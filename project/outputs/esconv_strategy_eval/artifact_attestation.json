@@ -1,0 +1,60 @@
+{
+  "status": "ATTESTED",
+  "stage": "esconv_strategy_only_evaluation",
+  "created_at": "2026-06-28T16:29:36.903068+00:00",
+  "study_freeze_sha256": "0e6cb4e2c84da57532d04bb98bf23379acd70c9d00014ee18b96a99666d28798",
+  "inputs": {
+    "action_outcomes": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/action_outcomes.jsonl",
+      "bytes": 19260917,
+      "sha256": "ff70e39e1a5be7dfea190c0e875baef172c287cc736793413485bfb5102e1146"
+    },
+    "action_sweep_attestation": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/artifact_attestation.json",
+      "bytes": 2351,
+      "sha256": "9581e4a0f60eb398070d93921534766c01d75cca19902c0a552347219595dc2d"
+    },
+    "audit": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/data/esconv_test/audit_only.jsonl",
+      "bytes": 602282,
+      "sha256": "6fa6265d1f01a24891d2b8432ceb3d7600f6fef74c3fbba8de2a8bce1cdfe6f6"
+    },
+    "runtime": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/data/esconv_test/runtime_states.jsonl",
+      "bytes": 6422390,
+      "sha256": "11b113e66d8315a756da8efeeb1a2074fb50d89ba39aa3826a0f0baa441a3abe"
+    },
+    "study_freeze": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/study_freeze.json",
+      "bytes": 10410,
+      "sha256": "03d3b76faccbefcb4d11924588bf1f25bc5a1a230532a488854be34a502140d7"
+    }
+  },
+  "outputs": {
+    "strategy_pair_judgments": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_strategy_eval/strategy_pair_judgments.jsonl",
+      "bytes": 1267910,
+      "sha256": "638c1112b0ee837e2aed6f396cd3ce2b4744ca3c41a7167440a7e672b40d5041",
+      "rows": 2275
+    },
+    "summary": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_strategy_eval/summary.json",
+      "bytes": 1787,
+      "sha256": "ddbb0adcbb8732ff6a69f8d7ec19d1002c6d312c0460b438d192e76a3aacebe6"
+    }
+  },
+  "parameters": {
+    "comparison": "M0+RS_vs_M0+R0",
+    "judge_endpoint": "final_judge",
+    "judge_model": "gpt-4o",
+    "judge_family": "openai_gpt4o",
+    "judge_base_url": "https://api.openai.com",
+    "package_local_attestation": true,
+    "raw_judge_calls_excluded_from_review_package": true
+  },
+  "expected": {
+    "pairs": 2275,
+    "dialogue_clusters": 169
+  },
+  "attestation_sha256": "f895f8775e930dbe6112132a6be9dd9bbafe00ab7231bb0a9c869a0ac9a7abfe"
+}

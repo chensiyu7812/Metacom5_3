@@ -1,15 +1,49 @@
 {
-  "status": "DRY_RUN",
-  "expected_pairs": 2275,
+  "comparison": "M0+RS_vs_M0+R0",
+  "n": 2275,
   "dialogue_clusters": 169,
-  "endpoint": "final_judge",
+  "rs_wins": 696,
+  "ties": 457,
+  "r0_wins": 1122,
+  "rs_preference_score": 0.4063736263736264,
+  "rs_preference_dialogue_cluster_bootstrap": {
+    "estimate": 0.40547466060511755,
+    "lower": 0.3857359138760618,
+    "upper": 0.4250604477356841,
+    "confidence": 0.95,
+    "n_units": 169,
+    "n_resamples": 10000
+  },
+  "strategy_recall_at_retrieved_k": 0.4145054945054945,
+  "strategy_recall_denominator": 2275,
+  "cost_by_action": {
+    "M0+R0": {
+      "n": 2275,
+      "mean_total_input_tokens": 316.71384615384613,
+      "mean_output_tokens": 58.00703296703297,
+      "mean_retrieval_calls": 0.0,
+      "mean_strategy_tokens": 0.0
+    },
+    "M0+RS": {
+      "n": 2275,
+      "mean_total_input_tokens": 570.3608791208791,
+      "mean_output_tokens": 56.637362637362635,
+      "mean_retrieval_calls": 1.0,
+      "mean_strategy_tokens": 259.20791208791206
+    }
+  },
+  "interpretation": "ESConv is single-session and has no long-term memory. This evaluation only tests whether Strategy RAG (RS) helps or hurts ordinary ESC responses under fixed generated outcomes.",
+  "status": "COMPLETE",
+  "judge_model": "gpt-4o",
+  "judge_family": "openai_gpt4o",
+  "endpoint_base_url": "https://api.openai.com",
   "freeze_sha256": "0e6cb4e2c84da57532d04bb98bf23379acd70c9d00014ee18b96a99666d28798",
   "outcomes_attestation_verification": {
     "ok": true,
     "errors": [],
-    "attestation_sha256": "593d3bef4fd2ed9228277a8590de21c74d807dff2d4d39eb988ed58bb96d0fd3",
+    "attestation_sha256": "4fe7bf22d65eb5e420876d239e278d174100ec656d8295e981e09cb2e683a08a",
     "stage": "action_sweep",
     "study_freeze_sha256": "a9f270041b54fff3c1f607c0365ef41b673977d62410e3ef2774280ed8b78876",
-    "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/artifact_attestation.json"
+    "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/esconv_sweep/artifact_attestation.json"
   }
 }
