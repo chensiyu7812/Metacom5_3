@@ -1,0 +1,59 @@
+{
+  "status": "ATTESTED",
+  "stage": "action_sweep",
+  "created_at": "2026-06-28T09:09:07.502418+00:00",
+  "study_freeze_sha256": "a9f270041b54fff3c1f607c0365ef41b673977d62410e3ef2774280ed8b78876",
+  "inputs": {
+    "backend": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/data/esconv_test/memory_backend.jsonl",
+      "bytes": 122850,
+      "sha256": "061bc583763b91c0145e57d9f5c238381bce974752eb6c98a3b89d3830cacb71"
+    },
+    "run_manifest": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/run_manifest.json",
+      "bytes": 791,
+      "sha256": "6759e907848f04fc388add1551e76935804b23d7c8384882319e4563a4857b44"
+    },
+    "runtime": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/data/esconv_test/runtime_states.jsonl",
+      "bytes": 6422390,
+      "sha256": "11b113e66d8315a756da8efeeb1a2074fb50d89ba39aa3826a0f0baa441a3abe"
+    },
+    "strategy_bank": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/data/strategy/strategy_cards.jsonl",
+      "bytes": 13920169,
+      "sha256": "f64ded1e23b4a79c0e08c6b47355ad76b3880d5cbc0bfa7530f366149b5c70db"
+    }
+  },
+  "outputs": {
+    "action_outcomes": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/action_outcomes.jsonl",
+      "bytes": 19260917,
+      "sha256": "ff70e39e1a5be7dfea190c0e875baef172c287cc736793413485bfb5102e1146",
+      "rows": 4550
+    },
+    "summary": {
+      "path": "/home/tokkio/snap/metacom_v33_github_review_package_20260628/project/outputs/esconv_sweep/summary.json",
+      "bytes": 576,
+      "sha256": "46c7485f46757c421b84b6bb47dfdc67f2e0e1b014746e7af2856727fc587c87"
+    }
+  },
+  "parameters": {
+    "endpoint_model": "meta/llama-3.1-8b-instruct",
+    "endpoint_family": "llama",
+    "endpoint_base_url": "https://integrate.api.nvidia.com",
+    "temperature": 0.0,
+    "max_tokens": 300,
+    "seed": 4311,
+    "strategy_top_k": 3,
+    "action_filter": null,
+    "max_cards": null,
+    "package_local_attestation": true,
+    "raw_api_calls_excluded_from_review_package": true
+  },
+  "expected": {
+    "cards": 2275,
+    "outcomes": 4550
+  },
+  "attestation_sha256": "593d3bef4fd2ed9228277a8590de21c74d807dff2d4d39eb988ed58bb96d0fd3"
+}
