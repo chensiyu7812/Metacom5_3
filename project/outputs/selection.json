@@ -1,0 +1,98 @@
+{
+  "best_fixed_action": "MPMSME+RS",
+  "budget_matched_fixed_action": "ME+R0",
+  "pm": {
+    "epsilon": 0.0,
+    "tau_misuse": 0.35,
+    "tau_omission": 1.0,
+    "tau_strategy": 1.0,
+    "confirmatory_allow_constraint_fallback": false,
+    "validation_metrics": {
+      "n": 1728,
+      "mean_response_score": 0.5759011377807034,
+      "mean_misuse_risk": 0.06278935185185185,
+      "mean_memory_omission_risk": 0.2980324074074074,
+      "mean_strategy_decision_risk": 0.24247685185185186,
+      "mean_safety_risk": 0.5167824074074074,
+      "mean_cost": 553.3327546296297,
+      "action_distribution": {
+        "M0+R0": 91,
+        "M0+RS": 337,
+        "ME+R0": 117,
+        "ME+RS": 385,
+        "MP+R0": 62,
+        "MP+RS": 173,
+        "MPE+R0": 33,
+        "MPE+RS": 38,
+        "MPMS+R0": 36,
+        "MPMS+RS": 62,
+        "MPMSME+R0": 5,
+        "MS+R0": 65,
+        "MS+RS": 151,
+        "MSE+R0": 32,
+        "MSE+RS": 141
+      }
+    },
+    "aggregation": "5-fold majority vote for thresholds; weighted mean metrics for diagnostics"
+  },
+  "strong_rule": {
+    "config": {
+      "mp_threshold": 0.08,
+      "ms_threshold": 0.08,
+      "me_threshold": 0.08,
+      "strategy_threshold": 0.0,
+      "max_sources": 2
+    },
+    "validation_metrics": {
+      "n": 1728,
+      "mean_response_score": 0.5423434718643859,
+      "mean_misuse_risk": 0.12471064814814815,
+      "mean_memory_omission_risk": 0.15219907407407407,
+      "mean_strategy_decision_risk": 0.021701388888888888,
+      "mean_safety_risk": 0.2722800925925926,
+      "mean_cost": 673.7181712962963,
+      "action_distribution": {
+        "M0+R0": 3,
+        "M0+RS": 204,
+        "ME+R0": 6,
+        "ME+RS": 363,
+        "MP+R0": 3,
+        "MP+RS": 201,
+        "MPE+R0": 6,
+        "MPE+RS": 239,
+        "MPMS+R0": 3,
+        "MPMS+RS": 304,
+        "MS+R0": 3,
+        "MS+RS": 192,
+        "MSE+R0": 3,
+        "MSE+RS": 198
+      }
+    },
+    "aggregation": "median thresholds across 5 validation folds; weighted mean metrics for diagnostics"
+  },
+  "selection_scope": {
+    "type": "cross_fold_development_consensus",
+    "fold_mode": "user",
+    "feature_mode": "text_metadata",
+    "seed": 17,
+    "n_folds": 5,
+    "external_use": "Frozen development-only selection for ESConv/EvoEmo confirmatory evaluation; not an internal performance estimate."
+  },
+  "selection_margins": {
+    "response_margin": 0.02,
+    "safety_margin": 0.02
+  },
+  "source_selection_files": [
+    "outputs/selection_m2b_text_metadata_fold0_seed17.json",
+    "outputs/selection_m2b_text_metadata_fold1_seed17.json",
+    "outputs/selection_m2b_text_metadata_fold2_seed17.json",
+    "outputs/selection_m2b_text_metadata_fold3_seed17.json",
+    "outputs/selection_m2b_text_metadata_fold4_seed17.json"
+  ],
+  "provenance": {
+    "method": "cross-fold consensus from validation-only selections",
+    "full_judging_attestation": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/full_judging_gemini_flash_lite_v3/artifact_attestation.json",
+    "m2b_attestation": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/m2b_selected_set_omission_gemini_flash_lite_v3/artifact_attestation.json",
+    "final_checkpoint_attestation": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/final_model_m2b_attested/pm_final.joblib.attestation.json"
+  }
+}

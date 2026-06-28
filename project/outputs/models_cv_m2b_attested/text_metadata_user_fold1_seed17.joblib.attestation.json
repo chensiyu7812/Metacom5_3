@@ -1,29 +1,9 @@
 {
   "status": "ATTESTED",
-  "stage": "validation_selection",
-  "created_at": "2026-06-28T02:02:54.629356+00:00",
+  "stage": "pm_training",
+  "created_at": "2026-06-28T01:45:58.803638+00:00",
   "study_freeze_sha256": null,
   "inputs": {
-    "action_outcomes": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/synthetic_sweep/action_outcomes.jsonl",
-      "bytes": 43115016,
-      "sha256": "121da61f72854a0186e7a1456ae6c65497e4db828f119998a6b7ce21ed1f29d5"
-    },
-    "action_sweep_attestation": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/synthetic_sweep/artifact_attestation.json",
-      "bytes": 2394,
-      "sha256": "ed9fb5c73ae349a449b430b61acdb9be8fde949e205adb50a081288974f3c7dc"
-    },
-    "checkpoint": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b_attested/text_metadata_user_fold0_seed17.joblib",
-      "bytes": 168241,
-      "sha256": "cc6b6c903f9ae49872bbb628a5090ece80d1b908a57b77449a260589dbc09fa5"
-    },
-    "checkpoint_attestation": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b_attested/text_metadata_user_fold0_seed17.joblib.attestation.json",
-      "bytes": 3891,
-      "sha256": "818c166d30d7387f60b13560173d96bdc2a1966aed717b30fd51679cde621151"
-    },
     "full_judging_attestation": {
       "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/full_judging_gemini_flash_lite_v3/artifact_attestation.json",
       "bytes": 5240,
@@ -59,11 +39,6 @@
       "bytes": 4244981,
       "sha256": "eeb516ababd4ee2198ac28d13f1e028be1c01ed03c00194761bdc8ae61e9778e"
     },
-    "strategy_bank": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/data/strategy/strategy_cards.jsonl",
-      "bytes": 219936,
-      "sha256": "5b2d58c6be07d3c27e20e9162a3494f47f875d02b94b983f8b05c08ff044bf46"
-    },
     "strategy_omission": {
       "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/full_judging_gemini_flash_lite_v3/strategy_omission_judgments.jsonl",
       "bytes": 2114190,
@@ -76,23 +51,33 @@
     }
   },
   "outputs": {
-    "selection": {
-      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/selection_m2b_text_metadata_fold0_seed17.json",
-      "bytes": 12404,
-      "sha256": "18d9f4e286d8933f2cf3e08a42974fbd8bb3944590b1707b1f2a56a9edbecc73"
+    "checkpoint": {
+      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b_attested/text_metadata_user_fold1_seed17.joblib",
+      "bytes": 168241,
+      "sha256": "597b51ec08a477bdb697f99f60050af0e2905fc4dc595319424bcd87715aafa8"
+    },
+    "training_report": {
+      "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b_attested/text_metadata_user_fold1_seed17.json",
+      "bytes": 1493,
+      "sha256": "2302ae59974e93d53ba6382474ba6570c0ab38c3c5435ad181698906a692d61d"
     }
   },
   "parameters": {
-    "response_margin": 0.02,
-    "safety_margin": 0.02,
-    "require_m2b": true,
+    "feature_mode": "text_metadata",
+    "c": 1.0,
+    "ridge_alpha": 5.0,
+    "seed": 17,
+    "strict_split": false,
     "m2b_enabled": true,
-    "validation_card_ids": 432
+    "require_m2b": true,
+    "train_card_ids_sha256": "d3cc850b7287d6b84b5f734d7111adb2cc3a419277caf3b68d3d755c6a280b80",
+    "validation_card_ids_sha256": "b5924a0dc324fbde7328b97336498237ff44335ca56cc6879fd8f457ef7eb73d"
   },
   "expected": {
-    "validation_cards": 432,
-    "pm_grid_total": 750,
-    "pm_grid_complete_no_fallback": 150
+    "train_cards": 1404,
+    "validation_cards": 324,
+    "train_states": 156,
+    "validation_states": 36
   },
-  "attestation_sha256": "d878700f5d214a204ad51b981d84fc56148e4a046ba9060b578e1431b2ac7afa"
+  "attestation_sha256": "3787b252541451b974c574adef20b5177fd5207dc2506dcac6f9bd268b2716a4"
 }

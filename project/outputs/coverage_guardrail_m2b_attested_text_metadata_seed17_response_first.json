@@ -1,0 +1,1391 @@
+{
+  "analysis_type": "development_pm_rule_coverage_guardrail",
+  "feature_mode": "text_metadata",
+  "fold_mode": "user",
+  "seed": 17,
+  "pm_base": "response_first",
+  "guardrail_modes": {
+    "memory_union": "PM memory sources union strong-rule memory sources; PM strategy retained.",
+    "memory_strategy_union": "PM memory sources union strong-rule memory sources; RS if either PM or rule selects RS.",
+    "rule_memory_only": "Strong-rule memory sources with PM strategy; isolates whether memory coverage alone explains omission."
+  },
+  "per_fold": [
+    {
+      "fold": 0,
+      "checkpoint": "outputs/models_cv_m2b_attested/text_metadata_user_fold0_seed17.joblib",
+      "base_pm": "response_first",
+      "n_validation_cards": 432,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "base_pm_selection": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 432,
+          "mean_response_score": 0.576717,
+          "mean_misuse_risk": 0.077546,
+          "mean_memory_omission_risk": 0.296296,
+          "mean_strategy_decision_risk": 0.238426,
+          "mean_safety_risk": 0.517361,
+          "mean_cost": 556.071759,
+          "action_distribution": {
+            "MPMS+RS": 21,
+            "ME+RS": 91,
+            "MS+RS": 35,
+            "MPE+RS": 19,
+            "M0+RS": 84,
+            "MP+R0": 14,
+            "ME+R0": 29,
+            "MP+RS": 44,
+            "MPMS+R0": 12,
+            "MSE+RS": 30,
+            "M0+R0": 25,
+            "MPE+R0": 4,
+            "MS+R0": 16,
+            "MSE+R0": 7,
+            "MPMSME+R0": 1
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.18,
+          "ms_threshold": 0.18,
+          "me_threshold": 0.18,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 432,
+          "mean_response_score": 0.542394,
+          "mean_misuse_risk": 0.115741,
+          "mean_memory_omission_risk": 0.167824,
+          "mean_strategy_decision_risk": 0.006944,
+          "mean_safety_risk": 0.267361,
+          "mean_cost": 678.49537,
+          "action_distribution": {
+            "MPMS+RS": 80,
+            "ME+RS": 87,
+            "MS+RS": 49,
+            "MP+RS": 56,
+            "MSE+RS": 50,
+            "MPE+RS": 53,
+            "M0+RS": 57
+          }
+        }
+      },
+      "guarded": {
+        "memory_union": {
+          "n": 432,
+          "mean_response_score": 0.576307,
+          "mean_misuse_risk": 0.123843,
+          "mean_memory_omission_risk": 0.115741,
+          "mean_strategy_decision_risk": 0.244213,
+          "mean_safety_risk": 0.434028,
+          "mean_cost": 579.203704,
+          "action_distribution": {
+            "MPMS+RS": 41,
+            "ME+RS": 72,
+            "MS+RS": 36,
+            "MPMSME+RS": 29,
+            "MP+RS": 36,
+            "MP+R0": 12,
+            "MSE+R0": 14,
+            "MPE+RS": 38,
+            "MPMSME+R0": 10,
+            "MPMS+R0": 12,
+            "M0+RS": 36,
+            "MSE+RS": 36,
+            "M0+R0": 12,
+            "MPE+R0": 12,
+            "ME+R0": 24,
+            "MS+R0": 12
+          }
+        },
+        "memory_strategy_union": {
+          "n": 432,
+          "mean_response_score": 0.540977,
+          "mean_misuse_risk": 0.128472,
+          "mean_memory_omission_risk": 0.115741,
+          "mean_strategy_decision_risk": 0.009259,
+          "mean_safety_risk": 0.25,
+          "mean_cost": 681.474537,
+          "action_distribution": {
+            "MPMS+RS": 53,
+            "ME+RS": 96,
+            "MS+RS": 48,
+            "MPMSME+RS": 39,
+            "MP+RS": 48,
+            "MSE+RS": 50,
+            "MPE+RS": 50,
+            "M0+RS": 48
+          }
+        },
+        "rule_memory_only": {
+          "n": 432,
+          "mean_response_score": 0.57637,
+          "mean_misuse_risk": 0.109954,
+          "mean_memory_omission_risk": 0.165509,
+          "mean_strategy_decision_risk": 0.241898,
+          "mean_safety_risk": 0.445602,
+          "mean_cost": 576.224537,
+          "action_distribution": {
+            "MPMS+RS": 65,
+            "ME+RS": 65,
+            "MS+RS": 36,
+            "MP+RS": 43,
+            "MP+R0": 13,
+            "MSE+R0": 14,
+            "MPE+RS": 36,
+            "MPMS+R0": 15,
+            "M0+RS": 43,
+            "MSE+RS": 36,
+            "M0+R0": 14,
+            "MPE+R0": 17,
+            "ME+R0": 22,
+            "MS+R0": 13
+          }
+        }
+      }
+    },
+    {
+      "fold": 1,
+      "checkpoint": "outputs/models_cv_m2b_attested/text_metadata_user_fold1_seed17.joblib",
+      "base_pm": "response_first",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "base_pm_selection": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.575175,
+          "mean_misuse_risk": 0.054012,
+          "mean_memory_omission_risk": 0.282407,
+          "mean_strategy_decision_risk": 0.25463,
+          "mean_safety_risk": 0.516975,
+          "mean_cost": 543.148148,
+          "action_distribution": {
+            "MS+R0": 13,
+            "M0+RS": 64,
+            "MSE+R0": 7,
+            "MPE+R0": 8,
+            "MS+RS": 28,
+            "MPMS+RS": 14,
+            "MSE+RS": 25,
+            "ME+RS": 64,
+            "ME+R0": 23,
+            "MP+RS": 30,
+            "M0+R0": 17,
+            "MPMS+R0": 7,
+            "MP+R0": 13,
+            "MPMSME+R0": 2,
+            "MPE+RS": 9
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.12,
+          "ms_threshold": 0.12,
+          "me_threshold": 0.12,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.542099,
+          "mean_misuse_risk": 0.114198,
+          "mean_memory_omission_risk": 0.137346,
+          "mean_strategy_decision_risk": 0.00463,
+          "mean_safety_risk": 0.239198,
+          "mean_cost": 679.429012,
+          "action_distribution": {
+            "MS+RS": 38,
+            "MP+RS": 36,
+            "MSE+RS": 37,
+            "ME+RS": 70,
+            "MPMS+RS": 62,
+            "MPE+RS": 43,
+            "M0+RS": 38
+          }
+        }
+      },
+      "guarded": {
+        "memory_union": {
+          "n": 324,
+          "mean_response_score": 0.567954,
+          "mean_misuse_risk": 0.114198,
+          "mean_memory_omission_risk": 0.117284,
+          "mean_strategy_decision_risk": 0.262346,
+          "mean_safety_risk": 0.442901,
+          "mean_cost": 565.268519,
+          "action_distribution": {
+            "MS+R0": 10,
+            "MP+RS": 26,
+            "MSE+R0": 10,
+            "ME+RS": 52,
+            "MPMSME+R0": 8,
+            "MPMS+RS": 33,
+            "MS+RS": 26,
+            "MSE+RS": 26,
+            "MPMSME+RS": 18,
+            "M0+RS": 26,
+            "MPE+R0": 11,
+            "M0+R0": 10,
+            "MPMS+R0": 11,
+            "MPE+RS": 27,
+            "ME+R0": 20,
+            "MP+R0": 10
+          }
+        },
+        "memory_strategy_union": {
+          "n": 324,
+          "mean_response_score": 0.541752,
+          "mean_misuse_risk": 0.12037,
+          "mean_memory_omission_risk": 0.112654,
+          "mean_strategy_decision_risk": 0.00463,
+          "mean_safety_risk": 0.234568,
+          "mean_cost": 681.462963,
+          "action_distribution": {
+            "MS+RS": 36,
+            "MP+RS": 36,
+            "MSE+RS": 36,
+            "ME+RS": 72,
+            "MPMSME+RS": 26,
+            "MPMS+RS": 44,
+            "M0+RS": 36,
+            "MPE+RS": 38
+          }
+        },
+        "rule_memory_only": {
+          "n": 324,
+          "mean_response_score": 0.567283,
+          "mean_misuse_risk": 0.111111,
+          "mean_memory_omission_risk": 0.138889,
+          "mean_strategy_decision_risk": 0.257716,
+          "mean_safety_risk": 0.444444,
+          "mean_cost": 563.234568,
+          "action_distribution": {
+            "MS+R0": 10,
+            "MP+RS": 26,
+            "MSE+R0": 13,
+            "ME+RS": 50,
+            "MPMS+R0": 14,
+            "MPMS+RS": 48,
+            "MS+RS": 28,
+            "MSE+RS": 24,
+            "MPE+RS": 30,
+            "M0+RS": 28,
+            "MPE+R0": 13,
+            "M0+R0": 10,
+            "ME+R0": 20,
+            "MP+R0": 10
+          }
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "checkpoint": "outputs/models_cv_m2b_attested/text_metadata_user_fold2_seed17.joblib",
+      "base_pm": "response_first",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "base_pm_selection": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.25,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.574963,
+          "mean_misuse_risk": 0.061728,
+          "mean_memory_omission_risk": 0.328704,
+          "mean_strategy_decision_risk": 0.234568,
+          "mean_safety_risk": 0.535494,
+          "mean_cost": 553.740741,
+          "action_distribution": {
+            "MS+RS": 33,
+            "ME+RS": 73,
+            "ME+R0": 24,
+            "MP+RS": 31,
+            "MS+R0": 14,
+            "MSE+RS": 28,
+            "MSE+R0": 5,
+            "M0+RS": 70,
+            "M0+R0": 16,
+            "MP+R0": 12,
+            "MPE+R0": 8,
+            "MPMS+RS": 5,
+            "MPE+RS": 3,
+            "MPMS+R0": 2
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.08,
+          "ms_threshold": 0.08,
+          "me_threshold": 0.08,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.544692,
+          "mean_misuse_risk": 0.165123,
+          "mean_memory_omission_risk": 0.165123,
+          "mean_strategy_decision_risk": 0.003086,
+          "mean_safety_risk": 0.299383,
+          "mean_cost": 682.166667,
+          "action_distribution": {
+            "MS+RS": 36,
+            "MPE+RS": 49,
+            "ME+RS": 68,
+            "MP+RS": 40,
+            "MSE+RS": 38,
+            "MPMS+RS": 53,
+            "M0+RS": 40
+          }
+        }
+      },
+      "guarded": {
+        "memory_union": {
+          "n": 324,
+          "mean_response_score": 0.566485,
+          "mean_misuse_risk": 0.158951,
+          "mean_memory_omission_risk": 0.131173,
+          "mean_strategy_decision_risk": 0.231481,
+          "mean_safety_risk": 0.45679,
+          "mean_cost": 581.003086,
+          "action_distribution": {
+            "MS+RS": 27,
+            "MPE+RS": 29,
+            "ME+R0": 18,
+            "MP+RS": 29,
+            "MSE+R0": 10,
+            "MSE+RS": 27,
+            "MPMS+RS": 29,
+            "ME+RS": 52,
+            "MPMSME+RS": 21,
+            "M0+RS": 29,
+            "M0+R0": 9,
+            "MP+R0": 9,
+            "MPE+R0": 13,
+            "MPMS+R0": 10,
+            "MS+R0": 9,
+            "MPMSME+R0": 3
+          }
+        },
+        "memory_strategy_union": {
+          "n": 324,
+          "mean_response_score": 0.543498,
+          "mean_misuse_risk": 0.169753,
+          "mean_memory_omission_risk": 0.131173,
+          "mean_strategy_decision_risk": 0.00463,
+          "mean_safety_risk": 0.290123,
+          "mean_cost": 684.641975,
+          "action_distribution": {
+            "MS+RS": 36,
+            "MPE+RS": 42,
+            "ME+RS": 70,
+            "MP+RS": 38,
+            "MSE+RS": 37,
+            "MPMS+RS": 39,
+            "MPMSME+RS": 24,
+            "M0+RS": 38
+          }
+        },
+        "rule_memory_only": {
+          "n": 324,
+          "mean_response_score": 0.567471,
+          "mean_misuse_risk": 0.151235,
+          "mean_memory_omission_risk": 0.16358,
+          "mean_strategy_decision_risk": 0.229938,
+          "mean_safety_risk": 0.46142,
+          "mean_cost": 578.527778,
+          "action_distribution": {
+            "MS+RS": 27,
+            "MPE+RS": 36,
+            "ME+R0": 17,
+            "MP+RS": 30,
+            "MSE+R0": 11,
+            "MSE+RS": 27,
+            "MPMS+RS": 42,
+            "ME+RS": 51,
+            "M0+RS": 30,
+            "M0+R0": 10,
+            "MP+R0": 10,
+            "MPE+R0": 13,
+            "MPMS+R0": 11,
+            "MS+R0": 9
+          }
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "checkpoint": "outputs/models_cv_m2b_attested/text_metadata_user_fold3_seed17.joblib",
+      "base_pm": "response_first",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "base_pm_selection": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.25,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.570321,
+          "mean_misuse_risk": 0.050926,
+          "mean_memory_omission_risk": 0.313272,
+          "mean_strategy_decision_risk": 0.24537,
+          "mean_safety_risk": 0.521605,
+          "mean_cost": 552.851852,
+          "action_distribution": {
+            "ME+RS": 85,
+            "MS+RS": 23,
+            "M0+R0": 17,
+            "M0+RS": 65,
+            "MPE+R0": 6,
+            "MS+R0": 11,
+            "ME+R0": 20,
+            "MP+RS": 37,
+            "MPE+RS": 1,
+            "MSE+RS": 26,
+            "MPMS+RS": 6,
+            "MPMS+R0": 7,
+            "MP+R0": 14,
+            "MSE+R0": 6
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.0,
+          "ms_threshold": 0.0,
+          "me_threshold": 0.0,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.537889,
+          "mean_misuse_risk": 0.12963,
+          "mean_memory_omission_risk": 0.146605,
+          "mean_strategy_decision_risk": 0.010802,
+          "mean_safety_risk": 0.265432,
+          "mean_cost": 681.444444,
+          "action_distribution": {
+            "MSE+RS": 38,
+            "MS+RS": 36,
+            "MPE+RS": 52,
+            "ME+RS": 72,
+            "MPMS+RS": 54,
+            "M0+RS": 36,
+            "MP+RS": 36
+          }
+        }
+      },
+      "guarded": {
+        "memory_union": {
+          "n": 324,
+          "mean_response_score": 0.562136,
+          "mean_misuse_risk": 0.131173,
+          "mean_memory_omission_risk": 0.118827,
+          "mean_strategy_decision_risk": 0.246914,
+          "mean_safety_risk": 0.439815,
+          "mean_cost": 580.04321,
+          "action_distribution": {
+            "MSE+RS": 27,
+            "MS+RS": 27,
+            "MPE+RS": 31,
+            "ME+RS": 54,
+            "MPMS+RS": 29,
+            "ME+R0": 18,
+            "M0+RS": 27,
+            "MPE+R0": 12,
+            "MSE+R0": 9,
+            "MP+RS": 27,
+            "M0+R0": 9,
+            "MPMSME+RS": 21,
+            "MS+R0": 9,
+            "MPMS+R0": 10,
+            "MP+R0": 9,
+            "MPMSME+R0": 5
+          }
+        },
+        "memory_strategy_union": {
+          "n": 324,
+          "mean_response_score": 0.540737,
+          "mean_misuse_risk": 0.137346,
+          "mean_memory_omission_risk": 0.12037,
+          "mean_strategy_decision_risk": 0.009259,
+          "mean_safety_risk": 0.256173,
+          "mean_cost": 683.682099,
+          "action_distribution": {
+            "MSE+RS": 36,
+            "MS+RS": 36,
+            "MPE+RS": 43,
+            "ME+RS": 72,
+            "MPMS+RS": 39,
+            "M0+RS": 36,
+            "MP+RS": 36,
+            "MPMSME+RS": 26
+          }
+        },
+        "rule_memory_only": {
+          "n": 324,
+          "mean_response_score": 0.560097,
+          "mean_misuse_risk": 0.123457,
+          "mean_memory_omission_risk": 0.145062,
+          "mean_strategy_decision_risk": 0.243827,
+          "mean_safety_risk": 0.445988,
+          "mean_cost": 577.805556,
+          "action_distribution": {
+            "MSE+RS": 27,
+            "MS+RS": 27,
+            "MPE+RS": 38,
+            "ME+RS": 54,
+            "MPMS+RS": 43,
+            "ME+R0": 18,
+            "M0+RS": 27,
+            "MPE+R0": 14,
+            "MSE+R0": 11,
+            "MP+RS": 27,
+            "M0+R0": 9,
+            "MS+R0": 9,
+            "MPMS+R0": 11,
+            "MP+R0": 9
+          }
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "checkpoint": "outputs/models_cv_m2b_attested/text_metadata_user_fold4_seed17.joblib",
+      "base_pm": "response_first",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "base_pm_selection": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.582058,
+          "mean_misuse_risk": 0.064815,
+          "mean_memory_omission_risk": 0.270062,
+          "mean_strategy_decision_risk": 0.240741,
+          "mean_safety_risk": 0.492284,
+          "mean_cost": 559.938272,
+          "action_distribution": {
+            "M0+RS": 54,
+            "ME+RS": 72,
+            "MP+RS": 31,
+            "MS+RS": 32,
+            "M0+R0": 16,
+            "MSE+RS": 32,
+            "MPE+R0": 7,
+            "MSE+R0": 7,
+            "MPE+RS": 6,
+            "MS+R0": 11,
+            "ME+R0": 21,
+            "MP+R0": 9,
+            "MPMS+RS": 16,
+            "MPMS+R0": 8,
+            "MPMSME+R0": 2
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.0,
+          "ms_threshold": 0.0,
+          "me_threshold": 0.0,
+          "strategy_threshold": 0.08,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.544627,
+          "mean_misuse_risk": 0.101852,
+          "mean_memory_omission_risk": 0.138889,
+          "mean_strategy_decision_risk": 0.087963,
+          "mean_safety_risk": 0.291667,
+          "mean_cost": 645.462963,
+          "action_distribution": {
+            "M0+RS": 33,
+            "MPE+RS": 42,
+            "MP+RS": 33,
+            "ME+RS": 66,
+            "MS+RS": 33,
+            "M0+R0": 3,
+            "MPMS+RS": 55,
+            "MSE+RS": 35,
+            "MSE+R0": 3,
+            "MPE+R0": 6,
+            "MS+R0": 3,
+            "ME+R0": 6,
+            "MP+R0": 3,
+            "MPMS+R0": 3
+          }
+        }
+      },
+      "guarded": {
+        "memory_union": {
+          "n": 324,
+          "mean_response_score": 0.573888,
+          "mean_misuse_risk": 0.108025,
+          "mean_memory_omission_risk": 0.112654,
+          "mean_strategy_decision_risk": 0.237654,
+          "mean_safety_risk": 0.410494,
+          "mean_cost": 580.354938,
+          "action_distribution": {
+            "M0+RS": 27,
+            "MPE+RS": 28,
+            "MP+RS": 27,
+            "ME+RS": 54,
+            "MS+RS": 27,
+            "M0+R0": 9,
+            "MPMSME+RS": 21,
+            "MSE+RS": 27,
+            "MPE+R0": 10,
+            "MSE+R0": 10,
+            "MS+R0": 9,
+            "ME+R0": 18,
+            "MPMS+RS": 32,
+            "MPMS+R0": 10,
+            "MPMSME+R0": 6,
+            "MP+R0": 9
+          }
+        },
+        "memory_strategy_union": {
+          "n": 324,
+          "mean_response_score": 0.549753,
+          "mean_misuse_risk": 0.108025,
+          "mean_memory_omission_risk": 0.115741,
+          "mean_strategy_decision_risk": 0.087963,
+          "mean_safety_risk": 0.28858,
+          "mean_cost": 647.910494,
+          "action_distribution": {
+            "M0+RS": 33,
+            "MPE+RS": 35,
+            "MP+RS": 33,
+            "ME+RS": 66,
+            "MS+RS": 33,
+            "M0+R0": 3,
+            "MPMSME+RS": 24,
+            "MSE+RS": 34,
+            "MSE+R0": 3,
+            "MPE+R0": 3,
+            "MS+R0": 3,
+            "ME+R0": 6,
+            "MPMS+RS": 39,
+            "MP+R0": 3,
+            "MPMSME+R0": 3,
+            "MPMS+R0": 3
+          }
+        },
+        "rule_memory_only": {
+          "n": 324,
+          "mean_response_score": 0.567873,
+          "mean_misuse_risk": 0.103395,
+          "mean_memory_omission_risk": 0.134259,
+          "mean_strategy_decision_risk": 0.236111,
+          "mean_safety_risk": 0.412037,
+          "mean_cost": 577.907407,
+          "action_distribution": {
+            "M0+RS": 27,
+            "MPE+RS": 34,
+            "MP+RS": 27,
+            "ME+RS": 54,
+            "MS+RS": 27,
+            "M0+R0": 9,
+            "MPMS+RS": 47,
+            "MSE+RS": 27,
+            "MPE+R0": 14,
+            "MSE+R0": 11,
+            "MS+R0": 9,
+            "ME+R0": 18,
+            "MPMS+R0": 11,
+            "MP+R0": 9
+          }
+        }
+      }
+    }
+  ],
+  "ci_vs_rule": {
+    "memory_union": {
+      "n_rows": 1728,
+      "n_states": 192,
+      "n_users": 16,
+      "metrics": {
+        "response_score": {
+          "mean_delta": 0.027445056904595675,
+          "state_cluster_ci": {
+            "estimate": 0.027445056904595675,
+            "lower": 0.018354814234442476,
+            "upper": 0.036971534341803974,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.02744505690459567,
+            "lower": 0.021393630138519804,
+            "upper": 0.033942680950306434,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.027445056904595675,
+            "mean_minus_null": 0.027445056904595675,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.02744505690459567,
+            "mean_minus_null": 0.02744505690459567,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "misuse_risk": {
+          "mean_delta": 0.0023148148148148147,
+          "state_cluster_ci": {
+            "estimate": 0.002314814814814815,
+            "lower": -0.004050925925925926,
+            "upper": 0.008391203703703705,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.0023148148148148147,
+            "lower": -0.00318287037037037,
+            "upper": 0.008101851851851851,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.0023148148148148147,
+            "mean_minus_null": 0.0023148148148148147,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.5055494450554945,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.0023148148148148147,
+            "mean_minus_null": 0.0023148148148148147,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.51004899510049,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "memory_omission_risk": {
+          "mean_delta": -0.033275462962962965,
+          "state_cluster_ci": {
+            "estimate": -0.033275462962962965,
+            "lower": -0.039641203703703706,
+            "upper": -0.027199074074074073,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -0.033275462962962965,
+            "lower": -0.04195601851851852,
+            "upper": -0.025752314814814815,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -0.033275462962962965,
+            "mean_minus_null": -0.033275462962962965,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -0.03327546296296296,
+            "mean_minus_null": -0.03327546296296296,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "strategy_decision_risk": {
+          "mean_delta": 0.22280092592592593,
+          "state_cluster_ci": {
+            "estimate": 0.2228009259259259,
+            "lower": 0.16753472222222224,
+            "upper": 0.27922453703703703,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.22280092592592593,
+            "lower": 0.1886574074074074,
+            "upper": 0.25665509259259256,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.2228009259259259,
+            "mean_minus_null": 0.2228009259259259,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.22280092592592593,
+            "mean_minus_null": 0.22280092592592593,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "safety_risk": {
+          "mean_delta": 0.16435185185185186,
+          "state_cluster_ci": {
+            "estimate": 0.16435185185185186,
+            "lower": 0.12065248842592598,
+            "upper": 0.20949074074074078,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.16435185185185186,
+            "lower": 0.14061776620370378,
+            "upper": 0.18778935185185186,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.16435185185185186,
+            "mean_minus_null": 0.16435185185185186,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.16435185185185186,
+            "mean_minus_null": 0.16435185185185186,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "cost": {
+          "mean_delta": -96.41666666666667,
+          "state_cluster_ci": {
+            "estimate": -96.41666666666667,
+            "lower": -121.62000868055553,
+            "upper": -71.87304687500001,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -96.41666666666669,
+            "lower": -111.2062065972222,
+            "upper": -81.86025752314816,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -96.41666666666667,
+            "mean_minus_null": -96.41666666666667,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -96.41666666666666,
+            "mean_minus_null": -96.41666666666666,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        }
+      }
+    },
+    "memory_strategy_union": {
+      "n_rows": 1728,
+      "n_states": 192,
+      "n_users": 16,
+      "metrics": {
+        "response_score": {
+          "mean_delta": 0.0008521458986957776,
+          "state_cluster_ci": {
+            "estimate": 0.0008521458986957775,
+            "lower": -0.0011631696065347369,
+            "upper": 0.0028165165703619133,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.0008521458986957774,
+            "lower": -0.0006552158232976233,
+            "upper": 0.002472441207485739,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.0008521458986957774,
+            "mean_minus_null": 0.0008521458986957774,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.41845815418458154,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.0008521458986957774,
+            "mean_minus_null": 0.0008521458986957774,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.3124687531246875,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "misuse_risk": {
+          "mean_delta": 0.0078125,
+          "state_cluster_ci": {
+            "estimate": 0.0078125,
+            "lower": 0.003761574074074074,
+            "upper": 0.011863425925925925,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.0078125,
+            "lower": 0.003761574074074074,
+            "upper": 0.012152777777777778,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.0078125,
+            "mean_minus_null": 0.0078125,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.0005999400059994001,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.0078125,
+            "mean_minus_null": 0.0078125,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.0030996900309969004,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "memory_omission_risk": {
+          "mean_delta": -0.033275462962962965,
+          "state_cluster_ci": {
+            "estimate": -0.033275462962962965,
+            "lower": -0.03935185185185185,
+            "upper": -0.02748842592592593,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -0.033275462962962965,
+            "lower": -0.04195601851851852,
+            "upper": -0.026041666666666664,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -0.033275462962962965,
+            "mean_minus_null": -0.033275462962962965,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -0.033275462962962965,
+            "mean_minus_null": -0.033275462962962965,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "strategy_decision_risk": {
+          "mean_delta": 0.0005787037037037037,
+          "state_cluster_ci": {
+            "estimate": 0.0005787037037037037,
+            "lower": -0.0008680555555555555,
+            "upper": 0.002025462962962963,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.0005787037037037037,
+            "lower": -0.0008680555555555555,
+            "upper": 0.002025462962962963,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.0005787037037037037,
+            "mean_minus_null": 0.0005787037037037037,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.6844315568443156,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.0005787037037037037,
+            "mean_minus_null": 0.0005787037037037037,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.6828317168283171,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "safety_risk": {
+          "mean_delta": -0.009259259259259259,
+          "state_cluster_ci": {
+            "estimate": -0.00925925925925926,
+            "lower": -0.013888888888888888,
+            "upper": -0.004918981481481482,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -0.009259259259259259,
+            "lower": -0.014756944444444444,
+            "upper": -0.003761574074074074,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -0.009259259259259259,
+            "mean_minus_null": -0.009259259259259259,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.00029997000299970003,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -0.009259259259259259,
+            "mean_minus_null": -0.009259259259259259,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.0110988901109889,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "cost": {
+          "mean_delta": 2.46875,
+          "state_cluster_ci": {
+            "estimate": 2.46875,
+            "lower": 2.1539351851851856,
+            "upper": 2.7858796296296298,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 2.46875,
+            "lower": 2.1979166666666665,
+            "upper": 2.7558015046296296,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 2.46875,
+            "mean_minus_null": 2.46875,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 2.46875,
+            "mean_minus_null": 2.46875,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        }
+      }
+    },
+    "rule_memory_only": {
+      "n_rows": 1728,
+      "n_states": 192,
+      "n_users": 16,
+      "metrics": {
+        "response_score": {
+          "mean_delta": 0.02600989056876359,
+          "state_cluster_ci": {
+            "estimate": 0.02600989056876359,
+            "lower": 0.01722290672406809,
+            "upper": 0.035361464703165604,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.02600989056876359,
+            "lower": 0.019682334501799032,
+            "upper": 0.03249745899632844,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.02600989056876359,
+            "mean_minus_null": 0.02600989056876359,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.02600989056876359,
+            "mean_minus_null": 0.02600989056876359,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "misuse_risk": {
+          "mean_delta": -0.005497685185185185,
+          "state_cluster_ci": {
+            "estimate": -0.005497685185185185,
+            "lower": -0.010127314814814813,
+            "upper": -0.0011574074074074073,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -0.005497685185185185,
+            "lower": -0.008969907407407406,
+            "upper": -0.0023148148148148147,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -0.005497685185185185,
+            "mean_minus_null": -0.005497685185185185,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.015498450154984501,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -0.005497685185185185,
+            "mean_minus_null": -0.005497685185185185,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.012398760123987601,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "memory_omission_risk": {
+          "mean_delta": -0.001736111111111111,
+          "state_cluster_ci": {
+            "estimate": -0.001736111111111111,
+            "lower": -0.004050925925925926,
+            "upper": 0.0005787037037037037,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -0.001736111111111111,
+            "lower": -0.003761574074074074,
+            "upper": 0.0005787037037037037,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -0.001736111111111111,
+            "mean_minus_null": -0.001736111111111111,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.2101789821017898,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -0.001736111111111111,
+            "mean_minus_null": -0.001736111111111111,
+            "null_value": 0.0,
+            "p_value_two_sided": 0.21137886211378862,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "strategy_decision_risk": {
+          "mean_delta": 0.22019675925925927,
+          "state_cluster_ci": {
+            "estimate": 0.22019675925925927,
+            "lower": 0.1652199074074074,
+            "upper": 0.27633101851851855,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.22019675925925924,
+            "lower": 0.18605324074074076,
+            "upper": 0.25376880787037026,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.22019675925925922,
+            "mean_minus_null": 0.22019675925925922,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.22019675925925924,
+            "mean_minus_null": 0.22019675925925924,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "safety_risk": {
+          "mean_delta": 0.16984953703703703,
+          "state_cluster_ci": {
+            "estimate": 0.16984953703703706,
+            "lower": 0.12760416666666666,
+            "upper": 0.21354166666666666,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": 0.16984953703703703,
+            "lower": 0.14525462962962965,
+            "upper": 0.1941550925925926,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": 0.16984953703703706,
+            "mean_minus_null": 0.16984953703703706,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": 0.16984953703703703,
+            "mean_minus_null": 0.16984953703703703,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        },
+        "cost": {
+          "mean_delta": -98.88541666666667,
+          "state_cluster_ci": {
+            "estimate": -98.88541666666667,
+            "lower": -124.05794270833333,
+            "upper": -74.327734375,
+            "confidence": 0.95,
+            "n_units": 192,
+            "n_resamples": 10000
+          },
+          "user_cluster_ci": {
+            "estimate": -98.88541666666667,
+            "lower": -113.78893229166665,
+            "upper": -84.359375,
+            "confidence": 0.95,
+            "n_units": 16,
+            "n_resamples": 10000
+          },
+          "state_cluster_signflip": {
+            "estimate": -98.88541666666667,
+            "mean_minus_null": -98.88541666666667,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 192,
+            "n_permutations": 10000
+          },
+          "user_cluster_signflip": {
+            "estimate": -98.88541666666667,
+            "mean_minus_null": -98.88541666666667,
+            "null_value": 0.0,
+            "p_value_two_sided": 9.999000099990002e-05,
+            "n_clusters": 16,
+            "n_permutations": 10000
+          }
+        }
+      }
+    }
+  },
+  "interpretation": "Diagnostic only. These hybrid policies use the validation-selected strong rule as a pre-evidence coverage guardrail. They should be reported as PM+rule variants, not as pure learned PM."
+}
