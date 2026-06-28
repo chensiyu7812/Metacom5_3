@@ -1,0 +1,125 @@
+# Copy to experiment.yaml and edit only endpoint URLs/model names.
+# API keys are read from environment variables and are never written to disk.
+endpoints:
+  synthetic_generator:
+    base_url: "https://api.openai.com"
+    model: "gpt-4o-mini"
+    api_key_env: "OPENAI_API_KEY"
+    family: "openai_gpt4o"
+    timeout_seconds: 240
+
+  # Supporter generator: Llama-8B is mid-strength, more sensitive to evidence
+  # than 70B models, and realistic for digital-human deployment.
+  generator:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "meta/llama-3.1-8b-instruct"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "llama"
+    timeout_seconds: 180
+
+  # Seeker simulator: different family from generator (Mistral vs Llama)
+  seeker:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "mistralai/mixtral-8x7b-instruct-v0.1"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "mistral"
+    timeout_seconds: 180
+
+  # Alternative seeker for robustness runs
+  seeker_alt:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "qwen/qwen2_5-7b-instruct"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "qwen"
+    timeout_seconds: 180
+
+  # Training judge: Gemini Flash-Lite is the low-cost development labeler once
+  # it passes the frozen V3 pilot gate. Final/confirmatory judging must use a
+  # different model family.
+  training_judge:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    model: "gemini-2.5-flash-lite"
+    api_key_env: "GEMINI_API_KEY"
+    family: "google_gemini"
+    timeout_seconds: 180
+
+  # Cheap fallback for quick schema smoke tests only; it is not currently
+  # accepted for full judging because it failed the pilot gate.
+  training_judge_openai_mini:
+    base_url: "https://api.openai.com"
+    model: "gpt-4o-mini"
+    api_key_env: "OPENAI_API_KEY"
+    family: "openai_gpt4o"
+    timeout_seconds: 180
+
+  # Low-cost NVIDIA-hosted judge candidates for full development labeling.
+  # They must pass the V3.2/V3.3 judge pilot gate before use in full judging.
+  training_judge_deepseek_flash:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "deepseek-ai/deepseek-v4-flash"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "deepseek"
+    timeout_seconds: 240
+
+  training_judge_qwen122:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "qwen/qwen3.5-122b-a10b"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "qwen"
+    timeout_seconds: 240
+
+  training_judge_glm51:
+    base_url: "https://integrate.api.nvidia.com"
+    model: "z-ai/glm-5.1"
+    api_key_env: "NVIDIA_API_KEY"
+    family: "glm"
+    timeout_seconds: 180
+
+  # Low-cost Google judge candidates. They are independent from the Llama
+  # generator, Mistral seeker, and NVIDIA-hosted judge candidates. Use only
+  # after they pass the same V3 pilot gate as any other training judge.
+  training_judge_gemini_flash_lite:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    model: "gemini-2.5-flash-lite"
+    api_key_env: "GEMINI_API_KEY"
+    family: "google_gemini"
+    timeout_seconds: 180
+
+  training_judge_gemini_flash:
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    model: "gemini-2.5-flash"
+    api_key_env: "GEMINI_API_KEY"
+    family: "google_gemini"
+    timeout_seconds: 180
+
+  # Final/confirmatory judge: OpenAI family is independent from the default
+  # Gemini training judge. Do not select a final judge from the same family as
+  # the full-judging training endpoint.
+  final_judge:
+    base_url: "https://api.openai.com"
+    model: "gpt-4o"
+    api_key_env: "OPENAI_API_KEY"
+    family: "openai_gpt4o"
+    timeout_seconds: 240
+
+  # Optional Claude final judge fallback if Gemini quota is too tight.
+  # Do not use this as final_judge when training_judge is also Claude.
+  # Uses AnthropicClient in api.py (not OpenAI-compatible format).
+  final_judge_claude:
+    base_url: "https://api.anthropic.com"
+    model: "claude-sonnet-4-6"
+    api_key_env: "ANTHROPIC_API_KEY"
+    family: "anthropic_claude"
+    timeout_seconds: 240
+
+protocol:
+  generator_temperature: 0.0
+  response_noninferiority_margin: 0.05
+  misuse_noninferiority_margin: 0.05
+  minimum_cost_reduction: 0.10
+  primary_seed: 101
+  robustness_seeds: [101, 202, 303]
+  synthetic_variant_mode: "balanced9"
+  strategy_top_k: 3
+  evoemo_session_rag_top_k: 4
+  confirmatory_seeker_endpoints: ["seeker", "seeker_alt"]

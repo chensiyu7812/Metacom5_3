@@ -1,0 +1,40 @@
+{
+  "model_format_version": "5.1",
+  "feature_mode": "metadata_only",
+  "raw_catalog_fingerprint_exposed": false,
+  "response_score_transform": "sigmoid(pairwise_logit)",
+  "seed": 43,
+  "n_train_cards": 1404,
+  "n_validation_cards": 324,
+  "n_train_non_tie_pairs": 7577,
+  "effective_train_states": 156,
+  "effective_validation_states": 36,
+  "split_diagnostics": {
+    "card_overlap": 0,
+    "state_id_overlap": 0,
+    "normalized_current_text_overlap": 36,
+    "user_overlap": 0,
+    "semantic_family_overlap": 12
+  },
+  "strict_split": false,
+  "judging_attestation_sha256": "3e77d1bf42f184f99acdbaa625ce67195c4a34c2ee9649e4af69b6fef420e32c",
+  "n_action_labels": {
+    "misuse": 9048,
+    "memory_omission": 9048,
+    "memory_decision": 9048,
+    "strategy_risk": 9048,
+    "strategy_decision": 9048,
+    "m2b_selected_set_omission": 7680
+  },
+  "validation_pair_accuracy": 0.5975177304964538,
+  "validation_pair_log_loss": 0.6603986213330144,
+  "validation_mae": {
+    "misuse": 0.08294657598652384,
+    "memory_omission": 0.2098123523687994,
+    "memory_decision": 0.2412407350299683,
+    "strategy_risk": 0.04798547058338312,
+    "strategy_decision": 0.05526956205330852
+  },
+  "text_dimension": 0,
+  "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/metadata_only_user_fold3_seed43.joblib"
+}

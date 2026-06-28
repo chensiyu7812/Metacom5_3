@@ -1,0 +1,51 @@
+# Copy to experiment.yaml and edit only endpoint URLs/model names.
+# API keys are read from environment variables and are never written to disk.
+endpoints:
+  synthetic_generator:
+    base_url: "https://api.openai.com"
+    model: "YOUR_SYNTHETIC_DATA_MODEL"
+    api_key_env: "SYNTHETIC_API_KEY"
+    family: "YOUR_SYNTHETIC_MODEL_FAMILY"
+    timeout_seconds: 240
+  generator:
+    base_url: "https://api.openai.com"
+    model: "YOUR_GENERATOR_MODEL"
+    api_key_env: "GENERATOR_API_KEY"
+    family: "YOUR_GENERATOR_FAMILY"
+    timeout_seconds: 180
+  seeker:
+    base_url: "https://api.openai.com"
+    model: "YOUR_SEEKER_MODEL"
+    api_key_env: "SEEKER_API_KEY"
+    family: "YOUR_SEEKER_FAMILY"
+    timeout_seconds: 180
+  seeker_alt:
+    base_url: "https://api.openai.com"
+    model: "YOUR_SECOND_SEEKER_MODEL"
+    api_key_env: "SECOND_SEEKER_API_KEY"
+    family: "YOUR_SECOND_SEEKER_FAMILY"
+    timeout_seconds: 180
+  training_judge:
+    base_url: "https://api.openai.com"
+    model: "YOUR_TRAINING_JUDGE_MODEL"
+    api_key_env: "TRAINING_JUDGE_API_KEY"
+    family: "YOUR_TRAINING_JUDGE_FAMILY"
+    timeout_seconds: 180
+  final_judge:
+    base_url: "https://api.openai.com"
+    model: "YOUR_FINAL_JUDGE_MODEL"
+    api_key_env: "FINAL_JUDGE_API_KEY"
+    family: "YOUR_FINAL_JUDGE_FAMILY"
+    timeout_seconds: 180
+
+protocol:
+  generator_temperature: 0.0
+  response_noninferiority_margin: 0.05
+  misuse_noninferiority_margin: 0.05
+  minimum_cost_reduction: 0.10
+  primary_seed: 101
+  robustness_seeds: [101, 202, 303]
+  synthetic_variant_mode: "balanced9"
+  strategy_top_k: 3
+  evoemo_session_rag_top_k: 4
+  confirmatory_seeker_endpoints: ["seeker", "seeker_alt"]

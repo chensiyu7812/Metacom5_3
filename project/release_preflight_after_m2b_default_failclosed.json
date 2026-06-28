@@ -1,0 +1,125 @@
+{
+  "status": "API_PILOT_READY",
+  "confirmatory_ready": false,
+  "created_at": "2026-06-28T01:04:01.446371+00:00",
+  "checks": {
+    "python_syntax": {
+      "passed": true,
+      "details": {
+        "n_python_files": 82,
+        "syntax_errors": [],
+        "findings": {
+          "hardcoded_home": [],
+          "legacy_gold_proxy": [],
+          "test_tuning_marker": []
+        }
+      }
+    },
+    "static_leakage_scan": {
+      "passed": true,
+      "details": {}
+    },
+    "synthetic_data_audit": {
+      "passed": true,
+      "details": {
+        "status": "PASS",
+        "errors": [],
+        "warnings": [],
+        "hashes": {
+          "runtime": "eeb516ababd4ee2198ac28d13f1e028be1c01ed03c00194761bdc8ae61e9778e",
+          "backend": "cec044ceaec693bc1721b228c8ad88ccdfa2827265cc828ea22c2596608a60d5"
+        },
+        "counts": {
+          "runtime_cards": 1728,
+          "states": 192,
+          "users": 16,
+          "semantic_families": 12,
+          "unique_current_texts": 36,
+          "min_variants_per_state": 9,
+          "max_variants_per_state": 9,
+          "reused_inventory_signatures": 38
+        },
+        "violations": {
+          "runtime_key_paths": [],
+          "memory_markers": [],
+          "future_memory": []
+        },
+        "interpretation": "Repeated text across counterfactual inventory variants is intentional; confirmatory evidence must come from ESConv/EvoEmo rather than this development set."
+      }
+    },
+    "pair_graph_audit": {
+      "passed": true,
+      "details": {
+        "n_states": 1728,
+        "n_training_pairs": 19776,
+        "errors": []
+      }
+    },
+    "evoemo_frozen_structure": {
+      "passed": true,
+      "details": {
+        "users": 18,
+        "sessions": 401,
+        "scenarios": 34,
+        "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"
+      }
+    },
+    "strategy_bank_valid": {
+      "passed": true,
+      "details": {
+        "n_cards": 156,
+        "pilot_only_prebuilt": true,
+        "audit": {
+          "status": "PREBUILT_PILOT_BANK",
+          "n_strategy_cards": 156,
+          "source_sha256": "960cfc78169e14817005f770894e0a3abc016dbf33757a9bbfa00702adf570e0",
+          "source_description": "Sanitized opaque-ID conversion of the prior ESConv-train-derived v13 strategy bank. Rebuild with scripts/02-03 before confirmatory ESConv testing.",
+          "confirmatory_overlap_check": "NOT_VERIFIED_IN_PREBUILT_BANK"
+        }
+      }
+    },
+    "configuration_present": {
+      "passed": true,
+      "details": {
+        "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/configs/experiment.yaml",
+        "schema_errors": [],
+        "fill_warnings": [],
+        "filled_for_api": true
+      }
+    },
+    "documentation_present": {
+      "passed": true,
+      "details": [
+        "/home/tokkio/esconv_experiment_bundle/policy_manager_35/README_CN.md",
+        "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/RUNBOOK_CN.md",
+        "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/STUDY_PROTOCOL_CN.md",
+        "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/MEASUREMENT_PROTOCOL_V2.md",
+        "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/MEASUREMENT_PROTOCOL_V3.md"
+      ]
+    },
+    "pytest": {
+      "passed": true,
+      "details": {
+        "returncode": 0,
+        "stdout_tail": "..............................................                           [100%]\n",
+        "stderr_tail": ""
+      }
+    }
+  },
+  "confirmatory_checks": {
+    "official_esconv_and_evoemo_present": false,
+    "strategy_bank_rebuilt_and_overlap_audited": false,
+    "esconv_test_runtime_present": false,
+    "configuration_filled": true,
+    "study_freeze_valid": false
+  },
+  "freeze_verification": {
+    "ok": false,
+    "errors": [
+      "study freeze not created"
+    ]
+  },
+  "manifest_sha256": "2298b5c40402271125a29234447f7eeaedb4c282cd470ee00dca3fe9c96b0d5d",
+  "manifest_files": 785,
+  "scope": "API_PILOT_READY permits only generator/judge calibration. CONFIRMATORY_READY additionally requires a locally installed or pinned official ESConv file, an overlap-audited train-only strategy bank, ESConv test runtime, filled model configuration, and a valid study freeze. The real judge pilot gate must still pass before full judging/training."
+}

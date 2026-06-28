@@ -1,0 +1,217 @@
+from __future__ import annotations
+
+import json
+import random
+import re
+from pathlib import Path
+from typing import Any, Iterable
+from collections import defaultdict
+
+from .contracts import StrategyCard
+from .io import stable_hex, write_jsonl, write_json, sha256_file
+from .text import dialogue_text, jaccard, normalize_for_hash, normalize_space, shingle_set
+
+
+def stable_dialogue_split(dialogue_index: int, seed: int = 13) -> str:
+    # Reproduces the 70/15/15 dialogue-level intent without turn leakage.
+    value = int(stable_hex("esconv_split", seed, dialogue_index, n=12), 16) / float(16**12)
+    if value < 0.70:
+        return "train"
+    if value < 0.85:
+        return "validation"
+    return "test"
+
+
+def load_esconv(path: str | Path) -> list[dict[str, Any]]:
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, list) or not data:
+        raise ValueError("ESConv must be a non-empty JSON list")
+    for idx, row in enumerate(data):
+        if not isinstance(row, dict) or not isinstance(row.get("dialog"), list):
+            raise ValueError(f"invalid ESConv dialogue at index {idx}")
+    return data
+
+
+def evoemo_dialogue_texts(evoemo_path: str | Path) -> list[str]:
+    data = json.loads(Path(evoemo_path).read_text(encoding="utf-8"))
+    texts: list[str] = []
+    for user in data:
+        for session in user.get("dialog_history") or []:
+            dialogue = session.get("dialogue") or []
+            texts.append(dialogue_text([
+                {"speaker": turn.get("role"), "content": turn.get("content")}
+                for turn in dialogue
+            ]))
+    return texts
+
+
+def find_esconv_evoemo_overlaps(
+    esconv: list[dict[str, Any]],
+    evoemo_path: str | Path,
+    *,
+    jaccard_threshold: float = 0.88,
+) -> dict[int, dict[str, Any]]:
+    evo_texts = evoemo_dialogue_texts(evoemo_path)
+    exact = {normalize_for_hash(text) for text in evo_texts if text}
+    evo_shingles = [shingle_set(text) for text in evo_texts if text]
+    overlaps: dict[int, dict[str, Any]] = {}
+    for idx, row in enumerate(esconv):
+        text = dialogue_text(row["dialog"])
+        normalized = normalize_for_hash(text)
+        if normalized in exact:
+            overlaps[idx] = {"reason": "exact", "similarity": 1.0}
+            continue
+        shingles = shingle_set(text)
+        if not shingles:
+            continue
+        best = max((jaccard(shingles, other) for other in evo_shingles), default=0.0)
+        if best >= jaccard_threshold:
+            overlaps[idx] = {"reason": "shingle_jaccard", "similarity": best}
+    return overlaps
+
+
+def _preceding_context(dialogue: list[dict[str, Any]], turn_index: int, max_turns: int = 6) -> str:
+    begin = max(0, turn_index - max_turns)
+    rows = dialogue[begin:turn_index]
+    return "\n".join(
+        f"{turn.get('speaker')}: {normalize_space(turn.get('content') or '')}"
+        for turn in rows
+    )
+
+
+def build_strategy_bank(
+    esconv_path: str | Path,
+    evoemo_path: str | Path,
+    out_bank_path: str | Path,
+    out_split_path: str | Path,
+    out_overlap_path: str | Path,
+    *,
+    seed: int = 13,
+    jaccard_threshold: float = 0.88,
+) -> dict[str, Any]:
+    esconv = load_esconv(esconv_path)
+    overlaps = find_esconv_evoemo_overlaps(
+        esconv, evoemo_path, jaccard_threshold=jaccard_threshold
+    )
+    cards: list[dict[str, Any]] = []
+    split_rows: list[dict[str, Any]] = []
+    for idx, row in enumerate(esconv):
+        split = stable_dialogue_split(idx, seed)
+        dialogue_id = f"esconv_{idx:04d}"
+        split_rows.append({
+            "dialogue_id": dialogue_id,
+            "index": idx,
+            "split": split,
+            "excluded_for_evoemo_overlap": idx in overlaps,
+        })
+        if split != "train" or idx in overlaps:
+            continue
+        dialogue = row["dialog"]
+        for turn_index, turn in enumerate(dialogue):
+            if turn.get("speaker") != "supporter":
+                continue
+            annotation = turn.get("annotation") or {}
+            strategy = normalize_space(annotation.get("strategy") or "Others")
+            response = normalize_space(turn.get("content") or "")
+            if not response:
+                continue
+            context = _preceding_context(dialogue, turn_index)
+            situation = normalize_space(row.get("situation") or "")
+            retrieval_text = "\n".join(x for x in [situation, context] if x)
+            guidance = (
+                f"Use the emotional-support strategy '{strategy}' when it fits the "
+                "visible dialogue. Adapt it naturally; do not copy private facts or "
+                "assume information that the user has not disclosed."
+            )
+            card = StrategyCard(
+                strategy_id=f"strat_{stable_hex(dialogue_id, turn_index, strategy, response, n=20)}",
+                strategy_label=strategy,
+                retrieval_text=retrieval_text or situation or response,
+                guidance_text=guidance,
+                example_response=response,
+                source_dialogue_id=dialogue_id,
+                source_turn_index=turn_index,
+            )
+            cards.append(card.model_dump(mode="json"))
+
+    # Remove exact duplicates without using validation/test content.
+    deduped: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for card in cards:
+        key = (
+            normalize_for_hash(card["retrieval_text"]),
+            normalize_for_hash(card["example_response"]),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(card)
+
+    write_jsonl(out_bank_path, deduped)
+    write_jsonl(out_split_path, split_rows)
+    write_json(out_overlap_path, {
+        "esconv_sha256": sha256_file(esconv_path),
+        "evoemo_sha256": sha256_file(evoemo_path),
+        "threshold": jaccard_threshold,
+        "n_esconv_dialogues": len(esconv),
+        "n_excluded_overlap": len(overlaps),
+        "overlaps": {f"esconv_{k:04d}": v for k, v in sorted(overlaps.items())},
+        "n_strategy_cards": len(deduped),
+    })
+    return {
+        "n_esconv_dialogues": len(esconv),
+        "n_strategy_cards": len(deduped),
+        "n_excluded_overlap": len(overlaps),
+    }
+
+
+def esconv_turn_states(
+    esconv_path: str | Path,
+    split_manifest_path: str | Path,
+    split: str,
+) -> list[dict[str, Any]]:
+    esconv = load_esconv(esconv_path)
+    split_rows = {
+        int(row["index"]): row
+        for row in __import__("metacom_pm.io", fromlist=["iter_jsonl"]).iter_jsonl(split_manifest_path)
+    }
+    states: list[dict[str, Any]] = []
+    for idx, dialogue_row in enumerate(esconv):
+        meta = split_rows[idx]
+        if meta["split"] != split or meta["excluded_for_evoemo_overlap"]:
+            continue
+        dialogue = dialogue_row["dialog"]
+        for turn_index, turn in enumerate(dialogue):
+            if turn.get("speaker") != "supporter":
+                continue
+            # Require at least one visible seeker message.
+            previous = dialogue[:turn_index]
+            if not any(x.get("speaker") == "seeker" for x in previous):
+                continue
+            current_user = next(
+                (normalize_space(x.get("content") or "") for x in reversed(previous)
+                 if x.get("speaker") == "seeker"),
+                "",
+            )
+            if not current_user:
+                continue
+            history = [
+                {
+                    "role": "user" if x.get("speaker") == "seeker" else "assistant",
+                    "content": normalize_space(x.get("content") or ""),
+                }
+                for x in previous[-8:]
+                if normalize_space(x.get("content") or "")
+            ]
+            states.append({
+                "dialogue_id": f"esconv_{idx:04d}",
+                "turn_index": turn_index,
+                "current_user_text": current_user,
+                "history": history,
+                "gold_response": normalize_space(turn.get("content") or ""),
+                "gold_strategy": normalize_space(
+                    (turn.get("annotation") or {}).get("strategy") or "Others"
+                ),
+                "situation": normalize_space(dialogue_row.get("situation") or ""),
+            })
+    return states

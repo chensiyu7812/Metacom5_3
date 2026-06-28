@@ -1,0 +1,707 @@
+{
+  "analysis_type": "development_safety_first_selection",
+  "feature_mode": "text_metadata",
+  "seed": 17,
+  "fold_mode": "user",
+  "safety_margin": 0.02,
+  "per_fold": [
+    {
+      "fold": 0,
+      "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/text_metadata_user_fold0_seed17.joblib",
+      "n_validation_cards": 432,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "response_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 432,
+          "mean_response_score": 0.576717,
+          "mean_misuse_risk": 0.077546,
+          "mean_memory_omission_risk": 0.296296,
+          "mean_strategy_decision_risk": 0.238426,
+          "mean_safety_risk": 0.517361,
+          "mean_cost": 556.071759,
+          "action_distribution": {
+            "MPMS+RS": 21,
+            "ME+RS": 91,
+            "MS+RS": 35,
+            "MPE+RS": 19,
+            "M0+RS": 84,
+            "MP+R0": 14,
+            "ME+R0": 29,
+            "MP+RS": 44,
+            "MPMS+R0": 12,
+            "MSE+RS": 30,
+            "M0+R0": 25,
+            "MPE+R0": 4,
+            "MS+R0": 16,
+            "MSE+R0": 7,
+            "MPMSME+R0": 1
+          }
+        }
+      },
+      "safety_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.75,
+          "tau_omission": 1.0,
+          "tau_strategy": 0.25
+        },
+        "metrics": {
+          "n": 432,
+          "mean_response_score": 0.542674,
+          "mean_misuse_risk": 0.090278,
+          "mean_memory_omission_risk": 0.282407,
+          "mean_strategy_decision_risk": 0.009259,
+          "mean_safety_risk": 0.362269,
+          "mean_cost": 660.712963,
+          "action_distribution": {
+            "MPMS+RS": 32,
+            "ME+RS": 113,
+            "MS+RS": 51,
+            "MPE+RS": 30,
+            "M0+RS": 109,
+            "MP+RS": 53,
+            "MSE+RS": 33,
+            "MPMSME+RS": 11
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.18,
+          "ms_threshold": 0.18,
+          "me_threshold": 0.18,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 432,
+          "mean_response_score": 0.542394,
+          "mean_misuse_risk": 0.115741,
+          "mean_memory_omission_risk": 0.167824,
+          "mean_strategy_decision_risk": 0.006944,
+          "mean_safety_risk": 0.267361,
+          "mean_cost": 678.49537,
+          "action_distribution": {
+            "MPMS+RS": 80,
+            "ME+RS": 87,
+            "MS+RS": 49,
+            "MP+RS": 56,
+            "MSE+RS": 50,
+            "MPE+RS": 53,
+            "M0+RS": 57
+          }
+        }
+      }
+    },
+    {
+      "fold": 1,
+      "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/text_metadata_user_fold1_seed17.joblib",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "response_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.575175,
+          "mean_misuse_risk": 0.054012,
+          "mean_memory_omission_risk": 0.282407,
+          "mean_strategy_decision_risk": 0.25463,
+          "mean_safety_risk": 0.516975,
+          "mean_cost": 543.148148,
+          "action_distribution": {
+            "MS+R0": 13,
+            "M0+RS": 64,
+            "MSE+R0": 7,
+            "MPE+R0": 8,
+            "MS+RS": 28,
+            "MPMS+RS": 14,
+            "MSE+RS": 25,
+            "ME+RS": 64,
+            "ME+R0": 23,
+            "MP+RS": 30,
+            "M0+R0": 17,
+            "MPMS+R0": 7,
+            "MP+R0": 13,
+            "MPMSME+R0": 2,
+            "MPE+RS": 9
+          }
+        }
+      },
+      "safety_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 0.25
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.547868,
+          "mean_misuse_risk": 0.060185,
+          "mean_memory_omission_risk": 0.279321,
+          "mean_strategy_decision_risk": 0.003086,
+          "mean_safety_risk": 0.333333,
+          "mean_cost": 659.342593,
+          "action_distribution": {
+            "MS+RS": 41,
+            "M0+RS": 81,
+            "MSE+RS": 32,
+            "MPE+RS": 17,
+            "MPMS+RS": 21,
+            "ME+RS": 87,
+            "MP+RS": 43,
+            "MPMSME+RS": 2
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.12,
+          "ms_threshold": 0.12,
+          "me_threshold": 0.12,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.542099,
+          "mean_misuse_risk": 0.114198,
+          "mean_memory_omission_risk": 0.137346,
+          "mean_strategy_decision_risk": 0.00463,
+          "mean_safety_risk": 0.239198,
+          "mean_cost": 679.429012,
+          "action_distribution": {
+            "MS+RS": 38,
+            "MP+RS": 36,
+            "MSE+RS": 37,
+            "ME+RS": 70,
+            "MPMS+RS": 62,
+            "MPE+RS": 43,
+            "M0+RS": 38
+          }
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/text_metadata_user_fold2_seed17.joblib",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "response_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.25,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.574963,
+          "mean_misuse_risk": 0.061728,
+          "mean_memory_omission_risk": 0.328704,
+          "mean_strategy_decision_risk": 0.234568,
+          "mean_safety_risk": 0.535494,
+          "mean_cost": 553.740741,
+          "action_distribution": {
+            "MS+RS": 33,
+            "ME+RS": 73,
+            "ME+R0": 24,
+            "MP+RS": 31,
+            "MS+R0": 14,
+            "MSE+RS": 28,
+            "MSE+R0": 5,
+            "M0+RS": 70,
+            "M0+R0": 16,
+            "MP+R0": 12,
+            "MPE+R0": 8,
+            "MPMS+RS": 5,
+            "MPE+RS": 3,
+            "MPMS+R0": 2
+          }
+        }
+      },
+      "safety_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 0.25
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.549617,
+          "mean_misuse_risk": 0.109568,
+          "mean_memory_omission_risk": 0.29784,
+          "mean_strategy_decision_risk": 0.001543,
+          "mean_safety_risk": 0.382716,
+          "mean_cost": 662.135802,
+          "action_distribution": {
+            "MS+RS": 42,
+            "ME+RS": 89,
+            "MP+RS": 43,
+            "MSE+RS": 26,
+            "MPMS+RS": 24,
+            "M0+RS": 82,
+            "MPE+RS": 17,
+            "MPMSME+RS": 1
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.08,
+          "ms_threshold": 0.08,
+          "me_threshold": 0.08,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.544692,
+          "mean_misuse_risk": 0.165123,
+          "mean_memory_omission_risk": 0.165123,
+          "mean_strategy_decision_risk": 0.003086,
+          "mean_safety_risk": 0.299383,
+          "mean_cost": 682.166667,
+          "action_distribution": {
+            "MS+RS": 36,
+            "MPE+RS": 49,
+            "ME+RS": 68,
+            "MP+RS": 40,
+            "MSE+RS": 38,
+            "MPMS+RS": 53,
+            "M0+RS": 40
+          }
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/text_metadata_user_fold3_seed17.joblib",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "response_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.25,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.570321,
+          "mean_misuse_risk": 0.050926,
+          "mean_memory_omission_risk": 0.313272,
+          "mean_strategy_decision_risk": 0.24537,
+          "mean_safety_risk": 0.521605,
+          "mean_cost": 552.851852,
+          "action_distribution": {
+            "ME+RS": 85,
+            "MS+RS": 23,
+            "M0+R0": 17,
+            "M0+RS": 65,
+            "MPE+R0": 6,
+            "MS+R0": 11,
+            "ME+R0": 20,
+            "MP+RS": 37,
+            "MPE+RS": 1,
+            "MSE+RS": 26,
+            "MPMS+RS": 6,
+            "MPMS+R0": 7,
+            "MP+R0": 14,
+            "MSE+R0": 6
+          }
+        }
+      },
+      "safety_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.75,
+          "tau_omission": 1.0,
+          "tau_strategy": 0.25
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.547293,
+          "mean_misuse_risk": 0.092593,
+          "mean_memory_omission_risk": 0.262346,
+          "mean_strategy_decision_risk": 0.012346,
+          "mean_safety_risk": 0.347222,
+          "mean_cost": 664.503086,
+          "action_distribution": {
+            "ME+RS": 93,
+            "MS+RS": 29,
+            "MPMS+RS": 24,
+            "MPE+RS": 25,
+            "M0+RS": 76,
+            "MP+RS": 43,
+            "MPMSME+RS": 11,
+            "MSE+RS": 23
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.0,
+          "ms_threshold": 0.0,
+          "me_threshold": 0.0,
+          "strategy_threshold": 0.0,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.537889,
+          "mean_misuse_risk": 0.12963,
+          "mean_memory_omission_risk": 0.146605,
+          "mean_strategy_decision_risk": 0.010802,
+          "mean_safety_risk": 0.265432,
+          "mean_cost": 681.444444,
+          "action_distribution": {
+            "MSE+RS": 38,
+            "MS+RS": 36,
+            "MPE+RS": 52,
+            "ME+RS": 72,
+            "MPMS+RS": 54,
+            "M0+RS": 36,
+            "MP+RS": 36
+          }
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/models_cv_m2b/text_metadata_user_fold4_seed17.joblib",
+      "n_validation_cards": 324,
+      "n_complete_pm_grid_rows": 150,
+      "n_score_failures": 0,
+      "response_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.35,
+          "tau_omission": 1.0,
+          "tau_strategy": 1.0
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.582058,
+          "mean_misuse_risk": 0.064815,
+          "mean_memory_omission_risk": 0.270062,
+          "mean_strategy_decision_risk": 0.240741,
+          "mean_safety_risk": 0.492284,
+          "mean_cost": 559.938272,
+          "action_distribution": {
+            "M0+RS": 54,
+            "ME+RS": 72,
+            "MP+RS": 31,
+            "MS+RS": 32,
+            "M0+R0": 16,
+            "MSE+RS": 32,
+            "MPE+R0": 7,
+            "MSE+R0": 7,
+            "MPE+RS": 6,
+            "MS+R0": 11,
+            "ME+R0": 21,
+            "MP+R0": 9,
+            "MPMS+RS": 16,
+            "MPMS+R0": 8,
+            "MPMSME+R0": 2
+          }
+        }
+      },
+      "safety_first": {
+        "config": {
+          "epsilon": 0.0,
+          "tau_misuse": 0.75,
+          "tau_omission": 1.0,
+          "tau_strategy": 0.25
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.545612,
+          "mean_misuse_risk": 0.070988,
+          "mean_memory_omission_risk": 0.251543,
+          "mean_strategy_decision_risk": 0.007716,
+          "mean_safety_risk": 0.319444,
+          "mean_cost": 666.20679,
+          "action_distribution": {
+            "M0+RS": 70,
+            "ME+RS": 89,
+            "MP+RS": 32,
+            "MS+RS": 43,
+            "MSE+RS": 34,
+            "MPE+RS": 23,
+            "MPMSME+RS": 10,
+            "MPMS+RS": 23
+          }
+        }
+      },
+      "strong_rule": {
+        "config": {
+          "mp_threshold": 0.0,
+          "ms_threshold": 0.0,
+          "me_threshold": 0.0,
+          "strategy_threshold": 0.08,
+          "max_sources": 2
+        },
+        "metrics": {
+          "n": 324,
+          "mean_response_score": 0.544627,
+          "mean_misuse_risk": 0.101852,
+          "mean_memory_omission_risk": 0.138889,
+          "mean_strategy_decision_risk": 0.087963,
+          "mean_safety_risk": 0.291667,
+          "mean_cost": 645.462963,
+          "action_distribution": {
+            "M0+RS": 33,
+            "MPE+RS": 42,
+            "MP+RS": 33,
+            "ME+RS": 66,
+            "MS+RS": 33,
+            "M0+R0": 3,
+            "MPMS+RS": 55,
+            "MSE+RS": 35,
+            "MSE+R0": 3,
+            "MPE+R0": 6,
+            "MS+R0": 3,
+            "ME+R0": 6,
+            "MP+R0": 3,
+            "MPMS+R0": 3
+          }
+        }
+      }
+    }
+  ],
+  "safety_first_vs_rule_ci": {
+    "n_rows": 1728,
+    "n_states": 192,
+    "n_users": 16,
+    "metrics": {
+      "response_score": {
+        "mean_delta": 0.004023070837634246,
+        "state_cluster_ci": {
+          "estimate": 0.004023070837634247,
+          "lower": -0.001389475653685572,
+          "upper": 0.009509710997778264,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": 0.004023070837634246,
+          "lower": -0.0004108020033707793,
+          "upper": 0.008273278372101747,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": 0.004023070837634246,
+          "mean_minus_null": 0.004023070837634246,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.14458554144585542,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": 0.004023070837634246,
+          "mean_minus_null": 0.004023070837634246,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.10588941105889411,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      },
+      "misuse_risk": {
+        "mean_delta": -0.039641203703703706,
+        "state_cluster_ci": {
+          "estimate": -0.039641203703703706,
+          "lower": -0.05063657407407407,
+          "upper": -0.028645833333333332,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": -0.0396412037037037,
+          "lower": -0.053240740740740734,
+          "upper": -0.02662037037037037,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": -0.0396412037037037,
+          "mean_minus_null": -0.0396412037037037,
+          "null_value": 0.0,
+          "p_value_two_sided": 9.999000099990002e-05,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": -0.039641203703703706,
+          "mean_minus_null": -0.039641203703703706,
+          "null_value": 0.0,
+          "p_value_two_sided": 9.999000099990002e-05,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      },
+      "memory_omission_risk": {
+        "mean_delta": 0.12297453703703703,
+        "state_cluster_ci": {
+          "estimate": 0.12297453703703703,
+          "lower": 0.10011574074074074,
+          "upper": 0.14583333333333334,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": 0.12297453703703705,
+          "lower": 0.11168981481481483,
+          "upper": 0.1328125,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": 0.12297453703703703,
+          "mean_minus_null": 0.12297453703703703,
+          "null_value": 0.0,
+          "p_value_two_sided": 9.999000099990002e-05,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": 0.12297453703703703,
+          "mean_minus_null": 0.12297453703703703,
+          "null_value": 0.0,
+          "p_value_two_sided": 9.999000099990002e-05,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      },
+      "strategy_decision_risk": {
+        "mean_delta": -0.014756944444444444,
+        "state_cluster_ci": {
+          "estimate": -0.014756944444444442,
+          "lower": -0.03443287037037037,
+          "upper": 0.00028935185185185184,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": -0.014756944444444444,
+          "lower": -0.037912326388888834,
+          "upper": 0.0008680555555555555,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": -0.014756944444444442,
+          "mean_minus_null": -0.014756944444444442,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.16328367163283672,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": -0.014756944444444446,
+          "mean_minus_null": -0.014756944444444446,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.18148185181481852,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      },
+      "safety_risk": {
+        "mean_delta": 0.0775462962962963,
+        "state_cluster_ci": {
+          "estimate": 0.0775462962962963,
+          "lower": 0.05295138888888889,
+          "upper": 0.1004050925925926,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": 0.0775462962962963,
+          "lower": 0.05584490740740741,
+          "upper": 0.09577546296296297,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": 0.0775462962962963,
+          "mean_minus_null": 0.0775462962962963,
+          "null_value": 0.0,
+          "p_value_two_sided": 9.999000099990002e-05,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": 0.0775462962962963,
+          "mean_minus_null": 0.0775462962962963,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.00029997000299970003,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      },
+      "cost": {
+        "mean_delta": -11.25462962962963,
+        "state_cluster_ci": {
+          "estimate": -11.254629629629628,
+          "lower": -18.587427662037037,
+          "upper": -1.8452980324074197,
+          "confidence": 0.95,
+          "n_units": 192,
+          "n_resamples": 10000
+        },
+        "user_cluster_ci": {
+          "estimate": -11.25462962962963,
+          "lower": -18.938107638888887,
+          "upper": 0.0029369212962927172,
+          "confidence": 0.95,
+          "n_units": 16,
+          "n_resamples": 10000
+        },
+        "state_cluster_signflip": {
+          "estimate": -11.254629629629632,
+          "mean_minus_null": -11.254629629629632,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.0027997200279972004,
+          "n_clusters": 192,
+          "n_permutations": 10000
+        },
+        "user_cluster_signflip": {
+          "estimate": -11.25462962962963,
+          "mean_minus_null": -11.25462962962963,
+          "null_value": 0.0,
+          "p_value_two_sided": 0.0524947505249475,
+          "n_clusters": 16,
+          "n_permutations": 10000
+        }
+      }
+    }
+  },
+  "interpretation": "Diagnostic only. This evaluates whether the trained PM has a conservative operating point under the same validation labels; it does not change full judging labels or external evaluation."
+}
