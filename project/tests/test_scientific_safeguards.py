@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -23,6 +25,7 @@ from metacom_pm.prompts import (
     observation_usage_messages,
     official_dialogue_score_messages,
 )
+from metacom_pm.release import run_release_preflight
 from metacom_pm.sweep import load_states
 from metacom_pm.variance import select_variance_card_ids
 
@@ -199,6 +202,32 @@ def test_model_role_gate_rejects_self_play_and_same_judge_family():
     result = confirmatory_model_independence(config)
     assert result["ok"] is False
     assert len(result["errors"]) >= 3
+
+
+def test_release_preflight_includes_model_family_independence(tmp_path):
+    report = run_release_preflight(
+        ROOT, tmp_path / "preflight.json", run_tests=False
+    )
+    assert "model_family_independence" in report["checks"]
+    assert report["checks"]["model_family_independence"]["passed"] is True
+    assert report["confirmatory_checks"]["model_family_independence"] is True
+
+
+def test_esconv_confirmatory_sweep_forbids_max_cards():
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/13_run_esconv_sweep.py"),
+            "--max-cards",
+            "1",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        env={"PYTHONPATH": str(ROOT / "src")},
+    )
+    assert proc.returncode != 0
+    assert "--max-cards is forbidden" in (proc.stderr + proc.stdout)
 
 
 def test_fixed_track_exogenous_id_is_shared_but_runtime_history_is_not():

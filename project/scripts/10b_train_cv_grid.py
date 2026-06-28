@@ -18,6 +18,9 @@ if __name__ == "__main__":
     p.add_argument('--m2b-path', type=Path,
                    default=ROOT/'outputs/m2b_selected_set_omission_gemini_flash_lite_v3/memory_selected_set_omission_judgments.jsonl',
                    help='Selected-set omission labels from scripts/09b_run_m2b_audit.py')
+    p.add_argument('--m2b-attestation', type=Path,
+                   default=ROOT/'outputs/m2b_selected_set_omission_gemini_flash_lite_v3/artifact_attestation.json',
+                   help='Artifact attestation for --m2b-path')
     p.add_argument('--allow-no-m2b', action='store_true',
                    help='Non-reportable debugging only: train without selected-set omission labels')
     a = p.parse_args()
@@ -45,6 +48,7 @@ if __name__ == "__main__":
                     a.out_dir/f'{stem}.joblib',
                     a.out_dir/f'{stem}.json',
                     m2b_path=(None if a.allow_no_m2b else a.m2b_path),
+                    m2b_attestation_path=(None if a.allow_no_m2b else a.m2b_attestation),
                     feature_mode=mode,
                     require_m2b=not a.allow_no_m2b,
                     seed=seed,

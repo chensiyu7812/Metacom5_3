@@ -15,6 +15,11 @@ parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--freeze', type=Path, default=ROOT / 'outputs/study_freeze.json')
 parser.add_argument('--allow-unfrozen-debug', action='store_true', help='Non-reportable debugging only')
 args = parser.parse_args()
+if not args.allow_unfrozen_debug and args.max_cards is not None:
+    raise RuntimeError(
+        "--max-cards is forbidden for confirmatory ESConv runs. "
+        "Use --allow-unfrozen-debug for non-reportable debugging."
+    )
 
 runtime_path = ROOT / 'data/esconv_test/runtime_states.jsonl'
 backend_path = ROOT / 'data/esconv_test/memory_backend.jsonl'

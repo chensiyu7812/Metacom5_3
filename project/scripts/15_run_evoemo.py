@@ -22,26 +22,28 @@ parser.add_argument('--fixed-tracks-attestation', type=Path,
                     default=ROOT / 'outputs/evoemo_fixed_tracks/artifact_attestation.json')
 parser.add_argument('--max-turns', type=int, default=10)
 parser.add_argument('--max-scenarios', type=int)
-parser.add_argument('--seeds', type=int, nargs='+', default=[101])
+parser.add_argument('--seeds', type=int, nargs='+')
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--freeze', type=Path, default=ROOT / 'outputs/study_freeze.json')
 parser.add_argument('--allow-unfrozen-debug', action='store_true', help='Non-reportable debugging only')
 args = parser.parse_args()
 
 config = load_config(args.config)
+configured_seeds = [int(x) for x in (config.get('protocol') or {}).get('robustness_seeds', [])]
+if args.seeds is None:
+    args.seeds = configured_seeds
 if not args.allow_unfrozen_debug:
     if args.max_scenarios is not None:
         raise RuntimeError(
             "--max-scenarios is forbidden for confirmatory EvoEmo runs. "
             "Use --allow-unfrozen-debug for non-reportable debugging."
         )
-    expected_seeds = [int(x) for x in (config.get('protocol') or {}).get('robustness_seeds', [])]
-    if not expected_seeds:
+    if not configured_seeds:
         raise RuntimeError("configs/experiment.yaml protocol.robustness_seeds is empty")
-    if [int(x) for x in args.seeds] != expected_seeds:
+    if [int(x) for x in args.seeds] != configured_seeds:
         raise RuntimeError(
             f"Confirmatory EvoEmo seeds must match frozen config robustness_seeds: "
-            f"{expected_seeds}; got {args.seeds}"
+            f"{configured_seeds}; got {args.seeds}"
         )
 evoemo_path = ROOT / 'data/external/evo_emo.json'
 strategy_path = ROOT / 'data/strategy/strategy_cards.jsonl'

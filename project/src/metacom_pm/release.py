@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from .audit import audit_synthetic_release
+from .config import confirmatory_model_independence
 from .evoemo import load_evoemo
 from .contracts import StrategyCard
 from .io import iter_jsonl
@@ -136,6 +137,7 @@ def run_release_preflight(
     config_path = root / "configs/experiment.yaml"
     config_schema_errors: list[str] = []
     config_fill_warnings: list[str] = []
+    config_value: dict[str, Any] | None = None
     config_filled = False
     if not config_path.is_file():
         config_schema_errors.append(f"missing configuration: {config_path}")
@@ -169,6 +171,18 @@ def run_release_preflight(
             "fill_warnings": config_fill_warnings,
             "filled_for_api": config_filled,
         },
+    }
+    if config_value is not None:
+        model_independence = confirmatory_model_independence(config_value)
+    else:
+        model_independence = {
+            "ok": False,
+            "errors": ["configuration could not be parsed"],
+            "families": {},
+        }
+    checks["model_family_independence"] = {
+        "passed": bool(model_independence.get("ok")),
+        "details": model_independence,
     }
     docs = [
         root / "README_CN.md",
@@ -238,6 +252,7 @@ def run_release_preflight(
         "strategy_bank_rebuilt_and_overlap_audited": bool(not prebuilt and confirmatory_data_ok),
         "esconv_test_runtime_present": bool(split_manifest_path.is_file() and all(path.is_file() for path in esconv_test_paths)),
         "configuration_filled": bool(config_filled),
+        "model_family_independence": bool(model_independence.get("ok")),
         "study_freeze_valid": bool(freeze_result.get("ok")),
     }
     confirmatory_ready = bool(passed and all(confirmatory_checks.values()))

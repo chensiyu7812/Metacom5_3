@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import argparse
+from metacom_pm.config import confirmatory_model_independence, load_config
 from metacom_pm.freeze import create_study_freeze
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,12 @@ selection_attestation = (
     args.selection_attestation
     or args.selection.with_suffix(args.selection.suffix + ".attestation.json")
 )
+model_independence = confirmatory_model_independence(load_config(args.config))
+if not model_independence.get("ok"):
+    raise RuntimeError(
+        "Confirmatory model-family independence check failed:\n- "
+        + "\n- ".join(model_independence.get("errors") or ["unknown error"])
+    )
 
 data_paths = [
     ROOT / 'data/synthetic/runtime_states.jsonl',
@@ -56,5 +63,6 @@ print(create_study_freeze(
         'external_test_policy': 'ESConv test and all 18 EvoEmo users are evaluation-only',
         'tuning_policy': 'All thresholds, baselines, prompts, generator and judge models are frozen before external evaluation',
         'debug_exception': 'Unfrozen runs are non-reportable and require explicit --allow-unfrozen-debug',
+        'model_family_independence': model_independence,
     },
 ))

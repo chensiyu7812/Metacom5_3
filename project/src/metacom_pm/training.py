@@ -222,6 +222,7 @@ def train_pm(
     ridge_alpha: float = 5.0,
     seed: int = 17,
     judging_attestation_path: str | Path | None = None,
+    m2b_attestation_path: str | Path | None = None,
     out_attestation_path: str | Path | None = None,
     strict_split: bool = False,
 ) -> dict[str, Any]:
@@ -253,6 +254,16 @@ def train_pm(
             "strategy_omission": strategy_omission_path,
         },
     )
+    m2b_verification = None
+    if m2b_path is not None:
+        m2b_attestation_path = Path(
+            m2b_attestation_path or m2b_path.parent / "artifact_attestation.json"
+        ).resolve()
+        m2b_verification = require_artifact_attestation(
+            m2b_attestation_path,
+            required_stage="m2b_selected_set_omission",
+            required_output_paths={"memory_selected_set_omission": m2b_path},
+        )
     states = load_states(runtime_path)
     unknown_train = set(train_card_ids) - set(states)
     unknown_validation = set(validation_card_ids) - set(states)
@@ -415,6 +426,9 @@ def train_pm(
         "split_diagnostics": split_diagnostics,
         "strict_split": strict_split,
         "judging_attestation_sha256": judging_verification["attestation_sha256"],
+        "m2b_attestation_sha256": (
+            m2b_verification["attestation_sha256"] if m2b_verification else None
+        ),
         "n_action_labels": {
             "misuse": n_misuse,
             "memory_omission": n_omission,
@@ -466,6 +480,7 @@ def train_pm(
             "strategy_use": strategy_use_path,
             "strategy_omission": strategy_omission_path,
             "full_judging_attestation": judging_attestation_path,
+            **({"m2b_attestation": Path(m2b_attestation_path)} if m2b_verification else {}),
         },
         outputs={
             "checkpoint": (out_checkpoint_path, False),
