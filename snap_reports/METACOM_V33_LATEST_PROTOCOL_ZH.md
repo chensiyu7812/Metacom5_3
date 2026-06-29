@@ -280,6 +280,13 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
 - `artifact_attestation.json`: 已生成；
 - malformed / failures: 0。
 
+评价阶段新增单独 freeze：
+
+- evaluation freeze: `outputs/evoemo_pairwise_eval_freeze.json`
+- evaluation freeze sha256: `6603d334484e93d282170600811faf8629e682c6b60b23fa0914cccce7b25819`
+- generation freeze sha256: `e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f`
+- 目的：保留已完成 generation 的旧 freeze，同时锁住新增 `--pairs-only` evaluator code/config。
+
 ### 6.4 EvoEmo 评价顺序
 
 推荐省钱且稳健的两阶段：
@@ -295,7 +302,7 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
 PYTHONNOUSERSITE=1 PYTHONPATH=src \
   /home/tokkio/miniconda3/envs/sim_eval/bin/python \
   scripts/17_eval_evoemo_selective.py \
-  --freeze outputs/study_freeze_stable.json \
+  --freeze outputs/evoemo_pairwise_eval_freeze.json \
   --generation-attestation outputs/evoemo_selective/artifact_attestation.json \
   --endpoint final_judge \
   --pairs-only
@@ -337,6 +344,14 @@ scripts/15_run_evoemo.py \
 - failures: `[]`；
 - malformed: `[]`；
 - `external_ood_preflight.json`: ok。
+
+评价 freeze：
+
+- `outputs/evoemo_pairwise_eval_freeze.json`
+- status: `FROZEN`
+- scope: `evoemo_pairwise_response_evaluation`
+- freeze sha256: `6603d334484e93d282170600811faf8629e682c6b60b23fa0914cccce7b25819`
+- bound generation freeze: `e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f`
 
 下一步：
 

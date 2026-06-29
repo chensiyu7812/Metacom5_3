@@ -473,6 +473,7 @@ def run_selective_evoemo_metrics(
     ),
     generation_attestation_path: str | Path | None = None,
     expected_freeze_sha256: str | None = None,
+    evaluation_freeze_sha256: str | None = None,
     overwrite: bool = False,
     min_orientation_consistency: float = 0.80,
     pairs_only: bool = False,
@@ -1038,6 +1039,8 @@ def run_selective_evoemo_metrics(
         "generation_attestation_verification": generation_verification,
         "judge_model": judge_endpoint.model,
         "judge_family": judge_endpoint.family,
+        "generation_freeze_sha256": expected_freeze_sha256,
+        "evaluation_freeze_sha256": evaluation_freeze_sha256,
         "pairs_only": pairs_only,
         "validations": validations,
         "minimum_orientation_consistency": min_orientation_consistency,
@@ -1074,12 +1077,14 @@ def run_selective_evoemo_metrics(
             "two_orientation_calls": True,
             "minimum_orientation_consistency": min_orientation_consistency,
             "pairs_only": pairs_only,
+            "generation_freeze_sha256": expected_freeze_sha256,
+            "evaluation_freeze_sha256": evaluation_freeze_sha256,
         },
         expected={
             "dialogues": len(dialogues),
             "dialogue_pair_rows": len(expected_pair_keys),
             "audit_rows_each": 0 if pairs_only else len(expected_audit_keys),
         },
-        study_freeze_sha256=expected_freeze_sha256,
+        study_freeze_sha256=evaluation_freeze_sha256 or expected_freeze_sha256,
     )
     return result
