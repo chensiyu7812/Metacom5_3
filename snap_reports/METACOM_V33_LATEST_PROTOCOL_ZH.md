@@ -288,7 +288,18 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
    - PM / PM+guardrail vs strong rule / best fixed / baselines；
    - final judge: GPT-4o；
    - 检验 response quality 是否非劣或更好；
-   - 预计费用约 4–10 USD。
+   - 预计费用约 4–10 USD；
+   - 运行入口：
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17_eval_evoemo_selective.py \
+  --freeze outputs/study_freeze_stable.json \
+  --generation-attestation outputs/evoemo_selective/artifact_attestation.json \
+  --endpoint final_judge \
+  --pairs-only
+```
 
 2. Selective memory / strategy audit
    - memory misuse；

@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-29  
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 正在运行。  
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；下一步是 EvoEmo pairwise-only response evaluation。  
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -268,12 +268,17 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
 816 dialogues × 10 turns = 8160 evaluated turns
 ```
 
-当前正在运行：
+当前已完成：
 
 - output dir: `outputs/evoemo_selective/`
 - freeze: `outputs/study_freeze_stable.json`
 - checkpoint: `outputs/final_model_m2b_stable/pm_final.joblib`
 - selection: `outputs/selection_stable.json`
+- `dialogues.jsonl`: 816 / 816；
+- `turns.jsonl`: 8160 / 8160；
+- `generation_summary.json`: 已生成；
+- `artifact_attestation.json`: 已生成；
+- malformed / failures: 0。
 
 ### 6.4 EvoEmo 评价顺序
 
@@ -283,7 +288,18 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
    - PM / PM+guardrail vs strong rule / best fixed / baselines；
    - final judge: GPT-4o；
    - 检验 response quality 是否非劣或更好；
-   - 预计费用约 4–10 USD。
+   - 预计费用约 4–10 USD；
+   - 运行入口：
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17_eval_evoemo_selective.py \
+  --freeze outputs/study_freeze_stable.json \
+  --generation-attestation outputs/evoemo_selective/artifact_attestation.json \
+  --endpoint final_judge \
+  --pairs-only
+```
 
 2. Selective memory / strategy audit
    - memory misuse；
@@ -296,9 +312,9 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
 
 完整 selective 外部评测预计约 30–50 USD。
 
-## 7. 当前正在运行的任务
+## 7. 当前任务状态
 
-EvoEmo selective generation 已启动：
+EvoEmo selective generation 已完成：
 
 ```bash
 scripts/15_run_evoemo.py \
@@ -309,12 +325,24 @@ scripts/15_run_evoemo.py \
   --interaction-mode fixed
 ```
 
-最近检查：
+完成状态：
 
-- process alive；
-- `external_ood_preflight.json`: ok；
-- 已完成约 321 / 816 dialogues；
-- `generation_summary.json` 和 `artifact_attestation.json` 将在全部完成后生成。
+- `outputs/evoemo_selective/generation_summary.json`
+- `outputs/evoemo_selective/artifact_attestation.json`
+- status: `COMPLETE`
+- expected dialogues: 816；
+- completed dialogues: 816；
+- expected turns: 8160；
+- completed turns: 8160；
+- failures: `[]`；
+- malformed: `[]`；
+- `external_ood_preflight.json`: ok。
+
+下一步：
+
+1. 跑 EvoEmo pairwise-only response evaluation；
+2. 若 response quality 非劣或更好，再补 selective memory / strategy audit；
+3. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
 
@@ -363,4 +391,3 @@ scripts/15_run_evoemo.py \
 不应写：
 
 > This is official ES-MemEval reproduction.
-

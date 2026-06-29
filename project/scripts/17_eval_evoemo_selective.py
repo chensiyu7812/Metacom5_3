@@ -15,6 +15,11 @@ parser.add_argument('--generation-attestation', type=Path,
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--freeze', type=Path, default=ROOT / 'outputs/study_freeze.json')
 parser.add_argument('--allow-unfrozen-debug', action='store_true', help='Non-reportable debugging only')
+parser.add_argument(
+    '--pairs-only',
+    action='store_true',
+    help='Run only dialogue pairwise response-quality evaluation; skip memory/strategy audits.',
+)
 args = parser.parse_args()
 
 evoemo_path = ROOT / 'data/external/evo_emo.json'
@@ -47,4 +52,5 @@ print(run_selective_evoemo_metrics(
     generation_attestation_path=args.generation_attestation,
     expected_freeze_sha256=freeze.get('freeze_sha256'),
     overwrite=args.overwrite,
+    pairs_only=args.pairs_only,
 ))

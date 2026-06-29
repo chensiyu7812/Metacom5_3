@@ -475,6 +475,7 @@ def run_selective_evoemo_metrics(
     expected_freeze_sha256: str | None = None,
     overwrite: bool = False,
     min_orientation_consistency: float = 0.80,
+    pairs_only: bool = False,
 ) -> dict[str, Any]:
     generation_verification = _require_generation(
         dialogues_path, generation_attestation_path, expected_freeze_sha256
@@ -543,14 +544,15 @@ def run_selective_evoemo_metrics(
         pair_path, pair_key_fields, expected_pair_keys,
         name="selective dialogue pairs", before_calls=True,
     )
-    _validate_exact_keys(
-        memory_path, audit_key_fields, expected_audit_keys,
-        name="selective memory audits", before_calls=True,
-    )
-    _validate_exact_keys(
-        strategy_path, audit_key_fields, expected_audit_keys,
-        name="selective strategy audits", before_calls=True,
-    )
+    if not pairs_only:
+        _validate_exact_keys(
+            memory_path, audit_key_fields, expected_audit_keys,
+            name="selective memory audits", before_calls=True,
+        )
+        _validate_exact_keys(
+            strategy_path, audit_key_fields, expected_audit_keys,
+            name="selective strategy audits", before_calls=True,
+        )
 
     done_pair = load_done_keys(
         pair_path,
@@ -694,192 +696,193 @@ def run_selective_evoemo_metrics(
 
         # Per-turn memory and strategy audits use full evaluator-only memory
         # timelines, while keeping policy/action labels hidden from the judge.
-        for dialogue in dialogues:
-            user_id, topic_index, condition, seed, simulator_id, interaction_mode = _dialogue_key(dialogue)
-            user = users[user_id]
-            topic = next(x for x in user["subsequent_topics"] if int(x["idx"]) == topic_index)
-            all_items, _ = build_evo_memory(user)
-            conversation: list[dict[str, str]] = []
-            full_dialogue = dialogue.get("dialogue") or []
-            if full_dialogue and full_dialogue[0].get("role") == "supporter":
-                conversation.append(dict(full_dialogue[0]))
-            for turn in dialogue["turns"]:
-                key = (
-                    user_id, topic_index, condition, seed, simulator_id,
-                    interaction_mode, int(turn["turn_index"]),
-                )
-                audit_context = (
-                    list(turn.get("context_before_turn") or [])
-                    if interaction_mode == "fixed" else list(conversation)
-                )
-                state = make_evo_runtime_state(
-                    user,
-                    topic,
-                    audit_context,
-                    turn["seeker_message"],
-                    all_items,
-                    int(turn["turn_index"]),
-                    condition,
-                    track_id=dialogue.get("track_id"),
-                    fixed_open_loop=interaction_mode == "fixed",
-                )
-                if key not in done_memory:
-                    selected = [MemoryItem.model_validate(x) for x in turn.get("selected_memory") or []]
-                    if selected:
-                        parsed_m = _call_with_semantic_retry(
-                            client,
-                            judge_endpoint,
-                            memory_use_messages(
-                                state,
-                                selected,
-                                turn["supporter_message"],
-                                all_items=all_items,
-                            ),
-                            MemoryUseJudgment,
-                            None,
-                            stage="evoemo_selective_memory_use",
-                            record_ids={
-                                "user_id": user_id,
-                                "topic_index": topic_index,
-                                "condition": condition,
-                                "seed": seed,
-                                "simulator_id": simulator_id,
-                                "interaction_mode": interaction_mode,
-                                "turn_index": turn["turn_index"],
-                            },
-                            raw_log_path=raw_path,
-                            max_tokens=1000,
-                        )
-                        assessments = parsed_m.source_assessments
-                        misuse = max([
-                            max(
-                                x.unnecessary_exposure,
-                                x.stale_or_conflicting_use,
-                                x.unsupported_personal_claim,
-                            ) / 2.0
-                            for x in assessments
-                        ], default=0.0)
-                        # MemoryUseJudgment does not have missed_memory_opportunity_severity.
-                        # For M2 actions (memory was used), omission_risk is derived from
-                        # overall_source_set_appropriateness: low appropriateness signals
-                        # that a sub-optimal or incomplete source set was selected.
-                        m2_appropriateness = parsed_m.overall_source_set_appropriateness
-                        m2_omission = max(0.0, (2 - m2_appropriateness) / 2.0)
-                        memory_row = {
-                            "audit_type": "memory_use",
-                            **parsed_m.model_dump(mode="json"),
-                            "misuse_risk": misuse,
-                            "omission_risk": m2_omission,
-                        }
-                    else:
-                        parsed_m0 = _call_with_semantic_retry(
-                            client,
-                            judge_endpoint,
-                            memory_omission_messages(state, all_items, turn["supporter_message"]),
-                            MemoryOmissionJudgment,
-                            None,
-                            stage="evoemo_selective_memory_omission",
-                            record_ids={
-                                "user_id": user_id,
-                                "topic_index": topic_index,
-                                "condition": condition,
-                                "seed": seed,
-                                "simulator_id": simulator_id,
-                                "interaction_mode": interaction_mode,
-                                "turn_index": turn["turn_index"],
-                            },
-                            raw_log_path=raw_path,
-                            max_tokens=900,
-                        )
-                        memory_row = {
-                            "audit_type": "memory_omission",
-                            **parsed_m0.model_dump(mode="json"),
-                            "misuse_risk": parsed_m0.unsupported_personal_claim / 2.0,
-                            "omission_risk": parsed_m0.missed_memory_opportunity_severity / 2.0,
-                        }
-                    append_jsonl(memory_path, {
-                        "user_id": user_id,
-                        "topic_index": topic_index,
-                        "condition": condition,
-                        "seed": seed,
-                        "simulator_id": simulator_id,
-                        "interaction_mode": interaction_mode,
-                        "track_id": dialogue.get("track_id"),
-                        "turn_index": int(turn["turn_index"]),
-                        **memory_row,
-                    })
+        if not pairs_only:
+            for dialogue in dialogues:
+                user_id, topic_index, condition, seed, simulator_id, interaction_mode = _dialogue_key(dialogue)
+                user = users[user_id]
+                topic = next(x for x in user["subsequent_topics"] if int(x["idx"]) == topic_index)
+                all_items, _ = build_evo_memory(user)
+                conversation: list[dict[str, str]] = []
+                full_dialogue = dialogue.get("dialogue") or []
+                if full_dialogue and full_dialogue[0].get("role") == "supporter":
+                    conversation.append(dict(full_dialogue[0]))
+                for turn in dialogue["turns"]:
+                    key = (
+                        user_id, topic_index, condition, seed, simulator_id,
+                        interaction_mode, int(turn["turn_index"]),
+                    )
+                    audit_context = (
+                        list(turn.get("context_before_turn") or [])
+                        if interaction_mode == "fixed" else list(conversation)
+                    )
+                    state = make_evo_runtime_state(
+                        user,
+                        topic,
+                        audit_context,
+                        turn["seeker_message"],
+                        all_items,
+                        int(turn["turn_index"]),
+                        condition,
+                        track_id=dialogue.get("track_id"),
+                        fixed_open_loop=interaction_mode == "fixed",
+                    )
+                    if key not in done_memory:
+                        selected = [MemoryItem.model_validate(x) for x in turn.get("selected_memory") or []]
+                        if selected:
+                            parsed_m = _call_with_semantic_retry(
+                                client,
+                                judge_endpoint,
+                                memory_use_messages(
+                                    state,
+                                    selected,
+                                    turn["supporter_message"],
+                                    all_items=all_items,
+                                ),
+                                MemoryUseJudgment,
+                                None,
+                                stage="evoemo_selective_memory_use",
+                                record_ids={
+                                    "user_id": user_id,
+                                    "topic_index": topic_index,
+                                    "condition": condition,
+                                    "seed": seed,
+                                    "simulator_id": simulator_id,
+                                    "interaction_mode": interaction_mode,
+                                    "turn_index": turn["turn_index"],
+                                },
+                                raw_log_path=raw_path,
+                                max_tokens=1000,
+                            )
+                            assessments = parsed_m.source_assessments
+                            misuse = max([
+                                max(
+                                    x.unnecessary_exposure,
+                                    x.stale_or_conflicting_use,
+                                    x.unsupported_personal_claim,
+                                ) / 2.0
+                                for x in assessments
+                            ], default=0.0)
+                            # MemoryUseJudgment does not have missed_memory_opportunity_severity.
+                            # For M2 actions (memory was used), omission_risk is derived from
+                            # overall_source_set_appropriateness: low appropriateness signals
+                            # that a sub-optimal or incomplete source set was selected.
+                            m2_appropriateness = parsed_m.overall_source_set_appropriateness
+                            m2_omission = max(0.0, (2 - m2_appropriateness) / 2.0)
+                            memory_row = {
+                                "audit_type": "memory_use",
+                                **parsed_m.model_dump(mode="json"),
+                                "misuse_risk": misuse,
+                                "omission_risk": m2_omission,
+                            }
+                        else:
+                            parsed_m0 = _call_with_semantic_retry(
+                                client,
+                                judge_endpoint,
+                                memory_omission_messages(state, all_items, turn["supporter_message"]),
+                                MemoryOmissionJudgment,
+                                None,
+                                stage="evoemo_selective_memory_omission",
+                                record_ids={
+                                    "user_id": user_id,
+                                    "topic_index": topic_index,
+                                    "condition": condition,
+                                    "seed": seed,
+                                    "simulator_id": simulator_id,
+                                    "interaction_mode": interaction_mode,
+                                    "turn_index": turn["turn_index"],
+                                },
+                                raw_log_path=raw_path,
+                                max_tokens=900,
+                            )
+                            memory_row = {
+                                "audit_type": "memory_omission",
+                                **parsed_m0.model_dump(mode="json"),
+                                "misuse_risk": parsed_m0.unsupported_personal_claim / 2.0,
+                                "omission_risk": parsed_m0.missed_memory_opportunity_severity / 2.0,
+                            }
+                        append_jsonl(memory_path, {
+                            "user_id": user_id,
+                            "topic_index": topic_index,
+                            "condition": condition,
+                            "seed": seed,
+                            "simulator_id": simulator_id,
+                            "interaction_mode": interaction_mode,
+                            "track_id": dialogue.get("track_id"),
+                            "turn_index": int(turn["turn_index"]),
+                            **memory_row,
+                        })
 
-                if key not in done_strategy:
-                    selected_strategy = [
-                        StrategyCard.model_validate(x)
-                        for x in turn.get("selected_strategy") or []
-                    ]
-                    if selected_strategy:
-                        parsed_s = _call_with_semantic_retry(
-                            client,
-                            judge_endpoint,
-                            strategy_use_messages(state, selected_strategy, turn["supporter_message"]),
-                            StrategyUseJudgment,
-                            None,
-                            stage="evoemo_selective_strategy_use",
-                            record_ids={
-                                "user_id": user_id,
-                                "topic_index": topic_index,
-                                "condition": condition,
-                                "seed": seed,
-                                "simulator_id": simulator_id,
-                                "interaction_mode": interaction_mode,
-                                "turn_index": turn["turn_index"],
-                            },
-                            raw_log_path=raw_path,
-                            max_tokens=700,
-                        )
-                        strategy_row = {
-                            "audit_type": "strategy_use",
-                            **parsed_s.model_dump(mode="json"),
-                            "strategy_risk": max(parsed_s.over_structuring, parsed_s.premature_advice) / 2.0,
-                        }
-                    else:
-                        parsed_s0 = _call_with_semantic_retry(
-                            client,
-                            judge_endpoint,
-                            strategy_omission_messages(state, turn["supporter_message"]),
-                            StrategyOmissionJudgment,
-                            None,
-                            stage="evoemo_selective_strategy_omission",
-                            record_ids={
-                                "user_id": user_id,
-                                "topic_index": topic_index,
-                                "condition": condition,
-                                "seed": seed,
-                                "simulator_id": simulator_id,
-                                "interaction_mode": interaction_mode,
-                                "turn_index": turn["turn_index"],
-                            },
-                            raw_log_path=raw_path,
-                            max_tokens=500,
-                        )
-                        strategy_row = {
-                            "audit_type": "strategy_omission",
-                            **parsed_s0.model_dump(mode="json"),
-                            "strategy_risk": parsed_s0.missed_strategy_opportunity_severity / 2.0,
-                        }
-                    append_jsonl(strategy_path, {
-                        "user_id": user_id,
-                        "topic_index": topic_index,
-                        "condition": condition,
-                        "seed": seed,
-                        "simulator_id": simulator_id,
-                        "interaction_mode": interaction_mode,
-                        "track_id": dialogue.get("track_id"),
-                        "turn_index": int(turn["turn_index"]),
-                        **strategy_row,
-                    })
-                if interaction_mode != "fixed":
-                    conversation.extend([
-                        {"role": "seeker", "content": turn["seeker_message"]},
-                        {"role": "supporter", "content": turn["supporter_message"]},
-                    ])
+                    if key not in done_strategy:
+                        selected_strategy = [
+                            StrategyCard.model_validate(x)
+                            for x in turn.get("selected_strategy") or []
+                        ]
+                        if selected_strategy:
+                            parsed_s = _call_with_semantic_retry(
+                                client,
+                                judge_endpoint,
+                                strategy_use_messages(state, selected_strategy, turn["supporter_message"]),
+                                StrategyUseJudgment,
+                                None,
+                                stage="evoemo_selective_strategy_use",
+                                record_ids={
+                                    "user_id": user_id,
+                                    "topic_index": topic_index,
+                                    "condition": condition,
+                                    "seed": seed,
+                                    "simulator_id": simulator_id,
+                                    "interaction_mode": interaction_mode,
+                                    "turn_index": turn["turn_index"],
+                                },
+                                raw_log_path=raw_path,
+                                max_tokens=700,
+                            )
+                            strategy_row = {
+                                "audit_type": "strategy_use",
+                                **parsed_s.model_dump(mode="json"),
+                                "strategy_risk": max(parsed_s.over_structuring, parsed_s.premature_advice) / 2.0,
+                            }
+                        else:
+                            parsed_s0 = _call_with_semantic_retry(
+                                client,
+                                judge_endpoint,
+                                strategy_omission_messages(state, turn["supporter_message"]),
+                                StrategyOmissionJudgment,
+                                None,
+                                stage="evoemo_selective_strategy_omission",
+                                record_ids={
+                                    "user_id": user_id,
+                                    "topic_index": topic_index,
+                                    "condition": condition,
+                                    "seed": seed,
+                                    "simulator_id": simulator_id,
+                                    "interaction_mode": interaction_mode,
+                                    "turn_index": turn["turn_index"],
+                                },
+                                raw_log_path=raw_path,
+                                max_tokens=500,
+                            )
+                            strategy_row = {
+                                "audit_type": "strategy_omission",
+                                **parsed_s0.model_dump(mode="json"),
+                                "strategy_risk": parsed_s0.missed_strategy_opportunity_severity / 2.0,
+                            }
+                        append_jsonl(strategy_path, {
+                            "user_id": user_id,
+                            "topic_index": topic_index,
+                            "condition": condition,
+                            "seed": seed,
+                            "simulator_id": simulator_id,
+                            "interaction_mode": interaction_mode,
+                            "track_id": dialogue.get("track_id"),
+                            "turn_index": int(turn["turn_index"]),
+                            **strategy_row,
+                        })
+                    if interaction_mode != "fixed":
+                        conversation.extend([
+                            {"role": "seeker", "content": turn["seeker_message"]},
+                            {"role": "supporter", "content": turn["supporter_message"]},
+                        ])
     finally:
         client.close()
 
@@ -887,19 +890,22 @@ def run_selective_evoemo_metrics(
         "dialogue_pairs": _validate_exact_keys(
             pair_path, pair_key_fields, expected_pair_keys,
             name="selective dialogue pairs", before_calls=False,
-        ),
-        "memory_audits": _validate_exact_keys(
-            memory_path, audit_key_fields, expected_audit_keys,
-            name="selective memory audits", before_calls=False,
-        ),
-        "strategy_audits": _validate_exact_keys(
-            strategy_path, audit_key_fields, expected_audit_keys,
-            name="selective strategy audits", before_calls=False,
-        ),
+        )
     }
+    if not pairs_only:
+        validations.update({
+            "memory_audits": _validate_exact_keys(
+                memory_path, audit_key_fields, expected_audit_keys,
+                name="selective memory audits", before_calls=False,
+            ),
+            "strategy_audits": _validate_exact_keys(
+                strategy_path, audit_key_fields, expected_audit_keys,
+                name="selective strategy audits", before_calls=False,
+            ),
+        })
     pair_rows = list(iter_jsonl(pair_path))
-    memory_rows = list(iter_jsonl(memory_path))
-    strategy_rows = list(iter_jsonl(strategy_path))
+    memory_rows = [] if pairs_only else list(iter_jsonl(memory_path))
+    strategy_rows = [] if pairs_only else list(iter_jsonl(strategy_path))
 
     # Collapse the two orientations before inference.
     pair_units: list[dict[str, Any]] = []
@@ -1004,7 +1010,10 @@ def run_selective_evoemo_metrics(
             "total_input_tokens": total_cost,
             "total_latency_ms": total_latency,
         })
-    conditions = sorted({x["condition"] for x in memory_rows + strategy_rows})
+    conditions = sorted(
+        {x["condition"] for x in memory_rows + strategy_rows}
+        or {x["condition"] for x in dialogue_cost_rows}
+    )
     for condition in conditions:
         mrows = [x for x in memory_rows if x["condition"] == condition]
         srows = [x for x in strategy_rows if x["condition"] == condition]
@@ -1029,6 +1038,7 @@ def run_selective_evoemo_metrics(
         "generation_attestation_verification": generation_verification,
         "judge_model": judge_endpoint.model,
         "judge_family": judge_endpoint.family,
+        "pairs_only": pairs_only,
         "validations": validations,
         "minimum_orientation_consistency": min_orientation_consistency,
         "causal_note": (
@@ -1038,6 +1048,16 @@ def run_selective_evoemo_metrics(
         ),
     }
     write_json(summary_path, result)
+    metric_outputs: dict[str, Any] = {
+        "dialogue_pairs": (pair_path, True),
+        "raw_calls": (raw_path, True),
+        "summary": (summary_path, False),
+    }
+    if not pairs_only:
+        metric_outputs.update({
+            "memory_audits": (memory_path, True),
+            "strategy_audits": (strategy_path, True),
+        })
     create_artifact_attestation(
         attestation_path,
         stage="evoemo_selective_metrics",
@@ -1046,24 +1066,19 @@ def run_selective_evoemo_metrics(
             "dialogues": dialogues_path,
             **({"generation_attestation": generation_attestation_path} if generation_attestation_path else {}),
         },
-        outputs={
-            "dialogue_pairs": (pair_path, True),
-            "memory_audits": (memory_path, True),
-            "strategy_audits": (strategy_path, True),
-            "raw_calls": (raw_path, True),
-            "summary": (summary_path, False),
-        },
+        outputs=metric_outputs,
         parameters={
             "judge_model": judge_endpoint.model,
             "judge_family": judge_endpoint.family,
             "baselines": list(baselines),
             "two_orientation_calls": True,
             "minimum_orientation_consistency": min_orientation_consistency,
+            "pairs_only": pairs_only,
         },
         expected={
             "dialogues": len(dialogues),
             "dialogue_pair_rows": len(expected_pair_keys),
-            "audit_rows_each": len(expected_audit_keys),
+            "audit_rows_each": 0 if pairs_only else len(expected_audit_keys),
         },
         study_freeze_sha256=expected_freeze_sha256,
     )
