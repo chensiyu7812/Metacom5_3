@@ -1,7 +1,7 @@
 {
   "status": "API_PILOT_READY",
   "confirmatory_ready": false,
-  "created_at": "2026-06-28T02:25:01.695312+00:00",
+  "created_at": "2026-06-27T16:36:09.897493+00:00",
   "checks": {
     "python_syntax": {
       "passed": true,
@@ -87,22 +87,6 @@
         "filled_for_api": true
       }
     },
-    "model_family_independence": {
-      "passed": true,
-      "details": {
-        "ok": true,
-        "errors": [],
-        "families": {
-          "generator": "llama",
-          "training_judge": "google_gemini",
-          "final_judge": "openai_gpt4o",
-          "seekers": [
-            "mistral",
-            "qwen"
-          ]
-        }
-      }
-    },
     "documentation_present": {
       "passed": true,
       "details": [
@@ -112,14 +96,6 @@
         "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/MEASUREMENT_PROTOCOL_V2.md",
         "/home/tokkio/esconv_experiment_bundle/policy_manager_35/docs/MEASUREMENT_PROTOCOL_V3.md"
       ]
-    },
-    "pytest": {
-      "passed": true,
-      "details": {
-        "returncode": 0,
-        "stdout_tail": ".................................................                        [100%]\n",
-        "stderr_tail": ""
-      }
     }
   },
   "confirmatory_checks": {
@@ -127,7 +103,6 @@
     "strategy_bank_rebuilt_and_overlap_audited": false,
     "esconv_test_runtime_present": false,
     "configuration_filled": true,
-    "model_family_independence": true,
     "study_freeze_valid": false
   },
   "freeze_verification": {
@@ -136,7 +111,7 @@
       "study freeze not created"
     ]
   },
-  "manifest_sha256": "8ca9d307dbb14f408264e423884c7a685d5c0a6f3344c6a35e47d5f577fa1618",
-  "manifest_files": 821,
+  "manifest_sha256": "5e8bb2df943c1be189a25382ca9da7b56e1ed1e1d5611ba43d7e0ad5a1475027",
+  "manifest_files": 778,
   "scope": "API_PILOT_READY permits only generator/judge calibration. CONFIRMATORY_READY additionally requires a locally installed or pinned official ESConv file, an overlap-audited train-only strategy bank, ESConv test runtime, filled model configuration, and a valid study freeze. The real judge pilot gate must still pass before full judging/training."
 }

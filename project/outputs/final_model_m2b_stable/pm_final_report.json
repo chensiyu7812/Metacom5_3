@@ -1,0 +1,42 @@
+{
+  "model_format_version": "5.1",
+  "feature_mode": "text_metadata_stable",
+  "catalog_fingerprint_exposed": false,
+  "raw_catalog_fingerprint_exposed": false,
+  "response_score_transform": "sigmoid(pairwise_logit)",
+  "seed": 17,
+  "n_train_cards": 1728,
+  "n_validation_cards": 0,
+  "n_train_non_tie_pairs": 9269,
+  "effective_train_states": 192,
+  "effective_validation_states": 0,
+  "split_diagnostics": {
+    "card_overlap": 0,
+    "state_id_overlap": 0,
+    "normalized_current_text_overlap": 0,
+    "user_overlap": 0,
+    "semantic_family_overlap": 0
+  },
+  "strict_split": false,
+  "judging_attestation_sha256": "3e77d1bf42f184f99acdbaa625ce67195c4a34c2ee9649e4af69b6fef420e32c",
+  "m2b_attestation_sha256": "6ce02397073b9715e218a2704186167a7c9d7d063f9ced930634fc3b4adb0f51",
+  "n_action_labels": {
+    "misuse": 11136,
+    "memory_omission": 11136,
+    "memory_decision": 11136,
+    "strategy_risk": 11136,
+    "strategy_decision": 11136,
+    "m2b_selected_set_omission": 7680
+  },
+  "validation_pair_accuracy": null,
+  "validation_pair_log_loss": null,
+  "validation_mae": {
+    "misuse": null,
+    "memory_omission": null,
+    "memory_decision": null,
+    "strategy_risk": null,
+    "strategy_decision": null
+  },
+  "text_dimension": 707,
+  "checkpoint": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/final_model_m2b_stable/pm_final.joblib"
+}

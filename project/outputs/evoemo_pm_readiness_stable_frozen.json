@@ -1,0 +1,69 @@
+{
+  "status": "READY",
+  "interpretation": "No supporter-generation API calls are made. BLOCKED means the frozen PM cannot be used for confirmatory EvoEmo generation without a preregistered OOD fallback, retraining, or feature-domain change.",
+  "freeze_sha256": "e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f",
+  "n_users": 18,
+  "n_tracks": 102,
+  "expected_states": 1020,
+  "checked_states": 1020,
+  "n_errors": 0,
+  "error_examples": [],
+  "pm_action_distribution": {
+    "MSE+RS": 521,
+    "MPMS+RS": 165,
+    "MP+RS": 128,
+    "MS+RS": 72,
+    "MPE+RS": 62,
+    "ME+RS": 34,
+    "MSE+R0": 27,
+    "ME+R0": 3,
+    "MPMS+R0": 3,
+    "MS+R0": 2,
+    "MP+R0": 2,
+    "MPMSME+RS": 1
+  },
+  "ood_counts": {},
+  "safe_action_count_distribution": {
+    "14": 930,
+    "15": 41,
+    "16": 49
+  },
+  "constraint_fallback_used_distribution": {
+    "False": 1020
+  },
+  "selection_pm": {
+    "epsilon": 0.0,
+    "tau_misuse": 0.35,
+    "tau_omission": 1.0,
+    "tau_strategy": 1.0,
+    "confirmatory_allow_constraint_fallback": false,
+    "validation_metrics": {
+      "n": 1728,
+      "mean_response_score": 0.5759011377807034,
+      "mean_misuse_risk": 0.06278935185185185,
+      "mean_memory_omission_risk": 0.2980324074074074,
+      "mean_strategy_decision_risk": 0.24247685185185186,
+      "mean_safety_risk": 0.5167824074074074,
+      "mean_cost": 553.3327546296297,
+      "action_distribution": {
+        "M0+R0": 91,
+        "M0+RS": 337,
+        "ME+R0": 117,
+        "ME+RS": 385,
+        "MP+R0": 62,
+        "MP+RS": 173,
+        "MPE+R0": 33,
+        "MPE+RS": 38,
+        "MPMS+R0": 36,
+        "MPMS+RS": 62,
+        "MPMSME+R0": 5,
+        "MS+R0": 65,
+        "MS+RS": 151,
+        "MSE+R0": 32,
+        "MSE+RS": 141
+      }
+    },
+    "aggregation": "5-fold majority vote for thresholds; weighted mean metrics for diagnostics",
+    "feature_mode": "text_metadata_stable"
+  }
+}

@@ -16,6 +16,12 @@ if __name__ == "__main__":
     p.add_argument('--m2b-path', type=Path,
                    default=ROOT/'outputs/m2b_selected_set_omission_gemini_flash_lite_v3/memory_selected_set_omission_judgments.jsonl',
                    help='Selected-set omission labels from scripts/09b_run_m2b_audit.py')
+    p.add_argument('--strategy-bank', type=Path,
+                   default=ROOT/'data/strategy/strategy_cards.jsonl',
+                   help='Strategy bank used by the action sweep being selected against')
+    p.add_argument('--outcomes-attestation', type=Path,
+                   default=None,
+                   help='Artifact attestation for outputs/synthetic_sweep/action_outcomes.jsonl')
     p.add_argument('--allow-no-m2b', action='store_true',
                    help='Non-reportable debugging only: tune without selected-set omission labels')
     a = p.parse_args()
@@ -32,12 +38,13 @@ if __name__ == "__main__":
         jdir/'memory_use_judgments.jsonl',
         jdir/'strategy_use_judgments.jsonl',
         jdir/'strategy_omission_judgments.jsonl',
-        ROOT/'data/strategy/strategy_cards.jsonl',
+        a.strategy_bank,
         a.checkpoint,
         set(fold['validation_card_ids']),
         a.out,
         m2b_path=(None if a.allow_no_m2b else a.m2b_path),
         require_m2b=not a.allow_no_m2b,
+        outcomes_attestation_path=a.outcomes_attestation,
     )
     print({
         "out": str(a.out),

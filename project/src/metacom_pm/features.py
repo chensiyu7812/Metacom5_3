@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Sequence
+from typing import Any, Sequence
 import numpy as np
 from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
@@ -41,14 +41,22 @@ class FeatureBuilder:
     vectorizer: TfidfVectorizer | None = None
     metadata_min: np.ndarray | None = None
     metadata_max: np.ndarray | None = None
+    stable_caps: dict[str, Any] | None = None
     _query_cache: dict[str, np.ndarray] = field(default_factory=dict, repr=False)
 
     def fit(self, states: Sequence[RuntimeState]) -> "FeatureBuilder":
-        if self.mode not in {"full", "text_only", "metadata_only", "text_metadata", "catalog_only"}:
+        if self.mode not in {
+            "full",
+            "text_only",
+            "metadata_only",
+            "text_metadata",
+            "text_metadata_stable",
+            "catalog_only",
+        }:
             raise ValueError(f"unknown feature mode: {self.mode}")
         if not states:
             raise ValueError("cannot fit features without states")
-        if self.mode in {"full", "text_only", "text_metadata"}:
+        if self.mode in {"full", "text_only", "text_metadata", "text_metadata_stable"}:
             self.vectorizer = TfidfVectorizer(
                 lowercase=True,
                 ngram_range=self.ngram_range,
@@ -60,6 +68,7 @@ class FeatureBuilder:
             self.vectorizer.fit([state_context(x) for x in states])
         else:
             self.vectorizer = None
+        self.stable_caps = self._fit_stable_caps(states) if self.mode == "text_metadata_stable" else None
         dense = np.vstack([
             self._dense_raw(state, action_id)
             for state in states
@@ -99,23 +108,66 @@ class FeatureBuilder:
             return 0.0
         return float(query @ catalog / (qnorm * cnorm))
 
+    def _fit_stable_caps(self, states: Sequence[RuntimeState]) -> dict[str, Any]:
+        """Learn deployment-stable caps from the development feature domain.
+
+        The stable mode is for external longitudinal settings whose memory
+        inventory can be much larger than the synthetic development users.  It
+        keeps the feature semantics pre-evidence while preventing raw count,
+        age, token, or session-depth scale from creating guaranteed OOD at
+        deployment time.
+        """
+        caps: dict[str, Any] = {
+            "session_index": max(float(s.session_index) for s in states),
+            "sources": {},
+        }
+        for source in ACTION_ORDER:
+            cats = [state.inventory[source] for state in states]
+            caps["sources"][source.value] = {
+                "count": max(float(cat.count) for cat in cats),
+                "min_age_sessions": max(float(cat.min_age_sessions or 0) for cat in cats),
+                "max_age_sessions": max(float(cat.max_age_sessions or 0) for cat in cats),
+                "estimated_tokens": max(float(cat.estimated_tokens) for cat in cats),
+            }
+        return caps
+
+    def _cap_value(self, source: MemorySource | None, name: str, value: float) -> float:
+        if self.mode != "text_metadata_stable" or self.stable_caps is None:
+            return value
+        if source is None:
+            cap = float(self.stable_caps.get(name, value))
+        else:
+            cap = float(
+                self.stable_caps["sources"].get(source.value, {}).get(name, value)
+            )
+        return min(value, cap)
+
+    def _metadata_values(
+        self, state: RuntimeState, source: MemorySource, selected: float
+    ) -> list[float]:
+        cat = state.inventory[source]
+        count = self._cap_value(source, "count", float(cat.count))
+        min_age = self._cap_value(source, "min_age_sessions", float(cat.min_age_sessions or 0))
+        max_age = self._cap_value(source, "max_age_sessions", float(cat.max_age_sessions or 0))
+        estimated_tokens = self._cap_value(source, "estimated_tokens", float(cat.estimated_tokens))
+        return [
+            float(cat.available),
+            np.log1p(count),
+            np.log1p(min_age),
+            np.log1p(max_age),
+            np.log1p(estimated_tokens),
+            selected * np.log1p(count),
+            selected * np.log1p(estimated_tokens),
+        ]
+
     def _dense_raw(self, state: RuntimeState, action_id: str) -> np.ndarray:
         sources, strategy = parse_action_id(action_id)
         values: list[float] = []
         for source in ACTION_ORDER:
             selected = float(source in sources)
             values.append(selected)
-            if self.mode in {"full", "metadata_only", "text_metadata"}:
-                cat = state.inventory[source]
-                values.extend([
-                    float(cat.available),
-                    np.log1p(cat.count),
-                    np.log1p(cat.min_age_sessions or 0),
-                    np.log1p(cat.max_age_sessions or 0),
-                    np.log1p(cat.estimated_tokens),
-                    selected * np.log1p(cat.count),
-                    selected * np.log1p(cat.estimated_tokens),
-                ])
+            if self.mode in {"full", "metadata_only", "text_metadata", "text_metadata_stable"}:
+                values.extend(self._metadata_values(state, source, selected))
             if self.mode in {"full", "catalog_only"}:
                 similarity = self._catalog_similarity(state, source)
                 values.extend([
@@ -127,8 +179,9 @@ class FeatureBuilder:
             float(len(sources)),
             float(len(sources) ** 2),
         ])
-        if self.mode in {"full", "metadata_only", "text_metadata"}:
-            values.append(np.log1p(state.session_index))
+        if self.mode in {"full", "metadata_only", "text_metadata", "text_metadata_stable"}:
+            session_index = self._cap_value(None, "session_index", float(state.session_index))
+            values.append(np.log1p(session_index))
         if self.mode in {"full", "catalog_only"}:
             for source in ACTION_ORDER:
                 fp = state.inventory[source].catalog_fingerprint
@@ -158,15 +211,9 @@ class FeatureBuilder:
             sources, _ = parse_action_id(action_id)
             for source in ACTION_ORDER:
                 cat = state.inventory[source]
-                vals = [
-                    float(cat.available),
-                    np.log1p(cat.count),
-                    np.log1p(cat.min_age_sessions or 0),
-                    np.log1p(cat.max_age_sessions or 0),
-                    np.log1p(cat.estimated_tokens),
-                    float(source in sources) * np.log1p(cat.count),
-                    float(source in sources) * np.log1p(cat.estimated_tokens),
-                ]
+                vals = self._metadata_values(
+                    state, source, float(source in sources)
+                )
                 # Locate the corresponding values inside dense by relying on the
                 # already-computed outside mask would be brittle across ablations,
                 # so compare scalar values against the scalar ranges observed in

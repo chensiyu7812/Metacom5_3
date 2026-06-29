@@ -6,7 +6,7 @@ if __name__ == "__main__":
     from metacom_pm.training import train_pm
     ROOT = Path(__file__).resolve().parents[1]
     p = argparse.ArgumentParser()
-    p.add_argument('--feature-mode', choices=['full','text_only','metadata_only','catalog_only','text_metadata'],
+    p.add_argument('--feature-mode', choices=['full','text_only','metadata_only','catalog_only','text_metadata','text_metadata_stable'],
                    default='text_metadata')
     p.add_argument('--seed', type=int, default=17)
     p.add_argument('--out-dir', type=Path, default=ROOT/'outputs/final_model')

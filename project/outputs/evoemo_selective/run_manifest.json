@@ -1,0 +1,38 @@
+{
+  "stage": "evoemo_generation",
+  "evoemo_sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+  "strategy_bank_sha256": "f64ded1e23b4a79c0e08c6b47355ad76b3880d5cbc0bfa7530f366149b5c70db",
+  "checkpoint_sha256": "1408fa8deb51407ea6e6fa00354754d753ed277800e13bb571ef31b9636fdcad",
+  "selection_sha256": "7ccb6825a0a29ad006dd073cbdb4941fc4ed2454c3ec191040232a842f45c89c",
+  "fixed_tracks_sha256": "447609e135f0a3813fd5f64c7bea6f1ba386c8bd5e439b4aa487a747ee41f9eb",
+  "fixed_tracks_attestation_sha256": "1d05f08a3f484cb62b727fb42c3554338b9a997a5c01c6a10e5890b2a1634ac7",
+  "generator_model": "meta/llama-3.1-8b-instruct",
+  "generator_family": "llama",
+  "generator_base_url": "https://integrate.api.nvidia.com",
+  "seeker_model": "mistralai/mixtral-8x7b-instruct-v0.1",
+  "seeker_family": "mistral",
+  "seeker_base_url": "https://integrate.api.nvidia.com",
+  "simulator_id": "seeker_main",
+  "protocol": "selective",
+  "interaction_mode": "fixed",
+  "fixed_track_design": "policy_independent_open_loop_one_step_v2",
+  "conditions": [
+    "no_memory_r0",
+    "no_memory_rs",
+    "session_rag_rs",
+    "full_history_rs",
+    "all_structured_rs",
+    "best_fixed",
+    "strong_rule",
+    "pm"
+  ],
+  "max_turns": 10,
+  "seeds": [
+    101,
+    202,
+    303
+  ],
+  "max_scenarios": null,
+  "study_freeze_sha256": "e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f",
+  "manifest_sha256": "e67ea3bc8fa94951fed622e14aca36c37a5a368380a979133fe771e4f2413c3f"
+}

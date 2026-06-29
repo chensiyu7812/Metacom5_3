@@ -1,7 +1,7 @@
 {
   "status": "API_PILOT_READY",
   "confirmatory_ready": false,
-  "created_at": "2026-06-28T02:25:01.695312+00:00",
+  "created_at": "2026-06-27T16:39:53.454797+00:00",
   "checks": {
     "python_syntax": {
       "passed": true,
@@ -87,22 +87,6 @@
         "filled_for_api": true
       }
     },
-    "model_family_independence": {
-      "passed": true,
-      "details": {
-        "ok": true,
-        "errors": [],
-        "families": {
-          "generator": "llama",
-          "training_judge": "google_gemini",
-          "final_judge": "openai_gpt4o",
-          "seekers": [
-            "mistral",
-            "qwen"
-          ]
-        }
-      }
-    },
     "documentation_present": {
       "passed": true,
       "details": [
@@ -117,7 +101,7 @@
       "passed": true,
       "details": {
         "returncode": 0,
-        "stdout_tail": ".................................................                        [100%]\n",
+        "stdout_tail": "..............................................                           [100%]\n",
         "stderr_tail": ""
       }
     }
@@ -127,7 +111,6 @@
     "strategy_bank_rebuilt_and_overlap_audited": false,
     "esconv_test_runtime_present": false,
     "configuration_filled": true,
-    "model_family_independence": true,
     "study_freeze_valid": false
   },
   "freeze_verification": {
@@ -136,7 +119,7 @@
       "study freeze not created"
     ]
   },
-  "manifest_sha256": "8ca9d307dbb14f408264e423884c7a685d5c0a6f3344c6a35e47d5f577fa1618",
-  "manifest_files": 821,
+  "manifest_sha256": "4472b1397b13d84c6cbaf5add3f6173a1b832f11a59c3167c80f5de5d67b1e98",
+  "manifest_files": 779,
   "scope": "API_PILOT_READY permits only generator/judge calibration. CONFIRMATORY_READY additionally requires a locally installed or pinned official ESConv file, an overlap-audited train-only strategy bank, ESConv test runtime, filled model configuration, and a valid study freeze. The real judge pilot gate must still pass before full judging/training."
 }
