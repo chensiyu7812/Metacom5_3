@@ -17,7 +17,7 @@ EvoEmo Response Eval V4 已完成，结论是：
 - strategy over-structuring / premature advice 更少；
 - source set 更节省但没有遗漏关键支持证据。
 
-本计划只是 no-API sample plan，不包含任何新 judge 结果。
+本文件最初是 no-API sample plan；当前已补充 pilot 与 full sampled audit judge 结果。
 
 ## 2. 为什么不直接跑全量 audit
 
@@ -138,7 +138,7 @@ Audit implementation now preserves the V4 discipline:
 raw_rows <= expected_calls * 1.10
 ```
 
-No full audit should run until the pilot passes.
+This gate was enforced: the full sampled audit was run only after the pilot passed exact output validation and the raw-row gate.
 
 ## 8. Current Evaluator / Dry-Run Status
 
@@ -228,7 +228,71 @@ The pilot passed. Full sampled audit must still use the full dry-run hash:
 164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45
 ```
 
-## 9. Paper Position
+## 9. Full Sampled Audit Result
+
+Full sampled audit 已按 full dry-run hash 完成：
+
+- command mode: `--full-run`
+- accepted cost hash: `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`
+- output dir: `outputs/evoemo_sampled_audit/`
+- summary: `outputs/evoemo_sampled_audit/audit_summary.json`
+- scores: `outputs/evoemo_sampled_audit/audit_scores.jsonl`
+- judgments: `outputs/evoemo_sampled_audit/audit_judgments.jsonl`
+- raw calls: `outputs/evoemo_sampled_audit/audit_raw_calls.jsonl`
+- attestation: `outputs/evoemo_sampled_audit/artifact_attestation.json`
+
+Run integrity:
+
+- status: `COMPLETE`
+- attestation status: `ATTESTED`
+- attestation sha256: `3ed5147dcb2dfafd07f1d0ad483e76d3333e520e1cbe4d1422d23ef04443ba7d`
+- expected / completed calls: 80 / 80
+- judgment rows / score rows / raw rows: 80 / 80 / 80
+- successful raw calls: 80
+- duplicate rows: 0
+- raw row gate: 80 <= 88
+- actual prompt tokens: 260,634
+- actual completion tokens: 13,349
+- estimated actual GPT-4o cost: about 0.79 USD
+
+Verdicts:
+
+| Verdict | Count |
+|---|---:|
+| acceptable | 77 |
+| minor_issue | 1 |
+| major_issue | 2 |
+
+Condition-level audit summary:
+
+| Condition | n | Misuse ↓ | Exposure ↓ | Stale/Conflict ↓ | Unsupported Claim ↓ | Source Set ↑ | Strategy Omission ↓ | Support ↑ | Risk ↓ |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| PM | 50 | 0.000 | 0.000 | 0.000 | 0.000 | 2.140 | 0.020 | 3.680 | 0.020 |
+| Strong rule | 14 | 0.143 | 0.000 | 0.000 | 0.000 | 2.071 | 0.000 | 3.571 | 0.143 |
+| Best fixed | 10 | 0.000 | 0.000 | 0.000 | 0.000 | 1.800 | 0.000 | 3.700 | 0.000 |
+| Session RAG RS | 6 | 0.333 | 0.000 | 0.000 | 0.000 | 1.667 | 0.000 | 3.667 | 0.333 |
+
+Audit-type summary:
+
+| Audit Type | n | Acceptable | Major Issue | Minor Issue | Misuse ↓ | Omission ↓ | Risk ↓ |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| selected-resource audit | 70 | 67 | 2 | 1 | 0.057 | 0.000 | 0.071 |
+| omission-with-authorized-context audit | 10 | 10 | 0 | 0 | 0.000 | 0.000 | 0.000 |
+
+Issue pattern:
+
+- PM: 1 minor issue. The response was supportive but did not directly answer the seeker's request for concrete guidance on managing anxiety around a reunion encounter.
+- Strong rule: 1 major selected-evidence misuse issue. The selected memories were judged irrelevant to the current impostor-syndrome / leadership-role context.
+- Session RAG RS: 1 major selected-evidence misuse issue. The selected memories were judged unrelated to the current social-anxiety / making-new-friends context.
+
+Interpretation:
+
+- PM did not show selected-evidence misuse, unnecessary exposure, stale/conflict, or unsupported personal-claim issues in this stratified sample.
+- The authorized-context omission audit found no missing critical memory evidence in its 10 sampled checks.
+- The result supports the paper's resource-risk tradeoff claim: PM can preserve comparable response quality while reducing resource use and avoiding observed evidence misuse in sampled audit.
+- This is not an all-turn safety guarantee and should not be written as PM being universally better than rule/fixed policies.
+
+## 10. Paper Position
 
 If audit supports PM:
 

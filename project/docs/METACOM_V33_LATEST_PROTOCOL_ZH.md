@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit pilot API 已通过。下一步是 full sampled audit。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit 已完成 full-run / attestation。下一步是写入论文结果表与 claim boundary。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -441,7 +441,7 @@ Token accounting note:
 - `no_memory_r0` 分数高说明很多 fixed-input turn 不需要资源，不说明长期记忆无用；
 - `session_rag_rs` 分数高但成本更高，不说明 always-on memory/RAG 是最佳系统。
 
-Memory / strategy audit 仍禁止全量直接跑：
+Memory / strategy audit 仍禁止 all-turn 全量直接跑：
 
 - 必须使用 stratified sampled audit；
 - memory omission audit 只在少量关键 turn 上使用完整 memory；
@@ -487,12 +487,39 @@ Audit plan focus:
 - PM vs no_memory_r0：检查 PM 是否引入 unnecessary exposure / over-structuring；
 - PM high-resource / low-resource / rare-action turns：检查 PM 边界行为。
 
-Audit API 之前仍必须：
+Sampled audit full-run result:
 
-1. 只先跑小样本 pilot；
-2. pilot 使用 dry-run hash `0ec60d02a5ac4d501c1d29d9037aec5a3cf2f0d7ddfdd9bcb2fb3533ff98ec46`；
-3. pilot 通过 exact output validation 和 raw rows gate 后，才考虑 full sampled audit；
-4. full sampled audit 需重新确认并使用 full dry-run hash `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`。
+- output dir: `outputs/evoemo_sampled_audit/`
+- full-run status: `COMPLETE`
+- attestation: `outputs/evoemo_sampled_audit/artifact_attestation.json`
+- attestation status: `ATTESTED`
+- attestation sha256: `3ed5147dcb2dfafd07f1d0ad483e76d3333e520e1cbe4d1422d23ef04443ba7d`
+- expected / completed calls: 80 / 80；
+- score rows / judgment rows / raw rows: 80 / 80 / 80；
+- raw rows gate: 80 <= 88；
+- successful raw calls: 80；
+- duplicate rows: 0；
+- actual prompt tokens: 260,634；
+- actual completion tokens: 13,349；
+- estimated actual GPT-4o cost: about 0.79 USD；
+- verdicts: acceptable 77；minor_issue 1；major_issue 2。
+
+Sampled audit condition summary:
+
+| Condition | n | Misuse ↓ | Exposure ↓ | Stale/Conflict ↓ | Unsupported Claim ↓ | Source Set ↑ | Strategy Omission ↓ | Support ↑ | Risk ↓ |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| PM | 50 | 0.000 | 0.000 | 0.000 | 0.000 | 2.140 | 0.020 | 3.680 | 0.020 |
+| Strong rule | 14 | 0.143 | 0.000 | 0.000 | 0.000 | 2.071 | 0.000 | 3.571 | 0.143 |
+| Best fixed | 10 | 0.000 | 0.000 | 0.000 | 0.000 | 1.800 | 0.000 | 3.700 | 0.000 |
+| Session RAG RS | 6 | 0.333 | 0.000 | 0.000 | 0.000 | 1.667 | 0.000 | 3.667 | 0.333 |
+
+Sampled audit interpretation:
+
+- PM sampled audit 中未观察到 selected-evidence misuse、unnecessary exposure、stale/conflict 或 unsupported personal claim；
+- PM 有 1 个 minor strategy omission / insufficiently targeted support case；
+- omission-with-authorized-context 子审计 10 / 10 为 acceptable，omission severity = 0；
+- strong_rule 与 session_rag_rs 各出现 major selected-evidence misuse case，主要是检索或规则选择了与当前 turn 不相关的记忆；
+- 这支持 PM 在 sampled audit 中更少误用证据、保持较低风险，但仍只能作为 stratified sampled evidence，不能写成全量安全保证。
 
 ## 7. 当前任务状态
 
@@ -576,14 +603,21 @@ Sampled audit evaluator：
 - pilot actual usage: prompt 53,863 tokens；completion 2,683 tokens；estimated GPT-4o cost about 0.16 USD；
 - pilot verdicts: acceptable 15；minor_issue 1；
 - full dry-run: PASS；
-- full API: not run yet。
+- full API: COMPLETE / ATTESTED；
+- full expected / completed calls: 80 / 80；
+- full score rows / judgment rows / raw rows: 80 / 80 / 80；
+- full raw rows gate: 80 <= 88；
+- full actual usage: prompt 260,634 tokens；completion 13,349 tokens；estimated GPT-4o cost about 0.79 USD；
+- full verdicts: acceptable 77；minor_issue 1；major_issue 2；
+- PM sampled audit: selected-evidence misuse 0；unnecessary exposure 0；stale/conflict 0；unsupported personal claim 0；overall risk 0.020；
+- full attestation: `outputs/evoemo_sampled_audit/artifact_attestation.json`
+- full attestation sha256: `3ed5147dcb2dfafd07f1d0ad483e76d3333e520e1cbe4d1422d23ef04443ba7d`
 
 下一步：
 
-1. 跑 full sampled audit；
-2. 检查 `audit_summary.json` 的 exact output validation；
-3. 检查 raw rows gate: `raw_rows <= expected_calls * 1.10`；
-4. 若 full audit 通过，再更新外部评测结果表与论文 claim boundary。
+1. 将 V4 response / cost / sampled audit 结果整理进论文结果表；
+2. claim boundary 写成 comparable response quality + lower resource cost + lower observed sampled-audit misuse/risk；
+3. 不再继续 API 评测，除非明确需要额外 targeted audit。
 
 ## 8. 当前文件索引
 
@@ -628,6 +662,11 @@ Sampled audit evaluator：
 - `outputs/evoemo_sampled_audit/pilot_summary.json`
 - `outputs/evoemo_sampled_audit/pilot_scores.jsonl`
 - `outputs/evoemo_sampled_audit/pilot_artifact_attestation.json`
+- `outputs/evoemo_sampled_audit/audit_summary.json`
+- `outputs/evoemo_sampled_audit/audit_scores.jsonl`
+- `outputs/evoemo_sampled_audit/audit_judgments.jsonl`
+- `outputs/evoemo_sampled_audit/audit_raw_calls.jsonl`
+- `outputs/evoemo_sampled_audit/artifact_attestation.json`
 
 ## 9. 投稿写法提醒
 
