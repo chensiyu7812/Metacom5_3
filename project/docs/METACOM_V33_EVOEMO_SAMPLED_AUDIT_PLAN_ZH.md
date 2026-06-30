@@ -148,28 +148,37 @@ No full audit should run until the pilot passes.
 - `scripts/17e_eval_evoemo_sampled_audit.py`
 - `scripts/20d_freeze_evoemo_sampled_audit_eval.py`
 
+Prompt leakage fix:
+
+- judge prompt 不包含 `covered_strata` / `planner_reason` / `pm_vs_*` 抽样理由；
+- judge prompt 不暴露 `pm` / `strong_rule` / `best_fixed` / `session_rag_rs` 等 policy condition name；
+- target 只显示为 `response_id="target"`；
+- comparison responses 只显示为 `comparison_id="C1"` / `C2`；
+- 非评分模块如 `positive_control_resource_saving` / `rare_pm_actions` 不进入 judge prompt；
+- action_id、selected_memory、selected_strategy 保留，因为 audit 需要 source-aware resource 信息。
+
 Evaluation freeze：
 
 - path: `outputs/evoemo_sampled_audit_eval_freeze.json`
-- sha256: `4d4cd3ca98617da93c38107dbedaa2ce20bb8aad6a08723054f27dada92858ce`
+- sha256: `c17cd2077a75f0c250091022e80d4a88c1322b73d52760789eafd990e11b4d8c`
 
 Pilot dry-run：
 
 - calls: 16
 - selected-resource calls: 12
 - authorized-context omission calls: 4
-- input tokens: total 50,419 / mean 3,151 / max 3,606
+- input tokens: total 49,703 / mean 3,106 / max 3,570
 - estimated GPT-4o cost: about 0.20 USD
-- cost hash: `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`
+- cost hash: `0ec60d02a5ac4d501c1d29d9037aec5a3cf2f0d7ddfdd9bcb2fb3533ff98ec46`
 
 Full sampled audit dry-run：
 
 - calls: 80
 - selected-resource calls: 70
 - authorized-context omission calls: 10
-- input tokens: total 243,590 / mean 3,045 / max 4,369
-- estimated GPT-4o cost: about 0.97 USD
-- cost hash: `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`
+- input tokens: total 239,834 / mean 2,998 / max 4,313
+- estimated GPT-4o cost: about 0.96 USD
+- cost hash: `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`
 
 API calls so far: none.
 
@@ -182,7 +191,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/17e_eval_evoemo_sampled_audit.py \
   --pilot \
   --pilot-items 8 \
-  --accept-cost-estimate-sha256 ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32 \
+  --accept-cost-estimate-sha256 0ec60d02a5ac4d501c1d29d9037aec5a3cf2f0d7ddfdd9bcb2fb3533ff98ec46 \
   --max-estimated-usd 2 \
   --max-input-tokens-per-call 8000
 ```
@@ -199,7 +208,7 @@ Pilot pass criteria:
 If the pilot passes, full sampled audit must still use the full dry-run hash:
 
 ```text
-380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555
+164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45
 ```
 
 ## 9. Paper Position

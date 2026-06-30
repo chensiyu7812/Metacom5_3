@@ -466,17 +466,18 @@ Memory / strategy audit 仍禁止全量直接跑：
 当前 sampled audit evaluator freeze / dry-run:
 
 - evaluation freeze: `outputs/evoemo_sampled_audit_eval_freeze.json`
-- evaluation freeze sha256: `4d4cd3ca98617da93c38107dbedaa2ce20bb8aad6a08723054f27dada92858ce`
+- evaluation freeze sha256: `c17cd2077a75f0c250091022e80d4a88c1322b73d52760789eafd990e11b4d8c`
+- prompt leakage fix: judge prompt 不暴露 `covered_strata` / `planner_reason` / `pm_vs_*` / policy condition name；target/comparison 用匿名 id；
 - pilot dry-run: `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
 - pilot calls: 16；
 - pilot estimated cost: about 0.20 USD；
-- pilot input tokens: total 50,419 / mean 3,151 / max 3,606；
-- pilot cost hash: `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`
+- pilot input tokens: total 49,703 / mean 3,106 / max 3,570；
+- pilot cost hash: `0ec60d02a5ac4d501c1d29d9037aec5a3cf2f0d7ddfdd9bcb2fb3533ff98ec46`
 - full dry-run: `outputs/evoemo_sampled_audit/cost_estimate_full.json`
 - full calls: 80；
-- full estimated cost: about 0.97 USD；
-- full input tokens: total 243,590 / mean 3,045 / max 4,369；
-- full cost hash: `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`
+- full estimated cost: about 0.96 USD；
+- full input tokens: total 239,834 / mean 2,998 / max 4,313；
+- full cost hash: `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`
 
 Audit plan focus:
 
@@ -489,9 +490,9 @@ Audit plan focus:
 Audit API 之前仍必须：
 
 1. 只先跑小样本 pilot；
-2. pilot 使用 dry-run hash `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`；
+2. pilot 使用 dry-run hash `0ec60d02a5ac4d501c1d29d9037aec5a3cf2f0d7ddfdd9bcb2fb3533ff98ec46`；
 3. pilot 通过 exact output validation 和 raw rows gate 后，才考虑 full sampled audit；
-4. full sampled audit 需重新确认并使用 full dry-run hash `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`。
+4. full sampled audit 需重新确认并使用 full dry-run hash `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`。
 
 ## 7. 当前任务状态
 

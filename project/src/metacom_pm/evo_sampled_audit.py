@@ -42,6 +42,21 @@ AUDIT_SCORE_FIELDS = (
 )
 
 
+PROMPT_AUDIT_MODULES = frozenset(
+    {
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim",
+        "source_set_appropriateness",
+        "strategy_overuse",
+        "strategy_omission",
+        "omission_with_authorized_context",
+        "response_support_sufficiency",
+    }
+)
+
+
 class EvoSampledAuditJudgment(StrictModel):
     audit_call_id: str = Field(min_length=1)
     verdict: Literal["acceptable", "minor_issue", "major_issue", "uncertain"]
@@ -203,15 +218,24 @@ def _compact_strategy(item: Mapping[str, Any], *, max_chars: int) -> dict[str, A
     return fields
 
 
+def _prompt_audit_modules(item: Mapping[str, Any]) -> list[str]:
+    return [
+        str(module)
+        for module in (item.get("audit_modules") or [])
+        if str(module) in PROMPT_AUDIT_MODULES
+    ]
+
+
 def _condition_payload(
     turn: Mapping[str, Any],
     *,
+    payload_id: str,
     max_memory_chars: int,
     max_strategy_chars: int,
 ) -> dict[str, Any]:
     cost = turn.get("cost") or {}
     return {
-        "condition": turn.get("condition"),
+        "response_id": payload_id,
         "action_id": turn.get("action_id"),
         "response": turn.get("supporter_message"),
         "input_tokens": turn.get("input_tokens"),
@@ -233,9 +257,9 @@ def _condition_payload(
     }
 
 
-def _comparison_payload(turn: Mapping[str, Any]) -> dict[str, Any]:
+def _comparison_payload(turn: Mapping[str, Any], *, comparison_id: str) -> dict[str, Any]:
     return {
-        "condition": turn.get("condition"),
+        "comparison_id": comparison_id,
         "action_id": turn.get("action_id"),
         "response": turn.get("supporter_message"),
     }
@@ -243,7 +267,9 @@ def _comparison_payload(turn: Mapping[str, Any]) -> dict[str, Any]:
 
 def _call_id(audit_item_id: str, audit_type: str, condition: str) -> str:
     suffix = stable_hex(audit_item_id, audit_type, condition, n=10)
-    return f"{audit_item_id}::{audit_type}::{condition}::{suffix}"
+    # The call id is shown to the judge so it must not reveal the policy
+    # condition (pm/strong_rule/best_fixed/session_rag_rs/etc.).
+    return f"{audit_item_id}::{audit_type}::{suffix}"
 
 
 def _selected_messages(
@@ -255,7 +281,7 @@ def _selected_messages(
     max_memory_chars: int,
     max_strategy_chars: int,
 ) -> list[dict[str, str]]:
-    modules = list(item.get("audit_modules") or [])
+    modules = _prompt_audit_modules(item)
     payload = {
         "task": "selected_resource_memory_strategy_audit",
         "audit_call_id": call_id,
@@ -265,20 +291,22 @@ def _selected_messages(
             "audit_item_id": item["audit_item_id"],
             "unit_id": item["unit_id"],
             "unit_key": item["unit_key"],
-            "covered_strata": item.get("covered_strata") or [item.get("stratum")],
-            "planner_reason": item.get("reason"),
             "context_before_turn": target_turn.get("context_before_turn") or [],
             "current_seeker_message": target_turn.get("seeker_message"),
         },
         "target": _condition_payload(
             target_turn,
+            payload_id="target",
             max_memory_chars=max_memory_chars,
             max_strategy_chars=max_strategy_chars,
         ),
-        "comparison_responses": [_comparison_payload(x) for x in comparison_turns],
+        "comparison_responses": [
+            _comparison_payload(x, comparison_id=f"C{i}")
+            for i, x in enumerate(comparison_turns, 1)
+        ],
         "instructions": [
             "Audit the target condition only.",
-            "Use comparison responses only to understand why this sample was selected.",
+            "Use comparison responses only as contextual references for the same fixed seeker turn.",
             "For selected-resource audits, do not assume omitted history that is not shown.",
             "Set omission_severity to 0 unless the prompt includes authorized context.",
         ],
@@ -317,24 +345,26 @@ def _omission_messages(
     payload = {
         "task": "authorized_context_omission_audit",
         "audit_call_id": call_id,
-        "audit_modules": list(item.get("audit_modules") or []),
+        "audit_modules": _prompt_audit_modules(item),
         "rubric": AUDIT_RUBRIC,
         "authorized_ground_truth": authorized_context,
         "case": {
             "audit_item_id": item["audit_item_id"],
             "unit_id": item["unit_id"],
             "unit_key": item["unit_key"],
-            "covered_strata": item.get("covered_strata") or [item.get("stratum")],
-            "planner_reason": item.get("reason"),
             "context_before_turn": target_turn.get("context_before_turn") or [],
             "current_seeker_message": target_turn.get("seeker_message"),
         },
         "target": _condition_payload(
             target_turn,
+            payload_id="target",
             max_memory_chars=max_memory_chars,
             max_strategy_chars=max_strategy_chars,
         ),
-        "comparison_responses": [_comparison_payload(x) for x in comparison_turns],
+        "comparison_responses": [
+            _comparison_payload(x, comparison_id=f"C{i}")
+            for i, x in enumerate(comparison_turns, 1)
+        ],
         "instructions": [
             "Audit whether the target response omitted important available context.",
             "Do not require memory use when a warm generic response is sufficient.",
