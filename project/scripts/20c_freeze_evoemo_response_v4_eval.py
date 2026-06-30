@@ -84,7 +84,10 @@ print(
                 "must pass --accept-cost-estimate-sha256 for the active mode."
             ),
             "pilot_gate_policy": (
-                "Full V4 response evaluation requires pilot_summary.status == PASS."
+                "Full V4 response evaluation requires a PASS pilot summary whose "
+                "model, family, conditions, turn indices, ground-truth mode, "
+                "generation/evaluation freezes, and pilot thresholds match the "
+                "current full-run configuration."
             ),
             "debug_exception": (
                 "Unfrozen runs or --allow-unfrozen-debug outputs are non-reportable."

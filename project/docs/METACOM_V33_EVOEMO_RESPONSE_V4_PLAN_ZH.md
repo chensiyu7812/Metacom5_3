@@ -13,7 +13,8 @@ V4 的目标不是“换个 judge 重跑”，而是修正测量设计：
 - 每个候选独立打 1-5 分；
 - 正式 API 跑之前必须先 no-API dry-run 和小样本 pilot；
 - 任何 API 模式都必须匹配 dry-run cost estimate hash；
-- pilot 不通过时禁止 full-run。
+- pilot 不通过时禁止 full-run；
+- full-run 前必须验证 pilot summary 与当前 full-run 的 judge / conditions / turns / ground truth / generation freeze / evaluation freeze / pilot thresholds 完全兼容。
 - 写 summary / attestation 前必须通过 exact output validation；
 - artifact attestation 绑定 V4 evaluation freeze，同时记录 generation freeze。
 
@@ -101,7 +102,7 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-freeze sha256: 027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1
+freeze sha256: e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6
 ```
 
 冻结入口：
@@ -181,7 +182,7 @@ outputs/evoemo_response_v4/pilot_raw_calls.jsonl
 outputs/evoemo_response_v4/pilot_summary.json
 ```
 
-只有 `pilot_summary.json` 的 `status` 为 `PASS`，才允许 full-run。
+只有 `pilot_summary.json` 的 `status` 为 `PASS`，且其 judge model / family、conditions、turn indices、ground truth mode、generation freeze、evaluation freeze 和 pilot thresholds 都与当前 full-run 配置一致，才允许 full-run。
 
 ### 6.3 Full dry-run
 

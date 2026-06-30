@@ -901,12 +901,64 @@ def _require_saved_dry_run(
         )
 
 
-def _require_pilot_passed(path: str | Path | None) -> dict[str, Any]:
+def _require_pilot_compatible_with_current_run(
+    path: str | Path | None,
+    *,
+    judge_endpoint: Endpoint,
+    ground_truth_mode: str,
+    conditions: Sequence[str],
+    turn_indices: Sequence[int],
+    generation_freeze_sha256: str | None,
+    evaluation_freeze_sha256: str | None,
+    max_order_mean_abs_diff: float,
+    max_position_mean_shift: float,
+) -> dict[str, Any]:
     if path is None:
         raise RuntimeError("full V4 response evaluation requires --pilot-summary with status PASS")
     summary = read_json(path)
-    if summary.get("status") != "PASS":
-        raise RuntimeError(f"pilot summary did not pass: {path}")
+
+    expected = {
+        "protocol": "evoemo_response_v4",
+        "mode": "pilot",
+        "status": "PASS",
+        "judge_model": judge_endpoint.model,
+        "judge_family": judge_endpoint.family,
+        "ground_truth_mode": ground_truth_mode,
+        "conditions": [str(condition) for condition in conditions],
+        "turn_indices": [int(turn_index) for turn_index in turn_indices],
+        "generation_freeze_sha256": generation_freeze_sha256,
+        "evaluation_freeze_sha256": evaluation_freeze_sha256,
+    }
+    errors = []
+    for key, expected_value in expected.items():
+        actual_value = summary.get(key)
+        if key == "turn_indices" and actual_value is not None:
+            actual_value = [int(turn_index) for turn_index in actual_value]
+        if key == "conditions" and actual_value is not None:
+            actual_value = [str(condition) for condition in actual_value]
+        if actual_value != expected_value:
+            errors.append(f"{key}: expected={expected_value!r}, actual={actual_value!r}")
+
+    thresholds = summary.get("thresholds") or {}
+    threshold_expected = {
+        "max_order_mean_abs_diff": float(max_order_mean_abs_diff),
+        "max_position_mean_shift": float(max_position_mean_shift),
+    }
+    for key, expected_value in threshold_expected.items():
+        actual_value = thresholds.get(key)
+        try:
+            actual_float = float(actual_value)
+        except (TypeError, ValueError):
+            errors.append(f"thresholds.{key}: expected={expected_value!r}, actual={actual_value!r}")
+            continue
+        if abs(actual_float - expected_value) > 1e-12:
+            errors.append(f"thresholds.{key}: expected={expected_value!r}, actual={actual_float!r}")
+
+    if errors:
+        raise RuntimeError(
+            "pilot summary is not compatible with current full V4 run:\n- "
+            + "\n- ".join(errors)
+        )
     return summary
 
 
@@ -967,13 +1019,24 @@ def run_evoemo_response_v4(
     effective_mode = dry_run_target if mode == "dry_run" else mode
     cost_estimate_path = out_dir / f"cost_estimate_{effective_mode}.json"
     cost_rows_path = out_dir / f"cost_estimate_{effective_mode}_calls.jsonl"
+    compatible_pilot_summary = None
     if effective_mode == "pilot":
         api_units = _select_pilot_units(units, pilot_units)
         order_variants = (0, 1)
         call_limit = min(max_api_calls, max(1, pilot_units * 2))
     elif effective_mode == "full":
         if mode == "full":
-            _require_pilot_passed(pilot_summary_path)
+            compatible_pilot_summary = _require_pilot_compatible_with_current_run(
+                pilot_summary_path,
+                judge_endpoint=judge_endpoint,
+                ground_truth_mode=ground_truth_mode,
+                conditions=conditions,
+                turn_indices=turn_indices,
+                generation_freeze_sha256=expected_generation_freeze_sha256,
+                evaluation_freeze_sha256=evaluation_freeze_sha256,
+                max_order_mean_abs_diff=max_order_mean_abs_diff,
+                max_position_mean_shift=max_position_mean_shift,
+            )
         api_units = units
         order_variants = (0,)
         call_limit = max_api_calls
@@ -1163,10 +1226,11 @@ def run_evoemo_response_v4(
         )
         summary.update(pilot_summary)
     else:
-        pilot_summary = read_json(pilot_summary_path) if pilot_summary_path else None
+        pilot_summary = compatible_pilot_summary
         summary["pilot_summary_sha256"] = (
             sha256_text(canonical_json(pilot_summary)) if pilot_summary else None
         )
+        summary["pilot_compatibility_checked"] = bool(pilot_summary)
     write_json(summary_path, summary)
     inputs = {
         "evoemo": evoemo_path,

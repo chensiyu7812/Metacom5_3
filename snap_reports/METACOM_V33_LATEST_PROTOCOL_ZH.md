@@ -351,12 +351,13 @@ min_orientation_consistency = 0.80
 - 候选顺序 deterministic balanced；
 - pilot 同一 unit 跑两个 order variants，检查 order sensitivity 和 position bias；
 - API 模式必须接受对应 dry-run `cost_estimate_sha256`；
-- full-run 必须有 `pilot_summary.json` 且 status = `PASS`。
+- full-run 必须有 `pilot_summary.json`，且 status = `PASS`；
+- full-run 前强制检查 pilot summary 与当前 full-run 的 judge / conditions / turns / ground truth / generation freeze / evaluation freeze / pilot thresholds 完全兼容。
 
 V4 no-API dry-run 已完成：
 
 - evaluation freeze: `outputs/evoemo_response_v4_eval_freeze.json`
-- evaluation freeze sha256: `027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1`
+- evaluation freeze sha256: `e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6`
 
 | Target | Calls | Total Input Tokens | Mean / P95 / Max Input Tokens | Estimated Cost | Hash |
 |---|---:|---:|---:|---:|---|
@@ -478,13 +479,13 @@ V4 准备状态：
 - `outputs/evoemo_response_v4_eval_freeze.json`
 - pilot dry-run: PASS；
 - full dry-run: PASS；
-- fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；
+- fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；full-run 前强制 pilot compatibility check；
 - pilot API: 尚未运行。
 
 下一步：
 
 1. 跑 V4 pilot API；
-2. 若 pilot status = `PASS`，再跑 V4 full response evaluation；
+2. 若 pilot status = `PASS` 且 full-run compatibility check 通过，再跑 V4 full response evaluation；
 3. full response 通过后，再设计 sampled memory / strategy audit；
 4. 更新外部评测结果表与论文 claim boundary。
 

@@ -1,6 +1,6 @@
 {
   "status": "FROZEN",
-  "created_at": "2026-06-30T03:06:47.827960+00:00",
+  "created_at": "2026-06-30T03:18:28.101692+00:00",
   "release_root_name": "policy_manager_35",
   "config_path": "configs/experiment.yaml",
   "config_sha256": "5c20bb6b7383a11a50397a70dbe72c825ce31e5f428bb16605994ec1a7e36ffa",
@@ -22,7 +22,7 @@
     "outputs/study_freeze_stable.json": "ea815499dba4ab7ff0e0bbd7d660bcef3b88054bf75b0b6fffe3169041415ed3"
   },
   "prompt_hashes": {
-    "src/metacom_pm/evo_response_v4.py": "b9b8d0187e6d833addb19fc3f37481f6bb1e08a28b2b4b9c108e8c401ca14943",
+    "src/metacom_pm/evo_response_v4.py": "26a25929b4d3041d42d20cb8a447764bc3037dff8754d7d06b1cad6d6687f56c",
     "src/metacom_pm/prompts.py": "80504562eeb81e9644a4319c23881ade7369b929af78a5d59e1d8087f73bf559"
   },
   "code_hashes": {
@@ -63,7 +63,7 @@
     "scripts/19_analyze_human_eval.py": "6c7a48fa72a2eb11485b01d81ff2e6d9df161a3373e0b7e9b5ca0b7f4a69c7a7",
     "scripts/20_freeze_study.py": "3d95445bb00fcdb755e2ca679794681d22d709295a40e51bc47a759895a4d9d1",
     "scripts/20b_freeze_evoemo_eval.py": "444927064abb80698d2d678f00fa1697237b199a45098fae80502ff3e18d4ae5",
-    "scripts/20c_freeze_evoemo_response_v4_eval.py": "c03c5a7fb5db8aaff05fa22fa0fb3e4625596a7307756b4d4eaa54ce653af6cf",
+    "scripts/20c_freeze_evoemo_response_v4_eval.py": "442fc175b966651d8480bbfbb3a141f97a22cea7ad8a5aa787d9c2a5442c1496",
     "scripts/99_release_preflight.py": "6df8de1e0d2e35cf1ed7f8fca16a8dc9737083703bda1d7c9316c66b8174912a",
     "src/metacom_pm/__init__.py": "9d9cc25edb0788f6704bf1abcb104b2ea242fe080645d4d211dee00ff7220049",
     "src/metacom_pm/api.py": "f65dd96d00641fd007de539488cfa846cf316000eae50fc1077b3f833aa8d9e4",
@@ -74,7 +74,7 @@
     "src/metacom_pm/controls.py": "07e5f162eb8dcd9c540ad38fb98a50fe33c631fd619a31747bfc7c2f7807519e",
     "src/metacom_pm/esconv.py": "eb6fb534a74d375b5d5a371145b014e235331e9a020a235e74a109092fc0565e",
     "src/metacom_pm/evo_metrics.py": "b188e32c16f1896c610a5b78aaed7d95241e8eea3785ee42bcfe0f6edda835b3",
-    "src/metacom_pm/evo_response_v4.py": "b9b8d0187e6d833addb19fc3f37481f6bb1e08a28b2b4b9c108e8c401ca14943",
+    "src/metacom_pm/evo_response_v4.py": "26a25929b4d3041d42d20cb8a447764bc3037dff8754d7d06b1cad6d6687f56c",
     "src/metacom_pm/evoemo.py": "7f1e74ce58b0d8a468891b4c657236e3f5b14de86fea2e9575e3c7d85c528d49",
     "src/metacom_pm/features.py": "9175d7700b9dd568c9640b64278702eb7f574d0b48fd50998fda0b6faa9877fc",
     "src/metacom_pm/freeze.py": "238db7ffe71b91e1bef8bdc806b390a33563d4192f144b40868ec350ddd31dc7",
@@ -108,7 +108,7 @@
     "generation_attestation": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_selective/artifact_attestation.json",
     "evaluation_policy": "This freeze binds the V4 response evaluator code/configuration used after EvoEmo selective generation was completed and attested. It does not authorize regenerating dialogues.",
     "api_budget_policy": "API runs must be preceded by a matching no-API dry-run and must pass --accept-cost-estimate-sha256 for the active mode.",
-    "pilot_gate_policy": "Full V4 response evaluation requires pilot_summary.status == PASS.",
+    "pilot_gate_policy": "Full V4 response evaluation requires a PASS pilot summary whose model, family, conditions, turn indices, ground-truth mode, generation/evaluation freezes, and pilot thresholds match the current full-run configuration.",
     "debug_exception": "Unfrozen runs or --allow-unfrozen-debug outputs are non-reportable.",
     "model_family_independence": {
       "ok": true,
@@ -124,5 +124,5 @@
       }
     }
   },
-  "freeze_sha256": "027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1"
+  "freeze_sha256": "e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6"
 }

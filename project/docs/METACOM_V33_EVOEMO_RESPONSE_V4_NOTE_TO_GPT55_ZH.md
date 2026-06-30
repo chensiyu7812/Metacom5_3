@@ -94,14 +94,14 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-sha256: 027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1
+sha256: e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6
 ```
 
 推荐顺序：
 
 1. `--dry-run --dry-run-target pilot`
 2. `--pilot --accept-cost-estimate-sha256 <pilot_hash>`
-3. 若 `pilot_summary.json.status == PASS`：
+3. 若 `pilot_summary.json.status == PASS` 且与当前 full-run 配置兼容：
 4. `--dry-run --dry-run-target full`
 5. `--full-run --pilot-summary ... --accept-cost-estimate-sha256 <full_hash>`
 
@@ -129,3 +129,22 @@ calls = 48
 estimated cost = 1.31 USD
 cost_estimate_sha256 = 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390
 ```
+
+## 8. 三次审查后的 pilot/full-run compatibility 补丁
+
+你指出 full-run 不能只检查旧 `pilot_summary.status == PASS`，这个判断是正确的。单看 PASS 会留下证明链一致性漏洞：旧 pilot 可能使用了不同 judge、conditions、turns、ground truth mode、generation/evaluation freeze 或 pilot thresholds，却仍被 full-run 接受。
+
+V4 现在新增 `_require_pilot_compatible_with_current_run(...)`，full-run 前逐项检查：
+
+- `protocol == "evoemo_response_v4"`；
+- `mode == "pilot"`；
+- `status == "PASS"`；
+- judge model / family 与当前 endpoint 一致；
+- `ground_truth_mode` 一致；
+- `conditions` 一致；
+- `turn_indices` 一致；
+- generation freeze sha256 一致；
+- evaluation freeze sha256 一致；
+- `max_order_mean_abs_diff` 和 `max_position_mean_shift` 一致。
+
+不一致时 fail-closed，禁止 full-run。对应新增 3 个单测：完全匹配通过、conditions mismatch 失败、evaluation freeze mismatch 失败。
