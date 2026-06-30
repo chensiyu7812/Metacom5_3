@@ -537,6 +537,34 @@ def _enforce_budget_gates(
     }
 
 
+def _finalize_cost_estimate(
+    estimate: Mapping[str, Any],
+    *,
+    invocation_mode: str,
+    dry_run_target: str | None,
+    effective_api_mode: str,
+    ground_truth_mode: str,
+    sample_metadata: Mapping[str, Any],
+    budget_gate: Mapping[str, Any],
+) -> dict[str, Any]:
+    # The hash authorizes the actual API plan.  It deliberately excludes the
+    # CLI invocation mode so a dry-run hash can be accepted by the matching
+    # pilot/full API run.
+    hashed = _hash_record(
+        {
+            **dict(estimate),
+            "effective_api_mode": effective_api_mode,
+            "ground_truth_mode": ground_truth_mode,
+            "sample_metadata": dict(sample_metadata),
+            "budget_gate": dict(budget_gate),
+        },
+        "cost_estimate_sha256",
+    )
+    hashed["invocation_mode"] = invocation_mode
+    hashed["dry_run_target"] = dry_run_target
+    return hashed
+
+
 def _candidate_id_validator(expected_ids: set[str]) -> Callable[[EvoResponseV4Judgment], None]:
     def validate(parsed: EvoResponseV4Judgment) -> None:
         actual = [score.candidate_id for score in parsed.candidates]
@@ -1058,18 +1086,14 @@ def run_evoemo_response_v4(
         max_estimated_usd=max_estimated_usd,
         max_input_tokens_per_call=max_input_tokens_per_call,
     )
-    estimate = {
-        **estimate,
-        "mode": mode,
-        "dry_run_target": dry_run_target if mode == "dry_run" else None,
-        "effective_api_mode": effective_mode,
-        "ground_truth_mode": ground_truth_mode,
-        "sample_metadata": metadata,
-        "budget_gate": budget_gate,
-    }
-    estimate = _hash_record(
-        {k: v for k, v in estimate.items() if k != "cost_estimate_sha256"},
-        "cost_estimate_sha256",
+    estimate = _finalize_cost_estimate(
+        estimate,
+        invocation_mode=mode,
+        dry_run_target=dry_run_target if mode == "dry_run" else None,
+        effective_api_mode=effective_mode,
+        ground_truth_mode=ground_truth_mode,
+        sample_metadata=metadata,
+        budget_gate=budget_gate,
     )
     if budget_gate["status"] != "PASS":
         if mode == "dry_run":

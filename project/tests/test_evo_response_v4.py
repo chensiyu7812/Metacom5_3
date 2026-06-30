@@ -3,6 +3,7 @@ from metacom_pm.evo_response_v4 import (
     EvoResponseV4CandidateScore,
     EvoResponseV4Judgment,
     _candidate_id_validator,
+    _finalize_cost_estimate,
     _require_pilot_compatible_with_current_run,
     _validate_response_v4_outputs,
     balanced_candidate_order,
@@ -135,6 +136,43 @@ def test_validate_response_v4_outputs_rejects_missing_score_row(tmp_path):
     )
     assert not result["ok"]
     assert any("missing score keys" in error for error in result["errors"])
+
+
+def test_cost_estimate_hash_ignores_cli_invocation_mode():
+    base_estimate = {
+        "status": "ESTIMATED",
+        "protocol": "evoemo_response_v4",
+        "api_calls": 48,
+        "candidate_count": 6,
+        "input_tokens": {"total": 100, "mean": 50, "min": 40, "p95": 60, "max": 60},
+        "estimated_output_tokens": {"per_call": 10, "total": 20},
+        "estimated_cost_usd": 0.01,
+        "pricing": {"input_usd_per_mtok": 2.5, "output_usd_per_mtok": 10.0},
+        "order_variants": [0, 1],
+        "model": "gpt-4o",
+    }
+    kwargs = {
+        "effective_api_mode": "pilot",
+        "ground_truth_mode": "full",
+        "sample_metadata": {"unit_count": 24},
+        "budget_gate": {"status": "PASS"},
+    }
+    dry_run = _finalize_cost_estimate(
+        base_estimate,
+        invocation_mode="dry_run",
+        dry_run_target="pilot",
+        **kwargs,
+    )
+    api_run = _finalize_cost_estimate(
+        base_estimate,
+        invocation_mode="pilot",
+        dry_run_target=None,
+        **kwargs,
+    )
+
+    assert dry_run["cost_estimate_sha256"] == api_run["cost_estimate_sha256"]
+    assert dry_run["invocation_mode"] == "dry_run"
+    assert api_run["invocation_mode"] == "pilot"
 
 
 def _pilot_summary() -> dict:

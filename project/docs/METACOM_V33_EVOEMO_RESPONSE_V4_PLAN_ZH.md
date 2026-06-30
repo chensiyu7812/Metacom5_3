@@ -102,7 +102,7 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-freeze sha256: e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6
+freeze sha256: c9ccd1d21d1da8571710361ed9648b6696964edaf45d45067cea2887185c4bb3
 ```
 
 冻结入口：
@@ -152,7 +152,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 ```text
 outputs/evoemo_response_v4/cost_estimate_pilot.json
-cost_estimate_sha256: 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390
+cost_estimate_sha256: 3f4c38cdb21d3e0e545bafd652cf6b7fcaedc159f83ef0919b9dfcd24ca3b661
 calls: 48
 estimated cost: 1.31 USD
 input tokens mean / p95 / max: 6,947 / 11,021 / 11,289
@@ -168,7 +168,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/17b_eval_evoemo_response_v4.py \
   --pilot \
   --pilot-units 24 \
-  --accept-cost-estimate-sha256 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390 \
+  --accept-cost-estimate-sha256 3f4c38cdb21d3e0e545bafd652cf6b7fcaedc159f83ef0919b9dfcd24ca3b661 \
   --max-order-mean-abs-diff 0.50 \
   --max-position-mean-shift 0.40
 ```
@@ -200,7 +200,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 ```text
 outputs/evoemo_response_v4/cost_estimate_full.json
-cost_estimate_sha256: 3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b
+cost_estimate_sha256: 74650cb61d42640ee673817b67953f3716e0c58c52f958c677706411d5650eb5
 calls: 204
 estimated cost: 5.59 USD
 input tokens mean / p95 / max: 6,970 / 10,706 / 11,289

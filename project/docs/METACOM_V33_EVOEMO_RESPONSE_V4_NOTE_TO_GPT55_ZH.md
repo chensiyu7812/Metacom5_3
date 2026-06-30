@@ -94,7 +94,7 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-sha256: e8e51abd6108fc46f7014e448b2073c8a2485fdc51f57bd7071065304dea21c6
+sha256: c9ccd1d21d1da8571710361ed9648b6696964edaf45d45067cea2887185c4bb3
 ```
 
 推荐顺序：
@@ -127,7 +127,7 @@ max_position_mean_shift = 0.40
 ```text
 calls = 48
 estimated cost = 1.31 USD
-cost_estimate_sha256 = 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390
+cost_estimate_sha256 = 3f4c38cdb21d3e0e545bafd652cf6b7fcaedc159f83ef0919b9dfcd24ca3b661
 ```
 
 ## 8. 三次审查后的 pilot/full-run compatibility 补丁
