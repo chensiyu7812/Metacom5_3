@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
-更新时间：2026-06-29  
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；下一步是 EvoEmo pairwise-only response evaluation。  
+更新时间：2026-06-30
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；EvoEmo pairwise-only response evaluation 已完成 816/816 calls，但 AB/BA orientation consistency gate 失败，因此不能作为 confirmatory 外部结果。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -287,37 +287,81 @@ EvoEmo / ES-MemEval-derived 数据用于长期记忆外部验证。
 - generation freeze sha256: `e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f`
 - 目的：保留已完成 generation 的旧 freeze，同时锁住新增 `--pairs-only` evaluator code/config。
 
-### 6.4 EvoEmo 评价顺序
+### 6.4 EvoEmo pairwise-only 评价结果
 
-推荐省钱且稳健的两阶段：
+Pairwise-only response evaluation 已完成所有 API calls：
 
-1. Pairwise-only response quality
-   - PM / PM+guardrail vs strong rule / best fixed / baselines；
-   - final judge: GPT-4o；
-   - 检验 response quality 是否非劣或更好；
-   - 预计费用约 4–10 USD；
-   - 运行入口：
+- output dir: `outputs/evoemo_selective_metrics/`
+- expected rows: 816；
+- actual rows: 816；
+- final judge: GPT-4o；
+- usage rows: 816；
+- prompt tokens: 12,267,429；
+- completion tokens: 90,529；
+- 估算费用：约 31.57 USD。
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/17_eval_evoemo_selective.py \
-  --freeze outputs/evoemo_pairwise_eval_freeze.json \
-  --generation-attestation outputs/evoemo_selective/artifact_attestation.json \
-  --endpoint final_judge \
-  --pairs-only
+但是最终没有生成正式：
+
+- `outputs/evoemo_selective_metrics/selective_summary.json`
+- `outputs/evoemo_selective_metrics/artifact_attestation.json`
+
+原因是 confirmatory dialogue-pair judge gate 失败。预设门槛：
+
+```text
+min_orientation_consistency = 0.80
 ```
 
-2. Selective memory / strategy audit
-   - memory misuse；
-   - memory omission；
-   - stale/conflict；
-   - unnecessary exposure；
-   - unsupported personal claim；
-   - strategy over-structuring / premature advice；
-   - 预计额外费用约 25–40 USD。
+实际结果：
 
-完整 selective 外部评测预计约 30–50 USD。
+| Comparison | Orientation Consistency | Raw PM Score | Disagreement-as-tie PM Score |
+|---|---:|---:|---:|
+| pm_vs_best_fixed | 0.647 | 0.488 | 0.490 |
+| pm_vs_full_history_rs | 0.745 | 0.853 | 0.853 |
+| pm_vs_session_rag_rs | 0.402 | 0.461 | 0.466 |
+| pm_vs_strong_rule | 0.569 | 0.458 | 0.461 |
+
+解释：
+
+- 本轮 pairwise 结果只能作为诊断；
+- 不能作为论文 confirmatory 外部 response-quality 结果；
+- 不能写 EvoEmo pairwise 证明 PM response quality 非劣或更好；
+- 失败原因是 10-turn bundle pairwise prompt 对候选顺序敏感，AB/BA 稳定性不足。
+
+详细报告：
+
+- `docs/METACOM_V33_EVOEMO_PAIRWISE_GATE_FAILURE_ZH.md`
+- `outputs/evoemo_selective_metrics/pairwise_gate_failure_diagnostic.json`
+
+### 6.5 下一版 EvoEmo 评价要求
+
+下一版 API 评价必须先过 pilot，不允许直接全量跑：
+
+1. no-API dry-run
+   - 统计调用数；
+   - 统计 token；
+   - 估算费用；
+   - 超过预算直接拒跑。
+
+2. 小样本 pilot
+   - 先跑少量 turns；
+   - 检查 JSON 成功率；
+   - 检查候选顺序稳定性；
+   - 检查 position bias；
+   - pilot 不过，不进入正式跑。
+
+3. 正式 response evaluation 改用更短、更稳的设计
+   - 单 turn 为评价单位；
+   - 同一 turn 内多候选打分；
+   - 不再使用 10-turn bundle pairwise 作为 confirmatory 主评测；
+   - 候选顺序固定 seed 随机并平衡；
+   - 预注册抽样规模；
+   - 保留 budget gate。
+
+4. memory / strategy audit 禁止全量直接跑
+   - 必须使用 stratified sampled audit；
+   - memory omission audit 只在少量关键 turn 上使用完整 memory；
+   - misuse audit 尽量只给 selected memory；
+   - strategy audit 单独轻量 prompt。
 
 ## 7. 当前任务状态
 
@@ -353,11 +397,22 @@ scripts/15_run_evoemo.py \
 - freeze sha256: `6603d334484e93d282170600811faf8629e682c6b60b23fa0914cccce7b25819`
 - bound generation freeze: `e3e0e33ce3227a3032dc7929eb6f615c42784630739c2b79351da7f4d904571f`
 
+Pairwise-only 评价状态：
+
+- `outputs/evoemo_selective_metrics/selective_dialogue_pairs.jsonl`
+- rows: 816 / 816；
+- gate: FAILED；
+- `selective_summary.json`: 未生成；
+- `artifact_attestation.json`: 未生成；
+- 结论：诊断可用，confirmatory 不可用。
+
 下一步：
 
-1. 跑 EvoEmo pairwise-only response evaluation；
-2. 若 response quality 非劣或更好，再补 selective memory / strategy audit；
-3. 更新外部评测结果表与论文 claim boundary。
+1. 先设计 EvoEmo Response Eval V4；
+2. no-API dry-run 估算 token / cost；
+3. 小样本 pilot 检查稳定性；
+4. pilot 通过后才允许正式抽样评价；
+5. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
 
@@ -372,6 +427,7 @@ scripts/15_run_evoemo.py \
 - `snap/METACOM_V33_EVOEMO_PM_READINESS_ZH.md`
 - `snap/METACOM_V33_STABLE_PM_EVOEMO_READINESS_ZH.md`
 - `snap/METACOM_V33_EXTERNAL_EVALUATION_PLAN_FOR_GPT55_ZH.md`
+- `docs/METACOM_V33_EVOEMO_PAIRWISE_GATE_FAILURE_ZH.md`
 
 核心 artifacts：
 
@@ -380,6 +436,7 @@ scripts/15_run_evoemo.py \
 - `outputs/selection_stable.json`
 - `outputs/evoemo_pm_readiness_stable_frozen.json`
 - `outputs/esconv_strategy_eval/summary.json`
+- `outputs/evoemo_selective_metrics/pairwise_gate_failure_diagnostic.json`
 
 ## 9. 投稿写法提醒
 
