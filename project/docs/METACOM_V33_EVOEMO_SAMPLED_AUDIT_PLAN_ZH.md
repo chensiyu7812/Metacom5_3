@@ -180,7 +180,24 @@ Full sampled audit dry-run：
 - estimated GPT-4o cost: about 0.96 USD
 - cost hash: `164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45`
 
-API calls so far: none.
+Pilot API status:
+
+- status: PASS
+- expected / completed calls: 16 / 16
+- score rows: 16
+- raw rows: 16
+- successful raw calls: 16
+- raw row gate: 16 <= 17
+- actual prompt tokens: 53,863
+- actual completion tokens: 2,683
+- estimated actual GPT-4o cost: about 0.16 USD
+- verdicts: acceptable 15 / minor_issue 1
+
+The only minor issue was a PM selected-resource call where the response was
+supportive but did not directly address the seeker's request for concrete
+guidance about managing anxiety around a reunion encounter. There were no
+selected-evidence misuse, unnecessary exposure, stale/conflict, or unsupported
+personal-claim issues in the pilot.
 
 Recommended pilot command:
 
@@ -205,7 +222,7 @@ Pilot pass criteria:
 - `score_rows == expected_calls`;
 - `raw_rows <= expected_calls * 1.10`.
 
-If the pilot passes, full sampled audit must still use the full dry-run hash:
+The pilot passed. Full sampled audit must still use the full dry-run hash:
 
 ```text
 164e5c6aa3aaa84cce45e30439e00ef70ed473d9c9d988fc182f53e39af3fa45

@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit evaluator / freeze / no-API dry-run 已完成。下一步是 sampled audit pilot API。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit pilot API 已通过。下一步是 full sampled audit。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -569,16 +569,21 @@ Sampled audit evaluator：
 - `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
 - `outputs/evoemo_sampled_audit/cost_estimate_full.json`
 - pilot dry-run: PASS；
+- pilot API: PASS；
+- pilot expected / completed calls: 16 / 16；
+- pilot score rows: 16；
+- pilot raw rows: 16；raw rows limit: 17；
+- pilot actual usage: prompt 53,863 tokens；completion 2,683 tokens；estimated GPT-4o cost about 0.16 USD；
+- pilot verdicts: acceptable 15；minor_issue 1；
 - full dry-run: PASS；
-- API calls so far: none。
+- full API: not run yet。
 
 下一步：
 
-1. 跑 sampled audit pilot API；
-2. 检查 `pilot_summary.json` 的 exact output validation；
+1. 跑 full sampled audit；
+2. 检查 `audit_summary.json` 的 exact output validation；
 3. 检查 raw rows gate: `raw_rows <= expected_calls * 1.10`；
-4. pilot 通过后才运行 full sampled audit；
-5. 更新外部评测结果表与论文 claim boundary。
+4. 若 full audit 通过，再更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
 
@@ -620,6 +625,9 @@ Sampled audit evaluator：
 - `outputs/evoemo_sampled_audit_eval_freeze.json`
 - `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
 - `outputs/evoemo_sampled_audit/cost_estimate_full.json`
+- `outputs/evoemo_sampled_audit/pilot_summary.json`
+- `outputs/evoemo_sampled_audit/pilot_scores.jsonl`
+- `outputs/evoemo_sampled_audit/pilot_artifact_attestation.json`
 
 ## 9. 投稿写法提醒
 
