@@ -356,11 +356,11 @@ min_orientation_consistency = 0.80
 V4 no-API dry-run 已完成：
 
 - evaluation freeze: `outputs/evoemo_response_v4_eval_freeze.json`
-- evaluation freeze sha256: `cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b`
+- evaluation freeze sha256: `027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1`
 
 | Target | Calls | Total Input Tokens | Mean / P95 / Max Input Tokens | Estimated Cost | Hash |
 |---|---:|---:|---:|---:|---|
-| pilot | 24 | 148,994 | 6,208 / 7,463 / 7,665 | 0.61 USD | `ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a` |
+| pilot | 48 | 333,436 | 6,947 / 11,021 / 11,289 | 1.31 USD | `349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390` |
 | full | 204 | 1,421,967 | 6,970 / 10,706 / 11,289 | 5.59 USD | `3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b` |
 
 这确认：
@@ -380,7 +380,10 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/17b_eval_evoemo_response_v4.py \
   --dry-run \
   --dry-run-target pilot \
+  --pilot-units 24 \
   --max-estimated-usd 2 \
+  --max-order-mean-abs-diff 0.50 \
+  --max-position-mean-shift 0.40 \
   --overwrite
 ```
 
@@ -391,7 +394,10 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   /home/tokkio/miniconda3/envs/sim_eval/bin/python \
   scripts/17b_eval_evoemo_response_v4.py \
   --pilot \
-  --accept-cost-estimate-sha256 ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a
+  --pilot-units 24 \
+  --accept-cost-estimate-sha256 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390 \
+  --max-order-mean-abs-diff 0.50 \
+  --max-position-mean-shift 0.40
 ```
 
 3. pilot 通过后，full dry-run + full API
@@ -472,15 +478,15 @@ V4 准备状态：
 - `outputs/evoemo_response_v4_eval_freeze.json`
 - pilot dry-run: PASS；
 - full dry-run: PASS；
+- fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；
 - pilot API: 尚未运行。
 
 下一步：
 
-1. 创建/冻结 V4 evaluation freeze，或仅以 `--allow-unfrozen-debug` 做非报告 pilot；
-2. 跑 V4 pilot API；
-3. 若 pilot status = `PASS`，再跑 V4 full response evaluation；
-4. full response 通过后，再设计 sampled memory / strategy audit；
-5. 更新外部评测结果表与论文 claim boundary。
+1. 跑 V4 pilot API；
+2. 若 pilot status = `PASS`，再跑 V4 full response evaluation；
+3. full response 通过后，再设计 sampled memory / strategy audit；
+4. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
 

@@ -63,7 +63,7 @@ parser.add_argument(
     default="full",
     help="Which API mode the dry-run cost estimate is for.",
 )
-parser.add_argument("--pilot-units", type=int, default=12)
+parser.add_argument("--pilot-units", type=int, default=24)
 parser.add_argument("--pilot-summary", type=Path, default=ROOT / "outputs/evoemo_response_v4/pilot_summary.json")
 parser.add_argument("--accept-cost-estimate-sha256")
 parser.add_argument("--max-api-calls", type=int, default=250)
@@ -73,8 +73,8 @@ parser.add_argument("--estimated-output-tokens-per-call", type=int, default=1000
 parser.add_argument("--input-usd-per-mtok", type=float, default=2.50)
 parser.add_argument("--output-usd-per-mtok", type=float, default=10.0)
 parser.add_argument("--max-tokens", type=int, default=1400)
-parser.add_argument("--max-order-mean-abs-diff", type=float, default=0.75)
-parser.add_argument("--max-position-mean-shift", type=float, default=0.50)
+parser.add_argument("--max-order-mean-abs-diff", type=float, default=0.50)
+parser.add_argument("--max-position-mean-shift", type=float, default=0.40)
 parser.add_argument("--overwrite", action="store_true")
 args = parser.parse_args()
 

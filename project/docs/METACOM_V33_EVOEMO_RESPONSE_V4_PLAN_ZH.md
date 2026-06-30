@@ -14,6 +14,8 @@ V4 的目标不是“换个 judge 重跑”，而是修正测量设计：
 - 正式 API 跑之前必须先 no-API dry-run 和小样本 pilot；
 - 任何 API 模式都必须匹配 dry-run cost estimate hash；
 - pilot 不通过时禁止 full-run。
+- 写 summary / attestation 前必须通过 exact output validation；
+- artifact attestation 绑定 V4 evaluation freeze，同时记录 generation freeze。
 
 ## 2. V4 主评测单位
 
@@ -78,8 +80,9 @@ V4 不再使用 AB/BA pairwise preference，因此消除了旧协议里的“同
 默认 pilot gate：
 
 ```text
-max_order_mean_abs_diff = 0.75
-max_position_mean_shift = 0.50
+pilot_units = 24
+max_order_mean_abs_diff = 0.50
+max_position_mean_shift = 0.40
 ```
 
 这些阈值不是论文结论本身，只是判断当前 prompt 是否足够稳定进入 full-run 的工程门。
@@ -98,7 +101,7 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-freeze sha256: cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b
+freeze sha256: 027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1
 ```
 
 冻结入口：
@@ -137,7 +140,10 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/17b_eval_evoemo_response_v4.py \
   --dry-run \
   --dry-run-target pilot \
+  --pilot-units 24 \
   --max-estimated-usd 2 \
+  --max-order-mean-abs-diff 0.50 \
+  --max-position-mean-shift 0.40 \
   --overwrite
 ```
 
@@ -145,7 +151,10 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 ```text
 outputs/evoemo_response_v4/cost_estimate_pilot.json
-cost_estimate_sha256: ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a
+cost_estimate_sha256: 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390
+calls: 48
+estimated cost: 1.31 USD
+input tokens mean / p95 / max: 6,947 / 11,021 / 11,289
 ```
 
 ### 6.2 Pilot API
@@ -157,7 +166,10 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   /home/tokkio/miniconda3/envs/sim_eval/bin/python \
   scripts/17b_eval_evoemo_response_v4.py \
   --pilot \
-  --accept-cost-estimate-sha256 <pilot_cost_estimate_sha256>
+  --pilot-units 24 \
+  --accept-cost-estimate-sha256 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390 \
+  --max-order-mean-abs-diff 0.50 \
+  --max-position-mean-shift 0.40
 ```
 
 输出：
@@ -188,6 +200,9 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 ```text
 outputs/evoemo_response_v4/cost_estimate_full.json
 cost_estimate_sha256: 3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b
+calls: 204
+estimated cost: 5.59 USD
+input tokens mean / p95 / max: 6,970 / 10,706 / 11,289
 ```
 
 ### 6.4 Full API

@@ -94,7 +94,7 @@ V4 evaluation freeze：
 
 ```text
 outputs/evoemo_response_v4_eval_freeze.json
-sha256: cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b
+sha256: 027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1
 ```
 
 推荐顺序：
@@ -106,3 +106,26 @@ sha256: cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b
 5. `--full-run --pilot-summary ... --accept-cost-estimate-sha256 <full_hash>`
 
 这解决了旧方案最大的问题：不再允许一次性全量烧钱，任何 API 运行前都必须有真实 prompt 构造出的预算 hash。
+
+## 7. 二次审查后的 fail-closed 补丁
+
+你指出的两个补丁是对的，已经修正：
+
+1. `artifact_attestation.json` / `pilot_artifact_attestation.json` 的 `study_freeze_sha256` 现在绑定 V4 evaluation freeze，而不是 generation freeze。
+2. summary 和 attestation 写入前会调用 exact output validation，强制检查 judgment rows、score rows、raw successful calls、重复 key、missing key、extra key，以及每个 judgment 的 candidate IDs / condition set 完整性。
+
+同时默认 pilot 改为：
+
+```text
+pilot_units = 24
+max_order_mean_abs_diff = 0.50
+max_position_mean_shift = 0.40
+```
+
+新的 pilot dry-run：
+
+```text
+calls = 48
+estimated cost = 1.31 USD
+cost_estimate_sha256 = 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390
+```

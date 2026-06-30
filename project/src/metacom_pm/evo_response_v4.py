@@ -704,6 +704,157 @@ def _load_scores(path: str | Path) -> list[dict[str, Any]]:
     return list(iter_jsonl(p))
 
 
+def _validate_response_v4_outputs(
+    *,
+    score_path: str | Path,
+    judgment_path: str | Path,
+    raw_path: str | Path,
+    expected_units: Sequence[Mapping[str, Any]],
+    order_variants: Sequence[int],
+    conditions: Sequence[str],
+) -> dict[str, Any]:
+    expected_judgment_keys = {
+        (str(unit["unit_id"]), int(order_variant))
+        for unit in expected_units
+        for order_variant in order_variants
+    }
+    expected_score_keys = {
+        (unit_id, order_variant, str(condition))
+        for unit_id, order_variant in expected_judgment_keys
+        for condition in conditions
+    }
+    expected_candidate_ids = {
+        _candidate_id(position) for position in range(len(conditions))
+    }
+    expected_conditions = set(str(condition) for condition in conditions)
+
+    errors: list[str] = []
+    judgment_keys: set[tuple[str, int]] = set()
+    duplicate_judgments: list[tuple[str, int]] = []
+    extra_judgments: list[tuple[str, int]] = []
+    judgment_rows = 0
+    for row in iter_jsonl(judgment_path):
+        judgment_rows += 1
+        try:
+            key = (str(row["unit_id"]), int(row["order_variant"]))
+        except Exception:
+            errors.append(f"judgment row lacks valid key: {row}")
+            continue
+        if key in judgment_keys:
+            duplicate_judgments.append(key)
+        judgment_keys.add(key)
+        if key not in expected_judgment_keys:
+            extra_judgments.append(key)
+
+        scores = row.get("scores")
+        if not isinstance(scores, list) or len(scores) != len(conditions):
+            errors.append(
+                f"judgment {key} has {len(scores) if isinstance(scores, list) else 'non-list'} "
+                f"scores; expected {len(conditions)}"
+            )
+            continue
+        score_ids = [str(score.get("candidate_id")) for score in scores if isinstance(score, dict)]
+        if len(score_ids) != len(set(score_ids)) or set(score_ids) != expected_candidate_ids:
+            errors.append(
+                f"judgment {key} candidate IDs mismatch: "
+                f"expected={sorted(expected_candidate_ids)}, actual={sorted(score_ids)}"
+            )
+        mapping = row.get("candidate_mapping")
+        if not isinstance(mapping, dict) or set(mapping) != expected_candidate_ids:
+            errors.append(f"judgment {key} candidate_mapping IDs mismatch")
+            continue
+        mapped_conditions = {
+            str(info.get("condition"))
+            for info in mapping.values()
+            if isinstance(info, dict)
+        }
+        if mapped_conditions != expected_conditions:
+            errors.append(
+                f"judgment {key} condition set mismatch: "
+                f"expected={sorted(expected_conditions)}, actual={sorted(mapped_conditions)}"
+            )
+
+    score_keys: set[tuple[str, int, str]] = set()
+    duplicate_scores: list[tuple[str, int, str]] = []
+    extra_scores: list[tuple[str, int, str]] = []
+    score_rows = 0
+    for row in iter_jsonl(score_path):
+        score_rows += 1
+        try:
+            key = (
+                str(row["unit_id"]),
+                int(row["order_variant"]),
+                str(row["condition"]),
+            )
+        except Exception:
+            errors.append(f"score row lacks valid key: {row}")
+            continue
+        if key in score_keys:
+            duplicate_scores.append(key)
+        score_keys.add(key)
+        if key not in expected_score_keys:
+            extra_scores.append(key)
+        for field in SCORE_FIELDS:
+            value = row.get(field)
+            if not isinstance(value, int) or not 1 <= value <= 5:
+                errors.append(f"score {key} has invalid {field}: {value!r}")
+
+    raw_rows = 0
+    raw_success_keys: set[tuple[str, int]] = set()
+    duplicate_raw_successes: list[tuple[str, int]] = []
+    for row in iter_jsonl(raw_path):
+        raw_rows += 1
+        if row.get("error") is not None or row.get("validated") is None:
+            continue
+        try:
+            key = (str(row["unit_id"]), int(row["order_variant"]))
+        except Exception:
+            errors.append(f"successful raw row lacks valid key: {row}")
+            continue
+        if key in raw_success_keys:
+            duplicate_raw_successes.append(key)
+        raw_success_keys.add(key)
+
+    missing_judgments = expected_judgment_keys - judgment_keys
+    missing_scores = expected_score_keys - score_keys
+    missing_raw_successes = expected_judgment_keys - raw_success_keys
+    if duplicate_judgments:
+        errors.append(f"duplicate judgment keys: {duplicate_judgments[:5]}")
+    if extra_judgments:
+        errors.append(f"extra judgment keys: {extra_judgments[:5]}")
+    if missing_judgments:
+        errors.append(f"missing judgment keys: {sorted(missing_judgments)[:5]}")
+    if duplicate_scores:
+        errors.append(f"duplicate score keys: {duplicate_scores[:5]}")
+    if extra_scores:
+        errors.append(f"extra score keys: {extra_scores[:5]}")
+    if missing_scores:
+        errors.append(f"missing score keys: {sorted(missing_scores)[:5]}")
+    if raw_rows < len(expected_judgment_keys):
+        errors.append(
+            f"raw rows fewer than expected calls: raw_rows={raw_rows}, "
+            f"expected_calls={len(expected_judgment_keys)}"
+        )
+    if duplicate_raw_successes:
+        errors.append(f"duplicate successful raw keys: {duplicate_raw_successes[:5]}")
+    if missing_raw_successes:
+        errors.append(f"missing successful raw keys: {sorted(missing_raw_successes)[:5]}")
+
+    return {
+        "ok": not errors,
+        "errors": errors,
+        "expected_calls": len(expected_judgment_keys),
+        "judgment_rows": judgment_rows,
+        "score_rows": score_rows,
+        "raw_rows": raw_rows,
+        "successful_raw_calls": len(raw_success_keys),
+        "expected_score_rows": len(expected_score_keys),
+        "duplicate_judgment_keys": len(duplicate_judgments),
+        "duplicate_score_keys": len(duplicate_scores),
+        "duplicate_successful_raw_keys": len(duplicate_raw_successes),
+    }
+
+
 def _prepare_outputs(out_dir: Path, paths: Sequence[Path], *, overwrite: bool) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     if overwrite:
@@ -773,7 +924,7 @@ def run_evoemo_response_v4(
     conditions: Sequence[str] = DEFAULT_RESPONSE_V4_CONDITIONS,
     turn_indices: Sequence[int] = DEFAULT_RESPONSE_V4_TURNS,
     ground_truth_mode: str = "full",
-    pilot_units: int = 12,
+    pilot_units: int = 24,
     accept_cost_estimate_sha256: str | None = None,
     pilot_summary_path: str | Path | None = None,
     max_api_calls: int = 250,
@@ -783,8 +934,8 @@ def run_evoemo_response_v4(
     input_usd_per_mtok: float = 2.50,
     output_usd_per_mtok: float = 10.0,
     max_tokens: int = 1_400,
-    max_order_mean_abs_diff: float = 0.75,
-    max_position_mean_shift: float = 0.50,
+    max_order_mean_abs_diff: float = 0.50,
+    max_position_mean_shift: float = 0.40,
     overwrite: bool = False,
 ) -> dict[str, Any]:
     if mode not in {"dry_run", "pilot", "full"}:
@@ -900,6 +1051,7 @@ def run_evoemo_response_v4(
         judgment_path = out_dir / "pilot_judgments.jsonl"
         raw_path = out_dir / "pilot_raw_calls.jsonl"
         summary_path = pilot_summary_json
+        run_attestation_path = out_dir / "pilot_artifact_attestation.json"
         stage = "evoemo_response_v4_pilot"
         expected_calls = len(api_units) * len(order_variants)
     else:
@@ -907,12 +1059,13 @@ def run_evoemo_response_v4(
         judgment_path = out_dir / "response_judgments.jsonl"
         raw_path = out_dir / "response_raw_calls.jsonl"
         summary_path = full_summary_json
+        run_attestation_path = attestation_path
         stage = "evoemo_response_v4_full"
         expected_calls = len(api_units)
 
     _prepare_outputs(
         out_dir,
-        [score_path, judgment_path, raw_path, summary_path, attestation_path],
+        [score_path, judgment_path, raw_path, summary_path, run_attestation_path],
         overwrite=overwrite,
     )
     done_calls = load_done_keys(judgment_path, ("unit_id", "order_variant"))
@@ -966,6 +1119,20 @@ def run_evoemo_response_v4(
         if callable(close):
             close()
 
+    output_validation = _validate_response_v4_outputs(
+        score_path=score_path,
+        judgment_path=judgment_path,
+        raw_path=raw_path,
+        expected_units=api_units,
+        order_variants=order_variants,
+        conditions=conditions,
+    )
+    if not output_validation["ok"]:
+        raise RuntimeError(
+            "V4 output validation failed before summary/attestation:\n- "
+            + "\n- ".join(output_validation["errors"])
+        )
+
     scores = _load_scores(score_path)
     summary = {
         "status": "COMPLETE",
@@ -973,12 +1140,15 @@ def run_evoemo_response_v4(
         "mode": mode,
         "judge_model": judge_endpoint.model,
         "judge_family": judge_endpoint.family,
+        "generation_freeze_sha256": expected_generation_freeze_sha256,
+        "evaluation_freeze_sha256": evaluation_freeze_sha256,
         "ground_truth_mode": ground_truth_mode,
         "conditions": list(conditions),
         "turn_indices": list(turn_indices),
         "expected_calls": expected_calls,
         "completed_calls": len(list(iter_jsonl(judgment_path))),
         "score_rows": len(scores),
+        "output_validation": output_validation,
         "cost_estimate_sha256": estimate["cost_estimate_sha256"],
         "cost_estimate": estimate,
         "sample_metadata": metadata,
@@ -1007,8 +1177,11 @@ def run_evoemo_response_v4(
     }
     if mode == "full" and pilot_summary_path is not None:
         inputs["pilot_summary"] = pilot_summary_path
+    freeze_verification_path = out_dir / "freeze_verification.json"
+    if freeze_verification_path.is_file():
+        inputs["freeze_verification"] = freeze_verification_path
     create_artifact_attestation(
-        attestation_path if mode == "full" else out_dir / "pilot_artifact_attestation.json",
+        run_attestation_path,
         stage=stage,
         inputs=inputs,
         outputs={
@@ -1025,11 +1198,13 @@ def run_evoemo_response_v4(
             "ground_truth_mode": ground_truth_mode,
             "mode": mode,
             "max_tokens": max_tokens,
+            "generation_freeze_sha256": expected_generation_freeze_sha256,
+            "evaluation_freeze_sha256": evaluation_freeze_sha256,
         },
         expected={
             "calls": expected_calls,
             "score_rows": expected_calls * len(conditions),
         },
-        study_freeze_sha256=expected_generation_freeze_sha256,
+        study_freeze_sha256=evaluation_freeze_sha256,
     )
     return summary
