@@ -1,6 +1,6 @@
 # EvoEmo Response V4 离线统计与资源汇总
 
-生成时间：2026-06-30T04:37:17.183418+00:00
+生成时间：2026-06-30T04:54:15.140789+00:00
 
 ## 结论摘要
 
@@ -52,6 +52,8 @@ Delta 为 `PM - baseline`。CI 使用 `(user_id, topic_index)` scenario-cluster 
 | pm vs session_rag_rs | 1294.6 | 3233.2 | 0.600 | 0.756 | -0.358 |
 | pm vs full_history_rs | 1294.6 | 14079.8 | 0.908 | 0.952 | -0.358 |
 | pm vs no_memory_r0 | 1294.6 | 395.5 | -2.273 | NA | NA |
+
+Token component note: `total_input_tokens` is the primary cost measure. Component fields such as `base_prompt_tokens`, `memory_tokens`, and `strategy_tokens` are diagnostic estimates and are not assumed to be additive under a single tokenizer/accounting path.
 
 ## Judge Cost
 

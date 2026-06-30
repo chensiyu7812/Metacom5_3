@@ -38,19 +38,20 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 结果：
 
-| Action | n | Len | Distinct-1 | Distinct-2 | BLEU-1 sanity | ROUGE-L sanity | Input tok |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| M0+R0 | 2275 | 48.6 | 0.034 | 0.243 | 0.103 | 0.103 | 316.7 |
-| M0+RS | 2275 | 47.7 | 0.034 | 0.241 | 0.107 | 0.106 | 570.4 |
+| Action | n | Len | Distinct-1 | Distinct-2 | B-1 sanity | B-2 sanity | B-3 sanity | B-4 sanity | ROUGE-L sanity | Input tok |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| M0+R0 | 2275 | 48.6 | 0.034 | 0.243 | 0.103 | 0.056 | 0.042 | 0.036 | 0.103 | 316.7 |
+| M0+RS | 2275 | 47.7 | 0.034 | 0.241 | 0.107 | 0.060 | 0.045 | 0.039 | 0.106 | 570.4 |
 
 ## 3. Interpretation
 
-这些自动指标没有显示 `M0+RS` 和 `M0+R0` 在长度、多样性、BLEU-1/ROUGE-L 表面重叠上有巨大异常差异。`M0+RS` 的 BLEU-1/ROUGE-L 略高，但主 judge preference 仍显著偏向 `M0+R0`。
+这些自动指标没有显示 `M0+RS` 和 `M0+R0` 在长度、多样性、BLEU/ROUGE-L 表面重叠上有巨大异常差异。`M0+RS` 的 B-1/B-2/B-3/B-4/ROUGE-L 略高，但主 judge preference 仍显著偏向 `M0+R0`。
 
 这正说明传统 overlap metrics 不足以判断情感支持质量：
 
 - ESConv gold response 不是唯一正确回复；
 - BLEU/ROUGE 主要测表面重叠，不测共情、时机、过度建议、语境适配；
+- 这里的 B-1/B-2/B-3/B-4 是 simple smoothed sentence-level sanity metrics，0-1 scale，不与 ESConv generation papers 的 published scores 直接数值比较；
 - Distinct-1/2 只能做多样性 sanity，不等价于帮助质量；
 - 本研究的主指标仍应是 blind pairwise preference / fixed-input scoring、memory misuse / omission / exposure risk、resource cost。
 
@@ -71,7 +72,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 |---|---|---|
 | ACC | no | 本研究不是 strategy classifier；可用 strategy recall diagnostic 替代。 |
 | PPL | no | 固定 API / generator 设定下不可自然比较。 |
-| BLEU / ROUGE-L | appendix only | 表面重叠 sanity，不代表支持质量。 |
+| BLEU-1/2/3/4 / ROUGE-L | appendix only | 表面重叠 sanity，不代表支持质量；不与 published ESConv SOTA scores 直接数值比较。 |
 | Distinct-1/2 | appendix only | 多样性 sanity，不代表安全或情感支持质量。 |
 | s_norm | no | 依赖上述自动指标组合，不适合作为核心 claim。 |
 
@@ -79,7 +80,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 可以写：
 
-> We report BLEU-1, ROUGE-L and Distinct-1/2 only as appendix sanity checks for ESConv-style comparability. These overlap/diversity metrics did not explain the judge preference gap, reinforcing the need for response-quality and risk-oriented evaluation.
+> We report BLEU-1/2/3/4, ROUGE-L and Distinct-1/2 only as appendix sanity checks for ESConv-style comparability. These overlap/diversity metrics did not explain the judge preference gap, reinforcing the need for response-quality and risk-oriented evaluation.
 
 不应写：
 

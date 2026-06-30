@@ -100,6 +100,10 @@ PM mean input token reductions:
 
 PM is more expensive than `no_memory_r0`, as expected. `no_memory_r0` is a useful low-cost response baseline, not a long-term-memory policy.
 
+Token accounting note:
+
+> `total_input_tokens` is the primary cost measure. Component fields such as `base_prompt_tokens`, `memory_tokens`, and `strategy_tokens` are diagnostic estimates and are not assumed to be additive under a single tokenizer/accounting path.
+
 ## 5. Interpretation for Paper
 
 可以写：

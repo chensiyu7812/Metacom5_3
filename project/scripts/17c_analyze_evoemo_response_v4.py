@@ -546,6 +546,8 @@ def _write_markdown(
             pm_resource_rows,
         ),
         "",
+        "Token component note: `total_input_tokens` is the primary cost measure. Component fields such as `base_prompt_tokens`, `memory_tokens`, and `strategy_tokens` are diagnostic estimates and are not assumed to be additive under a single tokenizer/accounting path.",
+        "",
         "## Judge Cost",
         "",
         f"- raw rows: {judge.get('raw_rows', 'NA')}",

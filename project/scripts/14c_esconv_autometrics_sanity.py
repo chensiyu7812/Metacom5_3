@@ -67,15 +67,39 @@ def _rouge_l_f1(hyp: list[str], ref: list[str]) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-def _bleu1(hyp: list[str], ref: list[str]) -> float:
+def _modified_precision(hyp: list[str], ref: list[str], n: int) -> tuple[int, int]:
+    hyp_grams = _ngrams(hyp, n)
+    ref_grams = _ngrams(ref, n)
+    if not hyp_grams or not ref_grams:
+        return 0, len(hyp_grams)
+    hyp_counts = Counter(hyp_grams)
+    ref_counts = Counter(ref_grams)
+    clipped = sum(
+        min(count, ref_counts[gram]) for gram, count in hyp_counts.items()
+    )
+    return clipped, len(hyp_grams)
+
+
+def _bleu_n(hyp: list[str], ref: list[str], max_n: int) -> float:
     if not hyp or not ref:
         return 0.0
-    hyp_counts = Counter(hyp)
-    ref_counts = Counter(ref)
-    clipped = sum(min(count, ref_counts[token]) for token, count in hyp_counts.items())
-    precision = clipped / len(hyp)
+    precisions = []
+    for n in range(1, max_n + 1):
+        clipped, total = _modified_precision(hyp, ref, n)
+        if total == 0:
+            return 0.0
+        # Light add-one smoothing keeps sentence-level B-2/3/4 informative
+        # without pretending to reproduce a specific ESConv leaderboard setup.
+        if n == 1:
+            precision = clipped / total
+        else:
+            precision = (clipped + 1.0) / (total + 1.0)
+        if precision <= 0:
+            return 0.0
+        precisions.append(precision)
+    geo_mean = math.exp(sum(math.log(p) for p in precisions) / max_n)
     brevity = 1.0 if len(hyp) >= len(ref) else math.exp(1.0 - len(ref) / len(hyp))
-    return brevity * precision
+    return brevity * geo_mean
 
 
 def _mean(values: list[float]) -> float | None:
@@ -101,14 +125,15 @@ def _percentile(values: list[float], q: float) -> float | None:
 def _summarize(rows: list[dict[str, Any]], gold_by_card: dict[str, str]) -> dict[str, Any]:
     lengths = [len(_tokens(row.get("response", ""))) for row in rows]
     rouge_l = []
-    bleu1 = []
+    bleu: dict[int, list[float]] = {1: [], 2: [], 3: [], 4: []}
     input_tokens = []
     output_tokens = []
     for row in rows:
         hyp = _tokens(row.get("response", ""))
         ref = _tokens(gold_by_card.get(str(row.get("card_id")), ""))
         rouge_l.append(_rouge_l_f1(hyp, ref))
-        bleu1.append(_bleu1(hyp, ref))
+        for n in bleu:
+            bleu[n].append(_bleu_n(hyp, ref, n))
         cost = row.get("cost") or {}
         input_tokens.append(float(cost.get("total_input_tokens") or 0))
         output_tokens.append(float(cost.get("output_tokens") or 0))
@@ -121,7 +146,11 @@ def _summarize(rows: list[dict[str, Any]], gold_by_card: dict[str, str]) -> dict
         },
         "distinct_1": _distinct(rows, 1),
         "distinct_2": _distinct(rows, 2),
-        "simple_sentence_bleu1_mean": _mean(bleu1),
+        "simple_smoothed_sentence_bleu1_mean": _mean(bleu[1]),
+        "simple_smoothed_sentence_bleu2_mean": _mean(bleu[2]),
+        "simple_smoothed_sentence_bleu3_mean": _mean(bleu[3]),
+        "simple_smoothed_sentence_bleu4_mean": _mean(bleu[4]),
+        "simple_sentence_bleu1_mean": _mean(bleu[1]),
         "rouge_l_f1_mean": _mean(rouge_l),
         "input_tokens_mean": _mean(input_tokens),
         "output_tokens_mean": _mean(output_tokens),
@@ -160,7 +189,10 @@ def _write_markdown(path: Path, result: dict[str, Any]) -> None:
                 _fmt(item["response_length_tokens"]["mean"], 1),
                 _fmt(item["distinct_1"]),
                 _fmt(item["distinct_2"]),
-                _fmt(item["simple_sentence_bleu1_mean"]),
+                _fmt(item["simple_smoothed_sentence_bleu1_mean"]),
+                _fmt(item["simple_smoothed_sentence_bleu2_mean"]),
+                _fmt(item["simple_smoothed_sentence_bleu3_mean"]),
+                _fmt(item["simple_smoothed_sentence_bleu4_mean"]),
                 _fmt(item["rouge_l_f1_mean"]),
                 _fmt(item["input_tokens_mean"], 1),
             ]
@@ -179,14 +211,17 @@ def _write_markdown(path: Path, result: dict[str, Any]) -> None:
                 "Len",
                 "Distinct-1",
                 "Distinct-2",
-                "BLEU-1 sanity",
+                "B-1 sanity",
+                "B-2 sanity",
+                "B-3 sanity",
+                "B-4 sanity",
                 "ROUGE-L sanity",
                 "Input tok",
             ],
             rows,
         ),
         "",
-        "解释边界：BLEU/ROUGE 与人类支持质量不等价，且 ESConv gold response 不是唯一正确回复；这些数值只用于检查长度、多样性和表面重叠是否出现异常。",
+        "解释边界：BLEU/ROUGE 与人类支持质量不等价，且 ESConv gold response 不是唯一正确回复；这些 0-1 scale 数值只用于检查长度、多样性和表面重叠是否出现异常，不与 ESConv generation papers 的 published scores 直接数值比较。",
         "",
     ]
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -234,7 +269,7 @@ def main() -> None:
         "scope": "appendix_sanity_only_not_main_evidence",
         "metrics": {
             "distinct_1_2": "corpus unique n-grams / total n-grams on generated responses",
-            "simple_sentence_bleu1_mean": "sentence-level clipped unigram BLEU with brevity penalty, averaged across turns",
+            "simple_smoothed_sentence_bleu1_4_mean": "sentence-level clipped BLEU-N with brevity penalty and light add-one smoothing for N>1, averaged across turns; appendix sanity only, not comparable to official ESConv leaderboard BLEU",
             "rouge_l_f1_mean": "sentence-level ROUGE-L F1 against ESConv gold response, averaged across turns",
         },
         "by_action": {

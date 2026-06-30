@@ -428,6 +428,10 @@ PM input token reduction:
 - vs session_rag_rs: 60.0%；
 - vs full_history_rs: 90.8%。
 
+Token accounting note:
+
+> `total_input_tokens` 是主成本指标；`base_prompt_tokens`、`memory_tokens`、`strategy_tokens` 等 component fields 是诊断估计，不假定在同一个 tokenizer / accounting path 下严格可加。
+
 解释：
 
 - PM 对 strong_rule / best_fixed 的 response quality 大体持平，不能说显著输了，也不能在严格 0.05 margin 下声称已确认非劣；
