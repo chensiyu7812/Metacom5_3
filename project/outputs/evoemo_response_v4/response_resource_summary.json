@@ -1,0 +1,1585 @@
+{
+  "status": "COMPLETE",
+  "created_at": "2026-06-30T04:37:17.169099+00:00",
+  "protocol": "evoemo_response_v4_no_api_resource_summary",
+  "input_turns": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_selective/turns.jsonl",
+  "input_scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_scores.jsonl",
+  "treatment": "pm",
+  "baselines": [
+    "strong_rule",
+    "best_fixed",
+    "session_rag_rs",
+    "full_history_rs",
+    "no_memory_r0"
+  ],
+  "v4_sampled_turns": {
+    "n_rows": 1224,
+    "condition_summary": {
+      "best_fixed": {
+        "n": 204,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MPMSME+RS": 204
+        },
+        "action_rates": {
+          "MPMSME+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 1654.7794117647059,
+          "median": 1654.0,
+          "p95": 1846.95,
+          "total": 337575.0
+        },
+        "output_tokens": {
+          "mean": 70.51960784313725,
+          "median": 70.0,
+          "p95": 100.0,
+          "total": 14386.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 1037.8186274509803,
+          "median": 1026.0,
+          "p95": 1194.0,
+          "total": 211715.0
+        },
+        "strategy_tokens": {
+          "mean": 261.2843137254902,
+          "median": 254.0,
+          "p95": 341.7,
+          "total": 53302.0
+        },
+        "retrieval_calls": {
+          "mean": 4.0,
+          "median": 4.0,
+          "p95": 4.0,
+          "total": 816.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2042.4405466137437,
+          "median": 1921.3629525038414,
+          "p95": 2581.5693881042534,
+          "total": 416657.8715092037
+        },
+        "generation_latency_ms": {
+          "mean": 757.6327589705733,
+          "median": 598.4158465289511,
+          "p95": 1127.3492730513678,
+          "total": 154557.08282999694
+        }
+      },
+      "full_history_rs": {
+        "n": 204,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "FULL_HISTORY+RS": 204
+        },
+        "action_rates": {
+          "FULL_HISTORY+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 14079.81862745098,
+          "median": 14127.0,
+          "p95": 21062.9,
+          "total": 2872283.0
+        },
+        "output_tokens": {
+          "mean": 69.37745098039215,
+          "median": 70.0,
+          "p95": 100.0,
+          "total": 14153.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 14383.617647058823,
+          "median": 14489.0,
+          "p95": 21699.0,
+          "total": 2934258.0
+        },
+        "strategy_tokens": {
+          "mean": 261.2843137254902,
+          "median": 254.0,
+          "p95": 341.7,
+          "total": 53302.0
+        },
+        "retrieval_calls": {
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "total": 408.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2403.3565851682843,
+          "median": 2295.302229002118,
+          "p95": 3055.0230210414156,
+          "total": 490284.74337433
+        },
+        "generation_latency_ms": {
+          "mean": 1105.189268208764,
+          "median": 1009.9520749936346,
+          "p95": 1531.4868247747654,
+          "total": 225458.61071458785
+        }
+      },
+      "no_memory_r0": {
+        "n": 204,
+        "rs_call_rate": 0.0,
+        "r0_call_rate": 1.0,
+        "memory_call_rate": 0.0,
+        "action_counts": {
+          "M0+R0": 204
+        },
+        "action_rates": {
+          "M0+R0": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 395.5147058823529,
+          "median": 390.5,
+          "p95": 464.0,
+          "total": 80685.0
+        },
+        "output_tokens": {
+          "mean": 59.86764705882353,
+          "median": 58.0,
+          "p95": 81.69999999999999,
+          "total": 12213.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "strategy_tokens": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "retrieval_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 625.6264043471424,
+          "median": 519.7887450049166,
+          "p95": 1036.0772531072137,
+          "total": 127627.78648681706
+        },
+        "generation_latency_ms": {
+          "mean": 611.9765231860048,
+          "median": 502.53983552102,
+          "p95": 1022.6016731321572,
+          "total": 124843.21072994499
+        }
+      },
+      "pm": {
+        "n": 204,
+        "rs_call_rate": 0.9411764705882353,
+        "r0_call_rate": 0.058823529411764705,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MSE+RS": 103,
+          "MPMS+RS": 31,
+          "MP+RS": 26,
+          "MPE+RS": 15,
+          "MS+RS": 13,
+          "MSE+R0": 9,
+          "ME+RS": 4,
+          "MS+R0": 1,
+          "ME+R0": 1,
+          "MP+R0": 1
+        },
+        "action_rates": {
+          "MSE+RS": 0.5049019607843137,
+          "MPMS+RS": 0.15196078431372548,
+          "MP+RS": 0.12745098039215685,
+          "MPE+RS": 0.07352941176470588,
+          "MS+RS": 0.06372549019607843,
+          "MSE+R0": 0.04411764705882353,
+          "ME+RS": 0.0196078431372549,
+          "MS+R0": 0.004901960784313725,
+          "ME+R0": 0.004901960784313725,
+          "MP+R0": 0.004901960784313725
+        },
+        "total_input_tokens": {
+          "mean": 1294.637254901961,
+          "median": 1537.5,
+          "p95": 1795.35,
+          "total": 264106.0
+        },
+        "output_tokens": {
+          "mean": 68.09313725490196,
+          "median": 66.0,
+          "p95": 100.0,
+          "total": 13891.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 683.2549019607843,
+          "median": 962.5,
+          "p95": 1155.6499999999999,
+          "total": 139384.0
+        },
+        "strategy_tokens": {
+          "mean": 245.40686274509804,
+          "median": 247.0,
+          "p95": 340.0,
+          "total": 50063.0
+        },
+        "retrieval_calls": {
+          "mean": 2.715686274509804,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 554.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 612.0
+        },
+        "latency_ms": {
+          "mean": 1917.8510003345996,
+          "median": 1859.3726485560182,
+          "p95": 2697.918567250599,
+          "total": 391241.6040682583
+        },
+        "generation_latency_ms": {
+          "mean": 706.0948094948282,
+          "median": 598.1206434953492,
+          "p95": 1412.7665017993409,
+          "total": 144043.34113694495
+        }
+      },
+      "session_rag_rs": {
+        "n": 204,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "SESSION_RAG+RS": 204
+        },
+        "action_rates": {
+          "SESSION_RAG+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 3233.2156862745096,
+          "median": 3221.5,
+          "p95": 3537.7,
+          "total": 659576.0
+        },
+        "output_tokens": {
+          "mean": 72.20588235294117,
+          "median": 72.0,
+          "p95": 100.0,
+          "total": 14730.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 2798.774509803922,
+          "median": 2763.5,
+          "p95": 3170.0,
+          "total": 570950.0
+        },
+        "strategy_tokens": {
+          "mean": 261.2843137254902,
+          "median": 254.0,
+          "p95": 341.7,
+          "total": 53302.0
+        },
+        "retrieval_calls": {
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "total": 408.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2131.325983675482,
+          "median": 2002.412206522422,
+          "p95": 2746.555210885708,
+          "total": 434790.50066979835
+        },
+        "generation_latency_ms": {
+          "mean": 841.2338289938406,
+          "median": 698.4927504963707,
+          "p95": 1484.9751705216474,
+          "total": 171611.70111474348
+        }
+      },
+      "strong_rule": {
+        "n": 204,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MSE+RS": 204
+        },
+        "action_rates": {
+          "MSE+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 1627.4019607843138,
+          "median": 1627.5,
+          "p95": 1821.1,
+          "total": 331990.0
+        },
+        "output_tokens": {
+          "mean": 69.45098039215686,
+          "median": 68.5,
+          "p95": 100.0,
+          "total": 14168.0
+        },
+        "base_prompt_tokens": {
+          "mean": 411.828431372549,
+          "median": 404.0,
+          "p95": 512.85,
+          "total": 84013.0
+        },
+        "memory_tokens": {
+          "mean": 1024.5539215686274,
+          "median": 1015.0,
+          "p95": 1180.55,
+          "total": 209009.0
+        },
+        "strategy_tokens": {
+          "mean": 261.2843137254902,
+          "median": 254.0,
+          "p95": 341.7,
+          "total": 53302.0
+        },
+        "retrieval_calls": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 612.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 612.0
+        },
+        "latency_ms": {
+          "mean": 3265.162902715554,
+          "median": 3165.3388430422638,
+          "p95": 4264.913927743328,
+          "total": 666093.2321539731
+        },
+        "generation_latency_ms": {
+          "mean": 784.3760229725912,
+          "median": 657.7147550124209,
+          "p95": 1439.791492602671,
+          "total": 160012.7086864086
+        }
+      }
+    },
+    "pm_vs_baselines": {
+      "strong_rule": {
+        "total_input_tokens": {
+          "pm_mean": 1294.637254901961,
+          "baseline_mean": 1627.4019607843138,
+          "pm_minus_baseline_mean": -332.7647058823529,
+          "relative_reduction_vs_baseline": 0.2044760384348926
+        },
+        "output_tokens": {
+          "pm_mean": 68.09313725490196,
+          "baseline_mean": 69.45098039215686,
+          "pm_minus_baseline_mean": -1.3578431372549034,
+          "relative_reduction_vs_baseline": 0.01955110107284022
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 411.828431372549,
+          "baseline_mean": 411.828431372549,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 683.2549019607843,
+          "baseline_mean": 1024.5539215686274,
+          "pm_minus_baseline_mean": -341.2990196078431,
+          "relative_reduction_vs_baseline": 0.3331196264275701
+        },
+        "strategy_tokens": {
+          "pm_mean": 245.40686274509804,
+          "baseline_mean": 261.2843137254902,
+          "pm_minus_baseline_mean": -15.877450980392183,
+          "relative_reduction_vs_baseline": 0.06076695058346788
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.715686274509804,
+          "baseline_mean": 3.0,
+          "pm_minus_baseline_mean": -0.28431372549019596,
+          "relative_reduction_vs_baseline": 0.09477124183006531
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 3.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "latency_ms": {
+          "pm_mean": 1917.8510003345996,
+          "baseline_mean": 3265.162902715554,
+          "pm_minus_baseline_mean": -1347.3119023809545,
+          "relative_reduction_vs_baseline": 0.41263236859037844
+        },
+        "generation_latency_ms": {
+          "pm_mean": 706.0948094948282,
+          "baseline_mean": 784.3760229725912,
+          "pm_minus_baseline_mean": -78.281213477763,
+          "relative_reduction_vs_baseline": 0.09980062009174702
+        },
+        "rs_call_rate_delta": -0.05882352941176472,
+        "memory_call_rate_delta": 0.0
+      },
+      "best_fixed": {
+        "total_input_tokens": {
+          "pm_mean": 1294.637254901961,
+          "baseline_mean": 1654.7794117647059,
+          "pm_minus_baseline_mean": -360.14215686274497,
+          "relative_reduction_vs_baseline": 0.21763756202325402
+        },
+        "output_tokens": {
+          "pm_mean": 68.09313725490196,
+          "baseline_mean": 70.51960784313725,
+          "pm_minus_baseline_mean": -2.42647058823529,
+          "relative_reduction_vs_baseline": 0.034408452662310525
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 411.828431372549,
+          "baseline_mean": 411.828431372549,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 683.2549019607843,
+          "baseline_mean": 1037.8186274509803,
+          "pm_minus_baseline_mean": -354.563725490196,
+          "relative_reduction_vs_baseline": 0.3416432468176558
+        },
+        "strategy_tokens": {
+          "pm_mean": 245.40686274509804,
+          "baseline_mean": 261.2843137254902,
+          "pm_minus_baseline_mean": -15.877450980392183,
+          "relative_reduction_vs_baseline": 0.06076695058346788
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.715686274509804,
+          "baseline_mean": 4.0,
+          "pm_minus_baseline_mean": -1.284313725490196,
+          "relative_reduction_vs_baseline": 0.321078431372549
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1917.8510003345996,
+          "baseline_mean": 2042.4405466137437,
+          "pm_minus_baseline_mean": -124.58954627914409,
+          "relative_reduction_vs_baseline": 0.06100032947627623
+        },
+        "generation_latency_ms": {
+          "pm_mean": 706.0948094948282,
+          "baseline_mean": 757.6327589705733,
+          "pm_minus_baseline_mean": -51.53794947574511,
+          "relative_reduction_vs_baseline": 0.06802497498362113
+        },
+        "rs_call_rate_delta": -0.05882352941176472,
+        "memory_call_rate_delta": 0.0
+      },
+      "session_rag_rs": {
+        "total_input_tokens": {
+          "pm_mean": 1294.637254901961,
+          "baseline_mean": 3233.2156862745096,
+          "pm_minus_baseline_mean": -1938.5784313725487,
+          "relative_reduction_vs_baseline": 0.5995821558091865
+        },
+        "output_tokens": {
+          "pm_mean": 68.09313725490196,
+          "baseline_mean": 72.20588235294117,
+          "pm_minus_baseline_mean": -4.112745098039213,
+          "relative_reduction_vs_baseline": 0.05695858791581802
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 411.828431372549,
+          "baseline_mean": 411.828431372549,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 683.2549019607843,
+          "baseline_mean": 2798.774509803922,
+          "pm_minus_baseline_mean": -2115.5196078431372,
+          "relative_reduction_vs_baseline": 0.755873544093178
+        },
+        "strategy_tokens": {
+          "pm_mean": 245.40686274509804,
+          "baseline_mean": 261.2843137254902,
+          "pm_minus_baseline_mean": -15.877450980392183,
+          "relative_reduction_vs_baseline": 0.06076695058346788
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.715686274509804,
+          "baseline_mean": 2.0,
+          "pm_minus_baseline_mean": 0.715686274509804,
+          "relative_reduction_vs_baseline": -0.357843137254902
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1917.8510003345996,
+          "baseline_mean": 2131.325983675482,
+          "pm_minus_baseline_mean": -213.47498334088232,
+          "relative_reduction_vs_baseline": 0.10016064411355023
+        },
+        "generation_latency_ms": {
+          "pm_mean": 706.0948094948282,
+          "baseline_mean": 841.2338289938406,
+          "pm_minus_baseline_mean": -135.13901949901242,
+          "relative_reduction_vs_baseline": 0.1606438243938023
+        },
+        "rs_call_rate_delta": -0.05882352941176472,
+        "memory_call_rate_delta": 0.0
+      },
+      "full_history_rs": {
+        "total_input_tokens": {
+          "pm_mean": 1294.637254901961,
+          "baseline_mean": 14079.81862745098,
+          "pm_minus_baseline_mean": -12785.18137254902,
+          "relative_reduction_vs_baseline": 0.9080501468692326
+        },
+        "output_tokens": {
+          "pm_mean": 68.09313725490196,
+          "baseline_mean": 69.37745098039215,
+          "pm_minus_baseline_mean": -1.2843137254901933,
+          "relative_reduction_vs_baseline": 0.018511976259450252
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 411.828431372549,
+          "baseline_mean": 411.828431372549,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 683.2549019607843,
+          "baseline_mean": 14383.617647058823,
+          "pm_minus_baseline_mean": -13700.362745098038,
+          "relative_reduction_vs_baseline": 0.952497701292797
+        },
+        "strategy_tokens": {
+          "pm_mean": 245.40686274509804,
+          "baseline_mean": 261.2843137254902,
+          "pm_minus_baseline_mean": -15.877450980392183,
+          "relative_reduction_vs_baseline": 0.06076695058346788
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.715686274509804,
+          "baseline_mean": 2.0,
+          "pm_minus_baseline_mean": 0.715686274509804,
+          "relative_reduction_vs_baseline": -0.357843137254902
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1917.8510003345996,
+          "baseline_mean": 2403.3565851682843,
+          "pm_minus_baseline_mean": -485.5055848336847,
+          "relative_reduction_vs_baseline": 0.2020114650609324
+        },
+        "generation_latency_ms": {
+          "pm_mean": 706.0948094948282,
+          "baseline_mean": 1105.189268208764,
+          "pm_minus_baseline_mean": -399.09445871393575,
+          "relative_reduction_vs_baseline": 0.36110960375209605
+        },
+        "rs_call_rate_delta": -0.05882352941176472,
+        "memory_call_rate_delta": 0.0
+      },
+      "no_memory_r0": {
+        "total_input_tokens": {
+          "pm_mean": 1294.637254901961,
+          "baseline_mean": 395.5147058823529,
+          "pm_minus_baseline_mean": 899.122549019608,
+          "relative_reduction_vs_baseline": -2.2732973910888026
+        },
+        "output_tokens": {
+          "pm_mean": 68.09313725490196,
+          "baseline_mean": 59.86764705882353,
+          "pm_minus_baseline_mean": 8.225490196078432,
+          "relative_reduction_vs_baseline": -0.137394579546385
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 411.828431372549,
+          "baseline_mean": 411.828431372549,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 683.2549019607843,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 683.2549019607843,
+          "relative_reduction_vs_baseline": null
+        },
+        "strategy_tokens": {
+          "pm_mean": 245.40686274509804,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 245.40686274509804,
+          "relative_reduction_vs_baseline": null
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.715686274509804,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 2.715686274509804,
+          "relative_reduction_vs_baseline": null
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1917.8510003345996,
+          "baseline_mean": 625.6264043471424,
+          "pm_minus_baseline_mean": 1292.2245959874572,
+          "relative_reduction_vs_baseline": -2.0654892232944158
+        },
+        "generation_latency_ms": {
+          "pm_mean": 706.0948094948282,
+          "baseline_mean": 611.9765231860048,
+          "pm_minus_baseline_mean": 94.11828630882337,
+          "relative_reduction_vs_baseline": -0.15379394918425157
+        },
+        "rs_call_rate_delta": 0.9411764705882353,
+        "memory_call_rate_delta": 1.0
+      }
+    }
+  },
+  "all_generated_turns": {
+    "n_rows": 6120,
+    "condition_summary": {
+      "best_fixed": {
+        "n": 1020,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MPMSME+RS": 1020
+        },
+        "action_rates": {
+          "MPMSME+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 1651.3176470588235,
+          "median": 1669.5,
+          "p95": 1864.1,
+          "total": 1684344.0
+        },
+        "output_tokens": {
+          "mean": 71.64411764705882,
+          "median": 71.0,
+          "p95": 100.0,
+          "total": 73077.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 1037.4421568627452,
+          "median": 1033.5,
+          "p95": 1200.0,
+          "total": 1058191.0
+        },
+        "strategy_tokens": {
+          "mean": 260.27941176470586,
+          "median": 255.0,
+          "p95": 353.0,
+          "total": 265485.0
+        },
+        "retrieval_calls": {
+          "mean": 4.0,
+          "median": 4.0,
+          "p95": 4.0,
+          "total": 4080.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2015.3124719622485,
+          "median": 1975.531388510717,
+          "p95": 2602.727372746449,
+          "total": 2055618.7214014935
+        },
+        "generation_latency_ms": {
+          "mean": 743.8329092813565,
+          "median": 620.3814865148161,
+          "p95": 1163.9025326003318,
+          "total": 758709.5674669836
+        }
+      },
+      "full_history_rs": {
+        "n": 1020,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "FULL_HISTORY+RS": 1020
+        },
+        "action_rates": {
+          "FULL_HISTORY+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 14076.232352941177,
+          "median": 14163.0,
+          "p95": 21068.0,
+          "total": 14357757.0
+        },
+        "output_tokens": {
+          "mean": 72.08039215686274,
+          "median": 72.0,
+          "p95": 100.0,
+          "total": 73522.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 14383.617647058823,
+          "median": 14489.0,
+          "p95": 21699.0,
+          "total": 14671290.0
+        },
+        "strategy_tokens": {
+          "mean": 260.27941176470586,
+          "median": 255.0,
+          "p95": 353.0,
+          "total": 265485.0
+        },
+        "retrieval_calls": {
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "total": 2040.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2402.6082607758844,
+          "median": 2360.2146030170843,
+          "p95": 3054.886317043565,
+          "total": 2450660.425991402
+        },
+        "generation_latency_ms": {
+          "mean": 1115.6481414210443,
+          "median": 1004.7305560146924,
+          "p95": 1600.327941193244,
+          "total": 1137961.1042494653
+        }
+      },
+      "no_memory_r0": {
+        "n": 1020,
+        "rs_call_rate": 0.0,
+        "r0_call_rate": 1.0,
+        "memory_call_rate": 0.0,
+        "action_counts": {
+          "M0+R0": 1020
+        },
+        "action_rates": {
+          "M0+R0": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 393.01372549019607,
+          "median": 450.5,
+          "p95": 464.0,
+          "total": 400874.0
+        },
+        "output_tokens": {
+          "mean": 63.26862745098039,
+          "median": 61.0,
+          "p95": 91.0,
+          "total": 64534.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "strategy_tokens": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "retrieval_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 664.999597240696,
+          "median": 546.447256434476,
+          "p95": 1100.0768968573536,
+          "total": 678299.5891855098
+        },
+        "generation_latency_ms": {
+          "mean": 652.4946517699658,
+          "median": 533.2405229855794,
+          "p95": 1085.3829469153422,
+          "total": 665544.5448053651
+        }
+      },
+      "pm": {
+        "n": 1020,
+        "rs_call_rate": 0.9637254901960784,
+        "r0_call_rate": 0.03627450980392157,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MSE+RS": 521,
+          "MPMS+RS": 165,
+          "MP+RS": 128,
+          "MS+RS": 72,
+          "MPE+RS": 62,
+          "ME+RS": 34,
+          "MSE+R0": 27,
+          "ME+R0": 3,
+          "MPMS+R0": 3,
+          "MS+R0": 2,
+          "MP+R0": 2,
+          "MPMSME+RS": 1
+        },
+        "action_rates": {
+          "MSE+RS": 0.5107843137254902,
+          "MPMS+RS": 0.16176470588235295,
+          "MP+RS": 0.12549019607843137,
+          "MS+RS": 0.07058823529411765,
+          "MPE+RS": 0.060784313725490195,
+          "ME+RS": 0.03333333333333333,
+          "MSE+R0": 0.026470588235294117,
+          "ME+R0": 0.0029411764705882353,
+          "MPMS+R0": 0.0029411764705882353,
+          "MS+R0": 0.00196078431372549,
+          "MP+R0": 0.00196078431372549,
+          "MPMSME+RS": 0.000980392156862745
+        },
+        "total_input_tokens": {
+          "mean": 1291.8117647058823,
+          "median": 1576.0,
+          "p95": 1808.2999999999997,
+          "total": 1317648.0
+        },
+        "output_tokens": {
+          "mean": 69.4892156862745,
+          "median": 68.0,
+          "p95": 100.0,
+          "total": 70879.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 677.2980392156862,
+          "median": 966.5,
+          "p95": 1160.0,
+          "total": 690844.0
+        },
+        "strategy_tokens": {
+          "mean": 250.71372549019608,
+          "median": 252.0,
+          "p95": 353.0,
+          "total": 255728.0
+        },
+        "retrieval_calls": {
+          "mean": 2.7284313725490197,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 2783.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 3060.0
+        },
+        "latency_ms": {
+          "mean": 1952.5422572673585,
+          "median": 1969.4179850048386,
+          "p95": 2627.2090586397094,
+          "total": 1991593.1024127058
+        },
+        "generation_latency_ms": {
+          "mean": 723.2324329023386,
+          "median": 610.2184960327577,
+          "p95": 1225.083586375694,
+          "total": 737697.0815603854
+        }
+      },
+      "session_rag_rs": {
+        "n": 1020,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "SESSION_RAG+RS": 1020
+        },
+        "action_rates": {
+          "SESSION_RAG+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 3236.692156862745,
+          "median": 3236.0,
+          "p95": 3555.05,
+          "total": 3301426.0
+        },
+        "output_tokens": {
+          "mean": 74.84313725490196,
+          "median": 74.0,
+          "p95": 100.0,
+          "total": 76340.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 2806.5323529411767,
+          "median": 2769.0,
+          "p95": 3170.0,
+          "total": 2862663.0
+        },
+        "strategy_tokens": {
+          "mean": 260.27941176470586,
+          "median": 255.0,
+          "p95": 353.0,
+          "total": 265485.0
+        },
+        "retrieval_calls": {
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "total": 2040.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "latency_ms": {
+          "mean": 2170.525456100586,
+          "median": 2078.9881334640086,
+          "p95": 2978.9216549281264,
+          "total": 2213935.9652225976
+        },
+        "generation_latency_ms": {
+          "mean": 892.3362488249504,
+          "median": 708.1834845012054,
+          "p95": 1573.2082180300456,
+          "total": 910182.9738014494
+        }
+      },
+      "strong_rule": {
+        "n": 1020,
+        "rs_call_rate": 1.0,
+        "r0_call_rate": 0.0,
+        "memory_call_rate": 1.0,
+        "action_counts": {
+          "MSE+RS": 1020
+        },
+        "action_rates": {
+          "MSE+RS": 1.0
+        },
+        "total_input_tokens": {
+          "mean": 1623.9725490196079,
+          "median": 1643.5,
+          "p95": 1837.05,
+          "total": 1656452.0
+        },
+        "output_tokens": {
+          "mean": 71.54313725490196,
+          "median": 70.0,
+          "p95": 100.0,
+          "total": 72974.0
+        },
+        "base_prompt_tokens": {
+          "mean": 407.6745098039216,
+          "median": 469.0,
+          "p95": 510.0,
+          "total": 415828.0
+        },
+        "memory_tokens": {
+          "mean": 1024.2588235294118,
+          "median": 1023.5,
+          "p95": 1181.0,
+          "total": 1044744.0
+        },
+        "strategy_tokens": {
+          "mean": 260.27941176470586,
+          "median": 255.0,
+          "p95": 353.0,
+          "total": 265485.0
+        },
+        "retrieval_calls": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 3060.0
+        },
+        "reranker_calls": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "total": 0.0
+        },
+        "catalog_reads": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "total": 3060.0
+        },
+        "latency_ms": {
+          "mean": 3226.2146116701165,
+          "median": 3274.7330724669155,
+          "p95": 4075.9067054896145,
+          "total": 3290738.903903519
+        },
+        "generation_latency_ms": {
+          "mean": 783.7655610246835,
+          "median": 649.8996975133196,
+          "p95": 1309.3864824913908,
+          "total": 799440.8722451772
+        }
+      }
+    },
+    "pm_vs_baselines": {
+      "strong_rule": {
+        "total_input_tokens": {
+          "pm_mean": 1291.8117647058823,
+          "baseline_mean": 1623.9725490196079,
+          "pm_minus_baseline_mean": -332.16078431372557,
+          "relative_reduction_vs_baseline": 0.20453595999159654
+        },
+        "output_tokens": {
+          "pm_mean": 69.4892156862745,
+          "baseline_mean": 71.54313725490196,
+          "pm_minus_baseline_mean": -2.053921568627459,
+          "relative_reduction_vs_baseline": 0.028708855208704576
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 407.6745098039216,
+          "baseline_mean": 407.6745098039216,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 677.2980392156862,
+          "baseline_mean": 1024.2588235294118,
+          "pm_minus_baseline_mean": -346.9607843137255,
+          "relative_reduction_vs_baseline": 0.33874327107884805
+        },
+        "strategy_tokens": {
+          "pm_mean": 250.71372549019608,
+          "baseline_mean": 260.27941176470586,
+          "pm_minus_baseline_mean": -9.565686274509773,
+          "relative_reduction_vs_baseline": 0.03675160555210264
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.7284313725490197,
+          "baseline_mean": 3.0,
+          "pm_minus_baseline_mean": -0.2715686274509803,
+          "relative_reduction_vs_baseline": 0.09052287581699343
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 3.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "latency_ms": {
+          "pm_mean": 1952.5422572673585,
+          "baseline_mean": 3226.2146116701165,
+          "pm_minus_baseline_mean": -1273.672354402758,
+          "relative_reduction_vs_baseline": 0.3947884774297192
+        },
+        "generation_latency_ms": {
+          "pm_mean": 723.2324329023386,
+          "baseline_mean": 783.7655610246835,
+          "pm_minus_baseline_mean": -60.53312812234492,
+          "relative_reduction_vs_baseline": 0.07723371774999249
+        },
+        "rs_call_rate_delta": -0.03627450980392155,
+        "memory_call_rate_delta": 0.0
+      },
+      "best_fixed": {
+        "total_input_tokens": {
+          "pm_mean": 1291.8117647058823,
+          "baseline_mean": 1651.3176470588235,
+          "pm_minus_baseline_mean": -359.50588235294117,
+          "relative_reduction_vs_baseline": 0.21770849660164432
+        },
+        "output_tokens": {
+          "pm_mean": 69.4892156862745,
+          "baseline_mean": 71.64411764705882,
+          "pm_minus_baseline_mean": -2.154901960784315,
+          "relative_reduction_vs_baseline": 0.030077863075933624
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 407.6745098039216,
+          "baseline_mean": 407.6745098039216,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 677.2980392156862,
+          "baseline_mean": 1037.4421568627452,
+          "pm_minus_baseline_mean": -360.1441176470589,
+          "relative_reduction_vs_baseline": 0.3471462146247701
+        },
+        "strategy_tokens": {
+          "pm_mean": 250.71372549019608,
+          "baseline_mean": 260.27941176470586,
+          "pm_minus_baseline_mean": -9.565686274509773,
+          "relative_reduction_vs_baseline": 0.03675160555210264
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.7284313725490197,
+          "baseline_mean": 4.0,
+          "pm_minus_baseline_mean": -1.2715686274509803,
+          "relative_reduction_vs_baseline": 0.3178921568627451
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1952.5422572673585,
+          "baseline_mean": 2015.3124719622485,
+          "pm_minus_baseline_mean": -62.77021469489,
+          "relative_reduction_vs_baseline": 0.031146641311544383
+        },
+        "generation_latency_ms": {
+          "pm_mean": 723.2324329023386,
+          "baseline_mean": 743.8329092813565,
+          "pm_minus_baseline_mean": -20.60047637901789,
+          "relative_reduction_vs_baseline": 0.027695032206790565
+        },
+        "rs_call_rate_delta": -0.03627450980392155,
+        "memory_call_rate_delta": 0.0
+      },
+      "session_rag_rs": {
+        "total_input_tokens": {
+          "pm_mean": 1291.8117647058823,
+          "baseline_mean": 3236.692156862745,
+          "pm_minus_baseline_mean": -1944.8803921568626,
+          "relative_reduction_vs_baseline": 0.600885193246797
+        },
+        "output_tokens": {
+          "pm_mean": 69.4892156862745,
+          "baseline_mean": 74.84313725490196,
+          "pm_minus_baseline_mean": -5.353921568627456,
+          "relative_reduction_vs_baseline": 0.07153523709719682
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 407.6745098039216,
+          "baseline_mean": 407.6745098039216,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 677.2980392156862,
+          "baseline_mean": 2806.5323529411767,
+          "pm_minus_baseline_mean": -2129.23431372549,
+          "relative_reduction_vs_baseline": 0.7586708599650046
+        },
+        "strategy_tokens": {
+          "pm_mean": 250.71372549019608,
+          "baseline_mean": 260.27941176470586,
+          "pm_minus_baseline_mean": -9.565686274509773,
+          "relative_reduction_vs_baseline": 0.03675160555210264
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.7284313725490197,
+          "baseline_mean": 2.0,
+          "pm_minus_baseline_mean": 0.7284313725490197,
+          "relative_reduction_vs_baseline": -0.36421568627450984
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1952.5422572673585,
+          "baseline_mean": 2170.525456100586,
+          "pm_minus_baseline_mean": -217.98319883322733,
+          "relative_reduction_vs_baseline": 0.10042876862860696
+        },
+        "generation_latency_ms": {
+          "pm_mean": 723.2324329023386,
+          "baseline_mean": 892.3362488249504,
+          "pm_minus_baseline_mean": -169.10381592261183,
+          "relative_reduction_vs_baseline": 0.18950683236873067
+        },
+        "rs_call_rate_delta": -0.03627450980392155,
+        "memory_call_rate_delta": 0.0
+      },
+      "full_history_rs": {
+        "total_input_tokens": {
+          "pm_mean": 1291.8117647058823,
+          "baseline_mean": 14076.232352941177,
+          "pm_minus_baseline_mean": -12784.420588235294,
+          "relative_reduction_vs_baseline": 0.9082274480616993
+        },
+        "output_tokens": {
+          "pm_mean": 69.4892156862745,
+          "baseline_mean": 72.08039215686274,
+          "pm_minus_baseline_mean": -2.5911764705882376,
+          "relative_reduction_vs_baseline": 0.035948423601099025
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 407.6745098039216,
+          "baseline_mean": 407.6745098039216,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 677.2980392156862,
+          "baseline_mean": 14383.617647058823,
+          "pm_minus_baseline_mean": -13706.319607843137,
+          "relative_reduction_vs_baseline": 0.9529118434711603
+        },
+        "strategy_tokens": {
+          "pm_mean": 250.71372549019608,
+          "baseline_mean": 260.27941176470586,
+          "pm_minus_baseline_mean": -9.565686274509773,
+          "relative_reduction_vs_baseline": 0.03675160555210264
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.7284313725490197,
+          "baseline_mean": 2.0,
+          "pm_minus_baseline_mean": 0.7284313725490197,
+          "relative_reduction_vs_baseline": -0.36421568627450984
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1952.5422572673585,
+          "baseline_mean": 2402.6082607758844,
+          "pm_minus_baseline_mean": -450.0660035085259,
+          "relative_reduction_vs_baseline": 0.18732392244551102
+        },
+        "generation_latency_ms": {
+          "pm_mean": 723.2324329023386,
+          "baseline_mean": 1115.6481414210443,
+          "pm_minus_baseline_mean": -392.41570851870574,
+          "relative_reduction_vs_baseline": 0.3517378767994635
+        },
+        "rs_call_rate_delta": -0.03627450980392155,
+        "memory_call_rate_delta": 0.0
+      },
+      "no_memory_r0": {
+        "total_input_tokens": {
+          "pm_mean": 1291.8117647058823,
+          "baseline_mean": 393.01372549019607,
+          "pm_minus_baseline_mean": 898.7980392156862,
+          "relative_reduction_vs_baseline": -2.2869380403817656
+        },
+        "output_tokens": {
+          "pm_mean": 69.4892156862745,
+          "baseline_mean": 63.26862745098039,
+          "pm_minus_baseline_mean": 6.220588235294116,
+          "relative_reduction_vs_baseline": -0.0983202652865156
+        },
+        "base_prompt_tokens": {
+          "pm_mean": 407.6745098039216,
+          "baseline_mean": 407.6745098039216,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": 0.0
+        },
+        "memory_tokens": {
+          "pm_mean": 677.2980392156862,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 677.2980392156862,
+          "relative_reduction_vs_baseline": null
+        },
+        "strategy_tokens": {
+          "pm_mean": 250.71372549019608,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 250.71372549019608,
+          "relative_reduction_vs_baseline": null
+        },
+        "retrieval_calls": {
+          "pm_mean": 2.7284313725490197,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 2.7284313725490197,
+          "relative_reduction_vs_baseline": null
+        },
+        "reranker_calls": {
+          "pm_mean": 0.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 0.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "catalog_reads": {
+          "pm_mean": 3.0,
+          "baseline_mean": 0.0,
+          "pm_minus_baseline_mean": 3.0,
+          "relative_reduction_vs_baseline": null
+        },
+        "latency_ms": {
+          "pm_mean": 1952.5422572673585,
+          "baseline_mean": 664.999597240696,
+          "pm_minus_baseline_mean": 1287.5426600266626,
+          "relative_reduction_vs_baseline": -1.9361555486185322
+        },
+        "generation_latency_ms": {
+          "pm_mean": 723.2324329023386,
+          "baseline_mean": 652.4946517699658,
+          "pm_minus_baseline_mean": 70.73778113237279,
+          "relative_reduction_vs_baseline": -0.10841128113539096
+        },
+        "rs_call_rate_delta": 0.9637254901960784,
+        "memory_call_rate_delta": 1.0
+      }
+    }
+  },
+  "judge_usage": {
+    "raw_rows": 204,
+    "usage_rows": 204,
+    "prompt_tokens": 1468275,
+    "completion_tokens": 147644,
+    "cached_prompt_tokens_reported": 1051008,
+    "estimated_cost_usd_without_cache_discount": 5.1471275,
+    "pricing": {
+      "input_usd_per_mtok": 2.5,
+      "output_usd_per_mtok": 10.0
+    }
+  }
+}

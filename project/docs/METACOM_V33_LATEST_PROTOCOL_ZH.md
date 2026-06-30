@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；EvoEmo pairwise-only response evaluation 已完成 816/816 calls，但 AB/BA orientation consistency gate 失败，因此不能作为 confirmatory 外部结果；EvoEmo Response Eval V4 方案、脚本和 no-API dry-run 已完成，下一步是小样本 pilot。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary。下一步是 sampled memory / strategy audit 设计。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -25,7 +25,7 @@
 
 更安全的核心结论：
 
-> PM 学到一种 response 更高、memory misuse 更低、成本更低的资源分配倾向；但 strong rule 在 omission / strategy coverage 上更保守。因此论文应报告 PM 与 PM+guardrail / safety-first 变体，而不能声称 PM 全面优于 rule。
+> PM 学到一种 resource-aware allocation 倾向：在内部 development 中 response / misuse / cost tradeoff 更有利；在 EvoEmo V4 外部 response evaluation 中，它相对 strong rule / best fixed 的 fixed-input response quality 大体持平，同时降低资源成本。但 strong rule 在 omission / strategy coverage 上更保守。因此论文应报告 tradeoff，而不能声称 PM 全面优于 rule。
 
 不能主张：
 
@@ -334,12 +334,14 @@ min_orientation_consistency = 0.80
 
 ### 6.5 下一版 EvoEmo 评价要求
 
-下一版已落地为 EvoEmo Response Eval V4：
+下一版已落地为 EvoEmo Response Eval V4，并已完成 full-run：
 
 - module: `src/metacom_pm/evo_response_v4.py`
 - script: `scripts/17b_eval_evoemo_response_v4.py`
+- offline analysis: `scripts/17c_analyze_evoemo_response_v4.py`
 - freeze script: `scripts/20c_freeze_evoemo_response_v4_eval.py`
 - plan: `docs/METACOM_V33_EVOEMO_RESPONSE_V4_PLAN_ZH.md`
+- result: `docs/METACOM_V33_EVOEMO_RESPONSE_V4_RESULT_ZH.md`
 - note to GPT-5.5 Pro: `docs/METACOM_V33_EVOEMO_RESPONSE_V4_NOTE_TO_GPT55_ZH.md`
 
 核心设计：
@@ -351,17 +353,28 @@ min_orientation_consistency = 0.80
 - 候选顺序 deterministic balanced；
 - pilot 同一 unit 跑两个 order variants，检查 order sensitivity 和 position bias；
 - API 模式必须接受对应 dry-run `cost_estimate_sha256`；
-- full-run 必须有 `pilot_summary.json` 且 status = `PASS`。
+- full-run 必须有 `pilot_summary.json`，且 status = `PASS`；
+- full-run 前强制检查 pilot summary 与当前 full-run 的 judge / conditions / turns / ground truth / generation freeze / evaluation freeze / pilot thresholds 完全兼容。
 
-V4 no-API dry-run 已完成：
+V4 dry-run / pilot / full-run 状态：
 
 - evaluation freeze: `outputs/evoemo_response_v4_eval_freeze.json`
-- evaluation freeze sha256: `027aa5ac49b843e01b3da3cee01a0bd0de58036830b9a4ee79b4bf40f476b2d1`
+- evaluation freeze sha256: `c9ccd1d21d1da8571710361ed9648b6696964edaf45d45067cea2887185c4bb3`
+- pilot API: PASS；
+- full-run: COMPLETE；
+- artifact attestation: `outputs/evoemo_response_v4/artifact_attestation.json`
+- full-run output validation: ok；
+- completed calls: 204 / 204；
+- score rows: 1224 / 1224；
+- raw rows: 204；
+- successful raw calls: 204。
+
+Dry-run budget：
 
 | Target | Calls | Total Input Tokens | Mean / P95 / Max Input Tokens | Estimated Cost | Hash |
 |---|---:|---:|---:|---:|---|
-| pilot | 48 | 333,436 | 6,947 / 11,021 / 11,289 | 1.31 USD | `349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390` |
-| full | 204 | 1,421,967 | 6,970 / 10,706 / 11,289 | 5.59 USD | `3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b` |
+| pilot | 48 | 333,436 | 6,947 / 11,021 / 11,289 | 1.31 USD | `3f4c38cdb21d3e0e545bafd652cf6b7fcaedc159f83ef0919b9dfcd24ca3b661` |
+| full | 204 | 1,421,967 | 6,970 / 10,706 / 11,289 | 5.59 USD | `74650cb61d42640ee673817b67953f3716e0c58c52f958c677706411d5650eb5` |
 
 这确认：
 
@@ -370,62 +383,66 @@ V4 no-API dry-run 已完成：
 - V4 默认 hard gate 改为 `12000`；
 - full-context V4 仍可控制在约 5–6 USD 量级，而不是旧 pairwise 的 31.57 USD。
 
-运行顺序：
+实际 full-run judge usage：
 
-1. pilot dry-run
+- prompt tokens: 1,468,275；
+- completion tokens: 147,644；
+- estimated cost without cache discount: about 5.15 USD。
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/17b_eval_evoemo_response_v4.py \
-  --dry-run \
-  --dry-run-target pilot \
-  --pilot-units 24 \
-  --max-estimated-usd 2 \
-  --max-order-mean-abs-diff 0.50 \
-  --max-position-mean-shift 0.40 \
-  --overwrite
-```
+V4 response result:
 
-2. pilot API
+| Condition | Overall | Memory Appropriateness | Factual Grounding |
+|---|---:|---:|---:|
+| session_rag_rs | 3.750 | 3.990 | 4.289 |
+| no_memory_r0 | 3.745 | 3.995 | 4.284 |
+| best_fixed | 3.662 | 3.946 | 4.270 |
+| strong_rule | 3.662 | 3.951 | 4.275 |
+| pm | 3.657 | 3.941 | 4.275 |
+| full_history_rs | 3.618 | 3.951 | 4.240 |
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/17b_eval_evoemo_response_v4.py \
-  --pilot \
-  --pilot-units 24 \
-  --accept-cost-estimate-sha256 349a0f1ad84d28b969e62893e80dd6be98049ca69f1739edc808cbe424030390 \
-  --max-order-mean-abs-diff 0.50 \
-  --max-position-mean-shift 0.40
-```
+PM paired overall deltas, scenario-cluster bootstrap:
 
-3. pilot 通过后，full dry-run + full API
+| Comparison | Mean PM - Baseline | 95% Cluster CI | NI @ 0.05 | NI @ 0.10 |
+|---|---:|---:|---:|---:|
+| PM - strong_rule | -0.005 | [-0.059, 0.044] | no | yes |
+| PM - best_fixed | -0.005 | [-0.064, 0.054] | no | yes |
+| PM - full_history_rs | +0.039 | [-0.064, 0.147] | no | yes |
+| PM - session_rag_rs | -0.093 | [-0.167, -0.025] | no | no |
+| PM - no_memory_r0 | -0.088 | [-0.167, -0.015] | no | no |
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/17b_eval_evoemo_response_v4.py \
-  --dry-run \
-  --dry-run-target full \
-  --max-estimated-usd 10 \
-  --overwrite
-```
+V4 resource result on sampled turns:
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/17b_eval_evoemo_response_v4.py \
-  --full-run \
-  --pilot-summary outputs/evoemo_response_v4/pilot_summary.json \
-  --accept-cost-estimate-sha256 3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b
-```
+| Condition | Mean Input Tokens | RS Call Rate | Top Actions |
+|---|---:|---:|---|
+| pm | 1294.6 | 0.941 | MSE+RS:103, MPMS+RS:31, MP+RS:26, MPE+RS:15 |
+| strong_rule | 1627.4 | 1.000 | MSE+RS:204 |
+| best_fixed | 1654.8 | 1.000 | MPMSME+RS:204 |
+| session_rag_rs | 3233.2 | 1.000 | SESSION_RAG+RS:204 |
+| full_history_rs | 14079.8 | 1.000 | FULL_HISTORY+RS:204 |
+| no_memory_r0 | 395.5 | 0.000 | M0+R0:204 |
 
-4. memory / strategy audit 仍禁止全量直接跑
-   - 必须使用 stratified sampled audit；
-   - memory omission audit 只在少量关键 turn 上使用完整 memory；
-   - misuse audit 尽量只给 selected memory；
-   - strategy audit 单独轻量 prompt。
+PM input token reduction:
+
+- vs strong_rule: 20.4%；
+- vs best_fixed: 21.8%；
+- vs session_rag_rs: 60.0%；
+- vs full_history_rs: 90.8%。
+
+解释：
+
+- PM 对 strong_rule / best_fixed 的 response quality 大体持平，不能说显著输了，也不能在严格 0.05 margin 下声称已确认非劣；
+- `0.10` practical margin 下，PM 对 strong_rule / best_fixed 可视为非劣；
+- session_rag_rs / no_memory_r0 的 overall 分数更高，说明 V4 不支持“PM response quality 最优”；
+- PM 的优势主要在相近 response quality 下减少 structured-memory / full-history resource use；
+- `no_memory_r0` 分数高说明很多 fixed-input turn 不需要资源，不说明长期记忆无用；
+- `session_rag_rs` 分数高但成本更高，不说明 always-on memory/RAG 是最佳系统。
+
+Memory / strategy audit 仍禁止全量直接跑：
+
+- 必须使用 stratified sampled audit；
+- memory omission audit 只在少量关键 turn 上使用完整 memory；
+- misuse audit 尽量只给 selected memory；
+- strategy audit 单独轻量 prompt。
 
 ## 7. 当前任务状态
 
@@ -476,17 +493,24 @@ V4 准备状态：
 - `outputs/evoemo_response_v4/cost_estimate_pilot.json`
 - `outputs/evoemo_response_v4/cost_estimate_full.json`
 - `outputs/evoemo_response_v4_eval_freeze.json`
+- `outputs/evoemo_response_v4/response_summary.json`
+- `outputs/evoemo_response_v4/response_statistical_summary.json`
+- `outputs/evoemo_response_v4/response_resource_summary.json`
+- `outputs/evoemo_response_v4/response_analysis_summary.md`
+- `outputs/evoemo_response_v4/artifact_attestation.json`
 - pilot dry-run: PASS；
+- pilot API: PASS；
 - full dry-run: PASS；
-- fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；
-- pilot API: 尚未运行。
+- full API: COMPLETE / ATTESTED；
+- fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；full-run 前强制 pilot compatibility check；
 
 下一步：
 
-1. 跑 V4 pilot API；
-2. 若 pilot status = `PASS`，再跑 V4 full response evaluation；
-3. full response 通过后，再设计 sampled memory / strategy audit；
-4. 更新外部评测结果表与论文 claim boundary。
+1. 设计 sampled memory / strategy audit；
+2. 先做 no-API audit sample plan / token estimate；
+3. 小样本 pilot 检查 JSON 成功率与成本；
+4. pilot 通过后才运行 sampled audit；
+5. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
 
@@ -503,7 +527,9 @@ V4 准备状态：
 - `snap/METACOM_V33_EXTERNAL_EVALUATION_PLAN_FOR_GPT55_ZH.md`
 - `docs/METACOM_V33_EVOEMO_PAIRWISE_GATE_FAILURE_ZH.md`
 - `docs/METACOM_V33_EVOEMO_RESPONSE_V4_PLAN_ZH.md`
+- `docs/METACOM_V33_EVOEMO_RESPONSE_V4_RESULT_ZH.md`
 - `docs/METACOM_V33_EVOEMO_RESPONSE_V4_NOTE_TO_GPT55_ZH.md`
+- `docs/METACOM_V33_ESCONV_AUTOMETRICS_APPENDIX_ZH.md`
 
 核心 artifacts：
 
@@ -516,6 +542,11 @@ V4 准备状态：
 - `outputs/evoemo_response_v4/sample_plan.json`
 - `outputs/evoemo_response_v4/cost_estimate_pilot.json`
 - `outputs/evoemo_response_v4/cost_estimate_full.json`
+- `outputs/evoemo_response_v4/response_summary.json`
+- `outputs/evoemo_response_v4/response_statistical_summary.json`
+- `outputs/evoemo_response_v4/response_resource_summary.json`
+- `outputs/evoemo_response_v4/artifact_attestation.json`
+- `outputs/esconv_strategy_eval/autometrics_sanity.json`
 
 ## 9. 投稿写法提醒
 

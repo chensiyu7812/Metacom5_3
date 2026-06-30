@@ -1,0 +1,43 @@
+{
+  "status": "COMPLETE",
+  "created_at": "2026-06-30T04:37:15.100146+00:00",
+  "protocol": "esconv_offline_autometrics_sanity",
+  "input_outcomes": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/esconv_sweep/action_outcomes.jsonl",
+  "input_audit": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/data/esconv_test/audit_only.jsonl",
+  "scope": "appendix_sanity_only_not_main_evidence",
+  "metrics": {
+    "distinct_1_2": "corpus unique n-grams / total n-grams on generated responses",
+    "simple_sentence_bleu1_mean": "sentence-level clipped unigram BLEU with brevity penalty, averaged across turns",
+    "rouge_l_f1_mean": "sentence-level ROUGE-L F1 against ESConv gold response, averaged across turns"
+  },
+  "by_action": {
+    "M0+R0": {
+      "n": 2275,
+      "response_length_tokens": {
+        "mean": 48.635604395604396,
+        "median": 47.0,
+        "p95": 75.0
+      },
+      "distinct_1": 0.03404551452379661,
+      "distinct_2": 0.2425095274566074,
+      "simple_sentence_bleu1_mean": 0.10349687934961968,
+      "rouge_l_f1_mean": 0.10282993704947539,
+      "input_tokens_mean": 316.71384615384613,
+      "output_tokens_mean": 58.00703296703297
+    },
+    "M0+RS": {
+      "n": 2275,
+      "response_length_tokens": {
+        "mean": 47.68703296703297,
+        "median": 46.0,
+        "p95": 81.29999999999973
+      },
+      "distinct_1": 0.03382862620750682,
+      "distinct_2": 0.24126990104789434,
+      "simple_sentence_bleu1_mean": 0.10730757091078974,
+      "rouge_l_f1_mean": 0.1064659988737119,
+      "input_tokens_mean": 570.3608791208791,
+      "output_tokens_mean": 56.637362637362635
+    }
+  }
+}

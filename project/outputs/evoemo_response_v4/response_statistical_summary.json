@@ -1,0 +1,2049 @@
+{
+  "status": "COMPLETE",
+  "created_at": "2026-06-30T04:37:15.066909+00:00",
+  "protocol": "evoemo_response_v4_no_api_statistical_summary",
+  "input_scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_scores.jsonl",
+  "input_response_summary": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_summary.json",
+  "treatment": "pm",
+  "baselines": [
+    "strong_rule",
+    "best_fixed",
+    "session_rag_rs",
+    "full_history_rs",
+    "no_memory_r0"
+  ],
+  "score_fields": [
+    "emotional_support",
+    "personalization",
+    "memory_appropriateness",
+    "factual_grounding",
+    "temporal_consistency",
+    "non_intrusiveness",
+    "overall"
+  ],
+  "margins": [
+    0.05,
+    0.1
+  ],
+  "bootstrap": {
+    "n_resamples": 10000,
+    "seed": 20260630,
+    "cluster_keys": {
+      "scenario": "(user_id, topic_index)",
+      "user": "user_id"
+    }
+  },
+  "source_response_summary_status": "COMPLETE",
+  "source_response_output_validation": {
+    "ok": true,
+    "errors": [],
+    "expected_calls": 204,
+    "judgment_rows": 204,
+    "score_rows": 1224,
+    "raw_rows": 204,
+    "successful_raw_calls": 204,
+    "expected_score_rows": 1224,
+    "duplicate_judgment_keys": 0,
+    "duplicate_score_keys": 0,
+    "duplicate_successful_raw_keys": 0
+  },
+  "condition_summary": {
+    "best_fixed": {
+      "n": 204,
+      "emotional_support": 3.661764705882353,
+      "personalization": 3.3872549019607843,
+      "memory_appropriateness": 3.946078431372549,
+      "factual_grounding": 4.269607843137255,
+      "temporal_consistency": 4.299019607843137,
+      "non_intrusiveness": 4.313725490196078,
+      "overall": 3.661764705882353
+    },
+    "full_history_rs": {
+      "n": 204,
+      "emotional_support": 3.6176470588235294,
+      "personalization": 3.377450980392157,
+      "memory_appropriateness": 3.950980392156863,
+      "factual_grounding": 4.240196078431373,
+      "temporal_consistency": 4.2745098039215685,
+      "non_intrusiveness": 4.279411764705882,
+      "overall": 3.6176470588235294
+    },
+    "no_memory_r0": {
+      "n": 204,
+      "emotional_support": 3.7450980392156863,
+      "personalization": 3.450980392156863,
+      "memory_appropriateness": 3.9950980392156863,
+      "factual_grounding": 4.284313725490196,
+      "temporal_consistency": 4.313725490196078,
+      "non_intrusiveness": 4.318627450980392,
+      "overall": 3.7450980392156863
+    },
+    "pm": {
+      "n": 204,
+      "emotional_support": 3.656862745098039,
+      "personalization": 3.3529411764705883,
+      "memory_appropriateness": 3.9411764705882355,
+      "factual_grounding": 4.2745098039215685,
+      "temporal_consistency": 4.303921568627451,
+      "non_intrusiveness": 4.294117647058823,
+      "overall": 3.656862745098039
+    },
+    "session_rag_rs": {
+      "n": 204,
+      "emotional_support": 3.75,
+      "personalization": 3.4411764705882355,
+      "memory_appropriateness": 3.9901960784313726,
+      "factual_grounding": 4.28921568627451,
+      "temporal_consistency": 4.318627450980392,
+      "non_intrusiveness": 4.333333333333333,
+      "overall": 3.75
+    },
+    "strong_rule": {
+      "n": 204,
+      "emotional_support": 3.661764705882353,
+      "personalization": 3.3823529411764706,
+      "memory_appropriateness": 3.950980392156863,
+      "factual_grounding": 4.2745098039215685,
+      "temporal_consistency": 4.303921568627451,
+      "non_intrusiveness": 4.299019607843137,
+      "overall": 3.661764705882353
+    }
+  },
+  "paired_pm_deltas": {
+    "strong_rule": {
+      "emotional_support": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 17,
+          "tie": 169,
+          "pm_lower": 18
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.06372549019607843,
+          "upper": 0.049019607843137254,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.0049019607843137246,
+          "lower": -0.05392156862745098,
+          "upper": 0.04411764705882354,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.00462962962962963,
+          "lower": -0.05555555555555555,
+          "upper": 0.060185185185185196,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5363,
+          "scenario_p_delta_lt_0": 0.5598,
+          "user_p_delta_lt_0": 0.4235
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0383
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0002
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": 0.0
+        }
+      },
+      "personalization": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.029411764705882353,
+        "paired_counts": {
+          "pm_higher": 9,
+          "tie": 180,
+          "pm_lower": 15
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.029411764705882353,
+          "lower": -0.0784313725490196,
+          "upper": 0.0196078431372549,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.029411764705882353,
+          "lower": -0.06862745098039216,
+          "upper": 0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.024691358024691357,
+          "lower": -0.06635802469135801,
+          "upper": 0.020061728395061724,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.8755,
+          "scenario_p_delta_lt_0": 0.9039,
+          "user_p_delta_lt_0": 0.8662
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.1504
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0005
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": -0.049019607843137254
+        }
+      },
+      "memory_appropriateness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.00980392156862745,
+        "paired_counts": {
+          "pm_higher": 4,
+          "tie": 194,
+          "pm_lower": 6
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.0392156862745098,
+          "upper": 0.0196078431372549,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.009803921568627453,
+          "lower": -0.04411764705882353,
+          "upper": 0.024509803921568624,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.01697530864197531,
+          "lower": -0.052469135802469126,
+          "upper": 0.016975308641975308,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.6824,
+          "scenario_p_delta_lt_0": 0.6743,
+          "user_p_delta_lt_0": 0.8296
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0121
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.00980392156862745,
+          "8": -0.029411764705882353
+        }
+      },
+      "factual_grounding": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.0,
+        "paired_counts": {
+          "pm_higher": 1,
+          "tie": 202,
+          "pm_lower": 1
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.014705882352941176,
+          "upper": 0.014705882352941176,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.014705882352941176,
+          "upper": 0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.013888888888888888,
+          "upper": 0.013888888888888888,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.3432,
+          "scenario_p_delta_lt_0": 0.3441,
+          "user_p_delta_lt_0": 0.3437
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.00980392156862745,
+          "8": -0.00980392156862745
+        }
+      },
+      "temporal_consistency": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.0,
+        "paired_counts": {
+          "pm_higher": 1,
+          "tie": 202,
+          "pm_lower": 1
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.014705882352941176,
+          "upper": 0.014705882352941176,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.014705882352941176,
+          "upper": 0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.0,
+          "lower": -0.013888888888888888,
+          "upper": 0.013888888888888888,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.3451,
+          "scenario_p_delta_lt_0": 0.3539,
+          "user_p_delta_lt_0": 0.3494
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.00980392156862745,
+          "8": -0.00980392156862745
+        }
+      },
+      "non_intrusiveness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 6,
+          "tie": 191,
+          "pm_lower": 7
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.0392156862745098,
+          "upper": 0.029411764705882353,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.034313725490196074,
+          "upper": 0.024509803921568624,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.006172839506172838,
+          "lower": -0.037037037037037035,
+          "upper": 0.024691358024691357,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5601,
+          "scenario_p_delta_lt_0": 0.5764,
+          "user_p_delta_lt_0": 0.6495
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0005
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.029411764705882353,
+          "8": -0.0392156862745098
+        }
+      },
+      "overall": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 17,
+          "tie": 169,
+          "pm_lower": 18
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.06372549019607843,
+          "upper": 0.05392156862745098,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.0049019607843137246,
+          "lower": -0.0588235294117647,
+          "upper": 0.04411764705882354,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.00462962962962963,
+          "lower": -0.05092592592592592,
+          "upper": 0.06018518518518518,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5275,
+          "scenario_p_delta_lt_0": 0.5643,
+          "user_p_delta_lt_0": 0.4254
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.04
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0002
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": 0.0
+        }
+      }
+    },
+    "best_fixed": {
+      "emotional_support": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 24,
+          "tie": 154,
+          "pm_lower": 26
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.07352941176470588,
+          "upper": 0.06862745098039216,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.004901960784313729,
+          "lower": -0.06372549019607843,
+          "upper": 0.0588235294117647,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.010802469135802472,
+          "lower": -0.06018518518518518,
+          "upper": 0.08641975308641975,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5315,
+          "scenario_p_delta_lt_0": 0.5668,
+          "user_p_delta_lt_0": 0.3971
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0678
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.001
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.058823529411764705,
+          "8": -0.06862745098039216
+        }
+      },
+      "personalization": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.03431372549019608,
+        "paired_counts": {
+          "pm_higher": 15,
+          "tie": 168,
+          "pm_lower": 21
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.03431372549019608,
+          "lower": -0.09803921568627451,
+          "upper": 0.024509803921568627,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.034313725490196074,
+          "lower": -0.08823529411764705,
+          "upper": 0.0196078431372549,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.02932098765432099,
+          "lower": -0.0771604938271605,
+          "upper": 0.016975308641975308,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.8507,
+          "scenario_p_delta_lt_0": 0.8923,
+          "user_p_delta_lt_0": 0.886
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.2532
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0094
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.029411764705882353,
+          "8": -0.09803921568627451
+        }
+      },
+      "memory_appropriateness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 7,
+          "tie": 190,
+          "pm_lower": 7
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.04411764705882353,
+          "upper": 0.03431372549019608,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.004901960784313727,
+          "lower": -0.049019607843137254,
+          "upper": 0.0392156862745098,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.001543209876543209,
+          "lower": -0.040123456790123455,
+          "upper": 0.03858024691358025,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5436,
+          "scenario_p_delta_lt_0": 0.5589,
+          "user_p_delta_lt_0": 0.5189
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0234
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0002
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0392156862745098,
+          "8": -0.049019607843137254
+        }
+      },
+      "factual_grounding": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 3,
+          "tie": 198,
+          "pm_lower": 3
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.004901960784313725,
+          "lower": -0.024509803921568627,
+          "upper": 0.03431372549019608,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.004901960784313725,
+          "lower": -0.02941176470588235,
+          "upper": 0.0392156862745098,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.009259259259259259,
+          "lower": -0.03240740740740741,
+          "upper": 0.06018518518518518,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.3172,
+          "scenario_p_delta_lt_0": 0.3284,
+          "user_p_delta_lt_0": 0.3228
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0005
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0,
+          "8": 0.00980392156862745
+        }
+      },
+      "temporal_consistency": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 3,
+          "tie": 198,
+          "pm_lower": 3
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.004901960784313725,
+          "lower": -0.024509803921568627,
+          "upper": 0.03431372549019608,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.004901960784313725,
+          "lower": -0.024509803921568627,
+          "upper": 0.0392156862745098,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.009259259259259259,
+          "lower": -0.03240740740740741,
+          "upper": 0.06018518518518518,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.3107,
+          "scenario_p_delta_lt_0": 0.3296,
+          "user_p_delta_lt_0": 0.347
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0002
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0,
+          "8": 0.00980392156862745
+        }
+      },
+      "non_intrusiveness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.0196078431372549,
+        "paired_counts": {
+          "pm_higher": 5,
+          "tie": 191,
+          "pm_lower": 8
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.0196078431372549,
+          "lower": -0.058823529411764705,
+          "upper": 0.0196078431372549,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.0196078431372549,
+          "lower": -0.049019607843137254,
+          "upper": 0.00980392156862745,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.0154320987654321,
+          "lower": -0.040123456790123455,
+          "upper": 0.006172839506172839,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.8109,
+          "scenario_p_delta_lt_0": 0.8775,
+          "user_p_delta_lt_0": 0.9004
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0235
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.00980392156862745,
+          "8": -0.049019607843137254
+        }
+      },
+      "overall": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.004901960784313725,
+        "paired_counts": {
+          "pm_higher": 24,
+          "tie": 154,
+          "pm_lower": 26
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.004901960784313725,
+          "lower": -0.07352941176470588,
+          "upper": 0.06372549019607843,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.004901960784313729,
+          "lower": -0.06372549019607843,
+          "upper": 0.05392156862745099,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.010802469135802472,
+          "lower": -0.06018518518518518,
+          "upper": 0.08487654320987655,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.5295,
+          "scenario_p_delta_lt_0": 0.5594,
+          "user_p_delta_lt_0": 0.4068
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.066
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0003
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.058823529411764705,
+          "8": -0.06862745098039216
+        }
+      }
+    },
+    "session_rag_rs": {
+      "emotional_support": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.09313725490196079,
+        "paired_counts": {
+          "pm_higher": 18,
+          "tie": 150,
+          "pm_lower": 36
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.09313725490196079,
+          "lower": -0.16666666666666666,
+          "upper": -0.0196078431372549,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.09313725490196079,
+          "lower": -0.16666666666666666,
+          "upper": -0.019607843137254905,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.08487654320987653,
+          "lower": -0.16824845679012346,
+          "upper": -0.0030864197530864274,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9945,
+          "scenario_p_delta_lt_0": 0.9929,
+          "user_p_delta_lt_0": 0.9798
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.8719
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.4182
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.13725490196078433,
+          "8": -0.049019607843137254
+        }
+      },
+      "personalization": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.08823529411764706,
+        "paired_counts": {
+          "pm_higher": 11,
+          "tie": 164,
+          "pm_lower": 29
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.08823529411764706,
+          "lower": -0.14705882352941177,
+          "upper": -0.029411764705882353,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.08823529411764705,
+          "lower": -0.14705882352941174,
+          "upper": -0.029411764705882353,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.08796296296296297,
+          "lower": -0.154320987654321,
+          "upper": -0.02160493827160494,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.998,
+          "scenario_p_delta_lt_0": 0.998,
+          "user_p_delta_lt_0": 0.9959
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.896
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.3417
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.12745098039215685,
+          "8": -0.049019607843137254
+        }
+      },
+      "memory_appropriateness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.049019607843137254,
+        "paired_counts": {
+          "pm_higher": 6,
+          "tie": 182,
+          "pm_lower": 16
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.049019607843137254,
+          "lower": -0.09313725490196079,
+          "upper": -0.004901960784313725,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.04901960784313725,
+          "lower": -0.0980392156862745,
+          "upper": 0.0,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.06018518518518518,
+          "lower": -0.11419753086419754,
+          "upper": -0.00462962962962963,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9806,
+          "scenario_p_delta_lt_0": 0.971,
+          "user_p_delta_lt_0": 0.9836
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.4589
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0175
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.0784313725490196,
+          "8": -0.0196078431372549
+        }
+      },
+      "factual_grounding": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.014705882352941176,
+        "paired_counts": {
+          "pm_higher": 2,
+          "tie": 197,
+          "pm_lower": 5
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.014705882352941176,
+          "lower": -0.0392156862745098,
+          "upper": 0.00980392156862745,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.014705882352941176,
+          "lower": -0.04411764705882353,
+          "upper": 0.009803921568627453,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.016975308641975304,
+          "lower": -0.05401234567901234,
+          "upper": 0.018518518518518517,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.8356,
+          "scenario_p_delta_lt_0": 0.8059,
+          "user_p_delta_lt_0": 0.8007
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0093
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.029411764705882353,
+          "8": 0.0
+        }
+      },
+      "temporal_consistency": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.014705882352941176,
+        "paired_counts": {
+          "pm_higher": 1,
+          "tie": 199,
+          "pm_lower": 4
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.014705882352941176,
+          "lower": -0.0392156862745098,
+          "upper": 0.004901960784313725,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.014705882352941176,
+          "lower": -0.03431372549019608,
+          "upper": 0.004901960784313725,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.021604938271604937,
+          "lower": -0.05092592592592592,
+          "upper": 0.0030864197530864196,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.883,
+          "scenario_p_delta_lt_0": 0.8837,
+          "user_p_delta_lt_0": 0.9408
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0003
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.0196078431372549,
+          "8": -0.00980392156862745
+        }
+      },
+      "non_intrusiveness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.0392156862745098,
+        "paired_counts": {
+          "pm_higher": 5,
+          "tie": 187,
+          "pm_lower": 12
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.0392156862745098,
+          "lower": -0.08333333333333333,
+          "upper": 0.0001225490196060598,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.0392156862745098,
+          "lower": -0.0784313725490196,
+          "upper": -0.004901960784313725,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.04938271604938272,
+          "lower": -0.09567901234567901,
+          "upper": -0.012345679012345678,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9562,
+          "scenario_p_delta_lt_0": 0.9838,
+          "user_p_delta_lt_0": 0.9978
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.2485
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0013
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.0196078431372549,
+          "8": -0.058823529411764705
+        }
+      },
+      "overall": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.09313725490196079,
+        "paired_counts": {
+          "pm_higher": 18,
+          "tie": 150,
+          "pm_lower": 36
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.09313725490196079,
+          "lower": -0.16176470588235295,
+          "upper": -0.024509803921568627,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.09313725490196079,
+          "lower": -0.16666666666666663,
+          "upper": -0.024509803921568624,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.08487654320987653,
+          "lower": -0.16824845679012349,
+          "upper": -1.5419764230904951e-18,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9945,
+          "scenario_p_delta_lt_0": 0.9951,
+          "user_p_delta_lt_0": 0.9754
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.8766
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.4222
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.13725490196078433,
+          "8": -0.049019607843137254
+        }
+      }
+    },
+    "full_history_rs": {
+      "emotional_support": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.0392156862745098,
+        "paired_counts": {
+          "pm_higher": 50,
+          "tie": 108,
+          "pm_lower": 46
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.0392156862745098,
+          "lower": -0.058823529411764705,
+          "upper": 0.13725490196078433,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.0392156862745098,
+          "lower": -0.06372549019607843,
+          "upper": 0.14215686274509806,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.037037037037037035,
+          "lower": -0.08333333333333331,
+          "upper": 0.15740740740740738,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.2067,
+          "scenario_p_delta_lt_0": 0.239,
+          "user_p_delta_lt_0": 0.2763
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0471
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0039
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.09803921568627451,
+          "8": -0.0196078431372549
+        }
+      },
+      "personalization": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.024509803921568627,
+        "paired_counts": {
+          "pm_higher": 32,
+          "tie": 131,
+          "pm_lower": 41
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.024509803921568627,
+          "lower": -0.11274509803921569,
+          "upper": 0.06372549019607843,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.024509803921568624,
+          "lower": -0.10294117647058823,
+          "upper": 0.06372549019607843,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.033950617283950615,
+          "lower": -0.125,
+          "upper": 0.05555555555555555,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.6837,
+          "scenario_p_delta_lt_0": 0.7067,
+          "user_p_delta_lt_0": 0.7621
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.2619
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0303
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.049019607843137254,
+          "8": -0.09803921568627451
+        }
+      },
+      "memory_appropriateness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.00980392156862745,
+        "paired_counts": {
+          "pm_higher": 13,
+          "tie": 176,
+          "pm_lower": 15
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.06372549019607843,
+          "upper": 0.049019607843137254,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.058823529411764705,
+          "upper": 0.0392156862745098,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.026234567901234563,
+          "lower": -0.08641975308641975,
+          "upper": 0.027777777777777776,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.6006,
+          "scenario_p_delta_lt_0": 0.6377,
+          "user_p_delta_lt_0": 0.8147
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0479
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0001
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0392156862745098,
+          "8": -0.058823529411764705
+        }
+      },
+      "factual_grounding": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.03431372549019608,
+        "paired_counts": {
+          "pm_higher": 10,
+          "tie": 190,
+          "pm_lower": 4
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.03431372549019608,
+          "lower": -0.004901960784313725,
+          "upper": 0.07352941176470588,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.034313725490196074,
+          "lower": 0.0,
+          "upper": 0.07352941176470587,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.02469135802469136,
+          "lower": -0.012345679012345678,
+          "upper": 0.05864197530864198,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.0267,
+          "scenario_p_delta_lt_0": 0.0219,
+          "user_p_delta_lt_0": 0.091
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0001
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0392156862745098,
+          "8": 0.029411764705882353
+        }
+      },
+      "temporal_consistency": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.029411764705882353,
+        "paired_counts": {
+          "pm_higher": 9,
+          "tie": 191,
+          "pm_lower": 4
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.029411764705882353,
+          "lower": -0.004901960784313725,
+          "upper": 0.06862745098039216,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.02941176470588235,
+          "lower": -0.004901960784313725,
+          "upper": 0.06372549019607843,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.015432098765432103,
+          "lower": -0.018518518518518517,
+          "upper": 0.0462962962962963,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.0455,
+          "scenario_p_delta_lt_0": 0.0312,
+          "user_p_delta_lt_0": 0.1617
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0392156862745098,
+          "8": 0.0196078431372549
+        }
+      },
+      "non_intrusiveness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.014705882352941176,
+        "paired_counts": {
+          "pm_higher": 12,
+          "tie": 183,
+          "pm_lower": 9
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.014705882352941176,
+          "lower": -0.03431372549019608,
+          "upper": 0.06862745098039216,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.01470588235294118,
+          "lower": -0.034313725490196074,
+          "upper": 0.06862745098039215,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.007716049382716052,
+          "lower": -0.0617283950617284,
+          "upper": 0.041666666666666664,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.2482,
+          "scenario_p_delta_lt_0": 0.2497,
+          "user_p_delta_lt_0": 0.5962
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0027
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.0392156862745098,
+          "8": -0.00980392156862745
+        }
+      },
+      "overall": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": 0.0392156862745098,
+        "paired_counts": {
+          "pm_higher": 50,
+          "tie": 108,
+          "pm_lower": 46
+        },
+        "unit_bootstrap_ci": {
+          "estimate": 0.0392156862745098,
+          "lower": -0.058823529411764705,
+          "upper": 0.14215686274509803,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": 0.0392156862745098,
+          "lower": -0.06372549019607843,
+          "upper": 0.14705882352941174,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": 0.037037037037037035,
+          "lower": -0.0833719135802469,
+          "upper": 0.1558641975308642,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.2093,
+          "scenario_p_delta_lt_0": 0.2309,
+          "user_p_delta_lt_0": 0.275
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0407
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0039
+          }
+        },
+        "turn_mean_deltas": {
+          "3": 0.09803921568627451,
+          "8": -0.0196078431372549
+        }
+      }
+    },
+    "no_memory_r0": {
+      "emotional_support": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.08823529411764706,
+        "paired_counts": {
+          "pm_higher": 26,
+          "tie": 137,
+          "pm_lower": 41
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.08823529411764706,
+          "lower": -0.1715686274509804,
+          "upper": -0.00980392156862745,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.08823529411764706,
+          "lower": -0.16666666666666666,
+          "upper": -0.014705882352941173,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.08179012345679011,
+          "lower": -0.1574074074074074,
+          "upper": -0.012345679012345678,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9808,
+          "scenario_p_delta_lt_0": 0.9907,
+          "user_p_delta_lt_0": 0.9894
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.8308
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.3692
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.11764705882352941,
+          "8": -0.058823529411764705
+        }
+      },
+      "personalization": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.09803921568627451,
+        "paired_counts": {
+          "pm_higher": 16,
+          "tie": 155,
+          "pm_lower": 33
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.09803921568627451,
+          "lower": -0.1715686274509804,
+          "upper": -0.029411764705882353,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.09803921568627451,
+          "lower": -0.15686274509803924,
+          "upper": -0.0392156862745098,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.09259259259259259,
+          "lower": -0.15123456790123455,
+          "upper": -0.035493827160493825,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9959,
+          "scenario_p_delta_lt_0": 0.9996,
+          "user_p_delta_lt_0": 0.9991
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.9381
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.469
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.09803921568627451,
+          "8": -0.09803921568627451
+        }
+      },
+      "memory_appropriateness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.05392156862745098,
+        "paired_counts": {
+          "pm_higher": 6,
+          "tie": 181,
+          "pm_lower": 17
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.05392156862745098,
+          "lower": -0.09803921568627451,
+          "upper": -0.00980392156862745,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.053921568627450976,
+          "lower": -0.09313725490196079,
+          "upper": -0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.054012345679012336,
+          "lower": -0.09722222222222222,
+          "upper": -0.013888888888888892,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9874,
+          "scenario_p_delta_lt_0": 0.9957,
+          "user_p_delta_lt_0": 0.9962
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.561
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0107
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.058823529411764705,
+          "8": -0.049019607843137254
+        }
+      },
+      "factual_grounding": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.00980392156862745,
+        "paired_counts": {
+          "pm_higher": 3,
+          "tie": 196,
+          "pm_lower": 5
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.03431372549019608,
+          "upper": 0.014705882352941176,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.034313725490196074,
+          "upper": 0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.004629629629629629,
+          "lower": -0.032407407407407406,
+          "upper": 0.023148148148148147,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.6888,
+          "scenario_p_delta_lt_0": 0.7308,
+          "user_p_delta_lt_0": 0.5622
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0007
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": -0.00980392156862745
+        }
+      },
+      "temporal_consistency": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.00980392156862745,
+        "paired_counts": {
+          "pm_higher": 2,
+          "tie": 198,
+          "pm_lower": 4
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.03431372549019608,
+          "upper": 0.014705882352941176,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.00980392156862745,
+          "lower": -0.029411764705882353,
+          "upper": 0.00980392156862745,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.009259259259259259,
+          "lower": -0.027777777777777776,
+          "upper": 0.0,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.7273,
+          "scenario_p_delta_lt_0": 0.7799,
+          "user_p_delta_lt_0": 0.6394
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": -0.00980392156862745
+        }
+      },
+      "non_intrusiveness": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.024509803921568627,
+        "paired_counts": {
+          "pm_higher": 7,
+          "tie": 186,
+          "pm_lower": 11
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.024509803921568627,
+          "lower": -0.06862745098039216,
+          "upper": 0.014705882352941176,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.024509803921568624,
+          "lower": -0.05392156862745098,
+          "upper": 0.004901960784313725,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.018518518518518517,
+          "lower": -0.05246913580246913,
+          "upper": 0.016975308641975304,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.8434,
+          "scenario_p_delta_lt_0": 0.9267,
+          "user_p_delta_lt_0": 0.8467
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0448
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": true,
+            "scenario_ci_noninferior": true,
+            "user_ci_noninferior": true,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.0
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.00980392156862745,
+          "8": -0.0392156862745098
+        }
+      },
+      "overall": {
+        "n": 204,
+        "mean_delta_pm_minus_baseline": -0.08823529411764706,
+        "paired_counts": {
+          "pm_higher": 26,
+          "tie": 137,
+          "pm_lower": 41
+        },
+        "unit_bootstrap_ci": {
+          "estimate": -0.08823529411764706,
+          "lower": -0.1715686274509804,
+          "upper": -0.004901960784313725,
+          "n_units": 204,
+          "n_resamples": 10000
+        },
+        "scenario_cluster_bootstrap_ci": {
+          "estimate": -0.08823529411764706,
+          "lower": -0.16666666666666666,
+          "upper": -0.014705882352941176,
+          "n_clusters": 34,
+          "n_resamples": 10000
+        },
+        "user_cluster_bootstrap_ci": {
+          "estimate": -0.08179012345679011,
+          "lower": -0.1589506172839506,
+          "upper": -0.012345679012345684,
+          "n_clusters": 18,
+          "n_resamples": 10000
+        },
+        "bootstrap_probabilities": {
+          "unit_p_delta_lt_0": 0.9801,
+          "scenario_p_delta_lt_0": 0.9922,
+          "user_p_delta_lt_0": 0.9912
+        },
+        "noninferiority": {
+          "0.05": {
+            "margin": 0.05,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.8298
+          },
+          "0.1": {
+            "margin": 0.1,
+            "unit_ci_noninferior": false,
+            "scenario_ci_noninferior": false,
+            "user_ci_noninferior": false,
+            "scenario_bootstrap_p_delta_below_minus_margin": 0.3849
+          }
+        },
+        "turn_mean_deltas": {
+          "3": -0.11764705882352941,
+          "8": -0.058823529411764705
+        }
+      }
+    }
+  }
+}
