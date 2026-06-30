@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary。下一步是 sampled memory / strategy audit 设计。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit no-API plan 已完成。下一步是 audit pilot 脚本与 dry-run。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -448,6 +448,35 @@ Memory / strategy audit 仍禁止全量直接跑：
 - misuse audit 尽量只给 selected memory；
 - strategy audit 单独轻量 prompt。
 
+当前 sampled audit no-API plan:
+
+- script: `scripts/17d_plan_evoemo_sampled_audit.py`
+- plan doc: `docs/METACOM_V33_EVOEMO_SAMPLED_AUDIT_PLAN_ZH.md`
+- output dir: `outputs/evoemo_sampled_audit_plan/`
+- selected items: 40；
+- unique users: 18；
+- unique scenarios `(user_id, topic_index)`: 34 / 34；
+- estimated audit calls: 80；
+- estimated input tokens: 178,975；
+- estimated output tokens: 36,000；
+- estimated cost: about 0.81 USD。
+
+Audit plan focus:
+
+- PM vs strong_rule：质量接近，PM 更省资源；
+- PM vs best_fixed：质量接近，PM 更省资源；
+- PM vs session_rag_rs：session_rag 分数略高但成本更大；
+- PM vs no_memory_r0：检查 PM 是否引入 unnecessary exposure / over-structuring；
+- PM high-resource / low-resource / rare-action turns：检查 PM 边界行为。
+
+下一步 audit API 之前必须：
+
+1. 写 audit pilot evaluator；
+2. no-API dry-run 构造真实 prompt 并估算 token；
+3. 生成 cost estimate hash；
+4. 先跑小样本 pilot，建议 8 items；
+5. pilot 通过 exact output validation 和 raw rows gate 后，才考虑扩大。
+
 ## 7. 当前任务状态
 
 EvoEmo selective generation 已完成：
@@ -508,10 +537,17 @@ V4 准备状态：
 - full API: COMPLETE / ATTESTED；
 - fail-closed 修正：artifact attestation 绑定 V4 evaluation freeze；summary / attestation 前强制 exact output validation；full-run 前强制 pilot compatibility check；
 
+Sampled audit no-API plan：
+
+- `outputs/evoemo_sampled_audit_plan/audit_sample_plan.json`
+- `outputs/evoemo_sampled_audit_plan/audit_items.jsonl`
+- `outputs/evoemo_sampled_audit_plan/audit_sample_plan.md`
+- status: `PLANNED_NO_API`
+
 下一步：
 
-1. 设计 sampled memory / strategy audit；
-2. 先做 no-API audit sample plan / token estimate；
+1. 写 sampled audit pilot evaluator；
+2. 先做 no-API dry-run / prompt token estimate；
 3. 小样本 pilot 检查 JSON 成功率与成本；
 4. pilot 通过后才运行 sampled audit；
 5. 更新外部评测结果表与论文 claim boundary。
@@ -534,6 +570,7 @@ V4 准备状态：
 - `docs/METACOM_V33_EVOEMO_RESPONSE_V4_RESULT_ZH.md`
 - `docs/METACOM_V33_EVOEMO_RESPONSE_V4_NOTE_TO_GPT55_ZH.md`
 - `docs/METACOM_V33_ESCONV_AUTOMETRICS_APPENDIX_ZH.md`
+- `docs/METACOM_V33_EVOEMO_SAMPLED_AUDIT_PLAN_ZH.md`
 
 核心 artifacts：
 
@@ -551,6 +588,7 @@ V4 准备状态：
 - `outputs/evoemo_response_v4/response_resource_summary.json`
 - `outputs/evoemo_response_v4/artifact_attestation.json`
 - `outputs/esconv_strategy_eval/autometrics_sanity.json`
+- `outputs/evoemo_sampled_audit_plan/audit_sample_plan.json`
 
 ## 9. 投稿写法提醒
 

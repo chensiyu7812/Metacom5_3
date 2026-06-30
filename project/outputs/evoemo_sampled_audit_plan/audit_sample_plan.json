@@ -1,0 +1,1860 @@
+{
+  "status": "PLANNED_NO_API",
+  "created_at": "2026-06-30T05:05:50.591110+00:00",
+  "protocol": "evoemo_sampled_memory_strategy_audit_plan_v1",
+  "inputs": {
+    "scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_scores.jsonl",
+    "turns": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_selective/turns.jsonl"
+  },
+  "parameters": {
+    "conditions": [
+      "pm",
+      "strong_rule",
+      "best_fixed",
+      "session_rag_rs",
+      "no_memory_r0"
+    ],
+    "per_stratum": 6,
+    "target_units": 40,
+    "max_omission_units": 12,
+    "estimated_output_tokens_per_call": 450
+  },
+  "candidate_pool": {
+    "v4_units": 204,
+    "strata_candidate_counts": {
+      "pm_high_resource_exposure": 204,
+      "pm_low_resource_or_r0": 12,
+      "pm_quality_tie_or_win_with_savings": 184,
+      "pm_vs_best_fixed_resource_saving": 204,
+      "pm_vs_no_memory_quality_loss": 41,
+      "pm_vs_session_quality_cost_tradeoff": 36,
+      "pm_vs_strong_rule_action_disagreement": 101,
+      "rare_pm_actions": 101
+    }
+  },
+  "selection_summary": {
+    "selected_items": 40,
+    "unique_users": 18,
+    "unique_scenarios": 34,
+    "unique_topics": 3,
+    "turn_counts": {
+      "3": 22,
+      "8": 18
+    },
+    "pm_action_counts": {
+      "MSE+RS": 14,
+      "MP+RS": 11,
+      "MPMS+RS": 6,
+      "MSE+R0": 4,
+      "MS+RS": 2,
+      "MP+R0": 1,
+      "MS+R0": 1,
+      "MPE+RS": 1
+    },
+    "focus_condition_counts": {
+      "pm": 40,
+      "strong_rule": 14,
+      "best_fixed": 10,
+      "no_memory_r0": 6,
+      "session_rag_rs": 6
+    },
+    "audit_module_counts": {
+      "selected_evidence_misuse": 30,
+      "unnecessary_exposure": 26,
+      "source_set_appropriateness": 16,
+      "unsupported_personal_claim": 14,
+      "strategy_overuse": 12,
+      "omission_with_authorized_context": 10,
+      "stale_or_conflict": 8,
+      "strategy_omission": 4,
+      "response_support_sufficiency": 4,
+      "positive_control_resource_saving": 4
+    },
+    "covered_strata_counts": {
+      "pm_quality_tie_or_win_with_savings": 30,
+      "rare_pm_actions": 22,
+      "pm_vs_best_fixed_resource_saving": 11,
+      "pm_high_resource_exposure": 10,
+      "pm_vs_no_memory_quality_loss": 6,
+      "pm_low_resource_or_r0": 6,
+      "pm_vs_session_quality_cost_tradeoff": 6,
+      "pm_vs_strong_rule_action_disagreement": 6
+    }
+  },
+  "cost_estimate": {
+    "status": "ESTIMATED_NO_API",
+    "selected_evidence_or_strategy_calls": 70,
+    "authorized_context_omission_calls": 10,
+    "total_estimated_calls": 80,
+    "estimated_input_tokens": 178975,
+    "estimated_output_tokens": 36000,
+    "estimated_cost_usd": 0.8074375,
+    "pricing": {
+      "input_usd_per_mtok": 2.5,
+      "output_usd_per_mtok": 10.0
+    },
+    "estimated_output_tokens_per_call": 450,
+    "max_omission_units": 12,
+    "note": "Planning estimate only. A real audit script must do its own dry-run hash and budget gate before API calls."
+  },
+  "guardrails": {
+    "no_api_calls": true,
+    "requires_future_dry_run_hash": true,
+    "requires_pilot_before_api_full_run": true,
+    "recommended_pilot_items": 8,
+    "raw_rows_manual_gate": "raw_rows <= expected_calls * 1.10",
+    "do_not_use_as_audit_result": true
+  },
+  "audit_items": [
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 1200.0,
+      "unit_id": "unit_34fba5d18ccf03afb79e",
+      "unit_key": {
+        "user_id": "p1",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1839.0,
+      "pm_memory_tokens": 1307.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 457.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": -3.024070021881838,
+      "input_tokens_saved_vs_baseline": -1382.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_001"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 3132.5,
+      "unit_id": "unit_0a7121ad34111d92dddb",
+      "unit_key": {
+        "user_id": "p10",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1892.0,
+      "pm_memory_tokens": 1181.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_002"
+    },
+    {
+      "stratum": "pm_low_resource_or_r0",
+      "priority_score": 1000.0,
+      "unit_id": "unit_8ad4754e3e53468b5cf1",
+      "unit_key": {
+        "user_id": "p11",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "strategy_omission",
+        "omission_with_authorized_context",
+        "response_support_sufficiency"
+      ],
+      "reason": "PM suppresses Strategy RAG or chooses R0; audit possible strategy omission against strong_rule.",
+      "pm_action_id": "MSE+R0",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1485.0,
+      "pm_memory_tokens": 1057.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1788.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.16946308724832215,
+      "input_tokens_saved_vs_baseline": 303.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_low_resource_or_r0"
+      ],
+      "audit_item_id": "audit_v4_003"
+    },
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 2200.0,
+      "unit_id": "unit_f502c18db95c52da55e7",
+      "unit_key": {
+        "user_id": "p11",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1738.0,
+      "pm_memory_tokens": 972.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 5.0,
+      "baseline_total_input_tokens": 465.0,
+      "overall_delta_pm_minus_baseline": -2.0,
+      "input_reduction_vs_baseline": -2.7376344086021507,
+      "input_tokens_saved_vs_baseline": -1273.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_high_resource_exposure"
+      ],
+      "audit_item_id": "audit_v4_004"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1078.750826173166,
+      "unit_id": "unit_1474d782e8189be4be70",
+      "unit_key": {
+        "user_id": "p12",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 643.0,
+      "pm_memory_tokens": 11.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3026.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.787508261731659,
+      "input_tokens_saved_vs_baseline": 2383.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_005"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1079.7516714422159,
+      "unit_id": "unit_64df15c5a79edb4706e5",
+      "unit_key": {
+        "user_id": "p13",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 636.0,
+      "pm_memory_tokens": 88.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3141.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.7975167144221585,
+      "input_tokens_saved_vs_baseline": 2505.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_006"
+    },
+    {
+      "stratum": "pm_low_resource_or_r0",
+      "priority_score": 1000.0,
+      "unit_id": "unit_07926f98ac135bfe948a",
+      "unit_key": {
+        "user_id": "p13",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "strategy_omission",
+        "omission_with_authorized_context",
+        "response_support_sufficiency"
+      ],
+      "reason": "PM suppresses Strategy RAG or chooses R0; audit possible strategy omission against strong_rule.",
+      "pm_action_id": "MSE+R0",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1385.0,
+      "pm_memory_tokens": 999.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1599.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.133833646028768,
+      "input_tokens_saved_vs_baseline": 214.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_low_resource_or_r0"
+      ],
+      "audit_item_id": "audit_v4_007"
+    },
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 1200.0,
+      "unit_id": "unit_3ce62586ea0e3a191f64",
+      "unit_key": {
+        "user_id": "p14",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1620.0,
+      "pm_memory_tokens": 964.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 5.0,
+      "baseline_total_input_tokens": 468.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": -2.4615384615384617,
+      "input_tokens_saved_vs_baseline": -1152.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_008"
+    },
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 1200.0,
+      "unit_id": "unit_763bad5094f10b52fdfa",
+      "unit_key": {
+        "user_id": "p15",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1508.0,
+      "pm_memory_tokens": 1013.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 335.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": -3.5014925373134327,
+      "input_tokens_saved_vs_baseline": -1173.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_009"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1225.0,
+      "unit_id": "unit_3ea3a5613ce77ee95853",
+      "unit_key": {
+        "user_id": "p16",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 5.0,
+      "pm_total_input_tokens": 804.0,
+      "pm_memory_tokens": 85.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1829.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.5604155276107162,
+      "input_tokens_saved_vs_baseline": 1025.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_010"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 3166.0,
+      "unit_id": "unit_6d64f6f2dae5fc48ad67",
+      "unit_key": {
+        "user_id": "p16",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1927.0,
+      "pm_memory_tokens": 1178.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure"
+      ],
+      "audit_item_id": "audit_v4_011"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1342.0,
+      "unit_id": "unit_2ba4d70a7b77d950b22e",
+      "unit_key": {
+        "user_id": "p17",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MP+R0",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 366.0,
+      "pm_memory_tokens": 15.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1608.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.7723880597014925,
+      "input_tokens_saved_vs_baseline": 1242.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_vs_best_fixed_resource_saving",
+        "pm_low_resource_or_r0",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_012"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 2969.0,
+      "unit_id": "unit_2433a7280dd3e07b4f00",
+      "unit_key": {
+        "user_id": "p18",
+        "topic_index": 1,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1779.0,
+      "pm_memory_tokens": 1080.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_013"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 665.8227848101266,
+      "unit_id": "unit_c890dcaaca9a93ae5114",
+      "unit_key": {
+        "user_id": "p2",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 686.0,
+      "pm_memory_tokens": 102.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1580.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.5658227848101266,
+      "input_tokens_saved_vs_baseline": 894.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_014"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1181.0,
+      "unit_id": "unit_61c639e8cf1888c0c791",
+      "unit_key": {
+        "user_id": "p3",
+        "topic_index": 1,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MS+R0",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 428.0,
+      "pm_memory_tokens": 86.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MS": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1509.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.7163684559310802,
+      "input_tokens_saved_vs_baseline": 1081.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_vs_best_fixed_resource_saving",
+        "pm_low_resource_or_r0",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_015"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 2851.5,
+      "unit_id": "unit_c36e5ad8755f3c804120",
+      "unit_key": {
+        "user_id": "p4",
+        "topic_index": 1,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 5.0,
+      "pm_total_input_tokens": 1666.0,
+      "pm_memory_tokens": 1071.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_016"
+    },
+    {
+      "stratum": "pm_quality_tie_or_win_with_savings",
+      "priority_score": 1284.0,
+      "unit_id": "unit_c47ff8386875e31e5433",
+      "unit_key": {
+        "user_id": "p5",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "positive_control_resource_saving",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM ties or beats conservative baselines while saving resources; audit as positive control.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 822.0,
+      "pm_memory_tokens": 109.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_017"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1214.0,
+      "unit_id": "unit_fb8d50f71c51b519adeb",
+      "unit_key": {
+        "user_id": "p6",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MS+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 830.0,
+      "pm_memory_tokens": 79.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1844.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.5498915401301518,
+      "input_tokens_saved_vs_baseline": 1014.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_018"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 711.6700201207243,
+      "unit_id": "unit_2b2224d0dd2d9a71f7d5",
+      "unit_key": {
+        "user_id": "p7",
+        "topic_index": 1,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 579.0,
+      "pm_memory_tokens": 11.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1491.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.6116700201207244,
+      "input_tokens_saved_vs_baseline": 912.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_019"
+    },
+    {
+      "stratum": "pm_quality_tie_or_win_with_savings",
+      "priority_score": 1338.0,
+      "unit_id": "unit_26d7d34525883cf3e0c1",
+      "unit_key": {
+        "user_id": "p8",
+        "topic_index": 1,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "positive_control_resource_saving",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM ties or beats conservative baselines while saving resources; audit as positive control.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 653.0,
+      "pm_memory_tokens": 6.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_020"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1077.5259678942398,
+      "unit_id": "unit_5ce01df4c2476f7b2d7d",
+      "unit_key": {
+        "user_id": "p9",
+        "topic_index": 1,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 714.0,
+      "pm_memory_tokens": 98.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3177.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.7752596789423984,
+      "input_tokens_saved_vs_baseline": 2463.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_021"
+    },
+    {
+      "stratum": "pm_low_resource_or_r0",
+      "priority_score": 1000.0,
+      "unit_id": "unit_368c0d15f9c8e973b4d4",
+      "unit_key": {
+        "user_id": "p11",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "strategy_omission",
+        "omission_with_authorized_context",
+        "response_support_sufficiency"
+      ],
+      "reason": "PM suppresses Strategy RAG or chooses R0; audit possible strategy omission against strong_rule.",
+      "pm_action_id": "MSE+R0",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1306.0,
+      "pm_memory_tokens": 839.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1596.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.18170426065162906,
+      "input_tokens_saved_vs_baseline": 290.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_low_resource_or_r0"
+      ],
+      "audit_item_id": "audit_v4_022"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 2961.0,
+      "unit_id": "unit_d738157058d3d1ae29bc",
+      "unit_key": {
+        "user_id": "p11",
+        "topic_index": 2,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1771.0,
+      "pm_memory_tokens": 1080.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_023"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1078.499838344649,
+      "unit_id": "unit_4425d0db2bda22910f8e",
+      "unit_key": {
+        "user_id": "p12",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MPMS+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 665.0,
+      "pm_memory_tokens": 101.0,
+      "pm_selected_memory_count": 4,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "MS": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3093.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.7849983834464921,
+      "input_tokens_saved_vs_baseline": 2428.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_024"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 669.7885196374623,
+      "unit_id": "unit_ba8ff6a7ebc390e63db0",
+      "unit_key": {
+        "user_id": "p13",
+        "topic_index": 2,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MS+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 712.0,
+      "pm_memory_tokens": 87.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1655.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.5697885196374622,
+      "input_tokens_saved_vs_baseline": 943.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_025"
+    },
+    {
+      "stratum": "pm_low_resource_or_r0",
+      "priority_score": 1000.0,
+      "unit_id": "unit_fb30b7cfe98b1b8a6b11",
+      "unit_key": {
+        "user_id": "p13",
+        "topic_index": 2,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "strategy_omission",
+        "omission_with_authorized_context",
+        "response_support_sufficiency"
+      ],
+      "reason": "PM suppresses Strategy RAG or chooses R0; audit possible strategy omission against strong_rule.",
+      "pm_action_id": "MSE+R0",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1468.0,
+      "pm_memory_tokens": 1051.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 0,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1787.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.17851147174034696,
+      "input_tokens_saved_vs_baseline": 319.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_low_resource_or_r0"
+      ],
+      "audit_item_id": "audit_v4_026"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1079.9558777182476,
+      "unit_id": "unit_162e0c5c31a00761dcc9",
+      "unit_key": {
+        "user_id": "p14",
+        "topic_index": 2,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 636.0,
+      "pm_memory_tokens": 11.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3173.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.7995587771824771,
+      "input_tokens_saved_vs_baseline": 2537.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_027"
+    },
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 1200.0,
+      "unit_id": "unit_435870356494a52c1409",
+      "unit_key": {
+        "user_id": "p15",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1633.0,
+      "pm_memory_tokens": 1042.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 444.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": -2.6779279279279278,
+      "input_tokens_saved_vs_baseline": -1189.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_028"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1210.0,
+      "unit_id": "unit_e1708419512afdf5f7cf",
+      "unit_key": {
+        "user_id": "p16",
+        "topic_index": 2,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 727.0,
+      "pm_memory_tokens": 19.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1837.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.6042460533478498,
+      "input_tokens_saved_vs_baseline": 1110.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_029"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 2920.0,
+      "unit_id": "unit_b33b0050bfe91caab85f",
+      "unit_key": {
+        "user_id": "p17",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1711.0,
+      "pm_memory_tokens": 1118.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_030"
+    },
+    {
+      "stratum": "pm_vs_session_quality_cost_tradeoff",
+      "priority_score": 1077.7044025157234,
+      "unit_id": "unit_a7938f9158e25b207f4d",
+      "unit_key": {
+        "user_id": "p2",
+        "topic_index": 2,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "session_rag_rs"
+      ],
+      "audit_modules": [
+        "omission_with_authorized_context",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "session_rag_rs scores higher but costs more; audit whether PM omitted useful session evidence or saved unnecessary exposure.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 709.0,
+      "pm_memory_tokens": 22.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "session_rag_rs",
+      "baseline_action_id": "SESSION_RAG+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 3180.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": 0.7770440251572327,
+      "input_tokens_saved_vs_baseline": 2471.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_session_quality_cost_tradeoff",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_031"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 673.7491661107405,
+      "unit_id": "unit_1266c4f37ab3d6d713bc",
+      "unit_key": {
+        "user_id": "p3",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 564.0,
+      "pm_memory_tokens": 12.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 1499.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.6237491661107405,
+      "input_tokens_saved_vs_baseline": 935.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_032"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 707.6585059635908,
+      "unit_id": "unit_0108e35847a87b104142",
+      "unit_key": {
+        "user_id": "p5",
+        "topic_index": 2,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 625.0,
+      "pm_memory_tokens": 10.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1593.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.6076585059635907,
+      "input_tokens_saved_vs_baseline": 968.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_033"
+    },
+    {
+      "stratum": "pm_quality_tie_or_win_with_savings",
+      "priority_score": 1382.0,
+      "unit_id": "unit_6bae801872553e79aa28",
+      "unit_key": {
+        "user_id": "p6",
+        "topic_index": 2,
+        "seed": 303,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "positive_control_resource_saving",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM ties or beats conservative baselines while saving resources; audit as positive control.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 645.0,
+      "pm_memory_tokens": 18.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_034"
+    },
+    {
+      "stratum": "pm_vs_strong_rule_action_disagreement",
+      "priority_score": 1214.0,
+      "unit_id": "unit_32bbdb3cac7bc6aea58d",
+      "unit_key": {
+        "user_id": "p8",
+        "topic_index": 2,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "strategy_overuse"
+      ],
+      "reason": "PM and strong_rule choose different actions while V4 response quality is comparable overall.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 600.0,
+      "pm_memory_tokens": 6.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "strong_rule",
+      "baseline_action_id": "MSE+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1614.0,
+      "overall_delta_pm_minus_baseline": 1.0,
+      "input_reduction_vs_baseline": 0.6282527881040892,
+      "input_tokens_saved_vs_baseline": 1014.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_strong_rule_action_disagreement",
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_035"
+    },
+    {
+      "stratum": "pm_vs_no_memory_quality_loss",
+      "priority_score": 1200.0,
+      "unit_id": "unit_c1da87a64359ca9d603a",
+      "unit_key": {
+        "user_id": "p12",
+        "topic_index": 3,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "no_memory_r0"
+      ],
+      "audit_modules": [
+        "unnecessary_exposure",
+        "unsupported_personal_claim",
+        "strategy_overuse"
+      ],
+      "reason": "no_memory_r0 scores higher; audit whether PM's resource use was intrusive, stale, or over-structured.",
+      "pm_action_id": "MPE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1545.0,
+      "pm_memory_tokens": 1010.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2,
+        "ME": 3
+      },
+      "baseline": "no_memory_r0",
+      "baseline_action_id": "M0+R0",
+      "baseline_overall": 4.0,
+      "baseline_total_input_tokens": 335.0,
+      "overall_delta_pm_minus_baseline": -1.0,
+      "input_reduction_vs_baseline": -3.611940298507463,
+      "input_tokens_saved_vs_baseline": -1210.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_no_memory_quality_loss",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_036"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 3159.0,
+      "unit_id": "unit_cb563d4b238ebf83d951",
+      "unit_key": {
+        "user_id": "p12",
+        "topic_index": 3,
+        "seed": 202,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 1890.0,
+      "pm_memory_tokens": 1238.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure"
+      ],
+      "audit_item_id": "audit_v4_037"
+    },
+    {
+      "stratum": "pm_quality_tie_or_win_with_savings",
+      "priority_score": 425.0,
+      "unit_id": "unit_750854a0419d5476331e",
+      "unit_key": {
+        "user_id": "p14",
+        "topic_index": 3,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "strong_rule",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "positive_control_resource_saving",
+        "selected_evidence_misuse",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM ties or beats conservative baselines while saving resources; audit as positive control.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1478.0,
+      "pm_memory_tokens": 964.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_038"
+    },
+    {
+      "stratum": "pm_vs_best_fixed_resource_saving",
+      "priority_score": 678.3029947152085,
+      "unit_id": "unit_61319c4ca8662cb4f975",
+      "unit_key": {
+        "user_id": "p17",
+        "topic_index": 3,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 3
+      },
+      "focus_conditions": [
+        "pm",
+        "best_fixed"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "source_set_appropriateness"
+      ],
+      "reason": "PM uses fewer resources than best_fixed, useful for auditing whether omitted sources were unnecessary.",
+      "pm_action_id": "MP+RS",
+      "pm_overall": 3.0,
+      "pm_total_input_tokens": 633.0,
+      "pm_memory_tokens": 18.0,
+      "pm_selected_memory_count": 2,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MP": 2
+      },
+      "baseline": "best_fixed",
+      "baseline_action_id": "MPMSME+RS",
+      "baseline_overall": 3.0,
+      "baseline_total_input_tokens": 1703.0,
+      "overall_delta_pm_minus_baseline": 0.0,
+      "input_reduction_vs_baseline": 0.6283029947152085,
+      "input_tokens_saved_vs_baseline": 1070.0,
+      "same_action": false,
+      "covered_strata": [
+        "pm_vs_best_fixed_resource_saving",
+        "pm_quality_tie_or_win_with_savings",
+        "rare_pm_actions"
+      ],
+      "audit_item_id": "audit_v4_039"
+    },
+    {
+      "stratum": "pm_high_resource_exposure",
+      "priority_score": 2931.0,
+      "unit_id": "unit_4d0199e709338e835e94",
+      "unit_key": {
+        "user_id": "p2",
+        "topic_index": 3,
+        "seed": 101,
+        "simulator_id": "seeker_main",
+        "interaction_mode": "fixed",
+        "turn_index": 8
+      },
+      "focus_conditions": [
+        "pm"
+      ],
+      "audit_modules": [
+        "selected_evidence_misuse",
+        "unnecessary_exposure",
+        "stale_or_conflict",
+        "unsupported_personal_claim"
+      ],
+      "reason": "PM uses comparatively high memory/strategy resources; audit exposure and stale/conflict risk.",
+      "pm_action_id": "MSE+RS",
+      "pm_overall": 4.0,
+      "pm_total_input_tokens": 1754.0,
+      "pm_memory_tokens": 1054.0,
+      "pm_selected_memory_count": 5,
+      "pm_selected_strategy_count": 3,
+      "pm_memory_sources": {
+        "MS": 2,
+        "ME": 3
+      },
+      "covered_strata": [
+        "pm_high_resource_exposure",
+        "pm_quality_tie_or_win_with_savings"
+      ],
+      "audit_item_id": "audit_v4_040"
+    }
+  ]
+}
