@@ -1,0 +1,60 @@
+{
+  "status": "ESTIMATED",
+  "protocol": "evoemo_sampled_memory_strategy_audit_v1",
+  "api_calls": 16,
+  "input_tokens": {
+    "total": 50419,
+    "mean": 3151.1875,
+    "min": 2238,
+    "p95": 3587,
+    "max": 3606
+  },
+  "estimated_output_tokens": {
+    "per_call": 450,
+    "total": 7200
+  },
+  "estimated_cost_usd": 0.1980475,
+  "pricing": {
+    "input_usd_per_mtok": 2.5,
+    "output_usd_per_mtok": 10.0
+  },
+  "model": "gpt-4o",
+  "cost_estimate_sha256": "ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32",
+  "mode": "pilot",
+  "call_metadata": {
+    "source_sample_plan_status": "PLANNED_NO_API",
+    "source_sample_plan_sha256": "a29754234fe236666c5cbe3bf51d4f782e424efb426ed79cf82bb0ffb2f91cea",
+    "mode": "pilot",
+    "pilot_items": 8,
+    "selected_items_in_mode": 8,
+    "total_items_in_plan": 40,
+    "calls": 16,
+    "call_type_counts": {
+      "selected": 12,
+      "omission": 4
+    },
+    "condition_counts": {
+      "pm": 12,
+      "strong_rule": 2,
+      "session_rag_rs": 2
+    },
+    "max_memory_chars": 1000,
+    "max_strategy_chars": 700,
+    "max_omission_calls": 10
+  },
+  "budget_gate": {
+    "status": "PASS",
+    "checks": {
+      "api_calls": true,
+      "estimated_cost_usd": true,
+      "max_input_tokens_per_call": true
+    },
+    "limits": {
+      "max_api_calls": 90,
+      "max_estimated_usd": 2.0,
+      "max_input_tokens_per_call": 8000
+    }
+  },
+  "response_attestation_sha256": "d764b43de3d6255d2153122d5657e1559f5455bd06ddff977a85df0e8a960fc4",
+  "evaluation_freeze_sha256": "4d4cd3ca98617da93c38107dbedaa2ce20bb8aad6a08723054f27dada92858ce"
+}

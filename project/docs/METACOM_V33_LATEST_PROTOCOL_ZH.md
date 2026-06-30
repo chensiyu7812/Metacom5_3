@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit no-API plan 已完成。下一步是 audit pilot 脚本与 dry-run。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；旧 EvoEmo pairwise-only response evaluation 已完成但 AB/BA gate 失败，仅作诊断；EvoEmo Response Eval V4 已完成 full-run / attestation / no-API statistical summary；sampled memory / strategy audit evaluator / freeze / no-API dry-run 已完成。下一步是 sampled audit pilot API。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -451,6 +451,8 @@ Memory / strategy audit 仍禁止全量直接跑：
 当前 sampled audit no-API plan:
 
 - script: `scripts/17d_plan_evoemo_sampled_audit.py`
+- evaluator: `scripts/17e_eval_evoemo_sampled_audit.py`
+- freeze script: `scripts/20d_freeze_evoemo_sampled_audit_eval.py`
 - plan doc: `docs/METACOM_V33_EVOEMO_SAMPLED_AUDIT_PLAN_ZH.md`
 - output dir: `outputs/evoemo_sampled_audit_plan/`
 - selected items: 40；
@@ -461,6 +463,21 @@ Memory / strategy audit 仍禁止全量直接跑：
 - estimated output tokens: 36,000；
 - estimated cost: about 0.81 USD。
 
+当前 sampled audit evaluator freeze / dry-run:
+
+- evaluation freeze: `outputs/evoemo_sampled_audit_eval_freeze.json`
+- evaluation freeze sha256: `4d4cd3ca98617da93c38107dbedaa2ce20bb8aad6a08723054f27dada92858ce`
+- pilot dry-run: `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
+- pilot calls: 16；
+- pilot estimated cost: about 0.20 USD；
+- pilot input tokens: total 50,419 / mean 3,151 / max 3,606；
+- pilot cost hash: `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`
+- full dry-run: `outputs/evoemo_sampled_audit/cost_estimate_full.json`
+- full calls: 80；
+- full estimated cost: about 0.97 USD；
+- full input tokens: total 243,590 / mean 3,045 / max 4,369；
+- full cost hash: `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`
+
 Audit plan focus:
 
 - PM vs strong_rule：质量接近，PM 更省资源；
@@ -469,13 +486,12 @@ Audit plan focus:
 - PM vs no_memory_r0：检查 PM 是否引入 unnecessary exposure / over-structuring；
 - PM high-resource / low-resource / rare-action turns：检查 PM 边界行为。
 
-下一步 audit API 之前必须：
+Audit API 之前仍必须：
 
-1. 写 audit pilot evaluator；
-2. no-API dry-run 构造真实 prompt 并估算 token；
-3. 生成 cost estimate hash；
-4. 先跑小样本 pilot，建议 8 items；
-5. pilot 通过 exact output validation 和 raw rows gate 后，才考虑扩大。
+1. 只先跑小样本 pilot；
+2. pilot 使用 dry-run hash `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`；
+3. pilot 通过 exact output validation 和 raw rows gate 后，才考虑 full sampled audit；
+4. full sampled audit 需重新确认并使用 full dry-run hash `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`。
 
 ## 7. 当前任务状态
 
@@ -544,12 +560,23 @@ Sampled audit no-API plan：
 - `outputs/evoemo_sampled_audit_plan/audit_sample_plan.md`
 - status: `PLANNED_NO_API`
 
+Sampled audit evaluator：
+
+- `scripts/17e_eval_evoemo_sampled_audit.py`
+- `scripts/20d_freeze_evoemo_sampled_audit_eval.py`
+- `outputs/evoemo_sampled_audit_eval_freeze.json`
+- `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
+- `outputs/evoemo_sampled_audit/cost_estimate_full.json`
+- pilot dry-run: PASS；
+- full dry-run: PASS；
+- API calls so far: none。
+
 下一步：
 
-1. 写 sampled audit pilot evaluator；
-2. 先做 no-API dry-run / prompt token estimate；
-3. 小样本 pilot 检查 JSON 成功率与成本；
-4. pilot 通过后才运行 sampled audit；
+1. 跑 sampled audit pilot API；
+2. 检查 `pilot_summary.json` 的 exact output validation；
+3. 检查 raw rows gate: `raw_rows <= expected_calls * 1.10`；
+4. pilot 通过后才运行 full sampled audit；
 5. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
@@ -589,6 +616,9 @@ Sampled audit no-API plan：
 - `outputs/evoemo_response_v4/artifact_attestation.json`
 - `outputs/esconv_strategy_eval/autometrics_sanity.json`
 - `outputs/evoemo_sampled_audit_plan/audit_sample_plan.json`
+- `outputs/evoemo_sampled_audit_eval_freeze.json`
+- `outputs/evoemo_sampled_audit/cost_estimate_pilot.json`
+- `outputs/evoemo_sampled_audit/cost_estimate_full.json`
 
 ## 9. 投稿写法提醒
 

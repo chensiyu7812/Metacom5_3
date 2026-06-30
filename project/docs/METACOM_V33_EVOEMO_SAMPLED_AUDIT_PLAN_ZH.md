@@ -125,7 +125,7 @@ Important cost guardrail:
 
 ## 7. Required API Safety Gates
 
-The next audit implementation must preserve the V4 discipline:
+Audit implementation now preserves the V4 discipline:
 
 1. no-API dry-run;
 2. real prompt construction and token estimate;
@@ -140,7 +140,69 @@ raw_rows <= expected_calls * 1.10
 
 No full audit should run until the pilot passes.
 
-## 8. Paper Position
+## 8. Current Evaluator / Dry-Run Status
+
+新增 evaluator：
+
+- `src/metacom_pm/evo_sampled_audit.py`
+- `scripts/17e_eval_evoemo_sampled_audit.py`
+- `scripts/20d_freeze_evoemo_sampled_audit_eval.py`
+
+Evaluation freeze：
+
+- path: `outputs/evoemo_sampled_audit_eval_freeze.json`
+- sha256: `4d4cd3ca98617da93c38107dbedaa2ce20bb8aad6a08723054f27dada92858ce`
+
+Pilot dry-run：
+
+- calls: 16
+- selected-resource calls: 12
+- authorized-context omission calls: 4
+- input tokens: total 50,419 / mean 3,151 / max 3,606
+- estimated GPT-4o cost: about 0.20 USD
+- cost hash: `ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32`
+
+Full sampled audit dry-run：
+
+- calls: 80
+- selected-resource calls: 70
+- authorized-context omission calls: 10
+- input tokens: total 243,590 / mean 3,045 / max 4,369
+- estimated GPT-4o cost: about 0.97 USD
+- cost hash: `380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555`
+
+API calls so far: none.
+
+Recommended pilot command:
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  OPENAI_API_KEY="$OPENAI_API_KEY" \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17e_eval_evoemo_sampled_audit.py \
+  --pilot \
+  --pilot-items 8 \
+  --accept-cost-estimate-sha256 ed3c6ce44045bbb798678c26857919df0d97c7c978b4fac91d3ac06e2488ef32 \
+  --max-estimated-usd 2 \
+  --max-input-tokens-per-call 8000
+```
+
+Pilot pass criteria:
+
+- `outputs/evoemo_sampled_audit/pilot_summary.json` exists;
+- `status == "PASS"`;
+- `output_validation.ok == true`;
+- `completed_calls == expected_calls`;
+- `score_rows == expected_calls`;
+- `raw_rows <= expected_calls * 1.10`.
+
+If the pilot passes, full sampled audit must still use the full dry-run hash:
+
+```text
+380d149f48965391c96adac6b72dc301a40672caef806df2867966058daa6555
+```
+
+## 9. Paper Position
 
 If audit supports PM:
 
