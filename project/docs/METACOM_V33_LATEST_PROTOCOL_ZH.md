@@ -1,7 +1,7 @@
 # MetaCom V3.3 最新研究方案与实验协议
 
 更新时间：2026-06-30
-状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；EvoEmo pairwise-only response evaluation 已完成 816/816 calls，但 AB/BA orientation consistency gate 失败，因此不能作为 confirmatory 外部结果。
+状态：内部 full judging / M2b / stable PM 重训完成；ESConv strategy-only 外部评测完成；EvoEmo selective generation 已完成并生成 attestation；EvoEmo pairwise-only response evaluation 已完成 816/816 calls，但 AB/BA orientation consistency gate 失败，因此不能作为 confirmatory 外部结果；EvoEmo Response Eval V4 方案、脚本和 no-API dry-run 已完成，下一步是小样本 pilot。
 项目目录：`/home/tokkio/esconv_experiment_bundle/policy_manager_35`
 
 ## 0. 这份文件是什么
@@ -334,30 +334,88 @@ min_orientation_consistency = 0.80
 
 ### 6.5 下一版 EvoEmo 评价要求
 
-下一版 API 评价必须先过 pilot，不允许直接全量跑：
+下一版已落地为 EvoEmo Response Eval V4：
 
-1. no-API dry-run
-   - 统计调用数；
-   - 统计 token；
-   - 估算费用；
-   - 超过预算直接拒跑。
+- module: `src/metacom_pm/evo_response_v4.py`
+- script: `scripts/17b_eval_evoemo_response_v4.py`
+- freeze script: `scripts/20c_freeze_evoemo_response_v4_eval.py`
+- plan: `docs/METACOM_V33_EVOEMO_RESPONSE_V4_PLAN_ZH.md`
+- note to GPT-5.5 Pro: `docs/METACOM_V33_EVOEMO_RESPONSE_V4_NOTE_TO_GPT55_ZH.md`
 
-2. 小样本 pilot
-   - 先跑少量 turns；
-   - 检查 JSON 成功率；
-   - 检查候选顺序稳定性；
-   - 检查 position bias；
-   - pilot 不过，不进入正式跑。
+核心设计：
 
-3. 正式 response evaluation 改用更短、更稳的设计
-   - 单 turn 为评价单位；
-   - 同一 turn 内多候选打分；
-   - 不再使用 10-turn bundle pairwise 作为 confirmatory 主评测；
-   - 候选顺序固定 seed 随机并平衡；
-   - 预注册抽样规模；
-   - 保留 budget gate。
+- single-turn fixed-input absolute scoring；
+- 每个 turn 内多候选匿名评分；
+- 默认 sample = 34 topics × 3 seeds × turns `{3, 8}` = 204 units；
+- 默认 conditions = `pm`, `strong_rule`, `best_fixed`, `session_rag_rs`, `full_history_rs`, `no_memory_r0`；
+- 候选顺序 deterministic balanced；
+- pilot 同一 unit 跑两个 order variants，检查 order sensitivity 和 position bias；
+- API 模式必须接受对应 dry-run `cost_estimate_sha256`；
+- full-run 必须有 `pilot_summary.json` 且 status = `PASS`。
 
-4. memory / strategy audit 禁止全量直接跑
+V4 no-API dry-run 已完成：
+
+- evaluation freeze: `outputs/evoemo_response_v4_eval_freeze.json`
+- evaluation freeze sha256: `cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b`
+
+| Target | Calls | Total Input Tokens | Mean / P95 / Max Input Tokens | Estimated Cost | Hash |
+|---|---:|---:|---:|---:|---|
+| pilot | 24 | 148,994 | 6,208 / 7,463 / 7,665 | 0.61 USD | `ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a` |
+| full | 204 | 1,421,967 | 6,970 / 10,706 / 11,289 | 5.59 USD | `3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b` |
+
+这确认：
+
+- GPT-5.5 Pro 原先约 3000 tokens/call 的估算偏低；
+- `max_input_tokens_per_call=6000` 太低；
+- V4 默认 hard gate 改为 `12000`；
+- full-context V4 仍可控制在约 5–6 USD 量级，而不是旧 pairwise 的 31.57 USD。
+
+运行顺序：
+
+1. pilot dry-run
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17b_eval_evoemo_response_v4.py \
+  --dry-run \
+  --dry-run-target pilot \
+  --max-estimated-usd 2 \
+  --overwrite
+```
+
+2. pilot API
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17b_eval_evoemo_response_v4.py \
+  --pilot \
+  --accept-cost-estimate-sha256 ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a
+```
+
+3. pilot 通过后，full dry-run + full API
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17b_eval_evoemo_response_v4.py \
+  --dry-run \
+  --dry-run-target full \
+  --max-estimated-usd 10 \
+  --overwrite
+```
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/17b_eval_evoemo_response_v4.py \
+  --full-run \
+  --pilot-summary outputs/evoemo_response_v4/pilot_summary.json \
+  --accept-cost-estimate-sha256 3c309933ab90dc7d1f909a398ae2dfe4d9d0abd87e1144cf6ce1af84ec95114b
+```
+
+4. memory / strategy audit 仍禁止全量直接跑
    - 必须使用 stratified sampled audit；
    - memory omission audit 只在少量关键 turn 上使用完整 memory；
    - misuse audit 尽量只给 selected memory；
@@ -406,12 +464,22 @@ Pairwise-only 评价状态：
 - `artifact_attestation.json`: 未生成；
 - 结论：诊断可用，confirmatory 不可用。
 
+V4 准备状态：
+
+- `outputs/evoemo_response_v4/sample_plan.json`
+- `outputs/evoemo_response_v4/cost_estimate_pilot.json`
+- `outputs/evoemo_response_v4/cost_estimate_full.json`
+- `outputs/evoemo_response_v4_eval_freeze.json`
+- pilot dry-run: PASS；
+- full dry-run: PASS；
+- pilot API: 尚未运行。
+
 下一步：
 
-1. 先设计 EvoEmo Response Eval V4；
-2. no-API dry-run 估算 token / cost；
-3. 小样本 pilot 检查稳定性；
-4. pilot 通过后才允许正式抽样评价；
+1. 创建/冻结 V4 evaluation freeze，或仅以 `--allow-unfrozen-debug` 做非报告 pilot；
+2. 跑 V4 pilot API；
+3. 若 pilot status = `PASS`，再跑 V4 full response evaluation；
+4. full response 通过后，再设计 sampled memory / strategy audit；
 5. 更新外部评测结果表与论文 claim boundary。
 
 ## 8. 当前文件索引
@@ -428,6 +496,8 @@ Pairwise-only 评价状态：
 - `snap/METACOM_V33_STABLE_PM_EVOEMO_READINESS_ZH.md`
 - `snap/METACOM_V33_EXTERNAL_EVALUATION_PLAN_FOR_GPT55_ZH.md`
 - `docs/METACOM_V33_EVOEMO_PAIRWISE_GATE_FAILURE_ZH.md`
+- `docs/METACOM_V33_EVOEMO_RESPONSE_V4_PLAN_ZH.md`
+- `docs/METACOM_V33_EVOEMO_RESPONSE_V4_NOTE_TO_GPT55_ZH.md`
 
 核心 artifacts：
 
@@ -437,6 +507,9 @@ Pairwise-only 评价状态：
 - `outputs/evoemo_pm_readiness_stable_frozen.json`
 - `outputs/esconv_strategy_eval/summary.json`
 - `outputs/evoemo_selective_metrics/pairwise_gate_failure_diagnostic.json`
+- `outputs/evoemo_response_v4/sample_plan.json`
+- `outputs/evoemo_response_v4/cost_estimate_pilot.json`
+- `outputs/evoemo_response_v4/cost_estimate_full.json`
 
 ## 9. 投稿写法提醒
 

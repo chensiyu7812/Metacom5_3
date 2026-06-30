@@ -1,0 +1,86 @@
+{
+  "status": "ESTIMATED",
+  "protocol": "evoemo_response_v4",
+  "api_calls": 24,
+  "candidate_count": 6,
+  "input_tokens": {
+    "total": 148994,
+    "mean": 6208.083333333333,
+    "min": 4783,
+    "p95": 7463,
+    "max": 7665
+  },
+  "estimated_output_tokens": {
+    "per_call": 1000,
+    "total": 24000
+  },
+  "estimated_cost_usd": 0.612485,
+  "pricing": {
+    "input_usd_per_mtok": 2.5,
+    "output_usd_per_mtok": 10.0
+  },
+  "order_variants": [
+    0,
+    1
+  ],
+  "model": "gpt-4o",
+  "mode": "dry_run",
+  "dry_run_target": "pilot",
+  "effective_api_mode": "pilot",
+  "ground_truth_mode": "full",
+  "sample_metadata": {
+    "unit_count": 204,
+    "conditions": [
+      "pm",
+      "strong_rule",
+      "best_fixed",
+      "session_rag_rs",
+      "full_history_rs",
+      "no_memory_r0"
+    ],
+    "turn_indices": [
+      3,
+      8
+    ],
+    "action_sensitivity": {
+      "3": {
+        "units": 102,
+        "units_with_any_action_difference": 102,
+        "pm_vs_baseline_same_action_rate": {
+          "strong_rule": 0.18627450980392157,
+          "best_fixed": 0.0,
+          "session_rag_rs": 0.0,
+          "full_history_rs": 0.0,
+          "no_memory_r0": 0.0
+        },
+        "any_action_difference_rate": 1.0
+      },
+      "8": {
+        "units": 102,
+        "units_with_any_action_difference": 102,
+        "pm_vs_baseline_same_action_rate": {
+          "strong_rule": 0.8235294117647058,
+          "best_fixed": 0.0,
+          "session_rag_rs": 0.0,
+          "full_history_rs": 0.0,
+          "no_memory_r0": 0.0
+        },
+        "any_action_difference_rate": 1.0
+      }
+    }
+  },
+  "budget_gate": {
+    "status": "PASS",
+    "checks": {
+      "api_calls": true,
+      "estimated_cost_usd": true,
+      "max_input_tokens_per_call": true
+    },
+    "limits": {
+      "max_api_calls": 24,
+      "max_estimated_usd": 2.0,
+      "max_input_tokens_per_call": 12000
+    }
+  },
+  "cost_estimate_sha256": "ea3eb4d4da21ae21e29a6383a3e7e6bed2deaa098d87d465d0eeb999f9dac73a"
+}

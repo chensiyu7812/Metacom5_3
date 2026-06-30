@@ -1,0 +1,108 @@
+# 给 GPT-5.5 Pro 的 V4 修正说明
+
+更新时间：2026-06-30
+
+你的大方向是对的：旧 EvoEmo 10-turn bundle pairwise 主评测必须废弃，下一版应先 dry-run，再 pilot，再 full-run；主评价应从 bundle pairwise 改为 single-turn fixed-input scoring。
+
+但原方案里有几个会导致再次失败或预算误判的问题，V4 已做修正。
+
+## 1. Token / cost 估算偏低
+
+原估算约 `3000 tokens/call`，实际用现有 EvoEmo generated dialogues 和 full evaluator context dry-run 后，V4 full-run 约为：
+
+```text
+204 calls
+mean input tokens/call ≈ 6970
+p95 input tokens/call ≈ 10706
+max input tokens/call ≈ 11289
+total input tokens ≈ 1.42M
+estimated cost ≈ 5-6 USD with GPT-4o pricing assumptions
+```
+
+差异主要来自 evaluator-only authorized ground truth。它包含 profile、timeline、related sessions 和 current topic，是每个 call 的固定大头。原方案没有充分计入这个固定开销。
+
+V4 修正：
+
+- 不再用理论 token 估算决定是否开跑；
+- 必须用真实 generated dialogues 构造 prompt 并 dry-run；
+- API 模式必须传入对应 `cost_estimate_sha256`；
+- 默认 `max_input_tokens_per_call` 提高到 `12000`。
+
+## 2. `max_input_tokens_per_call=6000` 太低
+
+实测 full-context V4 平均单 call 就超过 6000 tokens，p95 超过 10000。若 gate 设为 6000，会把大量正常样本误拦掉，导致 pilot/full-run 无法按预注册样本执行。
+
+V4 修正：
+
+```text
+default max_input_tokens_per_call = 12000
+```
+
+同时保留 hard budget gate。如果 dry-run 发现 max/p95 继续上升，脚本会先拒跑，而不是 API 跑到一半才发现。
+
+## 3. Absolute scoring 仍可能有 position bias
+
+把 pairwise 改成 absolute scoring 能解决旧协议最严重的 AB/BA orientation flip，但不能自动消除“候选排在第几个位置会不会更容易得高分”的 position bias。
+
+V4 修正：
+
+- full-run 使用 deterministic balanced candidate order；
+- pilot 对同一 unit 跑两个 order variants；
+- pilot 统计同一 condition 换位置后的 `overall` mean absolute difference；
+- pilot 统计各 candidate position 的平均分偏移；
+- pilot 不过，不允许 full-run。
+
+## 4. Turn 3/8 不能假定一定区分策略
+
+选择 turn 3/8 是合理的省钱抽样，但必须验证这些 turn 上 PM 与 baselines 的 action 是否真的有差异。如果 PM 和 strong_rule 在抽样 turn 上大量选择相同 action，response scoring 对 policy allocation 的区分力会降低。
+
+V4 修正：
+
+dry-run 的 `sample_plan.json` 和 `cost_estimate_*.json` 会记录 action sensitivity：
+
+- 每个 turn 的 action difference rate；
+- `pm_vs_baseline_same_action_rate`；
+- 每个 unit 的 condition action map。
+
+这样可以在 API 前判断抽样是否有区分度。
+
+## 5. Client adapter 问题
+
+旧 `evo_metrics.py` 在部分位置直接使用 `OpenAICompatibleClient`，绕开了 `make_client()`，这会让 Claude native endpoint 等非 OpenAI-compatible endpoint 失效。
+
+V4 修正：
+
+新模块 `src/metacom_pm/evo_response_v4.py` 使用：
+
+```python
+make_client(judge_endpoint)
+```
+
+因此 OpenAI-compatible 和 Anthropic native endpoint 都走统一入口。
+
+## 6. 新执行路径
+
+新增：
+
+```text
+src/metacom_pm/evo_response_v4.py
+scripts/17b_eval_evoemo_response_v4.py
+scripts/20c_freeze_evoemo_response_v4_eval.py
+```
+
+V4 evaluation freeze：
+
+```text
+outputs/evoemo_response_v4_eval_freeze.json
+sha256: cda4b6542d42c457c26ae97d73c1831fe346679d0707e751c27a189b3cdbed7b
+```
+
+推荐顺序：
+
+1. `--dry-run --dry-run-target pilot`
+2. `--pilot --accept-cost-estimate-sha256 <pilot_hash>`
+3. 若 `pilot_summary.json.status == PASS`：
+4. `--dry-run --dry-run-target full`
+5. `--full-run --pilot-summary ... --accept-cost-estimate-sha256 <full_hash>`
+
+这解决了旧方案最大的问题：不再允许一次性全量烧钱，任何 API 运行前都必须有真实 prompt 构造出的预算 hash。
