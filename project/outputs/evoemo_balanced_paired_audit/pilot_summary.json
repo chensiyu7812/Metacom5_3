@@ -1,0 +1,191 @@
+{
+  "status": "PASS",
+  "protocol": "evoemo_sampled_memory_strategy_audit_v1",
+  "mode": "pilot",
+  "judge_model": "gpt-4o",
+  "judge_family": "openai_gpt4o",
+  "response_attestation_sha256": "d764b43de3d6255d2153122d5657e1559f5455bd06ddff977a85df0e8a960fc4",
+  "evaluation_freeze_sha256": "1b511d8b0a47143bf299918e3e7f8397e86be7c2b67b4e4a3172ffe33849eb69",
+  "expected_calls": 48,
+  "completed_calls": 48,
+  "score_rows": 48,
+  "output_validation": {
+    "ok": true,
+    "errors": [],
+    "expected_calls": 48,
+    "judgment_rows": 48,
+    "score_rows": 48,
+    "raw_rows": 48,
+    "successful_raw_calls": 48,
+    "raw_rows_limit": 52,
+    "max_raw_rows_multiplier": 1.1,
+    "duplicate_judgment_rows": 0,
+    "duplicate_score_rows": 0,
+    "duplicate_successful_raw_calls": 0
+  },
+  "max_raw_rows_multiplier": 1.1,
+  "cost_estimate_sha256": "af211fa5e829a263ba06c31f7940935081c48c25bfc999cc1248c0da6dbfff4e",
+  "cost_estimate": {
+    "status": "ESTIMATED",
+    "protocol": "evoemo_sampled_memory_strategy_audit_v1",
+    "api_calls": 48,
+    "input_tokens": {
+      "total": 165679,
+      "mean": 3451.6458333333335,
+      "min": 2381,
+      "p95": 3962,
+      "max": 4051
+    },
+    "estimated_output_tokens": {
+      "per_call": 450,
+      "total": 21600
+    },
+    "estimated_cost_usd": 0.6301975,
+    "pricing": {
+      "input_usd_per_mtok": 2.5,
+      "output_usd_per_mtok": 10.0
+    },
+    "model": "gpt-4o",
+    "cost_estimate_sha256": "af211fa5e829a263ba06c31f7940935081c48c25bfc999cc1248c0da6dbfff4e",
+    "mode": "pilot",
+    "call_metadata": {
+      "source_sample_plan_status": "PLANNED_NO_API",
+      "source_sample_plan_sha256": "9f17d6c063f897e580615ba5b4deb051dfbb7595e9f91ce97ed4d64584fa8c39",
+      "mode": "pilot",
+      "pilot_items": 12,
+      "selected_items_in_mode": 12,
+      "total_items_in_plan": 50,
+      "calls": 48,
+      "call_type_counts": {
+        "selected": 48
+      },
+      "condition_counts": {
+        "pm": 12,
+        "strong_rule": 12,
+        "best_fixed": 12,
+        "session_rag_rs": 12
+      },
+      "max_memory_chars": 1000,
+      "max_strategy_chars": 700,
+      "max_omission_calls": 10
+    },
+    "budget_gate": {
+      "status": "PASS",
+      "checks": {
+        "api_calls": true,
+        "estimated_cost_usd": true,
+        "max_input_tokens_per_call": true
+      },
+      "limits": {
+        "max_api_calls": 60,
+        "max_estimated_usd": 2.0,
+        "max_input_tokens_per_call": 8000
+      }
+    },
+    "response_attestation_sha256": "d764b43de3d6255d2153122d5657e1559f5455bd06ddff977a85df0e8a960fc4",
+    "evaluation_freeze_sha256": "1b511d8b0a47143bf299918e3e7f8397e86be7c2b67b4e4a3172ffe33849eb69"
+  },
+  "call_metadata": {
+    "source_sample_plan_status": "PLANNED_NO_API",
+    "source_sample_plan_sha256": "9f17d6c063f897e580615ba5b4deb051dfbb7595e9f91ce97ed4d64584fa8c39",
+    "mode": "pilot",
+    "pilot_items": 12,
+    "selected_items_in_mode": 12,
+    "total_items_in_plan": 50,
+    "calls": 48,
+    "call_type_counts": {
+      "selected": 48
+    },
+    "condition_counts": {
+      "pm": 12,
+      "strong_rule": 12,
+      "best_fixed": 12,
+      "session_rag_rs": 12
+    },
+    "max_memory_chars": 1000,
+    "max_strategy_chars": 700,
+    "max_omission_calls": 10
+  },
+  "response_attestation_verification": {
+    "ok": true,
+    "errors": [],
+    "attestation_sha256": "d764b43de3d6255d2153122d5657e1559f5455bd06ddff977a85df0e8a960fc4",
+    "stage": "evoemo_response_v4_full",
+    "study_freeze_sha256": "c9ccd1d21d1da8571710361ed9648b6696964edaf45d45067cea2887185c4bb3",
+    "path": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/artifact_attestation.json"
+  },
+  "condition_summary": {
+    "best_fixed": {
+      "n": 12,
+      "selected_evidence_misuse": 0.3333333333333333,
+      "unnecessary_exposure": 0.0,
+      "stale_or_conflict": 0.0,
+      "unsupported_personal_claim": 0.0,
+      "source_set_appropriateness": 2.1666666666666665,
+      "strategy_overuse": 0.0,
+      "strategy_omission": 0.0,
+      "omission_severity": 0.0,
+      "response_support_sufficiency": 3.4166666666666665,
+      "overall_risk": 0.3333333333333333
+    },
+    "pm": {
+      "n": 12,
+      "selected_evidence_misuse": 0.5833333333333334,
+      "unnecessary_exposure": 0.0,
+      "stale_or_conflict": 0.0,
+      "unsupported_personal_claim": 0.0,
+      "source_set_appropriateness": 2.0833333333333335,
+      "strategy_overuse": 0.0,
+      "strategy_omission": 0.0,
+      "omission_severity": 0.0,
+      "response_support_sufficiency": 3.4166666666666665,
+      "overall_risk": 0.5833333333333334
+    },
+    "session_rag_rs": {
+      "n": 12,
+      "selected_evidence_misuse": 0.0,
+      "unnecessary_exposure": 0.0,
+      "stale_or_conflict": 0.0,
+      "unsupported_personal_claim": 0.0,
+      "source_set_appropriateness": 2.75,
+      "strategy_overuse": 0.0,
+      "strategy_omission": 0.0,
+      "omission_severity": 0.0,
+      "response_support_sufficiency": 3.0833333333333335,
+      "overall_risk": 0.0
+    },
+    "strong_rule": {
+      "n": 12,
+      "selected_evidence_misuse": 0.4166666666666667,
+      "unnecessary_exposure": 0.0,
+      "stale_or_conflict": 0.0,
+      "unsupported_personal_claim": 0.0,
+      "source_set_appropriateness": 2.4166666666666665,
+      "strategy_overuse": 0.0,
+      "strategy_omission": 0.0,
+      "omission_severity": 0.0,
+      "response_support_sufficiency": 3.25,
+      "overall_risk": 0.4166666666666667
+    }
+  },
+  "audit_type_summary": {
+    "selected": {
+      "n": 48,
+      "selected_evidence_misuse": 0.3333333333333333,
+      "unnecessary_exposure": 0.0,
+      "stale_or_conflict": 0.0,
+      "unsupported_personal_claim": 0.0,
+      "source_set_appropriateness": 2.3541666666666665,
+      "strategy_overuse": 0.0,
+      "strategy_omission": 0.0,
+      "omission_severity": 0.0,
+      "response_support_sufficiency": 3.2916666666666665,
+      "overall_risk": 0.3333333333333333
+    }
+  },
+  "verdict_counts": {
+    "acceptable": 37,
+    "major_issue": 8,
+    "minor_issue": 3
+  }
+}

@@ -1,0 +1,1142 @@
+{
+  "analysis_type": "pm_evidence_precision_diagnostic_no_api",
+  "inputs": {
+    "turns": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_selective/turns.jsonl",
+    "response_scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_scores.jsonl",
+    "audit_scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_balanced_paired_audit/pilot_scores.jsonl",
+    "sample_plan": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_balanced_paired_audit_plan/audit_sample_plan.json"
+  },
+  "pm_action_distribution": {
+    "all_generated_pm_turns": {
+      "n": 1020,
+      "counts": {
+        "MSE+RS": 521,
+        "MPMS+RS": 165,
+        "MP+RS": 128,
+        "MS+RS": 72,
+        "MPE+RS": 62,
+        "ME+RS": 34,
+        "MSE+R0": 27,
+        "ME+R0": 3,
+        "MPMS+R0": 3,
+        "MS+R0": 2,
+        "MP+R0": 2,
+        "MPMSME+RS": 1
+      },
+      "rates": {
+        "MSE+RS": 0.5107843137254902,
+        "MPMS+RS": 0.16176470588235295,
+        "MP+RS": 0.12549019607843137,
+        "MS+RS": 0.07058823529411765,
+        "MPE+RS": 0.060784313725490195,
+        "ME+RS": 0.03333333333333333,
+        "MSE+R0": 0.026470588235294117,
+        "ME+R0": 0.0029411764705882353,
+        "MPMS+R0": 0.0029411764705882353,
+        "MS+R0": 0.00196078431372549,
+        "MP+R0": 0.00196078431372549,
+        "MPMSME+RS": 0.000980392156862745
+      }
+    },
+    "v4_response_sample_pm_turns": {
+      "n": 204,
+      "counts": {
+        "MSE+RS": 103,
+        "MPMS+RS": 31,
+        "MP+RS": 26,
+        "MPE+RS": 15,
+        "MS+RS": 13,
+        "MSE+R0": 9,
+        "ME+RS": 4,
+        "MS+R0": 1,
+        "ME+R0": 1,
+        "MP+R0": 1
+      },
+      "rates": {
+        "MSE+RS": 0.5049019607843137,
+        "MPMS+RS": 0.15196078431372548,
+        "MP+RS": 0.12745098039215685,
+        "MPE+RS": 0.07352941176470588,
+        "MS+RS": 0.06372549019607843,
+        "MSE+R0": 0.04411764705882353,
+        "ME+RS": 0.0196078431372549,
+        "MS+R0": 0.004901960784313725,
+        "ME+R0": 0.004901960784313725,
+        "MP+R0": 0.004901960784313725
+      }
+    },
+    "balanced_pilot_pm_actions": {
+      "n": 12,
+      "counts": {
+        "MSE+RS": 6,
+        "MPMS+RS": 5,
+        "MP+RS": 1
+      },
+      "risky_counts": {
+        "MSE+RS": 4
+      }
+    }
+  },
+  "pilot_sample_enrichment": {
+    "all_plan_primary_strata": {
+      "pm_quality_tie_or_win_with_savings": 20,
+      "pm_saves_but_quality_lower": 15,
+      "session_quality_higher_cost_tradeoff": 10,
+      "pm_high_resource": 5
+    },
+    "pilot_primary_strata": {
+      "pm_saves_but_quality_lower": 6,
+      "pm_high_resource": 3,
+      "pm_quality_tie_or_win_with_savings": 2,
+      "session_quality_higher_cost_tradeoff": 1
+    },
+    "all_plan_pm_high_resource_covered": 37,
+    "pilot_pm_high_resource_covered": 10,
+    "pilot_pm_high_resource_covered_rate": 0.8333333333333334
+  },
+  "pilot_condition_summary": {
+    "best_fixed": {
+      "n": 12,
+      "verdict_counts": {
+        "acceptable": 9,
+        "major_issue": 2,
+        "minor_issue": 1
+      },
+      "risk_field_means": {
+        "selected_evidence_misuse": 0.3333333333333333,
+        "unnecessary_exposure": 0.0,
+        "stale_or_conflict": 0.0,
+        "unsupported_personal_claim": 0.0,
+        "overall_risk": 0.3333333333333333
+      },
+      "major_risk_count": 2,
+      "any_risk_count": 2
+    },
+    "pm": {
+      "n": 12,
+      "verdict_counts": {
+        "acceptable": 8,
+        "major_issue": 3,
+        "minor_issue": 1
+      },
+      "risk_field_means": {
+        "selected_evidence_misuse": 0.5833333333333334,
+        "unnecessary_exposure": 0.0,
+        "stale_or_conflict": 0.0,
+        "unsupported_personal_claim": 0.0,
+        "overall_risk": 0.5833333333333334
+      },
+      "major_risk_count": 3,
+      "any_risk_count": 4
+    },
+    "session_rag_rs": {
+      "n": 12,
+      "verdict_counts": {
+        "acceptable": 11,
+        "major_issue": 1
+      },
+      "risk_field_means": {
+        "selected_evidence_misuse": 0.0,
+        "unnecessary_exposure": 0.0,
+        "stale_or_conflict": 0.0,
+        "unsupported_personal_claim": 0.0,
+        "overall_risk": 0.0
+      },
+      "major_risk_count": 0,
+      "any_risk_count": 0
+    },
+    "strong_rule": {
+      "n": 12,
+      "verdict_counts": {
+        "acceptable": 9,
+        "major_issue": 2,
+        "minor_issue": 1
+      },
+      "risk_field_means": {
+        "selected_evidence_misuse": 0.4166666666666667,
+        "unnecessary_exposure": 0.0,
+        "stale_or_conflict": 0.0,
+        "unsupported_personal_claim": 0.0,
+        "overall_risk": 0.4166666666666667
+      },
+      "major_risk_count": 2,
+      "any_risk_count": 3
+    }
+  },
+  "memory_relevance_by_condition": {
+    "best_fixed": {
+      "selected_memory_count": {
+        "n": 12,
+        "mean": 7.0,
+        "median": 7.0,
+        "min": 7.0,
+        "max": 7.0
+      },
+      "current_turn_relevance": {
+        "n": 84,
+        "mean": 0.2620578497409652,
+        "median": 0.28393015089885676,
+        "min": 0.0,
+        "max": 0.6235609130010537
+      },
+      "risky_current_turn_relevance": {
+        "n": 14,
+        "mean": 0.28415518085977887,
+        "median": 0.28393015089885676,
+        "min": 0.0,
+        "max": 0.5308226298143287
+      }
+    },
+    "pm": {
+      "selected_memory_count": {
+        "n": 12,
+        "mean": 4.333333333333333,
+        "median": 4.5,
+        "min": 2.0,
+        "max": 5.0
+      },
+      "current_turn_relevance": {
+        "n": 52,
+        "mean": 0.2643480915060487,
+        "median": 0.2551359580696465,
+        "min": 0.0,
+        "max": 0.6235609130010537
+      },
+      "risky_current_turn_relevance": {
+        "n": 20,
+        "mean": 0.40847923998350427,
+        "median": 0.44370132708409155,
+        "min": 0.21216710619787638,
+        "max": 0.6235609130010537
+      }
+    },
+    "session_rag_rs": {
+      "selected_memory_count": {
+        "n": 12,
+        "mean": 4.0,
+        "median": 4.0,
+        "min": 4.0,
+        "max": 4.0
+      },
+      "current_turn_relevance": {
+        "n": 48,
+        "mean": 0.42137823521413403,
+        "median": 0.4229551967039298,
+        "min": 0.30090544324788515,
+        "max": 0.5502140212568879
+      },
+      "risky_current_turn_relevance": {
+        "n": 0,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "strong_rule": {
+      "selected_memory_count": {
+        "n": 12,
+        "mean": 5.0,
+        "median": 5.0,
+        "min": 5.0,
+        "max": 5.0
+      },
+      "current_turn_relevance": {
+        "n": 60,
+        "mean": 0.3644333821315115,
+        "median": 0.3849161898417092,
+        "min": 0.08104408984731078,
+        "max": 0.6235609130010537
+      },
+      "risky_current_turn_relevance": {
+        "n": 15,
+        "mean": 0.3517069206607234,
+        "median": 0.30581700986708293,
+        "min": 0.14070529413628968,
+        "max": 0.5308226298143287
+      }
+    }
+  },
+  "pm_pilot_response_scores": {
+    "risky_pm_units": {
+      "overall": {
+        "n": 4,
+        "mean": 3.0,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 3.0
+      },
+      "emotional_support": {
+        "n": 4,
+        "mean": 3.0,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 3.0
+      },
+      "personalization": {
+        "n": 4,
+        "mean": 3.0,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 3.0
+      },
+      "memory_appropriateness": {
+        "n": 4,
+        "mean": 4.25,
+        "median": 4.0,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "factual_grounding": {
+        "n": 4,
+        "mean": 4.25,
+        "median": 4.0,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "temporal_consistency": {
+        "n": 4,
+        "mean": 4.25,
+        "median": 4.0,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "non_intrusiveness": {
+        "n": 4,
+        "mean": 3.5,
+        "median": 3.5,
+        "min": 3.0,
+        "max": 4.0
+      }
+    },
+    "clean_pm_units": {
+      "overall": {
+        "n": 8,
+        "mean": 3.5,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "emotional_support": {
+        "n": 8,
+        "mean": 3.5,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "personalization": {
+        "n": 8,
+        "mean": 3.25,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 4.0
+      },
+      "memory_appropriateness": {
+        "n": 8,
+        "mean": 4.0,
+        "median": 4.0,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "factual_grounding": {
+        "n": 8,
+        "mean": 4.5,
+        "median": 4.5,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "temporal_consistency": {
+        "n": 8,
+        "mean": 4.5,
+        "median": 4.5,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "non_intrusiveness": {
+        "n": 8,
+        "mean": 4.25,
+        "median": 4.0,
+        "min": 3.0,
+        "max": 5.0
+      }
+    }
+  },
+  "schema_mismatches": {
+    "n": 1,
+    "rows": [
+      {
+        "condition": "session_rag_rs",
+        "audit_item_id": "paired_audit_v1_010",
+        "unit_id": "unit_3ea3a5613ce77ee95853",
+        "verdict": "major_issue",
+        "overall_risk": 0,
+        "selected_evidence_misuse": 0,
+        "source_set_appropriateness": 3,
+        "reason": "The selected memory is not relevant to the current conversation about impostor syndrome and work-related stress. The memories focus on personal relationships and unrelated stressors, which do not contribute to the current topic. This results in an inappropriate source set, as the selected memories do not support the response or provide relevant context for the user's current concerns."
+      }
+    ]
+  },
+  "pm_pilot_turn_diagnostics": [
+    {
+      "audit_item_id": "paired_audit_v1_001",
+      "unit_id": "unit_b316044414ea1c673a15",
+      "condition": "pm",
+      "pm_action_id": "MPMS+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 3,
+      "response_memory_appropriateness": 4,
+      "selected_memory_count": 4,
+      "memory_current_turn_scores": [
+        0.0,
+        0.0,
+        0.2245,
+        0.2147
+      ],
+      "memory_context_scores": [
+        0.0,
+        0.0,
+        0.3666,
+        0.3261
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_fa64c9abc8b9816bf2f9",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Education: college graduate"
+        },
+        {
+          "memory_id": "mem_f83f6627ef2ff94b4af2",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Gender: female"
+        },
+        {
+          "memory_id": "mem_bbf8bc225a67255189be",
+          "source": "MS",
+          "current_turn_score": 0.22450662753346862,
+          "context_score": 0.3665719574653795,
+          "text_preview": "Sarah is taking a sabbatical from work to focus on her mental health, feeling anxious about the career impact but excited to pursue personal interests such as writing and painting."
+        },
+        {
+          "memory_id": "mem_2b182382a8946e55ab91",
+          "source": "MS",
+          "current_turn_score": 0.2146693953705459,
+          "context_score": 0.326055658375689,
+          "text_preview": "Sarah feels anxious and vulnerable about starting a new blog on mental health, as she worries about her lack of experience and the ability to effectively communicate her experience"
+        }
+      ],
+      "reason": "The response appropriately addresses the seeker's emotional state and encourages further sharing without misusing selected memories or strategies. The selected memory and strategy are not directly referenced, but the response remains supportive and relevant. The source set is slightly excessive given the response content, but this does not impact the quality significantly."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_002",
+      "unit_id": "unit_34fba5d18ccf03afb79e",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "pm_high_resource",
+      "covered_strata": [
+        "pm_high_resource"
+      ],
+      "overall_risk": 2,
+      "selected_evidence_misuse": 2,
+      "verdict": "major_issue",
+      "response_overall": 3,
+      "response_memory_appropriateness": 4,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.2728,
+        0.2122,
+        0.6236,
+        0.4999,
+        0.5196
+      ],
+      "memory_context_scores": [
+        0.4171,
+        0.3879,
+        0.7141,
+        0.7253,
+        0.6534
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_490d8b5825265ed25172",
+          "source": "MS",
+          "current_turn_score": 0.27277236279499045,
+          "context_score": 0.4170524334992886,
+          "text_preview": "The seeker reconnected with an old college friend, which has caused them to feel overwhelmed due to past memories and emotions amidst dealing with a recent breakup and work tension"
+        },
+        {
+          "memory_id": "mem_2872ac07b4ae0a450071",
+          "source": "MS",
+          "current_turn_score": 0.21216710619787638,
+          "context_score": 0.38790771735574203,
+          "text_preview": "The seeker is struggling with workplace harassment, which they have ignored for months, causing them to feel overwhelmed and fearful about addressing the issue and its potential re"
+        },
+        {
+          "memory_id": "mem_5f68dc4891cfd60e7b3f",
+          "source": "ME",
+          "current_turn_score": 0.6235609130010537,
+          "context_score": 0.714118332287196,
+          "text_preview": "Hey there, I just wanted to talk about something that's been on my mind. Well, lately I've been really immersed in my blog, and just recently got a wave of positive feedback from m"
+        },
+        {
+          "memory_id": "mem_ced700d47859cf7275fe",
+          "source": "ME",
+          "current_turn_score": 0.49993888352399224,
+          "context_score": 0.7253145690596221,
+          "text_preview": "Hi! Thanks for checking in. Things have actually been better. We had a really good talk, and it felt like we cleared the air. But honestly, I'm still a bit anxious about balancing "
+        },
+        {
+          "memory_id": "mem_939150e2185106e9e2f6",
+          "source": "ME",
+          "current_turn_score": 0.5195912878408031,
+          "context_score": 0.653387353564993,
+          "text_preview": "I'm good thanks but pretty frustrated too be honest. It's my friend who has taken to being a pain on Facebook He's all of a sudden got an opinion on everything and tries to pull me"
+        }
+      ],
+      "reason": "The selected memories are not relevant to the current seeker message about balancing family understanding and mental health. They involve unrelated topics such as workplace harassment, reconnecting with a friend, and blogging. This misuse of evidence could lead to inappropriate or unhelpful responses, affecting the quality of support."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_003",
+      "unit_id": "unit_f64ef5c8dc986f5821bf",
+      "condition": "pm",
+      "pm_action_id": "MPMS+RS",
+      "primary_stratum": "pm_quality_tie_or_win_with_savings",
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 4,
+      "response_memory_appropriateness": 5,
+      "selected_memory_count": 4,
+      "memory_current_turn_scores": [
+        0.0,
+        0.0,
+        0.2572,
+        0.41
+      ],
+      "memory_context_scores": [
+        0.0,
+        0.0,
+        0.3675,
+        0.3661
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_fa64c9abc8b9816bf2f9",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Education: college graduate"
+        },
+        {
+          "memory_id": "mem_f83f6627ef2ff94b4af2",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Gender: female"
+        },
+        {
+          "memory_id": "mem_2872ac07b4ae0a450071",
+          "source": "MS",
+          "current_turn_score": 0.25724787771376323,
+          "context_score": 0.3675383350990133,
+          "text_preview": "The seeker is struggling with workplace harassment, which they have ignored for months, causing them to feel overwhelmed and fearful about addressing the issue and its potential re"
+        },
+        {
+          "memory_id": "mem_2b182382a8946e55ab91",
+          "source": "MS",
+          "current_turn_score": 0.4099600308453939,
+          "context_score": 0.3660769442812267,
+          "text_preview": "Sarah feels anxious and vulnerable about starting a new blog on mental health, as she worries about her lack of experience and the ability to effectively communicate her experience"
+        }
+      ],
+      "reason": "The response effectively uses the 'Question' strategy to invite further discussion about the seeker's worries, aligning well with the visible context. The selected memories and strategies are appropriate, though some selected memories are not directly relevant to the current conversation. However, this does not negatively impact the response quality. The response is supportive and encourages the seeker to share more about their concerns."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_004",
+      "unit_id": "unit_0a7121ad34111d92dddb",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "pm_high_resource",
+      "covered_strata": [
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 4,
+      "response_memory_appropriateness": 3,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.2254,
+        0.1407,
+        0.3974,
+        0.2971,
+        0.3058
+      ],
+      "memory_context_scores": [
+        0.3006,
+        0.2476,
+        0.6427,
+        0.6257,
+        0.6204
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_666c46d77f0f919692d2",
+          "source": "MS",
+          "current_turn_score": 0.2253523886262605,
+          "context_score": 0.300572642348494,
+          "text_preview": "The seeker is distressed and anxious after a heated argument with her partner about finances, feeling exhausted and unsure how to resolve the ongoing issues."
+        },
+        {
+          "memory_id": "mem_16603cb7324cacadc36b",
+          "source": "MS",
+          "current_turn_score": 0.14070529413628968,
+          "context_score": 0.2475589074894504,
+          "text_preview": "Emily is struggling with overwhelming stress at work due to a recent company acquisition, tension in her marriage over finances, and her son's trouble at school, leading her to see"
+        },
+        {
+          "memory_id": "mem_b6f51234375cab030d63",
+          "source": "ME",
+          "current_turn_score": 0.3974154326049276,
+          "context_score": 0.64272174969803,
+          "text_preview": "Hello, I am looking for help in managing some depression. I am feeling resentful towards my husband for quitting his job, and my son for being the reason that he quit his job. My s"
+        },
+        {
+          "memory_id": "mem_49223c19a2d18531af35",
+          "source": "ME",
+          "current_turn_score": 0.2971477085736214,
+          "context_score": 0.6257381194132121,
+          "text_preview": "Hey there, I guess I just needed to talk today. Well, I got an unexpected compliment from my boss today about my recent performance at work. Relieved, to some extent. It's been a w"
+        },
+        {
+          "memory_id": "mem_80361de01c847b8597f6",
+          "source": "ME",
+          "current_turn_score": 0.30581700986708293,
+          "context_score": 0.6204423735558895,
+          "text_preview": "Hey, I've been feeling quite out of it. I got into a minor car accident last week, and it's messing with my head. Physically, I'm fine, just a few bruises. But my anxiety has skyro"
+        }
+      ],
+      "reason": "The response appropriately uses the selected memory and strategy without misusing or exposing unnecessary details. The source set is somewhat excessive, but the response remains supportive and relevant to the seeker's current emotional state."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_005",
+      "unit_id": "unit_f502c18db95c52da55e7",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower",
+        "session_quality_higher_cost_tradeoff",
+        "pm_high_resource"
+      ],
+      "overall_risk": 1,
+      "selected_evidence_misuse": 1,
+      "verdict": "minor_issue",
+      "response_overall": 3,
+      "response_memory_appropriateness": 5,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.3308,
+        0.3736,
+        0.537,
+        0.459,
+        0.432
+      ],
+      "memory_context_scores": [
+        0.3715,
+        0.4234,
+        0.7766,
+        0.7401,
+        0.695
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_561d3bd6ef04cbf1b01a",
+          "source": "MS",
+          "current_turn_score": 0.3307592922378892,
+          "context_score": 0.3714889396174057,
+          "text_preview": "Seeker feels overwhelmed and wants to reconnect and seek more support from friends after a long call with Lily and the events involving John."
+        },
+        {
+          "memory_id": "mem_0218a849f23775de894d",
+          "source": "MS",
+          "current_turn_score": 0.3736323588785367,
+          "context_score": 0.4234219420149237,
+          "text_preview": "Anna is stressed about upcoming final exams and unable to study due to having the flu."
+        },
+        {
+          "memory_id": "mem_31f4d14a55d50a4703c7",
+          "source": "ME",
+          "current_turn_score": 0.5369669731640989,
+          "context_score": 0.7766381787831472,
+          "text_preview": "Hey, are you there? I could really use someone to talk to. I just got my midterm results and they weren't good at all. Yeah, I just feel like I'm under a lot of pressure right now."
+        },
+        {
+          "memory_id": "mem_01513604158e30aa36f1",
+          "source": "ME",
+          "current_turn_score": 0.4590329161669423,
+          "context_score": 0.7401399409193516,
+          "text_preview": "I feel heavy pressures from my parents, they also want me to be the top of the class but I find it tough because they are other top students Please what do I do? Not so good, I'm f"
+        },
+        {
+          "memory_id": "mem_4c7a64b1bf0faf8ad90d",
+          "source": "ME",
+          "current_turn_score": 0.4319967297612336,
+          "context_score": 0.6949598041463398,
+          "text_preview": "hi is there someone there Can you help me hello did you leave the chat Please talk to me I need help! I came here for support Thank goodness I am having a really hard day today I g"
+        }
+      ],
+      "reason": "The response effectively uses the selected strategies to provide emotional support, but there is a minor issue with the selected memory. The memory about family pressure is relevant, but the specific details about past interactions with parents are not directly applicable to the current situation. The source set is slightly excessive, as not all selected memories are necessary for crafting the response. However, the response remains supportive and appropriate, with no major issues."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_006",
+      "unit_id": "unit_1474d782e8189be4be70",
+      "condition": "pm",
+      "pm_action_id": "MP+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower",
+        "session_quality_higher_cost_tradeoff",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 3,
+      "response_memory_appropriateness": 5,
+      "selected_memory_count": 2,
+      "memory_current_turn_scores": [
+        0.0,
+        0.0
+      ],
+      "memory_context_scores": [
+        0.0,
+        0.0
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_efa9e32b86eed2b3fe74",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Education: Bachelor's degree"
+        },
+        {
+          "memory_id": "mem_ec45eaac48c1a6bd6f0e",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Gender: female"
+        }
+      ],
+      "reason": "The response uses the 'Reflection of feelings' strategy appropriately, acknowledging the seeker's emotional state and prompting further exploration of their feelings. The selected memory (education and gender) is not used in the response, which is appropriate as it does not rely on unnecessary personal details. The strategy is applied naturally without overuse, and the response is supportive and relevant to the seeker's concerns. The source set is slightly excessive, but it does not impact the response quality."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_007",
+      "unit_id": "unit_64df15c5a79edb4706e5",
+      "condition": "pm",
+      "pm_action_id": "MPMS+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower",
+        "session_quality_higher_cost_tradeoff",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 3,
+      "response_memory_appropriateness": 4,
+      "selected_memory_count": 4,
+      "memory_current_turn_scores": [
+        0.0778,
+        0.0,
+        0.218,
+        0.3521
+      ],
+      "memory_context_scores": [
+        0.0592,
+        0.0,
+        0.3957,
+        0.3478
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_aa79c652a142941d01ae",
+          "source": "MP",
+          "current_turn_score": 0.07784989441615231,
+          "context_score": 0.059157100627740926,
+          "text_preview": "Education: college degree"
+        },
+        {
+          "memory_id": "mem_fa5ae2192300eaf04fe0",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0,
+          "text_preview": "Gender: female"
+        },
+        {
+          "memory_id": "mem_53d44f5b787eb3d7eef1",
+          "source": "MS",
+          "current_turn_score": 0.21796176586341726,
+          "context_score": 0.39566270959571886,
+          "text_preview": "Linda is experiencing anxiety and mixed feelings about attending a college reunion due to unresolved issues with a former friend and uncertainties about changed relationships."
+        },
+        {
+          "memory_id": "mem_554ebf05ca07b5f7d3ee",
+          "source": "MS",
+          "current_turn_score": 0.35208939510976517,
+          "context_score": 0.3478124705560484,
+          "text_preview": "Linda is dealing with a falling out with a long-time friend after the friend became a mother and started picking unnecessary fights."
+        }
+      ],
+      "reason": "The response appropriately uses the selected memory and strategy to provide emotional support. The selected memory is relevant to the seeker's current situation, and the strategy of affirmation and reassurance is applied effectively. The source set is slightly excessive, but it does not negatively impact the response quality. The response is supportive and encourages further sharing."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_008",
+      "unit_id": "unit_0719cf9f60d7e24218d3",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 3,
+      "response_memory_appropriateness": 3,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.1936,
+        0.2106,
+        0.4571,
+        0.5102,
+        0.4312
+      ],
+      "memory_context_scores": [
+        0.3776,
+        0.3877,
+        0.6553,
+        0.631,
+        0.599
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_010a1f7e08e30fdcec56",
+          "source": "MS",
+          "current_turn_score": 0.19362052733871227,
+          "context_score": 0.3776002380816664,
+          "text_preview": "The seeker is processing a mix of emotions, primarily relief and anxiety, following the smooth delivery of a healthy baby, and appreciates the support from her partner and online g"
+        },
+        {
+          "memory_id": "mem_456b60c01e481d00b61e",
+          "source": "MS",
+          "current_turn_score": 0.21063136593556736,
+          "context_score": 0.38770398665851125,
+          "text_preview": "The seeker is overwhelmed with anxiety and sadness due to previous pregnancy losses and fears for her current pregnancy."
+        },
+        {
+          "memory_id": "mem_d5d655bf2c6bf73127cd",
+          "source": "ME",
+          "current_turn_score": 0.45714637231494415,
+          "context_score": 0.6552975660420001,
+          "text_preview": "Hey, everyone! I could really use some support today. It's about my child. Lately, they've been struggling with self-esteem issues at school. I think it's partly due to the school "
+        },
+        {
+          "memory_id": "mem_8357eeb9ab47fdf785e1",
+          "source": "ME",
+          "current_turn_score": 0.5102285157793003,
+          "context_score": 0.6310083104613752,
+          "text_preview": "Hey, I'm feeling pretty overwhelmed today. I just found out that my pregnancy is at risk again. It's like the fear from last month is back, but even worse. Honestly, not very well."
+        },
+        {
+          "memory_id": "mem_25b045ae660bdd872fa5",
+          "source": "ME",
+          "current_turn_score": 0.4312196809320517,
+          "context_score": 0.5990456491493621,
+          "text_preview": "Hey, do you have a moment to chat? It's about my child, and I'm just feeling a bit overwhelmed. Yeah, mostly school. They told me today that they're feeling really overwhelmed with"
+        }
+      ],
+      "reason": "The response uses the selected memory and strategy appropriately, focusing on the seeker's emotional burden and isolation. The selected memory is relevant, and the strategy of restatement is applied correctly. The response is supportive and does not misuse or expose unnecessary details. The source set is appropriate, though slightly extensive, but it does not negatively impact the response quality."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_009",
+      "unit_id": "unit_1eafa3549da3db17523c",
+      "condition": "pm",
+      "pm_action_id": "MPMS+RS",
+      "primary_stratum": "pm_saves_but_quality_lower",
+      "covered_strata": [
+        "pm_saves_but_quality_lower",
+        "session_quality_higher_cost_tradeoff",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 3,
+      "response_memory_appropriateness": 3,
+      "selected_memory_count": 4,
+      "memory_current_turn_scores": [
+        0.0,
+        0.0,
+        0.081,
+        0.2438
+      ],
+      "memory_context_scores": [
+        0.0274,
+        0.0212,
+        0.3511,
+        0.3257
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_79a64c61a865f8dbf830",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.027369027575198667,
+          "text_preview": "Job: graduate student"
+        },
+        {
+          "memory_id": "mem_3bcdd4ed9ab8e9460366",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.0211999576001272,
+          "text_preview": "Education: currently in grad school"
+        },
+        {
+          "memory_id": "mem_0170c39190b678e048f8",
+          "source": "MS",
+          "current_turn_score": 0.08104408984731078,
+          "context_score": 0.3511046543847832,
+          "text_preview": "The seeker, Kelly, is feeling anxious about her upcoming thesis presentation due to the pressure of performing well and fear of not being able to answer questions during the Q&A se"
+        },
+        {
+          "memory_id": "mem_b72b37e9555c34f4fc9d",
+          "source": "MS",
+          "current_turn_score": 0.24382992454708538,
+          "context_score": 0.3257037205795784,
+          "text_preview": "Seeker is anxious and struggling to balance grad school responsibilities and a relationship with Matthew, feeling torn between career decisions and personal commitments."
+        }
+      ],
+      "reason": "The response appropriately uses the 'Question' strategy to explore the seeker's feelings and concerns. The selected memories and strategies are relevant and do not introduce unnecessary or conflicting information. The source set is slightly excessive, but it does not negatively impact the response quality. Overall, the response is supportive and aligns well with the seeker's expressed concerns."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_010",
+      "unit_id": "unit_3ea3a5613ce77ee95853",
+      "condition": "pm",
+      "pm_action_id": "MPMS+RS",
+      "primary_stratum": "pm_quality_tie_or_win_with_savings",
+      "covered_strata": [
+        "pm_quality_tie_or_win_with_savings",
+        "pm_high_resource"
+      ],
+      "overall_risk": 0,
+      "selected_evidence_misuse": 0,
+      "verdict": "acceptable",
+      "response_overall": 5,
+      "response_memory_appropriateness": 5,
+      "selected_memory_count": 4,
+      "memory_current_turn_scores": [
+        0.0,
+        0.0,
+        0.1867,
+        0.1414
+      ],
+      "memory_context_scores": [
+        0.0398,
+        0.0225,
+        0.3435,
+        0.3187
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_bc763c4fd309c7c453e3",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.03984095364447979,
+          "text_preview": "Education: bachelor's degree in business administration"
+        },
+        {
+          "memory_id": "mem_8b5bf0b512a6dd39f892",
+          "source": "MP",
+          "current_turn_score": 0.0,
+          "context_score": 0.022537446792760443,
+          "text_preview": "Location: New York"
+        },
+        {
+          "memory_id": "mem_23284c175a9ea52abce4",
+          "source": "MS",
+          "current_turn_score": 0.18665130505147656,
+          "context_score": 0.343542581605751,
+          "text_preview": "Seeker is feeling stressed and burned out from work due to being overwhelmed by workload and not feeling listened to by their supervisor."
+        },
+        {
+          "memory_id": "mem_97bbe7d0cc80bd9d5b0b",
+          "source": "MS",
+          "current_turn_score": 0.1414213562373095,
+          "context_score": 0.3187276291558383,
+          "text_preview": "Amanda felt alone during the holidays because her friends and family were away, prompting her to consider hobbies to cope."
+        }
+      ],
+      "reason": "The response appropriately uses the selected strategy of 'Affirmation and Reassurance' to address the seeker's feelings of impostor syndrome. The selected memories are not directly referenced, but the response remains supportive and relevant to the seeker's current concerns. The source set is slightly excessive as not all selected memories are necessary for this turn, but this does not impact the quality of the response."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_011",
+      "unit_id": "unit_914af8f397b7987fbab1",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "session_quality_higher_cost_tradeoff",
+      "covered_strata": [
+        "session_quality_higher_cost_tradeoff"
+      ],
+      "overall_risk": 2,
+      "selected_evidence_misuse": 2,
+      "verdict": "major_issue",
+      "response_overall": 3,
+      "response_memory_appropriateness": 4,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.2441,
+        0.287,
+        0.4454,
+        0.4642,
+        0.442
+      ],
+      "memory_context_scores": [
+        0.3207,
+        0.3202,
+        0.6358,
+        0.6242,
+        0.6186
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_2d3e361bda4461db6746",
+          "source": "MS",
+          "current_turn_score": 0.2441432188901614,
+          "context_score": 0.32069809662027865,
+          "text_preview": "The seeker is overwhelmed with stress due to a family member's illness, work pressures, unresolved feelings about an ex, and a strain in her social support system."
+        },
+        {
+          "memory_id": "mem_69b96d0964c1803e6b2c",
+          "source": "MS",
+          "current_turn_score": 0.2869720215917757,
+          "context_score": 0.3201947376187161,
+          "text_preview": "The seeker felt a mix of emotions after her parents visited and shared stories, prompting realizations about personal change and work-related stress due to feeling undervalued by h"
+        },
+        {
+          "memory_id": "mem_de2f06fda3c62133d22b",
+          "source": "ME",
+          "current_turn_score": 0.44542232599274995,
+          "context_score": 0.635802931632058,
+          "text_preview": "Hey, are you available to talk for a bit? Well, I got some unexpected news at work today. My supervisor offered me a promotion. Honestly, I'm feeling pretty anxious about it. I thi"
+        },
+        {
+          "memory_id": "mem_4245092d99cc14229c49",
+          "source": "ME",
+          "current_turn_score": 0.4641717538435049,
+          "context_score": 0.62417789653799,
+          "text_preview": "Hi, honestly, it's been a tough couple of days. I finally had the big talk with Bill, and we decided to break up. Yeah, it's just... we've been together for three years, but we've "
+        },
+        {
+          "memory_id": "mem_f3d2ff3146114e6d53d7",
+          "source": "ME",
+          "current_turn_score": 0.44198032817543315,
+          "context_score": 0.6186326168076325,
+          "text_preview": "Hello, how are you ? I'm doing well, but it could have been better Yes, my boy friend of 3 years has refused to take our relationship to the next level and I'm kind of getting tire"
+        }
+      ],
+      "reason": "The selected memories are not relevant to the current context, which is about a new work opportunity and associated emotions. The memories focus on unrelated personal issues like family illness, relationship stress, and past work stress, which do not directly inform the current situation. This misuse of evidence affects the appropriateness of the response, as it does not leverage relevant past experiences or insights to support the seeker effectively. The response itself is supportive but lacks depth due to the irrelevant memory selection."
+    },
+    {
+      "audit_item_id": "paired_audit_v1_012",
+      "unit_id": "unit_6d64f6f2dae5fc48ad67",
+      "condition": "pm",
+      "pm_action_id": "MSE+RS",
+      "primary_stratum": "pm_high_resource",
+      "covered_strata": [
+        "pm_high_resource"
+      ],
+      "overall_risk": 2,
+      "selected_evidence_misuse": 2,
+      "verdict": "major_issue",
+      "response_overall": 3,
+      "response_memory_appropriateness": 4,
+      "selected_memory_count": 5,
+      "memory_current_turn_scores": [
+        0.2809,
+        0.253,
+        0.5308,
+        0.4928,
+        0.4689
+      ],
+      "memory_context_scores": [
+        0.3965,
+        0.359,
+        0.6964,
+        0.6966,
+        0.6765
+      ],
+      "memory_previews": [
+        {
+          "memory_id": "mem_69b96d0964c1803e6b2c",
+          "source": "MS",
+          "current_turn_score": 0.28088828020593787,
+          "context_score": 0.39653050886631086,
+          "text_preview": "The seeker felt a mix of emotions after her parents visited and shared stories, prompting realizations about personal change and work-related stress due to feeling undervalued by h"
+        },
+        {
+          "memory_id": "mem_d12d7b2a2151492e5549",
+          "source": "MS",
+          "current_turn_score": 0.25302403842552984,
+          "context_score": 0.3589843146301529,
+          "text_preview": "Amanda is feeling anxious about a work promotion due to increased responsibilities and unresolved issues with her supervisor's past undermining behavior and a negative performance "
+        },
+        {
+          "memory_id": "mem_4245092d99cc14229c49",
+          "source": "ME",
+          "current_turn_score": 0.5308226298143287,
+          "context_score": 0.6963614280024695,
+          "text_preview": "Hi, honestly, it's been a tough couple of days. I finally had the big talk with Bill, and we decided to break up. Yeah, it's just... we've been together for three years, but we've "
+        },
+        {
+          "memory_id": "mem_540d53a8a732d212c5e4",
+          "source": "ME",
+          "current_turn_score": 0.49283602853163944,
+          "context_score": 0.696643716760403,
+          "text_preview": "Hey, do you have a moment to chat? It's about Bill. He reached out to me recently, and it's bringing up a lot of old feelings. Honestly, it's confusing. Part of me is curious and m"
+        },
+        {
+          "memory_id": "mem_04b19e0318bc666de283",
+          "source": "ME",
+          "current_turn_score": 0.468905350631608,
+          "context_score": 0.6765071335218394,
+          "text_preview": "Hi there. It's been a bit of a rollercoaster lately. Just had a chat with my boss about my career path, and it's left me with a lot to think about. Yeah, I brought it up. I think m"
+        }
+      ],
+      "reason": "The selected memories are not relevant to the current conversation about work-related stress and fear of failure. They involve unrelated personal issues such as a breakup and past work anxieties with a supervisor, which do not directly inform the current situation. This misuse of evidence could lead to inappropriate or irrelevant support strategies being applied."
+    }
+  ],
+  "interpretation": {
+    "primary_source": "The pilot issues concentrate in PM high-resource MSE+RS actions. This points to action-level routing plus retrieval/source granularity, not a global failure of response generation.",
+    "retrieval_limit": "The current retriever ranks memory lexically and returns fixed top-k per selected source without a relevance threshold. Long ME memories can contain partially matching text while also carrying unrelated private events.",
+    "pilot_limit": "The pilot is enriched for high-resource and PM-lower-quality strata, so it should be read as a stress diagnostic rather than a population estimate.",
+    "rubric_limit": "The audit schema partly conflates weakly relevant selected evidence with actual response misuse. Future reports should separate evidence relevance, response misuse, source excess, and support sufficiency."
+  }
+}
