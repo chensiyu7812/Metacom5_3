@@ -1,0 +1,3864 @@
+{
+  "protocol": "evoemo_response_v4_pm_resource_saving_subgroup_analysis",
+  "inputs": {
+    "scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_response_v4/response_scores.jsonl",
+    "turns": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_selective/turns.jsonl",
+    "audit_items": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_sampled_audit_plan/audit_items.jsonl",
+    "audit_scores": "/home/tokkio/esconv_experiment_bundle/policy_manager_35/outputs/evoemo_sampled_audit/audit_scores.jsonl"
+  },
+  "conditions": [
+    "pm",
+    "strong_rule",
+    "best_fixed",
+    "session_rag_rs",
+    "full_history_rs",
+    "no_memory_r0"
+  ],
+  "comparisons": {
+    "strong_rule": {
+      "all": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.029411764705882353,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 17,
+        "tie_overall": 169,
+        "pm_lower_overall": 18,
+        "tie_or_higher_overall_rate": 0.9117647058823529,
+        "pm_lower_by_1_or_more_rate": 0.08823529411764706,
+        "mean_input_tokens_saved": 332.7647058823529,
+        "median_input_tokens_saved": 0.0,
+        "mean_memory_tokens_saved": 341.29901960784315,
+        "mean_input_reduction_vs_baseline": 0.21073876373568964,
+        "same_action_rate": 0.5049019607843137,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 5
+      },
+      "pm_saves_input": {
+        "n": 101,
+        "overall_delta": {
+          "n": 101,
+          "mean": 0.0297029702970297,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 101,
+          "mean": 0.0297029702970297,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 101,
+          "mean": 0.009900990099009901,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 101,
+          "mean": 0.019801980198019802,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 101,
+          "mean": 0.009900990099009901,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 101,
+          "mean": 0.009900990099009901,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 101,
+          "mean": 0.019801980198019802,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 12,
+        "tie_overall": 80,
+        "pm_lower_overall": 9,
+        "tie_or_higher_overall_rate": 0.9108910891089109,
+        "pm_lower_by_1_or_more_rate": 0.0891089108910891,
+        "mean_input_tokens_saved": 672.1188118811881,
+        "median_input_tokens_saved": 818.0,
+        "mean_memory_tokens_saved": 689.3564356435644,
+        "mean_input_reduction_vs_baseline": 0.4256505722978286,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 3.376237623762376,
+        "baseline_memory_count_mean": 5
+      },
+      "pm_does_not_save_input": {
+        "n": 103,
+        "overall_delta": {
+          "n": 103,
+          "mean": -0.038834951456310676,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 103,
+          "mean": -0.038834951456310676,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 103,
+          "mean": -0.06796116504854369,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 103,
+          "mean": -0.038834951456310676,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "factual_grounding_delta": {
+          "n": 103,
+          "mean": -0.009708737864077669,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "temporal_consistency_delta": {
+          "n": 103,
+          "mean": -0.009708737864077669,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 103,
+          "mean": -0.02912621359223301,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 5,
+        "tie_overall": 89,
+        "pm_lower_overall": 9,
+        "tie_or_higher_overall_rate": 0.912621359223301,
+        "pm_lower_by_1_or_more_rate": 0.08737864077669903,
+        "mean_input_tokens_saved": 0.0,
+        "median_input_tokens_saved": 0.0,
+        "mean_memory_tokens_saved": 0.0,
+        "mean_input_reduction_vs_baseline": 0.0,
+        "same_action_rate": 1.0,
+        "pm_memory_count_mean": 5,
+        "baseline_memory_count_mean": 5
+      },
+      "pm_saves_at_least_20_percent_input": {
+        "n": 73,
+        "overall_delta": {
+          "n": 73,
+          "mean": 0.0136986301369863,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 73,
+          "mean": 0.0136986301369863,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 73,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 73,
+          "mean": 0.0136986301369863,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 73,
+          "mean": 0.0136986301369863,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 73,
+          "mean": 0.0136986301369863,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 73,
+          "mean": 0.0547945205479452,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 10,
+        "tie_overall": 54,
+        "pm_lower_overall": 9,
+        "tie_or_higher_overall_rate": 0.8767123287671232,
+        "pm_lower_by_1_or_more_rate": 0.1232876712328767,
+        "mean_input_tokens_saved": 881.0,
+        "median_input_tokens_saved": 879.0,
+        "mean_memory_tokens_saved": 933.4109589041096,
+        "mean_input_reduction_vs_baseline": 0.5593734714993848,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 2.863013698630137,
+        "baseline_memory_count_mean": 5
+      },
+      "saved_and_quality_tie_or_win": {
+        "n": 92,
+        "overall_delta": {
+          "n": 92,
+          "mean": 0.13043478260869565,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 92,
+          "mean": 0.13043478260869565,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 92,
+          "mean": 0.06521739130434782,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 92,
+          "mean": 0.043478260869565216,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 92,
+          "mean": 0.010869565217391304,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 92,
+          "mean": 0.010869565217391304,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 92,
+          "mean": 0.03260869565217391,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 12,
+        "tie_overall": 80,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": 1.0,
+        "pm_lower_by_1_or_more_rate": 0.0,
+        "mean_input_tokens_saved": 654.3804347826087,
+        "median_input_tokens_saved": 819.0,
+        "mean_memory_tokens_saved": 667.0326086956521,
+        "mean_input_reduction_vs_baseline": 0.4127921898017999,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 3.358695652173913,
+        "baseline_memory_count_mean": 5
+      },
+      "saved_but_quality_lower": {
+        "n": 9,
+        "overall_delta": {
+          "n": 9,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "emotional_support_delta": {
+          "n": 9,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "personalization_delta": {
+          "n": 9,
+          "mean": -0.5555555555555556,
+          "median": -1.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 9,
+          "mean": -0.2222222222222222,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "factual_grounding_delta": {
+          "n": 9,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "temporal_consistency_delta": {
+          "n": 9,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 9,
+          "mean": -0.1111111111111111,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 9,
+        "tie_or_higher_overall_rate": 0.0,
+        "pm_lower_by_1_or_more_rate": 1.0,
+        "mean_input_tokens_saved": 853.4444444444445,
+        "median_input_tokens_saved": 815.0,
+        "mean_memory_tokens_saved": 917.5555555555555,
+        "mean_input_reduction_vs_baseline": 0.5570918155905664,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 3.5555555555555554,
+        "baseline_memory_count_mean": 5
+      },
+      "by_turn_index": {
+        "3": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": 0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 8,
+            "tie_overall": 85,
+            "pm_lower_overall": 9,
+            "tie_or_higher_overall_rate": 0.9117647058823529,
+            "pm_lower_by_1_or_more_rate": 0.08823529411764706,
+            "mean_input_tokens_saved": 606.7745098039215,
+            "median_input_tokens_saved": 810.0,
+            "mean_memory_tokens_saved": 648.1274509803922,
+            "mean_input_reduction_vs_baseline": 0.3875572923958771,
+            "same_action_rate": 0.18627450980392157,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 5
+          },
+          "saved": {
+            "n": 83,
+            "overall_delta": {
+              "n": 83,
+              "mean": -0.012048192771084338,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 83,
+              "mean": -0.012048192771084338,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 83,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 83,
+              "mean": 0.012048192771084338,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 83,
+              "mean": 0.012048192771084338,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 83,
+              "mean": 0.012048192771084338,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 83,
+              "mean": 0.03614457831325301,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 8,
+            "tie_overall": 66,
+            "pm_lower_overall": 9,
+            "tie_or_higher_overall_rate": 0.891566265060241,
+            "pm_lower_by_1_or_more_rate": 0.10843373493975904,
+            "mean_input_tokens_saved": 745.6746987951807,
+            "median_input_tokens_saved": 858.0,
+            "mean_memory_tokens_saved": 796.4939759036145,
+            "mean_input_reduction_vs_baseline": 0.4762752267997526,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.2048192771084336,
+            "baseline_memory_count_mean": 5
+          }
+        },
+        "8": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 0.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 0.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 9,
+            "tie_overall": 84,
+            "pm_lower_overall": 9,
+            "tie_or_higher_overall_rate": 0.9117647058823529,
+            "pm_lower_by_1_or_more_rate": 0.08823529411764706,
+            "mean_input_tokens_saved": 58.754901960784316,
+            "median_input_tokens_saved": 0.0,
+            "mean_memory_tokens_saved": 34.470588235294116,
+            "mean_input_reduction_vs_baseline": 0.03392023507550218,
+            "same_action_rate": 0.8235294117647058,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 5
+          },
+          "saved": {
+            "n": 18,
+            "overall_delta": {
+              "n": 18,
+              "mean": 0.2222222222222222,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 18,
+              "mean": 0.2222222222222222,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 18,
+              "mean": 0.05555555555555555,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 18,
+              "mean": 0.05555555555555555,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 18,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 0.0
+            },
+            "temporal_consistency_delta": {
+              "n": 18,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "max": 0.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 18,
+              "mean": -0.05555555555555555,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 0.0
+            },
+            "pm_higher_overall": 4,
+            "tie_overall": 14,
+            "pm_lower_overall": 0,
+            "tie_or_higher_overall_rate": 1.0,
+            "pm_lower_by_1_or_more_rate": 0.0,
+            "mean_input_tokens_saved": 332.94444444444446,
+            "median_input_tokens_saved": 243.5,
+            "mean_memory_tokens_saved": 195.33333333333334,
+            "mean_input_reduction_vs_baseline": 0.19221466542784568,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.166666666666667,
+            "baseline_memory_count_mean": 5
+          }
+        }
+      },
+      "action_pair_counts": {
+        "MSE+RS -> MSE+RS": 103,
+        "MPMS+RS -> MSE+RS": 31,
+        "MP+RS -> MSE+RS": 26,
+        "MPE+RS -> MSE+RS": 15,
+        "MS+RS -> MSE+RS": 13,
+        "MSE+R0 -> MSE+RS": 9,
+        "ME+RS -> MSE+RS": 4,
+        "MP+R0 -> MSE+RS": 1,
+        "ME+R0 -> MSE+RS": 1,
+        "MS+R0 -> MSE+RS": 1
+      }
+    },
+    "best_fixed": {
+      "all": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.03431372549019608,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.0196078431372549,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 24,
+        "tie_overall": 154,
+        "pm_lower_overall": 26,
+        "tie_or_higher_overall_rate": 0.8725490196078431,
+        "pm_lower_by_1_or_more_rate": 0.12745098039215685,
+        "mean_input_tokens_saved": 360.1421568627451,
+        "median_input_tokens_saved": 33.0,
+        "mean_memory_tokens_saved": 354.5637254901961,
+        "mean_input_reduction_vs_baseline": 0.22374645248446123,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 7
+      },
+      "pm_saves_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.03431372549019608,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.004901960784313725,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.004901960784313725,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.0196078431372549,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 24,
+        "tie_overall": 154,
+        "pm_lower_overall": 26,
+        "tie_or_higher_overall_rate": 0.8725490196078431,
+        "pm_lower_by_1_or_more_rate": 0.12745098039215685,
+        "mean_input_tokens_saved": 360.1421568627451,
+        "median_input_tokens_saved": 33.0,
+        "mean_memory_tokens_saved": 354.5637254901961,
+        "mean_input_reduction_vs_baseline": 0.22374645248446123,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 7
+      },
+      "pm_does_not_save_input": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "pm_saves_at_least_20_percent_input": {
+        "n": 73,
+        "overall_delta": {
+          "n": 73,
+          "mean": 0.0684931506849315,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "emotional_support_delta": {
+          "n": 73,
+          "mean": 0.0684931506849315,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "personalization_delta": {
+          "n": 73,
+          "mean": 0.0410958904109589,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 73,
+          "mean": 0.0547945205479452,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 73,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 73,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 73,
+          "mean": 0.0273972602739726,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 16,
+        "tie_overall": 45,
+        "pm_lower_overall": 12,
+        "tie_or_higher_overall_rate": 0.8356164383561644,
+        "pm_lower_by_1_or_more_rate": 0.1643835616438356,
+        "mean_input_tokens_saved": 908.3287671232877,
+        "median_input_tokens_saved": 905.0,
+        "mean_memory_tokens_saved": 946.4520547945206,
+        "mean_input_reduction_vs_baseline": 0.5669298926920586,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 2.863013698630137,
+        "baseline_memory_count_mean": 7
+      },
+      "saved_and_quality_tie_or_win": {
+        "n": 178,
+        "overall_delta": {
+          "n": 178,
+          "mean": 0.1404494382022472,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "emotional_support_delta": {
+          "n": 178,
+          "mean": 0.1404494382022472,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "personalization_delta": {
+          "n": 178,
+          "mean": 0.07303370786516854,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 178,
+          "mean": 0.03932584269662921,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 178,
+          "mean": 0.02247191011235955,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 178,
+          "mean": 0.02247191011235955,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 178,
+          "mean": 0.016853932584269662,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 24,
+        "tie_overall": 154,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": 1.0,
+        "pm_lower_by_1_or_more_rate": 0.0,
+        "mean_input_tokens_saved": 348.6292134831461,
+        "median_input_tokens_saved": 33.0,
+        "mean_memory_tokens_saved": 340.685393258427,
+        "mean_input_reduction_vs_baseline": 0.21581829539343964,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.202247191011236,
+        "baseline_memory_count_mean": 7
+      },
+      "saved_but_quality_lower": {
+        "n": 26,
+        "overall_delta": {
+          "n": 26,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "emotional_support_delta": {
+          "n": 26,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "personalization_delta": {
+          "n": 26,
+          "mean": -0.7692307692307693,
+          "median": -1.0,
+          "min": -2.0,
+          "max": 0.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 26,
+          "mean": -0.3076923076923077,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 0.0
+        },
+        "factual_grounding_delta": {
+          "n": 26,
+          "mean": -0.11538461538461539,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "temporal_consistency_delta": {
+          "n": 26,
+          "mean": -0.11538461538461539,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 26,
+          "mean": -0.2692307692307692,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 0.0
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 26,
+        "tie_or_higher_overall_rate": 0.0,
+        "pm_lower_by_1_or_more_rate": 1.0,
+        "mean_input_tokens_saved": 438.96153846153845,
+        "median_input_tokens_saved": 137.0,
+        "mean_memory_tokens_saved": 449.5769230769231,
+        "mean_input_reduction_vs_baseline": 0.2780238356460706,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.153846153846154,
+        "baseline_memory_count_mean": 7
+      },
+      "by_turn_index": {
+        "3": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": 0.058823529411764705,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": 0.058823529411764705,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": 0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 18,
+            "tie_overall": 72,
+            "pm_lower_overall": 12,
+            "tie_or_higher_overall_rate": 0.8823529411764706,
+            "pm_lower_by_1_or_more_rate": 0.11764705882352941,
+            "mean_input_tokens_saved": 634.0882352941177,
+            "median_input_tokens_saved": 839.5,
+            "mean_memory_tokens_saved": 661.2941176470588,
+            "mean_input_reduction_vs_baseline": 0.3981872909338473,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 7
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": 0.058823529411764705,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": 0.058823529411764705,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": 0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 18,
+            "tie_overall": 72,
+            "pm_lower_overall": 12,
+            "tie_or_higher_overall_rate": 0.8823529411764706,
+            "pm_lower_by_1_or_more_rate": 0.11764705882352941,
+            "mean_input_tokens_saved": 634.0882352941177,
+            "median_input_tokens_saved": 839.5,
+            "mean_memory_tokens_saved": 661.2941176470588,
+            "mean_input_reduction_vs_baseline": 0.3981872909338473,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 7
+          }
+        },
+        "8": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.06862745098039216,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.06862745098039216,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 0.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 6,
+            "tie_overall": 82,
+            "pm_lower_overall": 14,
+            "tie_or_higher_overall_rate": 0.8627450980392157,
+            "pm_lower_by_1_or_more_rate": 0.13725490196078433,
+            "mean_input_tokens_saved": 86.19607843137256,
+            "median_input_tokens_saved": 27.0,
+            "mean_memory_tokens_saved": 47.833333333333336,
+            "mean_input_reduction_vs_baseline": 0.04930561403507518,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 7
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.06862745098039216,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.06862745098039216,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 0.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 6,
+            "tie_overall": 82,
+            "pm_lower_overall": 14,
+            "tie_or_higher_overall_rate": 0.8627450980392157,
+            "pm_lower_by_1_or_more_rate": 0.13725490196078433,
+            "mean_input_tokens_saved": 86.19607843137256,
+            "median_input_tokens_saved": 27.0,
+            "mean_memory_tokens_saved": 47.833333333333336,
+            "mean_input_reduction_vs_baseline": 0.04930561403507518,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 7
+          }
+        }
+      },
+      "action_pair_counts": {
+        "MSE+RS -> MPMSME+RS": 103,
+        "MPMS+RS -> MPMSME+RS": 31,
+        "MP+RS -> MPMSME+RS": 26,
+        "MPE+RS -> MPMSME+RS": 15,
+        "MS+RS -> MPMSME+RS": 13,
+        "MSE+R0 -> MPMSME+RS": 9,
+        "ME+RS -> MPMSME+RS": 4,
+        "MP+R0 -> MPMSME+RS": 1,
+        "ME+R0 -> MPMSME+RS": 1,
+        "MS+R0 -> MPMSME+RS": 1
+      }
+    },
+    "session_rag_rs": {
+      "all": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.049019607843137254,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.0392156862745098,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 18,
+        "tie_overall": 150,
+        "pm_lower_overall": 36,
+        "tie_or_higher_overall_rate": 0.8235294117647058,
+        "pm_lower_by_1_or_more_rate": 0.17647058823529413,
+        "mean_input_tokens_saved": 1938.578431372549,
+        "median_input_tokens_saved": 1747.0,
+        "mean_memory_tokens_saved": 2115.5196078431372,
+        "mean_input_reduction_vs_baseline": 0.6004773779384212,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 4
+      },
+      "pm_saves_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.049019607843137254,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.0392156862745098,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 18,
+        "tie_overall": 150,
+        "pm_lower_overall": 36,
+        "tie_or_higher_overall_rate": 0.8235294117647058,
+        "pm_lower_by_1_or_more_rate": 0.17647058823529413,
+        "mean_input_tokens_saved": 1938.578431372549,
+        "median_input_tokens_saved": 1747.0,
+        "mean_memory_tokens_saved": 2115.5196078431372,
+        "mean_input_reduction_vs_baseline": 0.6004773779384212,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 4
+      },
+      "pm_does_not_save_input": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "pm_saves_at_least_20_percent_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.09313725490196079,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.049019607843137254,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": -0.014705882352941176,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.0392156862745098,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 18,
+        "tie_overall": 150,
+        "pm_lower_overall": 36,
+        "tie_or_higher_overall_rate": 0.8235294117647058,
+        "pm_lower_by_1_or_more_rate": 0.17647058823529413,
+        "mean_input_tokens_saved": 1938.578431372549,
+        "median_input_tokens_saved": 1747.0,
+        "mean_memory_tokens_saved": 2115.5196078431372,
+        "mean_input_reduction_vs_baseline": 0.6004773779384212,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 4
+      },
+      "saved_and_quality_tie_or_win": {
+        "n": 168,
+        "overall_delta": {
+          "n": 168,
+          "mean": 0.10714285714285714,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 168,
+          "mean": 0.10714285714285714,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 168,
+          "mean": 0.05952380952380952,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 168,
+          "mean": 0.02976190476190476,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 168,
+          "mean": 0.011904761904761904,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 168,
+          "mean": 0.005952380952380952,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 168,
+          "mean": 0.011904761904761904,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 18,
+        "tie_overall": 150,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": 1.0,
+        "pm_lower_by_1_or_more_rate": 0.0,
+        "mean_input_tokens_saved": 1931.8154761904761,
+        "median_input_tokens_saved": 1740.0,
+        "mean_memory_tokens_saved": 2105.6428571428573,
+        "mean_input_reduction_vs_baseline": 0.598711879016783,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.2023809523809526,
+        "baseline_memory_count_mean": 4
+      },
+      "saved_but_quality_lower": {
+        "n": 36,
+        "overall_delta": {
+          "n": 36,
+          "mean": -1.0277777777777777,
+          "median": -1.0,
+          "min": -2.0,
+          "max": -1.0
+        },
+        "emotional_support_delta": {
+          "n": 36,
+          "mean": -1.0277777777777777,
+          "median": -1.0,
+          "min": -2.0,
+          "max": -1.0
+        },
+        "personalization_delta": {
+          "n": 36,
+          "mean": -0.7777777777777778,
+          "median": -1.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 36,
+          "mean": -0.4166666666666667,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "factual_grounding_delta": {
+          "n": 36,
+          "mean": -0.1388888888888889,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "temporal_consistency_delta": {
+          "n": 36,
+          "mean": -0.1111111111111111,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 36,
+          "mean": -0.2777777777777778,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 0.0
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 36,
+        "tie_or_higher_overall_rate": 0.0,
+        "pm_lower_by_1_or_more_rate": 1.0,
+        "mean_input_tokens_saved": 1970.138888888889,
+        "median_input_tokens_saved": 1821.5,
+        "mean_memory_tokens_saved": 2161.6111111111113,
+        "mean_input_reduction_vs_baseline": 0.6087163729060657,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.166666666666667,
+        "baseline_memory_count_mean": 4
+      },
+      "by_turn_index": {
+        "3": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.13725490196078433,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.13725490196078433,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.12745098039215685,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.0784313725490196,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": -0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 8,
+            "tie_overall": 73,
+            "pm_lower_overall": 21,
+            "tie_or_higher_overall_rate": 0.7941176470588235,
+            "pm_lower_by_1_or_more_rate": 0.20588235294117646,
+            "mean_input_tokens_saved": 2226.2450980392155,
+            "median_input_tokens_saved": 2382.5,
+            "mean_memory_tokens_saved": 2441.0588235294117,
+            "mean_input_reduction_vs_baseline": 0.6994867835944923,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 4
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.13725490196078433,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.13725490196078433,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.12745098039215685,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.0784313725490196,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": -0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 8,
+            "tie_overall": 73,
+            "pm_lower_overall": 21,
+            "tie_or_higher_overall_rate": 0.7941176470588235,
+            "pm_lower_by_1_or_more_rate": 0.20588235294117646,
+            "mean_input_tokens_saved": 2226.2450980392155,
+            "median_input_tokens_saved": 2382.5,
+            "mean_memory_tokens_saved": 2441.0588235294117,
+            "mean_input_reduction_vs_baseline": 0.6994867835944923,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 4
+          }
+        },
+        "8": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 0.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 10,
+            "tie_overall": 77,
+            "pm_lower_overall": 15,
+            "tie_or_higher_overall_rate": 0.8529411764705882,
+            "pm_lower_by_1_or_more_rate": 0.14705882352941177,
+            "mean_input_tokens_saved": 1650.9117647058824,
+            "median_input_tokens_saved": 1629.5,
+            "mean_memory_tokens_saved": 1789.9803921568628,
+            "mean_input_reduction_vs_baseline": 0.5014679722823501,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 4
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 0.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 10,
+            "tie_overall": 77,
+            "pm_lower_overall": 15,
+            "tie_or_higher_overall_rate": 0.8529411764705882,
+            "pm_lower_by_1_or_more_rate": 0.14705882352941177,
+            "mean_input_tokens_saved": 1650.9117647058824,
+            "median_input_tokens_saved": 1629.5,
+            "mean_memory_tokens_saved": 1789.9803921568628,
+            "mean_input_reduction_vs_baseline": 0.5014679722823501,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 4
+          }
+        }
+      },
+      "action_pair_counts": {
+        "MSE+RS -> SESSION_RAG+RS": 103,
+        "MPMS+RS -> SESSION_RAG+RS": 31,
+        "MP+RS -> SESSION_RAG+RS": 26,
+        "MPE+RS -> SESSION_RAG+RS": 15,
+        "MS+RS -> SESSION_RAG+RS": 13,
+        "MSE+R0 -> SESSION_RAG+RS": 9,
+        "ME+RS -> SESSION_RAG+RS": 4,
+        "MP+R0 -> SESSION_RAG+RS": 1,
+        "ME+R0 -> SESSION_RAG+RS": 1,
+        "MS+R0 -> SESSION_RAG+RS": 1
+      }
+    },
+    "full_history_rs": {
+      "all": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.024509803921568627,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.03431372549019608,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.029411764705882353,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": 0.014705882352941176,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "pm_higher_overall": 50,
+        "tie_overall": 108,
+        "pm_lower_overall": 46,
+        "tie_or_higher_overall_rate": 0.7745098039215687,
+        "pm_lower_by_1_or_more_rate": 0.22549019607843138,
+        "mean_input_tokens_saved": 12785.18137254902,
+        "median_input_tokens_saved": 12757.5,
+        "mean_memory_tokens_saved": 13700.362745098038,
+        "mean_input_reduction_vs_baseline": 0.9024128352310753,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 22.11764705882353
+      },
+      "pm_saves_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.024509803921568627,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.03431372549019608,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.029411764705882353,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": 0.014705882352941176,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "pm_higher_overall": 50,
+        "tie_overall": 108,
+        "pm_lower_overall": 46,
+        "tie_or_higher_overall_rate": 0.7745098039215687,
+        "pm_lower_by_1_or_more_rate": 0.22549019607843138,
+        "mean_input_tokens_saved": 12785.18137254902,
+        "median_input_tokens_saved": 12757.5,
+        "mean_memory_tokens_saved": 13700.362745098038,
+        "mean_input_reduction_vs_baseline": 0.9024128352310753,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 22.11764705882353
+      },
+      "pm_does_not_save_input": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "pm_saves_at_least_20_percent_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": 0.0392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.024509803921568627,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": 0.03431372549019608,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": 0.029411764705882353,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": 0.014705882352941176,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 2.0
+        },
+        "pm_higher_overall": 50,
+        "tie_overall": 108,
+        "pm_lower_overall": 46,
+        "tie_or_higher_overall_rate": 0.7745098039215687,
+        "pm_lower_by_1_or_more_rate": 0.22549019607843138,
+        "mean_input_tokens_saved": 12785.18137254902,
+        "median_input_tokens_saved": 12757.5,
+        "mean_memory_tokens_saved": 13700.362745098038,
+        "mean_input_reduction_vs_baseline": 0.9024128352310753,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 22.11764705882353
+      },
+      "saved_and_quality_tie_or_win": {
+        "n": 158,
+        "overall_delta": {
+          "n": 158,
+          "mean": 0.34177215189873417,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "emotional_support_delta": {
+          "n": 158,
+          "mean": 0.34177215189873417,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "personalization_delta": {
+          "n": 158,
+          "mean": 0.21518987341772153,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 3.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 158,
+          "mean": 0.08860759493670886,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "factual_grounding_delta": {
+          "n": 158,
+          "mean": 0.06962025316455696,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "temporal_consistency_delta": {
+          "n": 158,
+          "mean": 0.06329113924050633,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 158,
+          "mean": 0.06329113924050633,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 2.0
+        },
+        "pm_higher_overall": 50,
+        "tie_overall": 108,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": 1.0,
+        "pm_lower_by_1_or_more_rate": 0.0,
+        "mean_input_tokens_saved": 12750.39240506329,
+        "median_input_tokens_saved": 12796.0,
+        "mean_memory_tokens_saved": 13660.158227848102,
+        "mean_input_reduction_vs_baseline": 0.9034744454854441,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.1645569620253164,
+        "baseline_memory_count_mean": 22.056962025316455
+      },
+      "saved_but_quality_lower": {
+        "n": 46,
+        "overall_delta": {
+          "n": 46,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "emotional_support_delta": {
+          "n": 46,
+          "mean": -1.0,
+          "median": -1.0,
+          "min": -1.0,
+          "max": -1.0
+        },
+        "personalization_delta": {
+          "n": 46,
+          "mean": -0.8478260869565217,
+          "median": -1.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 46,
+          "mean": -0.34782608695652173,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 0.0
+        },
+        "factual_grounding_delta": {
+          "n": 46,
+          "mean": -0.08695652173913043,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "temporal_consistency_delta": {
+          "n": 46,
+          "mean": -0.08695652173913043,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 0.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 46,
+          "mean": -0.15217391304347827,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 46,
+        "tie_or_higher_overall_rate": 0.0,
+        "pm_lower_by_1_or_more_rate": 1.0,
+        "mean_input_tokens_saved": 12904.673913043478,
+        "median_input_tokens_saved": 12608.0,
+        "mean_memory_tokens_saved": 13838.45652173913,
+        "mean_input_reduction_vs_baseline": 0.8987664347921565,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.304347826086956,
+        "baseline_memory_count_mean": 22.32608695652174
+      },
+      "by_turn_index": {
+        "3": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": 0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": 0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": 0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "pm_higher_overall": 29,
+            "tie_overall": 52,
+            "pm_lower_overall": 21,
+            "tie_or_higher_overall_rate": 0.7941176470588235,
+            "pm_lower_by_1_or_more_rate": 0.20588235294117646,
+            "mean_input_tokens_saved": 13072.264705882353,
+            "median_input_tokens_saved": 12923.5,
+            "mean_memory_tokens_saved": 14022.735294117647,
+            "mean_input_reduction_vs_baseline": 0.9269450827049376,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 22.11764705882353
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": 0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": 0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": 0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": 0.0392156862745098,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "pm_higher_overall": 29,
+            "tie_overall": 52,
+            "pm_lower_overall": 21,
+            "tie_or_higher_overall_rate": 0.7941176470588235,
+            "pm_lower_by_1_or_more_rate": 0.20588235294117646,
+            "mean_input_tokens_saved": 13072.264705882353,
+            "median_input_tokens_saved": 12923.5,
+            "mean_memory_tokens_saved": 14022.735294117647,
+            "mean_input_reduction_vs_baseline": 0.9269450827049376,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 22.11764705882353
+          }
+        },
+        "8": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 2.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 21,
+            "tie_overall": 56,
+            "pm_lower_overall": 25,
+            "tie_or_higher_overall_rate": 0.7549019607843137,
+            "pm_lower_by_1_or_more_rate": 0.24509803921568626,
+            "mean_input_tokens_saved": 12498.098039215687,
+            "median_input_tokens_saved": 12568.0,
+            "mean_memory_tokens_saved": 13377.990196078432,
+            "mean_input_reduction_vs_baseline": 0.8778805877572131,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 22.11764705882353
+          },
+          "saved": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 3.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 2.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": 0.029411764705882353,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": 0.0196078431372549,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 2.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 21,
+            "tie_overall": 56,
+            "pm_lower_overall": 25,
+            "tie_or_higher_overall_rate": 0.7549019607843137,
+            "pm_lower_by_1_or_more_rate": 0.24509803921568626,
+            "mean_input_tokens_saved": 12498.098039215687,
+            "median_input_tokens_saved": 12568.0,
+            "mean_memory_tokens_saved": 13377.990196078432,
+            "mean_input_reduction_vs_baseline": 0.8778805877572131,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 22.11764705882353
+          }
+        }
+      },
+      "action_pair_counts": {
+        "MSE+RS -> FULL_HISTORY+RS": 103,
+        "MPMS+RS -> FULL_HISTORY+RS": 31,
+        "MP+RS -> FULL_HISTORY+RS": 26,
+        "MPE+RS -> FULL_HISTORY+RS": 15,
+        "MS+RS -> FULL_HISTORY+RS": 13,
+        "MSE+R0 -> FULL_HISTORY+RS": 9,
+        "ME+RS -> FULL_HISTORY+RS": 4,
+        "MP+R0 -> FULL_HISTORY+RS": 1,
+        "ME+R0 -> FULL_HISTORY+RS": 1,
+        "MS+R0 -> FULL_HISTORY+RS": 1
+      }
+    },
+    "no_memory_r0": {
+      "all": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.09803921568627451,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.05392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.024509803921568627,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 26,
+        "tie_overall": 137,
+        "pm_lower_overall": 41,
+        "tie_or_higher_overall_rate": 0.7990196078431373,
+        "pm_lower_by_1_or_more_rate": 0.20098039215686275,
+        "mean_input_tokens_saved": -899.1225490196078,
+        "median_input_tokens_saved": -1145.5,
+        "mean_memory_tokens_saved": -683.2549019607843,
+        "mean_input_reduction_vs_baseline": -2.217685333593957,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 0
+      },
+      "pm_saves_input": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "pm_does_not_save_input": {
+        "n": 204,
+        "overall_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "emotional_support_delta": {
+          "n": 204,
+          "mean": -0.08823529411764706,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "personalization_delta": {
+          "n": 204,
+          "mean": -0.09803921568627451,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "memory_appropriateness_delta": {
+          "n": 204,
+          "mean": -0.05392156862745098,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "factual_grounding_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "temporal_consistency_delta": {
+          "n": 204,
+          "mean": -0.00980392156862745,
+          "median": 0.0,
+          "min": -1.0,
+          "max": 1.0
+        },
+        "non_intrusiveness_delta": {
+          "n": 204,
+          "mean": -0.024509803921568627,
+          "median": 0.0,
+          "min": -2.0,
+          "max": 1.0
+        },
+        "pm_higher_overall": 26,
+        "tie_overall": 137,
+        "pm_lower_overall": 41,
+        "tie_or_higher_overall_rate": 0.7990196078431373,
+        "pm_lower_by_1_or_more_rate": 0.20098039215686275,
+        "mean_input_tokens_saved": -899.1225490196078,
+        "median_input_tokens_saved": -1145.5,
+        "mean_memory_tokens_saved": -683.2549019607843,
+        "mean_input_reduction_vs_baseline": -2.217685333593957,
+        "same_action_rate": 0.0,
+        "pm_memory_count_mean": 4.196078431372549,
+        "baseline_memory_count_mean": 0
+      },
+      "pm_saves_at_least_20_percent_input": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "saved_and_quality_tie_or_win": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "saved_but_quality_lower": {
+        "n": 0,
+        "overall_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "emotional_support_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "personalization_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "memory_appropriateness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "factual_grounding_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "temporal_consistency_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "non_intrusiveness_delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "min": null,
+          "max": null
+        },
+        "pm_higher_overall": 0,
+        "tie_overall": 0,
+        "pm_lower_overall": 0,
+        "tie_or_higher_overall_rate": null,
+        "pm_lower_by_1_or_more_rate": null,
+        "mean_input_tokens_saved": null,
+        "mean_memory_tokens_saved": null,
+        "mean_input_reduction_vs_baseline": null,
+        "same_action_rate": null,
+        "pm_memory_count_mean": null,
+        "baseline_memory_count_mean": null
+      },
+      "by_turn_index": {
+        "3": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.11764705882352941,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.11764705882352941,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 9,
+            "tie_overall": 73,
+            "pm_lower_overall": 20,
+            "tie_or_higher_overall_rate": 0.803921568627451,
+            "pm_lower_by_1_or_more_rate": 0.19607843137254902,
+            "mean_input_tokens_saved": -619.3823529411765,
+            "median_input_tokens_saved": -382.5,
+            "mean_memory_tokens_saved": -360.88235294117646,
+            "mean_input_reduction_vs_baseline": -1.8599707462846788,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 3.5392156862745097,
+            "baseline_memory_count_mean": 0
+          },
+          "saved": {
+            "n": 0,
+            "overall_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "emotional_support_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "personalization_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "memory_appropriateness_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "factual_grounding_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "temporal_consistency_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "non_intrusiveness_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "pm_higher_overall": 0,
+            "tie_overall": 0,
+            "pm_lower_overall": 0,
+            "tie_or_higher_overall_rate": null,
+            "pm_lower_by_1_or_more_rate": null,
+            "mean_input_tokens_saved": null,
+            "mean_memory_tokens_saved": null,
+            "mean_input_reduction_vs_baseline": null,
+            "same_action_rate": null,
+            "pm_memory_count_mean": null,
+            "baseline_memory_count_mean": null
+          }
+        },
+        "8": {
+          "all": {
+            "n": 102,
+            "overall_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "emotional_support_delta": {
+              "n": 102,
+              "mean": -0.058823529411764705,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "personalization_delta": {
+              "n": 102,
+              "mean": -0.09803921568627451,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "memory_appropriateness_delta": {
+              "n": 102,
+              "mean": -0.049019607843137254,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "factual_grounding_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "temporal_consistency_delta": {
+              "n": 102,
+              "mean": -0.00980392156862745,
+              "median": 0.0,
+              "min": -1.0,
+              "max": 1.0
+            },
+            "non_intrusiveness_delta": {
+              "n": 102,
+              "mean": -0.0392156862745098,
+              "median": 0.0,
+              "min": -2.0,
+              "max": 1.0
+            },
+            "pm_higher_overall": 17,
+            "tie_overall": 64,
+            "pm_lower_overall": 21,
+            "tie_or_higher_overall_rate": 0.7941176470588235,
+            "pm_lower_by_1_or_more_rate": 0.20588235294117646,
+            "mean_input_tokens_saved": -1178.862745098039,
+            "median_input_tokens_saved": -1208.0,
+            "mean_memory_tokens_saved": -1005.6274509803922,
+            "mean_input_reduction_vs_baseline": -2.5753999209032346,
+            "same_action_rate": 0.0,
+            "pm_memory_count_mean": 4.852941176470588,
+            "baseline_memory_count_mean": 0
+          },
+          "saved": {
+            "n": 0,
+            "overall_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "emotional_support_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "personalization_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "memory_appropriateness_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "factual_grounding_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "temporal_consistency_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "non_intrusiveness_delta": {
+              "n": 0,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "max": null
+            },
+            "pm_higher_overall": 0,
+            "tie_overall": 0,
+            "pm_lower_overall": 0,
+            "tie_or_higher_overall_rate": null,
+            "pm_lower_by_1_or_more_rate": null,
+            "mean_input_tokens_saved": null,
+            "mean_memory_tokens_saved": null,
+            "mean_input_reduction_vs_baseline": null,
+            "same_action_rate": null,
+            "pm_memory_count_mean": null,
+            "baseline_memory_count_mean": null
+          }
+        }
+      },
+      "action_pair_counts": {
+        "MSE+RS -> M0+R0": 103,
+        "MPMS+RS -> M0+R0": 31,
+        "MP+RS -> M0+R0": 26,
+        "MPE+RS -> M0+R0": 15,
+        "MS+RS -> M0+R0": 13,
+        "MSE+R0 -> M0+R0": 9,
+        "ME+RS -> M0+R0": 4,
+        "MP+R0 -> M0+R0": 1,
+        "ME+R0 -> M0+R0": 1,
+        "MS+R0 -> M0+R0": 1
+      }
+    }
+  },
+  "audit_linkage": {
+    "all_joined_rows": {
+      "n": 80,
+      "verdict_counts": {
+        "acceptable": 77,
+        "minor_issue": 1,
+        "major_issue": 2
+      },
+      "selected_evidence_misuse": {
+        "positive_cases": 2,
+        "major_cases": 2,
+        "mean_severity": 0.05
+      },
+      "unnecessary_exposure": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "stale_or_conflict": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unsupported_personal_claim": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_overuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_omission": {
+        "positive_cases": 1,
+        "major_cases": 0,
+        "mean_severity": 0.0125
+      },
+      "omission_severity": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "overall_risk": {
+        "positive_cases": 3,
+        "major_cases": 2,
+        "mean_severity": 0.0625
+      }
+    },
+    "pm_rows": {
+      "n": 50,
+      "verdict_counts": {
+        "acceptable": 49,
+        "minor_issue": 1
+      },
+      "selected_evidence_misuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unnecessary_exposure": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "stale_or_conflict": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unsupported_personal_claim": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_overuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_omission": {
+        "positive_cases": 1,
+        "major_cases": 0,
+        "mean_severity": 0.02
+      },
+      "omission_severity": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "overall_risk": {
+        "positive_cases": 1,
+        "major_cases": 0,
+        "mean_severity": 0.02
+      }
+    },
+    "pm_rows_with_input_savings_vs_focus_baseline": {
+      "n": 32,
+      "verdict_counts": {
+        "acceptable": 31,
+        "minor_issue": 1
+      },
+      "selected_evidence_misuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unnecessary_exposure": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "stale_or_conflict": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unsupported_personal_claim": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_overuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_omission": {
+        "positive_cases": 1,
+        "major_cases": 0,
+        "mean_severity": 0.03125
+      },
+      "omission_severity": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "overall_risk": {
+        "positive_cases": 1,
+        "major_cases": 0,
+        "mean_severity": 0.03125
+      }
+    },
+    "pm_rows_without_input_savings_vs_focus_baseline": {
+      "n": 18,
+      "verdict_counts": {
+        "acceptable": 18
+      },
+      "selected_evidence_misuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unnecessary_exposure": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "stale_or_conflict": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "unsupported_personal_claim": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_overuse": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "strategy_omission": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "omission_severity": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      },
+      "overall_risk": {
+        "positive_cases": 0,
+        "major_cases": 0,
+        "mean_severity": 0.0
+      }
+    },
+    "pm_by_stratum": {
+      "pm_high_resource_exposure": {
+        "n": 8,
+        "verdict_counts": {
+          "acceptable": 8
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      },
+      "pm_low_resource_or_r0": {
+        "n": 8,
+        "verdict_counts": {
+          "acceptable": 7,
+          "minor_issue": 1
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 1,
+          "major_cases": 0,
+          "mean_severity": 0.125
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 1,
+          "major_cases": 0,
+          "mean_severity": 0.125
+        }
+      },
+      "pm_quality_tie_or_win_with_savings": {
+        "n": 4,
+        "verdict_counts": {
+          "acceptable": 4
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      },
+      "pm_vs_best_fixed_resource_saving": {
+        "n": 6,
+        "verdict_counts": {
+          "acceptable": 6
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      },
+      "pm_vs_no_memory_quality_loss": {
+        "n": 6,
+        "verdict_counts": {
+          "acceptable": 6
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      },
+      "pm_vs_session_quality_cost_tradeoff": {
+        "n": 12,
+        "verdict_counts": {
+          "acceptable": 12
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      },
+      "pm_vs_strong_rule_action_disagreement": {
+        "n": 6,
+        "verdict_counts": {
+          "acceptable": 6
+        },
+        "selected_evidence_misuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unnecessary_exposure": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "stale_or_conflict": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "unsupported_personal_claim": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_overuse": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "strategy_omission": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "omission_severity": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        },
+        "overall_risk": {
+          "positive_cases": 0,
+          "major_cases": 0,
+          "mean_severity": 0.0
+        }
+      }
+    },
+    "pm_saving_case_ids": [
+      "audit_v4_003",
+      "audit_v4_003",
+      "audit_v4_005",
+      "audit_v4_005",
+      "audit_v4_006",
+      "audit_v4_006",
+      "audit_v4_007",
+      "audit_v4_007",
+      "audit_v4_010",
+      "audit_v4_012",
+      "audit_v4_014",
+      "audit_v4_015",
+      "audit_v4_018",
+      "audit_v4_019",
+      "audit_v4_021",
+      "audit_v4_021",
+      "audit_v4_022",
+      "audit_v4_022",
+      "audit_v4_024",
+      "audit_v4_024",
+      "audit_v4_025",
+      "audit_v4_026",
+      "audit_v4_026",
+      "audit_v4_027",
+      "audit_v4_027",
+      "audit_v4_029",
+      "audit_v4_031",
+      "audit_v4_031",
+      "audit_v4_032",
+      "audit_v4_033",
+      "audit_v4_035",
+      "audit_v4_039"
+    ]
+  },
+  "notes": [
+    "This is descriptive no-API analysis over the existing V4 sample.",
+    "Turn-level score deltas use integer 1-5 judge scores; mean deltas are more stable than individual deltas.",
+    "Audit linkage is stratified and sampled, not a full safety guarantee."
+  ]
+}
