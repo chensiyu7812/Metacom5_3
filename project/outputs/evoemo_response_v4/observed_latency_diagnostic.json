@@ -1,0 +1,578 @@
+{
+  "status": "DIAGNOSTIC",
+  "source": "outputs/evoemo_selective/turns.jsonl",
+  "row_count": 8160,
+  "condition_count": 8,
+  "interpretation_boundary": "Observed online generation latency from existing logs. This excludes training and judge calls and should be treated as a deployment-oriented diagnostic rather than a randomized confirmatory latency benchmark.",
+  "primary_resource_metric": "Mean input tokens remains the primary resource-cost metric; latency is reported as an additional operational diagnostic because network and provider scheduling noise were not experimentally controlled.",
+  "paper_conditions": [
+    "no_memory_r0",
+    "pm",
+    "strong_rule",
+    "best_fixed",
+    "session_rag_rs",
+    "full_history_rs"
+  ],
+  "condition_summary": {
+    "all_structured_rs": {
+      "label": "All Structured",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 2270.885,
+          "median": 2199.19,
+          "p95": 2897.733,
+          "min": 1105.028,
+          "max": 11213.115
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 994.157,
+          "median": 847.218,
+          "p95": 1476.537,
+          "min": 337.143,
+          "max": 9751.169
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1269.668,
+          "median": 1405.099,
+          "p95": 1531.157,
+          "min": 576.877,
+          "max": 1732.561
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 7.06,
+          "median": 6.539,
+          "p95": 11.212,
+          "min": 3.769,
+          "max": 24.182
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 7488.026,
+          "median": 7440.0,
+          "p95": 11279.0,
+          "min": 4466.0,
+          "max": 11474.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 77.926,
+          "median": 78.0,
+          "p95": 100.0,
+          "min": 14.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 4.0,
+          "median": 4.0,
+          "p95": 4.0,
+          "min": 4.0,
+          "max": 4.0
+        }
+      }
+    },
+    "best_fixed": {
+      "label": "Fixed All Structured",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 2015.312,
+          "median": 1975.531,
+          "p95": 2602.727,
+          "min": 926.88,
+          "max": 12740.627
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 743.833,
+          "median": 620.381,
+          "p95": 1163.903,
+          "min": 176.67,
+          "max": 11247.254
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1264.511,
+          "median": 1365.288,
+          "p95": 1531.232,
+          "min": 577.507,
+          "max": 1762.375
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 6.969,
+          "median": 6.599,
+          "p95": 10.398,
+          "min": 3.707,
+          "max": 21.836
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 1651.318,
+          "median": 1669.5,
+          "p95": 1864.1,
+          "min": 1184.0,
+          "max": 1984.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 71.644,
+          "median": 71.0,
+          "p95": 100.0,
+          "min": 22.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 4.0,
+          "median": 4.0,
+          "p95": 4.0,
+          "min": 4.0,
+          "max": 4.0
+        }
+      }
+    },
+    "full_history_rs": {
+      "label": "Full History",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 2402.608,
+          "median": 2360.215,
+          "p95": 3054.886,
+          "min": 1260.233,
+          "max": 7891.286
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 1115.648,
+          "median": 1004.731,
+          "p95": 1600.328,
+          "min": 466.775,
+          "max": 6428.367
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1279.61,
+          "median": 1419.91,
+          "p95": 1541.723,
+          "min": 593.139,
+          "max": 1894.011
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 7.35,
+          "median": 6.704,
+          "p95": 12.325,
+          "min": 3.822,
+          "max": 29.519
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 14076.232,
+          "median": 14163.0,
+          "p95": 21068.0,
+          "min": 8432.0,
+          "max": 21350.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 72.08,
+          "median": 72.0,
+          "p95": 100.0,
+          "min": 12.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "min": 2.0,
+          "max": 2.0
+        }
+      }
+    },
+    "no_memory_r0": {
+      "label": "Context Only",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 665.0,
+          "median": 546.447,
+          "p95": 1100.077,
+          "min": 228.973,
+          "max": 8686.768
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 652.495,
+          "median": 533.241,
+          "p95": 1085.383,
+          "min": 223.145,
+          "max": 8679.78
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 0.001,
+          "median": 0.001,
+          "p95": 0.002,
+          "min": 0.0,
+          "max": 0.006
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 12.504,
+          "median": 10.226,
+          "p95": 24.038,
+          "min": 3.941,
+          "max": 41.838
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 393.014,
+          "median": 450.5,
+          "p95": 464.0,
+          "min": 184.0,
+          "max": 470.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 63.269,
+          "median": 61.0,
+          "p95": 91.0,
+          "min": 32.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    "no_memory_rs": {
+      "label": "Strategy Only",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 1938.706,
+          "median": 1906.758,
+          "p95": 2539.853,
+          "min": 878.132,
+          "max": 6815.833
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 660.975,
+          "median": 557.876,
+          "p95": 1159.912,
+          "min": 197.229,
+          "max": 5332.268
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1270.235,
+          "median": 1380.536,
+          "p95": 1529.024,
+          "min": 576.713,
+          "max": 1753.171
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 7.496,
+          "median": 6.742,
+          "p95": 13.042,
+          "min": 3.896,
+          "max": 29.621
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 648.791,
+          "median": 676.5,
+          "p95": 787.0,
+          "min": 375.0,
+          "max": 858.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 63.36,
+          "median": 62.0,
+          "p95": 98.0,
+          "min": 27.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 1.0,
+          "median": 1.0,
+          "p95": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        }
+      }
+    },
+    "pm": {
+      "label": "Learned Selector",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 1952.542,
+          "median": 1969.418,
+          "p95": 2627.209,
+          "min": 418.233,
+          "max": 7021.362
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 723.232,
+          "median": 610.218,
+          "p95": 1225.084,
+          "min": 164.39,
+          "max": 6058.91
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1214.091,
+          "median": 1345.881,
+          "p95": 1542.902,
+          "min": 5.31,
+          "max": 1731.397
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 8.118,
+          "median": 7.996,
+          "p95": 12.083,
+          "min": 4.226,
+          "max": 27.791
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 7.101,
+          "median": 6.621,
+          "p95": 11.266,
+          "min": 3.631,
+          "max": 20.193
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 1291.812,
+          "median": 1576.0,
+          "p95": 1808.3,
+          "min": 300.0,
+          "max": 1947.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 69.489,
+          "median": 68.0,
+          "p95": 100.0,
+          "min": 19.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 2.728,
+          "median": 3.0,
+          "p95": 3.0,
+          "min": 1.0,
+          "max": 4.0
+        }
+      }
+    },
+    "session_rag_rs": {
+      "label": "Session Retrieval",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 2170.525,
+          "median": 2078.988,
+          "p95": 2978.922,
+          "min": 997.134,
+          "max": 10544.111
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 892.336,
+          "median": 708.183,
+          "p95": 1573.208,
+          "min": 293.046,
+          "max": 9160.731
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 1271.033,
+          "median": 1417.224,
+          "p95": 1533.772,
+          "min": 575.285,
+          "max": 1752.782
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 7.156,
+          "median": 6.664,
+          "p95": 11.419,
+          "min": 3.761,
+          "max": 30.109
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 3236.692,
+          "median": 3236.0,
+          "p95": 3555.05,
+          "min": 2602.0,
+          "max": 3855.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 74.843,
+          "median": 74.0,
+          "p95": 100.0,
+          "min": 34.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 2.0,
+          "median": 2.0,
+          "p95": 2.0,
+          "min": 2.0,
+          "max": 2.0
+        }
+      }
+    },
+    "strong_rule": {
+      "label": "Rule Selector",
+      "n": 1020,
+      "metrics": {
+        "latency_ms": {
+          "n": 1020,
+          "mean": 3226.215,
+          "median": 3274.733,
+          "p95": 4075.907,
+          "min": 1551.964,
+          "max": 10027.507
+        },
+        "generation_latency_ms": {
+          "n": 1020,
+          "mean": 783.766,
+          "median": 649.9,
+          "p95": 1309.386,
+          "min": 240.27,
+          "max": 7491.812
+        },
+        "retrieval_latency_ms": {
+          "n": 1020,
+          "mean": 2435.656,
+          "median": 2585.864,
+          "p95": 3004.384,
+          "min": 1137.151,
+          "max": 3383.264
+        },
+        "pm_inference_ms": {
+          "n": 1020,
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "pre_evidence_compute_ms": {
+          "n": 1020,
+          "mean": 6.793,
+          "median": 6.409,
+          "p95": 10.135,
+          "min": 3.66,
+          "max": 19.66
+        },
+        "total_input_tokens": {
+          "n": 1020,
+          "mean": 1623.973,
+          "median": 1643.5,
+          "p95": 1837.05,
+          "min": 1159.0,
+          "max": 1954.0
+        },
+        "output_tokens": {
+          "n": 1020,
+          "mean": 71.543,
+          "median": 70.0,
+          "p95": 100.0,
+          "min": 30.0,
+          "max": 100.0
+        },
+        "retrieval_calls": {
+          "n": 1020,
+          "mean": 3.0,
+          "median": 3.0,
+          "p95": 3.0,
+          "min": 3.0,
+          "max": 3.0
+        }
+      }
+    }
+  }
+}
