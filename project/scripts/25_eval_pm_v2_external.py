@@ -21,6 +21,8 @@ def main() -> None:
         default=[
             ROOT / "outputs" / "evoemo_selective" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v2" / "turns.jsonl",
+            ROOT / "outputs" / "evoemo_pm_v2_cost_matched_fixed" / "turns.jsonl",
+            ROOT / "outputs" / "evoemo_pm_v2_me_r0_fixed" / "turns.jsonl",
         ],
     )
     parser.add_argument(
@@ -28,6 +30,8 @@ def main() -> None:
         nargs="+",
         default=[
             "pm_v2",
+            "pm_v2_cost_matched_fixed",
+            "pm_v2_me_r0_fixed",
             "no_memory_r0",
             "session_rag_rs",
             "best_fixed",
