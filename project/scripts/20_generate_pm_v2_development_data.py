@@ -12,6 +12,7 @@ from metacom_pm.pm_v2_data import (
     GeneratedUserBundle,
     generate_user_bundle,
     load_bundles,
+    load_states,
     validate_bundle,
     write_development_dataset,
 )
@@ -86,6 +87,21 @@ def strict_bundle_check(bundle: GeneratedUserBundle, allowed_families: list[str]
         raise ValueError(
             f"bundle used semantic families outside its frozen split pool: {invalid_families}"
         )
+    for case in bundle.cases:
+        missing_sources = [
+            name
+            for name, memories in (
+                ("MP", case.profile_memories),
+                ("MS", case.summary_memories),
+                ("ME", case.event_memories),
+            )
+            if not memories
+        ]
+        if missing_sources:
+            raise ValueError(
+                f"case {case.case_id} is missing sources {missing_sources}; "
+                "all development states must expose the complete 16-action space"
+            )
 
 
 def main() -> None:
@@ -109,25 +125,17 @@ def main() -> None:
     if pm_config.get("version") != "pm-v2.0":
         raise ValueError("unsupported PM-v2 config version")
     generation_cfg = pm_config["data_generation"]
-    args.train_users = (
-        int(args.train_users)
-        if args.train_users is not None
-        else int(generation_cfg["train_users"])
+    args.train_users = int(args.train_users if args.train_users is not None else generation_cfg["train_users"])
+    args.calibration_users = int(
+        args.calibration_users if args.calibration_users is not None else generation_cfg["calibration_users"]
     )
-    args.calibration_users = (
-        int(args.calibration_users)
-        if args.calibration_users is not None
-        else int(generation_cfg["calibration_users"])
+    args.internal_test_users = int(
+        args.internal_test_users if args.internal_test_users is not None else generation_cfg["internal_test_users"]
     )
-    args.internal_test_users = (
-        int(args.internal_test_users)
-        if args.internal_test_users is not None
-        else int(generation_cfg["internal_test_users"])
-    )
-    args.max_generation_attempts = (
-        int(args.max_generation_attempts)
+    args.max_generation_attempts = int(
+        args.max_generation_attempts
         if args.max_generation_attempts is not None
-        else int(generation_cfg["max_generation_attempts"])
+        else generation_cfg["max_generation_attempts"]
     )
     required_regimes = {str(value) for value in generation_cfg["required_regimes"]}
     if required_regimes != {regime.value for regime in ResourceNeedRegime}:
@@ -144,7 +152,9 @@ def main() -> None:
             "planned_users": total,
             "maximum_generation_calls": total * args.max_generation_attempts,
             "planned_states": total * len(ResourceNeedRegime),
+            "planned_action_outcomes": total * len(ResourceNeedRegime) * 16,
             "strict_split": "user + semantic-family + normalized-text disjoint",
+            "all_sources_required": True,
             "regimes": [regime.value for regime in ResourceNeedRegime],
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
@@ -212,11 +222,7 @@ def main() -> None:
                 last_error = f"{type(exc).__name__}: {exc}"
                 append_jsonl(
                     error_path,
-                    {
-                        "user_id": user_id,
-                        "attempt": attempt + 1,
-                        "error": last_error,
-                    },
+                    {"user_id": user_id, "attempt": attempt + 1, "error": last_error},
                 )
         if last_error is not None:
             raise RuntimeError(
@@ -229,12 +235,22 @@ def main() -> None:
         split_by_user=split_by_user,
         out_dir=args.out_dir,
     )
-    report["work_path"] = str(work_path)
-    report["error_path"] = str(error_path)
-    report["pm_v2_config"] = str(args.pm_v2_config)
-    report["pm_v2_config_sha256"] = sha256_file(args.pm_v2_config)
-    report["seed_dialogues"] = str(args.seed_dialogues)
-    report["seed_dialogues_sha256"] = sha256_file(args.seed_dialogues)
+    generated_states = load_states(args.out_dir / "pm_v2_states.jsonl")
+    report.update(
+        {
+            "work_path": str(work_path),
+            "error_path": str(error_path),
+            "pm_v2_config": str(args.pm_v2_config),
+            "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
+            "seed_dialogues": str(args.seed_dialogues),
+            "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
+            "all_states_have_16_actions": all(
+                len(state.allowed_actions) == 16 for state in generated_states
+            ),
+        }
+    )
+    if not report["all_states_have_16_actions"]:
+        raise RuntimeError("generated PM-v2 dataset does not expose all 16 actions")
     write_json(args.out_dir / "pm_v2_data_report.json", report)
     print(report)
 
