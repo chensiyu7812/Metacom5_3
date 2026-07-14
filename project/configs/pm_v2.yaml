@@ -1,0 +1,84 @@
+version: pm-v2.0
+
+action_space:
+  memory_subsets: [M0, MP, MS, ME, MPMS, MPE, MSE, MPMSME]
+  strategy_modes: [R0, RS]
+
+quality_composite:
+  version: pmv2-quality-v1
+  weights:
+    emotional_support: 0.30
+    personalization: 0.20
+    memory_appropriateness: 0.15
+    factual_grounding: 0.15
+    temporal_consistency: 0.10
+    non_intrusiveness: 0.10
+
+labeling:
+  minimum_independent_judge_families: 2
+  reliable_mad_threshold: 0.75
+  minimum_reliable_label_rate: 0.80
+  reject_duplicate_dimension_exact_match_rate: 0.98
+  request_llm_overall_field: false
+  forced_swap_audit_fraction: 0.10
+
+features:
+  word_hash_features: 256
+  char_hash_features: 256
+  optional_precomputed_semantic_embedding: true
+  forbid_actual_memory_text: true
+  forbid_retrieved_item_ids: true
+  forbid_generated_response: true
+  forbid_judge_labels: true
+
+model:
+  bootstrap_models: 7
+  group_bootstrap_key: state_id
+  primary_regressor: HistGradientBoostingRegressor
+  direct_targets:
+    - emotional_support
+    - personalization
+    - memory_appropriateness
+    - factual_grounding
+    - temporal_consistency
+    - non_intrusiveness
+    - selected_context_misuse
+    - unnecessary_exposure
+    - stale_or_conflicting_use
+    - unsupported_personal_claim
+    - memory_omission
+    - strategy_overuse
+    - strategy_omission
+
+selection:
+  version: pmv2-selection-v1
+  uncertainty_z: 1.0
+  max_risk_ucb: 0.45
+  risk_weight: 0.25
+  cost_weight: 0.10
+  resource_min_gain: -0.02
+  strategy_min_gain: -0.01
+  m0_omission_trigger: 0.35
+  r0_strategy_omission_trigger: 0.35
+  fallback_action: M0+R0
+  fail_closed_on_ood: true
+
+splits:
+  require_user_disjoint: true
+  require_semantic_family_disjoint: true
+  require_normalized_current_text_disjoint: true
+  train_users: 24
+  calibration_users: 6
+  internal_test_users: 6
+
+external_evaluation:
+  required_baselines:
+    - M0+R0
+    - ME+R0
+    - cost_matched_fixed
+    - structured_high_resource
+    - raw_session_top_k
+    - full_history
+  primary_resource_metric: observed_input_tokens
+  latency_role: diagnostic_only
+  require_forced_swap_or_human_check_for_key_claims: true
