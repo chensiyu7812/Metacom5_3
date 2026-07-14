@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from metacom_pm.config import endpoint_from_config, load_config
-from metacom_pm.io import append_jsonl, sha256_file
+from metacom_pm.io import append_jsonl, sha256_file, write_json
 from metacom_pm.pm_v2_contracts import PMV2Split, ResourceNeedRegime
 from metacom_pm.pm_v2_data import (
     GeneratedUserBundle,
