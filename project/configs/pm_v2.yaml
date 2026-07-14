@@ -1,0 +1,141 @@
+version: pm-v2.0
+
+action_space:
+  memory_subsets: [M0, MP, MS, ME, MPMS, MPE, MSE, MPMSME]
+  strategy_modes: [R0, RS]
+
+data_generation:
+  train_users: 24
+  calibration_users: 6
+  internal_test_users: 6
+  cases_per_user: 9
+  max_generation_attempts: 3
+  required_regimes:
+    - context_only
+    - profile_needed
+    - summary_needed
+    - event_needed
+    - multi_source_needed
+    - memory_harmful
+    - strategy_helpful
+    - strategy_harmful
+    - ambiguous
+
+quality_composite:
+  version: pmv2-quality-v1
+  interpretation: preregistered_training_utility_not_llm_overall
+  weights:
+    emotional_support: 0.30
+    personalization: 0.20
+    memory_appropriateness: 0.15
+    factual_grounding: 0.15
+    temporal_consistency: 0.10
+    non_intrusiveness: 0.10
+
+labeling:
+  minimum_independent_judge_families: 2
+  reliable_mad_threshold: 0.75
+  minimum_reliable_label_rate: 0.80
+  reject_duplicate_dimension_exact_match_rate: 0.98
+  reject_constant_response_dimensions: true
+  reject_constant_risk_dimensions: true
+  request_llm_overall_field: false
+  forced_swap_audit_fraction: 0.10
+
+human_label_audit:
+  required_before_reportable_freeze: true
+  items: 72
+  minimum_annotators: 2
+  maximum_response_mae: 0.80
+  minimum_response_spearman: 0.20
+  maximum_risk_mae: 0.60
+  minimum_within_one_rate: 0.80
+  minimum_interrater_kappa: 0.10
+
+features:
+  word_hash_features: 256
+  char_hash_features: 256
+  optional_precomputed_semantic_embedding: true
+  source_similarity: catalog_centroid_only
+  expose_current_state_conflict_oracle: false
+  expose_item_level_similarity: false
+  forbid_actual_memory_text: true
+  forbid_retrieved_item_ids: true
+  forbid_generated_response: true
+  forbid_judge_labels: true
+
+model:
+  bootstrap_models: 7
+  group_bootstrap_key: state_id
+  primary_regressor: HistGradientBoostingRegressor
+  direct_targets:
+    - emotional_support
+    - personalization
+    - memory_appropriateness
+    - factual_grounding
+    - temporal_consistency
+    - non_intrusiveness
+    - selected_context_misuse
+    - unnecessary_exposure
+    - stale_or_conflicting_use
+    - unsupported_personal_claim
+    - memory_omission
+    - strategy_overuse
+    - strategy_omission
+
+selection:
+  version: pmv2-selection-v1
+  uncertainty_z: 1.0
+  max_risk_ucb: 0.45
+  risk_weight: 0.25
+  cost_weight: 0.10
+  resource_min_gain: -0.02
+  strategy_min_gain: -0.01
+  m0_omission_trigger: 0.35
+  r0_strategy_omission_trigger: 0.35
+  fallback_action: M0+R0
+  fail_closed_on_ood: true
+
+calibration_grid:
+  cost_weights: [0.05, 0.10, 0.20, 0.30]
+  risk_weights: [0.15, 0.25, 0.40]
+  resource_gains: [-0.03, -0.01, 0.00, 0.02]
+  strategy_gains: [-0.02, 0.00, 0.02]
+  max_risks: [0.30, 0.40, 0.50]
+
+data_label_gate:
+  maximum_single_action_share: 0.35
+  minimum_m0_share: 0.10
+  minimum_r0_share: 0.15
+  minimum_rs_share: 0.15
+  minimum_distinct_actions: 6
+  minimum_regime_pass_rate: 0.60
+  minimum_reliable_rate: 0.80
+
+internal_reportability_gate:
+  minimum_quality_delta_vs_cost_matched: -0.02
+  minimum_utility_delta_vs_cost_matched: 0.00
+  maximum_risk_delta_vs_cost_matched: 0.02
+  maximum_cost_ratio_vs_cost_matched: 1.10
+  minimum_distinct_actions: 4
+  minimum_m0_rate: 0.05
+  minimum_r0_rate: 0.10
+  minimum_regime_pass_rate: 0.50
+
+splits:
+  require_user_disjoint: true
+  require_semantic_family_disjoint: true
+  require_normalized_current_text_disjoint: true
+
+external_evaluation:
+  required_baselines:
+    - M0+R0
+    - ME+R0
+    - cost_matched_fixed
+    - structured_high_resource
+    - raw_session_top_k
+    - full_history
+  primary_resource_metric: observed_input_tokens
+  latency_role: diagnostic_only
+  require_forced_swap_or_human_check_for_key_claims: true
+  max_ood_fallback_rate: 0.25
