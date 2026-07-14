@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from metacom_pm.config import endpoint_from_config, load_config
-from metacom_pm.io import append_jsonl
+from metacom_pm.io import append_jsonl, sha256_file
 from metacom_pm.pm_v2_contracts import PMV2Split, ResourceNeedRegime
 from metacom_pm.pm_v2_data import (
     GeneratedUserBundle,
@@ -91,18 +91,49 @@ def strict_bundle_check(bundle: GeneratedUserBundle, allowed_families: list[str]
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=ROOT / "configs" / "experiment.yaml")
+    parser.add_argument("--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v2.yaml")
     parser.add_argument("--endpoint", default="generator")
     parser.add_argument("--seed-dialogues", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, default=ROOT / "data" / "pm_v2")
-    parser.add_argument("--train-users", type=int, default=24)
-    parser.add_argument("--calibration-users", type=int, default=6)
-    parser.add_argument("--internal-test-users", type=int, default=6)
+    parser.add_argument("--train-users", type=int)
+    parser.add_argument("--calibration-users", type=int)
+    parser.add_argument("--internal-test-users", type=int)
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--max-users", type=int)
-    parser.add_argument("--max-generation-attempts", type=int, default=3)
+    parser.add_argument("--max-generation-attempts", type=int)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--seed", type=int, default=1701)
     args = parser.parse_args()
+
+    pm_config = load_config(args.pm_v2_config)
+    if pm_config.get("version") != "pm-v2.0":
+        raise ValueError("unsupported PM-v2 config version")
+    generation_cfg = pm_config["data_generation"]
+    args.train_users = (
+        int(args.train_users)
+        if args.train_users is not None
+        else int(generation_cfg["train_users"])
+    )
+    args.calibration_users = (
+        int(args.calibration_users)
+        if args.calibration_users is not None
+        else int(generation_cfg["calibration_users"])
+    )
+    args.internal_test_users = (
+        int(args.internal_test_users)
+        if args.internal_test_users is not None
+        else int(generation_cfg["internal_test_users"])
+    )
+    args.max_generation_attempts = (
+        int(args.max_generation_attempts)
+        if args.max_generation_attempts is not None
+        else int(generation_cfg["max_generation_attempts"])
+    )
+    required_regimes = {str(value) for value in generation_cfg["required_regimes"]}
+    if required_regimes != {regime.value for regime in ResourceNeedRegime}:
+        raise ValueError("PM-v2 config required_regimes does not match code contract")
+    if int(generation_cfg["cases_per_user"]) != len(ResourceNeedRegime):
+        raise ValueError("PM-v2 config cases_per_user must equal the regime count")
 
     total = args.train_users + args.calibration_users + args.internal_test_users
     if args.max_users is not None:
@@ -115,6 +146,8 @@ def main() -> None:
             "planned_states": total * len(ResourceNeedRegime),
             "strict_split": "user + semantic-family + normalized-text disjoint",
             "regimes": [regime.value for regime in ResourceNeedRegime],
+            "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
+            "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
         }
     )
     if not args.run:
@@ -198,6 +231,11 @@ def main() -> None:
     )
     report["work_path"] = str(work_path)
     report["error_path"] = str(error_path)
+    report["pm_v2_config"] = str(args.pm_v2_config)
+    report["pm_v2_config_sha256"] = sha256_file(args.pm_v2_config)
+    report["seed_dialogues"] = str(args.seed_dialogues)
+    report["seed_dialogues_sha256"] = sha256_file(args.seed_dialogues)
+    write_json(args.out_dir / "pm_v2_data_report.json", report)
     print(report)
 
 
