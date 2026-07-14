@@ -26,11 +26,12 @@ def state_text(state: PMV2State) -> str:
 
 @dataclass
 class PMV2FeatureBuilder:
-    """OOV-robust, pre-retrieval state-action features.
+    """OOV-robust, strictly pre-retrieval state-action features.
 
-    PM-v2 replaces fitted TF-IDF with fixed word/character hashing so unseen words do
-    not become silent zero features. Optional precomputed semantic embeddings can be
-    appended, but the builder never reads actual memory or strategy text.
+    The builder uses the current/recent text plus inventory-level metadata. It never
+    reads actual memory snippets, retrieved IDs, item-level top scores, or a
+    current-state conflict oracle. Query relevance is limited to similarity against a
+    cached source-level catalog representation supplied by the runtime state.
     """
 
     word_features: int = 256
@@ -98,11 +99,12 @@ class PMV2FeatureBuilder:
                     self._log(cat.median_age_sessions or 0.0),
                     self._log(cat.max_age_sessions or 0),
                     self._log(cat.estimated_tokens),
+                    # Source-centroid similarity only. Max/P90 item-level scores are
+                    # intentionally excluded because they approximate retrieval.
                     float(cat.query_similarity_mean),
-                    float(cat.query_similarity_max),
-                    float(cat.query_similarity_p90),
+                    # Age-derived stale metadata may be maintained by the memory
+                    # store. Current-state conflict labels are never exposed.
                     float(cat.stale_fraction),
-                    float(cat.conflict_fraction),
                 ]
             )
             if cat.catalog_embedding:
@@ -231,5 +233,7 @@ class PMV2FeatureBuilder:
             "char_features": self.char_features,
             "use_precomputed_embeddings": self.use_precomputed_embeddings,
             "embedding_dim": self.embedding_dim,
+            "source_similarity": "catalog_centroid_only",
+            "current_state_conflict_feature": False,
         }
         return sha256_text(canonical_json(payload))
