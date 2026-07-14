@@ -41,6 +41,7 @@ def main() -> None:
     parser.add_argument("--labels", type=Path, default=ROOT / "outputs" / "pm_v2_judging" / "action_labels.jsonl")
     parser.add_argument("--judge-summary", type=Path, default=ROOT / "outputs" / "pm_v2_judging" / "summary.json")
     parser.add_argument("--data-label-audit", type=Path, default=ROOT / "outputs" / "pm_v2_judging" / "data_label_audit.json")
+    parser.add_argument("--human-audit", type=Path, default=ROOT / "outputs" / "pm_v2_human_audit" / "human_audit_report.json")
     parser.add_argument("--evoemo", type=Path, default=ROOT / "data" / "external" / "evo_emo.json")
     parser.add_argument("--strategy-bank", type=Path, default=ROOT / "data" / "strategy" / "strategy_cards.jsonl")
     parser.add_argument("--fixed-tracks", type=Path, default=ROOT / "outputs" / "evoemo_fixed_tracks" / "fixed_seeker_tracks.jsonl")
@@ -60,6 +61,9 @@ def main() -> None:
     label_audit = json.loads(args.data_label_audit.read_text(encoding="utf-8"))
     if label_audit.get("status") != "PASS":
         raise RuntimeError("data/label diversity audit did not pass")
+    human_audit = json.loads(args.human_audit.read_text(encoding="utf-8"))
+    if human_audit.get("status") != "PASS":
+        raise RuntimeError("human-versus-LLM judge calibration audit did not pass")
     seed_audit = json.loads(args.seed_audit.read_text(encoding="utf-8"))
     if seed_audit.get("status") != "COMPLETE" or seed_audit.get("test_or_validation_rows_in_output") != 0:
         raise RuntimeError("seed lineage audit is incomplete or contains non-train rows")
@@ -75,6 +79,7 @@ def main() -> None:
         args.labels,
         args.judge_summary,
         args.data_label_audit,
+        args.human_audit,
         args.evoemo,
         args.strategy_bank,
         args.fixed_tracks,
@@ -96,6 +101,7 @@ def main() -> None:
             args.labels,
             args.judge_summary,
             args.data_label_audit,
+            args.human_audit,
             args.evoemo,
             args.strategy_bank,
             args.fixed_tracks,
@@ -110,6 +116,7 @@ def main() -> None:
             "judge_prompt_contract_hash": prompt_contract_hash(),
             "quality_composite_version": model.selection_config.composite_spec.version,
             "internal_reportability_checks": report["reportability_checks"],
+            "human_label_audit_checks": human_audit.get("checks"),
             "checkpoint_sha256": sha256_file(args.checkpoint),
             "external_use": "fixed-input EvoEmo only; no calibration on external results",
         },
