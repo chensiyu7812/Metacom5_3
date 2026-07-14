@@ -2,20 +2,24 @@ from __future__ import annotations
 
 from types import MethodType
 
+import numpy as np
 import pytest
 from pydantic import ValidationError
 
 from metacom_pm.contracts import DialogueTurn, MemorySource
 from metacom_pm.pm_v2_contracts import (
+    ActionLabel,
     ActionPrediction,
     ObservableSourceSummary,
     PMV2Split,
     PMV2State,
     PredictionInterval,
     ResponseDimensions,
+    RiskDimensions,
 )
 from metacom_pm.pm_v2_data import validate_split_manifests
-from metacom_pm.pm_v2_judging import ResponseJudgeOutput
+from metacom_pm.pm_v2_features import PMV2FeatureBuilder
+from metacom_pm.pm_v2_judging import ResponseJudgeOutput, validate_judge_table
 from metacom_pm.pm_v2_model import PMV2Model, SelectionConfig
 
 
@@ -235,3 +239,57 @@ def test_joint_split_manifest_rejects_overlap():
                 PMV2Split.INTERNAL_TEST: [],
             }
         )
+
+
+def test_current_state_conflict_oracle_is_not_a_model_feature():
+    left = make_state(state_id="left")
+    right = make_state(state_id="right")
+    right.current_user_text = left.current_user_text
+    right.current_session_summary = left.current_session_summary
+    right.current_session_history = left.current_session_history
+    right.inventory[MemorySource.ME].conflict_fraction = 1.0
+    left.inventory[MemorySource.ME].conflict_fraction = 0.0
+    builder = PMV2FeatureBuilder(word_features=32, char_features=32).fit([left, right])
+    left_vector = builder.transform([(left, "ME+R0")])[0]
+    right_vector = builder.transform([(right, "ME+R0")])[0]
+    assert np.allclose(left_vector, right_vector)
+
+
+def test_degenerate_risk_labels_fail_closed():
+    labels = []
+    for index in range(4):
+        response = ResponseDimensions(
+            emotional_support=2.0 + index * 0.5,
+            personalization=2.5 + index * 0.4,
+            memory_appropriateness=3.0 + index * 0.3,
+            factual_grounding=3.5 + index * 0.2,
+            temporal_consistency=4.0 + index * 0.1,
+            non_intrusiveness=4.5 - index * 0.2,
+        )
+        labels.append(
+            ActionLabel(
+                state_id=f"state_{index}",
+                card_id=f"card_{index}",
+                user_id=f"user_{index}",
+                semantic_family=f"family_{index}",
+                action_id="M0+R0",
+                response=response,
+                risk=RiskDimensions(
+                    selected_context_misuse=0.0,
+                    unnecessary_exposure=0.0,
+                    stale_or_conflicting_use=0.0,
+                    unsupported_personal_claim=0.0,
+                    memory_omission=0.0,
+                    strategy_overuse=0.0,
+                    strategy_omission=0.0,
+                ),
+                observed_input_tokens=100,
+                retrieval_calls=0,
+                judge_families=["a", "b"],
+                judge_count=2,
+                max_dimension_mad=0.0,
+                label_reliable=True,
+            )
+        )
+    with pytest.raises(RuntimeError, match="judge quality gate failed"):
+        validate_judge_table(labels)
