@@ -7,8 +7,9 @@ import random
 from collections import defaultdict
 from pathlib import Path
 
+from metacom_pm.config import load_config
 from metacom_pm.contracts import ActionOutcome
-from metacom_pm.io import iter_jsonl, sha256_text, write_json
+from metacom_pm.io import iter_jsonl, sha256_file, sha256_text, write_json
 from metacom_pm.pm_v2_contracts import ActionLabel, CompositeSpec
 from metacom_pm.pm_v2_data import load_states
 
@@ -35,17 +36,25 @@ RISK_FIELDS = (
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v2.yaml")
     parser.add_argument("--states", type=Path, default=ROOT / "data" / "pm_v2" / "pm_v2_states.jsonl")
     parser.add_argument("--outcomes", type=Path, default=ROOT / "outputs" / "pm_v2_sweep" / "action_outcomes.jsonl")
     parser.add_argument("--labels", type=Path, default=ROOT / "outputs" / "pm_v2_judging" / "action_labels.jsonl")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "outputs" / "pm_v2_human_audit")
-    parser.add_argument("--items", type=int, default=72)
     parser.add_argument("--seed", type=int, default=4701)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
+    config = load_config(args.pm_v2_config)
+    audit_cfg = config["human_label_audit"]
+    items = int(audit_cfg["items"])
+    quality_cfg = config["quality_composite"]
+    spec = CompositeSpec(
+        version=str(quality_cfg["version"]),
+        weights={str(key): float(value) for key, value in quality_cfg["weights"].items()},
+    )
+
     states = load_states(args.states)
-    state_map = {state.state_id: state for state in states}
     card_to_state = {state.card_id: state for state in states}
     labels = [ActionLabel.model_validate(row) for row in iter_jsonl(args.labels)]
     label_map = {(label.state_id, label.action_id): label for label in labels}
@@ -55,19 +64,18 @@ def main() -> None:
         for row in outcomes
         if row.card_id in card_to_state
     }
-    spec = CompositeSpec()
     by_regime = defaultdict(list)
     for state in states:
         candidates = [
-            label for label in labels
-            if label.state_id == state.state_id and (label.state_id, label.action_id) in outcome_map
+            label
+            for label in labels
+            if label.state_id == state.state_id
+            and (label.state_id, label.action_id) in outcome_map
         ]
         if not candidates:
             continue
         best = max(candidates, key=lambda label: spec.score(label.response))
-        selected = {best.action_id}
-        if "M0+R0" in state.allowed_actions:
-            selected.add("M0+R0")
+        selected = {best.action_id, "M0+R0"}
         high_resource = max(
             candidates,
             key=lambda label: (label.observed_input_tokens, label.action_id),
@@ -75,21 +83,29 @@ def main() -> None:
         selected.add(high_resource.action_id)
         regime = str(state.provenance.get("regime") or "unknown")
         for action_id in selected:
-            by_regime[regime].append((state, action_id))
+            if (state.state_id, action_id) in outcome_map:
+                by_regime[regime].append((state, action_id))
     regimes = sorted(by_regime)
     if not regimes:
         raise RuntimeError("no auditable state-action pairs")
     rng = random.Random(args.seed)
     selected_pairs = []
-    per_regime = max(1, args.items // len(regimes))
+    per_regime = max(1, items // len(regimes))
     for regime in regimes:
         rows = list(by_regime[regime])
         rng.shuffle(rows)
         selected_pairs.extend(rows[:per_regime])
-    remaining = [row for regime in regimes for row in by_regime[regime] if row not in selected_pairs]
+    remaining = [
+        row
+        for regime in regimes
+        for row in by_regime[regime]
+        if row not in selected_pairs
+    ]
     rng.shuffle(remaining)
-    selected_pairs.extend(remaining[: max(0, args.items - len(selected_pairs))])
-    selected_pairs = selected_pairs[: args.items]
+    selected_pairs.extend(remaining[: max(0, items - len(selected_pairs))])
+    selected_pairs = selected_pairs[:items]
+    if len(selected_pairs) != items:
+        raise RuntimeError(f"human audit could only sample {len(selected_pairs)} of {items} items")
     rng.shuffle(selected_pairs)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -157,11 +173,15 @@ def main() -> None:
         "status": "PREPARED",
         "n_items": len(key_rows),
         "packet": str(packet_path),
+        "pm_v2_config": str(args.pm_v2_config),
+        "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
+        "human_audit_config": audit_cfg,
+        "quality_composite_version": spec.version,
         "key_rows": key_rows,
         "instructions": {
             "response_scale": "1-5; use each dimension independently",
             "risk_scale": "0-3; 0=no observed issue, 3=major issue",
-            "minimum_annotators": 2,
+            "minimum_annotators": int(audit_cfg["minimum_annotators"]),
             "do_not_reveal": "action_id, policy name, LLM scores",
         },
     }
