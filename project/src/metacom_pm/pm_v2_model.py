@@ -140,6 +140,8 @@ class PMV2Model:
         seed: int = 17,
         reliable_only: bool = True,
         use_precomputed_embeddings: bool = True,
+        word_features: int = 256,
+        char_features: int = 256,
     ) -> "PMV2Model":
         state_map = {state.state_id: state for state in states}
         if len(state_map) != len(states):
@@ -165,7 +167,9 @@ class PMV2Model:
             )
         unique_states = [state_map[state_id] for state_id in sorted(labeled_actions)]
         builder = PMV2FeatureBuilder(
-            use_precomputed_embeddings=use_precomputed_embeddings
+            word_features=word_features,
+            char_features=char_features,
+            use_precomputed_embeddings=use_precomputed_embeddings,
         ).fit(unique_states)
         rows = [(state_map[label.state_id], label.action_id) for label in usable]
         x = builder.transform(rows)
@@ -205,6 +209,9 @@ class PMV2Model:
             "response_fields": list(RESPONSE_FIELDS),
             "risk_fields": list(RISK_FIELDS),
             "feature_config_hash": builder.config_hash(),
+            "word_hash_features": word_features,
+            "char_hash_features": char_features,
+            "use_precomputed_embeddings": use_precomputed_embeddings,
             "m0_r0_coverage": 1.0,
         }
         return cls(
