@@ -34,6 +34,21 @@ def main() -> None:
     parser.add_argument("--experiment-config", type=Path, default=ROOT / "configs" / "experiment.yaml")
     parser.add_argument("--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v2.yaml")
     parser.add_argument("--checkpoint", type=Path, default=ROOT / "outputs" / "pm_v2_model" / "pm_v2.joblib")
+    parser.add_argument(
+        "--cost-matched-checkpoint",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2_cost_matched_fixed.joblib",
+    )
+    parser.add_argument(
+        "--me-r0-checkpoint",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2_me_r0_fixed.joblib",
+    )
+    parser.add_argument(
+        "--fixed-baseline-report",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2_fixed_baselines.json",
+    )
     parser.add_argument("--training-report", type=Path, default=ROOT / "outputs" / "pm_v2_model" / "training_report.json")
     parser.add_argument("--states", type=Path, default=ROOT / "data" / "pm_v2" / "pm_v2_states.jsonl")
     parser.add_argument("--data-report", type=Path, default=ROOT / "data" / "pm_v2" / "pm_v2_data_report.json")
@@ -67,11 +82,27 @@ def main() -> None:
     seed_audit = json.loads(args.seed_audit.read_text(encoding="utf-8"))
     if seed_audit.get("status") != "COMPLETE" or seed_audit.get("test_or_validation_rows_in_output") != 0:
         raise RuntimeError("seed lineage audit is incomplete or contains non-train rows")
+    fixed_report = json.loads(args.fixed_baseline_report.read_text(encoding="utf-8"))
+    if fixed_report.get("status") != "COMPLETE":
+        raise RuntimeError("fixed baseline checkpoint report is not COMPLETE")
+    if fixed_report.get("source_checkpoint_sha256") != sha256_file(args.checkpoint):
+        raise RuntimeError("fixed baselines were not derived from the frozen PM-v2 checkpoint")
+    expected_fixed = {
+        "cost_matched_fixed": args.cost_matched_checkpoint,
+        "event_memory_r0": args.me_r0_checkpoint,
+    }
+    for name, path in expected_fixed.items():
+        expected_sha = fixed_report["baselines"][name]["checkpoint_sha256"]
+        if expected_sha != sha256_file(path):
+            raise RuntimeError(f"fixed baseline checkpoint hash mismatch: {name}")
 
     required = [
         args.experiment_config,
         args.pm_v2_config,
         args.checkpoint,
+        args.cost_matched_checkpoint,
+        args.me_r0_checkpoint,
+        args.fixed_baseline_report,
         args.training_report,
         args.states,
         args.data_report,
@@ -91,9 +122,14 @@ def main() -> None:
     frozen = create_study_freeze(
         release_root=ROOT,
         config_path=args.experiment_config,
-        checkpoint_paths=[args.checkpoint],
+        checkpoint_paths=[
+            args.checkpoint,
+            args.cost_matched_checkpoint,
+            args.me_r0_checkpoint,
+        ],
         data_paths=[
             args.pm_v2_config,
+            args.fixed_baseline_report,
             args.training_report,
             args.states,
             args.data_report,
@@ -118,6 +154,7 @@ def main() -> None:
             "internal_reportability_checks": report["reportability_checks"],
             "human_label_audit_checks": human_audit.get("checks"),
             "checkpoint_sha256": sha256_file(args.checkpoint),
+            "fixed_baselines": fixed_report["baselines"],
             "external_use": "fixed-input EvoEmo only; no calibration on external results",
         },
     )
