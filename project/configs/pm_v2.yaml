@@ -42,10 +42,23 @@ labeling:
   request_llm_overall_field: false
   forced_swap_audit_fraction: 0.10
 
+human_label_audit:
+  required_before_reportable_freeze: true
+  items: 72
+  minimum_annotators: 2
+  maximum_response_mae: 0.80
+  minimum_response_spearman: 0.20
+  maximum_risk_mae: 0.60
+  minimum_within_one_rate: 0.80
+  minimum_interrater_kappa: 0.10
+
 features:
   word_hash_features: 256
   char_hash_features: 256
   optional_precomputed_semantic_embedding: true
+  source_similarity: catalog_centroid_only
+  expose_current_state_conflict_oracle: false
+  expose_item_level_similarity: false
   forbid_actual_memory_text: true
   forbid_retrieved_item_ids: true
   forbid_generated_response: true
