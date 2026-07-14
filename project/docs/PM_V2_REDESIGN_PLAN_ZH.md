@@ -1,5 +1,8 @@
 # MetaCom PM-v2：重新设计、数据、标签、训练与验证方案
 
+> PM-v1 的完整失败、限制、负面结果与根因复盘见：
+> [`PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md`](PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md)。
+
 ## 1. 为什么不是在 PM-v1 上改一个 epsilon
 
 PM-v1 的外部结果暴露了四个相互关联的问题：
