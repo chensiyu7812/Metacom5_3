@@ -49,7 +49,11 @@ def fixed_action_metrics(states, labels, action_id, config):
     mean_quality = float(np.mean([row["quality"] for row in rows]))
     mean_risk = float(np.mean([row["risk"] for row in rows]))
     mean_cost = float(np.mean([row["cost"] for row in rows]))
-    utility = mean_quality - config.risk_weight * mean_risk - config.cost_weight * (mean_cost / cost_scale)
+    utility = (
+        mean_quality
+        - config.risk_weight * mean_risk
+        - config.cost_weight * (mean_cost / cost_scale)
+    )
     return {
         "action_id": action_id,
         "n": len(rows),
@@ -86,9 +90,11 @@ def policy_regime_alignment(model, states):
         "regime_pass_rate": {
             regime: float(np.mean(values)) for regime, values in sorted(by_regime.items())
         },
-        "mean_regime_pass_rate": float(
-            np.mean([value for values in by_regime.values() for value in values])
-        ) if by_regime else 0.0,
+        "mean_regime_pass_rate": (
+            float(np.mean([value for values in by_regime.values() for value in values]))
+            if by_regime
+            else 0.0
+        ),
     }
 
 
@@ -130,9 +136,7 @@ def main() -> None:
         for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION, PMV2Split.INTERNAL_TEST)
     }
     if any(not rows for rows in states_by_split.values()):
-        raise RuntimeError(
-            "PM-v2 requires non-empty train, calibration, and internal-test splits"
-        )
+        raise RuntimeError("PM-v2 requires non-empty train, calibration, and internal-test splits")
     split_manifest = validate_split_manifests(states_by_split)
     state_ids_by_split = {
         split: {state.state_id for state in rows}
@@ -159,9 +163,7 @@ def main() -> None:
         selection_config=initial_selection,
         n_models=int(model_cfg["bootstrap_models"]),
         seed=args.seed,
-        use_precomputed_embeddings=bool(
-            feature_cfg["optional_precomputed_semantic_embedding"]
-        ),
+        use_precomputed_embeddings=bool(feature_cfg["optional_precomputed_semantic_embedding"]),
         word_features=int(feature_cfg["word_hash_features"]),
         char_features=int(feature_cfg["char_hash_features"]),
     )
@@ -210,6 +212,7 @@ def main() -> None:
         calibration_fixed,
         key=lambda row: (row["utility"], row["mean_quality"], -row["mean_cost"]),
     )
+
     internal = evaluate_policy(
         model,
         states_by_split[PMV2Split.INTERNAL_TEST],
@@ -229,33 +232,36 @@ def main() -> None:
     )
     if internal_cost_matched is None or internal_best_fixed is None:
         raise RuntimeError("calibration-selected fixed action is not legal on internal test")
-    internal_alignment = policy_regime_alignment(
-        model, states_by_split[PMV2Split.INTERNAL_TEST]
-    )
+    internal_alignment = policy_regime_alignment(model, states_by_split[PMV2Split.INTERNAL_TEST])
+
     quality_delta = internal["mean_quality"] - internal_cost_matched["mean_quality"]
+    risk_delta = internal["mean_risk"] - internal_cost_matched["mean_risk"]
+    cost_ratio = internal["mean_cost"] / max(internal_cost_matched["mean_cost"], 1.0)
     internal_cost_scale = max(
-        float(
-            np.mean(
-                [
-                    label.observed_input_tokens
-                    for label in labels_by_split[PMV2Split.INTERNAL_TEST]
-                ]
-            )
-        ),
+        float(np.mean([label.observed_input_tokens for label in labels_by_split[PMV2Split.INTERNAL_TEST]])),
         1.0,
     )
     internal_pm_utility = (
         internal["mean_quality"]
         - model.selection_config.risk_weight * internal["mean_risk"]
-        - model.selection_config.cost_weight
-        * (internal["mean_cost"] / internal_cost_scale)
+        - model.selection_config.cost_weight * (internal["mean_cost"] / internal_cost_scale)
     )
-    utility_delta = internal_pm_utility - internal_cost_matched["utility"]
+    internal_fixed_utility = (
+        internal_cost_matched["mean_quality"]
+        - model.selection_config.risk_weight * internal_cost_matched["mean_risk"]
+        - model.selection_config.cost_weight
+        * (internal_cost_matched["mean_cost"] / internal_cost_scale)
+    )
+    utility_delta = internal_pm_utility - internal_fixed_utility
     reportability_checks = {
         "quality_vs_cost_matched": quality_delta
         >= float(gate_cfg["minimum_quality_delta_vs_cost_matched"]),
         "utility_vs_cost_matched": utility_delta
         >= float(gate_cfg["minimum_utility_delta_vs_cost_matched"]),
+        "risk_vs_cost_matched": risk_delta
+        <= float(gate_cfg["maximum_risk_delta_vs_cost_matched"]),
+        "cost_ratio_vs_cost_matched": cost_ratio
+        <= float(gate_cfg["maximum_cost_ratio_vs_cost_matched"]),
         "distinct_actions": internal_alignment["distinct_actions"]
         >= int(gate_cfg["minimum_distinct_actions"]),
         "m0_rate": internal["m0_rate"] >= float(gate_cfg["minimum_m0_rate"]),
@@ -287,7 +293,11 @@ def main() -> None:
         "internal_policy_regime_alignment": internal_alignment,
         "internal_deltas_vs_cost_matched": {
             "quality": float(quality_delta),
+            "risk": float(risk_delta),
+            "cost_ratio": float(cost_ratio),
             "utility": float(utility_delta),
+            "pm_utility": float(internal_pm_utility),
+            "fixed_utility": float(internal_fixed_utility),
         },
         "reportability_thresholds": gate_cfg,
         "reportability_checks": reportability_checks,
