@@ -15,9 +15,22 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=ROOT / "configs" / "experiment.yaml")
     parser.add_argument("--generator-endpoint", default="generator")
-    parser.add_argument("--checkpoint", type=Path, default=ROOT / "outputs" / "pm_v2_model" / "pm_v2.joblib")
-    parser.add_argument("--fixed-tracks", type=Path, default=ROOT / "outputs" / "evoemo_fixed_tracks" / "fixed_seeker_tracks.jsonl")
-    parser.add_argument("--fixed-tracks-attestation", type=Path, default=ROOT / "outputs" / "evoemo_fixed_tracks" / "artifact_attestation.json")
+    parser.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2.joblib",
+    )
+    parser.add_argument("--condition", default="pm_v2")
+    parser.add_argument(
+        "--fixed-tracks",
+        type=Path,
+        default=ROOT / "outputs" / "evoemo_fixed_tracks" / "fixed_seeker_tracks.jsonl",
+    )
+    parser.add_argument(
+        "--fixed-tracks-attestation",
+        type=Path,
+        default=ROOT / "outputs" / "evoemo_fixed_tracks" / "artifact_attestation.json",
+    )
     parser.add_argument("--out-dir", type=Path, default=ROOT / "outputs" / "evoemo_pm_v2")
     parser.add_argument("--simulator-id", default="seeker_main")
     parser.add_argument("--protocol", choices=["official", "selective"], default="selective")
@@ -73,6 +86,7 @@ def main() -> None:
         simulator_id=args.simulator_id,
         fixed_tracks_attestation_path=args.fixed_tracks_attestation,
         protocol=args.protocol,
+        condition=args.condition,
         max_turns=args.max_turns,
         seeds=args.seeds,
         max_scenarios=args.max_scenarios,
