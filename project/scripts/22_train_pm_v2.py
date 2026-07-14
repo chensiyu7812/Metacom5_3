@@ -2,19 +2,93 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter, defaultdict
 from pathlib import Path
 
-from metacom_pm.io import iter_jsonl, write_json
-from metacom_pm.pm_v2_contracts import ActionLabel, PMV2Split
+import numpy as np
+
+from metacom_pm.pm_v2_audit import _regime_pass, audit_training_labels
+from metacom_pm.pm_v2_contracts import ActionLabel, CompositeSpec, PMV2Split
 from metacom_pm.pm_v2_data import load_states, validate_split_manifests
 from metacom_pm.pm_v2_model import (
     PMV2Model,
+    RISK_FIELDS,
     SelectionConfig,
     evaluate_policy,
     tune_selection_config,
 )
+from metacom_pm.io import iter_jsonl, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def fixed_action_metrics(states, labels, action_id, config):
+    label_map = {(label.state_id, label.action_id): label for label in labels}
+    spec = CompositeSpec()
+    rows = []
+    for state in states:
+        if action_id not in state.allowed_actions:
+            return None
+        label = label_map.get((state.state_id, action_id))
+        if label is None:
+            return None
+        quality = spec.score(label.response)
+        risk = max(float(getattr(label.risk, name)) / 3.0 for name in RISK_FIELDS)
+        rows.append(
+            {
+                "state_id": state.state_id,
+                "quality": quality,
+                "risk": risk,
+                "cost": float(label.observed_input_tokens),
+            }
+        )
+    if not rows:
+        return None
+    cost_scale = max(float(np.mean([label.observed_input_tokens for label in labels])), 1.0)
+    mean_quality = float(np.mean([row["quality"] for row in rows]))
+    mean_risk = float(np.mean([row["risk"] for row in rows]))
+    mean_cost = float(np.mean([row["cost"] for row in rows]))
+    utility = mean_quality - config.risk_weight * mean_risk - config.cost_weight * (mean_cost / cost_scale)
+    return {
+        "action_id": action_id,
+        "n": len(rows),
+        "mean_quality": mean_quality,
+        "mean_risk": mean_risk,
+        "mean_cost": mean_cost,
+        "utility": float(utility),
+    }
+
+
+def policy_regime_alignment(model, states):
+    by_regime = defaultdict(list)
+    actions = []
+    for state in states:
+        decision = model.choose(state)
+        action = decision.chosen_action
+        actions.append(action)
+        regime = str(state.provenance.get("regime") or "unknown")
+        quality_values = sorted(
+            (prediction.quality_mean, action_id)
+            for action_id, prediction in decision.predictions.items()
+        )
+        quality_gap = (
+            float(quality_values[-1][0] - quality_values[-2][0])
+            if len(quality_values) > 1
+            else 0.0
+        )
+        by_regime[regime].append(_regime_pass(regime, action, quality_gap))
+    counts = Counter(actions)
+    return {
+        "action_distribution": dict(counts),
+        "distinct_actions": len(counts),
+        "maximum_action_share": max(counts.values(), default=0) / max(len(actions), 1),
+        "regime_pass_rate": {
+            regime: float(np.mean(values)) for regime, values in sorted(by_regime.items())
+        },
+        "mean_regime_pass_rate": float(
+            np.mean([value for values in by_regime.values() for value in values])
+        ) if by_regime else 0.0,
+    }
 
 
 def main() -> None:
@@ -25,6 +99,13 @@ def main() -> None:
     parser.add_argument("--n-models", type=int, default=7)
     parser.add_argument("--seed", type=int, default=1701)
     parser.add_argument("--minimum-calibration-quality", type=float)
+    parser.add_argument("--minimum-internal-quality-delta", type=float, default=-0.02)
+    parser.add_argument("--minimum-internal-utility-delta", type=float, default=-0.01)
+    parser.add_argument("--minimum-internal-distinct-actions", type=int, default=4)
+    parser.add_argument("--minimum-internal-m0-rate", type=float, default=0.05)
+    parser.add_argument("--minimum-internal-r0-rate", type=float, default=0.10)
+    parser.add_argument("--minimum-internal-regime-pass-rate", type=float, default=0.50)
+    parser.add_argument("--allow-nonreportable", action="store_true")
     args = parser.parse_args()
 
     states = load_states(args.states)
@@ -42,6 +123,10 @@ def main() -> None:
         split: [label for label in labels if label.state_id in state_ids]
         for split, state_ids in state_ids_by_split.items()
     }
+    data_label_audit = audit_training_labels(
+        states_by_split[PMV2Split.TRAIN] + states_by_split[PMV2Split.CALIBRATION],
+        labels_by_split[PMV2Split.TRAIN] + labels_by_split[PMV2Split.CALIBRATION],
+    )
     model = PMV2Model.train(
         states_by_split[PMV2Split.TRAIN],
         labels_by_split[PMV2Split.TRAIN],
@@ -55,27 +140,124 @@ def main() -> None:
         labels_by_split[PMV2Split.CALIBRATION],
         minimum_quality=args.minimum_calibration_quality,
     )
+    calibration_pm = evaluate_policy(
+        model,
+        states_by_split[PMV2Split.CALIBRATION],
+        labels_by_split[PMV2Split.CALIBRATION],
+    )
+    common_actions = sorted(
+        set.intersection(
+            *(set(state.allowed_actions) for state in states_by_split[PMV2Split.CALIBRATION])
+        )
+    )
+    calibration_fixed = [
+        fixed_action_metrics(
+            states_by_split[PMV2Split.CALIBRATION],
+            labels_by_split[PMV2Split.CALIBRATION],
+            action_id,
+            model.selection_config,
+        )
+        for action_id in common_actions
+    ]
+    calibration_fixed = [row for row in calibration_fixed if row is not None]
+    cost_matched = min(
+        calibration_fixed,
+        key=lambda row: (
+            abs(row["mean_cost"] - calibration_pm["mean_cost"]),
+            row["mean_cost"],
+            row["action_id"],
+        ),
+    )
+    best_fixed = max(
+        calibration_fixed,
+        key=lambda row: (row["utility"], row["mean_quality"], -row["mean_cost"]),
+    )
     internal = evaluate_policy(
         model,
         states_by_split[PMV2Split.INTERNAL_TEST],
         labels_by_split[PMV2Split.INTERNAL_TEST],
     )
+    internal_cost_matched = fixed_action_metrics(
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+        cost_matched["action_id"],
+        model.selection_config,
+    )
+    internal_best_fixed = fixed_action_metrics(
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+        best_fixed["action_id"],
+        model.selection_config,
+    )
+    if internal_cost_matched is None or internal_best_fixed is None:
+        raise RuntimeError("calibration-selected fixed action is not legal on internal test")
+    internal_alignment = policy_regime_alignment(
+        model, states_by_split[PMV2Split.INTERNAL_TEST]
+    )
+    quality_delta = internal["mean_quality"] - internal_cost_matched["mean_quality"]
+    internal_cost_scale = max(
+        float(
+            np.mean(
+                [
+                    label.observed_input_tokens
+                    for label in labels_by_split[PMV2Split.INTERNAL_TEST]
+                ]
+            )
+        ),
+        1.0,
+    )
+    internal_pm_utility = (
+        internal["mean_quality"]
+        - model.selection_config.risk_weight * internal["mean_risk"]
+        - model.selection_config.cost_weight
+        * (internal["mean_cost"] / internal_cost_scale)
+    )
+    utility_delta = internal_pm_utility - internal_cost_matched["utility"]
+    reportability_checks = {
+        "quality_vs_cost_matched": quality_delta >= args.minimum_internal_quality_delta,
+        "utility_vs_cost_matched": utility_delta >= args.minimum_internal_utility_delta,
+        "distinct_actions": internal_alignment["distinct_actions"]
+        >= args.minimum_internal_distinct_actions,
+        "m0_rate": internal["m0_rate"] >= args.minimum_internal_m0_rate,
+        "r0_rate": internal["r0_rate"] >= args.minimum_internal_r0_rate,
+        "regime_alignment": internal_alignment["mean_regime_pass_rate"]
+        >= args.minimum_internal_regime_pass_rate,
+    }
+    reportable = all(reportability_checks.values())
+
     args.out_dir.mkdir(parents=True, exist_ok=True)
     checkpoint = args.out_dir / "pm_v2.joblib"
     model.save(checkpoint)
     report = {
-        "status": "COMPLETE",
+        "status": "COMPLETE" if reportable else "NONREPORTABLE",
         "format_version": model.format_version,
         "checkpoint": str(checkpoint),
         "training": model.training_report,
         "split_manifest": split_manifest.model_dump(mode="json"),
+        "data_label_audit": {key: value for key, value in data_label_audit.items() if key != "rows"},
         "calibration": tuning,
+        "calibration_pm": {key: value for key, value in calibration_pm.items() if key != "rows"},
+        "calibration_cost_matched_fixed": cost_matched,
+        "calibration_best_fixed": best_fixed,
         "internal_test": {key: value for key, value in internal.items() if key != "rows"},
+        "internal_cost_matched_fixed": internal_cost_matched,
+        "internal_best_fixed": internal_best_fixed,
+        "internal_policy_regime_alignment": internal_alignment,
+        "internal_deltas_vs_cost_matched": {
+            "quality": float(quality_delta),
+            "utility": float(utility_delta),
+        },
+        "reportability_checks": reportability_checks,
         "selection_config": model.selection_config.model_dump(mode="json"),
         "selection_config_hash": model.selection_config.digest(),
     }
     write_json(args.out_dir / "training_report.json", report)
     print(report)
+    if not reportable and not args.allow_nonreportable:
+        raise RuntimeError(
+            "PM-v2 failed the frozen internal reportability gate. "
+            "Do not run external generation. See training_report.json."
+        )
 
 
 if __name__ == "__main__":
