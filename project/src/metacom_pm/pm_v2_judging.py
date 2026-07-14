@@ -249,19 +249,15 @@ def build_action_label(
     )
 
 
-def validate_judge_table(labels: Sequence[ActionLabel]) -> dict[str, Any]:
-    """Fail-closed checks for duplicated or degenerate score dimensions."""
-
-    if not labels:
-        raise ValueError("empty judge table")
-    response_fields = tuple(ResponseDimensions.model_fields)
-    matrix = np.asarray(
-        [[float(getattr(label.response, name)) for name in response_fields] for label in labels],
-        dtype=float,
-    )
+def _dimension_health(
+    matrix: np.ndarray,
+    field_names: Sequence[str],
+    *,
+    prefix: str,
+) -> tuple[list[dict[str, Any]], list[str], dict[str, Any]]:
     duplicate_pairs: list[dict[str, Any]] = []
-    for left in range(len(response_fields)):
-        for right in range(left + 1, len(response_fields)):
+    for left in range(len(field_names)):
+        for right in range(left + 1, len(field_names)):
             exact_rate = float(np.mean(matrix[:, left] == matrix[:, right]))
             correlation = float(
                 np.corrcoef(matrix[:, left], matrix[:, right])[0, 1]
@@ -271,22 +267,59 @@ def validate_judge_table(labels: Sequence[ActionLabel]) -> dict[str, Any]:
             if exact_rate >= 0.98:
                 duplicate_pairs.append(
                     {
-                        "left": response_fields[left],
-                        "right": response_fields[right],
+                        "left": f"{prefix}.{field_names[left]}",
+                        "right": f"{prefix}.{field_names[right]}",
                         "exact_match_rate": exact_rate,
                         "correlation": correlation,
                     }
                 )
-    constant_fields = [
-        response_fields[index]
-        for index in range(len(response_fields))
+    constants = [
+        f"{prefix}.{field_names[index]}"
+        for index in range(len(field_names))
         if float(np.std(matrix[:, index])) < 1e-9
     ]
+    prevalence = {
+        f"{prefix}.{field_names[index]}": {
+            "mean": float(np.mean(matrix[:, index])),
+            "std": float(np.std(matrix[:, index])),
+            "nonzero_rate": float(np.mean(matrix[:, index] != 0.0)),
+            "unique_values": sorted(float(value) for value in np.unique(matrix[:, index])),
+        }
+        for index in range(len(field_names))
+    }
+    return duplicate_pairs, constants, prevalence
+
+
+def validate_judge_table(labels: Sequence[ActionLabel]) -> dict[str, Any]:
+    """Fail closed on duplicated, constant, or unreliable response/risk labels."""
+
+    if not labels:
+        raise ValueError("empty judge table")
+    response_fields = tuple(ResponseDimensions.model_fields)
+    risk_fields = tuple(RiskDimensions.model_fields)
+    response_matrix = np.asarray(
+        [[float(getattr(label.response, name)) for name in response_fields] for label in labels],
+        dtype=float,
+    )
+    risk_matrix = np.asarray(
+        [[float(getattr(label.risk, name)) for name in risk_fields] for label in labels],
+        dtype=float,
+    )
+    response_duplicates, response_constants, response_prevalence = _dimension_health(
+        response_matrix, response_fields, prefix="response"
+    )
+    risk_duplicates, risk_constants, risk_prevalence = _dimension_health(
+        risk_matrix, risk_fields, prefix="risk"
+    )
     reliable_rate = float(np.mean([label.label_reliable for label in labels]))
+    duplicate_pairs = [*response_duplicates, *risk_duplicates]
+    constant_fields = [*response_constants, *risk_constants]
     report = {
         "n": len(labels),
         "duplicate_dimension_pairs": duplicate_pairs,
         "constant_dimensions": constant_fields,
+        "response_dimension_prevalence": response_prevalence,
+        "risk_dimension_prevalence": risk_prevalence,
         "reliable_label_rate": reliable_rate,
         "status": "PASS",
     }
