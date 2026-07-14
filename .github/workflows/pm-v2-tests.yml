@@ -13,6 +13,8 @@ on:
       - "project/scripts/24_run_pm_v2_evoemo.py"
       - "project/scripts/25_eval_pm_v2_external.py"
       - "project/scripts/26_freeze_pm_v2_study.py"
+      - "project/scripts/27_prepare_pm_v2_human_audit.py"
+      - "project/scripts/28_analyze_pm_v2_human_audit.py"
       - "project/tests/test_pm_v2.py"
       - "project/configs/pm_v2.yaml"
       - ".github/workflows/pm-v2-tests.yml"
@@ -30,6 +32,8 @@ on:
       - "project/scripts/24_run_pm_v2_evoemo.py"
       - "project/scripts/25_eval_pm_v2_external.py"
       - "project/scripts/26_freeze_pm_v2_study.py"
+      - "project/scripts/27_prepare_pm_v2_human_audit.py"
+      - "project/scripts/28_analyze_pm_v2_human_audit.py"
       - "project/tests/test_pm_v2.py"
       - "project/configs/pm_v2.yaml"
       - ".github/workflows/pm-v2-tests.yml"
@@ -62,6 +66,8 @@ jobs:
           scripts/24_run_pm_v2_evoemo.py
           scripts/25_eval_pm_v2_external.py
           scripts/26_freeze_pm_v2_study.py
+          scripts/27_prepare_pm_v2_human_audit.py
+          scripts/28_analyze_pm_v2_human_audit.py
       - name: Run PM-v2 tests
         run: pytest -q tests/test_pm_v2.py
       - name: Run existing scientific safeguards
