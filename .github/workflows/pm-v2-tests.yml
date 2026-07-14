@@ -1,0 +1,41 @@
+name: PM-v2 tests
+
+on:
+  pull_request:
+    paths:
+      - "project/src/metacom_pm/pm_v2_*.py"
+      - "project/scripts/19_audit_pm_v2_data_labels.py"
+      - "project/scripts/2*_pm_v2*.py"
+      - "project/tests/test_pm_v2.py"
+      - "project/configs/pm_v2.yaml"
+      - ".github/workflows/pm-v2-tests.yml"
+  push:
+    branches:
+      - pm-v2-redesign
+    paths:
+      - "project/src/metacom_pm/pm_v2_*.py"
+      - "project/tests/test_pm_v2.py"
+      - ".github/workflows/pm-v2-tests.yml"
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: project
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: project/pyproject.toml
+      - name: Install package
+        run: python -m pip install -e ".[dev]"
+      - name: Compile PM-v2 modules
+        run: python -m compileall -q src/metacom_pm scripts/19_audit_pm_v2_data_labels.py scripts/20_generate_pm_v2_development_data.py scripts/21_judge_pm_v2_action_sweep.py scripts/22_train_pm_v2.py scripts/23_select_pm_v2_actions.py scripts/24_run_pm_v2_evoemo.py scripts/25_eval_pm_v2_external.py
+      - name: Run PM-v2 tests
+        run: pytest -q tests/test_pm_v2.py
+      - name: Run existing scientific safeguards
+        run: pytest -q tests/test_contracts.py tests/test_scientific_safeguards.py tests/test_freeze_gate.py
