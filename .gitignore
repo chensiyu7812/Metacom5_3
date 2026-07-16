@@ -24,6 +24,23 @@ tmp/
 /project/data/pm_v2/
 /project/outputs/pm_v2*/
 /project/outputs/strategy_rag_v1_*/
+/project/outputs/evoemo_fixed_tracks_v22/
+/project/outputs/evoemo_pm_v2*/
+/project/outputs/evoemo_pmv22*/
+/project/outputs/posthoc_v1_bank*/
+/project/outputs/v1_bank_causal_probe*/
+
+# Provider payloads, generated call plans, local checkpoints, and completed
+# reviews belong in the private vault regardless of their parent directory.
+**/raw_api_calls.jsonl
+**/raw_seeker_calls.jsonl
+**/raw_*_calls.jsonl
+**/*call_plan*.jsonl
+**/paired_generations.jsonl
+**/pilot_bundle.json
+**/*.joblib
+**/reviewer_*_completed.csv
+**/annotations_completed*.csv
 
 # Local migration/integrity reports contain machine paths and immediately
 # become stale when the workspace changes.
