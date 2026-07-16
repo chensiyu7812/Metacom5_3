@@ -25,10 +25,13 @@ from metacom_pm.io import (
     canonical_json,
     iter_jsonl,
     read_json,
+    sha256_file,
     sha256_text,
     write_json,
     write_jsonl,
 )
+from metacom_pm.generation_contract import SupporterGenerationContract
+from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
 from metacom_pm.pm_v2_contracts import (
     ActionLabel,
     CompositeSpec,
@@ -38,12 +41,14 @@ from metacom_pm.pm_v2_contracts import (
 )
 from metacom_pm.pm_v2_evoemo import (
     EVALUATION_UNIT_CONTRACT_PROTOCOL,
+    bind_external_generation_request_log,
     build_generation_evaluation_units,
     compare_cost_matched_token_rows,
     compare_observed_cost_matched_turns,
     require_generation_evaluation_unit_contract,
     reconcile_succeeded_generation_turns,
     run_pmv2_fixed_evoemo,
+    summarize_external_generation_raw_matrix,
     summarize_action_preflight,
 )
 from metacom_pm.pm_v2_external_eval import (
@@ -376,6 +381,50 @@ def test_success_ledger_reconciles_generation_turn_after_append_crash(tmp_path):
     assert list(iter_jsonl(turn_path)) == [turn_record]
 
 
+def test_external_raw_matrix_requires_explicit_complete_treatment_bindings():
+    supporter = SupporterGenerationContract.from_config(
+        load_config("configs/pm_v2.yaml")
+    )
+    fixed = {"version": "fixed-fixture"}
+    fixed_sha = sha256_text(canonical_json(fixed))
+    rows = [
+        bind_external_generation_request_log(
+            {
+                "physical_call_key": key,
+                "normalized_finish_reason": "complete",
+                "error": None,
+            },
+            supporter_generation_treatment=supporter.payload(),
+            supporter_generation_treatment_sha256=supporter.digest(),
+            fixed_seeker_generation_treatment=fixed,
+            fixed_seeker_generation_treatment_sha256=fixed_sha,
+        )
+        for key in ("a" * 64, "b" * 64)
+    ]
+    report = summarize_external_generation_raw_matrix(
+        rows,
+        planned_call_keys=["a" * 64, "b" * 64],
+        supporter_generation_treatment=supporter.payload(),
+        supporter_generation_treatment_sha256=supporter.digest(),
+        fixed_seeker_generation_treatment=fixed,
+        fixed_seeker_generation_treatment_sha256=fixed_sha,
+    )
+    assert report["status"] == "PASS"
+    assert report["non_complete_finish_reason_count"] == 0
+
+    truncated = [{**rows[0], "normalized_finish_reason": "length"}, rows[1]]
+    failed = summarize_external_generation_raw_matrix(
+        truncated,
+        planned_call_keys=["a" * 64, "b" * 64],
+        supporter_generation_treatment=supporter.payload(),
+        supporter_generation_treatment_sha256=supporter.digest(),
+        fixed_seeker_generation_treatment=fixed,
+        fixed_seeker_generation_treatment_sha256=fixed_sha,
+    )
+    assert failed["status"] == "FAIL"
+    assert failed["non_complete_finish_reason_count"] == 1
+
+
 def test_reported_usage_gate_fails_closed_for_missing_or_nonpositive_prompt_tokens():
     assert reported_prompt_token_error(
         None,
@@ -591,15 +640,55 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     checkpoint_path = tmp_path / "checkpoint.joblib"
     fixed_tracks_path = tmp_path / "fixed_tracks.jsonl"
     fixed_attestation_path = tmp_path / "fixed_attestation.json"
+    fixed_contract = FixedSeekerGenerationContract.from_mapping(
+        load_config("configs/pm_v2.yaml")["fixed_seeker_generation_treatment"]
+    )
+    fixed_bound = fixed_contract.bind_endpoint(
+        fixed_contract.seeker_endpoint,
+        Endpoint(
+            "https://seeker.invalid/v1",
+            "fixture-seeker",
+            "UNSET",
+            family="fixture-seeker",
+        ),
+    )
     for path in (evoemo_path, checkpoint_path, fixed_tracks_path):
         path.write_text("fixture\n", encoding="utf-8")
     write_jsonl(strategy_path, [tiny_strategy.model_dump(mode="json")])
     write_json(
         fixed_attestation_path,
         {
-            "parameters": {"simulator_id": "sim", "max_turns": 3, "seeds": [7]},
-            "expected": {"tracks": 1, "turns_per_track": 3},
+            "parameters": {
+                "simulator_id": "sim",
+                "max_turns": 3,
+                "seeds": [7],
+                "fixed_seeker_generation_contract": fixed_bound.payload(),
+                "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+            },
+            "expected": {
+                "tracks": 1,
+                "turns_per_track": 3,
+                "completion_truncated_count": 0,
+            },
         },
+    )
+    write_json(
+        tmp_path / "summary.json",
+        {
+            "status": "COMPLETE",
+            "completion_truncated_count": 0,
+            "fixed_seeker_generation_contract": fixed_bound.payload(),
+            "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+        },
+    )
+    write_jsonl(
+        tmp_path / "raw_seeker_calls.jsonl",
+        [
+            {
+                "normalized_finish_reason": "complete",
+                "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+            }
+        ],
     )
 
     user = {"id": "u1", "subsequent_topics": [{"idx": 1}]}
@@ -607,6 +696,15 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     track = {
         "track_id": "track-1",
         "seeker_turns": ["first", "second", "third"],
+        "turn_provenance": [
+            {
+                "normalized_finish_reason": "complete",
+                "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+            }
+            for _ in range(3)
+        ],
+        "fixed_seeker_generation_contract": fixed_bound.payload(),
+        "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
     }
     runtime = tiny_state.model_copy(
         update={"provenance": {"exogenous_state_id": "exo-fixture"}}
@@ -636,6 +734,7 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     class FailMiddleClient:
         calls = 0
         overrun = False
+        truncated = False
 
         def __init__(self, endpoint):
             self.endpoint = endpoint
@@ -657,6 +756,8 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
                         },
                         latency_ms=1.0,
                         request_hash="request-overrun",
+                        provider_finish_reason="stop",
+                        normalized_finish_reason="complete",
                     ),
                     None,
                 )
@@ -673,6 +774,12 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
                     },
                     latency_ms=1.0,
                     request_hash=f"request-{type(self).calls}",
+                    provider_finish_reason=(
+                        "length" if type(self).truncated else "stop"
+                    ),
+                    normalized_finish_reason=(
+                        "length" if type(self).truncated else "complete"
+                    ),
                 ),
                 None,
             )
@@ -715,6 +822,11 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     out_dir = tmp_path / "out"
     kwargs = {
         "generator_endpoint": endpoint,
+        "supporter_generation_contract": SupporterGenerationContract.from_config(
+            load_config("configs/pm_v2.yaml")
+        ),
+        "fixed_seeker_generation_contract": fixed_bound.payload(),
+        "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
         "simulator_id": "sim",
         "fixed_tracks_attestation_path": fixed_attestation_path,
         "condition": "fixture_fixed",
@@ -758,6 +870,12 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
         for row in dry_plan
     )
     assert [row["turn_index"] for row in dry_plan] == [1, 3]
+    assert {row["max_output_tokens"] for row in dry_plan} == {300}
+    assert all(
+        row["supporter_generation_treatment_sha256"]
+        == kwargs["supporter_generation_contract"].digest()
+        for row in dry_plan
+    )
     assert dry_run["preflight"]["evaluation_turn_indices"] == [1, 3]
     assert dry_run["preflight"]["all_turn_diagnostic"]["n_states"] == 3
     with pytest.raises(RuntimeError, match="generation incomplete"):
@@ -780,6 +898,21 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
         "STARTED",
         "FAILED",
     ]
+    failed_run_raw = list(iter_jsonl(out_dir / "raw_api_calls.jsonl"))
+    assert len(failed_run_raw) == 2
+    assert all(
+        row["supporter_generation_treatment"]
+        == kwargs["supporter_generation_contract"].payload()
+        and row["supporter_generation_treatment_sha256"]
+        == kwargs["supporter_generation_contract"].digest()
+        and row["fixed_seeker_generation_treatment"]
+        == kwargs["fixed_seeker_generation_contract"]
+        and row["fixed_seeker_generation_treatment_sha256"]
+        == kwargs["fixed_seeker_generation_contract_sha256"]
+        for row in failed_run_raw
+    )
+    assert failed_run_raw[1]["normalized_finish_reason"] is None
+    assert failed_run_raw[1]["error"] == "RuntimeError: injected turn failure"
     saved_plan_before = (out_dir / "call_plan.jsonl").read_bytes()
     saved_estimate_before = (out_dir / "cost_estimate.json").read_bytes()
     with pytest.raises(RuntimeError, match="forbids changing its call plan or cost"):
@@ -813,6 +946,7 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     assert resumed["new_physical_http_attempts"] == 0
     assert resumed["historical_physical_http_attempts"] == 2
     assert resumed["total_physical_http_attempts"] == 2
+    assert resumed["raw_generation_contract_gate"]["status"] == "FAIL"
     assert list(iter_jsonl(out_dir / "physical_attempt_ledger.jsonl")) == ledger_before
 
     FailMiddleClient.calls = 0
@@ -848,6 +982,53 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     assert overrun_ledger[-1]["usage"]["prompt_tokens"] == 999_999
     overrun_summary = read_json(overrun_dir / "generation_summary.json")
     assert overrun_summary["aborted_on_input_token_overrun"] is True
+
+    FailMiddleClient.calls = 0
+    FailMiddleClient.overrun = False
+    FailMiddleClient.truncated = True
+    truncated_dir = tmp_path / "truncated"
+    truncated_dry_run = run_pmv2_fixed_evoemo(
+        evoemo_path,
+        strategy_path,
+        checkpoint_path,
+        fixed_tracks_path,
+        truncated_dir,
+        run=False,
+        **kwargs,
+    )
+    with pytest.raises(RuntimeError, match="generation incomplete"):
+        run_pmv2_fixed_evoemo(
+            evoemo_path,
+            strategy_path,
+            checkpoint_path,
+            fixed_tracks_path,
+            truncated_dir,
+            run=True,
+            accept_cost_estimate_sha256=truncated_dry_run["cost_estimate"][
+                "cost_estimate_sha256"
+            ],
+            **kwargs,
+        )
+    assert FailMiddleClient.calls == 1
+    assert not (truncated_dir / "turns.jsonl").exists()
+    truncated_ledger = list(
+        iter_jsonl(truncated_dir / "physical_attempt_ledger.jsonl")
+    )
+    assert [row["event"] for row in truncated_ledger] == ["STARTED", "FAILED"]
+    assert "output-token limit" in truncated_ledger[-1]["error"]
+    truncated_raw = list(iter_jsonl(truncated_dir / "raw_api_calls.jsonl"))
+    assert truncated_raw[0]["provider_finish_reason"] == "length"
+    assert truncated_raw[0]["normalized_finish_reason"] == "length"
+    assert truncated_raw[0]["completion_truncated"] is True
+    assert truncated_raw[0]["supporter_generation_treatment"] == kwargs[
+        "supporter_generation_contract"
+    ].payload()
+    assert truncated_raw[0]["fixed_seeker_generation_treatment"] == kwargs[
+        "fixed_seeker_generation_contract"
+    ]
+    truncated_summary = read_json(truncated_dir / "generation_summary.json")
+    assert truncated_summary["aborted_on_completion_gate_error"] is True
+    assert truncated_summary["completed_turns"] == 0
 
 
 def test_generation_evaluation_unit_contract_is_sparse_exact_and_content_addressed():
@@ -959,6 +1140,357 @@ def test_full_external_requires_schema_smoke_before_core_client_path():
         encoding="utf-8"
     )
     assert POINTWISE_SCHEMA_SMOKE_PROTOCOL in freeze_source
+
+
+def test_external_turn_gate_rejects_mixed_or_noncomplete_generation(tmp_path):
+    script = Path("scripts/25_eval_pm_v2_external.py")
+    spec = importlib.util.spec_from_file_location("pmv22_external_eval_script", script)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    contract = SupporterGenerationContract.from_config(load_config("configs/pm_v2.yaml"))
+    fixed_contract = FixedSeekerGenerationContract.from_mapping(
+        load_config("configs/pm_v2.yaml")["fixed_seeker_generation_treatment"]
+    )
+    fixed_bound = fixed_contract.bind_endpoint(
+        fixed_contract.seeker_endpoint,
+        Endpoint(
+            "https://seeker.invalid/v1",
+            "seeker",
+            "UNSET",
+            family="seeker-family",
+        ),
+    )
+    turn_path = tmp_path / "turns.jsonl"
+    row = {
+        "user_id": "u1",
+        "topic_index": 1,
+        "condition": "baseline",
+        "seed": 7,
+        "simulator_id": "sim",
+        "turn_index": 3,
+        "interaction_mode": "fixed",
+        "supporter_message": "I hear how difficult this is.",
+        "normalized_finish_reason": "complete",
+        "supporter_generation_treatment": contract.payload(),
+        "supporter_generation_treatment_sha256": contract.digest(),
+        "fixed_seeker_generation_treatment": fixed_bound.payload(),
+        "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+    }
+    write_jsonl(turn_path, [row])
+    assert len(
+        module.require_treatment_bound_turn_file(
+            turn_path,
+            expected_conditions=["baseline"],
+            expected_units=[("u1", 1, 7, "sim", 3)],
+            treatment=contract.payload(),
+            treatment_sha256=contract.digest(),
+            fixed_seeker_treatment=fixed_bound.payload(),
+            fixed_seeker_treatment_sha256=fixed_bound.digest(),
+        )
+    ) == 1
+
+    write_jsonl(turn_path, [{**row, "normalized_finish_reason": "length"}])
+    with pytest.raises(RuntimeError, match="mixed or non-complete"):
+        module.require_treatment_bound_turn_file(
+            turn_path,
+            expected_conditions=["baseline"],
+            expected_units=[("u1", 1, 7, "sim", 3)],
+            treatment=contract.payload(),
+            treatment_sha256=contract.digest(),
+            fixed_seeker_treatment=fixed_bound.payload(),
+            fixed_seeker_treatment_sha256=fixed_bound.digest(),
+        )
+
+    write_jsonl(
+        turn_path,
+        [{**row, "supporter_generation_treatment_sha256": "0" * 64}],
+    )
+    with pytest.raises(RuntimeError, match="mixed or non-complete"):
+        module.require_treatment_bound_turn_file(
+            turn_path,
+            expected_conditions=["baseline"],
+            expected_units=[("u1", 1, 7, "sim", 3)],
+            treatment=contract.payload(),
+            treatment_sha256=contract.digest(),
+            fixed_seeker_treatment=fixed_bound.payload(),
+            fixed_seeker_treatment_sha256=fixed_bound.digest(),
+        )
+
+
+def test_freeze_reference_baseline_contract_rejects_v1_and_truncation(
+    tmp_path, monkeypatch
+):
+    script = Path("scripts/26_freeze_pm_v2_study.py")
+    spec = importlib.util.spec_from_file_location("pmv22_freeze_script", script)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(
+        module,
+        "require_content_addressed_attestation",
+        lambda *args, **kwargs: {"attestation_sha256": "a" * 64},
+    )
+    contract = SupporterGenerationContract.from_config(load_config("configs/pm_v2.yaml"))
+    fixed_contract = FixedSeekerGenerationContract.from_mapping(
+        load_config("configs/pm_v2.yaml")["fixed_seeker_generation_treatment"]
+    )
+    fixed_bound = fixed_contract.bind_endpoint(
+        fixed_contract.seeker_endpoint,
+        Endpoint(
+            "https://seeker.invalid/v1",
+            "seeker",
+            "UNSET",
+            family="seeker-family",
+        ),
+    )
+    unit = ("u1", 1, 7, "sim", 3)
+    condition = "no_memory_r0"
+    evaluation_contract = {
+        "protocol": EVALUATION_UNIT_CONTRACT_PROTOCOL,
+        "evaluation_turn_indices": [3],
+        "expected_unit_count": 1,
+        "expected_units_sha256": sha256_text(canonical_json([unit])),
+    }
+    evidence_processing_contracts = {
+        condition: {
+            "protocol": "pm-v2.2-reference-baseline-evidence-processing-v1",
+            "memory_processing": "none",
+            "strategy_processing": "none",
+        }
+    }
+    evidence_contract = evidence_processing_contracts[condition]
+    evidence_processing_contracts_sha256 = sha256_text(
+        canonical_json(evidence_processing_contracts)
+    )
+    evidence_filter_config_sha256 = "e" * 64
+    evidence_filter_model_binding = {"checkpoint_sha256": "f" * 64}
+    strategy_bank_approval = {"status": "APPROVED"}
+    policy_checkpoint = tmp_path / "pm_v2.joblib"
+    policy_training_report = tmp_path / "policy_training_report.json"
+    policy_checkpoint.write_bytes(b"frozen-policy\n")
+    policy_training_report.write_text("{}\n", encoding="utf-8")
+    policy_lock = {
+        "policy_checkpoint_sha256": sha256_file(policy_checkpoint),
+        "policy_training_report_sha256": sha256_file(policy_training_report),
+        "policy_lock_timing": module.POLICY_LOCK_TIMING,
+        "post_generation_policy_tuning_prohibited": (
+            module.POST_GENERATION_POLICY_TUNING_PROHIBITED
+        ),
+    }
+    common = {
+        "conditions": [condition],
+        "supporter_generation_treatment": contract.payload(),
+        "supporter_generation_treatment_sha256": contract.digest(),
+        "fixed_seeker_generation_treatment": fixed_bound.payload(),
+        "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+        "evidence_processing_contracts": evidence_processing_contracts,
+        "evidence_processing_contracts_sha256": (
+            evidence_processing_contracts_sha256
+        ),
+        "evidence_filter_config_sha256": evidence_filter_config_sha256,
+        "evidence_filter_model": evidence_filter_model_binding,
+        "strategy_bank_approval": strategy_bank_approval,
+        **policy_lock,
+        "simulator_id": "sim",
+        "max_turns": 10,
+        "seeds": [7],
+        "evaluation_unit_contract": evaluation_contract,
+        "paid_generation_scope": "frozen_evaluation_turns_only",
+    }
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    turns = bundle / "turns.jsonl"
+    turn_row = {
+        "user_id": "u1",
+        "topic_index": 1,
+        "condition": condition,
+        "seed": 7,
+        "simulator_id": "sim",
+        "turn_index": 3,
+        "interaction_mode": "fixed",
+        "supporter_message": "That sounds painful.",
+        "normalized_finish_reason": "complete",
+        "supporter_generation_treatment": contract.payload(),
+        "supporter_generation_treatment_sha256": contract.digest(),
+        "fixed_seeker_generation_treatment": fixed_bound.payload(),
+        "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+        "evidence_processing_contract": evidence_contract,
+        "evidence_processing_contract_sha256": sha256_text(
+            canonical_json(evidence_contract)
+        ),
+        **policy_lock,
+    }
+    write_jsonl(turns, [turn_row])
+    plan = [
+        {
+            **{key: turn_row[key] for key in (
+                "user_id",
+                "topic_index",
+                "condition",
+                "seed",
+                "simulator_id",
+                "turn_index",
+            )},
+            "max_output_tokens": contract.max_output_tokens,
+            "call_key": "c" * 64,
+            "supporter_generation_treatment": contract.payload(),
+            "supporter_generation_treatment_sha256": contract.digest(),
+            "fixed_seeker_generation_treatment": fixed_bound.payload(),
+            "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+            "evidence_processing_contract": evidence_contract,
+            "evidence_processing_contract_sha256": sha256_text(
+                canonical_json(evidence_contract)
+            ),
+            **policy_lock,
+        }
+    ]
+    write_jsonl(bundle / "call_plan.jsonl", plan)
+    cost_payload = {
+        "supporter_generation_treatment": contract.payload(),
+        "supporter_generation_treatment_sha256": contract.digest(),
+        "fixed_seeker_generation_treatment": fixed_bound.payload(),
+        "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+        "evidence_processing_contracts": evidence_processing_contracts,
+        "evidence_processing_contracts_sha256": (
+            evidence_processing_contracts_sha256
+        ),
+        "evidence_filter_config_sha256": evidence_filter_config_sha256,
+        "evidence_filter_model": evidence_filter_model_binding,
+        **policy_lock,
+        "call_plan_sha256": sha256_text(canonical_json(plan)),
+    }
+    write_json(
+        bundle / "cost_estimate.json",
+        {
+            **cost_payload,
+            "cost_estimate_sha256": sha256_text(canonical_json(cost_payload)),
+            "budget_gate": {"status": "PASS"},
+        },
+    )
+    write_jsonl(
+        bundle / "raw_api_calls.jsonl",
+        [
+            {
+                "normalized_finish_reason": "complete",
+                "supporter_generation_treatment": contract.payload(),
+                "supporter_generation_treatment_sha256": contract.digest(),
+                "fixed_seeker_generation_treatment": fixed_bound.payload(),
+                "fixed_seeker_generation_treatment_sha256": fixed_bound.digest(),
+                "condition": condition,
+                "evidence_processing_contract": evidence_contract,
+                "evidence_processing_contract_sha256": sha256_text(
+                    canonical_json(evidence_contract)
+                ),
+                **policy_lock,
+                "physical_call_key": "c" * 64,
+            }
+        ],
+    )
+    write_jsonl(
+        bundle / "physical_attempt_ledger.jsonl",
+        [{"event": "STARTED"}, {"event": "SUCCEEDED"}],
+    )
+    manifest_payload = {
+        "stage": module.PMV22_REFERENCE_BASELINE_STAGE,
+        **common,
+        "generator_model": "generator-model",
+        "generator_family": "generator-family",
+        "generator_base_url": "https://generator.invalid/v1",
+    }
+    manifest = {
+        **manifest_payload,
+        "manifest_sha256": sha256_text(canonical_json(manifest_payload)),
+    }
+    write_json(bundle / "run_manifest.json", manifest)
+    write_json(
+        bundle / "generation_summary.json",
+        {
+            **common,
+            "status": "COMPLETE",
+            "completed_turns": 1,
+            "non_complete_finish_reason_count": 0,
+        },
+    )
+    attestation = {
+        "stage": module.PMV22_REFERENCE_BASELINE_STAGE,
+        "parameters": common,
+        "outputs": {"turns": {"rows": 1}},
+    }
+    attestation_path = bundle / "artifact_attestation.json"
+    write_json(attestation_path, attestation)
+    kwargs = {
+        "attestation_path": attestation_path,
+        "turns_path": turns,
+        "manifest_path": bundle / "run_manifest.json",
+        "summary_path": bundle / "generation_summary.json",
+        "evoemo_path": tmp_path / "evoemo.json",
+        "strategy_bank_path": tmp_path / "strategy.jsonl",
+        "policy_checkpoint_path": policy_checkpoint,
+        "policy_training_report_path": policy_training_report,
+        "pm_v2_config_path": tmp_path / "pm_v2.yaml",
+        "evidence_filter_checkpoint_path": tmp_path / "evidence_filter.joblib",
+        "evidence_filter_report_path": tmp_path / "evidence_filter_report.json",
+        "evidence_filter_attestation_path": tmp_path
+        / "evidence_filter_attestation.json",
+        "strategy_bank_approval_path": tmp_path / "strategy_bank_approval.json",
+        "fixed_tracks_path": tmp_path / "tracks.jsonl",
+        "fixed_tracks_attestation_path": tmp_path / "tracks_attestation.json",
+        "conditions": [condition],
+        "expected_units": [unit],
+        "treatment": contract.payload(),
+        "treatment_sha256": contract.digest(),
+        "fixed_seeker_treatment": fixed_bound.payload(),
+        "fixed_seeker_treatment_sha256": fixed_bound.digest(),
+        "evidence_processing_contracts": evidence_processing_contracts,
+        "evidence_processing_contracts_sha256": (
+            evidence_processing_contracts_sha256
+        ),
+        "evidence_filter_config_sha256": evidence_filter_config_sha256,
+        "evidence_filter_model_binding": evidence_filter_model_binding,
+        "strategy_bank_approval": strategy_bank_approval,
+        "generator_endpoint": {
+            "model": "generator-model",
+            "family": "generator-family",
+            "base_url": "https://generator.invalid/v1",
+        },
+        "simulator_id": "sim",
+        "max_turns": 10,
+        "seeds": [7],
+        "evaluation_unit_contract": evaluation_contract,
+    }
+    verified = module.require_pmv22_reference_baseline_bundle(**kwargs)
+    assert verified["stage"] == module.PMV22_REFERENCE_BASELINE_STAGE
+    assert verified["turns_rows"] == 1
+
+    write_jsonl(turns, [{**turn_row, "normalized_finish_reason": "length"}])
+    with pytest.raises(RuntimeError, match="mixed, truncated"):
+        module.require_pmv22_reference_baseline_bundle(**kwargs)
+    write_jsonl(turns, [turn_row])
+    write_json(attestation_path, {**attestation, "stage": "evoemo_generation"})
+    with pytest.raises(RuntimeError, match="legacy/V1"):
+        module.require_pmv22_reference_baseline_bundle(**kwargs)
+
+
+def test_freeze_requires_training_report_checkpoint_hash_binding(tmp_path):
+    script = Path("scripts/26_freeze_pm_v2_study.py")
+    spec = importlib.util.spec_from_file_location("pmv22_freeze_script", script)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    checkpoint = tmp_path / "pm_v2.joblib"
+    checkpoint.write_bytes(b"selected-policy\n")
+    expected = sha256_file(checkpoint)
+    assert (
+        module.require_training_report_checkpoint_binding(
+            {"checkpoint_sha256": expected}, checkpoint
+        )
+        == expected
+    )
+    with pytest.raises(RuntimeError, match="checkpoint hash"):
+        module.require_training_report_checkpoint_binding(
+            {"checkpoint_sha256": "0" * 64}, checkpoint
+        )
 
 
 def test_schema_smoke_second_family_client_failure_spends_zero_attempts(
@@ -1598,6 +2130,26 @@ def test_freeze_source_requires_semantic_sanity_and_binds_sweep_contract():
     assert "require_semantic_sanity_pass(" in source
     assert '"semantic_sanity": semantic_sanity' in source
     assert "semantic_sanity_input_paths" in source
+
+
+def test_external_sources_forbid_v1_baselines_and_require_v22_track_approval():
+    root = Path(__file__).resolve().parents[1]
+    external_source = (root / "scripts" / "25_eval_pm_v2_external.py").read_text(
+        encoding="utf-8"
+    )
+    freeze_source = (root / "scripts" / "26_freeze_pm_v2_study.py").read_text(
+        encoding="utf-8"
+    )
+    generation_source = (root / "scripts" / "24_run_pm_v2_evoemo.py").read_text(
+        encoding="utf-8"
+    )
+    combined = external_source + freeze_source + generation_source
+    assert "evoemo_selective" not in combined
+    assert 'required_stage="evoemo_generation"' not in combined
+    assert "evoemo_pmv22_reference_baselines" in combined
+    assert "evoemo_fixed_tracks_v22" in combined
+    assert "require_strategy_bank_human_approval(" in freeze_source
+    assert "fixed_seeker_generation_treatment_sha256" in combined
 
 
 def test_external_judge_pricing_and_safety_are_freeze_only_not_cli_overrides():

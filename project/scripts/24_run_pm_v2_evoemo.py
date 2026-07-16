@@ -9,6 +9,8 @@ from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evidence_filter_model import require_evidence_filter_artifacts
 from metacom_pm.freeze import require_study_freeze
+from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, sha256_file, sha256_text
 from metacom_pm.pm_v2_evoemo import (
     EVALUATION_UNIT_CONTRACT_PROTOCOL,
@@ -75,12 +77,18 @@ def main() -> None:
     parser.add_argument(
         "--fixed-tracks",
         type=Path,
-        default=ROOT / "outputs" / "evoemo_fixed_tracks" / "fixed_seeker_tracks.jsonl",
+        default=ROOT
+        / "outputs"
+        / "evoemo_fixed_tracks_v22"
+        / "fixed_seeker_tracks.jsonl",
     )
     parser.add_argument(
         "--fixed-tracks-attestation",
         type=Path,
-        default=ROOT / "outputs" / "evoemo_fixed_tracks" / "artifact_attestation.json",
+        default=ROOT
+        / "outputs"
+        / "evoemo_fixed_tracks_v22"
+        / "artifact_attestation.json",
     )
     parser.add_argument("--out-dir", type=Path, default=ROOT / "outputs" / "evoemo_pm_v2")
     parser.add_argument("--max-api-calls", type=int, default=2000)
@@ -100,6 +108,18 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    supporter_generation_contract = SupporterGenerationContract.from_config(
+        pm_v2_config
+    )
+    fixed_seeker_contract = FixedSeekerGenerationContract.from_mapping(
+        pm_v2_config["fixed_seeker_generation_treatment"]
+    )
+    fixed_seeker_endpoint = endpoint_from_config(
+        config, fixed_seeker_contract.seeker_endpoint
+    )
+    bound_fixed_seeker_contract = fixed_seeker_contract.bind_endpoint(
+        fixed_seeker_contract.seeker_endpoint, fixed_seeker_endpoint
+    )
     evidence_filter_config = EvidenceFilterConfig.from_mapping(
         pm_v2_config["evidence_filter"]
     )
@@ -138,6 +158,24 @@ def main() -> None:
     if not contract:
         raise RuntimeError("study freeze lacks generation_contract")
     if (
+        contract.get("supporter_generation_treatment")
+        != supporter_generation_contract.payload()
+        or contract.get("supporter_generation_treatment_sha256")
+        != supporter_generation_contract.digest()
+    ):
+        raise RuntimeError(
+            "study freeze supporter-generation treatment is absent or stale"
+        )
+    if (
+        contract.get("fixed_seeker_generation_treatment")
+        != bound_fixed_seeker_contract.payload()
+        or contract.get("fixed_seeker_generation_treatment_sha256")
+        != bound_fixed_seeker_contract.digest()
+    ):
+        raise RuntimeError(
+            "study freeze fixed-seeker generation treatment is absent or stale"
+        )
+    if (
         contract.get("evidence_filter") != evidence_filter_config.payload()
         or contract.get("evidence_filter_config_sha256")
         != evidence_filter_config.digest()
@@ -149,7 +187,7 @@ def main() -> None:
         input_override=args.input_usd_per_mtok,
         output_override=args.output_usd_per_mtok,
     )
-    endpoint_name = str(contract["generator_endpoint_name"])
+    endpoint_name = supporter_generation_contract.generator_endpoint
     endpoint = endpoint_from_config(config, endpoint_name)
     endpoint_sha = sha256_text(
         canonical_json(
@@ -158,7 +196,6 @@ def main() -> None:
     )
     if endpoint_sha != contract.get("generator_endpoint_sha256"):
         raise RuntimeError("generator endpoint changed after study freeze")
-    protocol = str(contract["protocol"])
     simulator_id = str(contract["simulator_id"])
     max_turns = int(contract["max_turns"])
     seeds = [int(value) for value in contract["seeds"]]
@@ -230,9 +267,15 @@ def main() -> None:
         args.fixed_tracks,
         args.out_dir,
         generator_endpoint=endpoint,
+        supporter_generation_contract=supporter_generation_contract,
+        fixed_seeker_generation_contract=(
+            bound_fixed_seeker_contract.payload()
+        ),
+        fixed_seeker_generation_contract_sha256=(
+            bound_fixed_seeker_contract.digest()
+        ),
         simulator_id=simulator_id,
         fixed_tracks_attestation_path=args.fixed_tracks_attestation,
-        protocol=protocol,
         condition=args.condition,
         max_turns=max_turns,
         seeds=seeds,

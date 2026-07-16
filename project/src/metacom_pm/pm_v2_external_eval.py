@@ -135,12 +135,12 @@ def load_fixed_turns(
     if full_unit_set is not None:
         if not excluded_unit_set <= full_unit_set:
             raise RuntimeError("excluded external units are outside the frozen universe")
-        required_confirmatory = full_unit_set - excluded_unit_set
+        required_scoring = full_unit_set - excluded_unit_set
         if expected_unit_set is None:
-            expected_unit_set = required_confirmatory
-        elif expected_unit_set != required_confirmatory:
+            expected_unit_set = required_scoring
+        elif expected_unit_set != required_scoring:
             raise RuntimeError(
-                "confirmatory external units are not the exact frozen universe minus "
+                "external scoring units are not the exact frozen universe minus "
                 "the exact excluded pilot set"
             )
     full_rows: dict[tuple[str, int, int, str, int, str], dict[str, Any]] = {}
@@ -179,14 +179,14 @@ def load_fixed_turns(
                 f"fixed-input mismatch for unit {unit}: "
                 f"context_hashes={context_hashes}, seeker_messages={seeker_messages}"
             )
-    confirmatory_units = sorted(
+    scoring_units = sorted(
         expected_unit_set
         if expected_unit_set is not None
         else {key[:-1] for key in full_rows}
     )
     rows = {
         (*unit, condition): full_rows[(*unit, condition)]
-        for unit in confirmatory_units
+        for unit in scoring_units
         for condition in requested
     }
     return rows
@@ -698,15 +698,18 @@ def run_external_response_evaluation(
     }
     if set(family_pricing) != {str(value) for value in families} or any(
         set(values) != {"input", "output"}
-        or any(value < 0.0 for value in values.values())
+        or any(value <= 0.0 for value in values.values())
         for values in family_pricing.values()
     ):
-        raise ValueError("external judge pricing must exactly cover judge families")
+        raise ValueError(
+            "external judge pricing must exactly cover judge families with "
+            "strictly positive rates"
+        )
     full_units = sorted(full_expected_units)
     units = sorted(expected_units)
     excluded_units = sorted(set(full_units) - set(units))
     if set(units) | set(excluded_units) != set(full_units):
-        raise RuntimeError("external full/confirmatory unit partition is invalid")
+        raise RuntimeError("external full/scoring unit partition is invalid")
     derived_excluded_ids = [
         sha256_text(canonical_json(unit))[:24] for unit in excluded_units
     ]

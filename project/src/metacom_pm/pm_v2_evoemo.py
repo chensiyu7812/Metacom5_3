@@ -28,6 +28,7 @@ from .contracts import (
 from .evidence_filter import EvidenceFilterConfig, filter_evidence
 from .evidence_filter_model import PMV2EvidenceFilterModel
 from .evoemo import (
+    FIXED_SEEKER_V22_STAGE,
     NEUTRAL_INITIAL_GREETING,
     _fixed_context_before_turn,
     _load_fixed_tracks,
@@ -49,9 +50,10 @@ from .io import (
     write_json,
     write_jsonl,
 )
+from .generation_contract import SupporterGenerationContract
 from .pm_v2_data import runtime_to_pmv2_state
 from .pm_v2_model import PMV2Model, decision_fallback_kind
-from .prompts import OFFICIAL_ESMEM_SYSTEM, SELECTIVE_ESMEM_SYSTEM, generation_messages
+from .prompts import generation_messages
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import conservative_token_bound, estimate_tokens, normalize_space
 
@@ -87,6 +89,93 @@ COST_MATCH_CONDITIONS = {COST_MATCH_TREATMENT, COST_MATCH_BASELINE}
 EVALUATION_UNIT_CONTRACT_PROTOCOL = (
     "pm-v2-external-fixed-context-evaluation-universe-v1"
 )
+
+
+def bind_external_generation_request_log(
+    row: Mapping[str, Any],
+    *,
+    supporter_generation_treatment: Mapping[str, Any],
+    supporter_generation_treatment_sha256: str,
+    fixed_seeker_generation_treatment: Mapping[str, Any],
+    fixed_seeker_generation_treatment_sha256: str,
+) -> dict[str, Any]:
+    """Bind every raw external call, including failures, to both treatments."""
+
+    return {
+        **dict(row),
+        "supporter_generation_treatment": dict(
+            supporter_generation_treatment
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_treatment_sha256
+        ),
+        "fixed_seeker_generation_treatment": dict(
+            fixed_seeker_generation_treatment
+        ),
+        "fixed_seeker_generation_treatment_sha256": (
+            fixed_seeker_generation_treatment_sha256
+        ),
+    }
+
+
+def summarize_external_generation_raw_matrix(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    planned_call_keys: Sequence[str],
+    supporter_generation_treatment: Mapping[str, Any],
+    supporter_generation_treatment_sha256: str,
+    fixed_seeker_generation_treatment: Mapping[str, Any],
+    fixed_seeker_generation_treatment_sha256: str,
+) -> dict[str, Any]:
+    """Prove the raw paid-call matrix is exact, complete, and unmixed."""
+
+    normalized_rows = [dict(row) for row in rows]
+    expected_keys = [str(value) for value in planned_call_keys]
+    observed_keys = [
+        str(row.get("physical_call_key") or "") for row in normalized_rows
+    ]
+    non_complete = sum(
+        row.get("normalized_finish_reason") != "complete"
+        for row in normalized_rows
+    )
+    checks = {
+        "row_count_exact": len(normalized_rows) == len(expected_keys),
+        "planned_call_keys_unique": len(expected_keys) == len(set(expected_keys)),
+        "raw_call_keys_unique": (
+            "" not in observed_keys
+            and len(observed_keys) == len(set(observed_keys))
+        ),
+        "raw_call_keys_exact": sorted(observed_keys) == sorted(expected_keys),
+        "all_finish_reasons_complete": non_complete == 0,
+        "all_errors_absent": all(row.get("error") is None for row in normalized_rows),
+        "supporter_treatment_exact": all(
+            row.get("supporter_generation_treatment")
+            == dict(supporter_generation_treatment)
+            and row.get("supporter_generation_treatment_sha256")
+            == supporter_generation_treatment_sha256
+            for row in normalized_rows
+        ),
+        "fixed_seeker_treatment_exact": all(
+            row.get("fixed_seeker_generation_treatment")
+            == dict(fixed_seeker_generation_treatment)
+            and row.get("fixed_seeker_generation_treatment_sha256")
+            == fixed_seeker_generation_treatment_sha256
+            for row in normalized_rows
+        ),
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "FAIL",
+        "checks": checks,
+        "expected_rows": len(expected_keys),
+        "observed_rows": len(normalized_rows),
+        "non_complete_finish_reason_count": int(non_complete),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_treatment_sha256
+        ),
+        "fixed_seeker_generation_treatment_sha256": (
+            fixed_seeker_generation_treatment_sha256
+        ),
+    }
 
 
 def build_generation_evaluation_units(
@@ -233,6 +322,30 @@ def reconcile_succeeded_generation_turns(
             != terminal.get("attempt_key")
             or not str(turn_record.get("supporter_message") or "").strip()
             or not isinstance(turn_record.get("cost"), Mapping)
+            or (
+                "supporter_generation_treatment" in planned
+                and turn_record.get("supporter_generation_treatment")
+                != planned.get("supporter_generation_treatment")
+            )
+            or (
+                "supporter_generation_treatment_sha256" in planned
+                and turn_record.get("supporter_generation_treatment_sha256")
+                != planned.get("supporter_generation_treatment_sha256")
+            )
+            or (
+                "supporter_generation_treatment" in planned
+                and turn_record.get("normalized_finish_reason") != "complete"
+            )
+            or (
+                "fixed_seeker_generation_treatment" in planned
+                and turn_record.get("fixed_seeker_generation_treatment")
+                != planned.get("fixed_seeker_generation_treatment")
+            )
+            or (
+                "fixed_seeker_generation_treatment_sha256" in planned
+                and turn_record.get("fixed_seeker_generation_treatment_sha256")
+                != planned.get("fixed_seeker_generation_treatment_sha256")
+            )
         ):
             raise RuntimeError(
                 "recoverable PM-v2 generation turn violates its successful "
@@ -486,9 +599,11 @@ def run_pmv2_fixed_evoemo(
     out_dir: str | Path,
     *,
     generator_endpoint: Endpoint,
+    supporter_generation_contract: SupporterGenerationContract,
+    fixed_seeker_generation_contract: Mapping[str, Any],
+    fixed_seeker_generation_contract_sha256: str,
     simulator_id: str,
     fixed_tracks_attestation_path: str | Path | None = None,
-    protocol: str = "selective",
     condition: str = "pm_v2",
     max_turns: int = 10,
     seeds: Sequence[int] = (101,),
@@ -529,8 +644,19 @@ def run_pmv2_fixed_evoemo(
     if any(value <= 0.0 for value in generator_pricing_usd_per_mtok.values()):
         raise ValueError("PM-v2 generator pricing must be strictly positive")
 
-    if protocol not in {"official", "selective"}:
-        raise ValueError("protocol must be official or selective")
+    supporter_treatment = supporter_generation_contract.payload()
+    supporter_treatment_sha256 = supporter_generation_contract.digest()
+    fixed_seeker_treatment = dict(fixed_seeker_generation_contract)
+    fixed_seeker_treatment_sha256 = str(
+        fixed_seeker_generation_contract_sha256
+    )
+    if (
+        not fixed_seeker_treatment
+        or len(fixed_seeker_treatment_sha256) != 64
+        or sha256_text(canonical_json(fixed_seeker_treatment))
+        != fixed_seeker_treatment_sha256
+    ):
+        raise ValueError("fixed-seeker generation contract binding is invalid")
     if set(action_preflight_gates) != ACTION_PREFLIGHT_GATE_KEYS:
         raise ValueError("action_preflight_gates do not match the frozen contract")
     cost_match_tolerance = float(maximum_cost_matched_relative_deviation)
@@ -552,13 +678,18 @@ def run_pmv2_fixed_evoemo(
     fixed_bundle_dir = Path(fixed_tracks_path).resolve().parent
     fixed_verification = require_content_addressed_attestation(
         fixed_tracks_attestation_path,
-        required_stage="evoemo_fixed_seeker_tracks",
+        required_stage=FIXED_SEEKER_V22_STAGE,
         relocated_inputs={
             "evoemo": evoemo_path,
             "run_manifest": fixed_bundle_dir / "run_manifest.json",
+            "cost_estimate": fixed_bundle_dir / "cost_estimate.json",
+            "call_plan": fixed_bundle_dir / "call_plan.jsonl",
         },
         relocated_outputs={
             "tracks": fixed_tracks_path,
+            "raw_calls": fixed_bundle_dir / "raw_seeker_calls.jsonl",
+            "physical_attempt_ledger": fixed_bundle_dir
+            / "physical_attempt_ledger.jsonl",
             "summary": fixed_bundle_dir / "summary.json",
         },
     )
@@ -568,6 +699,10 @@ def run_pmv2_fixed_evoemo(
         "simulator_id": simulator_id,
         "max_turns": int(max_turns),
         "seeds": [int(seed) for seed in seeds],
+        "fixed_seeker_generation_contract": fixed_seeker_treatment,
+        "fixed_seeker_generation_contract_sha256": (
+            fixed_seeker_treatment_sha256
+        ),
     }
     for key, expected in expected_fixed_parameters.items():
         if fixed_parameters.get(key) != expected:
@@ -594,8 +729,42 @@ def run_pmv2_fixed_evoemo(
     if (
         int(fixed_expected.get("tracks", -1)) != len(tracks)
         or int(fixed_expected.get("turns_per_track", -1)) != int(max_turns)
+        or int(fixed_expected.get("completion_truncated_count", -1)) != 0
     ):
         raise RuntimeError("fixed-track attestation expected matrix mismatch")
+    fixed_summary = read_json(fixed_bundle_dir / "summary.json")
+    fixed_raw_rows = list(iter_jsonl(fixed_bundle_dir / "raw_seeker_calls.jsonl"))
+    if (
+        fixed_summary.get("status") != "COMPLETE"
+        or fixed_summary.get("fixed_seeker_generation_contract")
+        != fixed_seeker_treatment
+        or fixed_summary.get("fixed_seeker_generation_contract_sha256")
+        != fixed_seeker_treatment_sha256
+        or int(fixed_summary.get("completion_truncated_count", -1)) != 0
+        or any(
+            track.get("fixed_seeker_generation_contract")
+            != fixed_seeker_treatment
+            or track.get("fixed_seeker_generation_contract_sha256")
+            != fixed_seeker_treatment_sha256
+            or len(track.get("turn_provenance") or []) != int(max_turns)
+            or any(
+                turn.get("normalized_finish_reason") != "complete"
+                or turn.get("fixed_seeker_generation_contract_sha256")
+                != fixed_seeker_treatment_sha256
+                for turn in (track.get("turn_provenance") or [])
+            )
+            for track in tracks.values()
+        )
+        or any(
+            row.get("normalized_finish_reason") != "complete"
+            or row.get("fixed_seeker_generation_contract_sha256")
+            != fixed_seeker_treatment_sha256
+            for row in fixed_raw_rows
+        )
+    ):
+        raise RuntimeError(
+            "fixed seeker V2.2 input is mixed, truncated, or contract-stale"
+        )
 
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -661,8 +830,14 @@ def run_pmv2_fixed_evoemo(
             "generator_model": generator_endpoint.model,
             "generator_family": generator_endpoint.family,
             "generator_base_url": generator_endpoint.base_url,
+            "supporter_generation_treatment": supporter_treatment,
+            "supporter_generation_treatment_sha256": supporter_treatment_sha256,
+            "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+            "fixed_seeker_generation_treatment_sha256": (
+                fixed_seeker_treatment_sha256
+            ),
             "simulator_id": simulator_id,
-            "protocol": protocol,
+            "protocol": supporter_generation_contract.version,
             "condition": condition,
             "max_turns": int(max_turns),
             "seeds": [int(seed) for seed in seeds],
@@ -806,11 +981,7 @@ def run_pmv2_fixed_evoemo(
                     memory_view = candidate_memory_view
                     strategy_view = candidate_strategy_view
                     filter_decision = None
-                system = (
-                    OFFICIAL_ESMEM_SYSTEM
-                    if protocol == "official"
-                    else SELECTIVE_ESMEM_SYSTEM
-                )
+                system = supporter_generation_contract.system_prompt
                 messages = generation_messages(
                     runtime, memory_view, strategy_view, system_prompt=system
                 )
@@ -830,18 +1001,29 @@ def run_pmv2_fixed_evoemo(
                     "turn_index": turn_index,
                     "interaction_mode": "fixed",
                     "track_id": str(track["track_id"]),
+                    "fixed_seeker_generation_contract_sha256": (
+                        fixed_seeker_treatment_sha256
+                    ),
                 }
-                max_output_tokens = 60 if protocol == "official" else 100
+                max_output_tokens = supporter_generation_contract.max_output_tokens
                 call_key = physical_call_key(
                     stage="evoemo_pm_v2_supporter",
                     record_ids=record_ids,
                     prompt_sha256=prompt_hash,
                     endpoint=generator_endpoint,
                     request_parameters={
-                        "temperature": 0.0,
+                        "temperature": supporter_generation_contract.temperature,
                         "max_tokens": max_output_tokens,
                         "seed": int(seed) + turn_index,
                         "response_schema": None,
+                        "supporter_generation_treatment": supporter_treatment,
+                        "supporter_generation_treatment_sha256": (
+                            supporter_treatment_sha256
+                        ),
+                        "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+                        "fixed_seeker_generation_treatment_sha256": (
+                            fixed_seeker_treatment_sha256
+                        ),
                     },
                 )
                 call_plan.append(
@@ -874,6 +1056,14 @@ def run_pmv2_fixed_evoemo(
                         "max_http_attempts": 1,
                         "prompt_hash": prompt_hash,
                         "call_key": call_key,
+                        "supporter_generation_treatment": supporter_treatment,
+                        "supporter_generation_treatment_sha256": (
+                            supporter_treatment_sha256
+                        ),
+                        "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+                        "fixed_seeker_generation_treatment_sha256": (
+                            fixed_seeker_treatment_sha256
+                        ),
                     }
                 )
     evaluation_preflight_rows = [
@@ -933,6 +1123,10 @@ def run_pmv2_fixed_evoemo(
         "stage": "evoemo_pm_v2_generation",
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "condition": condition,
+        "supporter_generation_treatment": supporter_treatment,
+        "supporter_generation_treatment_sha256": supporter_treatment_sha256,
+        "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+        "fixed_seeker_generation_treatment_sha256": fixed_seeker_treatment_sha256,
         "evaluation_unit_contract": normalized_evaluation_unit_contract,
         "call_plan_exactly_matches_frozen_evaluation_units": True,
         "input_token_safety_factor": float(input_token_safety_factor),
@@ -1057,6 +1251,16 @@ def run_pmv2_fixed_evoemo(
         if (
             reference_estimate.get("stage") != "evoemo_pm_v2_generation"
             or reference_estimate.get("condition") != expected_reference_condition
+            or reference_estimate.get("supporter_generation_treatment")
+            != supporter_treatment
+            or reference_estimate.get("supporter_generation_treatment_sha256")
+            != supporter_treatment_sha256
+            or reference_estimate.get("fixed_seeker_generation_treatment")
+            != fixed_seeker_treatment
+            or reference_estimate.get(
+                "fixed_seeker_generation_treatment_sha256"
+            )
+            != fixed_seeker_treatment_sha256
             or reference_estimate.get("study_freeze_sha256") != study_freeze_sha256
             or float(
                 reference_estimate.get(
@@ -1157,9 +1361,21 @@ def run_pmv2_fixed_evoemo(
     for unit, row in turn_index.items():
         planned = expected_turns[unit]
         call_key = str(planned["call_key"])
-        if row.get("physical_call_key") != call_key or not ledger.succeeded(call_key):
+        if (
+            row.get("physical_call_key") != call_key
+            or not ledger.succeeded(call_key)
+            or row.get("supporter_generation_treatment") != supporter_treatment
+            or row.get("supporter_generation_treatment_sha256")
+            != supporter_treatment_sha256
+            or row.get("fixed_seeker_generation_treatment")
+            != fixed_seeker_treatment
+            or row.get("fixed_seeker_generation_treatment_sha256")
+            != fixed_seeker_treatment_sha256
+            or row.get("normalized_finish_reason") != "complete"
+        ):
             raise RuntimeError(
-                f"persisted turn lacks its successful physical-attempt binding: {unit}"
+                "persisted turn lacks its successful physical-attempt/treatment "
+                f"binding: {unit}"
             )
     for unit in dialogue_index:
         covered = [key for key in turn_index if key[:-1] == unit]
@@ -1174,6 +1390,7 @@ def run_pmv2_fixed_evoemo(
     new_attempts = 0
     aborted_on_input_token_overrun = False
     aborted_on_usage_accounting_error = False
+    aborted_on_completion_gate_error = False
     failures: list[dict[str, Any]] = [
         {
             **dict(row.get("record_ids") or {}),
@@ -1290,11 +1507,7 @@ def run_pmv2_fixed_evoemo(
                         strategy_view = candidate_strategy_view
                         filter_decision = None
                     filter_ms = (time.perf_counter() - filter_start) * 1000.0
-                    system = (
-                        OFFICIAL_ESMEM_SYSTEM
-                        if protocol == "official"
-                        else SELECTIVE_ESMEM_SYSTEM
-                    )
+                    system = supporter_generation_contract.system_prompt
                     messages = generation_messages(
                         runtime, memory_view, strategy_view, system_prompt=system
                     )
@@ -1308,6 +1521,9 @@ def run_pmv2_fixed_evoemo(
                         "turn_index": turn_number,
                         "interaction_mode": "fixed",
                         "track_id": track_id,
+                        "fixed_seeker_generation_contract_sha256": (
+                            fixed_seeker_treatment_sha256
+                        ),
                     }
                     recomputed_call_key = physical_call_key(
                         stage="evoemo_pm_v2_supporter",
@@ -1315,15 +1531,37 @@ def run_pmv2_fixed_evoemo(
                         prompt_sha256=prompt_hash,
                         endpoint=generator_endpoint,
                         request_parameters={
-                            "temperature": 0.0,
+                            "temperature": supporter_generation_contract.temperature,
                             "max_tokens": int(planned["max_output_tokens"]),
                             "seed": int(seed) + turn_number,
                             "response_schema": None,
+                            "supporter_generation_treatment": supporter_treatment,
+                            "supporter_generation_treatment_sha256": (
+                                supporter_treatment_sha256
+                            ),
+                            "fixed_seeker_generation_treatment": (
+                                fixed_seeker_treatment
+                            ),
+                            "fixed_seeker_generation_treatment_sha256": (
+                                fixed_seeker_treatment_sha256
+                            ),
                         },
                     )
                     if (
                         recomputed_call_key != call_key
                         or prompt_hash != planned["prompt_hash"]
+                        or planned.get("supporter_generation_treatment")
+                        != supporter_treatment
+                        or planned.get("supporter_generation_treatment_sha256")
+                        != supporter_treatment_sha256
+                        or planned.get("fixed_seeker_generation_treatment")
+                        != fixed_seeker_treatment
+                        or planned.get(
+                            "fixed_seeker_generation_treatment_sha256"
+                        )
+                        != fixed_seeker_treatment_sha256
+                        or int(planned["max_output_tokens"])
+                        != supporter_generation_contract.max_output_tokens
                     ):
                         raise RuntimeError(
                             f"runtime PM-v2 call differs from frozen dry-run: {unit}"
@@ -1340,7 +1578,7 @@ def run_pmv2_fixed_evoemo(
                     try:
                         result, _ = generator.chat(
                             messages,
-                            temperature=0.0,
+                            temperature=supporter_generation_contract.temperature,
                             max_tokens=int(planned["max_output_tokens"]),
                             seed=int(seed) + turn_number,
                             response_schema=None,
@@ -1348,8 +1586,7 @@ def run_pmv2_fixed_evoemo(
                         )
                     except Exception as exc:
                         error = f"{type(exc).__name__}: {exc}"
-                        append_jsonl(
-                            raw_path,
+                        failed_request_log = bind_external_generation_request_log(
                             request_log(
                                 stage="evoemo_pm_v2_supporter",
                                 endpoint=generator_endpoint,
@@ -1365,13 +1602,25 @@ def run_pmv2_fixed_evoemo(
                                     "physical_attempt_key": reservation.attempt_key,
                                 },
                             ),
+                            supporter_generation_treatment=supporter_treatment,
+                            supporter_generation_treatment_sha256=(
+                                supporter_treatment_sha256
+                            ),
+                            fixed_seeker_generation_treatment=(
+                                fixed_seeker_treatment
+                            ),
+                            fixed_seeker_generation_treatment_sha256=(
+                                fixed_seeker_treatment_sha256
+                            ),
                         )
+                        append_jsonl(raw_path, failed_request_log)
                         ledger.finish(
                             reservation,
                             succeeded=False,
                             request_hash=None,
                             usage=None,
                             error=error,
+                            result={"request_log": failed_request_log},
                         )
                         failures.append(
                             {
@@ -1389,13 +1638,21 @@ def run_pmv2_fixed_evoemo(
                         stage="EvoEmo supporter generation",
                         require_positive=bool(fail_on_reported_input_overrun),
                     )
-                    generation_request_log = request_log(
+                    completion_error = (
+                        supporter_generation_contract.completion_gate_error(
+                            normalized_finish_reason=result.normalized_finish_reason,
+                            provider_finish_reason=result.provider_finish_reason,
+                        )
+                    )
+                    response_error = completion_error or usage_error
+                    generation_request_log = bind_external_generation_request_log(
+                        request_log(
                             stage="evoemo_pm_v2_supporter",
                             endpoint=generator_endpoint,
                             messages=messages,
                             result=result,
                             parsed=None,
-                            error=usage_error,
+                            error=response_error,
                             prompt_hash=prompt_hash,
                             record_ids={
                                 **record_ids,
@@ -1403,11 +1660,45 @@ def run_pmv2_fixed_evoemo(
                                 "physical_attempt_index": reservation.attempt_index,
                                 "physical_attempt_key": reservation.attempt_key,
                             },
+                        ),
+                        supporter_generation_treatment=supporter_treatment,
+                        supporter_generation_treatment_sha256=(
+                            supporter_treatment_sha256
+                        ),
+                        fixed_seeker_generation_treatment=fixed_seeker_treatment,
+                        fixed_seeker_generation_treatment_sha256=(
+                            fixed_seeker_treatment_sha256
+                        ),
                     )
                     append_jsonl(raw_path, generation_request_log)
                     reported_prompt_tokens = int(
                         (result.usage or {}).get("prompt_tokens") or 0
                     )
+                    if completion_error is not None:
+                        error = f"{completion_error}, unit={unit}"
+                        ledger.finish(
+                            reservation,
+                            succeeded=False,
+                            request_hash=result.request_hash,
+                            usage=result.usage,
+                            error=error,
+                            result={"request_log": generation_request_log},
+                        )
+                        failures.append(
+                            {
+                                **record_ids,
+                                "physical_call_key": call_key,
+                                "physical_attempt_index": reservation.attempt_index,
+                                "provider_finish_reason": result.provider_finish_reason,
+                                "normalized_finish_reason": (
+                                    result.normalized_finish_reason
+                                ),
+                                "completion_gate_failed": True,
+                                "error": error,
+                            }
+                        )
+                        aborted_on_completion_gate_error = True
+                        break
                     if usage_error is not None:
                         error = f"{usage_error}, unit={unit}"
                         ledger.finish(
@@ -1416,6 +1707,7 @@ def run_pmv2_fixed_evoemo(
                             request_hash=result.request_hash,
                             usage=result.usage,
                             error=error,
+                            result={"request_log": generation_request_log},
                         )
                         failures.append(
                             {
@@ -1438,7 +1730,9 @@ def run_pmv2_fixed_evoemo(
                         )
                         aborted_on_usage_accounting_error = True
                         break
-                    supporter_message = normalize_space(result.text)
+                    supporter_message = supporter_generation_contract.normalize_output(
+                        result.text
+                    )
                     memory_tokens = sum(estimate_tokens(row.text) for row in memory_view)
                     strategy_tokens = sum(
                         estimate_tokens(row.guidance_text + row.example_response)
@@ -1510,7 +1804,7 @@ def run_pmv2_fixed_evoemo(
                     )
                     turn_record = {
                         **record_ids,
-                        "protocol": protocol,
+                        "protocol": supporter_generation_contract.version,
                         "trajectory_comparability": "causal_fixed_context_one_step",
                         "state_id": runtime.state_id,
                         "exogenous_state_id": runtime.provenance["exogenous_state_id"],
@@ -1552,6 +1846,16 @@ def run_pmv2_fixed_evoemo(
                         "output_tokens": cost.output_tokens,
                         "latency_ms": cost.latency_ms,
                         "pm_v2_decision": decision.model_dump(mode="json"),
+                        "provider_finish_reason": result.provider_finish_reason,
+                        "normalized_finish_reason": result.normalized_finish_reason,
+                        "supporter_generation_treatment": supporter_treatment,
+                        "supporter_generation_treatment_sha256": (
+                            supporter_treatment_sha256
+                        ),
+                        "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+                        "fixed_seeker_generation_treatment_sha256": (
+                            fixed_seeker_treatment_sha256
+                        ),
                         "physical_call_key": call_key,
                         "physical_attempt_index": reservation.attempt_index,
                         "physical_attempt_key": reservation.attempt_key,
@@ -1570,7 +1874,10 @@ def run_pmv2_fixed_evoemo(
                     append_jsonl(turn_path, turn_record)
                     turn_index[unit] = turn_record
 
-                if aborted_on_usage_accounting_error:
+                if (
+                    aborted_on_usage_accounting_error
+                    or aborted_on_completion_gate_error
+                ):
                     break
 
                 track_turns = [
@@ -1610,7 +1917,15 @@ def run_pmv2_fixed_evoemo(
                     "user_id": str(user["id"]),
                     "topic_index": int(topic["idx"]),
                     "condition": condition,
-                    "protocol": protocol,
+                    "protocol": supporter_generation_contract.version,
+                    "supporter_generation_treatment": supporter_treatment,
+                    "supporter_generation_treatment_sha256": (
+                        supporter_treatment_sha256
+                    ),
+                    "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+                    "fixed_seeker_generation_treatment_sha256": (
+                        fixed_seeker_treatment_sha256
+                    ),
                     "interaction_mode": "fixed",
                     "trajectory_comparability": "causal_fixed_context_one_step",
                     "simulator_id": simulator_id,
@@ -1628,7 +1943,7 @@ def run_pmv2_fixed_evoemo(
                 }
                 append_jsonl(dialogue_path, dialogue_record)
                 dialogue_index[dialogue_key] = dialogue_record
-            if aborted_on_usage_accounting_error:
+            if aborted_on_usage_accounting_error or aborted_on_completion_gate_error:
                 break
     finally:
         if generator is not None:
@@ -1636,13 +1951,32 @@ def run_pmv2_fixed_evoemo(
 
     expected = len(scenarios) * len(seeds)
     completed = len(dialogue_index)
+    raw_rows = list(iter_jsonl(raw_path)) if raw_path.is_file() else []
+    raw_generation_contract_gate = summarize_external_generation_raw_matrix(
+        raw_rows,
+        planned_call_keys=call_keys,
+        supporter_generation_treatment=supporter_treatment,
+        supporter_generation_treatment_sha256=supporter_treatment_sha256,
+        fixed_seeker_generation_treatment=fixed_seeker_treatment,
+        fixed_seeker_generation_treatment_sha256=(
+            fixed_seeker_treatment_sha256
+        ),
+    )
     summary = {
         "status": (
             "COMPLETE"
-            if completed == expected and len(turn_index) == len(expected_turns)
+            if (
+                completed == expected
+                and len(turn_index) == len(expected_turns)
+                and raw_generation_contract_gate["status"] == "PASS"
+            )
             else "INCOMPLETE"
         ),
         "condition": condition,
+        "supporter_generation_treatment": supporter_treatment,
+        "supporter_generation_treatment_sha256": supporter_treatment_sha256,
+        "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+        "fixed_seeker_generation_treatment_sha256": fixed_seeker_treatment_sha256,
         "expected_dialogues": expected,
         "completed_dialogues": completed,
         "expected_turns": len(expected_turns),
@@ -1672,6 +2006,11 @@ def run_pmv2_fixed_evoemo(
         "fail_on_reported_input_overrun": bool(fail_on_reported_input_overrun),
         "aborted_on_input_token_overrun": aborted_on_input_token_overrun,
         "aborted_on_usage_accounting_error": aborted_on_usage_accounting_error,
+        "aborted_on_completion_gate_error": aborted_on_completion_gate_error,
+        "raw_generation_contract_gate": raw_generation_contract_gate,
+        "non_complete_finish_reason_count": raw_generation_contract_gate[
+            "non_complete_finish_reason_count"
+        ],
         "failures": failures,
         "preflight": preflight,
         "cost_estimate": cost_estimate,
@@ -1717,7 +2056,13 @@ def run_pmv2_fixed_evoemo(
         outputs=attestation_outputs,
         parameters={
             "condition": condition,
-            "protocol": protocol,
+            "protocol": supporter_generation_contract.version,
+            "supporter_generation_treatment": supporter_treatment,
+            "supporter_generation_treatment_sha256": supporter_treatment_sha256,
+            "fixed_seeker_generation_treatment": fixed_seeker_treatment,
+            "fixed_seeker_generation_treatment_sha256": (
+                fixed_seeker_treatment_sha256
+            ),
             "simulator_id": simulator_id,
             "max_turns": max_turns,
             "seeds": [int(seed) for seed in seeds],
@@ -1770,8 +2115,15 @@ def run_pmv2_fixed_evoemo(
             ),
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
             "maximum_physical_http_attempts_authorized": int(max_api_calls),
+            "raw_generation_contract_gate": raw_generation_contract_gate,
         },
-        expected={"dialogues": expected, "turns": len(frozen_evaluation_units)},
+        expected={
+            "dialogues": expected,
+            "turns": len(frozen_evaluation_units),
+            "raw_calls": len(frozen_evaluation_units),
+            "non_complete_finish_reason_count": 0,
+            "raw_generation_contract_gate_status": "PASS",
+        },
         study_freeze_sha256=study_freeze_sha256,
     )
     return summary

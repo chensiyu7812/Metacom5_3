@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Any, Mapping, Sequence
 
 from metacom_pm.artifacts import (
     require_artifact_attestation,
@@ -11,7 +12,9 @@ from metacom_pm.artifacts import (
 )
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.freeze import require_study_freeze
-from metacom_pm.io import canonical_json, sha256_file, sha256_text
+from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.generation_contract import SupporterGenerationContract
+from metacom_pm.io import canonical_json, iter_jsonl, sha256_file, sha256_text
 from metacom_pm.pm_v2_external_eval import (
     expected_external_units,
     run_external_response_evaluation,
@@ -25,8 +28,65 @@ from metacom_pm.pm_v2_judging import (
     labeling_settings_from_config,
 )
 from metacom_pm.pm_v2_forced_swap import require_forced_swap_key_claim
+from metacom_pm.pm_v22_reference_baselines import (
+    PMV22_REFERENCE_BASELINE_STAGE,
+    POLICY_LOCK_TIMING,
+    POST_GENERATION_POLICY_TUNING_PROHIBITED,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def require_treatment_bound_turn_file(
+    turn_path: Path,
+    *,
+    expected_conditions: Sequence[str],
+    expected_units: Sequence[tuple[str, int, int, str, int]],
+    treatment: Mapping[str, Any],
+    treatment_sha256: str,
+    fixed_seeker_treatment: Mapping[str, Any],
+    fixed_seeker_treatment_sha256: str,
+) -> list[dict[str, Any]]:
+    """Reject mixed-treatment or non-complete turns before any judging call."""
+
+    rows = [dict(row) for row in iter_jsonl(turn_path)]
+    conditions = {str(value) for value in expected_conditions}
+    if not rows or {str(row.get("condition") or "") for row in rows} != conditions:
+        raise RuntimeError("generation turn file does not cover its attested conditions")
+    expected = sorted(expected_units)
+    for condition in sorted(conditions):
+        condition_rows = [
+            row for row in rows if str(row.get("condition") or "") == condition
+        ]
+        units = sorted(
+            (
+                str(row.get("user_id") or ""),
+                int(row.get("topic_index") or 0),
+                int(row.get("seed") or 0),
+                str(row.get("simulator_id") or ""),
+                int(row.get("turn_index") or 0),
+            )
+            for row in condition_rows
+        )
+        if units != expected:
+            raise RuntimeError(
+                f"generation turns for {condition} differ from the frozen unit universe"
+            )
+        if any(
+            row.get("supporter_generation_treatment") != dict(treatment)
+            or row.get("supporter_generation_treatment_sha256") != treatment_sha256
+            or row.get("fixed_seeker_generation_treatment")
+            != dict(fixed_seeker_treatment)
+            or row.get("fixed_seeker_generation_treatment_sha256")
+            != fixed_seeker_treatment_sha256
+            or row.get("normalized_finish_reason") != "complete"
+            or not str(row.get("supporter_message") or "").strip()
+            for row in condition_rows
+        ):
+            raise RuntimeError(
+                f"generation turns for {condition} contain mixed or non-complete output"
+            )
+    return rows
 
 
 def main() -> None:
@@ -39,11 +99,24 @@ def main() -> None:
     parser.add_argument("--freeze", type=Path, default=ROOT / "outputs" / "pm_v2_study_freeze.json")
     parser.add_argument("--evoemo", type=Path, default=ROOT / "data" / "external" / "evo_emo.json")
     parser.add_argument(
+        "--policy-checkpoint",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2.joblib",
+    )
+    parser.add_argument(
+        "--policy-training-report",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "training_report.json",
+    )
+    parser.add_argument(
         "--turn-paths",
         type=Path,
         nargs="+",
         default=[
-            ROOT / "outputs" / "evoemo_selective" / "turns.jsonl",
+            ROOT
+            / "outputs"
+            / "evoemo_pmv22_reference_baselines"
+            / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v2" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v2_cost_matched_fixed" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v2_me_r0_fixed" / "turns.jsonl",
@@ -54,7 +127,10 @@ def main() -> None:
         type=Path,
         nargs="+",
         default=[
-            ROOT / "outputs" / "evoemo_selective" / "artifact_attestation.json",
+            ROOT
+            / "outputs"
+            / "evoemo_pmv22_reference_baselines"
+            / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v2" / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v2_cost_matched_fixed" / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v2_me_r0_fixed" / "artifact_attestation.json",
@@ -104,11 +180,28 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    supporter_generation_contract = SupporterGenerationContract.from_config(
+        pm_v2_config
+    )
+    fixed_seeker_contract = FixedSeekerGenerationContract.from_mapping(
+        pm_v2_config["fixed_seeker_generation_treatment"]
+    )
+    fixed_seeker_endpoint = endpoint_from_config(
+        config, fixed_seeker_contract.seeker_endpoint
+    )
+    bound_fixed_seeker_contract = fixed_seeker_contract.bind_endpoint(
+        fixed_seeker_contract.seeker_endpoint, fixed_seeker_endpoint
+    )
     verification = require_study_freeze(
         args.freeze,
         release_root=ROOT,
         config_path=args.config,
-        required_files=[args.pm_v2_config, args.evoemo],
+        required_files=[
+            args.pm_v2_config,
+            args.evoemo,
+            args.policy_checkpoint,
+            args.policy_training_report,
+        ],
     )
     freeze_data = json.loads(args.freeze.read_text(encoding="utf-8"))
     freeze_sha = str(verification["freeze_sha256"])
@@ -116,6 +209,62 @@ def main() -> None:
         "external_evaluation_contract"
     ) or {}
     generation_contract = (freeze_data.get("notes") or {}).get("generation_contract") or {}
+    frozen_generation_treatment = generation_contract.get(
+        "supporter_generation_treatment"
+    )
+    frozen_generation_treatment_sha256 = generation_contract.get(
+        "supporter_generation_treatment_sha256"
+    )
+    frozen_fixed_seeker_treatment = generation_contract.get(
+        "fixed_seeker_generation_treatment"
+    )
+    frozen_fixed_seeker_treatment_sha256 = generation_contract.get(
+        "fixed_seeker_generation_treatment_sha256"
+    )
+    frozen_policy_lock = {
+        "policy_checkpoint_sha256": sha256_file(args.policy_checkpoint),
+        "policy_training_report_sha256": sha256_file(
+            args.policy_training_report
+        ),
+        "policy_lock_timing": POLICY_LOCK_TIMING,
+        "post_generation_policy_tuning_prohibited": (
+            POST_GENERATION_POLICY_TUNING_PROHIBITED
+        ),
+    }
+    if any(
+        generation_contract.get(key) != expected
+        for key, expected in frozen_policy_lock.items()
+    ):
+        raise RuntimeError(
+            "study freeze does not bind the policy that preceded reference "
+            "baseline generation"
+        )
+    if (
+        frozen_generation_treatment != supporter_generation_contract.payload()
+        or frozen_generation_treatment_sha256
+        != supporter_generation_contract.digest()
+    ):
+        raise RuntimeError("study freeze supporter-generation treatment is stale")
+    if (
+        frozen_fixed_seeker_treatment != bound_fixed_seeker_contract.payload()
+        or frozen_fixed_seeker_treatment_sha256
+        != bound_fixed_seeker_contract.digest()
+    ):
+        raise RuntimeError("study freeze fixed-seeker generation treatment is stale")
+    fixed_tracks_contract = (freeze_data.get("notes") or {}).get(
+        "fixed_tracks_content_attestation"
+    ) or {}
+    if (
+        fixed_tracks_contract.get("stage")
+        != "evoemo_fixed_seeker_tracks_v22"
+        or fixed_tracks_contract.get("fixed_seeker_generation_treatment")
+        != frozen_fixed_seeker_treatment
+        or fixed_tracks_contract.get(
+            "fixed_seeker_generation_treatment_sha256"
+        )
+        != frozen_fixed_seeker_treatment_sha256
+    ):
+        raise RuntimeError("study freeze fixed-track content contract is stale")
     expected_external_estimand = {
         "external_estimand": "quality_risk_observed_cost_componentwise_pareto_v1",
         "risk_composite_basis": "requested_action_applicable_fields",
@@ -150,6 +299,20 @@ def main() -> None:
         "evaluation_unit_contract"
     ):
         raise RuntimeError("generation/external evaluation-unit contracts differ")
+    full_expected_units = expected_external_units(
+        args.evoemo,
+        seeds=[int(value) for value in generation_contract["seeds"]],
+        simulator_id=str(generation_contract["simulator_id"]),
+        turn_indices=turn_indices,
+    )
+    if (
+        evaluation_unit_contract.get("evaluation_turn_indices") != turn_indices
+        or evaluation_unit_contract.get("expected_unit_count")
+        != len(full_expected_units)
+        or evaluation_unit_contract.get("expected_units_sha256")
+        != sha256_text(canonical_json(full_expected_units))
+    ):
+        raise RuntimeError("frozen external evaluation-unit universe is stale")
     if len(args.turn_paths) != len(args.generation_attestations):
         raise ValueError("each turn path requires one generation attestation")
     attested_conditions = set()
@@ -158,44 +321,77 @@ def main() -> None:
     for turn_path, attestation_path in zip(args.turn_paths, args.generation_attestations):
         attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
         stage = str(attestation.get("stage") or "")
-        if stage == "evoemo_generation":
+        if stage == PMV22_REFERENCE_BASELINE_STAGE:
             baseline_dir = turn_path.resolve().parent
             result = require_content_addressed_attestation(
                 attestation_path,
-                required_stage="evoemo_generation",
+                required_stage=PMV22_REFERENCE_BASELINE_STAGE,
                 relocated_inputs={
                     "evoemo": args.evoemo,
-                    "run_manifest": baseline_dir / "run_manifest.json",
-                    "fixed_tracks": ROOT
-                    / "outputs"
-                    / "evoemo_fixed_tracks"
-                    / "fixed_seeker_tracks.jsonl",
-                    "fixed_tracks_attestation": ROOT
-                    / "outputs"
-                    / "evoemo_fixed_tracks"
-                    / "artifact_attestation.json",
-                    "checkpoint": ROOT
-                    / "outputs"
-                    / "final_model_m2b_stable"
-                    / "pm_final.joblib",
-                    "selection": ROOT / "outputs" / "selection_stable.json",
                     "strategy_bank": ROOT
                     / "data"
                     / "strategy"
                     / "strategy_cards.jsonl",
+                    "policy_checkpoint": args.policy_checkpoint,
+                    "policy_training_report": args.policy_training_report,
+                    "pm_v2_config": args.pm_v2_config,
+                    "evidence_filter_checkpoint": ROOT
+                    / "outputs"
+                    / "pm_v2_evidence_filter"
+                    / "evidence_filter.joblib",
+                    "evidence_filter_report": ROOT
+                    / "outputs"
+                    / "pm_v2_evidence_filter"
+                    / "training_report.json",
+                    "evidence_filter_attestation": ROOT
+                    / "outputs"
+                    / "pm_v2_evidence_filter"
+                    / "artifact_attestation.json",
+                    "strategy_bank_approval": ROOT
+                    / "outputs"
+                    / "strategy_rag_v1_frozen_candidate"
+                    / "human_approval.json",
+                    "run_manifest": baseline_dir / "run_manifest.json",
+                    "cost_estimate": baseline_dir / "cost_estimate.json",
+                    "call_plan": baseline_dir / "call_plan.jsonl",
+                    "fixed_tracks": ROOT
+                    / "outputs"
+                    / "evoemo_fixed_tracks_v22"
+                    / "fixed_seeker_tracks.jsonl",
+                    "fixed_tracks_attestation": ROOT
+                    / "outputs"
+                    / "evoemo_fixed_tracks_v22"
+                    / "artifact_attestation.json",
                 },
                 relocated_outputs={
                     "turns": turn_path,
+                    "raw_calls": baseline_dir / "raw_api_calls.jsonl",
+                    "physical_attempt_ledger": baseline_dir
+                    / "physical_attempt_ledger.jsonl",
                     "summary": baseline_dir / "generation_summary.json",
                 },
             )
-        else:
+        elif stage == "evoemo_pm_v2_generation":
             result = require_artifact_attestation(
                 attestation_path,
+                required_stage="evoemo_pm_v2_generation",
                 required_output_paths={"turns": turn_path},
             )
+        else:
+            raise RuntimeError(
+                "external evaluation accepts only PM-v2.2 generation artifacts; "
+                f"legacy or unknown stage is forbidden: {stage!r}"
+            )
         parameters = attestation.get("parameters") or {}
-        values = parameters.get("conditions") or [parameters.get("condition")]
+        values = [
+            str(value)
+            for value in (
+                parameters.get("conditions") or [parameters.get("condition")]
+            )
+            if value
+        ]
+        if not values:
+            raise RuntimeError("generation attestation has no conditions")
         attested_conditions.update(str(value) for value in values if value)
         if len(values) == 1 and values[0]:
             condition = str(values[0])
@@ -207,10 +403,33 @@ def main() -> None:
         ) != freeze_sha:
             raise RuntimeError("PM-v2 generation attestation uses a different study freeze")
         frozen_parameter_checks = [
-            ("protocol", generation_contract.get("protocol")),
+            (
+                "supporter_generation_treatment",
+                frozen_generation_treatment,
+            ),
+            (
+                "supporter_generation_treatment_sha256",
+                frozen_generation_treatment_sha256,
+            ),
+            (
+                "fixed_seeker_generation_treatment",
+                frozen_fixed_seeker_treatment,
+            ),
+            (
+                "fixed_seeker_generation_treatment_sha256",
+                frozen_fixed_seeker_treatment_sha256,
+            ),
             ("simulator_id", generation_contract.get("simulator_id")),
             ("max_turns", generation_contract.get("max_turns")),
             ("seeds", generation_contract.get("seeds")),
+            (
+                "evaluation_unit_contract",
+                generation_contract.get("evaluation_unit_contract"),
+            ),
+            (
+                "paid_generation_scope",
+                generation_contract.get("paid_generation_scope"),
+            ),
         ]
         if stage == "evoemo_pm_v2_generation":
             frozen_parameter_checks.extend(
@@ -239,14 +458,6 @@ def main() -> None:
                         "fail_on_reported_input_overrun",
                         generation_contract.get("fail_on_reported_input_overrun"),
                     ),
-                    (
-                        "evaluation_unit_contract",
-                        generation_contract.get("evaluation_unit_contract"),
-                    ),
-                    (
-                        "paid_generation_scope",
-                        generation_contract.get("paid_generation_scope"),
-                    ),
                 ]
             )
         for key, expected in frozen_parameter_checks:
@@ -254,9 +465,212 @@ def main() -> None:
                 raise RuntimeError(
                     f"generation attestation {attestation_path} violates frozen {key}"
                 )
-        if stage == "evoemo_generation":
-            manifest_path = turn_path.resolve().parent / "run_manifest.json"
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        turn_rows = require_treatment_bound_turn_file(
+            turn_path,
+            expected_conditions=values,
+            expected_units=full_expected_units,
+            treatment=frozen_generation_treatment,
+            treatment_sha256=str(frozen_generation_treatment_sha256),
+            fixed_seeker_treatment=frozen_fixed_seeker_treatment,
+            fixed_seeker_treatment_sha256=str(
+                frozen_fixed_seeker_treatment_sha256
+            ),
+        )
+        baseline_evidence_contracts: dict[str, dict[str, Any]] | None = None
+        baseline_evidence_contracts_sha256: str | None = None
+        if stage == PMV22_REFERENCE_BASELINE_STAGE:
+            baseline_evidence_contracts = {
+                str(key): dict(value)
+                for key, value in dict(
+                    parameters.get("evidence_processing_contracts") or {}
+                ).items()
+            }
+            baseline_evidence_contracts_sha256 = str(
+                parameters.get("evidence_processing_contracts_sha256") or ""
+            )
+            if (
+                set(baseline_evidence_contracts) != set(values)
+                or baseline_evidence_contracts_sha256
+                != sha256_text(canonical_json(baseline_evidence_contracts))
+                or any(
+                    parameters.get(key) != expected
+                    for key, expected in frozen_policy_lock.items()
+                )
+                or any(
+                    row.get("evidence_processing_contract")
+                    != baseline_evidence_contracts[str(row["condition"])]
+                    or row.get("evidence_processing_contract_sha256")
+                    != sha256_text(
+                        canonical_json(
+                            baseline_evidence_contracts[str(row["condition"])]
+                        )
+                    )
+                    or any(
+                        row.get(key) != expected
+                        for key, expected in frozen_policy_lock.items()
+                    )
+                    for row in turn_rows
+                )
+            ):
+                raise RuntimeError(
+                    "reference-baseline evidence-processing contract is stale"
+                )
+        generation_dir = turn_path.resolve().parent
+        manifest_path = generation_dir / "run_manifest.json"
+        summary_path = generation_dir / "generation_summary.json"
+        raw_path = generation_dir / "raw_api_calls.jsonl"
+        ledger_path = generation_dir / "physical_attempt_ledger.jsonl"
+        call_plan_path = generation_dir / "call_plan.jsonl"
+        cost_estimate_path = generation_dir / "cost_estimate.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        cost_estimate = json.loads(cost_estimate_path.read_text(encoding="utf-8"))
+        call_plan = [dict(row) for row in iter_jsonl(call_plan_path)]
+        raw_rows = [dict(row) for row in iter_jsonl(raw_path)]
+        ledger_rows = [dict(row) for row in iter_jsonl(ledger_path)]
+        for source_name, source in (
+            ("manifest", manifest),
+            ("summary", summary),
+            ("cost estimate", cost_estimate),
+        ):
+            if (
+                source.get("supporter_generation_treatment")
+                != frozen_generation_treatment
+                or source.get("supporter_generation_treatment_sha256")
+                != frozen_generation_treatment_sha256
+                or source.get("fixed_seeker_generation_treatment")
+                != frozen_fixed_seeker_treatment
+                or source.get("fixed_seeker_generation_treatment_sha256")
+                != frozen_fixed_seeker_treatment_sha256
+            ):
+                raise RuntimeError(
+                    f"{source_name} has a mixed supporter-generation treatment"
+                )
+            if stage == PMV22_REFERENCE_BASELINE_STAGE and (
+                source.get("evidence_processing_contracts")
+                != baseline_evidence_contracts
+                or source.get("evidence_processing_contracts_sha256")
+                != baseline_evidence_contracts_sha256
+                or any(
+                    source.get(key) != expected
+                    for key, expected in frozen_policy_lock.items()
+                )
+            ):
+                raise RuntimeError(
+                    f"{source_name} has a stale evidence-processing contract"
+                )
+        if (
+            summary.get("status") != "COMPLETE"
+            or int(summary.get("completed_turns", -1)) != len(turn_rows)
+            or len(call_plan) != len(turn_rows)
+            or len(raw_rows) != len(turn_rows)
+            or len(
+                [row for row in ledger_rows if row.get("event") == "SUCCEEDED"]
+            )
+            != len(turn_rows)
+            or any(row.get("event") == "FAILED" for row in ledger_rows)
+        ):
+            raise RuntimeError("generation bundle is incomplete or has failed attempts")
+        if (
+            stage == "evoemo_pm_v2_generation"
+            and (
+                (summary.get("raw_generation_contract_gate") or {}).get("status")
+                != "PASS"
+                or int(summary.get("non_complete_finish_reason_count", -1)) != 0
+                or parameters.get("raw_generation_contract_gate")
+                != summary.get("raw_generation_contract_gate")
+            )
+        ) or (
+            stage == PMV22_REFERENCE_BASELINE_STAGE
+            and int(summary.get("non_complete_finish_reason_count", -1)) != 0
+        ):
+            raise RuntimeError(
+                "generation summary does not prove a complete raw-call matrix"
+            )
+        if any(
+            row.get("supporter_generation_treatment")
+            != frozen_generation_treatment
+            or row.get("supporter_generation_treatment_sha256")
+            != frozen_generation_treatment_sha256
+            or row.get("fixed_seeker_generation_treatment")
+            != frozen_fixed_seeker_treatment
+            or row.get("fixed_seeker_generation_treatment_sha256")
+            != frozen_fixed_seeker_treatment_sha256
+            or int(row.get("max_output_tokens") or 0)
+            != int(frozen_generation_treatment["max_output_tokens"])
+            or (
+                stage == PMV22_REFERENCE_BASELINE_STAGE
+                and (
+                    row.get("evidence_processing_contract")
+                    != baseline_evidence_contracts.get(str(row.get("condition") or ""))
+                    or row.get("evidence_processing_contract_sha256")
+                    != sha256_text(
+                        canonical_json(
+                            baseline_evidence_contracts.get(
+                                str(row.get("condition") or ""), {}
+                            )
+                        )
+                    )
+                    or any(
+                        row.get(key) != expected
+                        for key, expected in frozen_policy_lock.items()
+                    )
+                )
+            )
+            for row in call_plan
+        ):
+            raise RuntimeError("generation call plan has a mixed treatment")
+        planned_call_keys = {str(row.get("call_key") or "") for row in call_plan}
+        raw_call_keys = {
+            str(row.get("physical_call_key") or "") for row in raw_rows
+        }
+        if (
+            raw_call_keys != planned_call_keys
+            or any(
+                row.get("normalized_finish_reason") != "complete"
+                or row.get("supporter_generation_treatment")
+                != frozen_generation_treatment
+                or row.get("supporter_generation_treatment_sha256")
+                != frozen_generation_treatment_sha256
+                or row.get("fixed_seeker_generation_treatment")
+                != frozen_fixed_seeker_treatment
+                or row.get("fixed_seeker_generation_treatment_sha256")
+                != frozen_fixed_seeker_treatment_sha256
+                or (
+                    stage == PMV22_REFERENCE_BASELINE_STAGE
+                    and (
+                        row.get("evidence_processing_contract")
+                        != baseline_evidence_contracts.get(
+                            str(row.get("condition") or "")
+                        )
+                        or row.get("evidence_processing_contract_sha256")
+                        != sha256_text(
+                            canonical_json(
+                                baseline_evidence_contracts.get(
+                                    str(row.get("condition") or ""), {}
+                                )
+                            )
+                        )
+                        or any(
+                            row.get(key) != expected
+                            for key, expected in frozen_policy_lock.items()
+                        )
+                    )
+                )
+                for row in raw_rows
+            )
+        ):
+            raise RuntimeError("generation raw calls contain a non-complete response")
+        if stage == PMV22_REFERENCE_BASELINE_STAGE:
+            manifest_payload = {
+                key: value
+                for key, value in manifest.items()
+                if key != "manifest_sha256"
+            }
+            if manifest.get("manifest_sha256") != sha256_text(
+                canonical_json(manifest_payload)
+            ):
+                raise RuntimeError("reference-baseline manifest self-hash mismatch")
             endpoint_contract = {
                 "model": str(manifest.get("generator_model") or ""),
                 "family": str(manifest.get("generator_family") or ""),
@@ -272,14 +686,50 @@ def main() -> None:
                     "attestation_sha256": result["attestation_sha256"],
                     "attestation_file_sha256": sha256_file(attestation_path),
                     "run_manifest_sha256": sha256_file(manifest_path),
+                    "run_manifest_record_sha256": manifest["manifest_sha256"],
+                    "turns_rows": len(turn_rows),
                     "generator_endpoint": endpoint_contract,
                     "generator_endpoint_sha256": sha256_text(
                         canonical_json(endpoint_contract)
                     ),
-                    "protocol": parameters.get("protocol"),
+                    "supporter_generation_treatment": (
+                        frozen_generation_treatment
+                    ),
+                    "supporter_generation_treatment_sha256": (
+                        frozen_generation_treatment_sha256
+                    ),
+                    "fixed_seeker_generation_treatment": (
+                        frozen_fixed_seeker_treatment
+                    ),
+                    "fixed_seeker_generation_treatment_sha256": (
+                        frozen_fixed_seeker_treatment_sha256
+                    ),
                     "simulator_id": parameters.get("simulator_id"),
                     "max_turns": parameters.get("max_turns"),
                     "seeds": parameters.get("seeds"),
+                    "evaluation_unit_contract": parameters.get(
+                        "evaluation_unit_contract"
+                    ),
+                    "paid_generation_scope": parameters.get(
+                        "paid_generation_scope"
+                    ),
+                    "conditions": sorted(values),
+                    "evidence_processing_contracts": (
+                        baseline_evidence_contracts
+                    ),
+                    "evidence_processing_contracts_sha256": (
+                        baseline_evidence_contracts_sha256
+                    ),
+                    "evidence_filter_config_sha256": parameters.get(
+                        "evidence_filter_config_sha256"
+                    ),
+                    "evidence_filter_model": parameters.get(
+                        "evidence_filter_model"
+                    ),
+                    "strategy_bank_approval": parameters.get(
+                        "strategy_bank_approval"
+                    ),
+                    **frozen_policy_lock,
                 }
                 for key, actual in exact_checks.items():
                     if frozen_artifact.get(key) != actual:
@@ -288,11 +738,13 @@ def main() -> None:
                             f"{condition}/{key}"
                         )
                 fixed_conditions_verified.add(condition)
-    if set(conditions) - attested_conditions:
-        raise RuntimeError("generation attestations do not cover the frozen conditions")
+    if set(conditions) != attested_conditions:
+        raise RuntimeError(
+            "generation attestations do not exactly cover the frozen conditions"
+        )
     if set(fixed_baseline_artifacts) != fixed_conditions_verified:
         raise RuntimeError(
-            "fixed external baselines are not all backed by their frozen legacy "
+            "fixed external baselines are not all backed by their frozen PM-v2.2 "
             "turn/attestation artifacts"
         )
     frozen_judges = external_contract.get("judge_endpoints") or []
@@ -310,20 +762,6 @@ def main() -> None:
         )
         if current_sha != frozen.get("sha256"):
             raise RuntimeError("judge endpoint contract changed after study freeze")
-    full_expected_units = expected_external_units(
-        args.evoemo,
-        seeds=[int(value) for value in generation_contract["seeds"]],
-        simulator_id=str(generation_contract["simulator_id"]),
-        turn_indices=turn_indices,
-    )
-    if (
-        evaluation_unit_contract.get("evaluation_turn_indices") != turn_indices
-        or evaluation_unit_contract.get("expected_unit_count")
-        != len(full_expected_units)
-        or evaluation_unit_contract.get("expected_units_sha256")
-        != sha256_text(canonical_json(full_expected_units))
-    ):
-        raise RuntimeError("frozen external evaluation-unit universe is stale")
     forced_contract = external_contract.get("forced_swap") or {}
     if not bool(forced_contract.get("exclude_sample_from_full_evaluation")):
         raise RuntimeError("study freeze does not require pilot/full sample separation")
