@@ -5,9 +5,6 @@ from typing import Any, Sequence
 import json
 import time
 
-import numpy as np
-from sklearn.feature_extraction.text import HashingVectorizer
-
 from .api import Endpoint, OpenAICompatibleClient, request_log
 from .artifacts import create_artifact_attestation, require_artifact_attestation
 from .contracts import (
@@ -178,26 +175,22 @@ def evaluator_context(user: dict[str, Any], topic: dict[str, Any]) -> dict[str, 
 
 def _catalog(items: Sequence[MemoryItem], source: MemorySource, session_index: int) -> SourceCatalog:
     selected = [x for x in items if x.source is source]
-    hashvec = HashingVectorizer(
-        n_features=64,
-        alternate_sign=False,
-        norm="l2",
-        lowercase=True,
-        ngram_range=(1, 2),
+    # Imported lazily so the legacy EvoEmo module and PM-v2 data adapter share one
+    # deployable source-catalog contract without introducing an import cycle.
+    from .pm_v2_data import build_deployable_catalog_statistics
+
+    statistics = build_deployable_catalog_statistics(
+        texts=[item.text for item in selected],
+        created_sessions=[item.created_session for item in selected],
+        session_index=session_index,
     )
-    if selected:
-        fp = hashvec.transform(["\n".join(x.text for x in selected)]).toarray()[0]
-        ages = [session_index - x.created_session for x in selected]
-    else:
-        fp = np.zeros(64)
-        ages = []
     return SourceCatalog(
-        available=bool(selected),
-        count=len(selected),
-        min_age_sessions=min(ages) if ages else None,
-        max_age_sessions=max(ages) if ages else None,
-        estimated_tokens=sum(estimate_tokens(x.text) for x in selected),
-        catalog_fingerprint=[round(float(x), 8) for x in fp],
+        available=bool(statistics["available"]),
+        count=int(statistics["count"]),
+        min_age_sessions=statistics["min_age_sessions"],
+        max_age_sessions=statistics["max_age_sessions"],
+        estimated_tokens=int(statistics["estimated_tokens"]),
+        catalog_fingerprint=list(statistics["catalog_fingerprint"]),
     )
 
 
