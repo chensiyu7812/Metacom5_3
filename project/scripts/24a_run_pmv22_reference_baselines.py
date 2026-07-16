@@ -126,6 +126,16 @@ def main() -> None:
         / "human_approval.json",
     )
     parser.add_argument(
+        "--policy-checkpoint",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "pm_v2.joblib",
+    )
+    parser.add_argument(
+        "--policy-training-report",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v2_model" / "training_report.json",
+    )
+    parser.add_argument(
         "--fixed-tracks",
         type=Path,
         default=ROOT
@@ -257,6 +267,8 @@ def main() -> None:
         "evoemo_path": args.evoemo,
         "strategy_bank_path": args.strategy_bank,
         "fixed_tracks_path": args.fixed_tracks,
+        "policy_checkpoint_path": args.policy_checkpoint,
+        "policy_training_report_path": args.policy_training_report,
         "generator_endpoint": generator,
         "supporter_generation_contract": supporter_contract,
         "fixed_seeker_generation_treatment": fixed_payload,

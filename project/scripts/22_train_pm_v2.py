@@ -1113,6 +1113,7 @@ def main() -> None:
         "evaluator_contexts_sha256": evaluator_contexts.source_sha256,
         "evaluator_contexts_map_sha256": evaluator_contexts.map_sha256,
         "checkpoint": str(checkpoint),
+        "checkpoint_sha256": sha256_file(checkpoint),
         "training": model.training_report,
         "split_manifest": split_manifest.model_dump(mode="json"),
         "cross_split_near_duplicate_audit": cross_split_near_duplicate_audit,

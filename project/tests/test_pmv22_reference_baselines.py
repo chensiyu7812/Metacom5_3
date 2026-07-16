@@ -9,7 +9,7 @@ from metacom_pm.config import load_config
 from metacom_pm.contracts import StrategyCard
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.generation_contract import SupporterGenerationContract
-from metacom_pm.io import iter_jsonl, write_json, write_jsonl
+from metacom_pm.io import iter_jsonl, sha256_file, write_json, write_jsonl
 from metacom_pm.pm_v22_reference_baselines import (
     PMV22_REFERENCE_BASELINE_STAGE,
     REFERENCE_BASELINE_CONDITIONS,
@@ -45,6 +45,14 @@ class OneResultClient:
 
     def close(self) -> None:
         self.closed = True
+
+
+def test_policy_training_producer_writes_consumer_checkpoint_hash_contract() -> None:
+    producer = (ROOT / "scripts" / "22_train_pm_v2.py").read_text(
+        encoding="utf-8"
+    )
+
+    assert '"checkpoint_sha256": sha256_file(checkpoint)' in producer
 
 
 def _user_and_topic() -> tuple[dict, dict]:
@@ -164,11 +172,26 @@ def _write_inputs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict:
         strategy_approval,
     ):
         path.write_text("test\n", encoding="utf-8")
+    policy_checkpoint = tmp_path / "pm_v2.joblib"
+    policy_checkpoint.write_bytes(b"locked policy checkpoint")
+    policy_training_report = tmp_path / "training_report.json"
+    write_json(
+        policy_training_report,
+        {
+            "status": "COMPLETE",
+            "checkpoint": str(policy_checkpoint),
+            "checkpoint_sha256": sha256_file(policy_checkpoint),
+            "require_learned_routing_advantage_before_external": True,
+            "learned_routing_advantage_verified": True,
+        },
+    )
     config = load_config(ROOT / "configs" / "pm_v2.yaml")
     return {
         "evoemo_path": evoemo,
         "strategy_bank_path": strategy,
         "fixed_tracks_path": fixed_tracks,
+        "policy_checkpoint_path": policy_checkpoint,
+        "policy_training_report_path": policy_training_report,
         "fixed_tracks_attestation_path": fixed_attestation,
         "pm_v2_config_path": config_path,
         "evidence_filter_checkpoint_path": evidence_checkpoint,
@@ -250,6 +273,16 @@ def test_dry_run_is_exact_four_condition_sparse_matrix_and_positive_price(
         row["fixed_seeker_generation_treatment_sha256"]
         == values["fixed_seeker_generation_treatment_sha256"]
         for row in plan
+    )
+    policy_sha256 = sha256_file(values["policy_checkpoint_path"])
+    assert first["policy_checkpoint_sha256"] == policy_sha256
+    assert first["policy_lock_timing"] == (
+        "before_first_reference_baseline_api_call"
+    )
+    assert first["post_generation_policy_tuning_prohibited"] is True
+    assert all(row["policy_checkpoint_sha256"] == policy_sha256 for row in plan)
+    assert all(
+        row["post_generation_policy_tuning_prohibited"] is True for row in plan
     )
     contracts = first["evidence_processing_contracts"]
     assert contracts["best_fixed"]["memory_processing"] == (
@@ -379,6 +412,66 @@ def test_run_rejects_wrong_accepted_hash_before_client_creation(
     assert created == 0
 
 
+def test_missing_policy_checkpoint_blocks_dry_run(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    values = _write_inputs(tmp_path, monkeypatch)
+    values["policy_checkpoint_path"].unlink()
+
+    with pytest.raises(FileNotFoundError, match="final PM-v2 policy checkpoint"):
+        plan_reference_baselines(**_plan_kwargs(values))
+
+
+def test_policy_checkpoint_drift_after_dry_run_blocks_before_client(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    values = _write_inputs(tmp_path, monkeypatch)
+    plan_kwargs = _plan_kwargs(values)
+    estimate, plan = plan_reference_baselines(**plan_kwargs)
+    out_dir = tmp_path / PMV22_REFERENCE_BASELINE_STAGE
+    persist_reference_baseline_dry_run(
+        out_dir, cost_estimate=estimate, call_plan=plan
+    )
+    values["policy_checkpoint_path"].write_bytes(b"post-plan policy drift")
+    created = 0
+
+    def factory(_endpoint):
+        nonlocal created
+        created += 1
+        raise AssertionError("must not create client")
+
+    with pytest.raises(
+        RuntimeError,
+        match="training report does not bind the selected checkpoint SHA-256",
+    ):
+        run_reference_baselines(
+            out_dir=out_dir,
+            fixed_tracks_attestation_path=values[
+                "fixed_tracks_attestation_path"
+            ],
+            pm_v2_config_path=values["pm_v2_config_path"],
+            evidence_filter_checkpoint_path=values[
+                "evidence_filter_checkpoint_path"
+            ],
+            evidence_filter_report_path=values[
+                "evidence_filter_report_path"
+            ],
+            evidence_filter_attestation_path=values[
+                "evidence_filter_attestation_path"
+            ],
+            strategy_bank_approval_path=values[
+                "strategy_bank_approval_path"
+            ],
+            strategy_bank_approval={"status": "APPROVED_FOR_TEST"},
+            accepted_cost_estimate_sha256=estimate[
+                "cost_estimate_sha256"
+            ],
+            client_factory=factory,
+            **plan_kwargs,
+        )
+    assert created == 0
+
+
 def test_complete_fake_run_attests_every_condition_and_unit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -437,6 +530,10 @@ def test_complete_fake_run_attests_every_condition_and_unit(
     assert summary["status"] == "COMPLETE"
     assert summary["completed_turns"] == 4
     assert summary["non_complete_finish_reason_count"] == 0
+    assert summary["policy_checkpoint_sha256"] == sha256_file(
+        values["policy_checkpoint_path"]
+    )
+    assert summary["post_generation_policy_tuning_prohibited"] is True
     assert client.calls == 4
     assert client.closed is True
     turns = list(iter_jsonl(out_dir / "turns.jsonl"))
@@ -448,3 +545,8 @@ def test_complete_fake_run_attests_every_condition_and_unit(
     attestation = load_config(out_dir / "artifact_attestation.json")
     assert attestation["stage"] == PMV22_REFERENCE_BASELINE_STAGE
     assert attestation["outputs"]["turns"]["rows"] == 4
+    assert "policy_checkpoint" in attestation["inputs"]
+    assert "policy_training_report" in attestation["inputs"]
+    assert attestation["parameters"]["policy_lock_timing"] == (
+        "before_first_reference_baseline_api_call"
+    )

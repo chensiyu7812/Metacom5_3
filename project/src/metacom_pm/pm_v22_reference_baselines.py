@@ -63,6 +63,64 @@ REFERENCE_BASELINE_CONDITIONS = (
     "session_rag_rs",
     "full_history_rs",
 )
+POLICY_LOCK_TIMING = "before_first_reference_baseline_api_call"
+POST_GENERATION_POLICY_TUNING_PROHIBITED = True
+POLICY_LOCK_FIELDS = (
+    "policy_checkpoint_sha256",
+    "policy_training_report_sha256",
+    "policy_lock_timing",
+    "post_generation_policy_tuning_prohibited",
+)
+
+
+def require_reference_policy_lock(
+    *,
+    policy_checkpoint_path: str | Path,
+    policy_training_report_path: str | Path,
+) -> dict[str, Any]:
+    """Bind the already-selected PM before any reference response can exist."""
+
+    checkpoint = Path(policy_checkpoint_path)
+    report_path = Path(policy_training_report_path)
+    if not checkpoint.is_file():
+        raise FileNotFoundError(
+            "reference-baseline planning requires the final PM-v2 policy "
+            f"checkpoint: {checkpoint}"
+        )
+    if not report_path.is_file():
+        raise FileNotFoundError(
+            "reference-baseline planning requires the final PM-v2 training "
+            f"report: {report_path}"
+        )
+    report = read_json(report_path)
+    if (
+        report.get("status") != "COMPLETE"
+        or report.get("require_learned_routing_advantage_before_external")
+        is not True
+        or report.get("learned_routing_advantage_verified") is not True
+    ):
+        raise RuntimeError(
+            "reference baselines require a final policy whose training report "
+            "passed the frozen learned-routing gate"
+        )
+    reported_checkpoint = str(report.get("checkpoint") or "")
+    if not reported_checkpoint or Path(reported_checkpoint).name != checkpoint.name:
+        raise RuntimeError(
+            "policy training report does not identify the selected checkpoint"
+        )
+    checkpoint_sha256 = sha256_file(checkpoint)
+    if report.get("checkpoint_sha256") != checkpoint_sha256:
+        raise RuntimeError(
+            "policy training report does not bind the selected checkpoint SHA-256"
+        )
+    return {
+        "policy_checkpoint_sha256": checkpoint_sha256,
+        "policy_training_report_sha256": sha256_file(report_path),
+        "policy_lock_timing": POLICY_LOCK_TIMING,
+        "post_generation_policy_tuning_prohibited": (
+            POST_GENERATION_POLICY_TUNING_PROHIBITED
+        ),
+    }
 
 
 def generator_endpoint_payload(endpoint: Endpoint) -> dict[str, str]:
@@ -396,6 +454,7 @@ def iter_prepared_reference_calls(
     evidence_processing_contracts_sha256: str,
     evidence_filter_config: EvidenceFilterConfig,
     evidence_filter_model: Any,
+    policy_lock: Mapping[str, Any],
     simulator_id: str,
     max_turns: int,
     seeds: Sequence[int],
@@ -546,6 +605,7 @@ def iter_prepared_reference_calls(
                             "evidence_processing_contract_sha256": (
                                 evidence_contract_sha256
                             ),
+                            **dict(policy_lock),
                         },
                     )
                     selected_memory_rows = _serialize_evidence(selected_memory)
@@ -607,6 +667,7 @@ def iter_prepared_reference_calls(
                         "evidence_processing_contract_sha256": (
                             evidence_contract_sha256
                         ),
+                        **dict(policy_lock),
                     }
                     yield PreparedReferenceCall(
                         plan=plan,
@@ -630,6 +691,8 @@ def plan_reference_baselines(
     evoemo_path: str | Path,
     strategy_bank_path: str | Path,
     fixed_tracks_path: str | Path,
+    policy_checkpoint_path: str | Path,
+    policy_training_report_path: str | Path,
     generator_endpoint: Endpoint,
     supporter_generation_contract: SupporterGenerationContract,
     fixed_seeker_generation_treatment: Mapping[str, Any],
@@ -666,6 +729,10 @@ def plan_reference_baselines(
         raise ValueError("reference-baseline planning requires positive prices")
     if float(input_token_safety_factor) < 1.0:
         raise ValueError("input-token safety factor must be at least one")
+    policy_lock = require_reference_policy_lock(
+        policy_checkpoint_path=policy_checkpoint_path,
+        policy_training_report_path=policy_training_report_path,
+    )
 
     scenarios = _scenarios(evoemo_path)
     evaluation_unit_contract, units = build_reference_evaluation_unit_contract(
@@ -705,6 +772,7 @@ def plan_reference_baselines(
         evidence_processing_contracts_sha256=evidence_contract_sha256,
         evidence_filter_config=evidence_filter_config,
         evidence_filter_model=evidence_filter_model,
+        policy_lock=policy_lock,
         simulator_id=simulator_id,
         max_turns=max_turns,
         seeds=seeds,
@@ -769,6 +837,7 @@ def plan_reference_baselines(
         ),
         "evidence_filter_config_sha256": evidence_filter_config.digest(),
         "evidence_filter_model": dict(evidence_filter_model_binding),
+        **policy_lock,
         "simulator_id": simulator_id,
         "max_turns": int(max_turns),
         "seeds": seeds,
@@ -952,6 +1021,7 @@ def _reconcile_reference_turns(
                 != planned.get("fixed_seeker_generation_treatment_sha256")
                 or row.get("evidence_processing_contract_sha256")
                 != planned.get("evidence_processing_contract_sha256")
+                or any(row.get(key) != planned.get(key) for key in POLICY_LOCK_FIELDS)
                 or row.get("normalized_finish_reason") != "complete"
             ):
                 raise RuntimeError(
@@ -966,6 +1036,8 @@ def run_reference_baselines(
     evoemo_path: str | Path,
     strategy_bank_path: str | Path,
     fixed_tracks_path: str | Path,
+    policy_checkpoint_path: str | Path,
+    policy_training_report_path: str | Path,
     fixed_tracks_attestation_path: str | Path,
     pm_v2_config_path: str | Path,
     evidence_filter_checkpoint_path: str | Path,
@@ -1002,6 +1074,8 @@ def run_reference_baselines(
         evoemo_path=evoemo_path,
         strategy_bank_path=strategy_bank_path,
         fixed_tracks_path=fixed_tracks_path,
+        policy_checkpoint_path=policy_checkpoint_path,
+        policy_training_report_path=policy_training_report_path,
         generator_endpoint=generator_endpoint,
         supporter_generation_contract=supporter_generation_contract,
         fixed_seeker_generation_treatment=fixed_seeker_generation_treatment,
@@ -1064,6 +1138,16 @@ def run_reference_baselines(
         "seeds": [int(value) for value in seeds],
         "evaluation_unit_contract": cost_estimate["evaluation_unit_contract"],
         "paid_generation_scope": "frozen_evaluation_turns_only",
+        "policy_checkpoint_sha256": cost_estimate[
+            "policy_checkpoint_sha256"
+        ],
+        "policy_training_report_sha256": cost_estimate[
+            "policy_training_report_sha256"
+        ],
+        "policy_lock_timing": cost_estimate["policy_lock_timing"],
+        "post_generation_policy_tuning_prohibited": cost_estimate[
+            "post_generation_policy_tuning_prohibited"
+        ],
     }
     manifest = ensure_run_manifest(
         manifest_path,
@@ -1166,6 +1250,18 @@ def run_reference_baselines(
             ),
             evidence_filter_config=evidence_filter_config,
             evidence_filter_model=evidence_filter_model,
+            policy_lock={
+                "policy_checkpoint_sha256": cost_estimate[
+                    "policy_checkpoint_sha256"
+                ],
+                "policy_training_report_sha256": cost_estimate[
+                    "policy_training_report_sha256"
+                ],
+                "policy_lock_timing": cost_estimate["policy_lock_timing"],
+                "post_generation_policy_tuning_prohibited": cost_estimate[
+                    "post_generation_policy_tuning_prohibited"
+                ],
+            },
             simulator_id=simulator_id,
             max_turns=max_turns,
             seeds=seeds,
@@ -1263,6 +1359,7 @@ def run_reference_baselines(
                         "evidence_processing_contract_sha256": planned[
                             "evidence_processing_contract_sha256"
                         ],
+                        **{key: planned[key] for key in POLICY_LOCK_FIELDS},
                     }
                 )
                 append_jsonl(raw_path, raw)
@@ -1336,6 +1433,7 @@ def run_reference_baselines(
                     "evidence_processing_contract_sha256": planned[
                         "evidence_processing_contract_sha256"
                     ],
+                    **{key: planned[key] for key in POLICY_LOCK_FIELDS},
                 }
             )
             append_jsonl(raw_path, raw)
@@ -1471,6 +1569,7 @@ def run_reference_baselines(
                 "evidence_processing_contract_sha256": planned[
                     "evidence_processing_contract_sha256"
                 ],
+                **{key: planned[key] for key in POLICY_LOCK_FIELDS},
                 "physical_call_key": call_key,
                 "physical_attempt_index": reservation.attempt_index,
                 "physical_attempt_key": reservation.attempt_key,
@@ -1530,6 +1629,8 @@ def run_reference_baselines(
         inputs={
             "evoemo": evoemo_path,
             "strategy_bank": strategy_bank_path,
+            "policy_checkpoint": policy_checkpoint_path,
+            "policy_training_report": policy_training_report_path,
             "pm_v2_config": pm_v2_config_path,
             "evidence_filter_checkpoint": evidence_filter_checkpoint_path,
             "evidence_filter_report": evidence_filter_report_path,
