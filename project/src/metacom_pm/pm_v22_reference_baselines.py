@@ -73,6 +73,80 @@ POLICY_LOCK_FIELDS = (
 )
 
 
+def build_raw_generation_contract_gate(
+    *,
+    raw_rows: Sequence[Mapping[str, Any]],
+    call_plan: Sequence[Mapping[str, Any]],
+    supporter_generation_treatment: Mapping[str, Any],
+    supporter_generation_treatment_sha256: str,
+    fixed_seeker_generation_treatment: Mapping[str, Any],
+    fixed_seeker_generation_treatment_sha256: str,
+    evidence_processing_contracts: Mapping[str, Mapping[str, Any]],
+    policy_lock: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Return the explicit all-raw-row gate required before COMPLETE."""
+
+    expected_keys = {str(row.get("call_key") or "") for row in call_plan}
+    observed_keys = {
+        str(row.get("physical_call_key") or "") for row in raw_rows
+    }
+    expected_rows = len(call_plan)
+    observed_rows = len(raw_rows)
+    normalized_evidence = {
+        str(key): dict(value) for key, value in evidence_processing_contracts.items()
+    }
+    checks = {
+        "row_count_exact": observed_rows == expected_rows,
+        "call_keys_exact": (
+            "" not in expected_keys
+            and "" not in observed_keys
+            and len(expected_keys) == expected_rows
+            and len(observed_keys) == observed_rows
+            and observed_keys == expected_keys
+        ),
+        "finish_reasons_complete": all(
+            row.get("normalized_finish_reason") == "complete" for row in raw_rows
+        ),
+        "errors_absent": all(row.get("error") in (None, "") for row in raw_rows),
+        "supporter_generation_treatment_exact": all(
+            row.get("supporter_generation_treatment")
+            == dict(supporter_generation_treatment)
+            and row.get("supporter_generation_treatment_sha256")
+            == supporter_generation_treatment_sha256
+            for row in raw_rows
+        ),
+        "fixed_seeker_generation_treatment_exact": all(
+            row.get("fixed_seeker_generation_treatment")
+            == dict(fixed_seeker_generation_treatment)
+            and row.get("fixed_seeker_generation_treatment_sha256")
+            == fixed_seeker_generation_treatment_sha256
+            for row in raw_rows
+        ),
+        "evidence_processing_contract_exact": all(
+            str(row.get("condition") or "") in normalized_evidence
+            and row.get("evidence_processing_contract")
+            == normalized_evidence[str(row.get("condition") or "")]
+            and row.get("evidence_processing_contract_sha256")
+            == sha256_text(
+                canonical_json(
+                    normalized_evidence[str(row.get("condition") or "")]
+                )
+            )
+            for row in raw_rows
+        ),
+        "policy_lock_exact": all(
+            all(row.get(key) == policy_lock.get(key) for key in POLICY_LOCK_FIELDS)
+            for row in raw_rows
+        ),
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "FAIL",
+        "expected_rows": expected_rows,
+        "observed_rows": observed_rows,
+        **checks,
+    }
+
+
 def require_reference_policy_lock(
     *,
     policy_checkpoint_path: str | Path,
@@ -1593,13 +1667,31 @@ def run_reference_baselines(
     ):
         raise RuntimeError("PM-v2.2 reference-baseline generation is incomplete")
     raw_rows = [dict(row) for row in iter_jsonl(raw_path)]
-    if (
-        len(raw_rows) != len(call_plan)
-        or {str(row.get("physical_call_key") or "") for row in raw_rows}
-        != set(expected_calls)
-        or any(row.get("normalized_finish_reason") != "complete" for row in raw_rows)
-    ):
-        raise RuntimeError("reference-baseline raw-call matrix is incomplete")
+    raw_generation_contract_gate = build_raw_generation_contract_gate(
+        raw_rows=raw_rows,
+        call_plan=call_plan,
+        supporter_generation_treatment=common_contract[
+            "supporter_generation_treatment"
+        ],
+        supporter_generation_treatment_sha256=common_contract[
+            "supporter_generation_treatment_sha256"
+        ],
+        fixed_seeker_generation_treatment=common_contract[
+            "fixed_seeker_generation_treatment"
+        ],
+        fixed_seeker_generation_treatment_sha256=common_contract[
+            "fixed_seeker_generation_treatment_sha256"
+        ],
+        evidence_processing_contracts=common_contract[
+            "evidence_processing_contracts"
+        ],
+        policy_lock={key: common_contract[key] for key in POLICY_LOCK_FIELDS},
+    )
+    if raw_generation_contract_gate["status"] != "PASS":
+        raise RuntimeError(
+            "reference-baseline raw-generation contract gate failed: "
+            f"{raw_generation_contract_gate}"
+        )
     summary = {
         "status": "COMPLETE",
         "stage": PMV22_REFERENCE_BASELINE_STAGE,
@@ -1621,6 +1713,7 @@ def run_reference_baselines(
         "evidence_filter_config_sha256": evidence_filter_config.digest(),
         "evidence_filter_model": dict(evidence_filter_model_binding),
         "strategy_bank_approval": dict(strategy_bank_approval),
+        "raw_generation_contract_gate": raw_generation_contract_gate,
     }
     write_json(summary_path, summary)
     create_artifact_attestation(
@@ -1673,6 +1766,7 @@ def run_reference_baselines(
                 PHYSICAL_ATTEMPT_LEDGER_PROTOCOL
             ),
             "maximum_physical_http_attempts_authorized": len(expected_calls),
+            "raw_generation_contract_gate": raw_generation_contract_gate,
         },
         expected={
             "turns": len(call_plan),
@@ -1683,6 +1777,7 @@ def run_reference_baselines(
             "accepted_normalized_finish_reasons": ["complete"],
             "non_complete_finish_reason_count": 0,
             "maximum_physical_attempts_per_logical_call": 1,
+            "raw_generation_contract_gate": raw_generation_contract_gate,
         },
     )
     return summary

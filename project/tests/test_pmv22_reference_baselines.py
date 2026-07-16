@@ -12,7 +12,9 @@ from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import iter_jsonl, sha256_file, write_json, write_jsonl
 from metacom_pm.pm_v22_reference_baselines import (
     PMV22_REFERENCE_BASELINE_STAGE,
+    POLICY_LOCK_FIELDS,
     REFERENCE_BASELINE_CONDITIONS,
+    build_raw_generation_contract_gate,
     persist_reference_baseline_dry_run,
     plan_reference_baselines,
     run_reference_baselines,
@@ -296,6 +298,87 @@ def test_dry_run_is_exact_four_condition_sparse_matrix_and_positive_price(
     )
 
 
+def test_raw_generation_gate_rejects_noncomplete_error_and_mixed_contract(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    values = _write_inputs(tmp_path, monkeypatch)
+    estimate, plan = plan_reference_baselines(**_plan_kwargs(values))
+    raw_rows = [
+        {
+            "condition": row["condition"],
+            "physical_call_key": row["call_key"],
+            "normalized_finish_reason": "complete",
+            "error": None,
+            "supporter_generation_treatment": row[
+                "supporter_generation_treatment"
+            ],
+            "supporter_generation_treatment_sha256": row[
+                "supporter_generation_treatment_sha256"
+            ],
+            "fixed_seeker_generation_treatment": row[
+                "fixed_seeker_generation_treatment"
+            ],
+            "fixed_seeker_generation_treatment_sha256": row[
+                "fixed_seeker_generation_treatment_sha256"
+            ],
+            "evidence_processing_contract": row[
+                "evidence_processing_contract"
+            ],
+            "evidence_processing_contract_sha256": row[
+                "evidence_processing_contract_sha256"
+            ],
+            **{key: row[key] for key in POLICY_LOCK_FIELDS},
+        }
+        for row in plan
+    ]
+    kwargs = {
+        "call_plan": plan,
+        "supporter_generation_treatment": estimate[
+            "supporter_generation_treatment"
+        ],
+        "supporter_generation_treatment_sha256": estimate[
+            "supporter_generation_treatment_sha256"
+        ],
+        "fixed_seeker_generation_treatment": estimate[
+            "fixed_seeker_generation_treatment"
+        ],
+        "fixed_seeker_generation_treatment_sha256": estimate[
+            "fixed_seeker_generation_treatment_sha256"
+        ],
+        "evidence_processing_contracts": estimate[
+            "evidence_processing_contracts"
+        ],
+        "policy_lock": {key: estimate[key] for key in POLICY_LOCK_FIELDS},
+    }
+    passing = build_raw_generation_contract_gate(raw_rows=raw_rows, **kwargs)
+    assert passing["status"] == "PASS"
+    assert all(
+        passing[key] is True
+        for key in (
+            "row_count_exact",
+            "call_keys_exact",
+            "finish_reasons_complete",
+            "errors_absent",
+            "supporter_generation_treatment_exact",
+            "fixed_seeker_generation_treatment_exact",
+            "evidence_processing_contract_exact",
+            "policy_lock_exact",
+        )
+    )
+
+    mixed = [dict(row) for row in raw_rows]
+    mixed[0]["normalized_finish_reason"] = "length"
+    mixed[1]["error"] = "provider error"
+    mixed[2]["supporter_generation_treatment_sha256"] = "0" * 64
+    mixed[3]["policy_checkpoint_sha256"] = "f" * 64
+    failed = build_raw_generation_contract_gate(raw_rows=mixed, **kwargs)
+    assert failed["status"] == "FAIL"
+    assert failed["finish_reasons_complete"] is False
+    assert failed["errors_absent"] is False
+    assert failed["supporter_generation_treatment_exact"] is False
+    assert failed["policy_lock_exact"] is False
+
+
 def test_truncated_response_is_failed_once_raw_retained_and_no_turn_written(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -534,6 +617,9 @@ def test_complete_fake_run_attests_every_condition_and_unit(
         values["policy_checkpoint_path"]
     )
     assert summary["post_generation_policy_tuning_prohibited"] is True
+    raw_gate = summary["raw_generation_contract_gate"]
+    assert raw_gate["status"] == "PASS"
+    assert raw_gate["observed_rows"] == 4
     assert client.calls == 4
     assert client.closed is True
     turns = list(iter_jsonl(out_dir / "turns.jsonl"))
@@ -550,3 +636,5 @@ def test_complete_fake_run_attests_every_condition_and_unit(
     assert attestation["parameters"]["policy_lock_timing"] == (
         "before_first_reference_baseline_api_call"
     )
+    assert attestation["parameters"]["raw_generation_contract_gate"] == raw_gate
+    assert attestation["expected"]["raw_generation_contract_gate"] == raw_gate
