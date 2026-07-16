@@ -17,3 +17,22 @@ raw_judge_calls.jsonl
 
 outputs/tmp/
 tmp/
+
+# PM-v2 generated data and research provenance stay local or in the
+# content-addressed artifact vault.  Public, sanitized summaries should be
+# promoted into docs/ explicitly instead of committing an entire run folder.
+/project/data/pm_v2/
+/project/outputs/pm_v2*/
+/project/outputs/strategy_rag_v1_*/
+
+# Local migration/integrity reports contain machine paths and immediately
+# become stale when the workspace changes.
+/MIGRATION_REPORT_ZH.md
+/MIGRATION_SHA256SUMS.txt
+/project/migration_preflight.json
+
+# Never stage private blinding maps or append-only paid-attempt provenance by
+# accident, even when they are created outside the standard PM-v2 directories.
+**/private_condition_mapping.jsonl
+**/physical_attempt_ledger.jsonl
+**/failed_attempt_*.json
