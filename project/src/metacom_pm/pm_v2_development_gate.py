@@ -143,8 +143,8 @@ def require_development_pilot_gate(
 
     experiment_config = load_config(experiment_config_path)
     pm_v2_config = load_config(pm_v2_config_path)
-    if pm_v2_config.get("version") != "pm-v2.1":
-        raise RuntimeError("development pilot gate requires PM-v2.1")
+    if pm_v2_config.get("version") != "pm-v2.2":
+        raise RuntimeError("development pilot gate requires PM-v2.2")
     pilot_config = dict(
         pm_v2_config["development_judging"]["compatibility_pilot"]
     )
@@ -259,7 +259,7 @@ def require_development_pilot_gate(
     )
     expected_sweep_binding_base = {
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
-        "pm_v2_version": "pm-v2.1",
+        "pm_v2_version": "pm-v2.2",
         "development_sweep": dict(pm_v2_config["development_sweep"]),
         "retrieval": dict(pm_v2_config["retrieval"]),
         "semantic_sanity": dict(semantic_sanity),

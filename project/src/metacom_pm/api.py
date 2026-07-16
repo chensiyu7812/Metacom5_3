@@ -4,13 +4,16 @@ import json
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Mapping, TypeVar, Type
+from typing import Any, Literal, Mapping, TypeVar, Type
 import httpx
 from pydantic import BaseModel, ValidationError
 
 from .io import canonical_json, sha256_text, utc_now
 
 T = TypeVar("T", bound=BaseModel)
+NormalizedFinishReason = Literal[
+    "complete", "length", "tool_call", "content_filter", "unknown"
+]
 ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME = "submit_structured_response"
 OPENAI_UNSUPPORTED_STRICT_SCHEMA_KEYWORDS = frozenset(
     {
@@ -50,6 +53,36 @@ class CallResult:
     usage: dict[str, int]
     latency_ms: float
     request_hash: str
+    provider_finish_reason: str | None = None
+    normalized_finish_reason: NormalizedFinishReason = "unknown"
+
+
+def normalize_provider_finish_reason(
+    raw_response: Mapping[str, Any],
+) -> tuple[str | None, NormalizedFinishReason]:
+    """Extract and normalize OpenAI-compatible or Anthropic finish metadata."""
+
+    provider_reason: str | None = None
+    choices = raw_response.get("choices")
+    if isinstance(choices, list) and choices and isinstance(choices[0], Mapping):
+        raw_reason = choices[0].get("finish_reason")
+        if raw_reason is not None:
+            provider_reason = str(raw_reason)
+    elif raw_response.get("stop_reason") is not None:
+        provider_reason = str(raw_response.get("stop_reason"))
+
+    if provider_reason is None or not provider_reason.strip():
+        return provider_reason, "unknown"
+    normalized = provider_reason.strip().casefold()
+    if normalized in {"stop", "end_turn", "stop_sequence"}:
+        return provider_reason, "complete"
+    if normalized in {"length", "max_tokens", "model_context_window_exceeded"}:
+        return provider_reason, "length"
+    if normalized in {"tool_calls", "tool_call", "function_call", "tool_use"}:
+        return provider_reason, "tool_call"
+    if normalized in {"content_filter", "refusal"}:
+        return provider_reason, "content_filter"
+    return provider_reason, "unknown"
 
 
 class ProviderRequestError(RuntimeError):
@@ -378,12 +411,17 @@ class OpenAICompatibleClient:
                     "completion_tokens": int(usage_raw.get("completion_tokens") or 0),
                     "total_tokens": int(usage_raw.get("total_tokens") or 0),
                 }
+                provider_finish_reason, normalized_finish_reason = (
+                    normalize_provider_finish_reason(body)
+                )
                 call = CallResult(
                     text=text.strip(),
                     raw_response=body,
                     usage=usage,
                     latency_ms=(time.perf_counter() - started) * 1000,
                     request_hash=request_hash,
+                    provider_finish_reason=provider_finish_reason,
+                    normalized_finish_reason=normalized_finish_reason,
                 )
                 if response_schema is None:
                     return call, None
@@ -507,12 +545,17 @@ class AnthropicClient:
                         + (usage_raw.get("output_tokens") or 0)
                     ),
                 }
+                provider_finish_reason, normalized_finish_reason = (
+                    normalize_provider_finish_reason(body)
+                )
                 call = CallResult(
                     text=text.strip(),
                     raw_response=body,
                     usage=usage,
                     latency_ms=(time.perf_counter() - started) * 1000,
                     request_hash=request_hash,
+                    provider_finish_reason=provider_finish_reason,
+                    normalized_finish_reason=normalized_finish_reason,
                 )
                 if response_schema is None:
                     return call, None
@@ -564,6 +607,13 @@ def request_log(
         "request_hash": result.request_hash if result else None,
         "raw_text": result.text if result else None,
         "raw_response": result.raw_response if result else None,
+        "provider_finish_reason": result.provider_finish_reason if result else None,
+        "normalized_finish_reason": (
+            result.normalized_finish_reason if result else None
+        ),
+        "completion_truncated": (
+            result.normalized_finish_reason == "length" if result else None
+        ),
         "validated": parsed.model_dump(mode="json") if parsed else None,
         "usage": result.usage if result else None,
         "latency_ms": result.latency_ms if result else None,

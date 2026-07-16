@@ -77,8 +77,8 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_config(args.pm_v2_config)
-    if config.get("version") != "pm-v2.1":
-        raise RuntimeError("development pilot requires PM-v2.1 config")
+    if config.get("version") != "pm-v2.2":
+        raise RuntimeError("development pilot requires PM-v2.2 config")
     pilot = dict(config["development_judging"]["compatibility_pilot"])
     states = load_states(args.states)
     contexts = load_evaluator_context_index(

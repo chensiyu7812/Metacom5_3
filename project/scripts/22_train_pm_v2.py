@@ -771,7 +771,7 @@ def main() -> None:
     args = parser.parse_args()
 
     pm_config = load_config(args.pm_v2_config)
-    if pm_config.get("version") != "pm-v2.1":
+    if pm_config.get("version") != "pm-v2.2":
         raise ValueError("unsupported PM-v2 config version")
     model_cfg = pm_config["model"]
     feature_cfg = pm_config["features"]

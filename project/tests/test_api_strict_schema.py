@@ -7,12 +7,15 @@ import pytest
 from pydantic import model_validator
 
 from metacom_pm.api import (
+    CallResult,
     Endpoint,
     OpenAICompatibleClient,
     ProviderRequestError,
     StructuredOutputValidationError,
     chat_request_payload,
+    normalize_provider_finish_reason,
     openai_strict_json_schema,
+    request_log,
 )
 from metacom_pm.pm_v2_data import GeneratedBundleDraft, GeneratedUserBundle
 from metacom_pm.pm_v2_contracts import StrictModel
@@ -172,7 +175,12 @@ def test_paid_structured_response_survives_local_semantic_rejection(
                 request=httpx.Request("POST", f"https://api.openai.com{path}"),
                 json={
                     "id": "paid-response-id",
-                    "choices": [{"message": {"content": '{"value":1}'}}],
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {"content": '{"value":1}'},
+                        }
+                    ],
                     "usage": {
                         "prompt_tokens": 12,
                         "completion_tokens": 4,
@@ -199,6 +207,8 @@ def test_paid_structured_response_survives_local_semantic_rejection(
         "completion_tokens": 4,
         "total_tokens": 16,
     }
+    assert failure.call.provider_finish_reason == "stop"
+    assert failure.call.normalized_finish_reason == "complete"
     assert failure.validation_errors[0]["loc"] == []
 
 
@@ -219,3 +229,69 @@ def test_chat_payload_binds_the_locally_validated_schema() -> None:
     assert payload["response_format"]["json_schema"]["schema"] == (
         openai_strict_json_schema(GeneratedBundleDraft)
     )
+
+
+@pytest.mark.parametrize(
+    ("raw_response", "provider_reason", "normalized_reason"),
+    (
+        ({"choices": [{"finish_reason": "stop"}]}, "stop", "complete"),
+        ({"choices": [{"finish_reason": "length"}]}, "length", "length"),
+        ({"choices": [{"finish_reason": "tool_calls"}]}, "tool_calls", "tool_call"),
+        (
+            {"choices": [{"finish_reason": "content_filter"}]},
+            "content_filter",
+            "content_filter",
+        ),
+        ({"stop_reason": "end_turn"}, "end_turn", "complete"),
+        ({"stop_reason": "max_tokens"}, "max_tokens", "length"),
+        ({"stop_reason": "tool_use"}, "tool_use", "tool_call"),
+        (
+            {"stop_reason": "future_provider_reason"},
+            "future_provider_reason",
+            "unknown",
+        ),
+        ({"choices": [{}]}, None, "unknown"),
+        ({"content": []}, None, "unknown"),
+    ),
+)
+def test_provider_finish_reasons_are_normalized_without_losing_raw_value(
+    raw_response: dict[str, Any],
+    provider_reason: str | None,
+    normalized_reason: str,
+) -> None:
+    assert normalize_provider_finish_reason(raw_response) == (
+        provider_reason,
+        normalized_reason,
+    )
+
+
+def test_request_log_exposes_truncation_as_first_class_metadata() -> None:
+    endpoint = Endpoint(
+        base_url="https://api.openai.com",
+        model="gpt-4o-mini",
+        api_key_env="IGNORED",
+    )
+    result = CallResult(
+        text="Incomplete response",
+        raw_response={"choices": [{"finish_reason": "length"}]},
+        usage={"prompt_tokens": 12, "completion_tokens": 4, "total_tokens": 16},
+        latency_ms=10.0,
+        request_hash="request-hash",
+        provider_finish_reason="length",
+        normalized_finish_reason="length",
+    )
+
+    log = request_log(
+        stage="supporter_generation",
+        endpoint=endpoint,
+        messages=[{"role": "user", "content": "Generate."}],
+        result=result,
+        parsed=None,
+        error=None,
+        prompt_hash="prompt-hash",
+        record_ids={"state_id": "state-001"},
+    )
+
+    assert log["provider_finish_reason"] == "length"
+    assert log["normalized_finish_reason"] == "length"
+    assert log["completion_truncated"] is True

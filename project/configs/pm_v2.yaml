@@ -1,4 +1,4 @@
-version: pm-v2.1
+version: pm-v2.2
 
 api_cost_planning:
   # Provider-neutral char/token estimates are multiplied by this frozen margin.
@@ -9,6 +9,22 @@ api_cost_planning:
 action_space:
   memory_subsets: [M0, MP, MS, ME, MPMS, MPE, MSE, MPMSME]
   strategy_modes: [R0, RS]
+
+# One reportable supporter-generation treatment shared by development and
+# external response generation.  Stage runners are migrated to this contract
+# explicitly; no caller may substitute a different prompt or output cap.
+supporter_generation_treatment:
+  version: pm-v2.2-supporter-generation-v1
+  generator_endpoint: generator
+  system_prompt_id: selective_esmem_v1
+  system_prompt_sha256: a0313589ed0da2e45ea5dc411d3edd504f77fabb516fe6c262eb38fbb13c3a59
+  temperature: 0.0
+  max_output_tokens: 300
+  output_normalization: normalize_space_v1
+  finish_reason_protocol: pm-v2-finish-reason-v1
+  accepted_normalized_finish_reasons: [complete]
+  reject_length: true
+  reject_missing_or_unknown: true
 
 data_generation:
   generator_endpoint: synthetic_generator
@@ -212,15 +228,12 @@ evidence_filter_training:
   require_before_development_sweep: true
 
 development_sweep:
-  generator_endpoint: generator
   # The hosted NVIDIA research endpoint is currently free for prototyping.
   # Use a non-zero conservative budget-accounting proxy so the accepted cost
   # gate cannot be collapsed by passing CLI zeros; this is not an invoice rate.
   pricing_usd_per_mtok:
     input: 0.15
     output: 0.60
-  temperature: 0.0
-  max_output_tokens: 300
   seed: 4311
   request_retries: 1
   fail_fast: true
@@ -490,8 +503,6 @@ external_evaluation:
   minimum_low_mad_coverage_per_condition_dimension: 0.80
   latency_role: diagnostic_only
   require_forced_swap_or_human_check_for_key_claims: true
-  generator_endpoint: generator
-  generation_protocol: selective
   simulator_id: seeker_main
   max_turns: 10
   turn_indices: [3, 8]

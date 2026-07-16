@@ -442,7 +442,7 @@ def main() -> None:
         raise ValueError("budget limits must be positive (USD may be zero)")
 
     pm_config = load_config(args.pm_v2_config)
-    if pm_config.get("version") != "pm-v2.1":
+    if pm_config.get("version") != "pm-v2.2":
         raise ValueError("unsupported PM-v2 config version")
     generation_cfg = pm_config["data_generation"]
     generation_pricing = dict(generation_cfg["pricing_usd_per_mtok"])

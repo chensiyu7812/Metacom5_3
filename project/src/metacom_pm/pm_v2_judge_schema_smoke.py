@@ -258,8 +258,8 @@ def build_judge_schema_smoke_contract(
 
     experiment_config = load_config(experiment_config_path)
     config = load_config(pm_v2_config_path)
-    if config.get("version") != "pm-v2.1":
-        raise RuntimeError("judge schema smoke requires PM-v2.1")
+    if config.get("version") != "pm-v2.2":
+        raise RuntimeError("judge schema smoke requires PM-v2.2")
     settings = judge_schema_smoke_settings(config)
     states = load_states(states_path)
     state_by_id = {state.state_id: state for state in states}
