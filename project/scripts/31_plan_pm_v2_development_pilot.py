@@ -12,6 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from metacom_pm.config import load_config
+from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, sha256_file, sha256_text, write_json
 from metacom_pm.pm_v2_contracts import ResourceNeedRegime
 from metacom_pm.pm_v2_data import load_evaluator_context_index, load_states
@@ -79,6 +80,7 @@ def main() -> None:
     config = load_config(args.pm_v2_config)
     if config.get("version") != "pm-v2.2":
         raise RuntimeError("development pilot requires PM-v2.2 config")
+    supporter_generation_contract = SupporterGenerationContract.from_config(config)
     pilot = dict(config["development_judging"]["compatibility_pilot"])
     states = load_states(args.states)
     contexts = load_evaluator_context_index(
@@ -167,8 +169,12 @@ def main() -> None:
     )
     payload = {
         "status": "READY",
-        "protocol": "pm_v2_development_compatibility_pilot_v1",
+        "protocol": "pm_v2_development_compatibility_pilot_v2_treatment_bound",
         "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
+        "supporter_generation_treatment": supporter_generation_contract.payload(),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "states_sha256": sha256_file(args.states),
         "runtime_sha256": sha256_file(args.runtime),
         "backend_sha256": sha256_file(args.backend),

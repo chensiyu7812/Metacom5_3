@@ -9,6 +9,7 @@ from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.contracts import parse_action_id
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evidence_filter_model import require_evidence_filter_artifacts
+from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import (
     canonical_json,
     iter_jsonl,
@@ -396,11 +397,25 @@ def main() -> None:
     evidence_filter_config = None
     memory_helpfulness_model = None
     evidence_filter_model_binding = None
+    supporter_generation_contract = None
     if args.pm_v2_config is not None:
         pm_config = load_config(args.pm_v2_config)
-        if pm_config.get("version") != "pm-v2.1":
-            raise RuntimeError("action sweep requires PM-v2.1 config")
+        if pm_config.get("version") != "pm-v2.2":
+            raise RuntimeError("action sweep requires PM-v2.2 config")
+        supporter_generation_contract = SupporterGenerationContract.from_config(
+            pm_config
+        )
         sweep_config = dict(pm_config["development_sweep"])
+        if set(sweep_config) != {
+            "pricing_usd_per_mtok",
+            "seed",
+            "request_retries",
+            "fail_fast",
+        }:
+            raise RuntimeError(
+                "development_sweep must not duplicate the PM-v2.2 supporter "
+                "generation treatment"
+            )
         retrieval_config = dict(pm_config["retrieval"])
         evidence_filter_config = EvidenceFilterConfig.from_mapping(
             pm_config["evidence_filter"]
@@ -521,9 +536,11 @@ def main() -> None:
             )
 
         frozen_values = {
-            "endpoint": str(sweep_config["generator_endpoint"]),
-            "temperature": float(sweep_config["temperature"]),
-            "max_output_tokens": int(sweep_config["max_output_tokens"]),
+            "endpoint": supporter_generation_contract.generator_endpoint,
+            "temperature": supporter_generation_contract.temperature,
+            "max_output_tokens": (
+                supporter_generation_contract.max_output_tokens
+            ),
             "seed": int(sweep_config["seed"]),
             "request_retries": int(sweep_config["request_retries"]),
             "fail_fast": bool(sweep_config["fail_fast"]),
@@ -582,6 +599,12 @@ def main() -> None:
         contract_bindings = {
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "pm_v2_version": str(pm_config["version"]),
+            "supporter_generation_treatment": (
+                supporter_generation_contract.payload()
+            ),
+            "supporter_generation_treatment_sha256": (
+                supporter_generation_contract.digest()
+            ),
             "development_sweep": sweep_config,
             "retrieval": retrieval_config,
             "evidence_filter": evidence_filter_config.payload(),
@@ -641,8 +664,22 @@ def main() -> None:
     action_filter = None
     card_filter = None
     if pilot_plan is not None:
+        assert supporter_generation_contract is not None
         if pilot_plan.get("status") != "READY":
             raise RuntimeError("PM-v2 compatibility pilot plan is not READY")
+        if pilot_plan.get("protocol") != (
+            "pm_v2_development_compatibility_pilot_v2_treatment_bound"
+        ):
+            raise RuntimeError("PM-v2 compatibility pilot protocol is stale")
+        if (
+            pilot_plan.get("supporter_generation_treatment")
+            != supporter_generation_contract.payload()
+            or pilot_plan.get("supporter_generation_treatment_sha256")
+            != supporter_generation_contract.digest()
+        ):
+            raise RuntimeError(
+                "PM-v2 pilot plan supporter-generation treatment mismatch"
+            )
         expected_hashes = {
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "runtime_sha256": sha256_file(args.runtime),
@@ -748,6 +785,7 @@ def main() -> None:
         strategy_min_score=strategy_min_score,
         evidence_filter_config=evidence_filter_config,
         memory_helpfulness_model=memory_helpfulness_model,
+        supporter_generation_contract=supporter_generation_contract,
         input_usd_per_mtok=args.input_usd_per_mtok,
         output_usd_per_mtok=args.output_usd_per_mtok,
         contract_bindings=contract_bindings,
@@ -805,6 +843,7 @@ def main() -> None:
         strategy_min_score=strategy_min_score,
         evidence_filter_config=evidence_filter_config,
         memory_helpfulness_model=memory_helpfulness_model,
+        supporter_generation_contract=supporter_generation_contract,
         overwrite=args.overwrite,
         max_physical_api_attempts=args.max_api_calls,
         contract_bindings={

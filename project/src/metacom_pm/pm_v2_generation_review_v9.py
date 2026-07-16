@@ -24,6 +24,7 @@ from .attempt_ledger import (
 )
 from .config import endpoint_from_config, load_config
 from .contracts import StrategyCard
+from .generation_contract import SupporterGenerationContract
 from .io import (
     append_jsonl,
     canonical_json,
@@ -44,7 +45,10 @@ from .retrieval_v1_canonical import (
 )
 
 
-V9_PROTOCOL = "pm-v2-generation-semantic-review-v9-real-rag-paired-smoke-v1"
+V9_PROTOCOL = (
+    "pm-v2-generation-semantic-review-v9-real-rag-paired-smoke-"
+    "v2-treatment-bound"
+)
 V9_STATUS_PENDING = "PAIR_GENERATION_PENDING_NOT_READY_FOR_REVIEW"
 V9_STATUS_CANDIDATE = "CANDIDATE_FOR_SMOKE_REVIEW_ONLY"
 CURRENT_BANK_SHA256 = (
@@ -55,7 +59,7 @@ LEGACY_BANK_SHA256 = (
 )
 CURRENT_BANK_COUNT = 12429
 LEGACY_BANK_COUNT = 156
-PAIR_STAGE = "pm_v2_v9_r0_rs_paired_generation_smoke"
+PAIR_STAGE = "pm_v2_v9_r0_rs_paired_generation_smoke_v2_treatment_bound"
 
 BASE_REVIEW_FIELDS = (
     "semantic_family_match",
@@ -704,7 +708,10 @@ def _memory_only_rationale(case: Mapping[str, Any]) -> str:
 
 
 def _generator_messages(
-    case: Mapping[str, Any], strategy_cards: Sequence[Mapping[str, Any]]
+    case: Mapping[str, Any],
+    strategy_cards: Sequence[Mapping[str, Any]],
+    *,
+    system_prompt: str = BASE_SUPPORTER_SYSTEM,
 ) -> list[dict[str, str]]:
     history = "\n".join(
         f"{turn['role']}: {turn['content']}"
@@ -726,7 +733,7 @@ def _generator_messages(
         )
     sections.append("Write only the counselor's next response.")
     return [
-        {"role": "system", "content": BASE_SUPPORTER_SYSTEM},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": "\n\n".join(sections)},
     ]
 
@@ -818,11 +825,12 @@ def prepare_v9(
 
     experiment = load_config(experiment_config_path)
     pm_v2 = load_config(pm_v2_config_path)
+    supporter_generation_contract = SupporterGenerationContract.from_config(pm_v2)
     sweep = pm_v2["development_sweep"]
-    endpoint_name = str(sweep["generator_endpoint"])
+    endpoint_name = supporter_generation_contract.generator_endpoint
     endpoint = endpoint_from_config(experiment, endpoint_name)
-    temperature = float(sweep["temperature"])
-    max_tokens = int(sweep["max_output_tokens"])
+    temperature = supporter_generation_contract.temperature
+    max_tokens = supporter_generation_contract.max_output_tokens
     base_seed = int(sweep["seed"])
     safety_factor = float(pm_v2["api_cost_planning"]["input_token_safety_factor"])
     pricing = sweep["pricing_usd_per_mtok"]
@@ -842,14 +850,27 @@ def prepare_v9(
             strategy_cards = (
                 [] if condition == "R0" else case["strategy_retrieval"]["cards"]
             )
-            messages = _generator_messages(case, strategy_cards)
+            messages = _generator_messages(
+                case,
+                strategy_cards,
+                system_prompt=supporter_generation_contract.system_prompt,
+            )
             prompt_sha256 = sha256_text(canonical_json(messages))
-            record_ids = {"item_id": case["item_id"], "condition": condition}
+            record_ids = {
+                "item_id": case["item_id"],
+                "condition": condition,
+                "supporter_generation_treatment_sha256": (
+                    supporter_generation_contract.digest()
+                ),
+            }
             params = {
                 "temperature": temperature,
                 "max_tokens": max_tokens,
                 "seed": pair_seed,
                 "response_schema": None,
+                "supporter_generation_treatment_sha256": (
+                    supporter_generation_contract.digest()
+                ),
             }
             estimated = max(1, math.ceil(len(canonical_json(messages)) / 4))
             upper = max(1, math.ceil(estimated * safety_factor))
@@ -880,6 +901,12 @@ def prepare_v9(
                     "strategy_card_ids": [
                         row["card_id"] for row in strategy_cards
                     ],
+                    "supporter_generation_treatment": (
+                        supporter_generation_contract.payload()
+                    ),
+                    "supporter_generation_treatment_sha256": (
+                        supporter_generation_contract.digest()
+                    ),
                 }
             )
     if len({row["call_key"] for row in call_plan}) != 18:
@@ -891,7 +918,7 @@ def prepare_v9(
     total_input = sum(row["maximum_input_tokens"] for row in call_plan)
     total_output = len(call_plan) * max_tokens
     estimate = {
-        "protocol": "pm-v2-v9-paired-generation-cost-v1",
+        "protocol": "pm-v2-v9-paired-generation-cost-v2-treatment-bound",
         "stage": PAIR_STAGE,
         "expected_api_calls": len(call_plan),
         "maximum_physical_api_attempts": len(call_plan),
@@ -909,6 +936,12 @@ def prepare_v9(
         * float(pricing["input"])
         + total_output / 1_000_000 * float(pricing["output"]),
         "call_plan_sha256": sha256_file(plan_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "generator": {
             "endpoint_name": endpoint_name,
             "base_url": endpoint.base_url,
@@ -930,7 +963,14 @@ def prepare_v9(
             "status": V9_STATUS_PENDING,
             "only_strategy_rag_input_differs": True,
             "generator": estimate["generator"],
-            "base_system_prompt": BASE_SUPPORTER_SYSTEM,
+            "supporter_generation_treatment": (
+                supporter_generation_contract.payload()
+            ),
+            "supporter_generation_treatment_sha256": (
+                supporter_generation_contract.digest()
+            ),
+            "historical_v9_base_300_artifacts_reused": False,
+            "formal_authorization": False,
             "bank_sha256": CURRENT_BANK_SHA256,
             "retriever_source_sha256": CANONICAL_V1_RETRIEVER_SHA256,
             "formal_gate_unlocked": False,
@@ -1528,6 +1568,40 @@ def run_v9_paired_generation(
         "call_plan_sha256"
     ]:
         raise RuntimeError("V9 call plan hash drift")
+    if not plan:
+        raise RuntimeError("V9 treatment-bound call plan is empty")
+    supporter_generation_contract = SupporterGenerationContract.from_mapping(
+        plan[0].get("supporter_generation_treatment") or {}
+    )
+    if (
+        estimate.get("protocol")
+        != "pm-v2-v9-paired-generation-cost-v2-treatment-bound"
+        or estimate.get("supporter_generation_treatment")
+        != supporter_generation_contract.payload()
+        or estimate.get("supporter_generation_treatment_sha256")
+        != supporter_generation_contract.digest()
+        or any(
+            row.get("supporter_generation_treatment")
+            != supporter_generation_contract.payload()
+            or row.get("supporter_generation_treatment_sha256")
+            != supporter_generation_contract.digest()
+            or float(row.get("temperature"))
+            != supporter_generation_contract.temperature
+            or int(row.get("max_tokens"))
+            != supporter_generation_contract.max_output_tokens
+            or (row.get("endpoint") or {}).get("name")
+            != supporter_generation_contract.generator_endpoint
+            or (row.get("messages") or [{}])[0]
+            != {
+                "role": "system",
+                "content": supporter_generation_contract.system_prompt,
+            }
+            for row in plan
+        )
+    ):
+        raise RuntimeError(
+            "V9 call plan is legacy, mixed-treatment, or differs from its contract"
+        )
     experiment = load_config(experiment_config_path)
     endpoint_name = str(plan[0]["endpoint"]["name"])
     endpoint = endpoint_from_config(experiment, endpoint_name)
@@ -1543,6 +1617,17 @@ def run_v9_paired_generation(
     result_path = out_dir / "paired_generations.jsonl"
     raw_path = out_dir / "raw_api_calls.jsonl"
     existing = _load_unique_results(result_path)
+    if any(
+        row.get("supporter_generation_treatment")
+        != supporter_generation_contract.payload()
+        or row.get("supporter_generation_treatment_sha256")
+        != supporter_generation_contract.digest()
+        or row.get("normalized_finish_reason") != "complete"
+        for row in existing.values()
+    ):
+        raise RuntimeError(
+            "existing V9 results are legacy or mixed-treatment; use a new directory"
+        )
     client = OpenAICompatibleClient(endpoint)
     try:
         for row in plan:
@@ -1554,8 +1639,18 @@ def run_v9_paired_generation(
             if ledger.succeeded(call_key):
                 terminal = ledger.terminal_row(call_key)
                 recovered = dict((terminal or {}).get("result") or {})
-                if not recovered.get("response"):
-                    raise RuntimeError("successful ledger row cannot recover missing output")
+                if (
+                    not recovered.get("response")
+                    or recovered.get("supporter_generation_treatment")
+                    != supporter_generation_contract.payload()
+                    or recovered.get("supporter_generation_treatment_sha256")
+                    != supporter_generation_contract.digest()
+                    or recovered.get("normalized_finish_reason") != "complete"
+                ):
+                    raise RuntimeError(
+                        "successful ledger row cannot recover a complete "
+                        "treatment-matched output"
+                    )
                 append_jsonl(result_path, recovered)
                 existing[call_key] = recovered
                 continue
@@ -1587,6 +1682,12 @@ def run_v9_paired_generation(
                 )
                 if token_error:
                     raise RuntimeError(token_error)
+                completion_error = supporter_generation_contract.completion_gate_error(
+                    normalized_finish_reason=call.normalized_finish_reason,
+                    provider_finish_reason=call.provider_finish_reason,
+                )
+                if completion_error is not None:
+                    raise RuntimeError(completion_error)
                 result = {
                     "call_key": call_key,
                     "item_id": row["item_id"],
@@ -1594,7 +1695,9 @@ def run_v9_paired_generation(
                     "condition": row["condition"],
                     "messages": row["messages"],
                     "prompt_sha256": row["prompt_sha256"],
-                    "response": call.text,
+                    "response": supporter_generation_contract.normalize_output(
+                        call.text
+                    ),
                     "request_hash": call.request_hash,
                     "usage": usage,
                     "latency_ms": float(call.latency_ms),
@@ -1603,6 +1706,14 @@ def run_v9_paired_generation(
                     "max_tokens": row["max_tokens"],
                     "seed": row["seed"],
                     "strategy_card_ids": row["strategy_card_ids"],
+                    "provider_finish_reason": call.provider_finish_reason,
+                    "normalized_finish_reason": call.normalized_finish_reason,
+                    "supporter_generation_treatment": (
+                        supporter_generation_contract.payload()
+                    ),
+                    "supporter_generation_treatment_sha256": (
+                        supporter_generation_contract.digest()
+                    ),
                 }
                 ledger.finish(
                     reservation,
@@ -1618,6 +1729,9 @@ def run_v9_paired_generation(
                     {
                         **result,
                         "raw_response": call.raw_response,
+                        "completion_truncated": (
+                            call.normalized_finish_reason == "length"
+                        ),
                     },
                 )
                 existing[call_key] = result
@@ -1637,6 +1751,23 @@ def run_v9_paired_generation(
                         "condition": row["condition"],
                         "error": f"{type(exc).__name__}: {exc}",
                         "raw_response": call.raw_response if call else None,
+                        "provider_finish_reason": (
+                            call.provider_finish_reason if call else None
+                        ),
+                        "normalized_finish_reason": (
+                            call.normalized_finish_reason if call else None
+                        ),
+                        "completion_truncated": (
+                            call.normalized_finish_reason == "length"
+                            if call
+                            else None
+                        ),
+                        "supporter_generation_treatment": (
+                            supporter_generation_contract.payload()
+                        ),
+                        "supporter_generation_treatment_sha256": (
+                            supporter_generation_contract.digest()
+                        ),
                     },
                 )
                 raise RuntimeError(
@@ -1651,6 +1782,19 @@ def run_v9_paired_generation(
             f"V9 paired generation incomplete: {len(existing)}/{len(plan)} successful"
         )
     summary = _finish_blinded_materials(out_dir)
+    summary.update(
+        {
+            "supporter_generation_treatment": (
+                supporter_generation_contract.payload()
+            ),
+            "supporter_generation_treatment_sha256": (
+                supporter_generation_contract.digest()
+            ),
+            "historical_v9_base_300_artifacts_reused": False,
+            "formal_authorization": False,
+        }
+    )
+    write_json(out_dir / "paired_generation_summary.json", summary)
     create_artifact_attestation(
         out_dir / "paired_generation_attestation.json",
         stage=PAIR_STAGE,
@@ -1673,6 +1817,13 @@ def run_v9_paired_generation(
             "accepted_cost_estimate_sha256": accept_cost_estimate_sha256,
             "review_scores_prefilled": False,
             "formal_gate_unlocked": False,
+            "supporter_generation_treatment": (
+                supporter_generation_contract.payload()
+            ),
+            "supporter_generation_treatment_sha256": (
+                supporter_generation_contract.digest()
+            ),
+            "historical_v9_base_300_artifacts_reused": False,
         },
         expected={"calls": 18, "pairs": 9},
     )

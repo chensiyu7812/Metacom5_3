@@ -6,6 +6,7 @@ from typing import Any, Mapping
 
 from .artifacts import require_artifact_attestation
 from .config import endpoint_from_config, load_config
+from .generation_contract import SupporterGenerationContract
 from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
 from .pm_v2_contracts import ResourceNeedRegime
 from .pm_v2_audit import audit_deployable_feature_observability
@@ -24,7 +25,7 @@ from .pm_v2_pilot_human_spot_check import (
 )
 
 
-DEVELOPMENT_PILOT_GATE_PROTOCOL = "pm-v2-development-pilot-gate-v2"
+DEVELOPMENT_PILOT_GATE_PROTOCOL = "pm-v2-development-pilot-gate-v3-treatment-bound"
 
 
 def _manifest_is_self_consistent(manifest: Mapping[str, Any]) -> bool:
@@ -145,6 +146,9 @@ def require_development_pilot_gate(
     pm_v2_config = load_config(pm_v2_config_path)
     if pm_v2_config.get("version") != "pm-v2.2":
         raise RuntimeError("development pilot gate requires PM-v2.2")
+    supporter_generation_contract = SupporterGenerationContract.from_config(
+        pm_v2_config
+    )
     pilot_config = dict(
         pm_v2_config["development_judging"]["compatibility_pilot"]
     )
@@ -159,8 +163,14 @@ def require_development_pilot_gate(
     if plan.get("status") != "READY" or not _plan_is_self_consistent(plan):
         raise RuntimeError("development pilot plan is absent, stale, or not READY")
     expected_plan_values = {
-        "protocol": "pm_v2_development_compatibility_pilot_v1",
+        "protocol": "pm_v2_development_compatibility_pilot_v2_treatment_bound",
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "states_sha256": sha256_file(states_path),
         "runtime_sha256": sha256_file(runtime_path),
         "backend_sha256": sha256_file(backend_path),
@@ -243,7 +253,7 @@ def require_development_pilot_gate(
 
     generation_endpoint = endpoint_from_config(
         experiment_config,
-        str(pm_v2_config["development_sweep"]["generator_endpoint"]),
+        supporter_generation_contract.generator_endpoint,
     )
     judge_schema_smoke = require_development_judge_schema_smoke_pass(
         summary_path=judge_schema_smoke_summary_path,
@@ -260,6 +270,12 @@ def require_development_pilot_gate(
     expected_sweep_binding_base = {
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
         "pm_v2_version": "pm-v2.2",
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "development_sweep": dict(pm_v2_config["development_sweep"]),
         "retrieval": dict(pm_v2_config["retrieval"]),
         "semantic_sanity": dict(semantic_sanity),
@@ -280,7 +296,9 @@ def require_development_pilot_gate(
     pilot_outcomes_path = _recorded_path(
         pilot_sweep_attestation, "outputs", "action_outcomes"
     )
-    _recorded_path(pilot_sweep_attestation, "outputs", "raw_calls")
+    pilot_raw_calls_path = _recorded_path(
+        pilot_sweep_attestation, "outputs", "raw_calls"
+    )
     _recorded_path(
         pilot_sweep_attestation, "outputs", "physical_attempt_ledger"
     )
@@ -329,8 +347,8 @@ def require_development_pilot_gate(
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
         "endpoint_model": generation_endpoint.model,
         "endpoint_base_url": generation_endpoint.base_url,
-        "temperature": float(pm_v2_config["development_sweep"]["temperature"]),
-        "max_tokens": int(pm_v2_config["development_sweep"]["max_output_tokens"]),
+        "temperature": supporter_generation_contract.temperature,
+        "max_tokens": supporter_generation_contract.max_output_tokens,
         "seed": int(pm_v2_config["development_sweep"]["seed"]),
         "request_retries": 1,
         "fail_fast": True,
@@ -345,8 +363,17 @@ def require_development_pilot_gate(
         ),
         "action_filter": sorted(expected_actions),
         "card_filter": sorted(str(row["card_id"]) for row in selected_states),
+        "system_prompt_sha256": (
+            supporter_generation_contract.system_prompt_sha256
+        ),
         "contract_bindings": expected_sweep_bindings,
         "planned_maximum_physical_api_attempts": expected_outcome_count,
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
     }
     for key, expected in expected_pilot_manifest_values.items():
         if pilot_manifest.get(key) != expected:
@@ -360,22 +387,56 @@ def require_development_pilot_gate(
         "total_physical_http_attempts": expected_outcome_count,
         "request_retries": 1,
         "fail_fast": True,
+        "aborted_on_completion_gate": False,
         "failures": [],
         "endpoint_model": generation_endpoint.model,
         "runtime_sha256": sha256_file(runtime_path),
         "backend_sha256": sha256_file(backend_path),
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "contract_bindings": expected_sweep_bindings,
     }
     for key, expected in expected_pilot_summary_values.items():
         if pilot_summary.get(key) != expected:
             raise RuntimeError(f"development pilot sweep summary mismatch: {key}")
+    outcome_rows = list(iter_jsonl(pilot_outcomes_path))
     actual_outcome_keys = sorted(
         [str(row.get("card_id")), str(row.get("action_id"))]
-        for row in iter_jsonl(pilot_outcomes_path)
+        for row in outcome_rows
     )
     if actual_outcome_keys != expected_outcome_keys:
         raise RuntimeError("development pilot sweep output matrix is not exact")
+    if any(
+        (row.get("provenance") or {}).get(
+            "supporter_generation_treatment_sha256"
+        )
+        != supporter_generation_contract.digest()
+        or (row.get("provenance") or {}).get(
+            "supporter_generation_treatment"
+        )
+        != supporter_generation_contract.payload()
+        or (row.get("provenance") or {}).get("normalized_finish_reason")
+        != "complete"
+        for row in outcome_rows
+    ):
+        raise RuntimeError(
+            "development pilot outcomes are mixed-treatment or not complete"
+        )
+    raw_call_rows = list(iter_jsonl(pilot_raw_calls_path))
+    if not raw_call_rows or any(
+        row.get("error") is not None
+        or row.get("normalized_finish_reason") != "complete"
+        or row.get("completion_truncated") is not False
+        for row in raw_call_rows
+    ):
+        raise RuntimeError(
+            "development pilot raw calls include a failed or truncated completion"
+        )
     pilot_parameters = pilot_sweep_attestation.get("parameters") or {}
     expected_pilot_parameters = {
         "endpoint_model": generation_endpoint.model,
@@ -391,6 +452,12 @@ def require_development_pilot_gate(
         "card_filter": sorted(str(row["card_id"]) for row in selected_states),
         "contract_bindings": expected_sweep_bindings,
         "maximum_physical_api_attempts_planned": expected_outcome_count,
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
     }
     for key, expected in expected_pilot_parameters.items():
         if pilot_parameters.get(key) != expected:
@@ -603,6 +670,12 @@ def require_development_pilot_gate(
         "status": "PASS",
         "protocol": DEVELOPMENT_PILOT_GATE_PROTOCOL,
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "generator_endpoint_sha256": sha256_text(
             canonical_json(
                 {

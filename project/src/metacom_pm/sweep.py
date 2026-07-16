@@ -30,6 +30,7 @@ from .contracts import (
 )
 from .evidence_filter import EvidenceFilterConfig, filter_evidence
 from .evidence_filter_model import PMV2EvidenceFilterModel
+from .generation_contract import SupporterGenerationContract
 from .io import (
     append_jsonl,
     iter_jsonl,
@@ -45,6 +46,34 @@ from .prompts import generation_messages, BASE_SUPPORTER_SYSTEM
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import conservative_token_bound, estimate_tokens
 from .sampling import select_stratified_card_ids
+
+
+def _resolve_supporter_generation_treatment(
+    *,
+    supporter_generation_contract: SupporterGenerationContract | None,
+    system_prompt: str | None,
+    temperature: float,
+    max_tokens: int,
+) -> tuple[str, dict[str, Any] | None, str | None]:
+    """Resolve legacy or PM-v2.2 generation settings without silent drift."""
+
+    if supporter_generation_contract is None:
+        return system_prompt or BASE_SUPPORTER_SYSTEM, None, None
+
+    contract = supporter_generation_contract
+    if system_prompt is not None and system_prompt != contract.system_prompt:
+        raise ValueError(
+            "supporter system prompt differs from the PM-v2.2 generation contract"
+        )
+    if float(temperature) != contract.temperature:
+        raise ValueError(
+            "supporter temperature differs from the PM-v2.2 generation contract"
+        )
+    if int(max_tokens) != contract.max_output_tokens:
+        raise ValueError(
+            "supporter max_tokens differs from the PM-v2.2 generation contract"
+        )
+    return contract.system_prompt, contract.payload(), contract.digest()
 
 
 def _percentile(values: list[int], fraction: float) -> float:
@@ -179,7 +208,8 @@ def plan_action_sweep(
     strategy_min_score: float | None = None,
     evidence_filter_config: EvidenceFilterConfig | None = None,
     memory_helpfulness_model: PMV2EvidenceFilterModel | None = None,
-    system_prompt: str = BASE_SUPPORTER_SYSTEM,
+    system_prompt: str | None = None,
+    supporter_generation_contract: SupporterGenerationContract | None = None,
     input_usd_per_mtok: float,
     output_usd_per_mtok: float,
     contract_bindings: dict[str, Any] | None = None,
@@ -188,6 +218,16 @@ def plan_action_sweep(
 
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
+    (
+        system_prompt,
+        generation_treatment,
+        generation_treatment_sha256,
+    ) = _resolve_supporter_generation_treatment(
+        supporter_generation_contract=supporter_generation_contract,
+        system_prompt=system_prompt,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
 
     runtime_path = Path(runtime_path)
     backend_path = Path(backend_path)
@@ -267,51 +307,68 @@ def plan_action_sweep(
                 "card_id": card_id,
                 "prompt_equivalence_sha256": prompt_sha256,
             }
+            if generation_treatment_sha256 is not None:
+                record_ids["supporter_generation_treatment_sha256"] = (
+                    generation_treatment_sha256
+                )
+            request_parameters = {
+                "temperature": float(temperature),
+                "max_tokens": int(max_tokens),
+                "seed": seed,
+                "response_schema": None,
+            }
+            if generation_treatment_sha256 is not None:
+                request_parameters["supporter_generation_treatment_sha256"] = (
+                    generation_treatment_sha256
+                )
             call_key = physical_call_key(
                 stage="action_sweep_generation",
                 record_ids=record_ids,
                 prompt_sha256=prompt_sha256,
                 endpoint=endpoint,
-                request_parameters={
-                    "temperature": float(temperature),
-                    "max_tokens": int(max_tokens),
-                    "seed": seed,
-                    "response_schema": None,
-                },
+                request_parameters=request_parameters,
             )
             messages_json = canonical_json(messages)
             raw_input_tokens = estimate_tokens(messages_json)
             input_tokens = conservative_token_bound(
                 messages_json, safety_factor=float(input_token_safety_factor)
             )
-            rows.append(
-                {
-                    "card_id": card_id,
-                    "state_id": state.state_id,
-                    "action_id": action_id,
-                    "requested_action_id": action_id,
-                    "effective_action_id": (
-                        filter_decision.effective_action_id
-                        if filter_decision is not None
-                        else action_id
-                    ),
-                    "candidate_memory_count": len(candidate_memory_view),
-                    "kept_memory_count": len(memory_view),
-                    "candidate_strategy_count": len(candidate_strategy_view),
-                    "kept_strategy_count": len(strategy_view),
-                    "evidence_filter_config_sha256": (
-                        filter_decision.config_sha256
-                        if filter_decision is not None
-                        else None
-                    ),
-                    "prompt_sha256": prompt_sha256,
-                    "call_key": call_key,
-                    "max_http_attempts": int(request_retries),
-                    "raw_estimated_input_tokens": raw_input_tokens,
-                    "estimated_input_tokens": input_tokens,
-                    "maximum_output_tokens": int(max_tokens),
-                }
-            )
+            plan_row = {
+                "card_id": card_id,
+                "state_id": state.state_id,
+                "action_id": action_id,
+                "requested_action_id": action_id,
+                "effective_action_id": (
+                    filter_decision.effective_action_id
+                    if filter_decision is not None
+                    else action_id
+                ),
+                "candidate_memory_count": len(candidate_memory_view),
+                "kept_memory_count": len(memory_view),
+                "candidate_strategy_count": len(candidate_strategy_view),
+                "kept_strategy_count": len(strategy_view),
+                "evidence_filter_config_sha256": (
+                    filter_decision.config_sha256
+                    if filter_decision is not None
+                    else None
+                ),
+                "prompt_sha256": prompt_sha256,
+                "call_key": call_key,
+                "max_http_attempts": int(request_retries),
+                "raw_estimated_input_tokens": raw_input_tokens,
+                "estimated_input_tokens": input_tokens,
+                "maximum_output_tokens": int(max_tokens),
+            }
+            if generation_treatment is not None:
+                plan_row.update(
+                    {
+                        "supporter_generation_treatment": generation_treatment,
+                        "supporter_generation_treatment_sha256": (
+                            generation_treatment_sha256
+                        ),
+                    }
+                )
+            rows.append(plan_row)
 
     equivalence_groups: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
@@ -422,6 +479,15 @@ def plan_action_sweep(
         "call_plan_sha256": sha256_text(canonical_json(rows)),
         "contract_bindings": dict(contract_bindings or {}),
     }
+    if generation_treatment is not None:
+        payload.update(
+            {
+                "supporter_generation_treatment": generation_treatment,
+                "supporter_generation_treatment_sha256": (
+                    generation_treatment_sha256
+                ),
+            }
+        )
     payload["cost_estimate_sha256"] = sha256_text(canonical_json(payload))
     return payload, rows
 
@@ -451,7 +517,8 @@ def run_action_sweep(
     evidence_filter_config: EvidenceFilterConfig | None = None,
     memory_helpfulness_model: PMV2EvidenceFilterModel | None = None,
     overwrite: bool = False,
-    system_prompt: str = BASE_SUPPORTER_SYSTEM,
+    system_prompt: str | None = None,
+    supporter_generation_contract: SupporterGenerationContract | None = None,
     study_freeze_sha256: str | None = None,
     contract_bindings: dict[str, Any] | None = None,
     max_physical_api_attempts: int | None = None,
@@ -459,6 +526,16 @@ def run_action_sweep(
 ) -> dict[str, Any]:
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
+    (
+        system_prompt,
+        generation_treatment,
+        generation_treatment_sha256,
+    ) = _resolve_supporter_generation_treatment(
+        supporter_generation_contract=supporter_generation_contract,
+        system_prompt=system_prompt,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
     runtime_path = Path(runtime_path)
     backend_path = Path(backend_path)
     strategy_bank_path = Path(strategy_bank_path)
@@ -568,17 +645,26 @@ def run_action_sweep(
                 "card_id": card_id,
                 "prompt_equivalence_sha256": prompt_hash,
             }
+            if generation_treatment_sha256 is not None:
+                record_ids["supporter_generation_treatment_sha256"] = (
+                    generation_treatment_sha256
+                )
+            request_parameters = {
+                "temperature": float(temperature),
+                "max_tokens": int(max_tokens),
+                "seed": seed,
+                "response_schema": None,
+            }
+            if generation_treatment_sha256 is not None:
+                request_parameters["supporter_generation_treatment_sha256"] = (
+                    generation_treatment_sha256
+                )
             call_key = physical_call_key(
                 stage="action_sweep_generation",
                 record_ids=record_ids,
                 prompt_sha256=prompt_hash,
                 endpoint=endpoint,
-                request_parameters={
-                    "temperature": float(temperature),
-                    "max_tokens": int(max_tokens),
-                    "seed": seed,
-                    "response_schema": None,
-                },
+                request_parameters=request_parameters,
             )
             prepared_calls[(card_id, action_id)] = {
                 "state": state,
@@ -665,6 +751,15 @@ def run_action_sweep(
         "prompt_alias_outcomes": len(prepared_calls) - len(physical_call_keys),
         "contract_bindings": dict(contract_bindings or {}),
     }
+    if generation_treatment is not None:
+        run_metadata.update(
+            {
+                "supporter_generation_treatment": generation_treatment,
+                "supporter_generation_treatment_sha256": (
+                    generation_treatment_sha256
+                ),
+            }
+        )
     if study_freeze_sha256 is not None:
         run_metadata["study_freeze_sha256"] = study_freeze_sha256
     ensure_run_manifest(manifest_path, run_metadata, overwrite=False)
@@ -807,6 +902,7 @@ def run_action_sweep(
     aborted_on_first_failure = False
     aborted_on_input_token_overrun = False
     aborted_on_missing_reported_usage = False
+    aborted_on_completion_gate = False
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     try:
         for (card_id, action_id), prepared in prepared_calls.items():
@@ -941,6 +1037,46 @@ def run_action_sweep(
                         "physical_attempt_key": reservation.attempt_key,
                     },
                 )
+                completion_error = (
+                    supporter_generation_contract.completion_gate_error(
+                        normalized_finish_reason=result.normalized_finish_reason,
+                        provider_finish_reason=result.provider_finish_reason,
+                    )
+                    if supporter_generation_contract is not None
+                    else None
+                )
+                if completion_error is not None:
+                    failed_raw_payload = {
+                        **successful_raw_payload,
+                        "error": completion_error,
+                    }
+                    append_jsonl(out_raw_calls_path, failed_raw_payload)
+                    ledger.finish(
+                        reservation,
+                        succeeded=False,
+                        request_hash=result.request_hash,
+                        usage=reported_usage,
+                        error=completion_error,
+                    )
+                    failures.append(
+                        {
+                            "card_id": card_id,
+                            "action_id": action_id,
+                            "call_key": call_key,
+                            "attempt_index": reservation.attempt_index,
+                            "error": completion_error,
+                            "supporter_completion_gate_rejected": True,
+                            "provider_finish_reason": result.provider_finish_reason,
+                            "normalized_finish_reason": (
+                                result.normalized_finish_reason
+                            ),
+                        }
+                    )
+                    aborted_on_completion_gate = True
+                    if fail_fast:
+                        aborted_on_first_failure = True
+                        break
+                    continue
                 reported_prompt_tokens = reported_usage["prompt_tokens"]
                 if (
                     fail_on_reported_input_overrun
@@ -988,6 +1124,11 @@ def run_action_sweep(
                     candidate_memory_view = prepared["candidate_memory_view"]
                     candidate_strategy_view = prepared["candidate_strategy_view"]
                     filter_decision = prepared["evidence_filter_decision"]
+                    response_text = (
+                        supporter_generation_contract.normalize_output(result.text)
+                        if supporter_generation_contract is not None
+                        else result.text
+                    )
                     base_tokens = estimate_tokens(
                         state.current_user_text
                         + state.current_session_summary
@@ -1016,7 +1157,7 @@ def run_action_sweep(
                         ),
                         output_tokens=(
                             reported_usage["completion_tokens"]
-                            or estimate_tokens(result.text)
+                            or estimate_tokens(response_text)
                         ),
                         latency_ms=result.latency_ms,
                         api_cost_usd=None,
@@ -1047,7 +1188,7 @@ def run_action_sweep(
                         state_id=state.state_id,
                         user_id=state.user_id,
                         action_id=action_id,
-                        response=result.text,
+                        response=response_text,
                         selected_memory_ids=[x.memory_id for x in memory_view],
                         selected_strategy_ids=[x.strategy_id for x in strategy_view],
                         memory_view=memory_view,
@@ -1071,6 +1212,22 @@ def run_action_sweep(
                             "physical_call_key": call_key,
                             "physical_attempt_index": reservation.attempt_index,
                             "physical_attempt_key": reservation.attempt_key,
+                            "provider_finish_reason": result.provider_finish_reason,
+                            "normalized_finish_reason": (
+                                result.normalized_finish_reason
+                            ),
+                            **(
+                                {
+                                    "supporter_generation_treatment": (
+                                        generation_treatment
+                                    ),
+                                    "supporter_generation_treatment_sha256": (
+                                        generation_treatment_sha256
+                                    ),
+                                }
+                                if generation_treatment is not None
+                                else {}
+                            ),
                             "contract_bindings_sha256": sha256_text(
                                 canonical_json(dict(contract_bindings or {}))
                             ),
@@ -1192,6 +1349,7 @@ def run_action_sweep(
         "aborted_on_first_failure": aborted_on_first_failure,
         "aborted_on_input_token_overrun": aborted_on_input_token_overrun,
         "aborted_on_missing_reported_usage": aborted_on_missing_reported_usage,
+        "aborted_on_completion_gate": aborted_on_completion_gate,
         "maximum_physical_api_attempts_planned": planned_maximum_attempts,
         "maximum_physical_api_attempts_authorized": runtime_attempt_cap,
         "failures": failures,
@@ -1202,6 +1360,15 @@ def run_action_sweep(
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
         "contract_bindings": dict(contract_bindings or {}),
     }
+    if generation_treatment is not None:
+        summary.update(
+            {
+                "supporter_generation_treatment": generation_treatment,
+                "supporter_generation_treatment_sha256": (
+                    generation_treatment_sha256
+                ),
+            }
+        )
     write_json(out_summary_path, summary)
     if summary["status"] != "COMPLETE":
         raise RuntimeError(f"action sweep incomplete: {len(failures)} failures")
@@ -1260,6 +1427,16 @@ def run_action_sweep(
             "action_filter": sorted(action_filter) if action_filter else None,
             "card_filter": sorted(card_filter) if card_filter else None,
             "max_cards": max_cards,
+            **(
+                {
+                    "supporter_generation_treatment": generation_treatment,
+                    "supporter_generation_treatment_sha256": (
+                        generation_treatment_sha256
+                    ),
+                }
+                if generation_treatment is not None
+                else {}
+            ),
             "contract_bindings": dict(contract_bindings or {}),
         },
         expected={

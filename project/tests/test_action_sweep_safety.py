@@ -12,6 +12,7 @@ from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.contracts import MemoryBackendRecord
 from metacom_pm.evidence_filter import EvidenceFilterConfig
+from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import (
     canonical_json,
     iter_jsonl,
@@ -42,6 +43,9 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
     pm_v2_config_path = PROJECT_ROOT / "configs" / "pm_v2.yaml"
     experiment_config = load_config(experiment_config_path)
     pm_v2_config = load_config(pm_v2_config_path)
+    supporter_generation_contract = SupporterGenerationContract.from_config(
+        pm_v2_config
+    )
     pilot_config = pm_v2_config["development_judging"]["compatibility_pilot"]
     actions = [str(value) for value in pilot_config["actions"]]
 
@@ -118,8 +122,14 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
     )
     pilot_plan = {
         "status": "READY",
-        "protocol": "pm_v2_development_compatibility_pilot_v1",
+        "protocol": "pm_v2_development_compatibility_pilot_v2_treatment_bound",
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "states_sha256": sha256_file(states_path),
         "runtime_sha256": sha256_file(runtime_path),
         "backend_sha256": sha256_file(backend_path),
@@ -145,7 +155,13 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
 
     sweep_bindings = {
         "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
-        "pm_v2_version": "pm-v2.1",
+        "pm_v2_version": "pm-v2.2",
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "development_sweep": dict(pm_v2_config["development_sweep"]),
         "retrieval": dict(pm_v2_config["retrieval"]),
         "semantic_sanity": semantic_sanity,
@@ -172,7 +188,7 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
     }
     generator = endpoint_from_config(
         experiment_config,
-        str(pm_v2_config["development_sweep"]["generator_endpoint"]),
+        supporter_generation_contract.generator_endpoint,
     )
     card_filter = sorted(row["card_id"] for row in selected_states)
     pilot_manifest = {
@@ -182,8 +198,8 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
         "endpoint_model": generator.model,
         "endpoint_base_url": generator.base_url,
-        "temperature": float(pm_v2_config["development_sweep"]["temperature"]),
-        "max_tokens": int(pm_v2_config["development_sweep"]["max_output_tokens"]),
+        "temperature": supporter_generation_contract.temperature,
+        "max_tokens": supporter_generation_contract.max_output_tokens,
         "seed": int(pm_v2_config["development_sweep"]["seed"]),
         "request_retries": 1,
         "fail_fast": True,
@@ -196,11 +212,19 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
         ),
         "action_filter": sorted(actions),
         "card_filter": card_filter,
-        "system_prompt_sha256": "d" * 64,
+        "system_prompt_sha256": (
+            supporter_generation_contract.system_prompt_sha256
+        ),
         "physical_attempt_ledger_protocol": "pm-v2-physical-http-attempt-ledger-v1",
         "planned_maximum_physical_api_attempts": len(expected_keys),
         "runtime_maximum_physical_api_attempts": len(expected_keys),
         "call_key_matrix_sha256": "e" * 64,
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "contract_bindings": sweep_bindings,
     }
     pilot_manifest["manifest_sha256"] = sha256_text(
@@ -212,13 +236,35 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
     write_jsonl(
         outcomes_path,
         [
-            {"card_id": card_id, "action_id": action_id}
+            {
+                "card_id": card_id,
+                "action_id": action_id,
+                "provenance": {
+                    "supporter_generation_treatment": (
+                        supporter_generation_contract.payload()
+                    ),
+                    "supporter_generation_treatment_sha256": (
+                        supporter_generation_contract.digest()
+                    ),
+                    "normalized_finish_reason": "complete",
+                },
+            }
             for card_id, action_id in expected_keys
         ],
     )
     raw_calls_path = pilot_dir / "raw_api_calls.jsonl"
     ledger_path = pilot_dir / "physical_attempt_ledger.jsonl"
-    write_jsonl(raw_calls_path, [{"fixture": "raw"}])
+    write_jsonl(
+        raw_calls_path,
+        [
+            {
+                "fixture": "raw",
+                "error": None,
+                "normalized_finish_reason": "complete",
+                "completion_truncated": False,
+            }
+        ],
+    )
     write_jsonl(ledger_path, [{"fixture": "ledger"}])
     pilot_summary = {
         "status": "COMPLETE",
@@ -231,11 +277,18 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
         "total_physical_http_attempts": len(expected_keys),
         "request_retries": 1,
         "fail_fast": True,
+        "aborted_on_completion_gate": False,
         "failures": [],
         "endpoint_model": generator.model,
         "runtime_sha256": sha256_file(runtime_path),
         "backend_sha256": sha256_file(backend_path),
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
+        "supporter_generation_treatment": (
+            supporter_generation_contract.payload()
+        ),
+        "supporter_generation_treatment_sha256": (
+            supporter_generation_contract.digest()
+        ),
         "contract_bindings": sweep_bindings,
     }
     pilot_summary_path = pilot_dir / "summary.json"
@@ -267,6 +320,12 @@ def _build_development_pilot_gate_fixture(tmp_path: Path) -> tuple[dict, dict]:
             "maximum_physical_api_attempts_planned": len(expected_keys),
             "action_filter": sorted(actions),
             "card_filter": card_filter,
+            "supporter_generation_treatment": (
+                supporter_generation_contract.payload()
+            ),
+            "supporter_generation_treatment_sha256": (
+                supporter_generation_contract.digest()
+            ),
             "contract_bindings": sweep_bindings,
         },
         expected={"cards": len(selected_states), "outcomes": len(expected_keys)},
