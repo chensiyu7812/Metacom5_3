@@ -1,14 +1,24 @@
-# MetaCom PM-v2.1 可执行运行手册
+# MetaCom PM-v2.2 可执行运行手册
 
-更新时间：2026-07-14
+更新时间：2026-07-16
 
-> 适用分支：`codex/pm-v2-hardening`。本流程新建 PM-v2.1 产物，不覆盖 PM-v1 的冻结结果。
+> 适用分支：`codex/pm-v2-hardening`。本流程新建 PM-v2.2 产物，不覆盖或改写 PM-v1 的冻结结果。
 
 ## 0. 当前状态与诚实边界
 
-截至本文更新时间，generation compatibility 历史中已有六次失败 physical attempts 和一次 v4 structural-success attempt；它们都保留在不可覆盖账本中。当前 v6 目录的付费 API 调用数是 **0**。PM 是否真正学会因情境选择不同资源、何时不用资源，以及是否优于同预算固定动作，仍必须由后续数据生成、双 family 标签、人工审计、internal holdout 和外部评测证明。
+截至本文更新时间，PM-v2.2 的正式 52-user data generation、7,488-action sweep、双-family judging、PM 训练和外部评测均未开始。历史 compatibility/V9 调用与账本已进入私有、内容寻址且校验通过的 artifact vault；它们是诊断证据，不是正式 run 许可。
 
-能预先保证的是 fail-closed：缺失矩阵、坏标签、近常量 policy、M0/R0 未学会、风险/不确定性失准、OOD 回退过多、成本不匹配或评审协议失败时停止。不能预先保证的是 PM-v2.1 一定获得正面经验结果。
+当前存在五个必须先解决的硬阻塞：
+
+1. `supporter_generation_treatment` 已统一为同一个 selective prompt、temperature 0 和 300-token API cap；development、external 和所有 matched baselines 必须绑定同一 payload/SHA，任何 `length`、缺失或未知 finish reason 都是终止失败；
+2. Strategy Bank 仍是 `PROVISIONAL_FROZEN_CANDIDATE_AWAITING_HUMAN_APPROVAL`，正式阶段必须读取一份真实、私有并绑定精确 bank/audit hashes 的 human approval；自动 audit 不能代替人工批准；
+3. V8 是明确标记的 provisional draft；V9 是 9-case paired smoke diagnostic，当前两份 reviewer CSV 仍为空。V7/V8/V9 均不得单独授权 52-user full generation；
+4. PM-v1 fixed seeker track 的 1,020 个逻辑 turn 中，最终 provider finish reason 为 `length` 的有 959 个（94.02%；raw-call artifact SHA `ff480956...`，track SHA `447609e1...`）。PM-v2.2 必须在新目录中以 300-token API cap、complete-only finish gate 和不可覆盖 ledger 重新生成 fixed tracks；
+5. PM-v1 的 `evoemo_selective` baseline 使用旧 prompt/cap 和旧时间点，不能进入 PM-v2.2 主比较。所有主表 baseline 必须在同一 PM-v2.2 treatment、fixed tracks、generator、seed 和冻结评分 unit 下重新生成。
+
+因此，**现在禁止执行任何正式 `--run`**。允许的工作仅限 no-API dry-run、代码/测试、人工审核、artifact 验证和预算计划。解除上述阻塞后，必须重新计算所有 cost SHA/attestation；本文中 2026-07-15 之前的 SHA 只保留历史 lineage，不再接受。
+
+能预先保证的是 fail-closed：缺失矩阵、坏标签、近常量 policy、截断 completion、treatment mismatch、M0/R0 未学会、风险/不确定性失准、OOD 回退过多、成本不匹配或评审协议失败时停止。不能预先保证的是 PM-v2.2 一定获得正面经验结果。
 
 ## 1. 环境、分支和统一规则
 
@@ -55,7 +65,7 @@ export PMV2_FULL_EXTERNAL_JUDGE_MAX_USD=...
 
 API keys 只在真正执行相应 `--run` 前注入环境；dry-run 和下述 no-API 检查不需要 key。
 
-## 2. PM-v2.1 的不可变口径
+## 2. PM-v2.2 的不可变口径
 
 - 16 个候选是 8 个 memory subsets × `R0/RS` 的 resource actions，不是 16 个独立回复 policy。
 - judge schema 不存在 `overall`。六个 response dimensions 独立输出；训练 utility 使用冻结的 `pmv2-quality-v2` composite。
@@ -66,6 +76,8 @@ API keys 只在真正执行相应 `--run` 前注入环境；dry-run 和下述 no
 - paired delta 和置信区间按 `user_id` cluster bootstrap，不能把同一用户的状态当作独立样本。
 - reportability、OOD、cost-match、label/human 阈值和 human sample seed 都只来自 `configs/pm_v2.yaml`；命令行不能临时放宽。
 - 正式系统是 pre-retrieval PM + post-retrieval Evidence Filter；完整契约见 [`PM_V2_EVIDENCE_FILTER_PROTOCOL_ZH.md`](PM_V2_EVIDENCE_FILTER_PROTOCOL_ZH.md)。requested/effective action 必须分开报告。
+- development、external 和 matched baseline 的 supporter generator 只有一个权威来源：`configs/pm_v2.yaml: supporter_generation_treatment`。stage-specific 配置不得再次声明 prompt、endpoint、temperature 或 output cap。
+- EvoEmo 已被 PM-v1 结果和 PM-v2 设计过程反复检查；PM-v2.2 中只能称为 **development-informed external evaluation**，不是 pristine confirmatory set。若论文保留强 confirmatory claim，必须另留一个在设计冻结前从未分析的纵向数据集。
 
 ## 3. No-API：从真实 ESConv train split 提取 seed
 
@@ -113,7 +125,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 因此 v4 只能记为“schema transport 兼容”，其 structural attestation 不是 semantic PASS，更不是 52-call 许可。
 
-### 4.2 v6 实测失败与 v7 deterministic-evidence replay（0 新 API）
+### 4.2 历史 lineage：v6 失败、v7 replay、v8 provisional、v9 diagnostic（0 新 API）
 
 v6 已实际执行并失败。OpenAI 接受 strict schema 并返回完整对象，usage 为 input 4,084、output 3,434、total 7,518 tokens；账本恰好一组 `STARTED -> FAILED`。失败来自 37 个本地 lexical family/distractor 检查，不是 HTTP、schema、网络或截断。证据保存在 `outputs/pm_v2_generation_compatibility_pilot_orthogonal_v6/`；旧成本 SHA `f2cc9fbf...` 已消费，禁止再次运行该命令。
 
@@ -131,30 +143,15 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 2026-07-15 replay 已完成：输出为 `outputs/pm_v2_generation_compatibility_pilot_deterministic_evidence_v7/`，最终 attestation `PASS`，SHA256 `683effc2193bc1c99a72a5f2ec8f4c2f74579f4a3fa53ef6d8485a4e8e540948`，`new_physical_api_attempts=0`。九例中 7 个保留 provider surface；`multi_source_needed` 因混合 academic/workplace topic、`strategy_harmful` 因 user turn 未明确表达无建议边界而使用透明 deterministic fallback。全部 structural checks 和 214 项 no-API tests 通过。
 
-**不要再次运行 `scripts/20a... --run`。** 当前下一步是双人语义审查。v1--v6 的所有 physical attempts、目录和账本均须永久保留；v7 structural PASS 也不等于 PM 已学会或外部效果已经成立。
+V8 后续被明确降级为 provisional draft；其 `PROVISIONAL_STATUS.md` 已说明不可用于 annotation/training gate。V9 使用真实 full bank top-3 retrieval，完成了 R0/RS paired smoke generation，但它只有九个诊断 case，且当前 `pm_v2_generation_pilot_semantic_review_v9_review_protocol_v2/reviewer_a.csv` 与 `reviewer_b.csv` 的判断列均为空。V9 只能帮助发现 retrieval relevance、stage fit、strategy safety 和 response-level drift，不能作为正式 Strategy Bank 批准或 full-generation 唯一授权。
 
-### 4.3 Pilot 双人 semantic review（0 API，full generation 的硬前置）
+**不要再次运行任何历史 `scripts/20a... --run`，也不要把 V7/V8/V9 attestation 填入新的正式 gate。** v1--v9 的所有 physical attempts、目录和账本均须永久保留。下一步是完成 Strategy Bank human approval，并在批准后生成一个新的、至少 27-case、双人独立且绑定 PM-v2.2 treatment/bank SHA 的正式 semantic validation；在该协议及其代码落地前，full run 保持锁定。
 
-pilot 成功后先生成审查包：
+### 4.3 V9 双人 review（0 API，仅诊断，不是 full-generation gate）
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/20b_prepare_pm_v2_generation_pilot_semantic_review.py
-```
+只使用 `outputs/pm_v2_generation_pilot_semantic_review_v9_review_protocol_v2/` 中的盲化材料。两位 reviewer 各自复制并独立填写 CSV，在完成前不得查看 `private_condition_mapping.jsonl`，不得讨论答案，也不得让同一人冒充两位 reviewer。review 完成后可运行 V9 的分析/揭盲脚本形成诊断报告，但无论结果为正或负，都不解锁 52-user generation。
 
-阅读 `generation_pilot_semantic_review_readable_ZH.md`，由两名独立审查者分别填写已经生成的精简 `reviewer_a.csv` 与 `reviewer_b.csv`。每份只有九行；填写 semantic family、regime、needed memory sources、item utility、MP/MS/ME source type、当前轮时间顺序、memory age design 和 strategy need 八列，所有值只能是 0/1，notes 可选。两人完成前不得讨论答案。然后分析：
-
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/20c_analyze_pm_v2_generation_pilot_semantic_review.py \
-  --completed \
-    outputs/pm_v2_generation_pilot_semantic_review_v7/reviewer_a.csv \
-    outputs/pm_v2_generation_pilot_semantic_review_v7/reviewer_b.csv
-```
-
-该门为 all-affirmative：任一审查者、任一 case、任一维度出现 0，或 annotator 不独立、保护列被改动、lineage/hash 不一致，report 都是 `FAIL`。full generator 与 study freeze 都要求同一个 review attestation 为 `PASS`。
+正式 gate 必须另外满足：Strategy Bank human approval；至少 27 个新 case；绑定 `supporter_generation_treatment_sha256`；双人独立 review；完整 bank/retriever/treatment lineage；且 formal case/response 不得复用 V9 诊断结果作为 ground truth。该 formal protocol 尚未生成，因此此节目前没有可执行的正式授权命令。
 
 ### 4.4 Full generation dry-run（0 API）
 
@@ -173,25 +170,11 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 检查 `generation_cost_estimate.json` 和 `generation_call_plan.jsonl`：`planned_users=52`、`expected_api_calls=52`、`maximum_api_calls=52`，且预算 gate 为 `PASS`。
 
-2026-07-15 当前 v7 full no-API dry-run 已连续两次文件 SHA256 一致：最大 52 calls、最大单次 input 上界 9,128、总成本保守上界 0.31259895 USD、budget gate `PASS`，成本 SHA 为 `69ede6499a1ccf3978b705c4706b198cf4e12f984e91980702a9b5e223434e31`。`generation_cost_estimate.json` 与 `generation_call_plan.jsonl` 的两次文件 SHA256 分别稳定为 `0e64e9aa...` 与 `838331dd...`。它只是成本与请求计划，不授权现在执行 52 次调用。
+2026-07-15 的 v7 dry-run 数字与 SHA 只保留为历史 lineage。PM-v2.2 config、prompt contract、finish-reason gate 和代码 hash 已变化，因此旧 `69ede649...`、`0e64e9aa...`、`838331dd...` 均已作废。新的 dry-run 也只能用于预算检查；在 formal semantic validation 和 bank approval 之前，它不授权 52 次调用。
 
-### 4.5 Pilot structural PASS + 双人 semantic PASS 后才允许 full run
+### 4.5 Full run 当前锁定
 
-```bash
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/20_generate_pm_v2_development_data.py \
-  --run \
-  --seed-dialogues data/pm_v2/train_seed_dialogues.jsonl \
-  --strategy-bank data/strategy/strategy_cards.jsonl \
-  --out-dir data/pm_v2 \
-  --generation-pilot-attestation outputs/pm_v2_generation_compatibility_pilot_deterministic_evidence_v7/artifact_attestation.json \
-  --generation-pilot-semantic-attestation outputs/pm_v2_generation_pilot_semantic_review_v7/artifact_attestation.json \
-  --max-api-calls 52 \
-  --max-estimated-usd 1 \
-  --max-input-tokens-per-call 12000 \
-  --accept-cost-estimate-sha256 69ede6499a1ccf3978b705c4706b198cf4e12f984e91980702a9b5e223434e31
-```
+只有以下文件全部存在、逐项通过且被新的 dry-run hash 绑定后，才可重新在本节加入 `--run` 命令：完成的人类 Strategy Bank approval、全新的 formal semantic validation PASS、PM-v2.2 supporter treatment、零截断 fixed seeker track contract、当前 Git commit、当前 52-call plan 与人工接受的成本 SHA。当前任一条件都未满足，因此故意不提供可复制执行的 full-run 命令。
 
 输出必须包含 52 bundles、468 states，并为每个 state 暴露完整 16 actions。`pm_v2_data_report.json` 中的跨 split word/char fixed-hash near-duplicate gate 必须为 `PASS`。`regime`、needed sources、覆盖 rationale 和逐 item `helpful/irrelevant/harmful` 标签等 oracle/evaluator 信息保存在独立 `evaluator_contexts.jsonl`，不会进入 PM feature state。每个 needed source 必须同时包含 helpful item 和同源 distractor，防止过滤器只学习 source ID。
 
@@ -528,7 +511,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 
 训练前必须满足：完整 action matrix、动作 oracle 多样性、M0/R0/RS 覆盖、regime 对齐、每维和每 action-dimension 的 low-MAD coverage。所有中位数 label 都保留；MAD 越大，该 head 的训练权重越低。
 
-PM-v2.1 使用 user-group bootstrap ensemble；calibration 对每个用户先取 max-over-states×actions nonconformity，再拟合每个 response/risk head 与 composite 的 split-conformal radius，固定 `z` 不通过 coverage 搜索。selection grid 中每个候选都由 YAML 冻结的同一 quality−risk−cost objective 标尺评分；候选不能通过减小自己的 risk/cost penalty 机械抬高调参目标。internal test 以独立 user-block Wilson 下界检查 head-wise interval coverage；冻结的 evidence threshold 为 `0.60`，在 16 个 internal users 下要求至少 14 个完整 user-block 命中，而不是把每个 head 都设成实际上近似 16/16 的门。internal 还检查 quality/support/risk/cost、动作熵与最大动作份额、M0/R0/nonfallback M0+R0、两类 fallback、每个 regime 以及与 cost-matched fixed 的 user-cluster paired bootstrap。deployment non-inferiority/tradeoff 与 learned-routing advantage 分开报告；进入 external 的必要条件是 quality、emotional support 和 utility 三个 paired CI lower bound 都**严格大于 0**，全 tie 不能算 learned advantage。
+PM-v2.2 使用 user-group bootstrap ensemble；calibration 对每个用户先取 max-over-states×actions nonconformity，再拟合每个 response/risk head 与 composite 的 split-conformal radius，固定 `z` 不通过 coverage 搜索。selection grid 中每个候选都由 YAML 冻结的同一 quality−risk−cost objective 标尺评分；候选不能通过减小自己的 risk/cost penalty 机械抬高调参目标。internal test 以独立 user-block Wilson 下界检查 head-wise interval coverage；冻结的 evidence threshold 为 `0.60`，在 16 个 internal users 下要求至少 14 个完整 user-block 命中，而不是把每个 head 都设成实际上近似 16/16 的门。internal 还检查 quality/support/risk/cost、动作熵与最大动作份额、M0/R0/nonfallback M0+R0、两类 fallback、每个 regime 以及与 cost-matched fixed 的 user-cluster paired bootstrap。deployment non-inferiority/tradeoff 与 learned-routing advantage 分开报告；进入 external 的必要条件是 quality、emotional support 和 utility 三个 paired CI lower bound 都**严格大于 0**，全 tie 不能算 learned advantage。
 
 `training_report.json` 的 `status` 非 `COMPLETE` 时停止。`--allow-nonreportable` 只用于诊断，不能用于 reportable freeze 或 external API。
 
@@ -555,37 +538,55 @@ human–LLM MAE/Spearman、within-one 和 human inter-rater kappa 任一 YAML ga
 
 ## 9. No-API：固定基线与不可变 study freeze
 
-PM-v1 的 8,160-row EvoEmo baseline turns 是外部冻结工件，不复制进 Git。当前本机
-从私有 vault 解析并重新校验该对象；换机器时必须把变量改成同一 SHA-256 的受控
-artifact 路径：
+PM-v1 的 8,160-row `evoemo_selective` turns 只用于历史审计和 V1 failure attribution。它们的 supporter cap 为 100，且依赖旧 fixed seeker tracks；即使 generator endpoint 相同，也不得进入 PM-v2.2 主表、freeze 或 forced-swap。
 
-```bash
-export PMV1_BASELINE_TURNS="$( \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  /home/tokkio/metacom_workspace/artifact_vault/resolve_artifact.py \
-  --vault /home/tokkio/metacom_workspace/artifact_vault \
-  --collection metacom_v1_artifacts_20260714 \
-  --relative-path outputs/evoemo_selective/turns.jsonl \
-)"
+### 9.1 可选的 V1 Strategy Bank 条件机制诊断
 
-printf '%s  %s\n' \
-  9bd51edea120790431fe43603210253595bd71f273b76a82036f52521ba22ee4 \
-  "$PMV1_BASELINE_TURNS" | sha256sum -c -
-```
+`scripts/34_posthoc_v1_bank_mechanism_diagnostic.py` 只回答一个受限问题：在冻结 V1 已选择的 `PM+RS` action、memory、state 与 prompt 内容后，在一个共同的、更新为 300-token cap 的 replay generation treatment 下，把 top-3 strategy retrieval 从 156-card legacy bank 换成 12,429-card full bank，downstream response 是否改变。它**不估计** bank metadata 对 PM routing/action selection 的影响，不是历史 V1 100-token treatment 下的 bank effect，不是 V1 bank mismatch 的 total effect，更不能完成 V1 失败的因果归因。endpoint/config 也是该 replay treatment 的显式组成，不能声称它自动复现历史 V1 generator。
+
+默认 no-API 计划按用户均衡抽 40 个 frozen turns，形成 80 个 paired calls；full-bank retrieval 必须逐例复现冻结 V1 的 selected strategies，除 strategy evidence section 外的 prompt 必须逐字节一致。2026-07-16 的本机验证得到 18 users、983 eligible turns、40 sampled turns、80 calls；以示例正价格 0.20/0.60 USD per MTok 计算的保守上限为 0.0453758 USD。该数字和 dry-run SHA 不是执行授权。
+
+诊断是 post-hoc、非 confirmatory、非 PM-v2 gate。只有在独立预算确认后才可基于同一 dry-run SHA 考虑执行；当前 runbook 故意不提供 `--run` 命令。
+
+### 9.2 PM-v2.2 fixed seeker tracks
+
+先为 PM-v2.2 规划新的 fixed seeker tracks。该 dry-run 必须创建 1,020 个逻辑调用的精确 plan、300-token API cap、complete-only finish gate 和一调用一次的物理 ledger；同时使用严格正的 0.15/0.60 USD per MTok 代理价格，并以 `ceil(1.5 × (static request tokens + prior turns × 300))` 冻结每次 sequential prompt 的输入上界。dry-run 不创建 API client：
 
 ```bash
 PYTHONNOUSERSITE=1 PYTHONPATH=src \
   /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/29_prepare_pm_v2_fixed_baselines.py
-
-PYTHONNOUSERSITE=1 PYTHONPATH=src \
-  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
-  scripts/26_freeze_pm_v2_study.py \
-  --seed-audit data/pm_v2/train_seed_dialogues.jsonl.audit.json \
-  --external-baseline-turns "$PMV1_BASELINE_TURNS"
+  scripts/15a_build_evoemo_fixed_tracks.py \
+  --dry-run \
+  --out-dir outputs/evoemo_fixed_tracks_v22 \
+  --max-api-calls 1020 \
+  --max-estimated-usd 3 \
+  --max-input-tokens-per-call 30000
 ```
 
-freeze 会绑定 seed/data/evaluator-context/sweep/judge/compatibility/human/internal/checkpoint/config/fixed-track hashes。固定输出至少包括 calibration-selected cost-matched action checkpoint 和 `ME+R0` checkpoint。
+2026-07-16 的真实 1,020-call no-API 计划已得到预算 `PASS`：保守代理成本上限约 2.6339 USD，最大单调用输入上界为 27,651 tokens，且 `api_clients_created=0`。这些是上界与治理代理，不是账单，也不是执行授权。人工核对 call count、contract SHA 和预算后，未来的 `--run` 必须显式传入同目录 dry-run 打印的 `--accepted-dry-run-sha256`，并复用完全相同的三重 limits。运行时 provider 实报的 prompt/completion usage 必须为正且逐调用不超过计划上界，observed cost 也必须同时低于计划与 CLI 上限。在 Strategy Bank approval 和正式数据 semantic gate 仍未通过时，不执行该 1,020-call run。
+
+### 9.3 Treatment-matched reference baselines 与 policy pre-lock
+
+新的 reference bundle 只包含四个共同 unit 上的固定 comparator：`M0+R0`、`MPMSME+RS`、session-RAG+RS 和 full-history+RS。四者共享同一 PM-v2.2 fixed seeker track、supporter prompt、generator endpoint、temperature、300-token cap、seed 与 complete-only finish gate；各 condition 的 evidence-processing contract 另行显式绑定，不能把 structured Evidence Filter 偷换到 raw-session comparator 上。
+
+reference generation 虽然不调用 learned PM 做推理，但必须在首次 baseline API call 前绑定已经完成 internal selection 的 `outputs/pm_v2_model/pm_v2.joblib` 精确 SHA。dry-run、call plan、cost estimate、manifest、summary 和 attestation 都必须写入 `policy_checkpoint_sha256`、`policy_lock_timing=before_first_reference_baseline_api_call` 与 `post_generation_policy_tuning_prohibited=true`。最终 study freeze 必须再次验证同一 checkpoint SHA；看过 baseline 文本后替换或重训 PM 会 fail closed。
+
+在 V2.2 fixed tracks、Evidence Filter 与 policy checkpoint 都已产生后，先做无 API 计划：
+
+```bash
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+  /home/tokkio/miniconda3/envs/sim_eval/bin/python \
+  scripts/24a_run_pmv22_reference_baselines.py \
+  --dry-run \
+  --policy-checkpoint outputs/pm_v2_model/pm_v2.joblib \
+  --out-dir outputs/evoemo_pmv22_reference_baselines
+```
+
+该 dry-run 必须得到 204 frozen units × 4 conditions = 816 calls、正价格预算 gate `PASS`，且不创建 API client。未来的 `--run` 还必须同时具备真实 Strategy Bank human approval 与人工接受的精确 cost-estimate SHA；当前两者未齐，因此不提供可复制的付费命令。
+
+`ME+R0` 只保留为 discussion/limitations 的诊断 comparator，不进入上述四条件 reference bundle，也不进入主表。learned PM、calibration-selected cost-matched fixed 与可选 `ME+R0` 诊断在 final study freeze 后由 script 24 各自生成。reference bundle 每个 turn 都必须记录 `normalized_finish_reason=complete`、相同 treatment SHA、相同 policy pre-lock SHA 和对应 evidence contract。
+
+freeze 最终会绑定 seed/data/evaluator-context/sweep/judge/compatibility/human/internal/checkpoint/config/fixed-track/Strategy-Bank-approval hashes；任何旧 V1 baseline、旧 fixed track、空 reviewer CSV 或 provisional manifest 都必须 fail closed。
 
 ## 10. External generation：script 24 dry-run 同时是 action/OOD no-API preflight
 
@@ -708,11 +709,11 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   --accept-cost-estimate-sha256 <SHA_FROM_FORCED_SWAP_DRY_RUN>
 ```
 
-这不是小样本显著性检验，也不用于调模型。它检查 schema 完整、order disagreement、跨 family 方向/相关性和预注册 futility continuation。任一检查不通过，状态为 `NONREPORTABLE`，full external 停止。40 个 pilot units 的 IDs 和选择 contract 写入 attestation；script 25 必须将它们从 confirmatory full sample 中排除。
+这不是小样本显著性检验，也不用于调模型。它检查 schema 完整、order disagreement、跨 family 方向/相关性和预注册 futility continuation。任一检查不通过，状态为 `NONREPORTABLE`，full external 停止。40 个 pilot units 的 IDs 和选择 contract 写入 attestation；script 25 必须将它们从后续 held-out scoring portion 中排除。
 
 ## 12. External pointwise schema smoke：4 calls
 
-forced-swap PASS 后、full pointwise judging 前，必须用一个已从 confirmatory sample
+forced-swap PASS 后、full pointwise judging 前，必须用一个已从后续 scoring sample
 排除且在 freeze 中精确绑定的 forced-swap unit，运行同一套匿名 pointwise
 response/risk prompt 与 structured schemas。矩阵固定为 1 condition × 2 external
 families × 2 schemas = 4 calls；它只验证 schema transport、usage accounting、ledger
@@ -753,8 +754,8 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/25_eval_pm_v2_external.py \
   --dry-run \
   --freeze outputs/pm_v2_study_freeze.json \
-  --turn-paths "$PMV1_BASELINE_TURNS" outputs/evoemo_pm_v2/turns.jsonl outputs/evoemo_pm_v2_cost_matched_fixed/turns.jsonl outputs/evoemo_pm_v2_me_r0_fixed/turns.jsonl \
-  --generation-attestations outputs/evoemo_selective/artifact_attestation.json outputs/evoemo_pm_v2/artifact_attestation.json outputs/evoemo_pm_v2_cost_matched_fixed/artifact_attestation.json outputs/evoemo_pm_v2_me_r0_fixed/artifact_attestation.json \
+  --turn-paths outputs/evoemo_pmv22_reference_baselines/turns.jsonl outputs/evoemo_pm_v2/turns.jsonl outputs/evoemo_pm_v2_cost_matched_fixed/turns.jsonl outputs/evoemo_pm_v2_me_r0_fixed/turns.jsonl \
+  --generation-attestations outputs/evoemo_pmv22_reference_baselines/artifact_attestation.json outputs/evoemo_pm_v2/artifact_attestation.json outputs/evoemo_pm_v2_cost_matched_fixed/artifact_attestation.json outputs/evoemo_pm_v2_me_r0_fixed/artifact_attestation.json \
   --key-claim-verification outputs/pm_v2_forced_swap/summary.json \
   --key-claim-verification-attestation outputs/pm_v2_forced_swap/artifact_attestation.json \
   --pointwise-schema-smoke-summary outputs/pm_v2_external_pointwise_schema_smoke/summary.json \
@@ -772,8 +773,8 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   scripts/25_eval_pm_v2_external.py \
   --run \
   --freeze outputs/pm_v2_study_freeze.json \
-  --turn-paths "$PMV1_BASELINE_TURNS" outputs/evoemo_pm_v2/turns.jsonl outputs/evoemo_pm_v2_cost_matched_fixed/turns.jsonl outputs/evoemo_pm_v2_me_r0_fixed/turns.jsonl \
-  --generation-attestations outputs/evoemo_selective/artifact_attestation.json outputs/evoemo_pm_v2/artifact_attestation.json outputs/evoemo_pm_v2_cost_matched_fixed/artifact_attestation.json outputs/evoemo_pm_v2_me_r0_fixed/artifact_attestation.json \
+  --turn-paths outputs/evoemo_pmv22_reference_baselines/turns.jsonl outputs/evoemo_pm_v2/turns.jsonl outputs/evoemo_pm_v2_cost_matched_fixed/turns.jsonl outputs/evoemo_pm_v2_me_r0_fixed/turns.jsonl \
+  --generation-attestations outputs/evoemo_pmv22_reference_baselines/artifact_attestation.json outputs/evoemo_pm_v2/artifact_attestation.json outputs/evoemo_pm_v2_cost_matched_fixed/artifact_attestation.json outputs/evoemo_pm_v2_me_r0_fixed/artifact_attestation.json \
   --key-claim-verification outputs/pm_v2_forced_swap/summary.json \
   --key-claim-verification-attestation outputs/pm_v2_forced_swap/artifact_attestation.json \
   --pointwise-schema-smoke-summary outputs/pm_v2_external_pointwise_schema_smoke/summary.json \
@@ -784,7 +785,7 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
   --accept-cost-estimate-sha256 <SHA_FROM_FULL_EXTERNAL_DRY_RUN>
 ```
 
-外部正式报告六个 response dimensions、冻结 composite、七个 risks、observed input tokens，并给出按 user/scenario 聚类的 paired/bootstrap intervals。必须包含 PM-v2、calibration-selected cost-matched fixed、`ME+R0` 以及 freeze 中的 context-only、structured、raw-session 和 full-history 条件。
+外部主表报告六个 response dimensions、冻结 composite、七个 risks、observed input tokens，并给出按 user/scenario 聚类的 paired/bootstrap intervals。主表包含 PM-v2、calibration-selected cost-matched fixed，以及 freeze 中的 context-only、structured、raw-session 和 full-history 条件。`ME+R0` 仍可在同一冻结 unit 上评分，但只能进入诊断附表或 discussion/limitations，不进入主表；“required evaluation condition”不等于“required main-table condition”。
 
 ## 14. 停止规则与成功标准
 
@@ -800,15 +801,13 @@ PYTHONNOUSERSITE=1 PYTHONPATH=src \
 - forced-swap 技术/无效性 gate 失败；
 - 4-call external pointwise schema smoke 未精确 PASS。
 
-PM-v2.1 只有在实际结果同时证明以下事项后才算解决 PM-v1 的核心经验问题：
+PM-v2.2 只有在实际结果同时证明以下事项后才算解决 PM-v1 的核心经验问题：
 
 1. learned、非 fallback 的 action 分布有足够熵和多样性，不是近常量动作；
 2. M0、R0、M0+R0、memory-on+R0 和 RS 都在合适 regime 被使用；
 3. 与同预算 fixed 相比，质量/支持、风险、成本和 conservative utility 达到预注册边界；
 4. interval coverage、OOD/fallback 和 human calibration 均通过；
-5. 排除 pilot units 的 confirmatory full evaluation 支持主结论，forced-swap
-   技术/顺序稳健性结果不与其矛盾；forced-swap 本身不冒充 confirmatory effect
-   estimate；
+5. 排除 pilot units 的 development-informed EvoEmo evaluation 支持主结论，forced-swap 技术/顺序稳健性结果不与其矛盾；该结果不能冒充 pristine confirmatory effect estimate；
 6. 负面结果原样报告。
 
-在这些结果真正产生前，只能写“PM-v2.1 的结构性修复和 fail-closed 验证链路已实现”，不能写“PM-v2.1 已证明学会最优 quality–risk–cost 平衡”。
+在这些结果真正产生前，只能写“PM-v2.2 的结构性修复和 fail-closed 验证链路已实现”，不能写“PM-v2.2 已证明学会最优 quality–risk–cost 平衡”。若没有新增从未分析过的纵向数据集，也不能写“PM-v2.2 已在独立 confirmatory set 上得到确认”。
