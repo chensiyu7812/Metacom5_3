@@ -35,6 +35,43 @@ from metacom_pm.pm_v22_reference_baselines import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+REFERENCE_RAW_GATE_BOOLEAN_CHECKS = (
+    "row_count_exact",
+    "call_keys_exact",
+    "finish_reasons_complete",
+    "errors_absent",
+    "supporter_generation_treatment_exact",
+    "fixed_seeker_generation_treatment_exact",
+    "evidence_processing_contract_exact",
+    "policy_lock_exact",
+)
+
+
+def require_reference_raw_generation_contract_gate(
+    *, summary: Mapping[str, Any], attestation: Mapping[str, Any], row_count: int
+) -> dict[str, Any]:
+    """Require the exact named raw gate before external judging."""
+
+    gate = dict(summary.get("raw_generation_contract_gate") or {})
+    if (
+        gate.get("status") != "PASS"
+        or int(gate.get("expected_rows", -1)) != int(row_count)
+        or int(gate.get("observed_rows", -1)) != int(row_count)
+        or not all(gate.get(key) is True for key in REFERENCE_RAW_GATE_BOOLEAN_CHECKS)
+        or (attestation.get("parameters") or {}).get(
+            "raw_generation_contract_gate"
+        )
+        != gate
+        or (attestation.get("expected") or {}).get(
+            "raw_generation_contract_gate"
+        )
+        != gate
+    ):
+        raise RuntimeError(
+            "reference-baseline summary/attestation lacks the exact PASS raw "
+            "generation contract gate"
+        )
+    return gate
 
 
 def require_treatment_bound_turn_file(
@@ -571,6 +608,13 @@ def main() -> None:
             or any(row.get("event") == "FAILED" for row in ledger_rows)
         ):
             raise RuntimeError("generation bundle is incomplete or has failed attempts")
+        reference_raw_gate: dict[str, Any] | None = None
+        if stage == PMV22_REFERENCE_BASELINE_STAGE:
+            reference_raw_gate = require_reference_raw_generation_contract_gate(
+                summary=summary,
+                attestation=attestation,
+                row_count=len(turn_rows),
+            )
         if (
             stage == "evoemo_pm_v2_generation"
             and (
@@ -582,7 +626,10 @@ def main() -> None:
             )
         ) or (
             stage == PMV22_REFERENCE_BASELINE_STAGE
-            and int(summary.get("non_complete_finish_reason_count", -1)) != 0
+            and (
+                int(summary.get("non_complete_finish_reason_count", -1)) != 0
+                or reference_raw_gate is None
+            )
         ):
             raise RuntimeError(
                 "generation summary does not prove a complete raw-call matrix"

@@ -1142,6 +1142,41 @@ def test_full_external_requires_schema_smoke_before_core_client_path():
     assert POINTWISE_SCHEMA_SMOKE_PROTOCOL in freeze_source
 
 
+def test_external_eval_requires_exact_reference_raw_generation_gate():
+    script = Path("scripts/25_eval_pm_v2_external.py")
+    spec = importlib.util.spec_from_file_location(
+        "pmv22_external_eval_raw_gate_script", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    gate = {
+        "status": "PASS",
+        "expected_rows": 4,
+        "observed_rows": 4,
+        **{
+            key: True
+            for key in module.REFERENCE_RAW_GATE_BOOLEAN_CHECKS
+        },
+    }
+    summary = {"raw_generation_contract_gate": gate}
+    attestation = {
+        "parameters": {"raw_generation_contract_gate": gate},
+        "expected": {"raw_generation_contract_gate": gate},
+    }
+    assert module.require_reference_raw_generation_contract_gate(
+        summary=summary, attestation=attestation, row_count=4
+    ) == gate
+
+    mixed = {**gate, "policy_lock_exact": False}
+    with pytest.raises(RuntimeError, match="exact PASS raw"):
+        module.require_reference_raw_generation_contract_gate(
+            summary={"raw_generation_contract_gate": mixed},
+            attestation=attestation,
+            row_count=4,
+        )
+
+
 def test_external_turn_gate_rejects_mixed_or_noncomplete_generation(tmp_path):
     script = Path("scripts/25_eval_pm_v2_external.py")
     spec = importlib.util.spec_from_file_location("pmv22_external_eval_script", script)
