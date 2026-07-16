@@ -10,9 +10,6 @@ from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.posthoc_v1_bank_probe import (
     DEFAULT_SAMPLE_SEED,
     DEFAULT_SAMPLE_SIZE,
-    FROZEN_V1_FULL_BANK_SHA256,
-    FROZEN_V1_LEGACY_BANK_SHA256,
-    FROZEN_V1_TURNS_SHA256,
     persist_posthoc_v1_bank_dry_run,
     plan_posthoc_v1_bank_probe,
     run_posthoc_v1_bank_probe,
@@ -36,19 +33,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--legacy-bank", type=Path, required=True)
     parser.add_argument("--full-bank", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
-    parser.add_argument("--endpoint", default="generator")
-    parser.add_argument("--source-condition", default="pm")
+    parser.add_argument(
+        "--endpoint",
+        default="generator",
+        help=(
+            "config name for the common replay generator treatment; this does "
+            "not assert historical original-V1 generator identity"
+        ),
+    )
     parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE)
     parser.add_argument("--sample-seed", type=int, default=DEFAULT_SAMPLE_SEED)
-    parser.add_argument(
-        "--expected-turns-sha256", default=FROZEN_V1_TURNS_SHA256
-    )
-    parser.add_argument(
-        "--expected-legacy-bank-sha256", default=FROZEN_V1_LEGACY_BANK_SHA256
-    )
-    parser.add_argument(
-        "--expected-full-bank-sha256", default=FROZEN_V1_FULL_BANK_SHA256
-    )
     parser.add_argument("--input-usd-per-million-tokens", type=float, required=True)
     parser.add_argument("--output-usd-per-million-tokens", type=float, required=True)
     parser.add_argument("--input-token-safety-factor", type=float, default=1.25)
@@ -76,11 +70,12 @@ def main() -> None:
         input_token_safety_factor=args.input_token_safety_factor,
         sample_size=args.sample_size,
         sample_seed=args.sample_seed,
-        source_condition=args.source_condition,
-        expected_turns_sha256=args.expected_turns_sha256,
-        expected_legacy_bank_sha256=args.expected_legacy_bank_sha256,
-        expected_full_bank_sha256=args.expected_full_bank_sha256,
     )
+    if not estimate["canonical_frozen_v1_inputs"]:
+        raise RuntimeError(
+            "formal CLI refuses noncanonical inputs; the three frozen SHA-256 "
+            "bindings and source_condition=pm are mandatory"
+        )
     if int(estimate["maximum_physical_api_attempts"]) > args.max_api_calls:
         raise RuntimeError("dry-run plan exceeds --max-api-calls")
     if float(estimate["maximum_estimated_usd"]) > args.max_estimated_usd:

@@ -22,7 +22,11 @@ from types import SimpleNamespace
 from typing import Any, Mapping, Sequence
 
 from .api import Endpoint, make_client, request_log, require_reported_usage
-from .attempt_ledger import PersistentAttemptLedger, physical_call_key
+from .attempt_ledger import (
+    PersistentAttemptLedger,
+    physical_call_key,
+    reported_prompt_token_error,
+)
 from .contracts import (
     DialogueTurn,
     MemoryItem,
@@ -52,9 +56,9 @@ from .text import conservative_token_bound, normalize_space
 
 
 DIAGNOSTIC_LABEL = "posthoc_v1_bank_mechanism_diagnostic"
+NONCANONICAL_DEBUG_LABEL = f"{DIAGNOSTIC_LABEL}_noncanonical_debug"
 DIAGNOSTIC_PROTOCOL = "posthoc-v1-bank-mechanism-diagnostic-v1"
 CALL_PLAN_PROTOCOL = "posthoc-v1-bank-paired-call-plan-v1"
-STAGE = DIAGNOSTIC_LABEL
 CONDITIONAL_ESTIMAND = (
     "Conditional on the frozen V1 PM+RS action, selected memory, state, prompt, "
     "generator treatment, and decoding controls, contrast the downstream "
@@ -486,6 +490,17 @@ def plan_posthoc_v1_bank_probe(
             label="full 12,429-card Strategy Bank",
         ),
     }
+    canonical_frozen_v1_inputs = bool(
+        source_condition == "pm"
+        and expected_turns_sha256 == FROZEN_V1_TURNS_SHA256
+        and expected_legacy_bank_sha256 == FROZEN_V1_LEGACY_BANK_SHA256
+        and expected_full_bank_sha256 == FROZEN_V1_FULL_BANK_SHA256
+    )
+    diagnostic_label = (
+        DIAGNOSTIC_LABEL
+        if canonical_frozen_v1_inputs
+        else NONCANONICAL_DEBUG_LABEL
+    )
     legacy_cards = _load_cards(legacy_bank_path)
     full_cards = _load_cards(full_bank_path)
     if (
@@ -584,12 +599,12 @@ def plan_posthoc_v1_bank_probe(
                 "retrieval_sha256": retrieval["retrieval_sha256"],
             }
             record_ids = {
-                "diagnostic_label": DIAGNOSTIC_LABEL,
+                "diagnostic_label": diagnostic_label,
                 "pair_id": candidate["unit_id"],
                 "bank_condition": bank_condition,
             }
             logical_call_key = physical_call_key(
-                stage=STAGE,
+                stage=diagnostic_label,
                 record_ids=record_ids,
                 prompt_sha256=messages_sha256,
                 endpoint=endpoint,
@@ -605,7 +620,8 @@ def plan_posthoc_v1_bank_probe(
             ) / 1_000_000.0
             calls_by_bank[bank_condition] = {
                 "protocol": CALL_PLAN_PROTOCOL,
-                "diagnostic_label": DIAGNOSTIC_LABEL,
+                "diagnostic_label": diagnostic_label,
+                "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
                 "conditional_estimand": CONDITIONAL_ESTIMAND,
                 "excluded_estimands": list(EXCLUDED_ESTIMANDS),
                 "confirmatory": False,
@@ -622,7 +638,7 @@ def plan_posthoc_v1_bank_probe(
                 "non_strategy_messages_sha256": None,
                 "messages": messages,
                 "messages_sha256": messages_sha256,
-                "endpoint": endpoint_binding,
+                "replay_generator_treatment": endpoint_binding,
                 "temperature": GENERATOR_TEMPERATURE,
                 "max_tokens": GENERATOR_MAX_OUTPUT_TOKENS,
                 "generator_seed": generator_seed,
@@ -661,6 +677,8 @@ def plan_posthoc_v1_bank_probe(
                 **candidate,
                 "sample_index": sample_index,
                 "sample_seed": int(sample_seed),
+                "diagnostic_label": diagnostic_label,
+                "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
                 "query_sha256": sha256_text(query),
                 "non_strategy_messages_sha256": non_strategy_sha,
                 "retrievals": retrievals,
@@ -670,7 +688,7 @@ def plan_posthoc_v1_bank_probe(
                     "same_recent_dialogue": True,
                     "same_requested_action": True,
                     "same_selected_memory": True,
-                    "same_endpoint": True,
+                    "same_replay_generator_treatment": True,
                     "same_system_prompt": True,
                     "same_temperature": True,
                     "same_max_output_tokens": True,
@@ -691,7 +709,13 @@ def plan_posthoc_v1_bank_probe(
     ) / 1_000_000.0
     estimate_payload = {
         "protocol": DIAGNOSTIC_PROTOCOL,
-        "diagnostic_label": DIAGNOSTIC_LABEL,
+        "diagnostic_label": diagnostic_label,
+        "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
+        "input_classification": (
+            "CANONICAL_FROZEN_V1"
+            if canonical_frozen_v1_inputs
+            else "NONCANONICAL_DEBUG_ONLY"
+        ),
         "claim_boundary": (
             "Conditional downstream mechanism diagnostic after freezing the "
             "V1 PM+RS action; not a total-effect or routing diagnostic; not "
@@ -718,7 +742,12 @@ def plan_posthoc_v1_bank_probe(
         },
         "canonical_v1_retriever_sha256": CANONICAL_V1_RETRIEVER_SHA256,
         "strategy_top_k": CANONICAL_V1_TOP_K,
-        "generator_endpoint": endpoint_binding,
+        "replay_generator_treatment": endpoint_binding,
+        "replay_generator_treatment_note": (
+            "A common endpoint/model treatment held fixed across both bank arms; "
+            "its binding is not claimed to prove the historical identity of the "
+            "original V1 generator."
+        ),
         "common_system_prompt_id": COMMON_PROMPT_ID,
         "common_system_prompt_sha256": prompt_sha256,
         "temperature": GENERATOR_TEMPERATURE,
@@ -764,7 +793,11 @@ def _write_annotation_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None
 
 
 def _review_plan(
-    samples: Sequence[Mapping[str, Any]], sample_seed: int
+    samples: Sequence[Mapping[str, Any]],
+    sample_seed: int,
+    *,
+    diagnostic_label: str,
+    canonical_frozen_v1_inputs: bool,
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     legacy_a_units = _balanced_first_assignment(
@@ -785,7 +818,8 @@ def _review_plan(
         ):
             rows.append(
                 {
-                    "diagnostic_label": DIAGNOSTIC_LABEL,
+                    "diagnostic_label": diagnostic_label,
+                    "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
                     "confirmatory": False,
                     "v2_training_gate": False,
                     "item_id": f"{pair_id}_order{order_variant}",
@@ -841,9 +875,21 @@ def persist_posthoc_v1_bank_dry_run(
     write_json(estimate_path, normalized[0])
     write_jsonl(samples_path, normalized[1])
     write_jsonl(plan_path, normalized[2])
-    review_plan = _review_plan(samples, int(estimate["sample_seed"]))
+    review_plan = _review_plan(
+        samples,
+        int(estimate["sample_seed"]),
+        diagnostic_label=str(estimate["diagnostic_label"]),
+        canonical_frozen_v1_inputs=bool(
+            estimate["canonical_frozen_v1_inputs"]
+        ),
+    )
     write_jsonl(out / "private_blind_review_plan.jsonl", review_plan)
-    schema = review_annotation_schema()
+    schema = review_annotation_schema(
+        diagnostic_label=str(estimate["diagnostic_label"]),
+        canonical_frozen_v1_inputs=bool(
+            estimate["canonical_frozen_v1_inputs"]
+        ),
+    )
     write_json(out / "review_annotation_schema.json", schema)
     for reviewer_id in ("reviewer_a", "reviewer_b"):
         reviewer_rows = [
@@ -859,10 +905,20 @@ def persist_posthoc_v1_bank_dry_run(
     return "WRITTEN"
 
 
-def review_annotation_schema() -> dict[str, Any]:
+def review_annotation_schema(
+    *,
+    diagnostic_label: str = DIAGNOSTIC_LABEL,
+    canonical_frozen_v1_inputs: bool = True,
+) -> dict[str, Any]:
     return {
         "protocol": "posthoc-v1-bank-dual-order-human-review-v1",
-        "diagnostic_label": DIAGNOSTIC_LABEL,
+        "diagnostic_label": diagnostic_label,
+        "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
+        "input_classification": (
+            "CANONICAL_FROZEN_V1"
+            if canonical_frozen_v1_inputs
+            else "NONCANONICAL_DEBUG_ONLY"
+        ),
         "claim_boundary": (
             "Conditional downstream mechanism diagnostic after freezing the "
             "V1 PM+RS action; not a routing or total-effect estimate; not "
@@ -965,7 +1021,10 @@ def _review_item(
     b_condition = str(mapping["response_B_condition"])
     return {
         "protocol": "posthoc-v1-bank-dual-order-human-review-v1",
-        "diagnostic_label": DIAGNOSTIC_LABEL,
+        "diagnostic_label": mapping["diagnostic_label"],
+        "canonical_frozen_v1_inputs": mapping[
+            "canonical_frozen_v1_inputs"
+        ],
         "conditional_estimand": CONDITIONAL_ESTIMAND,
         "excluded_estimands": list(EXCLUDED_ESTIMANDS),
         "confirmatory": False,
@@ -1015,6 +1074,28 @@ def run_posthoc_v1_bank_probe(
         max_estimated_usd=max_estimated_usd,
         max_input_tokens_per_call=max_input_tokens_per_call,
     )
+    canonical_frozen_v1_inputs = bool(
+        estimate.get("canonical_frozen_v1_inputs")
+    )
+    diagnostic_label = str(estimate.get("diagnostic_label") or "")
+    expected_label = (
+        DIAGNOSTIC_LABEL
+        if canonical_frozen_v1_inputs
+        else NONCANONICAL_DEBUG_LABEL
+    )
+    if diagnostic_label != expected_label:
+        raise RuntimeError("diagnostic label/input-classification mismatch")
+    replay_treatment = {
+        "base_url": endpoint.base_url,
+        "model": endpoint.model,
+        "family": endpoint.family,
+        "timeout_seconds": endpoint.timeout_seconds,
+    }
+    if estimate.get("replay_generator_treatment") != replay_treatment or any(
+        row.get("replay_generator_treatment") != replay_treatment
+        for row in call_plan
+    ):
+        raise RuntimeError("runtime replay generator treatment differs from dry-run")
     if any(
         int(row["conservative_input_tokens"]) > int(max_input_tokens_per_call)
         for row in call_plan
@@ -1026,7 +1107,7 @@ def run_posthoc_v1_bank_probe(
     expected_calls = {str(row["logical_call_key"]): 1 for row in call_plan}
     ledger = PersistentAttemptLedger(
         ledger_path,
-        stage=STAGE,
+        stage=diagnostic_label,
         expected_calls=expected_calls,
         maximum_total_attempts=len(expected_calls),
     )
@@ -1060,7 +1141,7 @@ def run_posthoc_v1_bank_probe(
         for plan_row in pending_rows:
             call_key = str(plan_row["logical_call_key"])
             record_ids = {
-                "diagnostic_label": DIAGNOSTIC_LABEL,
+                "diagnostic_label": diagnostic_label,
                 "pair_id": plan_row["pair_id"],
                 "bank_condition": plan_row["bank_condition"],
                 "logical_call_key": call_key,
@@ -1082,41 +1163,76 @@ def run_posthoc_v1_bank_probe(
                     response_schema=None,
                     retries=1,
                 )
-                usage = require_reported_usage(call.usage, stage=STAGE)
-                finish_gate_error = None
+                usage = require_reported_usage(
+                    call.usage, stage=diagnostic_label
+                )
+                call_gate_errors: list[str] = []
+                prompt_token_error = reported_prompt_token_error(
+                    usage,
+                    maximum_prompt_tokens=int(
+                        plan_row["conservative_input_tokens"]
+                    ),
+                    stage=diagnostic_label,
+                    require_positive=True,
+                )
+                if prompt_token_error is not None:
+                    call_gate_errors.append(prompt_token_error)
+                if int(usage["completion_tokens"]) > int(
+                    plan_row["maximum_output_tokens"]
+                ):
+                    call_gate_errors.append(
+                        f"{diagnostic_label} reported completion_tokens exceed "
+                        "the frozen "
+                        "per-call output bound: "
+                        f"reported={usage['completion_tokens']}, "
+                        f"bound={plan_row['maximum_output_tokens']}"
+                    )
                 if call.normalized_finish_reason != "complete":
-                    finish_gate_error = (
+                    call_gate_errors.append(
                         "supporter generation rejected by complete-only finish gate: "
                         f"provider={call.provider_finish_reason!r}, "
                         f"normalized={call.normalized_finish_reason!r}"
                     )
+                call_gate_error = (
+                    " | ".join(call_gate_errors) if call_gate_errors else None
+                )
                 append_jsonl(
                     raw_path,
                     request_log(
-                        stage=STAGE,
+                        stage=diagnostic_label,
                         endpoint=endpoint,
                         messages=list(plan_row["messages"]),
                         result=call,
                         parsed=None,
-                        error=finish_gate_error,
+                        error=call_gate_error,
                         prompt_hash=str(plan_row["messages_sha256"]),
                         record_ids=record_ids,
                     ),
                 )
                 raw_written = True
-                if finish_gate_error is not None:
+                if call_gate_error is not None:
                     ledger.finish(
                         reservation,
                         succeeded=False,
                         request_hash=call.request_hash,
                         usage=usage,
-                        error=finish_gate_error,
+                        error=call_gate_error,
                         result={
                             "provider_finish_reason": call.provider_finish_reason,
                             "normalized_finish_reason": call.normalized_finish_reason,
+                            "reported_prompt_tokens": usage["prompt_tokens"],
+                            "maximum_prompt_tokens": plan_row[
+                                "conservative_input_tokens"
+                            ],
+                            "reported_completion_tokens": usage[
+                                "completion_tokens"
+                            ],
+                            "maximum_completion_tokens": plan_row[
+                                "maximum_output_tokens"
+                            ],
                         },
                     )
-                    raise RuntimeError(finish_gate_error)
+                    raise RuntimeError(call_gate_error)
                 response = normalize_space(call.text)
                 if not response:
                     raise RuntimeError("complete diagnostic call normalized to empty output")
@@ -1144,7 +1260,7 @@ def run_posthoc_v1_bank_probe(
                     append_jsonl(
                         raw_path,
                         request_log(
-                            stage=STAGE,
+                            stage=diagnostic_label,
                             endpoint=endpoint,
                             messages=list(plan_row["messages"]),
                             result=call,
@@ -1194,7 +1310,8 @@ def run_posthoc_v1_bank_probe(
         generation_rows.append(
             {
                 "protocol": DIAGNOSTIC_PROTOCOL,
-                "diagnostic_label": DIAGNOSTIC_LABEL,
+                "diagnostic_label": diagnostic_label,
+                "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
                 "conditional_estimand": CONDITIONAL_ESTIMAND,
                 "excluded_estimands": list(EXCLUDED_ESTIMANDS),
                 "confirmatory": False,
@@ -1212,6 +1329,33 @@ def run_posthoc_v1_bank_probe(
                 "normalized_finish_reason": result.get("normalized_finish_reason"),
                 "usage": usage,
             }
+        )
+    prices = estimate["pricing_usd_per_million_tokens"]
+    observed_usd = (
+        total_usage["prompt_tokens"] * float(prices["input"])
+        + total_usage["completion_tokens"] * float(prices["output"])
+    ) / 1_000_000.0
+    accepted_estimated_usd = float(estimate["maximum_estimated_usd"])
+    observed_budget_gate = {
+        "diagnostic_label": diagnostic_label,
+        "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
+        "status": "PASS",
+        "observed_usd": observed_usd,
+        "accepted_cost_estimate_usd_ceiling": accepted_estimated_usd,
+        "cli_max_estimated_usd_ceiling": float(max_estimated_usd),
+        "within_accepted_cost_estimate": observed_usd <= accepted_estimated_usd,
+        "within_cli_max_estimated_usd": observed_usd <= float(max_estimated_usd),
+    }
+    if not (
+        observed_budget_gate["within_accepted_cost_estimate"]
+        and observed_budget_gate["within_cli_max_estimated_usd"]
+    ):
+        observed_budget_gate["status"] = "FAIL"
+        write_json(out / "observed_budget_gate_failure.json", observed_budget_gate)
+        raise RuntimeError(
+            "reported diagnostic cost exceeded an accepted budget ceiling: "
+            f"observed={observed_usd}, accepted={accepted_estimated_usd}, "
+            f"cli={float(max_estimated_usd)}"
         )
     write_jsonl(out / "paired_generations.jsonl", generation_rows)
 
@@ -1237,14 +1381,10 @@ def run_posthoc_v1_bank_probe(
                 for row in items
             ],
         )
-    prices = estimate["pricing_usd_per_million_tokens"]
-    observed_usd = (
-        total_usage["prompt_tokens"] * float(prices["input"])
-        + total_usage["completion_tokens"] * float(prices["output"])
-    ) / 1_000_000.0
     summary = {
         "protocol": DIAGNOSTIC_PROTOCOL,
-        "diagnostic_label": DIAGNOSTIC_LABEL,
+        "diagnostic_label": diagnostic_label,
+        "canonical_frozen_v1_inputs": canonical_frozen_v1_inputs,
         "status": "COMPLETE",
         "claim_boundary": (
             "Conditional downstream mechanism diagnostic after freezing the "
@@ -1263,6 +1403,7 @@ def run_posthoc_v1_bank_probe(
         "normalized_finish_reason_counts": {"complete": len(generation_rows)},
         "reported_usage": total_usage,
         "observed_usd": observed_usd,
+        "observed_budget_gate": observed_budget_gate,
         "accepted_cost_estimate_sha256": accepted_cost_estimate_sha256,
         "artifacts": {
             name: sha256_file(out / name)

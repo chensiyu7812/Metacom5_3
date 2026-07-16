@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import subprocess
+import sys
 
 import pytest
 
@@ -18,8 +20,8 @@ from metacom_pm.io import (
 import metacom_pm.posthoc_v1_bank_probe as probe_module
 from metacom_pm.posthoc_v1_bank_probe import (
     CONDITIONAL_ESTIMAND,
-    DIAGNOSTIC_LABEL,
     EXCLUDED_ESTIMANDS,
+    NONCANONICAL_DEBUG_LABEL,
     persist_posthoc_v1_bank_dry_run,
     plan_posthoc_v1_bank_probe,
     run_posthoc_v1_bank_probe,
@@ -42,6 +44,25 @@ def test_private_diagnostic_output_directory_is_gitignored() -> None:
         check=False,
     )
     assert completed.returncode == 0
+
+
+def test_formal_cli_exposes_no_noncanonical_sha_or_condition_override() -> None:
+    script = PROJECT_ROOT / "scripts" / "34_posthoc_v1_bank_mechanism_diagnostic.py"
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+    completed = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=PROJECT_ROOT,
+        env=environment,
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    assert "--expected-turns-sha256" not in completed.stdout
+    assert "--expected-legacy-bank-sha256" not in completed.stdout
+    assert "--expected-full-bank-sha256" not in completed.stdout
+    assert "--source-condition" not in completed.stdout
+    assert "common replay generator treatment" in completed.stdout
 
 
 def _endpoint() -> Endpoint:
@@ -170,7 +191,9 @@ def test_dry_run_is_deterministic_balanced_and_changes_only_strategy_section(
         lambda endpoint: pytest.fail("dry-run constructed an API client"),
     )
     estimate, samples, plan = _plan(tmp_path)
-    assert estimate["diagnostic_label"] == DIAGNOSTIC_LABEL
+    assert estimate["diagnostic_label"] == NONCANONICAL_DEBUG_LABEL
+    assert estimate["canonical_frozen_v1_inputs"] is False
+    assert estimate["input_classification"] == "NONCANONICAL_DEBUG_ONLY"
     assert estimate["conditional_estimand"] == CONDITIONAL_ESTIMAND
     assert estimate["excluded_estimands"] == list(EXCLUDED_ESTIMANDS)
     assert "frozen V1 PM+RS action" in estimate["conditional_estimand"]
@@ -183,6 +206,9 @@ def test_dry_run_is_deterministic_balanced_and_changes_only_strategy_section(
     assert estimate["maximum_physical_api_attempts"] == 6
     assert estimate["expected_call_formula"] == "2 * sample_size"
     assert estimate["maximum_estimated_usd"] > 0
+    assert "replay_generator_treatment" in estimate
+    assert "generator_endpoint" not in estimate
+    assert "not claimed" in estimate["replay_generator_treatment_note"]
     assert sorted(estimate["selected_per_user"].values()) == [1, 2]
     assert all(sample["paired_invariance"]["only_strategy_evidence_section_differs"] for sample in samples)
 
@@ -205,6 +231,8 @@ def test_dry_run_is_deterministic_balanced_and_changes_only_strategy_section(
     assert persist_posthoc_v1_bank_dry_run(out, estimate, samples, plan) == "VALIDATED_EXISTING"
     assert len(list(iter_jsonl(out / "private_blind_review_plan.jsonl"))) == 6
     review_schema = read_json(out / "review_annotation_schema.json")
+    assert review_schema["diagnostic_label"] == NONCANONICAL_DEBUG_LABEL
+    assert review_schema["canonical_frozen_v1_inputs"] is False
     assert review_schema["conditional_estimand"] == CONDITIONAL_ESTIMAND
     assert review_schema["excluded_estimands"] == list(EXCLUDED_ESTIMANDS)
     assert len((out / "reviewer_a_template.csv").read_text().splitlines()) == 4
@@ -284,6 +312,55 @@ def test_truncated_call_is_raw_logged_and_fails_closed(
     assert not (out / "paired_generations.jsonl").exists()
 
 
+def test_reported_prompt_token_overrun_is_raw_logged_and_fails_closed(
+    tmp_path: Path,
+) -> None:
+    estimate, samples, plan = _plan(tmp_path, sample_size=1)
+    out = tmp_path / "out"
+    persist_posthoc_v1_bank_dry_run(out, estimate, samples, plan)
+    prompt_tokens = int(plan[0]["conservative_input_tokens"]) + 1
+
+    class PromptOverrunClient(_FakeClient):
+        def chat(self, messages, **kwargs):
+            call, parsed = super().chat(messages, **kwargs)
+            call.usage = {
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": 5,
+                "total_tokens": prompt_tokens + 5,
+            }
+            call.raw_response["usage"] = dict(call.usage)
+            return call, parsed
+
+    fake = PromptOverrunClient(["complete"])
+    with pytest.raises(RuntimeError, match="reported prompt_tokens exceed"):
+        run_posthoc_v1_bank_probe(
+            out,
+            estimate,
+            samples,
+            plan,
+            endpoint=_endpoint(),
+            accepted_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+            max_api_calls=2,
+            max_estimated_usd=10.0,
+            max_input_tokens_per_call=100_000,
+            client_factory=lambda endpoint: fake,
+        )
+    assert fake.closed
+    assert [row["event"] for row in iter_jsonl(out / "physical_attempt_ledger.jsonl")] == [
+        "STARTED",
+        "FAILED",
+    ]
+    terminal = list(iter_jsonl(out / "physical_attempt_ledger.jsonl"))[-1]
+    assert terminal["usage"]["prompt_tokens"] == prompt_tokens
+    assert terminal["result"]["maximum_prompt_tokens"] == plan[0][
+        "conservative_input_tokens"
+    ]
+    raw = list(iter_jsonl(out / "raw_api_calls.jsonl"))
+    assert "reported prompt_tokens exceed" in raw[0]["error"]
+    assert raw[0]["raw_response"]["usage"]["prompt_tokens"] == prompt_tokens
+    assert not (out / "paired_generations.jsonl").exists()
+
+
 def test_run_rejects_unaccepted_cost_hash_before_client(
     monkeypatch, tmp_path: Path
 ) -> None:
@@ -358,6 +435,10 @@ def test_complete_run_builds_reverse_order_blind_review_package(
     assert summary["status"] == "COMPLETE"
     assert summary["successful_calls"] == 4
     assert summary["completion_truncated_count"] == 0
+    assert summary["observed_budget_gate"]["status"] == "PASS"
+    assert summary["observed_budget_gate"]["within_accepted_cost_estimate"] is True
+    assert summary["observed_budget_gate"]["within_cli_max_estimated_usd"] is True
+    assert summary["observed_usd"] <= estimate["maximum_estimated_usd"]
     assert all(call["retries"] == 1 for call in fake.calls)
     mappings = list(iter_jsonl(out / "private_blind_review_plan.jsonl"))
     by_pair: dict[str, list[dict]] = {}
@@ -379,3 +460,40 @@ def test_complete_run_builds_reverse_order_blind_review_package(
     )
     assert len((out / "reviewer_a.csv").read_text().splitlines()) == 3
     assert len((out / "reviewer_b.csv").read_text().splitlines()) == 3
+
+
+def test_final_observed_cost_must_fit_accepted_and_cli_budgets(
+    tmp_path: Path,
+) -> None:
+    estimate, samples, plan = _plan(tmp_path, sample_size=1)
+    estimate = dict(estimate)
+    estimate["maximum_estimated_usd"] = 1e-9
+    estimate_payload = {
+        key: value
+        for key, value in estimate.items()
+        if key != "cost_estimate_sha256"
+    }
+    estimate["cost_estimate_sha256"] = sha256_text(
+        canonical_json(estimate_payload)
+    )
+    out = tmp_path / "out"
+    persist_posthoc_v1_bank_dry_run(out, estimate, samples, plan)
+    fake = _FakeClient(["complete", "complete"])
+    with pytest.raises(RuntimeError, match="exceeded an accepted budget ceiling"):
+        run_posthoc_v1_bank_probe(
+            out,
+            estimate,
+            samples,
+            plan,
+            endpoint=_endpoint(),
+            accepted_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+            max_api_calls=2,
+            max_estimated_usd=5e-9,
+            max_input_tokens_per_call=100_000,
+            client_factory=lambda endpoint: fake,
+        )
+    gate = read_json(out / "observed_budget_gate_failure.json")
+    assert gate["status"] == "FAIL"
+    assert gate["within_accepted_cost_estimate"] is False
+    assert gate["within_cli_max_estimated_usd"] is False
+    assert not (out / "paired_generations.jsonl").exists()
