@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 import json
 import time
 
-from .api import Endpoint, OpenAICompatibleClient, request_log
+from .api import (
+    Endpoint,
+    OpenAICompatibleClient,
+    make_client,
+    request_log,
+    require_reported_usage,
+)
 from .artifacts import create_artifact_attestation, require_artifact_attestation
+from .attempt_ledger import PersistentAttemptLedger
 from .contracts import (
     CostRecord,
     DialogueTurn,
@@ -22,6 +29,7 @@ from .io import (
     append_jsonl,
     canonical_json,
     ensure_run_manifest,
+    index_jsonl_unique,
     iter_jsonl,
     load_done_keys,
     read_json,
@@ -30,7 +38,9 @@ from .io import (
     stable_hex,
     utc_now,
     write_json,
+    write_jsonl,
 )
+from .fixed_seeker_contract import FixedSeekerGenerationContract
 from .policies import FixedPolicy, LearnedPMPolicy, RuleConfig, StrongRulePolicy
 from .prompts import OFFICIAL_ESMEM_SYSTEM, SELECTIVE_ESMEM_SYSTEM, generation_messages
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
@@ -47,6 +57,10 @@ _NEUTRAL_TRACK_PROBES = (
     "What do you wish felt different at this point?",
     "What kind of support would feel most useful right now?",
 )
+
+FIXED_SEEKER_V22_STAGE = "evoemo_fixed_seeker_tracks_v22"
+FIXED_SEEKER_V22_DRY_RUN_PROTOCOL = "pm-v2.2-fixed-seeker-dry-run-v1"
+FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL = "pm-v2.2-fixed-seeker-logical-call-v1"
 
 
 def load_evoemo(path: str | Path) -> list[dict[str, Any]]:
@@ -363,11 +377,12 @@ def build_fixed_seeker_tracks(
     overwrite: bool = False,
     study_freeze_sha256: str | None = None,
 ) -> dict[str, Any]:
-    """Generate policy-independent seeker tracks for causal fixed-input tests.
+    """Generate legacy policy-independent tracks for historical reproduction.
 
-    The track is elicited by a deterministic, generic supporter scaffold. It is
-    then replayed unchanged to every policy. This removes the divergent-world
-    confound; interactive simulations remain a separate secondary analysis.
+    This pre-V2.2 path retains the historical 60-token provider cap and retry
+    behavior. New PM-v2 runs must use :func:`build_fixed_seeker_tracks_v22`,
+    whose treatment, dry-run acceptance, finish gate, and physical-attempt
+    ledger are frozen explicitly.
     """
     users = load_evoemo(evoemo_path)
     out_dir = Path(out_dir)
@@ -489,6 +504,757 @@ def build_fixed_seeker_tracks(
             "seeds": [int(x) for x in seeds],
         },
         expected={"tracks": expected, "turns_per_track": max_turns},
+        study_freeze_sha256=study_freeze_sha256,
+    )
+    return summary
+
+
+def _fixed_seeker_v22_scenarios(
+    evoemo_path: str | Path, *, max_scenarios: int | None
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    scenarios = [
+        (user, topic)
+        for user in load_evoemo(evoemo_path)
+        for topic in (user.get("subsequent_topics") or [])
+    ]
+    if max_scenarios is not None:
+        if max_scenarios < 1:
+            raise ValueError("max_scenarios must be positive when provided")
+        scenarios = scenarios[: int(max_scenarios)]
+    return scenarios
+
+
+def plan_fixed_seeker_tracks_v22(
+    evoemo_path: str | Path,
+    *,
+    seeker_endpoint: Endpoint,
+    contract: FixedSeekerGenerationContract,
+    simulator_id: str,
+    max_turns: int = 10,
+    seeds: Sequence[int] = (101,),
+    max_scenarios: int | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Build a deterministic, no-client call plan and exact output budget.
+
+    Later prompts contain earlier generated seeker turns, so their provider
+    request hashes cannot honestly be predicted before generation.  The dry
+    run instead freezes every logical coordinate, endpoint/treatment identity,
+    one-attempt bound, and exact maximum output-token budget.  Each actual
+    prompt hash is fsynced by the attempt ledger immediately before its HTTP
+    request.
+    """
+
+    if max_turns < 1:
+        raise ValueError("fixed-seeker max_turns must be positive")
+    normalized_seeds = [int(value) for value in seeds]
+    if not normalized_seeds or len(normalized_seeds) != len(set(normalized_seeds)):
+        raise ValueError("fixed-seeker seeds must be non-empty and unique")
+    if not str(simulator_id).strip():
+        raise ValueError("fixed-seeker simulator_id must be non-empty")
+
+    evoemo_sha256 = sha256_file(evoemo_path)
+    scaffold_sha256 = sha256_text(
+        canonical_json([NEUTRAL_INITIAL_GREETING, *_NEUTRAL_TRACK_PROBES])
+    )
+    bound = contract.bind_endpoint(contract.seeker_endpoint, seeker_endpoint)
+    bound_payload = bound.payload()
+    bound_sha256 = bound.digest()
+    rows: list[dict[str, Any]] = []
+    scenarios = _fixed_seeker_v22_scenarios(
+        evoemo_path, max_scenarios=max_scenarios
+    )
+    for user, topic in scenarios:
+        private_scenario_sha256 = sha256_text(
+            canonical_json(evaluator_context(user, topic))
+        )
+        for seed in normalized_seeds:
+            for turn_index in range(1, int(max_turns) + 1):
+                record_ids = {
+                    "user_id": str(user["id"]),
+                    "topic_index": int(topic["idx"]),
+                    "seed": int(seed),
+                    "simulator_id": str(simulator_id),
+                    "turn_index": int(turn_index),
+                }
+                call_identity = {
+                    "protocol": FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL,
+                    "record_ids": record_ids,
+                    "evoemo_sha256": evoemo_sha256,
+                    "private_scenario_sha256": private_scenario_sha256,
+                    "scaffold_sha256": scaffold_sha256,
+                    "fixed_seeker_generation_contract": bound_payload,
+                    "fixed_seeker_generation_contract_sha256": bound_sha256,
+                    "turn_seed": int(seed) + int(turn_index),
+                }
+                rows.append(
+                    {
+                        **record_ids,
+                        "turn_seed": int(seed) + int(turn_index),
+                        "maximum_output_tokens": contract.max_output_tokens,
+                        "maximum_physical_attempts": (
+                            contract.maximum_physical_attempts_per_logical_call
+                        ),
+                        "fixed_seeker_generation_contract": bound_payload,
+                        "fixed_seeker_generation_contract_sha256": bound_sha256,
+                        "logical_call_key": sha256_text(
+                            canonical_json(call_identity)
+                        ),
+                    }
+                )
+    logical_keys = [str(row["logical_call_key"]) for row in rows]
+    if len(logical_keys) != len(set(logical_keys)):
+        raise RuntimeError("fixed-seeker V2.2 call plan contains duplicate keys")
+    call_plan_sha256 = sha256_text(canonical_json(rows))
+    estimate_payload = {
+        "protocol": FIXED_SEEKER_V22_DRY_RUN_PROTOCOL,
+        "stage": FIXED_SEEKER_V22_STAGE,
+        "evoemo_sha256": evoemo_sha256,
+        "scaffold_sha256": scaffold_sha256,
+        "simulator_id": str(simulator_id),
+        "max_turns": int(max_turns),
+        "seeds": normalized_seeds,
+        "max_scenarios": max_scenarios,
+        "scenario_count": len(scenarios),
+        "expected_tracks": len(scenarios) * len(normalized_seeds),
+        "maximum_physical_api_attempts": len(rows),
+        "maximum_output_tokens_per_call": contract.max_output_tokens,
+        "maximum_total_output_tokens": len(rows) * contract.max_output_tokens,
+        "maximum_physical_attempts_per_logical_call": (
+            contract.maximum_physical_attempts_per_logical_call
+        ),
+        "call_plan_sha256": call_plan_sha256,
+        "fixed_seeker_generation_contract": bound_payload,
+        "fixed_seeker_generation_contract_sha256": bound_sha256,
+        "cost_scope": (
+            "exact call/output-token ceiling; input tokens and USD are not "
+            "claimed before sequential prompts exist"
+        ),
+    }
+    estimate = {
+        **estimate_payload,
+        "dry_run_acceptance_sha256": sha256_text(
+            canonical_json(estimate_payload)
+        ),
+    }
+    return estimate, rows
+
+
+def persist_fixed_seeker_tracks_v22_dry_run(
+    out_dir: str | Path,
+    estimate: Mapping[str, Any],
+    call_plan: Sequence[Mapping[str, Any]],
+    *,
+    overwrite: bool = False,
+) -> str:
+    """Persist or validate the exact no-API plan without creating a client."""
+
+    out_dir = Path(out_dir)
+    estimate_path = out_dir / "cost_estimate.json"
+    plan_path = out_dir / "call_plan.jsonl"
+    ledger_path = out_dir / "physical_attempt_ledger.jsonl"
+    if overwrite and ledger_path.is_file() and ledger_path.stat().st_size > 0:
+        raise RuntimeError(
+            "fixed-seeker V2.2 refuses to overwrite a dry run after any physical "
+            "attempt was reserved"
+        )
+    normalized_estimate = dict(estimate)
+    normalized_plan = [dict(row) for row in call_plan]
+    if estimate_path.is_file() or plan_path.is_file():
+        if not estimate_path.is_file() or not plan_path.is_file():
+            raise RuntimeError("fixed-seeker dry-run bundle is partial")
+        existing_estimate = read_json(estimate_path)
+        existing_plan = list(iter_jsonl(plan_path))
+        if (
+            existing_estimate == normalized_estimate
+            and existing_plan == normalized_plan
+        ):
+            return "VALIDATED_EXISTING"
+        if not overwrite:
+            raise RuntimeError(
+                "fixed-seeker dry-run differs from the saved plan; use a new "
+                "output directory or explicit --overwrite before any attempt"
+            )
+    out_dir.mkdir(parents=True, exist_ok=True)
+    write_json(estimate_path, normalized_estimate)
+    write_jsonl(plan_path, normalized_plan)
+    return "WRITTEN"
+
+
+def require_fixed_seeker_tracks_v22_dry_run(
+    out_dir: str | Path,
+    estimate: Mapping[str, Any],
+    call_plan: Sequence[Mapping[str, Any]],
+    *,
+    accepted_dry_run_sha256: str,
+) -> None:
+    """Fail closed unless the caller accepts this exact saved dry-run hash."""
+
+    out_dir = Path(out_dir)
+    estimate_path = out_dir / "cost_estimate.json"
+    plan_path = out_dir / "call_plan.jsonl"
+    if not estimate_path.is_file() or not plan_path.is_file():
+        raise RuntimeError(
+            "fixed-seeker API mode requires a completed matching --dry-run"
+        )
+    saved_estimate = read_json(estimate_path)
+    saved_plan = list(iter_jsonl(plan_path))
+    if saved_estimate != dict(estimate) or saved_plan != [
+        dict(row) for row in call_plan
+    ]:
+        raise RuntimeError(
+            "saved fixed-seeker dry run is stale; run --dry-run again"
+        )
+    expected_hash = str(estimate.get("dry_run_acceptance_sha256") or "")
+    if not expected_hash or accepted_dry_run_sha256 != expected_hash:
+        raise RuntimeError(
+            "--accepted-dry-run-sha256 must exactly equal the current fixed-seeker "
+            f"dry-run hash: {expected_hash}"
+        )
+
+
+def _fixed_seeker_v22_messages(
+    system_prompt: str, conversation: Sequence[Mapping[str, str]]
+) -> list[dict[str, str]]:
+    if not conversation or conversation[-1].get("role") != "supporter":
+        raise ValueError(
+            "fixed-seeker generation requires a transcript ending in a "
+            "supporter turn"
+        )
+    return [
+        {"role": "system", "content": system_prompt},
+        *[
+            {
+                "role": (
+                    "assistant" if row["role"] == "seeker" else "user"
+                ),
+                "content": str(row["content"]),
+            }
+            for row in conversation
+        ],
+    ]
+
+
+def build_fixed_seeker_tracks_v22(
+    evoemo_path: str | Path,
+    out_dir: str | Path,
+    *,
+    seeker_endpoint: Endpoint,
+    contract: FixedSeekerGenerationContract,
+    simulator_id: str,
+    accepted_dry_run_sha256: str,
+    max_turns: int = 10,
+    seeds: Sequence[int] = (101,),
+    max_scenarios: int | None = None,
+    overwrite: bool = False,
+    study_freeze_sha256: str | None = None,
+) -> dict[str, Any]:
+    """Generate PM-v2.2 fixed tracks under an accepted, fail-closed plan.
+
+    This is deliberately separate from :func:`build_fixed_seeker_tracks`, which
+    remains the legacy 60-output-token path for historical reproduction only.
+    """
+
+    estimate, call_plan = plan_fixed_seeker_tracks_v22(
+        evoemo_path,
+        seeker_endpoint=seeker_endpoint,
+        contract=contract,
+        simulator_id=simulator_id,
+        max_turns=max_turns,
+        seeds=seeds,
+        max_scenarios=max_scenarios,
+    )
+    out_dir = Path(out_dir)
+    require_fixed_seeker_tracks_v22_dry_run(
+        out_dir,
+        estimate,
+        call_plan,
+        accepted_dry_run_sha256=accepted_dry_run_sha256,
+    )
+
+    tracks_path = out_dir / "fixed_seeker_tracks.jsonl"
+    raw_path = out_dir / "raw_seeker_calls.jsonl"
+    ledger_path = out_dir / "physical_attempt_ledger.jsonl"
+    summary_path = out_dir / "summary.json"
+    manifest_path = out_dir / "run_manifest.json"
+    attestation_path = out_dir / "artifact_attestation.json"
+    if overwrite:
+        if ledger_path.is_file() and ledger_path.stat().st_size > 0:
+            raise RuntimeError(
+                "fixed-seeker V2.2 refuses --overwrite after a physical attempt "
+                "was reserved"
+            )
+        for path in (
+            tracks_path,
+            raw_path,
+            ledger_path,
+            summary_path,
+            manifest_path,
+            attestation_path,
+        ):
+            if path.exists():
+                path.unlink()
+
+    bound = contract.bind_endpoint(contract.seeker_endpoint, seeker_endpoint)
+    bound_payload = bound.payload()
+    bound_sha256 = bound.digest()
+    scaffold_sha256 = str(estimate["scaffold_sha256"])
+    ensure_run_manifest(
+        manifest_path,
+        {
+            "stage": FIXED_SEEKER_V22_STAGE,
+            "evoemo_sha256": str(estimate["evoemo_sha256"]),
+            "simulator_id": simulator_id,
+            "max_turns": int(max_turns),
+            "seeds": [int(value) for value in seeds],
+            "max_scenarios": max_scenarios,
+            "scaffold_sha256": scaffold_sha256,
+            "dry_run_acceptance_sha256": str(
+                estimate["dry_run_acceptance_sha256"]
+            ),
+            "call_plan_sha256": str(estimate["call_plan_sha256"]),
+            "fixed_seeker_generation_contract": bound_payload,
+            "fixed_seeker_generation_contract_sha256": bound_sha256,
+            "study_freeze_sha256": study_freeze_sha256,
+        },
+    )
+    expected_calls = {
+        str(row["logical_call_key"]): 1 for row in call_plan
+    }
+    ledger = PersistentAttemptLedger(
+        ledger_path,
+        stage=FIXED_SEEKER_V22_STAGE,
+        expected_calls=expected_calls,
+        maximum_total_attempts=len(expected_calls),
+    )
+    plan_index = {
+        (
+            str(row["user_id"]),
+            int(row["topic_index"]),
+            int(row["seed"]),
+            str(row["simulator_id"]),
+            int(row["turn_index"]),
+        ): dict(row)
+        for row in call_plan
+    }
+    existing_tracks = (
+        index_jsonl_unique(
+            tracks_path, ("user_id", "topic_index", "seed", "simulator_id")
+        )
+        if tracks_path.is_file()
+        else {}
+    )
+    expected_track_keys = {
+        (key[0], key[1], key[2], key[3]) for key in plan_index
+    }
+    unexpected_tracks = sorted(set(existing_tracks) - expected_track_keys)
+    if unexpected_tracks:
+        raise RuntimeError(
+            f"fixed-seeker output contains unplanned tracks: {unexpected_tracks[:3]}"
+        )
+
+    client = None
+    failures: list[dict[str, Any]] = []
+    scenarios = _fixed_seeker_v22_scenarios(
+        evoemo_path, max_scenarios=max_scenarios
+    )
+    work_units = [
+        (user, topic, int(seed))
+        for user, topic in scenarios
+        for seed in seeds
+    ]
+    try:
+        for user, topic, seed in work_units:
+            track_key = _track_key(
+                str(user["id"]), int(topic["idx"]), seed, simulator_id
+            )
+            if track_key in existing_tracks:
+                existing = existing_tracks[track_key]
+                if (
+                    existing.get("fixed_seeker_generation_contract")
+                    != bound_payload
+                    or existing.get(
+                        "fixed_seeker_generation_contract_sha256"
+                    )
+                    != bound_sha256
+                    or len(existing.get("seeker_turns") or []) != max_turns
+                ):
+                    raise RuntimeError(
+                        f"existing fixed-seeker V2.2 track is stale: {track_key}"
+                    )
+                for turn_index in range(1, max_turns + 1):
+                    plan_row = plan_index[(*track_key, turn_index)]
+                    logical_key = str(plan_row["logical_call_key"])
+                    terminal = ledger.terminal_row(logical_key)
+                    if (
+                        not ledger.succeeded(logical_key)
+                        or terminal is None
+                        or (terminal.get("result") or {}).get(
+                            "normalized_finish_reason"
+                        )
+                        != "complete"
+                    ):
+                        raise RuntimeError(
+                            "persisted fixed track lacks a matching successful "
+                            f"attempt: {track_key}, turn={turn_index}"
+                        )
+                continue
+
+            conversation: list[dict[str, str]] = [
+                {"role": "supporter", "content": NEUTRAL_INITIAL_GREETING}
+            ]
+            seeker_turns: list[str] = []
+            turn_provenance: list[dict[str, Any]] = []
+            try:
+                system_prompt = contract.render_system_prompt(
+                    evaluator_context(user, topic)
+                )
+                for turn_index in range(1, max_turns + 1):
+                    plan_row = plan_index[(*track_key, turn_index)]
+                    logical_key = str(plan_row["logical_call_key"])
+                    terminal = ledger.terminal_row(logical_key)
+                    if ledger.succeeded(logical_key):
+                        result_payload = dict((terminal or {}).get("result") or {})
+                        message = contract.normalize_output(
+                            str(result_payload.get("seeker_message") or "")
+                        )
+                        if (
+                            not message
+                            or result_payload.get("normalized_finish_reason")
+                            != "complete"
+                        ):
+                            raise RuntimeError(
+                                "successful fixed-seeker ledger result is invalid: "
+                                f"{logical_key}"
+                            )
+                        provider_finish_reason = result_payload.get(
+                            "provider_finish_reason"
+                        )
+                        normalized_finish_reason = result_payload.get(
+                            "normalized_finish_reason"
+                        )
+                        request_hash = terminal.get("request_hash")
+                    elif ledger.attempts_for(logical_key):
+                        raise RuntimeError(
+                            "fixed-seeker logical call already spent its one "
+                            f"physical attempt without success: {logical_key}"
+                        )
+                    else:
+                        messages = _fixed_seeker_v22_messages(
+                            system_prompt, conversation
+                        )
+                        prompt_hash = sha256_text(canonical_json(messages))
+                        record_ids = {
+                            "user_id": str(user["id"]),
+                            "topic_index": int(topic["idx"]),
+                            "seed": seed,
+                            "simulator_id": simulator_id,
+                            "turn_index": turn_index,
+                            "track_generation": True,
+                            "logical_call_key": logical_key,
+                            "fixed_seeker_generation_contract_sha256": (
+                                bound_sha256
+                            ),
+                            "dry_run_acceptance_sha256": accepted_dry_run_sha256,
+                        }
+                        if client is None:
+                            client = make_client(seeker_endpoint)
+                        reservation = ledger.reserve(
+                            logical_key,
+                            record_ids=record_ids,
+                            prompt_sha256=prompt_hash,
+                        )
+                        try:
+                            result, _ = client.chat(
+                                messages,
+                                temperature=contract.temperature,
+                                max_tokens=contract.max_output_tokens,
+                                seed=int(plan_row["turn_seed"]),
+                                response_schema=None,
+                                retries=1,
+                            )
+                        except Exception as exc:
+                            error = f"{type(exc).__name__}: {exc}"
+                            append_jsonl(
+                                raw_path,
+                                request_log(
+                                    stage=FIXED_SEEKER_V22_STAGE,
+                                    endpoint=seeker_endpoint,
+                                    messages=messages,
+                                    result=None,
+                                    parsed=None,
+                                    error=error,
+                                    prompt_hash=prompt_hash,
+                                    record_ids=record_ids,
+                                ),
+                            )
+                            ledger.finish(
+                                reservation,
+                                succeeded=False,
+                                request_hash=None,
+                                usage=None,
+                                error=error,
+                                result={
+                                    "fixed_seeker_generation_contract_sha256": (
+                                        bound_sha256
+                                    )
+                                },
+                            )
+                            raise
+
+                        completion_error = contract.completion_gate_error(
+                            normalized_finish_reason=(
+                                result.normalized_finish_reason
+                            ),
+                            provider_finish_reason=result.provider_finish_reason,
+                        )
+                        accounting_error = None
+                        try:
+                            require_reported_usage(
+                                result.usage,
+                                stage="PM-v2.2 fixed-seeker generation",
+                            )
+                        except RuntimeError as exc:
+                            accounting_error = str(exc)
+                        message = contract.normalize_output(result.text)
+                        empty_error = (
+                            None
+                            if message
+                            else (
+                                "fixed-seeker completion is empty after frozen "
+                                "normalization"
+                            )
+                        )
+                        gate_error = (
+                            completion_error or accounting_error or empty_error
+                        )
+                        result_payload = {
+                            "seeker_message": message,
+                            "provider_finish_reason": (
+                                result.provider_finish_reason
+                            ),
+                            "normalized_finish_reason": (
+                                result.normalized_finish_reason
+                            ),
+                            "fixed_seeker_generation_contract": bound_payload,
+                            "fixed_seeker_generation_contract_sha256": (
+                                bound_sha256
+                            ),
+                        }
+                        append_jsonl(
+                            raw_path,
+                            request_log(
+                                stage=FIXED_SEEKER_V22_STAGE,
+                                endpoint=seeker_endpoint,
+                                messages=messages,
+                                result=result,
+                                parsed=None,
+                                error=gate_error,
+                                prompt_hash=prompt_hash,
+                                record_ids=record_ids,
+                            ),
+                        )
+                        if gate_error:
+                            ledger.finish(
+                                reservation,
+                                succeeded=False,
+                                request_hash=result.request_hash,
+                                usage=result.usage,
+                                error=gate_error,
+                                result=result_payload,
+                            )
+                            raise RuntimeError(gate_error)
+                        ledger.finish(
+                            reservation,
+                            succeeded=True,
+                            request_hash=result.request_hash,
+                            usage=result.usage,
+                            error=None,
+                            result=result_payload,
+                        )
+                        provider_finish_reason = result.provider_finish_reason
+                        normalized_finish_reason = (
+                            result.normalized_finish_reason
+                        )
+                        request_hash = result.request_hash
+
+                    seeker_turns.append(message)
+                    turn_provenance.append(
+                        {
+                            "turn_index": turn_index,
+                            "logical_call_key": logical_key,
+                            "request_hash": request_hash,
+                            "provider_finish_reason": provider_finish_reason,
+                            "normalized_finish_reason": (
+                                normalized_finish_reason
+                            ),
+                            "fixed_seeker_generation_contract": bound_payload,
+                            "fixed_seeker_generation_contract_sha256": (
+                                bound_sha256
+                            ),
+                        }
+                    )
+                    conversation.append({"role": "seeker", "content": message})
+                    if turn_index < max_turns:
+                        probe = _NEUTRAL_TRACK_PROBES[
+                            (turn_index - 1) % len(_NEUTRAL_TRACK_PROBES)
+                        ]
+                        conversation.append(
+                            {"role": "supporter", "content": probe}
+                        )
+
+                track_id = (
+                    "track_"
+                    + stable_hex(
+                        user["id"],
+                        topic["idx"],
+                        seed,
+                        simulator_id,
+                        bound_sha256,
+                        canonical_json(seeker_turns),
+                        n=20,
+                    )
+                )
+                append_jsonl(
+                    tracks_path,
+                    {
+                        "track_id": track_id,
+                        "user_id": str(user["id"]),
+                        "topic_index": int(topic["idx"]),
+                        "seed": seed,
+                        "simulator_id": simulator_id,
+                        "seeker_model": seeker_endpoint.model,
+                        "seeker_family": seeker_endpoint.family,
+                        "initial_greeting": NEUTRAL_INITIAL_GREETING,
+                        "seeker_turns": seeker_turns,
+                        "turn_provenance": turn_provenance,
+                        "elicitation_scaffold": (
+                            contract.elicitation_scaffold_protocol
+                        ),
+                        "causal_use": "replayed unchanged to all policies",
+                        "fixed_seeker_generation_contract": bound_payload,
+                        "fixed_seeker_generation_contract_sha256": (
+                            bound_sha256
+                        ),
+                        "dry_run_acceptance_sha256": (
+                            accepted_dry_run_sha256
+                        ),
+                    },
+                )
+            except Exception as exc:
+                failures.append(
+                    {
+                        "user_id": str(user["id"]),
+                        "topic_index": int(topic["idx"]),
+                        "seed": seed,
+                        "simulator_id": simulator_id,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+                break
+    finally:
+        if client is not None:
+            client.close()
+
+    completed = (
+        len(
+            index_jsonl_unique(
+                tracks_path,
+                ("user_id", "topic_index", "seed", "simulator_id"),
+            )
+        )
+        if tracks_path.is_file()
+        else 0
+    )
+    expected_tracks = int(estimate["expected_tracks"])
+    normalized_finish_reason_counts = {
+        reason: 0
+        for reason in ("complete", "length", "tool_call", "content_filter", "unknown")
+    }
+    for call_key in expected_calls:
+        terminal = ledger.terminal_row(call_key)
+        if terminal is None:
+            continue
+        reason = str(
+            (terminal.get("result") or {}).get(
+                "normalized_finish_reason", "unknown"
+            )
+        )
+        normalized_finish_reason_counts[reason] = (
+            normalized_finish_reason_counts.get(reason, 0) + 1
+        )
+    status = (
+        "COMPLETE"
+        if completed == expected_tracks
+        and not failures
+        and ledger.started_attempts == len(expected_calls)
+        and all(ledger.succeeded(key) for key in expected_calls)
+        else "INCOMPLETE"
+    )
+    summary = {
+        "status": status,
+        "stage": FIXED_SEEKER_V22_STAGE,
+        "simulator_id": simulator_id,
+        "seeker_model": seeker_endpoint.model,
+        "seeker_family": seeker_endpoint.family,
+        "expected_tracks": expected_tracks,
+        "completed_tracks": completed,
+        "max_turns": max_turns,
+        "expected_logical_calls": len(expected_calls),
+        "started_physical_attempts": ledger.started_attempts,
+        "successful_logical_calls": sum(
+            int(ledger.succeeded(key)) for key in expected_calls
+        ),
+        "normalized_finish_reason_counts": normalized_finish_reason_counts,
+        "completion_truncated_count": normalized_finish_reason_counts.get(
+            "length", 0
+        ),
+        "failures": failures,
+        "dry_run_acceptance_sha256": accepted_dry_run_sha256,
+        "call_plan_sha256": str(estimate["call_plan_sha256"]),
+        "fixed_seeker_generation_contract": bound_payload,
+        "fixed_seeker_generation_contract_sha256": bound_sha256,
+        "interpretation": (
+            "fixed-input causal track; later seeker turns do not react to "
+            "evaluated policy replies"
+        ),
+    }
+    write_json(summary_path, summary)
+    if status != "COMPLETE":
+        raise RuntimeError(
+            "fixed seeker V2.2 generation incomplete; no failed logical call "
+            "may be retried under this accepted plan"
+        )
+    create_artifact_attestation(
+        attestation_path,
+        stage=FIXED_SEEKER_V22_STAGE,
+        inputs={
+            "evoemo": evoemo_path,
+            "run_manifest": manifest_path,
+            "cost_estimate": out_dir / "cost_estimate.json",
+            "call_plan": out_dir / "call_plan.jsonl",
+        },
+        outputs={
+            "tracks": (tracks_path, True),
+            "raw_calls": (raw_path, True),
+            "physical_attempt_ledger": (ledger_path, True),
+            "summary": (summary_path, False),
+        },
+        parameters={
+            "simulator_id": simulator_id,
+            "max_turns": max_turns,
+            "seeds": [int(value) for value in seeds],
+            "dry_run_acceptance_sha256": accepted_dry_run_sha256,
+            "call_plan_sha256": str(estimate["call_plan_sha256"]),
+            "fixed_seeker_generation_contract": bound_payload,
+            "fixed_seeker_generation_contract_sha256": bound_sha256,
+        },
+        expected={
+            "tracks": expected_tracks,
+            "turns_per_track": max_turns,
+            "logical_calls": len(expected_calls),
+            "accepted_normalized_finish_reasons": ["complete"],
+            "completion_truncated_count": 0,
+        },
         study_freeze_sha256=study_freeze_sha256,
     )
     return summary

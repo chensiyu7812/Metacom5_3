@@ -26,6 +26,25 @@ supporter_generation_treatment:
   reject_length: true
   reject_missing_or_unknown: true
 
+# Policy-independent EvoEmo seeker tracks use the same finish-reason protocol,
+# but their 60-token response instruction is deliberately not the provider API
+# cap.  The 300-token cap prevents the old track's instruction from becoming a
+# near-universal forced truncation mechanism.
+fixed_seeker_generation_treatment:
+  version: pm-v2.2-fixed-seeker-generation-v1
+  seeker_endpoint: seeker
+  system_prompt_id: evoemo-fixed-seeker-v1
+  system_prompt_template_sha256: a9138eaf46b46e8f10c89774a9ef51189b5807391a0882dff58c287a4c54eeac
+  response_instruction_token_limit: 60
+  temperature: 0.2
+  max_output_tokens: 300
+  output_normalization: normalize_space_v1
+  finish_reason_protocol: pm-v2-finish-reason-v1
+  accepted_normalized_finish_reasons: [complete]
+  maximum_physical_attempts_per_logical_call: 1
+  seed_protocol: base-seed-plus-turn-index-v1
+  elicitation_scaffold_protocol: deterministic-generic-open-loop-v1
+
 data_generation:
   generator_endpoint: synthetic_generator
   pricing_usd_per_mtok:
