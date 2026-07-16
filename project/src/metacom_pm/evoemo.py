@@ -3,11 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 import json
+import math
 import time
 
 from .api import (
     Endpoint,
     OpenAICompatibleClient,
+    chat_request_payload,
     make_client,
     request_log,
     require_reported_usage,
@@ -61,6 +63,70 @@ _NEUTRAL_TRACK_PROBES = (
 FIXED_SEEKER_V22_STAGE = "evoemo_fixed_seeker_tracks_v22"
 FIXED_SEEKER_V22_DRY_RUN_PROTOCOL = "pm-v2.2-fixed-seeker-dry-run-v1"
 FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL = "pm-v2.2-fixed-seeker-logical-call-v1"
+FIXED_SEEKER_COST_PLANNING_PROTOCOL = (
+    "pm-v2.2-fixed-seeker-cost-planning-v1"
+)
+FIXED_SEEKER_INPUT_BOUND_FORMULA = (
+    "ceil(input_token_safety_factor * "
+    "(static_request_tokens_with_empty_prior_seeker_content + "
+    "prior_turn_count * max_output_tokens))"
+)
+
+
+def fixed_seeker_cost_planning_contract(
+    raw: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate and normalize the frozen positive-price seeker cost contract."""
+
+    data = dict(raw)
+    expected_keys = {
+        "protocol",
+        "pricing_usd_per_mtok",
+        "input_token_safety_factor",
+        "fail_on_reported_input_overrun",
+    }
+    normalized_keys = expected_keys | {"per_call_input_bound_formula"}
+    if frozenset(data) not in {
+        frozenset(expected_keys),
+        frozenset(normalized_keys),
+    }:
+        raise ValueError(
+            "fixed_seeker_cost_planning keys differ from the frozen contract"
+        )
+    if (
+        "per_call_input_bound_formula" in data
+        and data["per_call_input_bound_formula"]
+        != FIXED_SEEKER_INPUT_BOUND_FORMULA
+    ):
+        raise ValueError("fixed-seeker input-bound formula changed")
+    if data["protocol"] != FIXED_SEEKER_COST_PLANNING_PROTOCOL:
+        raise ValueError("unsupported fixed-seeker cost-planning protocol")
+    prices_raw = data["pricing_usd_per_mtok"]
+    if not isinstance(prices_raw, Mapping) or set(prices_raw) != {
+        "input",
+        "output",
+    }:
+        raise ValueError("fixed-seeker pricing must contain input and output")
+    prices = {
+        "input": float(prices_raw["input"]),
+        "output": float(prices_raw["output"]),
+    }
+    if prices != {"input": 0.15, "output": 0.60}:
+        raise ValueError(
+            "fixed-seeker pricing must equal the frozen positive 0.15/0.60 proxy"
+        )
+    safety_factor = float(data["input_token_safety_factor"])
+    if not math.isfinite(safety_factor) or safety_factor != 1.50:
+        raise ValueError("fixed-seeker input-token safety factor must equal 1.50")
+    if data["fail_on_reported_input_overrun"] is not True:
+        raise ValueError("fixed-seeker reported input-token overrun must fail closed")
+    return {
+        "protocol": FIXED_SEEKER_COST_PLANNING_PROTOCOL,
+        "pricing_usd_per_mtok": prices,
+        "input_token_safety_factor": safety_factor,
+        "fail_on_reported_input_overrun": True,
+        "per_call_input_bound_formula": FIXED_SEEKER_INPUT_BOUND_FORMULA,
+    }
 
 
 def load_evoemo(path: str | Path) -> list[dict[str, Any]]:
@@ -529,7 +595,11 @@ def plan_fixed_seeker_tracks_v22(
     *,
     seeker_endpoint: Endpoint,
     contract: FixedSeekerGenerationContract,
+    cost_planning: Mapping[str, Any],
     simulator_id: str,
+    max_api_calls: int,
+    max_estimated_usd: float,
+    max_input_tokens_per_call: int,
     max_turns: int = 10,
     seeds: Sequence[int] = (101,),
     max_scenarios: int | None = None,
@@ -551,6 +621,20 @@ def plan_fixed_seeker_tracks_v22(
         raise ValueError("fixed-seeker seeds must be non-empty and unique")
     if not str(simulator_id).strip():
         raise ValueError("fixed-seeker simulator_id must be non-empty")
+    normalized_cost_planning = fixed_seeker_cost_planning_contract(cost_planning)
+    if int(max_api_calls) < 1 or int(max_input_tokens_per_call) < 1:
+        raise ValueError("fixed-seeker API and input-token caps must be positive")
+    if not math.isfinite(float(max_estimated_usd)) or float(
+        max_estimated_usd
+    ) <= 0.0:
+        raise ValueError("fixed-seeker max_estimated_usd must be finite and positive")
+    prices = normalized_cost_planning["pricing_usd_per_mtok"]
+    safety_factor = float(
+        normalized_cost_planning["input_token_safety_factor"]
+    )
+    cost_planning_sha256 = sha256_text(
+        canonical_json(normalized_cost_planning)
+    )
 
     evoemo_sha256 = sha256_file(evoemo_path)
     scaffold_sha256 = sha256_text(
@@ -564,6 +648,9 @@ def plan_fixed_seeker_tracks_v22(
         evoemo_path, max_scenarios=max_scenarios
     )
     for user, topic in scenarios:
+        system_prompt = contract.render_system_prompt(
+            evaluator_context(user, topic)
+        )
         private_scenario_sha256 = sha256_text(
             canonical_json(evaluator_context(user, topic))
         )
@@ -576,6 +663,56 @@ def plan_fixed_seeker_tracks_v22(
                     "simulator_id": str(simulator_id),
                     "turn_index": int(turn_index),
                 }
+                static_conversation: list[dict[str, str]] = [
+                    {"role": "supporter", "content": NEUTRAL_INITIAL_GREETING}
+                ]
+                for prior_index in range(turn_index - 1):
+                    # Historical seeker text is unknown at dry-run time. Its
+                    # provider-token contribution is added separately using
+                    # the exact 300-token completion ceiling.
+                    static_conversation.append(
+                        {"role": "seeker", "content": ""}
+                    )
+                    static_conversation.append(
+                        {
+                            "role": "supporter",
+                            "content": _NEUTRAL_TRACK_PROBES[
+                                prior_index % len(_NEUTRAL_TRACK_PROBES)
+                            ],
+                        }
+                    )
+                static_messages = _fixed_seeker_v22_messages(
+                    system_prompt, static_conversation
+                )
+                static_request_payload = chat_request_payload(
+                    seeker_endpoint,
+                    static_messages,
+                    temperature=contract.temperature,
+                    max_tokens=contract.max_output_tokens,
+                    seed=int(seed) + int(turn_index),
+                    response_schema=None,
+                )
+                static_request_tokens = estimate_tokens(
+                    canonical_json(static_request_payload)
+                )
+                history_completion_token_cap = (
+                    (int(turn_index) - 1) * contract.max_output_tokens
+                )
+                maximum_input_tokens = int(
+                    math.ceil(
+                        safety_factor
+                        * (
+                            static_request_tokens
+                            + history_completion_token_cap
+                        )
+                    )
+                )
+                maximum_cost_usd = (
+                    maximum_input_tokens / 1_000_000 * prices["input"]
+                    + contract.max_output_tokens
+                    / 1_000_000
+                    * prices["output"]
+                )
                 call_identity = {
                     "protocol": FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL,
                     "record_ids": record_ids,
@@ -584,18 +721,34 @@ def plan_fixed_seeker_tracks_v22(
                     "scaffold_sha256": scaffold_sha256,
                     "fixed_seeker_generation_contract": bound_payload,
                     "fixed_seeker_generation_contract_sha256": bound_sha256,
+                    "fixed_seeker_cost_planning": normalized_cost_planning,
+                    "fixed_seeker_cost_planning_sha256": (
+                        cost_planning_sha256
+                    ),
+                    "maximum_input_tokens": maximum_input_tokens,
                     "turn_seed": int(seed) + int(turn_index),
                 }
                 rows.append(
                     {
                         **record_ids,
                         "turn_seed": int(seed) + int(turn_index),
+                        "static_request_tokens_with_empty_prior_seeker_content": (
+                            static_request_tokens
+                        ),
+                        "history_completion_token_cap": (
+                            history_completion_token_cap
+                        ),
+                        "maximum_input_tokens": maximum_input_tokens,
                         "maximum_output_tokens": contract.max_output_tokens,
+                        "maximum_cost_usd": maximum_cost_usd,
                         "maximum_physical_attempts": (
                             contract.maximum_physical_attempts_per_logical_call
                         ),
                         "fixed_seeker_generation_contract": bound_payload,
                         "fixed_seeker_generation_contract_sha256": bound_sha256,
+                        "fixed_seeker_cost_planning_sha256": (
+                            cost_planning_sha256
+                        ),
                         "logical_call_key": sha256_text(
                             canonical_json(call_identity)
                         ),
@@ -605,6 +758,31 @@ def plan_fixed_seeker_tracks_v22(
     if len(logical_keys) != len(set(logical_keys)):
         raise RuntimeError("fixed-seeker V2.2 call plan contains duplicate keys")
     call_plan_sha256 = sha256_text(canonical_json(rows))
+    maximum_input_tokens = [
+        int(row["maximum_input_tokens"]) for row in rows
+    ]
+    maximum_total_input_tokens = sum(maximum_input_tokens)
+    maximum_total_output_tokens = len(rows) * contract.max_output_tokens
+    maximum_estimated_cost_usd = sum(
+        float(row["maximum_cost_usd"]) for row in rows
+    )
+    budget_limits = {
+        "max_api_calls": int(max_api_calls),
+        "max_estimated_usd": float(max_estimated_usd),
+        "max_input_tokens_per_call": int(max_input_tokens_per_call),
+    }
+    budget_checks = {
+        "api_calls": len(rows) <= int(max_api_calls),
+        "estimated_cost_usd": maximum_estimated_cost_usd
+        <= float(max_estimated_usd),
+        "max_input_tokens_per_call": max(maximum_input_tokens, default=0)
+        <= int(max_input_tokens_per_call),
+    }
+    budget_gate = {
+        "status": "PASS" if all(budget_checks.values()) else "FAIL",
+        "checks": budget_checks,
+        "limits": budget_limits,
+    }
     estimate_payload = {
         "protocol": FIXED_SEEKER_V22_DRY_RUN_PROTOCOL,
         "stage": FIXED_SEEKER_V22_STAGE,
@@ -617,18 +795,24 @@ def plan_fixed_seeker_tracks_v22(
         "scenario_count": len(scenarios),
         "expected_tracks": len(scenarios) * len(normalized_seeds),
         "maximum_physical_api_attempts": len(rows),
+        "maximum_input_tokens_per_call": max(
+            maximum_input_tokens, default=0
+        ),
+        "maximum_total_input_tokens": maximum_total_input_tokens,
         "maximum_output_tokens_per_call": contract.max_output_tokens,
-        "maximum_total_output_tokens": len(rows) * contract.max_output_tokens,
+        "maximum_total_output_tokens": maximum_total_output_tokens,
+        "maximum_estimated_usd": maximum_estimated_cost_usd,
         "maximum_physical_attempts_per_logical_call": (
             contract.maximum_physical_attempts_per_logical_call
         ),
         "call_plan_sha256": call_plan_sha256,
         "fixed_seeker_generation_contract": bound_payload,
         "fixed_seeker_generation_contract_sha256": bound_sha256,
-        "cost_scope": (
-            "exact call/output-token ceiling; input tokens and USD are not "
-            "claimed before sequential prompts exist"
-        ),
+        "fixed_seeker_cost_planning": normalized_cost_planning,
+        "fixed_seeker_cost_planning_sha256": cost_planning_sha256,
+        "budget_limits": budget_limits,
+        "budget_gate": budget_gate,
+        "cost_scope": "conservative sequential input/output/USD upper bound",
     }
     estimate = {
         **estimate_payload,
@@ -710,6 +894,38 @@ def require_fixed_seeker_tracks_v22_dry_run(
             "--accepted-dry-run-sha256 must exactly equal the current fixed-seeker "
             f"dry-run hash: {expected_hash}"
         )
+    if (estimate.get("budget_gate") or {}).get("status") != "PASS":
+        raise RuntimeError("fixed-seeker accepted dry-run budget gate did not PASS")
+
+
+def _fixed_seeker_reported_usage(
+    usage: Mapping[str, Any] | None,
+    *,
+    plan_row: Mapping[str, Any],
+) -> tuple[dict[str, int] | None, str | None]:
+    """Apply the accepted per-call input/output token upper bounds."""
+
+    try:
+        normalized = require_reported_usage(
+            usage, stage="PM-v2.2 fixed-seeker generation"
+        )
+    except RuntimeError as exc:
+        return None, str(exc)
+    if normalized["prompt_tokens"] > int(plan_row["maximum_input_tokens"]):
+        return normalized, (
+            "fixed-seeker reported prompt_tokens exceed the accepted conservative "
+            f"bound: reported={normalized['prompt_tokens']}, "
+            f"bound={plan_row['maximum_input_tokens']}"
+        )
+    if normalized["completion_tokens"] > int(
+        plan_row["maximum_output_tokens"]
+    ):
+        return normalized, (
+            "fixed-seeker reported completion_tokens exceed the accepted output "
+            f"bound: reported={normalized['completion_tokens']}, "
+            f"bound={plan_row['maximum_output_tokens']}"
+        )
+    return normalized, None
 
 
 def _fixed_seeker_v22_messages(
@@ -740,8 +956,12 @@ def build_fixed_seeker_tracks_v22(
     *,
     seeker_endpoint: Endpoint,
     contract: FixedSeekerGenerationContract,
+    cost_planning: Mapping[str, Any],
     simulator_id: str,
     accepted_dry_run_sha256: str,
+    max_api_calls: int,
+    max_estimated_usd: float,
+    max_input_tokens_per_call: int,
     max_turns: int = 10,
     seeds: Sequence[int] = (101,),
     max_scenarios: int | None = None,
@@ -758,7 +978,11 @@ def build_fixed_seeker_tracks_v22(
         evoemo_path,
         seeker_endpoint=seeker_endpoint,
         contract=contract,
+        cost_planning=cost_planning,
         simulator_id=simulator_id,
+        max_api_calls=max_api_calls,
+        max_estimated_usd=max_estimated_usd,
+        max_input_tokens_per_call=max_input_tokens_per_call,
         max_turns=max_turns,
         seeds=seeds,
         max_scenarios=max_scenarios,
@@ -797,6 +1021,12 @@ def build_fixed_seeker_tracks_v22(
     bound = contract.bind_endpoint(contract.seeker_endpoint, seeker_endpoint)
     bound_payload = bound.payload()
     bound_sha256 = bound.digest()
+    normalized_cost_planning = fixed_seeker_cost_planning_contract(
+        cost_planning
+    )
+    cost_planning_sha256 = sha256_text(
+        canonical_json(normalized_cost_planning)
+    )
     scaffold_sha256 = str(estimate["scaffold_sha256"])
     ensure_run_manifest(
         manifest_path,
@@ -814,6 +1044,9 @@ def build_fixed_seeker_tracks_v22(
             "call_plan_sha256": str(estimate["call_plan_sha256"]),
             "fixed_seeker_generation_contract": bound_payload,
             "fixed_seeker_generation_contract_sha256": bound_sha256,
+            "fixed_seeker_cost_planning": normalized_cost_planning,
+            "fixed_seeker_cost_planning_sha256": cost_planning_sha256,
+            "planned_budget_gate": estimate["budget_gate"],
             "study_freeze_sha256": study_freeze_sha256,
         },
     )
@@ -876,6 +1109,10 @@ def build_fixed_seeker_tracks_v22(
                         "fixed_seeker_generation_contract_sha256"
                     )
                     != bound_sha256
+                    or existing.get("fixed_seeker_cost_planning")
+                    != normalized_cost_planning
+                    or existing.get("fixed_seeker_cost_planning_sha256")
+                    != cost_planning_sha256
                     or len(existing.get("seeker_turns") or []) != max_turns
                 ):
                     raise RuntimeError(
@@ -885,6 +1122,9 @@ def build_fixed_seeker_tracks_v22(
                     plan_row = plan_index[(*track_key, turn_index)]
                     logical_key = str(plan_row["logical_call_key"])
                     terminal = ledger.terminal_row(logical_key)
+                    _, usage_error = _fixed_seeker_reported_usage(
+                        (terminal or {}).get("usage"), plan_row=plan_row
+                    )
                     if (
                         not ledger.succeeded(logical_key)
                         or terminal is None
@@ -892,6 +1132,7 @@ def build_fixed_seeker_tracks_v22(
                             "normalized_finish_reason"
                         )
                         != "complete"
+                        or usage_error is not None
                     ):
                         raise RuntimeError(
                             "persisted fixed track lacks a matching successful "
@@ -914,6 +1155,9 @@ def build_fixed_seeker_tracks_v22(
                     terminal = ledger.terminal_row(logical_key)
                     if ledger.succeeded(logical_key):
                         result_payload = dict((terminal or {}).get("result") or {})
+                        reported_usage, usage_error = _fixed_seeker_reported_usage(
+                            (terminal or {}).get("usage"), plan_row=plan_row
+                        )
                         message = contract.normalize_output(
                             str(result_payload.get("seeker_message") or "")
                         )
@@ -921,6 +1165,7 @@ def build_fixed_seeker_tracks_v22(
                             not message
                             or result_payload.get("normalized_finish_reason")
                             != "complete"
+                            or usage_error is not None
                         ):
                             raise RuntimeError(
                                 "successful fixed-seeker ledger result is invalid: "
@@ -953,6 +1198,15 @@ def build_fixed_seeker_tracks_v22(
                             "logical_call_key": logical_key,
                             "fixed_seeker_generation_contract_sha256": (
                                 bound_sha256
+                            ),
+                            "fixed_seeker_cost_planning_sha256": (
+                                cost_planning_sha256
+                            ),
+                            "maximum_input_tokens": int(
+                                plan_row["maximum_input_tokens"]
+                            ),
+                            "maximum_output_tokens": int(
+                                plan_row["maximum_output_tokens"]
                             ),
                             "dry_run_acceptance_sha256": accepted_dry_run_sha256,
                         }
@@ -1007,14 +1261,11 @@ def build_fixed_seeker_tracks_v22(
                             ),
                             provider_finish_reason=result.provider_finish_reason,
                         )
-                        accounting_error = None
-                        try:
-                            require_reported_usage(
-                                result.usage,
-                                stage="PM-v2.2 fixed-seeker generation",
+                        reported_usage, accounting_error = (
+                            _fixed_seeker_reported_usage(
+                                result.usage, plan_row=plan_row
                             )
-                        except RuntimeError as exc:
-                            accounting_error = str(exc)
+                        )
                         message = contract.normalize_output(result.text)
                         empty_error = (
                             None
@@ -1038,6 +1289,25 @@ def build_fixed_seeker_tracks_v22(
                             "fixed_seeker_generation_contract": bound_payload,
                             "fixed_seeker_generation_contract_sha256": (
                                 bound_sha256
+                            ),
+                            "fixed_seeker_cost_planning_sha256": (
+                                cost_planning_sha256
+                            ),
+                            "reported_usage": reported_usage,
+                            "observed_cost_usd": (
+                                (
+                                    reported_usage["prompt_tokens"]
+                                    * normalized_cost_planning[
+                                        "pricing_usd_per_mtok"
+                                    ]["input"]
+                                    + reported_usage["completion_tokens"]
+                                    * normalized_cost_planning[
+                                        "pricing_usd_per_mtok"
+                                    ]["output"]
+                                )
+                                / 1_000_000
+                                if reported_usage is not None
+                                else None
                             ),
                         }
                         append_jsonl(
@@ -1087,9 +1357,28 @@ def build_fixed_seeker_tracks_v22(
                             "normalized_finish_reason": (
                                 normalized_finish_reason
                             ),
+                            "reported_usage": reported_usage,
+                            "observed_cost_usd": (
+                                (
+                                    reported_usage["prompt_tokens"]
+                                    * normalized_cost_planning[
+                                        "pricing_usd_per_mtok"
+                                    ]["input"]
+                                    + reported_usage["completion_tokens"]
+                                    * normalized_cost_planning[
+                                        "pricing_usd_per_mtok"
+                                    ]["output"]
+                                )
+                                / 1_000_000
+                                if reported_usage is not None
+                                else None
+                            ),
                             "fixed_seeker_generation_contract": bound_payload,
                             "fixed_seeker_generation_contract_sha256": (
                                 bound_sha256
+                            ),
+                            "fixed_seeker_cost_planning_sha256": (
+                                cost_planning_sha256
                             ),
                         }
                     )
@@ -1134,6 +1423,12 @@ def build_fixed_seeker_tracks_v22(
                         "fixed_seeker_generation_contract": bound_payload,
                         "fixed_seeker_generation_contract_sha256": (
                             bound_sha256
+                        ),
+                        "fixed_seeker_cost_planning": (
+                            normalized_cost_planning
+                        ),
+                        "fixed_seeker_cost_planning_sha256": (
+                            cost_planning_sha256
                         ),
                         "dry_run_acceptance_sha256": (
                             accepted_dry_run_sha256
@@ -1182,12 +1477,79 @@ def build_fixed_seeker_tracks_v22(
         normalized_finish_reason_counts[reason] = (
             normalized_finish_reason_counts.get(reason, 0) + 1
         )
+    observed_usage = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+    }
+    observed_prompt_tokens_per_call: list[int] = []
+    observed_completion_tokens_per_call: list[int] = []
+    usage_accounting_complete = True
+    for plan_row in call_plan:
+        terminal = ledger.terminal_row(str(plan_row["logical_call_key"]))
+        if terminal is None:
+            continue
+        normalized_usage, usage_error = _fixed_seeker_reported_usage(
+            terminal.get("usage"), plan_row=plan_row
+        )
+        if usage_error is not None or normalized_usage is None:
+            usage_accounting_complete = False
+            continue
+        for key in observed_usage:
+            observed_usage[key] += int(normalized_usage[key])
+        observed_prompt_tokens_per_call.append(
+            int(normalized_usage["prompt_tokens"])
+        )
+        observed_completion_tokens_per_call.append(
+            int(normalized_usage["completion_tokens"])
+        )
+    observed_cost_usd = (
+        observed_usage["prompt_tokens"]
+        * normalized_cost_planning["pricing_usd_per_mtok"]["input"]
+        + observed_usage["completion_tokens"]
+        * normalized_cost_planning["pricing_usd_per_mtok"]["output"]
+    ) / 1_000_000
+    observed_budget_checks = {
+        "planned_budget_gate_passed": estimate["budget_gate"]["status"]
+        == "PASS",
+        "physical_attempts": ledger.started_attempts <= int(max_api_calls),
+        "reported_usage_complete": usage_accounting_complete
+        and len(observed_prompt_tokens_per_call) == ledger.started_attempts,
+        "observed_cost_usd": observed_cost_usd
+        <= float(max_estimated_usd),
+        "observed_cost_within_planned_upper_bound": observed_cost_usd
+        <= float(estimate["maximum_estimated_usd"]),
+        "max_reported_input_tokens_per_call": max(
+            observed_prompt_tokens_per_call, default=0
+        )
+        <= int(max_input_tokens_per_call),
+        "max_reported_completion_tokens_per_call": max(
+            observed_completion_tokens_per_call, default=0
+        )
+        <= int(contract.max_output_tokens),
+    }
+    observed_budget_gate = {
+        "status": (
+            "PASS" if all(observed_budget_checks.values()) else "FAIL"
+        ),
+        "checks": observed_budget_checks,
+        "limits": dict(estimate["budget_limits"]),
+        "reported_usage": observed_usage,
+        "observed_cost_usd": observed_cost_usd,
+        "max_reported_input_tokens_per_call": max(
+            observed_prompt_tokens_per_call, default=0
+        ),
+        "max_reported_completion_tokens_per_call": max(
+            observed_completion_tokens_per_call, default=0
+        ),
+    }
     status = (
         "COMPLETE"
         if completed == expected_tracks
         and not failures
         and ledger.started_attempts == len(expected_calls)
         and all(ledger.succeeded(key) for key in expected_calls)
+        and observed_budget_gate["status"] == "PASS"
         else "INCOMPLETE"
     )
     summary = {
@@ -1213,6 +1575,10 @@ def build_fixed_seeker_tracks_v22(
         "call_plan_sha256": str(estimate["call_plan_sha256"]),
         "fixed_seeker_generation_contract": bound_payload,
         "fixed_seeker_generation_contract_sha256": bound_sha256,
+        "fixed_seeker_cost_planning": normalized_cost_planning,
+        "fixed_seeker_cost_planning_sha256": cost_planning_sha256,
+        "planned_budget_gate": estimate["budget_gate"],
+        "observed_budget_gate": observed_budget_gate,
         "interpretation": (
             "fixed-input causal track; later seeker turns do not react to "
             "evaluated policy replies"
@@ -1247,6 +1613,10 @@ def build_fixed_seeker_tracks_v22(
             "call_plan_sha256": str(estimate["call_plan_sha256"]),
             "fixed_seeker_generation_contract": bound_payload,
             "fixed_seeker_generation_contract_sha256": bound_sha256,
+            "fixed_seeker_cost_planning": normalized_cost_planning,
+            "fixed_seeker_cost_planning_sha256": cost_planning_sha256,
+            "planned_budget_gate": estimate["budget_gate"],
+            "observed_budget_gate": observed_budget_gate,
         },
         expected={
             "tracks": expected_tracks,
@@ -1254,6 +1624,10 @@ def build_fixed_seeker_tracks_v22(
             "logical_calls": len(expected_calls),
             "accepted_normalized_finish_reasons": ["complete"],
             "completion_truncated_count": 0,
+            "planned_budget_gate_status": "PASS",
+            "observed_budget_gate_status": "PASS",
+            "planned_budget_gate": estimate["budget_gate"],
+            "observed_budget_gate": observed_budget_gate,
         },
         study_freeze_sha256=study_freeze_sha256,
     )

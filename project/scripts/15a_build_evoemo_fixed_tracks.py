@@ -6,6 +6,7 @@ import json
 from metacom_pm.config import load_config, endpoint_from_config
 from metacom_pm.evoemo import (
     build_fixed_seeker_tracks_v22,
+    fixed_seeker_cost_planning_contract,
     persist_fixed_seeker_tracks_v22_dry_run,
     plan_fixed_seeker_tracks_v22,
 )
@@ -47,6 +48,11 @@ def main() -> None:
     parser.add_argument('--max-turns', type=int, default=10)
     parser.add_argument('--seeds', type=int, nargs='+')
     parser.add_argument('--max-scenarios', type=int)
+    parser.add_argument('--max-api-calls', type=int, required=True)
+    parser.add_argument('--max-estimated-usd', type=float, required=True)
+    parser.add_argument(
+        '--max-input-tokens-per-call', type=int, required=True
+    )
     parser.add_argument('--overwrite', action='store_true')
     parser.add_argument(
         '--accepted-dry-run-sha256',
@@ -65,6 +71,10 @@ def main() -> None:
             "pm_v2.yaml lacks fixed_seeker_generation_treatment"
         )
     contract = FixedSeekerGenerationContract.from_mapping(raw_contract)
+    raw_cost_planning = pm_v2_config.get('fixed_seeker_cost_planning')
+    if not isinstance(raw_cost_planning, dict):
+        raise RuntimeError('pm_v2.yaml lacks fixed_seeker_cost_planning')
+    cost_planning = fixed_seeker_cost_planning_contract(raw_cost_planning)
     if (
         args.seeker_endpoint is not None
         and args.seeker_endpoint != contract.seeker_endpoint
@@ -88,7 +98,11 @@ def main() -> None:
         ROOT / 'data/external/evo_emo.json',
         seeker_endpoint=endpoint,
         contract=contract,
+        cost_planning=cost_planning,
         simulator_id=args.simulator_id,
+        max_api_calls=args.max_api_calls,
+        max_estimated_usd=args.max_estimated_usd,
+        max_input_tokens_per_call=args.max_input_tokens_per_call,
         max_turns=args.max_turns,
         seeds=seeds,
         max_scenarios=args.max_scenarios,
@@ -109,6 +123,10 @@ def main() -> None:
             "dry_run_disposition": disposition,
             "api_clients_created": 0,
         }, ensure_ascii=False, indent=2))
+        if estimate['budget_gate']['status'] != 'PASS':
+            raise RuntimeError(
+                'fixed-seeker dry-run budget gate failed; do not authorize --run'
+            )
         return
     if not args.accepted_dry_run_sha256:
         raise RuntimeError(
@@ -119,8 +137,12 @@ def main() -> None:
         args.out_dir,
         seeker_endpoint=endpoint,
         contract=contract,
+        cost_planning=cost_planning,
         simulator_id=args.simulator_id,
         accepted_dry_run_sha256=args.accepted_dry_run_sha256,
+        max_api_calls=args.max_api_calls,
+        max_estimated_usd=args.max_estimated_usd,
+        max_input_tokens_per_call=args.max_input_tokens_per_call,
         max_turns=args.max_turns,
         seeds=seeds,
         max_scenarios=args.max_scenarios,

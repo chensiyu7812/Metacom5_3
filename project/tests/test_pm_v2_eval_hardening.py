@@ -32,6 +32,7 @@ from metacom_pm.io import (
 )
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.evoemo import fixed_seeker_cost_planning_contract
 from metacom_pm.pm_v2_contracts import (
     ActionLabel,
     CompositeSpec,
@@ -652,6 +653,30 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
             family="fixture-seeker",
         ),
     )
+    fixed_cost_planning = fixed_seeker_cost_planning_contract(
+        load_config("configs/pm_v2.yaml")["fixed_seeker_cost_planning"]
+    )
+    fixed_cost_planning_sha256 = sha256_text(
+        canonical_json(fixed_cost_planning)
+    )
+    planned_budget_gate = {
+        "status": "PASS",
+        "checks": {
+            "api_calls": True,
+            "estimated_cost_usd": True,
+            "max_input_tokens_per_call": True,
+        },
+        "limits": {
+            "max_api_calls": 3,
+            "max_estimated_usd": 10.0,
+            "max_input_tokens_per_call": 20_000,
+        },
+    }
+    observed_budget_gate = {
+        "status": "PASS",
+        "checks": {"fixture": True},
+        "limits": planned_budget_gate["limits"],
+    }
     for path in (evoemo_path, checkpoint_path, fixed_tracks_path):
         path.write_text("fixture\n", encoding="utf-8")
     write_jsonl(strategy_path, [tiny_strategy.model_dump(mode="json")])
@@ -664,11 +689,19 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
                 "seeds": [7],
                 "fixed_seeker_generation_contract": fixed_bound.payload(),
                 "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+                "fixed_seeker_cost_planning": fixed_cost_planning,
+                "fixed_seeker_cost_planning_sha256": (
+                    fixed_cost_planning_sha256
+                ),
+                "planned_budget_gate": planned_budget_gate,
+                "observed_budget_gate": observed_budget_gate,
             },
             "expected": {
                 "tracks": 1,
                 "turns_per_track": 3,
                 "completion_truncated_count": 0,
+                "planned_budget_gate": planned_budget_gate,
+                "observed_budget_gate": observed_budget_gate,
             },
         },
     )
@@ -679,6 +712,10 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
             "completion_truncated_count": 0,
             "fixed_seeker_generation_contract": fixed_bound.payload(),
             "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+            "fixed_seeker_cost_planning": fixed_cost_planning,
+            "fixed_seeker_cost_planning_sha256": fixed_cost_planning_sha256,
+            "planned_budget_gate": planned_budget_gate,
+            "observed_budget_gate": observed_budget_gate,
         },
     )
     write_jsonl(
@@ -687,6 +724,7 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
             {
                 "normalized_finish_reason": "complete",
                 "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+                "fixed_seeker_cost_planning_sha256": fixed_cost_planning_sha256,
             }
         ],
     )
@@ -700,11 +738,14 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
             {
                 "normalized_finish_reason": "complete",
                 "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+                "fixed_seeker_cost_planning_sha256": fixed_cost_planning_sha256,
             }
             for _ in range(3)
         ],
         "fixed_seeker_generation_contract": fixed_bound.payload(),
         "fixed_seeker_generation_contract_sha256": fixed_bound.digest(),
+        "fixed_seeker_cost_planning": fixed_cost_planning,
+        "fixed_seeker_cost_planning_sha256": fixed_cost_planning_sha256,
     }
     runtime = tiny_state.model_copy(
         update={"provenance": {"exogenous_state_id": "exo-fixture"}}
@@ -1177,6 +1218,31 @@ def test_external_eval_requires_exact_reference_raw_generation_gate():
         )
 
 
+def test_freeze_finish_reason_gate_accepts_zero_buckets_but_rejects_nonzero():
+    script = Path("scripts/26_freeze_pm_v2_study.py")
+    spec = importlib.util.spec_from_file_location(
+        "pmv22_freeze_finish_reason_gate_script", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    initialized_counts = {
+        "complete": 2,
+        "length": 0,
+        "tool_call": 0,
+        "content_filter": 0,
+        "unknown": 0,
+    }
+    assert module.require_complete_only_finish_reason_counts(
+        initialized_counts, expected_rows=2
+    ) == initialized_counts
+
+    with pytest.raises(RuntimeError, match="incomplete calls"):
+        module.require_complete_only_finish_reason_counts(
+            {**initialized_counts, "length": 1}, expected_rows=2
+        )
+
+
 def test_external_turn_gate_rejects_mixed_or_noncomplete_generation(tmp_path):
     script = Path("scripts/25_eval_pm_v2_external.py")
     spec = importlib.util.spec_from_file_location("pmv22_external_eval_script", script)
@@ -1438,6 +1504,19 @@ def test_freeze_reference_baseline_contract_rejects_v1_and_truncation(
         "manifest_sha256": sha256_text(canonical_json(manifest_payload)),
     }
     write_json(bundle / "run_manifest.json", manifest)
+    raw_generation_contract_gate = {
+        "status": "PASS",
+        "expected_rows": 1,
+        "observed_rows": 1,
+        "row_count_exact": True,
+        "call_keys_exact": True,
+        "finish_reasons_complete": True,
+        "errors_absent": True,
+        "supporter_generation_treatment_exact": True,
+        "fixed_seeker_generation_treatment_exact": True,
+        "evidence_processing_contract_exact": True,
+        "policy_lock_exact": True,
+    }
     write_json(
         bundle / "generation_summary.json",
         {
@@ -1445,11 +1524,18 @@ def test_freeze_reference_baseline_contract_rejects_v1_and_truncation(
             "status": "COMPLETE",
             "completed_turns": 1,
             "non_complete_finish_reason_count": 0,
+            "raw_generation_contract_gate": raw_generation_contract_gate,
         },
     )
     attestation = {
         "stage": module.PMV22_REFERENCE_BASELINE_STAGE,
-        "parameters": common,
+        "parameters": {
+            **common,
+            "raw_generation_contract_gate": raw_generation_contract_gate,
+        },
+        "expected": {
+            "raw_generation_contract_gate": raw_generation_contract_gate,
+        },
         "outputs": {"turns": {"rows": 1}},
     }
     attestation_path = bundle / "artifact_attestation.json"

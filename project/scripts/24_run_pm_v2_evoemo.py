@@ -10,6 +10,7 @@ from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evidence_filter_model import require_evidence_filter_artifacts
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.evoemo import fixed_seeker_cost_planning_contract
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, sha256_file, sha256_text
 from metacom_pm.pm_v2_evoemo import (
@@ -120,6 +121,12 @@ def main() -> None:
     bound_fixed_seeker_contract = fixed_seeker_contract.bind_endpoint(
         fixed_seeker_contract.seeker_endpoint, fixed_seeker_endpoint
     )
+    fixed_seeker_cost_planning = fixed_seeker_cost_planning_contract(
+        pm_v2_config.get("fixed_seeker_cost_planning") or {}
+    )
+    fixed_seeker_cost_planning_sha256 = sha256_text(
+        canonical_json(fixed_seeker_cost_planning)
+    )
     evidence_filter_config = EvidenceFilterConfig.from_mapping(
         pm_v2_config["evidence_filter"]
     )
@@ -174,6 +181,15 @@ def main() -> None:
     ):
         raise RuntimeError(
             "study freeze fixed-seeker generation treatment is absent or stale"
+        )
+    if (
+        contract.get("fixed_seeker_cost_planning")
+        != fixed_seeker_cost_planning
+        or contract.get("fixed_seeker_cost_planning_sha256")
+        != fixed_seeker_cost_planning_sha256
+    ):
+        raise RuntimeError(
+            "study freeze fixed-seeker cost-planning contract is absent or stale"
         )
     if (
         contract.get("evidence_filter") != evidence_filter_config.payload()

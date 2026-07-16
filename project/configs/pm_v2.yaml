@@ -45,6 +45,19 @@ fixed_seeker_generation_treatment:
   seed_protocol: base-seed-plus-turn-index-v1
   elicitation_scaffold_protocol: deterministic-generic-open-loop-v1
 
+# Fixed-seeker prompts are sequential, so later prompt text is not known at
+# dry-run time.  The cost plan nevertheless has a deterministic upper bound:
+# static request tokens plus 300 tokens for every prior seeker completion, with
+# the safety factor applied to the whole quantity.  These non-zero proxy prices
+# prevent an accepted 1,020-call plan from carrying a zero-dollar budget.
+fixed_seeker_cost_planning:
+  protocol: pm-v2.2-fixed-seeker-cost-planning-v1
+  pricing_usd_per_mtok:
+    input: 0.15
+    output: 0.60
+  input_token_safety_factor: 1.50
+  fail_on_reported_input_overrun: true
+
 data_generation:
   generator_endpoint: synthetic_generator
   pricing_usd_per_mtok:
@@ -496,8 +509,9 @@ splits:
     report_top_pairs: 50
 
 external_evaluation:
-  # Users, not scenario-turn rows, are the confirmatory independent blocks.
-  # Scenario clustering remains a sensitivity analysis only.
+  # EvoEmo is development-informed external evaluation, not a pristine
+  # confirmatory set. Users, not scenario-turn rows, are the primary
+  # independent blocks; scenario clustering remains a sensitivity analysis.
   primary_bootstrap_cluster: user_id
   sensitivity_bootstrap_cluster: scenario
   required_baselines:
@@ -552,7 +566,7 @@ external_evaluation:
     minimum_cross_family_support_delta_correlation: 0.0
     require_cross_family_direction_agreement: true
     # Futility only: continue unless even the pilot CI upper bound is below
-    # this raw 1--5 support margin. Confirmatory effects use disjoint units.
+    # this raw 1--5 support margin. Subsequent scoring uses disjoint units.
     minimum_support_delta_ci_upper_for_continuation: -0.10
     # These are efficacy gates, separate from the continuation/futility rule.
     # A merely non-futile negative pilot can never verify PM superiority.

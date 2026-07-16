@@ -34,6 +34,7 @@ from .evoemo import (
     _load_fixed_tracks,
     _track_key,
     build_evo_memory,
+    fixed_seeker_cost_planning_contract,
     load_evoemo,
     make_evo_runtime_state,
 )
@@ -695,6 +696,16 @@ def run_pmv2_fixed_evoemo(
     )
     fixed_attestation = read_json(fixed_tracks_attestation_path)
     fixed_parameters = fixed_attestation.get("parameters") or {}
+    fixed_cost_planning = fixed_seeker_cost_planning_contract(
+        fixed_parameters.get("fixed_seeker_cost_planning") or {}
+    )
+    fixed_cost_planning_sha256 = sha256_text(
+        canonical_json(fixed_cost_planning)
+    )
+    if fixed_parameters.get(
+        "fixed_seeker_cost_planning_sha256"
+    ) != fixed_cost_planning_sha256:
+        raise RuntimeError("fixed-track cost-planning contract hash mismatch")
     expected_fixed_parameters = {
         "simulator_id": simulator_id,
         "max_turns": int(max_turns),
@@ -740,17 +751,43 @@ def run_pmv2_fixed_evoemo(
         != fixed_seeker_treatment
         or fixed_summary.get("fixed_seeker_generation_contract_sha256")
         != fixed_seeker_treatment_sha256
+        or fixed_summary.get("fixed_seeker_cost_planning")
+        != fixed_cost_planning
+        or fixed_summary.get("fixed_seeker_cost_planning_sha256")
+        != fixed_cost_planning_sha256
+        or (fixed_summary.get("planned_budget_gate") or {}).get("status")
+        != "PASS"
+        or (fixed_summary.get("observed_budget_gate") or {}).get("status")
+        != "PASS"
+        or fixed_parameters.get("planned_budget_gate")
+        != fixed_summary.get("planned_budget_gate")
+        or fixed_parameters.get("observed_budget_gate")
+        != fixed_summary.get("observed_budget_gate")
+        or (fixed_attestation.get("expected") or {}).get(
+            "planned_budget_gate"
+        )
+        != fixed_summary.get("planned_budget_gate")
+        or (fixed_attestation.get("expected") or {}).get(
+            "observed_budget_gate"
+        )
+        != fixed_summary.get("observed_budget_gate")
         or int(fixed_summary.get("completion_truncated_count", -1)) != 0
         or any(
             track.get("fixed_seeker_generation_contract")
             != fixed_seeker_treatment
             or track.get("fixed_seeker_generation_contract_sha256")
             != fixed_seeker_treatment_sha256
+            or track.get("fixed_seeker_cost_planning")
+            != fixed_cost_planning
+            or track.get("fixed_seeker_cost_planning_sha256")
+            != fixed_cost_planning_sha256
             or len(track.get("turn_provenance") or []) != int(max_turns)
             or any(
                 turn.get("normalized_finish_reason") != "complete"
                 or turn.get("fixed_seeker_generation_contract_sha256")
                 != fixed_seeker_treatment_sha256
+                or turn.get("fixed_seeker_cost_planning_sha256")
+                != fixed_cost_planning_sha256
                 for turn in (track.get("turn_provenance") or [])
             )
             for track in tracks.values()
@@ -759,6 +796,8 @@ def run_pmv2_fixed_evoemo(
             row.get("normalized_finish_reason") != "complete"
             or row.get("fixed_seeker_generation_contract_sha256")
             != fixed_seeker_treatment_sha256
+            or row.get("fixed_seeker_cost_planning_sha256")
+            != fixed_cost_planning_sha256
             for row in fixed_raw_rows
         )
     ):

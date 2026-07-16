@@ -54,6 +54,23 @@ def _contract() -> FixedSeekerGenerationContract:
     return FixedSeekerGenerationContract.from_mapping(_contract_mapping())
 
 
+def _cost_planning() -> dict:
+    return {
+        "protocol": "pm-v2.2-fixed-seeker-cost-planning-v1",
+        "pricing_usd_per_mtok": {"input": 0.15, "output": 0.60},
+        "input_token_safety_factor": 1.50,
+        "fail_on_reported_input_overrun": True,
+    }
+
+
+def _budget_kwargs() -> dict:
+    return {
+        "max_api_calls": 10,
+        "max_estimated_usd": 10.0,
+        "max_input_tokens_per_call": 20_000,
+    }
+
+
 def _endpoint(*, model: str = "fixture-seeker") -> Endpoint:
     return Endpoint(
         base_url="https://fixture.invalid/v1",
@@ -70,9 +87,13 @@ class _FakeClient:
         *,
         normalized_finish_reason: str = "complete",
         provider_finish_reason: str | None = "stop",
+        prompt_tokens: int = 20,
+        completion_tokens: int = 5,
     ) -> None:
         self.normalized_finish_reason = normalized_finish_reason
         self.provider_finish_reason = provider_finish_reason
+        self.prompt_tokens = int(prompt_tokens)
+        self.completion_tokens = int(completion_tokens)
         self.calls: list[dict] = []
         self.closed = False
 
@@ -87,15 +108,17 @@ class _FakeClient:
                         {"finish_reason": self.provider_finish_reason}
                     ],
                     "usage": {
-                        "prompt_tokens": 20,
-                        "completion_tokens": 5,
-                        "total_tokens": 25,
+                        "prompt_tokens": self.prompt_tokens,
+                        "completion_tokens": self.completion_tokens,
+                        "total_tokens": (
+                            self.prompt_tokens + self.completion_tokens
+                        ),
                     },
                 },
                 usage={
-                    "prompt_tokens": 20,
-                    "completion_tokens": 5,
-                    "total_tokens": 25,
+                    "prompt_tokens": self.prompt_tokens,
+                    "completion_tokens": self.completion_tokens,
+                    "total_tokens": self.prompt_tokens + self.completion_tokens,
                 },
                 latency_ms=1.0,
                 request_hash=f"request-{index}",
@@ -114,7 +137,9 @@ def _plan(out_dir: Path, *, max_turns: int = 2):
         EVOEMO_PATH,
         seeker_endpoint=_endpoint(),
         contract=_contract(),
+        cost_planning=_cost_planning(),
         simulator_id="seeker_main",
+        **_budget_kwargs(),
         max_turns=max_turns,
         seeds=[101],
         max_scenarios=1,
@@ -163,9 +188,20 @@ def test_fixed_seeker_dry_run_is_client_free_and_has_exact_budget(
     assert estimate["maximum_physical_api_attempts"] == 2
     assert estimate["maximum_output_tokens_per_call"] == 300
     assert estimate["maximum_total_output_tokens"] == 600
+    assert estimate["budget_gate"]["status"] == "PASS"
+    assert estimate["fixed_seeker_cost_planning"][
+        "pricing_usd_per_mtok"
+    ] == {"input": 0.15, "output": 0.60}
+    assert estimate["fixed_seeker_cost_planning"][
+        "input_token_safety_factor"
+    ] == 1.5
     assert len(rows) == 2
     assert len({row["logical_call_key"] for row in rows}) == 2
     assert all(row["maximum_physical_attempts"] == 1 for row in rows)
+    assert all(row["maximum_input_tokens"] > 0 for row in rows)
+    assert rows[1]["history_completion_token_cap"] == 300
+    assert rows[1]["maximum_input_tokens"] > rows[0]["maximum_input_tokens"]
+    assert all(row["maximum_cost_usd"] > 0 for row in rows)
     assert all(
         row["fixed_seeker_generation_contract_sha256"]
         == estimate["fixed_seeker_generation_contract_sha256"]
@@ -176,7 +212,9 @@ def test_fixed_seeker_dry_run_is_client_free_and_has_exact_budget(
         EVOEMO_PATH,
         seeker_endpoint=_endpoint(model="changed-model"),
         contract=_contract(),
+        cost_planning=_cost_planning(),
         simulator_id="seeker_main",
+        **_budget_kwargs(),
         max_turns=2,
         seeds=[101],
         max_scenarios=1,
@@ -202,13 +240,73 @@ def test_fixed_seeker_run_rejects_wrong_hash_before_client(
             tmp_path,
             seeker_endpoint=_endpoint(),
             contract=_contract(),
+            cost_planning=_cost_planning(),
             simulator_id="seeker_main",
             accepted_dry_run_sha256="wrong",
+            **_budget_kwargs(),
             max_turns=1,
             seeds=[101],
             max_scenarios=1,
         )
     assert not (tmp_path / "physical_attempt_ledger.jsonl").exists()
+
+
+def test_fixed_seeker_failed_budget_cannot_authorize_client(
+    monkeypatch, tmp_path: Path
+) -> None:
+    estimate, rows = plan_fixed_seeker_tracks_v22(
+        EVOEMO_PATH,
+        seeker_endpoint=_endpoint(),
+        contract=_contract(),
+        cost_planning=_cost_planning(),
+        simulator_id="seeker_main",
+        max_api_calls=1,
+        max_estimated_usd=10.0,
+        max_input_tokens_per_call=20_000,
+        max_turns=2,
+        seeds=[101],
+        max_scenarios=1,
+    )
+    assert estimate["budget_gate"]["status"] == "FAIL"
+    persist_fixed_seeker_tracks_v22_dry_run(tmp_path, estimate, rows)
+    monkeypatch.setattr(
+        evoemo_module,
+        "make_client",
+        lambda endpoint: pytest.fail("failed budget created an API client"),
+    )
+    with pytest.raises(RuntimeError, match="budget gate did not PASS"):
+        build_fixed_seeker_tracks_v22(
+            EVOEMO_PATH,
+            tmp_path,
+            seeker_endpoint=_endpoint(),
+            contract=_contract(),
+            cost_planning=_cost_planning(),
+            simulator_id="seeker_main",
+            accepted_dry_run_sha256=estimate["dry_run_acceptance_sha256"],
+            max_api_calls=1,
+            max_estimated_usd=10.0,
+            max_input_tokens_per_call=20_000,
+            max_turns=2,
+            seeds=[101],
+            max_scenarios=1,
+        )
+
+
+def test_fixed_seeker_cost_contract_rejects_zero_price(tmp_path: Path) -> None:
+    bad = _cost_planning()
+    bad["pricing_usd_per_mtok"] = {"input": 0.0, "output": 0.60}
+    with pytest.raises(ValueError, match="positive 0.15/0.60"):
+        plan_fixed_seeker_tracks_v22(
+            EVOEMO_PATH,
+            seeker_endpoint=_endpoint(),
+            contract=_contract(),
+            cost_planning=bad,
+            simulator_id="seeker_main",
+            **_budget_kwargs(),
+            max_turns=1,
+            seeds=[101],
+            max_scenarios=1,
+        )
 
 
 def test_fixed_seeker_complete_calls_use_300_and_bind_all_artifacts(
@@ -222,15 +320,30 @@ def test_fixed_seeker_complete_calls_use_300_and_bind_all_artifacts(
         tmp_path,
         seeker_endpoint=_endpoint(),
         contract=_contract(),
+        cost_planning=_cost_planning(),
         simulator_id="seeker_main",
         accepted_dry_run_sha256=estimate["dry_run_acceptance_sha256"],
+        **_budget_kwargs(),
         max_turns=2,
         seeds=[101],
         max_scenarios=1,
     )
     assert summary["status"] == "COMPLETE"
     assert summary["completion_truncated_count"] == 0
-    assert summary["normalized_finish_reason_counts"]["complete"] == 2
+    assert summary["normalized_finish_reason_counts"] == {
+        "complete": 2,
+        "length": 0,
+        "tool_call": 0,
+        "content_filter": 0,
+        "unknown": 0,
+    }
+    assert summary["planned_budget_gate"]["status"] == "PASS"
+    assert summary["observed_budget_gate"]["status"] == "PASS"
+    assert summary["observed_budget_gate"]["reported_usage"] == {
+        "prompt_tokens": 40,
+        "completion_tokens": 10,
+        "total_tokens": 50,
+    }
     assert fake.closed
     assert len(fake.calls) == 2
     assert all(call["max_tokens"] == 300 for call in fake.calls)
@@ -265,7 +378,40 @@ def test_fixed_seeker_complete_calls_use_300_and_bind_all_artifacts(
         assert artifact["fixed_seeker_generation_contract"] == estimate[
             "fixed_seeker_generation_contract"
         ]
+        assert artifact["fixed_seeker_cost_planning_sha256"] == estimate[
+            "fixed_seeker_cost_planning_sha256"
+        ]
     assert attestation["expected"]["completion_truncated_count"] == 0
+    assert attestation["expected"]["planned_budget_gate_status"] == "PASS"
+    assert attestation["expected"]["observed_budget_gate_status"] == "PASS"
+
+
+def test_fixed_seeker_reported_input_overrun_is_terminal(
+    monkeypatch, tmp_path: Path
+) -> None:
+    estimate, _ = _plan(tmp_path, max_turns=1)
+    fake = _FakeClient(prompt_tokens=999_999)
+    monkeypatch.setattr(evoemo_module, "make_client", lambda endpoint: fake)
+    with pytest.raises(RuntimeError, match="generation incomplete"):
+        build_fixed_seeker_tracks_v22(
+            EVOEMO_PATH,
+            tmp_path,
+            seeker_endpoint=_endpoint(),
+            contract=_contract(),
+            cost_planning=_cost_planning(),
+            simulator_id="seeker_main",
+            accepted_dry_run_sha256=estimate["dry_run_acceptance_sha256"],
+            **_budget_kwargs(),
+            max_turns=1,
+            seeds=[101],
+            max_scenarios=1,
+        )
+    ledger = list(iter_jsonl(tmp_path / "physical_attempt_ledger.jsonl"))
+    assert [row["event"] for row in ledger] == ["STARTED", "FAILED"]
+    assert "prompt_tokens exceed" in ledger[-1]["error"]
+    assert read_json(tmp_path / "summary.json")["observed_budget_gate"][
+        "status"
+    ] == "FAIL"
 
 
 @pytest.mark.parametrize(
@@ -295,8 +441,10 @@ def test_fixed_seeker_noncomplete_is_terminal_before_track_write(
             tmp_path,
             seeker_endpoint=_endpoint(),
             contract=_contract(),
+            cost_planning=_cost_planning(),
             simulator_id="seeker_main",
             accepted_dry_run_sha256=estimate["dry_run_acceptance_sha256"],
+            **_budget_kwargs(),
             max_turns=2,
             seeds=[101],
             max_scenarios=1,

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -31,7 +32,10 @@ from metacom_pm.pm_v2_evoemo import (
     ACTION_PREFLIGHT_METRIC_SCOPES,
     EVALUATION_UNIT_CONTRACT_PROTOCOL,
 )
-from metacom_pm.evoemo import FIXED_SEEKER_V22_STAGE
+from metacom_pm.evoemo import (
+    FIXED_SEEKER_V22_STAGE,
+    fixed_seeker_cost_planning_contract,
+)
 from metacom_pm.pm_v2_external_eval import expected_external_units
 from metacom_pm.pm_v2_generation_pilot import (
     build_generation_compatibility_contract,
@@ -67,6 +71,29 @@ from metacom_pm.pm_v2_semantic_audit import (
 from metacom_pm.strategy_bank_approval import require_strategy_bank_human_approval
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def require_complete_only_finish_reason_counts(
+    counts: Mapping[str, Any], *, expected_rows: int
+) -> dict[str, int]:
+    """Accept initialized zero buckets while requiring every row complete."""
+
+    normalized = {
+        str(key): int(value) for key, value in dict(counts).items()
+    }
+    if (
+        int(expected_rows) < 0
+        or normalized.get("complete", -1) != int(expected_rows)
+        or any(
+            count != 0
+            for reason, count in normalized.items()
+            if reason != "complete"
+        )
+    ):
+        raise RuntimeError(
+            "fixed seeker finish-reason counts contain incomplete calls"
+        )
+    return normalized
 
 
 def require_exact_treatment_turn_rows(
@@ -309,6 +336,48 @@ def require_pmv22_reference_baseline_bundle(
         or int(summary.get("completed_turns", -1)) != len(rows)
     ):
         raise RuntimeError("PM-v2.2 reference-baseline turn counts disagree")
+    raw_generation_contract_gate = dict(
+        summary.get("raw_generation_contract_gate") or {}
+    )
+    raw_gate_boolean_keys = {
+        "row_count_exact",
+        "call_keys_exact",
+        "finish_reasons_complete",
+        "errors_absent",
+        "supporter_generation_treatment_exact",
+        "fixed_seeker_generation_treatment_exact",
+        "evidence_processing_contract_exact",
+        "policy_lock_exact",
+    }
+    if (
+        set(raw_generation_contract_gate)
+        != {
+            "status",
+            "expected_rows",
+            "observed_rows",
+            *raw_gate_boolean_keys,
+        }
+        or raw_generation_contract_gate.get("status") != "PASS"
+        or int(raw_generation_contract_gate.get("expected_rows", -1))
+        != len(rows)
+        or int(raw_generation_contract_gate.get("observed_rows", -1))
+        != len(rows)
+        or any(
+            raw_generation_contract_gate.get(key) is not True
+            for key in raw_gate_boolean_keys
+        )
+        or (attestation.get("parameters") or {}).get(
+            "raw_generation_contract_gate"
+        )
+        != raw_generation_contract_gate
+        or (attestation.get("expected") or {}).get(
+            "raw_generation_contract_gate"
+        )
+        != raw_generation_contract_gate
+    ):
+        raise RuntimeError(
+            "PM-v2.2 reference-baseline raw-generation contract gate is stale"
+        )
     call_plan = [dict(row) for row in iter_jsonl(call_plan_path)]
     if len(call_plan) != len(rows) or any(
         row.get("supporter_generation_treatment") != dict(treatment)
@@ -766,6 +835,12 @@ def main() -> None:
     )
     fixed_seeker_generation_treatment = bound_fixed_seeker_contract.payload()
     fixed_seeker_generation_treatment_sha256 = bound_fixed_seeker_contract.digest()
+    fixed_seeker_cost_planning = fixed_seeker_cost_planning_contract(
+        pm_v2_config.get("fixed_seeker_cost_planning") or {}
+    )
+    fixed_seeker_cost_planning_sha256 = sha256_text(
+        canonical_json(fixed_seeker_cost_planning)
+    )
     strategy_split_manifest = ROOT / "data" / "strategy" / "esconv_split_manifest.jsonl"
     strategy_bank_audit = ROOT / "data" / "strategy" / "strategy_bank_audit.json"
     strategy_rag_audit_summary = (
@@ -1119,6 +1194,10 @@ def main() -> None:
         "fixed_seeker_generation_contract_sha256": (
             fixed_seeker_generation_treatment_sha256
         ),
+        "fixed_seeker_cost_planning": fixed_seeker_cost_planning,
+        "fixed_seeker_cost_planning_sha256": (
+            fixed_seeker_cost_planning_sha256
+        ),
     }
     for key, expected in expected_fixed_track_parameters.items():
         if (fixed_tracks_attestation.get("parameters") or {}).get(key) != expected:
@@ -1138,29 +1217,93 @@ def main() -> None:
     fixed_tracks_summary = json.loads(
         (fixed_bundle_dir / "summary.json").read_text(encoding="utf-8")
     )
+    fixed_tracks_cost_estimate = json.loads(
+        (fixed_bundle_dir / "cost_estimate.json").read_text(encoding="utf-8")
+    )
+    fixed_tracks_manifest = json.loads(
+        (fixed_bundle_dir / "run_manifest.json").read_text(encoding="utf-8")
+    )
+    fixed_tracks_expected = fixed_tracks_attestation.get("expected") or {}
+    planned_fixed_budget_gate = fixed_tracks_summary.get(
+        "planned_budget_gate"
+    ) or {}
+    observed_fixed_budget_gate = fixed_tracks_summary.get(
+        "observed_budget_gate"
+    ) or {}
+    planned_fixed_checks = planned_fixed_budget_gate.get("checks") or {}
+    observed_fixed_checks = observed_fixed_budget_gate.get("checks") or {}
     fixed_track_records = [dict(row) for row in iter_jsonl(args.fixed_tracks)]
     fixed_track_raw_rows = [
         dict(row) for row in iter_jsonl(fixed_bundle_dir / "raw_seeker_calls.jsonl")
     ]
+    try:
+        require_complete_only_finish_reason_counts(
+            fixed_tracks_summary.get("normalized_finish_reason_counts") or {},
+            expected_rows=len(fixed_track_raw_rows),
+        )
+    except (RuntimeError, TypeError, ValueError) as exc:
+        raise RuntimeError(
+            "fixed seeker V2.2 tracks are mixed, truncated, or contract-stale"
+        ) from exc
     if (
         fixed_tracks_summary.get("status") != "COMPLETE"
         or fixed_tracks_summary.get("fixed_seeker_generation_contract")
         != fixed_seeker_generation_treatment
         or fixed_tracks_summary.get("fixed_seeker_generation_contract_sha256")
         != fixed_seeker_generation_treatment_sha256
+        or fixed_tracks_summary.get("fixed_seeker_cost_planning")
+        != fixed_seeker_cost_planning
+        or fixed_tracks_summary.get("fixed_seeker_cost_planning_sha256")
+        != fixed_seeker_cost_planning_sha256
+        or fixed_tracks_cost_estimate.get("fixed_seeker_cost_planning")
+        != fixed_seeker_cost_planning
+        or fixed_tracks_cost_estimate.get(
+            "fixed_seeker_cost_planning_sha256"
+        )
+        != fixed_seeker_cost_planning_sha256
+        or fixed_tracks_manifest.get("fixed_seeker_cost_planning")
+        != fixed_seeker_cost_planning
+        or fixed_tracks_manifest.get("fixed_seeker_cost_planning_sha256")
+        != fixed_seeker_cost_planning_sha256
+        or (fixed_tracks_cost_estimate.get("budget_gate") or {}).get("status")
+        != "PASS"
+        or planned_fixed_budget_gate.get("status") != "PASS"
+        or observed_fixed_budget_gate.get("status") != "PASS"
+        or not planned_fixed_checks
+        or not all(value is True for value in planned_fixed_checks.values())
+        or not observed_fixed_checks
+        or not all(value is True for value in observed_fixed_checks.values())
+        or (fixed_tracks_attestation.get("parameters") or {}).get(
+            "planned_budget_gate"
+        )
+        != planned_fixed_budget_gate
+        or (fixed_tracks_attestation.get("parameters") or {}).get(
+            "observed_budget_gate"
+        )
+        != observed_fixed_budget_gate
+        or fixed_tracks_expected.get("planned_budget_gate")
+        != planned_fixed_budget_gate
+        or fixed_tracks_expected.get("observed_budget_gate")
+        != observed_fixed_budget_gate
+        or fixed_tracks_manifest.get("planned_budget_gate")
+        != planned_fixed_budget_gate
         or int(fixed_tracks_summary.get("completion_truncated_count", -1)) != 0
-        or set(fixed_tracks_summary.get("normalized_finish_reason_counts") or {})
-        != {"complete"}
         or any(
             row.get("fixed_seeker_generation_contract")
             != fixed_seeker_generation_treatment
             or row.get("fixed_seeker_generation_contract_sha256")
             != fixed_seeker_generation_treatment_sha256
+            or row.get("fixed_seeker_cost_planning")
+            != fixed_seeker_cost_planning
+            or row.get("fixed_seeker_cost_planning_sha256")
+            != fixed_seeker_cost_planning_sha256
             or len(row.get("turn_provenance") or []) != max_turns
             or any(
                 turn.get("normalized_finish_reason") != "complete"
                 or turn.get("fixed_seeker_generation_contract_sha256")
                 != fixed_seeker_generation_treatment_sha256
+                or turn.get("fixed_seeker_cost_planning_sha256")
+                != fixed_seeker_cost_planning_sha256
                 for turn in (row.get("turn_provenance") or [])
             )
             for row in fixed_track_records
@@ -1169,11 +1312,256 @@ def main() -> None:
             row.get("normalized_finish_reason") != "complete"
             or row.get("fixed_seeker_generation_contract_sha256")
             != fixed_seeker_generation_treatment_sha256
+            or row.get("fixed_seeker_cost_planning_sha256")
+            != fixed_seeker_cost_planning_sha256
             for row in fixed_track_raw_rows
         )
     ):
         raise RuntimeError(
             "fixed seeker V2.2 tracks are mixed, truncated, or contract-stale"
+        )
+    fixed_tracks_call_plan = [
+        dict(row) for row in iter_jsonl(fixed_bundle_dir / "call_plan.jsonl")
+    ]
+    fixed_cost_payload = {
+        key: value
+        for key, value in fixed_tracks_cost_estimate.items()
+        if key != "dry_run_acceptance_sha256"
+    }
+    fixed_prices = fixed_seeker_cost_planning["pricing_usd_per_mtok"]
+    fixed_safety_factor = float(
+        fixed_seeker_cost_planning["input_token_safety_factor"]
+    )
+    recomputed_fixed_maximum_input_tokens = sum(
+        int(row.get("maximum_input_tokens") or 0)
+        for row in fixed_tracks_call_plan
+    )
+    recomputed_fixed_maximum_output_tokens = sum(
+        int(row.get("maximum_output_tokens") or 0)
+        for row in fixed_tracks_call_plan
+    )
+    recomputed_fixed_maximum_cost = sum(
+        float(row.get("maximum_cost_usd") or 0.0)
+        for row in fixed_tracks_call_plan
+    )
+    if (
+        fixed_tracks_cost_estimate.get("dry_run_acceptance_sha256")
+        != sha256_text(canonical_json(fixed_cost_payload))
+        or fixed_tracks_cost_estimate.get("call_plan_sha256")
+        != sha256_text(canonical_json(fixed_tracks_call_plan))
+        or int(
+            fixed_tracks_cost_estimate.get(
+                "maximum_physical_api_attempts", -1
+            )
+        )
+        != len(fixed_tracks_call_plan)
+        or int(
+            fixed_tracks_cost_estimate.get("maximum_total_input_tokens", -1)
+        )
+        != recomputed_fixed_maximum_input_tokens
+        or int(
+            fixed_tracks_cost_estimate.get("maximum_total_output_tokens", -1)
+        )
+        != recomputed_fixed_maximum_output_tokens
+        or int(
+            fixed_tracks_cost_estimate.get(
+                "maximum_input_tokens_per_call", -1
+            )
+        )
+        != max(
+            (
+                int(row.get("maximum_input_tokens") or 0)
+                for row in fixed_tracks_call_plan
+            ),
+            default=0,
+        )
+        or not math.isclose(
+            float(fixed_tracks_cost_estimate.get("maximum_estimated_usd", -1.0)),
+            recomputed_fixed_maximum_cost,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+        or len(fixed_track_raw_rows) != len(fixed_tracks_call_plan)
+        or any(
+            row.get("fixed_seeker_cost_planning_sha256")
+            != fixed_seeker_cost_planning_sha256
+            or int(row.get("maximum_input_tokens") or 0) <= 0
+            or int(row.get("maximum_input_tokens") or 0)
+            != math.ceil(
+                fixed_safety_factor
+                * (
+                    int(
+                        row.get(
+                            "static_request_tokens_with_empty_prior_seeker_content"
+                        )
+                        or 0
+                    )
+                    + int(row.get("history_completion_token_cap") or 0)
+                )
+            )
+            or int(row.get("maximum_output_tokens") or 0)
+            != fixed_seeker_contract.max_output_tokens
+            or float(row.get("maximum_cost_usd") or 0.0) <= 0.0
+            or not math.isclose(
+                float(row.get("maximum_cost_usd") or 0.0),
+                (
+                    int(row.get("maximum_input_tokens") or 0)
+                    * fixed_prices["input"]
+                    + int(row.get("maximum_output_tokens") or 0)
+                    * fixed_prices["output"]
+                )
+                / 1_000_000,
+                rel_tol=0.0,
+                abs_tol=1e-15,
+            )
+            or int(row.get("maximum_physical_attempts") or 0) != 1
+            for row in fixed_tracks_call_plan
+        )
+    ):
+        raise RuntimeError(
+            "fixed seeker V2.2 cost estimate/call plan is stale or unbounded"
+        )
+    fixed_plan_by_key = {
+        str(row.get("logical_call_key") or ""): row
+        for row in fixed_tracks_call_plan
+    }
+    fixed_raw_by_key = {
+        str(row.get("logical_call_key") or ""): row
+        for row in fixed_track_raw_rows
+    }
+    fixed_ledger_rows = [
+        dict(row)
+        for row in iter_jsonl(
+            fixed_bundle_dir / "physical_attempt_ledger.jsonl"
+        )
+    ]
+    fixed_started_keys = [
+        str(row.get("call_key") or "")
+        for row in fixed_ledger_rows
+        if row.get("event") == "STARTED"
+    ]
+    fixed_succeeded_keys = [
+        str(row.get("call_key") or "")
+        for row in fixed_ledger_rows
+        if row.get("event") == "SUCCEEDED"
+    ]
+    if (
+        "" in fixed_plan_by_key
+        or len(fixed_plan_by_key) != len(fixed_tracks_call_plan)
+        or "" in fixed_raw_by_key
+        or len(fixed_raw_by_key) != len(fixed_track_raw_rows)
+        or set(fixed_raw_by_key) != set(fixed_plan_by_key)
+        or len(fixed_started_keys) != len(fixed_plan_by_key)
+        or len(fixed_succeeded_keys) != len(fixed_plan_by_key)
+        or set(fixed_started_keys) != set(fixed_plan_by_key)
+        or set(fixed_succeeded_keys) != set(fixed_plan_by_key)
+        or any(row.get("event") == "FAILED" for row in fixed_ledger_rows)
+    ):
+        raise RuntimeError(
+            "fixed seeker V2.2 raw/ledger call-key matrix is not exact"
+        )
+    fixed_observed_usage = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+    }
+    fixed_observed_prompt_counts: list[int] = []
+    fixed_observed_completion_counts: list[int] = []
+    for logical_key, plan_row in fixed_plan_by_key.items():
+        raw_row = fixed_raw_by_key[logical_key]
+        usage = raw_row.get("usage") or {}
+        try:
+            prompt_tokens = int(usage["prompt_tokens"])
+            completion_tokens = int(usage["completion_tokens"])
+            total_tokens = int(usage["total_tokens"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError(
+                "fixed seeker raw usage is missing or invalid"
+            ) from exc
+        if (
+            prompt_tokens <= 0
+            or completion_tokens <= 0
+            or total_tokens != prompt_tokens + completion_tokens
+            or prompt_tokens > int(plan_row["maximum_input_tokens"])
+            or completion_tokens > int(plan_row["maximum_output_tokens"])
+            or raw_row.get("error") is not None
+            or raw_row.get("normalized_finish_reason") != "complete"
+            or raw_row.get("fixed_seeker_cost_planning_sha256")
+            != fixed_seeker_cost_planning_sha256
+        ):
+            raise RuntimeError(
+                "fixed seeker raw usage exceeds its accepted per-call bound"
+            )
+        fixed_observed_usage["prompt_tokens"] += prompt_tokens
+        fixed_observed_usage["completion_tokens"] += completion_tokens
+        fixed_observed_usage["total_tokens"] += total_tokens
+        fixed_observed_prompt_counts.append(prompt_tokens)
+        fixed_observed_completion_counts.append(completion_tokens)
+    recomputed_fixed_observed_cost = (
+        fixed_observed_usage["prompt_tokens"] * fixed_prices["input"]
+        + fixed_observed_usage["completion_tokens"] * fixed_prices["output"]
+    ) / 1_000_000
+    fixed_limits = fixed_tracks_cost_estimate.get("budget_limits") or {}
+    expected_planned_checks = {
+        "api_calls": len(fixed_tracks_call_plan)
+        <= int(fixed_limits.get("max_api_calls", 0)),
+        "estimated_cost_usd": float(
+            fixed_tracks_cost_estimate["maximum_estimated_usd"]
+        )
+        <= float(fixed_limits.get("max_estimated_usd", 0.0)),
+        "max_input_tokens_per_call": max(
+            int(row["maximum_input_tokens"])
+            for row in fixed_tracks_call_plan
+        )
+        <= int(fixed_limits.get("max_input_tokens_per_call", 0)),
+    }
+    recomputed_fixed_observed_checks = {
+        "planned_budget_gate_passed": True,
+        "physical_attempts": len(fixed_started_keys)
+        <= int(fixed_limits.get("max_api_calls", 0)),
+        "reported_usage_complete": True,
+        "observed_cost_usd": recomputed_fixed_observed_cost
+        <= float(fixed_limits.get("max_estimated_usd", 0.0)),
+        "observed_cost_within_planned_upper_bound": (
+            recomputed_fixed_observed_cost
+            <= float(fixed_tracks_cost_estimate["maximum_estimated_usd"])
+        ),
+        "max_reported_input_tokens_per_call": max(
+            fixed_observed_prompt_counts, default=0
+        )
+        <= int(fixed_limits.get("max_input_tokens_per_call", 0)),
+        "max_reported_completion_tokens_per_call": max(
+            fixed_observed_completion_counts, default=0
+        )
+        <= fixed_seeker_contract.max_output_tokens,
+    }
+    if (
+        planned_fixed_budget_gate.get("checks") != expected_planned_checks
+        or observed_fixed_budget_gate.get("checks")
+        != recomputed_fixed_observed_checks
+        or observed_fixed_budget_gate.get("reported_usage")
+        != fixed_observed_usage
+        or not math.isclose(
+            float(observed_fixed_budget_gate.get("observed_cost_usd", -1.0)),
+            recomputed_fixed_observed_cost,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+        or int(
+            observed_fixed_budget_gate.get(
+                "max_reported_input_tokens_per_call", -1
+            )
+        )
+        != max(fixed_observed_prompt_counts, default=0)
+        or int(
+            observed_fixed_budget_gate.get(
+                "max_reported_completion_tokens_per_call", -1
+            )
+        )
+        != max(fixed_observed_completion_counts, default=0)
+    ):
+        raise RuntimeError(
+            "fixed seeker V2.2 planned/observed budget gate is not reproducible"
         )
     fixed_bundle_support_paths = [
         fixed_bundle_dir / "cost_estimate.json",
@@ -2343,6 +2731,10 @@ def main() -> None:
         "fixed_seeker_generation_treatment_sha256": (
             fixed_seeker_generation_treatment_sha256
         ),
+        "fixed_seeker_cost_planning": fixed_seeker_cost_planning,
+        "fixed_seeker_cost_planning_sha256": (
+            fixed_seeker_cost_planning_sha256
+        ),
         "policy_checkpoint_sha256": sha256_file(args.checkpoint),
         "policy_training_report_sha256": sha256_file(args.training_report),
         "policy_lock_timing": POLICY_LOCK_TIMING,
@@ -2769,6 +3161,12 @@ def main() -> None:
                 "fixed_seeker_generation_treatment_sha256": (
                     fixed_seeker_generation_treatment_sha256
                 ),
+                "fixed_seeker_cost_planning": fixed_seeker_cost_planning,
+                "fixed_seeker_cost_planning_sha256": (
+                    fixed_seeker_cost_planning_sha256
+                ),
+                "planned_budget_gate": planned_fixed_budget_gate,
+                "observed_budget_gate": observed_fixed_budget_gate,
                 "attestation_sha256": fixed_tracks_verification[
                     "attestation_sha256"
                 ],

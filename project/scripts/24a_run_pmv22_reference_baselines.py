@@ -9,7 +9,10 @@ from metacom_pm.artifacts import require_content_addressed_attestation
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evidence_filter_model import require_evidence_filter_artifacts
-from metacom_pm.evoemo import FIXED_SEEKER_V22_STAGE
+from metacom_pm.evoemo import (
+    FIXED_SEEKER_V22_STAGE,
+    fixed_seeker_cost_planning_contract,
+)
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, read_json, sha256_text
@@ -75,12 +78,46 @@ def _fixed_seeker_binding(
         )
     if int((payload.get("treatment") or {}).get("max_output_tokens") or 0) != 300:
         raise RuntimeError("legacy 60-token-cap fixed tracks are forbidden")
+    expected_cost_planning = fixed_seeker_cost_planning_contract(
+        pm_v2_config.get("fixed_seeker_cost_planning") or {}
+    )
+    expected_cost_sha256 = sha256_text(
+        canonical_json(expected_cost_planning)
+    )
+    if (
+        parameters.get("fixed_seeker_cost_planning")
+        != expected_cost_planning
+        or parameters.get("fixed_seeker_cost_planning_sha256")
+        != expected_cost_sha256
+    ):
+        raise RuntimeError("fixed-seeker attestation cost-planning binding is stale")
     summary = read_json(bundle_dir / "summary.json")
+    cost_estimate = read_json(bundle_dir / "cost_estimate.json")
+    expected_section = dict(attestation.get("expected") or {})
     if (
         summary.get("status") != "COMPLETE"
         or int(summary.get("completion_truncated_count", -1)) != 0
         or summary.get("fixed_seeker_generation_contract") != payload
         or summary.get("fixed_seeker_generation_contract_sha256") != digest
+        or summary.get("fixed_seeker_cost_planning")
+        != expected_cost_planning
+        or summary.get("fixed_seeker_cost_planning_sha256")
+        != expected_cost_sha256
+        or cost_estimate.get("fixed_seeker_cost_planning")
+        != expected_cost_planning
+        or cost_estimate.get("fixed_seeker_cost_planning_sha256")
+        != expected_cost_sha256
+        or (cost_estimate.get("budget_gate") or {}).get("status") != "PASS"
+        or (summary.get("planned_budget_gate") or {}).get("status") != "PASS"
+        or (summary.get("observed_budget_gate") or {}).get("status") != "PASS"
+        or parameters.get("planned_budget_gate")
+        != summary.get("planned_budget_gate")
+        or parameters.get("observed_budget_gate")
+        != summary.get("observed_budget_gate")
+        or expected_section.get("planned_budget_gate")
+        != summary.get("planned_budget_gate")
+        or expected_section.get("observed_budget_gate")
+        != summary.get("observed_budget_gate")
     ):
         raise RuntimeError(
             "fixed-seeker bundle is incomplete, truncated, or treatment-mixed"
