@@ -4,7 +4,9 @@ import json
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Literal, Mapping, TypeVar, Type
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from typing import Any, Literal, Mapping, Type, TypeVar
 import httpx
 from pydantic import BaseModel, ValidationError
 
@@ -88,12 +90,90 @@ def normalize_provider_finish_reason(
 class ProviderRequestError(RuntimeError):
     """A deterministic provider-side client error that must not be retried."""
 
-    def __init__(self, *, status_code: int, detail: str, schema_mode: bool):
+    def __init__(
+        self,
+        *,
+        status_code: int,
+        detail: str,
+        schema_mode: bool,
+        request_hash: str | None = None,
+        usage: Mapping[str, Any] | None = None,
+        response_diagnostics: Mapping[str, Any] | None = None,
+    ) -> None:
         self.status_code = int(status_code)
         self.detail = str(detail)
         self.schema_mode = bool(schema_mode)
+        self.request_hash = request_hash
+        self.usage = dict(usage) if usage is not None else None
+        self.response_diagnostics = (
+            dict(response_diagnostics) if response_diagnostics is not None else None
+        )
         mode = "schema mode " if self.schema_mode else ""
         super().__init__(f"{mode}HTTP {self.status_code}: {self.detail}")
+
+
+RETRYABLE_HTTP_STATUS_CODES = frozenset({408, 429, 500, 502, 503, 504})
+
+
+def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
+    """Classify a caught exception for a caller's bounded, ledger-visible retry loop.
+
+    Returns (retry_class, status_code). retry_class is one of:
+    "rate_limited_429", "request_timeout_408", "http_5xx",
+    "network_timeout", "missing_field", "other".
+    Only the caller decides whether/how many times to retry each class; this
+    function only describes what happened.
+    """
+
+    if isinstance(exc, httpx.HTTPStatusError):
+        status_code = exc.response.status_code
+        if status_code == 429:
+            return "rate_limited_429", status_code
+        if status_code == 408:
+            return "request_timeout_408", status_code
+        if status_code in RETRYABLE_HTTP_STATUS_CODES:
+            return "http_5xx", status_code
+        return "other", status_code
+    if isinstance(exc, httpx.HTTPError):
+        # Connection errors, timeouts, and similar transport failures carry no
+        # HTTP status code but are the same kind of transient infrastructure
+        # issue as a 5xx response.
+        return "network_timeout", None
+    if isinstance(exc, (KeyError, IndexError, TypeError, AttributeError)) or (
+        isinstance(exc, ValueError) and "empty model response" in str(exc)
+    ):
+        return "missing_field", None
+    return "other", None
+
+
+class RetryableProviderError(RuntimeError):
+    """Same message as the original exhausted-retries RuntimeError, plus
+    structured info about the last attempt so a ledger-visible bounded-retry
+    loop (see attempt_ledger.py) can decide whether to reserve another
+    physical attempt without parsing the message string."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        last_retry_class: str,
+        last_status_code: int | None,
+        attempts_tried: int,
+        request_hash: str | None = None,
+        usage: Mapping[str, Any] | None = None,
+        response_diagnostics: Mapping[str, Any] | None = None,
+        retry_after_seconds: float | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.last_retry_class = last_retry_class
+        self.last_status_code = last_status_code
+        self.attempts_tried = attempts_tried
+        self.request_hash = request_hash
+        self.usage = dict(usage) if usage is not None else None
+        self.response_diagnostics = (
+            dict(response_diagnostics) if response_diagnostics is not None else None
+        )
+        self.retry_after_seconds = retry_after_seconds
 
 
 class StructuredOutputValidationError(RuntimeError):
@@ -234,6 +314,85 @@ def _provider_error_summary(response: httpx.Response) -> str:
             cleaned = " ".join(str(value).split())[:1000]
             parts.append(f"{key}={cleaned}")
     return "; ".join(parts) or "provider returned no structured error detail"
+
+
+def _retry_after_seconds(response: httpx.Response) -> float | None:
+    """Parse Retry-After without treating a malformed header as retryable data."""
+
+    raw = response.headers.get("retry-after")
+    if raw is None or not raw.strip():
+        return None
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        try:
+            retry_at = parsedate_to_datetime(raw)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        if retry_at.tzinfo is None:
+            retry_at = retry_at.replace(tzinfo=timezone.utc)
+        return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
+
+
+def _openai_usage_from_body(body: Any) -> dict[str, int] | None:
+    """Preserve valid usage even when the response payload is otherwise malformed."""
+
+    if not isinstance(body, Mapping) or not isinstance(body.get("usage"), Mapping):
+        return None
+    usage_raw = body["usage"]
+    try:
+        return {
+            "prompt_tokens": int(usage_raw.get("prompt_tokens") or 0),
+            "completion_tokens": int(usage_raw.get("completion_tokens") or 0),
+            "total_tokens": int(usage_raw.get("total_tokens") or 0),
+        }
+    except (TypeError, ValueError):
+        return None
+
+
+def _provider_response_diagnostics(
+    response: httpx.Response, *, body: Any = None
+) -> dict[str, Any]:
+    """Return bounded response metadata and a body hash, never prompts or secrets."""
+
+    if body is None:
+        try:
+            body = response.json()
+        except (ValueError, json.JSONDecodeError):
+            body = None
+    try:
+        response_text = response.text
+    except (httpx.ResponseNotRead, UnicodeError):
+        response_text = ""
+    diagnostics: dict[str, Any] = {
+        "status_code": int(response.status_code),
+        "response_body_sha256": sha256_text(response_text),
+        "response_json_type": type(body).__name__ if body is not None else None,
+        "retry_after_seconds": _retry_after_seconds(response),
+    }
+    for header in ("x-request-id", "request-id", "nv-request-id"):
+        value = response.headers.get(header)
+        if value:
+            diagnostics["provider_request_id"] = str(value)[:256]
+            diagnostics["provider_request_id_header"] = header
+            break
+    if isinstance(body, Mapping):
+        diagnostics["response_json_top_level_keys"] = sorted(
+            str(key) for key in body
+        )[:100]
+        choices = body.get("choices")
+        if isinstance(choices, list):
+            diagnostics["choices_count"] = len(choices)
+            if choices and isinstance(choices[0], Mapping):
+                diagnostics["first_choice_keys"] = sorted(
+                    str(key) for key in choices[0]
+                )[:100]
+                message = choices[0].get("message")
+                if isinstance(message, Mapping):
+                    diagnostics["first_message_keys"] = sorted(
+                        str(key) for key in message
+                    )[:100]
+    return diagnostics
 
 
 def chat_request_payload(
@@ -377,40 +536,83 @@ class OpenAICompatibleClient:
             response_schema=response_schema,
         )
         request_hash = sha256_text(canonical_json(payload))
+        if retries < 1:
+            raise ValueError("retries must be at least 1")
         errors: list[str] = []
+        last_retry_class = "other"
+        last_status_code: int | None = None
+        last_usage: dict[str, int] | None = None
+        last_response_diagnostics: dict[str, Any] | None = None
+        last_retry_after_seconds: float | None = None
+        attempts_tried = 0
         for attempt in range(1, retries + 1):
+            attempts_tried = attempt
             started = time.perf_counter()
+            response: httpx.Response | None = None
+            body: Any = None
+            usage: dict[str, int] | None = None
             try:
                 response = self._client.post(self._chat_path, json=payload)
-                # 429 Rate limit: back off with longer wait and retry.
-                if response.status_code == 429:
-                    retry_after = int(response.headers.get("retry-after", "0") or 0)
-                    wait = max(retry_after, min(30 * attempt, 120))
-                    errors.append(f"attempt {attempt}: 429 rate-limited, waiting {wait}s")
+                # Rate limiting and request-timeout responses are transient,
+                # but remain visible to the outer durable-attempt ledger when
+                # this client is deliberately called with retries=1.
+                if response.status_code in {408, 429}:
+                    last_status_code = int(response.status_code)
+                    last_retry_class = (
+                        "rate_limited_429"
+                        if response.status_code == 429
+                        else "request_timeout_408"
+                    )
+                    try:
+                        body = response.json()
+                    except (ValueError, json.JSONDecodeError):
+                        body = None
+                    last_usage = _openai_usage_from_body(body)
+                    last_response_diagnostics = _provider_response_diagnostics(
+                        response, body=body
+                    )
+                    last_retry_after_seconds = _retry_after_seconds(response)
+                    wait = max(
+                        last_retry_after_seconds or 0.0,
+                        float(min(30 * attempt, 120)),
+                    )
+                    errors.append(
+                        f"attempt {attempt}: HTTP {response.status_code} "
+                        f"({last_retry_class}), waiting {wait:g}s"
+                    )
                     if attempt < retries:
                         time.sleep(wait)
-                    continue
+                        continue
+                    break
                 # Deterministic client errors are not fixed by retries.  Retain
                 # the frozen schema payload and surface the provider's bounded
                 # structured error instead of silently issuing a schema-less
                 # request with a different hash.
                 if 400 <= response.status_code < 500:
+                    try:
+                        body = response.json()
+                    except (ValueError, json.JSONDecodeError):
+                        body = None
                     raise ProviderRequestError(
                         status_code=response.status_code,
                         detail=_provider_error_summary(response),
                         schema_mode="response_format" in payload,
+                        request_hash=request_hash,
+                        usage=_openai_usage_from_body(body),
+                        response_diagnostics=_provider_response_diagnostics(
+                            response, body=body
+                        ),
                     )
                 response.raise_for_status()
                 body = response.json()
+                usage = _openai_usage_from_body(body) or {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0,
+                }
                 text = body["choices"][0]["message"]["content"]
                 if not isinstance(text, str) or not text.strip():
                     raise ValueError("empty model response")
-                usage_raw = body.get("usage") or {}
-                usage = {
-                    "prompt_tokens": int(usage_raw.get("prompt_tokens") or 0),
-                    "completion_tokens": int(usage_raw.get("completion_tokens") or 0),
-                    "total_tokens": int(usage_raw.get("total_tokens") or 0),
-                }
                 provider_finish_reason, normalized_finish_reason = (
                     normalize_provider_finish_reason(body)
                 )
@@ -442,12 +644,37 @@ class OpenAICompatibleClient:
                         validation_error=exc,
                     ) from exc
                 return call, parsed
-            except (httpx.HTTPError, KeyError, IndexError, ValueError, ValidationError, json.JSONDecodeError) as exc:
+            except (
+                httpx.HTTPError,
+                KeyError,
+                IndexError,
+                TypeError,
+                AttributeError,
+                ValueError,
+                ValidationError,
+                json.JSONDecodeError,
+            ) as exc:
                 errors.append(f"attempt {attempt}: {type(exc).__name__}: {exc}")
+                last_retry_class, last_status_code = _classify_retryable_exception(exc)
+                if response is not None:
+                    last_response_diagnostics = _provider_response_diagnostics(
+                        response, body=body
+                    )
+                    last_retry_after_seconds = _retry_after_seconds(response)
+                    last_usage = usage or _openai_usage_from_body(body)
                 if attempt == retries:
                     break
                 time.sleep(min(2 ** (attempt - 1), 8))
-        raise RuntimeError("API call failed after strict retries: " + " | ".join(errors))
+        raise RetryableProviderError(
+            "API call failed after strict retries: " + " | ".join(errors),
+            last_retry_class=last_retry_class,
+            last_status_code=last_status_code,
+            attempts_tried=attempts_tried,
+            request_hash=request_hash,
+            usage=last_usage,
+            response_diagnostics=last_response_diagnostics,
+            retry_after_seconds=last_retry_after_seconds,
+        )
 
 
 class AnthropicClient:

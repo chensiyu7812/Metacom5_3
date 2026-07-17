@@ -627,6 +627,7 @@ def run_pmv2_fixed_evoemo(
     strategy_min_score: float | None = None,
     evidence_filter_config: EvidenceFilterConfig | None = None,
     memory_helpfulness_model: PMV2EvidenceFilterModel | None = None,
+    evidence_filter_model_binding: Mapping[str, Any] | None = None,
     action_preflight_gates: Mapping[str, float],
     maximum_cost_matched_relative_deviation: float,
     cost_match_reference_call_plan_path: str | Path | None = None,
@@ -644,6 +645,26 @@ def run_pmv2_fixed_evoemo(
     }
     if any(value <= 0.0 for value in generator_pricing_usd_per_mtok.values()):
         raise ValueError("PM-v2 generator pricing must be strictly positive")
+    derived_evidence_filter_model_binding = (
+        {
+            "checkpoint_sha256": memory_helpfulness_model.checkpoint_sha256,
+            "model_contract_sha256": memory_helpfulness_model.contract_hash(),
+        }
+        if memory_helpfulness_model is not None
+        else None
+    )
+    if (
+        evidence_filter_model_binding is not None
+        and derived_evidence_filter_model_binding is not None
+        and dict(evidence_filter_model_binding)
+        != derived_evidence_filter_model_binding
+    ):
+        raise RuntimeError("explicit Evidence Filter model binding is stale")
+    effective_evidence_filter_model_binding = (
+        dict(evidence_filter_model_binding)
+        if evidence_filter_model_binding is not None
+        else derived_evidence_filter_model_binding
+    )
 
     supporter_treatment = supporter_generation_contract.payload()
     supporter_treatment_sha256 = supporter_generation_contract.digest()
@@ -900,14 +921,7 @@ def run_pmv2_fixed_evoemo(
                 if evidence_filter_config is not None
                 else None
             ),
-            "evidence_filter_model": (
-                {
-                    "checkpoint_sha256": memory_helpfulness_model.checkpoint_sha256,
-                    "model_contract_sha256": memory_helpfulness_model.contract_hash(),
-                }
-                if memory_helpfulness_model is not None
-                else None
-            ),
+            "evidence_filter_model": effective_evidence_filter_model_binding,
             "action_preflight_gates": dict(action_preflight_gates),
             "action_preflight_metric_scopes": ACTION_PREFLIGHT_METRIC_SCOPES,
             "maximum_cost_matched_relative_deviation": cost_match_tolerance,
@@ -2133,14 +2147,7 @@ def run_pmv2_fixed_evoemo(
                 if evidence_filter_config is not None
                 else None
             ),
-            "evidence_filter_model": (
-                {
-                    "checkpoint_sha256": memory_helpfulness_model.checkpoint_sha256,
-                    "model_contract_sha256": memory_helpfulness_model.contract_hash(),
-                }
-                if memory_helpfulness_model is not None
-                else None
-            ),
+            "evidence_filter_model": effective_evidence_filter_model_binding,
             "action_preflight_gates": dict(action_preflight_gates),
             "maximum_cost_matched_relative_deviation": cost_match_tolerance,
             "cost_match_reference_condition": expected_reference_condition,

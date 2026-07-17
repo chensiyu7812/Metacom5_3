@@ -197,8 +197,10 @@ def main() -> None:
 
     experiment_config = load_config(args.config)
     pm_config = load_config(args.pm_v2_config)
-    if pm_config.get("version") != "pm-v2.2":
-        raise ValueError("generation compatibility pilot requires PM-v2.2")
+    if pm_config.get("version") not in {"pm-v2.2", "pm-v1.5"}:
+        raise ValueError(
+            "generation compatibility pilot requires PM-v2.2 or PM-v1.5"
+        )
     generation_cfg = dict(pm_config["data_generation"])
     pricing = dict(generation_cfg["pricing_usd_per_mtok"])
     if set(pricing) != {"input", "output"}:

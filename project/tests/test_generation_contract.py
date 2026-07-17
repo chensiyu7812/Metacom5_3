@@ -80,11 +80,23 @@ def test_supporter_generation_contract_rejects_schema_drift() -> None:
         SupporterGenerationContract.from_mapping(payload)
 
 
+def test_pm_v1_5_config_uses_same_supporter_generation_contract() -> None:
+    """PM-v1.5's honestly-versioned config ("pm-v1.5", not disguised as
+    "pm-v2.2") must load through the same shared contract loader, and its
+    supporter treatment must match PM-v2.2's byte-for-byte -- that
+    consistency is the entire point of this shared loader."""
+
+    v1_5_config = load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    assert v1_5_config["version"] == "pm-v1.5"
+    v1_5_contract = SupporterGenerationContract.from_config(v1_5_config)
+    assert v1_5_contract.digest() == _configured_contract().digest()
+
+
 def test_supporter_generation_contract_rejects_wrong_config_version() -> None:
     config = deepcopy(load_config(ROOT / "configs" / "pm_v2.yaml"))
     config["version"] = "pm-v2.1"
 
-    with pytest.raises(ValueError, match="requires PM-v2 config version pm-v2.2"):
+    with pytest.raises(ValueError, match="requires one of these config versions"):
         SupporterGenerationContract.from_config(config)
 
 

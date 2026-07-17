@@ -1114,9 +1114,9 @@ def run_reference_baselines(
     policy_training_report_path: str | Path,
     fixed_tracks_attestation_path: str | Path,
     pm_v2_config_path: str | Path,
-    evidence_filter_checkpoint_path: str | Path,
-    evidence_filter_report_path: str | Path,
-    evidence_filter_attestation_path: str | Path,
+    evidence_filter_checkpoint_path: str | Path | None,
+    evidence_filter_report_path: str | Path | None,
+    evidence_filter_attestation_path: str | Path | None,
     strategy_bank_approval_path: str | Path,
     generator_endpoint: Endpoint,
     supporter_generation_contract: SupporterGenerationContract,
@@ -1716,25 +1716,39 @@ def run_reference_baselines(
         "raw_generation_contract_gate": raw_generation_contract_gate,
     }
     write_json(summary_path, summary)
+    attestation_inputs = {
+        "evoemo": evoemo_path,
+        "strategy_bank": strategy_bank_path,
+        "policy_checkpoint": policy_checkpoint_path,
+        "policy_training_report": policy_training_report_path,
+        "pm_v2_config": pm_v2_config_path,
+        "strategy_bank_approval": strategy_bank_approval_path,
+        "fixed_tracks": fixed_tracks_path,
+        "fixed_tracks_attestation": fixed_tracks_attestation_path,
+        "run_manifest": manifest_path,
+        "cost_estimate": out_dir / "cost_estimate.json",
+        "call_plan": out_dir / "call_plan.jsonl",
+    }
+    evidence_filter_paths = {
+        "evidence_filter_checkpoint": evidence_filter_checkpoint_path,
+        "evidence_filter_report": evidence_filter_report_path,
+        "evidence_filter_attestation": evidence_filter_attestation_path,
+    }
+    if evidence_filter_config.enabled:
+        if any(path is None for path in evidence_filter_paths.values()):
+            raise RuntimeError(
+                "enabled Evidence Filter requires checkpoint, report, and attestation"
+            )
+        attestation_inputs.update(evidence_filter_paths)
+    elif any(path is not None for path in evidence_filter_paths.values()):
+        raise RuntimeError(
+            "disabled Evidence Filter must not bind nonexistent or unrelated model artifacts"
+        )
+
     create_artifact_attestation(
         attestation_path,
         stage=PMV22_REFERENCE_BASELINE_STAGE,
-        inputs={
-            "evoemo": evoemo_path,
-            "strategy_bank": strategy_bank_path,
-            "policy_checkpoint": policy_checkpoint_path,
-            "policy_training_report": policy_training_report_path,
-            "pm_v2_config": pm_v2_config_path,
-            "evidence_filter_checkpoint": evidence_filter_checkpoint_path,
-            "evidence_filter_report": evidence_filter_report_path,
-            "evidence_filter_attestation": evidence_filter_attestation_path,
-            "strategy_bank_approval": strategy_bank_approval_path,
-            "fixed_tracks": fixed_tracks_path,
-            "fixed_tracks_attestation": fixed_tracks_attestation_path,
-            "run_manifest": manifest_path,
-            "cost_estimate": out_dir / "cost_estimate.json",
-            "call_plan": out_dir / "call_plan.jsonl",
-        },
+        inputs=attestation_inputs,
         outputs={
             "turns": (turns_path, True),
             "raw_calls": (raw_path, True),

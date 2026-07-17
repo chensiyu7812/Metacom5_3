@@ -11,6 +11,12 @@ from .text import normalize_space
 
 SUPPORTER_GENERATION_CONTRACT_VERSION = "pm-v2.2-supporter-generation-v1"
 PM_V2_CONFIG_VERSION = "pm-v2.2"
+# PM-v1.5 (scripts/v1_5/*.py) is a separate, honestly-versioned config
+# ("pm-v1.5" in configs/pm_v1_5.yaml, not a disguised "pm-v2.2"). Accepting
+# both here, rather than forking this shared contract loader, keeps a single
+# source of truth for what a valid supporter-generation-treatment config
+# looks like.
+ACCEPTED_PM_CONFIG_VERSIONS = frozenset({PM_V2_CONFIG_VERSION, "pm-v1.5"})
 FINISH_REASON_PROTOCOL_VERSION = "pm-v2-finish-reason-v1"
 OUTPUT_NORMALIZATION_VERSION = "normalize_space_v1"
 NORMALIZED_FINISH_REASONS = frozenset(
@@ -166,10 +172,10 @@ class SupporterGenerationContract:
 
     @classmethod
     def from_config(cls, config: Mapping[str, Any]) -> "SupporterGenerationContract":
-        if config.get("version") != PM_V2_CONFIG_VERSION:
+        if config.get("version") not in ACCEPTED_PM_CONFIG_VERSIONS:
             raise ValueError(
-                "supporter generation contract requires PM-v2 config version "
-                f"{PM_V2_CONFIG_VERSION}"
+                "supporter generation contract requires one of these config "
+                f"versions: {sorted(ACCEPTED_PM_CONFIG_VERSIONS)}"
             )
         raw = config.get("supporter_generation_treatment")
         if not isinstance(raw, Mapping):

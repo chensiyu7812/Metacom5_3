@@ -2,6 +2,10 @@
 
 This private repository contains the current MetaCom V3.3 code and audit package for external review.
 
+For the current PM-v1.5 conference-track review, start with:
+
+- `README_PM_V1_5_REVIEW_ZH.md`
+
 Start with:
 
 - `README_FOR_REVIEW.md`

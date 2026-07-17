@@ -628,6 +628,80 @@ def test_complete_fake_run_attests_every_condition_and_unit(
     )
     assert all(row["normalized_finish_reason"] == "complete" for row in turns)
     assert all(row["evidence_processing_contract"] for row in turns)
+
+
+def test_disabled_evidence_filter_omits_model_files_from_attestation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    values = _write_inputs(tmp_path, monkeypatch)
+    plan_kwargs = _plan_kwargs(values)
+    plan_kwargs.update(
+        {
+            "evidence_filter_config": EvidenceFilterConfig.from_mapping(
+                {
+                    **load_config(ROOT / "configs" / "pm_v2.yaml")[
+                        "evidence_filter"
+                    ],
+                    "enabled": False,
+                }
+            ),
+            "evidence_filter_model": None,
+            "evidence_filter_model_binding": {
+                "mode": "disabled_for_pm_v1_5"
+            },
+        }
+    )
+    estimate, plan = plan_reference_baselines(**plan_kwargs)
+    out_dir = tmp_path / "disabled_filter_reference_baselines"
+    persist_reference_baseline_dry_run(
+        out_dir, cost_estimate=estimate, call_plan=plan
+    )
+    client = OneResultClient(
+        CallResult(
+            text="That sounds difficult, and I am here with you.",
+            raw_response={
+                "choices": [{"finish_reason": "stop"}],
+                "usage": {
+                    "prompt_tokens": 20,
+                    "completion_tokens": 10,
+                    "total_tokens": 30,
+                },
+            },
+            usage={
+                "prompt_tokens": 20,
+                "completion_tokens": 10,
+                "total_tokens": 30,
+            },
+            latency_ms=1.0,
+            request_hash="request-hash",
+            provider_finish_reason="stop",
+            normalized_finish_reason="complete",
+        )
+    )
+    summary = run_reference_baselines(
+        out_dir=out_dir,
+        fixed_tracks_attestation_path=values["fixed_tracks_attestation_path"],
+        pm_v2_config_path=values["pm_v2_config_path"],
+        evidence_filter_checkpoint_path=None,
+        evidence_filter_report_path=None,
+        evidence_filter_attestation_path=None,
+        strategy_bank_approval_path=values["strategy_bank_approval_path"],
+        strategy_bank_approval={
+            "protocol": "pm-v1.5-strategy-bank-lineage-overlap-audit-v1",
+            "decision": "ACCEPTED_WITHOUT_HUMAN_REVIEW",
+            "human_calibration_performed": False,
+        },
+        accepted_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+        client_factory=lambda _endpoint: client,
+        **plan_kwargs,
+    )
+    from metacom_pm.io import read_json
+
+    attestation = read_json(out_dir / "artifact_attestation.json")
+    assert not any(
+        name.startswith("evidence_filter_") for name in attestation["inputs"]
+    )
+    raw_gate = summary["raw_generation_contract_gate"]
     attestation = load_config(out_dir / "artifact_attestation.json")
     assert attestation["stage"] == PMV22_REFERENCE_BASELINE_STAGE
     assert attestation["outputs"]["turns"]["rows"] == 4
