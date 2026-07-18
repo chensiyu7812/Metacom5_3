@@ -3,8 +3,9 @@
 > **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
-> 外部效率三层 gate。当前执行仍由中央 `PAID_RUN_BLOCKED` 开关锁死；本文保留为
-> 2026-07-17 版本的历史设计背景，与新合同冲突时以新合同为准。
+> 外部效率三层 gate。中央配置现已进入 `PAID_RUN_RELEASED`，但每个真实 API 阶段仍由
+> 缺省不存在的逐阶段 approval manifest 锁死；本文保留为 2026-07-17 版本的历史设计
+> 背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
 状态：免费代码与 fail-closed 链路已搭建；历史 1-call generation compatibility

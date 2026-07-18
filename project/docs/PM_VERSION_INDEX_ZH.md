@@ -51,7 +51,8 @@ supplemental 混用。
 
 2026-07-18 审查后的下一次运行合同：
 `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。该合同当前为
-`IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED`；原快速会议版文档只作为历史设计背景。
+`IMPLEMENTED_NOT_EXECUTED / EXECUTION_RELEASED_STAGE_APPROVAL_REQUIRED`；配置发布不替代
+逐阶段 approval manifest，原快速会议版文档只作为历史设计背景。
 
 用途：
 

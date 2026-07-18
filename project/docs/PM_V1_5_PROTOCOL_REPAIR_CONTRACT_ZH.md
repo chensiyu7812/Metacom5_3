@@ -1,14 +1,14 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-18
-合同状态：**IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED**
+合同状态：**IMPLEMENTED_NOT_EXECUTED / EXECUTION_RELEASED_STAGE_APPROVAL_REQUIRED**
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
 
 ## 0. 状态与效力
 
 本文是审查后冻结并完成代码实现的目标方法合同，不是实验结果。代码完成不等于实验
-主张成立；在本文末尾的 clean dry-run、lineage 审查、配置哈希和新 run identity 全部
-完成前：
+主张成立。中央配置已进入执行发布状态，但这不等于任何阶段已获授权；在本文末尾要求的
+逐阶段 clean dry-run、lineage 审查、配置哈希和新 run identity 全部完成前：
 
 - 不允许开始新的付费 development、judging 或 external 调用；
 - 旧 dry-run、旧自动语义审核、旧 cost-estimate hash 和旧 pilot 不得复用；

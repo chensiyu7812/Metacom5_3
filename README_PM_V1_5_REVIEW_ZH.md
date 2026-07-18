@@ -8,8 +8,10 @@
 > **2026-07-18 更新：** 审查发现原定义存在免费的目录内容派生探针、动作日志语义和
 > judge 角色隔离问题。下一次运行的优先合同现为
 > `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。PM-v1.5_1 已完成代码实现和
-> 本地回归，但尚未建立新的 dry-run/lineage/付费运行身份，因此状态仍为
-> `IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED`；下文保留原审查包说明作为历史背景。
+> 本地回归，并已进入逐阶段执行发布；当前状态为
+> `IMPLEMENTED_NOT_EXECUTED / EXECUTION_RELEASED_STAGE_APPROVAL_REQUIRED`。配置发布本身
+> 不授权任何 API 调用；每个付费阶段仍必须由独立 approval manifest 精确绑定当前配置
+> 哈希和该阶段的新 dry-run/cost identity。下文保留原审查包说明作为历史背景。
 > 全仓库 release preflight 当前为 `API_PILOT_READY`：静态路径扫描已通过；旧
 > `outputs/study_freeze.json` 被明确标记为 `STALE_HISTORICAL_FREEZE`，只阻止
 > confirmatory 执行，不能也不应通过原地刷新哈希伪装成当前 V1.5 freeze。

@@ -4,9 +4,10 @@
 # pm_v2.yaml expecting it to affect V1.5.
 #
 # 2026-07-18 PM-v1.5_1 protocol-repair notice: the code contract is implemented,
-# but this is NOT yet an active paid-run identity. The next run must receive a
-# new run identity, complete the clean dry-run/lineage review, and invalidate
-# all old dry-run/cost hashes. Until then: PAID_RUN_BLOCKED.
+# and the central config is released for staged execution. This is NOT blanket
+# API authorization: every paid stage must still receive a fresh run identity,
+# complete its clean dry-run/lineage review, and appear in the separate
+# content-bound approval manifest. All old dry-run/cost hashes remain invalid.
 #
 # `version` is the real, honest string "pm-v1.5" -- it is NOT disguised as
 # "pm-v2.2". 22_train_pm_v2.py's hardcoded check
@@ -52,7 +53,7 @@ release_revision: pm-v1.5_1
 # paid stage to its fresh accepted dry-run/cost identity.
 execution_release:
   protocol: pm-v1.5-central-paid-run-release-v1
-  status: PAID_RUN_BLOCKED
+  status: PAID_RUN_RELEASED
   release_revision: pm-v1.5_1
   approval_manifest: outputs/pm_v1_5_paid_run_release.json
 
