@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import site
+import sys
+
 import numpy as np
 import pytest
 import torch
+from pydantic import ValidationError
 
 from metacom_pm.pm_v1_5_semantic import (
     FrozenSemanticEncoderSpec,
@@ -72,7 +76,13 @@ class _ReversibleTokenizer:
         return " ".join(self._id_to_token[value] for value in ids if value >= 1000)
 
 
-def test_semantic_runtime_record_is_exact_and_fail_closed() -> None:
+def test_semantic_runtime_record_is_exact_and_fail_closed(monkeypatch) -> None:
+    monkeypatch.setattr(site, "ENABLE_USER_SITE", False)
+    monkeypatch.setattr(
+        site,
+        "getusersitepackages",
+        lambda: "/__pm_v1_5_disabled_user_site__",
+    )
     observed = semantic_runtime_attestation(_CanaryEncoder())
     assert observed.canary_shape == [len(SEMANTIC_CANARY_TEXTS), 16]
     assert observed.user_site_enabled is False
@@ -87,6 +97,30 @@ def test_semantic_runtime_record_is_exact_and_fail_closed() -> None:
     tampered = {**recorded, "contract_sha256": "0" * 64}
     with pytest.raises(RuntimeError, match="digest mismatch"):
         require_recorded_semantic_runtime(config, tampered)
+
+
+@pytest.mark.parametrize(
+    ("user_site_enabled", "user_site_on_sys_path", "rejected_field"),
+    [
+        (True, False, "user_site_enabled"),
+        (False, True, "user_site_on_sys_path"),
+    ],
+)
+def test_semantic_runtime_attestation_rejects_user_site_contamination(
+    monkeypatch,
+    user_site_enabled: bool,
+    user_site_on_sys_path: bool,
+    rejected_field: str,
+) -> None:
+    user_site = (
+        sys.path[0]
+        if user_site_on_sys_path
+        else "/__pm_v1_5_disabled_user_site__"
+    )
+    monkeypatch.setattr(site, "ENABLE_USER_SITE", user_site_enabled)
+    monkeypatch.setattr(site, "getusersitepackages", lambda: user_site)
+    with pytest.raises(ValidationError, match=rejected_field):
+        semantic_runtime_attestation(_CanaryEncoder())
 
 
 def test_tokenization_telemetry_reports_loss_without_text_or_token_ids() -> None:

@@ -18,6 +18,10 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Keep dependency resolution isolated from runner-level user packages.
+      # Reportable PM-v1.5 stages enforce the same invariant at runtime.
+      PYTHONNOUSERSITE: "1"
     defaults:
       run:
         working-directory: project

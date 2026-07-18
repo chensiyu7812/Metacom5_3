@@ -494,7 +494,7 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 | 项目 | 当前事实 |
 |---|---|
 | 分支 | `pm-v1.5_1`，工作树含本轮尚未提交的 live-training/external-runtime lineage、section-aware input、rule-grid preflight、score comparison 与 2×2 freeze 修复 |
-| tests/preflight | 专用 venv 精确 BGE runtime/canary no-API preflight PASS；CI 同入口的裸 `pytest -q` 为 393 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY`、pytest/static checks PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
+| tests/preflight | 专用 venv 精确 BGE runtime/canary no-API preflight PASS；CI 同入口的裸 `pytest -q` 为 395 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY`、pytest/static checks PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
 | semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
 | readiness challenge | 20 个固定 outcome-free challenge：current 17/20、full-context 15/20；状态为 `REPORT_ONLY_15_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
 | clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
