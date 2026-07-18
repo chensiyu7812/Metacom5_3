@@ -4,7 +4,8 @@
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
 > 外部效率三层 gate。V8.2 已真实消费并 fail-closed，中央配置现为
-> `PAID_RUN_BLOCKED`；V8.3 必须重新 dry-run、审查并获得逐阶段 approval。本文保留为 2026-07-17 版本的历史设计
+> `PAID_RUN_BLOCKED`；旧 V8.3 dry-run 已因本轮 runtime/输入协议修复而失效，下一次必须
+> 使用新目录和新 identity 重新 dry-run、审查并获得逐阶段 approval。本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
@@ -126,18 +127,20 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 | 顺序 | 动作 | API 调用规模 | 进入下一步的条件 |
 |---:|---|---:|---|
 | 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
+| 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；readiness 20-case 结果只报告 |
 | 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；上限 18 | 每次只生成一个 case 的四个 surface 字段；schema、原始响应重建、逐例 topic/structure lint 全部 PASS；失败时只允许同 case 的一次预预算 repair；最终 deterministic fallback 必须为 0 |
 | 2 | `v1_5_run_automated_semantic_review.py` | 102 | 27 真案例 + 12 字段 × 每字段 2 个 hard controls，共 51 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS` |
 | 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；上限 936 | 52 users × 9 个逐例 surface；每例最多一次 repair；468 states 完整并生成 attestation |
 | 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 24 controls) × 2 家族 = 984 logical calls；bounded retry 上界 2,952 attempts | 实际 468 states 全字段通过；12 字段负控矩阵完整；provider-surface fallback 分 split 低于冻结上限 |
 | 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
+| 3.7 | `v1_5/20b_preflight_rule_grid_v1_5.py` | 0 | 只读 train/calibration states、不读 outcome/internal；候选至少形成 2 种 state-level policy mapping，且最大 pairwise disagreement 不低于冻结下限；报告在 sweep/训练前绑定 |
 | 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case、actual-468 和 Step-0 shortcut attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 29,952 | 7,488 × response/risk × 2 judge families；完整性与 judge-health gates PASS |
-| 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
+| 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 入口现场重验与 development 相同的 exact runtime；只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
 | 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` | 由 dry-run 给出；当前数据设计为 1,020 个 seeker turns | 完整、无 truncation、独立 V1.5 bundle |
 | 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链，并锁定 external 合同 |
-| 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整 |
+| 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整；learned/rule external artifact 自包含 runtime lineage 与 development/external score comparison，禁止外部调阈值 |
 | 11 | `v1_5/30_eval_forced_swap_canary_v1_5.py` | 12 units × 2 orders × 2 families = 48 | schema、顺序稳健性和跨家族方向敏感性 PASS；12 units 从主评测排除 |
 | 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 3 units × 2 schemas × 2 orders × 2 families = 24 | 使用 canary 排序后的前三个单元；schema 必须全通过，mean/max absolute order delta 还必须低于冻结阈值；只作 transport diagnostic |
 | 13 | `v1_5/25_eval_pm_v2_external_v1_5.py` | 192 GPT 主质量 + 54 Claude 敏感性 + 36×2 risk audit = 318；以 dry-run 为准 | 七个 condition 全部进入每个 batched call；完整后单独生成 `SUPPORTED`/`NOT_SUPPORTED`、有边界的 risk audit 与非确认性 latency diagnostic |
@@ -159,7 +162,7 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 fresh dry-run PASS：成功路径 9 calls、上限 18，成本期望 `$0.0083661`、硬上限 `$0.01680705` | `758ae052…8cf3df2`，尚无付费批准；旧 `14ca3b79…406aac` 已消费失败 |
+| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 只曾完成旧合同 dry-run，现也已失效 | `758ae052…8cf3df2` 仅作历史，不可批准或执行；下一次必须新目录、新 hash；旧 `14ca3b79…406aac` 已消费失败 |
 | 自动语义审核 | 三次历史真实 `--run` 的故障记录仅用于追溯。当前已升级为 12 字段 × 每字段 2 个 control 的 v2 合同，共 102 个逻辑调用、最多 306 次物理尝试；旧 66-call cost/hash 全部失效。新价格上界和 acceptance hash 必须由当前代码重新 dry-run 产生 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |

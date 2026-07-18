@@ -230,13 +230,18 @@ semantic_encoder:
   local_files_only: true
   trust_remote_code: false
   language_scope: english
+  visible_state_input_protocol: pm-v1.5-visible-dialogue-state-v2-section-aware
+  current_user_state_token_budget: 160
+  session_summary_token_budget: 96
+  history_retention_policy: most-recent-token-suffix-preserve-chronology
+  implicit_full_state_truncation: forbidden
 
 # Reportable development and external semantic observations must be produced
 # by this exact numerical runtime. CI may exercise wiring without the snapshot,
 # but paid/reportable stages fail before API use when this canary differs.
 semantic_runtime:
   protocol: pm-v1.5-semantic-runtime-canary-v1
-  encoder_spec_sha256: aa78648c8e0717bb2450b26560bb183fe893972aed2fa44fe6d67507aae768f3
+  encoder_spec_sha256: febe9bbf8f7207607335284b98d7bc97a0b41231a4c2358cba0a027097911f65
   encoder_snapshot_tree_sha256: c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b
   canary_texts_sha256: 0b5597a2363f6be9bc421df44778f7b45752538e3fc9b012e1e48a004e7c42b6
   canary_matrix_sha256: de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13
@@ -244,6 +249,8 @@ semantic_runtime:
   python_version: 3.13.2
   platform_system: Linux
   platform_machine: x86_64
+  user_site_enabled: false
+  user_site_on_sys_path: false
   packages:
     numpy: 2.5.1
     scikit-learn: 1.9.0
@@ -327,14 +334,24 @@ internal_ablation:
 
 semantic_diagnostics:
   protocol: pm-v1.5-semantic-diagnostics-v1
-  selection_data_role: train_and_calibration_only
+  pre_freeze_design_distribution_splits: [train, calibration]
+  internal_feature_distribution_role: preconsumption_report_only_no_outcomes
   internal_results_must_not_select_or_retune_candidates: true
   rule_score_distribution_required: true
   rule_candidate_action_distribution_required: true
   readiness_challenge_role: report_only_not_outcome_gate
   token_truncation_telemetry_required: true
   current_user_text_truncation_must_be_zero: true
+  implicit_visible_state_truncation_must_be_zero: true
   development_external_centroid_scale_comparison_required: true
+
+pre_training_rule_grid_diagnostic:
+  protocol: pm-v1.5-transparent-rule-grid-diagnostic-v1
+  required_before_response_sweep: true
+  state_splits: [train, calibration]
+  outcome_labels_used: false
+  minimum_unique_policy_mappings: 2
+  minimum_maximum_pairwise_disagreement_rate: 0.01
 
 ood_calibration:
   protocol: pm-v2-ood-calibration-v1

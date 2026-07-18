@@ -61,12 +61,12 @@ V8.2 generation compatibility pilot 已真实消费并 fail-closed：8 个物理
 失败原因是词面 advice-request 正则错误拒绝了语义有效的请求。原 approval/index 矛盾已按真实
 账本闭环为 `CONSUMED_FAILED_CLOSED`；旧输出、旧 cost hash 和旧批准均不得重用。
 
-当前协议已推进到 V8.3 candidate：仍为 9 个逐 case surface-only 请求、每 case 最多一次
+当前生成协议仍为 9 个逐 case surface-only 请求、每 case 最多一次
 预预算 repair、最终 fallback 必须为 0，但删除了词面意图硬标签，引入冻结本地语义编码器，
-并把 Advice Readiness 与 Strategy RAG 边际价值做成独立因子。由于 prompt、schema、Step-0、
-数据蓝图和依赖均已变化，现已生成 V8.3 fresh dry-run identity
-`758ae052...8cf3df2`（9 个成功路径 calls、最多 18 attempts、硬上限 `$0.01680705`），但
-没有付费授权；状态仍是 `NO-RUN`，且不再是 V8.2 的 open reconciliation。
+并把 Advice Readiness 与 Strategy RAG 边际价值做成独立因子。本轮又冻结了 exact runtime、
+section-aware input 与训练/外部 lineage，因此 V8.3 dry-run identity
+`758ae052...8cf3df2` 也已失效，只保留历史。当前没有 fresh identity、没有付费授权；状态仍是
+`NO-RUN`，且不再是 V8.2 的 open reconciliation。
 
 ## 2. 全链路因果图与实验身份
 
@@ -184,7 +184,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V8 pilot | provider schema 用无研究意义的 `coverage_rationale<=180` 拒绝真实输出 | fail-closed；证明 provider 不应负责 evaluator rationale |
 | V8.1 pilot | 正交 family 后仍有 2/9 surface fallback | 暴露 whole-bundle generation 的跨 case 污染/稳定性问题 |
 | V8.2 真实 pilot | 8 次物理尝试、6 成功、2 失败；词面 advice-request gate 误杀语义有效输出 | `CONSUMED_FAILED_CLOSED`；approval/index 已按账本对齐 |
-| 当前 V8.3 工作树 | 冻结本地语义表示；Advice Readiness × Strategy Resource 正交；same-topic irrelevant decoy；pilot/formal 共用 V14 compiler | 旧 V8.2 全部失效；需 fresh dry-run、审查和精确批准 |
+| 本轮修复前的 V8.3 工作树 | 冻结本地语义表示；Advice Readiness × Strategy Resource 正交；same-topic irrelevant decoy；pilot/formal 共用 V14 compiler | 该 dry-run 已因后续 runtime/input 修复失效；需全新 post-repair dry-run、审查和精确批准 |
 
 ## 6. V1.5_1 全局问题账本
 
@@ -239,7 +239,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-DATA-03 | C2 | “875 条 RAG bank seed”表述混淆了 seed pool 与 Bank | 875 是私有 clean seed 候选；52 被选作 development；这些 52 不在 Bank；Bank 是 11,590 cards/823 sources | 已澄清，持续防混淆 |
 | V15-DATA-04 | C1 | 同一策略知识/心理支持经验的语义重合被误当成必须全部删除 | 允许领域和 family-level 经验重合；禁止同一 dialogue 实例、未来信息和测试 target 泄漏 | 设计边界 |
 | V15-DATA-05 | C0 | 27 个预制审查 case 不能证明实际 468 states 语义成立 | actual-468 双 development-family、12-field 全量 pre-outcome audit | `CODE_CLOSED_RUN_UNVERIFIED` |
-| V15-DATA-06 | C0 | deterministic fallback 模板包含 regime 线索，可成为答案键 | reportable corpus 最终 fallback 必须为 0；失败保留并停机 | 当前 V8.3 合同，`RUN_UNVERIFIED` |
+| V15-DATA-06 | C0 | deterministic fallback 模板包含 regime 线索，可成为答案键 | reportable corpus 最终 fallback 必须为 0；失败保留并停机 | post-repair 合同，`RUN_UNVERIFIED` |
 | V15-DATA-07 | C1 | fallback 率一度只有日志没有 split-specific 硬门 | train/calibration/internal 分开；internal=0；当前生成合同进一步要求全量 0 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-DATA-08 | C1 | source age、row order、inventory、family/template 可能直接编码 regime | counterbalance、随机化和 actual shortcut probes | `PENDING_RUN_EVIDENCE` |
 | V15-DATA-09 | C1 | EvoEmo chronology 曾依赖 JSON 原顺序，未验证 ID/date/reference | ISO date 稳定排序、ID/topic/reference fail-closed；不虚构 topic timestamp | `CODE_CLOSED_RUN_UNVERIFIED` |
@@ -252,11 +252,11 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 
 | ID | 级别 | 问题 | 永久修法/护栏 | 状态 |
 |---|---|---|---|---|
-| V15-GEN-01 | C1 | 旧 provider 一次生成 9 cases，还同时生成 memory/evidence/oracle/rationale/IDs | provider 只看一个 case 的四个 surface 字段；证据和 evaluator rationale 本地确定性编译 | 当前 V8.3，`RUN_UNVERIFIED` |
-| V15-GEN-02 | C1 | whole-bundle 让一个 case 的 topic/semantic family 污染另一个 case | one case per physical call；每 case 独立 seed | 当前 V8.3，`RUN_UNVERIFIED` |
+| V15-GEN-01 | C1 | 旧 provider 一次生成 9 cases，还同时生成 memory/evidence/oracle/rationale/IDs | provider 只看一个 case 的四个 surface 字段；证据和 evaluator rationale 本地确定性编译 | post-repair 合同，`RUN_UNVERIFIED` |
+| V15-GEN-02 | C1 | whole-bundle 让一个 case 的 topic/semantic family 污染另一个 case | one case per physical call；每 case 独立 seed | post-repair 合同，`RUN_UNVERIFIED` |
 | V15-GEN-03 | C2 | V8 的 `coverage_rationale<=180` 拒绝 181+ 字符真实输出 | 删除与 provider 任务无关的 rationale 字段；本地生成 | `HISTORICAL_CLOSED` |
 | V15-GEN-04 | C1 | relocation/academic/workplace pilot cohort 本身自然混题 | pilot family 必须实际正交，不为测试方便制造不自然 benchmark | V8.1 改用 relocation/self-confidence/sleep |
-| V15-GEN-05 | C1 | V8.1 真实输出 2/9 需要 fallback：一例 family 泄漏，一例缺少 anchor | 不放宽 9/9 门；改成逐 case + 一次受限 repair | 当前 V8.3 待真实验证 |
+| V15-GEN-05 | C1 | V8.1 真实输出 2/9 需要 fallback：一例 family 泄漏，一例缺少 anchor | 不放宽 9/9 门；改成逐 case + 一次受限 repair | 旧 V8.3 dry-run 已失效；post-repair pilot 待真实验证 |
 | V15-GEN-06 | C1 | 无限制 retry 会把“多试几次直到好”变成选择性生成 | 每 case 初次 + 最多一次预预算 repair；attempt ledger 先写后调用 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-GEN-07 | C1 | 只修 compatibility pilot 而未同步 formal 52-user，会重建 pilot/formal mismatch | 同一 generation contract 被 base 和 V1.5 formal runner 共同使用 | 当前已同步，`RUN_UNVERIFIED` |
 | V15-GEN-08 | C2 | casewise 架构把 formal 成功路径从 52 calls 提高到 468、上限 936 | 成本、token、timeout、approval 全部重新 dry-run；不能复用旧 52-call hash | 当前旧 hash 全部 stale |
@@ -275,6 +275,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-SEM-01 | C1 | actual controls 最初只破坏 family/regime，且 `--n-controls 0` 可绕过 | 12 fields × 2 controls，数量/seed/matrix hash 冻结 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-SEM-02 | C1 | `deliberately_unrelated_control` 太明显，只测 sentinel 识别 | 使用真实 donor、标签翻转、age 矛盾、时序/grounding/strategy corruption | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-SEM-03 | C1 | order pilot 一度只检 schema，`gating_threshold=None` | 3 units × 2 schemas × 2 orders × 2 families，mean/max 数值门 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-SEM-04 | C1 | 5 条 readiness canary 太小，且 runtime 文件顶层 `PASS` 容易被误读成 readiness 全通过 | 扩为 20 条 outcome-free paraphrase challenge；runtime 与 `REPORT_ONLY_x_OF_20` 分开报告，不允许据此调 anchor | `CODE_CLOSED_LOCAL_REPORT_ONLY_15_OF_20` |
 | V15-TRAIN-01 | C1 | 当前绝对 HGB 容易浪费容量预测 state 难度，而非 action 边际值 | train-only 比较 absolute、state-centered delta、rule-relative residual、rank 候选 | `PENDING_RUN_EVIDENCE` |
 | V15-TRAIN-02 | C1 | 直接换大模型/RL 与 24 train users、完整 action matrix 不匹配 | 小样本可审计监督学习；RL 留给有 transition/user feedback 的后续研究 | 设计边界 |
 | V15-TRAIN-03 | C1 | 缺少同观测强 rule 会把弱规则做 strawman | transparent rule 使用相同 Step-0，并作为 Gate M 主比较 | `CODE_CLOSED_RUN_UNVERIFIED` |
@@ -283,6 +284,8 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-TRAIN-06 | C1 | 16 actions×states 不是独立样本，真正有效规模接近 user blocks | user-disjoint fold/bootstrap；报告 prompt-effective N 和 action stability | 持续统计护栏 |
 | V15-TRAIN-07 | C1 | 仅增加冻结 embedding 仍可能因高维、小样本、环境 identity 过拟合 | 两个 384 维视图只在 train users 上 PCA 到 48 维；encoder binding 必须一致；group-CV/one-SE 决定是否保留复杂模型 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-TRAIN-08 | C1 | 原 no-Step0 消融仍保留 state BGE，无法区分“语言表示收益”和“Step-0 收益” | internal 一次性消费前同时冻结 full、无 Step-0、无 state-BGE、word/char-only 四格诊断；结果只解释组件贡献，不得选择或重调主 candidate，也不进入 external 主矩阵 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-TRAIN-09 | C1 | rule candidates 只比较聚合 action count，可能把在不同 states 上决策的两套 policy 错判为等价；诊断又到 internal 开封后才出现 | 新增 outcome-free pre-sweep grid preflight，记录每个 candidate 的 `action_by_state_sha256`、unique mapping 与 pairwise disagreement；sweep、training、candidate manifest 内容寻址绑定 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-TRAIN-10 | C1 | development 与 external Step-0 分布虽各自记录，却只能人工比对，且存在外部看分布后调阈值的风险 | external dry-run 读取冻结 training report，生成 calibration-vs-external quantile shift artifact；缺失来源显式标 `UNAVAILABLE`；只报告且禁止 selection/retuning | `CODE_CLOSED_RUN_UNVERIFIED` |
 
 ### 6.7 comparator、成本与 claim contract
 
@@ -309,15 +312,17 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-ENG-05 | C2 | 本地已缓存 BGE，使纯 freeze/external wiring 单测隐式解析真实 snapshot；GitHub clean offline cache 因而 10 项失败 | wiring fixture 只构造与精确 spec/tree 绑定的类型化假 binding；生产 freeze resolver 完全不改、仍 local-only fail-closed；全仓库测试另以空 `HF_HOME` + offline 环境执行 | `CODE_CLOSED_EMPTY_CACHE_AND_CI_PASS` |
 | V15-ENG-06 | C2 | external wiring fixture 以 test name 作为共享目录名，多会话并发会互删并产生瞬时 `FileNotFoundError` | 在 release root 内使用每次唯一的 `TemporaryDirectory`；既保留 freeze 路径约束又消除跨进程碰撞 | `CODE_CLOSED_FULL_TEST_PASS` |
 | V15-ENG-07 | C2 | 以外部 `tmp_path` 运行 release preflight 时仍重写真实 `release_manifest.json`，并错误收录 tracked `release_preflight.json` | preflight 支持独立 `manifest_out_path`；只排除 release root 内的真实生成目标；测试所有输出均写唯一临时目录 | `CODE_CLOSED_PREFLIGHT_PASS` |
-| V15-ENG-08 | C1 | `sim_eval` 虽能跑 mock tests，但 Python 3.10、Transformers 5/HF Hub 0.23 组合不符合项目合同且真实 BGE import 失败；仅锁权重不能保证 development/external 数值同一 | Python/package/device/dtype + 公共 3×384 canary 矩阵写入 config；development 付费前、data report、candidate manifest、study freeze、external 逐段 fail-closed；另提供 exact constraints 和 no-API preflight | `CODE_CLOSED_LOCAL_CANARY_PASS_FORMAL_RUN_UNVERIFIED` |
-| V15-ENG-09 | C1 | 512-token `truncation=True` 没有记录，可能让 external 的历史/摘要被静默截断 | 每个 current/full-state view 记录 original/encoded/lost token 数和 hash；development/external 分布单列；current user text 截断为硬失败，history 截断只报告 | `CODE_CLOSED_FULL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-08 | C1 | `sim_eval` 虽能跑 mock tests，但 Python 3.10、Transformers 5/HF Hub 0.23 组合不符合项目合同且真实 BGE import 失败；仅锁权重也不能约束 PCA/HGB 训练数值 | 专用 Python 3.13.2 `.venv-pm-v1-5` + `PYTHONNOUSERSITE=1`；Python/package/device/dtype/user-site 与公共 3×384 canary 写入 config；development、训练入口都现场重算，candidate/freeze/external 逐段绑定 | `CODE_CLOSED_LOCAL_CANARY_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-09 | C1 | 512-token `truncation=True` 没有记录，可能让 external 的历史/摘要被静默截断 | 冻结 section-aware input v2：当前话语/summary 固定预算、history 保留最近 token suffix；模型端 implicit truncation 必须为 0，逐 section 只记录计数/hash；current turn 另有完整独立 view | `CODE_CLOSED_LOCAL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
 | V15-ENG-10 | C2 | transparent rule 实际用 train/train-fold 调参，但 doc/report/YAML 声称 calibration；rule decision 还冒用 learned reason | 显式记录 `train_only/train_fold_only`，独立 `TRANSPARENT_RULE_SELECTION_REASON` 并按非 fallback 处理 | `CODE_CLOSED_FULL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-11 | C1 | wrapper 虽现场验证 BGE runtime，external artifact 自身却未写入该次 runtime 与 training-distribution lineage | learned/rule 的 manifest、preflight、cost、summary、attestation 全部写 live runtime；training report 作为 attested input，另输出内容寻址的分布比较 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-01 | C0 | `PAID_RUN_BLOCKED` 一度只是文档说明，各入口可直接 `--run` | 中央 release gate；每 stage 绑定 config/revision/run/cost hash | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-02 | C0 | 旧 pilot、partial attempts、旧 cost hash 或旧 PASS 可能被拼接复用 | immutable fresh output dir；旧 lineage 一律 stale；不覆盖、不拼接 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-03 | C1 | API 失败被误解为额度问题，或未知 attempt 被盲重试 | HTTP 前 ledger fsync；unknown 视为已花费；仅 429 支持限流判断 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-04 | C0 | paid release manifest 与 review artifact index 曾对 V8.2 approval 状态相互矛盾 | 按物理 ledger 记录为 `CONSUMED_FAILED_CLOSED`，删除 active approval；V8.3 必须 fresh identity | `HISTORICAL_CLOSED` |
 | V15-REL-05 | C1 | 代码/config/bank/prompt 修改后沿用旧 accepted hash | 任一输入变化使 stage approval 失效，必须 fresh dry-run + explicit approval | 持续护栏 |
 | V15-REL-06 | C2 | `API_PILOT_READY` 被误读成 `CONFIRMATORY_READY` | 报告两种状态；无 checkpoint/Gate M/F/freeze 时 confirmatory=false | 持续护栏 |
+| V15-REL-07 | C1 | formal generation CLI 默认指向已失效 V8.3 attestation，容易让旧 provenance 被无意继承 | 删除默认值；paid `--run` 必须显式传 fresh pilot attestation，并拒绝 V8/V8.1/V8.2/V8.3 已知历史目录 | `CODE_CLOSED_RUN_UNVERIFIED` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 
@@ -422,7 +427,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 
 ### 10.2 完整 52-user generation 前
 
-- 当前 V8.3 compatibility pilot 获得 fresh dry-run identity 后，经独立审查和精确批准真实 PASS；
+- 当前代码创建全新 compatibility pilot 目录和 fresh dry-run identity，经独立审查和精确批准真实 PASS；任何 V8–V8.3 历史 attestation 均拒绝；
 - 27 real cases + 24 controls × 2 development families 的 semantic pilot PASS；
 - pilot 与 formal 使用同一 surface-only casewise contract；
 - selected 52 与 Bank source intersection 为 0；
@@ -434,10 +439,12 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 - actual-468 12-field semantic gate PASS；
 - required-hit 只按预注册 positive challenge 规则检查；
 - train-only oracle / all-split structural shortcut audit PASS；
+- outcome-free train/calibration rule-grid mapping/disagreement preflight PASS；
 - retrieval/action/prompt alias contract 的 deterministic preflight PASS。
 
 ### 10.4 训练与 internal 前
 
+- 专用 Python 3.13.2 venv 的 live runtime/canary 与 development 记录完全一致；
 - 7,488 outcomes 和双-family labels 完整；
 - dimension constant/duplicate/correlation/MAD gates PASS；
 - model family/rule 只在 train-group CV 中选择；
@@ -451,6 +458,8 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 - Gate M 与 Gate F 按冻结规则完成；失败即停止；
 - fixed seeker 无 truncation、世界线相同、chronology report PASS；
 - 新 study freeze 绑定 checkpoint、data、Bank、retrieval、conditions、judges 和 claims；
+- freeze 显式绑定 full/no-Step0/no-state-BGE/lexical-only 四格 checkpoint，internal 结果不得选或重调 candidate；
+- learned/rule external dry-run 自包含 live runtime lineage、section truncation gate 和只报告的 development/external Step-0 分布比较；
 - 任何旧 V1/V1.5 freeze 都只作历史；
 - external 每个付费 stage 再做独立 dry-run/approval。
 
@@ -484,17 +493,17 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`，工作树含本轮尚未提交的 runtime、truncation、rule-diagnostic 与 2×2 internal ablation 修复 |
-| tests/preflight | 精确冻结 BGE runtime/canary no-API preflight PASS；最终 diff 全量 `pytest -q` PASS；通用 release preflight 为 `API_PILOT_READY`，但它审的是仓库通用资产（含通用 12,429-card Bank），不能替代单独内容寻址的 V1.5 11,590-card/823-source Bank；旧 study freeze 仍是 `STALE_HISTORICAL_FREEZE`，故 `confirmatory_ready=false` |
-| semantic runtime | Python 3.13.2 + exact package/device/dtype contract；冻结 3×384 public canary hash PASS；旧 `sim_eval` 环境禁止用于正式 development/external |
-| readiness challenge | 5 个固定 outcome-free challenge 中 4/5 可判；短句 `Maybe, I guess.` 在 current/full context 都保持 ambiguous，按预注册规则仅报告、不改变方法 |
+| 分支 | `pm-v1.5_1`，工作树含本轮尚未提交的 live-training/external-runtime lineage、section-aware input、rule-grid preflight、score comparison 与 2×2 freeze 修复 |
+| tests/preflight | 专用 venv 精确 BGE runtime/canary no-API preflight PASS；CI 同入口的裸 `pytest -q` 为 393 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY`、pytest/static checks PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
+| semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
+| readiness challenge | 20 个固定 outcome-free challenge：current 17/20、full-context 15/20；状态为 `REPORT_ONLY_15_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
 | clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
 | formal selected seeds | 52 个 source IDs |
 | Strategy Bank | 11,590 cards / 823 source dialogues / 8 families；与 selected 52 交集为空 |
 | V8 | 真实 FAIL：无关的 180-char rationale cap |
 | V8.1 | 真实 FAIL：2/9 provider surfaces 需 fallback |
 | V8.2 | 真实 FAIL：8 attempts，6 success/2 failure；旧输出与批准均 closed |
-| V8.3 | fresh dry-run PASS：9–18 calls，cost identity `758ae052...8cf3df2`；无付费批准、无真实 PASS |
+| V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录；下一次必须新目录、新 identity |
 | paid approval | 无 active stage approval；当前 `NO-RUN` |
 | automated semantic review | 当前合同需 102 logical calls；无当前 PASS |
 | formal development | 未运行 |

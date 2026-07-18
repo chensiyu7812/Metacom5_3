@@ -45,6 +45,7 @@ from metacom_pm.pm_v1_5_semantic import (
     semantic_encoder_spec_from_config,
     semantic_runtime_contract_from_config,
 )
+from metacom_pm.pm_v1_5_rule_router import RULE_GRID_DIAGNOSTIC_PROTOCOL
 from metacom_pm.pm_v2_external_schema_smoke import (
     POINTWISE_SCHEMA_SMOKE_PROTOCOL,
     POINTWISE_SCHEMA_SMOKE_PURPOSE,
@@ -850,6 +851,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--internal-consumption-ledger", type=Path, required=True)
     parser.add_argument("--transparent-rule-checkpoint", type=Path, required=True)
     parser.add_argument("--no-step0-checkpoint", type=Path, required=True)
+    parser.add_argument("--no-state-bge-checkpoint", type=Path, required=True)
+    parser.add_argument("--lexical-only-checkpoint", type=Path, required=True)
     parser.add_argument("--cost-matched-fixed-checkpoint", type=Path, required=True)
     parser.add_argument("--me-r0-fixed-checkpoint", type=Path, required=True)
     parser.add_argument(
@@ -987,12 +990,101 @@ def main() -> None:
         raise RuntimeError("EvoEmo chronology audit did not PASS")
 
     training_report = read_json(args.pm_training_report)
+    candidate_manifest = read_json(args.candidate_manifest)
+    candidate_core = {
+        key: value
+        for key, value in candidate_manifest.items()
+        if key != "candidate_manifest_sha256"
+    }
+    candidate_artifacts = candidate_manifest.get("artifacts") or {}
+    candidate_parameters = candidate_manifest.get("parameters") or {}
+    frozen_candidate_artifacts = {
+        "primary_checkpoint": args.pm_checkpoint,
+        "transparent_rule_checkpoint": args.transparent_rule_checkpoint,
+        "no_step0_checkpoint": args.no_step0_checkpoint,
+        "no_state_bge_checkpoint": args.no_state_bge_checkpoint,
+        "lexical_only_checkpoint": args.lexical_only_checkpoint,
+    }
+    if (
+        candidate_manifest.get("protocol")
+        != "pm-v1.5-frozen-candidate-family-v1"
+        or candidate_manifest.get("status") != "FROZEN_BEFORE_INTERNAL_TEST"
+        or not str(candidate_manifest.get("run_identity") or "")
+        or candidate_manifest.get("candidate_manifest_sha256")
+        != sha256_text(canonical_json(candidate_core))
+        or any(
+            (candidate_artifacts.get(name) or {}).get("sha256")
+            != sha256_file(path)
+            for name, path in frozen_candidate_artifacts.items()
+        )
+        or candidate_parameters.get("semantic_diagnostics_protocol")
+        != "pm-v1.5-semantic-diagnostics-v1"
+        or candidate_parameters.get("live_training_runtime_contract_sha256")
+        != semantic_runtime_contract.digest()
+        or candidate_parameters.get(
+            "internal_ablation_results_may_select_candidate"
+        )
+        is not False
+    ):
+        raise RuntimeError(
+            "candidate manifest lacks the exact frozen 2x2 diagnostic contract"
+        )
+    rule_grid_records = {
+        name: candidate_artifacts.get(name) or {}
+        for name in (
+            "rule_grid_preflight_report",
+            "rule_grid_preflight_attestation",
+        )
+    }
+    rule_grid_paths = {
+        name: Path(str(record.get("path") or ""))
+        for name, record in rule_grid_records.items()
+    }
+    if any(
+        not path.is_file()
+        or rule_grid_records[name].get("sha256") != sha256_file(path)
+        for name, path in rule_grid_paths.items()
+    ):
+        raise RuntimeError(
+            "candidate manifest lacks content-addressed rule-grid preflight files"
+        )
+    rule_grid_attestation = require_artifact_attestation(
+        rule_grid_paths["rule_grid_preflight_attestation"],
+        required_stage="pm_v1_5_pre_training_rule_grid_diagnostic",
+        required_output_paths={
+            "rule_grid_report": rule_grid_paths["rule_grid_preflight_report"]
+        },
+    )
+    frozen_rule_grid_report = read_json(
+        rule_grid_paths["rule_grid_preflight_report"]
+    )
+    if (
+        frozen_rule_grid_report.get("protocol")
+        != RULE_GRID_DIAGNOSTIC_PROTOCOL
+        or frozen_rule_grid_report.get("status") != "PASS"
+        or frozen_rule_grid_report.get("outcome_labels_used") is not False
+        or frozen_rule_grid_report.get("internal_states_used") is not False
+        or frozen_rule_grid_report.get("selection_or_retuning_authorized")
+        is not False
+        or frozen_rule_grid_report.get("pm_v1_5_config_sha256")
+        != sha256_file(args.pm_v1_5_config)
+        or frozen_rule_grid_report.get("states_sha256")
+        != sha256_file(args.states)
+    ):
+        raise RuntimeError("candidate manifest binds a stale rule-grid preflight")
     checkpoint_sha256 = sha256_file(args.pm_checkpoint)
     reportability_checks = training_report.get("reportability_checks") or {}
     internal_consumption = require_completed_internal_consumption(
         args.internal_consumption_ledger,
         candidate_manifest_path=args.candidate_manifest,
         report_path=args.pm_training_report,
+    )
+    frozen_runtime_payload = semantic_runtime_contract.model_dump(mode="json")
+    recorded_development_runtime = (
+        training_report.get("semantic_runtime_verification") or {}
+    )
+    recorded_live_training_runtime = (
+        training_report.get("live_training_runtime_verification") or {}
     )
     if (
         training_report.get("status") != "COMPLETE"
@@ -1013,9 +1105,15 @@ def main() -> None:
         or training_report.get("pm_v2_config_sha256")
         != sha256_file(args.pm_v1_5_config)
         or training_report.get("states_sha256") != sha256_file(args.states)
-        or (training_report.get("semantic_runtime_verification") or {}).get(
-            "contract_sha256"
-        )
+        or recorded_development_runtime.get("status") != "PASS"
+        or recorded_development_runtime.get("contract")
+        != frozen_runtime_payload
+        or recorded_development_runtime.get("contract_sha256")
+        != semantic_runtime_contract.digest()
+        or recorded_live_training_runtime.get("status") != "PASS"
+        or recorded_live_training_runtime.get("contract")
+        != frozen_runtime_payload
+        or recorded_live_training_runtime.get("contract_sha256")
         != semantic_runtime_contract.digest()
         or training_report.get("train_calibration_labels_sha256")
         != sha256_file(args.train_calibration_labels)
@@ -1023,10 +1121,22 @@ def main() -> None:
         != sha256_file(args.internal_test_labels)
         or training_report.get("candidate_manifest_sha256")
         != sha256_file(args.candidate_manifest)
+        or training_report.get("pre_training_rule_grid_diagnostic")
+        != frozen_rule_grid_report
+        or training_report.get("pre_training_rule_grid_attestation_sha256")
+        != rule_grid_attestation["attestation_sha256"]
         or training_report.get("transparent_rule_checkpoint_sha256")
         != sha256_file(args.transparent_rule_checkpoint)
         or training_report.get("no_step0_checkpoint_sha256")
         != sha256_file(args.no_step0_checkpoint)
+        or training_report.get("no_state_bge_checkpoint_sha256")
+        != sha256_file(args.no_state_bge_checkpoint)
+        or training_report.get("lexical_only_checkpoint_sha256")
+        != sha256_file(args.lexical_only_checkpoint)
+        or training_report.get(
+            "internal_ablation_results_may_select_or_retune_candidate"
+        )
+        is not False
     ):
         raise RuntimeError(
             "study freeze requires the exact reportable PM-v1.5 policy and "
@@ -1605,6 +1715,18 @@ def main() -> None:
             "claim_boundary": decision_quality_report["claim_boundary"],
         },
         "internal_test_consumption": internal_consumption,
+        "internal_ablation_contract": {
+            "protocol": "pm-v1.5-internal-2x2-feature-ablation-v1",
+            "semantic_diagnostics_protocol": "pm-v1.5-semantic-diagnostics-v1",
+            "no_step0_checkpoint_sha256": sha256_file(args.no_step0_checkpoint),
+            "no_state_bge_checkpoint_sha256": sha256_file(
+                args.no_state_bge_checkpoint
+            ),
+            "lexical_only_checkpoint_sha256": sha256_file(
+                args.lexical_only_checkpoint
+            ),
+            "internal_results_may_select_or_retune_candidate": False,
+        },
         "gate_m": training_report["gate_m"],
         "gate_f": training_report["gate_f"],
         "development_lineage": {
@@ -1653,6 +1775,10 @@ def main() -> None:
             args.internal_consumption_ledger,
             args.transparent_rule_checkpoint,
             args.no_step0_checkpoint,
+            args.no_state_bge_checkpoint,
+            args.lexical_only_checkpoint,
+            rule_grid_paths["rule_grid_preflight_report"],
+            rule_grid_paths["rule_grid_preflight_attestation"],
             args.train_calibration_labels,
             args.internal_test_labels,
             args.fixed_baselines_report,

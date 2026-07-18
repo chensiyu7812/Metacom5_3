@@ -14,6 +14,7 @@ import argparse
 import json
 from pathlib import Path
 
+from metacom_pm.artifacts import require_artifact_attestation
 from metacom_pm.attempt_ledger import forbid_overwrite_of_spent_attempts
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.contracts import parse_action_id
@@ -39,6 +40,7 @@ from metacom_pm.pm_v2_judge_schema_smoke import (
 from metacom_pm.pm_v1_5_shortcut_audit import (
     require_step0_shortcut_audit_pass,
 )
+from metacom_pm.pm_v1_5_rule_router import RULE_GRID_DIAGNOSTIC_PROTOCOL
 from metacom_pm.pm_v2_semantic_audit import (
     require_pmv2_runtime_state_lineage,
     require_semantic_sanity_pass,
@@ -381,6 +383,26 @@ def main() -> None:
         type=Path,
         default=ROOT / "data" / "pm_v1_5" / "artifact_attestation.json",
     )
+    parser.add_argument(
+        "--rule-grid-preflight-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_rule_grid_preflight"
+            / "rule_grid_report.json"
+        ),
+    )
+    parser.add_argument(
+        "--rule-grid-preflight-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_rule_grid_preflight"
+            / "artifact_attestation.json"
+        ),
+    )
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--temperature", type=float)
     parser.add_argument("--max-output-tokens", type=int)
@@ -604,6 +626,30 @@ def main() -> None:
                     args.development_data_attestation
                 ),
             )
+            rule_grid_attestation = require_artifact_attestation(
+                args.rule_grid_preflight_attestation,
+                required_stage="pm_v1_5_pre_training_rule_grid_diagnostic",
+                required_output_paths={
+                    "rule_grid_report": args.rule_grid_preflight_report
+                },
+            )
+            rule_grid_report = read_json(args.rule_grid_preflight_report)
+            if (
+                rule_grid_report.get("protocol")
+                != RULE_GRID_DIAGNOSTIC_PROTOCOL
+                or rule_grid_report.get("status") != "PASS"
+                or rule_grid_report.get("outcome_labels_used") is not False
+                or rule_grid_report.get("internal_states_used") is not False
+                or rule_grid_report.get("selection_or_retuning_authorized")
+                is not False
+                or rule_grid_report.get("pm_v1_5_config_sha256")
+                != sha256_file(args.pm_v2_config)
+                or rule_grid_report.get("states_sha256")
+                != sha256_file(pm_v2_states_path)
+            ):
+                raise RuntimeError(
+                    "action sweep requires exact PASS outcome-free rule-grid preflight"
+                )
             semantic_sanity = {
                 "protocol": (
                     "pm-v1.5-pilot-plus-actual-corpus-and-shortcut-gate-v2"
@@ -627,6 +673,12 @@ def main() -> None:
                 ),
                 "step0_shortcut_audit_attestation_sha256": (
                     shortcut_audit_verification["attestation_sha256"]
+                ),
+                "rule_grid_preflight_report_sha256": sha256_file(
+                    args.rule_grid_preflight_report
+                ),
+                "rule_grid_preflight_attestation_sha256": (
+                    rule_grid_attestation["attestation_sha256"]
                 ),
             }
             if pilot_plan is not None:

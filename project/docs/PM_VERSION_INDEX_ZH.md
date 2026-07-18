@@ -55,8 +55,9 @@ supplemental 混用。
 
 2026-07-18 审查后的下一次运行合同：
 `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。该合同当前为
-`IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_V8_3_REVIEW_AND_APPROVAL`；V8.2 已消费
-失败，后续配置解锁不能替代 V8.3 fresh dry-run identity 的独立审查与逐阶段 approval manifest。原快速
+`IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_FRESH_POST_REPAIR_PILOT`；V8.2 已消费
+失败，旧 V8.3 dry-run 也已因后续 runtime/输入合同修复而失效；后续配置解锁不能替代全新
+dry-run identity 的独立审查与逐阶段 approval manifest。原快速
 会议版文档只作为历史设计背景。
 
 用途：

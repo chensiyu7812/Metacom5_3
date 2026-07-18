@@ -20,7 +20,7 @@ class _CanaryEncoder:
         model_id="fixture/canary",
         revision="1" * 40,
         snapshot_tree_sha256="2" * 64,
-        max_length=32,
+        max_length=64,
         output_dimension=16,
     )
     binding = SemanticEncoderBinding(
@@ -47,9 +47,36 @@ class _CountingTokenizer:
         return {"input_ids": [101, *range(len(text.split())), 102]}
 
 
+class _ReversibleTokenizer:
+    truncation_side = "right"
+
+    def __init__(self) -> None:
+        self._token_to_id: dict[str, int] = {}
+        self._id_to_token: dict[int, str] = {}
+
+    def __call__(self, text, *, add_special_tokens=False, **kwargs):
+        del kwargs
+        ids = []
+        for token in str(text).split():
+            if token not in self._token_to_id:
+                token_id = 1000 + len(self._token_to_id)
+                self._token_to_id[token] = token_id
+                self._id_to_token[token_id] = token
+            ids.append(self._token_to_id[token])
+        if add_special_tokens:
+            ids = [101, *ids, 102]
+        return {"input_ids": ids}
+
+    def decode(self, ids, **kwargs):
+        del kwargs
+        return " ".join(self._id_to_token[value] for value in ids if value >= 1000)
+
+
 def test_semantic_runtime_record_is_exact_and_fail_closed() -> None:
     observed = semantic_runtime_attestation(_CanaryEncoder())
     assert observed.canary_shape == [len(SEMANTIC_CANARY_TEXTS), 16]
+    assert observed.user_site_enabled is False
+    assert observed.user_site_on_sys_path is False
     config = {"semantic_runtime": observed.model_dump(mode="json")}
     recorded = {
         "status": "PASS",
@@ -67,12 +94,12 @@ def test_tokenization_telemetry_reports_loss_without_text_or_token_ids() -> None
     encoder.tokenizer = _CountingTokenizer()
     telemetry = FrozenTransformerSemanticEncoder.tokenization_telemetry(
         encoder,
-        ["short input", " ".join(["long"] * 40)],
+        ["short input", " ".join(["long"] * 100)],
         view_names=["current_user_text", "visible_dialogue_state"],
     )
     assert telemetry["views"]["current_user_text"]["truncated"] is False
     assert telemetry["views"]["visible_dialogue_state"]["truncated"] is True
-    assert telemetry["views"]["visible_dialogue_state"]["truncated_token_count"] == 10
+    assert telemetry["views"]["visible_dialogue_state"]["truncated_token_count"] == 38
     assert "input_ids" not in str(telemetry)
     assert "long long" not in str(telemetry)
 
@@ -81,3 +108,36 @@ def test_tokenization_telemetry_reports_loss_without_text_or_token_ids() -> None
     )
     assert summary["current_user_text_complete"] is True
     assert summary["views"]["visible_dialogue_state"]["truncation_rate"] == 1.0
+
+
+def test_section_aware_visible_state_preserves_recent_history_without_implicit_loss() -> None:
+    encoder = _CanaryEncoder()
+    encoder.tokenizer = _ReversibleTokenizer()
+    state_text, allocation = (
+        FrozenTransformerSemanticEncoder.assemble_visible_dialogue_state(
+            encoder,
+            current_user_text=" ".join(f"current{index}" for index in range(70)),
+            current_session_history=[
+                {
+                    "role": "user" if index % 2 == 0 else "assistant",
+                    "content": " ".join(
+                        f"history{index}_{token}" for token in range(20)
+                    ),
+                }
+                for index in range(10)
+            ],
+            current_session_summary=" ".join(
+                f"summary{index}" for index in range(80)
+            ),
+        )
+    )
+    encoded = encoder.tokenizer(state_text, add_special_tokens=True)["input_ids"]
+    assert len(encoded) <= encoder.spec.max_length
+    assert allocation["protocol"].endswith("v2-section-aware")
+    assert allocation["implicit_full_state_truncation"] == "forbidden"
+    assert allocation["sections"]["current_user"]["retained_token_count"] == 32
+    assert allocation["sections"]["session_summary"]["retained_token_count"] == 16
+    assert allocation["sections"]["recent_dialogue"]["dropped_token_count"] > 0
+    assert "history9_19" in state_text
+    assert "history0_0" not in state_text
+    assert "history9_19" not in str(allocation)

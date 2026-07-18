@@ -14,17 +14,19 @@ import hashlib
 from importlib.metadata import PackageNotFoundError, version as package_version
 import platform
 from pathlib import Path
+import site
+import sys
 from typing import Any, Literal, Mapping, Protocol, Sequence
 
 import numpy as np
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .contracts import StrictModel
 from .io import canonical_json, sha256_file, sha256_text
 
 
 SEMANTIC_ENCODER_PROTOCOL = "pm-v1.5-frozen-visible-text-encoder-v1"
-SEMANTIC_INPUT_PROTOCOL = "pm-v1.5-visible-dialogue-state-v1"
+SEMANTIC_INPUT_PROTOCOL = "pm-v1.5-visible-dialogue-state-v2-section-aware"
 SEMANTIC_SNAPSHOT_HASH_PROTOCOL = "relative-path-tab-sha256-v1"
 SEMANTIC_RUNTIME_PROTOCOL = "pm-v1.5-semantic-runtime-canary-v1"
 SEMANTIC_CANARY_TEXTS = (
@@ -53,12 +55,32 @@ class FrozenSemanticEncoderSpec(StrictModel):
     snapshot_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     pooling: Literal["cls"] = "cls"
     normalize: Literal[True] = True
-    max_length: int = Field(ge=32, le=4096)
+    max_length: int = Field(ge=64, le=4096)
     output_dimension: int = Field(ge=16, le=4096)
     output_round_decimals: int = Field(default=8, ge=4, le=12)
     local_files_only: Literal[True] = True
     trust_remote_code: Literal[False] = False
     language_scope: Literal["english"] = "english"
+    visible_state_input_protocol: Literal[
+        "pm-v1.5-visible-dialogue-state-v2-section-aware"
+    ] = SEMANTIC_INPUT_PROTOCOL
+    current_user_state_token_budget: int = Field(default=32, ge=32, le=512)
+    session_summary_token_budget: int = Field(default=16, ge=16, le=512)
+    history_retention_policy: Literal[
+        "most-recent-token-suffix-preserve-chronology"
+    ] = "most-recent-token-suffix-preserve-chronology"
+    implicit_full_state_truncation: Literal["forbidden"] = "forbidden"
+
+    @model_validator(mode="after")
+    def valid_visible_state_budgets(self):
+        # Leave room for section headers, special tokens, and useful history.
+        if (
+            self.current_user_state_token_budget
+            + self.session_summary_token_budget
+            > self.max_length - 16
+        ):
+            raise ValueError("visible-state section budgets leave too little history room")
+        return self
 
     def digest(self) -> str:
         return sha256_text(canonical_json(self.model_dump(mode="json")))
@@ -88,6 +110,8 @@ class FrozenSemanticRuntimeContract(StrictModel):
     python_version: str = Field(min_length=1)
     platform_system: str = Field(min_length=1)
     platform_machine: str = Field(min_length=1)
+    user_site_enabled: Literal[False]
+    user_site_on_sys_path: Literal[False]
     packages: dict[str, str]
     device: Literal["cpu"]
     dtype: Literal["float32"]
@@ -293,6 +317,129 @@ class FrozenTransformerSemanticEncoder:
             "views": rows,
         }
 
+    def assemble_visible_dialogue_state(
+        self,
+        *,
+        current_user_text: str,
+        current_session_history: Sequence[Any],
+        current_session_summary: str,
+    ) -> tuple[str, dict[str, Any]]:
+        """Build a <=max_length state while preserving recent context explicitly.
+
+        Current text and summary receive frozen prefix budgets.  The remaining
+        capacity is filled with the most-recent suffix of the chronological
+        history.  The final string is re-tokenized without truncation and is
+        shortened until it fits, so model-side implicit right truncation is
+        never part of the reportable input contract.
+        """
+
+        def normalized(value: Any) -> str:
+            return " ".join(str(value).split())
+
+        def token_ids(text: str, *, special: bool = False) -> list[int]:
+            encoded = self.tokenizer(
+                text,
+                add_special_tokens=special,
+                padding=False,
+                truncation=False,
+                return_attention_mask=False,
+                verbose=False,
+            )
+            return [int(value) for value in encoded["input_ids"]]
+
+        def decode(ids: Sequence[int]) -> str:
+            if not ids:
+                return "[none]"
+            return normalized(
+                self.tokenizer.decode(
+                    list(ids),
+                    skip_special_tokens=True,
+                    clean_up_tokenization_spaces=True,
+                )
+            )
+
+        current = normalized(current_user_text)
+        summary = normalized(current_session_summary) or "[none]"
+        turns: list[str] = []
+        for turn in current_session_history:
+            if isinstance(turn, Mapping):
+                role = str(turn.get("role") or "")
+                content = str(turn.get("content") or "")
+            else:
+                role = str(getattr(turn, "role", ""))
+                content = str(getattr(turn, "content", ""))
+            if role not in {"user", "assistant"} or not content.strip():
+                raise ValueError("visible dialogue state contains an invalid turn")
+            turns.append(f"{role}: {normalized(content)}")
+        history = "\n".join(turns) or "[none]"
+
+        original_ids = {
+            "current_user": token_ids(current),
+            "session_summary": token_ids(summary),
+            "recent_dialogue": token_ids(history),
+        }
+        retained = {
+            "current_user": original_ids["current_user"][: int(
+                self.spec.current_user_state_token_budget
+            )],
+            "session_summary": original_ids["session_summary"][: int(
+                self.spec.session_summary_token_budget
+            )],
+            # Start with the largest possible recent suffix; the exact final
+            # capacity is established by the loop below, including headers.
+            "recent_dialogue": original_ids["recent_dialogue"][-int(
+                self.spec.max_length
+            ):],
+        }
+
+        def render() -> str:
+            return (
+                f"CURRENT_USER:\n{decode(retained['current_user'])}\n\n"
+                f"SESSION_SUMMARY:\n{decode(retained['session_summary'])}\n\n"
+                "RECENT_DIALOGUE_MOST_RECENT_SUFFIX_CHRONOLOGICAL:\n"
+                f"{decode(retained['recent_dialogue'])}"
+            )
+
+        state_text = render()
+        while len(token_ids(state_text, special=True)) > int(self.spec.max_length):
+            if retained["recent_dialogue"]:
+                retained["recent_dialogue"].pop(0)
+            elif retained["session_summary"]:
+                retained["session_summary"].pop()
+            elif retained["current_user"]:
+                retained["current_user"].pop()
+            else:  # pragma: no cover - fixed headers fit under every valid spec
+                raise RuntimeError("visible-state headers exceed semantic max_length")
+            state_text = render()
+        final_tokens = len(token_ids(state_text, special=True))
+        sections = {
+            name: {
+                "original_token_count": len(original_ids[name]),
+                "retained_token_count": len(retained[name]),
+                "dropped_token_count": len(original_ids[name]) - len(retained[name]),
+                "input_sha256": sha256_text(
+                    current
+                    if name == "current_user"
+                    else summary if name == "session_summary" else history
+                ),
+            }
+            for name in ("current_user", "session_summary", "recent_dialogue")
+        }
+        return state_text, {
+            "protocol": SEMANTIC_INPUT_PROTOCOL,
+            "max_length": int(self.spec.max_length),
+            "current_user_state_token_budget": int(
+                self.spec.current_user_state_token_budget
+            ),
+            "session_summary_token_budget": int(
+                self.spec.session_summary_token_budget
+            ),
+            "history_retention_policy": self.spec.history_retention_policy,
+            "implicit_full_state_truncation": self.spec.implicit_full_state_truncation,
+            "final_visible_state_token_count": final_tokens,
+            "sections": sections,
+        }
+
 
 def semantic_runtime_attestation(
     encoder: FrozenTransformerSemanticEncoder,
@@ -318,6 +465,8 @@ def semantic_runtime_attestation(
         python_version=platform.python_version(),
         platform_system=platform.system(),
         platform_machine=platform.machine(),
+        user_site_enabled=bool(site.ENABLE_USER_SITE),
+        user_site_on_sys_path=site.getusersitepackages() in sys.path,
         packages=packages,
         device=str(parameter.device.type),
         dtype=dtype,
@@ -367,6 +516,28 @@ def require_recorded_semantic_runtime(
     }
 
 
+def require_runtime_verification_matches_encoder(
+    recorded: Mapping[str, Any], encoder: SemanticTextEncoder
+) -> dict[str, Any]:
+    """Validate a live verification before embedding it in a stage artifact."""
+
+    if recorded.get("status") != "PASS":
+        raise RuntimeError("semantic runtime verification did not PASS")
+    contract = FrozenSemanticRuntimeContract.model_validate(recorded.get("contract"))
+    if (
+        contract.encoder_spec_sha256 != encoder.binding.spec_sha256
+        or contract.encoder_snapshot_tree_sha256
+        != encoder.binding.snapshot_tree_sha256
+        or recorded.get("contract_sha256") != contract.digest()
+    ):
+        raise RuntimeError("semantic runtime verification/encoder binding mismatch")
+    return {
+        "status": "PASS",
+        "contract": contract.model_dump(mode="json"),
+        "contract_sha256": contract.digest(),
+    }
+
+
 def visible_dialogue_state_text(
     *,
     current_user_text: str,
@@ -400,11 +571,20 @@ def encode_visible_state(
 ) -> tuple[list[float], dict[str, Any]]:
     """Encode current-turn and dialogue-state views once per state."""
 
-    state_text = visible_dialogue_state_text(
-        current_user_text=current_user_text,
-        current_session_history=current_session_history,
-        current_session_summary=current_session_summary,
-    )
+    assembly_method = getattr(encoder, "assemble_visible_dialogue_state", None)
+    if callable(assembly_method):
+        state_text, section_allocation = assembly_method(
+            current_user_text=current_user_text,
+            current_session_history=current_session_history,
+            current_session_summary=current_session_summary,
+        )
+    else:
+        state_text = visible_dialogue_state_text(
+            current_user_text=current_user_text,
+            current_session_history=current_session_history,
+            current_session_summary=current_session_summary,
+        )
+        section_allocation = None
     matrix = encoder.encode([current_user_text, state_text])
     expected = (2, encoder.spec.output_dimension)
     if matrix.shape != expected or not np.all(np.isfinite(matrix)):
@@ -426,6 +606,13 @@ def encode_visible_state(
             "views": {},
         }
     )
+    if section_allocation is not None:
+        tokenization = {**tokenization, "section_allocation": section_allocation}
+        visible = (tokenization.get("views") or {}).get("visible_dialogue_state") or {}
+        if visible.get("truncated") is not False:
+            raise RuntimeError(
+                "section-aware visible state must not reach implicit tokenizer truncation"
+            )
     audit = {
         "protocol": SEMANTIC_INPUT_PROTOCOL,
         "encoder_spec_sha256": encoder.binding.spec_sha256,
@@ -461,14 +648,19 @@ def summarize_semantic_truncation_audits(
     audits: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
     by_view: dict[str, list[Mapping[str, Any]]] = {}
+    by_section: dict[str, list[Mapping[str, Any]]] = {}
     unavailable = 0
     for semantic in audits:
-        views = (semantic.get("tokenization") or {}).get("views") or {}
+        tokenization = semantic.get("tokenization") or {}
+        views = tokenization.get("views") or {}
         if not views:
             unavailable += 1
             continue
         for name, row in views.items():
             by_view.setdefault(str(name), []).append(row)
+        sections = (tokenization.get("section_allocation") or {}).get("sections") or {}
+        for name, row in sections.items():
+            by_section.setdefault(str(name), []).append(row)
 
     summaries: dict[str, Any] = {}
     for name, rows in sorted(by_view.items()):
@@ -484,13 +676,34 @@ def summarize_semantic_truncation_audits(
             "maximum_original_tokens": max(original, default=0),
         }
     current = summaries.get("current_user_text") or {}
+    visible = summaries.get("visible_dialogue_state") or {}
+    section_summaries = {
+        name: {
+            "state_count": len(rows),
+            "states_with_deliberate_drop": int(
+                sum(int(row.get("dropped_token_count", 0)) > 0 for row in rows)
+            ),
+            "total_dropped_tokens": int(
+                sum(int(row.get("dropped_token_count", 0)) for row in rows)
+            ),
+            "maximum_dropped_tokens": max(
+                (int(row.get("dropped_token_count", 0)) for row in rows),
+                default=0,
+            ),
+        }
+        for name, rows in sorted(by_section.items())
+    }
     return {
         "protocol": "pm-v1.5-semantic-truncation-summary-v1",
         "state_count": len(audits),
         "telemetry_unavailable_state_count": unavailable,
         "views": summaries,
+        "section_allocation": section_summaries,
         "current_user_text_complete": (
             unavailable == 0 and int(current.get("truncated_state_count", -1)) == 0
+        ),
+        "implicit_visible_state_truncation_complete": (
+            unavailable == 0 and int(visible.get("truncated_state_count", -1)) == 0
         ),
     }
 

@@ -95,6 +95,11 @@ def main() -> None:
     parser.add_argument("--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml")
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument(
+        "--pm-training-report",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v1_5_model" / "training_report.json",
+    )
+    parser.add_argument(
         "--evidence-filter-checkpoint",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_evidence_filter" / "evidence_filter.joblib",
@@ -362,6 +367,18 @@ def main() -> None:
         raise RuntimeError("condition is not a frozen PM-v2 generation condition")
     if sha256_file(args.checkpoint) != condition_checkpoint_hashes[args.condition]:
         raise RuntimeError("condition/checkpoint pairing does not match study freeze")
+    semantic_condition = args.condition in {
+        "pm_v2",
+        "pm_v1_5_transparent_rule_step0",
+    }
+    if semantic_condition and (
+        not args.pm_training_report.is_file()
+        or sha256_file(args.pm_training_report)
+        != contract.get("policy_training_report_sha256")
+    ):
+        raise RuntimeError(
+            "semantic external condition requires the exact frozen training report"
+        )
     cost_match_reference_dirs = {
         "pm_v2": ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed",
         "pm_v2_cost_matched_fixed": ROOT / "outputs" / "evoemo_pm_v1_5",
@@ -423,6 +440,10 @@ def main() -> None:
             else None
         ),
         semantic_encoder=semantic_encoder,
+        semantic_runtime_verification=semantic_runtime_verification,
+        development_training_report_path=(
+            args.pm_training_report if semantic_condition else None
+        ),
     )
     print(result)
 

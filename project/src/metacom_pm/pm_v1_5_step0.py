@@ -197,7 +197,7 @@ _ADVICE_READINESS_ANCHORS: dict[str, tuple[str, ...]] = {
     ),
 }
 
-READINESS_CHALLENGE_PROTOCOL = "pm-v1.5-readiness-natural-language-challenge-v1"
+READINESS_CHALLENGE_PROTOCOL = "pm-v1.5-readiness-natural-language-challenge-v2"
 _READINESS_CHALLENGES: tuple[dict[str, str], ...] = (
     {
         "case_id": "explicit_listen_only",
@@ -232,6 +232,111 @@ _READINESS_CHALLENGES: tuple[dict[str, str], ...] = (
         "assistant_context": "What kind of support would feel useful?",
         "current_user_text": "Part of me wants ideas, but I am not sure I am ready.",
         "session_summary": "The user expresses mixed readiness for advice.",
+        "expected_contextual_readiness": "ambiguous",
+    },
+    {
+        "case_id": "polite_advice_decline",
+        "assistant_context": "I can offer a few ideas if that would help.",
+        "current_user_text": "I appreciate that, but I would rather not get solutions yet.",
+        "session_summary": "The user politely declines advice and wants presence.",
+        "expected_contextual_readiness": "listen_only",
+    },
+    {
+        "case_id": "implicit_listening_boundary",
+        "assistant_context": "Should we work out what to do next?",
+        "current_user_text": "Can I just get this off my chest first?",
+        "session_summary": "The user asks to speak without immediate problem solving.",
+        "expected_contextual_readiness": "listen_only",
+    },
+    {
+        "case_id": "strong_emotion_no_fix",
+        "assistant_context": "We could make a plan for handling this.",
+        "current_user_text": "Not a plan right now. I need a moment to feel upset.",
+        "session_summary": "The user explicitly postpones planning.",
+        "expected_contextual_readiness": "listen_only",
+    },
+    {
+        "case_id": "meaning_before_action",
+        "assistant_context": "Would practical options be useful?",
+        "current_user_text": "Before that, help me make sense of why I reacted this way.",
+        "session_summary": "The user requests understanding before action.",
+        "expected_contextual_readiness": "explore_first",
+    },
+    {
+        "case_id": "clarify_feelings",
+        "assistant_context": "Do you want to decide on a next step?",
+        "current_user_text": "I need to untangle what I am actually feeling first.",
+        "session_summary": "The user wants emotional exploration before a decision.",
+        "expected_contextual_readiness": "explore_first",
+    },
+    {
+        "case_id": "question_the_pattern",
+        "assistant_context": "I can suggest a way to respond.",
+        "current_user_text": "Could we explore why the same pattern keeps coming back?",
+        "session_summary": "The user asks for reflective exploration.",
+        "expected_contextual_readiness": "explore_first",
+    },
+    {
+        "case_id": "implicit_small_idea_request",
+        "assistant_context": "We can stay with the feeling or consider an option.",
+        "current_user_text": "A tiny, low-pressure idea might help.",
+        "session_summary": "The user is open to one modest suggestion.",
+        "expected_contextual_readiness": "light_suggestion",
+    },
+    {
+        "case_id": "one_tip_request",
+        "assistant_context": "What would feel manageable?",
+        "current_user_text": "Maybe give me one simple thing I could try tonight.",
+        "session_summary": "The user requests one bounded suggestion.",
+        "expected_contextual_readiness": "light_suggestion",
+    },
+    {
+        "case_id": "contextual_small_option_acceptance",
+        "assistant_context": "Would one small option be okay, without making a whole plan?",
+        "current_user_text": "Okay, one small option would be fine.",
+        "session_summary": "The user accepts a single low-pressure suggestion.",
+        "expected_contextual_readiness": "light_suggestion",
+    },
+    {
+        "case_id": "checklist_request",
+        "assistant_context": "We can keep this open-ended or make it concrete.",
+        "current_user_text": "Can you turn this into a checklist with clear steps?",
+        "session_summary": "The user explicitly requests structured action steps.",
+        "expected_contextual_readiness": "structured_plan",
+    },
+    {
+        "case_id": "priorities_and_timeline",
+        "assistant_context": "Would it help to organize the options?",
+        "current_user_text": "Yes, help me set priorities and a realistic timeline.",
+        "session_summary": "The user requests organized planning.",
+        "expected_contextual_readiness": "structured_plan",
+    },
+    {
+        "case_id": "multi_step_preparation",
+        "assistant_context": "How practical do you want to get?",
+        "current_user_text": "I am ready to work through the steps one by one.",
+        "session_summary": "The user is ready for a multi-step plan.",
+        "expected_contextual_readiness": "structured_plan",
+    },
+    {
+        "case_id": "talk_then_maybe_ideas",
+        "assistant_context": "Would listening or ideas help more?",
+        "current_user_text": "Mostly talking, though maybe an idea later. I am not sure.",
+        "session_summary": "The user expresses mixed support needs.",
+        "expected_contextual_readiness": "ambiguous",
+    },
+    {
+        "case_id": "rhetorical_what_now",
+        "assistant_context": "What feels most urgent?",
+        "current_user_text": "What am I even supposed to do with all of this?",
+        "session_summary": "The utterance could express distress or request advice.",
+        "expected_contextual_readiness": "ambiguous",
+    },
+    {
+        "case_id": "uncertain_support_mode",
+        "assistant_context": "I can listen, explore, or help plan.",
+        "current_user_text": "I honestly cannot tell which of those I need.",
+        "session_summary": "The user cannot yet select a support mode.",
         "expected_contextual_readiness": "ambiguous",
     },
 )
@@ -312,7 +417,15 @@ def readiness_natural_language_challenge(
     return {
         "protocol": READINESS_CHALLENGE_PROTOCOL,
         "role": "report_only_not_outcome_gate",
+        "status": (
+            "REPORT_ONLY_"
+            f"{sum(row['full_context']['matches_expected'] for row in rows)}"
+            f"_OF_{len(rows)}"
+        ),
         "outcome_labels_used": False,
+        "challenge_matrix_sha256": sha256_text(
+            canonical_json(list(_READINESS_CHALLENGES))
+        ),
         "case_count": len(rows),
         "current_turn_match_count": sum(
             row["current_turn"]["matches_expected"] for row in rows

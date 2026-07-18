@@ -62,12 +62,15 @@ from .pm_v2_contracts import PMV2State
 from .pm_v1_5_step0 import build_strategy_family_catalog
 from .pm_v1_5_semantic import (
     SemanticTextEncoder,
+    require_runtime_verification_matches_encoder,
     semantic_centroid,
     summarize_semantic_truncation_audits,
 )
 from .pm_v1_5_rule_router import (
+    DEVELOPMENT_EXTERNAL_SCORE_COMPARISON_PROTOCOL,
     RULE_ROUTER_PROTOCOL,
     TransparentRuleRouter,
+    compare_development_external_score_diagnostics,
     transparent_rule_score_diagnostics,
 )
 from .pm_v2_fixed_model import FixedActionPMV2Model
@@ -652,6 +655,8 @@ def run_pmv2_fixed_evoemo(
     cost_match_reference_call_plan_path: str | Path | None = None,
     cost_match_reference_cost_estimate_path: str | Path | None = None,
     semantic_encoder: SemanticTextEncoder | None = None,
+    semantic_runtime_verification: Mapping[str, Any] | None = None,
+    development_training_report_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Generate only the frozen PM-v2 condition on policy-independent tracks."""
 
@@ -665,6 +670,50 @@ def run_pmv2_fixed_evoemo(
     }
     if any(value <= 0.0 for value in generator_pricing_usd_per_mtok.values()):
         raise ValueError("PM-v2 generator pricing must be strictly positive")
+    if semantic_encoder is not None:
+        semantic_runtime_lineage = require_runtime_verification_matches_encoder(
+            semantic_runtime_verification or {}, semantic_encoder
+        )
+        semantic_runtime_lineage.update(
+            {
+                "semantic_encoder_spec_sha256": semantic_encoder.binding.spec_sha256,
+                "semantic_encoder_snapshot_tree_sha256": (
+                    semantic_encoder.binding.snapshot_tree_sha256
+                ),
+            }
+        )
+        if development_training_report_path is None:
+            raise RuntimeError(
+                "semantic external condition requires the frozen training report"
+            )
+        development_training_report_path = Path(
+            development_training_report_path
+        ).resolve()
+        development_training_report = read_json(development_training_report_path)
+        development_score_diagnostics = development_training_report.get(
+            "step0_score_diagnostics_by_split"
+        ) or {}
+        development_training_report_sha256 = sha256_file(
+            development_training_report_path
+        )
+    else:
+        if semantic_runtime_verification is not None:
+            raise RuntimeError(
+                "fixed-action condition cannot claim an unused semantic runtime"
+            )
+        semantic_runtime_lineage = {
+            "status": "NOT_APPLICABLE_FIXED_ACTION_CONDITION",
+            "contract": None,
+            "contract_sha256": None,
+            "semantic_encoder_spec_sha256": None,
+            "semantic_encoder_snapshot_tree_sha256": None,
+        }
+        if development_training_report_path is not None:
+            raise RuntimeError(
+                "fixed-action condition cannot claim an unused training-score reference"
+            )
+        development_score_diagnostics = None
+        development_training_report_sha256 = None
     derived_evidence_filter_model_binding = (
         {
             "checkpoint_sha256": memory_helpfulness_model.checkpoint_sha256,
@@ -893,6 +942,7 @@ def run_pmv2_fixed_evoemo(
     preflight_path = out_dir / "pm_v2_preflight.json"
     manifest_path = out_dir / "run_manifest.json"
     attestation_path = out_dir / "artifact_attestation.json"
+    comparison_path = out_dir / "semantic_distribution_comparison.json"
     cost_estimate_path = out_dir / "cost_estimate.json"
     call_plan_path = out_dir / "call_plan.jsonl"
     forbid_overwrite_of_spent_attempts(
@@ -909,6 +959,7 @@ def run_pmv2_fixed_evoemo(
             preflight_path,
             manifest_path,
             attestation_path,
+            comparison_path,
         )
         if not run:
             paths = (*paths, cost_estimate_path, call_plan_path)
@@ -1002,6 +1053,15 @@ def run_pmv2_fixed_evoemo(
             ),
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
             "runtime_maximum_physical_http_attempts": int(max_api_calls),
+            "semantic_runtime_verification": semantic_runtime_lineage,
+            "development_training_report_sha256": (
+                development_training_report_sha256
+            ),
+            "development_external_score_comparison_protocol": (
+                DEVELOPMENT_EXTERNAL_SCORE_COMPARISON_PROTOCOL
+                if semantic_encoder is not None
+                else None
+            ),
         },
     )
 
@@ -1243,6 +1303,32 @@ def run_pmv2_fixed_evoemo(
         condition=condition,
         gates=action_preflight_gates,
     )
+    external_score_diagnostics = (
+        transparent_rule_score_diagnostics(preflight_states)
+        if semantic_encoder is not None and preflight_states
+        else {
+            "status": (
+                "UNAVAILABLE_NONCONTRACT_TEST_DOUBLE"
+                if semantic_encoder is not None
+                else "NOT_APPLICABLE_FIXED_ACTION_CONDITION"
+            ),
+            "state_count": len(preflight_states),
+        }
+    )
+    development_external_score_comparison = (
+        compare_development_external_score_diagnostics(
+            development_score_diagnostics or {}, external_score_diagnostics
+        )
+        if semantic_encoder is not None
+        else {
+            "protocol": DEVELOPMENT_EXTERNAL_SCORE_COMPARISON_PROTOCOL,
+            "status": "NOT_APPLICABLE_FIXED_ACTION_CONDITION",
+            "outcome_labels_used": False,
+            "external_threshold_selection_or_retuning_authorized": False,
+        }
+    )
+    write_json(comparison_path, development_external_score_comparison)
+
     preflight = {
         **evaluation_gate,
         "gate_scope": "frozen_evaluation_turns_only",
@@ -1271,17 +1357,10 @@ def run_pmv2_fixed_evoemo(
         "semantic_truncation": summarize_semantic_truncation_audits(
             [row.get("semantic_observation") or {} for row in preflight_rows]
         ),
-        "step0_score_diagnostics": (
-            transparent_rule_score_diagnostics(preflight_states)
-            if semantic_encoder is not None and preflight_states
-            else {
-                "status": (
-                    "UNAVAILABLE_NONCONTRACT_TEST_DOUBLE"
-                    if semantic_encoder is not None
-                    else "NOT_APPLICABLE_FIXED_ACTION_CONDITION"
-                ),
-                "state_count": len(preflight_states),
-            }
+        "semantic_runtime_verification": semantic_runtime_lineage,
+        "step0_score_diagnostics": external_score_diagnostics,
+        "development_external_score_comparison": (
+            development_external_score_comparison
         ),
     }
     preflight["semantic_truncation"]["current_user_text_gate"] = (
@@ -1292,7 +1371,23 @@ def run_pmv2_fixed_evoemo(
         )
         else "FAIL"
     )
-    if preflight["semantic_truncation"]["current_user_text_gate"] != "PASS":
+    preflight["semantic_truncation"]["implicit_visible_state_truncation_gate"] = (
+        "PASS"
+        if (
+            semantic_encoder is None
+            or preflight["semantic_truncation"][
+                "implicit_visible_state_truncation_complete"
+            ]
+        )
+        else "FAIL"
+    )
+    if (
+        preflight["semantic_truncation"]["current_user_text_gate"] != "PASS"
+        or preflight["semantic_truncation"][
+            "implicit_visible_state_truncation_gate"
+        ]
+        != "PASS"
+    ):
         preflight["status"] = "FAIL"
     write_json(preflight_path, preflight)
     if preflight["status"] != "PASS":
@@ -1354,6 +1449,11 @@ def run_pmv2_fixed_evoemo(
         "study_freeze_sha256": study_freeze_sha256,
         "maximum_cost_matched_relative_deviation": cost_match_tolerance,
         "cost_match_reference_condition": expected_reference_condition,
+        "semantic_runtime_verification": semantic_runtime_lineage,
+        "development_training_report_sha256": development_training_report_sha256,
+        "development_external_score_comparison": (
+            development_external_score_comparison
+        ),
     }
     cost_estimate = {
         **cost_payload,
@@ -2291,6 +2391,11 @@ def run_pmv2_fixed_evoemo(
         "cost_estimate": cost_estimate,
         "budget_gate": budget_gate,
         "cost_match_estimated_preflight": cost_match_estimated_preflight,
+        "semantic_runtime_verification": semantic_runtime_lineage,
+        "development_training_report_sha256": development_training_report_sha256,
+        "development_external_score_comparison": (
+            development_external_score_comparison
+        ),
     }
     write_json(summary_path, summary)
     if summary["status"] != "COMPLETE":
@@ -2305,6 +2410,10 @@ def run_pmv2_fixed_evoemo(
         "cost_estimate": cost_estimate_path,
         "call_plan": call_plan_path,
     }
+    if development_training_report_path is not None:
+        attestation_inputs["development_training_report"] = (
+            development_training_report_path
+        )
     attestation_outputs = {
         "dialogues": (dialogue_path, True),
         "turns": (turn_path, True),
@@ -2312,6 +2421,7 @@ def run_pmv2_fixed_evoemo(
         "physical_attempt_ledger": (attempt_ledger_path, True),
         "summary": (summary_path, False),
         "preflight": (preflight_path, False),
+        "semantic_distribution_comparison": (comparison_path, False),
     }
     if cost_match_condition:
         attestation_inputs.update(
@@ -2384,6 +2494,13 @@ def run_pmv2_fixed_evoemo(
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
             "maximum_physical_http_attempts_authorized": int(max_api_calls),
             "raw_generation_contract_gate": raw_generation_contract_gate,
+            "semantic_runtime_verification": semantic_runtime_lineage,
+            "development_training_report_sha256": (
+                development_training_report_sha256
+            ),
+            "development_external_score_comparison": (
+                development_external_score_comparison
+            ),
         },
         expected={
             "dialogues": expected,

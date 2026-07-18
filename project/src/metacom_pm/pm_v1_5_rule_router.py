@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 from itertools import product
 from typing import Any, Literal, Mapping, Sequence
@@ -21,6 +22,10 @@ from .pm_v2_model import (
 
 RULE_ROUTER_PROTOCOL = "pm-v1.5-transparent-step0-rule-router-v2"
 RULE_SCORE_DIAGNOSTIC_PROTOCOL = "pm-v1.5-transparent-rule-score-diagnostic-v1"
+RULE_GRID_DIAGNOSTIC_PROTOCOL = "pm-v1.5-transparent-rule-grid-diagnostic-v1"
+DEVELOPMENT_EXTERNAL_SCORE_COMPARISON_PROTOCOL = (
+    "pm-v1.5-development-external-step0-score-comparison-v1"
+)
 
 
 def _distribution(values: Sequence[float]) -> dict[str, Any]:
@@ -78,6 +83,176 @@ def transparent_rule_score_diagnostics(
         "advice_readiness_similarity": _distribution(readiness_values),
         "strategy_family_top1_top2_margin": _distribution(family_margins),
         "advice_readiness_top1_top2_margin": _distribution(readiness_margins),
+    }
+
+
+def transparent_rule_grid_diagnostics(
+    states: Sequence[PMV2State],
+    candidates: Sequence[TransparentRuleConfig],
+    selection_config: SelectionConfig,
+    *,
+    minimum_unique_policy_mappings: int = 2,
+    minimum_maximum_pairwise_disagreement_rate: float = 0.01,
+) -> dict[str, Any]:
+    """Outcome-free audit of whether the finite rule grid changes policies."""
+
+    if not states or not candidates:
+        raise ValueError("rule-grid diagnostics require states and candidates")
+    ordered_states = sorted(states, key=lambda state: state.state_id)
+    candidate_rows: list[dict[str, Any]] = []
+    mappings: list[list[str]] = []
+    for config in candidates:
+        router = TransparentRuleRouter.create(config, selection_config)
+        actions = [router.choose_action(state) for state in ordered_states]
+        mappings.append(actions)
+        candidate_rows.append(
+            {
+                "config_sha256": config.digest(),
+                "action_by_state_sha256": sha256_text(
+                    canonical_json(
+                        list(
+                            zip(
+                                [state.state_id for state in ordered_states],
+                                actions,
+                                strict=True,
+                            )
+                        )
+                    )
+                ),
+                "action_distribution": dict(sorted(Counter(actions).items())),
+            }
+        )
+    disagreement: list[float] = []
+    for left in range(len(mappings)):
+        for right in range(left + 1, len(mappings)):
+            disagreement.append(
+                float(
+                    np.mean(
+                        np.asarray(mappings[left], dtype=object)
+                        != np.asarray(mappings[right], dtype=object)
+                    )
+                )
+            )
+    unique_mappings = len({tuple(actions) for actions in mappings})
+    maximum_disagreement = max(disagreement, default=0.0)
+    checks = {
+        "unique_policy_mappings": unique_mappings
+        >= int(minimum_unique_policy_mappings),
+        "maximum_pairwise_action_disagreement_rate": maximum_disagreement
+        >= float(minimum_maximum_pairwise_disagreement_rate),
+    }
+    return {
+        "protocol": RULE_GRID_DIAGNOSTIC_PROTOCOL,
+        "status": "PASS" if all(checks.values()) else "DEGENERATE_GRID",
+        "outcome_labels_used": False,
+        "state_split": "train_and_calibration_only",
+        "state_count": len(ordered_states),
+        "state_ids_sha256": sha256_text(
+            canonical_json([state.state_id for state in ordered_states])
+        ),
+        "candidate_count": len(candidate_rows),
+        "unique_policy_mapping_count": unique_mappings,
+        "pairwise_action_disagreement_rate": _distribution(disagreement),
+        "maximum_pairwise_action_disagreement_rate": maximum_disagreement,
+        "checks": checks,
+        "limits": {
+            "minimum_unique_policy_mappings": int(minimum_unique_policy_mappings),
+            "minimum_maximum_pairwise_disagreement_rate": float(
+                minimum_maximum_pairwise_disagreement_rate
+            ),
+        },
+        "candidates": candidate_rows,
+    }
+
+
+def compare_development_external_score_diagnostics(
+    development_by_split: Mapping[str, Any],
+    external: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Content-ready, outcome-free scale comparison with no retuning authority."""
+
+    reference = development_by_split.get("calibration")
+    if not isinstance(reference, Mapping):
+        raise RuntimeError("score comparison requires calibration diagnostics")
+    if (
+        reference.get("protocol") != RULE_SCORE_DIAGNOSTIC_PROTOCOL
+        or external.get("protocol") != RULE_SCORE_DIAGNOSTIC_PROTOCOL
+    ):
+        raise RuntimeError("score comparison received stale diagnostics")
+
+    paths = [
+        ("source_similarity.MP", ("source_similarity", "MP")),
+        ("source_similarity.MS", ("source_similarity", "MS")),
+        ("source_similarity.ME", ("source_similarity", "ME")),
+        ("strategy_family_similarity", ("strategy_family_similarity",)),
+        ("advice_readiness_similarity", ("advice_readiness_similarity",)),
+        (
+            "strategy_family_top1_top2_margin",
+            ("strategy_family_top1_top2_margin",),
+        ),
+        (
+            "advice_readiness_top1_top2_margin",
+            ("advice_readiness_top1_top2_margin",),
+        ),
+    ]
+
+    def at(payload: Mapping[str, Any], path: Sequence[str]) -> Mapping[str, Any]:
+        value: Any = payload
+        for key in path:
+            value = value.get(key) if isinstance(value, Mapping) else None
+        if not isinstance(value, Mapping) or "count" not in value:
+            raise RuntimeError(f"score comparison lacks distribution: {'.'.join(path)}")
+        return value
+
+    metrics: dict[str, Any] = {}
+    for name, path in paths:
+        left = at(reference, path)
+        right = at(external, path)
+        if int(left.get("count", 0)) <= 0 or int(right.get("count", 0)) <= 0:
+            metrics[name] = {
+                "status": "UNAVAILABLE_NO_OBSERVATIONS",
+                "development_calibration_count": int(left.get("count", 0)),
+                "external_count": int(right.get("count", 0)),
+                "quantile_shifts": None,
+                "quantile_l1_shift": None,
+                "development_calibration": None,
+                "external": None,
+            }
+            continue
+        quantile_shifts = {
+            key: float(right[key]) - float(left[key])
+            for key in ("q10", "median", "q90")
+        }
+        metrics[name] = {
+            "status": "AVAILABLE",
+            "development_calibration_count": int(left["count"]),
+            "external_count": int(right["count"]),
+            "quantile_shifts": quantile_shifts,
+            "quantile_l1_shift": float(
+                np.mean([abs(value) for value in quantile_shifts.values()])
+            ),
+            "development_calibration": {
+                key: left[key] for key in ("q10", "median", "q90")
+            },
+            "external": {
+                key: right[key] for key in ("q10", "median", "q90")
+            },
+        }
+    return {
+        "protocol": DEVELOPMENT_EXTERNAL_SCORE_COMPARISON_PROTOCOL,
+        "status": "REPORT_ONLY",
+        "outcome_labels_used": False,
+        "external_threshold_selection_or_retuning_authorized": False,
+        "development_reference_split": "calibration",
+        "available_distribution_count": sum(
+            row["status"] == "AVAILABLE" for row in metrics.values()
+        ),
+        "unavailable_distributions": sorted(
+            name
+            for name, row in metrics.items()
+            if row["status"] != "AVAILABLE"
+        ),
+        "metrics": metrics,
     }
 
 
@@ -365,6 +540,14 @@ def tune_transparent_rule_router(
     distribution_signatures = {
         canonical_json(row["action_distribution"]) for row in rows
     }
+    grid_diagnostics = transparent_rule_grid_diagnostics(
+        states, candidates, selection_config
+    )
+    selected_mapping = next(
+        row
+        for row in grid_diagnostics["candidates"]
+        if row["config_sha256"] == selected_config.digest()
+    )
     report = {
         "protocol": RULE_ROUTER_PROTOCOL,
         "selection_split": selection_data_role,
@@ -377,7 +560,17 @@ def tune_transparent_rule_router(
         "selected_config": selected_config.model_dump(mode="json"),
         "selected_config_sha256": selected_config.digest(),
         "selected_action_distribution": selected["action_distribution"],
+        "selected_action_by_state_sha256": selected_mapping[
+            "action_by_state_sha256"
+        ],
         "distinct_candidate_action_distributions": len(distribution_signatures),
+        "unique_policy_mapping_count": grid_diagnostics[
+            "unique_policy_mapping_count"
+        ],
+        "pairwise_action_disagreement_rate": grid_diagnostics[
+            "pairwise_action_disagreement_rate"
+        ],
+        "grid_diagnostics": grid_diagnostics,
         "score_diagnostics": transparent_rule_score_diagnostics(states),
         "candidates": rows,
     }

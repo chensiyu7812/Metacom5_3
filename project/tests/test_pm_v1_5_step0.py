@@ -16,7 +16,10 @@ from metacom_pm.pm_v1_5_step0 import (
 from metacom_pm.pm_v1_5_rule_router import (
     TransparentRuleConfig,
     TransparentRuleRouter,
+    compare_development_external_score_diagnostics,
     transparent_rule_candidates,
+    transparent_rule_grid_diagnostics,
+    transparent_rule_score_diagnostics,
     tune_transparent_rule_router,
 )
 from metacom_pm.pm_v1_5_shortcut_audit import (
@@ -477,3 +480,52 @@ def test_transparent_rule_grid_is_finite_and_fail_closed() -> None:
     assert len(transparent_rule_candidates(grid)) == 4
     with pytest.raises(ValueError, match="grid keys"):
         transparent_rule_candidates({**grid, "unexpected": [1.0]})
+
+
+def test_rule_grid_diagnostic_hashes_state_mappings_not_only_action_totals() -> None:
+    common = dict(
+        source_similarity_weight=1.0,
+        source_age_penalty=0.0,
+        source_cost_penalty=0.0,
+        maximum_memory_sources=1,
+        strategy_family_similarity_weight=0.0,
+        strategy_readiness_alignment_weight=0.0,
+        question_bonus=0.0,
+        strategy_cost_penalty=0.0,
+        strategy_minimum_score=1.0,
+    )
+    report = transparent_rule_grid_diagnostics(
+        [_state([0.1, 0.2, 0.3])],
+        [
+            TransparentRuleConfig(source_minimum_score=0.20, **common),
+            TransparentRuleConfig(source_minimum_score=0.30, **common),
+        ],
+        SelectionConfig(),
+        minimum_unique_policy_mappings=2,
+        minimum_maximum_pairwise_disagreement_rate=0.5,
+    )
+    assert report["status"] == "PASS"
+    assert report["unique_policy_mapping_count"] == 2
+    assert report["maximum_pairwise_action_disagreement_rate"] == 1.0
+    assert len({row["action_by_state_sha256"] for row in report["candidates"]}) == 2
+
+
+def test_development_external_score_comparison_is_report_only() -> None:
+    diagnostics = transparent_rule_score_diagnostics(
+        [_state([0.1, 0.2, 0.3])]
+    )
+    report = compare_development_external_score_diagnostics(
+        {"calibration": diagnostics}, diagnostics
+    )
+    assert report["status"] == "REPORT_ONLY"
+    assert report["outcome_labels_used"] is False
+    assert report["external_threshold_selection_or_retuning_authorized"] is False
+    assert all(
+        row["quantile_l1_shift"] == 0.0
+        for row in report["metrics"].values()
+        if row["status"] == "AVAILABLE"
+    )
+    assert report["unavailable_distributions"] == [
+        "source_similarity.ME",
+        "source_similarity.MS",
+    ]

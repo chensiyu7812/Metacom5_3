@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "18ffc6d7a146bccb316dcf2c254f7737c992ae4c47439a0e9a647ae9c8d86a66"
+    "sha256": "0eee287e8fdcd278b0126c69b140e5a8bb4c2fbfa2d4efbb860d2cfa307b26e0"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -126,21 +126,24 @@
     "model_id": "BAAI/bge-small-en-v1.5",
     "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
     "snapshot_tree_sha256": "c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b",
-    "spec_sha256": "aa78648c8e0717bb2450b26560bb183fe893972aed2fa44fe6d67507aae768f3",
+    "spec_sha256": "febe9bbf8f7207607335284b98d7bc97a0b41231a4c2358cba0a027097911f65",
     "pooling": "cls",
     "output_dimension": 384,
     "state_views": 2,
     "train_only_projection_dimension": 48,
     "runtime_network_download_allowed": false,
     "runtime_contract_protocol": "pm-v1.5-semantic-runtime-canary-v1",
-    "runtime_contract_sha256": "c8d7663953fc901578e0d3633fec15f69eee51e853f4dc36b5c5f7899814b0b2",
+    "runtime_contract_sha256": "2b8c2943c72b895c0796daaa4a5971f7d064b2789b6a0d5b896a304a25cbde7a",
     "runtime_canary_matrix_sha256": "de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13",
     "runtime_preflight_path": "project/outputs/pm_v1_5_semantic_runtime_preflight.json",
-    "runtime_preflight_sha256": "5b00efb11db240da956d517a6243ea3cefbc4ffe6ea4cb5553a9c73d2d29e0b3",
-    "runtime_preflight_status": "PASS_NO_API",
+    "runtime_preflight_sha256": "066862345f13cf6439e3208ac68801e7a375c5101772a7924e7a4501a45db41a",
+    "runtime_preflight_status": "PASS_RUNTIME_WITH_REPORT_ONLY_READINESS_DIAGNOSTIC",
     "exact_constraints_path": "project/constraints/pm_v1_5_runtime.txt",
+    "formal_environment": "dedicated Python 3.13.2 .venv-pm-v1-5 with PYTHONNOUSERSITE=1; never sim_eval or Conda base",
+    "readiness_challenge_status": "REPORT_ONLY_15_OF_20",
+    "visible_state_input_protocol": "pm-v1.5-visible-dialogue-state-v2-section-aware",
     "current_user_truncation_policy": "HARD_FAIL",
-    "history_truncation_policy": "REPORT_ONLY",
+    "history_truncation_policy": "MOST_RECENT_SUFFIX_WITH_EXPLICIT_SECTION_ALLOCATION",
     "development_external_parity": "LOCAL_EXACT_RUNTIME_CANARY_PASS_FORMAL_RUN_UNVERIFIED"
   },
   "engineering_preflight": {

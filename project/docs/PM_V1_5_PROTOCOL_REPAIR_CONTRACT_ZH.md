@@ -1,7 +1,7 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-18
-合同状态：**IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_V8_3_REVIEW_AND_APPROVAL**
+合同状态：**IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_FRESH_POST_REPAIR_PILOT**
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
 
 任何后续局部修复还必须先检查 `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 中的全链路
@@ -138,12 +138,20 @@ development 入口必须在创建 API client 前逐项验证；CLI 不能用另�
 sweep、judging、freeze 和 external 继续验证首阶段 attestation 中的同一 hash，而不是各自
 重新接受一个“看起来相似”的 Bank。
 
-### 3.5 可见状态语义表示
+### 3.5 可见状态语义表示与数值运行时
 
 PM 还可读取两个由同一冻结本地 encoder 产生的可部署视图：当前 user turn，以及
-`current turn + recent visible dialogue + visible session summary`。当前合同固定为
+`current turn + recent visible dialogue + visible session summary`。完整视图必须按冻结的
+section-aware 协议组装：当前 user turn 和 session summary 分别保留显式预算，剩余容量只取
+保持时间顺序的 recent-dialogue suffix；不得依赖 tokenizer 的隐式右截断。当前合同固定为
 `BAAI/bge-small-en-v1.5` 的精确 40-hex revision、snapshot tree SHA、CLS pooling、L2
-normalization、512-token truncation 和 384 维输出；运行时禁止下载或 remote code。
+normalization、512-token 总上限和 384 维输出；运行时禁止下载或 remote code。
+
+报告性 development、training 和 external 还必须使用独立 `.venv-pm-v1-5` 中的精确
+Python/NumPy/SciPy/scikit-learn/PyTorch/Transformers/tokenizers/Hugging Face Hub/
+safetensors 版本，并设置 `PYTHONNOUSERSITE=1`。每次真实阶段都要现场重算固定 canary，
+核对依赖版本、用户 site 隔离、encoder/spec/snapshot 和数值矩阵哈希；不能仅继承一次历史
+`PASS` 报告。`sim_eval` 和 Conda `base` 都不是本合同的报告性运行环境。
 
 两个视图拼接后只能在 train users 上拟合 PCA 到 48 维；calibration、internal 和 external
 只能 transform。encoder/spec/hash/dimension 只进入 provenance 和 freeze，不得成为数值
@@ -412,7 +420,13 @@ attestation，并在 API key 解析与付费调用前 fail closed。
 - [x] requested/attempted/realized/prompt-equivalence 全链路实现；
 - [x] required-hit pre-outcome validity gate 实现；
 - [x] transparent rule router 与 no-Step-0 ablation 实现；
+- [x] transparent-rule 全候选映射的 outcome-free 预训练诊断、内容寻址 attestation 与
+  pre-sweep 硬门实现；
 - [x] train-only algorithm comparison 与 candidate manifest 实现；
+- [x] full / no-Step-0 / no-state-BGE / lexical-only 的 2×2 checkpoint 在 internal-test 前
+  一次冻结；internal 结果只作解释，不允许回调候选；
+- [x] section-aware visible-state 输入、禁止隐式截断、精确数值运行时与 live canary lineage
+  在 development/training/external/freeze 全链路实现；
 - [x] one-standard-error 选择、train-only rule tuning 与 calibration 单用途实现；
 - [x] pre-training internal label seal 与 append-only consumption ledger 实现；
 - [x] Gate M/F/E 数值配置与测试实现；
@@ -422,7 +436,8 @@ attestation，并在 API key 解析与付费调用前 fail closed。
   user-group 多变量 probe 实现；
 - [x] EvoEmo chronology 校验与 3-unit/24-call 数值 order pilot 实现；
 - [x] 所有 V1.5 `--run` 入口统一中央付费门实现；
-- [x] clean venv 下与 CI 一致的裸 `pytest -q` 全量通过；
+- [x] 专用 Python 3.13.2 `.venv-pm-v1-5`、`PYTHONNOUSERSITE=1` 下与 CI 一致的裸
+  `pytest -q` 全量通过；
 - [ ] 新 paid-run 的 dry-run、lineage 人工审查与 approval manifest 完成。
 
 在最后一项完成前，合同状态不得改为 `ACTIVE`。

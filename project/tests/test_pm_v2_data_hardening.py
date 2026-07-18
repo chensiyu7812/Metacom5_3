@@ -1060,6 +1060,8 @@ class _FakeSemanticEncoder:
         snapshot_tree_sha256="2" * 64,
         max_length=128,
         output_dimension=16,
+        current_user_state_token_budget=48,
+        session_summary_token_budget=24,
     )
     binding = SemanticEncoderBinding(
         spec_sha256=spec.digest(),

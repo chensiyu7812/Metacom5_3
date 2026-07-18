@@ -32,6 +32,7 @@ from metacom_pm.evoemo import (
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
 from metacom_pm.io import (
     canonical_json,
+    read_json,
     sha256_file,
     sha256_text,
     write_json,
@@ -292,6 +293,38 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         workdir / "pm_v1_5_transparent_rule.joblib"
     )
     no_step0_checkpoint = _placeholder(workdir / "pm_v1_5_no_step0.joblib")
+    no_state_bge_checkpoint = _placeholder(
+        workdir / "pm_v1_5_no_state_bge.joblib"
+    )
+    lexical_only_checkpoint = _placeholder(
+        workdir / "pm_v1_5_lexical_only.joblib"
+    )
+    rule_grid_report = workdir / "rule_grid_report.json"
+    write_json(
+        rule_grid_report,
+        {
+            "protocol": "pm-v1.5-transparent-rule-grid-diagnostic-v1",
+            "status": "PASS",
+            "outcome_labels_used": False,
+            "internal_states_used": False,
+            "selection_or_retuning_authorized": False,
+            "pm_v1_5_config_sha256": sha256_file(
+                ROOT / "configs" / "pm_v1_5.yaml"
+            ),
+            "states_sha256": sha256_file(states),
+        },
+    )
+    rule_grid_attestation = workdir / "rule_grid_attestation.json"
+    create_artifact_attestation(
+        rule_grid_attestation,
+        stage="pm_v1_5_pre_training_rule_grid_diagnostic",
+        inputs={
+            "pm_v1_5_config": ROOT / "configs" / "pm_v1_5.yaml",
+            "states": states,
+        },
+        outputs={"rule_grid_report": (rule_grid_report, False)},
+        parameters={"outcome_labels_used": False},
+    )
     candidate_manifest = workdir / "candidate_manifest.json"
     sealed_internal_bundle = workdir / "sealed_internal_bundle.json"
     seal_internal_label_bundle(
@@ -305,9 +338,23 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "primary_checkpoint": pm_checkpoint,
             "transparent_rule_checkpoint": transparent_rule_checkpoint,
             "no_step0_checkpoint": no_step0_checkpoint,
+            "no_state_bge_checkpoint": no_state_bge_checkpoint,
+            "lexical_only_checkpoint": lexical_only_checkpoint,
+            "rule_grid_preflight_report": rule_grid_report,
+            "rule_grid_preflight_attestation": rule_grid_attestation,
             "sealed_internal_bundle": sealed_internal_bundle,
         },
-        parameters={"fixture": True},
+        parameters={
+            "semantic_diagnostics_protocol": "pm-v1.5-semantic-diagnostics-v1",
+            "live_training_runtime_contract_sha256": sha256_text(
+                canonical_json(
+                    load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+                        "semantic_runtime"
+                    ]
+                )
+            ),
+            "internal_ablation_results_may_select_candidate": False,
+        },
     )
     internal_consumption_ledger = workdir / "internal_consumption.jsonl"
     begin_internal_test_consumption(
@@ -329,19 +376,47 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             ),
             "internal_test_labels_sha256": sha256_file(internal_test_labels),
             "candidate_manifest_sha256": sha256_file(candidate_manifest),
+            "pre_training_rule_grid_diagnostic": read_json(rule_grid_report),
+            "pre_training_rule_grid_attestation_sha256": read_json(
+                rule_grid_attestation
+            )["attestation_sha256"],
             "transparent_rule_checkpoint_sha256": sha256_file(
                 transparent_rule_checkpoint
             ),
             "no_step0_checkpoint_sha256": sha256_file(no_step0_checkpoint),
+            "no_state_bge_checkpoint_sha256": sha256_file(
+                no_state_bge_checkpoint
+            ),
+            "lexical_only_checkpoint_sha256": sha256_file(
+                lexical_only_checkpoint
+            ),
             "semantic_runtime_verification": {
+                "status": "PASS",
+                "contract": load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+                    "semantic_runtime"
+                ],
                 "contract_sha256": sha256_text(
                     canonical_json(
                         load_config(ROOT / "configs" / "pm_v1_5.yaml")[
                             "semantic_runtime"
                         ]
                     )
-                )
+                ),
             },
+            "live_training_runtime_verification": {
+                "status": "PASS",
+                "contract": load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+                    "semantic_runtime"
+                ],
+                "contract_sha256": sha256_text(
+                    canonical_json(
+                        load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+                            "semantic_runtime"
+                        ]
+                    )
+                ),
+            },
+            "internal_ablation_results_may_select_or_retune_candidate": False,
             "step0_shortcut_audit": {"status": "PASS"},
             "selected_routing_algorithm": "state_centered_paired_delta_hgb",
             "algorithm_selection": {
@@ -581,6 +656,8 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "--internal-consumption-ledger", str(internal_consumption_ledger),
         "--transparent-rule-checkpoint", str(transparent_rule_checkpoint),
         "--no-step0-checkpoint", str(no_step0_checkpoint),
+        "--no-state-bge-checkpoint", str(no_state_bge_checkpoint),
+        "--lexical-only-checkpoint", str(lexical_only_checkpoint),
         "--cost-matched-fixed-checkpoint", str(cost_matched_checkpoint),
         "--me-r0-fixed-checkpoint", str(me_r0_checkpoint),
         "--fixed-baselines-report", str(fixed_baselines_report),

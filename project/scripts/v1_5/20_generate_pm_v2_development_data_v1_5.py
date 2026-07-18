@@ -649,13 +649,11 @@ def main() -> None:
     parser.add_argument(
         "--generation-pilot-attestation",
         type=Path,
-        default=(
-            ROOT
-            / "outputs"
-            / "pm_v1_5_generation_compatibility_pilot_v8_3_candidate"
-            / "artifact_attestation.json"
+        help=(
+            "Explicit fresh PASS casewise surface-only pilot attestation. "
+            "Required for full --run; there is deliberately no default because "
+            "consumed or stale pilot identities must never be inherited."
         ),
-        help="Required PASS casewise surface-only pilot for full --run only.",
     )
     parser.add_argument(
         "--automated-semantic-review-report",
@@ -1324,6 +1322,22 @@ def main() -> None:
             "accepted cost estimate hash does not match the current generation plan"
         )
 
+    if args.generation_pilot_attestation is None:
+        raise RuntimeError(
+            "paid generation requires an explicit fresh "
+            "--generation-pilot-attestation"
+        )
+    stale_pilot_directories = {
+        "pm_v1_5_generation_compatibility_pilot_v8_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_1_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_2_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
+    }
+    if args.generation_pilot_attestation.parent.name in stale_pilot_directories:
+        raise RuntimeError(
+            "paid generation refuses a known consumed/stale compatibility pilot "
+            f"directory: {args.generation_pilot_attestation.parent.name}"
+        )
     generation_pilot_verification = require_generation_compatibility_attestation(
         args.generation_pilot_attestation,
         expected_contract=generation_compatibility_contract,

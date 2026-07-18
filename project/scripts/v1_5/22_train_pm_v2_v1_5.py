@@ -11,6 +11,7 @@ from statistics import NormalDist
 import numpy as np
 import joblib
 
+from metacom_pm.artifacts import require_artifact_attestation
 from metacom_pm.config import load_config
 from metacom_pm.internal_holdout import (
     begin_internal_test_consumption,
@@ -20,6 +21,7 @@ from metacom_pm.internal_holdout import (
 )
 from metacom_pm.pm_v1_5_rule_router import (
     FixedActionBaselineRouter,
+    RULE_GRID_DIAGNOSTIC_PROTOCOL,
     transparent_rule_score_diagnostics,
     transparent_rule_candidates,
     tune_transparent_rule_router,
@@ -69,7 +71,12 @@ from metacom_pm.io import (
     sha256_text,
     write_json,
 )
-from metacom_pm.pm_v1_5_semantic import require_recorded_semantic_runtime
+from metacom_pm.pm_v1_5_semantic import (
+    FrozenTransformerSemanticEncoder,
+    require_recorded_semantic_runtime,
+    require_semantic_runtime_contract,
+    semantic_encoder_spec_from_config,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -885,6 +892,26 @@ def main() -> None:
         type=Path,
         default=ROOT / "data" / "pm_v1_5" / "artifact_attestation.json",
     )
+    parser.add_argument(
+        "--rule-grid-preflight-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_rule_grid_preflight"
+            / "rule_grid_report.json"
+        ),
+    )
+    parser.add_argument(
+        "--rule-grid-preflight-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_rule_grid_preflight"
+            / "artifact_attestation.json"
+        ),
+    )
     parser.add_argument("--run-identity", required=True)
     parser.add_argument("--seed", type=int, default=1701)
     parser.add_argument("--allow-nonreportable", action="store_true")
@@ -938,6 +965,17 @@ def main() -> None:
             "selection.uncertainty_z"
         )
 
+    # Training itself uses Python/NumPy/SciPy/scikit-learn numerics.  Re-run the
+    # exact live contract here instead of trusting only the environment that
+    # generated the already-embedded development features.
+    live_training_encoder = FrozenTransformerSemanticEncoder.load(
+        semantic_encoder_spec_from_config(pm_config)
+    )
+    live_training_runtime_verification = require_semantic_runtime_contract(
+        pm_config, live_training_encoder
+    )
+    del live_training_encoder
+
     states = load_states(args.states)
     development_data_report_path = args.states.parent / "pm_v2_data_report.json"
     if not development_data_report_path.is_file():
@@ -946,16 +984,49 @@ def main() -> None:
     semantic_runtime_verification = require_recorded_semantic_runtime(
         pm_config, development_data_report.get("semantic_runtime") or {}
     )
+    if (
+        live_training_runtime_verification.get("contract_sha256")
+        != semantic_runtime_verification.get("contract_sha256")
+    ):
+        raise RuntimeError(
+            "live training runtime differs from development semantic runtime"
+        )
     semantic_diagnostic_cfg = pm_config.get("semantic_diagnostics") or {}
     if semantic_diagnostic_cfg.get("protocol") != (
         "pm-v1.5-semantic-diagnostics-v1"
+    ) or (
+        list(
+            semantic_diagnostic_cfg.get(
+                "pre_freeze_design_distribution_splits"
+            )
+            or []
+        )
+        != ["train", "calibration"]
+        or semantic_diagnostic_cfg.get("internal_feature_distribution_role")
+        != "preconsumption_report_only_no_outcomes"
+        or semantic_diagnostic_cfg.get(
+            "internal_results_must_not_select_or_retune_candidates"
+        )
+        is not True
+        or semantic_diagnostic_cfg.get(
+            "development_external_centroid_scale_comparison_required"
+        )
+        is not True
     ):
         raise RuntimeError("training lacks the frozen semantic diagnostic contract")
     development_truncation = development_data_report.get("semantic_truncation") or {}
     if (
         semantic_diagnostic_cfg.get("current_user_text_truncation_must_be_zero")
         is not True
+        or semantic_diagnostic_cfg.get(
+            "implicit_visible_state_truncation_must_be_zero"
+        )
+        is not True
         or development_truncation.get("current_user_text_complete") is not True
+        or development_truncation.get(
+            "implicit_visible_state_truncation_complete"
+        )
+        is not True
         or int(development_truncation.get("telemetry_unavailable_state_count", -1))
         != 0
     ):
@@ -967,8 +1038,11 @@ def main() -> None:
     ) or {}
     if (
         readiness_challenge.get("protocol")
-        != "pm-v1.5-readiness-natural-language-challenge-v1"
+        != "pm-v1.5-readiness-natural-language-challenge-v2"
         or readiness_challenge.get("role") != "report_only_not_outcome_gate"
+        or not str(readiness_challenge.get("status") or "").startswith(
+            "REPORT_ONLY_"
+        )
     ):
         raise RuntimeError("development readiness challenge report is absent or stale")
     evaluator_contexts = load_evaluator_context_index(
@@ -1003,6 +1077,25 @@ def main() -> None:
         split.value: transparent_rule_score_diagnostics(rows)
         for split, rows in states_by_split.items()
     }
+    rule_grid_attestation = require_artifact_attestation(
+        args.rule_grid_preflight_attestation,
+        required_stage="pm_v1_5_pre_training_rule_grid_diagnostic",
+        required_output_paths={
+            "rule_grid_report": args.rule_grid_preflight_report
+        },
+    )
+    rule_grid_preflight = read_json(args.rule_grid_preflight_report)
+    if (
+        rule_grid_preflight.get("protocol") != RULE_GRID_DIAGNOSTIC_PROTOCOL
+        or rule_grid_preflight.get("status") != "PASS"
+        or rule_grid_preflight.get("outcome_labels_used") is not False
+        or rule_grid_preflight.get("internal_states_used") is not False
+        or rule_grid_preflight.get("selection_or_retuning_authorized") is not False
+        or rule_grid_preflight.get("pm_v1_5_config_sha256")
+        != sha256_file(args.pm_v2_config)
+        or rule_grid_preflight.get("states_sha256") != sha256_file(args.states)
+    ):
+        raise RuntimeError("training requires the exact PASS rule-grid preflight")
     split_manifest = validate_split_manifests(states_by_split)
     near_duplicate_cfg = pm_config["splits"]["near_duplicate_audit"]
     if near_duplicate_cfg.get("method") != (
@@ -1462,6 +1555,10 @@ def main() -> None:
             ),
             "development_data_attestation": args.development_data_attestation,
             "development_data_report": development_data_report_path,
+            "rule_grid_preflight_report": args.rule_grid_preflight_report,
+            "rule_grid_preflight_attestation": (
+                args.rule_grid_preflight_attestation
+            ),
             "sealed_internal_bundle": args.sealed_internal_bundle,
         },
         parameters={
@@ -1471,6 +1568,9 @@ def main() -> None:
             "semantic_runtime_contract_sha256": semantic_runtime_verification[
                 "contract_sha256"
             ],
+            "live_training_runtime_contract_sha256": (
+                live_training_runtime_verification["contract_sha256"]
+            ),
             "semantic_diagnostics_protocol": semantic_diagnostic_cfg["protocol"],
             "internal_ablation": selected_algorithm + "_without_step0",
             "internal_ablation_without_state_bge": (
@@ -1713,6 +1813,9 @@ def main() -> None:
             development_data_report_path
         ),
         "semantic_runtime_verification": semantic_runtime_verification,
+        "live_training_runtime_verification": (
+            live_training_runtime_verification
+        ),
         "development_semantic_truncation": development_truncation,
         "readiness_natural_language_challenge": readiness_challenge,
         "semantic_diagnostics_contract": semantic_diagnostic_cfg,
@@ -1764,6 +1867,10 @@ def main() -> None:
         "calibration": tuning,
         "transparent_rule_train_only_tuning": rule_tuning,
         "step0_score_diagnostics_by_split": step0_score_diagnostics_by_split,
+        "pre_training_rule_grid_diagnostic": rule_grid_preflight,
+        "pre_training_rule_grid_attestation_sha256": rule_grid_attestation[
+            "attestation_sha256"
+        ],
         "internal_only_ablation_calibration": {
             "without_step0": no_step0_diagnostic,
             "without_state_bge": no_state_bge_diagnostic,
