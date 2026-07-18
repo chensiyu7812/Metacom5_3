@@ -305,6 +305,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-ENG-02 | C2 | workflow path filter 未覆盖全部 V1.5 文件 | 触发范围改为 `project/**` | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-ENG-03 | C2 | legacy V9 硬编码 `/home` 和旧全局 study freeze hash 阻断新 preflight | 移除机器路径；旧 freeze 标 `STALE_HISTORICAL_FREEZE/confirmatory_only`，不原地刷新 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-ENG-04 | C2 | static scan 曾漏掉顶层 `scripts/v1_5_*.py` | release/freeze scan 覆盖所有 active V1.5 scripts | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-ENG-05 | C2 | 本地已缓存 BGE，使纯 freeze/external wiring 单测隐式解析真实 snapshot；GitHub clean offline cache 因而 10 项失败 | wiring fixture 只构造与精确 spec/tree 绑定的类型化假 binding；生产 freeze resolver 完全不改、仍 local-only fail-closed；全仓库测试另以空 `HF_HOME` + offline 环境执行 | `CODE_CLOSED_EMPTY_CACHE_PASS_CI_PENDING` |
 | V15-REL-01 | C0 | `PAID_RUN_BLOCKED` 一度只是文档说明，各入口可直接 `--run` | 中央 release gate；每 stage 绑定 config/revision/run/cost hash | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-02 | C0 | 旧 pilot、partial attempts、旧 cost hash 或旧 PASS 可能被拼接复用 | immutable fresh output dir；旧 lineage 一律 stale；不覆盖、不拼接 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-03 | C1 | API 失败被误解为额度问题，或未知 attempt 被盲重试 | HTTP 前 ledger fsync；unknown 视为已花费；仅 429 支持限流判断 | `CODE_CLOSED_RUN_UNVERIFIED` |

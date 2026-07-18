@@ -44,6 +44,10 @@ from metacom_pm.internal_holdout import (
     seal_internal_label_bundle,
 )
 from metacom_pm.pm_v22_reference_baselines import PMV22_REFERENCE_BASELINE_STAGE
+from metacom_pm.pm_v1_5_semantic import (
+    SemanticEncoderBinding,
+    semantic_encoder_spec_from_config,
+)
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -223,6 +227,30 @@ def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
 
 def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "pm-checkpoint"):
     module = _load_module("scripts/v1_5_create_freeze.py", "v1_5_create_freeze_test")
+    # These are contract-wiring tests, not model-distribution tests.  CI uses a
+    # clean, offline Hugging Face cache, so bind the exact frozen spec/tree to a
+    # deterministic fixture record without resolving or loading model weights.
+    # Production freeze creation still calls the real local-only resolver and
+    # fails closed if the pinned snapshot is absent or its tree hash drifts.
+    semantic_spec = semantic_encoder_spec_from_config(
+        load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    )
+    fixture_semantic_binding = SemanticEncoderBinding(
+        spec_sha256=semantic_spec.digest(),
+        snapshot_tree_sha256=semantic_spec.snapshot_tree_sha256,
+        snapshot_file_count=1,
+        implementation="transformers-auto-model-cls-float32",
+    )
+
+    def _fixture_semantic_resolver(requested_spec):
+        assert requested_spec == semantic_spec
+        return workdir / "offline-semantic-snapshot-fixture", fixture_semantic_binding
+
+    monkeypatch.setattr(
+        module,
+        "resolve_semantic_encoder_binding",
+        _fixture_semantic_resolver,
+    )
     pm_checkpoint = _placeholder(workdir / "pm_v1_5.joblib", pm_checkpoint_content)
     states = workdir / "pm_v2_states.jsonl"
     labels = workdir / "action_labels.jsonl"
@@ -663,6 +691,20 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
         "memory_min_score": 0.0,
         "strategy_min_score": 0.0,
     }
+    semantic_spec = semantic_encoder_spec_from_config(
+        load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    )
+    assert generation_contract["semantic_encoder_spec"] == semantic_spec.model_dump(
+        mode="json"
+    )
+    assert generation_contract["semantic_encoder_binding"] == (
+        SemanticEncoderBinding(
+            spec_sha256=semantic_spec.digest(),
+            snapshot_tree_sha256=semantic_spec.snapshot_tree_sha256,
+            snapshot_file_count=1,
+            implementation="transformers-auto-model-cls-float32",
+        ).model_dump(mode="json")
+    )
     assert notes["bank_seed_lineage"]["strategy_bank_cards"] == 11_590
     assert notes["bank_seed_lineage"]["strategy_source_dialogues"] == 823
     assert notes["bank_seed_lineage"]["selected_seed_sources"] == 52
