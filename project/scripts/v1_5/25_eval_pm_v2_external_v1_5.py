@@ -10,7 +10,7 @@ cross-validation layer. The shared evaluator's PM-v2.2-specific forced-swap
 the separately persisted paired non-inferiority/cost confidence intervals;
 the canary is transport/judge validation, not evidence that PM helps.
 
-The final scoring layer is V1.5-specific: seven anonymous conditions are scored
+The final scoring layer is V1.5-specific: five claim-relevant anonymous conditions are scored
 together. GPT-4o is the full primary quality judge, Claude is a frozen stratified
 sensitivity judge, and evidence-use risk is a separate stratified audit. The
 legacy pointwise scorer remains in the repository but is not this main path.
@@ -56,6 +56,7 @@ from metacom_pm.v1_5_forced_swap_canary import (
 from metacom_pm.v1_5_latency import (
     PROTOCOL as LATENCY_DIAGNOSTIC_PROTOCOL,
     build_descriptive_latency_report,
+    build_separated_resource_report,
 )
 from metacom_pm.pm_v2_judging import (
     composite_spec_from_config,
@@ -133,6 +134,10 @@ def main() -> None:
         default=[
             ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v1_5" / "turns.jsonl",
+            ROOT
+            / "outputs"
+            / "evoemo_pm_v1_5_transparent_rule"
+            / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v1_5_me_r0_fixed" / "turns.jsonl",
         ],
@@ -144,6 +149,10 @@ def main() -> None:
         default=[
             ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v1_5" / "artifact_attestation.json",
+            ROOT
+            / "outputs"
+            / "evoemo_pm_v1_5_transparent_rule"
+            / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v1_5_me_r0_fixed" / "artifact_attestation.json",
         ],
@@ -507,9 +516,18 @@ def main() -> None:
                 ),
             )
         )
-    if set(conditions) != attested_conditions:
+    secondary_conditions = {
+        str(value)
+        for value in external_contract.get("secondary_conditions") or []
+    }
+    unknown_attested = attested_conditions - set(conditions) - secondary_conditions
+    if unknown_attested:
         raise RuntimeError(
-            "generation attestations do not exactly cover the frozen conditions"
+            f"generation attestations contain unfrozen conditions: {sorted(unknown_attested)}"
+        )
+    if set(conditions) != (attested_conditions & set(conditions)):
+        raise RuntimeError(
+            "generation attestations do not cover every frozen primary condition"
         )
 
     latency_contract = external_contract.get("latency_diagnostic") or {}
@@ -530,12 +548,31 @@ def main() -> None:
         for key, expected in latency_contract.items()
     ):
         raise RuntimeError("latency diagnostic output violates the frozen contract")
+    resource_contract = external_contract.get("resource_accounting") or {}
+    if resource_contract.get("aggregation") != "separate_metrics_no_composite_cost":
+        raise RuntimeError("study freeze resource-accounting contract is stale")
+    resource_accounting = build_separated_resource_report(
+        validated_turn_rows,
+        conditions=conditions,
+        expected_units=expected_units,
+        generator_pricing_usd_per_mtok=resource_contract[
+            "generator_pricing_usd_per_mtok"
+        ],
+    )
+    if (
+        resource_accounting.get("protocol") != resource_contract.get("protocol")
+        or resource_accounting.get("aggregation")
+        != resource_contract.get("aggregation")
+    ):
+        raise RuntimeError("resource-accounting output violates the freeze")
     args.out_dir.mkdir(parents=True, exist_ok=True)
     latency_path = args.out_dir / "latency_diagnostic.json"
+    resource_path = args.out_dir / "resource_accounting.json"
     latency_attestation_path = (
         args.out_dir / "latency_diagnostic_attestation.json"
     )
     write_json(latency_path, latency_diagnostic)
+    write_json(resource_path, resource_accounting)
     create_artifact_attestation(
         latency_attestation_path,
         stage="pm_v1_5_descriptive_latency",
@@ -550,8 +587,14 @@ def main() -> None:
                 for index, path in enumerate(args.generation_attestations)
             },
         },
-        outputs={"latency_diagnostic": (latency_path, False)},
-        parameters={"contract": latency_contract},
+        outputs={
+            "latency_diagnostic": (latency_path, False),
+            "resource_accounting": (resource_path, False),
+        },
+        parameters={
+            "latency_contract": latency_contract,
+            "resource_accounting_contract": resource_contract,
+        },
         expected={"conditions": len(conditions), "units": len(expected_units)},
         study_freeze_sha256=freeze_sha,
     )
@@ -643,7 +686,11 @@ def main() -> None:
         max_input_tokens_per_call=args.max_input_tokens_per_call,
         overwrite=args.overwrite,
     )
-    result = {**result, "latency_diagnostic": latency_diagnostic}
+    result = {
+        **result,
+        "latency_diagnostic": latency_diagnostic,
+        "resource_accounting": resource_accounting,
+    }
     if args.run:
         claim_assessment = assess_external_claims(
             result, external_contract["claim_assessment"]
@@ -664,6 +711,7 @@ def main() -> None:
                 "external_summary": args.out_dir / "summary.json",
                 "external_attestation": args.out_dir / "artifact_attestation.json",
                 "latency_diagnostic": latency_path,
+                "resource_accounting": resource_path,
                 "latency_diagnostic_attestation": latency_attestation_path,
             },
             outputs={"claim_assessment": (claim_path, False)},

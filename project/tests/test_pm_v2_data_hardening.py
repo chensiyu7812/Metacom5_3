@@ -17,7 +17,13 @@ import yaml
 from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.api import CallResult, Endpoint, StructuredOutputValidationError
 from metacom_pm import pm_v2_data as pm_v2_data_module
-from metacom_pm.contracts import DialogueTurn, MemoryItem, MemorySource, RuntimeState
+from metacom_pm.contracts import (
+    DialogueTurn,
+    MemoryItem,
+    MemorySource,
+    RuntimeState,
+    StrategyCard,
+)
 from metacom_pm.attempt_ledger import PersistentAttemptLedger
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.evoemo import _catalog, build_evo_memory, load_evoemo
@@ -67,6 +73,7 @@ from metacom_pm.pm_v2_data import (
     write_development_dataset,
 )
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
+from metacom_pm.pm_v1_5_required_hit import validate_required_hit_preflight
 from metacom_pm.pm_v2_judging import prompt_contract_hash
 from metacom_pm.pm_v2_generation_pilot import (
     CALIBRATION_SEMANTIC_FAMILIES,
@@ -961,6 +968,20 @@ def test_development_and_external_catalogs_have_golden_feature_parity() -> None:
         strategy_catalog_count=development.strategy_catalog_count,
         strategy_estimated_tokens=development.strategy_estimated_tokens,
     )
+    fixed_policy_state = runtime_to_pmv2_state(
+        runtime,
+        strategy_catalog_count=development.strategy_catalog_count,
+        strategy_estimated_tokens=development.strategy_estimated_tokens,
+        include_step0_observation=False,
+    )
+
+    assert fixed_policy_state.step0_observation is None
+    assert all(
+        summary.query_similarity_mean == 0.0
+        and not summary.representation_valid
+        and summary.catalog_embedding == []
+        for summary in fixed_policy_state.inventory.values()
+    )
 
     for source in MemorySource:
         assert development.inventory[source].model_dump() == external.inventory[
@@ -1020,6 +1041,9 @@ def test_memory_metadata_uses_retrieval_capacity_not_catalog_tail() -> None:
                 "max_age_sessions": 5,
             }
         )
+        # This test deliberately mutates the legacy inventory scale. Drop the
+        # now-stale formal Step-0 snapshot so the builder recomputes it.
+        payload["step0_observation"] = None
     small = PMV2State.model_validate_json(json.dumps(small_payload))
     large = PMV2State.model_validate_json(json.dumps(large_payload))
     builder = PMV2FeatureBuilder(
@@ -1038,6 +1062,51 @@ def test_memory_metadata_uses_retrieval_capacity_not_catalog_tail() -> None:
     )
     assert builder.estimate_action_cost(small, "MP+R0") == pytest.approx(224.0)
     assert builder.estimate_action_cost(large, "MP+R0") == pytest.approx(224.0)
+
+
+def test_required_hit_preflight_runs_before_outcomes_and_fails_closed() -> None:
+    case = _case(
+        case_id="required_hit",
+        regime=ResourceNeedRegime.EVENT_NEEDED,
+    )
+    state = case_to_state(
+        user_id="required_hit_user",
+        case=case,
+        split=PMV2Split.TRAIN,
+        strategy_catalog_count=1,
+        strategy_estimated_tokens=40,
+    )
+    backend = case_to_memory_backend(state, case)
+    strategy = StrategyCard(
+        strategy_id="strat_aaaaaaaaaaaa",
+        strategy_label="Reflection of feelings",
+        retrieval_text="difficult workplace conversation and uncertainty",
+        guidance_text="Reflect the uncertainty.",
+        example_response="That uncertainty sounds tiring.",
+        source_dialogue_id="d1",
+        source_turn_index=1,
+    )
+    report = validate_required_hit_preflight(
+        states=[state],
+        cases_by_state={state.state_id: case},
+        backends_by_state={state.state_id: backend},
+        strategy_cards=[strategy],
+        strategy_top_k=1,
+        memory_min_score=0.0,
+        strategy_min_score=0.0,
+    )
+    assert report["status"] == "PASS"
+    assert report["outcome_fields_accessed"] is False
+    with pytest.raises(RuntimeError, match="required-hit"):
+        validate_required_hit_preflight(
+            states=[state],
+            cases_by_state={state.state_id: case},
+            backends_by_state={state.state_id: backend},
+            strategy_cards=[strategy],
+            strategy_top_k=1,
+            memory_min_score=1.0,
+            strategy_min_score=0.0,
+        )
 
 
 def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> None:
@@ -1072,6 +1141,7 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
                     "estimated_tokens": count * (12 + 4 * count),
                 }
             )
+        payload["step0_observation"] = None
         synthetic_states.append(PMV2State.model_validate_json(json.dumps(payload)))
 
     builder = PMV2FeatureBuilder(

@@ -51,6 +51,13 @@ LEARNED_SELECTION_REASON = (
     "resource-benefit, strategy-benefit and cost terms"
 )
 
+ROUTING_ALGORITHMS = (
+    "absolute_outcome_factorized_hgb",
+    "state_centered_paired_delta_hgb",
+    "rule_relative_safe_residual_hgb",
+    "group_rank_hgb",
+)
+
 
 class SelectionConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
@@ -236,6 +243,11 @@ class PMV2Model:
     conformal_calibration_report: dict[str, Any] = field(default_factory=dict)
     format_version: str = "pm-v2.1"
     training_report: dict[str, Any] = field(default_factory=dict)
+    routing_algorithm: str = "absolute_outcome_factorized_hgb"
+    routing_objective_head: BootstrapRegressor | None = None
+    routing_rule_router: Any | None = None
+    routing_safe_thresholds: dict[str, float] = field(default_factory=dict)
+    routing_objective_report: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def train(
@@ -251,6 +263,7 @@ class PMV2Model:
         use_precomputed_embeddings: bool = True,
         word_features: int = 256,
         char_features: int = 256,
+        step0_signal_mode: str = "full",
     ) -> "PMV2Model":
         effective_selection = selection_config or SelectionConfig()
         state_map = {state.state_id: state for state in states}
@@ -315,6 +328,7 @@ class PMV2Model:
             word_features=word_features,
             char_features=char_features,
             use_precomputed_embeddings=use_precomputed_embeddings,
+            step0_signal_mode=step0_signal_mode,
         ).fit(unique_states)
         allowed_group_keys = {"user_id", "state_id", "card_id", "semantic_family"}
         if bootstrap_group_key not in allowed_group_keys:
@@ -327,15 +341,35 @@ class PMV2Model:
         groups = [
             str(getattr(state_map[label.state_id], bootstrap_group_key)) for label in usable
         ]
-        state_action_counts: dict[str, int] = {}
+        # Equalize states and, within a state, equalize unique paid/judged prompt
+        # outcomes.  Requested-action aliases retain distinct labels and costs but
+        # cannot multiply one shared response into independent outcome evidence.
+        alias_raw_weights: list[float] = []
+        equivalence_ids_by_state: dict[str, set[str]] = {}
         for label in usable:
-            state_action_counts[label.state_id] = (
-                state_action_counts.get(label.state_id, 0) + 1
+            provenance = label.provenance
+            equivalence_id = str(
+                provenance.get("prompt_equivalence_id")
+                or f"legacy:{label.action_id}"
             )
-        # Equalize states, while the bootstrap resamples the configured higher-level
-        # group (user_id by default) to preserve within-user state dependence.
+            class_size = int(provenance.get("prompt_equivalence_class_size") or 1)
+            if class_size < 1:
+                raise ValueError("prompt-equivalence class size must be positive")
+            alias_raw_weights.append(1.0 / class_size)
+            equivalence_ids_by_state.setdefault(label.state_id, set()).add(
+                equivalence_id
+            )
+        state_raw_totals: dict[str, float] = {}
+        for label, raw_weight in zip(usable, alias_raw_weights, strict=True):
+            state_raw_totals[label.state_id] = (
+                state_raw_totals.get(label.state_id, 0.0) + raw_weight
+            )
         state_weights = np.asarray(
-            [1.0 / state_action_counts[label.state_id] for label in usable], dtype=float
+            [
+                raw_weight / state_raw_totals[label.state_id]
+                for label, raw_weight in zip(usable, alias_raw_weights, strict=True)
+            ],
+            dtype=float,
         )
 
         def mad_weight(label: ActionLabel, *, prefix: str, field_name: str) -> float:
@@ -412,9 +446,22 @@ class PMV2Model:
             "word_hash_features": word_features,
             "char_hash_features": char_features,
             "use_precomputed_embeddings": use_precomputed_embeddings,
+            "step0_signal_mode": step0_signal_mode,
             "m0_r0_coverage": 1.0,
             "complete_legal_action_coverage": 1.0,
             "row_reliability_used_for_filtering": False,
+            "prompt_equivalence_weighting": {
+                "protocol": "inverse-alias-class-then-equalize-state-v1",
+                "unique_prompt_outcomes": int(
+                    sum(len(values) for values in equivalence_ids_by_state.values())
+                ),
+                "alias_rows": int(
+                    len(usable)
+                    - sum(
+                        len(values) for values in equivalence_ids_by_state.values()
+                    )
+                ),
+            },
             "dimension_mad_weighting": {
                 "formula": "1 / (1 + (dimension_mad / scale)^2)",
                 "scale": float(dimension_mad_scale),
@@ -439,6 +486,164 @@ class PMV2Model:
             selection_config=effective_selection,
             training_report=report,
         )
+
+    def fit_routing_objective(
+        self,
+        states: Sequence[PMV2State],
+        labels: Sequence[ActionLabel],
+        *,
+        algorithm: str,
+        n_models: int,
+        seed: int,
+        bootstrap_group_key: str = "user_id",
+        rule_router: Any | None = None,
+        safe_thresholds: dict[str, float] | None = None,
+    ) -> "PMV2Model":
+        """Fit the train-only action-ranking head over the frozen safety model.
+
+        Response and risk heads remain absolute-outcome models for calibrated
+        ceilings.  Delta/ranking candidates affect only ordering among actions
+        that pass those same absolute gates.
+        """
+
+        if algorithm not in ROUTING_ALGORITHMS:
+            raise ValueError(f"unsupported routing algorithm: {algorithm}")
+        self.routing_algorithm = str(algorithm)
+        self.routing_rule_router = rule_router
+        self.routing_safe_thresholds = {
+            str(key): float(value) for key, value in (safe_thresholds or {}).items()
+        }
+        if algorithm == "absolute_outcome_factorized_hgb":
+            self.routing_objective_head = None
+            self.routing_objective_report = {
+                "algorithm": algorithm,
+                "target": "absolute_response_and_risk_heads",
+                "n_rows": len(labels),
+            }
+            self.training_report["routing_objective"] = dict(
+                self.routing_objective_report
+            )
+            return self
+
+        state_map = {state.state_id: state for state in states}
+        if len(state_map) != len(states) or not state_map:
+            raise ValueError("routing objective requires unique non-empty states")
+        label_map = {(label.state_id, label.action_id): label for label in labels}
+        expected = {
+            (state.state_id, action_id)
+            for state in states
+            for action_id in state.allowed_actions
+        }
+        if set(label_map) != expected:
+            raise ValueError("routing objective requires the complete action matrix")
+        if bootstrap_group_key not in {
+            "user_id",
+            "state_id",
+            "card_id",
+            "semantic_family",
+        }:
+            raise ValueError("unsupported routing-objective bootstrap group key")
+        if algorithm == "rule_relative_safe_residual_hgb" and rule_router is None:
+            raise ValueError("rule-relative residual requires a frozen rule router")
+
+        rows: list[tuple[PMV2State, str]] = []
+        raw_utility: dict[tuple[str, str], float] = {}
+        alias_weights: dict[tuple[str, str], float] = {}
+        for state in sorted(states, key=lambda value: value.state_id):
+            cost_profile = estimated_action_cost_profile(self.feature_builder, state)
+            for action_id in state.allowed_actions:
+                label = label_map[(state.state_id, action_id)]
+                quality = self.selection_config.composite_spec.score(label.response)
+                risk = max(
+                    float(getattr(label.risk, name)) / 3.0
+                    for name in applicable_risk_fields(action_id)
+                )
+                raw_utility[(state.state_id, action_id)] = float(
+                    quality
+                    - self.selection_config.risk_weight * risk
+                    - self.selection_config.cost_weight
+                    * cost_profile[action_id][
+                        "normalized_estimated_resource_cost"
+                    ]
+                )
+                class_size = int(
+                    label.provenance.get("prompt_equivalence_class_size") or 1
+                )
+                if class_size < 1:
+                    raise ValueError("prompt-equivalence class size must be positive")
+                alias_weights[(state.state_id, action_id)] = 1.0 / class_size
+                rows.append((state, action_id))
+
+        targets: list[float] = []
+        rule_actions: dict[str, str] = {}
+        for state in sorted(states, key=lambda value: value.state_id):
+            utilities = np.asarray(
+                [raw_utility[(state.state_id, action)] for action in state.allowed_actions],
+                dtype=float,
+            )
+            if algorithm == "state_centered_paired_delta_hgb":
+                transformed = utilities - float(np.mean(utilities))
+            elif algorithm == "group_rank_hgb":
+                ranks = _average_ranks(utilities)
+                transformed = (
+                    (ranks - 1.0) / max(len(ranks) - 1.0, 1.0)
+                )
+            else:
+                rule_action = str(rule_router.choose_action(state))
+                if rule_action not in state.allowed_actions:
+                    raise RuntimeError(
+                        f"rule router produced illegal training action {rule_action}"
+                    )
+                rule_actions[state.state_id] = rule_action
+                transformed = utilities - raw_utility[(state.state_id, rule_action)]
+            targets.extend(float(value) for value in transformed)
+
+        x = self.feature_builder.transform(rows)
+        groups = [
+            str(getattr(state, bootstrap_group_key)) for state, _ in rows
+        ]
+        state_totals: dict[str, float] = {}
+        for state, action_id in rows:
+            state_totals[state.state_id] = state_totals.get(state.state_id, 0.0) + (
+                alias_weights[(state.state_id, action_id)]
+            )
+        weights = np.asarray(
+            [
+                alias_weights[(state.state_id, action_id)]
+                / state_totals[state.state_id]
+                for state, action_id in rows
+            ],
+            dtype=float,
+        )
+        self.routing_objective_head = BootstrapRegressor(
+            n_models=int(n_models), seed=int(seed) + 211
+        ).fit(x, np.asarray(targets, dtype=float), groups, weights)
+        self.routing_objective_report = {
+            "algorithm": algorithm,
+            "target": {
+                "state_centered_paired_delta_hgb": "state_centered_realized_utility",
+                "rule_relative_safe_residual_hgb": "realized_utility_minus_rule_action",
+                "group_rank_hgb": "within_state_normalized_utility_rank",
+            }[algorithm],
+            "n_states": len(states),
+            "n_rows": len(rows),
+            "bootstrap_group_key": bootstrap_group_key,
+            "bootstrap_unique_groups": len(set(groups)),
+            "rule_action_distribution": dict(
+                sorted(
+                    {
+                        action: list(rule_actions.values()).count(action)
+                        for action in set(rule_actions.values())
+                    }.items()
+                )
+            ),
+            "safe_thresholds": dict(self.routing_safe_thresholds),
+            "fit_diagnostics": dict(self.routing_objective_head.fit_diagnostics),
+        }
+        self.training_report["routing_objective"] = dict(
+            self.routing_objective_report
+        )
+        return self
 
     def save(self, path: str | Path) -> None:
         path = Path(path)
@@ -685,6 +890,85 @@ class PMV2Model:
             )
         return predictions
 
+    def _routing_scores(self, state: PMV2State) -> dict[str, dict[str, Any]]:
+        if self.routing_objective_head is None:
+            raise RuntimeError(
+                f"routing algorithm {self.routing_algorithm} lacks its objective head"
+            )
+        actions = list(state.allowed_actions)
+        x = self.feature_builder.transform([(state, action) for action in actions])
+        members = self.routing_objective_head.predict_members(x)
+        if members.shape[1] != len(actions):
+            raise RuntimeError("routing objective returned the wrong action count")
+        z = self.selection_config.uncertainty_z
+        return {
+            action: {
+                "members": members[:, index],
+                "mean": float(np.mean(members[:, index])),
+                "lcb": float(
+                    np.mean(members[:, index])
+                    - z * np.std(members[:, index], ddof=0)
+                ),
+            }
+            for index, action in enumerate(actions)
+        }
+
+    def _safe_residual_candidate(
+        self,
+        *,
+        candidate: str,
+        baseline: str,
+        predictions: dict[str, ActionPrediction],
+        routing_scores: dict[str, dict[str, Any]],
+    ) -> tuple[bool, dict[str, float]]:
+        thresholds = self.routing_safe_thresholds
+        required = {
+            "minimum_quality_delta_lcb",
+            "minimum_emotional_support_delta_lcb",
+            "maximum_risk_delta_ucb",
+            "minimum_utility_delta_lcb",
+        }
+        if set(thresholds) != required:
+            raise RuntimeError(
+                "rule-relative residual safe thresholds do not match the contract"
+            )
+        candidate_prediction = predictions[candidate]
+        baseline_prediction = predictions[baseline]
+        quality_delta_lcb = float(
+            candidate_prediction.quality_lcb - baseline_prediction.quality_mean
+        )
+        candidate_support = candidate_prediction.response["emotional_support"]
+        baseline_support = baseline_prediction.response["emotional_support"]
+        support_delta_lcb = float(
+            (candidate_support.lower - baseline_support.mean) / 4.0
+        )
+        risk_delta_ucb = float(
+            candidate_prediction.risk_ucb - baseline_prediction.risk_ucb
+        )
+        paired_members = (
+            routing_scores[candidate]["members"]
+            - routing_scores[baseline]["members"]
+        )
+        utility_delta_lcb = float(
+            np.mean(paired_members)
+            - self.selection_config.uncertainty_z
+            * np.std(paired_members, ddof=0)
+        )
+        diagnostics = {
+            "quality_delta_lcb": quality_delta_lcb,
+            "emotional_support_delta_lcb": support_delta_lcb,
+            "risk_delta_ucb": risk_delta_ucb,
+            "utility_delta_lcb": utility_delta_lcb,
+        }
+        passed = (
+            quality_delta_lcb >= thresholds["minimum_quality_delta_lcb"]
+            and support_delta_lcb
+            >= thresholds["minimum_emotional_support_delta_lcb"]
+            and risk_delta_ucb <= thresholds["maximum_risk_delta_ucb"]
+            and utility_delta_lcb > thresholds["minimum_utility_delta_lcb"]
+        )
+        return bool(passed), diagnostics
+
     def choose(self, state: PMV2State) -> PolicyDecision:
         ood = self.feature_builder.ood_report(state)
         predictions = self.predict_actions(state)
@@ -710,7 +994,7 @@ class PMV2Model:
                 # This is deliberately not an OOD fallback. The machine-readable
                 # decision reason lets evaluation count it separately.
                 fallback_used = False
-            else:
+            elif self.routing_algorithm == "absolute_outcome_factorized_hgb":
                 selected = max(
                     candidates,
                     key=lambda item: (
@@ -724,6 +1008,67 @@ class PMV2Model:
                 chosen = selected.action_id
                 reason = LEARNED_SELECTION_REASON
                 fallback_used = False
+            else:
+                if self.routing_algorithm not in ROUTING_ALGORITHMS:
+                    raise RuntimeError(
+                        f"checkpoint has unknown routing algorithm: {self.routing_algorithm}"
+                    )
+                routing_scores = self._routing_scores(state)
+                candidate_ids = [row.action_id for row in candidates]
+                if self.routing_algorithm == "rule_relative_safe_residual_hgb":
+                    if self.routing_rule_router is None:
+                        raise RuntimeError(
+                            "rule-relative residual checkpoint lacks its rule router"
+                        )
+                    baseline = str(self.routing_rule_router.choose_action(state))
+                    if baseline not in predictions:
+                        raise RuntimeError(
+                            f"residual baseline {baseline} is illegal for {state.state_id}"
+                        )
+                    safe_overrides = []
+                    for action_id in candidate_ids:
+                        if action_id == baseline:
+                            continue
+                        passed, diagnostics = self._safe_residual_candidate(
+                            candidate=action_id,
+                            baseline=baseline,
+                            predictions=predictions,
+                            routing_scores=routing_scores,
+                        )
+                        if passed:
+                            safe_overrides.append((action_id, diagnostics))
+                    if safe_overrides:
+                        chosen = max(
+                            safe_overrides,
+                            key=lambda item: (
+                                item[1]["utility_delta_lcb"],
+                                routing_scores[item[0]]["lcb"],
+                                item[0],
+                            ),
+                        )[0]
+                        reason = LEARNED_SELECTION_REASON
+                        fallback_used = False
+                    elif baseline in candidate_ids:
+                        chosen = baseline
+                        reason = LEARNED_SELECTION_REASON
+                        fallback_used = False
+                    else:
+                        chosen = fallback
+                        reason = NO_FEASIBLE_FALLBACK_REASON
+                        fallback_used = False
+                else:
+                    chosen = max(
+                        candidate_ids,
+                        key=lambda action_id: (
+                            routing_scores[action_id]["lcb"],
+                            predictions[action_id].quality_lcb,
+                            -predictions[action_id].risk_ucb,
+                            -predictions[action_id].estimated_cost,
+                            action_id,
+                        ),
+                    )
+                    reason = LEARNED_SELECTION_REASON
+                    fallback_used = False
         return PolicyDecision(
             state_id=state.state_id,
             chosen_action=chosen,

@@ -1,6 +1,12 @@
-# PM-v1.5 config: genuinely independent from configs/pm_v2.yaml, not a
+# PM-v1.5_1 release revision of the PM-v1.5 method-family config: genuinely
+# independent from configs/pm_v2.yaml, not a
 # pointer to it. Edit this file for any V1.5-specific change; do not edit
 # pm_v2.yaml expecting it to affect V1.5.
+#
+# 2026-07-18 PM-v1.5_1 protocol-repair notice: the code contract is implemented,
+# but this is NOT yet an active paid-run identity. The next run must receive a
+# new run identity, complete the clean dry-run/lineage review, and invalidate
+# all old dry-run/cost hashes. Until then: PAID_RUN_BLOCKED.
 #
 # `version` is the real, honest string "pm-v1.5" -- it is NOT disguised as
 # "pm-v2.2". 22_train_pm_v2.py's hardcoded check
@@ -39,6 +45,7 @@
 # edit invalidates all dry-run hashes and requires a fresh run identity.
 
 version: pm-v1.5
+release_revision: pm-v1.5_1
 
 api_cost_planning:
   # Provider-neutral char/token estimates are multiplied by this frozen margin.
@@ -190,6 +197,50 @@ features:
   forbid_generated_response: true
   forbid_judge_labels: true
 
+step0_observation:
+  protocol: pm-v1.5-step0-source-observation-v1
+  stage: pre_item_retrieval
+  memory_representation: source_centroid_only
+  strategy_representation: fixed_eight_family_centroids
+  strategy_family_count: 8
+  strategy_family_hash_features: 128
+  expose_representation_valid: true
+  expose_representation_hash_or_version: false
+  expose_embedding_vector_or_statistics: false
+  primary_router_requires_valid_strategy_family_catalog: true
+
+shortcut_audit:
+  protocol: pm-v1.5-step0-shortcut-audit-v1
+  expected_states: 468
+  maximum_single_threshold_balanced_accuracy: 0.90
+  centroid_noise_std: 0.05
+  shuffle_seed: 6113
+  fail_on_near_oracle_threshold: true
+
+# Low-capacity mechanism baseline. Structural coefficients are frozen here;
+# only this finite numeric grid may be selected on calibration users. It sees
+# the exact same Step-0 object as the learned router and never sees item hits.
+transparent_rule_router:
+  protocol: pm-v1.5-transparent-step0-rule-router-v1
+  calibration_minimum_quality: 0.50
+  calibration_maximum_risk: 0.50
+  grid:
+    source_similarity_weights: [1.0]
+    source_age_penalties: [0.0, 0.10]
+    source_cost_penalties: [0.05]
+    source_minimum_scores: [0.05, 0.15, 0.25]
+    maximum_memory_sources: [1, 2]
+    strategy_similarity_weights: [1.0]
+    advice_requested_bonuses: [0.20]
+    question_bonuses: [0.05]
+    advice_rejected_penalties: [0.50]
+    strategy_cost_penalties: [0.05]
+    strategy_minimum_scores: [0.10, 0.25]
+
+internal_ablation:
+  learned_without_step0: true
+  external_primary_matrix: false
+
 ood_calibration:
   protocol: pm-v2-ood-calibration-v1
   calibration_split_only: true
@@ -218,6 +269,27 @@ model:
     - memory_omission
     - strategy_overuse
     - strategy_omission
+
+# Model-family choice is confined to train users and uses user-disjoint folds.
+# Calibration is reserved for the final rule thresholds, uncertainty and
+# selector margins; internal_test never participates in this choice.
+algorithm_selection:
+  protocol: pm-v1.5-train-user-group-cv-algorithm-selection-v1
+  group_key: user_id
+  folds: 4
+  cv_bootstrap_models: 3
+  candidates:
+    - state_centered_paired_delta_hgb
+    - absolute_outcome_factorized_hgb
+    - rule_relative_safe_residual_hgb
+    - group_rank_hgb
+  minimum_validation_quality: 0.50
+  maximum_validation_risk: 0.50
+  safe_residual_thresholds:
+    minimum_quality_delta_lcb: -0.02
+    minimum_emotional_support_delta_lcb: -0.025
+    maximum_risk_delta_ucb: 0.02
+    minimum_utility_delta_lcb: 0.00
 
 selection:
   version: pmv2-selection-v2
@@ -547,6 +619,25 @@ internal_reportability_gate:
   paired_bootstrap_seed: 4171
   paired_bootstrap_confidence_level: 0.95
 
+protocol_gates:
+  protocol: pm-v1.5-three-layer-gates-v1
+  delta_direction: PM_minus_comparator
+  primary_bootstrap_block: user_id
+  gate_m_learned_vs_rule:
+    minimum_quality_delta: -0.02
+    minimum_emotional_support_delta: -0.10
+    maximum_risk_delta: 0.02
+    minimum_utility_delta: 0.00
+  gate_f_fixed_guardrail:
+    minimum_quality_delta: -0.02
+    minimum_emotional_support_delta: -0.10
+    maximum_risk_delta: 0.02
+    minimum_utility_delta: 0.00
+  gate_e_learned_vs_structured_high_resource:
+    minimum_quality_delta: -0.02
+    maximum_risk_delta: 0.02
+    maximum_generator_input_token_delta: 0.00
+
 decision_quality:
   protocol: pm-v1.5-internal-decision-quality-v1
   split: internal_test
@@ -572,6 +663,22 @@ external_evaluation:
   # independent blocks; scenario clustering remains a sensitivity analysis.
   primary_bootstrap_cluster: user_id
   sensitivity_bootstrap_cluster: scenario
+  primary_conditions:
+    - pm_v2
+    - pm_v1_5_transparent_rule_step0
+    - pm_v2_cost_matched_fixed
+    - pm_v2_me_r0_fixed
+    - best_fixed
+  condition_roles:
+    pm_v2: learned_step0
+    pm_v1_5_transparent_rule_step0: transparent_rule_same_step0
+    pm_v2_cost_matched_fixed: calibration_cost_matched_fixed
+    pm_v2_me_r0_fixed: explicit_ME+R0_guardrail
+    best_fixed: structured_high_resource_MPMSME+RS
+  secondary_conditions:
+    - no_memory_r0
+    - session_rag_rs
+    - full_history_rs
   required_baselines:
     - M0+R0
     - ME+R0
@@ -613,7 +720,7 @@ external_evaluation:
     shared_pmv22_key_claim_verification: false
   claim_assessment:
     protocol: pm-v1.5-external-claim-assessment-v1
-    quality_judging_mode: anonymous_seven_candidate_batched
+    quality_judging_mode: anonymous_five_candidate_batched
     primary_quality_judge_family: openai_gpt4o
     sensitivity_judge_family: anthropic_claude
     sensitivity_role: sensitivity_only_not_pooled
@@ -637,8 +744,9 @@ external_evaluation:
   external_judge_endpoints: [final_judge, final_judge_claude]
   external_judge_seed: 3701
   # V1.5 keeps the current freeze/policy-lock/generation lineage and changes
-  # only the final scoring transport.  Seven anonymous conditions are judged
-  # together, eliminating the condition x judge-type pointwise multiplier.
+  # only the final scoring transport. Five claim-relevant anonymous conditions
+  # are judged together; three historical diagnostics remain secondary and do
+  # not dilute the primary mechanism/fixed-policy matrix.
   batched_judging:
     protocol: pm-v1.5-external-anonymous-batched-v1
     primary_quality_endpoint: final_judge

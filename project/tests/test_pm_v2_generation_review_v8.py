@@ -34,6 +34,13 @@ V7_HASHES = {
     "reviewer_a.csv": "bc31dbee48a204336cd3f82081ca6549d6db69059efcacc497657b3084fcffdf",
     "reviewer_b.csv": "fdb09a5317300be571a084f0d01d0d2a18503414332914f936d5cfa4d0f8ffd0",
 }
+V7_ARCHIVE_AVAILABLE = V7_DIR.is_dir() and all(
+    (V7_DIR / filename).is_file() for filename in V7_HASHES
+)
+requires_v7_archive = pytest.mark.skipif(
+    not V7_ARCHIVE_AVAILABLE,
+    reason="historical V7 review archive is intentionally absent from public checkout",
+)
 
 
 def _cases(*, seed: int = 20260749, cases_per_regime: int = 1):
@@ -44,6 +51,7 @@ def _cases(*, seed: int = 20260749, cases_per_regime: int = 1):
     )
 
 
+@requires_v7_archive
 def test_v7_review_artifacts_are_byte_identical() -> None:
     assert V7_DIR.is_dir()
     assert {
@@ -67,6 +75,7 @@ def test_v8_schema_uses_material_value_and_twelve_blank_ratings() -> None:
     assert all(row["annotator_id"] == row["notes"] == "" for row in rows)
 
 
+@requires_v7_archive
 def test_v8_default_smoke_passes_leakage_and_grounding_audit() -> None:
     report = audit_generation_pilot_semantics(
         _cases(),
@@ -191,6 +200,7 @@ def test_full_bilingual_material_contains_every_dialogue_and_evidence() -> None:
         assert all(field in document for field in RATING_FIELDS)
 
 
+@requires_v7_archive
 def test_prepare_writes_blank_reviewers_and_preserves_v7(tmp_path: Path) -> None:
     before = {name: sha256_file(V7_DIR / name) for name in V7_HASHES}
     out_dir = tmp_path / "v8"

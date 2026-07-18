@@ -22,6 +22,7 @@ from .contracts import (
     MemorySource,
     RuntimeState,
     SourceCatalog,
+    StrategyCard,
     StrategyMode,
     canonical_action_id,
 )
@@ -41,6 +42,12 @@ from .pm_v2_contracts import (
     SplitManifest,
     StrictModel,
 )
+from .pm_v1_5_step0 import (
+    StrategyFamilyCatalog,
+    build_step0_observation,
+    build_strategy_family_catalog,
+)
+from .pm_v1_5_required_hit import validate_required_hit_preflight
 from .text import estimate_tokens
 
 
@@ -2468,6 +2475,7 @@ def _catalog_summary(
         max_age_sessions=statistics["max_age_sessions"],
         estimated_tokens=int(statistics["estimated_tokens"]),
         query_similarity_mean=similarity,
+        representation_valid=bool(statistics["available"]),
         catalog_embedding=list(statistics["catalog_fingerprint"]),
     )
 
@@ -2479,6 +2487,7 @@ def case_to_state(
     split: PMV2Split,
     strategy_catalog_count: int,
     strategy_estimated_tokens: int,
+    strategy_family_catalog: StrategyFamilyCatalog | None = None,
     bundle_provenance: dict[str, Any] | None = None,
 ) -> PMV2State:
     query = "\n".join(
@@ -2528,6 +2537,13 @@ def case_to_state(
     }
     if generation_lineage:
         provenance["data_generation_sha256"] = str(generation_lineage)
+    step0_observation = build_step0_observation(
+        query_text=query,
+        inventory=inventory,
+        strategy_catalog_count=strategy_catalog_count,
+        strategy_estimated_tokens=strategy_estimated_tokens,
+        strategy_family_catalog=strategy_family_catalog,
+    )
     return PMV2State(
         state_id=state_id,
         card_id=card_id,
@@ -2542,6 +2558,7 @@ def case_to_state(
         inventory=inventory,
         strategy_catalog_count=strategy_catalog_count,
         strategy_estimated_tokens=strategy_estimated_tokens,
+        step0_observation=step0_observation,
         allowed_actions=allowed_actions,
         provenance=provenance,
     )
@@ -2962,6 +2979,10 @@ def write_development_dataset(
     strategy_estimated_tokens: int,
     strategy_top_k: int,
     strategy_bank_sha256: str,
+    strategy_cards: Sequence[StrategyCard] | None = None,
+    enforce_required_hit_preflight: bool = False,
+    memory_min_score: float = 0.0,
+    strategy_min_score: float = 0.0,
     expected_semantic_families_by_split: dict[
         PMV2Split, Sequence[str]
     ] | None = None,
@@ -2974,6 +2995,11 @@ def write_development_dataset(
     if len(strategy_bank_sha256) != 64:
         raise ValueError("strategy_bank_sha256 must be a SHA-256 hex digest")
     out_dir.mkdir(parents=True, exist_ok=True)
+    strategy_family_catalog = (
+        build_strategy_family_catalog(strategy_cards)
+        if strategy_cards is not None
+        else None
+    )
     states_by_split: dict[PMV2Split, list[PMV2State]] = {
         split: [] for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION, PMV2Split.INTERNAL_TEST)
     }
@@ -2992,6 +3018,7 @@ def write_development_dataset(
                 split=split,
                 strategy_catalog_count=strategy_catalog_count,
                 strategy_estimated_tokens=strategy_estimated_tokens,
+                strategy_family_catalog=strategy_family_catalog,
                 bundle_provenance=bundle.provenance,
             )
             if state.state_id in private_case_by_state:
@@ -3035,6 +3062,29 @@ def write_development_dataset(
                 f"split assignment: {coverage_failures}"
             )
     all_states = [state for rows in states_by_split.values() for state in rows]
+    backends_by_state = {
+        state.state_id: case_to_memory_backend(
+            state, private_case_by_state[state.state_id]
+        )
+        for state in all_states
+    }
+    required_hit_preflight: dict[str, Any] = {
+        "status": "NOT_ENFORCED_LEGACY_CALLER"
+    }
+    if enforce_required_hit_preflight:
+        if strategy_cards is None:
+            raise ValueError(
+                "required-hit preflight requires explicit strategy_cards"
+            )
+        required_hit_preflight = validate_required_hit_preflight(
+            states=all_states,
+            cases_by_state=private_case_by_state,
+            backends_by_state=backends_by_state,
+            strategy_cards=strategy_cards,
+            strategy_top_k=strategy_top_k,
+            memory_min_score=float(memory_min_score),
+            strategy_min_score=float(strategy_min_score),
+        )
     state_path = out_dir / "pm_v2_states.jsonl"
     runtime_path = out_dir / "runtime_states.jsonl"
     backend_path = out_dir / "memory_backend.jsonl"
@@ -3047,7 +3097,7 @@ def write_development_dataset(
         append_jsonl(runtime_path, state_to_v1_runtime(state).model_dump(mode="json"))
         append_jsonl(
             backend_path,
-            case_to_memory_backend(state, case).model_dump(mode="json"),
+            backends_by_state[state.state_id].model_dump(mode="json"),
         )
         append_jsonl(evaluator_path, case_to_evaluator_context(state, case))
     evaluator_index = load_evaluator_context_index(
@@ -3073,6 +3123,7 @@ def write_development_dataset(
         "split_manifest": manifest.model_dump(mode="json"),
         "semantic_family_coverage": semantic_family_coverage,
         "generation_shortcut_controls": shortcut_controls,
+        "required_hit_preflight": required_hit_preflight,
         "bundle_reports": bundle_reports,
         "states_path": str(state_path),
         "runtime_path": str(runtime_path),
@@ -3087,6 +3138,11 @@ def write_development_dataset(
             "estimated_action_tokens": strategy_estimated_tokens,
             "top_k": strategy_top_k,
             "strategy_bank_sha256": strategy_bank_sha256,
+            "step0_family_catalog": (
+                dict(strategy_family_catalog.audit)
+                if strategy_family_catalog is not None
+                else None
+            ),
         },
     }
     write_json(out_dir / "pm_v2_data_report.json", report)
@@ -3120,17 +3176,28 @@ def runtime_to_pmv2_state(
     split: PMV2Split = PMV2Split.EXTERNAL_TEST,
     strategy_catalog_count: int = 0,
     strategy_estimated_tokens: int = 240,
+    strategy_family_catalog: StrategyFamilyCatalog | None = None,
+    include_step0_observation: bool = True,
 ) -> PMV2State:
+    normalized_strategy_tokens = (
+        int(strategy_estimated_tokens) if int(strategy_catalog_count) > 0 else 0
+    )
     query = "\n".join(
         [state.current_user_text, state.current_session_summary]
         + [turn.content for turn in state.current_session_history]
     )
     inventory: dict[MemorySource, ObservableSourceSummary] = {}
     for source, cat in state.inventory.items():
-        fingerprint = list(cat.catalog_fingerprint)
-        if not fingerprint and not cat.available:
+        fingerprint = (
+            list(cat.catalog_fingerprint) if include_step0_observation else []
+        )
+        if include_step0_observation and not fingerprint and not cat.available:
             fingerprint = [0.0] * CATALOG_HASH_FEATURES
-        similarity = source_catalog_similarity(query, fingerprint)
+        similarity = (
+            source_catalog_similarity(query, fingerprint)
+            if include_step0_observation
+            else 0.0
+        )
         inventory[source] = ObservableSourceSummary(
             available=cat.available,
             count=cat.count,
@@ -3143,8 +3210,22 @@ def runtime_to_pmv2_state(
             max_age_sessions=cat.max_age_sessions,
             estimated_tokens=cat.estimated_tokens,
             query_similarity_mean=similarity,
+            representation_valid=bool(
+                include_step0_observation and cat.available and any(fingerprint)
+            ),
             catalog_embedding=[float(value) for value in fingerprint],
         )
+    step0_observation = (
+        build_step0_observation(
+            query_text=query,
+            inventory=inventory,
+            strategy_catalog_count=strategy_catalog_count,
+            strategy_estimated_tokens=normalized_strategy_tokens,
+            strategy_family_catalog=strategy_family_catalog,
+        )
+        if include_step0_observation
+        else None
+    )
     return PMV2State(
         state_id=state.state_id,
         card_id=state.card_id,
@@ -3158,7 +3239,8 @@ def runtime_to_pmv2_state(
         session_index=state.session_index,
         inventory=inventory,
         strategy_catalog_count=strategy_catalog_count,
-        strategy_estimated_tokens=strategy_estimated_tokens,
+        strategy_estimated_tokens=normalized_strategy_tokens,
+        step0_observation=step0_observation,
         allowed_actions=state.allowed_actions,
         provenance={
             "adapted_from_runtime_state": True,

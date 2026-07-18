@@ -12,7 +12,10 @@ from metacom_pm.v1_5_external_claims import PROTOCOL as CLAIM_PROTOCOL
 from metacom_pm.v1_5_external_claims import assess_external_claims
 from metacom_pm.v1_5_forced_swap_canary import PROTOCOL as CANARY_PROTOCOL
 from metacom_pm.v1_5_forced_swap_canary import require_v1_5_forced_swap_canary
-from metacom_pm.v1_5_latency import build_descriptive_latency_report
+from metacom_pm.v1_5_latency import (
+    build_descriptive_latency_report,
+    build_separated_resource_report,
+)
 
 
 def _claim_summary(
@@ -21,7 +24,7 @@ def _claim_summary(
     return {
         "status": "COMPLETE",
         "protocol": BATCHED_PROTOCOL,
-        "scoring_mode": "anonymous_seven_candidate_batched",
+        "scoring_mode": "anonymous_five_candidate_batched",
         "primary_quality_judge_family": "openai_gpt4o",
         "quality_gate": {"status": "PASS"},
         "candidate_position_gate": {"status": "PASS"},
@@ -41,6 +44,22 @@ def _claim_summary(
             "paper_statement_allowed": True,
             "allowed_statement": "bounded statement",
             "claim_boundary": "not a population safety claim",
+        },
+        "gate_e": {
+            "status": (
+                "PASS"
+                if quality_lower >= -0.02 and cost_upper < 0.0
+                else "NOT_SUPPORTED"
+            ),
+            "comparator": "best_fixed",
+            "checks": {
+                "quality_noninferior": quality_lower >= -0.02,
+                "evidence_risk_nonincrease": True,
+                "generator_input_tokens_strictly_lower": cost_upper < 0.0,
+                "internal_gate_m_passed": True,
+                "internal_gate_f_passed": True,
+                "lineage_complete": True,
+            },
         },
         "paired_treatment_deltas": {
             "best_fixed": {
@@ -68,7 +87,7 @@ def _claim_summary(
 def _claim_contract() -> dict:
     return {
         "protocol": CLAIM_PROTOCOL,
-        "quality_judging_mode": "anonymous_seven_candidate_batched",
+        "quality_judging_mode": "anonymous_five_candidate_batched",
         "primary_quality_judge_family": "openai_gpt4o",
         "sensitivity_judge_family": "anthropic_claude",
         "sensitivity_role": "sensitivity_only_not_pooled",
@@ -142,6 +161,44 @@ def test_latency_report_is_complete_but_explicitly_nonconfirmatory():
     assert report["paired_point_deltas"]["fixed"]["total_latency_ms"][
         "mean"
     ] == -20.0
+
+
+def test_resource_accounting_keeps_compute_retrieval_tokens_latency_and_usd_separate():
+    units = [("u1", 0, 101, "seeker", 3), ("u2", 0, 101, "seeker", 3)]
+    rows = []
+    for condition in ("pm", "fixed"):
+        for user_id, topic, seed, simulator, turn in units:
+            rows.append(
+                {
+                    "condition": condition,
+                    "user_id": user_id,
+                    "topic_index": topic,
+                    "seed": seed,
+                    "simulator_id": simulator,
+                    "turn_index": turn,
+                    "input_tokens": 100,
+                    "output_tokens": 20,
+                    "latency_ms": 50.0,
+                    "cost": {
+                        "step0_memory_comparisons": 3 if condition == "pm" else 0,
+                        "step0_strategy_family_comparisons": 8 if condition == "pm" else 0,
+                        "step0_latency_ms": 1.0 if condition == "pm" else 0.0,
+                        "retrieval_calls": 1,
+                        "retrieval_latency_ms": 2.0,
+                    },
+                }
+            )
+    report = build_separated_resource_report(
+        rows,
+        conditions=["pm", "fixed"],
+        expected_units=units,
+        generator_pricing_usd_per_mtok={"input": 0.15, "output": 0.60},
+    )
+    assert report["aggregation"] == "separate_metrics_no_composite_cost"
+    pm = report["condition_summaries"]["pm"]
+    assert pm["step0_memory_comparisons"]["total"] == 6.0
+    assert pm["generator_input_tokens"]["total"] == 200.0
+    assert pm["generator_api_cost_usd"]["total"] > 0.0
 
 
 def test_forced_swap_canary_verifier_accepts_compatibility_without_efficacy(

@@ -1194,6 +1194,10 @@ def main() -> None:
         strategy_estimated_tokens=strategy_estimated_tokens,
         strategy_top_k=strategy_top_k,
         strategy_bank_sha256=strategy_bank_sha256,
+        strategy_cards=strategy_cards,
+        enforce_required_hit_preflight=True,
+        memory_min_score=float(retrieval_cfg["memory_min_score"]),
+        strategy_min_score=float(retrieval_cfg["strategy_min_score"]),
         expected_semantic_families_by_split={
             PMV2Split.TRAIN: TRAIN_SEMANTIC_FAMILIES,
             PMV2Split.CALIBRATION: CALIBRATION_SEMANTIC_FAMILIES,

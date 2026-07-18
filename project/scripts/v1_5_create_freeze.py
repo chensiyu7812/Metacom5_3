@@ -29,6 +29,7 @@ from metacom_pm.evoemo import (
 )
 from metacom_pm.freeze import create_study_freeze
 from metacom_pm.generation_contract import SupporterGenerationContract
+from metacom_pm.internal_holdout import require_completed_internal_consumption
 from metacom_pm.io import (
     canonical_json,
     iter_jsonl,
@@ -51,7 +52,6 @@ from metacom_pm.pm_v2_judging import (
 from metacom_pm.pm_v22_reference_baselines import (
     POLICY_LOCK_TIMING,
     POST_GENERATION_POLICY_TUNING_PROHIBITED,
-    REFERENCE_BASELINE_CONDITIONS,
 )
 from metacom_pm.strategy_bank import find_deterministic_esconv_evoemo_overlaps
 from metacom_pm.v1_5_forced_swap_canary import (
@@ -65,7 +65,11 @@ from metacom_pm.v1_5_external_batched import (
     batched_prompt_contract_hash,
     select_stratified_units,
 )
-from metacom_pm.v1_5_latency import PROTOCOL as LATENCY_DIAGNOSTIC_PROTOCOL
+from metacom_pm.v1_5_latency import (
+    PROTOCOL as LATENCY_DIAGNOSTIC_PROTOCOL,
+    RESOURCE_ACCOUNTING_PROTOCOL,
+)
+from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -77,11 +81,18 @@ ROOT = Path(__file__).resolve().parents[1]
 # not a claim that this is the PM-v2.2 track -- pm_v1_5_config["version"]
 # ("pm-v1.5") is the honest version marker; see configs/pm_v1_5.yaml header.
 PM_V1_5_LEARNED_CONDITION = "pm_v2"
+PM_V1_5_RULE_CONDITION = "pm_v1_5_transparent_rule_step0"
 PM_V1_5_CONDITIONS = (
     PM_V1_5_LEARNED_CONDITION,
+    PM_V1_5_RULE_CONDITION,
     "pm_v2_cost_matched_fixed",
     "pm_v2_me_r0_fixed",
-    *REFERENCE_BASELINE_CONDITIONS,
+    "best_fixed",
+)
+PM_V1_5_SECONDARY_CONDITIONS = (
+    "no_memory_r0",
+    "session_rag_rs",
+    "full_history_rs",
 )
 EXPECTED_V1_5_BANK_CARDS = 12_403
 EXPECTED_V1_5_EXCLUDED_ESCONV_SOURCES = 84
@@ -307,6 +318,7 @@ def require_v1_5_development_chain(
     judging_summary_path: Path,
     judging_labels_path: Path,
     judging_attestation_path: Path,
+    judge_role_isolation: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Require the exact full 468-state x 16-action attested chain."""
 
@@ -523,10 +535,14 @@ def require_v1_5_development_chain(
             "status"
         )
         != "PASS"
+        or judging_summary.get("judge_role_isolation")
+        != dict(judge_role_isolation)
         or judging_parameters.get("status") != "COMPLETE"
         or judging_parameters.get("scope") != "full"
         or judging_parameters.get("pm_v2_config_sha256")
         != sha256_file(pm_v1_5_config_path)
+        or judging_parameters.get("judge_role_isolation")
+        != dict(judge_role_isolation)
         or int(
             ((judging_attestation.get("outputs") or {}).get("labels") or {}).get(
                 "rows", -1
@@ -736,6 +752,10 @@ def parse_args() -> argparse.Namespace:
         "against both the current checkpoint file and the reference-baseline attestation's "
         "own recorded policy lock.",
     )
+    parser.add_argument("--candidate-manifest", type=Path, required=True)
+    parser.add_argument("--internal-consumption-ledger", type=Path, required=True)
+    parser.add_argument("--transparent-rule-checkpoint", type=Path, required=True)
+    parser.add_argument("--no-step0-checkpoint", type=Path, required=True)
     parser.add_argument("--cost-matched-fixed-checkpoint", type=Path, required=True)
     parser.add_argument("--me-r0-fixed-checkpoint", type=Path, required=True)
     parser.add_argument(
@@ -772,6 +792,26 @@ def parse_args() -> argparse.Namespace:
         "--judging-labels",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_judging" / "action_labels.jsonl",
+    )
+    parser.add_argument(
+        "--train-calibration-labels",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging"
+            / "action_labels_train_calibration.jsonl"
+        ),
+    )
+    parser.add_argument(
+        "--internal-test-labels",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging"
+            / "action_labels_internal_test.jsonl"
+        ),
     )
     parser.add_argument(
         "--judging-attestation",
@@ -820,6 +860,10 @@ def main() -> None:
     pm_v1_5_config = load_config(args.pm_v1_5_config)
     if pm_v1_5_config.get("version") != "pm-v1.5":
         raise RuntimeError("this freeze creator requires a pm-v1.5 config")
+    judge_role_isolation = require_judge_role_isolation(
+        experiment_config,
+        pm_v1_5_config,
+    )
     retrieval_consistency = require_v1_5_retrieval_consistency(
         pm_v1_5_config
     )
@@ -837,11 +881,22 @@ def main() -> None:
     training_report = read_json(args.pm_training_report)
     checkpoint_sha256 = sha256_file(args.pm_checkpoint)
     reportability_checks = training_report.get("reportability_checks") or {}
+    internal_consumption = require_completed_internal_consumption(
+        args.internal_consumption_ledger,
+        candidate_manifest_path=args.candidate_manifest,
+        report_path=args.pm_training_report,
+    )
     if (
         training_report.get("status") != "COMPLETE"
-        or training_report.get("require_learned_routing_advantage_before_external")
-        is not True
-        or training_report.get("learned_routing_advantage_verified") is not True
+        or (training_report.get("step0_shortcut_audit") or {}).get("status")
+        != "PASS"
+        or not str(training_report.get("selected_routing_algorithm") or "")
+        or (training_report.get("algorithm_selection") or {}).get(
+            "selected_algorithm"
+        )
+        != training_report.get("selected_routing_algorithm")
+        or (training_report.get("gate_m") or {}).get("status") != "PASS"
+        or (training_report.get("gate_f") or {}).get("status") != "PASS"
         or not reportability_checks
         or not all(value is True for value in reportability_checks.values())
         or training_report.get("checkpoint_sha256") != checkpoint_sha256
@@ -850,7 +905,16 @@ def main() -> None:
         or training_report.get("pm_v2_config_sha256")
         != sha256_file(args.pm_v1_5_config)
         or training_report.get("states_sha256") != sha256_file(args.states)
-        or training_report.get("labels_sha256") != sha256_file(args.judging_labels)
+        or training_report.get("train_calibration_labels_sha256")
+        != sha256_file(args.train_calibration_labels)
+        or training_report.get("internal_test_labels_sha256")
+        != sha256_file(args.internal_test_labels)
+        or training_report.get("candidate_manifest_sha256")
+        != sha256_file(args.candidate_manifest)
+        or training_report.get("transparent_rule_checkpoint_sha256")
+        != sha256_file(args.transparent_rule_checkpoint)
+        or training_report.get("no_step0_checkpoint_sha256")
+        != sha256_file(args.no_step0_checkpoint)
     ):
         raise RuntimeError(
             "study freeze requires the exact reportable PM-v1.5 policy and "
@@ -870,6 +934,7 @@ def main() -> None:
         judging_summary_path=args.judging_summary,
         judging_labels_path=args.judging_labels,
         judging_attestation_path=args.judging_attestation,
+        judge_role_isolation=judge_role_isolation,
     )
 
     fixed_report = read_json(args.fixed_baselines_report)
@@ -946,6 +1011,18 @@ def main() -> None:
     }
 
     external = dict(pm_v1_5_config["external_evaluation"])
+    if tuple(external.get("primary_conditions") or ()) != PM_V1_5_CONDITIONS:
+        raise RuntimeError(
+            "PM-v1.5 primary conditions do not match the claim-relevant matrix"
+        )
+    if tuple(external.get("secondary_conditions") or ()) != PM_V1_5_SECONDARY_CONDITIONS:
+        raise RuntimeError("PM-v1.5 secondary condition contract is stale")
+    condition_roles = {
+        str(key): str(value)
+        for key, value in dict(external.get("condition_roles") or {}).items()
+    }
+    if set(condition_roles) != set(PM_V1_5_CONDITIONS):
+        raise RuntimeError("PM-v1.5 condition roles do not cover the primary matrix")
     generator_endpoint_name = supporter_generation_contract.generator_endpoint
     generator_endpoint = endpoint_from_config(experiment_config, generator_endpoint_name)
     generator_endpoint_sha256 = sha256_text(
@@ -1033,6 +1110,11 @@ def main() -> None:
         # checkpoint/report and also cross-checks 24a's own recorded policy
         # lock against these exact values.
         "policy_checkpoint_sha256": checkpoint_sha256,
+        "transparent_rule_checkpoint_sha256": sha256_file(
+            args.transparent_rule_checkpoint
+        ),
+        "no_step0_checkpoint_sha256": sha256_file(args.no_step0_checkpoint),
+        "candidate_manifest_sha256": sha256_file(args.candidate_manifest),
         "policy_training_report_sha256": sha256_file(args.pm_training_report),
         "policy_lock_timing": POLICY_LOCK_TIMING,
         "post_generation_policy_tuning_prohibited": (
@@ -1260,6 +1342,24 @@ def main() -> None:
             ),
             "seed": int(batched_cfg["bootstrap_seed"]),
         },
+        "gate_e": {
+            "protocol": str(pm_v1_5_config["protocol_gates"]["protocol"]),
+            "comparator": "best_fixed",
+            "thresholds": dict(
+                pm_v1_5_config["protocol_gates"][
+                    "gate_e_learned_vs_structured_high_resource"
+                ]
+            ),
+            "requires_gate_m": "PASS",
+            "requires_gate_f": "PASS",
+            "observed_gate_m": training_report["gate_m"]["status"],
+            "observed_gate_f": training_report["gate_f"]["status"],
+            "training_report_sha256": sha256_file(args.pm_training_report),
+            "candidate_manifest_sha256": sha256_file(args.candidate_manifest),
+            "internal_consumption_ledger_sha256": sha256_file(
+                args.internal_consumption_ledger
+            ),
+        },
     }
     pilot_cfg = dict(batched_cfg.get("schema_order_pilot") or {})
     batched_schema_order_pilot = {
@@ -1303,6 +1403,8 @@ def main() -> None:
         "evaluation_unit_contract": evaluation_unit_contract,
         "turn_indices": turn_indices,
         "conditions": list(PM_V1_5_CONDITIONS),
+        "condition_roles": condition_roles,
+        "secondary_conditions": list(PM_V1_5_SECONDARY_CONDITIONS),
         "treatment": PM_V1_5_LEARNED_CONDITION,
         "judge_seed": judge_seed,
         "judge_endpoints": judge_endpoints,
@@ -1335,6 +1437,14 @@ def main() -> None:
             "role": str(external["latency_role"]),
             "confirmatory_latency_claim_allowed": False,
         },
+        "resource_accounting": {
+            "protocol": RESOURCE_ACCOUNTING_PROTOCOL,
+            "aggregation": "separate_metrics_no_composite_cost",
+            "generator_pricing_usd_per_mtok": dict(
+                generation_contract["generator_pricing_usd_per_mtok"]
+            ),
+            "judge_tokens_and_cost_reported_separately": True,
+        },
         "key_claim_gate": key_claim_gate,
         "forced_swap": forced_swap_contract,
         "pointwise_schema_smoke": pointwise_schema_smoke,
@@ -1353,6 +1463,7 @@ def main() -> None:
         "fixed_baselines": fixed_report["baselines"],
         "fixed_seeker_tracks": fixed_tracks_verification,
         "retrieval_consistency": retrieval_consistency,
+        "judge_role_isolation": judge_role_isolation,
         "bank_seed_lineage": bank_seed_lineage,
         "full_development_chain": development_chain,
         "decision_quality": {
@@ -1364,6 +1475,9 @@ def main() -> None:
             "split": decision_quality_report["split"],
             "claim_boundary": decision_quality_report["claim_boundary"],
         },
+        "internal_test_consumption": internal_consumption,
+        "gate_m": training_report["gate_m"],
+        "gate_f": training_report["gate_f"],
         "development_lineage": {
             "data_attestation_sha256": development_chain[
                 "data_attestation_sha256"
@@ -1405,6 +1519,12 @@ def main() -> None:
             args.fixed_tracks,
             args.fixed_tracks_attestation,
             args.pm_training_report,
+            args.candidate_manifest,
+            args.internal_consumption_ledger,
+            args.transparent_rule_checkpoint,
+            args.no_step0_checkpoint,
+            args.train_calibration_labels,
+            args.internal_test_labels,
             args.fixed_baselines_report,
             args.decision_quality_report,
             args.decision_quality_attestation,

@@ -16,8 +16,25 @@ from metacom_pm.pm_v2_generation_review_v9 import (
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+V9_SOURCE_ARCHIVE_AVAILABLE = all(
+    path.is_file()
+    for path in (
+        PROJECT_ROOT
+        / "outputs"
+        / "pm_v2_generation_pilot_semantic_review_v8"
+        / "generation_pilot_semantic_review_cases.json",
+        PROJECT_ROOT
+        / "outputs"
+        / "strategy_rag_v1_frozen_candidate"
+        / "strategy_rag_manifest.json",
+    )
+)
 
 
+@pytest.mark.skipif(
+    not V9_SOURCE_ARCHIVE_AVAILABLE,
+    reason="historical V8/V9 artifact-vault inputs are absent from public checkout",
+)
 def test_future_v9_is_treatment_bound_and_rejects_truncation(
     tmp_path, monkeypatch
 ):

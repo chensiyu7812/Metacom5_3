@@ -18,6 +18,10 @@ from .attempt_ledger import (
     physical_call_key,
 )
 from .artifacts import create_artifact_attestation
+from .action_execution import (
+    execute_requested_retrievals,
+    realized_action_id_from_evidence,
+)
 from .contracts import (
     ActionOutcome,
     CostRecord,
@@ -166,12 +170,17 @@ def _materialize_prompt_equivalent_outcome(
         state_id=state.state_id,
         user_id=state.user_id,
         action_id=action_id,
+        requested_action_id=action_id,
         response=canonical.response,
         selected_memory_ids=[row.memory_id for row in memory_view],
         selected_strategy_ids=[row.strategy_id for row in strategy_view],
         memory_view=memory_view,
         strategy_view=strategy_view,
+        retrieval_attempts=prepared["retrieval_attempts"],
+        realized_action_id=prepared["realized_action_id"],
         effective_action_id=prepared["effective_action_id"],
+        prompt_equivalence_id=prepared["prompt_equivalence_id"],
+        label_lineage_id=prepared["label_lineage_id"],
         candidate_memory_view=candidate_memory_view,
         candidate_strategy_view=candidate_strategy_view,
         evidence_filter_decision=filter_decision,
@@ -183,6 +192,7 @@ def _materialize_prompt_equivalent_outcome(
             **canonical.provenance,
             "prompt_equivalence_alias": action_id != canonical.action_id,
             "prompt_equivalence_canonical_action_id": canonical.action_id,
+            "label_lineage_id": prepared["label_lineage_id"],
         },
     )
 
@@ -273,13 +283,16 @@ def plan_action_sweep(
             if action_filter is not None and action_id not in action_filter:
                 continue
             sources, strategy_mode = parse_action_id(action_id)
-            candidate_memory_view = memory_retriever.retrieve(
-                query, backend.items, sources
-            )
-            candidate_strategy_view = (
-                strategy_retriever.retrieve(query)
-                if strategy_mode is StrategyMode.RS
-                else []
+            (
+                candidate_memory_view,
+                candidate_strategy_view,
+                retrieval_attempts,
+            ) = execute_requested_retrievals(
+                requested_action_id=action_id,
+                query=query,
+                memory_items=backend.items,
+                memory_retriever=memory_retriever,
+                strategy_retriever=strategy_retriever,
             )
             if evidence_filter_config is not None:
                 filtered = filter_evidence(
@@ -299,6 +312,9 @@ def plan_action_sweep(
                 memory_view = candidate_memory_view
                 strategy_view = candidate_strategy_view
                 filter_decision = None
+            realized_action_id = realized_action_id_from_evidence(
+                memory_view, strategy_view
+            )
             messages = generation_messages(
                 state, memory_view, strategy_view, system_prompt=system_prompt
             )
@@ -338,11 +354,11 @@ def plan_action_sweep(
                 "state_id": state.state_id,
                 "action_id": action_id,
                 "requested_action_id": action_id,
-                "effective_action_id": (
-                    filter_decision.effective_action_id
-                    if filter_decision is not None
-                    else action_id
-                ),
+                "retrieval_attempts": [
+                    row.model_dump(mode="json") for row in retrieval_attempts
+                ],
+                "realized_action_id": realized_action_id,
+                "effective_action_id": realized_action_id,
                 "candidate_memory_count": len(candidate_memory_view),
                 "kept_memory_count": len(memory_view),
                 "candidate_strategy_count": len(candidate_strategy_view),
@@ -375,17 +391,10 @@ def plan_action_sweep(
         equivalence_groups.setdefault(str(row["call_key"]), []).append(row)
     for group in equivalence_groups.values():
         actions = sorted(str(row["action_id"]) for row in group)
-        equivalence_id = sha256_text(
-            canonical_json(
-                {
-                    "card_id": group[0]["card_id"],
-                    "prompt_sha256": group[0]["prompt_sha256"],
-                    "actions": actions,
-                }
-            )
-        )
+        equivalence_id = str(group[0]["prompt_sha256"])
         for row in group:
             row["prompt_equivalence_id"] = equivalence_id
+            row["label_lineage_id"] = equivalence_id
             row["prompt_equivalence_actions"] = actions
             row["prompt_equivalence_class_size"] = len(group)
 
@@ -606,13 +615,16 @@ def run_action_sweep(
             if action_filter is not None and action_id not in action_filter:
                 continue
             sources, strategy_mode = parse_action_id(action_id)
-            candidate_memory_view = memory_retriever.retrieve(
-                query, backend.items, sources
-            )
-            candidate_strategy_view = (
-                strategy_retriever.retrieve(query)
-                if strategy_mode is StrategyMode.RS
-                else []
+            (
+                candidate_memory_view,
+                candidate_strategy_view,
+                retrieval_attempts,
+            ) = execute_requested_retrievals(
+                requested_action_id=action_id,
+                query=query,
+                memory_items=backend.items,
+                memory_retriever=memory_retriever,
+                strategy_retriever=strategy_retriever,
             )
             if evidence_filter_config is not None:
                 filtered = filter_evidence(
@@ -632,6 +644,9 @@ def run_action_sweep(
                 memory_view = candidate_memory_view
                 strategy_view = candidate_strategy_view
                 filter_decision = None
+            realized_action_id = realized_action_id_from_evidence(
+                memory_view, strategy_view
+            )
             messages = generation_messages(
                 state, memory_view, strategy_view, system_prompt=system_prompt
             )
@@ -676,11 +691,11 @@ def run_action_sweep(
                 "candidate_memory_view": candidate_memory_view,
                 "candidate_strategy_view": candidate_strategy_view,
                 "evidence_filter_decision": filter_decision,
-                "effective_action_id": (
-                    filter_decision.effective_action_id
-                    if filter_decision is not None
-                    else action_id
-                ),
+                "retrieval_attempts": retrieval_attempts,
+                "realized_action_id": realized_action_id,
+                "effective_action_id": realized_action_id,
+                "prompt_equivalence_id": prompt_hash,
+                "label_lineage_id": prompt_hash,
                 "messages": messages,
                 "prompt_hash": prompt_hash,
                 "raw_estimated_input_tokens": raw_input_tokens,
@@ -1188,12 +1203,17 @@ def run_action_sweep(
                         state_id=state.state_id,
                         user_id=state.user_id,
                         action_id=action_id,
+                        requested_action_id=action_id,
                         response=response_text,
                         selected_memory_ids=[x.memory_id for x in memory_view],
                         selected_strategy_ids=[x.strategy_id for x in strategy_view],
                         memory_view=memory_view,
                         strategy_view=strategy_view,
+                        retrieval_attempts=prepared["retrieval_attempts"],
+                        realized_action_id=prepared["realized_action_id"],
                         effective_action_id=prepared["effective_action_id"],
+                        prompt_equivalence_id=prepared["prompt_equivalence_id"],
+                        label_lineage_id=prepared["label_lineage_id"],
                         candidate_memory_view=candidate_memory_view,
                         candidate_strategy_view=candidate_strategy_view,
                         evidence_filter_decision=filter_decision,
@@ -1231,6 +1251,7 @@ def run_action_sweep(
                             "contract_bindings_sha256": sha256_text(
                                 canonical_json(dict(contract_bindings or {}))
                             ),
+                            "label_lineage_id": prepared["label_lineage_id"],
                         },
                     )
                     ledger.finish(

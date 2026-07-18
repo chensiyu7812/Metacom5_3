@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Sequence
+from typing import Any, Literal, Sequence
 
 import numpy as np
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -9,7 +9,8 @@ from sklearn.preprocessing import RobustScaler
 
 from .contracts import MemorySource, StrategyMode, parse_action_id
 from .io import canonical_json, sha256_text
-from .pm_v2_contracts import PMV2State
+from .pm_v2_contracts import PMV2State, STRATEGY_FAMILY_IDS, Step0Observation
+from .pm_v1_5_step0 import build_step0_observation
 from .retrieval import DEFAULT_MEMORY_TOP_K
 
 
@@ -44,15 +45,17 @@ def state_text(state: PMV2State) -> str:
 class PMV2FeatureBuilder:
     """OOV-robust, strictly pre-retrieval state-action features.
 
-    The builder uses the current/recent text plus inventory-level metadata. It never
+    The builder uses the current/recent text plus the formal Step-0 scalars. It never
     reads actual memory snippets, retrieved IDs, item-level top scores, or a
     current-state conflict oracle. Query relevance is limited to similarity against a
-    cached source-level catalog representation supplied by the runtime state.
+    cached source-level catalog representation supplied by the runtime state. Raw
+    catalog vectors and their norm/mean/std are deliberately outside this class.
     """
 
     word_features: int = 256
     char_features: int = 256
     use_precomputed_embeddings: bool = True
+    step0_signal_mode: Literal["full", "none"] = "full"
     metadata_scaler: RobustScaler = field(default_factory=RobustScaler)
     embedding_dim: int = 0
     train_text_centroid: np.ndarray | None = None
@@ -65,6 +68,8 @@ class PMV2FeatureBuilder:
     fitted: bool = False
 
     def __post_init__(self):
+        if self.step0_signal_mode not in {"full", "none"}:
+            raise ValueError("step0_signal_mode must be 'full' or 'none'")
         self._word = HashingVectorizer(
             n_features=self.word_features,
             alternate_sign=False,
@@ -101,8 +106,9 @@ class PMV2FeatureBuilder:
             return 0.0
         return float(min(max(float(age) / max(float(session_index), 1.0), 0.0), 1.0))
 
-    @staticmethod
-    def _expected_source_retrieval_tokens(state: PMV2State, source: MemorySource) -> float:
+    def _expected_source_retrieval_tokens(
+        self, state: PMV2State, source: MemorySource
+    ) -> float:
         """Estimate tokens visible after one bounded source retrieval.
 
         The estimate intentionally depends on catalog-average item size and the
@@ -110,12 +116,29 @@ class PMV2FeatureBuilder:
         this value after the retrieval capacity is full.
         """
 
+        if self.step0_signal_mode == "none":
+            return float(MEMORY_TOP_K[source] * MEMORY_ITEM_FEATURE_TOKEN_CLIP)
+        if state.step0_observation is not None:
+            return float(
+                state.step0_observation.memory_sources[source].expected_retrieval_tokens
+            )
         cat = state.inventory[source]
         if not cat.available or cat.count <= 0:
             return 0.0
         retrieved_count = min(cat.count, MEMORY_TOP_K[source])
         mean_item_tokens = cat.estimated_tokens / cat.count
         return float(min(cat.estimated_tokens, mean_item_tokens * retrieved_count))
+
+    @staticmethod
+    def _step0(state: PMV2State) -> Step0Observation:
+        if state.step0_observation is not None:
+            return state.step0_observation
+        return build_step0_observation(
+            query_text=state_text(state),
+            inventory=state.inventory,
+            strategy_catalog_count=state.strategy_catalog_count,
+            strategy_estimated_tokens=state.strategy_estimated_tokens,
+        )
 
     def _state_text_vector(self, state: PMV2State) -> np.ndarray:
         text = state_text(state)
@@ -134,15 +157,23 @@ class PMV2FeatureBuilder:
         return np.concatenate(blocks)
 
     def _metadata_raw(self, state: PMV2State) -> np.ndarray:
+        step0 = self._step0(state)
         values: list[float] = [
             self._bounded_log_fraction(
                 state.session_index, SESSION_INDEX_FEATURE_CLIP
             )
         ]
+        if self.step0_signal_mode == "none":
+            # Preserve dimensionality so algorithm comparisons change only the
+            # observation, not downstream head capacity.
+            return np.asarray(
+                [*values, *([0.0] * (len(SOURCE_ORDER) * 9 + 13))],
+                dtype=np.float64,
+            )
         for source in SOURCE_ORDER:
-            cat = state.inventory[source]
+            cat = step0.memory_sources[source]
             top_k = MEMORY_TOP_K[source]
-            expected_tokens = self._expected_source_retrieval_tokens(state, source)
+            expected_tokens = float(cat.expected_retrieval_tokens)
             values.extend(
                 [
                     float(cat.available),
@@ -156,7 +187,8 @@ class PMV2FeatureBuilder:
                     ),
                     # Source-centroid similarity only. Max/P90 item-level scores are
                     # intentionally excluded because they approximate retrieval.
-                    float(cat.query_similarity_mean),
+                    float(cat.representation_valid),
+                    float(cat.query_to_source_similarity),
                     self._age_ratio(
                         max(
                             0.0,
@@ -167,17 +199,7 @@ class PMV2FeatureBuilder:
                     ),
                 ]
             )
-            if cat.catalog_embedding:
-                emb = np.asarray(cat.catalog_embedding, dtype=np.float64)
-                values.extend(
-                    [
-                        float(np.linalg.norm(emb)),
-                        float(np.mean(emb)),
-                        float(np.std(emb)),
-                    ]
-                )
-            else:
-                values.extend([0.0, 0.0, 0.0])
+        strategy = step0.strategy
         values.extend(
             [
                 # The total bank cardinality is constant deployment metadata, not
@@ -185,9 +207,17 @@ class PMV2FeatureBuilder:
                 # development/external OOD shortcut when the synthetic generator
                 # invented a small catalog count.
                 self._bounded_log_fraction(
-                    state.strategy_estimated_tokens,
+                    strategy.expected_retrieval_tokens,
                     STRATEGY_FEATURE_TOKEN_CLIP,
                 ),
+                float(strategy.representation_valid),
+                *[
+                    float(strategy.family_similarities[family])
+                    for family in STRATEGY_FAMILY_IDS
+                ],
+                float(strategy.advice_requested),
+                float(strategy.advice_rejected),
+                float(strategy.question_present),
             ]
         )
         return np.asarray(values, dtype=np.float64)
@@ -202,7 +232,13 @@ class PMV2FeatureBuilder:
         )
         retrieval_calls = len(sources) + int(strategy is StrategyMode.RS)
         estimated_tokens = memory_tokens + (
-            state.strategy_estimated_tokens if strategy is StrategyMode.RS else 0
+            (
+                STRATEGY_FEATURE_TOKEN_CLIP
+                if self.step0_signal_mode == "none"
+                else state.strategy_estimated_tokens
+            )
+            if strategy is StrategyMode.RS
+            else 0
         )
         return np.asarray(
             [
@@ -225,7 +261,11 @@ class PMV2FeatureBuilder:
             for source in sources
         )
         if strategy is StrategyMode.RS:
-            estimated_tokens += state.strategy_estimated_tokens
+            estimated_tokens += (
+                STRATEGY_FEATURE_TOKEN_CLIP
+                if self.step0_signal_mode == "none"
+                else state.strategy_estimated_tokens
+            )
         retrieval_calls = len(sources) + int(strategy is StrategyMode.RS)
         return max(
             0.0,
@@ -338,22 +378,62 @@ class PMV2FeatureBuilder:
 
     @staticmethod
     def _metadata_challenge(state: PMV2State) -> PMV2State:
+        step0 = PMV2FeatureBuilder._step0(state)
         inventory = {}
+        memory_observations = {}
         for source in SOURCE_ORDER:
             catalog = state.inventory[source]
             if not catalog.available:
                 inventory[source] = catalog.model_copy(deep=True)
+                memory_observations[source] = step0.memory_sources[source].model_copy(
+                    deep=True
+                )
                 continue
+            challenged_similarity = (
+                -1.0
+                if float(step0.memory_sources[source].query_to_source_similarity)
+                >= 0.0
+                else 1.0
+            )
             inventory[source] = catalog.model_copy(
                 deep=True,
                 update={
-                    "query_similarity_mean": (
-                        -1.0 if float(catalog.query_similarity_mean) >= 0.0 else 1.0
-                    ),
-                    "catalog_embedding": [1000.0, -1000.0, 1000.0],
+                    "query_similarity_mean": challenged_similarity,
+                    "representation_valid": True,
                 },
             )
-        return state.model_copy(deep=True, update={"inventory": inventory})
+            memory_observations[source] = step0.memory_sources[source].model_copy(
+                deep=True,
+                update={
+                    "query_to_source_similarity": challenged_similarity,
+                    "representation_valid": True,
+                },
+            )
+        strategy = step0.strategy.model_copy(
+            deep=True,
+            update={
+                "family_similarities": {
+                    family: (
+                        -1.0
+                        if float(step0.strategy.family_similarities[family]) >= 0.0
+                        else 1.0
+                    )
+                    for family in STRATEGY_FAMILY_IDS
+                },
+                "representation_valid": True,
+                "advice_requested": not step0.strategy.advice_requested,
+                "advice_rejected": not step0.strategy.advice_rejected,
+                "question_present": not step0.strategy.question_present,
+            },
+        )
+        challenged_step0 = step0.model_copy(
+            deep=True,
+            update={"memory_sources": memory_observations, "strategy": strategy},
+        )
+        return state.model_copy(
+            deep=True,
+            update={"inventory": inventory, "step0_observation": challenged_step0},
+        )
 
     def calibrate_ood(
         self,
@@ -506,6 +586,7 @@ class PMV2FeatureBuilder:
             "word_features": self.word_features,
             "char_features": self.char_features,
             "use_precomputed_embeddings": self.use_precomputed_embeddings,
+            "step0_signal_mode": self.step0_signal_mode,
             "embedding_dim": self.embedding_dim,
             "source_similarity": "catalog_centroid_only",
             "inventory_scale_contract": "retrieval_capacity_v1",

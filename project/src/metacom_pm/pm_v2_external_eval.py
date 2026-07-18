@@ -84,21 +84,29 @@ def _external_action_contract(turn_row: Mapping[str, Any]) -> dict[str, str]:
         if bool(turn_row.get("selected_strategy") or [])
         else StrategyMode.R0,
     )
-    raw_effective = str(turn_row.get("effective_action_id") or "")
+    raw_realized = str(
+        turn_row.get("realized_action_id")
+        or turn_row.get("effective_action_id")
+        or ""
+    )
     try:
-        parse_action_id(raw_effective)
-        effective = raw_effective
+        parse_action_id(raw_realized)
+        realized = raw_realized
     except ValueError:
-        effective = inferred_effective
-    if effective != inferred_effective:
-        raise RuntimeError("external turn effective_action_id mismatches selected evidence")
+        realized = inferred_effective
+    if realized != inferred_effective:
+        raise RuntimeError("external turn realized_action_id mismatches selected evidence")
+    raw_effective = str(turn_row.get("effective_action_id") or realized)
+    if raw_effective != realized:
+        raise RuntimeError("legacy effective_action_id mismatches realized_action_id")
     # Legacy fixed baselines may not expose a canonical requested action.  Their
     # realized evidence action is the only defensible applicability contract.
     if not requested:
-        requested = effective
+        requested = realized
     return {
         "requested_action_id": requested,
-        "effective_action_id": effective,
+        "realized_action_id": realized,
+        "effective_action_id": realized,
     }
 
 
@@ -812,6 +820,7 @@ def run_external_response_evaluation(
                     "risk_prompt_hash": risk_prompt_hash,
                     "observed_input_tokens": observed_tokens,
                     "requested_action_id": action_contract["requested_action_id"],
+                    "realized_action_id": action_contract["realized_action_id"],
                     "effective_action_id": action_contract["effective_action_id"],
                 }
                 response_seed = seed + unit_index * 100 + family_index

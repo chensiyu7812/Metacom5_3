@@ -16,6 +16,7 @@ from metacom_pm.v1_5_external_batched import (
     RISK_AUDIT_PROTOCOL,
     balanced_candidate_order,
     batched_prompt_contract_hash,
+    build_external_gate_e,
     build_v1_5_batched_evaluation_plan,
     select_stratified_units,
 )
@@ -23,13 +24,30 @@ from metacom_pm.v1_5_external_batched import (
 
 CONDITIONS = [
     "pm_v2",
+    "pm_v1_5_transparent_rule_step0",
     "pm_v2_cost_matched_fixed",
     "pm_v2_me_r0_fixed",
-    "no_memory_r0",
     "best_fixed",
-    "session_rag_rs",
-    "full_history_rs",
 ]
+
+
+def _gate_e_contract():
+    return {
+        "protocol": "pm-v1.5-three-layer-gates-v1",
+        "comparator": "best_fixed",
+        "thresholds": {
+            "minimum_quality_delta": -0.02,
+            "maximum_risk_delta": 0.02,
+            "maximum_generator_input_token_delta": 0.0,
+        },
+        "requires_gate_m": "PASS",
+        "requires_gate_f": "PASS",
+        "observed_gate_m": "PASS",
+        "observed_gate_f": "PASS",
+        "training_report_sha256": "a" * 64,
+        "candidate_manifest_sha256": "b" * 64,
+        "internal_consumption_ledger_sha256": "c" * 64,
+    }
 
 
 def _scores():
@@ -44,13 +62,13 @@ def _scores():
             "non_intrusiveness": 3.0,
             "rationale": "bounded reason",
         }
-        for index in range(1, 8)
+        for index in range(1, 6)
     ]
 
 
-def test_batched_schema_is_strict_and_requires_exactly_c1_through_c7():
+def test_batched_schema_is_strict_and_requires_exactly_c1_through_c5():
     openai_strict_json_schema(BatchedResponseJudgment)
-    assert len(BatchedResponseJudgment.model_validate({"candidates": _scores()}).candidates) == 7
+    assert len(BatchedResponseJudgment.model_validate({"candidates": _scores()}).candidates) == 5
     duplicate = _scores()
     duplicate[-1]["candidate_id"] = "C1"
     with pytest.raises(ValidationError, match="exactly"):
@@ -131,7 +149,7 @@ def test_plan_has_frozen_role_counts_and_anonymous_quality_prompts():
     risk = select_stratified_units(units, units_per_user=1, seed=7)
     contract = {
         "protocol": PROTOCOL,
-        "candidate_count": 7,
+        "candidate_count": 5,
         "conditions_sha256": sha256_text(canonical_json(CONDITIONS)),
         "llm_overall_requested": False,
         "batched_prompt_contract_sha256": batched_prompt_contract_hash(),
@@ -174,6 +192,7 @@ def test_plan_has_frozen_role_counts_and_anonymous_quality_prompts():
             "minimum_low_mad_coverage": 0.7,
         },
         "bootstrap": {"replicates": 100, "confidence_level": 0.95, "seed": 3},
+        "gate_e": _gate_e_contract(),
     }
     endpoints = [
         Endpoint("https://api.openai.com", "gpt-4o", "UNSET", family="openai_gpt4o"),
@@ -234,6 +253,33 @@ def test_batched_plan_rejects_missing_observed_generation_tokens():
         )
 
 
+def test_gate_e_requires_quality_risk_and_strict_generator_token_efficiency():
+    def metric(lower, upper):
+        return {"primary_cluster_ci": {"estimate": 0.0, "lower": lower, "upper": upper}}
+
+    quality = {
+        "best_fixed": {
+            "quality_composite": metric(-0.01, 0.02),
+            "observed_input_tokens": metric(-30.0, -1.0),
+        }
+    }
+    risk = {"best_fixed": {"risk_composite": metric(-0.01, 0.01)}}
+    passed = build_external_gate_e(
+        quality_comparisons=quality,
+        risk_comparisons=risk,
+        contract=_gate_e_contract(),
+    )
+    assert passed["status"] == "PASS"
+    quality["best_fixed"]["observed_input_tokens"] = metric(-30.0, 0.0)
+    failed = build_external_gate_e(
+        quality_comparisons=quality,
+        risk_comparisons=risk,
+        contract=_gate_e_contract(),
+    )
+    assert failed["status"] == "NOT_SUPPORTED"
+    assert not failed["checks"]["generator_input_tokens_strictly_lower"]
+
+
 def test_small_end_to_end_batched_dry_run_and_fake_execution(tmp_path: Path, monkeypatch):
     import metacom_pm.v1_5_external_batched as module
 
@@ -249,7 +295,7 @@ def test_small_end_to_end_batched_dry_run_and_fake_execution(tmp_path: Path, mon
     risk = select_stratified_units(units, units_per_user=1, seed=7)
     contract = {
         "protocol": PROTOCOL,
-        "candidate_count": 7,
+        "candidate_count": 5,
         "conditions_sha256": sha256_text(canonical_json(CONDITIONS)),
         "llm_overall_requested": False,
         "batched_prompt_contract_sha256": batched_prompt_contract_hash(),
@@ -292,6 +338,7 @@ def test_small_end_to_end_batched_dry_run_and_fake_execution(tmp_path: Path, mon
             "minimum_low_mad_coverage": 0.7,
         },
         "bootstrap": {"replicates": 40, "confidence_level": 0.95, "seed": 3},
+        "gate_e": _gate_e_contract(),
     }
     turns = tmp_path / "turns.jsonl"
     turn_rows = []
@@ -372,7 +419,7 @@ def test_small_end_to_end_batched_dry_run_and_fake_execution(tmp_path: Path, mon
         def chat(self, messages, *, seed, response_schema, **kwargs):
             candidates = []
             is_quality = response_schema.__name__ == "BatchedResponseJudgment"
-            for index in range(1, 8):
+            for index in range(1, 6):
                 if is_quality:
                     candidates.append(
                         {
@@ -419,6 +466,6 @@ def test_small_end_to_end_batched_dry_run_and_fake_execution(tmp_path: Path, mon
         accept_cost_estimate_sha256=dry["cost_estimate"]["cost_estimate_sha256"],
     )
     assert summary["status"] == "COMPLETE"
-    assert summary["score_rows"] == len(units) * 7
+    assert summary["score_rows"] == len(units) * 5
     assert summary["quality_sensitivity"]["judge_family"] == "anthropic_claude"
     assert summary["stratified_risk_audit"]["status"] == "COMPLETE"

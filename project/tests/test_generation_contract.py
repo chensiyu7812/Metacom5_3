@@ -88,6 +88,7 @@ def test_pm_v1_5_config_uses_same_supporter_generation_contract() -> None:
 
     v1_5_config = load_config(ROOT / "configs" / "pm_v1_5.yaml")
     assert v1_5_config["version"] == "pm-v1.5"
+    assert v1_5_config["release_revision"] == "pm-v1.5_1"
     v1_5_contract = SupporterGenerationContract.from_config(v1_5_config)
     assert v1_5_contract.digest() == _configured_contract().digest()
 

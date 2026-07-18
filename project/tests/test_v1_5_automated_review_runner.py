@@ -20,7 +20,7 @@ def _all_affirming_ratings() -> dict[str, int]:
 
 
 def test_aggregate_gate_requires_both_of_two_families_to_catch_a_control():
-    families = ["deepseek", "openai_gpt4o"]
+    families = ["deepseek", "google_gemini"]
     real_case_results = {
         "case_1": {
             family: {"ratings": _all_affirming_ratings()} for family in families
@@ -53,7 +53,7 @@ def test_aggregate_gate_requires_both_of_two_families_to_catch_a_control():
             "deepseek": {
                 "ratings": {**_all_affirming_ratings(), "regime_match": 0}
             },
-            "openai_gpt4o": {"ratings": _all_affirming_ratings()},
+            "google_gemini": {"ratings": _all_affirming_ratings()},
         }
     }
     gate = aggregate_gate(
@@ -105,18 +105,15 @@ def test_automated_review_dry_run_freezes_the_durable_retry_contract(
     first = read_json(out_dir / "cost_estimate.json")
     plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
     assert first["budget_gate"]["status"] == "PASS"
-    # 33 real+control cases x 2 families (qwen dropped, see module docstring
-    # amendment: two independent infra/compat failures, not a semantic-score
-    # search) = 66 logical calls, not the original 3-family 99. Each logical
-    # call now budgets up to 3 physical attempts (see the second docstring
-    # amendment: bounded retry on transient infra failures), so the worst-case
-    # physical-attempt cap is 66 x 3 = 198.
+    # 33 real+control cases x 2 development-only families = 66 logical calls.
+    # Final judges are hard-isolated from this gate. Each logical call budgets
+    # up to 3 physical attempts, so the worst-case cap is 66 x 3 = 198.
     assert first["n_logical_calls"] == 66
     assert first["maximum_physical_api_attempts"] == 198
     assert len(plan) == 66
     assert all(row["maximum_physical_attempts"] == 3 for row in plan)
     assert len({row["physical_call_key"] for row in plan}) == 66
-    assert {row["judge_family"] for row in plan} == {"deepseek", "openai_gpt4o"}
+    assert {row["judge_family"] for row in plan} == {"deepseek", "google_gemini"}
     retry_contract = first["retry_contract"]
     assert retry_contract["protocol"] == "pm-v1.5-bounded-retry-v2"
     assert retry_contract["cross_process_eligibility_source"] == (

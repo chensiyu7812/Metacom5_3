@@ -70,6 +70,7 @@ from metacom_pm.pm_v2_semantic_audit import (
 from metacom_pm.v1_5_automated_semantic_review import (
     require_automated_semantic_review_pass,
 )
+from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -522,6 +523,11 @@ def main() -> None:
     judging_config = dict(pm_v2_config["development_judging"])
     pilot_config = dict(judging_config["compatibility_pilot"])
     endpoint_names = [str(value) for value in judging_config["judge_endpoints"]]
+    judge_role_isolation = require_judge_role_isolation(
+        config,
+        pm_v2_config,
+        development_endpoint_names=endpoint_names,
+    )
     judge_seed = int(judging_config["seed"])
     response_max_output_tokens = int(
         judging_config["response_max_output_tokens"]
@@ -679,6 +685,10 @@ def main() -> None:
 
     out_dir.mkdir(parents=True, exist_ok=True)
     labels_path = out_dir / "action_labels.jsonl"
+    train_calibration_labels_path = (
+        out_dir / "action_labels_train_calibration.jsonl"
+    )
+    internal_test_labels_path = out_dir / "action_labels_internal_test.jsonl"
     raw_path = out_dir / "judge_results.jsonl"
     ledger_path = out_dir / "judge_call_ledger.jsonl"
     manifest_path = out_dir / "run_manifest.json"
@@ -693,6 +703,8 @@ def main() -> None:
     if args.overwrite:
         paths = (
             labels_path,
+            train_calibration_labels_path,
+            internal_test_labels_path,
             raw_path,
             out_dir / "summary.json",
             manifest_path,
@@ -720,6 +732,7 @@ def main() -> None:
             "evaluator_contexts_sha256": sha256_file(args.evaluator_contexts),
             "evaluator_context_map_sha256": evaluator_index.map_sha256,
             "judge_endpoints": endpoint_descriptors,
+            "judge_role_isolation": judge_role_isolation,
             "prompt_contract_hash": prompt_contract_hash(),
             "composite_spec": composite_spec.model_dump(mode="json"),
             "composite_weights_sha256": composite_weights_sha256,
@@ -1007,6 +1020,7 @@ def main() -> None:
         ),
         "pricing_usd_per_mtok": pricing_by_family,
         "api_cost_planning": api_cost_planning,
+        "judge_role_isolation": judge_role_isolation,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
         "ledger_sha256": sha256_text(canonical_json([])),
@@ -1062,6 +1076,7 @@ def main() -> None:
         "api_cost_planning": api_cost_planning,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "judge_endpoint_descriptors": endpoint_descriptors,
+        "judge_role_isolation": judge_role_isolation,
         "scope": "compatibility_pilot" if compatibility_pilot else "full",
         "reportability_status": (
             "COMPATIBILITY_GATE_PENDING" if compatibility_pilot else "REPORTABLE"
@@ -1353,6 +1368,15 @@ def main() -> None:
 
     labels = []
     labels_path.write_text("", encoding="utf-8")
+    train_calibration_labels_path.write_text("", encoding="utf-8")
+    internal_test_labels_path.write_text("", encoding="utf-8")
+    prompt_equivalence_class_sizes: dict[tuple[str, str], int] = {}
+    for outcome in outcomes:
+        state = state_by_card[outcome.card_id]
+        key = (state.state_id, str(outcome.prompt_equivalence_id))
+        prompt_equivalence_class_sizes[key] = (
+            prompt_equivalence_class_sizes.get(key, 0) + 1
+        )
     for outcome in outcomes:
         state = state_by_card[outcome.card_id]
         results = []
@@ -1395,10 +1419,25 @@ def main() -> None:
             provenance={
                 "outcome_request_hash": outcome.request_hash,
                 "outcome_prompt_hash": outcome.prompt_hash,
+                "requested_action_id": outcome.requested_action_id,
+                "realized_action_id": outcome.realized_action_id,
+                "prompt_equivalence_id": outcome.prompt_equivalence_id,
+                "label_lineage_id": outcome.label_lineage_id,
+                "prompt_equivalence_class_size": (
+                    prompt_equivalence_class_sizes[
+                        (state.state_id, str(outcome.prompt_equivalence_id))
+                    ]
+                ),
             },
         )
         labels.append(label)
         append_jsonl(labels_path, label.model_dump(mode="json"))
+        split_path = (
+            internal_test_labels_path
+            if state.split.value == "internal_test"
+            else train_calibration_labels_path
+        )
+        append_jsonl(split_path, label.model_dump(mode="json"))
     pilot_reliable_threshold = float(pilot_config["minimum_reliable_label_rate"])
     if labels:
         quality_gate = validate_judge_table(
@@ -1535,6 +1574,8 @@ def main() -> None:
         "compatibility_gate": compatibility_gate if compatibility_pilot else None,
         "label_value_feasibility": label_value_feasibility,
         "labels_path": str(labels_path),
+        "train_calibration_labels_path": str(train_calibration_labels_path),
+        "internal_test_labels_path": str(internal_test_labels_path),
         "raw_path": str(raw_path),
         "ledger_path": str(ledger_path),
         "physical_http_attempts": attempt_ledger.started_attempts,
@@ -1570,6 +1611,8 @@ def main() -> None:
         outputs={
             "summary": (summary_path, False),
             "labels": (labels_path, True),
+            "train_calibration_labels": (train_calibration_labels_path, True),
+            "internal_test_labels": (internal_test_labels_path, True),
             "raw_results": (raw_path, True),
             "call_ledger": (ledger_path, True),
         },
@@ -1583,6 +1626,7 @@ def main() -> None:
             "labeling_gates": labeling,
             "development_judging": judging_config,
             "judge_endpoint_descriptors": endpoint_descriptors,
+            "judge_role_isolation": judge_role_isolation,
             "pilot_plan_sha256": pilot_plan_sha256,
             "pilot_expected_keys_sha256": pilot_expected_keys_sha256,
             "compatibility_attestation_sha256": compatibility_attestation_sha256,
@@ -1603,6 +1647,7 @@ def main() -> None:
         },
         expected={
             "outcomes": len(outcomes),
+            "judge_role_isolation_status": judge_role_isolation["status"],
             "judge_pairs": len(required_keys),
             "full_logical_api_calls": len(cost_rows),
             "new_physical_http_attempts": (

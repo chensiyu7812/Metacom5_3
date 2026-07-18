@@ -10,6 +10,7 @@ import numpy as np
 
 
 PROTOCOL = "pm-v1.5-noninterleaved-latency-diagnostic-v1"
+RESOURCE_ACCOUNTING_PROTOCOL = "pm-v1.5-separated-resource-accounting-v1"
 
 
 def _unit(row: Mapping[str, Any]) -> tuple[str, int, int, str, int]:
@@ -128,4 +129,108 @@ def build_descriptive_latency_report(
         "scored_units_per_condition": len(expected),
         "condition_summaries": condition_summaries,
         "paired_point_deltas": paired_deltas,
+    }
+
+
+def build_separated_resource_report(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    conditions: Sequence[str],
+    expected_units: Sequence[tuple[str, int, int, str, int]],
+    generator_pricing_usd_per_mtok: Mapping[str, float],
+) -> dict[str, Any]:
+    """Report compute, retrieval, tokens, latency and USD without collapsing them."""
+
+    pricing = {
+        "input": float(generator_pricing_usd_per_mtok["input"]),
+        "output": float(generator_pricing_usd_per_mtok["output"]),
+    }
+    if any(value <= 0.0 for value in pricing.values()):
+        raise ValueError("generator resource report requires positive frozen prices")
+    expected = set(expected_units)
+    allowed = set(str(value) for value in conditions)
+    by_condition: dict[str, dict[tuple[str, int, int, str, int], dict[str, float]]] = (
+        defaultdict(dict)
+    )
+    for row in rows:
+        condition = str(row.get("condition") or "")
+        unit = _unit(row)
+        if condition not in allowed or unit not in expected:
+            continue
+        if unit in by_condition[condition]:
+            raise RuntimeError(f"duplicate resource-accounting unit for {condition}")
+        cost = dict(row.get("cost") or {})
+        input_tokens = float(
+            row.get("input_tokens") or cost.get("total_input_tokens") or 0
+        )
+        output_tokens = float(
+            row.get("output_tokens") or cost.get("output_tokens") or 0
+        )
+        if input_tokens <= 0.0 or output_tokens < 0.0:
+            raise RuntimeError("generation turn has invalid observed token usage")
+        attempts = list(row.get("retrieval_attempts") or [])
+        attempted = sum(bool(value.get("requested")) for value in attempts)
+        hits = (
+            sum(int(value.get("hit_count") or 0) for value in attempts)
+            if attempts
+            else len(row.get("selected_memory") or [])
+            + len(row.get("selected_strategy") or [])
+        )
+        retrieval_calls = float(cost.get("retrieval_calls", attempted))
+        api_cost = cost.get("api_cost_usd")
+        if api_cost is None:
+            api_cost = (
+                input_tokens / 1_000_000 * pricing["input"]
+                + output_tokens / 1_000_000 * pricing["output"]
+            )
+        metrics = {
+            "step0_memory_comparisons": float(
+                cost.get("step0_memory_comparisons", 0)
+            ),
+            "step0_strategy_family_comparisons": float(
+                cost.get("step0_strategy_family_comparisons", 0)
+            ),
+            "step0_latency_ms": float(cost.get("step0_latency_ms", 0.0)),
+            "item_retrieval_attempts": retrieval_calls,
+            "item_retrieval_hits": float(hits),
+            "retrieval_latency_ms": float(cost.get("retrieval_latency_ms", 0.0)),
+            "generator_input_tokens": input_tokens,
+            "generator_output_tokens": output_tokens,
+            "wall_clock_latency_ms": float(
+                row.get("latency_ms", cost.get("latency_ms", 0.0))
+            ),
+            "generator_api_cost_usd": float(api_cost),
+        }
+        if any(not math.isfinite(value) or value < 0.0 for value in metrics.values()):
+            raise RuntimeError("generation resource metrics must be finite/non-negative")
+        by_condition[condition][unit] = metrics
+    for condition in conditions:
+        if set(by_condition.get(str(condition), {})) != expected:
+            raise RuntimeError(
+                f"resource rows for {condition} do not exactly cover scored units"
+            )
+    metric_names = tuple(next(iter(by_condition[str(conditions[0])].values())))
+    summaries = {}
+    for condition in conditions:
+        values = by_condition[str(condition)]
+        summaries[str(condition)] = {
+            metric: {
+                "total": float(
+                    sum(values[unit][metric] for unit in sorted(expected))
+                ),
+                "mean_per_scored_turn": float(
+                    np.mean([values[unit][metric] for unit in sorted(expected)])
+                ),
+            }
+            for metric in metric_names
+        }
+    return {
+        "status": "COMPLETE",
+        "protocol": RESOURCE_ACCOUNTING_PROTOCOL,
+        "aggregation": "separate_metrics_no_composite_cost",
+        "conditions": list(conditions),
+        "scored_units_per_condition": len(expected),
+        "generator_pricing_usd_per_mtok": pricing,
+        "condition_summaries": summaries,
+        "judge_tokens_and_cost_included": False,
     }

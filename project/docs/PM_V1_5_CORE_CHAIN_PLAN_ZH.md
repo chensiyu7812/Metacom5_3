@@ -1,5 +1,11 @@
 # PM-v1.5 快速会议版：研究合同与执行顺序
 
+> **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
+> `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
+> source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
+> 外部效率三层 gate。它目前仍是 `TARGET_NOT_ACTIVE`；在实现清单全部完成前禁止付费
+> 执行。本文保留为 2026-07-17 版本的历史设计背景，与新合同冲突时以新合同为准。
+
 更新时间：2026-07-17
 状态：免费代码与 fail-closed 链路已搭建；历史 1-call generation compatibility
 transport pilot 曾结构性通过，但绑定的是旧版 `pm_v1_5.yaml` 哈希，当前配置下必须重跑，

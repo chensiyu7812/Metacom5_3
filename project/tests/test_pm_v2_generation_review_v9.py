@@ -36,6 +36,19 @@ V9_REVIEW = (
     / "outputs"
     / "pm_v2_generation_pilot_semantic_review_v9_review_protocol_v2"
 )
+V9_ARCHIVE_PATHS = (
+    COMPARISON / "bank_comparison_traces.jsonl",
+    FROZEN / "strategy_rag_manifest.json",
+    V8 / "generation_pilot_semantic_review_cases.json",
+    V9 / "generation_pilot_semantic_review_cases.json",
+    V9 / "paired_generation_call_plan.jsonl",
+    V9 / "private_condition_mapping.jsonl",
+    V9_REVIEW / "generation_pilot_semantic_review_packet.csv",
+)
+requires_v9_archive = pytest.mark.skipif(
+    not all(path.is_file() for path in V9_ARCHIVE_PATHS),
+    reason="historical V8/V9 artifact-vault bundle is absent from public checkout",
+)
 
 
 def _cards() -> list[StrategyCard]:
@@ -52,6 +65,7 @@ def test_canonical_wrapper_has_no_threshold_or_abstention_surface():
         StrategyRetrieverV1Canonical([], top_k=2)
 
 
+@requires_v9_archive
 def test_canonical_wrapper_matches_v1_default_behavior_on_all_v9_cases():
     cards = _cards()
     canonical = StrategyRetrieverV1Canonical(cards)
@@ -72,6 +86,7 @@ def test_canonical_wrapper_matches_v1_default_behavior_on_all_v9_cases():
         ]
 
 
+@requires_v9_archive
 def test_bank_comparison_is_dual_bank_and_human_fields_are_empty():
     traces = list(iter_jsonl(COMPARISON / "bank_comparison_traces.jsonl"))
     assert len(traces) == 9
@@ -102,6 +117,7 @@ def test_bank_comparison_is_dual_bank_and_human_fields_are_empty():
             assert row[field] == ""
 
 
+@requires_v9_archive
 def test_frozen_candidate_is_locked_and_separates_legacy_bank():
     manifest = read_json(FROZEN / "strategy_rag_manifest.json")
     assert manifest["gate_unlocked"] is False
@@ -117,6 +133,7 @@ def test_frozen_candidate_is_locked_and_separates_legacy_bank():
     assert manifest["retriever"]["persistent_index"] is None
 
 
+@requires_v9_archive
 def test_v9_removes_assumed_strategy_ground_truth_and_uses_real_top3():
     cases = read_json(V9 / "generation_pilot_semantic_review_cases.json")
     assert len(cases) == 9
@@ -139,6 +156,7 @@ def test_v9_removes_assumed_strategy_ground_truth_and_uses_real_top3():
             assert "marginal_value_rationale" not in card
 
 
+@requires_v9_archive
 def test_v9_call_plan_is_strictly_paired_and_only_strategy_input_differs():
     cases = {
         row["item_id"]: row
@@ -167,6 +185,7 @@ def test_v9_call_plan_is_strictly_paired_and_only_strategy_input_differs():
         assert pair["R0"]["messages"][0] == pair["RS"]["messages"][0]
 
 
+@requires_v9_archive
 def test_v9_reviewer_scores_and_card_utilities_are_blank_and_mapping_hidden():
     for filename, annotator in (
         ("reviewer_a.csv", "reviewer_a"),
@@ -195,6 +214,7 @@ def test_v9_reviewer_scores_and_card_utilities_are_blank_and_mapping_hidden():
     assert "unapproved for formal annotation" in status
 
 
+@requires_v9_archive
 def test_v9_review_packet_combines_memory_strategy_and_blind_responses():
     with (V9_REVIEW / "generation_pilot_semantic_review_packet.csv").open(
         encoding="utf-8", newline=""
@@ -236,6 +256,7 @@ def test_strategy_rag_marginal_value_is_only_derived_after_unblinding():
     ) == "uncertain"
 
 
+@requires_v9_archive
 def test_v8_and_formal_gate_remain_unchanged():
     assert sha256_file(V8 / "generation_pilot_semantic_review_cases.json") == (
         "cda849aabdaa9ae6c08a1cf5f66fd45dd4a6d5ef641f47714f22deb7cbd3faaf"
@@ -246,6 +267,7 @@ def test_v8_and_formal_gate_remain_unchanged():
     assert "V1_STRATEGY_RAG_AUDIT_COMPLETE = False" in source
 
 
+@requires_v9_archive
 def test_blinded_material_finalization_never_exposes_condition_mapping(tmp_path):
     for filename in (
         "generation_pilot_semantic_review_cases.json",

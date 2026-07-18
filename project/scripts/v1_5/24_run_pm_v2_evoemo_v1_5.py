@@ -32,6 +32,13 @@ def resolve_condition_paths(
             ROOT / "outputs" / "pm_v1_5_model" / "pm_v1_5.joblib",
             ROOT / "outputs" / "evoemo_pm_v1_5",
         ),
+        "pm_v1_5_transparent_rule_step0": (
+            ROOT
+            / "outputs"
+            / "pm_v1_5_model"
+            / "pm_v1_5_transparent_rule.joblib",
+            ROOT / "outputs" / "evoemo_pm_v1_5_transparent_rule",
+        ),
         "pm_v2_cost_matched_fixed": (
             ROOT / "outputs" / "pm_v1_5_model" / "cost_matched_fixed.joblib",
             ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed",
@@ -293,6 +300,9 @@ def main() -> None:
     gates = dict(contract["action_preflight_gates"])
     condition_checkpoint_hashes = {
         "pm_v2": notes.get("checkpoint_sha256"),
+        "pm_v1_5_transparent_rule_step0": contract.get(
+            "transparent_rule_checkpoint_sha256"
+        ),
         "pm_v2_cost_matched_fixed": (notes.get("fixed_baselines") or {}).get(
             "cost_matched_fixed", {}
         ).get("checkpoint_sha256"),
@@ -346,6 +356,7 @@ def main() -> None:
         strategy_top_k=int(contract["strategy_top_k"]),
         memory_min_score=contract.get("memory_min_score"),
         strategy_min_score=contract.get("strategy_min_score"),
+        require_complete_strategy_family_catalog=True,
         evidence_filter_config=evidence_filter_config,
         memory_helpfulness_model=memory_helpfulness_model,
         evidence_filter_model_binding=evidence_filter_model_binding,

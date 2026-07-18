@@ -5,8 +5,13 @@ from typing import Any, Mapping, Sequence
 import time
 from collections import Counter
 import math
+import joblib
 
 from .api import Endpoint, OpenAICompatibleClient, request_log
+from .action_execution import (
+    execute_requested_retrievals,
+    realized_action_id_from_evidence,
+)
 from .attempt_ledger import (
     PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
     PersistentAttemptLedger,
@@ -53,6 +58,9 @@ from .io import (
 )
 from .generation_contract import SupporterGenerationContract
 from .pm_v2_data import runtime_to_pmv2_state
+from .pm_v1_5_step0 import build_strategy_family_catalog
+from .pm_v1_5_rule_router import TransparentRuleRouter
+from .pm_v2_fixed_model import FixedActionPMV2Model
 from .pm_v2_model import PMV2Model, decision_fallback_kind
 from .prompts import generation_messages
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
@@ -625,6 +633,7 @@ def run_pmv2_fixed_evoemo(
     strategy_top_k: int = 3,
     memory_min_score: float | None = None,
     strategy_min_score: float | None = None,
+    require_complete_strategy_family_catalog: bool = False,
     evidence_filter_config: EvidenceFilterConfig | None = None,
     memory_helpfulness_model: PMV2EvidenceFilterModel | None = None,
     evidence_filter_model_binding: Mapping[str, Any] | None = None,
@@ -745,6 +754,10 @@ def run_pmv2_fixed_evoemo(
     ]
     if not strategy_cards:
         raise ValueError("strategy bank is empty")
+    strategy_family_catalog = build_strategy_family_catalog(
+        strategy_cards,
+        require_all_families=require_complete_strategy_family_catalog,
+    )
     strategy_retriever = StrategyRetriever(
         strategy_cards, top_k=strategy_top_k, minimum_score=strategy_min_score
     )
@@ -755,7 +768,16 @@ def run_pmv2_fixed_evoemo(
             else None
         )
     )
-    model = PMV2Model.load(checkpoint_path)
+    try:
+        model = PMV2Model.load(checkpoint_path)
+    except TypeError:
+        candidate = joblib.load(checkpoint_path)
+        if not isinstance(candidate, TransparentRuleRouter):
+            raise
+        if candidate.format_version != "pm-v1.5-transparent-step0-rule-router-v1":
+            raise RuntimeError("unsupported transparent-rule checkpoint format")
+        model = candidate
+    requires_step0_observation = not isinstance(model, FixedActionPMV2Model)
     tracks = _load_fixed_tracks(fixed_tracks_path)
     fixed_expected = fixed_attestation.get("expected") or {}
     if (
@@ -977,6 +999,8 @@ def run_pmv2_fixed_evoemo(
                     runtime,
                     strategy_catalog_count=len(strategy_cards),
                     strategy_estimated_tokens=strategy_action_tokens,
+                    strategy_family_catalog=strategy_family_catalog,
+                    include_step0_observation=requires_step0_observation,
                 )
                 decision = model.choose(pm_state)
                 fallback_type = (
@@ -1008,13 +1032,16 @@ def run_pmv2_fixed_evoemo(
                     runtime.current_session_summary,
                 )
                 sources, strategy = parse_action_id(decision.chosen_action)
-                candidate_memory_view = memory_retriever.retrieve(
-                    query, items, sources
-                )
-                candidate_strategy_view = (
-                    strategy_retriever.retrieve(query)
-                    if strategy is StrategyMode.RS
-                    else []
+                (
+                    candidate_memory_view,
+                    candidate_strategy_view,
+                    retrieval_attempts,
+                ) = execute_requested_retrievals(
+                    requested_action_id=decision.chosen_action,
+                    query=query,
+                    memory_items=items,
+                    memory_retriever=memory_retriever,
+                    strategy_retriever=strategy_retriever,
                 )
                 if evidence_filter_config is not None:
                     filtered = filter_evidence(
@@ -1034,6 +1061,9 @@ def run_pmv2_fixed_evoemo(
                     memory_view = candidate_memory_view
                     strategy_view = candidate_strategy_view
                     filter_decision = None
+                realized_action_id = realized_action_id_from_evidence(
+                    memory_view, strategy_view
+                )
                 system = supporter_generation_contract.system_prompt
                 messages = generation_messages(
                     runtime, memory_view, strategy_view, system_prompt=system
@@ -1089,11 +1119,11 @@ def run_pmv2_fixed_evoemo(
                         "condition": condition,
                         "chosen_action": decision.chosen_action,
                         "requested_action_id": decision.chosen_action,
-                        "effective_action_id": (
-                            filter_decision.effective_action_id
-                            if filter_decision is not None
-                            else decision.chosen_action
-                        ),
+                        "retrieval_attempts": [
+                            row.model_dump(mode="json") for row in retrieval_attempts
+                        ],
+                        "realized_action_id": realized_action_id,
+                        "effective_action_id": realized_action_id,
                         "candidate_memory_count": len(candidate_memory_view),
                         "kept_memory_count": len(memory_view),
                         "candidate_strategy_count": len(candidate_strategy_view),
@@ -1108,6 +1138,8 @@ def run_pmv2_fixed_evoemo(
                         "max_output_tokens": max_output_tokens,
                         "max_http_attempts": 1,
                         "prompt_hash": prompt_hash,
+                        "prompt_equivalence_id": prompt_hash,
+                        "label_lineage_id": prompt_hash,
                         "call_key": call_key,
                         "supporter_generation_treatment": supporter_treatment,
                         "supporter_generation_treatment_sha256": (
@@ -1499,7 +1531,6 @@ def run_pmv2_fixed_evoemo(
                     state_conversation = _fixed_context_before_turn(
                         fixed_track, turn_number
                     )
-                    state_start = time.perf_counter()
                     runtime = make_evo_runtime_state(
                         user,
                         topic,
@@ -1511,12 +1542,19 @@ def run_pmv2_fixed_evoemo(
                         track_id=track_id,
                         fixed_open_loop=True,
                     )
+                    step0_start = time.perf_counter()
                     pm_state = runtime_to_pmv2_state(
                         runtime,
                         strategy_catalog_count=len(strategy_cards),
                         strategy_estimated_tokens=strategy_action_tokens,
+                        strategy_family_catalog=strategy_family_catalog,
+                        include_step0_observation=requires_step0_observation,
                     )
-                    pre_evidence_ms = (time.perf_counter() - state_start) * 1000.0
+                    pre_evidence_ms = (
+                        (time.perf_counter() - step0_start) * 1000.0
+                        if requires_step0_observation
+                        else 0.0
+                    )
                     query = context_query(
                         runtime.current_user_text,
                         [
@@ -1530,16 +1568,20 @@ def run_pmv2_fixed_evoemo(
                     pm_ms = (time.perf_counter() - pm_start) * 1000.0
                     action_id = decision.chosen_action
                     sources, strategy = parse_action_id(action_id)
-                    retrieval_start = time.perf_counter()
-                    candidate_memory_view = memory_retriever.retrieve(
-                        query, items, sources
+                    (
+                        candidate_memory_view,
+                        candidate_strategy_view,
+                        retrieval_attempts,
+                    ) = execute_requested_retrievals(
+                        requested_action_id=action_id,
+                        query=query,
+                        memory_items=items,
+                        memory_retriever=memory_retriever,
+                        strategy_retriever=strategy_retriever,
                     )
-                    candidate_strategy_view = (
-                        strategy_retriever.retrieve(query)
-                        if strategy is StrategyMode.RS
-                        else []
+                    retrieval_ms = sum(
+                        row.latency_ms for row in retrieval_attempts if row.called
                     )
-                    retrieval_ms = (time.perf_counter() - retrieval_start) * 1000.0
                     filter_start = time.perf_counter()
                     if evidence_filter_config is not None:
                         filtered = filter_evidence(
@@ -1559,6 +1601,9 @@ def run_pmv2_fixed_evoemo(
                         memory_view = candidate_memory_view
                         strategy_view = candidate_strategy_view
                         filter_decision = None
+                    realized_action_id = realized_action_id_from_evidence(
+                        memory_view, strategy_view
+                    )
                     filter_ms = (time.perf_counter() - filter_start) * 1000.0
                     system = supporter_generation_contract.system_prompt
                     messages = generation_messages(
@@ -1800,12 +1845,31 @@ def run_pmv2_fixed_evoemo(
                         )
                     )
                     cost = CostRecord(
-                        pm_input_tokens_est=estimate_tokens(query)
-                        + sum(
-                            len(cat.catalog_fingerprint)
-                            for cat in runtime.inventory.values()
+                        pm_input_tokens_est=(
+                            estimate_tokens(query)
+                            + sum(
+                                len(cat.catalog_fingerprint)
+                                for cat in runtime.inventory.values()
+                            )
+                            if requires_step0_observation
+                            else 0
                         ),
-                        catalog_reads=len(runtime.inventory),
+                        catalog_reads=(
+                            len(runtime.inventory)
+                            if requires_step0_observation
+                            else 0
+                        ),
+                        step0_memory_comparisons=(
+                            len(runtime.inventory)
+                            if requires_step0_observation
+                            else 0
+                        ),
+                        step0_strategy_family_comparisons=(
+                            len(strategy_family_catalog.vectors)
+                            if requires_step0_observation
+                            else 0
+                        ),
+                        step0_latency_ms=pre_evidence_ms,
                         pre_evidence_compute_ms=pre_evidence_ms,
                         pm_inference_ms=pm_ms,
                         retrieval_latency_ms=retrieval_ms,
@@ -1831,7 +1895,20 @@ def run_pmv2_fixed_evoemo(
                             + filter_ms
                             + result.latency_ms
                         ),
-                        api_cost_usd=None,
+                        api_cost_usd=(
+                            (
+                                result.usage["prompt_tokens"]
+                                or base_tokens + memory_tokens + strategy_tokens
+                            )
+                            / 1_000_000
+                            * float(input_usd_per_mtok)
+                            + (
+                                result.usage["completion_tokens"]
+                                or estimate_tokens(supporter_message)
+                            )
+                            / 1_000_000
+                            * float(output_usd_per_mtok)
+                        ),
                         evidence_filter_calls=(1 if filter_decision is not None else 0),
                         evidence_filter_latency_ms=filter_ms,
                         candidate_memory_count=len(candidate_memory_view),
@@ -1870,11 +1947,13 @@ def run_pmv2_fixed_evoemo(
                         "supporter_message": supporter_message,
                         "action_id": action_id,
                         "requested_action_id": action_id,
-                        "effective_action_id": (
-                            filter_decision.effective_action_id
-                            if filter_decision is not None
-                            else action_id
-                        ),
+                        "retrieval_attempts": [
+                            row.model_dump(mode="json") for row in retrieval_attempts
+                        ],
+                        "realized_action_id": realized_action_id,
+                        "effective_action_id": realized_action_id,
+                        "prompt_equivalence_id": prompt_hash,
+                        "label_lineage_id": prompt_hash,
                         "candidate_memory": [
                             row.model_dump(mode="json")
                             for row in candidate_memory_view

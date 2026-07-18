@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""PM-v1.5 thin wrapper for `22_train_pm_v2.py`.
-
-The original script hard-checks `pm_config.get("version") == "pm-v2.2"`.
-PM-v1.5 uses its own honestly-versioned config (`configs/pm_v1_5.yaml`,
-`version: pm-v1.5` -- not disguised as "pm-v2.2"), so this fork only widens
-that one check. Everything else is identical to the original: no gates were
-touched here (this script has none), no Evidence Filter or bank logic lives
-in the training step itself.
-"""
+"""Freeze PM-v1.5 candidates, then consume internal-test outcomes once."""
 
 from __future__ import annotations
 
@@ -17,8 +9,27 @@ from pathlib import Path
 from statistics import NormalDist
 
 import numpy as np
+import joblib
 
 from metacom_pm.config import load_config
+from metacom_pm.internal_holdout import (
+    begin_internal_test_consumption,
+    finish_internal_test_consumption,
+    freeze_candidate_manifest,
+)
+from metacom_pm.pm_v1_5_rule_router import (
+    FixedActionBaselineRouter,
+    transparent_rule_candidates,
+    tune_transparent_rule_router,
+)
+from metacom_pm.pm_v1_5_algorithm_selection import (
+    ALGORITHM_SELECTION_PROTOCOL,
+    select_routing_algorithm_group_cv,
+)
+from metacom_pm.pm_v1_5_shortcut_audit import (
+    SHORTCUT_AUDIT_PROTOCOL,
+    audit_step0_shortcuts,
+)
 from metacom_pm.pm_v2_audit import (
     EXPECTED_REGIME_CHECKS,
     _regime_pass,
@@ -48,7 +59,7 @@ from metacom_pm.pm_v2_model import (
     evaluate_prediction_coverage,
     tune_selection_config,
 )
-from metacom_pm.io import iter_jsonl, sha256_file, write_json
+from metacom_pm.io import iter_jsonl, sha256_file, sha256_text, canonical_json, write_json
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -472,6 +483,7 @@ def paired_user_cluster_bootstrap(
     replicates,
     confidence_level,
     seed,
+    comparator_name="cost_matched_fixed",
 ):
     """Paired state deltas with users as the bootstrap resampling unit."""
 
@@ -537,7 +549,7 @@ def paired_user_cluster_bootstrap(
         "replicates": replicates,
         "confidence_level": confidence_level,
         "seed": int(seed),
-        "delta_direction": "PM_minus_cost_matched_fixed",
+        "delta_direction": f"PM_minus_{comparator_name}",
         "metrics": {
             name: {
                 "mean_delta": float(point[index]),
@@ -546,6 +558,35 @@ def paired_user_cluster_bootstrap(
             }
             for index, name in enumerate(metric_names)
         },
+    }
+
+
+def comparator_tradeoff_gate(
+    paired_bootstrap,
+    *,
+    thresholds,
+    require_strict_utility: bool,
+):
+    metrics = paired_bootstrap["metrics"]
+    checks = {
+        "quality_noninferior": metrics["quality"]["ci_lower"]
+        >= float(thresholds["minimum_quality_delta"]),
+        "emotional_support_noninferior": metrics["emotional_support"]["ci_lower"]
+        >= float(thresholds["minimum_emotional_support_delta"]),
+        "risk_nonincrease": metrics["risk"]["ci_upper"]
+        <= float(thresholds["maximum_risk_delta"]),
+        "utility": metrics["utility"]["ci_lower"]
+        > float(thresholds["minimum_utility_delta"])
+        if require_strict_utility
+        else metrics["utility"]["ci_lower"]
+        >= float(thresholds["minimum_utility_delta"]),
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "NOT_SUPPORTED",
+        "strict_utility_advantage_required": bool(require_strict_utility),
+        "thresholds": dict(thresholds),
+        "checks": checks,
+        "paired_user_cluster_bootstrap": paired_bootstrap,
     }
 
 
@@ -774,8 +815,32 @@ def main() -> None:
         type=Path,
         default=ROOT / "data" / "pm_v1_5" / "evaluator_contexts.jsonl",
     )
-    parser.add_argument("--labels", type=Path, default=ROOT / "outputs" / "pm_v1_5_judging" / "action_labels.jsonl")
-    parser.add_argument("--out-dir", type=Path, default=ROOT / "outputs" / "pm_v1_5_model")
+    parser.add_argument(
+        "--train-calibration-labels",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging"
+            / "action_labels_train_calibration.jsonl"
+        ),
+    )
+    parser.add_argument(
+        "--internal-test-labels",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging"
+            / "action_labels_internal_test.jsonl"
+        ),
+    )
+    parser.add_argument(
+        "--out-dir",
+        type=Path,
+        default=ROOT / "outputs" / "pm_v1_5_model",
+    )
+    parser.add_argument("--run-identity", required=True)
     parser.add_argument("--seed", type=int, default=1701)
     parser.add_argument("--allow-nonreportable", action="store_true")
     args = parser.parse_args()
@@ -830,7 +895,10 @@ def main() -> None:
         states=states,
         require_exact=True,
     )
-    labels = [ActionLabel.model_validate(row) for row in iter_jsonl(args.labels)]
+    labels = [
+        ActionLabel.model_validate(row)
+        for row in iter_jsonl(args.train_calibration_labels)
+    ]
     expected_weights_hash = composite_weights_digest(initial_selection.composite_spec)
     bad_label_hashes = sorted(
         {
@@ -870,12 +938,22 @@ def main() -> None:
         split: {state.state_id for state in rows}
         for split, rows in states_by_split.items()
     }
+    forbidden_internal_labels = sorted(
+        label.state_id
+        for label in labels
+        if label.state_id in state_ids_by_split[PMV2Split.INTERNAL_TEST]
+    )
+    if forbidden_internal_labels:
+        raise RuntimeError(
+            "train/calibration label file contains internal-test outcomes"
+        )
     labels_by_split = {
         split: [label for label in labels if label.state_id in state_ids]
         for split, state_ids in state_ids_by_split.items()
+        if split is not PMV2Split.INTERNAL_TEST
     }
     reliable_matrix_report = {}
-    for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION, PMV2Split.INTERNAL_TEST):
+    for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION):
         retained_states, retained_labels, subset_report = (
             complete_reliable_action_matrix_subset(
                 states_by_split[split],
@@ -903,6 +981,77 @@ def main() -> None:
         minimum_regime_pass_rate=float(audit_cfg["minimum_regime_pass_rate"]),
         minimum_reliable_rate=float(audit_cfg["minimum_reliable_rate"]),
     )
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    shortcut_cfg = dict(pm_config["shortcut_audit"])
+    if (
+        shortcut_cfg.get("protocol") != SHORTCUT_AUDIT_PROTOCOL
+        or int(shortcut_cfg.get("expected_states") or 0) != len(states)
+        or shortcut_cfg.get("fail_on_near_oracle_threshold") is not True
+    ):
+        raise ValueError("Step-0 shortcut-audit contract is missing or stale")
+    shortcut_audit = audit_step0_shortcuts(
+        states=states,
+        evaluator_contexts=evaluator_contexts,
+        maximum_single_threshold_balanced_accuracy=float(
+            shortcut_cfg["maximum_single_threshold_balanced_accuracy"]
+        ),
+        centroid_noise_std=float(shortcut_cfg["centroid_noise_std"]),
+        shuffle_seed=int(shortcut_cfg["shuffle_seed"]),
+    )
+    shortcut_audit_path = args.out_dir / "step0_shortcut_audit.json"
+    write_json(shortcut_audit_path, shortcut_audit)
+    if shortcut_audit["status"] != "PASS":
+        raise RuntimeError(
+            "Step-0 shortcut audit failed before candidate selection; paid/internal "
+            "progression is blocked. See step0_shortcut_audit.json."
+        )
+    algorithm_cfg = dict(pm_config["algorithm_selection"])
+    if (
+        algorithm_cfg.get("protocol") != ALGORITHM_SELECTION_PROTOCOL
+        or algorithm_cfg.get("group_key") != "user_id"
+    ):
+        raise ValueError("algorithm-selection contract is missing or stale")
+    rule_cfg = pm_config["transparent_rule_router"]
+    selected_algorithm, algorithm_selection = (
+        select_routing_algorithm_group_cv(
+            states=states_by_split[PMV2Split.TRAIN],
+            labels=labels_by_split[PMV2Split.TRAIN],
+            selection_config=initial_selection,
+            candidates=algorithm_cfg["candidates"],
+            folds=int(algorithm_cfg["folds"]),
+            n_models=int(algorithm_cfg["cv_bootstrap_models"]),
+            seed=args.seed,
+            dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
+            bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+            use_precomputed_embeddings=bool(
+                feature_cfg["optional_precomputed_semantic_embedding"]
+            ),
+            word_features=int(feature_cfg["word_hash_features"]),
+            char_features=int(feature_cfg["char_hash_features"]),
+            rule_grid=rule_cfg["grid"],
+            rule_minimum_quality=float(rule_cfg["calibration_minimum_quality"]),
+            rule_maximum_risk=float(rule_cfg["calibration_maximum_risk"]),
+            minimum_validation_quality=float(
+                algorithm_cfg["minimum_validation_quality"]
+            ),
+            maximum_validation_risk=float(
+                algorithm_cfg["maximum_validation_risk"]
+            ),
+            safe_residual_thresholds=algorithm_cfg[
+                "safe_residual_thresholds"
+            ],
+        )
+    )
+    # The strong rule's numeric thresholds are selected on calibration only.
+    # Its structure/grid were frozen before any internal outcome was opened.
+    rule_router, rule_tuning = tune_transparent_rule_router(
+        states=states_by_split[PMV2Split.CALIBRATION],
+        labels=labels_by_split[PMV2Split.CALIBRATION],
+        selection_config=initial_selection,
+        candidates=transparent_rule_candidates(rule_cfg["grid"]),
+        minimum_quality=float(rule_cfg["calibration_minimum_quality"]),
+        maximum_risk=float(rule_cfg["calibration_maximum_risk"]),
+    )
     model = PMV2Model.train(
         states_by_split[PMV2Split.TRAIN],
         labels_by_split[PMV2Split.TRAIN],
@@ -914,6 +1063,24 @@ def main() -> None:
         use_precomputed_embeddings=bool(feature_cfg["optional_precomputed_semantic_embedding"]),
         word_features=int(feature_cfg["word_hash_features"]),
         char_features=int(feature_cfg["char_hash_features"]),
+    )
+    model.fit_routing_objective(
+        states_by_split[PMV2Split.TRAIN],
+        labels_by_split[PMV2Split.TRAIN],
+        algorithm=selected_algorithm,
+        n_models=int(model_cfg["bootstrap_models"]),
+        seed=args.seed,
+        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+        rule_router=(
+            rule_router
+            if selected_algorithm == "rule_relative_safe_residual_hgb"
+            else None
+        ),
+        safe_thresholds=(
+            algorithm_cfg["safe_residual_thresholds"]
+            if selected_algorithm == "rule_relative_safe_residual_hgb"
+            else None
+        ),
     )
     ood_calibration = model.feature_builder.calibrate_ood(
         states_by_split[PMV2Split.CALIBRATION],
@@ -952,6 +1119,92 @@ def main() -> None:
     )
     tuning = tune_selection_config(
         model,
+        states_by_split[PMV2Split.CALIBRATION],
+        labels_by_split[PMV2Split.CALIBRATION],
+        cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
+        risk_weights=[float(value) for value in grid_cfg["risk_weights"]],
+        resource_gains=[float(value) for value in grid_cfg["resource_gains"]],
+        strategy_gains=[float(value) for value in grid_cfg["strategy_gains"]],
+        max_risks=[float(value) for value in grid_cfg["max_risks"]],
+        minimum_quality=float(grid_cfg["minimum_quality"]),
+        objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
+        objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
+        objective_version=str(grid_cfg["objective_version"]),
+    )
+    # Use the same frozen utility ruler after calibration without retuning the
+    # rule's already-selected numeric thresholds.
+    rule_router.selection_config = model.selection_config
+
+    no_step0_model = PMV2Model.train(
+        states_by_split[PMV2Split.TRAIN],
+        labels_by_split[PMV2Split.TRAIN],
+        selection_config=initial_selection,
+        n_models=int(model_cfg["bootstrap_models"]),
+        seed=args.seed,
+        dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
+        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+        use_precomputed_embeddings=bool(
+            feature_cfg["optional_precomputed_semantic_embedding"]
+        ),
+        word_features=int(feature_cfg["word_hash_features"]),
+        char_features=int(feature_cfg["char_hash_features"]),
+        step0_signal_mode="none",
+    )
+    no_step0_model.fit_routing_objective(
+        states_by_split[PMV2Split.TRAIN],
+        labels_by_split[PMV2Split.TRAIN],
+        algorithm=selected_algorithm,
+        n_models=int(model_cfg["bootstrap_models"]),
+        seed=args.seed,
+        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+        rule_router=(
+            FixedActionBaselineRouter()
+            if selected_algorithm == "rule_relative_safe_residual_hgb"
+            else None
+        ),
+        safe_thresholds=(
+            algorithm_cfg["safe_residual_thresholds"]
+            if selected_algorithm == "rule_relative_safe_residual_hgb"
+            else None
+        ),
+    )
+    no_step0_ood_calibration = no_step0_model.feature_builder.calibrate_ood(
+        states_by_split[PMV2Split.CALIBRATION],
+        semantic_false_positive_quantile=float(
+            ood_cfg["semantic_false_positive_quantile"]
+        ),
+        metadata_false_positive_quantile=float(
+            ood_cfg["metadata_false_positive_quantile"]
+        ),
+        maximum_joint_in_distribution_fallback_rate=float(
+            ood_cfg["maximum_joint_in_distribution_fallback_rate"]
+        ),
+        minimum_semantic_challenge_detection_rate=float(
+            ood_cfg["minimum_semantic_challenge_detection_rate"]
+        ),
+        minimum_metadata_challenge_detection_rate=float(
+            ood_cfg["minimum_metadata_challenge_detection_rate"]
+        ),
+    )
+    no_step0_uncertainty_calibration = calibrate_uncertainty_multiplier(
+        no_step0_model,
+        states_by_split[PMV2Split.CALIBRATION],
+        labels_by_split[PMV2Split.CALIBRATION],
+        z_candidates=preregistered_z,
+        target_coverage=float(uncertainty_cfg["target_coverage"]),
+        minimum_quality_coverage_lower_bound=float(
+            uncertainty_cfg["minimum_quality_coverage_lower_bound"]
+        ),
+        minimum_response_coverage_lower_bound=float(
+            uncertainty_cfg["minimum_response_coverage_lower_bound"]
+        ),
+        minimum_risk_coverage_lower_bound=float(
+            uncertainty_cfg["minimum_risk_coverage_lower_bound"]
+        ),
+        coverage_confidence_level=float(uncertainty_cfg["confidence_level"]),
+    )
+    no_step0_tuning = tune_selection_config(
+        no_step0_model,
         states_by_split[PMV2Split.CALIBRATION],
         labels_by_split[PMV2Split.CALIBRATION],
         cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
@@ -1054,6 +1307,96 @@ def main() -> None:
         ),
     )
 
+    # Freeze every candidate and comparator before the first internal outcome
+    # is opened. The append-only ledger is spent immediately afterwards.
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint = args.out_dir / "pm_v1_5.joblib"
+    no_step0_checkpoint = args.out_dir / "pm_v1_5_no_step0.joblib"
+    rule_checkpoint = args.out_dir / "pm_v1_5_transparent_rule.joblib"
+    model.save(checkpoint)
+    no_step0_model.save(no_step0_checkpoint)
+    joblib.dump(rule_router, rule_checkpoint)
+    candidate_manifest_path = args.out_dir / "candidate_manifest.json"
+    candidate_manifest = freeze_candidate_manifest(
+        candidate_manifest_path,
+        run_identity=args.run_identity,
+        artifacts={
+            "pm_v1_5_config": args.pm_v2_config,
+            "states": args.states,
+            "evaluator_contexts": args.evaluator_contexts,
+            "train_calibration_labels": args.train_calibration_labels,
+            "primary_checkpoint": checkpoint,
+            "no_step0_checkpoint": no_step0_checkpoint,
+            "transparent_rule_checkpoint": rule_checkpoint,
+            "training_script": Path(__file__),
+            "step0_shortcut_audit": shortcut_audit_path,
+        },
+        parameters={
+            "primary_candidate": selected_algorithm + "_with_step0",
+            "algorithm_selection_protocol": ALGORITHM_SELECTION_PROTOCOL,
+            "algorithm_selection_data_role": "train_only",
+            "internal_ablation": selected_algorithm + "_without_step0",
+            "no_step0_residual_baseline": (
+                "M0+R0"
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                else None
+            ),
+            "mechanism_baseline": "transparent_rule_with_same_step0",
+            "selection_config_sha256": model.selection_config.digest(),
+            "no_step0_selection_config_sha256": (
+                no_step0_model.selection_config.digest()
+            ),
+            "transparent_rule_config_sha256": rule_router.config.digest(),
+            "cost_matched_fixed_action": cost_matched["action_id"],
+            "best_fixed_action": best_fixed["action_id"],
+            "explicit_me_r0_action": "ME+R0",
+            "structured_high_resource_action": "MPMSME+RS",
+            "external_primary_conditions": list(
+                pm_config["external_evaluation"]["primary_conditions"]
+            ),
+        },
+    )
+    internal_consumption_ledger_path = (
+        args.out_dir / "internal_test_consumption_ledger.jsonl"
+    )
+    consumption_started = begin_internal_test_consumption(
+        internal_consumption_ledger_path,
+        candidate_manifest_path=candidate_manifest_path,
+        internal_labels_path=args.internal_test_labels,
+    )
+    internal_labels = [
+        ActionLabel.model_validate(row)
+        for row in iter_jsonl(args.internal_test_labels)
+    ]
+    bad_internal_hashes = sorted(
+        {
+            label.composite_weights_sha256
+            for label in internal_labels
+            if label.composite_weights_sha256 != expected_weights_hash
+        }
+    )
+    if bad_internal_hashes:
+        raise RuntimeError("internal-test labels use the wrong composite weights")
+    noninternal = sorted(
+        label.state_id
+        for label in internal_labels
+        if label.state_id not in state_ids_by_split[PMV2Split.INTERNAL_TEST]
+    )
+    if noninternal:
+        raise RuntimeError("internal-test label file contains non-internal outcomes")
+    internal_states, internal_labels, internal_matrix_report = (
+        complete_reliable_action_matrix_subset(
+            states_by_split[PMV2Split.INTERNAL_TEST],
+            internal_labels,
+            split_name=PMV2Split.INTERNAL_TEST.value,
+            gate_cfg=reliable_matrix_cfg[PMV2Split.INTERNAL_TEST.value],
+            low_mad_threshold=float(labeling_cfg["reliable_mad_threshold"]),
+        )
+    )
+    states_by_split[PMV2Split.INTERNAL_TEST] = internal_states
+    labels_by_split[PMV2Split.INTERNAL_TEST] = internal_labels
+    reliable_matrix_report[PMV2Split.INTERNAL_TEST.value] = internal_matrix_report
+
     internal = evaluate_policy(
         model,
         states_by_split[PMV2Split.INTERNAL_TEST],
@@ -1082,8 +1425,28 @@ def main() -> None:
         labels_by_split[PMV2Split.INTERNAL_TEST],
         best_fixed["action_id"],
     )
-    if internal_cost_matched is None or internal_best_fixed is None:
+    internal_me_r0 = fixed_action_metrics(
+        model,
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+        "ME+R0",
+    )
+    if (
+        internal_cost_matched is None
+        or internal_best_fixed is None
+        or internal_me_r0 is None
+    ):
         raise RuntimeError("calibration-selected fixed action is not legal on internal test")
+    internal_rule = evaluate_policy(
+        rule_router,
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+    )
+    internal_no_step0 = evaluate_policy(
+        no_step0_model,
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+    )
     internal_alignment = policy_regime_alignment(
         model,
         states_by_split[PMV2Split.INTERNAL_TEST],
@@ -1098,6 +1461,30 @@ def main() -> None:
         confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
         seed=int(gate_cfg["paired_bootstrap_seed"]),
     )
+    internal_rule_bootstrap = paired_user_cluster_bootstrap(
+        internal["rows"],
+        internal_rule["rows"],
+        replicates=int(gate_cfg["paired_bootstrap_replicates"]),
+        confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
+        seed=int(gate_cfg["paired_bootstrap_seed"]),
+        comparator_name="transparent_step0_rule",
+    )
+    internal_me_r0_bootstrap = paired_user_cluster_bootstrap(
+        internal["rows"],
+        internal_me_r0["rows"],
+        replicates=int(gate_cfg["paired_bootstrap_replicates"]),
+        confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
+        seed=int(gate_cfg["paired_bootstrap_seed"]),
+        comparator_name="ME_R0",
+    )
+    internal_no_step0_bootstrap = paired_user_cluster_bootstrap(
+        internal["rows"],
+        internal_no_step0["rows"],
+        replicates=int(gate_cfg["paired_bootstrap_replicates"]),
+        confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
+        seed=int(gate_cfg["paired_bootstrap_seed"]),
+        comparator_name="learned_without_step0",
+    )
     assessment = build_internal_reportability_assessment(
         internal=internal,
         internal_cost_matched=internal_cost_matched,
@@ -1108,12 +1495,39 @@ def main() -> None:
         paired_bootstrap=internal_paired_bootstrap,
         gate_cfg=gate_cfg,
     )
-    reportability_checks = assessment["checks"]
-    reportable = assessment["reportable"]
+    protocol_gate_cfg = pm_config["protocol_gates"]
+    gate_m = comparator_tradeoff_gate(
+        internal_rule_bootstrap,
+        thresholds=protocol_gate_cfg["gate_m_learned_vs_rule"],
+        require_strict_utility=True,
+    )
+    gate_f_cost_matched = comparator_tradeoff_gate(
+        internal_paired_bootstrap,
+        thresholds=protocol_gate_cfg["gate_f_fixed_guardrail"],
+        require_strict_utility=False,
+    )
+    gate_f_me_r0 = comparator_tradeoff_gate(
+        internal_me_r0_bootstrap,
+        thresholds=protocol_gate_cfg["gate_f_fixed_guardrail"],
+        require_strict_utility=False,
+    )
+    gate_f = {
+        "status": (
+            "PASS"
+            if gate_f_cost_matched["status"] == "PASS"
+            and gate_f_me_r0["status"] == "PASS"
+            else "NOT_SUPPORTED"
+        ),
+        "cost_matched_fixed": gate_f_cost_matched,
+        "ME+R0": gate_f_me_r0,
+    }
+    reportability_checks = {
+        **assessment["common_checks"],
+        "gate_m": gate_m["status"] == "PASS",
+        "gate_f": gate_f["status"] == "PASS",
+    }
+    reportable = all(reportability_checks.values())
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint = args.out_dir / "pm_v1_5.joblib"
-    model.save(checkpoint)
     report = {
         "status": "COMPLETE" if reportable else "NONREPORTABLE",
         "format_version": model.format_version,
@@ -1121,22 +1535,46 @@ def main() -> None:
         "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
         "states": str(args.states),
         "states_sha256": sha256_file(args.states),
-        "labels": str(args.labels),
-        "labels_sha256": sha256_file(args.labels),
+        "train_calibration_labels": str(args.train_calibration_labels),
+        "train_calibration_labels_sha256": sha256_file(
+            args.train_calibration_labels
+        ),
+        "internal_test_labels": str(args.internal_test_labels),
+        "internal_test_labels_sha256": sha256_file(args.internal_test_labels),
         "evaluator_contexts": str(args.evaluator_contexts),
         "evaluator_contexts_sha256": evaluator_contexts.source_sha256,
         "evaluator_contexts_map_sha256": evaluator_contexts.map_sha256,
         "checkpoint": str(checkpoint),
         "checkpoint_sha256": sha256_file(checkpoint),
+        "no_step0_checkpoint": str(no_step0_checkpoint),
+        "no_step0_checkpoint_sha256": sha256_file(no_step0_checkpoint),
+        "transparent_rule_checkpoint": str(rule_checkpoint),
+        "transparent_rule_checkpoint_sha256": sha256_file(rule_checkpoint),
+        "candidate_manifest": str(candidate_manifest_path),
+        "candidate_manifest_sha256": sha256_file(candidate_manifest_path),
+        "candidate_manifest_payload_sha256": candidate_manifest[
+            "candidate_manifest_sha256"
+        ],
+        "internal_test_consumption_ledger": str(
+            internal_consumption_ledger_path
+        ),
+        "internal_test_consumption_started": consumption_started,
         "training": model.training_report,
+        "algorithm_selection": algorithm_selection,
+        "selected_routing_algorithm": selected_algorithm,
         "split_manifest": split_manifest.model_dump(mode="json"),
         "cross_split_near_duplicate_audit": cross_split_near_duplicate_audit,
         "composite_weights_sha256": expected_weights_hash,
         "reliable_action_matrix_subsets": reliable_matrix_report,
         "data_label_audit": {key: value for key, value in data_label_audit.items() if key != "rows"},
+        "step0_shortcut_audit": shortcut_audit,
         "uncertainty_calibration": uncertainty_calibration,
         "ood_calibration": ood_calibration,
         "calibration": tuning,
+        "transparent_rule_calibration": rule_tuning,
+        "no_step0_calibration": no_step0_tuning,
+        "no_step0_uncertainty_calibration": no_step0_uncertainty_calibration,
+        "no_step0_ood_calibration": no_step0_ood_calibration,
         "calibration_pm": {key: value for key, value in calibration_pm.items() if key != "rows"},
         "calibration_prediction_coverage": calibration_coverage,
         "calibration_cost_diagnostics": calibration_cost_diagnostics,
@@ -1158,6 +1596,26 @@ def main() -> None:
         },
         "internal_best_fixed": {
             key: value for key, value in internal_best_fixed.items() if key != "rows"
+        },
+        "internal_ME+R0": {
+            key: value for key, value in internal_me_r0.items() if key != "rows"
+        },
+        "internal_transparent_rule": {
+            key: value for key, value in internal_rule.items() if key != "rows"
+        },
+        "internal_learned_without_step0": {
+            key: value
+            for key, value in internal_no_step0.items()
+            if key != "rows"
+        },
+        "internal_learned_vs_rule_bootstrap": internal_rule_bootstrap,
+        "internal_learned_vs_ME+R0_bootstrap": internal_me_r0_bootstrap,
+        "internal_step0_ablation_bootstrap": internal_no_step0_bootstrap,
+        "gate_m": gate_m,
+        "gate_f": gate_f,
+        "gate_e": {
+            "status": "PENDING_EXTERNAL",
+            "activated_only_after_gate_m_and_gate_f": True,
         },
         "internal_policy_regime_alignment": internal_alignment,
         "internal_paired_user_cluster_bootstrap": internal_paired_bootstrap,
@@ -1182,7 +1640,12 @@ def main() -> None:
         "selection_config": model.selection_config.model_dump(mode="json"),
         "selection_config_hash": model.selection_config.digest(),
     }
-    write_json(args.out_dir / "training_report.json", report)
+    training_report_path = args.out_dir / "training_report.json"
+    write_json(training_report_path, report)
+    finish_internal_test_consumption(
+        internal_consumption_ledger_path,
+        report_path=training_report_path,
+    )
     print(report)
     if not reportable and not args.allow_nonreportable:
         raise RuntimeError(

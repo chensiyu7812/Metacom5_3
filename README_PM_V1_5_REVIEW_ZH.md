@@ -1,9 +1,15 @@
-# PM-v1.5 快速会议版：GPT Pro 审查入口
+# PM-v1.5_1 协议修复候选版：审查入口
 
-更新时间：2026-07-17
+更新时间：2026-07-18
 
-审查对象：当前分支中的 **PM-v1.5 快速会议版**。这是一个尚未产出正式实验结果的
+审查对象：当前分支中的 **PM-v1.5_1 协议修复候选版**。这是一个尚未产出正式实验结果的
 方法与执行链审查包，不是结果仓库，也不是论文结论已经成立的证明。
+
+> **2026-07-18 更新：** 审查发现原定义存在免费的目录内容派生探针、动作日志语义和
+> judge 角色隔离问题。下一次运行的优先合同现为
+> `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。PM-v1.5_1 已完成代码实现和
+> 本地回归，但尚未建立新的 dry-run/lineage/付费运行身份，因此状态仍为
+> `TARGET_NOT_ACTIVE / PAID_RUN_BLOCKED`；下文保留原审查包说明作为历史背景。
 
 ## 0. 首先避免版本混淆
 
@@ -158,17 +164,18 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 
 ## 10. 推荐阅读顺序
 
-1. 本文件；
-2. `project/docs/PM_V1_5_CORE_CHAIN_PLAN_ZH.md`；
-3. `project/docs/PM_V1_5_REVIEW_ARTIFACT_INDEX.json`；
-4. `project/configs/pm_v1_5.yaml`；
-5. `project/src/metacom_pm/v1_5_external_claims.py`；
-6. `project/src/metacom_pm/v1_5_external_batched.py`；
-7. `project/scripts/v1_5_create_freeze.py`；
-8. `project/scripts/v1_5/` 与 `project/scripts/v1_5_run_automated_semantic_review.py`；
-9. `project/tests/test_v1_5_*.py`、`test_bounded_retry.py` 和
+1. `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`；
+2. 本文件（原审查包背景）；
+3. `project/docs/PM_V1_5_CORE_CHAIN_PLAN_ZH.md`（历史设计）；
+4. `project/docs/PM_V1_5_REVIEW_ARTIFACT_INDEX.json`；
+5. `project/configs/pm_v1_5.yaml`；
+6. `project/src/metacom_pm/v1_5_external_claims.py`；
+7. `project/src/metacom_pm/v1_5_external_batched.py`；
+8. `project/scripts/v1_5_create_freeze.py`；
+9. `project/scripts/v1_5/` 与 `project/scripts/v1_5_run_automated_semantic_review.py`；
+10. `project/tests/test_v1_5_*.py`、`test_bounded_retry.py` 和
    `test_api_retry_classification.py`；
-10. 历史问题背景：`project/docs/PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md` 与 legacy
+11. 历史问题背景：`project/docs/PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md` 与 legacy
     `PM_V1_5_SUPPLEMENTAL_ANALYSIS_ZH.md`，但不要把其中结果当作当前 V1.5 结果。
 
 ## 11. 可直接交给 GPT Pro 的审查任务

@@ -1,6 +1,6 @@
 # Policy Manager 版本索引
 
-更新时间：2026-07-17
+更新时间：2026-07-18
 
 本仓库中的 PM 研究按四条明确区分的轨道管理。尤其注意：历史
 `pm-v1.5-supplemental` 和当前“PM-v1.5 快速会议版”曾共用 V1.5 这个简称，但方法与结果
@@ -39,11 +39,19 @@ c16608343fe60e92e57c622fdc24738efe57d08c
 - 修正 Overall、claim boundaries、Discussion 和 Limitations；
 - 不构成新训练模型或重新选择后的 confirmatory method。
 
-## 当前 PM-v1.5：重新训练的快速会议版
+## 当前 PM-v1.5_1：审查修复后的重新训练候选版
 
-审查分支：[`agent/pm-v1-5-conference-review`](https://github.com/chensiyu7812/metacom-v33-review/tree/agent/pm-v1-5-conference-review)
+版本分支：[`pm-v1.5_1`](https://github.com/chensiyu7812/metacom-v33-review/tree/pm-v1.5_1)
 
 首要入口：仓库根目录 `README_PM_V1_5_REVIEW_ZH.md`
+
+`PM-v1.5_1` 是 `PM-v1.5` 方法族的协议修复发布版本；方法族内部稳定标识仍为
+`pm-v1.5`，配置中的 `release_revision` 明确记录 `pm-v1.5_1`，二者不得与 legacy
+supplemental 混用。
+
+2026-07-18 审查后的下一次运行合同：
+`project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。该合同当前为
+`TARGET_NOT_ACTIVE / PAID_RUN_BLOCKED`；原快速会议版文档只作为历史设计背景。
 
 用途：
 
@@ -78,5 +86,5 @@ PM-v1.5 checkpoint、study freeze 或外部主结果。Legacy supplemental 的�
 
 - `pm-v1-frozen`；
 - `pm-v1.5-supplemental`（legacy post-hoc）；
-- `agent/pm-v1-5-conference-review`（当前重新训练的快速会议版，审查阶段）；
+- `pm-v1.5_1`（当前协议修复后的重新训练候选版）；
 - 或 `pm-v2-redesign`。

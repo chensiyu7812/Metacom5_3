@@ -47,6 +47,15 @@ so restarting the process cannot reset a deterministic failure or missing-field
 counter. This changes the call-plan/cost-estimate contract
 (worst-case 3x physical attempts budgeted), so any prior accepted
 cost-estimate hash for this stage is stale.
+
+Judge-isolation amendment (2026-07-18): every prior panel containing
+``final_judge`` is ineligible for development gating because that endpoint is
+also the primary external judge. The only default development panel is now
+Gemini Flash Lite plus DeepSeek Flash. Before planning any call, code resolves
+all development and final endpoint aliases and fails closed on overlap in the
+alias, declared family, model identifier, or resolved base-URL/model route.
+Old partial judgments are not reused; this amendment requires a new output
+directory, dry-run, and accepted cost-estimate hash.
 """
 
 from __future__ import annotations
@@ -99,16 +108,15 @@ from metacom_pm.v1_5_automated_semantic_review import (
     build_positive_controls,
     judge_messages,
 )
+from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
 ROOT = Path(__file__).resolve().parents[1]
-# Amended from the original 3-family panel (see module docstring): dropped
-# training_judge_qwen122 after two independent infrastructure/compatibility
-# failures. The >=2-family check below and aggregate_gate's strict-majority
-# formula both already work unmodified with 2 families (majority of 2 is 2).
+# Development-only panel. Final-evaluation judges are rejected by resolved
+# identity even if a caller supplies a different endpoint alias.
 DEFAULT_JUDGE_ENDPOINTS = (
+    "training_judge_gemini_flash_lite",
     "training_judge_deepseek_flash",
-    "final_judge",
 )
 # Worst-case physical attempts per logical call: 1 initial + 2 bounded retries
 # for a transient 408/429/5xx/network-timeout failure (see
@@ -154,6 +162,11 @@ def main() -> None:
     pm_config = load_config(args.pm_v1_5_config)
     if pm_config.get("version") != "pm-v1.5":
         raise RuntimeError("automated semantic review requires PM-v1.5")
+    judge_role_isolation = require_judge_role_isolation(
+        experiment_config,
+        pm_config,
+        development_endpoint_names=args.judge_endpoints,
+    )
     endpoints = {
         name: endpoint_from_config(experiment_config, name) for name in args.judge_endpoints
     }
@@ -281,6 +294,7 @@ def main() -> None:
         ),
         "pricing_usd_per_mtok": prices,
         "api_cost_planning": planning,
+        "judge_role_isolation": judge_role_isolation,
         "retry_contract": {
             "protocol": RETRY_CONTRACT_PROTOCOL,
             "retryable_up_to_full_budget": sorted(
@@ -549,6 +563,7 @@ def main() -> None:
         },
         parameters={
             "protocol": AUTOMATED_REVIEW_PROTOCOL,
+            "judge_role_isolation": judge_role_isolation,
             "accepted_cost_estimate_sha256": estimate["cost_estimate_sha256"],
             "provider_client_retries": 1,
             "retry_contract": estimate["retry_contract"],
@@ -556,6 +571,7 @@ def main() -> None:
         },
         expected={
             "status": gate["status"],
+            "judge_role_isolation_status": judge_role_isolation["status"],
             "logical_calls": n_calls,
             "physical_attempts": ledger.started_attempts,
         },

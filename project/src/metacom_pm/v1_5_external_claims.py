@@ -74,7 +74,27 @@ def assess_external_claims(
         "observed_input_token_cost_strictly_lower": cost_upper
         < float(contract["maximum_cost_delta_ci_upper"]),
     }
-    supported = all(checks.values())
+    gate_e = dict(summary.get("gate_e") or {})
+    if (
+        gate_e.get("comparator") != comparator
+        or not isinstance(gate_e.get("checks"), Mapping)
+    ):
+        raise RuntimeError("external summary lacks the frozen Gate E verdict")
+    checks["gate_e_quality_noninferior"] = bool(
+        gate_e["checks"].get("quality_noninferior")
+    )
+    checks["gate_e_evidence_risk_nonincrease"] = bool(
+        gate_e["checks"].get("evidence_risk_nonincrease")
+    )
+    checks["gate_e_generator_input_tokens_strictly_lower"] = bool(
+        gate_e["checks"].get("generator_input_tokens_strictly_lower")
+    )
+    checks["internal_gate_m_and_f_lineage"] = bool(
+        gate_e["checks"].get("internal_gate_m_passed")
+        and gate_e["checks"].get("internal_gate_f_passed")
+        and gate_e["checks"].get("lineage_complete")
+    )
+    supported = gate_e.get("status") == "PASS" and all(checks.values())
     sensitivity = summary.get("quality_sensitivity") or {}
     if (
         sensitivity.get("role") != contract.get("sensitivity_role")
@@ -112,6 +132,7 @@ def assess_external_claims(
             ),
             "delta_ci": cost_ci,
         },
+        "gate_e": gate_e,
         "latency_claim_status": "DESCRIPTIVE_ONLY_NOT_CONFIRMATORY",
         "quality_sensitivity": {
             "judge_family": str(contract["sensitivity_judge_family"]),
@@ -132,7 +153,7 @@ def assess_external_claims(
                 else None
             ),
             "claim_boundary": risk_audit.get("claim_boundary"),
-            "affects_primary_quality_cost_verdict": False,
+            "affects_gate_e_efficiency_verdict": True,
         },
         "claim": (
             "PM-v1.5 is externally non-inferior in frozen quality composite and "

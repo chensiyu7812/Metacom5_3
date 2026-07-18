@@ -46,6 +46,11 @@ from metacom_pm.pm_v2_model import (
     evaluate_prediction_coverage,
     tune_selection_config,
 )
+from metacom_pm.pm_v1_5_algorithm_selection import (
+    select_routing_algorithm_group_cv,
+)
+from metacom_pm.pm_v1_5_rule_router import FixedActionBaselineRouter
+from metacom_pm.pm_v2_fixed_model import FixedActionPMV2Model
 
 
 def make_state(
@@ -105,6 +110,25 @@ def make_state(
         allowed_actions=allowed_actions,
         provenance={"evaluator_context_id": f"eval_{state_id}"},
     )
+
+
+def test_fixed_action_model_does_not_read_step0_or_prediction_heads() -> None:
+    state = make_state("fixed_no_step0")
+    state = state.model_copy(update={"step0_observation": None})
+    model = FixedActionPMV2Model(
+        feature_builder=object(),
+        response_heads={},
+        risk_heads={},
+        selection_config=SelectionConfig(),
+        fixed_action="M0+R0",
+    )
+
+    decision = model.choose(state)
+
+    assert decision.chosen_action == "M0+R0"
+    assert decision.predictions == {}
+    assert decision.semantic_ood_score == 0.0
+    assert decision.metadata_ood_score == 0.0
 
 
 def test_ood_thresholds_are_calibrated_on_holdout_and_challenge_gated():
@@ -278,6 +302,12 @@ class ConstantHead:
         return np.full((2, x.shape[0]), self.value, dtype=float)
 
 
+class OrderedHead:
+    def predict_members(self, x):
+        values = np.arange(x.shape[0], dtype=float)
+        return np.vstack([values, values])
+
+
 def fake_routing_model(predictions_by_state) -> PMV2Model:
     model = PMV2Model(
         feature_builder=RoutingBuilder(),
@@ -405,6 +435,110 @@ def test_default_bootstrap_group_is_user_id_not_state_id():
     cost_contract = model.training_report["estimated_resource_cost_contract"]
     assert cost_contract["memory_top_k"] == {"MP": 2, "MS": 2, "ME": 3}
     assert cost_contract["retrieval_call_penalty"] == 24.0
+
+
+def test_paired_delta_objective_is_fitted_over_complete_paired_states():
+    states = [make_state(f"delta_{index}") for index in range(3)]
+    labels = [
+        make_label(
+            state,
+            action,
+            response=make_response(
+                2.0 + 0.5 * state.allowed_actions.index(action)
+            ),
+        )
+        for state in states
+        for action in state.allowed_actions
+    ]
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+    )
+    model.fit_routing_objective(
+        states,
+        labels,
+        algorithm="state_centered_paired_delta_hgb",
+        n_models=1,
+        seed=17,
+    )
+    assert model.routing_objective_head is not None
+    assert model.routing_objective_report["target"] == (
+        "state_centered_realized_utility"
+    )
+    assert model.routing_objective_report["n_rows"] == sum(
+        len(state.allowed_actions) for state in states
+    )
+    assert model.choose(states[0]).chosen_action in states[0].allowed_actions
+
+
+def test_rule_residual_overrides_only_when_all_safe_delta_checks_pass():
+    state = make_state("safe_residual")
+    predictions = {
+        action: action_prediction(action, utility=0.5)
+        for action in state.allowed_actions
+    }
+    model = fake_routing_model({state.state_id: predictions})
+    model.routing_algorithm = "rule_relative_safe_residual_hgb"
+    model.routing_objective_head = OrderedHead()
+    model.routing_rule_router = FixedActionBaselineRouter()
+    model.routing_safe_thresholds = {
+        "minimum_quality_delta_lcb": -0.02,
+        "minimum_emotional_support_delta_lcb": -0.025,
+        "maximum_risk_delta_ucb": 0.02,
+        "minimum_utility_delta_lcb": 0.0,
+    }
+    assert model.choose(state).chosen_action == "ME+RS"
+    model.routing_safe_thresholds["minimum_utility_delta_lcb"] = 10.0
+    assert model.choose(state).chosen_action == "M0+R0"
+
+
+def test_algorithm_family_selection_is_train_user_group_disjoint():
+    states = [make_state(f"cv_{index}") for index in range(6)]
+    labels = [
+        make_label(
+            state,
+            action,
+            response=make_response(
+                2.0 + 0.4 * state.allowed_actions.index(action)
+            ),
+        )
+        for state in states
+        for action in state.allowed_actions
+    ]
+    selected, report = select_routing_algorithm_group_cv(
+        states=states,
+        labels=labels,
+        selection_config=SelectionConfig(),
+        candidates=[
+            "state_centered_paired_delta_hgb",
+            "absolute_outcome_factorized_hgb",
+        ],
+        folds=3,
+        n_models=1,
+        seed=17,
+        dimension_mad_scale=0.75,
+        bootstrap_group_key="user_id",
+        use_precomputed_embeddings=False,
+        word_features=8,
+        char_features=8,
+        rule_grid={},
+        rule_minimum_quality=0.0,
+        rule_maximum_risk=1.0,
+        minimum_validation_quality=0.0,
+        maximum_validation_risk=1.0,
+        safe_residual_thresholds={},
+    )
+    assert selected in {
+        "state_centered_paired_delta_hgb",
+        "absolute_outcome_factorized_hgb",
+    }
+    assert report["selection_data_role"] == "train_only"
+    for fold in report["fold_assignments"]:
+        assert set(fold["fit_users"]).isdisjoint(fold["validation_users"])
 
 
 def test_training_rejects_composite_weight_hash_mismatch():

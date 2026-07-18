@@ -1163,6 +1163,7 @@ def main() -> None:
         strategy_estimated_tokens=strategy_estimated_tokens,
         strategy_top_k=strategy_top_k,
         strategy_bank_sha256=strategy_bank_sha256,
+        strategy_cards=strategy_cards,
         expected_semantic_families_by_split={
             PMV2Split.TRAIN: TRAIN_SEMANTIC_FAMILIES,
             PMV2Split.CALIBRATION: CALIBRATION_SEMANTIC_FAMILIES,

@@ -274,6 +274,38 @@ class EvidenceFilterDecision(StrictModel):
         return self
 
 
+class RetrievalAttempt(StrictModel):
+    """One auditable requested/not-requested retrieval channel."""
+
+    channel: Literal["MP", "MS", "ME", "STRATEGY"]
+    requested: bool
+    called: bool
+    status: Literal["not_requested", "succeeded", "failed"]
+    hit_count: int = Field(ge=0)
+    retrieved_tokens: int = Field(ge=0)
+    latency_ms: float = Field(ge=0.0)
+    api_cost_usd: float = Field(ge=0.0)
+    failure_reason: str | None = None
+
+    @model_validator(mode="after")
+    def coherent(self):
+        if not self.requested:
+            if self.called or self.status != "not_requested":
+                raise ValueError("non-requested retrieval channel cannot be called")
+            if self.hit_count or self.retrieved_tokens or self.failure_reason is not None:
+                raise ValueError("non-requested retrieval channel must be empty")
+        elif not self.called or self.status == "not_requested":
+            raise ValueError("requested retrieval channel must be called")
+        if self.status == "failed":
+            if not self.failure_reason:
+                raise ValueError("failed retrieval requires failure_reason")
+            if self.hit_count or self.retrieved_tokens:
+                raise ValueError("failed retrieval cannot report candidates")
+        elif self.failure_reason is not None:
+            raise ValueError("only failed retrieval may include failure_reason")
+        return self
+
+
 class CostRecord(StrictModel):
     pm_input_tokens_est: int = Field(ge=0)
     retrieval_calls: int = Field(ge=0)
@@ -287,6 +319,9 @@ class CostRecord(StrictModel):
     api_cost_usd: float | None = Field(default=None, ge=0)
     # Latency breakdowns (optional; populated in EvoEmo runs)
     catalog_reads: int = Field(default=0, ge=0)
+    step0_memory_comparisons: int = Field(default=0, ge=0)
+    step0_strategy_family_comparisons: int = Field(default=0, ge=0)
+    step0_latency_ms: float = Field(default=0.0, ge=0.0)
     pre_evidence_compute_ms: float = Field(default=0.0, ge=0)
     pm_inference_ms: float = Field(default=0.0, ge=0)
     retrieval_latency_ms: float = Field(default=0.0, ge=0)
@@ -308,12 +343,17 @@ class ActionOutcome(StrictModel):
     state_id: str
     user_id: str
     action_id: str
+    requested_action_id: str | None = None
     response: str = Field(min_length=1)
     selected_memory_ids: list[str]
     selected_strategy_ids: list[str]
     memory_view: list[MemoryItem]
     strategy_view: list[StrategyCard]
+    retrieval_attempts: list[RetrievalAttempt] = Field(default_factory=list)
+    realized_action_id: str | None = None
     effective_action_id: str | None = None
+    prompt_equivalence_id: str | None = None
+    label_lineage_id: str | None = None
     candidate_memory_view: list[MemoryItem] | None = None
     candidate_strategy_view: list[StrategyCard] | None = None
     evidence_filter_decision: EvidenceFilterDecision | None = None
@@ -325,18 +365,16 @@ class ActionOutcome(StrictModel):
 
     @model_validator(mode="after")
     def selection_matches_action(self):
-        sources, strategy = parse_action_id(self.action_id)
+        requested_action_id = self.requested_action_id or self.action_id
+        if requested_action_id != self.action_id:
+            raise ValueError("action_id must remain the requested-action compatibility alias")
+        self.requested_action_id = requested_action_id
+        sources, strategy = parse_action_id(requested_action_id)
         actual_sources = {item.source for item in self.memory_view}
         if not actual_sources <= sources:
             raise ValueError("memory_view includes a source outside the action")
         if strategy is StrategyMode.R0 and self.strategy_view:
             raise ValueError("R0 outcome cannot include strategy cards")
-        if (
-            strategy is StrategyMode.RS
-            and not self.strategy_view
-            and self.evidence_filter_decision is None
-        ):
-            raise ValueError("RS outcome must include strategy cards")
         if self.selected_memory_ids != [x.memory_id for x in self.memory_view]:
             raise ValueError("selected_memory_ids mismatch")
         if self.selected_strategy_ids != [x.strategy_id for x in self.strategy_view]:
@@ -345,7 +383,7 @@ class ActionOutcome(StrictModel):
             if self.candidate_memory_view is None or self.candidate_strategy_view is None:
                 raise ValueError("filtered outcomes require candidate evidence views")
             decision = self.evidence_filter_decision
-            if decision.requested_action_id != self.action_id:
+            if decision.requested_action_id != requested_action_id:
                 raise ValueError("filter requested action does not match action_id")
             if decision.candidate_memory_ids != [
                 x.memory_id for x in self.candidate_memory_view
@@ -370,10 +408,59 @@ class ActionOutcome(StrictModel):
             )
             if decision.effective_action_id != computed_effective:
                 raise ValueError("filter effective action does not match kept evidence")
-            if self.effective_action_id != computed_effective:
-                raise ValueError("effective_action_id does not match kept evidence")
-        elif self.effective_action_id is not None and self.effective_action_id != self.action_id:
-            raise ValueError("unfiltered effective_action_id must equal action_id")
+        else:
+            computed_effective = canonical_action_id(
+                actual_sources,
+                StrategyMode.RS if self.strategy_view else StrategyMode.R0,
+            )
+        if self.realized_action_id is None:
+            self.realized_action_id = computed_effective
+        elif self.realized_action_id != computed_effective:
+            raise ValueError("realized_action_id does not match prompt evidence")
+        if self.effective_action_id is None:
+            self.effective_action_id = computed_effective
+        elif self.effective_action_id != computed_effective:
+            raise ValueError("effective_action_id does not match prompt evidence")
+        if self.prompt_equivalence_id is None:
+            self.prompt_equivalence_id = self.prompt_hash
+        elif self.prompt_equivalence_id != self.prompt_hash:
+            raise ValueError("prompt_equivalence_id must content-address the prompt")
+        if self.label_lineage_id is None:
+            self.label_lineage_id = self.prompt_equivalence_id
+
+        if self.retrieval_attempts:
+            channels = [row.channel for row in self.retrieval_attempts]
+            if channels != ["MP", "MS", "ME", "STRATEGY"]:
+                raise ValueError("retrieval_attempts must cover all channels in order")
+            requested_channels = {source.value for source in sources}
+            if strategy is StrategyMode.RS:
+                requested_channels.add("STRATEGY")
+            actual_requested = {
+                row.channel for row in self.retrieval_attempts if row.requested
+            }
+            if actual_requested != requested_channels:
+                raise ValueError("retrieval_attempts do not match requested action")
+            candidates = (
+                self.candidate_memory_view
+                if self.candidate_memory_view is not None
+                else self.memory_view
+            )
+            candidate_strategy = (
+                self.candidate_strategy_view
+                if self.candidate_strategy_view is not None
+                else self.strategy_view
+            )
+            expected_hits = {
+                source.value: sum(item.source is source for item in candidates)
+                for source in MemorySource
+            }
+            expected_hits["STRATEGY"] = len(candidate_strategy)
+            if any(
+                row.status == "succeeded"
+                and row.hit_count != expected_hits[row.channel]
+                for row in self.retrieval_attempts
+            ):
+                raise ValueError("retrieval attempt hit counts mismatch candidates")
         return self
 
 

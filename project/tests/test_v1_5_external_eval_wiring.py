@@ -37,7 +37,13 @@ from metacom_pm.io import (
     write_json,
     write_jsonl,
 )
+from metacom_pm.internal_holdout import (
+    begin_internal_test_consumption,
+    finish_internal_test_consumption,
+    freeze_candidate_manifest,
+)
 from metacom_pm.pm_v22_reference_baselines import PMV22_REFERENCE_BASELINE_STAGE
+from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = ROOT / "outputs" / "v1_5_test_fixtures"
@@ -66,6 +72,51 @@ def _placeholder(path: Path, content: str = "placeholder") -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     return path
+
+
+def _seed_lineage_fixture(workdir: Path) -> tuple[Path, Path]:
+    """Build the exact public-lineage seed inputs without a private run bundle."""
+
+    split_manifest = (
+        ROOT / "data" / "strategy" / "esconv_split_manifest_v1_5.jsonl"
+    )
+    split_rows = [
+        json.loads(line)
+        for line in split_manifest.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    selected = [
+        row
+        for row in split_rows
+        if row.get("split") == "train"
+        and not bool(row.get("excluded_for_evoemo_overlap"))
+    ][:875]
+    assert len(selected) == 875
+    seeds = workdir / "train_seed_dialogues_v1_5.jsonl"
+    write_jsonl(
+        seeds,
+        (
+            {
+                "dialogue_id": str(row["dialogue_id"]),
+                "source_split": "train",
+                "excluded_for_evoemo_overlap": False,
+            }
+            for row in selected
+        ),
+    )
+    audit = workdir / "train_seed_dialogues_v1_5.jsonl.audit.json"
+    write_json(
+        audit,
+        {
+            "status": "COMPLETE",
+            "output_sha256": sha256_file(seeds),
+            "selected_unique_train_seeds": 875,
+            "evoemo_overlap_excluded_total": 84,
+            "train_manifest": {"file_sha256": sha256_file(split_manifest)},
+            "split_manifest": {"sha256": sha256_file(split_manifest)},
+        },
+    )
+    return seeds, audit
 
 
 def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
@@ -174,6 +225,8 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
     pm_checkpoint = _placeholder(workdir / "pm_v1_5.joblib", pm_checkpoint_content)
     states = workdir / "pm_v2_states.jsonl"
     labels = workdir / "action_labels.jsonl"
+    train_calibration_labels = workdir / "action_labels_train_calibration.jsonl"
+    internal_test_labels = workdir / "action_labels_internal_test.jsonl"
     runtime = workdir / "runtime_states.jsonl"
     backend = workdir / "memory_backend.jsonl"
     evaluator_contexts = workdir / "evaluator_contexts.jsonl"
@@ -189,6 +242,35 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         outcomes, ({"fixture_outcome": index} for index in range(7_488))
     )
     write_jsonl(labels, ({"fixture_label": index} for index in range(7_488)))
+    write_jsonl(
+        train_calibration_labels,
+        ({"fixture_label": index} for index in range(5_184)),
+    )
+    write_jsonl(
+        internal_test_labels,
+        ({"fixture_label": index} for index in range(2_304)),
+    )
+    transparent_rule_checkpoint = _placeholder(
+        workdir / "pm_v1_5_transparent_rule.joblib"
+    )
+    no_step0_checkpoint = _placeholder(workdir / "pm_v1_5_no_step0.joblib")
+    candidate_manifest = workdir / "candidate_manifest.json"
+    freeze_candidate_manifest(
+        candidate_manifest,
+        run_identity="fixture-protocol-repair-run",
+        artifacts={
+            "primary_checkpoint": pm_checkpoint,
+            "transparent_rule_checkpoint": transparent_rule_checkpoint,
+            "no_step0_checkpoint": no_step0_checkpoint,
+        },
+        parameters={"fixture": True},
+    )
+    internal_consumption_ledger = workdir / "internal_consumption.jsonl"
+    begin_internal_test_consumption(
+        internal_consumption_ledger,
+        candidate_manifest_path=candidate_manifest,
+        internal_labels_path=internal_test_labels,
+    )
     training_report = workdir / "training_report.json"
     write_json(
         training_report,
@@ -198,11 +280,28 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "checkpoint_sha256": sha256_file(pm_checkpoint),
             "pm_v2_config_sha256": sha256_file(ROOT / "configs" / "pm_v1_5.yaml"),
             "states_sha256": sha256_file(states),
-            "labels_sha256": sha256_file(labels),
-            "require_learned_routing_advantage_before_external": True,
-            "learned_routing_advantage_verified": True,
+            "train_calibration_labels_sha256": sha256_file(
+                train_calibration_labels
+            ),
+            "internal_test_labels_sha256": sha256_file(internal_test_labels),
+            "candidate_manifest_sha256": sha256_file(candidate_manifest),
+            "transparent_rule_checkpoint_sha256": sha256_file(
+                transparent_rule_checkpoint
+            ),
+            "no_step0_checkpoint_sha256": sha256_file(no_step0_checkpoint),
+            "step0_shortcut_audit": {"status": "PASS"},
+            "selected_routing_algorithm": "state_centered_paired_delta_hgb",
+            "algorithm_selection": {
+                "selected_algorithm": "state_centered_paired_delta_hgb"
+            },
+            "gate_m": {"status": "PASS"},
+            "gate_f": {"status": "PASS"},
             "reportability_checks": {"fixture_gate": True},
         },
+    )
+    finish_internal_test_consumption(
+        internal_consumption_ledger,
+        report_path=training_report,
     )
     cost_matched_checkpoint = _placeholder(workdir / "cost_matched_fixed.joblib")
     me_r0_checkpoint = _placeholder(workdir / "me_r0_fixed.joblib")
@@ -228,6 +327,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
     )
 
     data_report = workdir / "data_report.json"
+    seed_dialogues, seed_audit = _seed_lineage_fixture(workdir)
     expected_split_states = {
         "train": 216,
         "calibration": 108,
@@ -255,10 +355,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         stage="pm_v1_5_development_data",
         inputs={
             "pm_v1_5_config": ROOT / "configs" / "pm_v1_5.yaml",
-            "seed_dialogues": ROOT
-            / "data"
-            / "pm_v2"
-            / "train_seed_dialogues_v1_5.jsonl",
+            "seed_dialogues": seed_dialogues,
             "strategy_bank": ROOT
             / "data"
             / "strategy"
@@ -341,6 +438,10 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         expected={"cards": 468, "outcomes": 7_488},
     )
     judging_summary = workdir / "judging_summary.json"
+    judge_role_isolation = require_judge_role_isolation(
+        load_config(ROOT / "configs" / "experiment.yaml"),
+        load_config(ROOT / "configs" / "pm_v1_5.yaml"),
+    )
     write_json(
         judging_summary,
         {
@@ -353,6 +454,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "remaining_api_calls": 0,
             "quality_gate": {"status": "PASS"},
             "raw_family_quality_gate": {"status": "PASS"},
+            "judge_role_isolation": judge_role_isolation,
         },
     )
     judging_attestation = workdir / "judging_attestation.json"
@@ -373,6 +475,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "pm_v2_config_sha256": sha256_file(
                 ROOT / "configs" / "pm_v1_5.yaml"
             ),
+            "judge_role_isolation": judge_role_isolation,
         },
     )
 
@@ -407,10 +510,16 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "--pm-v1-5-config", str(ROOT / "configs" / "pm_v1_5.yaml"),
         "--evoemo", str(ROOT / "data" / "external" / "evo_emo.json"),
         "--strategy-bank", str(ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl"),
+        "--seed-dialogues", str(seed_dialogues),
+        "--seed-audit", str(seed_audit),
         "--fixed-tracks", str(fixed_tracks),
         "--fixed-tracks-attestation", str(fixed_tracks_attestation),
         "--pm-checkpoint", str(pm_checkpoint),
         "--pm-training-report", str(training_report),
+        "--candidate-manifest", str(candidate_manifest),
+        "--internal-consumption-ledger", str(internal_consumption_ledger),
+        "--transparent-rule-checkpoint", str(transparent_rule_checkpoint),
+        "--no-step0-checkpoint", str(no_step0_checkpoint),
         "--cost-matched-fixed-checkpoint", str(cost_matched_checkpoint),
         "--me-r0-fixed-checkpoint", str(me_r0_checkpoint),
         "--fixed-baselines-report", str(fixed_baselines_report),
@@ -421,6 +530,8 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "--sweep-attestation", str(sweep_attestation),
         "--judging-summary", str(judging_summary),
         "--judging-labels", str(labels),
+        "--train-calibration-labels", str(train_calibration_labels),
+        "--internal-test-labels", str(internal_test_labels),
         "--judging-attestation", str(judging_attestation),
         "--decision-quality-report", str(decision_quality_report),
         "--decision-quality-attestation", str(decision_quality_attestation),
@@ -544,12 +655,15 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     assert notes["full_development_chain"]["labels"] == 7_488
 
     assert external_contract["treatment"] == "pm_v2"
-    assert set(external_contract["conditions"]) >= {
+    assert set(external_contract["conditions"]) == {
         "pm_v2",
+        "pm_v1_5_transparent_rule_step0",
         "pm_v2_cost_matched_fixed",
         "pm_v2_me_r0_fixed",
-        "no_memory_r0",
         "best_fixed",
+    }
+    assert set(external_contract["secondary_conditions"]) == {
+        "no_memory_r0",
         "session_rag_rs",
         "full_history_rs",
     }
@@ -563,6 +677,9 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     assert batched_pilot["judge_types"] == ["quality", "risk"]
     assert batched_pilot["required_before_full_external_client_creation"] is True
     batched = external_contract["batched_evaluation"]
+    assert batched["candidate_count"] == 5
+    assert batched["gate_e"]["observed_gate_m"] == "PASS"
+    assert batched["gate_e"]["observed_gate_f"] == "PASS"
     assert batched["expected_scoring_units"] == 192
     assert batched["quality"]["primary_judge_count_per_unit"] == 1
     assert batched["quality"]["full_two_family_score_pooling"] is False
@@ -622,6 +739,9 @@ def test_v1_5_external_generation_defaults_are_condition_isolated():
     learned_checkpoint, learned_out = module.resolve_condition_paths(
         "pm_v2", checkpoint=None, out_dir=None
     )
+    rule_checkpoint, rule_out = module.resolve_condition_paths(
+        "pm_v1_5_transparent_rule_step0", checkpoint=None, out_dir=None
+    )
     fixed_checkpoint, fixed_out = module.resolve_condition_paths(
         "pm_v2_cost_matched_fixed", checkpoint=None, out_dir=None
     )
@@ -629,10 +749,14 @@ def test_v1_5_external_generation_defaults_are_condition_isolated():
         "pm_v2_me_r0_fixed", checkpoint=None, out_dir=None
     )
     assert learned_checkpoint.name == "pm_v1_5.joblib"
+    assert rule_checkpoint.name == "pm_v1_5_transparent_rule.joblib"
     assert fixed_checkpoint.name == "cost_matched_fixed.joblib"
     assert me_checkpoint.name == "me_r0_fixed.joblib"
-    assert len({learned_out, fixed_out, me_out}) == 3
-    assert all("pm_v1_5" in str(path) for path in (learned_out, fixed_out, me_out))
+    assert len({learned_out, rule_out, fixed_out, me_out}) == 4
+    assert all(
+        "pm_v1_5" in str(path)
+        for path in (learned_out, rule_out, fixed_out, me_out)
+    )
 
 
 def test_v1_5_judging_requires_honest_full_sweep_binding():
@@ -998,6 +1122,7 @@ def test_v1_5_batched_schema_pilot_happy_path_reaches_v1_5_runner(
     attestations.append(reference_attestation)
     for condition in (
         "pm_v2",
+        "pm_v1_5_transparent_rule_step0",
         "pm_v2_cost_matched_fixed",
         "pm_v2_me_r0_fixed",
     ):
@@ -1087,6 +1212,7 @@ def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkey
     attestation_paths.append(reference_attestation)
     for condition in (
         "pm_v2",
+        "pm_v1_5_transparent_rule_step0",
         "pm_v2_cost_matched_fixed",
         "pm_v2_me_r0_fixed",
     ):
@@ -1162,6 +1288,15 @@ def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkey
             "protocol": "pm-v1.5-noninterleaved-latency-diagnostic-v1",
             "role": "diagnostic_only",
             "confirmatory_latency_claim_allowed": False,
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "build_separated_resource_report",
+        lambda *a, **k: {
+            "status": "COMPLETE",
+            "protocol": "pm-v1.5-separated-resource-accounting-v1",
+            "aggregation": "separate_metrics_no_composite_cost",
         },
     )
     monkeypatch.setattr(

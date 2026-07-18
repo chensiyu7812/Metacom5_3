@@ -85,9 +85,13 @@ def main() -> None:
         type=Path,
         nargs="+",
         default=[
-            ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "turns.jsonl",
-            ROOT / "outputs" / "evoemo_pm_v1_5" / "turns.jsonl",
-            ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "turns.jsonl",
+                ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "turns.jsonl",
+                ROOT / "outputs" / "evoemo_pm_v1_5" / "turns.jsonl",
+                ROOT
+                / "outputs"
+                / "evoemo_pm_v1_5_transparent_rule"
+                / "turns.jsonl",
+                ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "turns.jsonl",
             ROOT / "outputs" / "evoemo_pm_v1_5_me_r0_fixed" / "turns.jsonl",
         ],
     )
@@ -96,9 +100,13 @@ def main() -> None:
         type=Path,
         nargs="+",
         default=[
-            ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "artifact_attestation.json",
-            ROOT / "outputs" / "evoemo_pm_v1_5" / "artifact_attestation.json",
-            ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "artifact_attestation.json",
+                ROOT / "outputs" / "evoemo_pm_v1_5_reference_baselines" / "artifact_attestation.json",
+                ROOT / "outputs" / "evoemo_pm_v1_5" / "artifact_attestation.json",
+                ROOT
+                / "outputs"
+                / "evoemo_pm_v1_5_transparent_rule"
+                / "artifact_attestation.json",
+                ROOT / "outputs" / "evoemo_pm_v1_5_cost_matched_fixed" / "artifact_attestation.json",
             ROOT / "outputs" / "evoemo_pm_v1_5_me_r0_fixed" / "artifact_attestation.json",
         ],
     )
@@ -234,7 +242,12 @@ def main() -> None:
             ),
         )
     conditions = [str(value) for value in external["conditions"]]
-    if attested_conditions != set(conditions):
+    secondary = {
+        str(value) for value in external.get("secondary_conditions") or []
+    }
+    if attested_conditions - set(conditions) - secondary:
+        raise RuntimeError("batched pilot inputs contain unfrozen conditions")
+    if (attested_conditions & set(conditions)) != set(conditions):
         raise RuntimeError("batched pilot inputs do not cover all frozen conditions")
 
     frozen_endpoints = pilot.get("judge_endpoints") or []

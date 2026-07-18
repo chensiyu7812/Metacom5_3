@@ -60,7 +60,10 @@ class ObservableSourceSummary(StrictModel):
     max_age_sessions: int | None = Field(default=None, ge=0)
     estimated_tokens: int = Field(default=0, ge=0)
     query_similarity_mean: float = Field(default=0.0, ge=-1.0, le=1.0)
-    catalog_embedding: list[float] = Field(default_factory=list)
+    representation_valid: bool = False
+    # Transient construction input for the runtime catalog only. It is excluded
+    # from the serialized PM state and must never be consumed by model features.
+    catalog_embedding: list[float] = Field(default_factory=list, exclude=True)
 
     @model_validator(mode="after")
     def coherent(self):
@@ -78,12 +81,108 @@ class ObservableSourceSummary(StrictModel):
                 )
             ):
                 raise ValueError("unavailable source cannot expose age metadata")
+            if self.representation_valid:
+                raise ValueError("unavailable source cannot have a valid representation")
         if (
             self.min_age_sessions is not None
             and self.max_age_sessions is not None
             and self.min_age_sessions > self.max_age_sessions
         ):
             raise ValueError("min_age_sessions exceeds max_age_sessions")
+        return self
+
+
+STRATEGY_FAMILY_IDS: tuple[str, ...] = (
+    "question",
+    "other",
+    "suggestion",
+    "affirmation_reassurance",
+    "self_disclosure",
+    "reflection",
+    "information",
+    "restatement",
+)
+
+
+class Step0MemoryObservation(StrictModel):
+    available: bool
+    count: int = Field(ge=0)
+    min_age_sessions: int | None = Field(default=None, ge=0)
+    median_age_sessions: float | None = Field(default=None, ge=0)
+    max_age_sessions: int | None = Field(default=None, ge=0)
+    expected_retrieval_tokens: int = Field(ge=0)
+    representation_valid: bool
+    query_to_source_similarity: float = Field(ge=-1.0, le=1.0)
+
+    @model_validator(mode="after")
+    def coherent(self):
+        if self.available != (self.count > 0):
+            raise ValueError("Step-0 source availability must equal count > 0")
+        if not self.available and (
+            self.expected_retrieval_tokens != 0
+            or self.representation_valid
+            or self.query_to_source_similarity != 0.0
+        ):
+            raise ValueError("unavailable Step-0 source must have zero/invalid signals")
+        return self
+
+
+class Step0StrategyObservation(StrictModel):
+    available: bool
+    count: int = Field(ge=0)
+    expected_retrieval_tokens: int = Field(ge=0)
+    representation_valid: bool
+    family_similarities: dict[str, float]
+    advice_requested: bool
+    advice_rejected: bool
+    question_present: bool
+
+    @field_validator("family_similarities")
+    @classmethod
+    def exact_families(cls, value: dict[str, float]) -> dict[str, float]:
+        if set(value) != set(STRATEGY_FAMILY_IDS):
+            raise ValueError("Step-0 strategy family keys do not match the contract")
+        if any(not -1.0 <= float(score) <= 1.0 for score in value.values()):
+            raise ValueError("Step-0 strategy family similarity is outside [-1, 1]")
+        return value
+
+    @model_validator(mode="after")
+    def coherent(self):
+        if self.available != (self.count > 0):
+            raise ValueError("Step-0 strategy availability must equal count > 0")
+        if not self.available and (
+            self.expected_retrieval_tokens != 0 or self.representation_valid
+        ):
+            raise ValueError("unavailable strategy catalog must have zero/invalid signals")
+        if not self.representation_valid and any(
+            float(value) != 0.0 for value in self.family_similarities.values()
+        ):
+            raise ValueError("invalid strategy representation must expose zero similarities")
+        return self
+
+
+class Step0Observation(StrictModel):
+    protocol: Literal["pm-v1.5-step0-source-observation-v1"] = (
+        "pm-v1.5-step0-source-observation-v1"
+    )
+    observation_stage: Literal["pre_item_retrieval"] = "pre_item_retrieval"
+    memory_sources: dict[MemorySource, Step0MemoryObservation]
+    strategy: Step0StrategyObservation
+
+    @field_validator("memory_sources", mode="before")
+    @classmethod
+    def parse_memory_keys(cls, value):
+        if not isinstance(value, dict):
+            raise TypeError("Step-0 memory_sources must be an object")
+        return {
+            key if isinstance(key, MemorySource) else MemorySource(str(key)): item
+            for key, item in value.items()
+        }
+
+    @model_validator(mode="after")
+    def complete(self):
+        if set(self.memory_sources) != set(MemorySource):
+            raise ValueError("Step-0 observation must cover MP, MS, and ME")
         return self
 
 
@@ -101,6 +200,7 @@ class PMV2State(StrictModel):
     inventory: dict[MemorySource, ObservableSourceSummary]
     strategy_catalog_count: int = Field(default=0, ge=0)
     strategy_estimated_tokens: int = Field(default=0, ge=0)
+    step0_observation: Step0Observation | None = None
     text_embedding: list[float] = Field(default_factory=list)
     allowed_actions: list[str]
     provenance: dict[str, Any] = Field(default_factory=dict)
@@ -143,6 +243,29 @@ class PMV2State(StrictModel):
                 f"missing={sorted(expected - set(self.allowed_actions))}, "
                 f"extra={sorted(set(self.allowed_actions) - expected)}"
             )
+        if self.step0_observation is not None:
+            for source, catalog in self.inventory.items():
+                observed = self.step0_observation.memory_sources[source]
+                if (
+                    observed.available != catalog.available
+                    or observed.count != catalog.count
+                    or observed.min_age_sessions != catalog.min_age_sessions
+                    or observed.median_age_sessions != catalog.median_age_sessions
+                    or observed.max_age_sessions != catalog.max_age_sessions
+                    or observed.representation_valid != catalog.representation_valid
+                    or observed.query_to_source_similarity
+                    != catalog.query_similarity_mean
+                ):
+                    raise ValueError(
+                        f"Step-0 memory observation drifts from {source.value} inventory"
+                    )
+            if (
+                self.step0_observation.strategy.count
+                != self.strategy_catalog_count
+                or self.step0_observation.strategy.expected_retrieval_tokens
+                != self.strategy_estimated_tokens
+            ):
+                raise ValueError("Step-0 strategy observation drifts from state metadata")
         allowed_provenance = {
             "backend_record_id",
             "evaluator_context_id",

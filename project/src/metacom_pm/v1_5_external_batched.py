@@ -69,7 +69,7 @@ STAGE = "pm_v1_5_external_anonymous_batched"
 PILOT_PROTOCOL = "pm-v1.5-external-batched-schema-order-pilot-v1"
 PILOT_STAGE = "pm_v1_5_external_batched_schema_order_pilot"
 RISK_AUDIT_PROTOCOL = "pm-v1.5-stratified-evidence-risk-audit-v1"
-EXPECTED_CANDIDATE_COUNT = 7
+EXPECTED_CANDIDATE_COUNT = 5
 
 RESPONSE_DIMENSIONS = tuple(ResponseDimensions.model_fields)
 RISK_DIMENSIONS = tuple(RiskDimensions.model_fields)
@@ -79,7 +79,7 @@ EXPECTED_CANDIDATE_IDS = tuple(
 
 
 class BatchedResponseCandidateScore(StrictModel):
-    candidate_id: str = Field(pattern=r"^C[1-7]$")
+    candidate_id: str = Field(pattern=r"^C[1-5]$")
     emotional_support: float = Field(ge=1.0, le=5.0)
     personalization: float = Field(ge=1.0, le=5.0)
     memory_appropriateness: float = Field(ge=1.0, le=5.0)
@@ -107,7 +107,7 @@ class BatchedResponseJudgment(StrictModel):
 
 
 class BatchedRiskCandidateScore(StrictModel):
-    candidate_id: str = Field(pattern=r"^C[1-7]$")
+    candidate_id: str = Field(pattern=r"^C[1-5]$")
     selected_context_misuse: float = Field(ge=0.0, le=3.0)
     unnecessary_exposure: float = Field(ge=0.0, le=3.0)
     stale_or_conflicting_use: float = Field(ge=0.0, le=3.0)
@@ -136,7 +136,7 @@ class BatchedRiskJudgment(StrictModel):
 
 
 QUALITY_SYSTEM = f"""You are an impartial evaluator of emotional-support replies.
-Seven anonymous candidates answered the same fixed seeker turn. Score every
+Five anonymous candidates answered the same fixed seeker turn. Score every
 candidate independently on six dimensions. Do not rank candidates, infer the
 generating policy, reward verbosity, or produce an overall score. Candidate
 order is systematically position-balanced and carries no meaning. Authorized user context is only
@@ -146,7 +146,7 @@ reference material for checking personalization, grounding, and time.
 
 
 RISK_SYSTEM = f"""You are an evidence-risk auditor for emotional-support dialogue.
-Seven anonymous candidates were generated for the same fixed seeker turn. Each
+Five anonymous candidates were generated for the same fixed seeker turn. Each
 candidate includes only the context actually selected for its generator and its
 reply. Policy names, resource levels, and costs are hidden. Score observed risk,
 not resource quantity, and do not rank candidates. Candidate order is systematically position-balanced
@@ -229,17 +229,25 @@ def _external_action_contract(turn_row: Mapping[str, Any]) -> dict[str, str]:
         selected_sources,
         StrategyMode.RS if bool(turn_row.get("selected_strategy") or []) else StrategyMode.R0,
     )
-    raw_effective = str(turn_row.get("effective_action_id") or "")
+    raw_realized = str(
+        turn_row.get("realized_action_id")
+        or turn_row.get("effective_action_id")
+        or ""
+    )
     try:
-        parse_action_id(raw_effective)
-        effective = raw_effective
+        parse_action_id(raw_realized)
+        realized = raw_realized
     except ValueError:
-        effective = inferred
-    if effective != inferred:
-        raise RuntimeError("external batched turn effective action mismatches selected evidence")
+        realized = inferred
+    if realized != inferred:
+        raise RuntimeError("external batched turn realized action mismatches selected evidence")
+    raw_effective = str(turn_row.get("effective_action_id") or realized)
+    if raw_effective != realized:
+        raise RuntimeError("legacy effective action mismatches realized action")
     return {
-        "requested_action_id": requested or effective,
-        "effective_action_id": effective,
+        "requested_action_id": requested or realized,
+        "realized_action_id": realized,
+        "effective_action_id": realized,
     }
 
 
@@ -272,7 +280,7 @@ def build_batched_messages(
     authorized_user_context: str,
     judge_type: str,
 ) -> tuple[list[dict[str, str]], dict[str, dict[str, Any]]]:
-    """Build an anonymous seven-candidate quality or risk request."""
+    """Build an anonymous five-candidate quality or risk request."""
 
     if set(candidate_rows) != set(condition_order):
         raise ValueError("candidate rows and condition order differ")
@@ -942,6 +950,55 @@ def _pricing_by_family(
     return pricing
 
 
+def _judge_usage_accounting(
+    rows: Sequence[Mapping[str, Any]],
+    pricing_usd_per_mtok: Mapping[str, Mapping[str, float]],
+) -> dict[str, Any]:
+    """Keep judge tokens/USD separate from deployment-time resource usage."""
+
+    grouped: dict[tuple[str, str], dict[str, float]] = defaultdict(
+        lambda: {"calls": 0.0, "input_tokens": 0.0, "output_tokens": 0.0}
+    )
+    for row in rows:
+        family = str(row["judge_family"])
+        role = str(row["role"])
+        usage = dict(row.get("usage") or {})
+        input_tokens = float(usage.get("prompt_tokens") or 0)
+        output_tokens = float(usage.get("completion_tokens") or 0)
+        if input_tokens <= 0.0 or output_tokens < 0.0:
+            raise RuntimeError("completed judge call lacks valid reported usage")
+        values = grouped[(role, family)]
+        values["calls"] += 1.0
+        values["input_tokens"] += input_tokens
+        values["output_tokens"] += output_tokens
+    rows_out = []
+    for (role, family), values in sorted(grouped.items()):
+        prices = pricing_usd_per_mtok[family]
+        usd = (
+            values["input_tokens"] / 1_000_000 * float(prices["input"])
+            + values["output_tokens"] / 1_000_000 * float(prices["output"])
+        )
+        rows_out.append(
+            {
+                "role": role,
+                "judge_family": family,
+                "calls": int(values["calls"]),
+                "input_tokens": int(values["input_tokens"]),
+                "output_tokens": int(values["output_tokens"]),
+                "api_cost_usd": float(usd),
+            }
+        )
+    return {
+        "protocol": "pm-v1.5-judge-usage-accounting-v1",
+        "role": "experiment_cost_not_deployment_inference_cost",
+        "rows": rows_out,
+        "total_calls": sum(row["calls"] for row in rows_out),
+        "total_input_tokens": sum(row["input_tokens"] for row in rows_out),
+        "total_output_tokens": sum(row["output_tokens"] for row in rows_out),
+        "total_api_cost_usd": float(sum(row["api_cost_usd"] for row in rows_out)),
+    }
+
+
 def run_v1_5_batched_schema_order_pilot(
     *,
     evoemo_path: str | Path,
@@ -1104,6 +1161,9 @@ def run_v1_5_batched_schema_order_pilot(
     successful = execution_result["successful"]
     raw_rows = [successful[key] for key in sorted(successful)]
     write_jsonl(raw_path, raw_rows)
+    judge_usage_accounting = _judge_usage_accounting(
+        raw_rows, pricing
+    )
     order_values: dict[tuple[str, str, str, int], float] = {}
     for row in raw_rows:
         parsed_by_id = {
@@ -1147,6 +1207,7 @@ def run_v1_5_batched_schema_order_pilot(
             "maximum_absolute_order_delta": max(order_deltas),
             "gating_threshold": None,
         },
+        "judge_usage_accounting": judge_usage_accounting,
         "raw_path": str(raw_path),
         "ledger_path": execution_result["ledger_path"],
         "physical_http_attempts": execution_result["physical_http_attempts"],
@@ -1241,6 +1302,15 @@ def build_v1_5_batched_evaluation_plan(
         or bool(frozen.get("llm_overall_requested", True))
     ):
         raise RuntimeError("frozen V1.5 batched evaluation contract is stale")
+    gate_e = dict(frozen.get("gate_e") or {})
+    if (
+        gate_e.get("comparator") not in conditions
+        or gate_e.get("observed_gate_m") != "PASS"
+        or gate_e.get("observed_gate_f") != "PASS"
+        or gate_e.get("requires_gate_m") != "PASS"
+        or gate_e.get("requires_gate_f") != "PASS"
+    ):
+        raise RuntimeError("full external scoring is blocked by Gate M/F lineage")
     units = sorted(_normalized_unit(unit) for unit in units)
     if int(frozen.get("expected_scoring_units") or 0) != len(units):
         raise RuntimeError("frozen batched scoring-unit count is stale")
@@ -1496,6 +1566,82 @@ def _paired_comparisons(
     return result
 
 
+def build_external_gate_e(
+    *,
+    quality_comparisons: Mapping[str, Any],
+    risk_comparisons: Mapping[str, Any],
+    contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Evaluate the frozen external efficiency gate, PM minus comparator."""
+
+    frozen = dict(contract)
+    comparator = str(frozen.get("comparator") or "")
+    thresholds = dict(frozen.get("thresholds") or {})
+    expected_thresholds = {
+        "minimum_quality_delta",
+        "maximum_risk_delta",
+        "maximum_generator_input_token_delta",
+    }
+    lineage_hashes = (
+        "training_report_sha256",
+        "candidate_manifest_sha256",
+        "internal_consumption_ledger_sha256",
+    )
+    if (
+        not comparator
+        or set(thresholds) != expected_thresholds
+        or frozen.get("requires_gate_m") != "PASS"
+        or frozen.get("requires_gate_f") != "PASS"
+        or any(len(str(frozen.get(key) or "")) != 64 for key in lineage_hashes)
+    ):
+        raise RuntimeError("external Gate E contract is incomplete")
+    try:
+        quality_ci = dict(
+            quality_comparisons[comparator]["quality_composite"][
+                "primary_cluster_ci"
+            ]
+        )
+        token_ci = dict(
+            quality_comparisons[comparator]["observed_input_tokens"][
+                "primary_cluster_ci"
+            ]
+        )
+        risk_ci = dict(
+            risk_comparisons[comparator]["risk_composite"][
+                "primary_cluster_ci"
+            ]
+        )
+    except (KeyError, TypeError) as exc:
+        raise RuntimeError("external Gate E lacks its paired comparator CIs") from exc
+    checks = {
+        "internal_gate_m_passed": frozen.get("observed_gate_m") == "PASS",
+        "internal_gate_f_passed": frozen.get("observed_gate_f") == "PASS",
+        "lineage_complete": all(
+            len(str(frozen.get(key) or "")) == 64 for key in lineage_hashes
+        ),
+        "quality_noninferior": float(quality_ci["lower"])
+        >= float(thresholds["minimum_quality_delta"]),
+        "evidence_risk_nonincrease": float(risk_ci["upper"])
+        <= float(thresholds["maximum_risk_delta"]),
+        "generator_input_tokens_strictly_lower": float(token_ci["upper"])
+        < float(thresholds["maximum_generator_input_token_delta"]),
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "NOT_SUPPORTED",
+        "delta_direction": f"PM_minus_{comparator}",
+        "comparator": comparator,
+        "thresholds": thresholds,
+        "checks": checks,
+        "quality_composite_ci": quality_ci,
+        "evidence_risk_ci": risk_ci,
+        "observed_generator_input_tokens_ci": token_ci,
+        "claim_boundary": (
+            "quality-preserving generator-input efficiency only; not total USD, "
+            "latency, clinical efficacy, or superiority to same-budget fixed"
+        ),
+    }
+
+
 def _candidate_by_id(row: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
     values = {
         str(value["candidate_id"]): value
@@ -1546,6 +1692,7 @@ def _quality_score_rows(
                     "quality_composite": composite_spec.score(dimensions),
                     "observed_input_tokens": int(info["observed_input_tokens"]),
                     "requested_action_id": str(info["requested_action_id"]),
+                    "realized_action_id": str(info["realized_action_id"]),
                     "effective_action_id": str(info["effective_action_id"]),
                     "rationale": str(score["rationale"]),
                 }
@@ -1574,6 +1721,7 @@ def _risk_score_rows(
                     "family": str(raw["judge_family"]),
                     "observed_input_tokens": int(info["observed_input_tokens"]),
                     "requested_action_id": str(info["requested_action_id"]),
+                    "realized_action_id": str(info["realized_action_id"]),
                     "effective_action_id": str(info["effective_action_id"]),
                     "scores": {name: float(score[name]) for name in RISK_DIMENSIONS},
                     "rationale": str(score["rationale"]),
@@ -1587,14 +1735,18 @@ def _risk_score_rows(
             raise RuntimeError(f"risk audit judge families are incomplete for {uid}/{condition}")
         unit_values = {value["unit"] for value in values}
         action_values = {
-            (value["requested_action_id"], value["effective_action_id"])
+            (
+                value["requested_action_id"],
+                value["realized_action_id"],
+                value["effective_action_id"],
+            )
             for value in values
         }
         token_values = {value["observed_input_tokens"] for value in values}
         if len(unit_values) != 1 or len(action_values) != 1 or len(token_values) != 1:
             raise RuntimeError("risk audit family rows disagree on hidden candidate metadata")
         unit = next(iter(unit_values))
-        requested, effective = next(iter(action_values))
+        requested, realized, effective = next(iter(action_values))
         risks = {
             name: float(median(value["scores"][name] for value in values))
             for name in RISK_DIMENSIONS
@@ -1626,6 +1778,7 @@ def _risk_score_rows(
                 "max_risk_dimension_mad": max(mad.values()),
                 "observed_input_tokens": next(iter(token_values)),
                 "requested_action_id": requested,
+                "realized_action_id": realized,
                 "effective_action_id": effective,
                 "applicable_risk_fields": list(applicable),
                 "judge_families": sorted(families),
@@ -1967,7 +2120,7 @@ def run_v1_5_external_batched_evaluation(
     dry = {
         **{key: value for key, value in execution_result.items() if key != "successful"},
         "protocol": PROTOCOL,
-        "scoring_mode": "anonymous_seven_candidate_batched",
+        "scoring_mode": "anonymous_five_candidate_batched",
         "n_units": len(units),
         "conditions": list(conditions),
         "treatment": treatment,
@@ -1991,6 +2144,9 @@ def run_v1_5_external_batched_evaluation(
     successful = execution_result["successful"]
     raw_rows = [successful[key] for key in sorted(successful)]
     write_jsonl(raw_path, raw_rows)
+    judge_usage_accounting = _judge_usage_accounting(
+        raw_rows, pricing_usd_per_mtok
+    )
     primary_rows = _quality_score_rows(
         raw_rows, role="quality_primary", composite_spec=composite_spec
     )
@@ -2162,6 +2318,11 @@ def run_v1_5_external_batched_evaluation(
         "risk_dimension_mad_coverage": mad_coverage,
         "minimum_low_mad_coverage": minimum_mad_coverage,
     }
+    gate_e = build_external_gate_e(
+        quality_comparisons=primary_comparisons,
+        risk_comparisons=risk_comparisons,
+        contract=batched_contract["gate_e"],
+    )
 
     summary = {
         **dry,
@@ -2181,6 +2342,8 @@ def run_v1_5_external_batched_evaluation(
         "paired_treatment_deltas": primary_comparisons,
         "quality_sensitivity": sensitivity_report,
         "stratified_risk_audit": risk_audit,
+        "gate_e": gate_e,
+        "judge_usage_accounting": judge_usage_accounting,
         "composite_spec": composite_spec.model_dump(mode="json"),
         "composite_weights_sha256": composite_weights_hash(composite_spec),
         "primary_scores_path": str(primary_score_path),
