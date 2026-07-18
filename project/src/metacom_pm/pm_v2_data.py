@@ -67,7 +67,7 @@ LOCAL_FALLBACK_COVERAGE_PLACEHOLDER = (
     "Local fallback surface; evaluator rationale is compiled separately."
 )
 DATA_GENERATION_CONTRACT_VERSION = (
-    "pm-v2-data-generation-v15-observable-readiness-factorial"
+    "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness"
 )
 READINESS_SURFACE_PROTOCOL = (
     "pm-v2-visible-readiness-v1-deterministic-varied-counterbalanced"
@@ -504,6 +504,19 @@ class GeneratedDialogueTurnDraft(StrictModel):
     content: str = Field(min_length=1, max_length=180)
 
 
+class GeneratedDialogueExchangeDraft(StrictModel):
+    """Provider prose for one earlier user→assistant exchange.
+
+    Roles are field names, not model-generated values.  The compiler therefore
+    owns alternation and the final-assistant invariant instead of asking a
+    stochastic provider to satisfy a cross-item list constraint that JSON
+    Schema cannot express reliably.
+    """
+
+    user_text: str = Field(min_length=1, max_length=180)
+    assistant_text: str = Field(min_length=1, max_length=180)
+
+
 class GeneratedCaseSurfaceDraft(StrictModel):
     """Provider-authored surface fields; semantic checks run after transport.
 
@@ -532,8 +545,8 @@ class GeneratedSurfaceOnlyCaseDraft(StrictModel):
     """
 
     current_user_text: str = Field(min_length=1, max_length=220)
-    dialogue_before_current: list[GeneratedDialogueTurnDraft] = Field(
-        min_length=2, max_length=4
+    dialogue_exchanges_before_current: list[GeneratedDialogueExchangeDraft] = Field(
+        min_length=1, max_length=2
     )
     session_summary: str = Field(min_length=1, max_length=250)
     authorized_user_context: str = Field(min_length=1, max_length=250)
@@ -1299,10 +1312,24 @@ def _surface_payload(surface: GeneratedCaseSurfaceDraft) -> dict[str, Any]:
 def compiler_surface_from_provider(
     surface: GeneratedSurfaceOnlyCaseDraft,
 ) -> GeneratedCaseSurfaceDraft:
-    """Add only the locally owned transport placeholder for compilation."""
+    """Compile provider prose into a role-safe surface plus local placeholder."""
 
     return GeneratedCaseSurfaceDraft(
-        **surface.model_dump(mode="json"),
+        current_user_text=surface.current_user_text,
+        dialogue_before_current=[
+            turn
+            for exchange in surface.dialogue_exchanges_before_current
+            for turn in (
+                GeneratedDialogueTurnDraft(
+                    role="user", content=exchange.user_text
+                ),
+                GeneratedDialogueTurnDraft(
+                    role="assistant", content=exchange.assistant_text
+                ),
+            )
+        ],
+        session_summary=surface.session_summary,
+        authorized_user_context=surface.authorized_user_context,
         coverage_rationale=LOCAL_FALLBACK_COVERAGE_PLACEHOLDER,
     )
 
@@ -1364,7 +1391,7 @@ def lint_generation_surface_case(
                     "detail": str(other),
                 }
             )
-    turns = surface.dialogue_before_current
+    turns = compiler_surface_from_provider(surface).dialogue_before_current
     if turns[-1].role != "assistant":
         errors.append(
             {
@@ -1940,8 +1967,9 @@ def compile_generation_draft(
     """Compile natural surfaces plus deterministic evidence into one bundle.
 
     Legacy provider-authored memory slots, when present, remain in the raw trace
-    for audit but never determine oracle evidence or labels.  The V14 path uses
-    only provider-authored case surfaces and compiles every other field locally.
+    for audit but never determine oracle evidence or labels.  The current
+    casewise path uses only provider-authored prose fields and compiles roles,
+    evidence, rationales, and labels locally.
     """
 
     assignments = generation_case_family_assignments(semantic_families, regimes)
@@ -2380,7 +2408,9 @@ def generation_case_messages(
     repair_text = (
         "This is the one pre-authorized repair attempt for the same case. The "
         "first surface failed deterministic topic/structure lint. Rewrite all "
-        "four fields from scratch and obey every literal lock below."
+        "four fields from scratch and obey every literal lock below. Each "
+        "dialogue exchange has a user_text followed by its assistant_text; do "
+        "not put the final user statement inside those earlier exchanges."
         if repair
         else "This is the initial surface attempt for this case."
     )
@@ -2441,8 +2471,11 @@ HARD TOPIC LOCK
   domain unless that domain is itself the named target above.
 
 SURFACE RULES
-1. dialogue_before_current contains 2-4 earlier turns, alternates roles, and ends
-   with assistant. It must not repeat or answer current_user_text.
+1. dialogue_exchanges_before_current contains 1-2 earlier exchanges. In every
+   exchange, user_text happened first and assistant_text replied immediately after;
+   the last assistant_text is immediately before current_user_text. Do not output
+   role labels, and do not place the final user statement inside an exchange.
+   Earlier exchange text must not repeat or answer current_user_text.
 2. current_user_text is the final user turn and must be natural, specific, and
    understandable from the earlier dialogue.
 3. session_summary and authorized_user_context may summarize only visible facts.
@@ -2572,7 +2605,7 @@ SURFACE AND TIME RULES
    with frozen source-specific contributions.
 4. Strategy-resource marginal value and advice readiness are independent factors.
    Never make an advice-request phrase synonymous with RS usefulness, or a listening
-   boundary synonymous with R0. The casewise V14 surface contract, not this legacy
+   boundary synonymous with R0. The current casewise surface contract, not this legacy
    bundle transport, is authoritative for their counterbalanced assignments.
 5. In memory_harmful, the user's current correction must be explicit in
    current_user_text or prior visible dialogue. session_summary and authorized context
@@ -2817,7 +2850,7 @@ def validate_successful_generation_trace(
 def _validate_successful_surface_generation_trace(
     bundle: GeneratedUserBundle,
 ) -> dict[str, Any]:
-    """Replay all accepted one-case responses through the V14 compiler."""
+    """Replay all accepted one-case responses through the current compiler."""
 
     provenance = bundle.provenance
     raw_drafts = provenance.get("provider_surface_drafts")
@@ -3381,7 +3414,7 @@ def validate_bundle(bundle: GeneratedUserBundle) -> dict[str, Any]:
             ResourceNeedRegime.STRATEGY_HELPFUL: "use",
             ResourceNeedRegime.STRATEGY_HARMFUL: "skip",
         }:
-            raise ValueError("Strategy challenge targets drifted from the V14 design")
+            raise ValueError("Strategy challenge targets drifted from the frozen design")
         if {
             case.advice_readiness_target for case in strategy_cases.values()
         } != {"listen_only", "light_suggestion"}:

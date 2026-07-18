@@ -1336,6 +1336,8 @@ def main() -> None:
         "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
         "pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
         "pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_5_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
     }
     if args.generation_pilot_attestation.parent.name in stale_pilot_directories:
         raise RuntimeError(

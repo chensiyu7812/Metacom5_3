@@ -72,6 +72,7 @@ from metacom_pm.pm_v2_data import (
     case_to_state,
     compile_surface_only_user_bundle,
     compile_generation_draft,
+    compiler_surface_from_provider,
     evaluator_context_payload_sha256,
     generate_user_bundle,
     generation_case_family_assignments,
@@ -166,7 +167,7 @@ def test_semantic_family_schedule_counterbalances_regime_positions() -> None:
 
 def test_generation_pilot_uses_a_real_frozen_orthogonal_cohort() -> None:
     assert GENERATION_PILOT_CONTRACT_VERSION.startswith(
-        "pm-v2-generation-compatibility-pilot-v8.5-"
+        "pm-v2-generation-compatibility-pilot-v8.6-"
     )
     assert GENERATION_PILOT_FAMILIES in (
         ("relocation_loneliness", "academic_pressure", "trust_rebuilding"),
@@ -546,29 +547,75 @@ def _source_grounded_pilot_bundle(
 def _surface_only_pilot_inputs(
     contract: dict,
 ) -> dict[str, GeneratedSurfaceOnlyCaseDraft]:
-    """Project the legacy fixture onto the actual V13 provider schema."""
+    """Project the legacy fixture onto the role-safe provider schema."""
 
     draft = _role_slot_draft(
         [str(value) for value in contract["semantic_families"]]
     )
-    return {
-        case_field: GeneratedSurfaceOnlyCaseDraft.model_validate(
+    surfaces = {}
+    for case_field, _ in GENERATION_CASE_FIELDS:
+        compiled = getattr(draft, case_field)
+        turns = compiled.dialogue_before_current
+        assert len(turns) % 2 == 0
+        assert all(
+            turns[index].role == "user" and turns[index + 1].role == "assistant"
+            for index in range(0, len(turns), 2)
+        )
+        surfaces[case_field] = GeneratedSurfaceOnlyCaseDraft.model_validate(
             {
-                "current_user_text": getattr(draft, case_field).current_user_text,
-                "dialogue_before_current": [
-                    turn.model_dump(mode="json")
-                    for turn in getattr(
-                        draft, case_field
-                    ).dialogue_before_current
+                "current_user_text": compiled.current_user_text,
+                "dialogue_exchanges_before_current": [
+                    {
+                        "user_text": turns[index].content,
+                        "assistant_text": turns[index + 1].content,
+                    }
+                    for index in range(0, len(turns), 2)
                 ],
-                "session_summary": getattr(draft, case_field).session_summary,
-                "authorized_user_context": getattr(
-                    draft, case_field
-                ).authorized_user_context,
+                "session_summary": compiled.session_summary,
+                "authorized_user_context": compiled.authorized_user_context,
             }
         )
-        for case_field, _ in GENERATION_CASE_FIELDS
-    }
+    return surfaces
+
+
+def test_surface_provider_schema_makes_role_order_a_compiler_invariant() -> None:
+    surface = GeneratedSurfaceOnlyCaseDraft.model_validate(
+        {
+            "current_user_text": "The move still feels lonely today.",
+            "dialogue_exchanges_before_current": [
+                {
+                    "user_text": "I have not met anyone in the new city yet.",
+                    "assistant_text": "That sounds isolating; what feels hardest?",
+                },
+                {
+                    "user_text": "Evenings feel especially quiet.",
+                    "assistant_text": "The quiet evenings seem to make this sharper.",
+                },
+            ],
+            "session_summary": "The user feels lonely after moving to a new city.",
+            "authorized_user_context": "Use only the visible relocation details.",
+        }
+    )
+    compiled = compiler_surface_from_provider(surface)
+    assert [turn.role for turn in compiled.dialogue_before_current] == [
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+    ]
+    assert compiled.dialogue_before_current[-1].role == "assistant"
+    lint = lint_generation_surface_case(
+        case_field="context_only",
+        regime=ResourceNeedRegime.CONTEXT_ONLY,
+        family="relocation_loneliness",
+        forbidden_families=("self_confidence", "sleep_disruption"),
+        surface=surface,
+    )
+    assert lint["status"] == "PASS"
+    assert lint["errors"] == []
+    schema = GeneratedSurfaceOnlyCaseDraft.model_json_schema()
+    assert "dialogue_exchanges_before_current" in schema["properties"]
+    assert "dialogue_before_current" not in schema["properties"]
 
 
 def _surface_only_pilot_bundle(

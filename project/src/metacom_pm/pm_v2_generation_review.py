@@ -82,7 +82,7 @@ def _packet_rows(bundle: GeneratedUserBundle) -> list[dict[str, str]]:
         provider_draft = bundle.provenance.get("provider_surface_drafts")
         provider_surface_fields = (
             "current_user_text",
-            "dialogue_before_current",
+            "dialogue_exchanges_before_current",
             "session_summary",
             "authorized_user_context",
         )

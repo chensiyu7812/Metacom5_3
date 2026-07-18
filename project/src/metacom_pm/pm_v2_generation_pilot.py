@@ -30,8 +30,9 @@ GENERATION_PILOT_STAGE = (
     "pm_v2_synthetic_generation_deterministic_evidence_pilot"
 )
 GENERATION_PILOT_CONTRACT_VERSION = (
-    "pm-v2-generation-compatibility-pilot-v8.5-observable-readiness-"
-    "exact-paid-surface-review-casewise-one-bounded-repair-zero-fallback"
+    "pm-v2-generation-compatibility-pilot-v8.6-role-safe-exchanges-"
+    "observable-readiness-exact-paid-surface-review-casewise-one-bounded-"
+    "repair-zero-fallback"
 )
 GENERATION_PILOT_USER_ID = "pmv2_generation_compatibility_pilot"
 GENERATION_PILOT_SEED_OFFSET = 9_000_000

@@ -311,6 +311,10 @@ coverage rationale、case ID 或 evidence blueprint。每个用户的 9 个 case
 schema/topic/structure lint 失败时，只允许同 case 的一次独立 seed、提前计入预算的 repair。
 成功立即停止，repair 失败则整次正式生成 fail-closed；确定性 fallback 不得作为训练语料。
 因此 52-user 正式生成成功路径为 468 calls，硬上限为 936 calls，而不再是旧整包 52 calls。
+角色顺序不是 provider 的语义任务：provider 只填写 1–2 个
+`{user_text, assistant_text}` 历史 exchange，本地 compiler 再展开为严格的
+`user → assistant` turn 序列。这样 2–4 个历史 turn 的变化仍保留，但交替和“历史最后一条
+必须是 assistant”成为 schema/compiler 不变量，不能再靠 prompt 或事后放松 lint。
 `advice_readiness_target` 是合法的可见用户状态，不是 Strategy-value 标签：本地 compiler
 用多种自然句式把它写入 current turn，并在 user 内对 Strategy-use/skip 反平衡；因此 PM
 能够观察“想倾听/可接受小建议”，却不能用该句式直接猜 RS 是否产生正边际价值。

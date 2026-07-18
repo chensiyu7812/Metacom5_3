@@ -7,8 +7,10 @@
 > 但 approval manifest 仍为空，因而任何付费调用继续 fail-closed。旧 V8.3 dry-run 已失效；
 > V8.4 已真实执行并在 transport/schema 层 PASS，但 exact surface 复核发现
 > readiness 未进入两个 Strategy case 的可见话语，且旧自动审核没有绑定付费九例；
-> 因而 V8.4 已归档为 `CONSUMED_PASS_SEMANTICALLY_SUPERSEDED`。V8.5 已完成不调用
-> API 的 fresh dry-run，当前只能先审查并提交该精确 identity，再获得逐阶段 approval。
+> 因而 V8.4 已归档为 `CONSUMED_PASS_SEMANTICALLY_SUPERSEDED`。V8.5 两次真实调用
+> 都因 provider 的通用 role list 以 user 结尾而 fail-closed，identity 已消费。V8.6 将历史
+> 改成 schema-level `user_text → assistant_text` exchanges，由本地 compiler 保证角色顺序，
+> 并已完成不调用 API 的 fresh dry-run；下一步只能使用 V8.6 的新 identity。
 > 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
@@ -166,7 +168,7 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | V8.4 已真实执行：9/9 accepted、10 physical attempts、0 fallback、实际约 `$0.0030237`；但只判定 transport/schema PASS，因 readiness surface 与审核 lineage 缺口而被语义性淘汰，禁止下游使用。V8.5 fresh dry-run：9 success-path / 18 max、预估 `$0.00841695`、上限 `$0.01690875`、最大输入上界 2739/call | V8.5 exact identity `a84c17f…05ed` 待代码提交和独立复核；V8.4 `0588889c…d194b` 已消费且不可复用 |
+| generation compatibility | V8.4 transport/schema PASS 但语义性淘汰；V8.5 在 context_only 的 initial+repair 均因 role list 以 user 结尾而真实 FAIL，2 calls、约 `$0.0006274`。V8.6 fresh dry-run：9 success-path / 18 max、预估 `$0.0087474`、上限 `$0.01763955`、最大输入上界 3036/call | V8.6 exact identity `64a06993…ef85` 待提交后的精确批准；V8.4/V8.5 均已消费且不可复用 |
 | 自动语义审核 | 当前 v3 合同为 27 deterministic + exact paid 9 + 24 controls，双 family 共 120 logical calls、最多 360 physical attempts；任何未绑定 current paid pilot 的旧 102-call/hash 全部失效 | `STALE_REQUIRES_FRESH_PILOT_THEN_DRY_RUN` |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
