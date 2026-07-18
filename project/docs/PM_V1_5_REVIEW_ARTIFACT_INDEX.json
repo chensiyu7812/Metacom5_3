@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "6ac15164d240a612e9907b65dbf5a7e33e1585579f5ad3b949f9971ec0b1ab2a"
+    "sha256": "f709a31b70b4a7227d58595411ad7421f55eb03e6f2e60c3d6dd75d17cba830f"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -55,6 +55,11 @@
       "google_gemini",
       "deepseek"
     ],
+    "judge_endpoint_aliases": [
+      "training_judge_gemini_flash_lite",
+      "training_judge_deepseek_flash"
+    ],
+    "endpoint_descriptor_lineage": "alias+family+model+base_url+experiment_config_sha256",
     "retry_contract": "pm-v1.5-bounded-retry-v2",
     "invalidated_prior_accepted_cost_estimate_sha256": "54369b9c51d4d4930abb591c0a5be416691911512307811667f172a29adb3b0c",
     "invalidated_prior_call_plan_contract_sha256": "dfb32f887338d0ef21d7f3853fbdad4dd7ee66c5f14599c8bae5c002e79a075a",

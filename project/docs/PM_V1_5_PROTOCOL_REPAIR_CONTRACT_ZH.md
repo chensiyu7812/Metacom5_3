@@ -243,6 +243,12 @@ states、evaluator contexts、memory backend、Strategy Bank 和配置哈希必�
 controls 使用真实候选值交换、标签翻转、age 算术矛盾、时序复制、grounding donor、
 premature-strategy 注入等可读 corruption，不再使用 sentinel 字符串。
 
+两道 semantic review 的 judge endpoint aliases 也分别在 PM 配置中按顺序锁定。runner
+必须精确使用该面板，不能以任意“同样是两个独立开发家族”的 CLI override 替换。
+gate report、cost plan 与 attestation 同时记录 alias、family、model、base URL；下游在接受
+PASS 前必须将这些 descriptors 和 attested `experiment_config` 哈希与当前配置逐项重建、
+比对。alias、model、base URL 或 experiment config 任一漂移均使旧 PASS 失效。
+
 ## 8. 三层 Gate
 
 所有差值方向统一为 `PM - comparator`，以 user 为主要独立 bootstrap block。精确 margin、

@@ -29,6 +29,7 @@ from typing import Any, Literal, Mapping, Sequence
 
 from .api import Endpoint, make_client, require_reported_usage
 from .artifacts import require_artifact_attestation
+from .config import endpoint_from_config, load_config
 from .contracts import MemorySource
 from .io import canonical_json, read_json, sha256_file, sha256_text
 from .pm_v2_contracts import StrictModel
@@ -40,6 +41,31 @@ from .pm_v2_generation_review_v8 import (
 
 AUTOMATED_REVIEW_PROTOCOL = "pm-v1.5-automated-semantic-review-v2"
 AUTOMATED_CONTROL_PROTOCOL = "pm-v1.5-pilot-controls-v2"
+
+
+def build_judge_endpoint_descriptors(
+    experiment_config: Mapping[str, Any], endpoint_names: Sequence[str]
+) -> list[dict[str, str]]:
+    descriptors = []
+    for name in endpoint_names:
+        endpoint = endpoint_from_config(experiment_config, str(name))
+        if not endpoint.family:
+            raise RuntimeError(f"semantic-review endpoint {name} lacks family")
+        descriptors.append(
+            {
+                "alias": str(name),
+                "family": str(endpoint.family),
+                "model": str(endpoint.model),
+                "base_url": str(endpoint.base_url),
+            }
+        )
+    if len(descriptors) < 2 or len({row["family"] for row in descriptors}) != len(
+        descriptors
+    ):
+        raise RuntimeError(
+            "semantic-review panel requires distinct declared judge families"
+        )
+    return descriptors
 
 # Frozen replacements for the legacy V8 review cards. The original V8 IDs all
 # came from dialogue sources that are now among the 52 formal development seed
@@ -94,6 +120,7 @@ def require_automated_semantic_review_pass(
     report_path: str | Path,
     attestation_path: str | Path,
     *,
+    expected_experiment_config_path: str | Path,
     expected_pm_config_path: str | Path,
     expected_strategy_bank_path: str | Path,
 ) -> dict[str, Any]:
@@ -104,6 +131,9 @@ def require_automated_semantic_review_pass(
     )
     report = read_json(report_path)
     attestation = read_json(attestation_path)
+    _require_attested_input_hash(
+        attestation, "experiment_config", expected_experiment_config_path
+    )
     _require_attested_input_hash(
         attestation, "pm_v1_5_config", expected_pm_config_path
     )
@@ -121,6 +151,16 @@ def require_automated_semantic_review_pass(
     control_manifest = report.get("control_manifest") or []
     controls_record = output_records.get("controls") or {}
     controls_path = Path(str(controls_record.get("path") or ""))
+    pm_config = load_config(expected_pm_config_path)
+    expected_endpoint_names = list(
+        (pm_config.get("automated_semantic_review") or {}).get(
+            "judge_endpoints"
+        )
+        or []
+    )
+    expected_descriptors = build_judge_endpoint_descriptors(
+        load_config(expected_experiment_config_path), expected_endpoint_names
+    )
     if (
         report.get("protocol") != AUTOMATED_REVIEW_PROTOCOL
         or report.get("status") != "PASS"
@@ -141,6 +181,12 @@ def require_automated_semantic_review_pass(
         != report.get("control_matrix_sha256")
         or not controls_path.is_file()
         or read_json(controls_path) != control_manifest
+        or report.get("judge_endpoint_descriptors") != expected_descriptors
+        or report.get("judge_families") != expected_endpoint_names
+        or (attestation.get("parameters") or {}).get(
+            "judge_endpoint_descriptors"
+        )
+        != expected_descriptors
     ):
         raise RuntimeError("PM-v1.5 automated semantic-review gate did not PASS")
     return {

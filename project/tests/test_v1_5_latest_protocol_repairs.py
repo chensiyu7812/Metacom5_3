@@ -326,13 +326,47 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
     backend = tmp_path / "backend.jsonl"
     strategy_bank = tmp_path / "strategy.jsonl"
     config = tmp_path / "pm.yaml"
+    experiment = tmp_path / "experiment.yaml"
+    endpoint_names = ["judge_a", "judge_b"]
+    descriptors = [
+        {
+            "alias": "judge_a",
+            "family": "family_a",
+            "model": "model-a",
+            "base_url": "https://a.example.invalid",
+        },
+        {
+            "alias": "judge_b",
+            "family": "family_b",
+            "model": "model-b",
+            "base_url": "https://b.example.invalid",
+        },
+    ]
     for path, text in (
         (evaluator, '{"state_id":"s1"}\n'),
         (backend, '{"card_id":"c1"}\n'),
         (strategy_bank, '{"strategy_id":"x"}\n'),
-        (config, "version: pm-v1.5\n"),
+        (
+            config,
+            "version: pm-v1.5\nactual_corpus_semantic_audit:\n"
+            "  judge_endpoints: [judge_a, judge_b]\n",
+        ),
     ):
         path.write_text(text, encoding="utf-8")
+    experiment_text = (
+        "endpoints:\n"
+        "  judge_a:\n"
+        "    base_url: https://a.example.invalid\n"
+        "    model: model-a\n"
+        "    api_key_env: A_KEY\n"
+        "    family: family_a\n"
+        "  judge_b:\n"
+        "    base_url: https://b.example.invalid\n"
+        "    model: model-b\n"
+        "    api_key_env: B_KEY\n"
+        "    family: family_b\n"
+    )
+    experiment.write_text(experiment_text, encoding="utf-8")
     control_manifest = [
         {
             "item_id": str(index),
@@ -362,6 +396,8 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
             "control_manifest": control_manifest,
             "control_catches": [{"item_id": str(index)} for index in range(24)],
             "control_misses": [],
+            "judge_families": endpoint_names,
+            "judge_endpoint_descriptors": descriptors,
             "corpus_audit": {
                 "fallback_gate": {"status": "PASS"},
                 "control_matrix_sha256": matrix_sha256,
@@ -387,6 +423,7 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
         attestation,
         stage=ACTUAL_CORPUS_REVIEW_STAGE,
         inputs={
+            "experiment_config": experiment,
             "states": states,
             "evaluator_contexts": evaluator,
             "memory_backend": backend,
@@ -400,22 +437,39 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
             "gate_report": (report_path, False),
             "physical_attempt_ledger": (ledger, True),
         },
-        parameters={},
+        parameters={"judge_endpoint_descriptors": descriptors},
     )
     assert require_actual_corpus_semantic_review_pass(
         report_path,
         attestation,
+        expected_experiment_config_path=experiment,
         expected_states_path=states,
         expected_evaluator_contexts_path=evaluator,
         expected_backend_path=backend,
         expected_strategy_bank_path=strategy_bank,
         expected_pm_config_path=config,
     )["status"] == "PASS"
+    experiment.write_text(
+        experiment_text.replace("model-a", "model-a-v2"), encoding="utf-8"
+    )
+    with pytest.raises(RuntimeError, match="hash mismatch|does not bind"):
+        require_actual_corpus_semantic_review_pass(
+            report_path,
+            attestation,
+            expected_experiment_config_path=experiment,
+            expected_states_path=states,
+            expected_evaluator_contexts_path=evaluator,
+            expected_backend_path=backend,
+            expected_strategy_bank_path=strategy_bank,
+            expected_pm_config_path=config,
+        )
+    experiment.write_text(experiment_text, encoding="utf-8")
     states.write_text('{"state_id":"changed"}\n', encoding="utf-8")
     with pytest.raises(RuntimeError, match="hash mismatch|did not PASS"):
         require_actual_corpus_semantic_review_pass(
             report_path,
             attestation,
+            expected_experiment_config_path=experiment,
             expected_states_path=states,
             expected_evaluator_contexts_path=evaluator,
             expected_backend_path=backend,

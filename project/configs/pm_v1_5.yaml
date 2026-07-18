@@ -420,12 +420,13 @@ semantic_sanity_audit:
   minimum_affirmative_rate_per_split: 0.80
   minimum_affirmative_rate_per_family: 0.80
 
-# Frozen pre-generation 27-case calibration matrix. Every one of the 12 rubric
-# dimensions has two deterministic, natural-language corruptions. The runner
-# rejects any CLI seed or matrix that differs from this contract.
+# Frozen pre-generation 27-case calibration matrix and exact judge aliases.
+# Every one of the 12 rubric dimensions has two deterministic, natural-language
+# corruptions. The runner rejects any CLI seed, panel, or matrix that differs.
 automated_semantic_review:
   protocol: pm-v1.5-automated-semantic-review-v2
   control_protocol: pm-v1.5-pilot-controls-v2
+  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]
   control_seed: 20260716
   controls_per_field: 2
   required_control_fields:

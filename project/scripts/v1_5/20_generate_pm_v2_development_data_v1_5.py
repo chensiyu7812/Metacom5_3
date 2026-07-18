@@ -1089,6 +1089,7 @@ def main() -> None:
     automated_review_verification = require_automated_semantic_review_pass(
         args.automated_semantic_review_report,
         args.automated_semantic_review_attestation,
+        expected_experiment_config_path=args.config,
         expected_pm_config_path=args.pm_v2_config,
         expected_strategy_bank_path=args.strategy_bank,
     )

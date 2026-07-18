@@ -120,8 +120,42 @@ def test_aggregate_gate_rejects_empty_or_incomplete_control_matrix():
 
 def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path):
     config = tmp_path / "pm.yaml"
+    experiment = tmp_path / "experiment.yaml"
     bank = tmp_path / "strategy.jsonl"
-    config.write_text("version: pm-v1.5\n", encoding="utf-8")
+    endpoint_names = ["judge_a", "judge_b"]
+    descriptors = [
+        {
+            "alias": "judge_a",
+            "family": "family_a",
+            "model": "model-a",
+            "base_url": "https://a.example.invalid",
+        },
+        {
+            "alias": "judge_b",
+            "family": "family_b",
+            "model": "model-b",
+            "base_url": "https://b.example.invalid",
+        },
+    ]
+    config.write_text(
+        "version: pm-v1.5\nautomated_semantic_review:\n"
+        "  judge_endpoints: [judge_a, judge_b]\n",
+        encoding="utf-8",
+    )
+    experiment_text = (
+        "endpoints:\n"
+        "  judge_a:\n"
+        "    base_url: https://a.example.invalid\n"
+        "    model: model-a\n"
+        "    api_key_env: A_KEY\n"
+        "    family: family_a\n"
+        "  judge_b:\n"
+        "    base_url: https://b.example.invalid\n"
+        "    model: model-b\n"
+        "    api_key_env: B_KEY\n"
+        "    family: family_b\n"
+    )
+    experiment.write_text(experiment_text, encoding="utf-8")
     bank.write_text('{"strategy_id":"strat_000000000000"}\n', encoding="utf-8")
     control_manifest = [
         {
@@ -152,6 +186,8 @@ def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path
             "control_manifest": control_manifest,
             "control_catches": [{"item_id": str(index)} for index in range(24)],
             "control_misses": [],
+            "judge_families": endpoint_names,
+            "judge_endpoint_descriptors": descriptors,
         },
     )
     real_judgments = tmp_path / "real.json"
@@ -166,7 +202,11 @@ def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path
     create_artifact_attestation(
         attestation,
         stage="pm_v1_5_automated_semantic_review",
-        inputs={"pm_v1_5_config": config, "strategy_bank": bank},
+        inputs={
+            "experiment_config": experiment,
+            "pm_v1_5_config": config,
+            "strategy_bank": bank,
+        },
         outputs={
             "real_case_judgments": (real_judgments, False),
             "control_judgments": (control_judgments, False),
@@ -174,11 +214,12 @@ def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path
             "gate_report": (report_path, False),
             "physical_attempt_ledger": (ledger, True),
         },
-        parameters={},
+        parameters={"judge_endpoint_descriptors": descriptors},
     )
     assert require_automated_semantic_review_pass(
         report_path,
         attestation,
+        expected_experiment_config_path=experiment,
         expected_pm_config_path=config,
         expected_strategy_bank_path=bank,
     )["report"]["status"] == "PASS"
@@ -187,9 +228,52 @@ def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path
         require_automated_semantic_review_pass(
             report_path,
             attestation,
+            expected_experiment_config_path=experiment,
             expected_pm_config_path=config,
             expected_strategy_bank_path=bank,
         )
+    bank.write_text('{"strategy_id":"strat_000000000000"}\n', encoding="utf-8")
+    experiment.write_text(
+        experiment_text.replace(
+            "https://a.example.invalid", "https://changed.example.invalid"
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="hash mismatch|does not bind"):
+        require_automated_semantic_review_pass(
+            report_path,
+            attestation,
+            expected_experiment_config_path=experiment,
+            expected_pm_config_path=config,
+            expected_strategy_bank_path=bank,
+        )
+
+    experiment.write_text(
+        experiment_text.replace("model-a", "model-a-v2"),
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="hash mismatch|does not bind"):
+        require_automated_semantic_review_pass(
+            report_path,
+            attestation,
+            expected_experiment_config_path=experiment,
+            expected_pm_config_path=config,
+            expected_strategy_bank_path=bank,
+        )
+
+
+def test_runner_rejects_non_frozen_judge_alias_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    module = _load_runner()
+    argv = _argv(tmp_path / "review", "--dry-run") + [
+        "--judge-endpoints",
+        "training_judge_deepseek_flash",
+        "training_judge_gemini_flash_lite",
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+    with pytest.raises(RuntimeError, match="judge endpoints differ from frozen config"):
+        module.main()
 
 
 def _load_runner():

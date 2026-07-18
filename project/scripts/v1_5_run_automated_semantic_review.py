@@ -109,6 +109,7 @@ from metacom_pm.v1_5_automated_semantic_review import (
     _render_case_text,
     aggregate_gate,
     build_control_manifest,
+    build_judge_endpoint_descriptors,
     build_positive_controls,
     judge_messages,
 )
@@ -208,6 +209,19 @@ def main() -> None:
         if args.review_scope == "actual_468"
         else AUTOMATED_REVIEW_PROTOCOL
     )
+    control_cfg = dict(
+        pm_config[
+            "actual_corpus_semantic_audit"
+            if args.review_scope == "actual_468"
+            else "automated_semantic_review"
+        ]
+    )
+    expected_endpoint_names = list(control_cfg.get("judge_endpoints") or [])
+    if list(args.judge_endpoints) != expected_endpoint_names:
+        raise RuntimeError(
+            f"{args.review_scope} judge endpoints differ from frozen config: "
+            f"expected={expected_endpoint_names}, got={list(args.judge_endpoints)}"
+        )
     require_paid_run_release(
         pm_config,
         config_path=args.pm_v1_5_config,
@@ -227,13 +241,16 @@ def main() -> None:
     endpoints = {
         name: endpoint_from_config(experiment_config, name) for name in args.judge_endpoints
     }
+    judge_endpoint_descriptors = build_judge_endpoint_descriptors(
+        experiment_config, args.judge_endpoints
+    )
     families = [str(endpoint.family or "") for endpoint in endpoints.values()]
     if len(endpoints) < 2 or "" in families or len(set(families)) != len(families):
         raise RuntimeError("automated review requires distinct declared judge families")
 
     corpus_audit = None
     if args.review_scope == "actual_468":
-        actual_cfg = dict(pm_config["actual_corpus_semantic_audit"])
+        actual_cfg = control_cfg
         if (
             actual_cfg.get("protocol") != ACTUAL_CORPUS_REVIEW_PROTOCOL
             or actual_cfg.get("control_protocol")
@@ -244,7 +261,6 @@ def main() -> None:
             or int(actual_cfg.get("control_seed") or -1) != int(args.seed)
         ):
             raise RuntimeError("actual-corpus control contract/config drift")
-        control_cfg = actual_cfg
         real_case_rows, controls, corpus_audit = build_actual_corpus_review_items(
             states_path=args.states,
             evaluator_contexts_path=args.evaluator_contexts,
@@ -261,7 +277,7 @@ def main() -> None:
             controls_per_field=int(actual_cfg["controls_per_field"]),
         )
     else:
-        pilot_cfg = dict(pm_config["automated_semantic_review"])
+        pilot_cfg = control_cfg
         if (
             pilot_cfg.get("protocol") != AUTOMATED_REVIEW_PROTOCOL
             or pilot_cfg.get("control_protocol") != AUTOMATED_CONTROL_PROTOCOL
@@ -271,7 +287,6 @@ def main() -> None:
             or int(pilot_cfg.get("control_seed") or -1) != int(args.seed)
         ):
             raise RuntimeError("pilot control contract/config drift")
-        control_cfg = pilot_cfg
         cases = generate_v8_review_cases(
             strategy_bank_path=args.strategy_bank,
             cases_per_regime=VALIDATION_CASES_PER_REGIME,
@@ -419,6 +434,7 @@ def main() -> None:
         "pricing_usd_per_mtok": prices,
         "api_cost_planning": planning,
         "judge_role_isolation": judge_role_isolation,
+        "judge_endpoint_descriptors": judge_endpoint_descriptors,
         "review_strategy_card_ids": (
             {}
             if args.review_scope == "actual_468"
@@ -666,6 +682,7 @@ def main() -> None:
         ),
         "review_scope": args.review_scope,
         "corpus_audit": corpus_audit,
+        "judge_endpoint_descriptors": judge_endpoint_descriptors,
         "transport_retry_summary": retry_ledger_summary(
             ledger,
             [str(row["physical_call_key"]) for row in call_plan],
@@ -720,6 +737,7 @@ def main() -> None:
             "control_seed": int(control_cfg["control_seed"]),
             "control_matrix_sha256": gate["control_matrix_sha256"],
             "judge_role_isolation": judge_role_isolation,
+            "judge_endpoint_descriptors": judge_endpoint_descriptors,
             "review_strategy_card_ids": (
                 {}
                 if args.review_scope == "actual_468"

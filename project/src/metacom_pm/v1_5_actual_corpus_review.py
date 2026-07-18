@@ -11,7 +11,11 @@ from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
 from .pm_v2_data import load_bundles, load_evaluator_context_index, load_states
 from .pm_v2_generation_review_v8 import RATING_FIELDS, REVIEW_QUESTIONS_EN
 from .retrieval import StrategyRetriever, context_query
-from .v1_5_automated_semantic_review import build_control_manifest
+from .v1_5_automated_semantic_review import (
+    build_control_manifest,
+    build_judge_endpoint_descriptors,
+)
+from .config import load_config
 
 
 ACTUAL_CORPUS_REVIEW_PROTOCOL = "pm-v1.5-actual-468-semantic-review-v2"
@@ -454,6 +458,7 @@ def require_actual_corpus_semantic_review_pass(
     report_path: str | Path,
     attestation_path: str | Path,
     *,
+    expected_experiment_config_path: str | Path,
     expected_states_path: str | Path,
     expected_evaluator_contexts_path: str | Path,
     expected_backend_path: str | Path,
@@ -468,6 +473,7 @@ def require_actual_corpus_semantic_review_pass(
     report = read_json(report_path)
     attestation = read_json(attestation_path)
     expected_inputs = {
+        "experiment_config": expected_experiment_config_path,
         "states": expected_states_path,
         "evaluator_contexts": expected_evaluator_contexts_path,
         "memory_backend": expected_backend_path,
@@ -495,6 +501,16 @@ def require_actual_corpus_semantic_review_pass(
     control_manifest = report.get("control_manifest") or []
     controls_record = output_records.get("controls") or {}
     controls_path = Path(str(controls_record.get("path") or ""))
+    pm_config = load_config(expected_pm_config_path)
+    expected_endpoint_names = list(
+        (pm_config.get("actual_corpus_semantic_audit") or {}).get(
+            "judge_endpoints"
+        )
+        or []
+    )
+    expected_descriptors = build_judge_endpoint_descriptors(
+        load_config(expected_experiment_config_path), expected_endpoint_names
+    )
     if (
         report.get("protocol") != ACTUAL_CORPUS_REVIEW_PROTOCOL
         or report.get("status") != "PASS"
@@ -525,6 +541,12 @@ def require_actual_corpus_semantic_review_pass(
         != sha256_file(expected_strategy_bank_path)
         or (report.get("corpus_audit") or {}).get("control_matrix_sha256")
         != report.get("control_matrix_sha256")
+        or report.get("judge_endpoint_descriptors") != expected_descriptors
+        or report.get("judge_families") != expected_endpoint_names
+        or (attestation.get("parameters") or {}).get(
+            "judge_endpoint_descriptors"
+        )
+        != expected_descriptors
     ):
         raise RuntimeError("actual 468-state semantic/fallback gate did not PASS")
     return {

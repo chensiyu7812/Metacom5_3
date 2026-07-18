@@ -132,6 +132,8 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 7. 27-case 和 actual-468 自动语义审核均冻结 12 字段 × 每字段 2 个 hard controls；
    空/缺失/重复 control matrix、明显 sentinel、输入哈希漂移和未纳入 freeze 的活跃
    V1.5 脚本均 fail closed。
+8. 两道语义审核使用配置中按顺序冻结的 exact endpoint aliases；alias、family、model、
+   base URL 与当前 `experiment.yaml` 内容哈希全部进入 report/attestation/downstream gate。
 
 ## 8. 截至当前提交的真实执行状态
 
