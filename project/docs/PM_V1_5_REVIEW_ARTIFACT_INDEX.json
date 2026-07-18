@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "920dee02d87ed5c65d371993ae4f5d2571ec1b5c56bc6f642628942862f0a754"
+    "sha256": "47a34c2c25cb7637cc65011cb0e4626861e0238a3bd58b2bc88ac212685d8d86"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -38,7 +38,7 @@
     "publication_note": "Raw seed dialogues remain in the ignored private artifact vault; the review package publishes their lineage hash and construction code, not the raw dialogue file."
   },
   "generation_compatibility_pilot": {
-    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_NOW_STALE; NO_ACTIVE_PAID_APPROVAL",
+    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_STALE; V8_4_POST_RELEASE_DRY_RUN_PENDING_EXACT_APPROVAL; NO_PAID_CALL_AUTHORIZED",
     "paper_result": false,
     "historical_physical_attempts": 2,
     "latest_v8_attempt_status": "FAIL",
@@ -111,6 +111,20 @@
     "v8_3_maximum_estimated_cost_usd": 0.01680705,
     "v8_3_maximum_input_tokens_per_call": 2675,
     "v8_3_maximum_output_tokens_per_call": 900,
+    "v8_4_status": "POST_RELEASE_DRY_RUN_PASS_PENDING_EXACT_USER_APPROVAL",
+    "v8_4_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
+    "v8_4_compatibility_contract_sha256": "db67b3de5ecd09d8ecc419440ba60bed181931bdd1c42981d9a552ee717faae4",
+    "v8_4_cost_estimate_sha256": "0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b",
+    "v8_4_call_plan_sha256": "d4f2f0123ea6b6fb1848e200099e4bf6c6219c48686e202e10d719942370c307",
+    "v8_4_success_path_calls": 9,
+    "v8_4_maximum_physical_attempts": 18,
+    "v8_4_expected_estimated_cost_usd": 0.0083661,
+    "v8_4_maximum_estimated_cost_usd": 0.01680705,
+    "v8_4_maximum_input_tokens_per_call": 2675,
+    "v8_4_maximum_output_tokens_per_call": 900,
+    "v8_4_paid_execution_authorized": false,
+    "v8_4_provisional_blocked_config_identity": "e9467326aa65569ab66d9c0647586be6a58c4c692236a313d4dbe5e65417e08a",
+    "v8_4_provisional_identity_status": "STALE_NEVER_EXECUTED_CONFIG_STATUS_CHANGED_BEFORE_APPROVAL",
     "v8_3_semantic_changes": [
       "frozen local visible-state encoder",
       "semantic family/readiness Step-0 scalars",
@@ -119,7 +133,7 @@
       "no lexical advice-request hard gate"
     ],
     "current_required_provider_surface_fallback_cases": 0,
-    "required_action": "retain the immutable failed V8.2 output and stale V8.3 dry-run; review the runtime/diagnostic repair; then create a new output directory, dry-run identity, and exact stage approval before any paid execution"
+    "required_action": "review and explicitly approve exact V8.4 identity 0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b; then record only that stage approval and execute without overwrite; OPENAI_API_KEY must be supplied through the runtime secret environment"
   },
   "semantic_encoder": {
     "protocol": "pm-v1.5-frozen-visible-text-encoder-v1",
@@ -136,7 +150,7 @@
     "runtime_contract_sha256": "2b8c2943c72b895c0796daaa4a5971f7d064b2789b6a0d5b896a304a25cbde7a",
     "runtime_canary_matrix_sha256": "de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13",
     "runtime_preflight_path": "project/outputs/pm_v1_5_semantic_runtime_preflight.json",
-    "runtime_preflight_sha256": "8593007a62d73fcff10d3f0b9190832c5305009aba5906d258187358966cc13b",
+    "runtime_preflight_sha256": "219091e940b2cf139f504b93bff8c261bde7d312b9ce33d8b6e536e0df3c8be7",
     "runtime_preflight_status": "PASS_RUNTIME_WITH_REPORT_ONLY_READINESS_DIAGNOSTIC",
     "exact_constraints_path": "project/constraints/pm_v1_5_runtime.txt",
     "formal_environment": "dedicated Python 3.13.2 .venv-pm-v1-5 with PYTHONNOUSERSITE=1; never sim_eval or Conda base",

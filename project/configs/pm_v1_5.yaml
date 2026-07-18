@@ -53,9 +53,11 @@ release_revision: pm-v1.5_1
 # paid stage to its fresh accepted dry-run/cost identity.
 execution_release:
   protocol: pm-v1.5-central-paid-run-release-v1
-  # V8.2 was consumed and failed closed.  No later contract or paid stage is
-  # authorized until a fresh dry-run identity is reviewed and recorded.
-  status: PAID_RUN_BLOCKED
+  # The code/config revision is released for final dry-run identity creation,
+  # but no paid call is authorized unless the separate approval manifest is
+  # APPROVED and binds the exact stage identity.  Its approval map remains empty
+  # while the final post-release dry run is being reviewed.
+  status: PAID_RUN_RELEASED
   release_revision: pm-v1.5_1
   approval_manifest: outputs/pm_v1_5_paid_run_release.json
 

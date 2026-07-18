@@ -327,6 +327,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-REL-05 | C1 | 代码/config/bank/prompt 修改后沿用旧 accepted hash | 任一输入变化使 stage approval 失效，必须 fresh dry-run + explicit approval | 持续护栏 |
 | V15-REL-06 | C2 | `API_PILOT_READY` 被误读成 `CONFIRMATORY_READY` | 报告两种状态；无 checkpoint/Gate M/F/freeze 时 confirmatory=false | 持续护栏 |
 | V15-REL-07 | C1 | formal generation CLI 默认指向已失效 V8.3 attestation，容易让旧 provenance 被无意继承 | 删除默认值；paid `--run` 必须显式传 fresh pilot attestation，并拒绝 V8/V8.1/V8.2/V8.3 已知历史目录 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-REL-08 | C0 | 在 `PAID_RUN_BLOCKED` 配置上生成 cost hash、再切换 release 状态会改变全配置 SHA，使刚批准的 identity 必然失效 | 两阶段 release：先冻结 `PAID_RUN_RELEASED`，但 manifest 保持 pending/空 approvals；证明 `--run` 仍 fail-closed；只批准随后在稳定配置上生成的 post-release identity | `V8_4_POST_RELEASE_DRY_RUN_PASS_PENDING_EXACT_APPROVAL` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 
@@ -497,7 +498,7 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`；本轮统一 Step-0/state BGE 输入、严格 schema 与 residual 消融解释修复待提交并等待 CI 复核 |
+| 分支 | `pm-v1.5_1`；统一 Step-0/state BGE 修复 commit `614b2e51...` 已推送且 GitHub Actions #134 PASS；当前仅有 release/approval 状态与 fresh dry-run 索引待提交复核 |
 | tests/preflight | 专用 venv 精确 BGE runtime/canary 与真实 768-d strict `PMV2State` no-API smoke PASS；裸 `pytest -q` 为 398 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY` 且 syntax/static/pytest 全 PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
 | semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
 | readiness challenge | 20 个固定 outcome-free challenge：current 17/20、统一 bounded full-context 14/20；状态为 `REPORT_ONLY_14_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
@@ -508,7 +509,8 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 | V8.1 | 真实 FAIL：2/9 provider surfaces 需 fallback |
 | V8.2 | 真实 FAIL：8 attempts，6 success/2 failure；旧输出与批准均 closed |
 | V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录；下一次必须新目录、新 identity |
-| paid approval | 无 active stage approval；当前 `NO-RUN` |
+| V8.4 | post-release dry-run identity `0588889c...d194b`；9 success-path / 18 max attempts；预算上限 `$0.01680705`；当前只待 exact approval，尚未执行 |
+| paid approval | manifest 为 `PENDING_EXACT_IDENTITY_REVIEW` 且 stage approvals 为空；当前仍 `NO-RUN` |
 | automated semantic review | 当前合同需 102 logical calls；无当前 PASS |
 | formal development | 未运行 |
 | full sweep/judging | 未运行 |

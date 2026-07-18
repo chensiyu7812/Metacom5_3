@@ -3,9 +3,9 @@
 > **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
-> 外部效率三层 gate。V8.2 已真实消费并 fail-closed，中央配置现为
-> `PAID_RUN_BLOCKED`；旧 V8.3 dry-run 已因本轮 runtime/输入协议修复而失效，下一次必须
-> 使用新目录和新 identity 重新 dry-run、审查并获得逐阶段 approval。本文保留为 2026-07-17 版本的历史设计
+> 外部效率三层 gate。V8.2 已真实消费并 fail-closed；中央配置现已固定为 release 状态，
+> 但 approval manifest 仍为空，因而任何付费调用继续 fail-closed。旧 V8.3 dry-run 已失效；
+> 当前只允许审查全新 V8.4 post-release identity 并获得逐阶段精确 approval。本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
@@ -162,7 +162,7 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 只曾完成旧合同 dry-run，现也已失效 | `758ae052…8cf3df2` 仅作历史，不可批准或执行；下一次必须新目录、新 hash；旧 `14ca3b79…406aac` 已消费失败 |
+| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 旧 dry-run 已失效；V8.4 post-release dry-run 已通过预算与内容绑定、尚未执行 | 当前唯一可批准 identity `0588889c…d194b`，9 success-path / 18 max attempts、最大 `$0.01680705`；旧 `758ae052…8cf3df2` 与 `14ca3b79…406aac` 不可复用 |
 | 自动语义审核 | 三次历史真实 `--run` 的故障记录仅用于追溯。当前已升级为 12 字段 × 每字段 2 个 control 的 v2 合同，共 102 个逻辑调用、最多 306 次物理尝试；旧 66-call cost/hash 全部失效。新价格上界和 acceptance hash 必须由当前代码重新 dry-run 产生 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
