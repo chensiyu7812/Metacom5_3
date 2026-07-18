@@ -231,6 +231,31 @@ semantic_encoder:
   trust_remote_code: false
   language_scope: english
 
+# Reportable development and external semantic observations must be produced
+# by this exact numerical runtime. CI may exercise wiring without the snapshot,
+# but paid/reportable stages fail before API use when this canary differs.
+semantic_runtime:
+  protocol: pm-v1.5-semantic-runtime-canary-v1
+  encoder_spec_sha256: aa78648c8e0717bb2450b26560bb183fe893972aed2fa44fe6d67507aae768f3
+  encoder_snapshot_tree_sha256: c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b
+  canary_texts_sha256: 0b5597a2363f6be9bc421df44778f7b45752538e3fc9b012e1e48a004e7c42b6
+  canary_matrix_sha256: de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13
+  canary_shape: [3, 384]
+  python_version: 3.13.2
+  platform_system: Linux
+  platform_machine: x86_64
+  packages:
+    numpy: 2.5.1
+    scikit-learn: 1.9.0
+    scipy: 1.18.0
+    torch: 2.13.0
+    transformers: 4.57.6
+    tokenizers: 0.22.2
+    huggingface-hub: 0.36.2
+    safetensors: 0.8.0
+  device: cpu
+  dtype: float32
+
 features:
   word_hash_features: 256
   char_hash_features: 256
@@ -274,7 +299,8 @@ shortcut_audit:
   fail_on_near_oracle_multivariate_probe: true
 
 # Low-capacity mechanism baseline. Structural coefficients are frozen here;
-# only this finite numeric grid may be selected on calibration users. It sees
+# only this finite numeric grid may be selected on train users (or the fit-user
+# subset inside each train-only CV fold). It sees
 # the exact same Step-0 object as the learned router and never sees item hits.
 transparent_rule_router:
   protocol: pm-v1.5-transparent-step0-rule-router-v2
@@ -295,7 +321,20 @@ transparent_rule_router:
 
 internal_ablation:
   learned_without_step0: true
+  learned_without_state_bge: true
+  lexical_without_state_bge_or_step0: true
   external_primary_matrix: false
+
+semantic_diagnostics:
+  protocol: pm-v1.5-semantic-diagnostics-v1
+  selection_data_role: train_and_calibration_only
+  internal_results_must_not_select_or_retune_candidates: true
+  rule_score_distribution_required: true
+  rule_candidate_action_distribution_required: true
+  readiness_challenge_role: report_only_not_outcome_gate
+  token_truncation_telemetry_required: true
+  current_user_text_truncation_must_be_zero: true
+  development_external_centroid_scale_comparison_required: true
 
 ood_calibration:
   protocol: pm-v2-ood-calibration-v1

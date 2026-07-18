@@ -1,0 +1,187 @@
+{
+  "status": "PASS",
+  "protocol": "pm-v1.5-semantic-runtime-preflight-v1",
+  "pm_v1_5_config_sha256": "18ffc6d7a146bccb316dcf2c254f7737c992ae4c47439a0e9a647ae9c8d86a66",
+  "semantic_runtime": {
+    "status": "PASS",
+    "contract": {
+      "protocol": "pm-v1.5-semantic-runtime-canary-v1",
+      "encoder_spec_sha256": "aa78648c8e0717bb2450b26560bb183fe893972aed2fa44fe6d67507aae768f3",
+      "encoder_snapshot_tree_sha256": "c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b",
+      "canary_texts_sha256": "0b5597a2363f6be9bc421df44778f7b45752538e3fc9b012e1e48a004e7c42b6",
+      "canary_matrix_sha256": "de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13",
+      "canary_shape": [
+        3,
+        384
+      ],
+      "python_version": "3.13.2",
+      "platform_system": "Linux",
+      "platform_machine": "x86_64",
+      "packages": {
+        "numpy": "2.5.1",
+        "scikit-learn": "1.9.0",
+        "scipy": "1.18.0",
+        "torch": "2.13.0",
+        "transformers": "4.57.6",
+        "tokenizers": "0.22.2",
+        "huggingface-hub": "0.36.2",
+        "safetensors": "0.8.0"
+      },
+      "device": "cpu",
+      "dtype": "float32"
+    },
+    "contract_sha256": "c8d7663953fc901578e0d3633fec15f69eee51e853f4dc36b5c5f7899814b0b2"
+  },
+  "readiness_natural_language_challenge": {
+    "protocol": "pm-v1.5-readiness-natural-language-challenge-v1",
+    "role": "report_only_not_outcome_gate",
+    "outcome_labels_used": false,
+    "case_count": 5,
+    "current_turn_match_count": 4,
+    "full_context_match_count": 4,
+    "cases": [
+      {
+        "case_id": "explicit_listen_only",
+        "expected_contextual_readiness": "listen_only",
+        "current_turn": {
+          "scores": {
+            "listen_only": 0.7392375485633893,
+            "explore_first": 0.6032440302276805,
+            "light_suggestion": 0.5634718729607927,
+            "structured_plan": 0.5263324976825509,
+            "ambiguous": 0.6252975671094901
+          },
+          "top1": "listen_only",
+          "top1_top2_margin": 0.11393998145389916,
+          "matches_expected": true
+        },
+        "full_context": {
+          "scores": {
+            "listen_only": 0.7602871248283349,
+            "explore_first": 0.7253493338094104,
+            "light_suggestion": 0.6311529003300246,
+            "structured_plan": 0.6419053812143471,
+            "ambiguous": 0.7135436779744128
+          },
+          "top1": "listen_only",
+          "top1_top2_margin": 0.03493779101892458,
+          "matches_expected": true
+        }
+      },
+      {
+        "case_id": "short_context_dependent_acceptance",
+        "expected_contextual_readiness": "light_suggestion",
+        "current_turn": {
+          "scores": {
+            "listen_only": 0.6222182193399133,
+            "explore_first": 0.6487595757904305,
+            "light_suggestion": 0.5832241241815446,
+            "structured_plan": 0.5152796144791817,
+            "ambiguous": 0.7081521507067656
+          },
+          "top1": "ambiguous",
+          "top1_top2_margin": 0.059392574916335095,
+          "matches_expected": false
+        },
+        "full_context": {
+          "scores": {
+            "listen_only": 0.7169419037673791,
+            "explore_first": 0.7097517204426538,
+            "light_suggestion": 0.6792868122300805,
+            "structured_plan": 0.6443820331589566,
+            "ambiguous": 0.7398237286157974
+          },
+          "top1": "ambiguous",
+          "top1_top2_margin": 0.022881824848418275,
+          "matches_expected": false
+        }
+      },
+      {
+        "case_id": "explore_before_action",
+        "expected_contextual_readiness": "explore_first",
+        "current_turn": {
+          "scores": {
+            "listen_only": 0.6990396788785704,
+            "explore_first": 0.8040625528463733,
+            "light_suggestion": 0.5831746303581664,
+            "structured_plan": 0.584823215960064,
+            "ambiguous": 0.6790427328839519
+          },
+          "top1": "explore_first",
+          "top1_top2_margin": 0.10502287396780285,
+          "matches_expected": true
+        },
+        "full_context": {
+          "scores": {
+            "listen_only": 0.7203206673111172,
+            "explore_first": 0.7267993139110779,
+            "light_suggestion": 0.6169310018012438,
+            "structured_plan": 0.6671144021033343,
+            "ambiguous": 0.7180075997278229
+          },
+          "top1": "explore_first",
+          "top1_top2_margin": 0.006478646599960669,
+          "matches_expected": true
+        }
+      },
+      {
+        "case_id": "explicit_structured_plan",
+        "expected_contextual_readiness": "structured_plan",
+        "current_turn": {
+          "scores": {
+            "listen_only": 0.7512532162088132,
+            "explore_first": 0.7247219565657411,
+            "light_suggestion": 0.789501586637569,
+            "structured_plan": 0.9221781595592363,
+            "ambiguous": 0.7506249911944047
+          },
+          "top1": "structured_plan",
+          "top1_top2_margin": 0.13267657292166735,
+          "matches_expected": true
+        },
+        "full_context": {
+          "scores": {
+            "listen_only": 0.6669696469554122,
+            "explore_first": 0.6462633178416358,
+            "light_suggestion": 0.5881097633126683,
+            "structured_plan": 0.7501405756112369,
+            "ambiguous": 0.6579044372188363
+          },
+          "top1": "structured_plan",
+          "top1_top2_margin": 0.08317092865582476,
+          "matches_expected": true
+        }
+      },
+      {
+        "case_id": "mixed_ambivalence",
+        "expected_contextual_readiness": "ambiguous",
+        "current_turn": {
+          "scores": {
+            "listen_only": 0.7971594230461595,
+            "explore_first": 0.7994001081159628,
+            "light_suggestion": 0.7361429669958452,
+            "structured_plan": 0.7697776991493205,
+            "ambiguous": 0.9072892399328478
+          },
+          "top1": "ambiguous",
+          "top1_top2_margin": 0.10788913181688498,
+          "matches_expected": true
+        },
+        "full_context": {
+          "scores": {
+            "listen_only": 0.7236952893061881,
+            "explore_first": 0.7402408817184563,
+            "light_suggestion": 0.658721471229311,
+            "structured_plan": 0.7022984897669771,
+            "ambiguous": 0.7780738837387404
+          },
+          "top1": "ambiguous",
+          "top1_top2_margin": 0.03783300202028417,
+          "matches_expected": true
+        }
+      }
+    ]
+  },
+  "api_calls": 0,
+  "outcome_labels_used": false
+}

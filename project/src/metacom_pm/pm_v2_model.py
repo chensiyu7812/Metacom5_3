@@ -50,6 +50,9 @@ LEARNED_SELECTION_REASON = (
     "fallback_type=none; max conservative utility after explicit risk, "
     "resource-benefit, strategy-benefit and cost terms"
 )
+TRANSPARENT_RULE_SELECTION_REASON = (
+    "fallback_type=none; transparent Step-0 rule selection"
+)
 
 ROUTING_ALGORITHMS = (
     "absolute_outcome_factorized_hgb",
@@ -1101,9 +1104,12 @@ def decision_fallback_kind(decision: PolicyDecision) -> str | None:
         if decision.ood_fallback_used:
             raise RuntimeError("no-feasible fallback cannot carry the OOD fallback flag")
         return "no_feasible"
-    if decision.decision_reason == LEARNED_SELECTION_REASON:
+    if decision.decision_reason in {
+        LEARNED_SELECTION_REASON,
+        TRANSPARENT_RULE_SELECTION_REASON,
+    }:
         if decision.ood_fallback_used:
-            raise RuntimeError("learned decision cannot carry the OOD fallback flag")
+            raise RuntimeError("nonfallback decision cannot carry the OOD fallback flag")
         return None
     raise RuntimeError(
         f"unrecognized PM-v2 decision reason for state {decision.state_id}: "

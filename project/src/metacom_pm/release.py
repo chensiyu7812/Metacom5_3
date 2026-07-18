@@ -77,8 +77,10 @@ def run_release_preflight(
     out_path: str | Path,
     *,
     run_tests: bool = True,
+    manifest_out_path: str | Path | None = None,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
+    out_path = Path(out_path).resolve()
     checks: dict[str, dict[str, Any]] = {}
     scan = _scan_python(root)
     checks["python_syntax"] = {"passed": not scan["syntax_errors"], "details": scan}
@@ -213,13 +215,22 @@ def run_release_preflight(
             "stderr_tail": proc.stderr[-2000:],
         }}
 
-    # Build the manifest last and exclude the output itself to make it stable.
+    # Build the manifest last and exclude only generated outputs that are
+    # actually inside this release root. Tests may direct both outputs to
+    # tmp_path so a read-only preflight never mutates the shared checkout.
+    manifest_out = Path(manifest_out_path or (root / "release_manifest.json")).resolve()
+    excluded = {"release_manifest.json"}
+    for generated in (out_path, manifest_out):
+        try:
+            excluded.add(generated.relative_to(root).as_posix())
+        except ValueError:
+            pass
     manifest = build_manifest(
         root,
-        exclude={Path(out_path).name, "release_manifest.json"},
+        exclude=excluded,
         tracked_only=True,
     )
-    write_json(root / "release_manifest.json", manifest)
+    write_json(manifest_out, manifest)
     passed = all(value["passed"] for value in checks.values())
     esconv_path = root / "data/external/ESConv.json"
     evoemo_path = root / "data/external/evo_emo.json"

@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -64,13 +64,19 @@ def _load_module(relpath: str, name: str):
 
 
 @pytest.fixture()
-def workdir(request):
-    d = FIXTURE_ROOT / request.node.name
-    if d.exists():
-        shutil.rmtree(d)
-    d.mkdir(parents=True)
-    yield d
-    shutil.rmtree(d, ignore_errors=True)
+def workdir() -> Path:
+    """Give every pytest process an isolated directory.
+
+    Codex review sessions commonly run this file concurrently in the shared
+    checkout.  A repository-relative directory keyed only by the test name let
+    one process remove another process's live fixture.
+    """
+
+    FIXTURE_ROOT.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="external_wiring_", dir=FIXTURE_ROOT
+    ) as directory:
+        yield Path(directory)
 
 
 def _placeholder(path: Path, content: str = "placeholder") -> Path:
@@ -327,6 +333,15 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
                 transparent_rule_checkpoint
             ),
             "no_step0_checkpoint_sha256": sha256_file(no_step0_checkpoint),
+            "semantic_runtime_verification": {
+                "contract_sha256": sha256_text(
+                    canonical_json(
+                        load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+                            "semantic_runtime"
+                        ]
+                    )
+                )
+            },
             "step0_shortcut_audit": {"status": "PASS"},
             "selected_routing_algorithm": "state_centered_paired_delta_hgb",
             "algorithm_selection": {
@@ -705,6 +720,10 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
             implementation="transformers-auto-model-cls-float32",
         ).model_dump(mode="json")
     )
+    config = load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    assert generation_contract["semantic_runtime_contract"] == config[
+        "semantic_runtime"
+    ]
     assert notes["bank_seed_lineage"]["strategy_bank_cards"] == 11_590
     assert notes["bank_seed_lineage"]["strategy_source_dialogues"] == 823
     assert notes["bank_seed_lineage"]["selected_seed_sources"] == 52

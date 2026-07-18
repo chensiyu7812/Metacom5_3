@@ -20,6 +20,7 @@ from metacom_pm.internal_holdout import (
 )
 from metacom_pm.pm_v1_5_rule_router import (
     FixedActionBaselineRouter,
+    transparent_rule_score_diagnostics,
     transparent_rule_candidates,
     tune_transparent_rule_router,
 )
@@ -60,7 +61,15 @@ from metacom_pm.pm_v2_model import (
     evaluate_prediction_coverage,
     tune_selection_config,
 )
-from metacom_pm.io import iter_jsonl, sha256_file, sha256_text, canonical_json, write_json
+from metacom_pm.io import (
+    canonical_json,
+    iter_jsonl,
+    read_json,
+    sha256_file,
+    sha256_text,
+    write_json,
+)
+from metacom_pm.pm_v1_5_semantic import require_recorded_semantic_runtime
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -930,6 +939,38 @@ def main() -> None:
         )
 
     states = load_states(args.states)
+    development_data_report_path = args.states.parent / "pm_v2_data_report.json"
+    if not development_data_report_path.is_file():
+        raise RuntimeError("training requires the attested development data report")
+    development_data_report = read_json(development_data_report_path)
+    semantic_runtime_verification = require_recorded_semantic_runtime(
+        pm_config, development_data_report.get("semantic_runtime") or {}
+    )
+    semantic_diagnostic_cfg = pm_config.get("semantic_diagnostics") or {}
+    if semantic_diagnostic_cfg.get("protocol") != (
+        "pm-v1.5-semantic-diagnostics-v1"
+    ):
+        raise RuntimeError("training lacks the frozen semantic diagnostic contract")
+    development_truncation = development_data_report.get("semantic_truncation") or {}
+    if (
+        semantic_diagnostic_cfg.get("current_user_text_truncation_must_be_zero")
+        is not True
+        or development_truncation.get("current_user_text_complete") is not True
+        or int(development_truncation.get("telemetry_unavailable_state_count", -1))
+        != 0
+    ):
+        raise RuntimeError(
+            "development semantic truncation telemetry is absent or current text was truncated"
+        )
+    readiness_challenge = development_data_report.get(
+        "readiness_natural_language_challenge"
+    ) or {}
+    if (
+        readiness_challenge.get("protocol")
+        != "pm-v1.5-readiness-natural-language-challenge-v1"
+        or readiness_challenge.get("role") != "report_only_not_outcome_gate"
+    ):
+        raise RuntimeError("development readiness challenge report is absent or stale")
     evaluator_contexts = load_evaluator_context_index(
         args.evaluator_contexts,
         states=states,
@@ -958,6 +999,10 @@ def main() -> None:
     }
     if any(not rows for rows in states_by_split.values()):
         raise RuntimeError("PM-v2 requires non-empty train, calibration, and internal-test splits")
+    step0_score_diagnostics_by_split = {
+        split.value: transparent_rule_score_diagnostics(rows)
+        for split, rows in states_by_split.items()
+    }
     split_manifest = validate_split_manifests(states_by_split)
     near_duplicate_cfg = pm_config["splits"]["near_duplicate_audit"]
     if near_duplicate_cfg.get("method") != (
@@ -1088,6 +1133,7 @@ def main() -> None:
         candidates=transparent_rule_candidates(rule_cfg["grid"]),
         minimum_quality=float(rule_cfg["train_minimum_quality"]),
         maximum_risk=float(rule_cfg["train_maximum_risk"]),
+        selection_data_role="train",
     )
     model = PMV2Model.train(
         states_by_split[PMV2Split.TRAIN],
@@ -1178,93 +1224,119 @@ def main() -> None:
     # rule's already-selected numeric thresholds.
     rule_router.selection_config = model.selection_config
 
-    no_step0_model = PMV2Model.train(
-        states_by_split[PMV2Split.TRAIN],
-        labels_by_split[PMV2Split.TRAIN],
-        selection_config=initial_selection,
-        n_models=int(model_cfg["bootstrap_models"]),
-        seed=args.seed,
-        dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
-        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
-        use_precomputed_embeddings=bool(
-            feature_cfg["optional_precomputed_semantic_embedding"]
-        ),
-        require_precomputed_embeddings=bool(
-            feature_cfg["require_precomputed_semantic_embedding"]
-        ),
-        semantic_projection_dimensions=int(
-            feature_cfg["semantic_projection_dimensions"]
-        ),
-        word_features=int(feature_cfg["word_hash_features"]),
-        char_features=int(feature_cfg["char_hash_features"]),
-        step0_signal_mode="none",
+    def fit_internal_only_ablation(
+        *, use_state_bge: bool, include_step0: bool
+    ) -> tuple[PMV2Model, dict[str, object]]:
+        ablation = PMV2Model.train(
+            states_by_split[PMV2Split.TRAIN],
+            labels_by_split[PMV2Split.TRAIN],
+            selection_config=initial_selection,
+            n_models=int(model_cfg["bootstrap_models"]),
+            seed=args.seed,
+            dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
+            bootstrap_group_key=str(
+                model_cfg.get("group_bootstrap_key", "user_id")
+            ),
+            use_precomputed_embeddings=use_state_bge,
+            require_precomputed_embeddings=(
+                bool(feature_cfg["require_precomputed_semantic_embedding"])
+                if use_state_bge
+                else False
+            ),
+            semantic_projection_dimensions=int(
+                feature_cfg["semantic_projection_dimensions"]
+            ),
+            word_features=int(feature_cfg["word_hash_features"]),
+            char_features=int(feature_cfg["char_hash_features"]),
+            step0_signal_mode="full" if include_step0 else "none",
+        )
+        residual_baseline = None
+        if selected_algorithm == "rule_relative_safe_residual_hgb":
+            residual_baseline = (
+                rule_router if include_step0 else FixedActionBaselineRouter()
+            )
+        ablation.fit_routing_objective(
+            states_by_split[PMV2Split.TRAIN],
+            labels_by_split[PMV2Split.TRAIN],
+            algorithm=selected_algorithm,
+            n_models=int(model_cfg["bootstrap_models"]),
+            seed=args.seed,
+            bootstrap_group_key=str(
+                model_cfg.get("group_bootstrap_key", "user_id")
+            ),
+            rule_router=residual_baseline,
+            safe_thresholds=(
+                algorithm_cfg["safe_residual_thresholds"]
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                else None
+            ),
+        )
+        ood_report = ablation.feature_builder.calibrate_ood(
+            states_by_split[PMV2Split.CALIBRATION],
+            semantic_false_positive_quantile=float(
+                ood_cfg["semantic_false_positive_quantile"]
+            ),
+            metadata_false_positive_quantile=float(
+                ood_cfg["metadata_false_positive_quantile"]
+            ),
+            maximum_joint_in_distribution_fallback_rate=float(
+                ood_cfg["maximum_joint_in_distribution_fallback_rate"]
+            ),
+            minimum_semantic_challenge_detection_rate=float(
+                ood_cfg["minimum_semantic_challenge_detection_rate"]
+            ),
+            minimum_metadata_challenge_detection_rate=float(
+                ood_cfg["minimum_metadata_challenge_detection_rate"]
+            ),
+        )
+        uncertainty_report = calibrate_uncertainty_multiplier(
+            ablation,
+            states_by_split[PMV2Split.CALIBRATION],
+            labels_by_split[PMV2Split.CALIBRATION],
+            z_candidates=preregistered_z,
+            target_coverage=float(uncertainty_cfg["target_coverage"]),
+            minimum_quality_coverage_lower_bound=float(
+                uncertainty_cfg["minimum_quality_coverage_lower_bound"]
+            ),
+            minimum_response_coverage_lower_bound=float(
+                uncertainty_cfg["minimum_response_coverage_lower_bound"]
+            ),
+            minimum_risk_coverage_lower_bound=float(
+                uncertainty_cfg["minimum_risk_coverage_lower_bound"]
+            ),
+            coverage_confidence_level=float(uncertainty_cfg["confidence_level"]),
+        )
+        selection_report = tune_selection_config(
+            ablation,
+            states_by_split[PMV2Split.CALIBRATION],
+            labels_by_split[PMV2Split.CALIBRATION],
+            cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
+            risk_weights=[float(value) for value in grid_cfg["risk_weights"]],
+            resource_gains=[float(value) for value in grid_cfg["resource_gains"]],
+            strategy_gains=[float(value) for value in grid_cfg["strategy_gains"]],
+            max_risks=[float(value) for value in grid_cfg["max_risks"]],
+            minimum_quality=float(grid_cfg["minimum_quality"]),
+            objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
+            objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
+            objective_version=str(grid_cfg["objective_version"]),
+        )
+        return ablation, {
+            "role": "internal_only_diagnostic_not_candidate_selection",
+            "use_state_bge": use_state_bge,
+            "include_step0": include_step0,
+            "ood_calibration": ood_report,
+            "uncertainty_calibration": uncertainty_report,
+            "selection_calibration": selection_report,
+        }
+
+    no_step0_model, no_step0_diagnostic = fit_internal_only_ablation(
+        use_state_bge=True, include_step0=False
     )
-    no_step0_model.fit_routing_objective(
-        states_by_split[PMV2Split.TRAIN],
-        labels_by_split[PMV2Split.TRAIN],
-        algorithm=selected_algorithm,
-        n_models=int(model_cfg["bootstrap_models"]),
-        seed=args.seed,
-        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
-        rule_router=(
-            FixedActionBaselineRouter()
-            if selected_algorithm == "rule_relative_safe_residual_hgb"
-            else None
-        ),
-        safe_thresholds=(
-            algorithm_cfg["safe_residual_thresholds"]
-            if selected_algorithm == "rule_relative_safe_residual_hgb"
-            else None
-        ),
+    no_state_bge_model, no_state_bge_diagnostic = fit_internal_only_ablation(
+        use_state_bge=False, include_step0=True
     )
-    no_step0_ood_calibration = no_step0_model.feature_builder.calibrate_ood(
-        states_by_split[PMV2Split.CALIBRATION],
-        semantic_false_positive_quantile=float(
-            ood_cfg["semantic_false_positive_quantile"]
-        ),
-        metadata_false_positive_quantile=float(
-            ood_cfg["metadata_false_positive_quantile"]
-        ),
-        maximum_joint_in_distribution_fallback_rate=float(
-            ood_cfg["maximum_joint_in_distribution_fallback_rate"]
-        ),
-        minimum_semantic_challenge_detection_rate=float(
-            ood_cfg["minimum_semantic_challenge_detection_rate"]
-        ),
-        minimum_metadata_challenge_detection_rate=float(
-            ood_cfg["minimum_metadata_challenge_detection_rate"]
-        ),
-    )
-    no_step0_uncertainty_calibration = calibrate_uncertainty_multiplier(
-        no_step0_model,
-        states_by_split[PMV2Split.CALIBRATION],
-        labels_by_split[PMV2Split.CALIBRATION],
-        z_candidates=preregistered_z,
-        target_coverage=float(uncertainty_cfg["target_coverage"]),
-        minimum_quality_coverage_lower_bound=float(
-            uncertainty_cfg["minimum_quality_coverage_lower_bound"]
-        ),
-        minimum_response_coverage_lower_bound=float(
-            uncertainty_cfg["minimum_response_coverage_lower_bound"]
-        ),
-        minimum_risk_coverage_lower_bound=float(
-            uncertainty_cfg["minimum_risk_coverage_lower_bound"]
-        ),
-        coverage_confidence_level=float(uncertainty_cfg["confidence_level"]),
-    )
-    no_step0_tuning = tune_selection_config(
-        no_step0_model,
-        states_by_split[PMV2Split.CALIBRATION],
-        labels_by_split[PMV2Split.CALIBRATION],
-        cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
-        risk_weights=[float(value) for value in grid_cfg["risk_weights"]],
-        resource_gains=[float(value) for value in grid_cfg["resource_gains"]],
-        strategy_gains=[float(value) for value in grid_cfg["strategy_gains"]],
-        max_risks=[float(value) for value in grid_cfg["max_risks"]],
-        minimum_quality=float(grid_cfg["minimum_quality"]),
-        objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
-        objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
-        objective_version=str(grid_cfg["objective_version"]),
+    lexical_model, lexical_diagnostic = fit_internal_only_ablation(
+        use_state_bge=False, include_step0=False
     )
     calibration_pm = evaluate_policy(
         model,
@@ -1361,9 +1433,13 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     checkpoint = args.out_dir / "pm_v1_5.joblib"
     no_step0_checkpoint = args.out_dir / "pm_v1_5_no_step0.joblib"
+    no_state_bge_checkpoint = args.out_dir / "pm_v1_5_no_state_bge.joblib"
+    lexical_checkpoint = args.out_dir / "pm_v1_5_lexical_only.joblib"
     rule_checkpoint = args.out_dir / "pm_v1_5_transparent_rule.joblib"
     model.save(checkpoint)
     no_step0_model.save(no_step0_checkpoint)
+    no_state_bge_model.save(no_state_bge_checkpoint)
+    lexical_model.save(lexical_checkpoint)
     joblib.dump(rule_router, rule_checkpoint)
     candidate_manifest_path = args.out_dir / "candidate_manifest.json"
     candidate_manifest = freeze_candidate_manifest(
@@ -1376,6 +1452,8 @@ def main() -> None:
             "train_calibration_labels": args.train_calibration_labels,
             "primary_checkpoint": checkpoint,
             "no_step0_checkpoint": no_step0_checkpoint,
+            "no_state_bge_checkpoint": no_state_bge_checkpoint,
+            "lexical_only_checkpoint": lexical_checkpoint,
             "transparent_rule_checkpoint": rule_checkpoint,
             "training_script": Path(__file__),
             "step0_shortcut_audit": shortcut_audit_path,
@@ -1383,13 +1461,25 @@ def main() -> None:
                 args.step0_shortcut_audit_attestation
             ),
             "development_data_attestation": args.development_data_attestation,
+            "development_data_report": development_data_report_path,
             "sealed_internal_bundle": args.sealed_internal_bundle,
         },
         parameters={
             "primary_candidate": selected_algorithm + "_with_step0",
             "algorithm_selection_protocol": ALGORITHM_SELECTION_PROTOCOL,
             "algorithm_selection_data_role": "train_only",
+            "semantic_runtime_contract_sha256": semantic_runtime_verification[
+                "contract_sha256"
+            ],
+            "semantic_diagnostics_protocol": semantic_diagnostic_cfg["protocol"],
             "internal_ablation": selected_algorithm + "_without_step0",
+            "internal_ablation_without_state_bge": (
+                selected_algorithm + "_without_state_bge"
+            ),
+            "internal_ablation_lexical_only": (
+                selected_algorithm + "_without_state_bge_or_step0"
+            ),
+            "internal_ablation_results_may_select_candidate": False,
             "no_step0_residual_baseline": (
                 "M0+R0"
                 if selected_algorithm == "rule_relative_safe_residual_hgb"
@@ -1504,6 +1594,16 @@ def main() -> None:
         states_by_split[PMV2Split.INTERNAL_TEST],
         labels_by_split[PMV2Split.INTERNAL_TEST],
     )
+    internal_no_state_bge = evaluate_policy(
+        no_state_bge_model,
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+    )
+    internal_lexical = evaluate_policy(
+        lexical_model,
+        states_by_split[PMV2Split.INTERNAL_TEST],
+        labels_by_split[PMV2Split.INTERNAL_TEST],
+    )
     internal_alignment = policy_regime_alignment(
         model,
         states_by_split[PMV2Split.INTERNAL_TEST],
@@ -1541,6 +1641,22 @@ def main() -> None:
         confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
         seed=int(gate_cfg["paired_bootstrap_seed"]),
         comparator_name="learned_without_step0",
+    )
+    internal_no_state_bge_bootstrap = paired_user_cluster_bootstrap(
+        internal["rows"],
+        internal_no_state_bge["rows"],
+        replicates=int(gate_cfg["paired_bootstrap_replicates"]),
+        confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
+        seed=int(gate_cfg["paired_bootstrap_seed"]),
+        comparator_name="learned_without_state_bge",
+    )
+    internal_lexical_bootstrap = paired_user_cluster_bootstrap(
+        internal["rows"],
+        internal_lexical["rows"],
+        replicates=int(gate_cfg["paired_bootstrap_replicates"]),
+        confidence_level=float(gate_cfg["paired_bootstrap_confidence_level"]),
+        seed=int(gate_cfg["paired_bootstrap_seed"]),
+        comparator_name="learned_lexical_without_state_bge_or_step0",
     )
     assessment = build_internal_reportability_assessment(
         internal=internal,
@@ -1592,6 +1708,14 @@ def main() -> None:
         "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
         "states": str(args.states),
         "states_sha256": sha256_file(args.states),
+        "development_data_report": str(development_data_report_path),
+        "development_data_report_sha256": sha256_file(
+            development_data_report_path
+        ),
+        "semantic_runtime_verification": semantic_runtime_verification,
+        "development_semantic_truncation": development_truncation,
+        "readiness_natural_language_challenge": readiness_challenge,
+        "semantic_diagnostics_contract": semantic_diagnostic_cfg,
         "train_calibration_labels": str(args.train_calibration_labels),
         "train_calibration_labels_sha256": sha256_file(
             args.train_calibration_labels
@@ -1605,6 +1729,10 @@ def main() -> None:
         "checkpoint_sha256": sha256_file(checkpoint),
         "no_step0_checkpoint": str(no_step0_checkpoint),
         "no_step0_checkpoint_sha256": sha256_file(no_step0_checkpoint),
+        "no_state_bge_checkpoint": str(no_state_bge_checkpoint),
+        "no_state_bge_checkpoint_sha256": sha256_file(no_state_bge_checkpoint),
+        "lexical_only_checkpoint": str(lexical_checkpoint),
+        "lexical_only_checkpoint_sha256": sha256_file(lexical_checkpoint),
         "transparent_rule_checkpoint": str(rule_checkpoint),
         "transparent_rule_checkpoint_sha256": sha256_file(rule_checkpoint),
         "candidate_manifest": str(candidate_manifest_path),
@@ -1635,9 +1763,12 @@ def main() -> None:
         "ood_calibration": ood_calibration,
         "calibration": tuning,
         "transparent_rule_train_only_tuning": rule_tuning,
-        "no_step0_calibration": no_step0_tuning,
-        "no_step0_uncertainty_calibration": no_step0_uncertainty_calibration,
-        "no_step0_ood_calibration": no_step0_ood_calibration,
+        "step0_score_diagnostics_by_split": step0_score_diagnostics_by_split,
+        "internal_only_ablation_calibration": {
+            "without_step0": no_step0_diagnostic,
+            "without_state_bge": no_state_bge_diagnostic,
+            "lexical_without_state_bge_or_step0": lexical_diagnostic,
+        },
         "calibration_pm": {key: value for key, value in calibration_pm.items() if key != "rows"},
         "calibration_prediction_coverage": calibration_coverage,
         "calibration_cost_diagnostics": calibration_cost_diagnostics,
@@ -1671,9 +1802,20 @@ def main() -> None:
             for key, value in internal_no_step0.items()
             if key != "rows"
         },
+        "internal_learned_without_state_bge": {
+            key: value
+            for key, value in internal_no_state_bge.items()
+            if key != "rows"
+        },
+        "internal_lexical_without_state_bge_or_step0": {
+            key: value for key, value in internal_lexical.items() if key != "rows"
+        },
         "internal_learned_vs_rule_bootstrap": internal_rule_bootstrap,
         "internal_learned_vs_ME+R0_bootstrap": internal_me_r0_bootstrap,
         "internal_step0_ablation_bootstrap": internal_no_step0_bootstrap,
+        "internal_state_bge_ablation_bootstrap": internal_no_state_bge_bootstrap,
+        "internal_lexical_ablation_bootstrap": internal_lexical_bootstrap,
+        "internal_ablation_results_may_select_or_retune_candidate": False,
         "gate_m": gate_m,
         "gate_f": gate_f,
         "gate_e": {

@@ -328,6 +328,7 @@ class PMV2State(StrictModel):
                 "views",
                 "per_view_dimension",
                 "combined_dimension",
+                "tokenization",
                 "visible_input_sha256",
                 "observation_sha256",
             }
@@ -344,6 +345,39 @@ class PMV2State(StrictModel):
                 value = semantic.get(key)
                 if not isinstance(value, str) or len(value) != 64:
                     raise ValueError(f"semantic observation {key} must be SHA-256")
+            tokenization = semantic.get("tokenization")
+            if not isinstance(tokenization, dict) or set(tokenization) != {
+                "protocol",
+                "max_length",
+                "truncation_side",
+                "views",
+            }:
+                raise ValueError("semantic tokenization telemetry is malformed")
+            telemetry_views = tokenization.get("views")
+            if not isinstance(telemetry_views, dict):
+                raise ValueError("semantic tokenization views must be a mapping")
+            for view_name, row in telemetry_views.items():
+                if view_name not in {"current_user_text", "visible_dialogue_state"}:
+                    raise ValueError("semantic tokenization view is not authorized")
+                if not isinstance(row, dict) or set(row) != {
+                    "original_token_count",
+                    "encoded_token_count",
+                    "truncated",
+                    "truncated_token_count",
+                    "input_sha256",
+                }:
+                    raise ValueError("semantic tokenization row is malformed")
+                if (
+                    not isinstance(row["input_sha256"], str)
+                    or len(row["input_sha256"]) != 64
+                    or int(row["original_token_count"]) < int(row["encoded_token_count"])
+                    or int(row["truncated_token_count"])
+                    != int(row["original_token_count"])
+                    - int(row["encoded_token_count"])
+                    or bool(row["truncated"])
+                    != (int(row["truncated_token_count"]) > 0)
+                ):
+                    raise ValueError("semantic tokenization row is inconsistent")
         elif self.text_embedding:
             raise ValueError("text_embedding requires semantic observation provenance")
         return self

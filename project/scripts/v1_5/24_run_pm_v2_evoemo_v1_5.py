@@ -20,7 +20,9 @@ from metacom_pm.pm_v2_evoemo import (
 from metacom_pm.pm_v2_external_eval import expected_external_units
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
+    require_semantic_runtime_contract,
     semantic_encoder_spec_from_config,
+    semantic_runtime_contract_from_config,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -154,11 +156,15 @@ def main() -> None:
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
     semantic_encoder = None
+    semantic_runtime_verification = None
     if args.condition in {"pm_v2", "pm_v1_5_transparent_rule_step0"}:
         # Resolve the exact local snapshot before any paid client can be used.
         # A missing dependency, cache entry, or hash mismatch is a hard NO-RUN.
         semantic_encoder = FrozenTransformerSemanticEncoder.load(
             semantic_encoder_spec_from_config(pm_v2_config)
+        )
+        semantic_runtime_verification = require_semantic_runtime_contract(
+            pm_v2_config, semantic_encoder
         )
     require_paid_run_release(
         pm_v2_config,
@@ -242,6 +248,20 @@ def main() -> None:
         raise RuntimeError(
             "study freeze semantic encoder contract is absent or stale"
         )
+    if semantic_encoder is not None:
+        expected_runtime = semantic_runtime_contract_from_config(pm_v2_config)
+        if (
+            contract.get("semantic_runtime_contract")
+            != expected_runtime.model_dump(mode="json")
+            or contract.get("semantic_runtime_contract_sha256")
+            != expected_runtime.digest()
+            or semantic_runtime_verification is None
+            or semantic_runtime_verification.get("contract_sha256")
+            != expected_runtime.digest()
+        ):
+            raise RuntimeError(
+                "study freeze semantic runtime contract is absent or stale"
+            )
     if (
         contract.get("fixed_seeker_generation_treatment")
         != bound_fixed_seeker_contract.payload()

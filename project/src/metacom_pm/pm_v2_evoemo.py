@@ -58,9 +58,18 @@ from .io import (
 )
 from .generation_contract import SupporterGenerationContract
 from .pm_v2_data import runtime_to_pmv2_state
+from .pm_v2_contracts import PMV2State
 from .pm_v1_5_step0 import build_strategy_family_catalog
-from .pm_v1_5_semantic import SemanticTextEncoder, semantic_centroid
-from .pm_v1_5_rule_router import RULE_ROUTER_PROTOCOL, TransparentRuleRouter
+from .pm_v1_5_semantic import (
+    SemanticTextEncoder,
+    semantic_centroid,
+    summarize_semantic_truncation_audits,
+)
+from .pm_v1_5_rule_router import (
+    RULE_ROUTER_PROTOCOL,
+    TransparentRuleRouter,
+    transparent_rule_score_diagnostics,
+)
 from .pm_v2_fixed_model import FixedActionPMV2Model
 from .pm_v2_model import PMV2Model, decision_fallback_kind
 from .prompts import generation_messages
@@ -997,6 +1006,7 @@ def run_pmv2_fixed_evoemo(
     )
 
     preflight_rows: list[dict[str, Any]] = []
+    preflight_states: list[PMV2State] = []
     call_plan: list[dict[str, Any]] = []
     semantic_centroids_by_user: dict[
         str, dict[MemorySource, tuple[float, ...]]
@@ -1062,6 +1072,8 @@ def run_pmv2_fixed_evoemo(
                     ),
                 )
                 decision = model.choose(pm_state)
+                if semantic_encoder is not None and isinstance(pm_state, PMV2State):
+                    preflight_states.append(pm_state)
                 fallback_type = (
                     decision_fallback_kind(decision) if condition == "pm_v2" else None
                 )
@@ -1077,7 +1089,13 @@ def run_pmv2_fixed_evoemo(
                         "semantic_ood_score": decision.semantic_ood_score,
                         "metadata_ood_score": decision.metadata_ood_score,
                         "ood_fallback_used": decision.ood_fallback_used,
-                        "fallback_type": fallback_type,
+                            "fallback_type": fallback_type,
+                            "semantic_observation": (
+                                (getattr(pm_state, "provenance", {}) or {}).get(
+                                    "semantic_observation"
+                                )
+                                or {}
+                        ),
                     }
                 )
                 if turn_index not in evaluation_turn_indices:
@@ -1250,7 +1268,32 @@ def run_pmv2_fixed_evoemo(
                 strategy_catalog_refresh_ms
             ),
         },
+        "semantic_truncation": summarize_semantic_truncation_audits(
+            [row.get("semantic_observation") or {} for row in preflight_rows]
+        ),
+        "step0_score_diagnostics": (
+            transparent_rule_score_diagnostics(preflight_states)
+            if semantic_encoder is not None and preflight_states
+            else {
+                "status": (
+                    "UNAVAILABLE_NONCONTRACT_TEST_DOUBLE"
+                    if semantic_encoder is not None
+                    else "NOT_APPLICABLE_FIXED_ACTION_CONDITION"
+                ),
+                "state_count": len(preflight_states),
+            }
+        ),
     }
+    preflight["semantic_truncation"]["current_user_text_gate"] = (
+        "PASS"
+        if (
+            semantic_encoder is None
+            or preflight["semantic_truncation"]["current_user_text_complete"]
+        )
+        else "FAIL"
+    )
+    if preflight["semantic_truncation"]["current_user_text_gate"] != "PASS":
+        preflight["status"] = "FAIL"
     write_json(preflight_path, preflight)
     if preflight["status"] != "PASS":
         raise RuntimeError(

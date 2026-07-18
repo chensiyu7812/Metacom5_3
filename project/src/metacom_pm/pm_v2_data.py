@@ -52,6 +52,7 @@ from .pm_v1_5_semantic import (
     encode_visible_state,
     semantic_centroid,
     semantic_query_similarity,
+    summarize_semantic_truncation,
     visible_dialogue_state_text,
 )
 from .pm_v1_5_required_hit import validate_required_hit_preflight
@@ -3857,6 +3858,7 @@ def write_development_dataset(
             if semantic_encoder is not None
             else {"status": "NONREPORTABLE_LEGACY_OR_TEST_PATH"}
         ),
+        "semantic_truncation": summarize_semantic_truncation(all_states),
         "strategy_factorial_design": {
             "resource_target_is_outcome_label": False,
             "authoritative_outcome": "blinded_same-memory_R0_vs_RS_utility",

@@ -8,7 +8,7 @@ returned by :func:`build_strategy_family_catalog` and never enter PMV2State.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -26,6 +26,7 @@ from .pm_v2_contracts import (
 from .pm_v1_5_semantic import (
     SemanticTextEncoder,
     semantic_centroid,
+    visible_dialogue_state_text,
 )
 from .retrieval import DEFAULT_MEMORY_TOP_K
 
@@ -196,6 +197,45 @@ _ADVICE_READINESS_ANCHORS: dict[str, tuple[str, ...]] = {
     ),
 }
 
+READINESS_CHALLENGE_PROTOCOL = "pm-v1.5-readiness-natural-language-challenge-v1"
+_READINESS_CHALLENGES: tuple[dict[str, str], ...] = (
+    {
+        "case_id": "explicit_listen_only",
+        "assistant_context": "Would it help to think through possible next steps?",
+        "current_user_text": "No, please just stay with me and listen for now.",
+        "session_summary": "The user is distressed and has not requested problem solving.",
+        "expected_contextual_readiness": "listen_only",
+    },
+    {
+        "case_id": "short_context_dependent_acceptance",
+        "assistant_context": "Would you like us to think through one small option together?",
+        "current_user_text": "Maybe, I guess.",
+        "session_summary": "The user is cautiously considering a low-pressure suggestion.",
+        "expected_contextual_readiness": "light_suggestion",
+    },
+    {
+        "case_id": "explore_before_action",
+        "assistant_context": "Do you want advice about what to do next?",
+        "current_user_text": "Could we first understand why this keeps hitting me so hard?",
+        "session_summary": "The user wants reflection before choosing an action.",
+        "expected_contextual_readiness": "explore_first",
+    },
+    {
+        "case_id": "explicit_structured_plan",
+        "assistant_context": "We can keep talking or make the next steps concrete.",
+        "current_user_text": "Please help me make a clear step-by-step plan.",
+        "session_summary": "The user explicitly requests an organized action plan.",
+        "expected_contextual_readiness": "structured_plan",
+    },
+    {
+        "case_id": "mixed_ambivalence",
+        "assistant_context": "What kind of support would feel useful?",
+        "current_user_text": "Part of me wants ideas, but I am not sure I am ready.",
+        "session_summary": "The user expresses mixed readiness for advice.",
+        "expected_contextual_readiness": "ambiguous",
+    },
+)
+
 
 def _build_readiness_vectors(
     *, semantic_encoder: SemanticTextEncoder | None, n_features: int
@@ -215,6 +255,73 @@ def _build_readiness_vectors(
             round(float(value / max(norm, 1e-12)), 8) for value in centroid
         )
     return result
+
+
+def readiness_natural_language_challenge(
+    semantic_encoder: SemanticTextEncoder,
+) -> dict[str, Any]:
+    """Compare current-turn and full-context readiness views without outcomes."""
+
+    anchors = _build_readiness_vectors(
+        semantic_encoder=semantic_encoder,
+        n_features=STRATEGY_FAMILY_HASH_FEATURES,
+    )
+
+    def score(text: str) -> tuple[dict[str, float], str, float]:
+        query = semantic_encoder.encode([text])[0]
+        values = {
+            name: float(np.clip(query @ np.asarray(vector), -1.0, 1.0))
+            for name, vector in anchors.items()
+        }
+        ordered = sorted(values, key=lambda name: (values[name], name), reverse=True)
+        margin = values[ordered[0]] - values[ordered[1]]
+        return values, ordered[0], float(margin)
+
+    rows = []
+    for case in _READINESS_CHALLENGES:
+        full_text = visible_dialogue_state_text(
+            current_user_text=case["current_user_text"],
+            current_session_history=[
+                {"role": "assistant", "content": case["assistant_context"]}
+            ],
+            current_session_summary=case["session_summary"],
+        )
+        current_scores, current_top1, current_margin = score(
+            case["current_user_text"]
+        )
+        context_scores, context_top1, context_margin = score(full_text)
+        expected = case["expected_contextual_readiness"]
+        rows.append(
+            {
+                "case_id": case["case_id"],
+                "expected_contextual_readiness": expected,
+                "current_turn": {
+                    "scores": current_scores,
+                    "top1": current_top1,
+                    "top1_top2_margin": current_margin,
+                    "matches_expected": current_top1 == expected,
+                },
+                "full_context": {
+                    "scores": context_scores,
+                    "top1": context_top1,
+                    "top1_top2_margin": context_margin,
+                    "matches_expected": context_top1 == expected,
+                },
+            }
+        )
+    return {
+        "protocol": READINESS_CHALLENGE_PROTOCOL,
+        "role": "report_only_not_outcome_gate",
+        "outcome_labels_used": False,
+        "case_count": len(rows),
+        "current_turn_match_count": sum(
+            row["current_turn"]["matches_expected"] for row in rows
+        ),
+        "full_context_match_count": sum(
+            row["full_context"]["matches_expected"] for row in rows
+        ),
+        "cases": rows,
+    }
 
 
 def _query_family_similarities(

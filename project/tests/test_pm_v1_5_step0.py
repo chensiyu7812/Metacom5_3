@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+import metacom_pm.pm_v1_5_rule_router as rule_router_module
 
 from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.contracts import DialogueTurn, MemorySource, StrategyCard
@@ -16,6 +17,7 @@ from metacom_pm.pm_v1_5_rule_router import (
     TransparentRuleConfig,
     TransparentRuleRouter,
     transparent_rule_candidates,
+    tune_transparent_rule_router,
 )
 from metacom_pm.pm_v1_5_shortcut_audit import (
     SHORTCUT_AUDIT_PROTOCOL,
@@ -31,7 +33,11 @@ from metacom_pm.pm_v2_contracts import (
     PMV2State,
 )
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
-from metacom_pm.pm_v2_model import SelectionConfig
+from metacom_pm.pm_v2_model import (
+    SelectionConfig,
+    TRANSPARENT_RULE_SELECTION_REASON,
+    decision_fallback_kind,
+)
 from metacom_pm.pm_v2_data import EvaluatorContextIndex
 
 
@@ -412,6 +418,47 @@ def test_transparent_rule_router_uses_only_frozen_step0_scalars() -> None:
     assert decision.chosen_action == "MP+RS"
     assert decision.config_hash == config.digest()
     assert set(decision.predictions) == set(state.allowed_actions)
+    assert decision.decision_reason == TRANSPARENT_RULE_SELECTION_REASON
+    assert decision_fallback_kind(decision) is None
+
+
+def test_transparent_rule_tuning_reports_train_role_not_calibration(
+    monkeypatch,
+) -> None:
+    metrics = {
+        "mean_quality": 0.8,
+        "mean_risk": 0.1,
+        "mean_realized_utility": 0.7,
+        "mean_observed_input_tokens": 10.0,
+        "action_distribution": {"MP+RS": 1},
+    }
+    monkeypatch.setattr(
+        rule_router_module, "evaluate_policy", lambda router, states, labels: metrics
+    )
+    config = TransparentRuleConfig(
+        source_similarity_weight=1.0,
+        source_age_penalty=0.0,
+        source_cost_penalty=0.0,
+        source_minimum_score=0.20,
+        maximum_memory_sources=1,
+        strategy_family_similarity_weight=0.0,
+        strategy_readiness_alignment_weight=1.0,
+        question_bonus=0.0,
+        strategy_cost_penalty=0.0,
+        strategy_minimum_score=-1.0,
+    )
+    _, report = tune_transparent_rule_router(
+        states=[_state([0.1, 0.2, 0.3])],
+        labels=[],
+        selection_config=SelectionConfig(),
+        candidates=[config],
+        minimum_quality=0.0,
+        maximum_risk=1.0,
+        selection_data_role="train",
+    )
+    assert report["selection_split"] == "train"
+    assert report["selection_data_role"] == "train_only"
+    assert report["score_diagnostics"]["outcome_labels_used"] is False
 
 
 def test_transparent_rule_grid_is_finite_and_fail_closed() -> None:

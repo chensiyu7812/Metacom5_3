@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+from importlib.metadata import PackageNotFoundError, version as package_version
+import platform
 from pathlib import Path
 from typing import Any, Literal, Mapping, Protocol, Sequence
 
@@ -24,6 +26,22 @@ from .io import canonical_json, sha256_file, sha256_text
 SEMANTIC_ENCODER_PROTOCOL = "pm-v1.5-frozen-visible-text-encoder-v1"
 SEMANTIC_INPUT_PROTOCOL = "pm-v1.5-visible-dialogue-state-v1"
 SEMANTIC_SNAPSHOT_HASH_PROTOCOL = "relative-path-tab-sha256-v1"
+SEMANTIC_RUNTIME_PROTOCOL = "pm-v1.5-semantic-runtime-canary-v1"
+SEMANTIC_CANARY_TEXTS = (
+    "I only want someone to listen right now.",
+    "Could you help me think through a small next step?",
+    "Maybe, I guess.",
+)
+SEMANTIC_RUNTIME_PACKAGES = (
+    "numpy",
+    "scikit-learn",
+    "scipy",
+    "torch",
+    "transformers",
+    "tokenizers",
+    "huggingface-hub",
+    "safetensors",
+)
 
 
 class FrozenSemanticEncoderSpec(StrictModel):
@@ -54,6 +72,28 @@ class SemanticEncoderBinding(StrictModel):
     snapshot_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     snapshot_file_count: int = Field(ge=1)
     implementation: Literal["transformers-auto-model-cls-float32"]
+
+
+class FrozenSemanticRuntimeContract(StrictModel):
+    """Exact numerical environment required for reportable BGE observations."""
+
+    protocol: Literal["pm-v1.5-semantic-runtime-canary-v1"] = (
+        SEMANTIC_RUNTIME_PROTOCOL
+    )
+    encoder_spec_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    encoder_snapshot_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    canary_texts_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    canary_matrix_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    canary_shape: list[int] = Field(min_length=2, max_length=2)
+    python_version: str = Field(min_length=1)
+    platform_system: str = Field(min_length=1)
+    platform_machine: str = Field(min_length=1)
+    packages: dict[str, str]
+    device: Literal["cpu"]
+    dtype: Literal["float32"]
+
+    def digest(self) -> str:
+        return sha256_text(canonical_json(self.model_dump(mode="json")))
 
 
 class SemanticTextEncoder(Protocol):
@@ -107,6 +147,23 @@ def semantic_encoder_spec_from_config(
         raise RuntimeError("reportable PM-v1.5 requires semantic_encoder.enabled=true")
     payload = {key: value for key, value in raw.items() if key != "enabled"}
     return FrozenSemanticEncoderSpec.model_validate(payload)
+
+
+def semantic_runtime_contract_from_config(
+    config: Mapping[str, Any],
+) -> FrozenSemanticRuntimeContract:
+    raw = config.get("semantic_runtime")
+    if not isinstance(raw, Mapping):
+        raise RuntimeError("PM-v1.5 config lacks the frozen semantic runtime contract")
+    contract = FrozenSemanticRuntimeContract.model_validate(raw)
+    if set(contract.packages) != set(SEMANTIC_RUNTIME_PACKAGES):
+        raise RuntimeError(
+            "semantic runtime package set differs from the frozen contract"
+        )
+    expected_text_hash = sha256_text(canonical_json(list(SEMANTIC_CANARY_TEXTS)))
+    if contract.canary_texts_sha256 != expected_text_hash:
+        raise RuntimeError("semantic runtime canary text contract is stale")
+    return contract
 
 
 def _snapshot_file_manifest(snapshot_path: str | Path) -> list[dict[str, str]]:
@@ -201,6 +258,114 @@ class FrozenTransformerSemanticEncoder:
         matrix = matrix / np.maximum(renorm, 1e-12)
         return matrix.astype(np.float64)
 
+    def tokenization_telemetry(
+        self, texts: Sequence[str], *, view_names: Sequence[str] | None = None
+    ) -> dict[str, Any]:
+        """Measure right-truncation without exposing token IDs or text."""
+
+        normalized = [" ".join(str(text).split()) for text in texts]
+        names = list(view_names or [f"view_{index}" for index in range(len(texts))])
+        if len(names) != len(normalized) or len(set(names)) != len(names):
+            raise ValueError("semantic token telemetry requires unique aligned view names")
+        rows: dict[str, dict[str, Any]] = {}
+        for name, text in zip(names, normalized, strict=True):
+            encoded = self.tokenizer(
+                text,
+                add_special_tokens=True,
+                padding=False,
+                truncation=False,
+                return_attention_mask=False,
+                verbose=False,
+            )
+            original = len(encoded["input_ids"])
+            retained = min(original, int(self.spec.max_length))
+            rows[name] = {
+                "original_token_count": int(original),
+                "encoded_token_count": int(retained),
+                "truncated": bool(original > retained),
+                "truncated_token_count": int(original - retained),
+                "input_sha256": sha256_text(text),
+            }
+        return {
+            "protocol": "pm-v1.5-semantic-tokenization-telemetry-v1",
+            "max_length": int(self.spec.max_length),
+            "truncation_side": str(getattr(self.tokenizer, "truncation_side", "right")),
+            "views": rows,
+        }
+
+
+def semantic_runtime_attestation(
+    encoder: FrozenTransformerSemanticEncoder,
+) -> FrozenSemanticRuntimeContract:
+    """Encode a public canary and bind it to exact runtime versions."""
+
+    matrix = encoder.encode(SEMANTIC_CANARY_TEXTS)
+    try:
+        packages = {name: package_version(name) for name in SEMANTIC_RUNTIME_PACKAGES}
+    except PackageNotFoundError as exc:
+        raise RuntimeError(f"semantic runtime package is missing: {exc}") from exc
+    try:
+        parameter = next(encoder.model.parameters())
+    except (AttributeError, StopIteration) as exc:
+        raise RuntimeError("semantic runtime cannot determine model device/dtype") from exc
+    dtype = str(parameter.dtype).removeprefix("torch.")
+    return FrozenSemanticRuntimeContract(
+        encoder_spec_sha256=encoder.binding.spec_sha256,
+        encoder_snapshot_tree_sha256=encoder.binding.snapshot_tree_sha256,
+        canary_texts_sha256=sha256_text(canonical_json(list(SEMANTIC_CANARY_TEXTS))),
+        canary_matrix_sha256=sha256_text(canonical_json(matrix.tolist())),
+        canary_shape=[int(value) for value in matrix.shape],
+        python_version=platform.python_version(),
+        platform_system=platform.system(),
+        platform_machine=platform.machine(),
+        packages=packages,
+        device=str(parameter.device.type),
+        dtype=dtype,
+    )
+
+
+def require_semantic_runtime_contract(
+    config: Mapping[str, Any],
+    encoder: FrozenTransformerSemanticEncoder,
+) -> dict[str, Any]:
+    expected = semantic_runtime_contract_from_config(config)
+    observed = semantic_runtime_attestation(encoder)
+    expected_payload = expected.model_dump(mode="json")
+    observed_payload = observed.model_dump(mode="json")
+    if observed_payload != expected_payload:
+        mismatches = {
+            key: {"expected": expected_payload.get(key), "observed": observed_payload.get(key)}
+            for key in sorted(set(expected_payload) | set(observed_payload))
+            if expected_payload.get(key) != observed_payload.get(key)
+        }
+        raise RuntimeError(
+            "semantic runtime contract mismatch: " + canonical_json(mismatches)
+        )
+    return {
+        "status": "PASS",
+        "contract": observed_payload,
+        "contract_sha256": observed.digest(),
+    }
+
+
+def require_recorded_semantic_runtime(
+    config: Mapping[str, Any], recorded: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Verify a development-data runtime record without re-encoding text."""
+
+    expected = semantic_runtime_contract_from_config(config)
+    if recorded.get("status") != "PASS":
+        raise RuntimeError("development semantic runtime did not PASS")
+    payload = recorded.get("contract")
+    if payload != expected.model_dump(mode="json"):
+        raise RuntimeError("development semantic runtime differs from frozen config")
+    if recorded.get("contract_sha256") != expected.digest():
+        raise RuntimeError("development semantic runtime digest mismatch")
+    return {
+        "status": "PASS",
+        "contract_sha256": expected.digest(),
+    }
+
 
 def visible_dialogue_state_text(
     *,
@@ -247,6 +412,20 @@ def encode_visible_state(
             f"semantic visible-state matrix has shape {matrix.shape}, expected {expected}"
         )
     flattened = matrix.reshape(-1).astype(float).tolist()
+    telemetry_method = getattr(encoder, "tokenization_telemetry", None)
+    tokenization = (
+        telemetry_method(
+            [current_user_text, state_text],
+            view_names=["current_user_text", "visible_dialogue_state"],
+        )
+        if callable(telemetry_method)
+        else {
+            "protocol": "nonreportable-test-encoder-no-token-telemetry",
+            "max_length": int(encoder.spec.max_length),
+            "truncation_side": "unknown",
+            "views": {},
+        }
+    )
     audit = {
         "protocol": SEMANTIC_INPUT_PROTOCOL,
         "encoder_spec_sha256": encoder.binding.spec_sha256,
@@ -254,6 +433,7 @@ def encode_visible_state(
         "views": ["current_user_text", "visible_dialogue_state"],
         "per_view_dimension": encoder.spec.output_dimension,
         "combined_dimension": len(flattened),
+        "tokenization": tokenization,
         "visible_input_sha256": sha256_text(
             canonical_json(
                 {
@@ -265,6 +445,54 @@ def encode_visible_state(
     }
     audit["observation_sha256"] = sha256_text(canonical_json(audit))
     return flattened, audit
+
+
+def summarize_semantic_truncation(states: Sequence[Any]) -> dict[str, Any]:
+    """Aggregate per-state visible-text truncation without reading hidden text."""
+
+    audits: list[Mapping[str, Any]] = []
+    for state in states:
+        provenance = getattr(state, "provenance", {}) or {}
+        audits.append(provenance.get("semantic_observation") or {})
+    return summarize_semantic_truncation_audits(audits)
+
+
+def summarize_semantic_truncation_audits(
+    audits: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    by_view: dict[str, list[Mapping[str, Any]]] = {}
+    unavailable = 0
+    for semantic in audits:
+        views = (semantic.get("tokenization") or {}).get("views") or {}
+        if not views:
+            unavailable += 1
+            continue
+        for name, row in views.items():
+            by_view.setdefault(str(name), []).append(row)
+
+    summaries: dict[str, Any] = {}
+    for name, rows in sorted(by_view.items()):
+        truncated = [bool(row.get("truncated")) for row in rows]
+        lost = [int(row.get("truncated_token_count", 0)) for row in rows]
+        original = [int(row.get("original_token_count", 0)) for row in rows]
+        summaries[name] = {
+            "state_count": len(rows),
+            "truncated_state_count": int(sum(truncated)),
+            "truncation_rate": float(np.mean(truncated)) if rows else 0.0,
+            "total_truncated_tokens": int(sum(lost)),
+            "maximum_truncated_tokens": max(lost, default=0),
+            "maximum_original_tokens": max(original, default=0),
+        }
+    current = summaries.get("current_user_text") or {}
+    return {
+        "protocol": "pm-v1.5-semantic-truncation-summary-v1",
+        "state_count": len(audits),
+        "telemetry_unavailable_state_count": unavailable,
+        "views": summaries,
+        "current_user_text_complete": (
+            unavailable == 0 and int(current.get("truncated_state_count", -1)) == 0
+        ),
+    }
 
 
 def semantic_centroid(

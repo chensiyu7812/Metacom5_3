@@ -14,6 +14,24 @@ PYTHONPATH=src python scripts/99_release_preflight.py --root . --out release_pre
 
 初始包的 `status` 应为 `API_PILOT_READY`。由于尚未接入你的本地官方 ESConv，`confirmatory_ready` 初始为 `false`，这是预期行为。
 
+### 0.1 PM-v1.5_1 冻结语义运行环境
+
+PM-v1.5_1 的 reportable development/external 路径不能使用历史 `sim_eval`
+环境。它虽可运行 mock tests，但其 Python/Transformers/Hugging Face Hub 组合不符合
+当前合同，且无法真实加载冻结 BGE。使用 Python 3.13.2 创建独立环境：
+
+```bash
+python3.13 -m venv .venv-pm-v1-5
+source .venv-pm-v1-5/bin/activate
+python -m pip install -c constraints/pm_v1_5_runtime.txt -e '.[dev]'
+python scripts/v1_5/19_preflight_semantic_runtime_v1_5.py
+```
+
+只有 `semantic_runtime.status=PASS` 才能继续。该门同时绑定 Python、关键 package、
+CPU/float32、固定公开文本和 3×384 数值矩阵；development data report、candidate
+manifest、study freeze 与 external runner 会再次核对。readiness challenge 是
+`report_only_not_outcome_gate`，不得用其结果在 internal/external 后反向改模型。
+
 ## 1. 接入本地官方 ESConv，并重建 Strategy Bank
 
 已有本地官方文件时：

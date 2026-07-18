@@ -188,6 +188,7 @@ def select_routing_algorithm_group_cv(
                 candidates=transparent_rule_candidates(rule_grid),
                 minimum_quality=float(rule_minimum_quality),
                 maximum_risk=float(rule_maximum_risk),
+                selection_data_role="train_fold",
             )
         split_rows.append(
             {

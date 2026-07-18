@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from itertools import product
-from typing import Any, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -12,14 +12,73 @@ from .io import canonical_json, sha256_text
 from .pm_v2_contracts import ActionPrediction, PMV2State, PolicyDecision
 from .pm_v2_features import PMV2FeatureBuilder
 from .pm_v2_model import (
-    LEARNED_SELECTION_REASON,
     SelectionConfig,
+    TRANSPARENT_RULE_SELECTION_REASON,
     evaluate_policy,
     estimated_action_cost_profile,
 )
 
 
 RULE_ROUTER_PROTOCOL = "pm-v1.5-transparent-step0-rule-router-v2"
+RULE_SCORE_DIAGNOSTIC_PROTOCOL = "pm-v1.5-transparent-rule-score-diagnostic-v1"
+
+
+def _distribution(values: Sequence[float]) -> dict[str, Any]:
+    array = np.asarray([float(value) for value in values], dtype=float)
+    if not len(array):
+        return {"count": 0, "minimum": None, "q10": None, "median": None, "q90": None, "maximum": None}
+    return {
+        "count": len(array),
+        "minimum": float(np.min(array)),
+        "q10": float(np.quantile(array, 0.10)),
+        "median": float(np.median(array)),
+        "q90": float(np.quantile(array, 0.90)),
+        "maximum": float(np.max(array)),
+    }
+
+
+def _top_margin(values: Mapping[str, float]) -> float:
+    ordered = sorted((float(value) for value in values.values()), reverse=True)
+    return ordered[0] - ordered[1] if len(ordered) >= 2 else 0.0
+
+
+def transparent_rule_score_diagnostics(
+    states: Sequence[PMV2State],
+) -> dict[str, Any]:
+    """Report Step-0 score scales without consulting outcome labels."""
+
+    source_values = {source.value: [] for source in MemorySource}
+    family_values: list[float] = []
+    readiness_values: list[float] = []
+    family_margins: list[float] = []
+    readiness_margins: list[float] = []
+    for state in states:
+        if state.step0_observation is None:
+            raise RuntimeError("rule score diagnostics require formal Step-0")
+        for source in MemorySource:
+            row = state.step0_observation.memory_sources[source]
+            if row.available and row.representation_valid:
+                source_values[source.value].append(row.query_to_source_similarity)
+        strategy = state.step0_observation.strategy
+        if strategy.available and strategy.representation_valid:
+            family_values.extend(strategy.family_similarities.values())
+            readiness_values.extend(strategy.advice_readiness_similarities.values())
+            family_margins.append(_top_margin(strategy.family_similarities))
+            readiness_margins.append(
+                _top_margin(strategy.advice_readiness_similarities)
+            )
+    return {
+        "protocol": RULE_SCORE_DIAGNOSTIC_PROTOCOL,
+        "outcome_labels_used": False,
+        "state_count": len(states),
+        "source_similarity": {
+            source: _distribution(values) for source, values in source_values.items()
+        },
+        "strategy_family_similarity": _distribution(family_values),
+        "advice_readiness_similarity": _distribution(readiness_values),
+        "strategy_family_top1_top2_margin": _distribution(family_margins),
+        "advice_readiness_top1_top2_margin": _distribution(readiness_margins),
+    }
 
 
 @dataclass
@@ -215,7 +274,7 @@ class TransparentRuleRouter:
             semantic_ood_score=0.0,
             metadata_ood_score=0.0,
             ood_fallback_used=False,
-            decision_reason=LEARNED_SELECTION_REASON,
+            decision_reason=TRANSPARENT_RULE_SELECTION_REASON,
             config_hash=self.config.digest(),
         )
 
@@ -265,8 +324,9 @@ def tune_transparent_rule_router(
     candidates: Sequence[TransparentRuleConfig],
     minimum_quality: float,
     maximum_risk: float,
+    selection_data_role: Literal["train", "train_fold"],
 ) -> tuple[TransparentRuleRouter, dict[str, Any]]:
-    """Select rule numbers on calibration only with one frozen utility ruler."""
+    """Select rule numbers on train data with one frozen utility ruler."""
 
     rows: list[dict[str, Any]] = []
     for config in candidates:
@@ -290,7 +350,7 @@ def tune_transparent_rule_router(
         )
     eligible_rows = [row for row in rows if row["eligible"]]
     if not eligible_rows:
-        raise RuntimeError("no transparent rule candidate satisfies calibration guards")
+        raise RuntimeError("no transparent rule candidate satisfies train-data guards")
     selected = max(
         eligible_rows,
         key=lambda row: (
@@ -302,14 +362,23 @@ def tune_transparent_rule_router(
         ),
     )
     selected_config = TransparentRuleConfig.model_validate(selected["config"])
+    distribution_signatures = {
+        canonical_json(row["action_distribution"]) for row in rows
+    }
     report = {
         "protocol": RULE_ROUTER_PROTOCOL,
-        "selection_split": "calibration",
+        "selection_split": selection_data_role,
+        "selection_data_role": (
+            "train_only" if selection_data_role == "train" else "train_fold_only"
+        ),
         "candidate_count": len(rows),
         "minimum_quality": float(minimum_quality),
         "maximum_risk": float(maximum_risk),
         "selected_config": selected_config.model_dump(mode="json"),
         "selected_config_sha256": selected_config.digest(),
+        "selected_action_distribution": selected["action_distribution"],
+        "distinct_candidate_action_distributions": len(distribution_signatures),
+        "score_diagnostics": transparent_rule_score_diagnostics(states),
         "candidates": rows,
     }
     return TransparentRuleRouter.create(selected_config, selection_config), report

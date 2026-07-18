@@ -43,6 +43,7 @@ from metacom_pm.pm_v2_external_eval import expected_external_units
 from metacom_pm.pm_v1_5_semantic import (
     resolve_semantic_encoder_binding,
     semantic_encoder_spec_from_config,
+    semantic_runtime_contract_from_config,
 )
 from metacom_pm.pm_v2_external_schema_smoke import (
     POINTWISE_SCHEMA_SMOKE_PROTOCOL,
@@ -952,6 +953,9 @@ def main() -> None:
     experiment_config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
     semantic_encoder_spec = semantic_encoder_spec_from_config(pm_v1_5_config)
+    semantic_runtime_contract = semantic_runtime_contract_from_config(
+        pm_v1_5_config
+    )
     _, semantic_encoder_binding = resolve_semantic_encoder_binding(
         semantic_encoder_spec
     )
@@ -1009,6 +1013,10 @@ def main() -> None:
         or training_report.get("pm_v2_config_sha256")
         != sha256_file(args.pm_v1_5_config)
         or training_report.get("states_sha256") != sha256_file(args.states)
+        or (training_report.get("semantic_runtime_verification") or {}).get(
+            "contract_sha256"
+        )
+        != semantic_runtime_contract.digest()
         or training_report.get("train_calibration_labels_sha256")
         != sha256_file(args.train_calibration_labels)
         or training_report.get("internal_test_labels_sha256")
@@ -1184,6 +1192,8 @@ def main() -> None:
         "generator_endpoint_sha256": generator_endpoint_sha256,
         "semantic_encoder_spec": semantic_encoder_spec.model_dump(mode="json"),
         "semantic_encoder_binding": semantic_encoder_binding.model_dump(mode="json"),
+        "semantic_runtime_contract": semantic_runtime_contract.model_dump(mode="json"),
+        "semantic_runtime_contract_sha256": semantic_runtime_contract.digest(),
         "generator_pricing_usd_per_mtok": {"input": 0.15, "output": 0.60},
         "simulator_id": simulator_id,
         "max_turns": int(external["max_turns"]),

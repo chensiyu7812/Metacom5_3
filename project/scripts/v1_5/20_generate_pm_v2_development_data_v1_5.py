@@ -78,8 +78,10 @@ from metacom_pm.v1_5_automated_semantic_review import (
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
+    require_semantic_runtime_contract,
     semantic_encoder_spec_from_config,
 )
+from metacom_pm.pm_v1_5_step0 import readiness_natural_language_challenge
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -701,6 +703,10 @@ def main() -> None:
     semantic_encoder = FrozenTransformerSemanticEncoder.load(
         semantic_encoder_spec_from_config(pm_config)
     )
+    semantic_runtime_verification = require_semantic_runtime_contract(
+        pm_config, semantic_encoder
+    )
+    readiness_challenge = readiness_natural_language_challenge(semantic_encoder)
     require_paid_run_release(
         pm_config,
         config_path=args.pm_v2_config,
@@ -1621,6 +1627,8 @@ def main() -> None:
             "seed_strategy_instance_disjointness": seed_strategy_disjointness,
             "generation_run_binding": generation_binding,
             "generation_run_binding_sha256": generation_binding_sha256,
+            "semantic_runtime": semantic_runtime_verification,
+            "readiness_natural_language_challenge": readiness_challenge,
             "accepted_cost_estimate_sha256": expected_hash,
             "generation_api_calls_used": api_calls_used,
             "generation_historical_api_calls": historical_api_calls,

@@ -282,6 +282,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-TRAIN-05 | C1 | 仅选最高 CV mean 容易 winner's curse | one-standard-error rule，近最优中选更简单稳定模型 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-TRAIN-06 | C1 | 16 actions×states 不是独立样本，真正有效规模接近 user blocks | user-disjoint fold/bootstrap；报告 prompt-effective N 和 action stability | 持续统计护栏 |
 | V15-TRAIN-07 | C1 | 仅增加冻结 embedding 仍可能因高维、小样本、环境 identity 过拟合 | 两个 384 维视图只在 train users 上 PCA 到 48 维；encoder binding 必须一致；group-CV/one-SE 决定是否保留复杂模型 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-TRAIN-08 | C1 | 原 no-Step0 消融仍保留 state BGE，无法区分“语言表示收益”和“Step-0 收益” | internal 一次性消费前同时冻结 full、无 Step-0、无 state-BGE、word/char-only 四格诊断；结果只解释组件贡献，不得选择或重调主 candidate，也不进入 external 主矩阵 | `CODE_CLOSED_RUN_UNVERIFIED` |
 
 ### 6.7 comparator、成本与 claim contract
 
@@ -305,7 +306,12 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-ENG-02 | C2 | workflow path filter 未覆盖全部 V1.5 文件 | 触发范围改为 `project/**` | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-ENG-03 | C2 | legacy V9 硬编码 `/home` 和旧全局 study freeze hash 阻断新 preflight | 移除机器路径；旧 freeze 标 `STALE_HISTORICAL_FREEZE/confirmatory_only`，不原地刷新 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-ENG-04 | C2 | static scan 曾漏掉顶层 `scripts/v1_5_*.py` | release/freeze scan 覆盖所有 active V1.5 scripts | `CODE_CLOSED_RUN_UNVERIFIED` |
-| V15-ENG-05 | C2 | 本地已缓存 BGE，使纯 freeze/external wiring 单测隐式解析真实 snapshot；GitHub clean offline cache 因而 10 项失败 | wiring fixture 只构造与精确 spec/tree 绑定的类型化假 binding；生产 freeze resolver 完全不改、仍 local-only fail-closed；全仓库测试另以空 `HF_HOME` + offline 环境执行 | `CODE_CLOSED_EMPTY_CACHE_PASS_CI_PENDING` |
+| V15-ENG-05 | C2 | 本地已缓存 BGE，使纯 freeze/external wiring 单测隐式解析真实 snapshot；GitHub clean offline cache 因而 10 项失败 | wiring fixture 只构造与精确 spec/tree 绑定的类型化假 binding；生产 freeze resolver 完全不改、仍 local-only fail-closed；全仓库测试另以空 `HF_HOME` + offline 环境执行 | `CODE_CLOSED_EMPTY_CACHE_AND_CI_PASS` |
+| V15-ENG-06 | C2 | external wiring fixture 以 test name 作为共享目录名，多会话并发会互删并产生瞬时 `FileNotFoundError` | 在 release root 内使用每次唯一的 `TemporaryDirectory`；既保留 freeze 路径约束又消除跨进程碰撞 | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-ENG-07 | C2 | 以外部 `tmp_path` 运行 release preflight 时仍重写真实 `release_manifest.json`，并错误收录 tracked `release_preflight.json` | preflight 支持独立 `manifest_out_path`；只排除 release root 内的真实生成目标；测试所有输出均写唯一临时目录 | `CODE_CLOSED_PREFLIGHT_PASS` |
+| V15-ENG-08 | C1 | `sim_eval` 虽能跑 mock tests，但 Python 3.10、Transformers 5/HF Hub 0.23 组合不符合项目合同且真实 BGE import 失败；仅锁权重不能保证 development/external 数值同一 | Python/package/device/dtype + 公共 3×384 canary 矩阵写入 config；development 付费前、data report、candidate manifest、study freeze、external 逐段 fail-closed；另提供 exact constraints 和 no-API preflight | `CODE_CLOSED_LOCAL_CANARY_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-09 | C1 | 512-token `truncation=True` 没有记录，可能让 external 的历史/摘要被静默截断 | 每个 current/full-state view 记录 original/encoded/lost token 数和 hash；development/external 分布单列；current user text 截断为硬失败，history 截断只报告 | `CODE_CLOSED_FULL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-10 | C2 | transparent rule 实际用 train/train-fold 调参，但 doc/report/YAML 声称 calibration；rule decision 还冒用 learned reason | 显式记录 `train_only/train_fold_only`，独立 `TRANSPARENT_RULE_SELECTION_REASON` 并按非 fallback 处理 | `CODE_CLOSED_FULL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
 | V15-REL-01 | C0 | `PAID_RUN_BLOCKED` 一度只是文档说明，各入口可直接 `--run` | 中央 release gate；每 stage 绑定 config/revision/run/cost hash | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-02 | C0 | 旧 pilot、partial attempts、旧 cost hash 或旧 PASS 可能被拼接复用 | immutable fresh output dir；旧 lineage 一律 stale；不覆盖、不拼接 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-03 | C1 | API 失败被误解为额度问题，或未知 attempt 被盲重试 | HTTP 前 ledger fsync；unknown 视为已花费；仅 429 支持限流判断 | `CODE_CLOSED_RUN_UNVERIFIED` |
@@ -478,8 +484,10 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`，工作树含未提交 V8.3 语义路由/Strategy 解耦修复 |
-| tests/preflight | 冻结 BGE snapshot 已离线加载并校验；最终 diff 全量 `pytest -q` PASS；通用 release preflight 为 `API_PILOT_READY`，但它审的是仓库通用资产（含通用 12,429-card Bank），不能替代单独内容寻址的 V1.5 11,590-card/823-source Bank；旧 study freeze 仍是 `STALE_HISTORICAL_FREEZE`，故 `confirmatory_ready=false` |
+| 分支 | `pm-v1.5_1`，工作树含本轮尚未提交的 runtime、truncation、rule-diagnostic 与 2×2 internal ablation 修复 |
+| tests/preflight | 精确冻结 BGE runtime/canary no-API preflight PASS；最终 diff 全量 `pytest -q` PASS；通用 release preflight 为 `API_PILOT_READY`，但它审的是仓库通用资产（含通用 12,429-card Bank），不能替代单独内容寻址的 V1.5 11,590-card/823-source Bank；旧 study freeze 仍是 `STALE_HISTORICAL_FREEZE`，故 `confirmatory_ready=false` |
+| semantic runtime | Python 3.13.2 + exact package/device/dtype contract；冻结 3×384 public canary hash PASS；旧 `sim_eval` 环境禁止用于正式 development/external |
+| readiness challenge | 5 个固定 outcome-free challenge 中 4/5 可判；短句 `Maybe, I guess.` 在 current/full context 都保持 ambiguous，按预注册规则仅报告、不改变方法 |
 | clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
 | formal selected seeds | 52 个 source IDs |
 | Strategy Bank | 11,590 cards / 823 source dialogues / 8 families；与 selected 52 交集为空 |
