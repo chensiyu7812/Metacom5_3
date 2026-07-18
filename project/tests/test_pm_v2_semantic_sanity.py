@@ -129,6 +129,14 @@ def _semantic_fixture(tmp_path: Path) -> dict:
                 "card_id": card_id,
                 "regime": regime.value,
                 "needed_memory_sources": _needed_sources(regime),
+                "strategy_resource_target": (
+                    "use"
+                    if regime is ResourceNeedRegime.STRATEGY_HELPFUL
+                    else "skip"
+                    if regime is ResourceNeedRegime.STRATEGY_HARMFUL
+                    else "ambiguous"
+                ),
+                "advice_readiness_target": "ambiguous",
                 "authorized_user_context": (
                     f"Authorized longitudinal context for {suffix}."
                 ),

@@ -225,15 +225,14 @@ def compute_rs_correct(
     regime: str,
     utility_by_action: Mapping[str, float],
 ) -> bool | None:
-    """Whether RS on/off matches the regime label, falling back to the paired
-    R0-vs-RS utility comparison (same memory subset) when the regime alone is
-    ambiguous."""
+    """Whether RS on/off matches the blinded paired outcome.
+
+    The legacy strategy-helpful/harmful slot name is a development challenge,
+    not an outcome label.  Advice readiness is also independent.  Therefore the
+    same-memory R0/RS utility contrast is authoritative for every regime.
+    """
 
     chosen_sources, chosen_mode = parse_action_id(chosen_action)
-    if regime == "strategy_helpful":
-        return chosen_mode == StrategyMode.RS
-    if regime == "strategy_harmful":
-        return chosen_mode == StrategyMode.R0
     other_mode = StrategyMode.R0 if chosen_mode == StrategyMode.RS else StrategyMode.RS
     paired_action = canonical_action_id(chosen_sources, other_mode)
     if paired_action not in utility_by_action:

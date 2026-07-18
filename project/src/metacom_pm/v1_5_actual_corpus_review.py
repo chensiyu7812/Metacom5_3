@@ -70,29 +70,13 @@ def _surface_fallback_report(
     }
 
 
-def _advice_readiness_candidate(state: Any, regime: str) -> str:
-    strategy_observation = (
-        state.step0_observation.strategy
-        if state.step0_observation is not None
-        else None
-    )
-    if regime == "strategy_harmful" or (
-        strategy_observation is not None and strategy_observation.advice_rejected
-    ):
-        return "listen_only"
-    if strategy_observation is not None and strategy_observation.advice_requested:
-        return "light_suggestion"
-    if regime == "ambiguous":
-        return "ambiguous"
-    return "explore_first"
+def _advice_readiness_candidate(context: Mapping[str, Any]) -> str:
+    return str(context.get("advice_readiness_target") or "ambiguous")
 
 
-def _strategy_resource_candidate(regime: str) -> str:
-    if regime == "strategy_helpful":
-        return "use"
-    if regime == "strategy_harmful":
-        return "skip"
-    return "uncertain"
+def _strategy_resource_candidate(context: Mapping[str, Any]) -> str:
+    value = str(context.get("strategy_resource_target") or "ambiguous")
+    return "uncertain" if value == "ambiguous" else value
 
 
 def _render_actual_payload(payload: Mapping[str, Any]) -> str:
@@ -387,7 +371,7 @@ def build_actual_corpus_review_items(
             "semantic_family": state.semantic_family,
             "regime": regime,
             "needed_memory_sources": list(context["needed_memory_sources"]),
-            "advice_readiness": _advice_readiness_candidate(state, regime),
+            "advice_readiness": _advice_readiness_candidate(context),
             "split": state.split.value,
             "session_index": state.session_index,
             "history": [
@@ -399,7 +383,7 @@ def build_actual_corpus_review_items(
             "authorized_user_context": context["authorized_user_context"],
             "coverage_rationale": context["coverage_rationale"],
             "memory_evidence": memory_evidence,
-            "strategy_resource_candidate": _strategy_resource_candidate(regime),
+            "strategy_resource_candidate": _strategy_resource_candidate(context),
             "strategy_cards": [
                 {
                     "strategy_id": card.strategy_id,

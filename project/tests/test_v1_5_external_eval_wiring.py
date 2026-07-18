@@ -387,9 +387,11 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "automated_review_attestation_sha256": "b" * 64,
         "actual_corpus_review_report_sha256": "c" * 64,
         "actual_corpus_review_attestation_sha256": "d" * 64,
+        "step0_shortcut_audit_report_sha256": "e" * 64,
+        "step0_shortcut_audit_attestation_sha256": "f" * 64,
     }
     full_sweep_gate = {
-        "protocol": "pm-v1.5-full-sweep-gate-v1",
+        "protocol": "pm-v1.5-full-sweep-gate-v2",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
@@ -397,6 +399,8 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "automated_review_attestation_sha256": "b" * 64,
         "actual_corpus_review_report_sha256": "c" * 64,
         "actual_corpus_review_attestation_sha256": "d" * 64,
+        "step0_shortcut_audit_report_sha256": "e" * 64,
+        "step0_shortcut_audit_attestation_sha256": "f" * 64,
     }
     sweep_bindings = {
         "scope": "full",
@@ -786,8 +790,10 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
     attestation_sha = "b" * 64
     actual_report_sha = "c" * 64
     actual_attestation_sha = "d" * 64
+    shortcut_report_sha = "e" * 64
+    shortcut_attestation_sha = "f" * 64
     gate = {
-        "protocol": "pm-v1.5-full-sweep-gate-v1",
+        "protocol": "pm-v1.5-full-sweep-gate-v2",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
@@ -795,6 +801,8 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
         "automated_review_report_sha256": report_sha,
         "actual_corpus_review_attestation_sha256": actual_attestation_sha,
         "actual_corpus_review_report_sha256": actual_report_sha,
+        "step0_shortcut_audit_report_sha256": shortcut_report_sha,
+        "step0_shortcut_audit_attestation_sha256": shortcut_attestation_sha,
     }
     chain = {"contract_bindings": {"scope": "full", "v1_5_full_sweep_gate": gate}}
     assert module.require_v1_5_full_sweep_binding(
@@ -803,6 +811,8 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
         automated_review_attestation_sha256=attestation_sha,
         actual_corpus_review_report_sha256=actual_report_sha,
         actual_corpus_review_attestation_sha256=actual_attestation_sha,
+        step0_shortcut_audit_report_sha256=shortcut_report_sha,
+        step0_shortcut_audit_attestation_sha256=shortcut_attestation_sha,
     ) == gate
 
     stale = {
@@ -818,6 +828,8 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
             automated_review_attestation_sha256=attestation_sha,
             actual_corpus_review_report_sha256=actual_report_sha,
             actual_corpus_review_attestation_sha256=actual_attestation_sha,
+            step0_shortcut_audit_report_sha256=shortcut_report_sha,
+            step0_shortcut_audit_attestation_sha256=shortcut_attestation_sha,
         )
 
 

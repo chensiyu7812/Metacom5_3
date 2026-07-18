@@ -49,6 +49,12 @@ from .policies import FixedPolicy, LearnedPMPolicy, RuleConfig, StrongRulePolicy
 from .prompts import OFFICIAL_ESMEM_SYSTEM, SELECTIVE_ESMEM_SYSTEM, generation_messages
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import estimate_tokens, lexical_score, normalize_space
+from .pm_v1_5_semantic import (
+    SemanticTextEncoder,
+    semantic_centroid,
+    semantic_query_similarity,
+    visible_dialogue_state_text,
+)
 from .training import PMModel
 
 
@@ -336,7 +342,16 @@ def evaluator_context(user: dict[str, Any], topic: dict[str, Any]) -> dict[str, 
     }
 
 
-def _catalog(items: Sequence[MemoryItem], source: MemorySource, session_index: int) -> SourceCatalog:
+def _catalog(
+    items: Sequence[MemoryItem],
+    source: MemorySource,
+    session_index: int,
+    *,
+    query_text: str = "",
+    semantic_encoder: SemanticTextEncoder | None = None,
+    semantic_query_vector: Sequence[float] | None = None,
+    semantic_source_centroid: Sequence[float] | None = None,
+) -> SourceCatalog:
     selected = [x for x in items if x.source is source]
     # Imported lazily so the legacy EvoEmo module and PM-v2 data adapter share one
     # deployable source-catalog contract without introducing an import cycle.
@@ -347,6 +362,34 @@ def _catalog(items: Sequence[MemoryItem], source: MemorySource, session_index: i
         created_sessions=[item.created_session for item in selected],
         session_index=session_index,
     )
+    semantic_similarity = 0.0
+    semantic_valid = False
+    if semantic_encoder is not None and selected:
+        centroid = tuple(semantic_source_centroid) if semantic_source_centroid is not None else semantic_centroid(
+            semantic_encoder, [item.text for item in selected]
+        )
+        if semantic_query_vector is None:
+            semantic_similarity = semantic_query_similarity(
+                semantic_encoder, query_text, centroid
+            )
+        else:
+            if len(semantic_query_vector) != len(centroid):
+                raise RuntimeError("semantic query/catalog dimensions differ")
+            semantic_similarity = max(
+                -1.0,
+                min(
+                    1.0,
+                    float(
+                        sum(
+                            float(left) * float(right)
+                            for left, right in zip(
+                                semantic_query_vector, centroid, strict=True
+                            )
+                        )
+                    ),
+                ),
+            )
+        semantic_valid = True
     return SourceCatalog(
         available=bool(statistics["available"]),
         count=int(statistics["count"]),
@@ -354,6 +397,8 @@ def _catalog(items: Sequence[MemoryItem], source: MemorySource, session_index: i
         max_age_sessions=statistics["max_age_sessions"],
         estimated_tokens=int(statistics["estimated_tokens"]),
         catalog_fingerprint=list(statistics["catalog_fingerprint"]),
+        semantic_query_similarity=semantic_similarity,
+        semantic_representation_valid=semantic_valid,
     )
 
 
@@ -368,6 +413,10 @@ def make_evo_runtime_state(
     *,
     track_id: str | None = None,
     fixed_open_loop: bool = False,
+    semantic_encoder: SemanticTextEncoder | None = None,
+    semantic_source_centroids: Mapping[
+        MemorySource, Sequence[float]
+    ] | None = None,
 ) -> RuntimeState:
     session_index = max((x.created_session for x in items), default=0) + 1
     # The literal condition label is excluded.  The runtime state ID still
@@ -383,15 +432,6 @@ def make_evo_runtime_state(
         for row in conversation if row.get("role") == "seeker"
     ]
     exogenous_state_id = f"state_{stable_hex('evo-exogenous-state', user['id'], topic['idx'], track_id or '', turn_index, exogenous_history, current_user_text, n=20)}"
-    inventory = {source: _catalog(items, source, session_index) for source in MemorySource}
-    available = {src for src, cat in inventory.items() if cat.available}
-    from .contracts import ACTION_MEMORY_MAP, canonical_action_id
-    allowed = sorted(
-        canonical_action_id(sources, strategy)
-        for sources in ACTION_MEMORY_MAP.values()
-        if sources <= available
-        for strategy in StrategyMode
-    )
     prior = list(conversation)
     if (
         prior
@@ -407,6 +447,40 @@ def make_evo_runtime_state(
         )
         for row in prior[-8:]
     ]
+    semantic_query_text = visible_dialogue_state_text(
+        current_user_text=current_user_text,
+        current_session_history=history,
+        current_session_summary="",
+    )
+    semantic_query_vector = (
+        semantic_encoder.encode([semantic_query_text])[0]
+        if semantic_encoder is not None
+        else None
+    )
+    inventory = {
+        source: _catalog(
+            items,
+            source,
+            session_index,
+            query_text=semantic_query_text,
+            semantic_encoder=semantic_encoder,
+            semantic_query_vector=semantic_query_vector,
+            semantic_source_centroid=(
+                semantic_source_centroids.get(source)
+                if semantic_source_centroids is not None
+                else None
+            ),
+        )
+        for source in MemorySource
+    }
+    available = {src for src, cat in inventory.items() if cat.available}
+    from .contracts import ACTION_MEMORY_MAP, canonical_action_id
+    allowed = sorted(
+        canonical_action_id(sources, strategy)
+        for sources in ACTION_MEMORY_MAP.values()
+        if sources <= available
+        for strategy in StrategyMode
+    )
     return RuntimeState(
         state_id=state_id,
         card_id=card_id,

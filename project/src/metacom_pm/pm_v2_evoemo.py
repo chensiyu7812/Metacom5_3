@@ -59,7 +59,8 @@ from .io import (
 from .generation_contract import SupporterGenerationContract
 from .pm_v2_data import runtime_to_pmv2_state
 from .pm_v1_5_step0 import build_strategy_family_catalog
-from .pm_v1_5_rule_router import TransparentRuleRouter
+from .pm_v1_5_semantic import SemanticTextEncoder, semantic_centroid
+from .pm_v1_5_rule_router import RULE_ROUTER_PROTOCOL, TransparentRuleRouter
 from .pm_v2_fixed_model import FixedActionPMV2Model
 from .pm_v2_model import PMV2Model, decision_fallback_kind
 from .prompts import generation_messages
@@ -641,6 +642,7 @@ def run_pmv2_fixed_evoemo(
     maximum_cost_matched_relative_deviation: float,
     cost_match_reference_call_plan_path: str | Path | None = None,
     cost_match_reference_cost_estimate_path: str | Path | None = None,
+    semantic_encoder: SemanticTextEncoder | None = None,
 ) -> dict[str, Any]:
     """Generate only the frozen PM-v2 condition on policy-independent tracks."""
 
@@ -754,9 +756,16 @@ def run_pmv2_fixed_evoemo(
     ]
     if not strategy_cards:
         raise ValueError("strategy bank is empty")
+    strategy_catalog_refresh_started = time.perf_counter()
     strategy_family_catalog = build_strategy_family_catalog(
         strategy_cards,
         require_all_families=require_complete_strategy_family_catalog,
+        semantic_encoder=semantic_encoder,
+    )
+    strategy_catalog_refresh_ms = (
+        (time.perf_counter() - strategy_catalog_refresh_started) * 1000.0
+        if semantic_encoder is not None
+        else 0.0
     )
     strategy_retriever = StrategyRetriever(
         strategy_cards, top_k=strategy_top_k, minimum_score=strategy_min_score
@@ -774,10 +783,27 @@ def run_pmv2_fixed_evoemo(
         candidate = joblib.load(checkpoint_path)
         if not isinstance(candidate, TransparentRuleRouter):
             raise
-        if candidate.format_version != "pm-v1.5-transparent-step0-rule-router-v1":
+        if candidate.format_version != RULE_ROUTER_PROTOCOL:
             raise RuntimeError("unsupported transparent-rule checkpoint format")
         model = candidate
     requires_step0_observation = not isinstance(model, FixedActionPMV2Model)
+    if condition in {"pm_v2", "pm_v1_5_transparent_rule_step0"}:
+        if semantic_encoder is None:
+            raise RuntimeError(
+                "reportable learned/rule external generation requires the frozen "
+                "semantic encoder"
+            )
+        fitted_binding = getattr(
+            getattr(model, "feature_builder", None),
+            "semantic_encoder_spec_sha256",
+            None,
+        )
+        if isinstance(model, PMV2Model) and (
+            fitted_binding != semantic_encoder.binding.spec_sha256
+        ):
+            raise RuntimeError(
+                "PM checkpoint semantic encoder binding differs from runtime"
+            )
     tracks = _load_fixed_tracks(fixed_tracks_path)
     fixed_expected = fixed_attestation.get("expected") or {}
     if (
@@ -972,8 +998,34 @@ def run_pmv2_fixed_evoemo(
 
     preflight_rows: list[dict[str, Any]] = []
     call_plan: list[dict[str, Any]] = []
+    semantic_centroids_by_user: dict[
+        str, dict[MemorySource, tuple[float, ...]]
+    ] = {}
+    semantic_catalog_refresh_ms_by_user: dict[str, float] = {}
+
+    def source_centroids_for_user(
+        user_id: str, items
+    ) -> dict[MemorySource, tuple[float, ...]] | None:
+        if not requires_step0_observation or semantic_encoder is None:
+            return None
+        if user_id not in semantic_centroids_by_user:
+            started = time.perf_counter()
+            semantic_centroids_by_user[user_id] = {
+                source: semantic_centroid(
+                    semantic_encoder,
+                    [item.text for item in items if item.source is source],
+                )
+                for source in MemorySource
+            }
+            semantic_catalog_refresh_ms_by_user[user_id] = (
+                time.perf_counter() - started
+            ) * 1000.0
+        return semantic_centroids_by_user[user_id]
+
     for user, topic in scenarios:
         items, _ = build_evo_memory(user)
+        user_id = str(user["id"])
+        source_centroids = source_centroids_for_user(user_id, items)
         for seed in seeds:
             key = _track_key(str(user["id"]), int(topic["idx"]), int(seed), simulator_id)
             track = tracks.get(key)
@@ -994,6 +1046,10 @@ def run_pmv2_fixed_evoemo(
                     condition,
                     track_id=str(track["track_id"]),
                     fixed_open_loop=True,
+                    semantic_encoder=(
+                        semantic_encoder if requires_step0_observation else None
+                    ),
+                    semantic_source_centroids=source_centroids,
                 )
                 pm_state = runtime_to_pmv2_state(
                     runtime,
@@ -1001,6 +1057,9 @@ def run_pmv2_fixed_evoemo(
                     strategy_estimated_tokens=strategy_action_tokens,
                     strategy_family_catalog=strategy_family_catalog,
                     include_step0_observation=requires_step0_observation,
+                    semantic_encoder=(
+                        semantic_encoder if requires_step0_observation else None
+                    ),
                 )
                 decision = model.choose(pm_state)
                 fallback_type = (
@@ -1176,6 +1235,20 @@ def run_pmv2_fixed_evoemo(
             "gate_enforced": False,
             "scope": "all_fixed_track_turns",
             "turn_indices": list(range(1, int(max_turns) + 1)),
+        },
+        "semantic_catalog_refresh": {
+            "scope": "one_local_source-centroid_refresh_per_external_user",
+            "included_in_per_turn_step0_latency": False,
+            "user_count": len(semantic_catalog_refresh_ms_by_user),
+            "total_latency_ms": float(
+                sum(semantic_catalog_refresh_ms_by_user.values())
+            ),
+            "per_user_latency_ms": semantic_catalog_refresh_ms_by_user,
+            "api_calls": 0,
+            "api_cost_usd": 0.0,
+            "strategy_family_and_readiness_latency_ms": float(
+                strategy_catalog_refresh_ms
+            ),
         },
     }
     write_json(preflight_path, preflight)
@@ -1489,6 +1562,7 @@ def run_pmv2_fixed_evoemo(
     try:
         for user, topic in scenarios:
             items, _ = build_evo_memory(user)
+            source_centroids = source_centroids_for_user(str(user["id"]), items)
             for seed in seeds:
                 track_key = _track_key(
                     str(user["id"]), int(topic["idx"]), int(seed), simulator_id
@@ -1531,6 +1605,7 @@ def run_pmv2_fixed_evoemo(
                     state_conversation = _fixed_context_before_turn(
                         fixed_track, turn_number
                     )
+                    step0_start = time.perf_counter()
                     runtime = make_evo_runtime_state(
                         user,
                         topic,
@@ -1541,14 +1616,20 @@ def run_pmv2_fixed_evoemo(
                         condition,
                         track_id=track_id,
                         fixed_open_loop=True,
+                        semantic_encoder=(
+                            semantic_encoder if requires_step0_observation else None
+                        ),
+                        semantic_source_centroids=source_centroids,
                     )
-                    step0_start = time.perf_counter()
                     pm_state = runtime_to_pmv2_state(
                         runtime,
                         strategy_catalog_count=len(strategy_cards),
                         strategy_estimated_tokens=strategy_action_tokens,
                         strategy_family_catalog=strategy_family_catalog,
                         include_step0_observation=requires_step0_observation,
+                        semantic_encoder=(
+                            semantic_encoder if requires_step0_observation else None
+                        ),
                     )
                     pre_evidence_ms = (
                         (time.perf_counter() - step0_start) * 1000.0
@@ -1844,13 +1925,19 @@ def run_pmv2_fixed_evoemo(
                             row.content for row in runtime.current_session_history
                         )
                     )
+                    visible_state_tokens = estimate_tokens(
+                        runtime.current_user_text
+                        + runtime.current_session_summary
+                        + "\n".join(
+                            row.content for row in runtime.current_session_history
+                        )
+                    )
+                    current_turn_tokens = estimate_tokens(
+                        runtime.current_user_text
+                    )
                     cost = CostRecord(
                         pm_input_tokens_est=(
-                            estimate_tokens(query)
-                            + sum(
-                                len(cat.catalog_fingerprint)
-                                for cat in runtime.inventory.values()
-                            )
+                            visible_state_tokens
                             if requires_step0_observation
                             else 0
                         ),
@@ -1868,6 +1955,19 @@ def run_pmv2_fixed_evoemo(
                             len(strategy_family_catalog.vectors)
                             if requires_step0_observation
                             else 0
+                        ),
+                        step0_advice_readiness_comparisons=(
+                            len(strategy_family_catalog.readiness_vectors)
+                            if requires_step0_observation
+                            else 0
+                        ),
+                        step0_encoder_input_tokens_est=(
+                            3 * visible_state_tokens + 2 * current_turn_tokens
+                            if requires_step0_observation
+                            else 0
+                        ),
+                        step0_encoder_invocations=(
+                            4 if requires_step0_observation else 0
                         ),
                         step0_latency_ms=pre_evidence_ms,
                         pre_evidence_compute_ms=pre_evidence_ms,

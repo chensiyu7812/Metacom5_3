@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "2245e6e23e96fa8967b511a52ed59f0106b5b8b45a8d886a3f4c94adfb5079e3"
+    "sha256": "cf0394ae0d6edb73032e6df7d247b09483422ceb00f458032c38b75524cefd7a"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -23,6 +23,8 @@
     "strategy_family_count": 8,
     "excluded_esconv_sources": 84,
     "deterministic_source_id_rule_enabled": true,
+    "frozen_config_binding_protocol": "pm-v1.5-frozen-strategy-bank-binding-v1",
+    "frozen_config_binding_enforced_before_paid_development": true,
     "turn_overlap_audit_path": "project/outputs/v1_5_strategy_card_evoemo_turn_overlap_audit_v1_5_bank.json",
     "turn_overlap_audit_sha256": "d8568e6da36296f859e8585f81c9a8df8cc16e00d7a9b588c255e93519bcc1c0",
     "turn_overlap_audit_status": "GENERIC_FINDINGS_ONLY",
@@ -36,15 +38,111 @@
     "publication_note": "Raw seed dialogues remain in the ignored private artifact vault; the review package publishes their lineage hash and construction code, not the raw dialogue file."
   },
   "generation_compatibility_pilot": {
-    "execution_status": "STRUCTURAL_PASS_BOUND_TO_PRIOR_CONFIG",
+    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_DRY_RUN_PASS; NO_ACTIVE_PAID_APPROVAL",
     "paper_result": false,
-    "physical_attempts": 1,
-    "accepted_cost_estimate_sha256": "c9b48fe7ca9db0a6963c011c728ba70cd343ac6afa035f671cb7969e9e08efed",
-    "summary_file_sha256": "e1520a2738121a349c094d2653375d7da3360cb8e518b7000f47b24f55f79da5",
-    "attestation_file_sha256": "2c9309617409bcb98f7fa46d711dca67f98f88a8b28c2847ef7b81ca21f668d3",
-    "bound_pm_v1_5_config_sha256": "372c95dd9dbe8f0e36573c0cd1dc027dfed16f2639e004a5c2ac676e4c579156",
-    "matches_current_config": false,
-    "required_action": "rerun the one-call pilot under the current config before full development generation"
+    "historical_physical_attempts": 2,
+    "latest_v8_attempt_status": "FAIL",
+    "latest_v8_actual_usage": {
+      "prompt_tokens": 4750,
+      "completion_tokens": 2800,
+      "total_tokens": 7550,
+      "estimated_cost_usd": 0.0023925
+    },
+    "latest_v8_failure": "local provider-surface transport type rejected its own 183-character deterministic evaluator rationale at a 180-character placeholder cap",
+    "latest_v8_summary_sha256": "a95e9499ebdf252be35c63b1e8a97053b456813a27f6b3de5a5412264ba761fe",
+    "latest_v8_offline_replay": {
+      "new_physical_api_attempts": 0,
+      "raw_fallback_cases": 4,
+      "false_positive_detector_cases_fixed": 2,
+      "real_mixed_topic_cases": 2,
+      "finding": "the artificial relocation/academic/workplace pilot trio invites naturally mixed moving-for-school/job surfaces and is not an orthogonal frozen generation cohort"
+    },
+    "v8_1_contract": "pm-v2-generation-compatibility-pilot-v8.1-orthogonal-cohort-zero-provider-fallback-deterministic-evidence-single-attempt",
+    "v8_1_semantic_families": [
+      "relocation_loneliness",
+      "self_confidence",
+      "sleep_disruption"
+    ],
+    "v8_1_compatibility_contract_sha256": "8c6f29512000c5378a09eb7e910751bf52e7030115f445d0426e23170002b86f",
+    "v8_1_cost_estimate_sha256": "7b44b325207edb74634425334834136fab59e9569a3c81133519c9b065a764de",
+    "v8_1_maximum_estimated_cost_usd": 0.00627105,
+    "v8_1_authorization_status": "CONSUMED_FAILED_CLOSED",
+    "v8_1_actual_usage": {
+      "prompt_tokens": 4735,
+      "completion_tokens": 3271,
+      "total_tokens": 8006,
+      "estimated_cost_usd": 0.00267285
+    },
+    "v8_1_failure": "2 of 9 provider surfaces failed deterministic family lint: multi_source_needed leaked relocation into self-confidence, and strategy_harmful lacked a self-confidence anchor",
+    "v8_1_summary_sha256": "e2430164a92ddd2273b605502fc7fd97b466b0e939fe3c924d8a3edd50dfc6e3",
+    "v8_2_contract": "pm-v2-generation-compatibility-pilot-v8.2-surface-only-casewise-one-bounded-repair-zero-fallback",
+    "v8_2_success_path_calls": 9,
+    "v8_2_maximum_physical_attempts": 18,
+    "v8_2_provider_schema": "four visible natural-language fields for exactly one case; no memory, oracle, rationale, evidence, or IDs",
+    "v8_2_compatibility_contract_sha256": "8836f193e2609453d96da5a1bda662290cb3df092866b336212324dba9eeedef",
+    "v8_2_cost_estimate_sha256": "14ca3b799183e171347972dcb8a2cf34656d5d645d36cbab9eb6b16abc406aac",
+    "v8_2_expected_estimated_cost_usd": 0.0082332,
+    "v8_2_maximum_estimated_cost_usd": 0.01654095,
+    "v8_2_maximum_input_tokens_per_call": 2576,
+    "v8_2_maximum_output_tokens_per_call": 900,
+    "v8_2_authorization_status": "CONSUMED_FAILED_CLOSED_AFTER_RECONCILIATION",
+    "v8_2_attempt_status": "FAIL",
+    "v8_2_physical_attempts": 8,
+    "v8_2_succeeded_attempts": 6,
+    "v8_2_failed_attempts": 2,
+    "v8_2_actual_usage": {
+      "prompt_tokens": 10724,
+      "completion_tokens": 1349,
+      "total_tokens": 12073,
+      "estimated_cost_usd": 0.002418
+    },
+    "v8_2_failure": "strategy_helpful was falsely rejected twice by a lexical advice-request lint even though both provider surfaces were semantically valid advice requests",
+    "v8_2_summary_sha256": "19f299fc91ad120bbcabd276bbc879044b5498606b9fcdeea30395d97f544496",
+    "v8_2_physical_attempt_ledger_sha256": "f936ec52b45229a40357ae2ac46915f4f4738fb4b052cb0495faeda0d466a12e",
+    "v8_3_contract": "pm-v2-generation-compatibility-pilot-v8.3-semantic-router-factorial-casewise-one-bounded-repair-zero-fallback",
+    "v8_3_status": "DRY_RUN_PASS_NO_PAID_APPROVAL",
+    "v8_3_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
+    "v8_3_compatibility_contract_sha256": "dc54821bf1dc93b7907e00a14516523b718df639c7057c0f1e93c0edd2dfa645",
+    "v8_3_cost_estimate_sha256": "758ae052bf2d9aed5b4a8b1ea475b3a29e0b4bf6aa54ef17e37f299858cf3df2",
+    "v8_3_call_plan_sha256": "d4f2f0123ea6b6fb1848e200099e4bf6c6219c48686e202e10d719942370c307",
+    "v8_3_success_path_calls": 9,
+    "v8_3_maximum_physical_attempts": 18,
+    "v8_3_expected_estimated_cost_usd": 0.0083661,
+    "v8_3_maximum_estimated_cost_usd": 0.01680705,
+    "v8_3_maximum_input_tokens_per_call": 2675,
+    "v8_3_maximum_output_tokens_per_call": 900,
+    "v8_3_semantic_changes": [
+      "frozen local visible-state encoder",
+      "semantic family/readiness Step-0 scalars",
+      "Strategy resource target separated from advice readiness",
+      "same-topic irrelevant memory decoys",
+      "no lexical advice-request hard gate"
+    ],
+    "current_required_provider_surface_fallback_cases": 0,
+    "required_action": "retain the immutable failed V8.2 output; independently review the fresh V8.3 contract, call plan, and cost identity; then obtain a new exact stage approval before any paid execution"
+  },
+  "semantic_encoder": {
+    "protocol": "pm-v1.5-frozen-visible-text-encoder-v1",
+    "model_id": "BAAI/bge-small-en-v1.5",
+    "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "snapshot_tree_sha256": "c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b",
+    "spec_sha256": "aa78648c8e0717bb2450b26560bb183fe893972aed2fa44fe6d67507aae768f3",
+    "pooling": "cls",
+    "output_dimension": 384,
+    "state_views": 2,
+    "train_only_projection_dimension": 48,
+    "runtime_network_download_allowed": false,
+    "development_external_parity": "CODE_AND_TEST_ONLY_RUN_UNVERIFIED"
+  },
+  "engineering_preflight": {
+    "path": "project/release_preflight.json",
+    "status": "API_PILOT_READY",
+    "confirmatory_ready": false,
+    "python_syntax_pass": true,
+    "static_leakage_scan_pass": true,
+    "pytest_pass": true,
+    "freeze_status": "STALE_HISTORICAL_FREEZE",
+    "interpretation": "This is a repository-wide engineering preflight over the generic release assets (including the generic 12,429-card bank), not a substitute for the separately hashed V1.5 11,590-card/823-source bank lineage, not a V8.3 real-run PASS, not an actual-468 shortcut PASS, and not confirmatory readiness."
   },
   "automated_semantic_review": {
     "execution_status": "PRIOR_DRY_RUN_INVALIDATED_NO_CURRENT_PASS_GATE_REPORT",

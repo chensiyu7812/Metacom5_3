@@ -67,6 +67,9 @@ from metacom_pm.pm_v2_semantic_audit import (
     require_pmv2_runtime_state_lineage,
     require_semantic_sanity_pass,
 )
+from metacom_pm.pm_v1_5_shortcut_audit import (
+    require_step0_shortcut_audit_pass,
+)
 from metacom_pm.v1_5_automated_semantic_review import (
     require_automated_semantic_review_pass,
 )
@@ -277,13 +280,15 @@ def require_v1_5_full_sweep_binding(
     automated_review_attestation_sha256: str,
     actual_corpus_review_report_sha256: str,
     actual_corpus_review_attestation_sha256: str,
+    step0_shortcut_audit_report_sha256: str,
+    step0_shortcut_audit_attestation_sha256: str,
 ) -> dict[str, Any]:
     """Require an honestly full V1.5 matrix bound to the current review."""
 
     bindings = sweep_source_chain.get("contract_bindings") or {}
     observed = bindings.get("v1_5_full_sweep_gate") or {}
     expected = {
-        "protocol": "pm-v1.5-full-sweep-gate-v1",
+        "protocol": "pm-v1.5-full-sweep-gate-v2",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
@@ -295,6 +300,12 @@ def require_v1_5_full_sweep_binding(
             actual_corpus_review_attestation_sha256
         ),
         "actual_corpus_review_report_sha256": actual_corpus_review_report_sha256,
+        "step0_shortcut_audit_attestation_sha256": (
+            step0_shortcut_audit_attestation_sha256
+        ),
+        "step0_shortcut_audit_report_sha256": (
+            step0_shortcut_audit_report_sha256
+        ),
     }
     if bindings.get("scope") != "full" or observed != expected:
         raise RuntimeError(
@@ -431,6 +442,31 @@ def main() -> None:
             / "pm_v1_5_actual_corpus_semantic_review"
             / "artifact_attestation.json"
         ),
+    )
+    parser.add_argument(
+        "--step0-shortcut-audit-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "step0_shortcut_audit.json"
+        ),
+    )
+    parser.add_argument(
+        "--step0-shortcut-audit-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "artifact_attestation.json"
+        ),
+    )
+    parser.add_argument(
+        "--development-data-attestation",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "artifact_attestation.json",
     )
     parser.add_argument(
         "--pilot-human-spot-check-report",
@@ -706,8 +742,16 @@ def main() -> None:
             expected_strategy_bank_path=args.strategy_bank,
             expected_pm_config_path=args.pm_v2_config,
         )
+        shortcut_audit_verification = require_step0_shortcut_audit_pass(
+            args.step0_shortcut_audit_report,
+            args.step0_shortcut_audit_attestation,
+            expected_states_path=args.states,
+            expected_evaluator_contexts_path=args.evaluator_contexts,
+            expected_pm_config_path=args.pm_v2_config,
+            expected_generation_attestation_path=args.development_data_attestation,
+        )
         semantic_sanity = {
-            "protocol": "pm-v1.5-pilot-plus-actual-corpus-semantic-gate-v1",
+            "protocol": "pm-v1.5-pilot-plus-actual-corpus-and-shortcut-gate-v2",
             "status": "PASS",
             "human_calibration_performed": False,
             "automated_review_report_sha256": sha256_text(
@@ -722,6 +766,12 @@ def main() -> None:
             "actual_corpus_review_attestation_sha256": actual_corpus_verification[
                 "attestation_sha256"
             ],
+            "step0_shortcut_audit_report_sha256": shortcut_audit_verification[
+                "report_sha256"
+            ],
+            "step0_shortcut_audit_attestation_sha256": (
+                shortcut_audit_verification["attestation_sha256"]
+            ),
         }
         v1_5_full_sweep_gate = require_v1_5_full_sweep_binding(
             sweep_source_chain,
@@ -736,6 +786,12 @@ def main() -> None:
             ],
             actual_corpus_review_attestation_sha256=semantic_sanity[
                 "actual_corpus_review_attestation_sha256"
+            ],
+            step0_shortcut_audit_report_sha256=semantic_sanity[
+                "step0_shortcut_audit_report_sha256"
+            ],
+            step0_shortcut_audit_attestation_sha256=semantic_sanity[
+                "step0_shortcut_audit_attestation_sha256"
             ],
         )
         compatibility_attestation_sha256 = None

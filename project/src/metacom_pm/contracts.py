@@ -76,6 +76,10 @@ class SourceCatalog(StrictModel):
     max_age_sessions: int | None = Field(default=None, ge=0)
     estimated_tokens: int = Field(default=0, ge=0)
     catalog_fingerprint: list[float] = Field(default_factory=list)
+    # Reportable PM-v1.5 uses only this source-level semantic scalar.  The
+    # centroid itself remains outside RuntimeState and no retrieved item is read.
+    semantic_query_similarity: float = Field(default=0.0, ge=-1.0, le=1.0)
+    semantic_representation_valid: bool = False
 
     @model_validator(mode="after")
     def coherent(self):
@@ -85,6 +89,20 @@ class SourceCatalog(StrictModel):
             x is not None for x in (self.min_age_sessions, self.max_age_sessions)
         ):
             raise ValueError("unavailable source cannot have ages")
+        if not self.available and (
+            self.semantic_representation_valid
+            or self.semantic_query_similarity != 0.0
+        ):
+            raise ValueError(
+                "unavailable source cannot expose a semantic representation"
+            )
+        if (
+            not self.semantic_representation_valid
+            and self.semantic_query_similarity != 0.0
+        ):
+            raise ValueError(
+                "invalid semantic representation must expose zero similarity"
+            )
         if (
             self.min_age_sessions is not None
             and self.max_age_sessions is not None
@@ -321,6 +339,9 @@ class CostRecord(StrictModel):
     catalog_reads: int = Field(default=0, ge=0)
     step0_memory_comparisons: int = Field(default=0, ge=0)
     step0_strategy_family_comparisons: int = Field(default=0, ge=0)
+    step0_advice_readiness_comparisons: int = Field(default=0, ge=0)
+    step0_encoder_input_tokens_est: int = Field(default=0, ge=0)
+    step0_encoder_invocations: int = Field(default=0, ge=0)
     step0_latency_ms: float = Field(default=0.0, ge=0.0)
     pre_evidence_compute_ms: float = Field(default=0.0, ge=0)
     pm_inference_ms: float = Field(default=0.0, ge=0)

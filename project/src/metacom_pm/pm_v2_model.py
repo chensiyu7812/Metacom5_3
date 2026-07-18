@@ -261,6 +261,8 @@ class PMV2Model:
         dimension_mad_scale: float = 0.75,
         bootstrap_group_key: str = "user_id",
         use_precomputed_embeddings: bool = True,
+        require_precomputed_embeddings: bool = False,
+        semantic_projection_dimensions: int = 48,
         word_features: int = 256,
         char_features: int = 256,
         step0_signal_mode: str = "full",
@@ -328,6 +330,8 @@ class PMV2Model:
             word_features=word_features,
             char_features=char_features,
             use_precomputed_embeddings=use_precomputed_embeddings,
+            require_precomputed_embeddings=require_precomputed_embeddings,
+            semantic_projection_dimensions=semantic_projection_dimensions,
             step0_signal_mode=step0_signal_mode,
         ).fit(unique_states)
         allowed_group_keys = {"user_id", "state_id", "card_id", "semantic_family"}

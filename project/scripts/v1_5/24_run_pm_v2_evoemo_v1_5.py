@@ -18,6 +18,10 @@ from metacom_pm.pm_v2_evoemo import (
     run_pmv2_fixed_evoemo,
 )
 from metacom_pm.pm_v2_external_eval import expected_external_units
+from metacom_pm.pm_v1_5_semantic import (
+    FrozenTransformerSemanticEncoder,
+    semantic_encoder_spec_from_config,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -149,6 +153,13 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    semantic_encoder = None
+    if args.condition in {"pm_v2", "pm_v1_5_transparent_rule_step0"}:
+        # Resolve the exact local snapshot before any paid client can be used.
+        # A missing dependency, cache entry, or hash mismatch is a hard NO-RUN.
+        semantic_encoder = FrozenTransformerSemanticEncoder.load(
+            semantic_encoder_spec_from_config(pm_v2_config)
+        )
     require_paid_run_release(
         pm_v2_config,
         config_path=args.pm_v2_config,
@@ -221,6 +232,15 @@ def main() -> None:
     ):
         raise RuntimeError(
             "study freeze supporter-generation treatment is absent or stale"
+        )
+    if semantic_encoder is not None and (
+        contract.get("semantic_encoder_spec")
+        != semantic_encoder.spec.model_dump(mode="json")
+        or contract.get("semantic_encoder_binding")
+        != semantic_encoder.binding.model_dump(mode="json")
+    ):
+        raise RuntimeError(
+            "study freeze semantic encoder contract is absent or stale"
         )
     if (
         contract.get("fixed_seeker_generation_treatment")
@@ -382,6 +402,7 @@ def main() -> None:
             if cost_match_reference_dir is not None
             else None
         ),
+        semantic_encoder=semantic_encoder,
     )
     print(result)
 

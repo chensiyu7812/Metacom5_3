@@ -15,8 +15,8 @@ from .pm_v2_generation_pilot import require_generation_compatibility_attestation
 
 GENERATION_REVIEW_STAGE = "pm_v2_generation_pilot_semantic_review"
 GENERATION_REVIEW_PROTOCOL = (
-    "pm-v2-generation-pilot-semantic-review-v2-readable-two-independent-"
-    "all-affirmative"
+    "pm-v2-generation-pilot-semantic-review-v3-casewise-surface-only-"
+    "readable-two-independent-all-affirmative"
 )
 MINIMUM_ANNOTATORS = 2
 
@@ -78,9 +78,27 @@ def _pilot_inputs(
 
 
 def _packet_rows(bundle: GeneratedUserBundle) -> list[dict[str, str]]:
-    provider_draft = bundle.provenance.get("provider_draft")
+    if bundle.provenance.get("provider_trace_mode") == "surface_only_casewise":
+        provider_draft = bundle.provenance.get("provider_surface_drafts")
+        provider_surface_fields = (
+            "current_user_text",
+            "dialogue_before_current",
+            "session_summary",
+            "authorized_user_context",
+        )
+    else:
+        provider_draft = bundle.provenance.get("provider_draft")
+        provider_surface_fields = (
+            "current_user_text",
+            "dialogue_before_current",
+            "session_summary",
+            "authorized_user_context",
+            "coverage_rationale",
+        )
     if not isinstance(provider_draft, dict):
-        raise RuntimeError("pilot bundle lacks provider_draft for semantic review")
+        raise RuntimeError(
+            "pilot bundle lacks reconstructable provider surfaces for semantic review"
+        )
     selection = bundle.provenance.get("surface_selection")
     if not isinstance(selection, dict):
         raise RuntimeError("pilot bundle lacks surface-selection provenance")
@@ -148,13 +166,7 @@ def _packet_rows(bundle: GeneratedUserBundle) -> list[dict[str, str]]:
             "provider_surface_draft_json": canonical_json(
                 {
                     field: provider_draft[case_field][field]
-                    for field in (
-                        "current_user_text",
-                        "dialogue_before_current",
-                        "session_summary",
-                        "authorized_user_context",
-                        "coverage_rationale",
-                    )
+                    for field in provider_surface_fields
                 }
             ),
             "evidence_blueprint_sha256": evidence_blueprint_sha256,
@@ -205,9 +217,10 @@ def _manual() -> str:
 case 是否真的符合候选语义族、resource-need regime、item utility、来源类型与
 时间顺序。结构校验 PASS 不能替代本审查。
 
-Provider 只负责自然语言 surface。MP/MS/ME evidence 与 helpful/irrelevant/harmful
-标签、coverage rationale 与 evidence 来自冻结的 deterministic blueprint；provider
-输出中的 rationale 和 memory 占位字段被明确丢弃。`surface_origin=deterministic_fallback` 表示该 case 的 provider surface
+Provider 每次只负责一个 case 的四个自然语言 surface 字段。MP/MS/ME evidence、
+helpful/irrelevant/harmful 标签与 coverage rationale 来自冻结的 deterministic
+blueprint；provider schema 根本不暴露 memory、标签或 rationale 字段。
+`surface_origin=deterministic_fallback` 表示该 case 的 provider surface
 越界后由本地模板替换，仍须按相同标准审查，不能因为来源是 fallback 自动给 1。
 
 操作：审查者 A 阅读中文材料并填写精简的 `reviewer_a.csv`，审查者 B 独立阅读

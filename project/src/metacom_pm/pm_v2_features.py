@@ -4,13 +4,20 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Sequence
 
 import numpy as np
+from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.preprocessing import RobustScaler
 
 from .contracts import MemorySource, StrategyMode, parse_action_id
 from .io import canonical_json, sha256_text
-from .pm_v2_contracts import PMV2State, STRATEGY_FAMILY_IDS, Step0Observation
+from .pm_v2_contracts import (
+    ADVICE_READINESS_IDS,
+    PMV2State,
+    STRATEGY_FAMILY_IDS,
+    Step0Observation,
+)
 from .pm_v1_5_step0 import build_step0_observation
+from .pm_v1_5_semantic import visible_dialogue_state_text
 from .retrieval import DEFAULT_MEMORY_TOP_K
 
 
@@ -33,11 +40,10 @@ ACTION_FEATURE_TOKEN_CLIP = (
 
 
 def state_text(state: PMV2State) -> str:
-    history = "\n".join(f"{turn.role}: {turn.content}" for turn in state.current_session_history)
-    return (
-        f"CURRENT_USER:\n{state.current_user_text}\n\n"
-        f"RECENT_DIALOGUE:\n{history}\n\n"
-        f"SESSION_SUMMARY:\n{state.current_session_summary}"
+    return visible_dialogue_state_text(
+        current_user_text=state.current_user_text,
+        current_session_history=state.current_session_history,
+        current_session_summary=state.current_session_summary,
     )
 
 
@@ -55,9 +61,14 @@ class PMV2FeatureBuilder:
     word_features: int = 256
     char_features: int = 256
     use_precomputed_embeddings: bool = True
+    require_precomputed_embeddings: bool = False
+    semantic_projection_dimensions: int = 48
     step0_signal_mode: Literal["full", "none"] = "full"
     metadata_scaler: RobustScaler = field(default_factory=RobustScaler)
     embedding_dim: int = 0
+    raw_embedding_dim: int = 0
+    semantic_projector: PCA | None = None
+    semantic_encoder_spec_sha256: str | None = None
     train_text_centroid: np.ndarray | None = None
     train_text_radius_p95: float = 0.0
     metadata_reference_low: np.ndarray | None = None
@@ -140,20 +151,38 @@ class PMV2FeatureBuilder:
             strategy_estimated_tokens=state.strategy_estimated_tokens,
         )
 
+    def _semantic_vector(self, state: PMV2State) -> np.ndarray:
+        if not self.use_precomputed_embeddings or not self.raw_embedding_dim:
+            return np.empty(0, dtype=np.float64)
+        if len(state.text_embedding) != self.raw_embedding_dim:
+            raise ValueError(
+                f"state {state.card_id} has embedding dim {len(state.text_embedding)}; "
+                f"expected {self.raw_embedding_dim}"
+            )
+        if self.semantic_encoder_spec_sha256 is not None:
+            semantic = state.provenance.get("semantic_observation") or {}
+            if semantic.get("encoder_spec_sha256") != self.semantic_encoder_spec_sha256:
+                raise RuntimeError(
+                    f"state {state.card_id} semantic encoder binding does not match "
+                    "the fitted PM feature contract"
+                )
+        embedding = np.asarray(state.text_embedding, dtype=np.float64)
+        norm = np.linalg.norm(embedding)
+        embedding = embedding / norm if norm > 0 else embedding
+        if self.semantic_projector is not None:
+            embedding = self.semantic_projector.transform([embedding])[0]
+            projected_norm = np.linalg.norm(embedding)
+            embedding = embedding / projected_norm if projected_norm > 0 else embedding
+        return embedding
+
     def _state_text_vector(self, state: PMV2State) -> np.ndarray:
         text = state_text(state)
         word = self._word.transform([text]).toarray()[0].astype(np.float64)
         char = self._char.transform([text]).toarray()[0].astype(np.float64)
         blocks = [word, char]
-        if self.use_precomputed_embeddings and self.embedding_dim:
-            if len(state.text_embedding) != self.embedding_dim:
-                raise ValueError(
-                    f"state {state.card_id} has embedding dim {len(state.text_embedding)}; "
-                    f"expected {self.embedding_dim}"
-                )
-            emb = np.asarray(state.text_embedding, dtype=np.float64)
-            norm = np.linalg.norm(emb)
-            blocks.append(emb / norm if norm > 0 else emb)
+        semantic = self._semantic_vector(state)
+        if semantic.size:
+            blocks.append(semantic)
         return np.concatenate(blocks)
 
     def _metadata_raw(self, state: PMV2State) -> np.ndarray:
@@ -167,7 +196,19 @@ class PMV2FeatureBuilder:
             # Preserve dimensionality so algorithm comparisons change only the
             # observation, not downstream head capacity.
             return np.asarray(
-                [*values, *([0.0] * (len(SOURCE_ORDER) * 9 + 13))],
+                [
+                    *values,
+                    *(
+                        [0.0]
+                        * (
+                            len(SOURCE_ORDER) * 9
+                            + 2
+                            + len(STRATEGY_FAMILY_IDS)
+                            + len(ADVICE_READINESS_IDS)
+                            + 1
+                        )
+                    ),
+                ],
                 dtype=np.float64,
             )
         for source in SOURCE_ORDER:
@@ -215,8 +256,10 @@ class PMV2FeatureBuilder:
                     float(strategy.family_similarities[family])
                     for family in STRATEGY_FAMILY_IDS
                 ],
-                float(strategy.advice_requested),
-                float(strategy.advice_rejected),
+                *[
+                    float(strategy.advice_readiness_similarities[readiness])
+                    for readiness in ADVICE_READINESS_IDS
+                ],
                 float(strategy.question_present),
             ]
         )
@@ -290,10 +333,52 @@ class PMV2FeatureBuilder:
     def fit(self, states: Sequence[PMV2State]) -> "PMV2FeatureBuilder":
         if not states:
             raise ValueError("cannot fit PM-v2 features without states")
+        populated = [bool(state.text_embedding) for state in states]
+        if any(populated) and not all(populated):
+            raise ValueError("semantic embeddings must be present on all states or none")
         embedding_dims = {len(state.text_embedding) for state in states if state.text_embedding}
         if len(embedding_dims) > 1:
             raise ValueError(f"inconsistent text embedding dimensions: {sorted(embedding_dims)}")
-        self.embedding_dim = next(iter(embedding_dims), 0) if self.use_precomputed_embeddings else 0
+        self.raw_embedding_dim = (
+            next(iter(embedding_dims), 0) if self.use_precomputed_embeddings else 0
+        )
+        if self.require_precomputed_embeddings and self.raw_embedding_dim == 0:
+            raise RuntimeError("reportable PM-v1.5 requires semantic embeddings on every state")
+        bindings = {
+            str((state.provenance.get("semantic_observation") or {}).get("encoder_spec_sha256"))
+            for state in states
+            if state.text_embedding
+        }
+        if self.raw_embedding_dim:
+            if len(bindings) != 1 or "None" in bindings or "" in bindings:
+                raise RuntimeError("semantic state embeddings lack one exact encoder binding")
+            self.semantic_encoder_spec_sha256 = next(iter(bindings))
+            raw = np.vstack(
+                [np.asarray(state.text_embedding, dtype=np.float64) for state in states]
+            )
+            raw /= np.maximum(np.linalg.norm(raw, axis=1, keepdims=True), 1e-12)
+            requested = int(self.semantic_projection_dimensions)
+            maximum = min(len(states) - 1, self.raw_embedding_dim)
+            if self.require_precomputed_embeddings and maximum < requested:
+                raise RuntimeError(
+                    "reportable semantic projection has fewer train states than its "
+                    f"frozen dimension: requested={requested}, maximum={maximum}"
+                )
+            components = min(requested, maximum)
+            if 0 < components < self.raw_embedding_dim:
+                self.semantic_projector = PCA(
+                    n_components=components,
+                    svd_solver="full",
+                    whiten=False,
+                ).fit(raw)
+                self.embedding_dim = components
+            else:
+                self.semantic_projector = None
+                self.embedding_dim = self.raw_embedding_dim
+        else:
+            self.semantic_encoder_spec_sha256 = None
+            self.semantic_projector = None
+            self.embedding_dim = 0
         text = np.vstack([self._state_text_vector(state) for state in states])
         metadata = np.vstack([self._metadata_raw(state) for state in states])
         self.metadata_scaler.fit(metadata)
@@ -421,8 +506,10 @@ class PMV2FeatureBuilder:
                     for family in STRATEGY_FAMILY_IDS
                 },
                 "representation_valid": True,
-                "advice_requested": not step0.strategy.advice_requested,
-                "advice_rejected": not step0.strategy.advice_rejected,
+                "advice_readiness_similarities": {
+                    readiness: -float(value)
+                    for readiness, value in step0.strategy.advice_readiness_similarities.items()
+                },
                 "question_present": not step0.strategy.question_present,
             },
         )
@@ -586,8 +673,12 @@ class PMV2FeatureBuilder:
             "word_features": self.word_features,
             "char_features": self.char_features,
             "use_precomputed_embeddings": self.use_precomputed_embeddings,
+            "require_precomputed_embeddings": self.require_precomputed_embeddings,
+            "semantic_projection_dimensions": self.semantic_projection_dimensions,
             "step0_signal_mode": self.step0_signal_mode,
             "embedding_dim": self.embedding_dim,
+            "raw_embedding_dim": self.raw_embedding_dim,
+            "semantic_encoder_spec_sha256": self.semantic_encoder_spec_sha256,
             "source_similarity": "catalog_centroid_only",
             "inventory_scale_contract": "retrieval_capacity_v1",
             "memory_top_k": {

@@ -164,11 +164,12 @@ def test_m0_correct_by_regime():
     assert compute_m0_correct("M0+R0", "ambiguous") is None
 
 
-def test_rs_correct_uses_regime_label_when_available():
+def test_rs_correct_uses_paired_outcome_not_regime_label():
     utility = {"MP+R0": 0.5, "MP+RS": 0.5}
     assert compute_rs_correct("MP+RS", "strategy_helpful", utility) is True
-    assert compute_rs_correct("MP+R0", "strategy_helpful", utility) is False
-    assert compute_rs_correct("MP+RS", "strategy_harmful", utility) is False
+    assert compute_rs_correct("MP+R0", "strategy_helpful", utility) is True
+    assert compute_rs_correct("MP+R0", "strategy_harmful", utility) is True
+    assert compute_rs_correct("MP+RS", "strategy_harmful", utility) is True
 
 
 def test_rs_correct_falls_back_to_paired_utility_when_regime_ambiguous():

@@ -142,7 +142,7 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 | 阶段 | 状态 | 能否视为论文结果 |
 |---|---|---|
 | clean Strategy Bank / overlap audit | 已完成 | 只能证明数据血缘与已知 overlap 处理 |
-| 1-call generation compatibility pilot | 曾结构性 PASS，但绑定旧 config hash | 否；当前 config 下必须重跑 |
+| generation compatibility pilot | V8 因无关的 180-char rationale cap 失败；V8.1 有 2/9 surface fallback；V8.2 真实运行在 8 次物理尝试后 6 成功、2 失败，已永久 fail-closed；语义路由与 Strategy 标签解耦后的 V8.3 dry-run 已 PASS，但尚无付费批准或真实 PASS | 否；V8.2 失败产物不能复用，V8.3 dry-run 也不是 efficacy/PASS 结果 |
 | automated semantic review | 升级为 102-call v2 control 合同；旧 66-call dry-run 已失效，尚无当前 PASS gate report | 否 |
 | 52-user development generation | 未执行 | 否 |
 | 468 × 16 full action sweep / judging | 未执行 | 否 |
@@ -150,10 +150,12 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 | fixed seeker / study freeze | 未执行 | 否 |
 | seven-condition external generation / judging | 未执行 | 否 |
 
-特别说明：历史 1-call pilot 的 attestation 绑定
-`pm_v1_5.yaml` SHA-256 `372c95dd...579156`，当前 config 为
-`81c1d120...07762`。虽然改动主要发生在后续外部合同，现有 fail-closed 代码仍会把它
-视为 lineage mismatch；因此当前入口不把该 pilot 写成仍然有效的上游 PASS gate。
+特别说明：V8.2 的 cost identity `14ca3b79...406aac` 已真实消费并失败；paid release
+manifest、review artifact index 与物理 attempt ledger 现已统一记录为
+`CONSUMED_FAILED_CLOSED`，不存在仍可使用的批准。语义表示、Strategy value/readiness
+因子和 same-topic decoy 均已改变。V8.3 fresh dry-run identity 为
+`758ae052...8cf3df2`；它仍须接受独立审查和逐阶段精确批准。历史 1-call、V8、V8.1、V8.2 的 attestation 和 hash 均只作失败/诊断记录，不能充当
+V8.3 或正式 52-user generation 的上游 PASS gate。
 
 ## 9. 建议 GPT Pro 优先审查的问题
 
@@ -175,18 +177,19 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 
 ## 10. 推荐阅读顺序
 
-1. `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`；
-2. 本文件（原审查包背景）；
-3. `project/docs/PM_V1_5_CORE_CHAIN_PLAN_ZH.md`（历史设计）；
-4. `project/docs/PM_V1_5_REVIEW_ARTIFACT_INDEX.json`；
-5. `project/configs/pm_v1_5.yaml`；
-6. `project/src/metacom_pm/v1_5_external_claims.py`；
-7. `project/src/metacom_pm/v1_5_external_batched.py`；
-8. `project/scripts/v1_5_create_freeze.py`；
-9. `project/scripts/v1_5/` 与 `project/scripts/v1_5_run_automated_semantic_review.py`；
-10. `project/tests/test_v1_5_*.py`、`test_bounded_retry.py` 和
+1. `project/docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md`（历史失效模式与不可回归合同）；
+2. `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`（当前目标方法）；
+3. 本文件（原审查包背景）；
+4. `project/docs/PM_V1_5_CORE_CHAIN_PLAN_ZH.md`（历史设计）；
+5. `project/docs/PM_V1_5_REVIEW_ARTIFACT_INDEX.json`；
+6. `project/configs/pm_v1_5.yaml`；
+7. `project/src/metacom_pm/v1_5_external_claims.py`；
+8. `project/src/metacom_pm/v1_5_external_batched.py`；
+9. `project/scripts/v1_5_create_freeze.py`；
+10. `project/scripts/v1_5/` 与 `project/scripts/v1_5_run_automated_semantic_review.py`；
+11. `project/tests/test_v1_5_*.py`、`test_bounded_retry.py` 和
    `test_api_retry_classification.py`；
-11. 历史问题背景：`project/docs/PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md` 与 legacy
+12. 历史问题背景：`project/docs/PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md` 与 legacy
     `PM_V1_5_SUPPLEMENTAL_ANALYSIS_ZH.md`，但不要把其中结果当作当前 V1.5 结果。
 
 ## 11. 可直接交给 GPT Pro 的审查任务

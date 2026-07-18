@@ -47,20 +47,32 @@ from .pm_v1_5_step0 import (
     build_step0_observation,
     build_strategy_family_catalog,
 )
+from .pm_v1_5_semantic import (
+    SemanticTextEncoder,
+    encode_visible_state,
+    semantic_centroid,
+    semantic_query_similarity,
+    visible_dialogue_state_text,
+)
 from .pm_v1_5_required_hit import validate_required_hit_preflight
 from .text import estimate_tokens
 
 
 SPACE_RE = re.compile(r"\s+")
 CATALOG_HASH_FEATURES = 64
+LOCAL_FALLBACK_COVERAGE_PLACEHOLDER = (
+    "Local fallback surface; evaluator rationale is compiled separately."
+)
 DATA_GENERATION_CONTRACT_VERSION = (
-    "pm-v2-data-generation-v11-marginal-value-grounded-randomized-evidence"
+    "pm-v2-data-generation-v14-strategy-value-readiness-factorial"
 )
 # The 52 bundles already vary by seed dialogue, user, semantic family, and
 # attempt seed.  A lower temperature prioritizes compliance with the dense
 # cross-field data contract without removing those controlled diversity axes.
 GENERATION_TEMPERATURE = 0.4
 GENERATION_MAX_OUTPUT_TOKENS = 8000
+SURFACE_GENERATION_MAX_OUTPUT_TOKENS = 900
+SURFACE_GENERATION_MAX_REPAIRS = 1
 EVALUATOR_CONTEXT_FIELDS = frozenset(
     {
         "evaluator_context_id",
@@ -68,6 +80,8 @@ EVALUATOR_CONTEXT_FIELDS = frozenset(
         "card_id",
         "regime",
         "needed_memory_sources",
+        "strategy_resource_target",
+        "advice_readiness_target",
         "authorized_user_context",
         "coverage_rationale",
         "memory_annotations",
@@ -240,6 +254,8 @@ def build_evaluator_context_index(
             "state_id",
             "card_id",
             "regime",
+            "strategy_resource_target",
+            "advice_readiness_target",
             "authorized_user_context",
             "coverage_rationale",
             "context_payload_sha256",
@@ -251,6 +267,23 @@ def build_evaluator_context_index(
         if row["regime"] not in {regime.value for regime in ResourceNeedRegime}:
             raise RuntimeError(
                 f"evaluator context row {row_index} has unknown regime {row['regime']!r}"
+            )
+        if row["strategy_resource_target"] not in {"use", "skip", "ambiguous"}:
+            raise RuntimeError("evaluator context has invalid Strategy resource target")
+        if row["advice_readiness_target"] not in {
+            "listen_only",
+            "explore_first",
+            "light_suggestion",
+            "structured_plan",
+            "ambiguous",
+        }:
+            raise RuntimeError("evaluator context has invalid advice-readiness target")
+        expected_strategy_target = strategy_resource_target_for_regime(
+            ResourceNeedRegime(row["regime"])
+        )
+        if row["strategy_resource_target"] != expected_strategy_target:
+            raise RuntimeError(
+                "evaluator Strategy challenge target drifts from the frozen design"
             )
         needed_sources = row["needed_memory_sources"]
         if (
@@ -481,6 +514,38 @@ class GeneratedCaseSurfaceDraft(StrictModel):
     authorized_user_context: str = Field(min_length=1, max_length=250)
     coverage_rationale: str = Field(min_length=1, max_length=180)
 
+
+class GeneratedSurfaceOnlyCaseDraft(StrictModel):
+    """The complete provider contract for one natural-language case surface.
+
+    Evidence, oracle labels, evaluator rationale, IDs, and memory objects are
+    deliberately absent.  They are experimental-design data compiled locally.
+    Keeping a physical request to one family/regime prevents the provider from
+    mixing nine simultaneous topic locks and removes thousands of ignored
+    output tokens from the former bundle schema.
+    """
+
+    current_user_text: str = Field(min_length=1, max_length=220)
+    dialogue_before_current: list[GeneratedDialogueTurnDraft] = Field(
+        min_length=2, max_length=4
+    )
+    session_summary: str = Field(min_length=1, max_length=250)
+    authorized_user_context: str = Field(min_length=1, max_length=250)
+
+
+class GeneratedSurfaceBundleDraft(StrictModel):
+    """Locally assembled nine-case compiler input, never a provider schema."""
+
+    context_only: GeneratedCaseSurfaceDraft
+    profile_needed: GeneratedCaseSurfaceDraft
+    summary_needed: GeneratedCaseSurfaceDraft
+    event_needed: GeneratedCaseSurfaceDraft
+    multi_source_needed: GeneratedCaseSurfaceDraft
+    memory_harmful: GeneratedCaseSurfaceDraft
+    strategy_helpful: GeneratedCaseSurfaceDraft
+    strategy_harmful: GeneratedCaseSurfaceDraft
+    ambiguous: GeneratedCaseSurfaceDraft
+
 class GeneratedNoMemoryNeedCaseDraft(GeneratedCaseSurfaceDraft):
     profile_source: GeneratedProfileDistractorSourceDraft
     summary_source: GeneratedSummaryDistractorSourceDraft
@@ -584,6 +649,21 @@ class GeneratedStateCase(StrictModel):
     summary_memories: list[GeneratedMemory]
     event_memories: list[GeneratedMemory]
     needed_memory_sources: list[MemorySource]
+    # Evaluator-only factorial design variables.  They are never serialized in
+    # PMV2State and are not outcome labels: actual R0/RS marginal utility remains
+    # authoritative after the blinded sweep.
+    strategy_resource_target: SkipJsonSchema[
+        Literal["use", "skip", "ambiguous"]
+    ] = "ambiguous"
+    advice_readiness_target: SkipJsonSchema[
+        Literal[
+            "listen_only",
+            "explore_first",
+            "light_suggestion",
+            "structured_plan",
+            "ambiguous",
+        ]
+    ] = "ambiguous"
     authorized_user_context: str = Field(min_length=1)
     coverage_rationale: str = Field(min_length=1)
 
@@ -731,8 +811,51 @@ GENERATION_CASE_FIELDS: tuple[tuple[str, ResourceNeedRegime], ...] = (
     ("ambiguous", ResourceNeedRegime.AMBIGUOUS),
 )
 
+
+def strategy_resource_target_for_regime(
+    regime: ResourceNeedRegime,
+) -> Literal["use", "skip", "ambiguous"]:
+    if regime is ResourceNeedRegime.STRATEGY_HELPFUL:
+        return "use"
+    if regime is ResourceNeedRegime.STRATEGY_HARMFUL:
+        return "skip"
+    return "ambiguous"
+
+
+def advice_readiness_target_for_case(
+    *, user_id: str, regime: ResourceNeedRegime
+) -> Literal[
+    "listen_only",
+    "explore_first",
+    "light_suggestion",
+    "structured_plan",
+    "ambiguous",
+]:
+    """Cross advice readiness with Strategy-resource challenge assignment.
+
+    For half the users the nominal Strategy-use slot asks only to be heard and
+    the Strategy-skip slot requests a suggestion; the pairing is reversed for
+    the other half.  Thus neither lexical advice request nor listening boundary
+    can serve as the RS label.
+    """
+
+    parity = int(sha256_text(user_id)[:8], 16) % 2
+    if regime is ResourceNeedRegime.STRATEGY_HELPFUL:
+        return "listen_only" if parity == 0 else "light_suggestion"
+    if regime is ResourceNeedRegime.STRATEGY_HARMFUL:
+        return "light_suggestion" if parity == 0 else "listen_only"
+    return "ambiguous"
+
 GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
-    "relocation_loneliness": ("move", "moved", "relocat", "new city", "new place"),
+    # Do not use bare ``move``: phrases such as "move forward" describe a
+    # decision or conflict response, not relocation.
+    "relocation_loneliness": (
+        "moving",
+        "moved",
+        "relocat",
+        "new city",
+        "new place",
+    ),
     "workload_burnout": ("work", "workload", "deadline", "overtime", "burnout"),
     "friendship_distance": ("friend", "friendship", "drifted", "distant"),
     "family_expectations": ("family", "parent", "relative", "expectation"),
@@ -1094,19 +1217,6 @@ def lint_generation_draft(
             if _family_anchor_hits(event_text, target_family):
                 fail(case_field, "ME_harmful_leaks_target_family", target_family)
 
-        if regime is ResourceNeedRegime.STRATEGY_HELPFUL and not re.search(
-            r"\b(?:strategy|reflection|question|reassurance|suggestion|guidance|support)\b",
-            surface.coverage_rationale,
-            re.IGNORECASE,
-        ):
-            fail(case_field, "strategy_helpful_rationale", surface.coverage_rationale)
-        if regime is ResourceNeedRegime.STRATEGY_HARMFUL and not re.search(
-            r"\b(?:premature|directive|intrusive|listen|non-directive|not advice)\b",
-            surface.coverage_rationale,
-            re.IGNORECASE,
-        ):
-            fail(case_field, "strategy_harmful_rationale", surface.coverage_rationale)
-
     if len(normalized_currents) != len(set(normalized_currents)):
         fail("bundle", "unique_current_user_text", "duplicate normalized text")
     return {
@@ -1127,6 +1237,123 @@ def _surface_payload(surface: GeneratedCaseSurfaceDraft) -> dict[str, Any]:
         "session_summary": surface.session_summary,
         "authorized_user_context": surface.authorized_user_context,
         "coverage_rationale": surface.coverage_rationale,
+    }
+
+
+def compiler_surface_from_provider(
+    surface: GeneratedSurfaceOnlyCaseDraft,
+) -> GeneratedCaseSurfaceDraft:
+    """Add only the locally owned transport placeholder for compilation."""
+
+    return GeneratedCaseSurfaceDraft(
+        **surface.model_dump(mode="json"),
+        coverage_rationale=LOCAL_FALLBACK_COVERAGE_PLACEHOLDER,
+    )
+
+
+def assemble_surface_bundle_draft(
+    surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft],
+) -> GeneratedSurfaceBundleDraft:
+    expected = {field for field, _ in GENERATION_CASE_FIELDS}
+    if set(surfaces) != expected:
+        raise ValueError(
+            "surface-only bundle must contain every named case exactly once: "
+            f"missing={sorted(expected - set(surfaces))}, "
+            f"extra={sorted(set(surfaces) - expected)}"
+        )
+    return GeneratedSurfaceBundleDraft.model_validate(
+        {
+            field: compiler_surface_from_provider(surfaces[field]).model_dump(
+                mode="json"
+            )
+            for field, _ in GENERATION_CASE_FIELDS
+        }
+    )
+
+
+def lint_generation_surface_case(
+    *,
+    case_field: str,
+    regime: ResourceNeedRegime,
+    family: str,
+    forbidden_families: Sequence[str],
+    surface: GeneratedSurfaceOnlyCaseDraft,
+    prior_current_user_texts: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Validate one paid surface without reading evidence or outcome labels."""
+
+    if case_field not in {field for field, _ in GENERATION_CASE_FIELDS}:
+        raise ValueError(f"unknown generation case field: {case_field}")
+    if family not in GENERATION_FAMILY_ANCHORS:
+        raise ValueError(f"unknown semantic family: {family}")
+    unknown = sorted(set(forbidden_families) - set(GENERATION_FAMILY_ANCHORS))
+    if unknown:
+        raise ValueError(f"unknown forbidden semantic families: {unknown}")
+    errors: list[dict[str, str]] = []
+    blob = f"{surface.current_user_text} {surface.session_summary}"
+    if not _family_anchor_hits(blob, family):
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "current_family_anchor",
+                "detail": family,
+            }
+        )
+    for other in forbidden_families:
+        if other != family and _family_anchor_hits(blob, other):
+            errors.append(
+                {
+                    "case_field": case_field,
+                    "check": "current_leaks_other_family",
+                    "detail": str(other),
+                }
+            )
+    turns = surface.dialogue_before_current
+    if turns[-1].role != "assistant":
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "dialogue_must_end_with_assistant",
+                "detail": turns[-1].role,
+            }
+        )
+    if any(
+        turns[index - 1].role == turns[index].role
+        for index in range(1, len(turns))
+    ):
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "dialogue_roles_must_alternate",
+                "detail": "non-alternating roles",
+            }
+        )
+    normalized_current = normalize_text(surface.current_user_text)
+    if any(normalize_text(turn.content) == normalized_current for turn in turns):
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "dialogue_repeats_current_user_text",
+                "detail": normalized_current,
+            }
+        )
+    if normalized_current in {
+        normalize_text(value) for value in prior_current_user_texts
+    }:
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "unique_current_user_text",
+                "detail": normalized_current,
+            }
+        )
+    return {
+        "status": "PASS" if not errors else "FAIL",
+        "protocol": DATA_GENERATION_CONTRACT_VERSION,
+        "case_field": case_field,
+        "regime": regime.value,
+        "semantic_family": family,
+        "errors": errors,
     }
 
 
@@ -1195,10 +1422,10 @@ def _fallback_generation_surface(
             f"Use only facts stated in the visible dialogue about {topic}; do not "
             "infer hidden events or preferences."
         ),
-        # Backward-compatible provider-schema placeholder.  The compiler
-        # replaces this field with the frozen rationale below, just as it
-        # ignores provider-authored memory/oracle slots.
-        coverage_rationale=_deterministic_coverage_rationale(regime),
+        # Backward-compatible provider-schema placeholder only.  Keep the
+        # evaluator-only rationale out of this provider-facing transport type:
+        # the final GeneratedStateCase receives the frozen rationale directly.
+        coverage_rationale=LOCAL_FALLBACK_COVERAGE_PLACEHOLDER,
     )
 
 
@@ -1243,8 +1470,9 @@ def _deterministic_coverage_rationale(regime: ResourceNeedRegime) -> str:
             "reassurance, a question, or a light suggestion; it need not be a plan."
         ),
         ResourceNeedRegime.STRATEGY_HARMFUL: (
-            "The user asks to be heard without advice, so directive cards are harmful; "
-            "listening cards may still help because RS and directiveness are separate."
+            "This is a preregistered Strategy-skip challenge, independent of whether "
+            "the user asks for a suggestion or listening; blinded paired R0/RS "
+            "outcomes, not request wording, determine realized marginal value."
         ),
         ResourceNeedRegime.AMBIGUOUS: (
             "The current evidence does not clearly separate listening from one small "
@@ -1311,31 +1539,6 @@ def lint_generation_surfaces(
                     "detail": normalized_current,
                 }
             )
-        if regime is ResourceNeedRegime.STRATEGY_HELPFUL and not re.search(
-            r"\b(?:structured|step|plan|guidance|framework|what to do|next)\b",
-            surface.current_user_text,
-            re.IGNORECASE,
-        ):
-            errors.append(
-                {
-                    "case_field": case_field,
-                    "check": "strategy_helpful_user_request",
-                    "detail": surface.current_user_text,
-                }
-            )
-        if regime is ResourceNeedRegime.STRATEGY_HARMFUL and not re.search(
-            r"\b(?:listen|hear me|do not give|don't give|without advice|not advice|"
-            r"not ready for advice|just need)\b",
-            surface.current_user_text,
-            re.IGNORECASE,
-        ):
-            errors.append(
-                {
-                    "case_field": case_field,
-                    "check": "strategy_harmful_user_boundary",
-                    "detail": surface.current_user_text,
-                }
-            )
     if len(normalized_currents) != len(set(normalized_currents)):
         errors.append(
             {
@@ -1354,7 +1557,7 @@ def lint_generation_surfaces(
 
 def select_generation_surfaces(
     *,
-    draft: GeneratedBundleDraft,
+    draft: GeneratedBundleDraft | GeneratedSurfaceBundleDraft,
     semantic_families: Sequence[str],
     regimes: Sequence[ResourceNeedRegime],
 ) -> tuple[dict[str, GeneratedCaseSurfaceDraft], dict[str, Any]]:
@@ -1468,6 +1671,26 @@ def _blueprint_source_text(family: str, source: MemorySource) -> str:
     )
 
 
+def _semantic_decoy_source_raw(family: str, source: MemorySource) -> str:
+    """Same-topic but non-personal evidence used to break source-label leakage."""
+
+    topic = GENERATION_FAMILY_TOPICS[family]
+    if source is MemorySource.MP:
+        return (
+            f"enjoys reading general news stories about {topic}, while saying those "
+            "stories do not describe their own circumstances"
+        )
+    if source is MemorySource.MS:
+        return (
+            f"has occasionally discussed general news about {topic}, explicitly as "
+            "an outside topic rather than a recurring personal pattern"
+        )
+    return (
+        f"once read a news story about {topic} and explicitly said it was unrelated "
+        "to their own experience"
+    )
+
+
 def generation_evidence_blueprint_hash() -> str:
     return sha256_text(
         canonical_json(
@@ -1481,6 +1704,13 @@ def generation_evidence_blueprint_hash() -> str:
                 "sources": {
                     family: {
                         source.value: _blueprint_source_raw(family, source)
+                        for source in MemorySource
+                    }
+                    for family in GENERATION_FAMILY_TOPICS
+                },
+                "semantic_decoys": {
+                    family: {
+                        source.value: _semantic_decoy_source_raw(family, source)
                         for source in MemorySource
                     }
                     for family in GENERATION_FAMILY_TOPICS
@@ -1643,7 +1873,7 @@ def _compile_source_draft(
 
 def compile_generation_draft(
     *,
-    draft: GeneratedBundleDraft,
+    draft: GeneratedBundleDraft | GeneratedSurfaceBundleDraft,
     seed_dialogue: str,
     user_id: str,
     semantic_families: Sequence[str],
@@ -1651,10 +1881,9 @@ def compile_generation_draft(
 ) -> GeneratedUserBundle:
     """Compile natural surfaces plus deterministic evidence into one bundle.
 
-    Provider-authored memory slots remain in the raw trace for audit, but never
-    determine oracle evidence or labels.  Invalid natural-language surfaces are
-    replaced case-by-case by a recorded deterministic fallback and still face
-    the independent human semantic gate.
+    Legacy provider-authored memory slots, when present, remain in the raw trace
+    for audit but never determine oracle evidence or labels.  The V14 path uses
+    only provider-authored case surfaces and compiles every other field locally.
     """
 
     assignments = generation_case_family_assignments(semantic_families, regimes)
@@ -1791,18 +2020,21 @@ def compile_generation_draft(
                         raw_override=raw,
                     )
                 )
-                first_off_topic = distractor_assignments[case_field][source_field]
-                second_off_topic = next(
-                    family
-                    for family in semantic_families
-                    if family not in {target_family, first_off_topic}
-                )
+                # The harmful challenge also has no needed source.  Preserve the
+                # unsafe contrast item above, but pair it with the same-topic,
+                # explicitly non-personal decoy used by every other negative
+                # source.  Otherwise the Step-0 centroid would still encode a
+                # special memory_harmful signature through the old off-topic
+                # distractor branch.
                 items.append(
                     blueprint_memory(
                         slot_index=1,
-                        role="distractor",
-                        family=second_off_topic,
+                        role="semantic_decoy",
+                        family=target_family,
                         utility="irrelevant",
+                        raw_override=_semantic_decoy_source_raw(
+                            target_family, source
+                        ),
                         sensitive=source is MemorySource.ME,
                     )
                 )
@@ -1816,27 +2048,38 @@ def compile_generation_draft(
                             utility="helpful",
                         )
                     )
-                first_off_topic = distractor_assignments[case_field][source_field]
-                items.append(
-                    blueprint_memory(
-                        slot_index=(1 if source in needed_by_regime[regime] else 0),
-                        role="distractor",
-                        family=first_off_topic,
-                        utility="irrelevant",
-                        sensitive=source is MemorySource.ME,
-                    )
-                )
-                if source not in needed_by_regime[regime]:
-                    second_off_topic = next(
-                        family
-                        for family in semantic_families
-                        if family not in {target_family, first_off_topic}
-                    )
+                    first_off_topic = distractor_assignments[case_field][source_field]
                     items.append(
                         blueprint_memory(
                             slot_index=1,
-                            role="distractor_secondary",
-                            family=second_off_topic,
+                            role="distractor",
+                            family=first_off_topic,
+                            utility="irrelevant",
+                            sensitive=source is MemorySource.ME,
+                        )
+                    )
+                else:
+                    # Every non-needed source still has one same-topic, explicitly
+                    # non-personal item.  Source-centroid relevance therefore cannot
+                    # become a near-oracle indicator of the locally assigned source
+                    # target, while actual item utility remains auditable.
+                    items.append(
+                        blueprint_memory(
+                            slot_index=0,
+                            role="semantic_decoy",
+                            family=target_family,
+                            utility="irrelevant",
+                            raw_override=_semantic_decoy_source_raw(
+                                target_family, source
+                            ),
+                        )
+                    )
+                    first_off_topic = distractor_assignments[case_field][source_field]
+                    items.append(
+                        blueprint_memory(
+                            slot_index=1,
+                            role="distractor",
+                            family=first_off_topic,
                             utility="irrelevant",
                             sensitive=source is MemorySource.ME,
                         )
@@ -1887,6 +2130,12 @@ def compile_generation_draft(
                 summary_memories=memory_pools["summary_memories"],
                 event_memories=memory_pools["event_memories"],
                 needed_memory_sources=needed_by_regime[regime],
+                strategy_resource_target=strategy_resource_target_for_regime(
+                    regime
+                ),
+                advice_readiness_target=advice_readiness_target_for_case(
+                    user_id=user_id, regime=regime
+                ),
                 authorized_user_context=authorized_user_context,
                 coverage_rationale=_deterministic_coverage_rationale(regime),
             )
@@ -1923,19 +2172,29 @@ def compile_generation_draft(
             "surface_selection": surface_selection,
             "session_design_offset": design_offset,
             "case_design_positions": design_positions,
+            "provider_surface_only": isinstance(
+                draft, GeneratedSurfaceBundleDraft
+            ),
+            "provider_memory_slots_present": isinstance(
+                draft, GeneratedBundleDraft
+            ),
             "provider_memory_slots_ignored": True,
             "provider_coverage_rationale_ignored": True,
             "provider_memory_slots_sha256": sha256_text(
                 canonical_json(
-                    {
-                        case_field: {
-                            source_field: getattr(
-                                getattr(draft, case_field), source_field
-                            ).model_dump(mode="json")
-                            for source_field, _ in SOURCE_DRAFT_FIELDS
+                    (
+                        {
+                            case_field: {
+                                source_field: getattr(
+                                    getattr(draft, case_field), source_field
+                                ).model_dump(mode="json")
+                                for source_field, _ in SOURCE_DRAFT_FIELDS
+                            }
+                            for case_field, _ in GENERATION_CASE_FIELDS
                         }
-                        for case_field, _ in GENERATION_CASE_FIELDS
-                    }
+                        if isinstance(draft, GeneratedBundleDraft)
+                        else {}
+                    )
                 )
             ),
             "evidence_blueprint_sha256": generation_evidence_blueprint_hash(),
@@ -1995,15 +2254,161 @@ REGIME_INSTRUCTIONS: dict[ResourceNeedRegime, str] = {
         "question, or a suggestion; it is not synonymous with a plan."
     ),
     ResourceNeedRegime.STRATEGY_HARMFUL: (
-        "Treat this legacy slot as advice_harmful: directive suggestions would be "
-        "premature, while listening/reflection cards may still help. The surface must "
-        "separate advice readiness from Strategy RAG marginal value."
+        "This legacy-named slot is the Strategy-resource skip challenge. Do not infer "
+        "whether the user wants advice from this slot name; advice readiness is an "
+        "independent factor below. Actual blinded R0/RS outcomes remain authoritative."
     ),
     ResourceNeedRegime.AMBIGUOUS: (
         "Several low-cost actions should be genuinely competitive; do not create an "
         "obvious high-resource winner."
     ),
 }
+
+
+def generation_case_messages(
+    *,
+    seed_dialogue: str,
+    user_id: str,
+    case_field: str,
+    regime: ResourceNeedRegime,
+    semantic_family: str,
+    forbidden_families: Sequence[str],
+    repair: bool = False,
+) -> list[dict[str, str]]:
+    """Build a fully precomputable one-case, surface-only provider request."""
+
+    expected_regime = dict(GENERATION_CASE_FIELDS).get(case_field)
+    if expected_regime is None or expected_regime is not regime:
+        raise ValueError(
+            f"case/regime mismatch: {case_field} != {regime.value}"
+        )
+    if semantic_family not in GENERATION_FAMILY_ANCHORS:
+        raise ValueError(f"unknown semantic family: {semantic_family}")
+    forbidden = [
+        family for family in forbidden_families if family != semantic_family
+    ]
+    if len(forbidden) != len(set(forbidden)) or any(
+        family not in GENERATION_FAMILY_ANCHORS for family in forbidden
+    ):
+        raise ValueError("forbidden semantic families are invalid or duplicated")
+    required_anchors = ", ".join(
+        GENERATION_FAMILY_ANCHORS[semantic_family]
+    )
+    forbidden_anchors = ", ".join(
+        anchor
+        for family in forbidden
+        for anchor in GENERATION_FAMILY_ANCHORS[family]
+    )
+    repair_text = (
+        "This is the one pre-authorized repair attempt for the same case. The "
+        "first surface failed deterministic topic/structure lint. Rewrite all "
+        "four fields from scratch and obey every literal lock below."
+        if repair
+        else "This is the initial surface attempt for this case."
+    )
+    strategy_resource_target = strategy_resource_target_for_regime(regime)
+    advice_readiness_target = advice_readiness_target_for_case(
+        user_id=user_id, regime=regime
+    )
+    readiness_instruction = {
+        "listen_only": (
+            "The final user turn naturally asks to be heard or understood without "
+            "suggestions right now."
+        ),
+        "explore_first": (
+            "The final user turn asks to explore or understand the feeling before "
+            "deciding what to do."
+        ),
+        "light_suggestion": (
+            "The final user turn naturally asks for one small idea or low-pressure "
+            "suggestion, not a multi-step plan."
+        ),
+        "structured_plan": (
+            "The final user turn clearly asks for a concrete multi-step plan."
+        ),
+        "ambiguous": (
+            "Do not force an explicit advice request or refusal; leave the preferred "
+            "support style naturally uncertain."
+        ),
+    }[advice_readiness_target]
+    system = (
+        "You create one privacy-safe synthetic emotional-support conversation "
+        "surface. Return only the strict GeneratedSurfaceOnlyCaseDraft JSON. "
+        "Never create memory, evidence, labels, rationale, IDs, or a response "
+        "to the user; those are compiled locally."
+    )
+    user = f"""SEED DIALOGUE (style inspiration only; do not copy its topic or phrases)
+{seed_dialogue}
+
+LOCAL USER BINDING (never output): {user_id}
+CASE SLOT (never mention this label): {case_field}
+TARGET FAMILY: {semantic_family}
+TARGET REGIME: {regime.value}
+STRATEGY RESOURCE CHALLENGE (local design, not a word to output): {strategy_resource_target}
+ADVICE READINESS TARGET (independent of resource challenge): {advice_readiness_target}
+{repair_text}
+
+SEMANTIC REQUIREMENT
+{REGIME_INSTRUCTIONS[regime]}
+
+HARD TOPIC LOCK
+- current_user_text plus session_summary MUST contain at least one literal target
+  anchor from: [{required_anchors}].
+- They MUST NOT contain any word, phrase, or concrete situation from the other
+  assigned families, especially: [{forbidden_anchors}].
+- Stay on {GENERATION_FAMILY_TOPICS[semantic_family]} only. Do not explain it
+  through school, work, moving, sleep, relationships, money, or another life
+  domain unless that domain is itself the named target above.
+
+SURFACE RULES
+1. dialogue_before_current contains 2-4 earlier turns, alternates roles, and ends
+   with assistant. It must not repeat or answer current_user_text.
+2. current_user_text is the final user turn and must be natural, specific, and
+   understandable from the earlier dialogue.
+3. session_summary and authorized_user_context may summarize only visible facts.
+4. Advice readiness is independent of the Strategy-resource challenge:
+   {readiness_instruction}
+   Never use a request/refusal keyword as evidence that Strategy RAG itself has
+   marginal value. The later blinded R0/RS sweep determines that outcome.
+5. Avoid diagnosis, crisis, self-harm, treatment instructions, benchmark names,
+   action codes, resource labels, and meta-language such as regime or memory.
+6. Before returning, check every output word against the hard topic lock.
+Return exactly GeneratedSurfaceOnlyCaseDraft."""
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def surface_generation_contract_hash() -> str:
+    messages = generation_case_messages(
+        seed_dialogue="<SEED_DIALOGUE>",
+        user_id="<USER_ID>",
+        case_field="context_only",
+        regime=ResourceNeedRegime.CONTEXT_ONLY,
+        semantic_family="relocation_loneliness",
+        forbidden_families=["self_confidence", "sleep_disruption"],
+        repair=False,
+    )
+    repair_messages = generation_case_messages(
+        seed_dialogue="<SEED_DIALOGUE>",
+        user_id="<USER_ID>",
+        case_field="context_only",
+        regime=ResourceNeedRegime.CONTEXT_ONLY,
+        semantic_family="relocation_loneliness",
+        forbidden_families=["self_confidence", "sleep_disruption"],
+        repair=True,
+    )
+    return sha256_text(
+        canonical_json(
+            {
+                "version": DATA_GENERATION_CONTRACT_VERSION,
+                "initial_messages": messages,
+                "repair_messages": repair_messages,
+                "response_schema": GeneratedSurfaceOnlyCaseDraft.model_json_schema(),
+                "temperature": GENERATION_TEMPERATURE,
+                "max_output_tokens": SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+                "maximum_repairs_per_case": SURFACE_GENERATION_MAX_REPAIRS,
+            }
+        )
+    )
 
 
 def generation_messages(
@@ -2019,6 +2424,25 @@ def generation_messages(
         f"- {family}: include at least one literal topic anchor such as "
         f"{', '.join(GENERATION_FAMILY_ANCHORS[family][:3])}"
         for family in families
+    )
+    topic_lock_text = "\n".join(
+        "- {case}: ONLY topic={target}. REQUIRED in current_user_text or "
+        "session_summary: at least one of [{required}]. FORBIDDEN in "
+        "current_user_text and session_summary: every word or idea associated "
+        "with the other assigned topics, especially [{forbidden}].".format(
+            case=case_field,
+            target=family_assignments[case_field],
+            required=", ".join(
+                GENERATION_FAMILY_ANCHORS[family_assignments[case_field]]
+            ),
+            forbidden=", ".join(
+                anchor
+                for other_family in families
+                if other_family != family_assignments[case_field]
+                for anchor in GENERATION_FAMILY_ANCHORS[other_family]
+            ),
+        )
+        for case_field, _ in GENERATION_CASE_FIELDS
     )
     regime_text = "\n".join(
         f"- {field_name}: only topic={family_assignments[field_name]}. "
@@ -2049,6 +2473,9 @@ listed families in the same current turn, prior dialogue, or session summary.
 NAMED CASES AND FROZEN FAMILY ASSIGNMENTS
 {regime_text}
 
+PER-CASE TOPIC LOCKS (hard validation; violating one invalidates the whole call)
+{topic_lock_text}
+
 SURFACE AND TIME RULES
 1. dialogue_before_current contains only turns that occurred before current_user_text.
    It alternates roles, ends with assistant, and never repeats current_user_text. Do not
@@ -2062,11 +2489,10 @@ SURFACE AND TIME RULES
    one-topic surface.
 3. Fill multi_source unique-contribution strings concisely; the compiler replaces them
    with frozen source-specific contributions.
-4. In strategy_helpful, create a turn where an appropriate ESC support card can add
-   value beyond ordinary base empathy; an explicit request for steps is sufficient but
-   not required. In the legacy strategy_harmful slot, current_user_text must ask to be
-   heard without directive advice, while remaining compatible with a listening or
-   reflection card. Advice readiness and Strategy RAG are separate.
+4. Strategy-resource marginal value and advice readiness are independent factors.
+   Never make an advice-request phrase synonymous with RS usefulness, or a listening
+   boundary synonymous with R0. The casewise V14 surface contract, not this legacy
+   bundle transport, is authoritative for their counterbalanced assignments.
 5. In memory_harmful, the user's current correction must be explicit in
    current_user_text or prior visible dialogue. session_summary and authorized context
    may summarize visible facts but must never introduce a hidden update.
@@ -2075,6 +2501,10 @@ SURFACE AND TIME RULES
    'context only is enough', or 'regime'. The three occurrences of each family
    should be different situations, not paraphrases.
 7. Use privacy-safe ordinary life events. Output no checklist and no extra JSON keys.
+8. Before returning JSON, silently verify all nine current_user_text + session_summary
+   pairs against the per-case topic locks. Rewrite any pair that contains an anchor or
+   concrete situation from another assigned family. Do not reuse a dialogue or summary
+   across named cases, even when the emotional tone is similar.
 Return strict JSON matching GeneratedBundleDraft."""
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
@@ -2146,6 +2576,8 @@ def validate_successful_generation_trace(
     """Require reconstructable provider output and deterministic compilation."""
 
     provenance = bundle.provenance
+    if provenance.get("provider_trace_mode") == "surface_only_casewise":
+        return _validate_successful_surface_generation_trace(bundle)
     draft = provenance.get("provider_draft")
     response = provenance.get("provider_response")
     if not isinstance(draft, dict):
@@ -2291,6 +2723,132 @@ def validate_successful_generation_trace(
         "provider_oracle_evidence_used": False,
         "provider_oracle_rationale_used": False,
         "evidence_blueprint_sha256": generation_evidence_blueprint_hash(),
+    }
+
+
+def _validate_successful_surface_generation_trace(
+    bundle: GeneratedUserBundle,
+) -> dict[str, Any]:
+    """Replay all accepted one-case responses through the V14 compiler."""
+
+    provenance = bundle.provenance
+    raw_drafts = provenance.get("provider_surface_drafts")
+    raw_responses = provenance.get("provider_surface_responses")
+    compiler_payload = provenance.get("compiler_surface_draft")
+    expected_fields = {field for field, _ in GENERATION_CASE_FIELDS}
+    if (
+        not isinstance(raw_drafts, dict)
+        or not isinstance(raw_responses, dict)
+        or set(raw_drafts) != expected_fields
+        or set(raw_responses) != expected_fields
+    ):
+        raise RuntimeError(
+            f"bundle {bundle.user_id} casewise provider trace is incomplete"
+        )
+    parsed_surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft] = {}
+    for case_field, _ in GENERATION_CASE_FIELDS:
+        parsed = GeneratedSurfaceOnlyCaseDraft.model_validate(
+            raw_drafts[case_field]
+        )
+        response = raw_responses[case_field]
+        try:
+            content = response["choices"][0]["message"]["content"]
+            reconstructed = json.loads(content) if isinstance(content, str) else None
+        except (KeyError, IndexError, TypeError, json.JSONDecodeError):
+            reconstructed = None
+        if reconstructed != parsed.model_dump(mode="json"):
+            raise RuntimeError(
+                f"bundle {bundle.user_id} raw response does not reconstruct "
+                f"surface {case_field}"
+            )
+        parsed_surfaces[case_field] = parsed
+    compiler_draft = assemble_surface_bundle_draft(parsed_surfaces)
+    compiler_json = compiler_draft.model_dump(mode="json")
+    if compiler_json != compiler_payload:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} compiler surface draft is stale"
+        )
+    draft_sha256 = sha256_text(canonical_json(compiler_json))
+    if provenance.get("generation_draft_sha256") != draft_sha256:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} compiler surface draft hash mismatch"
+        )
+    response_sha256 = sha256_text(canonical_json(raw_responses))
+    if provenance.get("provider_response_sha256") != response_sha256:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} casewise provider response hash mismatch"
+        )
+    lint = provenance.get("deterministic_draft_lint")
+    selection = provenance.get("surface_selection")
+    if not isinstance(lint, dict) or lint.get("status") != "PASS":
+        raise RuntimeError(f"bundle {bundle.user_id} lacks a passing compiled lint")
+    if not isinstance(selection, dict):
+        raise RuntimeError(
+            f"bundle {bundle.user_id} lacks surface-selection provenance"
+        )
+    assignments = provenance.get("case_family_assignments")
+    if not isinstance(assignments, dict) or set(assignments) != expected_fields:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} lacks frozen family assignments"
+        )
+    ordered_families: list[str] = []
+    for case_field, _ in GENERATION_CASE_FIELDS:
+        family = str(assignments[case_field])
+        if family not in ordered_families:
+            ordered_families.append(family)
+    _, rerun_selection = select_generation_surfaces(
+        draft=compiler_draft,
+        semantic_families=ordered_families,
+        regimes=list(ResourceNeedRegime),
+    )
+    if canonical_json(rerun_selection) != canonical_json(selection):
+        raise RuntimeError(
+            f"bundle {bundle.user_id} stored surface selection is stale"
+        )
+    recompiled = compile_generation_draft(
+        draft=compiler_draft,
+        seed_dialogue="<trace-replay-seed>",
+        user_id=bundle.user_id,
+        semantic_families=ordered_families,
+        regimes=list(ResourceNeedRegime),
+    )
+    observed = bundle.model_dump(mode="json")
+    replayed = recompiled.model_dump(mode="json")
+    for field in ("profile_summary", "stable_preferences", "boundaries", "cases"):
+        if canonical_json(observed[field]) != canonical_json(replayed[field]):
+            raise RuntimeError(
+                f"bundle {bundle.user_id} deterministic compiler output "
+                f"drifted: {field}"
+            )
+    if provenance.get("provider_memory_slots_present") is not False:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} surface-only trace claims provider memory"
+        )
+    if provenance.get("provider_memory_slots_ignored") is not True:
+        raise RuntimeError(f"bundle {bundle.user_id} trusts provider oracle evidence")
+    if provenance.get("provider_coverage_rationale_ignored") is not True:
+        raise RuntimeError(f"bundle {bundle.user_id} trusts provider oracle rationale")
+    if provenance.get("evidence_blueprint_sha256") != generation_evidence_blueprint_hash():
+        raise RuntimeError(f"bundle {bundle.user_id} evidence blueprint is stale")
+    if provenance.get("generation_structure") != DATA_GENERATION_CONTRACT_VERSION:
+        raise RuntimeError(
+            f"bundle {bundle.user_id} was not generated under the current contract"
+        )
+    return {
+        "status": "PASS",
+        "generation_structure": DATA_GENERATION_CONTRACT_VERSION,
+        "provider_draft_sha256": sha256_text(canonical_json(raw_drafts)),
+        "provider_response_sha256": response_sha256,
+        "provider_response_reconstructs_draft": True,
+        "deterministic_bundle_recompiled": True,
+        "deterministic_draft_lint_status": lint["status"],
+        "provider_surface_fallback_case_count": int(
+            selection["fallback_case_count"]
+        ),
+        "provider_oracle_evidence_used": False,
+        "provider_oracle_rationale_used": False,
+        "evidence_blueprint_sha256": generation_evidence_blueprint_hash(),
+        "accepted_casewise_provider_calls": len(expected_fields),
     }
 
 
@@ -2448,6 +3006,97 @@ def generate_user_bundle(
         client.close()
 
 
+def compile_surface_only_user_bundle(
+    *,
+    surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft],
+    accepted_calls: dict[str, CallResult],
+    accepted_messages: dict[str, list[dict[str, str]]],
+    accepted_attempt_kinds: dict[str, Literal["initial", "repair"]],
+    seed_dialogue: str,
+    user_id: str,
+    semantic_families: Sequence[str],
+    regimes: Sequence[ResourceNeedRegime],
+    generator_model: str,
+    generator_family: str | None,
+) -> GeneratedUserBundle:
+    """Compile nine accepted provider surfaces and bind every paid trace."""
+
+    expected_fields = {field for field, _ in GENERATION_CASE_FIELDS}
+    for name, value in (
+        ("surfaces", surfaces),
+        ("accepted_calls", accepted_calls),
+        ("accepted_messages", accepted_messages),
+        ("accepted_attempt_kinds", accepted_attempt_kinds),
+    ):
+        if set(value) != expected_fields:
+            raise ValueError(
+                f"{name} must cover every named case exactly once"
+            )
+    compiler_draft = assemble_surface_bundle_draft(surfaces)
+    bundle = compile_generation_draft(
+        draft=compiler_draft,
+        seed_dialogue=seed_dialogue,
+        user_id=user_id,
+        semantic_families=semantic_families,
+        regimes=regimes,
+    )
+    selection = bundle.provenance["surface_selection"]
+    if int(selection["fallback_case_count"]) != 0:
+        raise RuntimeError(
+            "accepted surface-only bundle unexpectedly required deterministic "
+            f"fallback: {selection['fallback_cases']}"
+        )
+    aggregate_usage = {
+        key: sum(int(call.usage[key]) for call in accepted_calls.values())
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+    }
+    raw_drafts = {
+        field: surfaces[field].model_dump(mode="json")
+        for field, _ in GENERATION_CASE_FIELDS
+    }
+    raw_responses = {
+        field: accepted_calls[field].raw_response
+        for field, _ in GENERATION_CASE_FIELDS
+    }
+    compiler_payload = compiler_draft.model_dump(mode="json")
+    bundle.provenance.update(
+        {
+            "provider_trace_mode": "surface_only_casewise",
+            "generator_model": generator_model,
+            "generator_family": generator_family,
+            "request_hash": sha256_text(
+                canonical_json(
+                    {
+                        field: accepted_calls[field].request_hash
+                        for field, _ in GENERATION_CASE_FIELDS
+                    }
+                )
+            ),
+            "messages_hash": sha256_text(
+                canonical_json(
+                    {
+                        field: accepted_messages[field]
+                        for field, _ in GENERATION_CASE_FIELDS
+                    }
+                )
+            ),
+            "reported_usage": aggregate_usage,
+            "provider_surface_drafts": raw_drafts,
+            "provider_surface_responses": raw_responses,
+            "provider_surface_attempt_kinds": dict(accepted_attempt_kinds),
+            "compiler_surface_draft": compiler_payload,
+            "generation_draft_sha256": sha256_text(
+                canonical_json(compiler_payload)
+            ),
+            "provider_response_sha256": sha256_text(
+                canonical_json(raw_responses)
+            ),
+        }
+    )
+    validate_successful_generation_trace(bundle)
+    return bundle
+
+
 def _catalog_summary(
     *,
     source: MemorySource,
@@ -2455,6 +3104,7 @@ def _catalog_summary(
     query_text: str,
     session_index: int,
     n_features: int = CATALOG_HASH_FEATURES,
+    semantic_encoder: SemanticTextEncoder | None = None,
 ) -> ObservableSourceSummary:
     statistics = build_deployable_catalog_statistics(
         texts=[memory.text for memory in memories],
@@ -2462,11 +3112,24 @@ def _catalog_summary(
         session_index=session_index,
         n_features=n_features,
     )
-    similarity = source_catalog_similarity(
-        query_text,
-        statistics["catalog_fingerprint"],
-        n_features=n_features,
-    )
+    if semantic_encoder is not None and memories:
+        centroid = semantic_centroid(
+            semantic_encoder, [memory.text for memory in memories]
+        )
+        similarity = semantic_query_similarity(
+            semantic_encoder, query_text, centroid
+        )
+        representation_valid = True
+    else:
+        # Hashing is retained only as a non-reportable compatibility path for
+        # legacy artifacts and unit tests.  It is never accepted by the frozen
+        # V1.5 training config, which requires the semantic encoder binding.
+        similarity = source_catalog_similarity(
+            query_text,
+            statistics["catalog_fingerprint"],
+            n_features=n_features,
+        )
+        representation_valid = bool(statistics["available"])
     return ObservableSourceSummary(
         available=bool(statistics["available"]),
         count=int(statistics["count"]),
@@ -2475,7 +3138,7 @@ def _catalog_summary(
         max_age_sessions=statistics["max_age_sessions"],
         estimated_tokens=int(statistics["estimated_tokens"]),
         query_similarity_mean=similarity,
-        representation_valid=bool(statistics["available"]),
+        representation_valid=representation_valid,
         catalog_embedding=list(statistics["catalog_fingerprint"]),
     )
 
@@ -2489,10 +3152,12 @@ def case_to_state(
     strategy_estimated_tokens: int,
     strategy_family_catalog: StrategyFamilyCatalog | None = None,
     bundle_provenance: dict[str, Any] | None = None,
+    semantic_encoder: SemanticTextEncoder | None = None,
 ) -> PMV2State:
-    query = "\n".join(
-        [case.current_user_text, case.session_summary]
-        + [turn.content for turn in case.recent_dialogue]
+    query = visible_dialogue_state_text(
+        current_user_text=case.current_user_text,
+        current_session_history=case.recent_dialogue,
+        current_session_summary=case.session_summary,
     )
     memories = {
         MemorySource.MP: case.profile_memories,
@@ -2505,6 +3170,7 @@ def case_to_state(
             memories=items,
             query_text=query,
             session_index=case.session_index,
+            semantic_encoder=semantic_encoder,
         )
         for source, items in memories.items()
     }
@@ -2537,12 +3203,23 @@ def case_to_state(
     }
     if generation_lineage:
         provenance["data_generation_sha256"] = str(generation_lineage)
+    text_embedding: list[float] = []
+    if semantic_encoder is not None:
+        text_embedding, semantic_audit = encode_visible_state(
+            semantic_encoder,
+            current_user_text=case.current_user_text,
+            current_session_history=case.recent_dialogue,
+            current_session_summary=case.session_summary,
+        )
+        provenance["semantic_observation"] = semantic_audit
     step0_observation = build_step0_observation(
         query_text=query,
         inventory=inventory,
         strategy_catalog_count=strategy_catalog_count,
         strategy_estimated_tokens=strategy_estimated_tokens,
         strategy_family_catalog=strategy_family_catalog,
+        semantic_encoder=semantic_encoder,
+        readiness_text=case.current_user_text,
     )
     return PMV2State(
         state_id=state_id,
@@ -2559,6 +3236,7 @@ def case_to_state(
         strategy_catalog_count=strategy_catalog_count,
         strategy_estimated_tokens=strategy_estimated_tokens,
         step0_observation=step0_observation,
+        text_embedding=text_embedding,
         allowed_actions=allowed_actions,
         provenance=provenance,
     )
@@ -2579,6 +3257,30 @@ def validate_bundle(bundle: GeneratedUserBundle) -> dict[str, Any]:
     missing = required - set(regimes)
     if missing:
         raise ValueError(f"bundle {bundle.user_id} missing required regimes: {sorted(missing)}")
+    if bundle.provenance.get("generation_structure") == DATA_GENERATION_CONTRACT_VERSION:
+        strategy_cases = {
+            case.regime: case
+            for case in bundle.cases
+            if case.regime
+            in {
+                ResourceNeedRegime.STRATEGY_HELPFUL,
+                ResourceNeedRegime.STRATEGY_HARMFUL,
+            }
+        }
+        if {
+            regime: case.strategy_resource_target
+            for regime, case in strategy_cases.items()
+        } != {
+            ResourceNeedRegime.STRATEGY_HELPFUL: "use",
+            ResourceNeedRegime.STRATEGY_HARMFUL: "skip",
+        }:
+            raise ValueError("Strategy challenge targets drifted from the V14 design")
+        if {
+            case.advice_readiness_target for case in strategy_cases.values()
+        } != {"listen_only", "light_suggestion"}:
+            raise ValueError(
+                "Strategy challenge cases do not cross advice readiness within user"
+            )
     for case in bundle.cases:
         if not case.profile_memories and not case.summary_memories and not case.event_memories:
             raise ValueError(f"case {case.case_id} has no inventory variation")
@@ -2775,6 +3477,7 @@ def state_to_v1_runtime(state: PMV2State) -> RuntimeState:
             fp = fp + [0.0] * (64 - len(fp))
         elif len(fp) > 64:
             fp = fp[:64]
+        semantic_representation_valid = bool(summary.representation_valid)
         inventory[source] = SourceCatalog(
             available=summary.available,
             count=summary.count,
@@ -2782,6 +3485,12 @@ def state_to_v1_runtime(state: PMV2State) -> RuntimeState:
             max_age_sessions=summary.max_age_sessions,
             estimated_tokens=summary.estimated_tokens,
             catalog_fingerprint=fp,
+            semantic_query_similarity=(
+                summary.query_similarity_mean
+                if semantic_representation_valid
+                else 0.0
+            ),
+            semantic_representation_valid=semantic_representation_valid,
         )
     split_map = {
         PMV2Split.TRAIN: "train",
@@ -2873,6 +3582,8 @@ def case_to_evaluator_context(
         "needed_memory_sources": [
             source.value for source in case.needed_memory_sources
         ],
+        "strategy_resource_target": case.strategy_resource_target,
+        "advice_readiness_target": case.advice_readiness_target,
         "authorized_user_context": case.authorized_user_context,
         "coverage_rationale": case.coverage_rationale,
         "memory_annotations": annotations,
@@ -2986,6 +3697,7 @@ def write_development_dataset(
     expected_semantic_families_by_split: dict[
         PMV2Split, Sequence[str]
     ] | None = None,
+    semantic_encoder: SemanticTextEncoder | None = None,
 ) -> dict[str, Any]:
     out_dir = Path(out_dir)
     if strategy_catalog_count < 1 or strategy_top_k < 1:
@@ -2996,7 +3708,9 @@ def write_development_dataset(
         raise ValueError("strategy_bank_sha256 must be a SHA-256 hex digest")
     out_dir.mkdir(parents=True, exist_ok=True)
     strategy_family_catalog = (
-        build_strategy_family_catalog(strategy_cards)
+        build_strategy_family_catalog(
+            strategy_cards, semantic_encoder=semantic_encoder
+        )
         if strategy_cards is not None
         else None
     )
@@ -3020,6 +3734,7 @@ def write_development_dataset(
                 strategy_estimated_tokens=strategy_estimated_tokens,
                 strategy_family_catalog=strategy_family_catalog,
                 bundle_provenance=bundle.provenance,
+                semantic_encoder=semantic_encoder,
             )
             if state.state_id in private_case_by_state:
                 raise ValueError(f"duplicate generated PM-v2 state_id: {state.state_id}")
@@ -3133,6 +3848,28 @@ def write_development_dataset(
         "evaluator_contexts_map_sha256": evaluator_index.map_sha256,
         "bundles_path": str(bundle_path),
         "model_visible_state_contains_private_context": False,
+        "semantic_encoder": (
+            {
+                "status": "REPORTABLE_FROZEN_LOCAL",
+                "spec": semantic_encoder.spec.model_dump(mode="json"),
+                "binding": semantic_encoder.binding.model_dump(mode="json"),
+            }
+            if semantic_encoder is not None
+            else {"status": "NONREPORTABLE_LEGACY_OR_TEST_PATH"}
+        ),
+        "strategy_factorial_design": {
+            "resource_target_is_outcome_label": False,
+            "authoritative_outcome": "blinded_same-memory_R0_vs_RS_utility",
+            "advice_readiness_independent": True,
+            "target_counts": dict(
+                Counter(
+                    f"{case.strategy_resource_target}|{case.advice_readiness_target}"
+                    for bundle in bundles
+                    for case in bundle.cases
+                    if case.strategy_resource_target in {"use", "skip"}
+                )
+            ),
+        },
         "strategy_catalog": {
             "count": strategy_catalog_count,
             "estimated_action_tokens": strategy_estimated_tokens,
@@ -3178,26 +3915,35 @@ def runtime_to_pmv2_state(
     strategy_estimated_tokens: int = 240,
     strategy_family_catalog: StrategyFamilyCatalog | None = None,
     include_step0_observation: bool = True,
+    semantic_encoder: SemanticTextEncoder | None = None,
 ) -> PMV2State:
     normalized_strategy_tokens = (
         int(strategy_estimated_tokens) if int(strategy_catalog_count) > 0 else 0
     )
-    query = "\n".join(
-        [state.current_user_text, state.current_session_summary]
-        + [turn.content for turn in state.current_session_history]
+    query = visible_dialogue_state_text(
+        current_user_text=state.current_user_text,
+        current_session_history=state.current_session_history,
+        current_session_summary=state.current_session_summary,
     )
     inventory: dict[MemorySource, ObservableSourceSummary] = {}
     for source, cat in state.inventory.items():
-        fingerprint = (
-            list(cat.catalog_fingerprint) if include_step0_observation else []
-        )
-        if include_step0_observation and not fingerprint and not cat.available:
-            fingerprint = [0.0] * CATALOG_HASH_FEATURES
-        similarity = (
-            source_catalog_similarity(query, fingerprint)
-            if include_step0_observation
-            else 0.0
-        )
+        fingerprint = list(cat.catalog_fingerprint)
+        if include_step0_observation and semantic_encoder is not None:
+            similarity = float(cat.semantic_query_similarity)
+            representation_valid = bool(cat.semantic_representation_valid)
+        elif include_step0_observation:
+            # Nonreportable compatibility path for historical RuntimeState
+            # fixtures. The V1.5 config requires semantic embeddings, so a real
+            # learned checkpoint cannot pass with this branch.
+            if cat.available:
+                similarity = source_catalog_similarity(query, fingerprint)
+                representation_valid = bool(any(fingerprint))
+            else:
+                similarity = 0.0
+                representation_valid = False
+        else:
+            similarity = 0.0
+            representation_valid = False
         inventory[source] = ObservableSourceSummary(
             available=cat.available,
             count=cat.count,
@@ -3210,10 +3956,12 @@ def runtime_to_pmv2_state(
             max_age_sessions=cat.max_age_sessions,
             estimated_tokens=cat.estimated_tokens,
             query_similarity_mean=similarity,
-            representation_valid=bool(
-                include_step0_observation and cat.available and any(fingerprint)
+            representation_valid=representation_valid,
+            catalog_embedding=(
+                [float(value) for value in fingerprint]
+                if include_step0_observation
+                else []
             ),
-            catalog_embedding=[float(value) for value in fingerprint],
         )
     step0_observation = (
         build_step0_observation(
@@ -3222,10 +3970,27 @@ def runtime_to_pmv2_state(
             strategy_catalog_count=strategy_catalog_count,
             strategy_estimated_tokens=normalized_strategy_tokens,
             strategy_family_catalog=strategy_family_catalog,
+            semantic_encoder=semantic_encoder,
+            readiness_text=state.current_user_text,
         )
         if include_step0_observation
         else None
     )
+    provenance = {
+        "adapted_from_runtime_state": True,
+        "runtime_provenance_sha256": sha256_text(
+            canonical_json(state.provenance)
+        ),
+    }
+    text_embedding: list[float] = []
+    if include_step0_observation and semantic_encoder is not None:
+        text_embedding, semantic_audit = encode_visible_state(
+            semantic_encoder,
+            current_user_text=state.current_user_text,
+            current_session_history=state.current_session_history,
+            current_session_summary=state.current_session_summary,
+        )
+        provenance["semantic_observation"] = semantic_audit
     return PMV2State(
         state_id=state.state_id,
         card_id=state.card_id,
@@ -3241,11 +4006,7 @@ def runtime_to_pmv2_state(
         strategy_catalog_count=strategy_catalog_count,
         strategy_estimated_tokens=normalized_strategy_tokens,
         step0_observation=step0_observation,
+        text_embedding=text_embedding,
         allowed_actions=state.allowed_actions,
-        provenance={
-            "adapted_from_runtime_state": True,
-            "runtime_provenance_sha256": sha256_text(
-                canonical_json(state.provenance)
-            ),
-        },
+        provenance=provenance,
     )

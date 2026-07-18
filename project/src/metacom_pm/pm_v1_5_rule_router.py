@@ -19,7 +19,7 @@ from .pm_v2_model import (
 )
 
 
-RULE_ROUTER_PROTOCOL = "pm-v1.5-transparent-step0-rule-router-v1"
+RULE_ROUTER_PROTOCOL = "pm-v1.5-transparent-step0-rule-router-v2"
 
 
 @dataclass
@@ -45,10 +45,9 @@ class TransparentRuleConfig(BaseModel):
     source_cost_penalty: float = Field(ge=0.0)
     source_minimum_score: float
     maximum_memory_sources: int = Field(ge=0, le=3)
-    strategy_similarity_weight: float = Field(ge=0.0)
-    advice_requested_bonus: float = Field(ge=0.0)
+    strategy_family_similarity_weight: float = Field(ge=0.0)
+    strategy_readiness_alignment_weight: float = Field(ge=0.0)
     question_bonus: float = Field(ge=0.0)
-    advice_rejected_penalty: float = Field(ge=0.0)
     strategy_cost_penalty: float = Field(ge=0.0)
     strategy_minimum_score: float
 
@@ -133,16 +132,46 @@ class TransparentRuleRouter:
         }
 
         strategy = state.step0_observation.strategy
-        maximum_similarity = max(strategy.family_similarities.values(), default=0.0)
+        family = strategy.family_similarities
+        readiness = strategy.advice_readiness_similarities
+        stage_fits = {
+            "listen_only": (
+                max(
+                    family["reflection"],
+                    family["restatement"],
+                    family["affirmation_reassurance"],
+                ),
+                readiness["listen_only"],
+            ),
+            "explore_first": (
+                max(family["question"], family["reflection"], family["restatement"]),
+                readiness["explore_first"],
+            ),
+            "light_suggestion": (
+                max(family["suggestion"], family["information"], family["question"]),
+                readiness["light_suggestion"],
+            ),
+            "structured_plan": (
+                max(family["suggestion"], family["information"]),
+                readiness["structured_plan"],
+            ),
+            "ambiguous": (
+                max(family.values(), default=0.0),
+                readiness["ambiguous"],
+            ),
+        }
+        maximum_stage_fit = max(
+            self.config.strategy_family_similarity_weight * family_score
+            + self.config.strategy_readiness_alignment_weight * readiness_score
+            for family_score, readiness_score in stage_fits.values()
+        )
         strategy_cost_ratio = min(
             strategy.expected_retrieval_tokens / 768.0,
             1.0,
         )
         strategy_score = (
-            self.config.strategy_similarity_weight * maximum_similarity
-            + self.config.advice_requested_bonus * float(strategy.advice_requested)
+            maximum_stage_fit
             + self.config.question_bonus * float(strategy.question_present)
-            - self.config.advice_rejected_penalty * float(strategy.advice_rejected)
             - self.config.strategy_cost_penalty * strategy_cost_ratio
         )
         strategy_mode = (
@@ -200,10 +229,9 @@ def transparent_rule_candidates(
         "source_cost_penalties",
         "source_minimum_scores",
         "maximum_memory_sources",
-        "strategy_similarity_weights",
-        "advice_requested_bonuses",
+        "strategy_family_similarity_weights",
+        "strategy_readiness_alignment_weights",
         "question_bonuses",
-        "advice_rejected_penalties",
         "strategy_cost_penalties",
         "strategy_minimum_scores",
     )
@@ -219,12 +247,11 @@ def transparent_rule_candidates(
             source_cost_penalty=float(row[2]),
             source_minimum_score=float(row[3]),
             maximum_memory_sources=int(row[4]),
-            strategy_similarity_weight=float(row[5]),
-            advice_requested_bonus=float(row[6]),
+            strategy_family_similarity_weight=float(row[5]),
+            strategy_readiness_alignment_weight=float(row[6]),
             question_bonus=float(row[7]),
-            advice_rejected_penalty=float(row[8]),
-            strategy_cost_penalty=float(row[9]),
-            strategy_minimum_score=float(row[10]),
+            strategy_cost_penalty=float(row[8]),
+            strategy_minimum_score=float(row[9]),
         )
         for row in product(*values)
     ]

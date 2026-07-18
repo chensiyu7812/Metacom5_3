@@ -36,6 +36,9 @@ from metacom_pm.pm_v2_development_gate import require_development_pilot_gate
 from metacom_pm.pm_v2_judge_schema_smoke import (
     require_development_judge_schema_smoke_pass,
 )
+from metacom_pm.pm_v1_5_shortcut_audit import (
+    require_step0_shortcut_audit_pass,
+)
 from metacom_pm.pm_v2_semantic_audit import (
     require_pmv2_runtime_state_lineage,
     require_semantic_sanity_pass,
@@ -353,6 +356,31 @@ def main() -> None:
             / "artifact_attestation.json"
         ),
     )
+    parser.add_argument(
+        "--step0-shortcut-audit-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "step0_shortcut_audit.json"
+        ),
+    )
+    parser.add_argument(
+        "--step0-shortcut-audit-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "artifact_attestation.json"
+        ),
+    )
+    parser.add_argument(
+        "--development-data-attestation",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "artifact_attestation.json",
+    )
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--temperature", type=float)
     parser.add_argument("--max-output-tokens", type=int)
@@ -566,8 +594,20 @@ def main() -> None:
                 expected_strategy_bank_path=args.strategy_bank,
                 expected_pm_config_path=args.pm_v2_config,
             )
+            shortcut_audit_verification = require_step0_shortcut_audit_pass(
+                args.step0_shortcut_audit_report,
+                args.step0_shortcut_audit_attestation,
+                expected_states_path=pm_v2_states_path,
+                expected_evaluator_contexts_path=evaluator_contexts_path,
+                expected_pm_config_path=args.pm_v2_config,
+                expected_generation_attestation_path=(
+                    args.development_data_attestation
+                ),
+            )
             semantic_sanity = {
-                "protocol": "pm-v1.5-pilot-plus-actual-corpus-semantic-gate-v1",
+                "protocol": (
+                    "pm-v1.5-pilot-plus-actual-corpus-and-shortcut-gate-v2"
+                ),
                 "status": "PASS",
                 "human_calibration_performed": False,
                 "automated_review_report_sha256": sha256_text(
@@ -581,6 +621,12 @@ def main() -> None:
                 ),
                 "actual_corpus_review_attestation_sha256": (
                     actual_corpus_verification["attestation_sha256"]
+                ),
+                "step0_shortcut_audit_report_sha256": (
+                    shortcut_audit_verification["report_sha256"]
+                ),
+                "step0_shortcut_audit_attestation_sha256": (
+                    shortcut_audit_verification["attestation_sha256"]
                 ),
             }
             if pilot_plan is not None:
@@ -841,7 +887,7 @@ def main() -> None:
         ):
             raise RuntimeError("PM-v1.5 full sweep lacks its frozen review gate")
         contract_bindings["v1_5_full_sweep_gate"] = {
-            "protocol": "pm-v1.5-full-sweep-gate-v1",
+            "protocol": "pm-v1.5-full-sweep-gate-v2",
             "status": "PASS",
             "scope": "full",
             "human_calibration_performed": False,
@@ -856,6 +902,12 @@ def main() -> None:
             ],
             "actual_corpus_review_report_sha256": semantic_sanity[
                 "actual_corpus_review_report_sha256"
+            ],
+            "step0_shortcut_audit_attestation_sha256": semantic_sanity[
+                "step0_shortcut_audit_attestation_sha256"
+            ],
+            "step0_shortcut_audit_report_sha256": semantic_sanity[
+                "step0_shortcut_audit_report_sha256"
             ],
         }
     estimate, rows = plan_action_sweep(

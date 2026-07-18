@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate PM-v1.5 synthetic development data on the frozen fast track.
 
-The V1.5 branch requires both the one-call generation-compatibility pilot and
+The V1.5 branch requires both the casewise generation-compatibility pilot and
 an attested, multi-family automated semantic review before a paid full run.
 It intentionally does not claim independent human validation and must not be
 reported as equivalent to the PM-v2.2 human-review protocol.
@@ -16,8 +16,10 @@ from typing import Any
 
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.api import (
+    CallResult,
     StructuredOutputValidationError,
     chat_request_payload,
+    make_client,
     require_reported_usage,
 )
 from metacom_pm.attempt_ledger import (
@@ -40,19 +42,22 @@ from metacom_pm.io import (
 )
 from metacom_pm.pm_v2_contracts import PMV2Split, ResourceNeedRegime
 from metacom_pm.pm_v2_data import (
-    GENERATION_MAX_OUTPUT_TOKENS,
+    GENERATION_CASE_FIELDS,
     GENERATION_TEMPERATURE,
-    GenerationDraftCompilationError,
-    GeneratedBundleDraft,
+    SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+    SURFACE_GENERATION_MAX_REPAIRS,
+    GeneratedSurfaceOnlyCaseDraft,
     GeneratedUserBundle,
     audit_cross_split_near_duplicates,
     bind_bundle_to_generation_run,
-    generate_user_bundle,
-    generation_contract_hash,
-    generation_messages,
+    compile_surface_only_user_bundle,
+    generation_case_family_assignments,
+    generation_case_messages,
+    lint_generation_surface_case,
     load_bundles,
     load_states,
     require_bundle_generation_binding,
+    surface_generation_contract_hash,
     validate_bundle,
     validate_successful_generation_trace,
     write_development_dataset,
@@ -71,59 +76,145 @@ from metacom_pm.v1_5_automated_semantic_review import (
     require_automated_semantic_review_pass,
 )
 from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.pm_v1_5_semantic import (
+    FrozenTransformerSemanticEncoder,
+    semantic_encoder_spec_from_config,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 
 GENERATION_REQUEST_RETRIES = 1
-GENERATION_COST_PROTOCOL = "pm_v2_generation_cost_v2_persistent_attempt_ledger"
+GENERATION_COST_PROTOCOL = (
+    "pm_v2_generation_cost_v3_casewise_surface_bounded_repair_ledger"
+)
+GENERATION_STAGE = "pm_v2_synthetic_surface_generation"
 
 
 class ReportedInputTokenOverrun(RuntimeError):
     pass
 
 
-def _finish_generation_attempt(
-    ledger: PersistentAttemptLedger,
-    reservation,
+def _load_successful_surface_attempt(
     *,
-    bundle: GeneratedUserBundle | None,
-    succeeded: bool,
-    error: str | None,
-) -> None:
-    """Persist terminal provider provenance for both success and failure."""
-
-    ledger.finish(
-        reservation,
-        succeeded=succeeded,
-        request_hash=(
-            str(bundle.provenance.get("request_hash") or "") or None
-            if bundle is not None
-            else None
-        ),
-        usage=(
-            dict(bundle.provenance.get("reported_usage") or {})
-            if bundle is not None
-            else None
-        ),
-        error=error,
-        result=(
-            {"bundle": bundle.model_dump(mode="json")}
-            if bundle is not None
-            else None
-        ),
-    )
-
-
-def _require_bundle_reported_usage(bundle: GeneratedUserBundle) -> dict[str, int]:
+    ledger: PersistentAttemptLedger,
+    case_plan: dict[str, Any],
+) -> tuple[dict[str, Any], GeneratedSurfaceOnlyCaseDraft, CallResult] | None:
+    successful = [
+        attempt
+        for attempt in case_plan["attempts"]
+        if ledger.succeeded(str(attempt["call_key"]))
+    ]
+    if len(successful) > 1:
+        raise RuntimeError(
+            "casewise generation has multiple successful calls for "
+            f"{case_plan['user_id']}/{case_plan['case_field']}"
+        )
+    if not successful:
+        return None
+    attempt = successful[0]
+    terminal = ledger.terminal_row(str(attempt["call_key"])) or {}
+    result = terminal.get("result") or {}
+    surface_payload = result.get("surface")
+    provider_response = result.get("provider_response")
+    if not isinstance(surface_payload, dict) or not isinstance(
+        provider_response, dict
+    ):
+        raise RuntimeError("successful surface attempt lacks recoverable trace")
     usage = require_reported_usage(
-        bundle.provenance.get("reported_usage"),
-        stage="PM-v2 synthetic generation",
+        terminal.get("usage"), stage="recovered PM-v1.5 surface generation"
     )
-    bundle.provenance["reported_usage"] = usage
-    return usage
+    request_hash = str(terminal.get("request_hash") or "")
+    if not request_hash:
+        raise RuntimeError("successful surface attempt lacks request hash")
+    surface = GeneratedSurfaceOnlyCaseDraft.model_validate(surface_payload)
+    call = CallResult(
+        text=canonical_json(surface_payload),
+        raw_response=provider_response,
+        usage=usage,
+        latency_ms=0.0,
+        request_hash=request_hash,
+    )
+    return attempt, surface, call
 
 
-def _recover_successful_bundles_from_ledger(
+def _ledger_usage_for_keys(
+    ledger: PersistentAttemptLedger, call_keys: list[str]
+) -> dict[str, int]:
+    totals = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+    }
+    for call_key in call_keys:
+        terminal = ledger.terminal_row(call_key)
+        if terminal is None or terminal.get("usage") is None:
+            continue
+        usage = require_reported_usage(
+            terminal.get("usage"), stage="completed PM-v1.5 surface call"
+        )
+        for key in totals:
+            totals[key] += usage[key]
+    return totals
+
+
+def _compile_casewise_user_from_ledger(
+    *,
+    ledger: PersistentAttemptLedger,
+    user_plan: dict[str, Any],
+    seed_dialogue: str,
+    seed_dialogue_source_id: str,
+    endpoint,
+    generation_binding: dict[str, Any],
+) -> GeneratedUserBundle | None:
+    surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft] = {}
+    calls: dict[str, CallResult] = {}
+    messages: dict[str, list[dict[str, str]]] = {}
+    attempt_kinds: dict[str, str] = {}
+    accepted_call_keys: dict[str, str] = {}
+    for case_plan in user_plan["cases"]:
+        loaded = _load_successful_surface_attempt(
+            ledger=ledger, case_plan=case_plan
+        )
+        if loaded is None:
+            return None
+        attempt, surface, call = loaded
+        case_field = str(case_plan["case_field"])
+        surfaces[case_field] = surface
+        calls[case_field] = call
+        messages[case_field] = attempt["messages"]
+        attempt_kinds[case_field] = str(attempt["attempt_kind"])
+        accepted_call_keys[case_field] = str(attempt["call_key"])
+    bundle = compile_surface_only_user_bundle(
+        surfaces=surfaces,
+        accepted_calls=calls,
+        accepted_messages=messages,
+        accepted_attempt_kinds=attempt_kinds,
+        seed_dialogue=seed_dialogue,
+        user_id=str(user_plan["user_id"]),
+        semantic_families=[str(value) for value in user_plan["semantic_families"]],
+        regimes=list(ResourceNeedRegime),
+        generator_model=endpoint.model,
+        generator_family=endpoint.family,
+    )
+    bundle.provenance.update(
+        {
+            "seed_dialogue_source_id": seed_dialogue_source_id,
+            "accepted_surface_call_keys": accepted_call_keys,
+            "all_physical_attempt_usage": _ledger_usage_for_keys(
+                ledger,
+                [
+                    str(attempt["call_key"])
+                    for case_plan in user_plan["cases"]
+                    for attempt in case_plan["attempts"]
+                ],
+            ),
+        }
+    )
+    bind_bundle_to_generation_run(bundle, generation_binding)
+    return bundle
+
+
+def _recover_casewise_bundles_from_ledger(
     *,
     ledger: PersistentAttemptLedger,
     all_user_attempts: dict[str, dict[str, Any]],
@@ -131,39 +222,25 @@ def _recover_successful_bundles_from_ledger(
     work_path: Path,
     generation_binding: dict[str, Any],
     family_by_user: dict[str, list[str]],
+    seeds: list[dict[str, str]],
+    endpoint,
 ) -> int:
-    """Materialize paid successes after a crash between ledger and work append."""
-
     recovered = 0
-    for user_id, row in all_user_attempts.items():
+    for user_id, user_plan in all_user_attempts.items():
         if user_id in existing:
             continue
-        successful = [
-            attempt
-            for attempt in row["attempts"]
-            if ledger.succeeded(str(attempt["call_key"]))
-        ]
-        if not successful:
+        seed_record = seeds[int(user_plan["seed_dialogue_index"])]
+        bundle = _compile_casewise_user_from_ledger(
+            ledger=ledger,
+            user_plan=user_plan,
+            seed_dialogue=seed_record["dialogue_text"],
+            seed_dialogue_source_id=seed_record["dialogue_id"],
+            endpoint=endpoint,
+            generation_binding=generation_binding,
+        )
+        if bundle is None:
             continue
-        if len(successful) != 1:
-            raise RuntimeError(
-                f"user {user_id} has multiple successful physical generation calls"
-            )
-        call_key = str(successful[0]["call_key"])
-        terminal = ledger.terminal_row(call_key)
-        result = (terminal or {}).get("result") or {}
-        bundle_payload = result.get("bundle")
-        if not isinstance(bundle_payload, dict):
-            raise RuntimeError(
-                f"successful generation attempt lacks recoverable bundle: {user_id}"
-            )
-        bundle = GeneratedUserBundle.model_validate(bundle_payload)
-        if bundle.user_id != user_id:
-            raise RuntimeError("recovered generation bundle user_id mismatch")
-        require_bundle_generation_binding(bundle, generation_binding)
         strict_bundle_check(bundle, family_by_user[user_id])
-        if str(bundle.provenance.get("physical_call_key") or "") != call_key:
-            raise RuntimeError("recovered generation bundle call-key mismatch")
         append_jsonl(work_path, bundle.model_dump(mode="json"))
         existing[user_id] = bundle
         recovered += 1
@@ -327,6 +404,84 @@ def require_instance_disjoint_seed_strategy_sources(
     }
 
 
+def require_frozen_strategy_bank_binding(
+    *,
+    pm_config: dict[str, Any],
+    strategy_bank_path: Path,
+    selected_seed_sources_path: Path,
+    strategy_cards: list[StrategyCard],
+) -> dict[str, Any]:
+    """Fail before API use if V1.5 is pointed at a different method input."""
+
+    contract = dict(pm_config.get("strategy_bank_contract") or {})
+    required_keys = {
+        "protocol",
+        "relative_path",
+        "sha256",
+        "card_count",
+        "source_dialogue_count",
+        "audit_relative_path",
+        "audit_sha256",
+        "selected_seed_sources_relative_path",
+        "selected_seed_sources_sha256",
+        "selected_seed_source_count",
+    }
+    if set(contract) != required_keys:
+        raise RuntimeError("PM-v1.5 Strategy Bank contract keys are missing or stale")
+    if contract["protocol"] != "pm-v1.5-frozen-strategy-bank-binding-v1":
+        raise RuntimeError("PM-v1.5 Strategy Bank protocol is stale")
+    expected_bank = (ROOT / str(contract["relative_path"])).resolve()
+    expected_selected = (
+        ROOT / str(contract["selected_seed_sources_relative_path"])
+    ).resolve()
+    audit_path = (ROOT / str(contract["audit_relative_path"])).resolve()
+    if strategy_bank_path.resolve() != expected_bank:
+        raise RuntimeError("alternate Strategy Bank path is outside the frozen V1.5 method")
+    if selected_seed_sources_path.resolve() != expected_selected:
+        raise RuntimeError(
+            "alternate selected-seed manifest is outside the frozen V1.5 method"
+        )
+    if sha256_file(expected_bank) != str(contract["sha256"]):
+        raise RuntimeError("frozen V1.5 Strategy Bank hash mismatch")
+    if not audit_path.is_file() or sha256_file(audit_path) != str(
+        contract["audit_sha256"]
+    ):
+        raise RuntimeError("frozen V1.5 Strategy Bank audit hash mismatch")
+    if sha256_file(expected_selected) != str(
+        contract["selected_seed_sources_sha256"]
+    ):
+        raise RuntimeError("frozen V1.5 selected-seed manifest hash mismatch")
+    source_ids = {card.source_dialogue_id for card in strategy_cards}
+    selected_rows = list(iter_jsonl(expected_selected))
+    observed = {
+        "card_count": len(strategy_cards),
+        "source_dialogue_count": len(source_ids),
+        "selected_seed_source_count": len(selected_rows),
+    }
+    expected = {
+        "card_count": int(contract["card_count"]),
+        "source_dialogue_count": int(contract["source_dialogue_count"]),
+        "selected_seed_source_count": int(contract["selected_seed_source_count"]),
+    }
+    if observed != expected:
+        raise RuntimeError(
+            f"frozen V1.5 Strategy Bank counts mismatch: {observed} != {expected}"
+        )
+    return {
+        "protocol": contract["protocol"],
+        "status": "PASS",
+        "strategy_bank_path": str(expected_bank),
+        "strategy_bank_sha256": contract["sha256"],
+        "strategy_bank_audit_path": str(audit_path),
+        "strategy_bank_audit_sha256": contract["audit_sha256"],
+        "selected_seed_sources_path": str(expected_selected),
+        "selected_seed_sources_sha256": contract[
+            "selected_seed_sources_sha256"
+        ],
+        **observed,
+    }
+
+
 def strict_bundle_check(bundle: GeneratedUserBundle, allowed_families: list[str]) -> None:
     validate_bundle(bundle)
     expected_regimes = set(ResourceNeedRegime)
@@ -485,7 +640,7 @@ def main() -> None:
         type=float,
         help="Optional exact-match assertion against frozen data-generation pricing.",
     )
-    parser.add_argument("--max-api-calls", type=int, default=200)
+    parser.add_argument("--max-api-calls", type=int, default=1000)
     parser.add_argument("--max-estimated-usd", type=float, default=25.0)
     parser.add_argument("--max-input-tokens-per-call", type=int, default=12000)
     parser.add_argument("--accept-cost-estimate-sha256")
@@ -495,10 +650,10 @@ def main() -> None:
         default=(
             ROOT
             / "outputs"
-            / "pm_v1_5_generation_compatibility_pilot"
+            / "pm_v1_5_generation_compatibility_pilot_v8_3_candidate"
             / "artifact_attestation.json"
         ),
-        help="Required PASS source-grounded one-call pilot for full --run only.",
+        help="Required PASS casewise surface-only pilot for full --run only.",
     )
     parser.add_argument(
         "--automated-semantic-review-report",
@@ -541,6 +696,11 @@ def main() -> None:
     pm_config = load_config(args.pm_v2_config)
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 data generation requires a pm-v1.5 config")
+    # Fail before any paid generation if the exact deployable semantic
+    # observation mechanism cannot be reconstructed locally.
+    semantic_encoder = FrozenTransformerSemanticEncoder.load(
+        semantic_encoder_spec_from_config(pm_config)
+    )
     require_paid_run_release(
         pm_config,
         config_path=args.pm_v2_config,
@@ -595,6 +755,12 @@ def main() -> None:
     ]
     if not strategy_cards:
         raise ValueError("strategy bank is empty")
+    frozen_strategy_bank_binding = require_frozen_strategy_bank_binding(
+        pm_config=pm_config,
+        strategy_bank_path=args.strategy_bank,
+        selected_seed_sources_path=args.selected_seed_sources,
+        strategy_cards=strategy_cards,
+    )
     strategy_catalog_count = len(strategy_cards)
     strategy_bank_sha256 = sha256_file(args.strategy_bank)
     frozen_generation_values = {
@@ -651,6 +817,10 @@ def main() -> None:
         )
     if args.max_generation_attempts < 1:
         raise ValueError("max-generation-attempts must be positive")
+    if args.max_generation_attempts != 1 + SURFACE_GENERATION_MAX_REPAIRS:
+        raise ValueError(
+            "max-generation-attempts must equal initial plus the single frozen repair"
+        )
 
     seeds = read_seed_dialogues(args.seed_dialogues)
     experiment_config = load_config(args.config)
@@ -706,6 +876,8 @@ def main() -> None:
         Path(__file__).resolve(),
         ROOT / "src" / "metacom_pm" / "pm_v2_data.py",
         ROOT / "src" / "metacom_pm" / "pm_v2_contracts.py",
+        ROOT / "src" / "metacom_pm" / "pm_v1_5_semantic.py",
+        ROOT / "src" / "metacom_pm" / "pm_v1_5_step0.py",
         ROOT / "src" / "metacom_pm" / "pm_v2_generation_pilot.py",
         ROOT / "src" / "metacom_pm" / "pm_v2_generation_review_v8.py",
         ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
@@ -725,7 +897,7 @@ def main() -> None:
         "api_key_env": endpoint.api_key_env,
         "timeout_seconds": endpoint.timeout_seconds,
         "temperature": GENERATION_TEMPERATURE,
-        "max_output_tokens": GENERATION_MAX_OUTPUT_TOKENS,
+        "max_output_tokens": SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
         # One HTTP request per high-level attempt makes the accepted maximum
         # enforceable by this script instead of hiding client-internal retries.
         "request_retries": GENERATION_REQUEST_RETRIES,
@@ -772,7 +944,7 @@ def main() -> None:
         output_usd_per_mtok=args.output_usd_per_mtok,
     )
     generation_binding = {
-        "protocol": "pm_v2_generation_resume_binding_v2_attempt_ledger",
+        "protocol": "pm_v2_generation_resume_binding_v3_casewise_surface_ledger",
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "api_cost_planning": {
             "input_token_safety_factor": input_token_safety_factor,
@@ -788,11 +960,12 @@ def main() -> None:
             "estimated_action_tokens": strategy_estimated_tokens,
             "top_k": strategy_top_k,
         },
+        "frozen_strategy_bank_binding": frozen_strategy_bank_binding,
         "seed_strategy_instance_disjointness": seed_strategy_disjointness,
         "base_generation_seed": args.seed,
         "generator": endpoint_descriptor,
         "generator_config_sha256": sha256_text(canonical_json(endpoint_descriptor)),
-        "prompt_contract_sha256": generation_contract_hash(),
+        "prompt_contract_sha256": surface_generation_contract_hash(),
         "code_manifest": code_manifest,
         "code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
         "data_plan_sha256": sha256_text(canonical_json(data_plan)),
@@ -825,162 +998,223 @@ def main() -> None:
             f"plan: {unexpected_existing}; use a new output directory or --overwrite"
         )
     all_user_attempts: dict[str, dict[str, Any]] = {}
-    for index, user_id in enumerate(planned_users):
-        seed_record = seeds[index % len(seeds)]
+    for user_index, user_id in enumerate(planned_users):
+        seed_dialogue_index = user_index % len(seeds)
+        seed_record = seeds[seed_dialogue_index]
         seed_dialogue = seed_record["dialogue_text"]
-        messages = generation_messages(
-            seed_dialogue=seed_dialogue,
-            user_id=user_id,
-            semantic_families=family_by_user[user_id],
-            regimes=list(ResourceNeedRegime),
+        families = family_by_user[user_id]
+        assignments = generation_case_family_assignments(
+            families, list(ResourceNeedRegime)
         )
-        attempts = []
-        for attempt in range(args.max_generation_attempts):
-            attempt_seed = args.seed + index * 100 + attempt
-            # Include the strict JSON schema and all request controls in the
-            # provider-neutral input estimate.  Estimating messages alone would
-            # understate structured-output generation prompts.
-            request_contract = chat_request_payload(
-                endpoint,
-                messages,
-                temperature=GENERATION_TEMPERATURE,
-                max_tokens=GENERATION_MAX_OUTPUT_TOKENS,
-                seed=attempt_seed,
-                response_schema=GeneratedBundleDraft,
-            )
-            request_contract_sha256 = sha256_text(canonical_json(request_contract))
-            request_contract_json = canonical_json(request_contract)
-            prompt_sha256 = sha256_text(canonical_json(messages))
-            record_ids = {
-                "user_id": user_id,
-                "generation_seed": attempt_seed,
-                "attempt_index": attempt + 1,
-            }
-            call_key = physical_call_key(
-                stage="pm_v2_synthetic_bundle_generation",
-                record_ids=record_ids,
-                prompt_sha256=prompt_sha256,
-                endpoint=endpoint,
-                request_parameters={
-                    "temperature": GENERATION_TEMPERATURE,
-                    "max_tokens": GENERATION_MAX_OUTPUT_TOKENS,
-                    "seed": attempt_seed,
-                    "response_schema": GeneratedBundleDraft.__name__,
-                    "request_contract_sha256": request_contract_sha256,
-                },
-            )
-            attempts.append(
+        cases: list[dict[str, Any]] = []
+        for case_index, (case_field, regime) in enumerate(
+            GENERATION_CASE_FIELDS
+        ):
+            semantic_family = assignments[case_field]
+            forbidden_families = [
+                family for family in families if family != semantic_family
+            ]
+            attempts: list[dict[str, Any]] = []
+            for attempt_index in range(args.max_generation_attempts):
+                attempt_kind = "initial" if attempt_index == 0 else "repair"
+                messages = generation_case_messages(
+                    seed_dialogue=seed_dialogue,
+                    user_id=user_id,
+                    case_field=case_field,
+                    regime=regime,
+                    semantic_family=semantic_family,
+                    forbidden_families=forbidden_families,
+                    repair=attempt_kind == "repair",
+                )
+                attempt_seed = (
+                    int(args.seed)
+                    + user_index * 1000
+                    + case_index * 10
+                    + attempt_index
+                )
+                request_contract = chat_request_payload(
+                    endpoint,
+                    messages,
+                    temperature=GENERATION_TEMPERATURE,
+                    max_tokens=SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+                    seed=attempt_seed,
+                    response_schema=GeneratedSurfaceOnlyCaseDraft,
+                )
+                request_contract_json = canonical_json(request_contract)
+                request_contract_sha256 = sha256_text(request_contract_json)
+                prompt_sha256 = sha256_text(canonical_json(messages))
+                record_ids = {
+                    "user_id": user_id,
+                    "case_field": case_field,
+                    "attempt_kind": attempt_kind,
+                    "generation_seed": attempt_seed,
+                }
+                call_key = physical_call_key(
+                    stage=GENERATION_STAGE,
+                    record_ids=record_ids,
+                    prompt_sha256=prompt_sha256,
+                    endpoint=endpoint,
+                    request_parameters={
+                        "temperature": GENERATION_TEMPERATURE,
+                        "max_tokens": SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+                        "seed": attempt_seed,
+                        "response_schema": GeneratedSurfaceOnlyCaseDraft.__name__,
+                        "request_contract_sha256": request_contract_sha256,
+                    },
+                )
+                attempts.append(
+                    {
+                        "attempt": attempt_index + 1,
+                        "attempt_kind": attempt_kind,
+                        "seed": attempt_seed,
+                        "messages": messages,
+                        "prompt_sha256": prompt_sha256,
+                        "request_contract_sha256": request_contract_sha256,
+                        "call_key": call_key,
+                        "raw_estimated_input_tokens": estimate_tokens(
+                            request_contract_json
+                        ),
+                        "estimated_input_tokens": conservative_token_bound(
+                            request_contract_json,
+                            safety_factor=input_token_safety_factor,
+                        ),
+                    }
+                )
+            cases.append(
                 {
-                    "attempt": attempt + 1,
-                    "seed": attempt_seed,
-                    "request_contract_sha256": request_contract_sha256,
-                    "call_key": call_key,
-                    "raw_estimated_input_tokens": estimate_tokens(
-                        request_contract_json
-                    ),
-                    "estimated_input_tokens": conservative_token_bound(
-                        request_contract_json,
-                        safety_factor=input_token_safety_factor,
-                    ),
+                    "user_id": user_id,
+                    "case_field": case_field,
+                    "regime": regime.value,
+                    "semantic_family": semantic_family,
+                    "attempts": attempts,
                 }
             )
         all_user_attempts[user_id] = {
             "user_id": user_id,
             "split": split_by_user[user_id].value,
-            "semantic_families": family_by_user[user_id],
-            "seed_dialogue_index": index % len(seeds),
+            "semantic_families": families,
+            "seed_dialogue_index": seed_dialogue_index,
             "seed_dialogue_source_id": seed_record["dialogue_id"],
             "seed_dialogue_sha256": sha256_text(seed_dialogue),
-            "prompt_sha256": sha256_text(canonical_json(messages)),
-            "maximum_output_tokens": GENERATION_MAX_OUTPUT_TOKENS,
-            "maximum_attempts": args.max_generation_attempts,
-            "attempts": attempts,
+            "maximum_output_tokens_per_call": (
+                SURFACE_GENERATION_MAX_OUTPUT_TOKENS
+            ),
+            "maximum_attempts_per_case": args.max_generation_attempts,
+            "cases": cases,
         }
 
     all_call_keys = [
         str(attempt["call_key"])
         for row in all_user_attempts.values()
-        for attempt in row["attempts"]
+        for case_plan in row["cases"]
+        for attempt in case_plan["attempts"]
     ]
     if len(all_call_keys) != len(set(all_call_keys)):
         raise RuntimeError("synthetic generation produced duplicate physical call keys")
     ledger = PersistentAttemptLedger(
         attempt_ledger_path,
-        stage="pm_v2_synthetic_bundle_generation",
+        stage=GENERATION_STAGE,
         expected_calls={call_key: 1 for call_key in all_call_keys},
         maximum_total_attempts=max(len(all_call_keys), 1),
     )
-    recovered_successful_bundles = _recover_successful_bundles_from_ledger(
+    recovered_successful_bundles = _recover_casewise_bundles_from_ledger(
         ledger=ledger,
         all_user_attempts=all_user_attempts,
         existing=existing,
         work_path=work_path,
         generation_binding=generation_binding,
         family_by_user=family_by_user,
+        seeds=seeds,
+        endpoint=endpoint,
     )
     for user_id, bundle in existing.items():
         require_bundle_generation_binding(bundle, generation_binding)
         strict_bundle_check(bundle, family_by_user[user_id])
-        physical_call_key_value = str(
-            bundle.provenance.get("physical_call_key") or ""
+        accepted_call_keys = bundle.provenance.get(
+            "accepted_surface_call_keys"
         )
         valid_call_keys = {
-            str(row["call_key"])
-            for row in all_user_attempts[user_id]["attempts"]
+            str(attempt["call_key"])
+            for case_plan in all_user_attempts[user_id]["cases"]
+            for attempt in case_plan["attempts"]
         }
         if (
-            physical_call_key_value not in valid_call_keys
-            or not ledger.succeeded(physical_call_key_value)
+            not isinstance(accepted_call_keys, dict)
+            or set(accepted_call_keys)
+            != {field for field, _ in GENERATION_CASE_FIELDS}
+            or any(
+                str(value) not in valid_call_keys
+                or not ledger.succeeded(str(value))
+                for value in accepted_call_keys.values()
+            )
         ):
             raise RuntimeError(
-                f"resumable bundle lacks a successful physical-attempt binding: {user_id}"
+                f"resumable bundle lacks nine successful surface bindings: {user_id}"
             )
 
     pending_users = [user_id for user_id in planned_users if user_id not in existing]
     call_plan: list[dict[str, Any]] = []
     blocked_pending_users: list[dict[str, Any]] = []
     for user_id in pending_users:
-        row = all_user_attempts[user_id]
-        successful = [
-            attempt
-            for attempt in row["attempts"]
-            if ledger.succeeded(str(attempt["call_key"]))
-        ]
-        remaining_attempts = [
-            attempt
-            for attempt in row["attempts"]
-            if not ledger.exhausted(str(attempt["call_key"]))
-        ]
-        if successful or not remaining_attempts:
-            blocked_pending_users.append(
+        user_plan = all_user_attempts[user_id]
+        for case_plan in user_plan["cases"]:
+            successful = [
+                attempt
+                for attempt in case_plan["attempts"]
+                if ledger.succeeded(str(attempt["call_key"]))
+            ]
+            if successful:
+                continue
+            remaining_attempts = [
+                attempt
+                for attempt in case_plan["attempts"]
+                if not ledger.exhausted(str(attempt["call_key"]))
+            ]
+            if not remaining_attempts:
+                blocked_pending_users.append(
+                    {
+                        "user_id": user_id,
+                        "case_field": case_plan["case_field"],
+                        "reason": "maximum_case_attempts_exhausted",
+                        "historical_attempts": sum(
+                            ledger.attempts_for(str(attempt["call_key"]))
+                            for attempt in case_plan["attempts"]
+                        ),
+                    }
+                )
+                continue
+            public_attempts = [
+                {
+                    key: value
+                    for key, value in attempt.items()
+                    if key != "messages"
+                }
+                for attempt in remaining_attempts
+            ]
+            call_plan.append(
                 {
                     "user_id": user_id,
-                    "reason": (
-                        "successful_attempt_missing_bundle"
-                        if successful
-                        else "maximum_generation_attempts_exhausted"
+                    "split": user_plan["split"],
+                    "semantic_families": user_plan["semantic_families"],
+                    "seed_dialogue_index": user_plan["seed_dialogue_index"],
+                    "seed_dialogue_source_id": user_plan[
+                        "seed_dialogue_source_id"
+                    ],
+                    "seed_dialogue_sha256": user_plan["seed_dialogue_sha256"],
+                    "case_field": case_plan["case_field"],
+                    "regime": case_plan["regime"],
+                    "semantic_family": case_plan["semantic_family"],
+                    "estimated_input_tokens": public_attempts[0][
+                        "estimated_input_tokens"
+                    ],
+                    "maximum_estimated_input_tokens": max(
+                        int(attempt["estimated_input_tokens"])
+                        for attempt in public_attempts
                     ),
-                    "historical_attempts": sum(
-                        ledger.attempts_for(str(attempt["call_key"]))
-                        for attempt in row["attempts"]
-                    ),
+                    "remaining_attempts": len(public_attempts),
+                    "attempts": public_attempts,
                 }
             )
-            continue
-        call_plan.append(
-            {
-                **{key: value for key, value in row.items() if key != "attempts"},
-                "estimated_input_tokens": remaining_attempts[0][
-                    "estimated_input_tokens"
-                ],
-                "maximum_estimated_input_tokens": max(
-                    int(attempt["estimated_input_tokens"])
-                    for attempt in remaining_attempts
-                ),
-                "remaining_attempts": len(remaining_attempts),
-                "attempts": remaining_attempts,
-            }
-        )
 
     input_tokens = [int(row["estimated_input_tokens"]) for row in call_plan]
     expected_input_tokens = sum(input_tokens)
@@ -990,9 +1224,11 @@ def main() -> None:
         for attempt in row["attempts"]
     ]
     maximum_input_tokens = sum(potential_input_tokens)
-    expected_output_tokens = len(call_plan) * GENERATION_MAX_OUTPUT_TOKENS
+    expected_output_tokens = (
+        len(call_plan) * SURFACE_GENERATION_MAX_OUTPUT_TOKENS
+    )
     maximum_output_tokens = (
-        len(potential_input_tokens) * GENERATION_MAX_OUTPUT_TOKENS
+        len(potential_input_tokens) * SURFACE_GENERATION_MAX_OUTPUT_TOKENS
     )
     expected_cost = (
         expected_input_tokens / 1_000_000 * args.input_usd_per_mtok
@@ -1112,182 +1348,209 @@ def main() -> None:
     # reservation after this point is fsynced before its HTTP request.
     if call_plan:
         _ = endpoint.api_key
-    plan_by_user = {str(row["user_id"]): row for row in call_plan}
+    authorized_call_keys = {
+        str(attempt["call_key"])
+        for row in call_plan
+        for attempt in row["attempts"]
+    }
     historical_api_calls = ledger.started_attempts
     api_calls_used = 0
-    for index, user_id in enumerate(planned_users):
-        if user_id in existing:
-            continue
-        user_call_plan = plan_by_user.get(user_id)
-        if user_call_plan is None:
-            raise RuntimeError(
-                f"pending synthetic user has no remaining authorized attempt: {user_id}"
-            )
-        last_error = None
-        for attempt in user_call_plan["attempts"]:
-            if ledger.started_attempts >= args.max_api_calls:
-                raise RuntimeError("generation API call cap exhausted before completion")
-            record_ids = {
-                "user_id": user_id,
-                "generation_seed": int(attempt["seed"]),
-                "attempt_index": int(attempt["attempt"]),
-            }
-            reservation = ledger.reserve(
-                str(attempt["call_key"]),
-                record_ids=record_ids,
-                prompt_sha256=str(user_call_plan["prompt_sha256"]),
-            )
-            api_calls_used += 1
-            bundle = None
-            try:
-                bundle = generate_user_bundle(
-                    endpoint=endpoint,
-                    seed_dialogue=seeds[index % len(seeds)]["dialogue_text"],
-                    user_id=user_id,
-                    semantic_families=family_by_user[user_id],
-                    regimes=list(ResourceNeedRegime),
-                    seed=int(attempt["seed"]),
-                    request_retries=GENERATION_REQUEST_RETRIES,
-                )
-                reported_usage = _require_bundle_reported_usage(bundle)
-                reported_prompt_tokens = reported_usage["prompt_tokens"]
-                planned_input_bound = int(attempt["estimated_input_tokens"])
-                if (
-                    fail_on_reported_input_overrun
-                    and reported_prompt_tokens > planned_input_bound
-                ):
-                    raise ReportedInputTokenOverrun(
-                        "reported prompt_tokens exceed the frozen conservative "
-                        f"bound: reported={reported_prompt_tokens}, "
-                        f"bound={planned_input_bound}, user_id={user_id}, "
-                        f"attempt={attempt['attempt']}"
-                    )
-                bundle.provenance.update(
-                    {
-                        "seed_dialogue_source_id": seeds[index % len(seeds)][
-                            "dialogue_id"
-                        ],
-                        "physical_call_key": reservation.call_key,
-                        "physical_attempt_index": reservation.attempt_index,
-                        "physical_attempt_key": reservation.attempt_key,
-                    }
-                )
-                bind_bundle_to_generation_run(bundle, generation_binding)
-                strict_bundle_check(bundle, family_by_user[user_id])
-            except StructuredOutputValidationError as exc:
-                last_error = f"{type(exc).__name__}: {exc}"
-                usage = require_reported_usage(
-                    exc.call.usage,
-                    stage="failed PM-v2 full generation structured response",
-                )
-                failure_result = {
-                    "provider_response": exc.call.raw_response,
-                    "parsed_payload": exc.parsed_payload,
-                    "validation_errors": exc.validation_errors,
-                }
-                ledger.finish(
-                    reservation,
-                    succeeded=False,
-                    request_hash=exc.call.request_hash,
-                    usage=usage,
-                    error=last_error,
-                    result=failure_result,
-                )
-                append_jsonl(
-                    error_path,
-                    {
-                        "user_id": user_id,
-                        "attempt": int(attempt["attempt"]),
-                        "generation_seed": int(attempt["seed"]),
-                        "physical_call_key": reservation.call_key,
-                        "physical_attempt_index": reservation.attempt_index,
-                        "physical_attempt_key": reservation.attempt_key,
-                        "error": last_error,
-                        "provider_response_preserved": True,
-                        "validation_errors": exc.validation_errors,
-                        "generation_run_binding_sha256": generation_binding_sha256,
-                        "accepted_cost_estimate_sha256": expected_hash,
-                    },
-                )
+    client = make_client(endpoint) if call_plan else None
+    try:
+        for user_id in planned_users:
+            if user_id in existing:
                 continue
-            except GenerationDraftCompilationError as exc:
-                last_error = f"{type(exc).__name__}: {exc}"
-                usage = require_reported_usage(
-                    exc.call.usage,
-                    stage="failed PM-v2 full generation draft compilation",
+            user_plan = all_user_attempts[user_id]
+            prior_current_user_texts: list[str] = []
+            for case_plan in user_plan["cases"]:
+                loaded = _load_successful_surface_attempt(
+                    ledger=ledger, case_plan=case_plan
                 )
-                failure_result = {
-                    "provider_response": exc.call.raw_response,
-                    "parsed_payload": exc.parsed_payload,
-                    "compilation_error": exc.compilation_error,
-                }
-                ledger.finish(
-                    reservation,
-                    succeeded=False,
-                    request_hash=exc.call.request_hash,
-                    usage=usage,
-                    error=last_error,
-                    result=failure_result,
-                )
-                append_jsonl(
-                    error_path,
-                    {
-                        "user_id": user_id,
-                        "attempt": int(attempt["attempt"]),
-                        "generation_seed": int(attempt["seed"]),
-                        "physical_call_key": reservation.call_key,
-                        "physical_attempt_index": reservation.attempt_index,
-                        "physical_attempt_key": reservation.attempt_key,
-                        "error": last_error,
-                        "provider_response_preserved": True,
-                        "compilation_error": exc.compilation_error,
-                        "generation_run_binding_sha256": generation_binding_sha256,
-                        "accepted_cost_estimate_sha256": expected_hash,
-                    },
-                )
-                continue
-            except Exception as exc:
-                last_error = f"{type(exc).__name__}: {exc}"
-                _finish_generation_attempt(
-                    ledger,
-                    reservation,
-                    bundle=bundle,
-                    succeeded=False,
-                    error=last_error,
-                )
-                append_jsonl(
-                    error_path,
-                    {
-                        "user_id": user_id,
-                        "attempt": int(attempt["attempt"]),
-                        "generation_seed": int(attempt["seed"]),
-                        "physical_call_key": reservation.call_key,
-                        "physical_attempt_index": reservation.attempt_index,
-                        "physical_attempt_key": reservation.attempt_key,
-                        "error": last_error,
-                        "generation_run_binding_sha256": generation_binding_sha256,
-                        "accepted_cost_estimate_sha256": expected_hash,
-                    },
-                )
-                if isinstance(exc, ReportedInputTokenOverrun):
-                    raise RuntimeError(last_error) from exc
-                continue
-            _finish_generation_attempt(
-                ledger,
-                reservation,
-                bundle=bundle,
-                succeeded=True,
-                error=None,
+                if loaded is None:
+                    last_error: str | None = None
+                    for attempt in case_plan["attempts"]:
+                        call_key = str(attempt["call_key"])
+                        if call_key not in authorized_call_keys:
+                            continue
+                        if ledger.started_attempts >= args.max_api_calls:
+                            raise RuntimeError(
+                                "generation API call cap exhausted before completion"
+                            )
+                        reservation = ledger.reserve(
+                            call_key,
+                            record_ids={
+                                "user_id": user_id,
+                                "case_field": case_plan["case_field"],
+                                "attempt_kind": attempt["attempt_kind"],
+                                "generation_seed": int(attempt["seed"]),
+                            },
+                            prompt_sha256=str(attempt["prompt_sha256"]),
+                        )
+                        api_calls_used += 1
+                        try:
+                            assert client is not None
+                            call, surface = client.chat(
+                                attempt["messages"],
+                                temperature=GENERATION_TEMPERATURE,
+                                max_tokens=SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+                                seed=int(attempt["seed"]),
+                                response_schema=GeneratedSurfaceOnlyCaseDraft,
+                                retries=GENERATION_REQUEST_RETRIES,
+                            )
+                            assert surface is not None
+                            usage = require_reported_usage(
+                                call.usage,
+                                stage="PM-v1.5 full surface generation",
+                            )
+                            if usage["prompt_tokens"] > int(
+                                attempt["estimated_input_tokens"]
+                            ):
+                                result = {
+                                    "surface": surface.model_dump(mode="json"),
+                                    "provider_response": call.raw_response,
+                                }
+                                last_error = (
+                                    "reported prompt_tokens exceed the frozen "
+                                    "conservative bound"
+                                )
+                                ledger.finish(
+                                    reservation,
+                                    succeeded=False,
+                                    request_hash=call.request_hash,
+                                    usage=usage,
+                                    error=last_error,
+                                    result=result,
+                                )
+                                raise ReportedInputTokenOverrun(last_error)
+                            lint = lint_generation_surface_case(
+                                case_field=str(case_plan["case_field"]),
+                                regime=ResourceNeedRegime(
+                                    str(case_plan["regime"])
+                                ),
+                                family=str(case_plan["semantic_family"]),
+                                forbidden_families=[
+                                    family
+                                    for family in user_plan["semantic_families"]
+                                    if family != case_plan["semantic_family"]
+                                ],
+                                surface=surface,
+                                prior_current_user_texts=(
+                                    prior_current_user_texts
+                                ),
+                            )
+                            result = {
+                                "surface": surface.model_dump(mode="json"),
+                                "provider_response": call.raw_response,
+                                "lint": lint,
+                                "attempt_kind": attempt["attempt_kind"],
+                            }
+                            if lint["status"] != "PASS":
+                                last_error = "surface lint failed: " + canonical_json(
+                                    lint["errors"]
+                                )
+                                ledger.finish(
+                                    reservation,
+                                    succeeded=False,
+                                    request_hash=call.request_hash,
+                                    usage=usage,
+                                    error=last_error,
+                                    result=result,
+                                )
+                                append_jsonl(
+                                    error_path,
+                                    {
+                                        "user_id": user_id,
+                                        "case_field": case_plan["case_field"],
+                                        "attempt_kind": attempt["attempt_kind"],
+                                        "generation_seed": int(attempt["seed"]),
+                                        "physical_call_key": call_key,
+                                        "error": last_error,
+                                        "provider_response_preserved": True,
+                                        "accepted_cost_estimate_sha256": expected_hash,
+                                    },
+                                )
+                                continue
+                            ledger.finish(
+                                reservation,
+                                succeeded=True,
+                                request_hash=call.request_hash,
+                                usage=usage,
+                                error=None,
+                                result=result,
+                            )
+                            loaded = (attempt, surface, call)
+                            last_error = None
+                            break
+                        except StructuredOutputValidationError as exc:
+                            usage = require_reported_usage(
+                                exc.call.usage,
+                                stage="failed PM-v1.5 surface schema",
+                            )
+                            last_error = f"{type(exc).__name__}: {exc}"
+                            failure_result = {
+                                "provider_response": exc.call.raw_response,
+                                "parsed_payload": exc.parsed_payload,
+                                "validation_errors": exc.validation_errors,
+                            }
+                            ledger.finish(
+                                reservation,
+                                succeeded=False,
+                                request_hash=exc.call.request_hash,
+                                usage=usage,
+                                error=last_error,
+                                result=failure_result,
+                            )
+                            append_jsonl(
+                                error_path,
+                                {
+                                    "user_id": user_id,
+                                    "case_field": case_plan["case_field"],
+                                    "attempt_kind": attempt["attempt_kind"],
+                                    "generation_seed": int(attempt["seed"]),
+                                    "physical_call_key": call_key,
+                                    "error": last_error,
+                                    "provider_response_preserved": True,
+                                    "validation_errors": exc.validation_errors,
+                                    "accepted_cost_estimate_sha256": expected_hash,
+                                },
+                            )
+                            continue
+                        except ReportedInputTokenOverrun:
+                            raise
+                        except Exception as exc:
+                            last_error = f"{type(exc).__name__}: {exc}"
+                            ledger.finish(
+                                reservation,
+                                succeeded=False,
+                                request_hash=None,
+                                usage=None,
+                                error=last_error,
+                            )
+                            raise RuntimeError(last_error) from exc
+                    if loaded is None:
+                        raise RuntimeError(
+                            "surface generation exhausted initial+repair for "
+                            f"{user_id}/{case_plan['case_field']}: {last_error}"
+                        )
+                _, surface, _ = loaded
+                prior_current_user_texts.append(surface.current_user_text)
+            seed_record = seeds[int(user_plan["seed_dialogue_index"])]
+            bundle = _compile_casewise_user_from_ledger(
+                ledger=ledger,
+                user_plan=user_plan,
+                seed_dialogue=seed_record["dialogue_text"],
+                seed_dialogue_source_id=seed_record["dialogue_id"],
+                endpoint=endpoint,
+                generation_binding=generation_binding,
             )
+            if bundle is None:
+                raise RuntimeError(f"user {user_id} lacks nine accepted surfaces")
+            strict_bundle_check(bundle, family_by_user[user_id])
             append_jsonl(work_path, bundle.model_dump(mode="json"))
             existing[user_id] = bundle
-            last_error = None
-            break
-        if last_error is not None:
-            raise RuntimeError(
-                f"failed to generate valid bundle for {user_id} after "
-                f"its remaining frozen attempts: {last_error}"
-            )
+    finally:
+        if client is not None:
+            client.close()
     bundles = [existing[user_id] for user_id in planned_users]
     report = write_development_dataset(
         bundles=bundles,
@@ -1306,6 +1569,7 @@ def main() -> None:
             PMV2Split.CALIBRATION: CALIBRATION_SEMANTIC_FAMILIES,
             PMV2Split.INTERNAL_TEST: INTERNAL_TEST_SEMANTIC_FAMILIES,
         },
+        semantic_encoder=semantic_encoder,
     )
     enforce_full_state_design(
         report,
@@ -1337,6 +1601,14 @@ def main() -> None:
         ),
         report_top_pairs=int(near_duplicate_cfg["report_top_pairs"]),
     )
+    generation_repair_cases = [
+        {"user_id": bundle.user_id, "case_field": case_field}
+        for bundle in bundles
+        for case_field, attempt_kind in (
+            bundle.provenance.get("provider_surface_attempt_kinds") or {}
+        ).items()
+        if attempt_kind == "repair"
+    ]
     report.update(
         {
             "work_path": str(work_path),
@@ -1345,6 +1617,7 @@ def main() -> None:
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "seed_dialogues": str(args.seed_dialogues),
             "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
+            "frozen_strategy_bank_binding": frozen_strategy_bank_binding,
             "seed_strategy_instance_disjointness": seed_strategy_disjointness,
             "generation_run_binding": generation_binding,
             "generation_run_binding_sha256": generation_binding_sha256,
@@ -1361,6 +1634,14 @@ def main() -> None:
             ),
             "generation_expected_api_calls": estimate["expected_api_calls"],
             "generation_maximum_api_calls": estimate["maximum_api_calls"],
+            "generation_surface_protocol": "surface_only_casewise",
+            "generation_repair_case_count": len(generation_repair_cases),
+            "generation_repair_case_rate": (
+                len(generation_repair_cases) / len(generated_states)
+                if generated_states
+                else 0.0
+            ),
+            "generation_repair_cases": generation_repair_cases,
             "cross_split_near_duplicate_audit": near_duplicate_audit,
             "all_states_have_16_actions": all(
                 len(state.allowed_actions) == 16 for state in generated_states

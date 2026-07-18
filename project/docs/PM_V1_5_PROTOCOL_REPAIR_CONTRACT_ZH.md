@@ -1,13 +1,17 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-18
-合同状态：**IMPLEMENTED_NOT_EXECUTED / EXECUTION_RELEASED_STAGE_APPROVAL_REQUIRED**
+合同状态：**IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_V8_3_REVIEW_AND_APPROVAL**
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
+
+任何后续局部修复还必须先检查 `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 中的全链路
+失效模式、不可回归宪法与改动影响矩阵，不能只验证当前报错点。
 
 ## 0. 状态与效力
 
 本文是审查后冻结并完成代码实现的目标方法合同，不是实验结果。代码完成不等于实验
-主张成立。中央配置已进入执行发布状态，但这不等于任何阶段已获授权；在本文末尾要求的
+主张成立。V8.2 已真实消费并 fail-closed；中央配置当前保持
+`PAID_RUN_BLOCKED`。在本文末尾要求的
 逐阶段 clean dry-run、lineage 审查、配置哈希和新 run identity 全部完成前：
 
 - 不允许开始新的付费 development、judging 或 external 调用；
@@ -81,9 +85,13 @@ item-level retrieval 只能在动作之后执行。
 Strategy 只允许：
 
 - query 与少量预冻结 strategy-family centroids 的相似度；
-- 由当前对话文本确定性计算的 readiness 标量，例如明确请求建议、明确拒绝建议、
-  listening/readiness 或指令性风险；
+- query 与五类预冻结 advice-readiness anchors 的连续语义相似度：listen-only、
+  explore-first、light-suggestion、structured-plan、ambiguous；
 - family availability、bounded count 与 expected cost。
+
+禁止再用 advice/request/listen 关键词正则产生硬布尔标签。Advice Readiness 也不等于
+Strategy RAG 边际价值：listen-only 可受益于 reflection/restatement；明确请求建议也可能
+因 Bank 不匹配而不应开启 RS。
 
 连续值必须冻结归一化、裁剪和量化规则。缺失表示必须显式产生 `valid=false`，不得用某个
 来源特有的魔法数代替。
@@ -123,6 +131,30 @@ Strategy Bank 与 52 个正式 development seed dialogue 还必须做到实例�
 冻结选择先确定 52 个 seed source ID，再从主 Bank 中排除这些完整对话；结果为 11,590 张
 卡、823 个来源对话，8 个策略家族仍全部覆盖。这里允许“策略类型和经验规律重合”，但
 不允许训练输入与检索卡来自同一个原始 ESConv 对话实例。
+
+`configs/pm_v1_5.yaml:strategy_bank_contract` 还固定 exact relative path、Bank SHA、
+11,590/823 计数、Bank audit SHA，以及 52-source manifest 的 path/SHA/count。首个付费
+development 入口必须在创建 API client 前逐项验证；CLI 不能用另一套内容替换它。后续
+sweep、judging、freeze 和 external 继续验证首阶段 attestation 中的同一 hash，而不是各自
+重新接受一个“看起来相似”的 Bank。
+
+### 3.5 可见状态语义表示
+
+PM 还可读取两个由同一冻结本地 encoder 产生的可部署视图：当前 user turn，以及
+`current turn + recent visible dialogue + visible session summary`。当前合同固定为
+`BAAI/bge-small-en-v1.5` 的精确 40-hex revision、snapshot tree SHA、CLS pooling、L2
+normalization、512-token truncation 和 384 维输出；运行时禁止下载或 remote code。
+
+两个视图拼接后只能在 train users 上拟合 PCA 到 48 维；calibration、internal 和 external
+只能 transform。encoder/spec/hash/dimension 只进入 provenance 和 freeze，不得成为数值
+identity feature。development 与 external 若 binding 不同必须在任何付费调用前 fail closed。
+
+为防 source similarity 变成合成 oracle，普通 non-needed source 包含一条 same-topic、明确
+非个人且无边际价值的目录项，再配一条异题 distractor；needed source 包含 helpful +
+distractor；`memory_harmful` 的每个源则包含一条真实 unsafe contrast 和一条 same-topic
+非个人 decoy，避免 harmful 分支重新形成特殊 centroid 答案键。
+这只是构造假设，仍必须同时通过 actual item-utility semantic gate 和 train-only shortcut
+probe，不能因为代码这样写就宣告问题已解决。
 
 ## 4. 动作、尝试、实现与 prompt alias
 
@@ -203,6 +235,8 @@ delta_utility_LCB > 0
 在候选选择前必须报告：
 
 - Step-0 单特征和简单阈值对 source/RS oracle 的可预测性；
+- 将全部 Step-0 标量联合输入正则 logistic 与浅层树的 user-group
+  cross-validation probe，防止 XOR/interaction 一类组合 shortcut 绕过单特征门；
 - shuffled-label、permuted-source、centroid-noise 和 no-Step-0 消融；
 - 各 action factor 主效应及预声明 pairwise interaction 的覆盖；
 - user/regime/environment 对 representation 的可识别性；
@@ -212,7 +246,9 @@ oracle 可预测性审计只允许读取 train 的 216 个 resource/regime oracl
 internal-test 的 252 个 state 只做不读取 resource oracle 的结构、范围、缺失和身份审计。
 审计报告必须显式写入 `internal_resource_oracle_read=false`。
 
-若简单单阈值几乎完美恢复 synthetic label，不能把 learned PM 的高分解释为复杂状态调度。
+若简单单阈值或任一冻结的低容量多变量 probe 几乎完美恢复 synthetic label，不能把
+learned PM 的高分解释为复杂状态调度。该审计不读取 action outcomes，必须在 52-user / 468-state
+数据完成后立即独立运行并生成 attestation；full action sweep 不得等到训练阶段才首次运行它。
 
 ## 7. 分割、冻结与一次性 internal-test
 
@@ -233,15 +269,23 @@ checkpoint、sealed label bundle 和输出 schema 哈希。消费动作必须写
 ledger；label 与 seal 不一致或同一 run identity 第二次读取 outcome均直接失败。查看
 internal-test 后不得改变 primary candidate、阈值、baseline 或外部 condition matrix。
 
-完整 468-state corpus 在 action response generation 前还要通过两道门：实际构造文本的
+完整 468-state corpus 在 action response generation 前还要通过三道门：实际构造文本的
 双开发家族 12-field 全量语义审核，以及按 train/calibration/internal-test 分开计算的
-provider-surface fallback 上限。内部测试 split 的 fallback 上限为 0；审核报告和输入
+provider-surface fallback 上限，另加 train-only oracle / all-split structural 的 Step-0
+shortcut 审计。内部测试 split 的 fallback 上限为 0；审核报告和输入
 states、evaluator contexts、memory backend、Strategy Bank 和配置哈希必须由 attestation
 绑定，并与下游当前实际输入逐一一致。27-case review 只保留为生成协议的前置小型审查，
 不能替代真实 468-state gate。两道自动审核各自冻结 12 字段 × 每字段 2 个 hard controls；
 零 controls、字段缺失、重复覆盖、seed/数量漂移或 control matrix hash 不一致均直接失败。
 controls 使用真实候选值交换、标签翻转、age 算术矛盾、时序复制、grounding donor、
 premature-strategy 注入等可读 corruption，不再使用 sentinel 字符串。
+
+生成器接口本身冻结为 surface-only casewise 合同。每个物理请求只包含一个
+semantic family/regime 的四个可见自然语言字段，不向 provider 暴露 memory、oracle label、
+coverage rationale、case ID 或 evidence blueprint。每个用户的 9 个 case 分开请求；初次
+schema/topic/structure lint 失败时，只允许同 case 的一次独立 seed、提前计入预算的 repair。
+成功立即停止，repair 失败则整次正式生成 fail-closed；确定性 fallback 不得作为训练语料。
+因此 52-user 正式生成成功路径为 468 calls，硬上限为 936 calls，而不再是旧整包 52 calls。
 
 两道 semantic review 的 judge endpoint aliases 也分别在 PM 配置中按顺序锁定。runner
 必须精确使用该面板，不能以任意“同样是两个独立开发家族”的 CLI override 替换。
@@ -296,7 +340,9 @@ learned routing 优于同预算 fixed。
 
 不得再把不同资源折成一个未经验证的“token cost”。至少分别报告：
 
-- Step-0 compute/lookup 次数与耗时；
+- Step-0 encoder 本地输入 token estimate、invocation、memory/family/readiness
+  comparisons 与逐 turn 耗时；
+- source catalog 和 Strategy family/readiness catalog 的一次性 refresh 耗时；
 - item-level memory/strategy retrieval attempts、hits 与耗时；
 - observed generator input/output tokens；
 - judge tokens（实验成本，不混作部署推理成本）；
@@ -372,7 +418,8 @@ attestation，并在 API key 解析与付费调用前 fail closed。
 - [x] Gate M/F/E 数值配置与测试实现；
 - [x] 新 external condition matrix、freeze 与 claim wording 实现；
 - [x] 52-seed/Strategy Bank 实例级隔离并保留八个策略家族；
-- [x] actual 468-state semantic/fallback gate 与 train-only shortcut oracle audit 实现；
+- [x] actual 468-state semantic/fallback gate、独立 pre-sweep shortcut runner 与
+  user-group 多变量 probe 实现；
 - [x] EvoEmo chronology 校验与 3-unit/24-call 数值 order pilot 实现；
 - [x] 所有 V1.5 `--run` 入口统一中央付费门实现；
 - [x] clean venv 下与 CI 一致的裸 `pytest -q` 全量通过；

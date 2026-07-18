@@ -103,6 +103,14 @@ STRATEGY_FAMILY_IDS: tuple[str, ...] = (
     "restatement",
 )
 
+ADVICE_READINESS_IDS: tuple[str, ...] = (
+    "listen_only",
+    "explore_first",
+    "light_suggestion",
+    "structured_plan",
+    "ambiguous",
+)
+
 
 class Step0MemoryObservation(StrictModel):
     available: bool
@@ -133,8 +141,7 @@ class Step0StrategyObservation(StrictModel):
     expected_retrieval_tokens: int = Field(ge=0)
     representation_valid: bool
     family_similarities: dict[str, float]
-    advice_requested: bool
-    advice_rejected: bool
+    advice_readiness_similarities: dict[str, float]
     question_present: bool
 
     @field_validator("family_similarities")
@@ -144,6 +151,15 @@ class Step0StrategyObservation(StrictModel):
             raise ValueError("Step-0 strategy family keys do not match the contract")
         if any(not -1.0 <= float(score) <= 1.0 for score in value.values()):
             raise ValueError("Step-0 strategy family similarity is outside [-1, 1]")
+        return value
+
+    @field_validator("advice_readiness_similarities")
+    @classmethod
+    def exact_readiness(cls, value: dict[str, float]) -> dict[str, float]:
+        if set(value) != set(ADVICE_READINESS_IDS):
+            raise ValueError("Step-0 advice-readiness keys do not match the contract")
+        if any(not -1.0 <= float(score) <= 1.0 for score in value.values()):
+            raise ValueError("Step-0 advice-readiness similarity is outside [-1, 1]")
         return value
 
     @model_validator(mode="after")
@@ -162,8 +178,8 @@ class Step0StrategyObservation(StrictModel):
 
 
 class Step0Observation(StrictModel):
-    protocol: Literal["pm-v1.5-step0-source-observation-v1"] = (
-        "pm-v1.5-step0-source-observation-v1"
+    protocol: Literal["pm-v1.5-step0-semantic-source-observation-v2"] = (
+        "pm-v1.5-step0-semantic-source-observation-v2"
     )
     observation_stage: Literal["pre_item_retrieval"] = "pre_item_retrieval"
     memory_sources: dict[MemorySource, Step0MemoryObservation]
@@ -272,6 +288,7 @@ class PMV2State(StrictModel):
             "data_generation_sha256",
             "adapted_from_runtime_state",
             "runtime_provenance_sha256",
+            "semantic_observation",
         }
         unexpected_provenance = sorted(set(self.provenance) - allowed_provenance)
         if unexpected_provenance:
@@ -302,6 +319,33 @@ class PMV2State(StrictModel):
             raise ValueError(
                 "PMV2State provenance adapted_from_runtime_state must be boolean"
             )
+        if "semantic_observation" in self.provenance:
+            semantic = self.provenance["semantic_observation"]
+            expected_semantic_keys = {
+                "protocol",
+                "encoder_spec_sha256",
+                "encoder_snapshot_tree_sha256",
+                "views",
+                "per_view_dimension",
+                "combined_dimension",
+                "visible_input_sha256",
+                "observation_sha256",
+            }
+            if not isinstance(semantic, dict) or set(semantic) != expected_semantic_keys:
+                raise ValueError("semantic observation audit does not match the contract")
+            if semantic.get("combined_dimension") != len(self.text_embedding):
+                raise ValueError("semantic observation dimension drifts from text_embedding")
+            for key in (
+                "encoder_spec_sha256",
+                "encoder_snapshot_tree_sha256",
+                "visible_input_sha256",
+                "observation_sha256",
+            ):
+                value = semantic.get(key)
+                if not isinstance(value, str) or len(value) != 64:
+                    raise ValueError(f"semantic observation {key} must be SHA-256")
+        elif self.text_embedding:
+            raise ValueError("text_embedding requires semantic observation provenance")
         return self
 
 

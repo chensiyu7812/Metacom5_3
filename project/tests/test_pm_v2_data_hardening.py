@@ -48,9 +48,11 @@ from metacom_pm.pm_v2_contracts import (
 from metacom_pm.pm_v2_audit import _regime_pass
 from metacom_pm.pm_v2_data import (
     GENERATION_CASE_FIELDS,
+    GENERATION_FAMILY_TOPICS,
     GenerationDraftCompilationError,
     GeneratedBundleDraft,
     GeneratedMemory,
+    GeneratedSurfaceOnlyCaseDraft,
     GeneratedStateCase,
     GeneratedUserBundle,
     audit_cross_split_near_duplicates,
@@ -60,23 +62,34 @@ from metacom_pm.pm_v2_data import (
     case_to_evaluator_context,
     case_to_memory_backend,
     case_to_state,
+    compile_surface_only_user_bundle,
     compile_generation_draft,
     evaluator_context_payload_sha256,
     generate_user_bundle,
     generation_case_family_assignments,
+    generation_case_messages,
     generation_distractor_family_assignments,
     generation_messages,
+    lint_generation_surface_case,
     require_bundle_generation_binding,
     runtime_to_pmv2_state,
+    state_to_v1_runtime,
     validate_generation_shortcut_controls,
     validate_split_manifests,
     write_development_dataset,
 )
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
+from metacom_pm.pm_v1_5_semantic import (
+    FrozenSemanticEncoderSpec,
+    SemanticEncoderBinding,
+)
 from metacom_pm.pm_v1_5_required_hit import validate_required_hit_preflight
 from metacom_pm.pm_v2_judging import prompt_contract_hash
 from metacom_pm.pm_v2_generation_pilot import (
     CALIBRATION_SEMANTIC_FAMILIES,
+    GENERATION_PILOT_FAMILIES,
+    GENERATION_PILOT_MAX_ATTEMPTS,
+    GENERATION_PILOT_MINIMUM_CALLS,
     GENERATION_PILOT_STAGE,
     INTERNAL_TEST_SEMANTIC_FAMILIES,
     TRAIN_SEMANTIC_FAMILIES,
@@ -138,139 +151,12 @@ def test_semantic_family_schedule_counterbalances_regime_positions() -> None:
         )
 
 
-def test_successful_synthetic_generation_attempt_persists_reported_usage(
-    tmp_path: Path,
-) -> None:
-    script = PROJECT_ROOT / "scripts" / "20_generate_pm_v2_development_data.py"
-    spec = importlib.util.spec_from_file_location("pm_v2_generation_script", script)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    call_key = "c" * 64
-    ledger_path = tmp_path / "attempts.jsonl"
-    ledger = PersistentAttemptLedger(
-        ledger_path,
-        stage="fixture_generation",
-        expected_calls={call_key: 1},
-        maximum_total_attempts=1,
-    )
-    reservation = ledger.reserve(
-        call_key,
-        record_ids={"user_id": "fixture"},
-        prompt_sha256="p" * 64,
-    )
-    bundle = _bundle()
-    bundle.provenance.update(
-        {
-            "request_hash": "provider-request-hash",
-            "reported_usage": {
-                "prompt_tokens": 123,
-                "completion_tokens": 45,
-                "total_tokens": 168,
-            },
-        }
-    )
-    assert module._require_bundle_reported_usage(bundle) == bundle.provenance[
-        "reported_usage"
-    ]
-    module._finish_generation_attempt(
-        ledger,
-        reservation,
-        bundle=bundle,
-        succeeded=True,
-        error=None,
-    )
-    terminal = list(iter_jsonl(ledger_path))[-1]
-    assert terminal["event"] == "SUCCEEDED"
-    assert terminal["request_hash"] == "provider-request-hash"
-    assert terminal["usage"] == bundle.provenance["reported_usage"]
-    assert terminal["result"]["bundle"]["user_id"] == bundle.user_id
-
-    missing_usage_bundle = _bundle()
-    missing_usage_bundle.provenance["reported_usage"] = {
-        "prompt_tokens": 0,
-        "completion_tokens": 0,
-        "total_tokens": 0,
-    }
-    with pytest.raises(RuntimeError, match="positive prompt/completion"):
-        module._require_bundle_reported_usage(missing_usage_bundle)
-
-
-def test_synthetic_generation_recovers_paid_success_after_work_append_crash(
-    tmp_path: Path,
-) -> None:
-    script = PROJECT_ROOT / "scripts" / "20_generate_pm_v2_development_data.py"
-    spec = importlib.util.spec_from_file_location("pm_v2_generation_recovery", script)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    call_key = "d" * 64
-    ledger = PersistentAttemptLedger(
-        tmp_path / "attempts.jsonl",
-        stage="fixture_recovery",
-        expected_calls={call_key: 1},
-        maximum_total_attempts=1,
-    )
-    reservation = ledger.reserve(
-        call_key,
-        record_ids={"user_id": "recover_user"},
-        prompt_sha256="p" * 64,
-    )
-    families = (
-        "relocation_loneliness",
-        "workload_burnout",
-        "friendship_distance",
-    )
-    bundle = _source_grounded_bundle(user_id="recover_user")
-    generation_binding = {"protocol": "fixture-binding"}
-    bind_bundle_to_generation_run(bundle, generation_binding)
-    bundle.provenance.update(
-        {
-            "physical_call_key": call_key,
-            "request_hash": "paid-request",
-            "reported_usage": {
-                "prompt_tokens": 100,
-                "completion_tokens": 50,
-                "total_tokens": 150,
-            },
-        }
-    )
-    module._finish_generation_attempt(
-        ledger,
-        reservation,
-        bundle=bundle,
-        succeeded=True,
-        error=None,
-    )
-    work_path = tmp_path / "work.jsonl"
-    existing: dict[str, GeneratedUserBundle] = {}
-    recovered = module._recover_successful_bundles_from_ledger(
-        ledger=ledger,
-        all_user_attempts={
-            bundle.user_id: {"attempts": [{"call_key": call_key}]}
-        },
-        existing=existing,
-        work_path=work_path,
-        generation_binding=generation_binding,
-        family_by_user={bundle.user_id: list(families)},
-    )
-    assert recovered == 1
-    assert existing[bundle.user_id].model_dump(mode="json") == bundle.model_dump(
-        mode="json"
-    )
-    assert [row["user_id"] for row in iter_jsonl(work_path)] == [bundle.user_id]
-    assert (
-        module._recover_successful_bundles_from_ledger(
-            ledger=ledger,
-            all_user_attempts={
-                bundle.user_id: {"attempts": [{"call_key": call_key}]}
-            },
-            existing=existing,
-            work_path=work_path,
-            generation_binding=generation_binding,
-            family_by_user={bundle.user_id: list(families)},
-        )
-        == 0
+def test_generation_pilot_uses_a_real_frozen_orthogonal_cohort() -> None:
+    assert GENERATION_PILOT_FAMILIES in (
+        ("relocation_loneliness", "academic_pressure", "trust_rebuilding"),
+        ("relocation_loneliness", "self_confidence", "sleep_disruption"),
+        ("academic_pressure", "trust_rebuilding", "sleep_disruption"),
+        ("self_confidence", "academic_pressure", "relocation_loneliness"),
     )
 
 
@@ -468,13 +354,7 @@ def _role_slot_draft(
     regimes = list(ResourceNeedRegime)
     targets = generation_case_family_assignments(families, regimes)
     distractors = generation_distractor_family_assignments(families, regimes)
-    topic = {
-        "relocation_loneliness": "moving to a new city",
-        "workload_burnout": "work deadlines",
-        "friendship_distance": "a distant friendship",
-        "academic_pressure": "academic study and an exam",
-        "workplace_conflict": "a workplace conflict with a manager",
-    }
+    topic = {family: GENERATION_FAMILY_TOPICS[family] for family in families}
 
     def item(source: MemorySource, family: str, label: str) -> dict:
         content = topic[family]
@@ -519,8 +399,17 @@ def _role_slot_draft(
         1,
     ):
         target = targets[case_name]
+        current_user_text = f"Concern {index} now feels tied to {topic[target]}."
+        if regime is ResourceNeedRegime.STRATEGY_HELPFUL:
+            current_user_text = (
+                f"I want guidance about {topic[target]}; what should I do next?"
+            )
+        elif regime is ResourceNeedRegime.STRATEGY_HARMFUL:
+            current_user_text = (
+                f"Please just listen without advice while I describe {topic[target]}."
+            )
         surface = {
-            "current_user_text": f"Concern {index} now feels tied to {topic[target]}.",
+            "current_user_text": current_user_text,
             "dialogue_before_current": [
                 {"role": "user", "content": f"Earlier context number {index}."},
                 {"role": "assistant", "content": f"Prior reflection number {index}."},
@@ -638,6 +527,97 @@ def _source_grounded_pilot_bundle(
     return bundle
 
 
+def _surface_only_pilot_inputs(
+    contract: dict,
+) -> dict[str, GeneratedSurfaceOnlyCaseDraft]:
+    """Project the legacy fixture onto the actual V13 provider schema."""
+
+    draft = _role_slot_draft(
+        [str(value) for value in contract["semantic_families"]]
+    )
+    return {
+        case_field: GeneratedSurfaceOnlyCaseDraft.model_validate(
+            {
+                "current_user_text": getattr(draft, case_field).current_user_text,
+                "dialogue_before_current": [
+                    turn.model_dump(mode="json")
+                    for turn in getattr(
+                        draft, case_field
+                    ).dialogue_before_current
+                ],
+                "session_summary": getattr(draft, case_field).session_summary,
+                "authorized_user_context": getattr(
+                    draft, case_field
+                ).authorized_user_context,
+            }
+        )
+        for case_field, _ in GENERATION_CASE_FIELDS
+    }
+
+
+def _surface_only_pilot_bundle(
+    contract: dict,
+    *,
+    request_hash_prefix: str = "test-surface-request",
+) -> GeneratedUserBundle:
+    surfaces = _surface_only_pilot_inputs(contract)
+    assignments = generation_case_family_assignments(
+        [str(value) for value in contract["semantic_families"]],
+        list(ResourceNeedRegime),
+    )
+    accepted_calls: dict[str, CallResult] = {}
+    accepted_messages: dict[str, list[dict[str, str]]] = {}
+    for index, (case_field, regime) in enumerate(GENERATION_CASE_FIELDS):
+        surface_payload = surfaces[case_field].model_dump(mode="json")
+        accepted_calls[case_field] = CallResult(
+            text=canonical_json(surface_payload),
+            raw_response={
+                "choices": [
+                    {"message": {"content": canonical_json(surface_payload)}}
+                ]
+            },
+            usage={
+                "prompt_tokens": 100 + index,
+                "completion_tokens": 50,
+                "total_tokens": 150 + index,
+            },
+            latency_ms=1.0,
+            request_hash=f"{request_hash_prefix}-{case_field}",
+        )
+        accepted_messages[case_field] = generation_case_messages(
+            seed_dialogue="fixture held-out seed",
+            user_id=str(contract["pilot_user_id"]),
+            case_field=case_field,
+            regime=regime,
+            semantic_family=assignments[case_field],
+            forbidden_families=[
+                str(value)
+                for value in contract["semantic_families"]
+                if str(value) != assignments[case_field]
+            ],
+        )
+    bundle = compile_surface_only_user_bundle(
+        surfaces=surfaces,
+        accepted_calls=accepted_calls,
+        accepted_messages=accepted_messages,
+        accepted_attempt_kinds={
+            case_field: "initial" for case_field, _ in GENERATION_CASE_FIELDS
+        },
+        seed_dialogue="fixture held-out seed",
+        user_id=str(contract["pilot_user_id"]),
+        semantic_families=[
+            str(value) for value in contract["semantic_families"]
+        ],
+        regimes=list(ResourceNeedRegime),
+        generator_model=str(contract["endpoint"]["model"]),
+        generator_family=contract["endpoint"].get("family"),
+    )
+    bundle.provenance["generation_compatibility_contract_sha256"] = contract[
+        "contract_sha256"
+    ]
+    return bundle
+
+
 def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_labels() -> None:
     regimes = list(ResourceNeedRegime)
     families = [
@@ -669,6 +649,24 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
         == 2
         for case in bundle.cases
     )
+    for case in bundle.cases:
+        topic = GENERATION_FAMILY_TOPICS[case.semantic_family].casefold()
+        pools = {
+            MemorySource.MP: case.profile_memories,
+            MemorySource.MS: case.summary_memories,
+            MemorySource.ME: case.event_memories,
+        }
+        for source, memories in pools.items():
+            if source in set(case.needed_memory_sources):
+                continue
+            assert any(
+                memory.item_utility == "irrelevant"
+                and topic in memory.text.casefold()
+                for memory in memories
+            ), (
+                "every non-needed source must retain a same-topic semantic decoy; "
+                f"missing for {case.case_id}/{source.value}"
+            )
     assert all(
         memory.created_session < case.session_index
         for case in bundle.cases
@@ -697,8 +695,16 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
             *harmful.event_memories,
         )
     ) == 3
+    strategy_use = by_regime[ResourceNeedRegime.STRATEGY_HELPFUL]
+    strategy_skip = by_regime[ResourceNeedRegime.STRATEGY_HARMFUL]
+    assert strategy_use.strategy_resource_target == "use"
+    assert strategy_skip.strategy_resource_target == "skip"
+    assert {
+        strategy_use.advice_readiness_target,
+        strategy_skip.advice_readiness_target,
+    } == {"listen_only", "light_suggestion"}
     assert bundle.provenance["generation_structure"].endswith(
-        "marginal-value-grounded-randomized-evidence"
+        "strategy-value-readiness-factorial"
     )
     assert bundle.provenance["provider_memory_slots_ignored"] is True
     assert bundle.provenance["provider_coverage_rationale_ignored"] is True
@@ -815,6 +821,39 @@ def test_paid_role_slot_surface_drift_uses_recorded_case_fallback(
     assert bundle.provenance["reported_usage"]["total_tokens"] == 300
     assert bundle.provenance["provider_memory_slots_ignored"] is True
     assert bundle.provenance["provider_coverage_rationale_ignored"] is True
+
+
+def test_all_local_surface_fallbacks_fit_provider_transport_schema() -> None:
+    for index, regime in enumerate(ResourceNeedRegime):
+        surface = pm_v2_data_module._fallback_generation_surface(
+            case_field=f"case_{index}",
+            regime=regime,
+            family="relocation_loneliness",
+        )
+        assert (
+            surface.coverage_rationale
+            == pm_v2_data_module.LOCAL_FALLBACK_COVERAGE_PLACEHOLDER
+        )
+        assert len(surface.coverage_rationale) <= 180
+
+    # Evaluator-only rationales are compiled into GeneratedStateCase and are
+    # intentionally independent from the provider transport field's size cap.
+    assert len(
+        pm_v2_data_module._deterministic_coverage_rationale(
+            ResourceNeedRegime.CONTEXT_ONLY
+        )
+    ) > 180
+
+
+def test_surface_lint_does_not_treat_move_forward_as_relocation() -> None:
+    assert not pm_v2_data_module._family_anchor_hits(
+        "I am not sure how to move forward after the disagreement.",
+        "relocation_loneliness",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I moved to a new city last week.",
+        "relocation_loneliness",
+    )
 
 
 def test_generated_case_rejects_current_or_future_memory() -> None:
@@ -1012,6 +1051,65 @@ def test_development_and_external_catalogs_have_golden_feature_parity() -> None:
     leaked["provenance"] = {"regime": "event_needed"}
     with pytest.raises(ValidationError, match="operational references only"):
         PMV2State.model_validate(leaked)
+
+
+class _FakeSemanticEncoder:
+    spec = FrozenSemanticEncoderSpec(
+        model_id="fixture/semantic",
+        revision="1" * 40,
+        snapshot_tree_sha256="2" * 64,
+        max_length=128,
+        output_dimension=16,
+    )
+    binding = SemanticEncoderBinding(
+        spec_sha256=spec.digest(),
+        snapshot_tree_sha256="2" * 64,
+        snapshot_file_count=1,
+        implementation="transformers-auto-model-cls-float32",
+    )
+
+    def encode(self, texts):
+        rows = []
+        for text in texts:
+            vector = np.zeros(self.spec.output_dimension, dtype=float)
+            for token in str(text).casefold().split():
+                vector[int(sha256_text(token)[:8], 16) % len(vector)] += 1.0
+            vector /= max(float(np.linalg.norm(vector)), 1e-12)
+            rows.append(vector)
+        return np.vstack(rows)
+
+
+def test_reportable_semantic_observation_has_development_external_parity() -> None:
+    encoder = _FakeSemanticEncoder()
+    development = case_to_state(
+        user_id="semantic_parity_user",
+        case=_case(case_id="semantic_parity"),
+        split=PMV2Split.TRAIN,
+        strategy_catalog_count=0,
+        strategy_estimated_tokens=0,
+        semantic_encoder=encoder,
+    )
+    runtime = state_to_v1_runtime(development)
+    external = runtime_to_pmv2_state(
+        runtime,
+        strategy_catalog_count=0,
+        strategy_estimated_tokens=0,
+        semantic_encoder=encoder,
+    )
+
+    assert np.allclose(development.text_embedding, external.text_embedding)
+    assert development.provenance["semantic_observation"][
+        "encoder_spec_sha256"
+    ] == encoder.binding.spec_sha256
+    assert all(
+        development.inventory[source].query_similarity_mean
+        == external.inventory[source].query_similarity_mean
+        for source in MemorySource
+    )
+    builder = PMV2FeatureBuilder(use_precomputed_embeddings=False)
+    assert np.allclose(
+        builder._metadata_raw(development), builder._metadata_raw(external)
+    )
 
 
 def test_memory_metadata_uses_retrieval_capacity_not_catalog_tail() -> None:
@@ -1356,7 +1454,6 @@ def test_bundle_must_cover_every_frozen_assigned_family_and_report_union(
     assert report["split_manifest"][
         "normalized_current_user_text_unique_rate"
     ] == 1.0
-
     with pytest.raises(ValueError, match="semantic-family union"):
         write_development_dataset(
             bundles=[complete],
@@ -1416,6 +1513,50 @@ def test_bundle_must_cover_every_frozen_assigned_family_and_report_union(
             train_users=24,
             calibration_users=12,
             internal_test_users=16,
+        )
+
+
+def test_v1_5_data_generation_binds_exact_strategy_bank_and_seed_manifest() -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_frozen_strategy_binding", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    config = load_config(PROJECT_ROOT / "configs" / "pm_v1_5.yaml")
+    bank = PROJECT_ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl"
+    selected = (
+        PROJECT_ROOT
+        / "data"
+        / "strategy"
+        / "pm_v1_5_selected_seed_sources.jsonl"
+    )
+    cards = [StrategyCard.model_validate(row) for row in iter_jsonl(bank)]
+    report = module.require_frozen_strategy_bank_binding(
+        pm_config=config,
+        strategy_bank_path=bank,
+        selected_seed_sources_path=selected,
+        strategy_cards=cards,
+    )
+    assert report["status"] == "PASS"
+    assert report["card_count"] == 11590
+    assert report["source_dialogue_count"] == 823
+    assert report["selected_seed_source_count"] == 52
+
+    tampered = json.loads(json.dumps(config))
+    tampered["strategy_bank_contract"]["sha256"] = "0" * 64
+    with pytest.raises(RuntimeError, match="Strategy Bank hash mismatch"):
+        module.require_frozen_strategy_bank_binding(
+            pm_config=tampered,
+            strategy_bank_path=bank,
+            selected_seed_sources_path=selected,
+            strategy_cards=cards,
         )
 
 
@@ -1713,7 +1854,7 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
         "--max-users",
         "1",
         "--max-api-calls",
-        "1",
+        "18",
         "--max-estimated-usd",
         "1",
         "--max-input-tokens-per-call",
@@ -1730,10 +1871,10 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
     estimate = json.loads(
         (out_dir / "generation_cost_estimate.json").read_text(encoding="utf-8")
     )
-    assert estimate["expected_api_calls"] == 1
-    assert estimate["maximum_api_calls"] == 1
+    assert estimate["expected_api_calls"] == 9
+    assert estimate["maximum_api_calls"] == 18
     assert estimate["historical_physical_api_attempts"] == 0
-    assert estimate["maximum_physical_api_attempts_including_history"] == 1
+    assert estimate["maximum_physical_api_attempts_including_history"] == 18
     assert estimate["input_token_safety_factor"] == 1.5
     assert estimate["fail_on_reported_input_overrun"] is True
     assert estimate["pricing"] == {
@@ -1748,11 +1889,12 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
     assert strategy_catalog["top_k"] == 3
     assert len(strategy_catalog["sha256"]) == 64
     call_plan_rows = list(iter_jsonl(out_dir / "generation_call_plan.jsonl"))
-    assert len(call_plan_rows) == 1
-    assert call_plan_rows[0]["remaining_attempts"] == 1
+    assert len(call_plan_rows) == 9
+    assert all(row["remaining_attempts"] == 2 for row in call_plan_rows)
     assert all(
         row["estimated_input_tokens"] > row["raw_estimated_input_tokens"]
-        for row in call_plan_rows[0]["attempts"]
+        for case_plan in call_plan_rows
+        for row in case_plan["attempts"]
     )
     pricing_override = subprocess.run(
         [*command, "--dry-run", "--input-usd-per-mtok", "0"],
@@ -1764,28 +1906,32 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
     )
     assert pricing_override.returncode != 0
     assert "pricing override differs" in pricing_override.stderr
-    assert len({row["call_key"] for row in call_plan_rows[0]["attempts"]}) == 1
+    all_attempts = [
+        row for case_plan in call_plan_rows for row in case_plan["attempts"]
+    ]
+    assert len({row["call_key"] for row in all_attempts}) == 18
 
     # Inject the single paid failure.  The next dry-run must fail closed rather
     # than silently grant a replacement seed.
     expected_calls = {
-        row["call_key"]: 1 for row in call_plan_rows[0]["attempts"]
+        row["call_key"]: 1 for row in all_attempts
     }
     ledger = PersistentAttemptLedger(
         out_dir / "_generation_physical_attempt_ledger.jsonl",
-        stage="pm_v2_synthetic_bundle_generation",
+        stage="pm_v2_synthetic_surface_generation",
         expected_calls=expected_calls,
-        maximum_total_attempts=1,
+        maximum_total_attempts=18,
     )
     first = call_plan_rows[0]["attempts"][0]
     reservation = ledger.reserve(
         first["call_key"],
         record_ids={
             "user_id": call_plan_rows[0]["user_id"],
+            "case_field": call_plan_rows[0]["case_field"],
+            "attempt_kind": first["attempt_kind"],
             "generation_seed": first["seed"],
-            "attempt_index": first["attempt"],
         },
-        prompt_sha256=call_plan_rows[0]["prompt_sha256"],
+        prompt_sha256=first["prompt_sha256"],
     )
     ledger.finish(
         reservation,
@@ -1805,6 +1951,46 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
     assert overwrite_blocked.returncode != 0
     assert "refuses --overwrite" in overwrite_blocked.stderr
     assert len(list(iter_jsonl(out_dir / "_generation_physical_attempt_ledger.jsonl"))) == 2
+    repair_dry_run = subprocess.run(
+        [*command, "--dry-run"],
+        cwd=PROJECT_ROOT,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    repair_estimate = read_json(out_dir / "generation_cost_estimate.json")
+    repair_plan = list(iter_jsonl(out_dir / "generation_call_plan.jsonl"))
+    assert repair_estimate["historical_physical_api_attempts"] == 1
+    assert repair_estimate["expected_api_calls"] == 9
+    assert repair_estimate["maximum_api_calls"] == 17
+    assert repair_estimate["blocked_pending_users"] == []
+    repaired_case = next(
+        row
+        for row in repair_plan
+        if row["case_field"] == call_plan_rows[0]["case_field"]
+    )
+    assert repaired_case["remaining_attempts"] == 1
+    assert repaired_case["attempts"][0]["attempt_kind"] == "repair"
+
+    repair = call_plan_rows[0]["attempts"][1]
+    repair_reservation = ledger.reserve(
+        repair["call_key"],
+        record_ids={
+            "user_id": call_plan_rows[0]["user_id"],
+            "case_field": call_plan_rows[0]["case_field"],
+            "attempt_kind": "repair",
+            "generation_seed": repair["seed"],
+        },
+        prompt_sha256=repair["prompt_sha256"],
+    )
+    ledger.finish(
+        repair_reservation,
+        succeeded=False,
+        request_hash=None,
+        usage=None,
+        error="injected repair failure",
+    )
     exhausted = subprocess.run(
         [*command, "--dry-run"],
         cwd=PROJECT_ROOT,
@@ -1815,19 +2001,20 @@ def test_generation_dry_run_is_keyless_and_saves_exact_accepted_plan(
     )
     assert exhausted.returncode != 0
     exhausted_estimate = read_json(out_dir / "generation_cost_estimate.json")
-    assert exhausted_estimate["historical_physical_api_attempts"] == 1
-    assert exhausted_estimate["maximum_api_calls"] == 0
+    assert exhausted_estimate["historical_physical_api_attempts"] == 2
+    assert exhausted_estimate["maximum_api_calls"] == 16
     assert exhausted_estimate["blocked_pending_users"] == [
         {
             "user_id": call_plan_rows[0]["user_id"],
-            "reason": "maximum_generation_attempts_exhausted",
-            "historical_attempts": 1,
+            "case_field": call_plan_rows[0]["case_field"],
+            "reason": "maximum_case_attempts_exhausted",
+            "historical_attempts": 2,
         }
     ]
     assert exhausted_estimate["budget_gate"]["status"] == "FAIL"
 
 
-def test_generation_compatibility_pilot_dry_run_freezes_one_exact_call(
+def test_generation_compatibility_pilot_dry_run_freezes_casewise_plan(
     tmp_path: Path,
 ) -> None:
     seed_path = tmp_path / "seeds.jsonl"
@@ -1847,7 +2034,7 @@ def test_generation_compatibility_pilot_dry_run_freezes_one_exact_call(
         "--out-dir",
         str(out_dir),
         "--max-api-calls",
-        "1",
+        str(GENERATION_PILOT_MAX_ATTEMPTS),
         "--max-estimated-usd",
         "1",
         "--max-input-tokens-per-call",
@@ -1863,21 +2050,30 @@ def test_generation_compatibility_pilot_dry_run_freezes_one_exact_call(
     )
     estimate = read_json(out_dir / "cost_estimate.json")
     plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
-    assert estimate["minimum_api_calls_if_successful"] == 1
-    assert estimate["maximum_physical_api_attempts"] == 1
-    assert estimate["stop_after_first_success"] is True
+    assert estimate["minimum_api_calls_if_successful"] == GENERATION_PILOT_MINIMUM_CALLS
+    assert estimate["maximum_physical_api_attempts"] == GENERATION_PILOT_MAX_ATTEMPTS
+    assert estimate["maximum_repairs_per_case"] == 1
+    assert estimate["stop_after_each_case_success"] is True
     assert estimate["pricing"] == {
         "input_usd_per_mtok": 0.15,
         "output_usd_per_mtok": 0.60,
     }
     assert estimate["input_token_safety_factor"] == 1.5
-    assert estimate["input_token_upper_bound"] > estimate[
-        "raw_estimated_input_tokens"
-    ]
+    assert estimate["maximum_input_token_upper_bound_per_call"] > 0
+    assert estimate["maximum_output_tokens_per_call"] == 900
     assert estimate["budget_gate"]["status"] == "PASS"
-    assert len(plan) == 1
-    assert len({row["physical_call_key"] for row in plan}) == 1
-    assert len({row["generation_seed"] for row in plan}) == 1
+    assert len(plan) == GENERATION_PILOT_MAX_ATTEMPTS
+    assert len({row["physical_call_key"] for row in plan}) == len(plan)
+    assert len({row["generation_seed"] for row in plan}) == len(plan)
+    assert {row["attempt_kind"] for row in plan} == {"initial", "repair"}
+    assert {
+        row["case_field"] for row in plan
+    } == {field for field, _ in GENERATION_CASE_FIELDS}
+    assert all(
+        sum(candidate["case_field"] == row["case_field"] for candidate in plan)
+        == 2
+        for row in plan
+    )
     assert all(row["maximum_physical_attempts"] == 1 for row in plan)
 
     ledger_path = out_dir / "physical_attempt_ledger.jsonl"
@@ -1885,14 +2081,15 @@ def test_generation_compatibility_pilot_dry_run_freezes_one_exact_call(
         ledger_path,
         stage=GENERATION_PILOT_STAGE,
         expected_calls={str(row["physical_call_key"]): 1 for row in plan},
-        maximum_total_attempts=1,
+        maximum_total_attempts=len(plan),
     )
     reservation = ledger.reserve(
         str(plan[0]["physical_call_key"]),
         record_ids={
             "user_id": plan[0]["user_id"],
             "generation_seed": plan[0]["generation_seed"],
-            "attempt_index": 1,
+            "case_field": plan[0]["case_field"],
+            "attempt_kind": plan[0]["attempt_kind"],
         },
         prompt_sha256=str(plan[0]["prompt_sha256"]),
     )
@@ -1937,7 +2134,7 @@ def test_generation_compatibility_pilot_dry_run_freezes_one_exact_call(
         check=False,
     )
     assert stale_spent_dry_run.returncode != 0
-    assert "spent generation-pilot ledger freezes" in stale_spent_dry_run.stderr
+    assert "spent pilot ledger freezes" in stale_spent_dry_run.stderr
     assert (out_dir / "cost_estimate.json").read_bytes() == saved_estimate_bytes
     assert (out_dir / "call_plan.jsonl").read_bytes() == saved_plan_bytes
 
@@ -1978,7 +2175,7 @@ def test_generation_pilot_recovers_post_success_crash_without_second_http(
         "--out-dir",
         str(out_dir),
         "--max-api-calls",
-        "1",
+        str(GENERATION_PILOT_MAX_ATTEMPTS),
         "--max-estimated-usd",
         "1",
         "--max-input-tokens-per-call",
@@ -2012,62 +2209,47 @@ def test_generation_pilot_recovers_post_success_crash_without_second_http(
         input_usd_per_mtok=0.15,
         output_usd_per_mtok=0.60,
     )
-    plan_row, call_plan, _ = build_generation_compatibility_plan(
-        contract, endpoint=endpoint
-    )
-    call_key = str(plan_row["physical_call_key"])
-    ledger = PersistentAttemptLedger(
-        out_dir / "physical_attempt_ledger.jsonl",
-        stage=GENERATION_PILOT_STAGE,
-        expected_calls={
-            str(row["physical_call_key"]): 1 for row in call_plan
-        },
-        maximum_total_attempts=1,
-    )
-    reservation = ledger.reserve(
-        call_key,
-        record_ids={
-            "user_id": contract["pilot_user_id"],
-            "generation_seed": contract["generation_seed"],
-            "attempt_index": 1,
-        },
-        prompt_sha256=str(plan_row["prompt_sha256"]),
-    )
-    bundle = _source_grounded_pilot_bundle(
-        contract,
-        request_hash="paid-pilot-request",
-    )
-    bundle.provenance.update(
-        {
-            "generation_compatibility_contract_sha256": contract[
-                "contract_sha256"
-            ],
-            "physical_call_key": reservation.call_key,
-            "physical_attempt_index": reservation.attempt_index,
-            "physical_attempt_key": reservation.attempt_key,
-            "request_hash": "paid-pilot-request",
-            "reported_usage": {
-                "prompt_tokens": 100,
-                "completion_tokens": 50,
-                "total_tokens": 150,
-            },
-        }
-    )
-    ledger.finish(
-        reservation,
-        succeeded=True,
-        request_hash="paid-pilot-request",
-        usage=dict(bundle.provenance["reported_usage"]),
-        error=None,
-        result={"bundle": bundle.model_dump(mode="json")},
-    )
-    calls = {"count": 0}
+    surfaces = _surface_only_pilot_inputs(contract)
 
-    def forbidden_http(*args, **kwargs):
-        calls["count"] += 1
-        raise AssertionError("recovery must not issue a second HTTP call")
+    class FakeClient:
+        def __init__(self) -> None:
+            self.calls: list[str] = []
 
-    monkeypatch.setattr(module, "generate_user_bundle", forbidden_http)
+        def chat(self, messages, **kwargs):
+            prompt = messages[1]["content"]
+            case_field = next(
+                field
+                for field, _ in GENERATION_CASE_FIELDS
+                if f"CASE SLOT (never mention this label): {field}" in prompt
+            )
+            self.calls.append(case_field)
+            surface = surfaces[case_field]
+            payload = surface.model_dump(mode="json")
+            return (
+                CallResult(
+                    text=canonical_json(payload),
+                    raw_response={
+                        "choices": [
+                            {"message": {"content": canonical_json(payload)}}
+                        ]
+                    },
+                    usage={
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                    },
+                    latency_ms=1.0,
+                    request_hash=f"fake-{case_field}",
+                ),
+                surface,
+            )
+
+        def close(self) -> None:
+            return None
+
+    fake = FakeClient()
+    monkeypatch.setattr(module, "make_client", lambda endpoint: fake)
+    monkeypatch.setenv("OPENAI_API_KEY", "test-only")
     accepted_hash = read_json(out_dir / "cost_estimate.json")[
         "cost_estimate_sha256"
     ]
@@ -2082,16 +2264,27 @@ def test_generation_pilot_recovers_post_success_crash_without_second_http(
         ],
     )
     module.main()
-    assert calls["count"] == 0
+    assert fake.calls == [field for field, _ in GENERATION_CASE_FIELDS]
     assert read_json(out_dir / "summary.json")["status"] == "PASS"
     assert (out_dir / "artifact_attestation.json").is_file()
-    assert [row["event"] for row in iter_jsonl(out_dir / "physical_attempt_ledger.jsonl")] == [
-        "STARTED",
-        "SUCCEEDED",
+    ledger_rows = list(
+        iter_jsonl(out_dir / "physical_attempt_ledger.jsonl")
+    )
+    assert len(ledger_rows) == 2 * GENERATION_PILOT_MINIMUM_CALLS
+    assert [row["event"] for row in ledger_rows] == [
+        event
+        for _ in GENERATION_CASE_FIELDS
+        for event in ("STARTED", "SUCCEEDED")
     ]
 
+    def forbidden_client(endpoint):
+        raise AssertionError("completed pilot recovery must not create a client")
 
-def test_generation_pilot_preserves_single_failure_and_never_repeats_it(
+    monkeypatch.setattr(module, "make_client", forbidden_client)
+    module.main()
+
+
+def test_generation_pilot_uses_one_bounded_repair_and_never_repeats_success(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     script = (
@@ -2116,7 +2309,7 @@ def test_generation_pilot_preserves_single_failure_and_never_repeats_it(
         "--out-dir",
         str(out_dir),
         "--max-api-calls",
-        "1",
+        str(GENERATION_PILOT_MAX_ATTEMPTS),
         "--max-estimated-usd",
         "1",
         "--max-input-tokens-per-call",
@@ -2128,31 +2321,80 @@ def test_generation_pilot_preserves_single_failure_and_never_repeats_it(
         "cost_estimate_sha256"
     ]
     monkeypatch.setenv("OPENAI_API_KEY", "test-only")
-    calls: list[int] = []
+    experiment = load_config(PROJECT_ROOT / "configs" / "experiment.yaml")
+    pm_config = load_config(PROJECT_ROOT / "configs" / "pm_v2.yaml")
+    generation = pm_config["data_generation"]
+    endpoint = endpoint_from_config(
+        experiment, generation["generator_endpoint"]
+    )
+    contract = build_generation_compatibility_contract(
+        project_root=PROJECT_ROOT,
+        experiment_config_path=PROJECT_ROOT / "configs" / "experiment.yaml",
+        pm_v2_config_path=PROJECT_ROOT / "configs" / "pm_v2.yaml",
+        seed_dialogues_path=seed_path,
+        endpoint=endpoint,
+        base_generation_seed=int(generation["base_seed"]),
+        full_user_count=sum(
+            int(generation[key])
+            for key in ("train_users", "calibration_users", "internal_test_users")
+        ),
+        input_token_safety_factor=1.5,
+        fail_on_reported_input_overrun=True,
+        input_usd_per_mtok=0.15,
+        output_usd_per_mtok=0.60,
+    )
+    surfaces = _surface_only_pilot_inputs(contract)
+    invalid_context = surfaces["context_only"].model_copy(
+        update={
+            "current_user_text": "I feel unsettled today.",
+            "session_summary": "The user feels unsettled today.",
+        }
+    )
 
-    def semantic_failure(*, seed: int, user_id: str, **kwargs):
-        calls.append(seed)
-        invalid_payload = {"profile_summary": "incomplete"}
-        with pytest.raises(ValidationError) as exc_info:
-            GeneratedBundleDraft.model_validate(invalid_payload)
-        raise StructuredOutputValidationError(
-            call=CallResult(
-                text=canonical_json(invalid_payload),
-                raw_response={"id": "preserved-paid-response"},
-                usage={
-                    "prompt_tokens": 100,
-                    "completion_tokens": 20,
-                    "total_tokens": 120,
-                },
-                latency_ms=10.0,
-                request_hash="first-paid-request",
-            ),
-            parsed_payload=invalid_payload,
-            response_schema=GeneratedBundleDraft,
-            validation_error=exc_info.value,
-        )
+    class RepairingFakeClient:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, bool]] = []
 
-    monkeypatch.setattr(module, "generate_user_bundle", semantic_failure)
+        def chat(self, messages, **kwargs):
+            prompt = messages[1]["content"]
+            case_field = next(
+                field
+                for field, _ in GENERATION_CASE_FIELDS
+                if f"CASE SLOT (never mention this label): {field}" in prompt
+            )
+            repair = "one pre-authorized repair attempt" in prompt
+            self.calls.append((case_field, repair))
+            surface = (
+                invalid_context
+                if case_field == "context_only" and not repair
+                else surfaces[case_field]
+            )
+            payload = surface.model_dump(mode="json")
+            response = {
+                "choices": [
+                    {"message": {"content": canonical_json(payload)}}
+                ]
+            }
+            return (
+                CallResult(
+                    text=canonical_json(payload),
+                    raw_response=response,
+                    usage={
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                    },
+                    latency_ms=1.0,
+                    request_hash=f"fake-{case_field}-{'repair' if repair else 'initial'}",
+                ),
+                surface,
+            )
+
+        def close(self) -> None:
+            return None
+
+    fake = RepairingFakeClient()
+    monkeypatch.setattr(module, "make_client", lambda endpoint: fake)
     monkeypatch.setattr(
         sys,
         "argv",
@@ -2163,31 +2405,31 @@ def test_generation_pilot_preserves_single_failure_and_never_repeats_it(
             accepted_hash,
         ],
     )
-    with pytest.raises(RuntimeError, match="exhausted all pre-approved"):
-        module.main()
-
-    # A process restart observes the spent immutable ledger and refuses a
-    # second physical request for the same pilot contract.
-    with pytest.raises(RuntimeError, match="exhausted all pre-approved"):
-        module.main()
-
-    assert len(calls) == 1
-    failed = read_json(out_dir / "failed_attempt_01.json")
-    assert failed["provider_response"]["id"] == "preserved-paid-response"
-    assert failed["parsed_payload"] == {"profile_summary": "incomplete"}
-    ledger_rows = list(iter_jsonl(out_dir / "physical_attempt_ledger.jsonl"))
-    assert [row["event"] for row in ledger_rows] == [
-        "STARTED",
-        "FAILED",
+    module.main()
+    assert fake.calls[:2] == [
+        ("context_only", False),
+        ("context_only", True),
     ]
-    assert ledger_rows[1]["usage"]["total_tokens"] == 120
-    assert ledger_rows[1]["result"]["provider_response"]["id"] == (
-        "preserved-paid-response"
-    )
+    assert len(fake.calls) == GENERATION_PILOT_MINIMUM_CALLS + 1
+    failed = read_json(out_dir / "failed_context_only_initial.json")
+    assert failed["lint"]["status"] == "FAIL"
+    assert failed["lint"]["errors"][0]["check"] == "current_family_anchor"
+    ledger_rows = list(iter_jsonl(out_dir / "physical_attempt_ledger.jsonl"))
+    assert [row["event"] for row in ledger_rows[:4]] == [
+        "STARTED", "FAILED", "STARTED", "SUCCEEDED"
+    ]
+    assert ledger_rows[1]["usage"]["total_tokens"] == 150
     summary = read_json(out_dir / "summary.json")
-    assert summary["status"] == "FAIL"
-    assert summary["physical_attempts"] == 1
-    assert summary["stopped_early"] is False
+    assert summary["status"] == "PASS"
+    assert summary["physical_attempts"] == GENERATION_PILOT_MINIMUM_CALLS + 1
+    assert summary["repair_cases"] == ["context_only"]
+    assert summary["repair_case_count"] == 1
+
+    def forbidden_client(endpoint):
+        raise AssertionError("accepted casewise traces must never be repeated")
+
+    monkeypatch.setattr(module, "make_client", forbidden_client)
+    module.main()
 
 
 def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
@@ -2220,7 +2462,7 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         input_usd_per_mtok=0.15,
         output_usd_per_mtok=0.60,
     )
-    plan_row, call_plan, _ = build_generation_compatibility_plan(
+    _, call_plan, _ = build_generation_compatibility_plan(
         contract, endpoint=endpoint
     )
     assert contract["held_out_seed_index"] >= full_user_count
@@ -2237,17 +2479,13 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
             attestation_path, expected_contract=contract
         )
 
-    bundle = _source_grounded_pilot_bundle(
-        contract,
-        request_hash="test-request-hash",
-    )
+    bundle = _surface_only_pilot_bundle(contract)
     bundle_report = validate_generation_pilot_bundle(bundle, contract)
     assert bundle_report["status"] == "PASS"
     bundle_path = pilot_dir / "pilot_bundle.json"
     write_json(bundle_path, bundle.model_dump(mode="json"))
 
     ledger_path = pilot_dir / "physical_attempt_ledger.jsonl"
-    call_key = str(plan_row["physical_call_key"])
     ledger = PersistentAttemptLedger(
         ledger_path,
         stage=GENERATION_PILOT_STAGE,
@@ -2256,34 +2494,49 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         },
         maximum_total_attempts=len(call_plan),
     )
-    reservation = ledger.reserve(
-        call_key,
-        record_ids={
-            "user_id": contract["pilot_user_id"],
-            "generation_seed": contract["generation_seed"],
-            "attempt_index": 1,
-        },
-        prompt_sha256=str(plan_row["prompt_sha256"]),
-    )
-    ledger.finish(
-        reservation,
-        succeeded=True,
-        request_hash="test-request-hash",
-        usage={
-            "prompt_tokens": 100,
-            "completion_tokens": 100,
-            "total_tokens": 200,
-        },
-        error=None,
-        result={"bundle": bundle.model_dump(mode="json")},
-    )
+    initial_rows = [
+        row for row in call_plan if row["attempt_kind"] == "initial"
+    ]
+    provider_drafts = bundle.provenance["provider_surface_drafts"]
+    provider_responses = bundle.provenance["provider_surface_responses"]
+    for row in initial_rows:
+        case_field = str(row["case_field"])
+        reservation = ledger.reserve(
+            str(row["physical_call_key"]),
+            record_ids={
+                "user_id": contract["pilot_user_id"],
+                "case_field": case_field,
+                "attempt_kind": "initial",
+                "generation_seed": row["generation_seed"],
+            },
+            prompt_sha256=str(row["prompt_sha256"]),
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash=f"test-request-{case_field}",
+            usage={
+                "prompt_tokens": 100,
+                "completion_tokens": 50,
+                "total_tokens": 150,
+            },
+            error=None,
+            result={
+                "surface": provider_drafts[case_field],
+                "provider_response": provider_responses[case_field],
+                "attempt_kind": "initial",
+            },
+        )
     summary_path = pilot_dir / "summary.json"
     summary = {
         "status": "PASS",
         "compatibility_contract_sha256": contract["contract_sha256"],
-        "successful_call_plan": plan_row,
+        "accepted_surface_calls": initial_rows,
+        "accepted_case_count": len(initial_rows),
+        "repair_cases": [],
+        "repair_case_count": 0,
         "bundle_validation": bundle_report,
-        "physical_attempts": 1,
+        "physical_attempts": len(initial_rows),
     }
     write_json(summary_path, summary)
     run_manifest_path = pilot_dir / "run_manifest.json"
@@ -2323,12 +2576,15 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         parameters={
             "compatibility_contract": contract,
             "compatibility_contract_sha256": contract["contract_sha256"],
-                "accepted_cost_estimate_sha256": accepted_cost_hash,
+            "accepted_cost_estimate_sha256": accepted_cost_hash,
+            "provider_trace_mode": "surface_only_casewise",
         },
         expected={
-            "physical_attempts": 1,
-            "maximum_physical_attempts": 3,
+            "minimum_physical_attempts": GENERATION_PILOT_MINIMUM_CALLS,
+            "maximum_physical_attempts": GENERATION_PILOT_MAX_ATTEMPTS,
+            "actual_physical_attempts": len(initial_rows),
             "regimes": 9,
+            "maximum_repairs_per_case": 1,
         },
     )
     verification = require_generation_compatibility_attestation(
@@ -2464,7 +2720,7 @@ def test_full_generation_run_requires_pilot_attestation_before_api_key(
         "--generation-pilot-attestation",
         str(missing_attestation),
         "--max-api-calls",
-        "52",
+        "936",
         "--max-estimated-usd",
         "1",
         "--max-input-tokens-per-call",

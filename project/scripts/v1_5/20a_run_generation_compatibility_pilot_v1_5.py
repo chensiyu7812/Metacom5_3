@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PM-v1.5 entry point for the one-call generation compatibility pilot.
+"""PM-v1.5 entry point for the casewise generation compatibility pilot.
 
 The paid implementation remains scripts/20a_run_pm_v2_generation_compatibility_pilot.py;
 that implementation is version-neutral at the artifact-contract layer.  This
@@ -42,7 +42,9 @@ def main() -> None:
     argv = _with_default(
         argv,
         "--out-dir",
-        ROOT / "outputs" / "pm_v1_5_generation_compatibility_pilot",
+        ROOT
+        / "outputs"
+        / "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
     )
     if "--run" in argv:
         config_index = argv.index("--pm-v2-config") + 1

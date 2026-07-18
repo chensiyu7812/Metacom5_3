@@ -29,7 +29,7 @@ from metacom_pm.pm_v1_5_algorithm_selection import (
 )
 from metacom_pm.pm_v1_5_shortcut_audit import (
     SHORTCUT_AUDIT_PROTOCOL,
-    audit_step0_shortcuts,
+    require_step0_shortcut_audit_pass,
 )
 from metacom_pm.pm_v2_audit import (
     EXPECTED_REGIME_CHECKS,
@@ -851,6 +851,31 @@ def main() -> None:
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_model",
     )
+    parser.add_argument(
+        "--step0-shortcut-audit-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "step0_shortcut_audit.json"
+        ),
+    )
+    parser.add_argument(
+        "--step0-shortcut-audit-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_step0_shortcut_audit"
+            / "artifact_attestation.json"
+        ),
+    )
+    parser.add_argument(
+        "--development-data-attestation",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "artifact_attestation.json",
+    )
     parser.add_argument("--run-identity", required=True)
     parser.add_argument("--seed", type=int, default=1701)
     parser.add_argument("--allow-nonreportable", action="store_true")
@@ -998,38 +1023,18 @@ def main() -> None:
     )
     args.out_dir.mkdir(parents=True, exist_ok=True)
     shortcut_cfg = dict(pm_config["shortcut_audit"])
-    if (
-        shortcut_cfg.get("protocol") != SHORTCUT_AUDIT_PROTOCOL
-        or int(shortcut_cfg.get("expected_predictive_train_states") or 0)
-        != len(states_by_split[PMV2Split.TRAIN])
-        or int(shortcut_cfg.get("expected_structural_all_split_states") or 0)
-        != len(states)
-        or shortcut_cfg.get("fail_on_near_oracle_threshold") is not True
-    ):
+    if shortcut_cfg.get("protocol") != SHORTCUT_AUDIT_PROTOCOL:
         raise ValueError("Step-0 shortcut-audit contract is missing or stale")
-    shortcut_audit = audit_step0_shortcuts(
-        predictive_states=states_by_split[PMV2Split.TRAIN],
-        structural_states=states,
-        evaluator_contexts=evaluator_contexts,
-        expected_predictive_states=int(
-            shortcut_cfg["expected_predictive_train_states"]
-        ),
-        expected_structural_states=int(
-            shortcut_cfg["expected_structural_all_split_states"]
-        ),
-        maximum_single_threshold_balanced_accuracy=float(
-            shortcut_cfg["maximum_single_threshold_balanced_accuracy"]
-        ),
-        centroid_noise_std=float(shortcut_cfg["centroid_noise_std"]),
-        shuffle_seed=int(shortcut_cfg["shuffle_seed"]),
+    shortcut_verification = require_step0_shortcut_audit_pass(
+        args.step0_shortcut_audit_report,
+        args.step0_shortcut_audit_attestation,
+        expected_states_path=args.states,
+        expected_evaluator_contexts_path=args.evaluator_contexts,
+        expected_pm_config_path=args.pm_v2_config,
+        expected_generation_attestation_path=args.development_data_attestation,
     )
-    shortcut_audit_path = args.out_dir / "step0_shortcut_audit.json"
-    write_json(shortcut_audit_path, shortcut_audit)
-    if shortcut_audit["status"] != "PASS":
-        raise RuntimeError(
-            "Step-0 shortcut audit failed before candidate selection; paid/internal "
-            "progression is blocked. See step0_shortcut_audit.json."
-        )
+    shortcut_audit = shortcut_verification["report"]
+    shortcut_audit_path = args.step0_shortcut_audit_report
     algorithm_cfg = dict(pm_config["algorithm_selection"])
     if (
         algorithm_cfg.get("protocol") != ALGORITHM_SELECTION_PROTOCOL
@@ -1050,6 +1055,12 @@ def main() -> None:
             bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
             use_precomputed_embeddings=bool(
                 feature_cfg["optional_precomputed_semantic_embedding"]
+            ),
+            require_precomputed_embeddings=bool(
+                feature_cfg["require_precomputed_semantic_embedding"]
+            ),
+            semantic_projection_dimensions=int(
+                feature_cfg["semantic_projection_dimensions"]
             ),
             word_features=int(feature_cfg["word_hash_features"]),
             char_features=int(feature_cfg["char_hash_features"]),
@@ -1087,6 +1098,12 @@ def main() -> None:
         dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
         bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
         use_precomputed_embeddings=bool(feature_cfg["optional_precomputed_semantic_embedding"]),
+        require_precomputed_embeddings=bool(
+            feature_cfg["require_precomputed_semantic_embedding"]
+        ),
+        semantic_projection_dimensions=int(
+            feature_cfg["semantic_projection_dimensions"]
+        ),
         word_features=int(feature_cfg["word_hash_features"]),
         char_features=int(feature_cfg["char_hash_features"]),
     )
@@ -1171,6 +1188,12 @@ def main() -> None:
         bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
         use_precomputed_embeddings=bool(
             feature_cfg["optional_precomputed_semantic_embedding"]
+        ),
+        require_precomputed_embeddings=bool(
+            feature_cfg["require_precomputed_semantic_embedding"]
+        ),
+        semantic_projection_dimensions=int(
+            feature_cfg["semantic_projection_dimensions"]
         ),
         word_features=int(feature_cfg["word_hash_features"]),
         char_features=int(feature_cfg["char_hash_features"]),
@@ -1356,6 +1379,10 @@ def main() -> None:
             "transparent_rule_checkpoint": rule_checkpoint,
             "training_script": Path(__file__),
             "step0_shortcut_audit": shortcut_audit_path,
+            "step0_shortcut_audit_attestation": (
+                args.step0_shortcut_audit_attestation
+            ),
+            "development_data_attestation": args.development_data_attestation,
             "sealed_internal_bundle": args.sealed_internal_bundle,
         },
         parameters={
@@ -1598,6 +1625,12 @@ def main() -> None:
         "reliable_action_matrix_subsets": reliable_matrix_report,
         "data_label_audit": {key: value for key, value in data_label_audit.items() if key != "rows"},
         "step0_shortcut_audit": shortcut_audit,
+        "step0_shortcut_audit_report_sha256": shortcut_verification[
+            "report_sha256"
+        ],
+        "step0_shortcut_audit_attestation_sha256": shortcut_verification[
+            "attestation_sha256"
+        ],
         "uncertainty_calibration": uncertainty_calibration,
         "ood_calibration": ood_calibration,
         "calibration": tuning,

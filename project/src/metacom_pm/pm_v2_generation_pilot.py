@@ -11,12 +11,15 @@ from .attempt_ledger import PersistentAttemptLedger, physical_call_key
 from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
 from .pm_v2_contracts import ResourceNeedRegime
 from .pm_v2_data import (
-    GENERATION_MAX_OUTPUT_TOKENS,
+    GENERATION_CASE_FIELDS,
     GENERATION_TEMPERATURE,
-    GeneratedBundleDraft,
+    SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+    SURFACE_GENERATION_MAX_REPAIRS,
+    GeneratedSurfaceOnlyCaseDraft,
     GeneratedUserBundle,
-    generation_contract_hash,
-    generation_messages,
+    generation_case_family_assignments,
+    generation_case_messages,
+    surface_generation_contract_hash,
     validate_bundle,
     validate_successful_generation_trace,
 )
@@ -27,12 +30,15 @@ GENERATION_PILOT_STAGE = (
     "pm_v2_synthetic_generation_deterministic_evidence_pilot"
 )
 GENERATION_PILOT_CONTRACT_VERSION = (
-    "pm-v2-generation-compatibility-pilot-v7-deterministic-evidence-rationale-"
-    "neutral-metadata-single-attempt"
+    "pm-v2-generation-compatibility-pilot-v8.3-semantic-router-factorial-"
+    "casewise-one-bounded-repair-zero-fallback"
 )
 GENERATION_PILOT_USER_ID = "pmv2_generation_compatibility_pilot"
 GENERATION_PILOT_SEED_OFFSET = 9_000_000
-GENERATION_PILOT_MAX_ATTEMPTS = 1
+GENERATION_PILOT_MINIMUM_CALLS = len(ResourceNeedRegime)
+GENERATION_PILOT_MAX_ATTEMPTS = len(ResourceNeedRegime) * (
+    1 + SURFACE_GENERATION_MAX_REPAIRS
+)
 GENERATION_PILOT_REPLAY_PROTOCOL = (
     "pm-v2-paid-schema-response-offline-deterministic-compiler-replay-v1"
 )
@@ -109,12 +115,16 @@ SEMANTIC_FAMILY_COHORTS_BY_SPLIT: dict[str, tuple[tuple[str, str, str], ...]] = 
     ),
 }
 
-# The compatibility pilot spans three maximally distinct topics.  It is not a
-# training row and therefore may draw one family from more than one split.
+# Use one real, already-frozen cohort rather than an artificial cross-split
+# combination.  The previous relocation/academic/workplace trio encouraged
+# perfectly natural mixed scenarios such as moving for school or a new job,
+# making its lexical zero-fallback gate contradict the semantic task.  This
+# calibration cohort is representative of the full generation schedule while
+# keeping the three requested topics genuinely separable.
 GENERATION_PILOT_FAMILIES = (
     "relocation_loneliness",
-    "academic_pressure",
-    "workplace_conflict",
+    "self_confidence",
+    "sleep_disruption",
 )
 
 
@@ -248,31 +258,56 @@ def build_generation_compatibility_contract(
     seeds = read_generation_seed_dialogues(seed_dialogues_path)
     held_out_index = _held_out_seed_index(seeds, full_user_count=full_user_count)
     held_out_seed = seeds[held_out_index]
-    generation_seeds = [
-        int(base_generation_seed) + GENERATION_PILOT_SEED_OFFSET + index
-        for index in range(GENERATION_PILOT_MAX_ATTEMPTS)
-    ]
-    messages = generation_messages(
-        seed_dialogue=held_out_seed,
-        user_id=GENERATION_PILOT_USER_ID,
-        semantic_families=GENERATION_PILOT_FAMILIES,
-        regimes=list(ResourceNeedRegime),
+    assignments = generation_case_family_assignments(
+        GENERATION_PILOT_FAMILIES, list(ResourceNeedRegime)
     )
-    request_payload_sha256s = [
-        sha256_text(
-            canonical_json(
-                chat_request_payload(
-                    endpoint,
-                    messages,
-                    temperature=GENERATION_TEMPERATURE,
-                    max_tokens=GENERATION_MAX_OUTPUT_TOKENS,
-                    seed=generation_seed,
-                    response_schema=GeneratedBundleDraft,
-                )
+    call_specs: list[dict[str, Any]] = []
+    for case_index, (case_field, regime) in enumerate(GENERATION_CASE_FIELDS):
+        target_family = assignments[case_field]
+        forbidden = [
+            family
+            for family in GENERATION_PILOT_FAMILIES
+            if family != target_family
+        ]
+        for repair_index in range(1 + SURFACE_GENERATION_MAX_REPAIRS):
+            repair = repair_index > 0
+            generation_seed = (
+                int(base_generation_seed)
+                + GENERATION_PILOT_SEED_OFFSET
+                + case_index * 10
+                + repair_index
             )
-        )
-        for generation_seed in generation_seeds
-    ]
+            messages = generation_case_messages(
+                seed_dialogue=held_out_seed,
+                user_id=GENERATION_PILOT_USER_ID,
+                case_field=case_field,
+                regime=regime,
+                semantic_family=target_family,
+                forbidden_families=forbidden,
+                repair=repair,
+            )
+            request_payload = chat_request_payload(
+                endpoint,
+                messages,
+                temperature=GENERATION_TEMPERATURE,
+                max_tokens=SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
+                seed=generation_seed,
+                response_schema=GeneratedSurfaceOnlyCaseDraft,
+            )
+            call_specs.append(
+                {
+                    "case_field": case_field,
+                    "regime": regime.value,
+                    "semantic_family": target_family,
+                    "attempt_kind": "repair" if repair else "initial",
+                    "repair_index": repair_index,
+                    "generation_seed": generation_seed,
+                    "prompt_sha256": sha256_text(canonical_json(messages)),
+                    "request_payload_sha256": sha256_text(
+                        canonical_json(request_payload)
+                    ),
+                }
+            )
     code_manifest = shared_generation_code_manifest(project_root)
     payload = {
         "version": GENERATION_PILOT_CONTRACT_VERSION,
@@ -288,8 +323,7 @@ def build_generation_compatibility_contract(
         "pilot_user_id": GENERATION_PILOT_USER_ID,
         "semantic_families": list(GENERATION_PILOT_FAMILIES),
         "required_regimes": [regime.value for regime in ResourceNeedRegime],
-        "generation_seed": generation_seeds[0],
-        "generation_attempt_seeds": generation_seeds,
+        "case_call_specs": call_specs,
         "endpoint": {
             "base_url": endpoint.base_url,
             "model": endpoint.model,
@@ -299,10 +333,13 @@ def build_generation_compatibility_contract(
         },
         "generation_controls": {
             "temperature": GENERATION_TEMPERATURE,
-            "max_output_tokens": GENERATION_MAX_OUTPUT_TOKENS,
+            "max_output_tokens": SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
             "request_retries": 1,
             "maximum_physical_attempts": GENERATION_PILOT_MAX_ATTEMPTS,
-            "stop_after_first_success": True,
+            "minimum_physical_attempts": GENERATION_PILOT_MINIMUM_CALLS,
+            "maximum_repairs_per_case": SURFACE_GENERATION_MAX_REPAIRS,
+            "stop_after_each_case_success": True,
+            "required_provider_surface_fallback_cases": 0,
         },
         "api_cost_planning": {
             "input_token_safety_factor": float(input_token_safety_factor),
@@ -314,13 +351,13 @@ def build_generation_compatibility_contract(
             "input": float(input_usd_per_mtok),
             "output": float(output_usd_per_mtok),
         },
-        "prompt_contract_sha256": generation_contract_hash(),
-        "prompt_sha256": sha256_text(canonical_json(messages)),
+        "prompt_contract_sha256": surface_generation_contract_hash(),
         "schema_sha256": sha256_text(
-            canonical_json(GeneratedBundleDraft.model_json_schema())
+            canonical_json(GeneratedSurfaceOnlyCaseDraft.model_json_schema())
         ),
-        "request_payload_sha256": request_payload_sha256s[0],
-        "request_payload_sha256s": request_payload_sha256s,
+        "request_payload_sha256s": [
+            spec["request_payload_sha256"] for spec in call_specs
+        ],
         "shared_code_manifest": code_manifest,
         "shared_code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
     }
@@ -332,36 +369,53 @@ def build_generation_compatibility_plan(
     contract: dict[str, Any],
     *,
     endpoint: Endpoint,
-) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, str]]]:
+) -> tuple[
+    dict[str, Any],
+    list[dict[str, Any]],
+    dict[str, list[dict[str, str]]],
+]:
     seeds = read_generation_seed_dialogues_from_contract(contract)
     held_out_seed = seeds[int(contract["held_out_seed_index"])]
-    messages = generation_messages(
-        seed_dialogue=held_out_seed,
-        user_id=str(contract["pilot_user_id"]),
-        semantic_families=[str(value) for value in contract["semantic_families"]],
-        regimes=list(ResourceNeedRegime),
-    )
     controls = contract["generation_controls"]
-    prompt_sha256 = sha256_text(canonical_json(messages))
-    attempt_seeds = [int(value) for value in contract["generation_attempt_seeds"]]
-    if len(attempt_seeds) != int(controls["maximum_physical_attempts"]):
-        raise RuntimeError("generation pilot attempt seeds differ from its cap")
     rows: list[dict[str, Any]] = []
-    for attempt_index, generation_seed in enumerate(attempt_seeds, 1):
+    messages_by_call: dict[str, list[dict[str, str]]] = {}
+    for sequence_index, spec in enumerate(contract["case_call_specs"], 1):
+        case_field = str(spec["case_field"])
+        regime = ResourceNeedRegime(str(spec["regime"]))
+        semantic_family = str(spec["semantic_family"])
+        attempt_kind = str(spec["attempt_kind"])
+        repair = attempt_kind == "repair"
+        forbidden = [
+            str(family)
+            for family in contract["semantic_families"]
+            if str(family) != semantic_family
+        ]
+        messages = generation_case_messages(
+            seed_dialogue=held_out_seed,
+            user_id=str(contract["pilot_user_id"]),
+            case_field=case_field,
+            regime=regime,
+            semantic_family=semantic_family,
+            forbidden_families=forbidden,
+            repair=repair,
+        )
+        generation_seed = int(spec["generation_seed"])
         request_payload = chat_request_payload(
             endpoint,
             messages,
             temperature=float(controls["temperature"]),
             max_tokens=int(controls["max_output_tokens"]),
             seed=generation_seed,
-            response_schema=GeneratedBundleDraft,
+            response_schema=GeneratedSurfaceOnlyCaseDraft,
         )
         request_json = canonical_json(request_payload)
         request_payload_sha256 = sha256_text(request_json)
+        prompt_sha256 = sha256_text(canonical_json(messages))
         record_ids = {
             "user_id": str(contract["pilot_user_id"]),
+            "case_field": case_field,
+            "attempt_kind": attempt_kind,
             "generation_seed": generation_seed,
-            "attempt_index": attempt_index,
         }
         call_key = physical_call_key(
             stage=GENERATION_PILOT_STAGE,
@@ -372,15 +426,20 @@ def build_generation_compatibility_plan(
                 "temperature": float(controls["temperature"]),
                 "max_tokens": int(controls["max_output_tokens"]),
                 "seed": generation_seed,
-                "response_schema": GeneratedBundleDraft.__name__,
+                "response_schema": GeneratedSurfaceOnlyCaseDraft.__name__,
                 "request_payload_sha256": request_payload_sha256,
             },
         )
         rows.append(
             {
                 "user_id": str(contract["pilot_user_id"]),
+                "case_field": case_field,
+                "regime": regime.value,
+                "semantic_family": semantic_family,
+                "attempt_kind": attempt_kind,
+                "repair_index": int(spec["repair_index"]),
                 "generation_seed": generation_seed,
-                "attempt_index": attempt_index,
+                "sequence_index": sequence_index,
                 "physical_call_key": call_key,
                 "prompt_sha256": prompt_sha256,
                 "request_payload_sha256": request_payload_sha256,
@@ -397,13 +456,20 @@ def build_generation_compatibility_plan(
                 "maximum_physical_attempts": 1,
             }
         )
-    if (
-        prompt_sha256 != contract["prompt_sha256"]
-        or [row["request_payload_sha256"] for row in rows]
-        != contract["request_payload_sha256s"]
-    ):
+        messages_by_call[call_key] = messages
+        if (
+            prompt_sha256 != spec["prompt_sha256"]
+            or request_payload_sha256 != spec["request_payload_sha256"]
+        ):
+            raise RuntimeError(
+                f"generation pilot call differs from contract: {case_field}/"
+                f"{attempt_kind}"
+            )
+    if [row["request_payload_sha256"] for row in rows] != contract[
+        "request_payload_sha256s"
+    ]:
         raise RuntimeError("generation pilot plan differs from its lineage contract")
-    return rows[0], rows, messages
+    return rows[0], rows, messages_by_call
 
 
 def read_generation_seed_dialogues_from_contract(contract: dict[str, Any]) -> list[str]:
@@ -495,6 +561,14 @@ def validate_generation_pilot_bundle(
         "deterministic_draft_lint": (
             trace_validation["deterministic_draft_lint_status"] == "PASS"
         ),
+        "zero_provider_surface_fallback": (
+            trace_validation.get("provider_surface_fallback_case_count")
+            == int(
+                contract["generation_controls"][
+                    "required_provider_surface_fallback_cases"
+                ]
+            )
+        ),
         "provider_oracle_evidence_not_used": (
             trace_validation.get("provider_oracle_evidence_used") is False
         ),
@@ -533,7 +607,7 @@ def validate_generation_pilot_bundle(
         "successful_generation_trace": trace_validation,
         "successful_generation_trace_error": trace_error,
         "scope": (
-            "deterministic structure, surface lint/fallback, evaluator rationale, "
+            "deterministic structure, zero provider-surface fallback, evaluator rationale, "
             "and evidence blueprints only; independent human semantic review is required "
             "before full generation"
         ),
@@ -696,10 +770,15 @@ def require_generation_compatibility_attestation(
         raise RuntimeError(
             f"generation compatibility pilot bundle failed validation: {bundle_report}"
         )
-    plan_row = summary.get("successful_call_plan") or {}
-    if plan_row not in plan_rows:
-        raise RuntimeError("generation compatibility pilot summary plan is stale")
-    call_key = str(plan_row.get("physical_call_key") or "")
+    accepted_rows = summary.get("accepted_surface_calls")
+    if (
+        not isinstance(accepted_rows, list)
+        or len(accepted_rows) != len(ResourceNeedRegime)
+        or any(row not in plan_rows for row in accepted_rows)
+    ):
+        raise RuntimeError(
+            "generation compatibility pilot accepted surface plan is stale"
+        )
     ledger = PersistentAttemptLedger(
         ledger_path,
         stage=GENERATION_PILOT_STAGE,
@@ -708,50 +787,66 @@ def require_generation_compatibility_attestation(
         },
         maximum_total_attempts=len(plan_rows),
     )
-    success_index = plan_rows.index(plan_row)
-    expected_started_keys = {
-        str(row["physical_call_key"])
-        for row in plan_rows[: success_index + 1]
-    }
     successful_keys = {
         str(row["physical_call_key"])
         for row in plan_rows
         if ledger.succeeded(str(row["physical_call_key"]))
     }
+    accepted_keys = {
+        str(row["physical_call_key"]) for row in accepted_rows
+    }
+    accepted_by_case = {str(row["case_field"]): row for row in accepted_rows}
+    expected_cases = {field for field, _ in GENERATION_CASE_FIELDS}
+    expected_started_keys: set[str] = set()
+    for case_field in expected_cases:
+        rows = [row for row in plan_rows if row["case_field"] == case_field]
+        initial = next(row for row in rows if row["attempt_kind"] == "initial")
+        repair = next(row for row in rows if row["attempt_kind"] == "repair")
+        expected_started_keys.add(str(initial["physical_call_key"]))
+        accepted = accepted_by_case.get(case_field)
+        if accepted is None:
+            raise RuntimeError("generation pilot lacks an accepted case surface")
+        if accepted["attempt_kind"] == "repair":
+            expected_started_keys.add(str(repair["physical_call_key"]))
+            if ledger.terminal_event(str(initial["physical_call_key"]), 1) != "FAILED":
+                raise RuntimeError(
+                    "generation pilot repair lacks a failed initial attempt"
+                )
+        elif accepted["attempt_kind"] != "initial":
+            raise RuntimeError("generation pilot accepted unknown attempt kind")
     if (
-        successful_keys != {call_key}
+        set(accepted_by_case) != expected_cases
+        or successful_keys != accepted_keys
         or ledger.started_call_keys != expected_started_keys
-        or ledger.started_attempts != success_index + 1
         or int(summary.get("physical_attempts") or 0) != ledger.started_attempts
         or summary.get("bundle_validation") != bundle_report
     ):
         raise RuntimeError(
-            "generation compatibility pilot ledger does not stop at first success"
+            "generation compatibility pilot casewise ledger is inconsistent"
         )
-    terminal = ledger.terminal_row(call_key)
-    if terminal is None or not terminal.get("request_hash"):
-        raise RuntimeError("generation compatibility pilot success lacks request hash")
-    require_reported_usage(
-        terminal.get("usage"), stage="persisted generation compatibility pilot"
-    )
-    for started_row in plan_rows[: success_index + 1]:
-        started_key = str(started_row["physical_call_key"])
+    provider_drafts = bundle.provenance.get("provider_surface_drafts") or {}
+    provider_responses = bundle.provenance.get("provider_surface_responses") or {}
+    for started_key in expected_started_keys:
         terminal_row = ledger.terminal_row(started_key)
         if terminal_row is None:
             raise RuntimeError("generation pilot attempt lacks a terminal event")
         result = terminal_row.get("result") or {}
-        if isinstance(result, dict) and (
-            "provider_response" in result or "bundle" in result
-        ):
+        if isinstance(result, dict) and "provider_response" in result:
             require_reported_usage(
                 terminal_row.get("usage"),
                 stage="persisted completed generation-pilot attempt",
             )
-    result_bundle = (terminal.get("result") or {}).get("bundle")
-    if result_bundle != bundle.model_dump(mode="json"):
-        raise RuntimeError(
-            "generation compatibility pilot ledger result differs from artifact"
-        )
+    for case_field, accepted in accepted_by_case.items():
+        terminal = ledger.terminal_row(str(accepted["physical_call_key"]))
+        result = (terminal or {}).get("result") or {}
+        if (
+            not (terminal or {}).get("request_hash")
+            or result.get("surface") != provider_drafts.get(case_field)
+            or result.get("provider_response") != provider_responses.get(case_field)
+        ):
+            raise RuntimeError(
+                "generation compatibility pilot accepted trace differs from bundle"
+            )
     return {
         **verification,
         "status": "PASS",

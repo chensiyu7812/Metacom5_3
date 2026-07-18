@@ -73,10 +73,10 @@ data_generation:
   calibration_users: 12
   internal_test_users: 16
   cases_per_user: 9
-  # Source-grounded schema plus deterministic lint removes structural retry
-  # cases. A failed paid response is evidence for protocol review, not
-  # authorization for another blind call.
-  max_generation_attempts: 1
+  # Every case has one initial surface call and at most one separately seeded,
+  # pre-budgeted repair after schema/topic/structure lint failure. A success
+  # stops the case immediately; no third call or hidden client retry is allowed.
+  max_generation_attempts: 2
   compatibility_pilot_semantic_review:
     protocol: pm-v2-generation-pilot-semantic-review-v1-two-independent-all-affirmative
     required_before_full_generation: true

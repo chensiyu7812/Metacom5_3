@@ -102,6 +102,8 @@ def select_routing_algorithm_group_cv(
     dimension_mad_scale: float,
     bootstrap_group_key: str,
     use_precomputed_embeddings: bool,
+    require_precomputed_embeddings: bool = False,
+    semantic_projection_dimensions: int = 48,
     word_features: int,
     char_features: int,
     rule_grid: Mapping[str, Sequence[float | int]],
@@ -171,6 +173,8 @@ def select_routing_algorithm_group_cv(
             dimension_mad_scale=float(dimension_mad_scale),
             bootstrap_group_key=bootstrap_group_key,
             use_precomputed_embeddings=use_precomputed_embeddings,
+            require_precomputed_embeddings=require_precomputed_embeddings,
+            semantic_projection_dimensions=int(semantic_projection_dimensions),
             word_features=int(word_features),
             char_features=int(char_features),
         )

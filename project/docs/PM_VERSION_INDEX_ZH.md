@@ -45,14 +45,19 @@ c16608343fe60e92e57c622fdc24738efe57d08c
 
 首要入口：仓库根目录 `README_PM_V1_5_REVIEW_ZH.md`
 
+全局历史失效模式与不可回归检查入口：
+`project/docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md`。任何后续局部修复都应先按该文档的
+因果链、改动影响矩阵和阶段停止门检查，不能只验证当前报错点。
+
 `PM-v1.5_1` 是 `PM-v1.5` 方法族的协议修复发布版本；方法族内部稳定标识仍为
 `pm-v1.5`，配置中的 `release_revision` 明确记录 `pm-v1.5_1`，二者不得与 legacy
 supplemental 混用。
 
 2026-07-18 审查后的下一次运行合同：
 `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。该合同当前为
-`IMPLEMENTED_NOT_EXECUTED / EXECUTION_RELEASED_STAGE_APPROVAL_REQUIRED`；配置发布不替代
-逐阶段 approval manifest，原快速会议版文档只作为历史设计背景。
+`IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED_PENDING_V8_3_REVIEW_AND_APPROVAL`；V8.2 已消费
+失败，后续配置解锁不能替代 V8.3 fresh dry-run identity 的独立审查与逐阶段 approval manifest。原快速
+会议版文档只作为历史设计背景。
 
 用途：
 

@@ -53,9 +53,27 @@ release_revision: pm-v1.5_1
 # paid stage to its fresh accepted dry-run/cost identity.
 execution_release:
   protocol: pm-v1.5-central-paid-run-release-v1
-  status: PAID_RUN_RELEASED
+  # V8.2 was consumed and failed closed.  No later contract or paid stage is
+  # authorized until a fresh dry-run identity is reviewed and recorded.
+  status: PAID_RUN_BLOCKED
   release_revision: pm-v1.5_1
   approval_manifest: outputs/pm_v1_5_paid_run_release.json
+
+# Content-bound method input.  The first paid development stage rejects any
+# alternate path, hash, card/source count, or selected-seed manifest before it
+# can create an API client.  Downstream attestations and the final freeze then
+# propagate this exact binding; a different Bank is a new reviewed method run.
+strategy_bank_contract:
+  protocol: pm-v1.5-frozen-strategy-bank-binding-v1
+  relative_path: data/strategy/strategy_cards_v1_5.jsonl
+  sha256: 9cd614ad87677442feb6fb65ccbb4cecbba575867871474aede7700b0562a01e
+  card_count: 11590
+  source_dialogue_count: 823
+  audit_relative_path: data/strategy/strategy_bank_audit_v1_5.json
+  audit_sha256: 7381172b1c68e1f0cf79bec228f460384b9359cb0e9434a39806b23e5b687c80
+  selected_seed_sources_relative_path: data/strategy/pm_v1_5_selected_seed_sources.jsonl
+  selected_seed_sources_sha256: c8af66113bb3284cf0b737443800f21a5a53be22589fab72f6624db1d1457065
+  selected_seed_source_count: 52
 
 api_cost_planning:
   # Provider-neutral char/token estimates are multiplied by this frozen margin.
@@ -130,10 +148,10 @@ data_generation:
   calibration_users: 12
   internal_test_users: 16
   cases_per_user: 9
-  # Source-grounded schema plus deterministic lint removes structural retry
-  # cases. A failed paid response is evidence for protocol review, not
-  # authorization for another blind call.
-  max_generation_attempts: 1
+  # Every case has one initial surface call and at most one separately seeded,
+  # pre-budgeted repair after schema/topic/structure lint failure. A success
+  # stops the case immediately; no third call or hidden client retry is allowed.
+  max_generation_attempts: 2
   compatibility_pilot_semantic_review:
     protocol: pm-v2-generation-pilot-semantic-review-v1-two-independent-all-affirmative
     required_before_full_generation: true
@@ -195,11 +213,31 @@ human_label_audit:
   minimum_within_one_rate: 0.80
   minimum_interrater_kappa: 0.10
 
+# One frozen local encoder supplies deployable semantics to both development and
+# external PM states.  Reportable runners resolve this exact cached revision with
+# local_files_only=true; model identity/hash are audit metadata, never PM features.
+semantic_encoder:
+  enabled: true
+  protocol: pm-v1.5-frozen-visible-text-encoder-v1
+  model_id: BAAI/bge-small-en-v1.5
+  revision: 5c38ec7c405ec4b44b94cc5a9bb96e735b38267a
+  snapshot_tree_sha256: c94b5329116dedfb43349b42d8138ef0b7c3348373eb7339b35bbeef530de15b
+  pooling: cls
+  normalize: true
+  max_length: 512
+  output_dimension: 384
+  output_round_decimals: 8
+  local_files_only: true
+  trust_remote_code: false
+  language_scope: english
+
 features:
   word_hash_features: 256
   char_hash_features: 256
   optional_precomputed_semantic_embedding: true
-  source_similarity: catalog_centroid_only
+  require_precomputed_semantic_embedding: true
+  semantic_projection_dimensions: 48
+  source_similarity: frozen_semantic_catalog_centroid_only
   expose_current_state_conflict_oracle: false
   expose_item_level_similarity: false
   forbid_actual_memory_text: true
@@ -208,31 +246,38 @@ features:
   forbid_judge_labels: true
 
 step0_observation:
-  protocol: pm-v1.5-step0-source-observation-v1
+  protocol: pm-v1.5-step0-semantic-source-observation-v2
   stage: pre_item_retrieval
-  memory_representation: source_centroid_only
-  strategy_representation: fixed_eight_family_centroids
+  memory_representation: frozen_semantic_source_centroid_only
+  strategy_representation: frozen_semantic_eight_family_centroids
+  advice_readiness_representation: frozen_semantic_five_anchor_centroids
   strategy_family_count: 8
-  strategy_family_hash_features: 128
   expose_representation_valid: true
   expose_representation_hash_or_version: false
   expose_embedding_vector_or_statistics: false
   primary_router_requires_valid_strategy_family_catalog: true
 
 shortcut_audit:
-  protocol: pm-v1.5-step0-shortcut-audit-v2-train-oracle-only
+  protocol: pm-v1.5-step0-shortcut-audit-v3-user-group-multivariate-train-oracle-only
   expected_predictive_train_states: 216
   expected_structural_all_split_states: 468
   maximum_single_threshold_balanced_accuracy: 0.90
+  maximum_multivariate_probe_balanced_accuracy: 0.90
   centroid_noise_std: 0.05
   shuffle_seed: 6113
+  group_cv_folds: 6
+  probe_logistic_c: 1.0
+  probe_logistic_max_iter: 1000
+  probe_tree_max_depth: 3
+  probe_tree_min_samples_leaf: 9
   fail_on_near_oracle_threshold: true
+  fail_on_near_oracle_multivariate_probe: true
 
 # Low-capacity mechanism baseline. Structural coefficients are frozen here;
 # only this finite numeric grid may be selected on calibration users. It sees
 # the exact same Step-0 object as the learned router and never sees item hits.
 transparent_rule_router:
-  protocol: pm-v1.5-transparent-step0-rule-router-v1
+  protocol: pm-v1.5-transparent-step0-rule-router-v2
   tuning_data_role: train_only
   train_minimum_quality: 0.50
   train_maximum_risk: 0.50
@@ -242,10 +287,9 @@ transparent_rule_router:
     source_cost_penalties: [0.05]
     source_minimum_scores: [0.05, 0.15, 0.25]
     maximum_memory_sources: [1, 2]
-    strategy_similarity_weights: [1.0]
-    advice_requested_bonuses: [0.20]
+    strategy_family_similarity_weights: [1.0]
+    strategy_readiness_alignment_weights: [0.25, 0.50]
     question_bonuses: [0.05]
-    advice_rejected_penalties: [0.50]
     strategy_cost_penalties: [0.05]
     strategy_minimum_scores: [0.10, 0.25]
 

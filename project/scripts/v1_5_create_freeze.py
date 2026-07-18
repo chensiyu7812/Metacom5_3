@@ -40,6 +40,10 @@ from metacom_pm.io import (
 )
 from metacom_pm.pm_v2_evoemo import EVALUATION_UNIT_CONTRACT_PROTOCOL
 from metacom_pm.pm_v2_external_eval import expected_external_units
+from metacom_pm.pm_v1_5_semantic import (
+    resolve_semantic_encoder_binding,
+    semantic_encoder_spec_from_config,
+)
 from metacom_pm.pm_v2_external_schema_smoke import (
     POINTWISE_SCHEMA_SMOKE_PROTOCOL,
     POINTWISE_SCHEMA_SMOKE_PURPOSE,
@@ -490,7 +494,7 @@ def require_v1_5_development_chain(
         or sweep_summary.get("strategy_bank_sha256")
         != sha256_file(strategy_bank_path)
         or bindings.get("scope") != "full"
-        or full_gate.get("protocol") != "pm-v1.5-full-sweep-gate-v1"
+        or full_gate.get("protocol") != "pm-v1.5-full-sweep-gate-v2"
         or full_gate.get("status") != "PASS"
         or full_gate.get("scope") != "full"
         or full_gate.get("human_calibration_performed") is not False
@@ -514,6 +518,20 @@ def require_v1_5_development_chain(
         != semantic_review.get("actual_corpus_review_report_sha256")
         or full_gate.get("actual_corpus_review_attestation_sha256")
         != semantic_review.get("actual_corpus_review_attestation_sha256")
+        or len(
+            str(full_gate.get("step0_shortcut_audit_report_sha256") or "")
+        )
+        != 64
+        or len(
+            str(
+                full_gate.get("step0_shortcut_audit_attestation_sha256") or ""
+            )
+        )
+        != 64
+        or full_gate.get("step0_shortcut_audit_report_sha256")
+        != semantic_review.get("step0_shortcut_audit_report_sha256")
+        or full_gate.get("step0_shortcut_audit_attestation_sha256")
+        != semantic_review.get("step0_shortcut_audit_attestation_sha256")
         or bindings.get("pm_v2_config_sha256")
         != sha256_file(pm_v1_5_config_path)
         or bindings.get("pm_v2_version") != "pm-v1.5"
@@ -632,6 +650,12 @@ def require_v1_5_development_chain(
         ],
         "automated_review_attestation_sha256": full_gate[
             "automated_review_attestation_sha256"
+        ],
+        "step0_shortcut_audit_report_sha256": full_gate[
+            "step0_shortcut_audit_report_sha256"
+        ],
+        "step0_shortcut_audit_attestation_sha256": full_gate[
+            "step0_shortcut_audit_attestation_sha256"
         ],
     }
 
@@ -927,6 +951,10 @@ def main() -> None:
 
     experiment_config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
+    semantic_encoder_spec = semantic_encoder_spec_from_config(pm_v1_5_config)
+    _, semantic_encoder_binding = resolve_semantic_encoder_binding(
+        semantic_encoder_spec
+    )
     if pm_v1_5_config.get("version") != "pm-v1.5":
         raise RuntimeError("this freeze creator requires a pm-v1.5 config")
     judge_role_isolation = require_judge_role_isolation(
@@ -1154,6 +1182,8 @@ def main() -> None:
         "evidence_filter_config_sha256": evidence_filter_config.digest(),
         "evidence_filter_model": evidence_filter_model_binding,
         "generator_endpoint_sha256": generator_endpoint_sha256,
+        "semantic_encoder_spec": semantic_encoder_spec.model_dump(mode="json"),
+        "semantic_encoder_binding": semantic_encoder_binding.model_dump(mode="json"),
         "generator_pricing_usd_per_mtok": {"input": 0.15, "output": 0.60},
         "simulator_id": simulator_id,
         "max_turns": int(external["max_turns"]),
@@ -1627,7 +1657,12 @@ def main() -> None:
             args.judging_labels,
             args.judging_attestation,
         ],
-        prompt_files=[ROOT / "src" / "metacom_pm" / "prompts.py"],
+        prompt_files=[
+            ROOT / "src" / "metacom_pm" / "prompts.py",
+            ROOT / "src" / "metacom_pm" / "pm_v1_5_semantic.py",
+            ROOT / "src" / "metacom_pm" / "pm_v1_5_step0.py",
+            ROOT / "src" / "metacom_pm" / "pm_v1_5_rule_router.py",
+        ],
         out_path=args.out,
         notes=notes,
     )

@@ -3,13 +3,14 @@
 > **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
-> 外部效率三层 gate。中央配置现已进入 `PAID_RUN_RELEASED`，但每个真实 API 阶段仍由
-> 缺省不存在的逐阶段 approval manifest 锁死；本文保留为 2026-07-17 版本的历史设计
+> 外部效率三层 gate。V8.2 已真实消费并 fail-closed，中央配置现为
+> `PAID_RUN_BLOCKED`；V8.3 必须重新 dry-run、审查并获得逐阶段 approval。本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
-状态：免费代码与 fail-closed 链路已搭建；历史 1-call generation compatibility
-transport pilot 曾结构性通过，但绑定的是旧版 `pm_v1_5.yaml` 哈希，当前配置下必须重跑，
+状态：免费代码与 fail-closed 链路已搭建；历史整包 generation compatibility
+transport pilot 已失效，V8.1 逐例试运行在 9 个 case 中有 2 个话题 lint 失败。当前合同已改为
+surface-only 逐 case 生成和每 case 最多一次预预算 repair，必须在新目录重跑，
 不能视为仍然有效的上游 gate，更不是论文 efficacy 结果。其余正式链路尚未执行，也没有
 真实 V1.5 主结果。任何 dry-run、脚手架测试或旧 V1 诊断都不能写成论文结果。
 
@@ -125,11 +126,12 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 | 顺序 | 动作 | API 调用规模 | 进入下一步的条件 |
 |---:|---|---:|---|
 | 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
-| 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 1 | 最便宜的 transport stop-loss；schema、来源绑定、finish reason 全部 PASS |
+| 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；上限 18 | 每次只生成一个 case 的四个 surface 字段；schema、原始响应重建、逐例 topic/structure lint 全部 PASS；失败时只允许同 case 的一次预预算 repair；最终 deterministic fallback 必须为 0 |
 | 2 | `v1_5_run_automated_semantic_review.py` | 102 | 27 真案例 + 12 字段 × 每字段 2 个 hard controls，共 51 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS` |
-| 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 52 | 52 users / 468 states 完整，生成 attestation |
+| 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；上限 936 | 52 users × 9 个逐例 surface；每例最多一次 repair；468 states 完整并生成 attestation |
 | 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 24 controls) × 2 家族 = 984 logical calls；bounded retry 上界 2,952 attempts | 实际 468 states 全字段通过；12 字段负控矩阵完整；provider-surface fallback 分 split 低于冻结上限 |
-| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case 与 actual-468 attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
+| 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
+| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case、actual-468 和 Step-0 shortcut attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 29,952 | 7,488 × response/risk × 2 judge families；完整性与 judge-health gates PASS |
 | 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
@@ -144,7 +146,7 @@ V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是
 明确范围缩减。代价是证据强度低于 V2.2，但不能用把全量 sweep 标成 “pilot” 的方式
 绕过：V1.5 的 sweep 现在必须诚实记录为 `full`。
 
-按当前冻结规模，上表从 compatibility pilot 到 external judging 合计最多约 40,453 个逻辑调用，
+按当前冻结规模，上表从 compatibility pilot 到 external judging 的物理调用上限约 41,354，
 其中 29,952 个来自 development 双家族 judging。V1.5 的“快”主要是省掉人工流程和
 V2.2 的额外兼容性/复核层，不代表它是几十次调用的小实验；若时间窗口承受不了这个
 规模，应在付费前另立一个明确降级、重新命名的 pilot，不能事后把不完整矩阵称作 V1.5
@@ -157,9 +159,9 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | 历史真实 1 call 曾结构性通过；绑定旧 config，当前必须重新 dry-run 并重跑；历史预算上界 `$0.00606165` | historical accepted `c9b48fe7…e08efed` |
+| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 fresh dry-run PASS：成功路径 9 calls、上限 18，成本期望 `$0.0083661`、硬上限 `$0.01680705` | `758ae052…8cf3df2`，尚无付费批准；旧 `14ca3b79…406aac` 已消费失败 |
 | 自动语义审核 | 三次历史真实 `--run` 的故障记录仅用于追溯。当前已升级为 12 字段 × 每字段 2 个 control 的 v2 合同，共 102 个逻辑调用、最多 306 次物理尝试；旧 66-call cost/hash 全部失效。新价格上界和 acceptance hash 必须由当前代码重新 dry-run 产生 | `STALE_REQUIRES_FRESH_DRY_RUN` |
-| 52-user generation | 52 calls；`$0.31501515` | `955276b6…ae0739` |
+| 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 
 除明确标为历史真实调用的一行外，这些 dry-run 数字只证明当前计划可计算且未创建 API
@@ -206,7 +208,7 @@ HTTP 429 当作限流信号单独处理，其余错误类型都不构成额度�
 
 已实现的免费部分包括：真实 `version: pm-v1.5`、独立配置/目录/checkpoint、clean
 bank/seed 实例级隔离、EF 全链路关闭、66-call 小型自动审核 runner、actual-468 全量
-semantic/fallback runner、1-call generation pilot、完整数据
+semantic/fallback runner、9–18-call casewise generation pilot、完整数据
 attestation、真实 full-sweep gate、两家族 judging、internal decision-quality、fixed
 baseline 派生、无截断 fixed-track 验证、轻量 study freeze、12-unit canary、4-call external
 legacy pointwise smoke、24-call batched schema/order pilot、318-call batched 主评测规划、
