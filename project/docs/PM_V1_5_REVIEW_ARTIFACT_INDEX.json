@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "0c419dd3fd7f572d353601365cf6704263ece52495a8690e2a190f6ae79754d1"
+    "sha256": "6ac15164d240a612e9907b65dbf5a7e33e1585579f5ad3b949f9971ec0b1ab2a"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -49,8 +49,8 @@
   "automated_semantic_review": {
     "execution_status": "PRIOR_DRY_RUN_INVALIDATED_NO_CURRENT_PASS_GATE_REPORT",
     "paper_result": false,
-    "logical_calls": 66,
-    "maximum_physical_attempts": 198,
+    "logical_calls": 102,
+    "maximum_physical_attempts": 306,
     "judge_families": [
       "google_gemini",
       "deepseek"
@@ -59,8 +59,8 @@
     "invalidated_prior_accepted_cost_estimate_sha256": "54369b9c51d4d4930abb591c0a5be416691911512307811667f172a29adb3b0c",
     "invalidated_prior_call_plan_contract_sha256": "dfb32f887338d0ef21d7f3853fbdad4dd7ee66c5f14599c8bae5c002e79a075a",
     "prior_partial_attempt_policy": "not reused or spliced into the current run",
-    "current_required_small_pilot": "27 real cases plus positive controls",
-    "current_required_actual_corpus_gate": "468 real states plus positive controls, split-specific fallback gate"
+    "current_required_small_pilot": "27 real cases plus 24 frozen controls (2 per each of 12 fields)",
+    "current_required_actual_corpus_gate": "468 real states plus 24 frozen controls (2 per each of 12 fields), split-specific fallback gate"
   },
   "formal_pipeline": {
     "development_generation_complete": false,

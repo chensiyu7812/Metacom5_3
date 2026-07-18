@@ -101,19 +101,24 @@ from metacom_pm.pm_v2_generation_review_v8 import (
     generate_v8_review_cases,
 )
 from metacom_pm.v1_5_automated_semantic_review import (
+    AUTOMATED_CONTROL_PROTOCOL,
     AUTOMATED_REVIEW_PROTOCOL,
     AutomatedSemanticReviewOutput,
+    RATING_FIELDS,
     V1_5_REVIEW_STRATEGY_CARD_IDS,
     _render_case_text,
     aggregate_gate,
+    build_control_manifest,
     build_positive_controls,
     judge_messages,
 )
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.v1_5_actual_corpus_review import (
+    ACTUAL_CORPUS_CONTROL_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_STAGE,
+    ACTUAL_REVIEW_QUESTIONS_EN,
     build_actual_corpus_review_items,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
@@ -169,7 +174,6 @@ def parse_args() -> argparse.Namespace:
         default=ROOT / "data" / "pm_v1_5" / "pm_v2_bundles.jsonl",
     )
     parser.add_argument("--seed", type=int, default=20260716)
-    parser.add_argument("--n-controls", type=int, default=6)
     parser.add_argument(
         "--judge-endpoints", nargs="+", default=list(DEFAULT_JUDGE_ENDPOINTS)
     )
@@ -230,6 +234,17 @@ def main() -> None:
     corpus_audit = None
     if args.review_scope == "actual_468":
         actual_cfg = dict(pm_config["actual_corpus_semantic_audit"])
+        if (
+            actual_cfg.get("protocol") != ACTUAL_CORPUS_REVIEW_PROTOCOL
+            or actual_cfg.get("control_protocol")
+            != ACTUAL_CORPUS_CONTROL_PROTOCOL
+            or list(actual_cfg.get("required_control_fields") or [])
+            != list(RATING_FIELDS)
+            or int(actual_cfg.get("controls_per_field") or 0) != 2
+            or int(actual_cfg.get("control_seed") or -1) != int(args.seed)
+        ):
+            raise RuntimeError("actual-corpus control contract/config drift")
+        control_cfg = actual_cfg
         real_case_rows, controls, corpus_audit = build_actual_corpus_review_items(
             states_path=args.states,
             evaluator_contexts_path=args.evaluator_contexts,
@@ -242,9 +257,21 @@ def main() -> None:
                 "maximum_provider_surface_fallback_rate_by_split"
             ],
             control_seed=args.seed,
-            n_controls=args.n_controls,
+            required_control_fields=actual_cfg["required_control_fields"],
+            controls_per_field=int(actual_cfg["controls_per_field"]),
         )
     else:
+        pilot_cfg = dict(pm_config["automated_semantic_review"])
+        if (
+            pilot_cfg.get("protocol") != AUTOMATED_REVIEW_PROTOCOL
+            or pilot_cfg.get("control_protocol") != AUTOMATED_CONTROL_PROTOCOL
+            or list(pilot_cfg.get("required_control_fields") or [])
+            != list(RATING_FIELDS)
+            or int(pilot_cfg.get("controls_per_field") or 0) != 2
+            or int(pilot_cfg.get("control_seed") or -1) != int(args.seed)
+        ):
+            raise RuntimeError("pilot control contract/config drift")
+        control_cfg = pilot_cfg
         cases = generate_v8_review_cases(
             strategy_bank_path=args.strategy_bank,
             cases_per_regime=VALIDATION_CASES_PER_REGIME,
@@ -252,7 +279,10 @@ def main() -> None:
             strategy_card_ids=V1_5_REVIEW_STRATEGY_CARD_IDS,
         )
         controls = build_positive_controls(
-            cases, seed=args.seed, n_controls=args.n_controls
+            cases,
+            seed=args.seed,
+            required_fields=pilot_cfg["required_control_fields"],
+            controls_per_field=int(pilot_cfg["controls_per_field"]),
         )
         real_case_rows = [
             {"kind": "real", "item_id": case.item_id, "text": _render_case_text(case)}
@@ -279,8 +309,19 @@ def main() -> None:
     ]
     call_plan = []
     execution = {}
+    rating_questions = (
+        ACTUAL_REVIEW_QUESTIONS_EN
+        if args.review_scope == "actual_468"
+        else None
+    )
     for case_row in case_rows:
-        messages = judge_messages(str(case_row["text"]))
+        messages = (
+            judge_messages(
+                str(case_row["text"]), rating_questions=rating_questions
+            )
+            if rating_questions is not None
+            else judge_messages(str(case_row["text"]))
+        )
         for endpoint_name, endpoint in endpoints.items():
             payload = chat_request_payload(
                 endpoint,
@@ -359,6 +400,13 @@ def main() -> None:
         "review_scope": args.review_scope,
         "n_real_cases": len(real_case_rows),
         "n_controls": len(controls),
+        "control_protocol": control_cfg["control_protocol"],
+        "required_control_fields": list(control_cfg["required_control_fields"]),
+        "controls_per_field": int(control_cfg["controls_per_field"]),
+        "control_seed": int(control_cfg["control_seed"]),
+        "control_matrix_sha256": sha256_text(
+            canonical_json(build_control_manifest(controls))
+        ),
         "n_judge_families": len(endpoints),
         "n_logical_calls": n_calls,
         "maximum_physical_attempts_per_call": MAX_PHYSICAL_ATTEMPTS_PER_CALL,
@@ -611,6 +659,9 @@ def main() -> None:
             control_results=control_results,
             controls=controls,
             judge_family_names=list(endpoints),
+            control_protocol=str(control_cfg["control_protocol"]),
+            required_control_fields=control_cfg["required_control_fields"],
+            controls_per_field=int(control_cfg["controls_per_field"]),
             protocol=review_protocol,
         ),
         "review_scope": args.review_scope,
@@ -624,7 +675,7 @@ def main() -> None:
     write_json(args.out_dir / "control_judgments.json", control_results)
     write_json(
         args.out_dir / "controls.json",
-        [{k: v for k, v in c.items() if k != "case_text"} for c in controls],
+        gate["control_manifest"],
     )
     write_json(args.out_dir / "gate_report.json", gate)
     create_artifact_attestation(
@@ -663,6 +714,11 @@ def main() -> None:
         parameters={
             "protocol": review_protocol,
             "review_scope": args.review_scope,
+            "control_protocol": control_cfg["control_protocol"],
+            "required_control_fields": list(control_cfg["required_control_fields"]),
+            "controls_per_field": int(control_cfg["controls_per_field"]),
+            "control_seed": int(control_cfg["control_seed"]),
+            "control_matrix_sha256": gate["control_matrix_sha256"],
             "judge_role_isolation": judge_role_isolation,
             "review_strategy_card_ids": (
                 {}

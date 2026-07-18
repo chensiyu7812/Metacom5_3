@@ -420,12 +420,50 @@ semantic_sanity_audit:
   minimum_affirmative_rate_per_split: 0.80
   minimum_affirmative_rate_per_family: 0.80
 
+# Frozen pre-generation 27-case calibration matrix. Every one of the 12 rubric
+# dimensions has two deterministic, natural-language corruptions. The runner
+# rejects any CLI seed or matrix that differs from this contract.
+automated_semantic_review:
+  protocol: pm-v1.5-automated-semantic-review-v2
+  control_protocol: pm-v1.5-pilot-controls-v2
+  control_seed: 20260716
+  controls_per_field: 2
+  required_control_fields:
+    - semantic_family_match
+    - regime_match
+    - memory_sources_marginal_value_match
+    - memory_item_utility_match
+    - source_type_match
+    - dialogue_temporal_order_match
+    - context_grounding_match
+    - memory_age_design_match
+    - strategy_resource_need_match
+    - strategy_item_utility_match
+    - advice_readiness_match
+    - surface_naturalness_match
+
 # Paid response generation is forbidden until every one of the actual 468
 # generated states passes the same dual-family 12-field semantic rubric. The
 # internal split permits no deterministic surface fallback; train/calibration
 # tolerate at most one case only as an explicit fail-closed ceiling.
 actual_corpus_semantic_audit:
-  protocol: pm-v1.5-actual-468-semantic-review-v1
+  protocol: pm-v1.5-actual-468-semantic-review-v2
+  control_protocol: pm-v1.5-actual-corpus-controls-v2
+  control_seed: 20260716
+  controls_per_field: 2
+  required_control_fields:
+    - semantic_family_match
+    - regime_match
+    - memory_sources_marginal_value_match
+    - memory_item_utility_match
+    - source_type_match
+    - dialogue_temporal_order_match
+    - context_grounding_match
+    - memory_age_design_match
+    - strategy_resource_need_match
+    - strategy_item_utility_match
+    - advice_readiness_match
+    - surface_naturalness_match
   required_before_action_response_generation: true
   expected_states: 468
   judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]

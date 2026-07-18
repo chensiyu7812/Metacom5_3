@@ -1089,6 +1089,8 @@ def main() -> None:
     automated_review_verification = require_automated_semantic_review_pass(
         args.automated_semantic_review_report,
         args.automated_semantic_review_attestation,
+        expected_pm_config_path=args.pm_v2_config,
+        expected_strategy_bank_path=args.strategy_bank,
     )
     automated_review_report = automated_review_verification["report"]
     generation_pilot_semantic_verification = {

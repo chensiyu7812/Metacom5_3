@@ -236,8 +236,12 @@ internal-test 后不得改变 primary candidate、阈值、baseline 或外部 co
 完整 468-state corpus 在 action response generation 前还要通过两道门：实际构造文本的
 双开发家族 12-field 全量语义审核，以及按 train/calibration/internal-test 分开计算的
 provider-surface fallback 上限。内部测试 split 的 fallback 上限为 0；审核报告和输入
-states 哈希必须由 attestation 绑定。27-case review 只保留为生成协议的前置小型审查，
-不能替代真实 468-state gate。
+states、evaluator contexts、memory backend、Strategy Bank 和配置哈希必须由 attestation
+绑定，并与下游当前实际输入逐一一致。27-case review 只保留为生成协议的前置小型审查，
+不能替代真实 468-state gate。两道自动审核各自冻结 12 字段 × 每字段 2 个 hard controls；
+零 controls、字段缺失、重复覆盖、seed/数量漂移或 control matrix hash 不一致均直接失败。
+controls 使用真实候选值交换、标签翻转、age 算术矛盾、时序复制、grounding donor、
+premature-strategy 注入等可读 corruption，不再使用 sentinel 字符串。
 
 ## 8. 三层 Gate
 

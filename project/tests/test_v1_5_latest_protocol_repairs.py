@@ -7,7 +7,14 @@ import pytest
 
 from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.evoemo import evoemo_chronology_audit, normalize_evoemo_chronology
-from metacom_pm.io import iter_jsonl, read_json, sha256_file, write_json
+from metacom_pm.io import (
+    canonical_json,
+    iter_jsonl,
+    read_json,
+    sha256_file,
+    sha256_text,
+    write_json,
+)
 from metacom_pm.paid_run_release import (
     PAID_RUN_RELEASE_PROTOCOL,
     require_paid_run_release,
@@ -15,18 +22,33 @@ from metacom_pm.paid_run_release import (
 from metacom_pm.pm_v1_5_algorithm_selection import (
     _select_one_standard_error_candidate,
 )
+from metacom_pm.freeze import _is_current_release_python as freeze_includes_python
+from metacom_pm.release import _is_current_release_python as release_includes_python
 from metacom_pm.v1_5_actual_corpus_review import (
+    ACTUAL_CORPUS_CONTROL_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_STAGE,
     _surface_fallback_report,
+    build_actual_corpus_controls,
     require_actual_corpus_semantic_review_pass,
 )
 from metacom_pm.v1_5_automated_semantic_review import (
+    RATING_FIELDS,
     V1_5_REVIEW_STRATEGY_CARD_IDS,
 )
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_release_scan_and_study_freeze_cover_every_active_v1_5_script() -> None:
+    scripts = [
+        *sorted((ROOT / "scripts" / "v1_5").glob("*.py")),
+        *sorted((ROOT / "scripts").glob("v1_5_*.py")),
+    ]
+    assert scripts
+    assert all(release_includes_python(ROOT, path) for path in scripts)
+    assert all(freeze_includes_python(ROOT, path) for path in scripts)
 
 
 def test_every_v1_5_paid_entrypoint_calls_the_central_release_gate() -> None:
@@ -238,11 +260,91 @@ def test_actual_corpus_fallback_gate_is_split_specific_and_fail_closed(
     assert failed["status"] == "FAIL"
 
 
+def test_actual_control_matrix_covers_all_fields_without_sentinel_values() -> None:
+    items = []
+    for index in range(24):
+        regime = "strategy_helpful" if index % 2 == 0 else "strategy_harmful"
+        payload = {
+            "semantic_family": f"family_{index % 3}",
+            "regime": regime,
+            "needed_memory_sources": ["MP"] if index % 2 == 0 else [],
+            "advice_readiness": "explore_first" if index % 2 == 0 else "listen_only",
+            "split": "train",
+            "session_index": 4,
+            "history": [
+                {"role": "user", "content": f"earlier concern {index}"},
+                {"role": "assistant", "content": "I hear you."},
+            ],
+            "current_user_text": f"current concern {index}",
+            "session_summary": f"grounded summary {index}",
+            "authorized_user_context": f"authorized context {index}",
+            "coverage_rationale": "The visible conversation supports the case.",
+            "memory_evidence": [
+                {
+                    "memory_id": f"mem_{index:012x}",
+                    "source": "MP",
+                    "utility": "helpful" if index % 2 == 0 else "irrelevant",
+                    "created_session": 2,
+                    "age": 2,
+                    "stale": False,
+                    "conflict": False,
+                    "text": f"preference {index}",
+                }
+            ],
+            "strategy_resource_candidate": "use" if index % 2 == 0 else "skip",
+            "strategy_cards": [
+                {
+                    "strategy_id": f"strat_{index:012x}",
+                    "strategy_label": "Reflection",
+                    "guidance_text": "Reflect the feeling gently.",
+                    "example_response": "That sounds difficult.",
+                    "source_dialogue_id": f"esconv_{index:04d}",
+                }
+            ],
+        }
+        items.append({"item_id": f"state_{index}", "payload": payload})
+    controls = build_actual_corpus_controls(
+        items,
+        control_seed=20260716,
+        required_control_fields=RATING_FIELDS,
+        controls_per_field=2,
+    )
+    assert len(controls) == 24
+    assert {
+        field: sum(row["rating_field"] == field for row in controls)
+        for field in RATING_FIELDS
+    } == {field: 2 for field in RATING_FIELDS}
+    assert all("deliberately_unrelated_control" not in row["case_text"] for row in controls)
+
+
 def test_actual_468_gate_is_attested_and_binds_state_corpus(
     tmp_path: Path,
 ) -> None:
     states = tmp_path / "states.jsonl"
     states.write_text('{"state_id":"s1"}\n', encoding="utf-8")
+    evaluator = tmp_path / "evaluator.jsonl"
+    backend = tmp_path / "backend.jsonl"
+    strategy_bank = tmp_path / "strategy.jsonl"
+    config = tmp_path / "pm.yaml"
+    for path, text in (
+        (evaluator, '{"state_id":"s1"}\n'),
+        (backend, '{"card_id":"c1"}\n'),
+        (strategy_bank, '{"strategy_id":"x"}\n'),
+        (config, "version: pm-v1.5\n"),
+    ):
+        path.write_text(text, encoding="utf-8")
+    control_manifest = [
+        {
+            "item_id": str(index),
+            "case_item_id": "case",
+            "corrupted_field": RATING_FIELDS[index // 2],
+            "rating_field": RATING_FIELDS[index // 2],
+            "override": {},
+            "case_text_sha256": f"{index:064x}",
+        }
+        for index in range(24)
+    ]
+    matrix_sha256 = sha256_text(canonical_json(control_manifest))
     report_path = tmp_path / "gate_report.json"
     write_json(
         report_path,
@@ -250,27 +352,75 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
             "protocol": ACTUAL_CORPUS_REVIEW_PROTOCOL,
             "status": "PASS",
             "n_real_cases": 468,
+            "control_protocol": ACTUAL_CORPUS_CONTROL_PROTOCOL,
+            "required_control_fields": list(RATING_FIELDS),
+            "controls_per_field": 2,
+            "n_controls": 24,
+            "control_field_counts": {field: 2 for field in RATING_FIELDS},
+            "control_contract_errors": [],
+            "control_matrix_sha256": matrix_sha256,
+            "control_manifest": control_manifest,
+            "control_catches": [{"item_id": str(index)} for index in range(24)],
+            "control_misses": [],
             "corpus_audit": {
                 "fallback_gate": {"status": "PASS"},
-                "input_hashes": {"states": sha256_file(states)},
+                "control_matrix_sha256": matrix_sha256,
+                "input_hashes": {
+                    "states": sha256_file(states),
+                    "evaluator_contexts": sha256_file(evaluator),
+                    "backend": sha256_file(backend),
+                    "strategy_bank": sha256_file(strategy_bank),
+                },
             },
         },
     )
+    real_judgments = tmp_path / "real.json"
+    control_judgments = tmp_path / "control.json"
+    controls_path = tmp_path / "controls.json"
+    ledger = tmp_path / "ledger.jsonl"
+    write_json(real_judgments, {})
+    write_json(control_judgments, {})
+    write_json(controls_path, control_manifest)
+    ledger.write_text("{}\n", encoding="utf-8")
     attestation = tmp_path / "attestation.json"
     create_artifact_attestation(
         attestation,
         stage=ACTUAL_CORPUS_REVIEW_STAGE,
-        inputs={"states": states},
-        outputs={"gate_report": (report_path, False)},
+        inputs={
+            "states": states,
+            "evaluator_contexts": evaluator,
+            "memory_backend": backend,
+            "strategy_bank": strategy_bank,
+            "pm_v1_5_config": config,
+        },
+        outputs={
+            "real_case_judgments": (real_judgments, False),
+            "control_judgments": (control_judgments, False),
+            "controls": (controls_path, False),
+            "gate_report": (report_path, False),
+            "physical_attempt_ledger": (ledger, True),
+        },
         parameters={},
     )
     assert require_actual_corpus_semantic_review_pass(
-        report_path, attestation, expected_states_path=states
+        report_path,
+        attestation,
+        expected_states_path=states,
+        expected_evaluator_contexts_path=evaluator,
+        expected_backend_path=backend,
+        expected_strategy_bank_path=strategy_bank,
+        expected_pm_config_path=config,
     )["status"] == "PASS"
     states.write_text('{"state_id":"changed"}\n', encoding="utf-8")
     with pytest.raises(RuntimeError, match="hash mismatch|did not PASS"):
         require_actual_corpus_semantic_review_pass(
-            report_path, attestation, expected_states_path=states
+            report_path,
+            attestation,
+            expected_states_path=states,
+            expected_evaluator_contexts_path=evaluator,
+            expected_backend_path=backend,
+            expected_strategy_bank_path=strategy_bank,
+            expected_pm_config_path=config,
         )
 
 

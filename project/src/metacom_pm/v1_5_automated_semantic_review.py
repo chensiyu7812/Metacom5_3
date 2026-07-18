@@ -21,13 +21,16 @@ results produced under this gate must disclose that explicitly.
 from __future__ import annotations
 
 import json
+import copy
 import random
+from collections import Counter
 from pathlib import Path
-from typing import Any, Literal, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 from .api import Endpoint, make_client, require_reported_usage
 from .artifacts import require_artifact_attestation
-from .io import canonical_json, read_json, sha256_text
+from .contracts import MemorySource
+from .io import canonical_json, read_json, sha256_file, sha256_text
 from .pm_v2_contracts import StrictModel
 from .pm_v2_generation_review_v8 import (
     RATING_FIELDS,
@@ -35,7 +38,8 @@ from .pm_v2_generation_review_v8 import (
     V8ReviewCase,
 )
 
-AUTOMATED_REVIEW_PROTOCOL = "pm-v1.5-automated-semantic-review-v1"
+AUTOMATED_REVIEW_PROTOCOL = "pm-v1.5-automated-semantic-review-v2"
+AUTOMATED_CONTROL_PROTOCOL = "pm-v1.5-pilot-controls-v2"
 
 # Frozen replacements for the legacy V8 review cards. The original V8 IDs all
 # came from dialogue sources that are now among the 52 formal development seed
@@ -74,8 +78,24 @@ class AutomatedSemanticReviewOutput(StrictModel):
     notes: str
 
 
+def _require_attested_input_hash(
+    attestation: Mapping[str, Any], logical_name: str, expected_path: str | Path
+) -> None:
+    record = (attestation.get("inputs") or {}).get(logical_name)
+    if not isinstance(record, dict) or record.get("sha256") != sha256_file(
+        expected_path
+    ):
+        raise RuntimeError(
+            f"automated semantic-review attestation does not bind current {logical_name}"
+        )
+
+
 def require_automated_semantic_review_pass(
-    report_path: str | Path, attestation_path: str | Path
+    report_path: str | Path,
+    attestation_path: str | Path,
+    *,
+    expected_pm_config_path: str | Path,
+    expected_strategy_bank_path: str | Path,
 ) -> dict[str, Any]:
     verification = require_artifact_attestation(
         attestation_path,
@@ -83,10 +103,44 @@ def require_automated_semantic_review_pass(
         required_output_paths={"gate_report": report_path},
     )
     report = read_json(report_path)
+    attestation = read_json(attestation_path)
+    _require_attested_input_hash(
+        attestation, "pm_v1_5_config", expected_pm_config_path
+    )
+    _require_attested_input_hash(
+        attestation, "strategy_bank", expected_strategy_bank_path
+    )
+    required_outputs = {
+        "real_case_judgments",
+        "control_judgments",
+        "controls",
+        "gate_report",
+        "physical_attempt_ledger",
+    }
+    output_records = attestation.get("outputs") or {}
+    control_manifest = report.get("control_manifest") or []
+    controls_record = output_records.get("controls") or {}
+    controls_path = Path(str(controls_record.get("path") or ""))
     if (
         report.get("protocol") != AUTOMATED_REVIEW_PROTOCOL
         or report.get("status") != "PASS"
         or report.get("human_calibration_performed") is not False
+        or report.get("control_protocol") != AUTOMATED_CONTROL_PROTOCOL
+        or list(report.get("required_control_fields") or []) != list(RATING_FIELDS)
+        or int(report.get("controls_per_field") or 0) != 2
+        or int(report.get("n_controls") or 0) != 2 * len(RATING_FIELDS)
+        or report.get("control_field_counts")
+        != {field: 2 for field in RATING_FIELDS}
+        or list(report.get("control_contract_errors") or [])
+        or len(str(report.get("control_matrix_sha256") or "")) != 64
+        or len(report.get("control_catches") or []) != 2 * len(RATING_FIELDS)
+        or list(report.get("control_misses") or [])
+        or not required_outputs <= set(output_records)
+        or len(control_manifest) != 2 * len(RATING_FIELDS)
+        or sha256_text(canonical_json(control_manifest))
+        != report.get("control_matrix_sha256")
+        or not controls_path.is_file()
+        or read_json(controls_path) != control_manifest
     ):
         raise RuntimeError("PM-v1.5 automated semantic-review gate did not PASS")
     return {
@@ -97,34 +151,12 @@ def require_automated_semantic_review_pass(
 # Deliberately wrong values rotated in to build positive-control cases. Each
 # entry corrupts exactly one field so a competent reviewer should flag that
 # field (and ideally only that field) as unsupported.
-_CORRUPTIBLE_FIELDS = {
-    "regime": lambda true_value: next(
-        v
-        for v in (
-            "context_only",
-            "profile_useful",
-            "summary_useful",
-            "event_useful",
-            "multi_source_useful",
-            "memory_harmful",
-            "strategy_helpful",
-            "advice_harmful",
-            "ambiguous",
-        )
-        if v != true_value
-    ),
-    "semantic_family": lambda true_value: f"unrelated_topic_swap::{true_value}",
-}
-
-
-def _render_case_text(case: V8ReviewCase, *, override: dict[str, Any] | None = None) -> str:
-    override = override or {}
-    regime = override.get("regime", case.regime)
-    semantic_family = override.get("semantic_family", case.semantic_family)
+def _render_case_text(case: V8ReviewCase) -> str:
     lines = [
-        f"Candidate semantic family: {semantic_family}",
-        f"Candidate regime: {regime}",
+        f"Candidate semantic family: {case.semantic_family}",
+        f"Candidate regime: {case.regime}",
         f"Candidate materially-useful memory sources: {[s.value for s in case.materially_useful_memory_sources]}",
+        f"Current session index: {case.session_index}",
         "",
         "Dialogue before current turn:",
     ]
@@ -139,17 +171,23 @@ def _render_case_text(case: V8ReviewCase, *, override: dict[str, Any] | None = N
     ]
     for item in case.profile_memories:
         lines.append(
-            f"  - [{item.utility}, age={item.age_sessions}, stale={item.stale}] {item.text}"
+            f"  - [source={item.source.value}, utility={item.utility}, "
+            f"created_session={item.created_session}, age={item.age_sessions}, "
+            f"stale={item.stale}] {item.text}"
         )
     lines.append("Summary memories (MS):")
     for item in case.summary_memories:
         lines.append(
-            f"  - [{item.utility}, age={item.age_sessions}, stale={item.stale}] {item.text}"
+            f"  - [source={item.source.value}, utility={item.utility}, "
+            f"created_session={item.created_session}, age={item.age_sessions}, "
+            f"stale={item.stale}] {item.text}"
         )
     lines.append("Event memories (ME):")
     for item in case.event_memories:
         lines.append(
-            f"  - [{item.utility}, age={item.age_sessions}, stale={item.stale}] {item.text}"
+            f"  - [source={item.source.value}, utility={item.utility}, "
+            f"created_session={item.created_session}, age={item.age_sessions}, "
+            f"stale={item.stale}] {item.text}"
         )
     lines += [
         "",
@@ -173,8 +211,16 @@ the field. Return only JSON with exactly these keys: the 12 rating fields
 empty string if none)."""
 
 
-def judge_messages(case_text: str) -> list[dict[str, str]]:
-    questions = "\n".join(f"- {field}: {REVIEW_QUESTIONS_EN[field]}" for field in RATING_FIELDS)
+def judge_messages(
+    case_text: str,
+    *,
+    rating_questions: Mapping[str, str] = REVIEW_QUESTIONS_EN,
+) -> list[dict[str, str]]:
+    if set(rating_questions) != set(RATING_FIELDS):
+        raise RuntimeError("judge questions must exactly cover the 12-field rubric")
+    questions = "\n".join(
+        f"- {field}: {rating_questions[field]}" for field in RATING_FIELDS
+    )
     payload = {"case": case_text, "rating_questions": questions}
     return [
         {"role": "system", "content": _JUDGE_SYSTEM},
@@ -182,31 +228,124 @@ def judge_messages(case_text: str) -> list[dict[str, str]]:
     ]
 
 
-def build_positive_controls(
-    cases: Sequence[V8ReviewCase], *, seed: int, n_controls: int
-) -> list[dict[str, Any]]:
-    """Build corrupted (case, override, corrupted_field) triples for testing."""
+def _different(values: Sequence[Any], current: Any) -> Any:
+    for value in values:
+        if value != current:
+            return copy.deepcopy(value)
+    raise RuntimeError("control construction requires a different donor value")
 
-    rng = random.Random(seed)
-    corruptible_fields = list(_CORRUPTIBLE_FIELDS)
-    controls = []
-    sample = rng.sample(list(cases), k=min(n_controls, len(cases)))
-    for index, case in enumerate(sample):
-        field = corruptible_fields[index % len(corruptible_fields)]
-        true_value = getattr(case, field)
-        corrupted_value = _CORRUPTIBLE_FIELDS[field](true_value)
-        controls.append(
-            {
-                "item_id": f"{case.item_id}__control_{field}",
-                "case_item_id": case.item_id,
-                "corrupted_field": field,
-                "rating_field": (
-                    "regime_match" if field == "regime" else "semantic_family_match"
-                ),
-                "override": {field: corrupted_value},
-                "case_text": _render_case_text(case, override={field: corrupted_value}),
-            }
+
+def _flip_utility(value: str) -> str:
+    return "irrelevant" if value == "helpful" else "helpful"
+
+
+def _corrupt_pilot_case(
+    case: V8ReviewCase,
+    *,
+    field: str,
+    donors: Sequence[V8ReviewCase],
+) -> tuple[V8ReviewCase, dict[str, Any]]:
+    corrupted = copy.deepcopy(case)
+    override: dict[str, Any]
+    if field == "semantic_family_match":
+        value = _different([row.semantic_family for row in donors], case.semantic_family)
+        corrupted.semantic_family = value
+        override = {"semantic_family": value}
+    elif field == "regime_match":
+        value = _different([row.regime for row in donors], case.regime)
+        corrupted.regime = value
+        override = {"regime": value}
+    elif field == "memory_sources_marginal_value_match":
+        value = _different(
+            [row.materially_useful_memory_sources for row in donors],
+            case.materially_useful_memory_sources,
         )
+        corrupted.materially_useful_memory_sources = value
+        override = {"materially_useful_memory_sources": [row.value for row in value]}
+    elif field == "memory_item_utility_match":
+        item = corrupted.profile_memories[0]
+        item.utility = _flip_utility(item.utility)
+        override = {"memory_id": item.memory_id, "utility": item.utility}
+    elif field == "source_type_match":
+        item = corrupted.profile_memories[0]
+        item.source = MemorySource.MS
+        override = {"memory_id": item.memory_id, "source": item.source.value}
+    elif field == "dialogue_temporal_order_match":
+        turn = next(
+            row for row in corrupted.dialogue_before_current if row.role == "user"
+        )
+        turn.content = corrupted.current_user_text
+        override = {"prior_user_turn": "copied_current_user_message"}
+    elif field == "context_grounding_match":
+        value = next(
+            row.session_summary
+            for row in donors
+            if row.semantic_family != case.semantic_family
+            and row.session_summary != case.session_summary
+        )
+        corrupted.session_summary = value
+        override = {"session_summary": value}
+    elif field == "memory_age_design_match":
+        item = corrupted.profile_memories[0]
+        item.age_sessions += 1
+        override = {"memory_id": item.memory_id, "age_sessions": item.age_sessions}
+    elif field == "strategy_resource_need_match":
+        corrupted.strategy_target.use_strategy_rag = not bool(
+            corrupted.strategy_target.use_strategy_rag
+        )
+        override = {"use_strategy_rag": corrupted.strategy_target.use_strategy_rag}
+    elif field == "strategy_item_utility_match":
+        item = corrupted.strategy_evidence[0]
+        item.utility = _flip_utility(item.utility)
+        override = {"strategy_card_id": item.card_id, "utility": item.utility}
+    elif field == "advice_readiness_match":
+        current = corrupted.strategy_target.advice_readiness
+        value = "structured_plan" if current != "structured_plan" else "listen_only"
+        corrupted.strategy_target.advice_readiness = value
+        override = {"advice_readiness": value}
+    elif field == "surface_naturalness_match":
+        corrupted.current_user_text = (
+            "As the generated user for this resource-condition example, "
+            + corrupted.current_user_text
+        )
+        override = {"current_user_text": corrupted.current_user_text}
+    else:
+        raise RuntimeError(f"unsupported pilot control field: {field}")
+    return corrupted, override
+
+
+def build_positive_controls(
+    cases: Sequence[V8ReviewCase],
+    *,
+    seed: int,
+    required_fields: Sequence[str],
+    controls_per_field: int,
+) -> list[dict[str, Any]]:
+    """Build the exact frozen 12-field pilot control matrix."""
+
+    if list(required_fields) != list(RATING_FIELDS) or int(controls_per_field) != 2:
+        raise RuntimeError("pilot control contract must be exactly 2 x 12 fields")
+    if not cases:
+        raise RuntimeError("pilot controls require review cases")
+    controls: list[dict[str, Any]] = []
+    for field_index, field in enumerate(required_fields):
+        candidates = list(cases)
+        random.Random(int(seed) + field_index * 1009).shuffle(candidates)
+        for replica in range(int(controls_per_field)):
+            case = candidates[replica % len(candidates)]
+            corrupted, override = _corrupt_pilot_case(
+                case, field=field, donors=cases
+            )
+            controls.append(
+                {
+                    "item_id": f"{case.item_id}__control_{field}_{replica + 1}",
+                    "case_item_id": case.item_id,
+                    "corrupted_field": field,
+                    "rating_field": field,
+                    "override": override,
+                    "case_text": _render_case_text(corrupted),
+                }
+            )
     return controls
 
 
@@ -241,16 +380,64 @@ def judge_one(
             active_client.close()
 
 
+def build_control_manifest(
+    controls: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "item_id": str(row["item_id"]),
+            "case_item_id": str(row["case_item_id"]),
+            "corrupted_field": str(row["corrupted_field"]),
+            "rating_field": str(row["rating_field"]),
+            "override": row.get("override") or {},
+            "case_text_sha256": sha256_text(str(row["case_text"])),
+        }
+        for row in controls
+    ]
+
+
 def aggregate_gate(
     *,
     real_case_results: dict[str, dict[str, dict[str, Any]]],
     control_results: dict[str, dict[str, dict[str, Any]]],
     controls: Sequence[dict[str, Any]],
     judge_family_names: Sequence[str],
+    control_protocol: str,
+    required_control_fields: Sequence[str],
+    controls_per_field: int,
     protocol: str = AUTOMATED_REVIEW_PROTOCOL,
 ) -> dict[str, Any]:
     """`real_case_results[item_id][family] = judge_one(...)` and similarly for
     `control_results[control_item_id][family]`."""
+
+    required_fields = list(required_control_fields)
+    field_counts = Counter(str(row.get("rating_field") or "") for row in controls)
+    expected_count = len(required_fields) * int(controls_per_field)
+    control_contract_errors: list[str] = []
+    if required_fields != list(RATING_FIELDS):
+        control_contract_errors.append("required fields do not equal the 12-field rubric")
+    if int(controls_per_field) != 2:
+        control_contract_errors.append("controls_per_field must equal 2")
+    if len(controls) != expected_count:
+        control_contract_errors.append(
+            f"expected {expected_count} controls, found {len(controls)}"
+        )
+    if len({str(row.get("item_id") or "") for row in controls}) != len(controls):
+        control_contract_errors.append("control item IDs are not unique")
+    for field in required_fields:
+        if field_counts.get(field, 0) != int(controls_per_field):
+            control_contract_errors.append(
+                f"{field} has {field_counts.get(field, 0)} controls"
+            )
+    if set(field_counts) != set(required_fields):
+        control_contract_errors.append("control fields differ from the required set")
+    if any(
+        row.get("corrupted_field") != row.get("rating_field") for row in controls
+    ):
+        control_contract_errors.append("control corrupted/rating field mismatch")
+
+    control_manifest = build_control_manifest(controls)
+    control_matrix_sha256 = sha256_text(canonical_json(control_manifest))
 
     real_failures = []
     for item_id, by_family in real_case_results.items():
@@ -287,7 +474,7 @@ def aggregate_gate(
 
     status = (
         "PASS"
-        if not real_failures and not control_misses
+        if not control_contract_errors and not real_failures and not control_misses
         else "FAIL"
     )
     return {
@@ -295,6 +482,13 @@ def aggregate_gate(
         "status": status,
         "human_calibration_performed": False,
         "judge_families": list(judge_family_names),
+        "control_protocol": str(control_protocol),
+        "required_control_fields": required_fields,
+        "controls_per_field": int(controls_per_field),
+        "control_field_counts": dict(sorted(field_counts.items())),
+        "control_contract_errors": control_contract_errors,
+        "control_matrix_sha256": control_matrix_sha256,
+        "control_manifest": control_manifest,
         "n_real_cases": len(real_case_results),
         "n_controls": len(controls),
         "real_case_failures": real_failures,
@@ -304,6 +498,6 @@ def aggregate_gate(
             "all families affirmed all fields on all real cases, and all "
             "positive-control corruptions were caught by a strict majority"
             if status == "PASS"
-            else "see real_case_failures / control_misses"
+            else "see control_contract_errors / real_case_failures / control_misses"
         ),
     }

@@ -551,12 +551,18 @@ def main() -> None:
             automated_review_verification = require_automated_semantic_review_pass(
                 args.automated_semantic_review_report,
                 args.automated_semantic_review_attestation,
+                expected_pm_config_path=args.pm_v2_config,
+                expected_strategy_bank_path=args.strategy_bank,
             )
             automated_review_report = automated_review_verification["report"]
             actual_corpus_verification = require_actual_corpus_semantic_review_pass(
                 args.actual_corpus_semantic_review_report,
                 args.actual_corpus_semantic_review_attestation,
                 expected_states_path=pm_v2_states_path,
+                expected_evaluator_contexts_path=evaluator_contexts_path,
+                expected_backend_path=args.backend,
+                expected_strategy_bank_path=args.strategy_bank,
+                expected_pm_config_path=args.pm_v2_config,
             )
             semantic_sanity = {
                 "protocol": "pm-v1.5-pilot-plus-actual-corpus-semantic-gate-v1",

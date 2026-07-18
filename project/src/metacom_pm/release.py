@@ -43,7 +43,11 @@ def _is_current_release_python(root: Path, path: Path) -> bool:
         return True
     if parts[0] == "scripts":
         name = path.name
-        return bool(re.match(r"^(?:\d{2}[a-z]?_|99_).+\.py$", name))
+        return bool(
+            (len(parts) >= 2 and parts[1] == "v1_5")
+            or name.startswith("v1_5_")
+            or re.match(r"^(?:\d{2}[a-z]?_|99_).+\.py$", name)
+        )
     return False
 
 

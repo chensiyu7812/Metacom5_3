@@ -6,10 +6,17 @@ from pathlib import Path
 
 import pytest
 
+from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.attempt_ledger import PersistentAttemptLedger
 from metacom_pm.bounded_retry import TERMINAL_DISPOSITION, failure_metadata
-from metacom_pm.io import iter_jsonl, read_json
-from metacom_pm.v1_5_automated_semantic_review import RATING_FIELDS, aggregate_gate
+from metacom_pm.io import canonical_json, iter_jsonl, read_json, sha256_text, write_json
+from metacom_pm.v1_5_automated_semantic_review import (
+    AUTOMATED_CONTROL_PROTOCOL,
+    AUTOMATED_REVIEW_PROTOCOL,
+    RATING_FIELDS,
+    aggregate_gate,
+    require_automated_semantic_review_pass,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,45 +33,163 @@ def test_aggregate_gate_requires_both_of_two_families_to_catch_a_control():
             family: {"ratings": _all_affirming_ratings()} for family in families
         }
     }
-    controls = [{"item_id": "case_1__control_regime", "rating_field": "regime_match"}]
+    controls = [
+        {
+            "item_id": f"case_1__control_{field}_{replica}",
+            "case_item_id": "case_1",
+            "corrupted_field": field,
+            "rating_field": field,
+            "override": {field: replica},
+            "case_text": f"corrupted {field} {replica}",
+        }
+        for field in RATING_FIELDS
+        for replica in (1, 2)
+    ]
 
     # Both families catch the planted error (rate it 0): majority-of-2 is 2, PASS.
     both_catch = {
-        "case_1__control_regime": {
+        control["item_id"]: {
             family: {
-                "ratings": {**_all_affirming_ratings(), "regime_match": 0}
+                "ratings": {
+                    **_all_affirming_ratings(),
+                    control["rating_field"]: 0,
+                }
             }
             for family in families
         }
+        for control in controls
     }
     gate = aggregate_gate(
         real_case_results=real_case_results,
         control_results=both_catch,
         controls=controls,
         judge_family_names=families,
+        control_protocol="test-controls-v2",
+        required_control_fields=RATING_FIELDS,
+        controls_per_field=2,
     )
     assert gate["status"] == "PASS"
     assert gate["control_misses"] == []
 
     # Only one of two families catches it: majority-of-2 is 2, so 1/2 must FAIL,
     # not be treated as a passing majority the way 1/3 or 2/3 would be scaled.
-    only_one_catches = {
-        "case_1__control_regime": {
-            "deepseek": {
-                "ratings": {**_all_affirming_ratings(), "regime_match": 0}
-            },
-            "google_gemini": {"ratings": _all_affirming_ratings()},
-        }
+    only_one_catches = dict(both_catch)
+    first = controls[0]
+    only_one_catches[first["item_id"]] = {
+        "deepseek": {
+            "ratings": {
+                **_all_affirming_ratings(),
+                first["rating_field"]: 0,
+            }
+        },
+        "google_gemini": {"ratings": _all_affirming_ratings()},
     }
     gate = aggregate_gate(
         real_case_results=real_case_results,
         control_results=only_one_catches,
         controls=controls,
         judge_family_names=families,
+        control_protocol="test-controls-v2",
+        required_control_fields=RATING_FIELDS,
+        controls_per_field=2,
     )
     assert gate["status"] == "FAIL"
     assert len(gate["control_misses"]) == 1
     assert gate["control_misses"][0]["caught_by"] == ["deepseek"]
+
+
+def test_aggregate_gate_rejects_empty_or_incomplete_control_matrix():
+    families = ["deepseek", "google_gemini"]
+    real_case_results = {
+        "case_1": {
+            family: {"ratings": _all_affirming_ratings()} for family in families
+        }
+    }
+    gate = aggregate_gate(
+        real_case_results=real_case_results,
+        control_results={},
+        controls=[],
+        judge_family_names=families,
+        control_protocol="test-controls-v2",
+        required_control_fields=RATING_FIELDS,
+        controls_per_field=2,
+    )
+    assert gate["status"] == "FAIL"
+    assert gate["control_contract_errors"]
+
+
+def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path):
+    config = tmp_path / "pm.yaml"
+    bank = tmp_path / "strategy.jsonl"
+    config.write_text("version: pm-v1.5\n", encoding="utf-8")
+    bank.write_text('{"strategy_id":"strat_000000000000"}\n', encoding="utf-8")
+    control_manifest = [
+        {
+            "item_id": str(index),
+            "case_item_id": "case",
+            "corrupted_field": RATING_FIELDS[index // 2],
+            "rating_field": RATING_FIELDS[index // 2],
+            "override": {},
+            "case_text_sha256": f"{index:064x}",
+        }
+        for index in range(24)
+    ]
+    matrix_sha256 = sha256_text(canonical_json(control_manifest))
+    report_path = tmp_path / "gate.json"
+    write_json(
+        report_path,
+        {
+            "protocol": AUTOMATED_REVIEW_PROTOCOL,
+            "status": "PASS",
+            "human_calibration_performed": False,
+            "control_protocol": AUTOMATED_CONTROL_PROTOCOL,
+            "required_control_fields": list(RATING_FIELDS),
+            "controls_per_field": 2,
+            "n_controls": 24,
+            "control_field_counts": {field: 2 for field in RATING_FIELDS},
+            "control_contract_errors": [],
+            "control_matrix_sha256": matrix_sha256,
+            "control_manifest": control_manifest,
+            "control_catches": [{"item_id": str(index)} for index in range(24)],
+            "control_misses": [],
+        },
+    )
+    real_judgments = tmp_path / "real.json"
+    control_judgments = tmp_path / "control.json"
+    controls_path = tmp_path / "controls.json"
+    ledger = tmp_path / "ledger.jsonl"
+    write_json(real_judgments, {})
+    write_json(control_judgments, {})
+    write_json(controls_path, control_manifest)
+    ledger.write_text("{}\n", encoding="utf-8")
+    attestation = tmp_path / "attestation.json"
+    create_artifact_attestation(
+        attestation,
+        stage="pm_v1_5_automated_semantic_review",
+        inputs={"pm_v1_5_config": config, "strategy_bank": bank},
+        outputs={
+            "real_case_judgments": (real_judgments, False),
+            "control_judgments": (control_judgments, False),
+            "controls": (controls_path, False),
+            "gate_report": (report_path, False),
+            "physical_attempt_ledger": (ledger, True),
+        },
+        parameters={},
+    )
+    assert require_automated_semantic_review_pass(
+        report_path,
+        attestation,
+        expected_pm_config_path=config,
+        expected_strategy_bank_path=bank,
+    )["report"]["status"] == "PASS"
+    bank.write_text('{"strategy_id":"strat_changed000000"}\n', encoding="utf-8")
+    with pytest.raises(RuntimeError, match="hash mismatch|does not bind"):
+        require_automated_semantic_review_pass(
+            report_path,
+            attestation,
+            expected_pm_config_path=config,
+            expected_strategy_bank_path=bank,
+        )
 
 
 def _load_runner():
@@ -83,7 +208,7 @@ def _argv(out_dir: Path, mode: str) -> list[str]:
         "--out-dir",
         str(out_dir),
         "--max-api-calls",
-        "200",
+        "400",
         "--max-estimated-usd",
         "5",
         "--max-input-tokens-per-call",
@@ -105,14 +230,14 @@ def test_automated_review_dry_run_freezes_the_durable_retry_contract(
     first = read_json(out_dir / "cost_estimate.json")
     plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
     assert first["budget_gate"]["status"] == "PASS"
-    # 33 real+control cases x 2 development-only families = 66 logical calls.
+    # 27 real + 24 controls, across 2 development-only families.
     # Final judges are hard-isolated from this gate. Each logical call budgets
-    # up to 3 physical attempts, so the worst-case cap is 66 x 3 = 198.
-    assert first["n_logical_calls"] == 66
-    assert first["maximum_physical_api_attempts"] == 198
-    assert len(plan) == 66
+    # up to 3 physical attempts, so the worst-case cap is 102 x 3 = 306.
+    assert first["n_logical_calls"] == 102
+    assert first["maximum_physical_api_attempts"] == 306
+    assert len(plan) == 102
     assert all(row["maximum_physical_attempts"] == 3 for row in plan)
-    assert len({row["physical_call_key"] for row in plan}) == 66
+    assert len({row["physical_call_key"] for row in plan}) == 102
     assert {row["judge_family"] for row in plan} == {"deepseek", "google_gemini"}
     retry_contract = first["retry_contract"]
     assert retry_contract["protocol"] == "pm-v1.5-bounded-retry-v2"

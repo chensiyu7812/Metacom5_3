@@ -129,6 +129,9 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
    policy/freeze lineage。
 6. 付费阶段均先 dry-run、接受精确 cost hash，再以 append-only physical-attempt ledger
    执行；确定性失败跨进程不可偷偷重试。
+7. 27-case 和 actual-468 自动语义审核均冻结 12 字段 × 每字段 2 个 hard controls；
+   空/缺失/重复 control matrix、明显 sentinel、输入哈希漂移和未纳入 freeze 的活跃
+   V1.5 脚本均 fail closed。
 
 ## 8. 截至当前提交的真实执行状态
 
@@ -136,7 +139,7 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 |---|---|---|
 | clean Strategy Bank / overlap audit | 已完成 | 只能证明数据血缘与已知 overlap 处理 |
 | 1-call generation compatibility pilot | 曾结构性 PASS，但绑定旧 config hash | 否；当前 config 下必须重跑 |
-| automated semantic review | 当前 66-call dry-run 已完成；三次旧执行因传输故障中止，没有 PASS gate report | 否 |
+| automated semantic review | 升级为 102-call v2 control 合同；旧 66-call dry-run 已失效，尚无当前 PASS gate report | 否 |
 | 52-user development generation | 未执行 | 否 |
 | 468 × 16 full action sweep / judging | 未执行 | 否 |
 | PM-v1.5 training / internal_test | 未执行 | 否 |

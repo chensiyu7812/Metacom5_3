@@ -125,9 +125,9 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 |---:|---|---:|---|
 | 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
 | 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 1 | 最便宜的 transport stop-loss；schema、来源绑定、finish reason 全部 PASS |
-| 2 | `v1_5_run_automated_semantic_review.py` | 66 | 27 真案例 + 6 positive controls × 2 家族（`training_judge_deepseek_flash`、`final_judge`；`training_judge_qwen122` 已按下方记录的协议修订移出面板），attested `PASS` |
+| 2 | `v1_5_run_automated_semantic_review.py` | 102 | 27 真案例 + 12 字段 × 每字段 2 个 hard controls，共 51 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS` |
 | 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 52 | 52 users / 468 states 完整，生成 attestation |
-| 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 6 controls) × 2 家族 = 948 logical calls；bounded retry 上界 2,844 attempts | 实际 468 states 全字段通过，且 provider-surface fallback 分 split 低于冻结上限 |
+| 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 24 controls) × 2 家族 = 984 logical calls；bounded retry 上界 2,952 attempts | 实际 468 states 全字段通过；12 字段负控矩阵完整；provider-surface fallback 分 split 低于冻结上限 |
 | 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case 与 actual-468 attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 29,952 | 7,488 × response/risk × 2 judge families；完整性与 judge-health gates PASS |
 | 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
@@ -143,7 +143,7 @@ V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是
 明确范围缩减。代价是证据强度低于 V2.2，但不能用把全量 sweep 标成 “pilot” 的方式
 绕过：V1.5 的 sweep 现在必须诚实记录为 `full`。
 
-按当前冻结规模，上表从 compatibility pilot 到 external judging 合计最多约 40,381 个逻辑调用，
+按当前冻结规模，上表从 compatibility pilot 到 external judging 合计最多约 40,453 个逻辑调用，
 其中 29,952 个来自 development 双家族 judging。V1.5 的“快”主要是省掉人工流程和
 V2.2 的额外兼容性/复核层，不代表它是几十次调用的小实验；若时间窗口承受不了这个
 规模，应在付费前另立一个明确降级、重新命名的 pilot，不能事后把不完整矩阵称作 V1.5
@@ -157,7 +157,7 @@ batched scorer。
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
 | generation compatibility | 历史真实 1 call 曾结构性通过；绑定旧 config，当前必须重新 dry-run 并重跑；历史预算上界 `$0.00606165` | historical accepted `c9b48fe7…e08efed` |
-| 自动语义审核 | 三次真实 `--run` 分别在 `training_judge_qwen122`（HTTP 500）、同一 Qwen 路由（响应体缺 `message.content`）、`training_judge_deepseek_flash`（HTTP 503）上失败：即同一 NVIDIA base URL 上的两个模型路由、三次瞬时故障；这支持“本次观测路径不稳定”，但不能证明 NVIDIA 整个共享网关或全部模型都不稳定。三次均非 429/402/403，不构成额度耗尽证据。现采用 `pm-v1.5-bounded-retry-v2`：每个逻辑调用最多3次物理尝试且每次先写 append-only ledger；仅对408/429/5xx/网络超时在总预算内重试，2xx缺字段最多只增加一次物理尝试；4xx、schema校验、stage postcondition失败和已解析但不利的评分均永久终止。重试资格完全从ledger恢复，重启不能重置终止状态或缺字段计数；旧/无分类失败fail-closed。删除了在当前“一次终止失败即整批退出”执行模型中实际不可触发的circuit breaker。66 个逻辑调用 × 最多3次物理尝试 = 198 次worst-case上限；按统一保守代理价 input `$3/M`、output `$15/M` 计 `$2.86866`（3倍于单次尝试的 `$0.95622`） | `54369b9c…adb3b0c`（v2重试合同的新dry-run；此前 v1重试哈希 `2ff9d94e…4baa6f27`、99-call 哈希 `757ac238…783067` 与66-call单尝试哈希 `12e79140…9bb19a5` 均已作废） |
+| 自动语义审核 | 三次历史真实 `--run` 的故障记录仅用于追溯。当前已升级为 12 字段 × 每字段 2 个 control 的 v2 合同，共 102 个逻辑调用、最多 306 次物理尝试；旧 66-call cost/hash 全部失效。新价格上界和 acceptance hash 必须由当前代码重新 dry-run 产生 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | 52-user generation | 52 calls；`$0.31501515` | `955276b6…ae0739` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 
