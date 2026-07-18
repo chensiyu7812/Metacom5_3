@@ -8,7 +8,14 @@ from typing import Any, Mapping, Sequence
 from .artifacts import require_artifact_attestation
 from .contracts import MemoryBackendRecord, StrategyCard
 from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
-from .pm_v2_data import load_bundles, load_evaluator_context_index, load_states
+from .pm_v2_data import (
+    GENERATION_CASE_FIELDS,
+    GeneratedUserBundle,
+    load_bundles,
+    load_evaluator_context_index,
+    load_states,
+)
+from .pm_v2_generation_pilot import require_generation_compatibility_attestation
 from .pm_v2_generation_review_v8 import RATING_FIELDS, REVIEW_QUESTIONS_EN
 from .retrieval import StrategyRetriever, context_query
 from .v1_5_automated_semantic_review import (
@@ -77,6 +84,130 @@ def _advice_readiness_candidate(context: Mapping[str, Any]) -> str:
 def _strategy_resource_candidate(context: Mapping[str, Any]) -> str:
     value = str(context.get("strategy_resource_target") or "ambiguous")
     return "uncertain" if value == "ambiguous" else value
+
+
+def build_generation_pilot_review_items(
+    *,
+    pilot_attestation_path: str | Path,
+    strategy_bank_path: str | Path,
+    strategy_top_k: int,
+    strategy_min_score: float,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Render the exact paid nine-case pilot with the current 12-field rubric.
+
+    The legacy two-reviewer packet combines Strategy-resource value with advice
+    readiness and therefore cannot audit the counterbalanced V1.5 factorial.
+    This adapter reuses the same payload/rubric as the later 468-state audit and
+    binds every row to the paid pilot attestation and bundle hashes.
+    """
+
+    attestation_path = Path(pilot_attestation_path).resolve()
+    attestation = read_json(attestation_path)
+    contract = (attestation.get("parameters") or {}).get(
+        "compatibility_contract"
+    )
+    if not isinstance(contract, dict):
+        raise RuntimeError("pilot semantic review lacks compatibility contract")
+    verification = require_generation_compatibility_attestation(
+        attestation_path, expected_contract=contract
+    )
+    bundle_path = attestation_path.parent / "pilot_bundle.json"
+    bundle = GeneratedUserBundle.model_validate(read_json(bundle_path))
+    if len(bundle.cases) != len(GENERATION_CASE_FIELDS):
+        raise RuntimeError("pilot semantic review requires the exact nine cases")
+
+    cards = [
+        StrategyCard.model_validate(row) for row in iter_jsonl(strategy_bank_path)
+    ]
+    if not cards:
+        raise RuntimeError("pilot semantic review requires the frozen Strategy Bank")
+    strategy = StrategyRetriever(
+        cards, top_k=int(strategy_top_k), minimum_score=float(strategy_min_score)
+    )
+    items: list[dict[str, Any]] = []
+    for (case_field, expected_regime), case in zip(
+        GENERATION_CASE_FIELDS, bundle.cases, strict=True
+    ):
+        if case.regime is not expected_regime:
+            raise RuntimeError("pilot semantic review case order/regime drift")
+        query = context_query(
+            case.current_user_text,
+            [turn.model_dump(mode="json") for turn in case.recent_dialogue],
+            case.session_summary,
+        )
+        retrieved_cards = strategy.retrieve(query)
+        memory_evidence = [
+            {
+                "memory_id": memory.memory_id,
+                "source": memory.source.value,
+                "utility": memory.item_utility,
+                "created_session": memory.created_session,
+                "age": case.session_index - memory.created_session,
+                "stale": memory.stale,
+                "conflict": memory.conflicts_with_current_state,
+                "text": memory.text,
+            }
+            for memory in (
+                *case.profile_memories,
+                *case.summary_memories,
+                *case.event_memories,
+            )
+        ]
+        payload = {
+            "semantic_family": case.semantic_family,
+            "regime": case.regime.value,
+            "needed_memory_sources": [
+                source.value for source in case.materially_useful_memory_sources
+            ],
+            "advice_readiness": case.advice_readiness_target,
+            "split": "compatibility_pilot",
+            "session_index": case.session_index,
+            "history": [
+                {"role": turn.role, "content": turn.content}
+                for turn in case.recent_dialogue
+            ],
+            "current_user_text": case.current_user_text,
+            "session_summary": case.session_summary,
+            "authorized_user_context": case.authorized_user_context,
+            "coverage_rationale": case.coverage_rationale,
+            "memory_evidence": memory_evidence,
+            "strategy_resource_candidate": _strategy_resource_candidate(
+                {"strategy_resource_target": case.strategy_resource_target}
+            ),
+            "strategy_cards": [
+                {
+                    "strategy_id": card.strategy_id,
+                    "strategy_label": card.strategy_label,
+                    "guidance_text": card.guidance_text,
+                    "example_response": card.example_response,
+                    "source_dialogue_id": card.source_dialogue_id,
+                }
+                for card in retrieved_cards
+            ],
+        }
+        items.append(
+            {
+                "kind": "real",
+                "real_source": "paid_compatibility_pilot",
+                "item_id": f"paid_pilot_{case_field}",
+                "split": "compatibility_pilot",
+                "regime": case.regime.value,
+                "payload": payload,
+                "text": _render_actual_payload(payload),
+            }
+        )
+    return items, {
+        "status": "PASS",
+        "pilot_attestation_path": str(attestation_path),
+        "pilot_attestation_sha256": sha256_file(attestation_path),
+        "pilot_bundle_path": str(bundle_path),
+        "pilot_bundle_sha256": sha256_file(bundle_path),
+        "pilot_contract_sha256": str(contract["contract_sha256"]),
+        "pilot_verification_attestation_sha256": verification[
+            "attestation_sha256"
+        ],
+        "item_count": len(items),
+    }
 
 
 def _render_actual_payload(payload: Mapping[str, Any]) -> str:

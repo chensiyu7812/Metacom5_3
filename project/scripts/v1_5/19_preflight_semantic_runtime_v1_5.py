@@ -6,21 +6,72 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
+
 from metacom_pm.config import load_config
 from metacom_pm.contracts import DialogueTurn
 from metacom_pm.io import canonical_json, sha256_file, sha256_text, write_json
 from metacom_pm.pm_v2_contracts import PMV2Split, ResourceNeedRegime
-from metacom_pm.pm_v2_data import GeneratedStateCase, case_to_state
+from metacom_pm.pm_v2_data import (
+    READINESS_SURFACE_PROTOCOL,
+    _READINESS_SURFACE_CLAUSES,
+    GeneratedStateCase,
+    case_to_state,
+)
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_semantic_runtime_contract,
     require_unified_semantic_query_contract,
     semantic_encoder_spec_from_config,
 )
-from metacom_pm.pm_v1_5_step0 import readiness_natural_language_challenge
+from metacom_pm.pm_v1_5_step0 import (
+    _build_readiness_vectors,
+    readiness_natural_language_challenge,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def compiled_readiness_surface_smoke(encoder) -> dict[str, object]:
+    """Prove every compiler-owned readiness phrase is visible to frozen BGE."""
+
+    anchors = _build_readiness_vectors(
+        semantic_encoder=encoder, n_features=encoder.spec.output_dimension
+    )
+    cases = [
+        (expected, clause)
+        for expected, clauses in _READINESS_SURFACE_CLAUSES.items()
+        for clause in clauses
+    ]
+    matrix = np.asarray(encoder.encode([clause for _, clause in cases]), dtype=float)
+    rows = []
+    for (expected, clause), query in zip(cases, matrix, strict=True):
+        query /= max(float(np.linalg.norm(query)), 1e-12)
+        scores = {
+            name: float(np.clip(query @ np.asarray(vector), -1.0, 1.0))
+            for name, vector in anchors.items()
+        }
+        top1 = max(scores, key=scores.get)
+        rows.append(
+            {
+                "expected": expected,
+                "top1": top1,
+                "matches_expected": top1 == expected,
+                "clause_sha256": sha256_text(clause),
+                "scores": scores,
+            }
+        )
+    status = "PASS" if all(row["matches_expected"] for row in rows) else "FAIL"
+    return {
+        "status": status,
+        "protocol": READINESS_SURFACE_PROTOCOL,
+        "outcome_labels_used": False,
+        "strategy_resource_target_used": False,
+        "case_count": len(rows),
+        "match_count": sum(row["matches_expected"] for row in rows),
+        "rows": rows,
+    }
 
 
 def strict_state_construction_smoke(encoder) -> dict[str, object]:
@@ -112,6 +163,9 @@ def main() -> None:
     )
     semantic_runtime = require_semantic_runtime_contract(config, encoder)
     readiness = readiness_natural_language_challenge(encoder)
+    readiness_surface = compiled_readiness_surface_smoke(encoder)
+    if readiness_surface["status"] != "PASS":
+        raise RuntimeError("compiler-owned readiness surface is not BGE-observable")
     strict_state_smoke = strict_state_construction_smoke(encoder)
     report = {
         "status": "PASS_RUNTIME_WITH_REPORT_ONLY_READINESS_DIAGNOSTIC",
@@ -119,10 +173,12 @@ def main() -> None:
         "pm_v1_5_config_sha256": sha256_file(args.config),
         "semantic_runtime_status": semantic_runtime["status"],
         "readiness_challenge_status": readiness["status"],
+        "compiled_readiness_surface_status": readiness_surface["status"],
         "semantic_runtime": semantic_runtime,
         "semantic_query_contract": semantic_query_contract,
         "strict_state_construction_smoke": strict_state_smoke,
         "readiness_natural_language_challenge": readiness,
+        "compiled_readiness_surface_smoke": readiness_surface,
         "api_calls": 0,
         "outcome_labels_used": False,
     }

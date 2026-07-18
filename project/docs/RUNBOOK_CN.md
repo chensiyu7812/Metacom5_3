@@ -49,7 +49,10 @@ python scripts/v1_5/20b_preflight_rule_grid_v1_5.py
 
 正式 52-user `--run` 还必须显式传入本次新 pilot 的
 `--generation-pilot-attestation`。脚本没有默认值，并会拒绝 V8、V8.1、V8.2、V8.3
-这些已消费或已失效的历史目录。
+这些已消费或已失效的历史目录。V8.4 虽在 transport/schema 层真实 PASS，也因
+readiness surface 和 review-lineage 缺口被归档，不得复用；只有新合同的 fresh pilot
+可以进入后续自动语义审核。该审核必须同时覆盖 27 个确定性案例、exact paid 9-case
+artifact 和 24 个 hard controls（双开发家族共 120 logical calls）。
 
 ## 1. 接入本地官方 ESConv，并重建 Strategy Bank
 

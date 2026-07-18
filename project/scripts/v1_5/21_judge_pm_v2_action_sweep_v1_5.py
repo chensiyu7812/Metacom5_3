@@ -427,6 +427,14 @@ def main() -> None:
         / "artifact_attestation.json",
     )
     parser.add_argument(
+        "--generation-pilot-attestation",
+        type=Path,
+        help=(
+            "Exact paid nine-case pilot bound by the automated semantic review; "
+            "required for PM-v1.5 judging."
+        ),
+    )
+    parser.add_argument(
         "--actual-corpus-semantic-review-report",
         type=Path,
         default=(
@@ -730,6 +738,9 @@ def main() -> None:
             expected_experiment_config_path=args.config,
             expected_pm_config_path=args.pm_v2_config,
             expected_strategy_bank_path=args.strategy_bank,
+            expected_generation_pilot_attestation_path=(
+                args.generation_pilot_attestation
+            ),
         )
         automated_review_report = automated_review_verification["report"]
         actual_corpus_verification = require_actual_corpus_semantic_review_pass(

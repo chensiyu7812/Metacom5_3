@@ -1,9 +1,10 @@
 {
   "status": "PASS_RUNTIME_WITH_REPORT_ONLY_READINESS_DIAGNOSTIC",
   "protocol": "pm-v1.5-semantic-runtime-preflight-v1",
-  "pm_v1_5_config_sha256": "47a34c2c25cb7637cc65011cb0e4626861e0238a3bd58b2bc88ac212685d8d86",
+  "pm_v1_5_config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
   "semantic_runtime_status": "PASS",
   "readiness_challenge_status": "REPORT_ONLY_14_OF_20",
+  "compiled_readiness_surface_status": "PASS",
   "semantic_runtime": {
     "status": "PASS",
     "contract": {
@@ -619,6 +620,172 @@
           "top1": "ambiguous",
           "top1_top2_margin": 0.009632387103282403,
           "matches_expected": true
+        }
+      }
+    ]
+  },
+  "compiled_readiness_surface_smoke": {
+    "status": "PASS",
+    "protocol": "pm-v2-visible-readiness-v1-deterministic-varied-counterbalanced",
+    "outcome_labels_used": false,
+    "strategy_resource_target_used": false,
+    "case_count": 12,
+    "match_count": 12,
+    "rows": [
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "da97d959455845a86cdfbc524c64856f60ebd05f51c3662ff52ccdaa24e5a81c",
+        "scores": {
+          "listen_only": 0.8299225464564529,
+          "explore_first": 0.8050357898402698,
+          "light_suggestion": 0.688807598926283,
+          "structured_plan": 0.676951182918677,
+          "ambiguous": 0.8281669299948702
+        }
+      },
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "a653b80c7c89c95e01f05357594dbfdc6b078f60197a90626f0bf899f5ff8e07",
+        "scores": {
+          "listen_only": 0.8681854684980583,
+          "explore_first": 0.8075844387050481,
+          "light_suggestion": 0.661319060632997,
+          "structured_plan": 0.6338173462011311,
+          "ambiguous": 0.7687195987836027
+        }
+      },
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "4d072897cd1e4aac335e978efa1b446bd759fab6f5547fa54adc022c9d7f456f",
+        "scores": {
+          "listen_only": 0.8221279454762269,
+          "explore_first": 0.7569054256819086,
+          "light_suggestion": 0.6985662446167602,
+          "structured_plan": 0.6922984693609473,
+          "ambiguous": 0.8215128854435538
+        }
+      },
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "33edfbeafd484741e566cd37e49b427665452fb531206af5d462c27e94a02457",
+        "scores": {
+          "listen_only": 0.791873298252842,
+          "explore_first": 0.7120996748808748,
+          "light_suggestion": 0.6691211085506918,
+          "structured_plan": 0.6242607947177335,
+          "ambiguous": 0.7559920716913
+        }
+      },
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "f18256382e699a5819be6291deb1303e14fa5024342124ec523993fa106d8ed8",
+        "scores": {
+          "listen_only": 0.8279812139425446,
+          "explore_first": 0.7432047285085788,
+          "light_suggestion": 0.702305519952811,
+          "structured_plan": 0.662340102343536,
+          "ambiguous": 0.7502396095016686
+        }
+      },
+      {
+        "expected": "listen_only",
+        "top1": "listen_only",
+        "matches_expected": true,
+        "clause_sha256": "f0293782348a07f5681cb81e5ed1da8b9ab63fd5169c1f5f80a4730a0c05d09d",
+        "scores": {
+          "listen_only": 0.8282787916469075,
+          "explore_first": 0.7466832319910649,
+          "light_suggestion": 0.6567651342610877,
+          "structured_plan": 0.6665241231532552,
+          "ambiguous": 0.7842890535406775
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "4685d38c9945368d68979520cea85935039202163c87763bab303417da2dcb05",
+        "scores": {
+          "listen_only": 0.7065094046469828,
+          "explore_first": 0.6109727177085666,
+          "light_suggestion": 0.764240152992633,
+          "structured_plan": 0.6000778260572168,
+          "ambiguous": 0.7067783260104766
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "dba255865628e0abd89b119e664ab2eb71b87563fdc6acd0c2e45eb0d5f465ba",
+        "scores": {
+          "listen_only": 0.7839362011917366,
+          "explore_first": 0.6346141319298977,
+          "light_suggestion": 0.8026798568689814,
+          "structured_plan": 0.7178602546934669,
+          "ambiguous": 0.7423854308153561
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "2de76be18a8dd971774952f997d9a197711109de7218f7060afe9eb9bb63facf",
+        "scores": {
+          "listen_only": 0.7017800909989227,
+          "explore_first": 0.6936984241653726,
+          "light_suggestion": 0.815966248330441,
+          "structured_plan": 0.7795020293960152,
+          "ambiguous": 0.7920324316602866
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "0c9fdc64ddff8fedbdec4129d2aaf6375a2e1d062a2b6dd1cf3a70faa8bcbfbe",
+        "scores": {
+          "listen_only": 0.7335731946893094,
+          "explore_first": 0.7116582742340787,
+          "light_suggestion": 0.8760504764767314,
+          "structured_plan": 0.7374733872812355,
+          "ambiguous": 0.751186816680457
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "bf597b21b3d15d742ffa4f23ea765b11cfcaf012adec73d1cbe72b1ef994241c",
+        "scores": {
+          "listen_only": 0.7543296247194828,
+          "explore_first": 0.6222924823745659,
+          "light_suggestion": 0.8575313642443247,
+          "structured_plan": 0.7564341867756066,
+          "ambiguous": 0.7326263564476927
+        }
+      },
+      {
+        "expected": "light_suggestion",
+        "top1": "light_suggestion",
+        "matches_expected": true,
+        "clause_sha256": "d4cf8b46c44f45e7e70a6ec5c0ba16af6d05ef664f110546162303ad351342d9",
+        "scores": {
+          "listen_only": 0.6916945002397292,
+          "explore_first": 0.6289773149077621,
+          "light_suggestion": 0.8675524546522451,
+          "structured_plan": 0.6769110131844616,
+          "ambiguous": 0.7126365968925137
         }
       }
     ]

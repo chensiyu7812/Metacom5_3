@@ -2,11 +2,11 @@
 """Run the PM-v1.5 automated multi-family semantic-review gate.
 
 Generates the deterministic 27-case V8 validation set (no API calls; 9
-regimes x 3 cases), builds a handful of deliberately mislabeled positive-
-control cases, and judges all of it through independent LLM families using
-the same 12-question rubric the human V8 reviewers would have used. Writes
-a gate report that `scripts/v1_5/20_generate_pm_v2_development_data_v1_5.py`
-must show PASS before it will run the real 52-user generation.
+regimes x 3 cases), adds the exact nine surfaces from the paid compatibility
+pilot, builds deliberately mislabeled positive-control cases, and judges all
+of it through independent LLM families using the same 12-question rubric.
+The exact paid-pilot attestation is a required input, so a PASS on unrelated
+fixtures cannot authorize the real 52-user generation.
 
 Ad-hoc, not part of the PM-v2.2 gated pipeline. Explicitly does not claim
 independent human validation.
@@ -120,6 +120,7 @@ from metacom_pm.v1_5_actual_corpus_review import (
     ACTUAL_CORPUS_REVIEW_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_STAGE,
     ACTUAL_REVIEW_QUESTIONS_EN,
+    build_generation_pilot_review_items,
     build_actual_corpus_review_items,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
@@ -153,6 +154,14 @@ def parse_args() -> argparse.Namespace:
         "--review-scope",
         choices=("pilot_27", "actual_468"),
         default="pilot_27",
+    )
+    parser.add_argument(
+        "--generation-pilot-attestation",
+        type=Path,
+        help=(
+            "Exact paid nine-case compatibility-pilot attestation; required "
+            "for pilot_27 and forbidden for actual_468."
+        ),
     )
     parser.add_argument(
         "--states",
@@ -249,7 +258,12 @@ def main() -> None:
         raise RuntimeError("automated review requires distinct declared judge families")
 
     corpus_audit = None
+    paid_pilot_audit = None
     if args.review_scope == "actual_468":
+        if args.generation_pilot_attestation is not None:
+            raise RuntimeError(
+                "actual_468 review does not accept a compatibility-pilot input"
+            )
         actual_cfg = control_cfg
         if (
             actual_cfg.get("protocol") != ACTUAL_CORPUS_REVIEW_PROTOCOL
@@ -277,6 +291,10 @@ def main() -> None:
             controls_per_field=int(actual_cfg["controls_per_field"]),
         )
     else:
+        if args.generation_pilot_attestation is None:
+            raise RuntimeError(
+                "pilot_27 review requires --generation-pilot-attestation"
+            )
         pilot_cfg = control_cfg
         if (
             pilot_cfg.get("protocol") != AUTOMATED_REVIEW_PROTOCOL
@@ -299,10 +317,17 @@ def main() -> None:
             required_fields=pilot_cfg["required_control_fields"],
             controls_per_field=int(pilot_cfg["controls_per_field"]),
         )
-        real_case_rows = [
+        deterministic_case_rows = [
             {"kind": "real", "item_id": case.item_id, "text": _render_case_text(case)}
             for case in cases
         ]
+        paid_pilot_rows, paid_pilot_audit = build_generation_pilot_review_items(
+            pilot_attestation_path=args.generation_pilot_attestation,
+            strategy_bank_path=args.strategy_bank,
+            strategy_top_k=int(pm_config["retrieval"]["strategy_top_k"]),
+            strategy_min_score=float(pm_config["retrieval"]["strategy_min_score"]),
+        )
+        real_case_rows = deterministic_case_rows + paid_pilot_rows
 
     planning = dict(pm_config["api_cost_planning"])
     if set(planning) != {
@@ -324,11 +349,7 @@ def main() -> None:
     ]
     call_plan = []
     execution = {}
-    rating_questions = (
-        ACTUAL_REVIEW_QUESTIONS_EN
-        if args.review_scope == "actual_468"
-        else None
-    )
+    rating_questions = ACTUAL_REVIEW_QUESTIONS_EN
     for case_row in case_rows:
         messages = (
             judge_messages(
@@ -445,6 +466,7 @@ def main() -> None:
             if args.review_scope == "actual_468"
             else sha256_text(canonical_json(V1_5_REVIEW_STRATEGY_CARD_IDS))
         ),
+        "paid_pilot_audit": paid_pilot_audit,
         "retry_contract": {
             "protocol": RETRY_CONTRACT_PROTOCOL,
             "retryable_up_to_full_budget": sorted(
@@ -682,6 +704,10 @@ def main() -> None:
         ),
         "review_scope": args.review_scope,
         "corpus_audit": corpus_audit,
+        "paid_pilot_audit": paid_pilot_audit,
+        "n_paid_pilot_cases": (
+            int((paid_pilot_audit or {}).get("item_count") or 0)
+        ),
         "judge_endpoint_descriptors": judge_endpoint_descriptors,
         "transport_retry_summary": retry_ledger_summary(
             ledger,
@@ -710,7 +736,12 @@ def main() -> None:
                     "bundles": args.bundles,
                 }
                 if args.review_scope == "actual_468"
-                else {}
+                else {
+                    "generation_pilot_attestation": args.generation_pilot_attestation,
+                    "generation_pilot_bundle": Path(
+                        str(paid_pilot_audit["pilot_bundle_path"])
+                    ),
+                }
             ),
             "cost_estimate": estimate_path,
             "call_plan": plan_path,
@@ -742,6 +773,16 @@ def main() -> None:
                 {}
                 if args.review_scope == "actual_468"
                 else dict(V1_5_REVIEW_STRATEGY_CARD_IDS)
+            ),
+            "paid_pilot_attestation_sha256": (
+                None
+                if paid_pilot_audit is None
+                else paid_pilot_audit["pilot_attestation_sha256"]
+            ),
+            "paid_pilot_contract_sha256": (
+                None
+                if paid_pilot_audit is None
+                else paid_pilot_audit["pilot_contract_sha256"]
             ),
             "accepted_cost_estimate_sha256": estimate["cost_estimate_sha256"],
             "provider_client_retries": 1,

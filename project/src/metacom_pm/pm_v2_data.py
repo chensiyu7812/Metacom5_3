@@ -67,7 +67,10 @@ LOCAL_FALLBACK_COVERAGE_PLACEHOLDER = (
     "Local fallback surface; evaluator rationale is compiled separately."
 )
 DATA_GENERATION_CONTRACT_VERSION = (
-    "pm-v2-data-generation-v14-strategy-value-readiness-factorial"
+    "pm-v2-data-generation-v15-observable-readiness-factorial"
+)
+READINESS_SURFACE_PROTOCOL = (
+    "pm-v2-visible-readiness-v1-deterministic-varied-counterbalanced"
 )
 # The 52 bundles already vary by seed dialogue, user, semantic family, and
 # attempt seed.  A lower temperature prioritizes compliance with the dense
@@ -848,6 +851,56 @@ def advice_readiness_target_for_case(
     if regime is ResourceNeedRegime.STRATEGY_HARMFUL:
         return "light_suggestion" if parity == 0 else "listen_only"
     return "ambiguous"
+
+
+_READINESS_SURFACE_CLAUSES: dict[str, tuple[str, ...]] = {
+    "listen_only": (
+        "For this turn, I mainly need to feel heard before thinking about solutions.",
+        "Please listen while I talk through how this feels; I do not want suggestions yet.",
+        "I am not looking for ideas right now; I need a little room to talk it through.",
+        "What would help most right now is being listened to, not deciding what to do.",
+        "Please help me put this into words first; I do not want advice in this turn.",
+        "I would rather be understood for a moment before we talk about possible steps.",
+    ),
+    "light_suggestion": (
+        "If you have one small, low-pressure idea, I would be open to hearing it.",
+        "Could you offer one gentle suggestion, without turning it into a full plan?",
+        "I think I could use one manageable idea for what to try next.",
+        "Would you help me think of a single, low-pressure next step?",
+        "Could you give me one small suggestion I could try, without making a detailed plan?",
+        "Please offer one gentle, low-pressure idea I could try next.",
+    ),
+}
+
+
+def _append_visible_sentence(text: str, sentence: str) -> str:
+    """Join compiler-owned visible facts without run-on punctuation."""
+
+    prefix = text.strip()
+    if not prefix:
+        return sentence.strip()
+    if prefix[-1] not in ".!?":
+        prefix += "."
+    return f"{prefix} {sentence.strip()}"
+
+
+def readiness_surface_clause_for_case(
+    *, user_id: str, regime: ResourceNeedRegime
+) -> str | None:
+    """Materialize advice readiness in the legal, pre-retrieval user view.
+
+    Advice readiness is crossed with (and therefore cannot reveal) the
+    Strategy-resource target.  Several stable paraphrases prevent one literal
+    sentence from becoming the only training cue while keeping the synthetic
+    factor auditable and guaranteed to be observable.
+    """
+
+    target = advice_readiness_target_for_case(user_id=user_id, regime=regime)
+    choices = _READINESS_SURFACE_CLAUSES.get(target)
+    if choices is None:
+        return None
+    digest = sha256_text(f"{READINESS_SURFACE_PROTOCOL}|{user_id}|{regime.value}")
+    return choices[int(digest[:8], 16) % len(choices)]
 
 GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
     # Do not use bare ``move``: phrases such as "move forward" describe a
@@ -1638,12 +1691,12 @@ def _blueprint_source_raw(family: str, source: MemorySource) -> str:
         )
     if source is MemorySource.MS:
         return (
-            f"has repeatedly felt more distressed about {topic} when juggling "
-            "demands, and calmer after naming one immediate concern"
+            f"has repeatedly felt worse about {topic} when concerns pile up, and "
+            "steadier after naming today's main concern"
         )
     return (
-        f"described how, during a difficult period related to {topic}, they chose one "
-        "manageable next step and felt less overwhelmed"
+        f"in one prior episode involving {topic}, wrote down the hardest moment "
+        "before responding and later felt less overwhelmed"
     )
 
 
@@ -1699,6 +1752,8 @@ def generation_evidence_blueprint_hash() -> str:
         canonical_json(
             {
                 "protocol": DATA_GENERATION_CONTRACT_VERSION,
+                "readiness_surface_protocol": READINESS_SURFACE_PROTOCOL,
+                "readiness_surface_clauses": _READINESS_SURFACE_CLAUSES,
                 "topics": GENERATION_FAMILY_TOPICS,
                 "coverage_rationales": {
                     regime.value: _deterministic_coverage_rationale(regime)
@@ -2102,8 +2157,8 @@ def compile_generation_draft(
                 f"I used to avoid talking about {topic}, but this time I want "
                 "to describe what happened instead of pushing it away."
             )
-            current_user_text = (
-                f"{current_user_text.rstrip('.')} {visible_correction}"
+            current_user_text = _append_visible_sentence(
+                current_user_text, visible_correction
             )
             current_updates = (
                 "The user explicitly says they previously avoided this topic but "
@@ -2112,6 +2167,13 @@ def compile_generation_draft(
             session_summary = f"{session_summary.rstrip('.')}. {current_updates}"
             authorized_user_context = (
                 f"{authorized_user_context.rstrip('.')}. {current_updates}"
+            )
+        readiness_clause = readiness_surface_clause_for_case(
+            user_id=user_id, regime=regime
+        )
+        if readiness_clause is not None:
+            current_user_text = _append_visible_sentence(
+                current_user_text, readiness_clause
             )
         case_digest = sha256_text(
             f"{user_id}|{case_field}|{current_user_text}"
@@ -2201,6 +2263,19 @@ def compile_generation_draft(
                 )
             ),
             "evidence_blueprint_sha256": generation_evidence_blueprint_hash(),
+            "readiness_surface_protocol": READINESS_SURFACE_PROTOCOL,
+            "readiness_surface_clause_sha256s": {
+                case.regime.value: (
+                    sha256_text(clause)
+                    if (
+                        clause := readiness_surface_clause_for_case(
+                            user_id=user_id, regime=case.regime
+                        )
+                    )
+                    else None
+                )
+                for case in cases
+            },
             "memory_age_protocol": {
                 "protocol": "v11-utility-blind-sha256-separated-rng-streams",
                 "age_range_sessions": [1, 12],
@@ -2315,16 +2390,18 @@ def generation_case_messages(
     )
     readiness_instruction = {
         "listen_only": (
-            "The final user turn naturally asks to be heard or understood without "
-            "suggestions right now."
+            "Keep the core final turn neutral about asking for or refusing advice. "
+            "The frozen local compiler will append a natural listen-only sentence; "
+            "do not duplicate or anticipate that sentence."
         ),
         "explore_first": (
             "The final user turn asks to explore or understand the feeling before "
             "deciding what to do."
         ),
         "light_suggestion": (
-            "The final user turn naturally asks for one small idea or low-pressure "
-            "suggestion, not a multi-step plan."
+            "Keep the core final turn neutral about asking for or refusing advice. "
+            "The frozen local compiler will append a natural one-small-suggestion "
+            "sentence; do not duplicate or anticipate that sentence."
         ),
         "structured_plan": (
             "The final user turn clearly asks for a concrete multi-step plan."
@@ -2371,8 +2448,9 @@ SURFACE RULES
 3. session_summary and authorized_user_context may summarize only visible facts.
 4. Advice readiness is independent of the Strategy-resource challenge:
    {readiness_instruction}
-   Never use a request/refusal keyword as evidence that Strategy RAG itself has
-   marginal value. The later blinded R0/RS sweep determines that outcome.
+   The appended visible readiness sentence is a legitimate user-state observation,
+   but it does not identify Strategy-RAG value because the two factors are
+   counterbalanced. The later blinded R0/RS sweep determines that outcome.
 5. Avoid diagnosis, crisis, self-harm, treatment instructions, benchmark names,
    action codes, resource labels, and meta-language such as regime or memory.
 6. Before returning, check every output word against the hard topic lock.
@@ -2669,10 +2747,10 @@ def validate_successful_generation_trace(
         )
         if case.regime is ResourceNeedRegime.MEMORY_HARMFUL:
             topic = GENERATION_FAMILY_TOPICS[case.semantic_family]
-            expected_payload["current_user_text"] = (
-                f"{expected_surface.current_user_text.rstrip('.')} I used to avoid "
-                f"talking about {topic}, but this time I want to describe what "
-                "happened instead of pushing it away."
+            expected_payload["current_user_text"] = _append_visible_sentence(
+                expected_surface.current_user_text,
+                f"I used to avoid talking about {topic}, but this time I want "
+                "to describe what happened instead of pushing it away.",
             )
             summary_matches = case.session_summary.startswith(
                 expected_surface.session_summary.rstrip(".")
@@ -2689,6 +2767,13 @@ def validate_successful_generation_trace(
         else:
             summary_matches = True
             context_matches = True
+        readiness_clause = readiness_surface_clause_for_case(
+            user_id=bundle.user_id, regime=case.regime
+        )
+        if readiness_clause is not None:
+            expected_payload["current_user_text"] = _append_visible_sentence(
+                expected_payload["current_user_text"], readiness_clause
+            )
         if (
             canonical_json(observed_surface) != canonical_json(expected_payload)
             or not summary_matches

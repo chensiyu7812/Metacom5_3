@@ -1334,6 +1334,8 @@ def main() -> None:
         "pm_v1_5_generation_compatibility_pilot_v8_1_candidate",
         "pm_v1_5_generation_compatibility_pilot_v8_2_candidate",
         "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
+        "pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
     }
     if args.generation_pilot_attestation.parent.name in stale_pilot_directories:
         raise RuntimeError(
@@ -1350,6 +1352,9 @@ def main() -> None:
         expected_experiment_config_path=args.config,
         expected_pm_config_path=args.pm_v2_config,
         expected_strategy_bank_path=args.strategy_bank,
+        expected_generation_pilot_attestation_path=(
+            args.generation_pilot_attestation
+        ),
     )
     automated_review_report = automated_review_verification["report"]
     generation_pilot_semantic_verification = {

@@ -297,8 +297,10 @@ internal-test 后不得改变 primary candidate、阈值、baseline 或外部 co
 provider-surface fallback 上限，另加 train-only oracle / all-split structural 的 Step-0
 shortcut 审计。内部测试 split 的 fallback 上限为 0；审核报告和输入
 states、evaluator contexts、memory backend、Strategy Bank 和配置哈希必须由 attestation
-绑定，并与下游当前实际输入逐一一致。27-case review 只保留为生成协议的前置小型审查，
-不能替代真实 468-state gate。两道自动审核各自冻结 12 字段 × 每字段 2 个 hard controls；
+绑定，并与下游当前实际输入逐一一致。生成协议的前置小型审查同时包含 27 个确定性
+case 与 exact paid 9-case compatibility artifact，不能用未绑定真实 provider surface 的
+fixture PASS 代替，也不能替代真实 468-state gate。两道自动审核各自冻结 12 字段 ×
+每字段 2 个 hard controls；
 零 controls、字段缺失、重复覆盖、seed/数量漂移或 control matrix hash 不一致均直接失败。
 controls 使用真实候选值交换、标签翻转、age 算术矛盾、时序复制、grounding donor、
 premature-strategy 注入等可读 corruption，不再使用 sentinel 字符串。
@@ -309,6 +311,9 @@ coverage rationale、case ID 或 evidence blueprint。每个用户的 9 个 case
 schema/topic/structure lint 失败时，只允许同 case 的一次独立 seed、提前计入预算的 repair。
 成功立即停止，repair 失败则整次正式生成 fail-closed；确定性 fallback 不得作为训练语料。
 因此 52-user 正式生成成功路径为 468 calls，硬上限为 936 calls，而不再是旧整包 52 calls。
+`advice_readiness_target` 是合法的可见用户状态，不是 Strategy-value 标签：本地 compiler
+用多种自然句式把它写入 current turn，并在 user 内对 Strategy-use/skip 反平衡；因此 PM
+能够观察“想倾听/可接受小建议”，却不能用该句式直接猜 RS 是否产生正边际价值。
 
 两道 semantic review 的 judge endpoint aliases 也分别在 PM 配置中按顺序锁定。runner
 必须精确使用该面板，不能以任意“同样是两个独立开发家族”的 CLI override 替换。

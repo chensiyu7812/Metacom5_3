@@ -4,7 +4,7 @@
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "47a34c2c25cb7637cc65011cb0e4626861e0238a3bd58b2bc88ac212685d8d86"
+    "sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
@@ -38,7 +38,7 @@
     "publication_note": "Raw seed dialogues remain in the ignored private artifact vault; the review package publishes their lineage hash and construction code, not the raw dialogue file."
   },
   "generation_compatibility_pilot": {
-    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_STALE; V8_4_POST_RELEASE_DRY_RUN_PENDING_EXACT_APPROVAL; NO_PAID_CALL_AUTHORIZED",
+    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_STALE; V8_4_CONSUMED_TRANSPORT_PASS_SEMANTICALLY_SUPERSEDED; V8_5_FRESH_DRY_RUN_PASS_PENDING_EXACT_REVIEW; NO_CURRENT_PAID_CALL_AUTHORIZED",
     "paper_result": false,
     "historical_physical_attempts": 2,
     "latest_v8_attempt_status": "FAIL",
@@ -111,8 +111,8 @@
     "v8_3_maximum_estimated_cost_usd": 0.01680705,
     "v8_3_maximum_input_tokens_per_call": 2675,
     "v8_3_maximum_output_tokens_per_call": 900,
-    "v8_4_status": "POST_RELEASE_DRY_RUN_PASS_PENDING_EXACT_USER_APPROVAL",
-    "v8_4_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
+    "v8_4_status": "CONSUMED_TRANSPORT_PASS_SEMANTICALLY_SUPERSEDED",
+    "v8_4_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
     "v8_4_compatibility_contract_sha256": "db67b3de5ecd09d8ecc419440ba60bed181931bdd1c42981d9a552ee717faae4",
     "v8_4_cost_estimate_sha256": "0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b",
     "v8_4_call_plan_sha256": "d4f2f0123ea6b6fb1848e200099e4bf6c6219c48686e202e10d719942370c307",
@@ -123,6 +123,35 @@
     "v8_4_maximum_input_tokens_per_call": 2675,
     "v8_4_maximum_output_tokens_per_call": 900,
     "v8_4_paid_execution_authorized": false,
+    "v8_4_actual_execution": {
+      "status": "PASS",
+      "physical_attempts": 10,
+      "accepted_cases": 9,
+      "repair_cases": ["ambiguous"],
+      "provider_surface_fallback_cases": 0,
+      "prompt_tokens": 13866,
+      "completion_tokens": 1573,
+      "total_tokens": 15439,
+      "estimated_actual_cost_usd": 0.0030237,
+      "attestation_sha256": "aeebedb189c01367dd355e7bd7a18840eee6c82abb8cb16934398e4fef4850ff"
+    },
+    "v8_4_downstream_status": "REJECTED_AS_FORMAL_GATE_AFTER_EXACT_SURFACE_REVIEW: strategy cases did not express their frozen advice-readiness targets, and the 102-call review did not bind the paid nine-case artifact",
+    "v8_5_status": "FRESH_DRY_RUN_PASS_PENDING_EXACT_REVIEW",
+    "v8_5_contract": "pm-v2-generation-compatibility-pilot-v8.5-observable-readiness-exact-paid-surface-review-casewise-one-bounded-repair-zero-fallback",
+    "v8_5_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
+    "v8_5_compatibility_contract_sha256": "215e7c11ce8d8f47a7a607c1745d5693fb3f613ee7bf6d9221f971e9b5e12e02",
+    "v8_5_cost_estimate_sha256": "a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed",
+    "v8_5_call_plan_sha256": "08d8be995a1ed97709b7fbdf37ec7c668886dd5f72aa2d2b420198e84423f498",
+    "v8_5_success_path_calls": 9,
+    "v8_5_maximum_physical_attempts": 18,
+    "v8_5_expected_estimated_cost_usd": 0.00841695,
+    "v8_5_maximum_estimated_cost_usd": 0.01690875,
+    "v8_5_maximum_input_tokens_per_call": 2739,
+    "v8_5_maximum_output_tokens_per_call": 900,
+    "v8_5_generation_structure": "pm-v2-data-generation-v15-observable-readiness-factorial",
+    "v8_5_readiness_surface_protocol": "pm-v2-visible-readiness-v1-deterministic-varied-counterbalanced",
+    "v8_5_compiled_readiness_surface_bge_smoke": "PASS_12_OF_12_NO_OUTCOMES",
+    "v8_5_paid_execution_authorized": false,
     "v8_4_provisional_blocked_config_identity": "e9467326aa65569ab66d9c0647586be6a58c4c692236a313d4dbe5e65417e08a",
     "v8_4_provisional_identity_status": "STALE_NEVER_EXECUTED_CONFIG_STATUS_CHANGED_BEFORE_APPROVAL",
     "v8_3_semantic_changes": [
@@ -133,7 +162,7 @@
       "no lexical advice-request hard gate"
     ],
     "current_required_provider_surface_fallback_cases": 0,
-    "required_action": "review and explicitly approve exact V8.4 identity 0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b; then record only that stage approval and execute without overwrite; OPENAI_API_KEY must be supplied through the runtime secret environment"
+    "required_action": "review the committed V8.5 contract and dry-run, then explicitly approve exact identity a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed; only then record that stage approval and execute without overwrite; OPENAI_API_KEY must be supplied through the runtime secret environment"
   },
   "semantic_encoder": {
     "protocol": "pm-v1.5-frozen-visible-text-encoder-v1",
@@ -150,7 +179,7 @@
     "runtime_contract_sha256": "2b8c2943c72b895c0796daaa4a5971f7d064b2789b6a0d5b896a304a25cbde7a",
     "runtime_canary_matrix_sha256": "de13bd52b0222386ca313f64960bed4f86610fd15fab8ead0688d36abe16bc13",
     "runtime_preflight_path": "project/outputs/pm_v1_5_semantic_runtime_preflight.json",
-    "runtime_preflight_sha256": "219091e940b2cf139f504b93bff8c261bde7d312b9ce33d8b6e536e0df3c8be7",
+    "runtime_preflight_sha256": "12bed44ff85d8e066cc9d32db2ec70a1fa46fcbbe7881d3d9dfc0e548e208e0b",
     "runtime_preflight_status": "PASS_RUNTIME_WITH_REPORT_ONLY_READINESS_DIAGNOSTIC",
     "exact_constraints_path": "project/constraints/pm_v1_5_runtime.txt",
     "formal_environment": "dedicated Python 3.13.2 .venv-pm-v1-5 with PYTHONNOUSERSITE=1; never sim_eval or Conda base",
@@ -170,7 +199,7 @@
     "static_leakage_scan_pass": true,
     "pytest_pass": true,
     "freeze_status": "STALE_HISTORICAL_FREEZE",
-    "interpretation": "This is a repository-wide engineering preflight over the generic release assets (including the generic 12,429-card bank), not a substitute for the separately hashed V1.5 11,590-card/823-source bank lineage, not a V8.3 real-run PASS, not an actual-468 shortcut PASS, and not confirmatory readiness."
+    "interpretation": "This is a repository-wide engineering preflight over the generic release assets (including the generic 12,429-card bank), not a substitute for the separately hashed V1.5 11,590-card/823-source bank lineage, not a V8.5 paid-run PASS, not an actual-468 shortcut PASS, and not confirmatory readiness."
   },
   "automated_semantic_review": {
     "execution_status": "PRIOR_DRY_RUN_INVALIDATED_NO_CURRENT_PASS_GATE_REPORT",
@@ -190,7 +219,7 @@
     "invalidated_prior_accepted_cost_estimate_sha256": "54369b9c51d4d4930abb591c0a5be416691911512307811667f172a29adb3b0c",
     "invalidated_prior_call_plan_contract_sha256": "dfb32f887338d0ef21d7f3853fbdad4dd7ee66c5f14599c8bae5c002e79a075a",
     "prior_partial_attempt_policy": "not reused or spliced into the current run",
-    "current_required_small_pilot": "27 real cases plus 24 frozen controls (2 per each of 12 fields)",
+    "current_required_small_pilot": "27 deterministic real cases plus the exact 9 paid-pilot cases plus 24 frozen controls, all judged by 2 development families (120 logical calls)",
     "current_required_actual_corpus_gate": "468 real states plus 24 frozen controls (2 per each of 12 fields), split-specific fallback gate"
   },
   "formal_pipeline": {

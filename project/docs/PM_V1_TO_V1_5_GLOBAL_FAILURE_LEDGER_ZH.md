@@ -247,6 +247,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-DATA-11 | C0 | `strategy_helpful`/`strategy_harmful` 一度同时编码 RS value 与 advice readiness，模型可凭“要建议/只倾听”直接猜 RS | evaluator-only `strategy_resource_target` 与五级 `advice_readiness_target` 分开；两类 Strategy slots 在 user 内交叉配对 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-DATA-12 | C1 | 本地预设 Strategy target 可能被误当真实 outcome，形成自我实现标签 | target 仅作 pre-outcome challenge/语义审计；训练、`rs_correct` 和主结论以同 memory subset 的 blinded R0/RS utility 为准 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-DATA-13 | C0 | CLI 虽默认指向 V1.5 Bank，但可被替换成另一套 Bank 后仍形成一条内部自洽却偏离冻结方法的链 | 配置冻结 exact path/SHA/card count/source count/audit/52-seed manifest；首个付费 development 阶段在 API client 前强校验，后续由 attestation/freeze 传播 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-DATA-14 | C0 | evaluator-only `advice_readiness_target` 虽已与 Strategy value 反平衡，但真实 V8.4 的两个 Strategy surface 都没有把各自的 `light_suggestion/listen_only` 状态写进可见用户话语，PM 因而无从识别 | readiness 由本地 compiler 以每类 6 种自然句式确定性写入 current turn；52-user 内 Strategy-use/skip 双向反平衡；句式协议/hash 写入 provenance；专用环境 frozen BGE 对 12/12 句式 top-1 正确，且该门不读 outcome/Strategy target | `CODE_CLOSED_REAL_BGE_12_OF_12_FRESH_PILOT_REQUIRED` |
 
 ### 6.5 generator contract 与真实 pilot 失败
 
@@ -261,6 +262,8 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-GEN-07 | C1 | 只修 compatibility pilot 而未同步 formal 52-user，会重建 pilot/formal mismatch | 同一 generation contract 被 base 和 V1.5 formal runner 共同使用 | 当前已同步，`RUN_UNVERIFIED` |
 | V15-GEN-08 | C2 | casewise 架构把 formal 成功路径从 52 calls 提高到 468、上限 936 | 成本、token、timeout、approval 全部重新 dry-run；不能复用旧 52-call hash | 当前旧 hash 全部 stale |
 | V15-GEN-09 | C1 | V8.2 用英文关键词正则把 “tips/help me figure out” 等有效建议请求判失败 | provider lint 仅保留 topic/role/chronology 结构门；意图交给连续语义表示和 actual semantic review，不再作为硬词表 | `HISTORICAL_CLOSED` + 新合同待跑 |
+| V15-GEN-10 | C0 | V8.4 的结构 PASS 只证明 9 个 surface 可解析；旧 102-call 自动审核审的是另一批 27 个预制案例，没有绑定这次付费九例，却可被 formal generation 当作语义放行证据 | 自动审核 v3 同时读取 27 个确定性案例、exact paid 9-case attestation 与 24 个 hard controls；两家共 120 logical calls；report/attestation/formal generation/sweep/judging 都强制绑定同一 paid pilot SHA/contract | `CODE_CLOSED_FRESH_PILOT_AND_REVIEW_REQUIRED` |
+| V15-GEN-11 | C1 | V8.4 暴露 memory-harmful current turn 缺句号形成 run-on，ME “one manageable next step” 过泛并与 MS 边际贡献接近 | compiler 使用统一句子连接器；MS 明确跨 session 模式，ME 明确一次过去事件及具体记录动作；evidence blueprint hash 随之变化 | `CODE_CLOSED_FRESH_PILOT_REQUIRED` |
 
 ### 6.6 holdout、judge、训练与统计门
 
@@ -327,7 +330,8 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-REL-05 | C1 | 代码/config/bank/prompt 修改后沿用旧 accepted hash | 任一输入变化使 stage approval 失效，必须 fresh dry-run + explicit approval | 持续护栏 |
 | V15-REL-06 | C2 | `API_PILOT_READY` 被误读成 `CONFIRMATORY_READY` | 报告两种状态；无 checkpoint/Gate M/F/freeze 时 confirmatory=false | 持续护栏 |
 | V15-REL-07 | C1 | formal generation CLI 默认指向已失效 V8.3 attestation，容易让旧 provenance 被无意继承 | 删除默认值；paid `--run` 必须显式传 fresh pilot attestation，并拒绝 V8/V8.1/V8.2/V8.3 已知历史目录 | `CODE_CLOSED_RUN_UNVERIFIED` |
-| V15-REL-08 | C0 | 在 `PAID_RUN_BLOCKED` 配置上生成 cost hash、再切换 release 状态会改变全配置 SHA，使刚批准的 identity 必然失效 | 两阶段 release：先冻结 `PAID_RUN_RELEASED`，但 manifest 保持 pending/空 approvals；证明 `--run` 仍 fail-closed；只批准随后在稳定配置上生成的 post-release identity | `V8_4_POST_RELEASE_DRY_RUN_PASS_PENDING_EXACT_APPROVAL` |
+| V15-REL-08 | C0 | 在 `PAID_RUN_BLOCKED` 配置上生成 cost hash、再切换 release 状态会改变全配置 SHA，使刚批准的 identity 必然失效 | 两阶段 release：先冻结 `PAID_RUN_RELEASED`，但 manifest 保持 pending/空 approvals；证明 `--run` 仍 fail-closed；只批准随后在稳定配置上生成的 post-release identity | `HISTORICAL_CLOSED` |
+| V15-REL-09 | C0 | 兼容 pilot 的 transport/schema PASS 可能被误写成完整语义 PASS 并直接授权 52-user | V8.4 原始账本、费用与 PASS 完整保留，但状态改为 `CONSUMED_PASS_SEMANTICALLY_SUPERSEDED`；清空当前 approvals/consumptions；V8.5 已创建独立版本字符串、目录与 fresh dry-run identity，仍须提交复核和精确批准 | `V8_4_ARCHIVED_V8_5_DRY_RUN_PASS_PENDING_EXACT_REVIEW` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 
@@ -432,8 +436,8 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 
 ### 10.2 完整 52-user generation 前
 
-- 当前代码创建全新 compatibility pilot 目录和 fresh dry-run identity，经独立审查和精确批准真实 PASS；任何 V8–V8.3 历史 attestation 均拒绝；
-- 27 real cases + 24 controls × 2 development families 的 semantic pilot PASS；
+- 当前代码创建全新 compatibility pilot 目录和 fresh dry-run identity，经独立审查和精确批准真实 PASS；任何 V8–V8.4 历史 attestation 均拒绝；
+- 27 个确定性 real cases + exact paid 9-case artifact + 24 controls，经 2 个 development families 共 120 logical calls 的 semantic pilot PASS；
 - pilot 与 formal 使用同一 surface-only casewise contract；
 - selected 52 与 Bank source intersection 为 0；
 - formal 468/936 call 预算重新 dry-run 并单独批准。
@@ -498,8 +502,8 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`；统一 Step-0/state BGE 修复 commit `614b2e51...` 已推送且 GitHub Actions #134 PASS；当前仅有 release/approval 状态与 fresh dry-run 索引待提交复核 |
-| tests/preflight | 专用 venv 精确 BGE runtime/canary 与真实 768-d strict `PMV2State` no-API smoke PASS；裸 `pytest -q` 为 398 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY` 且 syntax/static/pytest 全 PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
+| 分支 | `pm-v1.5_1`；统一 Step-0/state BGE 修复 commit `614b2e51...` 已推送且 GitHub Actions #134 PASS；observable-readiness、exact paid-surface review 与 V8.5 identity 由本快照所在 commit 标识，仍须 GitHub CI 与独立复核 |
+| tests/preflight | 专用 venv 精确 BGE runtime/canary、真实 768-d strict `PMV2State` 和 compiler-owned readiness 12/12 no-API smoke PASS；裸 `pytest -q` 为 399 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY`、syntax/static/pytest 全 PASS，`confirmatory_ready=false`（历史 global freeze 按设计不在此阶段刷新）；它们不能替代单独内容寻址的 V1.5 Bank/freeze |
 | semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
 | readiness challenge | 20 个固定 outcome-free challenge：current 17/20、统一 bounded full-context 14/20；状态为 `REPORT_ONLY_14_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
 | clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
@@ -508,10 +512,11 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 | V8 | 真实 FAIL：无关的 180-char rationale cap |
 | V8.1 | 真实 FAIL：2/9 provider surfaces 需 fallback |
 | V8.2 | 真实 FAIL：8 attempts，6 success/2 failure；旧输出与批准均 closed |
-| V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录；下一次必须新目录、新 identity |
-| V8.4 | post-release dry-run identity `0588889c...d194b`；9 success-path / 18 max attempts；预算上限 `$0.01680705`；当前只待 exact approval，尚未执行 |
-| paid approval | manifest 为 `PENDING_EXACT_IDENTITY_REVIEW` 且 stage approvals 为空；当前仍 `NO-RUN` |
-| automated semantic review | 当前合同需 102 logical calls；无当前 PASS |
+| V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录；已由独立 V8.5 目录与 identity 取代 |
+| V8.4 | identity `0588889c...d194b` 已真实消费并 transport/schema PASS：9/9 accepted、10 attempts、0 fallback、约 `$0.0030237`；因 readiness 与 review-lineage 缺口被语义性淘汰，禁止复用 |
+| V8.5 | fresh dry-run identity `a84c17f...05ed`；contract `215e7c11...2e02`；9 success-path / 18 max；预估 `$0.00841695`、预算上限 `$0.01690875`；未调用 API |
+| paid approval | manifest 为 `PENDING_EXACT_IDENTITY_REVIEW`，`stage_approvals` 为空，V8.5 只登记为 proposed budget；当前仍 `NO-RUN` |
+| automated semantic review | 当前合同需 120 logical calls（27 deterministic + exact paid 9 + 24 controls，双家族）；无当前 PASS |
 | formal development | 未运行 |
 | full sweep/judging | 未运行 |
 | checkpoint/internal/freeze/external | 均未产生当前 V1.5_1 正式结果 |

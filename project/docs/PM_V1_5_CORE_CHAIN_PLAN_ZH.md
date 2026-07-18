@@ -5,7 +5,11 @@
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
 > 外部效率三层 gate。V8.2 已真实消费并 fail-closed；中央配置现已固定为 release 状态，
 > 但 approval manifest 仍为空，因而任何付费调用继续 fail-closed。旧 V8.3 dry-run 已失效；
-> 当前只允许审查全新 V8.4 post-release identity 并获得逐阶段精确 approval。本文保留为 2026-07-17 版本的历史设计
+> V8.4 已真实执行并在 transport/schema 层 PASS，但 exact surface 复核发现
+> readiness 未进入两个 Strategy case 的可见话语，且旧自动审核没有绑定付费九例；
+> 因而 V8.4 已归档为 `CONSUMED_PASS_SEMANTICALLY_SUPERSEDED`。V8.5 已完成不调用
+> API 的 fresh dry-run，当前只能先审查并提交该精确 identity，再获得逐阶段 approval。
+> 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
@@ -127,9 +131,9 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 | 顺序 | 动作 | API 调用规模 | 进入下一步的条件 |
 |---:|---|---:|---|
 | 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
-| 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；真实 BGE 长上下文 strict `PMV2State` 构造、Step-0/state 文本与向量 hash 相等、implicit truncation=0；readiness 20-case 结果只报告 |
+| 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；真实 BGE 长上下文 strict `PMV2State` 构造、Step-0/state 文本与向量 hash 相等、implicit truncation=0；通用 readiness 20-case 结果只报告；compiler-owned 12 个 readiness surface 必须 12/12 被 frozen BGE 识别 |
 | 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；上限 18 | 每次只生成一个 case 的四个 surface 字段；schema、原始响应重建、逐例 topic/structure lint 全部 PASS；失败时只允许同 case 的一次预预算 repair；最终 deterministic fallback 必须为 0 |
-| 2 | `v1_5_run_automated_semantic_review.py` | 102 | 27 真案例 + 12 字段 × 每字段 2 个 hard controls，共 51 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS` |
+| 2 | `v1_5_run_automated_semantic_review.py` | 120 | 27 个确定性真案例 + exact paid 9-case artifact + 12 字段 × 每字段 2 个 hard controls，共 60 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS`，且 formal generation 必须绑定同一 paid pilot SHA |
 | 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；上限 936 | 52 users × 9 个逐例 surface；每例最多一次 repair；468 states 完整并生成 attestation |
 | 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 24 controls) × 2 家族 = 984 logical calls；bounded retry 上界 2,952 attempts | 实际 468 states 全字段通过；12 字段负控矩阵完整；provider-surface fallback 分 split 低于冻结上限 |
 | 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
@@ -162,8 +166,8 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | V8.1 历史真实逐例试运行在 9 case 中 2 case 触发 fallback；V8.2 真实执行 8 attempts、6 success/2 failure，均已 fail-closed；V8.3 旧 dry-run 已失效；V8.4 post-release dry-run 已通过预算与内容绑定、尚未执行 | 当前唯一可批准 identity `0588889c…d194b`，9 success-path / 18 max attempts、最大 `$0.01680705`；旧 `758ae052…8cf3df2` 与 `14ca3b79…406aac` 不可复用 |
-| 自动语义审核 | 三次历史真实 `--run` 的故障记录仅用于追溯。当前已升级为 12 字段 × 每字段 2 个 control 的 v2 合同，共 102 个逻辑调用、最多 306 次物理尝试；旧 66-call cost/hash 全部失效。新价格上界和 acceptance hash 必须由当前代码重新 dry-run 产生 | `STALE_REQUIRES_FRESH_DRY_RUN` |
+| generation compatibility | V8.4 已真实执行：9/9 accepted、10 physical attempts、0 fallback、实际约 `$0.0030237`；但只判定 transport/schema PASS，因 readiness surface 与审核 lineage 缺口而被语义性淘汰，禁止下游使用。V8.5 fresh dry-run：9 success-path / 18 max、预估 `$0.00841695`、上限 `$0.01690875`、最大输入上界 2739/call | V8.5 exact identity `a84c17f…05ed` 待代码提交和独立复核；V8.4 `0588889c…d194b` 已消费且不可复用 |
+| 自动语义审核 | 当前 v3 合同为 27 deterministic + exact paid 9 + 24 controls，双 family 共 120 logical calls、最多 360 physical attempts；任何未绑定 current paid pilot 的旧 102-call/hash 全部失效 | `STALE_REQUIRES_FRESH_PILOT_THEN_DRY_RUN` |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 

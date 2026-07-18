@@ -44,7 +44,7 @@ def main() -> None:
         "--out-dir",
         ROOT
         / "outputs"
-        / "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
+        / "pm_v1_5_generation_compatibility_pilot_v8_5_release_candidate",
     )
     if "--run" in argv:
         config_index = argv.index("--pm-v2-config") + 1

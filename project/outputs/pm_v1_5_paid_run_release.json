@@ -2,18 +2,27 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "PENDING_EXACT_IDENTITY_REVIEW",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "47a34c2c25cb7637cc65011cb0e4626861e0238a3bd58b2bc88ac212685d8d86",
-  "prepared_from_code_commit_sha": "614b2e51c671add541258c154599575b6b18f641",
-  "prepared_at_utc": "2026-07-18T15:46:11Z",
+  "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
+  "prepared_from_code_commit_sha": null,
+  "prepared_at_utc": "2026-07-18T16:41:11Z",
+  "approved_execution_config_commit_sha": null,
+  "approved_at_utc": null,
   "paid_execution_authorized": false,
-  "pending_required_action": "create and review the final post-release dry-run identity before adding any stage approval",
+  "authorization_record": "V8_5_DRY_RUN_READY_PENDING_EXACT_REVIEW: identity a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed is proposed only; no paid execution is authorized until the reviewed commit and this exact stage identity are recorded as APPROVED",
   "stage_approvals": {},
   "stage_budget_bounds": {
-    "development_generation_compatibility_pilot": {
+    "development_generation_compatibility_pilot_proposed": {
+      "run_identity": "a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed",
+      "compatibility_contract_sha256": "215e7c11ce8d8f47a7a607c1745d5693fb3f613ee7bf6d9221f971e9b5e12e02",
+      "call_plan_sha256": "08d8be995a1ed97709b7fbdf37ec7c668886dd5f72aa2d2b420198e84423f498",
+      "minimum_api_calls_if_successful": 9,
       "maximum_physical_api_attempts": 18,
-      "maximum_estimated_cost_usd": 0.01680705,
-      "maximum_input_tokens_per_call": 2675,
-      "maximum_output_tokens": 900
+      "maximum_input_token_upper_bound_per_call": 2739,
+      "maximum_output_tokens_per_call": 900,
+      "expected_estimated_cost_usd": 0.00841695,
+      "maximum_estimated_cost_usd": 0.01690875,
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
+      "paid_execution_authorized": false
     }
   },
   "prior_stage_attempts_history": [
@@ -47,13 +56,10 @@
       "reported_output_tokens": 3271,
       "estimated_actual_cost_usd": 0.0026728,
       "note": "v8.1 contract: 2/9 cases needed provider-surface fallback under whole-bundle generation; superseded by v8.2's per-case casewise-repair architecture"
-    }
-  ],
-  "stage_consumptions": {
-    "development_generation_compatibility_pilot": {
-      "approval_identity": "14ca3b799183e171347972dcb8a2cf34656d5d645d36cbab9eb6b16abc406aac",
-      "authorization_record": "USER_DIRECTED_EXECUTION_WITH_PREEXISTING_MANIFEST_INDEX_RECONCILIATION_GAP",
+    },
+    {
       "status": "CONSUMED_FAILED_CLOSED",
+      "run_identity": "14ca3b799183e171347972dcb8a2cf34656d5d645d36cbab9eb6b16abc406aac",
       "consumed_at_utc": "2026-07-18T08:56:52.409632Z",
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_2_candidate",
       "compatibility_contract_sha256": "8836f193e2609453d96da5a1bda662290cb3df092866b336212324dba9eeedef",
@@ -68,7 +74,31 @@
       "estimated_actual_cost_usd": 0.002418,
       "failed_case": "strategy_helpful",
       "failure": "two semantically valid advice-seeking paraphrases were falsely rejected by the lexical strategy_helpful_user_request lint",
+      "note": "v8.2 contract: superseded by post-repair section-aware/BGE-hardened contract; moved to history to free the stage slot for run_identity 0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b",
       "rerun_allowed": false
+    },
+    {
+      "status": "CONSUMED_PASS_SEMANTICALLY_SUPERSEDED",
+      "run_identity": "0588889c298351dca4ebf2d2f3135bb41e89c9ed6ab2aca050d19a92599d194b",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "consumed_at_utc": "2026-07-19T00:10:00Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
+      "compatibility_contract_sha256": "db67b3de5ecd09d8ecc419440ba60bed181931bdd1c42981d9a552ee717faae4",
+      "attestation_sha256": "aeebedb189c01367dd355e7bd7a18840eee6c82abb8cb16934398e4fef4850ff",
+      "physical_attempts": 10,
+      "succeeded_attempts": 9,
+      "failed_attempts": 1,
+      "accepted_case_count": 9,
+      "repair_cases": ["ambiguous"],
+      "provider_surface_fallback_case_count": 0,
+      "reported_input_tokens": 13866,
+      "reported_output_tokens": 1573,
+      "reported_total_tokens": 15439,
+      "estimated_actual_cost_usd": 0.0030237,
+      "budget_ceiling_usd": 0.01680705,
+      "rerun_allowed": false,
+      "note": "Transport/schema compatibility PASS. Superseded before downstream use because the real strategy cases did not surface their frozen advice-readiness factor and the automated semantic gate did not bind the paid nine-case artifact."
     }
-  }
+  ],
+  "stage_consumptions": {}
 }

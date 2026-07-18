@@ -39,7 +39,9 @@ from .pm_v2_generation_review_v8 import (
     V8ReviewCase,
 )
 
-AUTOMATED_REVIEW_PROTOCOL = "pm-v1.5-automated-semantic-review-v2"
+AUTOMATED_REVIEW_PROTOCOL = (
+    "pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9"
+)
 AUTOMATED_CONTROL_PROTOCOL = "pm-v1.5-pilot-controls-v2"
 
 
@@ -123,7 +125,12 @@ def require_automated_semantic_review_pass(
     expected_experiment_config_path: str | Path,
     expected_pm_config_path: str | Path,
     expected_strategy_bank_path: str | Path,
+    expected_generation_pilot_attestation_path: str | Path,
 ) -> dict[str, Any]:
+    if expected_generation_pilot_attestation_path is None:
+        raise RuntimeError(
+            "automated semantic review requires the exact paid pilot attestation"
+        )
     verification = require_artifact_attestation(
         attestation_path,
         required_stage="pm_v1_5_automated_semantic_review",
@@ -140,6 +147,19 @@ def require_automated_semantic_review_pass(
     _require_attested_input_hash(
         attestation, "strategy_bank", expected_strategy_bank_path
     )
+    _require_attested_input_hash(
+        attestation,
+        "generation_pilot_attestation",
+        expected_generation_pilot_attestation_path,
+    )
+    expected_pilot_attestation = read_json(
+        expected_generation_pilot_attestation_path
+    )
+    expected_pilot_contract = (
+        expected_pilot_attestation.get("parameters") or {}
+    ).get("compatibility_contract")
+    if not isinstance(expected_pilot_contract, dict):
+        raise RuntimeError("expected generation pilot lacks compatibility contract")
     required_outputs = {
         "real_case_judgments",
         "control_judgments",
@@ -183,10 +203,24 @@ def require_automated_semantic_review_pass(
         or read_json(controls_path) != control_manifest
         or report.get("judge_endpoint_descriptors") != expected_descriptors
         or report.get("judge_families") != expected_endpoint_names
+        or int(report.get("n_real_cases") or 0) != 36
+        or int(report.get("n_paid_pilot_cases") or 0) != 9
+        or (report.get("paid_pilot_audit") or {}).get(
+            "pilot_attestation_sha256"
+        )
+        != sha256_file(expected_generation_pilot_attestation_path)
+        or (report.get("paid_pilot_audit") or {}).get(
+            "pilot_contract_sha256"
+        )
+        != expected_pilot_contract.get("contract_sha256")
         or (attestation.get("parameters") or {}).get(
             "judge_endpoint_descriptors"
         )
         != expected_descriptors
+        or (attestation.get("parameters") or {}).get(
+            "paid_pilot_attestation_sha256"
+        )
+        != sha256_file(expected_generation_pilot_attestation_path)
     ):
         raise RuntimeError("PM-v1.5 automated semantic-review gate did not PASS")
     return {

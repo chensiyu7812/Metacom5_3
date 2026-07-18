@@ -52,14 +52,17 @@ from metacom_pm.pm_v2_contracts import (
 )
 from metacom_pm.pm_v2_audit import _regime_pass
 from metacom_pm.pm_v2_data import (
+    DATA_GENERATION_CONTRACT_VERSION,
     GENERATION_CASE_FIELDS,
     GENERATION_FAMILY_TOPICS,
+    READINESS_SURFACE_PROTOCOL,
     GenerationDraftCompilationError,
     GeneratedBundleDraft,
     GeneratedMemory,
     GeneratedSurfaceOnlyCaseDraft,
     GeneratedStateCase,
     GeneratedUserBundle,
+    advice_readiness_target_for_case,
     audit_cross_split_near_duplicates,
     bind_bundle_to_generation_run,
     build_evaluator_context_index,
@@ -76,6 +79,7 @@ from metacom_pm.pm_v2_data import (
     generation_distractor_family_assignments,
     generation_messages,
     lint_generation_surface_case,
+    readiness_surface_clause_for_case,
     require_bundle_generation_binding,
     runtime_to_pmv2_state,
     state_to_v1_runtime,
@@ -95,6 +99,7 @@ from metacom_pm.pm_v1_5_required_hit import validate_required_hit_preflight
 from metacom_pm.pm_v2_judging import prompt_contract_hash
 from metacom_pm.pm_v2_generation_pilot import (
     CALIBRATION_SEMANTIC_FAMILIES,
+    GENERATION_PILOT_CONTRACT_VERSION,
     GENERATION_PILOT_FAMILIES,
     GENERATION_PILOT_MAX_ATTEMPTS,
     GENERATION_PILOT_MINIMUM_CALLS,
@@ -160,6 +165,9 @@ def test_semantic_family_schedule_counterbalances_regime_positions() -> None:
 
 
 def test_generation_pilot_uses_a_real_frozen_orthogonal_cohort() -> None:
+    assert GENERATION_PILOT_CONTRACT_VERSION.startswith(
+        "pm-v2-generation-compatibility-pilot-v8.5-"
+    )
     assert GENERATION_PILOT_FAMILIES in (
         ("relocation_loneliness", "academic_pressure", "trust_rebuilding"),
         ("relocation_loneliness", "self_confidence", "sleep_disruption"),
@@ -711,9 +719,19 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
         strategy_use.advice_readiness_target,
         strategy_skip.advice_readiness_target,
     } == {"listen_only", "light_suggestion"}
-    assert bundle.provenance["generation_structure"].endswith(
-        "strategy-value-readiness-factorial"
+    assert bundle.provenance["generation_structure"] == (
+        DATA_GENERATION_CONTRACT_VERSION
     )
+    assert bundle.provenance["readiness_surface_protocol"] == (
+        READINESS_SURFACE_PROTOCOL
+    )
+    for case in (strategy_use, strategy_skip):
+        expected_clause = readiness_surface_clause_for_case(
+            user_id=bundle.user_id, regime=case.regime
+        )
+        assert expected_clause
+        assert case.current_user_text.endswith(expected_clause)
+    assert harmful.current_user_text.count(". I used to avoid") == 1
     assert bundle.provenance["provider_memory_slots_ignored"] is True
     assert bundle.provenance["provider_coverage_rationale_ignored"] is True
     assert bundle.provenance["surface_selection"]["compiled_surface_lint"][
@@ -731,7 +749,6 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
             )
         }
     ) >= 6
-
     messages = generation_messages(
         seed_dialogue="held-out seed",
         user_id="compiled_user",
@@ -741,6 +758,33 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
     assert "GeneratedBundleDraft" in messages[-1]["content"]
     assert "do not output this ID" in messages[-1]["content"]
 
+
+def test_visible_readiness_is_varied_and_counterbalanced_against_strategy_target() -> None:
+    observations = set()
+    assignments = set()
+    for index in range(1, 53):
+        user_id = f"pmv2_train_u{index:03d}"
+        use_target = advice_readiness_target_for_case(
+            user_id=user_id, regime=ResourceNeedRegime.STRATEGY_HELPFUL
+        )
+        skip_target = advice_readiness_target_for_case(
+            user_id=user_id, regime=ResourceNeedRegime.STRATEGY_HARMFUL
+        )
+        assignments.add((use_target, skip_target))
+        for regime in (
+            ResourceNeedRegime.STRATEGY_HELPFUL,
+            ResourceNeedRegime.STRATEGY_HARMFUL,
+        ):
+            clause = readiness_surface_clause_for_case(
+                user_id=user_id, regime=regime
+            )
+            assert clause
+            observations.add(clause)
+    assert assignments == {
+        ("listen_only", "light_suggestion"),
+        ("light_suggestion", "listen_only"),
+    }
+    assert len(observations) >= 8
 
 def test_generation_session_and_age_metadata_cannot_encode_fixed_regime() -> None:
     bundles = [
