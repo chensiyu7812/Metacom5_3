@@ -8,7 +8,7 @@ import re
 from collections import Counter, defaultdict
 from itertools import combinations
 from pathlib import Path
-from typing import Any, Literal, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 from pydantic import Field, field_validator, model_validator
 
@@ -324,8 +324,15 @@ def _seeded_rng(seed: int, *parts: object) -> random.Random:
     return random.Random(int(digest[:16], 16))
 
 
-def load_strategy_catalog(path: str | Path) -> dict[str, StrategyCard]:
-    wanted = set(STRATEGY_CARD_IDS.values())
+def load_strategy_catalog(
+    path: str | Path,
+    *,
+    strategy_card_ids: Mapping[str, str] | None = None,
+) -> dict[str, StrategyCard]:
+    role_map = dict(strategy_card_ids or STRATEGY_CARD_IDS)
+    if set(role_map) != set(STRATEGY_CARD_IDS):
+        raise RuntimeError("V8 strategy-card role map is incomplete")
+    wanted = set(role_map.values())
     cards: dict[str, StrategyCard] = {}
     for row in iter_jsonl(path):
         card_id = str(row.get("strategy_id") or "")
@@ -1018,11 +1025,12 @@ def _compile_strategy_evidence(
     *,
     regime: str,
     catalog: dict[str, StrategyCard],
+    strategy_card_ids: Mapping[str, str],
 ) -> tuple[V8StrategyTarget, list[V8StrategyEvidence]]:
     target, designs = _strategy_design(regime)
     evidence: list[V8StrategyEvidence] = []
     for design in designs:
-        card = catalog[STRATEGY_CARD_IDS[design["role"]]]
+        card = catalog[strategy_card_ids[design["role"]]]
         evidence.append(
             V8StrategyEvidence(
                 card_id=card.strategy_id,
@@ -1058,13 +1066,17 @@ def generate_v8_review_cases(
     strategy_bank_path: str | Path,
     cases_per_regime: int,
     seed: int,
+    strategy_card_ids: Mapping[str, str] | None = None,
 ) -> list[V8ReviewCase]:
     if cases_per_regime not in {
         SMOKE_CASES_PER_REGIME,
         VALIDATION_CASES_PER_REGIME,
     }:
         raise ValueError("cases_per_regime must be 1 (smoke) or 3 (validation)")
-    catalog = load_strategy_catalog(strategy_bank_path)
+    role_map = dict(strategy_card_ids or STRATEGY_CARD_IDS)
+    catalog = load_strategy_catalog(
+        strategy_bank_path, strategy_card_ids=role_map
+    )
     surfaces = _surface_variants()
     cases: list[V8ReviewCase] = []
     item_index = 0
@@ -1076,6 +1088,7 @@ def generate_v8_review_cases(
             strategy_target, strategy_evidence = _compile_strategy_evidence(
                 regime=regime,
                 catalog=catalog,
+                strategy_card_ids=role_map,
             )
             case_digest = sha256_text(
                 f"v8|{seed}|{regime}|{variant_index}|{surface['current']}"

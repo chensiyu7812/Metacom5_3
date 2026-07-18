@@ -7,6 +7,7 @@ from pathlib import Path
 
 from metacom_pm.artifacts import require_content_addressed_attestation
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evoemo import (
     FIXED_SEEKER_V22_STAGE,
@@ -229,6 +230,13 @@ def main() -> None:
 
     experiment = load_config(args.config)
     pm_v2 = load_config(args.pm_v2_config)
+    require_paid_run_release(
+        pm_v2,
+        config_path=args.pm_v2_config,
+        stage="external_reference_baseline_generation",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     supporter_contract = SupporterGenerationContract.from_config(pm_v2)
     generator = endpoint_from_config(
         experiment, supporter_contract.generator_endpoint

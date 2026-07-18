@@ -43,6 +43,10 @@ from metacom_pm.pm_v2_semantic_audit import (
 from metacom_pm.v1_5_automated_semantic_review import (
     require_automated_semantic_review_pass,
 )
+from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.v1_5_actual_corpus_review import (
+    require_actual_corpus_semantic_review_pass,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -329,6 +333,26 @@ def main() -> None:
         / "pm_v1_5_automated_semantic_review"
         / "artifact_attestation.json",
     )
+    parser.add_argument(
+        "--actual-corpus-semantic-review-report",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_actual_corpus_semantic_review"
+            / "gate_report.json"
+        ),
+    )
+    parser.add_argument(
+        "--actual-corpus-semantic-review-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_actual_corpus_semantic_review"
+            / "artifact_attestation.json"
+        ),
+    )
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--temperature", type=float)
     parser.add_argument("--max-output-tokens", type=int)
@@ -462,6 +486,13 @@ def main() -> None:
     supporter_generation_contract = None
     if args.pm_v2_config is not None:
         pm_config = load_config(args.pm_v2_config)
+        require_paid_run_release(
+            pm_config,
+            config_path=args.pm_v2_config,
+            stage="development_action_sweep_generation",
+            run=bool(args.run),
+            run_identity=args.accept_cost_estimate_sha256,
+        )
         if pm_config.get("version") != "pm-v1.5":
             raise RuntimeError("PM-v1.5 action sweep requires a pm-v1.5 config")
         supporter_generation_contract = SupporterGenerationContract.from_config(
@@ -522,15 +553,26 @@ def main() -> None:
                 args.automated_semantic_review_attestation,
             )
             automated_review_report = automated_review_verification["report"]
+            actual_corpus_verification = require_actual_corpus_semantic_review_pass(
+                args.actual_corpus_semantic_review_report,
+                args.actual_corpus_semantic_review_attestation,
+                expected_states_path=pm_v2_states_path,
+            )
             semantic_sanity = {
-                "protocol": "pm-v1.5-semantic-sanity-replaced-by-automated-review",
-                "status": "PASS_VIA_AUTOMATED_MULTI_FAMILY_REVIEW",
+                "protocol": "pm-v1.5-pilot-plus-actual-corpus-semantic-gate-v1",
+                "status": "PASS",
                 "human_calibration_performed": False,
                 "automated_review_report_sha256": sha256_text(
                     canonical_json(automated_review_report)
                 ),
                 "automated_review_attestation_sha256": (
                     automated_review_verification["attestation_sha256"]
+                ),
+                "actual_corpus_review_report_sha256": (
+                    actual_corpus_verification["report_sha256"]
+                ),
+                "actual_corpus_review_attestation_sha256": (
+                    actual_corpus_verification["attestation_sha256"]
                 ),
             }
             if pilot_plan is not None:
@@ -800,6 +842,12 @@ def main() -> None:
             ],
             "automated_review_report_sha256": semantic_sanity[
                 "automated_review_report_sha256"
+            ],
+            "actual_corpus_review_attestation_sha256": semantic_sanity[
+                "actual_corpus_review_attestation_sha256"
+            ],
+            "actual_corpus_review_report_sha256": semantic_sanity[
+                "actual_corpus_review_report_sha256"
             ],
         }
     estimate, rows = plan_action_sweep(

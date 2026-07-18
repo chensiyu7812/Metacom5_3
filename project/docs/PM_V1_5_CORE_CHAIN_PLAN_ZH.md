@@ -3,8 +3,8 @@
 > **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
 > source-level Step-0，区分 requested/attempted/realized action，并重组机制、固定策略和
-> 外部效率三层 gate。它目前仍是 `TARGET_NOT_ACTIVE`；在实现清单全部完成前禁止付费
-> 执行。本文保留为 2026-07-17 版本的历史设计背景，与新合同冲突时以新合同为准。
+> 外部效率三层 gate。当前执行仍由中央 `PAID_RUN_BLOCKED` 开关锁死；本文保留为
+> 2026-07-17 版本的历史设计背景，与新合同冲突时以新合同为准。
 
 更新时间：2026-07-17
 状态：免费代码与 fail-closed 链路已搭建；历史 1-call generation compatibility
@@ -79,7 +79,7 @@ latency 实验；不能拿顺序运行的 wall-clock 时间补写结论。
 
 | 项目 | V1.5 冻结值/纪律 |
 |---|---|
-| Strategy Bank | `data/strategy/strategy_cards_v1_5.jsonl`，12,403 张 |
+| Strategy Bank | `data/strategy/strategy_cards_v1_5.jsonl`，11,590 张，来自 823 个 ESConv 对话；正式 52 个 development seed 来源已逐实例排除，8 个策略家族均保留 |
 | 泄漏排除 | `escN -> esconv_N` 确定性映射与既有 Jaccard 规则取并集；已移除 `0539/0585/1212` 的 26 张卡 |
 | supporter prompt/cap | 同一 `SupporterGenerationContract`；temperature 0；300 output-token cap；length/未知 finish reason 失败 |
 | memory/strategy retrieval | 同一实现、top-k、minimum-score 和 source 定义 |
@@ -127,7 +127,8 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 | 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 1 | 最便宜的 transport stop-loss；schema、来源绑定、finish reason 全部 PASS |
 | 2 | `v1_5_run_automated_semantic_review.py` | 66 | 27 真案例 + 6 positive controls × 2 家族（`training_judge_deepseek_flash`、`final_judge`；`training_judge_qwen122` 已按下方记录的协议修订移出面板），attested `PASS` |
 | 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 52 | 52 users / 468 states 完整，生成 attestation |
-| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 真正 `scope=full`；每 state × 16 action 完整；旧 compatibility-pilot/筛选分支拒绝 |
+| 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 6 controls) × 2 家族 = 948 logical calls；bounded retry 上界 2,844 attempts | 实际 468 states 全字段通过，且 provider-surface fallback 分 split 低于冻结上限 |
+| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case 与 actual-468 attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 29,952 | 7,488 × response/risk × 2 judge families；完整性与 judge-health gates PASS |
 | 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
@@ -135,7 +136,7 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 | 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链，并锁定 external 合同 |
 | 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整 |
 | 11 | `v1_5/30_eval_forced_swap_canary_v1_5.py` | 12 units × 2 orders × 2 families = 48 | schema、顺序稳健性和跨家族方向敏感性 PASS；12 units 从主评测排除 |
-| 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 1 unit × 2 schemas × 2 orders × 2 families = 8 | 使用 canary 首个单元；七候选 structured schema 在 GPT/Claude 的 quality/risk 传输均 PASS；顺序差异只作 transport diagnostic |
+| 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 3 units × 2 schemas × 2 orders × 2 families = 24 | 使用 canary 排序后的前三个单元；schema 必须全通过，mean/max absolute order delta 还必须低于冻结阈值；只作 transport diagnostic |
 | 13 | `v1_5/25_eval_pm_v2_external_v1_5.py` | 192 GPT 主质量 + 54 Claude 敏感性 + 36×2 risk audit = 318；以 dry-run 为准 | 七个 condition 全部进入每个 batched call；完整后单独生成 `SUPPORTED`/`NOT_SUPPORTED`、有边界的 risk audit 与非确认性 latency diagnostic |
 
 V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是快速通道的
@@ -178,8 +179,9 @@ HTTP 429 当作限流信号单独处理，其余错误类型都不构成额度�
 
 - forced-swap canary 只验证 judge 能否对故意交换的成对响应保持 schema 成功、顺序稳定和
   基本方向敏感；
-- batched schema/order pilot 使用其中排序后的第一个 unit，并真实覆盖 quality/risk 两种
-  schema、两个 order 和 GPT/Claude 两家；
+- batched schema/order pilot 使用其中排序后的前三个 unit，并真实覆盖 quality/risk 两种
+  schema、两个 order 和 GPT/Claude 两家；除 schema 成功外，还用冻结的 mean/max
+  absolute order delta 阈值作数值放行；
 - 12 个 unit 全部从正式 efficacy/非劣效主集合排除；
 - 新的 V1.5 batched scorer 不调用共享 PM-v2.2 pointwise evaluator；旧 pointwise scorer
   与 4-call smoke 仅保留为 legacy fallback，不是论文主链路。forced swap 仍不证明 PM
@@ -202,10 +204,11 @@ HTTP 429 当作限流信号单独处理，其余错误类型都不构成额度�
 ## 6. 当前实现与剩余工作
 
 已实现的免费部分包括：真实 `version: pm-v1.5`、独立配置/目录/checkpoint、clean
-bank/seed、EF 全链路关闭、66-call 自动审核 runner、1-call generation pilot、完整数据
+bank/seed 实例级隔离、EF 全链路关闭、66-call 小型自动审核 runner、actual-468 全量
+semantic/fallback runner、1-call generation pilot、完整数据
 attestation、真实 full-sweep gate、两家族 judging、internal decision-quality、fixed
 baseline 派生、无截断 fixed-track 验证、轻量 study freeze、12-unit canary、4-call external
-legacy pointwise smoke、8-call batched schema/order pilot、318-call batched 主评测规划、
+legacy pointwise smoke、24-call batched schema/order pilot、318-call batched 主评测规划、
 stratified risk audit、external claim assessment 以及对应的 fail-closed 测试。freeze 还会独立
 重验 bank/seed lineage、development/external retrieval lock 和完整 468×16 链，不能只靠
 目录名或某个阶段的 `COMPLETE` 字段放行。

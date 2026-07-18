@@ -103,12 +103,19 @@ from metacom_pm.pm_v2_generation_review_v8 import (
 from metacom_pm.v1_5_automated_semantic_review import (
     AUTOMATED_REVIEW_PROTOCOL,
     AutomatedSemanticReviewOutput,
+    V1_5_REVIEW_STRATEGY_CARD_IDS,
     _render_case_text,
     aggregate_gate,
     build_positive_controls,
     judge_messages,
 )
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
+from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.v1_5_actual_corpus_review import (
+    ACTUAL_CORPUS_REVIEW_PROTOCOL,
+    ACTUAL_CORPUS_REVIEW_STAGE,
+    build_actual_corpus_review_items,
+)
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -136,6 +143,31 @@ def parse_args() -> argparse.Namespace:
         default=ROOT / "configs" / "pm_v1_5.yaml",
     )
     parser.add_argument("--strategy-bank", type=Path, default=ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl")
+    parser.add_argument(
+        "--review-scope",
+        choices=("pilot_27", "actual_468"),
+        default="pilot_27",
+    )
+    parser.add_argument(
+        "--states",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "pm_v2_states.jsonl",
+    )
+    parser.add_argument(
+        "--evaluator-contexts",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "evaluator_contexts.jsonl",
+    )
+    parser.add_argument(
+        "--memory-backend",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "memory_backend.jsonl",
+    )
+    parser.add_argument(
+        "--bundles",
+        type=Path,
+        default=ROOT / "data" / "pm_v1_5" / "pm_v2_bundles.jsonl",
+    )
     parser.add_argument("--seed", type=int, default=20260716)
     parser.add_argument("--n-controls", type=int, default=6)
     parser.add_argument(
@@ -162,6 +194,27 @@ def main() -> None:
     pm_config = load_config(args.pm_v1_5_config)
     if pm_config.get("version") != "pm-v1.5":
         raise RuntimeError("automated semantic review requires PM-v1.5")
+    review_stage = (
+        ACTUAL_CORPUS_REVIEW_STAGE
+        if args.review_scope == "actual_468"
+        else "pm_v1_5_automated_semantic_review"
+    )
+    review_protocol = (
+        ACTUAL_CORPUS_REVIEW_PROTOCOL
+        if args.review_scope == "actual_468"
+        else AUTOMATED_REVIEW_PROTOCOL
+    )
+    require_paid_run_release(
+        pm_config,
+        config_path=args.pm_v1_5_config,
+        stage=(
+            "development_actual_corpus_semantic_review"
+            if args.review_scope == "actual_468"
+            else "development_pilot_semantic_review"
+        ),
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     judge_role_isolation = require_judge_role_isolation(
         experiment_config,
         pm_config,
@@ -174,12 +227,37 @@ def main() -> None:
     if len(endpoints) < 2 or "" in families or len(set(families)) != len(families):
         raise RuntimeError("automated review requires distinct declared judge families")
 
-    cases = generate_v8_review_cases(
-        strategy_bank_path=args.strategy_bank,
-        cases_per_regime=VALIDATION_CASES_PER_REGIME,
-        seed=args.seed,
-    )
-    controls = build_positive_controls(cases, seed=args.seed, n_controls=args.n_controls)
+    corpus_audit = None
+    if args.review_scope == "actual_468":
+        actual_cfg = dict(pm_config["actual_corpus_semantic_audit"])
+        real_case_rows, controls, corpus_audit = build_actual_corpus_review_items(
+            states_path=args.states,
+            evaluator_contexts_path=args.evaluator_contexts,
+            backend_path=args.memory_backend,
+            bundles_path=args.bundles,
+            strategy_bank_path=args.strategy_bank,
+            strategy_top_k=int(pm_config["retrieval"]["strategy_top_k"]),
+            strategy_min_score=float(pm_config["retrieval"]["strategy_min_score"]),
+            maximum_fallback_rate_by_split=actual_cfg[
+                "maximum_provider_surface_fallback_rate_by_split"
+            ],
+            control_seed=args.seed,
+            n_controls=args.n_controls,
+        )
+    else:
+        cases = generate_v8_review_cases(
+            strategy_bank_path=args.strategy_bank,
+            cases_per_regime=VALIDATION_CASES_PER_REGIME,
+            seed=args.seed,
+            strategy_card_ids=V1_5_REVIEW_STRATEGY_CARD_IDS,
+        )
+        controls = build_positive_controls(
+            cases, seed=args.seed, n_controls=args.n_controls
+        )
+        real_case_rows = [
+            {"kind": "real", "item_id": case.item_id, "text": _render_case_text(case)}
+            for case in cases
+        ]
 
     planning = dict(pm_config["api_cost_planning"])
     if set(planning) != {
@@ -195,10 +273,7 @@ def main() -> None:
     }
     if any(value < 0.0 for value in prices.values()):
         raise ValueError("automated-review prices must be non-negative")
-    case_rows = [
-        {"kind": "real", "item_id": case.item_id, "text": _render_case_text(case)}
-        for case in cases
-    ] + [
+    case_rows = list(real_case_rows) + [
         {"kind": "control", "item_id": row["item_id"], "text": row["case_text"]}
         for row in controls
     ]
@@ -225,7 +300,7 @@ def main() -> None:
                 "judge_family": str(endpoint.family),
             }
             call_key = physical_call_key(
-                stage="pm_v1_5_automated_semantic_review",
+                stage=review_stage,
                 record_ids=record_ids,
                 prompt_sha256=prompt_sha256,
                 endpoint=endpoint,
@@ -279,9 +354,10 @@ def main() -> None:
     # per the module docstring's second amendment.
     max_physical_attempts_worst_case = n_calls * MAX_PHYSICAL_ATTEMPTS_PER_CALL
     estimate_payload = {
-        "protocol": AUTOMATED_REVIEW_PROTOCOL,
-        "stage": "pm_v1_5_automated_semantic_review",
-        "n_real_cases": len(cases),
+        "protocol": review_protocol,
+        "stage": review_stage,
+        "review_scope": args.review_scope,
+        "n_real_cases": len(real_case_rows),
         "n_controls": len(controls),
         "n_judge_families": len(endpoints),
         "n_logical_calls": n_calls,
@@ -295,6 +371,16 @@ def main() -> None:
         "pricing_usd_per_mtok": prices,
         "api_cost_planning": planning,
         "judge_role_isolation": judge_role_isolation,
+        "review_strategy_card_ids": (
+            {}
+            if args.review_scope == "actual_468"
+            else dict(V1_5_REVIEW_STRATEGY_CARD_IDS)
+        ),
+        "review_strategy_card_ids_sha256": (
+            None
+            if args.review_scope == "actual_468"
+            else sha256_text(canonical_json(V1_5_REVIEW_STRATEGY_CARD_IDS))
+        ),
         "retry_contract": {
             "protocol": RETRY_CONTRACT_PROTOCOL,
             "retryable_up_to_full_budget": sorted(
@@ -349,7 +435,7 @@ def main() -> None:
     forbid_overwrite_of_spent_attempts(
         ledger_path,
         overwrite=args.overwrite,
-        stage="PM-v1.5 automated semantic review",
+        stage=f"PM-v1.5 {args.review_scope} semantic review",
     )
     if args.dry_run:
         if ledger_path.is_file() and ledger_path.stat().st_size:
@@ -378,7 +464,7 @@ def main() -> None:
         )
     ledger = PersistentAttemptLedger(
         ledger_path,
-        stage="pm_v1_5_automated_semantic_review",
+        stage=review_stage,
         expected_calls={
             str(row["physical_call_key"]): MAX_PHYSICAL_ATTEMPTS_PER_CALL
             for row in call_plan
@@ -441,7 +527,7 @@ def main() -> None:
                 if parsed is None:
                     raise RuntimeError("automated review returned no parsed object")
                 usage = require_reported_usage(
-                    result.usage, stage="PM-v1.5 automated semantic review"
+                    result.usage, stage=f"PM-v1.5 {args.review_scope} semantic review"
                 )
                 if usage["prompt_tokens"] > int(row["input_token_upper_bound"]):
                     raise RuntimeError("automated-review prompt tokens exceed bound")
@@ -525,7 +611,10 @@ def main() -> None:
             control_results=control_results,
             controls=controls,
             judge_family_names=list(endpoints),
+            protocol=review_protocol,
         ),
+        "review_scope": args.review_scope,
+        "corpus_audit": corpus_audit,
         "transport_retry_summary": retry_ledger_summary(
             ledger,
             [str(row["physical_call_key"]) for row in call_plan],
@@ -540,11 +629,21 @@ def main() -> None:
     write_json(args.out_dir / "gate_report.json", gate)
     create_artifact_attestation(
         args.out_dir / "artifact_attestation.json",
-        stage="pm_v1_5_automated_semantic_review",
+        stage=review_stage,
         inputs={
             "experiment_config": args.config,
             "pm_v1_5_config": args.pm_v1_5_config,
             "strategy_bank": args.strategy_bank,
+            **(
+                {
+                    "states": args.states,
+                    "evaluator_contexts": args.evaluator_contexts,
+                    "memory_backend": args.memory_backend,
+                    "bundles": args.bundles,
+                }
+                if args.review_scope == "actual_468"
+                else {}
+            ),
             "cost_estimate": estimate_path,
             "call_plan": plan_path,
         },
@@ -562,8 +661,14 @@ def main() -> None:
             "physical_attempt_ledger": (ledger_path, True),
         },
         parameters={
-            "protocol": AUTOMATED_REVIEW_PROTOCOL,
+            "protocol": review_protocol,
+            "review_scope": args.review_scope,
             "judge_role_isolation": judge_role_isolation,
+            "review_strategy_card_ids": (
+                {}
+                if args.review_scope == "actual_468"
+                else dict(V1_5_REVIEW_STRATEGY_CARD_IDS)
+            ),
             "accepted_cost_estimate_sha256": estimate["cost_estimate_sha256"],
             "provider_client_retries": 1,
             "retry_contract": estimate["retry_contract"],

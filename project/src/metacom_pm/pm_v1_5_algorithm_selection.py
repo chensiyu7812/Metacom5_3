@@ -20,7 +20,68 @@ from .pm_v2_model import (
 )
 
 
-ALGORITHM_SELECTION_PROTOCOL = "pm-v1.5-train-user-group-cv-algorithm-selection-v1"
+ALGORITHM_SELECTION_PROTOCOL = (
+    "pm-v1.5-train-user-group-cv-one-standard-error-selection-v2"
+)
+
+
+def _action_distribution_instability(rows: Sequence[Mapping[str, Any]]) -> float:
+    distributions = []
+    action_ids = sorted(
+        {
+            str(action)
+            for row in rows
+            for action in (row.get("action_distribution") or {})
+        }
+    )
+    for row in rows:
+        raw = row.get("action_distribution") or {}
+        values = np.asarray([float(raw.get(action, 0.0)) for action in action_ids])
+        total = float(values.sum())
+        distributions.append(values / total if total > 0.0 else values)
+    pairwise = [
+        0.5 * float(np.abs(left - right).sum())
+        for index, left in enumerate(distributions)
+        for right in distributions[index + 1 :]
+    ]
+    return float(np.mean(pairwise)) if pairwise else 0.0
+
+
+def _select_one_standard_error_candidate(
+    eligible: Sequence[Mapping[str, Any]],
+) -> tuple[Mapping[str, Any], Mapping[str, Any], float, list[Mapping[str, Any]]]:
+    """Apply the frozen one-standard-error rule to completed CV summaries."""
+
+    if not eligible:
+        raise RuntimeError("one-standard-error selection requires eligible candidates")
+    best = max(
+        eligible,
+        key=lambda row: (
+            float(row["mean_realized_utility"]),
+            float(row["mean_quality"]),
+            -float(row["mean_risk"]),
+            -float(row["mean_observed_input_tokens"]),
+            -int(row["priority"]),
+        ),
+    )
+    floor = float(best["mean_realized_utility"]) - float(
+        best["mean_realized_utility_standard_error"]
+    )
+    candidates = [
+        row
+        for row in eligible
+        if float(row["mean_realized_utility"]) >= floor
+    ]
+    selected = min(
+        candidates,
+        key=lambda row: (
+            int(row["simplicity_rank"]),
+            float(row["action_distribution_instability"]),
+            -float(row["mean_realized_utility"]),
+            -float(row["mean_quality"]),
+        ),
+    )
+    return best, selected, floor, candidates
 
 
 def _subset_labels(
@@ -49,6 +110,7 @@ def select_routing_algorithm_group_cv(
     minimum_validation_quality: float,
     maximum_validation_risk: float,
     safe_residual_thresholds: Mapping[str, float],
+    simplicity_order: Sequence[str],
 ) -> tuple[str, dict[str, Any]]:
     """Choose the routing target using only train-user group-aware CV."""
 
@@ -58,6 +120,10 @@ def select_routing_algorithm_group_cv(
     unknown = sorted(set(candidate_names) - set(ROUTING_ALGORITHMS))
     if unknown:
         raise ValueError(f"unknown routing algorithms: {unknown}")
+    simplicity = [str(value) for value in simplicity_order]
+    if set(simplicity) != set(candidate_names) or len(simplicity) != len(candidate_names):
+        raise ValueError("algorithm simplicity_order must exactly cover candidates")
+    simplicity_rank = {name: index for index, name in enumerate(simplicity)}
     state_map = {state.state_id: state for state in states}
     if len(state_map) != len(states) or not state_map:
         raise ValueError("algorithm selection requires unique non-empty states")
@@ -208,6 +274,14 @@ def select_routing_algorithm_group_cv(
                 "mean_observed_input_tokens"
             ),
             "action_distribution": dict(sorted(action_counts.items())),
+            "mean_realized_utility_standard_error": float(
+                np.std(
+                    [float(row["mean_realized_utility"]) for row in rows], ddof=1
+                )
+                / np.sqrt(len(rows))
+            ),
+            "action_distribution_instability": _action_distribution_instability(rows),
+            "simplicity_rank": simplicity_rank[algorithm],
         }
         summary["eligible"] = bool(
             summary["mean_quality"] >= float(minimum_validation_quality)
@@ -217,15 +291,13 @@ def select_routing_algorithm_group_cv(
     eligible = [row for row in summaries if row["eligible"]]
     if not eligible:
         raise RuntimeError("no train-CV routing algorithm satisfies frozen guards")
-    selected = max(
-        eligible,
-        key=lambda row: (
-            row["mean_realized_utility"],
-            row["mean_quality"],
-            -row["mean_risk"],
-            -row["mean_observed_input_tokens"],
-            -row["priority"],
-        ),
+    (
+        best,
+        selected,
+        one_standard_error_floor,
+        one_standard_error_candidates,
+    ) = _select_one_standard_error_candidate(
+        eligible
     )
     report = {
         "protocol": ALGORITHM_SELECTION_PROTOCOL,
@@ -241,6 +313,16 @@ def select_routing_algorithm_group_cv(
             for key, value in safe_residual_thresholds.items()
         },
         "selected_algorithm": selected["algorithm"],
+        "raw_best_mean_utility_algorithm": best["algorithm"],
+        "one_standard_error_floor": one_standard_error_floor,
+        "one_standard_error_candidates": [
+            row["algorithm"] for row in one_standard_error_candidates
+        ],
+        "simplicity_order": simplicity,
+        "selection_rule": (
+            "simplest eligible candidate within one standard error of the "
+            "best train-user CV utility; action stability breaks equal-complexity ties"
+        ),
         "fold_assignments": split_rows,
         "candidates": summaries,
     }

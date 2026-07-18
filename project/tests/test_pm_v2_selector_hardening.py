@@ -531,6 +531,10 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
         minimum_validation_quality=0.0,
         maximum_validation_risk=1.0,
         safe_residual_thresholds={},
+        simplicity_order=[
+            "absolute_outcome_factorized_hgb",
+            "state_centered_paired_delta_hgb",
+        ],
     )
     assert selected in {
         "state_centered_paired_delta_hgb",

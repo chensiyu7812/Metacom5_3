@@ -15,6 +15,7 @@ from pathlib import Path
 
 from metacom_pm.artifacts import require_artifact_attestation
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, read_json, sha256_text
@@ -73,6 +74,13 @@ def main() -> None:
 
     experiment = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
+    require_paid_run_release(
+        pm_v1_5_config,
+        config_path=args.pm_v1_5_config,
+        stage="external_pointwise_schema_smoke",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     if pm_v1_5_config.get("version") != "pm-v1.5":
         raise RuntimeError("this schema-smoke driver requires a pm-v1.5 config")
     supporter_generation_contract = SupporterGenerationContract.from_config(pm_v1_5_config)

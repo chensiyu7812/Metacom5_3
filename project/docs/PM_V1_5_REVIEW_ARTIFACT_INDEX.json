@@ -1,26 +1,32 @@
 {
   "protocol": "pm-v1.5-conference-review-artifact-index-v1",
-  "created_date": "2026-07-17",
+  "created_date": "2026-07-18",
   "scope": "code-and-method-review-before-confirmatory-execution",
   "current_pm_v1_5_config": {
     "path": "project/configs/pm_v1_5.yaml",
-    "sha256": "81c1d120da8468758933a91b6819530104886bc59e77c1994514009290a07762"
+    "sha256": "0c419dd3fd7f572d353601365cf6704263ece52495a8690e2a190f6ae79754d1"
   },
   "strategy_bank": {
     "path": "project/data/strategy/strategy_cards_v1_5.jsonl",
-    "rows": 12403,
-    "sha256": "87107266b12a0eb03727a5eec6f5f9ce4bedee1b4cfe636ffe7bee6ae6f03e98",
+    "rows": 11590,
+    "source_dialogues": 823,
+    "sha256": "9cd614ad87677442feb6fb65ccbb4cecbba575867871474aede7700b0562a01e",
     "split_manifest_path": "project/data/strategy/esconv_split_manifest_v1_5.jsonl",
     "split_manifest_rows": 1300,
     "split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
     "audit_path": "project/data/strategy/strategy_bank_audit_v1_5.json",
-    "audit_sha256": "55710a4a05eaff4551f3923c5fa150b8383d07d2626815c397e868e3964f4c1b",
+    "audit_sha256": "7381172b1c68e1f0cf79bec228f460384b9359cb0e9434a39806b23e5b687c80",
+    "selected_development_seed_sources_path": "project/data/strategy/pm_v1_5_selected_seed_sources.jsonl",
+    "selected_development_seed_sources": 52,
+    "selected_development_seed_sources_sha256": "c8af66113bb3284cf0b737443800f21a5a53be22589fab72f6624db1d1457065",
+    "seed_strategy_source_intersection": [],
+    "strategy_family_count": 8,
     "excluded_esconv_sources": 84,
     "deterministic_source_id_rule_enabled": true,
     "turn_overlap_audit_path": "project/outputs/v1_5_strategy_card_evoemo_turn_overlap_audit_v1_5_bank.json",
-    "turn_overlap_audit_sha256": "669120c5a3a6bb36f4a3ec37654ec1d25e555afa00180a92f3009cda9431f1b4",
+    "turn_overlap_audit_sha256": "d8568e6da36296f859e8585f81c9a8df8cc16e00d7a9b588c255e93519bcc1c0",
     "turn_overlap_audit_status": "GENERIC_FINDINGS_ONLY",
-    "turn_overlap_findings": 13,
+    "turn_overlap_findings": 12,
     "deterministic_source_findings_after_rebuild": 0
   },
   "development_seed": {
@@ -41,20 +47,20 @@
     "required_action": "rerun the one-call pilot under the current config before full development generation"
   },
   "automated_semantic_review": {
-    "execution_status": "CURRENT_DRY_RUN_ONLY_NO_PASS_GATE_REPORT",
+    "execution_status": "PRIOR_DRY_RUN_INVALIDATED_NO_CURRENT_PASS_GATE_REPORT",
     "paper_result": false,
     "logical_calls": 66,
     "maximum_physical_attempts": 198,
     "judge_families": [
-      "deepseek",
-      "openai_gpt4o"
+      "google_gemini",
+      "deepseek"
     ],
     "retry_contract": "pm-v1.5-bounded-retry-v2",
-    "accepted_cost_estimate_sha256": "54369b9c51d4d4930abb591c0a5be416691911512307811667f172a29adb3b0c",
-    "call_plan_contract_sha256": "dfb32f887338d0ef21d7f3853fbdad4dd7ee66c5f14599c8bae5c002e79a075a",
-    "local_cost_estimate_file_sha256": "50b6476710ab09d03f109dde63a605ed685b17b5877d38bb0f972d5be9e3d03a",
-    "local_call_plan_file_sha256": "a650a685d25ac228be4f7ed94005e2fed739dcfe484fdaf67e986c48e6beafb6",
-    "prior_partial_attempt_policy": "not reused or spliced into the current run"
+    "invalidated_prior_accepted_cost_estimate_sha256": "54369b9c51d4d4930abb591c0a5be416691911512307811667f172a29adb3b0c",
+    "invalidated_prior_call_plan_contract_sha256": "dfb32f887338d0ef21d7f3853fbdad4dd7ee66c5f14599c8bae5c002e79a075a",
+    "prior_partial_attempt_policy": "not reused or spliced into the current run",
+    "current_required_small_pilot": "27 real cases plus positive controls",
+    "current_required_actual_corpus_gate": "468 real states plus positive controls, split-specific fallback gate"
   },
   "formal_pipeline": {
     "development_generation_complete": false,

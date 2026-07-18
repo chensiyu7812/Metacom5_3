@@ -1,7 +1,7 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-18
-合同状态：**TARGET_NOT_ACTIVE / PAID_RUN_BLOCKED**
+合同状态：**IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED**
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
 
 ## 0. 状态与效力
@@ -18,6 +18,18 @@
 本文取代 `PM_V1_5_CORE_CHAIN_PLAN_ZH.md` 中“完全无目录观测的 pure
 pre-retrieval router”定义，作为下一次运行的优先方法合同。旧文档继续保存历史背景，但
 与本文冲突时以本文为准。
+
+中央执行门位于 `configs/pm_v1_5.yaml:execution_release`。所有含 `--run` 的 V1.5
+付费入口在创建 API client 或 attempt 前都会调用同一门；只有配置状态改为
+`PAID_RUN_RELEASED`，且独立 approval manifest 同时绑定当前配置哈希、release revision、
+具体 stage 和新 dry-run/cost identity 时才可执行。单独传 `--run` 或复用旧 hash 均不能
+绕过。
+
+通用 `scripts/99_release_preflight.py` 已消除 V9 复现脚本中的机器专属 Python 路径，
+当前静态扫描通过并返回 `API_PILOT_READY`。仓库中的旧
+`outputs/study_freeze.json` 不再把整个代码审查标成 `BLOCKED`，而是明确报告为
+`STALE_HISTORICAL_FREEZE / confirmatory_only`。它不会被原地改哈希；正式
+PM-v1.5_1 freeze 只能在新 candidate、internal gates 与 lineage 完成后重新创建。
 
 ## 1. 方法身份与有限主张
 
@@ -107,6 +119,11 @@ Strategy Bank 的开发侧信息，并记录 family 数、各 family 大小、�
 审计单一 family 是否近似等于某个 synthetic regime，及相似度是否近似直接编码 RS
 oracle；发现该 shortcut 时整次数据构造失效，而不是在结果后删除可疑 family。
 
+Strategy Bank 与 52 个正式 development seed dialogue 还必须做到实例级不相交。当前
+冻结选择先确定 52 个 seed source ID，再从主 Bank 中排除这些完整对话；结果为 11,590 张
+卡、823 个来源对话，8 个策略家族仍全部覆盖。这里允许“策略类型和经验规律重合”，但
+不允许训练输入与检索卡来自同一个原始 ESConv 对话实例。
+
 ## 4. 动作、尝试、实现与 prompt alias
 
 四个概念必须分开保存：
@@ -191,28 +208,42 @@ delta_utility_LCB > 0
 - user/regime/environment 对 representation 的可识别性；
 - alias 后独立 prompt/outcome 的真实数量。
 
+oracle 可预测性审计只允许读取 train 的 216 个 resource/regime oracle；calibration 与
+internal-test 的 252 个 state 只做不读取 resource oracle 的结构、范围、缺失和身份审计。
+审计报告必须显式写入 `internal_resource_oracle_read=false`。
+
 若简单单阈值几乎完美恢复 synthetic label，不能把 learned PM 的高分解释为复杂状态调度。
 
 ## 7. 分割、冻结与一次性 internal-test
 
 数据角色必须硬隔离：
 
-- `train`：选择模型 family、目标形式、interaction 与结构超参数；
-- `calibration`：冻结不确定性、非劣 margin、风险 ceiling、rule 数值阈值与
-  cost-matched fixed；
+- `train`：选择模型 family、目标形式、interaction、结构超参数和 transparent-rule
+  数值阈值；算法 family 使用 user-group CV，并以 one-standard-error rule 在近最优者中
+  优先选择预注册的更简单、更稳定候选；
+- `calibration`：只消费一次，用于冻结不确定性、selector margin 与 cost-matched fixed
+  frontier，不再反复调整机制 baseline；
 - `internal_test`：只消费一次，评估已冻结的唯一 primary candidate 和预注册消融；
 - `external`：仅在 internal gates 通过并生成 study freeze 后执行。
 
-internal-test 前写入内容寻址 candidate manifest，至少包含代码、配置、数据、Step-0、
-模型、rule、阈值、checkpoint 和输出 schema 哈希。消费动作必须写入 append-only ledger；
-同一 run identity 第二次读取 outcome 直接失败。查看 internal-test 后不得改变 primary
-candidate、阈值、baseline 或外部 condition matrix。
+internal-test label 文件在训练前先生成不可变 seal，记录 label 内容哈希、行数、state
+universe 和 schema 哈希；candidate manifest 必须绑定这个 seal。internal-test 前写入内容
+寻址 candidate manifest，至少包含代码、配置、数据、Step-0、模型、rule、阈值、
+checkpoint、sealed label bundle 和输出 schema 哈希。消费动作必须写入 append-only
+ledger；label 与 seal 不一致或同一 run identity 第二次读取 outcome均直接失败。查看
+internal-test 后不得改变 primary candidate、阈值、baseline 或外部 condition matrix。
+
+完整 468-state corpus 在 action response generation 前还要通过两道门：实际构造文本的
+双开发家族 12-field 全量语义审核，以及按 train/calibration/internal-test 分开计算的
+provider-surface fallback 上限。内部测试 split 的 fallback 上限为 0；审核报告和输入
+states 哈希必须由 attestation 绑定。27-case review 只保留为生成协议的前置小型审查，
+不能替代真实 468-state gate。
 
 ## 8. 三层 Gate
 
 所有差值方向统一为 `PM - comparator`，以 user 为主要独立 bootstrap block。精确 margin、
-置信水平和 utility 权重必须在新配置中于付费运行前冻结；未填写时状态保持
-`TARGET_NOT_ACTIVE`。
+置信水平和 utility 权重已经在新配置中冻结；任何修改都会改变配置哈希并使现有
+dry-run identity 失效。
 
 ### Gate M：机制价值（learned vs strong rule）
 
@@ -280,6 +311,15 @@ learned routing 优于同预算 fixed。
 learned 只留在 internal ablation。任何 secondary condition 不得替代 Gate M/F/E 的指定
 comparator。
 
+外部 batched schema/order pilot 使用三个预冻结 canary unit，覆盖 quality/risk、两个
+order 和两个 judge family，共 24 calls。除 schema success 必须为 100% 外，mean absolute
+order delta 与 maximum absolute order delta 还必须分别低于冻结阈值；只记录布尔“跑通”
+不能放行主评测。
+
+EvoEmo session 由 ISO date 升序排序，同日按原始位置稳定排序；所有 session ID、topic idx
+和 `related_sessions` 引用在 freeze 前 fail-closed 校验。源数据没有 topic timestamp，因而
+只主张 subsequent topics 位于完整排序历史之后，不虚构更强的 topic chronology。
+
 ## 11. Judge 角色隔离
 
 development semantic gate、完整 action judging 与 final external judging 的端点必须在
@@ -317,9 +357,15 @@ attestation，并在 API key 解析与付费调用前 fail closed。
 - [x] required-hit pre-outcome validity gate 实现；
 - [x] transparent rule router 与 no-Step-0 ablation 实现；
 - [x] train-only algorithm comparison 与 candidate manifest 实现；
-- [x] append-only internal-test consumption ledger 实现；
+- [x] one-standard-error 选择、train-only rule tuning 与 calibration 单用途实现；
+- [x] pre-training internal label seal 与 append-only consumption ledger 实现；
 - [x] Gate M/F/E 数值配置与测试实现；
 - [x] 新 external condition matrix、freeze 与 claim wording 实现；
-- [ ] 完整 clean-environment CI、dry-run 和 lineage 审查通过。
+- [x] 52-seed/Strategy Bank 实例级隔离并保留八个策略家族；
+- [x] actual 468-state semantic/fallback gate 与 train-only shortcut oracle audit 实现；
+- [x] EvoEmo chronology 校验与 3-unit/24-call 数值 order pilot 实现；
+- [x] 所有 V1.5 `--run` 入口统一中央付费门实现；
+- [x] clean venv 下与 CI 一致的裸 `pytest -q` 全量通过；
+- [ ] 新 paid-run 的 dry-run、lineage 人工审查与 approval manifest 完成。
 
 在最后一项完成前，合同状态不得改为 `ACTIVE`。

@@ -37,6 +37,26 @@ from .pm_v2_generation_review_v8 import (
 
 AUTOMATED_REVIEW_PROTOCOL = "pm-v1.5-automated-semantic-review-v1"
 
+# Frozen replacements for the legacy V8 review cards. The original V8 IDs all
+# came from dialogue sources that are now among the 52 formal development seed
+# sources, so retaining them would defeat instance-level seed/Bank isolation.
+# These cards preserve the same eleven semantic roles, are present in the
+# 11,590-card source-disjoint V1.5 Bank, and come from eleven distinct retained
+# source dialogues. They are review stimuli only; they are never PM features.
+V1_5_REVIEW_STRATEGY_CARD_IDS = {
+    "gentle_question": "strat_3117fcf093c71e45f41b",
+    "open_restatement": "strat_5e7c70020f3cff635dfb",
+    "stress_reflection": "strat_a0c6982aa523734322d0",
+    "exam_reflection": "strat_c11fdbd724094b26fab8",
+    "one_problem_suggestion": "strat_bfae933e5a8b5bd35388",
+    "social_connection_suggestion": "strat_8ed3e61eeff96909f66e",
+    "low_pressure_connection": "strat_7496a93d31d3325ec3da",
+    "intrusive_long_plan": "strat_f2e1526602e265075feb",
+    "video_call_self_disclosure": "strat_e5381557588a3941ddc1",
+    "support_affirmation": "strat_4b223b52154bcbe29f4c",
+    "job_information": "strat_d54feb99bfd36cfd0702",
+}
+
 
 class AutomatedSemanticReviewOutput(StrictModel):
     semantic_family_match: Literal[0, 1]
@@ -227,6 +247,7 @@ def aggregate_gate(
     control_results: dict[str, dict[str, dict[str, Any]]],
     controls: Sequence[dict[str, Any]],
     judge_family_names: Sequence[str],
+    protocol: str = AUTOMATED_REVIEW_PROTOCOL,
 ) -> dict[str, Any]:
     """`real_case_results[item_id][family] = judge_one(...)` and similarly for
     `control_results[control_item_id][family]`."""
@@ -270,7 +291,7 @@ def aggregate_gate(
         else "FAIL"
     )
     return {
-        "protocol": AUTOMATED_REVIEW_PROTOCOL,
+        "protocol": str(protocol),
         "status": status,
         "human_calibration_performed": False,
         "judge_families": list(judge_family_names),

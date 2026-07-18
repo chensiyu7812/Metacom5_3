@@ -244,12 +244,44 @@ def run_release_preflight(
         confirmatory_data_ok = False
 
     freeze_path = root / "outputs/study_freeze.json"
-    freeze_result = {"ok": False, "errors": ["study freeze not created"]}
+    freeze_result = {
+        "ok": False,
+        "status": "NOT_CREATED",
+        "errors": ["study freeze not created"],
+        "blocking_scope": "confirmatory_only",
+        "required_action": (
+            "create a new study freeze only after the current candidate and "
+            "all pre-freeze gates are complete"
+        ),
+    }
     if freeze_path.is_file():
         try:
             freeze_result = verify_study_freeze(freeze_path, release_root=root)
+            freeze_result["status"] = (
+                "VALID_CURRENT_FREEZE"
+                if freeze_result.get("ok")
+                else "STALE_HISTORICAL_FREEZE"
+            )
+            freeze_result["blocking_scope"] = "confirmatory_only"
+            freeze_result["required_action"] = (
+                None
+                if freeze_result.get("ok")
+                else (
+                    "do not refresh hashes in place; create a new freeze after "
+                    "the current candidate and all pre-freeze gates are complete"
+                )
+            )
         except Exception as exc:
-            freeze_result = {"ok": False, "errors": [str(exc)]}
+            freeze_result = {
+                "ok": False,
+                "status": "INVALID_FREEZE_RECORD",
+                "errors": [str(exc)],
+                "blocking_scope": "confirmatory_only",
+                "required_action": (
+                    "investigate the malformed record and create a new freeze; "
+                    "never repair a confirmatory freeze in place"
+                ),
+            }
 
     confirmatory_checks = {
         "official_esconv_and_evoemo_present": bool(esconv_path.is_file() and evoemo_path.is_file()),

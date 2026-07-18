@@ -140,7 +140,7 @@ def main() -> None:
                 # Jaccard(A, B) cannot reach the threshold when the set-size
                 # ratio alone is already below it. This exact upper-bound
                 # filter and the inverted shingle index preserve findings
-                # while avoiding a 12,403 x 8,596 all-pairs scan.
+                # while avoiding an 11,590 x 8,596 all-pairs scan.
                 size_ratio = min(len(card_shingles), len(turn_shingles)) / max(
                     len(card_shingles), len(turn_shingles)
                 )

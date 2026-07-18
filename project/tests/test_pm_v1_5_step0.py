@@ -235,16 +235,21 @@ def test_shortcut_audit_covers_all_468_states_without_outcome_labels() -> None:
         map_sha256="b" * 64,
     )
     report = audit_step0_shortcuts(
-        states=states,
+        predictive_states=states[:216],
+        structural_states=states,
         evaluator_contexts=index,
+        expected_predictive_states=216,
+        expected_structural_states=468,
         maximum_single_threshold_balanced_accuracy=0.90,
         centroid_noise_std=0.05,
         shuffle_seed=6113,
     )
     assert report["status"] == "PASS"
-    assert report["n_states"] == 468
+    assert report["n_structural_states"] == 468
+    assert report["n_predictive_states"] == 216
     assert report["outcome_labels_read"] is False
-    assert report["checks"]["all_468_states_present"]
+    assert report["checks"]["all_split_structural_state_count"]
+    assert report["internal_resource_oracle_read"] is False
 
 
 def test_transparent_rule_router_uses_only_frozen_step0_scalars() -> None:

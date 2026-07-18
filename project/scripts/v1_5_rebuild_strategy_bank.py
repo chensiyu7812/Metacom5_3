@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from metacom_pm.io import iter_jsonl
 from metacom_pm.strategy_bank import build_strategy_bank
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +42,20 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--jaccard-threshold", type=float, default=0.88)
+    parser.add_argument(
+        "--selected-seed-sources",
+        type=Path,
+        default=(
+            ROOT
+            / "data"
+            / "strategy"
+            / "pm_v1_5_selected_seed_sources.jsonl"
+        ),
+        help=(
+            "Frozen 52-dialogue development seed-source manifest. Every listed "
+            "dialogue is excluded from the primary Strategy Bank."
+        ),
+    )
     parser.add_argument("--overwrite", action="store_true")
     return parser.parse_args()
 
@@ -50,6 +65,16 @@ def main() -> None:
     for path in (args.out_bank, args.out_split, args.out_audit):
         if path.exists() and not args.overwrite:
             raise RuntimeError(f"refusing to overwrite existing file without --overwrite: {path}")
+    seed_rows = [dict(row) for row in iter_jsonl(args.selected_seed_sources)]
+    seed_ids = [str(row.get("dialogue_id") or "") for row in seed_rows]
+    if (
+        len(seed_ids) != 52
+        or len(set(seed_ids)) != len(seed_ids)
+        or "" in seed_ids
+    ):
+        raise RuntimeError(
+            "selected seed-source manifest must contain exactly 52 unique IDs"
+        )
     result = build_strategy_bank(
         args.esconv,
         args.evoemo,
@@ -59,6 +84,7 @@ def main() -> None:
         seed=args.seed,
         jaccard_threshold=args.jaccard_threshold,
         include_deterministic_source_ids=True,
+        excluded_development_seed_ids=seed_ids,
     )
     print(result)
 

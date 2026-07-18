@@ -211,6 +211,10 @@ def test_release_preflight_includes_model_family_independence(tmp_path):
     assert "model_family_independence" in report["checks"]
     assert report["checks"]["model_family_independence"]["passed"] is True
     assert report["confirmatory_checks"]["model_family_independence"] is True
+    assert report["status"] == "API_PILOT_READY"
+    assert report["confirmatory_ready"] is False
+    assert report["freeze_verification"]["status"] == "STALE_HISTORICAL_FREEZE"
+    assert report["freeze_verification"]["blocking_scope"] == "confirmatory_only"
 
 
 def test_esconv_confirmatory_sweep_forbids_max_cards():

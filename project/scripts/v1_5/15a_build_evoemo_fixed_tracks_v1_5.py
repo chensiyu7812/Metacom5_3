@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evoemo import (
     build_fixed_seeker_tracks_v22,
     fixed_seeker_cost_planning_contract,
@@ -64,6 +65,13 @@ def main() -> None:
 
     experiment = load_config(args.config)
     pm_config = load_config(args.pm_v1_5_config)
+    require_paid_run_release(
+        pm_config,
+        config_path=args.pm_v1_5_config,
+        stage="fixed_seeker_generation",
+        run=bool(args.run),
+        run_identity=args.accepted_dry_run_sha256,
+    )
     if pm_config.get("version") != "pm-v1.5":
         raise RuntimeError("fixed seeker track builder requires PM-v1.5 config")
     raw_contract = pm_config.get("fixed_seeker_generation_treatment")

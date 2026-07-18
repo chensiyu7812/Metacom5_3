@@ -11,6 +11,72 @@ from .io import canonical_json, sha256_file, sha256_text, utc_now, write_json
 
 CANDIDATE_MANIFEST_PROTOCOL = "pm-v1.5-frozen-candidate-family-v1"
 INTERNAL_LEDGER_PROTOCOL = "pm-v1.5-internal-test-consumption-ledger-v1"
+SEALED_INTERNAL_BUNDLE_PROTOCOL = "pm-v1.5-sealed-internal-label-bundle-v1"
+
+
+def seal_internal_label_bundle(
+    path: str | Path,
+    *,
+    internal_labels_path: str | Path,
+) -> dict[str, Any]:
+    """Create or exactly validate the pre-training opaque internal seal."""
+
+    labels_path = Path(internal_labels_path)
+    state_ids: set[str] = set()
+    schema_keys: set[tuple[str, ...]] = set()
+    row_count = 0
+    with labels_path.open("r", encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if not isinstance(row, dict) or not str(row.get("state_id") or ""):
+                raise RuntimeError(
+                    f"invalid internal label row while sealing: {line_number}"
+                )
+            state_ids.add(str(row["state_id"]))
+            schema_keys.add(tuple(sorted(str(key) for key in row)))
+            row_count += 1
+    if not row_count or len(schema_keys) != 1:
+        raise RuntimeError("internal label bundle is empty or has schema drift")
+    core = {
+        "protocol": SEALED_INTERNAL_BUNDLE_PROTOCOL,
+        "status": "SEALED_BEFORE_TRAINING",
+        "internal_labels_sha256": sha256_file(labels_path),
+        "row_count": row_count,
+        "state_count": len(state_ids),
+        "state_universe_sha256": sha256_text(canonical_json(sorted(state_ids))),
+        "schema_sha256": sha256_text(canonical_json(list(next(iter(schema_keys))))),
+    }
+    payload = {**core, "seal_sha256": sha256_text(canonical_json(core))}
+    path = Path(path)
+    if path.exists():
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing != payload:
+            raise RuntimeError("sealed internal bundle already exists with different content")
+        return existing
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_json(path, payload)
+    return payload
+
+
+def require_sealed_internal_label_bundle(
+    path: str | Path,
+    *,
+    internal_labels_path: str | Path,
+) -> dict[str, Any]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    core = {key: value for key, value in payload.items() if key != "seal_sha256"}
+    if (
+        payload.get("protocol") != SEALED_INTERNAL_BUNDLE_PROTOCOL
+        or payload.get("status") != "SEALED_BEFORE_TRAINING"
+        or payload.get("internal_labels_sha256") != sha256_file(internal_labels_path)
+        or payload.get("seal_sha256") != sha256_text(canonical_json(core))
+        or int(payload.get("row_count") or 0) < 1
+        or int(payload.get("state_count") or 0) < 1
+    ):
+        raise RuntimeError("sealed internal label bundle is missing, stale, or invalid")
+    return payload
 
 
 def freeze_candidate_manifest(
@@ -87,6 +153,15 @@ def begin_internal_test_consumption(
         raise RuntimeError("internal-test consumption requires a frozen candidate manifest")
     manifest_sha256 = sha256_file(candidate_manifest_path)
     labels_sha256 = sha256_file(internal_labels_path)
+    sealed_record = (manifest.get("artifacts") or {}).get("sealed_internal_bundle") or {}
+    sealed_path = Path(str(sealed_record.get("path") or ""))
+    sealed = require_sealed_internal_label_bundle(
+        sealed_path, internal_labels_path=internal_labels_path
+    )
+    if sealed_record.get("sha256") != sha256_file(sealed_path):
+        raise RuntimeError("candidate manifest does not bind the sealed internal bundle")
+    if sealed["internal_labels_sha256"] != labels_sha256:
+        raise RuntimeError("internal labels differ from the pre-training seal")
     ledger_path = Path(ledger_path)
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(ledger_path, os.O_RDWR | os.O_CREAT, 0o600)

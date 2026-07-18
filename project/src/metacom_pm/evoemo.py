@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Mapping, Sequence
+from copy import deepcopy
+from datetime import date
 import json
 import math
 import time
@@ -129,6 +131,86 @@ def fixed_seeker_cost_planning_contract(
     }
 
 
+def normalize_evoemo_chronology(
+    data: Sequence[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Validate IDs/references and freeze timestamp-based session ordering."""
+
+    normalized = deepcopy(list(data))
+    reordered_users = []
+    reordered_sessions = 0
+    related_references = 0
+    for user in normalized:
+        user_id = str(user.get("id") or "")
+        if not user_id:
+            raise RuntimeError("EvoEmo user has no stable ID")
+        sessions = list(user.get("dialog_history") or [])
+        ids = [str(row.get("id") or "") for row in sessions]
+        if "" in ids or len(ids) != len(set(ids)):
+            raise RuntimeError(f"EvoEmo session IDs are missing/duplicated: {user_id}")
+        decorated = []
+        for original_index, session in enumerate(sessions):
+            raw_timestamp = str(session.get("timestamp") or "")
+            try:
+                parsed = date.fromisoformat(raw_timestamp)
+            except ValueError as exc:
+                raise RuntimeError(
+                    f"EvoEmo timestamp is not ISO-8601: {user_id}/{ids[original_index]}"
+                ) from exc
+            decorated.append((parsed, original_index, session))
+        ordered = [row for _, _, row in sorted(decorated, key=lambda item: (item[0], item[1]))]
+        ordered_ids = [str(row["id"]) for row in ordered]
+        if ordered_ids != ids:
+            reordered_users.append(user_id)
+            reordered_sessions += sum(
+                left != right for left, right in zip(ids, ordered_ids, strict=True)
+            )
+        user["dialog_history"] = ordered
+        session_ids = set(ordered_ids)
+        topic_indices = []
+        for topic in user.get("subsequent_topics") or []:
+            topic_index = topic.get("idx")
+            if isinstance(topic_index, bool) or not isinstance(topic_index, int):
+                raise RuntimeError(f"EvoEmo topic idx is invalid: {user_id}")
+            topic_indices.append(topic_index)
+            related = [str(value) for value in topic.get("related_sessions") or []]
+            missing = sorted(set(related) - session_ids)
+            if missing:
+                raise RuntimeError(
+                    f"EvoEmo related_sessions reference missing IDs: {user_id}: {missing}"
+                )
+            related_references += len(related)
+        if len(topic_indices) != len(set(topic_indices)):
+            raise RuntimeError(f"EvoEmo topic idx is duplicated: {user_id}")
+    report = {
+        "protocol": "pm-v1.5-evoemo-chronology-audit-v1",
+        "status": (
+            "PASS_WITH_FROZEN_TIMESTAMP_NORMALIZATION"
+            if reordered_users
+            else "PASS_ALREADY_MONOTONIC"
+        ),
+        "ordering_rule": "ascending_iso_date_then_original_position_for_ties",
+        "users": len(normalized),
+        "sessions": sum(len(row.get("dialog_history") or []) for row in normalized),
+        "topics": sum(len(row.get("subsequent_topics") or []) for row in normalized),
+        "reordered_users": sorted(reordered_users),
+        "reordered_user_count": len(reordered_users),
+        "reordered_session_positions": reordered_sessions,
+        "related_session_references_checked": related_references,
+        "topic_temporal_contract": (
+            "subsequent_topics_are_defined_after_the_complete_timestamp_sorted_history; "
+            "the source has no topic timestamp, so no stronger timestamp claim is made"
+        ),
+    }
+    return normalized, report
+
+
+def evoemo_chronology_audit(path: str | Path) -> dict[str, Any]:
+    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    _, report = normalize_evoemo_chronology(raw)
+    return report
+
+
 def load_evoemo(path: str | Path) -> list[dict[str, Any]]:
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, list) or len(data) != 18:
@@ -139,7 +221,8 @@ def load_evoemo(path: str | Path) -> list[dict[str, Any]]:
         raise ValueError(
             f"unexpected EvoEmo statistics: sessions={total_sessions}, topics={total_topics}"
         )
-    return data
+    normalized, _ = normalize_evoemo_chronology(data)
+    return normalized
 
 
 def _opaque_memory_id(user_id: str, source: str, key: str) -> str:

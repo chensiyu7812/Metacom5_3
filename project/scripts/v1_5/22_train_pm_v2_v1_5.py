@@ -16,6 +16,7 @@ from metacom_pm.internal_holdout import (
     begin_internal_test_consumption,
     finish_internal_test_consumption,
     freeze_candidate_manifest,
+    require_sealed_internal_label_bundle,
 )
 from metacom_pm.pm_v1_5_rule_router import (
     FixedActionBaselineRouter,
@@ -836,6 +837,16 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--sealed-internal-bundle",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging"
+            / "sealed_internal_bundle_manifest.json"
+        ),
+    )
+    parser.add_argument(
         "--out-dir",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_model",
@@ -848,6 +859,10 @@ def main() -> None:
     pm_config = load_config(args.pm_v2_config)
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 training requires a pm-v1.5 config")
+    sealed_internal_bundle = require_sealed_internal_label_bundle(
+        args.sealed_internal_bundle,
+        internal_labels_path=args.internal_test_labels,
+    )
     model_cfg = pm_config["model"]
     feature_cfg = pm_config["features"]
     labeling_cfg = pm_config["labeling"]
@@ -985,13 +1000,23 @@ def main() -> None:
     shortcut_cfg = dict(pm_config["shortcut_audit"])
     if (
         shortcut_cfg.get("protocol") != SHORTCUT_AUDIT_PROTOCOL
-        or int(shortcut_cfg.get("expected_states") or 0) != len(states)
+        or int(shortcut_cfg.get("expected_predictive_train_states") or 0)
+        != len(states_by_split[PMV2Split.TRAIN])
+        or int(shortcut_cfg.get("expected_structural_all_split_states") or 0)
+        != len(states)
         or shortcut_cfg.get("fail_on_near_oracle_threshold") is not True
     ):
         raise ValueError("Step-0 shortcut-audit contract is missing or stale")
     shortcut_audit = audit_step0_shortcuts(
-        states=states,
+        predictive_states=states_by_split[PMV2Split.TRAIN],
+        structural_states=states,
         evaluator_contexts=evaluator_contexts,
+        expected_predictive_states=int(
+            shortcut_cfg["expected_predictive_train_states"]
+        ),
+        expected_structural_states=int(
+            shortcut_cfg["expected_structural_all_split_states"]
+        ),
         maximum_single_threshold_balanced_accuracy=float(
             shortcut_cfg["maximum_single_threshold_balanced_accuracy"]
         ),
@@ -1029,8 +1054,8 @@ def main() -> None:
             word_features=int(feature_cfg["word_hash_features"]),
             char_features=int(feature_cfg["char_hash_features"]),
             rule_grid=rule_cfg["grid"],
-            rule_minimum_quality=float(rule_cfg["calibration_minimum_quality"]),
-            rule_maximum_risk=float(rule_cfg["calibration_maximum_risk"]),
+            rule_minimum_quality=float(rule_cfg["train_minimum_quality"]),
+            rule_maximum_risk=float(rule_cfg["train_maximum_risk"]),
             minimum_validation_quality=float(
                 algorithm_cfg["minimum_validation_quality"]
             ),
@@ -1040,17 +1065,18 @@ def main() -> None:
             safe_residual_thresholds=algorithm_cfg[
                 "safe_residual_thresholds"
             ],
+            simplicity_order=algorithm_cfg["simplicity_order"],
         )
     )
-    # The strong rule's numeric thresholds are selected on calibration only.
-    # Its structure/grid were frozen before any internal outcome was opened.
+    # The strong rule's numeric thresholds are selected on train only. This
+    # prevents repeated mechanism-baseline tuning on the small calibration set.
     rule_router, rule_tuning = tune_transparent_rule_router(
-        states=states_by_split[PMV2Split.CALIBRATION],
-        labels=labels_by_split[PMV2Split.CALIBRATION],
+        states=states_by_split[PMV2Split.TRAIN],
+        labels=labels_by_split[PMV2Split.TRAIN],
         selection_config=initial_selection,
         candidates=transparent_rule_candidates(rule_cfg["grid"]),
-        minimum_quality=float(rule_cfg["calibration_minimum_quality"]),
-        maximum_risk=float(rule_cfg["calibration_maximum_risk"]),
+        minimum_quality=float(rule_cfg["train_minimum_quality"]),
+        maximum_risk=float(rule_cfg["train_maximum_risk"]),
     )
     model = PMV2Model.train(
         states_by_split[PMV2Split.TRAIN],
@@ -1330,6 +1356,7 @@ def main() -> None:
             "transparent_rule_checkpoint": rule_checkpoint,
             "training_script": Path(__file__),
             "step0_shortcut_audit": shortcut_audit_path,
+            "sealed_internal_bundle": args.sealed_internal_bundle,
         },
         parameters={
             "primary_candidate": selected_algorithm + "_with_step0",
@@ -1354,6 +1381,9 @@ def main() -> None:
             "external_primary_conditions": list(
                 pm_config["external_evaluation"]["primary_conditions"]
             ),
+            "sealed_internal_bundle_sha256": sealed_internal_bundle[
+                "seal_sha256"
+            ],
         },
     )
     internal_consumption_ledger_path = (
@@ -1571,7 +1601,7 @@ def main() -> None:
         "uncertainty_calibration": uncertainty_calibration,
         "ood_calibration": ood_calibration,
         "calibration": tuning,
-        "transparent_rule_calibration": rule_tuning,
+        "transparent_rule_train_only_tuning": rule_tuning,
         "no_step0_calibration": no_step0_tuning,
         "no_step0_uncertainty_calibration": no_step0_uncertainty_calibration,
         "no_step0_ood_calibration": no_step0_ood_calibration,

@@ -33,10 +33,10 @@
 #   parity only and are not code-enforced under this config.
 # - Strategy Bank path is a CLI argument (--strategy-bank), not a value in
 #   this file; V1.5 invocations must pass
-#   data/strategy/strategy_cards_v1_5.jsonl (12,403 cards; 3 ESConv source
-#   dialogues with a direct EvoEmo session-id match were found unexcluded in
-#   the original 12,429-card bank and have been removed -- see
-#   docs/PM_V1_5_CORE_CHAIN_PLAN_ZH.md).
+#   data/strategy/strategy_cards_v1_5.jsonl (11,590 cards from 823 ESConv
+#   dialogues). Besides the 84 EvoEmo-overlap exclusions, the exact 52 source
+#   dialogues used by the development seed pool are now excluded at dialogue
+#   instance level; all eight strategy families remain represented.
 #
 # The candidate grids and protocol thresholds below were inherited from the
 # PM-v2 line but are now the preregistered V1.5 values for this run. Training
@@ -46,6 +46,15 @@
 
 version: pm-v1.5
 release_revision: pm-v1.5_1
+
+# Central executable stop switch. No individual ``--run`` flag can bypass
+# this status. Release requires a separately reviewed manifest binding every
+# paid stage to its fresh accepted dry-run/cost identity.
+execution_release:
+  protocol: pm-v1.5-central-paid-run-release-v1
+  status: PAID_RUN_BLOCKED
+  release_revision: pm-v1.5_1
+  approval_manifest: outputs/pm_v1_5_paid_run_release.json
 
 api_cost_planning:
   # Provider-neutral char/token estimates are multiplied by this frozen margin.
@@ -210,8 +219,9 @@ step0_observation:
   primary_router_requires_valid_strategy_family_catalog: true
 
 shortcut_audit:
-  protocol: pm-v1.5-step0-shortcut-audit-v1
-  expected_states: 468
+  protocol: pm-v1.5-step0-shortcut-audit-v2-train-oracle-only
+  expected_predictive_train_states: 216
+  expected_structural_all_split_states: 468
   maximum_single_threshold_balanced_accuracy: 0.90
   centroid_noise_std: 0.05
   shuffle_seed: 6113
@@ -222,8 +232,9 @@ shortcut_audit:
 # the exact same Step-0 object as the learned router and never sees item hits.
 transparent_rule_router:
   protocol: pm-v1.5-transparent-step0-rule-router-v1
-  calibration_minimum_quality: 0.50
-  calibration_maximum_risk: 0.50
+  tuning_data_role: train_only
+  train_minimum_quality: 0.50
+  train_maximum_risk: 0.50
   grid:
     source_similarity_weights: [1.0]
     source_age_penalties: [0.0, 0.10]
@@ -270,17 +281,23 @@ model:
     - strategy_overuse
     - strategy_omission
 
-# Model-family choice is confined to train users and uses user-disjoint folds.
-# Calibration is reserved for the final rule thresholds, uncertainty and
-# selector margins; internal_test never participates in this choice.
+# Model-family and transparent-rule choices are confined to train users and use
+# user-disjoint folds. Calibration is consumed only once for uncertainty,
+# selector margins and fixed-frontier selection; internal_test participates in
+# none of these choices.
 algorithm_selection:
-  protocol: pm-v1.5-train-user-group-cv-algorithm-selection-v1
+  protocol: pm-v1.5-train-user-group-cv-one-standard-error-selection-v2
   group_key: user_id
   folds: 4
   cv_bootstrap_models: 3
   candidates:
     - state_centered_paired_delta_hgb
     - absolute_outcome_factorized_hgb
+    - rule_relative_safe_residual_hgb
+    - group_rank_hgb
+  simplicity_order:
+    - absolute_outcome_factorized_hgb
+    - state_centered_paired_delta_hgb
     - rule_relative_safe_residual_hgb
     - group_rank_hgb
   minimum_validation_quality: 0.50
@@ -402,6 +419,21 @@ semantic_sanity_audit:
   minimum_affirmative_rate_per_regime: 0.80
   minimum_affirmative_rate_per_split: 0.80
   minimum_affirmative_rate_per_family: 0.80
+
+# Paid response generation is forbidden until every one of the actual 468
+# generated states passes the same dual-family 12-field semantic rubric. The
+# internal split permits no deterministic surface fallback; train/calibration
+# tolerate at most one case only as an explicit fail-closed ceiling.
+actual_corpus_semantic_audit:
+  protocol: pm-v1.5-actual-468-semantic-review-v1
+  required_before_action_response_generation: true
+  expected_states: 468
+  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]
+  required_all_fields_affirmative: true
+  maximum_provider_surface_fallback_rate_by_split:
+    train: 0.005
+    calibration: 0.01
+    internal_test: 0.0
 
 development_judging:
   # Development and external judge families are disjoint. V1.5 does not run
@@ -762,11 +794,14 @@ external_evaluation:
     bootstrap_confidence_level: 0.95
     bootstrap_seed: 3701
     schema_order_pilot:
+      pilot_units: 3
       order_variants: [0, 1]
       judge_types: [quality, risk]
       estimated_quality_output_tokens: 2200
       estimated_risk_output_tokens: 2600
-      expected_calls: 8
+      expected_calls: 24
+      maximum_mean_absolute_order_delta: 0.15
+      maximum_single_absolute_order_delta: 0.35
     risk_audit:
       protocol: pm-v1.5-stratified-evidence-risk-audit-v1
       role: preregistered_stratified_audit_not_population_safety_claim

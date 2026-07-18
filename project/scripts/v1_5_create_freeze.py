@@ -26,6 +26,7 @@ from metacom_pm.evoemo import (
     FIXED_SEEKER_V22_STAGE,
     fixed_seeker_cost_planning_contract,
     load_evoemo,
+    evoemo_chronology_audit,
 )
 from metacom_pm.freeze import create_study_freeze
 from metacom_pm.generation_contract import SupporterGenerationContract
@@ -94,9 +95,11 @@ PM_V1_5_SECONDARY_CONDITIONS = (
     "session_rag_rs",
     "full_history_rs",
 )
-EXPECTED_V1_5_BANK_CARDS = 12_403
+EXPECTED_V1_5_BANK_CARDS = 11_590
+EXPECTED_V1_5_BANK_SOURCE_DIALOGUES = 823
 EXPECTED_V1_5_EXCLUDED_ESCONV_SOURCES = 84
 EXPECTED_V1_5_TRAIN_SEEDS = 875
+EXPECTED_V1_5_SELECTED_SEED_SOURCES = 52
 EXPECTED_V1_5_ACTIONS_PER_STATE = 16
 
 
@@ -161,9 +164,10 @@ def require_v1_5_bank_and_seed_lineage(
     strategy_bank_audit_path: Path,
     seed_dialogues_path: Path,
     seed_audit_path: Path,
+    selected_seed_sources_path: Path,
     turn_overlap_audit_path: Path,
 ) -> dict[str, Any]:
-    """Verify the clean 12,403-card bank and 875-seed source lineage."""
+    """Verify the instance-disjoint 11,590-card bank and seed lineage."""
 
     bank_audit = read_json(strategy_bank_audit_path)
     if (
@@ -178,6 +182,8 @@ def require_v1_5_bank_and_seed_lineage(
         != EXPECTED_V1_5_BANK_CARDS
         or int(bank_audit.get("n_excluded_overlap", -1))
         != EXPECTED_V1_5_EXCLUDED_ESCONV_SOURCES
+        or int(bank_audit.get("n_strategy_source_dialogues", -1))
+        != EXPECTED_V1_5_BANK_SOURCE_DIALOGUES
     ):
         raise RuntimeError(
             "PM-v1.5 Strategy Bank audit is stale or lacks the deterministic "
@@ -235,6 +241,35 @@ def require_v1_5_bank_and_seed_lineage(
             "PM-v1.5 Strategy Bank contains a non-train or EvoEmo-overlap source"
         )
 
+    selected_seed_rows = [
+        dict(row) for row in iter_jsonl(selected_seed_sources_path)
+    ]
+    selected_seed_ids = [
+        str(row.get("dialogue_id") or "") for row in selected_seed_rows
+    ]
+    bank_source_ids = {str(card["source_dialogue_id"]) for card in cards}
+    development_exclusion = bank_audit.get("development_seed_exclusion") or {}
+    family_counts = bank_audit.get("strategy_family_card_counts") or {}
+    if (
+        len(selected_seed_ids) != EXPECTED_V1_5_SELECTED_SEED_SOURCES
+        or len(set(selected_seed_ids)) != len(selected_seed_ids)
+        or "" in selected_seed_ids
+        or set(selected_seed_ids) & bank_source_ids
+        or development_exclusion.get("protocol")
+        != "pm-v1.5-dialogue-instance-disjoint-strategy-bank-v1"
+        or development_exclusion.get("excluded_source_ids")
+        != sorted(selected_seed_ids)
+        or development_exclusion.get("bank_source_intersection") != []
+        or int(development_exclusion.get("n_excluded_sources", -1))
+        != EXPECTED_V1_5_SELECTED_SEED_SOURCES
+        or len(family_counts) != 8
+        or any(int(value) < 1 for value in family_counts.values())
+    ):
+        raise RuntimeError(
+            "PM-v1.5 selected seed sources are not dialogue-instance-disjoint "
+            "from the primary Strategy Bank"
+        )
+
     turn_audit = read_json(turn_overlap_audit_path)
     if (
         turn_audit.get("protocol")
@@ -285,10 +320,19 @@ def require_v1_5_bank_and_seed_lineage(
         )
     ):
         raise RuntimeError("PM-v1.5 synthetic seed lineage is stale or contaminated")
+    actual_selected_seed_ids = [
+        str(row.get("dialogue_id") or "")
+        for row in seed_rows[:EXPECTED_V1_5_SELECTED_SEED_SOURCES]
+    ]
+    if actual_selected_seed_ids != selected_seed_ids:
+        raise RuntimeError(
+            "the actual first 52 synthetic seeds differ from the frozen "
+            "source-disjoint seed manifest"
+        )
 
     return {
         "status": "PASS",
-        "protocol": "pm-v1.5-bank-seed-lineage-freeze-v1",
+        "protocol": "pm-v1.5-bank-seed-lineage-freeze-v2-instance-disjoint",
         "strategy_bank_sha256": sha256_file(strategy_bank_path),
         "strategy_bank_cards": len(cards),
         "split_manifest_sha256": sha256_file(split_manifest_path),
@@ -296,6 +340,11 @@ def require_v1_5_bank_and_seed_lineage(
         "deterministic_esconv_sources": len(deterministic_ids),
         "seed_dialogues_sha256": sha256_file(seed_dialogues_path),
         "seed_dialogues": len(seed_rows),
+        "selected_seed_sources_sha256": sha256_file(selected_seed_sources_path),
+        "selected_seed_sources": len(selected_seed_ids),
+        "strategy_source_dialogues": len(bank_source_ids),
+        "seed_strategy_source_intersection": [],
+        "strategy_family_card_counts": dict(sorted(family_counts.items())),
         "strategy_bank_audit_sha256": sha256_file(strategy_bank_audit_path),
         "seed_audit_sha256": sha256_file(seed_audit_path),
         "turn_overlap_audit_sha256": sha256_file(turn_overlap_audit_path),
@@ -455,6 +504,16 @@ def require_v1_5_development_chain(
         != semantic_review.get("automated_review_report_sha256")
         or full_gate.get("automated_review_attestation_sha256")
         != semantic_review.get("automated_review_attestation_sha256")
+        or len(str(full_gate.get("actual_corpus_review_report_sha256") or ""))
+        != 64
+        or len(
+            str(full_gate.get("actual_corpus_review_attestation_sha256") or "")
+        )
+        != 64
+        or full_gate.get("actual_corpus_review_report_sha256")
+        != semantic_review.get("actual_corpus_review_report_sha256")
+        or full_gate.get("actual_corpus_review_attestation_sha256")
+        != semantic_review.get("actual_corpus_review_attestation_sha256")
         or bindings.get("pm_v2_config_sha256")
         != sha256_file(pm_v1_5_config_path)
         or bindings.get("pm_v2_version") != "pm-v1.5"
@@ -729,6 +788,16 @@ def parse_args() -> argparse.Namespace:
         / "train_seed_dialogues_v1_5.jsonl.audit.json",
     )
     parser.add_argument(
+        "--selected-seed-sources",
+        type=Path,
+        default=(
+            ROOT
+            / "data"
+            / "strategy"
+            / "pm_v1_5_selected_seed_sources.jsonl"
+        ),
+    )
+    parser.add_argument(
         "--turn-overlap-audit",
         type=Path,
         default=ROOT
@@ -875,8 +944,15 @@ def main() -> None:
         strategy_bank_audit_path=args.strategy_bank_audit,
         seed_dialogues_path=args.seed_dialogues,
         seed_audit_path=args.seed_audit,
+        selected_seed_sources_path=args.selected_seed_sources,
         turn_overlap_audit_path=args.turn_overlap_audit,
     )
+    chronology_audit = evoemo_chronology_audit(args.evoemo)
+    if chronology_audit.get("status") not in {
+        "PASS_WITH_FROZEN_TIMESTAMP_NORMALIZATION",
+        "PASS_ALREADY_MONOTONIC",
+    }:
+        raise RuntimeError("EvoEmo chronology audit did not PASS")
 
     training_report = read_json(args.pm_training_report)
     checkpoint_sha256 = sha256_file(args.pm_checkpoint)
@@ -1362,16 +1438,28 @@ def main() -> None:
         },
     }
     pilot_cfg = dict(batched_cfg.get("schema_order_pilot") or {})
+    pilot_unit_count = int(pilot_cfg["pilot_units"])
+    pilot_units = sorted(forced_units[:pilot_unit_count])
+    if len(pilot_units) != pilot_unit_count or pilot_unit_count < 2:
+        raise RuntimeError("batched order pilot requires multiple frozen units")
+    if int(pilot_cfg["expected_calls"]) != pilot_unit_count * 2 * 2 * 2:
+        raise RuntimeError("batched order-pilot expected_calls is inconsistent")
     batched_schema_order_pilot = {
         "protocol": BATCHED_PILOT_PROTOCOL,
         "purpose": "schema_transport_for_batched_quality_and_risk_not_efficacy",
         "candidate_count": len(PM_V1_5_CONDITIONS),
         "condition_count": len(PM_V1_5_CONDITIONS),
-        "unit": list(smoke_unit),
-        "unit_id": sha256_text(canonical_json(smoke_unit))[:24],
+        "units": [list(unit) for unit in pilot_units],
+        "unit_ids": [sha256_text(canonical_json(unit))[:24] for unit in pilot_units],
         "order_variants": [int(value) for value in pilot_cfg["order_variants"]],
         "judge_types": [str(value) for value in pilot_cfg["judge_types"]],
         "expected_calls": int(pilot_cfg["expected_calls"]),
+        "maximum_mean_absolute_order_delta": float(
+            pilot_cfg["maximum_mean_absolute_order_delta"]
+        ),
+        "maximum_single_absolute_order_delta": float(
+            pilot_cfg["maximum_single_absolute_order_delta"]
+        ),
         "judge_endpoints": judge_endpoints,
         "judge_pricing_usd_per_mtok": judge_pricing_usd_per_mtok,
         "api_cost_planning": api_cost_planning,
@@ -1465,6 +1553,7 @@ def main() -> None:
         "retrieval_consistency": retrieval_consistency,
         "judge_role_isolation": judge_role_isolation,
         "bank_seed_lineage": bank_seed_lineage,
+        "evoemo_chronology_audit": chronology_audit,
         "full_development_chain": development_chain,
         "decision_quality": {
             "report_sha256": sha256_file(args.decision_quality_report),
@@ -1515,6 +1604,7 @@ def main() -> None:
             args.split_manifest,
             args.seed_dialogues,
             args.seed_audit,
+            args.selected_seed_sources,
             args.turn_overlap_audit,
             args.fixed_tracks,
             args.fixed_tracks_attestation,

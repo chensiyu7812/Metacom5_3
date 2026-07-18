@@ -8,7 +8,7 @@ from typing import Any, Iterable
 from collections import defaultdict
 
 from .contracts import StrategyCard
-from .io import stable_hex, write_jsonl, write_json, sha256_file
+from .io import canonical_json, sha256_text, stable_hex, write_jsonl, write_json, sha256_file
 from .text import dialogue_text, jaccard, normalize_for_hash, normalize_space, shingle_set
 
 
@@ -128,6 +128,7 @@ def build_strategy_bank(
     seed: int = 13,
     jaccard_threshold: float = 0.88,
     include_deterministic_source_ids: bool = False,
+    excluded_development_seed_ids: Iterable[str] = (),
 ) -> dict[str, Any]:
     esconv = load_esconv(esconv_path)
     overlaps = find_esconv_evoemo_overlaps(
@@ -136,6 +137,9 @@ def build_strategy_bank(
         jaccard_threshold=jaccard_threshold,
         include_deterministic_source_ids=include_deterministic_source_ids,
     )
+    development_seed_ids = {str(value) for value in excluded_development_seed_ids}
+    if "" in development_seed_ids:
+        raise ValueError("development seed exclusions cannot contain an empty ID")
     cards: list[dict[str, Any]] = []
     split_rows: list[dict[str, Any]] = []
     for idx, row in enumerate(esconv):
@@ -147,7 +151,7 @@ def build_strategy_bank(
             "split": split,
             "excluded_for_evoemo_overlap": idx in overlaps,
         })
-        if split != "train" or idx in overlaps:
+        if split != "train" or idx in overlaps or dialogue_id in development_seed_ids:
             continue
         dialogue = row["dialog"]
         for turn_index, turn in enumerate(dialogue):
@@ -192,6 +196,10 @@ def build_strategy_bank(
 
     write_jsonl(out_bank_path, deduped)
     write_jsonl(out_split_path, split_rows)
+    source_ids = {str(card["source_dialogue_id"]) for card in deduped}
+    family_counts: dict[str, int] = defaultdict(int)
+    for card in deduped:
+        family_counts[str(card["strategy_label"])] += 1
     write_json(out_overlap_path, {
         "esconv_sha256": sha256_file(esconv_path),
         "evoemo_sha256": sha256_file(evoemo_path),
@@ -204,12 +212,25 @@ def build_strategy_bank(
         "n_esconv_dialogues": len(esconv),
         "n_excluded_overlap": len(overlaps),
         "overlaps": {f"esconv_{k:04d}": v for k, v in sorted(overlaps.items())},
+        "development_seed_exclusion": {
+            "protocol": "pm-v1.5-dialogue-instance-disjoint-strategy-bank-v1",
+            "excluded_source_ids": sorted(development_seed_ids),
+            "excluded_source_ids_sha256": sha256_text(
+                canonical_json(sorted(development_seed_ids))
+            ),
+            "n_excluded_sources": len(development_seed_ids),
+            "bank_source_intersection": sorted(development_seed_ids & source_ids),
+        },
+        "n_strategy_source_dialogues": len(source_ids),
+        "strategy_family_card_counts": dict(sorted(family_counts.items())),
         "n_strategy_cards": len(deduped),
     })
     return {
         "n_esconv_dialogues": len(esconv),
         "n_strategy_cards": len(deduped),
         "n_excluded_overlap": len(overlaps),
+        "n_excluded_development_seed_sources": len(development_seed_ids),
+        "n_strategy_source_dialogues": len(source_ids),
     }
 
 

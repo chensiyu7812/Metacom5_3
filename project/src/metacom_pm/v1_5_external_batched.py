@@ -1007,7 +1007,7 @@ def run_v1_5_batched_schema_order_pilot(
     turn_paths: Sequence[str | Path],
     generation_attestation_paths: Sequence[str | Path],
     full_expected_units: Sequence[tuple[str, int, int, str, int]],
-    smoke_unit: tuple[str, int, int, str, int],
+    pilot_units: Sequence[tuple[str, int, int, str, int]],
     conditions: Sequence[str],
     endpoints: Sequence[Endpoint],
     contract: Mapping[str, Any],
@@ -1019,7 +1019,7 @@ def run_v1_5_batched_schema_order_pilot(
     max_input_tokens_per_call: int,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """Run the eight-call two-schema/two-family/two-order transport pilot."""
+    """Run the stratified multi-unit schema/order-sensitivity pilot."""
 
     frozen = dict(contract)
     if (
@@ -1030,8 +1030,12 @@ def run_v1_5_batched_schema_order_pilot(
         or not bool(frozen.get("required_before_full_external_client_creation"))
     ):
         raise RuntimeError("study freeze lacks the current batched schema pilot")
-    if _normalized_unit(frozen.get("unit") or ()) != smoke_unit:
-        raise RuntimeError("batched schema pilot unit differs from the freeze")
+    frozen_units = [
+        _normalized_unit(value) for value in (frozen.get("units") or [])
+    ]
+    normalized_pilot_units = sorted(_normalized_unit(value) for value in pilot_units)
+    if frozen_units != normalized_pilot_units or not frozen_units:
+        raise RuntimeError("batched schema pilot units differ from the freeze")
     order_variants = [int(value) for value in frozen.get("order_variants") or []]
     if order_variants != [0, 1]:
         raise RuntimeError("batched schema pilot must freeze order variants [0, 1]")
@@ -1048,7 +1052,7 @@ def run_v1_5_batched_schema_order_pilot(
     if safety_factor < 1.0 or not fail_on_overrun:
         raise RuntimeError("batched schema pilot requires fail-closed cost planning")
     full_units = sorted(_normalized_unit(unit) for unit in full_expected_units)
-    if smoke_unit not in full_units:
+    if any(unit not in full_units for unit in normalized_pilot_units):
         raise RuntimeError("batched schema pilot unit is outside the frozen universe")
     matrix = load_fixed_turns(
         turn_paths,
@@ -1070,32 +1074,41 @@ def run_v1_5_batched_schema_order_pilot(
         "quality": int(frozen["estimated_quality_output_tokens"]),
         "risk": int(frozen["estimated_risk_output_tokens"]),
     }
-    unit_ordinal = full_units.index(smoke_unit)
     base_seed = int(frozen["judge_seed"])
-    for family_index, endpoint in enumerate(endpoints):
-        family = str(endpoint.family)
-        for type_index, judge_type in enumerate(("quality", "risk")):
-            for order_variant in order_variants:
-                row, execution = _build_call(
-                    stage=PILOT_STAGE,
-                    unit=smoke_unit,
-                    unit_ordinal=unit_ordinal,
-                    conditions=conditions,
-                    matrix=matrix,
-                    authorized_user_context=authorized[(smoke_unit[0], smoke_unit[1])],
-                    endpoint=endpoint,
-                    role="schema_order_pilot",
-                    judge_type=judge_type,
-                    order_variant=order_variant,
-                    call_seed=base_seed + family_index * 100 + type_index * 10 + order_variant,
-                    max_output_tokens=output_bounds[judge_type],
-                    pricing=pricing[family],
-                    input_token_safety_factor=safety_factor,
-                    study_freeze_sha256=study_freeze_sha256,
-                )
-                plan.append(row)
-                executions[str(row["logical_call_key"])] = execution
-    if len(plan) != int(frozen.get("expected_calls") or 0) or len(plan) != 8:
+    for pilot_index, pilot_unit in enumerate(normalized_pilot_units):
+        unit_ordinal = full_units.index(pilot_unit)
+        for family_index, endpoint in enumerate(endpoints):
+            family = str(endpoint.family)
+            for type_index, judge_type in enumerate(("quality", "risk")):
+                for order_variant in order_variants:
+                    row, execution = _build_call(
+                        stage=PILOT_STAGE,
+                        unit=pilot_unit,
+                        unit_ordinal=unit_ordinal,
+                        conditions=conditions,
+                        matrix=matrix,
+                        authorized_user_context=authorized[
+                            (pilot_unit[0], pilot_unit[1])
+                        ],
+                        endpoint=endpoint,
+                        role="schema_order_pilot",
+                        judge_type=judge_type,
+                        order_variant=order_variant,
+                        call_seed=(
+                            base_seed
+                            + pilot_index * 1000
+                            + family_index * 100
+                            + type_index * 10
+                            + order_variant
+                        ),
+                        max_output_tokens=output_bounds[judge_type],
+                        pricing=pricing[family],
+                        input_token_safety_factor=safety_factor,
+                        study_freeze_sha256=study_freeze_sha256,
+                    )
+                    plan.append(row)
+                    executions[str(row["logical_call_key"])] = execution
+    if len(plan) != int(frozen.get("expected_calls") or 0):
         raise RuntimeError("batched schema pilot call count differs from the freeze")
 
     out = Path(out_dir)
@@ -1138,7 +1151,7 @@ def run_v1_5_batched_schema_order_pilot(
                 for path in generation_attestation_paths
             },
             "contract_sha256": sha256_text(canonical_json(frozen)),
-            "smoke_unit": list(smoke_unit),
+            "pilot_units": [list(unit) for unit in normalized_pilot_units],
             "conditions": list(conditions),
             "endpoint_contracts": [_endpoint_contract(endpoint) for endpoint in endpoints],
         },
@@ -1147,8 +1160,8 @@ def run_v1_5_batched_schema_order_pilot(
         **{key: value for key, value in execution_result.items() if key != "successful"},
         "protocol": PILOT_PROTOCOL,
         "expected_calls": len(plan),
-        "smoke_unit": list(smoke_unit),
-        "smoke_unit_id": unit_id(smoke_unit),
+        "pilot_units": [list(unit) for unit in normalized_pilot_units],
+        "pilot_unit_ids": [unit_id(unit) for unit in normalized_pilot_units],
         "conditions": list(conditions),
         "candidate_count": EXPECTED_CANDIDATE_COUNT,
         "judge_types": ["quality", "risk"],
@@ -1164,7 +1177,7 @@ def run_v1_5_batched_schema_order_pilot(
     judge_usage_accounting = _judge_usage_accounting(
         raw_rows, pricing
     )
-    order_values: dict[tuple[str, str, str, int], float] = {}
+    order_values: dict[tuple[str, str, str, str, int], float] = {}
     for row in raw_rows:
         parsed_by_id = {
             str(score["candidate_id"]): score
@@ -1182,6 +1195,7 @@ def run_v1_5_batched_schema_order_pilot(
                 value = float(np.mean([float(score[name]) for name in RISK_DIMENSIONS])) / 3.0
             order_values[
                 (
+                    str(row["unit_id"]),
                     str(row["judge_family"]),
                     str(row["judge_type"]),
                     str(info["condition"]),
@@ -1190,11 +1204,19 @@ def run_v1_5_batched_schema_order_pilot(
             ] = value
     order_deltas = [
         abs(order_values[(*key, 0)] - order_values[(*key, 1)])
-        for key in sorted({key[:3] for key in order_values})
+        for key in sorted({key[:4] for key in order_values})
     ]
+    mean_order_delta = float(np.mean(order_deltas))
+    maximum_order_delta = max(order_deltas)
+    mean_threshold = float(frozen["maximum_mean_absolute_order_delta"])
+    maximum_threshold = float(frozen["maximum_single_absolute_order_delta"])
+    order_checks = {
+        "mean_absolute_order_delta": mean_order_delta <= mean_threshold,
+        "maximum_absolute_order_delta": maximum_order_delta <= maximum_threshold,
+    }
     summary = {
         **dry,
-        "status": "PASS",
+        "status": "PASS" if all(order_checks.values()) else "FAIL",
         "execution_status": "COMPLETE",
         "study_freeze_sha256": study_freeze_sha256,
         "contract_sha256": sha256_text(canonical_json(frozen)),
@@ -1203,9 +1225,14 @@ def run_v1_5_batched_schema_order_pilot(
         "order_diagnostic": {
             "role": "transport_diagnostic_not_efficacy",
             "paired_candidate_scores": len(order_deltas),
-            "mean_absolute_order_delta": float(np.mean(order_deltas)),
-            "maximum_absolute_order_delta": max(order_deltas),
-            "gating_threshold": None,
+            "mean_absolute_order_delta": mean_order_delta,
+            "maximum_absolute_order_delta": maximum_order_delta,
+            "thresholds": {
+                "maximum_mean_absolute_order_delta": mean_threshold,
+                "maximum_single_absolute_order_delta": maximum_threshold,
+            },
+            "checks": order_checks,
+            "status": "PASS" if all(order_checks.values()) else "FAIL",
         },
         "judge_usage_accounting": judge_usage_accounting,
         "raw_path": str(raw_path),
@@ -1233,7 +1260,7 @@ def run_v1_5_batched_schema_order_pilot(
             "summary": (summary_path, False),
         },
         parameters={"contract": frozen},
-        expected={"calls": 8, "status": "PASS"},
+        expected={"calls": len(plan), "status": summary["status"]},
         study_freeze_sha256=study_freeze_sha256,
     )
     return summary
@@ -1265,6 +1292,11 @@ def require_v1_5_batched_schema_order_pilot_pass(
         or int(summary.get("completed_calls") or 0)
         != int(contract.get("expected_calls") or 0)
         or float(summary.get("schema_success_rate") or 0.0) != 1.0
+        or (summary.get("order_diagnostic") or {}).get("status") != "PASS"
+        or not all(
+            bool(value)
+            for value in (summary.get("order_diagnostic") or {}).get("checks", {}).values()
+        )
     ):
         raise RuntimeError("batched schema/order pilot is stale, incomplete, or failed")
     return {
@@ -1272,7 +1304,7 @@ def require_v1_5_batched_schema_order_pilot_pass(
         "summary_sha256": sha256_file(summary_path),
         "attestation_sha256": verification["attestation_sha256"],
         "contract_sha256": expected_contract_sha,
-        "smoke_unit": summary["smoke_unit"],
+        "pilot_units": summary["pilot_units"],
         "completed_calls": int(summary["completed_calls"]),
     }
 

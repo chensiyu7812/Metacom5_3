@@ -70,6 +70,7 @@ from metacom_pm.text import conservative_token_bound, estimate_tokens
 from metacom_pm.v1_5_automated_semantic_review import (
     require_automated_semantic_review_pass,
 )
+from metacom_pm.paid_run_release import require_paid_run_release
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -237,27 +238,93 @@ def _require_saved_dry_run(
         raise RuntimeError("saved generation call-plan hash is stale")
 
 
-def read_seed_dialogues(path: Path) -> list[str]:
-    seeds: list[str] = []
+def read_seed_dialogues(path: Path) -> list[dict[str, str]]:
+    """Read strict dialogue-level seed records while preserving provenance.
+
+    V1.5_1 no longer accepts anonymous strings: losing ``dialogue_id`` made it
+    impossible to prove instance disjointness from the Strategy Bank.
+    """
+
+    seeds: list[dict[str, str]] = []
+    seen_ids: set[str] = set()
     with path.open("r", encoding="utf-8") as handle:
         for line in handle:
             if not line.strip():
                 continue
             row = json.loads(line)
-            if isinstance(row, str):
-                text = row
-            else:
-                text = row.get("dialogue_text") or row.get("text") or row.get("content")
-                if not text and isinstance(row.get("dialogue"), list):
-                    text = "\n".join(
-                        f"{turn.get('role','unknown')}: {turn.get('content','')}"
-                        for turn in row["dialogue"]
-                    )
-            if text and str(text).strip():
-                seeds.append(str(text).strip())
+            if not isinstance(row, dict):
+                raise RuntimeError(
+                    "PM-v1.5 seed rows must be objects with dialogue_id and text"
+                )
+            dialogue_id = str(row.get("dialogue_id") or "").strip()
+            if not dialogue_id or dialogue_id in seen_ids:
+                raise RuntimeError("seed dialogue IDs must be non-empty and unique")
+            text = row.get("dialogue_text") or row.get("text") or row.get("content")
+            if not text and isinstance(row.get("dialogue"), list):
+                text = "\n".join(
+                    f"{turn.get('role','unknown')}: {turn.get('content','')}"
+                    for turn in row["dialogue"]
+                )
+            if not text or not str(text).strip():
+                raise RuntimeError(f"seed dialogue {dialogue_id} has no usable text")
+            normalized_text = str(text).strip()
+            declared_hash = str(row.get("seed_text_sha256") or "")
+            if declared_hash and declared_hash != sha256_text(normalized_text):
+                raise RuntimeError(f"seed dialogue text hash mismatch: {dialogue_id}")
+            seeds.append(
+                {"dialogue_id": dialogue_id, "dialogue_text": normalized_text}
+            )
+            seen_ids.add(dialogue_id)
     if not seeds:
         raise ValueError("seed dialogue file contains no usable text")
     return seeds
+
+
+def require_instance_disjoint_seed_strategy_sources(
+    *,
+    seeds: list[dict[str, str]],
+    planned_user_count: int,
+    selected_seed_sources_path: Path,
+    strategy_cards: list[StrategyCard],
+) -> dict[str, Any]:
+    selected_rows = [dict(row) for row in iter_jsonl(selected_seed_sources_path)]
+    selected_ids = [str(row.get("dialogue_id") or "") for row in selected_rows]
+    actual_ids = [
+        str(seeds[index % len(seeds)]["dialogue_id"])
+        for index in range(planned_user_count)
+    ]
+    if (
+        len(selected_ids) != planned_user_count
+        or len(set(selected_ids)) != len(selected_ids)
+        or selected_ids != actual_ids
+    ):
+        raise RuntimeError(
+            "actual 52 seed sources differ from the frozen selected-source manifest"
+        )
+    bank_ids = {card.source_dialogue_id for card in strategy_cards}
+    intersection = sorted(set(actual_ids) & bank_ids)
+    if intersection:
+        raise RuntimeError(
+            "synthetic seed sources overlap the primary Strategy Bank: "
+            + str(intersection[:20])
+        )
+    family_counts: dict[str, int] = {}
+    for card in strategy_cards:
+        family_counts[card.strategy_label] = family_counts.get(card.strategy_label, 0) + 1
+    if len(family_counts) != 8 or any(count < 1 for count in family_counts.values()):
+        raise RuntimeError("source-disjoint Strategy Bank does not cover all 8 families")
+    return {
+        "protocol": "pm-v1.5-dialogue-instance-disjoint-strategy-bank-v1",
+        "status": "PASS",
+        "selected_seed_sources_path": str(selected_seed_sources_path.resolve()),
+        "selected_seed_sources_sha256": sha256_file(selected_seed_sources_path),
+        "selected_seed_source_ids": actual_ids,
+        "selected_seed_source_ids_sha256": sha256_text(canonical_json(actual_ids)),
+        "strategy_source_dialogues": len(bank_ids),
+        "strategy_bank_cards": len(strategy_cards),
+        "intersection": intersection,
+        "strategy_family_card_counts": dict(sorted(family_counts.items())),
+    }
 
 
 def strict_bundle_check(bundle: GeneratedUserBundle, allowed_families: list[str]) -> None:
@@ -390,6 +457,16 @@ def main() -> None:
         type=Path,
         default=ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl",
     )
+    parser.add_argument(
+        "--selected-seed-sources",
+        type=Path,
+        default=(
+            ROOT
+            / "data"
+            / "strategy"
+            / "pm_v1_5_selected_seed_sources.jsonl"
+        ),
+    )
     parser.add_argument("--out-dir", type=Path, default=ROOT / "data" / "pm_v1_5")
     parser.add_argument("--train-users", type=int)
     parser.add_argument("--calibration-users", type=int)
@@ -464,6 +541,13 @@ def main() -> None:
     pm_config = load_config(args.pm_v2_config)
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 data generation requires a pm-v1.5 config")
+    require_paid_run_release(
+        pm_config,
+        config_path=args.pm_v2_config,
+        stage="development_data_generation",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     generation_cfg = pm_config["data_generation"]
     generation_pricing = dict(generation_cfg["pricing_usd_per_mtok"])
     if set(generation_pricing) != {"input", "output"}:
@@ -611,6 +695,13 @@ def main() -> None:
             planned_users.append(user_id)
             global_index += 1
 
+    seed_strategy_disjointness = require_instance_disjoint_seed_strategy_sources(
+        seeds=seeds,
+        planned_user_count=len(planned_users),
+        selected_seed_sources_path=args.selected_seed_sources,
+        strategy_cards=strategy_cards,
+    )
+
     code_paths = [
         Path(__file__).resolve(),
         ROOT / "src" / "metacom_pm" / "pm_v2_data.py",
@@ -646,7 +737,10 @@ def main() -> None:
             "split": split_by_user[user_id].value,
             "semantic_families": family_by_user[user_id],
             "seed_dialogue_index": index % len(seeds),
-            "seed_dialogue_sha256": sha256_text(seeds[index % len(seeds)]),
+            "seed_dialogue_source_id": seeds[index % len(seeds)]["dialogue_id"],
+            "seed_dialogue_sha256": sha256_text(
+                seeds[index % len(seeds)]["dialogue_text"]
+            ),
         }
         for index, user_id in enumerate(planned_users)
     ]
@@ -694,6 +788,7 @@ def main() -> None:
             "estimated_action_tokens": strategy_estimated_tokens,
             "top_k": strategy_top_k,
         },
+        "seed_strategy_instance_disjointness": seed_strategy_disjointness,
         "base_generation_seed": args.seed,
         "generator": endpoint_descriptor,
         "generator_config_sha256": sha256_text(canonical_json(endpoint_descriptor)),
@@ -731,7 +826,8 @@ def main() -> None:
         )
     all_user_attempts: dict[str, dict[str, Any]] = {}
     for index, user_id in enumerate(planned_users):
-        seed_dialogue = seeds[index % len(seeds)]
+        seed_record = seeds[index % len(seeds)]
+        seed_dialogue = seed_record["dialogue_text"]
         messages = generation_messages(
             seed_dialogue=seed_dialogue,
             user_id=user_id,
@@ -793,6 +889,7 @@ def main() -> None:
             "split": split_by_user[user_id].value,
             "semantic_families": family_by_user[user_id],
             "seed_dialogue_index": index % len(seeds),
+            "seed_dialogue_source_id": seed_record["dialogue_id"],
             "seed_dialogue_sha256": sha256_text(seed_dialogue),
             "prompt_sha256": sha256_text(canonical_json(messages)),
             "maximum_output_tokens": GENERATION_MAX_OUTPUT_TOKENS,
@@ -1042,7 +1139,7 @@ def main() -> None:
             try:
                 bundle = generate_user_bundle(
                     endpoint=endpoint,
-                    seed_dialogue=seeds[index % len(seeds)],
+                    seed_dialogue=seeds[index % len(seeds)]["dialogue_text"],
                     user_id=user_id,
                     semantic_families=family_by_user[user_id],
                     regimes=list(ResourceNeedRegime),
@@ -1064,6 +1161,9 @@ def main() -> None:
                     )
                 bundle.provenance.update(
                     {
+                        "seed_dialogue_source_id": seeds[index % len(seeds)][
+                            "dialogue_id"
+                        ],
                         "physical_call_key": reservation.call_key,
                         "physical_attempt_index": reservation.attempt_index,
                         "physical_attempt_key": reservation.attempt_key,
@@ -1242,6 +1342,7 @@ def main() -> None:
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "seed_dialogues": str(args.seed_dialogues),
             "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
+            "seed_strategy_instance_disjointness": seed_strategy_disjointness,
             "generation_run_binding": generation_binding,
             "generation_run_binding_sha256": generation_binding_sha256,
             "accepted_cost_estimate_sha256": expected_hash,
@@ -1273,6 +1374,7 @@ def main() -> None:
             "experiment_config": args.config,
             "pm_v1_5_config": args.pm_v2_config,
             "seed_dialogues": args.seed_dialogues,
+            "selected_seed_sources": args.selected_seed_sources,
             "strategy_bank": args.strategy_bank,
             "generation_pilot_attestation": args.generation_pilot_attestation,
             "automated_semantic_review": args.automated_semantic_review_report,

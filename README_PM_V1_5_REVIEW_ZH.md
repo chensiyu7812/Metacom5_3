@@ -9,7 +9,10 @@
 > judge 角色隔离问题。下一次运行的优先合同现为
 > `project/docs/PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`。PM-v1.5_1 已完成代码实现和
 > 本地回归，但尚未建立新的 dry-run/lineage/付费运行身份，因此状态仍为
-> `TARGET_NOT_ACTIVE / PAID_RUN_BLOCKED`；下文保留原审查包说明作为历史背景。
+> `IMPLEMENTED_NOT_EXECUTED / PAID_RUN_BLOCKED`；下文保留原审查包说明作为历史背景。
+> 全仓库 release preflight 当前为 `API_PILOT_READY`：静态路径扫描已通过；旧
+> `outputs/study_freeze.json` 被明确标记为 `STALE_HISTORICAL_FREEZE`，只阻止
+> confirmatory 执行，不能也不应通过原地刷新哈希伪装成当前 V1.5 freeze。
 
 ## 0. 首先避免版本混淆
 
@@ -115,8 +118,9 @@ same-token cost-matched fixed policy 与 16-action oracle，包括：
 
 1. 训练、sweep、外部生成使用同一 supporter treatment、同一 Strategy Bank 和同一
    retrieval/Evidence Filter 机制；V1.5 全链路关闭 Evidence Filter，不再训练/测试错配。
-2. Strategy Bank 额外使用 `escN -> esconv_N` 确定性来源映射排除 EvoEmo 重合：
-   84 个 ESConv 来源被排除，bank 从 12,429 降为 12,403 cards。
+2. Strategy Bank 使用 `escN -> esconv_N` 确定性来源映射排除 EvoEmo 重合，并在选定
+   52 个正式 development seed source 后将这些对话逐实例从 Bank 排除：最终为
+   11,590 cards、823 个来源对话，8 个策略家族均保留，seed/Bank 来源交集为 0。
 3. train / calibration / internal_test 用户与 semantic family 分离；超参数只由 calibration
    选择，internal_test 冻结后只查看一次。
 4. 每个 468-state development matrix 必须覆盖全部 16 actions，不能用筛选后的 pilot

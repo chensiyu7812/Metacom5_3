@@ -32,6 +32,7 @@ from metacom_pm.posthoc_v1_bank_probe import (
     select_user_balanced_rs_turns,
 )
 from metacom_pm.prompts import SELECTIVE_ESMEM_SYSTEM, generation_messages
+from metacom_pm.paid_run_release import require_paid_run_release
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -42,6 +43,8 @@ def parse_args() -> argparse.Namespace:
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--run", action="store_true")
     parser.add_argument("--config", type=Path, default=ROOT / "configs" / "experiment.yaml")
+    parser.add_argument("--pm-v1-5-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml")
+    parser.add_argument("--paid-run-identity")
     parser.add_argument("--endpoint", default="generator")
     parser.add_argument("--turns", type=Path, required=True)
     parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE)
@@ -57,6 +60,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     experiment_config = load_config(args.config)
+    require_paid_run_release(
+        load_config(args.pm_v1_5_config),
+        config_path=args.pm_v1_5_config,
+        stage="diagnostic_r0_generation",
+        run=bool(args.run),
+        run_identity=args.paid_run_identity,
+    )
     endpoint = endpoint_from_config(experiment_config, args.endpoint)
 
     samples, _ = select_user_balanced_rs_turns(

@@ -13,6 +13,9 @@ import importlib.util
 from pathlib import Path
 import sys
 
+from metacom_pm.config import load_config
+from metacom_pm.paid_run_release import require_paid_run_release
+
 
 ROOT = Path(__file__).resolve().parents[2]
 IMPLEMENTATION = ROOT / "scripts" / "20a_run_pm_v2_generation_compatibility_pilot.py"
@@ -41,6 +44,19 @@ def main() -> None:
         "--out-dir",
         ROOT / "outputs" / "pm_v1_5_generation_compatibility_pilot",
     )
+    if "--run" in argv:
+        config_index = argv.index("--pm-v2-config") + 1
+        config_path = Path(argv[config_index])
+        identity = None
+        if "--accept-cost-estimate-sha256" in argv:
+            identity = argv[argv.index("--accept-cost-estimate-sha256") + 1]
+        require_paid_run_release(
+            load_config(config_path),
+            config_path=config_path,
+            stage="development_generation_compatibility_pilot",
+            run=True,
+            run_identity=identity,
+        )
     spec = importlib.util.spec_from_file_location(
         "pm_v1_5_generation_compatibility_implementation", IMPLEMENTATION
     )

@@ -29,6 +29,7 @@ from metacom_pm.artifacts import (
     require_artifact_attestation,
 )
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
@@ -209,6 +210,13 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
+    require_paid_run_release(
+        pm_v1_5_config,
+        config_path=args.pm_v1_5_config,
+        stage="external_batched_judging",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     if pm_v1_5_config.get("version") != "pm-v1.5":
         raise RuntimeError("this external evaluation driver requires a pm-v1.5 config")
 
@@ -630,8 +638,19 @@ def main() -> None:
         study_freeze_sha256=freeze_sha,
         contract=batched_schema_pilot_contract,
     )
-    if tuple(batched_schema_pilot_verification["smoke_unit"]) not in excluded_units:
-        raise RuntimeError("batched schema pilot unit is not in the frozen canary set")
+    verified_pilot_units = {
+        (str(unit[0]), int(unit[1]), int(unit[2]), str(unit[3]), int(unit[4]))
+        for unit in batched_schema_pilot_verification["pilot_units"]
+    }
+    if (
+        verified_pilot_units
+        != {
+            (str(unit[0]), int(unit[1]), int(unit[2]), str(unit[3]), int(unit[4]))
+            for unit in batched_schema_pilot_contract.get("units") or []
+        }
+        or not verified_pilot_units.issubset(excluded_units)
+    ):
+        raise RuntimeError("batched schema pilot units differ from the frozen canary set")
 
     cost_match_tolerance = float(external_contract["maximum_cost_matched_relative_deviation"])
     try:

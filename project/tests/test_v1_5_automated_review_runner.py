@@ -138,6 +138,11 @@ def test_automated_review_run_requires_accepted_dry_run_hash_before_credentials(
     out_dir = tmp_path / "review"
     monkeypatch.setattr(sys, "argv", _argv(out_dir, "--dry-run"))
     module.main()
+    monkeypatch.setattr(
+        module,
+        "require_paid_run_release",
+        lambda *args, **kwargs: {"status": "PAID_RUN_RELEASED"},
+    )
     monkeypatch.setattr(sys, "argv", _argv(out_dir, "--run"))
     with pytest.raises(RuntimeError, match="requires exact --accept-cost-estimate-sha256"):
         module.main()
@@ -150,6 +155,11 @@ def test_run_refuses_persisted_terminal_failure_before_loading_credentials(
     out_dir = tmp_path / "review"
     monkeypatch.setattr(sys, "argv", _argv(out_dir, "--dry-run"))
     module.main()
+    monkeypatch.setattr(
+        module,
+        "require_paid_run_release",
+        lambda *args, **kwargs: {"status": "PAID_RUN_RELEASED"},
+    )
     estimate = read_json(out_dir / "cost_estimate.json")
     plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
     expected_calls = {

@@ -21,6 +21,7 @@ from metacom_pm.api import make_client, require_reported_usage
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.io import append_jsonl, iter_jsonl, utc_now, write_json
 from metacom_pm.prompts import RESPONSE_JUDGE_SYSTEM
+from metacom_pm.paid_run_release import require_paid_run_release
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,6 +56,8 @@ def parse_args() -> argparse.Namespace:
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--run", action="store_true")
     parser.add_argument("--config", type=Path, default=ROOT / "configs" / "experiment.yaml")
+    parser.add_argument("--pm-v1-5-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml")
+    parser.add_argument("--paid-run-identity")
     parser.add_argument("--endpoint", default="synthetic_generator")
     parser.add_argument(
         "--review-items",
@@ -77,6 +80,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     experiment_config = load_config(args.config)
+    require_paid_run_release(
+        load_config(args.pm_v1_5_config),
+        config_path=args.pm_v1_5_config,
+        stage="diagnostic_bank_mechanism_judging",
+        run=bool(args.run),
+        run_identity=args.paid_run_identity,
+    )
     endpoint = endpoint_from_config(experiment_config, args.endpoint)
 
     items = list(iter_jsonl(args.review_items))

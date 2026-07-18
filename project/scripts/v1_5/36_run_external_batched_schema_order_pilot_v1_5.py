@@ -10,6 +10,7 @@ from typing import Any, Mapping, Sequence
 
 from metacom_pm.artifacts import require_artifact_attestation
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
@@ -125,7 +126,7 @@ def main() -> None:
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_external_batched_schema_order_pilot",
     )
-    parser.add_argument("--max-api-calls", type=int, default=8)
+    parser.add_argument("--max-api-calls", type=int, default=24)
     parser.add_argument("--max-estimated-usd", type=float, default=2.0)
     parser.add_argument("--max-input-tokens-per-call", type=int, default=24000)
     parser.add_argument("--accept-cost-estimate-sha256")
@@ -138,6 +139,13 @@ def main() -> None:
 
     experiment = load_config(args.config)
     pm_config = load_config(args.pm_v1_5_config)
+    require_paid_run_release(
+        pm_config,
+        config_path=args.pm_v1_5_config,
+        stage="external_batched_schema_order_pilot",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     if pm_config.get("version") != "pm-v1.5":
         raise RuntimeError("batched pilot requires the honest pm-v1.5 config")
     supporter = SupporterGenerationContract.from_config(pm_config)
@@ -179,16 +187,19 @@ def main() -> None:
         != sha256_text(canonical_json(full_units))
     ):
         raise RuntimeError("frozen batched pilot unit universe is stale")
-    smoke_unit = tuple(pilot.get("unit") or ())
-    if len(smoke_unit) != 5:
-        raise RuntimeError("frozen batched pilot unit is malformed")
-    smoke_unit = (
-        str(smoke_unit[0]),
-        int(smoke_unit[1]),
-        int(smoke_unit[2]),
-        str(smoke_unit[3]),
-        int(smoke_unit[4]),
-    )
+    pilot_units = [
+        (
+            str(value[0]),
+            int(value[1]),
+            int(value[2]),
+            str(value[3]),
+            int(value[4]),
+        )
+        for value in (pilot.get("units") or [])
+        if len(value) == 5
+    ]
+    if len(pilot_units) < 2:
+        raise RuntimeError("frozen batched pilot requires multiple units")
     forced = require_v1_5_forced_swap_canary(
         args.forced_swap_summary,
         args.forced_swap_attestation,
@@ -197,10 +208,10 @@ def main() -> None:
         contract=external.get("forced_swap") or {},
     )
     selected = sorted(forced["excluded_units"])
-    if smoke_unit != selected[0] or pilot.get(
+    if sorted(pilot_units) != selected[: len(pilot_units)] or pilot.get(
         "forced_swap_selected_units_sha256"
     ) != sha256_text(canonical_json(selected)):
-        raise RuntimeError("batched pilot is not bound to the frozen canary set")
+        raise RuntimeError("batched pilot units are not bound to the frozen canary set")
 
     attested_conditions: set[str] = set()
     for turns, attestation in zip(args.turn_paths, args.generation_attestations):
@@ -274,7 +285,7 @@ def main() -> None:
         turn_paths=args.turn_paths,
         generation_attestation_paths=args.generation_attestations,
         full_expected_units=full_units,
-        smoke_unit=smoke_unit,
+        pilot_units=pilot_units,
         conditions=conditions,
         endpoints=endpoints,
         contract=pilot,

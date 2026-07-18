@@ -670,7 +670,8 @@ The compatibility wrapper exposes no threshold or abstention parameter.
 set -euo pipefail
 cd {current_bank_path.resolve().parents[2]}
 sha256sum {current_bank_path.resolve()} {split_manifest_path.resolve()} {bank_audit_path.resolve()} {wrapper_path.resolve()}
-PYTHONNOUSERSITE=1 PYTHONPATH=src /home/tokkio/miniconda3/envs/sim_eval/bin/python - <<'PY'
+PYTHON_BIN="${{PYTHON:-python}}"
+PYTHONNOUSERSITE=1 PYTHONPATH=src "$PYTHON_BIN" - <<'PY'
 from metacom_pm.retrieval_v1_canonical import CANONICAL_V1_RETRIEVER_SHA256, CANONICAL_V1_TOP_K
 assert CANONICAL_V1_RETRIEVER_SHA256 == "{CANONICAL_V1_RETRIEVER_SHA256}"
 assert CANONICAL_V1_TOP_K == 3

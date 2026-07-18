@@ -41,6 +41,7 @@ from metacom_pm.internal_holdout import (
     begin_internal_test_consumption,
     finish_internal_test_consumption,
     freeze_candidate_manifest,
+    seal_internal_label_bundle,
 )
 from metacom_pm.pm_v22_reference_baselines import PMV22_REFERENCE_BASELINE_STAGE
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
@@ -248,13 +249,21 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
     )
     write_jsonl(
         internal_test_labels,
-        ({"fixture_label": index} for index in range(2_304)),
+        (
+            {"state_id": f"fixture_state_{index // 16}", "fixture_label": index}
+            for index in range(2_304)
+        ),
     )
     transparent_rule_checkpoint = _placeholder(
         workdir / "pm_v1_5_transparent_rule.joblib"
     )
     no_step0_checkpoint = _placeholder(workdir / "pm_v1_5_no_step0.joblib")
     candidate_manifest = workdir / "candidate_manifest.json"
+    sealed_internal_bundle = workdir / "sealed_internal_bundle.json"
+    seal_internal_label_bundle(
+        sealed_internal_bundle,
+        internal_labels_path=internal_test_labels,
+    )
     freeze_candidate_manifest(
         candidate_manifest,
         run_identity="fixture-protocol-repair-run",
@@ -262,6 +271,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "primary_checkpoint": pm_checkpoint,
             "transparent_rule_checkpoint": transparent_rule_checkpoint,
             "no_step0_checkpoint": no_step0_checkpoint,
+            "sealed_internal_bundle": sealed_internal_bundle,
         },
         parameters={"fixture": True},
     )
@@ -372,9 +382,11 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         expected={"states": 468, "users": 52},
     )
     semantic_review = {
-        "status": "PASS_VIA_AUTOMATED_MULTI_FAMILY_REVIEW",
+        "status": "PASS",
         "automated_review_report_sha256": "a" * 64,
         "automated_review_attestation_sha256": "b" * 64,
+        "actual_corpus_review_report_sha256": "c" * 64,
+        "actual_corpus_review_attestation_sha256": "d" * 64,
     }
     full_sweep_gate = {
         "protocol": "pm-v1.5-full-sweep-gate-v1",
@@ -383,6 +395,8 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "human_calibration_performed": False,
         "automated_review_report_sha256": "a" * 64,
         "automated_review_attestation_sha256": "b" * 64,
+        "actual_corpus_review_report_sha256": "c" * 64,
+        "actual_corpus_review_attestation_sha256": "d" * 64,
     }
     sweep_bindings = {
         "scope": "full",
@@ -645,7 +659,10 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
         "memory_min_score": 0.0,
         "strategy_min_score": 0.0,
     }
-    assert notes["bank_seed_lineage"]["strategy_bank_cards"] == 12_403
+    assert notes["bank_seed_lineage"]["strategy_bank_cards"] == 11_590
+    assert notes["bank_seed_lineage"]["strategy_source_dialogues"] == 823
+    assert notes["bank_seed_lineage"]["selected_seed_sources"] == 52
+    assert notes["bank_seed_lineage"]["seed_strategy_source_intersection"] == []
     assert notes["bank_seed_lineage"]["excluded_esconv_sources"] == 84
     assert notes["bank_seed_lineage"]["seed_dialogues"] == 875
     assert notes["bank_seed_lineage"]["deterministic_source_findings"] == 0
@@ -673,7 +690,8 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     assert smoke["legacy_pointwise_fallback_only"] is True
     assert smoke["required_before_full_external_client_creation"] is False
     batched_pilot = external_contract["batched_schema_order_pilot"]
-    assert batched_pilot["expected_calls"] == 8
+    assert batched_pilot["expected_calls"] == 24
+    assert len(batched_pilot["units"]) == 3
     assert batched_pilot["judge_types"] == ["quality", "risk"]
     assert batched_pilot["required_before_full_external_client_creation"] is True
     batched = external_contract["batched_evaluation"]
@@ -766,6 +784,8 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
     )
     report_sha = "a" * 64
     attestation_sha = "b" * 64
+    actual_report_sha = "c" * 64
+    actual_attestation_sha = "d" * 64
     gate = {
         "protocol": "pm-v1.5-full-sweep-gate-v1",
         "status": "PASS",
@@ -773,12 +793,16 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
         "human_calibration_performed": False,
         "automated_review_attestation_sha256": attestation_sha,
         "automated_review_report_sha256": report_sha,
+        "actual_corpus_review_attestation_sha256": actual_attestation_sha,
+        "actual_corpus_review_report_sha256": actual_report_sha,
     }
     chain = {"contract_bindings": {"scope": "full", "v1_5_full_sweep_gate": gate}}
     assert module.require_v1_5_full_sweep_binding(
         chain,
         automated_review_report_sha256=report_sha,
         automated_review_attestation_sha256=attestation_sha,
+        actual_corpus_review_report_sha256=actual_report_sha,
+        actual_corpus_review_attestation_sha256=actual_attestation_sha,
     ) == gate
 
     stale = {
@@ -792,6 +816,8 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
             stale,
             automated_review_report_sha256=report_sha,
             automated_review_attestation_sha256=attestation_sha,
+            actual_corpus_review_report_sha256=actual_report_sha,
+            actual_corpus_review_attestation_sha256=actual_attestation_sha,
         )
 
 
@@ -1179,8 +1205,8 @@ def test_v1_5_batched_schema_pilot_happy_path_reaches_v1_5_runner(
     module.main()
     assert len(calls) == 1
     assert calls[0]["conditions"] == external["conditions"]
-    assert calls[0]["smoke_unit"] == sorted(excluded)[0]
-    assert calls[0]["contract"]["expected_calls"] == 8
+    assert calls[0]["pilot_units"] == sorted(excluded)[:3]
+    assert calls[0]["contract"]["expected_calls"] == 24
 
 
 def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkeypatch):
@@ -1309,7 +1335,7 @@ def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkey
         "require_v1_5_batched_schema_order_pilot_pass",
         lambda *a, **k: {
             "status": "PASS",
-            "smoke_unit": list(sorted(excluded)[0]),
+            "pilot_units": [list(unit) for unit in sorted(excluded)[:3]],
         },
     )
     monkeypatch.setattr(

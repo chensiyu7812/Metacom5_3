@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
@@ -148,6 +149,13 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    require_paid_run_release(
+        pm_v2_config,
+        config_path=args.pm_v2_config,
+        stage="external_learned_or_rule_generation",
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
     supporter_generation_contract = SupporterGenerationContract.from_config(
         pm_v2_config
     )
