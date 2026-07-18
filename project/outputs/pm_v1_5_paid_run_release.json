@@ -1,19 +1,34 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "APPROVED",
+  "status": "CONSUMED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "2245e6e23e96fa8967b511a52ed59f0106b5b8b45a8d886a3f4c94adfb5079e3",
   "approved_execution_config_commit_sha": "5fc2a883876759815958de43c231f1387ad501dc",
   "approved_at_utc": "2026-07-18T06:26:59Z",
-  "stage_approvals": {
-    "development_generation_compatibility_pilot": "3f3b0d432819346cbe58b77687d60be252e9086d56b7b9198018cd7d311d353e"
-  },
+  "stage_approvals": {},
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot": {
       "maximum_physical_api_attempts": 1,
       "maximum_estimated_cost_usd": 0.00606165,
       "maximum_input_tokens_per_call": 8411,
       "maximum_output_tokens": 8000
+    }
+  },
+  "stage_consumptions": {
+    "development_generation_compatibility_pilot": {
+      "status": "PASS",
+      "run_identity": "3f3b0d432819346cbe58b77687d60be252e9086d56b7b9198018cd7d311d353e",
+      "execution_commit_sha": "53f8f0c2780ff5848700213637be00f54aa6b064",
+      "consumed_at_utc": "2026-07-18T06:37:02Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_release_5fc2a88",
+      "summary_sha256": "843b7c0923d0ca3caf2e6cf48f50a6407b80fa99720b4da2680260dd3d6c0942",
+      "artifact_attestation_file_sha256": "2e2f4620704f80dd81eeff456c87f38caf26c30bd2b9e47db2efa6827c76e739",
+      "artifact_attestation_record_sha256": "ae8c5bdb97925c8d0fc958b69c44f708583533732903dcfec32d3cf7d4f0fe24",
+      "physical_attempt_ledger_sha256": "9da64f098bb624e3bfeabbf0116d261d0829ac2fa52ba1f6f126798e8f220969",
+      "physical_attempts": 1,
+      "reported_input_tokens": 3911,
+      "reported_output_tokens": 3667,
+      "estimated_actual_cost_usd": 0.00278685
     }
   }
 }
