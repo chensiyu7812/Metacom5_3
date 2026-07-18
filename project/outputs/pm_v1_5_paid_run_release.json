@@ -1,17 +1,19 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "PENDING_EXACT_IDENTITY_REVIEW",
+  "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
-  "prepared_from_code_commit_sha": null,
+  "prepared_from_code_commit_sha": "f532b2fef79b60727df513e7782b6cd2f4454daa",
   "prepared_at_utc": "2026-07-18T16:41:11Z",
-  "approved_execution_config_commit_sha": null,
-  "approved_at_utc": null,
-  "paid_execution_authorized": false,
-  "authorization_record": "V8_5_DRY_RUN_READY_PENDING_EXACT_REVIEW: identity a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed is proposed only; no paid execution is authorized until the reviewed commit and this exact stage identity are recorded as APPROVED",
-  "stage_approvals": {},
+  "approved_execution_config_commit_sha": "f532b2fef79b60727df513e7782b6cd2f4454daa",
+  "approved_at_utc": "2026-07-18T17:07:29Z",
+  "paid_execution_authorized": true,
+  "authorization_record": "USER_EXPLICITLY_AUTHORIZED_V8_5_DIRECT_RUN",
+  "stage_approvals": {
+    "development_generation_compatibility_pilot": "a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed"
+  },
   "stage_budget_bounds": {
-    "development_generation_compatibility_pilot_proposed": {
+    "development_generation_compatibility_pilot": {
       "run_identity": "a84c17f92ccd678a3e2c863fefe4b2cf16e1060f33ccfd712e9cd3e3adfa05ed",
       "compatibility_contract_sha256": "215e7c11ce8d8f47a7a607c1745d5693fb3f613ee7bf6d9221f971e9b5e12e02",
       "call_plan_sha256": "08d8be995a1ed97709b7fbdf37ec7c668886dd5f72aa2d2b420198e84423f498",
@@ -22,7 +24,7 @@
       "expected_estimated_cost_usd": 0.00841695,
       "maximum_estimated_cost_usd": 0.01690875,
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
-      "paid_execution_authorized": false
+      "paid_execution_authorized": true
     }
   },
   "prior_stage_attempts_history": [
@@ -89,7 +91,9 @@
       "succeeded_attempts": 9,
       "failed_attempts": 1,
       "accepted_case_count": 9,
-      "repair_cases": ["ambiguous"],
+      "repair_cases": [
+        "ambiguous"
+      ],
       "provider_surface_fallback_case_count": 0,
       "reported_input_tokens": 13866,
       "reported_output_tokens": 1573,
