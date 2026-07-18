@@ -75,6 +75,7 @@ from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_recorded_semantic_runtime,
     require_semantic_runtime_contract,
+    require_unified_semantic_query_contract,
     semantic_encoder_spec_from_config,
 )
 
@@ -918,6 +919,7 @@ def main() -> None:
     args = parser.parse_args()
 
     pm_config = load_config(args.pm_v2_config)
+    semantic_query_contract = require_unified_semantic_query_contract(pm_config)
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 training requires a pm-v1.5 config")
     sealed_internal_bundle = require_sealed_internal_label_bundle(
@@ -1012,9 +1014,18 @@ def main() -> None:
             "development_external_centroid_scale_comparison_required"
         )
         is not True
+        or semantic_diagnostic_cfg.get(
+            "unified_step0_state_semantic_query_required"
+        )
+        is not True
+        or semantic_diagnostic_cfg.get(
+            "section_allocation_required_for_every_state"
+        )
+        is not True
     ):
         raise RuntimeError("training lacks the frozen semantic diagnostic contract")
     development_truncation = development_data_report.get("semantic_truncation") or {}
+    development_sections = development_truncation.get("section_allocation") or {}
     if (
         semantic_diagnostic_cfg.get("current_user_text_truncation_must_be_zero")
         is not True
@@ -1029,6 +1040,15 @@ def main() -> None:
         is not True
         or int(development_truncation.get("telemetry_unavailable_state_count", -1))
         != 0
+        or any(
+            int((development_sections.get(name) or {}).get("state_count", -1))
+            != len(states)
+            for name in (
+                "current_user",
+                "session_summary",
+                "recent_dialogue",
+            )
+        )
     ):
         raise RuntimeError(
             "development semantic truncation telemetry is absent or current text was truncated"
@@ -1417,6 +1437,24 @@ def main() -> None:
             "role": "internal_only_diagnostic_not_candidate_selection",
             "use_state_bge": use_state_bge,
             "include_step0": include_step0,
+            "interpretation": (
+                "component_removal_system_variant"
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                and not include_step0
+                else "retrained_feature_set_ablation"
+            ),
+            "residual_reference_policy": (
+                "transparent_rule_with_same_step0"
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                and include_step0
+                else "M0+R0"
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                else None
+            ),
+            "residual_reference_policy_changed_with_component_removal": bool(
+                selected_algorithm == "rule_relative_safe_residual_hgb"
+                and not include_step0
+            ),
             "ood_calibration": ood_report,
             "uncertainty_calibration": uncertainty_report,
             "selection_calibration": selection_report,
@@ -1572,6 +1610,7 @@ def main() -> None:
                 live_training_runtime_verification["contract_sha256"]
             ),
             "semantic_diagnostics_protocol": semantic_diagnostic_cfg["protocol"],
+            "semantic_query_contract": semantic_query_contract,
             "internal_ablation": selected_algorithm + "_without_step0",
             "internal_ablation_without_state_bge": (
                 selected_algorithm + "_without_state_bge"
@@ -1580,6 +1619,14 @@ def main() -> None:
                 selected_algorithm + "_without_state_bge_or_step0"
             ),
             "internal_ablation_results_may_select_candidate": False,
+            "without_step0_interpretation": (
+                "component_removal_system_variant"
+                if selected_algorithm == "rule_relative_safe_residual_hgb"
+                else "retrained_feature_set_ablation"
+            ),
+            "without_step0_is_pure_feature_ablation": bool(
+                selected_algorithm != "rule_relative_safe_residual_hgb"
+            ),
             "no_step0_residual_baseline": (
                 "M0+R0"
                 if selected_algorithm == "rule_relative_safe_residual_hgb"
@@ -1923,6 +1970,14 @@ def main() -> None:
         "internal_state_bge_ablation_bootstrap": internal_no_state_bge_bootstrap,
         "internal_lexical_ablation_bootstrap": internal_lexical_bootstrap,
         "internal_ablation_results_may_select_or_retune_candidate": False,
+        "internal_without_step0_interpretation": (
+            "component_removal_system_variant"
+            if selected_algorithm == "rule_relative_safe_residual_hgb"
+            else "retrained_feature_set_ablation"
+        ),
+        "internal_without_step0_is_pure_feature_ablation": bool(
+            selected_algorithm != "rule_relative_safe_residual_hgb"
+        ),
         "gate_m": gate_m,
         "gate_f": gate_f,
         "gate_e": {

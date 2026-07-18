@@ -14,6 +14,7 @@ from .contracts import (
     canonical_action_id,
     parse_action_id,
 )
+from .io import canonical_json, sha256_text
 
 
 class StrictModel(BaseModel):
@@ -178,8 +179,10 @@ class Step0StrategyObservation(StrictModel):
 
 
 class Step0Observation(StrictModel):
-    protocol: Literal["pm-v1.5-step0-semantic-source-observation-v2"] = (
-        "pm-v1.5-step0-semantic-source-observation-v2"
+    protocol: Literal[
+        "pm-v1.5-step0-semantic-source-observation-v3-unified-state-query"
+    ] = (
+        "pm-v1.5-step0-semantic-source-observation-v3-unified-state-query"
     )
     observation_stage: Literal["pre_item_retrieval"] = "pre_item_retrieval"
     memory_sources: dict[MemorySource, Step0MemoryObservation]
@@ -323,12 +326,17 @@ class PMV2State(StrictModel):
             semantic = self.provenance["semantic_observation"]
             expected_semantic_keys = {
                 "protocol",
+                "semantic_query_protocol",
                 "encoder_spec_sha256",
                 "encoder_snapshot_tree_sha256",
                 "views",
                 "per_view_dimension",
                 "combined_dimension",
                 "tokenization",
+                "step0_semantic_query_sha256",
+                "state_embedding_query_sha256",
+                "step0_semantic_query_vector_sha256",
+                "state_embedding_query_vector_sha256",
                 "visible_input_sha256",
                 "observation_sha256",
             }
@@ -339,18 +347,56 @@ class PMV2State(StrictModel):
             for key in (
                 "encoder_spec_sha256",
                 "encoder_snapshot_tree_sha256",
+                "step0_semantic_query_sha256",
+                "state_embedding_query_sha256",
+                "step0_semantic_query_vector_sha256",
+                "state_embedding_query_vector_sha256",
                 "visible_input_sha256",
                 "observation_sha256",
             ):
                 value = semantic.get(key)
                 if not isinstance(value, str) or len(value) != 64:
                     raise ValueError(f"semantic observation {key} must be SHA-256")
+            if semantic.get("semantic_query_protocol") != (
+                "pm-v1.5-unified-step0-state-semantic-query-v1"
+            ):
+                raise ValueError("semantic observation query protocol is stale")
+            if (
+                semantic["step0_semantic_query_sha256"]
+                != semantic["state_embedding_query_sha256"]
+                or semantic["step0_semantic_query_vector_sha256"]
+                != semantic["state_embedding_query_vector_sha256"]
+            ):
+                raise ValueError("Step-0 and state embedding semantic queries drift")
+            observation_payload = {
+                key: value
+                for key, value in semantic.items()
+                if key != "observation_sha256"
+            }
+            if sha256_text(canonical_json(observation_payload)) != semantic[
+                "observation_sha256"
+            ]:
+                raise ValueError("semantic observation content hash is stale")
+            dimension = int(semantic.get("per_view_dimension") or 0)
+            if dimension <= 0 or len(self.text_embedding) != 2 * dimension:
+                raise ValueError("semantic observation per-view dimensions are invalid")
+            state_vector_sha256 = sha256_text(
+                canonical_json(self.text_embedding[dimension:])
+            )
+            if state_vector_sha256 != semantic[
+                "state_embedding_query_vector_sha256"
+            ]:
+                raise ValueError("state embedding vector hash drifts from its audit")
             tokenization = semantic.get("tokenization")
-            if not isinstance(tokenization, dict) or set(tokenization) != {
+            base_tokenization_keys = {
                 "protocol",
                 "max_length",
                 "truncation_side",
                 "views",
+            }
+            if not isinstance(tokenization, dict) or frozenset(tokenization) not in {
+                frozenset(base_tokenization_keys),
+                frozenset(base_tokenization_keys | {"section_allocation"}),
             }:
                 raise ValueError("semantic tokenization telemetry is malformed")
             telemetry_views = tokenization.get("views")
@@ -378,6 +424,70 @@ class PMV2State(StrictModel):
                     != (int(row["truncated_token_count"]) > 0)
                 ):
                     raise ValueError("semantic tokenization row is inconsistent")
+            visible_view = telemetry_views.get("visible_dialogue_state") or {}
+            if visible_view and visible_view.get("input_sha256") != semantic[
+                "state_embedding_query_sha256"
+            ]:
+                raise ValueError("semantic query hash drifts from tokenization audit")
+            section_allocation = tokenization.get("section_allocation")
+            if section_allocation is not None:
+                expected_allocation_keys = {
+                    "protocol",
+                    "max_length",
+                    "current_user_state_token_budget",
+                    "session_summary_token_budget",
+                    "history_retention_policy",
+                    "implicit_full_state_truncation",
+                    "final_visible_state_token_count",
+                    "sections",
+                }
+                if (
+                    not isinstance(section_allocation, dict)
+                    or set(section_allocation) != expected_allocation_keys
+                    or section_allocation.get("protocol")
+                    != "pm-v1.5-visible-dialogue-state-v2-section-aware"
+                    or section_allocation.get("history_retention_policy")
+                    != "most-recent-token-suffix-preserve-chronology"
+                    or section_allocation.get("implicit_full_state_truncation")
+                    != "forbidden"
+                    or int(section_allocation.get("max_length", -1))
+                    != int(tokenization.get("max_length", -2))
+                    or int(section_allocation.get("final_visible_state_token_count", -1))
+                    != int(visible_view.get("original_token_count", -2))
+                    or bool(visible_view.get("truncated"))
+                ):
+                    raise ValueError("semantic section allocation is malformed")
+                sections = section_allocation.get("sections")
+                if not isinstance(sections, dict) or set(sections) != {
+                    "current_user",
+                    "session_summary",
+                    "recent_dialogue",
+                }:
+                    raise ValueError("semantic section allocation is incomplete")
+                for section_name, row in sections.items():
+                    if not isinstance(row, dict) or set(row) != {
+                        "original_token_count",
+                        "retained_token_count",
+                        "dropped_token_count",
+                        "input_sha256",
+                    }:
+                        raise ValueError("semantic section allocation row is malformed")
+                    original = int(row["original_token_count"])
+                    retained = int(row["retained_token_count"])
+                    dropped = int(row["dropped_token_count"])
+                    if (
+                        min(original, retained, dropped) < 0
+                        or original != retained + dropped
+                        or not isinstance(row["input_sha256"], str)
+                        or len(row["input_sha256"]) != 64
+                    ):
+                        raise ValueError("semantic section allocation row is inconsistent")
+                    budget_key = {
+                        "current_user": "current_user_state_token_budget",
+                        "session_summary": "session_summary_token_budget",
+                    }.get(section_name)
+                    if budget_key and retained > int(section_allocation[budget_key]):
+                        raise ValueError("semantic section allocation exceeds its budget")
         elif self.text_embedding:
             raise ValueError("text_embedding requires semantic observation provenance")
         return self

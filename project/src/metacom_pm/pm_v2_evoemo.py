@@ -1381,10 +1381,33 @@ def run_pmv2_fixed_evoemo(
         )
         else "FAIL"
     )
+    section_rows = preflight["semantic_truncation"].get(
+        "section_allocation"
+    ) or {}
+    preflight["semantic_truncation"]["complete_section_allocation_gate"] = (
+        "PASS"
+        if (
+            semantic_encoder is None
+            or all(
+                int((section_rows.get(name) or {}).get("state_count", -1))
+                == len(preflight_states)
+                for name in (
+                    "current_user",
+                    "session_summary",
+                    "recent_dialogue",
+                )
+            )
+        )
+        else "FAIL"
+    )
     if (
         preflight["semantic_truncation"]["current_user_text_gate"] != "PASS"
         or preflight["semantic_truncation"][
             "implicit_visible_state_truncation_gate"
+        ]
+        != "PASS"
+        or preflight["semantic_truncation"][
+            "complete_section_allocation_gate"
         ]
         != "PASS"
     ):
@@ -2075,9 +2098,33 @@ def run_pmv2_fixed_evoemo(
                             row.content for row in runtime.current_session_history
                         )
                     )
-                    current_turn_tokens = estimate_tokens(
-                        runtime.current_user_text
+                    semantic_views = (
+                        (
+                            (
+                                getattr(pm_state, "provenance", {}) or {}
+                            ).get("semantic_observation")
+                            or {}
+                        ).get("tokenization")
+                        or {}
+                    ).get("views") or {}
+                    semantic_visible_tokens = int(
+                        (
+                            semantic_views.get("visible_dialogue_state")
+                            or {}
+                        ).get("original_token_count", 0)
                     )
+                    semantic_current_tokens = int(
+                        (semantic_views.get("current_user_text") or {}).get(
+                            "original_token_count", 0
+                        )
+                    )
+                    if semantic_encoder is not None and requires_step0_observation and (
+                        semantic_visible_tokens <= 0
+                        or semantic_current_tokens <= 0
+                    ):
+                        raise RuntimeError(
+                            "reportable Step-0 cost lacks semantic token telemetry"
+                        )
                     cost = CostRecord(
                         pm_input_tokens_est=(
                             visible_state_tokens
@@ -2105,12 +2152,17 @@ def run_pmv2_fixed_evoemo(
                             else 0
                         ),
                         step0_encoder_input_tokens_est=(
-                            3 * visible_state_tokens + 2 * current_turn_tokens
+                            2 * semantic_visible_tokens
+                            + 2 * semantic_current_tokens
                             if requires_step0_observation
+                            and semantic_encoder is not None
                             else 0
                         ),
                         step0_encoder_invocations=(
-                            4 if requires_step0_observation else 0
+                            2
+                            if requires_step0_observation
+                            and semantic_encoder is not None
+                            else 0
                         ),
                         step0_latency_ms=pre_evidence_ms,
                         pre_evidence_compute_ms=pre_evidence_ms,

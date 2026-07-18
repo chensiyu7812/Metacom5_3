@@ -26,7 +26,12 @@ from metacom_pm.contracts import (
 )
 from metacom_pm.attempt_ledger import PersistentAttemptLedger
 from metacom_pm.config import endpoint_from_config, load_config
-from metacom_pm.evoemo import _catalog, build_evo_memory, load_evoemo
+from metacom_pm.evoemo import (
+    _catalog,
+    build_evo_memory,
+    load_evoemo,
+    make_evo_runtime_state,
+)
 from metacom_pm.io import (
     canonical_json,
     iter_jsonl,
@@ -81,7 +86,10 @@ from metacom_pm.pm_v2_data import (
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
 from metacom_pm.pm_v1_5_semantic import (
     FrozenSemanticEncoderSpec,
+    FrozenTransformerSemanticEncoder,
     SemanticEncoderBinding,
+    prepare_visible_semantic_state,
+    visible_dialogue_state_text,
 )
 from metacom_pm.pm_v1_5_required_hit import validate_required_hit_preflight
 from metacom_pm.pm_v2_judging import prompt_contract_hash
@@ -1081,6 +1089,53 @@ class _FakeSemanticEncoder:
         return np.vstack(rows)
 
 
+class _ReversibleTokenizer:
+    truncation_side = "right"
+
+    def __init__(self) -> None:
+        self._token_to_id: dict[str, int] = {}
+        self._id_to_token: dict[int, str] = {}
+
+    def __call__(self, text, *, add_special_tokens=False, **kwargs):
+        del kwargs
+        ids = []
+        for token in str(text).split():
+            if token not in self._token_to_id:
+                token_id = 1000 + len(self._token_to_id)
+                self._token_to_id[token] = token_id
+                self._id_to_token[token_id] = token
+            ids.append(self._token_to_id[token])
+        if add_special_tokens:
+            ids = [101, *ids, 102]
+        return {"input_ids": ids}
+
+    def decode(self, ids, **kwargs):
+        del kwargs
+        return " ".join(
+            self._id_to_token[value] for value in ids if value >= 1000
+        )
+
+
+class _SectionAwareFakeSemanticEncoder(_FakeSemanticEncoder):
+    def __init__(self) -> None:
+        self.tokenizer = _ReversibleTokenizer()
+        self.encoded_batches: list[tuple[str, ...]] = []
+
+    def encode(self, texts):
+        self.encoded_batches.append(tuple(str(text) for text in texts))
+        return super().encode(texts)
+
+    def assemble_visible_dialogue_state(self, **kwargs):
+        return FrozenTransformerSemanticEncoder.assemble_visible_dialogue_state(
+            self, **kwargs
+        )
+
+    def tokenization_telemetry(self, texts, *, view_names=None):
+        return FrozenTransformerSemanticEncoder.tokenization_telemetry(
+            self, texts, view_names=view_names
+        )
+
+
 def test_reportable_semantic_observation_has_development_external_parity() -> None:
     encoder = _FakeSemanticEncoder()
     development = case_to_state(
@@ -1112,6 +1167,158 @@ def test_reportable_semantic_observation_has_development_external_parity() -> No
     assert np.allclose(
         builder._metadata_raw(development), builder._metadata_raw(external)
     )
+
+
+def test_long_development_and_external_states_share_one_bounded_semantic_query() -> None:
+    encoder = _SectionAwareFakeSemanticEncoder()
+    long_history = [
+        DialogueTurn(
+            role="user" if index % 2 == 0 else "assistant",
+            content=" ".join(
+                f"history_{index}_{token}" for token in range(30)
+            ),
+        )
+        for index in range(10)
+    ]
+    case = _case(case_id="long_unified_semantic_query").model_copy(
+        update={
+            "recent_dialogue": long_history,
+            "session_summary": " ".join(
+                f"summary_{index}" for index in range(80)
+            ),
+        }
+    )
+    old_unbounded_query = visible_dialogue_state_text(
+        current_user_text=case.current_user_text,
+        current_session_history=case.recent_dialogue,
+        current_session_summary=case.session_summary,
+    )
+    prepared = prepare_visible_semantic_state(
+        encoder,
+        current_user_text=case.current_user_text,
+        current_session_history=case.recent_dialogue,
+        current_session_summary=case.session_summary,
+    )
+    assert prepared.query_text != old_unbounded_query
+    assert "history_9_29" in prepared.query_text
+    assert "history_0_0" not in prepared.query_text
+
+    encoder.encoded_batches.clear()
+    development = case_to_state(
+        user_id="long_semantic_user",
+        case=case,
+        split=PMV2Split.TRAIN,
+        strategy_catalog_count=0,
+        strategy_estimated_tokens=0,
+        semantic_encoder=encoder,
+    )
+    audit = development.provenance["semantic_observation"]
+    assert audit["step0_semantic_query_sha256"] == audit[
+        "state_embedding_query_sha256"
+    ]
+    assert audit["step0_semantic_query_vector_sha256"] == audit[
+        "state_embedding_query_vector_sha256"
+    ]
+    allocation = audit["tokenization"]["section_allocation"]
+    assert allocation["final_visible_state_token_count"] <= encoder.spec.max_length
+    assert allocation["sections"]["recent_dialogue"]["dropped_token_count"] > 0
+    assert audit["tokenization"]["views"]["visible_dialogue_state"][
+        "truncated"
+    ] is False
+    assert not any(old_unbounded_query in batch for batch in encoder.encoded_batches)
+
+    runtime = state_to_v1_runtime(development)
+    external = runtime_to_pmv2_state(
+        runtime,
+        strategy_catalog_count=0,
+        strategy_estimated_tokens=0,
+        semantic_encoder=encoder,
+    )
+    external_audit = external.provenance["semantic_observation"]
+    assert external_audit["state_embedding_query_sha256"] == audit[
+        "state_embedding_query_sha256"
+    ]
+    assert external_audit["state_embedding_query_vector_sha256"] == audit[
+        "state_embedding_query_vector_sha256"
+    ]
+    assert np.allclose(external.text_embedding, development.text_embedding)
+
+    tampered_runtime = runtime.model_copy(
+        update={
+            "provenance": {
+                **runtime.provenance,
+                "semantic_query_sha256": "0" * 64,
+            }
+        }
+    )
+    with pytest.raises(RuntimeError, match="lineage drifts"):
+        runtime_to_pmv2_state(
+            tampered_runtime,
+            semantic_encoder=encoder,
+        )
+    missing_lineage_runtime = runtime.model_copy(
+        update={
+            "provenance": {
+                key: value
+                for key, value in runtime.provenance.items()
+                if not key.startswith("semantic_query")
+            }
+        }
+    )
+    with pytest.raises(RuntimeError, match="lineage drifts"):
+        runtime_to_pmv2_state(
+            missing_lineage_runtime,
+            semantic_encoder=encoder,
+        )
+
+    tampered_state = development.model_dump(mode="json")
+    tampered_state["provenance"]["semantic_observation"][
+        "step0_semantic_query_sha256"
+    ] = "0" * 64
+    with pytest.raises(ValidationError, match="semantic queries drift"):
+        PMV2State.model_validate_json(json.dumps(tampered_state))
+
+
+def test_evoemo_memory_step0_and_state_embedding_share_semantic_lineage() -> None:
+    encoder = _SectionAwareFakeSemanticEncoder()
+    conversation = [
+        {
+            "role": "seeker" if index % 2 == 0 else "supporter",
+            "content": " ".join(
+                f"external_history_{index}_{token}" for token in range(30)
+            ),
+        }
+        for index in range(8)
+    ]
+    memory_items = [
+        MemoryItem(
+            memory_id=f"mem_{index:012x}",
+            source=source,
+            created_session=1,
+            text=f"Relevant {source.value} memory about workplace uncertainty.",
+        )
+        for index, source in enumerate(MemorySource, 1)
+    ]
+    runtime = make_evo_runtime_state(
+        user={"id": "external_long_user"},
+        topic={"idx": 1},
+        conversation=conversation,
+        current_user_text="I am unsure how to handle tomorrow's meeting.",
+        items=memory_items,
+        turn_index=4,
+        condition="PM",
+        semantic_encoder=encoder,
+    )
+    assert runtime.provenance["semantic_query_sha256"]
+    assert runtime.provenance["semantic_query_vector_sha256"]
+    external = runtime_to_pmv2_state(runtime, semantic_encoder=encoder)
+    audit = external.provenance["semantic_observation"]
+    assert runtime.provenance["semantic_query_sha256"] == audit[
+        "state_embedding_query_sha256"
+    ]
+    assert runtime.provenance["semantic_query_vector_sha256"] == audit[
+        "state_embedding_query_vector_sha256"
+    ]
 
 
 def test_memory_metadata_uses_retrieval_capacity_not_catalog_tail() -> None:

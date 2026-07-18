@@ -21,6 +21,7 @@ from metacom_pm.pm_v2_external_eval import expected_external_units
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_semantic_runtime_contract,
+    require_unified_semantic_query_contract,
     semantic_encoder_spec_from_config,
     semantic_runtime_contract_from_config,
 )
@@ -160,6 +161,7 @@ def main() -> None:
 
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    require_unified_semantic_query_contract(pm_v2_config)
     semantic_encoder = None
     semantic_runtime_verification = None
     if args.condition in {"pm_v2", "pm_v1_5_transparent_rule_step0"}:

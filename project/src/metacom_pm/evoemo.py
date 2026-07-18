@@ -50,9 +50,12 @@ from .prompts import OFFICIAL_ESMEM_SYSTEM, SELECTIVE_ESMEM_SYSTEM, generation_m
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import estimate_tokens, lexical_score, normalize_space
 from .pm_v1_5_semantic import (
+    UNIFIED_SEMANTIC_QUERY_PROTOCOL,
     SemanticTextEncoder,
+    prepare_visible_semantic_state,
     semantic_centroid,
     semantic_query_similarity,
+    semantic_vector_similarity,
     visible_dialogue_state_text,
 )
 from .training import PMModel
@@ -373,21 +376,8 @@ def _catalog(
                 semantic_encoder, query_text, centroid
             )
         else:
-            if len(semantic_query_vector) != len(centroid):
-                raise RuntimeError("semantic query/catalog dimensions differ")
-            semantic_similarity = max(
-                -1.0,
-                min(
-                    1.0,
-                    float(
-                        sum(
-                            float(left) * float(right)
-                            for left, right in zip(
-                                semantic_query_vector, centroid, strict=True
-                            )
-                        )
-                    ),
-                ),
+            semantic_similarity = semantic_vector_similarity(
+                semantic_query_vector, centroid
             )
         semantic_valid = True
     return SourceCatalog(
@@ -447,14 +437,28 @@ def make_evo_runtime_state(
         )
         for row in prior[-8:]
     ]
-    semantic_query_text = visible_dialogue_state_text(
-        current_user_text=current_user_text,
-        current_session_history=history,
-        current_session_summary="",
+    prepared_semantic_state = (
+        prepare_visible_semantic_state(
+            semantic_encoder,
+            current_user_text=current_user_text,
+            current_session_history=history,
+            current_session_summary="",
+        )
+        if semantic_encoder is not None
+        else None
+    )
+    semantic_query_text = (
+        prepared_semantic_state.query_text
+        if prepared_semantic_state is not None
+        else visible_dialogue_state_text(
+            current_user_text=current_user_text,
+            current_session_history=history,
+            current_session_summary="",
+        )
     )
     semantic_query_vector = (
-        semantic_encoder.encode([semantic_query_text])[0]
-        if semantic_encoder is not None
+        prepared_semantic_state.state_query_vector
+        if prepared_semantic_state is not None
         else None
     )
     inventory = {
@@ -481,6 +485,28 @@ def make_evo_runtime_state(
         if sources <= available
         for strategy in StrategyMode
     )
+    runtime_provenance = {
+        "topic_index": int(topic["idx"]),
+        "turn_index": int(turn_index),
+        "track_id": track_id,
+        "condition_label_not_present_in_pm_state": True,
+        "runtime_state_includes_prior_treatment_history": not fixed_open_loop,
+        "fixed_open_loop_context": fixed_open_loop,
+        "fixed_context_sha256": transcript_hash if fixed_open_loop else None,
+        "exogenous_state_id": exogenous_state_id,
+    }
+    if prepared_semantic_state is not None:
+        runtime_provenance.update(
+            {
+                "semantic_query_protocol": UNIFIED_SEMANTIC_QUERY_PROTOCOL,
+                "semantic_query_sha256": (
+                    prepared_semantic_state.semantic_query_sha256
+                ),
+                "semantic_query_vector_sha256": (
+                    prepared_semantic_state.semantic_query_vector_sha256
+                ),
+            }
+        )
     return RuntimeState(
         state_id=state_id,
         card_id=card_id,
@@ -493,18 +519,7 @@ def make_evo_runtime_state(
         session_index=session_index,
         inventory=inventory,
         allowed_actions=allowed,
-        provenance={
-            "topic_index": int(topic["idx"]),
-            "turn_index": int(turn_index),
-            "track_id": track_id,
-            "condition_label_not_present_in_pm_state": True,
-            "runtime_state_includes_prior_treatment_history": not fixed_open_loop,
-            "fixed_open_loop_context": fixed_open_loop,
-            "fixed_context_sha256": (
-                transcript_hash if fixed_open_loop else None
-            ),
-            "exogenous_state_id": exogenous_state_id,
-        },
+        provenance=runtime_provenance,
     )
 
 

@@ -27,6 +27,9 @@ from .io import canonical_json, sha256_file, sha256_text
 
 SEMANTIC_ENCODER_PROTOCOL = "pm-v1.5-frozen-visible-text-encoder-v1"
 SEMANTIC_INPUT_PROTOCOL = "pm-v1.5-visible-dialogue-state-v2-section-aware"
+UNIFIED_SEMANTIC_QUERY_PROTOCOL = (
+    "pm-v1.5-unified-step0-state-semantic-query-v1"
+)
 SEMANTIC_SNAPSHOT_HASH_PROTOCOL = "relative-path-tab-sha256-v1"
 SEMANTIC_RUNTIME_PROTOCOL = "pm-v1.5-semantic-runtime-canary-v1"
 SEMANTIC_CANARY_TEXTS = (
@@ -126,6 +129,49 @@ class SemanticTextEncoder(Protocol):
 
     def encode(self, texts: Sequence[str]) -> np.ndarray:
         """Return a finite, row-normalized ``[n, dimension]`` float matrix."""
+
+
+@dataclass(frozen=True)
+class PreparedVisibleSemanticState:
+    """One bounded semantic input shared by Step-0 and state features."""
+
+    query_text: str
+    current_user_vector: tuple[float, ...]
+    state_query_vector: tuple[float, ...]
+    combined_embedding: tuple[float, ...]
+    semantic_query_sha256: str
+    semantic_query_vector_sha256: str
+    audit: Mapping[str, Any]
+
+
+def require_unified_semantic_query_contract(
+    config: Mapping[str, Any],
+) -> dict[str, str]:
+    """Fail before work if the frozen config permits two full-state BGE inputs."""
+
+    step0 = config.get("step0_observation") or {}
+    diagnostics = config.get("semantic_diagnostics") or {}
+    expected = {
+        "step0_protocol": (
+            "pm-v1.5-step0-semantic-source-observation-v3-unified-state-query"
+        ),
+        "semantic_query_protocol": UNIFIED_SEMANTIC_QUERY_PROTOCOL,
+    }
+    if (
+        step0.get("protocol") != expected["step0_protocol"]
+        or step0.get("stage") != "pre_item_retrieval"
+        or step0.get("full_state_semantic_query")
+        != expected["semantic_query_protocol"]
+        or diagnostics.get("unified_step0_state_semantic_query_required")
+        is not True
+        or diagnostics.get("section_allocation_required_for_every_state")
+        is not True
+    ):
+        raise RuntimeError(
+            "PM-v1.5 config lacks the unified section-aware Step-0/state "
+            "semantic-query contract"
+        )
+    return expected
 
 
 def resolve_semantic_encoder_binding(
@@ -562,14 +608,39 @@ def visible_dialogue_state_text(
     )
 
 
-def encode_visible_state(
+def semantic_vector_similarity(
+    query_vector: Sequence[float], centroid: Sequence[float]
+) -> float:
+    """Return a finite clipped cosine for already normalized semantic vectors."""
+
+    query = np.asarray(query_vector, dtype=float)
+    target = np.asarray(centroid, dtype=float)
+    if (
+        query.ndim != 1
+        or target.ndim != 1
+        or query.shape != target.shape
+        or query.size == 0
+        or not np.all(np.isfinite(query))
+        or not np.all(np.isfinite(target))
+    ):
+        raise RuntimeError("semantic query/catalog vectors are invalid or misaligned")
+    query_norm = float(np.linalg.norm(query))
+    target_norm = float(np.linalg.norm(target))
+    if query_norm <= 0.0 or target_norm <= 0.0:
+        raise RuntimeError("semantic query/catalog vectors must be non-zero")
+    return float(
+        np.clip((query / query_norm) @ (target / target_norm), -1.0, 1.0)
+    )
+
+
+def prepare_visible_semantic_state(
     encoder: SemanticTextEncoder,
     *,
     current_user_text: str,
     current_session_history: Sequence[Any],
     current_session_summary: str,
-) -> tuple[list[float], dict[str, Any]]:
-    """Encode current-turn and dialogue-state views once per state."""
+) -> PreparedVisibleSemanticState:
+    """Assemble and encode the sole full-state query used by reportable PM-v1.5."""
 
     assembly_method = getattr(encoder, "assemble_visible_dialogue_state", None)
     if callable(assembly_method):
@@ -591,7 +662,9 @@ def encode_visible_state(
         raise RuntimeError(
             f"semantic visible-state matrix has shape {matrix.shape}, expected {expected}"
         )
-    flattened = matrix.reshape(-1).astype(float).tolist()
+    current_vector = tuple(float(value) for value in matrix[0])
+    state_vector = tuple(float(value) for value in matrix[1])
+    flattened = tuple(float(value) for value in matrix.reshape(-1))
     telemetry_method = getattr(encoder, "tokenization_telemetry", None)
     tokenization = (
         telemetry_method(
@@ -613,14 +686,28 @@ def encode_visible_state(
             raise RuntimeError(
                 "section-aware visible state must not reach implicit tokenizer truncation"
             )
+    visible_view = (tokenization.get("views") or {}).get(
+        "visible_dialogue_state"
+    ) or {}
+    query_sha256 = visible_view.get("input_sha256")
+    if not isinstance(query_sha256, str) or len(query_sha256) != 64:
+        # Nonreportable fixture encoders need not implement telemetry, but their
+        # semantic input must still be content addressed deterministically.
+        query_sha256 = sha256_text(" ".join(state_text.split()))
+    vector_sha256 = sha256_text(canonical_json(list(state_vector)))
     audit = {
         "protocol": SEMANTIC_INPUT_PROTOCOL,
+        "semantic_query_protocol": UNIFIED_SEMANTIC_QUERY_PROTOCOL,
         "encoder_spec_sha256": encoder.binding.spec_sha256,
         "encoder_snapshot_tree_sha256": encoder.binding.snapshot_tree_sha256,
         "views": ["current_user_text", "visible_dialogue_state"],
         "per_view_dimension": encoder.spec.output_dimension,
         "combined_dimension": len(flattened),
         "tokenization": tokenization,
+        "step0_semantic_query_sha256": query_sha256,
+        "state_embedding_query_sha256": query_sha256,
+        "step0_semantic_query_vector_sha256": vector_sha256,
+        "state_embedding_query_vector_sha256": vector_sha256,
         "visible_input_sha256": sha256_text(
             canonical_json(
                 {
@@ -631,7 +718,33 @@ def encode_visible_state(
         ),
     }
     audit["observation_sha256"] = sha256_text(canonical_json(audit))
-    return flattened, audit
+    return PreparedVisibleSemanticState(
+        query_text=state_text,
+        current_user_vector=current_vector,
+        state_query_vector=state_vector,
+        combined_embedding=flattened,
+        semantic_query_sha256=query_sha256,
+        semantic_query_vector_sha256=vector_sha256,
+        audit=audit,
+    )
+
+
+def encode_visible_state(
+    encoder: SemanticTextEncoder,
+    *,
+    current_user_text: str,
+    current_session_history: Sequence[Any],
+    current_session_summary: str,
+) -> tuple[list[float], dict[str, Any]]:
+    """Compatibility wrapper around the unified semantic-state preparation."""
+
+    prepared = prepare_visible_semantic_state(
+        encoder,
+        current_user_text=current_user_text,
+        current_session_history=current_session_history,
+        current_session_summary=current_session_summary,
+    )
+    return list(prepared.combined_embedding), dict(prepared.audit)
 
 
 def summarize_semantic_truncation(states: Sequence[Any]) -> dict[str, Any]:

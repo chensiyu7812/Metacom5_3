@@ -26,12 +26,14 @@ from .pm_v2_contracts import (
 from .pm_v1_5_semantic import (
     SemanticTextEncoder,
     semantic_centroid,
-    visible_dialogue_state_text,
+    prepare_visible_semantic_state,
 )
 from .retrieval import DEFAULT_MEMORY_TOP_K
 
 
-STEP0_PROTOCOL = "pm-v1.5-step0-semantic-source-observation-v2"
+STEP0_PROTOCOL = (
+    "pm-v1.5-step0-semantic-source-observation-v3-unified-state-query"
+)
 STRATEGY_FAMILY_CATALOG_PROTOCOL = "pm-v1.5-strategy-family-centroids-v2"
 STRATEGY_FAMILY_HASH_FEATURES = 128
 MEMORY_TOP_K = dict(DEFAULT_MEMORY_TOP_K)
@@ -372,8 +374,10 @@ def readiness_natural_language_challenge(
         n_features=STRATEGY_FAMILY_HASH_FEATURES,
     )
 
-    def score(text: str) -> tuple[dict[str, float], str, float]:
-        query = semantic_encoder.encode([text])[0]
+    def score_vector(
+        query: Sequence[float],
+    ) -> tuple[dict[str, float], str, float]:
+        query = np.asarray(query, dtype=float)
         values = {
             name: float(np.clip(query @ np.asarray(vector), -1.0, 1.0))
             for name, vector in anchors.items()
@@ -384,17 +388,20 @@ def readiness_natural_language_challenge(
 
     rows = []
     for case in _READINESS_CHALLENGES:
-        full_text = visible_dialogue_state_text(
+        prepared = prepare_visible_semantic_state(
+            semantic_encoder,
             current_user_text=case["current_user_text"],
             current_session_history=[
                 {"role": "assistant", "content": case["assistant_context"]}
             ],
             current_session_summary=case["session_summary"],
         )
-        current_scores, current_top1, current_margin = score(
-            case["current_user_text"]
+        current_scores, current_top1, current_margin = score_vector(
+            prepared.current_user_vector
         )
-        context_scores, context_top1, context_margin = score(full_text)
+        context_scores, context_top1, context_margin = score_vector(
+            prepared.state_query_vector
+        )
         expected = case["expected_contextual_readiness"]
         rows.append(
             {
@@ -441,17 +448,31 @@ def _query_family_similarities(
     query_text: str,
     catalog: StrategyFamilyCatalog | None,
     semantic_encoder: SemanticTextEncoder | None,
+    semantic_query_vector: Sequence[float] | None = None,
 ) -> tuple[bool, dict[str, float]]:
     zeros = {family: 0.0 for family in STRATEGY_FAMILY_IDS}
     if catalog is None:
         return False, zeros
-    if semantic_encoder is not None:
-        if catalog.audit.get("encoder_spec_sha256") != semantic_encoder.binding.spec_sha256:
-            raise RuntimeError("Strategy Step-0 catalog/encoder binding mismatch")
+    if (
+        semantic_encoder is not None
+        and catalog.audit.get("encoder_spec_sha256")
+        != semantic_encoder.binding.spec_sha256
+    ):
+        raise RuntimeError("Strategy Step-0 catalog/encoder binding mismatch")
+    if semantic_query_vector is not None:
+        query = np.asarray(semantic_query_vector, dtype=float)
+    elif semantic_encoder is not None:
         query = semantic_encoder.encode([query_text])[0]
     else:
         vectorizer = _vectorizer(len(next(iter(catalog.vectors.values()))))
         query = vectorizer.transform([query_text]).toarray()[0].astype(np.float64)
+    expected_dimension = len(next(iter(catalog.vectors.values())))
+    if (
+        query.ndim != 1
+        or query.shape != (expected_dimension,)
+        or not np.all(np.isfinite(query))
+    ):
+        raise RuntimeError("Strategy Step-0 query vector is invalid or misaligned")
     norm = float(np.linalg.norm(query))
     if norm <= 0.0:
         return False, zeros
@@ -466,15 +487,28 @@ def semantic_strategy_readiness(
     query_text: str,
     catalog: StrategyFamilyCatalog | None,
     semantic_encoder: SemanticTextEncoder | None,
+    semantic_query_vector: Sequence[float] | None = None,
 ) -> dict[str, float]:
     if catalog is None:
         return {readiness: 0.0 for readiness in ADVICE_READINESS_IDS}
-    if semantic_encoder is not None:
+    if semantic_query_vector is not None:
+        query = np.asarray(semantic_query_vector, dtype=float)
+    elif semantic_encoder is not None:
         query = semantic_encoder.encode([query_text])[0]
     else:
         vectorizer = _vectorizer(len(next(iter(catalog.readiness_vectors.values()))))
         query = vectorizer.transform([query_text]).toarray()[0].astype(np.float64)
-        query /= max(float(np.linalg.norm(query)), 1e-12)
+    expected_dimension = len(next(iter(catalog.readiness_vectors.values())))
+    if (
+        query.ndim != 1
+        or query.shape != (expected_dimension,)
+        or not np.all(np.isfinite(query))
+    ):
+        raise RuntimeError("Strategy readiness query vector is invalid or misaligned")
+    norm = float(np.linalg.norm(query))
+    if norm <= 0.0:
+        return {readiness: 0.0 for readiness in ADVICE_READINESS_IDS}
+    query /= norm
     return {
         readiness: float(
             np.clip(query @ np.asarray(catalog.readiness_vectors[readiness]), -1.0, 1.0)
@@ -508,6 +542,8 @@ def build_step0_observation(
     strategy_family_catalog: StrategyFamilyCatalog | None = None,
     semantic_encoder: SemanticTextEncoder | None = None,
     readiness_text: str | None = None,
+    semantic_query_vector: Sequence[float] | None = None,
+    readiness_query_vector: Sequence[float] | None = None,
 ) -> Step0Observation:
     """Materialize the complete PM-visible observation before item retrieval."""
 
@@ -534,6 +570,7 @@ def build_step0_observation(
         query_text,
         strategy_family_catalog,
         semantic_encoder,
+        semantic_query_vector,
     )
     if not strategy_available:
         strategy_valid = False
@@ -542,6 +579,7 @@ def build_step0_observation(
         readiness_text or query_text,
         strategy_family_catalog,
         semantic_encoder,
+        readiness_query_vector,
     )
     if not strategy_available:
         readiness_scores = {

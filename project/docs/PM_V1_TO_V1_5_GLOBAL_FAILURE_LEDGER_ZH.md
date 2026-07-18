@@ -275,7 +275,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-SEM-01 | C1 | actual controls 最初只破坏 family/regime，且 `--n-controls 0` 可绕过 | 12 fields × 2 controls，数量/seed/matrix hash 冻结 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-SEM-02 | C1 | `deliberately_unrelated_control` 太明显，只测 sentinel 识别 | 使用真实 donor、标签翻转、age 矛盾、时序/grounding/strategy corruption | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-SEM-03 | C1 | order pilot 一度只检 schema，`gating_threshold=None` | 3 units × 2 schemas × 2 orders × 2 families，mean/max 数值门 | `CODE_CLOSED_RUN_UNVERIFIED` |
-| V15-SEM-04 | C1 | 5 条 readiness canary 太小，且 runtime 文件顶层 `PASS` 容易被误读成 readiness 全通过 | 扩为 20 条 outcome-free paraphrase challenge；runtime 与 `REPORT_ONLY_x_OF_20` 分开报告，不允许据此调 anchor | `CODE_CLOSED_LOCAL_REPORT_ONLY_15_OF_20` |
+| V15-SEM-04 | C1 | 5 条 readiness canary 太小，且 runtime 文件顶层 `PASS` 容易被误读成 readiness 全通过 | 扩为 20 条 outcome-free paraphrase challenge；runtime 与 `REPORT_ONLY_x_OF_20` 分开报告，不允许据此调 anchor | `CODE_CLOSED_LOCAL_REPORT_ONLY_14_OF_20` |
 | V15-TRAIN-01 | C1 | 当前绝对 HGB 容易浪费容量预测 state 难度，而非 action 边际值 | train-only 比较 absolute、state-centered delta、rule-relative residual、rank 候选 | `PENDING_RUN_EVIDENCE` |
 | V15-TRAIN-02 | C1 | 直接换大模型/RL 与 24 train users、完整 action matrix 不匹配 | 小样本可审计监督学习；RL 留给有 transition/user feedback 的后续研究 | 设计边界 |
 | V15-TRAIN-03 | C1 | 缺少同观测强 rule 会把弱规则做 strawman | transparent rule 使用相同 Step-0，并作为 Gate M 主比较 | `CODE_CLOSED_RUN_UNVERIFIED` |
@@ -286,6 +286,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-TRAIN-08 | C1 | 原 no-Step0 消融仍保留 state BGE，无法区分“语言表示收益”和“Step-0 收益” | internal 一次性消费前同时冻结 full、无 Step-0、无 state-BGE、word/char-only 四格诊断；结果只解释组件贡献，不得选择或重调主 candidate，也不进入 external 主矩阵 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-TRAIN-09 | C1 | rule candidates 只比较聚合 action count，可能把在不同 states 上决策的两套 policy 错判为等价；诊断又到 internal 开封后才出现 | 新增 outcome-free pre-sweep grid preflight，记录每个 candidate 的 `action_by_state_sha256`、unique mapping 与 pairwise disagreement；sweep、training、candidate manifest 内容寻址绑定 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-TRAIN-10 | C1 | development 与 external Step-0 分布虽各自记录，却只能人工比对，且存在外部看分布后调阈值的风险 | external dry-run 读取冻结 training report，生成 calibration-vs-external quantile shift artifact；缺失来源显式标 `UNAVAILABLE`；只报告且禁止 selection/retuning | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-TRAIN-11 | C1 | residual 主算法的 no-Step0 版本会把 reference policy 从 transparent rule 改成 `M0+R0`，却可能被误写成纯 feature ablation | candidate manifest、calibration 和 internal report 显式标记 `component_removal_system_variant` 与 reference-policy change；只有非 residual 候选可称 retrained feature-set ablation | `CODE_CLOSED_RUN_UNVERIFIED` |
 
 ### 6.7 comparator、成本与 claim contract
 
@@ -316,6 +317,9 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-ENG-09 | C1 | 512-token `truncation=True` 没有记录，可能让 external 的历史/摘要被静默截断 | 冻结 section-aware input v2：当前话语/summary 固定预算、history 保留最近 token suffix；模型端 implicit truncation 必须为 0，逐 section 只记录计数/hash；current turn 另有完整独立 view | `CODE_CLOSED_LOCAL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
 | V15-ENG-10 | C2 | transparent rule 实际用 train/train-fold 调参，但 doc/report/YAML 声称 calibration；rule decision 还冒用 learned reason | 显式记录 `train_only/train_fold_only`，独立 `TRANSPARENT_RULE_SELECTION_REASON` 并按非 fallback 处理 | `CODE_CLOSED_FULL_TEST_PASS_FORMAL_RUN_UNVERIFIED` |
 | V15-ENG-11 | C1 | wrapper 虽现场验证 BGE runtime，external artifact 自身却未写入该次 runtime 与 training-distribution lineage | learned/rule 的 manifest、preflight、cost、summary、attestation 全部写 live runtime；training report 作为 attested input，另输出内容寻址的分布比较 | `CODE_CLOSED_RUN_UNVERIFIED` |
+| V15-ENG-12 | C0 | Memory/Strategy Step-0 曾使用旧未预算 full text，而 state BGE 使用 section-aware bounded text；长 external context 下两类 PM 特征可能基于相反的历史片段 | 单一 `prepare_visible_semantic_state` 同时生成 bounded text/current+state vectors/audit；development、EvoEmo inventory、runtime adapter 和 readiness challenge 共用；文本与向量双 hash 必须相等 | `CODE_CLOSED_REAL_BGE_STATE_SMOKE_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-ENG-13 | C0 | section-aware encoder 已输出 `section_allocation`，但 `PMV2State` 严格 schema 仍只允许旧 telemetry keys；真实 BGE `case_to_state` 会直接 ValidationError，普通 fake encoder 测试未覆盖 | schema 严格接纳并逐字段校验 allocation；长 development/external 测试、篡改反例及真实 BGE strict-state no-API smoke 全部执行 | `CODE_CLOSED_REAL_BGE_STATE_SMOKE_PASS_FORMAL_RUN_UNVERIFIED` |
+| V15-COST-05 | C1 | 统一语义输入后仍沿用旧 4 encoder invocation / `3×full+2×current` 估算会虚报机制并掩盖真实实现 | 当前实现按两次 `[current,bounded_state]` 批量编码记录 2 invocations，token 数直接取 tokenizer telemetry；无 semantic encoder 的 legacy/fixed 路径为 0 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-01 | C0 | `PAID_RUN_BLOCKED` 一度只是文档说明，各入口可直接 `--run` | 中央 release gate；每 stage 绑定 config/revision/run/cost hash | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-02 | C0 | 旧 pilot、partial attempts、旧 cost hash 或旧 PASS 可能被拼接复用 | immutable fresh output dir；旧 lineage 一律 stale；不覆盖、不拼接 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-03 | C1 | API 失败被误解为额度问题，或未知 attempt 被盲重试 | HTTP 前 ledger fsync；unknown 视为已花费；仅 429 支持限流判断 | `CODE_CLOSED_RUN_UNVERIFIED` |
@@ -489,14 +493,14 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 rule，而不支持 learned PM，
 那也是有效且应报告的研究结论。
 
-## 12. 当前执行快照（2026-07-18）
+## 12. 当前执行快照（2026-07-19）
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`，工作树含本轮尚未提交的 live-training/external-runtime lineage、section-aware input、rule-grid preflight、score comparison 与 2×2 freeze 修复 |
-| tests/preflight | 专用 venv 精确 BGE runtime/canary no-API preflight PASS；CI 同入口的裸 `pytest -q` 为 395 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY`、pytest/static checks PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
+| 分支 | `pm-v1.5_1`；本轮统一 Step-0/state BGE 输入、严格 schema 与 residual 消融解释修复待提交并等待 CI 复核 |
+| tests/preflight | 专用 venv 精确 BGE runtime/canary 与真实 768-d strict `PMV2State` no-API smoke PASS；裸 `pytest -q` 为 398 passed / 13 个预期历史 skip；仓库 release preflight 为 `API_PILOT_READY` 且 syntax/static/pytest 全 PASS；它仍不能替代单独内容寻址的 V1.5 Bank/freeze |
 | semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
-| readiness challenge | 20 个固定 outcome-free challenge：current 17/20、full-context 15/20；状态为 `REPORT_ONLY_15_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
+| readiness challenge | 20 个固定 outcome-free challenge：current 17/20、统一 bounded full-context 14/20；状态为 `REPORT_ONLY_14_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
 | clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
 | formal selected seeds | 52 个 source IDs |
 | Strategy Bank | 11,590 cards / 823 source dialogues / 8 families；与 selected 52 交集为空 |

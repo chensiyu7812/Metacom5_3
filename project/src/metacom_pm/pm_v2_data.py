@@ -48,10 +48,12 @@ from .pm_v1_5_step0 import (
     build_strategy_family_catalog,
 )
 from .pm_v1_5_semantic import (
+    UNIFIED_SEMANTIC_QUERY_PROTOCOL,
+    PreparedVisibleSemanticState,
     SemanticTextEncoder,
-    encode_visible_state,
+    prepare_visible_semantic_state,
     semantic_centroid,
-    semantic_query_similarity,
+    semantic_vector_similarity,
     summarize_semantic_truncation,
     visible_dialogue_state_text,
 )
@@ -3106,6 +3108,7 @@ def _catalog_summary(
     session_index: int,
     n_features: int = CATALOG_HASH_FEATURES,
     semantic_encoder: SemanticTextEncoder | None = None,
+    semantic_query_vector: Sequence[float] | None = None,
 ) -> ObservableSourceSummary:
     statistics = build_deployable_catalog_statistics(
         texts=[memory.text for memory in memories],
@@ -3117,8 +3120,12 @@ def _catalog_summary(
         centroid = semantic_centroid(
             semantic_encoder, [memory.text for memory in memories]
         )
-        similarity = semantic_query_similarity(
-            semantic_encoder, query_text, centroid
+        similarity = (
+            semantic_vector_similarity(semantic_query_vector, centroid)
+            if semantic_query_vector is not None
+            else semantic_vector_similarity(
+                semantic_encoder.encode([query_text])[0], centroid
+            )
         )
         representation_valid = True
     else:
@@ -3155,11 +3162,21 @@ def case_to_state(
     bundle_provenance: dict[str, Any] | None = None,
     semantic_encoder: SemanticTextEncoder | None = None,
 ) -> PMV2State:
-    query = visible_dialogue_state_text(
-        current_user_text=case.current_user_text,
-        current_session_history=case.recent_dialogue,
-        current_session_summary=case.session_summary,
-    )
+    prepared: PreparedVisibleSemanticState | None = None
+    if semantic_encoder is not None:
+        prepared = prepare_visible_semantic_state(
+            semantic_encoder,
+            current_user_text=case.current_user_text,
+            current_session_history=case.recent_dialogue,
+            current_session_summary=case.session_summary,
+        )
+        query = prepared.query_text
+    else:
+        query = visible_dialogue_state_text(
+            current_user_text=case.current_user_text,
+            current_session_history=case.recent_dialogue,
+            current_session_summary=case.session_summary,
+        )
     memories = {
         MemorySource.MP: case.profile_memories,
         MemorySource.MS: case.summary_memories,
@@ -3172,6 +3189,9 @@ def case_to_state(
             query_text=query,
             session_index=case.session_index,
             semantic_encoder=semantic_encoder,
+            semantic_query_vector=(
+                prepared.state_query_vector if prepared is not None else None
+            ),
         )
         for source, items in memories.items()
     }
@@ -3205,14 +3225,9 @@ def case_to_state(
     if generation_lineage:
         provenance["data_generation_sha256"] = str(generation_lineage)
     text_embedding: list[float] = []
-    if semantic_encoder is not None:
-        text_embedding, semantic_audit = encode_visible_state(
-            semantic_encoder,
-            current_user_text=case.current_user_text,
-            current_session_history=case.recent_dialogue,
-            current_session_summary=case.session_summary,
-        )
-        provenance["semantic_observation"] = semantic_audit
+    if prepared is not None:
+        text_embedding = list(prepared.combined_embedding)
+        provenance["semantic_observation"] = dict(prepared.audit)
     step0_observation = build_step0_observation(
         query_text=query,
         inventory=inventory,
@@ -3221,6 +3236,12 @@ def case_to_state(
         strategy_family_catalog=strategy_family_catalog,
         semantic_encoder=semantic_encoder,
         readiness_text=case.current_user_text,
+        semantic_query_vector=(
+            prepared.state_query_vector if prepared is not None else None
+        ),
+        readiness_query_vector=(
+            prepared.current_user_vector if prepared is not None else None
+        ),
     )
     return PMV2State(
         state_id=state_id,
@@ -3499,6 +3520,26 @@ def state_to_v1_runtime(state: PMV2State) -> RuntimeState:
         PMV2Split.INTERNAL_TEST: "development",
         PMV2Split.EXTERNAL_TEST: "evoemo_test",
     }
+    semantic_audit = state.provenance.get("semantic_observation") or {}
+    runtime_provenance = {
+        "pm_v2_state_id": state.state_id,
+        "surface_form_id": state.surface_form_id,
+        "pm_v2_provenance_sha256": sha256_text(canonical_json(state.provenance)),
+    }
+    if semantic_audit:
+        runtime_provenance.update(
+            {
+                "semantic_query_protocol": semantic_audit[
+                    "semantic_query_protocol"
+                ],
+                "semantic_query_sha256": semantic_audit[
+                    "state_embedding_query_sha256"
+                ],
+                "semantic_query_vector_sha256": semantic_audit[
+                    "state_embedding_query_vector_sha256"
+                ],
+            }
+        )
     return RuntimeState(
         state_id=state.state_id,
         card_id=state.card_id,
@@ -3511,11 +3552,7 @@ def state_to_v1_runtime(state: PMV2State) -> RuntimeState:
         session_index=state.session_index,
         inventory=inventory,
         allowed_actions=state.allowed_actions,
-        provenance={
-            "pm_v2_state_id": state.state_id,
-            "surface_form_id": state.surface_form_id,
-            "pm_v2_provenance_sha256": sha256_text(canonical_json(state.provenance)),
-        },
+        provenance=runtime_provenance,
     )
 
 
@@ -3778,6 +3815,29 @@ def write_development_dataset(
                 f"split assignment: {coverage_failures}"
             )
     all_states = [state for rows in states_by_split.values() for state in rows]
+    semantic_truncation = summarize_semantic_truncation(all_states)
+    if semantic_encoder is not None and callable(
+        getattr(semantic_encoder, "assemble_visible_dialogue_state", None)
+    ):
+        section_rows = semantic_truncation.get("section_allocation") or {}
+        if (
+            semantic_truncation.get("telemetry_unavailable_state_count") != 0
+            or semantic_truncation.get("implicit_visible_state_truncation_complete")
+            is not True
+            or any(
+                int((section_rows.get(name) or {}).get("state_count", -1))
+                != len(all_states)
+                for name in (
+                    "current_user",
+                    "session_summary",
+                    "recent_dialogue",
+                )
+            )
+        ):
+            raise RuntimeError(
+                "reportable development states lack complete section-aware "
+                "semantic-query telemetry"
+            )
     backends_by_state = {
         state.state_id: case_to_memory_backend(
             state, private_case_by_state[state.state_id]
@@ -3858,7 +3918,7 @@ def write_development_dataset(
             if semantic_encoder is not None
             else {"status": "NONREPORTABLE_LEGACY_OR_TEST_PATH"}
         ),
-        "semantic_truncation": summarize_semantic_truncation(all_states),
+        "semantic_truncation": semantic_truncation,
         "strategy_factorial_design": {
             "resource_target_is_outcome_label": False,
             "authoritative_outcome": "blinded_same-memory_R0_vs_RS_utility",
@@ -3922,11 +3982,40 @@ def runtime_to_pmv2_state(
     normalized_strategy_tokens = (
         int(strategy_estimated_tokens) if int(strategy_catalog_count) > 0 else 0
     )
-    query = visible_dialogue_state_text(
-        current_user_text=state.current_user_text,
-        current_session_history=state.current_session_history,
-        current_session_summary=state.current_session_summary,
+    prepared_semantic_state = (
+        prepare_visible_semantic_state(
+            semantic_encoder,
+            current_user_text=state.current_user_text,
+            current_session_history=state.current_session_history,
+            current_session_summary=state.current_session_summary,
+        )
+        if include_step0_observation and semantic_encoder is not None
+        else None
     )
+    query = (
+        prepared_semantic_state.query_text
+        if prepared_semantic_state is not None
+        else visible_dialogue_state_text(
+            current_user_text=state.current_user_text,
+            current_session_history=state.current_session_history,
+            current_session_summary=state.current_session_summary,
+        )
+    )
+    if prepared_semantic_state is not None:
+        lineage = {
+            "semantic_query_protocol": UNIFIED_SEMANTIC_QUERY_PROTOCOL,
+            "semantic_query_sha256": prepared_semantic_state.semantic_query_sha256,
+            "semantic_query_vector_sha256": (
+                prepared_semantic_state.semantic_query_vector_sha256
+            ),
+        }
+        recorded_lineage = {
+            key: state.provenance.get(key) for key in lineage
+        }
+        if recorded_lineage != lineage:
+            raise RuntimeError(
+                "runtime semantic-query lineage drifts from the adapted state"
+            )
     inventory: dict[MemorySource, ObservableSourceSummary] = {}
     for source, cat in state.inventory.items():
         fingerprint = list(cat.catalog_fingerprint)
@@ -3974,6 +4063,16 @@ def runtime_to_pmv2_state(
             strategy_family_catalog=strategy_family_catalog,
             semantic_encoder=semantic_encoder,
             readiness_text=state.current_user_text,
+            semantic_query_vector=(
+                prepared_semantic_state.state_query_vector
+                if prepared_semantic_state is not None
+                else None
+            ),
+            readiness_query_vector=(
+                prepared_semantic_state.current_user_vector
+                if prepared_semantic_state is not None
+                else None
+            ),
         )
         if include_step0_observation
         else None
@@ -3985,14 +4084,9 @@ def runtime_to_pmv2_state(
         ),
     }
     text_embedding: list[float] = []
-    if include_step0_observation and semantic_encoder is not None:
-        text_embedding, semantic_audit = encode_visible_state(
-            semantic_encoder,
-            current_user_text=state.current_user_text,
-            current_session_history=state.current_session_history,
-            current_session_summary=state.current_session_summary,
-        )
-        provenance["semantic_observation"] = semantic_audit
+    if prepared_semantic_state is not None:
+        text_embedding = list(prepared_semantic_state.combined_embedding)
+        provenance["semantic_observation"] = dict(prepared_semantic_state.audit)
     return PMV2State(
         state_id=state.state_id,
         card_id=state.card_id,

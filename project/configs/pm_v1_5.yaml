@@ -278,8 +278,9 @@ features:
   forbid_judge_labels: true
 
 step0_observation:
-  protocol: pm-v1.5-step0-semantic-source-observation-v2
+  protocol: pm-v1.5-step0-semantic-source-observation-v3-unified-state-query
   stage: pre_item_retrieval
+  full_state_semantic_query: pm-v1.5-unified-step0-state-semantic-query-v1
   memory_representation: frozen_semantic_source_centroid_only
   strategy_representation: frozen_semantic_eight_family_centroids
   advice_readiness_representation: frozen_semantic_five_anchor_centroids
@@ -331,6 +332,7 @@ internal_ablation:
   learned_without_state_bge: true
   lexical_without_state_bge_or_step0: true
   external_primary_matrix: false
+  residual_without_step0_interpretation: component_removal_system_variant
 
 semantic_diagnostics:
   protocol: pm-v1.5-semantic-diagnostics-v1
@@ -341,6 +343,8 @@ semantic_diagnostics:
   rule_candidate_action_distribution_required: true
   readiness_challenge_role: report_only_not_outcome_gate
   token_truncation_telemetry_required: true
+  unified_step0_state_semantic_query_required: true
+  section_allocation_required_for_every_state: true
   current_user_text_truncation_must_be_zero: true
   implicit_visible_state_truncation_must_be_zero: true
   development_external_centroid_scale_comparison_required: true

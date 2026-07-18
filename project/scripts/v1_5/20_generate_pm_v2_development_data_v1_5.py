@@ -79,6 +79,7 @@ from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_semantic_runtime_contract,
+    require_unified_semantic_query_contract,
     semantic_encoder_spec_from_config,
 )
 from metacom_pm.pm_v1_5_step0 import readiness_natural_language_challenge
@@ -696,6 +697,7 @@ def main() -> None:
     pm_config = load_config(args.pm_v2_config)
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 data generation requires a pm-v1.5 config")
+    require_unified_semantic_query_contract(pm_config)
     # Fail before any paid generation if the exact deployable semantic
     # observation mechanism cannot be reconstructed locally.
     semantic_encoder = FrozenTransformerSemanticEncoder.load(

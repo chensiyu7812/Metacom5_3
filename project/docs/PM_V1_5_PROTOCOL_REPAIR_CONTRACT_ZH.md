@@ -71,6 +71,20 @@ item-level retrieval 只能在动作之后执行。
 
 ## 3. Step-0 观测合同
 
+### 3.0 唯一 full-state 语义输入
+
+Memory source centroid、Strategy family centroid 与 state BGE 的 full-state 部分必须共享
+同一个 section-aware bounded text 及其同一个归一化向量。当前话语和 session summary 使用
+冻结预算，history 只保留最近 token suffix；该文本在送入 encoder 前已经不超过 512 tokens，
+模型内部静默截断禁止作为兜底。每个 state 同时记录并强制相等：
+
+- `step0_semantic_query_sha256 == state_embedding_query_sha256`；
+- `step0_semantic_query_vector_sha256 == state_embedding_query_vector_sha256`。
+
+Advice Readiness 有意只看 current-user 独立 view，不属于上述 full-state 相等约束。Development、
+external runtime 和严格 schema 必须执行同一 helper；旧的未预算文本只能存在于不具备正式
+semantic encoder 的 legacy/test compatibility path。
+
 ### 3.1 PM 可见字段
 
 对 MP、MS、ME，每个来源仅允许固定、任务相关、有限精度的标量：
@@ -374,6 +388,10 @@ learned routing 优于同预算 fixed。
 `M0+R0`、raw-session top-k、full-history 可作为预注册 secondary references。no-Step-0
 learned 只留在 internal ablation。任何 secondary condition 不得替代 Gate M/F/E 的指定
 comparator。
+
+若主候选是 rule-relative residual，移除 Step-0 后 residual reference 会从 transparent
+rule 变为固定 `M0+R0`。因此该结果必须称为 `component-removal system variant`，不能写成
+只改变一个 feature 的纯 2×2 feature ablation；非 residual 候选才允许使用后一种解释。
 
 外部 batched schema/order pilot 使用三个预冻结 canary unit，覆盖 quality/risk、两个
 order 和两个 judge family，共 24 calls。除 schema success 必须为 100% 外，mean absolute

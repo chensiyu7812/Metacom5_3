@@ -14,6 +14,7 @@ from metacom_pm.pm_v1_5_semantic import (
     SEMANTIC_CANARY_TEXTS,
     SemanticEncoderBinding,
     require_recorded_semantic_runtime,
+    require_unified_semantic_query_contract,
     semantic_runtime_attestation,
     summarize_semantic_truncation_audits,
 )
@@ -121,6 +122,36 @@ def test_semantic_runtime_attestation_rejects_user_site_contamination(
     monkeypatch.setattr(site, "getusersitepackages", lambda: user_site)
     with pytest.raises(ValidationError, match=rejected_field):
         semantic_runtime_attestation(_CanaryEncoder())
+
+
+def test_unified_semantic_query_config_fails_closed() -> None:
+    config = {
+        "step0_observation": {
+            "protocol": (
+                "pm-v1.5-step0-semantic-source-observation-v3-unified-state-query"
+            ),
+            "stage": "pre_item_retrieval",
+            "full_state_semantic_query": (
+                "pm-v1.5-unified-step0-state-semantic-query-v1"
+            ),
+        },
+        "semantic_diagnostics": {
+            "unified_step0_state_semantic_query_required": True,
+            "section_allocation_required_for_every_state": True,
+        },
+    }
+    assert require_unified_semantic_query_contract(config)[
+        "semantic_query_protocol"
+    ].endswith("v1")
+    stale = {
+        **config,
+        "step0_observation": {
+            **config["step0_observation"],
+            "full_state_semantic_query": "legacy-unbounded-query",
+        },
+    }
+    with pytest.raises(RuntimeError, match="unified section-aware"):
+        require_unified_semantic_query_contract(stale)
 
 
 def test_tokenization_telemetry_reports_loss_without_text_or_token_ids() -> None:
