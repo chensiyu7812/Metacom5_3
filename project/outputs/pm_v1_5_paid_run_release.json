@@ -1,17 +1,15 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "APPROVED",
+  "status": "CONSUMED_PASS",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "bd72ad3e53778f3efa55f723bba6d9503d852adf14fb3564dba5d29d432735f1",
   "prepared_from_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
   "prepared_at_utc": "2026-07-19T02:32:27Z",
   "approved_execution_config_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
   "approved_at_utc": "2026-07-19T02:55:00Z",
-  "paid_execution_authorized": true,
-  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity 920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8, max budget $0.01763955",
-  "stage_approvals": {
-    "development_generation_compatibility_pilot": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8"
-  },
+  "paid_execution_authorized": false,
+  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity 920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8; consumed and passed; no active approval remains",
+  "stage_approvals": {},
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
       "run_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
@@ -40,7 +38,7 @@
       "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
       "paid_execution_authorized": false
     },
-    "development_generation_compatibility_pilot_v8_7": {
+    "development_generation_compatibility_pilot_v8_7_consumed": {
       "run_identity": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8",
       "compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
       "generation_config_projection_sha256": "26b45edb9ee5212c378db93de0187384a71484e8242eb40cee1cc7008ae82d7f",
@@ -57,7 +55,7 @@
         "max_input_tokens_per_call": 4000
       },
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
-      "paid_execution_authorized": true,
+      "paid_execution_authorized": false,
       "note": "V8.7 scopes upstream lineage to generator-relevant configuration and freezes all budget limits in YAML; conflicting CLI overrides are rejected."
     }
   },
@@ -187,12 +185,41 @@
   ],
   "stage_consumptions": {
     "development_generation_compatibility_pilot": {
+      "approval_identity": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "approval_commit_sha": "c6e439b39858076ee9b0089dbb36ca2fa4f53ab7",
+      "execution_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
+      "status": "CONSUMED_PASS",
+      "approved_at_utc": "2026-07-19T02:55:00Z",
+      "consumed_at_utc": "2026-07-19T03:38:25.294639Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
+      "compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
+      "attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
+      "physical_attempts": 12,
+      "succeeded_attempts": 9,
+      "failed_attempts": 3,
+      "accepted_case_count": 9,
+      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
+      "repair_reason": "unique_current_user_text lint (near-duplicate opening line across cases); same benign class as v8.6, not the v8.5 role-ordering bug",
+      "provider_surface_fallback_case_count": 0,
+      "reported_input_tokens": 18288,
+      "reported_output_tokens": 1964,
+      "reported_total_tokens": 20252,
+      "estimated_actual_cost_usd": 0.0039216,
+      "budget_ceiling_usd": 0.01763955,
+      "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
+      "rerun_allowed": false,
+      "note": "v8.7 contract: frozen generation-pilot budget (YAML-scoped, CLI-override-rejecting) plus scoped generation-config-projection lineage; all 9 regimes accepted, zero provider-surface fallback"
+    }
+  },
+  "stage_consumptions_history": [
+    {
       "approval_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
       "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
       "approval_commit_sha": "dd52ff1387dbe2957d8033b7037992e216dd0c4c",
       "execution_code_commit_sha": "f3c20e1f26c370cfdf545411849beb9922cbcc9e",
       "result_record_commit_sha": "1008f18186359df092e377d85aa5fc34d9b0e520",
-      "status": "CONSUMED_PASS",
+      "status": "CONSUMED_PASS_SUPERSEDED",
       "approved_at_utc": "2026-07-19T01:41:43Z",
       "consumed_at_utc": "2026-07-19T01:42:23.305920Z",
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
@@ -203,7 +230,6 @@
       "failed_attempts": 3,
       "accepted_case_count": 9,
       "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
-      "repair_reason": "unique_current_user_text lint (near-duplicate opening line across cases), not the v8.5 role-ordering bug; that failure class did not recur anywhere in this run",
       "provider_surface_fallback_case_count": 0,
       "reported_input_tokens": 18288,
       "reported_output_tokens": 1942,
@@ -212,7 +238,7 @@
       "budget_ceiling_usd": 0.01763955,
       "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
       "rerun_allowed": false,
-      "note": "v8.6 contract: role-safe dialogue-exchange schema; all 9 regimes accepted, zero provider-surface fallback, no dialogue_must_end_with_assistant failures observed"
+      "note": "superseded by v8.7's frozen-budget/scoped-lineage contract; identity 64a06993... itself remains irrevocably spent"
     }
-  }
+  ]
 }
