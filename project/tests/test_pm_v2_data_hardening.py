@@ -2455,6 +2455,11 @@ def test_v1_5_generation_pilot_budget_is_config_frozen_and_reproducible(
 ) -> None:
     env = _subprocess_env()
     env.pop("OPENAI_API_KEY", None)
+    # A clean checkout intentionally has no ignored development seed corpus.
+    # Keep this budget-contract test hermetic by supplying the minimum unique
+    # synthetic cohort required for 52 users plus one held-out seed.
+    seed_path = tmp_path / "generation_seeds.jsonl"
+    _write_unique_generation_seeds(seed_path)
     script = (
         PROJECT_ROOT
         / "scripts"
@@ -2469,6 +2474,8 @@ def test_v1_5_generation_pilot_budget_is_config_frozen_and_reproducible(
                 sys.executable,
                 str(script),
                 "--dry-run",
+                "--seed-dialogues",
+                str(seed_path),
                 "--out-dir",
                 str(out_dir),
             ],
@@ -2494,6 +2501,8 @@ def test_v1_5_generation_pilot_budget_is_config_frozen_and_reproducible(
             sys.executable,
             str(script),
             "--dry-run",
+            "--seed-dialogues",
+            str(seed_path),
             "--out-dir",
             str(tmp_path / "override"),
             "--max-estimated-usd",

@@ -165,6 +165,38 @@ def test_central_paid_release_is_fail_closed_and_identity_bound(
         run_identity="post-repair-cost-hash",
     )["status"] == "PAID_RUN_RELEASED"
 
+    # Rotating a consumed stage into history must not make its old identity
+    # reusable after the manifest is reopened for a later fresh paid stage.
+    rotated_manifest = read_json(manifest_path)
+    rotated_manifest["stage_consumptions_history"] = list(
+        rotated_manifest["stage_consumptions"].values()
+    )
+    rotated_manifest["stage_consumptions"] = {}
+    rotated_manifest["stage_approvals"] = {
+        "development_data_generation": "fresh-cost-hash"
+    }
+    write_json(manifest_path, rotated_manifest)
+    with pytest.raises(RuntimeError, match="already been consumed"):
+        require_paid_run_release(
+            released,
+            config_path=config_path,
+            stage="development_data_generation",
+            run=True,
+            run_identity="fresh-cost-hash",
+        )
+
+    rotated_manifest["stage_approvals"] = {
+        "development_data_generation": "second-post-repair-cost-hash"
+    }
+    write_json(manifest_path, rotated_manifest)
+    assert require_paid_run_release(
+        released,
+        config_path=config_path,
+        stage="development_data_generation",
+        run=True,
+        run_identity="second-post-repair-cost-hash",
+    )["status"] == "PAID_RUN_RELEASED"
+
 
 def test_source_disjoint_strategy_bank_keeps_all_strategy_families() -> None:
     selected_path = (

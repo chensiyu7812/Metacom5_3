@@ -1,14 +1,14 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "CONSUMED_PASS",
+  "status": "PENDING_EXACT_IDENTITY_REVIEW",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "bd72ad3e53778f3efa55f723bba6d9503d852adf14fb3564dba5d29d432735f1",
-  "prepared_from_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
-  "prepared_at_utc": "2026-07-19T02:32:27Z",
-  "approved_execution_config_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
-  "approved_at_utc": "2026-07-19T02:55:00Z",
+  "prepared_from_code_commit_sha": null,
+  "prepared_at_utc": "2026-07-19T03:55:47.878235Z",
+  "approved_execution_config_commit_sha": null,
+  "approved_at_utc": null,
   "paid_execution_authorized": false,
-  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity 920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8; consumed and passed; no active approval remains",
+  "authorization_record": "NO_ACTIVE_APPROVAL: V8.7 generation pilot passed and is permanently consumed; V4 native-Gemini semantic-review dry-run identity 5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7 is pending separate exact review",
   "stage_approvals": {},
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
@@ -57,6 +57,30 @@
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
       "paid_execution_authorized": false,
       "note": "V8.7 scopes upstream lineage to generator-relevant configuration and freezes all budget limits in YAML; conflicting CLI overrides are rejected."
+    },
+    "development_pilot_semantic_review_v4_proposed": {
+      "run_identity": "5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7",
+      "protocol": "pm-v1.5-automated-semantic-review-v4-native-gemini-deterministic27-plus-paid9",
+      "pilot_attestation_file_sha256": "aef35679a86c9ccb8d3ef3604b6de90752d6ffdf047f0766a916bdffb5a0e7cc",
+      "pilot_verification_attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
+      "pilot_bundle_sha256": "4637a47b559fccf9c5211c4d7f2f2aec42532a98e9006ea351de00518097bcd8",
+      "call_plan_sha256": "37bd22b74e94a2f80fa784e0b0586c38ad4506b2229e226b0b09f7c5c682eb15",
+      "logical_api_calls": 120,
+      "maximum_physical_api_attempts": 360,
+      "maximum_input_token_upper_bound_per_call": 3297,
+      "maximum_output_tokens_per_call": 500,
+      "maximum_estimated_cost_usd": 0.16509600000000002,
+      "budget_limits": {
+        "max_api_calls": 360,
+        "max_estimated_usd": 0.17,
+        "max_input_tokens_per_call": 4000
+      },
+      "call_order_protocol": "frozen-endpoint-order-native-gemini-first-v1",
+      "first_endpoint": "training_judge_gemini_flash_lite",
+      "first_transport": "gemini_generate_content",
+      "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_7_native_gemini_candidate",
+      "paid_execution_authorized": false,
+      "note": "Fresh no-API dry run only. Exact approval is absent; the historical V3 identity remains permanently consumed."
     }
   },
   "prior_stage_attempts_history": [
@@ -181,38 +205,7 @@
       "root_cause_resolution": "The schema itself is a provider-supported object/integer-enum/string subset. V4 switches Google judges to the official native generateContent responseJsonSchema transport, adds bounded list-shaped error extraction, and schedules Gemini as the first physical call.",
       "rerun_allowed": false,
       "note": "Historical identity is irrevocably spent. The approval time is reconciled to the approval commit (02:10:37Z), before the exact terminal ledger time (02:13:57.074194Z)."
-    }
-  ],
-  "stage_consumptions": {
-    "development_generation_compatibility_pilot": {
-      "approval_identity": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8",
-      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
-      "approval_commit_sha": "c6e439b39858076ee9b0089dbb36ca2fa4f53ab7",
-      "execution_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
-      "status": "CONSUMED_PASS",
-      "approved_at_utc": "2026-07-19T02:55:00Z",
-      "consumed_at_utc": "2026-07-19T03:38:25.294639Z",
-      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
-      "compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
-      "attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
-      "physical_attempts": 12,
-      "succeeded_attempts": 9,
-      "failed_attempts": 3,
-      "accepted_case_count": 9,
-      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
-      "repair_reason": "unique_current_user_text lint (near-duplicate opening line across cases); same benign class as v8.6, not the v8.5 role-ordering bug",
-      "provider_surface_fallback_case_count": 0,
-      "reported_input_tokens": 18288,
-      "reported_output_tokens": 1964,
-      "reported_total_tokens": 20252,
-      "estimated_actual_cost_usd": 0.0039216,
-      "budget_ceiling_usd": 0.01763955,
-      "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
-      "rerun_allowed": false,
-      "note": "v8.7 contract: frozen generation-pilot budget (YAML-scoped, CLI-override-rejecting) plus scoped generation-config-projection lineage; all 9 regimes accepted, zero provider-surface fallback"
-    }
-  },
-  "stage_consumptions_history": [
+    },
     {
       "approval_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
       "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
@@ -240,5 +233,36 @@
       "rerun_allowed": false,
       "note": "superseded by v8.7's frozen-budget/scoped-lineage contract; identity 64a06993... itself remains irrevocably spent"
     }
-  ]
+  ],
+  "stage_consumptions": {
+    "development_generation_compatibility_pilot": {
+      "approval_identity": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "approval_commit_sha": "c6e439b39858076ee9b0089dbb36ca2fa4f53ab7",
+      "execution_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
+      "result_record_commit_sha": "17fb0a949e46fa16542aca2f2c4b9e34a4e169e2",
+      "status": "CONSUMED_PASS",
+      "prepared_at_utc": "2026-07-19T03:31:57Z",
+      "approved_at_utc": "2026-07-19T03:37:55Z",
+      "consumed_at_utc": "2026-07-19T03:38:25.294639Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
+      "compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
+      "attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
+      "physical_attempts": 12,
+      "succeeded_attempts": 9,
+      "failed_attempts": 3,
+      "accepted_case_count": 9,
+      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
+      "repair_reason": "unique_current_user_text lint (near-duplicate opening line across cases); same benign class as v8.6, not the v8.5 role-ordering bug",
+      "provider_surface_fallback_case_count": 0,
+      "reported_input_tokens": 18288,
+      "reported_output_tokens": 1964,
+      "reported_total_tokens": 20252,
+      "estimated_actual_cost_usd": 0.0039216,
+      "budget_ceiling_usd": 0.01763955,
+      "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
+      "rerun_allowed": false,
+      "note": "v8.7 contract: frozen generation-pilot budget (YAML-scoped, CLI-override-rejecting) plus scoped generation-config-projection lineage; all 9 regimes accepted, zero provider-surface fallback"
+    }
+  }
 }

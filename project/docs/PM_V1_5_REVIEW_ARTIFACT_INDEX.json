@@ -193,7 +193,7 @@
       "attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
       "rerun_allowed": false
     },
-    "v8_7_status": "FRESH_DRY_RUN_PASS_PENDING_EXACT_APPROVAL",
+    "v8_7_status": "CONSUMED_PASS_READY_FOR_BOUND_V4_SEMANTIC_REVIEW_DRY_RUN",
     "v8_7_contract": "pm-v2-generation-compatibility-pilot-v8.7-scoped-generation-lineage-role-safe-exchanges-observable-readiness-exact-paid-surface-review-casewise-one-bounded-repair-zero-fallback",
     "v8_7_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
     "v8_7_compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
@@ -211,6 +211,29 @@
       "max_input_tokens_per_call": 4000
     },
     "v8_7_paid_execution_authorized": false,
+    "v8_7_actual_execution": {
+      "status": "CONSUMED_PASS",
+      "approval_commit_sha": "c6e439b39858076ee9b0089dbb36ca2fa4f53ab7",
+      "execution_code_commit_sha": "70d035bb64b90657558771c41d089d8a7f0b6e36",
+      "result_record_commit_sha": "17fb0a949e46fa16542aca2f2c4b9e34a4e169e2",
+      "approved_at_utc": "2026-07-19T03:37:55Z",
+      "consumed_at_utc": "2026-07-19T03:38:25.294639Z",
+      "physical_attempts": 12,
+      "successful_attempts": 9,
+      "failed_attempts": 3,
+      "accepted_cases": 9,
+      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
+      "repair_reason": "unique_current_user_text only; no dialogue_must_end_with_assistant failure",
+      "provider_surface_fallback_cases": 0,
+      "prompt_tokens": 18288,
+      "completion_tokens": 1964,
+      "total_tokens": 20252,
+      "estimated_actual_cost_usd": 0.0039216,
+      "attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
+      "attestation_file_sha256": "aef35679a86c9ccb8d3ef3604b6de90752d6ffdf047f0766a916bdffb5a0e7cc",
+      "bundle_sha256": "4637a47b559fccf9c5211c4d7f2f2aec42532a98e9006ea351de00518097bcd8",
+      "rerun_allowed": false
+    },
     "v8_7_lineage_scope": "generator endpoint + data_generation + api_cost_planning + prompt/schema/request payloads + shared generation code; downstream judge-only config is excluded",
     "v8_4_provisional_blocked_config_identity": "e9467326aa65569ab66d9c0647586be6a58c4c692236a313d4dbe5e65417e08a",
     "v8_4_provisional_identity_status": "STALE_NEVER_EXECUTED_CONFIG_STATUS_CHANGED_BEFORE_APPROVAL",
@@ -222,7 +245,7 @@
       "no lexical advice-request hard gate"
     ],
     "current_required_provider_surface_fallback_cases": 0,
-    "required_action": "review V8.7 dry-run identity 920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8 and, only after separate exact approval, run the 9-case pilot; then generate a fresh V4 native-Gemini semantic-review dry run; no paid call is currently authorized"
+    "required_action": "review V4 native-Gemini semantic-review dry-run identity 5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7, its V8.7 binding, Gemini-first order, and $0.17 hard budget; only then may a separate exact paid approval be recorded; no paid call is currently authorized"
   },
   "semantic_encoder": {
     "protocol": "pm-v1.5-frozen-visible-text-encoder-v1",
@@ -262,19 +285,25 @@
     "interpretation": "This is a repository-wide engineering preflight over the generic release assets (including the generic 12,429-card bank), not a substitute for the separately hashed V1.5 11,590-card/823-source bank lineage, not a V8.6 paid-run PASS, not an actual-468 shortcut PASS, and not confirmatory readiness."
   },
   "automated_semantic_review": {
-    "execution_status": "V3_CONSUMED_FAILED_CLOSED_GEMINI_OPENAI_COMPAT_HTTP_400; V4_NATIVE_GEMINI_CODE_READY_WAITING_FOR_V8_7_PAID_PILOT",
+    "execution_status": "V3_CONSUMED_FAILED_CLOSED_GEMINI_OPENAI_COMPAT_HTTP_400; V4_NATIVE_GEMINI_FRESH_DRY_RUN_PASS_PENDING_EXACT_APPROVAL",
     "paper_result": false,
     "logical_calls": 120,
     "maximum_physical_attempts": 360,
-    "output_directory": "project/outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
-    "cost_estimate_sha256": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
-    "cost_estimate_file_sha256": "5cdf72276cd2642139d4c0e3206842903da51f14dff6ac3202b7f5d0eb5003ef",
-    "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
-    "call_plan_file_sha256": "d1488ef8c4e2ddf7b9ed6dd4da02e9adfff2673b3dc735bd9ed1c18ab3d8c62f",
-    "maximum_estimated_cost_usd": 0.16542600000000002,
-    "maximum_input_tokens_per_call": 3389,
-    "bound_pilot_attestation_sha256": "ba6bc6b9078ec3b6679294b514228de5e52584f369c4605dd93a0190aedf76be",
-    "bound_pilot_verification_attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
+    "output_directory": "project/outputs/pm_v1_5_automated_semantic_review_v8_7_native_gemini_candidate",
+    "cost_estimate_sha256": "5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7",
+    "cost_estimate_file_sha256": "405947b023881854f917aef4b2c5a7cfbe080d29e75e6d15509a437b44dfd200",
+    "call_plan_sha256": "37bd22b74e94a2f80fa784e0b0586c38ad4506b2229e226b0b09f7c5c682eb15",
+    "call_plan_file_sha256": "6ecc60484316d17005cc48ec9f06dc9e3b170927d8c4c0cacaa0be5b6eb2c30c",
+    "maximum_estimated_cost_usd": 0.16509600000000002,
+    "maximum_input_tokens_per_call": 3297,
+    "budget_limits": {
+      "max_api_calls": 360,
+      "max_estimated_usd": 0.17,
+      "max_input_tokens_per_call": 4000
+    },
+    "bound_pilot_attestation_sha256": "aef35679a86c9ccb8d3ef3604b6de90752d6ffdf047f0766a916bdffb5a0e7cc",
+    "bound_pilot_verification_attestation_sha256": "09f1f90b748e31f4c793182dcd6a50873bd9d4965f29eba76a0fb28c6faa60c5",
+    "bound_pilot_bundle_sha256": "4637a47b559fccf9c5211c4d7f2f2aec42532a98e9006ea351de00518097bcd8",
     "paid_execution_authorized": false,
     "v3_actual_execution": {
       "status": "CONSUMED_FAILED_CLOSED",

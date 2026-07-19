@@ -61,9 +61,20 @@ def require_paid_run_release(
         not isinstance(record, Mapping) for record in history
     ):
         raise RuntimeError("paid-run approval manifest has invalid attempt history")
+    # Older result-recording code briefly used a separate consumption-history
+    # list. Include and validate it so rotating the current stage slot can never
+    # make a spent identity reusable. Current manifests migrate these rows into
+    # prior_stage_attempts_history, but committed older manifests remain safe.
+    consumption_history = manifest.get("stage_consumptions_history") or []
+    if not isinstance(consumption_history, list) or any(
+        not isinstance(record, Mapping) for record in consumption_history
+    ):
+        raise RuntimeError(
+            "paid-run approval manifest has invalid stage consumption history"
+        )
     consumed_identities = {
         str(record.get("approval_identity") or record.get("run_identity") or "")
-        for record in [*consumptions.values(), *history]
+        for record in [*consumptions.values(), *history, *consumption_history]
         if isinstance(record, Mapping)
     }
     if identity in consumed_identities:

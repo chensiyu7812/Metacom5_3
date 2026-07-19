@@ -20,9 +20,10 @@
 > V8.6 的历史 attestation 绑定了整份配置和共享 API 代码，不能在新代码上重新盖章复用；
 > V8.7 已改为只绑定 generator-relevant config projection，今后的 judge-only 修改不会再
 > 误伤上游 pilot。V8.7 进一步把 pilot 预算上限冻结进 YAML，消除了依赖隐藏 CLI
-> 参数而产生多个 cost identity 的歧义；无 API dry-run 已 PASS，identity
-> `920807ec…84e8`，但当前没有
-> active approval；须先单独批准并完成 V8.7，之后才生成 fresh V4 semantic-review identity。
+> 参数而产生多个 cost identity 的歧义；identity `920807ec…84e8` 已真实执行并
+> `CONSUMED_PASS`：9/9 accepted、12 attempts、3 次 bounded repair、0 fallback，
+> 18,288 input / 1,964 output tokens，约 `$0.0039216`。当前没有 active approval；
+> 下一步是绑定该 exact attestation 生成 fresh V4 native-Gemini semantic-review dry-run。
 > 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
@@ -181,8 +182,8 @@ batched scorer。
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
 | generation compatibility | V8.4 transport/schema PASS 但语义性淘汰；V8.5 真实 FAIL；V8.6 真实 PASS：9/9 accepted、12 attempts、3 repairs、0 fallback、18,288 input / 1,942 output tokens、约 `$0.0039084`；没有 role-order failure | V8.6 attestation `15135ad9…7f2c`；identity `64a06993…ef85` 已消费并关闭，禁止复用 |
-| 自动语义审核 | V3 identity `b4f27249…f84a` 已真实消费：DeepSeek 1 次成功，Gemini OpenAI-compatible strict-schema 请求 1 次 terminal HTTP 400；1603 input / 129 output tokens，约 `$0.0002119`，随后 fail-closed。V4 改用 native `generateContent + responseJsonSchema`，仍为 27 deterministic + exact paid 9 + 24 controls × 双 family 共 120 logical calls、最多 360 physical attempts；必须在 V8.7 paid PASS 后重新计算预算 | V3 identity 永久禁止复用；V4 为 `WAITING_FOR_V8_7_PAID_PASS`，且 Gemini 必须是 call plan 第一项 |
-| generation compatibility V8.7 | generator-relevant scoped lineage；预算从 YAML 独立 stage contract 唯一冻结为 18 attempts / `$0.018` / 4000 input tokens，拒绝冲突 CLI；9 个 regime，成功路径 9 calls，最多 18 attempts；expected `$0.0087474`、hard ceiling `$0.01763955`；max input 3036/call | dry-run identity `920807ec…84e8` 已在两个独立目录复现但未批准、未调用 API |
+| 自动语义审核 | V3 identity `b4f27249…f84a` 已真实消费：DeepSeek 1 次成功，Gemini OpenAI-compatible strict-schema 请求 1 次 terminal HTTP 400；1603 input / 129 output tokens，约 `$0.0002119`，随后 fail-closed。V4 改用 native `generateContent + responseJsonSchema`，绑定 V8.7 exact paid attestation；27 deterministic + exact paid 9 + 24 controls × 双 family 共 120 logical calls、最多 360 physical attempts；worst-case estimate `$0.165096`，hard budget `$0.17`，max input 3297/call | V3 identity 永久禁止复用；V4 dry-run identity `5f3c57a0…8bf7` 已 PASS 待 exact review，Gemini 是 call plan 第一项，当前未批准 |
+| generation compatibility V8.7 | generator-relevant scoped lineage；预算从 YAML 独立 stage contract 唯一冻结为 18 attempts / `$0.018` / 4000 input tokens，拒绝冲突 CLI；真实结果 9/9 accepted、12 attempts、3 repairs（均为 `unique_current_user_text`）、0 fallback；18,288 input / 1,964 output tokens，约 `$0.0039216` | identity `920807ec…84e8` 与 attestation `09f1f90b…60c5` 已消费 PASS、禁止复用；当前无 active approval |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 
