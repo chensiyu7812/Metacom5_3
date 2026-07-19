@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any, Literal, Mapping, Type, TypeVar
+from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ValidationError
 
@@ -39,6 +40,10 @@ class Endpoint:
     # A human-declared model family is required for confirmatory runs.  Model
     # aliases and vendor gateways are not reliable indicators of independence.
     family: str | None = None
+    # The request protocol is part of endpoint identity. ``auto`` preserves
+    # backward compatibility for ordinary OpenAI/Anthropic routes, while
+    # providers with multiple API surfaces (notably Gemini) must freeze it.
+    transport: str = "auto"
 
     @property
     def api_key(self) -> str:
@@ -46,6 +51,36 @@ class Endpoint:
         if not key:
             raise RuntimeError(f"Environment variable {self.api_key_env} is not set")
         return key
+
+
+SUPPORTED_ENDPOINT_TRANSPORTS = frozenset(
+    {
+        "openai_chat_completions",
+        "anthropic_messages",
+        "gemini_generate_content",
+    }
+)
+
+
+def endpoint_transport(endpoint: Endpoint) -> str:
+    """Resolve and validate the exact HTTP protocol used by an endpoint."""
+
+    declared = str(endpoint.transport or "auto").strip()
+    if declared != "auto":
+        if declared not in SUPPORTED_ENDPOINT_TRANSPORTS:
+            raise ValueError(f"unsupported endpoint transport: {declared}")
+        return declared
+    if "anthropic.com" in endpoint.base_url:
+        return "anthropic_messages"
+    if "generativelanguage.googleapis.com" in endpoint.base_url:
+        if endpoint.base_url.rstrip("/").endswith("/openai"):
+            raise ValueError(
+                "Gemini's OpenAI-compatibility route is not an approved strict-"
+                "schema transport; declare gemini_generate_content and use the "
+                "native /v1beta base URL"
+            )
+        return "gemini_generate_content"
+    return "openai_chat_completions"
 
 
 @dataclass
@@ -70,7 +105,16 @@ def normalize_provider_finish_reason(
         raw_reason = choices[0].get("finish_reason")
         if raw_reason is not None:
             provider_reason = str(raw_reason)
-    elif raw_response.get("stop_reason") is not None:
+    else:
+        candidates = raw_response.get("candidates")
+        if (
+            isinstance(candidates, list)
+            and candidates
+            and isinstance(candidates[0], Mapping)
+            and candidates[0].get("finishReason") is not None
+        ):
+            provider_reason = str(candidates[0].get("finishReason"))
+    if provider_reason is None and raw_response.get("stop_reason") is not None:
         provider_reason = str(raw_response.get("stop_reason"))
 
     if provider_reason is None or not provider_reason.strip():
@@ -82,7 +126,15 @@ def normalize_provider_finish_reason(
         return provider_reason, "length"
     if normalized in {"tool_calls", "tool_call", "function_call", "tool_use"}:
         return provider_reason, "tool_call"
-    if normalized in {"content_filter", "refusal"}:
+    if normalized in {
+        "content_filter",
+        "refusal",
+        "safety",
+        "recitation",
+        "prohibited_content",
+        "spii",
+        "image_safety",
+    }:
         return provider_reason, "content_filter"
     return provider_reason, "unknown"
 
@@ -295,6 +347,53 @@ def openai_strict_json_schema(response_schema: Type[BaseModel]) -> dict[str, Any
     return schema
 
 
+def _bounded_provider_error_parts(
+    node: Any, *, depth: int = 0, maximum_parts: int = 12
+) -> list[str]:
+    """Extract only named error fields from dict- or list-shaped JSON.
+
+    Some compatible endpoints return a top-level list instead of OpenAI's
+    ``{"error": ...}`` object.  Recursion is deliberately shallow and only
+    whitelisted diagnostic fields are retained, so prompts, responses, and
+    credentials cannot leak into an attempt ledger.
+    """
+
+    if depth > 5 or maximum_parts <= 0:
+        return []
+    if isinstance(node, list):
+        parts: list[str] = []
+        for value in node[:10]:
+            parts.extend(
+                _bounded_provider_error_parts(
+                    value,
+                    depth=depth + 1,
+                    maximum_parts=maximum_parts - len(parts),
+                )
+            )
+            if len(parts) >= maximum_parts:
+                break
+        return parts[:maximum_parts]
+    if not isinstance(node, Mapping):
+        return []
+    parts = []
+    for key in ("message", "type", "param", "code", "status", "reason"):
+        value = node.get(key)
+        if isinstance(value, (str, int, float)) and str(value).strip():
+            cleaned = " ".join(str(value).split())[:1000]
+            parts.append(f"{key}={cleaned}")
+    for key in ("error", "errors", "details", "fieldViolations"):
+        if key in node and len(parts) < maximum_parts:
+            parts.extend(
+                _bounded_provider_error_parts(
+                    node[key],
+                    depth=depth + 1,
+                    maximum_parts=maximum_parts - len(parts),
+                )
+            )
+    # Preserve order while suppressing duplicated wrappers.
+    return list(dict.fromkeys(parts))[:maximum_parts]
+
+
 def _provider_error_summary(response: httpx.Response) -> str:
     """Extract a bounded structured provider error without logging prompts."""
 
@@ -302,17 +401,7 @@ def _provider_error_summary(response: httpx.Response) -> str:
         body = response.json()
     except (ValueError, json.JSONDecodeError):
         return "provider returned no structured error detail"
-    if not isinstance(body, Mapping):
-        return "provider returned no structured error detail"
-    raw_error = body.get("error", body)
-    if not isinstance(raw_error, Mapping):
-        return "provider returned no structured error detail"
-    parts: list[str] = []
-    for key in ("message", "type", "param", "code"):
-        value = raw_error.get(key)
-        if value is not None and str(value).strip():
-            cleaned = " ".join(str(value).split())[:1000]
-            parts.append(f"{key}={cleaned}")
+    parts = _bounded_provider_error_parts(body)
     return "; ".join(parts) or "provider returned no structured error detail"
 
 
@@ -345,6 +434,24 @@ def _openai_usage_from_body(body: Any) -> dict[str, int] | None:
             "prompt_tokens": int(usage_raw.get("prompt_tokens") or 0),
             "completion_tokens": int(usage_raw.get("completion_tokens") or 0),
             "total_tokens": int(usage_raw.get("total_tokens") or 0),
+        }
+    except (TypeError, ValueError):
+        return None
+
+
+def _gemini_usage_from_body(body: Any) -> dict[str, int] | None:
+    """Normalize native Gemini generateContent usage metadata."""
+
+    if not isinstance(body, Mapping) or not isinstance(
+        body.get("usageMetadata"), Mapping
+    ):
+        return None
+    usage_raw = body["usageMetadata"]
+    try:
+        return {
+            "prompt_tokens": int(usage_raw.get("promptTokenCount") or 0),
+            "completion_tokens": int(usage_raw.get("candidatesTokenCount") or 0),
+            "total_tokens": int(usage_raw.get("totalTokenCount") or 0),
         }
     except (TypeError, ValueError):
         return None
@@ -392,6 +499,19 @@ def _provider_response_diagnostics(
                     diagnostics["first_message_keys"] = sorted(
                         str(key) for key in message
                     )[:100]
+        candidates = body.get("candidates")
+        if isinstance(candidates, list):
+            diagnostics["candidates_count"] = len(candidates)
+            if candidates and isinstance(candidates[0], Mapping):
+                diagnostics["first_candidate_keys"] = sorted(
+                    str(key) for key in candidates[0]
+                )[:100]
+    elif isinstance(body, list):
+        diagnostics["response_json_list_length"] = len(body)
+        if body and isinstance(body[0], Mapping):
+            diagnostics["first_list_item_keys"] = sorted(
+                str(key) for key in body[0]
+            )[:100]
     return diagnostics
 
 
@@ -406,7 +526,8 @@ def chat_request_payload(
 ) -> dict[str, Any]:
     """Build the exact initial provider payload used for cost/provenance hashes."""
 
-    if "anthropic.com" in endpoint.base_url:
+    transport = endpoint_transport(endpoint)
+    if transport == "anthropic_messages":
         system_parts = [m["content"] for m in messages if m["role"] == "system"]
         non_system = [m for m in messages if m["role"] != "system"]
         payload: dict[str, Any] = {
@@ -432,6 +553,47 @@ def chat_request_payload(
                 "name": ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME,
             }
         return payload
+    if transport == "gemini_generate_content":
+        system_parts = [m["content"] for m in messages if m["role"] == "system"]
+        contents: list[dict[str, Any]] = []
+        for message in messages:
+            role = str(message.get("role") or "")
+            if role == "system":
+                continue
+            if role == "assistant":
+                native_role = "model"
+            elif role == "user":
+                native_role = "user"
+            else:
+                raise ValueError(f"unsupported Gemini message role: {role}")
+            contents.append(
+                {
+                    "role": native_role,
+                    "parts": [{"text": str(message["content"])}],
+                }
+            )
+        if not contents:
+            raise ValueError("Gemini request requires at least one non-system message")
+        generation_config: dict[str, Any] = {
+            "temperature": float(temperature),
+            "maxOutputTokens": int(max_tokens),
+        }
+        if seed is not None:
+            generation_config["seed"] = int(seed)
+        if response_schema is not None:
+            generation_config["responseMimeType"] = "application/json"
+            generation_config["responseJsonSchema"] = (
+                response_schema.model_json_schema()
+            )
+        payload = {
+            "contents": contents,
+            "generationConfig": generation_config,
+        }
+        if system_parts:
+            payload["systemInstruction"] = {
+                "parts": [{"text": "\n\n".join(system_parts)}]
+            }
+        return payload
     payload = {
         "model": endpoint.model,
         "messages": messages,
@@ -453,7 +615,7 @@ def chat_request_payload(
 
 
 def request_payload_has_schema(payload: Mapping[str, Any]) -> bool:
-    """Recognize the exact OpenAI or Anthropic structured-output contract."""
+    """Recognize OpenAI, Anthropic, or native Gemini schema contracts."""
 
     response_format = payload.get("response_format")
     if isinstance(response_format, Mapping):
@@ -464,6 +626,13 @@ def request_payload_has_schema(payload: Mapping[str, Any]) -> bool:
             and isinstance(json_schema.get("schema"), Mapping)
         ):
             return True
+    generation_config = payload.get("generationConfig")
+    if (
+        isinstance(generation_config, Mapping)
+        and generation_config.get("responseMimeType") == "application/json"
+        and isinstance(generation_config.get("responseJsonSchema"), Mapping)
+    ):
+        return True
     tools = payload.get("tools")
     tool_choice = payload.get("tool_choice")
     if not isinstance(tools, list) or not isinstance(tool_choice, Mapping):
@@ -677,6 +846,223 @@ class OpenAICompatibleClient:
         )
 
 
+class GeminiNativeClient:
+    """Fail-closed client for Gemini's native ``generateContent`` API.
+
+    Google documents structured output on this surface through
+    ``generationConfig.responseJsonSchema``.  It is intentionally separate
+    from ``OpenAICompatibleClient`` so an OpenAI compatibility-layer quirk
+    cannot silently change the frozen schema contract.
+    """
+
+    def __init__(self, endpoint: Endpoint):
+        if endpoint_transport(endpoint) != "gemini_generate_content":
+            raise ValueError("GeminiNativeClient requires gemini_generate_content")
+        if "generativelanguage.googleapis.com" not in endpoint.base_url:
+            raise ValueError("Gemini native transport requires Google's API host")
+        if endpoint.base_url.rstrip("/").endswith("/openai"):
+            raise ValueError("Gemini native transport forbids the /openai route")
+        self.endpoint = endpoint
+        model_name = endpoint.model.removeprefix("models/").strip()
+        if not model_name:
+            raise ValueError("Gemini native transport requires a model name")
+        self._generate_path = (
+            f"/models/{quote(model_name, safe='-._')}:generateContent"
+        )
+        self._client = httpx.Client(
+            base_url=endpoint.base_url.rstrip("/"),
+            timeout=endpoint.timeout_seconds,
+            headers={
+                "x-goog-api-key": endpoint.api_key,
+                "Content-Type": "application/json",
+            },
+        )
+
+    def close(self) -> None:
+        self._client.close()
+
+    def chat(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        temperature: float = 0.0,
+        max_tokens: int = 512,
+        seed: int | None = None,
+        response_schema: Type[T] | None = None,
+        retries: int = 3,
+    ) -> tuple[CallResult, T | None]:
+        payload = chat_request_payload(
+            self.endpoint,
+            messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            seed=seed,
+            response_schema=response_schema,
+        )
+        request_hash = sha256_text(
+            canonical_json(
+                {
+                    "transport": "gemini_generate_content",
+                    "base_url": self.endpoint.base_url.rstrip("/"),
+                    "model": self.endpoint.model,
+                    "path": self._generate_path,
+                    "payload": payload,
+                }
+            )
+        )
+        if retries < 1:
+            raise ValueError("retries must be at least 1")
+        errors: list[str] = []
+        last_retry_class = "other"
+        last_status_code: int | None = None
+        last_usage: dict[str, int] | None = None
+        last_response_diagnostics: dict[str, Any] | None = None
+        last_retry_after_seconds: float | None = None
+        attempts_tried = 0
+        for attempt in range(1, retries + 1):
+            attempts_tried = attempt
+            started = time.perf_counter()
+            response: httpx.Response | None = None
+            body: Any = None
+            usage: dict[str, int] | None = None
+            try:
+                response = self._client.post(self._generate_path, json=payload)
+                if response.status_code in {408, 429}:
+                    last_status_code = int(response.status_code)
+                    last_retry_class = (
+                        "rate_limited_429"
+                        if response.status_code == 429
+                        else "request_timeout_408"
+                    )
+                    try:
+                        body = response.json()
+                    except (ValueError, json.JSONDecodeError):
+                        body = None
+                    last_usage = _gemini_usage_from_body(body)
+                    last_response_diagnostics = _provider_response_diagnostics(
+                        response, body=body
+                    )
+                    last_retry_after_seconds = _retry_after_seconds(response)
+                    wait = max(
+                        last_retry_after_seconds or 0.0,
+                        float(min(30 * attempt, 120)),
+                    )
+                    errors.append(
+                        f"attempt {attempt}: HTTP {response.status_code} "
+                        f"({last_retry_class}), waiting {wait:g}s"
+                    )
+                    if attempt < retries:
+                        time.sleep(wait)
+                        continue
+                    break
+                if 400 <= response.status_code < 500:
+                    try:
+                        body = response.json()
+                    except (ValueError, json.JSONDecodeError):
+                        body = None
+                    raise ProviderRequestError(
+                        status_code=response.status_code,
+                        detail=_provider_error_summary(response),
+                        schema_mode=request_payload_has_schema(payload),
+                        request_hash=request_hash,
+                        usage=_gemini_usage_from_body(body),
+                        response_diagnostics=_provider_response_diagnostics(
+                            response, body=body
+                        ),
+                    )
+                response.raise_for_status()
+                body = response.json()
+                if not isinstance(body, Mapping):
+                    raise TypeError("Gemini response root is not an object")
+                usage = _gemini_usage_from_body(body) or {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0,
+                }
+                candidates = body["candidates"]
+                if not isinstance(candidates, list) or not candidates:
+                    raise ValueError("empty model response")
+                first = candidates[0]
+                if not isinstance(first, Mapping):
+                    raise TypeError("Gemini candidate is not an object")
+                content = first["content"]
+                if not isinstance(content, Mapping):
+                    raise TypeError("Gemini candidate content is not an object")
+                parts = content["parts"]
+                if not isinstance(parts, list):
+                    raise TypeError("Gemini candidate parts is not a list")
+                text = "".join(
+                    str(part["text"])
+                    for part in parts
+                    if isinstance(part, Mapping)
+                    and isinstance(part.get("text"), str)
+                ).strip()
+                if not text:
+                    raise ValueError("empty model response")
+                provider_finish_reason, normalized_finish_reason = (
+                    normalize_provider_finish_reason(body)
+                )
+                call = CallResult(
+                    text=text,
+                    raw_response=dict(body),
+                    usage=usage,
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    request_hash=request_hash,
+                    provider_finish_reason=provider_finish_reason,
+                    normalized_finish_reason=normalized_finish_reason,
+                )
+                if response_schema is None:
+                    return call, None
+                try:
+                    parsed_obj = json.loads(text)
+                except json.JSONDecodeError:
+                    start, end = text.find("{"), text.rfind("}")
+                    if start < 0 or end <= start:
+                        raise ValueError("response is not valid JSON")
+                    parsed_obj = json.loads(text[start : end + 1])
+                try:
+                    parsed = response_schema.model_validate(parsed_obj)
+                except ValidationError as exc:
+                    raise StructuredOutputValidationError(
+                        call=call,
+                        parsed_payload=parsed_obj,
+                        response_schema=response_schema,
+                        validation_error=exc,
+                    ) from exc
+                return call, parsed
+            except (
+                httpx.HTTPError,
+                KeyError,
+                IndexError,
+                TypeError,
+                AttributeError,
+                ValueError,
+                ValidationError,
+                json.JSONDecodeError,
+            ) as exc:
+                errors.append(f"attempt {attempt}: {type(exc).__name__}: {exc}")
+                last_retry_class, last_status_code = _classify_retryable_exception(exc)
+                if response is not None:
+                    last_response_diagnostics = _provider_response_diagnostics(
+                        response, body=body
+                    )
+                    last_retry_after_seconds = _retry_after_seconds(response)
+                    last_usage = usage or _gemini_usage_from_body(body)
+                if attempt == retries:
+                    break
+                time.sleep(min(2 ** (attempt - 1), 8))
+        raise RetryableProviderError(
+            "Gemini API call failed after strict retries: " + " | ".join(errors),
+            last_retry_class=last_retry_class,
+            last_status_code=last_status_code,
+            attempts_tried=attempts_tried,
+            request_hash=request_hash,
+            usage=last_usage,
+            response_diagnostics=last_response_diagnostics,
+            retry_after_seconds=last_retry_after_seconds,
+        )
+
+
 class AnthropicClient:
     """Minimal Anthropic Messages API client (claude-* models).
 
@@ -804,10 +1190,16 @@ class AnthropicClient:
         raise RuntimeError("Anthropic API call failed after retries: " + " | ".join(errors))
 
 
-def make_client(endpoint: Endpoint) -> OpenAICompatibleClient | AnthropicClient:
-    """Return the appropriate client for the endpoint's base_url."""
-    if "anthropic.com" in endpoint.base_url:
+def make_client(
+    endpoint: Endpoint,
+) -> OpenAICompatibleClient | GeminiNativeClient | AnthropicClient:
+    """Return the client for the endpoint's frozen transport protocol."""
+
+    transport = endpoint_transport(endpoint)
+    if transport == "anthropic_messages":
         return AnthropicClient(endpoint)
+    if transport == "gemini_generate_content":
+        return GeminiNativeClient(endpoint)
     return OpenAICompatibleClient(endpoint)
 
 
@@ -829,6 +1221,7 @@ def request_log(
         "model": endpoint.model,
         "model_family": endpoint.family,
         "base_url": endpoint.base_url,
+        "transport": endpoint_transport(endpoint),
         "prompt_hash": prompt_hash,
         "messages_hash": sha256_text(canonical_json(messages)),
         "request_hash": result.request_hash if result else None,

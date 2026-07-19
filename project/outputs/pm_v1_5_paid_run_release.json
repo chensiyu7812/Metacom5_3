@@ -1,14 +1,14 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "CONSUMED_FAILED_CLOSED",
+  "status": "REPAIR_PENDING_FRESH_DRY_RUN",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
-  "prepared_from_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
-  "prepared_at_utc": "2026-07-19T01:51:27Z",
-  "approved_execution_config_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
-  "approved_at_utc": "2026-07-19T02:50:00Z",
+  "config_sha256": "bd72ad3e53778f3efa55f723bba6d9503d852adf14fb3564dba5d29d432735f1",
+  "prepared_from_code_commit_sha": null,
+  "prepared_at_utc": "2026-07-19T02:32:27Z",
+  "approved_execution_config_commit_sha": null,
+  "approved_at_utc": null,
   "paid_execution_authorized": false,
-  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a; consumed and failed closed on a google_gemini HTTP 400; no active approval remains",
+  "authorization_record": "NO_ACTIVE_APPROVAL: v8.6 semantic-review identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a is permanently consumed; native Gemini transport repair requires a fresh dry run and separate exact approval",
   "stage_approvals": {},
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
@@ -37,6 +37,26 @@
       "maximum_estimated_cost_usd": 0.16542600000000002,
       "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
       "paid_execution_authorized": false
+    },
+    "development_generation_compatibility_pilot_v8_7_proposed": {
+      "run_identity": "920807ec6377cba9058649dcb02a246fd8f9fa13fe0ce2c8adfade4840f284e8",
+      "compatibility_contract_sha256": "e031d35c62a1b65c0f9198864a25ec45611486ae5dff89c78a2a642179f9c183",
+      "generation_config_projection_sha256": "26b45edb9ee5212c378db93de0187384a71484e8242eb40cee1cc7008ae82d7f",
+      "call_plan_sha256": "1a6e7ecf60b70cb73688da7994a2c3b723b8a784171ce1a56e695c6bad35bf51",
+      "minimum_api_calls_if_successful": 9,
+      "maximum_physical_api_attempts": 18,
+      "maximum_input_token_upper_bound_per_call": 3036,
+      "maximum_output_tokens_per_call": 900,
+      "expected_estimated_cost_usd": 0.008747399999999999,
+      "maximum_estimated_cost_usd": 0.01763955,
+      "frozen_budget_limits": {
+        "max_api_calls": 18,
+        "max_estimated_usd": 0.018,
+        "max_input_tokens_per_call": 4000
+      },
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
+      "paid_execution_authorized": false,
+      "note": "Fresh dry run only. Exact approval is absent. V8.7 scopes upstream lineage to generator-relevant configuration and freezes all budget limits in YAML; conflicting CLI overrides are rejected."
     }
   },
   "prior_stage_attempts_history": [
@@ -134,6 +154,33 @@
       "failure": "both the initial call and its one bounded repair produced a dialogue_before_current ending on a user turn instead of an assistant turn; surface lint check dialogue_must_end_with_assistant failed identically both times, so the run correctly raised RuntimeError and stopped before generating any other case (zero-fallback, fail-closed as designed)",
       "note": "v8.5 contract: reproducible generator non-compliance on the first case in call order; no cases accepted; stage slot consumed and closed, requires a fresh identity after a code/prompt fix before any retry",
       "rerun_allowed": false
+    },
+    {
+      "status": "CONSUMED_FAILED_CLOSED",
+      "stage": "development_pilot_semantic_review",
+      "run_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "approval_commit_sha": "94e7450e7a4a47ff29c0fd5a6ed4ece0e96bdc0e",
+      "execution_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
+      "result_record_commit_sha": "40ce6feb5ab5a898facb2bad0564c28ee1cdae98",
+      "approved_at_utc": "2026-07-19T02:10:37Z",
+      "consumed_at_utc": "2026-07-19T02:13:57.074194Z",
+      "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
+      "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
+      "physical_attempts": 2,
+      "succeeded_attempts": 1,
+      "failed_attempts": 1,
+      "reported_input_tokens": 1603,
+      "reported_output_tokens": 129,
+      "reported_total_tokens": 1732,
+      "estimated_actual_cost_usd": 0.0002119,
+      "budget_ceiling_usd": 0.16542600000000002,
+      "failed_judge_family": "google_gemini",
+      "failed_item": "v8_item_01__control_semantic_family_match_2",
+      "failure": "Gemini OpenAI-compatible endpoint returned terminal HTTP 400 for the strict response_format request; the immutable body was list-shaped and only its SHA-256 was retained, so the exact provider complaint cannot be reconstructed",
+      "root_cause_resolution": "The schema itself is a provider-supported object/integer-enum/string subset. V4 switches Google judges to the official native generateContent responseJsonSchema transport, adds bounded list-shaped error extraction, and schedules Gemini as the first physical call.",
+      "rerun_allowed": false,
+      "note": "Historical identity is irrevocably spent. The approval time is reconciled to the approval commit (02:10:37Z), before the exact terminal ledger time (02:13:57.074194Z)."
     }
   ],
   "stage_consumptions": {
@@ -164,30 +211,6 @@
       "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
       "rerun_allowed": false,
       "note": "v8.6 contract: role-safe dialogue-exchange schema; all 9 regimes accepted, zero provider-surface fallback, no dialogue_must_end_with_assistant failures observed"
-    },
-    "development_pilot_semantic_review": {
-      "approval_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
-      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
-      "approval_commit_sha": "94e7450e7a4a47ff29c0fd5a6ed4ece0e96bdc0e",
-      "execution_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
-      "status": "CONSUMED_FAILED_CLOSED",
-      "approved_at_utc": "2026-07-19T02:50:00Z",
-      "consumed_at_utc": "2026-07-19T02:13:57.074194Z",
-      "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
-      "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
-      "physical_attempts": 2,
-      "succeeded_attempts": 1,
-      "failed_attempts": 1,
-      "reported_input_tokens": 1603,
-      "reported_output_tokens": 129,
-      "reported_total_tokens": 1732,
-      "estimated_actual_cost_usd": 0.0002119,
-      "budget_ceiling_usd": 0.16542600000000002,
-      "failed_judge_family": "google_gemini",
-      "failed_item": "v8_item_01__control_semantic_family_match_2",
-      "failure": "ProviderRequestError: HTTP 400 in strict JSON-schema mode from the training_judge_gemini_flash_lite endpoint (Gemini's OpenAI-compatible API); classified provider_request_error_4xx/terminal_nonretryable per the bounded-retry contract, so the run correctly stopped after 2 physical attempts with zero silent retry or fallback; the provider's error body was a JSON list rather than the OpenAI-style error object our diagnostics code expects, so only a response_body_sha256 was captured, not a human-readable reason",
-      "rerun_allowed": false,
-      "note": "the one successful call (training_judge_deepseek_flash/NVIDIA) worked correctly; failure is isolated to the google_gemini endpoint's structured-output compatibility, requires investigation before a fresh identity/retry"
     }
   }
 }

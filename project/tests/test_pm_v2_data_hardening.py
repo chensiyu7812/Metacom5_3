@@ -167,7 +167,7 @@ def test_semantic_family_schedule_counterbalances_regime_positions() -> None:
 
 def test_generation_pilot_uses_a_real_frozen_orthogonal_cohort() -> None:
     assert GENERATION_PILOT_CONTRACT_VERSION.startswith(
-        "pm-v2-generation-compatibility-pilot-v8.6-"
+        "pm-v2-generation-compatibility-pilot-v8.7-"
     )
     assert GENERATION_PILOT_FAMILIES in (
         ("relocation_loneliness", "academic_pressure", "trust_rebuilding"),
@@ -2450,6 +2450,65 @@ def test_generation_compatibility_pilot_dry_run_freezes_casewise_plan(
     assert "input pricing override differs" in dry_run_again.stderr
 
 
+def test_v1_5_generation_pilot_budget_is_config_frozen_and_reproducible(
+    tmp_path: Path,
+) -> None:
+    env = _subprocess_env()
+    env.pop("OPENAI_API_KEY", None)
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20a_run_generation_compatibility_pilot_v1_5.py"
+    )
+    estimates = []
+    for suffix in ("first", "second"):
+        out_dir = tmp_path / suffix
+        subprocess.run(
+            [
+                sys.executable,
+                str(script),
+                "--dry-run",
+                "--out-dir",
+                str(out_dir),
+            ],
+            cwd=PROJECT_ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        estimates.append(read_json(out_dir / "cost_estimate.json"))
+    assert estimates[0]["budget_limits"] == {
+        "max_api_calls": GENERATION_PILOT_MAX_ATTEMPTS,
+        "max_estimated_usd": 0.018,
+        "max_input_tokens_per_call": 4000,
+    }
+    assert (
+        estimates[0]["cost_estimate_sha256"]
+        == estimates[1]["cost_estimate_sha256"]
+    )
+
+    rejected = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--dry-run",
+            "--out-dir",
+            str(tmp_path / "override"),
+            "--max-estimated-usd",
+            "2.0",
+        ],
+        cwd=PROJECT_ROOT,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert rejected.returncode != 0
+    assert "override differs from frozen generation-pilot budget" in rejected.stderr
+
+
 def test_generation_pilot_recovers_post_success_crash_without_second_http(
     tmp_path: Path, monkeypatch
 ) -> None:
@@ -2732,6 +2791,77 @@ def test_generation_pilot_uses_one_bounded_repair_and_never_repeats_success(
     module.main()
 
 
+def test_generation_contract_ignores_downstream_judges_but_binds_generator(
+    tmp_path: Path,
+) -> None:
+    seed_path = tmp_path / "seeds.jsonl"
+    _write_unique_generation_seeds(seed_path)
+    source_experiment = PROJECT_ROOT / "configs" / "experiment.yaml"
+    source_pm = PROJECT_ROOT / "configs" / "pm_v1_5.yaml"
+    experiment_path = tmp_path / "experiment.yaml"
+    pm_path = tmp_path / "pm.yaml"
+    experiment_text = source_experiment.read_text(encoding="utf-8")
+    pm_text = source_pm.read_text(encoding="utf-8")
+    experiment_path.write_text(experiment_text, encoding="utf-8")
+    pm_path.write_text(pm_text, encoding="utf-8")
+
+    def build() -> dict:
+        experiment = load_config(experiment_path)
+        pm_config = load_config(pm_path)
+        generation = pm_config["data_generation"]
+        endpoint = endpoint_from_config(
+            experiment, str(generation["generator_endpoint"])
+        )
+        return build_generation_compatibility_contract(
+            project_root=PROJECT_ROOT,
+            experiment_config_path=experiment_path,
+            pm_v2_config_path=pm_path,
+            seed_dialogues_path=seed_path,
+            endpoint=endpoint,
+            base_generation_seed=int(generation["base_seed"]),
+            full_user_count=sum(
+                int(generation[key])
+                for key in ("train_users", "calibration_users", "internal_test_users")
+            ),
+            input_token_safety_factor=1.5,
+            fail_on_reported_input_overrun=True,
+            input_usd_per_mtok=0.15,
+            output_usd_per_mtok=0.60,
+        )
+
+    baseline = build()
+    experiment_path.write_text(
+        experiment_text.replace('model: "gpt-4o"', 'model: "gpt-4o-review-only"'),
+        encoding="utf-8",
+    )
+    pm_path.write_text(
+        pm_text.replace(
+            "pm-v1.5-automated-semantic-review-v4-native-gemini-"
+            "deterministic27-plus-paid9",
+            "pm-v1.5-automated-semantic-review-v4-native-gemini-"
+            "deterministic27-plus-paid9-doc-only-change",
+        ),
+        encoding="utf-8",
+    )
+    assert build() == baseline
+
+    experiment_path.write_text(
+        experiment_text.replace(
+            'model: "gpt-4o-mini"', 'model: "gpt-4o-mini-generator-change"', 1
+        ),
+        encoding="utf-8",
+    )
+    pm_path.write_text(pm_text, encoding="utf-8")
+    assert build()["contract_sha256"] != baseline["contract_sha256"]
+
+    experiment_path.write_text(experiment_text, encoding="utf-8")
+    pm_path.write_text(
+        pm_text.replace("max_estimated_usd: 0.018", "max_estimated_usd: 0.017"),
+        encoding="utf-8",
+    )
+    assert build()["contract_sha256"] != baseline["contract_sha256"]
+
+
 def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
     tmp_path: Path,
 ) -> None:
@@ -2770,6 +2900,11 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         "input": 0.15,
         "output": 0.60,
     }
+    assert contract["generation_config_projection"]["protocol"] == (
+        "pm-v2-generation-config-projection-v1"
+    )
+    assert "experiment_config_sha256" not in contract
+    assert "pm_v2_config_sha256" not in contract
 
     pilot_dir = tmp_path / "pilot_artifacts"
     pilot_dir.mkdir()

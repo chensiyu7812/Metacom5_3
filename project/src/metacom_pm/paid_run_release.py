@@ -56,10 +56,20 @@ def require_paid_run_release(
     consumptions = manifest.get("stage_consumptions") or {}
     if not isinstance(consumptions, Mapping):
         raise RuntimeError("paid-run approval manifest has invalid stage consumptions")
-    if str(stage) in consumptions:
+    history = manifest.get("prior_stage_attempts_history") or []
+    if not isinstance(history, list) or any(
+        not isinstance(record, Mapping) for record in history
+    ):
+        raise RuntimeError("paid-run approval manifest has invalid attempt history")
+    consumed_identities = {
+        str(record.get("approval_identity") or record.get("run_identity") or "")
+        for record in [*consumptions.values(), *history]
+        if isinstance(record, Mapping)
+    }
+    if identity in consumed_identities:
         raise RuntimeError(
-            "paid-run stage/run identity has already been consumed; a consumed "
-            "stage requires a new dry run and fresh exact approval"
+            "paid-run identity has already been consumed; the exact identity "
+            "can never be reused"
         )
     if (
         manifest.get("protocol") != PAID_RUN_RELEASE_PROTOCOL

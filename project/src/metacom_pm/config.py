@@ -63,6 +63,7 @@ def endpoint_from_config(config: Mapping[str, Any], name: str) -> Endpoint:
         api_key_env=str(raw["api_key_env"]),
         timeout_seconds=float(raw.get("timeout_seconds", 180.0)),
         family=(str(raw["family"]) if raw.get("family") else None),
+        transport=str(raw.get("transport") or "auto"),
     )
 
 

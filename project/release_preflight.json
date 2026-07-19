@@ -1,7 +1,7 @@
 {
   "status": "API_PILOT_READY",
   "confirmatory_ready": false,
-  "created_at": "2026-07-19T01:58:30.450589+00:00",
+  "created_at": "2026-07-19T03:24:29.216702+00:00",
   "checks": {
     "python_syntax": {
       "passed": true,
@@ -444,7 +444,7 @@
       "passed": true,
       "details": {
         "returncode": 0,
-        "stdout_tail": "........................................................................ [ 17%]\n........................................................................ [ 34%]\n........................................................................ [ 52%]\n............................s.s....s..sssssss.ss........................ [ 69%]\n........................................................................ [ 87%]\n....................................................s                    [100%]\n",
+        "stdout_tail": "........................................................................ [ 17%]\n........................................................................ [ 34%]\n........................................................................ [ 51%]\n.................................s.s....s..sssssss.ss................... [ 68%]\n........................................................................ [ 86%]\n.........................................................s               [100%]\n",
         "stderr_tail": ""
       }
     }
@@ -460,6 +460,7 @@
   "freeze_verification": {
     "ok": false,
     "errors": [
+      "config hash mismatch",
       "hash mismatch: src/metacom_pm/prompts.py",
       "hash mismatch: pyproject.toml",
       "hash mismatch: scripts/06_run_action_sweep.py",
@@ -492,7 +493,7 @@
     "blocking_scope": "confirmatory_only",
     "required_action": "do not refresh hashes in place; create a new freeze after the current candidate and all pre-freeze gates are complete"
   },
-  "manifest_sha256": "c391ab67e11cdf3c4206e9c6f5cafe9b5d3aa624c036543c4279348316dad086",
+  "manifest_sha256": "ca12ed88d19db1c85b8e9b470553d70b8dcbd16e243fa4112714ef7e9ec9fe71",
   "manifest_files": 608,
   "scope": "API_PILOT_READY permits only generator/judge calibration. CONFIRMATORY_READY additionally requires a locally installed or pinned official ESConv file, an overlap-audited train-only strategy bank, ESConv test runtime, filled model configuration, and a valid study freeze. The real judge pilot gate must still pass before full judging/training."
 }

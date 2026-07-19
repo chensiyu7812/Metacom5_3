@@ -15,14 +15,17 @@ from .pm_v2_data import (
     load_evaluator_context_index,
     load_states,
 )
-from .pm_v2_generation_pilot import require_generation_compatibility_attestation
+from .pm_v2_generation_pilot import (
+    build_generation_compatibility_contract,
+    require_generation_compatibility_attestation,
+)
 from .pm_v2_generation_review_v8 import RATING_FIELDS, REVIEW_QUESTIONS_EN
 from .retrieval import StrategyRetriever, context_query
 from .v1_5_automated_semantic_review import (
     build_control_manifest,
     build_judge_endpoint_descriptors,
 )
-from .config import load_config
+from .config import endpoint_from_config, load_config
 
 
 ACTUAL_CORPUS_REVIEW_PROTOCOL = "pm-v1.5-actual-468-semantic-review-v2"
@@ -89,6 +92,8 @@ def _strategy_resource_candidate(context: Mapping[str, Any]) -> str:
 def build_generation_pilot_review_items(
     *,
     pilot_attestation_path: str | Path,
+    experiment_config_path: str | Path,
+    pm_v1_5_config_path: str | Path,
     strategy_bank_path: str | Path,
     strategy_top_k: int,
     strategy_min_score: float,
@@ -108,8 +113,43 @@ def build_generation_pilot_review_items(
     )
     if not isinstance(contract, dict):
         raise RuntimeError("pilot semantic review lacks compatibility contract")
+    experiment_config = load_config(experiment_config_path)
+    pm_config = load_config(pm_v1_5_config_path)
+    generation = pm_config.get("data_generation")
+    api_cost = pm_config.get("api_cost_planning")
+    if not isinstance(generation, dict) or not isinstance(api_cost, dict):
+        raise RuntimeError("pilot semantic review lacks generation config")
+    endpoint = endpoint_from_config(
+        experiment_config, str(generation.get("generator_endpoint") or "")
+    )
+    pricing = generation.get("pricing_usd_per_mtok")
+    if not isinstance(pricing, dict):
+        raise RuntimeError("pilot semantic review lacks generation pricing")
+    current_contract = build_generation_compatibility_contract(
+        project_root=Path(__file__).resolve().parents[2],
+        experiment_config_path=experiment_config_path,
+        pm_v2_config_path=pm_v1_5_config_path,
+        seed_dialogues_path=str(contract.get("seed_dialogues_path") or ""),
+        endpoint=endpoint,
+        base_generation_seed=int(generation["base_seed"]),
+        full_user_count=sum(
+            int(generation[key])
+            for key in ("train_users", "calibration_users", "internal_test_users")
+        ),
+        input_token_safety_factor=float(api_cost["input_token_safety_factor"]),
+        fail_on_reported_input_overrun=bool(
+            api_cost["fail_on_reported_input_overrun"]
+        ),
+        input_usd_per_mtok=float(pricing["input"]),
+        output_usd_per_mtok=float(pricing["output"]),
+    )
+    if current_contract != contract:
+        raise RuntimeError(
+            "paid generation pilot differs from the current scoped generation "
+            "config/prompt/schema/code contract"
+        )
     verification = require_generation_compatibility_attestation(
-        attestation_path, expected_contract=contract
+        attestation_path, expected_contract=current_contract
     )
     bundle_path = attestation_path.parent / "pilot_bundle.json"
     bundle = GeneratedUserBundle.model_validate(read_json(bundle_path))
@@ -203,6 +243,9 @@ def build_generation_pilot_review_items(
         "pilot_bundle_path": str(bundle_path),
         "pilot_bundle_sha256": sha256_file(bundle_path),
         "pilot_contract_sha256": str(contract["contract_sha256"]),
+        "generation_config_projection_sha256": str(
+            contract["generation_config_projection_sha256"]
+        ),
         "pilot_verification_attestation_sha256": verification[
             "attestation_sha256"
         ],

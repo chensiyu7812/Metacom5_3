@@ -138,8 +138,6 @@ def _materialize_success(
         attestation_path,
         stage=GENERATION_PILOT_STAGE,
         inputs={
-            "experiment_config": config_path,
-            "pm_v2_config": pm_config_path,
             "seed_dialogues": seed_path,
             "run_manifest": manifest_path,
             "cost_estimate": estimate_path,
@@ -191,20 +189,12 @@ def main() -> None:
     )
     parser.add_argument("--input-usd-per-mtok", type=float)
     parser.add_argument("--output-usd-per-mtok", type=float)
-    parser.add_argument("--max-api-calls", type=int, default=GENERATION_PILOT_MAX_ATTEMPTS)
-    parser.add_argument("--max-estimated-usd", type=float, default=2.0)
-    parser.add_argument("--max-input-tokens-per-call", type=int, default=12000)
+    parser.add_argument("--max-api-calls", type=int)
+    parser.add_argument("--max-estimated-usd", type=float)
+    parser.add_argument("--max-input-tokens-per-call", type=int)
     parser.add_argument("--accept-cost-estimate-sha256")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
-
-    if args.max_api_calls != GENERATION_PILOT_MAX_ATTEMPTS:
-        raise ValueError(
-            "generation compatibility pilot requires max-api-calls="
-            f"{GENERATION_PILOT_MAX_ATTEMPTS}"
-        )
-    if args.max_estimated_usd < 0 or args.max_input_tokens_per_call <= 0:
-        raise ValueError("invalid compatibility-pilot budget")
 
     experiment = load_config(args.config)
     pm_config = load_config(args.pm_v2_config)
@@ -229,6 +219,57 @@ def main() -> None:
     fail_on_overrun = bool(api_cost["fail_on_reported_input_overrun"])
     if safety_factor < 1.0 or not fail_on_overrun:
         raise ValueError("generation pilot requires fail-safe costing")
+    frozen_budget_raw = pm_config.get("generation_compatibility_pilot_budget")
+    legacy_defaults = {
+        "max_api_calls": GENERATION_PILOT_MAX_ATTEMPTS,
+        "max_estimated_usd": 2.0,
+        "max_input_tokens_per_call": 12000,
+    }
+    if frozen_budget_raw is not None:
+        if not isinstance(frozen_budget_raw, dict):
+            raise ValueError(
+                "generation_compatibility_pilot_budget must be a mapping"
+            )
+        if set(frozen_budget_raw) != set(legacy_defaults):
+            raise ValueError(
+                "generation compatibility pilot budget must contain exactly "
+                "max_api_calls/max_estimated_usd/max_input_tokens_per_call"
+            )
+        frozen_budget = {
+            "max_api_calls": int(frozen_budget_raw["max_api_calls"]),
+            "max_estimated_usd": float(frozen_budget_raw["max_estimated_usd"]),
+            "max_input_tokens_per_call": int(
+                frozen_budget_raw["max_input_tokens_per_call"]
+            ),
+        }
+        for argument_name, frozen_value in frozen_budget.items():
+            supplied_value = getattr(args, argument_name)
+            if supplied_value is not None and supplied_value != frozen_value:
+                flag = argument_name.replace("_", "-")
+                raise RuntimeError(
+                    f"--{flag} override differs from frozen generation-pilot budget"
+                )
+    else:
+        # Preserve the version-neutral PM-v2 runner's historical defaults.
+        # PM-v1.5 always supplies the frozen mapping above; legacy PM-v2 may
+        # continue to make its budget limits explicit on the CLI.
+        frozen_budget = {
+            argument_name: (
+                getattr(args, argument_name)
+                if getattr(args, argument_name) is not None
+                else default_value
+            )
+            for argument_name, default_value in legacy_defaults.items()
+        }
+    for argument_name, frozen_value in frozen_budget.items():
+        setattr(args, argument_name, frozen_value)
+    if args.max_api_calls != GENERATION_PILOT_MAX_ATTEMPTS:
+        raise ValueError(
+            "generation compatibility pilot requires max-api-calls="
+            f"{GENERATION_PILOT_MAX_ATTEMPTS}"
+        )
+    if args.max_estimated_usd < 0 or args.max_input_tokens_per_call <= 0:
+        raise ValueError("invalid compatibility-pilot budget")
     endpoint = endpoint_from_config(
         experiment, str(generation["generator_endpoint"])
     )

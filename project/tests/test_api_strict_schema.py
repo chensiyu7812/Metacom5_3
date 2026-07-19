@@ -9,12 +9,15 @@ from pydantic import model_validator
 from metacom_pm.api import (
     CallResult,
     Endpoint,
+    GeminiNativeClient,
     OpenAICompatibleClient,
     ProviderRequestError,
     StructuredOutputValidationError,
     chat_request_payload,
+    make_client,
     normalize_provider_finish_reason,
     openai_strict_json_schema,
+    request_payload_has_schema,
     request_log,
 )
 from metacom_pm.pm_v2_data import GeneratedBundleDraft, GeneratedUserBundle
@@ -229,6 +232,173 @@ def test_chat_payload_binds_the_locally_validated_schema() -> None:
     assert payload["response_format"]["json_schema"]["schema"] == (
         openai_strict_json_schema(GeneratedBundleDraft)
     )
+
+
+def test_gemini_native_payload_uses_official_structured_output_contract() -> None:
+    endpoint = Endpoint(
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        model="gemini-2.5-flash-lite",
+        api_key_env="IGNORED",
+        family="google_gemini",
+        transport="gemini_generate_content",
+    )
+    payload = chat_request_payload(
+        endpoint,
+        [
+            {"role": "system", "content": "Judge strictly."},
+            {"role": "user", "content": "Return scores."},
+        ],
+        temperature=0.0,
+        max_tokens=500,
+        seed=13,
+        response_schema=ResponseJudgeOutput,
+    )
+    assert "response_format" not in payload
+    assert "model" not in payload
+    assert payload["systemInstruction"] == {
+        "parts": [{"text": "Judge strictly."}]
+    }
+    assert payload["contents"] == [
+        {"role": "user", "parts": [{"text": "Return scores."}]}
+    ]
+    generation = payload["generationConfig"]
+    assert generation["responseMimeType"] == "application/json"
+    assert generation["responseJsonSchema"] == ResponseJudgeOutput.model_json_schema()
+    assert generation["maxOutputTokens"] == 500
+    assert generation["seed"] == 13
+    assert request_payload_has_schema(payload) is True
+
+
+def test_gemini_native_client_parses_usage_finish_reason_and_schema(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class NativeOutput(StrictModel):
+        value: int
+
+    monkeypatch.setenv("TEST_GEMINI_KEY", "test-only")
+    endpoint = Endpoint(
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        model="gemini-2.5-flash-lite",
+        api_key_env="TEST_GEMINI_KEY",
+        family="google_gemini",
+        transport="gemini_generate_content",
+    )
+    client = make_client(endpoint)
+    assert isinstance(client, GeminiNativeClient)
+    client._client.close()
+
+    class SuccessfulTransport:
+        def __init__(self) -> None:
+            self.paths: list[str] = []
+            self.payloads: list[dict[str, Any]] = []
+
+        def post(self, path: str, *, json: dict[str, Any]) -> httpx.Response:
+            self.paths.append(path)
+            self.payloads.append(json)
+            return httpx.Response(
+                200,
+                request=httpx.Request(
+                    "POST",
+                    "https://generativelanguage.googleapis.com/v1beta" + path,
+                ),
+                json={
+                    "candidates": [
+                        {
+                            "content": {
+                                "role": "model",
+                                "parts": [{"text": '{"value":7}'}],
+                            },
+                            "finishReason": "STOP",
+                        }
+                    ],
+                    "usageMetadata": {
+                        "promptTokenCount": 19,
+                        "candidatesTokenCount": 5,
+                        "totalTokenCount": 24,
+                    },
+                },
+            )
+
+        def close(self) -> None:
+            pass
+
+    transport = SuccessfulTransport()
+    client._client = transport  # type: ignore[assignment]
+    try:
+        call, parsed = client.chat(
+            [{"role": "user", "content": "Return one value."}],
+            response_schema=NativeOutput,
+            retries=1,
+        )
+    finally:
+        client.close()
+    assert transport.paths == ["/models/gemini-2.5-flash-lite:generateContent"]
+    assert request_payload_has_schema(transport.payloads[0]) is True
+    assert parsed is not None and parsed.value == 7
+    assert call.usage == {
+        "prompt_tokens": 19,
+        "completion_tokens": 5,
+        "total_tokens": 24,
+    }
+    assert call.provider_finish_reason == "STOP"
+    assert call.normalized_finish_reason == "complete"
+    assert len(call.request_hash) == 64
+
+
+def test_gemini_list_shaped_http_error_is_bounded_and_readable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TEST_GEMINI_KEY", "test-only")
+    endpoint = Endpoint(
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        model="gemini-2.5-flash-lite",
+        api_key_env="TEST_GEMINI_KEY",
+        family="google_gemini",
+        transport="gemini_generate_content",
+    )
+    client = GeminiNativeClient(endpoint)
+    client._client.close()
+
+    class RejectingTransport:
+        def post(self, path: str, *, json: dict[str, Any]) -> httpx.Response:
+            return httpx.Response(
+                400,
+                request=httpx.Request(
+                    "POST",
+                    "https://generativelanguage.googleapis.com/v1beta" + path,
+                ),
+                json=[
+                    {
+                        "error": {
+                            "code": 400,
+                            "message": "Invalid responseJsonSchema",
+                            "status": "INVALID_ARGUMENT",
+                        }
+                    }
+                ],
+            )
+
+        def close(self) -> None:
+            pass
+
+    client._client = RejectingTransport()  # type: ignore[assignment]
+    try:
+        with pytest.raises(ProviderRequestError) as exc_info:
+            client.chat(
+                [{"role": "user", "content": "Return scores."}],
+                response_schema=ResponseJudgeOutput,
+                retries=3,
+            )
+    finally:
+        client.close()
+    failure = exc_info.value
+    assert "schema mode HTTP 400" in str(failure)
+    assert "Invalid responseJsonSchema" in str(failure)
+    assert "INVALID_ARGUMENT" in str(failure)
+    assert failure.response_diagnostics is not None
+    assert failure.response_diagnostics["response_json_type"] == "list"
+    assert failure.response_diagnostics["response_json_list_length"] == 1
+    assert failure.response_diagnostics["first_list_item_keys"] == ["error"]
 
 
 @pytest.mark.parametrize(

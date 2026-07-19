@@ -149,6 +149,21 @@ def test_central_paid_release_is_fail_closed_and_identity_bound(
             run=True,
             run_identity="fresh-cost-hash",
         )
+    # Consumption is identity-scoped, not a permanent ban on a scientific
+    # stage. A code/config repair may proceed only with a newly reviewed dry
+    # run identity, while the spent identity remains irrevocably blocked.
+    consumed_manifest = read_json(manifest_path)
+    consumed_manifest["stage_approvals"] = {
+        "development_data_generation": "post-repair-cost-hash"
+    }
+    write_json(manifest_path, consumed_manifest)
+    assert require_paid_run_release(
+        released,
+        config_path=config_path,
+        stage="development_data_generation",
+        run=True,
+        run_identity="post-repair-cost-hash",
+    )["status"] == "PAID_RUN_RELEASED"
 
 
 def test_source_disjoint_strategy_bank_keeps_all_strategy_families() -> None:
@@ -350,12 +365,14 @@ def test_actual_468_gate_is_attested_and_binds_state_corpus(
             "family": "family_a",
             "model": "model-a",
             "base_url": "https://a.example.invalid",
+            "transport": "openai_chat_completions",
         },
         {
             "alias": "judge_b",
             "family": "family_b",
             "model": "model-b",
             "base_url": "https://b.example.invalid",
+            "transport": "openai_chat_completions",
         },
     ]
     for path, text in (

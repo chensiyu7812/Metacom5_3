@@ -5,9 +5,15 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Any, Sequence
 
-from .api import Endpoint, chat_request_payload, require_reported_usage
+from .api import (
+    Endpoint,
+    chat_request_payload,
+    endpoint_transport,
+    require_reported_usage,
+)
 from .artifacts import require_artifact_attestation
 from .attempt_ledger import PersistentAttemptLedger, physical_call_key
+from .config import load_config
 from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
 from .pm_v2_contracts import ResourceNeedRegime
 from .pm_v2_data import (
@@ -30,7 +36,8 @@ GENERATION_PILOT_STAGE = (
     "pm_v2_synthetic_generation_deterministic_evidence_pilot"
 )
 GENERATION_PILOT_CONTRACT_VERSION = (
-    "pm-v2-generation-compatibility-pilot-v8.6-role-safe-exchanges-"
+    "pm-v2-generation-compatibility-pilot-v8.7-scoped-generation-lineage-"
+    "role-safe-exchanges-"
     "observable-readiness-exact-paid-surface-review-casewise-one-bounded-"
     "repair-zero-fallback"
 )
@@ -310,11 +317,46 @@ def build_generation_compatibility_contract(
                 }
             )
     code_manifest = shared_generation_code_manifest(project_root)
+    experiment_config = load_config(experiment_config_path)
+    pm_v2_config = load_config(pm_v2_config_path)
+    data_generation = pm_v2_config.get("data_generation")
+    api_cost_planning = pm_v2_config.get("api_cost_planning")
+    generation_pilot_budget = pm_v2_config.get(
+        "generation_compatibility_pilot_budget"
+    )
+    if not isinstance(data_generation, dict) or not isinstance(
+        api_cost_planning, dict
+    ):
+        raise RuntimeError("generation compatibility config projection is incomplete")
+    config_projection = {
+        "protocol": "pm-v2-generation-config-projection-v1",
+        "pm_version": str(pm_v2_config.get("version") or ""),
+        "release_revision": str(pm_v2_config.get("release_revision") or ""),
+        "data_generation": data_generation,
+        "api_cost_planning": api_cost_planning,
+        "generation_compatibility_pilot_budget": generation_pilot_budget,
+        "generator_endpoint_alias": str(data_generation.get("generator_endpoint") or ""),
+        "resolved_generator_endpoint": {
+            "base_url": endpoint.base_url,
+            "model": endpoint.model,
+            "family": endpoint.family,
+            "api_key_env": endpoint.api_key_env,
+            "timeout_seconds": endpoint.timeout_seconds,
+            "transport": endpoint_transport(endpoint),
+        },
+    }
+    configured_endpoints = experiment_config.get("endpoints")
+    if not isinstance(configured_endpoints, dict) or config_projection[
+        "generator_endpoint_alias"
+    ] not in configured_endpoints:
+        raise RuntimeError("generation config projection lacks the generator endpoint")
     payload = {
         "version": GENERATION_PILOT_CONTRACT_VERSION,
         "stage": GENERATION_PILOT_STAGE,
-        "experiment_config_sha256": sha256_file(experiment_config_path),
-        "pm_v2_config_sha256": sha256_file(pm_v2_config_path),
+        "generation_config_projection": config_projection,
+        "generation_config_projection_sha256": sha256_text(
+            canonical_json(config_projection)
+        ),
         "seed_dialogues_path": str(Path(seed_dialogues_path).resolve()),
         "seed_dialogues_sha256": sha256_file(seed_dialogues_path),
         "full_user_count": int(full_user_count),
@@ -331,6 +373,7 @@ def build_generation_compatibility_contract(
             "family": endpoint.family,
             "api_key_env": endpoint.api_key_env,
             "timeout_seconds": endpoint.timeout_seconds,
+            "transport": endpoint_transport(endpoint),
         },
         "generation_controls": {
             "temperature": GENERATION_TEMPERATURE,

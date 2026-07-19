@@ -136,12 +136,14 @@ def test_pilot_review_pass_binds_current_config_and_strategy_bank(tmp_path: Path
             "family": "family_a",
             "model": "model-a",
             "base_url": "https://a.example.invalid",
+            "transport": "openai_chat_completions",
         },
         {
             "alias": "judge_b",
             "family": "family_b",
             "model": "model-b",
             "base_url": "https://b.example.invalid",
+            "transport": "openai_chat_completions",
         },
     ]
     config.write_text(
@@ -387,6 +389,13 @@ def test_automated_review_dry_run_freezes_the_durable_retry_contract(
     assert all(row["maximum_physical_attempts"] == 3 for row in plan)
     assert len({row["physical_call_key"] for row in plan}) == 120
     assert {row["judge_family"] for row in plan} == {"deepseek", "google_gemini"}
+    assert first["call_order_protocol"] == (
+        "frozen-endpoint-order-native-gemini-first-v1"
+    )
+    assert plan[0]["endpoint_name"] == "training_judge_gemini_flash_lite"
+    assert first["judge_endpoint_descriptors"][0]["transport"] == (
+        "gemini_generate_content"
+    )
     retry_contract = first["retry_contract"]
     assert retry_contract["protocol"] == "pm-v1.5-bounded-retry-v2"
     assert retry_contract["cross_process_eligibility_source"] == (

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
-from .api import Endpoint, require_reported_usage
+from .api import Endpoint, endpoint_transport, require_reported_usage
 from .io import append_jsonl, canonical_json, iter_jsonl, sha256_text, utc_now
 
 
@@ -77,6 +77,7 @@ def physical_call_key(
                     "base_url": endpoint.base_url,
                     "model": endpoint.model,
                     "family": endpoint.family,
+                    "transport": endpoint_transport(endpoint),
                 },
                 "request_parameters": dict(request_parameters),
             }

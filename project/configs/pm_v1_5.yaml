@@ -83,6 +83,15 @@ api_cost_planning:
   input_token_safety_factor: 1.50
   fail_on_reported_input_overrun: true
 
+# These limits are a dedicated generation-stage contract rather than extra
+# keys in the shared token-planning mapping consumed by later stages.
+# Operators must not need hidden CLI flags to reproduce the reviewed identity;
+# conflicting CLI overrides are rejected.
+generation_compatibility_pilot_budget:
+  max_api_calls: 18
+  max_estimated_usd: 0.018
+  max_input_tokens_per_call: 4000
+
 action_space:
   memory_subsets: [M0, MP, MS, ME, MPMS, MPE, MSE, MPMSME]
   strategy_modes: [R0, RS]
@@ -531,7 +540,7 @@ semantic_sanity_audit:
 # Every one of the 12 rubric dimensions has two deterministic, natural-language
 # corruptions. The runner rejects any CLI seed, panel, or matrix that differs.
 automated_semantic_review:
-  protocol: pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9
+  protocol: pm-v1.5-automated-semantic-review-v4-native-gemini-deterministic27-plus-paid9
   control_protocol: pm-v1.5-pilot-controls-v2
   judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]
   control_seed: 20260716

@@ -27,7 +27,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Literal, Mapping, Sequence
 
-from .api import Endpoint, make_client, require_reported_usage
+from .api import Endpoint, endpoint_transport, make_client, require_reported_usage
 from .artifacts import require_artifact_attestation
 from .config import endpoint_from_config, load_config
 from .contracts import MemorySource
@@ -40,7 +40,8 @@ from .pm_v2_generation_review_v8 import (
 )
 
 AUTOMATED_REVIEW_PROTOCOL = (
-    "pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9"
+    "pm-v1.5-automated-semantic-review-v4-native-gemini-"
+    "deterministic27-plus-paid9"
 )
 AUTOMATED_CONTROL_PROTOCOL = "pm-v1.5-pilot-controls-v2"
 
@@ -59,6 +60,7 @@ def build_judge_endpoint_descriptors(
                 "family": str(endpoint.family),
                 "model": str(endpoint.model),
                 "base_url": str(endpoint.base_url),
+                "transport": endpoint_transport(endpoint),
             }
         )
     if len(descriptors) < 2 or len({row["family"] for row in descriptors}) != len(

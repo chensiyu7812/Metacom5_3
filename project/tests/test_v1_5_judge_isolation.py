@@ -31,6 +31,13 @@ def test_current_v1_5_judge_roles_are_hard_isolated() -> None:
         "training_judge_gemini_flash_lite",
         "training_judge_deepseek_flash",
     }
+    gemini = next(
+        row
+        for row in report["development_endpoints"]
+        if row["family"] == "google_gemini"
+    )
+    assert gemini["transport"] == "gemini_generate_content"
+    assert gemini["base_url"].endswith("/v1beta")
     assert set(final_judge_endpoint_names(pm_config)) == {
         "final_judge",
         "final_judge_claude",

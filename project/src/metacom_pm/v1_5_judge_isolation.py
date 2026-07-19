@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
 
-from .api import Endpoint
+from .api import Endpoint, endpoint_transport
 from .config import endpoint_from_config
 
 
@@ -21,6 +21,7 @@ def _endpoint_descriptor(name: str, endpoint: Endpoint) -> dict[str, str]:
         "family": str(endpoint.family or ""),
         "model": endpoint.model,
         "base_url": endpoint.base_url.rstrip("/"),
+        "transport": endpoint_transport(endpoint),
     }
 
 
@@ -131,16 +132,24 @@ def judge_role_isolation_report(
     family_overlap = _overlap(development_rows, final_rows, "family")
     model_overlap = _overlap(development_rows, final_rows, "model")
     development_routes = {
-        (_normalized(row["base_url"]), _normalized(row["model"]))
+        (
+            _normalized(row["base_url"]),
+            _normalized(row["model"]),
+            _normalized(row["transport"]),
+        )
         for row in development_rows
     }
     final_routes = {
-        (_normalized(row["base_url"]), _normalized(row["model"]))
+        (
+            _normalized(row["base_url"]),
+            _normalized(row["model"]),
+            _normalized(row["transport"]),
+        )
         for row in final_rows
     }
     route_overlap = [
-        {"base_url": base_url, "model": model}
-        for base_url, model in sorted(development_routes & final_routes)
+        {"base_url": base_url, "model": model, "transport": transport}
+        for base_url, model, transport in sorted(development_routes & final_routes)
     ]
 
     errors: list[str] = []

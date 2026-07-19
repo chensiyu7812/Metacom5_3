@@ -188,7 +188,13 @@ def parse_args() -> argparse.Namespace:
         "--judge-endpoints", nargs="+", default=list(DEFAULT_JUDGE_ENDPOINTS)
     )
     parser.add_argument(
-        "--out-dir", type=Path, default=ROOT / "outputs" / "pm_v1_5_automated_semantic_review"
+        "--out-dir",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_automated_semantic_review_v8_7_native_gemini_candidate"
+        ),
     )
     parser.add_argument("--max-api-calls", type=int, required=True)
     parser.add_argument("--max-estimated-usd", type=float, required=True)
@@ -323,6 +329,8 @@ def main() -> None:
         ]
         paid_pilot_rows, paid_pilot_audit = build_generation_pilot_review_items(
             pilot_attestation_path=args.generation_pilot_attestation,
+            experiment_config_path=args.config,
+            pm_v1_5_config_path=args.pm_v1_5_config,
             strategy_bank_path=args.strategy_bank,
             strategy_top_k=int(pm_config["retrieval"]["strategy_top_k"]),
             strategy_min_score=float(pm_config["retrieval"]["strategy_min_score"]),
@@ -420,9 +428,20 @@ def main() -> None:
                 "messages": messages,
                 "record_ids": record_ids,
             }
+    endpoint_order = {
+        name: index for index, name in enumerate(args.judge_endpoints)
+    }
+    # The frozen panel lists Gemini first.  Preserve that order so the repaired
+    # native transport is exercised by the first paid call; if compatibility
+    # is still broken, the fail-closed run stops before spending on DeepSeek.
+    # This affects transport safety only, never the complete matrix or gate.
     call_plan = sorted(
         call_plan,
-        key=lambda row: (row["kind"], row["item_id"], row["judge_family"]),
+        key=lambda row: (
+            row["kind"],
+            row["item_id"],
+            endpoint_order[str(row["endpoint_name"])],
+        ),
     )
     n_calls = len(call_plan)
     # Worst-case physical HTTP attempts across the whole batch if every
@@ -456,6 +475,7 @@ def main() -> None:
         "api_cost_planning": planning,
         "judge_role_isolation": judge_role_isolation,
         "judge_endpoint_descriptors": judge_endpoint_descriptors,
+        "call_order_protocol": "frozen-endpoint-order-native-gemini-first-v1",
         "review_strategy_card_ids": (
             {}
             if args.review_scope == "actual_468"
