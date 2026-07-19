@@ -1134,6 +1134,24 @@ def test_surface_lint_does_not_treat_move_forward_as_relocation() -> None:
     )
 
 
+def test_surface_lint_accepts_natural_social_anxiety_phrasing() -> None:
+    # Regression for the V8.13 formal-generation run (pmv2_train_u003/
+    # multi_source_needed): real gpt-4o-mini completions wrote "meeting new
+    # people" and "judging"/"judge me", which the old rigid "judged" anchor
+    # rejected even though the text is accurate, on-topic social-anxiety
+    # content. The anchor must match on the inflection stem, like every other
+    # family in GENERATION_FAMILY_ANCHORS.
+    assert pm_v2_data_module._family_anchor_hits(
+        "I feel so anxious about meeting new people. It’s like everyone is "
+        "judging me before I even say a word.",
+        "social_anxiety",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I feel so anxious about meeting new people; I worry they'll judge me.",
+        "social_anxiety",
+    )
+
+
 def test_generated_case_rejects_current_or_future_memory() -> None:
     case = _case().model_dump()
     case["event_memories"][0]["created_session"] = case["session_index"]

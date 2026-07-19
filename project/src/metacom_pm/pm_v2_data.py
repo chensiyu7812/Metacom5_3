@@ -1048,7 +1048,13 @@ GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
     "academic_pressure": ("exam", "grade", "study", "school", "academic"),
     "career_change": ("career", "job change", "profession", "resign"),
     "caregiving_stress": ("caregiv", "caring for", "dependent", "elder care"),
-    "social_anxiety": ("social", "crowd", "meeting people", "judged"),
+    # "judg" (not "judged"): natural phrasing overwhelmingly uses "judging"/
+    # "judge me", and the family's own anchor list is the one place in this
+    # dict that used a single rigid inflection instead of the stem convention
+    # used everywhere else (relocat, caregiv, isolat, apolog, bereav,
+    # procrastinat) -- confirmed to reject real, on-topic provider text during
+    # the V8.13 formal-generation run (pmv2_train_u003/multi_source_needed).
+    "social_anxiety": ("social", "crowd", "meeting people", "judg"),
     "sleep_disruption": ("sleep", "insomnia", "awake", "rest"),
     "identity_transition": ("identity", "who i am", "transition", "sense of self"),
     "financial_uncertainty": ("money", "financial", "rent", "debt", "budget"),
