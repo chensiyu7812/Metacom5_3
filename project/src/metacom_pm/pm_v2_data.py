@@ -1175,11 +1175,18 @@ def generation_distractor_family_assignments(
 
 
 def _family_anchor_hits(text: str, family: str) -> list[str]:
+    # A leading word-boundary is required (but not a trailing one, since
+    # several anchors are deliberately bare stems like "relocat"/"isolat"
+    # meant to match inflected forms). Without it, a plain substring check
+    # lets "rent" (financial_uncertainty) falsely fire on ordinary words like
+    # "parent" -- a real false-positive found during the V8.14 formal run
+    # (pmv2_internal_test_u011/multi_source_needed, identity_transition text
+    # mentioning "as a parent" wrongly flagged as leaking financial_uncertainty).
     normalized = normalize_text(text)
     return [
         anchor
         for anchor in GENERATION_FAMILY_ANCHORS[family]
-        if anchor in normalized
+        if re.search(r"(?<![a-z])" + re.escape(anchor), normalized)
     ]
 
 

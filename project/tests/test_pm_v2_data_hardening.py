@@ -1134,6 +1134,32 @@ def test_surface_lint_does_not_treat_move_forward_as_relocation() -> None:
     )
 
 
+def test_surface_lint_does_not_treat_parent_as_leaking_financial_uncertainty() -> None:
+    # Regression for the V8.14 formal-generation run (pmv2_internal_test_u011/
+    # multi_source_needed): financial_uncertainty's "rent" anchor is a literal
+    # substring of the ordinary word "parent", so identity_transition text
+    # about being "a parent" was falsely flagged as leaking financial_uncertainty.
+    # A leading word-boundary must be required, while stems like "relocat"/
+    # "isolat"/"judg" must still match their inflected suffixes.
+    assert not pm_v2_data_module._family_anchor_hits(
+        "I feel like I'm struggling to understand who I am as a parent "
+        "while trying to balance everything at home.",
+        "financial_uncertainty",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I am worried about paying rent this month.",
+        "financial_uncertainty",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I moved to a new city last week.",
+        "relocation_loneliness",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "everyone is judging me",
+        "social_anxiety",
+    )
+
+
 def test_surface_lint_accepts_natural_social_anxiety_phrasing() -> None:
     # Regression for the V8.13 formal-generation run (pmv2_train_u003/
     # multi_source_needed): real gpt-4o-mini completions wrote "meeting new
