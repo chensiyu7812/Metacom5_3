@@ -1,15 +1,17 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "PENDING_EXACT_IDENTITY_REVIEW",
+  "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
-  "prepared_from_code_commit_sha": null,
+  "prepared_from_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
   "prepared_at_utc": "2026-07-19T01:51:27Z",
-  "approved_execution_config_commit_sha": null,
-  "approved_at_utc": null,
-  "paid_execution_authorized": false,
-  "authorization_record": "V8.6 generation identity was consumed successfully and closed; automated semantic-review identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a is proposed only and no current paid stage is authorized",
-  "stage_approvals": {},
+  "approved_execution_config_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
+  "approved_at_utc": "2026-07-19T02:50:00Z",
+  "paid_execution_authorized": true,
+  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a, max budget $0.165426",
+  "stage_approvals": {
+    "development_pilot_semantic_review": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a"
+  },
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
       "run_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
@@ -24,7 +26,7 @@
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
       "paid_execution_authorized": false
     },
-    "development_pilot_semantic_review_proposed": {
+    "development_pilot_semantic_review": {
       "run_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
       "protocol": "pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9",
       "pilot_attestation_sha256": "ba6bc6b9078ec3b6679294b514228de5e52584f369c4605dd93a0190aedf76be",
@@ -36,7 +38,7 @@
       "maximum_output_tokens_per_call": 500,
       "maximum_estimated_cost_usd": 0.16542600000000002,
       "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
-      "paid_execution_authorized": false
+      "paid_execution_authorized": true
     }
   },
   "prior_stage_attempts_history": [
