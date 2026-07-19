@@ -1,17 +1,15 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "APPROVED",
+  "status": "CONSUMED_FAILED_CLOSED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
   "prepared_from_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
   "prepared_at_utc": "2026-07-19T01:51:27Z",
   "approved_execution_config_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
   "approved_at_utc": "2026-07-19T02:50:00Z",
-  "paid_execution_authorized": true,
-  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a, max budget $0.165426",
-  "stage_approvals": {
-    "development_pilot_semantic_review": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a"
-  },
+  "paid_execution_authorized": false,
+  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a; consumed and failed closed on a google_gemini HTTP 400; no active approval remains",
+  "stage_approvals": {},
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
       "run_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
@@ -26,7 +24,7 @@
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
       "paid_execution_authorized": false
     },
-    "development_pilot_semantic_review": {
+    "development_pilot_semantic_review_consumed": {
       "run_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
       "protocol": "pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9",
       "pilot_attestation_sha256": "ba6bc6b9078ec3b6679294b514228de5e52584f369c4605dd93a0190aedf76be",
@@ -38,7 +36,7 @@
       "maximum_output_tokens_per_call": 500,
       "maximum_estimated_cost_usd": 0.16542600000000002,
       "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
-      "paid_execution_authorized": true
+      "paid_execution_authorized": false
     }
   },
   "prior_stage_attempts_history": [
@@ -166,6 +164,30 @@
       "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
       "rerun_allowed": false,
       "note": "v8.6 contract: role-safe dialogue-exchange schema; all 9 regimes accepted, zero provider-surface fallback, no dialogue_must_end_with_assistant failures observed"
+    },
+    "development_pilot_semantic_review": {
+      "approval_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "approval_commit_sha": "94e7450e7a4a47ff29c0fd5a6ed4ece0e96bdc0e",
+      "execution_code_commit_sha": "373aae92f011d6cc3bf663752053be713e81b6ba",
+      "status": "CONSUMED_FAILED_CLOSED",
+      "approved_at_utc": "2026-07-19T02:50:00Z",
+      "consumed_at_utc": "2026-07-19T02:13:57.074194Z",
+      "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
+      "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
+      "physical_attempts": 2,
+      "succeeded_attempts": 1,
+      "failed_attempts": 1,
+      "reported_input_tokens": 1603,
+      "reported_output_tokens": 129,
+      "reported_total_tokens": 1732,
+      "estimated_actual_cost_usd": 0.0002119,
+      "budget_ceiling_usd": 0.16542600000000002,
+      "failed_judge_family": "google_gemini",
+      "failed_item": "v8_item_01__control_semantic_family_match_2",
+      "failure": "ProviderRequestError: HTTP 400 in strict JSON-schema mode from the training_judge_gemini_flash_lite endpoint (Gemini's OpenAI-compatible API); classified provider_request_error_4xx/terminal_nonretryable per the bounded-retry contract, so the run correctly stopped after 2 physical attempts with zero silent retry or fallback; the provider's error body was a JSON list rather than the OpenAI-style error object our diagnostics code expects, so only a response_body_sha256 was captured, not a human-readable reason",
+      "rerun_allowed": false,
+      "note": "the one successful call (training_judge_deepseek_flash/NVIDIA) worked correctly; failure is isolated to the google_gemini endpoint's structured-output compatibility, requires investigation before a fresh identity/retry"
     }
   }
 }
