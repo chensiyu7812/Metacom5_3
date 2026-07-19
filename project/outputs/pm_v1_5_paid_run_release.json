@@ -1,15 +1,17 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "PENDING_EXACT_IDENTITY_REVIEW",
+  "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "bd72ad3e53778f3efa55f723bba6d9503d852adf14fb3564dba5d29d432735f1",
-  "prepared_from_code_commit_sha": null,
+  "prepared_from_code_commit_sha": "340e6a2c3547eb37f1e5cddc2040cb4f50aa04f5",
   "prepared_at_utc": "2026-07-19T03:55:47.878235Z",
-  "approved_execution_config_commit_sha": null,
-  "approved_at_utc": null,
-  "paid_execution_authorized": false,
-  "authorization_record": "NO_ACTIVE_APPROVAL: V8.7 generation pilot passed and is permanently consumed; V4 native-Gemini semantic-review dry-run identity 5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7 is pending separate exact review",
-  "stage_approvals": {},
+  "approved_execution_config_commit_sha": "340e6a2c3547eb37f1e5cddc2040cb4f50aa04f5",
+  "approved_at_utc": "2026-07-19T04:20:00Z",
+  "paid_execution_authorized": true,
+  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity 5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7, max budget $0.17, max 360 physical attempts",
+  "stage_approvals": {
+    "development_pilot_semantic_review": "5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7"
+  },
   "stage_budget_bounds": {
     "development_generation_compatibility_pilot_consumed": {
       "run_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
@@ -58,7 +60,7 @@
       "paid_execution_authorized": false,
       "note": "V8.7 scopes upstream lineage to generator-relevant configuration and freezes all budget limits in YAML; conflicting CLI overrides are rejected."
     },
-    "development_pilot_semantic_review_v4_proposed": {
+    "development_pilot_semantic_review_v4": {
       "run_identity": "5f3c57a0ee791e51e10bea78e7c8b3221d8c2f3a29892178bc275bc9cafc8bf7",
       "protocol": "pm-v1.5-automated-semantic-review-v4-native-gemini-deterministic27-plus-paid9",
       "pilot_attestation_file_sha256": "aef35679a86c9ccb8d3ef3604b6de90752d6ffdf047f0766a916bdffb5a0e7cc",
@@ -79,8 +81,8 @@
       "first_endpoint": "training_judge_gemini_flash_lite",
       "first_transport": "gemini_generate_content",
       "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_7_native_gemini_candidate",
-      "paid_execution_authorized": false,
-      "note": "Fresh no-API dry run only. Exact approval is absent; the historical V3 identity remains permanently consumed."
+      "paid_execution_authorized": true,
+      "note": "V4 native-Gemini transport; historical V3 identity remains permanently consumed."
     }
   },
   "prior_stage_attempts_history": [
