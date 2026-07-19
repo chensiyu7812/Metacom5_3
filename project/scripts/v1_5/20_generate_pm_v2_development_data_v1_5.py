@@ -46,6 +46,7 @@ from metacom_pm.contracts import StrategyCard
 from metacom_pm.io import (
     append_jsonl,
     canonical_json,
+    dict_field_diff,
     iter_jsonl,
     read_json,
     sha256_file,
@@ -340,30 +341,14 @@ def _estimate_field_diff(
     A bare hash mismatch (the only thing the caller previously reported) is not
     diagnosable after the fact: nothing about which of the ~20 hashed inputs
     (themselves nesting things like a 14-file code manifest) changed survives
-    past the raised exception. This walks the same dict the hash was computed
-    over and recurses through nested dicts (code_manifest, generation_run_binding,
-    budget_gate, ...) so a real mismatch is a direct dotted-path lookup instead
-    of a multi-hour forensic reconstruction (see
-    PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md V15-REL-15 for the prior,
-    narrower instance of this same "CLI/identity reproducibility" failure
-    class).
+    past the raised exception. This recurses through nested dicts
+    (code_manifest, generation_run_binding, budget_gate, ...) so a real
+    mismatch is a direct dotted-path lookup instead of a multi-hour forensic
+    reconstruction (see PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md V15-REL-15
+    for the prior, narrower instance of this same "CLI/identity
+    reproducibility" failure class).
     """
-    differing_field_paths: list[str] = []
-
-    def _walk(saved_value: Any, current_value: Any, path: str) -> None:
-        if isinstance(saved_value, dict) and isinstance(current_value, dict):
-            for key in sorted(set(saved_value) | set(current_value)):
-                _walk(
-                    saved_value.get(key),
-                    current_value.get(key),
-                    f"{path}.{key}" if path else key,
-                )
-            return
-        if canonical_json(saved_value) != canonical_json(current_value):
-            differing_field_paths.append(path)
-
-    _walk(saved, current, "")
-    return {"differing_field_paths": differing_field_paths}
+    return {"differing_field_paths": dict_field_diff(saved, current)}
 
 
 def _require_saved_dry_run(

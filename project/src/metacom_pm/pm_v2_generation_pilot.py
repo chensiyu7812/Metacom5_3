@@ -20,7 +20,14 @@ from .bounded_retry import (
     retry_ledger_summary,
 )
 from .config import load_config
-from .io import canonical_json, iter_jsonl, read_json, sha256_file, sha256_text
+from .io import (
+    canonical_json,
+    dict_field_diff,
+    iter_jsonl,
+    read_json,
+    sha256_file,
+    sha256_text,
+)
 from .pm_v2_contracts import ResourceNeedRegime
 from .pm_v2_data import (
     GENERATION_CASE_FIELDS,
@@ -723,7 +730,9 @@ def require_generation_compatibility_attestation(
         ):
             raise RuntimeError(
                 "generation replay lineage differs from the current "
-                "endpoint/config/prompt/schema/shared-code contract"
+                "endpoint/config/prompt/schema/shared-code contract. "
+                "Differing field(s): "
+                f"{dict_field_diff(recorded_contract or {}, expected_contract)}"
             )
         replay = read_json(replay_path)
         summary = read_json(summary_path)
@@ -808,7 +817,9 @@ def require_generation_compatibility_attestation(
     ):
         raise RuntimeError(
             "generation compatibility pilot lineage differs from the current "
-            "endpoint/config/prompt/schema/shared-code contract"
+            "endpoint/config/prompt/schema/shared-code contract. "
+            "Differing field(s): "
+            f"{dict_field_diff(recorded_contract or {}, expected_contract)}"
         )
     estimate = read_json(estimate_path)
     estimate_payload = {

@@ -29,6 +29,7 @@ from .contracts import (
 from .io import (
     append_jsonl,
     canonical_json,
+    dict_field_diff,
     iter_jsonl,
     sha256_file,
     sha256_text,
@@ -3062,7 +3063,8 @@ def require_bundle_generation_binding(
     if canonical_json(actual) != canonical_json(expected) or actual_digest != expected_digest:
         raise RuntimeError(
             f"bundle {bundle.user_id} belongs to a different generator/seed/config/"
-            "prompt/code run; use a new output directory or --overwrite"
+            "prompt/code run; use a new output directory or --overwrite. "
+            f"Differing binding field(s): {dict_field_diff(actual, expected)}"
         )
 
 
