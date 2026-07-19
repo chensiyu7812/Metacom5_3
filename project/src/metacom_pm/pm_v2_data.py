@@ -67,8 +67,12 @@ LOCAL_FALLBACK_COVERAGE_PLACEHOLDER = (
     "Local fallback surface; evaluator rationale is compiled separately."
 )
 DATA_GENERATION_CONTRACT_VERSION = (
-    "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness"
+    "pm-v2-data-generation-v18-controlled-counterfactual-current-text"
 )
+OBSERVABLE_STATE_SUPPORT_PROTOCOL = (
+    "pm-v1.5-development-external-observable-state-support-v1"
+)
+OBSERVABLE_HISTORY_TURN_TARGETS = (2, 4, 6, 8)
 READINESS_SURFACE_PROTOCOL = (
     "pm-v2-visible-readiness-v1-deterministic-varied-counterbalanced"
 )
@@ -79,6 +83,16 @@ GENERATION_TEMPERATURE = 0.4
 GENERATION_MAX_OUTPUT_TOKENS = 8000
 SURFACE_GENERATION_MAX_OUTPUT_TOKENS = 900
 SURFACE_GENERATION_MAX_REPAIRS = 1
+CURRENT_USER_TEXT_DIVERSITY_PROTOCOL = (
+    "pm-v1.5-controlled-counterfactual-current-text-v1"
+)
+MAX_SAME_USER_FAMILY_CURRENT_TEXT_GROUP_SIZE = 2
+MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE = 7
+MAX_COUNTERFACTUAL_CURRENT_TEXT_PAIRS_PER_NINE_CASE_BUNDLE = 2
+DETERMINISTIC_MEMORY_BLUEPRINT_PROTOCOL = (
+    "pm-v1.5-deterministic-memory-blueprint-boundary-v1"
+)
+GENERATED_MEMORY_DRAFT_MAX_CHARS = 160
 EVALUATOR_CONTEXT_FIELDS = frozenset(
     {
         "evaluator_context_id",
@@ -155,6 +169,87 @@ def validate_regime_needed_sources(
 
 def normalize_text(text: str) -> str:
     return SPACE_RE.sub(" ", text.strip().lower())
+
+
+def audit_current_user_text_diversity(
+    rows: Sequence[dict[str, str]],
+    *,
+    minimum_unique_texts: int | None = None,
+) -> dict[str, Any]:
+    """Audit exact current-turn reuse without manufacturing lexical case markers.
+
+    An exact duplicate may represent a scientifically useful counterfactual when
+    the same user expresses the same concern in the same semantic family while
+    the visible history/catalog differs.  Reuse across users, families, or
+    splits remains leakage-prone and is rejected.  A group is capped at two so
+    this exception cannot collapse bundle diversity.
+    """
+
+    groups: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        normalized = normalize_text(str(row["current_user_text"]))
+        groups[normalized].append(
+            {
+                "case_field": str(row.get("case_field") or ""),
+                "user_id": str(row.get("user_id") or ""),
+                "semantic_family": str(row.get("semantic_family") or ""),
+                "split": str(row.get("split") or ""),
+            }
+        )
+    allowed: list[dict[str, Any]] = []
+    disallowed: list[dict[str, Any]] = []
+    for normalized, members in sorted(groups.items()):
+        if len(members) < 2:
+            continue
+        users = sorted({row["user_id"] for row in members if row["user_id"]})
+        families = sorted(
+            {row["semantic_family"] for row in members if row["semantic_family"]}
+        )
+        splits = sorted({row["split"] for row in members if row["split"]})
+        reasons: list[str] = []
+        if len(members) > MAX_SAME_USER_FAMILY_CURRENT_TEXT_GROUP_SIZE:
+            reasons.append("group_size_exceeds_two")
+        if len(users) > 1:
+            reasons.append("cross_user_duplicate")
+        if len(families) > 1:
+            reasons.append("cross_family_duplicate")
+        if len(splits) > 1:
+            reasons.append("cross_split_duplicate")
+        record = {
+            "normalized_text_sha256": sha256_text(normalized),
+            "group_size": len(members),
+            "case_fields": [row["case_field"] for row in members],
+            "user_ids": users,
+            "semantic_families": families,
+            "splits": splits,
+        }
+        if reasons:
+            record["reasons"] = reasons
+            disallowed.append(record)
+        else:
+            record["basis"] = "same_user_same_family_same_split_counterfactual_pair"
+            allowed.append(record)
+    unique_count = len(groups)
+    if minimum_unique_texts is not None and unique_count < minimum_unique_texts:
+        disallowed.append(
+            {
+                "reasons": ["bundle_unique_text_floor_not_met"],
+                "observed_unique_texts": unique_count,
+                "minimum_unique_texts": int(minimum_unique_texts),
+            }
+        )
+    return {
+        "protocol": CURRENT_USER_TEXT_DIVERSITY_PROTOCOL,
+        "status": "PASS" if not disallowed else "FAIL",
+        "row_count": len(rows),
+        "unique_normalized_current_user_texts": unique_count,
+        "minimum_unique_texts": minimum_unique_texts,
+        "maximum_allowed_duplicate_group_size": (
+            MAX_SAME_USER_FAMILY_CURRENT_TEXT_GROUP_SIZE
+        ),
+        "allowed_counterfactual_duplicate_groups": allowed,
+        "disallowed_duplicate_groups": disallowed,
+    }
 
 
 def evaluator_context_payload_sha256(row: dict[str, Any]) -> str:
@@ -434,7 +529,9 @@ class GeneratedMemory(StrictModel):
 class GeneratedProfileMemoryDraft(StrictModel):
     """A stable user attribute fragment, never advice or an episodic event."""
 
-    stable_user_fact: str = Field(min_length=5, max_length=160)
+    stable_user_fact: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     relevance_explanation: str = Field(min_length=5, max_length=120)
     private_sensitivity: Literal["ordinary", "sensitive"]
 
@@ -442,7 +539,9 @@ class GeneratedProfileMemoryDraft(StrictModel):
 class GeneratedSummaryMemoryDraft(StrictModel):
     """A cross-session recurring pattern fragment, never a recommendation."""
 
-    cross_session_pattern: str = Field(min_length=5, max_length=160)
+    cross_session_pattern: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     relevance_explanation: str = Field(min_length=5, max_length=120)
     private_sensitivity: Literal["ordinary", "sensitive"]
 
@@ -450,7 +549,9 @@ class GeneratedSummaryMemoryDraft(StrictModel):
 class GeneratedEventMemoryDraft(StrictModel):
     """A concrete past-event fragment, never general advice."""
 
-    concrete_past_event: str = Field(min_length=5, max_length=160)
+    concrete_past_event: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     relevance_explanation: str = Field(min_length=5, max_length=120)
     private_sensitivity: Literal["ordinary", "sensitive"]
 
@@ -483,19 +584,29 @@ class GeneratedEventDistractorSourceDraft(StrictModel):
 
 
 class GeneratedHarmfulProfileSourceDraft(StrictModel):
-    outdated_user_fact: str = Field(min_length=5, max_length=160)
-    explicit_current_update: str = Field(min_length=5, max_length=160)
+    outdated_user_fact: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
+    explicit_current_update: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     why_recall_is_harmful: str = Field(min_length=5, max_length=120)
 
 
 class GeneratedHarmfulSummarySourceDraft(StrictModel):
-    outdated_cross_session_pattern: str = Field(min_length=5, max_length=160)
-    explicit_current_update: str = Field(min_length=5, max_length=160)
+    outdated_cross_session_pattern: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
+    explicit_current_update: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     why_recall_is_harmful: str = Field(min_length=5, max_length=120)
 
 
 class GeneratedHarmfulEventSourceDraft(StrictModel):
-    unrelated_sensitive_past_event: str = Field(min_length=5, max_length=160)
+    unrelated_sensitive_past_event: str = Field(
+        min_length=5, max_length=GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
     why_recall_is_intrusive: str = Field(min_length=5, max_length=120)
 
 
@@ -527,9 +638,13 @@ class GeneratedCaseSurfaceDraft(StrictModel):
 
     current_user_text: str = Field(min_length=1, max_length=220)
     dialogue_before_current: list[GeneratedDialogueTurnDraft] = Field(
-        min_length=2, max_length=4
+        min_length=2, max_length=8
     )
-    session_summary: str = Field(min_length=1, max_length=250)
+    # The provider-facing draft below must always contain a real summary so
+    # generation quality remains checkable.  This compiler-owned model also
+    # represents the frozen summary-absent observable-state cell, encoded as
+    # the unambiguous empty string.
+    session_summary: str = Field(min_length=0, max_length=250)
     authorized_user_context: str = Field(min_length=1, max_length=250)
     coverage_rationale: str = Field(min_length=1, max_length=180)
 
@@ -546,7 +661,7 @@ class GeneratedSurfaceOnlyCaseDraft(StrictModel):
 
     current_user_text: str = Field(min_length=1, max_length=220)
     dialogue_exchanges_before_current: list[GeneratedDialogueExchangeDraft] = Field(
-        min_length=1, max_length=2
+        min_length=1, max_length=4
     )
     session_summary: str = Field(min_length=1, max_length=250)
     authorized_user_context: str = Field(min_length=1, max_length=250)
@@ -1136,6 +1251,60 @@ def _generation_user_design_offset(user_id: str) -> int:
     return int(sha256_text(user_id)[:8], 16) % len(GENERATION_CASE_FIELDS)
 
 
+def observable_state_design(*, user_id: str, case_field: str) -> dict[str, Any]:
+    """Return the outcome-blind visible-state support cell for one case.
+
+    Formal users end in ``_uNNN``.  Within each 4-user block every regime sees
+    each history length once; alternating blocks independently balance summary
+    presence inside each history-length stratum.  Compatibility users use a
+    stable digest with the same finite support.  The case index only rotates a
+    balanced treatment schedule; target actions and measured outcomes are
+    absent from both assignments.
+    """
+
+    case_fields = [field for field, _ in GENERATION_CASE_FIELDS]
+    if case_field not in case_fields:
+        raise ValueError(f"unknown observable-state case field: {case_field}")
+    case_index = case_fields.index(case_field)
+    match = re.search(r"_u(\d+)$", user_id)
+    if match:
+        user_ordinal = int(match.group(1)) - 1
+        if user_ordinal < 0:
+            raise ValueError("formal user ordinal must be positive")
+        history_index = (user_ordinal + case_index) % len(
+            OBSERVABLE_HISTORY_TURN_TARGETS
+        )
+        # Alternate the one-observation imbalance of odd-sized strata across
+        # history cells.  This preserves <=1 imbalance within each cell while
+        # keeping the 12-user calibration split exactly 6/6 overall.
+        summary_present = ((user_ordinal // 4) + history_index) % 2 == 0
+        assignment_mode = "formal_counterbalanced"
+    else:
+        history_digest = sha256_text(
+            f"{OBSERVABLE_STATE_SUPPORT_PROTOCOL}|history|{user_id}|{case_field}"
+        )
+        summary_digest = sha256_text(
+            f"{OBSERVABLE_STATE_SUPPORT_PROTOCOL}|summary|{user_id}|{case_field}"
+        )
+        history_index = int(history_digest[:8], 16) % len(
+            OBSERVABLE_HISTORY_TURN_TARGETS
+        )
+        summary_present = int(summary_digest[:8], 16) % 2 == 0
+        assignment_mode = "compatibility_stable_hash"
+    return {
+        "protocol": OBSERVABLE_STATE_SUPPORT_PROTOCOL,
+        "assignment_mode": assignment_mode,
+        "history_turn_target": OBSERVABLE_HISTORY_TURN_TARGETS[history_index],
+        "summary_present": bool(summary_present),
+        # ``case_field`` is used only to rotate the counterbalance cell so that
+        # every regime receives every treatment equally often.  It never
+        # changes the aggregate support by regime and no target action or
+        # measured outcome enters either assignment.
+        "case_index_used_for_counterbalance_rotation": True,
+        "assignment_uses_outcome_or_target_action": False,
+    }
+
+
 def _memory_age_sessions(
     *, user_id: str, case_field: str, source: MemorySource, slot_index: int
 ) -> int:
@@ -1199,14 +1368,20 @@ def lint_generation_draft(
         if not _family_anchor_hits(profile_blob, family):
             fail("bundle", "profile_family_coverage", family)
 
-    normalized_currents: list[str] = []
+    diversity_rows: list[dict[str, str]] = []
     for case_field, regime in GENERATION_CASE_FIELDS:
         surface = getattr(draft, case_field)
         target_family = assignments[case_field]
         current_blob = f"{surface.current_user_text} {surface.session_summary}"
         if not _family_anchor_hits(current_blob, target_family):
             fail(case_field, "current_family_anchor", target_family)
-        normalized_currents.append(normalize_text(surface.current_user_text))
+        diversity_rows.append(
+            {
+                "case_field": case_field,
+                "current_user_text": surface.current_user_text,
+                "semantic_family": target_family,
+            }
+        )
 
         for source_field, source in SOURCE_DRAFT_FIELDS:
             source_draft = getattr(surface, source_field)
@@ -1286,14 +1461,19 @@ def lint_generation_draft(
             if _family_anchor_hits(event_text, target_family):
                 fail(case_field, "ME_harmful_leaks_target_family", target_family)
 
-    if len(normalized_currents) != len(set(normalized_currents)):
-        fail("bundle", "unique_current_user_text", "duplicate normalized text")
+    diversity = audit_current_user_text_diversity(
+        diversity_rows,
+        minimum_unique_texts=MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE,
+    )
+    for violation in diversity["disallowed_duplicate_groups"]:
+        fail("bundle", "current_user_text_diversity", canonical_json(violation))
     return {
         "status": "PASS" if not errors else "FAIL",
         "protocol": DATA_GENERATION_CONTRACT_VERSION,
         "errors": errors,
         "case_family_assignments": assignments,
         "distractor_family_assignments": distractor_assignments,
+        "current_user_text_diversity": diversity,
     }
 
 
@@ -1311,24 +1491,38 @@ def _surface_payload(surface: GeneratedCaseSurfaceDraft) -> dict[str, Any]:
 
 def compiler_surface_from_provider(
     surface: GeneratedSurfaceOnlyCaseDraft,
+    *,
+    observable_design: dict[str, Any] | None = None,
 ) -> GeneratedCaseSurfaceDraft:
-    """Compile provider prose into a role-safe surface plus local placeholder."""
+    """Compile provider prose into a role-safe, externally supported surface."""
+
+    dialogue_before_current = [
+        turn
+        for exchange in surface.dialogue_exchanges_before_current
+        for turn in (
+            GeneratedDialogueTurnDraft(
+                role="user", content=exchange.user_text
+            ),
+            GeneratedDialogueTurnDraft(
+                role="assistant", content=exchange.assistant_text
+            ),
+        )
+    ]
+    session_summary = surface.session_summary
+    if observable_design is not None:
+        target = int(observable_design["history_turn_target"])
+        if len(dialogue_before_current) != target:
+            raise ValueError(
+                "provider surface does not match its frozen history-turn cell: "
+                f"expected={target}, observed={len(dialogue_before_current)}"
+            )
+        if observable_design["summary_present"] is not True:
+            session_summary = ""
 
     return GeneratedCaseSurfaceDraft(
         current_user_text=surface.current_user_text,
-        dialogue_before_current=[
-            turn
-            for exchange in surface.dialogue_exchanges_before_current
-            for turn in (
-                GeneratedDialogueTurnDraft(
-                    role="user", content=exchange.user_text
-                ),
-                GeneratedDialogueTurnDraft(
-                    role="assistant", content=exchange.assistant_text
-                ),
-            )
-        ],
-        session_summary=surface.session_summary,
+        dialogue_before_current=dialogue_before_current,
+        session_summary=session_summary,
         authorized_user_context=surface.authorized_user_context,
         coverage_rationale=LOCAL_FALLBACK_COVERAGE_PLACEHOLDER,
     )
@@ -1336,6 +1530,8 @@ def compiler_surface_from_provider(
 
 def assemble_surface_bundle_draft(
     surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft],
+    *,
+    user_id: str | None = None,
 ) -> GeneratedSurfaceBundleDraft:
     expected = {field for field, _ in GENERATION_CASE_FIELDS}
     if set(surfaces) != expected:
@@ -1346,9 +1542,14 @@ def assemble_surface_bundle_draft(
         )
     return GeneratedSurfaceBundleDraft.model_validate(
         {
-            field: compiler_surface_from_provider(surfaces[field]).model_dump(
-                mode="json"
-            )
+            field: compiler_surface_from_provider(
+                surfaces[field],
+                observable_design=(
+                    observable_state_design(user_id=user_id, case_field=field)
+                    if user_id is not None
+                    else None
+                ),
+            ).model_dump(mode="json")
             for field, _ in GENERATION_CASE_FIELDS
         }
     )
@@ -1356,12 +1557,14 @@ def assemble_surface_bundle_draft(
 
 def lint_generation_surface_case(
     *,
+    user_id: str,
     case_field: str,
     regime: ResourceNeedRegime,
     family: str,
     forbidden_families: Sequence[str],
     surface: GeneratedSurfaceOnlyCaseDraft,
     prior_current_user_texts: Sequence[str] = (),
+    prior_current_user_families: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Validate one paid surface without reading evidence or outcome labels."""
 
@@ -1373,8 +1576,9 @@ def lint_generation_surface_case(
     if unknown:
         raise ValueError(f"unknown forbidden semantic families: {unknown}")
     errors: list[dict[str, str]] = []
-    blob = f"{surface.current_user_text} {surface.session_summary}"
-    if not _family_anchor_hits(blob, family):
+    # The summary is deterministically absent for half of the formal states, so
+    # the final user turn itself must carry the topic anchor.
+    if not _family_anchor_hits(surface.current_user_text, family):
         errors.append(
             {
                 "case_field": case_field,
@@ -1382,6 +1586,7 @@ def lint_generation_surface_case(
                 "detail": family,
             }
         )
+    blob = f"{surface.current_user_text} {surface.session_summary}"
     for other in forbidden_families:
         if other != family and _family_anchor_hits(blob, other):
             errors.append(
@@ -1391,6 +1596,19 @@ def lint_generation_surface_case(
                     "detail": str(other),
                 }
             )
+    design = observable_state_design(user_id=user_id, case_field=case_field)
+    observed_history_turns = 2 * len(surface.dialogue_exchanges_before_current)
+    if observed_history_turns != int(design["history_turn_target"]):
+        errors.append(
+            {
+                "case_field": case_field,
+                "check": "history_turn_target",
+                "detail": (
+                    f"expected={design['history_turn_target']},"
+                    f"observed={observed_history_turns}"
+                ),
+            }
+        )
     turns = compiler_surface_from_provider(surface).dialogue_before_current
     if turns[-1].role != "assistant":
         errors.append(
@@ -1420,14 +1638,42 @@ def lint_generation_surface_case(
                 "detail": normalized_current,
             }
         )
-    if normalized_current in {
+    if len(prior_current_user_texts) != len(prior_current_user_families):
+        raise ValueError(
+            "prior current-user texts and semantic families must have equal length"
+        )
+    matching_families = [
+        str(prior_family)
+        for prior_text, prior_family in zip(
+            prior_current_user_texts, prior_current_user_families, strict=True
+        )
+        if normalize_text(prior_text) == normalized_current
+    ]
+    prior_text_counts = Counter(
         normalize_text(value) for value in prior_current_user_texts
-    }:
+    )
+    prior_counterfactual_pair_count = sum(
+        count == MAX_SAME_USER_FAMILY_CURRENT_TEXT_GROUP_SIZE
+        for count in prior_text_counts.values()
+    )
+    allowed_counterfactual_duplicate = bool(
+        len(matching_families) == 1
+        and matching_families[0] == family
+        and prior_counterfactual_pair_count
+        < MAX_COUNTERFACTUAL_CURRENT_TEXT_PAIRS_PER_NINE_CASE_BUNDLE
+    )
+    if matching_families and not allowed_counterfactual_duplicate:
+        if len(matching_families) >= 2:
+            check = "current_user_text_duplicate_group_too_large"
+        elif matching_families[0] != family:
+            check = "current_user_text_cross_family_duplicate"
+        else:
+            check = "maximum_counterfactual_current_text_pairs_exceeded"
         errors.append(
             {
                 "case_field": case_field,
-                "check": "unique_current_user_text",
-                "detail": normalized_current,
+                "check": check,
+                "detail": sha256_text(normalized_current),
             }
         )
     return {
@@ -1436,6 +1682,18 @@ def lint_generation_surface_case(
         "case_field": case_field,
         "regime": regime.value,
         "semantic_family": family,
+        "observable_state_design": design,
+        "current_user_text_diversity": {
+            "protocol": CURRENT_USER_TEXT_DIVERSITY_PROTOCOL,
+            "allowed_same_user_family_counterfactual_duplicate": (
+                allowed_counterfactual_duplicate
+            ),
+            "prior_exact_duplicate_count": len(matching_families),
+            "prior_counterfactual_pair_count": prior_counterfactual_pair_count,
+            "maximum_counterfactual_pairs_per_nine_case_bundle": (
+                MAX_COUNTERFACTUAL_CURRENT_TEXT_PAIRS_PER_NINE_CASE_BUNDLE
+            ),
+        },
         "errors": errors,
     }
 
@@ -1574,7 +1832,7 @@ def lint_generation_surfaces(
 
     assignments = generation_case_family_assignments(semantic_families, regimes)
     errors: list[dict[str, str]] = []
-    normalized_currents: list[str] = []
+    diversity_rows: list[dict[str, str]] = []
     for case_field, regime in GENERATION_CASE_FIELDS:
         surface = surfaces[case_field]
         target = assignments[case_field]
@@ -1592,7 +1850,13 @@ def lint_generation_surfaces(
                         "detail": str(other),
                     }
                 )
-        normalized_currents.append(normalize_text(surface.current_user_text))
+        diversity_rows.append(
+            {
+                "case_field": case_field,
+                "current_user_text": surface.current_user_text,
+                "semantic_family": target,
+            }
+        )
         turns = surface.dialogue_before_current
         if turns[-1].role != "assistant":
             errors.append(
@@ -1622,12 +1886,16 @@ def lint_generation_surfaces(
                     "detail": normalized_current,
                 }
             )
-    if len(normalized_currents) != len(set(normalized_currents)):
+    diversity = audit_current_user_text_diversity(
+        diversity_rows,
+        minimum_unique_texts=MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE,
+    )
+    for violation in diversity["disallowed_duplicate_groups"]:
         errors.append(
             {
                 "case_field": "bundle",
-                "check": "unique_current_user_text",
-                "detail": "duplicate normalized text",
+                "check": "current_user_text_diversity",
+                "detail": canonical_json(violation),
             }
         )
     return {
@@ -1635,6 +1903,7 @@ def lint_generation_surfaces(
         "protocol": DATA_GENERATION_CONTRACT_VERSION,
         "errors": errors,
         "case_family_assignments": assignments,
+        "current_user_text_diversity": diversity,
     }
 
 
@@ -1660,13 +1929,10 @@ def select_generation_surfaces(
         for error in provider_lint["errors"]
         if error["case_field"] != "bundle"
     }
-    if any(error["case_field"] == "bundle" for error in provider_lint["errors"]):
-        seen: set[str] = set()
-        for case_field, _ in GENERATION_CASE_FIELDS:
-            normalized = normalize_text(provider[case_field].current_user_text)
-            if normalized in seen:
-                invalid_cases.add(case_field)
-            seen.add(normalized)
+    for group in provider_lint["current_user_text_diversity"][
+        "disallowed_duplicate_groups"
+    ]:
+        invalid_cases.update(str(value) for value in group.get("case_fields", [])[1:])
     assignments = generation_case_family_assignments(semantic_families, regimes)
     selected: dict[str, GeneratedCaseSurfaceDraft] = {}
     for case_field, regime in GENERATION_CASE_FIELDS:
@@ -1765,13 +2031,94 @@ def _semantic_decoy_source_raw(family: str, source: MemorySource) -> str:
         )
     if source is MemorySource.MS:
         return (
-            f"has occasionally discussed general news about {topic}, explicitly as "
-            "an outside topic rather than a recurring personal pattern"
+            f"has discussed news about {topic} only as an outside topic, not a "
+            "recurring personal pattern"
         )
     return (
         f"once read a news story about {topic} and explicitly said it was unrelated "
         "to their own experience"
     )
+
+
+def deterministic_memory_blueprint_preflight() -> dict[str, Any]:
+    """Validate every compiler-owned memory fragment before any paid call.
+
+    The provider never authors these evidence fragments.  Exhausting the finite
+    family/source/template product here therefore catches local schema drift
+    without inspecting generated outcomes or spending API budget.
+    """
+
+    checked: list[dict[str, Any]] = []
+
+    def validate(
+        *, family: str, source: MemorySource, role: str, raw: str
+    ) -> None:
+        common = {
+            "relevance_explanation": "Deterministic compiler boundary preflight.",
+            "private_sensitivity": "ordinary",
+        }
+        if source is MemorySource.MP:
+            GeneratedProfileMemoryDraft(stable_user_fact=raw, **common)
+        elif source is MemorySource.MS:
+            GeneratedSummaryMemoryDraft(cross_session_pattern=raw, **common)
+        else:
+            GeneratedEventMemoryDraft(concrete_past_event=raw, **common)
+        checked.append(
+            {
+                "family": family,
+                "source": source.value,
+                "role": role,
+                "character_count": len(raw),
+            }
+        )
+
+    for family, topic in sorted(GENERATION_FAMILY_TOPICS.items()):
+        for source in MemorySource:
+            validate(
+                family=family,
+                source=source,
+                role="helpful_blueprint",
+                raw=_blueprint_source_raw(family, source),
+            )
+            validate(
+                family=family,
+                source=source,
+                role="semantic_decoy",
+                raw=_semantic_decoy_source_raw(family, source),
+            )
+        validate(
+            family=family,
+            source=MemorySource.MP,
+            role="harmful_outdated_profile",
+            raw=f"previously preferred not to discuss {topic}",
+        )
+        validate(
+            family=family,
+            source=MemorySource.MS,
+            role="harmful_outdated_summary",
+            raw=f"previously withdrew whenever {topic} arose",
+        )
+        validate(
+            family=family,
+            source=MemorySource.ME,
+            role="harmful_unrelated_event",
+            raw=f"last spring described a private incident involving {topic}",
+        )
+
+    maximum = max(row["character_count"] for row in checked)
+    return {
+        "protocol": DETERMINISTIC_MEMORY_BLUEPRINT_PROTOCOL,
+        "status": "PASS",
+        "field_maximum_characters": GENERATED_MEMORY_DRAFT_MAX_CHARS,
+        "checked_template_instances": len(checked),
+        "maximum_observed_characters": maximum,
+        "minimum_remaining_margin_characters": (
+            GENERATED_MEMORY_DRAFT_MAX_CHARS - maximum
+        ),
+        "maximum_instances": [
+            row for row in checked if row["character_count"] == maximum
+        ],
+    }
 
 
 def generation_evidence_blueprint_hash() -> str:
@@ -2192,7 +2539,10 @@ def compile_generation_draft(
                 "The user explicitly says they previously avoided this topic but "
                 "now want to describe the current event rather than push it away."
             )
-            session_summary = f"{session_summary.rstrip('.')}. {current_updates}"
+            if session_summary:
+                session_summary = (
+                    f"{session_summary.rstrip('.')}. {current_updates}"
+                )
             authorized_user_context = (
                 f"{authorized_user_context.rstrip('.')}. {current_updates}"
             )
@@ -2265,6 +2615,18 @@ def compile_generation_draft(
             "surface_selection": surface_selection,
             "session_design_offset": design_offset,
             "case_design_positions": design_positions,
+            "observable_state_support": {
+                "protocol": OBSERVABLE_STATE_SUPPORT_PROTOCOL,
+                "case_designs": {
+                    case_field: observable_state_design(
+                        user_id=user_id, case_field=case_field
+                    )
+                    for case_field, _ in GENERATION_CASE_FIELDS
+                },
+                "provider_summary_compiled_absent_when_assigned": True,
+                "history_turn_targets": list(OBSERVABLE_HISTORY_TURN_TARGETS),
+                "uses_evoemo_content_or_outcomes": False,
+            },
             "provider_surface_only": isinstance(
                 draft, GeneratedSurfaceBundleDraft
             ),
@@ -2418,6 +2780,19 @@ def generation_case_messages(
     advice_readiness_target = advice_readiness_target_for_case(
         user_id=user_id, regime=regime
     )
+    observable_design = observable_state_design(
+        user_id=user_id, case_field=case_field
+    )
+    exchange_target = int(observable_design["history_turn_target"]) // 2
+    summary_treatment = (
+        "The compiler will retain session_summary for this case."
+        if observable_design["summary_present"]
+        else (
+            "The compiler will deterministically hide session_summary for this "
+            "case. Still write a faithful summary for transport audit, but make "
+            "current_user_text self-contained and do not rely on the summary."
+        )
+    )
     readiness_instruction = {
         "listen_only": (
             "Keep the core final turn neutral about asking for or refusing advice. "
@@ -2471,14 +2846,18 @@ HARD TOPIC LOCK
   domain unless that domain is itself the named target above.
 
 SURFACE RULES
-1. dialogue_exchanges_before_current contains 1-2 earlier exchanges. In every
+1. dialogue_exchanges_before_current contains EXACTLY {exchange_target} earlier
+   user-to-assistant exchanges ({observable_design['history_turn_target']} turns).
+   In every
    exchange, user_text happened first and assistant_text replied immediately after;
    the last assistant_text is immediately before current_user_text. Do not output
    role labels, and do not place the final user statement inside an exchange.
    Earlier exchange text must not repeat or answer current_user_text.
-2. current_user_text is the final user turn and must be natural, specific, and
-   understandable from the earlier dialogue.
+2. current_user_text is the final user turn and must be natural, specific,
+   understandable from the earlier dialogue, and itself contain a literal target
+   anchor. Do not rely on session_summary to establish the topic.
 3. session_summary and authorized_user_context may summarize only visible facts.
+   {summary_treatment}
 4. Advice readiness is independent of the Strategy-resource challenge:
    {readiness_instruction}
    The appended visible readiness sentence is a legitimate user-state observation,
@@ -2610,7 +2989,10 @@ SURFACE AND TIME RULES
 5. In memory_harmful, the user's current correction must be explicit in
    current_user_text or prior visible dialogue. session_summary and authorized context
    may summarize visible facts but must never introduce a hidden update.
-6. Use nine distinct, natural current-user turns. Never use meta-label phrases such as
+6. Use natural current-user turns. Exact wording may recur only when the same user's
+   same-family concern is intentionally held constant while locally compiled visible
+   history/catalog differs; never force uniqueness with case labels, nonce phrases, or
+   meta-language. At least seven of the nine turns must remain distinct. Never use phrases such as
    'one detail alone does not explain', 'helpful memory', 'strategy is needed',
    'context only is enough', or 'regime'. The three occurrences of each family
    should be different situations, not paraphrases.
@@ -2785,10 +3167,13 @@ def validate_successful_generation_trace(
                 f"I used to avoid talking about {topic}, but this time I want "
                 "to describe what happened instead of pushing it away.",
             )
-            summary_matches = case.session_summary.startswith(
-                expected_surface.session_summary.rstrip(".")
-                + ". The user explicitly says they previously avoided this topic"
-            )
+            if expected_surface.session_summary:
+                summary_matches = case.session_summary.startswith(
+                    expected_surface.session_summary.rstrip(".")
+                    + ". The user explicitly says they previously avoided this topic"
+                )
+            else:
+                summary_matches = case.session_summary == ""
             context_matches = case.authorized_user_context.startswith(
                 expected_surface.authorized_user_context.rstrip(".")
                 + ". The user explicitly says they previously avoided this topic"
@@ -2883,7 +3268,9 @@ def _validate_successful_surface_generation_trace(
                 f"surface {case_field}"
             )
         parsed_surfaces[case_field] = parsed
-    compiler_draft = assemble_surface_bundle_draft(parsed_surfaces)
+    compiler_draft = assemble_surface_bundle_draft(
+        parsed_surfaces, user_id=bundle.user_id
+    )
     compiler_json = compiler_draft.model_dump(mode="json")
     if compiler_json != compiler_payload:
         raise RuntimeError(
@@ -3153,7 +3540,7 @@ def compile_surface_only_user_bundle(
             raise ValueError(
                 f"{name} must cover every named case exactly once"
             )
-    compiler_draft = assemble_surface_bundle_draft(surfaces)
+    compiler_draft = assemble_surface_bundle_draft(surfaces, user_id=user_id)
     bundle = compile_generation_draft(
         draft=compiler_draft,
         seed_dialogue=seed_dialogue,
@@ -3386,8 +3773,26 @@ def validate_bundle(bundle: GeneratedUserBundle) -> dict[str, Any]:
     regimes = Counter(case.regime.value for case in bundle.cases)
     current_texts = [normalize_text(case.current_user_text) for case in bundle.cases]
     memory_ages: list[int] = []
-    if len(current_texts) != len(set(current_texts)):
-        raise ValueError(f"bundle {bundle.user_id} repeats normalized current-user text")
+    minimum_unique_texts = (
+        len(bundle.cases) * MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE + 8
+    ) // 9
+    diversity = audit_current_user_text_diversity(
+        [
+            {
+                "case_field": case.case_id,
+                "user_id": bundle.user_id,
+                "semantic_family": case.semantic_family,
+                "current_user_text": case.current_user_text,
+            }
+            for case in bundle.cases
+        ],
+        minimum_unique_texts=minimum_unique_texts,
+    )
+    if diversity["status"] != "PASS":
+        raise ValueError(
+            f"bundle {bundle.user_id} violates current-user-text diversity: "
+            + canonical_json(diversity["disallowed_duplicate_groups"])
+        )
     required = {
         ResourceNeedRegime.CONTEXT_ONLY.value,
         ResourceNeedRegime.EVENT_NEEDED.value,
@@ -3448,6 +3853,7 @@ def validate_bundle(bundle: GeneratedUserBundle) -> dict[str, Any]:
         "normalized_current_user_text_unique_rate": (
             len(set(current_texts)) / len(current_texts)
         ),
+        "current_user_text_diversity": diversity,
         "regime_distribution": dict(regimes),
         "semantic_families": sorted({case.semantic_family for case in bundle.cases}),
         "needed_memory_sources": {
@@ -3480,6 +3886,29 @@ def validate_split_manifests(split_states: dict[PMV2Split, Sequence[PMV2State]])
         normalize_text(state.current_user_text) for state in all_states
     ]
     unique_normalized_texts = len(set(normalized_texts))
+    diversity = audit_current_user_text_diversity(
+        [
+            {
+                "case_field": state.state_id,
+                "user_id": state.user_id,
+                "semantic_family": state.semantic_family,
+                "split": state.split.value,
+                "current_user_text": state.current_user_text,
+            }
+            for state in all_states
+        ]
+    )
+    same_split_violations = [
+        group
+        for group in diversity["disallowed_duplicate_groups"]
+        if "cross_split_duplicate" not in group.get("reasons", [])
+    ]
+    if same_split_violations:
+        raise ValueError(
+            "PM-v2 current-user-text reuse is permitted only as a same-user, "
+            "same-family, same-split counterfactual pair: "
+            + canonical_json(same_split_violations)
+        )
     return SplitManifest(
         train_users=sorted(user_sets[0]),
         calibration_users=sorted(user_sets[1]),
@@ -3837,6 +4266,160 @@ def validate_generation_shortcut_controls(
     }
 
 
+def summarize_observable_state_support(
+    *,
+    bundles: Sequence[GeneratedUserBundle],
+    split_by_user: dict[str, PMV2Split],
+) -> dict[str, Any]:
+    """Audit visible-state support without consulting action outcomes."""
+
+    rows: list[dict[str, Any]] = []
+    for bundle in bundles:
+        split = split_by_user[bundle.user_id]
+        cases_by_regime = {case.regime: case for case in bundle.cases}
+        for case_field, regime in GENERATION_CASE_FIELDS:
+            case = cases_by_regime[regime]
+            design = observable_state_design(
+                user_id=bundle.user_id, case_field=case_field
+            )
+            observed_turns = len(case.recent_dialogue)
+            observed_summary = bool(case.session_summary.strip())
+            if observed_turns != int(design["history_turn_target"]):
+                raise RuntimeError(
+                    f"{bundle.user_id}/{case_field} history support drifted"
+                )
+            if observed_summary is not bool(design["summary_present"]):
+                raise RuntimeError(
+                    f"{bundle.user_id}/{case_field} summary support drifted"
+                )
+            rows.append(
+                {
+                    "split": split.value,
+                    "regime": regime.value,
+                    "history_turns": observed_turns,
+                    "summary_present": observed_summary,
+                    "current_user_tokens_est": estimate_tokens(
+                        case.current_user_text
+                    ),
+                }
+            )
+
+    by_split: dict[str, Any] = {}
+    checks: dict[str, bool] = {}
+    for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION, PMV2Split.INTERNAL_TEST):
+        split_rows = [row for row in rows if row["split"] == split.value]
+        regime_rows: dict[str, Any] = {}
+        for _, regime in GENERATION_CASE_FIELDS:
+            selected = [
+                row for row in split_rows if row["regime"] == regime.value
+            ]
+            history_counts = Counter(row["history_turns"] for row in selected)
+            summary_counts = Counter(row["summary_present"] for row in selected)
+            history_complete = set(history_counts) == set(
+                OBSERVABLE_HISTORY_TURN_TARGETS
+            )
+            history_balanced = (
+                history_complete
+                and max(history_counts.values()) - min(history_counts.values()) <= 1
+            )
+            summary_balanced = abs(
+                summary_counts.get(True, 0) - summary_counts.get(False, 0)
+            ) <= 1
+            checks[f"{split.value}.{regime.value}.history"] = history_balanced
+            checks[f"{split.value}.{regime.value}.summary"] = summary_balanced
+            regime_rows[regime.value] = {
+                "state_count": len(selected),
+                "history_turn_counts": {
+                    str(key): history_counts.get(key, 0)
+                    for key in OBSERVABLE_HISTORY_TURN_TARGETS
+                },
+                "summary_present_count": summary_counts.get(True, 0),
+                "summary_absent_count": summary_counts.get(False, 0),
+            }
+        token_values = [row["current_user_tokens_est"] for row in split_rows]
+        by_split[split.value] = {
+            "state_count": len(split_rows),
+            "history_turn_counts": dict(
+                sorted(Counter(row["history_turns"] for row in split_rows).items())
+            ),
+            "summary_present_count": sum(
+                row["summary_present"] for row in split_rows
+            ),
+            "summary_absent_count": sum(
+                not row["summary_present"] for row in split_rows
+            ),
+            "current_user_tokens_est_min": min(token_values, default=0),
+            "current_user_tokens_est_max": max(token_values, default=0),
+            "regimes": regime_rows,
+        }
+    if not all(checks.values()):
+        failed = sorted(key for key, passed in checks.items() if not passed)
+        raise RuntimeError(
+            "development observable-state support is not counterbalanced: "
+            f"{failed[:10]}"
+        )
+    return {
+        "protocol": OBSERVABLE_STATE_SUPPORT_PROTOCOL,
+        "status": "PASS",
+        "outcome_labels_used": False,
+        "evoemo_content_used": False,
+        "history_turn_targets": list(OBSERVABLE_HISTORY_TURN_TARGETS),
+        "summary_treatments": ["present", "absent"],
+        "by_split": by_split,
+        "checks": checks,
+    }
+
+
+def compare_external_observable_state_support(
+    *,
+    development: dict[str, Any],
+    external_states: Sequence[PMV2State],
+) -> dict[str, Any]:
+    """Gate structural support, while leaving distribution shift descriptive."""
+
+    if (
+        development.get("protocol") != OBSERVABLE_STATE_SUPPORT_PROTOCOL
+        or development.get("status") != "PASS"
+        or development.get("history_turn_targets")
+        != list(OBSERVABLE_HISTORY_TURN_TARGETS)
+        or development.get("summary_treatments") != ["present", "absent"]
+    ):
+        raise RuntimeError("development observable-state support record is stale")
+    if not external_states:
+        raise RuntimeError("external observable-state comparison has no states")
+    history_counts = Counter(
+        len(state.current_session_history) for state in external_states
+    )
+    summary_counts = Counter(
+        bool(state.current_session_summary.strip()) for state in external_states
+    )
+    current_tokens = [
+        estimate_tokens(state.current_user_text) for state in external_states
+    ]
+    checks = {
+        "history_lengths_within_development_support": set(history_counts)
+        <= set(OBSERVABLE_HISTORY_TURN_TARGETS),
+        "summary_treatments_within_development_support": set(summary_counts)
+        <= {True, False},
+        "current_user_text_nonempty": min(current_tokens) >= 1,
+        "no_evoemo_outcome_used_for_support_decision": True,
+    }
+    return {
+        "protocol": OBSERVABLE_STATE_SUPPORT_PROTOCOL,
+        "status": "PASS" if all(checks.values()) else "FAIL",
+        "role": "structural_support_gate_distribution_shift_report_only",
+        "outcome_labels_used": False,
+        "external_threshold_selection_or_retuning_authorized": False,
+        "state_count": len(external_states),
+        "history_turn_counts": dict(sorted(history_counts.items())),
+        "summary_present_count": summary_counts.get(True, 0),
+        "summary_absent_count": summary_counts.get(False, 0),
+        "current_user_tokens_est_min": min(current_tokens),
+        "current_user_tokens_est_max": max(current_tokens),
+        "checks": checks,
+    }
+
+
 def write_development_dataset(
     *,
     bundles: Sequence[GeneratedUserBundle],
@@ -4007,6 +4590,25 @@ def write_development_dataset(
         bundles=bundles,
         split_by_user=split_by_user,
     )
+    observable_state_support = (
+        summarize_observable_state_support(
+            bundles=bundles,
+            split_by_user=split_by_user,
+        )
+        if bundles
+        and all(
+            bundle.provenance.get("generation_structure")
+            == DATA_GENERATION_CONTRACT_VERSION
+            and bundle.provenance.get("provider_surface_only") is True
+            for bundle in bundles
+        )
+        else {
+            "protocol": OBSERVABLE_STATE_SUPPORT_PROTOCOL,
+            "status": "NOT_ENFORCED_LEGACY_OR_TEST_FIXTURE",
+            "outcome_labels_used": False,
+            "evoemo_content_used": False,
+        }
+    )
     report = {
         "status": "COMPLETE",
         "n_users": len(bundles),
@@ -4017,6 +4619,7 @@ def write_development_dataset(
         "split_manifest": manifest.model_dump(mode="json"),
         "semantic_family_coverage": semantic_family_coverage,
         "generation_shortcut_controls": shortcut_controls,
+        "observable_state_support": observable_state_support,
         "required_hit_preflight": required_hit_preflight,
         "bundle_reports": bundle_reports,
         "states_path": str(state_path),

@@ -397,14 +397,21 @@ def test_automated_review_dry_run_freezes_the_durable_retry_contract(
         "gemini_generate_content"
     )
     retry_contract = first["retry_contract"]
-    assert retry_contract["protocol"] == "pm-v1.5-bounded-retry-v2"
+    assert retry_contract["protocol"] == (
+        "pm-v1.5-bounded-retry-v4-independent-transport-format"
+    )
     assert retry_contract["cross_process_eligibility_source"] == (
         "physical_attempt_ledger"
     )
     assert "request_timeout_408" in retry_contract["retryable_up_to_full_budget"]
+    assert retry_contract["bounded_provider_output_retry_classes"] == [
+        "missing_field",
+        "provider_output_format",
+    ]
+    assert retry_contract["provider_output_maximum_failures"] == 2
     assert retry_contract[
-        "missing_field_maximum_additional_physical_attempts"
-    ] == 1
+        "provider_output_failures_are_independent_of_transport_attempts"
+    ] is True
     assert "consecutive_failure_circuit_breaker_limit" not in retry_contract
 
     monkeypatch.setattr(sys, "argv", _argv(out_dir, "--dry-run", pilot))

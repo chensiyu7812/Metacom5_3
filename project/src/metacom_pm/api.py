@@ -18,6 +18,13 @@ NormalizedFinishReason = Literal[
     "complete", "length", "tool_call", "content_filter", "unknown"
 ]
 ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME = "submit_structured_response"
+GEMINI_USAGE_BREAKDOWN_KEYS = (
+    "gemini_prompt_tokens",
+    "gemini_candidate_tokens",
+    "gemini_thought_tokens",
+    "gemini_tool_use_prompt_tokens",
+    "gemini_cached_content_tokens",
+)
 OPENAI_UNSUPPORTED_STRICT_SCHEMA_KEYWORDS = frozenset(
     {
         "allOf",
@@ -92,6 +99,100 @@ class CallResult:
     request_hash: str
     provider_finish_reason: str | None = None
     normalized_finish_reason: NormalizedFinishReason = "unknown"
+    # Structured providers occasionally wrap an otherwise valid JSON object in
+    # a Markdown fence or a short prose prefix.  When that surface is repaired
+    # deterministically, retain an explicit audit record instead of silently
+    # pretending that the provider returned exact JSON.
+    structured_output_audit: dict[str, Any] | None = None
+
+
+def parse_audited_json_surface(text: str) -> tuple[Any, dict[str, Any]]:
+    """Parse one JSON value with narrowly bounded, fully audited normalization.
+
+    Exact JSON remains the preferred surface.  The only accepted normalization
+    removes either one complete Markdown JSON fence or a short prefix/suffix
+    surrounding exactly one JSON object.  JSON values are never edited.  A
+    malformed object, multiple objects, or a long wrapper remains a provider
+    output-format failure and is handled by the outer paid-attempt ledger.
+    """
+
+    raw = str(text)
+    stripped = raw.strip()
+    raw_sha256 = sha256_text(raw)
+    parse_error: json.JSONDecodeError | None = None
+    try:
+        parsed = json.loads(stripped)
+    except json.JSONDecodeError as exc:
+        parse_error = exc
+        parsed = None
+    else:
+        return parsed, {
+            "initially_valid_json": True,
+            "normalization_kind": "exact_json",
+            "raw_text_sha256": raw_sha256,
+            "normalized_json_sha256": sha256_text(canonical_json(parsed)),
+            "discarded_prefix_chars": 0,
+            "discarded_suffix_chars": 0,
+        }
+
+    lines = stripped.splitlines()
+    if (
+        len(lines) >= 3
+        and lines[0].strip().casefold() in {"```", "```json"}
+        and lines[-1].strip() == "```"
+    ):
+        inner = "\n".join(lines[1:-1]).strip()
+        try:
+            fenced = json.loads(inner)
+        except json.JSONDecodeError:
+            pass
+        else:
+            return fenced, {
+                "initially_valid_json": False,
+                "normalization_kind": "single_markdown_json_fence",
+                "raw_text_sha256": raw_sha256,
+                "normalized_json_sha256": sha256_text(canonical_json(fenced)),
+                "discarded_prefix_chars": len(lines[0]) + 1,
+                "discarded_suffix_chars": len(lines[-1]) + 1,
+            }
+
+    # Recover the recurring provider shape `We{...}` without accepting an
+    # arbitrary essay around JSON.  The wrapper is bounded, may not contain a
+    # second JSON delimiter, and exactly one decodable object must exist.
+    decoder = json.JSONDecoder()
+    candidates: list[tuple[Any, str, int, int]] = []
+    for start, character in enumerate(stripped):
+        if character != "{":
+            continue
+        try:
+            embedded, end = decoder.raw_decode(stripped, start)
+        except json.JSONDecodeError:
+            continue
+        prefix = stripped[:start]
+        suffix = stripped[end:]
+        if not isinstance(embedded, dict):
+            continue
+        if len(prefix) > 80 or len(suffix) > 80:
+            continue
+        if any(token in prefix + suffix for token in ("{", "}", "[", "]")):
+            continue
+        candidates.append(
+            (embedded, "single_bounded_json_object", len(prefix), len(suffix))
+        )
+
+    if len(candidates) != 1:
+        if parse_error is None:  # pragma: no cover - exact JSON returned above
+            raise ValueError("provider response is not valid JSON")
+        raise parse_error
+    parsed, kind, prefix_chars, suffix_chars = candidates[0]
+    return parsed, {
+        "initially_valid_json": False,
+        "normalization_kind": kind,
+        "raw_text_sha256": raw_sha256,
+        "normalized_json_sha256": sha256_text(canonical_json(parsed)),
+        "discarded_prefix_chars": int(prefix_chars),
+        "discarded_suffix_chars": int(suffix_chars),
+    }
 
 
 def normalize_provider_finish_reason(
@@ -172,7 +273,7 @@ def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
 
     Returns (retry_class, status_code). retry_class is one of:
     "rate_limited_429", "request_timeout_408", "http_5xx",
-    "network_timeout", "missing_field", "other".
+    "network_timeout", "missing_field", "provider_output_format", "other".
     Only the caller decides whether/how many times to retry each class; this
     function only describes what happened.
     """
@@ -195,6 +296,10 @@ def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
         isinstance(exc, ValueError) and "empty model response" in str(exc)
     ):
         return "missing_field", None
+    if isinstance(exc, json.JSONDecodeError) or (
+        isinstance(exc, ValueError) and "response is not valid JSON" in str(exc)
+    ):
+        return "provider_output_format", None
     return "other", None
 
 
@@ -215,6 +320,7 @@ class RetryableProviderError(RuntimeError):
         usage: Mapping[str, Any] | None = None,
         response_diagnostics: Mapping[str, Any] | None = None,
         retry_after_seconds: float | None = None,
+        provider_text: str | None = None,
     ) -> None:
         super().__init__(message)
         self.last_retry_class = last_retry_class
@@ -226,6 +332,7 @@ class RetryableProviderError(RuntimeError):
             dict(response_diagnostics) if response_diagnostics is not None else None
         )
         self.retry_after_seconds = retry_after_seconds
+        self.provider_text = str(provider_text) if provider_text is not None else None
 
 
 class StructuredOutputValidationError(RuntimeError):
@@ -279,6 +386,47 @@ def require_reported_usage(
         raise RuntimeError(
             f"{stage} provider reported total_tokens is internally inconsistent"
         )
+    present_gemini_keys = {
+        key for key in GEMINI_USAGE_BREAKDOWN_KEYS if key in raw
+    }
+    if present_gemini_keys:
+        if present_gemini_keys != set(GEMINI_USAGE_BREAKDOWN_KEYS):
+            raise RuntimeError(
+                f"{stage} Gemini usage breakdown is incomplete"
+            )
+        try:
+            gemini = {
+                key: int(raw[key]) for key in GEMINI_USAGE_BREAKDOWN_KEYS
+            }
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError(
+                f"{stage} Gemini usage breakdown is invalid"
+            ) from exc
+        if any(value < 0 for value in gemini.values()):
+            raise RuntimeError(
+                f"{stage} Gemini usage breakdown cannot contain negative tokens"
+            )
+        if gemini["gemini_cached_content_tokens"] > gemini[
+            "gemini_prompt_tokens"
+        ]:
+            raise RuntimeError(
+                f"{stage} Gemini cached tokens exceed prompt tokens"
+            )
+        if normalized["prompt_tokens"] != (
+            gemini["gemini_prompt_tokens"]
+            + gemini["gemini_tool_use_prompt_tokens"]
+        ):
+            raise RuntimeError(
+                f"{stage} Gemini normalized prompt accounting is inconsistent"
+            )
+        if normalized["completion_tokens"] != (
+            gemini["gemini_candidate_tokens"]
+            + gemini["gemini_thought_tokens"]
+        ):
+            raise RuntimeError(
+                f"{stage} Gemini normalized completion accounting is inconsistent"
+            )
+        normalized.update(gemini)
     return normalized
 
 
@@ -440,7 +588,12 @@ def _openai_usage_from_body(body: Any) -> dict[str, int] | None:
 
 
 def _gemini_usage_from_body(body: Any) -> dict[str, int] | None:
-    """Normalize native Gemini generateContent usage metadata."""
+    """Normalize native Gemini usage without dropping billable components.
+
+    Gemini defines totalTokenCount as prompt + candidates + tool-use prompt +
+    thoughts. Cached content is already included in promptTokenCount, so it is
+    recorded for audit but is not added a second time.
+    """
 
     if not isinstance(body, Mapping) or not isinstance(
         body.get("usageMetadata"), Mapping
@@ -448,10 +601,20 @@ def _gemini_usage_from_body(body: Any) -> dict[str, int] | None:
         return None
     usage_raw = body["usageMetadata"]
     try:
+        provider_prompt = int(usage_raw.get("promptTokenCount") or 0)
+        candidates = int(usage_raw.get("candidatesTokenCount") or 0)
+        thoughts = int(usage_raw.get("thoughtsTokenCount") or 0)
+        tool_use_prompt = int(usage_raw.get("toolUsePromptTokenCount") or 0)
+        cached_content = int(usage_raw.get("cachedContentTokenCount") or 0)
         return {
-            "prompt_tokens": int(usage_raw.get("promptTokenCount") or 0),
-            "completion_tokens": int(usage_raw.get("candidatesTokenCount") or 0),
+            "prompt_tokens": provider_prompt + tool_use_prompt,
+            "completion_tokens": candidates + thoughts,
             "total_tokens": int(usage_raw.get("totalTokenCount") or 0),
+            "gemini_prompt_tokens": provider_prompt,
+            "gemini_candidate_tokens": candidates,
+            "gemini_thought_tokens": thoughts,
+            "gemini_tool_use_prompt_tokens": tool_use_prompt,
+            "gemini_cached_content_tokens": cached_content,
         }
     except (TypeError, ValueError):
         return None
@@ -713,6 +876,7 @@ class OpenAICompatibleClient:
         last_usage: dict[str, int] | None = None
         last_response_diagnostics: dict[str, Any] | None = None
         last_retry_after_seconds: float | None = None
+        last_provider_text: str | None = None
         attempts_tried = 0
         for attempt in range(1, retries + 1):
             attempts_tried = attempt
@@ -782,6 +946,7 @@ class OpenAICompatibleClient:
                 text = body["choices"][0]["message"]["content"]
                 if not isinstance(text, str) or not text.strip():
                     raise ValueError("empty model response")
+                last_provider_text = text
                 provider_finish_reason, normalized_finish_reason = (
                     normalize_provider_finish_reason(body)
                 )
@@ -796,13 +961,8 @@ class OpenAICompatibleClient:
                 )
                 if response_schema is None:
                     return call, None
-                try:
-                    parsed_obj = json.loads(text)
-                except json.JSONDecodeError:
-                    start, end = text.find("{"), text.rfind("}")
-                    if start < 0 or end <= start:
-                        raise ValueError("response is not valid JSON")
-                    parsed_obj = json.loads(text[start : end + 1])
+                parsed_obj, surface_audit = parse_audited_json_surface(text)
+                call.structured_output_audit = surface_audit
                 try:
                     parsed = response_schema.model_validate(parsed_obj)
                 except ValidationError as exc:
@@ -843,6 +1003,7 @@ class OpenAICompatibleClient:
             usage=last_usage,
             response_diagnostics=last_response_diagnostics,
             retry_after_seconds=last_retry_after_seconds,
+            provider_text=last_provider_text,
         )
 
 
@@ -918,6 +1079,7 @@ class GeminiNativeClient:
         last_usage: dict[str, int] | None = None
         last_response_diagnostics: dict[str, Any] | None = None
         last_retry_after_seconds: float | None = None
+        last_provider_text: str | None = None
         attempts_tried = 0
         for attempt in range(1, retries + 1):
             attempts_tried = attempt
@@ -999,6 +1161,7 @@ class GeminiNativeClient:
                 ).strip()
                 if not text:
                     raise ValueError("empty model response")
+                last_provider_text = text
                 provider_finish_reason, normalized_finish_reason = (
                     normalize_provider_finish_reason(body)
                 )
@@ -1013,13 +1176,8 @@ class GeminiNativeClient:
                 )
                 if response_schema is None:
                     return call, None
-                try:
-                    parsed_obj = json.loads(text)
-                except json.JSONDecodeError:
-                    start, end = text.find("{"), text.rfind("}")
-                    if start < 0 or end <= start:
-                        raise ValueError("response is not valid JSON")
-                    parsed_obj = json.loads(text[start : end + 1])
+                parsed_obj, surface_audit = parse_audited_json_surface(text)
+                call.structured_output_audit = surface_audit
                 try:
                     parsed = response_schema.model_validate(parsed_obj)
                 except ValidationError as exc:
@@ -1060,6 +1218,7 @@ class GeminiNativeClient:
             usage=last_usage,
             response_diagnostics=last_response_diagnostics,
             retry_after_seconds=last_retry_after_seconds,
+            provider_text=last_provider_text,
         )
 
 
@@ -1233,6 +1392,9 @@ def request_log(
         ),
         "completion_truncated": (
             result.normalized_finish_reason == "length" if result else None
+        ),
+        "structured_output_audit": (
+            result.structured_output_audit if result else None
         ),
         "validated": parsed.model_dump(mode="json") if parsed else None,
         "usage": result.usage if result else None,

@@ -983,6 +983,9 @@ def main() -> None:
     if not development_data_report_path.is_file():
         raise RuntimeError("training requires the attested development data report")
     development_data_report = read_json(development_data_report_path)
+    development_observable_support = development_data_report.get(
+        "observable_state_support"
+    ) or {}
     semantic_runtime_verification = require_recorded_semantic_runtime(
         pm_config, development_data_report.get("semantic_runtime") or {}
     )
@@ -1022,8 +1025,26 @@ def main() -> None:
             "section_allocation_required_for_every_state"
         )
         is not True
+        or semantic_diagnostic_cfg.get(
+            "development_external_observable_state_support_required"
+        )
+        is not True
     ):
         raise RuntimeError("training lacks the frozen semantic diagnostic contract")
+    if (
+        development_observable_support.get("protocol")
+        != "pm-v1.5-development-external-observable-state-support-v1"
+        or development_observable_support.get("status") != "PASS"
+        or development_observable_support.get("history_turn_targets")
+        != [2, 4, 6, 8]
+        or development_observable_support.get("summary_treatments")
+        != ["present", "absent"]
+        or development_observable_support.get("outcome_labels_used") is not False
+        or development_observable_support.get("evoemo_content_used") is not False
+    ):
+        raise RuntimeError(
+            "development observable-state support contract is absent or stale"
+        )
     development_truncation = development_data_report.get("semantic_truncation") or {}
     development_sections = development_truncation.get("section_allocation") or {}
     if (
@@ -1864,6 +1885,9 @@ def main() -> None:
             live_training_runtime_verification
         ),
         "development_semantic_truncation": development_truncation,
+        "development_observable_state_support": (
+            development_observable_support
+        ),
         "readiness_natural_language_challenge": readiness_challenge,
         "semantic_diagnostics_contract": semantic_diagnostic_cfg,
         "train_calibration_labels": str(args.train_calibration_labels),

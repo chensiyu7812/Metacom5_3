@@ -232,6 +232,122 @@ def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
     return tracks, attestation
 
 
+def _esconv_v1_5_freeze_fixture(
+    workdir: Path,
+    *,
+    pm_checkpoint: Path,
+    transparent_rule_checkpoint: Path,
+    training_report: Path,
+    development_observable_support: dict,
+) -> dict[str, Path]:
+    config = load_config(ROOT / "configs" / "pm_v1_5.yaml")[
+        "esconv_external_evaluation"
+    ]
+    bundle = workdir / "esconv_test_v1_5"
+    bundle.mkdir()
+    paths = {
+        "runtime_states": bundle / "runtime_states.jsonl",
+        "pm_v2_states": bundle / "pm_v2_states.jsonl",
+        "memory_backend": bundle / "memory_backend.jsonl",
+        "audit_only": bundle / "audit_only.jsonl",
+        "split_audit": bundle / "split_audit.json",
+    }
+    state_count = int(config["expected_primary_states"])
+    write_jsonl(
+        paths["runtime_states"],
+        ({"state_id": f"esconv-state-{index}"} for index in range(state_count)),
+    )
+    write_jsonl(
+        paths["pm_v2_states"],
+        ({"state_id": f"esconv-state-{index}"} for index in range(state_count)),
+    )
+    write_jsonl(
+        paths["memory_backend"],
+        ({"state_id": f"esconv-state-{index}"} for index in range(state_count)),
+    )
+    write_jsonl(
+        paths["audit_only"],
+        ({"state_id": f"esconv-state-{index}"} for index in range(state_count)),
+    )
+    write_json(
+        paths["split_audit"],
+        {
+            "status": "PASS",
+            "protocol": config["split_protocol"],
+            "outcomes_used_for_split": False,
+            "eligible_test_dialogues": config["nonoverlap_dialogue_counts"][
+                "test"
+            ],
+            "checks": {"fixture_isolation": True},
+        },
+    )
+    build_report = bundle / "build_report.json"
+    write_json(
+        build_report,
+        {
+            "status": "COMPLETE",
+            "protocol": config["protocol"],
+            "turn_selection_protocol": config["turn_selection_protocol"],
+            "same_pm_checkpoint_required": True,
+            "retraining_or_esconv_outcome_tuning_authorized": False,
+            "turn_selection_uses_response_or_judge_outcomes": False,
+            "all_support_eligible_test_turns_included": True,
+            "legal_actions": config["legal_actions"],
+            "test_dialogues": config["nonoverlap_dialogue_counts"]["test"],
+            "test_turns": state_count,
+            "observable_state_support": {"status": "PASS"},
+            "development_observable_state_support_sha256": sha256_text(
+                canonical_json(development_observable_support)
+            ),
+            "outputs": {
+                name: {"path": str(path), "sha256": sha256_file(path)}
+                for name, path in paths.items()
+            },
+        },
+    )
+    policy_dir = workdir / "esconv_v1_5_preflight"
+    policy_dir.mkdir()
+    choices = policy_dir / "policy_choices.jsonl"
+    write_jsonl(
+        choices,
+        (
+            {
+                "state_id": f"esconv-state-{index}",
+                "learned_action": "M0+R0",
+                "transparent_rule_action": "M0+RS",
+                "always_r0_action": "M0+R0",
+                "always_rs_action": "M0+RS",
+                "esconv_outcome_used_for_choice": False,
+            }
+            for index in range(state_count)
+        ),
+    )
+    summary = policy_dir / "summary.json"
+    write_json(
+        summary,
+        {
+            "status": "COMPLETE",
+            "protocol": config["protocol"],
+            "same_frozen_checkpoint": True,
+            "esconv_train_validation_or_test_outcomes_used_for_choice": False,
+            "learned_checkpoint_sha256": sha256_file(pm_checkpoint),
+            "transparent_rule_checkpoint_sha256": sha256_file(
+                transparent_rule_checkpoint
+            ),
+            "training_report_sha256": sha256_file(training_report),
+            "pm_v2_states_sha256": sha256_file(paths["pm_v2_states"]),
+            "policy_choices_sha256": sha256_file(choices),
+            "state_count": state_count,
+        },
+    )
+    return {
+        "build_report": build_report,
+        **paths,
+        "policy_summary": summary,
+        "policy_choices": choices,
+    }
+
+
 def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "pm-checkpoint"):
     module = _load_module("scripts/v1_5_create_freeze.py", "v1_5_create_freeze_test")
     # These are contract-wiring tests, not model-distribution tests.  CI uses a
@@ -362,6 +478,14 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         candidate_manifest_path=candidate_manifest,
         internal_labels_path=internal_test_labels,
     )
+    development_observable_support = {
+        "protocol": "pm-v1.5-development-external-observable-state-support-v1",
+        "status": "PASS",
+        "outcome_labels_used": False,
+        "evoemo_content_used": False,
+        "history_turn_targets": [2, 4, 6, 8],
+        "summary_treatments": ["present", "absent"],
+    }
     training_report = workdir / "training_report.json"
     write_json(
         training_report,
@@ -425,6 +549,9 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
             "gate_m": {"status": "PASS"},
             "gate_f": {"status": "PASS"},
             "reportability_checks": {"fixture_gate": True},
+            "development_observable_state_support": (
+                development_observable_support
+            ),
         },
     )
     finish_internal_test_consumption(
@@ -475,6 +602,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
                 "expected_split_state_counts": expected_split_states,
                 "expected_total_states": 468,
             },
+            "observable_state_support": development_observable_support,
         },
     )
     data_attestation = workdir / "data_attestation.json"
@@ -501,20 +629,16 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
     )
     semantic_review = {
         "status": "PASS",
-        "automated_review_report_sha256": "a" * 64,
-        "automated_review_attestation_sha256": "b" * 64,
         "actual_corpus_review_report_sha256": "c" * 64,
         "actual_corpus_review_attestation_sha256": "d" * 64,
         "step0_shortcut_audit_report_sha256": "e" * 64,
         "step0_shortcut_audit_attestation_sha256": "f" * 64,
     }
     full_sweep_gate = {
-        "protocol": "pm-v1.5-full-sweep-gate-v2",
+        "protocol": "pm-v1.5-full-sweep-gate-v3",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
-        "automated_review_report_sha256": "a" * 64,
-        "automated_review_attestation_sha256": "b" * 64,
         "actual_corpus_review_report_sha256": "c" * 64,
         "actual_corpus_review_attestation_sha256": "d" * 64,
         "step0_shortcut_audit_report_sha256": "e" * 64,
@@ -638,6 +762,13 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         parameters={"track": "pm-v1.5"},
     )
     fixed_tracks, fixed_tracks_attestation = _fixed_track_fixture(workdir)
+    esconv_fixture = _esconv_v1_5_freeze_fixture(
+        workdir,
+        pm_checkpoint=pm_checkpoint,
+        transparent_rule_checkpoint=transparent_rule_checkpoint,
+        training_report=training_report,
+        development_observable_support=development_observable_support,
+    )
     out = workdir / "pm_v1_5_study_freeze.json"
 
     argv = [
@@ -673,6 +804,14 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "--judging-attestation", str(judging_attestation),
         "--decision-quality-report", str(decision_quality_report),
         "--decision-quality-attestation", str(decision_quality_attestation),
+        "--esconv-build-report", str(esconv_fixture["build_report"]),
+        "--esconv-runtime-states", str(esconv_fixture["runtime_states"]),
+        "--esconv-pm-states", str(esconv_fixture["pm_v2_states"]),
+        "--esconv-memory-backend", str(esconv_fixture["memory_backend"]),
+        "--esconv-audit-only", str(esconv_fixture["audit_only"]),
+        "--esconv-split-audit", str(esconv_fixture["split_audit"]),
+        "--esconv-policy-summary", str(esconv_fixture["policy_summary"]),
+        "--esconv-policy-choices", str(esconv_fixture["policy_choices"]),
         "--out", str(out),
     ]
     monkeypatch.setattr(sys, "argv", argv)
@@ -775,6 +914,15 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     notes = freeze["notes"]
     generation_contract = notes["generation_contract"]
     external_contract = notes["external_evaluation_contract"]
+    esconv_binding = notes["esconv_external_binding"]
+
+    assert esconv_binding["status"] == "PASS"
+    assert esconv_binding["test_dialogues"] == 169
+    assert esconv_binding["test_turns"] == 2112
+    assert esconv_binding["same_checkpoint_sha256"] == sha256_file(
+        checkpoints["pm_checkpoint"]
+    )
+    assert esconv_binding["external_outcomes_used_for_tuning"] is False
 
     assert notes["retrieval_consistency"] == {
         "status": "PASS",
@@ -853,8 +1001,6 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     assert smoke["unit"] == sorted(external_contract["excluded_units"])[0]
     assert external_contract["forced_swap"]["sample_units"] == 12
 
-    from metacom_pm.io import sha256_file
-
     assert generation_contract["policy_checkpoint_sha256"] == sha256_file(checkpoints["pm_checkpoint"])
     assert generation_contract["policy_training_report_sha256"] == sha256_file(checkpoints["training_report"])
     assert generation_contract["post_generation_policy_tuning_prohibited"] is True
@@ -924,19 +1070,15 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
         "scripts/v1_5/21_judge_pm_v2_action_sweep_v1_5.py",
         "v1_5_full_sweep_binding",
     )
-    report_sha = "a" * 64
-    attestation_sha = "b" * 64
     actual_report_sha = "c" * 64
     actual_attestation_sha = "d" * 64
     shortcut_report_sha = "e" * 64
     shortcut_attestation_sha = "f" * 64
     gate = {
-        "protocol": "pm-v1.5-full-sweep-gate-v2",
+        "protocol": "pm-v1.5-full-sweep-gate-v3",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
-        "automated_review_attestation_sha256": attestation_sha,
-        "automated_review_report_sha256": report_sha,
         "actual_corpus_review_attestation_sha256": actual_attestation_sha,
         "actual_corpus_review_report_sha256": actual_report_sha,
         "step0_shortcut_audit_report_sha256": shortcut_report_sha,
@@ -945,8 +1087,6 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
     chain = {"contract_bindings": {"scope": "full", "v1_5_full_sweep_gate": gate}}
     assert module.require_v1_5_full_sweep_binding(
         chain,
-        automated_review_report_sha256=report_sha,
-        automated_review_attestation_sha256=attestation_sha,
         actual_corpus_review_report_sha256=actual_report_sha,
         actual_corpus_review_attestation_sha256=actual_attestation_sha,
         step0_shortcut_audit_report_sha256=shortcut_report_sha,
@@ -962,8 +1102,6 @@ def test_v1_5_judging_requires_honest_full_sweep_binding():
     with pytest.raises(RuntimeError, match="exact PM-v1.5 full matrix"):
         module.require_v1_5_full_sweep_binding(
             stale,
-            automated_review_report_sha256=report_sha,
-            automated_review_attestation_sha256=attestation_sha,
             actual_corpus_review_report_sha256=actual_report_sha,
             actual_corpus_review_attestation_sha256=actual_attestation_sha,
             step0_shortcut_audit_report_sha256=shortcut_report_sha,

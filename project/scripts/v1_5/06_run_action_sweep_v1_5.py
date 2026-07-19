@@ -45,9 +45,6 @@ from metacom_pm.pm_v2_semantic_audit import (
     require_pmv2_runtime_state_lineage,
     require_semantic_sanity_pass,
 )
-from metacom_pm.v1_5_automated_semantic_review import (
-    require_automated_semantic_review_pass,
-)
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.v1_5_actual_corpus_review import (
     require_actual_corpus_semantic_review_pass,
@@ -322,29 +319,20 @@ def main() -> None:
     parser.add_argument(
         "--automated-semantic-review-report",
         type=Path,
-        default=ROOT / "outputs" / "pm_v1_5_automated_semantic_review" / "gate_report.json",
         help=(
-            "PM-v1.5 replacement for the human semantic-sanity and pilot "
-            "spot-check gates: output of "
-            "scripts/v1_5_run_automated_semantic_review.py, must show "
-            "status=PASS."
+            "Deprecated V4 calibration artifact; forbidden for the formal "
+            "V1.5 sweep, which binds actual-468 structured QA v3 instead."
         ),
     )
     parser.add_argument(
         "--automated-semantic-review-attestation",
         type=Path,
-        default=ROOT
-        / "outputs"
-        / "pm_v1_5_automated_semantic_review"
-        / "artifact_attestation.json",
+        help="Deprecated companion V4 attestation; forbidden.",
     )
     parser.add_argument(
         "--generation-pilot-attestation",
         type=Path,
-        help=(
-            "Exact paid nine-case pilot bound by the automated semantic review; "
-            "required for the PM-v1.5 full sweep."
-        ),
+        help="Deprecated direct input; generation lineage comes through the development-data attestation.",
     )
     parser.add_argument(
         "--actual-corpus-semantic-review-report",
@@ -606,17 +594,15 @@ def main() -> None:
             runtime_state_lineage = require_pmv2_runtime_state_lineage(
                 args.runtime, audited_states
             )
-            automated_review_verification = require_automated_semantic_review_pass(
-                args.automated_semantic_review_report,
-                args.automated_semantic_review_attestation,
-                expected_experiment_config_path=args.config,
-                expected_pm_config_path=args.pm_v2_config,
-                expected_strategy_bank_path=args.strategy_bank,
-                expected_generation_pilot_attestation_path=(
-                    args.generation_pilot_attestation
-                ),
-            )
-            automated_review_report = automated_review_verification["report"]
+            if (
+                args.automated_semantic_review_report is not None
+                or args.automated_semantic_review_attestation is not None
+                or args.generation_pilot_attestation is not None
+            ):
+                raise RuntimeError(
+                    "formal sweep refuses direct legacy V4/pilot inputs; use the "
+                    "attested development corpus plus actual structured QA v3"
+                )
             actual_corpus_verification = require_actual_corpus_semantic_review_pass(
                 args.actual_corpus_semantic_review_report,
                 args.actual_corpus_semantic_review_attestation,
@@ -663,16 +649,10 @@ def main() -> None:
                 )
             semantic_sanity = {
                 "protocol": (
-                    "pm-v1.5-pilot-plus-actual-corpus-and-shortcut-gate-v2"
+                    "pm-v1.5-actual-corpus-and-shortcut-gate-v3"
                 ),
                 "status": "PASS",
                 "human_calibration_performed": False,
-                "automated_review_report_sha256": sha256_text(
-                    canonical_json(automated_review_report)
-                ),
-                "automated_review_attestation_sha256": (
-                    automated_review_verification["attestation_sha256"]
-                ),
                 "actual_corpus_review_report_sha256": (
                     actual_corpus_verification["report_sha256"]
                 ),
@@ -950,16 +930,10 @@ def main() -> None:
         ):
             raise RuntimeError("PM-v1.5 full sweep lacks its frozen review gate")
         contract_bindings["v1_5_full_sweep_gate"] = {
-            "protocol": "pm-v1.5-full-sweep-gate-v2",
+            "protocol": "pm-v1.5-full-sweep-gate-v3",
             "status": "PASS",
             "scope": "full",
             "human_calibration_performed": False,
-            "automated_review_attestation_sha256": semantic_sanity[
-                "automated_review_attestation_sha256"
-            ],
-            "automated_review_report_sha256": semantic_sanity[
-                "automated_review_report_sha256"
-            ],
             "actual_corpus_review_attestation_sha256": semantic_sanity[
                 "actual_corpus_review_attestation_sha256"
             ],

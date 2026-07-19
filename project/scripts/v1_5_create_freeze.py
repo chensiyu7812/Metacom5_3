@@ -109,6 +109,128 @@ EXPECTED_V1_5_SELECTED_SEED_SOURCES = 52
 EXPECTED_V1_5_ACTIONS_PER_STATE = 16
 
 
+def require_esconv_v1_5_freeze_inputs(
+    *,
+    pm_v1_5_config: Mapping[str, Any],
+    training_report: Mapping[str, Any],
+    training_report_path: Path,
+    checkpoint_path: Path,
+    transparent_rule_checkpoint_path: Path,
+    build_report_path: Path,
+    runtime_states_path: Path,
+    pm_states_path: Path,
+    memory_backend_path: Path,
+    audit_only_path: Path,
+    split_audit_path: Path,
+    policy_summary_path: Path,
+    policy_choices_path: Path,
+) -> dict[str, Any]:
+    """Bind ESConv to the same frozen V1.5 PM before either external run."""
+
+    config = dict(pm_v1_5_config.get("esconv_external_evaluation") or {})
+    report = read_json(build_report_path)
+    expected_outputs = {
+        "runtime_states": runtime_states_path,
+        "pm_v2_states": pm_states_path,
+        "memory_backend": memory_backend_path,
+        "audit_only": audit_only_path,
+        "split_audit": split_audit_path,
+    }
+    output_records = report.get("outputs") or {}
+    output_binding_ok = all(
+        isinstance(output_records.get(name), Mapping)
+        and (output_records[name] or {}).get("sha256") == sha256_file(path)
+        and Path(str((output_records[name] or {}).get("path") or "")).resolve()
+        == path.resolve()
+        for name, path in expected_outputs.items()
+    )
+    development_support = training_report.get(
+        "development_observable_state_support"
+    ) or {}
+    if (
+        report.get("status") != "COMPLETE"
+        or report.get("protocol") != config.get("protocol")
+        or report.get("turn_selection_protocol")
+        != config.get("turn_selection_protocol")
+        or report.get("same_pm_checkpoint_required") is not True
+        or report.get("retraining_or_esconv_outcome_tuning_authorized")
+        is not False
+        or report.get("turn_selection_uses_response_or_judge_outcomes")
+        is not False
+        or report.get("all_support_eligible_test_turns_included") is not True
+        or report.get("legal_actions") != config.get("legal_actions")
+        or int(report.get("test_dialogues") or -1)
+        != int((config.get("nonoverlap_dialogue_counts") or {}).get("test", -2))
+        or int(report.get("test_turns") or -1)
+        != int(config.get("expected_primary_states", -2))
+        or (report.get("observable_state_support") or {}).get("status")
+        != "PASS"
+        or report.get("development_observable_state_support_sha256")
+        != sha256_text(canonical_json(development_support))
+        or not output_binding_ok
+    ):
+        raise RuntimeError(
+            "study freeze requires the exact outcome-free ESConv V1.5 adapter"
+        )
+
+    split_audit = read_json(split_audit_path)
+    if (
+        split_audit.get("status") != "PASS"
+        or split_audit.get("protocol") != config.get("split_protocol")
+        or split_audit.get("outcomes_used_for_split") is not False
+        or int(split_audit.get("eligible_test_dialogues") or -1)
+        != int((config.get("nonoverlap_dialogue_counts") or {}).get("test", -2))
+        or not all((split_audit.get("checks") or {}).values())
+    ):
+        raise RuntimeError("study freeze received a stale ESConv split audit")
+
+    policy = read_json(policy_summary_path)
+    choices = [dict(row) for row in iter_jsonl(policy_choices_path)]
+    legal_actions = set(config.get("legal_actions") or [])
+    if (
+        policy.get("status") != "COMPLETE"
+        or policy.get("protocol") != config.get("protocol")
+        or policy.get("same_frozen_checkpoint") is not True
+        or policy.get("esconv_train_validation_or_test_outcomes_used_for_choice")
+        is not False
+        or policy.get("learned_checkpoint_sha256")
+        != sha256_file(checkpoint_path)
+        or policy.get("transparent_rule_checkpoint_sha256")
+        != sha256_file(transparent_rule_checkpoint_path)
+        or policy.get("training_report_sha256")
+        != sha256_file(training_report_path)
+        or policy.get("pm_v2_states_sha256") != sha256_file(pm_states_path)
+        or policy.get("policy_choices_sha256") != sha256_file(policy_choices_path)
+        or int(policy.get("state_count") or -1) != len(choices)
+        or len(choices) != int(config.get("expected_primary_states", -2))
+        or any(
+            row.get("learned_action") not in legal_actions
+            or row.get("transparent_rule_action") not in legal_actions
+            or row.get("always_r0_action") != "M0+R0"
+            or row.get("always_rs_action") != "M0+RS"
+            or row.get("esconv_outcome_used_for_choice") is not False
+            for row in choices
+        )
+    ):
+        raise RuntimeError(
+            "study freeze requires ESConv choices from the same learned/rule checkpoints"
+        )
+    return {
+        "status": "PASS",
+        "protocol": str(config.get("protocol") or ""),
+        "turn_selection_protocol": str(
+            config.get("turn_selection_protocol") or ""
+        ),
+        "test_dialogues": int(report["test_dialogues"]),
+        "test_turns": int(report["test_turns"]),
+        "build_report_sha256": sha256_file(build_report_path),
+        "policy_summary_sha256": sha256_file(policy_summary_path),
+        "policy_choices_sha256": sha256_file(policy_choices_path),
+        "same_checkpoint_sha256": sha256_file(checkpoint_path),
+        "external_outcomes_used_for_tuning": False,
+    }
+
+
 def _require_attestation_record_matches(
     attestation: Mapping[str, Any],
     *,
@@ -496,20 +618,10 @@ def require_v1_5_development_chain(
         or sweep_summary.get("strategy_bank_sha256")
         != sha256_file(strategy_bank_path)
         or bindings.get("scope") != "full"
-        or full_gate.get("protocol") != "pm-v1.5-full-sweep-gate-v2"
+        or full_gate.get("protocol") != "pm-v1.5-full-sweep-gate-v3"
         or full_gate.get("status") != "PASS"
         or full_gate.get("scope") != "full"
         or full_gate.get("human_calibration_performed") is not False
-        or len(str(full_gate.get("automated_review_report_sha256") or ""))
-        != 64
-        or len(
-            str(full_gate.get("automated_review_attestation_sha256") or "")
-        )
-        != 64
-        or full_gate.get("automated_review_report_sha256")
-        != semantic_review.get("automated_review_report_sha256")
-        or full_gate.get("automated_review_attestation_sha256")
-        != semantic_review.get("automated_review_attestation_sha256")
         or len(str(full_gate.get("actual_corpus_review_report_sha256") or ""))
         != 64
         or len(
@@ -647,11 +759,11 @@ def require_v1_5_development_chain(
         "judging_attestation_sha256": judging_attestation[
             "attestation_sha256"
         ],
-        "automated_review_report_sha256": full_gate[
-            "automated_review_report_sha256"
+        "actual_corpus_review_report_sha256": full_gate[
+            "actual_corpus_review_report_sha256"
         ],
-        "automated_review_attestation_sha256": full_gate[
-            "automated_review_attestation_sha256"
+        "actual_corpus_review_attestation_sha256": full_gate[
+            "actual_corpus_review_attestation_sha256"
         ],
         "step0_shortcut_audit_report_sha256": full_gate[
             "step0_shortcut_audit_report_sha256"
@@ -936,6 +1048,46 @@ def parse_args() -> argparse.Namespace:
         / "pm_v1_5_decision_quality"
         / "artifact_attestation.json",
     )
+    parser.add_argument(
+        "--esconv-build-report",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "build_report.json",
+    )
+    parser.add_argument(
+        "--esconv-runtime-states",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "runtime_states.jsonl",
+    )
+    parser.add_argument(
+        "--esconv-pm-states",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "pm_v2_states.jsonl",
+    )
+    parser.add_argument(
+        "--esconv-memory-backend",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "memory_backend.jsonl",
+    )
+    parser.add_argument(
+        "--esconv-audit-only",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "audit_only.jsonl",
+    )
+    parser.add_argument(
+        "--esconv-split-audit",
+        type=Path,
+        default=ROOT / "data" / "esconv_test_v1_5" / "split_audit.json",
+    )
+    parser.add_argument(
+        "--esconv-policy-summary",
+        type=Path,
+        default=ROOT / "outputs" / "esconv_v1_5_preflight" / "summary.json",
+    )
+    parser.add_argument(
+        "--esconv-policy-choices",
+        type=Path,
+        default=ROOT / "outputs" / "esconv_v1_5_preflight" / "policy_choices.jsonl",
+    )
     parser.add_argument("--out", type=Path, default=ROOT / "outputs" / "pm_v1_5_study_freeze.json")
     parser.add_argument("--overwrite", action="store_true")
     return parser.parse_args()
@@ -1157,6 +1309,22 @@ def main() -> None:
         judging_labels_path=args.judging_labels,
         judging_attestation_path=args.judging_attestation,
         judge_role_isolation=judge_role_isolation,
+    )
+
+    esconv_external_binding = require_esconv_v1_5_freeze_inputs(
+        pm_v1_5_config=pm_v1_5_config,
+        training_report=training_report,
+        training_report_path=args.pm_training_report,
+        checkpoint_path=args.pm_checkpoint,
+        transparent_rule_checkpoint_path=args.transparent_rule_checkpoint,
+        build_report_path=args.esconv_build_report,
+        runtime_states_path=args.esconv_runtime_states,
+        pm_states_path=args.esconv_pm_states,
+        memory_backend_path=args.esconv_memory_backend,
+        audit_only_path=args.esconv_audit_only,
+        split_audit_path=args.esconv_split_audit,
+        policy_summary_path=args.esconv_policy_summary,
+        policy_choices_path=args.esconv_policy_choices,
     )
 
     fixed_report = read_json(args.fixed_baselines_report)
@@ -1704,6 +1872,7 @@ def main() -> None:
         "judge_role_isolation": judge_role_isolation,
         "bank_seed_lineage": bank_seed_lineage,
         "evoemo_chronology_audit": chronology_audit,
+        "esconv_external_binding": esconv_external_binding,
         "full_development_chain": development_chain,
         "decision_quality": {
             "report_sha256": sha256_file(args.decision_quality_report),
@@ -1784,6 +1953,14 @@ def main() -> None:
             args.fixed_baselines_report,
             args.decision_quality_report,
             args.decision_quality_attestation,
+            args.esconv_build_report,
+            args.esconv_runtime_states,
+            args.esconv_pm_states,
+            args.esconv_memory_backend,
+            args.esconv_audit_only,
+            args.esconv_split_audit,
+            args.esconv_policy_summary,
+            args.esconv_policy_choices,
             args.development_data_attestation,
             args.development_data_report,
             args.states,
@@ -1798,6 +1975,9 @@ def main() -> None:
             ROOT / "src" / "metacom_pm" / "pm_v1_5_semantic.py",
             ROOT / "src" / "metacom_pm" / "pm_v1_5_step0.py",
             ROOT / "src" / "metacom_pm" / "pm_v1_5_rule_router.py",
+            ROOT / "src" / "metacom_pm" / "pm_v2_data.py",
+            ROOT / "src" / "metacom_pm" / "strategy_bank.py",
+            ROOT / "src" / "metacom_pm" / "esconv_v1_5.py",
         ],
         out_path=args.out,
         notes=notes,

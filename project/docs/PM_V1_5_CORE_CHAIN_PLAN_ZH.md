@@ -23,11 +23,31 @@
 > 参数而产生多个 cost identity 的歧义；identity `920807ec…84e8` 已真实执行并
 > `CONSUMED_PASS`：9/9 accepted、12 attempts、3 次 bounded repair、0 fallback，
 > 18,288 input / 1,964 output tokens，约 `$0.0039216`。当前没有 active approval；
-> 下一步是绑定该 exact attestation 生成 fresh V4 native-Gemini semantic-review dry-run。
+> V4 native-Gemini semantic review 已真实消费并在测量有效性上 fail-closed：120 个
+> logical calls 最终成功，但 targeted controls 0/24。旧单字段 v1 因本地 Gemini usage
+> parser 漏分项停止；v2 验证了精确 token 记账，却只得到 7/14 内容正确，并在第 15 个
+> logical call 的首次 malformed JSON 上按旧合同立即终止，并非耗尽重试。balanced v3
+> 随后真实消费两次：Gemini PASS；DeepSeek verdict 与逐字 quote 正确，却把 memory text
+> 引到 `memory_id`，原始 surface 还带 `We` 前缀，旧 client 又静默截取 JSON。当前 v4
+> 将 record metadata 移出 citable evidence，并把 citation integrity 与 verdict accuracy
+> 分开记录。v4.0 `acb07969…f7caf` 因短时 provider availability 仅完成 1/16 endpoint calls，
+> 已消费且无法提供测量结论。v4.1 将 transport 与 malformed-output 计数拆开，显式审计
+> 确定性 JSON wrapper 规范化，单项不可用时继续冻结矩阵。fresh 16-call dry-run 已双目录
+> 复现，identity `22265947…936d`，最大 160 physical / `$0.037195`；
+> 中央 approval 为空。本诊断不是 formal gate，不能授权
+> training、V5、52 users，也不支持真实用户需求识别/真实改善主张。
 > 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
-更新时间：2026-07-17
+更新时间：2026-07-19
+当前收口状态：V8.11.1 已真实 `CONSUMED_PASS`：9/9 accepted、10 次物理调用、
+1 次普通 content repair、0 transport retry、0 fallback；9 例有 8 个不同 current turn，
+唯一重复组是同一 user/family/split 的合法反事实对。identity `6876e2d3…25ed` 永久
+禁止复用，approval map 与 pending map 均为空。其 artifact 中“full generation 前需要
+independent human semantic review”的 scope 句是旧 V4 流程的历史描述，不是当前执行门；
+权威顺序是正式 468-state corpus 生成后执行 actual-468 structured QA v3，并在 7,488-action
+sweep 前 fail-closed。为保留已通过 attestation，不回写或重签历史 artifact。
+
 状态：免费代码与 fail-closed 链路已搭建；历史整包 generation compatibility
 transport pilot 已失效，V8.1 逐例试运行在 9 个 case 中有 2 个话题 lint 失败。当前合同已改为
 surface-only 逐 case 生成和每 case 最多一次预预算 repair，必须在新目录重跑，
@@ -147,18 +167,22 @@ bank 的剩余 turn-level 命中是通用寒暄/共情短句，应保留审计�
 |---:|---|---:|---|
 | 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
 | 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；真实 BGE 长上下文 strict `PMV2State` 构造、Step-0/state 文本与向量 hash 相等、implicit truncation=0；通用 readiness 20-case 结果只报告；compiler-owned 12 个 readiness surface 必须 12/12 被 frozen BGE 识别 |
-| 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；上限 18 | 每次只生成一个 case 的四个 surface 字段；schema、原始响应重建、逐例 topic/structure lint 全部 PASS；失败时只允许同 case 的一次预预算 repair；最终 deterministic fallback 必须为 0 |
-| 2 | `v1_5_run_automated_semantic_review.py` | 120 | 27 个确定性真案例 + exact paid 9-case artifact + 12 字段 × 每字段 2 个 hard controls，共 60 cases × 2 个开发 judge family（Gemini、DeepSeek）；24 个 controls 必须由两家同时识别，attested `PASS`，且 formal generation 必须绑定同一 paid pilot SHA |
-| 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；上限 936 | 52 users × 9 个逐例 surface；每例最多一次 repair；468 states 完整并生成 attestation |
-| 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 真案例 + 24 controls) × 2 家族 = 984 logical calls；bounded retry 上界 2,952 attempts | 实际 468 states 全字段通过；12 字段负控矩阵完整；provider-surface fallback 分 split 低于冻结上限 |
+| 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；18 个 content attempts；上限 54 个 physical attempts | observable-state-support v18 + fresh V8.11.1 必须 PASS；同一 user/family/split 最多两对完全相同的 current turn、每组最多 2，9 例至少 7 个独立表达，跨 user/family/split 与人工 nonce 均禁止；两对上限逐例执行；每个 content attempt 各有最多 3 个 transport slots，最终 fallback 必须为 0 |
+| 2（历史失败） | `v1_5_run_automated_semantic_review.py` V4 | 已真实执行 120 logical / 144 physical | native transport 成功，但测量工具 targeted controls 0/24，永久 `CONSUMED_FAILED_CLOSED`；不得重跑或作为上游 PASS |
+| 2.1（已消费校准） | `v1_5/20c_prepare_v4_single_field_diagnostic_v1_5.py` + `20d_run_v4_single_field_diagnostic_v1_5.py` | V4.2 实际 8 logical / 12 physical | 8/8 完成；确定性=1.0、verdict=.875、citation=.875。Gemini 一次 citation section 不足；DeepSeek 一次把 `explore_first` 错当成必须出现“ready”字样。identity 永久 consumed；结果只用于修订正式测量合同 |
+| 2.2（已落实为正式合同） | actual-468 structured QA v3 | 0（合同/测试） | 4 个确定性字段代码硬验；仅 context grounding、advice readiness 进入原子双家族 panel；readiness 有明确操作定义；引用只报告。不得把分歧改写成 gold 或据此调样本/阈值 |
+| 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；最多 936 个 content attempts；每个 content attempt 最多 3 个独立 transport slots，physical 硬上限 2,808 | exact V8.11.1 attestation 的路径、raw/internal SHA 与 contract SHA 进入 cost identity；52 users × 9 个逐例 surface，每例最多一次 content repair，transport retry 不消耗 repair；允许的同文反事实由 history/catalog 区分且逐 bundle/split 审计；468 states 完整并反平衡 |
+| 3.5 | `v1_5_run_actual_corpus_semantic_review.py` | (468 × 2 原子语义 packet + 4 controls) × 2 家族 = 1,880 logical calls；冻结的 6-attempt 上界为 11,280 physical attempts（实际预算以 dry-run 为准） | 4 个 deterministic fields 全部 PASS；真实 packet 无双家族一致 `not_supported`；负控无双家族一致漏检；judge 分歧保留并报告；citation 只报告；provider-surface fallback 分 split 低于冻结上限 |
 | 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
 | 3.7 | `v1_5/20b_preflight_rule_grid_v1_5.py` | 0 | 只读 train/calibration states、不读 outcome/internal；候选至少形成 2 种 state-level policy mapping，且最大 pairwise disagreement 不低于冻结下限；报告在 sweep/训练前绑定 |
-| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 同时验证 27-case、actual-468 和 Step-0 shortcut attested PASS；真正 `scope=full`；每 state × 16 action 完整 |
+| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 | 验证 actual-468 structured QA 与 Step-0 shortcut attested PASS；旧 V4 明确不进入 formal binding；真正 `scope=full`；每 state × 16 action 完整 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 29,952 | 7,488 × response/risk × 2 judge families；完整性与 judge-health gates PASS |
 | 6 | `v1_5/22_train_pm_v2_v1_5.py` | 0 | 入口现场重验与 development 相同的 exact runtime；只用 train/calibration 调参；internal gate 为 `COMPLETE`，否则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
+| 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + `13_preflight_esconv_policy_v1_5.py` | 0 | 使用同一 PMV2 checkpoint、同一 BAAI/Step-0 与 transparent rule；自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；仅允许 `M0+R0/M0+RS`，policy choice 不读 gold response/strategy |
 | 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` | 由 dry-run 给出；当前数据设计为 1,020 个 seeker turns | 完整、无 truncation、独立 V1.5 bundle |
-| 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链，并锁定 external 合同 |
+| 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链；同时绑定 ESConv build/policy artifacts 与 EvoEmo fixed tracks；任一外部结果出现后不得修改 PM 再跑另一外部环境 |
+| 9.5 | V1.5 ESConv 两动作 sweep + orientation-balanced blind R0-vs-RS judging | 2,112 × 2 唯一 generation outcomes；judge 规模以独立 dry-run 为准 | learned/rule/always-R0/always-RS 共享完全相同的两份 outcome，不重复计 alias；dialogue-cluster CI；质量分别对两个 fixed 作非劣，Strategy 调用与 input cost 单独报告；不得声称长期记忆 |
 | 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整；learned/rule external artifact 自包含 runtime lineage 与 development/external score comparison，禁止外部调阈值 |
 | 11 | `v1_5/30_eval_forced_swap_canary_v1_5.py` | 12 units × 2 orders × 2 families = 48 | schema、顺序稳健性和跨家族方向敏感性 PASS；12 units 从主评测排除 |
 | 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 3 units × 2 schemas × 2 orders × 2 families = 24 | 使用 canary 排序后的前三个单元；schema 必须全通过，mean/max absolute order delta 还必须低于冻结阈值；只作 transport diagnostic |
@@ -168,7 +192,7 @@ V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是
 明确范围缩减。代价是证据强度低于 V2.2，但不能用把全量 sweep 标成 “pilot” 的方式
 绕过：V1.5 的 sweep 现在必须诚实记录为 `full`。
 
-按当前冻结规模，上表从 compatibility pilot 到 external judging 的物理调用上限约 41,354，
+按当前冻结规模，上表从 compatibility pilot 到 external judging 的物理调用上限约 41,390，
 其中 29,952 个来自 development 双家族 judging。V1.5 的“快”主要是省掉人工流程和
 V2.2 的额外兼容性/复核层，不代表它是几十次调用的小实验；若时间窗口承受不了这个
 规模，应在付费前另立一个明确降级、重新命名的 pilot，不能事后把不完整矩阵称作 V1.5
@@ -176,15 +200,20 @@ V2.2 的额外兼容性/复核层，不代表它是几十次调用的小实验�
 不是恢复 V1 老评测链，而是在当前 freeze/policy-lock/attestation 之后接入独立的 V1.5
 batched scorer。
 
-截至 2026-07-17，已记录以下 dry-run 与历史执行状态。generation compatibility
+截至 2026-07-19，已记录以下 dry-run 与历史执行状态。generation compatibility
 一行保留历史调用及预算哈希用于追溯，但该调用绑定旧配置，不能充当当前上游 gate：
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
 | generation compatibility | V8.4 transport/schema PASS 但语义性淘汰；V8.5 真实 FAIL；V8.6 真实 PASS：9/9 accepted、12 attempts、3 repairs、0 fallback、18,288 input / 1,942 output tokens、约 `$0.0039084`；没有 role-order failure | V8.6 attestation `15135ad9…7f2c`；identity `64a06993…ef85` 已消费并关闭，禁止复用 |
-| 自动语义审核 | V3 identity `b4f27249…f84a` 已真实消费：DeepSeek 1 次成功，Gemini OpenAI-compatible strict-schema 请求 1 次 terminal HTTP 400；1603 input / 129 output tokens，约 `$0.0002119`，随后 fail-closed。V4 改用 native `generateContent + responseJsonSchema`，绑定 V8.7 exact paid attestation；27 deterministic + exact paid 9 + 24 controls × 双 family 共 120 logical calls、最多 360 physical attempts；worst-case estimate `$0.165096`，hard budget `$0.17`，max input 3297/call | V3 identity 永久禁止复用；V4 dry-run identity `5f3c57a0…8bf7` 已 PASS 待 exact review，Gemini 是 call plan 第一项，当前未批准 |
+| 自动语义审核 | V4 native 测量合同失败；旧单字段 v1/v2/v3/v4.0 失败事实保留。v4.1 identity `22265947…936d` 已完成 16/16，20 physical attempts，花费约 `$0.0016565`；deterministic=1.0、semantic verdict=.75、citation=.875、joint=.6875，暴露了 source taxonomy、tri-state verdict 与 citation/outcome 混合问题 | v1/v2/v3/v4.0/v4.1 identities 均永久 consumed。v4.2 改为 8 code truths + 4 semantic items/8 calls；协议 `first-paper-scoped`，fresh dry-run/identity 尚待生成，绝非 formal gate |
 | generation compatibility V8.7 | generator-relevant scoped lineage；预算从 YAML 独立 stage contract 唯一冻结为 18 attempts / `$0.018` / 4000 input tokens，拒绝冲突 CLI；真实结果 9/9 accepted、12 attempts、3 repairs（均为 `unique_current_user_text`）、0 fallback；18,288 input / 1,964 output tokens，约 `$0.0039216` | identity `920807ec…84e8` 与 attestation `09f1f90b…60c5` 已消费 PASS、禁止复用；当前无 active approval |
-| 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
+| generation compatibility V8.9 | observable-support v17；identity `e7b89550…600a` 真实执行时 context_only 成功，profile_needed 首次 HTTP 500；旧 runner 将每个 content attempt 的 transport cap 错设为 1，2 个 physical attempts 后停止，约 `$0.0003459` | `CONSUMED_FAILED_CLOSED_TRANSIENT_500`；不是内容/方法失败，identity 永久禁止复用 |
+| generation compatibility V8.10 | transport-resilient identity `f518d8e3…eed4` 真实执行 4/9 后失败；6 physical、零 transport retry、约 `$0.0018943`；失败来自过严的全局 current-text 唯一门，而非 provider 波动 | `CONSUMED_FAILED_CLOSED`，永久禁止复用 |
+| generation compatibility V8.11.1 | v18 controlled-counterfactual + V8.10 transport resilience；identity `6876e2d3…25ed` 已真实执行：9/9 accepted、10 physical、1 次普通 content repair、0 transport retry、0 fallback、8/9 unique current turns；attestation `dd96e1df…cfd7`、ledger `2f25e11e…3177` | `CONSUMED_PASS`；永久禁止复用。后续 compiler 修复使其 shared-code binding 正确失效 |
+| 52-user generation 第一次尝试 | identity `85d1eda3…8788f` 真正执行到 user 1：9/9 surface 调用成功、0 retry/repair；随后固定 `health_routine_stress × MS semantic_decoy` 为 162 字符，超过本地 160 schema 而 fail-closed；约 `$0.004121`，users 2–52 未调用 | `CONSUMED_FAILED_CLOSED`；不是 provider/seed 内容错误；原 9-call ledger 不覆盖、不删除，可离线恢复 |
+| generation compatibility V8.12 | 缩短 compiler-owned decoy；付费前穷举 216 个 family/source/role 模板，最大 155/160；identity `bebeb1b1…8564` 已真实 9/9 PASS：10 physical、1 content repair、0 transport retry、0 fallback，约 `$0.0031569`；attestation `d132e5ef…1c16` | `CONSUMED_PASS`，永久禁止复用 |
+| 52-user resumable generation | exact V8.12 attestation + 原 9-call ledger 已在两目录恢复同一 user-1 bundle；fresh identity `799e1cce…a6a7`、binding `47e7d25f…e4e1`、plan `8ef7aeab…40c6`；剩余 51 users，459 success / 918 content / 2,754 new physical，上限 `$2.7235611` | `DRY_RUN_REPRODUCED_UNAPPROVED_NO_NEW_API`；必须在原 canonical 目录无 `--overwrite` 执行，禁止重生 user 1 |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 
 除明确标为历史真实调用的一行外，这些 dry-run 数字只证明当前计划可计算且未创建 API
@@ -230,8 +259,8 @@ HTTP 429 当作限流信号单独处理，其余错误类型都不构成额度�
 ## 6. 当前实现与剩余工作
 
 已实现的免费部分包括：真实 `version: pm-v1.5`、独立配置/目录/checkpoint、clean
-bank/seed 实例级隔离、EF 全链路关闭、66-call 小型自动审核 runner、actual-468 全量
-semantic/fallback runner、9–18-call casewise generation pilot、完整数据
+bank/seed 实例级隔离、EF 全链路关闭、历史自动审核/校准诊断、actual-468 structured
+QA/fallback runner、9–18-call casewise generation pilot、完整数据
 attestation、真实 full-sweep gate、两家族 judging、internal decision-quality、fixed
 baseline 派生、无截断 fixed-track 验证、轻量 study freeze、12-unit canary、4-call external
 legacy pointwise smoke、24-call batched schema/order pilot、318-call batched 主评测规划、
@@ -239,11 +268,12 @@ stratified risk audit、external claim assessment 以及对应的 fail-closed �
 重验 bank/seed lineage、development/external retrieval lock 和完整 468×16 链，不能只靠
 目录名或某个阶段的 `COMPLETE` 字段放行。
 
-尚未完成的是“实验结果”，不是继续堆脚手架：V8.7、正式 automated review、模型训练、
-freeze 和 external evaluation 都仍待执行。V8.6 已真实 PASS，但它的完整配置/共享代码
-lineage 在 native Gemini 修复后按合同失效，不能静默继承。V8.7 已生成 fresh dry-run，
-尚未批准或调用 API；其 scoped projection 仍精确绑定 generator endpoint、生成参数、
-prompt/schema/request payload 和共享生成代码，只排除科学上无关的 downstream judge-only
-字段。V3 自动语义审核的两次真实调用及失败费用已归档；V4 尚未生成 identity。一次只
-批准一个付费阶段。若任一 gate 失败，应保留失败产物并停止，不得在同一冻结协议下不断
-换模型/提示词直到通过。
+尚未完成的是可支撑论文主链的“正式语义测量结果”、模型训练、freeze 和 external
+evaluation。V8.7 已真实 PASS；V4 也已真实执行但在测量有效性上 FAIL，不能静默继承。
+当前 balanced proxy runner 只诊断既有 calibration controls：它必须同时正确接受 matched
+positive、把缺乏完整支持的 matched negative 判为 `not_supported`，并通过代码真值。citation
+pointer 完整性单独报告，不再篡改语义 outcome。诊断通过后可继续设计正式 measurement
+contract；即使表现很好，也不能扩大为真人效果主张。第一篇只报告 synthetic-state、
+LLM-judged proxy utility，并把无人工金标签、无真实用户和自然度仅作有限 lint 明确列为局限。
+一次只批准一个付费阶段。若任一 gate 失败，应保留失败产物并停止，不得在同一冻结协议下
+不断换模型/提示词直到通过。

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import httpx
@@ -13,11 +14,14 @@ from metacom_pm.api import (
     OpenAICompatibleClient,
     ProviderRequestError,
     StructuredOutputValidationError,
+    _classify_retryable_exception,
     chat_request_payload,
     make_client,
     normalize_provider_finish_reason,
     openai_strict_json_schema,
+    parse_audited_json_surface,
     request_payload_has_schema,
+    require_reported_usage,
     request_log,
 )
 from metacom_pm.pm_v2_data import GeneratedBundleDraft, GeneratedUserBundle
@@ -34,6 +38,26 @@ PROVIDER_SCHEMAS = (
     RiskJudgeOutput,
     ForcedSwapJudgeOutput,
 )
+
+
+def test_invalid_provider_json_has_a_distinct_bounded_repair_class() -> None:
+    assert _classify_retryable_exception(
+        ValueError("response is not valid JSON")
+    ) == ("provider_output_format", None)
+
+
+def test_audited_json_surface_only_normalizes_one_bounded_document() -> None:
+    parsed, audit = parse_audited_json_surface('```json\n{"score": 1}\n```')
+    assert parsed == {"score": 1}
+    assert audit["initially_valid_json"] is False
+    assert audit["normalization_kind"] == "single_markdown_json_fence"
+    assert audit["discarded_prefix_chars"] > 0
+    assert audit["discarded_suffix_chars"] > 0
+
+    with pytest.raises(json.JSONDecodeError):
+        parse_audited_json_surface('{"score": 1} and {"score": 1}')
+    with pytest.raises(json.JSONDecodeError):
+        parse_audited_json_surface("x" * 81 + '{"score": 1}')
 
 
 def _object_nodes(node: Any):
@@ -339,10 +363,103 @@ def test_gemini_native_client_parses_usage_finish_reason_and_schema(
         "prompt_tokens": 19,
         "completion_tokens": 5,
         "total_tokens": 24,
+        "gemini_prompt_tokens": 19,
+        "gemini_candidate_tokens": 5,
+        "gemini_thought_tokens": 0,
+        "gemini_tool_use_prompt_tokens": 0,
+        "gemini_cached_content_tokens": 0,
     }
     assert call.provider_finish_reason == "STOP"
     assert call.normalized_finish_reason == "complete"
     assert len(call.request_hash) == 64
+
+
+def test_gemini_native_usage_reconciles_thought_tokens_without_tolerance(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class NativeOutput(StrictModel):
+        value: int
+
+    monkeypatch.setenv("TEST_GEMINI_KEY", "test-only")
+    endpoint = Endpoint(
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        model="gemini-2.5-flash-lite",
+        api_key_env="TEST_GEMINI_KEY",
+        family="google_gemini",
+        transport="gemini_generate_content",
+    )
+    client = GeminiNativeClient(endpoint)
+    client._client.close()
+
+    class ThinkingTransport:
+        def post(self, path: str, *, json: dict[str, Any]) -> httpx.Response:
+            return httpx.Response(
+                200,
+                request=httpx.Request(
+                    "POST",
+                    "https://generativelanguage.googleapis.com/v1beta" + path,
+                ),
+                json={
+                    "candidates": [
+                        {
+                            "content": {
+                                "role": "model",
+                                "parts": [{"text": '{"value":7}'}],
+                            },
+                            "finishReason": "STOP",
+                        }
+                    ],
+                    "usageMetadata": {
+                        "promptTokenCount": 265,
+                        "candidatesTokenCount": 109,
+                        "thoughtsTokenCount": 2,
+                        "toolUsePromptTokenCount": 0,
+                        "cachedContentTokenCount": 20,
+                        "totalTokenCount": 376,
+                    },
+                },
+            )
+
+        def close(self) -> None:
+            pass
+
+    client._client = ThinkingTransport()  # type: ignore[assignment]
+    try:
+        call, parsed = client.chat(
+            [{"role": "user", "content": "Return one value."}],
+            response_schema=NativeOutput,
+            retries=1,
+        )
+    finally:
+        client.close()
+    assert parsed is not None and parsed.value == 7
+    assert call.usage == {
+        "prompt_tokens": 265,
+        "completion_tokens": 111,
+        "total_tokens": 376,
+        "gemini_prompt_tokens": 265,
+        "gemini_candidate_tokens": 109,
+        "gemini_thought_tokens": 2,
+        "gemini_tool_use_prompt_tokens": 0,
+        "gemini_cached_content_tokens": 20,
+    }
+    assert require_reported_usage(call.usage, stage="test") == call.usage
+    with pytest.raises(RuntimeError, match="internally inconsistent"):
+        require_reported_usage(
+            {**call.usage, "total_tokens": 377},
+            stage="test",
+        )
+    tool_usage = {
+        **call.usage,
+        "prompt_tokens": 268,
+        "total_tokens": 379,
+        "gemini_tool_use_prompt_tokens": 3,
+    }
+    assert require_reported_usage(tool_usage, stage="test") == tool_usage
+    incomplete = dict(call.usage)
+    incomplete.pop("gemini_thought_tokens")
+    with pytest.raises(RuntimeError, match="breakdown is incomplete"):
+        require_reported_usage(incomplete, stage="test")
 
 
 def test_gemini_list_shaped_http_error_is_bounded_and_readable(

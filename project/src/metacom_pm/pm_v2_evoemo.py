@@ -57,7 +57,10 @@ from .io import (
     write_jsonl,
 )
 from .generation_contract import SupporterGenerationContract
-from .pm_v2_data import runtime_to_pmv2_state
+from .pm_v2_data import (
+    compare_external_observable_state_support,
+    runtime_to_pmv2_state,
+)
 from .pm_v2_contracts import PMV2State
 from .pm_v1_5_step0 import build_strategy_family_catalog
 from .pm_v1_5_semantic import (
@@ -693,6 +696,9 @@ def run_pmv2_fixed_evoemo(
         development_score_diagnostics = development_training_report.get(
             "step0_score_diagnostics_by_split"
         ) or {}
+        development_observable_support = development_training_report.get(
+            "development_observable_state_support"
+        ) or {}
         development_training_report_sha256 = sha256_file(
             development_training_report_path
         )
@@ -713,6 +719,7 @@ def run_pmv2_fixed_evoemo(
                 "fixed-action condition cannot claim an unused training-score reference"
             )
         development_score_diagnostics = None
+        development_observable_support = None
         development_training_report_sha256 = None
     derived_evidence_filter_model_binding = (
         {
@@ -1067,6 +1074,7 @@ def run_pmv2_fixed_evoemo(
 
     preflight_rows: list[dict[str, Any]] = []
     preflight_states: list[PMV2State] = []
+    evaluation_preflight_states: list[PMV2State] = []
     call_plan: list[dict[str, Any]] = []
     semantic_centroids_by_user: dict[
         str, dict[MemorySource, tuple[float, ...]]
@@ -1134,6 +1142,8 @@ def run_pmv2_fixed_evoemo(
                 decision = model.choose(pm_state)
                 if semantic_encoder is not None and isinstance(pm_state, PMV2State):
                     preflight_states.append(pm_state)
+                    if turn_index in evaluation_turn_indices:
+                        evaluation_preflight_states.append(pm_state)
                 fallback_type = (
                     decision_fallback_kind(decision) if condition == "pm_v2" else None
                 )
@@ -1327,6 +1337,21 @@ def run_pmv2_fixed_evoemo(
             "external_threshold_selection_or_retuning_authorized": False,
         }
     )
+    observable_state_support = (
+        compare_external_observable_state_support(
+            development=development_observable_support or {},
+            external_states=evaluation_preflight_states,
+        )
+        if semantic_encoder is not None
+        else {
+            "protocol": (
+                "pm-v1.5-development-external-observable-state-support-v1"
+            ),
+            "status": "NOT_APPLICABLE_FIXED_ACTION_CONDITION",
+            "outcome_labels_used": False,
+            "external_threshold_selection_or_retuning_authorized": False,
+        }
+    )
     write_json(comparison_path, development_external_score_comparison)
 
     preflight = {
@@ -1362,6 +1387,7 @@ def run_pmv2_fixed_evoemo(
         "development_external_score_comparison": (
             development_external_score_comparison
         ),
+        "observable_state_support": observable_state_support,
     }
     preflight["semantic_truncation"]["current_user_text_gate"] = (
         "PASS"
@@ -1410,6 +1436,10 @@ def run_pmv2_fixed_evoemo(
             "complete_section_allocation_gate"
         ]
         != "PASS"
+        or observable_state_support.get("status") not in {
+            "PASS",
+            "NOT_APPLICABLE_FIXED_ACTION_CONDITION",
+        }
     ):
         preflight["status"] = "FAIL"
     write_json(preflight_path, preflight)

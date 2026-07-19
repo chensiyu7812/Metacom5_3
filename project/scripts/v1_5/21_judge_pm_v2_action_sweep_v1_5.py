@@ -70,9 +70,6 @@ from metacom_pm.pm_v2_semantic_audit import (
 from metacom_pm.pm_v1_5_shortcut_audit import (
     require_step0_shortcut_audit_pass,
 )
-from metacom_pm.v1_5_automated_semantic_review import (
-    require_automated_semantic_review_pass,
-)
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.v1_5_actual_corpus_review import (
     require_actual_corpus_semantic_review_pass,
@@ -276,8 +273,6 @@ def require_full_sweep_development_binding(
 def require_v1_5_full_sweep_binding(
     sweep_source_chain: Mapping[str, Any],
     *,
-    automated_review_report_sha256: str,
-    automated_review_attestation_sha256: str,
     actual_corpus_review_report_sha256: str,
     actual_corpus_review_attestation_sha256: str,
     step0_shortcut_audit_report_sha256: str,
@@ -288,14 +283,10 @@ def require_v1_5_full_sweep_binding(
     bindings = sweep_source_chain.get("contract_bindings") or {}
     observed = bindings.get("v1_5_full_sweep_gate") or {}
     expected = {
-        "protocol": "pm-v1.5-full-sweep-gate-v2",
+        "protocol": "pm-v1.5-full-sweep-gate-v3",
         "status": "PASS",
         "scope": "full",
         "human_calibration_performed": False,
-        "automated_review_attestation_sha256": (
-            automated_review_attestation_sha256
-        ),
-        "automated_review_report_sha256": automated_review_report_sha256,
         "actual_corpus_review_attestation_sha256": (
             actual_corpus_review_attestation_sha256
         ),
@@ -410,29 +401,19 @@ def main() -> None:
     parser.add_argument(
         "--automated-semantic-review-report",
         type=Path,
-        default=ROOT / "outputs" / "pm_v1_5_automated_semantic_review" / "gate_report.json",
         help=(
-            "PM-v1.5 replacement for the human semantic-sanity and pilot "
-            "spot-check gates: output of "
-            "scripts/v1_5_run_automated_semantic_review.py, must show "
-            "status=PASS."
+            "Deprecated V4 calibration artifact; forbidden for formal judging."
         ),
     )
     parser.add_argument(
         "--automated-semantic-review-attestation",
         type=Path,
-        default=ROOT
-        / "outputs"
-        / "pm_v1_5_automated_semantic_review"
-        / "artifact_attestation.json",
+        help="Deprecated companion V4 attestation; forbidden.",
     )
     parser.add_argument(
         "--generation-pilot-attestation",
         type=Path,
-        help=(
-            "Exact paid nine-case pilot bound by the automated semantic review; "
-            "required for PM-v1.5 judging."
-        ),
+        help="Deprecated direct input; generation lineage is inherited from the full sweep.",
     )
     parser.add_argument(
         "--actual-corpus-semantic-review-report",
@@ -729,20 +710,19 @@ def main() -> None:
         # V1.5's fast track does not run V2.2's 180-generation/360-judge
         # compatibility pilot. Full judging itself is fail-closed on the first
         # unsuccessful physical call and subsequently enforces the complete
-        # two-family matrix/quality gates. The independent automated semantic
-        # review remains a required, content-bound input here; external key
-        # claims additionally require the frozen forced-swap sensitivity canary.
-        automated_review_verification = require_automated_semantic_review_pass(
-            args.automated_semantic_review_report,
-            args.automated_semantic_review_attestation,
-            expected_experiment_config_path=args.config,
-            expected_pm_config_path=args.pm_v2_config,
-            expected_strategy_bank_path=args.strategy_bank,
-            expected_generation_pilot_attestation_path=(
-                args.generation_pilot_attestation
-            ),
-        )
-        automated_review_report = automated_review_verification["report"]
+        # two-family matrix/quality gates. The actual-468 structured QA and
+        # Step-0 shortcut audit are content-bound inputs inherited from the
+        # full sweep; external key claims additionally require the frozen
+        # forced-swap sensitivity canary.
+        if (
+            args.automated_semantic_review_report is not None
+            or args.automated_semantic_review_attestation is not None
+            or args.generation_pilot_attestation is not None
+        ):
+            raise RuntimeError(
+                "formal judging refuses direct legacy V4/pilot inputs; it must "
+                "inherit current actual-QA lineage from the full sweep"
+            )
         actual_corpus_verification = require_actual_corpus_semantic_review_pass(
             args.actual_corpus_semantic_review_report,
             args.actual_corpus_semantic_review_attestation,
@@ -762,15 +742,9 @@ def main() -> None:
             expected_generation_attestation_path=args.development_data_attestation,
         )
         semantic_sanity = {
-            "protocol": "pm-v1.5-pilot-plus-actual-corpus-and-shortcut-gate-v2",
+            "protocol": "pm-v1.5-actual-corpus-and-shortcut-gate-v3",
             "status": "PASS",
             "human_calibration_performed": False,
-            "automated_review_report_sha256": sha256_text(
-                canonical_json(automated_review_report)
-            ),
-            "automated_review_attestation_sha256": (
-                automated_review_verification["attestation_sha256"]
-            ),
             "actual_corpus_review_report_sha256": actual_corpus_verification[
                 "report_sha256"
             ],
@@ -786,12 +760,6 @@ def main() -> None:
         }
         v1_5_full_sweep_gate = require_v1_5_full_sweep_binding(
             sweep_source_chain,
-            automated_review_report_sha256=semantic_sanity[
-                "automated_review_report_sha256"
-            ],
-            automated_review_attestation_sha256=semantic_sanity[
-                "automated_review_attestation_sha256"
-            ],
             actual_corpus_review_report_sha256=semantic_sanity[
                 "actual_corpus_review_report_sha256"
             ],
@@ -1732,12 +1700,6 @@ def main() -> None:
     if compatibility_pilot:
         attestation_inputs["pilot_plan"] = args.pilot_plan
     else:
-        attestation_inputs["automated_semantic_review"] = (
-            args.automated_semantic_review_report
-        )
-        attestation_inputs["automated_semantic_review_attestation"] = (
-            args.automated_semantic_review_attestation
-        )
         attestation_inputs["actual_corpus_semantic_review"] = (
             args.actual_corpus_semantic_review_report
         )

@@ -11,6 +11,11 @@ from metacom_pm.api import (
     ProviderRequestError,
     RetryableProviderError,
 )
+from metacom_pm.pm_v2_contracts import StrictModel
+
+
+class _TinyStructuredOutput(StrictModel):
+    verdict: str
 
 
 def _client(
@@ -135,6 +140,58 @@ def test_2xx_missing_content_preserves_usage_and_safe_body_shape(
     assert failure.response_diagnostics["status_code"] == 200
     assert failure.response_diagnostics["first_message_keys"] == ["role"]
     assert "paid-but-malformed" not in str(failure.response_diagnostics)
+
+
+def test_schema_mode_audits_bounded_prefix_without_changing_json_values(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = _client(
+        monkeypatch,
+        lambda _request: httpx.Response(
+            200,
+            json={
+                "id": "paid-prefixed-json",
+                "choices": [
+                    {
+                        "message": {
+                            "role": "assistant",
+                            "content": 'We{"verdict":"supported"}',
+                        },
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 21,
+                    "completion_tokens": 5,
+                    "total_tokens": 26,
+                },
+            },
+        ),
+    )
+    try:
+        call, parsed = client.chat(
+            [{"role": "user", "content": "test"}],
+            response_schema=_TinyStructuredOutput,
+            retries=1,
+        )
+    finally:
+        client.close()
+    assert parsed is not None and parsed.verdict == "supported"
+    assert call.usage == {
+        "prompt_tokens": 21,
+        "completion_tokens": 5,
+        "total_tokens": 26,
+    }
+    assert call.structured_output_audit == {
+        "initially_valid_json": False,
+        "normalization_kind": "single_bounded_json_object",
+        "raw_text_sha256": call.structured_output_audit["raw_text_sha256"],
+        "normalized_json_sha256": call.structured_output_audit[
+            "normalized_json_sha256"
+        ],
+        "discarded_prefix_chars": 2,
+        "discarded_suffix_chars": 0,
+    }
 
 
 def test_real_http_403_is_deterministic_and_carries_request_hash(

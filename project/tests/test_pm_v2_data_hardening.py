@@ -15,7 +15,12 @@ from pydantic import ValidationError
 import yaml
 
 from metacom_pm.artifacts import create_artifact_attestation
-from metacom_pm.api import CallResult, Endpoint, StructuredOutputValidationError
+from metacom_pm.api import (
+    CallResult,
+    Endpoint,
+    RetryableProviderError,
+    StructuredOutputValidationError,
+)
 from metacom_pm import pm_v2_data as pm_v2_data_module
 from metacom_pm.contracts import (
     DialogueTurn,
@@ -53,8 +58,11 @@ from metacom_pm.pm_v2_contracts import (
 from metacom_pm.pm_v2_audit import _regime_pass
 from metacom_pm.pm_v2_data import (
     DATA_GENERATION_CONTRACT_VERSION,
+    DETERMINISTIC_MEMORY_BLUEPRINT_PROTOCOL,
     GENERATION_CASE_FIELDS,
     GENERATION_FAMILY_TOPICS,
+    GENERATED_MEMORY_DRAFT_MAX_CHARS,
+    MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE,
     READINESS_SURFACE_PROTOCOL,
     GenerationDraftCompilationError,
     GeneratedBundleDraft,
@@ -63,6 +71,7 @@ from metacom_pm.pm_v2_data import (
     GeneratedStateCase,
     GeneratedUserBundle,
     advice_readiness_target_for_case,
+    audit_current_user_text_diversity,
     audit_cross_split_near_duplicates,
     bind_bundle_to_generation_run,
     build_evaluator_context_index,
@@ -73,6 +82,7 @@ from metacom_pm.pm_v2_data import (
     compile_surface_only_user_bundle,
     compile_generation_draft,
     compiler_surface_from_provider,
+    deterministic_memory_blueprint_preflight,
     evaluator_context_payload_sha256,
     generate_user_bundle,
     generation_case_family_assignments,
@@ -80,6 +90,7 @@ from metacom_pm.pm_v2_data import (
     generation_distractor_family_assignments,
     generation_messages,
     lint_generation_surface_case,
+    observable_state_design,
     readiness_surface_clause_for_case,
     require_bundle_generation_binding,
     runtime_to_pmv2_state,
@@ -89,6 +100,7 @@ from metacom_pm.pm_v2_data import (
     write_development_dataset,
 )
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
+from metacom_pm.bounded_retry import RETRY_CONTRACT_PROTOCOL, retry_ledger_summary
 from metacom_pm.pm_v1_5_semantic import (
     FrozenSemanticEncoderSpec,
     FrozenTransformerSemanticEncoder,
@@ -102,7 +114,9 @@ from metacom_pm.pm_v2_generation_pilot import (
     CALIBRATION_SEMANTIC_FAMILIES,
     GENERATION_PILOT_CONTRACT_VERSION,
     GENERATION_PILOT_FAMILIES,
+    GENERATION_PILOT_MAX_CONTENT_ATTEMPTS,
     GENERATION_PILOT_MAX_ATTEMPTS,
+    GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT,
     GENERATION_PILOT_MINIMUM_CALLS,
     GENERATION_PILOT_STAGE,
     INTERNAL_TEST_SEMANTIC_FAMILIES,
@@ -167,7 +181,7 @@ def test_semantic_family_schedule_counterbalances_regime_positions() -> None:
 
 def test_generation_pilot_uses_a_real_frozen_orthogonal_cohort() -> None:
     assert GENERATION_PILOT_CONTRACT_VERSION.startswith(
-        "pm-v2-generation-compatibility-pilot-v8.7-"
+        "pm-v2-generation-compatibility-pilot-v8.12-"
     )
     assert GENERATION_PILOT_FAMILIES in (
         ("relocation_loneliness", "academic_pressure", "trust_rebuilding"),
@@ -561,16 +575,29 @@ def _surface_only_pilot_inputs(
             turns[index].role == "user" and turns[index + 1].role == "assistant"
             for index in range(0, len(turns), 2)
         )
+        exchanges = [
+            {
+                "user_text": turns[index].content,
+                "assistant_text": turns[index + 1].content,
+            }
+            for index in range(0, len(turns), 2)
+        ]
+        target_exchanges = observable_state_design(
+            user_id=str(contract["pilot_user_id"]), case_field=case_field
+        )["history_turn_target"] // 2
+        while len(exchanges) < target_exchanges:
+            ordinal = len(exchanges) + 1
+            exchanges.insert(
+                0,
+                {
+                    "user_text": f"Earlier context detail {ordinal}.",
+                    "assistant_text": f"Earlier support reply {ordinal}.",
+                },
+            )
         surfaces[case_field] = GeneratedSurfaceOnlyCaseDraft.model_validate(
             {
                 "current_user_text": compiled.current_user_text,
-                "dialogue_exchanges_before_current": [
-                    {
-                        "user_text": turns[index].content,
-                        "assistant_text": turns[index + 1].content,
-                    }
-                    for index in range(0, len(turns), 2)
-                ],
+                "dialogue_exchanges_before_current": exchanges[-target_exchanges:],
                 "session_summary": compiled.session_summary,
                 "authorized_user_context": compiled.authorized_user_context,
             }
@@ -581,7 +608,7 @@ def _surface_only_pilot_inputs(
 def test_surface_provider_schema_makes_role_order_a_compiler_invariant() -> None:
     surface = GeneratedSurfaceOnlyCaseDraft.model_validate(
         {
-            "current_user_text": "The move still feels lonely today.",
+            "current_user_text": "Moving to a new city still feels lonely today.",
             "dialogue_exchanges_before_current": [
                 {
                     "user_text": "I have not met anyone in the new city yet.",
@@ -605,6 +632,7 @@ def test_surface_provider_schema_makes_role_order_a_compiler_invariant() -> None
     ]
     assert compiled.dialogue_before_current[-1].role == "assistant"
     lint = lint_generation_surface_case(
+        user_id="pm_v1_5_u002",
         case_field="context_only",
         regime=ResourceNeedRegime.CONTEXT_ONLY,
         family="relocation_loneliness",
@@ -616,6 +644,133 @@ def test_surface_provider_schema_makes_role_order_a_compiler_invariant() -> None
     schema = GeneratedSurfaceOnlyCaseDraft.model_json_schema()
     assert "dialogue_exchanges_before_current" in schema["properties"]
     assert "dialogue_before_current" not in schema["properties"]
+
+
+def test_surface_lint_allows_only_one_same_family_counterfactual_pair() -> None:
+    surface = GeneratedSurfaceOnlyCaseDraft.model_validate(
+        {
+            # Exact V8.10 provider text: profile_needed and multi_source_needed
+            # legitimately held the same self-confidence concern constant.
+            "current_user_text": (
+                "I often feel insecure about my abilities and wonder if I'm "
+                "capable of achieving my goals."
+            ),
+            "dialogue_exchanges_before_current": [
+                {
+                    "user_text": "I keep doubting myself.",
+                    "assistant_text": "What brings that self-doubt up today?",
+                }
+            ],
+            "session_summary": "The user is struggling with self confidence.",
+            "authorized_user_context": "Use only the visible self-doubt concern.",
+        }
+    )
+    allowed = lint_generation_surface_case(
+        user_id="pmv2_generation_compatibility_pilot",
+        case_field="multi_source_needed",
+        regime=ResourceNeedRegime.MULTI_SOURCE_NEEDED,
+        family="self_confidence",
+        forbidden_families=("relocation_loneliness", "sleep_disruption"),
+        surface=surface,
+        prior_current_user_texts=(surface.current_user_text,),
+        prior_current_user_families=("self_confidence",),
+    )
+    assert allowed["status"] == "PASS"
+    assert allowed["current_user_text_diversity"][
+        "allowed_same_user_family_counterfactual_duplicate"
+    ] is True
+
+    cross_family = lint_generation_surface_case(
+        user_id="pmv2_generation_compatibility_pilot",
+        case_field="multi_source_needed",
+        regime=ResourceNeedRegime.MULTI_SOURCE_NEEDED,
+        family="self_confidence",
+        forbidden_families=("relocation_loneliness", "sleep_disruption"),
+        surface=surface,
+        prior_current_user_texts=(surface.current_user_text,),
+        prior_current_user_families=("relocation_loneliness",),
+    )
+    assert cross_family["status"] == "FAIL"
+    assert cross_family["errors"][0]["check"] == (
+        "current_user_text_cross_family_duplicate"
+    )
+
+    oversized = lint_generation_surface_case(
+        user_id="pmv2_generation_compatibility_pilot",
+        case_field="multi_source_needed",
+        regime=ResourceNeedRegime.MULTI_SOURCE_NEEDED,
+        family="self_confidence",
+        forbidden_families=("relocation_loneliness", "sleep_disruption"),
+        surface=surface,
+        prior_current_user_texts=(surface.current_user_text, surface.current_user_text),
+        prior_current_user_families=("self_confidence", "self_confidence"),
+    )
+    assert oversized["status"] == "FAIL"
+    assert oversized["errors"][0]["check"] == (
+        "current_user_text_duplicate_group_too_large"
+    )
+
+    third_pair = lint_generation_surface_case(
+        user_id="pmv2_generation_compatibility_pilot",
+        case_field="multi_source_needed",
+        regime=ResourceNeedRegime.MULTI_SOURCE_NEEDED,
+        family="self_confidence",
+        forbidden_families=("relocation_loneliness", "sleep_disruption"),
+        surface=surface,
+        prior_current_user_texts=(
+            "first pair",
+            "first pair",
+            "second pair",
+            "second pair",
+            surface.current_user_text,
+        ),
+        prior_current_user_families=(
+            "self_confidence",
+            "self_confidence",
+            "self_confidence",
+            "self_confidence",
+            "self_confidence",
+        ),
+    )
+    assert third_pair["status"] == "FAIL"
+    assert third_pair["errors"][0]["check"] == (
+        "maximum_counterfactual_current_text_pairs_exceeded"
+    )
+
+
+def test_bundle_text_diversity_allows_two_controlled_pairs_but_keeps_floor() -> None:
+    rows = [
+        {
+            "case_field": f"case_{index}",
+            "user_id": "one_user",
+            "semantic_family": "family_a" if index < 2 else "family_b",
+            "split": "train",
+            "current_user_text": (
+                "same family counterfactual"
+                if index < 2
+                else "second family counterfactual"
+                if index in (2, 3)
+                else f"distinct turn {index}"
+            ),
+        }
+        for index in range(9)
+    ]
+    audit = audit_current_user_text_diversity(
+        rows,
+        minimum_unique_texts=MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE,
+    )
+    assert audit["status"] == "PASS"
+    assert audit["unique_normalized_current_user_texts"] == 7
+    assert len(audit["allowed_counterfactual_duplicate_groups"]) == 2
+
+    rows[4]["current_user_text"] = "distinct turn 5"
+    rows[4]["semantic_family"] = rows[5]["semantic_family"]
+    audit = audit_current_user_text_diversity(
+        rows,
+        minimum_unique_texts=MIN_UNIQUE_CURRENT_TEXTS_PER_NINE_CASE_BUNDLE,
+    )
+    assert audit["status"] == "FAIL"
+    assert audit["unique_normalized_current_user_texts"] == 6
 
 
 def _surface_only_pilot_bundle(
@@ -804,6 +959,30 @@ def test_role_slot_compiler_guarantees_structural_bundle_without_self_reported_l
     )
     assert "GeneratedBundleDraft" in messages[-1]["content"]
     assert "do not output this ID" in messages[-1]["content"]
+
+
+def test_all_deterministic_memory_blueprints_fit_the_frozen_schema_boundary() -> None:
+    report = deterministic_memory_blueprint_preflight()
+    assert report["protocol"] == DETERMINISTIC_MEMORY_BLUEPRINT_PROTOCOL
+    assert report["status"] == "PASS"
+    assert report["checked_template_instances"] == (
+        len(GENERATION_FAMILY_TOPICS) * 9
+    )
+    assert report["field_maximum_characters"] == (
+        GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
+    assert report["maximum_observed_characters"] <= (
+        GENERATED_MEMORY_DRAFT_MAX_CHARS
+    )
+    assert report["minimum_remaining_margin_characters"] >= 0
+
+    # Regression for the first formal user's exact failure cell.  The old
+    # health-routine MS decoy was 162 characters and crashed only after all
+    # nine paid surface calls had succeeded.
+    raw = pm_v2_data_module._semantic_decoy_source_raw(
+        "health_routine_stress", MemorySource.MS
+    )
+    assert len(raw) <= GENERATED_MEMORY_DRAFT_MAX_CHARS
 
 
 def test_visible_readiness_is_varied_and_counterbalanced_against_strategy_target() -> None:
@@ -1635,7 +1814,7 @@ def test_split_manifest_rejects_same_split_duplicate_current_text() -> None:
         PMV2Split.CALIBRATION: [],
         PMV2Split.INTERNAL_TEST: [],
     }
-    with pytest.raises(ValidationError, match="globally unique"):
+    with pytest.raises(ValueError, match="same-user, same-family, same-split"):
         validate_split_manifests(split_states)
 
     second.current_user_text = "This is a genuinely different current turn."
@@ -1643,6 +1822,13 @@ def test_split_manifest_rejects_same_split_duplicate_current_text() -> None:
     assert manifest.total_states == 2
     assert manifest.unique_normalized_current_user_texts == 2
     assert manifest.normalized_current_user_text_unique_rate == 1.0
+
+    second.current_user_text = first.current_user_text
+    second.user_id = first.user_id
+    second.semantic_family = first.semantic_family
+    manifest = validate_split_manifests(split_states)
+    assert manifest.unique_normalized_current_user_texts == 1
+    assert manifest.normalized_current_user_text_unique_rate == 0.5
 
 
 def test_cross_split_near_duplicate_audit_rejects_paraphrase_like_texts() -> None:
@@ -1806,8 +1992,11 @@ def test_bundle_must_cover_every_frozen_assigned_family_and_report_union(
         "internal_test": 5,
     }
     duplicate_report = json.loads(json.dumps(frozen_report))
-    duplicate_report["split_manifest"]["unique_normalized_current_user_texts"] = 467
-    with pytest.raises(RuntimeError, match="not globally unique"):
+    duplicate_report["split_manifest"]["unique_normalized_current_user_texts"] = 363
+    duplicate_report["split_manifest"][
+        "normalized_current_user_text_unique_rate"
+    ] = 363 / 468
+    with pytest.raises(RuntimeError, match="counterfactual-diversity floor"):
         module.enforce_full_state_design(
             duplicate_report,
             train_users=24,
@@ -1858,6 +2047,128 @@ def test_v1_5_data_generation_binds_exact_strategy_bank_and_seed_manifest() -> N
             selected_seed_sources_path=selected,
             strategy_cards=cards,
         )
+
+
+def test_v1_5_formal_identity_content_binds_exact_pilot_attestation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_exact_pilot_binding", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    pilot_dir = tmp_path / "outputs" / "fresh_pilot"
+    pilot_dir.mkdir(parents=True)
+    attestation_path = pilot_dir / "artifact_attestation.json"
+    write_json(attestation_path, {"attestation_sha256": "a" * 64})
+    monkeypatch.setattr(
+        module,
+        "require_generation_compatibility_attestation",
+        lambda *_args, **_kwargs: {"status": "PASS"},
+    )
+    binding, verification = module._require_exact_generation_pilot_binding(
+        attestation_path,
+        expected_contract={"contract_sha256": "b" * 64},
+    )
+    assert verification == {"status": "PASS"}
+    assert binding == {
+        "protocol": "pm-v1.5-exact-generation-pilot-attestation-binding-v1",
+        "relative_path": "outputs/fresh_pilot/artifact_attestation.json",
+        "artifact_attestation_file_sha256": sha256_file(attestation_path),
+        "attestation_sha256": "a" * 64,
+        "compatibility_contract_sha256": "b" * 64,
+        "verification_status": "PASS",
+    }
+    original_file_sha256 = binding["artifact_attestation_file_sha256"]
+    write_json(
+        attestation_path,
+        {"attestation_sha256": "a" * 64, "unexpected": True},
+    )
+    changed, _ = module._require_exact_generation_pilot_binding(
+        attestation_path,
+        expected_contract={"contract_sha256": "b" * 64},
+    )
+    assert changed["artifact_attestation_file_sha256"] != original_file_sha256
+
+    outside = tmp_path.parent / "outside-pilot-attestation.json"
+    write_json(outside, {"attestation_sha256": "a" * 64})
+    with pytest.raises(RuntimeError, match="inside the project root"):
+        module._require_exact_generation_pilot_binding(
+            outside,
+            expected_contract={"contract_sha256": "b" * 64},
+        )
+
+
+def test_saved_dry_run_mismatch_writes_field_level_diagnostic(
+    tmp_path: Path,
+) -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_dry_run_mismatch_diagnostic", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    out_dir = tmp_path / "formal_run"
+    out_dir.mkdir(parents=True)
+    saved = {
+        "cost_estimate_sha256": "a" * 64,
+        "call_plan_sha256": "b" * 64,
+        "generation_run_binding": {
+            "base_generation_seed": 1234,
+            "generator_config_sha256": "c" * 64,
+            "code_manifest": {
+                "src/metacom_pm/pm_v2_data.py": "d" * 64,
+                "src/metacom_pm/api.py": "e" * 64,
+            },
+        },
+        "expected_api_calls": 459,
+    }
+    write_json(out_dir / "generation_cost_estimate.json", saved)
+    (out_dir / "generation_call_plan.jsonl").write_text("", encoding="utf-8")
+
+    # An exact match must pass silently and must not write any diagnostic.
+    module._require_saved_dry_run(out_dir, dict(saved))
+    assert not list(out_dir.glob("generation_dry_run_mismatch_diagnostic_*.json"))
+
+    current = json.loads(json.dumps(saved))
+    current["cost_estimate_sha256"] = "f" * 64
+    current["generation_run_binding"]["base_generation_seed"] = 5678
+    current["generation_run_binding"]["code_manifest"][
+        "src/metacom_pm/api.py"
+    ] = "9" * 64
+    current["expected_api_calls"] = 51
+
+    with pytest.raises(RuntimeError, match="see .*generation_dry_run_mismatch_diagnostic"):
+        module._require_saved_dry_run(out_dir, current)
+
+    diagnostics = list(
+        out_dir.glob("generation_dry_run_mismatch_diagnostic_*.json")
+    )
+    assert len(diagnostics) == 1
+    diagnostic = read_json(diagnostics[0])
+    assert diagnostic["saved_cost_estimate_sha256"] == "a" * 64
+    assert diagnostic["current_cost_estimate_sha256"] == "f" * 64
+    assert set(diagnostic["differing_field_paths"]) == {
+        "generation_run_binding.base_generation_seed",
+        "generation_run_binding.code_manifest.src/metacom_pm/api.py",
+        "expected_api_calls",
+        "cost_estimate_sha256",
+    }
 
 
 def test_generation_resume_binding_rejects_legacy_and_mismatch() -> None:
@@ -2352,6 +2663,10 @@ def test_generation_compatibility_pilot_dry_run_freezes_casewise_plan(
     plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
     assert estimate["minimum_api_calls_if_successful"] == GENERATION_PILOT_MINIMUM_CALLS
     assert estimate["maximum_physical_api_attempts"] == GENERATION_PILOT_MAX_ATTEMPTS
+    assert estimate["maximum_content_attempts"] == GENERATION_PILOT_MAX_CONTENT_ATTEMPTS
+    assert estimate["maximum_transport_attempts_per_content_attempt"] == (
+        GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+    )
     assert estimate["maximum_repairs_per_case"] == 1
     assert estimate["stop_after_each_case_success"] is True
     assert estimate["pricing"] == {
@@ -2362,7 +2677,7 @@ def test_generation_compatibility_pilot_dry_run_freezes_casewise_plan(
     assert estimate["maximum_input_token_upper_bound_per_call"] > 0
     assert estimate["maximum_output_tokens_per_call"] == 900
     assert estimate["budget_gate"]["status"] == "PASS"
-    assert len(plan) == GENERATION_PILOT_MAX_ATTEMPTS
+    assert len(plan) == GENERATION_PILOT_MAX_CONTENT_ATTEMPTS
     assert len({row["physical_call_key"] for row in plan}) == len(plan)
     assert len({row["generation_seed"] for row in plan}) == len(plan)
     assert {row["attempt_kind"] for row in plan} == {"initial", "repair"}
@@ -2374,14 +2689,21 @@ def test_generation_compatibility_pilot_dry_run_freezes_casewise_plan(
         == 2
         for row in plan
     )
-    assert all(row["maximum_physical_attempts"] == 1 for row in plan)
+    assert all(
+        row["maximum_physical_attempts"]
+        == GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+        for row in plan
+    )
 
     ledger_path = out_dir / "physical_attempt_ledger.jsonl"
     ledger = PersistentAttemptLedger(
         ledger_path,
         stage=GENERATION_PILOT_STAGE,
-        expected_calls={str(row["physical_call_key"]): 1 for row in plan},
-        maximum_total_attempts=len(plan),
+        expected_calls={
+            str(row["physical_call_key"]): int(row["maximum_physical_attempts"])
+            for row in plan
+        },
+        maximum_total_attempts=GENERATION_PILOT_MAX_ATTEMPTS,
     )
     reservation = ledger.reserve(
         str(plan[0]["physical_call_key"]),
@@ -2488,7 +2810,7 @@ def test_v1_5_generation_pilot_budget_is_config_frozen_and_reproducible(
         estimates.append(read_json(out_dir / "cost_estimate.json"))
     assert estimates[0]["budget_limits"] == {
         "max_api_calls": GENERATION_PILOT_MAX_ATTEMPTS,
-        "max_estimated_usd": 0.018,
+        "max_estimated_usd": 0.054,
         "max_input_tokens_per_call": 4000,
     }
     assert (
@@ -2800,6 +3122,154 @@ def test_generation_pilot_uses_one_bounded_repair_and_never_repeats_success(
     module.main()
 
 
+def test_generation_pilot_recovers_transient_500_without_content_repair(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "20a_run_pm_v2_generation_compatibility_pilot.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v2_generation_pilot_transport_retry", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    seed_path = tmp_path / "seeds.jsonl"
+    _write_unique_generation_seeds(seed_path)
+    out_dir = tmp_path / "pilot"
+    common = [
+        str(script),
+        "--seed-dialogues",
+        str(seed_path),
+        "--out-dir",
+        str(out_dir),
+        "--max-api-calls",
+        str(GENERATION_PILOT_MAX_ATTEMPTS),
+        "--max-estimated-usd",
+        "1",
+        "--max-input-tokens-per-call",
+        "12000",
+    ]
+    monkeypatch.setattr(sys, "argv", [*common, "--dry-run"])
+    module.main()
+    accepted_hash = read_json(out_dir / "cost_estimate.json")[
+        "cost_estimate_sha256"
+    ]
+    monkeypatch.setenv("OPENAI_API_KEY", "test-only")
+
+    experiment = load_config(PROJECT_ROOT / "configs" / "experiment.yaml")
+    pm_config = load_config(PROJECT_ROOT / "configs" / "pm_v2.yaml")
+    generation = pm_config["data_generation"]
+    endpoint = endpoint_from_config(experiment, generation["generator_endpoint"])
+    contract = build_generation_compatibility_contract(
+        project_root=PROJECT_ROOT,
+        experiment_config_path=PROJECT_ROOT / "configs" / "experiment.yaml",
+        pm_v2_config_path=PROJECT_ROOT / "configs" / "pm_v2.yaml",
+        seed_dialogues_path=seed_path,
+        endpoint=endpoint,
+        base_generation_seed=int(generation["base_seed"]),
+        full_user_count=sum(
+            int(generation[key])
+            for key in ("train_users", "calibration_users", "internal_test_users")
+        ),
+        input_token_safety_factor=1.5,
+        fail_on_reported_input_overrun=True,
+        input_usd_per_mtok=0.15,
+        output_usd_per_mtok=0.60,
+    )
+    surfaces = _surface_only_pilot_inputs(contract)
+
+    class TransientThenSuccessfulClient:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, bool]] = []
+            self.injected = False
+
+        def chat(self, messages, **kwargs):
+            prompt = messages[1]["content"]
+            case_field = next(
+                field
+                for field, _ in GENERATION_CASE_FIELDS
+                if f"CASE SLOT (never mention this label): {field}" in prompt
+            )
+            repair = "one pre-authorized repair attempt" in prompt
+            self.calls.append((case_field, repair))
+            if case_field == "context_only" and not repair and not self.injected:
+                self.injected = True
+                raise RetryableProviderError(
+                    "injected HTTP 500",
+                    last_retry_class="http_5xx",
+                    last_status_code=500,
+                    attempts_tried=1,
+                    response_diagnostics={"status_code": 500},
+                )
+            surface = surfaces[case_field]
+            payload = surface.model_dump(mode="json")
+            return (
+                CallResult(
+                    text=canonical_json(payload),
+                    raw_response={
+                        "choices": [
+                            {"message": {"content": canonical_json(payload)}}
+                        ]
+                    },
+                    usage={
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                    },
+                    latency_ms=1.0,
+                    request_hash=f"fake-{case_field}-{len(self.calls)}",
+                ),
+                surface,
+            )
+
+        def close(self) -> None:
+            return None
+
+    fake = TransientThenSuccessfulClient()
+    monkeypatch.setattr(module, "make_client", lambda endpoint: fake)
+    monkeypatch.setattr(module.time, "sleep", lambda seconds: None)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            *common,
+            "--run",
+            "--accept-cost-estimate-sha256",
+            accepted_hash,
+        ],
+    )
+    module.main()
+
+    assert fake.calls[:2] == [
+        ("context_only", False),
+        ("context_only", False),
+    ]
+    assert all(not repair for _, repair in fake.calls)
+    assert len(fake.calls) == GENERATION_PILOT_MINIMUM_CALLS + 1
+    summary = read_json(out_dir / "summary.json")
+    assert summary["status"] == "PASS"
+    assert summary["repair_cases"] == []
+    assert summary["physical_attempts"] == GENERATION_PILOT_MINIMUM_CALLS + 1
+    assert summary["transport_retry_summary"]["failed_attempts_by_class"] == {
+        "http_5xx": 1
+    }
+    assert summary["transport_retry_summary"][
+        "logical_calls_recovered_after_retry"
+    ] == 1
+    ledger_rows = list(iter_jsonl(out_dir / "physical_attempt_ledger.jsonl"))
+    assert [row["event"] for row in ledger_rows[:4]] == [
+        "STARTED",
+        "FAILED",
+        "STARTED",
+        "SUCCEEDED",
+    ]
+    assert ledger_rows[1]["metadata"]["retry_class"] == "http_5xx"
+
+
 def test_generation_contract_ignores_downstream_judges_but_binds_generator(
     tmp_path: Path,
 ) -> None:
@@ -2865,7 +3335,7 @@ def test_generation_contract_ignores_downstream_judges_but_binds_generator(
 
     experiment_path.write_text(experiment_text, encoding="utf-8")
     pm_path.write_text(
-        pm_text.replace("max_estimated_usd: 0.018", "max_estimated_usd: 0.017"),
+        pm_text.replace("max_estimated_usd: 0.054", "max_estimated_usd: 0.053"),
         encoding="utf-8",
     )
     assert build()["contract_sha256"] != baseline["contract_sha256"]
@@ -2934,9 +3404,10 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         ledger_path,
         stage=GENERATION_PILOT_STAGE,
         expected_calls={
-            str(row["physical_call_key"]): 1 for row in call_plan
+            str(row["physical_call_key"]): int(row["maximum_physical_attempts"])
+            for row in call_plan
         },
-        maximum_total_attempts=len(call_plan),
+        maximum_total_attempts=GENERATION_PILOT_MAX_ATTEMPTS,
     )
     initial_rows = [
         row for row in call_plan if row["attempt_kind"] == "initial"
@@ -2981,6 +3452,14 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
         "repair_case_count": 0,
         "bundle_validation": bundle_report,
         "physical_attempts": len(initial_rows),
+        "actual_usage": {
+            "prompt_tokens": 100 * len(initial_rows),
+            "completion_tokens": 50 * len(initial_rows),
+            "total_tokens": 150 * len(initial_rows),
+        },
+        "transport_retry_summary": retry_ledger_summary(
+            ledger, list(ledger.expected_calls)
+        ),
     }
     write_json(summary_path, summary)
     run_manifest_path = pilot_dir / "run_manifest.json"
@@ -2990,6 +3469,8 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
     cost_payload = {
         "stage": GENERATION_PILOT_STAGE,
         "call_plan_sha256": sha256_text(canonical_json(call_plan)),
+        "maximum_content_attempts": len(call_plan),
+        "maximum_physical_api_attempts": GENERATION_PILOT_MAX_ATTEMPTS,
     }
     accepted_cost_hash = sha256_text(canonical_json(cost_payload))
     write_json(
@@ -3022,6 +3503,10 @@ def test_generation_compatibility_attestation_is_exact_and_tamper_evident(
             "compatibility_contract_sha256": contract["contract_sha256"],
             "accepted_cost_estimate_sha256": accepted_cost_hash,
             "provider_trace_mode": "surface_only_casewise",
+            "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+            "maximum_transport_attempts_per_content_attempt": (
+                GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+            ),
         },
         expected={
             "minimum_physical_attempts": GENERATION_PILOT_MINIMUM_CALLS,

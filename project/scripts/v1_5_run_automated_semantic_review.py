@@ -77,7 +77,9 @@ from metacom_pm.attempt_ledger import (
     physical_call_key,
 )
 from metacom_pm.bounded_retry import (
+    BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES,
     DEFAULT_BACKOFF_SECONDS,
+    DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS,
     RETRY_CONTRACT_PROTOCOL,
     RETRYABLE_UP_TO_FULL_BUDGET,
     TERMINAL_DISPOSITION,
@@ -116,12 +118,21 @@ from metacom_pm.v1_5_automated_semantic_review import (
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.v1_5_actual_corpus_review import (
+    ACTUAL_CITATION_POLICY,
     ACTUAL_CORPUS_CONTROL_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_PROTOCOL,
     ACTUAL_CORPUS_REVIEW_STAGE,
-    ACTUAL_REVIEW_QUESTIONS_EN,
+    ACTUAL_DERIVED_OR_CONSTRUCTION_FIELDS,
+    ACTUAL_DETERMINISTIC_FIELDS,
+    ACTUAL_PANEL_POLICY,
+    ACTUAL_SEMANTIC_FIELDS,
+    aggregate_actual_corpus_gate,
     build_generation_pilot_review_items,
     build_actual_corpus_review_items,
+)
+from metacom_pm.v1_5_semantic_review_diagnostic import (
+    SingleFieldDiagnosticOutput,
+    assess_single_field_diagnostic_output,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
@@ -264,6 +275,7 @@ def main() -> None:
         raise RuntimeError("automated review requires distinct declared judge families")
 
     corpus_audit = None
+    actual_state_items = None
     paid_pilot_audit = None
     if args.review_scope == "actual_468":
         if args.generation_pilot_attestation is not None:
@@ -276,12 +288,20 @@ def main() -> None:
             or actual_cfg.get("control_protocol")
             != ACTUAL_CORPUS_CONTROL_PROTOCOL
             or list(actual_cfg.get("required_control_fields") or [])
-            != list(RATING_FIELDS)
+            != list(ACTUAL_SEMANTIC_FIELDS)
+            or list(actual_cfg.get("semantic_fields") or [])
+            != list(ACTUAL_SEMANTIC_FIELDS)
+            or list(actual_cfg.get("deterministic_fields") or [])
+            != list(ACTUAL_DETERMINISTIC_FIELDS)
+            or list(actual_cfg.get("derived_or_construction_fields") or [])
+            != list(ACTUAL_DERIVED_OR_CONSTRUCTION_FIELDS)
+            or actual_cfg.get("panel_policy") != ACTUAL_PANEL_POLICY
+            or actual_cfg.get("citation_policy") != ACTUAL_CITATION_POLICY
             or int(actual_cfg.get("controls_per_field") or 0) != 2
             or int(actual_cfg.get("control_seed") or -1) != int(args.seed)
         ):
             raise RuntimeError("actual-corpus control contract/config drift")
-        real_case_rows, controls, corpus_audit = build_actual_corpus_review_items(
+        actual_state_items, controls, corpus_audit = build_actual_corpus_review_items(
             states_path=args.states,
             evaluator_contexts_path=args.evaluator_contexts,
             backend_path=args.memory_backend,
@@ -296,6 +316,18 @@ def main() -> None:
             required_control_fields=actual_cfg["required_control_fields"],
             controls_per_field=int(actual_cfg["controls_per_field"]),
         )
+        real_case_rows = [
+            {
+                "kind": "real",
+                "item_id": packet["item_id"],
+                "case_item_id": state["item_id"],
+                "field": packet["field"],
+                "messages": packet["messages"],
+                "semantic_packet": packet,
+            }
+            for state in actual_state_items
+            for packet in state["semantic_packets"]
+        ]
     else:
         if args.generation_pilot_attestation is None:
             raise RuntimeError(
@@ -337,6 +369,31 @@ def main() -> None:
         )
         real_case_rows = deterministic_case_rows + paid_pilot_rows
 
+    if args.review_scope == "actual_468":
+        maximum_physical_attempts_per_call = int(
+            control_cfg["maximum_physical_attempts_per_logical_call"]
+        )
+        maximum_provider_output_failures = int(
+            control_cfg["maximum_provider_output_failures_per_logical_call"]
+        )
+        transport_backoff_seconds = tuple(
+            float(value) for value in control_cfg["transport_backoff_seconds"]
+        )
+        if (
+            maximum_physical_attempts_per_call < 3
+            or maximum_provider_output_failures < 1
+            or maximum_provider_output_failures
+            > maximum_physical_attempts_per_call
+            or len(transport_backoff_seconds)
+            < maximum_physical_attempts_per_call - 1
+            or any(value < 0 for value in transport_backoff_seconds)
+        ):
+            raise RuntimeError("actual-corpus bounded retry contract is invalid")
+    else:
+        maximum_physical_attempts_per_call = MAX_PHYSICAL_ATTEMPTS_PER_CALL
+        maximum_provider_output_failures = DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+        transport_backoff_seconds = DEFAULT_BACKOFF_SECONDS
+
     planning = dict(pm_config["api_cost_planning"])
     if set(planning) != {
         "input_token_safety_factor",
@@ -351,19 +408,33 @@ def main() -> None:
     }
     if any(value < 0.0 for value in prices.values()):
         raise ValueError("automated-review prices must be non-negative")
-    case_rows = list(real_case_rows) + [
-        {"kind": "control", "item_id": row["item_id"], "text": row["case_text"]}
-        for row in controls
-    ]
+    if args.review_scope == "actual_468":
+        case_rows = list(real_case_rows) + [
+            {
+                "kind": "control",
+                "item_id": row["item_id"],
+                "case_item_id": row["case_item_id"],
+                "field": row["rating_field"],
+                "messages": row["semantic_packet"]["messages"],
+                "semantic_packet": row["semantic_packet"],
+            }
+            for row in controls
+        ]
+        response_schema = SingleFieldDiagnosticOutput
+        response_max_tokens = 300
+    else:
+        case_rows = list(real_case_rows) + [
+            {"kind": "control", "item_id": row["item_id"], "text": row["case_text"]}
+            for row in controls
+        ]
+        response_schema = AutomatedSemanticReviewOutput
+        response_max_tokens = 500
     call_plan = []
     execution = {}
-    rating_questions = ACTUAL_REVIEW_QUESTIONS_EN
     for case_row in case_rows:
         messages = (
-            judge_messages(
-                str(case_row["text"]), rating_questions=rating_questions
-            )
-            if rating_questions is not None
+            list(case_row["messages"])
+            if args.review_scope == "actual_468"
             else judge_messages(str(case_row["text"]))
         )
         for endpoint_name, endpoint in endpoints.items():
@@ -371,9 +442,9 @@ def main() -> None:
                 endpoint,
                 messages,
                 temperature=0.0,
-                max_tokens=500,
+                max_tokens=response_max_tokens,
                 seed=13,
-                response_schema=AutomatedSemanticReviewOutput,
+                response_schema=response_schema,
             )
             if not request_payload_has_schema(payload):
                 raise RuntimeError("automated-review request lacks structured schema")
@@ -383,6 +454,14 @@ def main() -> None:
                 "kind": case_row["kind"],
                 "item_id": case_row["item_id"],
                 "judge_family": str(endpoint.family),
+                **(
+                    {
+                        "case_item_id": case_row["case_item_id"],
+                        "field": case_row["field"],
+                    }
+                    if args.review_scope == "actual_468"
+                    else {}
+                ),
             }
             call_key = physical_call_key(
                 stage=review_stage,
@@ -391,9 +470,9 @@ def main() -> None:
                 endpoint=endpoint,
                 request_parameters={
                     "temperature": 0.0,
-                    "max_tokens": 500,
+                    "max_tokens": response_max_tokens,
                     "seed": 13,
-                    "response_schema": AutomatedSemanticReviewOutput.__name__,
+                    "response_schema": response_schema.__name__,
                     "retries": 1,
                 },
             )
@@ -411,15 +490,15 @@ def main() -> None:
                     "request_payload_sha256": sha256_text(payload_text),
                     "raw_estimated_input_tokens": estimate_tokens(payload_text),
                     "input_token_upper_bound": bound,
-                    "maximum_output_tokens": 500,
-                    "maximum_physical_attempts": MAX_PHYSICAL_ATTEMPTS_PER_CALL,
+                    "maximum_output_tokens": response_max_tokens,
+                    "maximum_physical_attempts": maximum_physical_attempts_per_call,
                     # Worst case: every physical attempt up to the retry budget
                     # is a real, separately-billed call before one finally
                     # succeeds or the call is abandoned.
-                    "maximum_cost_usd": MAX_PHYSICAL_ATTEMPTS_PER_CALL
+                    "maximum_cost_usd": maximum_physical_attempts_per_call
                     * (
                         bound / 1_000_000 * prices["input"]
-                        + 500 / 1_000_000 * prices["output"]
+                        + response_max_tokens / 1_000_000 * prices["output"]
                     ),
                 }
             )
@@ -427,6 +506,8 @@ def main() -> None:
                 "endpoint": endpoint,
                 "messages": messages,
                 "record_ids": record_ids,
+                "response_schema": response_schema,
+                "semantic_packet": case_row.get("semantic_packet"),
             }
     endpoint_order = {
         name: index for index, name in enumerate(args.judge_endpoints)
@@ -448,12 +529,21 @@ def main() -> None:
     # logical call needed its full bounded-retry budget before succeeding
     # (or being abandoned) -- the number actually authorized and cost-capped,
     # per the module docstring's second amendment.
-    max_physical_attempts_worst_case = n_calls * MAX_PHYSICAL_ATTEMPTS_PER_CALL
+    max_physical_attempts_worst_case = (
+        n_calls * maximum_physical_attempts_per_call
+    )
     estimate_payload = {
         "protocol": review_protocol,
         "stage": review_stage,
         "review_scope": args.review_scope,
-        "n_real_cases": len(real_case_rows),
+        "n_real_cases": (
+            len(actual_state_items)
+            if actual_state_items is not None
+            else len(real_case_rows)
+        ),
+        "n_real_semantic_packets": (
+            len(real_case_rows) if actual_state_items is not None else None
+        ),
         "n_controls": len(controls),
         "control_protocol": control_cfg["control_protocol"],
         "required_control_fields": list(control_cfg["required_control_fields"]),
@@ -464,7 +554,7 @@ def main() -> None:
         ),
         "n_judge_families": len(endpoints),
         "n_logical_calls": n_calls,
-        "maximum_physical_attempts_per_call": MAX_PHYSICAL_ATTEMPTS_PER_CALL,
+        "maximum_physical_attempts_per_call": maximum_physical_attempts_per_call,
         "maximum_physical_api_attempts": max_physical_attempts_worst_case,
         "call_plan_sha256": sha256_text(canonical_json(call_plan)),
         "maximum_estimated_usd": sum(row["maximum_cost_usd"] for row in call_plan),
@@ -492,14 +582,20 @@ def main() -> None:
             "retryable_up_to_full_budget": sorted(
                 RETRYABLE_UP_TO_FULL_BUDGET
             ),
-            "missing_field_maximum_additional_physical_attempts": 1,
+            "bounded_provider_output_retry_classes": sorted(
+                BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES
+            ),
+            "provider_output_maximum_failures": (
+                maximum_provider_output_failures
+            ),
+            "provider_output_failures_are_independent_of_transport_attempts": True,
             "never_retried": [
                 "provider_request_error_4xx",
                 "structured_output_validation_error",
                 "successfully_parsed_but_unfavorable_score",
                 "stage_postcondition_failure",
             ],
-            "backoff_seconds": list(DEFAULT_BACKOFF_SECONDS),
+            "backoff_seconds": list(transport_backoff_seconds),
             "retry_after_header_is_respected": True,
             "cross_process_eligibility_source": "physical_attempt_ledger",
             "legacy_or_unclassified_failure_policy": "fail_closed",
@@ -572,7 +668,7 @@ def main() -> None:
         ledger_path,
         stage=review_stage,
         expected_calls={
-            str(row["physical_call_key"]): MAX_PHYSICAL_ATTEMPTS_PER_CALL
+            str(row["physical_call_key"]): maximum_physical_attempts_per_call
             for row in call_plan
         },
         maximum_total_attempts=max_physical_attempts_worst_case,
@@ -582,7 +678,11 @@ def main() -> None:
         call_key = str(row["physical_call_key"])
         if ledger.succeeded(call_key):
             continue
-        blocker = call_retry_blocker(ledger, call_key)
+        blocker = call_retry_blocker(
+            ledger,
+            call_key,
+            max_provider_output_attempts=maximum_provider_output_failures,
+        )
         if blocker is not None:
             blocked[call_key] = blocker
     if blocked:
@@ -611,9 +711,9 @@ def main() -> None:
                 return clients[str(item["record_ids"]["judge_family"])].chat(
                     item["messages"],
                     temperature=0.0,
-                    max_tokens=500,
+                    max_tokens=response_max_tokens,
                     seed=13,
-                    response_schema=AutomatedSemanticReviewOutput,
+                    response_schema=item["response_schema"],
                     retries=1,
                 )
 
@@ -625,6 +725,8 @@ def main() -> None:
                     record_ids=item["record_ids"],
                     prompt_sha256=str(row["prompt_sha256"]),
                     call_fn=call_fn,
+                    max_provider_output_attempts=maximum_provider_output_failures,
+                    backoff_seconds=transport_backoff_seconds,
                 )
                 # execute_with_bounded_retry has already ledgered every failed
                 # physical attempt; this reservation is still open (STARTED
@@ -695,24 +797,54 @@ def main() -> None:
         if terminal is None or not ledger.succeeded(call_key):
             raise RuntimeError("automated semantic-review matrix is incomplete")
         result = terminal.get("result") or {}
-        parsed = AutomatedSemanticReviewOutput.model_validate(result.get("parsed"))
-        payload = parsed.model_dump(mode="json")
-        judgment = {
-            "ratings": {
-                key: int(payload[key])
-                for key in AutomatedSemanticReviewOutput.model_fields
-                if key != "notes"
-            },
-            "notes": payload["notes"],
-            "raw_text": result.get("raw_text"),
-            "usage": terminal.get("usage"),
-            "request_hash": terminal.get("request_hash"),
-        }
+        if args.review_scope == "actual_468":
+            parsed = SingleFieldDiagnosticOutput.model_validate(result.get("parsed"))
+            packet = execution[call_key]["semantic_packet"]
+            assessment = assess_single_field_diagnostic_output(
+                item=packet, output=parsed
+            )
+            payload = parsed.model_dump(mode="json")
+            judgment = {
+                "field": row["field"],
+                "case_item_id": row["case_item_id"],
+                "verdict": payload["verdict"],
+                "evidence_keys": payload["evidence_keys"],
+                "evidence_quotes": payload["evidence_quotes"],
+                "reason": payload["reason"],
+                "citation_valid": assessment["citation_valid"],
+                "citation_errors": assessment["citation_errors"],
+                "raw_text": result.get("raw_text"),
+                "usage": terminal.get("usage"),
+                "request_hash": terminal.get("request_hash"),
+            }
+        else:
+            parsed = AutomatedSemanticReviewOutput.model_validate(result.get("parsed"))
+            payload = parsed.model_dump(mode="json")
+            judgment = {
+                "ratings": {
+                    key: int(payload[key])
+                    for key in AutomatedSemanticReviewOutput.model_fields
+                    if key != "notes"
+                },
+                "notes": payload["notes"],
+                "raw_text": result.get("raw_text"),
+                "usage": terminal.get("usage"),
+                "request_hash": terminal.get("request_hash"),
+            }
         destination = real_case_results if row["kind"] == "real" else control_results
         destination.setdefault(str(row["item_id"]), {})[str(row["endpoint_name"])] = judgment
 
-    gate = {
-        **aggregate_gate(
+    aggregated_gate = (
+        aggregate_actual_corpus_gate(
+            state_items=actual_state_items or [],
+            real_case_results=real_case_results,
+            control_results=control_results,
+            controls=controls,
+            judge_family_names=list(endpoints),
+            corpus_audit=corpus_audit or {},
+        )
+        if args.review_scope == "actual_468"
+        else aggregate_gate(
             real_case_results=real_case_results,
             control_results=control_results,
             controls=controls,
@@ -721,7 +853,10 @@ def main() -> None:
             required_control_fields=control_cfg["required_control_fields"],
             controls_per_field=int(control_cfg["controls_per_field"]),
             protocol=review_protocol,
-        ),
+        )
+    )
+    gate = {
+        **aggregated_gate,
         "review_scope": args.review_scope,
         "corpus_audit": corpus_audit,
         "paid_pilot_audit": paid_pilot_audit,
@@ -789,6 +924,16 @@ def main() -> None:
             "control_matrix_sha256": gate["control_matrix_sha256"],
             "judge_role_isolation": judge_role_isolation,
             "judge_endpoint_descriptors": judge_endpoint_descriptors,
+            "panel_policy": (
+                ACTUAL_PANEL_POLICY
+                if args.review_scope == "actual_468"
+                else None
+            ),
+            "citation_policy": (
+                ACTUAL_CITATION_POLICY
+                if args.review_scope == "actual_468"
+                else None
+            ),
             "review_strategy_card_ids": (
                 {}
                 if args.review_scope == "actual_468"

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Generate PM-v1.5 synthetic development data on the frozen fast track.
 
-The V1.5 branch requires both the casewise generation-compatibility pilot and
-an attested, multi-family automated semantic review before a paid full run.
-It intentionally does not claim independent human validation and must not be
-reported as equivalent to the PM-v2.2 human-review protocol.
+The V1.5 branch requires an exact PASS casewise generation-compatibility
+attestation before either the formal dry-run identity or a paid full run can be
+created.  Semantic validation is intentionally deferred to actual-468
+structured QA after generation and before the action sweep; the consumed V4
+calibration review is not an authorization gate.
 """
 
 from __future__ import annotations
@@ -12,11 +13,14 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import time
 from typing import Any
 
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.api import (
     CallResult,
+    ProviderRequestError,
+    RetryableProviderError,
     StructuredOutputValidationError,
     chat_request_payload,
     make_client,
@@ -29,6 +33,15 @@ from metacom_pm.attempt_ledger import (
     physical_call_key,
 )
 from metacom_pm.artifacts import create_artifact_attestation
+from metacom_pm.bounded_retry import (
+    BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES,
+    RETRY_CONTRACT_PROTOCOL,
+    TERMINAL_DISPOSITION,
+    call_retry_blocker,
+    execute_with_bounded_retry,
+    failure_metadata,
+    retry_ledger_summary,
+)
 from metacom_pm.contracts import StrategyCard
 from metacom_pm.io import (
     append_jsonl,
@@ -44,6 +57,8 @@ from metacom_pm.pm_v2_contracts import PMV2Split, ResourceNeedRegime
 from metacom_pm.pm_v2_data import (
     GENERATION_CASE_FIELDS,
     GENERATION_TEMPERATURE,
+    OBSERVABLE_HISTORY_TURN_TARGETS,
+    OBSERVABLE_STATE_SUPPORT_PROTOCOL,
     SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
     SURFACE_GENERATION_MAX_REPAIRS,
     GeneratedSurfaceOnlyCaseDraft,
@@ -51,6 +66,7 @@ from metacom_pm.pm_v2_data import (
     audit_cross_split_near_duplicates,
     bind_bundle_to_generation_run,
     compile_surface_only_user_bundle,
+    deterministic_memory_blueprint_preflight,
     generation_case_family_assignments,
     generation_case_messages,
     lint_generation_surface_case,
@@ -67,14 +83,13 @@ from metacom_pm.pm_v2_generation_pilot import (
     INTERNAL_TEST_SEMANTIC_FAMILIES,
     SEMANTIC_FAMILY_COHORTS_BY_SPLIT,
     TRAIN_SEMANTIC_FAMILIES,
+    GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT,
+    GENERATION_PILOT_TRANSPORT_BACKOFF_SECONDS,
     build_generation_compatibility_contract,
     generation_family_schedule,
     require_generation_compatibility_attestation,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
-from metacom_pm.v1_5_automated_semantic_review import (
-    require_automated_semantic_review_pass,
-)
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
@@ -95,6 +110,27 @@ GENERATION_STAGE = "pm_v2_synthetic_surface_generation"
 
 class ReportedInputTokenOverrun(RuntimeError):
     pass
+
+
+_CONTENT_ATTEMPT_FAILURE_CLASSES = frozenset(
+    {
+        *BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES,
+        "structured_output_validation_error",
+        "content_lint_failure",
+    }
+)
+
+
+def _persisted_content_attempt_failed(
+    ledger: PersistentAttemptLedger, call_key: str
+) -> bool:
+    terminal = ledger.terminal_row(call_key)
+    if terminal is None or terminal.get("event") != "FAILED":
+        return False
+    metadata = terminal.get("metadata") or {}
+    return str(metadata.get("retry_class") or "") in (
+        _CONTENT_ATTEMPT_FAILURE_CLASSES
+    )
 
 
 def _load_successful_surface_attempt(
@@ -296,6 +332,40 @@ def _strict_existing_bundles(path: Path) -> dict[str, GeneratedUserBundle]:
     return result
 
 
+def _estimate_field_diff(
+    saved: dict[str, Any], current: dict[str, Any]
+) -> dict[str, Any]:
+    """Pinpoint which field(s) made two cost-estimate dicts hash differently.
+
+    A bare hash mismatch (the only thing the caller previously reported) is not
+    diagnosable after the fact: nothing about which of the ~20 hashed inputs
+    (themselves nesting things like a 14-file code manifest) changed survives
+    past the raised exception. This walks the same dict the hash was computed
+    over and recurses through nested dicts (code_manifest, generation_run_binding,
+    budget_gate, ...) so a real mismatch is a direct dotted-path lookup instead
+    of a multi-hour forensic reconstruction (see
+    PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md V15-REL-15 for the prior,
+    narrower instance of this same "CLI/identity reproducibility" failure
+    class).
+    """
+    differing_field_paths: list[str] = []
+
+    def _walk(saved_value: Any, current_value: Any, path: str) -> None:
+        if isinstance(saved_value, dict) and isinstance(current_value, dict):
+            for key in sorted(set(saved_value) | set(current_value)):
+                _walk(
+                    saved_value.get(key),
+                    current_value.get(key),
+                    f"{path}.{key}" if path else key,
+                )
+            return
+        if canonical_json(saved_value) != canonical_json(current_value):
+            differing_field_paths.append(path)
+
+    _walk(saved, current, "")
+    return {"differing_field_paths": differing_field_paths}
+
+
 def _require_saved_dry_run(
     out_dir: Path,
     current: dict[str, Any],
@@ -309,13 +379,88 @@ def _require_saved_dry_run(
         )
     saved = read_json(estimate_path)
     if saved.get("cost_estimate_sha256") != current.get("cost_estimate_sha256"):
+        diagnostic_path = out_dir / (
+            "generation_dry_run_mismatch_diagnostic_"
+            f"{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}.json"
+        )
+        write_json(
+            diagnostic_path,
+            {
+                "protocol": "pm-v1.5-dry-run-mismatch-diagnostic-v1",
+                "saved_cost_estimate_sha256": saved.get("cost_estimate_sha256"),
+                "current_cost_estimate_sha256": current.get("cost_estimate_sha256"),
+                **_estimate_field_diff(saved, current),
+            },
+        )
         raise RuntimeError(
             "saved generation dry-run does not match the current generator, seed, "
             "configuration, prompt, code, resume state, pricing, or budget limits; "
-            "run --dry-run again"
+            f"see {diagnostic_path} for the exact differing field(s), then run "
+            "--dry-run again"
         )
     if saved.get("call_plan_sha256") != current.get("call_plan_sha256"):
         raise RuntimeError("saved generation call-plan hash is stale")
+
+
+def _require_exact_generation_pilot_binding(
+    attestation_path: Path | None,
+    *,
+    expected_contract: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Validate and content-bind the exact pilot before formal identity creation."""
+
+    if attestation_path is None:
+        raise RuntimeError(
+            "formal generation dry-run and paid run require an explicit fresh "
+            "--generation-pilot-attestation"
+        )
+    resolved = attestation_path.resolve()
+    try:
+        relative_path = str(resolved.relative_to(ROOT.resolve()))
+    except ValueError as exc:
+        raise RuntimeError(
+            "generation pilot attestation must be inside the project root so "
+            "the reviewed identity is machine-independent"
+        ) from exc
+    stale_pilot_directories = {
+        "pm_v1_5_generation_compatibility_pilot_v8_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_1_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_2_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
+        "pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_5_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_7_frozen_budget_candidate",
+        "pm_v1_5_generation_compatibility_pilot_v8_8_1_final_contract_candidate",
+    }
+    if resolved.parent.name in stale_pilot_directories:
+        raise RuntimeError(
+            "formal generation refuses a known consumed/stale compatibility "
+            f"pilot directory: {resolved.parent.name}"
+        )
+    verification = require_generation_compatibility_attestation(
+        resolved,
+        expected_contract=expected_contract,
+    )
+    attestation = read_json(resolved)
+    internal_sha256 = str(attestation.get("attestation_sha256") or "")
+    if len(internal_sha256) != 64:
+        raise RuntimeError("generation pilot attestation lacks its internal digest")
+    binding = {
+        "protocol": "pm-v1.5-exact-generation-pilot-attestation-binding-v1",
+        "relative_path": relative_path,
+        "artifact_attestation_file_sha256": sha256_file(resolved),
+        "attestation_sha256": internal_sha256,
+        "compatibility_contract_sha256": str(
+            expected_contract["contract_sha256"]
+        ),
+        "verification_status": str(verification.get("status") or ""),
+    }
+    if binding["verification_status"] != "PASS":
+        raise RuntimeError("generation pilot attestation verification is not PASS")
+    return binding, verification
 
 
 def read_seed_dialogues(path: Path) -> list[dict[str, str]]:
@@ -553,17 +698,17 @@ def enforce_full_state_design(
             f"expected={expected_split_state_counts}, observed={report['split_counts']}"
         )
     expected_total_states = sum(expected_split_state_counts.values())
+    minimum_unique_current_texts = (expected_total_states * 7 + 8) // 9
     split_manifest_report = report["split_manifest"]
     if (
         report["n_states"] != expected_total_states
         or split_manifest_report["total_states"] != expected_total_states
         or split_manifest_report["unique_normalized_current_user_texts"]
-        != expected_total_states
-        or split_manifest_report["normalized_current_user_text_unique_rate"] != 1.0
+        < minimum_unique_current_texts
     ):
         raise RuntimeError(
-            "generated PM-v2 current-user texts are not globally unique over the "
-            "frozen full state design"
+            "generated PM-v2 current-user texts violate the frozen controlled "
+            "counterfactual-diversity floor"
         )
     expected_family_union_counts = {
         PMV2Split.TRAIN.value: 14,
@@ -584,8 +729,19 @@ def enforce_full_state_design(
         "cases_per_user": cases_per_user,
         "expected_split_state_counts": expected_split_state_counts,
         "expected_total_states": expected_total_states,
-        "unique_normalized_current_user_texts": expected_total_states,
-        "normalized_current_user_text_unique_rate": 1.0,
+        "minimum_unique_normalized_current_user_texts": (
+            minimum_unique_current_texts
+        ),
+        "unique_normalized_current_user_texts": split_manifest_report[
+            "unique_normalized_current_user_texts"
+        ],
+        "normalized_current_user_text_unique_rate": split_manifest_report[
+            "normalized_current_user_text_unique_rate"
+        ],
+        "current_user_text_diversity_policy": (
+            "same-user/same-family/same-split pairs only; max group 2; "
+            "minimum 7 unique per 9-case bundle"
+        ),
         "semantic_family_union_counts": observed_family_union_counts,
     }
     report["full_state_design"] = result
@@ -643,9 +799,9 @@ def main() -> None:
         type=float,
         help="Optional exact-match assertion against frozen data-generation pricing.",
     )
-    parser.add_argument("--max-api-calls", type=int, default=1000)
-    parser.add_argument("--max-estimated-usd", type=float, default=25.0)
-    parser.add_argument("--max-input-tokens-per-call", type=int, default=12000)
+    parser.add_argument("--max-api-calls", type=int)
+    parser.add_argument("--max-estimated-usd", type=float)
+    parser.add_argument("--max-input-tokens-per-call", type=int)
     parser.add_argument("--accept-cost-estimate-sha256")
     parser.add_argument(
         "--generation-pilot-attestation",
@@ -659,20 +815,16 @@ def main() -> None:
     parser.add_argument(
         "--automated-semantic-review-report",
         type=Path,
-        default=ROOT / "outputs" / "pm_v1_5_automated_semantic_review" / "gate_report.json",
         help=(
-            "PM-v1.5 replacement for the human V8 review: output of "
-            "scripts/v1_5_run_automated_semantic_review.py, must show "
-            "status=PASS for --run."
+            "Deprecated and forbidden for formal generation. The consumed V4 "
+            "calibration review cannot authorize new data; actual structured QA "
+            "runs after the 468-state corpus exists and before the action sweep."
         ),
     )
     parser.add_argument(
         "--automated-semantic-review-attestation",
         type=Path,
-        default=ROOT
-        / "outputs"
-        / "pm_v1_5_automated_semantic_review"
-        / "artifact_attestation.json",
+        help="Deprecated companion to --automated-semantic-review-report; forbidden.",
     )
     args = parser.parse_args()
 
@@ -688,9 +840,12 @@ def main() -> None:
     ):
         raise ValueError("pricing must be non-negative")
     if (
-        args.max_api_calls <= 0
-        or args.max_estimated_usd < 0
-        or args.max_input_tokens_per_call <= 0
+        (args.max_api_calls is not None and args.max_api_calls <= 0)
+        or (args.max_estimated_usd is not None and args.max_estimated_usd < 0)
+        or (
+            args.max_input_tokens_per_call is not None
+            and args.max_input_tokens_per_call <= 0
+        )
     ):
         raise ValueError("budget limits must be positive (USD may be zero)")
 
@@ -698,6 +853,48 @@ def main() -> None:
     if pm_config.get("version") != "pm-v1.5":
         raise ValueError("PM-v1.5 data generation requires a pm-v1.5 config")
     require_unified_semantic_query_contract(pm_config)
+    formal_execution_cfg = dict(pm_config["formal_generation_execution"])
+    formal_transport_cfg = dict(formal_execution_cfg["transport_retry"])
+    if (
+        formal_transport_cfg.get("protocol") != RETRY_CONTRACT_PROTOCOL
+        or int(
+            formal_transport_cfg.get(
+                "maximum_physical_attempts_per_content_attempt", 0
+            )
+        )
+        != GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+        or tuple(
+            float(value)
+            for value in formal_transport_cfg.get("transport_backoff_seconds", [])
+        )
+        != tuple(GENERATION_PILOT_TRANSPORT_BACKOFF_SECONDS)
+        or set(formal_transport_cfg.get("retryable_classes", []))
+        != {
+            "http_5xx",
+            "network_timeout",
+            "rate_limited_429",
+            "request_timeout_408",
+        }
+    ):
+        raise ValueError(
+            "formal generation transport retry contract differs from the "
+            "successful compatibility pilot"
+        )
+    formal_budget_cfg = dict(formal_execution_cfg["budget_limits"])
+    frozen_budget = {
+        "max_api_calls": int(formal_budget_cfg["max_api_calls"]),
+        "max_estimated_usd": float(formal_budget_cfg["max_estimated_usd"]),
+        "max_input_tokens_per_call": int(
+            formal_budget_cfg["max_input_tokens_per_call"]
+        ),
+    }
+    for name, frozen_value in frozen_budget.items():
+        requested_value = getattr(args, name)
+        if requested_value is not None and requested_value != frozen_value:
+            raise RuntimeError(
+                f"{name} override differs from the frozen formal-generation budget"
+            )
+        setattr(args, name, frozen_value)
     # Fail before any paid generation if the exact deployable semantic
     # observation mechanism cannot be reconstructed locally.
     semantic_encoder = FrozenTransformerSemanticEncoder.load(
@@ -812,6 +1009,15 @@ def main() -> None:
         raise ValueError("PM-v2 config required_regimes does not match code contract")
     if int(generation_cfg["cases_per_user"]) != len(ResourceNeedRegime):
         raise ValueError("PM-v2 config cases_per_user must equal the regime count")
+    observable_cfg = generation_cfg.get("observable_state_support") or {}
+    if (
+        observable_cfg.get("protocol") != OBSERVABLE_STATE_SUPPORT_PROTOCOL
+        or observable_cfg.get("history_turn_targets")
+        != list(OBSERVABLE_HISTORY_TURN_TARGETS)
+        or observable_cfg.get("summary_treatments") != ["present", "absent"]
+        or observable_cfg.get("evoemo_instance_text_or_outcomes_used") is not False
+    ):
+        raise ValueError("PM-v1.5 observable-state support config is stale")
     if min(args.train_users, args.calibration_users, args.internal_test_users) < 0:
         raise ValueError("user counts must be non-negative")
     if args.max_users is not None and args.max_users < 0:
@@ -887,6 +1093,8 @@ def main() -> None:
         ROOT / "src" / "metacom_pm" / "pm_v2_generation_pilot.py",
         ROOT / "src" / "metacom_pm" / "pm_v2_generation_review_v8.py",
         ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
+        ROOT / "src" / "metacom_pm" / "bounded_retry.py",
+        ROOT / "src" / "metacom_pm" / "paid_run_release.py",
         ROOT / "src" / "metacom_pm" / "api.py",
         ROOT / "src" / "metacom_pm" / "config.py",
         ROOT / "src" / "metacom_pm" / "io.py",
@@ -949,6 +1157,14 @@ def main() -> None:
         input_usd_per_mtok=args.input_usd_per_mtok,
         output_usd_per_mtok=args.output_usd_per_mtok,
     )
+    memory_blueprint_preflight = deterministic_memory_blueprint_preflight()
+    (
+        generation_pilot_attestation_binding,
+        generation_pilot_verification,
+    ) = _require_exact_generation_pilot_binding(
+        args.generation_pilot_attestation,
+        expected_contract=generation_compatibility_contract,
+    )
     generation_binding = {
         "protocol": "pm_v2_generation_resume_binding_v3_casewise_surface_ledger",
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
@@ -956,6 +1172,8 @@ def main() -> None:
             "input_token_safety_factor": input_token_safety_factor,
             "fail_on_reported_input_overrun": fail_on_reported_input_overrun,
         },
+        "formal_transport_retry": formal_transport_cfg,
+        "formal_budget_limits": frozen_budget,
         "experiment_config_sha256": sha256_file(args.config),
         "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
         "seed_dialogues_sha256": sha256_file(args.seed_dialogues),
@@ -981,6 +1199,8 @@ def main() -> None:
         "generation_compatibility_contract_sha256": (
             generation_compatibility_contract["contract_sha256"]
         ),
+        "generation_pilot_attestation": generation_pilot_attestation_binding,
+        "deterministic_memory_blueprint_preflight": memory_blueprint_preflight,
     }
     generation_binding_sha256 = sha256_text(canonical_json(generation_binding))
 
@@ -1120,8 +1340,15 @@ def main() -> None:
     ledger = PersistentAttemptLedger(
         attempt_ledger_path,
         stage=GENERATION_STAGE,
-        expected_calls={call_key: 1 for call_key in all_call_keys},
-        maximum_total_attempts=max(len(all_call_keys), 1),
+        expected_calls={
+            call_key: GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+            for call_key in all_call_keys
+        },
+        maximum_total_attempts=max(
+            len(all_call_keys)
+            * GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT,
+            1,
+        ),
     )
     recovered_successful_bundles = _recover_casewise_bundles_from_ledger(
         ledger=ledger,
@@ -1171,17 +1398,34 @@ def main() -> None:
             ]
             if successful:
                 continue
-            remaining_attempts = [
-                attempt
-                for attempt in case_plan["attempts"]
-                if not ledger.exhausted(str(attempt["call_key"]))
-            ]
+            remaining_attempts = []
+            blocked_attempt_reasons: list[str] = []
+            for attempt in case_plan["attempts"]:
+                call_key = str(attempt["call_key"])
+                if _persisted_content_attempt_failed(ledger, call_key):
+                    continue
+                blocker = call_retry_blocker(
+                    ledger,
+                    call_key,
+                    max_provider_output_attempts=1,
+                )
+                if blocker is None:
+                    remaining_attempts.append(attempt)
+                elif ledger.attempts_for(call_key):
+                    blocked_attempt_reasons.append(
+                        f"{attempt['attempt_kind']}: {blocker}"
+                    )
             if not remaining_attempts:
                 blocked_pending_users.append(
                     {
                         "user_id": user_id,
                         "case_field": case_plan["case_field"],
-                        "reason": "maximum_case_attempts_exhausted",
+                        "reason": (
+                            "persisted_noncontent_retry_blocker"
+                            if blocked_attempt_reasons
+                            else "maximum_case_attempts_exhausted"
+                        ),
+                        "blockers": blocked_attempt_reasons,
                         "historical_attempts": sum(
                             ledger.attempts_for(str(attempt["call_key"]))
                             for attempt in case_plan["attempts"]
@@ -1197,6 +1441,18 @@ def main() -> None:
                 }
                 for attempt in remaining_attempts
             ]
+            for public_attempt in public_attempts:
+                call_key = str(public_attempt["call_key"])
+                public_attempt["maximum_physical_attempts"] = (
+                    GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+                )
+                public_attempt["historical_physical_attempts"] = (
+                    ledger.attempts_for(call_key)
+                )
+                public_attempt["remaining_physical_attempts"] = (
+                    GENERATION_PILOT_MAX_TRANSPORT_ATTEMPTS_PER_CONTENT_ATTEMPT
+                    - ledger.attempts_for(call_key)
+                )
             call_plan.append(
                 {
                     "user_id": user_id,
@@ -1218,6 +1474,10 @@ def main() -> None:
                         for attempt in public_attempts
                     ),
                     "remaining_attempts": len(public_attempts),
+                    "remaining_physical_api_attempts": sum(
+                        int(attempt["remaining_physical_attempts"])
+                        for attempt in public_attempts
+                    ),
                     "attempts": public_attempts,
                 }
             )
@@ -1228,6 +1488,7 @@ def main() -> None:
         int(attempt["estimated_input_tokens"])
         for row in call_plan
         for attempt in row["attempts"]
+        for _ in range(int(attempt["remaining_physical_attempts"]))
     ]
     maximum_input_tokens = sum(potential_input_tokens)
     expected_output_tokens = (
@@ -1324,52 +1585,22 @@ def main() -> None:
             "accepted cost estimate hash does not match the current generation plan"
         )
 
-    if args.generation_pilot_attestation is None:
+    if (
+        args.automated_semantic_review_report is not None
+        or args.automated_semantic_review_attestation is not None
+    ):
         raise RuntimeError(
-            "paid generation requires an explicit fresh "
-            "--generation-pilot-attestation"
+            "formal generation refuses the consumed V4 semantic-review artifacts; "
+            "run actual-468 structured QA v3 after generation and before sweep"
         )
-    stale_pilot_directories = {
-        "pm_v1_5_generation_compatibility_pilot_v8_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_1_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_2_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_3_candidate",
-        "pm_v1_5_generation_compatibility_pilot_post_repair_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_4_release_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_5_release_candidate",
-        "pm_v1_5_generation_compatibility_pilot_v8_5_final_release_candidate",
-    }
-    if args.generation_pilot_attestation.parent.name in stale_pilot_directories:
-        raise RuntimeError(
-            "paid generation refuses a known consumed/stale compatibility pilot "
-            f"directory: {args.generation_pilot_attestation.parent.name}"
-        )
-    generation_pilot_verification = require_generation_compatibility_attestation(
-        args.generation_pilot_attestation,
-        expected_contract=generation_compatibility_contract,
-    )
-    automated_review_verification = require_automated_semantic_review_pass(
-        args.automated_semantic_review_report,
-        args.automated_semantic_review_attestation,
-        expected_experiment_config_path=args.config,
-        expected_pm_config_path=args.pm_v2_config,
-        expected_strategy_bank_path=args.strategy_bank,
-        expected_generation_pilot_attestation_path=(
-            args.generation_pilot_attestation
-        ),
-    )
-    automated_review_report = automated_review_verification["report"]
     generation_pilot_semantic_verification = {
-        "protocol": "pm-v1.5-generation-semantic-review-v8-replaced-by-automated-review",
-        "status": "PASS_VIA_AUTOMATED_MULTI_FAMILY_REVIEW",
+        "protocol": "pm-v1.5-post-generation-actual-structured-qa-required-v1",
+        "status": "DEFERRED_UNTIL_ACTUAL_468_EXISTS",
         "human_calibration_performed": False,
-        "automated_review_report_sha256": sha256_text(
-            canonical_json(automated_review_report)
-        ),
-        "automated_review_attestation_sha256": automated_review_verification[
-            "attestation_sha256"
-        ],
-        "automated_review_judge_families": automated_review_report.get("judge_families"),
+        "historical_v4_status": "CONSUMED_FAILED_CLOSED_CALIBRATION_ONLY",
+        "historical_v4_2_status": "CONSUMED_INSTRUMENT_NOT_READY_CALIBRATION_ONLY",
+        "required_next_gate": "pm-v1.5-actual-468-structured-qa-v3",
+        "required_before": "7488_action_sweep",
     }
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -1391,6 +1622,7 @@ def main() -> None:
                 continue
             user_plan = all_user_attempts[user_id]
             prior_current_user_texts: list[str] = []
+            prior_current_user_families: list[str] = []
             for case_plan in user_plan["cases"]:
                 loaded = _load_successful_surface_attempt(
                     ledger=ledger, case_plan=case_plan
@@ -1405,26 +1637,37 @@ def main() -> None:
                             raise RuntimeError(
                                 "generation API call cap exhausted before completion"
                             )
-                        reservation = ledger.reserve(
-                            call_key,
-                            record_ids={
-                                "user_id": user_id,
-                                "case_field": case_plan["case_field"],
-                                "attempt_kind": attempt["attempt_kind"],
-                                "generation_seed": int(attempt["seed"]),
-                            },
-                            prompt_sha256=str(attempt["prompt_sha256"]),
-                        )
-                        api_calls_used += 1
+                        record_ids = {
+                            "user_id": user_id,
+                            "case_field": case_plan["case_field"],
+                            "attempt_kind": attempt["attempt_kind"],
+                            "generation_seed": int(attempt["seed"]),
+                        }
+                        reservation = None
+                        call = None
                         try:
                             assert client is not None
-                            call, surface = client.chat(
-                                attempt["messages"],
-                                temperature=GENERATION_TEMPERATURE,
-                                max_tokens=SURFACE_GENERATION_MAX_OUTPUT_TOKENS,
-                                seed=int(attempt["seed"]),
-                                response_schema=GeneratedSurfaceOnlyCaseDraft,
-                                retries=GENERATION_REQUEST_RETRIES,
+                            reservation, call, surface = execute_with_bounded_retry(
+                                ledger,
+                                call_key,
+                                record_ids=record_ids,
+                                prompt_sha256=str(attempt["prompt_sha256"]),
+                                call_fn=lambda attempt=attempt: client.chat(
+                                    attempt["messages"],
+                                    temperature=GENERATION_TEMPERATURE,
+                                    max_tokens=(
+                                        SURFACE_GENERATION_MAX_OUTPUT_TOKENS
+                                    ),
+                                    seed=int(attempt["seed"]),
+                                    response_schema=GeneratedSurfaceOnlyCaseDraft,
+                                    retries=GENERATION_REQUEST_RETRIES,
+                                ),
+                                max_provider_output_attempts=1,
+                                backoff_seconds=(
+                                    GENERATION_PILOT_TRANSPORT_BACKOFF_SECONDS
+                                ),
+                                sleep=time.sleep,
+                                capture_provider_output_text=True,
                             )
                             assert surface is not None
                             usage = require_reported_usage(
@@ -1449,9 +1692,14 @@ def main() -> None:
                                     usage=usage,
                                     error=last_error,
                                     result=result,
+                                    metadata=failure_metadata(
+                                        retry_class="input_token_bound_overrun",
+                                        retry_disposition=TERMINAL_DISPOSITION,
+                                    ),
                                 )
                                 raise ReportedInputTokenOverrun(last_error)
                             lint = lint_generation_surface_case(
+                                user_id=str(user_plan["user_id"]),
                                 case_field=str(case_plan["case_field"]),
                                 regime=ResourceNeedRegime(
                                     str(case_plan["regime"])
@@ -1465,6 +1713,9 @@ def main() -> None:
                                 surface=surface,
                                 prior_current_user_texts=(
                                     prior_current_user_texts
+                                ),
+                                prior_current_user_families=(
+                                    prior_current_user_families
                                 ),
                             )
                             result = {
@@ -1484,6 +1735,10 @@ def main() -> None:
                                     usage=usage,
                                     error=last_error,
                                     result=result,
+                                    metadata=failure_metadata(
+                                        retry_class="content_lint_failure",
+                                        retry_disposition=TERMINAL_DISPOSITION,
+                                    ),
                                 )
                                 append_jsonl(
                                     error_path,
@@ -1511,24 +1766,7 @@ def main() -> None:
                             last_error = None
                             break
                         except StructuredOutputValidationError as exc:
-                            usage = require_reported_usage(
-                                exc.call.usage,
-                                stage="failed PM-v1.5 surface schema",
-                            )
                             last_error = f"{type(exc).__name__}: {exc}"
-                            failure_result = {
-                                "provider_response": exc.call.raw_response,
-                                "parsed_payload": exc.parsed_payload,
-                                "validation_errors": exc.validation_errors,
-                            }
-                            ledger.finish(
-                                reservation,
-                                succeeded=False,
-                                request_hash=exc.call.request_hash,
-                                usage=usage,
-                                error=last_error,
-                                result=failure_result,
-                            )
                             append_jsonl(
                                 error_path,
                                 {
@@ -1544,17 +1782,53 @@ def main() -> None:
                                 },
                             )
                             continue
+                        except RetryableProviderError as exc:
+                            last_error = f"{type(exc).__name__}: {exc}"
+                            if (
+                                exc.last_retry_class
+                                in BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES
+                            ):
+                                append_jsonl(
+                                    error_path,
+                                    {
+                                        "user_id": user_id,
+                                        "case_field": case_plan["case_field"],
+                                        "attempt_kind": attempt["attempt_kind"],
+                                        "generation_seed": int(attempt["seed"]),
+                                        "physical_call_key": call_key,
+                                        "error": last_error,
+                                        "provider_response_preserved": True,
+                                        "accepted_cost_estimate_sha256": (
+                                            expected_hash
+                                        ),
+                                    },
+                                )
+                                continue
+                            raise
+                        except ProviderRequestError:
+                            raise
                         except ReportedInputTokenOverrun:
                             raise
                         except Exception as exc:
                             last_error = f"{type(exc).__name__}: {exc}"
-                            ledger.finish(
-                                reservation,
-                                succeeded=False,
-                                request_hash=None,
-                                usage=None,
-                                error=last_error,
-                            )
+                            if (
+                                reservation is not None
+                                and ledger.terminal_event(
+                                    call_key, reservation.attempt_index
+                                )
+                                is None
+                            ):
+                                ledger.finish(
+                                    reservation,
+                                    succeeded=False,
+                                    request_hash=getattr(call, "request_hash", None),
+                                    usage=getattr(call, "usage", None),
+                                    error=last_error,
+                                    metadata=failure_metadata(
+                                        retry_class="local_postcondition_error",
+                                        retry_disposition=TERMINAL_DISPOSITION,
+                                    ),
+                                )
                             raise RuntimeError(last_error) from exc
                     if loaded is None:
                         raise RuntimeError(
@@ -1563,6 +1837,9 @@ def main() -> None:
                         )
                 _, surface, _ = loaded
                 prior_current_user_texts.append(surface.current_user_text)
+                prior_current_user_families.append(
+                    str(case_plan["semantic_family"])
+                )
             seed_record = seeds[int(user_plan["seed_dialogue_index"])]
             bundle = _compile_casewise_user_from_ledger(
                 ledger=ledger,
@@ -1580,6 +1857,7 @@ def main() -> None:
     finally:
         if client is not None:
             client.close()
+    api_calls_used = ledger.started_attempts - historical_api_calls
     bundles = [existing[user_id] for user_id in planned_users]
     report = write_development_dataset(
         bundles=bundles,
@@ -1656,6 +1934,9 @@ def main() -> None:
             "generation_api_calls_used": api_calls_used,
             "generation_historical_api_calls": historical_api_calls,
             "generation_total_physical_api_attempts": ledger.started_attempts,
+            "generation_transport_retry_summary": retry_ledger_summary(
+                ledger, list(ledger.expected_calls)
+            ),
             "generation_attempt_ledger_path": str(attempt_ledger_path),
             "generation_attempt_ledger_sha256": sha256_file(attempt_ledger_path),
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
@@ -1692,10 +1973,6 @@ def main() -> None:
             "selected_seed_sources": args.selected_seed_sources,
             "strategy_bank": args.strategy_bank,
             "generation_pilot_attestation": args.generation_pilot_attestation,
-            "automated_semantic_review": args.automated_semantic_review_report,
-            "automated_semantic_review_attestation": (
-                args.automated_semantic_review_attestation
-            ),
             "cost_estimate": args.out_dir / "generation_cost_estimate.json",
             "call_plan": args.out_dir / "generation_call_plan.jsonl",
         },
