@@ -124,5 +124,30 @@
       "rerun_allowed": false
     }
   ],
-  "stage_consumptions": {}
+  "stage_consumptions": {
+    "development_generation_compatibility_pilot": {
+      "approval_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
+      "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "status": "CONSUMED_PASS",
+      "consumed_at_utc": "2026-07-19T02:35:00Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
+      "compatibility_contract_sha256": "a4efb86557dfc0a8b7dabd05bf73e10dbf24898502a817eb506ad9688361a756",
+      "attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
+      "physical_attempts": 12,
+      "succeeded_attempts": 9,
+      "failed_attempts": 3,
+      "accepted_case_count": 9,
+      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
+      "repair_reason": "unique_current_user_text lint (near-duplicate opening line across cases), not the v8.5 role-ordering bug; that failure class did not recur anywhere in this run",
+      "provider_surface_fallback_case_count": 0,
+      "reported_input_tokens": 18288,
+      "reported_output_tokens": 1942,
+      "reported_total_tokens": 20230,
+      "estimated_actual_cost_usd": 0.0039084,
+      "budget_ceiling_usd": 0.01763955,
+      "generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
+      "rerun_allowed": false,
+      "note": "v8.6 contract: role-safe dialogue-exchange schema; all 9 regimes accepted, zero provider-surface fallback, no dialogue_must_end_with_assistant failures observed"
+    }
+  }
 }
