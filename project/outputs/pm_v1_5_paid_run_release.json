@@ -1,16 +1,42 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "CONSUMED_FAILED_CLOSED",
+  "status": "CONSUMED_PASS_CLOSED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "090c4f27bd30f89c4cb18075b88f8c4d2237e767cc2406b610dea8e1dde8be1a",
-  "prepared_from_code_commit_sha": "ffebd79",
-  "prepared_at_utc": "2026-07-19T16:28:41.369343Z",
-  "approved_execution_config_commit_sha": "ffebd79",
-  "approved_at_utc": "2026-07-19T16:28:41.369343Z",
+  "prepared_from_code_commit_sha": "778675d",
+  "prepared_at_utc": "2026-07-19T16:58:14.526958Z",
+  "approved_execution_config_commit_sha": "778675d",
+  "approved_at_utc": "2026-07-19T16:58:14.526958Z",
   "paid_execution_authorized": false,
-  "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我明确批准，上限花费$2.78562465' for stage development_data_generation, run_identity 3010cc81d29ce03a312cfc3a9373b5712049eb53b7c9081f19761f385ac91add (fresh full 52-user generation, expected cost USD 0.46050615, ceiling USD 2.78562465). This is a brand-new corpus using the V8.13 generation-pilot attestation, not a resume of the old 799e1cce identity: resuming would have mixed user 1's old-code data with 51 new-code users, violating single-treatment-identity. Scope: only the 52-user development-data generation; no actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage. Old identities 85d1eda387d9355047e0dbd339e47f8a07f1856acb3d93f1d87c4fafb388788f, bebeb1b1d7ae5a039780ece00baff4d18b5613d12d3608d13c7d17d0e3708564, c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4, and 799e1cce3f7c3755cc1e966ed189cedcef4193e0cfd7cdaf3449006ea489a6a7 remain CONSUMED and permanently unusable. Local-only; not pushed to GitHub.",
+  "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我明确批准，上限$0.0537' for stage development_generation_compatibility_pilot, run_identity ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a (fresh V8.14 pilot re-validating the generation contract after fixing the social_anxiety anchor-keyword brittleness in pm_v2_data.py; expected cost USD 0.0088728, ceiling USD 0.0536733). call_plan_sha256=b7b5df5417342b3ac6a04e4ed757b279fdbf7e73cca9cec2f311010d0389aa4e is unchanged from V8.12/V8.13, confirming only shared code changed. Scope: only this 9-case pilot; no 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage. Old identities 85d1eda387d9355047e0dbd339e47f8a07f1856acb3d93f1d87c4fafb388788f, bebeb1b1d7ae5a039780ece00baff4d18b5613d12d3608d13c7d17d0e3708564, c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4, and 3010cc81d29ce03a312cfc3a9373b5712049eb53b7c9081f19761f385ac91add remain CONSUMED and permanently unusable. Local-only; not pushed to GitHub.",
   "stage_approvals": {},
   "pending_unapproved_dry_runs": {
+    "development_generation_compatibility_pilot_v8_14_family_anchor_fix": {
+      "run_identity": "ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a",
+      "call_plan_sha256": "b7b5df5417342b3ac6a04e4ed757b279fdbf7e73cca9cec2f311010d0389aa4e",
+      "compatibility_contract_sha256": "7f1b4282504253a63d4c27d81e4393e9da03e5a145bb5b4be5301dec803f8267",
+      "shared_code_manifest_sha256": "205b657c85ec8bec626852e1e7527e1e2f0effcab9785afaa4b705f69dd0c54b",
+      "expected_estimated_cost_usd": 0.0088728,
+      "maximum_estimated_cost_usd": 0.0536733,
+      "frozen_budget_limits": {
+        "max_api_calls": 54,
+        "max_estimated_usd": 0.054,
+        "max_input_tokens_per_call": 4000
+      },
+      "canonical_output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_14_family_anchor_fix_candidate",
+      "independent_reproduction_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_14_family_anchor_fix_repro_check",
+      "reproduced_in_two_directories": true,
+      "deterministic_memory_blueprint_preflight": {
+        "protocol": "pm-v1.5-deterministic-memory-blueprint-boundary-v1",
+        "status": "PASS",
+        "checked_template_instances": 216,
+        "field_maximum_characters": 160,
+        "maximum_observed_characters": 155,
+        "minimum_remaining_margin_characters": 5
+      },
+      "paid_execution_authorized": false,
+      "note": "SUPERSEDED_BY_CONSUMPTION: this identity was independently reproduced twice (byte-for-byte, both directories), approved, and executed for real on 2026-07-19T16:59Z; result was PASS, 9/9 accepted, 10 physical attempts, 1 bounded content-lint repair, 0 transport retries, about $0.0031539. See stage_consumptions.development_generation_compatibility_pilot for the real result. Kept here as the original pending-dry-run historical record per explicit instruction to preserve all history."
+    },
     "development_data_generation_v8_13_dual_eval": {
       "run_identity": "3010cc81d29ce03a312cfc3a9373b5712049eb53b7c9081f19761f385ac91add",
       "call_plan_sha256": "65a23ba1eab5eb90726f4c8222c7b212bf1d360a07e9f42d8b61457cd5ea72b1",
@@ -620,6 +646,28 @@
       "budget_ceiling_usd": 2.7235611,
       "rerun_allowed": false,
       "note": "Migrated to prior_stage_attempts_history to free the stage_consumptions.development_data_generation slot for the fresh V8.13 full-52-user identity 3010cc81d29ce03a312cfc3a9373b5712049eb53b7c9081f19761f385ac91add. This identity remains permanently unusable; its output directory data/pm_v1_5_formal_v8_11_1_final_candidate_repro_a is untouched and retains user 1's real paid data."
+    },
+    {
+      "stage": "development_generation_compatibility_pilot",
+      "approval_identity": "c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4",
+      "authorization_record": "USER_DELEGATED_RESEARCH_DIRECTION_AND_APPROVED_NEXT_STEP then USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我明确批准执行这次 V8.13 pilot,金额上限 $0.0536733' (local-only, not pushed to GitHub)",
+      "status": "CONSUMED_PASS",
+      "approved_at_utc": "2026-07-19T16:14:06.752736Z",
+      "consumed_at_utc": "2026-07-19T16:21:47.969509Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_13_dual_eval_candidate",
+      "compatibility_contract_sha256": "5aa6671892efe79d0a36269f9008deb7c7afbcb54cd15fbb51c249c08008b7d5",
+      "call_plan_sha256": "b7b5df5417342b3ac6a04e4ed757b279fdbf7e73cca9cec2f311010d0389aa4e",
+      "attestation_sha256": "b0df54e28ccc36a2bbbe42f7c5bc69932c1de1d1a030bd0f1df03c3a7bc2833b",
+      "physical_attempt_ledger_sha256": "3601ea0c8fc1bfd19c576155ee28d3db468682b19fa48eda7843cfb014144664",
+      "physical_attempts": 10,
+      "succeeded_attempts": 9,
+      "failed_attempts": 1,
+      "accepted_case_count": 9,
+      "reported_input_tokens": 15654,
+      "reported_output_tokens": 1355,
+      "estimated_actual_cost_usd": 0.0031611,
+      "budget_ceiling_usd": 0.0536733,
+      "note": "Migrated to prior_stage_attempts_history to free the stage_consumptions.development_generation_compatibility_pilot slot for the V8.14 identity ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a, needed because the social_anxiety anchor-keyword fix touched pm_v2_data.py (inside shared_code_manifest). This identity remains permanently unusable; its output directory is untouched."
     }
   ],
   "stage_consumptions": {
@@ -980,16 +1028,16 @@
       "note": "V8.11.1: all 9 regimes accepted, zero provider-surface fallback, 1 of 9 cases needed the one bounded content repair (ordinary content_lint_failure, not a diversity collision). Diversity contract held: 8/9 unique current_user_texts, exactly one allowed same-user/same-family duplicate pair, within the 7-unique-minimum and 2-pair-maximum bounds. No 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage was run. No commit or push was made."
     },
     "development_generation_compatibility_pilot": {
-      "approval_identity": "c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4",
-      "authorization_record": "USER_DELEGATED_RESEARCH_DIRECTION_AND_APPROVED_NEXT_STEP then USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我明确批准执行这次 V8.13 pilot,金额上限 $0.0536733' (local-only, not pushed to GitHub)",
+      "approval_identity": "ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a",
+      "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我明确批准，上限$0.0537' (local-only, not pushed to GitHub)",
       "status": "CONSUMED_PASS",
-      "approved_at_utc": "2026-07-19T16:14:06.752736Z",
-      "consumed_at_utc": "2026-07-19T16:21:47.969509Z",
-      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_13_dual_eval_candidate",
-      "compatibility_contract_sha256": "5aa6671892efe79d0a36269f9008deb7c7afbcb54cd15fbb51c249c08008b7d5",
+      "approved_at_utc": "2026-07-19T16:58:14.526958Z",
+      "consumed_at_utc": "2026-07-19T16:59:37.856218Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_14_family_anchor_fix_candidate",
+      "compatibility_contract_sha256": "7f1b4282504253a63d4c27d81e4393e9da03e5a145bb5b4be5301dec803f8267",
       "call_plan_sha256": "b7b5df5417342b3ac6a04e4ed757b279fdbf7e73cca9cec2f311010d0389aa4e",
-      "attestation_sha256": "b0df54e28ccc36a2bbbe42f7c5bc69932c1de1d1a030bd0f1df03c3a7bc2833b",
-      "physical_attempt_ledger_sha256": "3601ea0c8fc1bfd19c576155ee28d3db468682b19fa48eda7843cfb014144664",
+      "attestation_sha256": "39ed567213434345dbc5c5753c871d388671b4ac1a12c9d37fcf57653fb40592",
+      "physical_attempt_ledger_sha256": "887125170388f6e34a453dcef8ded266cd90871c7464e001b99fa068ebadfeb8",
       "physical_attempts": 10,
       "succeeded_attempts": 9,
       "failed_attempts": 1,
@@ -1008,13 +1056,13 @@
         "minimum_remaining_margin_characters": 5
       },
       "reported_input_tokens": 15654,
-      "reported_output_tokens": 1355,
-      "reported_total_tokens": 17009,
-      "estimated_actual_cost_usd": 0.0031611,
+      "reported_output_tokens": 1343,
+      "reported_total_tokens": 16997,
+      "estimated_actual_cost_usd": 0.0031539,
       "budget_ceiling_usd": 0.0536733,
       "generation_structure": "pm-v2-data-generation-v18-controlled-counterfactual-current-text",
       "rerun_allowed": false,
-      "note": "V8.13: re-validates the frozen V8.12 generation contract against today's shared code (io.py/pm_v2_data.py/pm_v2_generation_pilot.py changed since V8.12, mostly from unrelated ESConv dual-external-evaluation scaffolding added by a concurrent session). call_plan_sha256 is unchanged from V8.12 (b7b5df54...240c6), confirming the generation contract/prompts/seeds themselves did not change, only supporting code and its shared_code_manifest hash. All 9 regimes accepted, zero provider-surface fallback. This authorizes only a fresh formal 52-user generation dry-run/run using this new attestation; it does not itself authorize 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo. No commit or push was made."
+      "note": "V8.14: re-validates the generation contract after fixing the social_anxiety anchor-keyword brittleness (GENERATION_FAMILY_ANCHORS 'judged'->'judg') found by the real V8.13 formal 52-user attempt. call_plan_sha256 unchanged from V8.12/V8.13 (b7b5df54...240c6), confirming only supporting code changed. All 9 regimes accepted, zero provider-surface fallback. This authorizes only a fresh formal 52-user generation dry-run/run using this new attestation; it does not itself authorize 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo. No commit or push was made."
     },
     "development_data_generation": {
       "approval_identity": "3010cc81d29ce03a312cfc3a9373b5712049eb53b7c9081f19761f385ac91add",
