@@ -264,7 +264,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-GEN-09 | C1 | V8.2 用英文关键词正则把 “tips/help me figure out” 等有效建议请求判失败 | provider lint 仅保留 topic/role/chronology 结构门；意图交给连续语义表示和 actual semantic review，不再作为硬词表 | `HISTORICAL_CLOSED` + 新合同待跑 |
 | V15-GEN-10 | C0 | V8.4 的结构 PASS 只证明 9 个 surface 可解析；旧 102-call 自动审核审的是另一批 27 个预制案例，没有绑定这次付费九例，却可被 formal generation 当作语义放行证据 | 自动审核 v3 同时读取 27 个确定性案例、exact paid 9-case attestation 与 24 个 hard controls；两家共 120 logical calls；report/attestation/formal generation/sweep/judging 都强制绑定同一 paid pilot SHA/contract | `CODE_CLOSED_FRESH_PILOT_AND_REVIEW_REQUIRED` |
 | V15-GEN-11 | C1 | V8.4 暴露 memory-harmful current turn 缺句号形成 run-on，ME “one manageable next step” 过泛并与 MS 边际贡献接近 | compiler 使用统一句子连接器；MS 明确跨 session 模式，ME 明确一次过去事件及具体记录动作；evidence blueprint hash 随之变化 | `CODE_CLOSED_FRESH_PILOT_REQUIRED` |
-| V15-GEN-12 | C1 | V8.5 的 provider schema 允许任意 role list，但返回后 lint 才要求交替并以 assistant 结尾；context_only initial+repair 都生成 `assistant,user,assistant,user`，真实消费 2 calls / `$0.0006274` 后 fail-closed | V8.6 provider 只返回 1–2 个 `{user_text, assistant_text}` exchange；本地 compiler 展开为 `user,assistant[,user,assistant]`，使交替与末尾 assistant 成为结构不变量；旧 V8.5 目录/identity 显式封禁 | `CODE_CLOSED_FULL_TEST_PASS_V8_6_DRY_RUN_PASS` |
+| V15-GEN-12 | C1 | V8.5 的 provider schema 允许任意 role list，但返回后 lint 才要求交替并以 assistant 结尾；context_only initial+repair 都生成 `assistant,user,assistant,user`，真实消费 2 calls / `$0.0006274` 后 fail-closed | V8.6 provider 只返回 1–2 个 `{user_text, assistant_text}` exchange；本地 compiler 展开为 `user,assistant[,user,assistant]`，使交替与末尾 assistant 成为结构不变量；真实 V8.6 为 9/9 accepted、0 fallback，12 attempts 中没有该错误 | `CLOSED_V8_6_PAID_PASS` |
 
 ### 6.6 holdout、judge、训练与统计门
 
@@ -332,7 +332,9 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-REL-06 | C2 | `API_PILOT_READY` 被误读成 `CONFIRMATORY_READY` | 报告两种状态；无 checkpoint/Gate M/F/freeze 时 confirmatory=false | 持续护栏 |
 | V15-REL-07 | C1 | formal generation CLI 默认指向已失效 V8.3 attestation，容易让旧 provenance 被无意继承 | 删除默认值；paid `--run` 必须显式传 fresh pilot attestation，并拒绝 V8/V8.1/V8.2/V8.3 已知历史目录 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-REL-08 | C0 | 在 `PAID_RUN_BLOCKED` 配置上生成 cost hash、再切换 release 状态会改变全配置 SHA，使刚批准的 identity 必然失效 | 两阶段 release：先冻结 `PAID_RUN_RELEASED`，但 manifest 保持 pending/空 approvals；证明 `--run` 仍 fail-closed；只批准随后在稳定配置上生成的 post-release identity | `HISTORICAL_CLOSED` |
-| V15-REL-09 | C0 | 兼容 pilot 的 transport/schema PASS 可能被误写成完整语义 PASS 并直接授权 52-user | V8.4 原始账本、费用与 PASS 完整保留但语义性淘汰；V8.5 失败账本完整保留且 identity 消费；V8.6 使用独立版本、目录和 fresh dry-run，approval 仍为空 | `V8_4_ARCHIVED_V8_5_FAILED_V8_6_DRY_RUN_PASS_PENDING_EXACT_APPROVAL` |
+| V15-REL-09 | C0 | 兼容 pilot 的 transport/schema PASS 可能被误写成完整语义 PASS 并直接授权 52-user | V8.4 原始账本、费用与 PASS 完整保留但语义性淘汰；V8.5 失败账本完整保留；V8.6 独立 identity 真实 PASS 并只授权进入绑定 exact attestation 的双家族语义审核，不直接授权 52-user | `V8_4_ARCHIVED_V8_5_FAILED_V8_6_PAID_PASS_REVIEW_PENDING` |
+| V15-REL-10 | C0 | V8.6 成功后虽写入 `stage_consumptions`，manifest 仍保持 `APPROVED`、旧 stage identity 和 `paid_execution_authorized=true`；中央门又不读取 consumption，换输出目录可理论性复用同一 cost identity 再次付费 | 成功后清空 approval 并关闭 paid flag；中央门新增 consumed-stage 硬拒绝测试，因此即使账本维护者忘记改顶层状态也不能复用已消费 stage | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-REL-11 | C1 | V8.6 人工回填的 approval/consumption 时间分别为 `02:30/02:35Z`，晚于不可变 API ledger 与 Git commit 约 48–53 分钟，不能作为可信执行时间 | approval 改取 `dd52ff1` commit time `01:41:43Z`；consumption 改取 ledger 最后一条 terminal event `01:42:23.305920Z`，并记录 approval/code/result 三个 commit SHA | `RECONCILED_TO_IMMUTABLE_EVIDENCE` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 
@@ -516,9 +518,9 @@ fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 r
 | V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录 |
 | V8.4 | identity `0588889c...d194b` 已真实消费并 transport/schema PASS：9/9 accepted、10 attempts、0 fallback、约 `$0.0030237`；因 readiness 与 review-lineage 缺口被语义性淘汰，禁止复用 |
 | V8.5 | identity `a84c17f...05ed` 已消费并真实 FAIL：context_only initial+repair 均以 user 结束，0 accepted，2 attempts，约 `$0.0006274`；禁止复用 |
-| V8.6 | role-safe exchange schema fresh dry-run identity `64a06993...ef85`；contract `a4efb865...a756`；9 success-path / 18 max；预估 `$0.0087474`、预算上限 `$0.01763955`；未调用 API |
-| paid approval | manifest 为 `PENDING_EXACT_IDENTITY_REVIEW`，`stage_approvals` 为空，V8.6 只登记为 proposed budget；当前仍 `NO-RUN` |
-| automated semantic review | 当前合同需 120 logical calls（27 deterministic + exact paid 9 + 24 controls，双家族）；无当前 PASS |
+| V8.6 | role-safe exchange schema 真实 PASS：identity `64a06993...ef85`；contract `a4efb865...a756`；9/9 accepted、12 attempts、3 repairs（均为 `unique_current_user_text`）、0 fallback、约 `$0.0039084`；attestation `15135ad9...7f2c` |
+| paid approval | V8.6 stage 已消费且中央门拒绝复用；manifest 当前为 `PENDING_EXACT_IDENTITY_REVIEW`、`stage_approvals` 为空、paid flag=false，只登记下一阶段 proposed budget；当前仍 `NO-RUN` |
+| automated semantic review | V8.6-bound no-API dry-run PASS：120 logical calls / 360 max physical；identity `b4f27249...f84a`；最大预算 `$0.165426`、最大输入 3389/call；尚未批准或调用 API，无当前 gate PASS |
 | formal development | 未运行 |
 | full sweep/judging | 未运行 |
 | checkpoint/internal/freeze/external | 均未产生当前 V1.5_1 正式结果 |

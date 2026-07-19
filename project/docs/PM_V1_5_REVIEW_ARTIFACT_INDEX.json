@@ -38,7 +38,7 @@
     "publication_note": "Raw seed dialogues remain in the ignored private artifact vault; the review package publishes their lineage hash and construction code, not the raw dialogue file."
   },
   "generation_compatibility_pilot": {
-    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_STALE; V8_4_CONSUMED_TRANSPORT_PASS_SEMANTICALLY_SUPERSEDED; V8_5_CONSUMED_FAILED_CLOSED_ROLE_ORDER; V8_6_FRESH_DRY_RUN_PASS_PENDING_EXACT_REVIEW; NO_CURRENT_PAID_CALL_AUTHORIZED",
+    "execution_status": "V8_FAILED_CLOSED; V8_1_FAILED_CLOSED; V8_2_CONSUMED_FAILED_CLOSED; V8_3_PRE_REPAIR_DRY_RUN_STALE; V8_4_CONSUMED_TRANSPORT_PASS_SEMANTICALLY_SUPERSEDED; V8_5_CONSUMED_FAILED_CLOSED_ROLE_ORDER; V8_6_CONSUMED_PASS; NO_CURRENT_PAID_CALL_AUTHORIZED",
     "paper_result": false,
     "historical_physical_attempts": 2,
     "latest_v8_attempt_status": "FAIL",
@@ -164,7 +164,7 @@
       "estimated_actual_cost_usd": 0.0006274,
       "rerun_allowed": false
     },
-    "v8_6_status": "FRESH_DRY_RUN_PASS_PENDING_EXACT_REVIEW",
+    "v8_6_status": "CONSUMED_PASS_REQUIRES_BOUND_AUTOMATED_SEMANTIC_REVIEW",
     "v8_6_contract": "pm-v2-generation-compatibility-pilot-v8.6-role-safe-exchanges-observable-readiness-exact-paid-surface-review-casewise-one-bounded-repair-zero-fallback",
     "v8_6_generation_structure": "pm-v2-data-generation-v16-role-safe-exchanges-observable-readiness",
     "v8_6_output_directory": "project/outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
@@ -179,6 +179,20 @@
     "v8_6_maximum_output_tokens_per_call": 900,
     "v8_6_role_order_contract": "provider emits 1-2 user_text/assistant_text exchanges; local compiler owns alternating roles and final-assistant invariant",
     "v8_6_paid_execution_authorized": false,
+    "v8_6_actual_execution": {
+      "status": "PASS",
+      "physical_attempts": 12,
+      "accepted_cases": 9,
+      "repair_cases": ["event_needed", "strategy_harmful", "strategy_helpful"],
+      "repair_reason": "unique_current_user_text only; no dialogue_must_end_with_assistant failure",
+      "provider_surface_fallback_cases": 0,
+      "prompt_tokens": 18288,
+      "completion_tokens": 1942,
+      "total_tokens": 20230,
+      "estimated_actual_cost_usd": 0.0039084,
+      "attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
+      "rerun_allowed": false
+    },
     "v8_4_provisional_blocked_config_identity": "e9467326aa65569ab66d9c0647586be6a58c4c692236a313d4dbe5e65417e08a",
     "v8_4_provisional_identity_status": "STALE_NEVER_EXECUTED_CONFIG_STATUS_CHANGED_BEFORE_APPROVAL",
     "v8_3_semantic_changes": [
@@ -189,7 +203,7 @@
       "no lexical advice-request hard gate"
     ],
     "current_required_provider_surface_fallback_cases": 0,
-    "required_action": "after committing the V8.6 role-safe contract, explicitly approve exact identity 64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85; only then record that stage approval and execute the immutable V8.6 directory without overwrite; OPENAI_API_KEY must be supplied through the runtime secret environment"
+    "required_action": "after committing the consumed-stage hard gate and V8.6 reconciliation, review and explicitly approve automated semantic-review identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a with maximum budget $0.165426; no paid review is currently authorized"
   },
   "semantic_encoder": {
     "protocol": "pm-v1.5-frozen-visible-text-encoder-v1",
@@ -229,10 +243,20 @@
     "interpretation": "This is a repository-wide engineering preflight over the generic release assets (including the generic 12,429-card bank), not a substitute for the separately hashed V1.5 11,590-card/823-source bank lineage, not a V8.6 paid-run PASS, not an actual-468 shortcut PASS, and not confirmatory readiness."
   },
   "automated_semantic_review": {
-    "execution_status": "PRIOR_DRY_RUN_INVALIDATED_NO_CURRENT_PASS_GATE_REPORT",
+    "execution_status": "V8_6_BOUND_FRESH_DRY_RUN_PASS_PENDING_EXACT_APPROVAL_NO_CURRENT_GATE_REPORT",
     "paper_result": false,
-    "logical_calls": 102,
-    "maximum_physical_attempts": 306,
+    "logical_calls": 120,
+    "maximum_physical_attempts": 360,
+    "output_directory": "project/outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
+    "cost_estimate_sha256": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
+    "cost_estimate_file_sha256": "5cdf72276cd2642139d4c0e3206842903da51f14dff6ac3202b7f5d0eb5003ef",
+    "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
+    "call_plan_file_sha256": "d1488ef8c4e2ddf7b9ed6dd4da02e9adfff2673b3dc735bd9ed1c18ab3d8c62f",
+    "maximum_estimated_cost_usd": 0.16542600000000002,
+    "maximum_input_tokens_per_call": 3389,
+    "bound_pilot_attestation_sha256": "ba6bc6b9078ec3b6679294b514228de5e52584f369c4605dd93a0190aedf76be",
+    "bound_pilot_verification_attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
+    "paid_execution_authorized": false,
     "judge_families": [
       "google_gemini",
       "deepseek"

@@ -1,19 +1,17 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "APPROVED",
+  "status": "PENDING_EXACT_IDENTITY_REVIEW",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "5a72e29b3fd6e0b5d1b14d43df4dcdafd28729b6d57e20fcf3f39456f0ab4f64",
-  "prepared_from_code_commit_sha": "f3c20e1f26c370cfdf545411849beb9922cbcc9e",
-  "prepared_at_utc": "2026-07-18T17:21:39Z",
-  "approved_execution_config_commit_sha": "f3c20e1f26c370cfdf545411849beb9922cbcc9e",
-  "approved_at_utc": "2026-07-19T02:30:00Z",
-  "paid_execution_authorized": true,
-  "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED: run_identity 64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85, max budget $0.01763955",
-  "stage_approvals": {
-    "development_generation_compatibility_pilot": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85"
-  },
+  "prepared_from_code_commit_sha": null,
+  "prepared_at_utc": "2026-07-19T01:51:27Z",
+  "approved_execution_config_commit_sha": null,
+  "approved_at_utc": null,
+  "paid_execution_authorized": false,
+  "authorization_record": "V8.6 generation identity was consumed successfully and closed; automated semantic-review identity b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a is proposed only and no current paid stage is authorized",
+  "stage_approvals": {},
   "stage_budget_bounds": {
-    "development_generation_compatibility_pilot": {
+    "development_generation_compatibility_pilot_consumed": {
       "run_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
       "compatibility_contract_sha256": "a4efb86557dfc0a8b7dabd05bf73e10dbf24898502a817eb506ad9688361a756",
       "call_plan_sha256": "492305bdbc395531c1aee3f561825b33beadcbd4a9a6679f0a6bde55bc4ff3c5",
@@ -24,7 +22,21 @@
       "expected_estimated_cost_usd": 0.0087474,
       "maximum_estimated_cost_usd": 0.01763955,
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
-      "paid_execution_authorized": true
+      "paid_execution_authorized": false
+    },
+    "development_pilot_semantic_review_proposed": {
+      "run_identity": "b4f272499efa96f7a6b3d515461643321dd7f442cb1573c35605d9c81663f84a",
+      "protocol": "pm-v1.5-automated-semantic-review-v3-deterministic27-plus-paid9",
+      "pilot_attestation_sha256": "ba6bc6b9078ec3b6679294b514228de5e52584f369c4605dd93a0190aedf76be",
+      "pilot_verification_attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",
+      "call_plan_sha256": "f18c0e29492fb793f03c6c762bfe0a880fce9f6a08a1d3f435dd7ad8aa962f27",
+      "logical_api_calls": 120,
+      "maximum_physical_api_attempts": 360,
+      "maximum_input_token_upper_bound_per_call": 3389,
+      "maximum_output_tokens_per_call": 500,
+      "maximum_estimated_cost_usd": 0.16542600000000002,
+      "output_directory": "outputs/pm_v1_5_automated_semantic_review_v8_6_candidate",
+      "paid_execution_authorized": false
     }
   },
   "prior_stage_attempts_history": [
@@ -128,8 +140,12 @@
     "development_generation_compatibility_pilot": {
       "approval_identity": "64a06993fed3acd5b5c50856a435fe1f62b319e5d3ca7b9d007353d54283ef85",
       "authorization_record": "USER_DIRECTED_EXECUTION_EXACT_PHRASE_ACCEPTED",
+      "approval_commit_sha": "dd52ff1387dbe2957d8033b7037992e216dd0c4c",
+      "execution_code_commit_sha": "f3c20e1f26c370cfdf545411849beb9922cbcc9e",
+      "result_record_commit_sha": "1008f18186359df092e377d85aa5fc34d9b0e520",
       "status": "CONSUMED_PASS",
-      "consumed_at_utc": "2026-07-19T02:35:00Z",
+      "approved_at_utc": "2026-07-19T01:41:43Z",
+      "consumed_at_utc": "2026-07-19T01:42:23.305920Z",
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_6_release_candidate",
       "compatibility_contract_sha256": "a4efb86557dfc0a8b7dabd05bf73e10dbf24898502a817eb506ad9688361a756",
       "attestation_sha256": "15135ad9821a958836a4315f182eafdbd2a4470cfe9027812b3ae2d6feee7f2c",

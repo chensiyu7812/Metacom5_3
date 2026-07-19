@@ -1,7 +1,7 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-19
-合同状态：**IMPLEMENTED_NOT_EXECUTED / POST-RELEASE_DRY-RUN_PENDING_EXACT_APPROVAL**
+合同状态：**IMPLEMENTED / V8.6 PAID COMPATIBILITY PASS / AUTOMATED SEMANTIC REVIEW PENDING**
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
 
 任何后续局部修复还必须先检查 `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 中的全链路
@@ -10,9 +10,10 @@
 ## 0. 状态与效力
 
 本文是审查后冻结并完成代码实现的目标方法合同，不是实验结果。代码完成不等于实验
-主张成立。V8.2 已真实消费并 fail-closed；中央配置已固定为
-`PAID_RUN_RELEASED` 以产生最终稳定 dry-run hash，但独立 approval manifest 当前是
-`PENDING_EXACT_IDENTITY_REVIEW`、approval map 为空，因此付费执行仍 fail-closed。在本文末尾要求的
+主张成立。V8.2 与 V8.5 已真实消费并 fail-closed；V8.6 已真实 PASS，但这只证明
+compatibility/transport 与确定性结构门通过，不是论文结果。中央配置保持
+`PAID_RUN_RELEASED`，独立 approval manifest 已在 V8.6 消费后关闭且 approval map 为空，
+因此新的付费执行仍 fail-closed。在本文末尾要求的
 逐阶段 clean dry-run、lineage 审查、配置哈希和新 run identity 全部完成前：
 
 - 不允许开始新的付费 development、judging 或 external 调用；

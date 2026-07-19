@@ -53,6 +53,14 @@ def require_paid_run_release(
         raise RuntimeError("paid-run approval manifest is absent")
     manifest = read_json(manifest_path)
     approvals = manifest.get("stage_approvals") or {}
+    consumptions = manifest.get("stage_consumptions") or {}
+    if not isinstance(consumptions, Mapping):
+        raise RuntimeError("paid-run approval manifest has invalid stage consumptions")
+    if str(stage) in consumptions:
+        raise RuntimeError(
+            "paid-run stage/run identity has already been consumed; a consumed "
+            "stage requires a new dry run and fresh exact approval"
+        )
     if (
         manifest.get("protocol") != PAID_RUN_RELEASE_PROTOCOL
         or manifest.get("status") != "APPROVED"

@@ -10,7 +10,9 @@
 > 因而 V8.4 已归档为 `CONSUMED_PASS_SEMANTICALLY_SUPERSEDED`。V8.5 两次真实调用
 > 都因 provider 的通用 role list 以 user 结尾而 fail-closed，identity 已消费。V8.6 将历史
 > 改成 schema-level `user_text → assistant_text` exchanges，由本地 compiler 保证角色顺序，
-> 并已完成不调用 API 的 fresh dry-run；下一步只能使用 V8.6 的新 identity。
+> 已真实 PASS：9/9 accepted、12 次物理尝试、0 fallback；3 次 initial failure 均为
+> `unique_current_user_text`，没有复现 role-order bug。V8.6 approval 已在消费后关闭，
+> 下一步是绑定该 exact attestation 的 120-logical-call 双家族语义审核 dry-run。
 > 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
@@ -168,8 +170,8 @@ batched scorer。
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
 |---|---:|---|
-| generation compatibility | V8.4 transport/schema PASS 但语义性淘汰；V8.5 在 context_only 的 initial+repair 均因 role list 以 user 结尾而真实 FAIL，2 calls、约 `$0.0006274`。V8.6 fresh dry-run：9 success-path / 18 max、预估 `$0.0087474`、上限 `$0.01763955`、最大输入上界 3036/call | V8.6 exact identity `64a06993…ef85` 待提交后的精确批准；V8.4/V8.5 均已消费且不可复用 |
-| 自动语义审核 | 当前 v3 合同为 27 deterministic + exact paid 9 + 24 controls，双 family 共 120 logical calls、最多 360 physical attempts；任何未绑定 current paid pilot 的旧 102-call/hash 全部失效 | `STALE_REQUIRES_FRESH_PILOT_THEN_DRY_RUN` |
+| generation compatibility | V8.4 transport/schema PASS 但语义性淘汰；V8.5 真实 FAIL；V8.6 真实 PASS：9/9 accepted、12 attempts、3 repairs、0 fallback、18,288 input / 1,942 output tokens、约 `$0.0039084`；没有 role-order failure | V8.6 attestation `15135ad9…7f2c`；identity `64a06993…ef85` 已消费并关闭，禁止复用 |
+| 自动语义审核 | V8.6-bound fresh dry-run PASS：27 deterministic + exact paid 9 + 24 controls，双 family 共 120 logical calls、最多 360 physical attempts；预算硬上限 `$0.165426`，最大输入上界 3389/call；任何旧 102-call/hash 全部失效 | identity `b4f27249…f84a`，当前只 proposed、未批准、未调用 API |
 | 52-user generation | 成功路径 468 calls、上限 936；当前代码试算上限约 `$0.8571`，正式值以 pilot 通过后的新 dry-run 为准 | `STALE_REQUIRES_FRESH_DRY_RUN` |
 | fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
 

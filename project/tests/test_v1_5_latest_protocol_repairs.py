@@ -133,6 +133,22 @@ def test_central_paid_release_is_fail_closed_and_identity_bound(
             run=True,
             run_identity="different-hash",
         )
+    consumed_manifest = read_json(manifest_path)
+    consumed_manifest["stage_consumptions"] = {
+        "development_data_generation": {
+            "status": "CONSUMED_PASS",
+            "approval_identity": "fresh-cost-hash",
+        }
+    }
+    write_json(manifest_path, consumed_manifest)
+    with pytest.raises(RuntimeError, match="already been consumed"):
+        require_paid_run_release(
+            released,
+            config_path=config_path,
+            stage="development_data_generation",
+            run=True,
+            run_identity="fresh-cost-hash",
+        )
 
 
 def test_source_disjoint_strategy_bank_keeps_all_strategy_families() -> None:
