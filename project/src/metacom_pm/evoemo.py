@@ -259,12 +259,21 @@ EVO_MEMORY_EPISODE_MAX_TOKENS = 120
 
 def _chunk_session_episodes(
     turns: Sequence[tuple[int, str]],
+    *,
+    max_tokens: int = EVO_MEMORY_EPISODE_MAX_TOKENS,
 ) -> list[tuple[int, int, str]]:
     """Greedily group one session's seeker turns, in original dialogue
     order, into non-overlapping episode chunks, hard-capped at
-    EVO_MEMORY_EPISODE_MAX_TOKENS (a single turn already at or over the cap
-    stands alone rather than being split), targeting but not guaranteeing
-    at least EVO_MEMORY_EPISODE_MIN_TOKENS per chunk.
+    max_tokens (a single turn already at or over the cap stands alone
+    rather than being split). EVO_MEMORY_EPISODE_MIN_TOKENS is a target
+    used only in prose/reporting, never enforced here as a gate.
+
+    max_tokens defaults to the frozen production value
+    (EVO_MEMORY_EPISODE_MAX_TOKENS) but is a parameter specifically so a
+    no-API sensitivity check can recompile the real catalog under
+    alternative caps without duplicating this logic -- see
+    scripts/*_evo_memory_chunk_sensitivity*.py. Only the frozen default is
+    ever used by build_evo_memory itself.
 
     Deterministic and content-only: boundaries depend solely on turn order
     and length, never on any evaluator-only signal (related sessions,
@@ -286,7 +295,7 @@ def _chunk_session_episodes(
     for turn_index, text in turns:
         if current_texts:
             candidate_tokens = estimate_tokens(" ".join([*current_texts, text]))
-            if candidate_tokens > EVO_MEMORY_EPISODE_MAX_TOKENS:
+            if candidate_tokens > max_tokens:
                 chunks.append(
                     (current_indices[0], current_indices[-1], " ".join(current_texts))
                 )
