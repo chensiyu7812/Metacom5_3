@@ -2407,6 +2407,125 @@ def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
     assert "no carried-forward surface available" in missing_outcome
 
 
+def test_cross_user_duplicate_repair_manifest_keeps_earliest_plan_position() -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_repair_manifest", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    # Regression for the real V8.16 carry-forward-fix run: two different
+    # users, generated independently, produced verbatim-identical
+    # current_user_text for the same semantic family within the same
+    # split -- a real gpt-4o-mini coincidence, not a code or template bug.
+    duplicate_text = (
+        "I just feel so unmotivated lately, like I can't get myself to do "
+        "anything productive."
+    )
+    bundle_u003 = GeneratedUserBundle(
+        user_id="pmv2_train_u003",
+        profile_summary="A privacy-safe synthetic user.",
+        stable_preferences=["calm communication"],
+        boundaries=["no diagnosis"],
+        generator_seed_id="seed_u003",
+        cases=[
+            _case(
+                case_id="case_u003_a",
+                regime=ResourceNeedRegime.CONTEXT_ONLY,
+                current_user_text="Unrelated first text for u003.",
+            ),
+            _case(
+                case_id="case_u003_b",
+                regime=ResourceNeedRegime.STRATEGY_HARMFUL,
+                current_user_text=duplicate_text,
+            ),
+            _case(
+                case_id="case_u003_c",
+                regime=ResourceNeedRegime.EVENT_NEEDED,
+                current_user_text="Unrelated third text for u003.",
+            ),
+            _case(
+                case_id="case_u003_d",
+                regime=ResourceNeedRegime.STRATEGY_HELPFUL,
+                current_user_text="Unrelated fourth text for u003.",
+            ),
+        ],
+    )
+    bundle_u007 = GeneratedUserBundle(
+        user_id="pmv2_train_u007",
+        profile_summary="A privacy-safe synthetic user.",
+        stable_preferences=["calm communication"],
+        boundaries=["no diagnosis"],
+        generator_seed_id="seed_u007",
+        cases=[
+            _case(
+                case_id="case_u007_a",
+                regime=ResourceNeedRegime.EVENT_NEEDED,
+                current_user_text=duplicate_text,
+            ),
+            _case(
+                case_id="case_u007_b",
+                regime=ResourceNeedRegime.STRATEGY_HELPFUL,
+                current_user_text="Unrelated second text for u007.",
+            ),
+            _case(
+                case_id="case_u007_c",
+                regime=ResourceNeedRegime.CONTEXT_ONLY,
+                current_user_text="Unrelated third text for u007.",
+            ),
+            _case(
+                case_id="case_u007_d",
+                regime=ResourceNeedRegime.STRATEGY_HARMFUL,
+                current_user_text="Unrelated fourth text for u007.",
+            ),
+        ],
+    )
+    planned_users = [
+        "pmv2_train_u001",
+        "pmv2_train_u002",
+        "pmv2_train_u003",
+        "pmv2_train_u004",
+        "pmv2_train_u005",
+        "pmv2_train_u006",
+        "pmv2_train_u007",
+    ]
+    split_by_user = {user_id: PMV2Split.TRAIN for user_id in planned_users}
+    manifest = module._compute_cross_user_duplicate_repair_manifest(
+        planned_users=planned_users,
+        bundles={"pmv2_train_u003": bundle_u003, "pmv2_train_u007": bundle_u007},
+        split_by_user=split_by_user,
+    )
+    assert manifest["policy"] == "keep_earliest_frozen_plan_position"
+    assert len(manifest["repair_cases"]) == 1
+    repair = manifest["repair_cases"][0]
+    # u003 appears earlier in planned_users than u007, so u007's case is
+    # the one marked for regeneration, never u003's -- a deterministic
+    # outcome of frozen plan order, not a human picking which user to redo.
+    assert repair["user_id"] == "pmv2_train_u007"
+    assert repair["case_field"] == "event_needed"
+    assert repair["duplicate_of"] == {
+        "user_id": "pmv2_train_u003",
+        "case_field": "strategy_harmful",
+    }
+    assert manifest["manifest_sha256"]
+
+    # No cross-user collision -> no repair cases, regardless of same-user
+    # counterfactual reuse (which is allowed and not a leak).
+    clean_manifest = module._compute_cross_user_duplicate_repair_manifest(
+        planned_users=planned_users,
+        bundles={"pmv2_train_u003": bundle_u003},
+        split_by_user=split_by_user,
+    )
+    assert clean_manifest["repair_cases"] == []
+
+
 def test_generation_resume_binding_rejects_legacy_and_mismatch() -> None:
     binding = {
         "generator_config_sha256": "a" * 64,

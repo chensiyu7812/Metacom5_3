@@ -11,6 +11,7 @@ calibration review is not an authorization gate.
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
 import json
 from pathlib import Path
 import time
@@ -65,6 +66,7 @@ from metacom_pm.pm_v2_data import (
     GeneratedSurfaceOnlyCaseDraft,
     GeneratedUserBundle,
     audit_cross_split_near_duplicates,
+    audit_current_user_text_diversity,
     bind_bundle_to_generation_run,
     compile_surface_only_user_bundle,
     deterministic_memory_blueprint_preflight,
@@ -73,6 +75,7 @@ from metacom_pm.pm_v2_data import (
     lint_generation_surface_case,
     load_bundles,
     load_states,
+    normalize_text,
     require_bundle_generation_binding,
     surface_generation_contract_hash,
     validate_bundle,
@@ -293,6 +296,78 @@ def _carry_forward_bundle_from_old_directory(
     bundle.provenance["carried_forward_from"] = audit
     bind_bundle_to_generation_run(bundle, generation_binding)
     return bundle, audit
+
+
+def _compute_cross_user_duplicate_repair_manifest(
+    *,
+    planned_users: list[str],
+    bundles: dict[str, GeneratedUserBundle],
+    split_by_user: dict[str, PMV2Split],
+) -> dict[str, Any]:
+    """Deterministic, no-API: which (user_id, case_field) pairs must be
+    regenerated because their current_user_text collides with an earlier
+    case (by frozen plan order) belonging to a DIFFERENT user.
+
+    This is exactly the failure validate_split_manifests raises at final
+    corpus assembly (same-split, cross-user exact duplicates are never
+    permitted; only same-user/same-family/same-split counterfactual pairs
+    are), computed here so a carry-forward candidate set can be checked
+    -- and repaired -- BEFORE spending anything on the remaining pending
+    users, instead of discovering it only after paying for them.
+
+    Policy is fixed and auditable, never a human's choice of which user to
+    redo: within each cross-user duplicate group, keep the occurrence
+    appearing earliest in planned_users (ties broken by
+    GENERATION_CASE_FIELDS order) and mark every other member of the group
+    for regeneration.
+    """
+    regime_to_case_field = {
+        regime: field for field, regime in GENERATION_CASE_FIELDS
+    }
+    case_field_rank = {
+        field: index for index, (field, _) in enumerate(GENERATION_CASE_FIELDS)
+    }
+    plan_rank = {user_id: index for index, user_id in enumerate(planned_users)}
+
+    groups: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    for user_id, bundle in bundles.items():
+        for case in bundle.cases:
+            case_field = regime_to_case_field[case.regime]
+            normalized = normalize_text(case.current_user_text)
+            groups[normalized].append((user_id, case_field))
+
+    repair_cases: list[dict[str, Any]] = []
+    for normalized, members in sorted(groups.items()):
+        if len({user_id for user_id, _ in members}) < 2:
+            continue  # same-user reuse is the allowed counterfactual design
+        ordered = sorted(
+            members,
+            key=lambda member: (plan_rank[member[0]], case_field_rank[member[1]]),
+        )
+        keep_user_id, keep_case_field = ordered[0]
+        for user_id, case_field in ordered[1:]:
+            repair_cases.append(
+                {
+                    "user_id": user_id,
+                    "case_field": case_field,
+                    "reason": "cross_user_exact_duplicate",
+                    "duplicate_of": {
+                        "user_id": keep_user_id,
+                        "case_field": keep_case_field,
+                    },
+                    "normalized_text_sha256": sha256_text(normalized),
+                }
+            )
+    repair_cases.sort(
+        key=lambda row: (plan_rank[row["user_id"]], case_field_rank[row["case_field"]])
+    )
+    manifest = {
+        "protocol": "pm-v1.5-cross-user-duplicate-repair-manifest-v1",
+        "policy": "keep_earliest_frozen_plan_position",
+        "repair_cases": repair_cases,
+    }
+    manifest["manifest_sha256"] = sha256_text(canonical_json(manifest))
+    return manifest
 
 
 def _ledger_usage_for_keys(
@@ -1344,11 +1419,18 @@ def main() -> None:
         "source_output_directory": None,
         "carried_users": [],
         "skipped_users": {},
+        "duplicate_repair_manifest": None,
     }
     if args.carry_forward_from is not None:
         carry_forward_report["source_output_directory"] = str(
             args.carry_forward_from.resolve()
         )
+        # Pass 1: collect every carry-forward candidate WITHOUT writing it
+        # yet, so the whole candidate set can be checked together for the
+        # cross-user duplicate failure validate_split_manifests would only
+        # otherwise catch at final assembly -- after paying for the
+        # remaining pending users too.
+        candidates: dict[str, GeneratedUserBundle] = {}
         for user_index, user_id in enumerate(planned_users):
             if user_id in existing:
                 continue
@@ -1366,6 +1448,43 @@ def main() -> None:
                 carry_forward_report["skipped_users"][user_id] = outcome
                 continue
             strict_bundle_check(bundle, family_by_user[user_id])
+            candidates[user_id] = bundle
+
+        # Checked against the full would-be-included set (already-`existing`
+        # bundles from a PRIOR invocation of this same out_dir, plus this
+        # invocation's own candidates) -- not candidates alone. On a second
+        # --dry-run against an already-populated directory, a duplicate's
+        # earlier-plan-position partner may already be sitting in `existing`
+        # (persisted by the first invocation) and absent from `candidates`,
+        # which would otherwise make the check silently miss the exact same
+        # collision it just found, producing another unstable identity.
+        repair_manifest = _compute_cross_user_duplicate_repair_manifest(
+            planned_users=planned_users,
+            bundles={**existing, **candidates},
+            split_by_user=split_by_user,
+        )
+        carry_forward_report["duplicate_repair_manifest"] = repair_manifest
+        # Fixed, deterministic policy (never a human's choice of which user
+        # to redo): a user with ANY case flagged by the repair manifest is
+        # excluded from carry-forward entirely and regenerated fresh in
+        # full, rather than partially merging old and new cases into one
+        # bundle. The dollar cost of redoing a whole 9-case user instead of
+        # just the 1 conflicting case is negligible (a few thousandths of a
+        # dollar) next to the correctness risk of a partial-bundle merge,
+        # and any new collision introduced by the regenerated cases is
+        # caught for free on the next dry-run before any further spend.
+        users_requiring_regeneration = {
+            row["user_id"] for row in repair_manifest["repair_cases"]
+        }
+
+        # Pass 2: write only the candidates NOT flagged for regeneration.
+        for user_id, bundle in candidates.items():
+            if user_id in users_requiring_regeneration:
+                carry_forward_report["skipped_users"][user_id] = (
+                    "excluded by duplicate_repair_manifest: "
+                    f"{repair_manifest['manifest_sha256']}"
+                )
+                continue
             append_jsonl(work_path, bundle.model_dump(mode="json"))
             existing[user_id] = bundle
         # Derived from the final state of `existing`, not from which
