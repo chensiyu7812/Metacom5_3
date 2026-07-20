@@ -1031,7 +1031,7 @@ def readiness_surface_clause_for_case(
     digest = sha256_text(f"{READINESS_SURFACE_PROTOCOL}|{user_id}|{regime.value}")
     return choices[int(digest[:8], 16) % len(choices)]
 
-GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
+GENERATION_FAMILY_REQUIRED_ANCHORS: dict[str, tuple[str, ...]] = {
     # Do not use bare ``move``: phrases such as "move forward" describe a
     # decision or conflict response, not relocation.
     "relocation_loneliness": (
@@ -1063,10 +1063,21 @@ GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
     # bereavement, and false-positived a current_leaks_other_family check
     # against genuine relationship_uncertainty text during the V8.15 formal
     # run (pmv2_internal_test_u013/profile_needed, "confusion and loss
-    # regarding the end of the relationship"). "griev" is added (alongside
-    # the unrelated exact word "grief") so verb forms like "grieving" still
-    # anchor without needing "loss" as a fallback.
-    "grief_adjustment": ("grief", "griev", "passed away", "bereav"),
+    # regarding the end of the relationship"). Also no bare "griev" stem:
+    # workplace_conflict and grief_adjustment are co-rotated in a real
+    # internal_test cohort (SEMANTIC_FAMILY_COHORTS_BY_SPLIT), and "griev"
+    # falsely matches "grievance"/"grievances" (a workplace complaint, not
+    # bereavement). Enumerating the inflected verb forms instead still
+    # covers "grieving"/"grieved" without that collision, since "grievance"
+    # does not contain "grieve" as a substring (...iev-A-nce, not ...iev-E).
+    "grief_adjustment": (
+        "grief",
+        "grieve",
+        "grieved",
+        "grieving",
+        "passed away",
+        "bereav",
+    ),
     "health_routine_stress": ("health", "exercise", "routine", "appointment"),
     "conflict_repair": ("conflict", "argument", "apolog", "repair"),
     "self_confidence": ("confidence", "self-doubt", "capable", "insecure"),
@@ -1080,10 +1091,56 @@ GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
     "uncertain_future": ("future", "uncertain", "unknown", "what comes next"),
 }
 
+# A separate, deliberately narrower pattern set for "did this text leak
+# evidence of a DIFFERENT, forbidden family" (precision-oriented), as opposed
+# to GENERATION_FAMILY_REQUIRED_ANCHORS above, which answers "does this text
+# sufficiently anchor to ITS OWN target family" (recall-oriented). Reusing one
+# list for both jobs is what produced three separate real false-positive
+# leaks during the V8.13-V8.15 formal-generation runs (judged/judging,
+# rent/parent, loss/relationship-loss, griev/grievance): every anchor broad
+# enough to keep recall high on the target family is also broad enough to
+# occasionally collide with another family's ordinary vocabulary. Anchors
+# here are hand-picked to be as close to unambiguous as English allows;
+# families whose entire required-anchor vocabulary is too generic to safely
+# accuse another family's text of leaking (decision_paralysis,
+# uncertain_future) are left with an empty tuple on purpose -- the leak
+# check simply never fires against them, which is the safe direction to err
+# in (a missed leak is far cheaper than a real, on-topic case being
+# wrongly rejected and burning a paid attempt).
+GENERATION_FAMILY_EXCLUSIVE_ANCHORS: dict[str, tuple[str, ...]] = {
+    "relocation_loneliness": ("relocat", "new city", "new place"),
+    "workload_burnout": ("workload", "overtime", "burnout", "deadline"),
+    "friendship_distance": ("friendship", "drifted"),
+    "family_expectations": ("family expectations",),
+    "relationship_uncertainty": ("dating", "break up"),
+    "academic_pressure": ("exam", "academic"),
+    "career_change": ("career", "job change", "profession", "resign"),
+    "caregiving_stress": ("caregiv", "elder care"),
+    "social_anxiety": ("meeting people", "crowd"),
+    "sleep_disruption": ("insomnia",),
+    "identity_transition": ("sense of self",),
+    "financial_uncertainty": ("financial", "debt", "budget", "rent"),
+    "grief_adjustment": ("passed away", "bereav"),
+    "health_routine_stress": ("exercise",),
+    "conflict_repair": ("apolog", "argument"),
+    "self_confidence": ("self-doubt",),
+    "belonging_and_isolation": ("isolat", "left out"),
+    "decision_paralysis": (),
+    "parenting_pressure": ("parenting",),
+    "workplace_conflict": ("coworker", "manager", "workplace", "colleague"),
+    "life_stage_transition": ("life stage", "retire", "adulthood"),
+    "motivation_loss": ("unmotivated", "procrastinat"),
+    "trust_rebuilding": ("betray", "let down"),
+    "uncertain_future": (),
+}
+
+if set(GENERATION_FAMILY_EXCLUSIVE_ANCHORS) != set(GENERATION_FAMILY_REQUIRED_ANCHORS):
+    raise RuntimeError("exclusive-leak anchors do not cover every family")
+
 # Frozen, human-readable topics used by the deterministic evidence compiler.
 # The provider may paraphrase case surfaces, but it never decides which memory
 # is helpful, irrelevant, harmful, stale, or conflicting.  Every topic contains
-# at least one literal anchor from GENERATION_FAMILY_ANCHORS.
+# at least one literal anchor from GENERATION_FAMILY_REQUIRED_ANCHORS.
 GENERATION_FAMILY_TOPICS: dict[str, str] = {
     "relocation_loneliness": "moving to a new city",
     "workload_burnout": "work deadline pressure and burnout",
@@ -1111,7 +1168,7 @@ GENERATION_FAMILY_TOPICS: dict[str, str] = {
     "uncertain_future": "an uncertain future",
 }
 
-if set(GENERATION_FAMILY_TOPICS) != set(GENERATION_FAMILY_ANCHORS):
+if set(GENERATION_FAMILY_TOPICS) != set(GENERATION_FAMILY_REQUIRED_ANCHORS):
     raise RuntimeError("generation topic blueprints do not cover every family")
 
 SOURCE_DRAFT_FIELDS: tuple[tuple[str, MemorySource], ...] = (
@@ -1130,7 +1187,7 @@ def _require_complete_generation_design(
         raise ValueError("synthetic generation requires at least three semantic families")
     if len(families) != len(set(families)):
         raise ValueError("synthetic generation semantic families must be unique")
-    unknown_families = sorted(set(families) - set(GENERATION_FAMILY_ANCHORS))
+    unknown_families = sorted(set(families) - set(GENERATION_FAMILY_REQUIRED_ANCHORS))
     if unknown_families:
         raise ValueError(
             f"synthetic generation has unknown semantic families: {unknown_families}"
@@ -1182,7 +1239,7 @@ def generation_distractor_family_assignments(
     return result
 
 
-def _family_anchor_hits(text: str, family: str) -> list[str]:
+def _pattern_hits(text: str, patterns: tuple[str, ...]) -> list[str]:
     # A leading word-boundary is required (but not a trailing one, since
     # several anchors are deliberately bare stems like "relocat"/"isolat"
     # meant to match inflected forms). Without it, a plain substring check
@@ -1192,10 +1249,25 @@ def _family_anchor_hits(text: str, family: str) -> list[str]:
     # mentioning "as a parent" wrongly flagged as leaking financial_uncertainty).
     normalized = normalize_text(text)
     return [
-        anchor
-        for anchor in GENERATION_FAMILY_ANCHORS[family]
-        if re.search(r"(?<![a-z])" + re.escape(anchor), normalized)
+        pattern
+        for pattern in patterns
+        if re.search(r"(?<![a-z])" + re.escape(pattern), normalized)
     ]
+
+
+def _family_anchor_hits(text: str, family: str) -> list[str]:
+    """Recall-oriented: does this text sufficiently anchor to ITS OWN family."""
+    return _pattern_hits(text, GENERATION_FAMILY_REQUIRED_ANCHORS[family])
+
+
+def _family_leak_hits(text: str, family: str) -> list[str]:
+    """Precision-oriented: does this text leak evidence of a FORBIDDEN family.
+
+    Uses GENERATION_FAMILY_EXCLUSIVE_ANCHORS, a deliberately narrower set than
+    the required-anchor recall check above -- see the comment on that dict
+    for why the two must not share one list.
+    """
+    return _pattern_hits(text, GENERATION_FAMILY_EXCLUSIVE_ANCHORS[family])
 
 
 def _compiled_memory_id(
@@ -1430,7 +1502,7 @@ def lint_generation_draft(
                         f"{source.value}_distractor_family_anchor",
                         distractor_family,
                     )
-                if _family_anchor_hits(raw, target_family):
+                if _family_leak_hits(raw, target_family):
                     fail(
                         case_field,
                         f"{source.value}_distractor_leaks_target_family",
@@ -1480,7 +1552,7 @@ def lint_generation_draft(
             event_text = surface.event_source.unrelated_sensitive_past_event
             if not _family_anchor_hits(event_text, event_family):
                 fail(case_field, "ME_harmful_off_topic_anchor", event_family)
-            if _family_anchor_hits(event_text, target_family):
+            if _family_leak_hits(event_text, target_family):
                 fail(case_field, "ME_harmful_leaks_target_family", target_family)
 
     diversity = audit_current_user_text_diversity(
@@ -1592,9 +1664,9 @@ def lint_generation_surface_case(
 
     if case_field not in {field for field, _ in GENERATION_CASE_FIELDS}:
         raise ValueError(f"unknown generation case field: {case_field}")
-    if family not in GENERATION_FAMILY_ANCHORS:
+    if family not in GENERATION_FAMILY_REQUIRED_ANCHORS:
         raise ValueError(f"unknown semantic family: {family}")
-    unknown = sorted(set(forbidden_families) - set(GENERATION_FAMILY_ANCHORS))
+    unknown = sorted(set(forbidden_families) - set(GENERATION_FAMILY_REQUIRED_ANCHORS))
     if unknown:
         raise ValueError(f"unknown forbidden semantic families: {unknown}")
     errors: list[dict[str, str]] = []
@@ -1610,7 +1682,7 @@ def lint_generation_surface_case(
         )
     blob = f"{surface.current_user_text} {surface.session_summary}"
     for other in forbidden_families:
-        if other != family and _family_anchor_hits(blob, other):
+        if other != family and _family_leak_hits(blob, other):
             errors.append(
                 {
                     "case_field": case_field,
@@ -1864,7 +1936,7 @@ def lint_generation_surfaces(
                 {"case_field": case_field, "check": "current_family_anchor", "detail": target}
             )
         for other in semantic_families:
-            if other != target and _family_anchor_hits(blob, other):
+            if other != target and _family_leak_hits(blob, other):
                 errors.append(
                     {
                         "case_field": case_field,
@@ -2772,22 +2844,26 @@ def generation_case_messages(
         raise ValueError(
             f"case/regime mismatch: {case_field} != {regime.value}"
         )
-    if semantic_family not in GENERATION_FAMILY_ANCHORS:
+    if semantic_family not in GENERATION_FAMILY_REQUIRED_ANCHORS:
         raise ValueError(f"unknown semantic family: {semantic_family}")
     forbidden = [
         family for family in forbidden_families if family != semantic_family
     ]
     if len(forbidden) != len(set(forbidden)) or any(
-        family not in GENERATION_FAMILY_ANCHORS for family in forbidden
+        family not in GENERATION_FAMILY_REQUIRED_ANCHORS for family in forbidden
     ):
         raise ValueError("forbidden semantic families are invalid or duplicated")
     required_anchors = ", ".join(
-        GENERATION_FAMILY_ANCHORS[semantic_family]
+        GENERATION_FAMILY_REQUIRED_ANCHORS[semantic_family]
     )
+    # Drawn from the narrower exclusive set, not the broad required set: the
+    # required anchors for a family like workload_burnout ("work") or
+    # trust_rebuilding ("trust") are far too generic to ask a model to avoid
+    # outright without also steering it away from natural, on-topic phrasing.
     forbidden_anchors = ", ".join(
         anchor
         for family in forbidden
-        for anchor in GENERATION_FAMILY_ANCHORS[family]
+        for anchor in GENERATION_FAMILY_EXCLUSIVE_ANCHORS[family]
     )
     repair_text = (
         "This is the one pre-authorized repair attempt for the same case. The "
@@ -2861,11 +2937,11 @@ SEMANTIC REQUIREMENT
 HARD TOPIC LOCK
 - current_user_text plus session_summary MUST contain at least one literal target
   anchor from: [{required_anchors}].
-- They MUST NOT contain any word, phrase, or concrete situation from the other
-  assigned families, especially: [{forbidden_anchors}].
-- Stay on {GENERATION_FAMILY_TOPICS[semantic_family]} only. Do not explain it
-  through school, work, moving, sleep, relationships, money, or another life
-  domain unless that domain is itself the named target above.
+- Stay primarily on {GENERATION_FAMILY_TOPICS[semantic_family]}. Do not
+  introduce a concrete situation, event, or scenario belonging to another
+  assigned family, especially anything resembling: [{forbidden_anchors}].
+  Natural language overlaps between everyday topics are fine; a different
+  family's specific storyline is not.
 
 SURFACE RULES
 1. dialogue_exchanges_before_current contains EXACTLY {exchange_target} earlier
@@ -2937,24 +3013,29 @@ def generation_messages(
     family_assignments = generation_case_family_assignments(families, regimes)
     family_anchor_text = "\n".join(
         f"- {family}: include at least one literal topic anchor such as "
-        f"{', '.join(GENERATION_FAMILY_ANCHORS[family][:3])}"
+        f"{', '.join(GENERATION_FAMILY_REQUIRED_ANCHORS[family][:3])}"
         for family in families
     )
     topic_lock_text = "\n".join(
         "- {case}: ONLY topic={target}. REQUIRED in current_user_text or "
-        "session_summary: at least one of [{required}]. FORBIDDEN in "
-        "current_user_text and session_summary: every word or idea associated "
-        "with the other assigned topics, especially [{forbidden}].".format(
+        "session_summary: at least one of [{required}]. Stay primarily on "
+        "this topic; do not introduce a concrete situation, event, or "
+        "scenario belonging to another assigned topic, especially anything "
+        "resembling [{forbidden}]. Natural language overlaps between "
+        "everyday topics are fine; a different topic's specific storyline "
+        "is not.".format(
             case=case_field,
             target=family_assignments[case_field],
             required=", ".join(
-                GENERATION_FAMILY_ANCHORS[family_assignments[case_field]]
+                GENERATION_FAMILY_REQUIRED_ANCHORS[family_assignments[case_field]]
             ),
+            # Drawn from the narrower exclusive set, not the broad required
+            # set -- see GENERATION_FAMILY_EXCLUSIVE_ANCHORS for why.
             forbidden=", ".join(
                 anchor
                 for other_family in families
                 if other_family != family_assignments[case_field]
-                for anchor in GENERATION_FAMILY_ANCHORS[other_family]
+                for anchor in GENERATION_FAMILY_EXCLUSIVE_ANCHORS[other_family]
             ),
         )
         for case_field, _ in GENERATION_CASE_FIELDS

@@ -1187,6 +1187,77 @@ def test_surface_lint_does_not_treat_relationship_loss_as_grief() -> None:
     )
 
 
+def test_required_and_exclusive_anchors_cover_the_same_families() -> None:
+    assert set(pm_v2_data_module.GENERATION_FAMILY_EXCLUSIVE_ANCHORS) == set(
+        pm_v2_data_module.GENERATION_FAMILY_REQUIRED_ANCHORS
+    )
+
+
+def test_leak_check_uses_the_narrower_exclusive_anchors_not_required() -> None:
+    # This is the structural fix behind the V8.13-V8.15 whack-a-mole: one
+    # anchor list cannot safely serve both "does this text sufficiently
+    # anchor its own family" (recall, wants breadth) and "did this text leak
+    # a forbidden family" (precision, wants distinctiveness) at once.
+    # workload_burnout's broad recall anchor "work" would false-positive
+    # against almost any other family's text ("I need to work on my
+    # confidence"), so it must not appear in the exclusive/leak set even
+    # though it is a perfectly good required/recall anchor.
+    assert "work" in pm_v2_data_module.GENERATION_FAMILY_REQUIRED_ANCHORS[
+        "workload_burnout"
+    ]
+    assert "work" not in pm_v2_data_module.GENERATION_FAMILY_EXCLUSIVE_ANCHORS[
+        "workload_burnout"
+    ]
+    assert not pm_v2_data_module._family_leak_hits(
+        "I need to work on my confidence before the interview.",
+        "workload_burnout",
+    )
+    assert pm_v2_data_module._family_leak_hits(
+        "I've been doing unpaid overtime every week and I'm burnt out.",
+        "workload_burnout",
+    )
+
+
+def test_leak_check_does_not_treat_workplace_grievance_as_grief() -> None:
+    # workplace_conflict and grief_adjustment are co-rotated in a real
+    # internal_test cohort (SEMANTIC_FAMILY_COHORTS_BY_SPLIT). A required
+    # recall anchor broad enough to catch "grieving"/"grieved" (a bare
+    # "griev" stem) also matches "grievance" (a workplace complaint, nothing
+    # to do with bereavement) -- exactly the kind of collision the
+    # required/exclusive split exists to prevent, verified directly here
+    # rather than relying on which specific forms happen to be enumerated.
+    assert not pm_v2_data_module._family_leak_hits(
+        "I filed a grievance against my manager over the unfair schedule.",
+        "grief_adjustment",
+    )
+    assert pm_v2_data_module._family_leak_hits(
+        "My grandmother passed away last month.",
+        "grief_adjustment",
+    )
+
+
+def test_families_too_generic_for_precision_have_empty_exclusive_anchors() -> None:
+    # decision_paralysis and uncertain_future's entire required-anchor
+    # vocabulary ("decision", "choice", "stuck", "future", "uncertain",
+    # "unknown", ...) is generic enough to appear naturally in almost any
+    # other family's narrative. Erring toward never flagging a leak against
+    # them is safer than a false-positive block burning a paid attempt.
+    assert pm_v2_data_module.GENERATION_FAMILY_EXCLUSIVE_ANCHORS[
+        "decision_paralysis"
+    ] == ()
+    assert pm_v2_data_module.GENERATION_FAMILY_EXCLUSIVE_ANCHORS[
+        "uncertain_future"
+    ] == ()
+    assert not pm_v2_data_module._family_leak_hits(
+        "I can't decide what to do and feel stuck about the unknown future.",
+        "decision_paralysis",
+    )
+    assert not pm_v2_data_module._family_leak_hits(
+        "I can't decide what to do and feel stuck about the unknown future.",
+        "uncertain_future",
+    )
+
+
 def test_surface_lint_accepts_natural_social_anxiety_phrasing() -> None:
     # Regression for the V8.13 formal-generation run (pmv2_train_u003/
     # multi_source_needed): real gpt-4o-mini completions wrote "meeting new
