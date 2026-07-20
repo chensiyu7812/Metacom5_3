@@ -2366,7 +2366,7 @@ def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
 
     endpoint = type("Endpoint", (), {"model": "gpt-4o-mini", "family": "openai_gpt4o"})()
     bundle, outcome = module._carry_forward_bundle_from_old_directory(
-        old_out_dir=old_dir,
+        old_out_dirs=[old_dir],
         user_id=user_id,
         families=families,
         seed_dialogue="fixture held-out seed",
@@ -2378,16 +2378,17 @@ def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
     assert bundle.user_id == user_id
     assert len(bundle.cases) == 9
     carried_from = bundle.provenance["carried_forward_from"]
-    assert carried_from["source_output_directory"] == str(old_dir)
-    assert carried_from["source_physical_attempt_ledger_sha256"] == sha256_file(
-        ledger_path
-    )
+    assert carried_from["source_output_directories"] == [str(old_dir)]
+    assert set(carried_from["case_sources"].values()) == {str(old_dir)}
+    assert carried_from["source_physical_attempt_ledger_sha256_by_directory"][
+        str(old_dir)
+    ] == sha256_file(ledger_path)
     require_bundle_generation_binding(bundle, {"protocol": "test-binding"})
 
     # The ledger has not moved since carry-forward: unchanged.
     assert sha256_file(ledger_path) == carried_from[
-        "source_physical_attempt_ledger_sha256"
-    ]
+        "source_physical_attempt_ledger_sha256_by_directory"
+    ][str(old_dir)]
 
     # Missing even one case's successful surface means the whole user is
     # not carried forward (all-or-nothing), and the reason names the case.
@@ -2395,7 +2396,7 @@ def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
         for row in rows[:-1]:
             f.write(canonical_json(row) + "\n")
     missing_bundle, missing_outcome = module._carry_forward_bundle_from_old_directory(
-        old_out_dir=old_dir,
+        old_out_dirs=[old_dir],
         user_id=user_id,
         families=families,
         seed_dialogue="fixture held-out seed",
@@ -2405,6 +2406,360 @@ def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
     )
     assert missing_bundle is None
     assert "no carried-forward surface available" in missing_outcome
+
+
+def test_carry_forward_falls_back_across_multiple_source_directories(
+    tmp_path: Path,
+) -> None:
+    """A later directory that only regenerated a handful of users (e.g.
+    after excluding a collision) must be preferred per-case, falling back
+    to an earlier, full-cohort directory for cases it never touched --
+    the real situation after the V8.16 dedup-repair attempt, where
+    pmv2_train_u007 and the internal_test users were regenerated fresh in
+    a NEW directory while the other 46 users' real content still lives
+    only in the ORIGINAL v8.15 directory.
+    """
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_carry_forward_multi_source", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    user_id = "pmv2_generation_compatibility_pilot"
+    families = ["relocation_loneliness", "self_confidence", "sleep_disruption"]
+    contract = {"semantic_families": families, "pilot_user_id": user_id}
+    surfaces = _surface_only_pilot_inputs(contract)
+
+    def _rows(case_fields: list[str], tag: str) -> list[dict[str, object]]:
+        rows = []
+        for case_field in case_fields:
+            payload = surfaces[case_field].model_dump(mode="json")
+            rows.append(
+                {
+                    "event": "SUCCEEDED",
+                    "record_ids": {"user_id": user_id, "case_field": case_field},
+                    "result": {
+                        "surface": payload,
+                        "provider_response": {
+                            "choices": [
+                                {"message": {"content": canonical_json(payload)}}
+                            ]
+                        },
+                    },
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                    },
+                    "request_hash": f"{tag}-request-{case_field}",
+                }
+            )
+        return rows
+
+    all_case_fields = [field for field, _ in GENERATION_CASE_FIELDS]
+    newer_fields = all_case_fields[:3]
+    older_fields = all_case_fields  # the full, original cohort directory
+
+    newer_dir = tmp_path / "newer_run"
+    newer_dir.mkdir()
+    newer_ledger_path = newer_dir / "_generation_physical_attempt_ledger.jsonl"
+    with newer_ledger_path.open("w", encoding="utf-8") as f:
+        for row in _rows(newer_fields, "newer"):
+            f.write(canonical_json(row) + "\n")
+
+    older_dir = tmp_path / "older_run"
+    older_dir.mkdir()
+    older_ledger_path = older_dir / "_generation_physical_attempt_ledger.jsonl"
+    with older_ledger_path.open("w", encoding="utf-8") as f:
+        for row in _rows(older_fields, "older"):
+            f.write(canonical_json(row) + "\n")
+
+    endpoint = type("Endpoint", (), {"model": "gpt-4o-mini", "family": "openai_gpt4o"})()
+    bundle, outcome = module._carry_forward_bundle_from_old_directory(
+        old_out_dirs=[newer_dir, older_dir],
+        user_id=user_id,
+        families=families,
+        seed_dialogue="fixture held-out seed",
+        seed_dialogue_source_id="fixture-seed-1",
+        endpoint=endpoint,
+        generation_binding={"protocol": "test-binding"},
+    )
+    assert isinstance(bundle, GeneratedUserBundle), outcome
+    carried_from = bundle.provenance["carried_forward_from"]
+    case_sources = carried_from["case_sources"]
+    for case_field in newer_fields:
+        assert case_sources[case_field] == str(newer_dir)
+    for case_field in all_case_fields:
+        if case_field not in newer_fields:
+            assert case_sources[case_field] == str(older_dir)
+    assert set(carried_from["source_output_directories"]) == {
+        str(newer_dir),
+        str(older_dir),
+    }
+    assert carried_from["source_physical_attempt_ledger_sha256_by_directory"] == {
+        str(newer_dir): sha256_file(newer_ledger_path),
+        str(older_dir): sha256_file(older_ledger_path),
+    }
+
+    # A case missing from every source directory still fails closed and
+    # names the case, exactly like the single-directory path.
+    incomplete_dir = tmp_path / "incomplete_run"
+    incomplete_dir.mkdir()
+    incomplete_ledger_path = incomplete_dir / "_generation_physical_attempt_ledger.jsonl"
+    with incomplete_ledger_path.open("w", encoding="utf-8") as f:
+        for row in _rows(all_case_fields[:-1], "incomplete"):
+            f.write(canonical_json(row) + "\n")
+    missing_bundle, missing_outcome = module._carry_forward_bundle_from_old_directory(
+        old_out_dirs=[incomplete_dir],
+        user_id=user_id,
+        families=families,
+        seed_dialogue="fixture held-out seed",
+        seed_dialogue_source_id="fixture-seed-1",
+        endpoint=endpoint,
+        generation_binding={"protocol": "test-binding"},
+    )
+    assert missing_bundle is None
+    assert "no carried-forward surface available" in missing_outcome
+
+
+def test_seed_casewise_carry_forward_into_ledger_recovers_only_carried_fields(
+    tmp_path: Path,
+) -> None:
+    """Casewise repair for a user with ONE colliding case (the real V8.16
+    dedup-repair situation for pmv2_calibration_u012): the other 8 cases
+    must be seeded into THIS run's own ledger under THIS run's own call
+    keys, using the already-paid content from the source directory, while
+    the flagged case is left completely untouched for real generation.
+    """
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_casewise_carry_forward_seed", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    user_id = "pmv2_calibration_u012"
+    families = ["relocation_loneliness", "self_confidence", "sleep_disruption"]
+    contract = {"semantic_families": families, "pilot_user_id": user_id}
+    surfaces = _surface_only_pilot_inputs(contract)
+    all_case_fields = [field for field, _ in GENERATION_CASE_FIELDS]
+    flagged_field = all_case_fields[-1]
+    carried_fields = [field for field in all_case_fields if field != flagged_field]
+
+    old_dir = tmp_path / "source_run"
+    old_dir.mkdir()
+    old_ledger_path = old_dir / "_generation_physical_attempt_ledger.jsonl"
+    with old_ledger_path.open("w", encoding="utf-8") as f:
+        for case_field in carried_fields:
+            payload = surfaces[case_field].model_dump(mode="json")
+            row = {
+                "event": "SUCCEEDED",
+                "record_ids": {"user_id": user_id, "case_field": case_field},
+                "result": {
+                    "surface": payload,
+                    "provider_response": {
+                        "choices": [
+                            {"message": {"content": canonical_json(payload)}}
+                        ]
+                    },
+                },
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 50,
+                    "total_tokens": 150,
+                },
+                "request_hash": f"source-request-{case_field}",
+            }
+            f.write(canonical_json(row) + "\n")
+
+    def _case_plan(case_field: str) -> dict[str, object]:
+        call_key = module.physical_call_key(
+            stage=module.GENERATION_STAGE,
+            record_ids={
+                "user_id": user_id,
+                "case_field": case_field,
+                "attempt_kind": "initial",
+                "generation_seed": 0,
+            },
+            prompt_sha256=f"prompt-{case_field}",
+            endpoint=type(
+                "Endpoint",
+                (),
+                {
+                    "base_url": "https://example.test",
+                    "model": "gpt-4o-mini",
+                    "family": "openai_gpt4o",
+                    "transport": "auto",
+                },
+            )(),
+            request_parameters={},
+        )
+        return {
+            "case_field": case_field,
+            "attempts": [
+                {
+                    "call_key": call_key,
+                    "seed": 0,
+                    "prompt_sha256": f"prompt-{case_field}",
+                }
+            ],
+        }
+
+    all_user_attempts = {
+        user_id: {"cases": [_case_plan(field) for field in all_case_fields]},
+    }
+    all_call_keys = [
+        case_plan["attempts"][0]["call_key"]
+        for case_plan in all_user_attempts[user_id]["cases"]
+    ]
+    ledger = PersistentAttemptLedger(
+        tmp_path / "current_run_ledger.jsonl",
+        stage=module.GENERATION_STAGE,
+        expected_calls={call_key: 3 for call_key in all_call_keys},
+        maximum_total_attempts=27,
+    )
+    casewise_repair_plan = {
+        user_id: {
+            "carried_case_fields": carried_fields,
+            "regenerated_case_fields": [flagged_field],
+            "carried_case_sources": {
+                field: str(old_dir) for field in carried_fields
+            },
+        }
+    }
+
+    provenance = module._seed_casewise_carry_forward_into_ledger(
+        ledger=ledger,
+        all_user_attempts=all_user_attempts,
+        casewise_repair_plan=casewise_repair_plan,
+    )
+    assert provenance[user_id]["regenerated_case_fields"] == [flagged_field]
+    assert set(provenance[user_id]["carried_case_fields"]) == set(carried_fields)
+    for field in carried_fields:
+        entry = provenance[user_id]["carried_case_fields"][field]
+        assert entry["source_output_directory"] == str(old_dir)
+        assert entry["source_physical_attempt_ledger_sha256"] == sha256_file(
+            old_ledger_path
+        )
+
+    flagged_call_key = next(
+        case_plan["attempts"][0]["call_key"]
+        for case_plan in all_user_attempts[user_id]["cases"]
+        if case_plan["case_field"] == flagged_field
+    )
+    for case_plan in all_user_attempts[user_id]["cases"]:
+        call_key = case_plan["attempts"][0]["call_key"]
+        if case_plan["case_field"] == flagged_field:
+            assert not ledger.succeeded(call_key)
+        else:
+            assert ledger.succeeded(call_key)
+
+    started_attempts_after_first_seed = ledger.started_attempts
+    # Idempotent: re-seeding an already-seeded ledger (a repeated --dry-run
+    # against a populated out_dir) must not write any new ledger rows.
+    module._seed_casewise_carry_forward_into_ledger(
+        ledger=ledger,
+        all_user_attempts=all_user_attempts,
+        casewise_repair_plan=casewise_repair_plan,
+    )
+    assert ledger.started_attempts == started_attempts_after_first_seed
+    assert not ledger.succeeded(flagged_call_key)
+
+    # If the source directory's content for a carried field vanishes after
+    # the repair plan was computed, seeding must fail closed by name rather
+    # than silently regenerating it or crashing obscurely.
+    lost_field = carried_fields[0]
+    with old_ledger_path.open("w", encoding="utf-8") as f:
+        for case_field in carried_fields:
+            if case_field == lost_field:
+                continue
+            payload = surfaces[case_field].model_dump(mode="json")
+            row = {
+                "event": "SUCCEEDED",
+                "record_ids": {"user_id": user_id, "case_field": case_field},
+                "result": {
+                    "surface": payload,
+                    "provider_response": {
+                        "choices": [
+                            {"message": {"content": canonical_json(payload)}}
+                        ]
+                    },
+                },
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 50,
+                    "total_tokens": 150,
+                },
+                "request_hash": f"source-request-{case_field}",
+            }
+            f.write(canonical_json(row) + "\n")
+    other_user_id = "pmv2_calibration_u099"
+    other_all_user_attempts = {
+        other_user_id: {
+            "cases": [
+                {**_case_plan(field), "case_field": field}
+                for field in carried_fields
+            ]
+        }
+    }
+    for case_plan in other_all_user_attempts[other_user_id]["cases"]:
+        case_plan["attempts"][0]["call_key"] = module.physical_call_key(
+            stage=module.GENERATION_STAGE,
+            record_ids={
+                "user_id": other_user_id,
+                "case_field": case_plan["case_field"],
+                "attempt_kind": "initial",
+                "generation_seed": 0,
+            },
+            prompt_sha256=f"prompt-{case_plan['case_field']}",
+            endpoint=type(
+                "Endpoint",
+                (),
+                {
+                    "base_url": "https://example.test",
+                    "model": "gpt-4o-mini",
+                    "family": "openai_gpt4o",
+                    "transport": "auto",
+                },
+            )(),
+            request_parameters={},
+        )
+    other_ledger = PersistentAttemptLedger(
+        tmp_path / "other_run_ledger.jsonl",
+        stage=module.GENERATION_STAGE,
+        expected_calls={
+            case_plan["attempts"][0]["call_key"]: 3
+            for case_plan in other_all_user_attempts[other_user_id]["cases"]
+        },
+        maximum_total_attempts=27,
+    )
+    with pytest.raises(RuntimeError, match=f"{other_user_id}/{lost_field}"):
+        module._seed_casewise_carry_forward_into_ledger(
+            ledger=other_ledger,
+            all_user_attempts=other_all_user_attempts,
+            casewise_repair_plan={
+                other_user_id: {
+                    "carried_case_fields": carried_fields,
+                    "regenerated_case_fields": [flagged_field],
+                    "carried_case_sources": {
+                        field: str(old_dir) for field in carried_fields
+                    },
+                }
+            },
+        )
 
 
 def test_cross_user_duplicate_repair_manifest_keeps_earliest_plan_position() -> None:

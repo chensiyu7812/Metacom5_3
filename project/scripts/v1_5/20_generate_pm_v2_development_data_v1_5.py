@@ -237,9 +237,39 @@ def _load_successful_surface_from_old_ledger(
     return surface, call
 
 
+def _load_successful_surface_from_any_source(
+    old_out_dirs: list[Path],
+    *,
+    user_id: str,
+    case_field: str,
+) -> tuple[GeneratedSurfaceOnlyCaseDraft, CallResult, Path] | None:
+    """Try each source directory in priority order; first match wins.
+
+    Different source directories can legitimately hold the authoritative
+    real content for different users -- e.g. a later directory that only
+    regenerated a handful of previously excluded/colliding users, while an
+    earlier, full-cohort directory remains authoritative for everyone else.
+    Carried-forward users never touch their OWN run's physical attempt
+    ledger (they are written straight to the compiled bundle file), so a
+    later directory's ledger alone cannot recover users it merely inherited
+    from an earlier one; the caller must supply that earlier directory too.
+    """
+    for old_out_dir in old_out_dirs:
+        old_ledger_path = old_out_dir / "_generation_physical_attempt_ledger.jsonl"
+        if not old_ledger_path.is_file():
+            continue
+        loaded = _load_successful_surface_from_old_ledger(
+            old_ledger_path, user_id=user_id, case_field=case_field
+        )
+        if loaded is not None:
+            surface, call = loaded
+            return surface, call, old_out_dir
+    return None
+
+
 def _carry_forward_bundle_from_old_directory(
     *,
-    old_out_dir: Path,
+    old_out_dirs: list[Path],
     user_id: str,
     families: list[str],
     seed_dialogue: str,
@@ -247,32 +277,44 @@ def _carry_forward_bundle_from_old_directory(
     endpoint,
     generation_binding: dict[str, Any],
 ) -> tuple[GeneratedUserBundle, dict[str, Any]] | tuple[None, str]:
-    """Recompile one user's bundle from an older run's paid, real provider
-    responses, under CURRENT code, rebinding it to the CURRENT generation
-    run. Read-only on old_out_dir. All-or-nothing per user: any missing or
-    now-invalid case means the whole user must be regenerated for real, not
-    partially carried forward.
+    """Recompile one user's bundle from one or more older runs' paid, real
+    provider responses, under CURRENT code, rebinding it to the CURRENT
+    generation run. Read-only on every old_out_dir. All-or-nothing per
+    user: any case missing from EVERY source directory means the whole
+    user must be regenerated for real, not partially carried forward here
+    (see the casewise-repair path in main() for partial carry-forward of a
+    user whose OTHER cases are fine but one specific case is not).
+
+    Directories are tried in the given priority order per case: a later
+    directory that only regenerated a handful of users is consulted first,
+    falling back to an earlier, full-cohort directory for users/cases it
+    never touched.
     """
-    old_ledger_path = old_out_dir / "_generation_physical_attempt_ledger.jsonl"
-    if not old_ledger_path.is_file():
-        return None, f"carry-forward source has no physical attempt ledger: {old_out_dir}"
+    existing_dirs = [
+        d for d in old_out_dirs
+        if (d / "_generation_physical_attempt_ledger.jsonl").is_file()
+    ]
+    if not existing_dirs:
+        return None, f"no carry-forward source directory has a physical attempt ledger: {old_out_dirs}"
     surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft] = {}
     calls: dict[str, CallResult] = {}
     messages: dict[str, list[dict[str, str]]] = {}
     attempt_kinds: dict[str, str] = {}
     accepted_call_keys: dict[str, str] = {}
+    case_sources: dict[str, str] = {}
     for case_field, _ in GENERATION_CASE_FIELDS:
-        loaded = _load_successful_surface_from_old_ledger(
-            old_ledger_path, user_id=user_id, case_field=case_field
+        loaded = _load_successful_surface_from_any_source(
+            old_out_dirs, user_id=user_id, case_field=case_field
         )
         if loaded is None:
             return None, f"no carried-forward surface available for case {case_field}"
-        surface, call = loaded
+        surface, call, source_dir = loaded
         surfaces[case_field] = surface
         calls[case_field] = call
         messages[case_field] = []
         attempt_kinds[case_field] = "carried_forward"
-        accepted_call_keys[case_field] = f"carried_forward:{old_out_dir}:{user_id}:{case_field}"
+        accepted_call_keys[case_field] = f"carried_forward:{source_dir}:{user_id}:{case_field}"
+        case_sources[case_field] = str(source_dir)
     try:
         bundle = compile_surface_only_user_bundle(
             surfaces=surfaces,
@@ -289,13 +331,102 @@ def _carry_forward_bundle_from_old_directory(
     except (ValueError, RuntimeError) as exc:
         return None, f"failed current recompilation/lint: {exc}"
     bundle.provenance.update({"accepted_surface_call_keys": accepted_call_keys})
+    used_dirs = sorted(set(case_sources.values()))
     audit = {
-        "source_output_directory": str(old_out_dir),
-        "source_physical_attempt_ledger_sha256": sha256_file(old_ledger_path),
+        "source_output_directories": used_dirs,
+        "case_sources": case_sources,
+        "source_physical_attempt_ledger_sha256_by_directory": {
+            d: sha256_file(Path(d) / "_generation_physical_attempt_ledger.jsonl")
+            for d in used_dirs
+        },
     }
     bundle.provenance["carried_forward_from"] = audit
     bind_bundle_to_generation_run(bundle, generation_binding)
     return bundle, audit
+
+
+def _seed_casewise_carry_forward_into_ledger(
+    *,
+    ledger: PersistentAttemptLedger,
+    all_user_attempts: dict[str, dict[str, Any]],
+    casewise_repair_plan: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Pre-seed THIS run's own ledger with the carried-forward (non-flagged)
+    case fields of any partially-excluded user, recorded under this run's
+    own call keys so the normal pending/call-plan/execution machinery sees
+    them as already succeeded and queues a real API call for only the
+    flagged field(s), never the whole user. Read-only on every source
+    directory named in casewise_repair_plan; this run's own ledger is the
+    only thing written to. Idempotent: a second invocation against an
+    already-seeded ledger (e.g. a repeated --dry-run) makes no new writes.
+
+    Returns per-user casewise-carry provenance for attaching to the
+    eventually compiled bundle.
+    """
+    casewise_carry_provenance: dict[str, dict[str, Any]] = {}
+    for user_id, plan in casewise_repair_plan.items():
+        user_plan = all_user_attempts[user_id]
+        carried_fields = set(plan["carried_case_fields"])
+        carried_case_provenance: dict[str, Any] = {}
+        for case_plan in user_plan["cases"]:
+            case_field = str(case_plan["case_field"])
+            if case_field not in carried_fields:
+                continue
+            source_dir_str = plan["carried_case_sources"][case_field]
+            source_dir = Path(source_dir_str)
+            loaded = _load_successful_surface_from_old_ledger(
+                source_dir / "_generation_physical_attempt_ledger.jsonl",
+                user_id=user_id,
+                case_field=case_field,
+            )
+            if loaded is None:
+                raise RuntimeError(
+                    "casewise repair lost its previously located "
+                    f"carried-forward surface for {user_id}/{case_field} "
+                    f"in {source_dir}"
+                )
+            surface, call = loaded
+            attempt = case_plan["attempts"][0]
+            call_key = str(attempt["call_key"])
+            if not ledger.succeeded(call_key):
+                reservation = ledger.reserve(
+                    call_key,
+                    record_ids={
+                        "user_id": user_id,
+                        "case_field": case_field,
+                        "attempt_kind": "carried_forward",
+                        "generation_seed": int(attempt["seed"]),
+                    },
+                    prompt_sha256=str(attempt["prompt_sha256"]),
+                )
+                ledger.finish(
+                    reservation,
+                    succeeded=True,
+                    request_hash=call.request_hash,
+                    usage=call.usage,
+                    error=None,
+                    result={
+                        "surface": surface.model_dump(mode="json"),
+                        "provider_response": call.raw_response,
+                        "attempt_kind": "carried_forward",
+                    },
+                    metadata={
+                        "casewise_carried_forward_from": {
+                            "source_output_directory": source_dir_str,
+                        }
+                    },
+                )
+            carried_case_provenance[case_field] = {
+                "source_output_directory": source_dir_str,
+                "source_physical_attempt_ledger_sha256": sha256_file(
+                    source_dir / "_generation_physical_attempt_ledger.jsonl"
+                ),
+            }
+        casewise_carry_provenance[user_id] = {
+            "regenerated_case_fields": plan["regenerated_case_fields"],
+            "carried_case_fields": carried_case_provenance,
+        }
+    return casewise_carry_provenance
 
 
 def _compute_cross_user_duplicate_repair_manifest(
@@ -398,6 +529,7 @@ def _compile_casewise_user_from_ledger(
     seed_dialogue_source_id: str,
     endpoint,
     generation_binding: dict[str, Any],
+    casewise_carried_forward: dict[str, Any] | None = None,
 ) -> GeneratedUserBundle | None:
     surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft] = {}
     calls: dict[str, CallResult] = {}
@@ -443,6 +575,8 @@ def _compile_casewise_user_from_ledger(
             ),
         }
     )
+    if casewise_carried_forward is not None:
+        bundle.provenance["casewise_carried_forward_from"] = casewise_carried_forward
     bind_bundle_to_generation_run(bundle, generation_binding)
     return bundle
 
@@ -457,7 +591,9 @@ def _recover_casewise_bundles_from_ledger(
     family_by_user: dict[str, list[str]],
     seeds: list[dict[str, str]],
     endpoint,
+    casewise_carry_provenance: dict[str, dict[str, Any]] | None = None,
 ) -> int:
+    casewise_carry_provenance = casewise_carry_provenance or {}
     recovered = 0
     for user_id, user_plan in all_user_attempts.items():
         if user_id in existing:
@@ -470,6 +606,7 @@ def _recover_casewise_bundles_from_ledger(
             seed_dialogue_source_id=seed_record["dialogue_id"],
             endpoint=endpoint,
             generation_binding=generation_binding,
+            casewise_carried_forward=casewise_carry_provenance.get(user_id),
         )
         if bundle is None:
             continue
@@ -963,14 +1100,22 @@ def main() -> None:
     parser.add_argument(
         "--carry-forward-from",
         type=Path,
+        nargs="+",
         help=(
-            "Optional older output directory whose already-paid, real "
+            "One or more older output directories whose already-paid, real "
             "provider responses should be recompiled under current code and "
-            "carried into this run instead of being regenerated. Read-only "
-            "on the source directory. Any user whose carried-forward "
-            "content no longer passes current lint/schema checks is left "
-            "pending for real regeneration, never silently dropped or "
-            "forced through."
+            "carried into this run instead of being regenerated. When "
+            "multiple directories are given, each (user_id, case_field) is "
+            "recovered from the first directory (in the given order) whose "
+            "immutable ledger has a successful surface for it -- e.g. a "
+            "later directory that only regenerated a handful of previously "
+            "excluded/colliding users, falling back to the original "
+            "full-cohort directory for everyone else. Read-only on every "
+            "source directory. A user whose carried-forward content no "
+            "longer passes current lint/schema checks, in full, is left "
+            "pending for real regeneration of ONLY the case field(s) that "
+            "no longer pass -- other case fields for that user are still "
+            "carried forward, never silently dropped or forced through."
         ),
     )
     parser.add_argument("--train-users", type=int)
@@ -1416,15 +1561,17 @@ def main() -> None:
         )
 
     carry_forward_report: dict[str, Any] = {
-        "source_output_directory": None,
+        "source_output_directories": None,
         "carried_users": [],
         "skipped_users": {},
         "duplicate_repair_manifest": None,
+        "casewise_repair_plan": {},
     }
+    casewise_repair_plan: dict[str, dict[str, Any]] = {}
     if args.carry_forward_from is not None:
-        carry_forward_report["source_output_directory"] = str(
-            args.carry_forward_from.resolve()
-        )
+        carry_forward_report["source_output_directories"] = [
+            str(d.resolve()) for d in args.carry_forward_from
+        ]
         # Pass 1: collect every carry-forward candidate WITHOUT writing it
         # yet, so the whole candidate set can be checked together for the
         # cross-user duplicate failure validate_split_manifests would only
@@ -1436,7 +1583,7 @@ def main() -> None:
                 continue
             seed_record = seeds[user_index % len(seeds)]
             bundle, outcome = _carry_forward_bundle_from_old_directory(
-                old_out_dir=args.carry_forward_from,
+                old_out_dirs=args.carry_forward_from,
                 user_id=user_id,
                 families=family_by_user[user_id],
                 seed_dialogue=seed_record["dialogue_text"],
@@ -1465,28 +1612,45 @@ def main() -> None:
         )
         carry_forward_report["duplicate_repair_manifest"] = repair_manifest
         # Fixed, deterministic policy (never a human's choice of which user
-        # to redo): a user with ANY case flagged by the repair manifest is
-        # excluded from carry-forward entirely and regenerated fresh in
-        # full, rather than partially merging old and new cases into one
-        # bundle. The dollar cost of redoing a whole 9-case user instead of
-        # just the 1 conflicting case is negligible (a few thousandths of a
-        # dollar) next to the correctness risk of a partial-bundle merge,
-        # and any new collision introduced by the regenerated cases is
-        # caught for free on the next dry-run before any further spend.
-        users_requiring_regeneration = {
-            row["user_id"] for row in repair_manifest["repair_cases"]
-        }
+        # to redo): a user with a case flagged by the repair manifest keeps
+        # every OTHER case carried forward from the same source(s) and only
+        # has the flagged case field(s) regenerated for real (casewise
+        # repair) -- not a whole-user regeneration. Whole-user regeneration
+        # was tried first and its residual risk materialized for real
+        # twice in a row (V8.16 dedup-repair regenerated calibration_u012
+        # whole, which then collided with a DIFFERENT user each time,
+        # first u009 then u010): touching all 9 fresh cases instead of just
+        # the 1 that actually needs it needlessly re-exposes the other 8,
+        # already-fine cases to a brand new chance of colliding with
+        # someone else.
+        case_fields_requiring_regeneration: dict[str, set[str]] = defaultdict(set)
+        for row in repair_manifest["repair_cases"]:
+            case_fields_requiring_regeneration[row["user_id"]].add(row["case_field"])
 
-        # Pass 2: write only the candidates NOT flagged for regeneration.
+        # Pass 2: write clean candidates whole; partially-flagged candidates
+        # are held back here (not written to existing) so their carried
+        # case fields can be re-attached to a real, freshly generated
+        # surface for the flagged field(s) further below, once this run's
+        # own call keys exist.
         for user_id, bundle in candidates.items():
-            if user_id in users_requiring_regeneration:
-                carry_forward_report["skipped_users"][user_id] = (
-                    "excluded by duplicate_repair_manifest: "
-                    f"{repair_manifest['manifest_sha256']}"
-                )
+            flagged = case_fields_requiring_regeneration.get(user_id)
+            if not flagged:
+                append_jsonl(work_path, bundle.model_dump(mode="json"))
+                existing[user_id] = bundle
                 continue
-            append_jsonl(work_path, bundle.model_dump(mode="json"))
-            existing[user_id] = bundle
+            case_sources = bundle.provenance["carried_forward_from"]["case_sources"]
+            non_flagged = [
+                field for field, _ in GENERATION_CASE_FIELDS if field not in flagged
+            ]
+            casewise_repair_plan[user_id] = {
+                "carried_case_fields": non_flagged,
+                "regenerated_case_fields": sorted(flagged),
+                "carried_case_sources": {
+                    field: case_sources[field] for field in non_flagged
+                },
+                "duplicate_repair_manifest_sha256": repair_manifest["manifest_sha256"],
+            }
+        carry_forward_report["casewise_repair_plan"] = casewise_repair_plan
         # Derived from the final state of `existing`, not from which
         # invocation happened to append each bundle: --dry-run itself
         # persists carried-forward bundles into this out_dir's own work
@@ -1627,6 +1791,19 @@ def main() -> None:
             1,
         ),
     )
+    # Casewise repair: seed THIS run's own ledger with the carried-forward
+    # (non-flagged) case fields of any partially-excluded user, recorded
+    # under this run's own call keys so the normal pending/call-plan/
+    # execution machinery below sees them as already succeeded and queues
+    # a real API call for only the flagged field(s) -- never the whole
+    # user. Read-only on every source directory; this run's own ledger is
+    # the only thing written to.
+    casewise_carry_provenance = _seed_casewise_carry_forward_into_ledger(
+        ledger=ledger,
+        all_user_attempts=all_user_attempts,
+        casewise_repair_plan=casewise_repair_plan,
+    )
+
     recovered_successful_bundles = _recover_casewise_bundles_from_ledger(
         ledger=ledger,
         all_user_attempts=all_user_attempts,
@@ -1636,26 +1813,32 @@ def main() -> None:
         family_by_user=family_by_user,
         seeds=seeds,
         endpoint=endpoint,
+        casewise_carry_provenance=casewise_carry_provenance,
     )
     for user_id, bundle in existing.items():
         require_bundle_generation_binding(bundle, generation_binding)
         strict_bundle_check(bundle, family_by_user[user_id])
         carried_from = bundle.provenance.get("carried_forward_from")
         if carried_from is not None:
-            # This user's "proof of payment" lives in a DIFFERENT run's
-            # ledger (already verified once at carry-forward time); re-check
-            # that source ledger has not changed or vanished since, rather
-            # than requiring it to appear in this run's own (mostly-empty)
-            # ledger, which does not apply to carried-forward users.
-            source_dir = Path(str(carried_from["source_output_directory"]))
-            source_ledger = source_dir / "_generation_physical_attempt_ledger.jsonl"
-            if not source_ledger.is_file() or sha256_file(source_ledger) != str(
-                carried_from["source_physical_attempt_ledger_sha256"]
-            ):
-                raise RuntimeError(
-                    f"carried-forward bundle {user_id} source ledger changed or "
-                    f"is missing since carry-forward: {source_dir}"
-                )
+            # This user's "proof of payment" lives in one or more DIFFERENT
+            # runs' ledgers (already verified once at carry-forward time);
+            # re-check that every source ledger this bundle actually drew
+            # from has not changed or vanished since, rather than requiring
+            # it to appear in this run's own (mostly-empty) ledger, which
+            # does not apply to carried-forward users.
+            for (
+                dir_str,
+                expected_hash,
+            ) in carried_from["source_physical_attempt_ledger_sha256_by_directory"].items():
+                source_dir = Path(dir_str)
+                source_ledger = source_dir / "_generation_physical_attempt_ledger.jsonl"
+                if not source_ledger.is_file() or sha256_file(source_ledger) != str(
+                    expected_hash
+                ):
+                    raise RuntimeError(
+                        f"carried-forward bundle {user_id} source ledger changed or "
+                        f"is missing since carry-forward: {source_dir}"
+                    )
             continue
         accepted_call_keys = bundle.provenance.get(
             "accepted_surface_call_keys"
@@ -2143,6 +2326,7 @@ def main() -> None:
                 seed_dialogue_source_id=seed_record["dialogue_id"],
                 endpoint=endpoint,
                 generation_binding=generation_binding,
+                casewise_carried_forward=casewise_carry_provenance.get(user_id),
             )
             if bundle is None:
                 raise RuntimeError(f"user {user_id} lacks nine accepted surfaces")
