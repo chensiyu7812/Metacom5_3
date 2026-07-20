@@ -44,7 +44,7 @@ from .contracts import MemoryItem, MemorySource
 from .evoemo import build_evo_memory
 from .hybrid_retrieval import HybridMemoryRetriever, retrieve_fixed_token_budget
 from .io import sha256_text
-from .retrieval import MemoryRetriever
+from .retrieval import MemoryRetriever, context_query
 from .text import lexical_score
 
 
@@ -109,10 +109,19 @@ def iter_case_calibration_examples(
 
     ``bundles`` is the raw per-user structure produced by
     ``scripts/v1_5/20_generate_pm_v2_development_data_v1_5.py`` (one row per
-    user, each with a ``cases`` list; each case has ``current_user_text``
-    and the three memory pools in ``MEMORY_POOL_FIELDS``). Any split not in
-    ``allowed_splits`` (in particular ``internal_test``/``external_test``)
-    is skipped entirely -- never even flattened into memory.
+    user, each with a ``cases`` list; each case has ``current_user_text``,
+    ``recent_dialogue``, ``session_summary``, and the three memory pools in
+    ``MEMORY_POOL_FIELDS``). Any split not in ``allowed_splits`` (in
+    particular ``internal_test``/``external_test``) is skipped entirely --
+    never even flattened into memory.
+
+    The query used for calibration is built via the same
+    ``retrieval.context_query`` the real retrievers use at deployment time
+    (``current_user_text`` + visible history + session summary), not bare
+    ``current_user_text`` alone -- floors calibrated against a shorter,
+    differently-shaped query than what real retrieval actually sees would
+    not be calibrated against the query distribution they are meant to
+    gate.
     """
 
     examples: list[CalibrationExample] = []
@@ -121,7 +130,11 @@ def iter_case_calibration_examples(
         if split not in allowed_splits:
             continue
         for case in bundle.get("cases") or []:
-            query_text = str(case["current_user_text"])
+            query_text = context_query(
+                str(case["current_user_text"]),
+                case.get("recent_dialogue") or [],
+                str(case.get("session_summary") or ""),
+            )
             for pool_field, source in MEMORY_POOL_FIELDS.items():
                 for memory_row in case.get(pool_field) or []:
                     examples.append(

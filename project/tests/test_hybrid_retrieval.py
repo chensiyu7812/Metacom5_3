@@ -16,6 +16,7 @@ from metacom_pm.hybrid_retrieval import (
 )
 from metacom_pm.io import sha256_text
 from metacom_pm.retrieval import context_query
+from metacom_pm.text import lexical_score
 
 
 class _FakeEncoder:
@@ -132,6 +133,36 @@ def test_floor_excludes_only_when_both_scorers_reject_a_candidate():
     ids = {x.memory_id for x in out}
     assert ids == {"mem_aaaaaaaaaaaa", "mem_bbbbbbbbbbbb"}
     assert "mem_cccccccccccc" not in ids
+
+
+def test_floor_never_excludes_a_candidate_scoring_exactly_at_the_floor():
+    # A floor calibrated as "the minimum score among known-good examples"
+    # (hybrid_retrieval_diagnostics.calibrate_source_floors) must never
+    # exclude the example that defines it -- that example's own score sits
+    # AT the floor, not below it. This candidate is constructed to score
+    # exactly 0.5 on BOTH scorers against a floor of (0.5, 0.5): under the
+    # old `<=` exclusion rule this would have been wrongly dropped; the
+    # comparison must be strict (`<`) so it survives.
+    query = "a b"
+    at_floor_text = "a c"
+    # lexical_score("a b", "a c") == 1 shared token / (sqrt(2)*sqrt(2)) == 0.5.
+    assert lexical_score(query, at_floor_text) == pytest.approx(0.5)
+    query_vector = np.array([1.0, 0.0])
+    candidate_vector = np.array([0.5, (3 ** 0.5) / 2])  # unit vector, dot == 0.5
+    assert float(query_vector @ candidate_vector) == pytest.approx(0.5)
+    encoder = _FakeEncoder({query: query_vector, at_floor_text: candidate_vector})
+    item = _item("mem_aaaaaaaaaaaa", MemorySource.ME, 1, at_floor_text)
+    retriever = HybridMemoryRetriever(
+        semantic_encoder=encoder,
+        top_k_by_source={MemorySource.ME: 10},
+        floors_by_source={
+            MemorySource.ME: SourceScoreFloors(
+                lexical_min_score=0.5, semantic_min_score=0.5
+            )
+        },
+    )
+    out = retriever.retrieve(query, [item], frozenset({MemorySource.ME}))
+    assert [x.memory_id for x in out] == ["mem_aaaaaaaaaaaa"]
 
 
 def test_top_k_by_source_is_respected_per_source():
@@ -296,6 +327,77 @@ def test_hybrid_strategy_retriever_empty_cards_returns_empty():
         floors=_floors(),
     )
     assert retriever.retrieve("anything") == []
+
+
+class _CountingEncoder:
+    """Wraps _FakeEncoder and counts every encode() call, to prove card
+    embeddings are computed once at construction, not re-embedded on every
+    retrieve()/rank_all() call -- the real Strategy Bank has 11k+ cards, so
+    re-encoding it per call would be an unacceptable production cost."""
+
+    def __init__(self, vocab: dict[str, np.ndarray]):
+        self._inner = _FakeEncoder(vocab)
+        self.call_count = 0
+        self.texts_seen: list[tuple[str, ...]] = []
+
+    def encode(self, texts):
+        self.call_count += 1
+        self.texts_seen.append(tuple(texts))
+        return self._inner.encode(texts)
+
+
+def test_hybrid_strategy_retriever_encodes_the_bank_once_not_per_call():
+    vector = _one_hot(1, 0)
+    cards = [
+        StrategyCard(
+            strategy_id=f"strat_{i:012x}",
+            strategy_label="reflect",
+            retrieval_text="card text",
+            guidance_text="g",
+            example_response="e",
+            source_dialogue_id="d1",
+            source_turn_index=1,
+        )
+        for i in range(3)
+    ]
+    encoder = _CountingEncoder({"q": vector, "card text": vector})
+    retriever = HybridStrategyRetriever(
+        cards, semantic_encoder=encoder, top_k=2, floors=_floors()
+    )
+    # Construction alone should have already embedded every card's text.
+    assert encoder.call_count == 1
+    assert encoder.texts_seen[0] == ("card text", "card text", "card text")
+
+    retriever.retrieve("q")
+    retriever.retrieve("q")
+    retriever.rank_all("q")
+    # Only the (single-text) query is encoded per call thereafter -- the
+    # card bank itself is never re-encoded.
+    assert encoder.call_count == 4
+    assert all(len(texts) == 1 for texts in encoder.texts_seen[1:])
+
+
+def test_hybrid_strategy_retriever_confidence_matches_max_lexical_score():
+    encoder = _FakeEncoder({"q": _one_hot(1, 0), "matches q well": _one_hot(1, 0)})
+    card = StrategyCard(
+        strategy_id="strat_aaaaaaaaaaaa",
+        strategy_label="reflect",
+        retrieval_text="matches q well",
+        guidance_text="g",
+        example_response="e",
+        source_dialogue_id="d1",
+        source_turn_index=1,
+    )
+    retriever = HybridStrategyRetriever(
+        [card], semantic_encoder=encoder, floors=_floors()
+    )
+    assert retriever.confidence("q") == pytest.approx(lexical_score("q", "matches q well"))
+
+
+def test_hybrid_strategy_retriever_confidence_is_zero_for_empty_bank():
+    encoder = _FakeEncoder({})
+    retriever = HybridStrategyRetriever([], semantic_encoder=encoder, floors=_floors())
+    assert retriever.confidence("anything") == 0.0
 
 
 def test_retrieve_fixed_token_budget_skips_overflow_and_continues():

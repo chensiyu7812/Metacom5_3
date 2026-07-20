@@ -867,6 +867,12 @@ def _reference_parameters(freeze: dict, *, checkpoint_sha256: str | None = None)
         "supporter_generation_treatment_sha256": generation[
             "supporter_generation_treatment_sha256"
         ],
+        "evo_memory_builder_contract_sha256": generation[
+            "evo_memory_builder_contract_sha256"
+        ],
+        "evo_memory_global_catalog_sha256": generation[
+            "evo_memory_global_catalog_sha256"
+        ],
         "fixed_seeker_generation_treatment": generation[
             "fixed_seeker_generation_treatment"
         ],
@@ -1178,6 +1184,61 @@ def test_v1_5_external_eval_rejects_stale_supporter_treatment(workdir, monkeypat
     ]
     monkeypatch.setattr(sys, "argv", argv)
     with pytest.raises(RuntimeError, match="violates frozen supporter_generation_treatment_sha256"):
+        module.main()
+
+
+def test_v1_5_external_eval_rejects_stale_evo_memory_catalog(workdir, monkeypatch):
+    # Guards the checkpoint added to close the gap where a memory-builder
+    # change after the freeze (chunking, splitting, id scheme) could
+    # otherwise slip past external evaluation undetected: evoemo_sha256
+    # alone only pins the raw input file, not what build_evo_memory
+    # actually constructs from it.
+    out, checkpoints = _build_freeze(workdir, monkeypatch)
+    freeze = json.loads(out.read_text(encoding="utf-8"))
+    freeze_sha = freeze["freeze_sha256"]
+    generation_contract = freeze["notes"]["generation_contract"]
+
+    parameters = {
+        "condition": "pm_v2",
+        "supporter_generation_treatment": generation_contract["supporter_generation_treatment"],
+        "supporter_generation_treatment_sha256": generation_contract[
+            "supporter_generation_treatment_sha256"
+        ],
+        "evo_memory_builder_contract_sha256": "0" * 64,  # tampered
+        "evo_memory_global_catalog_sha256": generation_contract[
+            "evo_memory_global_catalog_sha256"
+        ],
+        "fixed_seeker_generation_treatment": generation_contract["fixed_seeker_generation_treatment"],
+        "fixed_seeker_generation_treatment_sha256": generation_contract[
+            "fixed_seeker_generation_treatment_sha256"
+        ],
+        "simulator_id": generation_contract["simulator_id"],
+        "max_turns": generation_contract["max_turns"],
+        "seeds": generation_contract["seeds"],
+        "evaluation_unit_contract": generation_contract["evaluation_unit_contract"],
+    }
+    turns_path, attestation_path = _fake_generation_artifact(
+        workdir,
+        "pm_v2",
+        stage="evoemo_pm_v2_generation",
+        parameters=parameters,
+        study_freeze_sha256=freeze_sha,
+    )
+
+    module = _load_module(
+        "scripts/v1_5/25_eval_pm_v2_external_v1_5.py", "v1_5_external_eval_test_evo_memory"
+    )
+    argv = [
+        "25_eval_pm_v2_external_v1_5.py",
+        "--dry-run",
+        "--freeze", str(out),
+        "--turn-paths", str(turns_path),
+        "--generation-attestations", str(attestation_path),
+        "--policy-checkpoint", str(checkpoints["pm_checkpoint"]),
+        "--policy-training-report", str(checkpoints["training_report"]),
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+    with pytest.raises(RuntimeError, match="violates frozen evo_memory_builder_contract_sha256"):
         module.main()
 
 
@@ -1545,6 +1606,12 @@ def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkey
                 ],
                 "supporter_generation_treatment_sha256": generation[
                     "supporter_generation_treatment_sha256"
+                ],
+                "evo_memory_builder_contract_sha256": generation[
+                    "evo_memory_builder_contract_sha256"
+                ],
+                "evo_memory_global_catalog_sha256": generation[
+                    "evo_memory_global_catalog_sha256"
                 ],
                 "fixed_seeker_generation_treatment": generation[
                     "fixed_seeker_generation_treatment"

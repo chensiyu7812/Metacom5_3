@@ -190,6 +190,15 @@ def main() -> None:
             "spec_sha256": encoder_spec.digest(),
             "binding": encoder.binding.model_dump(mode="json"),
         },
+        "floor_calibration_query_construction": (
+            "Each calibration example's query is built via "
+            "retrieval.context_query(current_user_text, recent_dialogue, "
+            "session_summary) -- the same construction real retrieval uses "
+            "at deployment time -- not bare current_user_text alone. "
+            "Floors calibrated against a shorter, differently-shaped query "
+            "would not be calibrated against the query distribution they "
+            "are meant to gate."
+        ),
         "floor_calibration_by_memory_source": {
             source.value: asdict(calib) for source, calib in source_calibration.items()
         },

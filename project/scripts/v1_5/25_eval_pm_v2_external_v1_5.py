@@ -367,6 +367,14 @@ def main() -> None:
                     "supporter_generation_treatment_sha256",
                     generation_contract.get("supporter_generation_treatment_sha256"),
                 ),
+                (
+                    "evo_memory_builder_contract_sha256",
+                    generation_contract.get("evo_memory_builder_contract_sha256"),
+                ),
+                (
+                    "evo_memory_global_catalog_sha256",
+                    generation_contract.get("evo_memory_global_catalog_sha256"),
+                ),
                 ("fixed_seeker_generation_treatment", generation_contract.get("fixed_seeker_generation_treatment")),
                 (
                     "fixed_seeker_generation_treatment_sha256",
@@ -451,6 +459,12 @@ def main() -> None:
                 ),
                 "supporter_generation_treatment_sha256": generation_contract.get(
                     "supporter_generation_treatment_sha256"
+                ),
+                "evo_memory_builder_contract_sha256": generation_contract.get(
+                    "evo_memory_builder_contract_sha256"
+                ),
+                "evo_memory_global_catalog_sha256": generation_contract.get(
+                    "evo_memory_global_catalog_sha256"
                 ),
                 "fixed_seeker_generation_treatment": generation_contract.get(
                     "fixed_seeker_generation_treatment"

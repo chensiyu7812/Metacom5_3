@@ -1,6 +1,6 @@
 {
   "protocol": "pm-v1.5-hybrid-retrieval-diagnostic-v1",
-  "generated_utc": "2026-07-20T08:47:14Z",
+  "generated_utc": "2026-07-20T10:29:38Z",
   "status": "REPORT_ONLY_NOT_A_FORMAL_ARTIFACT_NO_ADOPTION_DECISION_MADE",
   "inputs": {
     "evoemo_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/external/evo_emo.json",
@@ -29,20 +29,21 @@
       "implementation": "transformers-auto-model-cls-float32"
     }
   },
+  "floor_calibration_query_construction": "Each calibration example's query is built via retrieval.context_query(current_user_text, recent_dialogue, session_summary) -- the same construction real retrieval uses at deployment time -- not bare current_user_text alone. Floors calibrated against a shorter, differently-shaped query would not be calibrated against the query distribution they are meant to gate.",
   "floor_calibration_by_memory_source": {
     "ME": {
-      "lexical_min_score": 0.0,
-      "semantic_min_score": 0.5689549360814325,
+      "lexical_min_score": 0.0827640881769065,
+      "semantic_min_score": 0.6020669904499151,
       "train_positive_count": 48,
       "train_negative_count": 384,
       "calibration_positive_count": 24,
       "calibration_negative_count": 192,
       "calibration_recall": 1.0,
-      "calibration_negative_exclusion_rate": 0.036458333333333336
+      "calibration_negative_exclusion_rate": 0.10416666666666667
     },
     "MP": {
-      "lexical_min_score": 0.039193090083481034,
-      "semantic_min_score": 0.4805013375375814,
+      "lexical_min_score": 0.06728631102524889,
+      "semantic_min_score": 0.552360977474838,
       "train_positive_count": 48,
       "train_negative_count": 384,
       "calibration_positive_count": 24,
@@ -51,14 +52,14 @@
       "calibration_negative_exclusion_rate": 0.015625
     },
     "MS": {
-      "lexical_min_score": 0.0,
-      "semantic_min_score": 0.540746386466293,
+      "lexical_min_score": 0.05876339005942004,
+      "semantic_min_score": 0.5271099646806728,
       "train_positive_count": 48,
       "train_negative_count": 384,
       "calibration_positive_count": 24,
       "calibration_negative_count": 192,
       "calibration_recall": 1.0,
-      "calibration_negative_exclusion_rate": 0.015625
+      "calibration_negative_exclusion_rate": 0.026041666666666668
     }
   },
   "strategy_floor_calibration_status": "no_labeled_synthetic_strategy_candidates_available_in_this_corpus; strategy floors frozen at (0.0, 0.0) -- no exclusion -- rather than fabricated from nonexistent ground truth",
@@ -66,23 +67,23 @@
     "rrf_k": 60,
     "memory_floors_by_source": {
       "ME": {
-        "lexical_min_score": 0.0,
-        "semantic_min_score": 0.5689549360814325
+        "lexical_min_score": 0.0827640881769065,
+        "semantic_min_score": 0.6020669904499151
       },
       "MP": {
-        "lexical_min_score": 0.039193090083481034,
-        "semantic_min_score": 0.4805013375375814
+        "lexical_min_score": 0.06728631102524889,
+        "semantic_min_score": 0.552360977474838
       },
       "MS": {
-        "lexical_min_score": 0.0,
-        "semantic_min_score": 0.540746386466293
+        "lexical_min_score": 0.05876339005942004,
+        "semantic_min_score": 0.5271099646806728
       }
     },
     "strategy_floors": {
       "lexical_min_score": 0.0,
       "semantic_min_score": 0.0
     },
-    "contract_sha256": "1e9115a2bfcbc1df791f7e0c605a90abd43628e41a8274529c21e6d5196a9124"
+    "contract_sha256": "c8674d11a6d39f762b7c2d01094a3e56201b1bf1f629b61d78030b9233bc8e5f"
   },
   "report_only_evoemo_diagnostic_not_confirmatory": {
     "note": "Every number below uses EvoEmo's evaluator-only subsequent_topics/related_sessions ground truth and topic text as a query stand-in -- report-only, computed after the frozen_contract above was already fixed, and never fed back into floor calibration. Scope is ME only: related_sessions ground truth has no MP/MS analogue.",
@@ -219,7 +220,7 @@
       "hybrid": {
         "topics_evaluated": 34,
         "hit_rate": 0.9117647058823529,
-        "mean_precision": 0.45784313725490194,
+        "mean_precision": 0.46715686274509804,
         "query_hashes": [
           "b483b8a2953db23c3c8249ce45ccb47ed552e00534d7d7fa3fa3c6e5cf32f624",
           "efa38c87d37bd2cae6c9ffcdbf6291c27109eb68e614f359220cbd8276e52227",

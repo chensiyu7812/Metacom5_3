@@ -33,12 +33,17 @@ Fusion/normalization contract (frozen, not tuned against any result):
 - **Independent per-source score floors** are applied to raw (unranked)
   scores before ranking, as a fail-closed exclusion of candidates neither
   scorer considers even weakly relevant: a candidate is dropped only if its
-  raw lexical score is at or below ``lexical_min_score`` *and* its raw
-  semantic score is at or below ``semantic_min_score`` -- either scorer
+  raw lexical score is *strictly below* ``lexical_min_score`` *and* its raw
+  semantic score is *strictly below* ``semantic_min_score`` -- either scorer
   alone can rescue a candidate the other misses, which is the entire reason
-  to hybridize. Floors are calibrated only against the synthetic
-  train/calibration split's evaluator-only memory-utility labels (see the
-  diagnostic script) and are recorded, not hand-guessed.
+  to hybridize. The comparison is strict (``<``), not ``<=``, specifically
+  so that a floor computed as "the minimum score among known-good examples"
+  (see ``hybrid_retrieval_diagnostics.calibrate_source_floors``) can never
+  exclude the very example that defines it: that example's score sits AT
+  the floor, not below it, on whichever scorer it was the minimum for.
+  Floors are calibrated only against the synthetic train/calibration
+  split's evaluator-only memory-utility labels (see the diagnostic script)
+  and are recorded, not hand-guessed.
 - Final tie-break after fusion is the same deterministic secondary key
   pattern already used by the real, frozen retrievers in ``retrieval.py``:
   ``(fusion_score, created_session, memory_id_or_strategy_id)``.
@@ -199,7 +204,7 @@ class HybridMemoryRetriever:
             floors = floors_of(item)
             lex = lexical_score(query_text, item.text)
             sem = float(query_vector @ item_vector)
-            if lex <= floors.lexical_min_score and sem <= floors.semantic_min_score:
+            if lex < floors.lexical_min_score and sem < floors.semantic_min_score:
                 continue
             lexical_rows.append((lex, item.created_session, item.memory_id))
             semantic_rows.append((sem, item.created_session, item.memory_id))
@@ -293,6 +298,15 @@ class HybridStrategyRetriever:
         self.top_k = top_k
         self.floors = floors
         self.rrf_k = int(rrf_k)
+        # The Strategy Bank is large (11k+ cards in the real V1.5 bank) and
+        # fixed once this retriever is constructed -- embed every card's
+        # retrieval_text exactly once here rather than re-encoding the
+        # entire bank on every rank_all()/retrieve() call.
+        self._card_vectors = (
+            self.semantic_encoder.encode([card.retrieval_text for card in self.cards])
+            if self.cards
+            else None
+        )
 
     def rank_all(self, query: str) -> list[StrategyCard]:
         """Full ranking of every card passing the floor filter, never sliced."""
@@ -300,16 +314,14 @@ class HybridStrategyRetriever:
         if not self.cards:
             return []
         query_vector = self.semantic_encoder.encode([query])[0]
-        card_vectors = self.semantic_encoder.encode(
-            [card.retrieval_text for card in self.cards]
-        )
+        card_vectors = self._card_vectors
         lexical_rows: list[tuple[float, int, str]] = []
         semantic_rows: list[tuple[float, int, str]] = []
         raw_by_id: dict[str, StrategyCard] = {}
         for card, card_vector in zip(self.cards, card_vectors):
             lex = lexical_score(query, card.retrieval_text)
             sem = float(query_vector @ card_vector)
-            if lex <= self.floors.lexical_min_score and sem <= self.floors.semantic_min_score:
+            if lex < self.floors.lexical_min_score and sem < self.floors.semantic_min_score:
                 continue
             # StrategyCard has no created_session; use a constant so the
             # deterministic tie-break reduces to (score, strategy_id).
@@ -339,6 +351,23 @@ class HybridStrategyRetriever:
         """Top-k, matching StrategyRetriever's public interface."""
 
         return self.rank_all(query)[: self.top_k]
+
+    def confidence(self, query: str) -> float:
+        """Matches StrategyRetriever.confidence's exact lexical-only semantics.
+
+        Provided for interface parity only (real callers such as
+        ``policies.py`` gate on ``confidence(query) >= threshold``). Deliberately
+        NOT redefined as a hybrid/fused quantity: no real consumer uses this
+        method yet, and inventing a new fused-confidence formula without any
+        calibration or validation evidence would repeat the same mistake this
+        project exists to avoid -- fabricating a number instead of measuring
+        one. If Hybrid is ever adopted, this method should be revisited
+        together with that decision, not before.
+        """
+
+        if not self.cards:
+            return 0.0
+        return max(lexical_score(query, card.retrieval_text) for card in self.cards)
 
 
 def retrieve_fixed_token_budget(
