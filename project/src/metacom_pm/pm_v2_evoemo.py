@@ -80,6 +80,7 @@ from .pm_v1_5_rule_router import (
 from .pm_v2_fixed_model import FixedActionPMV2Model
 from .pm_v2_model import PMV2Model, decision_fallback_kind
 from .prompts import generation_messages
+from .response_mechanism_contract import build_response_mechanism_contract
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import conservative_token_bound, estimate_tokens, normalize_space
 
@@ -624,6 +625,7 @@ def run_pmv2_fixed_evoemo(
     fixed_tracks_path: str | Path,
     out_dir: str | Path,
     *,
+    project_root: str | Path,
     generator_endpoint: Endpoint,
     supporter_generation_contract: SupporterGenerationContract,
     fixed_seeker_generation_contract: Mapping[str, Any],
@@ -2536,6 +2538,27 @@ def run_pmv2_fixed_evoemo(
             cost_match_preflight_path,
             False,
         )
+    generator_endpoint_sha256 = sha256_text(
+        canonical_json(
+            {
+                "model": generator_endpoint.model,
+                "family": generator_endpoint.family,
+                "base_url": generator_endpoint.base_url,
+            }
+        )
+    )
+    response_mechanism_contract = build_response_mechanism_contract(
+        project_root=project_root,
+        supporter_generation_contract=supporter_generation_contract,
+        generator_endpoint_sha256=generator_endpoint_sha256,
+        strategy_bank_sha256=sha256_file(strategy_bank_path),
+        memory_min_score=memory_min_score,
+        strategy_min_score=strategy_min_score,
+        strategy_top_k=int(strategy_top_k),
+        evidence_filter_enabled=bool(
+            evidence_filter_config.enabled if evidence_filter_config is not None else False
+        ),
+    )
     create_artifact_attestation(
         attestation_path,
         stage="evoemo_pm_v2_generation",
@@ -2550,6 +2573,7 @@ def run_pmv2_fixed_evoemo(
             "evo_memory_global_catalog_sha256": evo_memory_digest[
                 "global_catalog_sha256"
             ],
+            "response_mechanism_contract": response_mechanism_contract,
             "supporter_generation_treatment": supporter_treatment,
             "supporter_generation_treatment_sha256": supporter_treatment_sha256,
             "fixed_seeker_generation_treatment": fixed_seeker_treatment,
@@ -2564,15 +2588,7 @@ def run_pmv2_fixed_evoemo(
             "action_preflight_gate_scope": "frozen_evaluation_turns_only",
             "all_turn_action_preflight_is_diagnostic_only": True,
             "selection_config_hash": model.selection_config.digest(),
-            "generator_endpoint_sha256": sha256_text(
-                canonical_json(
-                    {
-                        "model": generator_endpoint.model,
-                        "family": generator_endpoint.family,
-                        "base_url": generator_endpoint.base_url,
-                    }
-                )
-            ),
+            "generator_endpoint_sha256": generator_endpoint_sha256,
             "strategy_action_tokens": int(strategy_action_tokens),
             "strategy_top_k": int(strategy_top_k),
             "memory_min_score": memory_min_score,

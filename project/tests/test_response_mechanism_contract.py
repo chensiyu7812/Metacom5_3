@@ -116,3 +116,19 @@ def test_require_matching_response_mechanism_contract_fails_closed_when_differen
         require_matching_response_mechanism_contract(
             expected=expected, actual=actual, context="test"
         )
+
+
+def test_none_score_floor_is_not_coerced_to_zero_and_changes_the_hash():
+    # MemoryRetriever/StrategyRetriever treat None as "no floor at all" (a
+    # zero-score candidate is still retrieved) while 0.0 excludes zero-score
+    # candidates (score > threshold). These are different mechanisms and must
+    # produce different contract hashes, not be silently conflated.
+    none_floor = build_response_mechanism_contract(
+        **_base_kwargs(memory_min_score=None, strategy_min_score=None)
+    )
+    zero_floor = build_response_mechanism_contract(
+        **_base_kwargs(memory_min_score=0.0, strategy_min_score=0.0)
+    )
+    assert none_floor["retrieval_settings"]["memory_min_score"] is None
+    assert none_floor["retrieval_settings"]["strategy_min_score"] is None
+    assert none_floor["contract_sha256"] != zero_floor["contract_sha256"]

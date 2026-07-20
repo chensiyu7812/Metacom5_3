@@ -130,8 +130,8 @@ def build_response_mechanism_contract(
     supporter_generation_contract: SupporterGenerationContract,
     generator_endpoint_sha256: str,
     strategy_bank_sha256: str,
-    memory_min_score: float,
-    strategy_min_score: float,
+    memory_min_score: float | None,
+    strategy_min_score: float | None,
     strategy_top_k: int,
     evidence_filter_enabled: bool,
 ) -> dict[str, Any]:
@@ -142,6 +142,14 @@ def build_response_mechanism_contract(
     ``generator_endpoint_sha256``/config values, then record
     ``contract_sha256`` in its own attestation. The freeze must verify all
     recorded values are equal (see ``require_matching_response_mechanism_contract``).
+
+    ``memory_min_score``/``strategy_min_score`` of ``None`` is not the same
+    thing as ``0.0``: ``MemoryRetriever``/``StrategyRetriever`` treat ``None``
+    as "no score floor at all" (a zero-score candidate is still retrieved),
+    while a floor of ``0.0`` excludes zero-score candidates (``score >
+    threshold``). Callers must pass the real value through unchanged rather
+    than coercing ``None`` to ``0.0``, or this contract would silently claim a
+    different retrieval mechanism than the one actually running.
     """
 
     root = Path(project_root).resolve()
@@ -155,8 +163,12 @@ def build_response_mechanism_contract(
         "generator_endpoint_sha256": generator_endpoint_sha256,
         "strategy_bank_sha256": strategy_bank_sha256,
         "retrieval_settings": {
-            "memory_min_score": float(memory_min_score),
-            "strategy_min_score": float(strategy_min_score),
+            "memory_min_score": (
+                float(memory_min_score) if memory_min_score is not None else None
+            ),
+            "strategy_min_score": (
+                float(strategy_min_score) if strategy_min_score is not None else None
+            ),
             "strategy_top_k": int(strategy_top_k),
         },
         "memory_top_k_by_source": {

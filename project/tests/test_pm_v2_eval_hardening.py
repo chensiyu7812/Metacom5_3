@@ -862,6 +862,7 @@ def test_evoemo_turn_resume_never_repeats_successful_or_failed_http_attempts(
     }
     out_dir = tmp_path / "out"
     kwargs = {
+        "project_root": Path(__file__).resolve().parents[1],
         "generator_endpoint": endpoint,
         "supporter_generation_contract": SupporterGenerationContract.from_config(
             load_config("configs/pm_v2.yaml")

@@ -46,6 +46,7 @@ from metacom_pm.pm_v2_semantic_audit import (
     require_semantic_sanity_pass,
 )
 from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.response_mechanism_contract import build_response_mechanism_contract
 from metacom_pm.v1_5_actual_corpus_review import (
     require_actual_corpus_semantic_review_pass,
 )
@@ -792,9 +793,32 @@ def main() -> None:
             raise RuntimeError("output pricing override differs from PM-v2 YAML")
         args.input_usd_per_mtok = frozen_input_price
         args.output_usd_per_mtok = frozen_output_price
+        generator_endpoint = endpoint_from_config(
+            experiment_config, supporter_generation_contract.generator_endpoint
+        )
+        generator_endpoint_sha256 = sha256_text(
+            canonical_json(
+                {
+                    "model": generator_endpoint.model,
+                    "family": generator_endpoint.family,
+                    "base_url": generator_endpoint.base_url,
+                }
+            )
+        )
+        response_mechanism_contract = build_response_mechanism_contract(
+            project_root=ROOT,
+            supporter_generation_contract=supporter_generation_contract,
+            generator_endpoint_sha256=generator_endpoint_sha256,
+            strategy_bank_sha256=sha256_file(args.strategy_bank),
+            memory_min_score=float(retrieval_config["memory_min_score"]),
+            strategy_min_score=float(retrieval_config["strategy_min_score"]),
+            strategy_top_k=int(retrieval_config["strategy_top_k"]),
+            evidence_filter_enabled=bool(evidence_filter_config.enabled),
+        )
         contract_bindings = {
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "pm_v2_version": str(pm_config["version"]),
+            "response_mechanism_contract": response_mechanism_contract,
             "supporter_generation_treatment": (
                 supporter_generation_contract.payload()
             ),
