@@ -1916,11 +1916,16 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
         13,
         33,
     )
+    # ME items are session-internal episode chunks (see
+    # _chunk_session_episodes in evoemo.py), not one item per whole
+    # session, so ME's per-user item count is now much higher than MS's
+    # (which is still one item per session) at a comparable per-item
+    # token size to the training-time compiler's ME items.
     assert (min(real_counts[MemorySource.ME]), max(real_counts[MemorySource.ME])) == (
-        13,
-        33,
+        38,
+        109,
     )
-    assert max(real_token_totals) == 9935
+    assert max(real_token_totals) == 9950
     assert reports
     assert not any(report["severe_metadata_ood"] for report in reports)
     assert not any(report["recommendation"] == "FALLBACK" for report in reports)

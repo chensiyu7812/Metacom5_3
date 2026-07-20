@@ -238,12 +238,115 @@ def _opaque_memory_id(user_id: str, source: str, key: str) -> str:
     return f"mem_{stable_hex('evo', user_id, source, key, n=20)}"
 
 
+EVO_MEMORY_PROTOCOL = "pm-v1.5-evo-memory-episode-chunked-v1"
+# A single very long turn stands alone rather than being split; a short
+# trailing chunk at the end of a session (nothing left to merge with) is
+# left under the minimum rather than reaching backward across what is
+# already a separate, earlier-closed chunk. Frozen from the length/support
+# diagnostics reported in this project's own memory-catalog review (median
+# training ME item ~37 tokens; prior external ME was ~280 tokens from
+# concatenating a whole session) -- never adjusted against any judged or
+# outcome-bearing result.
+EVO_MEMORY_EPISODE_MIN_TOKENS = 60
+EVO_MEMORY_EPISODE_MAX_TOKENS = 120
+
+
+def _chunk_session_episodes(
+    turns: Sequence[tuple[int, str]],
+) -> list[tuple[int, int, str]]:
+    """Greedily group one session's seeker turns, in original dialogue
+    order, into non-overlapping episode chunks of
+    [EVO_MEMORY_EPISODE_MIN_TOKENS, EVO_MEMORY_EPISODE_MAX_TOKENS] tokens.
+
+    Deterministic and content-only: boundaries depend solely on turn order
+    and length, never on any evaluator-only signal (related sessions,
+    future topics, observations, reference answers). Never merges across
+    sessions. Returns (first_turn_index, last_turn_index, merged_text)
+    triples so callers can build a stable, auditable "turn span" id.
+    """
+    chunks: list[tuple[int, int, str]] = []
+    current_indices: list[int] = []
+    current_texts: list[str] = []
+    current_tokens = 0
+    for turn_index, text in turns:
+        text_tokens = estimate_tokens(text)
+        if (
+            current_texts
+            and current_tokens >= EVO_MEMORY_EPISODE_MIN_TOKENS
+            and current_tokens + text_tokens > EVO_MEMORY_EPISODE_MAX_TOKENS
+        ):
+            chunks.append(
+                (current_indices[0], current_indices[-1], " ".join(current_texts))
+            )
+            current_indices = []
+            current_texts = []
+            current_tokens = 0
+        current_indices.append(turn_index)
+        current_texts.append(text)
+        current_tokens += text_tokens
+    if current_texts:
+        chunks.append(
+            (current_indices[0], current_indices[-1], " ".join(current_texts))
+        )
+    return chunks
+
+
+def evo_memory_builder_contract_hash() -> str:
+    return sha256_text(
+        canonical_json(
+            {
+                "protocol": EVO_MEMORY_PROTOCOL,
+                "episode_min_tokens": EVO_MEMORY_EPISODE_MIN_TOKENS,
+                "episode_max_tokens": EVO_MEMORY_EPISODE_MAX_TOKENS,
+            }
+        )
+    )
+
+
+def evo_memory_catalog_digest(user: dict[str, Any]) -> dict[str, Any]:
+    """Per-user fingerprint of build_evo_memory's exact output, for binding
+    into freeze/manifest/attestation checks so a change to the builder or
+    its frozen thresholds is never silently inherited by a downstream
+    artifact computed under the old shape.
+    """
+    items, _ = build_evo_memory(user)
+    rows = [item.model_dump(mode="json") for item in items]
+    return {
+        "protocol": EVO_MEMORY_PROTOCOL,
+        "builder_contract_sha256": evo_memory_builder_contract_hash(),
+        "user_id": str(user["id"]),
+        "item_count": len(rows),
+        "catalog_sha256": sha256_text(canonical_json(rows)),
+    }
+
+
+def evo_memory_global_catalog_digest(users: Sequence[dict[str, Any]]) -> dict[str, Any]:
+    per_user = [evo_memory_catalog_digest(user) for user in users]
+    return {
+        "protocol": EVO_MEMORY_PROTOCOL,
+        "builder_contract_sha256": evo_memory_builder_contract_hash(),
+        "user_count": len(per_user),
+        "per_user_catalog_sha256": {
+            row["user_id"]: row["catalog_sha256"] for row in per_user
+        },
+        "global_catalog_sha256": sha256_text(
+            canonical_json([row["catalog_sha256"] for row in per_user])
+        ),
+    }
+
+
 def build_evo_memory(user: dict[str, Any]) -> tuple[list[MemoryItem], list[dict[str, Any]]]:
     """Build deployable memory only from profile and past dialogue history.
 
     Event timelines, observation annotations, related-session labels, QA
     evidence, reference answers and future topics are evaluator-only and never
     enter the policy/generator view.
+
+    ME items are session-internal episode chunks (see
+    _chunk_session_episodes), not one item per whole session: concatenating
+    every seeker turn in a session into a single item produced ME items far
+    longer (median ~280 tokens) than the training-time compiler's ME items
+    (median ~37 tokens), a train/deploy representation mismatch.
     """
     user_id = str(user["id"])
     items: list[MemoryItem] = []
@@ -275,18 +378,23 @@ def build_evo_memory(user: dict[str, Any]) -> tuple[list[MemoryItem], list[dict[
                 timestamp=timestamp or None,
                 text=summary,
             ))
-        seeker_turns = [
-            normalize_space(turn.get("content") or "")
-            for turn in (session.get("dialogue") or [])
+        dialogue = session.get("dialogue") or []
+        seeker_turns_with_index = [
+            (turn_index, normalize_space(turn.get("content") or ""))
+            for turn_index, turn in enumerate(dialogue)
             if turn.get("role") == "seeker" and normalize_space(turn.get("content") or "")
         ]
-        if seeker_turns:
+        for start_index, end_index, chunk_text in _chunk_session_episodes(
+            seeker_turns_with_index
+        ):
             items.append(MemoryItem(
-                memory_id=_opaque_memory_id(user_id, "ME", session_id),
+                memory_id=_opaque_memory_id(
+                    user_id, "ME", f"{session_id}_turns_{start_index}_{end_index}"
+                ),
                 source=MemorySource.ME,
                 created_session=index,
                 timestamp=timestamp or None,
-                text=" ".join(seeker_turns),
+                text=chunk_text,
             ))
         dialogue_text = "\n".join(
             f"{turn.get('role')}: {normalize_space(turn.get('content') or '')}"
