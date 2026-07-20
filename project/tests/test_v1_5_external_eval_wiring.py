@@ -30,6 +30,8 @@ from metacom_pm.evoemo import (
     load_evoemo,
 )
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.generation_contract import SupporterGenerationContract
+from metacom_pm.response_mechanism_contract import build_response_mechanism_contract
 from metacom_pm.io import (
     canonical_json,
     read_json,
@@ -644,6 +646,36 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "step0_shortcut_audit_report_sha256": "e" * 64,
         "step0_shortcut_audit_attestation_sha256": "f" * 64,
     }
+    pm_v1_5_config_for_fixture = load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    fixture_supporter_contract = SupporterGenerationContract.from_config(
+        pm_v1_5_config_for_fixture
+    )
+    fixture_generator_endpoint = endpoint_from_config(
+        load_config(ROOT / "configs" / "experiment.yaml"),
+        fixture_supporter_contract.generator_endpoint,
+    )
+    fixture_generator_endpoint_sha256 = sha256_text(
+        canonical_json(
+            {
+                "model": fixture_generator_endpoint.model,
+                "family": fixture_generator_endpoint.family,
+                "base_url": fixture_generator_endpoint.base_url,
+            }
+        )
+    )
+    fixture_retrieval = pm_v1_5_config_for_fixture["retrieval"]
+    fixture_response_mechanism_contract = build_response_mechanism_contract(
+        project_root=ROOT,
+        supporter_generation_contract=fixture_supporter_contract,
+        generator_endpoint_sha256=fixture_generator_endpoint_sha256,
+        strategy_bank_sha256=sha256_file(
+            ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl"
+        ),
+        memory_min_score=fixture_retrieval["memory_min_score"],
+        strategy_min_score=fixture_retrieval["strategy_min_score"],
+        strategy_top_k=fixture_retrieval["strategy_top_k"],
+        evidence_filter_enabled=False,
+    )
     sweep_bindings = {
         "scope": "full",
         "pm_v2_config_sha256": sha256_file(
@@ -657,6 +689,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "evidence_filter_model": {"mode": "disabled_for_pm_v1_5"},
         "semantic_sanity": semantic_review,
         "v1_5_full_sweep_gate": full_sweep_gate,
+        "response_mechanism_contract": fixture_response_mechanism_contract,
     }
     sweep_summary = workdir / "sweep_summary.json"
     write_json(

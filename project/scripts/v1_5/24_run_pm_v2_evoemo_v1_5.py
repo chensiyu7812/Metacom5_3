@@ -22,6 +22,10 @@ from metacom_pm.pm_v2_evoemo import (
     run_pmv2_fixed_evoemo,
 )
 from metacom_pm.pm_v2_external_eval import expected_external_units
+from metacom_pm.response_mechanism_contract import (
+    build_response_mechanism_contract,
+    require_matching_response_mechanism_contract,
+)
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_semantic_runtime_contract,
@@ -328,6 +332,21 @@ def main() -> None:
     )
     if endpoint_sha != contract.get("generator_endpoint_sha256"):
         raise RuntimeError("generator endpoint changed after study freeze")
+    live_response_mechanism_contract = build_response_mechanism_contract(
+        project_root=ROOT,
+        supporter_generation_contract=supporter_generation_contract,
+        generator_endpoint_sha256=endpoint_sha,
+        strategy_bank_sha256=sha256_file(strategy_path),
+        memory_min_score=contract.get("memory_min_score"),
+        strategy_min_score=contract.get("strategy_min_score"),
+        strategy_top_k=int(contract["strategy_top_k"]),
+        evidence_filter_enabled=bool(evidence_filter_config.enabled),
+    )
+    require_matching_response_mechanism_contract(
+        expected=contract.get("response_mechanism_contract") or {},
+        actual=live_response_mechanism_contract,
+        context="study freeze vs live EvoEmo external generation",
+    )
     simulator_id = str(contract["simulator_id"])
     max_turns = int(contract["max_turns"])
     seeds = [int(value) for value in contract["seeds"]]

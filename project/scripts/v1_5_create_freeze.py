@@ -61,6 +61,10 @@ from metacom_pm.pm_v22_reference_baselines import (
     POLICY_LOCK_TIMING,
     POST_GENERATION_POLICY_TUNING_PROHIBITED,
 )
+from metacom_pm.response_mechanism_contract import (
+    build_response_mechanism_contract,
+    require_matching_response_mechanism_contract,
+)
 from metacom_pm.strategy_bank import find_deterministic_esconv_evoemo_overlaps
 from metacom_pm.v1_5_forced_swap_canary import (
     KEY_CLAIM_GATE,
@@ -254,7 +258,16 @@ def _require_attestation_record_matches(
 def require_v1_5_retrieval_consistency(
     pm_v1_5_config: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Fail before paid external generation if development/external RAG drifts."""
+    """Fail before paid external generation if development/external RAG drifts.
+
+    This only ever compares three scalar config values; it never touches the
+    query-builder code, the lexical scorer, the Strategy Bank content, the
+    Evidence Filter state, the action-execution code, the prompt-compiler
+    code, or the internal sweep's own actually-recorded generator endpoint.
+    Kept as a cheap, early, narrow sanity check; see
+    ``require_v1_5_response_mechanism_consistency`` below for the broader
+    check that subsumes it against the real, already-attested internal sweep.
+    """
 
     retrieval = dict(pm_v1_5_config.get("retrieval") or {})
     external = dict(pm_v1_5_config.get("external_evaluation") or {})
@@ -281,6 +294,50 @@ def require_v1_5_retrieval_consistency(
         "status": "PASS",
         "protocol": "pm-v1.5-development-external-retrieval-lock-v1",
         **development_values,
+    }
+
+
+def require_v1_5_response_mechanism_consistency(
+    *,
+    freeze_contract: Mapping[str, Any],
+    sweep_contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Fail closed unless the frozen external mechanism equals the sweep's real one.
+
+    ``response_mechanism_contract`` binds the query-builder/lexical-scorer
+    code, the Strategy Bank content, the Evidence Filter state, the
+    action-execution code, the prompt-compiler code, and the generator
+    endpoint -- everything ``require_v1_5_retrieval_consistency`` misses.
+    ``freeze_contract`` is what this freeze requires the eventual external
+    (EvoEmo/ESConv) generation run to match; ``sweep_contract`` is the real
+    value the already-completed internal action sweep actually recorded in
+    its own attestation. A mismatch here means development training ran on a
+    different retrieval/prompt/action-execution mechanism than external
+    generation is frozen to use -- the exact training/deployment
+    action-semantics mismatch this project exists to eliminate.
+    """
+
+    require_matching_response_mechanism_contract(
+        expected=freeze_contract,
+        actual=sweep_contract,
+        context="study freeze vs internal action sweep",
+    )
+    # Explicit, direct check (in addition to the full-contract hash compare
+    # above) so a generator-endpoint drift specifically is never buried
+    # inside an opaque "contract differs somewhere" failure.
+    if freeze_contract.get("generator_endpoint_sha256") != sweep_contract.get(
+        "generator_endpoint_sha256"
+    ):
+        raise RuntimeError(
+            "study freeze generator endpoint differs from the internal "
+            "action sweep's own generator endpoint"
+        )
+    return {
+        "status": "PASS",
+        "protocol": "pm-v1.5-response-mechanism-freeze-vs-sweep-consistency-v1",
+        "response_mechanism_contract_sha256": freeze_contract.get(
+            "contract_sha256"
+        ),
     }
 
 
@@ -654,6 +711,13 @@ def require_v1_5_development_chain(
         or (bindings.get("evidence_filter") or {}).get("enabled") is not False
         or (bindings.get("evidence_filter_model") or {}).get("mode")
         != "disabled_for_pm_v1_5"
+        or not isinstance(bindings.get("response_mechanism_contract"), dict)
+        or not str(
+            (bindings.get("response_mechanism_contract") or {}).get(
+                "contract_sha256"
+            )
+            or ""
+        )
         or sweep_parameters.get("max_cards") is not None
         or sweep_parameters.get("action_filter") is not None
         or sweep_parameters.get("card_filter") is not None
@@ -772,6 +836,9 @@ def require_v1_5_development_chain(
         "step0_shortcut_audit_attestation_sha256": full_gate[
             "step0_shortcut_audit_attestation_sha256"
         ],
+        "sweep_response_mechanism_contract": bindings.get(
+            "response_mechanism_contract"
+        ),
     }
 
 
@@ -1466,7 +1533,23 @@ def main() -> None:
     # the same way a changed supporter/fixed-seeker treatment is.
     evo_memory_digest = evo_memory_global_catalog_digest(load_evoemo(args.evoemo))
 
+    response_mechanism_contract = build_response_mechanism_contract(
+        project_root=ROOT,
+        supporter_generation_contract=supporter_generation_contract,
+        generator_endpoint_sha256=generator_endpoint_sha256,
+        strategy_bank_sha256=sha256_file(args.strategy_bank),
+        memory_min_score=external.get("memory_min_score"),
+        strategy_min_score=external.get("strategy_min_score"),
+        strategy_top_k=int(external["strategy_top_k"]),
+        evidence_filter_enabled=bool(evidence_filter_config.enabled),
+    )
+    response_mechanism_consistency = require_v1_5_response_mechanism_consistency(
+        freeze_contract=response_mechanism_contract,
+        sweep_contract=development_chain["sweep_response_mechanism_contract"],
+    )
+
     generation_contract: dict[str, Any] = {
+        "response_mechanism_contract": response_mechanism_contract,
         "evo_memory_builder_contract_sha256": evo_memory_digest[
             "builder_contract_sha256"
         ],
@@ -1883,6 +1966,7 @@ def main() -> None:
         "fixed_baselines": fixed_report["baselines"],
         "fixed_seeker_tracks": fixed_tracks_verification,
         "retrieval_consistency": retrieval_consistency,
+        "response_mechanism_consistency": response_mechanism_consistency,
         "judge_role_isolation": judge_role_isolation,
         "bank_seed_lineage": bank_seed_lineage,
         "evoemo_chronology_audit": chronology_audit,
