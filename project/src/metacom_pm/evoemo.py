@@ -6,6 +6,7 @@ from copy import deepcopy
 from datetime import date
 import json
 import math
+import re
 import time
 
 from .api import (
@@ -238,48 +239,102 @@ def _opaque_memory_id(user_id: str, source: str, key: str) -> str:
     return f"mem_{stable_hex('evo', user_id, source, key, n=20)}"
 
 
-EVO_MEMORY_PROTOCOL = "pm-v1.5-evo-memory-episode-chunked-v2"
-# EVO_MEMORY_EPISODE_MAX_TOKENS is a genuine hard cap on every chunk except
-# a single turn that already exceeds it alone (unavoidable without
-# splitting one turn's text mid-sentence, which is out of scope here).
-# EVO_MEMORY_EPISODE_MIN_TOKENS is a target, not a guarantee: a short
-# trailing chunk at the end of a session (nothing left to merge with
-# under the cap) is left under the minimum rather than reaching backward
-# across an already-closed earlier chunk. Frozen from the length/support
-# diagnostics reported in this project's own memory-catalog review (median
-# training ME item ~37 tokens; prior external ME was ~280 tokens from
-# concatenating a whole session) -- never adjusted against any judged or
-# outcome-bearing result. This range is a first-pass target, not proof
-# that 60-120 tokens is the "right" support match for the ~37-token
-# training distribution; the two remain visibly different and should be
-# reported as such, not described as "comparable."
-EVO_MEMORY_EPISODE_MIN_TOKENS = 60
+EVO_MEMORY_PROTOCOL = "pm-v1.5-evo-memory-episode-chunked-v3"
+# EVO_MEMORY_EPISODE_MAX_TOKENS is a genuine hard cap on every emitted
+# chunk, with NO exception: a turn that itself exceeds the cap is split
+# (see _split_oversized_text) rather than left over-cap.
+# EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS is a reporting/diagnostic target
+# only -- it has never gated anything since the chunker's hard-cap fix
+# (it would otherwise let a not-yet-at-minimum chunk absorb turns past the
+# cap). A short trailing chunk at the end of a session (nothing left to
+# merge with under the cap) is expected and left under the target. Frozen
+# from the length/support diagnostics reported in this project's own
+# memory-catalog review (median training ME item ~37 tokens; prior
+# external ME was ~280 tokens from concatenating a whole session) -- never
+# adjusted against any judged or outcome-bearing result. This range is a
+# first-pass target, not proof that 60-120 tokens is the "right" support
+# match for the ~37-token training distribution; the two remain visibly
+# different and should be reported as such, not described as "comparable."
+EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS = 60
 EVO_MEMORY_EPISODE_MAX_TOKENS = 120
+
+_SENTENCE_BOUNDARY_RE = re.compile(r"(?<=[.!?])\s+")
+
+
+def _split_oversized_text(text: str, max_tokens: int) -> list[str]:
+    """Split one over-cap piece of text into ordered, non-overlapping,
+    lossless pieces each within max_tokens.
+
+    Tries deterministic sentence boundaries first; falls back to
+    word-boundary greedy packing for a single sentence still over cap;
+    falls back further to a raw bounded character span for a single word
+    still over cap (pathological, but must still never lose or truncate
+    content silently). ``text`` is assumed already normalize_space-d
+    (collapsed to single spaces between tokens), so joining the returned
+    pieces with a single space exactly reconstructs the input -- this is
+    exercised directly by
+    test_chunk_session_episodes_splits_an_oversized_turn_losslessly.
+    """
+    if estimate_tokens(text) <= max_tokens:
+        return [text]
+
+    sentences = [s for s in _SENTENCE_BOUNDARY_RE.split(text) if s]
+    if len(sentences) > 1:
+        pieces: list[str] = []
+        for sentence in sentences:
+            pieces.extend(_split_oversized_text(sentence, max_tokens))
+        return pieces
+
+    words = text.split(" ")
+    if len(words) > 1:
+        packed: list[str] = []
+        current: list[str] = []
+        for word in words:
+            candidate = " ".join([*current, word]) if current else word
+            if current and estimate_tokens(candidate) > max_tokens:
+                packed.append(" ".join(current))
+                current = []
+            current.append(word)
+        if current:
+            packed.append(" ".join(current))
+        pieces = []
+        for piece in packed:
+            pieces.extend(_split_oversized_text(piece, max_tokens))
+        return pieces
+
+    # A single word (no internal spaces) still over cap: the only
+    # remaining lossless option is a raw, bounded character span. Every
+    # character of the word appears in exactly one span, in order.
+    char_limit = max_tokens * 4
+    return [text[i : i + char_limit] for i in range(0, len(text), char_limit)]
 
 
 def _chunk_session_episodes(
     turns: Sequence[tuple[int, str]],
     *,
     max_tokens: int = EVO_MEMORY_EPISODE_MAX_TOKENS,
-) -> list[tuple[int, int, str]]:
+) -> list[tuple[int, int, str, int | None]]:
     """Greedily group one session's seeker turns, in original dialogue
     order, into non-overlapping episode chunks, hard-capped at
-    max_tokens (a single turn already at or over the cap stands alone
-    rather than being split). EVO_MEMORY_EPISODE_MIN_TOKENS is a target
-    used only in prose/reporting, never enforced here as a gate.
+    max_tokens with NO exception (a turn that itself exceeds the cap is
+    split via _split_oversized_text, never left over-cap).
+    EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS is a target used only in
+    prose/reporting, never enforced here as a gate.
 
     max_tokens defaults to the frozen production value
     (EVO_MEMORY_EPISODE_MAX_TOKENS) but is a parameter specifically so a
     no-API sensitivity check can recompile the real catalog under
-    alternative caps without duplicating this logic -- see
-    scripts/*_evo_memory_chunk_sensitivity*.py. Only the frozen default is
-    ever used by build_evo_memory itself.
+    alternative caps without duplicating this logic. Only the frozen
+    default is ever used by build_evo_memory itself.
 
     Deterministic and content-only: boundaries depend solely on turn order
     and length, never on any evaluator-only signal (related sessions,
     future topics, observations, reference answers). Never merges across
-    sessions. Returns (first_turn_index, last_turn_index, merged_text)
-    triples so callers can build a stable, auditable "turn span" id.
+    sessions. Returns (first_turn_index, last_turn_index, chunk_text,
+    span_index) quadruples: span_index is None for a normal chunk (one or
+    more whole turns), or an integer 0, 1, 2, ... identifying one lossless
+    piece of a single oversized turn that had to be split -- callers use
+    this to build a stable, auditable, and always-unique id.
 
     The would-be joined text's token count is recomputed on every turn
     (not tracked as a running sum of per-turn estimates): estimate_tokens
@@ -307,7 +362,21 @@ def _chunk_session_episodes(
         chunks.append(
             (current_indices[0], current_indices[-1], " ".join(current_texts))
         )
-    return chunks
+
+    # The packing loop above only ever leaves a chunk over-cap when it is a
+    # single, isolated turn (start == end): as soon as a second turn would
+    # be added to an already-over-cap accumulation, the check above closes
+    # it first. Expand any such chunk into lossless, non-overlapping,
+    # uniquely-identified sub-spans; every other chunk passes through
+    # unchanged with span_index=None.
+    expanded: list[tuple[int, int, str, int | None]] = []
+    for start, end, text in chunks:
+        if estimate_tokens(text) <= max_tokens:
+            expanded.append((start, end, text, None))
+            continue
+        for span_index, piece in enumerate(_split_oversized_text(text, max_tokens)):
+            expanded.append((start, end, piece, span_index))
+    return expanded
 
 
 def evo_memory_builder_contract_hash() -> str:
@@ -315,7 +384,7 @@ def evo_memory_builder_contract_hash() -> str:
         canonical_json(
             {
                 "protocol": EVO_MEMORY_PROTOCOL,
-                "episode_min_tokens": EVO_MEMORY_EPISODE_MIN_TOKENS,
+                "episode_target_min_tokens": EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS,
                 "episode_max_tokens": EVO_MEMORY_EPISODE_MAX_TOKENS,
             }
         )
@@ -403,13 +472,14 @@ def build_evo_memory(user: dict[str, Any]) -> tuple[list[MemoryItem], list[dict[
             for turn_index, turn in enumerate(dialogue)
             if turn.get("role") == "seeker" and normalize_space(turn.get("content") or "")
         ]
-        for start_index, end_index, chunk_text in _chunk_session_episodes(
+        for start_index, end_index, chunk_text, span_index in _chunk_session_episodes(
             seeker_turns_with_index
         ):
+            id_key = f"{session_id}_turns_{start_index}_{end_index}"
+            if span_index is not None:
+                id_key = f"{id_key}_span{span_index}"
             items.append(MemoryItem(
-                memory_id=_opaque_memory_id(
-                    user_id, "ME", f"{session_id}_turns_{start_index}_{end_index}"
-                ),
+                memory_id=_opaque_memory_id(user_id, "ME", id_key),
                 source=MemorySource.ME,
                 created_session=index,
                 timestamp=timestamp or None,

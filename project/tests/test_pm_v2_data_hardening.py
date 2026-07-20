@@ -1923,8 +1923,8 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
     # scale after that change; it is not a claim that the resulting
     # per-item token size now matches the training-time compiler's ME
     # items (median ~37 tokens there vs a visibly larger median here) --
-    # see the module-level note on EVO_MEMORY_EPISODE_MIN_TOKENS/MAX_TOKENS
-    # in evoemo.py.
+    # see the module-level note on EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS/
+    # MAX_TOKENS in evoemo.py.
     assert (min(real_counts[MemorySource.ME]), max(real_counts[MemorySource.ME])) == (
         37,
         109,
@@ -1942,10 +1942,9 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
 
 def test_chunk_session_episodes_enforces_a_true_hard_cap() -> None:
     """EVO_MEMORY_EPISODE_MAX_TOKENS must be a real hard cap on every
-    multi-turn chunk, not merely a target that a not-yet-at-minimum
-    accumulation can sail past. Only a single turn that is already at or
-    over the cap by itself may exceed it, since splitting one turn's text
-    is out of scope.
+    emitted chunk, with NO exception -- including a single turn that is
+    itself over the cap, which must now be split rather than left over-cap
+    or merged with a neighbor.
     """
     from metacom_pm.evoemo import (
         EVO_MEMORY_EPISODE_MAX_TOKENS,
@@ -1953,39 +1952,38 @@ def test_chunk_session_episodes_enforces_a_true_hard_cap() -> None:
     )
     from metacom_pm.text import estimate_tokens
 
-    # Two turns individually under the minimum (60) whose sum would blow
-    # past the maximum (120) if naively accumulated while "still below
-    # minimum" -- this reproduces the real bug found in the real EvoEmo
-    # corpus (items observed up to 143 tokens against a 120 cap).
+    # Two turns individually small whose sum would blow past the maximum
+    # (120) if naively accumulated while "still below the target minimum"
+    # -- this reproduces the real bug found in the real EvoEmo corpus
+    # (items observed up to 143 tokens against a 120 cap).
     turns = [
-        (0, "short " * 8),   # well under min alone
-        (1, "word " * 25),   # combined with turn 0, would exceed max if merged
+        (0, "short " * 8),
+        (1, "word " * 25),
         (2, "tail " * 3),
     ]
     chunks = _chunk_session_episodes(turns)
-    for _, _, text in chunks:
+    for _, _, text, _span in chunks:
         assert estimate_tokens(text) <= EVO_MEMORY_EPISODE_MAX_TOKENS
+    assert all(span is None for *_, span in chunks)
 
-    # A single turn already at/over the cap stands alone rather than being
-    # split or merged -- the one documented, disclosed exception.
+    # A single turn already at/over the cap is now split, never left
+    # over-cap and never merged with a neighboring turn.
     oversized_turns = [(0, "small "), (1, "huge " * 200)]
     oversized_chunks = _chunk_session_episodes(oversized_turns)
-    oversized_texts = [text for _, _, text in oversized_chunks]
-    assert any(
-        estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS
-        for text in oversized_texts
-    )
-    # ...but that oversized text must be exactly the one oversized turn,
-    # never merged with the small neighboring turn.
-    assert "small" not in [
-        text for text in oversized_texts if estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS
-    ][0]
+    for start, end, text, span in oversized_chunks:
+        assert estimate_tokens(text) <= EVO_MEMORY_EPISODE_MAX_TOKENS
+        if start == 0 and end == 0:
+            assert span is None
+            assert text.strip() == "small"
+        else:
+            assert start == 1 and end == 1
+            assert span is not None
+            assert "small" not in text
 
-    # Real-corpus regression: after the fix, only genuinely single-turn
-    # chunks may exceed the cap.
+    # Real-corpus regression: NOTHING may exceed the cap anymore, single
+    # turn or not.
     users = load_evoemo(PROJECT_ROOT / "data/external/evo_emo.json")
-    over_cap_multi_turn = 0
-    over_cap_single_turn = 0
+    over_cap = 0
     for user in users:
         for session in user.get("dialog_history") or []:
             dialogue = session.get("dialogue") or []
@@ -1994,13 +1992,93 @@ def test_chunk_session_episodes_enforces_a_true_hard_cap() -> None:
                 for i, t in enumerate(dialogue)
                 if t.get("role") == "seeker" and normalize_space(t.get("content") or "")
             ]
-            for start, end, text in _chunk_session_episodes(seeker_turns_with_index):
+            for _start, _end, text, _span in _chunk_session_episodes(
+                seeker_turns_with_index
+            ):
                 if estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS:
-                    if start == end:
-                        over_cap_single_turn += 1
-                    else:
-                        over_cap_multi_turn += 1
-    assert over_cap_multi_turn == 0
+                    over_cap += 1
+    assert over_cap == 0
+
+
+def test_chunk_session_episodes_splits_an_oversized_turn_losslessly() -> None:
+    """A turn that itself exceeds the cap must be split into pieces that
+    are, together, lossless (concatenation reproduces the original text
+    exactly), non-overlapping, order-preserving, and each uniquely
+    identified -- across an entire session's output, including when
+    multiple turns each need splitting.
+    """
+    from metacom_pm.evoemo import _chunk_session_episodes
+    from metacom_pm.text import estimate_tokens
+
+    long_turn_a = " ".join(
+        f"This is sentence number {i} of a very long turn that goes on and on."
+        for i in range(20)
+    )
+    # A run-on "sentence" with no terminal punctuation at all, forcing the
+    # word-boundary fallback rather than sentence-boundary splitting.
+    long_turn_b = " ".join(f"word{i}" for i in range(200))
+    # A single pathological "word" with no spaces, forcing the raw
+    # bounded-character-span fallback.
+    long_turn_c = "x" * 1000
+
+    turns = [
+        (0, "short intro"),
+        (1, long_turn_a),
+        (2, "short middle"),
+        (3, long_turn_b),
+        (4, long_turn_c),
+        (5, "short outro"),
+    ]
+    max_tokens = 80
+    chunks = _chunk_session_episodes(turns, max_tokens=max_tokens)
+
+    for _start, _end, text, _span in chunks:
+        assert estimate_tokens(text) <= max_tokens
+
+    # Reconstruct each turn's own pieces (in emitted order, which must
+    # match source order) and compare against the original text. Every
+    # turn here is already normalize_space-d (single spaces between
+    # tokens), so space-joining its pieces is lossless for the
+    # sentence/word-boundary splits (turns 0, 1, 2, 3, 5); the single
+    # pathological no-space "word" (turn 4) instead needs a raw join since
+    # its pieces are exact character slices with no separator between
+    # them.
+    for turn_index, original_text in turns:
+        pieces = [
+            text for start, end, text, _span in chunks if start == turn_index == end
+        ]
+        assert pieces, f"turn {turn_index} produced no chunks"
+        if turn_index == 4:
+            assert "".join(pieces) == original_text
+        else:
+            assert " ".join(pieces) == original_text
+
+    # No overlap / no loss, checked structurally: every chunk belonging to
+    # a split turn, concatenated in emission order, must equal that turn's
+    # original text (word-joined for sentence/word splits, raw-joined for
+    # the character-span fallback) -- already checked above per turn.
+    # Order preserved: chunks for a given turn appear with strictly
+    # increasing span_index, and turns overall appear in non-decreasing
+    # turn-index order.
+    seen_turn_order = [start for start, _end, _text, _span in chunks]
+    assert seen_turn_order == sorted(seen_turn_order)
+    for turn_index, _ in turns:
+        span_sequence = [
+            span
+            for start, end, _text, span in chunks
+            if start == turn_index == end and span is not None
+        ]
+        assert span_sequence == list(range(len(span_sequence)))
+
+    # ID uniqueness: build the same ids build_evo_memory would, across the
+    # whole session's output, and confirm no collisions.
+    ids = []
+    for start, end, _text, span in chunks:
+        id_key = f"session_x_turns_{start}_{end}"
+        if span is not None:
+            id_key = f"{id_key}_span{span}"
+        ids.append(id_key)
+    assert len(ids) == len(set(ids))
 
 
 def test_split_manifest_rejects_same_split_duplicate_current_text() -> None:
