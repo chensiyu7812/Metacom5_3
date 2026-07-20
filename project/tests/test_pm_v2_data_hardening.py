@@ -1160,6 +1160,33 @@ def test_surface_lint_does_not_treat_parent_as_leaking_financial_uncertainty() -
     )
 
 
+def test_surface_lint_does_not_treat_relationship_loss_as_grief() -> None:
+    # Regression for the V8.15 formal-generation run (pmv2_internal_test_u013/
+    # profile_needed): grief_adjustment's bare "loss" anchor is a real
+    # standalone word (not a substring artifact), but it is a generic word
+    # for any negative change, not specific to bereavement, so genuine
+    # relationship_uncertainty text about a breakup ("confusion and loss
+    # regarding the end of the relationship") false-positived a
+    # current_leaks_other_family check. "griev" is added alongside the
+    # unrelated exact word "grief" so verb forms like "grieving" still
+    # anchor without needing "loss" as a fallback.
+    assert not pm_v2_data_module._family_anchor_hits(
+        "The user is reflecting on their feelings after a breakup with a "
+        "partner, expressing confusion and loss regarding the end of the "
+        "relationship.",
+        "grief_adjustment",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I still feel the grief of losing my father last year.",
+        "grief_adjustment",
+    )
+    assert pm_v2_data_module._family_anchor_hits(
+        "I feel like I'm grieving the loss of normalcy since everything "
+        "changed with the pandemic.",
+        "grief_adjustment",
+    )
+
+
 def test_surface_lint_accepts_natural_social_anxiety_phrasing() -> None:
     # Regression for the V8.13 formal-generation run (pmv2_train_u003/
     # multi_source_needed): real gpt-4o-mini completions wrote "meeting new

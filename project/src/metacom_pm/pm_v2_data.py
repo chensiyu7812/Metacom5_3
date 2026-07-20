@@ -1058,7 +1058,15 @@ GENERATION_FAMILY_ANCHORS: dict[str, tuple[str, ...]] = {
     "sleep_disruption": ("sleep", "insomnia", "awake", "rest"),
     "identity_transition": ("identity", "who i am", "transition", "sense of self"),
     "financial_uncertainty": ("money", "financial", "rent", "debt", "budget"),
-    "grief_adjustment": ("grief", "loss", "passed away", "bereav"),
+    # No bare "loss": it is a generic word for any negative change (a
+    # breakup, a job, motivation, confidence, ...), not specific to
+    # bereavement, and false-positived a current_leaks_other_family check
+    # against genuine relationship_uncertainty text during the V8.15 formal
+    # run (pmv2_internal_test_u013/profile_needed, "confusion and loss
+    # regarding the end of the relationship"). "griev" is added (alongside
+    # the unrelated exact word "grief") so verb forms like "grieving" still
+    # anchor without needing "loss" as a fallback.
+    "grief_adjustment": ("grief", "griev", "passed away", "bereav"),
     "health_routine_stress": ("health", "exercise", "routine", "appointment"),
     "conflict_repair": ("conflict", "argument", "apolog", "repair"),
     "self_confidence": ("confidence", "self-doubt", "capable", "insecure"),
