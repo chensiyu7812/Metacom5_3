@@ -2836,8 +2836,19 @@ def generation_case_messages(
     semantic_family: str,
     forbidden_families: Sequence[str],
     repair: bool = False,
+    forbidden_exact_texts: Sequence[str] = (),
 ) -> list[dict[str, str]]:
-    """Build a fully precomputable one-case, surface-only provider request."""
+    """Build a fully precomputable one-case, surface-only provider request.
+
+    ``forbidden_exact_texts`` is for the narrow duplicate-specific bounded
+    repair case: a case whose prior current_user_text collided with a
+    DIFFERENT user's case (caught by validate_split_manifests) is
+    regenerated with that exact sentence named as forbidden, so the model
+    re-expresses the same concern rather than reproducing its own
+    canonical phrasing for the family again. Empty by default so every
+    other call site's prompt (and surface_generation_contract_hash) is
+    byte-identical to before this parameter existed.
+    """
 
     expected_regime = dict(GENERATION_CASE_FIELDS).get(case_field)
     if expected_regime is None or expected_regime is not regime:
@@ -2914,6 +2925,22 @@ def generation_case_messages(
             "support style naturally uncertain."
         ),
     }[advice_readiness_target]
+    duplicate_repair_lock = (
+        (
+            "\nDUPLICATE REPAIR LOCK\n"
+            "- This case previously produced a current_user_text that turned out to be "
+            "an exact duplicate of a DIFFERENT synthetic user's case elsewhere in this "
+            "development corpus. current_user_text must NOT normalize "
+            "(lowercased, whitespace-collapsed) to any of these forbidden sentences: "
+            + " | ".join(f'"{text}"' for text in forbidden_exact_texts)
+            + ". Re-express the SAME underlying concern for this family using "
+            "different syntax and specific wording. Do not introduce a synthetic "
+            "nonce, case ID, unusual marker, or switch to a different semantic "
+            "family or concern just to force uniqueness."
+        )
+        if forbidden_exact_texts
+        else ""
+    )
     system = (
         "You create one privacy-safe synthetic emotional-support conversation "
         "surface. Return only the strict GeneratedSurfaceOnlyCaseDraft JSON. "
@@ -2942,7 +2969,7 @@ HARD TOPIC LOCK
   assigned family, especially anything resembling: [{forbidden_anchors}].
   Natural language overlaps between everyday topics are fine; a different
   family's specific storyline is not.
-
+{duplicate_repair_lock}
 SURFACE RULES
 1. dialogue_exchanges_before_current contains EXACTLY {exchange_target} earlier
    user-to-assistant exchanges ({observable_design['history_turn_target']} turns).

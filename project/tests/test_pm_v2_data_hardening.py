@@ -95,6 +95,7 @@ from metacom_pm.pm_v2_data import (
     require_bundle_generation_binding,
     runtime_to_pmv2_state,
     state_to_v1_runtime,
+    surface_generation_contract_hash,
     validate_generation_shortcut_controls,
     validate_split_manifests,
     write_development_dataset,
@@ -2313,6 +2314,45 @@ def test_saved_dry_run_mismatch_writes_field_level_diagnostic(
     }
 
 
+def test_generation_case_messages_duplicate_repair_lock_is_opt_in_and_exact() -> None:
+    """forbidden_exact_texts is for the narrow duplicate-specific bounded
+    repair case: default (empty) must not change the prompt at all -- so
+    every existing generation_pilot_attestation binding (keyed to
+    surface_generation_contract_hash()) stays valid -- and a non-empty
+    value must name the forbidden sentence(s) verbatim without touching
+    anything else about the case (family, regime, topic lock).
+    """
+    kwargs = dict(
+        seed_dialogue="A held-out seed dialogue.",
+        user_id="pmv2_calibration_u012",
+        case_field="ambiguous",
+        regime=ResourceNeedRegime.AMBIGUOUS,
+        semantic_family="self_confidence",
+        forbidden_families=["relocation_loneliness", "sleep_disruption"],
+        repair=False,
+    )
+    baseline = generation_case_messages(**kwargs)
+    default_explicit = generation_case_messages(**kwargs, forbidden_exact_texts=())
+    assert baseline == default_explicit
+    assert "DUPLICATE REPAIR LOCK" not in baseline[1]["content"]
+    assert surface_generation_contract_hash() == surface_generation_contract_hash()
+
+    forbidden_text = "I've been feeling really insecure about my abilities lately."
+    locked = generation_case_messages(
+        **kwargs, forbidden_exact_texts=[forbidden_text]
+    )
+    assert locked[0] == baseline[0]
+    locked_user_content = locked[1]["content"]
+    assert "DUPLICATE REPAIR LOCK" in locked_user_content
+    assert f'"{forbidden_text}"' in locked_user_content
+    assert "synthetic nonce" in locked_user_content
+    # Removing only the lock section recovers exactly the baseline prompt.
+    lock_start = locked_user_content.index("\nDUPLICATE REPAIR LOCK")
+    lock_end = locked_user_content.index("\nSURFACE RULES")
+    stripped = locked_user_content[:lock_start] + locked_user_content[lock_end:]
+    assert stripped == baseline[1]["content"]
+
+
 def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
     tmp_path: Path,
 ) -> None:
@@ -2527,6 +2567,117 @@ def test_carry_forward_falls_back_across_multiple_source_directories(
     )
     assert missing_bundle is None
     assert "no carried-forward surface available" in missing_outcome
+
+
+def test_load_duplicate_repair_spec_rejects_cases_the_manifest_did_not_flag(
+    tmp_path: Path,
+) -> None:
+    """A duplicate-repair-spec entry is never a way to force a fresh
+    generation the cross-user duplicate-repair manifest did not already
+    flag -- it can only add the forbidden-text lock to an ALREADY-flagged
+    case field.
+    """
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec_module = importlib.util.spec_from_file_location(
+        "pm_v1_5_duplicate_repair_spec", script
+    )
+    assert spec_module is not None and spec_module.loader is not None
+    module = importlib.util.module_from_spec(spec_module)
+    spec_module.loader.exec_module(module)
+
+    casewise_repair_plan = {
+        "pmv2_calibration_u012": {
+            "carried_case_fields": ["context_only"],
+            "regenerated_case_fields": ["ambiguous"],
+            "carried_case_sources": {"context_only": "some/dir"},
+        }
+    }
+
+    valid_spec_path = tmp_path / "valid_spec.json"
+    write_json(
+        valid_spec_path,
+        {
+            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
+            "repairs": [
+                {
+                    "user_id": "pmv2_calibration_u012",
+                    "case_field": "ambiguous",
+                    "forbidden_current_user_text": (
+                        "I've been feeling really insecure about my abilities lately."
+                    ),
+                    "duplicate_of": {
+                        "user_id": "pmv2_calibration_u010",
+                        "case_field": "multi_source_needed",
+                    },
+                }
+            ],
+        },
+    )
+    loaded = module._load_duplicate_repair_spec(valid_spec_path, casewise_repair_plan)
+    key = ("pmv2_calibration_u012", "ambiguous")
+    assert set(loaded) == {key}
+    assert loaded[key]["forbidden_current_user_text"] == (
+        "I've been feeling really insecure about my abilities lately."
+    )
+    assert loaded[key]["forbidden_current_user_text_sha256"] == sha256_text(
+        "I've been feeling really insecure about my abilities lately."
+    )
+    assert loaded[key]["duplicate_of"] == {
+        "user_id": "pmv2_calibration_u010",
+        "case_field": "multi_source_needed",
+    }
+
+    # Naming a case the manifest never flagged (here: a different case
+    # field for the same user) must fail closed, not silently force a
+    # fresh regeneration of an otherwise-clean carried case.
+    unflagged_spec_path = tmp_path / "unflagged_spec.json"
+    write_json(
+        unflagged_spec_path,
+        {
+            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
+            "repairs": [
+                {
+                    "user_id": "pmv2_calibration_u012",
+                    "case_field": "context_only",
+                    "forbidden_current_user_text": "some text",
+                    "duplicate_of": {"user_id": "x", "case_field": "y"},
+                }
+            ],
+        },
+    )
+    with pytest.raises(RuntimeError, match="did not flag for regeneration"):
+        module._load_duplicate_repair_spec(unflagged_spec_path, casewise_repair_plan)
+
+    # Wrong protocol also fails closed.
+    wrong_protocol_path = tmp_path / "wrong_protocol.json"
+    write_json(wrong_protocol_path, {"protocol": "not-the-right-protocol", "repairs": []})
+    with pytest.raises(RuntimeError, match="unrecognized or missing protocol"):
+        module._load_duplicate_repair_spec(wrong_protocol_path, casewise_repair_plan)
+
+    # An empty forbidden text fails closed rather than silently locking
+    # against an empty string (which would forbid nothing).
+    empty_text_path = tmp_path / "empty_text.json"
+    write_json(
+        empty_text_path,
+        {
+            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
+            "repairs": [
+                {
+                    "user_id": "pmv2_calibration_u012",
+                    "case_field": "ambiguous",
+                    "forbidden_current_user_text": "   ",
+                    "duplicate_of": {"user_id": "x", "case_field": "y"},
+                }
+            ],
+        },
+    )
+    with pytest.raises(RuntimeError, match="empty forbidden text"):
+        module._load_duplicate_repair_spec(empty_text_path, casewise_repair_plan)
 
 
 def test_seed_casewise_carry_forward_into_ledger_recovers_only_carried_fields(

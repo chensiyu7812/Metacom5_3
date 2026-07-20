@@ -110,6 +110,14 @@ GENERATION_COST_PROTOCOL = (
     "pm_v2_generation_cost_v3_casewise_surface_bounded_repair_ledger"
 )
 GENERATION_STAGE = "pm_v2_synthetic_surface_generation"
+DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL = (
+    "pm-v1.5-duplicate-specific-bounded-repair-v1"
+)
+# Comfortably above the maximum seed the normal per-case formula can ever
+# reach (base_seed + up to 51*1000 + 8*10 + 1), so a duplicate-specific
+# repair attempt never reuses the exact seed that produced the colliding
+# text, without touching the normal formula or its budget for anyone else.
+DUPLICATE_REPAIR_SEED_OFFSET = 900_000
 
 
 class ReportedInputTokenOverrun(RuntimeError):
@@ -427,6 +435,48 @@ def _seed_casewise_carry_forward_into_ledger(
             "carried_case_fields": carried_case_provenance,
         }
     return casewise_carry_provenance
+
+
+def _load_duplicate_repair_spec(
+    path: Path,
+    casewise_repair_plan: dict[str, dict[str, Any]],
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """Load and fail-closed-validate a duplicate-specific bounded repair spec.
+
+    Every named (user_id, case_field) must already be a case the cross-user
+    duplicate-repair manifest flagged for regeneration -- this is never a
+    way to force a fresh generation the manifest did not already flag, and
+    never a way to touch the OTHER (already-fine) side of a collision.
+    """
+    spec = read_json(path)
+    if spec.get("protocol") != DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL:
+        raise RuntimeError(
+            "duplicate-repair-spec has an unrecognized or missing protocol"
+        )
+    flagged_case_fields = {
+        (user_id, case_field)
+        for user_id, plan in casewise_repair_plan.items()
+        for case_field in plan["regenerated_case_fields"]
+    }
+    duplicate_repair_by_case: dict[tuple[str, str], dict[str, Any]] = {}
+    for entry in spec.get("repairs", []):
+        key = (str(entry["user_id"]), str(entry["case_field"]))
+        if key not in flagged_case_fields:
+            raise RuntimeError(
+                "duplicate-repair-spec names a case the cross-user "
+                f"duplicate-repair manifest did not flag for regeneration: {key}"
+            )
+        if key in duplicate_repair_by_case:
+            raise RuntimeError(f"duplicate-repair-spec repeats case {key}")
+        forbidden_text = str(entry["forbidden_current_user_text"])
+        if not forbidden_text.strip():
+            raise RuntimeError(f"duplicate-repair-spec has an empty forbidden text for {key}")
+        duplicate_repair_by_case[key] = {
+            "forbidden_current_user_text": forbidden_text,
+            "forbidden_current_user_text_sha256": sha256_text(forbidden_text),
+            "duplicate_of": dict(entry["duplicate_of"]),
+        }
+    return duplicate_repair_by_case
 
 
 def _compute_cross_user_duplicate_repair_manifest(
@@ -1118,6 +1168,27 @@ def main() -> None:
             "carried forward, never silently dropped or forced through."
         ),
     )
+    parser.add_argument(
+        "--duplicate-repair-spec",
+        type=Path,
+        help=(
+            "Optional JSON file naming exact-duplicate-specific bounded repairs: "
+            "{\"protocol\": \"pm-v1.5-duplicate-specific-bounded-repair-v1\", "
+            "\"repairs\": [{\"user_id\":..., \"case_field\":..., "
+            "\"forbidden_current_user_text\":..., \"duplicate_of\": "
+            "{\"user_id\":..., \"case_field\":...}}]}. Each entry must name a "
+            "case field already flagged for regeneration by the cross-user "
+            "duplicate-repair manifest (via --carry-forward-from); it is never "
+            "a way to force a fresh generation the manifest did not already "
+            "flag. The forbidden text is added to that one case's prompt as an "
+            "exact-normalized-match exclusion and a distinct, deterministic "
+            "repair seed is used, so a case that reproduced a colliding "
+            "sentence verbatim on its first fresh regeneration is asked to "
+            "re-express the same concern differently rather than trying the "
+            "same prompt again unchanged. Temperature, family, regime, and "
+            "every other generation parameter are untouched."
+        ),
+    )
     parser.add_argument("--train-users", type=int)
     parser.add_argument("--calibration-users", type=int)
     parser.add_argument("--internal-test-users", type=int)
@@ -1664,6 +1735,18 @@ def main() -> None:
             if bundle.provenance.get("carried_forward_from") is not None
         )
 
+    # Exact-duplicate-specific bounded repair: a case that the cross-user
+    # duplicate-repair manifest already flagged for regeneration, but whose
+    # first fresh regeneration reproduced the exact colliding sentence
+    # again, gets ONE targeted retry naming that sentence as forbidden --
+    # never a whole-user regeneration and never a change to the OTHER
+    # (already-fine) side of the collision.
+    duplicate_repair_by_case: dict[tuple[str, str], dict[str, Any]] = {}
+    if args.duplicate_repair_spec is not None:
+        duplicate_repair_by_case = _load_duplicate_repair_spec(
+            args.duplicate_repair_spec, casewise_repair_plan
+        )
+
     all_user_attempts: dict[str, dict[str, Any]] = {}
     for user_index, user_id in enumerate(planned_users):
         seed_dialogue_index = user_index % len(seeds)
@@ -1681,6 +1764,7 @@ def main() -> None:
             forbidden_families = [
                 family for family in families if family != semantic_family
             ]
+            duplicate_repair = duplicate_repair_by_case.get((user_id, case_field))
             attempts: list[dict[str, Any]] = []
             for attempt_index in range(args.max_generation_attempts):
                 attempt_kind = "initial" if attempt_index == 0 else "repair"
@@ -1692,12 +1776,18 @@ def main() -> None:
                     semantic_family=semantic_family,
                     forbidden_families=forbidden_families,
                     repair=attempt_kind == "repair",
+                    forbidden_exact_texts=(
+                        [duplicate_repair["forbidden_current_user_text"]]
+                        if duplicate_repair is not None
+                        else ()
+                    ),
                 )
                 attempt_seed = (
                     int(args.seed)
                     + user_index * 1000
                     + case_index * 10
                     + attempt_index
+                    + (DUPLICATE_REPAIR_SEED_OFFSET if duplicate_repair is not None else 0)
                 )
                 request_contract = chat_request_payload(
                     endpoint,
@@ -1713,7 +1803,11 @@ def main() -> None:
                 record_ids = {
                     "user_id": user_id,
                     "case_field": case_field,
-                    "attempt_kind": attempt_kind,
+                    "attempt_kind": (
+                        f"duplicate_repair_{attempt_kind}"
+                        if duplicate_repair is not None
+                        else attempt_kind
+                    ),
                     "generation_seed": attempt_seed,
                 }
                 call_key = physical_call_key(
@@ -1993,6 +2087,15 @@ def main() -> None:
         "generation_run_binding_sha256": generation_binding_sha256,
         "generation_run_binding": generation_binding,
         "carry_forward": carry_forward_report,
+        "duplicate_repair": {
+            f"{user_id}/{case_field}": {
+                "forbidden_current_user_text_sha256": entry[
+                    "forbidden_current_user_text_sha256"
+                ],
+                "duplicate_of": entry["duplicate_of"],
+            }
+            for (user_id, case_field), entry in sorted(duplicate_repair_by_case.items())
+        },
         "completed_bundle_hashes": completed_bundle_hashes,
         "completed_bundle_manifest_sha256": sha256_text(
             canonical_json(completed_bundle_hashes)
