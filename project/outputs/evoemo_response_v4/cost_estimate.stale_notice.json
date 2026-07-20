@@ -28,9 +28,9 @@
     "builder_contract_sha256_retroactive": "9ec603028cceb522d1f3da7062962e6cdd3ed9d2d23dfca65d0d5a7dafecd964"
   },
   "new_memory_protocol": {
-    "protocol": "pm-v1.5-evo-memory-episode-chunked-v2",
-    "description": "build_evo_memory's ME construction now chunks each session's seeker turns into non-overlapping, in-order, length-bounded (60-120 token) episode items with stable turn-span ids, instead of one whole-session item.",
-    "builder_contract_sha256": "4fa398f1ae74b1b04755970f0106e65552d7fcb24624e5796ad826a7b75a63fd"
+    "protocol": "pm-v1.5-evo-memory-episode-chunked-v3",
+    "description": "build_evo_memory's ME construction now chunks each session's seeker turns into non-overlapping, in-order, length-bounded episode items with stable turn-span ids (60-token reporting target, 120-token true hard cap -- any turn alone over the cap is losslessly split on sentence/word/bounded-character-span boundaries into further uniquely-id'd sub-spans), instead of one whole-session item.",
+    "builder_contract_sha256": "ec4768cb3b52932a11838196c45e41868b85d321716e18e26e6c6d8961c6c6cb"
   },
   "reason": "Indirect/lower-confidence staleness: estimate_response_v4_cost() in evo_response_v4.py does not call build_evo_memory() directly -- it measures token counts of previously generated dialogue units (candidate_turns, authorized_ground_truth) that were produced under the OLD build_evo_memory in an earlier pipeline stage. If those dialogues were ever regenerated under the new chunked-ME code, the prompts (and hence input_tokens/estimated_cost_usd/cost_estimate_sha256) would change. Flagged for completeness even though the dependency is transitive, not direct.",
   "historical_only": true,

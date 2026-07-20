@@ -24,6 +24,7 @@ from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
 from metacom_pm.evoemo import (
     FIXED_SEEKER_V22_STAGE,
+    evo_memory_global_catalog_digest,
     fixed_seeker_cost_planning_contract,
     load_evoemo,
     evoemo_chronology_audit,
@@ -1456,7 +1457,20 @@ def main() -> None:
         "expected_units_sha256": sha256_text(canonical_json(expected_units)),
     }
 
+    # Locked the same way every other treatment/config parameter above is:
+    # evoemo_sha256 (bound elsewhere in this contract via the raw file
+    # hash) only pins the INPUT file, not what build_evo_memory actually
+    # constructs from it (MP/MS/ME item content, chunking, ids). Binding
+    # this digest here means a future change to the memory builder is
+    # detected by 24/24a's own re-verification against this frozen value,
+    # the same way a changed supporter/fixed-seeker treatment is.
+    evo_memory_digest = evo_memory_global_catalog_digest(load_evoemo(args.evoemo))
+
     generation_contract: dict[str, Any] = {
+        "evo_memory_builder_contract_sha256": evo_memory_digest[
+            "builder_contract_sha256"
+        ],
+        "evo_memory_global_catalog_sha256": evo_memory_digest["global_catalog_sha256"],
         "protocol": supporter_generation_contract.version,
         "supporter_generation_treatment": supporter_generation_contract.payload(),
         "supporter_generation_treatment_sha256": supporter_generation_contract.digest(),

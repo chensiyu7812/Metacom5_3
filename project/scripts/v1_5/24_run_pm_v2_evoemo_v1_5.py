@@ -10,7 +10,11 @@ from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
-from metacom_pm.evoemo import fixed_seeker_cost_planning_contract
+from metacom_pm.evoemo import (
+    evo_memory_global_catalog_digest,
+    fixed_seeker_cost_planning_contract,
+    load_evoemo,
+)
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, sha256_file, sha256_text
 from metacom_pm.pm_v2_evoemo import (
@@ -294,6 +298,22 @@ def main() -> None:
         or contract.get("evidence_filter_model") != evidence_filter_model_binding
     ):
         raise RuntimeError("study freeze Evidence Filter contract is absent or stale")
+    # PM-v1.5: the freeze's evoemo_sha256 only pins the raw input file, not
+    # what build_evo_memory actually constructs from it (MP/MS/ME item
+    # content, chunking, ids). Independently recompute the same digest this
+    # run's own memory catalog would have and fail closed on any mismatch,
+    # so a memory-builder change that slipped in after the freeze cannot
+    # silently generate over a different catalog than was frozen.
+    live_evo_memory_digest = evo_memory_global_catalog_digest(load_evoemo(evoemo_path))
+    if (
+        contract.get("evo_memory_builder_contract_sha256")
+        != live_evo_memory_digest["builder_contract_sha256"]
+        or contract.get("evo_memory_global_catalog_sha256")
+        != live_evo_memory_digest["global_catalog_sha256"]
+    ):
+        raise RuntimeError(
+            "study freeze EvoEmo memory catalog is absent or stale"
+        )
     generator_pricing = resolve_frozen_generator_pricing(
         contract,
         input_override=args.input_usd_per_mtok,

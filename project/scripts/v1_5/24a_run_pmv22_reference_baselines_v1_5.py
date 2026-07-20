@@ -11,7 +11,9 @@ from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evoemo import (
     FIXED_SEEKER_V22_STAGE,
+    evo_memory_global_catalog_digest,
     fixed_seeker_cost_planning_contract,
+    load_evoemo,
 )
 from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
 from metacom_pm.freeze import require_study_freeze
@@ -298,6 +300,23 @@ def main() -> None:
     ):
         raise RuntimeError(
             "reference baselines' Evidence Filter binding does not match the PM-v1.5 freeze"
+        )
+    # PM-v1.5: the freeze's evoemo_sha256 only pins the raw input file, not
+    # what build_evo_memory actually constructs from it (MP/MS/ME item
+    # content, chunking, ids). Independently recompute the same digest this
+    # script's own memory catalog would have and fail closed on any
+    # mismatch, so a memory-builder change that slipped in after the freeze
+    # cannot silently produce reference baselines over a different catalog
+    # than PM was frozen against.
+    live_evo_memory_digest = evo_memory_global_catalog_digest(load_evoemo(args.evoemo))
+    if (
+        freeze_contract.get("evo_memory_builder_contract_sha256")
+        != live_evo_memory_digest["builder_contract_sha256"]
+        or freeze_contract.get("evo_memory_global_catalog_sha256")
+        != live_evo_memory_digest["global_catalog_sha256"]
+    ):
+        raise RuntimeError(
+            "reference baselines' EvoEmo memory catalog does not match the PM-v1.5 freeze"
         )
 
     external = dict(pm_v2["external_evaluation"])

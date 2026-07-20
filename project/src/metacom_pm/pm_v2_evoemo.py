@@ -39,6 +39,7 @@ from .evoemo import (
     _load_fixed_tracks,
     _track_key,
     build_evo_memory,
+    evo_memory_global_catalog_digest,
     fixed_seeker_cost_planning_contract,
     load_evoemo,
     make_evo_runtime_state,
@@ -993,11 +994,24 @@ def run_pmv2_fixed_evoemo(
         "evaluation_turn_indices"
     ]
 
+    # evoemo_sha256 above only pins the raw input file, not what
+    # build_evo_memory actually constructs from it (MP/MS/ME item content,
+    # chunking, ids) -- record that separately so this run's manifest is
+    # auditable against the memory builder that actually produced its
+    # retrieval catalog, not just the source data.
+    evo_memory_digest = evo_memory_global_catalog_digest(users)
+
     ensure_run_manifest(
         manifest_path,
         {
             "stage": "evoemo_pm_v2_generation",
             "evoemo_sha256": sha256_file(evoemo_path),
+            "evo_memory_builder_contract_sha256": evo_memory_digest[
+                "builder_contract_sha256"
+            ],
+            "evo_memory_global_catalog_sha256": evo_memory_digest[
+                "global_catalog_sha256"
+            ],
             "strategy_bank_sha256": sha256_file(strategy_bank_path),
             "checkpoint_sha256": sha256_file(checkpoint_path),
             "fixed_tracks_sha256": sha256_file(fixed_tracks_path),
@@ -1472,6 +1486,12 @@ def run_pmv2_fixed_evoemo(
         "stage": "evoemo_pm_v2_generation",
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "condition": condition,
+        "evo_memory_builder_contract_sha256": evo_memory_digest[
+            "builder_contract_sha256"
+        ],
+        "evo_memory_global_catalog_sha256": evo_memory_digest[
+            "global_catalog_sha256"
+        ],
         "supporter_generation_treatment": supporter_treatment,
         "supporter_generation_treatment_sha256": supporter_treatment_sha256,
         "fixed_seeker_generation_treatment": fixed_seeker_treatment,
@@ -2524,6 +2544,12 @@ def run_pmv2_fixed_evoemo(
         parameters={
             "condition": condition,
             "protocol": supporter_generation_contract.version,
+            "evo_memory_builder_contract_sha256": evo_memory_digest[
+                "builder_contract_sha256"
+            ],
+            "evo_memory_global_catalog_sha256": evo_memory_digest[
+                "global_catalog_sha256"
+            ],
             "supporter_generation_treatment": supporter_treatment,
             "supporter_generation_treatment_sha256": supporter_treatment_sha256,
             "fixed_seeker_generation_treatment": fixed_seeker_treatment,

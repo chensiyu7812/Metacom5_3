@@ -379,11 +379,32 @@ def _chunk_session_episodes(
     return expanded
 
 
+# Explicit, human-readable tags for every algorithmic component that
+# affects build_evo_memory's exact output. Each is a separately versioned
+# string (bump the specific tag that changed, not just EVO_MEMORY_PROTOCOL
+# as a whole) so evo_memory_builder_contract_hash changes whenever any of
+# them does, and a diff of the hashed dict shows exactly what changed.
+EVO_MEMORY_CHUNKING_ALGORITHM_TAG = "greedy_bin_pack_then_split_oversized_v1"
+EVO_MEMORY_LONG_TURN_SPLIT_PROTOCOL_TAG = (
+    "sentence_boundary_then_word_boundary_then_bounded_char_span_v1"
+)
+EVO_MEMORY_ID_SCHEME_TAG = "{session_id}_turns_{start}_{end}[_span{i}]_v1"
+EVO_MEMORY_NORMALIZATION_TAG = "normalize_space_single_space_collapse_v1"
+EVO_MEMORY_TOKEN_ESTIMATOR_PROTOCOL_TAG = (
+    "ceil_len_over_4_character_count_heuristic_v1"
+)
+
+
 def evo_memory_builder_contract_hash() -> str:
     return sha256_text(
         canonical_json(
             {
                 "protocol": EVO_MEMORY_PROTOCOL,
+                "chunking_algorithm": EVO_MEMORY_CHUNKING_ALGORITHM_TAG,
+                "long_turn_split_protocol": EVO_MEMORY_LONG_TURN_SPLIT_PROTOCOL_TAG,
+                "id_scheme": EVO_MEMORY_ID_SCHEME_TAG,
+                "normalization": EVO_MEMORY_NORMALIZATION_TAG,
+                "token_estimator_protocol": EVO_MEMORY_TOKEN_ESTIMATOR_PROTOCOL_TAG,
                 "episode_target_min_tokens": EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS,
                 "episode_max_tokens": EVO_MEMORY_EPISODE_MAX_TOKENS,
             }
@@ -409,16 +430,38 @@ def evo_memory_catalog_digest(user: dict[str, Any]) -> dict[str, Any]:
 
 
 def evo_memory_global_catalog_digest(users: Sequence[dict[str, Any]]) -> dict[str, Any]:
-    per_user = [evo_memory_catalog_digest(user) for user in users]
+    """Deterministic global fingerprint: per-user rows are sorted by
+    user_id (never by input iteration order, which callers should not be
+    required to keep stable) and each binds user_id/item_count/hash
+    together, not a bare hash keyed loosely by user_id.
+    """
+    per_user = sorted(
+        (evo_memory_catalog_digest(user) for user in users),
+        key=lambda row: row["user_id"],
+    )
     return {
         "protocol": EVO_MEMORY_PROTOCOL,
         "builder_contract_sha256": evo_memory_builder_contract_hash(),
         "user_count": len(per_user),
-        "per_user_catalog_sha256": {
-            row["user_id"]: row["catalog_sha256"] for row in per_user
-        },
+        "per_user": [
+            {
+                "user_id": row["user_id"],
+                "item_count": row["item_count"],
+                "catalog_sha256": row["catalog_sha256"],
+            }
+            for row in per_user
+        ],
         "global_catalog_sha256": sha256_text(
-            canonical_json([row["catalog_sha256"] for row in per_user])
+            canonical_json(
+                [
+                    {
+                        "user_id": row["user_id"],
+                        "item_count": row["item_count"],
+                        "catalog_sha256": row["catalog_sha256"],
+                    }
+                    for row in per_user
+                ]
+            )
         ),
     }
 

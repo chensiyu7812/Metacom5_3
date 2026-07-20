@@ -2081,6 +2081,72 @@ def test_chunk_session_episodes_splits_an_oversized_turn_losslessly() -> None:
     assert len(ids) == len(set(ids))
 
 
+def test_evo_memory_builder_contract_hash_covers_every_algorithmic_component(
+    monkeypatch,
+) -> None:
+    """The contract hash must change whenever ANY component that affects
+    build_evo_memory's exact output changes -- not just the two threshold
+    constants -- so a future change to the chunking algorithm, the
+    long-turn split protocol, the id scheme, normalization, or the
+    token-estimator protocol can never silently keep the old hash.
+    """
+    import metacom_pm.evoemo as evoemo_module
+
+    baseline = evoemo_module.evo_memory_builder_contract_hash()
+
+    tag_attrs = [
+        "EVO_MEMORY_PROTOCOL",
+        "EVO_MEMORY_CHUNKING_ALGORITHM_TAG",
+        "EVO_MEMORY_LONG_TURN_SPLIT_PROTOCOL_TAG",
+        "EVO_MEMORY_ID_SCHEME_TAG",
+        "EVO_MEMORY_NORMALIZATION_TAG",
+        "EVO_MEMORY_TOKEN_ESTIMATOR_PROTOCOL_TAG",
+        "EVO_MEMORY_EPISODE_TARGET_MIN_TOKENS",
+        "EVO_MEMORY_EPISODE_MAX_TOKENS",
+    ]
+    for attr in tag_attrs:
+        original = getattr(evoemo_module, attr)
+        perturbed = f"{original}-perturbed" if isinstance(original, str) else original + 1
+        monkeypatch.setattr(evoemo_module, attr, perturbed)
+        changed = evoemo_module.evo_memory_builder_contract_hash()
+        assert changed != baseline, f"hash did not change when {attr} changed"
+        monkeypatch.setattr(evoemo_module, attr, original)
+        assert evoemo_module.evo_memory_builder_contract_hash() == baseline
+
+
+def test_evo_memory_global_catalog_digest_is_sorted_and_binds_user_id_count_hash() -> None:
+    """The global digest must be deterministic regardless of input order
+    (sorted by user_id, not by however the caller happened to list users),
+    and each per-user row must bind user_id/item_count/catalog_sha256
+    together rather than a bare hash keyed loosely by user_id.
+    """
+    from metacom_pm.evoemo import (
+        evo_memory_catalog_digest,
+        evo_memory_global_catalog_digest,
+    )
+
+    users = load_evoemo(PROJECT_ROOT / "data/external/evo_emo.json")
+    forward = evo_memory_global_catalog_digest(users)
+    reversed_order = evo_memory_global_catalog_digest(list(reversed(users)))
+    assert forward == reversed_order
+
+    user_ids = [row["user_id"] for row in forward["per_user"]]
+    assert user_ids == sorted(user_ids)
+    assert len(set(user_ids)) == len(users)
+
+    # Every row's bound item_count/catalog_sha256 must match what the
+    # per-user digest independently computes for that same user -- not
+    # just be internally self-consistent.
+    by_id = {str(user["id"]): user for user in users}
+    for row in forward["per_user"]:
+        expected = evo_memory_catalog_digest(by_id[row["user_id"]])
+        assert row["item_count"] == expected["item_count"]
+        assert row["catalog_sha256"] == expected["catalog_sha256"]
+
+    assert forward["user_count"] == len(users)
+    assert forward["global_catalog_sha256"]
+
+
 def test_split_manifest_rejects_same_split_duplicate_current_text() -> None:
     first = case_to_state(
         user_id="duplicate_text_user_a",
