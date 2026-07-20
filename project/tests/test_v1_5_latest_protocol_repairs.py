@@ -86,6 +86,17 @@ def test_formal_chain_cannot_be_authorized_by_consumed_v4_review() -> None:
     assert "pm-v1.5-full-sweep-gate-v3" in sources[2]
 
 
+def test_v1_5_evoemo_runner_verifies_its_live_response_mechanism_against_the_freeze() -> None:
+    source = (
+        ROOT / "scripts" / "v1_5" / "24_run_pm_v2_evoemo_v1_5.py"
+    ).read_text(encoding="utf-8")
+    assert "build_response_mechanism_contract" in source
+    assert "require_matching_response_mechanism_contract" in source
+    # The live contract must be checked against the frozen one, not rebuilt
+    # from the frozen one's own values (which would make the check a no-op).
+    assert 'contract.get("response_mechanism_contract")' in source
+
+
 def test_formal_generation_separates_transport_retry_from_content_repair() -> None:
     script = (
         ROOT / "scripts" / "v1_5" / "20_generate_pm_v2_development_data_v1_5.py"

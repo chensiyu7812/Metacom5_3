@@ -64,17 +64,32 @@ def test_contract_hash_changes_with_every_input(override):
     assert changed["contract_sha256"] != baseline["contract_sha256"]
 
 
-def test_contract_hash_changes_when_shared_mechanism_code_changes(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "src/metacom_pm/prompts.py",
+        "src/metacom_pm/retrieval.py",
+        "src/metacom_pm/action_execution.py",
+        "src/metacom_pm/text.py",
+    ],
+)
+def test_contract_hash_changes_when_shared_mechanism_code_changes(
+    tmp_path, relative_path
+):
     # Copy the real project tree is too heavy for a unit test; instead prove
     # the code-identity binding works by pointing project_root at a temp
     # directory with a byte-perturbed copy of one mechanism file and
     # confirming the contract hash differs from the real tree's contract.
+    # Parametrized over every MECHANISM_CODE_RELATIVE_PATHS file so a
+    # prompt-compiler (prompts.py) or query-builder (retrieval.py) change is
+    # proven to change the hash, not just a text.py change.
     import shutil
 
     fake_root = tmp_path / "project"
     (fake_root / "src" / "metacom_pm").mkdir(parents=True)
     from metacom_pm.response_mechanism_contract import MECHANISM_CODE_RELATIVE_PATHS
 
+    assert relative_path in MECHANISM_CODE_RELATIVE_PATHS
     for relative in MECHANISM_CODE_RELATIVE_PATHS:
         dest = fake_root / relative
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -82,7 +97,7 @@ def test_contract_hash_changes_when_shared_mechanism_code_changes(tmp_path, monk
 
     baseline = build_response_mechanism_contract(**_base_kwargs(project_root=fake_root))
 
-    perturbed_path = fake_root / "src" / "metacom_pm" / "text.py"
+    perturbed_path = fake_root / relative_path
     perturbed_path.write_text(
         perturbed_path.read_text(encoding="utf-8") + "\n# perturbed\n",
         encoding="utf-8",
@@ -90,8 +105,8 @@ def test_contract_hash_changes_when_shared_mechanism_code_changes(tmp_path, monk
     perturbed = build_response_mechanism_contract(**_base_kwargs(project_root=fake_root))
     assert perturbed["contract_sha256"] != baseline["contract_sha256"]
     assert (
-        perturbed["shared_code_manifest"]["src/metacom_pm/text.py"]
-        != baseline["shared_code_manifest"]["src/metacom_pm/text.py"]
+        perturbed["shared_code_manifest"][relative_path]
+        != baseline["shared_code_manifest"][relative_path]
     )
 
 

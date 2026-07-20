@@ -317,14 +317,11 @@ def require_v1_5_response_mechanism_consistency(
     action-semantics mismatch this project exists to eliminate.
     """
 
-    require_matching_response_mechanism_contract(
-        expected=freeze_contract,
-        actual=sweep_contract,
-        context="study freeze vs internal action sweep",
-    )
-    # Explicit, direct check (in addition to the full-contract hash compare
-    # above) so a generator-endpoint drift specifically is never buried
-    # inside an opaque "contract differs somewhere" failure.
+    # Explicit, direct check first (rather than after the full-contract hash
+    # compare below, where it would be unreachable dead code -- any endpoint
+    # difference already changes contract_sha256) so a generator-endpoint
+    # drift specifically is never buried inside an opaque "contract differs
+    # somewhere" failure.
     if freeze_contract.get("generator_endpoint_sha256") != sweep_contract.get(
         "generator_endpoint_sha256"
     ):
@@ -332,6 +329,11 @@ def require_v1_5_response_mechanism_consistency(
             "study freeze generator endpoint differs from the internal "
             "action sweep's own generator endpoint"
         )
+    require_matching_response_mechanism_contract(
+        expected=freeze_contract,
+        actual=sweep_contract,
+        context="study freeze vs internal action sweep",
+    )
     return {
         "status": "PASS",
         "protocol": "pm-v1.5-response-mechanism-freeze-vs-sweep-consistency-v1",

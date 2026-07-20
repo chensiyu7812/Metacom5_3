@@ -1076,6 +1076,94 @@ def test_v1_5_freeze_rejects_development_external_retrieval_drift():
         module.require_v1_5_retrieval_consistency(config)
 
 
+def _response_mechanism_base_kwargs() -> dict:
+    pm_v1_5_config = load_config(ROOT / "configs" / "pm_v1_5.yaml")
+    supporter_contract = SupporterGenerationContract.from_config(pm_v1_5_config)
+    retrieval = pm_v1_5_config["retrieval"]
+    return {
+        "project_root": ROOT,
+        "supporter_generation_contract": supporter_contract,
+        "generator_endpoint_sha256": "a" * 64,
+        "strategy_bank_sha256": "b" * 64,
+        "memory_min_score": retrieval["memory_min_score"],
+        "strategy_min_score": retrieval["strategy_min_score"],
+        "strategy_top_k": retrieval["strategy_top_k"],
+        "evidence_filter_enabled": False,
+    }
+
+
+@pytest.mark.parametrize(
+    "override,expected_match",
+    [
+        (
+            {"generator_endpoint_sha256": "c" * 64},
+            "generator endpoint differs",
+        ),  # model
+        (
+            {"strategy_bank_sha256": "d" * 64},
+            "response mechanism contract",
+        ),  # Bank
+        ({"strategy_top_k": 99}, "response mechanism contract"),  # top-k
+        (
+            {"evidence_filter_enabled": True},
+            "response mechanism contract",
+        ),  # filter
+    ],
+)
+def test_require_v1_5_response_mechanism_consistency_fails_closed_on_drift(
+    override, expected_match
+):
+    module = _load_module(
+        "scripts/v1_5_create_freeze.py", "v1_5_response_mechanism_drift_test"
+    )
+    base_kwargs = _response_mechanism_base_kwargs()
+    freeze_contract = build_response_mechanism_contract(**base_kwargs)
+    sweep_contract = build_response_mechanism_contract(**{**base_kwargs, **override})
+    with pytest.raises(RuntimeError, match=expected_match):
+        module.require_v1_5_response_mechanism_consistency(
+            freeze_contract=freeze_contract, sweep_contract=sweep_contract
+        )
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "src/metacom_pm/prompts.py",  # prompt
+        "src/metacom_pm/retrieval.py",  # query builder
+    ],
+)
+def test_require_v1_5_response_mechanism_consistency_fails_closed_on_code_drift(
+    tmp_path, relative_path
+):
+    import shutil
+
+    from metacom_pm.response_mechanism_contract import MECHANISM_CODE_RELATIVE_PATHS
+
+    module = _load_module(
+        "scripts/v1_5_create_freeze.py", "v1_5_response_mechanism_code_drift_test"
+    )
+    fake_root = tmp_path / "project"
+    (fake_root / "src" / "metacom_pm").mkdir(parents=True)
+    for relative in MECHANISM_CODE_RELATIVE_PATHS:
+        dest = fake_root / relative
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, dest)
+
+    base_kwargs = {**_response_mechanism_base_kwargs(), "project_root": fake_root}
+    freeze_contract = build_response_mechanism_contract(**base_kwargs)
+
+    perturbed_path = fake_root / relative_path
+    perturbed_path.write_text(
+        perturbed_path.read_text(encoding="utf-8") + "\n# perturbed\n",
+        encoding="utf-8",
+    )
+    sweep_contract = build_response_mechanism_contract(**base_kwargs)
+    with pytest.raises(RuntimeError, match="response mechanism contract"):
+        module.require_v1_5_response_mechanism_consistency(
+            freeze_contract=freeze_contract, sweep_contract=sweep_contract
+        )
+
+
 def test_v1_5_external_generation_defaults_are_condition_isolated():
     module = _load_module(
         "scripts/v1_5/24_run_pm_v2_evoemo_v1_5.py",
