@@ -1,14 +1,14 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "CONSUMED_FAILED_CLOSED",
+  "status": "CONSUMED_PASS",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "090c4f27bd30f89c4cb18075b88f8c4d2237e767cc2406b610dea8e1dde8be1a",
-  "prepared_from_code_commit_sha": "086fac5",
-  "prepared_at_utc": "2026-07-20T04:05:57.470883Z",
-  "approved_execution_config_commit_sha": "086fac5",
-  "approved_at_utc": "2026-07-20T04:05:57.470883Z",
+  "prepared_from_code_commit_sha": "7bfffd8",
+  "prepared_at_utc": "2026-07-20T15:28:05.057135Z",
+  "approved_execution_config_commit_sha": "7bfffd8",
+  "approved_at_utc": "2026-07-20T15:28:05.057135Z",
   "paid_execution_authorized": false,
-  "authorization_record": "No stage currently approved. Prior authorization was USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准运行，$0.0058446' for stage development_data_generation, run_identity 4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be; consumed for real on 2026-07-20T04:21:56.180896Z. The multi-directory casewise carry-forward mechanism worked exactly as designed (51/52 users recovered at zero cost, exactly 1 real API call made for pmv2_calibration_u012's flagged case, real cost $0.00036554999999999997), but the run FAILED again at final-assembly validate_split_manifests: the fresh, really-generated text for that one case is byte-for-byte identical to the old colliding text ('I've been feeling really insecure about my abilities lately.'), so it still collides with pmv2_calibration_u010 -- see stage_consumptions.development_data_generation for full detail. Scope was only the 52-user development-data generation; no actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage. Old identities 85d1eda387d9355047e0dbd339e47f8a07f1856acb3d93f1d87c4fafb388788f, bebeb1b1d7ae5a039780ece00baff4d18b5613d12d3608d13c7d17d0e3708564, c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4, ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a, d17d61af4275e6e09e122899af95348d471a3c6e44561f6fb7f602661170a6c0, 82ee0e6f8c6084c605e8e2d8ae4e86d6669642b7c4bedd91785419d54b22ef23, 559a6336bee89efd47825007d26616281da84de1e4793ac078bae4693e2a709a, dd5cf423e656feaad88e4a6435ea30e5885fb358be0d38667f6080343842f453, f9649bf03ddb350cadf0ab2b9600dfe62d50eafc5e5bccf9072a021abcbd5d4a, 8f9cf2c85cbfed2689b44250d96b3fd1c83056d862816f6007691e470655e2fe, and 4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be remain CONSUMED and permanently unusable. Local-only; not pushed to GitHub.",
+  "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准运行,$0.0088407' for stage development_generation_compatibility_pilot, run_identity 2e66e51c94a13256f08b67701eda8841a615ce98aa130c6b625eb3e395dcc9b5 (V8.18 duplicate-repair-mechanism re-certification pilot); consumed for real on 2026-07-20T15:32:21.388483Z. This identity was independently reproduced four times in separate output directories (v8_18_duplicate_repair_candidate, v8_18_duplicate_repair_repro_check, v8_18_independent_verify_1784559816, and the real run's own pre-run dry-run at v8_18_duplicate_repair_paid_run) with byte-identical compatibility_contract_sha256/call_plan_sha256/cost_estimate_sha256 before real execution. Real result: PASS -- 9/9 cases accepted, 9 physical attempts, 0 repairs, 0 provider-surface fallback, actual usage 13,786 input / 1,299 output / 15,085 total tokens, real cost $0.0028472999999999997 (well under the $0.0088407 expected and $0.05347935 ceiling). Output directory outputs/pm_v1_5_generation_compatibility_pilot_v8_18_duplicate_repair_paid_run, attestation_sha256 4f563b548de03c7947f48d93ba9269450a782a9db0ba6c6ee6ed4e80f5e36b0a. This authorizes only a fresh formal 52-user generation dry-run/run using this new attestation; it does not itself authorize 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo. Prior authorization was USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准运行，$0.0058446' for stage development_data_generation, run_identity 4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be; consumed for real on 2026-07-20T04:21:56.180896Z. The multi-directory casewise carry-forward mechanism worked exactly as designed (51/52 users recovered at zero cost, exactly 1 real API call made for pmv2_calibration_u012's flagged case, real cost $0.00036554999999999997), but the run FAILED again at final-assembly validate_split_manifests: the fresh, really-generated text for that one case is byte-for-byte identical to the old colliding text ('I've been feeling really insecure about my abilities lately.'), so it still collides with pmv2_calibration_u010 -- see stage_consumptions.development_data_generation for full detail. Scope was only the 52-user development-data generation; no actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage. Old identities 85d1eda387d9355047e0dbd339e47f8a07f1856acb3d93f1d87c4fafb388788f, bebeb1b1d7ae5a039780ece00baff4d18b5613d12d3608d13c7d17d0e3708564, c7afde62186873a64e8d4fb0d1944fb067c8aaf70b3273b6265cb83d5b0472a4, ab4067c97d31729fd5bcc0f7d115bfae46fddd8a12210a4395f827bffc3dc43a, d17d61af4275e6e09e122899af95348d471a3c6e44561f6fb7f602661170a6c0, 82ee0e6f8c6084c605e8e2d8ae4e86d6669642b7c4bedd91785419d54b22ef23, 559a6336bee89efd47825007d26616281da84de1e4793ac078bae4693e2a709a, dd5cf423e656feaad88e4a6435ea30e5885fb358be0d38667f6080343842f453, f9649bf03ddb350cadf0ab2b9600dfe62d50eafc5e5bccf9072a021abcbd5d4a, 8f9cf2c85cbfed2689b44250d96b3fd1c83056d862816f6007691e470655e2fe, and 4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be remain CONSUMED and permanently unusable. Local-only; not pushed to GitHub.",
   "stage_approvals": {},
   "pending_unapproved_dry_runs": {
     "development_data_generation_v8_17_casewise_repair": {
@@ -619,6 +619,19 @@
       "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_12_memory_blueprint_candidate",
       "paid_execution_authorized": false,
       "note": "Permanently consumed on 2026-07-19T14:50:24.588601Z. PASS: all 9 regimes accepted, zero provider-surface fallback. 1 of 9 cases (strategy_harmful) needed the one bounded content repair for current_user_text_duplicate_group_too_large (a diversity-cap lint, not the 160-char memory blueprint bug). The 216-template deterministic-memory-blueprint preflight was independently re-verified: PASS, 216 checked instances, maximum observed 155 of 160 characters (5-char margin)."
+    },
+    "development_generation_compatibility_pilot_v8_18_duplicate_repair_consumed": {
+      "run_identity": "2e66e51c94a13256f08b67701eda8841a615ce98aa130c6b625eb3e395dcc9b5",
+      "compatibility_contract_sha256": "aa75592f83c98d6ba5440d363280228e4e8d11b34008ff4c96f1a0a93c721fcd",
+      "call_plan_sha256": "47df7f2ba48e593a38c0863b6831bfc6682ceb83825465886079842d7e24d6c6",
+      "minimum_api_calls_if_successful": 9,
+      "maximum_content_attempts": 18,
+      "maximum_physical_api_attempts": 54,
+      "expected_estimated_cost_usd": 0.0088407,
+      "maximum_estimated_cost_usd": 0.05347935,
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_18_duplicate_repair_paid_run",
+      "paid_execution_authorized": false,
+      "note": "Permanently consumed on 2026-07-20T15:32:21.388483Z. PASS: all 9 regimes accepted on the first attempt, zero repairs, zero provider-surface fallback. This identity (pre-run call_plan/cost_estimate) was reproduced byte-identically four times before real execution: the original _duplicate_repair_candidate directory, a _repro_check directory, an independent _independent_verify_1784559816 directory, and the pre-run dry-run at this exact canonical output directory (required by the runner to match --run's saved dry-run). Real actual_usage was 13,786 input / 1,299 output / 15,085 total tokens, real cost $0.0028472999999999997 -- well under both the $0.0088407 expected estimate and the $0.05347935 ceiling."
     }
   },
   "prior_stage_attempts_history": [
@@ -1030,6 +1043,28 @@
       "budget_ceiling_usd": 0.31356,
       "rerun_allowed": false,
       "note": "Migrated to prior_stage_attempts_history to free the stage_consumptions.development_data_generation slot for the V8.17 casewise-repair identity 4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be, built after adding multi-directory casewise carry-forward (commit 086fac5) to fix the recurring residual risk of whole-user regeneration (pmv2_calibration_u012 had collided twice in a row with different users under whole-user regen). This identity remains permanently unusable; its output directory data/pm_v1_5_formal_v8_16_dedup_repair_candidate is untouched and retains 52/52 completed users' real paid data."
+    },
+    {
+      "stage": "development_generation_compatibility_pilot",
+      "approval_identity": "559a6336bee89efd47825007d26616281da84de1e4793ac078bae4693e2a709a",
+      "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '好的，我明确批准跑小额，上限和之前的一样' (local-only, not pushed to GitHub)",
+      "status": "CONSUMED_PASS",
+      "approved_at_utc": "2026-07-20T01:35:56.014510Z",
+      "consumed_at_utc": "2026-07-20T01:37:16.920593Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_16_anchor_split_carry_forward_candidate",
+      "compatibility_contract_sha256": "1d7110cd826dede70c99e668c163aaf39ad8831521679257da6cba2e97997631",
+      "call_plan_sha256": "47df7f2ba48e593a38c0863b6831bfc6682ceb83825465886079842d7e24d6c6",
+      "attestation_sha256": "a41b9527866f95a908a03d98a0388a1c93bd7dedf315f008228ed552b772d6eb",
+      "physical_attempt_ledger_sha256": "bb22ff50b5e8db64f8a79448a3c8b471d4881d157e469029feb3daf1d4b978ba",
+      "physical_attempts": 9,
+      "succeeded_attempts": 9,
+      "failed_attempts": 0,
+      "accepted_case_count": 9,
+      "reported_input_tokens": 13786,
+      "reported_output_tokens": 1280,
+      "estimated_actual_cost_usd": 0.0028359,
+      "budget_ceiling_usd": 0.05347935,
+      "note": "Migrated to prior_stage_attempts_history to free the stage_consumptions.development_generation_compatibility_pilot slot for the V8.18 duplicate-repair identity 2e66e51c94a13256f08b67701eda8841a615ce98aa130c6b625eb3e395dcc9b5, needed because commit ea73b80 (duplicate-specific bounded repair: generation_case_messages gains the forbidden_exact_texts parameter) touched pm_v2_data.py, one of the 12 files in shared_generation_code_manifest, changing compatibility_contract_sha256 from this record's value to aa75592f83c98d6ba5440d363280228e4e8d11b34008ff4c96f1a0a93c721fcd. Commit 690a25e (fixing three gaps in that same mechanism) only touched the formal runner script (intentionally excluded from shared_generation_code_manifest) and tests, so it did not itself require re-certification. All 9 regimes accepted on the first attempt, zero repairs, zero provider-surface fallback. This identity remains permanently unusable; its output directory is untouched."
     }
   ],
   "stage_consumptions": {
@@ -1390,16 +1425,16 @@
       "note": "V8.11.1: all 9 regimes accepted, zero provider-surface fallback, 1 of 9 cases needed the one bounded content repair (ordinary content_lint_failure, not a diversity collision). Diversity contract held: 8/9 unique current_user_texts, exactly one allowed same-user/same-family duplicate pair, within the 7-unique-minimum and 2-pair-maximum bounds. No 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo stage was run. No commit or push was made."
     },
     "development_generation_compatibility_pilot": {
-      "approval_identity": "559a6336bee89efd47825007d26616281da84de1e4793ac078bae4693e2a709a",
-      "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '好的，我明确批准跑小额，上限和之前的一样' (local-only, not pushed to GitHub)",
+      "approval_identity": "2e66e51c94a13256f08b67701eda8841a615ce98aa130c6b625eb3e395dcc9b5",
+      "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准运行,$0.0088407' (local-only, not pushed to GitHub)",
       "status": "CONSUMED_PASS",
-      "approved_at_utc": "2026-07-20T01:35:56.014510Z",
-      "consumed_at_utc": "2026-07-20T01:37:16.920593Z",
-      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_16_anchor_split_carry_forward_candidate",
-      "compatibility_contract_sha256": "1d7110cd826dede70c99e668c163aaf39ad8831521679257da6cba2e97997631",
-      "call_plan_sha256": "47df7f2ba48e593a38c0863b6831bfc6682ceb83825465886079842d7e24d6c6",
-      "attestation_sha256": "a41b9527866f95a908a03d98a0388a1c93bd7dedf315f008228ed552b772d6eb",
-      "physical_attempt_ledger_sha256": "bb22ff50b5e8db64f8a79448a3c8b471d4881d157e469029feb3daf1d4b978ba",
+      "approved_at_utc": "2026-07-20T15:28:05.057135Z",
+      "consumed_at_utc": "2026-07-20T15:32:21.388483Z",
+      "output_directory": "outputs/pm_v1_5_generation_compatibility_pilot_v8_18_duplicate_repair_paid_run",
+      "compatibility_contract_sha256": "aa75592f83c98d6ba5440d363280228e4e8d11b34008ff4c96f1a0a93c721fcd",
+      "call_plan_sha256": "b7dda6c9b85d0d7a9bbe15199e2e35b6af84eb4e987d4214c7eb97d7766b4dad",
+      "attestation_sha256": "4f563b548de03c7947f48d93ba9269450a782a9db0ba6c6ee6ed4e80f5e36b0a",
+      "physical_attempt_ledger_sha256": "d5d8dbf7dbf7a6b842a59bf713bd2de8e4aa13c80e7f2578970db4116e16e6ec",
       "physical_attempts": 9,
       "succeeded_attempts": 9,
       "failed_attempts": 0,
@@ -1409,22 +1444,14 @@
       "repair_reason": null,
       "provider_surface_fallback_case_count": 0,
       "transport_retries": {"cases_needing_transport_retry": 0, "detail": "OpenAI was stable throughout; all 9 cases accepted on the first attempt, zero repairs needed"},
-      "deterministic_memory_blueprint_preflight": {
-        "protocol": "pm-v1.5-deterministic-memory-blueprint-boundary-v1",
-        "status": "PASS",
-        "checked_template_instances": 216,
-        "field_maximum_characters": 160,
-        "maximum_observed_characters": 155,
-        "minimum_remaining_margin_characters": 5
-      },
       "reported_input_tokens": 13786,
-      "reported_output_tokens": 1280,
-      "reported_total_tokens": 15066,
-      "estimated_actual_cost_usd": 0.0028359,
+      "reported_output_tokens": 1299,
+      "reported_total_tokens": 15085,
+      "estimated_actual_cost_usd": 0.0028472999999999997,
       "budget_ceiling_usd": 0.05347935,
       "generation_structure": "pm-v2-data-generation-v18-controlled-counterfactual-current-text",
       "rerun_allowed": false,
-      "note": "V8.16: re-validates the generation contract after the REQUIRED/EXCLUSIVE anchor split (commit faa2297) and the carry-forward feature (commit c91aa99). call_plan_sha256 changed from all prior pilots only because the prompt wording changed (HARD TOPIC LOCK softened); the case/family/seed plan itself is unchanged. All 9 regimes accepted on the first attempt, zero repairs, zero provider-surface fallback. This authorizes only a fresh formal 52-user generation dry-run/run using this new attestation, optionally with --carry-forward-from the V8.15 formal directory (48 real completed users) to avoid regenerating them; it does not itself authorize 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo. No commit or push was made."
+      "note": "V8.18: re-validates the generation contract after the u012 duplicate-specific bounded repair (commit ea73b80 changed pm_v2_data.py's generation_case_messages, adding the opt-in forbidden_exact_texts parameter) and its subsequent three-gap fix (commit 690a25e, which only touched the formal runner script and tests, not shared_generation_code_manifest). compatibility_contract_sha256 changed from the superseded V8.16 record's value because of the pm_v2_data.py change; call_plan/cost_estimate byte-identically reproduced across four independent checks before real execution (original candidate, repro check, an independent verification, and the pre-run dry-run at this exact output directory). All 9 regimes accepted on the first attempt, zero repairs, zero provider-surface fallback, real actual_usage {prompt_tokens: 13786, completion_tokens: 1299, total_tokens: 15085}, real cost $0.0028472999999999997 (well under the $0.05347935 budget ceiling). This authorizes only a fresh formal 52-user generation dry-run/run using this new attestation; it does not itself authorize 52-user generation, actual-468 QA, sweep, judging, training, ESConv, or EvoEmo. No commit or push was made at execution time."
     },
     "development_data_generation": {
       "approval_identity": "4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be",
