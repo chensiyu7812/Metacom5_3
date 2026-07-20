@@ -238,15 +238,21 @@ def _opaque_memory_id(user_id: str, source: str, key: str) -> str:
     return f"mem_{stable_hex('evo', user_id, source, key, n=20)}"
 
 
-EVO_MEMORY_PROTOCOL = "pm-v1.5-evo-memory-episode-chunked-v1"
-# A single very long turn stands alone rather than being split; a short
-# trailing chunk at the end of a session (nothing left to merge with) is
-# left under the minimum rather than reaching backward across what is
-# already a separate, earlier-closed chunk. Frozen from the length/support
+EVO_MEMORY_PROTOCOL = "pm-v1.5-evo-memory-episode-chunked-v2"
+# EVO_MEMORY_EPISODE_MAX_TOKENS is a genuine hard cap on every chunk except
+# a single turn that already exceeds it alone (unavoidable without
+# splitting one turn's text mid-sentence, which is out of scope here).
+# EVO_MEMORY_EPISODE_MIN_TOKENS is a target, not a guarantee: a short
+# trailing chunk at the end of a session (nothing left to merge with
+# under the cap) is left under the minimum rather than reaching backward
+# across an already-closed earlier chunk. Frozen from the length/support
 # diagnostics reported in this project's own memory-catalog review (median
 # training ME item ~37 tokens; prior external ME was ~280 tokens from
 # concatenating a whole session) -- never adjusted against any judged or
-# outcome-bearing result.
+# outcome-bearing result. This range is a first-pass target, not proof
+# that 60-120 tokens is the "right" support match for the ~37-token
+# training distribution; the two remain visibly different and should be
+# reported as such, not described as "comparable."
 EVO_MEMORY_EPISODE_MIN_TOKENS = 60
 EVO_MEMORY_EPISODE_MAX_TOKENS = 120
 
@@ -255,35 +261,39 @@ def _chunk_session_episodes(
     turns: Sequence[tuple[int, str]],
 ) -> list[tuple[int, int, str]]:
     """Greedily group one session's seeker turns, in original dialogue
-    order, into non-overlapping episode chunks of
-    [EVO_MEMORY_EPISODE_MIN_TOKENS, EVO_MEMORY_EPISODE_MAX_TOKENS] tokens.
+    order, into non-overlapping episode chunks, hard-capped at
+    EVO_MEMORY_EPISODE_MAX_TOKENS (a single turn already at or over the cap
+    stands alone rather than being split), targeting but not guaranteeing
+    at least EVO_MEMORY_EPISODE_MIN_TOKENS per chunk.
 
     Deterministic and content-only: boundaries depend solely on turn order
     and length, never on any evaluator-only signal (related sessions,
     future topics, observations, reference answers). Never merges across
     sessions. Returns (first_turn_index, last_turn_index, merged_text)
     triples so callers can build a stable, auditable "turn span" id.
+
+    The would-be joined text's token count is recomputed on every turn
+    (not tracked as a running sum of per-turn estimates): estimate_tokens
+    is a character-count heuristic (ceil(len(text) / 4)), so summing
+    per-turn estimates is not exactly additive across a join (separator
+    characters and independent per-turn rounding can shift the total by a
+    token or two) -- a real off-by-a-few-tokens gap against the cap was
+    found this way on the real EvoEmo corpus and would otherwise recur.
     """
     chunks: list[tuple[int, int, str]] = []
     current_indices: list[int] = []
     current_texts: list[str] = []
-    current_tokens = 0
     for turn_index, text in turns:
-        text_tokens = estimate_tokens(text)
-        if (
-            current_texts
-            and current_tokens >= EVO_MEMORY_EPISODE_MIN_TOKENS
-            and current_tokens + text_tokens > EVO_MEMORY_EPISODE_MAX_TOKENS
-        ):
-            chunks.append(
-                (current_indices[0], current_indices[-1], " ".join(current_texts))
-            )
-            current_indices = []
-            current_texts = []
-            current_tokens = 0
+        if current_texts:
+            candidate_tokens = estimate_tokens(" ".join([*current_texts, text]))
+            if candidate_tokens > EVO_MEMORY_EPISODE_MAX_TOKENS:
+                chunks.append(
+                    (current_indices[0], current_indices[-1], " ".join(current_texts))
+                )
+                current_indices = []
+                current_texts = []
         current_indices.append(turn_index)
         current_texts.append(text)
-        current_tokens += text_tokens
     if current_texts:
         chunks.append(
             (current_indices[0], current_indices[-1], " ".join(current_texts))

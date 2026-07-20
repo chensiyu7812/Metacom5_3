@@ -136,7 +136,7 @@ from metacom_pm.pm_v2_generation_review import (
     prepare_generation_pilot_semantic_review,
     require_generation_pilot_semantic_review,
 )
-from metacom_pm.text import conservative_token_bound, estimate_tokens
+from metacom_pm.text import conservative_token_bound, estimate_tokens, normalize_space
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -1919,13 +1919,17 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
     # ME items are session-internal episode chunks (see
     # _chunk_session_episodes in evoemo.py), not one item per whole
     # session, so ME's per-user item count is now much higher than MS's
-    # (which is still one item per session) at a comparable per-item
-    # token size to the training-time compiler's ME items.
+    # (which is still one item per session). This records the observed
+    # scale after that change; it is not a claim that the resulting
+    # per-item token size now matches the training-time compiler's ME
+    # items (median ~37 tokens there vs a visibly larger median here) --
+    # see the module-level note on EVO_MEMORY_EPISODE_MIN_TOKENS/MAX_TOKENS
+    # in evoemo.py.
     assert (min(real_counts[MemorySource.ME]), max(real_counts[MemorySource.ME])) == (
-        38,
+        37,
         109,
     )
-    assert max(real_token_totals) == 9950
+    assert max(real_token_totals) == 9948
     assert reports
     assert not any(report["severe_metadata_ood"] for report in reports)
     assert not any(report["recommendation"] == "FALLBACK" for report in reports)
@@ -1934,6 +1938,69 @@ def test_real_evoemo_inventory_scale_does_not_force_metadata_ood_fallback() -> N
     )
     assert np.all(np.isfinite(external_vectors))
     assert float(np.max(np.abs(external_vectors))) < 10.0
+
+
+def test_chunk_session_episodes_enforces_a_true_hard_cap() -> None:
+    """EVO_MEMORY_EPISODE_MAX_TOKENS must be a real hard cap on every
+    multi-turn chunk, not merely a target that a not-yet-at-minimum
+    accumulation can sail past. Only a single turn that is already at or
+    over the cap by itself may exceed it, since splitting one turn's text
+    is out of scope.
+    """
+    from metacom_pm.evoemo import (
+        EVO_MEMORY_EPISODE_MAX_TOKENS,
+        _chunk_session_episodes,
+    )
+    from metacom_pm.text import estimate_tokens
+
+    # Two turns individually under the minimum (60) whose sum would blow
+    # past the maximum (120) if naively accumulated while "still below
+    # minimum" -- this reproduces the real bug found in the real EvoEmo
+    # corpus (items observed up to 143 tokens against a 120 cap).
+    turns = [
+        (0, "short " * 8),   # well under min alone
+        (1, "word " * 25),   # combined with turn 0, would exceed max if merged
+        (2, "tail " * 3),
+    ]
+    chunks = _chunk_session_episodes(turns)
+    for _, _, text in chunks:
+        assert estimate_tokens(text) <= EVO_MEMORY_EPISODE_MAX_TOKENS
+
+    # A single turn already at/over the cap stands alone rather than being
+    # split or merged -- the one documented, disclosed exception.
+    oversized_turns = [(0, "small "), (1, "huge " * 200)]
+    oversized_chunks = _chunk_session_episodes(oversized_turns)
+    oversized_texts = [text for _, _, text in oversized_chunks]
+    assert any(
+        estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS
+        for text in oversized_texts
+    )
+    # ...but that oversized text must be exactly the one oversized turn,
+    # never merged with the small neighboring turn.
+    assert "small" not in [
+        text for text in oversized_texts if estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS
+    ][0]
+
+    # Real-corpus regression: after the fix, only genuinely single-turn
+    # chunks may exceed the cap.
+    users = load_evoemo(PROJECT_ROOT / "data/external/evo_emo.json")
+    over_cap_multi_turn = 0
+    over_cap_single_turn = 0
+    for user in users:
+        for session in user.get("dialog_history") or []:
+            dialogue = session.get("dialogue") or []
+            seeker_turns_with_index = [
+                (i, normalize_space(t.get("content") or ""))
+                for i, t in enumerate(dialogue)
+                if t.get("role") == "seeker" and normalize_space(t.get("content") or "")
+            ]
+            for start, end, text in _chunk_session_episodes(seeker_turns_with_index):
+                if estimate_tokens(text) > EVO_MEMORY_EPISODE_MAX_TOKENS:
+                    if start == end:
+                        over_cap_single_turn += 1
+                    else:
+                        over_cap_multi_turn += 1
+    assert over_cap_multi_turn == 0
 
 
 def test_split_manifest_rejects_same_split_duplicate_current_text() -> None:

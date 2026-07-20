@@ -1,6 +1,6 @@
 {
   "protocol": "pm-v1.5-stale-artifact-notice-v1",
-  "notice_created_utc": "2026-07-20T15:40:00Z",
+  "notice_created_utc": "2026-07-20T16:05:00Z",
   "stale_files": [
     {
       "path": "outputs/evoemo_selective/external_ood_preflight.json",
@@ -16,9 +16,9 @@
     "builder_contract_sha256_retroactive": "9ec603028cceb522d1f3da7062962e6cdd3ed9d2d23dfca65d0d5a7dafecd964"
   },
   "new_memory_protocol": {
-    "protocol": "pm-v1.5-evo-memory-episode-chunked-v1",
+    "protocol": "pm-v1.5-evo-memory-episode-chunked-v2",
     "description": "build_evo_memory's ME construction now chunks each session's seeker turns into non-overlapping, in-order, length-bounded (60-120 token) episode items with stable turn-span ids, instead of one whole-session item.",
-    "builder_contract_sha256": "c6080bf89c07b61109368faefd7a19d499c97a3a52632e60cf9b1dc6ef4b0156"
+    "builder_contract_sha256": "4fa398f1ae74b1b04755970f0106e65552d7fcb24624e5796ad826a7b75a63fd"
   },
   "reason": "This file is the on-disk output of _external_ood_preflight() in evoemo.py, which calls build_evo_memory() and feeds ME catalog statistics (count/tokens/age) into the PM's OOD detector. The frozen ME shape it was computed under no longer matches the current builder. It belongs to the completed 'policy_manager_35' study freeze (created 2026-06-29) and predates the current PM-v1.5 casewise-repair/RAG-quality work by a separate research phase; it was never part of the active PM-v1.5 pipeline manifest (outputs/pm_v1_5_paid_run_release.json).",
   "historical_only": true,

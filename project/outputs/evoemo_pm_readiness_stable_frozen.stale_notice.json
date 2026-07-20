@@ -1,6 +1,6 @@
 {
   "protocol": "pm-v1.5-stale-artifact-notice-v1",
-  "notice_created_utc": "2026-07-20T15:40:00Z",
+  "notice_created_utc": "2026-07-20T16:05:00Z",
   "stale_files": [
     {
       "path": "outputs/evoemo_pm_readiness_stable_frozen.json",
@@ -16,9 +16,9 @@
     "builder_contract_sha256_retroactive": "9ec603028cceb522d1f3da7062962e6cdd3ed9d2d23dfca65d0d5a7dafecd964"
   },
   "new_memory_protocol": {
-    "protocol": "pm-v1.5-evo-memory-episode-chunked-v1",
+    "protocol": "pm-v1.5-evo-memory-episode-chunked-v2",
     "description": "build_evo_memory's ME construction now chunks each session's seeker turns into non-overlapping, in-order, length-bounded (60-120 token) episode items with stable turn-span ids, instead of one whole-session item.",
-    "builder_contract_sha256": "c6080bf89c07b61109368faefd7a19d499c97a3a52632e60cf9b1dc6ef4b0156"
+    "builder_contract_sha256": "4fa398f1ae74b1b04755970f0106e65552d7fcb24624e5796ad826a7b75a63fd"
   },
   "reason": "This is a checked-in snapshot of scripts/15b_evoemo_pm_readiness.py's output (pm_action_distribution, safe_action_count_distribution, etc.), derived from make_evo_runtime_state()/_catalog() statistics over build_evo_memory()'s items. The chunked ME catalog changes count/age/token features that gate the PM's OOD/safe-action logic, so a fresh run under the current builder would very plausibly produce different distributions. No script or test regenerates or diffs it against a live run, so it would otherwise go silently stale.",
   "historical_only": true,
