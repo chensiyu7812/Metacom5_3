@@ -110,9 +110,6 @@ GENERATION_COST_PROTOCOL = (
     "pm_v2_generation_cost_v3_casewise_surface_bounded_repair_ledger"
 )
 GENERATION_STAGE = "pm_v2_synthetic_surface_generation"
-DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL = (
-    "pm-v1.5-duplicate-specific-bounded-repair-v1"
-)
 # Comfortably above the maximum seed the normal per-case formula can ever
 # reach (base_seed + up to 51*1000 + 8*10 + 1), so a duplicate-specific
 # repair attempt never reuses the exact seed that produced the colliding
@@ -437,48 +434,6 @@ def _seed_casewise_carry_forward_into_ledger(
     return casewise_carry_provenance
 
 
-def _load_duplicate_repair_spec(
-    path: Path,
-    casewise_repair_plan: dict[str, dict[str, Any]],
-) -> dict[tuple[str, str], dict[str, Any]]:
-    """Load and fail-closed-validate a duplicate-specific bounded repair spec.
-
-    Every named (user_id, case_field) must already be a case the cross-user
-    duplicate-repair manifest flagged for regeneration -- this is never a
-    way to force a fresh generation the manifest did not already flag, and
-    never a way to touch the OTHER (already-fine) side of a collision.
-    """
-    spec = read_json(path)
-    if spec.get("protocol") != DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL:
-        raise RuntimeError(
-            "duplicate-repair-spec has an unrecognized or missing protocol"
-        )
-    flagged_case_fields = {
-        (user_id, case_field)
-        for user_id, plan in casewise_repair_plan.items()
-        for case_field in plan["regenerated_case_fields"]
-    }
-    duplicate_repair_by_case: dict[tuple[str, str], dict[str, Any]] = {}
-    for entry in spec.get("repairs", []):
-        key = (str(entry["user_id"]), str(entry["case_field"]))
-        if key not in flagged_case_fields:
-            raise RuntimeError(
-                "duplicate-repair-spec names a case the cross-user "
-                f"duplicate-repair manifest did not flag for regeneration: {key}"
-            )
-        if key in duplicate_repair_by_case:
-            raise RuntimeError(f"duplicate-repair-spec repeats case {key}")
-        forbidden_text = str(entry["forbidden_current_user_text"])
-        if not forbidden_text.strip():
-            raise RuntimeError(f"duplicate-repair-spec has an empty forbidden text for {key}")
-        duplicate_repair_by_case[key] = {
-            "forbidden_current_user_text": forbidden_text,
-            "forbidden_current_user_text_sha256": sha256_text(forbidden_text),
-            "duplicate_of": dict(entry["duplicate_of"]),
-        }
-    return duplicate_repair_by_case
-
-
 def _compute_cross_user_duplicate_repair_manifest(
     *,
     planned_users: list[str],
@@ -549,6 +504,119 @@ def _compute_cross_user_duplicate_repair_manifest(
     }
     manifest["manifest_sha256"] = sha256_text(canonical_json(manifest))
     return manifest
+
+
+def _build_casewise_repair_plan(
+    *,
+    candidates: dict[str, GeneratedUserBundle],
+    repair_manifest: dict[str, Any],
+) -> dict[str, dict[str, Any]]:
+    """For each candidate with a case flagged by the automatic cross-user
+    duplicate-repair manifest, derive everything a casewise repair needs
+    directly from the manifest and the (about-to-be-discarded) candidate
+    bundle -- never from operator-supplied free text. An operator can
+    approve the resulting plan the same way as any other stage here (via
+    the dry-run's cost_estimate_sha256) but cannot name or alter which
+    text is forbidden or which user it collided with.
+    """
+    regime_to_case_field = {regime: field for field, regime in GENERATION_CASE_FIELDS}
+    case_fields_requiring_regeneration: dict[str, set[str]] = defaultdict(set)
+    duplicate_of_by_case: dict[tuple[str, str], dict[str, str]] = {}
+    for row in repair_manifest["repair_cases"]:
+        case_fields_requiring_regeneration[row["user_id"]].add(row["case_field"])
+        duplicate_of_by_case[(row["user_id"], row["case_field"])] = dict(
+            row["duplicate_of"]
+        )
+
+    plan: dict[str, dict[str, Any]] = {}
+    for user_id, bundle in candidates.items():
+        flagged = case_fields_requiring_regeneration.get(user_id)
+        if not flagged:
+            continue
+        case_sources = bundle.provenance["carried_forward_from"]["case_sources"]
+        non_flagged = [
+            field for field, _ in GENERATION_CASE_FIELDS if field not in flagged
+        ]
+        current_text_by_case_field = {
+            regime_to_case_field[case.regime]: case.current_user_text
+            for case in bundle.cases
+        }
+        duplicate_repair = {
+            case_field: {
+                "forbidden_current_user_text": current_text_by_case_field[case_field],
+                "forbidden_current_user_text_sha256": sha256_text(
+                    current_text_by_case_field[case_field]
+                ),
+                "duplicate_of": duplicate_of_by_case[(user_id, case_field)],
+            }
+            for case_field in flagged
+        }
+        plan[user_id] = {
+            "carried_case_fields": non_flagged,
+            "regenerated_case_fields": sorted(flagged),
+            "carried_case_sources": {
+                field: case_sources[field] for field in non_flagged
+            },
+            "duplicate_repair_manifest_sha256": repair_manifest["manifest_sha256"],
+            "duplicate_repair": duplicate_repair,
+        }
+    return plan
+
+
+def _find_cross_user_duplicate(
+    *,
+    normalized_text: str,
+    user_id: str,
+    accepted_normalized_texts: dict[str, tuple[str, str]],
+) -> tuple[str, str] | None:
+    """Return the (user_id, case_field) this normalized text collides with,
+    if any DIFFERENT user has already had it accepted this run (including
+    ones carried forward or recovered from an earlier invocation) --
+    excluding the allowed same-user counterfactual reuse validate_split_
+    manifests itself permits.
+    """
+    match = accepted_normalized_texts.get(normalized_text)
+    if match is not None and match[0] != user_id:
+        return match
+    return None
+
+
+def _is_carried_forward_ledger_row(row: dict[str, Any]) -> bool:
+    return (row.get("record_ids") or {}).get("attempt_kind") == "carried_forward"
+
+
+def _real_physical_attempt_count(ledger: PersistentAttemptLedger) -> int:
+    """Physical HTTP attempts actually made against the provider, excluding
+    casewise carry-forward entries seeded directly into this same ledger
+    (which reuse already-paid content and never issue a real request).
+
+    A casewise-repaired user's carried case fields are recorded as
+    STARTED/SUCCEEDED events in this run's OWN physical-attempt ledger --
+    the only way the existing pending/call-plan machinery recognizes them
+    as already done without a larger refactor -- but that means
+    ``ledger.started_attempts`` alone conflates real spend with reused
+    history. Every call site that reports cost, budget consumption, or a
+    physical-attempt count for THIS run should use this instead.
+    """
+    seen: set[tuple[str, int]] = set()
+    for row in ledger.event_rows:
+        if row.get("event") != "STARTED" or _is_carried_forward_ledger_row(row):
+            continue
+        seen.add((str(row["call_key"]), int(row["attempt_index"])))
+    return len(seen)
+
+
+def _carried_forward_ledger_entry_count(ledger: PersistentAttemptLedger) -> int:
+    """Companion to _real_physical_attempt_count: how many of this ledger's
+    entries are seeded carry-forward records rather than real attempts, so
+    the two numbers are always reported side by side, never one silently
+    standing in for the other.
+    """
+    seen: set[tuple[str, int]] = set()
+    for row in ledger.event_rows:
+        if row.get("event") == "STARTED" and _is_carried_forward_ledger_row(row):
+            seen.add((str(row["call_key"]), int(row["attempt_index"])))
+    return len(seen)
 
 
 def _ledger_usage_for_keys(
@@ -1168,27 +1236,6 @@ def main() -> None:
             "carried forward, never silently dropped or forced through."
         ),
     )
-    parser.add_argument(
-        "--duplicate-repair-spec",
-        type=Path,
-        help=(
-            "Optional JSON file naming exact-duplicate-specific bounded repairs: "
-            "{\"protocol\": \"pm-v1.5-duplicate-specific-bounded-repair-v1\", "
-            "\"repairs\": [{\"user_id\":..., \"case_field\":..., "
-            "\"forbidden_current_user_text\":..., \"duplicate_of\": "
-            "{\"user_id\":..., \"case_field\":...}}]}. Each entry must name a "
-            "case field already flagged for regeneration by the cross-user "
-            "duplicate-repair manifest (via --carry-forward-from); it is never "
-            "a way to force a fresh generation the manifest did not already "
-            "flag. The forbidden text is added to that one case's prompt as an "
-            "exact-normalized-match exclusion and a distinct, deterministic "
-            "repair seed is used, so a case that reproduced a colliding "
-            "sentence verbatim on its first fresh regeneration is asked to "
-            "re-express the same concern differently rather than trying the "
-            "same prompt again unchanged. Temperature, family, regime, and "
-            "every other generation parameter are untouched."
-        ),
-    )
     parser.add_argument("--train-users", type=int)
     parser.add_argument("--calibration-users", type=int)
     parser.add_argument("--internal-test-users", type=int)
@@ -1694,9 +1741,9 @@ def main() -> None:
         # the 1 that actually needs it needlessly re-exposes the other 8,
         # already-fine cases to a brand new chance of colliding with
         # someone else.
-        case_fields_requiring_regeneration: dict[str, set[str]] = defaultdict(set)
-        for row in repair_manifest["repair_cases"]:
-            case_fields_requiring_regeneration[row["user_id"]].add(row["case_field"])
+        casewise_repair_plan = _build_casewise_repair_plan(
+            candidates=candidates, repair_manifest=repair_manifest
+        )
 
         # Pass 2: write clean candidates whole; partially-flagged candidates
         # are held back here (not written to existing) so their carried
@@ -1704,24 +1751,29 @@ def main() -> None:
         # surface for the flagged field(s) further below, once this run's
         # own call keys exist.
         for user_id, bundle in candidates.items():
-            flagged = case_fields_requiring_regeneration.get(user_id)
-            if not flagged:
-                append_jsonl(work_path, bundle.model_dump(mode="json"))
-                existing[user_id] = bundle
+            if user_id in casewise_repair_plan:
                 continue
-            case_sources = bundle.provenance["carried_forward_from"]["case_sources"]
-            non_flagged = [
-                field for field, _ in GENERATION_CASE_FIELDS if field not in flagged
-            ]
-            casewise_repair_plan[user_id] = {
-                "carried_case_fields": non_flagged,
-                "regenerated_case_fields": sorted(flagged),
-                "carried_case_sources": {
-                    field: case_sources[field] for field in non_flagged
-                },
-                "duplicate_repair_manifest_sha256": repair_manifest["manifest_sha256"],
+            append_jsonl(work_path, bundle.model_dump(mode="json"))
+            existing[user_id] = bundle
+        carry_forward_report["casewise_repair_plan"] = {
+            user_id: {
+                key: value
+                for key, value in plan.items()
+                if key != "duplicate_repair"
             }
-        carry_forward_report["casewise_repair_plan"] = casewise_repair_plan
+            | {
+                "duplicate_repair": {
+                    case_field: {
+                        "forbidden_current_user_text_sha256": entry[
+                            "forbidden_current_user_text_sha256"
+                        ],
+                        "duplicate_of": entry["duplicate_of"],
+                    }
+                    for case_field, entry in plan["duplicate_repair"].items()
+                }
+            }
+            for user_id, plan in casewise_repair_plan.items()
+        }
         # Derived from the final state of `existing`, not from which
         # invocation happened to append each bundle: --dry-run itself
         # persists carried-forward bundles into this out_dir's own work
@@ -1733,18 +1785,6 @@ def main() -> None:
             user_id
             for user_id, bundle in existing.items()
             if bundle.provenance.get("carried_forward_from") is not None
-        )
-
-    # Exact-duplicate-specific bounded repair: a case that the cross-user
-    # duplicate-repair manifest already flagged for regeneration, but whose
-    # first fresh regeneration reproduced the exact colliding sentence
-    # again, gets ONE targeted retry naming that sentence as forbidden --
-    # never a whole-user regeneration and never a change to the OTHER
-    # (already-fine) side of the collision.
-    duplicate_repair_by_case: dict[tuple[str, str], dict[str, Any]] = {}
-    if args.duplicate_repair_spec is not None:
-        duplicate_repair_by_case = _load_duplicate_repair_spec(
-            args.duplicate_repair_spec, casewise_repair_plan
         )
 
     all_user_attempts: dict[str, dict[str, Any]] = {}
@@ -1764,7 +1804,9 @@ def main() -> None:
             forbidden_families = [
                 family for family in families if family != semantic_family
             ]
-            duplicate_repair = duplicate_repair_by_case.get((user_id, case_field))
+            duplicate_repair = casewise_repair_plan.get(user_id, {}).get(
+                "duplicate_repair", {}
+            ).get(case_field)
             attempts: list[dict[str, Any]] = []
             for attempt_index in range(args.max_generation_attempts):
                 attempt_kind = "initial" if attempt_index == 0 else "repair"
@@ -2087,15 +2129,6 @@ def main() -> None:
         "generation_run_binding_sha256": generation_binding_sha256,
         "generation_run_binding": generation_binding,
         "carry_forward": carry_forward_report,
-        "duplicate_repair": {
-            f"{user_id}/{case_field}": {
-                "forbidden_current_user_text_sha256": entry[
-                    "forbidden_current_user_text_sha256"
-                ],
-                "duplicate_of": entry["duplicate_of"],
-            }
-            for (user_id, case_field), entry in sorted(duplicate_repair_by_case.items())
-        },
         "completed_bundle_hashes": completed_bundle_hashes,
         "completed_bundle_manifest_sha256": sha256_text(
             canonical_json(completed_bundle_hashes)
@@ -2110,14 +2143,17 @@ def main() -> None:
             if attempt_ledger_path.exists()
             else sha256_text("")
         ),
-        "historical_physical_api_attempts": ledger.started_attempts,
+        "historical_physical_api_attempts": _real_physical_attempt_count(ledger),
+        "historical_carried_forward_ledger_entries": (
+            _carried_forward_ledger_entry_count(ledger)
+        ),
         "recovered_successful_bundles_from_ledger": recovered_successful_bundles,
         # Exact one-attempt success-path count plus an accepted hard upper bound.
         "expected_api_calls": len(call_plan),
         "maximum_api_calls": len(potential_input_tokens),
         "maximum_new_physical_api_attempts": len(potential_input_tokens),
         "maximum_physical_api_attempts_including_history": (
-            ledger.started_attempts + len(potential_input_tokens)
+            _real_physical_attempt_count(ledger) + len(potential_input_tokens)
         ),
         "expected_total_input_tokens": expected_input_tokens,
         "maximum_total_input_tokens": maximum_input_tokens,
@@ -2194,9 +2230,28 @@ def main() -> None:
         for row in call_plan
         for attempt in row["attempts"]
     }
-    historical_api_calls = ledger.started_attempts
+    historical_api_calls = _real_physical_attempt_count(ledger)
     api_calls_used = 0
     client = make_client(endpoint) if call_plan else None
+    # Immediate, cheap (exact-normalized-text) cross-user duplicate check,
+    # updated as each case is accepted. validate_split_manifests still runs
+    # the authoritative final check at whole-corpus assembly, but that only
+    # happens after every pending user's cases are generated and the
+    # expensive semantic near-duplicate audit runs; catching a new
+    # cross-user collision right after the response that caused it is
+    # generated fails closed immediately, before paying for -- or waiting
+    # on -- the rest of the pipeline.
+    regime_to_case_field_for_dedup = {
+        regime: field for field, regime in GENERATION_CASE_FIELDS
+    }
+    accepted_normalized_texts: dict[str, tuple[str, str]] = {
+        normalize_text(case.current_user_text): (
+            existing_user_id,
+            regime_to_case_field_for_dedup[case.regime],
+        )
+        for existing_user_id, existing_bundle in existing.items()
+        for case in existing_bundle.cases
+    }
     try:
         for user_id in planned_users:
             if user_id in existing:
@@ -2214,7 +2269,7 @@ def main() -> None:
                         call_key = str(attempt["call_key"])
                         if call_key not in authorized_call_keys:
                             continue
-                        if ledger.started_attempts >= args.max_api_calls:
+                        if _real_physical_attempt_count(ledger) >= args.max_api_calls:
                             raise RuntimeError(
                                 "generation API call cap exhausted before completion"
                             )
@@ -2335,6 +2390,45 @@ def main() -> None:
                                     },
                                 )
                                 continue
+                            normalized_text = normalize_text(surface.current_user_text)
+                            cross_user_duplicate = _find_cross_user_duplicate(
+                                normalized_text=normalized_text,
+                                user_id=user_id,
+                                accepted_normalized_texts=accepted_normalized_texts,
+                            )
+                            if cross_user_duplicate is not None:
+                                last_error = (
+                                    "cross-user exact-duplicate current_user_text "
+                                    "detected immediately after generation (before "
+                                    "final corpus assembly): collides with "
+                                    f"{cross_user_duplicate[0]}/{cross_user_duplicate[1]}"
+                                )
+                                ledger.finish(
+                                    reservation,
+                                    succeeded=False,
+                                    request_hash=call.request_hash,
+                                    usage=usage,
+                                    error=last_error,
+                                    result=result,
+                                    metadata=failure_metadata(
+                                        retry_class="cross_user_duplicate_detected_immediately",
+                                        retry_disposition=TERMINAL_DISPOSITION,
+                                    ),
+                                )
+                                append_jsonl(
+                                    error_path,
+                                    {
+                                        "user_id": user_id,
+                                        "case_field": case_plan["case_field"],
+                                        "attempt_kind": attempt["attempt_kind"],
+                                        "generation_seed": int(attempt["seed"]),
+                                        "physical_call_key": call_key,
+                                        "error": last_error,
+                                        "provider_response_preserved": True,
+                                        "accepted_cost_estimate_sha256": expected_hash,
+                                    },
+                                )
+                                continue
                             ledger.finish(
                                 reservation,
                                 succeeded=True,
@@ -2342,6 +2436,10 @@ def main() -> None:
                                 usage=usage,
                                 error=None,
                                 result=result,
+                            )
+                            accepted_normalized_texts[normalized_text] = (
+                                user_id,
+                                str(case_plan["case_field"]),
                             )
                             loaded = (attempt, surface, call)
                             last_error = None
@@ -2421,6 +2519,13 @@ def main() -> None:
                 prior_current_user_families.append(
                     str(case_plan["semantic_family"])
                 )
+                # Covers the ledger-recovered path too (a case already
+                # accepted in an EARLIER invocation of this same run):
+                # harmless to repeat for the freshly-generated path, which
+                # already registered the identical key/value above.
+                accepted_normalized_texts[
+                    normalize_text(surface.current_user_text)
+                ] = (user_id, str(case_plan["case_field"]))
             seed_record = seeds[int(user_plan["seed_dialogue_index"])]
             bundle = _compile_casewise_user_from_ledger(
                 ledger=ledger,
@@ -2439,7 +2544,7 @@ def main() -> None:
     finally:
         if client is not None:
             client.close()
-    api_calls_used = ledger.started_attempts - historical_api_calls
+    api_calls_used = _real_physical_attempt_count(ledger) - historical_api_calls
     bundles = [existing[user_id] for user_id in planned_users]
     report = write_development_dataset(
         bundles=bundles,
@@ -2515,7 +2620,13 @@ def main() -> None:
             "accepted_cost_estimate_sha256": expected_hash,
             "generation_api_calls_used": api_calls_used,
             "generation_historical_api_calls": historical_api_calls,
-            "generation_total_physical_api_attempts": ledger.started_attempts,
+            "generation_total_physical_api_attempts": _real_physical_attempt_count(
+                ledger
+            ),
+            "generation_total_carried_forward_ledger_entries": (
+                _carried_forward_ledger_entry_count(ledger)
+            ),
+            "generation_total_ledger_entries": ledger.started_attempts,
             "generation_transport_retry_summary": retry_ledger_summary(
                 ledger, list(ledger.expected_calls)
             ),

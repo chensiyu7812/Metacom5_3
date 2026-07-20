@@ -2569,13 +2569,14 @@ def test_carry_forward_falls_back_across_multiple_source_directories(
     assert "no carried-forward surface available" in missing_outcome
 
 
-def test_load_duplicate_repair_spec_rejects_cases_the_manifest_did_not_flag(
-    tmp_path: Path,
-) -> None:
-    """A duplicate-repair-spec entry is never a way to force a fresh
-    generation the cross-user duplicate-repair manifest did not already
-    flag -- it can only add the forbidden-text lock to an ALREADY-flagged
-    case field.
+def test_build_casewise_repair_plan_derives_forbidden_text_automatically() -> None:
+    """The forbidden text and its collision partner must come ONLY from the
+    automatic cross-user duplicate-repair manifest and the candidate bundle
+    itself -- there is no parameter through which an operator could supply
+    or override either one. This directly addresses the gap the prior
+    duplicate-repair-spec design had: a hand-authored JSON file could name
+    any forbidden_current_user_text/duplicate_of without being checked
+    against what the automatic detector actually found.
     """
     script = (
         PROJECT_ROOT
@@ -2584,100 +2585,144 @@ def test_load_duplicate_repair_spec_rejects_cases_the_manifest_did_not_flag(
         / "20_generate_pm_v2_development_data_v1_5.py"
     )
     spec_module = importlib.util.spec_from_file_location(
-        "pm_v1_5_duplicate_repair_spec", script
+        "pm_v1_5_casewise_repair_plan", script
     )
     assert spec_module is not None and spec_module.loader is not None
     module = importlib.util.module_from_spec(spec_module)
     spec_module.loader.exec_module(module)
 
-    casewise_repair_plan = {
-        "pmv2_calibration_u012": {
-            "carried_case_fields": ["context_only"],
-            "regenerated_case_fields": ["ambiguous"],
-            "carried_case_sources": {"context_only": "some/dir"},
-        }
-    }
+    colliding_text = "I've been feeling really insecure about my abilities lately."
+    all_case_fields = [field for field, _ in GENERATION_CASE_FIELDS]
 
-    valid_spec_path = tmp_path / "valid_spec.json"
-    write_json(
-        valid_spec_path,
-        {
-            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
-            "repairs": [
-                {
-                    "user_id": "pmv2_calibration_u012",
-                    "case_field": "ambiguous",
-                    "forbidden_current_user_text": (
-                        "I've been feeling really insecure about my abilities lately."
-                    ),
-                    "duplicate_of": {
-                        "user_id": "pmv2_calibration_u010",
-                        "case_field": "multi_source_needed",
-                    },
-                }
+    def _candidate_bundle(user_id: str, sole_case: GeneratedStateCase) -> GeneratedUserBundle:
+        bundle = GeneratedUserBundle(
+            user_id=user_id,
+            profile_summary="A privacy-safe synthetic user.",
+            stable_preferences=["calm communication"],
+            boundaries=["no diagnosis"],
+            generator_seed_id=f"seed_{user_id}",
+            cases=[
+                sole_case,
+                _case(
+                    case_id=f"{sole_case.case_id}_b",
+                    regime=ResourceNeedRegime.CONTEXT_ONLY,
+                    current_user_text=f"Unrelated context text for {user_id}.",
+                ),
+                _case(
+                    case_id=f"{sole_case.case_id}_c",
+                    regime=ResourceNeedRegime.EVENT_NEEDED,
+                    current_user_text=f"Unrelated event text for {user_id}.",
+                ),
+                _case(
+                    case_id=f"{sole_case.case_id}_d",
+                    regime=ResourceNeedRegime.STRATEGY_HELPFUL,
+                    current_user_text=f"Unrelated strategy text for {user_id}.",
+                ),
             ],
-        },
+        )
+        bundle.provenance["carried_forward_from"] = {
+            "case_sources": {field: "data/some_source_dir" for field in all_case_fields}
+        }
+        return bundle
+
+    bundle_u010 = _candidate_bundle(
+        "pmv2_calibration_u010",
+        _case(
+            case_id="case_u010_multi",
+            regime=ResourceNeedRegime.MULTI_SOURCE_NEEDED,
+            current_user_text=colliding_text,
+        ),
     )
-    loaded = module._load_duplicate_repair_spec(valid_spec_path, casewise_repair_plan)
-    key = ("pmv2_calibration_u012", "ambiguous")
-    assert set(loaded) == {key}
-    assert loaded[key]["forbidden_current_user_text"] == (
-        "I've been feeling really insecure about my abilities lately."
+    bundle_u012 = _candidate_bundle(
+        "pmv2_calibration_u012",
+        _case(
+            case_id="case_u012_ambiguous",
+            regime=ResourceNeedRegime.AMBIGUOUS,
+            current_user_text=colliding_text,
+        ),
     )
-    assert loaded[key]["forbidden_current_user_text_sha256"] == sha256_text(
-        "I've been feeling really insecure about my abilities lately."
+    candidates = {
+        "pmv2_calibration_u010": bundle_u010,
+        "pmv2_calibration_u012": bundle_u012,
+    }
+    planned_users = ["pmv2_calibration_u010", "pmv2_calibration_u012"]
+    split_by_user = {user_id: PMV2Split.CALIBRATION for user_id in planned_users}
+    repair_manifest = module._compute_cross_user_duplicate_repair_manifest(
+        planned_users=planned_users,
+        bundles=candidates,
+        split_by_user=split_by_user,
     )
-    assert loaded[key]["duplicate_of"] == {
+    assert len(repair_manifest["repair_cases"]) == 1
+    assert repair_manifest["repair_cases"][0]["user_id"] == "pmv2_calibration_u012"
+
+    plan = module._build_casewise_repair_plan(
+        candidates=candidates, repair_manifest=repair_manifest
+    )
+    assert set(plan) == {"pmv2_calibration_u012"}
+    u012_plan = plan["pmv2_calibration_u012"]
+    assert u012_plan["regenerated_case_fields"] == ["ambiguous"]
+    assert set(u012_plan["carried_case_fields"]) == set(all_case_fields) - {"ambiguous"}
+
+    duplicate_repair = u012_plan["duplicate_repair"]
+    assert set(duplicate_repair) == {"ambiguous"}
+    entry = duplicate_repair["ambiguous"]
+    assert entry["forbidden_current_user_text"] == colliding_text
+    assert entry["forbidden_current_user_text_sha256"] == sha256_text(colliding_text)
+    assert entry["duplicate_of"] == {
         "user_id": "pmv2_calibration_u010",
         "case_field": "multi_source_needed",
     }
 
-    # Naming a case the manifest never flagged (here: a different case
-    # field for the same user) must fail closed, not silently force a
-    # fresh regeneration of an otherwise-clean carried case.
-    unflagged_spec_path = tmp_path / "unflagged_spec.json"
-    write_json(
-        unflagged_spec_path,
-        {
-            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
-            "repairs": [
-                {
-                    "user_id": "pmv2_calibration_u012",
-                    "case_field": "context_only",
-                    "forbidden_current_user_text": "some text",
-                    "duplicate_of": {"user_id": "x", "case_field": "y"},
-                }
-            ],
-        },
+    # A clean candidate set (no collision) yields an empty plan.
+    clean_manifest = module._compute_cross_user_duplicate_repair_manifest(
+        planned_users=["pmv2_calibration_u010"],
+        bundles={"pmv2_calibration_u010": bundle_u010},
+        split_by_user={"pmv2_calibration_u010": PMV2Split.CALIBRATION},
     )
-    with pytest.raises(RuntimeError, match="did not flag for regeneration"):
-        module._load_duplicate_repair_spec(unflagged_spec_path, casewise_repair_plan)
+    assert module._build_casewise_repair_plan(
+        candidates={"pmv2_calibration_u010": bundle_u010},
+        repair_manifest=clean_manifest,
+    ) == {}
 
-    # Wrong protocol also fails closed.
-    wrong_protocol_path = tmp_path / "wrong_protocol.json"
-    write_json(wrong_protocol_path, {"protocol": "not-the-right-protocol", "repairs": []})
-    with pytest.raises(RuntimeError, match="unrecognized or missing protocol"):
-        module._load_duplicate_repair_spec(wrong_protocol_path, casewise_repair_plan)
 
-    # An empty forbidden text fails closed rather than silently locking
-    # against an empty string (which would forbid nothing).
-    empty_text_path = tmp_path / "empty_text.json"
-    write_json(
-        empty_text_path,
-        {
-            "protocol": module.DUPLICATE_SPECIFIC_BOUNDED_REPAIR_PROTOCOL,
-            "repairs": [
-                {
-                    "user_id": "pmv2_calibration_u012",
-                    "case_field": "ambiguous",
-                    "forbidden_current_user_text": "   ",
-                    "duplicate_of": {"user_id": "x", "case_field": "y"},
-                }
-            ],
-        },
+def test_find_cross_user_duplicate_ignores_same_user_reuse() -> None:
+    """The immediate, cheap post-generation cross-user duplicate check (run
+    before the expensive final validate_split_manifests pass) must flag a
+    DIFFERENT user's already-accepted text but never the same user's own
+    counterfactual reuse, which validate_split_manifests itself permits.
+    """
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
     )
-    with pytest.raises(RuntimeError, match="empty forbidden text"):
-        module._load_duplicate_repair_spec(empty_text_path, casewise_repair_plan)
+    spec_module = importlib.util.spec_from_file_location(
+        "pm_v1_5_find_cross_user_duplicate", script
+    )
+    assert spec_module is not None and spec_module.loader is not None
+    module = importlib.util.module_from_spec(spec_module)
+    spec_module.loader.exec_module(module)
+
+    accepted = {"normalized already accepted text": ("pmv2_train_u001", "context_only")}
+    assert module._find_cross_user_duplicate(
+        normalized_text="normalized already accepted text",
+        user_id="pmv2_train_u002",
+        accepted_normalized_texts=accepted,
+    ) == ("pmv2_train_u001", "context_only")
+    # Same user reusing its own text (the allowed counterfactual pattern)
+    # must not be flagged.
+    assert module._find_cross_user_duplicate(
+        normalized_text="normalized already accepted text",
+        user_id="pmv2_train_u001",
+        accepted_normalized_texts=accepted,
+    ) is None
+    # Genuinely new text is never flagged.
+    assert module._find_cross_user_duplicate(
+        normalized_text="brand new unseen text",
+        user_id="pmv2_train_u002",
+        accepted_normalized_texts=accepted,
+    ) is None
 
 
 def test_seed_casewise_carry_forward_into_ledger_recovers_only_carried_fields(
@@ -2911,6 +2956,89 @@ def test_seed_casewise_carry_forward_into_ledger_recovers_only_carried_fields(
                 }
             },
         )
+
+
+def test_real_physical_attempt_count_excludes_carried_forward_entries(
+    tmp_path: Path,
+) -> None:
+    """V8.17's real closure had to hand-inspect record_ids to learn that
+    only 1 of its "9 physical attempts" was a real paid OpenAI call and the
+    other 8 were seeded carry-forward entries -- ledger.started_attempts
+    conflates the two. _real_physical_attempt_count/
+    _carried_forward_ledger_entry_count must split them cleanly so no
+    report field silently mixes reused history with real new spend.
+    """
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec_module = importlib.util.spec_from_file_location(
+        "pm_v1_5_real_physical_attempt_count", script
+    )
+    assert spec_module is not None and spec_module.loader is not None
+    module = importlib.util.module_from_spec(spec_module)
+    spec_module.loader.exec_module(module)
+
+    expected_calls = {f"call_{i}": 3 for i in range(9)}
+    ledger = PersistentAttemptLedger(
+        tmp_path / "ledger.jsonl",
+        stage=module.GENERATION_STAGE,
+        expected_calls=expected_calls,
+        maximum_total_attempts=27,
+    )
+    # 8 carried-forward entries (matching the real V8.17 shape): seeded
+    # directly as SUCCEEDED with attempt_kind="carried_forward".
+    for i in range(8):
+        call_key = f"call_{i}"
+        reservation = ledger.reserve(
+            call_key,
+            record_ids={
+                "user_id": "pmv2_calibration_u012",
+                "case_field": f"field_{i}",
+                "attempt_kind": "carried_forward",
+                "generation_seed": 0,
+            },
+            prompt_sha256="prompt",
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash="carried-request",
+            usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            error=None,
+            result={"surface": {}, "provider_response": {}},
+        )
+    assert module._real_physical_attempt_count(ledger) == 0
+    assert module._carried_forward_ledger_entry_count(ledger) == 8
+
+    # 1 genuinely real attempt: a normal "initial" attempt_kind.
+    real_call_key = "call_8"
+    reservation = ledger.reserve(
+        real_call_key,
+        record_ids={
+            "user_id": "pmv2_calibration_u012",
+            "case_field": "ambiguous",
+            "attempt_kind": "initial",
+            "generation_seed": 900000,
+        },
+        prompt_sha256="prompt",
+    )
+    ledger.finish(
+        reservation,
+        succeeded=True,
+        request_hash="real-request",
+        usage={"prompt_tokens": 1489, "completion_tokens": 237, "total_tokens": 1726},
+        error=None,
+        result={"surface": {}, "provider_response": {}},
+    )
+    assert module._real_physical_attempt_count(ledger) == 1
+    assert module._carried_forward_ledger_entry_count(ledger) == 8
+    # The raw, undifferentiated ledger size still counts all 9 -- kept
+    # available (as generation_total_ledger_entries) but never used alone
+    # for cost/budget reporting.
+    assert ledger.started_attempts == 9
 
 
 def test_cross_user_duplicate_repair_manifest_keeps_earliest_plan_position() -> None:
