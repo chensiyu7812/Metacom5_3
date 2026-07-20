@@ -1,6 +1,6 @@
 {
   "protocol": "pm-v1.5-hybrid-retrieval-diagnostic-v1",
-  "generated_utc": "2026-07-20T10:29:38Z",
+  "generated_utc": "2026-07-20T14:38:03Z",
   "status": "REPORT_ONLY_NOT_A_FORMAL_ARTIFACT_NO_ADOPTION_DECISION_MADE",
   "inputs": {
     "evoemo_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/external/evo_emo.json",
@@ -17,7 +17,13 @@
         "train": 24
       },
       "disclosure": "Real, generated content produced by scripts/v1_5/20_generate_pm_v2_development_data_v1_5.py's v8.17 casewise-repair attempt -- NOT the frozen formal development-data artifact (as of this report, that stage has not been formally closed out / paid-approved for every user). Floors calibrated from it should be re-derived once the formal artifact exists; the calibration method itself (TRAIN-positive minimum, CALIBRATION-only reporting) does not change."
-    }
+    },
+    "esconv_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/external/ESConv.json",
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "esconv_split_manifest_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/strategy/esconv_split_manifest_v1_5.jsonl",
+    "esconv_split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "strategy_bank_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/strategy/strategy_cards_v1_5.jsonl",
+    "strategy_bank_sha256": "9cd614ad87677442feb6fb65ccbb4cecbba575867871474aede7700b0562a01e"
   },
   "semantic_encoder": {
     "spec_sha256": "febe9bbf8f7207607335284b98d7bc97a0b41231a4c2358cba0a027097911f65",
@@ -85,14 +91,142 @@
     },
     "contract_sha256": "c8674d11a6d39f762b7c2d01094a3e56201b1bf1f629b61d78030b9233bc8e5f"
   },
+  "legitimate_adoption_evidence": {
+    "note": "The only numbers in this report that may inform a Part 4 adoption decision, per the approved plan's data-boundary rule: real per-case candidate pools scored via the actual retrieve() pipeline (fusion, ranking, top-k), never a raw- score-only floor check. Memory uses the CALIBRATION split only (never TRAIN, already spent fitting floors above); Strategy uses the ESConv VALIDATION split only (never test, which is confirmatory). Both use the same context_query construction real retrieval uses.",
+    "memory_retrieval_quality": {
+      "split": "calibration",
+      "top_k_by_source": {
+        "MP": 2,
+        "MS": 2,
+        "ME": 3
+      },
+      "by_method": {
+        "lexical_only": {
+          "MP": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.5,
+            "query_hashes": []
+          },
+          "MS": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.5,
+            "query_hashes": []
+          },
+          "ME": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.5,
+            "query_hashes": []
+          }
+        },
+        "hybrid": {
+          "MP": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.5,
+            "query_hashes": []
+          },
+          "MS": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.5,
+            "query_hashes": []
+          },
+          "ME": {
+            "units_evaluated": 24,
+            "hit_rate": 1.0,
+            "mean_precision": 0.625,
+            "query_hashes": []
+          }
+        }
+      },
+      "negative_source_and_harmful_retrieval": {
+        "lexical_only": {
+          "MP": {
+            "harmful_retrieval_rate": 1.0,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 1.0,
+            "negative_source_eligible_cases": 84
+          },
+          "MS": {
+            "harmful_retrieval_rate": 1.0,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 1.0,
+            "negative_source_eligible_cases": 84
+          },
+          "ME": {
+            "harmful_retrieval_rate": 1.0,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 1.0,
+            "negative_source_eligible_cases": 84
+          }
+        },
+        "hybrid": {
+          "MP": {
+            "harmful_retrieval_rate": 1.0,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 1.0,
+            "negative_source_eligible_cases": 84
+          },
+          "MS": {
+            "harmful_retrieval_rate": 1.0,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 0.9880952380952381,
+            "negative_source_eligible_cases": 84
+          },
+          "ME": {
+            "harmful_retrieval_rate": 0.9166666666666666,
+            "harmful_eligible_cases": 12,
+            "negative_source_false_retrieval_rate": 1.0,
+            "negative_source_eligible_cases": 84
+          }
+        }
+      }
+    },
+    "esconv_strategy_retrieval_quality": {
+      "split": "validation",
+      "strategy_top_k": 3,
+      "by_method": {
+        "lexical_only": {
+          "units_evaluated": 2393,
+          "hit_rate": 0.4057668198913498,
+          "mean_precision": 0.17230812090820447,
+          "query_hashes": []
+        },
+        "hybrid": {
+          "units_evaluated": 2393,
+          "hit_rate": 0.39406602590890094,
+          "mean_precision": 0.1649254770859451,
+          "query_hashes": []
+        }
+      },
+      "paired_dialogue_cluster_bootstrap": {
+        "cluster_key": "dialogue_id",
+        "hit_rate_diff": {
+          "mean": -0.011700793982448809,
+          "ci_low": -0.038336172440045675,
+          "ci_high": 0.015047615224440319,
+          "n_clusters": 172
+        },
+        "precision_diff": {
+          "mean": -0.007382643822259368,
+          "ci_low": -0.01911616193851919,
+          "ci_high": 0.0037594119442357684,
+          "n_clusters": 172
+        }
+      }
+    }
+  },
   "report_only_evoemo_diagnostic_not_confirmatory": {
-    "note": "Every number below uses EvoEmo's evaluator-only subsequent_topics/related_sessions ground truth and topic text as a query stand-in -- report-only, computed after the frozen_contract above was already fixed, and never fed back into floor calibration. Scope is ME only: related_sessions ground truth has no MP/MS analogue.",
+    "note": "Every number below uses EvoEmo's evaluator-only subsequent_topics/related_sessions ground truth and topic text as a query stand-in -- report-only, computed after the frozen_contract above was already fixed, and never fed back into floor calibration or the legitimate evidence above. Scope is ME only: related_sessions ground truth has no MP/MS analogue.",
     "top_k_by_source": {
       "ME": 3
     },
     "fixed_top_k_comparison": {
       "lexical_only": {
-        "topics_evaluated": 34,
+        "units_evaluated": 34,
         "hit_rate": 0.5882352941176471,
         "mean_precision": 0.2647058823529412,
         "query_hashes": [
@@ -133,7 +267,7 @@
         ]
       },
       "hybrid": {
-        "topics_evaluated": 34,
+        "units_evaluated": 34,
         "hit_rate": 0.9117647058823529,
         "mean_precision": 0.5392156862745098,
         "query_hashes": [
@@ -177,7 +311,7 @@
     "fixed_token_budget_comparison": {
       "token_budget": 360,
       "lexical_only": {
-        "topics_evaluated": 34,
+        "units_evaluated": 34,
         "hit_rate": 0.6470588235294118,
         "mean_precision": 0.22941176470588234,
         "query_hashes": [
@@ -218,7 +352,7 @@
         ]
       },
       "hybrid": {
-        "topics_evaluated": 34,
+        "units_evaluated": 34,
         "hit_rate": 0.9117647058823529,
         "mean_precision": 0.46715686274509804,
         "query_hashes": [

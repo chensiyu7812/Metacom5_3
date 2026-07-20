@@ -388,6 +388,20 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-HYB-05 | C1 | `scripts/v1_5/25_eval_pm_v2_external_v1_5.py` 的两个显式 frozen-parameter 核验列表（`GENERATION_STAGE`、`PMV22_REFERENCE_BASELINE_STAGE`）都没有比较 `evo_memory_builder_contract_sha256`/`evo_memory_global_catalog_sha256`，即便这两个字段早已在 Part 2 被接入 freeze contract 与真实 attestation——"接入了 freeze"不等于"接入了下游每一个读 freeze 的核验点" | 两个列表都补上这两项核验，并新增专门的"篡改即拒绝"回归测试（`test_v1_5_external_eval_rejects_stale_evo_memory_catalog`）；不是结果颠覆性漏洞（24/24a 两个驱动脚本自己的交叉检查已经能防止不一致的 attestation 被生产出来），但属于计划里明确点名的"evaluation attestation"检查点的真实缺口 | `CODE_CLOSED_FULL_TEST_PASS` |
 | V15-HYB-06 | C2 | 口头向用户汇报把 `pm-v1.5-hybrid-retrieval` 相对 `pm-v1.5_1` 的提交数说成 6 个，实际 `git log --oneline pm-v1.5_1..HEAD` 只有 5 个（很可能把两分支共同祖先提交也数了进去）；性质上和本账本反复出现的"批准/消费时间戳倒签"是同一类错误——凭记忆报数而非先跑确定性命令验证 | 任何"提交数/测试数/费用数/耗时"类陈述，开口前必须先跑一次确定性命令验证，不能凭记忆推算；发现后已在同一轮对话中口头更正 | `RECONCILED_VERBAL_CORRECTION` |
 
+**最终采纳决定（2026-07-20T14:41:00Z，见 `outputs/pm_v1_5_hybrid_retrieval_adoption_decision.json`，绑定
+`diagnostic_report_contract_sha256=c8674d11...9233bc8e5f`）：`NOT_ADOPTED`。** 修完 V15-HYB-01..05 后按合法证据边界
+（Memory 用 calibration 切分、Strategy 用 ESConv validation 切分，真实跑完整 `retrieve()` 流程，2393 turns/172 个独立
+dialogue cluster）重新出结果：Strategy 上 hybrid 数值上更差（hit_rate 0.394 vs 0.406，precision 0.165 vs 0.172），
+paired dialogue-cluster bootstrap 的两个 95% CI 都跨过 0，不能证明有差异；Memory 上 MP/MS 完全无差异，仅 ME 的
+precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、且不能在另外两个来源复现，单独站不住。这组合法证据
+与更早的 report-only EvoEmo 诊断（lexical 0.588–0.647 vs hybrid 0.912）形成鲜明反差——后者用 EvoEmo 评估者专用的
+长段落 `topic` 字段当 query 代理，与真实部署时的短查询在形状上完全不同；两者的巨大落差本身就说明那个 0.912 更像是
+查询形状的人为产物，而不是真实检索质量的信号，印证了 V15-HYB-04 一开始的怀疑。用户据此决定：不批准 Part 4 原子
+迁移，继续使用现有 `MemoryRetriever`/`StrategyRetriever`（lexical-only）；Hybrid 诊断代码、测试与两份报告保留归档
+（`hybrid_retrieval.py`/`hybrid_retrieval_diagnostics.py`/`40_diagnose_hybrid_retrieval.py` 及其测试从未被任何真实
+调用方导入，`tests/test_hybrid_retrieval_isolation.py` 持续强制这一点），仅在未来出现新的、同一数据边界下的证据时才
+可重新讨论——不得仅凭复述同一组数字、或再次用 report-only EvoEmo 数字顶替合法证据来重开此决定。
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。
