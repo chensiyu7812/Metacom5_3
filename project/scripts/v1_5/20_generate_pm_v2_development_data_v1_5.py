@@ -177,6 +177,124 @@ def _load_successful_surface_attempt(
     return attempt, surface, call
 
 
+def _load_successful_surface_from_old_ledger(
+    old_ledger_path: Path,
+    *,
+    user_id: str,
+    case_field: str,
+) -> tuple[GeneratedSurfaceOnlyCaseDraft, CallResult] | None:
+    """Read-only extraction of one already-paid surface from a DIFFERENT run's
+    immutable ledger, by (user_id, case_field) rather than by call_key.
+
+    This intentionally does not go through the normal call-plan/call-key
+    lookup (_load_successful_surface_attempt): the request payload -- and
+    therefore the call_key -- is derived from the exact prompt text, which
+    legitimately changes across code fixes (e.g. the V8.13-V8.16 anchor
+    fixes). The underlying paid provider response is unaffected by a local
+    prompt-wording or lint change, so it is still valid raw material to
+    recompile under current code; only the cache key changes.
+    """
+    matches: list[dict[str, Any]] = []
+    for row in iter_jsonl(old_ledger_path):
+        if row.get("event") != "SUCCEEDED":
+            continue
+        record_ids = row.get("record_ids") or {}
+        if record_ids.get("user_id") == user_id and record_ids.get("case_field") == case_field:
+            matches.append(row)
+    if not matches:
+        return None
+    if len(matches) > 1:
+        raise RuntimeError(
+            f"carry-forward source ledger has multiple SUCCEEDED rows for "
+            f"{user_id}/{case_field}: {old_ledger_path}"
+        )
+    result = matches[0].get("result") or {}
+    surface_payload = result.get("surface")
+    provider_response = result.get("provider_response")
+    if not isinstance(surface_payload, dict) or not isinstance(provider_response, dict):
+        raise RuntimeError(
+            f"carry-forward source lacks a recoverable trace for {user_id}/{case_field}"
+        )
+    usage = require_reported_usage(
+        matches[0].get("usage"), stage="carried-forward PM-v1.5 surface generation"
+    )
+    request_hash = str(matches[0].get("request_hash") or "")
+    if not request_hash:
+        raise RuntimeError(
+            f"carry-forward source lacks a request hash for {user_id}/{case_field}"
+        )
+    surface = GeneratedSurfaceOnlyCaseDraft.model_validate(surface_payload)
+    call = CallResult(
+        text=canonical_json(surface_payload),
+        raw_response=provider_response,
+        usage=usage,
+        latency_ms=0.0,
+        request_hash=request_hash,
+    )
+    return surface, call
+
+
+def _carry_forward_bundle_from_old_directory(
+    *,
+    old_out_dir: Path,
+    user_id: str,
+    families: list[str],
+    seed_dialogue: str,
+    seed_dialogue_source_id: str,
+    endpoint,
+    generation_binding: dict[str, Any],
+) -> tuple[GeneratedUserBundle, dict[str, Any]] | tuple[None, str]:
+    """Recompile one user's bundle from an older run's paid, real provider
+    responses, under CURRENT code, rebinding it to the CURRENT generation
+    run. Read-only on old_out_dir. All-or-nothing per user: any missing or
+    now-invalid case means the whole user must be regenerated for real, not
+    partially carried forward.
+    """
+    old_ledger_path = old_out_dir / "_generation_physical_attempt_ledger.jsonl"
+    if not old_ledger_path.is_file():
+        return None, f"carry-forward source has no physical attempt ledger: {old_out_dir}"
+    surfaces: dict[str, GeneratedSurfaceOnlyCaseDraft] = {}
+    calls: dict[str, CallResult] = {}
+    messages: dict[str, list[dict[str, str]]] = {}
+    attempt_kinds: dict[str, str] = {}
+    accepted_call_keys: dict[str, str] = {}
+    for case_field, _ in GENERATION_CASE_FIELDS:
+        loaded = _load_successful_surface_from_old_ledger(
+            old_ledger_path, user_id=user_id, case_field=case_field
+        )
+        if loaded is None:
+            return None, f"no carried-forward surface available for case {case_field}"
+        surface, call = loaded
+        surfaces[case_field] = surface
+        calls[case_field] = call
+        messages[case_field] = []
+        attempt_kinds[case_field] = "carried_forward"
+        accepted_call_keys[case_field] = f"carried_forward:{old_out_dir}:{user_id}:{case_field}"
+    try:
+        bundle = compile_surface_only_user_bundle(
+            surfaces=surfaces,
+            accepted_calls=calls,
+            accepted_messages=messages,
+            accepted_attempt_kinds=attempt_kinds,
+            seed_dialogue=seed_dialogue,
+            user_id=user_id,
+            semantic_families=families,
+            regimes=list(ResourceNeedRegime),
+            generator_model=endpoint.model,
+            generator_family=endpoint.family,
+        )
+    except (ValueError, RuntimeError) as exc:
+        return None, f"failed current recompilation/lint: {exc}"
+    bundle.provenance.update({"accepted_surface_call_keys": accepted_call_keys})
+    audit = {
+        "source_output_directory": str(old_out_dir),
+        "source_physical_attempt_ledger_sha256": sha256_file(old_ledger_path),
+    }
+    bundle.provenance["carried_forward_from"] = audit
+    bind_bundle_to_generation_run(bundle, generation_binding)
+    return bundle, audit
+
+
 def _ledger_usage_for_keys(
     ledger: PersistentAttemptLedger, call_keys: list[str]
 ) -> dict[str, int]:
@@ -767,6 +885,19 @@ def main() -> None:
         ),
     )
     parser.add_argument("--out-dir", type=Path, default=ROOT / "data" / "pm_v1_5")
+    parser.add_argument(
+        "--carry-forward-from",
+        type=Path,
+        help=(
+            "Optional older output directory whose already-paid, real "
+            "provider responses should be recompiled under current code and "
+            "carried into this run instead of being regenerated. Read-only "
+            "on the source directory. Any user whose carried-forward "
+            "content no longer passes current lint/schema checks is left "
+            "pending for real regeneration, never silently dropped or "
+            "forced through."
+        ),
+    )
     parser.add_argument("--train-users", type=int)
     parser.add_argument("--calibration-users", type=int)
     parser.add_argument("--internal-test-users", type=int)
@@ -1208,6 +1339,37 @@ def main() -> None:
             "resumable work file contains users outside the active immutable data "
             f"plan: {unexpected_existing}; use a new output directory or --overwrite"
         )
+
+    carry_forward_report: dict[str, Any] = {
+        "source_output_directory": None,
+        "carried_users": [],
+        "skipped_users": {},
+    }
+    if args.carry_forward_from is not None:
+        carry_forward_report["source_output_directory"] = str(
+            args.carry_forward_from.resolve()
+        )
+        for user_index, user_id in enumerate(planned_users):
+            if user_id in existing:
+                continue
+            seed_record = seeds[user_index % len(seeds)]
+            bundle, outcome = _carry_forward_bundle_from_old_directory(
+                old_out_dir=args.carry_forward_from,
+                user_id=user_id,
+                families=family_by_user[user_id],
+                seed_dialogue=seed_record["dialogue_text"],
+                seed_dialogue_source_id=seed_record["dialogue_id"],
+                endpoint=endpoint,
+                generation_binding=generation_binding,
+            )
+            if bundle is None:
+                carry_forward_report["skipped_users"][user_id] = outcome
+                continue
+            strict_bundle_check(bundle, family_by_user[user_id])
+            append_jsonl(work_path, bundle.model_dump(mode="json"))
+            existing[user_id] = bundle
+            carry_forward_report["carried_users"].append(user_id)
+
     all_user_attempts: dict[str, dict[str, Any]] = {}
     for user_index, user_id in enumerate(planned_users):
         seed_dialogue_index = user_index % len(seeds)
@@ -1348,6 +1510,23 @@ def main() -> None:
     for user_id, bundle in existing.items():
         require_bundle_generation_binding(bundle, generation_binding)
         strict_bundle_check(bundle, family_by_user[user_id])
+        carried_from = bundle.provenance.get("carried_forward_from")
+        if carried_from is not None:
+            # This user's "proof of payment" lives in a DIFFERENT run's
+            # ledger (already verified once at carry-forward time); re-check
+            # that source ledger has not changed or vanished since, rather
+            # than requiring it to appear in this run's own (mostly-empty)
+            # ledger, which does not apply to carried-forward users.
+            source_dir = Path(str(carried_from["source_output_directory"]))
+            source_ledger = source_dir / "_generation_physical_attempt_ledger.jsonl"
+            if not source_ledger.is_file() or sha256_file(source_ledger) != str(
+                carried_from["source_physical_attempt_ledger_sha256"]
+            ):
+                raise RuntimeError(
+                    f"carried-forward bundle {user_id} source ledger changed or "
+                    f"is missing since carry-forward: {source_dir}"
+                )
+            continue
         accepted_call_keys = bundle.provenance.get(
             "accepted_surface_call_keys"
         )
@@ -1500,6 +1679,7 @@ def main() -> None:
         "fail_on_reported_input_overrun": fail_on_reported_input_overrun,
         "generation_run_binding_sha256": generation_binding_sha256,
         "generation_run_binding": generation_binding,
+        "carry_forward": carry_forward_report,
         "completed_bundle_hashes": completed_bundle_hashes,
         "completed_bundle_manifest_sha256": sha256_text(
             canonical_json(completed_bundle_hashes)

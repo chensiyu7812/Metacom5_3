@@ -2313,6 +2313,100 @@ def test_saved_dry_run_mismatch_writes_field_level_diagnostic(
     }
 
 
+def test_carry_forward_recompiles_and_rebinds_an_older_directory_bundle(
+    tmp_path: Path,
+) -> None:
+    script = (
+        PROJECT_ROOT
+        / "scripts"
+        / "v1_5"
+        / "20_generate_pm_v2_development_data_v1_5.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "pm_v1_5_carry_forward", script
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    user_id = "pmv2_generation_compatibility_pilot"
+    families = ["relocation_loneliness", "self_confidence", "sleep_disruption"]
+    contract = {"semantic_families": families, "pilot_user_id": user_id}
+    surfaces = _surface_only_pilot_inputs(contract)
+
+    old_dir = tmp_path / "old_run"
+    old_dir.mkdir()
+    ledger_path = old_dir / "_generation_physical_attempt_ledger.jsonl"
+    rows = []
+    for case_field, _ in GENERATION_CASE_FIELDS:
+        payload = surfaces[case_field].model_dump(mode="json")
+        rows.append(
+            {
+                "event": "SUCCEEDED",
+                "record_ids": {"user_id": user_id, "case_field": case_field},
+                "result": {
+                    "surface": payload,
+                    "provider_response": {
+                        "choices": [
+                            {"message": {"content": canonical_json(payload)}}
+                        ]
+                    },
+                },
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 50,
+                    "total_tokens": 150,
+                },
+                "request_hash": f"old-run-request-{case_field}",
+            }
+        )
+    with ledger_path.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(canonical_json(row) + "\n")
+
+    endpoint = type("Endpoint", (), {"model": "gpt-4o-mini", "family": "openai_gpt4o"})()
+    bundle, outcome = module._carry_forward_bundle_from_old_directory(
+        old_out_dir=old_dir,
+        user_id=user_id,
+        families=families,
+        seed_dialogue="fixture held-out seed",
+        seed_dialogue_source_id="fixture-seed-1",
+        endpoint=endpoint,
+        generation_binding={"protocol": "test-binding"},
+    )
+    assert isinstance(bundle, GeneratedUserBundle), outcome
+    assert bundle.user_id == user_id
+    assert len(bundle.cases) == 9
+    carried_from = bundle.provenance["carried_forward_from"]
+    assert carried_from["source_output_directory"] == str(old_dir)
+    assert carried_from["source_physical_attempt_ledger_sha256"] == sha256_file(
+        ledger_path
+    )
+    require_bundle_generation_binding(bundle, {"protocol": "test-binding"})
+
+    # The ledger has not moved since carry-forward: unchanged.
+    assert sha256_file(ledger_path) == carried_from[
+        "source_physical_attempt_ledger_sha256"
+    ]
+
+    # Missing even one case's successful surface means the whole user is
+    # not carried forward (all-or-nothing), and the reason names the case.
+    with ledger_path.open("w", encoding="utf-8") as f:
+        for row in rows[:-1]:
+            f.write(canonical_json(row) + "\n")
+    missing_bundle, missing_outcome = module._carry_forward_bundle_from_old_directory(
+        old_out_dir=old_dir,
+        user_id=user_id,
+        families=families,
+        seed_dialogue="fixture held-out seed",
+        seed_dialogue_source_id="fixture-seed-1",
+        endpoint=endpoint,
+        generation_binding={"protocol": "test-binding"},
+    )
+    assert missing_bundle is None
+    assert "no carried-forward surface available" in missing_outcome
+
+
 def test_generation_resume_binding_rejects_legacy_and_mismatch() -> None:
     binding = {
         "generator_config_sha256": "a" * 64,
