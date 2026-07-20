@@ -1368,7 +1368,18 @@ def main() -> None:
             strict_bundle_check(bundle, family_by_user[user_id])
             append_jsonl(work_path, bundle.model_dump(mode="json"))
             existing[user_id] = bundle
-            carry_forward_report["carried_users"].append(user_id)
+        # Derived from the final state of `existing`, not from which
+        # invocation happened to append each bundle: --dry-run itself
+        # persists carried-forward bundles into this out_dir's own work
+        # file, so a later --run invocation would otherwise see them as
+        # already-`existing` and silently omit them from this list, making
+        # the saved dry-run and the freshly recomputed estimate disagree
+        # over an identical, unchanged set of completed users.
+        carry_forward_report["carried_users"] = sorted(
+            user_id
+            for user_id, bundle in existing.items()
+            if bundle.provenance.get("carried_forward_from") is not None
+        )
 
     all_user_attempts: dict[str, dict[str, Any]] = {}
     for user_index, user_id in enumerate(planned_users):
