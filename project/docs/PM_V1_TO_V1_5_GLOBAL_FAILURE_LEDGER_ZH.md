@@ -1,6 +1,6 @@
 # PM V1 → V1.5_1 全局失效模式账本与不可回归合同
 
-更新时间：2026-07-18
+更新时间：2026-07-20
 适用分支：`pm-v1.5_1` 及其后续修复分支
 文档性质：历史复盘、研究有效性威胁账本、改动影响检查表；不是实验结果，也不替代冻结配置
 
@@ -371,6 +371,23 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-REL-29 | C0 | V8.10/V8.11.1 pilot 已把 transport retries 与 content repair 分开，但 formal 468-call runner 仍给每个 content attempt 仅一个 physical slot；一次 500 会直接 abort 或错误消耗 initial/repair，复现 pilot/formal 两套执行机制 | formal runner 复用同一 bounded-retry-v4：每个 initial/repair 各 3 个 ledger-visible transport slots，10s/30s backoff，只有 5xx/429/408/timeout 重试；schema/provider-output/lint 只进入唯一 content repair，4xx/本地 postcondition 终止。预算冻结为 468 success / 936 content / 2,808 physical、`$3` ceiling，并在 report 输出 retry summary；bounded-retry/release 依赖也进入 formal code manifest | `CODE_CLOSED_REAL_FORMAL_ATTEMPT_REACHED_LOCAL_COMPILER_FAILURE_NOT_TRANSPORT` |
 | V15-REL-30 | C0 | 已消费 identity 曾继续留在 `pending_unapproved_dry_runs`，且 formal 失败说明错误声称长度来自 seed；若继续使用会把“已花费历史”误当“当前候选” | pending 始终只保留下一项未批准身份；`85d1…` 与 `bebe…` 仅在 consumption 历史中保留并永久拒绝复用。当前 pending 是绑定 exact V8.12 attestation、原 9-call ledger 与恢复 bundle 的 formal `799e…` | `MANIFEST_RECONCILED_FORMAL_RESUME_AWAITING_EXPLICIT_APPROVAL` |
 
+### 6.9 Hybrid 检索诊断（Part 3/3.1，独立分支 `pm-v1.5-hybrid-retrieval`）
+
+这一节记录的是一条完全独立、仍处于诊断阶段的支线：在 `MemoryRetriever`/`StrategyRetriever`
+之外新增一个**从未接入任何真实调用方**的 `HybridMemoryRetriever`/`HybridStrategyRetriever`
+（词法 + 语义融合），用于回答"混合检索是否值得在 Part 4 原子迁移全部真实消费者"这个问题。
+与第 6 节其余内容不同，这里目前没有任何付费 API 调用，也没有触碰任何正式冻结产物；记录
+在案是因为其中至少一条已经是本项目今年遇到的最接近生产事故量级的真实 bug。
+
+| ID | 级别 | 问题 | 永久修法/护栏 | 状态 |
+|---|---|---|---|---|
+| V15-HYB-01 | C1 | Hybrid 检索的 floor 排除条件用 `<=`（两个维度都"小于等于"floor 才保留，否则排除），但 floor 本身定义为"训练正例里的最小分数"——恰好等于该 floor 的正例（也就是定义 floor 的那个样本）在两个维度同时命中时会被自己定义的门排除，与"不会排除任何已知正例"的设计承诺直接矛盾 | 排除条件改成严格 `<`（两个维度都严格低于 floor 才排除等价于允许 `>=` 通过）；新增专测构造一个词法分数和语义分数都恰好等于 0.5、floor 也是 0.5 的候选，验证它必然存活 | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-HYB-02 | C1 | Floor 校准时的查询只用裸 `current_user_text`，但真实检索路径用的是 `retrieval.context_query(current_user_text, history, summary)`；两者长度和内容分布不同，意味着校准出来的 floor 并不是针对真实部署时会出现的查询分布拟合的 | 校准查询改为统一调用 `context_query`，复用语料本身已有的 `recent_dialogue`/`session_summary` 字段（这两个字段本来就在合成语料里，零新增数据/API 成本） | `CODE_CLOSED_REAL_DATA_RERUN_PASS` |
+| V15-HYB-03 | C0 | 为避免每次调用都重新编码全部 Strategy Bank，在 `HybridStrategyRetriever` 构造时把 11,590 张卡的 `retrieval_text` 一次性整批传给 `encoder.encode()`；该函数没有任何内部分批/分块，真实运行时把全部卡片一次性塞进同一次 transformer 前向传播，实测常驻内存冲到约 87GB、CPU 长时间不退出，只能手动 kill —— 是本阶段唯一真正逼近生产事故量级的问题，且完全是"为了修另一个问题（重复编码浪费）而引入的新问题" | 新增 `batched_encode()` helper，任何大规模文本集合一律按固定 batch size（128）切块编码再拼接，绝不允许无界集合喂给一次 `encode()` 调用；`_embed_all_texts`（floor 校准的批量编码）同步接入同一 helper（即使这次不是它引起崩溃，也不能让同一形状的风险留在第二个调用点）；杀掉旧进程后重跑，内存回落到约 1.5–2GB 并保持稳定 | `CODE_CLOSED_MEMORY_CONFIRMED_SANE_FULL_TEST_PASS_REAL_RERUN_COMPLETING` |
+| V15-HYB-04 | C1 | `HybridStrategyRetriever` 缺少 `confidence()`（真实 `StrategyRetriever.confidence` 是 `policies.py` 里 `>= threshold` 的真实门控信号）；同时，用 EvoEmo 的 evaluator-only `topic` 字段当 query 代理算出来的报告性诊断数字（0.912 命中率）被过度解读为足以支持 Part 4 原子迁移的证据——但按已批准计划的数据边界规则，只有 train/calibration 切分与 ESConv validation 切分的证据才合法，EvoEmo 数字永远是 report-only | 补 `confidence()`，严格保持与真实版本一致的纯词法语义（不在没有校准/验证证据的情况下发明"融合置信度"，留给未来若真的采纳 Hybrid 时再设计）；新增 `evaluate_case_memory_retrieval_quality`（真实 calibration 切分，跑完整 `retrieve()` 融合排序流程而不只是 floor 判断）与 `evaluate_esconv_strategy_retrieval_quality`（真实 ESConv validation 切分，172 对话/2,393 turns，镜像 `esconv.py` 已有的 `strategy_recall_at_k` 写法）作为目前唯一合法的"可用于采纳决定"的证据来源，报告中与 EvoEmo report-only 部分显式分区、互不污染 | `CODE_CLOSED_FULL_TEST_PASS_REAL_RERUN_IN_PROGRESS` |
+| V15-HYB-05 | C1 | `scripts/v1_5/25_eval_pm_v2_external_v1_5.py` 的两个显式 frozen-parameter 核验列表（`GENERATION_STAGE`、`PMV22_REFERENCE_BASELINE_STAGE`）都没有比较 `evo_memory_builder_contract_sha256`/`evo_memory_global_catalog_sha256`，即便这两个字段早已在 Part 2 被接入 freeze contract 与真实 attestation——"接入了 freeze"不等于"接入了下游每一个读 freeze 的核验点" | 两个列表都补上这两项核验，并新增专门的"篡改即拒绝"回归测试（`test_v1_5_external_eval_rejects_stale_evo_memory_catalog`）；不是结果颠覆性漏洞（24/24a 两个驱动脚本自己的交叉检查已经能防止不一致的 attestation 被生产出来），但属于计划里明确点名的"evaluation attestation"检查点的真实缺口 | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-HYB-06 | C2 | 口头向用户汇报把 `pm-v1.5-hybrid-retrieval` 相对 `pm-v1.5_1` 的提交数说成 6 个，实际 `git log --oneline pm-v1.5_1..HEAD` 只有 5 个（很可能把两分支共同祖先提交也数了进去）；性质上和本账本反复出现的"批准/消费时间戳倒签"是同一类错误——凭记忆报数而非先跑确定性命令验证 | 任何"提交数/测试数/费用数/耗时"类陈述，开口前必须先跑一次确定性命令验证，不能凭记忆推算；发现后已在同一轮对话中口头更正 | `RECONCILED_VERBAL_CORRECTION` |
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。
@@ -395,6 +412,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | 只改 pilot 生成器 | formal 仍走 whole-bundle，重新产生 mechanism mismatch | 修改共享 contract 后逐一核对所有消费者 |
 | 改成逐 case 生成 | 正式调用从 52 变 468，最大 936 | 方法改进必须同步更新成本、超时、ledger、approval、文档和 hash |
 | 发布 staged approval | manifest 与审查索引可能出现不同状态 | 用户授权也是内容寻址的单一事实，不能靠文件先写成已批准 |
+| 给 Strategy 检索加 embedding 缓存以避免重复编码 | 把"缓存"实现成构造时一次性把全部 11,590 张卡整批塞给 `encoder.encode()`；该函数无内部分批，真实运行内存冲到约 87GB，需手动 kill（V15-HYB-03） | 任何"缓存/预计算"优化都必须同时检查底层调用的输入规模上限；大规模文本集合一律显式分批（`batched_encode`），不能假设 encoder 自己会处理，也不能只用小规模单测掩盖真实规模下的行为 |
 
 ## 8. 不可回归宪法
 
