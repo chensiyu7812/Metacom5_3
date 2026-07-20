@@ -54,6 +54,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Sequence
 
+import numpy as np
+
 from .contracts import MemoryItem, MemorySource, StrategyCard
 from .io import canonical_json, sha256_text
 from .pm_v1_5_semantic import SemanticTextEncoder
@@ -67,6 +69,44 @@ HYBRID_RETRIEVAL_PROTOCOL = "pm-v1.5-hybrid-retrieval-diagnostic-v1"
 # standard literature default -- never tuned against this project's own
 # retrieval results, which would make "not tuned" a false claim.
 RECIPROCAL_RANK_FUSION_K = 60
+
+# SemanticTextEncoder.encode(texts) puts every text into a single forward
+# pass with no internal batching -- fine for the handful of texts in one
+# retrieval call, but encoding a large text collection (e.g. the real
+# ~11.6k-card Strategy Bank) in ONE unbatched call is a genuine
+# memory/latency risk, not just a theoretical one (observed multi-hour,
+# tens-of-GB blowup encoding the full bank in one shot). Always go through
+# batched_encode for any collection whose size isn't bounded by a single
+# retrieval call's candidate pool.
+DEFAULT_ENCODE_BATCH_SIZE = 128
+
+
+def batched_encode(
+    encoder: SemanticTextEncoder,
+    texts: Sequence[str],
+    *,
+    batch_size: int = DEFAULT_ENCODE_BATCH_SIZE,
+    progress: Callable[[int, int], None] | None = None,
+) -> np.ndarray:
+    """Encode ``texts`` in fixed-size batches and concatenate the result.
+
+    ``progress(batches_done, total_batches)``, if given, is called after
+    each batch -- useful for a large collection (e.g. the ~11.6k-card
+    Strategy Bank, ~91 batches at the default size) where the whole call
+    can take long enough that visibility into per-batch progress matters.
+    """
+
+    if not texts:
+        raise ValueError("batched_encode requires at least one text")
+    if batch_size < 1:
+        raise ValueError("batch_size must be at least 1")
+    starts = list(range(0, len(texts), batch_size))
+    chunks = []
+    for batch_index, start in enumerate(starts, start=1):
+        chunks.append(encoder.encode(texts[start : start + batch_size]))
+        if progress is not None:
+            progress(batch_index, len(starts))
+    return np.concatenate(chunks, axis=0)
 
 
 @dataclass(frozen=True)
@@ -292,6 +332,7 @@ class HybridStrategyRetriever:
         top_k: int = 3,
         floors: SourceScoreFloors,
         rrf_k: int = RECIPROCAL_RANK_FUSION_K,
+        embedding_progress: Callable[[int, int], None] | None = None,
     ):
         self.cards = list(cards)
         self.semantic_encoder = semantic_encoder
@@ -301,9 +342,14 @@ class HybridStrategyRetriever:
         # The Strategy Bank is large (11k+ cards in the real V1.5 bank) and
         # fixed once this retriever is constructed -- embed every card's
         # retrieval_text exactly once here rather than re-encoding the
-        # entire bank on every rank_all()/retrieve() call.
+        # entire bank on every rank_all()/retrieve() call. Batched (not one
+        # giant encode() call): see batched_encode's docstring.
         self._card_vectors = (
-            self.semantic_encoder.encode([card.retrieval_text for card in self.cards])
+            batched_encode(
+                self.semantic_encoder,
+                [card.retrieval_text for card in self.cards],
+                progress=embedding_progress,
+            )
             if self.cards
             else None
         )

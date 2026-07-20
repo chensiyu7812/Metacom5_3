@@ -10,6 +10,7 @@ from metacom_pm.hybrid_retrieval import (
     HybridMemoryRetriever,
     HybridStrategyRetriever,
     SourceScoreFloors,
+    batched_encode,
     hybrid_retrieval_contract_hash,
     observable_query_with_hash,
     retrieve_fixed_token_budget,
@@ -460,3 +461,23 @@ def test_contract_hash_changes_with_floors_rrf_k_and_encoder_binding():
 
 def test_protocol_tag_is_stable_string():
     assert HYBRID_RETRIEVAL_PROTOCOL == "pm-v1.5-hybrid-retrieval-diagnostic-v1"
+
+
+def test_batched_encode_chunks_large_collections_and_preserves_order():
+    # A large text collection (e.g. the real ~11.6k-card Strategy Bank) must
+    # never be handed to encoder.encode() in one unbatched call -- that
+    # already caused a real multi-hour, tens-of-GB blowup in practice.
+    texts = [f"text {i}" for i in range(10)]
+    vocab = {text: _one_hot(10, i) for i, text in enumerate(texts)}
+    encoder = _CountingEncoder(vocab)
+    result = batched_encode(encoder, texts, batch_size=3)
+    assert encoder.call_count == 4  # ceil(10 / 3)
+    assert all(len(batch) <= 3 for batch in encoder.texts_seen)
+    for i, text in enumerate(texts):
+        assert np.array_equal(result[i], vocab[text])
+
+
+def test_batched_encode_rejects_empty_input():
+    encoder = _FakeEncoder({})
+    with pytest.raises(ValueError):
+        batched_encode(encoder, [])

@@ -30,18 +30,27 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
+import time
 from collections import Counter
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+_START = time.monotonic()
+
+
+def _log(message: str) -> None:
+    print(f"[{time.monotonic() - _START:8.1f}s] {message}", file=sys.stderr, flush=True)
+
 from metacom_pm.config import load_config
-from metacom_pm.contracts import MemorySource
+from metacom_pm.contracts import MemorySource, StrategyCard
 from metacom_pm.evoemo import evo_memory_global_catalog_digest, load_evoemo
 from metacom_pm.hybrid_retrieval import (
     HYBRID_RETRIEVAL_PROTOCOL,
     RECIPROCAL_RANK_FUSION_K,
     HybridMemoryRetriever,
+    HybridStrategyRetriever,
     SourceScoreFloors,
     hybrid_retrieval_contract_hash,
 )
@@ -49,6 +58,8 @@ from metacom_pm.hybrid_retrieval_diagnostics import (
     calibrate_source_floors,
     compare_fixed_token_budget,
     compare_fixed_top_k,
+    evaluate_case_memory_retrieval_quality,
+    evaluate_esconv_strategy_retrieval_quality,
     iter_case_calibration_examples,
     split_of_user_id,
 )
@@ -57,7 +68,7 @@ from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     semantic_encoder_spec_from_config,
 )
-from metacom_pm.retrieval import DEFAULT_MEMORY_TOP_K, MemoryRetriever
+from metacom_pm.retrieval import DEFAULT_MEMORY_TOP_K, MemoryRetriever, StrategyRetriever
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -99,6 +110,43 @@ def main() -> None:
         "--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml"
     )
     parser.add_argument(
+        "--esconv", type=Path, default=ROOT / "data" / "external" / "ESConv.json"
+    )
+    parser.add_argument(
+        "--esconv-split-manifest",
+        type=Path,
+        default=ROOT / "data" / "strategy" / "esconv_split_manifest_v1_5.jsonl",
+    )
+    parser.add_argument(
+        "--strategy-bank",
+        type=Path,
+        default=ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl",
+    )
+    parser.add_argument(
+        "--memory-eval-split",
+        default="calibration",
+        choices=["calibration"],
+        help=(
+            "Split evaluate_case_memory_retrieval_quality reads. Hard-"
+            "restricted to 'calibration' -- the only split the approved "
+            "plan permits for adoption-relevant evidence. 'train' would "
+            "reuse the split floors were fit from; internal_test/"
+            "external_test are confirmatory and must never be touched "
+            "before the retriever design is frozen and a decision is made."
+        ),
+    )
+    parser.add_argument(
+        "--esconv-eval-split",
+        default="validation",
+        choices=["validation"],
+        help=(
+            "Split evaluate_esconv_strategy_retrieval_quality reads. Hard-"
+            "restricted to 'validation'; 'test' is confirmatory and must "
+            "never be used before the retriever design is frozen and a "
+            "decision is made."
+        ),
+    )
+    parser.add_argument(
         "--token-budget",
         type=int,
         default=360,
@@ -111,14 +159,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    _log("loading config and semantic encoder")
     config = load_config(args.pm_v2_config)
     encoder_spec = semantic_encoder_spec_from_config(config)
     encoder = FrozenTransformerSemanticEncoder.load(encoder_spec)
+    _log("semantic encoder loaded")
 
     bundles = list(iter_jsonl(args.development_data_candidate))
     split_counts = Counter(split_of_user_id(bundle["user_id"]) for bundle in bundles)
     calibration_examples = iter_case_calibration_examples(bundles)
+    _log(f"calibrating floors from {len(calibration_examples)} examples")
     source_calibration = calibrate_source_floors(calibration_examples, encoder=encoder)
+    _log("floor calibration complete")
     memory_floors_by_source = {
         source: SourceScoreFloors(
             lexical_min_score=calib.lexical_min_score,
@@ -135,25 +187,76 @@ def main() -> None:
 
     users = load_evoemo(args.evoemo)
     evo_memory_digest = evo_memory_global_catalog_digest(users)
-    top_k_by_source = {MemorySource.ME: DEFAULT_MEMORY_TOP_K[MemorySource.ME]}
+    # Configured for every source (not just ME) so the same retriever pair
+    # serves both the ME-only EvoEmo comparison below (which always passes
+    # selected_sources={ME} explicitly) and the all-source
+    # evaluate_case_memory_retrieval_quality legitimate-evidence pass.
+    memory_min_score = float(config["retrieval"]["memory_min_score"])
     lexical_retriever = MemoryRetriever(
-        top_k_by_source=top_k_by_source,
-        minimum_score_by_source={
-            MemorySource.ME: float(config["retrieval"]["memory_min_score"])
-        },
+        top_k_by_source=dict(DEFAULT_MEMORY_TOP_K),
+        minimum_score_by_source={source: memory_min_score for source in MemorySource},
     )
     hybrid_retriever = HybridMemoryRetriever(
         semantic_encoder=encoder,
-        top_k_by_source=top_k_by_source,
+        top_k_by_source=dict(DEFAULT_MEMORY_TOP_K),
         floors_by_source=memory_floors_by_source,
         rrf_k=RECIPROCAL_RANK_FUSION_K,
     )
+    _log(f"running EvoEmo fixed-top-k comparison over {len(users)} users")
     fixed_top_k_report = compare_fixed_top_k(
         users, lexical_retriever=lexical_retriever, hybrid_retriever=hybrid_retriever
     )
+    _log("EvoEmo fixed-top-k comparison complete; running fixed-token-budget comparison")
     fixed_budget_report = compare_fixed_token_budget(
         users, hybrid_retriever=hybrid_retriever, token_budget=int(args.token_budget)
     )
+    _log("EvoEmo fixed-token-budget comparison complete")
+
+    _log(f"running case memory retrieval-quality eval (split={args.memory_eval_split})")
+    memory_retrieval_quality_report = evaluate_case_memory_retrieval_quality(
+        bundles,
+        split=args.memory_eval_split,
+        lexical_retriever=lexical_retriever,
+        hybrid_retriever=hybrid_retriever,
+        progress=lambda done, total: (
+            _log(f"  memory case {done}/{total}") if done % 10 == 0 or done == total else None
+        ),
+    )
+    _log("case memory retrieval-quality eval complete")
+
+    strategy_cards = [
+        StrategyCard.model_validate(row) for row in iter_jsonl(args.strategy_bank)
+    ]
+    _log(f"loaded {len(strategy_cards)} strategy cards; building retrievers (batched encode)")
+    strategy_top_k = int(config["retrieval"]["strategy_top_k"])
+    strategy_min_score = float(config["retrieval"]["strategy_min_score"])
+    lexical_strategy_retriever = StrategyRetriever(
+        strategy_cards, top_k=strategy_top_k, minimum_score=strategy_min_score
+    )
+    hybrid_strategy_retriever = HybridStrategyRetriever(
+        strategy_cards,
+        semantic_encoder=encoder,
+        top_k=strategy_top_k,
+        floors=STRATEGY_FLOORS,
+        rrf_k=RECIPROCAL_RANK_FUSION_K,
+        embedding_progress=lambda done, total: (
+            _log(f"  strategy bank encode batch {done}/{total}")
+            if done % 10 == 0 or done == total
+            else None
+        ),
+    )
+    _log("strategy bank batched encode complete; running ESConv strategy retrieval-quality eval")
+    esconv_strategy_report = evaluate_esconv_strategy_retrieval_quality(
+        str(args.esconv),
+        str(args.esconv_split_manifest),
+        split=args.esconv_eval_split,
+        lexical_retriever=lexical_strategy_retriever,
+        hybrid_retriever=hybrid_strategy_retriever,
+        progress=lambda done, total: (
+            _log(f"  esconv turn {done}/{total}") if done % 100 == 0 or done == total else None
+        ),
+    )
+    _log("ESConv strategy retrieval-quality eval complete; writing report")
 
     report = {
         "protocol": HYBRID_RETRIEVAL_PROTOCOL,
@@ -185,6 +288,12 @@ def main() -> None:
                     "CALIBRATION-only reporting) does not change."
                 ),
             },
+            "esconv_path": str(args.esconv),
+            "esconv_sha256": sha256_file(args.esconv),
+            "esconv_split_manifest_path": str(args.esconv_split_manifest),
+            "esconv_split_manifest_sha256": sha256_file(args.esconv_split_manifest),
+            "strategy_bank_path": str(args.strategy_bank),
+            "strategy_bank_sha256": sha256_file(args.strategy_bank),
         },
         "semantic_encoder": {
             "spec_sha256": encoder_spec.digest(),
@@ -212,16 +321,59 @@ def main() -> None:
             "strategy_floors": asdict(STRATEGY_FLOORS),
             "contract_sha256": contract_hash,
         },
+        "legitimate_adoption_evidence": {
+            "note": (
+                "The only numbers in this report that may inform a Part 4 "
+                "adoption decision, per the approved plan's data-boundary "
+                "rule: real per-case candidate pools scored via the actual "
+                "retrieve() pipeline (fusion, ranking, top-k), never a raw- "
+                "score-only floor check. Memory uses the CALIBRATION split "
+                "only (never TRAIN, already spent fitting floors above); "
+                "Strategy uses the ESConv VALIDATION split only (never "
+                "test, which is confirmatory). Both use the same "
+                "context_query construction real retrieval uses."
+            ),
+            "memory_retrieval_quality": {
+                "split": args.memory_eval_split,
+                "top_k_by_source": {
+                    source.value: k for source, k in DEFAULT_MEMORY_TOP_K.items()
+                },
+                "by_method": {
+                    method: {
+                        source_value: asdict(summary)
+                        for source_value, summary in per_source.items()
+                    }
+                    for method, per_source in memory_retrieval_quality_report[
+                        "by_method_by_source"
+                    ].items()
+                },
+                "negative_source_and_harmful_retrieval": memory_retrieval_quality_report[
+                    "negative_source_and_harmful_retrieval"
+                ],
+            },
+            "esconv_strategy_retrieval_quality": {
+                "split": args.esconv_eval_split,
+                "strategy_top_k": strategy_top_k,
+                "by_method": {
+                    method: asdict(summary)
+                    for method, summary in esconv_strategy_report["by_method"].items()
+                },
+                "paired_dialogue_cluster_bootstrap": esconv_strategy_report[
+                    "paired_dialogue_cluster_bootstrap"
+                ],
+            },
+        },
         "report_only_evoemo_diagnostic_not_confirmatory": {
             "note": (
                 "Every number below uses EvoEmo's evaluator-only "
                 "subsequent_topics/related_sessions ground truth and topic "
                 "text as a query stand-in -- report-only, computed after "
                 "the frozen_contract above was already fixed, and never fed "
-                "back into floor calibration. Scope is ME only: "
-                "related_sessions ground truth has no MP/MS analogue."
+                "back into floor calibration or the legitimate evidence "
+                "above. Scope is ME only: related_sessions ground truth has "
+                "no MP/MS analogue."
             ),
-            "top_k_by_source": {"ME": top_k_by_source[MemorySource.ME]},
+            "top_k_by_source": {"ME": DEFAULT_MEMORY_TOP_K[MemorySource.ME]},
             "fixed_top_k_comparison": {
                 name: asdict(summary) for name, summary in fixed_top_k_report.items()
             },
