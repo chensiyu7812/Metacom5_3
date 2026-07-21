@@ -500,3 +500,18 @@ def test_run_refuses_persisted_terminal_failure_before_loading_credentials(
     with pytest.raises(RuntimeError, match="persisted ledger"):
         module.main()
     assert ledger.attempts_for(call_key) == 1
+
+
+def test_actual_468_response_max_tokens_is_900_not_300():
+    # Real evidence from the crashed actual-468 run: DeepSeek's own
+    # completions for this exact schema already reached 604 tokens
+    # (context_grounding_match) and 365 (advice_readiness_match) with only
+    # 300 requested (DeepSeek does not enforce max_tokens strictly), while
+    # Gemini does enforce it and crashed with a truncated-JSON parse error
+    # when a real response needed more than 300. 300 must never be
+    # reintroduced for review_scope == "actual_468" without addressing this.
+    source = (
+        ROOT / "scripts" / "v1_5_run_automated_semantic_review.py"
+    ).read_text(encoding="utf-8")
+    assert "response_max_tokens = 900" in source
+    assert "response_max_tokens = 300" not in source

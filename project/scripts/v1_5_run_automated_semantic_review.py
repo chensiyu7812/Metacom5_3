@@ -507,7 +507,20 @@ def main() -> None:
             for row in controls
         ]
         response_schema = SingleFieldDiagnosticOutput
-        response_max_tokens = 300
+        # Real evidence from the first 516/1880 actual_468 calls: Gemini
+        # enforces max_tokens as a hard truncation (a completion cut off
+        # mid-JSON-string raises JSONDecodeError, which the
+        # provider_output_format retry class allows only one extra attempt
+        # for), while DeepSeek does not enforce it strictly -- DeepSeek's own
+        # completions for the SAME schema/fields already reached up to 604
+        # tokens (context_grounding_match) and 365 (advice_readiness_match)
+        # with only 300 requested, meaning the true task sometimes needs
+        # more than 300 regardless of judge family; Gemini's strict
+        # enforcement is what turns that shortfall into a hard crash rather
+        # than a silent overrun. 900 gives real margin above the observed
+        # 604 max across both fields, including headroom for the ~1,363
+        # calls not yet attempted.
+        response_max_tokens = 900
     else:
         case_rows = list(real_case_rows) + [
             {"kind": "control", "item_id": row["item_id"], "text": row["case_text"]}
