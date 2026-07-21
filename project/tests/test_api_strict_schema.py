@@ -239,6 +239,48 @@ def test_paid_structured_response_survives_local_semantic_rejection(
     assert failure.validation_errors[0]["loc"] == []
 
 
+def test_chat_payload_sends_thinking_field_only_when_declared() -> None:
+    """thinking_mode="provider_default" (every existing endpoint) must omit
+    the field entirely -- only an endpoint that explicitly declares
+    "disabled" or "enabled" gets it sent. deepseek-v4-flash defaults to
+    thinking enabled and has no separate reasoning-token budget from
+    max_tokens, so an unrequested reasoning pass can consume the entire
+    judge max_tokens before any content token (the real cause of three
+    finish_reason=length judge failures on training_judge_deepseek_official_
+    flash)."""
+
+    default_endpoint = Endpoint(
+        base_url="https://api.openai.com", model="gpt-4o-mini", api_key_env="IGNORED"
+    )
+    payload = chat_request_payload(
+        default_endpoint,
+        [{"role": "user", "content": "hi"}],
+        temperature=0.0,
+        max_tokens=100,
+        seed=1,
+        response_schema=None,
+    )
+    assert "thinking" not in payload
+
+    disabled_endpoint = Endpoint(
+        base_url="https://api.deepseek.com",
+        model="deepseek-v4-flash",
+        api_key_env="IGNORED",
+        family="deepseek_official",
+        supports_strict_json_schema=False,
+        thinking_mode="disabled",
+    )
+    payload = chat_request_payload(
+        disabled_endpoint,
+        [{"role": "user", "content": "hi"}],
+        temperature=0.0,
+        max_tokens=100,
+        seed=1,
+        response_schema=None,
+    )
+    assert payload["thinking"] == {"type": "disabled"}
+
+
 def test_chat_payload_uses_loose_json_object_mode_when_declared() -> None:
     """Endpoint.supports_strict_json_schema=False (DeepSeek's own official
     API, which rejects the newer strict json_schema response_format with a

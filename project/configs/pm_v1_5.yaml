@@ -826,6 +826,16 @@ development_judging:
     deepseek_official:
       input: 0.14
       output: 0.28
+  # Per-family, so switching one family's provider does not silently change
+  # another's retry behavior. deepseek_official's loose json_object mode has
+  # more format/empty-output noise than the strict-schema NVIDIA endpoint it
+  # replaced (partly caused by an unrequested reasoning budget, now fixed via
+  # thinking_mode: disabled on the endpoint itself -- see experiment.yaml);
+  # 3 keeps one extra margin of safety for genuine, provider-acknowledged
+  # occasional empty content beyond that fix. google_gemini is unchanged.
+  maximum_provider_output_attempts_by_family:
+    google_gemini: 2
+    deepseek_official: 3
   seed: 2701
   response_max_output_tokens: 600
   risk_max_output_tokens: 700

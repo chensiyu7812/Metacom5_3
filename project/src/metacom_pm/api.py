@@ -60,6 +60,17 @@ class Endpoint:
     # json_object mode. Default True preserves every existing endpoint's
     # behavior unchanged.
     supports_strict_json_schema: bool = True
+    # "provider_default" omits the ``thinking`` request field entirely,
+    # preserving every existing endpoint's behavior unchanged. deepseek-v4-
+    # flash defaults to thinking enabled (confirmed via api-docs.deepseek.com
+    # /guides/thinking_mode/) and has no separate reasoning-token budget from
+    # max_tokens, so a short judge max_tokens can be entirely consumed by an
+    # unrequested chain-of-thought before any JSON content is emitted --
+    # exactly the finish_reason=length pattern observed on three real
+    # deepseek_official judge calls (completion_tokens landed precisely on
+    # the configured ceiling every time). "disabled"/"enabled" send an
+    # explicit ``{"thinking": {"type": ...}}`` field.
+    thinking_mode: str = "provider_default"
 
     @property
     def api_key(self) -> str:
@@ -301,6 +312,17 @@ def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
         # HTTP status code but are the same kind of transient infrastructure
         # issue as a 5xx response.
         return "network_timeout", None
+    if isinstance(exc, ValueError) and "finish_reason=length" in str(exc):
+        # The provider truncated the response because max_tokens ran out
+        # (commonly an unrequested reasoning/thinking budget consuming the
+        # entire allowance before any content token) -- a contract/config
+        # mismatch, not transient noise. Retrying the identical request is
+        # unlikely to help, so this is deliberately its own class, outside
+        # both RETRYABLE_UP_TO_FULL_BUDGET and BOUNDED_PROVIDER_OUTPUT_RETRY_
+        # CLASSES in bounded_retry.py -- it falls through to terminal on the
+        # first occurrence rather than burning a retry budget chasing the
+        # same ceiling.
+        return "output_token_limit", None
     if isinstance(exc, (KeyError, IndexError, TypeError, AttributeError)) or (
         isinstance(exc, ValueError) and "empty model response" in str(exc)
     ):
@@ -666,11 +688,36 @@ def _provider_response_diagnostics(
                 diagnostics["first_choice_keys"] = sorted(
                     str(key) for key in choices[0]
                 )[:100]
+                finish_reason = choices[0].get("finish_reason")
+                if finish_reason is not None:
+                    diagnostics["first_choice_finish_reason"] = str(finish_reason)
                 message = choices[0].get("message")
                 if isinstance(message, Mapping):
                     diagnostics["first_message_keys"] = sorted(
                         str(key) for key in message
                     )[:100]
+                    # Bounded lengths only -- never the content itself, which
+                    # may include the model's chain-of-thought or judged text.
+                    content = message.get("content")
+                    if isinstance(content, str):
+                        diagnostics["first_message_content_length"] = len(content)
+                    reasoning_content = message.get("reasoning_content")
+                    if isinstance(reasoning_content, str):
+                        diagnostics["first_message_reasoning_content_length"] = len(
+                            reasoning_content
+                        )
+        usage = body.get("usage")
+        if isinstance(usage, Mapping):
+            completion_details = usage.get("completion_tokens_details")
+            if isinstance(completion_details, Mapping):
+                reasoning_tokens = completion_details.get("reasoning_tokens")
+                if reasoning_tokens is not None:
+                    try:
+                        diagnostics["completion_reasoning_tokens"] = int(
+                            reasoning_tokens
+                        )
+                    except (TypeError, ValueError):
+                        pass
         candidates = body.get("candidates")
         if isinstance(candidates, list):
             diagnostics["candidates_count"] = len(candidates)
@@ -774,6 +821,8 @@ def chat_request_payload(
     }
     if seed is not None:
         payload["seed"] = int(seed)
+    if endpoint.thinking_mode != "provider_default":
+        payload["thinking"] = {"type": endpoint.thinking_mode}
     if response_schema is not None:
         if endpoint.supports_strict_json_schema:
             payload["response_format"] = {
@@ -971,13 +1020,23 @@ class OpenAICompatibleClient:
                     "completion_tokens": 0,
                     "total_tokens": 0,
                 }
-                text = body["choices"][0]["message"]["content"]
-                if not isinstance(text, str) or not text.strip():
-                    raise ValueError("empty model response")
-                last_provider_text = text
                 provider_finish_reason, normalized_finish_reason = (
                     normalize_provider_finish_reason(body)
                 )
+                text = body["choices"][0]["message"]["content"]
+                if not isinstance(text, str) or not text.strip():
+                    if normalized_finish_reason == "length":
+                        # Distinguish "the provider truncated the response
+                        # because max_tokens ran out" (e.g. an unrequested
+                        # reasoning/thinking budget consumed everything
+                        # before any content token) from a genuinely
+                        # unexplained empty response -- these need different
+                        # retry treatment (see _classify_retryable_exception).
+                        raise ValueError(
+                            "empty model response (finish_reason=length)"
+                        )
+                    raise ValueError("empty model response")
+                last_provider_text = text
                 call = CallResult(
                     text=text.strip(),
                     raw_response=body,
@@ -989,7 +1048,14 @@ class OpenAICompatibleClient:
                 )
                 if response_schema is None:
                     return call, None
-                parsed_obj, surface_audit = parse_audited_json_surface(text)
+                try:
+                    parsed_obj, surface_audit = parse_audited_json_surface(text)
+                except json.JSONDecodeError as exc:
+                    if normalized_finish_reason == "length":
+                        raise ValueError(
+                            "response is not valid JSON (finish_reason=length)"
+                        ) from exc
+                    raise
                 call.structured_output_audit = surface_audit
                 try:
                     parsed = response_schema.model_validate(parsed_obj)

@@ -730,7 +730,22 @@ def main() -> None:
         # when seeded below.
         maximum_total_attempts=int(args.max_api_calls) + len(carried_call_keys),
     )
-    maximum_provider_output_failures = DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+    # Per-family, not a single shared scalar: a judge family switching to a
+    # provider with more format/output noise (e.g. deepseek_official's loose
+    # json_object mode) must not silently change another family's (e.g.
+    # google_gemini's) retry behavior. Falls back to the shared default for
+    # any family not explicitly listed, so existing configs need no changes.
+    provider_output_attempts_by_family = {
+        str(family): int(value)
+        for family, value in dict(
+            judging_config.get("maximum_provider_output_attempts_by_family") or {}
+        ).items()
+    }
+
+    def _max_provider_output_attempts_for(judge_family: str) -> int:
+        return provider_output_attempts_by_family.get(
+            judge_family, DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+        )
 
     for row in cost_rows:
         physical_key = str(row["physical_call_key"])
@@ -773,7 +788,11 @@ def main() -> None:
         if ledger.succeeded(key):
             continue
         blocker = call_retry_blocker(
-            ledger, key, max_provider_output_attempts=maximum_provider_output_failures
+            ledger,
+            key,
+            max_provider_output_attempts=_max_provider_output_attempts_for(
+                str(row["judge_family"])
+            ),
         )
         if blocker is not None:
             blocked[key] = blocker
@@ -834,7 +853,9 @@ def main() -> None:
                 },
                 prompt_sha256=str(row["prompt_hash"]),
                 call_fn=call_fn,
-                max_provider_output_attempts=maximum_provider_output_failures,
+                max_provider_output_attempts=_max_provider_output_attempts_for(
+                    key[2]
+                ),
                 backoff_seconds=TRANSPORT_BACKOFF_SECONDS,
             )
             assert parsed is not None

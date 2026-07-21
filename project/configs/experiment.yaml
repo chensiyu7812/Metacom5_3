@@ -83,6 +83,13 @@ endpoints:
     # json_object response_format, not OpenAI's newer strict json_schema
     # mode that NVIDIA's gateway happily forwards for the same model.
     supports_strict_json_schema: false
+    # deepseek-v4-flash defaults to thinking enabled (api-docs.deepseek.com/
+    # guides/thinking_mode/); three real judge calls exhausted their entire
+    # max_tokens budget on unrequested reasoning before any JSON content,
+    # landing on completion_tokens == the configured ceiling every time and
+    # leaving empty/truncated content. Judging is fixed-rubric scoring, not a
+    # task that needs long chain-of-thought, so thinking is disabled here.
+    thinking_mode: disabled
 
   training_judge_qwen122:
     base_url: "https://integrate.api.nvidia.com"

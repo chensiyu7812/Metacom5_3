@@ -67,6 +67,7 @@ def endpoint_from_config(config: Mapping[str, Any], name: str) -> Endpoint:
         supports_strict_json_schema=bool(
             raw.get("supports_strict_json_schema", True)
         ),
+        thinking_mode=str(raw.get("thinking_mode") or "provider_default"),
     )
 
 
