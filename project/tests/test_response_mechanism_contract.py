@@ -133,6 +133,36 @@ def test_require_matching_response_mechanism_contract_fails_closed_when_differen
         )
 
 
+def test_require_matching_response_mechanism_contract_rejects_stale_declared_hash():
+    # A payload whose declared contract_sha256 no longer matches its own
+    # content (stale, tampered, or hand-constructed) must be rejected even
+    # if that stale hash happens to equal the other side's declared hash.
+    contract = dict(build_response_mechanism_contract(**_base_kwargs()))
+    tampered = dict(contract)
+    tampered["strategy_top_k_display_only"] = "irrelevant field added post-hoc"
+    # contract_sha256 left unchanged -- no longer the hash of this payload.
+    with pytest.raises(RuntimeError, match="does not match its own recomputed"):
+        require_matching_response_mechanism_contract(
+            expected=contract, actual=tampered, context="test"
+        )
+
+
+def test_require_matching_response_mechanism_contract_rejects_equal_hash_different_payload():
+    # Two payloads that happen to declare the same contract_sha256 but whose
+    # actual bodies differ must still be caught by the full-payload compare.
+    expected = dict(build_response_mechanism_contract(**_base_kwargs()))
+    actual = dict(expected)
+    actual["evidence_filter_enabled"] = not actual["evidence_filter_enabled"]
+    # actual's declared contract_sha256 is now stale for its own new body,
+    # but exercise the case where both declared hashes still match each
+    # other by copying expected's hash onto actual as well.
+    actual["contract_sha256"] = expected["contract_sha256"]
+    with pytest.raises(RuntimeError, match="does not match its own recomputed"):
+        require_matching_response_mechanism_contract(
+            expected=expected, actual=actual, context="test"
+        )
+
+
 def test_none_score_floor_is_not_coerced_to_zero_and_changes_the_hash():
     # MemoryRetriever/StrategyRetriever treat None as "no floor at all" (a
     # zero-score candidate is still retrieved) while 0.0 excludes zero-score

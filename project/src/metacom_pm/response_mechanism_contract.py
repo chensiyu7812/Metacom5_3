@@ -59,6 +59,9 @@ MECHANISM_CODE_RELATIVE_PATHS = (
     "src/metacom_pm/retrieval.py",
     "src/metacom_pm/action_execution.py",
     "src/metacom_pm/text.py",
+    "src/metacom_pm/generation_contract.py",
+    "src/metacom_pm/contracts.py",
+    "src/metacom_pm/api.py",
 )
 
 _CANARY_MEMORY_ITEM = MemoryItem(
@@ -187,15 +190,40 @@ def build_response_mechanism_contract(
     return payload
 
 
+def _self_hash(payload: Mapping[str, Any]) -> str:
+    body = {key: value for key, value in payload.items() if key != "contract_sha256"}
+    return sha256_text(canonical_json(body))
+
+
 def require_matching_response_mechanism_contract(
     *,
     expected: Mapping[str, Any],
     actual: Mapping[str, Any],
     context: str,
 ) -> None:
-    """Fail closed unless two mechanism contracts are byte-for-byte identical."""
+    """Fail closed unless two mechanism contracts are byte-for-byte identical.
 
-    if expected.get("contract_sha256") != actual.get("contract_sha256"):
+    Recomputes each side's own hash from its full payload (excluding the
+    self-referential ``contract_sha256`` field) rather than trusting the
+    declared ``contract_sha256`` field at face value -- a payload whose
+    declared hash is stale, tampered, or copy-pasted from elsewhere would
+    otherwise pass a check that only compared the two declared hash
+    strings. Also compares the full canonical payloads directly, so a
+    difference in any field is caught even if hash computation itself ever
+    had some quirk that happened to coincide on both sides.
+    """
+
+    for label, payload in (("expected", expected), ("actual", actual)):
+        declared = payload.get("contract_sha256")
+        recomputed = _self_hash(payload)
+        if declared != recomputed:
+            raise RuntimeError(
+                f"{context}: {label} response mechanism contract's declared "
+                "contract_sha256 does not match its own recomputed payload "
+                "hash -- the contract is stale, tampered, or was not built "
+                "by build_response_mechanism_contract"
+            )
+    if canonical_json(expected) != canonical_json(actual):
         raise RuntimeError(
             f"{context}: response mechanism contract does not match the frozen "
             "value -- development, EvoEmo, and ESConv generation must share "
