@@ -44,6 +44,7 @@ def select_pilot_states(
     *,
     selected_seed_sources_path: Path,
     train_split_dir: Path,
+    dialogue_offset: int = 0,
 ) -> dict[str, Any]:
     seeds = list(iter_jsonl(selected_seed_sources_path))
     train_dialogue_ids_ordered = [
@@ -57,7 +58,22 @@ def select_pilot_states(
             f"manifest, found {len(train_dialogue_ids_ordered)}"
         )
     n_pilot_dialogues = DIALOGUES_PER_STRATUM * len(STRATA)
-    pilot_dialogue_ids = train_dialogue_ids_ordered[:n_pilot_dialogues]
+    if dialogue_offset < 0 or dialogue_offset + n_pilot_dialogues > len(
+        train_dialogue_ids_ordered
+    ):
+        raise ValueError(
+            f"dialogue_offset {dialogue_offset} leaves fewer than "
+            f"{n_pilot_dialogues} train dialogues; must be in "
+            f"[0, {len(train_dialogue_ids_ordered) - n_pilot_dialogues}]"
+        )
+    # Still deterministic, still computable before any real API call --
+    # offset only shifts which contiguous window of the frozen canonical
+    # ordinal order is used (e.g. a second, disjoint pilot after an earlier
+    # one's real artifacts were lost, so the fresh run is not just
+    # recomputing byte-identical content).
+    pilot_dialogue_ids = train_dialogue_ids_ordered[
+        dialogue_offset : dialogue_offset + n_pilot_dialogues
+    ]
     stratum_by_dialogue_id = {
         dialogue_id: STRATA[index // DIALOGUES_PER_STRATUM]
         for index, dialogue_id in enumerate(pilot_dialogue_ids)
@@ -159,11 +175,25 @@ def main() -> None:
         type=Path,
         default=ROOT / "outputs" / "esconv_auxiliary_pilot_selection_manifest.json",
     )
+    parser.add_argument(
+        "--dialogue-offset",
+        type=int,
+        default=0,
+        help=(
+            "Shift which contiguous window of the 24 frozen train dialogues "
+            "is used (still deterministic, still selectable before any real "
+            "API call). Use a nonzero offset to pick a disjoint pilot "
+            "sample, e.g. after an earlier pilot's real artifacts were lost "
+            "and a fresh, genuinely different sample is wanted rather than "
+            "recomputing byte-identical content."
+        ),
+    )
     args = parser.parse_args()
 
     result = select_pilot_states(
         selected_seed_sources_path=args.selected_seed_sources,
         train_split_dir=args.train_split_dir,
+        dialogue_offset=args.dialogue_offset,
     )
     args.out_dir.mkdir(parents=True, exist_ok=True)
     write_jsonl(args.out_dir / "runtime_states.jsonl", result["runtime_rows"])
@@ -171,6 +201,7 @@ def main() -> None:
     write_jsonl(args.out_dir / "pm_v2_states.jsonl", result["pmv2_rows"])
     manifest = {
         "protocol": result["protocol"],
+        "dialogue_offset": int(args.dialogue_offset),
         "n_dialogues": result["n_dialogues"],
         "n_states": result["n_states"],
         "strata": result["strata"],

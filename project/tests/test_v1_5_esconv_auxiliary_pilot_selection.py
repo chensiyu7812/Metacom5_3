@@ -87,6 +87,50 @@ def test_selects_12_distinct_dialogues_stratified_4_4_4(tmp_path):
             assert row["turn_index"] == 3 + (9 - 1) * 2
 
 
+def test_dialogue_offset_selects_a_disjoint_deterministic_window(tmp_path):
+    module = _load_module()
+    seeds_path, train_dir = _write_fixture(tmp_path, n_dialogues=24, states_per_dialogue=9)
+    first = module.select_pilot_states(
+        selected_seed_sources_path=seeds_path,
+        train_split_dir=train_dir,
+        dialogue_offset=0,
+    )
+    second = module.select_pilot_states(
+        selected_seed_sources_path=seeds_path,
+        train_split_dir=train_dir,
+        dialogue_offset=12,
+    )
+    first_dialogues = {row["dialogue_id"] for row in first["manifest"]}
+    second_dialogues = {row["dialogue_id"] for row in second["manifest"]}
+    assert len(first_dialogues) == 12
+    assert len(second_dialogues) == 12
+    assert first_dialogues.isdisjoint(second_dialogues)
+    # Same offset, same fixture -> byte-identical selection (deterministic).
+    repeat = module.select_pilot_states(
+        selected_seed_sources_path=seeds_path,
+        train_split_dir=train_dir,
+        dialogue_offset=12,
+    )
+    assert repeat["manifest"] == second["manifest"]
+
+
+def test_dialogue_offset_out_of_range_is_rejected(tmp_path):
+    module = _load_module()
+    seeds_path, train_dir = _write_fixture(tmp_path, n_dialogues=24, states_per_dialogue=9)
+    with pytest.raises(ValueError, match="dialogue_offset"):
+        module.select_pilot_states(
+            selected_seed_sources_path=seeds_path,
+            train_split_dir=train_dir,
+            dialogue_offset=13,
+        )
+    with pytest.raises(ValueError, match="dialogue_offset"):
+        module.select_pilot_states(
+            selected_seed_sources_path=seeds_path,
+            train_split_dir=train_dir,
+            dialogue_offset=-1,
+        )
+
+
 def test_rejects_wrong_train_dialogue_count(tmp_path):
     module = _load_module()
     seeds_path, train_dir = _write_fixture(tmp_path, n_dialogues=10, states_per_dialogue=5)
