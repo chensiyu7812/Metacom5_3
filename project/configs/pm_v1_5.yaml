@@ -806,6 +806,18 @@ actual_corpus_semantic_audit:
   # logical_call above, unchanged.
   maximum_provider_output_attempts_by_family:
     deepseek_official: 3
+  # Real per-family rates (matches development_judging's), used instead of
+  # v1_5_run_automated_semantic_review.py's uniform CLI --input/output-usd-
+  # per-million-tokens price for this scope: google_gemini and deepseek_
+  # official have different real per-token prices, so one uniform number
+  # either over- or under-counts one family's real cost.
+  pricing_usd_per_mtok:
+    google_gemini:
+      input: 0.10
+      output: 0.40
+    deepseek_official:
+      input: 0.14
+      output: 0.28
   transport_backoff_seconds: [10, 30, 60, 120, 300, 300, 600, 600, 900]
   maximum_provider_surface_fallback_rate_by_split:
     train: 0.005

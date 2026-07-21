@@ -514,6 +514,31 @@ def main() -> None:
     }
     if any(value < 0.0 for value in prices.values()):
         raise ValueError("automated-review prices must be non-negative")
+    # actual_468 prices per judge family (mirrors 13c_judge_esconv_auxiliary
+    # _v1_5.py): google_gemini and deepseek_official have different real
+    # per-token rates, so a single CLI-supplied uniform price either over- or
+    # under-counts one family's real cost. The CLI --input/output-usd-per-
+    # million-tokens args stay required (validated above) as a legacy/other-
+    # scope fallback and a sanity floor, but actual_468's own cost accounting
+    # uses this fail-closed, exactly-covering per-family config instead.
+    prices_by_family: dict[str, dict[str, float]] | None = None
+    if args.review_scope == "actual_468":
+        prices_by_family = {
+            str(family): {
+                "input": float(values["input"]),
+                "output": float(values["output"]),
+            }
+            for family, values in dict(
+                control_cfg.get("pricing_usd_per_mtok") or {}
+            ).items()
+        }
+        if set(prices_by_family) != {
+            str(endpoint.family) for endpoint in endpoints.values()
+        }:
+            raise RuntimeError(
+                "actual_468 judge pricing must exactly cover frozen endpoint "
+                "families"
+            )
     if args.review_scope == "actual_468":
         case_rows = list(real_case_rows) + [
             {
@@ -613,11 +638,25 @@ def main() -> None:
                     "maximum_physical_attempts": maximum_physical_attempts_per_call,
                     # Worst case: every physical attempt up to the retry budget
                     # is a real, separately-billed call before one finally
-                    # succeeds or the call is abandoned.
+                    # succeeds or the call is abandoned. Uses this row's own
+                    # judge family's real price when available (actual_468),
+                    # not the single uniform CLI price.
                     "maximum_cost_usd": maximum_physical_attempts_per_call
                     * (
-                        bound / 1_000_000 * prices["input"]
-                        + response_max_tokens / 1_000_000 * prices["output"]
+                        bound
+                        / 1_000_000
+                        * (
+                            prices_by_family[str(endpoint.family)]["input"]
+                            if prices_by_family is not None
+                            else prices["input"]
+                        )
+                        + response_max_tokens
+                        / 1_000_000
+                        * (
+                            prices_by_family[str(endpoint.family)]["output"]
+                            if prices_by_family is not None
+                            else prices["output"]
+                        )
                     ),
                 }
             )
@@ -710,7 +749,14 @@ def main() -> None:
             if remaining_call_plan
             else 0
         ),
-        "pricing_usd_per_mtok": prices,
+        "pricing_usd_per_mtok": (
+            {
+                family: prices_by_family[family]
+                for family in sorted(prices_by_family)
+            }
+            if prices_by_family is not None
+            else prices
+        ),
         "api_cost_planning": planning,
         "judge_role_isolation": judge_role_isolation,
         "judge_endpoint_descriptors": judge_endpoint_descriptors,
@@ -737,6 +783,15 @@ def main() -> None:
             "provider_output_maximum_failures": (
                 maximum_provider_output_failures
             ),
+            # Folded into the hashed payload (not just used at runtime) so
+            # changing any family's format-retry budget changes cost_
+            # estimate_sha256 -- otherwise a config-only change to real
+            # retry behavior could silently keep an already-approved
+            # identity valid.
+            "provider_output_maximum_attempts_by_family": {
+                family: provider_output_attempts_by_family[family]
+                for family in sorted(provider_output_attempts_by_family)
+            },
             "provider_output_failures_are_independent_of_transport_attempts": True,
             "never_retried": [
                 "provider_request_error_4xx",

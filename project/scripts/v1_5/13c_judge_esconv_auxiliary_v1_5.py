@@ -423,6 +423,27 @@ def main() -> None:
     composite_weights_sha256 = composite_weights_hash(composite_spec)
     labeling = labeling_settings_from_config(pm_v1_5_config)
     judging_config = dict(pm_v1_5_config["development_judging"])
+    # Per-family, not a single shared scalar: a judge family switching to a
+    # provider with more format/output noise (e.g. deepseek_official's loose
+    # json_object mode) must not silently change another family's (e.g.
+    # google_gemini's) retry behavior. Falls back to the shared default for
+    # any family not explicitly listed, so existing configs need no changes.
+    # Computed here (before cost_payload) and folded into it below, so
+    # changing any family's budget changes cost_estimate_sha256 -- otherwise
+    # a config-only change to real retry behavior would silently keep an
+    # already-approved identity valid.
+    provider_output_attempts_by_family = {
+        str(family): int(value)
+        for family, value in dict(
+            judging_config.get("maximum_provider_output_attempts_by_family") or {}
+        ).items()
+    }
+
+    def _max_provider_output_attempts_for(judge_family: str) -> int:
+        return provider_output_attempts_by_family.get(
+            judge_family, DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+        )
+
     endpoint_names = [str(value) for value in judging_config["judge_endpoints"]]
     judge_seed = int(judging_config["seed"])
     response_max_output_tokens = int(judging_config["response_max_output_tokens"])
@@ -649,6 +670,14 @@ def main() -> None:
         "api_cost_planning": api_cost_planning,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+        # Folded into the hashed payload (not just used at runtime) so
+        # changing any family's format-retry budget changes cost_estimate_
+        # sha256 -- otherwise a config-only change to real retry behavior
+        # could silently keep an already-approved identity valid.
+        "provider_output_maximum_attempts_by_family": {
+            family: provider_output_attempts_by_family[family]
+            for family in sorted(provider_output_attempts_by_family)
+        },
         "call_plan_shuffle_seed": CALL_PLAN_SHUFFLE_SEED,
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
         "run_manifest_sha256": manifest["manifest_sha256"],
@@ -730,22 +759,6 @@ def main() -> None:
         # when seeded below.
         maximum_total_attempts=int(args.max_api_calls) + len(carried_call_keys),
     )
-    # Per-family, not a single shared scalar: a judge family switching to a
-    # provider with more format/output noise (e.g. deepseek_official's loose
-    # json_object mode) must not silently change another family's (e.g.
-    # google_gemini's) retry behavior. Falls back to the shared default for
-    # any family not explicitly listed, so existing configs need no changes.
-    provider_output_attempts_by_family = {
-        str(family): int(value)
-        for family, value in dict(
-            judging_config.get("maximum_provider_output_attempts_by_family") or {}
-        ).items()
-    }
-
-    def _max_provider_output_attempts_for(judge_family: str) -> int:
-        return provider_output_attempts_by_family.get(
-            judge_family, DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
-        )
 
     for row in cost_rows:
         physical_key = str(row["physical_call_key"])
