@@ -62,6 +62,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from typing import Any
 
 from metacom_pm.api import (
     chat_request_payload,
@@ -149,6 +150,77 @@ DEFAULT_JUDGE_ENDPOINTS = (
 MAX_PHYSICAL_ATTEMPTS_PER_CALL = 3
 
 
+def _load_carry_forward_state(
+    *,
+    carry_forward_dir: Path | None,
+    call_plan: list[dict],
+    review_stage: str,
+) -> dict[str, Any]:
+    """Read-only: find which of this run's own call-plan rows already
+    succeeded, with a complete parsed result, in a prior run's ledger.
+
+    Refuses (rather than silently carrying forward a stale subset) unless
+    the prior directory's call_plan.jsonl is byte-identical to the plan this
+    run just freshly computed for itself -- a real difference in states,
+    controls, judges, or code would already make individual call_keys not
+    match, but this is an explicit, early, whole-plan check rather than
+    relying on that as the only signal. Never touches the prior directory's
+    own ledger file; only reads it.
+    """
+
+    if carry_forward_dir is None:
+        return {
+            "carry_forward_source_directory": None,
+            "carry_forward_source_ledger_sha256": None,
+            "carried_call_keys": set(),
+            "carried_terminal_rows": {},
+        }
+    old_call_plan_path = carry_forward_dir / "call_plan.jsonl"
+    old_ledger_path = carry_forward_dir / "physical_attempt_ledger.jsonl"
+    if not old_call_plan_path.is_file() or not old_ledger_path.is_file():
+        raise RuntimeError(
+            "carry-forward source directory lacks a call plan or ledger"
+        )
+    if list(iter_jsonl(old_call_plan_path)) != call_plan:
+        raise RuntimeError(
+            "carry-forward source call plan differs from this run's own "
+            "freshly-computed plan -- refusing to trust its ledger's call keys"
+        )
+    expected_calls = {
+        str(row["physical_call_key"]): int(row["maximum_physical_attempts"])
+        for row in call_plan
+    }
+    old_ledger = PersistentAttemptLedger(
+        old_ledger_path,
+        stage=review_stage,
+        expected_calls=expected_calls,
+        # Read-only inspection of history; the real runtime cap is enforced
+        # separately, by this run's own ledger, once seeded.
+        maximum_total_attempts=10**9,
+    )
+    carried_call_keys: set[str] = set()
+    carried_terminal_rows: dict[str, dict] = {}
+    for row in call_plan:
+        call_key = str(row["physical_call_key"])
+        if not old_ledger.succeeded(call_key):
+            continue
+        terminal = old_ledger.terminal_row(call_key)
+        result = (terminal or {}).get("result")
+        if not isinstance(result, dict) or not result.get("parsed"):
+            raise RuntimeError(
+                "carry-forward source lacks a complete parsed result for "
+                f"{call_key}"
+            )
+        carried_call_keys.add(call_key)
+        carried_terminal_rows[call_key] = terminal
+    return {
+        "carry_forward_source_directory": str(carry_forward_dir),
+        "carry_forward_source_ledger_sha256": sha256_file(old_ledger_path),
+        "carried_call_keys": carried_call_keys,
+        "carried_terminal_rows": carried_terminal_rows,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -214,6 +286,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-usd-per-million-tokens", type=float, required=True)
     parser.add_argument("--accept-cost-estimate-sha256")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--carry-forward-review-dir",
+        type=Path,
+        help=(
+            "A prior run's --out-dir whose already-succeeded, fully-parsed "
+            "judge calls should be recovered read-only into this run's own "
+            "ledger under a fresh --out-dir/identity, instead of being paid "
+            "for again. Requires the prior directory's call_plan.jsonl to be "
+            "byte-identical to this run's own freshly-computed plan; refuses "
+            "otherwise. Only already-SUCCEEDED calls are carried; a "
+            "terminally-failed call is never carried and gets a full fresh "
+            "retry budget in this run."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -525,12 +611,25 @@ def main() -> None:
         ),
     )
     n_calls = len(call_plan)
-    # Worst-case physical HTTP attempts across the whole batch if every
+    carry_forward = _load_carry_forward_state(
+        carry_forward_dir=args.carry_forward_review_dir,
+        call_plan=call_plan,
+        review_stage=review_stage,
+    )
+    carried_call_keys = carry_forward["carried_call_keys"]
+    remaining_call_plan = [
+        row
+        for row in call_plan
+        if str(row["physical_call_key"]) not in carried_call_keys
+    ]
+    n_remaining_calls = len(remaining_call_plan)
+    # Worst-case physical HTTP attempts across the REMAINING batch if every
     # logical call needed its full bounded-retry budget before succeeding
     # (or being abandoned) -- the number actually authorized and cost-capped,
-    # per the module docstring's second amendment.
+    # per the module docstring's second amendment. Carried-forward calls are
+    # already paid for and need no further budget.
     max_physical_attempts_worst_case = (
-        n_calls * maximum_physical_attempts_per_call
+        n_remaining_calls * maximum_physical_attempts_per_call
     )
     estimate_payload = {
         "protocol": review_protocol,
@@ -554,12 +653,29 @@ def main() -> None:
         ),
         "n_judge_families": len(endpoints),
         "n_logical_calls": n_calls,
+        "historical_carried_forward_calls": len(carried_call_keys),
+        "remaining_new_logical_calls": n_remaining_calls,
+        "carry_forward_source_directory": carry_forward[
+            "carry_forward_source_directory"
+        ],
+        "carry_forward_source_ledger_sha256": carry_forward[
+            "carry_forward_source_ledger_sha256"
+        ],
+        "carried_forward_call_keys_sha256": (
+            sha256_text(canonical_json(sorted(carried_call_keys)))
+            if carried_call_keys
+            else None
+        ),
         "maximum_physical_attempts_per_call": maximum_physical_attempts_per_call,
         "maximum_physical_api_attempts": max_physical_attempts_worst_case,
         "call_plan_sha256": sha256_text(canonical_json(call_plan)),
-        "maximum_estimated_usd": sum(row["maximum_cost_usd"] for row in call_plan),
-        "maximum_input_tokens_per_call": max(
-            row["input_token_upper_bound"] for row in call_plan
+        "maximum_estimated_usd": sum(
+            row["maximum_cost_usd"] for row in remaining_call_plan
+        ),
+        "maximum_input_tokens_per_call": (
+            max(row["input_token_upper_bound"] for row in remaining_call_plan)
+            if remaining_call_plan
+            else 0
         ),
         "pricing_usd_per_mtok": prices,
         "api_cost_planning": planning,
@@ -671,8 +787,40 @@ def main() -> None:
             str(row["physical_call_key"]): maximum_physical_attempts_per_call
             for row in call_plan
         },
-        maximum_total_attempts=max_physical_attempts_worst_case,
+        # The cap must cover both the carried-forward entries seeded below
+        # (each contributes exactly one attempt, however many attempts the
+        # source run actually needed) and the genuinely new worst case.
+        maximum_total_attempts=(
+            max_physical_attempts_worst_case + len(carried_call_keys)
+        ),
     )
+    for row in call_plan:
+        call_key = str(row["physical_call_key"])
+        if call_key not in carried_call_keys or ledger.succeeded(call_key):
+            continue
+        terminal = carry_forward["carried_terminal_rows"][call_key]
+        reservation = ledger.reserve(
+            call_key,
+            record_ids=execution[call_key]["record_ids"],
+            prompt_sha256=str(row["prompt_sha256"]),
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash=terminal.get("request_hash"),
+            usage=terminal.get("usage"),
+            error=None,
+            result=terminal.get("result"),
+            metadata={
+                "carried_forward": True,
+                "carried_forward_source_directory": carry_forward[
+                    "carry_forward_source_directory"
+                ],
+                "carried_forward_source_ledger_sha256": carry_forward[
+                    "carry_forward_source_ledger_sha256"
+                ],
+            },
+        )
     blocked: dict[str, str] = {}
     for row in call_plan:
         call_key = str(row["physical_call_key"])
