@@ -42,8 +42,8 @@ from metacom_pm.io import (
     write_jsonl,
 )
 from metacom_pm.paid_run_release import (
-    require_output_directory_not_previously_consumed,
     require_paid_run_release,
+    resolve_first_unconsumed_output_directory,
 )
 from metacom_pm.response_mechanism_contract import build_response_mechanism_contract
 from metacom_pm.sweep import plan_action_sweep, run_action_sweep
@@ -203,9 +203,10 @@ def main() -> None:
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
     )
-    out_dir = args.out_root / f"esconv_auxiliary_generation_v1_5_{scope}_{split}"
-    require_output_directory_not_previously_consumed(
-        out_dir, config=pm_v1_5_config, config_path=args.pm_v1_5_config
+    out_dir = resolve_first_unconsumed_output_directory(
+        args.out_root / f"esconv_auxiliary_generation_v1_5_{scope}_{split}",
+        config=pm_v1_5_config,
+        config_path=args.pm_v1_5_config,
     )
 
     legal_actions = tuple(

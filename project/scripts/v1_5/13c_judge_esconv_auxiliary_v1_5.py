@@ -113,8 +113,8 @@ from metacom_pm.io import (
     write_jsonl,
 )
 from metacom_pm.paid_run_release import (
-    require_output_directory_not_previously_consumed,
     require_paid_run_release,
+    resolve_first_unconsumed_output_directory,
 )
 from metacom_pm.pm_v2_data import load_states
 from metacom_pm.pm_v2_judging import (
@@ -317,6 +317,20 @@ def main() -> None:
     parser.add_argument(
         "--generation-root", type=Path, default=ROOT / "outputs"
     )
+    parser.add_argument(
+        "--generation-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Explicit generation output directory to judge, overriding the "
+            "default esconv_auxiliary_generation_v1_5_{scope}_{split} guess. "
+            "Needed when the generation run that produced these outcomes "
+            "used a __retryN sibling directory (see "
+            "resolve_first_unconsumed_output_directory in "
+            "paid_run_release.py) because the plain directory was already "
+            "consumed by an earlier attempt."
+        ),
+    )
     parser.add_argument("--out-root", type=Path, default=ROOT / "outputs")
     parser.add_argument("--max-api-calls", type=int, default=50000)
     parser.add_argument("--max-estimated-usd", type=float, default=50.0)
@@ -366,15 +380,18 @@ def main() -> None:
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
     )
-    out_dir = args.out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
-    require_output_directory_not_previously_consumed(
-        out_dir, config=pm_v1_5_config, config_path=args.pm_v1_5_config
+    out_dir = resolve_first_unconsumed_output_directory(
+        args.out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}",
+        config=pm_v1_5_config,
+        config_path=args.pm_v1_5_config,
     )
 
     # Judging always reads the generation run of the same scope (a pilot
     # judging run reads a pilot generation run; a full judging run reads a
     # full generation run) -- see 13b_run_esconv_auxiliary_generation_v1_5.py.
-    generation_dir = (
+    # --generation-dir overrides this when the generation run actually used a
+    # __retryN sibling (see resolve_first_unconsumed_output_directory).
+    generation_dir = args.generation_dir or (
         args.generation_root / f"esconv_auxiliary_generation_v1_5_{scope}_{split}"
     )
     outcomes_path = generation_dir / "action_outcomes.jsonl"

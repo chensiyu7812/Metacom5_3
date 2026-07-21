@@ -424,11 +424,13 @@ def test_carry_forward_makes_zero_new_client_calls(workdir):
 
 
 def test_output_directory_guard_is_wired_in_before_any_expensive_work(workdir):
-    """Proves main() calls require_output_directory_not_previously_consumed
-    with the real, scope-qualified out_dir, before any judge call plan is
-    built. See test_output_directory_previously_consumed_is_permanently_
-    protected in tests/test_v1_5_latest_protocol_repairs.py for the
-    underlying guard function's own correctness."""
+    """Proves main() calls resolve_first_unconsumed_output_directory with the
+    real, scope-qualified out_dir, before any judge call plan is built. See
+    test_output_directory_previously_consumed_is_permanently_protected in
+    tests/test_v1_5_latest_protocol_repairs.py for the underlying guard
+    function's own correctness, and test_resolve_first_unconsumed_output_
+    directory_falls_back_to_a_retry_sibling in the same file for the
+    __retryN fallback behavior."""
 
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
@@ -441,11 +443,11 @@ def test_output_directory_guard_is_wired_in_before_any_expensive_work(workdir):
     )
     calls: list[Path] = []
 
-    def fake_guard(out_dir, *, config, config_path):
+    def fake_resolver(out_dir, *, config, config_path):
         calls.append(Path(out_dir))
         raise RuntimeError("guard invoked -- stopping before any real work")
 
-    module.require_output_directory_not_previously_consumed = fake_guard
+    module.resolve_first_unconsumed_output_directory = fake_resolver
     argv = [
         "13c_judge_esconv_auxiliary_v1_5.py",
         "--dry-run",

@@ -75,6 +75,45 @@ def require_output_directory_not_previously_consumed(
         )
 
 
+def resolve_first_unconsumed_output_directory(
+    base_out_dir: str | Path,
+    *,
+    config: Mapping[str, Any],
+    config_path: str | Path,
+    max_attempts: int = 20,
+) -> Path:
+    """Return base_out_dir, or the first ``__retryN`` sibling that is free.
+
+    A legitimate second attempt at the same scope/split (e.g. after a first
+    full-scale run failed and the fix needs a fresh identity) would otherwise
+    have to be launched with a manually chosen ``--out-root`` to dodge
+    ``require_output_directory_not_previously_consumed``. The real run
+    identity is not known at this point (it depends on plan_action_sweep's
+    retrieval computation over every state, which has not run yet), so this
+    cannot embed the identity itself -- it just finds the first sibling name
+    that is not yet permanently protected, trying the base name first so
+    every already-registered directory (and every existing test) keeps
+    working unchanged. Still runs before any expensive planning work; each
+    candidate check is a cheap manifest read, not a corpus load.
+    """
+
+    base = Path(base_out_dir)
+    last_error: RuntimeError | None = None
+    for attempt in range(1, max(int(max_attempts), 1) + 1):
+        candidate = base if attempt == 1 else base.with_name(f"{base.name}__retry{attempt}")
+        try:
+            require_output_directory_not_previously_consumed(
+                candidate, config=config, config_path=config_path
+            )
+            return candidate
+        except RuntimeError as exc:
+            last_error = exc
+    raise RuntimeError(
+        f"every candidate output directory for {base} up to __retry{max_attempts} "
+        f"is already permanently protected: {last_error}"
+    )
+
+
 def require_paid_run_release(
     config: Mapping[str, Any],
     *,

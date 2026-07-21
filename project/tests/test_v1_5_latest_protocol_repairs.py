@@ -20,6 +20,7 @@ from metacom_pm.paid_run_release import (
     PAID_RUN_RELEASE_PROTOCOL,
     require_output_directory_not_previously_consumed,
     require_paid_run_release,
+    resolve_first_unconsumed_output_directory,
 )
 from metacom_pm.pm_v1_5_algorithm_selection import (
     _select_one_standard_error_candidate,
@@ -342,6 +343,93 @@ def test_output_directory_previously_consumed_is_permanently_protected(
     require_output_directory_not_previously_consumed(
         protected_dir, config=config, config_path=config_path
     )
+
+
+def test_resolve_first_unconsumed_output_directory_falls_back_to_a_retry_sibling(
+    tmp_path: Path,
+) -> None:
+    """A legitimate second attempt at the same scope/split (e.g. a fresh
+    full-scale run after a first one failed) must not require the operator
+    to manually pick a new --out-root: the base name is tried first (so
+    every already-registered directory keeps working unchanged), and only
+    a consumed base name falls back to a __retry2, __retry3, ... sibling."""
+
+    config_path = tmp_path / "configs" / "pm_v1_5.yaml"
+    config_path.parent.mkdir(parents=True)
+    config = {
+        "release_revision": "pm-v1.5_1",
+        "execution_release": {
+            "protocol": PAID_RUN_RELEASE_PROTOCOL,
+            "status": "PAID_RUN_RELEASED",
+            "release_revision": "pm-v1.5_1",
+            "approval_manifest": "outputs/paid_release.json",
+        },
+    }
+    write_json(config_path, config)
+    manifest_path = tmp_path / "outputs" / "paid_release.json"
+    manifest_path.parent.mkdir(parents=True)
+
+    base_dir = tmp_path / "outputs" / "esconv_auxiliary_generation_v1_5_full_train"
+
+    # No manifest yet: the base name itself is returned, unchanged.
+    resolved = resolve_first_unconsumed_output_directory(
+        base_dir, config=config, config_path=config_path
+    )
+    assert resolved == base_dir
+
+    # Base name already consumed by a first attempt -> falls back to
+    # __retry2, without needing a manually chosen --out-root.
+    write_json(
+        manifest_path,
+        {
+            "protocol": PAID_RUN_RELEASE_PROTOCOL,
+            "status": "CONSUMED_FAIL",
+            "release_revision": "pm-v1.5_1",
+            "config_sha256": sha256_file(config_path),
+            "stage_consumptions": {
+                "esconv_auxiliary_generation_full_train": {
+                    "status": "CONSUMED_FAIL",
+                    "output_directory": (
+                        "outputs/esconv_auxiliary_generation_v1_5_full_train"
+                    ),
+                }
+            },
+        },
+    )
+    resolved = resolve_first_unconsumed_output_directory(
+        base_dir, config=config, config_path=config_path
+    )
+    assert resolved == base_dir.with_name(f"{base_dir.name}__retry2")
+
+    # __retry2 also consumed -> falls back further, to __retry3.
+    manifest = read_json(manifest_path)
+    manifest["stage_consumptions"]["esconv_auxiliary_generation_full_train_retry2"] = {
+        "status": "CONSUMED_FAIL",
+        "output_directory": (
+            "outputs/esconv_auxiliary_generation_v1_5_full_train__retry2"
+        ),
+    }
+    write_json(manifest_path, manifest)
+    resolved = resolve_first_unconsumed_output_directory(
+        base_dir, config=config, config_path=config_path
+    )
+    assert resolved == base_dir.with_name(f"{base_dir.name}__retry3")
+
+    # Exhausting every candidate up to the cap fails closed, not silently.
+    manifest = read_json(manifest_path)
+    for attempt in range(3, 6):
+        suffix = "" if attempt == 1 else f"__retry{attempt}"
+        manifest["stage_consumptions"][f"probe_{attempt}"] = {
+            "status": "CONSUMED_FAIL",
+            "output_directory": (
+                f"outputs/esconv_auxiliary_generation_v1_5_full_train{suffix}"
+            ),
+        }
+    write_json(manifest_path, manifest)
+    with pytest.raises(RuntimeError, match="already permanently protected"):
+        resolve_first_unconsumed_output_directory(
+            base_dir, config=config, config_path=config_path, max_attempts=5
+        )
 
 
 def test_source_disjoint_strategy_bank_keeps_all_strategy_families() -> None:
