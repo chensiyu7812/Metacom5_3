@@ -771,7 +771,16 @@ actual_corpus_semantic_audit:
     - advice_readiness_match
   required_before_action_response_generation: true
   expected_states: 468
-  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]
+  # Switched from training_judge_deepseek_flash (NVIDIA-hosted) to
+  # training_judge_deepseek_official_flash (DeepSeek's own API) after this
+  # exact stage's third consecutive real crash from the NVIDIA endpoint's
+  # confirmed 40 RPM account cap (development_actual_corpus_semantic_review,
+  # 553/1880 succeeded before exhausting its retry budget on sustained 429s).
+  # v1_5_run_automated_semantic_review.py prices uniformly from CLI args, not
+  # per-family, so no pricing_usd_per_mtok change is needed here -- but a
+  # fresh dry-run/identity is required regardless of prior progress, since
+  # endpoint identity is part of every frozen contract hash.
+  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_official_flash]
   panel_policy: unanimous-reject-disagreement-retained-v1
   citation_policy: report-only-not-outcome-v1
   real_state_acceptance: no_unanimous_semantic_rejection
@@ -799,17 +808,24 @@ development_judging:
   # gated by the automated semantic review and fails on the first unsuccessful
   # physical call. The compatibility_pilot block below is retained only so
   # shared parsers can read the config; V1.5 CLI branches reject its use.
-  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_flash]
-  # Frozen per-family accounting. Gemini rates are the paid-tier list prices;
-  # the NVIDIA-hosted DeepSeek endpoint is credit-backed, so the hard API-call
-  # cap (rather than a fictitious token price) is its primary budget bound.
+  # Switched from training_judge_deepseek_flash (NVIDIA-hosted) to
+  # training_judge_deepseek_official_flash (DeepSeek's own API) after the
+  # NVIDIA-hosted endpoint's confirmed 40 RPM account cap crashed
+  # esconv_auxiliary_judging_pilot_train (retry-budget exhaustion on
+  # sustained 429s). Endpoint identity is part of every frozen contract hash,
+  # so any not-yet-consumed identity computed under the old endpoint is
+  # stale; a fresh dry-run is required regardless of prior progress.
+  judge_endpoints: [training_judge_gemini_flash_lite, training_judge_deepseek_official_flash]
+  # Gemini rates are the paid-tier list prices. deepseek_official is
+  # DeepSeek's own real per-token pricing (api-docs.deepseek.com), using the
+  # conservative cache-miss input rate since cache-hit cannot be guaranteed.
   pricing_usd_per_mtok:
     google_gemini:
       input: 0.10
       output: 0.40
-    deepseek:
-      input: 0.0
-      output: 0.0
+    deepseek_official:
+      input: 0.14
+      output: 0.28
   seed: 2701
   response_max_output_tokens: 600
   risk_max_output_tokens: 700
