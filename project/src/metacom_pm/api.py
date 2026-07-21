@@ -51,6 +51,15 @@ class Endpoint:
     # backward compatibility for ordinary OpenAI/Anthropic routes, while
     # providers with multiple API surfaces (notably Gemini) must freeze it.
     transport: str = "auto"
+    # Declared, frozen endpoint capability, decided before any request is
+    # sent -- never a runtime fallback after a rejection (see
+    # test_schema_http_400_is_diagnostic_and_never_downgrades). Some OpenAI-
+    # compatible providers (DeepSeek's own official API, unlike NVIDIA's
+    # gateway hosting the same model) reject the newer strict json_schema
+    # response_format with a 400 and only support the older, loose
+    # json_object mode. Default True preserves every existing endpoint's
+    # behavior unchanged.
+    supports_strict_json_schema: bool = True
 
     @property
     def api_key(self) -> str:
@@ -766,19 +775,36 @@ def chat_request_payload(
     if seed is not None:
         payload["seed"] = int(seed)
     if response_schema is not None:
-        payload["response_format"] = {
-            "type": "json_schema",
-            "json_schema": {
-                "name": response_schema.__name__,
-                "strict": True,
-                "schema": openai_strict_json_schema(response_schema),
-            },
-        }
+        if endpoint.supports_strict_json_schema:
+            payload["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": response_schema.__name__,
+                    "strict": True,
+                    "schema": openai_strict_json_schema(response_schema),
+                },
+            }
+        else:
+            # Loose JSON mode: the provider only guarantees syntactically
+            # valid JSON, not schema conformance. OpenAICompatibleClient.chat
+            # still runs response_schema.model_validate(...) on the parsed
+            # result afterward, so schema conformance is enforced locally
+            # either way -- a mismatch surfaces as StructuredOutputValidation
+            # Error and feeds the existing bounded provider-output retry,
+            # exactly as it would under strict mode.
+            payload["response_format"] = {"type": "json_object"}
     return payload
 
 
 def request_payload_has_schema(payload: Mapping[str, Any]) -> bool:
-    """Recognize OpenAI, Anthropic, or native Gemini schema contracts."""
+    """Recognize OpenAI, Anthropic, or native Gemini schema contracts.
+
+    Includes the loose ``json_object`` mode used by OpenAI-compatible
+    providers that reject the stricter ``json_schema`` response_format
+    (declared via Endpoint.supports_strict_json_schema=False) -- it is a
+    deliberately weaker, but still intentional, structured-output request,
+    not a missing one.
+    """
 
     response_format = payload.get("response_format")
     if isinstance(response_format, Mapping):
@@ -788,6 +814,8 @@ def request_payload_has_schema(payload: Mapping[str, Any]) -> bool:
             and isinstance(json_schema, Mapping)
             and isinstance(json_schema.get("schema"), Mapping)
         ):
+            return True
+        if response_format.get("type") == "json_object":
             return True
     generation_config = payload.get("generationConfig")
     if (

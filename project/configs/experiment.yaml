@@ -77,6 +77,12 @@ endpoints:
     api_key_env: "DEEPSEEK_API_KEY"
     family: "deepseek_official"
     timeout_seconds: 240
+    # Confirmed via a real HTTP 400 ("This response_format type is
+    # unavailable now") and DeepSeek's own docs (api-docs.deepseek.com/
+    # guides/json_mode): the official API only supports the older, loose
+    # json_object response_format, not OpenAI's newer strict json_schema
+    # mode that NVIDIA's gateway happily forwards for the same model.
+    supports_strict_json_schema: false
 
   training_judge_qwen122:
     base_url: "https://integrate.api.nvidia.com"
