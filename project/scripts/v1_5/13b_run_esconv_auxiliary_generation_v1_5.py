@@ -360,6 +360,14 @@ def main() -> None:
         )
 
     out_dir.mkdir(parents=True, exist_ok=True)
+    # run_action_sweep, unlike plan_action_sweep, does not accept pricing
+    # kwargs (it executes generation; cost accounting was already frozen in
+    # the accepted dry-run estimate above).
+    run_kwargs = {
+        key: value
+        for key, value in plan_kwargs.items()
+        if key not in ("input_usd_per_mtok", "output_usd_per_mtok")
+    }
     summary = run_action_sweep(
         runtime_states_path,
         memory_backend_path,
@@ -369,7 +377,7 @@ def main() -> None:
         out_dir / "summary.json",
         overwrite=False,
         study_freeze_sha256=None,
-        **plan_kwargs,
+        **run_kwargs,
     )
     print(summary)
 
