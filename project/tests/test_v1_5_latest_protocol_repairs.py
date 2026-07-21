@@ -18,6 +18,7 @@ from metacom_pm.io import (
 )
 from metacom_pm.paid_run_release import (
     PAID_RUN_RELEASE_PROTOCOL,
+    require_output_directory_not_previously_consumed,
     require_paid_run_release,
 )
 from metacom_pm.pm_v1_5_algorithm_selection import (
@@ -260,6 +261,87 @@ def test_central_paid_release_is_fail_closed_and_identity_bound(
         run=True,
         run_identity="second-post-repair-cost-hash",
     )["status"] == "PAID_RUN_RELEASED"
+
+
+def test_output_directory_previously_consumed_is_permanently_protected(
+    tmp_path: Path,
+) -> None:
+    """Guards against the exact accident that destroyed the first
+    ESConv-auxiliary generation pilot's real artifacts: a later dry-run for
+    the same split reusing the same default output directory and deleting
+    the earlier real run's files. Once a directory is recorded as a
+    stage_consumptions (or historical) output_directory, no future script
+    invocation -- dry-run or paid -- may target it again, regardless of
+    whether its local ledger currently looks empty (exactly the state left
+    behind by an external deletion)."""
+
+    config_path = tmp_path / "configs" / "pm_v1_5.yaml"
+    config_path.parent.mkdir(parents=True)
+    config = {
+        "release_revision": "pm-v1.5_1",
+        "execution_release": {
+            "protocol": PAID_RUN_RELEASE_PROTOCOL,
+            "status": "PAID_RUN_RELEASED",
+            "release_revision": "pm-v1.5_1",
+            "approval_manifest": "outputs/paid_release.json",
+        },
+    }
+    write_json(config_path, config)
+    manifest_path = tmp_path / "outputs" / "paid_release.json"
+    manifest_path.parent.mkdir(parents=True)
+
+    protected_dir = tmp_path / "outputs" / "esconv_auxiliary_generation_v1_5_train"
+    write_json(
+        manifest_path,
+        {
+            "protocol": PAID_RUN_RELEASE_PROTOCOL,
+            "status": "CONSUMED_PASS",
+            "release_revision": "pm-v1.5_1",
+            "config_sha256": sha256_file(config_path),
+            "stage_consumptions": {
+                "esconv_auxiliary_generation_train": {
+                    "status": "CONSUMED_PASS",
+                    "output_directory": "outputs/esconv_auxiliary_generation_v1_5_train",
+                }
+            },
+        },
+    )
+    # Directory need not even exist on disk (that is exactly the dangerous
+    # post-deletion state) for the guard to fire.
+    assert not protected_dir.exists()
+    with pytest.raises(RuntimeError, match="permanently protected"):
+        require_output_directory_not_previously_consumed(
+            protected_dir, config=config, config_path=config_path
+        )
+
+    # A never-recorded directory is unaffected.
+    require_output_directory_not_previously_consumed(
+        tmp_path / "outputs" / "esconv_auxiliary_generation_v1_5_pilot_train",
+        config=config,
+        config_path=config_path,
+    )
+
+    # Historical (superseded) consumption records protect their directory
+    # too, not just the current stage_consumptions entry.
+    manifest = read_json(manifest_path)
+    manifest["stage_consumptions"] = {}
+    manifest["prior_stage_attempts_history"] = [
+        {
+            "status": "CONSUMED_PASS",
+            "output_directory": "outputs/esconv_auxiliary_generation_v1_5_train",
+        }
+    ]
+    write_json(manifest_path, manifest)
+    with pytest.raises(RuntimeError, match="permanently protected"):
+        require_output_directory_not_previously_consumed(
+            protected_dir, config=config, config_path=config_path
+        )
+
+    # No manifest on disk yet -- nothing to protect against.
+    manifest_path.unlink()
+    require_output_directory_not_previously_consumed(
+        protected_dir, config=config, config_path=config_path
+    )
 
 
 def test_source_disjoint_strategy_bank_keeps_all_strategy_families() -> None:

@@ -93,6 +93,8 @@ def _run_dry_run(aux_dir: Path, split: str, out_root: Path) -> dict:
         "--dry-run",
         "--split",
         split,
+        "--scope",
+        "full",
         "--auxiliary-dir",
         str(aux_dir),
         "--out-root",
@@ -110,7 +112,7 @@ def _run_dry_run(aux_dir: Path, split: str, out_root: Path) -> dict:
         module.main()
     finally:
         sys.argv = previous
-    out_dir = out_root / f"esconv_auxiliary_generation_v1_5_{split}"
+    out_dir = out_root / f"esconv_auxiliary_generation_v1_5_full_{split}"
     return json.loads((out_dir / "cost_estimate.json").read_text(encoding="utf-8"))
 
 
@@ -146,6 +148,55 @@ def test_dry_run_shape_is_stable_across_invocations(workdir):
 def test_missing_split_directory_fails_closed(workdir):
     with pytest.raises(RuntimeError, match="missing runtime_states"):
         _run_dry_run(workdir, "internal_test", workdir / "outputs")
+
+
+def test_output_directory_guard_is_wired_in_before_any_expensive_work(workdir):
+    """Proves main() calls require_output_directory_not_previously_consumed
+    with the real, scope-qualified out_dir, and does so before plan_action_
+    sweep's expensive retrieval work -- not just that the underlying guard
+    function itself is correct (see
+    test_output_directory_previously_consumed_is_permanently_protected in
+    tests/test_v1_5_latest_protocol_repairs.py for that)."""
+
+    _write_fixture(workdir, "train", n_states=4)
+    module = _load_module(
+        "scripts/v1_5/13b_run_esconv_auxiliary_generation_v1_5.py",
+        f"v1_5_esconv_auxiliary_generation_guard_wiring_test_{id(workdir)}",
+    )
+    calls: list[Path] = []
+
+    def fake_guard(out_dir, *, config, config_path):
+        calls.append(Path(out_dir))
+        raise RuntimeError("guard invoked -- stopping before any real work")
+
+    module.require_output_directory_not_previously_consumed = fake_guard
+    argv = [
+        "13b_run_esconv_auxiliary_generation_v1_5.py",
+        "--dry-run",
+        "--split",
+        "train",
+        "--scope",
+        "full",
+        "--auxiliary-dir",
+        str(workdir),
+        "--out-root",
+        str(workdir / "outputs"),
+        "--max-api-calls",
+        "1000",
+        "--max-estimated-usd",
+        "5.0",
+        "--max-input-tokens-per-call",
+        "12000",
+    ]
+    previous = sys.argv
+    try:
+        sys.argv = argv
+        with pytest.raises(RuntimeError, match="guard invoked"):
+            module.main()
+    finally:
+        sys.argv = previous
+    assert len(calls) == 1
+    assert calls[0].name == "esconv_auxiliary_generation_v1_5_full_train"
 
 
 def test_script_never_imports_audit_only():

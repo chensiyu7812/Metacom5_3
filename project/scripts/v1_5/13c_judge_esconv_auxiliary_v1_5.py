@@ -112,7 +112,10 @@ from metacom_pm.io import (
     write_json,
     write_jsonl,
 )
-from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.paid_run_release import (
+    require_output_directory_not_previously_consumed,
+    require_paid_run_release,
+)
 from metacom_pm.pm_v2_data import load_states
 from metacom_pm.pm_v2_judging import (
     JudgeResult,
@@ -298,6 +301,17 @@ def main() -> None:
     )
     parser.add_argument("--split", required=True, choices=SPLITS)
     parser.add_argument(
+        "--scope",
+        required=True,
+        choices=("pilot", "full"),
+        help=(
+            "Folded into the stage name and output directory so a pilot-scale "
+            "and full-scale run for the same split can never collide on the "
+            "same default directory. Independent of --pilot (which only "
+            "relaxes quality-gate strictness)."
+        ),
+    )
+    parser.add_argument(
         "--auxiliary-dir", type=Path, default=ROOT / "data" / "esconv_auxiliary_v1_5"
     )
     parser.add_argument(
@@ -339,7 +353,8 @@ def main() -> None:
         )
 
     split = str(args.split)
-    stage = f"esconv_auxiliary_judging_{split}"
+    scope = str(args.scope)
+    stage = f"esconv_auxiliary_judging_{scope}_{split}"
     config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
     if pm_v1_5_config.get("version") != "pm-v1.5":
@@ -351,8 +366,17 @@ def main() -> None:
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
     )
+    out_dir = args.out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
+    require_output_directory_not_previously_consumed(
+        out_dir, config=pm_v1_5_config, config_path=args.pm_v1_5_config
+    )
 
-    generation_dir = args.generation_root / f"esconv_auxiliary_generation_v1_5_{split}"
+    # Judging always reads the generation run of the same scope (a pilot
+    # judging run reads a pilot generation run; a full judging run reads a
+    # full generation run) -- see 13b_run_esconv_auxiliary_generation_v1_5.py.
+    generation_dir = (
+        args.generation_root / f"esconv_auxiliary_generation_v1_5_{scope}_{split}"
+    )
     outcomes_path = generation_dir / "action_outcomes.jsonl"
     generation_summary_path = generation_dir / "summary.json"
     if not outcomes_path.is_file():
@@ -424,7 +448,6 @@ def main() -> None:
     api_cost_planning = dict(pm_v1_5_config["api_cost_planning"])
     input_token_safety_factor = float(api_cost_planning["input_token_safety_factor"])
 
-    out_dir = args.out_root / f"esconv_auxiliary_judging_v1_5_{split}"
     labels_path = out_dir / "action_labels.jsonl"
     raw_path = out_dir / "judge_results.jsonl"
     ledger_path = out_dir / "physical_attempt_ledger.jsonl"

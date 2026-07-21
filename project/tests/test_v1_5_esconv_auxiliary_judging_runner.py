@@ -128,11 +128,14 @@ def _run_dry_run(
         "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
         f"v1_5_esconv_auxiliary_judging_runner_test_{id(aux_dir)}_{split}_{pilot}",
     )
+    scope = "pilot" if pilot else "full"
     argv = [
         "13c_judge_esconv_auxiliary_v1_5.py",
         "--dry-run",
         "--split",
         split,
+        "--scope",
+        scope,
         "--auxiliary-dir",
         str(aux_dir),
         "--generation-root",
@@ -156,14 +159,14 @@ def _run_dry_run(
         module.main()
     finally:
         sys.argv = previous
-    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{split}"
+    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
     return json.loads((out_dir / "cost_estimate.json").read_text(encoding="utf-8"))
 
 
 def test_dry_run_has_one_pair_per_state_action_and_four_calls_per_pair(workdir):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
     gen_dir.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir, "train", n_states=3)
     estimate = _run_dry_run(aux_dir, gen_root, workdir / "outputs", "train")
@@ -177,13 +180,13 @@ def test_dry_run_has_one_pair_per_state_action_and_four_calls_per_pair(workdir):
 def test_call_plan_shuffle_is_independent_of_outcomes_file_row_order(workdir):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir_a = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir_a = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
     gen_dir_a.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir_a, "train", n_states=3, shuffled=False)
     first = _run_dry_run(aux_dir, gen_root, workdir / "outputs_a", "train")
 
     gen_root_b = workdir / "gen_root_b"
-    gen_dir_b = gen_root_b / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir_b = gen_root_b / "esconv_auxiliary_generation_v1_5_full_train"
     gen_dir_b.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir_b, "train", n_states=3, shuffled=True)
     second = _run_dry_run(aux_dir, gen_root_b, workdir / "outputs_b", "train")
@@ -207,7 +210,7 @@ def test_missing_generation_outcomes_fails_closed(workdir):
 def test_incomplete_generation_summary_fails_closed(workdir):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
     gen_dir.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir, "train", n_states=1)
     write_json(gen_dir / "summary.json", {"status": "STARTING"})
@@ -277,11 +280,14 @@ def _run_run(
         "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
         f"v1_5_esconv_auxiliary_judging_run_test_{id(aux_dir)}_{split}_{pilot}",
     )
+    scope = "pilot" if pilot else "full"
     argv = [
         "13c_judge_esconv_auxiliary_v1_5.py",
         "--run",
         "--split",
         split,
+        "--scope",
+        scope,
         "--auxiliary-dir",
         str(aux_dir),
         "--generation-root",
@@ -316,14 +322,14 @@ def _run_run(
         module.main()
     finally:
         sys.argv = previous
-    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{split}"
+    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
     return json.loads((out_dir / "summary.json").read_text(encoding="utf-8"))
 
 
 def test_non_pilot_run_raises_on_constant_risk_dimensions(workdir):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
     gen_dir.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir, "train", n_states=3)
     out_root = workdir / "outputs"
@@ -343,7 +349,7 @@ def test_pilot_run_completes_as_diagnostic_only_despite_constant_risk_dimensions
 ):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_pilot_train"
     gen_dir.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir, "train", n_states=3)
     pilot_out_root = workdir / "outputs_pilot"
@@ -368,7 +374,7 @@ def test_pilot_run_completes_as_diagnostic_only_despite_constant_risk_dimensions
 def test_carry_forward_makes_zero_new_client_calls(workdir):
     aux_dir = workdir / "aux"
     gen_root = workdir / "gen_root"
-    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_pilot_train"
     gen_dir.mkdir(parents=True)
     _write_fixture(aux_dir, gen_dir, "train", n_states=2)
     out_root = workdir / "outputs"
@@ -381,7 +387,7 @@ def test_carry_forward_makes_zero_new_client_calls(workdir):
         accept_cost_estimate_sha256=dry_run_estimate["cost_estimate_sha256"],
         pilot=True,
     )
-    original_out_dir = out_root / "esconv_auxiliary_judging_v1_5_train"
+    original_out_dir = out_root / "esconv_auxiliary_judging_v1_5_pilot_train"
     assert _ConstantJudgeClient.calls == 16  # 2 states x 2 actions x 2 families x 2 types
 
     # Fresh output directory + fresh identity (pilot flag unchanged here, but
@@ -415,6 +421,60 @@ def test_carry_forward_makes_zero_new_client_calls(workdir):
     assert summary["carried_forward_physical_calls"] == 16
     assert summary["new_physical_calls"] == 0
     assert summary["completed_judge_pairs"] == 4
+
+
+def test_output_directory_guard_is_wired_in_before_any_expensive_work(workdir):
+    """Proves main() calls require_output_directory_not_previously_consumed
+    with the real, scope-qualified out_dir, before any judge call plan is
+    built. See test_output_directory_previously_consumed_is_permanently_
+    protected in tests/test_v1_5_latest_protocol_repairs.py for the
+    underlying guard function's own correctness."""
+
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=2)
+    module = _load_module(
+        "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
+        f"v1_5_esconv_auxiliary_judging_guard_wiring_test_{id(workdir)}",
+    )
+    calls: list[Path] = []
+
+    def fake_guard(out_dir, *, config, config_path):
+        calls.append(Path(out_dir))
+        raise RuntimeError("guard invoked -- stopping before any real work")
+
+    module.require_output_directory_not_previously_consumed = fake_guard
+    argv = [
+        "13c_judge_esconv_auxiliary_v1_5.py",
+        "--dry-run",
+        "--split",
+        "train",
+        "--scope",
+        "full",
+        "--auxiliary-dir",
+        str(aux_dir),
+        "--generation-root",
+        str(gen_root),
+        "--out-root",
+        str(workdir / "outputs"),
+        "--max-api-calls",
+        "1000",
+        "--max-estimated-usd",
+        "5.0",
+        "--max-input-tokens-per-call",
+        "12000",
+    ]
+    previous = sys.argv
+    try:
+        sys.argv = argv
+        with pytest.raises(RuntimeError, match="guard invoked"):
+            module.main()
+    finally:
+        sys.argv = previous
+    assert len(calls) == 1
+    assert calls[0].name == "esconv_auxiliary_judging_v1_5_full_train"
 
 
 def test_script_never_references_gold_fields_or_action_id_in_authorized_context():

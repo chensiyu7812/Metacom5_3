@@ -9,6 +9,72 @@ from .io import read_json, sha256_file
 PAID_RUN_RELEASE_PROTOCOL = "pm-v1.5-central-paid-run-release-v1"
 
 
+def _resolve_manifest_path(config: Mapping[str, Any], config_path: str | Path) -> Path:
+    release = config.get("execution_release")
+    if not isinstance(release, Mapping):
+        raise RuntimeError("PM-v1.5 config lacks the central paid-run release gate")
+    config_path = Path(config_path).resolve()
+    raw_manifest_path = Path(str(release.get("approval_manifest") or ""))
+    return (
+        raw_manifest_path
+        if raw_manifest_path.is_absolute()
+        else config_path.parent.parent / raw_manifest_path
+    )
+
+
+def require_output_directory_not_previously_consumed(
+    out_dir: str | Path,
+    *,
+    config: Mapping[str, Any],
+    config_path: str | Path,
+) -> None:
+    """Fail closed if out_dir was ever a real paid-run's output_directory.
+
+    Protects against the exact failure mode that destroyed the first
+    ESConv-auxiliary generation pilot's raw artifacts: a later run (dry-run
+    or paid) reusing the same default output directory as an earlier,
+    already-consumed real run, silently overwriting or deleting its
+    artifacts. Once a directory is recorded as a stage_consumptions (or
+    historical) output_directory, it is permanently protected -- every
+    future run must use a new directory, regardless of whether that
+    directory's local ledger currently looks empty or missing, which is
+    exactly the dangerous state left behind after an external deletion (the
+    per-directory ledger check alone cannot detect that case, since the
+    ledger itself is what got deleted). Call this before any script creates,
+    writes to, or overwrites a directory -- in both --dry-run and --run
+    modes, since the deletion that motivated this check happened during a
+    zero-cost dry-run.
+    """
+
+    manifest_path = _resolve_manifest_path(config, config_path)
+    if not manifest_path.is_file():
+        return
+    manifest = read_json(manifest_path)
+    project_root = Path(config_path).resolve().parent.parent
+    resolved_target = Path(out_dir).resolve()
+    protected: dict[Path, str] = {}
+    consumptions = manifest.get("stage_consumptions") or {}
+    for stage_name, record in (consumptions.items() if isinstance(consumptions, Mapping) else []):
+        if isinstance(record, Mapping) and record.get("output_directory"):
+            raw = Path(str(record["output_directory"]))
+            resolved = raw if raw.is_absolute() else (project_root / raw).resolve()
+            protected.setdefault(resolved, f"stage_consumptions.{stage_name}")
+    history = manifest.get("prior_stage_attempts_history") or []
+    for index, record in enumerate(history if isinstance(history, list) else []):
+        if isinstance(record, Mapping) and record.get("output_directory"):
+            raw = Path(str(record["output_directory"]))
+            resolved = raw if raw.is_absolute() else (project_root / raw).resolve()
+            protected.setdefault(resolved, f"prior_stage_attempts_history[{index}]")
+    source = protected.get(resolved_target)
+    if source is not None:
+        raise RuntimeError(
+            f"output directory {resolved_target} was already recorded as a "
+            f"real paid-run output_directory ({source}) in the approval "
+            "manifest; it is permanently protected from reuse, overwrite, "
+            "or deletion by any future run -- use a new directory"
+        )
+
+
 def require_paid_run_release(
     config: Mapping[str, Any],
     *,
@@ -43,12 +109,7 @@ def require_paid_run_release(
     if not identity:
         raise RuntimeError("paid API execution requires a non-empty fresh run identity")
     config_path = Path(config_path).resolve()
-    raw_manifest_path = Path(str(release.get("approval_manifest") or ""))
-    manifest_path = (
-        raw_manifest_path
-        if raw_manifest_path.is_absolute()
-        else config_path.parent.parent / raw_manifest_path
-    )
+    manifest_path = _resolve_manifest_path(config, config_path)
     if not manifest_path.is_file():
         raise RuntimeError("paid-run approval manifest is absent")
     manifest = read_json(manifest_path)

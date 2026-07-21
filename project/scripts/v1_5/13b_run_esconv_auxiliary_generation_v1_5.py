@@ -41,7 +41,10 @@ from metacom_pm.io import (
     write_json,
     write_jsonl,
 )
-from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.paid_run_release import (
+    require_output_directory_not_previously_consumed,
+    require_paid_run_release,
+)
 from metacom_pm.response_mechanism_contract import build_response_mechanism_contract
 from metacom_pm.sweep import plan_action_sweep, run_action_sweep
 
@@ -145,6 +148,16 @@ def main() -> None:
     )
     parser.add_argument("--split", required=True, choices=SPLITS)
     parser.add_argument(
+        "--scope",
+        required=True,
+        choices=("pilot", "full"),
+        help=(
+            "Folded into the stage name and output directory so a pilot-scale "
+            "and full-scale run for the same split can never collide on the "
+            "same default directory."
+        ),
+    )
+    parser.add_argument(
         "--auxiliary-dir",
         type=Path,
         default=ROOT / "data" / "esconv_auxiliary_v1_5",
@@ -181,13 +194,18 @@ def main() -> None:
         raise RuntimeError("ESConv-auxiliary generation requires a pm-v1.5 config")
 
     split = str(args.split)
-    stage = f"esconv_auxiliary_generation_{split}"
+    scope = str(args.scope)
+    stage = f"esconv_auxiliary_generation_{scope}_{split}"
     require_paid_run_release(
         pm_v1_5_config,
         config_path=args.pm_v1_5_config,
         stage=stage,
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
+    )
+    out_dir = args.out_root / f"esconv_auxiliary_generation_v1_5_{scope}_{split}"
+    require_output_directory_not_previously_consumed(
+        out_dir, config=pm_v1_5_config, config_path=args.pm_v1_5_config
     )
 
     legal_actions = tuple(
@@ -331,7 +349,6 @@ def main() -> None:
         max_input_tokens_per_call=args.max_input_tokens_per_call,
     )
     result = {**estimate, "budget_gate": gate}
-    out_dir = args.out_root / f"esconv_auxiliary_generation_v1_5_{split}"
 
     if args.dry_run:
         _persist_or_validate_dry_run(out_dir, result, rows)
