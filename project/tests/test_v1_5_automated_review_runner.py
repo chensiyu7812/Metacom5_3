@@ -367,6 +367,36 @@ def _argv(out_dir: Path, mode: str, pilot_attestation: Path) -> list[str]:
     ]
 
 
+def test_output_directory_guard_is_wired_in_before_any_expensive_work(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """Unlike 13b/13c, this script takes --out-dir as an explicit operator-
+    chosen path rather than auto-deriving one from scope/split, so there is
+    no auto-fallback sibling directory to resolve to here -- just proves
+    require_output_directory_not_previously_consumed is actually called with
+    the real --out-dir, before any real_case_rows/retrieval work, not just
+    that the underlying guard function itself is correct (see
+    test_output_directory_previously_consumed_is_permanently_protected in
+    tests/test_v1_5_latest_protocol_repairs.py for that)."""
+
+    module = _load_runner()
+    out_dir = tmp_path / "review"
+    pilot = _patch_paid_pilot(module, monkeypatch, tmp_path)
+    calls: list[Path] = []
+
+    def fake_guard(target_out_dir, *, config, config_path):
+        calls.append(Path(target_out_dir))
+        raise RuntimeError("guard invoked -- stopping before any real work")
+
+    monkeypatch.setattr(
+        module, "require_output_directory_not_previously_consumed", fake_guard
+    )
+    monkeypatch.setattr(sys, "argv", _argv(out_dir, "--dry-run", pilot))
+    with pytest.raises(RuntimeError, match="guard invoked"):
+        module.main()
+    assert calls == [out_dir]
+
+
 def test_automated_review_dry_run_freezes_the_durable_retry_contract(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):

@@ -117,7 +117,10 @@ from metacom_pm.v1_5_automated_semantic_review import (
     judge_messages,
 )
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
-from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.paid_run_release import (
+    require_output_directory_not_previously_consumed,
+    require_paid_run_release,
+)
 from metacom_pm.v1_5_actual_corpus_review import (
     ACTUAL_CITATION_POLICY,
     ACTUAL_CORPUS_CONTROL_PROTOCOL,
@@ -344,6 +347,15 @@ def main() -> None:
         ),
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
+    )
+    # This script (unlike 13b/13c) takes --out-dir as an explicit, operator-
+    # chosen path rather than auto-deriving one from scope/split, so there is
+    # no auto-fallback sibling to resolve to -- just fail closed if this
+    # exact directory was ever a real paid-run's output_directory (the same
+    # guard that protects 13b/13c, added after the incident where a deleted-
+    # then-recreated directory silently reused a consumed path).
+    require_output_directory_not_previously_consumed(
+        args.out_dir, config=pm_config, config_path=args.pm_v1_5_config
     )
     judge_role_isolation = require_judge_role_isolation(
         experiment_config,
