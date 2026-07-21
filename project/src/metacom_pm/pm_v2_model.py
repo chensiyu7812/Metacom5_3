@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 from statistics import NormalDist
-from typing import Any, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 import joblib
 import numpy as np
@@ -269,6 +269,7 @@ class PMV2Model:
         word_features: int = 256,
         char_features: int = 256,
         step0_signal_mode: str = "full",
+        domain_key: Callable[[PMV2State], str] | None = None,
     ) -> "PMV2Model":
         effective_selection = selection_config or SelectionConfig()
         state_map = {state.state_id: state for state in states}
@@ -371,13 +372,58 @@ class PMV2Model:
             state_raw_totals[label.state_id] = (
                 state_raw_totals.get(label.state_id, 0.0) + raw_weight
             )
-        state_weights = np.asarray(
-            [
+        # Domain -> user/dialogue group -> state -> action/alias, each level
+        # equalized within its parent. ``domain_key`` defaults to a single
+        # shared domain, which is a uniform rescaling of (so mathematically
+        # equivalent to, for any scale-invariant weighted fit) the prior
+        # state-only equalization whenever every group has the same state
+        # count -- true of the 52 synthetic development users today (9
+        # regime states each). Passing a real domain_key (e.g. distinguishing
+        # longitudinal synthetic states from ESConv auxiliary states) is what
+        # stops a domain with many more user/dialogue groups, or deeper
+        # per-dialogue turn counts, from silently outweighing another.
+        effective_domain_key = domain_key or (lambda _state: "default")
+        domain_by_state = {
+            state_id: str(effective_domain_key(state))
+            for state_id, state in state_map.items()
+        }
+        group_by_state = {
+            state_id: str(state.user_id) for state_id, state in state_map.items()
+        }
+        groups_by_domain: dict[str, set[str]] = {}
+        states_by_group: dict[tuple[str, str], set[str]] = {}
+        for state_id in state_map:
+            domain = domain_by_state[state_id]
+            group = group_by_state[state_id]
+            groups_by_domain.setdefault(domain, set()).add(group)
+            states_by_group.setdefault((domain, group), set()).add(state_id)
+        domains_present = sorted(groups_by_domain)
+        domain_weight = {domain: 1.0 / len(domains_present) for domain in domains_present}
+        state_weights = np.empty(len(usable), dtype=float)
+        for i, (label, raw_weight) in enumerate(
+            zip(usable, alias_raw_weights, strict=True)
+        ):
+            domain = domain_by_state[label.state_id]
+            group = group_by_state[label.state_id]
+            group_weight = domain_weight[domain] / len(groups_by_domain[domain])
+            state_weight = group_weight / len(states_by_group[(domain, group)])
+            state_weights[i] = state_weight * (
                 raw_weight / state_raw_totals[label.state_id]
-                for label, raw_weight in zip(usable, alias_raw_weights, strict=True)
-            ],
-            dtype=float,
-        )
+            )
+        domain_weighting_report = {
+            "domains_present": domains_present,
+            "domain_weight": domain_weight,
+            "groups_per_domain": {
+                domain: len(groups) for domain, groups in groups_by_domain.items()
+            },
+            "states_per_domain": {
+                domain: sum(
+                    len(states_by_group[(domain, group)])
+                    for group in groups_by_domain[domain]
+                )
+                for domain in domains_present
+            },
+        }
 
         def mad_weight(label: ActionLabel, *, prefix: str, field_name: str) -> float:
             mad = float(label.dimension_mad[f"{prefix}.{field_name}"])
@@ -474,6 +520,10 @@ class PMV2Model:
                 "scale": float(dimension_mad_scale),
                 "response_heads": response_weight_reports,
                 "risk_heads": risk_weight_reports,
+            },
+            "domain_dialogue_state_action_weighting": {
+                "protocol": "domain-then-group-then-state-then-alias-equalize-v1",
+                **domain_weighting_report,
             },
             "composite_weights_sha256": expected_weights_hash,
             "bootstrap_group_key": bootstrap_group_key,

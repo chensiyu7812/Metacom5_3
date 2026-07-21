@@ -410,6 +410,67 @@ def test_dimension_mad_downweights_only_corresponding_head_without_row_deletion(
     ]["minimum"]
 
 
+def test_domain_key_equalizes_domains_regardless_of_state_count():
+    # Domain A: one user/dialogue with 3 states. Domain B: two users/dialogues
+    # with 1 state each (BootstrapRegressor requires >=3 unique bootstrap
+    # groups, so domain B is split across two users rather than one). Without
+    # domain_key, state-only equalization would give domain A 3/5 of the
+    # total weight and domain B only 2/5 (proportional to raw state count) --
+    # exactly the "719 ESConv states swamp 216 longitudinal states" failure
+    # mode this is meant to prevent.
+    domain_a_states = [
+        make_state(f"a_s{i}", user_id="user_a") for i in range(3)
+    ]
+    domain_b_states = [
+        make_state("b_s0", user_id="user_b"),
+        make_state("c_s0", user_id="user_c"),
+    ]
+    states = domain_a_states + domain_b_states
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+
+    def domain_key(state: PMV2State) -> str:
+        return "A" if state.user_id == "user_a" else "B"
+
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+        domain_key=domain_key,
+    )
+    weighting = model.training_report["domain_dialogue_state_action_weighting"]
+    assert weighting["domains_present"] == ["A", "B"]
+    assert weighting["states_per_domain"] == {"A": 3, "B": 2}
+    assert weighting["groups_per_domain"] == {"A": 1, "B": 2}
+    assert weighting["domain_weight"] == {"A": 0.5, "B": 0.5}
+
+
+def test_domain_key_defaults_to_a_single_domain_matching_prior_behavior():
+    states = [make_state(f"single_{i}") for i in range(3)]
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+    )
+    weighting = model.training_report["domain_dialogue_state_action_weighting"]
+    assert weighting["domains_present"] == ["default"]
+    assert weighting["domain_weight"] == {"default": 1.0}
+
+
 def test_default_bootstrap_group_is_user_id_not_state_id():
     states = [
         make_state(f"u{user}_s{state}", user_id=f"user_{user}")
