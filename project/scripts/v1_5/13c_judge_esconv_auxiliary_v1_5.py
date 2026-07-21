@@ -1,0 +1,822 @@
+#!/usr/bin/env python3
+"""Dual-family (gemini + deepseek) quality/risk judging for ESConv-auxiliary
+generation outcomes.
+
+Produces ``action_labels.jsonl`` in the exact ``ActionLabel`` shape PM-v2
+training already consumes (``build_action_label``/``pm_v2_contracts.
+ActionLabel``), from the real generated M0+R0/M0+RS responses in
+``outputs/esconv_auxiliary_generation_v1_5_{split}/action_outcomes.jsonl``
+(built by ``13b_run_esconv_auxiliary_generation_v1_5.py``).
+
+Judge prompts (``build_response_messages``/``build_risk_messages``,
+``pm_v2_judging.py``) never receive the action identity -- "The resource
+policy and action name are hidden" is stated directly in the risk prompt --
+so action-blinding is inherited for free from the existing, already-tested
+prompt builders, not reimplemented here.
+
+``authorized_user_context`` is always empty for ESConv states: memory is
+structurally unavailable (MP/MS/ME all False), so there is no cross-session
+memory bank to authorize beyond what is already visible in
+``current_session_history``/``current_session_summary``.
+
+Uses ``execute_with_bounded_retry`` (``bounded_retry.py``) rather than
+``21_judge_pm_v2_action_sweep_v1_5.py``'s single-shot-then-fail-hard
+mechanism: deepseek's NVIDIA-hosted endpoint has a measured, sustained real
+failure rate around 37% (see the actual-corpus semantic-review retry-budget
+fix earlier in this project's history), and this judging track uses that
+same judge family, so it needs the same ledger-backed backoff/retry
+resilience -- not the internal sweep's single-attempt contract, which
+assumes an already-reliable generator endpoint.
+
+The four physical calls per (state, action) -- gemini response, gemini risk,
+deepseek response, deepseek risk -- are scheduled in a seeded-shuffled order
+(``call_plan_shuffle_seed``, frozen and recorded in the cost estimate) rather
+than natural (state, action, family, type) order. This governs only physical
+HTTP attempt *scheduling*; ``judge_one``'s pointwise design judges one
+candidate response at a time and never shows a judge both R0 and RS
+together, so there is no pairwise presentation order to control -- this
+shuffle exists so a sustained provider outage clusters less predictably
+against any single (state, action) subgroup.
+
+Deliberately not coupled to the internal 7,488-action sweep's provenance
+gates (``require_action_sweep_source_chain``, ``v1_5_full_sweep_gate``,
+actual-corpus review, Step-0 shortcut audit): those gates authenticate that
+sweep's *generation* source, which does not apply here (ESConv-auxiliary
+generation is its own disclosed, self-contained track, verified directly by
+``13b_run_esconv_auxiliary_generation_v1_5.py``'s own contract bindings).
+The judge *output*-quality gates (``validate_raw_judge_family_health`` and
+friends) are retained in full: they check judge behavior, not sweep
+provenance, and apply exactly the same way here.
+"""
+
+from __future__ import annotations
+
+import argparse
+import random
+from pathlib import Path
+from typing import Any
+
+from metacom_pm.api import make_client
+from metacom_pm.attempt_ledger import (
+    PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+    forbid_overwrite_of_spent_attempts,
+    physical_call_key as make_physical_call_key,
+)
+from metacom_pm.bounded_retry import (
+    DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS,
+    RETRY_CONTRACT_PROTOCOL,
+    call_retry_blocker,
+    execute_with_bounded_retry,
+)
+from metacom_pm.attempt_ledger import PersistentAttemptLedger
+from metacom_pm.config import endpoint_from_config, load_config
+from metacom_pm.contracts import ActionOutcome
+from metacom_pm.io import (
+    append_jsonl,
+    canonical_json,
+    ensure_run_manifest,
+    iter_jsonl,
+    read_json,
+    sha256_file,
+    sha256_text,
+    write_json,
+    write_jsonl,
+)
+from metacom_pm.paid_run_release import require_paid_run_release
+from metacom_pm.pm_v2_data import load_states
+from metacom_pm.pm_v2_judging import (
+    JudgeResult,
+    ResponseJudgeOutput,
+    RiskJudgeOutput,
+    build_action_label,
+    build_response_messages,
+    build_risk_messages,
+    composite_spec_from_config,
+    composite_weights_hash,
+    labeling_settings_from_config,
+    prompt_contract_hash,
+    validate_action_applicable_risk_signal,
+    validate_judge_table,
+    validate_raw_judge_family_health,
+    validate_raw_judge_family_subgroup_health,
+)
+from metacom_pm.text import conservative_token_bound, estimate_tokens
+
+
+ROOT = Path(__file__).resolve().parents[2]
+SPLITS = ("train", "calibration", "internal_test")
+# Frozen, disclosed constant; changing it changes call-plan order (and
+# therefore the cost-estimate hash) but never scoring.
+CALL_PLAN_SHUFFLE_SEED = 913171
+# Matches the retry-budget fix already applied to
+# actual_corpus_semantic_audit after this project measured deepseek's
+# NVIDIA-hosted endpoint at a sustained ~37% real transport failure rate;
+# this judging track uses the same flaky family, so it gets the same budget.
+MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL = 10
+TRANSPORT_BACKOFF_SECONDS: tuple[float, ...] = (
+    10.0,
+    30.0,
+    60.0,
+    120.0,
+    300.0,
+    300.0,
+    600.0,
+    600.0,
+    900.0,
+)
+
+
+def outcome_key(outcome: ActionOutcome) -> tuple[str, str]:
+    return (outcome.state_id, outcome.action_id)
+
+
+def call_key(row: dict[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        str(row["state_id"]),
+        str(row["action_id"]),
+        str(row["judge_family"]),
+        str(row["judge_type"]),
+    )
+
+
+def _persist_or_validate_dry_run(
+    *,
+    ledger_path: Path,
+    estimate_path: Path,
+    call_plan_path: Path,
+    cost_estimate: dict[str, Any],
+    budget_gate: dict[str, Any],
+    call_plan: list[dict[str, Any]],
+) -> str:
+    expected_estimate = {**cost_estimate, "budget_gate": budget_gate}
+    spent = ledger_path.is_file() and ledger_path.stat().st_size > 0
+    if spent:
+        if not estimate_path.is_file() or not call_plan_path.is_file():
+            raise RuntimeError(
+                "spent ESConv-auxiliary-judging ledger freezes the accepted "
+                "dry-run, but its estimate or full call plan is missing"
+            )
+        if read_json(estimate_path) != expected_estimate or list(
+            iter_jsonl(call_plan_path)
+        ) != call_plan:
+            raise RuntimeError(
+                "spent ESConv-auxiliary-judging ledger freezes the original "
+                "exact estimate and full call plan; current drift is rejected"
+            )
+        return "VALIDATED_EXISTING"
+    write_json(estimate_path, expected_estimate)
+    write_jsonl(call_plan_path, call_plan)
+    return "WRITTEN"
+
+
+def _require_saved_dry_run(
+    *,
+    estimate_path: Path,
+    call_plan_path: Path,
+    cost_estimate: dict[str, Any],
+    budget_gate: dict[str, Any],
+    call_plan: list[dict[str, Any]],
+) -> None:
+    if not estimate_path.is_file() or not call_plan_path.is_file():
+        raise RuntimeError(
+            "ESConv-auxiliary judge API run requires a matching saved --dry-run"
+        )
+    expected_estimate = {**cost_estimate, "budget_gate": budget_gate}
+    if read_json(estimate_path) != expected_estimate:
+        raise RuntimeError("saved ESConv-auxiliary judge dry-run estimate is stale")
+    if list(iter_jsonl(call_plan_path)) != call_plan:
+        raise RuntimeError("saved ESConv-auxiliary judge full call plan is stale")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--dry-run", action="store_true")
+    mode.add_argument("--run", action="store_true")
+    parser.add_argument(
+        "--config", type=Path, default=ROOT / "configs" / "experiment.yaml"
+    )
+    parser.add_argument(
+        "--pm-v1-5-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml"
+    )
+    parser.add_argument("--split", required=True, choices=SPLITS)
+    parser.add_argument(
+        "--auxiliary-dir", type=Path, default=ROOT / "data" / "esconv_auxiliary_v1_5"
+    )
+    parser.add_argument(
+        "--generation-root", type=Path, default=ROOT / "outputs"
+    )
+    parser.add_argument("--out-root", type=Path, default=ROOT / "outputs")
+    parser.add_argument("--max-api-calls", type=int, default=50000)
+    parser.add_argument("--max-estimated-usd", type=float, default=50.0)
+    parser.add_argument("--max-input-tokens-per-call", type=int, default=12000)
+    parser.add_argument("--accept-cost-estimate-sha256")
+    parser.add_argument("--overwrite", action="store_true")
+    args = parser.parse_args()
+
+    if args.run and args.overwrite:
+        raise RuntimeError(
+            "paid ESConv-auxiliary judging runs prohibit --overwrite; use a "
+            "new output directory"
+        )
+
+    split = str(args.split)
+    stage = f"esconv_auxiliary_judging_{split}"
+    config = load_config(args.config)
+    pm_v1_5_config = load_config(args.pm_v1_5_config)
+    if pm_v1_5_config.get("version") != "pm-v1.5":
+        raise RuntimeError("ESConv-auxiliary judging requires a pm-v1.5 config")
+    require_paid_run_release(
+        pm_v1_5_config,
+        config_path=args.pm_v1_5_config,
+        stage=stage,
+        run=bool(args.run),
+        run_identity=args.accept_cost_estimate_sha256,
+    )
+
+    generation_dir = args.generation_root / f"esconv_auxiliary_generation_v1_5_{split}"
+    outcomes_path = generation_dir / "action_outcomes.jsonl"
+    generation_summary_path = generation_dir / "summary.json"
+    if not outcomes_path.is_file():
+        raise RuntimeError(
+            f"missing ESConv-auxiliary generation outcomes for split {split!r}: "
+            f"{outcomes_path}; run 13b_run_esconv_auxiliary_generation_v1_5.py first"
+        )
+    generation_summary = read_json(generation_summary_path)
+    if generation_summary.get("status") != "COMPLETE":
+        raise RuntimeError(
+            f"ESConv-auxiliary generation for split {split!r} is not COMPLETE"
+        )
+
+    states_path = args.auxiliary_dir / split / "pm_v2_states.jsonl"
+    states = load_states(states_path)
+    state_by_id = {state.state_id: state for state in states}
+    outcomes = [ActionOutcome.model_validate(row) for row in iter_jsonl(outcomes_path)]
+    unknown_states = sorted({o.state_id for o in outcomes} - set(state_by_id))
+    if unknown_states:
+        raise RuntimeError(
+            f"ESConv-auxiliary outcomes reference unknown states: {unknown_states[:10]}"
+        )
+    if len({outcome_key(o) for o in outcomes}) != len(outcomes):
+        raise RuntimeError("duplicate ESConv-auxiliary state-action outcomes")
+
+    composite_spec = composite_spec_from_config(pm_v1_5_config)
+    composite_weights_sha256 = composite_weights_hash(composite_spec)
+    labeling = labeling_settings_from_config(pm_v1_5_config)
+    judging_config = dict(pm_v1_5_config["development_judging"])
+    endpoint_names = [str(value) for value in judging_config["judge_endpoints"]]
+    judge_seed = int(judging_config["seed"])
+    response_max_output_tokens = int(judging_config["response_max_output_tokens"])
+    risk_max_output_tokens = int(judging_config["risk_max_output_tokens"])
+    if response_max_output_tokens <= 0 or risk_max_output_tokens <= 0:
+        raise ValueError("judge max-output-token limits must be positive")
+    endpoints = [endpoint_from_config(config, name) for name in endpoint_names]
+    families = {endpoint.family for endpoint in endpoints}
+    if (
+        None in families
+        or len(families) < labeling["minimum_families"]
+        or len(families) != len(endpoints)
+    ):
+        raise ValueError(
+            "ESConv-auxiliary judging requires at least two endpoints from "
+            "distinct, declared judge families"
+        )
+    endpoint_descriptors = [
+        {
+            "name": name,
+            "model": endpoint.model,
+            "family": endpoint.family,
+            "base_url": endpoint.base_url,
+        }
+        for name, endpoint in zip(endpoint_names, endpoints)
+    ]
+    pricing_by_family = {
+        str(family): {
+            "input": float(values["input"]),
+            "output": float(values["output"]),
+        }
+        for family, values in dict(judging_config["pricing_usd_per_mtok"]).items()
+    }
+    if set(pricing_by_family) != {str(endpoint.family) for endpoint in endpoints}:
+        raise RuntimeError(
+            "ESConv-auxiliary judge pricing must exactly cover frozen endpoint "
+            "families"
+        )
+
+    api_cost_planning = dict(pm_v1_5_config["api_cost_planning"])
+    input_token_safety_factor = float(api_cost_planning["input_token_safety_factor"])
+
+    out_dir = args.out_root / f"esconv_auxiliary_judging_v1_5_{split}"
+    labels_path = out_dir / "action_labels.jsonl"
+    raw_path = out_dir / "judge_results.jsonl"
+    ledger_path = out_dir / "physical_attempt_ledger.jsonl"
+    manifest_path = out_dir / "run_manifest.json"
+    cost_estimate_path = out_dir / "cost_estimate.json"
+    call_plan_path = out_dir / "call_plan.jsonl"
+    forbid_overwrite_of_spent_attempts(ledger_path, overwrite=args.overwrite, stage=stage)
+    if args.overwrite:
+        for path in (
+            labels_path,
+            raw_path,
+            out_dir / "summary.json",
+            manifest_path,
+        ):
+            if path.exists():
+                path.unlink()
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest = ensure_run_manifest(
+        manifest_path,
+        {
+            "stage": stage,
+            "experiment_config_sha256": sha256_file(args.config),
+            "pm_v1_5_config_sha256": sha256_file(args.pm_v1_5_config),
+            "states_sha256": sha256_file(states_path),
+            "outcomes_sha256": sha256_file(outcomes_path),
+            "generation_summary_sha256": sha256_file(generation_summary_path),
+            "judge_endpoints": endpoint_descriptors,
+            "prompt_contract_hash": prompt_contract_hash(),
+            "composite_spec": composite_spec.model_dump(mode="json"),
+            "composite_weights_sha256": composite_weights_sha256,
+            "labeling": labeling,
+            "development_judging": judging_config,
+            "seed": judge_seed,
+            "call_plan_shuffle_seed": CALL_PLAN_SHUFFLE_SEED,
+            "response_max_output_tokens": response_max_output_tokens,
+            "risk_max_output_tokens": risk_max_output_tokens,
+            "pricing_usd_per_mtok": pricing_by_family,
+            "api_cost_planning": api_cost_planning,
+            "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+            "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+            "split": split,
+        },
+    )
+
+    # Build the full call plan in natural order, then apply a frozen, seeded
+    # shuffle over the outer (state, action) iteration -- see module
+    # docstring. Sorting outcomes first makes the shuffle a pure function of
+    # the frozen seed, independent of the outcomes file's on-disk row order.
+    ordered_outcomes = sorted(outcomes, key=outcome_key)
+    shuffled_indices = list(range(len(ordered_outcomes)))
+    random.Random(CALL_PLAN_SHUFFLE_SEED).shuffle(shuffled_indices)
+    shuffled_outcomes = [ordered_outcomes[i] for i in shuffled_indices]
+
+    cost_rows: list[dict[str, Any]] = []
+    execution_by_call_key: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for outcome_index, outcome in enumerate(shuffled_outcomes):
+        state = state_by_id[outcome.state_id]
+        authorized_user_context = ""
+        selected_context = "\n".join(
+            [f"MEMORY[{item.source.value}]: {item.text}" for item in outcome.memory_view]
+            + [
+                f"STRATEGY[{card.strategy_label}]: {card.guidance_text}"
+                for card in outcome.strategy_view
+            ]
+        )
+        response_messages = build_response_messages(
+            state=state,
+            authorized_user_context=authorized_user_context,
+            candidate_response=outcome.response,
+        )
+        risk_messages = build_risk_messages(
+            state=state,
+            authorized_user_context=authorized_user_context,
+            selected_context=selected_context,
+            candidate_response=outcome.response,
+        )
+        for endpoint_index, endpoint in enumerate(endpoints):
+            base_call_seed = judge_seed + outcome_index * 10 + endpoint_index
+            for judge_type, messages, max_output_tokens, schema, call_seed in (
+                (
+                    "response",
+                    response_messages,
+                    response_max_output_tokens,
+                    ResponseJudgeOutput,
+                    base_call_seed,
+                ),
+                (
+                    "risk",
+                    risk_messages,
+                    risk_max_output_tokens,
+                    RiskJudgeOutput,
+                    base_call_seed + 1,
+                ),
+            ):
+                prompt_hash = sha256_text(canonical_json(messages))
+                base_input_tokens_est = estimate_tokens(canonical_json(messages))
+                input_tokens_est = conservative_token_bound(
+                    canonical_json(messages), safety_factor=input_token_safety_factor
+                )
+                pricing = pricing_by_family[str(endpoint.family)]
+                plan_row = {
+                    "state_id": state.state_id,
+                    "action_id": outcome.action_id,
+                    "judge_family": endpoint.family,
+                    "judge_model": endpoint.model,
+                    "judge_type": judge_type,
+                    "seed": call_seed,
+                    "input_tokens_est": input_tokens_est,
+                    "base_input_tokens_est": base_input_tokens_est,
+                    "max_output_tokens": max_output_tokens,
+                    "prompt_hash": prompt_hash,
+                    "pricing_usd_per_mtok": pricing,
+                    "maximum_cost_usd": input_tokens_est / 1_000_000 * pricing["input"]
+                    + max_output_tokens / 1_000_000 * pricing["output"],
+                }
+                plan_row["physical_call_key"] = make_physical_call_key(
+                    stage=stage,
+                    record_ids={
+                        "state_id": state.state_id,
+                        "action_id": outcome.action_id,
+                        "judge_family": str(endpoint.family),
+                        "judge_type": judge_type,
+                    },
+                    prompt_sha256=prompt_hash,
+                    endpoint=endpoint,
+                    request_parameters={
+                        "temperature": 0.0,
+                        "max_tokens": int(max_output_tokens),
+                        "seed": int(call_seed),
+                        "response_schema": schema.__name__,
+                    },
+                )
+                cost_rows.append(plan_row)
+                execution_by_call_key[call_key(plan_row)] = {
+                    "messages": messages,
+                    "schema": schema,
+                }
+
+    if len({str(r["physical_call_key"]) for r in cost_rows}) != len(cost_rows):
+        raise RuntimeError("duplicate ESConv-auxiliary judge physical-call key")
+    required_keys = {call_key(row) for row in cost_rows}
+    expected_pairs = {outcome_key(o) for o in outcomes}
+
+    total_input_tokens = sum(int(row["input_tokens_est"]) for row in cost_rows)
+    total_output_tokens = sum(int(row["max_output_tokens"]) for row in cost_rows)
+    cost_payload = {
+        "stage": stage,
+        "split": split,
+        "full_logical_api_calls": len(cost_rows),
+        "expected_judge_pairs": len(expected_pairs),
+        "total_input_tokens_est": total_input_tokens,
+        "max_input_tokens_per_call_est": max(
+            (int(r["input_tokens_est"]) for r in cost_rows), default=0
+        ),
+        "total_output_tokens_est": total_output_tokens,
+        "estimated_cost_usd": sum(float(r["maximum_cost_usd"]) for r in cost_rows),
+        "pricing_usd_per_mtok": pricing_by_family,
+        "api_cost_planning": api_cost_planning,
+        "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+        "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+        "call_plan_shuffle_seed": CALL_PLAN_SHUFFLE_SEED,
+        "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
+        "run_manifest_sha256": manifest["manifest_sha256"],
+        "budget_limits": {
+            "max_api_calls": int(args.max_api_calls),
+            "max_estimated_usd": float(args.max_estimated_usd),
+            "max_input_tokens_per_call": int(args.max_input_tokens_per_call),
+        },
+    }
+    cost_estimate = {
+        **cost_payload,
+        "cost_estimate_sha256": sha256_text(canonical_json(cost_payload)),
+    }
+    budget_checks = {
+        "api_calls": len(cost_rows) <= int(args.max_api_calls),
+        "estimated_cost_usd": cost_estimate["estimated_cost_usd"]
+        <= float(args.max_estimated_usd),
+        "max_input_tokens_per_call": cost_estimate["max_input_tokens_per_call_est"]
+        <= int(args.max_input_tokens_per_call),
+    }
+    budget_gate = {
+        "status": "PASS" if all(budget_checks.values()) else "FAIL",
+        "checks": budget_checks,
+        "limits": {
+            "max_api_calls": int(args.max_api_calls),
+            "max_estimated_usd": float(args.max_estimated_usd),
+            "max_input_tokens_per_call": int(args.max_input_tokens_per_call),
+        },
+    }
+
+    if args.dry_run or budget_gate["status"] != "PASS":
+        _persist_or_validate_dry_run(
+            ledger_path=ledger_path,
+            estimate_path=cost_estimate_path,
+            call_plan_path=call_plan_path,
+            cost_estimate=cost_estimate,
+            budget_gate=budget_gate,
+            call_plan=cost_rows,
+        )
+    result = {**cost_estimate, "budget_gate": budget_gate}
+    print(result)
+    if args.dry_run:
+        if budget_gate["status"] != "PASS":
+            raise RuntimeError(
+                "ESConv-auxiliary judging dry-run failed the frozen budget gate"
+            )
+        return
+    if budget_gate["status"] != "PASS":
+        raise RuntimeError("ESConv-auxiliary judging API run blocked by budget gate")
+    _require_saved_dry_run(
+        estimate_path=cost_estimate_path,
+        call_plan_path=call_plan_path,
+        cost_estimate=cost_estimate,
+        budget_gate=budget_gate,
+        call_plan=cost_rows,
+    )
+    expected_hash = str(cost_estimate["cost_estimate_sha256"])
+    if not args.accept_cost_estimate_sha256:
+        raise RuntimeError(
+            "API mode is fail-closed: pass --accept-cost-estimate-sha256 "
+            f"{expected_hash} from the matching dry-run"
+        )
+    if args.accept_cost_estimate_sha256 != expected_hash:
+        raise RuntimeError(
+            "accepted cost estimate hash does not match the current "
+            "ESConv-auxiliary judging plan"
+        )
+
+    ledger = PersistentAttemptLedger(
+        ledger_path,
+        stage=stage,
+        expected_calls={
+            str(row["physical_call_key"]): MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+            for row in cost_rows
+        },
+        maximum_total_attempts=int(args.max_api_calls),
+    )
+    maximum_provider_output_failures = DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+
+    blocked: dict[str, str] = {}
+    for row in cost_rows:
+        key = str(row["physical_call_key"])
+        if ledger.succeeded(key):
+            continue
+        blocker = call_retry_blocker(
+            ledger, key, max_provider_output_attempts=maximum_provider_output_failures
+        )
+        if blocker is not None:
+            blocked[key] = blocker
+    if blocked:
+        first = sorted(blocked)[0]
+        raise RuntimeError(
+            f"ESConv-auxiliary judging is unreachable from the persisted ledger: "
+            f"{first}: {blocked[first]}"
+        )
+
+    endpoint_by_family = {str(endpoint.family): endpoint for endpoint in endpoints}
+    pending = [
+        row for row in cost_rows if not ledger.succeeded(str(row["physical_call_key"]))
+    ]
+    clients = (
+        {family: make_client(endpoint) for family, endpoint in endpoint_by_family.items()}
+        if pending
+        else {}
+    )
+    successful_call_rows: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    try:
+        for row in cost_rows:
+            key = call_key(row)
+            physical_key = str(row["physical_call_key"])
+            if ledger.succeeded(physical_key):
+                terminal = ledger.terminal_row(physical_key)
+                result_payload = (terminal or {}).get("result") or {}
+                schema = ResponseJudgeOutput if key[3] == "response" else RiskJudgeOutput
+                successful_call_rows[key] = {
+                    **row,
+                    "parsed": schema.model_validate(result_payload.get("parsed")).model_dump(
+                        mode="json"
+                    ),
+                    "request_hash": str(terminal.get("request_hash")),
+                }
+                continue
+            execution = execution_by_call_key[key]
+            endpoint = endpoint_by_family[key[2]]
+
+            def call_fn(row=row, execution=execution, endpoint=endpoint):
+                return clients[str(endpoint.family)].chat(
+                    execution["messages"],
+                    temperature=0.0,
+                    max_tokens=int(row["max_output_tokens"]),
+                    seed=int(row["seed"]),
+                    response_schema=execution["schema"],
+                    retries=1,
+                )
+
+            reservation, call_result, parsed = execute_with_bounded_retry(
+                ledger,
+                physical_key,
+                record_ids={
+                    "state_id": key[0],
+                    "action_id": key[1],
+                    "judge_family": key[2],
+                    "judge_type": key[3],
+                },
+                prompt_sha256=str(row["prompt_hash"]),
+                call_fn=call_fn,
+                max_provider_output_attempts=maximum_provider_output_failures,
+                backoff_seconds=TRANSPORT_BACKOFF_SECONDS,
+            )
+            assert parsed is not None
+            parsed_payload = parsed.model_dump(mode="json")
+            ledger.finish(
+                reservation,
+                succeeded=True,
+                request_hash=call_result.request_hash,
+                usage=call_result.usage,
+                error=None,
+                result={"parsed": parsed_payload},
+            )
+            successful_call_rows[key] = {
+                **row,
+                "parsed": parsed_payload,
+                "request_hash": call_result.request_hash,
+            }
+    finally:
+        for client in clients.values():
+            client.close()
+
+    raw_by_key: dict[tuple[str, str, str], dict[str, Any]] = {}
+    state_id_for_card: dict[str, str] = {o.state_id: o.card_id for o in outcomes}
+    for state_id, action_id in sorted(expected_pairs):
+        pair_rows = {}
+        for family in sorted(str(e.family) for e in endpoints):
+            response_row = successful_call_rows.get((state_id, action_id, family, "response"))
+            risk_row = successful_call_rows.get((state_id, action_id, family, "risk"))
+            if response_row is None or risk_row is None:
+                pair_rows = {}
+                break
+            pair_rows[family] = (response_row, risk_row)
+        if not pair_rows:
+            continue
+        for family, (response_row, risk_row) in pair_rows.items():
+            raw_by_key[(state_id, action_id, family)] = {
+                "status": "SUCCESS",
+                "schema_success": True,
+                "state_id": state_id,
+                "card_id": state_id_for_card[state_id],
+                "action_id": action_id,
+                "judge_family": family,
+                "judge_model": response_row["judge_model"],
+                "prompt_contract_hash": prompt_contract_hash(),
+                "response": response_row["parsed"],
+                "risk": risk_row["parsed"],
+                "response_request_hash": response_row["request_hash"],
+                "risk_request_hash": risk_row["request_hash"],
+            }
+    write_jsonl(raw_path, [raw_by_key[key] for key in sorted(raw_by_key)])
+
+    canonical_raw_rows = [
+        {
+            "judge_family": row["judge_family"],
+            "action_id": row["action_id"],
+            "response": row["response"],
+            "risk": row["risk"],
+        }
+        for row in raw_by_key.values()
+    ]
+    raw_family_global_gate = validate_raw_judge_family_health(
+        canonical_raw_rows,
+        expected_families=[str(endpoint.family) for endpoint in endpoints],
+        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
+        maximum_absolute_dimension_correlation=labeling[
+            "maximum_absolute_dimension_correlation"
+        ],
+        composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
+        maximum_absolute_composite_support_correlation=labeling[
+            "maximum_absolute_composite_support_correlation"
+        ],
+        reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
+        reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+        composite_spec=composite_spec,
+        raise_on_failure=True,
+    )
+    raw_family_action_gate = validate_raw_judge_family_subgroup_health(
+        canonical_raw_rows,
+        subgroup_key="action_id",
+        expected_subgroups=sorted({o.action_id for o in outcomes}),
+        expected_families=[str(endpoint.family) for endpoint in endpoints],
+        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
+        maximum_absolute_dimension_correlation=labeling[
+            "maximum_absolute_dimension_correlation"
+        ],
+        composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
+        maximum_absolute_composite_support_correlation=labeling[
+            "maximum_absolute_composite_support_correlation"
+        ],
+        reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
+        reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+        composite_spec=composite_spec,
+        raise_on_failure=True,
+    )
+    action_applicable_risk_gate = validate_action_applicable_risk_signal(
+        canonical_raw_rows,
+        expected_actions=sorted({o.action_id for o in outcomes}),
+        expected_families=[str(endpoint.family) for endpoint in endpoints],
+        minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
+        minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
+        raise_on_failure=True,
+    )
+
+    labels = []
+    labels_path.write_text("", encoding="utf-8")
+    for state_id, action_id in sorted(expected_pairs):
+        state = state_by_id[state_id]
+        outcome = next(
+            o for o in outcomes if o.state_id == state_id and o.action_id == action_id
+        )
+        results = []
+        for endpoint in endpoints:
+            row = raw_by_key.get((state_id, action_id, str(endpoint.family)))
+            if row is None:
+                results = []
+                break
+            results.append(
+                JudgeResult(
+                    family=str(row["judge_family"]),
+                    model=str(row["judge_model"]),
+                    response=ResponseJudgeOutput.model_validate(row["response"]),
+                    risk=RiskJudgeOutput.model_validate(row["risk"]),
+                    response_request_hash=str(row["response_request_hash"]),
+                    risk_request_hash=str(row["risk_request_hash"]),
+                )
+            )
+        if not results:
+            continue
+        label = build_action_label(
+            state=state,
+            action_id=action_id,
+            observed_input_tokens=outcome.cost.total_input_tokens,
+            retrieval_calls=outcome.cost.retrieval_calls,
+            results=results,
+            composite_spec=composite_spec,
+            minimum_families=labeling["minimum_families"],
+            reliable_mad_threshold=labeling["reliable_mad_threshold"],
+            provenance={"esconv_auxiliary_split": split},
+        )
+        labels.append(label)
+        append_jsonl(labels_path, label.model_dump(mode="json"))
+
+    quality_gate = (
+        validate_judge_table(
+            labels,
+            minimum_families=labeling["minimum_families"],
+            minimum_reliable_rate=labeling["minimum_reliable_rate"],
+            reliable_mad_threshold=labeling["reliable_mad_threshold"],
+            minimum_low_mad_coverage_per_dimension=labeling[
+                "minimum_low_mad_coverage_per_dimension"
+            ],
+            minimum_low_mad_coverage_per_action_dimension=labeling[
+                "minimum_low_mad_coverage_per_action_dimension"
+            ],
+            duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
+            maximum_absolute_dimension_correlation=labeling[
+                "maximum_absolute_dimension_correlation"
+            ],
+            composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
+            maximum_absolute_composite_support_correlation=labeling[
+                "maximum_absolute_composite_support_correlation"
+            ],
+            reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
+            reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+            composite_spec=composite_spec,
+            raise_on_failure=True,
+        )
+        if labels
+        else {"status": "FAIL", "reason": "no completed labels"}
+    )
+    missing_after = sorted(expected_pairs - {(l.state_id, l.action_id) for l in labels})
+    summary = {
+        "status": "COMPLETE" if not missing_after else "INCOMPLETE",
+        "split": split,
+        "expected_judge_pairs": len(expected_pairs),
+        "completed_judge_pairs": len(labels),
+        "missing_keys": missing_after[:50],
+        "run_manifest_sha256": manifest["manifest_sha256"],
+        "raw_family_quality_gate": {
+            "status": (
+                "PASS"
+                if raw_family_global_gate.get("status") == "PASS"
+                and raw_family_action_gate.get("status") == "PASS"
+                and action_applicable_risk_gate.get("status") == "PASS"
+                else "FAIL"
+            ),
+            "global": raw_family_global_gate,
+            "family_by_action": raw_family_action_gate,
+            "action_applicable_risk_signal": action_applicable_risk_gate,
+        },
+        "quality_gate": quality_gate,
+        "cost_estimate": cost_estimate,
+        "budget_gate": budget_gate,
+    }
+    write_json(out_dir / "summary.json", summary)
+    print(summary)
+    if missing_after:
+        raise RuntimeError(
+            f"ESConv-auxiliary judging incomplete for split {split!r}: "
+            f"{len(missing_after)} missing pairs"
+        )
+
+
+if __name__ == "__main__":
+    main()

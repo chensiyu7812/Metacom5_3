@@ -21,14 +21,29 @@ REAL_CONSUMER_MODULES = (
     "src/metacom_pm/pm_v2_features.py",
     "src/metacom_pm/pm_v2_model.py",
     "src/metacom_pm/esconv_v1_5.py",
+    "scripts/v1_5/13b_run_esconv_auxiliary_generation_v1_5.py",
+    "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
 )
 
 FORBIDDEN_TOKENS = ("gold_response", "gold_strategy")
 
 
+def _code_without_module_docstring(source: str) -> str:
+    """Strip a leading module docstring, which may name these fields as
+    documentation (e.g. describing the audit_only boundary), before checking
+    that the actual code never references them. Matches the established
+    pattern in test_v1_5_esconv_generation_runner.py."""
+
+    _, _, code_after_docstring = source.partition('"""')
+    _, _, code = code_after_docstring.partition('"""')
+    return code
+
+
 def test_real_consumers_never_reference_gold_fields_outside_the_audit_builder() -> None:
     for relative_path in REAL_CONSUMER_MODULES:
-        source = (ROOT / relative_path).read_text(encoding="utf-8")
+        source = _code_without_module_docstring(
+            (ROOT / relative_path).read_text(encoding="utf-8")
+        )
         for token in FORBIDDEN_TOKENS:
             occurrences = source.count(token)
             if relative_path == "src/metacom_pm/esconv_v1_5.py":
