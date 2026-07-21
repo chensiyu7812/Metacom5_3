@@ -465,6 +465,16 @@ def main() -> None:
         transport_backoff_seconds = tuple(
             float(value) for value in control_cfg["transport_backoff_seconds"]
         )
+        # Per-family override, so a family switching to a noisier provider
+        # (e.g. deepseek_official's loose json_object mode) never silently
+        # changes another family's (google_gemini's) retry behavior. Falls
+        # back to maximum_provider_output_failures for any family not listed.
+        provider_output_attempts_by_family = {
+            str(family): int(value)
+            for family, value in dict(
+                control_cfg.get("maximum_provider_output_attempts_by_family") or {}
+            ).items()
+        }
         if (
             maximum_physical_attempts_per_call < 3
             or maximum_provider_output_failures < 1
@@ -473,12 +483,22 @@ def main() -> None:
             or len(transport_backoff_seconds)
             < maximum_physical_attempts_per_call - 1
             or any(value < 0 for value in transport_backoff_seconds)
+            or any(
+                value < 1 or value > maximum_physical_attempts_per_call
+                for value in provider_output_attempts_by_family.values()
+            )
         ):
             raise RuntimeError("actual-corpus bounded retry contract is invalid")
     else:
         maximum_physical_attempts_per_call = MAX_PHYSICAL_ATTEMPTS_PER_CALL
         maximum_provider_output_failures = DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
         transport_backoff_seconds = DEFAULT_BACKOFF_SECONDS
+        provider_output_attempts_by_family = {}
+
+    def _max_provider_output_attempts_for(judge_family: str) -> int:
+        return provider_output_attempts_by_family.get(
+            judge_family, maximum_provider_output_failures
+        )
 
     planning = dict(pm_config["api_cost_planning"])
     if set(planning) != {
@@ -842,7 +862,9 @@ def main() -> None:
         blocker = call_retry_blocker(
             ledger,
             call_key,
-            max_provider_output_attempts=maximum_provider_output_failures,
+            max_provider_output_attempts=_max_provider_output_attempts_for(
+                str(row["judge_family"])
+            ),
         )
         if blocker is not None:
             blocked[call_key] = blocker
@@ -886,7 +908,9 @@ def main() -> None:
                     record_ids=item["record_ids"],
                     prompt_sha256=str(row["prompt_sha256"]),
                     call_fn=call_fn,
-                    max_provider_output_attempts=maximum_provider_output_failures,
+                    max_provider_output_attempts=_max_provider_output_attempts_for(
+                        str(row["judge_family"])
+                    ),
                     backoff_seconds=transport_backoff_seconds,
                 )
                 # execute_with_bounded_retry has already ledgered every failed

@@ -796,6 +796,16 @@ actual_corpus_semantic_audit:
   # budget already used by v4_root_cause_single_field_diagnostic.
   maximum_physical_attempts_per_logical_call: 10
   maximum_provider_output_failures_per_logical_call: 2
+  # Per-family override (mirrors development_judging's): deepseek_official's
+  # loose json_object mode has more format/empty-output noise than the
+  # strict-schema NVIDIA endpoint this stage used before, partly caused by
+  # an unrequested reasoning budget (now fixed via thinking_mode: disabled
+  # on the endpoint itself -- see experiment.yaml); 3 keeps one extra margin
+  # for genuine, provider-acknowledged occasional empty content beyond that
+  # fix. google_gemini falls back to maximum_provider_output_failures_per_
+  # logical_call above, unchanged.
+  maximum_provider_output_attempts_by_family:
+    deepseek_official: 3
   transport_backoff_seconds: [10, 30, 60, 120, 300, 300, 600, 600, 900]
   maximum_provider_surface_fallback_rate_by_split:
     train: 0.005
