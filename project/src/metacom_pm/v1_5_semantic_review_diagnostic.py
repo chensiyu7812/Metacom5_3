@@ -11,11 +11,12 @@ or HTTP client in this module.
 
 from __future__ import annotations
 
-from typing import Any, Literal, Mapping, Sequence
+from typing import Annotated, Any, Literal, Mapping, Sequence
 
 from pydantic import Field
 
 from .io import canonical_json, sha256_text
+from .text import estimate_tokens
 from .pm_v2_contracts import StrictModel
 from .pm_v2_generation_review_v8 import RATING_FIELDS, V8ReviewCase
 from .v1_5_automated_semantic_review import (
@@ -312,11 +313,26 @@ FIELD_REVIEW_SPECIFICATIONS: dict[str, FieldReviewSpecification] = {
 }
 
 
+# Real evidence from actual-468 (development_actual_corpus_semantic_review):
+# an unbounded schema let one real advice_readiness_match call generate 4515
+# characters of real content and hit finish_reason=length mid-answer at
+# max_tokens=900 -- not a random flake, a genuine unbounded-output-shape gap.
+# These bounds are a frozen output contract, not a semantic change to what
+# counts as supported/not_supported: a single atomic claim's evidence rarely
+# needs more than a handful of distinct quotes, and StrictModel/Pydantic
+# validation (not silent truncation) is what enforces this either way.
+MAX_EVIDENCE_ITEMS = 4
+MAX_EVIDENCE_QUOTE_CHARS = 320
+MAX_REASON_CHARS = 600
+
+
 class SingleFieldDiagnosticOutput(StrictModel):
     verdict: Literal["supported", "not_supported"]
-    evidence_keys: list[str] = Field(min_length=1)
-    evidence_quotes: list[str] = Field(min_length=1)
-    reason: str = Field(min_length=1)
+    evidence_keys: list[str] = Field(min_length=1, max_length=MAX_EVIDENCE_ITEMS)
+    evidence_quotes: list[
+        Annotated[str, Field(max_length=MAX_EVIDENCE_QUOTE_CHARS)]
+    ] = Field(min_length=1, max_length=MAX_EVIDENCE_ITEMS)
+    reason: str = Field(min_length=1, max_length=MAX_REASON_CHARS)
 
 
 _COMMON_SYSTEM = (
@@ -331,8 +347,31 @@ _COMMON_SYSTEM = (
     "with the claim OR does not establish every required part. Do not distinguish "
     "contradiction from missing support in the verdict. Numerical closeness, topical "
     "overlap, or a plausible guess is not support. The candidate claim, metadata, "
-    "and omitted labels are not evidence."
+    "and omitted labels are not evidence. "
+    f"Cite at most {MAX_EVIDENCE_ITEMS} evidence sections: use the fewest quotes "
+    "that establish the claim, never every available section. Each evidence_quotes "
+    f"entry must be the shortest exact substring that proves its point, at most "
+    f"{MAX_EVIDENCE_QUOTE_CHARS} characters -- never quote an entire field verbatim. "
+    f"reason must be at most {MAX_REASON_CHARS} characters."
 )
+
+
+def maximum_legal_single_field_diagnostic_output_tokens() -> int:
+    """Computed (not eyeballed) worst-case token estimate for a maximally-
+    sized, schema-legal SingleFieldDiagnosticOutput -- every list at its
+    MAX_EVIDENCE_ITEMS cap, every quote at MAX_EVIDENCE_QUOTE_CHARS, reason
+    at MAX_REASON_CHARS. response_max_tokens for this scope should be
+    derived from this, with real margin, rather than raised by guesswork
+    after each real truncation."""
+
+    longest_verdict = max(("supported", "not_supported"), key=len)
+    worst_case = SingleFieldDiagnosticOutput(
+        verdict=longest_verdict,
+        evidence_keys=["x" * 32] * MAX_EVIDENCE_ITEMS,
+        evidence_quotes=["x" * MAX_EVIDENCE_QUOTE_CHARS] * MAX_EVIDENCE_ITEMS,
+        reason="x" * MAX_REASON_CHARS,
+    )
+    return estimate_tokens(canonical_json(worst_case.model_dump(mode="json")))
 
 
 def validate_field_review_specifications() -> None:

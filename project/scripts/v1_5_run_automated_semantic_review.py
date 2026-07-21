@@ -65,6 +65,8 @@ from pathlib import Path
 from typing import Any
 
 from metacom_pm.api import (
+    RetryableProviderError,
+    StructuredOutputValidationError,
     chat_request_payload,
     make_client,
     request_payload_has_schema,
@@ -137,6 +139,7 @@ from metacom_pm.v1_5_actual_corpus_review import (
 from metacom_pm.v1_5_semantic_review_diagnostic import (
     SingleFieldDiagnosticOutput,
     assess_single_field_diagnostic_output,
+    maximum_legal_single_field_diagnostic_output_tokens,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
@@ -151,6 +154,33 @@ DEFAULT_JUDGE_ENDPOINTS = (
 # for a transient 408/429/5xx/network-timeout failure (see
 # module docstring's second amendment and metacom_pm.bounded_retry).
 MAX_PHYSICAL_ATTEMPTS_PER_CALL = 3
+
+# A failure in one of these classes means exactly one logical call could not
+# be completed after exhausting its own retry budget -- not that anything is
+# systemically broken. These are recorded and the run continues with the
+# remaining calls, instead of the whole ~1,880-call matrix dying on a single
+# real, isolated case (the exact failure mode that killed two real actual-468
+# runs). Anything else (ProviderRequestError/4xx -- credentials, balance,
+# request-contract rejections; local invariant failures; unclassified
+# exceptions) still stops the run immediately: those indicate the run itself,
+# not one case, cannot be trusted.
+ISOLATABLE_RETRY_CLASSES = frozenset(
+    {
+        "output_token_limit",
+        "missing_field",
+        "provider_output_format",
+        "http_5xx",
+        "network_timeout",
+        "rate_limited_429",
+        "request_timeout_408",
+        "structured_output_validation_error",
+    }
+)
+# If the same isolatable retry_class recurs this many times in a row across
+# different calls, treat it as a systemic issue rather than isolated bad
+# luck, and stop rather than silently grinding through a run that cannot
+# actually succeed.
+CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER = 5
 
 
 def _load_carry_forward_state(
@@ -564,20 +594,26 @@ def main() -> None:
             for row in controls
         ]
         response_schema = SingleFieldDiagnosticOutput
-        # Real evidence from the first 516/1880 actual_468 calls: Gemini
-        # enforces max_tokens as a hard truncation (a completion cut off
-        # mid-JSON-string raises JSONDecodeError, which the
-        # provider_output_format retry class allows only one extra attempt
-        # for), while DeepSeek does not enforce it strictly -- DeepSeek's own
-        # completions for the SAME schema/fields already reached up to 604
-        # tokens (context_grounding_match) and 365 (advice_readiness_match)
-        # with only 300 requested, meaning the true task sometimes needs
-        # more than 300 regardless of judge family; Gemini's strict
-        # enforcement is what turns that shortfall into a hard crash rather
-        # than a silent overrun. 900 gives real margin above the observed
-        # 604 max across both fields, including headroom for the ~1,363
-        # calls not yet attempted.
-        response_max_tokens = 900
+        # Real evidence across two rounds of actual_468 crashes: 300 was too
+        # low (real completions up to 604/365 tokens with only 300
+        # requested), and even 900 was not always enough -- a real
+        # advice_readiness_match call generated 4515 characters (no
+        # reasoning_content -- not the deepseek thinking-mode bug) and was
+        # still mid-answer at completion_tokens=900, finish_reason=length.
+        # Root cause: SingleFieldDiagnosticOutput had no upper bound on
+        # evidence_keys/evidence_quotes count or length, or on reason length,
+        # so a legal response could be arbitrarily long. Now bounded (see
+        # v1_5_semantic_review_diagnostic.py), with a computed (not
+        # eyeballed) worst-case-legal-response token estimate as a real
+        # preflight check, so this ceiling is derived from the output
+        # contract rather than raised by guesswork after each truncation.
+        maximum_legal_tokens = maximum_legal_single_field_diagnostic_output_tokens()
+        response_max_tokens = 1800
+        if response_max_tokens <= maximum_legal_tokens:
+            raise RuntimeError(
+                "actual_468 response_max_tokens does not clear the computed "
+                f"worst-case-legal-response bound ({maximum_legal_tokens} tokens)"
+            )
     else:
         case_rows = list(real_case_rows) + [
             {"kind": "control", "item_id": row["item_id"], "text": row["case_text"]}
@@ -952,6 +988,9 @@ def main() -> None:
             str(endpoint.family): make_client(endpoint)
             for endpoint in endpoints.values()
         }
+    isolated_failures: dict[str, str] = {}
+    last_isolated_retry_class: str | None = None
+    consecutive_same_class_count = 0
     try:
         for row in pending:
             call_key = str(row["physical_call_key"])
@@ -1002,6 +1041,8 @@ def main() -> None:
                         "raw_text": result.text,
                     },
                 )
+                last_isolated_retry_class = None
+                consecutive_same_class_count = 0
             except Exception as exc:
                 if reservation is not None and ledger.terminal_event(
                     reservation.call_key, reservation.attempt_index
@@ -1009,7 +1050,10 @@ def main() -> None:
                     # The physical attempt itself succeeded; only our own
                     # post-hoc validation rejected it. Never retried -- this
                     # is a deterministic accounting/schema problem, not a
-                    # transient one.
+                    # transient one. Not in ISOLATABLE_RETRY_CLASSES (a
+                    # genuine planning/invariant mismatch, potentially
+                    # systemic across similar inputs), so this still stops
+                    # the run below.
                     ledger.finish(
                         reservation,
                         succeeded=False,
@@ -1036,18 +1080,98 @@ def main() -> None:
                             retry_disposition=TERMINAL_DISPOSITION,
                         ),
                     )
-                raise
+                # A single isolated logical-call failure (exhausted its own
+                # retry budget, or failed local schema validation) does not
+                # mean the whole ~1,880-call matrix is untrustworthy -- record
+                # it and continue with the remaining calls. Anything else
+                # (ProviderRequestError/4xx, an unclassified exception, or a
+                # local invariant failure -- ledgered above with retry_class
+                # stage_postcondition_failure, deliberately not in the
+                # isolatable set) still stops the whole run immediately.
+                if isinstance(exc, RetryableProviderError):
+                    retry_class: str | None = exc.last_retry_class
+                elif isinstance(exc, StructuredOutputValidationError):
+                    retry_class = "structured_output_validation_error"
+                else:
+                    retry_class = None
+                if retry_class not in ISOLATABLE_RETRY_CLASSES:
+                    raise
+                if retry_class == last_isolated_retry_class:
+                    consecutive_same_class_count += 1
+                else:
+                    last_isolated_retry_class = retry_class
+                    consecutive_same_class_count = 1
+                if consecutive_same_class_count >= CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER:
+                    raise RuntimeError(
+                        f"circuit breaker: {retry_class} recurred "
+                        f"{consecutive_same_class_count} times in a row across "
+                        "different calls -- treating as systemic, not isolated"
+                    ) from exc
+                isolated_failures[call_key] = (
+                    f"{retry_class}: {type(exc).__name__}: {exc}"
+                )
     finally:
         for client in clients.values():
             client.close()
+
+    incomplete_calls = [
+        {
+            "call_key": str(row["physical_call_key"]),
+            "record_ids": {
+                k: v
+                for k, v in row.items()
+                if k
+                in (
+                    "kind",
+                    "item_id",
+                    "case_item_id",
+                    "field",
+                    "judge_family",
+                    "endpoint_name",
+                )
+            },
+            "reason": isolated_failures.get(str(row["physical_call_key"]), "never attempted"),
+        }
+        for row in call_plan
+        if not ledger.succeeded(str(row["physical_call_key"]))
+    ]
+    if incomplete_calls:
+        # A single isolated failure (or several) no longer crashes the whole
+        # run (see ISOLATABLE_RETRY_CLASSES above), but an incomplete matrix
+        # must never silently compute a gate decision -- missing judge
+        # coverage is not the same as "disagreement retained", and treating
+        # it that way could let a bad state pass for lack of a vote. This
+        # exits normally (not a crash) with an unambiguous, structurally
+        # distinct status instead.
+        write_json(
+            args.out_dir / "gate_report.json",
+            {
+                "protocol": review_protocol,
+                "review_scope": args.review_scope,
+                "status": "INCOMPLETE_NO_GATE_DECISION",
+                "logical_calls_planned": len(call_plan),
+                "logical_calls_succeeded": len(call_plan) - len(incomplete_calls),
+                "logical_calls_incomplete": len(incomplete_calls),
+                "incomplete_calls": incomplete_calls,
+                "transport_retry_summary": retry_ledger_summary(
+                    ledger,
+                    [str(row["physical_call_key"]) for row in call_plan],
+                ),
+            },
+        )
+        print(
+            f"INCOMPLETE_NO_GATE_DECISION: {len(incomplete_calls)}/"
+            f"{len(call_plan)} logical calls did not succeed; see "
+            f"{args.out_dir / 'gate_report.json'}. No PASS/FAIL gate was "
+            "computed."
+        )
+        return
 
     real_case_results: dict[str, dict] = {}
     control_results: dict[str, dict] = {}
     for row in call_plan:
         call_key = str(row["physical_call_key"])
         terminal = ledger.terminal_row(call_key)
-        if terminal is None or not ledger.succeeded(call_key):
-            raise RuntimeError("automated semantic-review matrix is incomplete")
         result = terminal.get("result") or {}
         if args.review_scope == "actual_468":
             parsed = SingleFieldDiagnosticOutput.model_validate(result.get("parsed"))

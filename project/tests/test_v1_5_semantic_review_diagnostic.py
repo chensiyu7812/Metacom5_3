@@ -30,6 +30,7 @@ from metacom_pm.v1_5_semantic_review_diagnostic import (
     DIAGNOSTIC_RUN_STAGE,
     DIAGNOSTIC_STATUS,
     FIELD_REVIEW_SPECIFICATIONS,
+    MAX_EVIDENCE_QUOTE_CHARS,
     SEMANTIC_DIAGNOSTIC_FIELDS,
     SingleFieldDiagnosticOutput,
     aggregate_v4_single_field_diagnostic,
@@ -518,12 +519,19 @@ def test_diagnostic_runner_records_bad_citation_and_completes_full_mock_matrix(
                 raise AssertionError(field)
             minimum = int(payload["minimum_distinct_evidence_citations"])
             keys = list(evidence)[:minimum]
-            quotes = [canonical_json(evidence[key]) for key in keys]
+            quotes = [
+                canonical_json(evidence[key])[:MAX_EVIDENCE_QUOTE_CHARS]
+                for key in keys
+            ]
             # A citation pointer defect is recorded separately and must not
             # redefine an otherwise correct binary semantic verdict.
             if not self.gemini and field == "context_grounding_match" and supported:
                 keys = ["memory_id"]
-                quotes = [canonical_json(evidence["current_user_text"])]
+                quotes = [
+                    canonical_json(evidence["current_user_text"])[
+                        :MAX_EVIDENCE_QUOTE_CHARS
+                    ]
+                ]
             parsed = SingleFieldDiagnosticOutput(
                 verdict="supported" if supported else "not_supported",
                 evidence_keys=keys,
@@ -657,7 +665,10 @@ def test_diagnostic_runner_continues_matrix_after_one_provider_exhausts(
             parsed = SingleFieldDiagnosticOutput(
                 verdict="supported" if supported else "not_supported",
                 evidence_keys=keys,
-                evidence_quotes=[canonical_json(evidence[key]) for key in keys],
+                evidence_quotes=[
+                    canonical_json(evidence[key])[:MAX_EVIDENCE_QUOTE_CHARS]
+                    for key in keys
+                ],
                 reason="The cited exhaustive evidence decides the atomic claim.",
             )
             return (
