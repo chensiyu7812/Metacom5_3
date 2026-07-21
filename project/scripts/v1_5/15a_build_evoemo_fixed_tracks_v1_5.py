@@ -49,12 +49,29 @@ def main() -> None:
     parser.add_argument("--max-input-tokens-per-call", type=int, required=True)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--accepted-dry-run-sha256")
+    parser.add_argument(
+        "--carry-forward-tracks-dir",
+        type=Path,
+        help=(
+            "A prior v2-contract run's --out-dir whose already-succeeded, "
+            "fully-parsed seeker turns should be recovered read-only into "
+            "this run's own ledger under a fresh --out-dir/identity, "
+            "instead of being paid for again. Requires the prior "
+            "directory's call_plan.jsonl to be byte-identical to this "
+            "run's own freshly-computed plan (same contract, same v2 "
+            "identity); refuses otherwise. A v1 (exactly-one-attempt) "
+            "directory can never match, by design."
+        ),
+    )
     args = parser.parse_args()
 
-    if args.out_dir.name != "evoemo_fixed_tracks_v1_5":
+    if args.out_dir.name != "evoemo_fixed_tracks_v1_5" and not (
+        args.out_dir.name.startswith("evoemo_fixed_tracks_v1_5_v2")
+    ):
         raise RuntimeError(
             "PM-v1.5 fixed seeker tracks must use an isolated "
-            "evoemo_fixed_tracks_v1_5 directory"
+            "evoemo_fixed_tracks_v1_5 (v1) or evoemo_fixed_tracks_v1_5_v2* "
+            "(v2 retry-contract candidate/repro-check) directory"
         )
     if args.run and args.overwrite:
         raise RuntimeError("paid fixed-seeker runs prohibit --overwrite")
@@ -142,6 +159,7 @@ def main() -> None:
         args.out_dir,
         accepted_dry_run_sha256=args.accepted_dry_run_sha256,
         overwrite=False,
+        carry_forward_tracks_dir=args.carry_forward_tracks_dir,
         **plan_args,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))

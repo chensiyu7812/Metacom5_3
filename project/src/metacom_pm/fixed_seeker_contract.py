@@ -15,8 +15,21 @@ from .io import canonical_json, sha256_text
 from .text import normalize_space
 
 
-FIXED_SEEKER_GENERATION_CONTRACT_VERSION = (
+FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V1 = (
     "pm-v2.2-fixed-seeker-generation-v1"
+)
+# v2 lifts the exactly-one-physical-attempt restriction: configs/pm_v2.yaml
+# still uses v1 and must keep its historical exactly-one-attempt behavior
+# unchanged, so the two versions are validated differently below rather than
+# repointing the shared constant (which would silently loosen pm_v2.yaml too).
+FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V2 = (
+    "pm-v2.2-fixed-seeker-generation-v2"
+)
+SUPPORTED_FIXED_SEEKER_GENERATION_CONTRACT_VERSIONS = frozenset(
+    {
+        FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V1,
+        FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V2,
+    }
 )
 FIXED_SEEKER_SYSTEM_PROMPT_ID = "evoemo-fixed-seeker-v1"
 FIXED_SEEKER_SEED_PROTOCOL = "base-seed-plus-turn-index-v1"
@@ -110,7 +123,7 @@ class FixedSeekerGenerationContract:
     elicitation_scaffold_protocol: str
 
     def __post_init__(self) -> None:
-        if self.version != FIXED_SEEKER_GENERATION_CONTRACT_VERSION:
+        if self.version not in SUPPORTED_FIXED_SEEKER_GENERATION_CONTRACT_VERSIONS:
             raise ValueError(
                 f"unsupported fixed-seeker contract version: {self.version!r}"
             )
@@ -165,10 +178,16 @@ class FixedSeekerGenerationContract:
             raise ValueError(
                 "PM-v2.2 fixed-seeker generation must accept only complete responses"
             )
-        if self.maximum_physical_attempts_per_logical_call != 1:
+        if self.version == FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V1:
+            if self.maximum_physical_attempts_per_logical_call != 1:
+                raise ValueError(
+                    "PM-v2.2 fixed-seeker generation v1 permits exactly one "
+                    "physical attempt per logical call"
+                )
+        elif self.maximum_physical_attempts_per_logical_call < 1:
             raise ValueError(
-                "PM-v2.2 fixed-seeker generation permits exactly one physical "
-                "attempt per logical call"
+                "PM-v2.2 fixed-seeker generation v2 requires a positive "
+                "physical attempt budget per logical call"
             )
         if self.seed_protocol != FIXED_SEEKER_SEED_PROTOCOL:
             raise ValueError(

@@ -19,6 +19,12 @@ from .api import (
 )
 from .artifacts import create_artifact_attestation, require_artifact_attestation
 from .attempt_ledger import PersistentAttemptLedger
+from .bounded_retry import (
+    DEFAULT_BACKOFF_SECONDS,
+    TERMINAL_DISPOSITION,
+    execute_with_bounded_retry,
+    failure_metadata,
+)
 from .contracts import (
     CostRecord,
     DialogueTurn,
@@ -1119,11 +1125,18 @@ def plan_fixed_seeker_tracks_v22(
                         )
                     )
                 )
+                # Worst case: every physical attempt up to the retry budget is
+                # a real, separately-billed call before one finally succeeds
+                # or the logical call is abandoned (same convention as
+                # v1_5_run_automated_semantic_review.py's call-plan rows).
                 maximum_cost_usd = (
-                    maximum_input_tokens / 1_000_000 * prices["input"]
-                    + contract.max_output_tokens
-                    / 1_000_000
-                    * prices["output"]
+                    contract.maximum_physical_attempts_per_logical_call
+                    * (
+                        maximum_input_tokens / 1_000_000 * prices["input"]
+                        + contract.max_output_tokens
+                        / 1_000_000
+                        * prices["output"]
+                    )
                 )
                 call_identity = {
                     "protocol": FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL,
@@ -1173,8 +1186,14 @@ def plan_fixed_seeker_tracks_v22(
     maximum_input_tokens = [
         int(row["maximum_input_tokens"]) for row in rows
     ]
-    maximum_total_input_tokens = sum(maximum_input_tokens)
-    maximum_total_output_tokens = len(rows) * contract.max_output_tokens
+    attempts_per_call = int(contract.maximum_physical_attempts_per_logical_call)
+    # Aggregate totals reflect the worst case (every attempt up to the retry
+    # budget is billed); the per-call max_input_tokens_per_call budget-gate
+    # check below stays per-attempt, not multiplied.
+    maximum_total_input_tokens = sum(maximum_input_tokens) * attempts_per_call
+    maximum_total_output_tokens = (
+        len(rows) * contract.max_output_tokens * attempts_per_call
+    )
     maximum_estimated_cost_usd = sum(
         float(row["maximum_cost_usd"]) for row in rows
     )
@@ -1183,8 +1202,9 @@ def plan_fixed_seeker_tracks_v22(
         "max_estimated_usd": float(max_estimated_usd),
         "max_input_tokens_per_call": int(max_input_tokens_per_call),
     }
+    maximum_physical_api_attempts = len(rows) * attempts_per_call
     budget_checks = {
-        "api_calls": len(rows) <= int(max_api_calls),
+        "api_calls": maximum_physical_api_attempts <= int(max_api_calls),
         "estimated_cost_usd": maximum_estimated_cost_usd
         <= float(max_estimated_usd),
         "max_input_tokens_per_call": max(maximum_input_tokens, default=0)
@@ -1206,7 +1226,7 @@ def plan_fixed_seeker_tracks_v22(
         "max_scenarios": max_scenarios,
         "scenario_count": len(scenarios),
         "expected_tracks": len(scenarios) * len(normalized_seeds),
-        "maximum_physical_api_attempts": len(rows),
+        "maximum_physical_api_attempts": maximum_physical_api_attempts,
         "maximum_input_tokens_per_call": max(
             maximum_input_tokens, default=0
         ),
@@ -1362,6 +1382,86 @@ def _fixed_seeker_v22_messages(
     ]
 
 
+def _load_fixed_seeker_carry_forward_state(
+    *,
+    carry_forward_dir: Path | None,
+    call_plan: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Read-only: find which of this run's own call-plan rows already
+    succeeded, with a complete parsed seeker turn, in a prior v2-identity
+    run's ledger.
+
+    Mirrors ``_load_carry_forward_state`` in
+    ``scripts/v1_5_run_automated_semantic_review.py``. Refuses unless the
+    prior directory's call_plan.jsonl is byte-identical to the plan this run
+    just freshly computed for itself. Never touches the prior directory's own
+    ledger file; only reads it. This is for continuing the SAME v2 contract
+    after a transport crash -- carrying content across a v1->v2 contract
+    change is deliberately not supported (max_output_tokens, retry budget,
+    and everything else in the frozen contract must match exactly, so a
+    contract change always starts a fresh, fully-repaid ledger).
+    """
+
+    if carry_forward_dir is None:
+        return {
+            "carry_forward_source_directory": None,
+            "carry_forward_source_ledger_sha256": None,
+            "carried_call_keys": set(),
+            "carried_terminal_rows": {},
+        }
+    old_call_plan_path = carry_forward_dir / "call_plan.jsonl"
+    old_ledger_path = carry_forward_dir / "physical_attempt_ledger.jsonl"
+    if not old_call_plan_path.is_file() or not old_ledger_path.is_file():
+        raise RuntimeError(
+            "fixed-seeker carry-forward source directory lacks a call plan "
+            "or ledger"
+        )
+    if list(iter_jsonl(old_call_plan_path)) != call_plan:
+        raise RuntimeError(
+            "fixed-seeker carry-forward source call plan differs from this "
+            "run's own freshly-computed plan -- refusing to trust its "
+            "ledger's call keys (this includes any contract change, e.g. "
+            "v1->v2)"
+        )
+    expected_calls = {
+        str(row["logical_call_key"]): int(row["maximum_physical_attempts"])
+        for row in call_plan
+    }
+    old_ledger = PersistentAttemptLedger(
+        old_ledger_path,
+        stage=FIXED_SEEKER_V22_STAGE,
+        expected_calls=expected_calls,
+        # Read-only inspection of history; the real runtime cap is enforced
+        # separately, by this run's own ledger, once seeded.
+        maximum_total_attempts=10**9,
+    )
+    carried_call_keys: set[str] = set()
+    carried_terminal_rows: dict[str, dict] = {}
+    for row in call_plan:
+        call_key = str(row["logical_call_key"])
+        if not old_ledger.succeeded(call_key):
+            continue
+        terminal = old_ledger.terminal_row(call_key)
+        result = (terminal or {}).get("result")
+        if (
+            not isinstance(result, dict)
+            or not result.get("seeker_message")
+            or result.get("normalized_finish_reason") != "complete"
+        ):
+            raise RuntimeError(
+                "fixed-seeker carry-forward source lacks a complete "
+                f"successful seeker turn for {call_key}"
+            )
+        carried_call_keys.add(call_key)
+        carried_terminal_rows[call_key] = terminal
+    return {
+        "carry_forward_source_directory": str(carry_forward_dir),
+        "carry_forward_source_ledger_sha256": sha256_file(old_ledger_path),
+        "carried_call_keys": carried_call_keys,
+        "carried_terminal_rows": carried_terminal_rows,
+    }
+
+
 def build_fixed_seeker_tracks_v22(
     evoemo_path: str | Path,
     out_dir: str | Path,
@@ -1377,6 +1477,8 @@ def build_fixed_seeker_tracks_v22(
     max_turns: int = 10,
     seeds: Sequence[int] = (101,),
     max_scenarios: int | None = None,
+    carry_forward_tracks_dir: str | Path | None = None,
+    transport_backoff_seconds: tuple[float, ...] = DEFAULT_BACKOFF_SECONDS,
     overwrite: bool = False,
     study_freeze_sha256: str | None = None,
 ) -> dict[str, Any]:
@@ -1463,14 +1565,64 @@ def build_fixed_seeker_tracks_v22(
         },
     )
     expected_calls = {
-        str(row["logical_call_key"]): 1 for row in call_plan
+        str(row["logical_call_key"]): int(row["maximum_physical_attempts"])
+        for row in call_plan
     }
+    carry_forward_dir = (
+        Path(carry_forward_tracks_dir)
+        if carry_forward_tracks_dir is not None
+        else None
+    )
+    carry_forward = _load_fixed_seeker_carry_forward_state(
+        carry_forward_dir=carry_forward_dir, call_plan=call_plan
+    )
+    carried_call_keys = carry_forward["carried_call_keys"]
     ledger = PersistentAttemptLedger(
         ledger_path,
         stage=FIXED_SEEKER_V22_STAGE,
         expected_calls=expected_calls,
-        maximum_total_attempts=len(expected_calls),
+        maximum_total_attempts=sum(expected_calls.values()),
     )
+    for row in call_plan:
+        call_key = str(row["logical_call_key"])
+        if call_key not in carried_call_keys or ledger.succeeded(call_key):
+            continue
+        terminal = carry_forward["carried_terminal_rows"][call_key]
+        reservation = ledger.reserve(
+            call_key,
+            record_ids={
+                "user_id": str(row["user_id"]),
+                "topic_index": int(row["topic_index"]),
+                "seed": int(row["seed"]),
+                "simulator_id": str(row["simulator_id"]),
+                "turn_index": int(row["turn_index"]),
+                "track_generation": True,
+                "logical_call_key": call_key,
+                "fixed_seeker_generation_contract_sha256": bound_sha256,
+                "fixed_seeker_cost_planning_sha256": cost_planning_sha256,
+                "maximum_input_tokens": int(row["maximum_input_tokens"]),
+                "maximum_output_tokens": int(row["maximum_output_tokens"]),
+                "dry_run_acceptance_sha256": accepted_dry_run_sha256,
+            },
+            prompt_sha256=str(terminal.get("prompt_sha256")),
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash=terminal.get("request_hash"),
+            usage=terminal.get("usage"),
+            error=None,
+            result=terminal.get("result"),
+            metadata={
+                "carried_forward": True,
+                "carried_forward_source_directory": carry_forward[
+                    "carry_forward_source_directory"
+                ],
+                "carried_forward_source_ledger_sha256": carry_forward[
+                    "carry_forward_source_ledger_sha256"
+                ],
+            },
+        )
     plan_index = {
         (
             str(row["user_id"]),
@@ -1590,11 +1742,6 @@ def build_fixed_seeker_tracks_v22(
                             "normalized_finish_reason"
                         )
                         request_hash = terminal.get("request_hash")
-                    elif ledger.attempts_for(logical_key):
-                        raise RuntimeError(
-                            "fixed-seeker logical call already spent its one "
-                            f"physical attempt without success: {logical_key}"
-                        )
                     else:
                         messages = _fixed_seeker_v22_messages(
                             system_prompt, conversation
@@ -1624,13 +1771,9 @@ def build_fixed_seeker_tracks_v22(
                         }
                         if client is None:
                             client = make_client(seeker_endpoint)
-                        reservation = ledger.reserve(
-                            logical_key,
-                            record_ids=record_ids,
-                            prompt_sha256=prompt_hash,
-                        )
-                        try:
-                            result, _ = client.chat(
+
+                        def call_fn(messages=messages, plan_row=plan_row):
+                            return client.chat(
                                 messages,
                                 temperature=contract.temperature,
                                 max_tokens=contract.max_output_tokens,
@@ -1638,35 +1781,23 @@ def build_fixed_seeker_tracks_v22(
                                 response_schema=None,
                                 retries=1,
                             )
-                        except Exception as exc:
-                            error = f"{type(exc).__name__}: {exc}"
-                            append_jsonl(
-                                raw_path,
-                                request_log(
-                                    stage=FIXED_SEEKER_V22_STAGE,
-                                    endpoint=seeker_endpoint,
-                                    messages=messages,
-                                    result=None,
-                                    parsed=None,
-                                    error=error,
-                                    prompt_hash=prompt_hash,
-                                    record_ids=record_ids,
-                                ),
-                            )
-                            ledger.finish(
-                                reservation,
-                                succeeded=False,
-                                request_hash=None,
-                                usage=None,
-                                error=error,
-                                result={
-                                    "fixed_seeker_generation_contract_sha256": (
-                                        bound_sha256
-                                    )
-                                },
-                            )
-                            raise
 
+                        # execute_with_bounded_retry retries only persisted
+                        # transient transport failures (408/429/5xx/network
+                        # timeout) up to the contract's physical-attempt
+                        # budget, ledgering every failed attempt itself (see
+                        # bounded_retry.py, reused here unmodified). Our own
+                        # content gate below (finish reason, empty text,
+                        # usage accounting) still fails closed on its first
+                        # attempt, never retried.
+                        reservation, result, _ = execute_with_bounded_retry(
+                            ledger,
+                            logical_key,
+                            record_ids=record_ids,
+                            prompt_sha256=prompt_hash,
+                            call_fn=call_fn,
+                            backoff_seconds=transport_backoff_seconds,
+                        )
                         completion_error = contract.completion_gate_error(
                             normalized_finish_reason=(
                                 result.normalized_finish_reason
@@ -1736,6 +1867,12 @@ def build_fixed_seeker_tracks_v22(
                             ),
                         )
                         if gate_error:
+                            # The physical attempt itself succeeded; only our
+                            # own content gate rejected it. Never retried --
+                            # a deterministic content problem, not a
+                            # transient one. TERMINAL_DISPOSITION makes this
+                            # permanent across process restarts too, via
+                            # bounded_retry.py's own call_retry_blocker.
                             ledger.finish(
                                 reservation,
                                 succeeded=False,
@@ -1743,6 +1880,10 @@ def build_fixed_seeker_tracks_v22(
                                 usage=result.usage,
                                 error=gate_error,
                                 result=result_payload,
+                                metadata=failure_metadata(
+                                    retry_class="stage_postcondition_failure",
+                                    retry_disposition=TERMINAL_DISPOSITION,
+                                ),
                             )
                             raise RuntimeError(gate_error)
                         ledger.finish(
@@ -1925,8 +2066,12 @@ def build_fixed_seeker_tracks_v22(
         "planned_budget_gate_passed": estimate["budget_gate"]["status"]
         == "PASS",
         "physical_attempts": ledger.started_attempts <= int(max_api_calls),
+        # One reported-usage entry per LOGICAL call's terminal row, not per
+        # physical attempt -- retries can make started_attempts exceed
+        # len(expected_calls) even when every logical call is fully
+        # accounted for.
         "reported_usage_complete": usage_accounting_complete
-        and len(observed_prompt_tokens_per_call) == ledger.started_attempts,
+        and len(observed_prompt_tokens_per_call) == len(expected_calls),
         "observed_cost_usd": observed_cost_usd
         <= float(max_estimated_usd),
         "observed_cost_within_planned_upper_bound": observed_cost_usd
@@ -1959,7 +2104,9 @@ def build_fixed_seeker_tracks_v22(
         "COMPLETE"
         if completed == expected_tracks
         and not failures
-        and ledger.started_attempts == len(expected_calls)
+        # Retries mean started_attempts can now exceed len(expected_calls)
+        # even on full success; completeness is whether every logical call
+        # has a SUCCEEDED terminal row, not the physical attempt count.
         and all(ledger.succeeded(key) for key in expected_calls)
         and observed_budget_gate["status"] == "PASS"
         else "INCOMPLETE"
@@ -1999,8 +2146,10 @@ def build_fixed_seeker_tracks_v22(
     write_json(summary_path, summary)
     if status != "COMPLETE":
         raise RuntimeError(
-            "fixed seeker V2.2 generation incomplete; no failed logical call "
-            "may be retried under this accepted plan"
+            "fixed seeker V2.2 generation incomplete; at least one logical "
+            "call exhausted its transport-retry budget or was rejected by "
+            "the content gate -- continue via --carry-forward-tracks-dir "
+            "under a fresh identity rather than retrying this exact plan"
         )
     create_artifact_attestation(
         attestation_path,

@@ -124,7 +124,7 @@ supporter_generation_treatment:
 # cap.  The 300-token cap prevents the old track's instruction from becoming a
 # near-universal forced truncation mechanism.
 fixed_seeker_generation_treatment:
-  version: pm-v2.2-fixed-seeker-generation-v1
+  version: pm-v2.2-fixed-seeker-generation-v2
   seeker_endpoint: seeker
   system_prompt_id: evoemo-fixed-seeker-v1
   system_prompt_template_sha256: a9138eaf46b46e8f10c89774a9ef51189b5807391a0882dff58c287a4c54eeac
@@ -134,7 +134,16 @@ fixed_seeker_generation_treatment:
   output_normalization: normalize_space_v1
   finish_reason_protocol: pm-v2-finish-reason-v1
   accepted_normalized_finish_reasons: [complete]
-  maximum_physical_attempts_per_logical_call: 1
+  # v1 permitted exactly one physical attempt per logical call; a real run
+  # crashed after 5/1020 calls on a single plain ReadTimeout, because a
+  # 1,020-call matrix against a third-party-hosted (NVIDIA NIM) endpoint is
+  # at least as likely to hit a transient failure as automated_semantic_review
+  # (10) or actual_corpus_semantic_audit (6), and got none. v2 retries only
+  # transport failures (408/429/5xx/network timeout) up to this budget via
+  # bounded_retry.py's execute_with_bounded_retry; a content-gate rejection
+  # (finish_reason != complete, empty text, usage anomaly) still fails closed
+  # on its first attempt, never retried.
+  maximum_physical_attempts_per_logical_call: 10
   seed_protocol: base-seed-plus-turn-index-v1
   elicitation_scaffold_protocol: deterministic-generic-open-loop-v1
 
