@@ -746,9 +746,15 @@ actual_corpus_semantic_audit:
   # A 1,880-call formal matrix is much more likely than an 8-call diagnostic
   # to encounter a transient 5xx. The exact upper bound is costed in dry-run;
   # malformed provider surfaces remain separately capped at two observations.
-  maximum_physical_attempts_per_logical_call: 6
+  # Raised 6->10 after two real runs measured the NVIDIA-hosted deepseek
+  # endpoint's real physical-attempt failure rate at ~37% (vs ~3% for
+  # google_gemini) over several sustained hours, not a brief blip -- at that
+  # rate 6 attempts left a ~30% chance of at least one full-budget exhaustion
+  # across the ~1,500-call remaining batch; 10 cuts that to ~1%. Matches the
+  # budget already used by v4_root_cause_single_field_diagnostic.
+  maximum_physical_attempts_per_logical_call: 10
   maximum_provider_output_failures_per_logical_call: 2
-  transport_backoff_seconds: [10, 30, 60, 120, 300]
+  transport_backoff_seconds: [10, 30, 60, 120, 300, 300, 600, 600, 900]
   maximum_provider_surface_fallback_rate_by_split:
     train: 0.005
     calibration: 0.01
