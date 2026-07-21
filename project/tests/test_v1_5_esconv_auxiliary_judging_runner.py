@@ -20,6 +20,7 @@ from metacom_pm.contracts import CostRecord, DialogueTurn, MemorySource, SourceC
 from metacom_pm.esconv_v1_5 import ESCONV_V1_5_ALLOWED_ACTIONS
 from metacom_pm.io import write_json, write_jsonl
 from metacom_pm.pm_v2_contracts import ObservableSourceSummary, PMV2Split, PMV2State
+from metacom_pm.pm_v2_judging import ResponseJudgeOutput, RiskJudgeOutput
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = ROOT / "outputs" / "v1_5_test_fixtures"
@@ -115,11 +116,17 @@ def _write_fixture(
 
 
 def _run_dry_run(
-    aux_dir: Path, generation_root: Path, out_root: Path, split: str
+    aux_dir: Path,
+    generation_root: Path,
+    out_root: Path,
+    split: str,
+    *,
+    pilot: bool = False,
+    carry_forward_from: Path | None = None,
 ) -> dict:
     module = _load_module(
         "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
-        f"v1_5_esconv_auxiliary_judging_runner_test_{id(aux_dir)}_{split}",
+        f"v1_5_esconv_auxiliary_judging_runner_test_{id(aux_dir)}_{split}_{pilot}",
     )
     argv = [
         "13c_judge_esconv_auxiliary_v1_5.py",
@@ -139,6 +146,10 @@ def _run_dry_run(
         "--max-input-tokens-per-call",
         "12000",
     ]
+    if pilot:
+        argv.append("--pilot")
+    if carry_forward_from is not None:
+        argv.extend(["--carry-forward-from", str(carry_forward_from)])
     previous = sys.argv
     try:
         sys.argv = argv
@@ -202,6 +213,208 @@ def test_incomplete_generation_summary_fails_closed(workdir):
     write_json(gen_dir / "summary.json", {"status": "STARTING"})
     with pytest.raises(RuntimeError, match="not COMPLETE"):
         _run_dry_run(aux_dir, gen_root, workdir / "outputs", "train")
+
+
+class _ConstantJudgeClient:
+    """Every response/risk judgment is identical -- deliberately degenerate,
+    to test the raw-family-health constant-dimension gate."""
+
+    calls = 0
+
+    def __init__(self, endpoint):
+        pass
+
+    def close(self):
+        pass
+
+    def chat(self, messages, *, response_schema, **kwargs):
+        type(self).calls += 1
+        if response_schema is ResponseJudgeOutput:
+            parsed = ResponseJudgeOutput(
+                emotional_support=3.0,
+                personalization=3.0,
+                memory_appropriateness=3.0,
+                factual_grounding=3.0,
+                temporal_consistency=3.0,
+                non_intrusiveness=3.0,
+                rationale="constant",
+            )
+        else:
+            parsed = RiskJudgeOutput(
+                selected_context_misuse=0.0,
+                unnecessary_exposure=0.0,
+                stale_or_conflicting_use=0.0,
+                unsupported_personal_claim=0.0,
+                memory_omission=0.0,
+                strategy_overuse=0.0,
+                strategy_omission=0.0,
+                rationale="constant",
+            )
+        from metacom_pm.api import CallResult
+
+        result = CallResult(
+            text="{}",
+            raw_response={"fixture": True},
+            usage={"prompt_tokens": 50, "completion_tokens": 10, "total_tokens": 60},
+            latency_ms=1.0,
+            request_hash=f"request-{type(self).calls}",
+        )
+        return result, parsed
+
+
+def _run_run(
+    aux_dir: Path,
+    generation_root: Path,
+    out_root: Path,
+    split: str,
+    *,
+    accept_cost_estimate_sha256: str,
+    pilot: bool = False,
+    carry_forward_from: Path | None = None,
+    client_cls=_ConstantJudgeClient,
+) -> dict:
+    module = _load_module(
+        "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
+        f"v1_5_esconv_auxiliary_judging_run_test_{id(aux_dir)}_{split}_{pilot}",
+    )
+    argv = [
+        "13c_judge_esconv_auxiliary_v1_5.py",
+        "--run",
+        "--split",
+        split,
+        "--auxiliary-dir",
+        str(aux_dir),
+        "--generation-root",
+        str(generation_root),
+        "--out-root",
+        str(out_root),
+        "--max-api-calls",
+        "1000",
+        "--max-estimated-usd",
+        "5.0",
+        "--max-input-tokens-per-call",
+        "12000",
+        "--accept-cost-estimate-sha256",
+        accept_cost_estimate_sha256,
+    ]
+    if pilot:
+        argv.append("--pilot")
+    if carry_forward_from is not None:
+        argv.extend(["--carry-forward-from", str(carry_forward_from)])
+    client_cls.calls = 0
+    module.make_client = lambda endpoint: client_cls(endpoint)
+    # The real paid-run-release gate needs a matching approval in the real
+    # project manifest; that gate itself is tested elsewhere
+    # (test_central_paid_release_is_fail_closed_and_identity_bound). Here we
+    # only care about judging behavior, so bypass it.
+    module.require_paid_run_release = lambda *args, **kwargs: {
+        "status": "PAID_RUN_RELEASED"
+    }
+    previous = sys.argv
+    try:
+        sys.argv = argv
+        module.main()
+    finally:
+        sys.argv = previous
+    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{split}"
+    return json.loads((out_dir / "summary.json").read_text(encoding="utf-8"))
+
+
+def test_non_pilot_run_raises_on_constant_risk_dimensions(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=3)
+    out_root = workdir / "outputs"
+    dry_run_estimate = _run_dry_run(aux_dir, gen_root, out_root, "train")
+    with pytest.raises(RuntimeError, match="quality gate failed"):
+        _run_run(
+            aux_dir,
+            gen_root,
+            out_root,
+            "train",
+            accept_cost_estimate_sha256=dry_run_estimate["cost_estimate_sha256"],
+        )
+
+
+def test_pilot_run_completes_as_diagnostic_only_despite_constant_risk_dimensions(
+    workdir,
+):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=3)
+    pilot_out_root = workdir / "outputs_pilot"
+    pilot_estimate = _run_dry_run(
+        aux_dir, gen_root, pilot_out_root, "train", pilot=True
+    )
+    summary = _run_run(
+        aux_dir,
+        gen_root,
+        pilot_out_root,
+        "train",
+        accept_cost_estimate_sha256=pilot_estimate["cost_estimate_sha256"],
+        pilot=True,
+    )
+    assert summary["status"] == "COMPLETE"
+    assert summary["pilot_mode"] is True
+    assert summary["reportability_status"] == "PILOT_DIAGNOSTIC_ONLY"
+    assert summary["raw_family_quality_gate"]["status"] == "FAIL"
+    assert summary["completed_judge_pairs"] == 6
+
+
+def test_carry_forward_makes_zero_new_client_calls(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=2)
+    out_root = workdir / "outputs"
+    dry_run_estimate = _run_dry_run(aux_dir, gen_root, out_root, "train", pilot=True)
+    _run_run(
+        aux_dir,
+        gen_root,
+        out_root,
+        "train",
+        accept_cost_estimate_sha256=dry_run_estimate["cost_estimate_sha256"],
+        pilot=True,
+    )
+    original_out_dir = out_root / "esconv_auxiliary_judging_v1_5_train"
+    assert _ConstantJudgeClient.calls == 16  # 2 states x 2 actions x 2 families x 2 types
+
+    # Fresh output directory + fresh identity (pilot flag unchanged here, but
+    # a real reprocessing would typically change something in cost_payload;
+    # carry-forward correctness only requires a byte-identical call plan).
+    new_out_root = workdir / "outputs_v2"
+    cf_estimate = _run_dry_run(
+        aux_dir,
+        gen_root,
+        new_out_root,
+        "train",
+        pilot=True,
+        carry_forward_from=original_out_dir,
+    )
+    assert cf_estimate["historical_carried_forward_calls"] == 16
+    assert cf_estimate["remaining_new_logical_calls"] == 0
+    assert cf_estimate["estimated_cost_usd"] == 0
+
+    summary = _run_run(
+        aux_dir,
+        gen_root,
+        new_out_root,
+        "train",
+        accept_cost_estimate_sha256=cf_estimate["cost_estimate_sha256"],
+        pilot=True,
+        carry_forward_from=original_out_dir,
+    )
+    # _run_run resets the call counter to 0 before invoking main(); zero here
+    # means the carry-forward path made no new client calls at all.
+    assert _ConstantJudgeClient.calls == 0
+    assert summary["carried_forward_physical_calls"] == 16
+    assert summary["new_physical_calls"] == 0
+    assert summary["completed_judge_pairs"] == 4
 
 
 def test_script_never_references_gold_fields_or_action_id_in_authorized_context():

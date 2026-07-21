@@ -47,6 +47,36 @@ generation is its own disclosed, self-contained track, verified directly by
 The judge *output*-quality gates (``validate_raw_judge_family_health`` and
 friends) are retained in full: they check judge behavior, not sweep
 provenance, and apply exactly the same way here.
+
+``--pilot`` mode: at small N (the 24-pair pilot), several risk dimensions
+can show zero measured variance across an entire family purely from sample
+size -- this is the exact situation
+``21_judge_pm_v2_action_sweep_v1_5.py``'s ``compatibility_pilot`` branch
+already exists to handle for the internal training sweep. This script
+mirrors that precedent exactly rather than inventing a new policy: with
+``--pilot``, the raw-family-health/subgroup-health/action-applicable-risk
+gates and the final judge-table gate are still computed and reported in
+full, at the *same* thresholds as a formal run, but do not raise (mirroring
+``raise_on_failure=not compatibility_pilot``); the judge-table gate
+additionally uses the frozen, pre-registered
+``development_judging.compatibility_pilot`` thresholds
+(``minimum_reliable_label_rate``, ``minimum_low_mad_coverage_per_dimension``,
+``minimum_low_mad_coverage_per_action_dimension``) instead of the full-scale
+``labeling`` ones. A pilot run's ``summary.json`` is always tagged
+``reportability_status: "PILOT_DIAGNOSTIC_ONLY"`` -- its labels are never
+implicitly promoted to formal training data. Only a non-pilot invocation can
+produce ``reportability_status: "REPORTABLE"``, and only then are the full
+thresholds enforced as fatal.
+
+``--carry-forward-from PRIOR_OUT_DIR``: since ``--pilot`` changes only
+post-hoc validation policy (not any judge prompt, endpoint, or token
+parameter), a prior run's call_plan.jsonl is byte-identical to a fresh
+non-pilot-vs-pilot recomputation, so every physical call it already
+succeeded can be carried forward at zero new cost rather than re-spent --
+mirroring ``scripts/v1_5_run_automated_semantic_review.py``'s carry-forward
+mechanism exactly. Refuses (rather than silently reusing a stale subset)
+unless the prior directory's call plan is byte-identical to this run's own
+freshly computed one.
 """
 
 from __future__ import annotations
@@ -169,6 +199,73 @@ def _persist_or_validate_dry_run(
     return "WRITTEN"
 
 
+def _load_carry_forward_state(
+    *,
+    carry_forward_dir: Path | None,
+    call_plan: list[dict[str, Any]],
+    stage: str,
+) -> dict[str, Any]:
+    """Read-only: find which of this run's own call-plan rows already
+    succeeded, with a complete parsed result, in a prior run's ledger.
+
+    Mirrors scripts/v1_5_run_automated_semantic_review.py's carry-forward
+    mechanism exactly. Refuses rather than silently carrying forward a stale
+    subset unless the prior directory's call_plan.jsonl is byte-identical to
+    the plan this run just freshly computed for itself. Never touches the
+    prior directory's own ledger file; only reads it.
+    """
+
+    if carry_forward_dir is None:
+        return {
+            "carry_forward_source_directory": None,
+            "carry_forward_source_ledger_sha256": None,
+            "carried_call_keys": set(),
+            "carried_terminal_rows": {},
+        }
+    old_call_plan_path = carry_forward_dir / "call_plan.jsonl"
+    old_ledger_path = carry_forward_dir / "physical_attempt_ledger.jsonl"
+    if not old_call_plan_path.is_file() or not old_ledger_path.is_file():
+        raise RuntimeError(
+            "carry-forward source directory lacks a call plan or ledger"
+        )
+    if list(iter_jsonl(old_call_plan_path)) != call_plan:
+        raise RuntimeError(
+            "carry-forward source call plan differs from this run's own "
+            "freshly-computed plan -- refusing to trust its ledger's call keys"
+        )
+    expected_calls = {
+        str(row["physical_call_key"]): MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+        for row in call_plan
+    }
+    old_ledger = PersistentAttemptLedger(
+        old_ledger_path,
+        stage=stage,
+        expected_calls=expected_calls,
+        maximum_total_attempts=10**9,
+    )
+    carried_call_keys: set[str] = set()
+    carried_terminal_rows: dict[str, dict[str, Any]] = {}
+    for row in call_plan:
+        physical_key = str(row["physical_call_key"])
+        if not old_ledger.succeeded(physical_key):
+            continue
+        terminal = old_ledger.terminal_row(physical_key)
+        result = (terminal or {}).get("result")
+        if not isinstance(result, dict) or not result.get("parsed"):
+            raise RuntimeError(
+                "carry-forward source lacks a complete parsed result for "
+                f"{physical_key}"
+            )
+        carried_call_keys.add(physical_key)
+        carried_terminal_rows[physical_key] = terminal
+    return {
+        "carry_forward_source_directory": str(carry_forward_dir),
+        "carry_forward_source_ledger_sha256": sha256_file(old_ledger_path),
+        "carried_call_keys": carried_call_keys,
+        "carried_terminal_rows": carried_terminal_rows,
+    }
+
+
 def _require_saved_dry_run(
     *,
     estimate_path: Path,
@@ -212,6 +309,27 @@ def main() -> None:
     parser.add_argument("--max-input-tokens-per-call", type=int, default=12000)
     parser.add_argument("--accept-cost-estimate-sha256")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--pilot",
+        action="store_true",
+        help=(
+            "Small-N pilot: quality gates are computed and reported at the "
+            "same thresholds but do not raise (mirrors "
+            "21_judge_pm_v2_action_sweep_v1_5.py's compatibility_pilot). "
+            "Output is tagged reportability_status=PILOT_DIAGNOSTIC_ONLY and "
+            "must never be treated as formal training data."
+        ),
+    )
+    parser.add_argument(
+        "--carry-forward-from",
+        type=Path,
+        default=None,
+        help=(
+            "Prior output directory whose already-succeeded physical calls "
+            "(byte-identical call plan required) are carried forward at "
+            "zero new cost."
+        ),
+    )
     args = parser.parse_args()
 
     if args.run and args.overwrite:
@@ -349,6 +467,7 @@ def main() -> None:
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
             "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
             "split": split,
+            "pilot_mode": bool(args.pilot),
         },
     )
 
@@ -451,19 +570,41 @@ def main() -> None:
     required_keys = {call_key(row) for row in cost_rows}
     expected_pairs = {outcome_key(o) for o in outcomes}
 
-    total_input_tokens = sum(int(row["input_tokens_est"]) for row in cost_rows)
-    total_output_tokens = sum(int(row["max_output_tokens"]) for row in cost_rows)
+    # Loaded here (before cost accounting) so the frozen dry-run estimate
+    # reflects only the REAL remaining spend, not a misleading full-cost
+    # hypothetical -- mirrors scripts/v1_5_run_automated_semantic_review.py's
+    # carry-forward cost accounting exactly.
+    carry_forward = _load_carry_forward_state(
+        carry_forward_dir=args.carry_forward_from,
+        call_plan=cost_rows,
+        stage=stage,
+    )
+    carried_call_keys = carry_forward["carried_call_keys"]
+    remaining_cost_rows = [
+        row for row in cost_rows if str(row["physical_call_key"]) not in carried_call_keys
+    ]
+
+    total_input_tokens = sum(int(row["input_tokens_est"]) for row in remaining_cost_rows)
+    total_output_tokens = sum(int(row["max_output_tokens"]) for row in remaining_cost_rows)
     cost_payload = {
         "stage": stage,
         "split": split,
         "full_logical_api_calls": len(cost_rows),
+        "historical_carried_forward_calls": len(carried_call_keys),
+        "remaining_new_logical_calls": len(remaining_cost_rows),
+        "carry_forward_source_directory": carry_forward["carry_forward_source_directory"],
+        "carry_forward_source_ledger_sha256": carry_forward[
+            "carry_forward_source_ledger_sha256"
+        ],
         "expected_judge_pairs": len(expected_pairs),
         "total_input_tokens_est": total_input_tokens,
         "max_input_tokens_per_call_est": max(
-            (int(r["input_tokens_est"]) for r in cost_rows), default=0
+            (int(r["input_tokens_est"]) for r in remaining_cost_rows), default=0
         ),
         "total_output_tokens_est": total_output_tokens,
-        "estimated_cost_usd": sum(float(r["maximum_cost_usd"]) for r in cost_rows),
+        "estimated_cost_usd": sum(
+            float(r["maximum_cost_usd"]) for r in remaining_cost_rows
+        ),
         "pricing_usd_per_mtok": pricing_by_family,
         "api_cost_planning": api_cost_planning,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
@@ -471,6 +612,7 @@ def main() -> None:
         "call_plan_shuffle_seed": CALL_PLAN_SHUFFLE_SEED,
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
         "run_manifest_sha256": manifest["manifest_sha256"],
+        "pilot_mode": bool(args.pilot),
         "budget_limits": {
             "max_api_calls": int(args.max_api_calls),
             "max_estimated_usd": float(args.max_estimated_usd),
@@ -482,7 +624,7 @@ def main() -> None:
         "cost_estimate_sha256": sha256_text(canonical_json(cost_payload)),
     }
     budget_checks = {
-        "api_calls": len(cost_rows) <= int(args.max_api_calls),
+        "api_calls": len(remaining_cost_rows) <= int(args.max_api_calls),
         "estimated_cost_usd": cost_estimate["estimated_cost_usd"]
         <= float(args.max_estimated_usd),
         "max_input_tokens_per_call": cost_estimate["max_input_tokens_per_call_est"]
@@ -543,9 +685,47 @@ def main() -> None:
             str(row["physical_call_key"]): MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
             for row in cost_rows
         },
-        maximum_total_attempts=int(args.max_api_calls),
+        # Carried-forward calls are already paid for and need no further
+        # attempt budget, but each still consumes one ledger "attempt slot"
+        # when seeded below.
+        maximum_total_attempts=int(args.max_api_calls) + len(carried_call_keys),
     )
     maximum_provider_output_failures = DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+
+    for row in cost_rows:
+        physical_key = str(row["physical_call_key"])
+        if physical_key not in carry_forward["carried_call_keys"] or ledger.succeeded(
+            physical_key
+        ):
+            continue
+        terminal = carry_forward["carried_terminal_rows"][physical_key]
+        reservation = ledger.reserve(
+            physical_key,
+            record_ids={
+                "state_id": row["state_id"],
+                "action_id": row["action_id"],
+                "judge_family": row["judge_family"],
+                "judge_type": row["judge_type"],
+            },
+            prompt_sha256=str(row["prompt_hash"]),
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash=terminal.get("request_hash"),
+            usage=terminal.get("usage"),
+            error=None,
+            result=terminal.get("result"),
+            metadata={
+                "carried_forward": True,
+                "carried_forward_source_directory": carry_forward[
+                    "carry_forward_source_directory"
+                ],
+                "carried_forward_source_ledger_sha256": carry_forward[
+                    "carry_forward_source_ledger_sha256"
+                ],
+            },
+        )
 
     blocked: dict[str, str] = {}
     for row in cost_rows:
@@ -689,7 +869,7 @@ def main() -> None:
         reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
         reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
         composite_spec=composite_spec,
-        raise_on_failure=True,
+        raise_on_failure=not args.pilot,
     )
     raw_family_action_gate = validate_raw_judge_family_subgroup_health(
         canonical_raw_rows,
@@ -707,7 +887,7 @@ def main() -> None:
         reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
         reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
         composite_spec=composite_spec,
-        raise_on_failure=True,
+        raise_on_failure=not args.pilot,
     )
     action_applicable_risk_gate = validate_action_applicable_risk_signal(
         canonical_raw_rows,
@@ -715,7 +895,7 @@ def main() -> None:
         expected_families=[str(endpoint.family) for endpoint in endpoints],
         minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
         minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
-        raise_on_failure=True,
+        raise_on_failure=not args.pilot,
     )
 
     labels = []
@@ -757,18 +937,27 @@ def main() -> None:
         labels.append(label)
         append_jsonl(labels_path, label.model_dump(mode="json"))
 
+    pilot_config = dict(judging_config.get("compatibility_pilot") or {})
     quality_gate = (
         validate_judge_table(
             labels,
             minimum_families=labeling["minimum_families"],
-            minimum_reliable_rate=labeling["minimum_reliable_rate"],
+            minimum_reliable_rate=(
+                float(pilot_config["minimum_reliable_label_rate"])
+                if args.pilot
+                else labeling["minimum_reliable_rate"]
+            ),
             reliable_mad_threshold=labeling["reliable_mad_threshold"],
-            minimum_low_mad_coverage_per_dimension=labeling[
-                "minimum_low_mad_coverage_per_dimension"
-            ],
-            minimum_low_mad_coverage_per_action_dimension=labeling[
-                "minimum_low_mad_coverage_per_action_dimension"
-            ],
+            minimum_low_mad_coverage_per_dimension=(
+                float(pilot_config["minimum_low_mad_coverage_per_dimension"])
+                if args.pilot
+                else labeling["minimum_low_mad_coverage_per_dimension"]
+            ),
+            minimum_low_mad_coverage_per_action_dimension=(
+                float(pilot_config["minimum_low_mad_coverage_per_action_dimension"])
+                if args.pilot
+                else labeling["minimum_low_mad_coverage_per_action_dimension"]
+            ),
             duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
             maximum_absolute_dimension_correlation=labeling[
                 "maximum_absolute_dimension_correlation"
@@ -780,27 +969,45 @@ def main() -> None:
             reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
             reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
             composite_spec=composite_spec,
-            raise_on_failure=True,
+            raise_on_failure=not args.pilot,
         )
         if labels
         else {"status": "FAIL", "reason": "no completed labels"}
     )
     missing_after = sorted(expected_pairs - {(l.state_id, l.action_id) for l in labels})
+    raw_family_quality_status = (
+        "PASS"
+        if raw_family_global_gate.get("status") == "PASS"
+        and raw_family_action_gate.get("status") == "PASS"
+        and action_applicable_risk_gate.get("status") == "PASS"
+        else "FAIL"
+    )
     summary = {
         "status": "COMPLETE" if not missing_after else "INCOMPLETE",
+        "pilot_mode": bool(args.pilot),
+        "reportability_status": (
+            "PILOT_DIAGNOSTIC_ONLY"
+            if args.pilot
+            else (
+                "REPORTABLE"
+                if raw_family_quality_status == "PASS"
+                and quality_gate.get("status") == "PASS"
+                else "FORMAL_GATE_FAILED"
+            )
+        ),
         "split": split,
         "expected_judge_pairs": len(expected_pairs),
         "completed_judge_pairs": len(labels),
         "missing_keys": missing_after[:50],
         "run_manifest_sha256": manifest["manifest_sha256"],
+        "carry_forward_source_directory": carry_forward["carry_forward_source_directory"],
+        "carry_forward_source_ledger_sha256": carry_forward[
+            "carry_forward_source_ledger_sha256"
+        ],
+        "carried_forward_physical_calls": len(carry_forward["carried_call_keys"]),
+        "new_physical_calls": len(cost_rows) - len(carry_forward["carried_call_keys"]),
         "raw_family_quality_gate": {
-            "status": (
-                "PASS"
-                if raw_family_global_gate.get("status") == "PASS"
-                and raw_family_action_gate.get("status") == "PASS"
-                and action_applicable_risk_gate.get("status") == "PASS"
-                else "FAIL"
-            ),
+            "status": raw_family_quality_status,
             "global": raw_family_global_gate,
             "family_by_action": raw_family_action_gate,
             "action_applicable_risk_signal": action_applicable_risk_gate,
@@ -816,6 +1023,10 @@ def main() -> None:
             f"ESConv-auxiliary judging incomplete for split {split!r}: "
             f"{len(missing_after)} missing pairs"
         )
+    # Note: in non-pilot mode every gate above already used
+    # raise_on_failure=True, so reaching this point means reportability_status
+    # is necessarily REPORTABLE -- a FAIL would have raised inside the gate
+    # call itself, not fallen through to here.
 
 
 if __name__ == "__main__":
