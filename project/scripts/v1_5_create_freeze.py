@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from metacom_pm.artifacts import (
     require_artifact_attestation,
@@ -340,6 +340,62 @@ def require_v1_5_response_mechanism_consistency(
         "response_mechanism_contract_sha256": freeze_contract.get(
             "contract_sha256"
         ),
+    }
+
+
+def build_v1_5_esconv_generation_contract(
+    *,
+    response_mechanism_contract: Mapping[str, Any],
+    runtime_states_path: Path,
+    policy_choices_path: Path,
+    legal_actions: Sequence[str],
+) -> dict[str, Any]:
+    """Freeze what the (not-yet-built) ESConv generation runner must match.
+
+    Action-first, not condition-first: ESConv states have exactly
+    ``legal_actions`` (currently M0+R0 and M0+RS -- memory is structurally
+    unavailable) legal actions each, so the real generation space is
+    ``len(states) * len(legal_actions)`` logical (card_id, action_id) pairs,
+    never 4 independent replies per state. The four policy conditions
+    (learned_pm, transparent_rule_same_step0, always_r0, always_rs) are a
+    downstream *mapping* over these same two real per-state outcomes,
+    computed by a later evaluation step -- never a reason to generate more
+    than ``legal_actions`` replies per state.
+
+    Reuses the exact same ``response_mechanism_contract`` object already
+    bound for the internal sweep and EvoEmo external generation (not a
+    separately-built one that merely happens to match), so all three real
+    generation stages are provably bound to one identical mechanism.
+
+    Deliberately does not reference ``audit_only.jsonl`` (evaluator-only
+    gold_response/gold_strategy) in any way -- this contract, and the
+    generation runner that must match it, are both scoped strictly to
+    observable inputs.
+    """
+
+    legal_actions = tuple(legal_actions)
+    # Read as plain rows (not a full RuntimeState parse) so this binds to
+    # card_id identity only -- the same lightweight, hash-level trust the
+    # rest of this freeze places in the ESConv adapter's own attestation and
+    # build_report, rather than re-validating 2,112 states' full schema here.
+    card_ids = sorted({str(row["card_id"]) for row in iter_jsonl(runtime_states_path)})
+    expected_action_keys = sorted(
+        (card_id, action_id)
+        for card_id in card_ids
+        for action_id in legal_actions
+    )
+    return {
+        "protocol": "pm-v1.5-esconv-action-first-generation-contract-v1",
+        "response_mechanism_contract": dict(response_mechanism_contract),
+        "legal_actions": list(legal_actions),
+        "expected_state_count": len(card_ids),
+        "expected_logical_action_outcomes": len(expected_action_keys),
+        "expected_action_keys_sha256": sha256_text(
+            canonical_json(expected_action_keys)
+        ),
+        "states_sha256": sha256_file(runtime_states_path),
+        "policy_choices_sha256": sha256_file(policy_choices_path),
+        "audit_only_referenced": False,
     }
 
 
@@ -1549,6 +1605,12 @@ def main() -> None:
         freeze_contract=response_mechanism_contract,
         sweep_contract=development_chain["sweep_response_mechanism_contract"],
     )
+    esconv_generation_contract = build_v1_5_esconv_generation_contract(
+        response_mechanism_contract=response_mechanism_contract,
+        runtime_states_path=args.esconv_runtime_states,
+        policy_choices_path=args.esconv_policy_choices,
+        legal_actions=pm_v1_5_config["esconv_external_evaluation"]["legal_actions"],
+    )
 
     generation_contract: dict[str, Any] = {
         "response_mechanism_contract": response_mechanism_contract,
@@ -1973,6 +2035,7 @@ def main() -> None:
         "bank_seed_lineage": bank_seed_lineage,
         "evoemo_chronology_audit": chronology_audit,
         "esconv_external_binding": esconv_external_binding,
+        "esconv_generation_contract": esconv_generation_contract,
         "full_development_chain": development_chain,
         "decision_quality": {
             "report_sha256": sha256_file(args.decision_quality_report),

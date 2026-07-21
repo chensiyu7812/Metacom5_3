@@ -257,7 +257,13 @@ def _esconv_v1_5_freeze_fixture(
     state_count = int(config["expected_primary_states"])
     write_jsonl(
         paths["runtime_states"],
-        ({"state_id": f"esconv-state-{index}"} for index in range(state_count)),
+        (
+            {
+                "state_id": f"esconv-state-{index}",
+                "card_id": f"esconv-card-{index}",
+            }
+            for index in range(state_count)
+        ),
     )
     write_jsonl(
         paths["pm_v2_states"],
@@ -963,6 +969,26 @@ def test_v1_5_freeze_creation_produces_well_formed_external_contract(workdir, mo
     )
     assert esconv_binding["external_outcomes_used_for_tuning"] is False
 
+    esconv_generation_contract = notes["esconv_generation_contract"]
+    assert esconv_generation_contract["protocol"] == (
+        "pm-v1.5-esconv-action-first-generation-contract-v1"
+    )
+    assert esconv_generation_contract["legal_actions"] == ["M0+R0", "M0+RS"]
+    assert esconv_generation_contract["expected_state_count"] == 2112
+    # Action-first: exactly 2 legal actions per state, never one generation
+    # per policy condition (which would wrongly be 2112 * 4 = 8448).
+    assert esconv_generation_contract["expected_logical_action_outcomes"] == (
+        2112 * 2
+    )
+    assert esconv_generation_contract["audit_only_referenced"] is False
+    # The ESConv contract reuses the exact same response_mechanism_contract
+    # object already bound to the internal sweep and EvoEmo external
+    # generation -- not a separately-built one that merely happens to match.
+    assert (
+        esconv_generation_contract["response_mechanism_contract"]
+        == generation_contract["response_mechanism_contract"]
+    )
+
     assert notes["retrieval_consistency"] == {
         "status": "PASS",
         "protocol": "pm-v1.5-development-external-retrieval-lock-v1",
@@ -1162,6 +1188,53 @@ def test_require_v1_5_response_mechanism_consistency_fails_closed_on_code_drift(
         module.require_v1_5_response_mechanism_consistency(
             freeze_contract=freeze_contract, sweep_contract=sweep_contract
         )
+
+
+def test_esconv_generation_contract_expected_keys_change_with_legal_actions_or_states(
+    tmp_path,
+):
+    module = _load_module(
+        "scripts/v1_5_create_freeze.py", "v1_5_esconv_generation_contract_test"
+    )
+    states_path = tmp_path / "runtime_states.jsonl"
+    write_jsonl(
+        states_path,
+        ({"card_id": f"card_{i}"} for i in range(5)),
+    )
+    choices_path = tmp_path / "policy_choices.jsonl"
+    write_jsonl(choices_path, [{"dummy": 1}])
+    base_kwargs = dict(
+        response_mechanism_contract={"contract_sha256": "a" * 64},
+        runtime_states_path=states_path,
+        policy_choices_path=choices_path,
+        legal_actions=("M0+R0", "M0+RS"),
+    )
+    baseline = module.build_v1_5_esconv_generation_contract(**base_kwargs)
+    assert baseline["expected_state_count"] == 5
+    assert baseline["expected_logical_action_outcomes"] == 10
+
+    fewer_actions = module.build_v1_5_esconv_generation_contract(
+        **{**base_kwargs, "legal_actions": ("M0+R0",)}
+    )
+    assert fewer_actions["expected_logical_action_outcomes"] == 5
+    assert (
+        fewer_actions["expected_action_keys_sha256"]
+        != baseline["expected_action_keys_sha256"]
+    )
+
+    more_states_path = tmp_path / "runtime_states_more.jsonl"
+    write_jsonl(
+        more_states_path,
+        ({"card_id": f"card_{i}"} for i in range(6)),
+    )
+    more_states = module.build_v1_5_esconv_generation_contract(
+        **{**base_kwargs, "runtime_states_path": more_states_path}
+    )
+    assert more_states["expected_state_count"] == 6
+    assert (
+        more_states["expected_action_keys_sha256"]
+        != baseline["expected_action_keys_sha256"]
+    )
 
 
 def test_v1_5_external_generation_defaults_are_condition_isolated():
