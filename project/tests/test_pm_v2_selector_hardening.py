@@ -150,6 +150,32 @@ def test_ood_thresholds_are_calibrated_on_holdout_and_challenge_gated():
     )
 
 
+def test_metadata_ood_breakdown_matches_the_aggregate_score():
+    train = [make_state(f"breakdown_train_{index}") for index in range(5)]
+    calibration = [make_state(f"breakdown_cal_{index}") for index in range(5)]
+    builder = PMV2FeatureBuilder(use_precomputed_embeddings=False).fit(train)
+    builder.calibrate_ood(
+        calibration,
+        semantic_false_positive_quantile=0.99,
+        metadata_false_positive_quantile=0.99,
+        maximum_joint_in_distribution_fallback_rate=0.05,
+        minimum_semantic_challenge_detection_rate=0.80,
+        minimum_metadata_challenge_detection_rate=0.95,
+    )
+    state = calibration[0]
+    names = builder.metadata_dimension_names()
+    breakdown = builder.metadata_ood_breakdown(state)
+    assert len(names) == len(breakdown)
+    assert set(names) == set(breakdown)
+    assert all(value >= 0.0 for value in breakdown.values())
+    report = builder.ood_report(state)
+    assert sum(breakdown.values()) / len(breakdown) == pytest.approx(
+        report["metadata_ood_score"]
+    )
+    assert any(name.startswith("MP.") for name in names)
+    assert any(name.startswith("strategy.family.") for name in names)
+
+
 def make_evaluator_contexts(states, regimes) -> EvaluatorContextIndex:
     needed_sources_by_regime = {
         "context_only": [],
