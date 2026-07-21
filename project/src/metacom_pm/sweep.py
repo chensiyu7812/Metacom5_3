@@ -355,7 +355,18 @@ def plan_action_sweep(
                 "action_id": action_id,
                 "requested_action_id": action_id,
                 "retrieval_attempts": [
-                    row.model_dump(mode="json") for row in retrieval_attempts
+                    # latency_ms is a real wall-clock measurement
+                    # (action_execution.execute_requested_retrievals), so it
+                    # varies across separate process invocations even for the
+                    # identical plan. Planning only needs to know which
+                    # evidence would be selected (for prompt/token counting),
+                    # not how long that trial retrieval took -- zeroing it
+                    # here is what makes call_plan_sha256/cost_estimate_sha256
+                    # reproducible across a separate --dry-run and --run
+                    # invocation. Real per-call latency is still recorded
+                    # for real during run_action_sweep's own execution.
+                    {**row.model_dump(mode="json"), "latency_ms": 0.0}
+                    for row in retrieval_attempts
                 ],
                 "realized_action_id": realized_action_id,
                 "effective_action_id": realized_action_id,
