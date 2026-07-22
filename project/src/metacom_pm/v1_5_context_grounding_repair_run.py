@@ -243,13 +243,23 @@ def build_repair_run_plan(
     }
     contract["contract_sha256"] = sha256_text(canonical_json(contract))
 
-    one_attempt_cost = sum(
-        (
-            int(row["input_token_upper_bound"]) * input_usd_per_mtok
-            + int(row["maximum_output_tokens"]) * output_usd_per_mtok
-        )
-        / 1_000_000
-        for row in rows
+    # Sum exact integer token counts first, then convert to dollars in a single
+    # fixed float expression (matching plan_action_sweep's own convention in
+    # sweep.py). Summing many already-converted float dollar terms is not
+    # reproducible across Python versions: CPython 3.12 changed the built-in
+    # sum() to use Neumaier compensated summation for floats, so the same
+    # per-row terms in the same order can round to a different last bit on
+    # 3.10 (this project's mandated distress_build env) vs 3.12+, which would
+    # silently change cost_estimate_sha256 depending on interpreter version.
+    total_input_token_upper_bound = sum(
+        int(row["input_token_upper_bound"]) for row in rows
+    )
+    total_maximum_output_tokens = sum(
+        int(row["maximum_output_tokens"]) for row in rows
+    )
+    one_attempt_cost = (
+        total_input_token_upper_bound / 1_000_000 * input_usd_per_mtok
+        + total_maximum_output_tokens / 1_000_000 * output_usd_per_mtok
     )
     maximum_cost = one_attempt_cost * REPAIR_MAX_PHYSICAL_ATTEMPTS_PER_CALL
     cost_payload = {

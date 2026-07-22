@@ -1,6 +1,6 @@
 {
   "protocol": "pm-v1.5-central-paid-run-release-v1",
-  "status": "CLOSED_AFTER_FAILED_CONSUMPTION",
+  "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
   "config_sha256": "d45aab7fa6490b084c596c724020ca762642b973ad5c9608b871c5881ccf37fa",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
@@ -26,10 +26,27 @@
       "maximum_estimated_cost_usd": 0.01111005,
       "candidate_output_directory": "outputs/pm_v1_5_context_grounding_repair_pilot_v2_candidate",
       "independent_reproduction_directory": "outputs/pm_v1_5_context_grounding_repair_pilot_v2_repro_check",
-      "independent_reproduction_status": "EXACT_MATCH",
+      "independent_reproduction_status": "EXACT_MATCH_WAS_ENVIRONMENT_DEPENDENT_SEE_INVALIDATION",
       "budget_gate": "PASS",
-      "approval_status": "PENDING_EXPLICIT_USER_APPROVAL",
-      "note": "Fresh identity after fixing the deterministic summary-prompt contradiction found by the first paid pilot. Both zero-API dry-runs produced byte-identical call-plan and cost-estimate files. This identity authorizes only the fixed six-state repair pilot; it does not authorize the 25-state full repair, canonical recompilation, delta review, sweep, judging, or training."
+      "approval_status": "IDENTITY_INVALIDATED_BY_BUG_FIX_BEFORE_ANY_SPEND. User gave USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准执行， $0.01111005' for this identity, but attempting --run against this exact identity failed BEFORE any API client was created or any cost incurred (zero spend): scripts/v1_5/20e_run_context_grounding_repair_v1_5.py's own _persist_or_require_plan rejected it because a freshly recomputed build_repair_run_plan() (in the PYTHONNOUSERSITE=1 PYTHONPATH=src distress_build conda env, Python 3.10.19, this project's own mandated heavy-code environment) did not byte-match the saved cost_estimate.json (estimated_cost_usd 0.0037033500000000002 recomputed vs 0.00370335 saved, giving cost_estimate_sha256 b39ff4283257bdf4d6217348e21d32ea32c7ca7b5a43c4d656cd21488343cf34 vs saved 33e19728029cefdf8599fdb9b199a07555ef8dce5e77861fb54d88cc87ad879c; call_plan.jsonl itself was still byte-identical). Root cause: v1_5_context_grounding_repair_run.py's build_repair_run_plan computed one_attempt_cost via bare sum() over six already-converted per-row float dollar terms. CPython 3.12 changed the built-in sum() for floats to use Neumaier-compensated summation for improved accuracy; Python 3.10 (this project's own distress_build env) still uses plain sequential addition. For this exact term order the two algorithms round to different last bits (confirmed by direct reproduction: distress_build python3.10.19 gives 0.0037033500000000002, base conda python3.13.2 gives 0.00370335 for the identical per-row terms in the identical order), so cost_estimate_sha256 was never actually guaranteed reproducible across Python versions/environments -- the prior 'verified reproducible across two independent dry-run invocations' claim only ever exercised whichever single environment produced both of those invocations, not cross-environment stability. This is the same defect shape as the earlier plan_action_sweep wall-clock-latency non-determinism bug in this same project, just surfacing through a different mechanism (interpreter version instead of embedded real-time data). Fixed in v1_5_context_grounding_repair_run.py: one_attempt_cost is now computed by summing the two integer token totals first (exact, version-independent) and converting to dollars via a single fixed float expression, matching plan_action_sweep's own established convention in sweep.py. Verified the fixed formula gives the identical float (0.0037033500000000002) in both Python 3.10.19 (distress_build) and Python 3.13.2 (base conda) directly on the real per-row numbers. Full pytest suite re-run clean after the fix (no failures). This identity (33e19728...) is now permanently invalidated and must never be resubmitted; call_plan.jsonl/contract content were never actually wrong, only the cost-estimate float, but the code-file hash change alone would invalidate this identity regardless. A fresh identity for the SAME six-state pilot plan is prepared below (context_grounding_repair_pilot_v3) and requires its own fresh user approval before any --run attempt."
+    },
+    "context_grounding_repair_pilot_v3": {
+      "stage": "context_grounding_repair_pilot",
+      "run_identity": "b0fdd317a57d8ad1c8b58d9d2d8ff697688f3b8a330866a2ebf4f07870050795",
+      "contract_sha256": "2156823088b61c01161132e2affd5de4e09a6f61b2c08dbc4ba5b779ebbaa385",
+      "call_plan_sha256": "e323bd7d1a06f1a0e65b42f005b04e45cf431e153111ed4ead8e130e6888ce2e",
+      "prepared_from_code_commit_sha": "UNCOMMITTED_WORKING_TREE_FIX_v1_5_context_grounding_repair_run.py_sum_determinism",
+      "scope": "pilot",
+      "planned_logical_calls": 6,
+      "maximum_physical_api_attempts": 18,
+      "expected_estimated_cost_usd": 0.0037033500000000002,
+      "maximum_estimated_cost_usd": 0.01111005,
+      "candidate_output_directory": "outputs/pm_v1_5_context_grounding_repair_pilot_v3_distress_candidate",
+      "independent_reproduction_directory": "outputs/pm_v1_5_context_grounding_repair_pilot_v3_distress_repro_check",
+      "independent_reproduction_status": "EXACT_MATCH (two separate distress_build/Python 3.10.19 invocations, byte-identical cost_estimate.json/call_plan.jsonl); cost formula additionally confirmed version-independent against Python 3.13.2 directly on the same real per-row numbers (sklearn unavailable there so the full script could not be run end-to-end in that interpreter, only the isolated arithmetic)",
+      "budget_gate": "PASS",
+      "approval_status": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准，$0.01111005' (given directly for this identity, b0fdd317a57d8ad1c8b58d9d2d8ff697688f3b8a330866a2ebf4f07870050795; local-only, not pushed to GitHub)",
+      "note": "Fresh identity after fixing the sum()-over-floats cross-Python-version non-determinism found while attempting to execute context_grounding_repair_pilot_v2 (33e19728...). Same six pilot state IDs, same call_plan_sha256 (call plan content unchanged), same $0.01111005 ceiling. This identity authorizes only the fixed six-state repair pilot; it does not authorize the 25-state full repair, canonical recompilation, delta review, sweep, judging, or training."
     },
     "development_data_generation_v8_17_casewise_repair": {
       "run_identity": "4f5aa12d69320e5b6bba73c3bd93c0896eeca8885e40c6e3a0818e90b9cf46be",
@@ -1327,6 +1344,38 @@
       "rerun_allowed": false,
       "failure_class": "repair_prompt_contract_contradiction",
       "note": "FAILED CLOSED after 2/6 planned logical calls. The first repair succeeded. The second provider response was valid JSON but returned an empty session_summary for a state whose frozen corpus design requires a non-empty grounded summary. Root cause was a deterministic prompt-contract contradiction: the shared system instruction allowed an empty summary while the state-specific contract required a non-empty summary. The strict postcondition correctly rejected it. No transport/API/schema failure occurred. The exact identity and output directory are permanently consumed; any retry requires a prompt fix, a fresh directory, a newly reproduced dry-run identity, and fresh user approval."
+    },
+    "context_grounding_repair_pilot_attempt2": {
+      "stage": "context_grounding_repair_pilot",
+      "approval_identity": "b0fdd317a57d8ad1c8b58d9d2d8ff697688f3b8a330866a2ebf4f07870050795",
+      "authorization_record": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准，$0.01111005' (local-only, not pushed to GitHub)",
+      "status": "CONSUMED_PASS",
+      "consumed_at_utc": "2026-07-22T06:04:01Z",
+      "output_directory": "outputs/pm_v1_5_context_grounding_repair_pilot_v3_distress_candidate",
+      "physical_attempt_ledger_sha256": "f510a65b5bb1ba5a7e39113e5d348bb58538b7b8d0776edae3608b8dfccc2352",
+      "artifact_attestation_sha256": "9cde769a7f9afcf8ebb8b88c8d8890b9872f33eca197063efe693fe415897a54",
+      "planned_logical_calls": 6,
+      "completed_logical_calls": 6,
+      "failed_logical_calls": 0,
+      "unattempted_logical_calls": 0,
+      "new_physical_attempts": 6,
+      "new_succeeded_attempts": 6,
+      "new_failed_attempts": 0,
+      "new_reported_input_tokens": 3969,
+      "new_reported_output_tokens": 530,
+      "new_reported_total_tokens": 4499,
+      "new_estimated_actual_cost_usd": 0.0009133500000000001,
+      "budget_ceiling_usd": 0.01111005,
+      "rerun_allowed": false,
+      "repaired_state_ids": [
+        "state_062b3dd61638973f95199d76",
+        "state_1d327ed7b58f3b13298b968c",
+        "state_481fdb962d3774c3e0d720bb",
+        "state_44550214bf7c9fa22284a731",
+        "state_d0eee004b44a562c57a0e6c6",
+        "state_ba1e526156d1cf3810fa8e98"
+      ],
+      "note": "PASS -- fresh identity after fixing the cross-Python-version sum()-over-floats non-determinism in build_repair_run_plan's cost estimate (see pending_unapproved_dry_runs.context_grounding_repair_pilot_v2's approval_status for the full incident writeup; this identity's own prior code-commit chain is recorded under pending_unapproved_dry_runs.context_grounding_repair_pilot_v3). All 6/6 pilot logical calls succeeded on the first physical attempt (2 FIELD_ONLY_REPAIR: state_062b3dd6.../state_1d327ed7...; 4 VISIBLE_SURFACE_REPAIR: state_481fdb96.../state_44550214.../state_d0eee004.../state_ba1e5261...), zero failures, zero retries -- this also validates that the summary-prompt contradiction which failed attempt1's second call (state requiring non-empty session_summary) is fixed in the current prompt/messages code, since attempt1's second failing state is among these 6 and now passed cleanly. Real cost $0.0009133500000000001, far under the $0.01111005 ceiling. Output directory outputs/pm_v1_5_context_grounding_repair_pilot_v3_distress_candidate is a genuinely new directory, protected going forward. This is scope=pilot only -- it certifies the six preselected repair shapes' prompts/schemas/postconditions and does NOT emit a production repair_overlays.jsonl (production_overlay_emitted=false in summary.json); it does not itself authorize the 25-state --scope full repair, canonical recompilation, delta review, sweep, judging, or training, each of which needs its own fresh dry-run/identity/approval."
     },
     "esconv_auxiliary_generation_pilot_train_v2": {
       "approval_identity": "9c8c326e0d2827c1adefde55d3f6ad00e5292619e14650677c8aa3d47bf43276",
