@@ -1382,6 +1382,31 @@
     }
   ],
   "stage_consumptions": {
+    "step0_shortcut_audit_v8_19_1": {
+      "stage": "step0_shortcut_audit",
+      "status": "REAL_PASS_ZERO_COST",
+      "new_api_calls": 0,
+      "new_cost_usd": 0.0,
+      "output_directory": "outputs/pm_v1_5_step0_shortcut_audit_v8_19_1",
+      "report_sha256": "77127f5496eb80c5cbc6b793a3ec186c8844a2c18640a8e90ae7598ee91bba89",
+      "artifact_attestation_sha256": "7198c9db46a5f4949c78493f9d27cdfa753fbf09ca709592d2a0a07fd46d50ac",
+      "corpus_basis": "data/pm_v1_5_formal_v8_19_1_context_grounding_repair_candidate",
+      "maximum_single_threshold_balanced_accuracy": 0.8035714285714286,
+      "maximum_multivariate_probe_balanced_accuracy": 0.7827380952380952,
+      "note": "Core-chain-plan step 3.6, re-run against the repaired V8.19.1 corpus (previously only run and PASSed against V8.18, before the 25-state context_grounding repair). PASS: neither the single-threshold nor the train-only multivariate probe reaches the frozen near-oracle upper bound. Required an attestation.json for V8.19.1, which the recompile script did not previously write; added via a cheap --verify-only pass (no re-encoding needed)."
+    },
+    "rule_grid_preflight_v8_19_1": {
+      "stage": "rule_grid_preflight",
+      "status": "REAL_PASS_ZERO_COST",
+      "new_api_calls": 0,
+      "new_cost_usd": 0.0,
+      "output_directory": "outputs/pm_v1_5_rule_grid_preflight_v8_19_1",
+      "report_sha256": "7b93a27203ef5afd3768186536ee4615774d9590d856b8085cc3443f1a346a2c",
+      "corpus_basis": "data/pm_v1_5_formal_v8_19_1_context_grounding_repair_candidate",
+      "unique_policy_mapping_count": 4,
+      "maximum_pairwise_action_disagreement_rate": 1.0,
+      "note": "Core-chain-plan step 3.7, re-run against the repaired V8.19.1 corpus (previously only run and PASSed against V8.18). PASS: 4 distinct candidate rule-based policy mappings (>= 2 required), maximum pairwise action disagreement rate 1.0 (>= 0.01 required). Read-only on train/calibration states, no outcome/internal labels used."
+    },
     "context_grounding_repair_pilot_attempt1": {
       "stage": "context_grounding_repair_pilot",
       "approval_identity": "b763043dddfaa5996184b26791d2edad5df3655c5c18c3c1e1db5d7345379fab",
