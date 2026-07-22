@@ -250,21 +250,27 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
 
 - 52-user/468-state 纵向 development corpus 已完成；actual-468 首轮审计暴露了
   measurement wording ambiguity 和 25 个真实 context defects。25 个状态已通过窄字段
-  repair overlay 在全新 V8.19 候选中 canonical 重编译；当前正在做 JSON round-trip、
-  evaluator ID、预期文件差异、文件哈希和 attestation 的最后零成本收口，并复现 delta
-  dry-run。V8.19 actual gate 尚未得到最终 PASS。
+  repair overlay 在 V8.19.1 中 canonical 重编译并逐项解决（双家族一致拒绝由 14 降为
+  0）。审计仍诚实保留 1 个 control 宽松漏检与 1 个不可恢复的截断调用，因此不能把
+  测量工具写成“无缺陷 PASS”；按预注册停止规则将其作为已披露的 instrument limitation，
+  不再反复调 prompt/control 追求全绿。注意当前正式 sweep 代码仍要求 exact
+  `status=PASS` attestation；在显式冻结一份“不放松真实数据门、仅承认测量工具残余缺口”
+  的协议修订前，longitudinal sweep dry-run 必须继续 fail closed，不能静默绕过。
 - 719-state ESConv auxiliary 输入已构建完成：52 个与 Strategy Bank 来源零重合的
   train dialogues，split 为 train 318 states/24 dialogues、calibration 170/12、
   internal-test 231/16。只完成了小规模 generation/judging 机制 pilot；完整 719-state
   generation 和 judging 尚未执行。
 - `PMV2Model`、routing-objective、transparent-rule、train-group CV 与 calibration grid
   已实现 domain→dialogue/user→state→action/alias 等权；双域输入验证器、零 API preflight
-  和两个彼此独立的 sealed-holdout/consumption-ledger 原语也已实现并有反向测试。但当前
-  `22_train_pm_v2_v1_5.py` 仍只有一套 states/labels 和一套 sealed internal bundle 参数；
-  双域文件装载、domain-specific data audits/OOD 与 uncertainty calibration、两个
-  comparator/internal gate、candidate freeze 与最终报告尚未接入正式训练入口。必须先
-  完成并通过反向测试，不能把底层原语存在误写成“联合训练已可运行”。
-- longitudinal full action sweep、sweep judging、联合训练、两个 internal-test 的正式
+  和两个彼此独立的 sealed-holdout/consumption-ledger 原语也已实现。新的正式入口
+  `22a_train_pm_v2_dual_domain_v1_5.py` 负责联合装载、分域 label audit、分域 OOD/uncertainty
+  报告、纵向与 ESConv 各自 comparator/internal gate、联合 candidate freeze 和“一域失败即
+  NOT_SUPPORTED”。旧 `22_train_pm_v2_v1_5.py` 保留为单域回退，不得用于正式双域结论。
+  该入口仍需等待 719-state auxiliary 与 longitudinal sweep 的完整 labels 才能真实训练；
+  “代码入口完成”不等于“模型已经训练”。
+- Step-0 shortcut audit 与 transparent rule-grid preflight 已在 V8.19.1 上零 API 实跑
+  PASS，并由输入 hash/attestation 绑定。longitudinal full action sweep、sweep judging、
+  联合训练、两个 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。
 - memory item canonical builder、chunk 边界与 digest/consumer binding 已完成并由测试
@@ -393,8 +399,8 @@ judging、domain/alias weighting、sealed internal holdout、fixed baselines、�
 
 剩余主线必须按第 4 节推进：
 
-1. 收口并通过 V8.19 actual-468 delta gate；
-2. 运行 Step-0 shortcut 与 rule-grid 零成本审计；
+1. 冻结 V8.19.1 actual-468 的数据修复结果与已披露测量局限，不再 outcome-driven 微调；
+2. 复用已经按 V8.19.1 输入 hash/attestation PASS 的 Step-0 shortcut 与 rule-grid 审计；
 3. 完成 719-state auxiliary 两动作 generation/judging 与 468×16 longitudinal
    full sweep/judging；
 4. 联合训练同一个 PM，冻结选择后分别一次性消费两个 internal-test；

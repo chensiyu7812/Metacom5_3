@@ -1,11 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import fsum
 from typing import Any, Mapping, Sequence
+
+import numpy as np
 
 from .contracts import MemorySource
 from .io import canonical_json, sha256_text
 from .pm_v2_contracts import ActionLabel, PMV2Split, PMV2State
+from .pm_v2_model import (
+    RESPONSE_FIELDS,
+    applicable_risk_fields,
+    estimated_action_cost_profile,
+    evaluate_policy,
+    evaluate_prediction_coverage,
+)
 
 
 DUAL_DOMAIN_TRAINING_PROTOCOL = "pm-v1.5-dual-domain-training-input-v1"
@@ -13,6 +23,7 @@ LONGITUDINAL_DOMAIN = "longitudinal_synthetic"
 ESCONV_AUXILIARY_DOMAIN = "esconv_auxiliary"
 ESCONV_AUXILIARY_FAMILY = "esconv_auxiliary_strategy_routing"
 ESCONV_AUXILIARY_ACTIONS = frozenset({"M0+R0", "M0+RS"})
+DUAL_DOMAIN_GATE_PROTOCOL = "pm-v1.5-dual-domain-independent-internal-gates-v1"
 
 
 def training_domain_for_state(state: PMV2State) -> str:
@@ -112,6 +123,388 @@ def _validate_exact_labels(
             raise ValueError(f"{domain} label identity mismatch for {label.state_id}")
 
 
+def validate_internal_domain_labels(
+    *,
+    states: Sequence[PMV2State],
+    labels: Sequence[ActionLabel],
+    domain: str,
+) -> tuple[list[PMV2State], list[ActionLabel]]:
+    """Validate one internal domain after its independent ledger is spent.
+
+    This deliberately accepts only INTERNAL_TEST states.  The function is kept
+    separate from :func:`validate_dual_domain_training_inputs` so callers cannot
+    accidentally deserialize internal outcomes during fitting or calibration.
+    """
+
+    internal_states = list(states)
+    internal_labels = list(labels)
+    if not internal_states or any(
+        state.split is not PMV2Split.INTERNAL_TEST for state in internal_states
+    ):
+        raise ValueError(f"{domain} internal input contains non-internal states")
+    state_map = _validate_unique_states(internal_states, domain=f"{domain} internal")
+    keys = [(label.state_id, label.action_id) for label in internal_labels]
+    if len(keys) != len(set(keys)):
+        raise ValueError(f"{domain} internal labels contain duplicate rows")
+    expected = {
+        (state.state_id, action_id)
+        for state in internal_states
+        for action_id in state.allowed_actions
+    }
+    if set(keys) != expected:
+        raise ValueError(
+            f"{domain} internal labels are not the exact legal matrix; "
+            f"missing={sorted(expected - set(keys))[:10]}, "
+            f"extra={sorted(set(keys) - expected)[:10]}"
+        )
+    for label in internal_labels:
+        state = state_map.get(label.state_id)
+        if state is None:
+            raise ValueError(f"{domain} internal labels reference another domain")
+        if label.user_id != state.user_id or label.card_id != state.card_id:
+            raise ValueError(
+                f"{domain} internal label identity mismatch for {label.state_id}"
+            )
+        if domain == ESCONV_AUXILIARY_DOMAIN:
+            if label.action_id not in ESCONV_AUXILIARY_ACTIONS:
+                raise ValueError("ESConv internal labels contain a memory action")
+            if str(label.provenance.get("esconv_auxiliary_split") or "") != (
+                PMV2Split.INTERNAL_TEST.value
+            ):
+                raise ValueError("ESConv internal label split provenance mismatch")
+    return internal_states, internal_labels
+
+
+def audit_domain_label_matrix(
+    states: Sequence[PMV2State],
+    labels: Sequence[ActionLabel],
+    *,
+    domain: str,
+    low_mad_threshold: float,
+    minimum_reliable_rate: float,
+    minimum_low_mad_coverage_per_dimension: float,
+    minimum_low_mad_coverage_per_action_dimension: float,
+) -> dict[str, Any]:
+    """Outcome audit reported independently for each training domain."""
+
+    state_map = {state.state_id: state for state in states}
+    if not state_map or len(state_map) != len(states):
+        raise ValueError(f"{domain} audit requires unique non-empty states")
+    label_map = {(label.state_id, label.action_id): label for label in labels}
+    expected = {
+        (state.state_id, action_id)
+        for state in states
+        for action_id in state.allowed_actions
+    }
+    if set(label_map) != expected:
+        raise ValueError(f"{domain} audit requires the exact action matrix")
+    action_counts: dict[str, int] = {}
+    for _state_id, action_id in label_map:
+        action_counts[action_id] = action_counts.get(action_id, 0) + 1
+    dimension_names = sorted(next(iter(label_map.values())).dimension_mad)
+    dimension_coverage = {
+        name: float(
+            np.mean(
+                [float(label.dimension_mad[name]) <= low_mad_threshold for label in labels]
+            )
+        )
+        for name in dimension_names
+    }
+    action_dimension_coverage = {
+        action_id: {
+            name: float(
+                np.mean(
+                    [
+                        float(label.dimension_mad[name]) <= low_mad_threshold
+                        for label in labels
+                        if label.action_id == action_id
+                    ]
+                )
+            )
+            for name in dimension_names
+        }
+        for action_id in sorted(action_counts)
+    }
+    reliable_rate = float(np.mean([label.label_reliable for label in labels]))
+    checks = {
+        "label_reliable_rate": reliable_rate >= float(minimum_reliable_rate),
+        "low_mad_coverage_per_dimension": min(dimension_coverage.values())
+        >= float(minimum_low_mad_coverage_per_dimension),
+        "low_mad_coverage_per_action_dimension": min(
+            value
+            for action_row in action_dimension_coverage.values()
+            for value in action_row.values()
+        )
+        >= float(minimum_low_mad_coverage_per_action_dimension),
+    }
+    if not all(checks.values()):
+        raise RuntimeError(f"{domain} label-quality gate failed: {checks}")
+    return {
+        "domain": domain,
+        "status": "PASS",
+        "state_count": len(states),
+        "group_count": len({state.user_id for state in states}),
+        "label_count": len(labels),
+        "action_distribution": dict(sorted(action_counts.items())),
+        "label_reliable_rate": reliable_rate,
+        "maximum_dimension_mad": float(max(label.max_dimension_mad for label in labels)),
+        "low_mad_threshold": float(low_mad_threshold),
+        "minimum_dimension_low_mad_coverage": min(dimension_coverage.values()),
+        "minimum_action_dimension_low_mad_coverage": min(
+            value
+            for action_row in action_dimension_coverage.values()
+            for value in action_row.values()
+        ),
+        "checks": checks,
+        "state_universe_sha256": _state_universe_sha256(states),
+        "label_universe_sha256": _label_universe_sha256(labels),
+    }
+
+
+def require_equal_domain_training_weight(training_report: Mapping[str, Any]) -> dict[str, float]:
+    """Fail closed unless both model heads and routing objective weight domains equally."""
+
+    head = dict(training_report.get("domain_dialogue_state_action_weighting") or {})
+    routing = dict(
+        ((training_report.get("routing_objective") or {}).get(
+            "domain_dialogue_state_action_weighting"
+        ))
+        or {}
+    )
+    expected_domains = {LONGITUDINAL_DOMAIN, ESCONV_AUXILIARY_DOMAIN}
+    for name, row in (("prediction_heads", head), ("routing_objective", routing)):
+        weights = {str(key): float(value) for key, value in (row.get("effective_weight_by_domain") or row.get("domain_weight") or {}).items()}
+        if set(weights) != expected_domains:
+            raise RuntimeError(f"{name} lacks the exact two training domains")
+        total = fsum(weights.values())
+        normalized = {key: value / total for key, value in weights.items()}
+        if any(abs(value - 0.5) > 1e-9 for value in normalized.values()):
+            raise RuntimeError(f"{name} permits one domain to swamp the other")
+    return {LONGITUDINAL_DOMAIN: 0.5, ESCONV_AUXILIARY_DOMAIN: 0.5}
+
+
+def fixed_action_metrics(model, states, labels, action_id: str) -> dict[str, Any] | None:
+    """Evaluate a fixed comparator without pretending it is a learned policy."""
+
+    label_map = {(label.state_id, label.action_id): label for label in labels}
+    rows: list[dict[str, Any]] = []
+    for state in states:
+        if action_id not in state.allowed_actions:
+            return None
+        label = label_map.get((state.state_id, action_id))
+        if label is None:
+            return None
+        quality = model.selection_config.composite_spec.score(label.response)
+        risk = max(
+            float(getattr(label.risk, name)) / 3.0
+            for name in applicable_risk_fields(action_id)
+        )
+        cost = estimated_action_cost_profile(model.feature_builder, state)[action_id]
+        utility = (
+            quality
+            - model.selection_config.risk_weight * risk
+            - model.selection_config.cost_weight
+            * float(cost["normalized_estimated_resource_cost"])
+        )
+        rows.append(
+            {
+                "state_id": state.state_id,
+                "user_id": state.user_id,
+                "quality": float(quality),
+                "risk": float(risk),
+                "realized_utility": float(utility),
+                "observed_input_tokens": float(label.observed_input_tokens),
+                "response_dimensions": {
+                    name: float(getattr(label.response, name)) for name in RESPONSE_FIELDS
+                },
+            }
+        )
+    if not rows:
+        return None
+    return {
+        "action_id": action_id,
+        "n": len(rows),
+        "mean_quality": float(np.mean([row["quality"] for row in rows])),
+        "mean_risk": float(np.mean([row["risk"] for row in rows])),
+        "mean_realized_utility": float(
+            np.mean([row["realized_utility"] for row in rows])
+        ),
+        "mean_observed_input_tokens": float(
+            np.mean([row["observed_input_tokens"] for row in rows])
+        ),
+        "mean_response_dimensions": {
+            name: float(
+                np.mean([row["response_dimensions"][name] for row in rows])
+            )
+            for name in RESPONSE_FIELDS
+        },
+        "rows": rows,
+    }
+
+
+def _paired_group_bootstrap(
+    policy_rows,
+    comparator_rows,
+    *,
+    replicates: int,
+    confidence_level: float,
+    seed: int,
+) -> dict[str, Any]:
+    policy = {str(row["state_id"]): row for row in policy_rows}
+    comparator = {str(row["state_id"]): row for row in comparator_rows}
+    if set(policy) != set(comparator) or not policy:
+        raise ValueError("paired domain gate requires identical non-empty states")
+    by_group: dict[str, list[dict[str, float]]] = {}
+    for state_id in sorted(policy):
+        left, right = policy[state_id], comparator[state_id]
+        if left["user_id"] != right["user_id"]:
+            raise ValueError("paired domain gate group mismatch")
+        by_group.setdefault(str(left["user_id"]), []).append(
+            {
+                "quality": float(left["quality"] - right["quality"]),
+                "emotional_support": float(
+                    left["response_dimensions"]["emotional_support"]
+                    - right["response_dimensions"]["emotional_support"]
+                ),
+                "risk": float(left["risk"] - right["risk"]),
+                "utility": float(
+                    left["realized_utility"] - right["realized_utility"]
+                ),
+            }
+        )
+    if int(replicates) < 100:
+        raise ValueError("paired domain bootstrap requires at least 100 replicates")
+    if not 0.5 < float(confidence_level) < 1.0:
+        raise ValueError("paired domain bootstrap confidence must be in (0.5, 1.0)")
+    metric_names = ("quality", "emotional_support", "risk", "utility")
+    groups = sorted(by_group)
+    if len(groups) < 3:
+        raise ValueError("paired domain bootstrap requires at least three groups")
+    # Each ESConv dialogue and each longitudinal user is one independent block,
+    # irrespective of how many states it contributes.
+    group_means = np.asarray(
+        [
+            [float(np.mean([row[name] for row in by_group[group]])) for name in metric_names]
+            for group in groups
+        ],
+        dtype=float,
+    )
+    point = np.mean(group_means, axis=0)
+    rng = np.random.default_rng(int(seed))
+    sampled = rng.integers(0, len(groups), size=(int(replicates), len(groups)))
+    bootstrap = np.mean(group_means[sampled], axis=1)
+    alpha = 1.0 - float(confidence_level)
+    lower = np.quantile(bootstrap, alpha / 2.0, axis=0)
+    upper = np.quantile(bootstrap, 1.0 - alpha / 2.0, axis=0)
+    return {
+        "cluster_key": "user_id_or_dialogue_id",
+        "n_groups": len(groups),
+        "replicates": int(replicates),
+        "confidence_level": float(confidence_level),
+        "seed": int(seed),
+        "metrics": {
+            name: {
+                "mean_delta": float(point[index]),
+                "ci_lower": float(lower[index]),
+                "ci_upper": float(upper[index]),
+            }
+            for index, name in enumerate(metric_names)
+        },
+    }
+
+
+def domain_internal_gate(
+    *,
+    model,
+    rule_router,
+    states: Sequence[PMV2State],
+    labels: Sequence[ActionLabel],
+    domain: str,
+    fixed_actions: Sequence[str],
+    gate_config: Mapping[str, Any],
+    uncertainty_confidence_level: float,
+    bootstrap_replicates: int,
+    bootstrap_confidence_level: float,
+    bootstrap_seed: int,
+) -> dict[str, Any]:
+    """Independent comparator gate; no domain may compensate for another."""
+
+    policy = evaluate_policy(model, states, labels)
+    rule = evaluate_policy(rule_router, states, labels)
+    coverage = evaluate_prediction_coverage(
+        model,
+        states,
+        labels,
+        confidence_level=float(uncertainty_confidence_level),
+    )
+    comparators = {"transparent_rule": rule}
+    for action_id in fixed_actions:
+        row = fixed_action_metrics(model, states, labels, action_id)
+        if row is None:
+            raise RuntimeError(f"{domain} fixed comparator {action_id} is not legal")
+        comparators[action_id] = row
+    thresholds_m = dict(gate_config["gate_m_learned_vs_rule"])
+    thresholds_f = dict(gate_config["gate_f_fixed_guardrail"])
+
+    def check(
+        comparator: Mapping[str, Any],
+        thresholds: Mapping[str, Any],
+        *,
+        strict_utility: bool,
+        seed_offset: int,
+    ) -> dict[str, Any]:
+        bootstrap = _paired_group_bootstrap(
+            policy["rows"],
+            comparator["rows"],
+            replicates=bootstrap_replicates,
+            confidence_level=bootstrap_confidence_level,
+            seed=int(bootstrap_seed) + int(seed_offset),
+        )
+        metrics = bootstrap["metrics"]
+        checks = {
+            "quality_noninferior": metrics["quality"]["ci_lower"] >= float(thresholds["minimum_quality_delta"]),
+            "emotional_support_noninferior": metrics["emotional_support"]["ci_lower"] >= float(thresholds["minimum_emotional_support_delta"]),
+            "risk_nonincrease": metrics["risk"]["ci_upper"] <= float(thresholds["maximum_risk_delta"]),
+            "utility": metrics["utility"]["ci_lower"] > float(thresholds["minimum_utility_delta"])
+            if strict_utility
+            else metrics["utility"]["ci_lower"] >= float(thresholds["minimum_utility_delta"]),
+        }
+        return {
+            "status": "PASS" if all(checks.values()) else "NOT_SUPPORTED",
+            "checks": checks,
+            "paired_group_bootstrap": bootstrap,
+        }
+
+    learned_vs_rule = check(
+        rule, thresholds_m, strict_utility=True, seed_offset=0
+    )
+    fixed = {
+        action_id: check(
+            comparators[action_id],
+            thresholds_f,
+            strict_utility=False,
+            seed_offset=index + 1,
+        )
+        for index, action_id in enumerate(fixed_actions)
+    }
+    fixed_status = all(row["status"] == "PASS" for row in fixed.values())
+    status = "PASS" if learned_vs_rule["status"] == "PASS" and fixed_status else "NOT_SUPPORTED"
+    return {
+        "protocol": DUAL_DOMAIN_GATE_PROTOCOL,
+        "domain": domain,
+        "status": status,
+        "learned_policy": {key: value for key, value in policy.items() if key != "rows"},
+        "prediction_coverage": coverage,
+        "learned_vs_transparent_rule": learned_vs_rule,
+        "learned_vs_fixed": fixed,
+        "fixed_comparators": {
+            key: {name: value for name, value in row.items() if name != "rows"}
+            for key, row in comparators.items()
+            if key != "transparent_rule"
+        },
+    }
+
+
 @dataclass(frozen=True)
 class DualDomainTrainingInputs:
     longitudinal_states: tuple[PMV2State, ...]
@@ -141,6 +534,32 @@ class DualDomainTrainingInputs:
             for label in self.combined_train_calibration_labels
             if label.state_id in state_ids
         ]
+
+    def fit_and_calibration_views(
+        self,
+    ) -> tuple[
+        dict[PMV2Split, list[PMV2State]],
+        dict[PMV2Split, list[ActionLabel]],
+    ]:
+        """Return the only outcome-bearing views permitted before candidate freeze."""
+
+        allowed = (PMV2Split.TRAIN, PMV2Split.CALIBRATION)
+        states = {split: self.states_for_split(split) for split in allowed}
+        labels = {split: self.labels_for_split(split) for split in allowed}
+        internal_ids = {
+            state.state_id for state in self.states_for_split(PMV2Split.INTERNAL_TEST)
+        }
+        leaked = sorted(
+            label.state_id
+            for rows in labels.values()
+            for label in rows
+            if label.state_id in internal_ids
+        )
+        if leaked:
+            raise RuntimeError(
+                f"internal outcomes entered fit/calibration views: {leaked[:10]}"
+            )
+        return states, labels
 
 
 def validate_dual_domain_training_inputs(

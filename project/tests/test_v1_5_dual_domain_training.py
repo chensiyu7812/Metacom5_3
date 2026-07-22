@@ -14,8 +14,11 @@ from metacom_pm.pm_v2_contracts import (
 from metacom_pm.v1_5_dual_domain_training import (
     ESCONV_AUXILIARY_DOMAIN,
     LONGITUDINAL_DOMAIN,
+    audit_domain_label_matrix,
+    require_equal_domain_training_weight,
     training_domain_for_state,
     validate_dual_domain_training_inputs,
+    validate_internal_domain_labels,
 )
 
 
@@ -189,6 +192,15 @@ def test_dual_domain_inputs_are_exact_balanced_and_do_not_open_internal_labels()
     }
     assert len(result.states_for_split(PMV2Split.TRAIN)) == 4
     assert len(result.labels_for_split(PMV2Split.INTERNAL_TEST)) == 0
+    fit_states, fit_labels = result.fit_and_calibration_views()
+    internal_ids = {
+        state.state_id
+        for state in result.states_for_split(PMV2Split.INTERNAL_TEST)
+    }
+    assert set(fit_states) == {PMV2Split.TRAIN, PMV2Split.CALIBRATION}
+    assert not {
+        label.state_id for rows in fit_labels.values() for label in rows
+    } & internal_ids
     assert training_domain_for_state(auxiliary[0]) == ESCONV_AUXILIARY_DOMAIN
     assert training_domain_for_state(longitudinal[0]) == LONGITUDINAL_DOMAIN
 
@@ -230,4 +242,132 @@ def test_dual_domain_inputs_reject_memory_available_in_esconv_auxiliary():
             longitudinal_train_calibration_labels=long_labels,
             auxiliary_train_calibration_labels=aux_labels,
             pm_config=config,
+        )
+
+
+def test_dual_domain_inputs_reject_internal_outcomes_before_freeze():
+    longitudinal, auxiliary, long_labels, aux_labels, config = _fixture()
+    internal_state = next(
+        state for state in auxiliary if state.split is PMV2Split.INTERNAL_TEST
+    )
+    aux_labels.append(
+        _label(internal_state, "M0+R0", auxiliary=True)
+    )
+    with pytest.raises(ValueError, match="exact legal matrix"):
+        validate_dual_domain_training_inputs(
+            longitudinal_states=longitudinal,
+            auxiliary_states=auxiliary,
+            longitudinal_train_calibration_labels=long_labels,
+            auxiliary_train_calibration_labels=aux_labels,
+            pm_config=config,
+        )
+
+
+def test_dual_domain_inputs_reject_esconv_memory_action_space():
+    longitudinal, auxiliary, long_labels, aux_labels, config = _fixture()
+    auxiliary[0].allowed_actions = ["M0+R0", "ME+R0"]
+    with pytest.raises(ValueError, match="non-canonical actions"):
+        validate_dual_domain_training_inputs(
+            longitudinal_states=longitudinal,
+            auxiliary_states=auxiliary,
+            longitudinal_train_calibration_labels=long_labels,
+            auxiliary_train_calibration_labels=aux_labels,
+            pm_config=config,
+        )
+
+
+def test_internal_domain_labels_reject_cross_domain_rows():
+    longitudinal, auxiliary, _long_labels, _aux_labels, _config = _fixture()
+    internal_aux = [
+        state for state in auxiliary if state.split is PMV2Split.INTERNAL_TEST
+    ]
+    internal_long = next(
+        state for state in longitudinal if state.split is PMV2Split.INTERNAL_TEST
+    )
+    labels = [
+        _label(internal_aux[0], action, auxiliary=True)
+        for action in internal_aux[0].allowed_actions
+    ]
+    labels.append(_label(internal_long, "M0+R0", auxiliary=False))
+    with pytest.raises(ValueError, match="exact legal matrix"):
+        validate_internal_domain_labels(
+            states=internal_aux,
+            labels=labels,
+            domain=ESCONV_AUXILIARY_DOMAIN,
+        )
+
+
+def test_equal_domain_weight_guard_rejects_esconv_swamping():
+    report = {
+        "domain_dialogue_state_action_weighting": {
+            "domain_weight": {
+                LONGITUDINAL_DOMAIN: 0.5,
+                ESCONV_AUXILIARY_DOMAIN: 0.5,
+            }
+        },
+        "routing_objective": {
+            "domain_dialogue_state_action_weighting": {
+                "effective_weight_by_domain": {
+                    LONGITUDINAL_DOMAIN: 0.25,
+                    ESCONV_AUXILIARY_DOMAIN: 0.75,
+                }
+            }
+        },
+    }
+    with pytest.raises(RuntimeError, match="swamp"):
+        require_equal_domain_training_weight(report)
+
+
+def test_equal_domain_weight_guard_accepts_both_model_stages():
+    report = {
+        "domain_dialogue_state_action_weighting": {
+            "domain_weight": {
+                LONGITUDINAL_DOMAIN: 0.5,
+                ESCONV_AUXILIARY_DOMAIN: 0.5,
+            }
+        },
+        "routing_objective": {
+            "domain_dialogue_state_action_weighting": {
+                "effective_weight_by_domain": {
+                    LONGITUDINAL_DOMAIN: 0.5000000000000001,
+                    ESCONV_AUXILIARY_DOMAIN: 0.4999999999999999,
+                }
+            }
+        },
+    }
+    assert require_equal_domain_training_weight(report) == {
+        LONGITUDINAL_DOMAIN: 0.5,
+        ESCONV_AUXILIARY_DOMAIN: 0.5,
+    }
+
+
+def test_per_domain_label_audit_gates_reliability_without_dropping_rows():
+    longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
+    train_states = [
+        state for state in longitudinal if state.split is PMV2Split.TRAIN
+    ]
+    train_ids = {state.state_id for state in train_states}
+    train_labels = [label for label in long_labels if label.state_id in train_ids]
+    report = audit_domain_label_matrix(
+        train_states,
+        train_labels,
+        domain=LONGITUDINAL_DOMAIN,
+        low_mad_threshold=0.75,
+        minimum_reliable_rate=0.8,
+        minimum_low_mad_coverage_per_dimension=0.9,
+        minimum_low_mad_coverage_per_action_dimension=0.8,
+    )
+    assert report["status"] == "PASS"
+    assert report["label_count"] == len(train_labels)
+    train_labels[0].label_reliable = False
+    train_labels[1].label_reliable = False
+    with pytest.raises(RuntimeError, match="label-quality gate failed"):
+        audit_domain_label_matrix(
+            train_states,
+            train_labels,
+            domain=LONGITUDINAL_DOMAIN,
+            low_mad_threshold=0.75,
+            minimum_reliable_rate=0.8,
+            minimum_low_mad_coverage_per_dimension=0.9,
+            minimum_low_mad_coverage_per_action_dimension=0.8,
         )
