@@ -34,6 +34,7 @@ from metacom_pm.pm_v1_5_shortcut_audit import (
     SHORTCUT_AUDIT_PROTOCOL,
     require_step0_shortcut_audit_pass,
 )
+from metacom_pm.v1_5_dual_domain_training import training_domain_for_state
 from metacom_pm.pm_v2_audit import (
     EXPECTED_REGIME_CHECKS,
     _regime_pass,
@@ -1256,6 +1257,7 @@ def main() -> None:
                 "safe_residual_thresholds"
             ],
             simplicity_order=algorithm_cfg["simplicity_order"],
+            domain_key=training_domain_for_state,
         )
     )
     # The strong rule's numeric thresholds are selected on train only. This
@@ -1268,6 +1270,7 @@ def main() -> None:
         minimum_quality=float(rule_cfg["train_minimum_quality"]),
         maximum_risk=float(rule_cfg["train_maximum_risk"]),
         selection_data_role="train",
+        domain_key=training_domain_for_state,
     )
     model = PMV2Model.train(
         states_by_split[PMV2Split.TRAIN],
@@ -1286,6 +1289,7 @@ def main() -> None:
         ),
         word_features=int(feature_cfg["word_hash_features"]),
         char_features=int(feature_cfg["char_hash_features"]),
+        domain_key=training_domain_for_state,
     )
     model.fit_routing_objective(
         states_by_split[PMV2Split.TRAIN],
@@ -1294,6 +1298,7 @@ def main() -> None:
         n_models=int(model_cfg["bootstrap_models"]),
         seed=args.seed,
         bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+        domain_key=training_domain_for_state,
         rule_router=(
             rule_router
             if selected_algorithm == "rule_relative_safe_residual_hgb"
@@ -1353,6 +1358,7 @@ def main() -> None:
         objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
         objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
         objective_version=str(grid_cfg["objective_version"]),
+        domain_key=training_domain_for_state,
     )
     # Use the same frozen utility ruler after calibration without retuning the
     # rule's already-selected numeric thresholds.
@@ -1383,6 +1389,7 @@ def main() -> None:
             word_features=int(feature_cfg["word_hash_features"]),
             char_features=int(feature_cfg["char_hash_features"]),
             step0_signal_mode="full" if include_step0 else "none",
+            domain_key=training_domain_for_state,
         )
         residual_baseline = None
         if selected_algorithm == "rule_relative_safe_residual_hgb":
@@ -1398,6 +1405,7 @@ def main() -> None:
             bootstrap_group_key=str(
                 model_cfg.get("group_bootstrap_key", "user_id")
             ),
+            domain_key=training_domain_for_state,
             rule_router=residual_baseline,
             safe_thresholds=(
                 algorithm_cfg["safe_residual_thresholds"]
@@ -1453,6 +1461,7 @@ def main() -> None:
             objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
             objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
             objective_version=str(grid_cfg["objective_version"]),
+            domain_key=training_domain_for_state,
         )
         return ablation, {
             "role": "internal_only_diagnostic_not_candidate_selection",

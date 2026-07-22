@@ -43,6 +43,7 @@ from metacom_pm.pm_v2_model import (
     cost_calibration_diagnostics,
     decision_fallback_kind,
     evaluate_policy,
+    evaluate_policy_domain_balanced,
     evaluate_prediction_coverage,
     tune_selection_config,
 )
@@ -497,6 +498,95 @@ def test_domain_key_defaults_to_a_single_domain_matching_prior_behavior():
     assert weighting["domain_weight"] == {"default": 1.0}
 
 
+def test_routing_objective_domain_key_equalizes_domains_and_alias_rows():
+    domain_a_states = [
+        make_state(f"routing_a_{index}", user_id="routing_user_a")
+        for index in range(3)
+    ]
+    domain_b_states = [
+        make_state("routing_b_0", user_id="routing_user_b"),
+        make_state("routing_c_0", user_id="routing_user_c"),
+    ]
+    states = domain_a_states + domain_b_states
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+    )
+    model.fit_routing_objective(
+        states,
+        labels,
+        algorithm="state_centered_paired_delta_hgb",
+        n_models=1,
+        seed=17,
+        domain_key=(
+            lambda state: "A" if state.user_id == "routing_user_a" else "B"
+        ),
+    )
+    weighting = model.routing_objective_report[
+        "domain_dialogue_state_action_weighting"
+    ]
+    assert weighting["domain_weight"] == {"A": 0.5, "B": 0.5}
+    assert weighting["effective_weight_by_domain"] == pytest.approx(
+        {"A": 0.5, "B": 0.5}
+    )
+
+
+def test_policy_metrics_equalize_domains_instead_of_raw_state_counts():
+    states_a = [make_state(f"metrics_a_{index}") for index in range(6)]
+    states_b = [make_state(f"metrics_b_{index}") for index in range(3)]
+    states = states_a + states_b
+    predictions = {
+        state.state_id: {
+            action: action_prediction(
+                action,
+                utility=(
+                    1.0
+                    if action
+                    == ("M0+R0" if state in states_a else "ME+R0")
+                    else 0.0
+                ),
+            )
+            for action in state.allowed_actions
+        }
+        for state in states
+    }
+    model = fake_routing_model(predictions)
+    labels = [
+        make_label(
+            state,
+            action,
+            response=make_response(5.0 if state in states_a else 1.0),
+        )
+        for state in states
+        for action in state.allowed_actions
+    ]
+    pooled = evaluate_policy(model, states, labels)
+    balanced = evaluate_policy_domain_balanced(
+        model,
+        states,
+        labels,
+        domain_key=lambda state: "A" if state in states_a else "B",
+    )
+    assert pooled["mean_quality"] == pytest.approx(2.0 / 3.0)
+    assert balanced["mean_quality"] == pytest.approx(0.5)
+    assert balanced["domain_balancing"]["domain_weight"] == {
+        "A": 0.5,
+        "B": 0.5,
+    }
+    assert balanced["domain_balanced_action_distribution"] == pytest.approx(
+        {"M0+R0": 0.5, "ME+R0": 0.5}
+    )
+
+
 def test_default_bootstrap_group_is_user_id_not_state_id():
     states = [
         make_state(f"u{user}_s{state}", user_id=f"user_{user}")
@@ -585,6 +675,9 @@ def test_rule_residual_overrides_only_when_all_safe_delta_checks_pass():
 
 def test_algorithm_family_selection_is_train_user_group_disjoint():
     states = [make_state(f"cv_{index}") for index in range(6)]
+    domain_key = lambda state: (
+        "longitudinal" if int(state.state_id.rsplit("_", 1)[1]) < 3 else "esconv"
+    )
     labels = [
         make_label(
             state,
@@ -622,6 +715,7 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
             "absolute_outcome_factorized_hgb",
             "state_centered_paired_delta_hgb",
         ],
+        domain_key=domain_key,
     )
     assert selected in {
         "state_centered_paired_delta_hgb",
@@ -630,6 +724,17 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
     assert report["selection_data_role"] == "train_only"
     for fold in report["fold_assignments"]:
         assert set(fold["fit_users"]).isdisjoint(fold["validation_users"])
+        assert set(fold["fit_domain_counts"]) == {"longitudinal", "esconv"}
+        assert set(fold["validation_domain_counts"]) == {
+            "longitudinal",
+            "esconv",
+        }
+    for candidate in report["candidates"]:
+        for fold in candidate["folds"]:
+            assert fold["domain_balancing"]["domain_weight"] == {
+                "esconv": 0.5,
+                "longitudinal": 0.5,
+            }
 
 
 def test_training_rejects_composite_weight_hash_mismatch():

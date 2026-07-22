@@ -553,6 +553,7 @@ class PMV2Model:
         n_models: int,
         seed: int,
         bootstrap_group_key: str = "user_id",
+        domain_key: Callable[[PMV2State], str] | None = None,
         rule_router: Any | None = None,
         safe_thresholds: dict[str, float] | None = None,
     ) -> "PMV2Model":
@@ -664,14 +665,50 @@ class PMV2Model:
             state_totals[state.state_id] = state_totals.get(state.state_id, 0.0) + (
                 alias_weights[(state.state_id, action_id)]
             )
+        effective_domain_key = domain_key or (lambda _state: "default")
+        domain_by_state = {
+            state.state_id: str(effective_domain_key(state)) for state in states
+        }
+        if any(not value for value in domain_by_state.values()):
+            raise ValueError("routing-objective domain keys must be non-empty")
+        groups_by_domain: dict[str, set[str]] = {}
+        states_by_group: dict[tuple[str, str], set[str]] = {}
+        for state in states:
+            domain = domain_by_state[state.state_id]
+            group = str(state.user_id)
+            groups_by_domain.setdefault(domain, set()).add(group)
+            states_by_group.setdefault((domain, group), set()).add(state.state_id)
+        domains_present = sorted(groups_by_domain)
+        domain_weights = {
+            domain: 1.0 / len(domains_present) for domain in domains_present
+        }
         weights = np.asarray(
             [
-                alias_weights[(state.state_id, action_id)]
-                / state_totals[state.state_id]
+                (
+                    domain_weights[domain_by_state[state.state_id]]
+                    / len(groups_by_domain[domain_by_state[state.state_id]])
+                    / len(
+                        states_by_group[
+                            (domain_by_state[state.state_id], str(state.user_id))
+                        ]
+                    )
+                    * alias_weights[(state.state_id, action_id)]
+                    / state_totals[state.state_id]
+                )
                 for state, action_id in rows
             ],
             dtype=float,
         )
+        effective_weight_by_domain = {
+            domain: float(
+                sum(
+                    weight
+                    for weight, (state, _action_id) in zip(weights, rows, strict=True)
+                    if domain_by_state[state.state_id] == domain
+                )
+            )
+            for domain in domains_present
+        }
         self.routing_objective_head = BootstrapRegressor(
             n_models=int(n_models), seed=int(seed) + 211
         ).fit(x, np.asarray(targets, dtype=float), groups, weights)
@@ -686,6 +723,23 @@ class PMV2Model:
             "n_rows": len(rows),
             "bootstrap_group_key": bootstrap_group_key,
             "bootstrap_unique_groups": len(set(groups)),
+            "domain_dialogue_state_action_weighting": {
+                "protocol": "domain-then-group-then-state-then-alias-equalize-v1",
+                "domains_present": domains_present,
+                "domain_weight": domain_weights,
+                "effective_weight_by_domain": effective_weight_by_domain,
+                "groups_per_domain": {
+                    domain: len(groups_by_domain[domain])
+                    for domain in domains_present
+                },
+                "states_per_domain": {
+                    domain: sum(
+                        len(states_by_group[(domain, group)])
+                        for group in groups_by_domain[domain]
+                    )
+                    for domain in domains_present
+                },
+            },
             "rule_action_distribution": dict(
                 sorted(
                     {
@@ -1919,6 +1973,141 @@ def evaluate_policy(
     }
 
 
+def evaluate_policy_domain_balanced(
+    model: PMV2Model,
+    states: Sequence[PMV2State],
+    labels: Sequence[ActionLabel],
+    *,
+    domain_key: Callable[[PMV2State], str] | None = None,
+) -> dict[str, Any]:
+    """Evaluate a policy with equal top-level weight for each data domain.
+
+    Raw state counts are intentionally retained for completeness diagnostics,
+    while every scalar policy mean/rate used for model or rule selection is the
+    arithmetic mean of the corresponding within-domain statistic.  With no
+    ``domain_key`` this is exactly the legacy single-domain evaluation.
+    """
+
+    if domain_key is None:
+        result = evaluate_policy(model, states, labels)
+        result["domain_balanced_action_distribution"] = {
+            action_id: float(count) / float(result["n"])
+            for action_id, count in result["action_distribution"].items()
+        }
+        result["domain_balancing"] = {
+            "protocol": "equal-domain-policy-metrics-v1",
+            "domains_present": ["default"],
+            "domain_weight": {"default": 1.0},
+        }
+        return result
+    state_map = {state.state_id: state for state in states}
+    if len(state_map) != len(states) or not state_map:
+        raise ValueError("domain-balanced evaluation requires unique non-empty states")
+    domain_states: dict[str, list[PMV2State]] = {}
+    for state in states:
+        domain = str(domain_key(state))
+        if not domain:
+            raise ValueError("domain-balanced evaluation keys must be non-empty")
+        domain_states.setdefault(domain, []).append(state)
+    labels_by_domain: dict[str, list[ActionLabel]] = {
+        domain: [] for domain in domain_states
+    }
+    state_domain = {
+        state.state_id: domain
+        for domain, domain_rows in domain_states.items()
+        for state in domain_rows
+    }
+    for label in labels:
+        domain = state_domain.get(label.state_id)
+        if domain is None:
+            raise ValueError(
+                f"domain-balanced labels reference unknown state {label.state_id}"
+            )
+        labels_by_domain[domain].append(label)
+    per_domain = {
+        domain: evaluate_policy(
+            model, domain_states[domain], labels_by_domain[domain]
+        )
+        for domain in sorted(domain_states)
+    }
+    pooled = evaluate_policy(model, states, labels)
+    scalar_keys = (
+        "mean_quality",
+        "mean_risk",
+        "mean_realized_utility",
+        "mean_estimated_resource_cost",
+        "mean_normalized_estimated_resource_cost",
+        "mean_observed_input_tokens",
+        "mean_cost",
+        "m0_rate",
+        "r0_rate",
+        "learned_m0_rate",
+        "learned_r0_rate",
+        "nonfallback_m0_r0_rate",
+        "learned_m0_share",
+        "learned_r0_share",
+        "learned_decision_rate",
+        "fallback_rate",
+        "severe_ood_fallback_rate",
+        "no_feasible_fallback_rate",
+        "ood_fallback_rate",
+        "action_entropy_bits",
+        "learned_action_entropy_bits",
+        "learned_maximum_action_share",
+    )
+    for key in scalar_keys:
+        pooled[key] = float(
+            np.mean([float(row[key]) for row in per_domain.values()])
+        )
+    pooled["mean_response_dimensions"] = {
+        name: float(
+            np.mean(
+                [
+                    float(row["mean_response_dimensions"][name])
+                    for row in per_domain.values()
+                ]
+            )
+        )
+        for name in RESPONSE_FIELDS
+    }
+    domains = sorted(per_domain)
+    action_ids = sorted(
+        {
+            action_id
+            for row in per_domain.values()
+            for action_id in row["action_distribution"]
+        }
+    )
+    domain_balanced_action_distribution = {
+        action_id: float(
+            np.mean(
+                [
+                    float(row["action_distribution"].get(action_id, 0))
+                    / float(row["n"])
+                    for row in per_domain.values()
+                ]
+            )
+        )
+        for action_id in action_ids
+    }
+    pooled["domain_balanced_action_distribution"] = (
+        domain_balanced_action_distribution
+    )
+    pooled["domain_balancing"] = {
+        "protocol": "equal-domain-policy-metrics-v1",
+        "domains_present": domains,
+        "domain_weight": {domain: 1.0 / len(domains) for domain in domains},
+        "state_count": {
+            domain: len(domain_states[domain]) for domain in domains
+        },
+        "per_domain": {
+            domain: {key: value for key, value in row.items() if key != "rows"}
+            for domain, row in per_domain.items()
+        },
+    }
+    return pooled
+
+
 def tune_selection_config(
     model: PMV2Model,
     states: Sequence[PMV2State],
@@ -1933,6 +2122,7 @@ def tune_selection_config(
     objective_risk_weight: float = 0.25,
     objective_cost_weight: float = 0.10,
     objective_version: str = "pmv2-calibration-utility-v1",
+    domain_key: Callable[[PMV2State], str] | None = None,
 ) -> dict[str, Any]:
     """Tune only on a frozen calibration split.
 
@@ -1965,7 +2155,9 @@ def tune_selection_config(
                             }
                         )
                         model.selection_config = config
-                        metrics = evaluate_policy(model, states, labels)
+                        metrics = evaluate_policy_domain_balanced(
+                            model, states, labels, domain_key=domain_key
+                        )
                         objective = (
                             metrics["mean_quality"]
                             - float(objective_risk_weight) * metrics["mean_risk"]
@@ -2008,6 +2200,7 @@ def tune_selection_config(
             "cost_basis": "within_state_normalized_estimated_resource_cost",
             "observed_input_tokens_used": False,
         },
+        "domain_balancing_protocol": "equal-domain-policy-metrics-v1",
         "selected": best,
         "candidate_count": len(candidates),
         "pareto_candidates": sorted(valid, key=lambda row: row["objective"], reverse=True)[:25],

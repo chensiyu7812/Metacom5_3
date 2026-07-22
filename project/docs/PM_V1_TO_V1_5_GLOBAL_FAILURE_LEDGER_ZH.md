@@ -413,6 +413,15 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | V15-GRD-05 | C1 | production exact-25 合同与 6-state pilot 若共用一个“允许子集”的发布入口，会为正式数据留下绕过完整性门的后门 | pilot 与 full 使用不同 stage/identity；pilot 固定 6 个代表形状，只验证 provider-facing prompt/schema/postcondition且永不产出 production overlay；只有 full 的 25/25 结果可 materialize overlay | `CODE_CLOSED_DRY_RUN_PASS_FIRST_PAID_PILOT_FAILED_CLOSED` |
 | V15-GRD-06 | C1 | 首次真实 repair pilot 的公共 system prompt 允许“无额外信息时返回空 summary”，但冻结的两个 summary-repair 状态要求非空 summary；模型在第 2/6 条遵循前者返回空串，严格 postcondition 正确终止。若放松校验会破坏冻结的 summary-present 配平合同 | 不放松 validator；公共 prompt 改为服从逐任务 summary 规则，summary-required 分支显式要求非空且允许与 context 有限重叠；失败响应额外保存 parsed payload 便于审计。旧 identity 永久消费（2 次调用，1 成功/1 失败，真实费用 `$0.0001926`）；修复后必须产生新 dry-run identity 并重新批准 | `CODE_CLOSED_TARGETED_TEST_PASS_FRESH_DRY_RUN_PENDING` |
 
+### 6.11 双域训练与墙钟加速
+
+| ID | 级别 | 问题 | 永久修法/护栏 | 状态 |
+|---|---|---|---|---|
+| V15-DUAL-01 | C0 | 纵向合成域每个 state 有 16 个 memory/strategy action，而 ESConv auxiliary 是单 session、memory 结构性不可用且只有 `M0+R0/M0+RS`。若直接拼行或按 state/action 数加权，719-state 域或 16-action 域会仅凭行数支配 HGB、rule/CV 与 calibration，研究对象不再是同一 PM 在两个互补环境中的平衡 | 所有拟合与候选选择冻结为 domain→dialogue/user→state→action/prompt-alias 分层等权；报告每域有效总权重必须各为 0.5。底层 model/routing/rule/CV/calibration 原语与反向测试已完成，正式双域文件入口和分域 gate 尚未完成，不得声称联合训练已可运行 | `PRIMITIVES_CODE_CLOSED_FULL_TEST_PASS_FORMAL_ENTRY_PENDING` |
+| V15-DUAL-02 | C1 | 纵向 synthetic 的跨 split `current_user_text` 去重上限是生成合同；真实多轮 ESConv dialogue 会合法重复简短用户话。把前者的 `validate_split_manifests()` 原样套到 auxiliary 会把真实数据特性误判为泄漏，反过来放宽全局门又会破坏 synthetic 防 shortcut 合同 | 两域先各自执行来源匹配的 validator，再只执行共同的跨域 state/card/user ID、dialogue split、Bank-source 和 action/memory-availability 不变量；禁止用一个全局“最宽松 validator”替代两套域合同 | `CODE_CLOSED_TARGETED_REAL_DATA_DIAGNOSTIC_PASS` |
+| V15-DUAL-03 | C0 | 一个 PM 不等于一个 internal-test 文件。若 longitudinal 与 ESConv auxiliary 共用 seal/ledger/report，先读取一个域可能意外打开另一个域，失败重试或合并 gate 也会掩盖某域不成立 | 两个 internal label 文件训练前分别 seal；同一 candidate manifest 显式绑定两个 seal；模型、阈值与 comparators 全冻结后，按域使用独立 append-only ledger 各消费一次并分别报告，最后只做预注册的 conjunction，不以好域覆盖坏域 | `HOLDOUT_PRIMITIVES_CODE_CLOSED_FULL_TEST_PASS_FORMAL_ENTRY_PENDING` |
+| V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。当前仅冻结设计，未实现前所有 runner 继续按自身现状运行 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。
