@@ -27,7 +27,7 @@ the initial grandmother/grandfather mismatch).
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Sequence
+from typing import Annotated, Any, Mapping, Sequence
 
 from pydantic import Field
 
@@ -77,10 +77,44 @@ class FieldOnlyRepairOutput(StrictModel):
     session_summary: str = Field(min_length=0, max_length=MAX_CONTEXT_FIELD_CHARS)
 
 
+# Real corpus max observed history-turn length is 180 chars (checked
+# directly against every turn in data/pm_v1_5_formal_v8_18_duplicate_
+# repair_candidate); 400 gives real margin without being unbounded --
+# an unbounded per-item string here would repeat the exact
+# output_token_limit crash class this project already root-caused once
+# for SingleFieldDiagnosticOutput.
+MAX_REPAIRED_TURN_CONTENT_CHARS = 400
+
+
 class VisibleSurfaceRepairOutput(StrictModel):
-    repaired_turn_contents: list[str] = Field(min_length=1, max_length=8)
+    repaired_turn_contents: list[
+        Annotated[str, Field(max_length=MAX_REPAIRED_TURN_CONTENT_CHARS)]
+    ] = Field(min_length=1, max_length=8)
     authorized_user_context: str = Field(min_length=1, max_length=MAX_CONTEXT_FIELD_CHARS)
     session_summary: str = Field(min_length=0, max_length=MAX_CONTEXT_FIELD_CHARS)
+
+
+def maximum_legal_field_only_repair_output_tokens() -> int:
+    """Computed (not eyeballed) worst-case token estimate for a maximally-
+    sized, schema-legal FieldOnlyRepairOutput."""
+
+    worst_case = FieldOnlyRepairOutput(
+        authorized_user_context="x" * MAX_CONTEXT_FIELD_CHARS,
+        session_summary="x" * MAX_CONTEXT_FIELD_CHARS,
+    )
+    return estimate_tokens(canonical_json(worst_case.model_dump(mode="json")))
+
+
+def maximum_legal_visible_surface_repair_output_tokens() -> int:
+    """Computed (not eyeballed) worst-case token estimate for a maximally-
+    sized, schema-legal VisibleSurfaceRepairOutput (all 8 turns at the cap)."""
+
+    worst_case = VisibleSurfaceRepairOutput(
+        repaired_turn_contents=["x" * MAX_REPAIRED_TURN_CONTENT_CHARS] * 8,
+        authorized_user_context="x" * MAX_CONTEXT_FIELD_CHARS,
+        session_summary="x" * MAX_CONTEXT_FIELD_CHARS,
+    )
+    return estimate_tokens(canonical_json(worst_case.model_dump(mode="json")))
 
 
 _COMMON_REPAIR_SYSTEM = (

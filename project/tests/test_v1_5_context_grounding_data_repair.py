@@ -5,7 +5,10 @@ from pathlib import Path
 
 import pytest
 
+from pydantic import ValidationError
+
 from metacom_pm.v1_5_context_grounding_data_repair import (
+    MAX_REPAIRED_TURN_CONTENT_CHARS,
     FieldOnlyRepairOutput,
     VISIBLE_SURFACE_REPAIR_TURN_INDICES,
     VisibleSurfaceRepairOutput,
@@ -13,6 +16,8 @@ from metacom_pm.v1_5_context_grounding_data_repair import (
     apply_visible_surface_repair,
     build_field_only_repair_messages,
     build_visible_surface_repair_messages,
+    maximum_legal_field_only_repair_output_tokens,
+    maximum_legal_visible_surface_repair_output_tokens,
     repair_call_plan_row,
     validate_repair_allowlist_diff,
 )
@@ -243,3 +248,23 @@ def test_validate_rejects_a_role_change_for_visible_surface_repair() -> None:
             repaired_evaluator_context=context,
             repair_mode="VISIBLE_SURFACE_REPAIR",
         )
+
+
+def test_visible_surface_output_rejects_a_turn_over_the_length_cap() -> None:
+    with pytest.raises(ValidationError):
+        VisibleSurfaceRepairOutput(
+            repaired_turn_contents=["x" * (MAX_REPAIRED_TURN_CONTENT_CHARS + 1)],
+            authorized_user_context="fine.",
+            session_summary="",
+        )
+
+
+def test_worst_case_token_preflight_functions_are_real_and_positive() -> None:
+    field_only = maximum_legal_field_only_repair_output_tokens()
+    visible_surface = maximum_legal_visible_surface_repair_output_tokens()
+    assert field_only > 0
+    assert visible_surface > field_only  # 8 bounded turns dominate the payload
+    # Corpus's real observed max history-turn length is 180 chars; the 400-char
+    # cap must clear it with real margin -- if this ever regresses, the cap
+    # itself (not just this test) needs revisiting.
+    assert MAX_REPAIRED_TURN_CONTENT_CHARS > 180
