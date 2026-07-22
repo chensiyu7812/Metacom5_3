@@ -24,6 +24,7 @@ import argparse
 from pathlib import Path
 from typing import Any
 
+from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.config import load_config
 from metacom_pm.contracts import StrategyCard
 from metacom_pm.io import (
@@ -320,6 +321,39 @@ def main() -> None:
 
     verification_path = args.out_dir / "context_grounding_repair_recompile_verification.json"
     write_json(verification_path, verification)
+
+    # Downstream zero-API consumers (step0 shortcut audit, rule-grid
+    # preflight) require a real artifact_attestation.json binding this
+    # directory's states/evaluator_contexts to their real, hash-verified
+    # inputs -- the same stage name formal generation uses, since this
+    # recompilation stands in for it for the 25 repaired states.
+    attestation_path = args.out_dir / "artifact_attestation.json"
+    create_artifact_attestation(
+        attestation_path,
+        stage="pm_v1_5_development_data",
+        inputs={
+            "original_bundles": original_bundles_path,
+            "classification": args.classification,
+            "repair_overlays": args.repair_overlays,
+            "pm_v1_5_config": args.pm_v1_5_config,
+            "strategy_bank": args.strategy_bank,
+            "selected_seed_sources": args.selected_seed_sources,
+        },
+        outputs={
+            "states": (args.out_dir / "pm_v2_states.jsonl", True),
+            "bundles": (args.out_dir / "pm_v2_bundles.jsonl", True),
+            "evaluator_contexts": (args.out_dir / "evaluator_contexts.jsonl", True),
+            "backend": (args.out_dir / "memory_backend.jsonl", True),
+            "runtime_states": (args.out_dir / "runtime_states.jsonl", True),
+            "data_report": (args.out_dir / "pm_v2_data_report.json", False),
+        },
+        parameters={
+            "recompile_script": "scripts/v1_5/20f_recompile_context_grounding_repair_v1_5.py",
+            "repaired_state_count": verification["repaired_state_count"],
+        },
+        expected={"total_states": verification["total_states"]},
+    )
+
     print(
         {
             "status": "PASS",
@@ -328,6 +362,7 @@ def main() -> None:
             "repaired_state_count": verification["repaired_state_count"],
             "untouched_state_count": verification["untouched_state_count"],
             "verification_path": str(verification_path),
+            "attestation_path": str(attestation_path),
         }
     )
 
