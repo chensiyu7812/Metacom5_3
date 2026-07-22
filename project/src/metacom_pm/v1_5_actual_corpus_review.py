@@ -650,11 +650,19 @@ def _corrupt_actual_payload(
         turn["content"] = payload["current_user_text"]
         override = {"prior_user_turn": "copied_current_user_message"}
     elif field == "context_grounding_match":
+        # The donor's session_summary must be non-empty: a structurally
+        # absent (empty) summary is N/A, not evidence to be judged
+        # "supported"/"not_supported" against (see
+        # _actual_semantic_claim_and_evidence's N/A handling) -- a donor
+        # summary that happens to be empty is not a real negative control,
+        # since the fixed audit contract correctly never treats an empty
+        # summary as unsupported evidence.
         value = next(
             row["payload"]["session_summary"]
             for row in donors
             if row["payload"]["semantic_family"] != payload["semantic_family"]
             and row["payload"]["session_summary"] != payload["session_summary"]
+            and row["payload"]["session_summary"].strip()
         )
         payload["session_summary"] = value
         override = {"session_summary": value}
