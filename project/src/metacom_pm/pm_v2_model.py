@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from math import fsum
 from pathlib import Path
 from statistics import NormalDist
 from typing import Any, Callable, Iterable, Sequence
@@ -701,8 +702,8 @@ class PMV2Model:
         )
         effective_weight_by_domain = {
             domain: float(
-                sum(
-                    weight
+                fsum(
+                    float(weight)
                     for weight, (state, _action_id) in zip(weights, rows, strict=True)
                     if domain_by_state[state.state_id] == domain
                 )

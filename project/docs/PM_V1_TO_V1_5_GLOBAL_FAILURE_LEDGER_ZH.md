@@ -421,6 +421,7 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | V15-DUAL-02 | C1 | 纵向 synthetic 的跨 split `current_user_text` 去重上限是生成合同；真实多轮 ESConv dialogue 会合法重复简短用户话。把前者的 `validate_split_manifests()` 原样套到 auxiliary 会把真实数据特性误判为泄漏，反过来放宽全局门又会破坏 synthetic 防 shortcut 合同 | 两域先各自执行来源匹配的 validator，再只执行共同的跨域 state/card/user ID、dialogue split、Bank-source 和 action/memory-availability 不变量；禁止用一个全局“最宽松 validator”替代两套域合同 | `CODE_CLOSED_TARGETED_REAL_DATA_DIAGNOSTIC_PASS` |
 | V15-DUAL-03 | C0 | 一个 PM 不等于一个 internal-test 文件。若 longitudinal 与 ESConv auxiliary 共用 seal/ledger/report，先读取一个域可能意外打开另一个域，失败重试或合并 gate 也会掩盖某域不成立 | 两个 internal label 文件训练前分别 seal；同一 candidate manifest 显式绑定两个 seal；模型、阈值与 comparators 全冻结后，按域使用独立 append-only ledger 各消费一次并分别报告，最后只做预注册的 conjunction，不以好域覆盖坏域 | `HOLDOUT_PRIMITIVES_CODE_CLOSED_FULL_TEST_PASS_FORMAL_ENTRY_PENDING` |
 | V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。当前仅冻结设计，未实现前所有 runner 继续按自身现状运行 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
+| V15-DUAL-05 | C1 | routing objective 的 `effective_weight_by_domain` 报告曾用裸 `sum()` 聚合浮点权重；它不参与 HGB 拟合，却会进入 training report/downstream hash，在不同 CPython 浮点求和实现间可能产生末位差异并使相同科学计划出现不同 identity | 改用固定的 `math.fsum()`；回归测试要求两个域的有效权重精确等于 `0.5/0.5`，不再只用近似比较。训练正式入口仍须绑定单一冻结 runtime，但报告哈希不再依赖裸 `sum()` 的版本行为 | `CODE_CLOSED_TARGETED_TEST_PASS` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 

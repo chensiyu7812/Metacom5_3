@@ -535,9 +535,7 @@ def test_routing_objective_domain_key_equalizes_domains_and_alias_rows():
         "domain_dialogue_state_action_weighting"
     ]
     assert weighting["domain_weight"] == {"A": 0.5, "B": 0.5}
-    assert weighting["effective_weight_by_domain"] == pytest.approx(
-        {"A": 0.5, "B": 0.5}
-    )
+    assert weighting["effective_weight_by_domain"] == {"A": 0.5, "B": 0.5}
 
 
 def test_policy_metrics_equalize_domains_instead_of_raw_state_counts():
