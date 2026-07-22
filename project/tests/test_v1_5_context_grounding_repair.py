@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 from metacom_pm.io import write_jsonl
 from metacom_pm.v1_5_context_grounding_repair import (
+    DEFAULT_CLASSIFICATION_PATH,
     EXPECTED_DATA_DEFECT_COUNT,
     EXPECTED_FIELD_ONLY_REPAIR_COUNT,
     EXPECTED_INSTRUMENT_AMBIGUITY_COUNT,
@@ -18,13 +17,7 @@ from metacom_pm.v1_5_context_grounding_repair import (
     visible_surface_repair_state_ids,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
-CLASSIFICATION_PATH = (
-    ROOT
-    / "outputs"
-    / "pm_v1_5_actual_corpus_semantic_review_v8_18_deepseek_official_v2_candidate"
-    / "context_grounding_defect_classification.jsonl"
-)
+CLASSIFICATION_PATH = DEFAULT_CLASSIFICATION_PATH
 
 
 def _minimal_record(**overrides):

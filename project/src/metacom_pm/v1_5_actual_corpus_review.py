@@ -470,8 +470,12 @@ def _actual_semantic_claim_and_evidence(
         # One judge family systematically misread "candidate context fields"
         # as literal field names that must appear in the evidence text,
         # rejecting well-grounded contexts on that basis alone (verified
-        # against 67 real disagreements, all showing this exact
-        # misreading). The claim below states plainly which TEXT is being
+        # against 65 real disagreements showing this exact misreading; one
+        # further disagreement showed a related but distinct empty-summary-
+        # as-missing-evidence misreading, also fixed by the N/A handling
+        # below -- see data/pm_v1_5_contracts/context_grounding_defect_
+        # classification_v1.jsonl for the full, frozen per-state audit).
+        # The claim below states plainly which TEXT is being
         # verified and instructs the judge to evaluate facts, not field
         # names. A structurally absent (empty) session_summary is marked
         # N/A rather than posed as something to "support" -- an empty field

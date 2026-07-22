@@ -1901,6 +1901,25 @@
         "recovered_gate_summary": "Full 1880/1880 matrix aggregated via the same aggregate_actual_corpus_gate used by a live run: 544 real-case panel passes, 378 real-case disagreements retained (per panel_policy=unanimous-reject-disagreement-retained-v1), 14 real-case rejections (both judge families independently returned not_supported -- this is what drives status=FAIL and is a genuine audit finding about the real 468-state dataset, not a defect in this recovery), 3 control catches, 1 control disagreement, 0 control misses, deterministic_gate PASS, citation_audit integrity_rate=0.8218 (1545/1880) across the whole corpus. See recovered_gate_report.json for full detail.",
         "new_api_calls": 0,
         "new_cost_usd": 0.0
+      },
+      "context_grounding_audit_contract_incident": {
+        "protocol": "pm-v1.5-context-grounding-defect-classification-v1",
+        "status": "AUDIT_CONTRACT_FIXED_DATA_REPAIR_PENDING",
+        "finding": "Of the 14 real_case_rejections and 74 real_case_disagreements in recovered_gate_report.json (all on context_grounding_match), a full manual audit of all 88 states (plus 3 more found via an unconditional garbage-context scan, 91 total) found the claim wording itself ('both candidate context fields are supported', a self-referential meta-description) caused deepseek_official to systematically misread 'candidate context fields' as literal field names required in the evidence text -- 65/91 disagreements show this exact misreading, 1/91 shows a related empty-summary-as-missing-evidence misreading, both fixed by rewording the claim (commit 61f6609) with zero data change. The remaining 25/91 are genuine dataset defects in data/pm_v1_5_formal_v8_18_duplicate_repair_candidate: 19 FIELD_ONLY_REPAIR (garbage authorized_user_context or a fabricated/ungrounded fact, current_user_text/history internally consistent) and 6 VISIBLE_SURFACE_REPAIR (the visible dialogue itself names two different people/relations across turns, or an unresolved two-move narrative -- context/summary alone cannot honestly fix these).",
+        "classification_artifact_path": "data/pm_v1_5_contracts/context_grounding_defect_classification_v1.jsonl",
+        "classification_artifact_sha256": "a20a1003e02cccd42a9dedb720073a73172e0228e4638d2a5bbdc1f69d6b9af5",
+        "classification_artifact_note": "Originally written under this stage's (git-ignored) output_directory; moved byte-identical (same sha256) into this version-controlled data/pm_v1_5_contracts/ path so a fresh checkout or CI has it, not only local disk. Loader (metacom_pm.v1_5_context_grounding_repair.load_context_grounding_defect_classification) fails closed on any sha256 or count mismatch.",
+        "n_data_defect": 25,
+        "n_field_only_repair": 19,
+        "n_visible_surface_repair": 6,
+        "n_instrument_ambiguity": 66,
+        "wording_fix_dry_run": {
+          "cost_estimate_sha256": "6834a164495097f3acffabbb9c5e315e50d3e9c062b7bbf6ad02c119cd970640",
+          "note": "Diagnostic only, reflects the wording fix with ZERO data repair applied yet -- not an approvable execution identity. Will change once the 25 DATA_DEFECT states are actually repaired (repair-content generator not yet built). historical_carried_forward_calls=917, remaining_new_logical_calls=963 (940 context_grounding_match, all redone because every row's prompt changed; 23 advice_readiness_match calls that were only ever offline-recovered, never a real SUCCEEDED ledger event), maximum_estimated_usd=7.411672599999992.",
+          "new_api_calls": 0,
+          "new_cost_usd": 0.0
+        },
+        "next_step_not_yet_built": "A repair-content generator for the 25 DATA_DEFECT states (FIELD_ONLY_REPAIR: regenerate only authorized_user_context/session_summary, current_user_text/history frozen; VISIBLE_SURFACE_REPAIR: regenerate only the conflicting history turn(s), re-derive summary/context from the corrected dialogue, current_user_text/regime/semantic_family/turn-count/role-order frozen), plus a zero-API post-hoc allowlist-diff validator, plus a fresh dry-run against the repaired dataset. Needs its own fresh approval before any real API call; the 963-call context/advice re-judge above must not be executed under the current identity."
       }
     },
     "fixed_seeker_generation": {

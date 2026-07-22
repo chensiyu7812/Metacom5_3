@@ -45,6 +45,21 @@ CONTEXT_GROUNDING_DEFECT_CLASSIFICATION_PROTOCOL = (
     "pm-v1.5-context-grounding-defect-classification-v1"
 )
 
+# Canonical, version-controlled location. The classification was originally
+# written under outputs/pm_v1_5_actual_corpus_semantic_review_v8_18_
+# deepseek_official_v2_candidate/ -- real, but that whole directory is
+# git-ignored (like every other paid-run output directory in this project),
+# so a fresh checkout or CI would silently lack the file this loader's
+# frozen-sha256 gate depends on. Moved here, byte-identical (same sha256),
+# specifically so the classification is part of the repository, not only of
+# one machine's local disk.
+DEFAULT_CLASSIFICATION_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "data"
+    / "pm_v1_5_contracts"
+    / "context_grounding_defect_classification_v1.jsonl"
+)
+
 # Frozen once, at the time this classification was produced and independently
 # reviewed. Any future edit to the classification file must be a deliberate,
 # disclosed act (a fresh review), never a silent drift -- so this constant is
