@@ -11,6 +11,17 @@ which flipped 3 states' summary-presence and tripped
 summarize_observable_state_support's real hard-fail check
 ("... summary support drifted"). Fixed in v1_5_context_grounding_data_
 repair.py and mirrored in this overlay module; this test locks the fix in.
+
+The "leaves 443 untouched states identical" tests deliberately compare only
+the TEXT fields listed (current_user_text/history/summary/semantic_family/
+split/user_id/surface_form_id), not the full state object -- this test run
+uses a lightweight fixture encoder (not the real frozen BGE snapshot used
+for v8_18), so text_embedding/inventory.query_similarity_mean/
+step0_observation legitimately differ from the original for ALL 468 states
+regardless of which 25 were repaired. A real byte-for-byte-including-
+embedding certification requires running with the actual frozen encoder
+and is a separate, later step (real repair content also does not exist yet
+-- these tests use placeholder text).
 """
 
 from __future__ import annotations
@@ -116,6 +127,20 @@ def real_classification_sha256():
     return sha256_file(DEFAULT_CLASSIFICATION_PATH)
 
 
+@pytest.fixture(scope="module")
+def real_classification_records():
+    return load_context_grounding_defect_classification(DEFAULT_CLASSIFICATION_PATH)
+
+
+def _apply(bundles, overlays, classification_records, classification_sha256):
+    return apply_repair_overlay_to_bundles(
+        bundles=bundles,
+        overlays=overlays,
+        classification_records=classification_records,
+        expected_classification_sha256=classification_sha256,
+    )
+
+
 def test_find_bundle_location_maps_every_defect_state(real_bundles, real_classification_sha256) -> None:
     records = load_context_grounding_defect_classification(DEFAULT_CLASSIFICATION_PATH)
     defects = [r for r in records if r.classification == "DATA_DEFECT"]
@@ -129,12 +154,14 @@ def test_find_bundle_location_maps_every_defect_state(real_bundles, real_classif
         assert case_id.startswith("case_")
 
 
-def test_apply_overlay_changes_exactly_25_cases_and_leaves_443_byte_identical(
-    real_bundles, real_classification_sha256
+def test_apply_overlay_changes_exactly_25_cases_and_leaves_443_unchanged(
+    real_bundles, real_classification_sha256, real_classification_records
 ) -> None:
     overlays, defects = _build_placeholder_overlays(real_bundles, real_classification_sha256)
     assert len(overlays) == 25
-    patched_bundles = apply_repair_overlay_to_bundles(bundles=real_bundles, overlays=overlays)
+    patched_bundles = _apply(
+        real_bundles, overlays, real_classification_records, real_classification_sha256
+    )
 
     orig_by_case_id = {c.case_id: c for b in real_bundles for c in b.cases}
     changed_case_ids = {o.case_id for o in overlays}
@@ -148,26 +175,121 @@ def test_apply_overlay_changes_exactly_25_cases_and_leaves_443_byte_identical(
                 assert case.model_dump(mode="json") != original.model_dump(mode="json")
             else:
                 n_unchanged += 1
+                # These 443 ARE compared byte-for-byte here (this is the
+                # bundle-level GeneratedStateCase, not the recompiled
+                # PMV2State -- no encoder involved at this layer, so full
+                # equality is meaningful, unlike the post-recompilation
+                # comparison below).
                 assert case.model_dump(mode="json") == original.model_dump(mode="json")
     assert n_changed == 25
     assert n_unchanged == 443
 
 
-def test_apply_overlay_rejects_a_stale_original_case_hash(real_bundles, real_classification_sha256) -> None:
+def test_apply_overlay_rejects_a_stale_original_case_hash(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
     overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
-    tampered = overlays[0].model_copy(update={"original_bundle_case_sha256": "0" * 64})
+    tampered = list(overlays)
+    tampered[0] = tampered[0].model_copy(update={"original_bundle_case_sha256": "0" * 64})
     with pytest.raises(RuntimeError, match="stale or mismatched overlay"):
-        apply_repair_overlay_to_bundles(bundles=real_bundles, overlays=[tampered])
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_rejects_duplicate_state_id(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    duplicated = list(overlays) + [overlays[0]]
+    with pytest.raises(RuntimeError, match="duplicate state_id"):
+        _apply(real_bundles, duplicated, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_rejects_a_missing_defect_state(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    subset = list(overlays)[:-1]  # 24 of 25 -- a real missing-coverage bug
+    with pytest.raises(RuntimeError, match="do not exactly match"):
+        _apply(real_bundles, subset, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_rejects_a_state_not_in_the_frozen_defect_set(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    # Build one legitimate overlay for a real INSTRUMENT_AMBIGUITY state --
+    # i.e. one that should NOT be repaired at all -- and confirm it is
+    # refused rather than silently accepted as an "extra" repair.
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    ambiguity_record = next(
+        r for r in real_classification_records if r.classification == "INSTRUMENT_AMBIGUITY"
+    )
+    extra = build_repair_overlay_record(
+        record=ambiguity_record,
+        bundles=real_bundles,
+        classification_sha256=real_classification_sha256,
+        authorized_user_context="should never be applied.",
+        session_summary=None,
+        recent_dialogue_patch={},
+    )
+    with pytest.raises(RuntimeError, match="do not exactly match"):
+        _apply(
+            real_bundles,
+            list(overlays) + [extra],
+            real_classification_records,
+            real_classification_sha256,
+        )
+
+
+def test_apply_overlay_rejects_a_stale_classification_sha256(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    tampered = list(overlays)
+    tampered[0] = tampered[0].model_copy(update={"classification_sha256": "0" * 64})
+    with pytest.raises(RuntimeError, match="different classification_sha256"):
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_rejects_a_field_only_overlay_with_a_dialogue_patch(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    tampered = list(overlays)
+    for index, overlay in enumerate(tampered):
+        if overlay.repair_mode == "FIELD_ONLY_REPAIR":
+            tampered[index] = overlay.model_copy(
+                update={"recent_dialogue_patch": {0: "an unauthorized dialogue edit"}}
+            )
+            break
+    with pytest.raises(RuntimeError, match="must not carry a recent_dialogue_patch"):
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_rejects_an_off_spec_turn_index(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    tampered = list(overlays)
+    for index, overlay in enumerate(tampered):
+        if overlay.repair_mode == "VISIBLE_SURFACE_REPAIR":
+            # Patch an extra, off-spec turn index beyond the frozen set.
+            bad_patch = {**overlay.recent_dialogue_patch, 7: "an off-spec turn edit"}
+            tampered[index] = overlay.model_copy(update={"recent_dialogue_patch": bad_patch})
+            break
+    with pytest.raises(RuntimeError, match="frozen spec requires exactly"):
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
 
 
 def test_apply_overlay_preserves_summary_presence_for_originally_empty_states(
-    real_bundles, real_classification_sha256
+    real_bundles, real_classification_sha256, real_classification_records
 ) -> None:
     # state_44550214... has an originally-empty session_summary; even though
     # the overlay supplies a non-empty placeholder, it must be forced back
     # to empty -- this is the real bug the full recompilation test caught.
     overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
-    patched_bundles = apply_repair_overlay_to_bundles(bundles=real_bundles, overlays=overlays)
+    patched_bundles = _apply(
+        real_bundles, overlays, real_classification_records, real_classification_sha256
+    )
     by_case_id = {c.case_id: c for b in patched_bundles for c in b.cases}
     empty_summary_state_ids = {
         "state_44550214bf7c9fa22284a731",
@@ -187,9 +309,13 @@ def test_apply_overlay_preserves_summary_presence_for_originally_empty_states(
 
 
 @pytest.fixture(scope="module")
-def full_recompilation_report(real_bundles, real_classification_sha256, tmp_path_factory):
+def full_recompilation_report(
+    real_bundles, real_classification_sha256, real_classification_records, tmp_path_factory
+):
     overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
-    patched_bundles = apply_repair_overlay_to_bundles(bundles=real_bundles, overlays=overlays)
+    patched_bundles = _apply(
+        real_bundles, overlays, real_classification_records, real_classification_sha256
+    )
     split_by_user = split_by_user_from_existing_states(str(DATA_DIR / "pm_v2_states.jsonl"))
     strategy_cards = [
         StrategyCard.model_validate(row) for row in iter_jsonl(STRATEGY_BANK_PATH)

@@ -144,12 +144,97 @@ def apply_repair_overlay_to_bundles(
     *,
     bundles: Sequence[Any],
     overlays: Sequence[RepairOverlayRecord],
+    classification_records: Sequence[Any],  # ContextGroundingClassificationRecord
+    expected_classification_sha256: str,
 ) -> list[Any]:
     """Return a NEW list of GeneratedUserBundle objects with exactly the
     overlaid cases patched. Bundles containing no overlaid case are
     returned as the SAME object (guaranteeing byte-identical serialization
     for the 443 untouched cases); bundles with at least one overlaid case
-    get a fresh .model_copy with only the flagged case(s) replaced."""
+    get a fresh .model_copy with only the flagged case(s) replaced.
+
+    classification_records (the full, frozen 91-row classification) is the
+    single source of truth this function checks every overlay against --
+    it never trusts the overlay's own state_id/user_id/repair_mode/case_id
+    or the caller's choice of WHICH cases to patch:
+
+    - overlays must cover EXACTLY the classification's DATA_DEFECT state_ids
+      -- no missing state, no extra one, no duplicate.
+    - classification_sha256 must equal expected_classification_sha256 (the
+      real, frozen artifact hash) for every overlay.
+    - case_id is independently RE-DERIVED from the matching classification
+      record's (user_id, current_user_text) and must equal the overlay's
+      own case_id and user_id/repair_mode.
+    - FIELD_ONLY_REPAIR overlays must carry an EMPTY recent_dialogue_patch;
+      VISIBLE_SURFACE_REPAIR overlays' patch keys must equal EXACTLY the
+      frozen VISIBLE_SURFACE_REPAIR_TURN_INDICES for that state -- no
+      subset, no superset, no off-target turn.
+    """
+
+    from .v1_5_context_grounding_data_repair import VISIBLE_SURFACE_REPAIR_TURN_INDICES
+    from .v1_5_context_grounding_repair import data_defect_state_ids
+
+    if len({o.state_id for o in overlays}) != len(overlays):
+        raise RuntimeError("duplicate state_id among overlays")
+    if len({o.case_id for o in overlays}) != len(overlays):
+        raise RuntimeError("duplicate case_id among overlays")
+
+    expected_state_ids = data_defect_state_ids(classification_records)
+    overlay_state_ids = {o.state_id for o in overlays}
+    if overlay_state_ids != expected_state_ids:
+        missing = expected_state_ids - overlay_state_ids
+        extra = overlay_state_ids - expected_state_ids
+        raise RuntimeError(
+            "overlays do not exactly match the frozen DATA_DEFECT state_ids -- "
+            f"missing={missing or None}, extra={extra or None}"
+        )
+
+    records_by_state_id = {r.state_id: r for r in classification_records}
+    for overlay in overlays:
+        if overlay.classification_sha256 != expected_classification_sha256:
+            raise RuntimeError(
+                f"overlay for {overlay.state_id} is bound to a different "
+                "classification_sha256 than the frozen artifact -- refusing "
+                "a stale or mismatched overlay"
+            )
+        record = records_by_state_id[overlay.state_id]
+        if overlay.user_id != record.user_id:
+            raise RuntimeError(
+                f"overlay for {overlay.state_id} has user_id={overlay.user_id!r}, "
+                f"classification says {record.user_id!r}"
+            )
+        if overlay.repair_mode != record.repair_mode:
+            raise RuntimeError(
+                f"overlay for {overlay.state_id} has repair_mode="
+                f"{overlay.repair_mode!r}, classification says "
+                f"{record.repair_mode!r}"
+            )
+        real_case_id = find_bundle_location_for_state(
+            bundles=bundles, user_id=record.user_id, current_user_text=record.current_user_text
+        )
+        if overlay.case_id != real_case_id:
+            raise RuntimeError(
+                f"overlay for {overlay.state_id} has case_id={overlay.case_id!r}, "
+                f"but the classification's own (user_id, current_user_text) "
+                f"resolves to {real_case_id!r}"
+            )
+        if record.repair_mode == "FIELD_ONLY_REPAIR":
+            if overlay.recent_dialogue_patch:
+                raise RuntimeError(
+                    f"FIELD_ONLY_REPAIR overlay for {overlay.state_id} must not "
+                    "carry a recent_dialogue_patch"
+                )
+        elif record.repair_mode == "VISIBLE_SURFACE_REPAIR":
+            expected_indices = set(VISIBLE_SURFACE_REPAIR_TURN_INDICES[overlay.state_id])
+            actual_indices = set(overlay.recent_dialogue_patch)
+            if actual_indices != expected_indices:
+                raise RuntimeError(
+                    f"VISIBLE_SURFACE_REPAIR overlay for {overlay.state_id} patches "
+                    f"turn indices {sorted(actual_indices)}, but the frozen spec "
+                    f"requires exactly {sorted(expected_indices)}"
+                )
+        else:
+            raise RuntimeError(f"unsupported repair_mode: {record.repair_mode}")
 
     overlay_by_case_id = {overlay.case_id: overlay for overlay in overlays}
     seen_case_ids: set[str] = set()
