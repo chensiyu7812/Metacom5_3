@@ -278,6 +278,16 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   attempts，logical estimate `$2.36494155`、最坏上限 `$9.4597662`，cost identity
   `a4a1a94f…ee913`，call-plan SHA `3f473200…f75cc`，transport contract
   `0af7d371…40fdc`，budget gate PASS；尚未获批或执行真实调用。sweep judging、
+  旧正式 judging runner 仍是 29,952 logical calls 中任一单次失败即终止、每 call 只有
+  1 个 physical slot；现已在不改变双 judge、quality/risk prompt、schema、seed、阈值和
+  标签算法的前提下，单立 development-judging execution transport contract：每 logical
+  call 最多 4 个 ledger-visible physical attempts，只重试 429/408/5xx/timeout 与有界
+  provider-output 格式噪声；孤立的已知 provider failure 继续矩阵，连续 5 个同类失败熔断，
+  未完整矩阵固定为 `NONREPORTABLE_INCOMPLETE_MATRIX`。fresh continuation 只可从 call plan
+  逐字节相同的旧目录继承 `SUCCEEDED` 行，旧 ledger SHA 进入新 cost identity，避免一条
+  terminal failure 迫使约三万条成功判断全部重跑。因真实 7,488 outcomes 尚未产生，
+  29,952-call judging 的两次正式 dry-run 只能在 sweep 完成后计算，当前不得引用旧单次尝试
+  cost identity。
   联合训练、两个 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。
