@@ -190,16 +190,34 @@ def main() -> None:
     incomplete_call_keys = {str(row["call_key"]) for row in incomplete_calls}
     recovered_judgments: dict[str, dict[str, Any]] = {}
     recovery_detail: list[dict[str, Any]] = []
+    unrecoverable_calls: list[dict[str, Any]] = []
     for call_key in sorted(incomplete_call_keys):
         terminal = ledger.terminal_row(call_key)
         if terminal is None or terminal.get("event") != "FAILED":
             raise RuntimeError(f"expected a terminal FAILED row for {call_key}")
         retry_class = str((terminal.get("metadata") or {}).get("retry_class") or "")
         if retry_class != "structured_output_validation_error":
-            raise RuntimeError(
-                f"refusing mixed recovery: {call_key} has retry_class={retry_class!r}, "
-                "not structured_output_validation_error"
+            # A genuinely different failure class (e.g. output_token_limit --
+            # a truncated, incomplete provider response, not a complete-but-
+            # over-the-character-cap one) cannot be safely recovered offline:
+            # there is no guarantee the raw response even contains complete
+            # JSON. Leave it out of both recovered_judgments and the real/
+            # control result maps below -- aggregate_actual_corpus_gate's own
+            # contract check then honestly reports this packet as lacking
+            # the full two-family panel, rather than silently dropping it or
+            # crashing this otherwise-legitimate recovery of the other calls.
+            plan_row = call_plan_by_key[call_key]
+            unrecoverable_calls.append(
+                {
+                    "call_key": call_key,
+                    "case_item_id": plan_row["case_item_id"],
+                    "field": plan_row["field"],
+                    "judge_family": plan_row["judge_family"],
+                    "kind": plan_row["kind"],
+                    "retry_class": retry_class,
+                }
             )
+            continue
         result = terminal.get("result") or {}
         recovered = recover_length_bound_failure(
             raw_provider_response=result["provider_response"],
@@ -231,10 +249,16 @@ def main() -> None:
             }
         )
 
+    unrecoverable_call_keys = {str(row["call_key"]) for row in unrecoverable_calls}
     real_case_results: dict[str, dict[str, Any]] = {}
     control_results: dict[str, dict[str, Any]] = {}
     for row in call_plan:
         call_key = str(row["physical_call_key"])
+        if call_key in unrecoverable_call_keys:
+            # Deliberately no entry: this packet's family panel is left
+            # incomplete, which aggregate_actual_corpus_gate's own contract
+            # check reports honestly rather than papering over.
+            continue
         if call_key in recovered_judgments:
             judgment = recovered_judgments[call_key]
         else:
@@ -271,25 +295,36 @@ def main() -> None:
     citation_valid_count = sum(1 for row in recovery_detail if row["citation_valid"])
     recovery_report = {
         "protocol": OFFLINE_LENGTH_BOUND_RECOVERY_PROTOCOL,
-        "status": "RECOVERED",
+        "status": "RECOVERED" if not unrecoverable_calls else "PARTIALLY_RECOVERED",
         "note": (
-            "Post-run engineering-contract amendment: recovers 24 real "
-            "responses rejected only for exceeding SingleFieldDiagnosticOutput's "
-            "character-length caps (reason<=600, evidence_quotes<=320). Every "
-            "recovered response has a real, normal, non-truncated provider "
-            "finish reason; every other schema constraint that "
+            f"Post-run engineering-contract amendment: recovers "
+            f"{len(recovery_detail)} real responses rejected only for "
+            "exceeding SingleFieldDiagnosticOutput's character-length caps "
+            "(reason<=600, evidence_quotes<=320). Every recovered response "
+            "has a real, normal, non-truncated provider finish reason; "
+            "every other schema constraint that "
             "RecoveredSingleFieldDiagnosticOutput enforces (verdict enum, <=4 "
             "evidence items, non-empty, forbid extra fields) was re-verified, "
             "not bypassed. Evidence_keys/evidence_quotes length-equality is "
             "NOT a schema constraint on either model -- it is a citation-"
             "integrity check (assess_single_field_diagnostic_output), and is "
-            "reported honestly as such: 1 of the 24 recovered responses is "
-            "genuinely misaligned and is recorded citation_valid=false "
-            "(evidence_keys_and_quotes_not_aligned), never upgraded to valid. "
-            "Citation-integrity defects overall are disclosed honestly, never "
-            "upgraded to valid: report-only-not-outcome-v1 policy already "
-            "governs citation_valid for this stage and is unchanged by this "
-            "recovery. Zero new API calls; zero new cost."
+            f"reported honestly as such: {len(recovery_detail) - citation_valid_count} "
+            "of the recovered responses are genuinely misaligned and recorded "
+            "citation_valid=false, never upgraded to valid. Citation-integrity "
+            "defects overall are disclosed honestly, never upgraded to valid: "
+            "report-only-not-outcome-v1 policy already governs citation_valid "
+            "for this stage and is unchanged by this recovery. Zero new API "
+            "calls; zero new cost."
+            + (
+                f" {len(unrecoverable_calls)} incomplete call(s) could NOT be "
+                "recovered offline (a genuinely different failure class, e.g. "
+                "output_token_limit -- a truncated response, not a complete-"
+                "but-over-length one) and are left as a disclosed gap in "
+                "unrecoverable_calls; the aggregated gate below honestly "
+                "reports those packets as lacking a complete two-family panel."
+                if unrecoverable_calls
+                else ""
+            )
         ),
         "original_output_directory": str(out_dir),
         "original_physical_attempt_ledger_sha256": sha256_file(ledger_path),
@@ -297,21 +332,33 @@ def main() -> None:
         "n_citation_valid": citation_valid_count,
         "n_citation_invalid": len(recovery_detail) - citation_valid_count,
         "recovered_calls": recovery_detail,
+        "unrecoverable_calls": unrecoverable_calls,
     }
     write_json(out_dir / "recovery_report.json", recovery_report)
 
+    n_succeeded = len(call_plan) - len(incomplete_call_keys)
     recovered_gate_report = {
         "protocol": OFFLINE_LENGTH_BOUND_RECOVERY_PROTOCOL,
         "status": "RECOVERED_GATE_DECISION_POST_RUN_AMENDMENT",
         "note": (
             "Supersedes gate_report.json's INCOMPLETE_NO_GATE_DECISION via the "
             "offline recovery documented in recovery_report.json. gate_report.json "
-            "itself is left untouched. This aggregation includes all 1880/1880 "
-            "logical calls: 1856 original SUCCEEDED plus 24 recovered."
+            f"itself is left untouched. This aggregation includes {n_succeeded} "
+            f"original SUCCEEDED plus {len(recovery_detail)} recovered logical "
+            f"calls out of {len(call_plan)} planned"
+            + (
+                f"; {len(unrecoverable_calls)} call(s) remain genuinely "
+                "incomplete (see recovery_report.json's unrecoverable_calls) "
+                "and are honestly reflected as an incomplete panel in "
+                "aggregated_gate's contract_errors, not silently dropped."
+                if unrecoverable_calls
+                else "."
+            )
         ),
         "recovery_report_sha256": sha256_text(canonical_json(recovery_report)),
         "logical_calls_planned": len(call_plan),
         "logical_calls_recovered": len(recovery_detail),
+        "logical_calls_unrecoverable": len(unrecoverable_calls),
         "aggregated_gate": aggregated_gate,
     }
     write_json(out_dir / "recovered_gate_report.json", recovered_gate_report)
