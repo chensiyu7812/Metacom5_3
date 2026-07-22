@@ -4172,11 +4172,13 @@ def audit_cross_split_near_duplicates(
 def state_to_v1_runtime(state: PMV2State) -> RuntimeState:
     inventory = {}
     for source, summary in state.inventory.items():
-        fp = list(summary.catalog_embedding)
-        if len(fp) < 64:
-            fp = fp + [0.0] * (64 - len(fp))
-        elif len(fp) > 64:
-            fp = fp[:64]
+        # ``catalog_embedding`` is a transient construction value excluded
+        # from the serialized PMV2State by design.  Persisting it here made a
+        # runtime row impossible to reconstruct from its audited state and
+        # reintroduced the forbidden free catalog-vector surface through the
+        # legacy RuntimeState adapter.  The reportable Step-0 contract exposes
+        # only the paid/source-level query-similarity scalar below.
+        fp = [0.0] * 64
         semantic_representation_valid = bool(summary.representation_valid)
         inventory[source] = SourceCatalog(
             available=summary.available,

@@ -417,9 +417,17 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 
 | ID | 级别 | 问题 | 永久修法/护栏 | 状态 |
 |---|---|---|---|---|
-| V15-DUAL-01 | C0 | 纵向合成域每个 state 有 16 个 memory/strategy action，而 ESConv auxiliary 是单 session、memory 结构性不可用且只有 `M0+R0/M0+RS`。若直接拼行或按 state/action 数加权，719-state 域或 16-action 域会仅凭行数支配 HGB、rule/CV 与 calibration，研究对象不再是同一 PM 在两个互补环境中的平衡 | 所有拟合与候选选择冻结为 domain→dialogue/user→state→action/prompt-alias 分层等权；报告每域有效总权重必须各为 0.5。底层 model/routing/rule/CV/calibration 原语与反向测试已完成，正式双域文件入口和分域 gate 尚未完成，不得声称联合训练已可运行 | `PRIMITIVES_CODE_CLOSED_FULL_TEST_PASS_FORMAL_ENTRY_PENDING` |
+| V15-DUAL-01 | C0 | 纵向合成域每个 state 有 16 个 memory/strategy action，而 ESConv auxiliary 是单 session、memory 结构性不可用且只有 `M0+R0/M0+RS`。若直接拼行或按 state/action 数加权，719-state 域或 16-action 域会仅凭行数支配 HGB、rule/CV 与 calibration，研究对象不再是同一 PM 在两个互补环境中的平衡 | 所有拟合与候选选择冻结为 domain→dialogue/user→state→action/prompt-alias 分层等权；报告每域有效总权重必须各为 0.5。底层 model/routing/rule/CV/calibration 原语、正式双域入口与分域 gate 已完成并通过全量测试；仍须等待两域完整 labels，不能把“入口已完成”写成“训练已运行” | `CODE_CLOSED_FULL_TEST_PASS_REAL_INPUTS_PENDING` |
+
+### 6.12 actual-468 post-hoc instrument qualification
+
+| ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
+|---|---:|---|---|---|
+| V15-SEM-11 | C0 | V8.19.1 修复后真实案例一致拒绝已降为 0、25 个 repair 全部 attested、确定性检查全过，但原 actual-468 gate 因一个负控漏检和一个 provider 截断仍为 `FAIL`。直接要求 exact PASS 会永久阻断 sweep；直接把 FAIL 改名 PASS 又会伪造研究记录 | 新增独立 `pm-v1.5-actual-468-posthoc-instrument-qualification-v1`：原 gate 永久保留 FAIL；仅在 0 个真实一致拒绝、25 个 repair、468 个确定性检查全过、且残留恰好等于冻结的一个 control miss + 一个 truncation 时输出 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS`。报告同时冻结 316 个 panel disagreement 与 report-only citation 指标，并禁止继续调 prompt/control/阈值/数据。V8.19.2 真实 qualification report SHA=`638408e1…7d96`、contract SHA=`c6d40af1…79b7`、attestation SHA=`78cd0ace…a659`；sweep、judging、freeze 传播 admission mode/status，不得伪称原 gate PASS | `CODE_CLOSED_FULL_TEST_PASS_REAL_V8_19_2_QUALIFIED` |
+| V15-SEM-12 | C1 | recovered gate 保存的是 recovery report 的 canonical-JSON 内容哈希，而不是 pretty-printed 文件字节哈希；若 verifier 错用 `sha256_file` 会把真实一致的恢复血缘误判为漂移 | qualification builder 同时验证上游 canonical 内容哈希，并由新 artifact attestation 另外绑定当前 recovery 文件字节哈希；语义身份与磁盘身份分层，不放松任何校验 | `CODE_CLOSED_TARGETED_TEST_PASS` |
+| V15-DATA-18 | C0 | `ObservableSourceSummary.catalog_embedding` 明确是 exclude=True 的构造期临时量，但 `state_to_v1_runtime()` 曾把它写入 legacy `catalog_fingerprint`。因此落盘后的 audited PMV2 state 无法重建 runtime，468/468 lineage 全失败；更严重的是 runtime 重新携带了 P0-1 明确禁止的免费目录向量表面 | canonical runtime 的 64 维 legacy fingerprint 固定为全零，只保留正式、计费的 source-level query similarity；新增“公开 state JSON round-trip 后 runtime 完全一致”回归测试。V8.19.2 已零 API 完整重编译：468/468 runtime lineage PASS，runtime SHA=`5ff31de1…7ded`；states、evaluator contexts、memory backend 与 bundles 相对 V8.19.1 字节不变，因此不重跑 actual-468 judge；Step-0 shortcut audit 与 rule-grid preflight 均在新身份上 PASS | `CODE_CLOSED_FULL_TEST_PASS_REAL_V8_19_2_RECOMPILE_AND_PREFLIGHT_PASS` |
 | V15-DUAL-02 | C1 | 纵向 synthetic 的跨 split `current_user_text` 去重上限是生成合同；真实多轮 ESConv dialogue 会合法重复简短用户话。把前者的 `validate_split_manifests()` 原样套到 auxiliary 会把真实数据特性误判为泄漏，反过来放宽全局门又会破坏 synthetic 防 shortcut 合同 | 两域先各自执行来源匹配的 validator，再只执行共同的跨域 state/card/user ID、dialogue split、Bank-source 和 action/memory-availability 不变量；禁止用一个全局“最宽松 validator”替代两套域合同 | `CODE_CLOSED_TARGETED_REAL_DATA_DIAGNOSTIC_PASS` |
-| V15-DUAL-03 | C0 | 一个 PM 不等于一个 internal-test 文件。若 longitudinal 与 ESConv auxiliary 共用 seal/ledger/report，先读取一个域可能意外打开另一个域，失败重试或合并 gate 也会掩盖某域不成立 | 两个 internal label 文件训练前分别 seal；同一 candidate manifest 显式绑定两个 seal；模型、阈值与 comparators 全冻结后，按域使用独立 append-only ledger 各消费一次并分别报告，最后只做预注册的 conjunction，不以好域覆盖坏域 | `HOLDOUT_PRIMITIVES_CODE_CLOSED_FULL_TEST_PASS_FORMAL_ENTRY_PENDING` |
+| V15-DUAL-03 | C0 | 一个 PM 不等于一个 internal-test 文件。若 longitudinal 与 ESConv auxiliary 共用 seal/ledger/report，先读取一个域可能意外打开另一个域，失败重试或合并 gate 也会掩盖某域不成立 | 两个 internal label 文件训练前分别 seal；同一 candidate manifest 显式绑定两个 seal；模型、阈值与 comparators 全冻结后，按域使用独立 append-only ledger 各消费一次并分别报告，最后只做预注册的 conjunction，不以好域覆盖坏域 | `CODE_CLOSED_FULL_TEST_PASS_REAL_SEAL_AND_CONSUMPTION_PENDING` |
 | V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。当前仅冻结设计，未实现前所有 runner 继续按自身现状运行 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
 | V15-DUAL-05 | C1 | routing objective 的 `effective_weight_by_domain` 报告曾用裸 `sum()` 聚合浮点权重；它不参与 HGB 拟合，却会进入 training report/downstream hash，在不同 CPython 浮点求和实现间可能产生末位差异并使相同科学计划出现不同 identity | 改用固定的 `math.fsum()`；回归测试要求两个域的有效权重精确等于 `0.5/0.5`，不再只用近似比较。训练正式入口仍须绑定单一冻结 runtime，但报告哈希不再依赖裸 `sum()` 的版本行为 | `CODE_CLOSED_TARGETED_TEST_PASS` |
 
@@ -536,7 +544,7 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 ### 10.3 7,488-action sweep 前
 
 - 468/468 states 完整且无 deterministic fallback；
-- actual-468 structured QA v3 PASS：4 个代码事实全过；context/readiness 原子 panel 无一致否定；负控无一致漏检；分歧与 citation 缺陷完整报告；
+- actual-468 admission：优先接受 structured QA v3 exact PASS；本次 V8.19.2 只允许使用独立的 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS`，且原 gate 必须仍为 FAIL、真实一致否定为 0、25 个 repair attested、4 个代码事实全过、残留必须精确等于冻结的 1 个负控漏检和 1 个 provider 截断；分歧与 citation 缺陷完整报告；
 - required-hit 只按预注册 positive challenge 规则检查；
 - train-only oracle / all-split structural shortcut audit PASS；
 - outcome-free train/calibration rule-grid mapping/disagreement preflight PASS；

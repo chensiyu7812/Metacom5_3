@@ -50,6 +50,9 @@ from metacom_pm.response_mechanism_contract import build_response_mechanism_cont
 from metacom_pm.v1_5_actual_corpus_review import (
     require_actual_corpus_semantic_review_pass,
 )
+from metacom_pm.v1_5_actual_corpus_qualification import (
+    require_actual_corpus_posthoc_qualification,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -356,6 +359,20 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--actual-corpus-qualification-report",
+        type=Path,
+        help=(
+            "Frozen post-hoc instrument-qualification addendum. When supplied "
+            "with its attestation, the original review remains FAIL and this "
+            "narrow qualification is used instead of claiming gate PASS."
+        ),
+    )
+    parser.add_argument(
+        "--actual-corpus-qualification-attestation",
+        type=Path,
+        help="Companion attestation for --actual-corpus-qualification-report.",
+    )
+    parser.add_argument(
         "--step0-shortcut-audit-report",
         type=Path,
         default=(
@@ -604,16 +621,38 @@ def main() -> None:
                     "formal sweep refuses direct legacy V4/pilot inputs; use the "
                     "attested development corpus plus actual structured QA v3"
                 )
-            actual_corpus_verification = require_actual_corpus_semantic_review_pass(
-                args.actual_corpus_semantic_review_report,
-                args.actual_corpus_semantic_review_attestation,
-                expected_experiment_config_path=args.config,
-                expected_states_path=pm_v2_states_path,
-                expected_evaluator_contexts_path=evaluator_contexts_path,
-                expected_backend_path=args.backend,
-                expected_strategy_bank_path=args.strategy_bank,
-                expected_pm_config_path=args.pm_v2_config,
+            qualification_args = (
+                args.actual_corpus_qualification_report,
+                args.actual_corpus_qualification_attestation,
             )
+            if any(value is not None for value in qualification_args) and not all(
+                value is not None for value in qualification_args
+            ):
+                raise RuntimeError(
+                    "actual-corpus qualification report and attestation must be supplied together"
+                )
+            if all(value is not None for value in qualification_args):
+                actual_corpus_verification = require_actual_corpus_posthoc_qualification(
+                    args.actual_corpus_qualification_report,
+                    args.actual_corpus_qualification_attestation,
+                    expected_experiment_config_path=args.config,
+                    expected_states_path=pm_v2_states_path,
+                    expected_evaluator_contexts_path=evaluator_contexts_path,
+                    expected_backend_path=args.backend,
+                    expected_strategy_bank_path=args.strategy_bank,
+                    expected_pm_config_path=args.pm_v2_config,
+                )
+            else:
+                actual_corpus_verification = require_actual_corpus_semantic_review_pass(
+                    args.actual_corpus_semantic_review_report,
+                    args.actual_corpus_semantic_review_attestation,
+                    expected_experiment_config_path=args.config,
+                    expected_states_path=pm_v2_states_path,
+                    expected_evaluator_contexts_path=evaluator_contexts_path,
+                    expected_backend_path=args.backend,
+                    expected_strategy_bank_path=args.strategy_bank,
+                    expected_pm_config_path=args.pm_v2_config,
+                )
             shortcut_audit_verification = require_step0_shortcut_audit_pass(
                 args.step0_shortcut_audit_report,
                 args.step0_shortcut_audit_attestation,
@@ -652,7 +691,10 @@ def main() -> None:
                 "protocol": (
                     "pm-v1.5-actual-corpus-and-shortcut-gate-v3"
                 ),
-                "status": "PASS",
+                "status": actual_corpus_verification["status"],
+                "actual_corpus_admission_mode": actual_corpus_verification.get(
+                    "mode", "ORIGINAL_GATE_PASS"
+                ),
                 "human_calibration_performed": False,
                 "actual_corpus_review_report_sha256": (
                     actual_corpus_verification["report_sha256"]
@@ -970,6 +1012,18 @@ def main() -> None:
             "step0_shortcut_audit_report_sha256": semantic_sanity[
                 "step0_shortcut_audit_report_sha256"
             ],
+            **(
+                {
+                    "actual_corpus_admission_mode": semantic_sanity[
+                        "actual_corpus_admission_mode"
+                    ],
+                    "actual_corpus_admission_status": semantic_sanity["status"],
+                    "original_actual_corpus_gate_status": "FAIL",
+                }
+                if semantic_sanity.get("actual_corpus_admission_mode")
+                == "POSTHOC_INSTRUMENT_QUALIFICATION"
+                else {}
+            ),
         }
     estimate, rows = plan_action_sweep(
         args.runtime,

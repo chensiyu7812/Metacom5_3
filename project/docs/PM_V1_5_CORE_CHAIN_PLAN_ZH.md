@@ -216,14 +216,14 @@ external 付费生成前失败。
 | 2.1（已消费校准） | `v1_5/20c_prepare_v4_single_field_diagnostic_v1_5.py` + `20d_run_v4_single_field_diagnostic_v1_5.py` | V4.2 实际 8 logical / 12 physical | 8/8 完成；确定性=1.0、verdict=.875、citation=.875。Gemini 一次 citation section 不足；DeepSeek 一次把 `explore_first` 错当成必须出现“ready”字样。identity 永久 consumed；结果只用于修订正式测量合同 |
 | 2.2（已落实为正式合同） | actual-468 structured QA v3 | 0（合同/测试） | 4 个确定性字段代码硬验；仅 context grounding、advice readiness 进入原子双家族 panel；readiness 有明确操作定义；引用只报告。不得把分歧改写成 gold 或据此调样本/阈值 |
 | 3 | `v1_5/20_generate_pm_v2_development_data_v1_5.py` | 成功路径 468；最多 936 个 content attempts；每个 content attempt 最多 3 个独立 transport slots，physical 硬上限 2,808 | exact V8.11.1 attestation 的路径、raw/internal SHA 与 contract SHA 进入 cost identity；52 users × 9 个逐例 surface，每例最多一次 content repair，transport retry 不消耗 repair；允许的同文反事实由 history/catalog 区分且逐 bundle/split 审计；468 states 完整并反平衡 |
-| 3.5 | V8.19 actual-468 structured QA delta review | 完整矩阵仍为 1,880 logical calls；只允许按 call-key、prompt hash、旧 ledger hash 和新 evaluator corpus hash 继承未变化结果；新增调用数与 physical/cost 上限只认两次独立 dry-run | V8.19 修复 overlay、canonical 全量重编译与 attestation 完整；4 个 deterministic fields 全部 PASS；真实 packet 无双家族一致 `not_supported`；负控无双家族一致漏检；分歧与 citation 如实报告。任何 incomplete/FAIL 都停止，不得靠再次改数据追门 |
+| 3.5 | V8.19.2 actual-468 structured QA lineage + 冻结 post-hoc instrument qualification | 完整矩阵仍为 1,880 logical calls；只允许按 call-key、prompt hash、旧 ledger hash 和新 evaluator corpus hash 继承未变化结果；新增调用数与 physical/cost 上限只认两次独立 dry-run | 原 gate **永久保留 FAIL**，不得改写为 PASS。25/25 缺陷修复有 canonical 重编译与 attestation；4 个 deterministic fields 全部 PASS；真实 packet 双家族一致 `not_supported` 为 0。仅允许以独立状态 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS` 放行 development sweep：冻结披露 1 个负控一致漏检、1 个 provider 截断、316 个按预注册 panel policy 保留的分歧及 report-only citation 完整率；此后不再改 prompt/control/阈值/数据。论文必须称其为 post-hoc instrument qualification，不能称原 gate PASS 或 held-out confirmation |
 | 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
 | 3.7 | `v1_5/20b_preflight_rule_grid_v1_5.py` | 0 | 只读 train/calibration states、不读 outcome/internal；候选至少形成 2 种 state-level policy mapping，且最大 pairwise disagreement 不低于冻结下限；报告在 sweep/训练前绑定 |
 | 3.8 | `v1_5/12b_build_esconv_auxiliary_v1_5.py` 及三 split 无 API preflight | 0 | 冻结 52 个 bank-disjoint ESConv train dialogue、719 states（318/170/231）和仅 `M0+R0/M0+RS` 合法动作；不读 ESConv gold response/strategy/outcome；held-out ESConv test 不被读取 |
 | 3.9 | ESConv auxiliary 两动作 generation + judging | 1,438 唯一 outcomes；质量/风险双家族上界 5,752 judge calls；实际物理调用与预算只认 dry-run | generation/judging 机制 pilot 已通过后才运行 full 719；train/calibration/internal-test 均完整，label reliability 与 judge-health gates PASS；internal-test 产物在模型选择冻结前保持 sealed |
-| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 logical action outcomes；prompt-equivalent actions 允许共享一次物理生成，但必须物化全部 7,488 行 | 验证 actual-468 structured QA、Step-0 shortcut 与 response-mechanism attestation PASS；真正 `scope=full`；每 state × 16 requested actions 完整，alias/cost lineage 可审计 |
+| 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 logical action outcomes；prompt-equivalent actions 允许共享一次物理生成，但必须物化全部 7,488 行 | 验证 actual-468 的 exact PASS **或**上述独立、内容寻址的 post-hoc qualification（二者不得混称）、Step-0 shortcut 与 response-mechanism attestation；真正 `scope=full`；每 state × 16 requested actions 完整，alias/cost lineage 可审计 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 7,488 × quality/risk × 2 judge families = 29,952 logical labels；完全相同 prompt/response/evidence 可按冻结 equivalence class 共享物理判断 | 全部 requested-action labels 可恢复；alias class size 进入训练权重而不伪增样本；完整性与 judge-health gates PASS |
-| 6 | `v1_5/22_train_pm_v2_v1_5.py` 联合双域训练 | 0 | 入口现场重验 exact runtime；只用两个域各自 train/calibration 调参；冻结 domain→dialogue/user→state→action/alias 权重；模型选择后才分别一次性消费 longitudinal 与 ESConv-aux internal-test；任一必需 gate 不完整则停止 |
+| 6 | `v1_5/22a_train_pm_v2_dual_domain_v1_5.py` 联合双域训练 | 0 | 入口现场重验 exact runtime；只用两个域各自 train/calibration 调参；冻结 domain→dialogue/user→state→action/alias 权重；模型选择后才分别一次性消费 longitudinal 与 ESConv-aux internal-test；任一必需 gate 不完整则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
 | 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + `13_preflight_esconv_policy_v1_5.py` | 0 | 使用同一 PMV2 checkpoint、同一 BAAI/Step-0 与 transparent rule；自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；仅允许 `M0+R0/M0+RS`，policy choice 不读 gold response/strategy |
 | 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` | 由 dry-run 给出；当前数据设计为 1,020 个 seeker turns | 完整、无 truncation、独立 V1.5 bundle |
@@ -250,12 +250,12 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
 
 - 52-user/468-state 纵向 development corpus 已完成；actual-468 首轮审计暴露了
   measurement wording ambiguity 和 25 个真实 context defects。25 个状态已通过窄字段
-  repair overlay 在 V8.19.1 中 canonical 重编译并逐项解决（双家族一致拒绝由 14 降为
+  repair overlay canonical 重编译并逐项解决（双家族一致拒绝由 14 降为
   0）。审计仍诚实保留 1 个 control 宽松漏检与 1 个不可恢复的截断调用，因此不能把
   测量工具写成“无缺陷 PASS”；按预注册停止规则将其作为已披露的 instrument limitation，
-  不再反复调 prompt/control 追求全绿。注意当前正式 sweep 代码仍要求 exact
-  `status=PASS` attestation；在显式冻结一份“不放松真实数据门、仅承认测量工具残余缺口”
-  的协议修订前，longitudinal sweep dry-run 必须继续 fail closed，不能静默绕过。
+  不再反复调 prompt/control 追求全绿。独立的 post-hoc qualification 已在 V8.19.2
+  内容寻址冻结为 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS`；原 gate
+  永久保留 `FAIL`。sweep、judging 与 freeze 已能 fail-closed 地传播二者而不混称。
 - 719-state ESConv auxiliary 输入已构建完成：52 个与 Strategy Bank 来源零重合的
   train dialogues，split 为 train 318 states/24 dialogues、calibration 170/12、
   internal-test 231/16。只完成了小规模 generation/judging 机制 pilot；完整 719-state
@@ -268,8 +268,13 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   NOT_SUPPORTED”。旧 `22_train_pm_v2_v1_5.py` 保留为单域回退，不得用于正式双域结论。
   该入口仍需等待 719-state auxiliary 与 longitudinal sweep 的完整 labels 才能真实训练；
   “代码入口完成”不等于“模型已经训练”。
-- Step-0 shortcut audit 与 transparent rule-grid preflight 已在 V8.19.1 上零 API 实跑
-  PASS，并由输入 hash/attestation 绑定。longitudinal full action sweep、sweep judging、
+- `catalog_embedding` 向 legacy runtime 泄漏且无法从落盘 state 重建的问题已修复；V8.19.2
+  零 API 重编译后 468/468 runtime lineage PASS，且 states/evaluator contexts/memory backend/
+  bundles 相对 V8.19.1 字节不变，因此不需要重跑 actual-468 judge。Step-0 shortcut audit 与
+  transparent rule-grid preflight 已在 V8.19.2 上零 API 实跑 PASS，并由输入
+  hash/attestation 绑定。longitudinal full action sweep 的两次独立 dry-run 也已字节一致：
+  7,488 logical/physical calls，cost identity `faf13c51…f93c69`，保守估算 `$2.36494155`，
+  budget gate PASS；尚未获批或执行真实调用。sweep judging、
   联合训练、两个 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。
@@ -294,7 +299,8 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
    需要重新做 compatibility pilot，不能在正式 sweep 中途临时换端点；
 5. 准备论文表格骨架与自动报告，不读取 internal/external outcome。
 
-付费执行仍按依赖顺序：V8.19 actual gate PASS → auxiliary full labels 与 longitudinal
+付费执行仍按依赖顺序：V8.19.2 actual corpus 通过 exact PASS 或冻结的 post-hoc
+qualification admission → auxiliary full labels 与 longitudinal
 full sweep 可在资源不冲突时并行 → 两域 labels 完整 → 联合训练 → 两个 internal gates →
 freeze → 两项外部评测。不能为了“并行”在 freeze 前偷看 internal-test，或在一个外部
 结果出现后修改 PM 再跑另一个外部环境。
@@ -323,6 +329,12 @@ generator prompt（包含检索 evidence、compiler 输出和生成参数）逐�
 向 alias 物化；judge 侧只有在 response、evidence、rubric、schema、judge endpoint/model
 全部相同且 equivalence hash 相等时才可判断一次。每个 requested action 的 action/cost
 标签继续保留，训练按 equivalence class size 逆权重，不能把 alias 当作独立证据。
+
+纯本地检索也允许同一 sweep invocation 内的确定性只读缓存：同一 observable query 对
+同一冻结 Strategy Bank/top-k/score-floor 的结果只计算一次，再为该 state 的多个 RS
+requested actions 返回副本。缓存不得跨 contract identity 持久化，也不得改变检索顺序、
+evidence、attempt 行、prompt 或 action lineage；必须有回归测试证明 16 个逻辑 action 仍
+全部物化。该缓存只消除对 11,590 张卡的重复词法扫描，不构成 Hybrid、向量检索或方法变更。
 
 禁止用以下方式“提速”：删掉 DeepSeek/Gemini 任一家、合并 quality 与 risk rubric、减少
 state/action、抽样替代正式矩阵、跨 ESConv/EvoEmo 合并结果、调低 validator，或把 provider
@@ -399,8 +411,9 @@ judging、domain/alias weighting、sealed internal holdout、fixed baselines、�
 
 剩余主线必须按第 4 节推进：
 
-1. 冻结 V8.19.1 actual-468 的数据修复结果与已披露测量局限，不再 outcome-driven 微调；
-2. 复用已经按 V8.19.1 输入 hash/attestation PASS 的 Step-0 shortcut 与 rule-grid 审计；
+1. 使用已冻结的 V8.19.2 actual-468 qualification，不再 outcome-driven 微调；
+2. 使用已按 V8.19.2 输入 hash/attestation PASS 的 Step-0 shortcut、rule-grid 审计与
+   两次可复现 full-sweep dry-run；
 3. 完成 719-state auxiliary 两动作 generation/judging 与 468×16 longitudinal
    full sweep/judging；
 4. 联合训练同一个 PM，冻结选择后分别一次性消费两个 internal-test；

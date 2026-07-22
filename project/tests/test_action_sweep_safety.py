@@ -852,6 +852,44 @@ def test_action_sweep_plan_is_exact_and_does_not_need_api_key(
     assert len(estimate["cost_estimate_sha256"]) == 64
 
 
+def test_action_sweep_caches_identical_strategy_query_without_changing_rows(
+    tmp_path, monkeypatch, tiny_state, tiny_memories, tiny_strategy
+):
+    import metacom_pm.sweep as sweep_module
+
+    runtime = tmp_path / "runtime.jsonl"
+    backend = tmp_path / "backend.jsonl"
+    strategies = tmp_path / "strategies.jsonl"
+    write_jsonl(runtime, [tiny_state.model_dump(mode="json")])
+    write_jsonl(
+        backend,
+        [MemoryBackendRecord(card_id=tiny_state.card_id, items=tiny_memories).model_dump(mode="json")],
+    )
+    write_jsonl(strategies, [tiny_strategy.model_dump(mode="json")])
+    original_retrieve = sweep_module.StrategyRetriever.retrieve
+    calls = 0
+
+    def counted_retrieve(self, query):
+        nonlocal calls
+        calls += 1
+        return original_retrieve(self, query)
+
+    monkeypatch.setattr(sweep_module.StrategyRetriever, "retrieve", counted_retrieve)
+    endpoint = Endpoint("https://invalid.example", "fixture", "UNSET", family="test")
+    estimate, rows = plan_action_sweep(
+        runtime,
+        backend,
+        strategies,
+        endpoint=endpoint,
+        request_retries=1,
+        input_usd_per_mtok=1.0,
+        output_usd_per_mtok=2.0,
+    )
+    assert any(row["action_id"].endswith("+RS") for row in rows)
+    assert calls == 1
+    assert estimate["logical_api_calls"] == len(rows)
+
+
 def test_action_sweep_deduplicates_filter_collapsed_prompts(
     tmp_path, monkeypatch, tiny_state, tiny_memories, tiny_strategy
 ):

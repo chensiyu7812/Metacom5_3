@@ -748,6 +748,27 @@ def require_v1_5_development_chain(
         != semantic_review.get("actual_corpus_review_report_sha256")
         or full_gate.get("actual_corpus_review_attestation_sha256")
         != semantic_review.get("actual_corpus_review_attestation_sha256")
+        or full_gate.get("actual_corpus_admission_mode")
+        != (
+            semantic_review.get("actual_corpus_admission_mode")
+            if semantic_review.get("actual_corpus_admission_mode")
+            == "POSTHOC_INSTRUMENT_QUALIFICATION"
+            else None
+        )
+        or full_gate.get("actual_corpus_admission_status")
+        != (
+            semantic_review.get("status")
+            if semantic_review.get("actual_corpus_admission_mode")
+            == "POSTHOC_INSTRUMENT_QUALIFICATION"
+            else None
+        )
+        or full_gate.get("original_actual_corpus_gate_status")
+        != (
+            "FAIL"
+            if semantic_review.get("actual_corpus_admission_mode")
+            == "POSTHOC_INSTRUMENT_QUALIFICATION"
+            else None
+        )
         or len(
             str(full_gate.get("step0_shortcut_audit_report_sha256") or "")
         )

@@ -8,6 +8,8 @@ import time
 from .api import (
     Endpoint,
     OpenAICompatibleClient,
+    ProviderRequestError,
+    RetryableProviderError,
     request_log,
     require_reported_usage,
 )
@@ -16,6 +18,12 @@ from .attempt_ledger import (
     PersistentAttemptLedger,
     forbid_overwrite_of_spent_attempts,
     physical_call_key,
+)
+from .bounded_retry import (
+    DEFAULT_BACKOFF_SECONDS,
+    DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS,
+    call_retry_blocker,
+    execute_with_bounded_retry,
 )
 from .artifacts import create_artifact_attestation
 from .action_execution import (
@@ -50,6 +58,28 @@ from .prompts import generation_messages, BASE_SUPPORTER_SYSTEM
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
 from .text import conservative_token_bound, estimate_tokens
 from .sampling import select_stratified_card_ids
+
+
+class _QueryCachedStrategyRetriever:
+    """Memoize deterministic Strategy retrieval within one offline sweep.
+
+    A full 16-action counterfactual matrix asks the same pre-retrieval query
+    for every RS action of a state. Re-scanning all 11,590 cards eight times
+    cannot change evidence or prompts; it only repeats lexical tokenization.
+    The cache is local to one plan/run invocation and returns fresh lists so a
+    caller cannot mutate the stored result.
+    """
+
+    def __init__(self, delegate: StrategyRetriever):
+        self.delegate = delegate
+        self._cache: dict[str, tuple[StrategyCard, ...]] = {}
+
+    def retrieve(self, query: str) -> list[StrategyCard]:
+        cached = self._cache.get(query)
+        if cached is None:
+            cached = tuple(self.delegate.retrieve(query))
+            self._cache[query] = cached
+        return list(cached)
 
 
 def _resolve_supporter_generation_treatment(
@@ -260,8 +290,10 @@ def plan_action_sweep(
     strategies = load_strategy_cards(strategy_bank_path)
     if not strategies:
         raise ValueError("strategy bank is empty")
-    strategy_retriever = StrategyRetriever(
-        strategies, top_k=strategy_top_k, minimum_score=strategy_min_score
+    strategy_retriever = _QueryCachedStrategyRetriever(
+        StrategyRetriever(
+            strategies, top_k=strategy_top_k, minimum_score=strategy_min_score
+        )
     )
     memory_retriever = MemoryRetriever(
         minimum_score_by_source=(
@@ -543,9 +575,17 @@ def run_action_sweep(
     contract_bindings: dict[str, Any] | None = None,
     max_physical_api_attempts: int | None = None,
     out_attempt_ledger_path: str | Path | None = None,
+    transport_retry_policy: str = "single_attempt",
+    transport_backoff_seconds: tuple[float, ...] = DEFAULT_BACKOFF_SECONDS,
+    consecutive_same_class_circuit_breaker: int | None = 5,
 ) -> dict[str, Any]:
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
+    if transport_retry_policy not in {"single_attempt", "bounded_transport"}:
+        raise ValueError(
+            "transport_retry_policy must be 'single_attempt' or "
+            "'bounded_transport'"
+        )
     (
         system_prompt,
         generation_treatment,
@@ -602,8 +642,10 @@ def run_action_sweep(
     strategies = load_strategy_cards(strategy_bank_path)
     if not strategies:
         raise ValueError("strategy bank is empty")
-    strategy_retriever = StrategyRetriever(
-        strategies, top_k=strategy_top_k, minimum_score=strategy_min_score
+    strategy_retriever = _QueryCachedStrategyRetriever(
+        StrategyRetriever(
+            strategies, top_k=strategy_top_k, minimum_score=strategy_min_score
+        )
     )
     memory_retriever = MemoryRetriever(
         minimum_score_by_source=(
@@ -740,6 +782,11 @@ def run_action_sweep(
         "seed": seed,
         "request_retries": int(request_retries),
         "fail_fast": bool(fail_fast),
+        "transport_retry_policy": str(transport_retry_policy),
+        "transport_backoff_seconds": list(transport_backoff_seconds),
+        "consecutive_same_class_circuit_breaker": (
+            consecutive_same_class_circuit_breaker
+        ),
         "input_token_safety_factor": float(input_token_safety_factor),
         "fail_on_reported_input_overrun": bool(fail_on_reported_input_overrun),
         "strategy_top_k": strategy_top_k,
@@ -929,6 +976,8 @@ def run_action_sweep(
     aborted_on_input_token_overrun = False
     aborted_on_missing_reported_usage = False
     aborted_on_completion_gate = False
+    last_isolated_retry_class: str | None = None
+    consecutive_same_class_count = 0
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     try:
         for (card_id, action_id), prepared in prepared_calls.items():
@@ -965,7 +1014,28 @@ def run_action_sweep(
                 )
                 done.add((card_id, action_id))
                 continue
-            if ledger.exhausted(call_key):
+            if transport_retry_policy == "bounded_transport":
+                blocker = call_retry_blocker(
+                    ledger,
+                    call_key,
+                    max_provider_output_attempts=(
+                        DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+                    ),
+                )
+                if blocker is not None:
+                    failures.append(
+                        {
+                            "card_id": card_id,
+                            "action_id": action_id,
+                            "call_key": call_key,
+                            "error": f"call cannot be retried: {blocker}",
+                        }
+                    )
+                    if fail_fast:
+                        aborted_on_first_failure = True
+                        break
+                    continue
+            elif ledger.exhausted(call_key):
                 failures.append(
                     {
                         "card_id": card_id,
@@ -986,22 +1056,93 @@ def run_action_sweep(
             # a physical API attempt and must not consume the frozen budget.
             if client is None:
                 client = OpenAICompatibleClient(endpoint)
-            reservation = ledger.reserve(
-                call_key,
-                record_ids=prepared["record_ids"],
-                prompt_sha256=prepared["prompt_hash"],
-            )
-            n_calls += 1
             result = None
-            try:
-                result, _ = client.chat(
-                    prepared["messages"],
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    seed=seed,
-                    response_schema=None,
-                    retries=1,
+            if transport_retry_policy == "bounded_transport":
+                # Every physical HTTP attempt (including transient 5xx/
+                # timeout retries) is ledgered by execute_with_bounded_retry
+                # itself; only a terminal or exhausted disposition escapes as
+                # an exception here. Content-level terminal errors (schema,
+                # completion-gate rejection, reported-token-overrun) are
+                # still handled below, after a physical response exists --
+                # this call only governs the transport layer.
+                def call_fn(prepared=prepared):
+                    return client.chat(
+                        prepared["messages"],
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        seed=seed,
+                        response_schema=None,
+                        retries=1,
+                    )
+
+                try:
+                    reservation, result, _ = execute_with_bounded_retry(
+                        ledger,
+                        call_key,
+                        record_ids=prepared["record_ids"],
+                        prompt_sha256=prepared["prompt_hash"],
+                        call_fn=call_fn,
+                        max_provider_output_attempts=(
+                            DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS
+                        ),
+                        backoff_seconds=transport_backoff_seconds,
+                    )
+                except Exception as exc:
+                    if isinstance(exc, RetryableProviderError):
+                        retry_class = exc.last_retry_class
+                    elif isinstance(exc, ProviderRequestError):
+                        retry_class = "provider_request_error_4xx"
+                    else:
+                        retry_class = "unclassified_local_error"
+                    failures.append(
+                        {
+                            "card_id": card_id,
+                            "action_id": action_id,
+                            "call_key": call_key,
+                            "error": f"{type(exc).__name__}: {exc}",
+                            "retry_class": retry_class,
+                        }
+                    )
+                    if retry_class == last_isolated_retry_class:
+                        consecutive_same_class_count += 1
+                    else:
+                        last_isolated_retry_class = retry_class
+                        consecutive_same_class_count = 1
+                    if (
+                        consecutive_same_class_circuit_breaker is not None
+                        and consecutive_same_class_count
+                        >= consecutive_same_class_circuit_breaker
+                    ):
+                        raise RuntimeError(
+                            f"circuit breaker: {retry_class} recurred "
+                            f"{consecutive_same_class_count} times in a row "
+                            "across different calls -- treating as systemic, "
+                            "not isolated"
+                        ) from exc
+                    if fail_fast:
+                        aborted_on_first_failure = True
+                        break
+                    continue
+                n_calls += 1
+                last_isolated_retry_class = None
+                consecutive_same_class_count = 0
+            else:
+                reservation = ledger.reserve(
+                    call_key,
+                    record_ids=prepared["record_ids"],
+                    prompt_sha256=prepared["prompt_hash"],
                 )
+                n_calls += 1
+            try:
+                if transport_retry_policy != "bounded_transport":
+                    result, _ = client.chat(
+                        prepared["messages"],
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        seed=seed,
+                        response_schema=None,
+                        retries=1,
+                    )
                 try:
                     reported_usage = require_reported_usage(
                         result.usage, stage="action sweep generation"
@@ -1378,6 +1519,11 @@ def run_action_sweep(
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "request_retries": int(request_retries),
         "fail_fast": bool(fail_fast),
+        "transport_retry_policy": str(transport_retry_policy),
+        "transport_backoff_seconds": list(transport_backoff_seconds),
+        "consecutive_same_class_circuit_breaker": (
+            consecutive_same_class_circuit_breaker
+        ),
         "aborted_on_first_failure": aborted_on_first_failure,
         "aborted_on_input_token_overrun": aborted_on_input_token_overrun,
         "aborted_on_missing_reported_usage": aborted_on_missing_reported_usage,
@@ -1428,6 +1574,11 @@ def run_action_sweep(
             "seed": seed,
             "request_retries": int(request_retries),
             "fail_fast": bool(fail_fast),
+            "transport_retry_policy": str(transport_retry_policy),
+            "transport_backoff_seconds": list(transport_backoff_seconds),
+            "consecutive_same_class_circuit_breaker": (
+                consecutive_same_class_circuit_breaker
+            ),
             "input_token_safety_factor": float(input_token_safety_factor),
             "fail_on_reported_input_overrun": bool(
                 fail_on_reported_input_overrun

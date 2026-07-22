@@ -1560,6 +1560,16 @@ def test_reportable_semantic_observation_has_development_external_parity() -> No
         semantic_encoder=encoder,
     )
     runtime = state_to_v1_runtime(development)
+    assert all(
+        runtime.inventory[source].catalog_fingerprint == [0.0] * 64
+        for source in MemorySource
+    )
+    # The runtime projection must be reconstructible from the public audited
+    # PMV2 state; excluded construction-only embeddings cannot affect it.
+    public_round_trip = PMV2State.model_validate_json(
+        json.dumps(development.model_dump(mode="json"))
+    )
+    assert state_to_v1_runtime(public_round_trip) == runtime
     external = runtime_to_pmv2_state(
         runtime,
         strategy_catalog_count=0,
