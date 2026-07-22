@@ -272,7 +272,14 @@ def main() -> None:
                     request_hash=call.request_hash,
                     usage=call.usage,
                     error=f"{type(exc).__name__}: {exc}",
-                    result={"provider_response": call.raw_response},
+                    result={
+                        "provider_response": call.raw_response,
+                        "parsed_repair": (
+                            parsed.model_dump(mode="json")
+                            if parsed is not None
+                            else None
+                        ),
+                    },
                     metadata=failure_metadata(
                         retry_class="repair_postcondition_failure",
                         retry_disposition=TERMINAL_DISPOSITION,

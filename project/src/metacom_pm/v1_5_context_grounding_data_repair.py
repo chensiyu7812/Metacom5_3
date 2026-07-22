@@ -176,9 +176,11 @@ _COMMON_REPAIR_SYSTEM = (
     "dialogue given to you -- never invent an identity attribute (gender, "
     "marital status, age), a relationship duration, or a third party's "
     "belief that is not actually present in the dialogue. "
-    "If the visible dialogue does not support a substantive session_summary "
-    "beyond what authorized_user_context already says, return an empty "
-    "string for session_summary rather than inventing content."
+    "Follow the task-specific session_summary instruction exactly: some "
+    "records require a non-empty grounded replacement because summary "
+    "presence is a frozen corpus-design property, while other records require "
+    "an exact echo that the caller will ignore. Never invent content merely "
+    "to make a summary non-empty."
 )
 
 
@@ -192,9 +194,12 @@ def build_field_only_repair_messages(
 ) -> list[dict[str, str]]:
     if repair_summary:
         summary_instruction = (
-            "Produce authorized_user_context and session_summary, each "
+            "Produce authorized_user_context and a NON-EMPTY session_summary, each "
             "grounded only in frozen_current_user_text and frozen_history "
-            "above. Do not reproduce the defect described in defect_note."
+            "above. The original record's summary-presence is frozen, so an "
+            "empty session_summary is invalid; a concise grounded summary may "
+            "overlap authorized_user_context. Do not reproduce the defect "
+            "described in defect_note."
         )
     else:
         summary_instruction = (
@@ -247,7 +252,9 @@ def build_visible_surface_repair_messages(
             "role and natural conversational flow. Then produce "
             "authorized_user_context and session_summary grounded in the "
             "corrected full conversation (frozen_current_user_text plus "
-            "every history turn, repaired or not)."
+            "every history turn, repaired or not). Return a concise NON-EMPTY "
+            "session_summary; for records whose original summary is structurally "
+            "absent the caller deterministically discards it."
         ),
     }
     return [

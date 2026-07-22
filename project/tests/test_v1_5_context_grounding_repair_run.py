@@ -90,6 +90,13 @@ def test_repair_plan_is_deterministic_and_binds_inputs(records) -> None:
     assert contract["classification_path"].startswith("data/")
     assert contract["shared_code_manifest_sha256"]
     assert "repair_runner" in contract["shared_code_manifest"]
+    summary_row = next(
+        row for row in rows if row["state_id"] == "state_1d327ed7b58f3b13298b968c"
+    )
+    summary_prompt = " ".join(
+        message["content"] for message in messages[summary_row["physical_call_key"]]
+    )
+    assert "NON-EMPTY session_summary" in summary_prompt
 
 
 def test_full_plan_cannot_be_confused_with_pilot(records) -> None:
