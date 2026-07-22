@@ -49,7 +49,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from .io import canonical_json, sha256_text
 from .pm_v2_contracts import StrictModel
@@ -71,6 +71,19 @@ class RepairOverlayRecord(StrictModel):
     authorized_user_context: str = Field(min_length=1, max_length=250)
     session_summary: str | None = Field(default=None, max_length=250)
     recent_dialogue_patch: Mapping[int, str] = Field(default_factory=dict)
+
+    @field_validator("recent_dialogue_patch", mode="before")
+    @classmethod
+    def _coerce_patch_keys_to_int(cls, value: Any) -> Any:
+        """JSON has no integer keys: model_dump(mode="json") always writes
+        recent_dialogue_patch with string keys, and this model's inherited
+        strict=True config refuses to coerce them back to int on reload --
+        meaning every persisted repair_overlays.jsonl would otherwise be
+        unloadable by any later consumer (e.g. canonical recompilation)."""
+
+        if isinstance(value, Mapping):
+            return {int(key): item for key, item in value.items()}
+        return value
 
 
 def find_bundle_location_for_state(
