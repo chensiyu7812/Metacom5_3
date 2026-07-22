@@ -50,6 +50,26 @@
       "approval_status": "USER_EXPLICITLY_APPROVED_EXACT_PHRASE: '我批准，$0.02840355' (given directly for this identity, 9e8bf0dc37d1f92ec16cce36970e90168ba0b855f7146414195ec2b6f543ea55; local-only, not pushed to GitHub)",
       "note": "First dry-run of the full 25-state DATA_DEFECT repair (19 FIELD_ONLY_REPAIR + 6 VISIBLE_SURFACE_REPAIR, includes all 6 pilot states already validated for real by context_grounding_repair_pilot_attempt2). Prepared under the post-fix code (commit af8f18c, the same sum()-determinism fix validated by the pilot run). If --run succeeds, this is the ONLY mode that emits repair_overlays.jsonl for canonical whole-corpus recompilation (production_overlay_emitted=true), via materialize_full_repair_overlays + apply_repair_overlay_to_bundles's 5 fail-closed checks (classification_sha256 verification, duplicate rejection, exact-25-state-set enforcement, cross-checked case_id/user_id/repair_mode, turn-index constraints). Does not itself authorize canonical recompilation (write_development_dataset), delta re-judging of the 963 remaining context/advice calls, sweep, judging, or training -- each needs its own fresh step/approval. Requires a fresh user approval phrase naming this exact identity and ceiling before any --run attempt."
     },
+    "development_actual_corpus_semantic_review_v8_19_1_delta_v3": {
+      "stage": "development_actual_corpus_semantic_review",
+      "run_identity": "72a09088e47b0c81a242c7d010ba054b702a3228dec8975429229c70381e83ae",
+      "call_plan_sha256": "595432d7601505319dbccb1f86975b97d5530ee5b16e795a1a6e5da8b9da7726",
+      "shared_code_manifest_sha256": "8100eb1d6501763368e5f117b4a0bcadd35a12236cf785e6af0abe25bf036b41",
+      "cost_estimate_file_sha256": "db963b6942d5e0083c8abce90d4bd3a676f0f1a172be56f5c31ffd91a78c80c7",
+      "call_plan_file_sha256": "6b22b1246b5326c16598dcd26c7e244c7b18d1c218e1d78701e635f81d12b519",
+      "prepared_from_code_commit_sha": "1e3e57444469634552f706ae7efa8c8c2b8d05ce",
+      "delta_carry_forward_source_directory": "outputs/pm_v1_5_actual_corpus_semantic_review_v8_19_delta_candidate_fix",
+      "planned_logical_calls": 1880,
+      "historical_carried_forward_calls": 1863,
+      "remaining_new_logical_calls": 17,
+      "maximum_estimated_usd": 0.13598300000000002,
+      "candidate_output_directory": "outputs/pm_v1_5_actual_corpus_semantic_review_v8_19_1_delta_v3_candidate",
+      "independent_reproduction_directory": "outputs/pm_v1_5_actual_corpus_semantic_review_v8_19_1_delta_v3_repro_check",
+      "independent_reproduction_status": "EXACT_MATCH (two separate distress_build invocations, byte-identical cost_estimate.json/call_plan.jsonl)",
+      "approval_status": "PENDING_EXPLICIT_USER_APPROVAL",
+      "supersedes": "development_actual_corpus_semantic_review_v8_19_1_delta (identity 480e04c5..., CONSUMED_CRASH -- circuit breaker sequencing bug plus the runner's cost identity not binding its own code, both now fixed; call_plan content is identical, only the runner's own shared_code_manifest changed, which is why this is a fresh identity for the exact same 17 new calls at the exact same $0.13598300000000002 ceiling).",
+      "note": "Same corpus basis (V8.19.1), same delta-carry-forward source, same 17 new calls as before: 2 for state_8ce4e8be2e8bb4ed6b097b7b's context_grounding_match (the actual point of this delta, never yet tested), 2 for the context_grounding_match control fix (already real-tested once: both judges still return 'supported' -- a disclosed judge-leniency limitation, not being further patched), 13 for the V8.19 delta run's offline-recovered-but-ledger-FAILED calls (5 of which already deterministically re-failed with structured_output_validation_error in the crashed attempt; expected to do so again, and this time should be recorded as isolated incomplete calls rather than crash the run)."
+    },
     "development_actual_corpus_semantic_review_v8_19_1_delta": {
       "stage": "development_actual_corpus_semantic_review",
       "run_identity": "480e04c55ae3bf546e7889b67892782fed2e9c81592e2e33814587725caf9372",
