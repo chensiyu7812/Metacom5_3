@@ -19,14 +19,12 @@ structurally unavailable (MP/MS/ME all False), so there is no cross-session
 memory bank to authorize beyond what is already visible in
 ``current_session_history``/``current_session_summary``.
 
-Uses ``execute_with_bounded_retry`` (``bounded_retry.py``) rather than
-``21_judge_pm_v2_action_sweep_v1_5.py``'s single-shot-then-fail-hard
-mechanism: deepseek's NVIDIA-hosted endpoint has a measured, sustained real
-failure rate around 37% (see the actual-corpus semantic-review retry-budget
-fix earlier in this project's history), and this judging track uses that
-same judge family, so it needs the same ledger-backed backoff/retry
-resilience -- not the internal sweep's single-attempt contract, which
-assumes an already-reliable generator endpoint.
+Uses ``execute_with_bounded_retry`` (``bounded_retry.py``) with a separately
+content-addressed execution contract.  Both historical NVIDIA-hosted judges
+and the current official/provider-native judge surfaces have produced real
+5xx, timeout, malformed-output, and truncation failures in this project.
+Every physical attempt is therefore ledger-visible and budgeted; this does
+not change the scientific prompt, schema, endpoint, or scoring contract.
 
 The four physical calls per (state, action) -- gemini response, gemini risk,
 deepseek response, deepseek risk -- are scheduled in a seeded-shuffled order
@@ -82,21 +80,30 @@ freshly computed one.
 from __future__ import annotations
 
 import argparse
+import math
 import random
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
-from metacom_pm.api import make_client
+from metacom_pm.api import (
+    ProviderRequestError,
+    RetryableProviderError,
+    StructuredOutputValidationError,
+    make_client,
+)
 from metacom_pm.attempt_ledger import (
     PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
     forbid_overwrite_of_spent_attempts,
     physical_call_key as make_physical_call_key,
 )
 from metacom_pm.bounded_retry import (
+    BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES,
     DEFAULT_MAX_PROVIDER_OUTPUT_ATTEMPTS,
+    RETRYABLE_UP_TO_FULL_BUDGET,
     RETRY_CONTRACT_PROTOCOL,
     call_retry_blocker,
     execute_with_bounded_retry,
+    retry_ledger_summary,
 )
 from metacom_pm.attempt_ledger import PersistentAttemptLedger
 from metacom_pm.config import endpoint_from_config, load_config
@@ -141,10 +148,9 @@ SPLITS = ("train", "calibration", "internal_test")
 # Frozen, disclosed constant; changing it changes call-plan order (and
 # therefore the cost-estimate hash) but never scoring.
 CALL_PLAN_SHUFFLE_SEED = 913171
-# Matches the retry-budget fix already applied to
-# actual_corpus_semantic_audit after this project measured deepseek's
-# NVIDIA-hosted endpoint at a sustained ~37% real transport failure rate;
-# this judging track uses the same flaky family, so it gets the same budget.
+# Matches the durable retry budget already exercised by the actual-corpus
+# semantic audit.  The bound is execution resilience, not a scientific model
+# or rubric setting, and every authorized attempt is included in dry-run cost.
 MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL = 10
 TRANSPORT_BACKOFF_SECONDS: tuple[float, ...] = (
     10.0,
@@ -157,6 +163,123 @@ TRANSPORT_BACKOFF_SECONDS: tuple[float, ...] = (
     600.0,
     900.0,
 )
+ESCONV_AUXILIARY_JUDGING_TRANSPORT_PROTOCOL = (
+    "pm-v1.5-esconv-auxiliary-judging-transport-v1"
+)
+CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER = 5
+ISOLATABLE_PROVIDER_FAILURE_CLASSES = frozenset(
+    set(RETRYABLE_UP_TO_FULL_BUDGET)
+    | set(BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES)
+    | {"structured_output_validation_error", "output_token_limit"}
+)
+
+
+def judging_cost_bounds(
+    rows: list[Mapping[str, Any]],
+) -> dict[str, int | float]:
+    """Bound every authorized physical attempt, not only first attempts."""
+
+    logical_input_tokens = sum(int(row["input_tokens_est"]) for row in rows)
+    logical_output_tokens = sum(int(row["max_output_tokens"]) for row in rows)
+    logical_cost_usd = math.fsum(float(row["maximum_cost_usd"]) for row in rows)
+    attempts = MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+    return {
+        "logical_input_tokens": logical_input_tokens,
+        "logical_output_tokens": logical_output_tokens,
+        "logical_cost_usd": logical_cost_usd,
+        "maximum_physical_attempts": len(rows) * attempts,
+        "maximum_input_tokens": logical_input_tokens * attempts,
+        "maximum_output_tokens": logical_output_tokens * attempts,
+        "maximum_cost_usd": logical_cost_usd * attempts,
+    }
+
+
+def judging_transport_contract(
+    *, provider_output_attempts_by_family: Mapping[str, int]
+) -> dict[str, Any]:
+    """Content-address execution resilience separately from judge science."""
+
+    if not provider_output_attempts_by_family or any(
+        int(value) < 1
+        or int(value) > MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+        for value in provider_output_attempts_by_family.values()
+    ):
+        raise ValueError(
+            "per-family provider-output attempts must fit the physical-attempt bound"
+        )
+    code_paths = {
+        "runner": Path(__file__).resolve(),
+        "api": ROOT / "src" / "metacom_pm" / "api.py",
+        "attempt_ledger": ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
+        "bounded_retry": ROOT / "src" / "metacom_pm" / "bounded_retry.py",
+        "judging": ROOT / "src" / "metacom_pm" / "pm_v2_judging.py",
+    }
+    code_manifest = {
+        name: {
+            "relative_path": str(path.relative_to(ROOT)),
+            "sha256": sha256_file(path),
+        }
+        for name, path in sorted(code_paths.items())
+    }
+    payload: dict[str, Any] = {
+        "protocol": ESCONV_AUXILIARY_JUDGING_TRANSPORT_PROTOCOL,
+        "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+        "maximum_physical_attempts_per_logical_call": (
+            MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+        ),
+        "transport_backoff_seconds": list(TRANSPORT_BACKOFF_SECONDS),
+        "retryable_transport_classes": sorted(RETRYABLE_UP_TO_FULL_BUDGET),
+        "isolatable_provider_failure_classes": sorted(
+            ISOLATABLE_PROVIDER_FAILURE_CLASSES
+        ),
+        "provider_output_maximum_attempts_by_family": {
+            str(family): int(value)
+            for family, value in sorted(provider_output_attempts_by_family.items())
+        },
+        "terminal_content_or_schema_failure_is_not_blindly_retried": True,
+        "continue_after_isolated_provider_failure": True,
+        "consecutive_same_class_circuit_breaker": (
+            CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER
+        ),
+        "client_internal_retries": 1,
+        "scientific_judge_contract_unchanged": True,
+        "code_manifest": code_manifest,
+        "code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
+    }
+    payload["contract_sha256"] = sha256_text(canonical_json(payload))
+    return payload
+
+
+def _isolatable_provider_failure_class(exc: Exception) -> str | None:
+    if isinstance(exc, RetryableProviderError):
+        retry_class = str(exc.last_retry_class)
+        return retry_class if retry_class in ISOLATABLE_PROVIDER_FAILURE_CLASSES else None
+    if isinstance(exc, StructuredOutputValidationError):
+        return "structured_output_validation_error"
+    if isinstance(exc, ProviderRequestError):
+        return None
+    return None
+
+
+def _persisted_isolatable_failure_class(
+    ledger: PersistentAttemptLedger, physical_key: str
+) -> str | None:
+    terminal = ledger.terminal_row(physical_key) or {}
+    metadata = terminal.get("metadata") or {}
+    retry_class = str(metadata.get("retry_class") or "")
+    return retry_class if retry_class in ISOLATABLE_PROVIDER_FAILURE_CLASSES else None
+
+
+def advance_failure_streak(
+    *, previous_class: str | None, previous_count: int, retry_class: str
+) -> tuple[str, int]:
+    count = previous_count + 1 if retry_class == previous_class else 1
+    if count >= CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER:
+        raise RuntimeError(
+            f"circuit breaker: {retry_class} recurred {count} times in a row "
+            "across different ESConv-auxiliary judging calls"
+        )
+    return retry_class, count
 
 
 def outcome_key(outcome: ActionOutcome) -> tuple[str, str]:
@@ -461,6 +584,13 @@ def main() -> None:
             "ESConv-auxiliary judging requires at least two endpoints from "
             "distinct, declared judge families"
         )
+    provider_output_attempts_by_family = {
+        str(endpoint.family): _max_provider_output_attempts_for(str(endpoint.family))
+        for endpoint in endpoints
+    }
+    transport_execution_contract = judging_transport_contract(
+        provider_output_attempts_by_family=provider_output_attempts_by_family
+    )
     endpoint_descriptors = [
         {
             "name": name,
@@ -527,6 +657,7 @@ def main() -> None:
             "api_cost_planning": api_cost_planning,
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
             "retry_contract_protocol": RETRY_CONTRACT_PROTOCOL,
+            "transport_execution_contract": transport_execution_contract,
             "split": split,
             "pilot_mode": bool(args.pilot),
         },
@@ -645,27 +776,38 @@ def main() -> None:
         row for row in cost_rows if str(row["physical_call_key"]) not in carried_call_keys
     ]
 
-    total_input_tokens = sum(int(row["input_tokens_est"]) for row in remaining_cost_rows)
-    total_output_tokens = sum(int(row["max_output_tokens"]) for row in remaining_cost_rows)
+    cost_bounds = judging_cost_bounds(remaining_cost_rows)
+    maximum_physical_attempts = int(cost_bounds["maximum_physical_attempts"])
+    logical_input_tokens = int(cost_bounds["logical_input_tokens"])
+    logical_output_tokens = int(cost_bounds["logical_output_tokens"])
+    logical_cost_usd = float(cost_bounds["logical_cost_usd"])
+    total_input_tokens = int(cost_bounds["maximum_input_tokens"])
+    total_output_tokens = int(cost_bounds["maximum_output_tokens"])
     cost_payload = {
         "stage": stage,
         "split": split,
         "full_logical_api_calls": len(cost_rows),
         "historical_carried_forward_calls": len(carried_call_keys),
         "remaining_new_logical_calls": len(remaining_cost_rows),
+        "planned_new_api_calls": maximum_physical_attempts,
+        "maximum_physical_http_attempts": maximum_physical_attempts,
+        "maximum_physical_attempts_per_logical_call": (
+            MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL
+        ),
         "carry_forward_source_directory": carry_forward["carry_forward_source_directory"],
         "carry_forward_source_ledger_sha256": carry_forward[
             "carry_forward_source_ledger_sha256"
         ],
         "expected_judge_pairs": len(expected_pairs),
+        "logical_input_tokens_est": logical_input_tokens,
+        "logical_output_tokens_est": logical_output_tokens,
         "total_input_tokens_est": total_input_tokens,
         "max_input_tokens_per_call_est": max(
             (int(r["input_tokens_est"]) for r in remaining_cost_rows), default=0
         ),
         "total_output_tokens_est": total_output_tokens,
-        "estimated_cost_usd": sum(
-            float(r["maximum_cost_usd"]) for r in remaining_cost_rows
-        ),
+        "logical_single_attempt_estimated_cost_usd": logical_cost_usd,
+        "estimated_cost_usd": float(cost_bounds["maximum_cost_usd"]),
         "pricing_usd_per_mtok": pricing_by_family,
         "api_cost_planning": api_cost_planning,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
@@ -674,10 +816,7 @@ def main() -> None:
         # changing any family's format-retry budget changes cost_estimate_
         # sha256 -- otherwise a config-only change to real retry behavior
         # could silently keep an already-approved identity valid.
-        "provider_output_maximum_attempts_by_family": {
-            family: provider_output_attempts_by_family[family]
-            for family in sorted(provider_output_attempts_by_family)
-        },
+        "transport_execution_contract": transport_execution_contract,
         "call_plan_shuffle_seed": CALL_PLAN_SHUFFLE_SEED,
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
         "run_manifest_sha256": manifest["manifest_sha256"],
@@ -693,7 +832,7 @@ def main() -> None:
         "cost_estimate_sha256": sha256_text(canonical_json(cost_payload)),
     }
     budget_checks = {
-        "api_calls": len(remaining_cost_rows) <= int(args.max_api_calls),
+        "api_calls": maximum_physical_attempts <= int(args.max_api_calls),
         "estimated_cost_usd": cost_estimate["estimated_cost_usd"]
         <= float(args.max_estimated_usd),
         "max_input_tokens_per_call": cost_estimate["max_input_tokens_per_call_est"]
@@ -795,27 +934,6 @@ def main() -> None:
             },
         )
 
-    blocked: dict[str, str] = {}
-    for row in cost_rows:
-        key = str(row["physical_call_key"])
-        if ledger.succeeded(key):
-            continue
-        blocker = call_retry_blocker(
-            ledger,
-            key,
-            max_provider_output_attempts=_max_provider_output_attempts_for(
-                str(row["judge_family"])
-            ),
-        )
-        if blocker is not None:
-            blocked[key] = blocker
-    if blocked:
-        first = sorted(blocked)[0]
-        raise RuntimeError(
-            f"ESConv-auxiliary judging is unreachable from the persisted ledger: "
-            f"{first}: {blocked[first]}"
-        )
-
     endpoint_by_family = {str(endpoint.family): endpoint for endpoint in endpoints}
     pending = [
         row for row in cost_rows if not ledger.succeeded(str(row["physical_call_key"]))
@@ -826,7 +944,13 @@ def main() -> None:
         else {}
     )
     successful_call_rows: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    isolated_failures: dict[str, str] = {}
+    last_isolated_retry_class: str | None = None
+    consecutive_same_class_count = 0
     try:
+        # Iterate the frozen full plan, not only pending rows. A prior success
+        # resets the breaker, so separated failures cannot be compressed into
+        # a false systemic streak during resume.
         for row in cost_rows:
             key = call_key(row)
             physical_key = str(row["physical_call_key"])
@@ -841,9 +965,32 @@ def main() -> None:
                     ),
                     "request_hash": str(terminal.get("request_hash")),
                 }
+                last_isolated_retry_class = None
+                consecutive_same_class_count = 0
                 continue
             execution = execution_by_call_key[key]
             endpoint = endpoint_by_family[key[2]]
+            blocker = call_retry_blocker(
+                ledger,
+                physical_key,
+                max_provider_output_attempts=_max_provider_output_attempts_for(key[2]),
+            )
+            if blocker is not None:
+                retry_class = _persisted_isolatable_failure_class(ledger, physical_key)
+                if retry_class is None:
+                    raise RuntimeError(
+                        "ESConv-auxiliary judging cannot continue past a persisted "
+                        f"non-isolatable failure: {physical_key}: {blocker}"
+                    )
+                isolated_failures[physical_key] = f"{retry_class}: {blocker}"
+                last_isolated_retry_class, consecutive_same_class_count = (
+                    advance_failure_streak(
+                        previous_class=last_isolated_retry_class,
+                        previous_count=consecutive_same_class_count,
+                        retry_class=retry_class,
+                    )
+                )
+                continue
 
             def call_fn(row=row, execution=execution, endpoint=endpoint):
                 return clients[str(endpoint.family)].chat(
@@ -855,22 +1002,41 @@ def main() -> None:
                     retries=1,
                 )
 
-            reservation, call_result, parsed = execute_with_bounded_retry(
-                ledger,
-                physical_key,
-                record_ids={
-                    "state_id": key[0],
-                    "action_id": key[1],
-                    "judge_family": key[2],
-                    "judge_type": key[3],
-                },
-                prompt_sha256=str(row["prompt_hash"]),
-                call_fn=call_fn,
-                max_provider_output_attempts=_max_provider_output_attempts_for(
-                    key[2]
-                ),
-                backoff_seconds=TRANSPORT_BACKOFF_SECONDS,
-            )
+            try:
+                reservation, call_result, parsed = execute_with_bounded_retry(
+                    ledger,
+                    physical_key,
+                    record_ids={
+                        "state_id": key[0],
+                        "action_id": key[1],
+                        "judge_family": key[2],
+                        "judge_type": key[3],
+                    },
+                    prompt_sha256=str(row["prompt_hash"]),
+                    call_fn=call_fn,
+                    max_provider_output_attempts=_max_provider_output_attempts_for(
+                        key[2]
+                    ),
+                    backoff_seconds=TRANSPORT_BACKOFF_SECONDS,
+                )
+            except Exception as exc:
+                retry_class = _isolatable_provider_failure_class(exc)
+                if retry_class is None:
+                    raise
+                isolated_failures[physical_key] = (
+                    f"{retry_class}: {type(exc).__name__}: {exc}"
+                )
+                try:
+                    last_isolated_retry_class, consecutive_same_class_count = (
+                        advance_failure_streak(
+                            previous_class=last_isolated_retry_class,
+                            previous_count=consecutive_same_class_count,
+                            retry_class=retry_class,
+                        )
+                    )
+                except RuntimeError as breaker_error:
+                    raise breaker_error from exc
+                continue
             assert parsed is not None
             parsed_payload = parsed.model_dump(mode="json")
             ledger.finish(
@@ -886,6 +1052,8 @@ def main() -> None:
                 "parsed": parsed_payload,
                 "request_hash": call_result.request_hash,
             }
+            last_isolated_retry_class = None
+            consecutive_same_class_count = 0
     finally:
         for client in clients.values():
             client.close()
@@ -919,6 +1087,55 @@ def main() -> None:
                 "risk_request_hash": risk_row["request_hash"],
             }
     write_jsonl(raw_path, [raw_by_key[key] for key in sorted(raw_by_key)])
+
+    missing_call_keys = sorted(required_keys - set(successful_call_rows))
+    completed_label_pairs = {
+        (state_id, action_id)
+        for state_id, action_id in expected_pairs
+        if all(
+            (state_id, action_id, str(endpoint.family)) in raw_by_key
+            for endpoint in endpoints
+        )
+    }
+    actual_new_physical_attempts = max(
+        0, ledger.started_attempts - len(carry_forward["carried_call_keys"])
+    )
+    if missing_call_keys:
+        # Partial judgments must never become training labels. Preserve the
+        # successful raw rows and ledger for a fresh exact-plan continuation,
+        # but materialize an empty label file and a non-reportable summary.
+        labels_path.write_text("", encoding="utf-8")
+        incomplete_summary = {
+            "status": "INCOMPLETE",
+            "pilot_mode": bool(args.pilot),
+            "reportability_status": "NONREPORTABLE_INCOMPLETE_MATRIX",
+            "split": split,
+            "expected_judge_pairs": len(expected_pairs),
+            "completed_judge_pairs": len(completed_label_pairs),
+            "missing_call_keys": [list(key) for key in missing_call_keys[:50]],
+            "run_manifest_sha256": manifest["manifest_sha256"],
+            "carry_forward_source_directory": carry_forward[
+                "carry_forward_source_directory"
+            ],
+            "carry_forward_source_ledger_sha256": carry_forward[
+                "carry_forward_source_ledger_sha256"
+            ],
+            "carried_forward_physical_calls": len(
+                carry_forward["carried_call_keys"]
+            ),
+            "new_physical_calls": actual_new_physical_attempts,
+            "isolated_failures": isolated_failures,
+            "transport_retry_summary": retry_ledger_summary(
+                ledger, [str(row["physical_call_key"]) for row in cost_rows]
+            ),
+            "cost_estimate": cost_estimate,
+            "budget_gate": budget_gate,
+        }
+        write_json(out_dir / "summary.json", incomplete_summary)
+        raise RuntimeError(
+            f"ESConv-auxiliary judging incomplete for split {split!r}: "
+            f"{len(missing_call_keys)} missing logical calls"
+        )
 
     canonical_raw_rows = [
         {
@@ -1079,7 +1296,11 @@ def main() -> None:
             "carry_forward_source_ledger_sha256"
         ],
         "carried_forward_physical_calls": len(carry_forward["carried_call_keys"]),
-        "new_physical_calls": len(cost_rows) - len(carry_forward["carried_call_keys"]),
+        "new_physical_calls": actual_new_physical_attempts,
+        "isolated_failures": isolated_failures,
+        "transport_retry_summary": retry_ledger_summary(
+            ledger, [str(row["physical_call_key"]) for row in cost_rows]
+        ),
         "raw_family_quality_gate": {
             "status": raw_family_quality_status,
             "global": raw_family_global_gate,

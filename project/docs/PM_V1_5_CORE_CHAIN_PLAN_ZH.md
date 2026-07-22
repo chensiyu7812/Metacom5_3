@@ -358,7 +358,12 @@ worker 数。与并发不同，longitudinal sweep 已实现并冻结**串行的*
 韧性：科学 treatment 不变，每 logical call 最多 4 个 ledger-visible physical attempts，
 只重试 429/408/5xx/timeout，孤立 terminal failure 不立即杀死矩阵，连续 5 个同类失败触发
 circuit breaker。该能力减少偶发传输故障造成的整批作废，但不提供并行加速，也不把失败
-调用当作成功。
+调用当作成功。ESConv auxiliary judging 也已按同一原则收口，但其独立合同为每 logical
+call 最多 10 个 physical attempts：dry-run 同时报告单次逻辑成本与 10-attempt 最坏上界，
+预算门只按后者放行；孤立 provider-surface failure 可继续矩阵，连续 5 个同类失败熔断，
+任一缺行均只产出 `NONREPORTABLE_INCOMPLETE_MATRIX`，不得生成可训练 labels。该变更不
+影响已经执行或正在执行的 auxiliary generation；所有早于此合同的 full auxiliary-judging
+dry-run identity 均因曾只计首个 attempt 而失效，必须等对应 generation 完成后重新计算。
 
 截至 2026-07-22，已记录以下 dry-run 与历史执行状态。generation compatibility
 一行保留历史调用及预算哈希用于追溯，但该调用绑定旧配置，不能充当当前上游 gate：

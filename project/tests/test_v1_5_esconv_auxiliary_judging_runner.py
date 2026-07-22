@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from metacom_pm.api import ProviderRequestError, RetryableProviderError
 from metacom_pm.contracts import CostRecord, DialogueTurn, MemorySource, SourceCatalog
 from metacom_pm.esconv_v1_5 import ESCONV_V1_5_ALLOWED_ACTIONS
 from metacom_pm.io import write_json, write_jsonl
@@ -174,6 +175,15 @@ def test_dry_run_has_one_pair_per_state_action_and_four_calls_per_pair(workdir):
     # physical calls.
     assert estimate["expected_judge_pairs"] == 6
     assert estimate["full_logical_api_calls"] == 24
+    assert estimate["remaining_new_logical_calls"] == 24
+    assert estimate["maximum_physical_attempts_per_logical_call"] == 10
+    assert estimate["maximum_physical_http_attempts"] == 240
+    assert estimate["planned_new_api_calls"] == 240
+    assert estimate["total_input_tokens_est"] == 10 * estimate["logical_input_tokens_est"]
+    assert estimate["total_output_tokens_est"] == 10 * estimate["logical_output_tokens_est"]
+    assert estimate["estimated_cost_usd"] == pytest.approx(
+        10 * estimate["logical_single_attempt_estimated_cost_usd"]
+    )
     assert estimate["budget_gate"]["status"] == "PASS"
 
 
@@ -263,6 +273,47 @@ class _ConstantJudgeClient:
             request_hash=f"request-{type(self).calls}",
         )
         return result, parsed
+
+
+class _OneTerminalOutputThenSuccessClient(_ConstantJudgeClient):
+    """One deterministic provider-surface failure must not kill the matrix."""
+
+    def chat(self, messages, *, response_schema, **kwargs):
+        if type(self).calls == 0:
+            type(self).calls += 1
+            raise RetryableProviderError(
+                "fixture output hit its token ceiling",
+                last_retry_class="output_token_limit",
+                last_status_code=None,
+                attempts_tried=1,
+                request_hash="truncated-request",
+                usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20},
+            )
+        return super().chat(messages, response_schema=response_schema, **kwargs)
+
+
+class _AlwaysTerminalOutputClient(_ConstantJudgeClient):
+    def chat(self, messages, *, response_schema, **kwargs):
+        type(self).calls += 1
+        raise RetryableProviderError(
+            "fixture output hit its token ceiling",
+            last_retry_class="output_token_limit",
+            last_status_code=None,
+            attempts_tried=1,
+            request_hash=f"truncated-request-{type(self).calls}",
+            usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20},
+        )
+
+
+class _TerminalRequestClient(_ConstantJudgeClient):
+    def chat(self, messages, *, response_schema, **kwargs):
+        type(self).calls += 1
+        raise ProviderRequestError(
+            status_code=400,
+            detail="fixture request contract rejected",
+            schema_mode=True,
+            request_hash="bad-request",
+        )
 
 
 def _run_run(
@@ -404,6 +455,8 @@ def test_carry_forward_makes_zero_new_client_calls(workdir):
     )
     assert cf_estimate["historical_carried_forward_calls"] == 16
     assert cf_estimate["remaining_new_logical_calls"] == 0
+    assert cf_estimate["maximum_physical_http_attempts"] == 0
+    assert cf_estimate["logical_single_attempt_estimated_cost_usd"] == 0
     assert cf_estimate["estimated_cost_usd"] == 0
 
     summary = _run_run(
@@ -421,6 +474,92 @@ def test_carry_forward_makes_zero_new_client_calls(workdir):
     assert summary["carried_forward_physical_calls"] == 16
     assert summary["new_physical_calls"] == 0
     assert summary["completed_judge_pairs"] == 4
+
+
+def test_one_terminal_provider_output_is_isolated_and_matrix_is_nonreportable(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_pilot_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=2)
+    out_root = workdir / "outputs"
+    estimate = _run_dry_run(aux_dir, gen_root, out_root, "train", pilot=True)
+    with pytest.raises(RuntimeError, match="missing logical calls"):
+        _run_run(
+            aux_dir,
+            gen_root,
+            out_root,
+            "train",
+            accept_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+            pilot=True,
+            client_cls=_OneTerminalOutputThenSuccessClient,
+        )
+    out_dir = out_root / "esconv_auxiliary_judging_v1_5_pilot_train"
+    summary = json.loads((out_dir / "summary.json").read_text(encoding="utf-8"))
+    assert _OneTerminalOutputThenSuccessClient.calls == 16
+    assert summary["status"] == "INCOMPLETE"
+    assert summary["reportability_status"] == "NONREPORTABLE_INCOMPLETE_MATRIX"
+    assert summary["new_physical_calls"] == 16
+    assert len(summary["isolated_failures"]) == 1
+    assert (out_dir / "action_labels.jsonl").read_text(encoding="utf-8") == ""
+
+    continuation_root = workdir / "continuation"
+    continuation = _run_dry_run(
+        aux_dir,
+        gen_root,
+        continuation_root,
+        "train",
+        pilot=True,
+        carry_forward_from=out_dir,
+    )
+    assert continuation["historical_carried_forward_calls"] == 15
+    assert continuation["remaining_new_logical_calls"] == 1
+    assert continuation["maximum_physical_http_attempts"] == 10
+    assert continuation["estimated_cost_usd"] == pytest.approx(
+        10 * continuation["logical_single_attempt_estimated_cost_usd"]
+    )
+
+
+def test_five_adjacent_terminal_provider_outputs_trip_circuit_breaker(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_pilot_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=2)
+    out_root = workdir / "outputs"
+    estimate = _run_dry_run(aux_dir, gen_root, out_root, "train", pilot=True)
+    with pytest.raises(RuntimeError, match="circuit breaker"):
+        _run_run(
+            aux_dir,
+            gen_root,
+            out_root,
+            "train",
+            accept_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+            pilot=True,
+            client_cls=_AlwaysTerminalOutputClient,
+        )
+    assert _AlwaysTerminalOutputClient.calls == 5
+
+
+def test_terminal_http_400_stops_immediately_without_blind_retry(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_pilot_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=2)
+    out_root = workdir / "outputs"
+    estimate = _run_dry_run(aux_dir, gen_root, out_root, "train", pilot=True)
+    with pytest.raises(ProviderRequestError):
+        _run_run(
+            aux_dir,
+            gen_root,
+            out_root,
+            "train",
+            accept_cost_estimate_sha256=estimate["cost_estimate_sha256"],
+            pilot=True,
+            client_cls=_TerminalRequestClient,
+        )
+    assert _TerminalRequestClient.calls == 1
 
 
 def test_output_directory_guard_is_wired_in_before_any_expensive_work(workdir):
