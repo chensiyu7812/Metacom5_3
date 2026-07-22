@@ -205,6 +205,7 @@ def _load_carry_forward_state(
         return {
             "carry_forward_source_directory": None,
             "carry_forward_source_ledger_sha256": None,
+            "carry_forward_mechanism": "whole_plan_byte_identical",
             "carried_call_keys": set(),
             "carried_terminal_rows": {},
         }
@@ -249,6 +250,103 @@ def _load_carry_forward_state(
     return {
         "carry_forward_source_directory": str(carry_forward_dir),
         "carry_forward_source_ledger_sha256": sha256_file(old_ledger_path),
+        "carry_forward_mechanism": "whole_plan_byte_identical",
+        "carried_call_keys": carried_call_keys,
+        "carried_terminal_rows": carried_terminal_rows,
+    }
+
+
+def _load_delta_carry_forward_state(
+    *,
+    carry_forward_dir: Path | None,
+    call_plan: list[dict],
+    review_stage: str,
+) -> dict[str, Any]:
+    """Per-row delta carry-forward.
+
+    Unlike ``_load_carry_forward_state`` above (which refuses entirely
+    unless the prior directory's call_plan.jsonl is byte-identical to this
+    run's own freshly-computed plan -- one changed row poisons the whole
+    comparison and blocks carry-forward for every untouched row too), this
+    inspects the prior ledger row by row and inherits ONLY the specific
+    calls that independently match on every one of: physical_call_key,
+    prompt_sha256, request_payload_sha256, and the prior ledger actually
+    recording a real SUCCEEDED, fully-parsed result under that exact key.
+
+    physical_call_key already encodes prompt_sha256 and endpoint identity
+    (base_url/model/family/transport) and request_parameters (temperature,
+    max_tokens, seed, response_schema.__name__) -- but request_payload_sha256
+    covers the FULL serialized request body, including the schema's exact
+    field constraints. A schema's internal Field(max_length=...) could
+    change without changing response_schema.__name__ or anything else
+    physical_call_key hashes, which would leave call_key identical while
+    the real bytes sent to the provider differ. Checking request_payload_
+    sha256 explicitly, never relying on call_key equality alone, is what
+    makes this safe for exactly that kind of change (e.g. a context-claim
+    wording fix that only touches the messages of some rows).
+
+    A call whose prompt/request changed (a targeted repair affecting some
+    states but not others) is correctly treated as new and is never
+    silently carried forward; every untouched row's already-paid-for
+    result is still reused at zero cost.
+    """
+
+    if carry_forward_dir is None:
+        return {
+            "carry_forward_source_directory": None,
+            "carry_forward_source_ledger_sha256": None,
+            "carry_forward_mechanism": "per_row_delta",
+            "carried_call_keys": set(),
+            "carried_terminal_rows": {},
+        }
+    old_call_plan_path = carry_forward_dir / "call_plan.jsonl"
+    old_ledger_path = carry_forward_dir / "physical_attempt_ledger.jsonl"
+    if not old_call_plan_path.is_file() or not old_ledger_path.is_file():
+        raise RuntimeError(
+            "delta carry-forward source directory lacks a call plan or ledger"
+        )
+    old_plan_by_key = {
+        str(row["physical_call_key"]): row for row in iter_jsonl(old_call_plan_path)
+    }
+    expected_calls = {
+        key: int(row["maximum_physical_attempts"]) for key, row in old_plan_by_key.items()
+    }
+    old_ledger = PersistentAttemptLedger(
+        old_ledger_path,
+        stage=review_stage,
+        expected_calls=expected_calls,
+        # Read-only inspection of history; the real runtime cap is enforced
+        # separately, by this run's own ledger, once seeded.
+        maximum_total_attempts=10**9,
+    )
+    carried_call_keys: set[str] = set()
+    carried_terminal_rows: dict[str, dict] = {}
+    for new_row in call_plan:
+        call_key = str(new_row["physical_call_key"])
+        old_row = old_plan_by_key.get(call_key)
+        if old_row is None:
+            continue
+        if str(old_row.get("prompt_sha256")) != str(new_row.get("prompt_sha256")):
+            continue
+        if str(old_row.get("request_payload_sha256")) != str(
+            new_row.get("request_payload_sha256")
+        ):
+            continue
+        if not old_ledger.succeeded(call_key):
+            continue
+        terminal = old_ledger.terminal_row(call_key)
+        result = (terminal or {}).get("result")
+        if not isinstance(result, dict) or not result.get("parsed"):
+            raise RuntimeError(
+                "delta carry-forward source lacks a complete parsed result for "
+                f"{call_key}"
+            )
+        carried_call_keys.add(call_key)
+        carried_terminal_rows[call_key] = terminal
+    return {
+        "carry_forward_source_directory": str(carry_forward_dir),
+        "carry_forward_source_ledger_sha256": sha256_file(old_ledger_path),
+        "carry_forward_mechanism": "per_row_delta",
         "carried_call_keys": carried_call_keys,
         "carried_terminal_rows": carried_terminal_rows,
     }
@@ -330,7 +428,26 @@ def parse_args() -> argparse.Namespace:
             "byte-identical to this run's own freshly-computed plan; refuses "
             "otherwise. Only already-SUCCEEDED calls are carried; a "
             "terminally-failed call is never carried and gets a full fresh "
-            "retry budget in this run."
+            "retry budget in this run. Mutually exclusive with "
+            "--delta-carry-forward-from."
+        ),
+    )
+    parser.add_argument(
+        "--delta-carry-forward-from",
+        type=Path,
+        help=(
+            "A prior run's --out-dir to inherit from row by row instead of "
+            "requiring the whole plan to match. Unlike --carry-forward-"
+            "review-dir, this does NOT require call_plan.jsonl to be "
+            "identical -- it inherits only the specific calls whose "
+            "physical_call_key, prompt_sha256, and request_payload_sha256 "
+            "all independently match a real SUCCEEDED result in the prior "
+            "ledger; any row whose prompt/request changed (e.g. a targeted "
+            "audit-contract or data repair affecting only some states) is "
+            "correctly treated as new. Use this when the call plan has "
+            "genuinely partially changed, not just when resuming an "
+            "identical interrupted run. Mutually exclusive with "
+            "--carry-forward-review-dir."
         ),
     )
     return parser.parse_args()
@@ -731,11 +848,23 @@ def main() -> None:
         ),
     )
     n_calls = len(call_plan)
-    carry_forward = _load_carry_forward_state(
-        carry_forward_dir=args.carry_forward_review_dir,
-        call_plan=call_plan,
-        review_stage=review_stage,
-    )
+    if args.carry_forward_review_dir is not None and args.delta_carry_forward_from is not None:
+        raise RuntimeError(
+            "--carry-forward-review-dir and --delta-carry-forward-from are "
+            "mutually exclusive"
+        )
+    if args.delta_carry_forward_from is not None:
+        carry_forward = _load_delta_carry_forward_state(
+            carry_forward_dir=args.delta_carry_forward_from,
+            call_plan=call_plan,
+            review_stage=review_stage,
+        )
+    else:
+        carry_forward = _load_carry_forward_state(
+            carry_forward_dir=args.carry_forward_review_dir,
+            call_plan=call_plan,
+            review_stage=review_stage,
+        )
     carried_call_keys = carry_forward["carried_call_keys"]
     remaining_call_plan = [
         row
@@ -781,6 +910,7 @@ def main() -> None:
         "carry_forward_source_ledger_sha256": carry_forward[
             "carry_forward_source_ledger_sha256"
         ],
+        "carry_forward_mechanism": carry_forward["carry_forward_mechanism"],
         "carried_forward_call_keys_sha256": (
             sha256_text(canonical_json(sorted(carried_call_keys)))
             if carried_call_keys

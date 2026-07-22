@@ -462,12 +462,47 @@ def _actual_semantic_claim_and_evidence(
         "session_summary": str(payload["session_summary"]),
     }
     if field == "context_grounding_match":
+        summary_text = str(payload["session_summary"])
+        context_text = str(payload["authorized_user_context"])
+        # Root cause of a real incident: the old claim used a self-
+        # referential meta-description ("both candidate context fields are
+        # supported") instead of stating the verification target directly.
+        # One judge family systematically misread "candidate context fields"
+        # as literal field names that must appear in the evidence text,
+        # rejecting well-grounded contexts on that basis alone (verified
+        # against 67 real disagreements, all showing this exact
+        # misreading). The claim below states plainly which TEXT is being
+        # verified and instructs the judge to evaluate facts, not field
+        # names. A structurally absent (empty) session_summary is marked
+        # N/A rather than posed as something to "support" -- an empty field
+        # is not missing evidence and must never be scored as unsupported.
+        if summary_text.strip():
+            claim = {
+                "verification_instruction": (
+                    "session_summary_text and authorized_user_context_text "
+                    "below are each a claim about the user that must be "
+                    "fully entailed by the evidence. Judge the stated facts "
+                    "in the text, never the names of any fields."
+                ),
+                "session_summary_text": summary_text,
+                "authorized_user_context_text": context_text,
+            }
+        else:
+            claim = {
+                "verification_instruction": (
+                    "session_summary_text is structurally absent (N/A) for "
+                    "this case -- it requires no verification and its "
+                    "absence must never be treated as missing or "
+                    "unsupported evidence. Only authorized_user_context_text "
+                    "below must be fully entailed by the evidence. Judge the "
+                    "stated facts in the text, never the names of any "
+                    "fields."
+                ),
+                "session_summary_text": "N/A",
+                "authorized_user_context_text": context_text,
+            }
         return (
-            {
-                "session_summary": str(payload["session_summary"]),
-                "authorized_user_context": str(payload["authorized_user_context"]),
-                "proposed_grounding": "both candidate context fields are supported",
-            },
+            claim,
             {
                 "history": visible_evidence["history"],
                 "current_user_text": visible_evidence["current_user_text"],
