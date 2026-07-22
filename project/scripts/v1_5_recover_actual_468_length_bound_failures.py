@@ -81,6 +81,21 @@ def parse_args() -> argparse.Namespace:
         default=["training_judge_gemini_flash_lite", "training_judge_deepseek_official_flash"],
     )
     parser.add_argument("--seed", type=int, default=20260716)
+    parser.add_argument(
+        "--states-dir",
+        type=Path,
+        help=(
+            "Override the corpus directory used to reconstruct semantic "
+            "packets (pm_v2_states.jsonl/evaluator_contexts.jsonl/"
+            "memory_backend.jsonl/pm_v2_bundles.jsonl). Required for a "
+            "delta re-judge run whose --out-dir is not the manifest's "
+            "single recorded development_actual_corpus_semantic_review "
+            "output_directory (e.g. a repaired-corpus addendum run) -- "
+            "when given, the manifest's output_directory/ledger-sha256 "
+            "cross-check is skipped, but the byte-exact prompt_sha256 "
+            "reconstruction check below still fails closed on any mismatch."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -89,31 +104,34 @@ def main() -> None:
     out_dir = args.out_dir
     manifest = read_json(args.paid_run_release)
     stage_consumption = manifest["stage_consumptions"]["development_actual_corpus_semantic_review"]
-    if Path(stage_consumption["output_directory"]) != out_dir:
-        raise RuntimeError(
-            "recovery --out-dir does not match the manifest's recorded "
-            "development_actual_corpus_semantic_review output_directory"
-        )
-    if stage_consumption["status"] != "CONSUMED_INCOMPLETE":
-        raise RuntimeError(
-            "recovery requires the manifest to record this run as "
-            "CONSUMED_INCOMPLETE; refusing to recover any other status"
-        )
     ledger_path = out_dir / "physical_attempt_ledger.jsonl"
-    real_ledger_sha256 = sha256_file(ledger_path)
-    if real_ledger_sha256 != stage_consumption["physical_attempt_ledger_sha256"]:
-        raise RuntimeError(
-            "physical_attempt_ledger.jsonl does not match the manifest's "
-            "recorded sha256; refusing to recover from an altered ledger"
-        )
-
-    data_generation = manifest["stage_consumptions"]["development_data_generation"]
-    if data_generation["status"] != "CONSUMED_PASS":
-        raise RuntimeError(
-            "development_data_generation must be CONSUMED_PASS; refusing to "
-            "reconstruct semantic packets from an unvalidated dataset"
-        )
-    states_dir = Path(data_generation["output_directory"])
+    if args.states_dir is not None:
+        states_dir = args.states_dir
+    else:
+        if Path(stage_consumption["output_directory"]) != out_dir:
+            raise RuntimeError(
+                "recovery --out-dir does not match the manifest's recorded "
+                "development_actual_corpus_semantic_review output_directory "
+                "-- pass --states-dir explicitly for a delta re-judge run "
+                "against a different (e.g. repaired) corpus directory"
+            )
+        if stage_consumption["status"] != "CONSUMED_INCOMPLETE":
+            raise RuntimeError(
+                "recovery requires the manifest to record this run as "
+                "CONSUMED_INCOMPLETE; refusing to recover any other status"
+            )
+        if sha256_file(ledger_path) != stage_consumption["physical_attempt_ledger_sha256"]:
+            raise RuntimeError(
+                "physical_attempt_ledger.jsonl does not match the manifest's "
+                "recorded sha256; refusing to recover from an altered ledger"
+            )
+        data_generation = manifest["stage_consumptions"]["development_data_generation"]
+        if data_generation["status"] != "CONSUMED_PASS":
+            raise RuntimeError(
+                "development_data_generation must be CONSUMED_PASS; refusing "
+                "to reconstruct semantic packets from an unvalidated dataset"
+            )
+        states_dir = Path(data_generation["output_directory"])
 
     gate_report = read_json(out_dir / "gate_report.json")
     if gate_report["status"] != "INCOMPLETE_NO_GATE_DECISION":
@@ -274,7 +292,7 @@ def main() -> None:
             "recovery. Zero new API calls; zero new cost."
         ),
         "original_output_directory": str(out_dir),
-        "original_physical_attempt_ledger_sha256": real_ledger_sha256,
+        "original_physical_attempt_ledger_sha256": sha256_file(ledger_path),
         "n_recovered": len(recovery_detail),
         "n_citation_valid": citation_valid_count,
         "n_citation_invalid": len(recovery_detail) - citation_valid_count,
