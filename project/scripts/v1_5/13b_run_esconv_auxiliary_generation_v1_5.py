@@ -277,6 +277,37 @@ def main() -> None:
         for action_id in legal_actions
     )
 
+    # Binds the execution-behavior code that will actually run the batch
+    # (transport-retry/circuit-breaker logic lives in sweep.py, not in this
+    # script) into the identity, matching the shared_code_manifest lesson
+    # from v1_5_run_automated_semantic_review.py: without this, a future
+    # runtime bugfix to that shared code would silently apply under an
+    # already-approved cost_estimate_sha256 instead of minting a fresh one.
+    shared_code_paths = {
+        "runner": Path(__file__).resolve(),
+        "sweep": ROOT / "src" / "metacom_pm" / "sweep.py",
+        "api": ROOT / "src" / "metacom_pm" / "api.py",
+        "attempt_ledger": ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
+        "bounded_retry": ROOT / "src" / "metacom_pm" / "bounded_retry.py",
+    }
+    shared_code_manifest = {
+        name: {
+            "relative_path": str(path.resolve().relative_to(ROOT.resolve())),
+            "sha256": sha256_file(path),
+        }
+        for name, path in sorted(shared_code_paths.items())
+    }
+
+    # Transport-only bounded retry: every physical HTTP attempt is ledgered;
+    # 5xx/timeout/429 failures get bounded retries with backoff up to
+    # request_retries; content-level terminal errors (schema, completion-gate
+    # rejection, reported-token-overrun) are never blindly retried. fail_fast
+    # is False so one isolated failure never aborts the whole 1,438-call
+    # batch; a same-class circuit breaker still stops a systemic outage.
+    transport_retry_policy = "bounded_transport"
+    transport_backoff_seconds = (10.0, 30.0, 60.0)
+    consecutive_same_class_circuit_breaker = 5
+
     contract_bindings = {
         "pm_v1_5_config_sha256": sha256_file(args.pm_v1_5_config),
         "pm_v1_5_version": str(pm_v1_5_config["version"]),
@@ -292,6 +323,15 @@ def main() -> None:
         "scope": f"esconv_auxiliary_action_first_{split}",
         "auxiliary_runtime_states_sha256": sha256_file(runtime_states_path),
         "auxiliary_memory_backend_sha256": sha256_file(memory_backend_path),
+        "shared_code_manifest": shared_code_manifest,
+        "shared_code_manifest_sha256": sha256_text(
+            canonical_json(shared_code_manifest)
+        ),
+        "transport_retry_policy": transport_retry_policy,
+        "transport_backoff_seconds": list(transport_backoff_seconds),
+        "consecutive_same_class_circuit_breaker": (
+            consecutive_same_class_circuit_breaker
+        ),
     }
 
     api_cost_config = dict(pm_v1_5_config["api_cost_planning"])
@@ -319,8 +359,16 @@ def main() -> None:
         temperature=supporter_generation_contract.temperature,
         max_tokens=supporter_generation_contract.max_output_tokens,
         seed=seed,
-        request_retries=1,
-        fail_fast=True,
+        # Bounded per-call physical-attempt budget for transient transport
+        # failures (500/503/timeouts/429); a single request_retries=1 budget
+        # is not viable for a real 1,438-call batch on an endpoint with a
+        # documented history of rate limits and transient 5xx/timeouts.
+        # fail_fast=False so one isolated failure never aborts the whole
+        # batch (transport_retry_policy/circuit breaker are added below,
+        # only for run_action_sweep -- plan_action_sweep does not accept
+        # them, so they are bound into contract_bindings instead).
+        request_retries=4,
+        fail_fast=False,
         input_token_safety_factor=input_token_safety_factor,
         fail_on_reported_input_overrun=fail_on_reported_input_overrun,
         strategy_top_k=strategy_top_k,
@@ -386,6 +434,13 @@ def main() -> None:
         for key, value in plan_kwargs.items()
         if key not in ("input_usd_per_mtok", "output_usd_per_mtok")
     }
+    run_kwargs.update(
+        transport_retry_policy=transport_retry_policy,
+        transport_backoff_seconds=transport_backoff_seconds,
+        consecutive_same_class_circuit_breaker=(
+            consecutive_same_class_circuit_breaker
+        ),
+    )
     summary = run_action_sweep(
         runtime_states_path,
         memory_backend_path,
