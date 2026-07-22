@@ -272,9 +272,12 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   零 API 重编译后 468/468 runtime lineage PASS，且 states/evaluator contexts/memory backend/
   bundles 相对 V8.19.1 字节不变，因此不需要重跑 actual-468 judge。Step-0 shortcut audit 与
   transparent rule-grid preflight 已在 V8.19.2 上零 API 实跑 PASS，并由输入
-  hash/attestation 绑定。longitudinal full action sweep 的两次独立 dry-run 也已字节一致：
-  7,488 logical/physical calls，cost identity `faf13c51…f93c69`，保守估算 `$2.36494155`，
-  budget gate PASS；尚未获批或执行真实调用。sweep judging、
+  hash/attestation 绑定。旧的单次尝试 dry-run identity `faf13c51…f93c69` 已因正式
+  transport execution contract 而失效，不得批准。新的 longitudinal full action sweep
+  两次独立 dry-run 已在不同目录逐字节一致：7,488 logical calls、最多 29,952 physical
+  attempts，logical estimate `$2.36494155`、最坏上限 `$9.4597662`，cost identity
+  `a4a1a94f…ee913`，call-plan SHA `3f473200…f75cc`，transport contract
+  `0af7d371…40fdc`，budget gate PASS；尚未获批或执行真实调用。sweep judging、
   联合训练、两个 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。
@@ -340,9 +343,12 @@ evidence、attempt 行、prompt 或 action lineage；必须有回归测试证明
 state/action、抽样替代正式矩阵、跨 ESConv/EvoEmo 合并结果、调低 validator，或把 provider
 失败当作语义 PASS。按保守并发和等价复用，若 provider 稳定，余下正式链路可由纯串行的
 约 3–5 天压缩到约 1–2 天；这是工程预算，不是保证，也不能写入论文 efficacy 结果。
-截至本次更新，该并发合同是 `DESIGN_FROZEN_NOT_IMPLEMENTED`；现有 runner/ledger 仍按其
-各自代码状态运行。未完成加锁、shard merge、并发回归测试和小 pilot 前，不得仅通过 CLI
-提高 worker 数。
+截至本次更新，该并发合同仍是 `DESIGN_FROZEN_NOT_IMPLEMENTED`；不得仅通过 CLI 提高
+worker 数。与并发不同，longitudinal sweep 已实现并冻结**串行的** bounded-transport
+韧性：科学 treatment 不变，每 logical call 最多 4 个 ledger-visible physical attempts，
+只重试 429/408/5xx/timeout，孤立 terminal failure 不立即杀死矩阵，连续 5 个同类失败触发
+circuit breaker。该能力减少偶发传输故障造成的整批作废，但不提供并行加速，也不把失败
+调用当作成功。
 
 截至 2026-07-22，已记录以下 dry-run 与历史执行状态。generation compatibility
 一行保留历史调用及预算哈希用于追溯，但该调用绑定旧配置，不能充当当前上游 gate：

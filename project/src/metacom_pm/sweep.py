@@ -240,6 +240,7 @@ def plan_action_sweep(
     max_tokens: int = 300,
     seed: int | None = 4311,
     request_retries: int = 3,
+    transport_max_attempts_per_call: int | None = None,
     fail_fast: bool = False,
     input_token_safety_factor: float = 1.0,
     fail_on_reported_input_overrun: bool = False,
@@ -258,6 +259,13 @@ def plan_action_sweep(
 
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
+    transport_attempt_cap = int(
+        request_retries
+        if transport_max_attempts_per_call is None
+        else transport_max_attempts_per_call
+    )
+    if transport_attempt_cap < 1:
+        raise ValueError("transport_max_attempts_per_call must be positive")
     (
         system_prompt,
         generation_treatment,
@@ -413,7 +421,7 @@ def plan_action_sweep(
                 ),
                 "prompt_sha256": prompt_sha256,
                 "call_key": call_key,
-                "max_http_attempts": int(request_retries),
+                "max_http_attempts": transport_attempt_cap,
                 "raw_estimated_input_tokens": raw_input_tokens,
                 "estimated_input_tokens": input_tokens,
                 "maximum_output_tokens": int(max_tokens),
@@ -452,7 +460,7 @@ def plan_action_sweep(
         total_input / 1_000_000 * float(input_usd_per_mtok)
         + total_output / 1_000_000 * float(output_usd_per_mtok)
     )
-    maximum_physical_attempts = len(physical_rows) * int(request_retries)
+    maximum_physical_attempts = len(physical_rows) * transport_attempt_cap
     payload = {
         "protocol": "pm_v2_action_sweep_cost_v3_persistent_attempt_ledger",
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
@@ -468,6 +476,7 @@ def plan_action_sweep(
         "max_tokens": int(max_tokens),
         "seed": seed,
         "request_retries": int(request_retries),
+        "transport_max_attempts_per_call": transport_attempt_cap,
         "fail_fast": bool(fail_fast),
         "input_token_safety_factor": float(input_token_safety_factor),
         "fail_on_reported_input_overrun": bool(fail_on_reported_input_overrun),
@@ -513,9 +522,9 @@ def plan_action_sweep(
         "unduplicated_logical_maximum_output_tokens": len(rows)
         * int(max_tokens),
         "maximum_physical_total_input_tokens": total_input
-        * int(request_retries),
+        * transport_attempt_cap,
         "maximum_physical_total_output_tokens": total_output
-        * int(request_retries),
+        * transport_attempt_cap,
         "mean_input_tokens": (
             float(total_input / len(input_tokens)) if input_tokens else 0.0
         ),
@@ -526,7 +535,7 @@ def plan_action_sweep(
             "output_usd_per_mtok": float(output_usd_per_mtok),
         },
         "logical_estimated_cost_usd": logical_cost_usd,
-        "estimated_cost_usd": logical_cost_usd * int(request_retries),
+        "estimated_cost_usd": logical_cost_usd * transport_attempt_cap,
         "cost_basis": "maximum_physical_api_attempts",
         "call_plan_sha256": sha256_text(canonical_json(rows)),
         "contract_bindings": dict(contract_bindings or {}),
@@ -560,6 +569,7 @@ def run_action_sweep(
     max_tokens: int = 300,
     seed: int | None = 4311,
     request_retries: int = 3,
+    transport_max_attempts_per_call: int | None = None,
     fail_fast: bool = False,
     input_token_safety_factor: float = 1.0,
     fail_on_reported_input_overrun: bool = False,
@@ -581,10 +591,25 @@ def run_action_sweep(
 ) -> dict[str, Any]:
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
+    transport_attempt_cap = int(
+        request_retries
+        if transport_max_attempts_per_call is None
+        else transport_max_attempts_per_call
+    )
+    if transport_attempt_cap < 1:
+        raise ValueError("transport_max_attempts_per_call must be positive")
     if transport_retry_policy not in {"single_attempt", "bounded_transport"}:
         raise ValueError(
             "transport_retry_policy must be 'single_attempt' or "
             "'bounded_transport'"
+        )
+    if (
+        transport_retry_policy == "single_attempt"
+        and transport_attempt_cap != int(request_retries)
+    ):
+        raise ValueError(
+            "a distinct transport_max_attempts_per_call requires "
+            "transport_retry_policy='bounded_transport'"
         )
     (
         system_prompt,
@@ -760,7 +785,7 @@ def run_action_sweep(
     physical_call_keys = {
         str(row["call_key"]) for row in prepared_calls.values()
     }
-    planned_maximum_attempts = len(physical_call_keys) * int(request_retries)
+    planned_maximum_attempts = len(physical_call_keys) * transport_attempt_cap
     runtime_attempt_cap = int(
         planned_maximum_attempts
         if max_physical_api_attempts is None
@@ -781,6 +806,7 @@ def run_action_sweep(
         "max_tokens": max_tokens,
         "seed": seed,
         "request_retries": int(request_retries),
+        "transport_max_attempts_per_call": transport_attempt_cap,
         "fail_fast": bool(fail_fast),
         "transport_retry_policy": str(transport_retry_policy),
         "transport_backoff_seconds": list(transport_backoff_seconds),
@@ -864,7 +890,7 @@ def run_action_sweep(
         attempt_ledger_path,
         stage="action_sweep_generation",
         expected_calls={
-            row["call_key"]: int(request_retries)
+            row["call_key"]: transport_attempt_cap
             for row in prepared_calls.values()
         },
         maximum_total_attempts=runtime_attempt_cap,
@@ -961,7 +987,7 @@ def run_action_sweep(
         done.add(key)
     historical_attempts = ledger.started_attempts
     client: OpenAICompatibleClient | None = None
-    n_calls = 0
+    newly_attempted_call_keys: set[str] = set()
     failures: list[dict[str, Any]] = [
         {
             **dict(row.get("record_ids") or {}),
@@ -1056,6 +1082,7 @@ def run_action_sweep(
             # a physical API attempt and must not consume the frozen budget.
             if client is None:
                 client = OpenAICompatibleClient(endpoint)
+            newly_attempted_call_keys.add(call_key)
             result = None
             if transport_retry_policy == "bounded_transport":
                 # Every physical HTTP attempt (including transient 5xx/
@@ -1123,7 +1150,6 @@ def run_action_sweep(
                         aborted_on_first_failure = True
                         break
                     continue
-                n_calls += 1
                 last_isolated_retry_class = None
                 consecutive_same_class_count = 0
             else:
@@ -1132,7 +1158,6 @@ def run_action_sweep(
                     record_ids=prepared["record_ids"],
                     prompt_sha256=prepared["prompt_hash"],
                 )
-                n_calls += 1
             try:
                 if transport_retry_policy != "bounded_transport":
                     result, _ = client.chat(
@@ -1381,6 +1406,9 @@ def run_action_sweep(
                             "temperature": temperature,
                             "seed": seed,
                             "request_retries": int(request_retries),
+                            "transport_max_attempts_per_call": (
+                                transport_attempt_cap
+                            ),
                             "physical_call_key": call_key,
                             "physical_attempt_index": reservation.attempt_index,
                             "physical_attempt_key": reservation.attempt_key,
@@ -1511,13 +1539,17 @@ def run_action_sweep(
         "n_cards": len(cards),
         "expected_outcomes": expected,
         "completed_outcomes": completed,
-        "new_api_calls": n_calls,
-        "new_physical_http_attempts": n_calls,
+        "new_api_calls": len(newly_attempted_call_keys),
+        "new_logical_calls_attempted": len(newly_attempted_call_keys),
+        "new_physical_http_attempts": (
+            ledger.started_attempts - historical_attempts
+        ),
         "historical_physical_http_attempts": historical_attempts,
         "total_physical_http_attempts": ledger.started_attempts,
         "remaining_runtime_physical_http_attempts": ledger.remaining_attempts,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "request_retries": int(request_retries),
+        "transport_max_attempts_per_call": transport_attempt_cap,
         "fail_fast": bool(fail_fast),
         "transport_retry_policy": str(transport_retry_policy),
         "transport_backoff_seconds": list(transport_backoff_seconds),
@@ -1573,6 +1605,7 @@ def run_action_sweep(
             "max_tokens": max_tokens,
             "seed": seed,
             "request_retries": int(request_retries),
+            "transport_max_attempts_per_call": transport_attempt_cap,
             "fail_fast": bool(fail_fast),
             "transport_retry_policy": str(transport_retry_policy),
             "transport_backoff_seconds": list(transport_backoff_seconds),

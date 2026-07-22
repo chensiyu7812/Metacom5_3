@@ -16,6 +16,7 @@ from pathlib import Path
 
 from metacom_pm.artifacts import require_artifact_attestation
 from metacom_pm.attempt_ledger import forbid_overwrite_of_spent_attempts
+from metacom_pm.bounded_retry import RETRYABLE_UP_TO_FULL_BUDGET
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.contracts import parse_action_id
 from metacom_pm.evidence_filter import EvidenceFilterConfig
@@ -56,6 +57,55 @@ from metacom_pm.v1_5_actual_corpus_qualification import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+LONGITUDINAL_TRANSPORT_EXECUTION_PROTOCOL = (
+    "pm-v1.5-longitudinal-sweep-transport-execution-v1"
+)
+LONGITUDINAL_TRANSPORT_MAX_ATTEMPTS_PER_CALL = 4
+LONGITUDINAL_TRANSPORT_BACKOFF_SECONDS = (10.0, 30.0, 60.0)
+LONGITUDINAL_TRANSPORT_CIRCUIT_BREAKER = 5
+
+
+def _longitudinal_transport_execution_contract() -> dict:
+    """Bind execution resilience without changing the scientific treatment."""
+
+    code_paths = {
+        "runner": Path(__file__).resolve(),
+        "sweep": ROOT / "src" / "metacom_pm" / "sweep.py",
+        "api": ROOT / "src" / "metacom_pm" / "api.py",
+        "attempt_ledger": ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
+        "bounded_retry": ROOT / "src" / "metacom_pm" / "bounded_retry.py",
+    }
+    code_manifest = {
+        name: {
+            "relative_path": str(path.relative_to(ROOT)),
+            "sha256": sha256_file(path),
+        }
+        for name, path in sorted(code_paths.items())
+    }
+    payload = {
+        "protocol": LONGITUDINAL_TRANSPORT_EXECUTION_PROTOCOL,
+        "transport_retry_policy": "bounded_transport",
+        "transport_max_attempts_per_call": (
+            LONGITUDINAL_TRANSPORT_MAX_ATTEMPTS_PER_CALL
+        ),
+        "transport_backoff_seconds": list(
+            LONGITUDINAL_TRANSPORT_BACKOFF_SECONDS
+        ),
+        "consecutive_same_class_circuit_breaker": (
+            LONGITUDINAL_TRANSPORT_CIRCUIT_BREAKER
+        ),
+        "continue_after_isolated_terminal_failure": True,
+        "retryable_classes": sorted(RETRYABLE_UP_TO_FULL_BUDGET),
+        "terminal_content_failures_are_not_blindly_retried": True,
+        "legacy_config_request_retries": 1,
+        "legacy_config_fail_fast": True,
+        "scientific_treatment_unchanged": True,
+        "code_manifest": code_manifest,
+        "code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
+    }
+    payload["contract_sha256"] = sha256_text(canonical_json(payload))
+    return payload
 
 
 def _budget_gate(
@@ -538,6 +588,13 @@ def main() -> None:
     if args.pilot_plan is not None and (args.max_cards is not None or args.actions):
         raise RuntimeError("--pilot-plan cannot be combined with ad-hoc pilot filters")
     pilot_plan = read_json(args.pilot_plan) if args.pilot_plan is not None else None
+    formal_v1_5_full_sweep = bool(
+        runtime_is_pm_v2
+        and args.v1_5_full_sweep_scope
+        and pilot_plan is None
+        and args.max_cards is None
+        and not args.actions
+    )
 
     contract_bindings: dict = {}
     pm_v2_states_path = None
@@ -548,6 +605,11 @@ def main() -> None:
     memory_helpfulness_model = None
     evidence_filter_model_binding = None
     supporter_generation_contract = None
+    transport_max_attempts_per_call: int | None = None
+    transport_retry_policy = "single_attempt"
+    transport_backoff_seconds: tuple[float, ...] = ()
+    consecutive_same_class_circuit_breaker: int | None = None
+    longitudinal_transport_execution_contract: dict | None = None
     if args.pm_v2_config is not None:
         pm_config = load_config(args.pm_v2_config)
         require_paid_run_release(
@@ -820,6 +882,27 @@ def main() -> None:
                 "PM-v2 development_sweep.fail_fast must be true so an exact "
                 "action-matrix failure cannot spend the remaining budget"
             )
+        if formal_v1_5_full_sweep:
+            # The old config values remain frozen so the scientific corpus and
+            # response-mechanism identities do not drift.  Formal V1.5 uses a
+            # separately hashed execution-only resilience contract: each
+            # physical HTTP call still asks for exactly the same model,
+            # prompt, seed and output cap, while transient transport failures
+            # receive a bounded fresh attempt recorded in the durable ledger.
+            longitudinal_transport_execution_contract = (
+                _longitudinal_transport_execution_contract()
+            )
+            transport_max_attempts_per_call = (
+                LONGITUDINAL_TRANSPORT_MAX_ATTEMPTS_PER_CALL
+            )
+            transport_retry_policy = "bounded_transport"
+            transport_backoff_seconds = (
+                LONGITUDINAL_TRANSPORT_BACKOFF_SECONDS
+            )
+            consecutive_same_class_circuit_breaker = (
+                LONGITUDINAL_TRANSPORT_CIRCUIT_BREAKER
+            )
+            fail_fast = False
         strategy_top_k = frozen_values["strategy_top_k"]
         memory_min_score = frozen_values["memory_min_score"]
         strategy_min_score = frozen_values["strategy_min_score"]
@@ -899,6 +982,10 @@ def main() -> None:
                 else "full"
             ),
         }
+        if longitudinal_transport_execution_contract is not None:
+            contract_bindings["transport_execution_contract"] = (
+                longitudinal_transport_execution_contract
+            )
     else:
         if args.input_usd_per_mtok is None or args.output_usd_per_mtok is None:
             raise RuntimeError(
@@ -1037,6 +1124,7 @@ def main() -> None:
         max_tokens=max_output_tokens,
         seed=seed,
         request_retries=request_retries,
+        transport_max_attempts_per_call=transport_max_attempts_per_call,
         fail_fast=fail_fast,
         input_token_safety_factor=input_token_safety_factor,
         fail_on_reported_input_overrun=fail_on_reported_input_overrun,
@@ -1095,6 +1183,7 @@ def main() -> None:
         max_tokens=max_output_tokens,
         seed=seed,
         request_retries=request_retries,
+        transport_max_attempts_per_call=transport_max_attempts_per_call,
         fail_fast=fail_fast,
         input_token_safety_factor=input_token_safety_factor,
         fail_on_reported_input_overrun=fail_on_reported_input_overrun,
@@ -1106,6 +1195,11 @@ def main() -> None:
         supporter_generation_contract=supporter_generation_contract,
         overwrite=args.overwrite,
         max_physical_api_attempts=args.max_api_calls,
+        transport_retry_policy=transport_retry_policy,
+        transport_backoff_seconds=transport_backoff_seconds,
+        consecutive_same_class_circuit_breaker=(
+            consecutive_same_class_circuit_breaker
+        ),
         contract_bindings={
             **contract_bindings,
             "accepted_cost_estimate_sha256": expected_hash,
