@@ -1132,8 +1132,21 @@ def main() -> None:
     last_isolated_retry_class: str | None = None
     consecutive_same_class_count = 0
     try:
-        for row in pending:
+        # Iterate the FULL call plan, in its frozen order -- not just
+        # `pending` -- so the circuit breaker's consecutive-failure count
+        # reflects the calls' real adjacency. A carried-forward or
+        # already-succeeded row makes no API call, but still resets the
+        # streak: found for real that filtering to `pending` first
+        # compresses failures that are hundreds of rows apart in the true
+        # plan (positions 52/420/477/644/790 in a 1880-row plan) into an
+        # apparent "5 in a row", tripping the breaker on isolated failures
+        # that were never actually clustered.
+        for row in call_plan:
             call_key = str(row["physical_call_key"])
+            if ledger.succeeded(call_key):
+                last_isolated_retry_class = None
+                consecutive_same_class_count = 0
+                continue
             item = execution[call_key]
 
             def call_fn(item=item):

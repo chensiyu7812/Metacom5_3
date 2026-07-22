@@ -422,12 +422,43 @@ class _FakeClientWithInjectedFailures:
 
 
 def _run_with_fake_client(
-    module, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, fail_at: dict[int, callable]
+    module,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    *,
+    fail_at: dict[int, callable],
+    preseed_succeeded_plan_indices: set[int] | None = None,
 ) -> Path:
     out_dir = tmp_path / "review"
     pilot = _patch_paid_pilot(module, monkeypatch, tmp_path)
     monkeypatch.setattr(sys, "argv", _argv(out_dir, "--dry-run", pilot))
     module.main()
+    if preseed_succeeded_plan_indices:
+        plan = list(iter_jsonl(out_dir / "call_plan.jsonl"))
+        ledger = PersistentAttemptLedger(
+            out_dir / "physical_attempt_ledger.jsonl",
+            stage="pm_v1_5_automated_semantic_review",
+            expected_calls={
+                str(row["physical_call_key"]): int(row["maximum_physical_attempts"])
+                for row in plan
+            },
+            maximum_total_attempts=10**6,
+        )
+        for index in preseed_succeeded_plan_indices:
+            row = plan[index]
+            call_key = str(row["physical_call_key"])
+            reservation = ledger.reserve(
+                call_key, record_ids={}, prompt_sha256=str(row["prompt_sha256"])
+            )
+            ledger.finish(
+                reservation,
+                succeeded=True,
+                request_hash="f" * 64,
+                usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20},
+                error=None,
+                result={"parsed": {}, "raw_text": "{}"},
+                metadata={"carried_forward": True},
+            )
     monkeypatch.setattr(
         module,
         "require_paid_run_release",
@@ -519,6 +550,53 @@ def test_circuit_breaker_stops_on_repeated_same_class_isolated_failures(
     fail_at = {i: _missing_field_error for i in range(10)}
     with pytest.raises(RuntimeError, match="circuit breaker"):
         _run_with_fake_client(module, monkeypatch, tmp_path, fail_at=fail_at)
+
+
+def test_circuit_breaker_does_not_trip_on_failures_spread_across_carried_forward_successes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """Real bug: the runner used to iterate only the `pending` (not-yet-
+    succeeded) rows, so the consecutive-failure counter advanced only
+    across pending rows -- any already-succeeded (e.g. carried-forward)
+    row in between was invisible to it. Five failures that are hundreds of
+    rows apart in the real 1880-row actual-468 plan (positions 52, 420,
+    477, 644, 790, confirmed against a real run) got compressed into an
+    apparent "5 in a row" this way, tripping the breaker on isolated
+    failures. Fixed by iterating the full call plan and resetting the
+    streak on every already-succeeded row, whether real or carried
+    forward. This test seeds most of the 120-row pilot plan as already
+    successful (simulating carry-forward) except 5 positions spread far
+    apart, which fail with the same isolatable retry_class -- the run
+    must complete (INCOMPLETE_NO_GATE_DECISION), not crash."""
+
+    module = _load_runner()
+
+    def _missing_field_error():
+        return RetryableProviderError(
+            "empty model response",
+            last_retry_class="missing_field",
+            last_status_code=None,
+            attempts_tried=1,
+        )
+
+    spread_out_failure_positions = {5, 35, 65, 95, 115}
+    preseed = set(range(120)) - spread_out_failure_positions
+    # Only the 5 non-preseeded rows ever reach the fake client, in plan
+    # order. Each needs 2 physical attempts to become terminal (matching
+    # test_circuit_breaker_stops_on_repeated_same_class_isolated_failures'
+    # own range(10) for exactly 5 terminal logical failures), so all 10
+    # physical-attempt indices across those 5 logical calls must fail.
+    fail_at = {i: _missing_field_error for i in range(10)}
+    out_dir = _run_with_fake_client(
+        module,
+        monkeypatch,
+        tmp_path,
+        fail_at=fail_at,
+        preseed_succeeded_plan_indices=preseed,
+    )
+    gate = read_json(out_dir / "gate_report.json")
+    assert gate["status"] == "INCOMPLETE_NO_GATE_DECISION"
+    assert gate["logical_calls_incomplete"] == 5
 
 
 def test_output_directory_guard_is_wired_in_before_any_expensive_work(
