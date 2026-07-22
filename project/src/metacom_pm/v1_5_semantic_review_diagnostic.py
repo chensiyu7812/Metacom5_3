@@ -15,6 +15,7 @@ from typing import Annotated, Any, Literal, Mapping, Sequence
 
 from pydantic import Field
 
+from .api import normalize_provider_finish_reason
 from .io import canonical_json, sha256_text
 from .text import estimate_tokens
 from .pm_v2_contracts import StrictModel
@@ -372,6 +373,52 @@ def maximum_legal_single_field_diagnostic_output_tokens() -> int:
         reason="x" * MAX_REASON_CHARS,
     )
     return estimate_tokens(canonical_json(worst_case.model_dump(mode="json")))
+
+
+OFFLINE_LENGTH_BOUND_RECOVERY_PROTOCOL = (
+    "pm-v1.5-actual-468-offline-length-bound-recovery-v1"
+)
+
+
+class RecoveredSingleFieldDiagnosticOutput(StrictModel):
+    """Offline-recovery-only counterpart to SingleFieldDiagnosticOutput.
+
+    Never used to generate a live provider JSON schema and never sent as a
+    request contract -- SingleFieldDiagnosticOutput's max_length constraints
+    on reason/evidence_quotes are load-bearing for two live concerns this
+    model must never touch: the provider request schema, and
+    maximum_legal_single_field_diagnostic_output_tokens()'s worst-case token
+    preflight. Every other constraint (verdict enum, <=4 evidence items,
+    non-empty strings, forbid extra fields) is kept identical, so this can
+    only recover a response that was already a complete, well-formed answer
+    rejected purely for exceeding an arbitrary character count.
+    """
+
+    verdict: Literal["supported", "not_supported"]
+    evidence_keys: list[str] = Field(min_length=1, max_length=MAX_EVIDENCE_ITEMS)
+    evidence_quotes: list[str] = Field(min_length=1, max_length=MAX_EVIDENCE_ITEMS)
+    reason: str = Field(min_length=1)
+
+
+def recover_length_bound_failure(
+    *,
+    raw_provider_response: Mapping[str, Any],
+    parsed_payload: Mapping[str, Any],
+) -> RecoveredSingleFieldDiagnosticOutput:
+    """Locally re-validate an already-received response, ignoring only length.
+
+    Fails closed (raises ValueError) unless the provider's own finish reason
+    was a normal completion -- this never recovers a genuinely truncated
+    response -- and the payload still satisfies every other constraint.
+    """
+
+    _, normalized_finish_reason = normalize_provider_finish_reason(raw_provider_response)
+    if normalized_finish_reason != "complete":
+        raise ValueError(
+            "refusing to recover a response whose provider finish reason was "
+            f"not a normal completion: {normalized_finish_reason!r}"
+        )
+    return RecoveredSingleFieldDiagnosticOutput.model_validate(parsed_payload)
 
 
 def validate_field_review_specifications() -> None:

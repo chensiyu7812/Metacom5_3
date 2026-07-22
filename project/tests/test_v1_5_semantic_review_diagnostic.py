@@ -31,15 +31,20 @@ from metacom_pm.v1_5_semantic_review_diagnostic import (
     DIAGNOSTIC_STATUS,
     FIELD_REVIEW_SPECIFICATIONS,
     MAX_EVIDENCE_QUOTE_CHARS,
+    MAX_REASON_CHARS,
+    RecoveredSingleFieldDiagnosticOutput,
     SEMANTIC_DIAGNOSTIC_FIELDS,
     SingleFieldDiagnosticOutput,
     aggregate_v4_single_field_diagnostic,
     assess_single_field_diagnostic_output,
     build_v4_root_cause_diagnostic_packet,
     evaluate_deterministic_diagnostic_item,
+    recover_length_bound_failure,
     validate_single_field_diagnostic_output,
     validate_v4_diagnostic_source_artifacts,
 )
+
+from pydantic import ValidationError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -323,6 +328,137 @@ def test_semantic_output_rejects_unknown_missing_and_duplicate_citations(
                 reason="Leaked label.",
             ),
         )
+
+
+def _gemini_response(finish_reason: str) -> dict:
+    return {"candidates": [{"finishReason": finish_reason}]}
+
+
+def _openai_compatible_response(finish_reason: str) -> dict:
+    return {"choices": [{"finish_reason": finish_reason}]}
+
+
+def test_recovered_schema_accepts_a_reason_and_quote_over_the_live_length_caps() -> None:
+    over_long_reason = "x " * (MAX_REASON_CHARS)  # well over MAX_REASON_CHARS
+    over_long_quote = "y " * (MAX_EVIDENCE_QUOTE_CHARS)  # well over MAX_EVIDENCE_QUOTE_CHARS
+    recovered = RecoveredSingleFieldDiagnosticOutput(
+        verdict="supported",
+        evidence_keys=["current_user_text"],
+        evidence_quotes=[over_long_quote],
+        reason=over_long_reason,
+    )
+    assert len(recovered.reason) > MAX_REASON_CHARS
+    assert len(recovered.evidence_quotes[0]) > MAX_EVIDENCE_QUOTE_CHARS
+    with pytest.raises(ValidationError):
+        SingleFieldDiagnosticOutput(
+            verdict="supported",
+            evidence_keys=["current_user_text"],
+            evidence_quotes=[over_long_quote],
+            reason=over_long_reason,
+        )
+
+
+@pytest.mark.parametrize(
+    "bad_kwargs,match",
+    [
+        ({"verdict": "maybe"}, None),
+        ({"reason": ""}, None),
+        ({"evidence_keys": []}, None),
+        ({"evidence_keys": ["a", "b", "c", "d", "e"]}, None),
+        ({"evidence_quotes": ["a", "b", "c", "d", "e"]}, None),
+        ({"extra_field": "not allowed"}, None),
+    ],
+)
+def test_recovered_schema_still_rejects_every_non_length_defect(bad_kwargs, match) -> None:
+    base = dict(
+        verdict="supported",
+        evidence_keys=["current_user_text"],
+        evidence_quotes=["a real quote"],
+        reason="a real reason",
+    )
+    base.update(bad_kwargs)
+    with pytest.raises(ValidationError):
+        RecoveredSingleFieldDiagnosticOutput(**base)
+
+
+def test_recover_length_bound_failure_refuses_a_truncated_gemini_response() -> None:
+    with pytest.raises(ValueError, match="not a normal completion"):
+        recover_length_bound_failure(
+            raw_provider_response=_gemini_response("MAX_TOKENS"),
+            parsed_payload={
+                "verdict": "supported",
+                "evidence_keys": ["current_user_text"],
+                "evidence_quotes": ["a quote"],
+                "reason": "x" * (MAX_REASON_CHARS + 10),
+            },
+        )
+
+
+def test_recover_length_bound_failure_refuses_a_truncated_openai_compatible_response() -> None:
+    with pytest.raises(ValueError, match="not a normal completion"):
+        recover_length_bound_failure(
+            raw_provider_response=_openai_compatible_response("length"),
+            parsed_payload={
+                "verdict": "supported",
+                "evidence_keys": ["current_user_text"],
+                "evidence_quotes": ["a quote"],
+                "reason": "x" * (MAX_REASON_CHARS + 10),
+            },
+        )
+
+
+def test_recover_length_bound_failure_recovers_a_complete_over_length_response(
+    v4_calibration_material,
+) -> None:
+    _cases, _controls, packet = v4_calibration_material
+    item = next(
+        row
+        for row in packet["items"]
+        if row["field"] == "context_grounding_match" and row["polarity"] == "positive"
+    )
+    keys = ["history", "current_user_text"]
+    over_long_reason = (
+        "The current request and preceding event jointly entail the summary. " * 20
+    )
+    assert len(over_long_reason) > MAX_REASON_CHARS
+    recovered = recover_length_bound_failure(
+        raw_provider_response=_gemini_response("STOP"),
+        parsed_payload={
+            "verdict": "supported",
+            "evidence_keys": keys,
+            "evidence_quotes": [_quote(item["allowed_evidence"][key]) for key in keys],
+            "reason": over_long_reason,
+        },
+    )
+    assessment = assess_single_field_diagnostic_output(item=item, output=recovered)
+    assert assessment["citation_valid"] is True
+    assert assessment["correct"] is True
+
+
+def test_recover_length_bound_failure_reports_citation_defects_honestly_not_as_valid(
+    v4_calibration_material,
+) -> None:
+    _cases, _controls, packet = v4_calibration_material
+    item = next(
+        row
+        for row in packet["items"]
+        if row["field"] == "context_grounding_match" and row["polarity"] == "positive"
+    )
+    over_long_reason = "This reason is deliberately over the live length cap. " * 20
+    assert len(over_long_reason) > MAX_REASON_CHARS
+    recovered = recover_length_bound_failure(
+        raw_provider_response=_openai_compatible_response("stop"),
+        parsed_payload={
+            "verdict": "supported",
+            "evidence_keys": ["current_user_text"],
+            "evidence_quotes": ["a quote that does not appear anywhere in the evidence"],
+            "reason": over_long_reason,
+        },
+    )
+    assessment = assess_single_field_diagnostic_output(item=item, output=recovered)
+    assert assessment["citation_valid"] is False
+    assert "quote_absent_from_cited_evidence:current_user_text" in assessment["citation_errors"]
+    assert assessment["correct"] is False
 
 
 def _failed_v4_source_artifacts(packet: dict, controls: list[dict]):
