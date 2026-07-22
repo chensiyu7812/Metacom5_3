@@ -342,6 +342,21 @@ def apply_visible_surface_repair(
     turn_indices: Sequence[int],
     repair: VisibleSurfaceRepairOutput,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Whether session_summary is present or absent for a given (user,
+    case_field) cell is a frozen, counterbalanced design property enforced
+    by write_development_dataset's summarize_observable_state_support
+    (real check, confirmed by running the real recompilation pipeline
+    against a placeholder-repaired copy of the actual v8_18 bundles: it
+    hard-fails with "summary support drifted" the moment a repair turns an
+    originally-empty summary non-empty). 3 of the 6 VISIBLE_SURFACE_REPAIR
+    states have an originally EMPTY summary (state_44550214..., state_
+    7d1e36f1..., state_ba1e5261...) -- for those, repair.session_summary is
+    deliberately ignored and the summary is forced back to empty,
+    regardless of what the model returned, mirroring the same
+    never-trust-the-model-to-echo-correctly philosophy already applied to
+    apply_field_only_repair's 17 non-summary states.
+    """
+
     if len(repair.repaired_turn_contents) != len(turn_indices):
         raise RuntimeError(
             "repaired_turn_contents length does not match turn_indices_to_repair"
@@ -351,7 +366,10 @@ def apply_visible_surface_repair(
         new_history[index] = {**new_history[index], "content": content}
     repaired_state = dict(state)
     repaired_state["current_session_history"] = new_history
-    repaired_state["current_session_summary"] = repair.session_summary
+    original_summary_present = bool(str(state.get("current_session_summary") or "").strip())
+    repaired_state["current_session_summary"] = (
+        repair.session_summary if original_summary_present else ""
+    )
     repaired_context = dict(evaluator_context)
     repaired_context["authorized_user_context"] = repair.authorized_user_context
     repaired_context["context_payload_sha256"] = _evaluator_context_payload_sha256(
@@ -392,6 +410,25 @@ def validate_repair_allowlist_diff(
     ):
         raise RuntimeError(
             "repair changed current_user_text, which must always be frozen"
+        )
+
+    # Whether session_summary is present or absent for this (user,
+    # case_field) cell is a frozen, counterbalanced corpus-design property
+    # (observable_state_design / summarize_observable_state_support in
+    # pm_v2_data.py) -- confirmed as a REAL hard-fail check by running the
+    # actual recompilation pipeline against the real bundles. A repair may
+    # change summary CONTENT but must never flip empty<->non-empty.
+    original_summary_present = bool(
+        str(original_state.get("current_session_summary") or "").strip()
+    )
+    repaired_summary_present = bool(
+        str(repaired_state.get("current_session_summary") or "").strip()
+    )
+    if original_summary_present != repaired_summary_present:
+        raise RuntimeError(
+            "repair changed whether session_summary is present/absent -- "
+            "this is a frozen, counterbalanced corpus-design property and "
+            "must never drift, only the summary's content may change"
         )
 
     allowed_state_fields = (

@@ -237,7 +237,7 @@ def test_apply_visible_surface_repair_replaces_only_specified_turns() -> None:
     repair = VisibleSurfaceRepairOutput(
         repaired_turn_contents=["I've been struggling with the loss of my grandmother. It's been really tough on my family and me."],
         authorized_user_context="The user has recently lost their grandmother.",
-        session_summary="",
+        session_summary="User expressed feelings of grief due to the loss of their grandmother.",
     )
     repaired_state, repaired_context = apply_visible_surface_repair(
         state=state, evaluator_context=context, turn_indices=turn_indices, repair=repair
@@ -267,7 +267,7 @@ def test_validate_rejects_visible_surface_repair_without_a_refreshed_embedding()
     repair = VisibleSurfaceRepairOutput(
         repaired_turn_contents=["I've been struggling with the loss of my grandmother."],
         authorized_user_context="The user has recently lost their grandmother.",
-        session_summary="",
+        session_summary="User expressed feelings of grief due to the loss of their grandmother.",
     )
     repaired_state, repaired_context = apply_visible_surface_repair(
         state=state, evaluator_context=context, turn_indices=turn_indices, repair=repair
@@ -294,7 +294,7 @@ def test_validate_rejects_a_flagged_turn_left_unchanged() -> None:
     repair = VisibleSurfaceRepairOutput(
         repaired_turn_contents=[original_turn_0_content],
         authorized_user_context="The user has recently lost their grandmother.",
-        session_summary="",
+        session_summary="User expressed feelings of grief due to the loss of their grandmother.",
     )
     repaired_state, repaired_context = apply_visible_surface_repair(
         state=state, evaluator_context=context, turn_indices=turn_indices, repair=repair
@@ -318,7 +318,7 @@ def test_validate_rejects_an_unflagged_turn_that_changed() -> None:
     repair = VisibleSurfaceRepairOutput(
         repaired_turn_contents=["I've been struggling with the loss of my grandmother."],
         authorized_user_context="The user has recently lost their grandmother.",
-        session_summary="",
+        session_summary="User expressed feelings of grief due to the loss of their grandmother.",
     )
     repaired_state, repaired_context = apply_visible_surface_repair(
         state=state, evaluator_context=context, turn_indices=turn_indices, repair=repair
@@ -464,3 +464,41 @@ def test_worst_case_token_preflight_functions_are_real_and_positive() -> None:
     # cap must clear it with real margin -- if this ever regresses, the cap
     # itself (not just this test) needs revisiting.
     assert MAX_REPAIRED_TURN_CONTENT_CHARS > 180
+
+
+def test_apply_visible_surface_repair_forces_empty_summary_to_stay_empty() -> None:
+    # state_44550214... has an originally EMPTY session_summary. Real
+    # end-to-end recompilation against the actual v8_18 bundles caught this
+    # exact bug: write_development_dataset's summarize_observable_state_
+    # support hard-fails ("summary support drifted") if a repair flips an
+    # originally-empty summary non-empty, because whether a (user,
+    # case_field) cell has a summary at all is a frozen, counterbalanced
+    # corpus-design property. The model's session_summary output must be
+    # ignored here, never trusted, exactly like the FIELD_ONLY_REPAIR mask.
+    state_id = "state_44550214bf7c9fa22284a731"
+    state, context = _load_real_state_and_context(state_id)
+    assert state["current_session_summary"] == ""
+    turn_indices = VISIBLE_SURFACE_REPAIR_TURN_INDICES[state_id]
+    repair = VisibleSurfaceRepairOutput(
+        repaired_turn_contents=[f"repaired turn {i}." for i in turn_indices],
+        authorized_user_context="The user is navigating a workplace conflict with a coworker.",
+        session_summary="a summary the model produced but that must be IGNORED",
+    )
+    repaired_state, _ = apply_visible_surface_repair(
+        state=state, evaluator_context=context, turn_indices=turn_indices, repair=repair
+    )
+    assert repaired_state["current_session_summary"] == ""
+
+
+def test_validate_rejects_a_repair_that_flips_summary_presence() -> None:
+    state, context = _load_real_state_and_context("state_032737f91e3c332227f04942")
+    assert state["current_session_summary"] == ""
+    tampered_state = {**state, "current_session_summary": "a summary that should not exist"}
+    with pytest.raises(RuntimeError, match="session_summary is present/absent"):
+        validate_repair_allowlist_diff(
+            original_state=state,
+            original_evaluator_context=context,
+            repaired_state=tampered_state,
+            repaired_evaluator_context=context,
+            repair_mode="FIELD_ONLY_REPAIR",
+        )
