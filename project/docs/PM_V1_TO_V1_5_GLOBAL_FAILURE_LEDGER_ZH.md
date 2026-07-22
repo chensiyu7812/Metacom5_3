@@ -402,6 +402,16 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 调用方导入，`tests/test_hybrid_retrieval_isolation.py` 持续强制这一点），仅在未来出现新的、同一数据边界下的证据时才
 可重新讨论——不得仅凭复述同一组数字、或再次用 report-only EvoEmo 数字顶替合法证据来重开此决定。
 
+### 6.10 actual-468 grounding 缺陷修复与差量复审
+
+| ID | 级别 | 问题 | 永久修法/护栏 | 状态 |
+|---|---|---|---|---|
+| V15-GRD-01 | C0 | `context_grounding_match` 的旧 claim 用“both candidate context fields are supported”这类元描述，DeepSeek 将字段名本身误读为待蕴含文本；大量分歧来自测量工具措辞而非数据 | claim 改成直接陈述两个字段文本均须由证据蕴含；旧结果只作 incident/calibration；新措辞必须经独立 pilot 后再作差量复审 | `CODE_CLOSED_REAL_JUDGE_PILOT_PENDING` |
+| V15-GRD-02 | C0 | 25 个真实 DATA_DEFECT 同时包含仅 evaluator context 缺陷、2 个 summary 缺陷和 6 个可见对话缺陷；若只手改派生 JSONL，会令 embedding、inventory similarity、Step-0 与文本不同步 | 修复源 `pm_v2_bundles.jsonl` 的显式 overlay，再调用既有 `write_development_dataset()` 对全 52 users/468 states 做 canonical 本地重编译；原始目录只读，新版本写新目录 | `CODE_CLOSED_PLACEHOLDER_RECOMPILE_PASS_REAL_CONTENT_PENDING` |
+| V15-GRD-03 | C0 | 首版 overlay 虽记录 classification SHA，却不验证；重复 case/state 可被 dict 覆盖；子集/超集、错误 user/mode/case、任意 turn patch 均可能进入修复 | overlay 必须精确覆盖冻结 25-state 集合；逐行交叉核验 classification SHA、original case SHA、state/user/mode/case；FIELD_ONLY 禁止 history patch，VISIBLE 只允许冻结的精确 turn indices | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-GRD-04 | C0 | 即使限制 summary 的 empty/non-empty 形状，17 个本来 summary 正确的 FIELD_ONLY 状态仍可被 overlay 顺手重写，改变 PM 可见输入与 Step-0 | overlay 层强制 `FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED`：仅冻结的 2 个 state 必须携带 summary 修复，其余 17 个必须为 `None` 并保持原 summary 字节不变；正反测试覆盖 | `CODE_CLOSED_TARGETED_TEST_PASS` |
+| V15-GRD-05 | C1 | production exact-25 合同与 6-state pilot 若共用一个“允许子集”的发布入口，会为正式数据留下绕过完整性门的后门 | pilot 与 full 使用不同 stage/identity；pilot 固定 6 个代表形状，只验证 provider-facing prompt/schema/postcondition且永不产出 production overlay；只有 full 的 25/25 结果可 materialize overlay | `CODE_CLOSED_DRY_RUN_PASS_PAID_PILOT_PENDING` |
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。

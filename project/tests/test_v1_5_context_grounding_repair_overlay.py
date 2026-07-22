@@ -41,7 +41,10 @@ from metacom_pm.pm_v2_generation_pilot import (
     INTERNAL_TEST_SEMANTIC_FAMILIES,
     TRAIN_SEMANTIC_FAMILIES,
 )
-from metacom_pm.v1_5_context_grounding_data_repair import VISIBLE_SURFACE_REPAIR_TURN_INDICES
+from metacom_pm.v1_5_context_grounding_data_repair import (
+    FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED,
+    VISIBLE_SURFACE_REPAIR_TURN_INDICES,
+)
 from metacom_pm.v1_5_context_grounding_repair import (
     DEFAULT_CLASSIFICATION_PATH,
     load_context_grounding_defect_classification,
@@ -97,7 +100,11 @@ def _build_placeholder_overlays(bundles, classification_sha256):
                     bundles=bundles,
                     classification_sha256=classification_sha256,
                     authorized_user_context="placeholder repaired context for testing only.",
-                    session_summary=None,
+                    session_summary=(
+                        "placeholder repaired summary for testing only."
+                        if record.state_id in FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED
+                        else None
+                    ),
                     recent_dialogue_patch={},
                 )
             )
@@ -265,6 +272,37 @@ def test_apply_overlay_rejects_a_field_only_overlay_with_a_dialogue_patch(
         _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
 
 
+def test_apply_overlay_rejects_unauthorized_field_only_summary_rewrite(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    tampered = list(overlays)
+    for index, overlay in enumerate(tampered):
+        if (
+            overlay.repair_mode == "FIELD_ONLY_REPAIR"
+            and overlay.state_id not in FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED
+        ):
+            tampered[index] = overlay.model_copy(
+                update={"session_summary": "an unauthorized summary rewrite"}
+            )
+            break
+    with pytest.raises(RuntimeError, match="leave session_summary byte-identical"):
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
+
+
+def test_apply_overlay_requires_frozen_field_only_summary_repair(
+    real_bundles, real_classification_sha256, real_classification_records
+) -> None:
+    overlays, _ = _build_placeholder_overlays(real_bundles, real_classification_sha256)
+    tampered = list(overlays)
+    for index, overlay in enumerate(tampered):
+        if overlay.state_id in FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED:
+            tampered[index] = overlay.model_copy(update={"session_summary": None})
+            break
+    with pytest.raises(RuntimeError, match="required session_summary repair"):
+        _apply(real_bundles, tampered, real_classification_records, real_classification_sha256)
+
+
 def test_apply_overlay_rejects_an_off_spec_turn_index(
     real_bundles, real_classification_sha256, real_classification_records
 ) -> None:
@@ -382,10 +420,11 @@ def test_full_recompilation_leaves_443_untouched_states_textually_identical(
             assert identical, f"untouched state {state_id} drifted"
             n_untouched_identical += 1
     assert n_untouched_identical == 443
-    # Only the 6 VISIBLE_SURFACE_REPAIR states touch current_session_history/
-    # summary; the 19 FIELD_ONLY_REPAIR states only change authorized_user_
-    # context, which lives in evaluator_contexts.jsonl, not PMV2State at all.
-    assert n_touched_changed == 6
+    # The 6 VISIBLE_SURFACE_REPAIR states touch history and (when present)
+    # summary; exactly 2 FIELD_ONLY_REPAIR states additionally carry a frozen,
+    # independently-required summary repair. The other 17 field-only states
+    # change evaluator context only.
+    assert n_touched_changed == 8
 
 
 def test_full_recompilation_updates_authorized_user_context_for_all_25_defects(

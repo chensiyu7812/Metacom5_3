@@ -171,7 +171,10 @@ def apply_repair_overlay_to_bundles(
       subset, no superset, no off-target turn.
     """
 
-    from .v1_5_context_grounding_data_repair import VISIBLE_SURFACE_REPAIR_TURN_INDICES
+    from .v1_5_context_grounding_data_repair import (
+        FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED,
+        VISIBLE_SURFACE_REPAIR_TURN_INDICES,
+    )
     from .v1_5_context_grounding_repair import data_defect_state_ids
 
     if len({o.state_id for o in overlays}) != len(overlays):
@@ -223,6 +226,20 @@ def apply_repair_overlay_to_bundles(
                 raise RuntimeError(
                     f"FIELD_ONLY_REPAIR overlay for {overlay.state_id} must not "
                     "carry a recent_dialogue_patch"
+                )
+            summary_repair_required = (
+                overlay.state_id in FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED
+            )
+            if summary_repair_required and overlay.session_summary is None:
+                raise RuntimeError(
+                    f"FIELD_ONLY_REPAIR overlay for {overlay.state_id} must "
+                    "carry the frozen required session_summary repair"
+                )
+            if not summary_repair_required and overlay.session_summary is not None:
+                raise RuntimeError(
+                    f"FIELD_ONLY_REPAIR overlay for {overlay.state_id} must "
+                    "leave session_summary byte-identical; this state is not "
+                    "in FIELD_ONLY_REPAIR_SUMMARY_ALSO_NEEDED"
                 )
         elif record.repair_mode == "VISIBLE_SURFACE_REPAIR":
             expected_indices = set(VISIBLE_SURFACE_REPAIR_TURN_INDICES[overlay.state_id])
