@@ -245,6 +245,13 @@ def main() -> None:
     }
     if set(original_evaluator_by_id) != set(original_by_id):
         raise RuntimeError("evaluator_contexts.jsonl state_id set differs from pm_v2_states.jsonl")
+    if set(new_evaluator_by_id) != set(new_by_id):
+        raise RuntimeError(
+            "recompiled evaluator_contexts.jsonl state_id set has extra or "
+            f"missing rows vs the recompiled pm_v2_states.jsonl -- "
+            f"missing={set(new_by_id) - set(new_evaluator_by_id) or None}, "
+            f"extra={set(new_evaluator_by_id) - set(new_by_id) or None}"
+        )
 
     repaired_state_ids = {overlay.state_id for overlay in overlays}
     unexpectedly_changed: dict[str, dict[str, list[str]]] = {}
@@ -267,6 +274,21 @@ def main() -> None:
             if state_diff or evaluator_diff:
                 unexpectedly_changed[state_id] = combined
 
+    output_file_sha256s = {
+        name: sha256_file(args.out_dir / name)
+        for name in (
+            "pm_v2_states.jsonl",
+            "pm_v2_bundles.jsonl",
+            "evaluator_contexts.jsonl",
+            "memory_backend.jsonl",
+            "runtime_states.jsonl",
+            "pm_v2_data_report.json",
+        )
+    }
+    memory_backend_unchanged_from_original = sha256_file(
+        args.out_dir / "memory_backend.jsonl"
+    ) == sha256_file(args.original_out_dir / "memory_backend.jsonl")
+
     verification = {
         "protocol": "pm-v1.5-context-grounding-repair-recompile-verification-v1",
         "original_out_dir": str(args.original_out_dir),
@@ -274,6 +296,8 @@ def main() -> None:
         "classification_sha256": classification_sha256,
         "repair_overlays_path": str(args.repair_overlays),
         "repair_overlays_sha256": sha256_file(args.repair_overlays),
+        "output_file_sha256s": output_file_sha256s,
+        "memory_backend_byte_identical_to_original": memory_backend_unchanged_from_original,
         "total_states": len(original_by_id),
         "repaired_state_count": len(repaired_state_ids),
         "untouched_state_count": len(original_by_id) - len(repaired_state_ids),

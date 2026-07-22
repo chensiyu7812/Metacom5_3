@@ -61,6 +61,7 @@ directory, dry-run, and accepted cost-estimate hash.
 from __future__ import annotations
 
 import argparse
+import math
 from pathlib import Path
 from typing import Any
 
@@ -919,7 +920,16 @@ def main() -> None:
         "maximum_physical_attempts_per_call": maximum_physical_attempts_per_call,
         "maximum_physical_api_attempts": max_physical_attempts_worst_case,
         "call_plan_sha256": sha256_text(canonical_json(call_plan)),
-        "maximum_estimated_usd": sum(
+        # math.fsum, not the bare sum() builtin: CPython 3.12 changed sum()
+        # for floats to use Neumaier compensated summation, so the same
+        # per-row terms in the same order can round to a different last bit
+        # depending on interpreter version (found for real via an
+        # independent dry-run reproduction on 2026-07-22 -- distress_build's
+        # Python 3.10.19 gave 7.5322911999999915, another environment gave
+        # the clean 7.5322912 for the identical remaining_call_plan/
+        # call_plan_sha256). math.fsum is a fixed, correctly-rounded
+        # algorithm unaffected by that interpreter change.
+        "maximum_estimated_usd": math.fsum(
             row["maximum_cost_usd"] for row in remaining_call_plan
         ),
         "maximum_input_tokens_per_call": (

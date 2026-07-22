@@ -82,7 +82,14 @@ class RepairOverlayRecord(StrictModel):
         unloadable by any later consumer (e.g. canonical recompilation)."""
 
         if isinstance(value, Mapping):
-            return {int(key): item for key, item in value.items()}
+            coerced = {int(key): item for key, item in value.items()}
+            if len(coerced) != len(value):
+                raise ValueError(
+                    "recent_dialogue_patch has non-canonical integer-string "
+                    "keys that collide after conversion (e.g. '1' and '01') "
+                    "-- refusing to silently drop one"
+                )
+            return coerced
         return value
 
 

@@ -192,6 +192,47 @@ def test_apply_overlay_changes_exactly_25_cases_and_leaves_443_unchanged(
     assert n_unchanged == 443
 
 
+def test_repair_overlay_record_survives_a_real_json_round_trip() -> None:
+    """Locks in the fix for a real bug: model_dump(mode="json") always
+    stringifies recent_dialogue_patch's integer keys (JSON has no integer
+    keys), and RepairOverlayRecord's inherited strict=True config used to
+    refuse to coerce them back to int on reload -- meaning every persisted
+    repair_overlays.jsonl was unloadable by any later consumer."""
+
+    import json
+
+    original = RepairOverlayRecord(
+        state_id="s1",
+        user_id="u1",
+        case_id="c1",
+        repair_mode="VISIBLE_SURFACE_REPAIR",
+        original_bundle_case_sha256="a" * 64,
+        classification_sha256="b" * 64,
+        authorized_user_context="hello world context",
+        session_summary=None,
+        recent_dialogue_patch={0: "turn zero", 3: "turn three"},
+    )
+    on_disk = json.dumps(original.model_dump(mode="json"))
+    reloaded = RepairOverlayRecord.model_validate(json.loads(on_disk))
+    assert reloaded == original
+    assert set(reloaded.recent_dialogue_patch) == {0, 3}
+
+
+def test_repair_overlay_record_rejects_colliding_non_canonical_patch_keys() -> None:
+    with pytest.raises(ValueError, match="collide after conversion"):
+        RepairOverlayRecord(
+            state_id="s1",
+            user_id="u1",
+            case_id="c1",
+            repair_mode="VISIBLE_SURFACE_REPAIR",
+            original_bundle_case_sha256="a" * 64,
+            classification_sha256="b" * 64,
+            authorized_user_context="hello world context",
+            session_summary=None,
+            recent_dialogue_patch={"1": "a", "01": "b"},
+        )
+
+
 def test_apply_overlay_rejects_a_stale_original_case_hash(
     real_bundles, real_classification_sha256, real_classification_records
 ) -> None:
