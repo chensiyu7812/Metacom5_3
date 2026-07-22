@@ -881,10 +881,38 @@ def main() -> None:
     max_physical_attempts_worst_case = (
         n_remaining_calls * maximum_physical_attempts_per_call
     )
+    shared_code_paths = {
+        "runner": Path(__file__).resolve(),
+        "api": ROOT / "src" / "metacom_pm" / "api.py",
+        "attempt_ledger": ROOT / "src" / "metacom_pm" / "attempt_ledger.py",
+        "bounded_retry": ROOT / "src" / "metacom_pm" / "bounded_retry.py",
+    }
+    shared_code_manifest = {
+        name: {
+            "relative_path": str(path.resolve().relative_to(ROOT.resolve())),
+            "sha256": sha256_file(path),
+        }
+        for name, path in sorted(shared_code_paths.items())
+    }
     estimate_payload = {
         "protocol": review_protocol,
         "stage": review_stage,
         "review_scope": args.review_scope,
+        # Binds the runner's own execution-behavior code (retry/circuit-
+        # breaker sequencing, not just the requested call plan/schema) into
+        # the identity. Found for real: this script's cost_estimate_sha256
+        # was previously computed only from the plan content, so a real
+        # runtime bugfix (the circuit breaker's pending-vs-full-plan
+        # sequencing bug) left an already-crashed identity's hash
+        # unchanged -- meaning a fixed run could never mint a fresh
+        # identity for the same plan without this, and worse, a future
+        # behavior-changing edit here could silently apply under an
+        # already-approved identity. Matches the shared_code_manifest
+        # convention already used by v1_5_context_grounding_repair_run.py.
+        "shared_code_manifest": shared_code_manifest,
+        "shared_code_manifest_sha256": sha256_text(
+            canonical_json(shared_code_manifest)
+        ),
         "n_real_cases": (
             len(actual_state_items)
             if actual_state_items is not None
