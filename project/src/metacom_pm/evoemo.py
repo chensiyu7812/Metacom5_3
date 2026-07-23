@@ -51,7 +51,10 @@ from .io import (
     write_json,
     write_jsonl,
 )
-from .fixed_seeker_contract import FixedSeekerGenerationContract
+from .fixed_seeker_contract import (
+    FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3,
+    FixedSeekerGenerationContract,
+)
 from .policies import FixedPolicy, LearnedPMPolicy, RuleConfig, StrongRulePolicy
 from .prompts import OFFICIAL_ESMEM_SYSTEM, SELECTIVE_ESMEM_SYSTEM, generation_messages
 from .retrieval import MemoryRetriever, StrategyRetriever, context_query
@@ -81,6 +84,13 @@ _NEUTRAL_TRACK_PROBES = (
 FIXED_SEEKER_V22_STAGE = "evoemo_fixed_seeker_tracks_v22"
 FIXED_SEEKER_V22_DRY_RUN_PROTOCOL = "pm-v2.2-fixed-seeker-dry-run-v1"
 FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL = "pm-v2.2-fixed-seeker-logical-call-v1"
+FIXED_SEEKER_V23_STAGE = "evoemo_fixed_seeker_tracks_v23_bounded_surface"
+FIXED_SEEKER_V23_DRY_RUN_PROTOCOL = (
+    "pm-v2.2-fixed-seeker-bounded-surface-dry-run-v1"
+)
+FIXED_SEEKER_V23_LOGICAL_CALL_PROTOCOL = (
+    "pm-v2.2-fixed-seeker-bounded-surface-logical-call-v1"
+)
 FIXED_SEEKER_COST_PLANNING_PROTOCOL = (
     "pm-v2.2-fixed-seeker-cost-planning-v1"
 )
@@ -89,6 +99,22 @@ FIXED_SEEKER_INPUT_BOUND_FORMULA = (
     "(static_request_tokens_with_empty_prior_seeker_content + "
     "prior_turn_count * max_output_tokens))"
 )
+
+
+def _fixed_seeker_protocols(
+    contract: FixedSeekerGenerationContract,
+) -> tuple[str, str, str]:
+    if contract.version == FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3:
+        return (
+            FIXED_SEEKER_V23_STAGE,
+            FIXED_SEEKER_V23_DRY_RUN_PROTOCOL,
+            FIXED_SEEKER_V23_LOGICAL_CALL_PROTOCOL,
+        )
+    return (
+        FIXED_SEEKER_V22_STAGE,
+        FIXED_SEEKER_V22_DRY_RUN_PROTOCOL,
+        FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL,
+    )
 
 
 def fixed_seeker_cost_planning_contract(
@@ -1032,6 +1058,9 @@ def plan_fixed_seeker_tracks_v22(
     request.
     """
 
+    stage, dry_run_protocol, logical_call_protocol = _fixed_seeker_protocols(
+        contract
+    )
     if max_turns < 1:
         raise ValueError("fixed-seeker max_turns must be positive")
     normalized_seeds = [int(value) for value in seeds]
@@ -1139,7 +1168,7 @@ def plan_fixed_seeker_tracks_v22(
                     )
                 )
                 call_identity = {
-                    "protocol": FIXED_SEEKER_V22_LOGICAL_CALL_PROTOCOL,
+                    "protocol": logical_call_protocol,
                     "record_ids": record_ids,
                     "evoemo_sha256": evoemo_sha256,
                     "private_scenario_sha256": private_scenario_sha256,
@@ -1216,8 +1245,8 @@ def plan_fixed_seeker_tracks_v22(
         "limits": budget_limits,
     }
     estimate_payload = {
-        "protocol": FIXED_SEEKER_V22_DRY_RUN_PROTOCOL,
-        "stage": FIXED_SEEKER_V22_STAGE,
+        "protocol": dry_run_protocol,
+        "stage": stage,
         "evoemo_sha256": evoemo_sha256,
         "scaffold_sha256": scaffold_sha256,
         "simulator_id": str(simulator_id),
@@ -1386,6 +1415,8 @@ def _load_fixed_seeker_carry_forward_state(
     *,
     carry_forward_dir: Path | None,
     call_plan: list[dict[str, Any]],
+    contract: FixedSeekerGenerationContract,
+    stage: str,
 ) -> dict[str, Any]:
     """Read-only: find which of this run's own call-plan rows already
     succeeded, with a complete parsed seeker turn, in a prior v2-identity
@@ -1429,7 +1460,7 @@ def _load_fixed_seeker_carry_forward_state(
     }
     old_ledger = PersistentAttemptLedger(
         old_ledger_path,
-        stage=FIXED_SEEKER_V22_STAGE,
+        stage=stage,
         expected_calls=expected_calls,
         # Read-only inspection of history; the real runtime cap is enforced
         # separately, by this run's own ledger, once seeded.
@@ -1443,13 +1474,19 @@ def _load_fixed_seeker_carry_forward_state(
             continue
         terminal = old_ledger.terminal_row(call_key)
         result = (terminal or {}).get("result")
-        if (
-            not isinstance(result, dict)
-            or not result.get("seeker_message")
-            or result.get("normalized_finish_reason") != "complete"
-        ):
+        selected_surface = None
+        surface_error = "missing result"
+        if isinstance(result, dict):
+            selected_surface, surface_error = contract.select_surface(
+                str(result.get("seeker_message") or ""),
+                normalized_finish_reason=result.get(
+                    "normalized_finish_reason"
+                ),
+                provider_finish_reason=result.get("provider_finish_reason"),
+            )
+        if selected_surface is None or surface_error is not None:
             raise RuntimeError(
-                "fixed-seeker carry-forward source lacks a complete "
+                "fixed-seeker carry-forward source lacks a contract-valid "
                 f"successful seeker turn for {call_key}"
             )
         carried_call_keys.add(call_key)
@@ -1488,6 +1525,9 @@ def build_fixed_seeker_tracks_v22(
     remains the legacy 60-output-token path for historical reproduction only.
     """
 
+    stage, _dry_run_protocol, _logical_call_protocol = _fixed_seeker_protocols(
+        contract
+    )
     estimate, call_plan = plan_fixed_seeker_tracks_v22(
         evoemo_path,
         seeker_endpoint=seeker_endpoint,
@@ -1545,7 +1585,7 @@ def build_fixed_seeker_tracks_v22(
     ensure_run_manifest(
         manifest_path,
         {
-            "stage": FIXED_SEEKER_V22_STAGE,
+            "stage": stage,
             "evoemo_sha256": str(estimate["evoemo_sha256"]),
             "simulator_id": simulator_id,
             "max_turns": int(max_turns),
@@ -1574,12 +1614,15 @@ def build_fixed_seeker_tracks_v22(
         else None
     )
     carry_forward = _load_fixed_seeker_carry_forward_state(
-        carry_forward_dir=carry_forward_dir, call_plan=call_plan
+        carry_forward_dir=carry_forward_dir,
+        call_plan=call_plan,
+        contract=contract,
+        stage=stage,
     )
     carried_call_keys = carry_forward["carried_call_keys"]
     ledger = PersistentAttemptLedger(
         ledger_path,
-        stage=FIXED_SEEKER_V22_STAGE,
+        stage=stage,
         expected_calls=expected_calls,
         maximum_total_attempts=sum(expected_calls.values()),
     )
@@ -1686,16 +1729,24 @@ def build_fixed_seeker_tracks_v22(
                     plan_row = plan_index[(*track_key, turn_index)]
                     logical_key = str(plan_row["logical_call_key"])
                     terminal = ledger.terminal_row(logical_key)
+                    result_payload = dict((terminal or {}).get("result") or {})
+                    selected_surface, surface_error = contract.select_surface(
+                        str(result_payload.get("seeker_message") or ""),
+                        normalized_finish_reason=result_payload.get(
+                            "normalized_finish_reason"
+                        ),
+                        provider_finish_reason=result_payload.get(
+                            "provider_finish_reason"
+                        ),
+                    )
                     _, usage_error = _fixed_seeker_reported_usage(
                         (terminal or {}).get("usage"), plan_row=plan_row
                     )
                     if (
                         not ledger.succeeded(logical_key)
                         or terminal is None
-                        or (terminal.get("result") or {}).get(
-                            "normalized_finish_reason"
-                        )
-                        != "complete"
+                        or selected_surface is None
+                        or surface_error is not None
                         or usage_error is not None
                     ):
                         raise RuntimeError(
@@ -1722,13 +1773,19 @@ def build_fixed_seeker_tracks_v22(
                         reported_usage, usage_error = _fixed_seeker_reported_usage(
                             (terminal or {}).get("usage"), plan_row=plan_row
                         )
-                        message = contract.normalize_output(
-                            str(result_payload.get("seeker_message") or "")
+                        selected_surface, surface_error = contract.select_surface(
+                            str(result_payload.get("seeker_message") or ""),
+                            normalized_finish_reason=result_payload.get(
+                                "normalized_finish_reason"
+                            ),
+                            provider_finish_reason=result_payload.get(
+                                "provider_finish_reason"
+                            ),
                         )
+                        message = selected_surface.text if selected_surface else ""
                         if (
                             not message
-                            or result_payload.get("normalized_finish_reason")
-                            != "complete"
+                            or surface_error is not None
                             or usage_error is not None
                         ):
                             raise RuntimeError(
@@ -1798,7 +1855,8 @@ def build_fixed_seeker_tracks_v22(
                             call_fn=call_fn,
                             backoff_seconds=transport_backoff_seconds,
                         )
-                        completion_error = contract.completion_gate_error(
+                        selected_surface, surface_error = contract.select_surface(
+                            result.text,
                             normalized_finish_reason=(
                                 result.normalized_finish_reason
                             ),
@@ -1809,20 +1867,16 @@ def build_fixed_seeker_tracks_v22(
                                 result.usage, plan_row=plan_row
                             )
                         )
-                        message = contract.normalize_output(result.text)
-                        empty_error = (
-                            None
-                            if message
-                            else (
-                                "fixed-seeker completion is empty after frozen "
-                                "normalization"
-                            )
-                        )
-                        gate_error = (
-                            completion_error or accounting_error or empty_error
-                        )
+                        message = selected_surface.text if selected_surface else ""
+                        gate_error = surface_error or accounting_error
                         result_payload = {
                             "seeker_message": message,
+                            "surface_selection": (
+                                selected_surface.metadata()
+                                if selected_surface is not None
+                                else None
+                            ),
+                            "provider_output_sha256": sha256_text(result.text),
                             "provider_finish_reason": (
                                 result.provider_finish_reason
                             ),
@@ -1856,7 +1910,7 @@ def build_fixed_seeker_tracks_v22(
                         append_jsonl(
                             raw_path,
                             request_log(
-                                stage=FIXED_SEEKER_V22_STAGE,
+                                stage=stage,
                                 endpoint=seeker_endpoint,
                                 messages=messages,
                                 result=result,
@@ -2018,18 +2072,29 @@ def build_fixed_seeker_tracks_v22(
         reason: 0
         for reason in ("complete", "length", "tool_call", "content_filter", "unknown")
     }
+    selected_surface_word_counts: list[int] = []
+    selected_surface_prefix_count = 0
+    selected_surface_metadata_complete = True
     for call_key in expected_calls:
         terminal = ledger.terminal_row(call_key)
         if terminal is None:
             continue
-        reason = str(
-            (terminal.get("result") or {}).get(
-                "normalized_finish_reason", "unknown"
-            )
-        )
+        result_payload = dict(terminal.get("result") or {})
+        reason = str(result_payload.get("normalized_finish_reason", "unknown"))
         normalized_finish_reason_counts[reason] = (
             normalized_finish_reason_counts.get(reason, 0) + 1
         )
+        if ledger.succeeded(call_key):
+            surface_row = result_payload.get("surface_selection")
+            if isinstance(surface_row, Mapping):
+                selected_surface_word_counts.append(
+                    int(surface_row.get("selected_word_count") or 0)
+                )
+                selected_surface_prefix_count += int(
+                    surface_row.get("prefix_selected") is True
+                )
+            elif contract.version == FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3:
+                selected_surface_metadata_complete = False
     observed_usage = {
         "prompt_tokens": 0,
         "completion_tokens": 0,
@@ -2108,12 +2173,20 @@ def build_fixed_seeker_tracks_v22(
         # even on full success; completeness is whether every logical call
         # has a SUCCEEDED terminal row, not the physical attempt count.
         and all(ledger.succeeded(key) for key in expected_calls)
+        and (
+            contract.version != FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3
+            or (
+                selected_surface_metadata_complete
+                and max(selected_surface_word_counts, default=0)
+                <= int(contract.response_instruction_word_limit or 0)
+            )
+        )
         and observed_budget_gate["status"] == "PASS"
         else "INCOMPLETE"
     )
     summary = {
         "status": status,
-        "stage": FIXED_SEEKER_V22_STAGE,
+        "stage": stage,
         "simulator_id": simulator_id,
         "seeker_model": seeker_endpoint.model,
         "seeker_family": seeker_endpoint.family,
@@ -2126,9 +2199,21 @@ def build_fixed_seeker_tracks_v22(
             int(ledger.succeeded(key)) for key in expected_calls
         ),
         "normalized_finish_reason_counts": normalized_finish_reason_counts,
+        "provider_length_finish_count": normalized_finish_reason_counts.get(
+            "length", 0
+        ),
         "completion_truncated_count": normalized_finish_reason_counts.get(
             "length", 0
         ),
+        "surface_selection": {
+            "protocol": contract.surface_selection_protocol,
+            "metadata_complete": selected_surface_metadata_complete,
+            "prefix_selected_count": selected_surface_prefix_count,
+            "maximum_selected_word_count": max(
+                selected_surface_word_counts, default=0
+            ),
+            "mid_sentence_truncation_count": 0,
+        },
         "failures": failures,
         "dry_run_acceptance_sha256": accepted_dry_run_sha256,
         "call_plan_sha256": str(estimate["call_plan_sha256"]),
@@ -2146,14 +2231,14 @@ def build_fixed_seeker_tracks_v22(
     write_json(summary_path, summary)
     if status != "COMPLETE":
         raise RuntimeError(
-            "fixed seeker V2.2 generation incomplete; at least one logical "
+            "fixed seeker generation incomplete; at least one logical "
             "call exhausted its transport-retry budget or was rejected by "
             "the content gate -- continue via --carry-forward-tracks-dir "
             "under a fresh identity rather than retrying this exact plan"
         )
     create_artifact_attestation(
         attestation_path,
-        stage=FIXED_SEEKER_V22_STAGE,
+        stage=stage,
         inputs={
             "evoemo": evoemo_path,
             "run_manifest": manifest_path,
@@ -2183,8 +2268,16 @@ def build_fixed_seeker_tracks_v22(
             "tracks": expected_tracks,
             "turns_per_track": max_turns,
             "logical_calls": len(expected_calls),
-            "accepted_normalized_finish_reasons": ["complete"],
-            "completion_truncated_count": 0,
+            "accepted_normalized_finish_reasons": list(
+                contract.accepted_normalized_finish_reasons
+            ),
+            "provider_length_finish_count": normalized_finish_reason_counts.get(
+                "length", 0
+            ),
+            "completion_truncated_count": normalized_finish_reason_counts.get(
+                "length", 0
+            ),
+            "surface_selection": summary["surface_selection"],
             "planned_budget_gate_status": "PASS",
             "observed_budget_gate_status": "PASS",
             "planned_budget_gate": estimate["budget_gate"],

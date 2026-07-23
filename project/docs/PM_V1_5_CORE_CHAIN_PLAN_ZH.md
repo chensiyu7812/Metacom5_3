@@ -161,7 +161,7 @@ bootstrap cluster 不得合并；只有两项分别通过自身冻结门，才�
 | Step-0/state semantic input | 同一 section-aware bounded visible-state text/vector；Step-0 与 state embedding 的 query hash 必须相同，禁止 tokenizer 隐式截断 |
 | requested/attempted/realized action | 全链路分开记录；outcome、cost、label lineage 必须绑定真实 realized evidence，不得把 requested action 直接当作已执行 action |
 | prompt-equivalence alias | 相同 state 下实际 generator prompt 完全相同的 action 只允许一次物理生成/判断；结果可映射给 alias，但 requested-action cost、类别大小和 lineage 必须保留 |
-| fixed seeker | 独立 `outputs/evoemo_fixed_tracks_v1_5/`；300 API cap；任何 truncation、缺轨或旧 V2.2 bundle 都拒绝 |
+| fixed seeker | V3 独立 sidecar/目录；provider cap 保持 300，原始响应与 finish reason 完整留账；正式轨迹只接收不超过 60 个空白分词的完整表面文本，超长或 provider `length` 只能确定性选取界内最长完整句前缀，禁止中句截断；先过同合同小 pilot，再生成 102 条冻结轨迹 |
 | 配置与 checkpoint | `configs/pm_v1_5.yaml`、`pm_v1_5.joblib` 及两个 fixed checkpoint 独立命名和哈希 |
 | 外部单元 | 同一 EvoEmo、simulator、3 个 robustness seeds、turn 3/8；freeze 后不可改变 |
 
@@ -226,7 +226,7 @@ external 付费生成前失败。
 | 6 | `v1_5/22a_train_pm_v2_dual_domain_v1_5.py` 联合双域训练 | 0 | 入口现场重验 exact runtime；只用两个域各自 train/calibration 调参；冻结 domain→dialogue/user→state→action/alias 权重；模型选择后才分别一次性消费 longitudinal 与 ESConv-aux internal-test；任一必需 gate 不完整则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
 | 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + `13_preflight_esconv_policy_v1_5.py` | 0 | 使用同一 PMV2 checkpoint、同一 BAAI/Step-0 与 transparent rule；自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；仅允许 `M0+R0/M0+RS`，policy choice 不读 gold response/strategy |
-| 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` | 由 dry-run 给出；当前数据设计为 1,020 个 seeker turns | 完整、无 truncation、独立 V1.5 bundle |
+| 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` V3 bounded-surface pilot → formal | pilot 为 2 tracks / 20 logical calls；formal 为 102 tracks / 1,020 logical calls；physical/cost 上限各以独立 dry-run 为准 | pilot 与 formal 使用同一 V3 prompt、模型、surface selector 和 transport 合同；原始 provider 输出不删除，正式 track 每轮 `<=60` words、完整句边界、`mid_sentence_truncation_count=0`，102 条轨迹完整后才可进入 freeze |
 | 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链；同时绑定 ESConv build/policy artifacts 与 EvoEmo fixed tracks；任一外部结果出现后不得修改 PM 再跑另一外部环境 |
 | 9.5 | V1.5 ESConv 两动作 sweep + orientation-balanced blind R0-vs-RS judging | 2,112 × 2 唯一 generation outcomes；judge 规模以独立 dry-run 为准 | learned/rule/always-R0/always-RS 共享完全相同的两份 outcome，不重复计 alias；dialogue-cluster CI；质量分别对两个 fixed 作非劣，Strategy 调用与 input cost 单独报告；不得声称长期记忆 |
 | 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整；learned/rule external artifact 自包含 runtime lineage 与 development/external score comparison，禁止外部调阈值 |
@@ -397,7 +397,8 @@ dry-run identity 均因曾只计首个 attempt 而失效，必须等对应 gener
 | 52-user generation 第一次尝试 | identity `85d1eda3…8788f` 真正执行到 user 1：9/9 surface 调用成功、0 retry/repair；随后固定 `health_routine_stress × MS semantic_decoy` 为 162 字符，超过本地 160 schema 而 fail-closed；约 `$0.004121`，users 2–52 未调用 | `CONSUMED_FAILED_CLOSED`；不是 provider/seed 内容错误；原 9-call ledger 不覆盖、不删除，可离线恢复 |
 | generation compatibility V8.12 | 缩短 compiler-owned decoy；付费前穷举 216 个 family/source/role 模板，最大 155/160；identity `bebeb1b1…8564` 已真实 9/9 PASS：10 physical、1 content repair、0 transport retry、0 fallback，约 `$0.0031569`；attestation `d132e5ef…1c16` | `CONSUMED_PASS`，永久禁止复用 |
 | 52-user resumable generation | exact V8.12 attestation + 原 9-call ledger 已在两目录恢复同一 user-1 bundle；fresh identity `799e1cce…a6a7`、binding `47e7d25f…e4e1`、plan `8ef7aeab…40c6`；剩余 51 users，459 success / 918 content / 2,754 new physical，上限 `$2.7235611` | `DRY_RUN_REPRODUCED_UNAPPROVED_NO_NEW_API`；必须在原 canonical 目录无 `--overwrite` 执行，禁止重生 user 1 |
-| fixed seeker | 102 tracks / 1,020 calls；代理价上界 `$2.63391075` | acceptance `018c2c95…39353` |
+| fixed seeker V2（历史、不可放行） | 102 tracks / 1,020 calls；实际只完成 5 tracks / 56 turns 后遇到 provider `length`；且 51/56 已成功表面文本超过原提示中的 60-word 意图 | 旧 acceptance `018c2c95…39353` 只作历史，不能进入 freeze |
+| fixed seeker V3 bounded-surface pilot | 2 tracks / 20 logical calls；最多 200 physical attempts；最坏预算 `$0.431109`；两次独立 dry-run 的 `call_plan.jsonl` 与 `cost_estimate.json` 逐字节一致；零 API | identity `6dc86e09…f2c74`；call plan `a95e6667…0dda`；contract `b0118ef0…f74`；尚未批准/执行 |
 
 除明确标为历史真实调用的一行外，这些 dry-run 数字只证明当前计划可计算且未创建 API
 client，不等于授权执行。正式预算仍必须核对当前 endpoint/pricing 与完整 hash；任何相关
@@ -456,7 +457,8 @@ judging、domain/alias weighting、sealed internal holdout、fixed baselines、�
 3. 完成 719-state auxiliary 两动作 generation/judging 与 468×16 longitudinal
    full sweep/judging；
 4. 联合训练同一个 PM，冻结选择后分别一次性消费两个 internal-test；
-5. 构建 decision-quality/fixed-baseline reports、fixed seeker 和 study freeze；
+5. 构建 decision-quality/fixed-baseline reports；先真实通过 fixed-seeker V3
+   bounded-surface pilot，再以独立 identity 生成完整 102 tracks，随后创建 study freeze；
 6. 在同一 freeze 下分别执行 ESConv 即时质量/Strategy 路由评测和 EvoEmo 纵向
    memory/strategy 评测；
 7. 只按各自预注册 gate 给出 `SUPPORTED`/`NOT_SUPPORTED`，不得用一项成功掩盖另一项失败。
