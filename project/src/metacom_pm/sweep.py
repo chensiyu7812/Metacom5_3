@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 import math
 import time
 
@@ -588,6 +588,8 @@ def run_action_sweep(
     transport_retry_policy: str = "single_attempt",
     transport_backoff_seconds: tuple[float, ...] = DEFAULT_BACKOFF_SECONDS,
     consecutive_same_class_circuit_breaker: int | None = 5,
+    carry_forward_terminal_rows: Mapping[str, Mapping[str, Any]] | None = None,
+    carry_forward_binding: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if request_retries < 1:
         raise ValueError("request_retries must be positive")
@@ -785,7 +787,29 @@ def run_action_sweep(
     physical_call_keys = {
         str(row["call_key"]) for row in prepared_calls.values()
     }
-    planned_maximum_attempts = len(physical_call_keys) * transport_attempt_cap
+    carried_terminal_rows = {
+        str(call_key): dict(terminal)
+        for call_key, terminal in (carry_forward_terminal_rows or {}).items()
+    }
+    if carried_terminal_rows and carry_forward_binding is None:
+        raise ValueError(
+            "action-sweep carry-forward rows require a content-addressed binding"
+        )
+    unknown_carried_call_keys = sorted(
+        set(carried_terminal_rows) - physical_call_keys
+    )
+    if unknown_carried_call_keys:
+        raise RuntimeError(
+            "action-sweep carry-forward contains calls outside the current plan: "
+            f"{unknown_carried_call_keys[:5]}"
+        )
+    full_planned_maximum_attempts = (
+        len(physical_call_keys) * transport_attempt_cap
+    )
+    planned_maximum_attempts = (
+        len(physical_call_keys - set(carried_terminal_rows))
+        * transport_attempt_cap
+    )
     runtime_attempt_cap = int(
         planned_maximum_attempts
         if max_physical_api_attempts is None
@@ -840,6 +864,9 @@ def run_action_sweep(
         "card_filter": sorted(card_filter) if card_filter else None,
         "system_prompt_sha256": sha256_text(system_prompt),
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+        "full_plan_maximum_physical_api_attempts": (
+            full_planned_maximum_attempts
+        ),
         "planned_maximum_physical_api_attempts": planned_maximum_attempts,
         "runtime_maximum_physical_api_attempts": runtime_attempt_cap,
         "call_key_matrix_sha256": sha256_text(
@@ -849,6 +876,11 @@ def run_action_sweep(
         "prompt_equivalence_classes": len(physical_call_keys),
         "prompt_alias_outcomes": len(prepared_calls) - len(physical_call_keys),
         "contract_bindings": dict(contract_bindings or {}),
+        "carry_forward_binding": (
+            dict(carry_forward_binding)
+            if carry_forward_binding is not None
+            else None
+        ),
     }
     if generation_treatment is not None:
         run_metadata.update(
@@ -893,8 +925,71 @@ def run_action_sweep(
             row["call_key"]: transport_attempt_cap
             for row in prepared_calls.values()
         },
-        maximum_total_attempts=runtime_attempt_cap,
+        # Carried successes are written as explicitly tagged synthetic ledger
+        # entries so the existing recovery path can authenticate their exact
+        # result payloads.  They were paid for in the content-addressed source
+        # run and therefore do not consume this continuation's NEW budget.
+        maximum_total_attempts=(
+            runtime_attempt_cap + len(carried_terminal_rows)
+        ),
     )
+    for call_key, source_terminal in carried_terminal_rows.items():
+        if ledger.succeeded(call_key):
+            continue
+        if ledger.attempts_for(call_key):
+            raise RuntimeError(
+                "action-sweep continuation ledger already contains a non-success "
+                f"for carried call {call_key}"
+            )
+        source_result = source_terminal.get("result")
+        source_usage = source_terminal.get("usage")
+        if (
+            source_terminal.get("event") != "SUCCEEDED"
+            or not isinstance(source_result, dict)
+            or not isinstance(source_result.get("action_outcome"), dict)
+            or not isinstance(source_result.get("raw_call"), dict)
+            or not isinstance(source_usage, dict)
+        ):
+            raise RuntimeError(
+                f"action-sweep carry-forward source is incomplete for {call_key}"
+            )
+        matching_prepared = next(
+            row
+            for row in prepared_calls.values()
+            if row["call_key"] == call_key
+        )
+        source_outcome = ActionOutcome.model_validate(
+            source_result["action_outcome"]
+        )
+        source_raw = dict(source_result["raw_call"])
+        if (
+            source_outcome.card_id != matching_prepared["state"].card_id
+            or source_outcome.prompt_hash != matching_prepared["prompt_hash"]
+            or (source_outcome.provenance or {}).get("physical_call_key")
+            != call_key
+            or source_raw.get("error") is not None
+            or str(source_raw.get("physical_call_key") or "") != call_key
+        ):
+            raise RuntimeError(
+                f"action-sweep carry-forward payload mismatches plan for {call_key}"
+            )
+        reservation = ledger.reserve(
+            call_key,
+            record_ids=dict(matching_prepared["record_ids"]),
+            prompt_sha256=str(matching_prepared["prompt_hash"]),
+        )
+        ledger.finish(
+            reservation,
+            succeeded=True,
+            request_hash=source_terminal.get("request_hash"),
+            usage=dict(source_usage),
+            error=None,
+            result=dict(source_result),
+            metadata={
+                "carried_forward": True,
+                **dict(carry_forward_binding or {}),
+            },
+        )
     successful_raw_call_keys: set[str] = set()
     if out_raw_calls_path.exists():
         duplicate_success_raw: list[str] = []
@@ -1560,8 +1655,17 @@ def run_action_sweep(
         "aborted_on_input_token_overrun": aborted_on_input_token_overrun,
         "aborted_on_missing_reported_usage": aborted_on_missing_reported_usage,
         "aborted_on_completion_gate": aborted_on_completion_gate,
+        "full_plan_maximum_physical_api_attempts": (
+            full_planned_maximum_attempts
+        ),
         "maximum_physical_api_attempts_planned": planned_maximum_attempts,
         "maximum_physical_api_attempts_authorized": runtime_attempt_cap,
+        "carried_forward_logical_calls": len(carried_terminal_rows),
+        "carry_forward_binding": (
+            dict(carry_forward_binding)
+            if carry_forward_binding is not None
+            else None
+        ),
         "failures": failures,
         "usage": total_usage,
         "endpoint_model": endpoint.model,
@@ -1617,8 +1721,17 @@ def run_action_sweep(
                 fail_on_reported_input_overrun
             ),
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+            "full_plan_maximum_physical_api_attempts": (
+                full_planned_maximum_attempts
+            ),
             "maximum_physical_api_attempts_planned": planned_maximum_attempts,
             "maximum_physical_api_attempts_authorized": runtime_attempt_cap,
+            "carried_forward_logical_calls": len(carried_terminal_rows),
+            "carry_forward_binding": (
+                dict(carry_forward_binding)
+                if carry_forward_binding is not None
+                else None
+            ),
             "strategy_top_k": strategy_top_k,
             "memory_min_score": memory_min_score,
             "strategy_min_score": strategy_min_score,

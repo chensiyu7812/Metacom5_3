@@ -12,13 +12,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
+from typing import Any
 
 from metacom_pm.artifacts import require_artifact_attestation
-from metacom_pm.attempt_ledger import forbid_overwrite_of_spent_attempts
+from metacom_pm.attempt_ledger import (
+    PersistentAttemptLedger,
+    forbid_overwrite_of_spent_attempts,
+)
 from metacom_pm.bounded_retry import RETRYABLE_UP_TO_FULL_BUDGET
 from metacom_pm.config import endpoint_from_config, load_config
-from metacom_pm.contracts import parse_action_id
+from metacom_pm.contracts import ActionOutcome, parse_action_id
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.evidence_filter_model import require_evidence_filter_artifacts
 from metacom_pm.generation_contract import SupporterGenerationContract
@@ -183,6 +188,232 @@ def _require_saved_dry_run(
         raise RuntimeError("saved action-sweep dry-run did not pass its budget gate")
 
 
+ACTION_SWEEP_CARRY_FORWARD_PROTOCOL = (
+    "pm-v1.5-action-sweep-exact-plan-carry-forward-v1"
+)
+
+
+def _load_action_sweep_carry_forward(
+    *, carry_forward_dir: Path | None, call_plan: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Authenticate successful calls from an exact-plan prior sweep.
+
+    The source directory is read-only.  A failed/exhausted call is never
+    inherited; only a ledger SUCCEEDED event containing the complete raw call
+    and ActionOutcome recovery payload is eligible.  Exact full-plan equality
+    prevents a continuation from silently mixing scientific treatments.
+    """
+
+    if carry_forward_dir is None:
+        return {
+            "binding": None,
+            "carried_call_keys": set(),
+            "carried_terminal_rows": {},
+        }
+    required = {
+        "call_plan": carry_forward_dir / "call_plan.jsonl",
+        "cost_estimate": carry_forward_dir / "cost_estimate.json",
+        "ledger": carry_forward_dir / "physical_attempt_ledger.jsonl",
+        "outcomes": carry_forward_dir / "action_outcomes.jsonl",
+        "raw_calls": carry_forward_dir / "raw_api_calls.jsonl",
+        "summary": carry_forward_dir / "summary.json",
+    }
+    missing = sorted(name for name, path in required.items() if not path.is_file())
+    if missing:
+        raise RuntimeError(
+            f"action-sweep carry-forward source lacks required files: {missing}"
+        )
+    source_plan = list(iter_jsonl(required["call_plan"]))
+    if source_plan != call_plan:
+        raise RuntimeError(
+            "action-sweep carry-forward source plan differs from the current "
+            "freshly computed full plan"
+        )
+    source_estimate = read_json(required["cost_estimate"])
+    source_estimate_body = {
+        key: value
+        for key, value in source_estimate.items()
+        if key not in {"cost_estimate_sha256", "budget_gate"}
+    }
+    if source_estimate.get("cost_estimate_sha256") != sha256_text(
+        canonical_json(source_estimate_body)
+    ):
+        raise RuntimeError("action-sweep carry-forward source estimate self-hash failed")
+    current_plan_sha256 = sha256_text(canonical_json(call_plan))
+    if source_estimate.get("call_plan_sha256") != current_plan_sha256:
+        raise RuntimeError("action-sweep carry-forward source plan hash mismatch")
+    expected_calls = {
+        str(row["call_key"]): int(row["max_http_attempts"])
+        for row in call_plan
+    }
+    source_ledger = PersistentAttemptLedger(
+        required["ledger"],
+        stage="action_sweep_generation",
+        expected_calls=expected_calls,
+        maximum_total_attempts=10**9,
+    )
+    plan_by_call_key: dict[str, dict[str, Any]] = {}
+    for row in call_plan:
+        plan_by_call_key.setdefault(str(row["call_key"]), row)
+    carried_terminal_rows: dict[str, dict[str, Any]] = {}
+    for call_key, plan_row in plan_by_call_key.items():
+        if not source_ledger.succeeded(call_key):
+            continue
+        terminal = source_ledger.terminal_row(call_key)
+        result = (terminal or {}).get("result")
+        if (
+            not isinstance(terminal, dict)
+            or not isinstance(result, dict)
+            or not isinstance(result.get("action_outcome"), dict)
+            or not isinstance(result.get("raw_call"), dict)
+            or not isinstance(terminal.get("usage"), dict)
+        ):
+            raise RuntimeError(
+                f"action-sweep carry-forward source lacks recovery data: {call_key}"
+            )
+        outcome = ActionOutcome.model_validate(result["action_outcome"])
+        raw_call = dict(result["raw_call"])
+        if (
+            outcome.card_id != str(plan_row["card_id"])
+            or outcome.prompt_hash != str(plan_row["prompt_sha256"])
+            or (outcome.provenance or {}).get("physical_call_key") != call_key
+            or raw_call.get("error") is not None
+            or str(raw_call.get("physical_call_key") or "") != call_key
+        ):
+            raise RuntimeError(
+                f"action-sweep carry-forward payload mismatches plan: {call_key}"
+            )
+        carried_terminal_rows[call_key] = dict(terminal)
+    carried_call_keys = set(carried_terminal_rows)
+    remaining_call_keys = set(plan_by_call_key) - carried_call_keys
+    summary = read_json(required["summary"])
+    carried_logical_outcomes = sum(
+        1 for row in call_plan if str(row["call_key"]) in carried_call_keys
+    )
+    if int(summary.get("completed_outcomes", -1)) != carried_logical_outcomes:
+        raise RuntimeError(
+            "action-sweep carry-forward summary/ledger completion mismatch"
+        )
+    binding = {
+        "protocol": ACTION_SWEEP_CARRY_FORWARD_PROTOCOL,
+        "source_directory": str(carry_forward_dir),
+        "source_call_plan_file_sha256": sha256_file(required["call_plan"]),
+        "source_cost_estimate_file_sha256": sha256_file(required["cost_estimate"]),
+        "source_cost_estimate_sha256": source_estimate["cost_estimate_sha256"],
+        "source_ledger_sha256": sha256_file(required["ledger"]),
+        "source_outcomes_sha256": sha256_file(required["outcomes"]),
+        "source_raw_calls_sha256": sha256_file(required["raw_calls"]),
+        "source_summary_sha256": sha256_file(required["summary"]),
+        "source_physical_http_attempts": int(
+            summary.get("total_physical_http_attempts", -1)
+        ),
+        "full_call_plan_sha256": current_plan_sha256,
+        "carried_forward_call_count": len(carried_call_keys),
+        "carried_forward_logical_outcome_count": carried_logical_outcomes,
+        "carried_forward_call_keys_sha256": sha256_text(
+            canonical_json(sorted(carried_call_keys))
+        ),
+        "remaining_new_call_count": len(remaining_call_keys),
+        "remaining_new_call_keys_sha256": sha256_text(
+            canonical_json(sorted(remaining_call_keys))
+        ),
+    }
+    binding["binding_sha256"] = sha256_text(canonical_json(binding))
+    return {
+        "binding": binding,
+        "carried_call_keys": carried_call_keys,
+        "carried_terminal_rows": carried_terminal_rows,
+    }
+
+
+def _continuation_cost_estimate(
+    estimate: dict[str, Any],
+    rows: list[dict[str, Any]],
+    carry_forward: dict[str, Any],
+) -> dict[str, Any]:
+    """Reprice an exact full plan for only the calls not carried forward."""
+
+    binding = carry_forward.get("binding")
+    if binding is None:
+        return estimate
+    carried = set(carry_forward["carried_call_keys"])
+    physical_by_key: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        physical_by_key.setdefault(str(row["call_key"]), row)
+    remaining_keys = set(physical_by_key) - carried
+    remaining_physical_rows = [physical_by_key[key] for key in sorted(remaining_keys)]
+    remaining_logical_rows = [
+        row for row in rows if str(row["call_key"]) in remaining_keys
+    ]
+    attempts_per_call = int(estimate["transport_max_attempts_per_call"])
+    input_tokens = [
+        int(row["estimated_input_tokens"]) for row in remaining_physical_rows
+    ]
+    logical_input = sum(input_tokens)
+    logical_output = sum(
+        int(row["maximum_output_tokens"]) for row in remaining_physical_rows
+    )
+    pricing = dict(estimate["pricing"])
+    logical_cost = (
+        logical_input / 1_000_000 * float(pricing["input_usd_per_mtok"])
+        + logical_output / 1_000_000 * float(pricing["output_usd_per_mtok"])
+    )
+    ordered = sorted(input_tokens)
+    p95_index = max(0, math.ceil(0.95 * len(ordered)) - 1) if ordered else 0
+    payload = {
+        key: value
+        for key, value in estimate.items()
+        if key != "cost_estimate_sha256"
+    }
+    contract_bindings = {
+        **dict(payload.get("contract_bindings") or {}),
+        "carry_forward": dict(binding),
+    }
+    payload.update(
+        {
+            "full_expected_api_calls": int(estimate["expected_api_calls"]),
+            "expected_api_calls": len(remaining_physical_rows),
+            "full_logical_api_calls": int(estimate["logical_api_calls"]),
+            "logical_api_calls": len(rows),
+            "historical_carried_forward_calls": len(carried),
+            "remaining_new_logical_calls": len(remaining_physical_rows),
+            "remaining_new_logical_outcomes": len(remaining_logical_rows),
+            "full_maximum_physical_api_attempts": int(
+                estimate["maximum_physical_api_attempts"]
+            ),
+            "maximum_physical_api_attempts": (
+                len(remaining_physical_rows) * attempts_per_call
+            ),
+            "estimated_total_input_tokens": logical_input,
+            "maximum_total_output_tokens": logical_output,
+            "unduplicated_logical_total_input_tokens": sum(
+                int(row["estimated_input_tokens"])
+                for row in remaining_logical_rows
+            ),
+            "unduplicated_logical_maximum_output_tokens": sum(
+                int(row["maximum_output_tokens"])
+                for row in remaining_logical_rows
+            ),
+            "maximum_physical_total_input_tokens": (
+                logical_input * attempts_per_call
+            ),
+            "maximum_physical_total_output_tokens": (
+                logical_output * attempts_per_call
+            ),
+            "mean_input_tokens": (
+                logical_input / len(input_tokens) if input_tokens else 0.0
+            ),
+            "p95_input_tokens": ordered[p95_index] if ordered else 0.0,
+            "max_input_tokens": max(input_tokens, default=0),
+            "logical_estimated_cost_usd": logical_cost,
+            "estimated_cost_usd": logical_cost * attempts_per_call,
+            "contract_bindings": contract_bindings,
+        }
+    )
+    payload["cost_estimate_sha256"] = sha256_text(canonical_json(payload))
+    return payload
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Fail-closed action sweep: exact dry-run and accepted cost hash before API use."
@@ -240,6 +471,15 @@ def main() -> None:
     )
     parser.add_argument(
         "--out-dir", type=Path, default=ROOT / "outputs" / "pm_v1_5_sweep"
+    )
+    parser.add_argument(
+        "--carry-forward-from",
+        type=Path,
+        help=(
+            "Read-only exact-plan source directory. Only ledger-authenticated "
+            "SUCCEEDED calls are inherited; failed calls receive a fresh, "
+            "separately approved continuation identity in --out-dir."
+        ),
     )
     parser.add_argument("--max-cards", type=int)
     parser.add_argument(
@@ -519,6 +759,11 @@ def main() -> None:
 
     if args.run and args.overwrite:
         raise RuntimeError("paid PM-v1.5 action-sweep runs prohibit --overwrite")
+    if (
+        args.carry_forward_from is not None
+        and args.carry_forward_from.resolve() == args.out_dir.resolve()
+    ):
+        raise RuntimeError("action-sweep carry-forward requires a new output directory")
     if args.pilot_plan is not None:
         raise RuntimeError(
             "PM-v1.5 does not run the PM-v2.2 compatibility-pilot branch; "
@@ -1138,6 +1383,12 @@ def main() -> None:
         output_usd_per_mtok=args.output_usd_per_mtok,
         contract_bindings=contract_bindings,
     )
+    carry_forward = _load_action_sweep_carry_forward(
+        carry_forward_dir=args.carry_forward_from,
+        call_plan=rows,
+    )
+    estimate = _continuation_cost_estimate(estimate, rows, carry_forward)
+    contract_bindings = dict(estimate["contract_bindings"])
     gate = _budget_gate(
         estimate,
         max_api_calls=args.max_api_calls,
@@ -1205,6 +1456,8 @@ def main() -> None:
             "accepted_cost_estimate_sha256": expected_hash,
             "pricing": result["pricing"],
         },
+        carry_forward_terminal_rows=carry_forward["carried_terminal_rows"],
+        carry_forward_binding=carry_forward["binding"],
     )
     print(summary)
 

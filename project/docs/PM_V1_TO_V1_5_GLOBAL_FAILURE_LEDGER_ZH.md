@@ -435,6 +435,12 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。当前仅冻结设计，未实现前所有 runner 继续按自身现状运行 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
 | V15-DUAL-05 | C1 | routing objective 的 `effective_weight_by_domain` 报告曾用裸 `sum()` 聚合浮点权重；它不参与 HGB 拟合，却会进入 training report/downstream hash，在不同 CPython 浮点求和实现间可能产生末位差异并使相同科学计划出现不同 identity | 改用固定的 `math.fsum()`；回归测试要求两个域的有效权重精确等于 `0.5/0.5`，不再只用近似比较。训练正式入口仍须绑定单一冻结 runtime，但报告哈希不再依赖裸 `sum()` 的版本行为 | `CODE_CLOSED_TARGETED_TEST_PASS` |
 
+### 6.13 longitudinal action sweep 的精确续跑
+
+| ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
+|---|---:|---|---|---|
+| V15-SWP-01 | C1 | 首次正式 7,488-action sweep 的 7,487 条 outcome 已成功并由 ledger 记录，但最后一条在 4 个冻结 transport slots 内依次遇到 429/429/429/503；若原地重跑会违规扩展已消费 identity，若整批重跑又会重复付费并把随机 provider 波动混入 7,487 条已完成结果 | 新增 exact-plan carry-forward：重新计算的完整 call plan 必须逐行相等，并绑定旧 cost identity、call-plan/ledger/outcome/raw-call/summary 文件 SHA、7,487 个成功 call keys 与唯一剩余 key；只接受旧 ledger 的 `SUCCEEDED` terminal recovery payload，FAILED/exhausted 永不继承；在全新目录、新 identity 下只为剩余 1 条重新获得最多 4 次物理预算，同时仍物化完整 7,488 行。原运行保留为 `INCOMPLETE`，不得改写为 PASS | `CODE_CLOSED_TARGETED_TEST_AND_DOUBLE_DRY_RUN_PASS_ONE_CALL_PAID_CONTINUATION_PENDING` |
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。

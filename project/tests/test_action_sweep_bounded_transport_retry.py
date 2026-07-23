@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,18 @@ from metacom_pm.api import CallResult, Endpoint, ProviderRequestError, Retryable
 from metacom_pm.contracts import MemoryBackendRecord
 from metacom_pm.io import iter_jsonl, read_json, write_jsonl
 from metacom_pm.sweep import run_action_sweep
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_v1_5_runner():
+    path = PROJECT_ROOT / "scripts" / "v1_5" / "06_run_action_sweep_v1_5.py"
+    spec = importlib.util.spec_from_file_location("v1_5_sweep_continuation", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _endpoint() -> Endpoint:
@@ -363,3 +376,181 @@ def test_bounded_transport_retry_covers_state_by_actions_matrix_exactly(
     outcome_keys = [(row["card_id"], row["action_id"]) for row in outcomes]
     assert sorted(outcome_keys) == sorted(expected_keys)
     assert len(outcome_keys) == len(set(outcome_keys))
+
+
+def test_exact_plan_carry_forward_only_reissues_the_missing_call(
+    tmp_path, monkeypatch, tiny_state, tiny_memories, tiny_strategy
+):
+    runtime, backend, strategies, expected_keys = _write_two_card_fixture(
+        tmp_path, tiny_state, tiny_memories, tiny_strategy
+    )
+    transient = RetryableProviderError(
+        "transient",
+        last_retry_class="http_5xx",
+        last_status_code=503,
+        attempts_tried=1,
+    )
+    ScriptedClient.script = [
+        transient,
+        transient,
+        _success_result("source-call2"),
+        _success_result("source-call3"),
+        _success_result("source-call4"),
+    ]
+    ScriptedClient.call_log = []
+    import metacom_pm.sweep as sweep_module
+
+    monkeypatch.setattr(sweep_module, "OpenAICompatibleClient", ScriptedClient)
+    source = tmp_path / "source"
+    with pytest.raises(RuntimeError, match="action sweep incomplete"):
+        run_action_sweep(
+            runtime,
+            backend,
+            strategies,
+            source / "outcomes.jsonl",
+            source / "raw.jsonl",
+            source / "summary.json",
+            endpoint=_endpoint(),
+            action_filter={"M0+R0", "M0+RS"},
+            request_retries=2,
+            fail_fast=False,
+            transport_retry_policy="bounded_transport",
+            transport_backoff_seconds=(0.0,),
+        )
+    source_ledger_rows = list(
+        iter_jsonl(source / "physical_attempt_ledger.jsonl")
+    )
+    carried = {
+        str(row["call_key"]): row
+        for row in source_ledger_rows
+        if row["event"] == "SUCCEEDED"
+    }
+    assert len(carried) == 3
+
+    ScriptedClient.script = [_success_result("continuation-missing-call")]
+    ScriptedClient.call_log = []
+    continuation = tmp_path / "continuation"
+    binding = {
+        "protocol": "fixture-exact-plan-carry-forward-v1",
+        "source_ledger_sha256": "a" * 64,
+    }
+    summary = run_action_sweep(
+        runtime,
+        backend,
+        strategies,
+        continuation / "outcomes.jsonl",
+        continuation / "raw.jsonl",
+        continuation / "summary.json",
+        endpoint=_endpoint(),
+        action_filter={"M0+R0", "M0+RS"},
+        request_retries=2,
+        fail_fast=False,
+        transport_retry_policy="bounded_transport",
+        transport_backoff_seconds=(0.0,),
+        max_physical_api_attempts=2,
+        carry_forward_terminal_rows=carried,
+        carry_forward_binding=binding,
+    )
+    assert summary["status"] == "COMPLETE"
+    assert summary["completed_outcomes"] == len(expected_keys) == 4
+    assert summary["carried_forward_logical_calls"] == 3
+    assert summary["historical_physical_http_attempts"] == 3
+    assert summary["new_physical_http_attempts"] == 1
+    assert summary["maximum_physical_api_attempts_planned"] == 2
+    assert len(ScriptedClient.call_log) == 1
+    continuation_rows = list(
+        iter_jsonl(continuation / "physical_attempt_ledger.jsonl")
+    )
+    carried_successes = [
+        row
+        for row in continuation_rows
+        if row["event"] == "SUCCEEDED"
+        and (row.get("metadata") or {}).get("carried_forward") is True
+    ]
+    assert len(carried_successes) == 3
+
+
+def test_carry_forward_requires_binding_and_rejects_unknown_call(
+    tmp_path, tiny_state, tiny_memories, tiny_strategy
+):
+    runtime, backend, strategies, _ = _write_two_card_fixture(
+        tmp_path, tiny_state, tiny_memories, tiny_strategy
+    )
+    with pytest.raises(ValueError, match="content-addressed binding"):
+        run_action_sweep(
+            runtime,
+            backend,
+            strategies,
+            tmp_path / "out" / "outcomes.jsonl",
+            tmp_path / "out" / "raw.jsonl",
+            tmp_path / "out" / "summary.json",
+            endpoint=_endpoint(),
+            action_filter={"M0+R0", "M0+RS"},
+            carry_forward_terminal_rows={"unknown": {}},
+        )
+    with pytest.raises(RuntimeError, match="outside the current plan"):
+        run_action_sweep(
+            runtime,
+            backend,
+            strategies,
+            tmp_path / "out2" / "outcomes.jsonl",
+            tmp_path / "out2" / "raw.jsonl",
+            tmp_path / "out2" / "summary.json",
+            endpoint=_endpoint(),
+            action_filter={"M0+R0", "M0+RS"},
+            carry_forward_terminal_rows={"unknown": {}},
+            carry_forward_binding={"protocol": "fixture"},
+        )
+
+
+def test_continuation_cost_identity_prices_only_remaining_calls():
+    module = _load_v1_5_runner()
+    rows = [
+        {
+            "call_key": "call-a",
+            "estimated_input_tokens": 100,
+            "maximum_output_tokens": 20,
+        },
+        {
+            "call_key": "call-b",
+            "estimated_input_tokens": 300,
+            "maximum_output_tokens": 40,
+        },
+    ]
+    estimate = {
+        "protocol": "fixture",
+        "expected_api_calls": 2,
+        "logical_api_calls": 2,
+        "maximum_physical_api_attempts": 8,
+        "transport_max_attempts_per_call": 4,
+        "pricing": {
+            "input_usd_per_mtok": 1.0,
+            "output_usd_per_mtok": 2.0,
+        },
+        "contract_bindings": {"science": "frozen"},
+        "cost_estimate_sha256": "old",
+    }
+    carry_forward = {
+        "binding": {"protocol": "fixture-carry", "binding_sha256": "b" * 64},
+        "carried_call_keys": {"call-a"},
+        "carried_terminal_rows": {"call-a": {}},
+    }
+    continuation = module._continuation_cost_estimate(
+        estimate, rows, carry_forward
+    )
+    assert continuation["historical_carried_forward_calls"] == 1
+    assert continuation["remaining_new_logical_calls"] == 1
+    assert continuation["maximum_physical_api_attempts"] == 4
+    assert continuation["estimated_total_input_tokens"] == 300
+    assert continuation["maximum_total_output_tokens"] == 40
+    assert continuation["estimated_cost_usd"] == pytest.approx(
+        4 * ((300 / 1_000_000) + (40 / 1_000_000 * 2))
+    )
+    body = {
+        key: value
+        for key, value in continuation.items()
+        if key != "cost_estimate_sha256"
+    }
+    assert continuation["cost_estimate_sha256"] == module.sha256_text(
+        module.canonical_json(body)
+    )

@@ -277,7 +277,14 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   两次独立 dry-run 已在不同目录逐字节一致：7,488 logical calls、最多 29,952 physical
   attempts，logical estimate `$2.36494155`、最坏上限 `$9.4597662`，cost identity
   `a4a1a94f…ee913`，call-plan SHA `3f473200…f75cc`，transport contract
-  `0af7d371…40fdc`，budget gate PASS；尚未获批或执行真实调用。sweep judging、
+  `0af7d371…40fdc`，budget gate PASS。该 identity 随后真实执行：7,487/7,488 outcomes
+  成功，8155 physical attempts（666 个 429、2 个 5xx 失败尝试，其余成功），成功调用
+  usage 为 3,761,153 input + 394,280 output tokens，约 `$0.80074095`；唯一剩余调用在
+  429/429/429/503 后耗尽冻结的 4-attempt cap，原阶段诚实保留为 `INCOMPLETE`。不得原地
+  扩展旧 identity，也不得重跑 7,487 个成功调用。exact-plan carry-forward 已在两个独立
+  目录逐字节复现：完整 call-plan SHA 仍为 `3f473200…f75cc`，继承 7,487 条、仅剩 1 条，
+  最多 4 次新 physical attempts，logical estimate `$0.00023535`、最坏上限 `$0.0009414`，
+  fresh identity `526c0ac6…2fbe`；尚未获得该 fresh identity 的付费批准。sweep judging、
   旧正式 judging runner 仍是 29,952 logical calls 中任一单次失败即终止、每 call 只有
   1 个 physical slot；现已在不改变双 judge、quality/risk prompt、schema、seed、阈值和
   标签算法的前提下，单立 development-judging execution transport contract：每 logical
