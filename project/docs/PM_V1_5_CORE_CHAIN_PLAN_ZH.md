@@ -222,7 +222,7 @@ external 付费生成前失败。
 | 3.8 | `v1_5/12b_build_esconv_auxiliary_v1_5.py` 及三 split 无 API preflight | 0 | 冻结 52 个 bank-disjoint ESConv train dialogue、719 states（318/170/231）和仅 `M0+R0/M0+RS` 合法动作；不读 ESConv gold response/strategy/outcome；held-out ESConv test 不被读取 |
 | 3.9 | ESConv auxiliary 两动作 generation + judging | 1,438 唯一 outcomes；质量/风险双家族上界 5,752 judge calls；实际物理调用与预算只认 dry-run | generation/judging 机制 pilot 已通过后才运行 full 719；train/calibration/internal-test 均完整，label reliability 与 judge-health gates PASS；internal-test 产物在模型选择冻结前保持 sealed |
 | 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 logical action outcomes；prompt-equivalent actions 允许共享一次物理生成，但必须物化全部 7,488 行 | 验证 actual-468 的 exact PASS **或**上述独立、内容寻址的 post-hoc qualification（二者不得混称）、Step-0 shortcut 与 response-mechanism attestation；真正 `scope=full`；每 state × 16 requested actions 完整，alias/cost lineage 可审计 |
-| 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 7,488 × quality/risk × 2 judge families = 29,952 logical labels；完全相同 prompt/response/evidence 可按冻结 equivalence class 共享物理判断 | 全部 requested-action labels 可恢复；alias class size 进入训练权重而不伪增样本；完整性与 judge-health gates PASS |
+| 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 合计仍为 7,488 × quality/risk × 2 judge families = 29,952 logical calls；先显式 `train_calibration`（5,184 outcomes/20,736 calls），另以 `sealed_internal_test`（2,304/9,216）生成 opaque holdout | train/calibration requested-action labels 完整且 judge-health gates PASS；internal runner 不计算 outcome aggregate，只在完整矩阵后立即 seal，并在 candidate/阈值/comparator 冻结后由 one-shot ledger 消费；禁止用原先的 all-split runner 先汇总 internal 再补 seal |
 | 6 | `v1_5/22a_train_pm_v2_dual_domain_v1_5.py` 联合双域训练 | 0 | 入口现场重验 exact runtime；只用两个域各自 train/calibration 调参；冻结 domain→dialogue/user→state→action/alias 权重；模型选择后才分别一次性消费 longitudinal 与 ESConv-aux internal-test；任一必需 gate 不完整则停止 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
 | 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + `13_preflight_esconv_policy_v1_5.py` | 0 | 使用同一 PMV2 checkpoint、同一 BAAI/Step-0 与 transparent rule；自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；仅允许 `M0+R0/M0+RS`，policy choice 不读 gold response/strategy |
@@ -287,17 +287,25 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   fresh identity `526c0ac6…2fbe`。该 continuation 已获独立批准并真实 `CONSUMED_PASS`：唯一
   新调用首次成功，新增 207 input + 52 output tokens、费用 `$0.00006225`；最终输出
   7,488/7,488、零 failure，artifact attestation SHA `687cecc0…26c0`。原始 incomplete 与
-  continuation 两个 identities 均永久禁止复用。sweep judging、
-  旧正式 judging runner 仍是 29,952 logical calls 中任一单次失败即终止、每 call 只有
-  1 个 physical slot；现已在不改变双 judge、quality/risk prompt、schema、seed、阈值和
+  continuation 两个 identities 均永久禁止复用。旧正式 judging runner 曾是 29,952
+  logical calls 中任一单次失败即终止、每 call 只有 1 个 physical slot；现已在不改变
+  双 judge、quality/risk prompt、schema、seed、阈值和
   标签算法的前提下，单立 development-judging execution transport contract：每 logical
   call 最多 4 个 ledger-visible physical attempts，只重试 429/408/5xx/timeout 与有界
   provider-output 格式噪声；孤立的已知 provider failure 继续矩阵，连续 5 个同类失败熔断，
   未完整矩阵固定为 `NONREPORTABLE_INCOMPLETE_MATRIX`。fresh continuation 只可从 call plan
   逐字节相同的旧目录继承 `SUCCEEDED` 行，旧 ledger SHA 进入新 cost identity，避免一条
-  terminal failure 迫使约三万条成功判断全部重跑。因真实 7,488 outcomes 尚未产生，
-  29,952-call judging 的两次正式 dry-run 只能在 sweep 完成后计算，当前不得引用旧单次尝试
-  cost identity。
+  terminal failure 迫使约三万条成功判断全部重跑。完整 7,488 outcomes 到齐后发现原
+  all-split runner 会在 seal 前把 internal-test 纳入 quality/reliability 聚合，因此其
+  identity `1b73b0cf…c8877` 永久失效。正式 runner 已拆成两个显式 scopes：
+  `train_calibration` 只评 5,184 outcomes；`sealed_internal_test` 只生成 2,304 outcomes
+  的标签并立即密封，禁止预先计算 outcome aggregate。train/calibration 两次 dry-run 已
+  逐字节一致：20,736 logical calls、最多 82,944 physical attempts、单次成功保守估算
+  `$8.50905808`、最坏上限 `$34.03623232`、identity `d07f2441…3b52`。internal-test
+  独立 scope 也已两次 dry-run 一致：2,304 outcomes、9,216 logical calls、最多 36,864
+  physical attempts、单次成功保守估算 `$3.80874806`、最坏上限 `$15.23499224`、identity
+  `24c46e31…a388`；它只能生成 opaque bundle 并立即 seal，直到联合
+  candidate/阈值/comparator 冻结后由 one-shot ledger 消费。
   联合训练、两个 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。

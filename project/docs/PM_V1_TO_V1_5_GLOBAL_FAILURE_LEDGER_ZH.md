@@ -441,6 +441,12 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 |---|---:|---|---|---|
 | V15-SWP-01 | C1 | 首次正式 7,488-action sweep 的 7,487 条 outcome 已成功并由 ledger 记录，但最后一条在 4 个冻结 transport slots 内依次遇到 429/429/429/503；若原地重跑会违规扩展已消费 identity，若整批重跑又会重复付费并把随机 provider 波动混入 7,487 条已完成结果 | 新增 exact-plan carry-forward：重新计算的完整 call plan 必须逐行相等，并绑定旧 cost identity、call-plan/ledger/outcome/raw-call/summary 文件 SHA、7,487 个成功 call keys 与唯一剩余 key；只接受旧 ledger 的 `SUCCEEDED` terminal recovery payload，FAILED/exhausted 永不继承；在全新目录、新 identity 下只为剩余 1 条重新获得最多 4 次物理预算，同时仍物化完整 7,488 行。原运行永久保留为 `INCOMPLETE`。fresh continuation `526c0ac6…2fbe` 已真实执行：唯一新调用首次成功，新增费用 `$0.00006225`，最终 7,488/7,488、零 failure、artifact `ATTESTED` | `CODE_CLOSED_FULL_TEST_AND_DOUBLE_DRY_RUN_PASS_REAL_CONTINUATION_PASS` |
 
+### 6.14 longitudinal judging 的 holdout 作用域
+
+| ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
+|---|---:|---|---|---|
+| V15-JDG-01 | C0 | 原正式 runner 在同一次 29,952-call 运行中生成 train/calibration/internal-test 全部标签，并在创建 internal seal **之前**把 internal rows 纳入全局 judge-health、reliability 与 quality gate；这等价于模型选择冻结前查看 held-out outcome，事后再写 seal 不能消除泄漏 | 正式运行必须显式选择 `train_calibration` 或 `sealed_internal_test`。前者只物化 5,184 outcomes/20,736 logical judge calls并运行 label-health gates；后者只物化 2,304 outcomes/9,216 calls，完整后立即 seal，summary 固定为 `SEALED_HOLDOUT_NOT_YET_CONSUMED`，禁止计算 reliability/quality/raw-family 聚合。两者使用独立 paid stage、call plan、ledger、cost identity 与 attestation；双域 candidate/阈值/comparator 冻结后才由 one-shot ledger 消费 internal bundle | `CODE_CLOSED_FULL_TEST_AND_BOTH_SCOPES_DOUBLE_DRY_RUN_PASS_PAID_RUN_PENDING` |
+
 ## 7. 修复本身曾引入或差点引入的新问题
 
 这是今后最需要反复阅读的一节。每次“修一个点”至少要审查以下二阶影响。

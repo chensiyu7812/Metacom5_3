@@ -102,6 +102,9 @@ DEVELOPMENT_JUDGING_TRANSPORT_PROTOCOL = (
 DEVELOPMENT_JUDGING_MAXIMUM_PHYSICAL_ATTEMPTS = 4
 DEVELOPMENT_JUDGING_BACKOFF_SECONDS = (10.0, 30.0, 60.0)
 DEVELOPMENT_JUDGING_CONSECUTIVE_FAILURE_BREAKER = 5
+TRAIN_CALIBRATION_SCOPE = "train_calibration"
+SEALED_INTERNAL_TEST_SCOPE = "sealed_internal_test"
+FORMAL_JUDGING_SCOPES = (TRAIN_CALIBRATION_SCOPE, SEALED_INTERNAL_TEST_SCOPE)
 DEVELOPMENT_JUDGING_ISOLATABLE_FAILURE_CLASSES = frozenset(
     set(RETRYABLE_UP_TO_FULL_BUDGET)
     | set(BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES)
@@ -215,6 +218,108 @@ def development_judging_cost_bounds(
         "maximum_input_tokens": logical_input_tokens * attempts,
         "maximum_output_tokens": logical_output_tokens * attempts,
         "maximum_cost_usd": logical_cost_usd * attempts,
+    }
+
+
+def select_formal_judging_outcomes(
+    outcomes: list[ActionOutcome],
+    *,
+    state_by_card: Mapping[str, Any],
+    label_scope: str,
+) -> list[ActionOutcome]:
+    """Select exactly one pre-registered split scope without peeking at labels."""
+
+    if label_scope not in FORMAL_JUDGING_SCOPES:
+        raise ValueError(f"unsupported formal judging scope: {label_scope}")
+    allowed_splits = (
+        {"train", "calibration"}
+        if label_scope == TRAIN_CALIBRATION_SCOPE
+        else {"internal_test"}
+    )
+    selected = [
+        outcome
+        for outcome in outcomes
+        if str(state_by_card[outcome.card_id].split.value) in allowed_splits
+    ]
+    observed_splits = {
+        str(state_by_card[outcome.card_id].split.value) for outcome in selected
+    }
+    if observed_splits != allowed_splits:
+        raise RuntimeError(
+            f"formal judging scope {label_scope} is incomplete: "
+            f"{sorted(observed_splits)} != {sorted(allowed_splits)}"
+        )
+    if not selected:
+        raise RuntimeError(f"formal judging scope {label_scope} selected no outcomes")
+    return selected
+
+
+def evaluate_raw_judge_gates(
+    canonical_raw_rows: list[Mapping[str, Any]],
+    *,
+    outcomes: list[ActionOutcome],
+    endpoints: list[Any],
+    labeling: Mapping[str, Any],
+    composite_spec: Any,
+    compatibility_pilot: bool,
+) -> dict[str, Any]:
+    """Evaluate development-label health only on train/calibration rows."""
+
+    expected_families = [str(endpoint.family) for endpoint in endpoints]
+    common = {
+        "expected_families": expected_families,
+        "duplicate_exact_match_rate": labeling["duplicate_exact_match_rate"],
+        "maximum_absolute_dimension_correlation": labeling[
+            "maximum_absolute_dimension_correlation"
+        ],
+        "composite_support_exact_match_rate": labeling[
+            "composite_support_exact_match_rate"
+        ],
+        "maximum_absolute_composite_support_correlation": labeling[
+            "maximum_absolute_composite_support_correlation"
+        ],
+        "reject_constant_response_dimensions": labeling[
+            "reject_constant_response_dimensions"
+        ],
+        "reject_constant_risk_dimensions": labeling[
+            "reject_constant_risk_dimensions"
+        ],
+        "composite_spec": composite_spec,
+        "raise_on_failure": not compatibility_pilot,
+    }
+    global_gate = validate_raw_judge_family_health(canonical_raw_rows, **common)
+    action_gate = validate_raw_judge_family_subgroup_health(
+        canonical_raw_rows,
+        subgroup_key="action_id",
+        expected_subgroups=sorted({row.action_id for row in outcomes}),
+        **common,
+    )
+    risk_gate = validate_action_applicable_risk_signal(
+        canonical_raw_rows,
+        expected_actions=sorted({row.action_id for row in outcomes}),
+        expected_families=expected_families,
+        minimum_signal_rate=labeling[
+            "minimum_action_applicable_risk_signal_rate"
+        ],
+        minimum_distinct_values=labeling[
+            "minimum_action_applicable_risk_distinct_values"
+        ],
+        raise_on_failure=not compatibility_pilot,
+    )
+    return {
+        "status": (
+            "PASS"
+            if global_gate.get("status") == "PASS"
+            and action_gate.get("status") == "PASS"
+            and (compatibility_pilot or risk_gate.get("status") == "PASS")
+            else "FAIL"
+        ),
+        "global": global_gate,
+        "family_by_action": action_gate,
+        "action_applicable_risk_signal": {
+            **risk_gate,
+            "enforced": not compatibility_pilot,
+        },
     }
 
 
@@ -583,6 +688,16 @@ def main() -> None:
     )
     parser.add_argument("--compatibility-pilot", action="store_true")
     parser.add_argument(
+        "--label-scope",
+        choices=FORMAL_JUDGING_SCOPES,
+        required=True,
+        help=(
+            "Formal holdout boundary. Run train_calibration before candidate "
+            "selection; sealed_internal_test only creates the opaque held-out "
+            "label bundle and must not compute outcome-quality summaries."
+        ),
+    )
+    parser.add_argument(
         "--pilot-plan",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_development_pilot" / "pilot_plan.json",
@@ -802,18 +917,28 @@ def main() -> None:
         args.evaluator_contexts, states=states, require_exact=True
     )
     evaluator_by_state = evaluator_index.by_state
-    outcomes = [ActionOutcome.model_validate(row) for row in iter_jsonl(outcomes_path)]
-    unknown_cards = sorted({row.card_id for row in outcomes} - set(state_by_card))
+    all_outcomes = [ActionOutcome.model_validate(row) for row in iter_jsonl(outcomes_path)]
+    unknown_cards = sorted({row.card_id for row in all_outcomes} - set(state_by_card))
     if unknown_cards:
         raise RuntimeError(f"outcomes contain unknown PM-v2 cards: {unknown_cards[:10]}")
-    if len({(row.card_id, row.action_id) for row in outcomes}) != len(outcomes):
+    if len({(row.card_id, row.action_id) for row in all_outcomes}) != len(all_outcomes):
         raise RuntimeError("duplicate state-action outcomes")
+    outcomes = select_formal_judging_outcomes(
+        all_outcomes,
+        state_by_card=state_by_card,
+        label_scope=args.label_scope,
+    )
     config = load_config(args.config)
     pm_v2_config = load_config(args.pm_v2_config)
+    paid_release_stage = (
+        "development_action_judging_train_calibration"
+        if args.label_scope == TRAIN_CALIBRATION_SCOPE
+        else "development_action_judging_internal_test"
+    )
     require_paid_run_release(
         pm_v2_config,
         config_path=args.pm_v2_config,
-        stage="development_action_judging",
+        stage=paid_release_stage,
         run=bool(args.run),
         run_identity=args.accept_cost_estimate_sha256,
     )
@@ -1076,11 +1201,16 @@ def main() -> None:
         )
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    labels_path = out_dir / "action_labels.jsonl"
+    sealed_holdout_scope = args.label_scope == SEALED_INTERNAL_TEST_SCOPE
     train_calibration_labels_path = (
         out_dir / "action_labels_train_calibration.jsonl"
     )
     internal_test_labels_path = out_dir / "action_labels_internal_test.jsonl"
+    labels_path = (
+        internal_test_labels_path
+        if sealed_holdout_scope
+        else out_dir / "action_labels.jsonl"
+    )
     raw_path = out_dir / "judge_results.jsonl"
     ledger_path = out_dir / "judge_call_ledger.jsonl"
     manifest_path = out_dir / "run_manifest.json"
@@ -1110,7 +1240,7 @@ def main() -> None:
     stage = (
         "pm_v2_development_judge_compatibility"
         if compatibility_pilot
-        else "pm_v2_action_judging"
+        else f"pm_v2_action_judging_{args.label_scope}"
     )
     manifest = ensure_run_manifest(
         manifest_path,
@@ -1134,6 +1264,13 @@ def main() -> None:
             "response_max_output_tokens": response_max_output_tokens,
             "risk_max_output_tokens": risk_max_output_tokens,
             "scope": "compatibility_pilot" if compatibility_pilot else "full",
+            "label_scope": args.label_scope,
+            "source_full_outcomes_sha256": sha256_file(outcomes_path),
+            "selected_outcome_keys_sha256": sha256_text(
+                canonical_json(
+                    sorted([row.card_id, row.action_id] for row in outcomes)
+                )
+            ),
             "max_outcomes": None,
             "pilot_plan_sha256": pilot_plan_sha256,
             "pilot_expected_keys_sha256": pilot_expected_keys_sha256,
@@ -1434,6 +1571,7 @@ def main() -> None:
     total_output_tokens = int(cost_bounds["maximum_output_tokens"])
     cost_payload = {
         "stage": stage,
+        "label_scope": args.label_scope,
         "full_logical_api_calls": len(cost_rows),
         "historical_carried_forward_calls": len(carried_call_keys),
         "remaining_new_logical_calls": len(newly_costed_rows),
@@ -1495,6 +1633,7 @@ def main() -> None:
     }
     summary = {
         "status": "DRY_RUN_COMPLETE" if args.dry_run else "STARTING",
+        "label_scope": args.label_scope,
         "outcomes": len(outcomes),
         "judge_endpoints": endpoint_names,
         "judge_families": sorted(str(value) for value in families),
@@ -1825,96 +1964,41 @@ def main() -> None:
         write_json(out_dir / "summary.json", report)
         raise RuntimeError(f"judge run incomplete: {len(missing_after)} missing pairs")
 
-    canonical_raw_rows = [
-        {
-            "judge_family": row["judge_family"],
-            "action_id": row["action_id"],
-            "response": row["response"],
-            "risk": row["risk"],
+    if sealed_holdout_scope:
+        # Do not calculate any outcome-dependent aggregate before candidate,
+        # thresholds, comparators, and uncertainty rules are frozen. The raw
+        # rows are schema-validated above and immediately sealed below.
+        raw_family_quality_gate = {
+            "status": "NOT_EVALUATED_SEALED_HOLDOUT",
+            "reason": "internal-test outcome aggregates are forbidden before consumption",
         }
-        for row in raw_by_key.values()
-    ]
-    raw_family_global_gate = validate_raw_judge_family_health(
-        canonical_raw_rows,
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
-        maximum_absolute_dimension_correlation=labeling[
-            "maximum_absolute_dimension_correlation"
-        ],
-        composite_support_exact_match_rate=labeling[
-            "composite_support_exact_match_rate"
-        ],
-        maximum_absolute_composite_support_correlation=labeling[
-            "maximum_absolute_composite_support_correlation"
-        ],
-        reject_constant_response_dimensions=labeling[
-            "reject_constant_response_dimensions"
-        ],
-        reject_constant_risk_dimensions=labeling[
-            "reject_constant_risk_dimensions"
-        ],
-        composite_spec=composite_spec,
-        raise_on_failure=not compatibility_pilot,
-    )
-    raw_family_action_gate = validate_raw_judge_family_subgroup_health(
-        canonical_raw_rows,
-        subgroup_key="action_id",
-        expected_subgroups=sorted({row.action_id for row in outcomes}),
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
-        maximum_absolute_dimension_correlation=labeling[
-            "maximum_absolute_dimension_correlation"
-        ],
-        composite_support_exact_match_rate=labeling[
-            "composite_support_exact_match_rate"
-        ],
-        maximum_absolute_composite_support_correlation=labeling[
-            "maximum_absolute_composite_support_correlation"
-        ],
-        reject_constant_response_dimensions=labeling[
-            "reject_constant_response_dimensions"
-        ],
-        reject_constant_risk_dimensions=labeling[
-            "reject_constant_risk_dimensions"
-        ],
-        composite_spec=composite_spec,
-        raise_on_failure=not compatibility_pilot,
-    )
-    action_applicable_risk_gate = validate_action_applicable_risk_signal(
-        canonical_raw_rows,
-        expected_actions=sorted({row.action_id for row in outcomes}),
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        minimum_signal_rate=labeling[
-            "minimum_action_applicable_risk_signal_rate"
-        ],
-        minimum_distinct_values=labeling[
-            "minimum_action_applicable_risk_distinct_values"
-        ],
-        raise_on_failure=not compatibility_pilot,
-    )
-    raw_family_quality_gate = {
-        "status": (
-            "PASS"
-            if raw_family_global_gate.get("status") == "PASS"
-            and raw_family_action_gate.get("status") == "PASS"
-            and (
-                compatibility_pilot
-                or action_applicable_risk_gate.get("status") == "PASS"
-            )
-            else "FAIL"
-        ),
-        "global": raw_family_global_gate,
-        "family_by_action": raw_family_action_gate,
-        "action_applicable_risk_signal": {
-            **action_applicable_risk_gate,
-            "enforced": not compatibility_pilot,
-        },
-    }
+    else:
+        canonical_raw_rows = [
+            {
+                "judge_family": row["judge_family"],
+                "action_id": row["action_id"],
+                "response": row["response"],
+                "risk": row["risk"],
+            }
+            for row in raw_by_key.values()
+        ]
+        raw_family_quality_gate = evaluate_raw_judge_gates(
+            canonical_raw_rows,
+            outcomes=outcomes,
+            endpoints=endpoints,
+            labeling=labeling,
+            composite_spec=composite_spec,
+            compatibility_pilot=compatibility_pilot,
+        )
 
     labels = []
     labels_path.write_text("", encoding="utf-8")
-    train_calibration_labels_path.write_text("", encoding="utf-8")
-    internal_test_labels_path.write_text("", encoding="utf-8")
+    selected_labels_path = (
+        internal_test_labels_path
+        if sealed_holdout_scope
+        else train_calibration_labels_path
+    )
+    selected_labels_path.write_text("", encoding="utf-8")
     prompt_equivalence_class_sizes: dict[tuple[str, str], int] = {}
     for outcome in outcomes:
         state = state_by_card[outcome.card_id]
@@ -1977,14 +2061,15 @@ def main() -> None:
         )
         labels.append(label)
         append_jsonl(labels_path, label.model_dump(mode="json"))
-        split_path = (
-            internal_test_labels_path
-            if state.split.value == "internal_test"
-            else train_calibration_labels_path
-        )
-        append_jsonl(split_path, label.model_dump(mode="json"))
+        if selected_labels_path != labels_path:
+            append_jsonl(selected_labels_path, label.model_dump(mode="json"))
     pilot_reliable_threshold = float(pilot_config["minimum_reliable_label_rate"])
-    if labels:
+    if sealed_holdout_scope:
+        quality_gate = {
+            "status": "NOT_EVALUATED_SEALED_HOLDOUT",
+            "reason": "internal-test outcome aggregates are forbidden before consumption",
+        }
+    elif labels:
         quality_gate = validate_judge_table(
             labels,
             minimum_families=labeling["minimum_families"],
@@ -2036,7 +2121,9 @@ def main() -> None:
     successful_pairs = sum(raw_row_succeeded(row) for row in raw_by_key.values())
     schema_success_rate = successful_pairs / len(required_keys) if required_keys else 0.0
     reliable_rate = (
-        sum(label.label_reliable for label in labels) / len(labels) if labels else 0.0
+        None
+        if sealed_holdout_scope
+        else (sum(label.label_reliable for label in labels) / len(labels) if labels else 0.0)
     )
     compatibility_thresholds = {
         "minimum_schema_success_rate": float(
@@ -2050,27 +2137,30 @@ def main() -> None:
             pilot_config["minimum_low_mad_coverage_per_action_dimension"]
         ),
     }
-    compatibility_checks = {
-        "exact_raw_matrix": set(raw_by_key) == required_keys,
-        "schema_success_rate": schema_success_rate
-        >= compatibility_thresholds["minimum_schema_success_rate"],
-        "complete_two_family_labels": len(labels) == len(outcomes),
-        "dimension_quality_gate": quality_gate.get("status") == "PASS",
-        "raw_family_dimension_quality_gate": (
-            raw_family_quality_gate.get("status") == "PASS"
-        ),
-    }
-    compatibility_gate = {
-        "status": "PASS" if all(compatibility_checks.values()) else "NONREPORTABLE",
-        "checks": compatibility_checks,
-        "thresholds": compatibility_thresholds,
-        "schema_success_rate": schema_success_rate,
-        "reliable_label_rate": reliable_rate,
-        "joint_reliable_rate_is_diagnostic_only": True,
-        "futility_triggered": pilot_futility_reason is not None,
-        "futility_reason": pilot_futility_reason,
-        "allowed_schema_failures": allowed_schema_failures,
-    }
+    compatibility_checks = None
+    compatibility_gate = None
+    if compatibility_pilot:
+        compatibility_checks = {
+            "exact_raw_matrix": set(raw_by_key) == required_keys,
+            "schema_success_rate": schema_success_rate
+            >= compatibility_thresholds["minimum_schema_success_rate"],
+            "complete_two_family_labels": len(labels) == len(outcomes),
+            "dimension_quality_gate": quality_gate.get("status") == "PASS",
+            "raw_family_dimension_quality_gate": (
+                raw_family_quality_gate.get("status") == "PASS"
+            ),
+        }
+        compatibility_gate = {
+            "status": "PASS" if all(compatibility_checks.values()) else "NONREPORTABLE",
+            "checks": compatibility_checks,
+            "thresholds": compatibility_thresholds,
+            "schema_success_rate": schema_success_rate,
+            "reliable_label_rate": reliable_rate,
+            "joint_reliable_rate_is_diagnostic_only": True,
+            "futility_triggered": pilot_futility_reason is not None,
+            "futility_reason": pilot_futility_reason,
+            "allowed_schema_failures": allowed_schema_failures,
+        }
     label_value_feasibility = None
     if compatibility_pilot:
         selected_state_by_id = {
@@ -2087,6 +2177,7 @@ def main() -> None:
             risk_weight=float(pm_v2_config["selection"]["risk_weight"]),
             cost_weight=float(pm_v2_config["selection"]["cost_weight"]),
         )
+        assert compatibility_gate is not None
         compatibility_gate["checks"]["label_value_feasibility"] = (
             label_value_feasibility["status"] == "PASS"
         )
@@ -2096,27 +2187,40 @@ def main() -> None:
             else "NONREPORTABLE"
         )
     final_status = (
-        compatibility_gate["status"] if compatibility_pilot else "COMPLETE"
+        compatibility_gate["status"]
+        if compatibility_pilot and compatibility_gate is not None
+        else (
+            "SEALED_INTERNAL_TEST_COMPLETE"
+            if sealed_holdout_scope
+            else "COMPLETE"
+        )
     )
     final_missing_api_calls = sum(
         call_key(row) not in successful_call_rows for row in cost_rows
     )
     sealed_internal_bundle_path = out_dir / "sealed_internal_bundle_manifest.json"
-    sealed_internal_bundle = seal_internal_label_bundle(
-        sealed_internal_bundle_path,
-        internal_labels_path=internal_test_labels_path,
-    )
+    sealed_internal_bundle = None
+    if sealed_holdout_scope:
+        sealed_internal_bundle = seal_internal_label_bundle(
+            sealed_internal_bundle_path,
+            internal_labels_path=internal_test_labels_path,
+        )
     report = {
         **summary,
         "status": final_status,
         "reportability_status": (
-            "COMPATIBILITY_GATE_ONLY" if compatibility_pilot else "REPORTABLE"
+            "SEALED_HOLDOUT_NOT_YET_CONSUMED"
+            if sealed_holdout_scope
+            else ("COMPATIBILITY_GATE_ONLY" if compatibility_pilot else "REPORTABLE")
         ),
+        "label_scope": args.label_scope,
         "completed_judge_pairs": len(raw_by_key),
         "remaining_judge_pairs": len(required_keys - set(raw_by_key)),
         "remaining_api_calls": final_missing_api_calls,
         "label_rows": len(labels),
-        "reliable_rows": sum(label.label_reliable for label in labels),
+        "reliable_rows": (
+            None if sealed_holdout_scope else sum(label.label_reliable for label in labels)
+        ),
         "schema_success_pairs": successful_pairs,
         "schema_success_rate": schema_success_rate,
         "quality_gate": quality_gate,
@@ -2124,9 +2228,15 @@ def main() -> None:
         "compatibility_gate": compatibility_gate if compatibility_pilot else None,
         "label_value_feasibility": label_value_feasibility,
         "labels_path": str(labels_path),
-        "train_calibration_labels_path": str(train_calibration_labels_path),
-        "internal_test_labels_path": str(internal_test_labels_path),
-        "sealed_internal_bundle_path": str(sealed_internal_bundle_path),
+        "train_calibration_labels_path": (
+            str(train_calibration_labels_path) if not sealed_holdout_scope else None
+        ),
+        "internal_test_labels_path": (
+            str(internal_test_labels_path) if sealed_holdout_scope else None
+        ),
+        "sealed_internal_bundle_path": (
+            str(sealed_internal_bundle_path) if sealed_holdout_scope else None
+        ),
         "sealed_internal_bundle": sealed_internal_bundle,
         "raw_path": str(raw_path),
         "ledger_path": str(ledger_path),
@@ -2172,22 +2282,34 @@ def main() -> None:
         attestation_inputs["carry_forward_ledger"] = (
             args.carry_forward_from / "judge_call_ledger.jsonl"
         )
+    attestation_outputs = {
+        "summary": (summary_path, False),
+        "raw_results": (raw_path, True),
+        "call_ledger": (ledger_path, True),
+    }
+    if sealed_holdout_scope:
+        attestation_outputs.update(
+            {
+                "sealed_internal_bundle": (sealed_internal_bundle_path, False),
+                "internal_test_labels": (internal_test_labels_path, True),
+            }
+        )
+    else:
+        attestation_outputs.update(
+            {
+                "labels": (labels_path, True),
+                "train_calibration_labels": (train_calibration_labels_path, True),
+            }
+        )
     create_artifact_attestation(
         attestation_path,
         stage=stage,
         inputs=attestation_inputs,
-        outputs={
-            "summary": (summary_path, False),
-            "labels": (labels_path, True),
-            "sealed_internal_bundle": (sealed_internal_bundle_path, False),
-            "train_calibration_labels": (train_calibration_labels_path, True),
-            "internal_test_labels": (internal_test_labels_path, True),
-            "raw_results": (raw_path, True),
-            "call_ledger": (ledger_path, True),
-        },
+        outputs=attestation_outputs,
         parameters={
             "status": final_status,
             "scope": "compatibility_pilot" if compatibility_pilot else "full",
+            "label_scope": args.label_scope,
             "pm_v2_config_sha256": sha256_file(args.pm_v2_config),
             "prompt_contract_hash": prompt_contract_hash(),
             "composite_spec": composite_spec.model_dump(mode="json"),

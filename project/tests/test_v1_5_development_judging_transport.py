@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -266,3 +267,50 @@ def test_formal_runner_wires_bounded_transport_and_nonreportable_incomplete() ->
     assert '"carry_forward_source_ledger_sha256"' in source
     assert "the one-attempt protocol forbids reissuing it" not in source
     assert "development judge HTTP call failed after its ledger row was saved" not in source
+
+
+def test_formal_judging_scope_selects_splits_without_label_access() -> None:
+    module = _module()
+    state_by_card = {
+        "train": SimpleNamespace(split=SimpleNamespace(value="train")),
+        "calibration": SimpleNamespace(split=SimpleNamespace(value="calibration")),
+        "internal": SimpleNamespace(split=SimpleNamespace(value="internal_test")),
+    }
+    outcomes = [
+        SimpleNamespace(card_id="train"),
+        SimpleNamespace(card_id="calibration"),
+        SimpleNamespace(card_id="internal"),
+    ]
+
+    development = module.select_formal_judging_outcomes(
+        outcomes,
+        state_by_card=state_by_card,
+        label_scope=module.TRAIN_CALIBRATION_SCOPE,
+    )
+    internal = module.select_formal_judging_outcomes(
+        outcomes,
+        state_by_card=state_by_card,
+        label_scope=module.SEALED_INTERNAL_TEST_SCOPE,
+    )
+
+    assert [row.card_id for row in development] == ["train", "calibration"]
+    assert [row.card_id for row in internal] == ["internal"]
+    with pytest.raises(ValueError, match="unsupported formal judging scope"):
+        module.select_formal_judging_outcomes(
+            outcomes,
+            state_by_card=state_by_card,
+            label_scope="all",
+        )
+
+
+def test_internal_scope_is_sealed_before_any_outcome_aggregate() -> None:
+    source = SCRIPT.read_text(encoding="utf-8")
+
+    assert '--label-scope' in source
+    assert '"development_action_judging_train_calibration"' in source
+    assert '"development_action_judging_internal_test"' in source
+    assert '"NOT_EVALUATED_SEALED_HOLDOUT"' in source
+    assert '"SEALED_INTERNAL_TEST_COMPLETE"' in source
+    assert '"SEALED_HOLDOUT_NOT_YET_CONSUMED"' in source
+    assert "if sealed_holdout_scope:" in source
+    assert "seal_internal_label_bundle(" in source
