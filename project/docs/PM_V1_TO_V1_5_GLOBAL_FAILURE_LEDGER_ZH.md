@@ -439,7 +439,7 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 
 | ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
 |---|---:|---|---|---|
-| V15-SWP-01 | C1 | 首次正式 7,488-action sweep 的 7,487 条 outcome 已成功并由 ledger 记录，但最后一条在 4 个冻结 transport slots 内依次遇到 429/429/429/503；若原地重跑会违规扩展已消费 identity，若整批重跑又会重复付费并把随机 provider 波动混入 7,487 条已完成结果 | 新增 exact-plan carry-forward：重新计算的完整 call plan 必须逐行相等，并绑定旧 cost identity、call-plan/ledger/outcome/raw-call/summary 文件 SHA、7,487 个成功 call keys 与唯一剩余 key；只接受旧 ledger 的 `SUCCEEDED` terminal recovery payload，FAILED/exhausted 永不继承；在全新目录、新 identity 下只为剩余 1 条重新获得最多 4 次物理预算，同时仍物化完整 7,488 行。原运行保留为 `INCOMPLETE`，不得改写为 PASS | `CODE_CLOSED_TARGETED_TEST_AND_DOUBLE_DRY_RUN_PASS_ONE_CALL_PAID_CONTINUATION_PENDING` |
+| V15-SWP-01 | C1 | 首次正式 7,488-action sweep 的 7,487 条 outcome 已成功并由 ledger 记录，但最后一条在 4 个冻结 transport slots 内依次遇到 429/429/429/503；若原地重跑会违规扩展已消费 identity，若整批重跑又会重复付费并把随机 provider 波动混入 7,487 条已完成结果 | 新增 exact-plan carry-forward：重新计算的完整 call plan 必须逐行相等，并绑定旧 cost identity、call-plan/ledger/outcome/raw-call/summary 文件 SHA、7,487 个成功 call keys 与唯一剩余 key；只接受旧 ledger 的 `SUCCEEDED` terminal recovery payload，FAILED/exhausted 永不继承；在全新目录、新 identity 下只为剩余 1 条重新获得最多 4 次物理预算，同时仍物化完整 7,488 行。原运行永久保留为 `INCOMPLETE`。fresh continuation `526c0ac6…2fbe` 已真实执行：唯一新调用首次成功，新增费用 `$0.00006225`，最终 7,488/7,488、零 failure、artifact `ATTESTED` | `CODE_CLOSED_FULL_TEST_AND_DOUBLE_DRY_RUN_PASS_REAL_CONTINUATION_PASS` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 

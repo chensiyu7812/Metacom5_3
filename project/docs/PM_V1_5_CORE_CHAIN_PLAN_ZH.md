@@ -284,7 +284,10 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   扩展旧 identity，也不得重跑 7,487 个成功调用。exact-plan carry-forward 已在两个独立
   目录逐字节复现：完整 call-plan SHA 仍为 `3f473200…f75cc`，继承 7,487 条、仅剩 1 条，
   最多 4 次新 physical attempts，logical estimate `$0.00023535`、最坏上限 `$0.0009414`，
-  fresh identity `526c0ac6…2fbe`；尚未获得该 fresh identity 的付费批准。sweep judging、
+  fresh identity `526c0ac6…2fbe`。该 continuation 已获独立批准并真实 `CONSUMED_PASS`：唯一
+  新调用首次成功，新增 207 input + 52 output tokens、费用 `$0.00006225`；最终输出
+  7,488/7,488、零 failure，artifact attestation SHA `687cecc0…26c0`。原始 incomplete 与
+  continuation 两个 identities 均永久禁止复用。sweep judging、
   旧正式 judging runner 仍是 29,952 logical calls 中任一单次失败即终止、每 call 只有
   1 个 physical slot；现已在不改变双 judge、quality/risk prompt、schema、seed、阈值和
   标签算法的前提下，单立 development-judging execution transport contract：每 logical
