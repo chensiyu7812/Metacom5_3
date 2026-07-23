@@ -54,37 +54,56 @@ def _require_internal_seal_matches_states(seal: dict, states, *, domain: str) ->
 ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED = (
     "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED"
 )
+ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED = (
+    "ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED"
+)
 
 
-def _require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+def _require_content_addressed_instrument_freeze_contract(
     contract_path: Path,
-) -> None:
-    """Fail closed if the ESConv-auxiliary absolute-label instrument is frozen NOT_SUPPORTED.
+    *,
+    blocking_status: str,
+    contract_label: str,
+) -> dict:
+    """Fail closed unless a git-tracked instrument-freeze contract is present,
 
-    A zero-API re-aggregation of the real, already-recovered ESConv-auxiliary
-    train-split labels found the applicable response dimensions and the
-    cross-judge-family routing preference both remain unreliable even after
-    every measurement-contract fix (applicability masking, MAD-adjusted
-    conservative utility, sparse-zero-aware and pairwise-action-applicable
-    correlation detection). That verdict is frozen at ``contract_path``
-    (data/pm_v1_5_contracts/esconv_auxiliary_absolute_instrument_freeze_v1.
-    json, git-tracked). Absence of the file is not itself an error -- it
-    means no freeze has been recorded, not that the instrument is fine --
-    but if the file is present and carries this status, dual-domain training
-    must refuse to consume the existing absolute (per-dimension) ESConv-
-    auxiliary labels; do not silently proceed.
+    self-consistent, and does not carry ``blocking_status``.
+
+    Both the ESConv-auxiliary absolute-label instrument (per-dimension
+    scoring, data/pm_v1_5_contracts/esconv_auxiliary_absolute_instrument_
+    freeze_v1.json) and the pairwise instrument (anonymous A/B preference,
+    data/pm_v1_5_contracts/esconv_auxiliary_pairwise_instrument_freeze_v1.
+    json) have independently been found NOT_SUPPORTED by their own zero-/
+    low-cost measurement studies. Unlike an earlier, more permissive version
+    of this check, a *missing* contract is now itself a fail-closed
+    condition -- dual-domain training may not silently proceed just because
+    a freeze record has not been produced yet -- and each contract's own
+    ``contract_sha256`` self-hash is re-verified against its current on-disk
+    content (the same self-addressed-hash convention artifact attestations
+    use) so a hand-edited or truncated contract is also rejected.
     """
 
     if not contract_path.is_file():
-        return
-    contract = read_json(contract_path)
-    if contract.get("status") == ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED:
         raise RuntimeError(
-            "ESConv-auxiliary absolute-label instrument is frozen "
-            f"{ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED} "
-            f"({contract_path}); refusing to use the existing absolute labels "
-            "for dual-domain training"
+            f"{contract_label} freeze contract is missing: {contract_path}; "
+            "dual-domain training requires this contract to be present"
         )
+    contract = read_json(contract_path)
+    expected_self_hash = contract.get("contract_sha256")
+    without_self_hash = {
+        key: value for key, value in contract.items() if key != "contract_sha256"
+    }
+    if expected_self_hash != sha256_text(canonical_json(without_self_hash)):
+        raise RuntimeError(
+            f"{contract_label} freeze contract hash mismatch: {contract_path}"
+        )
+    if contract.get("status") == blocking_status:
+        raise RuntimeError(
+            f"{contract_label} is frozen {blocking_status} ({contract_path}); "
+            "refusing to use the existing ESConv-auxiliary labels for "
+            "dual-domain training"
+        )
+    return contract
 
 
 def _require_frozen_esconv_auxiliary_measurement_contract(
@@ -208,8 +227,22 @@ def main() -> None:
         help=(
             "Git-tracked contract recording whether the ESConv-auxiliary "
             "absolute (per-dimension) label instrument has been frozen "
-            "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED. "
-            "Missing is not an error; present with that status fails closed."
+            "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED. Must "
+            "be present, self-hash-consistent, and not carry that status."
+        ),
+    )
+    parser.add_argument(
+        "--esconv-auxiliary-pairwise-instrument-freeze-contract",
+        type=Path,
+        default=ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "esconv_auxiliary_pairwise_instrument_freeze_v1.json",
+        help=(
+            "Git-tracked contract recording whether the ESConv-auxiliary "
+            "pairwise (anonymous A/B preference) instrument has been frozen "
+            "ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED. Must be "
+            "present, self-hash-consistent, and not carry that status."
         ),
     )
     parser.add_argument(
@@ -219,8 +252,15 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    _require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
-        args.esconv_auxiliary_absolute_instrument_freeze_contract
+    _require_content_addressed_instrument_freeze_contract(
+        args.esconv_auxiliary_absolute_instrument_freeze_contract,
+        blocking_status=ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED,
+        contract_label="ESConv-auxiliary absolute-label instrument freeze",
+    )
+    _require_content_addressed_instrument_freeze_contract(
+        args.esconv_auxiliary_pairwise_instrument_freeze_contract,
+        blocking_status=ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED,
+        contract_label="ESConv-auxiliary pairwise instrument freeze",
     )
 
     config = load_config(args.pm_v1_5_config)

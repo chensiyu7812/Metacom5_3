@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 from metacom_pm.artifacts import create_artifact_attestation
-from metacom_pm.io import sha256_file, write_json, write_jsonl
+from metacom_pm.io import canonical_json, sha256_file, sha256_text, write_json, write_jsonl
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts" / "v1_5" / "21a_preflight_dual_domain_training_v1_5.py"
@@ -176,41 +176,65 @@ def test_rejects_code_drift_since_freeze(tmp_path):
         )
 
 
-def test_absolute_instrument_freeze_guard_allows_a_missing_contract(tmp_path):
+def _self_hashed_contract(status: str) -> dict:
+    payload = {"status": status, "note": "test fixture"}
+    return {**payload, "contract_sha256": sha256_text(canonical_json(payload))}
+
+
+def test_instrument_freeze_guard_fails_closed_on_a_missing_contract(tmp_path):
     module = _load_preflight_module()
     missing_path = tmp_path / "no_such_contract.json"
     assert not missing_path.exists()
-    # Absence is not itself an error -- it means no freeze has been recorded.
-    module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
-        missing_path
-    )
-
-
-def test_absolute_instrument_freeze_guard_passes_when_status_is_not_the_freeze_value(
-    tmp_path,
-):
-    module = _load_preflight_module()
-    contract_path = tmp_path / "contract.json"
-    write_json(contract_path, {"status": "SOME_OTHER_STATUS"})
-    module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
-        contract_path
-    )
-
-
-def test_absolute_instrument_freeze_guard_fails_closed_on_not_supported(tmp_path):
-    module = _load_preflight_module()
-    contract_path = tmp_path / "contract.json"
-    write_json(
-        contract_path,
-        {"status": "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED"},
-    )
-    with pytest.raises(RuntimeError, match="NOT_SUPPORTED"):
-        module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
-            contract_path
+    # Unlike an earlier, more permissive version of this guard, a missing
+    # contract must now itself fail closed -- dual-domain training may not
+    # silently proceed just because no freeze record has been produced yet.
+    with pytest.raises(RuntimeError, match="missing"):
+        module._require_content_addressed_instrument_freeze_contract(
+            missing_path,
+            blocking_status="SOME_BLOCKING_STATUS",
+            contract_label="test instrument",
         )
 
 
-def test_absolute_instrument_freeze_guard_matches_the_real_frozen_contract(tmp_path):
+def test_instrument_freeze_guard_fails_closed_on_hash_mismatch(tmp_path):
+    module = _load_preflight_module()
+    contract_path = tmp_path / "contract.json"
+    contract = _self_hashed_contract("SOME_OTHER_STATUS")
+    contract["contract_sha256"] = "0" * 64
+    write_json(contract_path, contract)
+    with pytest.raises(RuntimeError, match="hash mismatch"):
+        module._require_content_addressed_instrument_freeze_contract(
+            contract_path,
+            blocking_status="SOME_BLOCKING_STATUS",
+            contract_label="test instrument",
+        )
+
+
+def test_instrument_freeze_guard_passes_when_status_is_not_the_blocking_value(tmp_path):
+    module = _load_preflight_module()
+    contract_path = tmp_path / "contract.json"
+    write_json(contract_path, _self_hashed_contract("SOME_OTHER_STATUS"))
+    result = module._require_content_addressed_instrument_freeze_contract(
+        contract_path,
+        blocking_status="SOME_BLOCKING_STATUS",
+        contract_label="test instrument",
+    )
+    assert result["status"] == "SOME_OTHER_STATUS"
+
+
+def test_instrument_freeze_guard_fails_closed_on_the_blocking_status(tmp_path):
+    module = _load_preflight_module()
+    contract_path = tmp_path / "contract.json"
+    write_json(contract_path, _self_hashed_contract("SOME_BLOCKING_STATUS"))
+    with pytest.raises(RuntimeError, match="SOME_BLOCKING_STATUS"):
+        module._require_content_addressed_instrument_freeze_contract(
+            contract_path,
+            blocking_status="SOME_BLOCKING_STATUS",
+            contract_label="test instrument",
+        )
+
+
+def test_instrument_freeze_guard_matches_the_real_frozen_absolute_contract():
     module = _load_preflight_module()
     real_contract_path = (
         ROOT
@@ -220,6 +244,25 @@ def test_absolute_instrument_freeze_guard_matches_the_real_frozen_contract(tmp_p
     )
     assert real_contract_path.is_file()
     with pytest.raises(RuntimeError, match="NOT_SUPPORTED"):
-        module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
-            real_contract_path
+        module._require_content_addressed_instrument_freeze_contract(
+            real_contract_path,
+            blocking_status=module.ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED,
+            contract_label="ESConv-auxiliary absolute-label instrument freeze",
+        )
+
+
+def test_instrument_freeze_guard_matches_the_real_frozen_pairwise_contract():
+    module = _load_preflight_module()
+    real_contract_path = (
+        ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "esconv_auxiliary_pairwise_instrument_freeze_v1.json"
+    )
+    assert real_contract_path.is_file()
+    with pytest.raises(RuntimeError, match="NOT_SUPPORTED"):
+        module._require_content_addressed_instrument_freeze_contract(
+            real_contract_path,
+            blocking_status=module.ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED,
+            contract_label="ESConv-auxiliary pairwise instrument freeze",
         )
