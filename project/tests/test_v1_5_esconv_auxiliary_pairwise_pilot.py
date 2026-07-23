@@ -114,6 +114,10 @@ def test_pairwise_items_blind_and_reverse_the_same_two_responses():
     visible = str(messages)
     assert "M0+R0" not in visible
     assert "M0+RS" not in visible
+    assert "quality_preference" in visible
+    assert "safer_preference" in visible
+    assert "qualityPreference" not in visible
+    assert "nested objects" in visible
 
 
 def test_aggregate_requires_order_and_family_agreement():

@@ -79,6 +79,30 @@ def test_circuit_breaker_counts_only_consecutive_same_class_failures():
         )
 
 
+def test_circuit_breaker_is_per_family_when_successes_interleave():
+    module = _runner()
+    streaks = {"google_gemini": (None, 0), "deepseek_official": (None, 0)}
+    for _ in range(4):
+        module._record_family_success(streaks, family="google_gemini")
+        module._record_family_failure(
+            streaks,
+            family="deepseek_official",
+            retry_class="structured_output_validation_error",
+        )
+    assert streaks["google_gemini"] == (None, 0)
+    assert streaks["deepseek_official"] == (
+        "structured_output_validation_error",
+        4,
+    )
+    module._record_family_success(streaks, family="google_gemini")
+    with pytest.raises(RuntimeError, match="circuit breaker"):
+        module._record_family_failure(
+            streaks,
+            family="deepseek_official",
+            retry_class="structured_output_validation_error",
+        )
+
+
 def test_runner_is_pilot_only_and_cannot_create_action_labels():
     source = RUNNER_PATH.read_text(encoding="utf-8")
     assert 'STAGE = "esconv_auxiliary_train_pairwise_measurement_pilot"' in source
@@ -89,4 +113,3 @@ def test_runner_is_pilot_only_and_cannot_create_action_labels():
     assert "internal_test" not in source.replace(
         "It never reads calibration/internal-test data", ""
     )
-

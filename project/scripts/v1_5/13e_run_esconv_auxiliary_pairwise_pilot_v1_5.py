@@ -82,7 +82,7 @@ TRANSPORT_BACKOFF_SECONDS: tuple[float, ...] = (
     900.0,
 )
 CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER = 5
-TRANSPORT_PROTOCOL = "pm-v1.5-esconv-auxiliary-pairwise-pilot-transport-v1"
+TRANSPORT_PROTOCOL = "pm-v1.5-esconv-auxiliary-pairwise-pilot-transport-v2"
 ISOLATABLE_FAILURE_CLASSES = frozenset(
     set(RETRYABLE_UP_TO_FULL_BUDGET)
     | set(BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES)
@@ -128,6 +128,26 @@ def _advance_failure_streak(
     return retry_class, count
 
 
+def _record_family_failure(
+    streaks: dict[str, tuple[str | None, int]],
+    *,
+    family: str,
+    retry_class: str,
+) -> None:
+    previous_class, previous_count = streaks.get(family, (None, 0))
+    streaks[family] = _advance_failure_streak(
+        previous_class=previous_class,
+        previous_count=previous_count,
+        retry_class=retry_class,
+    )
+
+
+def _record_family_success(
+    streaks: dict[str, tuple[str | None, int]], *, family: str
+) -> None:
+    streaks[family] = (None, 0)
+
+
 def _transport_contract(
     *,
     provider_output_attempts_by_family: Mapping[str, int],
@@ -152,7 +172,7 @@ def _transport_contract(
         "transport_backoff_seconds": list(TRANSPORT_BACKOFF_SECONDS),
         "retryable_transport_classes": sorted(RETRYABLE_UP_TO_FULL_BUDGET),
         "isolatable_failure_classes": sorted(ISOLATABLE_FAILURE_CLASSES),
-        "consecutive_same_class_circuit_breaker": (
+        "per_family_consecutive_same_class_circuit_breaker": (
             CONSECUTIVE_SAME_CLASS_CIRCUIT_BREAKER
         ),
         "client_internal_retries": 1,
@@ -499,14 +519,17 @@ def main() -> None:
         )
     }
     isolated_failures: dict[str, str] = {}
-    previous_failure_class: str | None = None
-    consecutive_failure_count = 0
+    failure_streaks_by_family: dict[str, tuple[str | None, int]] = {
+        family: (None, 0) for family in endpoint_by_family
+    }
     try:
         for row in plan:
             call_key = str(row["physical_call_key"])
+            family = str(row["judge_family"])
             if ledger.succeeded(call_key):
-                previous_failure_class = None
-                consecutive_failure_count = 0
+                _record_family_success(
+                    failure_streaks_by_family, family=family
+                )
                 continue
             blocker = call_retry_blocker(
                 ledger,
@@ -522,12 +545,10 @@ def main() -> None:
                         f"pairwise pilot persisted non-isolatable failure: {blocker}"
                     )
                 isolated_failures[call_key] = f"{retry_class}: {blocker}"
-                previous_failure_class, consecutive_failure_count = (
-                    _advance_failure_streak(
-                        previous_class=previous_failure_class,
-                        previous_count=consecutive_failure_count,
-                        retry_class=retry_class,
-                    )
+                _record_family_failure(
+                    failure_streaks_by_family,
+                    family=family,
+                    retry_class=retry_class,
                 )
                 continue
 
@@ -580,12 +601,10 @@ def main() -> None:
                 isolated_failures[call_key] = (
                     f"{retry_class}: {type(exc).__name__}: {exc}"
                 )
-                previous_failure_class, consecutive_failure_count = (
-                    _advance_failure_streak(
-                        previous_class=previous_failure_class,
-                        previous_count=consecutive_failure_count,
-                        retry_class=retry_class,
-                    )
+                _record_family_failure(
+                    failure_streaks_by_family,
+                    family=family,
+                    retry_class=retry_class,
                 )
                 continue
             try:
@@ -616,8 +635,7 @@ def main() -> None:
                 error=None,
                 result={"parsed": parsed.model_dump(mode="json")},
             )
-            previous_failure_class = None
-            consecutive_failure_count = 0
+            _record_family_success(failure_streaks_by_family, family=family)
     finally:
         for client in clients.values():
             client.close()
