@@ -1,14 +1,21 @@
 # PM-v1.5 快速会议版：研究合同与执行顺序
 
-> **2026-07-22 权威更新：** 本文现在是 PM-v1.5 后续执行的单一主路线。此前只写入
-> 52-user/468-state 纵向合成域的旧顺序，已由本文第 4 节的新顺序取代。正式训练改为
-> 同一个 PM 的双域监督训练：纵向合成域提供完整 16-action memory/strategy 反事实；
-> 719-state ESConv auxiliary 域提供真实单会话、memory 结构性不可用时的
-> `M0+R0/M0+RS` 支持。两个域各自保留 train/calibration/internal-test，按
-> domain→dialogue/user→state→action/alias 分层加权，两个 internal-test 分开消费、
-> 分开报告，绝不合并成一个“总体准确率”。正式外部评测仍是同一冻结 PM 的两项并列
-> 试验：ESConv test 只支持即时回复质量和 Strategy 开关主张；EvoEmo/ES-MemEval-derived
-> 只支持纵向 memory/strategy 的质量—风险—成本主张。Hybrid retrieval 已依据
+> **2026-07-23 权威更新：** 本文是 PM-v1.5 后续执行的唯一活跃主路线，只回答“研究要
+> 证明什么、现在到哪、下一步按什么顺序做”。问题编号、根因和关闭状态只在
+> `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 维护；旧 V1 postmortem 为只读历史证据。
+> 不得在本文或其他文件再建立第二套活跃问题清单。
+>
+> 此前拟定的双域监督路线已按预注册停止规则关闭。719-state ESConv auxiliary
+> generation 已完成，但其单动作绝对量表在 train 上为 `NOT_SUPPORTED`；随后独立的
+> 24-state balanced-order pairwise pilot 虽 96/96 调用完整，安全偏好的有效非 tie 率仅
+> 0.1667，低于冻结下限 0.25，故结论为
+> `ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED`。不得继续打开 calibration 或
+> internal、调 prompt/阈值或换 judge 直到通过，也不得把 auxiliary 数据用于监督训练。
+> 正式 PM-v1.5 回到 52-user/468-state 纵向单域训练；双域入口保留为未消费的研究基础设施，
+> 不是本篇的正式路线。正式外部评测仍是两项互补而非同义的试验：ESConv test 仅比较
+> 固定 `M0+R0/M0+RS` 的即时回复质量与 Strategy 机制，不主张 learned PM 在 ESConv
+> 路由；EvoEmo/ES-MemEval-derived 才检验冻结纵向 PM 的 memory/strategy
+> 质量—风险—成本权衡。Hybrid retrieval 已依据
 > calibration 与 ESConv validation 的合法证据作出 `NOT_ADOPTED` 决定，正式链路继续
 > 使用 lexical-only；它不是待办事项。并发只允许作为保持 call plan、prompt、模型、
 > judge、重试和统计单位不变的执行层优化，具体边界见第 4.3 节。
@@ -52,7 +59,7 @@
 > 本文保留为 2026-07-17 版本的历史设计
 > 背景，与新合同冲突时以新合同为准。
 
-更新时间：2026-07-22
+更新时间：2026-07-23
 历史收口状态（截至 2026-07-19）：V8.11.1 已真实 `CONSUMED_PASS`：9/9 accepted、10 次物理调用、
 1 次普通 content repair、0 transport retry、0 fallback；9 例有 8 个不同 current turn，
 唯一重复组是同一 user/family/split 的合法反事实对。identity `6876e2d3…25ed` 永久
@@ -61,11 +68,11 @@ independent human semantic review”的 scope 句是旧 V4 流程的历史描述
 权威顺序是正式 468-state corpus 生成后执行 actual-468 structured QA v3，并在 7,488-action
 sweep 前 fail-closed。为保留已通过 attestation，不回写或重签历史 artifact。
 
-历史状态：免费代码与 fail-closed 链路已搭建；历史整包 generation compatibility
+历史状态（仅描述当时，不是当前快照）：免费代码与 fail-closed 链路已搭建；历史整包 generation compatibility
 transport pilot 已失效，V8.1 逐例试运行在 9 个 case 中有 2 个话题 lint 失败。当前合同已改为
-surface-only 逐 case 生成和每 case 最多一次预预算 repair，必须在新目录重跑，
-不能视为仍然有效的上游 gate，更不是论文 efficacy 结果。其余正式链路尚未执行，也没有
-真实 V1.5 主结果。任何 dry-run、脚手架测试或旧 V1 诊断都不能写成论文结果。
+surface-only 逐 case 生成和每 case 最多一次预预算 repair；该历史状态后来已被第 4.1 节
+列出的正式 corpus/sweep 进展取代，不能视为当前待办或论文 efficacy 结果。任何 dry-run、
+脚手架测试或旧 V1 诊断都不能写成论文结果。
 
 ## 1. V1.5 到底要支持什么主张
 
@@ -220,15 +227,15 @@ external 付费生成前失败。
 | 3.6 | `v1_5/20b_run_step0_shortcut_audit_v1_5.py` | 0 | 完整 468 states 上的单阈值和 train-only user-group 多变量 probe 均未达到冻结的 near-oracle 上限；报告与数据 attestation 内容寻址绑定 |
 | 3.7 | `v1_5/20b_preflight_rule_grid_v1_5.py` | 0 | 只读 train/calibration states、不读 outcome/internal；候选至少形成 2 种 state-level policy mapping，且最大 pairwise disagreement 不低于冻结下限；报告在 sweep/训练前绑定 |
 | 3.8 | `v1_5/12b_build_esconv_auxiliary_v1_5.py` 及三 split 无 API preflight | 0 | 冻结 52 个 bank-disjoint ESConv train dialogue、719 states（318/170/231）和仅 `M0+R0/M0+RS` 合法动作；不读 ESConv gold response/strategy/outcome；held-out ESConv test 不被读取 |
-| 3.9 | ESConv auxiliary 两动作 generation + judging | 1,438 唯一 outcomes；质量/风险双家族上界 5,752 judge calls；实际物理调用与预算只认 dry-run | generation/judging 机制 pilot 已通过后才运行 full 719；train/calibration/internal-test 均完整，label reliability 与 judge-health gates PASS；internal-test 产物在模型选择冻结前保持 sealed |
+| 3.9 | ESConv auxiliary 两动作 generation + train-only measurement | generation 1,438 outcomes 已完成；absolute train 636 pairs 已测；pairwise pilot 96 calls 已测 | generation 三 split 完整，但 absolute instrument 与 pairwise replacement 均 `NOT_SUPPORTED`；按预注册停止规则，calibration/internal judging 不运行，auxiliary 不进入训练。其产物只作诊断与第一篇局限证据 |
 | 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 logical action outcomes；prompt-equivalent actions 允许共享一次物理生成，但必须物化全部 7,488 行 | 验证 actual-468 的 exact PASS **或**上述独立、内容寻址的 post-hoc qualification（二者不得混称）、Step-0 shortcut 与 response-mechanism attestation；真正 `scope=full`；每 state × 16 requested actions 完整，alias/cost lineage 可审计 |
 | 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 合计仍为 7,488 × quality/risk × 2 judge families = 29,952 logical calls；先显式 `train_calibration`（5,184 outcomes/20,736 calls），另以 `sealed_internal_test`（2,304/9,216）生成 opaque holdout | train/calibration requested-action labels 完整且 judge-health gates PASS；internal runner 不计算 outcome aggregate，只在完整矩阵后立即 seal，并在 candidate/阈值/comparator 冻结后由 one-shot ledger 消费；禁止用原先的 all-split runner 先汇总 internal 再补 seal |
-| 6 | `v1_5/22a_train_pm_v2_dual_domain_v1_5.py` 联合双域训练 | 0 | 入口现场重验 exact runtime；只用两个域各自 train/calibration 调参；冻结 domain→dialogue/user→state→action/alias 权重；模型选择后才分别一次性消费 longitudinal 与 ESConv-aux internal-test；任一必需 gate 不完整则停止 |
+| 6 | `v1_5/22_train_pm_v2_v1_5.py` 纵向单域训练 | 0 | 入口现场重验 exact runtime；只用 longitudinal train/calibration 选择模型与冻结阈值/comparator；candidate 冻结后才一次性消费 longitudinal internal-test。`22a` 双域入口保留但由两个 auxiliary `NOT_SUPPORTED` freeze fail-closed，本篇不执行 |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
-| 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + `13_preflight_esconv_policy_v1_5.py` | 0 | 使用同一 PMV2 checkpoint、同一 BAAI/Step-0 与 transparent rule；自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；仅允许 `M0+R0/M0+RS`，policy choice 不读 gold response/strategy |
+| 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + fixed-condition preflight | 0 | 自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；只构建固定 `M0+R0/M0+RS` 条件，不把 longitudinal PM/rule 的 ESConv policy choice 当正式 condition，不读 gold response/strategy |
 | 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` V3 bounded-surface pilot → formal | pilot 为 2 tracks / 20 logical calls；formal 为 102 tracks / 1,020 logical calls；physical/cost 上限各以独立 dry-run 为准 | pilot 与 formal 使用同一 V3 prompt、模型、surface selector 和 transport 合同；原始 provider 输出不删除，正式 track 每轮 `<=60` words、完整句边界、`mid_sentence_truncation_count=0`，102 条轨迹完整后才可进入 freeze |
 | 9 | `v1_5_create_freeze.py` | 0 | 重新验证步骤 3–8 的内容寻址链；同时绑定 ESConv build/policy artifacts 与 EvoEmo fixed tracks；任一外部结果出现后不得修改 PM 再跑另一外部环境 |
-| 9.5 | V1.5 ESConv 两动作 sweep + orientation-balanced blind R0-vs-RS judging | 2,112 × 2 唯一 generation outcomes；judge 规模以独立 dry-run 为准 | learned/rule/always-R0/always-RS 共享完全相同的两份 outcome，不重复计 alias；dialogue-cluster CI；质量分别对两个 fixed 作非劣，Strategy 调用与 input cost 单独报告；不得声称长期记忆 |
+| 9.5 | V1.5 ESConv fixed-condition 两动作 sweep + orientation-balanced blind R0-vs-RS judging | 2,112 × 2 唯一 generation outcomes；judge 规模以独立 dry-run 为准 | 只比较 always-R0 与 always-RS；dialogue-cluster CI；报告回复质量、风险、Strategy 调用与 input cost。不得把纵向 PM 在 ESConv 上的选择写成正式 learned condition，不得声称长期记忆 |
 | 10 | `v1_5/24...` 生成 learned、cost-matched-fixed、ME+R0；`24a...` 生成 4 个 reference baselines | 当前单元合同为 204 × 7 = 1,428 calls；最终以各 dry-run 为准 | 7 条 condition 的同一 frozen unit matrix 完整；learned/rule external artifact 自包含 runtime lineage 与 development/external score comparison，禁止外部调阈值 |
 | 11 | `v1_5/30_eval_forced_swap_canary_v1_5.py` | 12 units × 2 orders × 2 families = 48 | schema、顺序稳健性和跨家族方向敏感性 PASS；12 units 从主评测排除 |
 | 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 3 units × 2 schemas × 2 orders × 2 families = 24 | 使用 canary 排序后的前三个单元；schema 必须全通过，mean/max absolute order delta 还必须低于冻结阈值；只作 transport diagnostic |
@@ -246,7 +253,7 @@ logical labels 和可安全共享的 prompt-equivalent physical calls 混在了�
 正式矩阵，应另立、重新命名 pilot，不能事后把不完整矩阵称作 V1.5 正式结果。外部付费
 judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
 
-### 4.1 截至 2026-07-22 的真实进度
+### 4.1 截至 2026-07-23 的真实进度
 
 - 52-user/468-state 纵向 development corpus 已完成；actual-468 首轮审计暴露了
   measurement wording ambiguity 和 25 个真实 context defects。25 个状态已通过窄字段
@@ -257,17 +264,32 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   内容寻址冻结为 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS`；原 gate
   永久保留 `FAIL`。sweep、judging 与 freeze 已能 fail-closed 地传播二者而不混称。
 - 719-state ESConv auxiliary 输入已构建完成：52 个与 Strategy Bank 来源零重合的
-  train dialogues，split 为 train 318 states/24 dialogues、calibration 170/12、
-  internal-test 231/16。只完成了小规模 generation/judging 机制 pilot；完整 719-state
-  generation 和 judging 尚未执行。
+  dialogues，split 为 train 318 states/24 dialogues、calibration 170/12、
+  internal-test 231/16。完整 generation 已执行收官：train 636/636、calibration 340/340、
+  internal-test 462/462 outcomes，三 split 均 `CONSUMED_PASS`，合计真实费用约 `$0.1342`。
+  bounded transport 在 1,438 次真实调用中恢复了 124 次 429 和 1 次 5xx，零终止性失败。
+  这证明生成链可用，不代表 judging labels 或 PM 已完成。
+- auxiliary train judging 的 636/636 judge-pair 矩阵已经完整恢复，但原 quality gate 暴露
+  三类不同问题：memory 结构性不可用造成的 N/A 维度被误判为常数缺陷、稀疏零值造成的
+  假 duplicate/correlation、以及 Gemini/DeepSeek 在真正适用维度上的近常数或近重复行为。
+  第一类已由 action applicability 合同纠正；后两类、risk-head applicability mask、
+  joint-reliability 的诊断角色、统一 `median±MAD` conservative utility 和正式 attestation
+  已实现并通过针对性测试；零 API 重聚合后 train gate 仍为 `NOT_SUPPORTED`，主要剩余
+  问题是适用 response 维度低 MAD coverage 和 family-specific 近常数行为。新出现的
+  `strategy_overuse`/`strategy_omission=-1` 还包含 action 适用性与互斥构念混合的二阶 gate
+  bug，不能当作新的 judge failure 直接定案。独立探索复算还显示两个 judge 对 R0/RS
+  nominal composite 偏好仅约 44% 同向，须进入正式 train-only measurement report。
+  calibration judging 继续暂停；internal-test judging 即使生成 labels 也只能立即密封，
+  禁止在 candidate/threshold/comparator 冻结前查看聚合。
 - `PMV2Model`、routing-objective、transparent-rule、train-group CV 与 calibration grid
   已实现 domain→dialogue/user→state→action/alias 等权；双域输入验证器、零 API preflight
   和两个彼此独立的 sealed-holdout/consumption-ledger 原语也已实现。新的正式入口
   `22a_train_pm_v2_dual_domain_v1_5.py` 负责联合装载、分域 label audit、分域 OOD/uncertainty
   报告、纵向与 ESConv 各自 comparator/internal gate、联合 candidate freeze 和“一域失败即
-  NOT_SUPPORTED”。旧 `22_train_pm_v2_v1_5.py` 保留为单域回退，不得用于正式双域结论。
-  该入口仍需等待 719-state auxiliary 与 longitudinal sweep 的完整 labels 才能真实训练；
-  “代码入口完成”不等于“模型已经训练”。
+  NOT_SUPPORTED”。但 absolute 与 pairwise auxiliary instruments 均已真实
+  `NOT_SUPPORTED`，所以该双域入口现在必须 fail-closed，不能在本篇消费。正式路线使用
+  `22_train_pm_v2_v1_5.py` 训练纵向单域 PM；这不是事后挑简单结果，而是预注册停止规则
+  对测量工具失败的既定分支。两套入口目前都尚未真实训练。
 - `catalog_embedding` 向 legacy runtime 泄漏且无法从落盘 state 重建的问题已修复；V8.19.2
   零 API 重编译后 468/468 runtime lineage PASS，且 states/evaluator contexts/memory backend/
   bundles 相对 V8.19.1 字节不变，因此不需要重跑 actual-468 judge。Step-0 shortcut audit 与
@@ -304,9 +326,9 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   `$8.50905808`、最坏上限 `$34.03623232`、identity `d07f2441…3b52`。internal-test
   独立 scope 也已两次 dry-run 一致：2,304 outcomes、9,216 logical calls、最多 36,864
   physical attempts、单次成功保守估算 `$3.80874806`、最坏上限 `$15.23499224`、identity
-  `24c46e31…a388`；它只能生成 opaque bundle 并立即 seal，直到联合
+  `24c46e31…a388`；它只能生成 opaque bundle 并立即 seal，直到纵向
   candidate/阈值/comparator 冻结后由 one-shot ledger 消费。
-  联合训练、两个 internal-test 的正式
+  纵向训练、纵向 internal-test 的正式
   消费、study freeze、正式 ESConv external 和 EvoEmo external 均未开始。任何“模型已经
   训练/内部测试已经通过/外部结果已经得到”的说法都不真实。
 - memory item canonical builder、chunk 边界与 digest/consumer binding 已完成并由测试
@@ -315,26 +337,23 @@ judge 仍采用冻结的 V1.5 scorer，不恢复 V1 的旧评测链。
   在 ESConv validation 上没有改善且点估计略低，Memory 只在小样本 ME precision 上有
   单项信号。正式链路继续 lexical-only；不得再安排 Hybrid Part 4 或让其拖住主线。
 
-### 4.2 可以与 actual-468 收口并行的工作
+### 4.2 当前可并行的工作
 
-以下工作不读取 V8.19 outcome、不触碰另一个执行者正在修改的 repair/manifest 文件，
-可以并行完成：
+auxiliary 测量路线已经按两个独立 `NOT_SUPPORTED` freeze 关闭，不再与纵向 judging
+并行消费。当前唯一训练测量线是 longitudinal train/calibration judging。
 
-1. 更新并冻结本文、双外部合同和论文 claim/limitation 用语；
-2. 为 auxiliary full generation/judging 准备只读 dry-run、domain weighting 与 sealed
-   internal-test 输入合同，但不得执行付费调用或打开 internal-test labels；
-3. 为 sweep/judging 做 ledger 并发安全与 prompt-equivalence 物理调用复用的代码、测试和
-   小型机制 pilot；
-4. 检查 provider 账户额度与 endpoint binding。若 NVIDIA prototyping 配额已经耗尽，
-   必须先冻结一个可用的新 generator endpoint/model；这属于 response mechanism 变更，
-   需要重新做 compatibility pilot，不能在正式 sweep 中途临时换端点；
-5. 准备论文表格骨架与自动报告，不读取 internal/external outcome。
+同时可在本地并行完成：
 
-付费执行仍按依赖顺序：V8.19.2 actual corpus 通过 exact PASS 或冻结的 post-hoc
-qualification admission → auxiliary full labels 与 longitudinal
-full sweep 可在资源不冲突时并行 → 两域 labels 完整 → 联合训练 → 两个 internal gates →
-freeze → 两项外部评测。不能为了“并行”在 freeze 前偷看 internal-test，或在一个外部
-结果出现后修改 PM 再跑另一个外部环境。
+- longitudinal-only preflight、训练报告/论文表格的无 outcome 骨架；
+- deterministic shard/merge 的执行层实现与小型机制 pilot；
+- BGE runtime、input SHA、weight/ESS、seal 与 attestation 的只读核验；
+- fixed-seeker formal 和两项外部 runner 的零 API dry-run 准备，但不能提前执行或读取
+  external outcome。
+
+longitudinal train/calibration labels 完整后才能训练并冻结 candidate。只有 longitudinal
+internal-test 会在 candidate、threshold、rule、fixed frontier 与 external matrix 全部冻结后
+一次性消费；auxiliary internal-test 保持未判定、未打开。不能为了“并行”提前打开
+internal-test，或根据一个外部结果修改 PM 后再跑另一个外部环境。
 
 ### 4.3 安全并发与去重加速合同
 
@@ -383,7 +402,38 @@ call 最多 10 个 physical attempts：dry-run 同时报告单次逻辑成本与
 影响已经执行或正在执行的 auxiliary generation；所有早于此合同的 full auxiliary-judging
 dry-run identity 均因曾只计首个 attempt 而失效，必须等对应 generation 完成后重新计算。
 
-截至 2026-07-22，已记录以下 dry-run 与历史执行状态。generation compatibility
+#### 从当前阶段开始的加速优先级
+
+当前关键路径已经从 generation 转为 longitudinal judging。加速必须按以下顺序实施，前一项不足时
+才进入后一项：
+
+1. **先消除不必要重跑。** 所有大矩阵使用 exact-plan continuation，只继承旧 ledger 中
+   `SUCCEEDED` 且 call-key/input hash 完全一致的行；格式完整但仅触发本地长度上限的响应，
+   只能走独立、只读、可审计 recovery schema，不能修改在线 schema 后给旧调用补签。
+2. **把网络 stage 与零 API 工作并行，而不是把 holdout 混在一起。** longitudinal
+   train/calibration judging 运行时，可同时在本地运行 BGE/preflight/report 和
+   fixed-seeker promotion 的只读检查；auxiliary judging 已停止。internal-test 仍须等
+   candidate/threshold/comparator 冻结后一次性消费，不能为了并行提前打开。
+3. **实现确定性 provider sharding。** 优先把冻结 call plan 按
+   `(provider_family, stable_call_key_hash % N)` 切为 4 个独立 shard；每 shard 顺序执行并
+   使用独立 ledger，最后按 exact key 集合、无重复、预算与 artifact SHA fail-closed merge。
+   这比在共享无锁 ledger 上直接开线程更容易审计。4-shard pilot 与串行键集合一致后，
+   才考虑 Gemini 4–8、DeepSeek official 4–8 的保守并发；遇到 429/5xx 只降速，不改模型、
+   prompt 或 schema。
+4. **只做已证明语义等价的缓存/复用。** Strategy Bank 的同-query lexical 结果可在一次
+   invocation 内缓存；judge/generator 只有完整 provider-visible payload hash 相同时才复用。
+   逻辑 action 与成本标签仍逐行物化，不能用复用减少科学样本数。
+5. **本地 GPU 只跑零 API 工作。** RTX A6000 48GB 可承担 BGE、HGB、bootstrap、preflight
+   和报告；当前 hosted Llama generation 已完成，而 Gemini 没有可等价本地部署的权重、
+   DeepSeek official judge 也不能在单张 A6000 上等价复现。当前版本中途换成本地
+   Llama/Gemma/量化 DeepSeek 会改变 treatment，不能作为提速。未来 V1.6 可从一开始冻结
+   本地 open generator/judge。
+
+若只采用第 1–2 项，不需要改变科学合同；第 3 项需要新的 execution contract、机制 pilot
+和 fresh dry-run identity，但不要求重生已经完成的 corpus/sweep。第 5 项对当前关键路径
+没有净收益。磁盘当前接近满载，任何本地模型下载前还必须先完成独立的存储空间审计。
+
+截至 2026-07-23，已记录以下 dry-run 与历史执行状态。generation compatibility
 一行保留历史调用及预算哈希用于追溯，但该调用绑定旧配置，不能充当当前上游 gate：
 
 | 阶段 | 当前 dry-run 上界 | 当前 hash |
@@ -444,24 +494,36 @@ HTTP 429 当作限流信号单独处理，其余错误类型都不构成额度�
 
 已实现：真实 `version: pm-v1.5`、独立配置/目录/checkpoint、clean bank/seed 实例级隔离、
 EF 全链路关闭、requested/attempted/realized action、统一 bounded semantic input、memory
-builder/digest binding、actual-468 修复与 delta-review 基础设施、完整 full-sweep gate、双家族
-judging、domain/alias weighting、sealed internal holdout、fixed baselines、双外部 runner/freeze
-合同、canary/batched scorer 和相应 fail-closed 测试。719-state auxiliary 输入已构建；Hybrid
-检索负结果已归档且与生产 consumer 隔离。
+builder/digest binding、actual-468 修复与 qualification、完整 7,488-action sweep、719-state
+auxiliary 双动作 generation、双家族 judging 基础设施、domain/alias weighting、sealed
+internal holdout、fixed baselines、双外部 runner/freeze 合同、canary/batched scorer 和相应
+fail-closed 测试。Hybrid 检索负结果已归档且与 production consumer 隔离。
 
 剩余主线必须按第 4 节推进：
 
-1. 使用已冻结的 V8.19.2 actual-468 qualification，不再 outcome-driven 微调；
-2. 使用已按 V8.19.2 输入 hash/attestation PASS 的 Step-0 shortcut、rule-grid 审计与
-   两次可复现 full-sweep dry-run；
-3. 完成 719-state auxiliary 两动作 generation/judging 与 468×16 longitudinal
-   full sweep/judging；
-4. 联合训练同一个 PM，冻结选择后分别一次性消费两个 internal-test；
-5. 构建 decision-quality/fixed-baseline reports；先真实通过 fixed-seeker V3
-   bounded-surface pilot，再以独立 identity 生成完整 102 tracks，随后创建 study freeze；
-6. 在同一 freeze 下分别执行 ESConv 即时质量/Strategy 路由评测和 EvoEmo 纵向
-   memory/strategy 评测；
-7. 只按各自预注册 gate 给出 `SUPPORTED`/`NOT_SUPPORTED`，不得用一项成功掩盖另一项失败。
+1. auxiliary absolute instrument 与 pairwise replacement 已先后得到
+   `NOT_SUPPORTED`；pairwise 工程执行 96/96 完整，但 safety effective non-tie
+   `0.1667 < 0.25`。冻结结论，不再打开 auxiliary calibration/internal，不生成训练
+   labels，不调 prompt、judge、样本或阈值。719-state generation 与两次 pilot 仅作
+   diagnostic/limitation 证据；
+2. 完成 longitudinal train/calibration judging；缺行只允许 exact continuation/recovery，
+   不重跑已成功行。冻结 applicability、sparse-zero、MAD utility、judge-health 与
+   attestation 后，用纵向 train 选择模型族、calibration 冻结阈值、transparent rule、
+   fixed frontier 与 comparator；
+3. 用 `22_train_pm_v2_v1_5.py` 训练唯一 longitudinal candidate。不得把已经实现但未获
+   measurement 支持的双域入口用于本篇正式结果；
+4. candidate 完全冻结后，一次性生成/打开 longitudinal internal-test labels并消费唯一
+   holdout ledger；ESConv auxiliary internal-test 保持未判定、未打开；
+5. fixed-seeker V3 pilot 已 PASS，但正式 config/freeze/外部 consumers 仍是 V2 合同，
+   当前 zero-API promotion preflight 因此明确 `BLOCKED`。先原子迁移 config、study
+   freeze、PM generation、reference baseline 和 shared EvoEmo runner 的 stage/目录
+   合同并补反向测试；再双 dry-run、独立批准并完整生成 V3 102 tracks，构建
+   decision-quality/fixed-baseline reports，最后创建绑定同一
+   response/retrieval/judge mechanism 的 study freeze；
+6. 在同一 freeze 下执行 ESConv test 的即时回复质量/Strategy 开关评测，以及
+   EvoEmo/ES-MemEval-derived 的纵向 memory/strategy 评测；
+7. 只按各自预注册 gate 给出 `SUPPORTED`/`NOT_SUPPORTED`。若只支持透明 rule、只支持一个
+   外部域或两个都不支持，也必须如实报告，不继续调方法直到全绿。
 
 第一篇只报告冻结特征与 LLM-judged labels 下，监督式 pre-item-retrieval router 的
 质量—风险—成本权衡。无人工金标签、无真实用户、HGB+BAAI 不等于语言理解、EvoEmo 与
@@ -469,3 +531,9 @@ ESConv 均有合成/语义血缘、以及 provider 可靠性都必须明确列�
 审计的付费 identity；可并行的独立 stage 也必须各有自己的目录、ledger、预算与收尾记录。
 任一科学 gate 失败，应保留失败产物并按主张边界报告，而不是不断换模型、prompt、样本或
 阈值直到通过。
+
+执行加速只改变传输编排，不改变科学请求。纵向 train+calibration judging 当前冻结计划为
+20,736 logical calls；已用 `sha256(physical_call_key) mod 4` 零 API 划分为
+5,298/5,127/5,130/5,181 四个 disjoint shards，两次产物逐字节一致并通过 exact coverage
+校验。正式启用前仍须补 shard-aware runner、每片独立 ledger/identity、hash-bound merge
+和一个小 pilot；现有只读分片文件不能直接视为执行授权，也不能与旧全量 identity 混用。

@@ -1,8 +1,13 @@
 # PM V1 → V1.5_1 全局失效模式账本与不可回归合同
 
-更新时间：2026-07-20
-适用分支：`pm-v1.5_1` 及其后续修复分支
+更新时间：2026-07-23
+适用分支：`pm-v1.5_1` 及当前修复分支 `pm-v1.5-hybrid-retrieval`
 文档性质：历史复盘、研究有效性威胁账本、改动影响检查表；不是实验结果，也不替代冻结配置
+
+> **单一问题源：** 本文是 PM-v1.5 当前唯一允许新增、关闭或升级问题状态的全局问题清单。
+> `PM_V1_5_CORE_CHAIN_PLAN_ZH.md` 只维护研究主张、执行顺序和当前阶段；旧
+> `PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md` 仅为只读历史证据。不得在后两者另建一套
+> 活跃问题编号或待办清单；新问题必须回写本文，避免不同 Codex 各维护一份“当前事实”。
 
 ## 0. 为什么需要这份文档
 
@@ -53,20 +58,26 @@ PM-v1 的正式外部动作曾表现为 `M0=0%`、`RS≈96.4%`，并集中到 `M
 
 ### 1.3 当前 V1.5_1 的准确状态
 
-当前 V1.5_1 已把多数已知结构性问题改成代码合同，但仍没有新的 52-user development
-corpus、7,488-action sweep、训练 checkpoint、一次性 internal 结果、study freeze 或 external
-主结果。因此只能说“方法具备重新检验条件”，不能说“PM 已成功”。
+当前已经越过“只有脚手架”的阶段，但还没有得到训练后 PM、internal-test 或 external 主结果：
 
-V8.2 generation compatibility pilot 已真实消费并 fail-closed：8 个物理尝试中 6 成功、2 失败，
-失败原因是词面 advice-request 正则错误拒绝了语义有效的请求。原 approval/index 矛盾已按真实
-账本闭环为 `CONSUMED_FAILED_CLOSED`；旧输出、旧 cost hash 和旧批准均不得重用。
+- 52-user / 468-state 纵向 development corpus 已 canonical 修复并冻结为 V8.19.2；
+  actual-468 原 gate 永久保留 `FAIL`，同时以独立、可审计的
+  `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS` 授权后链，不能改写成
+  原门已 PASS；
+- Step-0 shortcut audit 与 rule-grid preflight 已 PASS；7,488-action sweep 已通过精确
+  continuation 完成 7,488/7,488，零缺行并 attested；
+- 719-state ESConv auxiliary 的 train/calibration/internal-test generation 已分别完成
+  318/170/231 states × 2 actions，共 1,438 个 outcome；三个 split 全部 `CONSUMED_PASS`；
+- auxiliary train judging 已形成 636/636 完整 judge-pair 矩阵，但暴露了维度适用性、
+  sparse-zero 假重复、适用风险 head 权重和 judge 稳定性问题。当前正在冻结测量合同，
+  calibration judging 尚未作为正式选择证据消费，internal-test judge labels 仍须密封；
+- dual-domain 正式训练入口、分域权重和双 internal ledger 的代码基础已完成，但训练尚未
+  真实运行；study freeze、正式 ESConv test 与 EvoEmo external 均未开始；
+- fixed-seeker V3 compatibility pilot 已 2/2 tracks、20/20 calls PASS，只证明新 bounded
+  surface 机制可运行，不能替代完整 102-track formal generation。
 
-当前生成协议仍为 9 个逐 case surface-only 请求、每 case 最多一次
-预预算 repair、最终 fallback 必须为 0，但删除了词面意图硬标签，引入冻结本地语义编码器，
-并把 Advice Readiness 与 Strategy RAG 边际价值做成独立因子。本轮又冻结了 exact runtime、
-section-aware input 与训练/外部 lineage，因此 V8.3 dry-run identity
-`758ae052...8cf3df2` 也已失效，只保留历史。当前没有 fresh identity、没有付费授权；状态仍是
-`NO-RUN`，且不再是 V8.2 的 open reconciliation。
+所以准确主张是：“开发语料、纵向 sweep 和 auxiliary generation 已完成；标签测量合同仍在
+收口，PM 尚未训练，internal/external 尚无结果。”不得写成“PM 已成功”或“研究已通过”。
 
 ## 2. 全链路因果图与实验身份
 
@@ -200,6 +211,7 @@ finish-reason 规则不能因 condition 或 split 偷偷变化。
 | V15-ID-06 | C1 | canary/forced-swap 的布尔名曾暗示 efficacy | 明确 `judge_sensitivity_not_pm_efficacy`；主效应由冻结 paired CI 决定 | `CODE_CLOSED_RUN_UNVERIFIED` |
 | V15-ID-07 | C1 | 归一化 margin 0.02 容易写成原始量表 0.02 分 | 明确 [0,1] 的 0.02 ≈ 原 1–5 量表 0.08 | 持续论文护栏 |
 | V15-ID-08 | C0 | fixed seeker V2 只在 prompt 写“尽量不超过 60 tokens”，代码没有表面长度门；真实运行 56 个成功 turn 中 51 个超过 60 whitespace words，另一次在 300-token provider cap 以 `length` 结束，导致整批停止。简单提高 cap 或切字符串都会分别留下无界回复或中句截断，并可能改变所有 condition 的后续世界线 | V3 把研究表面合同改为明确的 `<=60` normalized whitespace words；完整短回复原样保留，超长或 provider `length` 只允许确定性选择界内最长完整句前缀；完整原始 provider 输出、finish reason、选择 metadata 与 SHA 全部留账，正式轨迹要求 `mid_sentence_truncation_count=0`。历史 57 份真实 provider 文本零 API 回放 57/57 可选出合法表面，最大 60 words；双 dry-run 已逐字节复现。随后同合同 2-track/20-call pilot 真实 `PASS`：20/20 首次调用成功、零 retry/failure、1 次完整句前缀选择、最大 55 words、零中句截断，实付约 `$0.0236859`；identity `6dc86e09…f2c74` 已消费。该结果只认证 V3 compatibility，102-track formal 仍须新 dry-run 与独立批准 | `REAL_PILOT_PASS_FORMAL_102_TRACKS_UNVERIFIED` |
+| V15-ID-09 | C0 | V3 pilot 虽已 PASS，但正式链路仍未原子迁移到 V3：`pm_v1_5.yaml` 仍声明 V2；study freeze、PM/EvoEmo runner、reference baseline 与共享 EvoEmo runner 仍硬编码 `FIXED_SEEKER_V22_STAGE`，两个外部驱动还只接受目录名 `evoemo_fixed_tracks_v1_5`。因此直接生成 V3 formal bundle 后也会被 freeze/外部消费者拒绝，或被迫错误退回 V2 | 新增零 API promotion preflight，先验证 V3 pilot attestation，再逐项检查 config、4 个正式 consumer 的 stage/目录合同和 102-track artifact。必须先一次性把 config、freeze、PM generation、reference baseline、shared runner 全部迁移到 V3，并补反向测试；随后才允许双 dry-run、独立批准 formal 102 tracks。当前真实 preflight 为 `BLOCKED`，明确列出 10 个 blocker | `ROOT_CAUSE_CONFIRMED_ZERO_API_PREFLIGHT_ADDED_PROMOTION_PENDING` |
 
 ### 6.2 pre-action observation 与 shortcut
 
@@ -432,7 +444,7 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | V15-DATA-18 | C0 | `ObservableSourceSummary.catalog_embedding` 明确是 exclude=True 的构造期临时量，但 `state_to_v1_runtime()` 曾把它写入 legacy `catalog_fingerprint`。因此落盘后的 audited PMV2 state 无法重建 runtime，468/468 lineage 全失败；更严重的是 runtime 重新携带了 P0-1 明确禁止的免费目录向量表面 | canonical runtime 的 64 维 legacy fingerprint 固定为全零，只保留正式、计费的 source-level query similarity；新增“公开 state JSON round-trip 后 runtime 完全一致”回归测试。V8.19.2 已零 API 完整重编译：468/468 runtime lineage PASS，runtime SHA=`5ff31de1…7ded`；states、evaluator contexts、memory backend 与 bundles 相对 V8.19.1 字节不变，因此不重跑 actual-468 judge；Step-0 shortcut audit 与 rule-grid preflight 均在新身份上 PASS | `CODE_CLOSED_FULL_TEST_PASS_REAL_V8_19_2_RECOMPILE_AND_PREFLIGHT_PASS` |
 | V15-DUAL-02 | C1 | 纵向 synthetic 的跨 split `current_user_text` 去重上限是生成合同；真实多轮 ESConv dialogue 会合法重复简短用户话。把前者的 `validate_split_manifests()` 原样套到 auxiliary 会把真实数据特性误判为泄漏，反过来放宽全局门又会破坏 synthetic 防 shortcut 合同 | 两域先各自执行来源匹配的 validator，再只执行共同的跨域 state/card/user ID、dialogue split、Bank-source 和 action/memory-availability 不变量；禁止用一个全局“最宽松 validator”替代两套域合同 | `CODE_CLOSED_TARGETED_REAL_DATA_DIAGNOSTIC_PASS` |
 | V15-DUAL-03 | C0 | 一个 PM 不等于一个 internal-test 文件。若 longitudinal 与 ESConv auxiliary 共用 seal/ledger/report，先读取一个域可能意外打开另一个域，失败重试或合并 gate 也会掩盖某域不成立 | 两个 internal label 文件训练前分别 seal；同一 candidate manifest 显式绑定两个 seal；模型、阈值与 comparators 全冻结后，按域使用独立 append-only ledger 各消费一次并分别报告，最后只做预注册的 conjunction，不以好域覆盖坏域 | `CODE_CLOSED_FULL_TEST_PASS_REAL_SEAL_AND_CONSUMPTION_PENDING` |
-| V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。当前仅冻结设计，未实现前所有 runner 继续按自身现状运行 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
+| V15-DUAL-04 | C1 | 串行 provider backoff 造成数十小时墙钟浪费，但直接给 `PersistentAttemptLedger` 套线程池会产生重复计费、attempt 序号冲突、预算竞态和不可复现输出；把“计划加速”写成“已经支持并发”同样危险 | 并发只能保持冻结 call plan/prompt/model/seed/retry/统计单位；ledger reserve/finish 必须加锁或使用确定性 shard+hash-bound merge，网络等待在锁外，provider 分别限流，先做串行/并发键集合与预算等价 pilot。现已新增只读 deterministic sharding contract：`sha256(physical_call_key) mod 4`、完整计划 SHA、逐 shard SHA、exact coverage/无重复/无篡改校验；在当前 20,736-call train+calibration plan 上两次生成逐字节一致的 5,298/5,127/5,130/5,181 四片。它仍只是 preparation，正式 runner/独立 ledger/hash-bound merge 尚未实现，不能据此直接并发执行 | `DETERMINISTIC_4_SHARD_PREPARATION_PASS_EXECUTOR_PENDING` |
 | V15-DUAL-05 | C1 | routing objective 的 `effective_weight_by_domain` 报告曾用裸 `sum()` 聚合浮点权重；它不参与 HGB 拟合，却会进入 training report/downstream hash，在不同 CPython 浮点求和实现间可能产生末位差异并使相同科学计划出现不同 identity | 改用固定的 `math.fsum()`；回归测试要求两个域的有效权重精确等于 `0.5/0.5`，不再只用近似比较。训练正式入口仍须绑定单一冻结 runtime，但报告哈希不再依赖裸 `sum()` 的版本行为 | `CODE_CLOSED_TARGETED_TEST_PASS` |
 
 ### 6.13 longitudinal action sweep 的精确续跑
@@ -446,6 +458,30 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
 |---|---:|---|---|---|
 | V15-JDG-01 | C0 | 原正式 runner 在同一次 29,952-call 运行中生成 train/calibration/internal-test 全部标签，并在创建 internal seal **之前**把 internal rows 纳入全局 judge-health、reliability 与 quality gate；这等价于模型选择冻结前查看 held-out outcome，事后再写 seal 不能消除泄漏 | 正式运行必须显式选择 `train_calibration` 或 `sealed_internal_test`。前者只物化 5,184 outcomes/20,736 logical judge calls并运行 label-health gates；后者只物化 2,304 outcomes/9,216 calls，完整后立即 seal，summary 固定为 `SEALED_HOLDOUT_NOT_YET_CONSUMED`，禁止计算 reliability/quality/raw-family 聚合。两者使用独立 paid stage、call plan、ledger、cost identity 与 attestation；双域 candidate/阈值/comparator 冻结后才由 one-shot ledger 消费 internal bundle | `CODE_CLOSED_FULL_TEST_AND_BOTH_SCOPES_DOUBLE_DRY_RUN_PASS_PAID_RUN_PENDING` |
+
+### 6.15 judge 适用性、sparse-zero 与双域效用
+
+| ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
+|---|---:|---|---|---|
+| V15-JDG-02 | C0 | ESConv auxiliary 没有 memory action，`selected_context_misuse`、`stale_or_conflicting_use`、`unnecessary_exposure` 等风险在所有合法动作上结构性不适用。把这些恒为 0 的维度当作 judge constant-dimension 缺陷，会让正确的 N/A 机制错误阻断训练 | 用单一 `applicable_risk_fields(action_id)` 合同同时约束 judging gate、训练 risk heads、fixed comparator 和 external verifier；结构性不适用标为 N/A，不当 PASS/FAIL 信号；训练 risk head 对不适用行权重为 0；summary/attestation/preflight 绑定 applicability SHA。实现与测试已完成，但 train 在其余适用维度上仍为 NOT_SUPPORTED | `CODE_CLOSED_FULL_TEST_PASS_TRAIN_GATE_STILL_NOT_SUPPORTED` |
+| V15-JDG-03 | C0 | 两个稀疏风险维度大多同时为 0 时，全矩阵 exact-match rate 可接近 100%，被误报为 duplicate/correlation；这只是“共同不触发”，不是两维度测量同一构念。首次 informative-only 重聚合又把 `strategy_overuse` 与 `strategy_omission` 的 −1 相关列为 failure，但二者本来接近互斥，且全局矩阵混入了某维对该 action 不适用的行 | duplicate 决策先取“两个维度都对该 action 适用”的 pairwise applicability mask，再取至少一维非零的 informative rows；同时报告 overall/informative 分母。高正相关可提示重复，负相关只作互斥诊断，不能以 `abs(correlation)` 自动当 duplicate failure；证据不足固定为 `INSUFFICIENT_EVIDENCE`。实现、反向测试与同一 636/636 标签的零 API 重聚合均完成；假阳性已消失，但其余 response 覆盖与跨家族方向问题仍使 instrument NOT_SUPPORTED | `CODE_CLOSED_FULL_TEST_PASS_INSTRUMENT_STILL_NOT_SUPPORTED` |
+| V15-JDG-04 | C1 | `label_reliable_rate` 曾在双域 preflight 中被当硬阻断项，而共享 judging 合同把它定义为诊断；同一批标签在不同入口得到不同可用性判定 | completeness、schema、适用维度 coverage、低 MAD 支持和独立 judge-family 血缘是硬门；joint reliability 只诊断并披露，不再单独 raise。若未来要把它升级为硬门，必须预注册阈值并重做全部 labels | `CODE_CLOSED_FULL_TEST_PASS` |
+| V15-MODEL-01 | C0 | risk head 的样本权重已有 MAD 置信度，但没有动作适用性 mask。ESConv 中结构性不适用的 0 分恰好 MAD=0，会以“高一致性”满权重污染风险学习 | risk head 权重固定为 domain/state/action/alias weight × MAD weight × applicability mask；不适用行权重为 0。报告每个 head 的分域、分动作有效样本量；全局可用权重为 0 时 fail-closed，不得训练一个常数 head | `CODE_CLOSED_FULL_TEST_PASS_TRAINING_NOT_STARTED` |
+| V15-METRIC-01 | C0 | 若只给 fixed comparator 使用 `median±MAD`，learned PM 仍用 nominal median，双方的 utility 定义不同，比较失去意义；反过来若只改共享函数，又可能悄悄改变旧 V1/V1.5 报告 | 新增默认关闭的双域 conservative utility：response=`clip(median−MAD,1,5)`，applicable risk=`clip(median+MAD,0,3)`，冻结 `λ=1.0`；learned、rule、fixed、calibration frontier、internal bootstrap 调用同一 helper，同时保留 nominal 与 conservative 指标，禁止根据 internal/external 调 λ | `CODE_CLOSED_FULL_TEST_PASS_TRAIN_MEASUREMENT_NOT_SUPPORTED` |
+| V15-JDG-05 | C1 | 13c judging runner 原先没有正式 artifact attestation writer；仅把 applicability hash 写在 summary 中不足以证明 labels、维度适用性和后续双域 preflight 使用同一合同 | 已增加正式 attestation 并绑定 labels/raw/ledger、适用性、utility λ/clamp 与相关代码哈希；21a 会重验 train label 与代码 SHA。但独立复审发现当前 record 尚未显式冻结 sparse-zero 最小信息行数、相关性符号/适用行规则、low-MAD/reliability gate 角色，且 calibration 13c 自身不要求 train attestation。由于 train 已 NOT_SUPPORTED，当前不会产生可供 21a 使用的正式 attestation；这些缺口必须在任何新测量路线真正冻结前补齐 | `PARTIAL_CODE_CLOSED_ATTESTATION_SCOPE_GAPS_CONFIRMED` |
+| V15-JDG-06 | C1 | 排除结构性 N/A 后，Gemini 仍出现适用维度近常数/低风险触发，DeepSeek 与 Gemini 在若干 response 维度的低 MAD coverage 低于冻结 0.80；train 的可靠标签率约 0.588。这些是 judge 行为和第一篇无人工金标签的真实限制，不能靠不断调 prompt/阈值直到全绿 | 当前 train 测量门如实记录为 `NOT_SUPPORTED`，calibration/internal judging 暂停。先修 V15-JDG-03 这种构念无关的 gate bug，再重新聚合同一 train labels；若 factual grounding、memory appropriateness、personalization 等适用 response 维度仍破坏 hard coverage，则停止 auxiliary 监督路线或另立新的 train-only 测量协议，不能打开 calibration/internal 救场 | `TRAIN_GATE_NOT_SUPPORTED_CALIBRATION_INTERNAL_PAUSED` |
+| V15-JDG-07 | C0 | 即使单维 gate 可修，两个 judge 是否对真正的 R0/RS 路由方向达成一致仍未被直接检查。正式 train-only 复算显示 318 states 中 52.5% 至少一方 tie；双方均明确的 151 states 中方向一致率 64.2%，90% dialogue-cluster CI `[0.577,0.709]` | 该结果只作诊断，不伪装成可训练 gold；因此另立预注册 balanced-order direct pairwise pilot。pilot 又因 safety effective non-tie 不足而 NO-GO，故 ESConv auxiliary 降为 diagnostic，删除 learned ESConv routing 主张，且不打开 calibration/internal | `FORMAL_DIAGNOSTIC_AND_PAIRWISE_PILOT_COMPLETE_AUXILIARY_ROUTE_STOPPED` |
+| V15-JDG-08 | C0 | 在现有 13c 单动作绝对打分已 NOT_SUPPORTED 后，直接继续 calibration/internal 或改阈值会把测量工具问题伪装成训练数据问题；但整套重做 labels 又耗时且没有先验证 direct comparison 是否更可靠 | 已完成完全独立、train-only、balanced-order pairwise pilot：24 个不重合 dialogue/state、R0/RS 双顺序、两 judge family，共 96 logical calls。修复后的真实执行 96/96 成功、97 physical attempts、1 次 Gemini 5xx 有界恢复、实际约 `$0.01009656`。quality agreement=.7273、non-tie=.3333 均 PASS；safety agreement=.7692 PASS，但 non-tie=.1667 低于冻结 .25，故总结果 `PILOT_NO_GO`。未创建 labels，未读 calibration/internal，不进行 post-hoc 调参；正式 freeze 见 `data/pm_v1_5_contracts/esconv_auxiliary_pairwise_instrument_freeze_v1.json` | `REAL_PILOT_COMPLETE_NO_GO_AUXILIARY_SUPERVISION_STOPPED` |
+| V15-JDG-09 | C1 | 首次 pairwise 真跑时，DeepSeek official 的 loose `json_object` transport 看不到 Pydantic schema，而 prompt 只写“遵守所给 schema”，导致 13/13 DeepSeek 输出系统性使用 nested camelCase；全局 circuit-breaker 又被交替出现的 Gemini 成功重置，不能识别单 family 系统性故障 | prompt 明列四个 flat snake_case keys、allowed values 与禁止 nesting/camelCase；breaker streak 改为按 judge family 独立。首次 identity 永久 `CONSUMED_INCOMPLETE_CODE_BUG`，已知费用约 `$0.0026111`；新 identity 双 dry-run 后真实 96/96 通过，证明修复有效 | `CODE_CLOSED_REAL_RUN_VALIDATED` |
+
+### 6.16 执行加速与本地部署边界
+
+| ID | 严重度 | 已确认问题 | 冻结处理 | 当前状态 |
+|---|---:|---|---|---|
+| V15-ACC-01 | C1 | 大批量 judging 主要耗时在串行网络等待和退避；直接给无锁 ledger 套线程池会产生重复计费、attempt 冲突、预算竞态与不可复现输出 | 优先使用确定性 shard + 独立 ledger + exact-key/hash-bound merge；或先证明 reserve/finish 线程安全。provider 分别限流、网络等待在锁外，小 pilot 验证键集合/成本/失败恢复等价后才逐级提高并发 | `DESIGN_FROZEN_NOT_IMPLEMENTED` |
+| V15-ACC-02 | C0 | 在中途把 hosted Llama、DeepSeek 或 Gemini 换成本地“近似模型”，即使更快，也会改变 generator/judge treatment；内部、ESConv、EvoEmo 不再是同一套机制 | 当前研究不切模型、不换 endpoint、不改量化。仅允许在相同请求/响应合同下做 execution-only 优化；任何本地模型替换进入下一研究版本并重新做 compatibility、labels、checkpoint、freeze 与 external | `FROZEN_NO_MIDSTUDY_MODEL_SWAP` |
+| V15-ACC-03 | C1 | A6000 48GB 可运行 Llama-3.1-8B，但当前 1,438 个 auxiliary generation 和 7,488-action sweep 已完成；Gemini 无同模型本地权重，DeepSeek official 当前 judge 也无法在单张 A6000 上等价复现。现在部署本地模型不会缩短剩余关键路径 | 当前关键路径继续使用冻结的 Gemini + DeepSeek official judging；A6000 只用于 BGE、训练、bootstrap、本地 preflight/report 等零 API 工作。未来 V1.6 可预先冻结本地 open judge/generator 并从头验证 | `NO_CURRENT_CRITICAL_PATH_GAIN` |
+| V15-ACC-04 | C1 | 主机磁盘约 98% 使用、仅约 21GB 空闲；盲目下载量化模型或保留多份 cache 会造成中途写盘失败、artifact 丢失或 ledger 不完整 | 任何本地模型实验前先做只读空间清单和经批准的非破坏性清理；模型、HF cache、输出与不可变 artifact 分盘规划。当前版本不为“试试看”下载大模型 | `BLOCKED_BY_STORAGE_AND_TREATMENT_PARITY` |
 
 ## 7. 修复本身曾引入或差点引入的新问题
 
@@ -472,6 +508,10 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | 改成逐 case 生成 | 正式调用从 52 变 468，最大 936 | 方法改进必须同步更新成本、超时、ledger、approval、文档和 hash |
 | 发布 staged approval | manifest 与审查索引可能出现不同状态 | 用户授权也是内容寻址的单一事实，不能靠文件先写成已批准 |
 | 给 Strategy 检索加 embedding 缓存以避免重复编码 | 把"缓存"实现成构造时一次性把全部 11,590 张卡整批塞给 `encoder.encode()`；该函数无内部分批，真实运行内存冲到约 87GB，需手动 kill（V15-HYB-03） | 任何"缓存/预计算"优化都必须同时检查底层调用的输入规模上限；大规模文本集合一律显式分批（`batched_encode`），不能假设 encoder 自己会处理，也不能只用小规模单测掩盖真实规模下的行为 |
+| 为 sparse-zero 假重复增加最小非零样本数 | 若 exact-match/correlation 仍在全矩阵计算，零值仍会支配数值，只是晚一点触发 | duplicate 决策必须基于 informative-only rows；overall 只作描述，二者都报告分母 |
+| 排除不适用风险维度 | 一次性把“低信号”都叫 N/A，会掩盖 Gemini 在真正适用维度上的常数输出 | N/A 必须由 action contract 决定，不能根据观测分数事后决定；适用维度仍执行完整 health gate |
+| 引入 MAD 保守效用 | 只改 learned 或只改 comparator，双方 estimand 不同；根据 internal 结果调 λ 又会污染 holdout | 一个 helper、一个冻结 λ、两侧同公式；同时报告 nominal/conservative，internal 前内容寻址 |
+| 为缩短时间改成本地 endpoint/量化 | 模型行为、tokenizer、schema、finish reason 与历史 treatment 不同，内部/外部不再公平 | 当前版本只做 execution-layer 加速；模型/endpoint/量化变更必须成为新实验身份并重跑全链 |
 
 ## 8. 不可回归宪法
 
@@ -514,6 +554,16 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
     suggestion 也不代表当前 Bank 检索有边际价值。训练标签只能来自冻结 R0/RS outcome。
 20. **语义表示也是 treatment。** encoder、revision、snapshot tree、pooling、normalization、输入
     拼接和 projection 任何一项改变，都使旧 states、shortcut report、checkpoint 和 freeze 失效。
+21. **维度适用性先于数值健康。** 只有 action contract 判定适用的风险维度才进入 coverage、
+    constant/duplicate、risk head 和 utility；N/A 既不是零风险证据，也不是 judge 缺陷。
+22. **同一效用定义贯穿所有比较器。** learned、transparent rule、fixed、calibration 和
+    internal 必须共享 nominal/conservative helper、clamp、λ 与 applicability；不得一侧保守、
+    一侧名义。
+23. **加速只能改变执行，不改变科学单元。** shard、并发、缓存和 continuation 不得改变 call
+    plan、prompt、model、seed、重试语义、统计单位或 outcome；合并前必须 exact-key 和 hash
+    校验。
+24. **问题与路线各有唯一事实源。** 本文是唯一活跃问题账本；核心链路文档是唯一活跃执行
+    路线；历史 postmortem 只读。不得创建未声明的新问题清单或在多个文档维护冲突状态。
 
 ## 9. 改动影响矩阵
 
@@ -530,11 +580,13 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 | action ID/alias/realized semantics | 16-action matrix、labels、oracle/regret、checkpoint、external | action-contract tests + 全 sweep 后链 |
 | supporter model/prompt/temp/cap/finish normalization | 每个 response outcome 和外部比较 | 全部 generation/judging/训练/external |
 | development judge panel/rubric | labels、algorithm selection、calibration、internal | semantic/control pilot、full judging、重新训练 |
+| dimension applicability、MAD/utility、judge-health 规则 | label qualification、risk heads、rule/fixed frontier、calibration、internal、attestation | train/calibration 重聚合或重判（按 prompt 是否变化决定）、双域 preflight、重新训练；internal 未开前冻结 |
 | final judge panel/rubric/order schema | external canary/order/main outcomes | final dry-run、canary、order pilot、external judging |
 | quality/risk composite、margin、utility/cost weights | selector、rule/fixed frontier、Gate M/F/E、paper claim | train/calibration/internal；若 freeze 后变更则 external 全失效 |
 | model candidates/CV/one-SE 规则 | candidate manifest、internal | train-only selection、calibration、新 internal users（若旧 internal 已开） |
 | external conditions/comparator | batched schema、position balance、cost、claim estimand | condition dry-run、canary/order、external main |
 | pricing/token bounds | cost hash 和 stage approval | fresh dry-run、明确用户授权；通常不必重生科学数据，除非超预算停止 |
+| endpoint/model/tokenizer/量化或 hosted↔local | 所有该端点生成/判断的 outcome、labels、checkpoint、freeze、external parity | 新 compatibility pilot 与受影响全链；不得因“更快”继承旧身份 |
 | release manifest/approval | 仅执行权限，不改变科学方法 | 对齐用户授权、config SHA、stage/run/cost hash；不得倒签 |
 | 只改文档 | 通常不改变 pilot treatment；若文档改变主张、状态或冻结合同则仍需对齐配置/manifest | link/事实一致性检查；必要时重生成 review index |
 
@@ -570,7 +622,13 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 
 - 专用 Python 3.13.2 venv 的 live runtime/canary 与 development 记录完全一致；
 - 7,488 outcomes 和双-family labels 完整；
-- dimension constant/duplicate/correlation/MAD gates PASS；
+- action-level dimension applicability contract 已 attested；结构性 N/A 已排除，适用维度的
+  constant/duplicate/correlation/MAD/coverage hard gates 满足冻结规则；
+- sparse-zero duplicate 只按 informative-only rows 决策并报告有效分母；证据不足不得伪装 PASS；
+- nominal 与 `median±MAD` conservative utility 的 helper、clamp、λ 已在 learned/rule/fixed/
+  calibration/internal 五处内容寻址冻结；risk heads 对不适用行权重为 0，并报告有效样本量；
+- joint `label_reliable_rate` 只作诊断；label completeness、适用维度 coverage 与低 MAD 支持
+  仍为 hard gate；
 - model family/rule 只在 train-group CV 中选择；
 - calibration 只完成冻结职责；
 - sealed internal manifest 在训练前存在；
@@ -613,35 +671,24 @@ precision 从 0.5 升到 0.625，但 n=24、hit_rate 两边都已顶格 1.0、�
 fixed 在冻结 utility 上显示可重复优势。如果数据只支持透明 rule，而不支持 learned PM，
 那也是有效且应报告的研究结论。
 
-## 12. 当前执行快照（2026-07-19）
+## 12. 当前执行快照（2026-07-23）
 
 | 项目 | 当前事实 |
 |---|---|
-| 分支 | `pm-v1.5_1`；V8.5 失败事实由 commit `d4fdcf1...` 归档；V8.6 role-safe exchange 修复与 fresh identity 由本快照所在 commit 标识，仍须 GitHub CI |
-| tests/preflight | 专用 venv 精确 BGE runtime/canary、真实 768-d strict `PMV2State` 和 compiler-owned readiness 12/12 no-API smoke PASS；observable-support + dual-external + V8.12 memory-boundary + exact formal attestation binding + formal transport resilience 修复栈的裸全量 `pytest -q` exit 0（440 passed / 13 个预期 archive skip，453 collected）；216 个 compiler-owned memory template 实例全部真实 schema PASS，最大 155/160；失败 formal ledger 的 user 1 已 9/9 离线恢复。这些证据仍不能替代正式 corpus、训练或外部结果 |
-| semantic runtime | 专用 `.venv-pm-v1-5`：Python 3.13.2 + exact package/device/dtype/user-site=false；冻结 3×384 public canary hash PASS；`sim_eval` 与 Conda `base` 均禁止作为正式运行环境 |
-| readiness challenge | 20 个固定 outcome-free challenge：current 17/20、统一 bounded full-context 14/20；状态为 `REPORT_ONLY_14_OF_20`，只披露 BGE 粗粒度边界，不作为 outcome gate 或调参依据 |
-| clean seed pool | 875 条私有候选，hash 由 artifact index 记录 |
-| formal selected seeds | 52 个 source IDs |
-| Strategy Bank | 11,590 cards / 823 source dialogues / 8 families；与 selected 52 交集为空 |
-| V8 | 真实 FAIL：无关的 180-char rationale cap |
-| V8.1 | 真实 FAIL：2/9 provider surfaces 需 fallback |
-| V8.2 | 真实 FAIL：8 attempts，6 success/2 failure；旧输出与批准均 closed |
-| V8.3 | 旧 dry-run `758ae052...8cf3df2` 已因当前 config/input/runtime 修复而 stale；formal CLI 也显式拒绝该历史目录 |
-| V8.4 | identity `0588889c...d194b` 已真实消费并 transport/schema PASS：9/9 accepted、10 attempts、0 fallback、约 `$0.0030237`；因 readiness 与 review-lineage 缺口被语义性淘汰，禁止复用 |
-| V8.5 | identity `a84c17f...05ed` 已消费并真实 FAIL：context_only initial+repair 均以 user 结束，0 accepted，2 attempts，约 `$0.0006274`；禁止复用 |
-| V8.6 | role-safe exchange schema 真实 PASS：identity `64a06993...ef85`；contract `a4efb865...a756`；9/9 accepted、12 attempts、3 repairs（均为 `unique_current_user_text`）、0 fallback、约 `$0.0039084`；attestation `15135ad9...7f2c` |
-| V8.7 | frozen-budget/scoped-lineage identity `920807ec...84e8` 已真实 `CONSUMED_PASS`：9/9 accepted、12 attempts、3 repairs（均为 `unique_current_user_text`）、0 fallback、18,288 input / 1,964 output tokens、约 `$0.0039216`；attestation `09f1f90b...60c5`，禁止复用 |
-| V8.9 paid run | identity `e7b89550…600a` 已真实 `CONSUMED_FAILED_CLOSED`：context_only 成功；profile_needed 首次请求收到 OpenAI HTTP 500；因旧 runner 每 content attempt 只有一个 transport slot，2 physical attempts 后停止，1/9 accepted，约 `$0.0003459`；没有 schema/lint/repair 失败，不能解释为方法或内容失败 |
-| V8.10 paid run | identity `f518d8e3…eed4` 已真实 `CONSUMED_FAILED_CLOSED`：4/9 accepted、6 physical、约 `$0.0018943`；OpenAI 全程稳定且 transport retry=0；`multi_source_needed` initial/repair 均因与同家族 `profile_needed` 完全相同的 current turn 被旧全局唯一门拒绝。永久禁止复用 |
-| V8.11.1 paid run | identity `6876e2d3…25ed` 已真实 `CONSUMED_PASS`：9/9 accepted、10 physical、1 次普通 content repair、0 transport retry、0 fallback、8/9 unique current turns；attestation `dd96e1df…cfd7`、ledger `2f25e11e…3177`。exact approval timestamp 未由不可变证据记录，manifest 明示为 null，不伪造时间 |
-| paid approval | V8.8.1/V8.11.1/V8.12 保留历史 `CONSUMED_PASS`；V8.9/V8.10 与 formal `85d1…` 保留 `CONSUMED_FAILED_CLOSED`；全部 identities 永久不可复用。manifest 当前 `stage_approvals={}`、仅 formal resume no-API identity 在 pending、`paid_execution_authorized=false` |
-| next paid stage | formal resume identity `799e1cce…a6a7` 已在两个只含同一不可变 ledger 的目录逐位复现：binding `47e7d25f…e4e1`、plan `8ef7aeab…40c6`；恢复 1、剩余 51 users，459 success-path / 918 content / 2,754 new physical，含历史最多 2,763；预计 `$0.45023475`、上限 `$2.7235611`。当前未批准、零新增 API |
-| automated semantic review | V4 native 主审核 targeted controls 0/24，永久 calibration-only。V4.2 完成 8/8、12 physical，约 `$0.0010544`：确定性=1.0、verdict=.875、citation=.875；Gemini 一次 citation section 不足，DeepSeek 一次误解 `explore_first` 操作定义。正式 actual-468 已改为 structured QA v3；不重跑 V4.x，不扩大 synthetic proxy 主张 |
-| formal development | 已尝试但未形成 corpus：`85d1…` 在 user 1 的 9 次 surface 均成功后因本地 162>160 template bug fail-closed；0/52 bundle 完成、users 2–52 未调用、约 `$0.004121`；原 ledger 保留用于修复后恢复 |
-| full sweep/judging | 未运行 |
-| checkpoint/internal/freeze/external | 均未产生当前 V1.5_1 正式结果 |
-| claim | `NO_CURRENT_RESULT` |
+| 分支与文档 | 当前工作分支 `pm-v1.5-hybrid-retrieval`；Hybrid 已 `NOT_ADOPTED`，分支名不代表正式方法采用 Hybrid。本文是唯一活跃问题账本，核心链路文档是唯一活跃路线 |
+| 正式语料 | V8.19.2：52 users / 468 states；25/25 已确认数据缺陷完成 canonical repair；actual-468 原 gate 永久为 `FAIL`，独立 qualification 为 `QUALIFIED_DATA_CORPUS_WITH_DISCLOSED_INSTRUMENT_LIMITATIONS` |
+| 语料前置门 | 468/468 runtime lineage PASS；Step-0 shortcut audit PASS；transparent rule-grid preflight PASS；不再根据 outcome 调 actual-468 prompt/control/data |
+| longitudinal sweep | 468×16=7,488 outcomes 已完整生成；首次 7,487/7,488 后以 exact-plan continuation 只补 1 条，最终 7,488 unique rows、零 failure、artifact `ATTESTED` |
+| ESConv auxiliary generation | train 318 states/636 outcomes、calibration 170/340、internal-test 231/462，三 split 全部 `CONSUMED_PASS`；合计 719 states/1,438 outcomes，真实总费用约 `$0.1342` |
+| ESConv auxiliary train judging | 636/636 judge pairs 经限定离线恢复后矩阵完整；结构性 N/A、risk-head mask、reliability 角色、统一 conservative utility 与 attestation 已实现并通过针对性测试，但零 API 重聚合仍为 `NOT_SUPPORTED`。适用 response 维度低 MAD coverage 与 judge-family 路由方向低一致性是真问题；`strategy_overuse/omission=-1` 还含二阶 gate bug。calibration/internal 暂停 |
+| ESConv auxiliary pairwise | 修复 DeepSeek loose-JSON schema 后 96/96 完整；quality agreement/non-tie 均过门，safety agreement 过门但 non-tie=0.1667<0.25；正式 `PILOT_NO_GO`，未创建 labels |
+| calibration/internal judging | auxiliary calibration/internal 按停止规则不运行；longitudinal internal 必须在 candidate/threshold/comparator 冻结前保持密封 |
+| 正式训练 | 双域基础设施已实现但未获测量工具支持、不得消费；本篇改走 longitudinal-only，真实训练尚未开始 |
+| fixed seeker | V3 compatibility pilot 2/2 tracks、20/20 calls PASS，零 failure；完整 102-track formal generation 尚未执行 |
+| external | 正式 ESConv test 与 EvoEmo/ES-MemEval-derived external 均未开始；没有 external efficacy 结果 |
+| Hybrid retrieval | calibration + ESConv validation 证据不支持采用；正式链继续 lexical-only，Part 4 关闭并归档 |
+| 当前主张 | `LONGITUDINAL_DEVELOPMENT_AND_SWEEP_COMPLETE_AUXILIARY_SUPERVISION_NOT_SUPPORTED_NO_TRAINED_PM_NO_INTERNAL_OR_EXTERNAL_RESULT` |
+| 下一关键路径 | longitudinal train/calibration judging → longitudinal-only PM 训练与 candidate freeze → 一次性消费 longitudinal internal → fixed-seeker formal + study freeze → ESConv fixed-condition 机制评测 + EvoEmo learned-PM 外部评测 |
 
 ## 13. 未来每个 PR 必填模板
 
@@ -676,11 +723,13 @@ claim evaluator。
 
 主要仓库证据：
 
-- `PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md`：V1 结果、根因和范围；
+- **本文**：唯一活跃问题编号、状态与不可回归清单；
+- `PM_V1_FAILURE_LIMITATION_POSTMORTEM_ZH.md`：只读归档的 V1 结果、根因和范围；不得在其中
+  维护当前问题或待办；
 - `PM_V1_5_SUPPLEMENTAL_ANALYSIS_ZH.md`：legacy V1.5 的 `ME+R0`、forced-swap 和 OOD 诊断；
 - `PM_V2_1_V1_SYSTEMATIC_RESOLUTION_AUDIT_ZH.md`：V1 问题到新门禁的映射；
 - `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md`：当前目标方法合同；
-- `PM_V1_5_CORE_CHAIN_PLAN_ZH.md`：V1.5 执行顺序与历史 pilot 状态；
+- `PM_V1_5_CORE_CHAIN_PLAN_ZH.md`：唯一活跃执行顺序、阶段状态与并行计划；不另建问题编号；
 - `PM_V1_5_REVIEW_ARTIFACT_INDEX.json`：当前审查 artifact 摘要；
 - `outputs/pm_v1_5_paid_run_release.json`：逐阶段付费执行 manifest；
 - `release_preflight.json`：工程 preflight，不等于 confirmatory readiness。
@@ -696,3 +745,5 @@ claim evaluator。
 3. 修复导致新的方法身份、成本或调用架构时，必须同时新增“二阶风险”记录；
 4. 任何 `PASS/APPROVED/SUPPORTED` 状态变化都要写明唯一 artifact 和内容哈希；
 5. 探索性或失败 run 不删除，且不得把其中有利子集重新包装成确认性结果。
+6. 其他文档发现新问题时，只链接本文 ID，不复制一套状态表；若出现第二份活跃 ledger，
+   先合并其唯一信息，再将其改成只读跳转页或删除，禁止长期双写。
