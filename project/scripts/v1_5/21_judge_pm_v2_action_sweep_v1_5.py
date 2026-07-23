@@ -91,6 +91,9 @@ from metacom_pm.v1_5_actual_corpus_qualification import (
     require_actual_corpus_posthoc_qualification,
 )
 from metacom_pm.v1_5_judge_isolation import require_judge_role_isolation
+from metacom_pm.v1_5_deterministic_sharding import (
+    load_validated_sharding_contract,
+)
 from metacom_pm.internal_holdout import seal_internal_label_bundle
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
@@ -651,6 +654,14 @@ def main() -> None:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--run", action="store_true")
+    mode.add_argument(
+        "--aggregate-only",
+        action="store_true",
+        help=(
+            "Zero-API aggregation from one exact, complete merged shard ledger. "
+            "Requires --carry-forward-from and never opens provider clients."
+        ),
+    )
     parser.add_argument("--config", type=Path, default=ROOT / "configs" / "experiment.yaml")
     parser.add_argument(
         "--pm-v2-config", type=Path, default=ROOT / "configs" / "pm_v1_5.yaml"
@@ -686,6 +697,16 @@ def main() -> None:
             "exactly identical call plan are copied into a fresh identity."
         ),
     )
+    parser.add_argument(
+        "--execution-sharding-contract",
+        type=Path,
+        help=(
+            "Content-addressed deterministic partition of the full call plan. "
+            "Requires --execution-shard-index; each shard has an independent "
+            "paid identity and only emits call-level ledger evidence."
+        ),
+    )
+    parser.add_argument("--execution-shard-index", type=int)
     parser.add_argument("--compatibility-pilot", action="store_true")
     parser.add_argument(
         "--label-scope",
@@ -876,6 +897,17 @@ def main() -> None:
         raise RuntimeError(
             "paid API runs prohibit --overwrite; use a new output directory"
         )
+    if (args.execution_sharding_contract is None) != (
+        args.execution_shard_index is None
+    ):
+        raise RuntimeError(
+            "--execution-sharding-contract and --execution-shard-index "
+            "must be provided together"
+        )
+    if args.aggregate_only and args.carry_forward_from is None:
+        raise RuntimeError("--aggregate-only requires --carry-forward-from")
+    if args.aggregate_only and args.execution_sharding_contract is not None:
+        raise RuntimeError("--aggregate-only consumes the merged ledger, not one shard")
     if args.compatibility_pilot:
         raise RuntimeError(
             "PM-v1.5 does not run the PM-v2.2 compatibility-pilot judging "
@@ -935,6 +967,10 @@ def main() -> None:
         if args.label_scope == TRAIN_CALIBRATION_SCOPE
         else "development_action_judging_internal_test"
     )
+    if args.execution_shard_index is not None:
+        paid_release_stage = (
+            f"{paid_release_stage}_shard_{int(args.execution_shard_index):02d}"
+        )
     require_paid_run_release(
         pm_v2_config,
         config_path=args.pm_v2_config,
@@ -1283,6 +1319,18 @@ def main() -> None:
             "pricing_usd_per_mtok": pricing_by_family,
             "api_cost_planning": api_cost_planning,
             "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
+            "execution_sharding_contract_path": (
+                str(args.execution_sharding_contract)
+                if args.execution_sharding_contract is not None
+                else None
+            ),
+            "execution_sharding_contract_file_sha256": (
+                sha256_file(args.execution_sharding_contract)
+                if args.execution_sharding_contract is not None
+                else None
+            ),
+            "execution_shard_index": args.execution_shard_index,
+            "aggregate_only": bool(args.aggregate_only),
         },
     )
     endpoint_by_family = {str(endpoint.family): endpoint for endpoint in endpoints}
@@ -1464,6 +1512,33 @@ def main() -> None:
     }
     if len(plan_by_physical_key) != len(cost_rows):
         raise RuntimeError("duplicate development judge physical-call key")
+    execution_sharding_contract = None
+    execution_shard_record = None
+    execution_cost_rows = cost_rows
+    if args.execution_sharding_contract is not None:
+        execution_sharding_contract, shard_plans = (
+            load_validated_sharding_contract(
+                full_rows=cost_rows,
+                contract_path=args.execution_sharding_contract,
+            )
+        )
+        shard_index = int(args.execution_shard_index)
+        if not 0 <= shard_index < len(shard_plans):
+            raise RuntimeError(
+                f"execution shard index {shard_index} is outside "
+                f"[0,{len(shard_plans)})"
+            )
+        execution_cost_rows = shard_plans[shard_index]
+        execution_shard_record = dict(
+            execution_sharding_contract["shards"][shard_index]
+        )
+        if not execution_cost_rows:
+            raise RuntimeError("development judging execution shard is empty")
+    execution_physical_keys = {
+        str(row["physical_call_key"]) for row in execution_cost_rows
+    }
+    if len(execution_physical_keys) != len(execution_cost_rows):
+        raise RuntimeError("execution shard contains duplicate physical-call keys")
     if args.carry_forward_from is not None and (
         args.carry_forward_from.resolve() == out_dir.resolve()
     ):
@@ -1474,12 +1549,24 @@ def main() -> None:
         stage=stage,
     )
     carried_call_keys = set(carry_forward["carried_call_keys"])
+    if args.execution_sharding_contract is not None and not carried_call_keys.issubset(
+        execution_physical_keys
+    ):
+        raise RuntimeError(
+            "shard continuation contains successful calls outside this shard"
+        )
+    if args.aggregate_only and carried_call_keys != set(plan_by_physical_key):
+        missing = sorted(set(plan_by_physical_key) - carried_call_keys)
+        raise RuntimeError(
+            "aggregate-only requires a complete exact merged successful ledger; "
+            f"missing={missing[:3]}"
+        )
     attempt_ledger = PersistentAttemptLedger(
         ledger_path,
         stage=stage,
         expected_calls={
             key: DEVELOPMENT_JUDGING_MAXIMUM_PHYSICAL_ATTEMPTS
-            for key in plan_by_physical_key
+            for key in execution_physical_keys
         },
         maximum_total_attempts=int(args.max_api_calls) + len(carried_call_keys),
     )
@@ -1541,7 +1628,7 @@ def main() -> None:
         }
     pending_cost_rows = [
         row
-        for row in cost_rows
+        for row in execution_cost_rows
         if call_key(row) not in successful_call_rows
     ]
     completed_pair_keys = {
@@ -1558,12 +1645,12 @@ def main() -> None:
     # never in the approval hash or saved call plan.
     newly_costed_rows = [
         row
-        for row in cost_rows
+        for row in execution_cost_rows
         if str(row["physical_call_key"]) not in carried_call_keys
     ]
     cost_bounds = development_judging_cost_bounds(newly_costed_rows)
     maximum_physical_attempts = int(cost_bounds["maximum_physical_attempts"])
-    input_counts = [int(row["input_tokens_est"]) for row in cost_rows]
+    input_counts = [int(row["input_tokens_est"]) for row in execution_cost_rows]
     logical_input_tokens = int(cost_bounds["logical_input_tokens"])
     logical_output_tokens = int(cost_bounds["logical_output_tokens"])
     logical_cost_usd = float(cost_bounds["logical_cost_usd"])
@@ -1573,6 +1660,7 @@ def main() -> None:
         "stage": stage,
         "label_scope": args.label_scope,
         "full_logical_api_calls": len(cost_rows),
+        "execution_logical_api_calls": len(execution_cost_rows),
         "historical_carried_forward_calls": len(carried_call_keys),
         "remaining_new_logical_calls": len(newly_costed_rows),
         "carry_forward_source_directory": carry_forward["source_directory"],
@@ -1599,6 +1687,13 @@ def main() -> None:
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "transport_execution_contract": transport_execution_contract,
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
+        "execution_call_plan_sha256": sha256_text(
+            canonical_json(execution_cost_rows)
+        ),
+        "execution_sharding_contract": execution_sharding_contract,
+        "execution_shard_record": execution_shard_record,
+        "execution_shard_index": args.execution_shard_index,
+        "aggregate_only": bool(args.aggregate_only),
         "ledger_sha256": sha256_text(canonical_json([])),
         "run_manifest_sha256": manifest["manifest_sha256"],
         "scope": "compatibility_pilot" if compatibility_pilot else "full",
@@ -1638,6 +1733,7 @@ def main() -> None:
         "judge_endpoints": endpoint_names,
         "judge_families": sorted(str(value) for value in families),
         "full_expected_api_calls": full_calls,
+        "execution_expected_api_calls": len(execution_cost_rows),
         "completed_judge_pairs": len(completed_pair_keys),
         "remaining_judge_pairs": len(missing_keys),
         "remaining_api_calls": remaining_calls,
@@ -1658,11 +1754,21 @@ def main() -> None:
         "api_cost_planning": api_cost_planning,
         "physical_attempt_ledger_protocol": PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
         "transport_execution_contract": transport_execution_contract,
+        "execution_sharding_contract": execution_sharding_contract,
+        "execution_shard_record": execution_shard_record,
+        "execution_shard_index": args.execution_shard_index,
+        "aggregate_only": bool(args.aggregate_only),
         "judge_endpoint_descriptors": endpoint_descriptors,
         "judge_role_isolation": judge_role_isolation,
         "scope": "compatibility_pilot" if compatibility_pilot else "full",
         "reportability_status": (
-            "COMPATIBILITY_GATE_PENDING" if compatibility_pilot else "REPORTABLE"
+            "SHARD_EXECUTION_ONLY_NO_AGGREGATE"
+            if args.execution_sharding_contract is not None
+            else (
+                "COMPATIBILITY_GATE_PENDING"
+                if compatibility_pilot
+                else "REPORTABLE"
+            )
         ),
         "pilot_plan_sha256": pilot_plan_sha256,
         "pilot_expected_keys_sha256": pilot_expected_keys_sha256,
@@ -1672,7 +1778,7 @@ def main() -> None:
         "budget_gate": budget_gate,
     }
     print(summary)
-    if args.dry_run or budget_gate["status"] != "PASS":
+    if args.dry_run or args.aggregate_only or budget_gate["status"] != "PASS":
         persist_or_validate_judge_dry_run(
             ledger_path=ledger_path,
             estimate_path=cost_estimate_path,
@@ -1685,17 +1791,18 @@ def main() -> None:
         raise RuntimeError("PM-v2 judge budget gate failed before API calls")
     if args.dry_run:
         return
-    require_exact_saved_judge_dry_run(
-        estimate_path=cost_estimate_path,
-        call_plan_path=call_plan_path,
-        cost_estimate=cost_estimate,
-        budget_gate=budget_gate,
-        call_plan=cost_rows,
-    )
-    if args.accept_cost_estimate_sha256 != cost_estimate["cost_estimate_sha256"]:
-        raise RuntimeError(
-            "judge API run requires exact --accept-cost-estimate-sha256 from dry-run"
+    if not args.aggregate_only:
+        require_exact_saved_judge_dry_run(
+            estimate_path=cost_estimate_path,
+            call_plan_path=call_plan_path,
+            cost_estimate=cost_estimate,
+            budget_gate=budget_gate,
+            call_plan=cost_rows,
         )
+        if args.accept_cost_estimate_sha256 != cost_estimate["cost_estimate_sha256"]:
+            raise RuntimeError(
+                "judge API run requires exact --accept-cost-estimate-sha256 from dry-run"
+            )
 
     # Seed the fresh ledger only after the exact dry-run identity and approval
     # have been validated. These rows represent immutable, already-paid calls;
@@ -1771,7 +1878,7 @@ def main() -> None:
         # Preserve the frozen full-plan adjacency. Already-successful calls
         # reset the breaker even during resume; iterating only pending rows
         # would falsely compress failures that were far apart into a streak.
-        for plan in cost_rows:
+        for plan in execution_cost_rows:
             if pilot_futility_reason is not None:
                 break
             key = call_key(plan)
@@ -1922,6 +2029,86 @@ def main() -> None:
         for client in clients.values():
             client.close()
     ledger_rows = attempt_ledger.event_rows
+
+    if args.execution_sharding_contract is not None:
+        missing_shard_calls = [
+            row
+            for row in execution_cost_rows
+            if call_key(row) not in successful_call_rows
+        ]
+        shard_results_path = out_dir / "shard_call_results.jsonl"
+        write_jsonl(
+            shard_results_path,
+            [
+                successful_call_rows[call_key(row)]
+                for row in execution_cost_rows
+                if call_key(row) in successful_call_rows
+            ],
+        )
+        shard_status = (
+            "SHARD_COMPLETE_NO_AGGREGATE"
+            if not missing_shard_calls
+            else "SHARD_INCOMPLETE_NONREPORTABLE"
+        )
+        shard_report = {
+            **summary,
+            "status": shard_status,
+            "reportability_status": "SHARD_EXECUTION_ONLY_NO_AGGREGATE",
+            "completed_shard_calls": len(execution_cost_rows)
+            - len(missing_shard_calls),
+            "missing_shard_calls": [
+                str(row["physical_call_key"]) for row in missing_shard_calls[:50]
+            ],
+            "physical_http_attempts": attempt_ledger.started_attempts,
+            "transport_retry_summary": retry_ledger_summary(
+                attempt_ledger, sorted(execution_physical_keys)
+            ),
+            "final_ledger_sha256": sha256_text(canonical_json(ledger_rows)),
+            "training_labels_created": False,
+        }
+        summary_path = out_dir / "summary.json"
+        write_json(summary_path, shard_report)
+        create_artifact_attestation(
+            attestation_path,
+            stage=stage,
+            inputs={
+                "experiment_config": args.config,
+                "pm_v2_config": args.pm_v2_config,
+                "states": args.states,
+                "outcomes": outcomes_path,
+                "evaluator_contexts": args.evaluator_contexts,
+                "sweep_manifest": sweep_manifest_path,
+                "sweep_summary": sweep_summary_path,
+                "sweep_attestation": sweep_attestation_path,
+                "cost_estimate": cost_estimate_path,
+                "full_call_plan": call_plan_path,
+                "sharding_contract": args.execution_sharding_contract,
+            },
+            outputs={
+                "summary": (summary_path, False),
+                "shard_call_results": (shard_results_path, True),
+                "call_ledger": (ledger_path, True),
+            },
+            parameters={
+                "status": shard_status,
+                "label_scope": args.label_scope,
+                "execution_sharding_contract": execution_sharding_contract,
+                "execution_shard_record": execution_shard_record,
+                "execution_shard_index": args.execution_shard_index,
+                "accepted_cost_estimate_sha256": cost_estimate[
+                    "cost_estimate_sha256"
+                ],
+                "transport_execution_contract": transport_execution_contract,
+                "training_labels_created": False,
+            },
+        )
+        if missing_shard_calls:
+            raise RuntimeError(
+                "development judging shard incomplete: "
+                f"{len(missing_shard_calls)} missing calls"
+            )
+        print(shard_report)
+        return
 
     raw_by_key = {}
     state_card = {state.state_id: state.card_id for state in states}
