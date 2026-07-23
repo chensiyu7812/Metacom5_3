@@ -398,7 +398,7 @@ dry-run identity 均因曾只计首个 attempt 而失效，必须等对应 gener
 | generation compatibility V8.12 | 缩短 compiler-owned decoy；付费前穷举 216 个 family/source/role 模板，最大 155/160；identity `bebeb1b1…8564` 已真实 9/9 PASS：10 physical、1 content repair、0 transport retry、0 fallback，约 `$0.0031569`；attestation `d132e5ef…1c16` | `CONSUMED_PASS`，永久禁止复用 |
 | 52-user resumable generation | exact V8.12 attestation + 原 9-call ledger 已在两目录恢复同一 user-1 bundle；fresh identity `799e1cce…a6a7`、binding `47e7d25f…e4e1`、plan `8ef7aeab…40c6`；剩余 51 users，459 success / 918 content / 2,754 new physical，上限 `$2.7235611` | `DRY_RUN_REPRODUCED_UNAPPROVED_NO_NEW_API`；必须在原 canonical 目录无 `--overwrite` 执行，禁止重生 user 1 |
 | fixed seeker V2（历史、不可放行） | 102 tracks / 1,020 calls；实际只完成 5 tracks / 56 turns 后遇到 provider `length`；且 51/56 已成功表面文本超过原提示中的 60-word 意图 | 旧 acceptance `018c2c95…39353` 只作历史，不能进入 freeze |
-| fixed seeker V3 bounded-surface pilot | 2 tracks / 20 logical calls；最多 200 physical attempts；最坏预算 `$0.431109`；两次独立 dry-run 的 `call_plan.jsonl` 与 `cost_estimate.json` 逐字节一致；零 API | identity `6dc86e09…f2c74`；call plan `a95e6667…0dda`；contract `b0118ef0…f74`；尚未批准/执行 |
+| fixed seeker V3 bounded-surface pilot | 已真实 `PASS`：2/2 tracks、20/20 logical calls、20 physical attempts、0 transport retry、0 failure；1 次确定性选择完整句前缀，最大表面 55 words，`mid_sentence_truncation_count=0`；153,314 input / 1,148 output tokens，实付约 `$0.0236859`（批准上限 `$0.431109`） | identity `6dc86e09…f2c74` 已消费并永久禁止复用；call plan `a95e6667…0dda`；contract `b0118ef0…f74`；attestation `afa96655…2f01`。只认证 V3 小 pilot，不自动授权 102-track formal |
 
 除明确标为历史真实调用的一行外，这些 dry-run 数字只证明当前计划可计算且未创建 API
 client，不等于授权执行。正式预算仍必须核对当前 endpoint/pricing 与完整 hash；任何相关
