@@ -138,7 +138,12 @@ class ResponseJudgeOutput(StrictModel):
     factual_grounding: float = Field(ge=1.0, le=5.0)
     temporal_consistency: float = Field(ge=1.0, le=5.0)
     non_intrusiveness: float = Field(ge=1.0, le=5.0)
-    rationale: str = Field(min_length=1, max_length=800)
+    # No max_length: the real scientific bound on rationale length is the
+    # judge call's own max_tokens (600 for response, 700 for risk); an
+    # additional character cap here has no scientific meaning and only
+    # produces spurious structured_output_validation_error failures on
+    # otherwise-complete, real judge responses.
+    rationale: str = Field(min_length=1)
 
 
 class RiskJudgeOutput(StrictModel):
@@ -149,7 +154,7 @@ class RiskJudgeOutput(StrictModel):
     memory_omission: float = Field(ge=0.0, le=3.0)
     strategy_overuse: float = Field(ge=0.0, le=3.0)
     strategy_omission: float = Field(ge=0.0, le=3.0)
-    rationale: str = Field(min_length=1, max_length=800)
+    rationale: str = Field(min_length=1)
 
 
 @dataclass(frozen=True)
@@ -398,6 +403,105 @@ def build_action_label(
     )
 
 
+def dimension_applicability_by_action(
+    action_ids: Iterable[str],
+) -> dict[str, frozenset[str]]:
+    """Per-action risk dimensions structurally inapplicable to that action.
+
+    Reuses applicable_risk_fields (pm_v2_model.py) -- the same authoritative,
+    already-tested source validate_action_applicable_risk_signal relies on --
+    rather than a second, hand-maintained notion of applicability. A
+    structural zero (e.g. selected_context_misuse when no memory source was
+    ever selected) is not a judge defect and must not be flagged as one by
+    the constant/duplicate/correlation/low-MAD-coverage checks below.
+    """
+
+    all_risk_fields = frozenset(RiskDimensions.model_fields)
+    return {
+        str(action_id): frozenset(
+            f"risk.{name}"
+            for name in all_risk_fields - frozenset(applicable_risk_fields(action_id))
+        )
+        for action_id in action_ids
+    }
+
+
+def dimensions_inapplicable_to_every_action(
+    action_ids: Iterable[str],
+) -> frozenset[str]:
+    """Risk dimensions inapplicable to *every* action in the given set.
+
+    For a global (not per-action) check: only exclude a dimension when it is
+    structurally meaningless across the *entire* evaluated action set, never
+    merely inapplicable to some of it.
+    """
+
+    by_action = dimension_applicability_by_action(action_ids)
+    if not by_action:
+        return frozenset()
+    return frozenset.intersection(*by_action.values())
+
+
+DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL = (
+    "pm-v1.5-dimension-applicability-contract-v1"
+)
+
+
+def dimension_applicability_contract_sha256(action_ids: Iterable[str]) -> str:
+    """Single, hashable identity for the applicability contract in force.
+
+    Deliberately derived, not hand-maintained: two different action sets
+    that resolve to the same inapplicable-dimension mapping get the same
+    hash, and any future change to applicable_risk_fields's own logic
+    changes this hash automatically, so a downstream consumer (attestation,
+    preflight) can bind to "which contract was in effect" without needing
+    its own copy of the exclusion list.
+    """
+
+    by_action = dimension_applicability_by_action(sorted({str(a) for a in action_ids}))
+    payload = {
+        "protocol": DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL,
+        "inapplicable_risk_dimensions_by_action": {
+            action_id: sorted(dims) for action_id, dims in sorted(by_action.items())
+        },
+    }
+    return sha256_text(canonical_json(payload))
+
+
+def _drop_inapplicable(
+    *,
+    constants: list[str],
+    duplicate_pairs: list[dict[str, Any]],
+    correlation_pairs: list[dict[str, Any]],
+    inapplicable_dimensions: frozenset[str],
+) -> tuple[list[str], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Drop entries that only implicate a declared-inapplicable dimension.
+
+    A pair is dropped only when *both* sides are inapplicable (or one side is
+    inapplicable and the other is a genuine constant already excluded) --
+    never when a *real*, applicable dimension merely correlates with an
+    inapplicable one, since that would hide a real defect in the applicable
+    dimension behind an unrelated exclusion.
+    """
+
+    if not inapplicable_dimensions:
+        return constants, duplicate_pairs, correlation_pairs
+    filtered_constants = [name for name in constants if name not in inapplicable_dimensions]
+    filtered_duplicates = [
+        pair
+        for pair in duplicate_pairs
+        if pair["left"] not in inapplicable_dimensions
+        and pair["right"] not in inapplicable_dimensions
+    ]
+    filtered_correlations = [
+        pair
+        for pair in correlation_pairs
+        if pair["left"] not in inapplicable_dimensions
+        and pair["right"] not in inapplicable_dimensions
+    ]
+    return filtered_constants, filtered_duplicates, filtered_correlations
+
+
 def dimension_health(
     matrix: np.ndarray,
     field_names: Sequence[str],
@@ -405,35 +509,100 @@ def dimension_health(
     prefix: str,
     duplicate_exact_match_rate: float,
     maximum_absolute_dimension_correlation: float,
+    minimum_nonzero_observations: int = 0,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
     list[str],
     dict[str, Any],
 ]:
+    """minimum_nonzero_observations (default 0, preserving exact prior
+    behavior for every existing caller): two sparse, mostly-zero dimensions
+    can reach a high exact_match_rate purely because they agree on the
+    trivial zero-zero case, with no real evidence either way that one copies
+    the other. When positive, the duplicate/correlation *determination* uses
+    only the informative subset (rows where at least one side is nonzero),
+    not the full matrix -- computing exact-match/correlation over the full
+    matrix would still let a mountain of trivial zero-zero rows manufacture
+    a false positive even once enough nonzero rows exist. Both the overall
+    (full-matrix) and informative-only statistics are always reported; only
+    informative-only ones ever drive the duplicate/high-correlation verdict.
+    Below the row-count floor, the pair is reported as insufficient evidence,
+    never silently treated as either duplicate or independent.
+    """
+
     duplicate_pairs: list[dict[str, Any]] = []
     high_correlation_pairs: list[dict[str, Any]] = []
     for left in range(len(field_names)):
         for right in range(left + 1, len(field_names)):
-            exact_rate = float(np.mean(matrix[:, left] == matrix[:, right]))
+            informative = (matrix[:, left] != 0.0) | (matrix[:, right] != 0.0)
+            n_informative = int(np.sum(informative))
+            insufficient_evidence = n_informative < minimum_nonzero_observations
+            overall_exact_rate = float(np.mean(matrix[:, left] == matrix[:, right]))
+            if n_informative > 0:
+                informative_exact_rate = float(
+                    np.mean(
+                        matrix[informative, left] == matrix[informative, right]
+                    )
+                )
+            else:
+                informative_exact_rate = None
             left_std = float(np.std(matrix[:, left]))
             right_std = float(np.std(matrix[:, right]))
-            correlation: float | None = None
+            overall_correlation: float | None = None
             if left_std >= 1e-9 and right_std >= 1e-9:
-                correlation = float(
+                overall_correlation = float(
                     np.corrcoef(matrix[:, left], matrix[:, right])[0, 1]
                 )
+            informative_correlation: float | None = None
+            if n_informative >= 2:
+                left_info = matrix[informative, left]
+                right_info = matrix[informative, right]
+                if (
+                    float(np.std(left_info)) >= 1e-9
+                    and float(np.std(right_info)) >= 1e-9
+                ):
+                    informative_correlation = float(
+                        np.corrcoef(left_info, right_info)[0, 1]
+                    )
             pair = {
                 "left": f"{prefix}.{field_names[left]}",
                 "right": f"{prefix}.{field_names[right]}",
-                "exact_match_rate": exact_rate,
-                "correlation": correlation,
+                "overall_exact_match_rate": overall_exact_rate,
+                "informative_exact_match_rate": informative_exact_rate,
+                "overall_correlation": overall_correlation,
+                "informative_correlation": informative_correlation,
+                "informative_rows": n_informative,
+                "insufficient_evidence": insufficient_evidence,
+                # Legacy keys, computed over the full matrix exactly as
+                # before, kept for any reader that predates the
+                # overall/informative split (e.g. minimum_nonzero_
+                # observations=0 callers, whose verdict is unaffected).
+                "exact_match_rate": overall_exact_rate,
+                "correlation": overall_correlation,
             }
-            if exact_rate >= duplicate_exact_match_rate:
+            if not insufficient_evidence and (
+                informative_exact_rate
+                if minimum_nonzero_observations > 0
+                else overall_exact_rate
+            ) is not None and (
+                (
+                    informative_exact_rate
+                    if minimum_nonzero_observations > 0
+                    else overall_exact_rate
+                )
+                >= duplicate_exact_match_rate
+            ):
                 duplicate_pairs.append(pair)
+            verdict_correlation = (
+                informative_correlation
+                if minimum_nonzero_observations > 0
+                else overall_correlation
+            )
             if (
-                correlation is not None
-                and abs(correlation) >= maximum_absolute_dimension_correlation
+                not insufficient_evidence
+                and verdict_correlation is not None
+                and abs(verdict_correlation) >= maximum_absolute_dimension_correlation
             ):
                 high_correlation_pairs.append(pair)
     constants = [
@@ -464,6 +633,8 @@ def validate_raw_judge_family_health(
     reject_constant_response_dimensions: bool = True,
     reject_constant_risk_dimensions: bool = True,
     check_risk_dimension_health: bool = True,
+    inapplicable_risk_dimensions: frozenset[str] = frozenset(),
+    minimum_nonzero_observations: int = 0,
     composite_spec: CompositeSpec | None = None,
     raise_on_failure: bool = True,
 ) -> dict[str, Any]:
@@ -526,6 +697,7 @@ def validate_raw_judge_family_health(
             maximum_absolute_dimension_correlation=(
                 maximum_absolute_dimension_correlation
             ),
+            minimum_nonzero_observations=minimum_nonzero_observations,
         )
         (
             risk_duplicates,
@@ -540,6 +712,7 @@ def validate_raw_judge_family_health(
             maximum_absolute_dimension_correlation=(
                 maximum_absolute_dimension_correlation
             ),
+            minimum_nonzero_observations=minimum_nonzero_observations,
         )
         composite_values = np.asarray(
             [
@@ -590,6 +763,12 @@ def validate_raw_judge_family_health(
                 else []
             ),
         ]
+        constant_dimensions, duplicate_pairs, high_correlation_pairs = _drop_inapplicable(
+            constants=constant_dimensions,
+            duplicate_pairs=duplicate_pairs,
+            correlation_pairs=high_correlation_pairs,
+            inapplicable_dimensions=inapplicable_risk_dimensions,
+        )
         exact_failure = (
             composite_support_match_rate >= composite_support_exact_match_rate
         )
@@ -649,7 +828,11 @@ def validate_raw_judge_family_health(
             ),
             "reject_constant_risk_dimensions": reject_constant_risk_dimensions,
             "check_risk_dimension_health": check_risk_dimension_health,
+            "inapplicable_risk_dimensions": sorted(inapplicable_risk_dimensions),
         },
+        "dimension_applicability_contract_protocol": (
+            DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL
+        ),
         "composite_spec_version": spec.version,
         "composite_weights_sha256": composite_weights_hash(spec),
         "families": family_reports,
@@ -856,10 +1039,23 @@ def validate_judge_table(
     maximum_absolute_composite_support_correlation: float = 0.995,
     reject_constant_response_dimensions: bool = True,
     reject_constant_risk_dimensions: bool = True,
+    inapplicable_risk_dimensions: frozenset[str] = frozenset(),
+    inapplicable_risk_dimensions_by_action: Mapping[str, frozenset[str]] | None = None,
+    minimum_nonzero_observations: int = 0,
     composite_spec: CompositeSpec | None = None,
     raise_on_failure: bool = True,
 ) -> dict[str, Any]:
-    """Fail closed on duplicated, constant, or unreliable response/risk labels."""
+    """Fail closed on duplicated, constant, or unreliable response/risk labels.
+
+    inapplicable_risk_dimensions excludes a risk dimension (e.g. "risk.
+    selected_context_misuse") from the *global* constant/duplicate/
+    correlation/low-MAD-coverage checks when it is structurally inapplicable
+    to every action present -- a structural zero (no memory source was ever
+    selected) is not a judge defect. inapplicable_risk_dimensions_by_action
+    additionally excludes a "{action_id}/{dimension}" combination from the
+    *per-action* low-MAD-coverage check when that dimension is inapplicable
+    to that specific action, even if applicable to others in the same table.
+    """
 
     if not labels:
         raise ValueError("empty judge table")
@@ -884,6 +1080,7 @@ def validate_judge_table(
         prefix="response",
         duplicate_exact_match_rate=duplicate_exact_match_rate,
         maximum_absolute_dimension_correlation=maximum_absolute_dimension_correlation,
+        minimum_nonzero_observations=minimum_nonzero_observations,
     )
     (
         risk_duplicates,
@@ -895,6 +1092,7 @@ def validate_judge_table(
         risk_fields,
         prefix="risk",
         duplicate_exact_match_rate=duplicate_exact_match_rate,
+        minimum_nonzero_observations=minimum_nonzero_observations,
         maximum_absolute_dimension_correlation=maximum_absolute_dimension_correlation,
     )
     reliable_rate = float(np.mean([label.label_reliable for label in labels]))
@@ -902,8 +1100,18 @@ def validate_judge_table(
         *[f"response.{name}" for name in response_fields],
         *[f"risk.{name}" for name in risk_fields],
     ]
-    dimension_low_mad_coverage = {
-        name: float(
+    inapplicable_by_action = inapplicable_risk_dimensions_by_action or {}
+    # A dimension/cell that is structurally inapplicable (globally, or to one
+    # specific action) is reported as an explicit N/A (None), never as a
+    # computed number: a real coverage figure here would either look like a
+    # spurious failure or, worse, a spuriously perfect value that could help
+    # an unrelated real defect slip past the gate.
+    dimension_low_mad_coverage: dict[str, float | None] = {}
+    for name in dimension_names:
+        if name in inapplicable_risk_dimensions:
+            dimension_low_mad_coverage[name] = None
+            continue
+        dimension_low_mad_coverage[name] = float(
             np.mean(
                 [
                     float(label.dimension_mad[name]) <= reliable_mad_threshold
@@ -911,13 +1119,16 @@ def validate_judge_table(
                 ]
             )
         )
-        for name in dimension_names
-    }
-    action_dimension_low_mad_coverage: dict[str, dict[str, float]] = {}
+    action_dimension_low_mad_coverage: dict[str, dict[str, float | None]] = {}
     for action_id in sorted({label.action_id for label in labels}):
         action_labels = [label for label in labels if label.action_id == action_id]
-        action_dimension_low_mad_coverage[action_id] = {
-            name: float(
+        inapplicable_for_action = inapplicable_by_action.get(action_id, frozenset())
+        row: dict[str, float | None] = {}
+        for name in dimension_names:
+            if name in inapplicable_for_action:
+                row[name] = None
+                continue
+            row[name] = float(
                 np.mean(
                     [
                         float(label.dimension_mad[name]) <= reliable_mad_threshold
@@ -925,18 +1136,18 @@ def validate_judge_table(
                     ]
                 )
             )
-            for name in dimension_names
-        }
+        action_dimension_low_mad_coverage[action_id] = row
     low_coverage_dimensions = sorted(
         name
         for name, coverage in dimension_low_mad_coverage.items()
-        if coverage < minimum_low_mad_coverage_per_dimension
+        if coverage is not None and coverage < minimum_low_mad_coverage_per_dimension
     )
     low_coverage_action_dimensions = sorted(
         f"{action_id}/{name}"
         for action_id, coverages in action_dimension_low_mad_coverage.items()
         for name, coverage in coverages.items()
-        if coverage < minimum_low_mad_coverage_per_action_dimension
+        if coverage is not None
+        and coverage < minimum_low_mad_coverage_per_action_dimension
     )
     duplicate_pairs = [*response_duplicates, *risk_duplicates]
     high_correlation_pairs = [*response_correlations, *risk_correlations]
@@ -944,6 +1155,12 @@ def validate_judge_table(
         *(response_constants if reject_constant_response_dimensions else []),
         *(risk_constants if reject_constant_risk_dimensions else []),
     ]
+    constant_fields, duplicate_pairs, high_correlation_pairs = _drop_inapplicable(
+        constants=constant_fields,
+        duplicate_pairs=duplicate_pairs,
+        correlation_pairs=high_correlation_pairs,
+        inapplicable_dimensions=inapplicable_risk_dimensions,
+    )
     family_failures = [
         f"{label.state_id}/{label.action_id}"
         for label in labels
@@ -1006,6 +1223,14 @@ def validate_judge_table(
         ),
         "low_coverage_dimensions": low_coverage_dimensions,
         "low_coverage_action_dimensions": low_coverage_action_dimensions,
+        "inapplicable_risk_dimensions": sorted(inapplicable_risk_dimensions),
+        "inapplicable_risk_dimensions_by_action": {
+            action_id: sorted(dims)
+            for action_id, dims in sorted(inapplicable_by_action.items())
+        },
+        "dimension_applicability_contract_protocol": (
+            DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL
+        ),
         "minimum_independent_judge_families": minimum_families,
         "duplicate_exact_match_rate": duplicate_exact_match_rate,
         "maximum_absolute_dimension_correlation": maximum_absolute_dimension_correlation,

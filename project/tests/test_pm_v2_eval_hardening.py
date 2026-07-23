@@ -67,6 +67,9 @@ from metacom_pm.pm_v2_judging import (
     RiskJudgeOutput,
     composite_spec_from_config,
     composite_weights_hash,
+    dimension_applicability_by_action,
+    dimension_applicability_contract_sha256,
+    dimensions_inapplicable_to_every_action,
     judge_one,
     labeling_settings_from_config,
     prompt_contract_hash,
@@ -325,6 +328,190 @@ def test_raw_family_subgroup_gate_allows_structurally_inapplicable_zero_risks():
     assert family_report["risk_dimension_prevalence"]
     assert family_report["duplicate_dimension_pairs"] == []
     assert family_report["constant_dimensions"] == []
+
+
+def test_dimension_applicability_by_action_matches_applicable_risk_fields():
+    by_action = dimension_applicability_by_action(["M0+R0", "M0+RS"])
+    assert by_action["M0+R0"] == frozenset(
+        {"risk.selected_context_misuse", "risk.unnecessary_exposure",
+         "risk.stale_or_conflicting_use", "risk.strategy_overuse"}
+    )
+    assert by_action["M0+RS"] == frozenset(
+        {"risk.selected_context_misuse", "risk.unnecessary_exposure",
+         "risk.stale_or_conflicting_use"}
+    )
+
+
+def test_dimensions_inapplicable_to_every_action_is_the_intersection():
+    # M0+R0/M0+RS never select memory; MP+R0 does -- so the memory-misuse
+    # dimensions are inapplicable to the first two but applicable to the
+    # third, and must NOT appear in the "inapplicable to every action" set.
+    only_memoryless = dimensions_inapplicable_to_every_action(["M0+R0", "M0+RS"])
+    assert "risk.selected_context_misuse" in only_memoryless
+    mixed = dimensions_inapplicable_to_every_action(["M0+R0", "MP+R0"])
+    assert "risk.selected_context_misuse" not in mixed
+    assert dimensions_inapplicable_to_every_action([]) == frozenset()
+
+
+def test_dimension_applicability_contract_sha256_is_order_independent_and_sensitive():
+    a = dimension_applicability_contract_sha256(["M0+R0", "M0+RS"])
+    b = dimension_applicability_contract_sha256(["M0+RS", "M0+R0"])
+    c = dimension_applicability_contract_sha256(["M0+R0", "MP+R0"])
+    assert a == b
+    assert a != c
+
+
+def test_raw_family_gate_ignores_declared_inapplicable_constant_risk_dimension():
+    rows = []
+    for index in range(20):
+        for family in ("family_a", "family_b"):
+            risk = {
+                name: float((index + hash(name)) % 4)
+                for name in RiskDimensions.model_fields
+            }
+            # selected_context_misuse is declared inapplicable and held at a
+            # real structural zero; every other risk dimension still varies.
+            risk["selected_context_misuse"] = 0.0
+            rows.append(
+                {
+                    "judge_family": family,
+                    "response": {
+                        **{
+                            name: 1.0 + float((index + i) % 5)
+                            for i, name in enumerate(ResponseDimensions.model_fields)
+                        },
+                        "rationale": "response",
+                    },
+                    "risk": {**risk, "rationale": "risk"},
+                }
+            )
+    kwargs = dict(
+        expected_families=["family_a", "family_b"],
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=1.1,
+        composite_support_exact_match_rate=1.1,
+        maximum_absolute_composite_support_correlation=1.1,
+        reject_constant_response_dimensions=False,
+        reject_constant_risk_dimensions=True,
+        composite_spec=CompositeSpec(),
+        raise_on_failure=False,
+    )
+    without_contract = validate_raw_judge_family_health(rows, **kwargs)
+    assert without_contract["status"] == "FAIL"
+    assert "risk.selected_context_misuse" in (
+        without_contract["families"]["family_a"]["constant_dimensions"]
+    )
+    with_contract = validate_raw_judge_family_health(
+        rows,
+        inapplicable_risk_dimensions=frozenset({"risk.selected_context_misuse"}),
+        **kwargs,
+    )
+    assert with_contract["status"] == "PASS"
+    assert with_contract["families"]["family_a"]["constant_dimensions"] == []
+
+    # A genuinely constant *applicable* dimension must still fail.
+    for row in rows:
+        row["risk"]["memory_omission"] = 0.0
+    still_fails = validate_raw_judge_family_health(
+        rows,
+        inapplicable_risk_dimensions=frozenset({"risk.selected_context_misuse"}),
+        **kwargs,
+    )
+    assert still_fails["status"] == "FAIL"
+    assert "risk.memory_omission" in (
+        still_fails["families"]["family_a"]["constant_dimensions"]
+    )
+
+
+def test_judge_table_ignores_declared_inapplicable_dimension_for_low_mad_coverage():
+    spec = CompositeSpec()
+    dimensions = [
+        *[f"response.{name}" for name in ResponseDimensions.model_fields],
+        *[f"risk.{name}" for name in RiskDimensions.model_fields],
+    ]
+    labels = []
+    for index in range(20):
+        # risk.selected_context_misuse disagrees on every single label (MAD
+        # always above threshold) -- a real, structural artifact of a
+        # dimension that is never applicable to M0+R0, not a judge defect.
+        dimension_mad = {name: 0.0 for name in dimensions}
+        dimension_mad["risk.selected_context_misuse"] = 1.0
+        labels.append(
+            ActionLabel(
+                state_id=f"s{index}",
+                card_id=f"c{index}",
+                user_id=f"u{index}",
+                semantic_family=f"f{index}",
+                action_id="M0+R0",
+                response=ResponseDimensions(
+                    **{
+                        name: 1.0 + float((index * (offset + 1)) % 5)
+                        for offset, name in enumerate(ResponseDimensions.model_fields)
+                    }
+                ),
+                risk=RiskDimensions(
+                    **{name: 0.0 for name in RiskDimensions.model_fields}
+                ),
+                observed_input_tokens=100,
+                retrieval_calls=0,
+                judge_families=["a", "b"],
+                judge_count=2,
+                max_dimension_mad=1.0,
+                dimension_mad=dimension_mad,
+                label_reliable=True,
+                composite_weights_sha256=composite_weights_hash(spec),
+            )
+        )
+    kwargs = dict(
+        minimum_reliable_rate=0.0,
+        reliable_mad_threshold=0.75,
+        minimum_low_mad_coverage_per_dimension=0.90,
+        minimum_low_mad_coverage_per_action_dimension=0.90,
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=1.1,
+        reject_constant_response_dimensions=False,
+        reject_constant_risk_dimensions=False,
+        composite_spec=spec,
+        raise_on_failure=False,
+    )
+    without_contract = validate_judge_table(labels, **kwargs)
+    assert without_contract["status"] == "FAIL"
+    assert "risk.selected_context_misuse" in without_contract["low_coverage_dimensions"]
+    assert (
+        "M0+R0/risk.selected_context_misuse"
+        in without_contract["low_coverage_action_dimensions"]
+    )
+    with_contract = validate_judge_table(
+        labels,
+        inapplicable_risk_dimensions=frozenset({"risk.selected_context_misuse"}),
+        inapplicable_risk_dimensions_by_action=dimension_applicability_by_action(
+            ["M0+R0"]
+        ),
+        **kwargs,
+    )
+    assert with_contract["status"] == "PASS"
+    assert with_contract["low_coverage_dimensions"] == []
+    assert with_contract["low_coverage_action_dimensions"] == []
+    # The raw coverage dicts must show an explicit N/A (None), not a computed
+    # (here, artificially low) number that merely happens to be excluded from
+    # the failure lists above -- the report itself must not misrepresent an
+    # inapplicable cell as if it were a real (bad or good) measurement.
+    assert (
+        with_contract["dimension_low_mad_coverage"]["risk.selected_context_misuse"]
+        is None
+    )
+    assert (
+        with_contract["action_dimension_low_mad_coverage"]["M0+R0"][
+            "risk.selected_context_misuse"
+        ]
+        is None
+    )
+    # An applicable dimension on the same table must still report a real
+    # computed coverage value, not be swept into N/A by accident.
+    assert isinstance(
+        with_contract["dimension_low_mad_coverage"]["response.emotional_support"],
+        float,
+    )
 
 
 def test_success_ledger_reconciles_generation_turn_after_append_crash(tmp_path):

@@ -33,11 +33,15 @@ from metacom_pm.pm_v2_contracts import (
 from metacom_pm.pm_v2_data import EvaluatorContextIndex
 from metacom_pm.pm_v2_features import PMV2FeatureBuilder
 from metacom_pm.pm_v2_model import (
+    MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA,
     NO_FEASIBLE_FALLBACK_REASON,
     PMV2Model,
+    RESPONSE_DIMENSION_CLAMP_RANGE,
     RESPONSE_FIELDS,
+    RISK_DIMENSION_CLAMP_RANGE,
     RISK_FIELDS,
     SelectionConfig,
+    applicable_risk_fields,
     calibrate_uncertainty_multiplier,
     composite_weights_digest,
     cost_calibration_diagnostics,
@@ -45,6 +49,8 @@ from metacom_pm.pm_v2_model import (
     evaluate_policy,
     evaluate_policy_domain_balanced,
     evaluate_prediction_coverage,
+    mad_adjusted_conservative_quality_and_risk,
+    mad_adjusted_conservative_utility,
     tune_selection_config,
 )
 from metacom_pm.pm_v1_5_algorithm_selection import (
@@ -437,6 +443,95 @@ def test_dimension_mad_downweights_only_corresponding_head_without_row_deletion(
     ]["minimum"]
 
 
+def test_risk_head_weight_report_masks_inapplicable_actions_to_exactly_zero():
+    states = [make_state(f"risk_mask_{index}") for index in range(3)]
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+    )
+    risk_reports = model.training_report["dimension_mad_weighting"]["risk_heads"]
+    report = risk_reports["selected_context_misuse"]
+    assert report["applicability_mask_applied"] is True
+    # selected_context_misuse is only applicable when a memory source is
+    # selected (ME+R0/ME+RS here) -- M0+R0/M0+RS must show exactly zero
+    # applicable rows and exactly zero effective weight, never a nonzero
+    # value earned merely from those labels' own MAD looking reliable.
+    assert report["by_action"]["M0+R0"]["applicable_row_count"] == 0
+    assert report["by_action"]["M0+R0"]["effective_weight"] == 0.0
+    assert report["by_action"]["M0+RS"]["applicable_row_count"] == 0
+    assert report["by_action"]["M0+RS"]["effective_weight"] == 0.0
+    assert report["by_action"]["ME+R0"]["applicable_row_count"] == len(states)
+    assert report["by_action"]["ME+R0"]["effective_weight"] > 0.0
+    assert report["by_action"]["ME+RS"]["applicable_row_count"] == len(states)
+    assert report["by_action"]["ME+RS"]["effective_weight"] > 0.0
+    assert report["applicable_row_count"] == 2 * len(states)
+    assert report["total_row_count"] == 4 * len(states)
+    assert report["total_effective_weight"] > 0.0
+    # A dimension applicable to every action (memory_omission) must show
+    # every action fully represented, unmasked.
+    memory_omission_report = risk_reports["memory_omission"]
+    for action_id in ("M0+R0", "M0+RS", "ME+R0", "ME+RS"):
+        assert memory_omission_report["by_action"][action_id]["applicable_row_count"] == len(
+            states
+        )
+
+
+def _m0_only_state(state_id: str, *, user_id: str) -> PMV2State:
+    inventory = {
+        source: ObservableSourceSummary(available=False, count=0, estimated_tokens=0)
+        for source in MemorySource
+    }
+    return PMV2State(
+        state_id=state_id,
+        card_id=f"card_{state_id}",
+        user_id=user_id,
+        split=PMV2Split.TRAIN,
+        semantic_family=f"family_{state_id}",
+        surface_form_id=f"surface_{state_id}",
+        current_user_text="I am having a difficult day.",
+        current_session_history=[DialogueTurn(role="user", content="I feel tense.")],
+        current_session_summary="The user describes current stress.",
+        session_index=1,
+        inventory=inventory,
+        strategy_catalog_count=10,
+        strategy_estimated_tokens=120,
+        allowed_actions=["M0+R0", "M0+RS"],
+        provenance={"evaluator_context_id": f"eval_{state_id}"},
+    )
+
+
+def test_risk_head_training_fails_closed_when_no_action_makes_it_applicable():
+    # Every state's legal action set is M0-only (no memory source ever
+    # selectable): selected_context_misuse/unnecessary_exposure/stale_or_
+    # conflicting_use are then structurally inapplicable to *every* action in
+    # the whole training set, so their risk head would otherwise train on an
+    # all-zero, all-masked target with zero total effective weight.
+    states = [_m0_only_state(f"m0_only_{i}", user_id=f"user_{i}") for i in range(3)]
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+    with pytest.raises(RuntimeError, match="zero total effective training weight"):
+        PMV2Model.train(
+            states,
+            labels,
+            n_models=1,
+            word_features=8,
+            char_features=8,
+            use_precomputed_embeddings=False,
+        )
+
+
 def test_domain_key_equalizes_domains_regardless_of_state_count():
     # Domain A: one user/dialogue with 3 states. Domain B: two users/dialogues
     # with 1 state each (BootstrapRegressor requires >=3 unique bootstrap
@@ -803,6 +898,97 @@ def test_evaluate_policy_realized_utility_uses_one_risk_and_estimated_cost_term(
     assert metrics["mean_realized_utility"] == pytest.approx(
         0.5 - 0.30 * 0.5 - 0.20 * 0.5
     )
+
+
+def test_conservative_utility_lambda_is_the_fixed_constant_one():
+    assert MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA == 1.0
+    assert RESPONSE_DIMENSION_CLAMP_RANGE == (1.0, 5.0)
+    assert RISK_DIMENSION_CLAMP_RANGE == (0.0, 3.0)
+
+
+def test_mad_adjusted_conservative_quality_clips_per_dimension_before_composite():
+    state = make_state("conservative_quality")
+    response = make_response(3.0, emotional_support=3.0)
+    label = make_label(state, "M0+R0", response=response)
+    label.dimension_mad["response.emotional_support"] = 0.5
+    spec = CompositeSpec()
+    conservative_quality, _conservative_risk = mad_adjusted_conservative_quality_and_risk(
+        label=label, action_id="M0+R0", composite_spec=spec
+    )
+    expected_response = ResponseDimensions(
+        **{
+            name: (2.5 if name == "emotional_support" else 3.0)
+            for name in RESPONSE_FIELDS
+        }
+    )
+    assert conservative_quality == pytest.approx(spec.score(expected_response))
+    # Nominal (unadjusted) quality must be strictly higher: lambda*MAD > 0
+    # always pushes quality down, never up.
+    assert conservative_quality < spec.score(response)
+
+
+def test_mad_adjusted_conservative_risk_ignores_inapplicable_dimensions():
+    state = make_state("conservative_risk")
+    # M0+R0: sources=frozenset() (M0), strategy=R0 -- selected_context_misuse
+    # is structurally inapplicable (no memory source selected), so an
+    # extreme value+MAD there must never influence the conservative risk.
+    assert "selected_context_misuse" not in applicable_risk_fields("M0+R0")
+    assert "unsupported_personal_claim" in applicable_risk_fields("M0+R0")
+    risk = make_risk(0.0, selected_context_misuse=3.0, unsupported_personal_claim=1.0)
+    label = make_label(state, "M0+R0", risk=risk)
+    label.dimension_mad["risk.selected_context_misuse"] = 3.0
+    label.dimension_mad["risk.unsupported_personal_claim"] = 0.5
+    _conservative_quality, conservative_risk = mad_adjusted_conservative_quality_and_risk(
+        label=label, action_id="M0+R0", composite_spec=CompositeSpec()
+    )
+    # clip(1.0 + 1.0*0.5, 0, 3) / 3 == 0.5; the inapplicable dimension's
+    # clip(3.0 + 3.0, 0, 3) / 3 == 1.0 must not win the max.
+    assert conservative_risk == pytest.approx(0.5)
+
+
+def test_mad_adjusted_conservative_utility_combines_quality_risk_and_cost():
+    state = make_state("conservative_combine")
+    label = make_label(state, "M0+R0")
+    result = mad_adjusted_conservative_utility(
+        label=label,
+        action_id="M0+R0",
+        composite_spec=CompositeSpec(),
+        risk_weight=0.3,
+        cost_weight=0.2,
+        normalized_cost=0.4,
+    )
+    assert result["conservative_utility"] == pytest.approx(
+        result["conservative_quality"]
+        - 0.3 * result["conservative_risk"]
+        - 0.2 * 0.4
+    )
+
+
+def test_evaluate_policy_reports_conservative_alongside_nominal_without_overwriting_it():
+    state = make_state("conservative_wiring")
+    predictions = {
+        action: action_prediction(
+            action,
+            utility=1.0 if action == "M0+R0" else 0.0,
+        )
+        for action in state.allowed_actions
+    }
+    model = fake_routing_model({state.state_id: predictions})
+    response = make_response(3.0, emotional_support=3.0)
+    risk = make_risk(0.0, unsupported_personal_claim=1.0)
+    label = make_label(state, "M0+R0", response=response, risk=risk)
+    label.dimension_mad["response.emotional_support"] = 0.5
+    label.dimension_mad["risk.unsupported_personal_claim"] = 0.5
+    metrics = evaluate_policy(model, [state], [label])
+    row = metrics["rows"][0]
+    assert row["nominal_quality"] == row["quality"]
+    assert row["nominal_risk"] == row["risk"]
+    assert row["nominal_utility"] == row["realized_utility"]
+    # Both directions of the fixed-lambda adjustment are pessimistic: quality
+    # only moves down, risk only moves up, relative to the nominal values.
+    assert row["conservative_quality"] < row["nominal_quality"]
+    assert row["conservative_risk"] > row["nominal_risk"]
+    assert row["conservative_utility"] < row["nominal_utility"]
 
 
 def test_fallback_classes_do_not_count_as_learned_m0_r0():

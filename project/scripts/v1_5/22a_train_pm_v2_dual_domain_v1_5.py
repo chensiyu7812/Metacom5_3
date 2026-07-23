@@ -122,20 +122,23 @@ def _calibration_fixed_frontier(model, states, labels, actions):
         rows.append(row)
     if not rows:
         raise RuntimeError("domain calibration has no legal fixed comparator")
+    # Selection is bound to the MAD-adjusted conservative utility (lambda=
+    # 1.0 fixed) -- the same shared helper and constant used by every other
+    # comparator in this audit -- never the nominal utility.
     cost_matched = min(
         rows,
         key=lambda row: (
             row["observed_token_relative_deviation"],
-            -row["mean_realized_utility"],
+            -row["mean_conservative_utility"],
             row["action_id"],
         ),
     )
     best = max(
         rows,
         key=lambda row: (
-            row["mean_realized_utility"],
-            row["mean_quality"],
-            -row["mean_risk"],
+            row["mean_conservative_utility"],
+            row["mean_conservative_quality"],
+            -row["mean_conservative_risk"],
             row["action_id"],
         ),
     )

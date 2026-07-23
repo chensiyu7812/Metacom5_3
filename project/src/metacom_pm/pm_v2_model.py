@@ -41,6 +41,112 @@ def composite_weights_digest(spec: CompositeSpec) -> str:
     return sha256_text(canonical_json(spec.weights))
 
 
+# Fixed, disclosed, never tuned from calibration/internal-test results. This
+# is a MAD-adjusted conservative utility -- a pessimistic point adjustment
+# for judge disagreement recorded on ActionLabel.dimension_mad -- and is
+# explicitly NOT a confidence interval, NOT a gold-standard value, and NOT a
+# measurement of true user utility.
+MAD_ADJUSTED_CONSERVATIVE_UTILITY_PROTOCOL = (
+    "pm-v1.5-mad-adjusted-conservative-utility-v1"
+)
+MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA = 1.0
+# The dimensions' own frozen 1-5/0-3 scales (ResponseDimensions/RiskDimensions,
+# pm_v2_contracts.py) named here so attestations can bind the exact clamp
+# range in force without hand-copying a magic number that could silently
+# drift from the schema.
+RESPONSE_DIMENSION_CLAMP_RANGE = (1.0, 5.0)
+RISK_DIMENSION_CLAMP_RANGE = (0.0, 3.0)
+
+
+def mad_adjusted_conservative_quality_and_risk(
+    *,
+    label: ActionLabel,
+    action_id: str,
+    composite_spec: CompositeSpec,
+) -> tuple[float, float]:
+    """Per-dimension MAD-adjusted conservative quality/risk for one label.
+
+    quality: every response dimension is first replaced by
+    clip(median - lambda*MAD, 1, 5) (the dimension's own frozen 1-5 scale),
+    then aggregated with the same frozen composite weights already used for
+    the nominal quality score -- never a linear approximation applied only
+    at the composite level.
+
+    risk: only the dimensions applicable to this action (applicable_risk_
+    fields, pm_v2_model.py's own authoritative source) are replaced by
+    clip(median + lambda*MAD, 0, 3), scaled to [0, 1], and the maximum is
+    taken -- matching the existing nominal risk aggregation exactly, just
+    with a pessimistic per-dimension adjustment instead of the raw median.
+
+    lambda is MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA, fixed at 1.0. It must
+    never be tuned from calibration/internal-test results -- doing so would
+    turn a disclosed, fixed conservatism rule into a result-chasing free
+    parameter.
+    """
+
+    lam = MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA
+    response_min, response_max = RESPONSE_DIMENSION_CLAMP_RANGE
+    risk_min, risk_max = RISK_DIMENSION_CLAMP_RANGE
+    conservative_response = {
+        name: float(
+            np.clip(
+                float(getattr(label.response, name))
+                - lam * float(label.dimension_mad[f"response.{name}"]),
+                response_min,
+                response_max,
+            )
+        )
+        for name in RESPONSE_FIELDS
+    }
+    conservative_quality = float(
+        composite_spec.score(ResponseDimensions(**conservative_response))
+    )
+    applicable = applicable_risk_fields(action_id)
+    conservative_risk = max(
+        float(
+            np.clip(
+                float(getattr(label.risk, name))
+                + lam * float(label.dimension_mad[f"risk.{name}"]),
+                risk_min,
+                risk_max,
+            )
+        )
+        / risk_max
+        for name in applicable
+    )
+    return conservative_quality, conservative_risk
+
+
+def mad_adjusted_conservative_utility(
+    *,
+    label: ActionLabel,
+    action_id: str,
+    composite_spec: CompositeSpec,
+    risk_weight: float,
+    cost_weight: float,
+    normalized_cost: float,
+) -> dict[str, float]:
+    """The one shared conservative-utility computation for every comparator:
+    learned PM, transparent rule, fixed comparators, the calibration fixed
+    frontier's own selection, and the internal paired bootstrap all call this
+    same helper with the same fixed lambda -- never a per-caller reimplementation.
+    """
+
+    conservative_quality, conservative_risk = mad_adjusted_conservative_quality_and_risk(
+        label=label, action_id=action_id, composite_spec=composite_spec
+    )
+    conservative_utility = float(
+        conservative_quality
+        - float(risk_weight) * conservative_risk
+        - float(cost_weight) * float(normalized_cost)
+    )
+    return {
+        "conservative_quality": conservative_quality,
+        "conservative_risk": conservative_risk,
+        "conservative_utility": conservative_utility,
+    }
+
+
 SEVERE_OOD_FALLBACK_REASON = (
     "fallback_type=severe_ood; preregistered conservative fallback"
 )
@@ -443,6 +549,36 @@ class PMV2Model:
                 ),
             }
 
+        def grouped_effective_weight_report(
+            values: np.ndarray, group_keys: Sequence[str]
+        ) -> dict[str, dict[str, float]]:
+            # Reports effective weight and ESS per group directly from
+            # ``values`` (which may already carry an exact-zero applicability
+            # mask); zero-weighted rows contribute nothing to either
+            # statistic, so inapplicable rows are naturally excluded without
+            # needing a separate filter here.
+            report: dict[str, dict[str, float]] = {}
+            for group in sorted(set(group_keys)):
+                group_values = np.asarray(
+                    [
+                        value
+                        for value, key in zip(values, group_keys, strict=True)
+                        if key == group
+                    ],
+                    dtype=float,
+                )
+                total = float(np.sum(group_values))
+                sum_sq = float(np.sum(group_values**2))
+                report[group] = {
+                    "effective_weight": total,
+                    "effective_sample_size": float(total**2 / sum_sq)
+                    if sum_sq > 0.0
+                    else 0.0,
+                    "applicable_row_count": int(np.count_nonzero(group_values)),
+                    "total_row_count": int(len(group_values)),
+                }
+            return report
+
         response_heads: dict[str, BootstrapRegressor] = {}
         response_weight_reports: dict[str, dict[str, float]] = {}
         for field_name in RESPONSE_FIELDS:
@@ -465,6 +601,16 @@ class PMV2Model:
                 n_models=n_models, seed=seed
             ).fit(x, y, groups, head_weights)
 
+        # Action-applicability mask: a risk dimension that cannot make a given
+        # action infeasible (see ``applicable_risk_fields``) must contribute
+        # exactly zero training weight to that risk head, never a nonzero
+        # weight earned merely from the label's own MAD looking "reliable".
+        applicable_fields_by_label = [
+            frozenset(applicable_risk_fields(label.action_id)) for label in usable
+        ]
+        domain_keys_for_usable = [domain_by_state[label.state_id] for label in usable]
+        action_keys_for_usable = [label.action_id for label in usable]
+
         risk_heads: dict[str, BootstrapRegressor] = {}
         risk_weight_reports: dict[str, dict[str, float]] = {}
         for field_name in RISK_FIELDS:
@@ -472,14 +618,45 @@ class PMV2Model:
                 [float(getattr(label.risk, field_name)) / 3.0 for label in usable],
                 dtype=float,
             )
-            head_weights = state_weights * np.asarray(
+            applicability_mask = np.asarray(
                 [
-                    mad_weight(label, prefix="risk", field_name=field_name)
-                    for label in usable
+                    1.0 if field_name in fields else 0.0
+                    for fields in applicable_fields_by_label
                 ],
                 dtype=float,
             )
-            risk_weight_reports[field_name] = weight_report(head_weights)
+            head_weights = (
+                state_weights
+                * np.asarray(
+                    [
+                        mad_weight(label, prefix="risk", field_name=field_name)
+                        for label in usable
+                    ],
+                    dtype=float,
+                )
+                * applicability_mask
+            )
+            total_effective_weight = float(np.sum(head_weights))
+            if total_effective_weight <= 0.0:
+                raise RuntimeError(
+                    f"risk head {field_name!r} has zero total effective training "
+                    "weight after applying the action-applicability mask; no "
+                    "action in this training set makes this risk dimension "
+                    "applicable, so it cannot be fit"
+                )
+            risk_weight_reports[field_name] = {
+                **weight_report(head_weights),
+                "applicability_mask_applied": True,
+                "applicable_row_count": int(np.count_nonzero(applicability_mask)),
+                "total_row_count": int(len(applicability_mask)),
+                "total_effective_weight": total_effective_weight,
+                "by_domain": grouped_effective_weight_report(
+                    head_weights, domain_keys_for_usable
+                ),
+                "by_action": grouped_effective_weight_report(
+                    head_weights, action_keys_for_usable
+                ),
+            }
             risk_heads[field_name] = BootstrapRegressor(
                 n_models=n_models, seed=seed + 101
             ).fit(x, y, groups, head_weights)
@@ -1849,6 +2026,14 @@ def evaluate_policy(
             - model.selection_config.risk_weight * risk
             - model.selection_config.cost_weight * normalized_estimated_cost
         )
+        conservative = mad_adjusted_conservative_utility(
+            label=label,
+            action_id=decision.chosen_action,
+            composite_spec=model.selection_config.composite_spec,
+            risk_weight=model.selection_config.risk_weight,
+            cost_weight=model.selection_config.cost_weight,
+            normalized_cost=normalized_estimated_cost,
+        )
         rows.append(
             {
                 "state_id": state_id,
@@ -1857,6 +2042,17 @@ def evaluate_policy(
                 "quality": quality,
                 "risk": risk,
                 "realized_utility": realized_utility,
+                # MAD-adjusted conservative utility (pm-v1.5-mad-adjusted-
+                # conservative-utility-v1, lambda=1.0 fixed): a disclosed,
+                # pessimistic adjustment for judge disagreement -- NOT a
+                # confidence interval, NOT a gold-standard value, NOT true
+                # user utility. nominal_* fields above are never overwritten.
+                "nominal_quality": quality,
+                "nominal_risk": risk,
+                "nominal_utility": realized_utility,
+                "conservative_quality": conservative["conservative_quality"],
+                "conservative_risk": conservative["conservative_risk"],
+                "conservative_utility": conservative["conservative_utility"],
                 "estimated_resource_cost": float(chosen_prediction.estimated_cost),
                 "normalized_estimated_resource_cost": normalized_estimated_cost,
                 "observed_input_tokens": float(label.observed_input_tokens),

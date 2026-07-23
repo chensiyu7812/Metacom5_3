@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import pytest
 
 from metacom_pm.contracts import DialogueTurn, MemorySource
@@ -11,10 +13,13 @@ from metacom_pm.pm_v2_contracts import (
     ResponseDimensions,
     RiskDimensions,
 )
+from metacom_pm.pm_v2_model import SelectionConfig
 from metacom_pm.v1_5_dual_domain_training import (
     ESCONV_AUXILIARY_DOMAIN,
     LONGITUDINAL_DOMAIN,
+    _paired_group_bootstrap,
     audit_domain_label_matrix,
+    fixed_action_metrics,
     require_equal_domain_training_weight,
     training_domain_for_state,
     validate_dual_domain_training_inputs,
@@ -341,7 +346,7 @@ def test_equal_domain_weight_guard_accepts_both_model_stages():
     }
 
 
-def test_per_domain_label_audit_gates_reliability_without_dropping_rows():
+def test_per_domain_label_audit_reports_reliable_rate_as_diagnostic_only():
     longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
     train_states = [
         state for state in longitudinal if state.split is PMV2Split.TRAIN
@@ -359,8 +364,37 @@ def test_per_domain_label_audit_gates_reliability_without_dropping_rows():
     )
     assert report["status"] == "PASS"
     assert report["label_count"] == len(train_labels)
+    assert report["label_reliable_rate_diagnostic"] == 1.0
+    assert report["label_reliable_rate_is_diagnostic_only"] is True
+    # A low reliable_rate is disclosed, not hard-gated: it must never make an
+    # otherwise-PASSing coverage audit raise on its own.
     train_labels[0].label_reliable = False
     train_labels[1].label_reliable = False
+    report_after = audit_domain_label_matrix(
+        train_states,
+        train_labels,
+        domain=LONGITUDINAL_DOMAIN,
+        low_mad_threshold=0.75,
+        minimum_reliable_rate=0.8,
+        minimum_low_mad_coverage_per_dimension=0.9,
+        minimum_low_mad_coverage_per_action_dimension=0.8,
+    )
+    assert report_after["status"] == "PASS"
+    assert report_after["label_reliable_rate_diagnostic"] < 1.0
+
+
+def test_per_domain_label_audit_still_hard_gates_real_low_mad_coverage():
+    longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
+    train_states = [
+        state for state in longitudinal if state.split is PMV2Split.TRAIN
+    ]
+    train_ids = {state.state_id for state in train_states}
+    train_labels = [label for label in long_labels if label.state_id in train_ids]
+    # memory_omission is applicable to every action in this fixture's action
+    # set (M0+R0, M0+RS): driving its MAD above threshold on every row must
+    # still hard-fail the coverage gate, unlike the diagnostic reliable_rate.
+    for label in train_labels:
+        label.dimension_mad["risk.memory_omission"] = 3.0
     with pytest.raises(RuntimeError, match="label-quality gate failed"):
         audit_domain_label_matrix(
             train_states,
@@ -371,3 +405,134 @@ def test_per_domain_label_audit_gates_reliability_without_dropping_rows():
             minimum_low_mad_coverage_per_dimension=0.9,
             minimum_low_mad_coverage_per_action_dimension=0.8,
         )
+
+
+def test_per_domain_label_audit_marks_inapplicable_risk_dimensions_as_na():
+    longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
+    train_states = [
+        state for state in longitudinal if state.split is PMV2Split.TRAIN
+    ]
+    train_ids = {state.state_id for state in train_states}
+    train_labels = [label for label in long_labels if label.state_id in train_ids]
+    # Every action in this fixture is M0 (no memory source selected), so
+    # these three risk dimensions are structurally inapplicable to all of
+    # them and must be reported N/A, never as a real (mis)computed value.
+    always_inapplicable = {
+        "risk.selected_context_misuse",
+        "risk.unnecessary_exposure",
+        "risk.stale_or_conflicting_use",
+    }
+    # Deliberately blow up MAD on a structurally-inapplicable dimension: it
+    # must not be able to fail (or help pass) the coverage gate either way.
+    for label in train_labels:
+        label.dimension_mad["risk.selected_context_misuse"] = 3.0
+    report = audit_domain_label_matrix(
+        train_states,
+        train_labels,
+        domain=LONGITUDINAL_DOMAIN,
+        low_mad_threshold=0.75,
+        minimum_reliable_rate=0.8,
+        minimum_low_mad_coverage_per_dimension=0.9,
+        minimum_low_mad_coverage_per_action_dimension=0.8,
+    )
+    assert report["status"] == "PASS"
+    assert always_inapplicable <= set(report["inapplicable_risk_dimensions"])
+    for name in always_inapplicable:
+        assert report["dimension_coverage"][name] is None
+    # strategy_overuse is inapplicable to M0+R0 specifically, but applicable
+    # to M0+RS -- a per-action distinction, not a global one.
+    assert "risk.strategy_overuse" in report["inapplicable_risk_dimensions_by_action"]["M0+R0"]
+    assert "risk.strategy_overuse" not in report["inapplicable_risk_dimensions_by_action"]["M0+RS"]
+    assert report["action_dimension_coverage"]["M0+R0"]["risk.strategy_overuse"] is None
+    assert report["action_dimension_coverage"]["M0+RS"]["risk.strategy_overuse"] is not None
+
+
+class _FakeFeatureBuilder:
+    def estimate_action_cost(self, state: PMV2State, action_id: str) -> float:
+        return {"M0+R0": 0.0, "M0+RS": 100.0}[action_id]
+
+
+def test_fixed_action_metrics_reports_conservative_alongside_nominal():
+    state = _state("fixed_metrics", user_id="u1", split=PMV2Split.TRAIN, auxiliary=False)
+    label = _label(state, "M0+R0", auxiliary=False)
+    label.risk = RiskDimensions(
+        **{
+            **{name: 0.0 for name in RiskDimensions.model_fields},
+            "unsupported_personal_claim": 1.0,
+        }
+    )
+    label.dimension_mad["response.emotional_support"] = 0.5
+    label.dimension_mad["risk.unsupported_personal_claim"] = 0.5
+    model = SimpleNamespace(
+        feature_builder=_FakeFeatureBuilder(),
+        selection_config=SelectionConfig(risk_weight=0.3, cost_weight=0.2),
+    )
+    row = fixed_action_metrics(model, [state], [label], "M0+R0")
+    assert row is not None
+    # Fixed-lambda MAD adjustment is pessimistic in both directions: quality
+    # only moves down, risk only moves up, relative to the nominal values.
+    assert row["mean_conservative_quality"] < row["mean_quality"]
+    assert row["mean_conservative_risk"] > row["mean_risk"]
+    assert row["mean_conservative_utility"] < row["mean_realized_utility"]
+    assert row["rows"][0]["nominal_quality"] == row["rows"][0]["quality"]
+    assert row["rows"][0]["nominal_risk"] == row["rows"][0]["risk"]
+    assert row["rows"][0]["nominal_utility"] == row["rows"][0]["realized_utility"]
+
+
+def _bootstrap_row(
+    state_id: str,
+    user_id: str,
+    *,
+    quality: float,
+    risk: float,
+    utility: float,
+    conservative_quality: float,
+    conservative_risk: float,
+    conservative_utility: float,
+) -> dict:
+    return {
+        "state_id": state_id,
+        "user_id": user_id,
+        "quality": quality,
+        "risk": risk,
+        "realized_utility": utility,
+        "response_dimensions": {"emotional_support": quality},
+        "conservative_quality": conservative_quality,
+        "conservative_risk": conservative_risk,
+        "conservative_utility": conservative_utility,
+    }
+
+
+def test_paired_group_bootstrap_computes_conservative_deltas_independently_of_nominal():
+    # Nominal quality delta is +1.0 in every group, but the conservative
+    # quality delta is deliberately a *different* value (+0.4): if the gate
+    # ever aliased conservative_* onto the nominal fields, this test would
+    # observe the wrong (1.0) mean_delta for conservative_quality.
+    policy_rows = [
+        _bootstrap_row(
+            f"s{i}", f"u{i}", quality=4.0, risk=0.5, utility=3.5,
+            conservative_quality=3.0, conservative_risk=0.9, conservative_utility=2.0,
+        )
+        for i in range(3)
+    ]
+    comparator_rows = [
+        _bootstrap_row(
+            f"s{i}", f"u{i}", quality=3.0, risk=0.5, utility=2.5,
+            conservative_quality=2.6, conservative_risk=0.5, conservative_utility=1.8,
+        )
+        for i in range(3)
+    ]
+    result = _paired_group_bootstrap(
+        policy_rows,
+        comparator_rows,
+        replicates=200,
+        confidence_level=0.9,
+        seed=7,
+    )
+    metrics = result["metrics"]
+    assert metrics["quality"]["mean_delta"] == pytest.approx(1.0)
+    assert metrics["conservative_quality"]["mean_delta"] == pytest.approx(0.4)
+    assert metrics["risk"]["mean_delta"] == pytest.approx(0.0)
+    assert metrics["conservative_risk"]["mean_delta"] == pytest.approx(0.4)
+    assert metrics["utility"]["mean_delta"] == pytest.approx(1.0)
+    assert metrics["conservative_utility"]["mean_delta"] == pytest.approx(0.2)

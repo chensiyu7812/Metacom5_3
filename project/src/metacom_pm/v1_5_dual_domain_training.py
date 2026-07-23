@@ -9,12 +9,20 @@ import numpy as np
 from .contracts import MemorySource
 from .io import canonical_json, sha256_text
 from .pm_v2_contracts import ActionLabel, PMV2Split, PMV2State
+from .pm_v2_judging import (
+    DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL,
+    dimension_applicability_by_action,
+    dimensions_inapplicable_to_every_action,
+)
 from .pm_v2_model import (
+    MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA,
+    MAD_ADJUSTED_CONSERVATIVE_UTILITY_PROTOCOL,
     RESPONSE_FIELDS,
     applicable_risk_fields,
     estimated_action_cost_profile,
     evaluate_policy,
     evaluate_prediction_coverage,
+    mad_adjusted_conservative_utility,
 )
 
 
@@ -201,18 +209,41 @@ def audit_domain_label_matrix(
     action_counts: dict[str, int] = {}
     for _state_id, action_id in label_map:
         action_counts[action_id] = action_counts.get(action_id, 0) + 1
+    action_ids_present = sorted(action_counts)
+    # Risk dimensions that are structurally inapplicable to an action (e.g.
+    # selected_context_misuse when no memory source was ever selected) are
+    # not a judge-reliability signal at all: they must be excluded from the
+    # low-MAD-coverage gate outright (N/A), never scored as 0 (which would
+    # spuriously fail the gate) or silently dropped in a way that could
+    # inflate the reported minimum and help a real failure PASS.
+    inapplicable_risk_dimensions = dimensions_inapplicable_to_every_action(
+        action_ids_present
+    )
+    inapplicable_risk_dimensions_by_action = dimension_applicability_by_action(
+        action_ids_present
+    )
     dimension_names = sorted(next(iter(label_map.values())).dimension_mad)
-    dimension_coverage = {
-        name: float(
+    dimension_coverage: dict[str, float | None] = {}
+    for name in dimension_names:
+        if name in inapplicable_risk_dimensions:
+            dimension_coverage[name] = None
+            continue
+        dimension_coverage[name] = float(
             np.mean(
                 [float(label.dimension_mad[name]) <= low_mad_threshold for label in labels]
             )
         )
-        for name in dimension_names
-    }
-    action_dimension_coverage = {
-        action_id: {
-            name: float(
+    action_dimension_coverage: dict[str, dict[str, float | None]] = {}
+    for action_id in action_ids_present:
+        inapplicable_for_action = inapplicable_risk_dimensions_by_action.get(
+            action_id, frozenset()
+        )
+        row: dict[str, float | None] = {}
+        for name in dimension_names:
+            if name in inapplicable_for_action:
+                row[name] = None
+                continue
+            row[name] = float(
                 np.mean(
                     [
                         float(label.dimension_mad[name]) <= low_mad_threshold
@@ -221,19 +252,36 @@ def audit_domain_label_matrix(
                     ]
                 )
             )
-            for name in dimension_names
-        }
-        for action_id in sorted(action_counts)
-    }
+        action_dimension_coverage[action_id] = row
     reliable_rate = float(np.mean([label.label_reliable for label in labels]))
+    applicable_dimension_coverage_values = [
+        value for value in dimension_coverage.values() if value is not None
+    ]
+    if not applicable_dimension_coverage_values:
+        raise RuntimeError(
+            f"{domain} audit has no applicable dimensions left to gate coverage on"
+        )
+    applicable_action_dimension_coverage_values = [
+        value
+        for action_row in action_dimension_coverage.values()
+        for value in action_row.values()
+        if value is not None
+    ]
+    if not applicable_action_dimension_coverage_values:
+        raise RuntimeError(
+            f"{domain} audit has no applicable action-dimension cells left to "
+            "gate coverage on"
+        )
+    # label_reliable_rate is diagnostic-only (matches validate_judge_table's
+    # joint_reliable_rate_is_diagnostic_only convention): it is reported, but
+    # never itself a hard gate. Matrix completeness (checked above via the
+    # exact expected-action-set comparison) and the MAD-based coverage checks
+    # below remain hard gates.
     checks = {
-        "label_reliable_rate": reliable_rate >= float(minimum_reliable_rate),
-        "low_mad_coverage_per_dimension": min(dimension_coverage.values())
+        "low_mad_coverage_per_dimension": min(applicable_dimension_coverage_values)
         >= float(minimum_low_mad_coverage_per_dimension),
         "low_mad_coverage_per_action_dimension": min(
-            value
-            for action_row in action_dimension_coverage.values()
-            for value in action_row.values()
+            applicable_action_dimension_coverage_values
         )
         >= float(minimum_low_mad_coverage_per_action_dimension),
     }
@@ -246,14 +294,22 @@ def audit_domain_label_matrix(
         "group_count": len({state.user_id for state in states}),
         "label_count": len(labels),
         "action_distribution": dict(sorted(action_counts.items())),
-        "label_reliable_rate": reliable_rate,
+        "label_reliable_rate_diagnostic": reliable_rate,
+        "label_reliable_rate_is_diagnostic_only": True,
+        "minimum_reliable_rate_diagnostic_threshold": float(minimum_reliable_rate),
         "maximum_dimension_mad": float(max(label.max_dimension_mad for label in labels)),
         "low_mad_threshold": float(low_mad_threshold),
-        "minimum_dimension_low_mad_coverage": min(dimension_coverage.values()),
+        "dimension_coverage": dimension_coverage,
+        "action_dimension_coverage": action_dimension_coverage,
+        "inapplicable_risk_dimensions": sorted(inapplicable_risk_dimensions),
+        "inapplicable_risk_dimensions_by_action": {
+            action_id: sorted(dims)
+            for action_id, dims in sorted(inapplicable_risk_dimensions_by_action.items())
+        },
+        "dimension_applicability_contract_protocol": DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL,
+        "minimum_dimension_low_mad_coverage": min(applicable_dimension_coverage_values),
         "minimum_action_dimension_low_mad_coverage": min(
-            value
-            for action_row in action_dimension_coverage.values()
-            for value in action_row.values()
+            applicable_action_dimension_coverage_values
         ),
         "checks": checks,
         "state_universe_sha256": _state_universe_sha256(states),
@@ -300,11 +356,19 @@ def fixed_action_metrics(model, states, labels, action_id: str) -> dict[str, Any
             for name in applicable_risk_fields(action_id)
         )
         cost = estimated_action_cost_profile(model.feature_builder, state)[action_id]
+        normalized_cost = float(cost["normalized_estimated_resource_cost"])
         utility = (
             quality
             - model.selection_config.risk_weight * risk
-            - model.selection_config.cost_weight
-            * float(cost["normalized_estimated_resource_cost"])
+            - model.selection_config.cost_weight * normalized_cost
+        )
+        conservative = mad_adjusted_conservative_utility(
+            label=label,
+            action_id=action_id,
+            composite_spec=model.selection_config.composite_spec,
+            risk_weight=model.selection_config.risk_weight,
+            cost_weight=model.selection_config.cost_weight,
+            normalized_cost=normalized_cost,
         )
         rows.append(
             {
@@ -313,6 +377,17 @@ def fixed_action_metrics(model, states, labels, action_id: str) -> dict[str, Any
                 "quality": float(quality),
                 "risk": float(risk),
                 "realized_utility": float(utility),
+                # See mad_adjusted_conservative_utility (pm_v2_model.py):
+                # fixed lambda=1.0, never tuned from calibration/internal-
+                # test; a disclosed conservative adjustment, not a
+                # confidence interval, gold standard, or true user utility.
+                # nominal_* fields are never overwritten by these.
+                "nominal_quality": float(quality),
+                "nominal_risk": float(risk),
+                "nominal_utility": float(utility),
+                "conservative_quality": conservative["conservative_quality"],
+                "conservative_risk": conservative["conservative_risk"],
+                "conservative_utility": conservative["conservative_utility"],
                 "observed_input_tokens": float(label.observed_input_tokens),
                 "response_dimensions": {
                     name: float(getattr(label.response, name)) for name in RESPONSE_FIELDS
@@ -328,6 +403,15 @@ def fixed_action_metrics(model, states, labels, action_id: str) -> dict[str, Any
         "mean_risk": float(np.mean([row["risk"] for row in rows])),
         "mean_realized_utility": float(
             np.mean([row["realized_utility"] for row in rows])
+        ),
+        "mean_conservative_quality": float(
+            np.mean([row["conservative_quality"] for row in rows])
+        ),
+        "mean_conservative_risk": float(
+            np.mean([row["conservative_risk"] for row in rows])
+        ),
+        "mean_conservative_utility": float(
+            np.mean([row["conservative_utility"] for row in rows])
         ),
         "mean_observed_input_tokens": float(
             np.mean([row["observed_input_tokens"] for row in rows])
@@ -370,13 +454,33 @@ def _paired_group_bootstrap(
                 "utility": float(
                     left["realized_utility"] - right["realized_utility"]
                 ),
+                # MAD-adjusted conservative deltas (lambda=1.0 fixed): the
+                # dual-domain gate's own PASS/NOT_SUPPORTED check binds to
+                # these, never the nominal deltas above.
+                "conservative_quality": float(
+                    left["conservative_quality"] - right["conservative_quality"]
+                ),
+                "conservative_risk": float(
+                    left["conservative_risk"] - right["conservative_risk"]
+                ),
+                "conservative_utility": float(
+                    left["conservative_utility"] - right["conservative_utility"]
+                ),
             }
         )
     if int(replicates) < 100:
         raise ValueError("paired domain bootstrap requires at least 100 replicates")
     if not 0.5 < float(confidence_level) < 1.0:
         raise ValueError("paired domain bootstrap confidence must be in (0.5, 1.0)")
-    metric_names = ("quality", "emotional_support", "risk", "utility")
+    metric_names = (
+        "quality",
+        "emotional_support",
+        "risk",
+        "utility",
+        "conservative_quality",
+        "conservative_risk",
+        "conservative_utility",
+    )
     groups = sorted(by_group)
     if len(groups) < 3:
         raise ValueError("paired domain bootstrap requires at least three groups")
@@ -461,13 +565,16 @@ def domain_internal_gate(
             seed=int(bootstrap_seed) + int(seed_offset),
         )
         metrics = bootstrap["metrics"]
+        # The gate binds explicitly to the MAD-adjusted conservative metrics
+        # (lambda=1.0 fixed), never the nominal ones -- nominal deltas remain
+        # in the report (bootstrap["metrics"]) for transparency only.
         checks = {
-            "quality_noninferior": metrics["quality"]["ci_lower"] >= float(thresholds["minimum_quality_delta"]),
+            "quality_noninferior": metrics["conservative_quality"]["ci_lower"] >= float(thresholds["minimum_quality_delta"]),
             "emotional_support_noninferior": metrics["emotional_support"]["ci_lower"] >= float(thresholds["minimum_emotional_support_delta"]),
-            "risk_nonincrease": metrics["risk"]["ci_upper"] <= float(thresholds["maximum_risk_delta"]),
-            "utility": metrics["utility"]["ci_lower"] > float(thresholds["minimum_utility_delta"])
+            "risk_nonincrease": metrics["conservative_risk"]["ci_upper"] <= float(thresholds["maximum_risk_delta"]),
+            "utility": metrics["conservative_utility"]["ci_lower"] > float(thresholds["minimum_utility_delta"])
             if strict_utility
-            else metrics["utility"]["ci_lower"] >= float(thresholds["minimum_utility_delta"]),
+            else metrics["conservative_utility"]["ci_lower"] >= float(thresholds["minimum_utility_delta"]),
         }
         return {
             "status": "PASS" if all(checks.values()) else "NOT_SUPPORTED",

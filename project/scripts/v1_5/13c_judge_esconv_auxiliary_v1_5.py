@@ -91,6 +91,7 @@ from metacom_pm.api import (
     StructuredOutputValidationError,
     make_client,
 )
+from metacom_pm.artifacts import create_artifact_attestation
 from metacom_pm.attempt_ledger import (
     PHYSICAL_ATTEMPT_LEDGER_PROTOCOL,
     forbid_overwrite_of_spent_attempts,
@@ -108,6 +109,7 @@ from metacom_pm.bounded_retry import (
 from metacom_pm.attempt_ledger import PersistentAttemptLedger
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.contracts import ActionOutcome
+from metacom_pm.internal_holdout import seal_internal_label_bundle
 from metacom_pm.io import (
     append_jsonl,
     canonical_json,
@@ -125,6 +127,7 @@ from metacom_pm.paid_run_release import (
 )
 from metacom_pm.pm_v2_data import load_states
 from metacom_pm.pm_v2_judging import (
+    DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL,
     JudgeResult,
     ResponseJudgeOutput,
     RiskJudgeOutput,
@@ -133,12 +136,21 @@ from metacom_pm.pm_v2_judging import (
     build_risk_messages,
     composite_spec_from_config,
     composite_weights_hash,
+    dimension_applicability_by_action,
+    dimension_applicability_contract_sha256,
+    dimensions_inapplicable_to_every_action,
     labeling_settings_from_config,
     prompt_contract_hash,
     validate_action_applicable_risk_signal,
     validate_judge_table,
     validate_raw_judge_family_health,
     validate_raw_judge_family_subgroup_health,
+)
+from metacom_pm.pm_v2_model import (
+    MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA,
+    MAD_ADJUSTED_CONSERVATIVE_UTILITY_PROTOCOL,
+    RESPONSE_DIMENSION_CLAMP_RANGE,
+    RISK_DIMENSION_CLAMP_RANGE,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
 
@@ -152,6 +164,11 @@ CALL_PLAN_SHUFFLE_SEED = 913171
 # semantic audit.  The bound is execution resilience, not a scientific model
 # or rubric setting, and every authorized attempt is included in dry-run cost.
 MAXIMUM_PHYSICAL_ATTEMPTS_PER_LOGICAL_CALL = 10
+# Two sparse, mostly-zero risk dimensions can reach a high exact-match rate
+# purely from shared zero-zero rows; below this many informative
+# (at-least-one-side-nonzero) rows, a duplicate/high-correlation claim is
+# reported as insufficient evidence rather than a false positive.
+MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK = 10
 TRANSPORT_BACKOFF_SECONDS: tuple[float, ...] = (
     10.0,
     30.0,
@@ -243,6 +260,69 @@ def judging_transport_contract(
         ),
         "client_internal_retries": 1,
         "scientific_judge_contract_unchanged": True,
+        "code_manifest": code_manifest,
+        "code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
+    }
+    payload["contract_sha256"] = sha256_text(canonical_json(payload))
+    return payload
+
+
+MEASUREMENT_CONTRACT_PROTOCOL = (
+    "pm-v1.5-judge-uncertainty-robust-measurement-contract-v1"
+)
+
+
+def measurement_contract_record(
+    *,
+    action_ids_present: list[str],
+    inapplicable_risk_dimensions: frozenset[str],
+    inapplicable_risk_dimensions_by_action: Mapping[str, frozenset[str]],
+) -> dict[str, Any]:
+    """Single, hashable freeze record for the applicability + conservative-
+    utility measurement contract in force for this labeling run.
+
+    Bound here (the train-split judging attestation) so
+    21a_preflight_dual_domain_training_v1_5.py can require an exact match
+    before calibration/internal-test judging is allowed to proceed --
+    per the explicit freeze rule, none of these values may be tuned from
+    calibration/internal-test results once a train-split run attests them.
+    """
+
+    code_paths = {
+        "judging_runner": Path(__file__).resolve(),
+        "pm_v2_contracts": ROOT / "src" / "metacom_pm" / "pm_v2_contracts.py",
+        "pm_v2_judging": ROOT / "src" / "metacom_pm" / "pm_v2_judging.py",
+        "pm_v2_model": ROOT / "src" / "metacom_pm" / "pm_v2_model.py",
+        "v1_5_dual_domain_training": (
+            ROOT / "src" / "metacom_pm" / "v1_5_dual_domain_training.py"
+        ),
+    }
+    code_manifest = {
+        name: {
+            "relative_path": str(path.relative_to(ROOT)),
+            "sha256": sha256_file(path),
+        }
+        for name, path in sorted(code_paths.items())
+    }
+    payload: dict[str, Any] = {
+        "protocol": MEASUREMENT_CONTRACT_PROTOCOL,
+        "action_ids_present": sorted(action_ids_present),
+        "dimension_applicability_contract_protocol": (
+            DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL
+        ),
+        "dimension_applicability_contract_sha256": (
+            dimension_applicability_contract_sha256(action_ids_present)
+        ),
+        "inapplicable_risk_dimensions": sorted(inapplicable_risk_dimensions),
+        "inapplicable_risk_dimensions_by_action": {
+            action_id: sorted(dims)
+            for action_id, dims in sorted(inapplicable_risk_dimensions_by_action.items())
+        },
+        "conservative_utility_protocol": MAD_ADJUSTED_CONSERVATIVE_UTILITY_PROTOCOL,
+        "conservative_utility_lambda": MAD_ADJUSTED_CONSERVATIVE_UTILITY_LAMBDA,
+        "conservative_utility_lambda_is_fixed_never_tuned": True,
+        "response_dimension_clamp_range": list(RESPONSE_DIMENSION_CLAMP_RANGE),
+        "risk_dimension_clamp_range": list(RISK_DIMENSION_CLAMP_RANGE),
         "code_manifest": code_manifest,
         "code_manifest_sha256": sha256_text(canonical_json(code_manifest)),
     }
@@ -481,6 +561,21 @@ def main() -> None:
             "zero new cost."
         ),
     )
+    parser.add_argument(
+        "--sealed-holdout",
+        action="store_true",
+        help=(
+            "Held-out scope (internal_test): never compute quality_gate, "
+            "raw_family_quality_gate, or any other reliability/aggregate "
+            "metric over the judge labels -- not merely 'do not raise' or "
+            "'do not report' (--pilot's relaxation), but do not call those "
+            "functions at all. Writes action_labels.jsonl, then immediately "
+            "seals it (seal_internal_label_bundle, internal_holdout.py) and "
+            "writes a summary containing only completeness/row-count/ledger/"
+            "seal SHA256s. Incompatible with --pilot (a pilot run is "
+            "diagnostic-only and is never the sealed holdout)."
+        ),
+    )
     args = parser.parse_args()
 
     if args.run and args.overwrite:
@@ -488,6 +583,8 @@ def main() -> None:
             "paid ESConv-auxiliary judging runs prohibit --overwrite; use a "
             "new output directory"
         )
+    if args.sealed_holdout and args.pilot:
+        raise RuntimeError("--sealed-holdout and --pilot are mutually exclusive")
 
     split = str(args.split)
     scope = str(args.scope)
@@ -719,6 +816,27 @@ def main() -> None:
                     canonical_json(messages), safety_factor=input_token_safety_factor
                 )
                 pricing = pricing_by_family[str(endpoint.family)]
+                # Bind the schema's actual field constraints (not just its
+                # class name) into the call identity: a bare Pydantic field
+                # change (e.g. a length bound) does not change response_
+                # schema.__name__, messages, or physical_call_key under the
+                # old scheme, so it silently would not mint a fresh identity
+                # even though the real request contract changed.
+                response_json_schema = schema.model_json_schema()
+                response_schema_sha256 = sha256_text(
+                    canonical_json(response_json_schema)
+                )
+                request_payload_sha256 = sha256_text(
+                    canonical_json(
+                        {
+                            "messages": messages,
+                            "response_schema": response_json_schema,
+                            "temperature": 0.0,
+                            "max_tokens": int(max_output_tokens),
+                            "seed": int(call_seed),
+                        }
+                    )
+                )
                 plan_row = {
                     "state_id": state.state_id,
                     "action_id": outcome.action_id,
@@ -730,6 +848,8 @@ def main() -> None:
                     "base_input_tokens_est": base_input_tokens_est,
                     "max_output_tokens": max_output_tokens,
                     "prompt_hash": prompt_hash,
+                    "response_schema_sha256": response_schema_sha256,
+                    "request_payload_sha256": request_payload_sha256,
                     "pricing_usd_per_mtok": pricing,
                     "maximum_cost_usd": input_tokens_est / 1_000_000 * pricing["input"]
                     + max_output_tokens / 1_000_000 * pricing["output"],
@@ -749,6 +869,7 @@ def main() -> None:
                         "max_tokens": int(max_output_tokens),
                         "seed": int(call_seed),
                         "response_schema": schema.__name__,
+                        "response_schema_sha256": response_schema_sha256,
                     },
                 )
                 cost_rows.append(plan_row)
@@ -1146,48 +1267,69 @@ def main() -> None:
         }
         for row in raw_by_key.values()
     ]
-    raw_family_global_gate = validate_raw_judge_family_health(
-        canonical_raw_rows,
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
-        maximum_absolute_dimension_correlation=labeling[
-            "maximum_absolute_dimension_correlation"
-        ],
-        composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
-        maximum_absolute_composite_support_correlation=labeling[
-            "maximum_absolute_composite_support_correlation"
-        ],
-        reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
-        reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
-        composite_spec=composite_spec,
-        raise_on_failure=not args.pilot,
-    )
-    raw_family_action_gate = validate_raw_judge_family_subgroup_health(
-        canonical_raw_rows,
-        subgroup_key="action_id",
-        expected_subgroups=sorted({o.action_id for o in outcomes}),
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
-        maximum_absolute_dimension_correlation=labeling[
-            "maximum_absolute_dimension_correlation"
-        ],
-        composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
-        maximum_absolute_composite_support_correlation=labeling[
-            "maximum_absolute_composite_support_correlation"
-        ],
-        reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
-        reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
-        composite_spec=composite_spec,
-        raise_on_failure=not args.pilot,
-    )
-    action_applicable_risk_gate = validate_action_applicable_risk_signal(
-        canonical_raw_rows,
-        expected_actions=sorted({o.action_id for o in outcomes}),
-        expected_families=[str(endpoint.family) for endpoint in endpoints],
-        minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
-        minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
-        raise_on_failure=not args.pilot,
-    )
+    # Sealed holdout (internal_test): these three functions compute
+    # cross-item/cross-family reliability statistics over the labels'
+    # *values* -- exactly the "aggregate" the seal must never touch before
+    # the candidate model/thresholds are frozen. Skip calling them entirely
+    # rather than merely suppressing or hiding their result.
+    if not args.sealed_holdout:
+        # ESConv-auxiliary's legal actions are frozen to {M0+R0, M0+RS}: no
+        # memory source is ever selected, so every memory-misuse risk
+        # dimension (applicable_risk_fields, pm_v2_model.py) is structurally
+        # a zero here, not a judge defect. Derived from the actual action set
+        # present, not hand-maintained, so it can never silently drift from
+        # applicable_risk_fields's own definition.
+        action_ids_present = sorted({o.action_id for o in outcomes})
+        inapplicable_risk_dimensions = dimensions_inapplicable_to_every_action(
+            action_ids_present
+        )
+        inapplicable_risk_dimensions_by_action = dimension_applicability_by_action(
+            action_ids_present
+        )
+        raw_family_global_gate = validate_raw_judge_family_health(
+            canonical_raw_rows,
+            expected_families=[str(endpoint.family) for endpoint in endpoints],
+            duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
+            maximum_absolute_dimension_correlation=labeling[
+                "maximum_absolute_dimension_correlation"
+            ],
+            composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
+            maximum_absolute_composite_support_correlation=labeling[
+                "maximum_absolute_composite_support_correlation"
+            ],
+            reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
+            reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+            inapplicable_risk_dimensions=inapplicable_risk_dimensions,
+            minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
+            composite_spec=composite_spec,
+            raise_on_failure=not args.pilot,
+        )
+        raw_family_action_gate = validate_raw_judge_family_subgroup_health(
+            canonical_raw_rows,
+            subgroup_key="action_id",
+            expected_subgroups=sorted({o.action_id for o in outcomes}),
+            expected_families=[str(endpoint.family) for endpoint in endpoints],
+            duplicate_exact_match_rate=labeling["duplicate_exact_match_rate"],
+            maximum_absolute_dimension_correlation=labeling[
+                "maximum_absolute_dimension_correlation"
+            ],
+            composite_support_exact_match_rate=labeling["composite_support_exact_match_rate"],
+            maximum_absolute_composite_support_correlation=labeling[
+                "maximum_absolute_composite_support_correlation"
+            ],
+            reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
+            reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+            composite_spec=composite_spec,
+            raise_on_failure=not args.pilot,
+        )
+        action_applicable_risk_gate = validate_action_applicable_risk_signal(
+            canonical_raw_rows,
+            expected_actions=sorted({o.action_id for o in outcomes}),
+            expected_families=[str(endpoint.family) for endpoint in endpoints],
+            minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
+            minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
+            raise_on_failure=not args.pilot,
+        )
 
     labels = []
     labels_path.write_text("", encoding="utf-8")
@@ -1228,6 +1370,55 @@ def main() -> None:
         labels.append(label)
         append_jsonl(labels_path, label.model_dump(mode="json"))
 
+    missing_after = sorted(expected_pairs - {(l.state_id, l.action_id) for l in labels})
+
+    if args.sealed_holdout:
+        if missing_after:
+            raise RuntimeError(
+                f"ESConv-auxiliary judging incomplete for split {split!r}: "
+                f"{len(missing_after)} missing pairs -- a sealed holdout run "
+                "must produce the complete label set before it may be sealed"
+            )
+        seal = seal_internal_label_bundle(
+            out_dir / "sealed_internal_bundle.json",
+            internal_labels_path=labels_path,
+        )
+        summary = {
+            "status": "COMPLETE",
+            "pilot_mode": False,
+            "sealed_holdout": True,
+            "reportability_status": "SEALED_HOLDOUT_NOT_YET_EVALUATED",
+            "split": split,
+            "expected_judge_pairs": len(expected_pairs),
+            "completed_judge_pairs": len(labels),
+            "run_manifest_sha256": manifest["manifest_sha256"],
+            "physical_attempt_ledger_sha256": sha256_file(ledger_path),
+            "sealed_internal_bundle_path": str(out_dir / "sealed_internal_bundle.json"),
+            "sealed_internal_bundle_seal_sha256": seal["seal_sha256"],
+            "carry_forward_source_directory": carry_forward["carry_forward_source_directory"],
+            "carry_forward_source_ledger_sha256": carry_forward[
+                "carry_forward_source_ledger_sha256"
+            ],
+            "carried_forward_physical_calls": len(carry_forward["carried_call_keys"]),
+            "new_physical_calls": actual_new_physical_attempts,
+            "isolated_failures": isolated_failures,
+            "transport_retry_summary": retry_ledger_summary(
+                ledger, [str(row["physical_call_key"]) for row in cost_rows]
+            ),
+            "cost_estimate": cost_estimate,
+            "budget_gate": budget_gate,
+            "note": (
+                "Sealed holdout scope: no quality_gate, raw_family_quality_"
+                "gate, or any other cross-label aggregate was computed. Only "
+                "completeness, row/state counts, and content hashes are "
+                "reported here. The candidate model and thresholds must be "
+                "frozen before this seal is ever opened for evaluation."
+            ),
+        }
+        write_json(out_dir / "summary.json", summary)
+        print(summary)
+        return
+
     pilot_config = dict(judging_config.get("compatibility_pilot") or {})
     quality_gate = (
         validate_judge_table(
@@ -1259,19 +1450,26 @@ def main() -> None:
             ],
             reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
             reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
+            inapplicable_risk_dimensions=inapplicable_risk_dimensions,
+            inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
+            minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
             composite_spec=composite_spec,
             raise_on_failure=not args.pilot,
         )
         if labels
         else {"status": "FAIL", "reason": "no completed labels"}
     )
-    missing_after = sorted(expected_pairs - {(l.state_id, l.action_id) for l in labels})
     raw_family_quality_status = (
         "PASS"
         if raw_family_global_gate.get("status") == "PASS"
         and raw_family_action_gate.get("status") == "PASS"
         and action_applicable_risk_gate.get("status") == "PASS"
         else "FAIL"
+    )
+    measurement_contract = measurement_contract_record(
+        action_ids_present=action_ids_present,
+        inapplicable_risk_dimensions=inapplicable_risk_dimensions,
+        inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
     )
     summary = {
         "status": "COMPLETE" if not missing_after else "INCOMPLETE",
@@ -1308,6 +1506,10 @@ def main() -> None:
             "action_applicable_risk_signal": action_applicable_risk_gate,
         },
         "quality_gate": quality_gate,
+        "dimension_applicability_contract_sha256": dimension_applicability_contract_sha256(
+            action_ids_present
+        ),
+        "measurement_contract": measurement_contract,
         "cost_estimate": cost_estimate,
         "budget_gate": budget_gate,
     }
@@ -1322,6 +1524,42 @@ def main() -> None:
     # raise_on_failure=True, so reaching this point means reportability_status
     # is necessarily REPORTABLE -- a FAIL would have raised inside the gate
     # call itself, not fallen through to here.
+
+    # Formal attestation, written only once the run is genuinely complete
+    # (unreachable above if missing_after was non-empty). Binds the
+    # measurement contract -- applicability + conservative-utility protocol,
+    # fixed lambda, per-dimension clamp ranges, applicable risk dimensions,
+    # and the exact code hashes that define them -- alongside the label
+    # artifact itself, so a downstream consumer (the dual-domain preflight)
+    # can require an exact match before calibration/internal-test judging is
+    # allowed to proceed.
+    create_artifact_attestation(
+        out_dir / "attestation.json",
+        stage=stage,
+        inputs={
+            "experiment_config": args.config,
+            "pm_v1_5_config": args.pm_v1_5_config,
+            "states": states_path,
+            "generation_outcomes": outcomes_path,
+            "generation_summary": generation_summary_path,
+        },
+        outputs={
+            "summary": (out_dir / "summary.json", False),
+            "labels": (labels_path, True),
+            "raw_results": (raw_path, True),
+            "call_ledger": (ledger_path, True),
+        },
+        parameters={
+            "status": summary["status"],
+            "reportability_status": summary["reportability_status"],
+            "pilot_mode": bool(args.pilot),
+            "scope": scope,
+            "split": split,
+            "quality_gate_status": quality_gate.get("status"),
+            "raw_family_quality_gate_status": raw_family_quality_status,
+            "measurement_contract": measurement_contract,
+        },
+    )
 
 
 if __name__ == "__main__":

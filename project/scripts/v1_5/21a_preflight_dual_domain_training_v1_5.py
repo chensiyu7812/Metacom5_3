@@ -12,7 +12,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from metacom_pm.artifacts import create_artifact_attestation
+from metacom_pm.artifacts import create_artifact_attestation, require_artifact_attestation
 from metacom_pm.config import load_config
 from metacom_pm.internal_holdout import seal_internal_label_bundle
 from metacom_pm.io import (
@@ -49,6 +49,61 @@ def _require_internal_seal_matches_states(seal: dict, states, *, domain: str) ->
         raise RuntimeError(f"{domain} internal seal action-matrix row count mismatch")
     if seal.get("state_universe_sha256") != _state_universe_sha256(internal_states):
         raise RuntimeError(f"{domain} internal seal state universe mismatch")
+
+
+def _require_frozen_esconv_auxiliary_measurement_contract(
+    attestation_path: Path, *, expected_train_labels_path: Path
+) -> dict:
+    """Fail closed unless the frozen ESConv-auxiliary measurement contract holds.
+
+    Requires that the train-split judging attestation
+    (``13c_judge_esconv_auxiliary_v1_5.py``'s ``measurement_contract_record``)
+    exists, attests exactly the train labels this preflight is about to
+    consume, and that the code defining applicability / conservative-utility /
+    per-dimension clamp ranges has not changed since that contract was
+    frozen. Per the explicit freeze rule, none of these may be tuned from
+    calibration/internal-test results once train-split judging attests them.
+    """
+
+    require_artifact_attestation(
+        attestation_path,
+        required_stage="esconv_auxiliary_judging_full_train",
+        required_output_paths={"labels": expected_train_labels_path},
+    )
+    attestation = read_json(attestation_path)
+    measurement_contract = (attestation.get("parameters") or {}).get(
+        "measurement_contract"
+    )
+    if not isinstance(measurement_contract, dict) or not measurement_contract:
+        raise RuntimeError(
+            "ESConv-auxiliary train judging attestation lacks a measurement_contract"
+        )
+    if measurement_contract.get("conservative_utility_lambda") != 1.0:
+        raise RuntimeError(
+            "frozen measurement contract lambda is not the fixed 1.0 constant"
+        )
+    if measurement_contract.get("conservative_utility_lambda_is_fixed_never_tuned") is not True:
+        raise RuntimeError(
+            "frozen measurement contract does not declare lambda as fixed/never-tuned"
+        )
+    if measurement_contract.get("response_dimension_clamp_range") != [1.0, 5.0]:
+        raise RuntimeError("frozen measurement contract response clamp range mismatch")
+    if measurement_contract.get("risk_dimension_clamp_range") != [0.0, 3.0]:
+        raise RuntimeError("frozen measurement contract risk clamp range mismatch")
+    code_manifest = measurement_contract.get("code_manifest")
+    if not isinstance(code_manifest, dict) or not code_manifest:
+        raise RuntimeError("frozen measurement contract lacks a code_manifest")
+    drifted = [
+        name
+        for name, record in sorted(code_manifest.items())
+        if sha256_file(ROOT / str(record["relative_path"])) != record["sha256"]
+    ]
+    if drifted:
+        raise RuntimeError(
+            "code defining the frozen measurement contract has changed since "
+            f"the ESConv-auxiliary train judging attestation: {drifted}"
+        )
+    return measurement_contract
 
 
 def _require_auxiliary_build_report(report_path: Path, auxiliary_dir: Path) -> dict:
@@ -94,6 +149,20 @@ def main() -> None:
     parser.add_argument("--auxiliary-calibration-labels", type=Path, required=True)
     parser.add_argument("--auxiliary-internal-test-labels", type=Path, required=True)
     parser.add_argument(
+        "--esconv-auxiliary-judging-train-attestation",
+        type=Path,
+        required=True,
+        help=(
+            "attestation.json written by 13c_judge_esconv_auxiliary_v1_5.py "
+            "for the full-scope train split. Binds and re-verifies the frozen "
+            "applicability + conservative-utility measurement contract "
+            "(dimension applicability, lambda=1.0, per-dimension clamp "
+            "ranges, applicable risk dimensions, code hashes) before "
+            "dual-domain training may proceed; fails closed if missing or if "
+            "the contract-defining code has drifted since the freeze."
+        ),
+    )
+    parser.add_argument(
         "--out-dir",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_dual_domain_training_preflight",
@@ -106,6 +175,10 @@ def main() -> None:
     auxiliary_build_report_path = args.auxiliary_dir / "build_report.json"
     auxiliary_build_report = _require_auxiliary_build_report(
         auxiliary_build_report_path, args.auxiliary_dir
+    )
+    frozen_measurement_contract = _require_frozen_esconv_auxiliary_measurement_contract(
+        args.esconv_auxiliary_judging_train_attestation,
+        expected_train_labels_path=args.auxiliary_train_labels,
     )
     longitudinal_states = load_states(args.longitudinal_states)
     auxiliary_state_paths = {
@@ -171,6 +244,7 @@ def main() -> None:
             "esconv_auxiliary": auxiliary_seal,
         },
         "internal_label_values_deserialized": False,
+        "frozen_esconv_auxiliary_measurement_contract": frozen_measurement_contract,
     }
     write_json(report_path, report)
     attestation_path = args.out_dir / "artifact_attestation.json"
@@ -185,6 +259,9 @@ def main() -> None:
             ),
             "longitudinal_internal_test_labels": args.longitudinal_internal_test_labels,
             "auxiliary_build_report": auxiliary_build_report_path,
+            "esconv_auxiliary_judging_train_attestation": (
+                args.esconv_auxiliary_judging_train_attestation
+            ),
             **{
                 f"auxiliary_{split}_states": path
                 for split, path in auxiliary_state_paths.items()
@@ -208,6 +285,7 @@ def main() -> None:
                 "top_level_domain_weight"
             ],
             "internal_label_values_deserialized": False,
+            "frozen_esconv_auxiliary_measurement_contract": frozen_measurement_contract,
         },
     )
     print(
