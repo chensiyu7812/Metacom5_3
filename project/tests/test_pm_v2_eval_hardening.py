@@ -5,6 +5,7 @@ import importlib.util
 from pathlib import Path
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
 from metacom_pm.api import (
@@ -69,7 +70,9 @@ from metacom_pm.pm_v2_judging import (
     composite_weights_hash,
     dimension_applicability_by_action,
     dimension_applicability_contract_sha256,
+    dimension_health,
     dimensions_inapplicable_to_every_action,
+    judge_family_directional_preference_report,
     judge_one,
     labeling_settings_from_config,
     prompt_contract_hash,
@@ -512,6 +515,203 @@ def test_judge_table_ignores_declared_inapplicable_dimension_for_low_mad_coverag
         with_contract["dimension_low_mad_coverage"]["response.emotional_support"],
         float,
     )
+
+
+def test_dimension_health_pairwise_applicability_restricts_before_informative_filter():
+    # action A makes "overuse" inapplicable; its own (positively-correlated)
+    # noise would otherwise dilute the real, cleanly anti-correlated signal
+    # that action B alone provides between "overuse" and "omission".
+    field_names = ("overuse", "omission")
+    action_ids = ["A"] * 10 + ["B"] * 10
+    a_overuse = [1.0, 0.0] * 5
+    a_omission = [1.0, 0.0] * 5
+    b_overuse = [1.0, 0.0] * 5
+    b_omission = [0.0, 1.0] * 5
+    matrix = np.asarray(
+        list(zip(a_overuse + b_overuse, a_omission + b_omission)), dtype=float
+    )
+    inapplicable_by_action = {"A": frozenset({"risk.overuse"}), "B": frozenset()}
+
+    (
+        _dup_without,
+        corr_without,
+        _const_without,
+        _prev_without,
+        mutual_without,
+    ) = dimension_health(
+        matrix,
+        field_names,
+        prefix="risk",
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=0.95,
+        minimum_nonzero_observations=5,
+        split_correlation_by_sign=True,
+    )
+    assert corr_without == []
+    assert mutual_without == []
+
+    (
+        _dup_with,
+        corr_with,
+        _const_with,
+        _prev_with,
+        mutual_with,
+    ) = dimension_health(
+        matrix,
+        field_names,
+        prefix="risk",
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=0.95,
+        minimum_nonzero_observations=5,
+        action_ids=action_ids,
+        inapplicable_risk_dimensions_by_action=inapplicable_by_action,
+        split_correlation_by_sign=True,
+    )
+    assert corr_with == []
+    assert len(mutual_with) == 1
+    pair = mutual_with[0]
+    assert pair["pairwise_applicable_rows"] == 10
+    assert pair["informative_correlation"] == pytest.approx(-1.0)
+
+
+def test_dimension_health_splits_correlation_by_sign():
+    field_names = ("a", "b")
+    positive_matrix = np.asarray([[1.0, 1.0], [0.0, 0.0]] * 6, dtype=float)
+    negative_matrix = np.asarray([[1.0, 0.0], [0.0, 1.0]] * 6, dtype=float)
+
+    (_dup, positive_high, _const, _prev, positive_mutual) = dimension_health(
+        positive_matrix,
+        field_names,
+        prefix="risk",
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=0.95,
+        split_correlation_by_sign=True,
+    )
+    assert len(positive_high) == 1
+    assert positive_mutual == []
+
+    (_dup2, negative_high, _const2, _prev2, negative_mutual) = dimension_health(
+        negative_matrix,
+        field_names,
+        prefix="risk",
+        duplicate_exact_match_rate=1.1,
+        maximum_absolute_dimension_correlation=0.95,
+        split_correlation_by_sign=True,
+    )
+    assert negative_high == []
+    assert len(negative_mutual) == 1
+
+    # split_correlation_by_sign=False (the default) preserves the exact
+    # unsplit prior behavior: both directions gate as high_correlation_pairs.
+    (_dup3, negative_unsplit, _const3, _prev3, negative_mutual_unsplit) = (
+        dimension_health(
+            negative_matrix,
+            field_names,
+            prefix="risk",
+            duplicate_exact_match_rate=1.1,
+            maximum_absolute_dimension_correlation=0.95,
+        )
+    )
+    assert len(negative_unsplit) == 1
+    assert negative_mutual_unsplit == []
+
+
+def test_judge_family_directional_preference_report_concordance_and_contingency():
+    dims = list(ResponseDimensions.model_fields)
+    risk_dims = list(RiskDimensions.model_fields)
+
+    def row(state_id, action_id, family, support_value):
+        return {
+            "state_id": state_id,
+            "action_id": action_id,
+            "judge_family": family,
+            "response": {
+                **{name: support_value for name in dims},
+                "rationale": "r",
+            },
+            "risk": {**{name: 0.0 for name in risk_dims}, "rationale": "r"},
+        }
+
+    rows = []
+    # s1: both families score M0+RS higher -> concordant.
+    for family in ("fam_a", "fam_b"):
+        rows.append(row("s1", "M0+R0", family, 3.0))
+        rows.append(row("s1", "M0+RS", family, 4.0))
+    # s2/s3: fam_a prefers M0+R0, fam_b prefers M0+RS -> discordant.
+    for state_id in ("s2", "s3"):
+        rows.append(row(state_id, "M0+R0", "fam_a", 5.0))
+        rows.append(row(state_id, "M0+RS", "fam_a", 1.0))
+        rows.append(row(state_id, "M0+R0", "fam_b", 1.0))
+        rows.append(row(state_id, "M0+RS", "fam_b", 5.0))
+
+    report = judge_family_directional_preference_report(
+        rows,
+        action_a="M0+R0",
+        action_b="M0+RS",
+        expected_families=["fam_a", "fam_b"],
+        dialogue_by_state={"s1": "d1", "s2": "d2", "s3": "d3"},
+        risk_weight=0.25,
+        bootstrap_replicates=200,
+        bootstrap_seed=3,
+    )
+    assert report["diagnostic_only"] is True
+    assert report["never_gates"] is True
+    assert report["n_comparable_states"] == 3
+    assert report["concordant_states"] == 1
+    assert report["discordant_states"] == 2
+    assert report["tie_involved_states"] == 0
+    assert report["concordance_rate"] == pytest.approx(1.0 / 3.0)
+    assert report["directional_contingency_table"]["M0+R0"]["M0+RS"] == 2
+    assert report["directional_contingency_table"]["M0+RS"]["M0+RS"] == 1
+    bootstrap = report["dialogue_cluster_bootstrap"]
+    assert bootstrap["n_groups"] == 3
+    assert bootstrap["concordance_rate_ci_lower"] is not None
+    assert bootstrap["concordance_rate_ci_upper"] is not None
+    assert 0.0 <= bootstrap["concordance_rate_ci_lower"] <= bootstrap[
+        "concordance_rate_ci_upper"
+    ] <= 1.0
+
+
+def test_judge_family_directional_preference_report_ties_excluded_from_decisive_rates():
+    dims = list(ResponseDimensions.model_fields)
+    risk_dims = list(RiskDimensions.model_fields)
+
+    def row(state_id, action_id, family, support_value):
+        return {
+            "state_id": state_id,
+            "action_id": action_id,
+            "judge_family": family,
+            "response": {
+                **{name: support_value for name in dims},
+                "rationale": "r",
+            },
+            "risk": {**{name: 0.0 for name in risk_dims}, "rationale": "r"},
+        }
+
+    rows = []
+    # fam_a ties on every state (identical scores for both actions).
+    for state_id in ("s1", "s2", "s3"):
+        rows.append(row(state_id, "M0+R0", "fam_a", 3.0))
+        rows.append(row(state_id, "M0+RS", "fam_a", 3.0))
+        rows.append(row(state_id, "M0+R0", "fam_b", 5.0))
+        rows.append(row(state_id, "M0+RS", "fam_b", 1.0))
+
+    report = judge_family_directional_preference_report(
+        rows,
+        action_a="M0+R0",
+        action_b="M0+RS",
+        expected_families=["fam_a", "fam_b"],
+        dialogue_by_state={"s1": "d1", "s2": "d2", "s3": "d3"},
+        risk_weight=0.25,
+        bootstrap_replicates=200,
+        bootstrap_seed=1,
+    )
+    assert report["tie_involved_states"] == 3
+    assert report["concordant_states"] == 0
+    assert report["discordant_states"] == 0
+    assert report["concordance_rate"] is None
+    assert report["discordance_rate"] is None
+    assert report["tie_rate"] == 1.0
 
 
 def test_success_ledger_reconciles_generation_turn_after_append_crash(tmp_path):

@@ -51,6 +51,42 @@ def _require_internal_seal_matches_states(seal: dict, states, *, domain: str) ->
         raise RuntimeError(f"{domain} internal seal state universe mismatch")
 
 
+ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED = (
+    "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED"
+)
+
+
+def _require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+    contract_path: Path,
+) -> None:
+    """Fail closed if the ESConv-auxiliary absolute-label instrument is frozen NOT_SUPPORTED.
+
+    A zero-API re-aggregation of the real, already-recovered ESConv-auxiliary
+    train-split labels found the applicable response dimensions and the
+    cross-judge-family routing preference both remain unreliable even after
+    every measurement-contract fix (applicability masking, MAD-adjusted
+    conservative utility, sparse-zero-aware and pairwise-action-applicable
+    correlation detection). That verdict is frozen at ``contract_path``
+    (data/pm_v1_5_contracts/esconv_auxiliary_absolute_instrument_freeze_v1.
+    json, git-tracked). Absence of the file is not itself an error -- it
+    means no freeze has been recorded, not that the instrument is fine --
+    but if the file is present and carries this status, dual-domain training
+    must refuse to consume the existing absolute (per-dimension) ESConv-
+    auxiliary labels; do not silently proceed.
+    """
+
+    if not contract_path.is_file():
+        return
+    contract = read_json(contract_path)
+    if contract.get("status") == ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED:
+        raise RuntimeError(
+            "ESConv-auxiliary absolute-label instrument is frozen "
+            f"{ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED} "
+            f"({contract_path}); refusing to use the existing absolute labels "
+            "for dual-domain training"
+        )
+
+
 def _require_frozen_esconv_auxiliary_measurement_contract(
     attestation_path: Path, *, expected_train_labels_path: Path
 ) -> dict:
@@ -163,11 +199,29 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--esconv-auxiliary-absolute-instrument-freeze-contract",
+        type=Path,
+        default=ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "esconv_auxiliary_absolute_instrument_freeze_v1.json",
+        help=(
+            "Git-tracked contract recording whether the ESConv-auxiliary "
+            "absolute (per-dimension) label instrument has been frozen "
+            "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED. "
+            "Missing is not an error; present with that status fails closed."
+        ),
+    )
+    parser.add_argument(
         "--out-dir",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_dual_domain_training_preflight",
     )
     args = parser.parse_args()
+
+    _require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+        args.esconv_auxiliary_absolute_instrument_freeze_contract
+    )
 
     config = load_config(args.pm_v1_5_config)
     if config.get("version") != "pm-v1.5":

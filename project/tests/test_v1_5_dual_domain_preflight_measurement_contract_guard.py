@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 from metacom_pm.artifacts import create_artifact_attestation
-from metacom_pm.io import sha256_file, write_jsonl
+from metacom_pm.io import sha256_file, write_json, write_jsonl
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts" / "v1_5" / "21a_preflight_dual_domain_training_v1_5.py"
@@ -173,4 +173,53 @@ def test_rejects_code_drift_since_freeze(tmp_path):
     with pytest.raises(RuntimeError, match="changed since"):
         module._require_frozen_esconv_auxiliary_measurement_contract(
             attestation_path, expected_train_labels_path=labels_path
+        )
+
+
+def test_absolute_instrument_freeze_guard_allows_a_missing_contract(tmp_path):
+    module = _load_preflight_module()
+    missing_path = tmp_path / "no_such_contract.json"
+    assert not missing_path.exists()
+    # Absence is not itself an error -- it means no freeze has been recorded.
+    module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+        missing_path
+    )
+
+
+def test_absolute_instrument_freeze_guard_passes_when_status_is_not_the_freeze_value(
+    tmp_path,
+):
+    module = _load_preflight_module()
+    contract_path = tmp_path / "contract.json"
+    write_json(contract_path, {"status": "SOME_OTHER_STATUS"})
+    module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+        contract_path
+    )
+
+
+def test_absolute_instrument_freeze_guard_fails_closed_on_not_supported(tmp_path):
+    module = _load_preflight_module()
+    contract_path = tmp_path / "contract.json"
+    write_json(
+        contract_path,
+        {"status": "ESCONV_AUXILIARY_ABSOLUTE_LABEL_INSTRUMENT_NOT_SUPPORTED"},
+    )
+    with pytest.raises(RuntimeError, match="NOT_SUPPORTED"):
+        module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+            contract_path
+        )
+
+
+def test_absolute_instrument_freeze_guard_matches_the_real_frozen_contract(tmp_path):
+    module = _load_preflight_module()
+    real_contract_path = (
+        ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "esconv_auxiliary_absolute_instrument_freeze_v1.json"
+    )
+    assert real_contract_path.is_file()
+    with pytest.raises(RuntimeError, match="NOT_SUPPORTED"):
+        module._require_esconv_auxiliary_absolute_instrument_not_frozen_unsupported(
+            real_contract_path
         )

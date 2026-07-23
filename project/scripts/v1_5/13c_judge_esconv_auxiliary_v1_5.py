@@ -139,6 +139,7 @@ from metacom_pm.pm_v2_judging import (
     dimension_applicability_by_action,
     dimension_applicability_contract_sha256,
     dimensions_inapplicable_to_every_action,
+    judge_family_directional_preference_report,
     labeling_settings_from_config,
     prompt_contract_hash,
     validate_action_applicable_risk_signal,
@@ -1267,6 +1268,21 @@ def main() -> None:
         }
         for row in raw_by_key.values()
     ]
+    # Unlike canonical_raw_rows (deliberately state_id-free, matching what
+    # validate_raw_judge_family_health/validate_raw_judge_family_subgroup_
+    # health/validate_action_applicable_risk_signal consume), the directional
+    # preference diagnostic below needs state_id to pair each family's M0+R0
+    # vs M0+RS judgment for the *same* state.
+    preference_rows = [
+        {
+            "state_id": state_id,
+            "action_id": action_id,
+            "judge_family": family,
+            "response": row["response"],
+            "risk": row["risk"],
+        }
+        for (state_id, action_id, family), row in raw_by_key.items()
+    ]
     # Sealed holdout (internal_test): these three functions compute
     # cross-item/cross-family reliability statistics over the labels'
     # *values* -- exactly the "aggregate" the seal must never touch before
@@ -1300,7 +1316,9 @@ def main() -> None:
             reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
             reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
             inapplicable_risk_dimensions=inapplicable_risk_dimensions,
+            inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
             minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
+            split_correlation_by_sign=True,
             composite_spec=composite_spec,
             raise_on_failure=not args.pilot,
         )
@@ -1329,6 +1347,24 @@ def main() -> None:
             minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
             minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
             raise_on_failure=not args.pilot,
+        )
+        # ESConv-auxiliary's legal action set is frozen to exactly {M0+R0,
+        # M0+RS}: whether independent judge families agree on which one is
+        # *better* per state (not just per-dimension score agreement) is a
+        # distinct, diagnostic-only reliability question -- never a hard gate.
+        if len(action_ids_present) != 2:
+            raise RuntimeError(
+                "directional preference diagnostic requires exactly two "
+                f"legal actions, got {action_ids_present}"
+            )
+        directional_preference = judge_family_directional_preference_report(
+            preference_rows,
+            action_a=action_ids_present[0],
+            action_b=action_ids_present[1],
+            expected_families=[str(endpoint.family) for endpoint in endpoints],
+            dialogue_by_state={state.state_id: state.user_id for state in states},
+            risk_weight=float(pm_v1_5_config["selection"]["risk_weight"]),
+            bootstrap_seed=0,
         )
 
     labels = []
@@ -1453,6 +1489,7 @@ def main() -> None:
             inapplicable_risk_dimensions=inapplicable_risk_dimensions,
             inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
             minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
+            split_correlation_by_sign=True,
             composite_spec=composite_spec,
             raise_on_failure=not args.pilot,
         )
@@ -1506,6 +1543,7 @@ def main() -> None:
             "action_applicable_risk_signal": action_applicable_risk_gate,
         },
         "quality_gate": quality_gate,
+        "judge_family_directional_preference": directional_preference,
         "dimension_applicability_contract_sha256": dimension_applicability_contract_sha256(
             action_ids_present
         ),

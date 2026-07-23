@@ -510,11 +510,15 @@ def dimension_health(
     duplicate_exact_match_rate: float,
     maximum_absolute_dimension_correlation: float,
     minimum_nonzero_observations: int = 0,
+    action_ids: Sequence[str] | None = None,
+    inapplicable_risk_dimensions_by_action: Mapping[str, frozenset[str]] | None = None,
+    split_correlation_by_sign: bool = False,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
     list[str],
     dict[str, Any],
+    list[dict[str, Any]],
 ]:
     """minimum_nonzero_observations (default 0, preserving exact prior
     behavior for every existing caller): two sparse, mostly-zero dimensions
@@ -529,13 +533,56 @@ def dimension_health(
     informative-only ones ever drive the duplicate/high-correlation verdict.
     Below the row-count floor, the pair is reported as insufficient evidence,
     never silently treated as either duplicate or independent.
+
+    action_ids/inapplicable_risk_dimensions_by_action (both default None,
+    preserving exact prior behavior when omitted): a risk dimension can be
+    structurally inapplicable to only *some* actions (e.g. strategy_overuse
+    only applies to RS actions). A row where either side of a pair is
+    inapplicable to that row's own action carries no evidence about whether
+    the *pair* is duplicated, so it is excluded before the nonzero
+    ("informative") filter above is even applied -- "informative" therefore
+    means "pairwise-applicable and nonzero on at least one side", not merely
+    "nonzero", whenever these are provided.
+
+    split_correlation_by_sign (default False, preserving exact prior
+    behavior): a strong *positive* correlation between two dimensions is
+    evidence one is a copy of the other. A strong *negative* correlation is
+    evidence of near-mutual-exclusivity between two independently-scored
+    constructs (e.g. an action can be "overused" or "omitted" but rarely
+    both) -- a different phenomenon, not a duplicate-judge defect. When True,
+    only positive high-correlation pairs are returned as high_correlation_
+    pairs (gate-eligible); negative ones are returned separately as
+    mutual_exclusivity_diagnostic_pairs (always reported, never gates).
     """
 
     duplicate_pairs: list[dict[str, Any]] = []
     high_correlation_pairs: list[dict[str, Any]] = []
+    mutual_exclusivity_diagnostic_pairs: list[dict[str, Any]] = []
     for left in range(len(field_names)):
         for right in range(left + 1, len(field_names)):
-            informative = (matrix[:, left] != 0.0) | (matrix[:, right] != 0.0)
+            left_name = f"{prefix}.{field_names[left]}"
+            right_name = f"{prefix}.{field_names[right]}"
+            if action_ids is not None and inapplicable_risk_dimensions_by_action is not None:
+                pairwise_applicable = np.asarray(
+                    [
+                        left_name
+                        not in inapplicable_risk_dimensions_by_action.get(
+                            str(action_id), frozenset()
+                        )
+                        and right_name
+                        not in inapplicable_risk_dimensions_by_action.get(
+                            str(action_id), frozenset()
+                        )
+                        for action_id in action_ids
+                    ],
+                    dtype=bool,
+                )
+            else:
+                pairwise_applicable = np.ones(matrix.shape[0], dtype=bool)
+            n_pairwise_applicable = int(np.sum(pairwise_applicable))
+            informative = pairwise_applicable & (
+                (matrix[:, left] != 0.0) | (matrix[:, right] != 0.0)
+            )
             n_informative = int(np.sum(informative))
             insufficient_evidence = n_informative < minimum_nonzero_observations
             overall_exact_rate = float(np.mean(matrix[:, left] == matrix[:, right]))
@@ -566,13 +613,14 @@ def dimension_health(
                         np.corrcoef(left_info, right_info)[0, 1]
                     )
             pair = {
-                "left": f"{prefix}.{field_names[left]}",
-                "right": f"{prefix}.{field_names[right]}",
+                "left": left_name,
+                "right": right_name,
                 "overall_exact_match_rate": overall_exact_rate,
                 "informative_exact_match_rate": informative_exact_rate,
                 "overall_correlation": overall_correlation,
                 "informative_correlation": informative_correlation,
                 "informative_rows": n_informative,
+                "pairwise_applicable_rows": n_pairwise_applicable,
                 "insufficient_evidence": insufficient_evidence,
                 # Legacy keys, computed over the full matrix exactly as
                 # before, kept for any reader that predates the
@@ -599,12 +647,14 @@ def dimension_health(
                 if minimum_nonzero_observations > 0
                 else overall_correlation
             )
-            if (
-                not insufficient_evidence
-                and verdict_correlation is not None
-                and abs(verdict_correlation) >= maximum_absolute_dimension_correlation
-            ):
-                high_correlation_pairs.append(pair)
+            if not insufficient_evidence and verdict_correlation is not None:
+                if split_correlation_by_sign:
+                    if verdict_correlation >= maximum_absolute_dimension_correlation:
+                        high_correlation_pairs.append(pair)
+                    elif verdict_correlation <= -maximum_absolute_dimension_correlation:
+                        mutual_exclusivity_diagnostic_pairs.append(pair)
+                elif abs(verdict_correlation) >= maximum_absolute_dimension_correlation:
+                    high_correlation_pairs.append(pair)
     constants = [
         f"{prefix}.{field_names[index]}"
         for index in range(len(field_names))
@@ -619,7 +669,13 @@ def dimension_health(
         }
         for index in range(len(field_names))
     }
-    return duplicate_pairs, high_correlation_pairs, constants, prevalence
+    return (
+        duplicate_pairs,
+        high_correlation_pairs,
+        constants,
+        prevalence,
+        mutual_exclusivity_diagnostic_pairs,
+    )
 
 
 def validate_raw_judge_family_health(
@@ -634,7 +690,9 @@ def validate_raw_judge_family_health(
     reject_constant_risk_dimensions: bool = True,
     check_risk_dimension_health: bool = True,
     inapplicable_risk_dimensions: frozenset[str] = frozenset(),
+    inapplicable_risk_dimensions_by_action: Mapping[str, frozenset[str]] | None = None,
     minimum_nonzero_observations: int = 0,
+    split_correlation_by_sign: bool = False,
     composite_spec: CompositeSpec | None = None,
     raise_on_failure: bool = True,
 ) -> dict[str, Any]:
@@ -644,13 +702,19 @@ def validate_raw_judge_family_health(
     constant score table.  Every configured family therefore has to pass the
     same construct-independence checks on its own raw structured outputs.
     Canonical input rows contain ``judge_family``, ``response`` and ``risk``;
-    the latter two are validated against the strict judge schemas.
+    the latter two are validated against the strict judge schemas. An
+    ``action_id`` is used, when present, to restrict pairwise risk-dimension
+    comparisons to rows where the row's own action makes both dimensions
+    applicable (see dimension_health); rows without one are treated as
+    applicable to every pair, matching prior behavior exactly.
     """
 
     expected = {str(value) for value in expected_families}
     if not expected:
         raise ValueError("raw judge-family health requires expected families")
-    grouped: dict[str, list[tuple[ResponseJudgeOutput, RiskJudgeOutput]]] = defaultdict(list)
+    grouped: dict[str, list[tuple[ResponseJudgeOutput, RiskJudgeOutput, str]]] = defaultdict(
+        list
+    )
     for index, row in enumerate(rows):
         family = str(row.get("judge_family") or "")
         if not family:
@@ -661,6 +725,7 @@ def validate_raw_judge_family_health(
             (
                 ResponseJudgeOutput.model_validate(row.get("response")),
                 RiskJudgeOutput.model_validate(row.get("risk")),
+                str(row.get("action_id") or ""),
             )
         )
     missing_families = sorted(expected - set(grouped))
@@ -670,17 +735,18 @@ def validate_raw_judge_family_health(
     family_reports: dict[str, dict[str, Any]] = {}
     for family in sorted(grouped):
         outputs = grouped[family]
+        action_ids = [action_id for _, _, action_id in outputs]
         response_matrix = np.asarray(
             [
                 [float(getattr(response, name)) for name in response_fields]
-                for response, _ in outputs
+                for response, _, _ in outputs
             ],
             dtype=float,
         )
         risk_matrix = np.asarray(
             [
                 [float(getattr(risk, name)) for name in risk_fields]
-                for _, risk in outputs
+                for _, risk, _ in outputs
             ],
             dtype=float,
         )
@@ -689,6 +755,7 @@ def validate_raw_judge_family_health(
             response_correlations,
             response_constants,
             response_prevalence,
+            _response_mutual_exclusivity,
         ) = dimension_health(
             response_matrix,
             response_fields,
@@ -698,12 +765,14 @@ def validate_raw_judge_family_health(
                 maximum_absolute_dimension_correlation
             ),
             minimum_nonzero_observations=minimum_nonzero_observations,
+            split_correlation_by_sign=split_correlation_by_sign,
         )
         (
             risk_duplicates,
             risk_correlations,
             risk_constants,
             risk_prevalence,
+            risk_mutual_exclusivity,
         ) = dimension_health(
             risk_matrix,
             risk_fields,
@@ -713,6 +782,9 @@ def validate_raw_judge_family_health(
                 maximum_absolute_dimension_correlation
             ),
             minimum_nonzero_observations=minimum_nonzero_observations,
+            action_ids=action_ids,
+            inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
+            split_correlation_by_sign=split_correlation_by_sign,
         )
         composite_values = np.asarray(
             [
@@ -724,7 +796,7 @@ def validate_raw_judge_family_health(
                         }
                     )
                 )
-                for response, _ in outputs
+                for response, _, _ in outputs
             ],
             dtype=float,
         )
@@ -753,6 +825,10 @@ def validate_raw_judge_family_health(
         high_correlation_pairs = [
             *response_correlations,
             *(risk_correlations if check_risk_dimension_health else []),
+        ]
+        mutual_exclusivity_diagnostic_pairs = [
+            *_response_mutual_exclusivity,
+            *(risk_mutual_exclusivity if check_risk_dimension_health else []),
         ]
         constant_dimensions = [
             *(response_constants if reject_constant_response_dimensions else []),
@@ -789,6 +865,7 @@ def validate_raw_judge_family_health(
             "n": len(outputs),
             "duplicate_dimension_pairs": duplicate_pairs,
             "high_correlation_dimension_pairs": high_correlation_pairs,
+            "mutual_exclusivity_diagnostic_pairs": mutual_exclusivity_diagnostic_pairs,
             "constant_dimensions": constant_dimensions,
             "response_dimension_prevalence": response_prevalence,
             "risk_dimension_prevalence": risk_prevalence,
@@ -829,6 +906,13 @@ def validate_raw_judge_family_health(
             "reject_constant_risk_dimensions": reject_constant_risk_dimensions,
             "check_risk_dimension_health": check_risk_dimension_health,
             "inapplicable_risk_dimensions": sorted(inapplicable_risk_dimensions),
+            "inapplicable_risk_dimensions_by_action": {
+                action_id: sorted(dims)
+                for action_id, dims in sorted(
+                    (inapplicable_risk_dimensions_by_action or {}).items()
+                )
+            },
+            "split_correlation_by_sign": split_correlation_by_sign,
         },
         "dimension_applicability_contract_protocol": (
             DIMENSION_APPLICABILITY_CONTRACT_PROTOCOL
@@ -1042,6 +1126,7 @@ def validate_judge_table(
     inapplicable_risk_dimensions: frozenset[str] = frozenset(),
     inapplicable_risk_dimensions_by_action: Mapping[str, frozenset[str]] | None = None,
     minimum_nonzero_observations: int = 0,
+    split_correlation_by_sign: bool = False,
     composite_spec: CompositeSpec | None = None,
     raise_on_failure: bool = True,
 ) -> dict[str, Any]:
@@ -1069,11 +1154,13 @@ def validate_judge_table(
         [[float(getattr(label.risk, name)) for name in risk_fields] for label in labels],
         dtype=float,
     )
+    action_ids = [label.action_id for label in labels]
     (
         response_duplicates,
         response_correlations,
         response_constants,
         response_prevalence,
+        _response_mutual_exclusivity,
     ) = dimension_health(
         response_matrix,
         response_fields,
@@ -1081,12 +1168,14 @@ def validate_judge_table(
         duplicate_exact_match_rate=duplicate_exact_match_rate,
         maximum_absolute_dimension_correlation=maximum_absolute_dimension_correlation,
         minimum_nonzero_observations=minimum_nonzero_observations,
+        split_correlation_by_sign=split_correlation_by_sign,
     )
     (
         risk_duplicates,
         risk_correlations,
         risk_constants,
         risk_prevalence,
+        risk_mutual_exclusivity,
     ) = dimension_health(
         risk_matrix,
         risk_fields,
@@ -1094,6 +1183,9 @@ def validate_judge_table(
         duplicate_exact_match_rate=duplicate_exact_match_rate,
         minimum_nonzero_observations=minimum_nonzero_observations,
         maximum_absolute_dimension_correlation=maximum_absolute_dimension_correlation,
+        action_ids=action_ids,
+        inapplicable_risk_dimensions_by_action=inapplicable_risk_dimensions_by_action,
+        split_correlation_by_sign=split_correlation_by_sign,
     )
     reliable_rate = float(np.mean([label.label_reliable for label in labels]))
     dimension_names = [
@@ -1151,6 +1243,10 @@ def validate_judge_table(
     )
     duplicate_pairs = [*response_duplicates, *risk_duplicates]
     high_correlation_pairs = [*response_correlations, *risk_correlations]
+    mutual_exclusivity_diagnostic_pairs = [
+        *_response_mutual_exclusivity,
+        *risk_mutual_exclusivity,
+    ]
     constant_fields = [
         *(response_constants if reject_constant_response_dimensions else []),
         *(risk_constants if reject_constant_risk_dimensions else []),
@@ -1206,6 +1302,7 @@ def validate_judge_table(
         "n": len(labels),
         "duplicate_dimension_pairs": duplicate_pairs,
         "high_correlation_dimension_pairs": high_correlation_pairs,
+        "mutual_exclusivity_diagnostic_pairs": mutual_exclusivity_diagnostic_pairs,
         "constant_dimensions": constant_fields,
         "response_dimension_prevalence": response_prevalence,
         "risk_dimension_prevalence": risk_prevalence,
@@ -1234,6 +1331,7 @@ def validate_judge_table(
         "minimum_independent_judge_families": minimum_families,
         "duplicate_exact_match_rate": duplicate_exact_match_rate,
         "maximum_absolute_dimension_correlation": maximum_absolute_dimension_correlation,
+        "split_correlation_by_sign": split_correlation_by_sign,
         "insufficient_family_rows": family_failures,
         "composite_spec_version": expected_composite_version,
         "composite_weights_sha256": expected_composite_weights_sha256,
@@ -1271,6 +1369,213 @@ def validate_judge_table(
                 "PM-v2 judge quality gate failed: " + canonical_json(report)
             )
     return report
+
+
+JUDGE_FAMILY_DIRECTIONAL_PREFERENCE_PROTOCOL = (
+    "pm-v1.5-judge-family-directional-preference-diagnostic-v1"
+)
+
+
+def judge_family_directional_preference_report(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    action_a: str,
+    action_b: str,
+    expected_families: Sequence[str],
+    dialogue_by_state: Mapping[str, str],
+    risk_weight: float,
+    composite_spec: CompositeSpec | None = None,
+    bootstrap_replicates: int = 2000,
+    bootstrap_confidence_level: float = 0.90,
+    bootstrap_seed: int = 0,
+) -> dict[str, Any]:
+    """Cross-judge-family directional (action_a vs action_b) preference diagnostic.
+
+    Per family, per state: compute that family's own (not aggregated-median)
+    utility for action_a and action_b from its raw response/risk scores --
+    the same quality-minus-risk_weight*risk formula the real routing
+    objective uses -- and determine whether that family PREFERS action_a,
+    action_b, or reports a tie. Across states, report concordance (both
+    families prefer the same action) and discordance (families prefer
+    opposite actions) among the *decisive* states only: a state is excluded
+    from both the concordant and discordant counts, and from the
+    concordance-rate denominator, whenever *either* family reports a tie for
+    it -- a tie from one or both families is never counted as concordant.
+    Also report the tie rate, a directional contingency table (which does
+    still cross-tabulate every state, tie or not), and a dialogue-clustered
+    bootstrap confidence interval on the concordance rate (resampling whole
+    dialogues/users, respecting the non-independence of same-dialogue
+    states).
+
+    Every input row must carry ``state_id``, ``action_id``, ``judge_family``,
+    ``response`` and ``risk`` (unlike the raw rows validate_raw_judge_family_
+    health consumes, which intentionally omit state_id).
+
+    This is purely diagnostic and never gates: it measures whether the
+    routing-relevant *direction* of judge preference is reliable across
+    independent judge families -- a different question from the per-
+    dimension absolute-score agreement dimension_health/validate_judge_table
+    already check.
+    """
+
+    spec = composite_spec or CompositeSpec()
+    expected_family_set = sorted({str(family) for family in expected_families})
+    if len(expected_family_set) != 2:
+        raise ValueError(
+            "directional preference report requires exactly two judge families"
+        )
+    if action_a == action_b:
+        raise ValueError("directional preference report requires two distinct actions")
+
+    by_key: dict[tuple[str, str, str], Mapping[str, Any]] = {}
+    for row in rows:
+        action_id = str(row["action_id"])
+        if action_id not in (action_a, action_b):
+            continue
+        family = str(row["judge_family"])
+        if family not in expected_family_set:
+            continue
+        key = (str(row["state_id"]), action_id, family)
+        if key in by_key:
+            raise RuntimeError(f"duplicate directional preference row {key}")
+        by_key[key] = row
+
+    state_ids = sorted({key[0] for key in by_key})
+    family_a, family_b = expected_family_set
+    tie_epsilon = 1e-9
+
+    def utility_for(state_id: str, action_id: str, family: str) -> float | None:
+        row = by_key.get((state_id, action_id, family))
+        if row is None:
+            return None
+        response = ResponseJudgeOutput.model_validate(row["response"])
+        risk = RiskJudgeOutput.model_validate(row["risk"])
+        quality = spec.score(
+            ResponseDimensions(
+                **{
+                    name: float(getattr(response, name))
+                    for name in ResponseDimensions.model_fields
+                }
+            )
+        )
+        risk_value = max(
+            float(getattr(risk, name)) / 3.0
+            for name in applicable_risk_fields(action_id)
+        )
+        return float(quality) - float(risk_weight) * risk_value
+
+    def direction(state_id: str, family: str) -> str | None:
+        utility_a = utility_for(state_id, action_a, family)
+        utility_b = utility_for(state_id, action_b, family)
+        if utility_a is None or utility_b is None:
+            return None
+        delta = utility_a - utility_b
+        if abs(delta) <= tie_epsilon:
+            return "tie"
+        return action_a if delta > 0.0 else action_b
+
+    directions: dict[tuple[str, str], str] = {}
+    for state_id in state_ids:
+        for family in expected_family_set:
+            value = direction(state_id, family)
+            if value is not None:
+                directions[(state_id, family)] = value
+
+    comparable_states = [
+        state_id
+        for state_id in state_ids
+        if (state_id, family_a) in directions and (state_id, family_b) in directions
+    ]
+
+    categories = (action_a, action_b, "tie")
+    contingency = {
+        row_category: {column_category: 0 for column_category in categories}
+        for row_category in categories
+    }
+    concordant = 0
+    discordant = 0
+    tie_involved = 0
+    for state_id in comparable_states:
+        direction_a = directions[(state_id, family_a)]
+        direction_b = directions[(state_id, family_b)]
+        contingency[direction_a][direction_b] += 1
+        if direction_a == "tie" or direction_b == "tie":
+            tie_involved += 1
+        elif direction_a == direction_b:
+            concordant += 1
+        else:
+            discordant += 1
+    decisive_total = concordant + discordant
+    n_comparable = len(comparable_states)
+
+    groups: dict[str, list[str]] = {}
+    for state_id in comparable_states:
+        groups.setdefault(str(dialogue_by_state[state_id]), []).append(state_id)
+    group_keys = sorted(groups)
+
+    def concordance_rate_for(states: Sequence[str]) -> float | None:
+        c = 0
+        d = 0
+        for state_id in states:
+            direction_a = directions[(state_id, family_a)]
+            direction_b = directions[(state_id, family_b)]
+            if direction_a == "tie" or direction_b == "tie":
+                continue
+            if direction_a == direction_b:
+                c += 1
+            else:
+                d += 1
+        return c / (c + d) if (c + d) else None
+
+    point_estimate = concordance_rate_for(comparable_states)
+    bootstrap_values: list[float] = []
+    if len(group_keys) >= 3 and int(bootstrap_replicates) >= 100:
+        rng = np.random.default_rng(int(bootstrap_seed))
+        group_key_array = np.asarray(group_keys, dtype=object)
+        for _ in range(int(bootstrap_replicates)):
+            sampled_groups = rng.choice(
+                group_key_array, size=len(group_key_array), replace=True
+            )
+            sampled_states = [
+                state_id for group in sampled_groups for state_id in groups[str(group)]
+            ]
+            rate = concordance_rate_for(sampled_states)
+            if rate is not None:
+                bootstrap_values.append(rate)
+    if bootstrap_values:
+        alpha = 1.0 - float(bootstrap_confidence_level)
+        ci_lower: float | None = float(np.quantile(bootstrap_values, alpha / 2.0))
+        ci_upper: float | None = float(np.quantile(bootstrap_values, 1.0 - alpha / 2.0))
+    else:
+        ci_lower = None
+        ci_upper = None
+
+    return {
+        "protocol": JUDGE_FAMILY_DIRECTIONAL_PREFERENCE_PROTOCOL,
+        "action_a": action_a,
+        "action_b": action_b,
+        "families": [family_a, family_b],
+        "risk_weight": float(risk_weight),
+        "n_states": len(state_ids),
+        "n_comparable_states": n_comparable,
+        "concordant_states": concordant,
+        "discordant_states": discordant,
+        "tie_involved_states": tie_involved,
+        "concordance_rate": point_estimate,
+        "discordance_rate": (discordant / decisive_total) if decisive_total else None,
+        "tie_rate": (tie_involved / n_comparable) if n_comparable else None,
+        "directional_contingency_table": contingency,
+        "dialogue_cluster_bootstrap": {
+            "n_groups": len(group_keys),
+            "replicates": int(bootstrap_replicates),
+            "confidence_level": float(bootstrap_confidence_level),
+            "seed": int(bootstrap_seed),
+            "concordance_rate_ci_lower": ci_lower,
+            "concordance_rate_ci_upper": ci_upper,
+        },
+        "diagnostic_only": True,
+        "never_gates": True,
+    }
 
 
 def prompt_contract_hash() -> str:
