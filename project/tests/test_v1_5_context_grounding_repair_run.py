@@ -37,6 +37,14 @@ BUNDLES_PATH = (
 )
 
 
+def _require_real_bundles() -> None:
+    if not BUNDLES_PATH.is_file():
+        pytest.skip(
+            "requires the private local V8.18 development-data artifact; "
+            "the artifact is intentionally excluded from Git"
+        )
+
+
 @pytest.fixture(scope="module")
 def records():
     return load_context_grounding_defect_classification(DEFAULT_CLASSIFICATION_PATH)
@@ -52,6 +60,7 @@ def _endpoint() -> Endpoint:
 
 
 def _plan(records, scope):
+    _require_real_bundles()
     return build_repair_run_plan(
         records=records,
         scope=scope,
@@ -135,6 +144,7 @@ def test_visible_validation_rejects_wrong_turn_count(records) -> None:
 
 
 def test_full_overlay_materializer_rejects_pilot_results(records) -> None:
+    _require_real_bundles()
     bundles = load_bundles(str(BUNDLES_PATH))
     pilot_results = {}
     for record in select_repair_records(records, scope="pilot"):
@@ -155,6 +165,7 @@ def test_full_overlay_materializer_rejects_pilot_results(records) -> None:
 
 
 def test_full_overlay_materializer_emits_exact_25_hash_bound_rows(records) -> None:
+    _require_real_bundles()
     bundles = load_bundles(str(BUNDLES_PATH))
     validated = {}
     for record in select_repair_records(records, scope="full"):
@@ -192,6 +203,7 @@ def test_full_overlay_materializer_emits_exact_25_hash_bound_rows(records) -> No
 
 
 def test_cli_pilot_dry_run_is_zero_api_and_writes_exact_plan(tmp_path) -> None:
+    _require_real_bundles()
     out_dir = tmp_path / "pilot"
     env = dict(os.environ)
     env.pop("OPENAI_API_KEY", None)

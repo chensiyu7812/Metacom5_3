@@ -78,14 +78,15 @@ def test_real_sidecar_and_consumers_clear_every_blocker_but_the_formal_bundle() 
     treatment, and is not read by this check at all.
     """
 
-    pilot_dir = (
-        ROOT / "outputs" / "evoemo_fixed_tracks_v1_5_v3_pilot_execution_candidate"
-    )
     sidecar_contract = require_fixed_seeker_v3_sidecar_contract(SIDECAR_PATH)
     report = assess_fixed_seeker_v3_promotion(
         fixed_seeker_sidecar_contract=sidecar_contract.payload(),
-        pilot_summary=read_json(pilot_dir / "summary.json"),
-        pilot_attestation=read_json(pilot_dir / "artifact_attestation.json"),
+        # The paid pilot directory is intentionally private/local.  This test
+        # checks the real tracked sidecar and real consumer wiring with the
+        # minimal already-validated PASS surface rather than requiring raw
+        # provider artifacts in a clean Git checkout.
+        pilot_summary=_summary(),
+        pilot_attestation=_attestation(),
         consumer_source_text=load_consumer_sources(ROOT),
         formal_bundle_exists=False,
     )

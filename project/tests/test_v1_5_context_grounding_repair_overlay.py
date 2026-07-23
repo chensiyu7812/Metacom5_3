@@ -126,7 +126,13 @@ def _build_placeholder_overlays(bundles, classification_sha256):
 
 @pytest.fixture(scope="module")
 def real_bundles():
-    return load_bundles(str(DATA_DIR / "pm_v2_bundles.jsonl"))
+    bundles_path = DATA_DIR / "pm_v2_bundles.jsonl"
+    if not bundles_path.is_file():
+        pytest.skip(
+            "requires the private local V8.18 development-data artifact; "
+            "the artifact is intentionally excluded from Git"
+        )
+    return load_bundles(str(bundles_path))
 
 
 @pytest.fixture(scope="module")

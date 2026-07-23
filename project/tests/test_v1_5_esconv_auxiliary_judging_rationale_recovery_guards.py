@@ -294,20 +294,13 @@ def test_refuses_when_finish_reason_is_not_complete(tmp_path, recovery_module) -
 
 
 def test_recognizes_gemini_native_complete_finish_reason(
-    tmp_path, recovery_module
+    recovery_module,
 ) -> None:
-    fixture = _base_fixture(
-        tmp_path,
-        provider_response={
-            "candidates": [{"finishReason": "STOP", "content": {"parts": []}}],
-        },
+    provider_finish_reason = recovery_module.require_complete_provider_response(
+        {
+            "candidates": [
+                {"finishReason": "STOP", "content": {"parts": []}}
+            ],
+        }
     )
-    # This minimal fixture's pm_v1_5.yaml has no quality_composite, so the
-    # run still fails past the guards this test file targets -- but it must
-    # fail on THAT (a downstream ValueError), never on the finish-reason
-    # guard, confirming the Gemini-native candidates[].finishReason surface
-    # is recognized as a complete response exactly like the OpenAI-style one.
-    with pytest.raises(Exception) as excinfo:
-        _run_main(recovery_module, fixture)
-    assert "finish reason" not in str(excinfo.value)
-    assert "quality_composite" in str(excinfo.value)
+    assert provider_finish_reason == "STOP"

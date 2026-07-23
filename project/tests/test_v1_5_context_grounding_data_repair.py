@@ -71,15 +71,22 @@ class _FakeEncoder:
 
 
 def _load_real_state_and_context(state_id: str) -> tuple[dict, dict]:
+    states_path = DATA_DIR / "pm_v2_states.jsonl"
+    contexts_path = DATA_DIR / "evaluator_contexts.jsonl"
+    if not states_path.is_file() or not contexts_path.is_file():
+        pytest.skip(
+            "requires the private local V8.18 development-data artifact; "
+            "the artifact is intentionally excluded from Git"
+        )
     state = None
-    with open(DATA_DIR / "pm_v2_states.jsonl") as f:
+    with open(states_path) as f:
         for line in f:
             row = json.loads(line)
             if row["state_id"] == state_id:
                 state = row
                 break
     context = None
-    with open(DATA_DIR / "evaluator_contexts.jsonl") as f:
+    with open(contexts_path) as f:
         for line in f:
             row = json.loads(line)
             if row["state_id"] == state_id:

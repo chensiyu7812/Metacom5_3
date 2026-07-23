@@ -163,6 +163,23 @@ def _schema_for(judge_type: str):
     raise RuntimeError(f"unknown judge_type: {judge_type!r}")
 
 
+def require_complete_provider_response(
+    provider_response: dict[str, Any],
+) -> str | None:
+    """Reject truncated recovery inputs across native and compatible surfaces."""
+
+    provider_finish_reason, normalized_finish_reason = (
+        normalize_provider_finish_reason(provider_response)
+    )
+    if normalized_finish_reason != "complete":
+        raise RuntimeError(
+            "provider response does not have a complete (stop/STOP) finish "
+            f"reason (got {normalized_finish_reason!r}); refusing to recover "
+            "a possibly-truncated response"
+        )
+    return provider_finish_reason
+
+
 def main() -> None:
     args = parse_args()
     out_dir = args.out_dir
@@ -260,15 +277,9 @@ def main() -> None:
                 f"call {physical_key} has no provider_response to verify "
                 "completeness against"
             )
-        _, normalized_finish_reason = normalize_provider_finish_reason(
+        provider_finish_reason = require_complete_provider_response(
             provider_response
         )
-        if normalized_finish_reason != "complete":
-            raise RuntimeError(
-                f"call {physical_key} does not have a complete (stop/STOP) "
-                f"finish reason (got {normalized_finish_reason!r}); refusing "
-                "to recover a possibly-truncated response"
-            )
         parsed_payload = result.get("parsed_payload")
         if not isinstance(parsed_payload, dict):
             raise RuntimeError(f"call {physical_key} has no parsed_payload to recover")
@@ -291,10 +302,7 @@ def main() -> None:
                 "judge_family": row["judge_family"],
                 "judge_type": row["judge_type"],
                 "rationale_length": len(str(parsed_payload.get("rationale", ""))),
-                "provider_finish_reason": provider_response.get("choices", [{}])[0].get(
-                    "finish_reason"
-                )
-                or (provider_response.get("candidates", [{}])[0].get("finishReason")),
+                "provider_finish_reason": provider_finish_reason,
             }
         )
 
