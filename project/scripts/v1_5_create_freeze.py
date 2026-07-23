@@ -21,9 +21,9 @@ from metacom_pm.artifacts import (
 )
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.evidence_filter import EvidenceFilterConfig
-from metacom_pm.fixed_seeker_contract import FixedSeekerGenerationContract
+from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
 from metacom_pm.evoemo import (
-    FIXED_SEEKER_V22_STAGE,
+    FIXED_SEEKER_V23_STAGE,
     evo_memory_global_catalog_digest,
     fixed_seeker_cost_planning_contract,
     load_evoemo,
@@ -939,7 +939,7 @@ def require_v1_5_fixed_tracks(
     bundle_dir = tracks_path.resolve().parent
     verification = require_content_addressed_attestation(
         attestation_path,
-        required_stage=FIXED_SEEKER_V22_STAGE,
+        required_stage=FIXED_SEEKER_V23_STAGE,
         relocated_inputs={
             "evoemo": evoemo_path,
             "run_manifest": bundle_dir / "run_manifest.json",
@@ -1093,9 +1093,23 @@ def parse_args() -> argparse.Namespace:
         "--fixed-tracks",
         type=Path,
         required=True,
-        help="Non-truncated outputs/evoemo_fixed_tracks_v1_5 bundle; never reuse or overwrite V2.2 tracks.",
+        help=(
+            "Non-truncated outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate "
+            "bundle; never reuse or overwrite the historical V1/V2 tracks."
+        ),
     )
     parser.add_argument("--fixed-tracks-attestation", type=Path, required=True)
+    parser.add_argument(
+        "--fixed-seeker-contract",
+        type=Path,
+        default=ROOT / "configs" / "pm_v1_5_fixed_seeker_v3.json",
+        help=(
+            "V3 sidecar contract (configs/pm_v1_5.yaml itself deliberately "
+            "stays on the historical V2 treatment; editing it directly was "
+            "shown to invalidate the already-qualified V8.19.2 lineage via a "
+            "pm_v1_5_config hash mismatch)."
+        ),
+    )
     parser.add_argument("--pm-checkpoint", type=Path, required=True)
     parser.add_argument(
         "--pm-training-report",
@@ -1245,11 +1259,12 @@ def main() -> None:
     if args.out.exists() and not args.overwrite:
         raise RuntimeError(f"refusing to overwrite existing freeze without --overwrite: {args.out}")
     if (
-        args.fixed_tracks.parent.name != "evoemo_fixed_tracks_v1_5"
+        args.fixed_tracks.parent.name != "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
         or args.fixed_tracks_attestation.parent != args.fixed_tracks.parent
     ):
         raise RuntimeError(
-            "V1.5 freeze requires its isolated outputs/evoemo_fixed_tracks_v1_5 bundle"
+            "V1.5 freeze requires its isolated "
+            "outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate bundle"
         )
 
     experiment_config = load_config(args.config)
@@ -1520,8 +1535,8 @@ def main() -> None:
         )
 
     supporter_generation_contract = SupporterGenerationContract.from_config(pm_v1_5_config)
-    fixed_seeker_contract = FixedSeekerGenerationContract.from_mapping(
-        pm_v1_5_config["fixed_seeker_generation_treatment"]
+    fixed_seeker_contract = require_fixed_seeker_v3_sidecar_contract(
+        args.fixed_seeker_contract
     )
     fixed_seeker_endpoint = endpoint_from_config(experiment_config, fixed_seeker_contract.seeker_endpoint)
     bound_fixed_seeker_contract = fixed_seeker_contract.bind_endpoint(

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from math import isfinite
+from pathlib import Path
 import re
 from typing import Any, Mapping
 
@@ -12,7 +13,7 @@ from .generation_contract import (
     NORMALIZED_FINISH_REASONS,
     OUTPUT_NORMALIZATION_VERSION,
 )
-from .io import canonical_json, sha256_text
+from .io import canonical_json, read_json, sha256_file, sha256_text
 from .text import normalize_space
 
 
@@ -35,6 +36,17 @@ SUPPORTED_FIXED_SEEKER_GENERATION_CONTRACT_VERSIONS = frozenset(
         FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V2,
         FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3,
     }
+)
+# configs/pm_v1_5.yaml stays on the historical V2 treatment: a real
+# longitudinal dry-run showed that editing it directly invalidates the
+# already-qualified V8.19.2 lineage via a pm_v1_5_config hash mismatch. V3 is
+# therefore read only from this separately-tracked sidecar file by every V1.5
+# consumer that needs it (never from configs/pm_v1_5.yaml). Each consumer
+# verifies this exact frozen file hash before trusting its contents -- update
+# deliberately if the sidecar is ever revised (a genuine V3 protocol change),
+# never to silence a real mismatch.
+FIXED_SEEKER_V3_SIDECAR_CONTRACT_SHA256 = (
+    "8386e31e996a6621f293fb813812bf3882dd4eaf4bb337bd7fde7b536d4b8b21"
 )
 FIXED_SEEKER_SYSTEM_PROMPT_ID = "evoemo-fixed-seeker-v1"
 FIXED_SEEKER_SYSTEM_PROMPT_ID_V3 = "evoemo-fixed-seeker-bounded-surface-v1"
@@ -554,3 +566,34 @@ class FixedSeekerGenerationContract:
                 f"provider={provider_finish_reason!r}"
             )
         return None
+
+
+def require_fixed_seeker_v3_sidecar_contract(
+    sidecar_path: str | Path,
+) -> "FixedSeekerGenerationContract":
+    """Fail closed unless the V3 sidecar file is exactly the frozen contract.
+
+    Every V1.5 consumer that needs the V3 bounded-surface treatment loads it
+    through this one function, never by reading configs/pm_v1_5.yaml (which
+    stays on the historical V2 treatment -- see FIXED_SEEKER_V3_SIDECAR_
+    CONTRACT_SHA256's docstring for why). Verifies both the exact frozen file
+    hash and that the file actually declares itself V3, so a hand-edited or
+    swapped-in sidecar is rejected before any downstream generation/freeze
+    binding check even runs.
+    """
+
+    path = Path(sidecar_path)
+    observed_sha256 = sha256_file(path)
+    if observed_sha256 != FIXED_SEEKER_V3_SIDECAR_CONTRACT_SHA256:
+        raise RuntimeError(
+            "fixed-seeker V3 sidecar contract hash mismatch: "
+            f"path={path}, expected={FIXED_SEEKER_V3_SIDECAR_CONTRACT_SHA256}, "
+            f"observed={observed_sha256}"
+        )
+    contract = FixedSeekerGenerationContract.from_mapping(read_json(path))
+    if contract.version != FIXED_SEEKER_GENERATION_CONTRACT_VERSION_V3:
+        raise RuntimeError(
+            f"fixed-seeker V3 sidecar contract is not V3: path={path}, "
+            f"version={contract.version!r}"
+        )
+    return contract

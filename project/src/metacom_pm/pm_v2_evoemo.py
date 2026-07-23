@@ -34,6 +34,7 @@ from .evidence_filter import EvidenceFilterConfig, filter_evidence
 from .evidence_filter_model import PMV2EvidenceFilterModel
 from .evoemo import (
     FIXED_SEEKER_V22_STAGE,
+    FIXED_SEEKER_V23_STAGE,
     NEUTRAL_INITIAL_GREETING,
     _fixed_context_before_turn,
     _load_fixed_tracks,
@@ -632,6 +633,12 @@ def run_pmv2_fixed_evoemo(
     fixed_seeker_generation_contract_sha256: str,
     simulator_id: str,
     fixed_tracks_attestation_path: str | Path | None = None,
+    # Shared by both the original PM-v2.2 track (scripts/24_run_pm_v2_evoemo.py,
+    # still V2, unchanged) and the V1.5 track (scripts/v1_5/
+    # 24_run_pm_v2_evoemo_v1_5.py, migrated to V3): the caller states which
+    # fixed-seeker attestation stage its own frozen bundle must carry, rather
+    # than this shared runner silently assuming one track's version for both.
+    fixed_seeker_required_stage: str = FIXED_SEEKER_V22_STAGE,
     condition: str = "pm_v2",
     max_turns: int = 10,
     seeds: Sequence[int] = (101,),
@@ -669,6 +676,13 @@ def run_pmv2_fixed_evoemo(
     if run and overwrite:
         raise RuntimeError(
             "paid API runs prohibit overwrite; use a new output directory"
+        )
+    if fixed_seeker_required_stage not in {
+        FIXED_SEEKER_V22_STAGE,
+        FIXED_SEEKER_V23_STAGE,
+    }:
+        raise ValueError(
+            f"unsupported fixed-seeker required stage: {fixed_seeker_required_stage!r}"
         )
     generator_pricing_usd_per_mtok = {
         "input": float(input_usd_per_mtok),
@@ -779,7 +793,7 @@ def run_pmv2_fixed_evoemo(
     fixed_bundle_dir = Path(fixed_tracks_path).resolve().parent
     fixed_verification = require_content_addressed_attestation(
         fixed_tracks_attestation_path,
-        required_stage=FIXED_SEEKER_V22_STAGE,
+        required_stage=fixed_seeker_required_stage,
         relocated_inputs={
             "evoemo": evoemo_path,
             "run_manifest": fixed_bundle_dir / "run_manifest.json",
