@@ -5,8 +5,12 @@ from pathlib import Path
 import pytest
 
 from metacom_pm import fixed_seeker_contract as fixed_seeker_contract_module
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
-from metacom_pm.io import canonical_json, read_json, sha256_file
+from metacom_pm.fixed_seeker_contract import (
+    FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL,
+    require_fixed_seeker_v3_formal_bundle,
+    require_fixed_seeker_v3_sidecar_contract,
+)
+from metacom_pm.io import canonical_json, read_json, sha256_file, sha256_text, write_json
 from metacom_pm.v1_5_fixed_seeker_readiness import (
     assess_fixed_seeker_v3_promotion,
     load_consumer_sources,
@@ -14,6 +18,63 @@ from metacom_pm.v1_5_fixed_seeker_readiness import (
 
 ROOT = Path(__file__).resolve().parents[1]
 SIDECAR_PATH = ROOT / "configs" / "pm_v1_5_fixed_seeker_v3.json"
+FORMAL_BUNDLE_V3_STAGE = "evoemo_fixed_seeker_tracks_v23_bounded_surface"
+FORMAL_BUNDLE_V2_STAGE = "evoemo_fixed_seeker_tracks_v22"
+
+
+def _minimal_formal_bundle(
+    tmp_path: Path, *, stage: str = FORMAL_BUNDLE_V3_STAGE
+) -> Path:
+    """A minimal, self-contained (not content-addressed-attestation-valid)
+
+    bundle directory: enough for require_fixed_seeker_v3_formal_bundle's own
+    independent checks, which never delegate to
+    require_content_addressed_attestation.
+    """
+
+    bundle_dir = tmp_path / "bundle"
+    bundle_dir.mkdir()
+    (bundle_dir / "fixed_seeker_tracks.jsonl").write_text(
+        '{"track_id": "t1"}\n', encoding="utf-8"
+    )
+    write_json(bundle_dir / "artifact_attestation.json", {"stage": stage})
+    write_json(
+        bundle_dir / "summary.json",
+        {
+            "expected_tracks": 1,
+            "completed_tracks": 1,
+            "expected_logical_calls": 1,
+            "successful_logical_calls": 1,
+        },
+    )
+    return bundle_dir
+
+
+def _write_formal_bundle_binding(
+    binding_path: Path,
+    *,
+    bundle_dir: Path,
+    stage: str = FORMAL_BUNDLE_V3_STAGE,
+    protocol: str = FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL,
+) -> None:
+    payload = {
+        "protocol": protocol,
+        "stage": stage,
+        "output_directory": str(bundle_dir),
+        "approval_identity": "test-identity",
+        "sidecar_sha256": "0" * 64,
+        "call_plan_sha256": "0" * 64,
+        "expected_tracks": 1,
+        "expected_logical_calls": 1,
+        "fixed_seeker_tracks_sha256": sha256_file(
+            bundle_dir / "fixed_seeker_tracks.jsonl"
+        ),
+        "artifact_attestation_sha256": sha256_file(
+            bundle_dir / "artifact_attestation.json"
+        ),
+    }
+    payload["binding_sha256"] = sha256_text(canonical_json(payload))
+    write_json(binding_path, payload)
 
 
 def _summary() -> dict:
@@ -163,3 +224,172 @@ def test_require_fixed_seeker_v3_sidecar_contract_fails_closed_on_non_v3_version
         fixed_seeker_contract_module.require_fixed_seeker_v3_sidecar_contract(
             downgraded
         )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_accepts_the_real_bundle(
+    tmp_path,
+) -> None:
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(binding_path, bundle_dir=bundle_dir)
+    result = require_fixed_seeker_v3_formal_bundle(
+        binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+    )
+    assert result["output_directory"] == bundle_dir.resolve()
+    assert result["fixed_tracks_path"] == bundle_dir / "fixed_seeker_tracks.jsonl"
+    assert (
+        result["artifact_attestation_path"]
+        == bundle_dir / "artifact_attestation.json"
+    )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_binding_self_hash_tamper(
+    tmp_path,
+) -> None:
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(binding_path, bundle_dir=bundle_dir)
+    payload = read_json(binding_path)
+    payload["approval_identity"] = "tampered-after-the-fact"  # binding_sha256 now stale
+    write_json(binding_path, payload)
+    with pytest.raises(RuntimeError, match="binding hash mismatch"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_wrong_tracks_hash(
+    tmp_path,
+) -> None:
+    """A forged same-name directory: the tracks file's real bytes changed
+
+    after the binding was created (whether by tampering or by someone
+    recreating a directory with the same path/name but different content) --
+    the recorded hash no longer matches, so it must fail closed rather than
+    trust the directory name/path alone.
+    """
+
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(binding_path, bundle_dir=bundle_dir)
+    (bundle_dir / "fixed_seeker_tracks.jsonl").write_text(
+        '{"track_id": "forged"}\n', encoding="utf-8"
+    )
+    with pytest.raises(RuntimeError, match="tracks file hash mismatch"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_wrong_attestation_hash(
+    tmp_path,
+) -> None:
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(binding_path, bundle_dir=bundle_dir)
+    write_json(
+        bundle_dir / "artifact_attestation.json",
+        {"stage": FORMAL_BUNDLE_V3_STAGE, "forged": True},
+    )
+    with pytest.raises(RuntimeError, match="attestation file hash mismatch"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_wrong_attestation_stage(
+    tmp_path,
+) -> None:
+    """The binding's own stage field is V3, but the real attestation file on
+
+    disk (re-hashed and re-bound, e.g. by a careless regeneration) actually
+    records the historical V2 stage -- content-addressing alone is not
+    enough; the stage recorded inside the attestation must also match.
+    """
+
+    bundle_dir = _minimal_formal_bundle(tmp_path, stage=FORMAL_BUNDLE_V2_STAGE)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(
+        binding_path, bundle_dir=bundle_dir, stage=FORMAL_BUNDLE_V3_STAGE
+    )
+    with pytest.raises(RuntimeError, match="attestation stage mismatch"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_old_v2_binding(
+    tmp_path,
+) -> None:
+    """The binding itself honestly declares an old V2 bundle: callers always
+
+    pass required_stage=FIXED_SEEKER_V23_STAGE, so a V2-declared binding must
+    never be silently accepted as formal-V3-ready.
+    """
+
+    bundle_dir = _minimal_formal_bundle(tmp_path, stage=FORMAL_BUNDLE_V2_STAGE)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(
+        binding_path, bundle_dir=bundle_dir, stage=FORMAL_BUNDLE_V2_STAGE
+    )
+    with pytest.raises(RuntimeError, match="binding stage does not match"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_wrong_protocol(
+    tmp_path,
+) -> None:
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(
+        binding_path, bundle_dir=bundle_dir, protocol="some-other-protocol-v1"
+    )
+    with pytest.raises(RuntimeError, match="binding protocol"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_wrong_track_counts(
+    tmp_path,
+) -> None:
+    bundle_dir = _minimal_formal_bundle(tmp_path)
+    write_json(
+        bundle_dir / "summary.json",
+        {
+            "expected_tracks": 1,
+            "completed_tracks": 0,
+            "expected_logical_calls": 1,
+            "successful_logical_calls": 0,
+        },
+    )
+    binding_path = tmp_path / "binding.json"
+    _write_formal_bundle_binding(binding_path, bundle_dir=bundle_dir)
+    with pytest.raises(RuntimeError, match="track/call counts do not match"):
+        require_fixed_seeker_v3_formal_bundle(
+            binding_path, root=tmp_path, required_stage=FORMAL_BUNDLE_V3_STAGE
+        )
+
+
+def test_real_fixed_seeker_v3_formal_bundle_binding_is_well_formed() -> None:
+    """The real, tracked formal-bundle binding must at least be internally
+
+    well-formed (self-hash intact, correct protocol/stage/track counts).
+    The referenced output directory is a local, untracked paid-run artifact
+    (outputs/ is never committed) and is intentionally not required to exist
+    in every checkout, so this does not call
+    require_fixed_seeker_v3_formal_bundle end-to-end.
+    """
+
+    binding_path = (
+        ROOT / "data" / "pm_v1_5_contracts" / "fixed_seeker_v3_formal_bundle_v1.json"
+    )
+    binding = read_json(binding_path)
+    payload = {key: value for key, value in binding.items() if key != "binding_sha256"}
+    assert binding["binding_sha256"] == sha256_text(canonical_json(payload))
+    assert binding["protocol"] == FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL
+    assert binding["stage"] == FORMAL_BUNDLE_V3_STAGE
+    assert binding["expected_tracks"] == 102
+    assert binding["expected_logical_calls"] == 1020

@@ -18,6 +18,20 @@ NormalizedFinishReason = Literal[
     "complete", "length", "tool_call", "content_filter", "unknown"
 ]
 ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME = "submit_structured_response"
+ANTHROPIC_STRICT_TOOL_SCHEMA_PROJECTION_PROTOCOL = (
+    "anthropic-strict-tool-schema-projection-v2-strip-numeric-and-array-bounds"
+)
+ANTHROPIC_UNSUPPORTED_STRICT_TOOL_SCHEMA_KEYWORDS = frozenset(
+    {
+        "exclusiveMaximum",
+        "exclusiveMinimum",
+        "maxItems",
+        "maximum",
+        "minItems",
+        "minimum",
+        "multipleOf",
+    }
+)
 GEMINI_USAGE_BREAKDOWN_KEYS = (
     "gemini_prompt_tokens",
     "gemini_candidate_tokens",
@@ -71,6 +85,37 @@ class Endpoint:
     # the configured ceiling every time). "disabled"/"enabled" send an
     # explicit ``{"thinking": {"type": ...}}`` field.
     thinking_mode: str = "provider_default"
+    # OpenAI-compatible Qwen hybrid-thinking endpoints use the top-level
+    # ``enable_thinking`` boolean rather than DeepSeek's ``thinking`` object.
+    # ``None`` preserves every existing endpoint byte-for-byte.  The field is
+    # deliberately part of Endpoint so it is included in content-addressed
+    # physical call identities.
+    enable_thinking: bool | None = None
+    # OpenAI reasoning models can require the provider-default sampling
+    # surface. ``explicit`` preserves every historical endpoint byte-for-byte;
+    # ``omit`` deliberately leaves temperature out of the HTTP payload.
+    temperature_mode: Literal["explicit", "omit"] = "explicit"
+    # Newer OpenAI reasoning endpoints use ``max_completion_tokens`` instead
+    # of the older Chat Completions ``max_tokens`` field.  Keep the historical
+    # default and opt in per endpoint so no unrelated provider changes shape.
+    max_output_tokens_parameter: Literal[
+        "max_tokens", "max_completion_tokens"
+    ] = "max_tokens"
+    # Anthropic strict tool use is an endpoint capability, not a runtime
+    # fallback.  The historical default remains unchanged.  Qualification
+    # stages that require provider-enforced schema conformance opt in and bind
+    # this value into their physical-call identity.
+    anthropic_strict_tool_use: bool = False
+    # Native Gemini 2.5 requests count hidden thoughts against maxOutputTokens.
+    # ``None`` preserves every historical request byte-for-byte; an explicit
+    # non-negative value is emitted as generationConfig.thinkingConfig.
+    gemini_thinking_budget: int | None = None
+    # Pre-5.1 OpenAI reasoning models default to medium effort, which can
+    # consume an entire max_completion_tokens allowance before emitting the
+    # visible strict-JSON answer. ``None`` preserves historical behavior.
+    openai_reasoning_effort: Literal[
+        "minimal", "low", "medium", "high"
+    ] | None = None
 
     @property
     def api_key(self) -> str:
@@ -526,6 +571,38 @@ def openai_strict_json_schema(response_schema: Type[BaseModel]) -> dict[str, Any
     return schema
 
 
+def anthropic_strict_tool_schema(
+    response_schema: Type[BaseModel],
+) -> dict[str, Any]:
+    """Project a canonical local schema onto Anthropic's strict-tool subset.
+
+    Anthropic strict tool use rejects JSON-Schema numeric and array bound
+    keywords such as ``minimum``, ``maximum``, ``minItems``, and ``maxItems``.
+    The projection is deterministic and only affects the provider-visible tool
+    schema; the canonical Pydantic model is still used after the paid response
+    and remains authoritative for numeric/array bounds and cross-field
+    validators.
+    """
+
+    canonical = response_schema.model_json_schema()
+
+    def project(node: Any) -> Any:
+        if isinstance(node, list):
+            return [project(value) for value in node]
+        if not isinstance(node, dict):
+            return node
+        return {
+            key: project(value)
+            for key, value in node.items()
+            if key not in ANTHROPIC_UNSUPPORTED_STRICT_TOOL_SCHEMA_KEYWORDS
+        }
+
+    projected = project(canonical)
+    if not isinstance(projected, dict):
+        raise TypeError("Anthropic strict tool schema projection is not an object")
+    return projected
+
+
 def _bounded_provider_error_parts(
     node: Any, *, depth: int = 0, maximum_parts: int = 12
 ) -> list[str]:
@@ -747,6 +824,16 @@ def chat_request_payload(
 
     transport = endpoint_transport(endpoint)
     if transport == "anthropic_messages":
+        if (
+            endpoint.temperature_mode != "explicit"
+            or endpoint.max_output_tokens_parameter != "max_tokens"
+            or endpoint.gemini_thinking_budget is not None
+            or endpoint.openai_reasoning_effort is not None
+        ):
+            raise ValueError(
+                "OpenAI reasoning request capabilities cannot be applied to "
+                "the Anthropic transport"
+            )
         system_parts = [m["content"] for m in messages if m["role"] == "system"]
         non_system = [m for m in messages if m["role"] != "system"]
         payload: dict[str, Any] = {
@@ -758,21 +845,36 @@ def chat_request_payload(
         if system_parts:
             payload["system"] = "\n\n".join(system_parts)
         if response_schema is not None:
-            payload["tools"] = [
-                {
-                    "name": ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME,
-                    "description": (
-                        "Return the evaluator result using the required strict schema."
-                    ),
-                    "input_schema": response_schema.model_json_schema(),
-                }
-            ]
+            provider_schema = (
+                anthropic_strict_tool_schema(response_schema)
+                if endpoint.anthropic_strict_tool_use
+                else response_schema.model_json_schema()
+            )
+            tool = {
+                "name": ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME,
+                "description": (
+                    "Return the evaluator result using the required strict schema."
+                ),
+                "input_schema": provider_schema,
+            }
+            if endpoint.anthropic_strict_tool_use:
+                tool["strict"] = True
+            payload["tools"] = [tool]
             payload["tool_choice"] = {
                 "type": "tool",
                 "name": ANTHROPIC_STRUCTURED_OUTPUT_TOOL_NAME,
             }
         return payload
     if transport == "gemini_generate_content":
+        if (
+            endpoint.temperature_mode != "explicit"
+            or endpoint.max_output_tokens_parameter != "max_tokens"
+            or endpoint.openai_reasoning_effort is not None
+        ):
+            raise ValueError(
+                "OpenAI reasoning request capabilities cannot be applied to "
+                "the Gemini transport"
+            )
         system_parts = [m["content"] for m in messages if m["role"] == "system"]
         contents: list[dict[str, Any]] = []
         for message in messages:
@@ -804,6 +906,13 @@ def chat_request_payload(
             generation_config["responseJsonSchema"] = (
                 response_schema.model_json_schema()
             )
+        if endpoint.gemini_thinking_budget is not None:
+            thinking_budget = int(endpoint.gemini_thinking_budget)
+            if thinking_budget < 0:
+                raise ValueError("Gemini thinking budget must be non-negative")
+            generation_config["thinkingConfig"] = {
+                "thinkingBudget": thinking_budget
+            }
         payload = {
             "contents": contents,
             "generationConfig": generation_config,
@@ -816,13 +925,31 @@ def chat_request_payload(
     payload = {
         "model": endpoint.model,
         "messages": messages,
-        "temperature": float(temperature),
-        "max_tokens": int(max_tokens),
     }
+    if endpoint.gemini_thinking_budget is not None:
+        raise ValueError(
+            "Gemini thinking budget cannot be applied to OpenAI transport"
+        )
+    if endpoint.temperature_mode == "explicit":
+        payload["temperature"] = float(temperature)
+    elif endpoint.temperature_mode != "omit":  # pragma: no cover - Literal
+        raise ValueError(
+            f"unsupported temperature mode: {endpoint.temperature_mode}"
+        )
+    output_parameter = endpoint.max_output_tokens_parameter
+    if output_parameter not in {"max_tokens", "max_completion_tokens"}:
+        raise ValueError(  # pragma: no cover - Literal
+            f"unsupported max-output parameter: {output_parameter}"
+        )
+    payload[output_parameter] = int(max_tokens)
     if seed is not None:
         payload["seed"] = int(seed)
     if endpoint.thinking_mode != "provider_default":
         payload["thinking"] = {"type": endpoint.thinking_mode}
+    if endpoint.enable_thinking is not None:
+        payload["enable_thinking"] = bool(endpoint.enable_thinking)
+    if endpoint.openai_reasoning_effort is not None:
+        payload["reasoning_effort"] = endpoint.openai_reasoning_effort
     if response_schema is not None:
         if endpoint.supports_strict_json_schema:
             payload["response_format"] = {
@@ -1362,8 +1489,17 @@ class AnthropicClient:
         )
         request_hash = sha256_text(canonical_json(payload))
         errors: list[str] = []
+        last_retry_class = "other"
+        last_status_code: int | None = None
+        last_usage: dict[str, int] | None = None
+        last_response_diagnostics: dict[str, Any] | None = None
+        last_retry_after_seconds: float | None = None
+        attempts_tried = 0
         for attempt in range(1, retries + 1):
+            attempts_tried = attempt
             started = time.perf_counter()
+            response: httpx.Response | None = None
+            body: Any = None
             try:
                 response = self._client.post("/v1/messages", json=payload)
                 if 400 <= response.status_code < 500 and response.status_code != 429:
@@ -1411,6 +1547,7 @@ class AnthropicClient:
                         + (usage_raw.get("output_tokens") or 0)
                     ),
                 }
+                last_usage = usage
                 provider_finish_reason, normalized_finish_reason = (
                     normalize_provider_finish_reason(body)
                 )
@@ -1435,12 +1572,37 @@ class AnthropicClient:
                         validation_error=exc,
                     ) from exc
                 return call, parsed
-            except (httpx.HTTPError, KeyError, IndexError, ValueError, ValidationError, json.JSONDecodeError) as exc:
+            except (
+                httpx.HTTPError,
+                KeyError,
+                IndexError,
+                ValueError,
+                ValidationError,
+                json.JSONDecodeError,
+            ) as exc:
                 errors.append(f"attempt {attempt}: {type(exc).__name__}: {exc}")
+                last_retry_class, last_status_code = (
+                    _classify_retryable_exception(exc)
+                )
+                if response is not None:
+                    last_response_diagnostics = (
+                        _provider_response_diagnostics(response, body=body)
+                    )
+                    last_retry_after_seconds = _retry_after_seconds(response)
                 if attempt == retries:
                     break
                 time.sleep(min(2 ** (attempt - 1), 8))
-        raise RuntimeError("Anthropic API call failed after retries: " + " | ".join(errors))
+        raise RetryableProviderError(
+            "Anthropic API call failed after strict retries: "
+            + " | ".join(errors),
+            last_retry_class=last_retry_class,
+            last_status_code=last_status_code,
+            attempts_tried=attempts_tried,
+            request_hash=request_hash,
+            usage=last_usage,
+            response_diagnostics=last_response_diagnostics,
+            retry_after_seconds=last_retry_after_seconds,
+        )
 
 
 def make_client(

@@ -19,7 +19,7 @@ import pytest
 from metacom_pm.api import ProviderRequestError, RetryableProviderError
 from metacom_pm.contracts import CostRecord, DialogueTurn, MemorySource, SourceCatalog
 from metacom_pm.esconv_v1_5 import ESCONV_V1_5_ALLOWED_ACTIONS
-from metacom_pm.io import write_json, write_jsonl
+from metacom_pm.io import canonical_json, sha256_text, write_json, write_jsonl
 from metacom_pm.pm_v2_contracts import ObservableSourceSummary, PMV2Split, PMV2State
 from metacom_pm.pm_v2_judging import ResponseJudgeOutput, RiskJudgeOutput
 
@@ -124,6 +124,7 @@ def _run_dry_run(
     *,
     pilot: bool = False,
     carry_forward_from: Path | None = None,
+    weak_supervision_contract: Path | None = None,
 ) -> dict:
     module = _load_module(
         "scripts/v1_5/13c_judge_esconv_auxiliary_v1_5.py",
@@ -154,14 +155,36 @@ def _run_dry_run(
         argv.append("--pilot")
     if carry_forward_from is not None:
         argv.extend(["--carry-forward-from", str(carry_forward_from)])
+    if weak_supervision_contract is not None:
+        argv.extend(
+            ["--weak-supervision-contract", str(weak_supervision_contract)]
+        )
     previous = sys.argv
     try:
         sys.argv = argv
         module.main()
     finally:
         sys.argv = previous
-    out_dir = out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
+    out_dir = out_root / (
+        f"esconv_auxiliary_weak_judging_v1_5_{scope}_{split}"
+        if weak_supervision_contract is not None
+        else f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
+    )
     return json.loads((out_dir / "cost_estimate.json").read_text(encoding="utf-8"))
+
+
+def _write_weak_contract(path: Path) -> None:
+    body = {
+        "protocol": "pm-v1.5-llm-weak-supervision-v1",
+        "status": "LLM_WEAK_SUPERVISION_NOT_GOLD",
+        "automatic_gold_label_claimed": False,
+        "human_anchors_used_as_automatic_gold": False,
+        "scope": {"esconv_auxiliary": ["train", "calibration"]},
+    }
+    write_json(
+        path,
+        {**body, "contract_sha256": sha256_text(canonical_json(body))},
+    )
 
 
 def test_dry_run_has_one_pair_per_state_action_and_four_calls_per_pair(workdir):
@@ -202,6 +225,48 @@ def test_call_plan_shuffle_is_independent_of_outcomes_file_row_order(workdir):
     second = _run_dry_run(aux_dir, gen_root_b, workdir / "outputs_b", "train")
 
     assert first["call_plan_sha256"] == second["call_plan_sha256"]
+
+
+def test_weak_mode_has_distinct_stage_and_cost_identity(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_train"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "train", n_states=1)
+    normal = _run_dry_run(
+        aux_dir, gen_root, workdir / "normal", "train"
+    )
+    contract = workdir / "weak_contract.json"
+    _write_weak_contract(contract)
+    weak = _run_dry_run(
+        aux_dir,
+        gen_root,
+        workdir / "weak",
+        "train",
+        weak_supervision_contract=contract,
+    )
+    assert weak["stage"] == "esconv_auxiliary_weak_judging_full_train"
+    assert weak["weak_supervision_mode"] is True
+    assert weak["weak_supervision_contract_sha256"] is not None
+    assert weak["cost_estimate_sha256"] != normal["cost_estimate_sha256"]
+
+
+def test_weak_mode_rejects_internal_test_even_if_cli_requests_it(workdir):
+    aux_dir = workdir / "aux"
+    gen_root = workdir / "gen_root"
+    gen_dir = gen_root / "esconv_auxiliary_generation_v1_5_full_internal_test"
+    gen_dir.mkdir(parents=True)
+    _write_fixture(aux_dir, gen_dir, "internal_test", n_states=1)
+    contract = workdir / "weak_contract.json"
+    _write_weak_contract(contract)
+    with pytest.raises(RuntimeError, match="only consume train/calibration"):
+        _run_dry_run(
+            aux_dir,
+            gen_root,
+            workdir / "weak",
+            "internal_test",
+            weak_supervision_contract=contract,
+        )
 
 
 def test_missing_generation_outcomes_fails_closed(workdir):

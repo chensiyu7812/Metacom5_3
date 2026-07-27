@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from typing import Any, Callable, Mapping, Sequence
 
@@ -114,6 +115,7 @@ def select_routing_algorithm_group_cv(
     safe_residual_thresholds: Mapping[str, float],
     simplicity_order: Sequence[str],
     domain_key: Callable[[PMV2State], str] | None = None,
+    parallel_folds: int = 1,
 ) -> tuple[str, dict[str, Any]]:
     """Choose the routing target using only train-user group-aware CV."""
 
@@ -145,6 +147,9 @@ def select_routing_algorithm_group_cv(
         raise ValueError("algorithm CV folds must be in [2, unique train users]")
     if int(n_models) < 1:
         raise ValueError("algorithm CV bootstrap model count must be positive")
+    parallel_fold_count = int(parallel_folds)
+    if parallel_fold_count < 1 or parallel_fold_count > fold_count:
+        raise ValueError("parallel_folds must be in [1, folds]")
 
     splitter = GroupKFold(n_splits=fold_count)
     candidate_rows: dict[str, list[dict[str, Any]]] = {
@@ -203,7 +208,8 @@ def select_routing_algorithm_group_cv(
                 )
             )
             fold_splits.append((fit, validation))
-    for fold_index, (fit_indices, validation_indices) in enumerate(fold_splits):
+    def run_fold(fold_item):
+        fold_index, (fit_indices, validation_indices) = fold_item
         fit_states = [states[int(index)] for index in fit_indices]
         validation_states = [states[int(index)] for index in validation_indices]
         fit_ids = {state.state_id for state in fit_states}
@@ -242,38 +248,37 @@ def select_routing_algorithm_group_cv(
                 selection_data_role="train_fold",
                 domain_key=domain_key,
             )
-        split_rows.append(
-            {
-                "fold": fold_index,
-                "fit_users": sorted(fit_users),
-                "validation_users": sorted(validation_users),
-                "fit_states": len(fit_states),
-                "validation_states": len(validation_states),
-                "fit_user_count": len(fit_users),
-                "validation_user_count": len(validation_users),
-                "fit_domain_counts": dict(
-                    sorted(
-                        Counter(
-                            str(domain_key(state)) if domain_key else "default"
-                            for state in fit_states
-                        ).items()
-                    )
-                ),
-                "validation_domain_counts": dict(
-                    sorted(
-                        Counter(
-                            str(domain_key(state)) if domain_key else "default"
-                            for state in validation_states
-                        ).items()
-                    )
-                ),
-                "rule_config_sha256": (
-                    fold_rule_report["selected_config_sha256"]
-                    if fold_rule_report is not None
-                    else None
-                ),
-            }
-        )
+        split_row = {
+            "fold": fold_index,
+            "fit_users": sorted(fit_users),
+            "validation_users": sorted(validation_users),
+            "fit_states": len(fit_states),
+            "validation_states": len(validation_states),
+            "fit_user_count": len(fit_users),
+            "validation_user_count": len(validation_users),
+            "fit_domain_counts": dict(
+                sorted(
+                    Counter(
+                        str(domain_key(state)) if domain_key else "default"
+                        for state in fit_states
+                    ).items()
+                )
+            ),
+            "validation_domain_counts": dict(
+                sorted(
+                    Counter(
+                        str(domain_key(state)) if domain_key else "default"
+                        for state in validation_states
+                    ).items()
+                )
+            ),
+            "rule_config_sha256": (
+                fold_rule_report["selected_config_sha256"]
+                if fold_rule_report is not None
+                else None
+            ),
+        }
+        fold_candidates: dict[str, dict[str, Any]] = {}
         for candidate_index, algorithm in enumerate(candidate_names):
             model = deepcopy(base)
             model.fit_routing_objective(
@@ -301,28 +306,42 @@ def select_routing_algorithm_group_cv(
                 validation_labels,
                 domain_key=domain_key,
             )
-            candidate_rows[algorithm].append(
-                {
-                    "fold": fold_index,
-                    "validation_states": len(validation_states),
-                    "validation_users": len(validation_users),
-                    "mean_quality": float(metrics["mean_quality"]),
-                    "mean_emotional_support": float(
-                        metrics["mean_response_dimensions"]["emotional_support"]
-                    ),
-                    "mean_risk": float(metrics["mean_risk"]),
-                    "mean_realized_utility": float(
-                        metrics["mean_realized_utility"]
-                    ),
-                    "mean_observed_input_tokens": float(
-                        metrics["mean_observed_input_tokens"]
-                    ),
-                    "action_distribution": dict(
-                        metrics["domain_balanced_action_distribution"]
-                    ),
-                    "domain_balancing": metrics["domain_balancing"],
-                }
-            )
+            fold_candidates[algorithm] = {
+                "fold": fold_index,
+                "validation_states": len(validation_states),
+                "validation_users": len(validation_users),
+                "mean_quality": float(metrics["mean_quality"]),
+                "mean_emotional_support": float(
+                    metrics["mean_response_dimensions"]["emotional_support"]
+                ),
+                "mean_risk": float(metrics["mean_risk"]),
+                "mean_realized_utility": float(
+                    metrics["mean_realized_utility"]
+                ),
+                "mean_observed_input_tokens": float(
+                    metrics["mean_observed_input_tokens"]
+                ),
+                "action_distribution": dict(
+                    metrics["domain_balanced_action_distribution"]
+                ),
+                "domain_balancing": metrics["domain_balancing"],
+            }
+        return fold_index, split_row, fold_candidates
+
+    indexed_splits = list(enumerate(fold_splits))
+    if parallel_fold_count == 1:
+        fold_results = [run_fold(item) for item in indexed_splits]
+    else:
+        with ThreadPoolExecutor(max_workers=parallel_fold_count) as executor:
+            fold_results = list(executor.map(run_fold, indexed_splits))
+    for fold_index, split_row, fold_candidates in sorted(
+        fold_results, key=lambda row: row[0]
+    ):
+        if int(split_row["fold"]) != fold_index:
+            raise RuntimeError("algorithm CV fold result index drifted")
+        split_rows.append(split_row)
+        for algorithm in candidate_names:
+            candidate_rows[algorithm].append(fold_candidates[algorithm])
 
     summaries: list[dict[str, Any]] = []
     for priority, algorithm in enumerate(candidate_names):
@@ -391,6 +410,7 @@ def select_routing_algorithm_group_cv(
         "unique_train_users": len(unique_users),
         "domain_balancing_protocol": "equal-domain-policy-metrics-v1",
         "cv_bootstrap_models": int(n_models),
+        "execution_parallel_folds": parallel_fold_count,
         "minimum_validation_quality": float(minimum_validation_quality),
         "maximum_validation_risk": float(maximum_validation_risk),
         "safe_residual_thresholds": {

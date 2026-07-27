@@ -46,7 +46,7 @@ from pathlib import Path
 from typing import Any
 
 from metacom_pm.config import load_config
-from metacom_pm.contracts import MemorySource
+from metacom_pm.contracts import MemorySource, StrategyCard
 from metacom_pm.evoemo import (
     NEUTRAL_INITIAL_GREETING,
     _fixed_context_before_turn,
@@ -59,7 +59,12 @@ from metacom_pm.io import iter_jsonl, sha256_file, sha256_text, canonical_json, 
 from metacom_pm.pm_v1_5_semantic import (
     FrozenTransformerSemanticEncoder,
     require_semantic_runtime_contract,
+    semantic_centroid,
     semantic_encoder_spec_from_config,
+)
+from metacom_pm.pm_v1_5_step0 import (
+    StrategyFamilyCatalog,
+    build_strategy_family_catalog,
 )
 from metacom_pm.pm_v2_contracts import PMV2Split, PMV2State
 from metacom_pm.pm_v2_data import load_states, runtime_to_pmv2_state
@@ -75,6 +80,26 @@ OOD_CALIBRATION_KWARGS = dict(
     minimum_semantic_challenge_detection_rate=0.80,
     minimum_metadata_challenge_detection_rate=0.95,
 )
+
+
+def _expected_formal_turn_states(
+    *,
+    total_scenarios: int,
+    track_keys: list[tuple[Any, ...]],
+    turn_indices: list[int],
+) -> tuple[int, int]:
+    """Return (unique seed count, seed-specific formal state count).
+
+    A formal fixed-seeker bundle contains one track per scenario and seed.
+    Counting only scenario × turn silently undercounts the real evaluation
+    support audit whenever robustness uses more than one seed.
+    """
+
+    unique_seeds = {int(key[2]) for key in track_keys}
+    return (
+        len(unique_seeds),
+        total_scenarios * len(unique_seeds) * len(turn_indices),
+    )
 
 
 def _dimension_category(name: str) -> str:
@@ -159,6 +184,9 @@ def _build_evoemo_states(
     *,
     evoemo_path: Path,
     encoder: FrozenTransformerSemanticEncoder,
+    strategy_catalog_count: int,
+    strategy_estimated_tokens: int,
+    strategy_family_catalog: StrategyFamilyCatalog,
 ) -> tuple[list[PMV2State], dict[str, Any]]:
     """Single-turn-preflight states: one canned turn-1 state per (user,
     topic) scenario. Broader coverage, non-formal -- see module docstring."""
@@ -167,6 +195,12 @@ def _build_evoemo_states(
     states: list[PMV2State] = []
     for user in users:
         items, _ = build_evo_memory(user)
+        source_centroids = {
+            source: semantic_centroid(
+                encoder, [item.text for item in items if item.source is source]
+            )
+            for source in MemorySource
+        }
         for topic in user.get("subsequent_topics") or []:
             runtime_state = make_evo_runtime_state(
                 user,
@@ -178,9 +212,15 @@ def _build_evoemo_states(
                 "ood_preflight",
                 track_id="ood_preflight",
                 semantic_encoder=encoder,
+                semantic_source_centroids=source_centroids,
             )
             pm_state = runtime_to_pmv2_state(
-                runtime_state, split=PMV2Split.EXTERNAL_TEST, semantic_encoder=encoder
+                runtime_state,
+                split=PMV2Split.EXTERNAL_TEST,
+                strategy_catalog_count=strategy_catalog_count,
+                strategy_estimated_tokens=strategy_estimated_tokens,
+                strategy_family_catalog=strategy_family_catalog,
+                semantic_encoder=encoder,
             )
             states.append(pm_state)
     total_scenarios = sum(
@@ -200,6 +240,9 @@ def _build_evoemo_formal_turn_states(
     turn_indices: list[int],
     condition: str,
     encoder: FrozenTransformerSemanticEncoder,
+    strategy_catalog_count: int,
+    strategy_estimated_tokens: int,
+    strategy_family_catalog: StrategyFamilyCatalog,
 ) -> tuple[list[PMV2State], dict[str, Any]]:
     """Real production-path states (make_evo_runtime_state ->
     runtime_to_pmv2_state) restricted to the frozen formal evaluation turns,
@@ -229,6 +272,12 @@ def _build_evoemo_formal_turn_states(
             items, _ = build_evo_memory(user)
             memory_cache[user_id] = items
         items = memory_cache[user_id]
+        source_centroids = {
+            source: semantic_centroid(
+                encoder, [item.text for item in items if item.source is source]
+            )
+            for source in MemorySource
+        }
         for turn_index in turn_indices:
             if turn_index > len(track.get("seeker_turns") or []):
                 continue
@@ -245,21 +294,31 @@ def _build_evoemo_formal_turn_states(
                 track_id=str(track["track_id"]),
                 fixed_open_loop=True,
                 semantic_encoder=encoder,
+                semantic_source_centroids=source_centroids,
             )
             pm_state = runtime_to_pmv2_state(
-                runtime_state, split=PMV2Split.EXTERNAL_TEST, semantic_encoder=encoder
+                runtime_state,
+                split=PMV2Split.EXTERNAL_TEST,
+                strategy_catalog_count=strategy_catalog_count,
+                strategy_estimated_tokens=strategy_estimated_tokens,
+                strategy_family_catalog=strategy_family_catalog,
+                semantic_encoder=encoder,
             )
             states.append(pm_state)
         covered_scenarios.add((user_id, topic_index))
+    n_unique_seeds, expected_formal_turn_states = _expected_formal_turn_states(
+        total_scenarios=total_scenarios,
+        track_keys=list(tracks),
+        turn_indices=turn_indices,
+    )
     return states, {
         "n_total_scenarios": total_scenarios,
         "n_scenarios_with_at_least_one_complete_track": len(covered_scenarios),
         "n_complete_tracks_found": len(tracks),
+        "n_unique_seeds": n_unique_seeds,
         "turn_indices": turn_indices,
         "n_formal_turn_states": len(states),
-        "expected_formal_turn_states_at_full_coverage": (
-            total_scenarios * len(turn_indices)
-        ),
+        "expected_formal_turn_states_at_full_coverage": expected_formal_turn_states,
     }
 
 
@@ -290,6 +349,11 @@ def main() -> None:
         "--evoemo-path", type=Path, default=ROOT / "data" / "external" / "evo_emo.json"
     )
     parser.add_argument(
+        "--strategy-bank",
+        type=Path,
+        default=ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl",
+    )
+    parser.add_argument(
         "--fixed-tracks-path",
         type=Path,
         default=ROOT
@@ -311,7 +375,18 @@ def main() -> None:
     require_semantic_runtime_contract(config, encoder)
     external_evaluation = dict(config.get("external_evaluation") or {})
     turn_indices = list(external_evaluation.get("turn_indices") or [3, 8])
+    strategy_estimated_tokens = int(
+        external_evaluation.get("strategy_action_tokens") or 260
+    )
     condition = "ood_preflight"
+    strategy_cards = [
+        StrategyCard.model_validate(row) for row in iter_jsonl(args.strategy_bank)
+    ]
+    strategy_family_catalog = build_strategy_family_catalog(
+        strategy_cards,
+        require_all_families=True,
+        semantic_encoder=encoder,
+    )
 
     synth = load_states(args.synthetic_states)
     synth_train = [s for s in synth if s.split == PMV2Split.TRAIN]
@@ -329,7 +404,11 @@ def main() -> None:
     merged_cal_report = merged.calibrate_ood(synth_cal + aux_cal, **OOD_CALIBRATION_KWARGS)
 
     evoemo_single_turn_states, evoemo_single_turn_meta = _build_evoemo_states(
-        evoemo_path=args.evoemo_path, encoder=encoder
+        evoemo_path=args.evoemo_path,
+        encoder=encoder,
+        strategy_catalog_count=len(strategy_cards),
+        strategy_estimated_tokens=strategy_estimated_tokens,
+        strategy_family_catalog=strategy_family_catalog,
     )
     evoemo_formal_states, evoemo_formal_meta = _build_evoemo_formal_turn_states(
         evoemo_path=args.evoemo_path,
@@ -337,6 +416,9 @@ def main() -> None:
         turn_indices=turn_indices,
         condition=condition,
         encoder=encoder,
+        strategy_catalog_count=len(strategy_cards),
+        strategy_estimated_tokens=strategy_estimated_tokens,
+        strategy_family_catalog=strategy_family_catalog,
     )
 
     report = {
@@ -352,6 +434,7 @@ def main() -> None:
             ),
             "esconv_test_states_sha256": sha256_file(args.esconv_test_states),
             "evoemo_sha256": sha256_file(args.evoemo_path),
+            "strategy_bank_sha256": sha256_file(args.strategy_bank),
             "fixed_tracks_sha256": (
                 sha256_file(args.fixed_tracks_path)
                 if args.fixed_tracks_path.is_file()
@@ -400,6 +483,10 @@ def main() -> None:
                 "formal_result": (
                     evoemo_formal_meta["n_scenarios_with_at_least_one_complete_track"]
                     == evoemo_formal_meta["n_total_scenarios"]
+                    and evoemo_formal_meta["n_formal_turn_states"]
+                    == evoemo_formal_meta[
+                        "expected_formal_turn_states_at_full_coverage"
+                    ]
                 ),
                 "note": (
                     "formal_result is only True once every scenario has a "
@@ -427,9 +514,10 @@ def main() -> None:
         ]["evoemo_formal_turn_states"]["severe_rate"],
         "evoemo_formal_turn_coverage_note": (
             f"{evoemo_formal_meta['n_scenarios_with_at_least_one_complete_track']}/"
-            f"{evoemo_formal_meta['n_total_scenarios']} scenarios covered by real "
-            "fixed seeker tracks; NOT the full formal 68-state audit until all "
-            "scenarios have complete tracks"
+            f"{evoemo_formal_meta['n_total_scenarios']} scenarios and "
+            f"{evoemo_formal_meta['n_formal_turn_states']}/"
+            f"{evoemo_formal_meta['expected_formal_turn_states_at_full_coverage']} "
+            "seed-specific formal turn states covered"
         ),
     }
     args.out_path.parent.mkdir(parents=True, exist_ok=True)

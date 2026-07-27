@@ -29,7 +29,10 @@ from metacom_pm.evoemo import (
     fixed_seeker_cost_planning_contract,
     load_evoemo,
 )
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
+from metacom_pm.fixed_seeker_contract import (
+    FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL,
+    require_fixed_seeker_v3_sidecar_contract,
+)
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.response_mechanism_contract import build_response_mechanism_contract
 from metacom_pm.io import (
@@ -133,7 +136,46 @@ def _seed_lineage_fixture(workdir: Path) -> tuple[Path, Path]:
     return seeds, audit
 
 
-def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
+def _write_formal_bundle_binding(
+    binding_path: Path,
+    *,
+    bundle_dir: Path,
+    stage: str = FIXED_SEEKER_V23_STAGE,
+    expected_tracks: int,
+    expected_logical_calls: int,
+) -> Path:
+    """Tracked, content-addressed binding for a test-built formal bundle.
+
+    Mirrors the real data/pm_v1_5_contracts/fixed_seeker_v3_formal_bundle_v1.
+    json shape exactly, so consumers under test locate and verify the bundle
+    the same way they would locate the real one -- never via a hardcoded
+    output-directory basename.
+    """
+
+    payload = {
+        "protocol": FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL,
+        "stage": stage,
+        "output_directory": str(bundle_dir),
+        "approval_identity": "test-fixture-identity",
+        "sidecar_sha256": sha256_file(
+            ROOT / "configs" / "pm_v1_5_fixed_seeker_v3.json"
+        ),
+        "call_plan_sha256": "0" * 64,
+        "expected_tracks": expected_tracks,
+        "expected_logical_calls": expected_logical_calls,
+        "fixed_seeker_tracks_sha256": sha256_file(
+            bundle_dir / "fixed_seeker_tracks.jsonl"
+        ),
+        "artifact_attestation_sha256": sha256_file(
+            bundle_dir / "artifact_attestation.json"
+        ),
+    }
+    payload["binding_sha256"] = sha256_text(canonical_json(payload))
+    write_json(binding_path, payload)
+    return binding_path
+
+
+def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path, Path]:
     bundle = workdir / "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
     bundle.mkdir(parents=True)
     experiment = load_config(ROOT / "configs" / "experiment.yaml")
@@ -187,6 +229,8 @@ def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
             "status": "COMPLETE",
             "expected_tracks": len(rows),
             "completed_tracks": len(rows),
+            "expected_logical_calls": len(rows) * max_turns,
+            "successful_logical_calls": len(rows) * max_turns,
             "max_turns": max_turns,
             "completion_truncated_count": 0,
             "failures": [],
@@ -234,7 +278,14 @@ def _fixed_track_fixture(workdir: Path) -> tuple[Path, Path]:
             "observed_budget_gate_status": "PASS",
         },
     )
-    return tracks, attestation
+    binding = bundle.parent / "fixed_seeker_v3_formal_bundle_binding.json"
+    _write_formal_bundle_binding(
+        binding,
+        bundle_dir=bundle,
+        expected_tracks=len(rows),
+        expected_logical_calls=len(rows) * max_turns,
+    )
+    return tracks, attestation, binding
 
 
 def _esconv_v1_5_freeze_fixture(
@@ -803,7 +854,9 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         outputs={"report": (decision_quality_report, False)},
         parameters={"track": "pm-v1.5"},
     )
-    fixed_tracks, fixed_tracks_attestation = _fixed_track_fixture(workdir)
+    fixed_tracks, fixed_tracks_attestation, fixed_tracks_binding = (
+        _fixed_track_fixture(workdir)
+    )
     esconv_fixture = _esconv_v1_5_freeze_fixture(
         workdir,
         pm_checkpoint=pm_checkpoint,
@@ -821,8 +874,7 @@ def _build_freeze(workdir: Path, monkeypatch, *, pm_checkpoint_content: str = "p
         "--strategy-bank", str(ROOT / "data" / "strategy" / "strategy_cards_v1_5.jsonl"),
         "--seed-dialogues", str(seed_dialogues),
         "--seed-audit", str(seed_audit),
-        "--fixed-tracks", str(fixed_tracks),
-        "--fixed-tracks-attestation", str(fixed_tracks_attestation),
+        "--fixed-tracks-bundle-binding", str(fixed_tracks_binding),
         "--pm-checkpoint", str(pm_checkpoint),
         "--pm-training-report", str(training_report),
         "--candidate-manifest", str(candidate_manifest),
@@ -1928,20 +1980,51 @@ def test_v1_5_external_eval_happy_path_reaches_shared_dry_runner(workdir, monkey
     assert set(calls[0]["expected_units"]).isdisjoint(excluded)
 
 
-def _pre_v3_fixed_seeker_bundle(workdir: Path) -> tuple[Path, Path]:
-    """A bare, pre-V3-migration-named bundle: content is irrelevant, since
+def _pre_v3_fixed_seeker_bundle(workdir: Path) -> Path:
+    """A bare, pre-V3 (V22-stage) bundle plus its own tracked binding.
 
-    every migrated consumer's directory-name check fires before either file
-    is actually read.
+    Every migrated consumer now locates and verifies its formal bundle only
+    through a content-addressed binding, never a hardcoded output-directory
+    basename -- so the reverse-direction check is that a binding honestly
+    declaring an old V2/V22-stage bundle is still refused, exactly like
+    tests/test_v1_5_fixed_seeker_v3_readiness.py's unit-level
+    ``test_require_fixed_seeker_v3_formal_bundle_fails_closed_on_old_v2_binding``,
+    but exercised end-to-end through each real consumer script.
     """
 
     old_style_dir = workdir / "evoemo_fixed_tracks_v1_5"
     old_style_dir.mkdir(parents=True)
     fixed_tracks = old_style_dir / "fixed_seeker_tracks.jsonl"
-    fixed_tracks.touch()
+    fixed_tracks.write_text('{"track_id": "old-v2"}\n', encoding="utf-8")
     fixed_tracks_attestation = old_style_dir / "artifact_attestation.json"
-    fixed_tracks_attestation.touch()
-    return fixed_tracks, fixed_tracks_attestation
+    write_json(fixed_tracks_attestation, {"stage": "evoemo_fixed_seeker_tracks_v22"})
+    write_json(
+        old_style_dir / "summary.json",
+        {
+            "expected_tracks": 1,
+            "completed_tracks": 1,
+            "expected_logical_calls": 1,
+            "successful_logical_calls": 1,
+        },
+    )
+    binding = workdir / "old_v2_bundle_binding.json"
+    payload = {
+        "protocol": FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL,
+        "stage": "evoemo_fixed_seeker_tracks_v22",
+        "output_directory": str(old_style_dir),
+        "approval_identity": "test-old-v2-identity",
+        "sidecar_sha256": sha256_file(
+            ROOT / "configs" / "pm_v1_5_fixed_seeker_v3.json"
+        ),
+        "call_plan_sha256": "0" * 64,
+        "expected_tracks": 1,
+        "expected_logical_calls": 1,
+        "fixed_seeker_tracks_sha256": sha256_file(fixed_tracks),
+        "artifact_attestation_sha256": sha256_file(fixed_tracks_attestation),
+    }
+    payload["binding_sha256"] = sha256_text(canonical_json(payload))
+    write_json(binding, payload)
+    return binding
 
 
 def test_v1_5_freeze_rejects_pre_v3_fixed_seeker_bundle_directory_name(
@@ -1949,20 +2032,18 @@ def test_v1_5_freeze_rejects_pre_v3_fixed_seeker_bundle_directory_name(
 ):
     """Reverse-direction check for the fixed-seeker V3 atomic migration:
 
-    scripts/v1_5_create_freeze.py must now refuse the historical bare
-    outputs/evoemo_fixed_tracks_v1_5 bundle name it used to require, not
-    silently keep accepting it alongside the new V3 name.
+    scripts/v1_5_create_freeze.py must still refuse a binding that honestly
+    declares an old V2/V22-stage bundle, not silently promote it.
     """
 
     module = _load_module(
         "scripts/v1_5_create_freeze.py", "v1_5_create_freeze_reverse_test"
     )
-    fixed_tracks, fixed_tracks_attestation = _pre_v3_fixed_seeker_bundle(workdir)
+    binding = _pre_v3_fixed_seeker_bundle(workdir)
     placeholder = lambda name: str(workdir / name)  # noqa: E731
     argv = [
         "v1_5_create_freeze.py",
-        "--fixed-tracks", str(fixed_tracks),
-        "--fixed-tracks-attestation", str(fixed_tracks_attestation),
+        "--fixed-tracks-bundle-binding", str(binding),
         "--pm-checkpoint", placeholder("pm.joblib"),
         "--pm-training-report", placeholder("training_report.json"),
         "--candidate-manifest", placeholder("candidate_manifest.json"),
@@ -1976,9 +2057,7 @@ def test_v1_5_freeze_rejects_pre_v3_fixed_seeker_bundle_directory_name(
         "--out", placeholder("study_freeze.json"),
     ]
     monkeypatch.setattr(sys, "argv", argv)
-    with pytest.raises(
-        RuntimeError, match="evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-    ):
+    with pytest.raises(RuntimeError, match="binding stage does not match"):
         module.main()
 
 
@@ -1991,17 +2070,14 @@ def test_v1_5_evoemo_generation_rejects_pre_v3_fixed_seeker_bundle_directory_nam
         "scripts/v1_5/24_run_pm_v2_evoemo_v1_5.py",
         "v1_5_24_run_pm_v2_evoemo_reverse_test",
     )
-    fixed_tracks, fixed_tracks_attestation = _pre_v3_fixed_seeker_bundle(workdir)
+    binding = _pre_v3_fixed_seeker_bundle(workdir)
     argv = [
         "24_run_pm_v2_evoemo_v1_5.py",
         "--dry-run",
-        "--fixed-tracks", str(fixed_tracks),
-        "--fixed-tracks-attestation", str(fixed_tracks_attestation),
+        "--fixed-tracks-bundle-binding", str(binding),
     ]
     monkeypatch.setattr(sys, "argv", argv)
-    with pytest.raises(
-        RuntimeError, match="evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-    ):
+    with pytest.raises(RuntimeError, match="binding stage does not match"):
         module.main()
 
 
@@ -2017,17 +2093,14 @@ def test_v1_5_reference_baselines_rejects_pre_v3_fixed_seeker_bundle_directory_n
         "scripts/v1_5/24a_run_pmv22_reference_baselines_v1_5.py",
         "v1_5_24a_run_pmv22_reference_baselines_reverse_test",
     )
-    fixed_tracks, fixed_tracks_attestation = _pre_v3_fixed_seeker_bundle(workdir)
+    binding = _pre_v3_fixed_seeker_bundle(workdir)
     argv = [
         "24a_run_pmv22_reference_baselines_v1_5.py",
         "--dry-run",
-        "--fixed-tracks", str(fixed_tracks),
-        "--fixed-tracks-attestation", str(fixed_tracks_attestation),
+        "--fixed-tracks-bundle-binding", str(binding),
     ]
     monkeypatch.setattr(sys, "argv", argv)
-    with pytest.raises(
-        RuntimeError, match="evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-    ):
+    with pytest.raises(RuntimeError, match="binding stage does not match"):
         module.main()
 
 

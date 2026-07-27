@@ -66,6 +66,49 @@ def physical_call_key(
 ) -> str:
     """Return the immutable logical-call key used by dry-run and resume."""
 
+    endpoint_record = {
+        "base_url": endpoint.base_url,
+        "model": endpoint.model,
+        "family": endpoint.family,
+        "transport": endpoint_transport(endpoint),
+    }
+    # Preserve all historical identities when these capabilities retain their
+    # defaults, while content-addressing endpoint-specific behavior whenever a
+    # caller explicitly opts into it.
+    if not bool(getattr(endpoint, "supports_strict_json_schema", True)):
+        endpoint_record["supports_strict_json_schema"] = False
+    thinking_mode = str(
+        getattr(endpoint, "thinking_mode", "provider_default")
+    )
+    if thinking_mode != "provider_default":
+        endpoint_record["thinking_mode"] = thinking_mode
+    enable_thinking = getattr(endpoint, "enable_thinking", None)
+    if enable_thinking is not None:
+        endpoint_record["enable_thinking"] = bool(enable_thinking)
+    temperature_mode = str(getattr(endpoint, "temperature_mode", "explicit"))
+    if temperature_mode != "explicit":
+        endpoint_record["temperature_mode"] = temperature_mode
+    max_output_parameter = str(
+        getattr(endpoint, "max_output_tokens_parameter", "max_tokens")
+    )
+    if max_output_parameter != "max_tokens":
+        endpoint_record["max_output_tokens_parameter"] = max_output_parameter
+    if bool(getattr(endpoint, "anthropic_strict_tool_use", False)):
+        endpoint_record["anthropic_strict_tool_use"] = True
+    gemini_thinking_budget = getattr(
+        endpoint, "gemini_thinking_budget", None
+    )
+    if gemini_thinking_budget is not None:
+        endpoint_record["gemini_thinking_budget"] = int(
+            gemini_thinking_budget
+        )
+    openai_reasoning_effort = getattr(
+        endpoint, "openai_reasoning_effort", None
+    )
+    if openai_reasoning_effort is not None:
+        endpoint_record["openai_reasoning_effort"] = str(
+            openai_reasoning_effort
+        )
     return sha256_text(
         canonical_json(
             {
@@ -73,12 +116,7 @@ def physical_call_key(
                 "stage": str(stage),
                 "record_ids": dict(record_ids),
                 "prompt_sha256": str(prompt_sha256),
-                "endpoint": {
-                    "base_url": endpoint.base_url,
-                    "model": endpoint.model,
-                    "family": endpoint.family,
-                    "transport": endpoint_transport(endpoint),
-                },
+                "endpoint": endpoint_record,
                 "request_parameters": dict(request_parameters),
             }
         )

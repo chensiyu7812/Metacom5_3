@@ -154,6 +154,11 @@ from metacom_pm.pm_v2_model import (
     RISK_DIMENSION_CLAMP_RANGE,
 )
 from metacom_pm.text import conservative_token_bound, estimate_tokens
+from metacom_pm.v1_5_weak_supervision import (
+    WEAK_SUPERVISION_STATUS,
+    require_weak_supervision_contract,
+    require_weak_supervision_split,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -577,6 +582,17 @@ def main() -> None:
             "diagnostic-only and is never the sealed holdout)."
         ),
     )
+    parser.add_argument(
+        "--weak-supervision-contract",
+        type=Path,
+        default=None,
+        help=(
+            "Explicitly compile a complete train/calibration matrix as "
+            "LLM_WEAK_SUPERVISION_NOT_GOLD even when automatic-gold quality "
+            "gates fail. The tracked contract hash is folded into the stage, "
+            "run manifest and cost identity. Forbidden for internal_test."
+        ),
+    )
     args = parser.parse_args()
 
     if args.run and args.overwrite:
@@ -586,10 +602,33 @@ def main() -> None:
         )
     if args.sealed_holdout and args.pilot:
         raise RuntimeError("--sealed-holdout and --pilot are mutually exclusive")
+    weak_supervision_contract = None
+    if args.weak_supervision_contract is not None:
+        if args.pilot or args.sealed_holdout:
+            raise RuntimeError(
+                "weak supervision is mutually exclusive with pilot/sealed-holdout"
+            )
+        if args.split not in {"train", "calibration"}:
+            raise RuntimeError(
+                "weak supervision may only consume train/calibration splits"
+            )
+        weak_supervision_contract = require_weak_supervision_contract(
+            args.weak_supervision_contract
+        )
+        require_weak_supervision_split(
+            weak_supervision_contract,
+            domain="esconv_auxiliary",
+            split=args.split,
+        )
 
     split = str(args.split)
     scope = str(args.scope)
-    stage = f"esconv_auxiliary_judging_{scope}_{split}"
+    weak_supervision_mode = weak_supervision_contract is not None
+    stage = (
+        f"esconv_auxiliary_weak_judging_{scope}_{split}"
+        if weak_supervision_mode
+        else f"esconv_auxiliary_judging_{scope}_{split}"
+    )
     config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
     if pm_v1_5_config.get("version") != "pm-v1.5":
@@ -602,7 +641,12 @@ def main() -> None:
         run_identity=args.accept_cost_estimate_sha256,
     )
     out_dir = resolve_first_unconsumed_output_directory(
-        args.out_root / f"esconv_auxiliary_judging_v1_5_{scope}_{split}",
+        args.out_root
+        / (
+            f"esconv_auxiliary_weak_judging_v1_5_{scope}_{split}"
+            if weak_supervision_mode
+            else f"esconv_auxiliary_judging_v1_5_{scope}_{split}"
+        ),
         config=pm_v1_5_config,
         config_path=args.pm_v1_5_config,
     )
@@ -758,6 +802,12 @@ def main() -> None:
             "transport_execution_contract": transport_execution_contract,
             "split": split,
             "pilot_mode": bool(args.pilot),
+            "weak_supervision_mode": weak_supervision_mode,
+            "weak_supervision_contract_sha256": (
+                weak_supervision_contract["contract_sha256"]
+                if weak_supervision_contract
+                else None
+            ),
         },
     )
 
@@ -943,6 +993,12 @@ def main() -> None:
         "call_plan_sha256": sha256_text(canonical_json(cost_rows)),
         "run_manifest_sha256": manifest["manifest_sha256"],
         "pilot_mode": bool(args.pilot),
+        "weak_supervision_mode": weak_supervision_mode,
+        "weak_supervision_contract_sha256": (
+            weak_supervision_contract["contract_sha256"]
+            if weak_supervision_contract
+            else None
+        ),
         "budget_limits": {
             "max_api_calls": int(args.max_api_calls),
             "max_estimated_usd": float(args.max_estimated_usd),
@@ -1320,7 +1376,7 @@ def main() -> None:
             minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
             split_correlation_by_sign=True,
             composite_spec=composite_spec,
-            raise_on_failure=not args.pilot,
+            raise_on_failure=not (args.pilot or weak_supervision_mode),
         )
         raw_family_action_gate = validate_raw_judge_family_subgroup_health(
             canonical_raw_rows,
@@ -1338,7 +1394,7 @@ def main() -> None:
             reject_constant_response_dimensions=labeling["reject_constant_response_dimensions"],
             reject_constant_risk_dimensions=labeling["reject_constant_risk_dimensions"],
             composite_spec=composite_spec,
-            raise_on_failure=not args.pilot,
+            raise_on_failure=not (args.pilot or weak_supervision_mode),
         )
         action_applicable_risk_gate = validate_action_applicable_risk_signal(
             canonical_raw_rows,
@@ -1346,7 +1402,7 @@ def main() -> None:
             expected_families=[str(endpoint.family) for endpoint in endpoints],
             minimum_signal_rate=labeling["minimum_action_applicable_risk_signal_rate"],
             minimum_distinct_values=labeling["minimum_action_applicable_risk_distinct_values"],
-            raise_on_failure=not args.pilot,
+            raise_on_failure=not (args.pilot or weak_supervision_mode),
         )
         # ESConv-auxiliary's legal action set is frozen to exactly {M0+R0,
         # M0+RS}: whether independent judge families agree on which one is
@@ -1401,7 +1457,22 @@ def main() -> None:
             composite_spec=composite_spec,
             minimum_families=labeling["minimum_families"],
             reliable_mad_threshold=labeling["reliable_mad_threshold"],
-            provenance={"esconv_auxiliary_split": split},
+            provenance={
+                "esconv_auxiliary_split": split,
+                **(
+                    {
+                        "supervision_kind": WEAK_SUPERVISION_STATUS,
+                        "automatic_gold_label": False,
+                        "weak_supervision_contract_sha256": (
+                            weak_supervision_contract["contract_sha256"]
+                        ),
+                        "domain": "esconv_auxiliary",
+                        "split": split,
+                    }
+                    if weak_supervision_contract
+                    else {}
+                ),
+            },
         )
         labels.append(label)
         append_jsonl(labels_path, label.model_dump(mode="json"))
@@ -1491,7 +1562,7 @@ def main() -> None:
             minimum_nonzero_observations=MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK,
             split_correlation_by_sign=True,
             composite_spec=composite_spec,
-            raise_on_failure=not args.pilot,
+            raise_on_failure=not (args.pilot or weak_supervision_mode),
         )
         if labels
         else {"status": "FAIL", "reason": "no completed labels"}
@@ -1512,14 +1583,24 @@ def main() -> None:
         "status": "COMPLETE" if not missing_after else "INCOMPLETE",
         "pilot_mode": bool(args.pilot),
         "reportability_status": (
-            "PILOT_DIAGNOSTIC_ONLY"
-            if args.pilot
+            WEAK_SUPERVISION_STATUS
+            if weak_supervision_mode
             else (
-                "REPORTABLE"
-                if raw_family_quality_status == "PASS"
-                and quality_gate.get("status") == "PASS"
-                else "FORMAL_GATE_FAILED"
+                "PILOT_DIAGNOSTIC_ONLY"
+                if args.pilot
+                else (
+                    "REPORTABLE"
+                    if raw_family_quality_status == "PASS"
+                    and quality_gate.get("status") == "PASS"
+                    else "FORMAL_GATE_FAILED"
+                )
             )
+        ),
+        "automatic_gold_label_claimed": False if weak_supervision_mode else None,
+        "weak_supervision_contract_sha256": (
+            weak_supervision_contract["contract_sha256"]
+            if weak_supervision_contract
+            else None
         ),
         "split": split,
         "expected_judge_pairs": len(expected_pairs),
@@ -1558,10 +1639,10 @@ def main() -> None:
             f"ESConv-auxiliary judging incomplete for split {split!r}: "
             f"{len(missing_after)} missing pairs"
         )
-    # Note: in non-pilot mode every gate above already used
-    # raise_on_failure=True, so reaching this point means reportability_status
-    # is necessarily REPORTABLE -- a FAIL would have raised inside the gate
-    # call itself, not fallen through to here.
+    # In legacy formal mode every gate above raises on failure, so reaching
+    # this point means REPORTABLE. Weak-supervision mode deliberately records
+    # the same failed diagnostics while materializing NOT_GOLD labels; this is
+    # a separate estimand and stage, not a relaxation of the gold gate.
 
     # Formal attestation, written only once the run is genuinely complete
     # (unreachable above if missing_after was non-empty). Binds the
@@ -1580,6 +1661,11 @@ def main() -> None:
             "states": states_path,
             "generation_outcomes": outcomes_path,
             "generation_summary": generation_summary_path,
+            **(
+                {"weak_supervision_contract": args.weak_supervision_contract}
+                if weak_supervision_mode
+                else {}
+            ),
         },
         outputs={
             "summary": (out_dir / "summary.json", False),
@@ -1591,6 +1677,15 @@ def main() -> None:
             "status": summary["status"],
             "reportability_status": summary["reportability_status"],
             "pilot_mode": bool(args.pilot),
+            "weak_supervision_mode": weak_supervision_mode,
+            "automatic_gold_label_claimed": (
+                False if weak_supervision_mode else None
+            ),
+            "weak_supervision_contract_sha256": (
+                weak_supervision_contract["contract_sha256"]
+                if weak_supervision_contract
+                else None
+            ),
             "scope": scope,
             "split": split,
             "quality_gate_status": quality_gate.get("status"),

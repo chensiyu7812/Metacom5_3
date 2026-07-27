@@ -19,6 +19,7 @@ from metacom_pm.v1_5_dual_domain_training import (
     LONGITUDINAL_DOMAIN,
     _paired_group_bootstrap,
     audit_domain_label_matrix,
+    calibration_action_viability,
     fixed_action_metrics,
     require_equal_domain_training_weight,
     training_domain_for_state,
@@ -407,6 +408,32 @@ def test_per_domain_label_audit_still_hard_gates_real_low_mad_coverage():
         )
 
 
+def test_per_domain_label_audit_keeps_low_mad_failure_diagnostic_for_non_gold_weak_supervision():
+    longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
+    train_states = [
+        state for state in longitudinal if state.split is PMV2Split.TRAIN
+    ]
+    train_ids = {state.state_id for state in train_states}
+    train_labels = [label for label in long_labels if label.state_id in train_ids]
+    for label in train_labels:
+        label.dimension_mad["risk.memory_omission"] = 3.0
+    report = audit_domain_label_matrix(
+        train_states,
+        train_labels,
+        domain=LONGITUDINAL_DOMAIN,
+        low_mad_threshold=0.75,
+        minimum_reliable_rate=0.8,
+        minimum_low_mad_coverage_per_dimension=0.9,
+        minimum_low_mad_coverage_per_action_dimension=0.8,
+        enforce_low_mad_coverage_gate=False,
+    )
+    assert report["status"] == (
+        "DIAGNOSTIC_LIMITATION_NON_GOLD_WEAK_SUPERVISION"
+    )
+    assert report["low_mad_coverage_gate_enforced"] is False
+    assert report["checks"]["low_mad_coverage_per_dimension"] is False
+
+
 def test_per_domain_label_audit_marks_inapplicable_risk_dimensions_as_na():
     longitudinal, _auxiliary, long_labels, _aux_labels, _config = _fixture()
     train_states = [
@@ -536,3 +563,72 @@ def test_paired_group_bootstrap_computes_conservative_deltas_independently_of_no
     assert metrics["conservative_risk"]["mean_delta"] == pytest.approx(0.4)
     assert metrics["utility"]["mean_delta"] == pytest.approx(1.0)
     assert metrics["conservative_utility"]["mean_delta"] == pytest.approx(0.2)
+
+
+def _action_preflight() -> dict[str, float]:
+    return {
+        "maximum_severe_ood_fallback_rate": 0.10,
+        "maximum_no_feasible_fallback_rate": 0.10,
+        "minimum_m0_rate": 0.05,
+        "minimum_r0_rate": 0.10,
+        "minimum_m0_r0_rate": 0.05,
+        "minimum_nonfallback_rate": 0.80,
+        "maximum_action_share": 0.50,
+        "minimum_action_entropy_bits": 1.00,
+    }
+
+
+def test_calibration_action_viability_reuses_frozen_preflight_thresholds():
+    metrics = {
+        "n": 10,
+        "action_distribution": {"M0+R0": 5, "M0+RS": 5},
+        "m0_rate": 1.0,
+        "r0_rate": 0.5,
+        "learned_decision_rate": 0.9,
+        "fallback_rate": 0.1,
+        "severe_ood_fallback_rate": 0.0,
+        "no_feasible_fallback_rate": 0.1,
+        "action_entropy_bits": 1.0,
+    }
+    report = calibration_action_viability(
+        metrics, action_preflight=_action_preflight()
+    )
+    assert report["status"] == "PASS"
+    assert all(report["checks"].values())
+    assert report["metrics"]["nonfallback_rate"] == pytest.approx(0.9)
+    assert report["metrics"]["maximum_action_share"] == pytest.approx(0.5)
+
+
+def test_calibration_action_viability_rejects_fixed_fallback_collapse():
+    metrics = {
+        "n": 10,
+        "action_distribution": {"M0+R0": 10},
+        "m0_rate": 1.0,
+        "r0_rate": 1.0,
+        "learned_decision_rate": 0.0,
+        "fallback_rate": 1.0,
+        "severe_ood_fallback_rate": 0.0,
+        "no_feasible_fallback_rate": 1.0,
+        "action_entropy_bits": 0.0,
+    }
+    report = calibration_action_viability(
+        metrics, action_preflight=_action_preflight()
+    )
+    assert report["status"] == "NOT_SUPPORTED"
+    assert report["checks"]["no_feasible_fallback_rate"] is False
+    assert report["checks"]["nonfallback_rate"] is False
+    assert report["checks"]["maximum_action_share"] is False
+    assert report["checks"]["action_entropy_bits"] is False
+
+
+def test_calibration_action_viability_requires_exact_gate_contract():
+    gates = _action_preflight()
+    gates.pop("maximum_action_share")
+    with pytest.raises(ValueError, match="exact frozen action-preflight"):
+        calibration_action_viability(
+            {
+                "n": 1,
+                "action_distribution": {"M0+R0": 1},
+            },
+            action_preflight=gates,
+        )

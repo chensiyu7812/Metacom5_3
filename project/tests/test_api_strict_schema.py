@@ -5,7 +5,7 @@ from typing import Any
 
 import httpx
 import pytest
-from pydantic import model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from metacom_pm.api import (
     CallResult,
@@ -330,6 +330,52 @@ def test_default_endpoint_still_uses_strict_json_schema_mode() -> None:
     assert payload["response_format"]["json_schema"]["schema"] == (
         openai_strict_json_schema(GeneratedBundleDraft)
     )
+
+
+def test_anthropic_strict_tool_projection_strips_provider_numeric_and_array_bounds():
+    class BoundedOutput(BaseModel):
+        model_config = ConfigDict(extra="forbid", strict=True)
+
+        severity: int = Field(ge=0, le=3)
+        findings: list[str] = Field(min_length=1, max_length=3)
+
+    endpoint = Endpoint(
+        base_url="https://api.anthropic.com",
+        model="claude-haiku-4-5-20251001",
+        api_key_env="IGNORED",
+        family="anthropic_claude_haiku_4_5",
+        transport="anthropic_messages",
+        anthropic_strict_tool_use=True,
+    )
+    payload = chat_request_payload(
+        endpoint,
+        [{"role": "user", "content": "Audit."}],
+        temperature=0.0,
+        max_tokens=100,
+        seed=7,
+        response_schema=BoundedOutput,
+    )
+    provider_field = payload["tools"][0]["input_schema"]["properties"][
+        "severity"
+    ]
+    assert "minimum" not in provider_field
+    assert "maximum" not in provider_field
+    provider_findings = payload["tools"][0]["input_schema"]["properties"][
+        "findings"
+    ]
+    assert "minItems" not in provider_findings
+    assert "maxItems" not in provider_findings
+    assert BoundedOutput.model_validate(
+        {"severity": 3, "findings": ["supported"]}
+    ).severity == 3
+    with pytest.raises(Exception):
+        BoundedOutput.model_validate({"severity": 4, "findings": ["supported"]})
+    with pytest.raises(Exception):
+        BoundedOutput.model_validate({"severity": 3, "findings": []})
+    with pytest.raises(Exception):
+        BoundedOutput.model_validate(
+            {"severity": 3, "findings": ["a", "b", "c", "d"]}
+        )
 
 
 def test_loose_json_object_mode_still_enforces_the_schema_locally(

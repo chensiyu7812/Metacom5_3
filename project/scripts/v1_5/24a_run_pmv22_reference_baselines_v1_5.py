@@ -15,7 +15,10 @@ from metacom_pm.evoemo import (
     fixed_seeker_cost_planning_contract,
     load_evoemo,
 )
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
+from metacom_pm.fixed_seeker_contract import (
+    require_fixed_seeker_v3_formal_bundle,
+    require_fixed_seeker_v3_sidecar_contract,
+)
 from metacom_pm.freeze import require_study_freeze
 from metacom_pm.generation_contract import SupporterGenerationContract
 from metacom_pm.io import canonical_json, read_json, sha256_text
@@ -173,20 +176,17 @@ def main() -> None:
         default=ROOT / "outputs" / "pm_v1_5_model" / "training_report.json",
     )
     parser.add_argument(
-        "--fixed-tracks",
+        "--fixed-tracks-bundle-binding",
         type=Path,
         default=ROOT
-        / "outputs"
-        / "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        / "fixed_seeker_tracks.jsonl",
-    )
-    parser.add_argument(
-        "--fixed-tracks-attestation",
-        type=Path,
-        default=ROOT
-        / "outputs"
-        / "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        / "artifact_attestation.json",
+        / "data"
+        / "pm_v1_5_contracts"
+        / "fixed_seeker_v3_formal_bundle_v1.json",
+        help=(
+            "Tracked, content-addressed binding that locates and verifies "
+            "the formal V3 fixed-seeker bundle -- never a hardcoded output "
+            "directory basename."
+        ),
     )
     parser.add_argument(
         "--fixed-seeker-contract",
@@ -226,17 +226,16 @@ def main() -> None:
         raise RuntimeError(
             "--run requires --accept-cost-estimate-sha256 from the matching dry run"
         )
+    fixed_seeker_bundle = require_fixed_seeker_v3_formal_bundle(
+        args.fixed_tracks_bundle_binding,
+        root=ROOT,
+        required_stage=FIXED_SEEKER_V23_STAGE,
+    )
+    args.fixed_tracks = fixed_seeker_bundle["fixed_tracks_path"]
+    args.fixed_tracks_attestation = fixed_seeker_bundle["artifact_attestation_path"]
     legacy_names = {"evoemo_selective", "evoemo_fixed_tracks"}
     if args.out_dir.name in legacy_names or args.fixed_tracks.parent.name in legacy_names:
         raise RuntimeError("legacy EvoEmo generation artifacts are forbidden")
-    if (
-        args.fixed_tracks.parent.name != "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        or args.fixed_tracks_attestation.parent != args.fixed_tracks.parent
-    ):
-        raise RuntimeError(
-            "PM-v1.5 reference baselines require the isolated "
-            "outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate bundle"
-        )
 
     experiment = load_config(args.config)
     pm_v2 = load_config(args.pm_v2_config)

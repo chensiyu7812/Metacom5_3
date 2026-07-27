@@ -9,7 +9,10 @@ from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.paid_run_release import require_paid_run_release
 from metacom_pm.evidence_filter import EvidenceFilterConfig
 from metacom_pm.freeze import require_study_freeze
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
+from metacom_pm.fixed_seeker_contract import (
+    require_fixed_seeker_v3_formal_bundle,
+    require_fixed_seeker_v3_sidecar_contract,
+)
 from metacom_pm.evoemo import (
     FIXED_SEEKER_V23_STAGE,
     evo_memory_global_catalog_digest,
@@ -17,7 +20,7 @@ from metacom_pm.evoemo import (
     load_evoemo,
 )
 from metacom_pm.generation_contract import SupporterGenerationContract
-from metacom_pm.io import canonical_json, read_json, sha256_file, sha256_text
+from metacom_pm.io import canonical_json, sha256_file, sha256_text
 from metacom_pm.pm_v2_evoemo import (
     EVALUATION_UNIT_CONTRACT_PROTOCOL,
     run_pmv2_fixed_evoemo,
@@ -126,20 +129,17 @@ def main() -> None:
     )
     parser.add_argument("--condition", default="pm_v2")
     parser.add_argument(
-        "--fixed-tracks",
+        "--fixed-tracks-bundle-binding",
         type=Path,
         default=ROOT
-        / "outputs"
-        / "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        / "fixed_seeker_tracks.jsonl",
-    )
-    parser.add_argument(
-        "--fixed-tracks-attestation",
-        type=Path,
-        default=ROOT
-        / "outputs"
-        / "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        / "artifact_attestation.json",
+        / "data"
+        / "pm_v1_5_contracts"
+        / "fixed_seeker_v3_formal_bundle_v1.json",
+        help=(
+            "Tracked, content-addressed binding that locates and verifies "
+            "the formal V3 fixed-seeker bundle -- never a hardcoded output "
+            "directory basename."
+        ),
     )
     parser.add_argument(
         "--fixed-seeker-contract",
@@ -166,20 +166,13 @@ def main() -> None:
     args.checkpoint, args.out_dir = resolve_condition_paths(
         args.condition, checkpoint=args.checkpoint, out_dir=args.out_dir
     )
-    if (
-        args.fixed_tracks.parent.name != "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        or args.fixed_tracks_attestation.parent != args.fixed_tracks.parent
-    ):
-        raise RuntimeError(
-            "PM-v1.5 requires its isolated "
-            "outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate bundle"
-        )
-    if args.fixed_tracks_attestation.is_file():
-        if read_json(args.fixed_tracks_attestation).get("stage") != FIXED_SEEKER_V23_STAGE:
-            raise RuntimeError(
-                "PM-v1.5 fixed-seeker generation requires a "
-                f"{FIXED_SEEKER_V23_STAGE} bundle"
-            )
+    fixed_seeker_bundle = require_fixed_seeker_v3_formal_bundle(
+        args.fixed_tracks_bundle_binding,
+        root=ROOT,
+        required_stage=FIXED_SEEKER_V23_STAGE,
+    )
+    args.fixed_tracks = fixed_seeker_bundle["fixed_tracks_path"]
+    args.fixed_tracks_attestation = fixed_seeker_bundle["artifact_attestation_path"]
 
     if args.run and args.overwrite:
         raise RuntimeError(

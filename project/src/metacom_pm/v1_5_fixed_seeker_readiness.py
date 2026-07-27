@@ -58,6 +58,10 @@ def assess_fixed_seeker_v3_promotion(
             or "required_stage=FIXED_SEEKER_V22_STAGE" in source
         ):
             blockers.append(f"{consumer}_still_hard_codes_v2_bundle_contract")
+        if 'parent.name != "evoemo_fixed_tracks_v1_5_v3_formal_candidate"' in source:
+            blockers.append(
+                f"{consumer}_still_hard_codes_formal_bundle_directory_basename"
+            )
     if not formal_bundle_exists:
         blockers.append("formal_102_track_v3_bundle_not_generated")
 

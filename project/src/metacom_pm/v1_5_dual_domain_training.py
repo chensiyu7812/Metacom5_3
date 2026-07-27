@@ -32,6 +32,9 @@ ESCONV_AUXILIARY_DOMAIN = "esconv_auxiliary"
 ESCONV_AUXILIARY_FAMILY = "esconv_auxiliary_strategy_routing"
 ESCONV_AUXILIARY_ACTIONS = frozenset({"M0+R0", "M0+RS"})
 DUAL_DOMAIN_GATE_PROTOCOL = "pm-v1.5-dual-domain-independent-internal-gates-v1"
+CALIBRATION_ACTION_VIABILITY_PROTOCOL = (
+    "pm-v1.5-pre-internal-calibration-action-viability-v1"
+)
 
 
 def training_domain_for_state(state: PMV2State) -> str:
@@ -42,6 +45,97 @@ def training_domain_for_state(state: PMV2State) -> str:
             )
         return ESCONV_AUXILIARY_DOMAIN
     return LONGITUDINAL_DOMAIN
+
+
+def calibration_action_viability(
+    metrics: Mapping[str, Any],
+    *,
+    action_preflight: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Apply the frozen deployment action guardrails before opening holdouts.
+
+    Calibration may select thresholds and cost/risk trade-offs, but it must not
+    promote a selector that is already observationally equivalent to one fixed
+    action or that reaches decisions almost entirely through fail-closed
+    fallback.  Reusing the preregistered external action-preflight thresholds
+    avoids inventing a favorable post-hoc calibration gate.
+    """
+
+    required_gates = {
+        "maximum_severe_ood_fallback_rate",
+        "maximum_no_feasible_fallback_rate",
+        "minimum_m0_rate",
+        "minimum_r0_rate",
+        "minimum_m0_r0_rate",
+        "minimum_nonfallback_rate",
+        "maximum_action_share",
+        "minimum_action_entropy_bits",
+    }
+    if set(action_preflight) != required_gates:
+        raise ValueError(
+            "calibration action viability requires the exact frozen "
+            f"action-preflight contract; missing={sorted(required_gates-set(action_preflight))}, "
+            f"extra={sorted(set(action_preflight)-required_gates)}"
+        )
+    n = int(metrics.get("n") or 0)
+    distribution = {
+        str(action_id): int(count)
+        for action_id, count in dict(metrics.get("action_distribution") or {}).items()
+    }
+    if n <= 0 or sum(distribution.values()) != n:
+        raise ValueError(
+            "calibration action viability requires an exact non-empty action "
+            "distribution"
+        )
+    maximum_action_share = max(distribution.values()) / n
+    m0_r0_rate = distribution.get("M0+R0", 0) / n
+    nonfallback_rate = 1.0 - float(metrics["fallback_rate"])
+    checks = {
+        "severe_ood_fallback_rate": float(metrics["severe_ood_fallback_rate"])
+        <= float(action_preflight["maximum_severe_ood_fallback_rate"]),
+        "no_feasible_fallback_rate": float(metrics["no_feasible_fallback_rate"])
+        <= float(action_preflight["maximum_no_feasible_fallback_rate"]),
+        "m0_rate": float(metrics["m0_rate"])
+        >= float(action_preflight["minimum_m0_rate"]),
+        "r0_rate": float(metrics["r0_rate"])
+        >= float(action_preflight["minimum_r0_rate"]),
+        "m0_r0_rate": m0_r0_rate
+        >= float(action_preflight["minimum_m0_r0_rate"]),
+        "nonfallback_rate": nonfallback_rate
+        >= float(action_preflight["minimum_nonfallback_rate"]),
+        "maximum_action_share": maximum_action_share
+        <= float(action_preflight["maximum_action_share"]),
+        "action_entropy_bits": float(metrics["action_entropy_bits"])
+        >= float(action_preflight["minimum_action_entropy_bits"]),
+    }
+    return {
+        "protocol": CALIBRATION_ACTION_VIABILITY_PROTOCOL,
+        "status": "PASS" if all(checks.values()) else "NOT_SUPPORTED",
+        "checks": checks,
+        "threshold_source": "configs.pm_v1_5.external_evaluation.action_preflight",
+        "thresholds": {
+            key: float(value) for key, value in sorted(action_preflight.items())
+        },
+        "metrics": {
+            "n": n,
+            "action_distribution": distribution,
+            "distinct_actions": len(distribution),
+            "maximum_action_share": float(maximum_action_share),
+            "action_entropy_bits": float(metrics["action_entropy_bits"]),
+            "m0_rate": float(metrics["m0_rate"]),
+            "r0_rate": float(metrics["r0_rate"]),
+            "m0_r0_rate": float(m0_r0_rate),
+            "learned_decision_rate": float(metrics["learned_decision_rate"]),
+            "fallback_rate": float(metrics["fallback_rate"]),
+            "nonfallback_rate": float(nonfallback_rate),
+            "severe_ood_fallback_rate": float(
+                metrics["severe_ood_fallback_rate"]
+            ),
+            "no_feasible_fallback_rate": float(
+                metrics["no_feasible_fallback_rate"]
+            ),
+        },
+    }
 
 
 def _state_universe_sha256(states: Sequence[PMV2State]) -> str:
@@ -192,6 +286,7 @@ def audit_domain_label_matrix(
     minimum_reliable_rate: float,
     minimum_low_mad_coverage_per_dimension: float,
     minimum_low_mad_coverage_per_action_dimension: float,
+    enforce_low_mad_coverage_gate: bool = True,
 ) -> dict[str, Any]:
     """Outcome audit reported independently for each training domain."""
 
@@ -285,11 +380,15 @@ def audit_domain_label_matrix(
         )
         >= float(minimum_low_mad_coverage_per_action_dimension),
     }
-    if not all(checks.values()):
+    if enforce_low_mad_coverage_gate and not all(checks.values()):
         raise RuntimeError(f"{domain} label-quality gate failed: {checks}")
     return {
         "domain": domain,
-        "status": "PASS",
+        "status": (
+            "PASS"
+            if all(checks.values())
+            else "DIAGNOSTIC_LIMITATION_NON_GOLD_WEAK_SUPERVISION"
+        ),
         "state_count": len(states),
         "group_count": len({state.user_id for state in states}),
         "label_count": len(labels),
@@ -311,6 +410,7 @@ def audit_domain_label_matrix(
         "minimum_action_dimension_low_mad_coverage": min(
             applicable_action_dimension_coverage_values
         ),
+        "low_mad_coverage_gate_enforced": bool(enforce_low_mad_coverage_gate),
         "checks": checks,
         "state_universe_sha256": _state_universe_sha256(states),
         "label_universe_sha256": _label_universe_sha256(labels),

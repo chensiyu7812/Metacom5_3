@@ -68,6 +68,8 @@ from metacom_pm.pm_v2_judging import (
     build_risk_messages,
     composite_spec_from_config,
     composite_weights_hash,
+    dimension_applicability_by_action,
+    dimensions_inapplicable_to_every_action,
     judge_one,
     labeling_settings_from_config,
     prompt_contract_hash,
@@ -108,6 +110,7 @@ DEVELOPMENT_JUDGING_CONSECUTIVE_FAILURE_BREAKER = 5
 TRAIN_CALIBRATION_SCOPE = "train_calibration"
 SEALED_INTERNAL_TEST_SCOPE = "sealed_internal_test"
 FORMAL_JUDGING_SCOPES = (TRAIN_CALIBRATION_SCOPE, SEALED_INTERNAL_TEST_SCOPE)
+MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK = 10
 DEVELOPMENT_JUDGING_ISOLATABLE_FAILURE_CLASSES = frozenset(
     set(RETRYABLE_UP_TO_FULL_BUDGET)
     | set(BOUNDED_PROVIDER_OUTPUT_RETRY_CLASSES)
@@ -269,6 +272,11 @@ def evaluate_raw_judge_gates(
     """Evaluate development-label health only on train/calibration rows."""
 
     expected_families = [str(endpoint.family) for endpoint in endpoints]
+    expected_actions = sorted({row.action_id for row in outcomes})
+    inapplicable_by_action = dimension_applicability_by_action(expected_actions)
+    globally_inapplicable = dimensions_inapplicable_to_every_action(
+        expected_actions
+    )
     common = {
         "expected_families": expected_families,
         "duplicate_exact_match_rate": labeling["duplicate_exact_match_rate"],
@@ -287,19 +295,30 @@ def evaluate_raw_judge_gates(
         "reject_constant_risk_dimensions": labeling[
             "reject_constant_risk_dimensions"
         ],
+        "minimum_nonzero_observations": (
+            MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK
+        ),
+        "split_correlation_by_sign": True,
         "composite_spec": composite_spec,
-        "raise_on_failure": not compatibility_pilot,
+        # The caller must persist a complete diagnostic before a formal
+        # non-PASS result terminates the stage.
+        "raise_on_failure": False,
     }
-    global_gate = validate_raw_judge_family_health(canonical_raw_rows, **common)
+    global_gate = validate_raw_judge_family_health(
+        canonical_raw_rows,
+        inapplicable_risk_dimensions=globally_inapplicable,
+        inapplicable_risk_dimensions_by_action=inapplicable_by_action,
+        **common,
+    )
     action_gate = validate_raw_judge_family_subgroup_health(
         canonical_raw_rows,
         subgroup_key="action_id",
-        expected_subgroups=sorted({row.action_id for row in outcomes}),
+        expected_subgroups=expected_actions,
         **common,
     )
     risk_gate = validate_action_applicable_risk_signal(
         canonical_raw_rows,
-        expected_actions=sorted({row.action_id for row in outcomes}),
+        expected_actions=expected_actions,
         expected_families=expected_families,
         minimum_signal_rate=labeling[
             "minimum_action_applicable_risk_signal_rate"
@@ -307,7 +326,7 @@ def evaluate_raw_judge_gates(
         minimum_distinct_values=labeling[
             "minimum_action_applicable_risk_distinct_values"
         ],
-        raise_on_failure=not compatibility_pilot,
+        raise_on_failure=False,
     )
     return {
         "status": (
@@ -323,6 +342,67 @@ def evaluate_raw_judge_gates(
             **risk_gate,
             "enforced": not compatibility_pilot,
         },
+    }
+
+
+def formal_instrument_decision(
+    *,
+    raw_family_quality_gate: Mapping[str, Any],
+    quality_gate: Mapping[str, Any],
+    compatibility_pilot: bool,
+    sealed_holdout_scope: bool,
+) -> dict[str, Any]:
+    """Separate measurement qualification from label materialization."""
+
+    supported = bool(
+        sealed_holdout_scope
+        or compatibility_pilot
+        or (
+            raw_family_quality_gate.get("status") == "PASS"
+            and quality_gate.get("status") == "PASS"
+        )
+    )
+    if compatibility_pilot:
+        status = "COMPATIBILITY_GATE_ONLY"
+        reportability = "COMPATIBILITY_GATE_ONLY"
+    elif sealed_holdout_scope:
+        status = "SEALED_INTERNAL_TEST_COMPLETE"
+        reportability = "SEALED_HOLDOUT_NOT_YET_CONSUMED"
+    elif supported:
+        status = "COMPLETE"
+        reportability = "REPORTABLE"
+    else:
+        status = "LONGITUDINAL_JUDGE_INSTRUMENT_NOT_SUPPORTED"
+        reportability = "NONREPORTABLE_MEASUREMENT_INSTRUMENT"
+    return {
+        "formal_instrument_supported": supported,
+        "training_labels_created": supported,
+        "status": status,
+        "reportability_status": reportability,
+    }
+
+
+def actual_corpus_attestation_inputs(args: Any) -> dict[str, Path]:
+    """Bind the same admission artifact that the formal runner consumed."""
+
+    if args.actual_corpus_qualification_report is not None:
+        if args.actual_corpus_qualification_attestation is None:
+            raise RuntimeError(
+                "actual-corpus qualification attestation is required"
+            )
+        return {
+            "actual_corpus_qualification": args.actual_corpus_qualification_report,
+            "actual_corpus_qualification_attestation": (
+                args.actual_corpus_qualification_attestation
+            ),
+        }
+    return {
+        "actual_corpus_semantic_review": (
+            args.actual_corpus_semantic_review_report
+        ),
+        "actual_corpus_semantic_review_attestation": (
+            args.actual_corpus_semantic_review_attestation
+        ),
     }
 
 
@@ -2179,13 +2259,17 @@ def main() -> None:
         )
 
     labels = []
-    labels_path.write_text("", encoding="utf-8")
     selected_labels_path = (
         internal_test_labels_path
         if sealed_holdout_scope
         else train_calibration_labels_path
     )
-    selected_labels_path.write_text("", encoding="utf-8")
+    # Never leave stale training labels behind when a rerun discovers that the
+    # measurement instrument is unsupported.  Formal labels are materialized
+    # only after both health gates pass.
+    labels_path.unlink(missing_ok=True)
+    if selected_labels_path != labels_path:
+        selected_labels_path.unlink(missing_ok=True)
     prompt_equivalence_class_sizes: dict[tuple[str, str], int] = {}
     for outcome in outcomes:
         state = state_by_card[outcome.card_id]
@@ -2247,9 +2331,6 @@ def main() -> None:
             },
         )
         labels.append(label)
-        append_jsonl(labels_path, label.model_dump(mode="json"))
-        if selected_labels_path != labels_path:
-            append_jsonl(selected_labels_path, label.model_dump(mode="json"))
     pilot_reliable_threshold = float(pilot_config["minimum_reliable_label_rate"])
     if sealed_holdout_scope:
         quality_gate = {
@@ -2257,6 +2338,7 @@ def main() -> None:
             "reason": "internal-test outcome aggregates are forbidden before consumption",
         }
     elif labels:
+        label_actions = sorted({label.action_id for label in labels})
         quality_gate = validate_judge_table(
             labels,
             minimum_families=labeling["minimum_families"],
@@ -2296,8 +2378,19 @@ def main() -> None:
             reject_constant_risk_dimensions=labeling[
                 "reject_constant_risk_dimensions"
             ],
+            inapplicable_risk_dimensions=(
+                dimensions_inapplicable_to_every_action(label_actions)
+            ),
+            inapplicable_risk_dimensions_by_action=(
+                dimension_applicability_by_action(label_actions)
+            ),
+            minimum_nonzero_observations=(
+                MINIMUM_NONZERO_OBSERVATIONS_FOR_DUPLICATE_CHECK
+            ),
+            split_correlation_by_sign=True,
             composite_spec=composite_spec,
-            raise_on_failure=not compatibility_pilot,
+            # Persist the full formal diagnosis before failing closed.
+            raise_on_failure=False,
         )
     else:
         quality_gate = {
@@ -2373,15 +2466,31 @@ def main() -> None:
             if all(compatibility_gate["checks"].values())
             else "NONREPORTABLE"
         )
-    final_status = (
-        compatibility_gate["status"]
-        if compatibility_pilot and compatibility_gate is not None
-        else (
-            "SEALED_INTERNAL_TEST_COMPLETE"
-            if sealed_holdout_scope
-            else "COMPLETE"
-        )
+    instrument_decision = formal_instrument_decision(
+        raw_family_quality_gate=raw_family_quality_gate,
+        quality_gate=quality_gate,
+        compatibility_pilot=compatibility_pilot,
+        sealed_holdout_scope=sealed_holdout_scope,
     )
+    formal_instrument_supported = bool(
+        instrument_decision["formal_instrument_supported"]
+    )
+    if compatibility_pilot and compatibility_gate is not None:
+        final_status = compatibility_gate["status"]
+    else:
+        final_status = str(instrument_decision["status"])
+
+    training_labels_created = bool(instrument_decision["training_labels_created"])
+    if training_labels_created:
+        write_jsonl(
+            labels_path,
+            [label.model_dump(mode="json") for label in labels],
+        )
+        if selected_labels_path != labels_path:
+            write_jsonl(
+                selected_labels_path,
+                [label.model_dump(mode="json") for label in labels],
+            )
     final_missing_api_calls = sum(
         call_key(row) not in successful_call_rows for row in cost_rows
     )
@@ -2396,9 +2505,7 @@ def main() -> None:
         **summary,
         "status": final_status,
         "reportability_status": (
-            "SEALED_HOLDOUT_NOT_YET_CONSUMED"
-            if sealed_holdout_scope
-            else ("COMPATIBILITY_GATE_ONLY" if compatibility_pilot else "REPORTABLE")
+            str(instrument_decision["reportability_status"])
         ),
         "label_scope": args.label_scope,
         "completed_judge_pairs": len(raw_by_key),
@@ -2412,11 +2519,15 @@ def main() -> None:
         "schema_success_rate": schema_success_rate,
         "quality_gate": quality_gate,
         "raw_family_quality_gate": raw_family_quality_gate,
+        "formal_instrument_supported": formal_instrument_supported,
+        "training_labels_created": training_labels_created,
         "compatibility_gate": compatibility_gate if compatibility_pilot else None,
         "label_value_feasibility": label_value_feasibility,
-        "labels_path": str(labels_path),
+        "labels_path": str(labels_path) if training_labels_created else None,
         "train_calibration_labels_path": (
-            str(train_calibration_labels_path) if not sealed_holdout_scope else None
+            str(train_calibration_labels_path)
+            if training_labels_created and not sealed_holdout_scope
+            else None
         ),
         "internal_test_labels_path": (
             str(internal_test_labels_path) if sealed_holdout_scope else None
@@ -2456,12 +2567,7 @@ def main() -> None:
     if compatibility_pilot:
         attestation_inputs["pilot_plan"] = args.pilot_plan
     else:
-        attestation_inputs["actual_corpus_semantic_review"] = (
-            args.actual_corpus_semantic_review_report
-        )
-        attestation_inputs["actual_corpus_semantic_review_attestation"] = (
-            args.actual_corpus_semantic_review_attestation
-        )
+        attestation_inputs.update(actual_corpus_attestation_inputs(args))
     if args.carry_forward_from is not None:
         attestation_inputs["carry_forward_call_plan"] = (
             args.carry_forward_from / "call_plan.jsonl"
@@ -2481,7 +2587,7 @@ def main() -> None:
                 "internal_test_labels": (internal_test_labels_path, True),
             }
         )
-    else:
+    elif training_labels_created:
         attestation_outputs.update(
             {
                 "labels": (labels_path, True),
@@ -2513,6 +2619,8 @@ def main() -> None:
             ),
             "label_value_feasibility": label_value_feasibility,
             "raw_family_quality_gate": raw_family_quality_gate,
+            "formal_instrument_supported": formal_instrument_supported,
+            "training_labels_created": training_labels_created,
             "accepted_cost_estimate_sha256": cost_estimate[
                 "cost_estimate_sha256"
             ],
@@ -2543,6 +2651,11 @@ def main() -> None:
             "physical_http_attempts": attempt_ledger.started_attempts,
         },
     )
+    if not formal_instrument_supported:
+        raise RuntimeError(
+            "longitudinal judge instrument is not supported; diagnostic "
+            f"artifacts were persisted at {summary_path}"
+        )
     print(report)
 
 

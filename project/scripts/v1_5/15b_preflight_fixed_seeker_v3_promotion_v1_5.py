@@ -8,7 +8,10 @@ from pathlib import Path
 
 from metacom_pm.artifacts import require_content_addressed_attestation
 from metacom_pm.evoemo import FIXED_SEEKER_V23_STAGE
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
+from metacom_pm.fixed_seeker_contract import (
+    require_fixed_seeker_v3_formal_bundle,
+    require_fixed_seeker_v3_sidecar_contract,
+)
 from metacom_pm.io import read_json, write_json
 from metacom_pm.v1_5_fixed_seeker_readiness import (
     assess_fixed_seeker_v3_promotion,
@@ -40,9 +43,19 @@ def main() -> None:
         / "evoemo_fixed_tracks_v1_5_v3_pilot_execution_candidate",
     )
     parser.add_argument(
-        "--formal-dir",
+        "--formal-bundle-binding",
         type=Path,
-        default=ROOT / "outputs" / "evoemo_fixed_tracks_v1_5_v3_formal_candidate",
+        default=ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "fixed_seeker_v3_formal_bundle_v1.json",
+        help=(
+            "Tracked, content-addressed binding that locates and verifies "
+            "the formal V3 fixed-seeker bundle -- never a hardcoded output "
+            "directory basename, since the bundle survives being generated "
+            "into a fresh directory whenever a prior identity is permanently "
+            "consumed."
+        ),
     )
     parser.add_argument(
         "--out",
@@ -71,15 +84,21 @@ def main() -> None:
     sidecar_contract = require_fixed_seeker_v3_sidecar_contract(
         args.fixed_seeker_contract
     )
+    try:
+        require_fixed_seeker_v3_formal_bundle(
+            args.formal_bundle_binding,
+            root=ROOT,
+            required_stage=FIXED_SEEKER_V23_STAGE,
+        )
+        formal_bundle_exists = True
+    except (FileNotFoundError, RuntimeError):
+        formal_bundle_exists = False
     report = assess_fixed_seeker_v3_promotion(
         fixed_seeker_sidecar_contract=sidecar_contract.payload(),
         pilot_summary=read_json(pilot / "summary.json"),
         pilot_attestation=read_json(pilot / "artifact_attestation.json"),
         consumer_source_text=load_consumer_sources(ROOT),
-        formal_bundle_exists=(
-            (args.formal_dir / "fixed_seeker_tracks.jsonl").is_file()
-            and (args.formal_dir / "artifact_attestation.json").is_file()
-        ),
+        formal_bundle_exists=formal_bundle_exists,
     )
     write_json(args.out, report)
     print(report)

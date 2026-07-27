@@ -4,6 +4,135 @@
 > 证明什么、现在到哪、下一步按什么顺序做”。问题编号、根因和关闭状态只在
 > `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 维护；旧 V1 postmortem 为只读历史证据。
 > 不得在本文或其他文件再建立第二套活跃问题清单。
+> “PM 应学什么、如何从可见对话形成非临床支持需求、BAAI 如何接入、Strategy Bank 应
+> 提供什么、训练对照如何构造、质量/证据/strategy 裁判具体按什么标准判、裁判分歧如何
+> 进入弱监督”统一见 `PM_V1_5_UNIFIED_NEED_SEMANTICS_TRAINING_PLAN_V3_ZH.md`。该文件
+> 定义实质方法与测量内容，不以工程 attestation 或笼统 `PASS` 代替可学习性。
+>
+> **2026-07-26 训练数据根因与外部迁移更新（覆盖下文较早的“直接重训”叙述）：**
+> 第一轮 NOT_GOLD 双域训练在两个 calibration 域都退化为 100% `M0+R0`。零 API
+> 根因审计已经把“模型没学会”进一步定位为三个上游主因，而不是简单归咎于 HGB：
+> （1）positive source treatment 实际混入 irrelevant item，且三源组合存在明确
+> interference；（2）从 16 个含噪绝对分数直接取 argmax 形成 winner's-curse
+> pseudo-oracle；（3）训练输入虽已支持 ESConv 单会话形状，却不支持 EvoEmo formal
+> 的大目录、长 age/span 与高 expected-token metadata，204/204 个 formal observable
+> states 均为 severe metadata OOD。oracle 单条 helpful memory 可被同一 generator
+> 吸收，故 generator 容量不是当前首要根因；LLM judge 只能作为会 abstain 的弱
+> labeling functions，不能作自动 gold。
+>
+> **2026-07-27 需求语义与 Strategy Bank V3 更新（进一步覆盖“直接生成 clean
+> contrast”）：** 当前 BAAI 最近 readiness 中心只在 outcome-free 自然语言挑战上达到
+> 14/20，且多次把明确小建议请求因 context dilution 判成 ambiguous/listen；它只能作
+> 待验证的连续表示，不能被称为已经理解用户需求。冻结 Strategy Bank 也只是 823 个
+> ESConv 对话的 11,590 个 raw supporter 回合，`guidance_text` 仅 8 个 family 通用模板，
+> `example_response` 仍含大量问候/元话语/重复和未经适用性审计的内容。由此，任何新
+> paid response 生成前必须先完成 `PM_V1_5_UNIFIED_NEED_SEMANTICS_TRAINING_PLAN_V3_ZH.md`
+> 的 Phase 0：separated-view support-need probe、Strategy Bank V2、family opportunity
+> 与实际 eligible retriever 对齐、三岗位 rubric。support readiness、resource opportunity
+> 和 realized matched effect 是三类不同标签；只有 effect 决定开关。危机/安全升级独立于
+> PM，不作小样本 routing action。
+>
+> **2026-07-27 ESConv 原生 metadata 与透明指标补充：** 正式 expanded ESConv 输入的
+> 1,300 个 dialogue 都有 problem、emotion、experience、situation、turn strategy 与
+> survey 字段，当前 11,590 张卡也都能按 source dialogue 回连，但正式卡 schema 尚未保存
+> 这些层次。它们只能作 Bank provenance、soft applicability、分层抽样和 coverage/偏差
+> 审计：strategy 是“实际使用”而非“最优”，survey 是 post-treatment conversation-level
+> 结果，二者都不能成为在线 PM action gold；problem/emotion 的部署真值也不能进入 PM。
+> Phase 0 同时必须建立机器可读的透明 metric registry。每项指标给出决策问题、unit、
+> 分子/分母、N/A/tie/abstain、方向、cluster CI、阈值来源和失败动作；需求理解、Bank
+> eligibility、检索暴露、回复偏好、证据/风险、cost 分项报告。禁止以单个笼统质量分或
+> 内部 utility 代替这些可观察量。
+>
+> **2026-07-27 SupportNeedObservation 与小样本弱监督实现补充：** 旧 V1.5 没有独立
+> support-need 模块；它只有一个 full-state BGE embedding、5 个手写 readiness centroid、
+> 8 个 raw Bank family centroid、source-level similarity 与 `question_present`，且自然语言
+> challenge 只有 14/20。V3 将 `ambiguous` 从真实 mode 移到 uncertainty/abstain，新增
+> `comfort_reassure`，分别输出 mode、goal、phase、nonclinical urgency、MP/MS/ME 与
+> clean-Bank family opportunity。BAAI 只是固定多视图表示器；outcome-blind `{4,8,12}`
+> 维投影和强正则 partial-label heads 才形成 observation，safety 独立绕过。
+> 小样本的独立单位固定为 user/dialogue group，不是 action/judge/paraphrase 行；所有训练
+> 报 raw rows、groups、physical responses、weights 与 ESS。约 60–100-state 零 API need
+> pilot 先过门，再在约 48–80 states 做 clean single-component effect pilot。只有
+> cross-fitted need prediction、generator uptake、拆职 measurement、group-held-out
+> component effect 和 policy viability 都成立，才允许 formal fit。不满足 ESS 的组件保持
+> off，不为保留 16-action 外观训练随机 head。
+>
+> **2026-07-27 SupportNeedObservation 实现进度：** 独立 V3 schema、多视图编码、
+> explicit-boundary cues、soft partial-label 聚合、group-held-out nested CV、fold 内
+> 标准化/PCA/ridge、inner-group OOF temperature calibration、one-SE 简化、group ESS 与
+> 零 API canary 已实现。canary 在 60 个独立 group 上恢复已知五类信号（accuracy 1.0），
+> label permutation 为 `.05`，并真实修掉一处会让
+> 重复行膨胀 ESS 的 bug。第一批 24 条人评已完整绑定（23 non-abstain），冻结 BAAI
+> 已完成真实 train-only grouped OOF；结果为
+> `INSUFFICIENT_EVIDENCE_FOR_FORMAL_FIVE_WAY_MODE_FIT`：五类最佳 lexical
+> log-loss 从先验 1.7473 降至 1.6176，但只召回 comfort，另外四类 recall=0；
+> BAAI current/multiview 未胜透明 lexical/structure。因而这不是 need learnability PASS，
+> 也不授权 formal fit。旧 burden 字段的“明确用户边界/建议低负担”混义已经拆开，
+> 原标注不返工。零 API、同一 grouped-OOF 协议下又用本机既有
+> `BAAI/bge-m3`（1024 维）复核：五类 current-view log-loss 仅由 `1.6321`
+> 变为 `1.6272`，相对 small 的 paired bootstrap 95% CI 跨 0；仍然无法召回
+> `listen/explore/structured_planning`。它只在较粗的 `dialogue_phase` 上显示真实改善
+>（accuracy 约 `.38→.56`），但 exploration recall 仍为 0。这说明 small encoder 有能力
+> 上限，却不是五类塌缩的主因；23 个独立 group、最少类仅 2 条以及互相重叠的 flat
+> target 才是当前首要瓶颈。另 24 条 fresh blind anchor 虽已确定性准备，但现已暂停，
+> 不向标注者开放；先比较任务分解、现有 BGE-M3 与 instruction-aware encoder，明确
+> 哪种新增标注会改变决策后再恢复。
+> 第一份 outcome-blind train-only packet 已确定性选出 75 个全新 ESConv 对话、每个
+> 对话一个 state，覆盖 13 个 problem、8 个 emotion，early/middle/late 各 25。24 条
+> 人工 anchor 按 emotion×position 轮转，三个位置各 8 且覆盖全部 8 个 emotion；人工
+> rubric 另见 `PM_V1_5_SUPPORT_NEED_HUMAN_ANNOTATION_GUIDE_ZH.md`，受追踪 binding 为
+> `data/pm_v1_5_contracts/support_need_human_packet_v1.json`。packet 不读取目标
+> supporter 回复、turn strategy、survey、internal 或 external outcome。血缘审计同时
+> 发现这 75 个 source dialogue 在当前 raw Bank 中全部存在，共对应 1,094 张卡；因此
+> 它们必须在 Strategy Bank V2 中逐 source 删除，overlap 降为 0，之后才允许运行真实
+> Need/Bank pilot。零 API V2 candidate 已进一步把这 1,094 张卡全部排除；数据画像随后
+> 发现首版 lineage 仍有 130 条 pre-seeker opening。修订 V2 在内容过滤前拒绝所有
+> “没有 prior visible seeker turn”的 raw card，最终将 748 个 source/6,391 条
+> rule-filtered lineage 聚成 5 张透明 technique-only cards：
+> Question、Restatement/Paraphrasing、Reflection、Affirmation/Reassurance 与
+> Providing Suggestions；raw example 不进入 generator surface，Information、Others、
+> Self-disclosure 和具体 domain claim 暂不进入第一篇。候选当前仍为
+> `eligible_for_formal_rs=false`，等待 5-card 人评与小额 LLM 弱审计；修订 binding 见
+> `data/pm_v1_5_contracts/strategy_bank_v2_candidate_v2.json`。五张 technique 文本
+> 与首版逐字段一致，旧人评只允许按精确 technique 内容迁移，不能沿用旧 card ID。
+> 当前状态是
+> `SUPPORT_NEED_EXPANSION_PAUSED_REPRESENTATION_AND_TARGET_DECOMPOSITION_AUDIT`；
+> Bank V2 五卡内容审计可以独立继续，但不得把 Bank 审计结果偷换成 need label。
+>
+> 现有受追踪合同
+> `data/pm_v1_5_contracts/learnable_transfer_training_data_v2.json` 约束。它要求在生成
+> 新训练回复之前，同时覆盖 M0、MP、MS、ME、RS、多源交互、harm/irrelevant 抑制与
+> deterministic cost，并将 ESConv 与 EvoEmo/ES-MemEval-derived 的外部输入形状作为
+> pre-training gate。旧 longitudinal/auxiliary outcomes 与 judges 只保留作 noisy
+> diagnostics/lineage，不再作 primary targets；新 clean contrast 必须严格保持同
+> state/prompt/generator/seed，positive treatment 只能有一个 helpful item，placebo
+> 与 harmful 分开。ESConv 只用 bank-disjoint train dialogues；EvoEmo 只允许使用不含
+> outcome 的 operational envelope/metadata augmentation，禁止复制 external text、
+> topic、related-session 或 judge outcome，并必须称 development-informed transfer。
+> **ESConv 与 EvoEmo 只在数据形状和外部统计上分开，不是两套 PM 或两种互不相干的
+> 能力。** 正式对象始终是同一个 checkpoint、同一个 state builder 和同一组
+> MP/MS/ME/RS component heads：ESConv 是 MP/MS/ME availability 全为 false 时，同一
+> PM 在 `M0+R0/M0+RS` 子空间上的边界状态；EvoEmo 是 memory 可用时，同一联合
+> state-action function 的多会话区域。domain ID 不得作为 PM 特征，分域权重只防止样本量
+> 淹没，分域 gate 只用于诚实报告。训练必须同时识别 RS 主效应、memory source 主效应、
+> source-source interaction 与 source×RS interaction，不能把“开 RS”和“调用 memory”
+> 拆成两个互不相干的 selector。
+> 在 clean-treatment、mechanism-uptake、measurement、train-group learnability 和两域
+> OOD 五类门全部通过前，不得扩量或重新 fit。此前 719-state absolute/pairwise
+> `NOT_SUPPORTED` 结论仍然有效；新合同不是把旧失败改名 PASS，而是一个尚未执行的、
+> 需重新预注册和产生新数据身份的训练迭代。
+>
+> formal fit 现由
+> `scripts/v1_5/22g_preflight_learnable_transfer_training_v1_5.py` fail-closed。2026-07-27
+> 的真实零 API 状态为 `BLOCKED_BEFORE_FORMAL_FIT`：32/32 旧-treatment 人工诊断尚未
+> 填写，clean-contrast、mechanism-uptake、新分布 measurement 与 train-only
+> learnability 四份报告尚不存在，现有 external-support report 尚未绑定 V2 contract，
+> 且 EvoEmo severe metadata OOD 仍为 1.0。该状态允许继续构建小规模 train-only pilot，
+> 但禁止 full generation、formal fit、calibration/internal/external outcome 消费。
+> 该 V2 合同仍是必要的 clean-treatment 基础，但在 V3 need/Bank/interface 门完成前不再
+> 单独构成训练 readiness。`READY` 只表示所有已知坑的实质门均已通过，不保证
+> calibration、internal 或 external 结果成功；唯一可承诺的是不再把已知不可学的数据送入
+> 正式训练。
 >
 > 此前拟定的双域监督路线已按预注册停止规则关闭。719-state ESConv auxiliary
 > generation 已完成，但其单动作绝对量表在 train 上为 `NOT_SUPPORTED`；随后独立的
@@ -11,14 +140,33 @@
 > 0.1667，低于冻结下限 0.25，故结论为
 > `ESCONV_AUXILIARY_PAIRWISE_INSTRUMENT_NOT_SUPPORTED`。不得继续打开 calibration 或
 > internal、调 prompt/阈值或换 judge 直到通过，也不得把 auxiliary 数据用于监督训练。
-> 正式 PM-v1.5 回到 52-user/468-state 纵向单域训练；双域入口保留为未消费的研究基础设施，
-> 不是本篇的正式路线。正式外部评测仍是两项互补而非同义的试验：ESConv test 仅比较
-> 固定 `M0+R0/M0+RS` 的即时回复质量与 Strategy 机制，不主张 learned PM 在 ESConv
-> 路由；EvoEmo/ES-MemEval-derived 才检验冻结纵向 PM 的 memory/strategy
-> 质量—风险—成本权衡。Hybrid retrieval 已依据
+> 上述停止只关闭**旧 auxiliary treatment 和旧裁判标签**，不关闭统一 PM 的目标。新的
+> clean V2 数据仍训练同一个 checkpoint：ESConv 形状提供 memory 不可用背景下的 R0/RS
+> 监督，纵向与 outcome-free external-shape augmentation 提供 memory 可用背景下的
+> MP/MS/ME、R0/RS 与交互监督；domain ID 不进入模型。只有新 clean treatment 的 uptake、
+> 新职责裁判和 train-group learnability 都成立时，这些数据才能联合进入 formal fit。
+> 正式外部评测仍是两项互补试验：ESConv 检查同一 PM 在 memory-unavailable 子空间的
+> RS 决策与回复质量；EvoEmo/ES-MemEval-derived 检查同一 PM 在 memory-available 区域的
+> memory/strategy 质量—风险—成本权衡。Hybrid retrieval 已依据
 > calibration 与 ESConv validation 的合法证据作出 `NOT_ADOPTED` 决定，正式链路继续
 > 使用 lexical-only；它不是待办事项。并发只允许作为保持 call plan、prompt、模型、
 > judge、重试和统计单位不变的执行层优化，具体边界见第 4.3 节。
+>
+> **2026-07-25 测量恢复分支：** strict bakeoff 已正式 NO-GO，不能再在原 12 条上调
+> prompt、schema、阈值或多数票。为判断 learned PM 是否仍有可训练信号，现只开放一个
+> 新的 train-only、双域、角色拆分资格赛：盲化 overall/support pairwise、逐回复
+> evidence/risk 审计、确定性 cost 三者分离；纵向与 ESConv 各 12 个此前未用 state，
+> 另有 12 条新人工锚点必须在 API 前冻结。此分支尚未重新授权训练；只有相关岗位分别
+> 通过预注册门，才能建立新的 label identity。任一岗位失败都必须 abstain，不能用第三
+> 裁判多数票或另一个岗位的 PASS 抵消。首次 full 执行在产生任何可报告语义结果前因
+> Anthropic strict-tool schema 子集、理由长度、provider-specific token 预算与
+> postcondition ledger 四项执行缺陷关闭；旧 identity 永久消费，不能写成裁判 NO-GO。
+> 两次 2-call compatibility pilot 均未形成语义 verdict：第一次定位
+> provider-visible `maxItems`；第二次已证明两种请求都能完成 strict tool 推理，但
+> evidence/risk 给出 `insufficient_evidence + severity=1`，触发 canonical 跨字段拒绝。
+> 该映射现显式写入 system/user prompt，canonical 规则不放宽、无静默归一化；同时补上
+> live canonical schema 对 tracked schema SHA 的 fail-closed 复核。当前仍只允许以全新
+> identity 再运行同范围 2-call pilot；它 2/2 PASS 后才重新建立 full-matrix identity。
 
 > **2026-07-18 审查修复提示：** 下一次正式运行的方法定义已由
 > `PM_V1_5_PROTOCOL_REPAIR_CONTRACT_ZH.md` 取代。新合同引入正式、受限且计费的
@@ -114,7 +262,7 @@ V1.5 当前没有可支持确认性 latency 优势的交错测量设计。因此
 latency”。若会议稿必须把 latency 放入正式主张，需要另加冻结的 interleaved
 latency 实验；不能拿顺序运行的 wall-clock 时间补写结论。
 
-ESConv 是与上述 EvoEmo 评测并列、而不是混在一起的第二项外部实验。它只允许检验：
+ESConv 是与上述 EvoEmo **分开统计、共同检验同一 PM** 的第二项外部实验。它只允许检验：
 
 1. 同一冻结 PM 在单会话、跨会话 memory 结构性不可用时，能否选择性地在
    `M0+R0` 与 `M0+RS` 之间切换；
@@ -125,6 +273,17 @@ ESConv 是与上述 EvoEmo 评测并列、而不是混在一起的第二项外�
 ESConv 不支持 memory 能力或长期个性化主张。ESConv 与 EvoEmo 的分数、样本和
 bootstrap cluster 不得合并；只有两项分别通过自身冻结门，才允许使用“跨单会话策略与
 多会话记忆环境的资源调度”这一较宽表述。
+
+这里“不合并指标”不等于“能力本体分开”：ESConv 的 unavailable-memory inventory 是同一
+联合策略的合法边界输入，EvoEmo 的 available-memory inventory 是其另一输入区域。PM
+始终联合决定 `memory subset + R0/RS`；只是 ESConv 的 legal-action mask 将 memory
+动作排除。PM 选择的是 source types，不是具体 memory item；选中 source 后才由冻结
+retriever 选择 item。
+
+上述 learned-ESConv 条件是新训练数据 V2 候选的**条件性主张**，不是当前已经成立的
+结果。若 V2 在进入 calibration 前的 clean-treatment、uptake、measurement、group-CV
+或 ESConv input-support 任一门失败，正式 ESConv 仍只保留 fixed `R0/RS` 机制比较，
+不得把 longitudinal PM 的选择写成 learned ESConv routing。
 
 ### 1.2 路由层主张
 
@@ -216,8 +375,9 @@ external 付费生成前失败。
 
 | 顺序 | 动作 | API 调用规模 | 进入下一步的条件 |
 |---:|---|---:|---|
-| 0 | clean bank、split manifest、875 条 clean seed、overlap audits | 0 | 已完成且后续只认其 SHA |
-| 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；真实 BGE 长上下文 strict `PMV2State` 构造、Step-0/state 文本与向量 hash 相等、implicit truncation=0；通用 readiness 20-case 结果只报告；compiler-owned 12 个 readiness surface 必须 12/12 被 frozen BGE 识别 |
+| 0 | raw Strategy Bank、split manifest、875 条 clean seed、overlap audits | 0 | lineage/SHA 已完成；raw Bank 只作 provenance/baseline，不等于 V3 正式 eligible Bank |
+| 0.5 | 专用 Python 3.13.2 venv 中运行 `v1_5/19_preflight_semantic_runtime_v1_5.py` | 0 | exact package/device/dtype/user-site 与 3×384 canary `PASS`；真实 BGE 长上下文 strict `PMV2State` 构造、Step-0/state 文本与向量 hash 相等、implicit truncation=0；既有 readiness 仅 14/20，明确不能作需求分类 PASS |
+| 0.6（V3 当前关键路径） | Strategy Bank V2 + ESConv native-metadata registry + separated-view `SupportNeedObservation` + train-only BAAI/lexical probe + 三岗位 rubric + transparent metric registry | 0 | Bank 去重/去 meta/风险分库并有 raw+normalized provenance/soft-applicability metadata；post-chat survey/action annotation 不作 PM gold。BAAI 只提供 current/last-assistant/history/summary 多视图；`ambiguous` 改为 uncertainty/abstain，mode/goal/phase/urgency 与 source/family opportunity 用低容量 partial-label heads 输出。先用可控 fixture 验证已知 MP/MS/ME/RS effect 可恢复、label permutation 回 chance、复制 action/judge/alias 不改变 ESS；再以约 60–100 个 need states 做 user/dialogue-group CV，要求胜 nearest-centroid/lexical、关键反事实方向正确且能 abstain，每 mode 至少 10 groups/ESS≥8。PM-visible family opportunity 与 downstream eligible pool 同源；指标 unit、分母、N/A、方向和 failure action 可复算。未过门不得生成新 paid clean treatment |
 | 1 | `v1_5/20a_run_generation_compatibility_pilot_v1_5.py` | 成功路径 9；18 个 content attempts；上限 54 个 physical attempts | observable-state-support v18 + fresh V8.11.1 必须 PASS；同一 user/family/split 最多两对完全相同的 current turn、每组最多 2，9 例至少 7 个独立表达，跨 user/family/split 与人工 nonce 均禁止；两对上限逐例执行；每个 content attempt 各有最多 3 个 transport slots，最终 fallback 必须为 0 |
 | 2（历史失败） | `v1_5_run_automated_semantic_review.py` V4 | 已真实执行 120 logical / 144 physical | native transport 成功，但测量工具 targeted controls 0/24，永久 `CONSUMED_FAILED_CLOSED`；不得重跑或作为上游 PASS |
 | 2.1（已消费校准） | `v1_5/20c_prepare_v4_single_field_diagnostic_v1_5.py` + `20d_run_v4_single_field_diagnostic_v1_5.py` | V4.2 实际 8 logical / 12 physical | 8/8 完成；确定性=1.0、verdict=.875、citation=.875。Gemini 一次 citation section 不足；DeepSeek 一次把 `explore_first` 错当成必须出现“ready”字样。identity 永久 consumed；结果只用于修订正式测量合同 |
@@ -229,8 +389,8 @@ external 付费生成前失败。
 | 3.8 | `v1_5/12b_build_esconv_auxiliary_v1_5.py` 及三 split 无 API preflight | 0 | 冻结 52 个 bank-disjoint ESConv train dialogue、719 states（318/170/231）和仅 `M0+R0/M0+RS` 合法动作；不读 ESConv gold response/strategy/outcome；held-out ESConv test 不被读取 |
 | 3.9 | ESConv auxiliary 两动作 generation + train-only measurement | generation 1,438 outcomes 已完成；absolute train 636 pairs 已测；pairwise pilot 96 calls 已测 | generation 三 split 完整，但 absolute instrument 与 pairwise replacement 均 `NOT_SUPPORTED`；按预注册停止规则，calibration/internal judging 不运行，auxiliary 不进入训练。其产物只作诊断与第一篇局限证据 |
 | 4 | `v1_5/06_run_action_sweep_v1_5.py --v1-5-full-sweep-scope` | 7,488 logical action outcomes；prompt-equivalent actions 允许共享一次物理生成，但必须物化全部 7,488 行 | 验证 actual-468 的 exact PASS **或**上述独立、内容寻址的 post-hoc qualification（二者不得混称）、Step-0 shortcut 与 response-mechanism attestation；真正 `scope=full`；每 state × 16 requested actions 完整，alias/cost lineage 可审计 |
-| 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | 合计仍为 7,488 × quality/risk × 2 judge families = 29,952 logical calls；先显式 `train_calibration`（5,184 outcomes/20,736 calls），另以 `sealed_internal_test`（2,304/9,216）生成 opaque holdout | train/calibration requested-action labels 完整且 judge-health gates PASS；internal runner 不计算 outcome aggregate，只在完整矩阵后立即 seal，并在 candidate/阈值/comparator 冻结后由 one-shot ledger 消费；禁止用原先的 all-split runner 先汇总 internal 再补 seal |
-| 6 | `v1_5/22_train_pm_v2_v1_5.py` 纵向单域训练 | 0 | 入口现场重验 exact runtime；只用 longitudinal train/calibration 选择模型与冻结阈值/comparator；candidate 冻结后才一次性消费 longitudinal internal-test。`22a` 双域入口保留但由两个 auxiliary `NOT_SUPPORTED` freeze fail-closed，本篇不执行 |
+| 5 | `v1_5/21_judge_pm_v2_action_sweep_v1_5.py` | train/calibration 的 20,736/20,736 logical calls 已完整；internal 9,216 calls 未运行 | 纠正 applicability/sparse-zero 与口头误读后，train/calibration 仍为 `LONGITUDINAL_SUPERVISION_NOT_SUPPORTED`：不物化 labels，不训练，不消费 internal。仅当预注册的新机制与新测量都在 train-only pilot 获支持，才允许建立全新 label identity；不得继续在现有结果上调 threshold |
+| 6 | V3 统一 component-effect PM（正式入口待 Phase 0–3 实现与资格） | 0 | 同一 checkpoint、同一 SupportNeedObservation、同一 MP/MS/ME/RS heads；support-need partial labels、resource opportunity 与 realized effect 分开。train user/dialogue group CV 必须胜 M0+R0 和同观测 transparent rule；calibration 只消费一次，candidate 冻结后才一次性消费两域 internal |
 | 7 | `v1_5/23_build_decision_quality_report_v1_5.py` 与 `29_prepare_fixed_baselines_v1_5.py` | 0 | 两份报告均与 checkpoint/training report SHA 一致 |
 | 7.5 | `v1_5/12_build_esconv_test_v1_5.py` + fixed-condition preflight | 0 | 自定义 70/15/15 split 的 169 个 non-overlap test dialogues 全保留；2,275 supporter turns 中按 outcome-free history-support rule 保留 2,112；只构建固定 `M0+R0/M0+RS` 条件，不把 longitudinal PM/rule 的 ESConv policy choice 当正式 condition，不读 gold response/strategy |
 | 8 | `v1_5/15a_build_evoemo_fixed_tracks_v1_5.py` V3 bounded-surface pilot → formal | pilot 为 2 tracks / 20 logical calls；formal 为 102 tracks / 1,020 logical calls；physical/cost 上限各以独立 dry-run 为准 | pilot 与 formal 使用同一 V3 prompt、模型、surface selector 和 transport 合同；原始 provider 输出不删除，正式 track 每轮 `<=60` words、完整句边界、`mid_sentence_truncation_count=0`，102 条轨迹完整后才可进入 freeze |
@@ -240,6 +400,36 @@ external 付费生成前失败。
 | 11 | `v1_5/30_eval_forced_swap_canary_v1_5.py` | 12 units × 2 orders × 2 families = 48 | schema、顺序稳健性和跨家族方向敏感性 PASS；12 units 从主评测排除 |
 | 12 | `v1_5/36_run_external_batched_schema_order_pilot_v1_5.py` | 3 units × 2 schemas × 2 orders × 2 families = 24 | 使用 canary 排序后的前三个单元；schema 必须全通过，mean/max absolute order delta 还必须低于冻结阈值；只作 transport diagnostic |
 | 13 | `v1_5/25_eval_pm_v2_external_v1_5.py` | 192 GPT 主质量 + 54 Claude 敏感性 + 36×2 risk audit = 318；以 dry-run 为准 | 七个 condition 全部进入每个 batched call；完整后单独生成 `SUPPORTED`/`NOT_SUPPORTED`、有边界的 risk audit 与非确认性 latency diagnostic |
+
+上表 4–6 行保存的是已完成旧矩阵和失败 candidate 的血缘，不再授权直接从旧 labels
+重训。当前唯一恢复顺序是：
+
+1. 先完成 V3 Phase 0：Strategy Bank V2、ESConv native-metadata 角色登记、四视图
+   `SupportNeedObservation`、BAAI/lexical grouped probe、family opportunity 与真实
+   eligible retriever 对齐，并建立原子透明 metric registry。need heads 只允许 outcome-blind
+   低维投影和强正则模型；旧 nearest-centroid/高维 HGB 是 baseline，不是默认实现。既有
+   32 条旧-treatment 人工 packet 只保留为可选根因诊断，不再阻塞新方法，也不能校准新分布。
+2. 先用约 60–100 个新鲜 train-only states 做零 API need/Bank pilot；只使用 out-of-fold
+   need prediction。通过后才从中选约 48–80 states，按
+   `learnable_transfer_training_data_v2.json` 建同 prompt/seed 的 M0/MP/MS/ME/RS clean
+   contrasts；先做 selected-item composition 与 generator uptake，未达到冻结 practical
+   margin 就停止，不做 full generation。
+3. 按 `PM_V1_5_UNIFIED_NEED_SEMANTICS_TRAINING_PLAN_V3_ZH.md` 用新 response distribution
+   另建一份小型、train-only、盲化人工 anchor。quality 岗只见 visible dialogue 与匿名
+   回复；evidence 岗逐主张核对精确证据；strategy 岗单独判断 readiness。LLM judges 保留
+   family、AB/BA、分歧和 abstention；冲突不作硬标签，structural need/harm 只作 silver LF。
+4. 零 outcome 构建 external-shape metadata support grid；ESConv 与 EvoEmo formal
+   observable states 分别要求 severe OOD `<=0.10`。不得看 external score 后再补范围。
+5. 只在上述门全过后，用 cross-fitted need observation 拟合 realized-benefit residual
+   heads；train 使用 user/dialogue nested group CV，报告 raw rows、groups、physical
+   responses、weights 与 ESS。MP/MS/ME/RS main effect 每个方向至少 8 个独立 groups；
+   interaction 至少 12 groups 且相关 main effects 已过门。未胜过 M0-only 与
+   transparent-rule baseline 就冻结 `NOT_SUPPORTED`，不打开 internal；在真实数据之前，
+   同一训练/选择代码还必须在可控 canary 上恢复已知 main effects，且复制重复测量不得
+   改变 ESS。部分组件失败时只允许受限 action mask 和相应有限主张。
+6. candidate、threshold、comparator 与两项 external matrix 全部冻结后，才一次性消费
+   internal，再在同一 study freeze 下运行 ESConv 和 EvoEmo/ES-MemEval-derived 外部
+   评测。二者分别判定，不能互相补票。
 
 V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是快速通道的
 明确范围缩减。代价是证据强度低于 V2.2，但不能用把全量 sweep 标成 “pilot” 的方式
@@ -506,23 +696,125 @@ fail-closed 测试。Hybrid 检索负结果已归档且与 production consumer �
    `0.1667 < 0.25`。冻结结论，不再打开 auxiliary calibration/internal，不生成训练
    labels，不调 prompt、judge、样本或阈值。719-state generation 与两次 pilot 仅作
    diagnostic/limitation 证据；
-2. 完成 longitudinal train/calibration judging；缺行只允许 exact continuation/recovery，
-   不重跑已成功行。冻结 applicability、sparse-zero、MAD utility、judge-health 与
-   attestation 后，用纵向 train 选择模型族、calibration 冻结阈值、transparent rule、
-   fixed frontier 与 comparator；
-3. 用 `22_train_pm_v2_v1_5.py` 训练唯一 longitudinal candidate。不得把已经实现但未获
-   measurement 支持的双域入口用于本篇正式结果；
-4. candidate 完全冻结后，一次性生成/打开 longitudinal internal-test labels并消费唯一
-   holdout ledger；ESConv auxiliary internal-test 保持未判定、未打开；
-5. fixed-seeker V3 pilot 已 PASS，但正式 config/freeze/外部 consumers 仍是 V2 合同，
-   当前 zero-API promotion preflight 因此明确 `BLOCKED`。先原子迁移 config、study
-   freeze、PM generation、reference baseline 和 shared EvoEmo runner 的 stage/目录
-   合同并补反向测试；再双 dry-run、独立批准并完整生成 V3 102 tracks，构建
+2. longitudinal train/calibration judging 已完成 exact matrix，但 raw-family、
+   aggregated-label 和预注册 label-value feasibility 未共同过门；冻结
+   `LONGITUDINAL_SUPERVISION_NOT_SUPPORTED`，不生成 labels、不训练、不打开 internal；
+3. 已在 train-only、outcome-isolated 的小矩阵中诊断 response mechanism：零成本复用
+   attested full-sweep outcome 作为 control；唯一新臂保持同一 retriever、模型、temperature、
+   seed 和冻结 `selective_esmem_v1` prompt，只把 post-retrieval/pre-generation evidence
+   surface 确定性限制为每个 memory source 至多 1 项、strategy 至多 1 项。原草案的
+   “top-1 + 新 selective-use instruction”因冻结 prompt 本来已有同义约束且会混淆
+   retrieval/prompt 两个因素，已在看到 outcome 前删除。该 14-state/14-call 运行只用
+   outcome 前冻结并进入 cost identity 的 uptake 合同定位机制：主指标固定为 treatment
+   相对 control 对预先定义 target evidence reference 的 BGE cosine 增量；helpful 10 对
+   要求均值为正且至少 6 对为正，harmful 4 对要求均值为负且至少 3 对为负。lexical、
+   visible-grounding、5-gram copy 与 selected-item coverage 仅作辅助诊断。该结果只能是
+   report-only mechanism signal，不得冒充 response-quality gold，也不创建 labels、
+   不授权训练或 external claim。真实 14/14 调用完成后，预注册主指标未建立信号：
+   helpful 仅 `3/10` 为正且均值 `-0.00604`，harmful 仅 `2/4` 为负且均值
+   `+0.01058`；因此该 top-1 evidence-surface rescue 已冻结为 report-only NO-GO，
+   不再调指标或扩样本；
+4. 随后的独立 18-state oracle-memory 上界排除了“generator/prompt 绝对不会使用记忆”
+   这一单一解释：helpful `9/12` 为正、均值 `+0.02124`，harmful `4/6` 非正、均值
+   `-0.00723`；但三源 multi-source 只有 `1/3` 为正，而单源合计 `8/9` 为正。因此当前
+   最可信的机制根因是 production retrieval/evidence composition，尤其多源组合干扰，
+   不是直接换第三个 judge 或继续训练。下一步严格分成两项 report-only 诊断：
+   （a）复用已有 18 对回复生成 action/source 盲化、AB/BA 平衡的 memory-specific
+   quality packet；第三 judge 如加入只逐家报告，majority 不能成为 gold；
+   （b）只对 3 个 multi-source states 新增 MP/MS/ME 单源各一次共 9 calls，复用已有
+   M0/all-three。两项均禁止创建 labels、打开 internal 或授权 PM 训练；
+5. strict bakeoff 已按原合同 NO-GO，不再修当前 packet。新的拆职资格赛已零 API 构建
+   24 个双域新鲜 pair（纵向 12、ESConv auxiliary 12）、48 个 AB/BA 质量项、48 个逐回复
+   evidence/risk 审计项和 12 条人工盲评锚点，并两次逐字节复现。人工锚点已在任何候选
+   API 调用前完成并冻结为 tracked/content-addressed artifact，结构、适用维度以及逐字
+   response/evidence 引用均通过校验；它只是单研究者独立参照，不是自动 gold。
+   canonical packet 也已迁入 tracked data，不再依赖本机 `outputs/`。结果前冻结的零 API
+   聚合器按岗位分别计算 AB/BA 一致率、informative rate、适用维度覆盖、逐字摘录有效率
+   与 abstention；人工一致率只作描述，不作多数票或自动晋级。
+   Claude Haiku 4.5、Gemini 2.5 Flash、GPT-5 mini 的 quality labeler 与 evidence/risk
+   auditor 岗位分别资格认证。首次 288-call identity 已因执行合同缺陷永久关闭，未形成
+   语义 verdict：Anthropic provider schema 不接受 numeric bounds、两条理由超长、统一
+   token margin 低估且一条已付费响应未形成 terminal ledger。canonical 本地 schema
+   不放宽；provider schema projection、显式短理由、Anthropic 2.25× token margin 和
+   paid-postcondition terminal ledger 已完成针对性修复。第一次 2-call pilot 的 quality
+   1/1 成功，但 evidence/risk 因首次投影遗漏 `maxItems` 而在推理前 HTTP 400；该
+   identity 已关闭，费用仅 `$0.002427`，不得解释为 judge 结果。数组界限投影 v2、完整
+   测试与两次全新零 API dry-run 已完成。该 pilot 证明 provider schema 已兼容，但
+   evidence/risk 的 `insufficient_evidence + severity=1` 被 canonical 跨字段规则拒绝；
+   其 identity 已关闭，费用 `$0.006089`，仍不得解释为 judge 结果。既有
+   verdict→severity 语义规则现已显式写入双层 prompt，live-schema/contract 绑定门、
+   反向测试、全套测试与两次逐字节一致的新 dry-run 均已通过。修复后的真实 2-call
+   compatibility pilot 已 2/2 首次成功、零重试、零失败，真实费用 `$0.005970`；
+   evidence/risk 恰好返回 compiler 声明的 3 个维度且 canonical 跨字段规则全部通过。
+   该 PASS 只认证执行兼容，不认证任何裁判岗位、不创建 labels、不授权训练；下一步是在
+   最终冻结代码上重新做完整 288-call 两次零 API dry-run，再以全新 identity 申请
+   full-matrix 付费批准。该完整执行现已完成：288 次物理调用触达全部计划、284 成功，
+   4 个 Gemini evidence/risk 输出因超长且非逐字证据摘录被隔离，真实费用约
+   `$0.522968`。岗位独立复核显示没有任何候选通过结果前冻结门：quality AB/BA
+   consistency（门槛 `.80`）Claude `.458/.458`、Gemini `.750/.750`、GPT-mini
+   `.708/.625`；evidence/risk exact-excerpt validity（门槛 `.95`）Claude `.701`、
+   GPT-mini `.658`，Gemini 仅 `44/48` 完整。因此不补跑 4 条，也不允许任何候选冒充
+   自动 gold labeler。该结果并不禁止训练：第一篇若只检验有限条件下的可学习性，下一步
+   可在打开 internal 前冻结独立的 `LLM_WEAK_SUPERVISION` 合同，把原始 judge family、
+   AB/BA 一致/分歧、abstention、适用维度与 MAD 显式编码为有噪声 target/weight，
+   quality、risk 与 deterministic cost 继续分离；train/calibration 可训练和定阈值，
+   sealed internal 仍只消费一次。论文主张必须写成 judge-conditioned weak-supervision
+   下的 routing learnability，不能称人类 gold、真实心理效果或最优策略。现有少量人工
+   锚点只负责描述性校准与最终 sanity check，不要求把全量数据改成人工标注。
+   只有相关岗位分别通过
+   预注册门，且机制证据仍支持可学性，才可建立全新的 labels、明确 PM 目标适配并运行
+   训练。否则第一篇必须缩小为 deterministic/source-need routing 或把 learned PM 主张
+   报告为 `NOT_SUPPORTED`；任何 internal 始终保持未打开；
+   自动 gold 门失败不再被解释为“所有 LLM 判断均不可训练”。用户已明确把第一篇目标限定
+   为有限条件下的可学习性后，新增且冻结了独立
+   `pm-v1.5-llm-weak-supervision-v1`：现有两家 development judge 的逐维 median 只作
+   `LLM_WEAK_SUPERVISION_NOT_GOLD`，family/MAD/abstention/恢复血缘继续显式保留，
+   `label_reliable` 不删行，PM 仍按逐维 MAD 连续降权、risk action-applicability
+   置零、domain→dialogue/user→state→action/alias 等权，cost 仍来自确定性日志。
+   零 API 编译已在两个独立目录逐字节复现并形成正式输出：纵向 324 states/5,184 labels，
+   auxiliary train 318 states/636 labels；没有读取 internal/external outcome，也没有把
+   12 条人评锚点自动晋升为 gold。auxiliary calibration 的 170 states/340 outcomes 已按
+   同一 NOT_GOLD 合同完成 1,360 次真实 judge 调用：全部首次成功，真实费用约
+   `$0.187828`，只形成 `LLM_WEAK_SUPERVISION_NOT_GOLD`，没有读取 internal outcome。
+   双域 preflight 与 fit-only 随后完成；第一轮真实 fit 暴露 risk head 对结构性 N/A 用户
+   仍要求全员覆盖的校准 bug，已按 action applicability 修复并补测试。修复后的候选在
+   train/calibration 血缘、两域各 0.5 权重、OOD 与 conformal 拟合上机械完成，但路由
+   完全退化：longitudinal calibration `108/108`、ESConv calibration `170/170` 均选择
+   `M0+R0`，learned-decision rate 为 0，no-feasible fallback 分别约 `.9907/.9941`，
+   action entropy 为 0。独立、结果前阈值的 viability audit 已冻结为
+   `NOT_SUPPORTED_FOR_INTERNAL_TEST_CONSUMPTION`，因此两个 internal outcome 继续密封，
+   不得把该模型送入 internal/external，也不得只把 risk threshold 从 `.3` 提到
+   `.4/.5` 后称为修复：该改动虽会消除大部分 fallback，原始 utility argmax 仍全部是
+   `M0+R0`。下一步只能在 train-only 范围定位监督/目标和 retrieval-evidence 机制为何
+   抹掉 action 边际值，预注册新候选后重新 fit；不得在当前 calibration 上循环调参直到
+   出现多样性；
+   已完成第一轮 train-only 因子化信号审计（零 API、未读 internal/external）：把
+   16-action factorial sweep 改写为每个 state 的 MP/MS/ME/RS 开关效应，并先在 8 个
+   matched backgrounds 内聚合，再分别保留 DeepSeek/Gemini 方向。纵向 216 个 train
+   states 中，以冻结的 `.01` 质量边际计，MP 的两家同向正/负仅 `23/24`、直接反向
+   `30`、其余不确定 `139`；MS 为 `20/10/28/158`，ME 为 `32/14/22/148`，RS 为
+   `18/28/30/140`。对 synthetic structural need/harm target 的方向对齐率也仅
+   MP `.153`、MS `.056`、ME `.139`、RS `.167`。ESConv train 的 RS 对照有 311 个
+   完整双家族 effect，只有 28 个同向正、63 个同向负、48 个反向、172 个不确定；另
+   7 个 offline-recovered pair 没有完整 raw-family row，不能伪装成独立 family effect。
+   因此旧 16-way absolute pseudo-oracle 不得继续使用，新学习单位冻结为
+   state×component repeated-measure effect；
+   新 `pm-v1.5-factorized-small-sample-weak-learning-v1` 已在任何新 fit 前冻结：
+   structural need 只作 silver labeling function，ambiguous 视作 unlabeled；两家
+   paired effect 分开保留，反向时 abstain；risk 使用 structural harm + applicable
+   soft audit，cost 仍完全确定性；用强正则的 factorized component-benefit model，
+   group CV/bootstrapping 按 user/dialogue，禁止再以高维 16-action absolute HGB 作为
+   唯一学习器。32 条 train-only、每 component×consensus stratum 各 2 条的人工盲评
+   packet 已确定性生成并隐藏动作、regime、模型、裁判方向及资源 ID；人工仅校准 labeling
+   function 可靠度，不自动成为 bulk gold。完成这 32 条前不运行新模型；
+6. fixed-seeker V3 pilot 已 PASS，sidecar 与正式 config/freeze/外部 consumers 的原子
+   迁移已经完成并通过反向测试。正式 102-track/1,020-call 计划已在新环境下两次零 API
+   复现；当前只差对冻结 identity 的独立批准与真实生成。PASS 后构建
    decision-quality/fixed-baseline reports，最后创建绑定同一
    response/retrieval/judge mechanism 的 study freeze；
-6. 在同一 freeze 下执行 ESConv test 的即时回复质量/Strategy 开关评测，以及
+7. 在同一 freeze 下执行 ESConv test 的即时回复质量/Strategy 开关评测，以及
    EvoEmo/ES-MemEval-derived 的纵向 memory/strategy 评测；
-7. 只按各自预注册 gate 给出 `SUPPORTED`/`NOT_SUPPORTED`。若只支持透明 rule、只支持一个
+8. 只按各自预注册 gate 给出 `SUPPORTED`/`NOT_SUPPORTED`。若只支持透明 rule、只支持一个
    外部域或两个都不支持，也必须如实报告，不继续调方法直到全绿。
 
 第一篇只报告冻结特征与 LLM-judged labels 下，监督式 pre-item-retrieval router 的

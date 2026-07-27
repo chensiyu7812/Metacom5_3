@@ -12,6 +12,12 @@ from .io import canonical_json, sha256_file, sha256_text, utc_now, write_json
 CANDIDATE_MANIFEST_PROTOCOL = "pm-v1.5-frozen-candidate-family-v1"
 INTERNAL_LEDGER_PROTOCOL = "pm-v1.5-internal-test-consumption-ledger-v1"
 SEALED_INTERNAL_BUNDLE_PROTOCOL = "pm-v1.5-sealed-internal-label-bundle-v1"
+POSTFREEZE_SEALED_INTERNAL_BUNDLE_PROTOCOL = (
+    "pm-v1.5-postfreeze-sealed-internal-label-bundle-v1"
+)
+INTERNAL_STATE_COMMITMENT_PROTOCOL = (
+    "pm-v1.5-internal-state-universe-commitment-v1"
+)
 
 
 def seal_internal_label_bundle(
@@ -76,6 +82,111 @@ def require_sealed_internal_label_bundle(
         or int(payload.get("state_count") or 0) < 1
     ):
         raise RuntimeError("sealed internal label bundle is missing, stale, or invalid")
+    return payload
+
+
+def seal_postfreeze_internal_label_bundle(
+    path: str | Path,
+    *,
+    internal_labels_path: str | Path,
+    state_commitment_path: str | Path,
+) -> dict[str, Any]:
+    """Seal outcomes generated only after an immutable candidate exists."""
+
+    commitment_path = Path(state_commitment_path)
+    commitment = json.loads(commitment_path.read_text(encoding="utf-8"))
+    commitment_core = {
+        key: value
+        for key, value in commitment.items()
+        if key != "commitment_sha256"
+    }
+    if (
+        commitment.get("protocol") != INTERNAL_STATE_COMMITMENT_PROTOCOL
+        or commitment.get("status")
+        != "COMMITTED_WITHOUT_OUTCOMES_BEFORE_FIT"
+        or commitment.get("commitment_sha256")
+        != sha256_text(canonical_json(commitment_core))
+    ):
+        raise RuntimeError("internal state commitment is missing or invalid")
+
+    labels_path = Path(internal_labels_path)
+    state_ids: set[str] = set()
+    action_matrix: list[dict[str, str]] = []
+    schema_keys: set[tuple[str, ...]] = set()
+    with labels_path.open("r", encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            state_id = str(row.get("state_id") or "")
+            action_id = str(row.get("action_id") or "")
+            if not isinstance(row, dict) or not state_id or not action_id:
+                raise RuntimeError(
+                    f"invalid postfreeze internal label row: {line_number}"
+                )
+            state_ids.add(state_id)
+            action_matrix.append(
+                {"state_id": state_id, "action_id": action_id}
+            )
+            schema_keys.add(tuple(sorted(str(key) for key in row)))
+    action_matrix.sort(key=lambda row: (row["state_id"], row["action_id"]))
+    if len(schema_keys) != 1:
+        raise RuntimeError("postfreeze internal label schema drift")
+    if (
+        len(action_matrix) != int(commitment.get("expected_label_rows") or -1)
+        or len(state_ids) != int(commitment.get("state_count") or -1)
+        or sha256_text(canonical_json(sorted(state_ids)))
+        != commitment.get("state_universe_sha256")
+    ):
+        raise RuntimeError(
+            "postfreeze internal labels differ from committed state universe"
+        )
+    # The pre-fit commitment stores one row per state with allowed_actions.
+    # Normalize that representation into the exact (state, action) label
+    # matrix before comparing.
+    committed_action_rows = []
+    raw_action_matrix = commitment.get("action_matrix")
+    if not isinstance(raw_action_matrix, list):
+        raise RuntimeError(
+            "postfreeze sealing requires an explicit committed action matrix"
+        )
+    for row in raw_action_matrix:
+        for action_id in row["allowed_actions"]:
+            committed_action_rows.append(
+                {"state_id": str(row["state_id"]), "action_id": str(action_id)}
+            )
+    committed_action_rows.sort(
+        key=lambda row: (row["state_id"], row["action_id"])
+    )
+    if action_matrix != committed_action_rows:
+        raise RuntimeError(
+            "postfreeze internal labels differ from committed action matrix"
+        )
+    core = {
+        "protocol": POSTFREEZE_SEALED_INTERNAL_BUNDLE_PROTOCOL,
+        "status": "SEALED_AFTER_CANDIDATE_BEFORE_EVALUATION",
+        "internal_labels_sha256": sha256_file(labels_path),
+        "row_count": len(action_matrix),
+        "state_count": len(state_ids),
+        "state_universe_sha256": sha256_text(canonical_json(sorted(state_ids))),
+        "action_matrix_sha256": sha256_text(canonical_json(action_matrix)),
+        "schema_sha256": sha256_text(
+            canonical_json(list(next(iter(schema_keys))))
+        ),
+        "state_commitment_file_sha256": sha256_file(commitment_path),
+        "state_commitment_sha256": commitment["commitment_sha256"],
+    }
+    payload = {**core, "seal_sha256": sha256_text(canonical_json(core))}
+    path = Path(path)
+    if path.exists():
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing != payload:
+            raise RuntimeError(
+                "postfreeze internal seal already exists with different content"
+            )
+        return existing
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_json(path, payload)
     return payload
 
 
@@ -196,6 +307,73 @@ def begin_internal_test_consumption(
     except Exception:
         # fd is owned by fdopen after successful construction.
         raise
+
+
+def begin_postfreeze_internal_test_consumption(
+    ledger_path: str | Path,
+    *,
+    candidate_manifest_path: str | Path,
+    internal_labels_path: str | Path,
+    postfreeze_seal_path: str | Path,
+    committed_artifact_name: str,
+    consumption_domain: str,
+) -> dict[str, Any]:
+    """Spend an outcome read when labels did not exist at candidate freeze."""
+
+    manifest_path = Path(candidate_manifest_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if (
+        manifest.get("protocol") != CANDIDATE_MANIFEST_PROTOCOL
+        or manifest.get("status") != "FROZEN_BEFORE_INTERNAL_TEST"
+    ):
+        raise RuntimeError(
+            "postfreeze internal consumption requires a frozen candidate"
+        )
+    commitment_record = (manifest.get("artifacts") or {}).get(
+        committed_artifact_name
+    ) or {}
+    commitment_path = Path(str(commitment_record.get("path") or ""))
+    if (
+        not commitment_path.is_file()
+        or commitment_record.get("sha256") != sha256_file(commitment_path)
+    ):
+        raise RuntimeError(
+            "candidate manifest does not bind the internal state commitment"
+        )
+    seal_path = Path(postfreeze_seal_path)
+    seal = seal_postfreeze_internal_label_bundle(
+        seal_path,
+        internal_labels_path=internal_labels_path,
+        state_commitment_path=commitment_path,
+    )
+    ledger_path = Path(ledger_path)
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(ledger_path, os.O_RDWR | os.O_CREAT, 0o600)
+    with os.fdopen(fd, "r+", encoding="utf-8") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        if _read_ledger(handle):
+            raise RuntimeError(
+                "internal-test outcome has already been consumed or started"
+            )
+        event = {
+            "protocol": INTERNAL_LEDGER_PROTOCOL,
+            "event": "STARTED",
+            "run_identity": manifest["run_identity"],
+            "candidate_manifest_sha256": sha256_file(manifest_path),
+            "internal_labels_sha256": sha256_file(internal_labels_path),
+            "sealed_artifact_name": str(seal_path),
+            "postfreeze_seal_sha256": seal["seal_sha256"],
+            "committed_artifact_name": committed_artifact_name,
+            "state_commitment_sha256": seal["state_commitment_sha256"],
+            "consumption_domain": consumption_domain,
+            "started_at": utc_now(),
+        }
+        handle.seek(0, os.SEEK_END)
+        handle.write(canonical_json(event) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        return event
 
 
 def finish_internal_test_consumption(

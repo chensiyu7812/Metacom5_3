@@ -61,6 +61,110 @@ def test_transport_contract_is_self_hashed_and_scientifically_separate() -> None
         )
 
 
+def test_formal_raw_gate_uses_applicability_and_sparse_zero_contract(
+    monkeypatch,
+) -> None:
+    module = _module()
+    captured = {}
+
+    def global_gate(rows, **kwargs):
+        captured["global"] = kwargs
+        return {"status": "FAIL", "families": {}}
+
+    def action_gate(rows, **kwargs):
+        captured["action"] = kwargs
+        return {"status": "PASS", "subgroups": {}}
+
+    def risk_gate(rows, **kwargs):
+        captured["risk"] = kwargs
+        return {"status": "PASS", "actions": {}}
+
+    monkeypatch.setattr(module, "validate_raw_judge_family_health", global_gate)
+    monkeypatch.setattr(
+        module, "validate_raw_judge_family_subgroup_health", action_gate
+    )
+    monkeypatch.setattr(
+        module, "validate_action_applicable_risk_signal", risk_gate
+    )
+    labeling = {
+        "duplicate_exact_match_rate": 0.98,
+        "maximum_absolute_dimension_correlation": 0.95,
+        "composite_support_exact_match_rate": 0.98,
+        "maximum_absolute_composite_support_correlation": 0.995,
+        "reject_constant_response_dimensions": True,
+        "reject_constant_risk_dimensions": True,
+        "minimum_action_applicable_risk_signal_rate": 0.005,
+        "minimum_action_applicable_risk_distinct_values": 2,
+    }
+    report = module.evaluate_raw_judge_gates(
+        [{"judge_family": "family", "action_id": "M0+R0"}],
+        outcomes=[SimpleNamespace(action_id="M0+R0")],
+        endpoints=[SimpleNamespace(family="family")],
+        labeling=labeling,
+        composite_spec=SimpleNamespace(),
+        compatibility_pilot=False,
+    )
+
+    assert report["status"] == "FAIL"
+    assert captured["global"]["raise_on_failure"] is False
+    assert captured["global"]["minimum_nonzero_observations"] == 10
+    assert captured["global"]["split_correlation_by_sign"] is True
+    assert captured["global"]["inapplicable_risk_dimensions"]
+    assert captured["global"]["inapplicable_risk_dimensions_by_action"]
+    assert captured["action"]["raise_on_failure"] is False
+    assert captured["action"]["minimum_nonzero_observations"] == 10
+    assert captured["action"]["split_correlation_by_sign"] is True
+    assert captured["risk"]["raise_on_failure"] is False
+
+
+def test_formal_instrument_failure_is_nonreportable_and_creates_no_labels() -> None:
+    module = _module()
+    failed = module.formal_instrument_decision(
+        raw_family_quality_gate={"status": "FAIL"},
+        quality_gate={"status": "PASS"},
+        compatibility_pilot=False,
+        sealed_holdout_scope=False,
+    )
+    passed = module.formal_instrument_decision(
+        raw_family_quality_gate={"status": "PASS"},
+        quality_gate={"status": "PASS"},
+        compatibility_pilot=False,
+        sealed_holdout_scope=False,
+    )
+
+    assert failed == {
+        "formal_instrument_supported": False,
+        "training_labels_created": False,
+        "status": "LONGITUDINAL_JUDGE_INSTRUMENT_NOT_SUPPORTED",
+        "reportability_status": "NONREPORTABLE_MEASUREMENT_INSTRUMENT",
+    }
+    assert passed["formal_instrument_supported"] is True
+    assert passed["training_labels_created"] is True
+    assert passed["status"] == "COMPLETE"
+
+
+def test_attestation_binds_posthoc_qualification_instead_of_stale_original() -> None:
+    module = _module()
+    qualification = Path("/tmp/qualification.json")
+    qualification_attestation = Path("/tmp/qualification_attestation.json")
+    inputs = module.actual_corpus_attestation_inputs(
+        SimpleNamespace(
+            actual_corpus_qualification_report=qualification,
+            actual_corpus_qualification_attestation=qualification_attestation,
+            actual_corpus_semantic_review_report=Path("/tmp/stale.json"),
+            actual_corpus_semantic_review_attestation=Path(
+                "/tmp/stale_attestation.json"
+            ),
+        )
+    )
+
+    assert inputs == {
+        "actual_corpus_qualification": qualification,
+        "actual_corpus_qualification_attestation": qualification_attestation,
+    }
+    assert "actual_corpus_semantic_review" not in inputs
+
+
 def test_worst_case_cost_and_attempt_bounds_scale_exactly_fourfold() -> None:
     module = _module()
     bounds = module.development_judging_cost_bounds(

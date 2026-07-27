@@ -10,6 +10,7 @@ joint candidate family and both opaque seals have been frozen.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -23,7 +24,14 @@ from metacom_pm.internal_holdout import (
     freeze_candidate_manifest,
     require_sealed_internal_label_bundle,
 )
-from metacom_pm.io import iter_jsonl, read_json, sha256_file, write_json
+from metacom_pm.io import (
+    canonical_json,
+    iter_jsonl,
+    read_json,
+    sha256_file,
+    sha256_text,
+    write_json,
+)
 from metacom_pm.pm_v1_5_algorithm_selection import select_routing_algorithm_group_cv
 from metacom_pm.pm_v1_5_rule_router import (
     transparent_rule_candidates,
@@ -50,6 +58,7 @@ from metacom_pm.v1_5_dual_domain_training import (
     ESCONV_AUXILIARY_DOMAIN,
     LONGITUDINAL_DOMAIN,
     audit_domain_label_matrix,
+    calibration_action_viability,
     domain_internal_gate,
     fixed_action_metrics,
     require_equal_domain_training_weight,
@@ -85,6 +94,132 @@ def _domain_rows(states, labels, domain: str):
         state for state in states if training_domain_for_state(state) == domain
     ]
     return selected_states, _labels_for_states(labels, selected_states)
+
+
+@contextmanager
+def _cache_selection_inference(model: PMV2Model):
+    """Cache selector-independent model inference during the frozen grid scan.
+
+    The calibration candidates alter only risk/cost/gain thresholds.  They do
+    not alter fitted heads, conformal radii, ``uncertainty_z`` or the state
+    features.  Recomputing all bootstrap-head predictions for every candidate
+    is therefore both wasteful and exactly redundant.
+    """
+
+    original_bundle = model._prediction_bundle
+    original_routing = model._routing_scores
+    bundle_cache: dict[str, Any] = {}
+    routing_cache: dict[str, Any] = {}
+
+    def cached_bundle(state):
+        if state.state_id not in bundle_cache:
+            bundle_cache[state.state_id] = original_bundle(state)
+        return bundle_cache[state.state_id]
+
+    def cached_routing(state):
+        if state.state_id not in routing_cache:
+            routing_cache[state.state_id] = original_routing(state)
+        return routing_cache[state.state_id]
+
+    model._prediction_bundle = cached_bundle
+    model._routing_scores = cached_routing
+    try:
+        yield {
+            "prediction_bundle_cache": bundle_cache,
+            "routing_score_cache": routing_cache,
+        }
+    finally:
+        del model._prediction_bundle
+        del model._routing_scores
+
+
+def _require_internal_state_commitment(path: Path, states, *, domain: str) -> dict:
+    commitment = read_json(path)
+    core = {
+        key: value
+        for key, value in commitment.items()
+        if key != "commitment_sha256"
+    }
+    internal_states = sorted(
+        (state for state in states if state.split is PMV2Split.INTERNAL_TEST),
+        key=lambda state: state.state_id,
+    )
+    action_matrix = [
+        {
+            "state_id": state.state_id,
+            "allowed_actions": sorted(state.allowed_actions),
+        }
+        for state in internal_states
+    ]
+    if (
+        commitment.get("protocol")
+        != "pm-v1.5-internal-state-universe-commitment-v1"
+        or commitment.get("status")
+        != "COMMITTED_WITHOUT_OUTCOMES_BEFORE_FIT"
+        or commitment.get("domain") != domain
+        or commitment.get("commitment_sha256")
+        != sha256_text(canonical_json(core))
+        or int(commitment.get("state_count") or -1) != len(internal_states)
+        or int(commitment.get("expected_label_rows") or -1)
+        != sum(len(state.allowed_actions) for state in internal_states)
+        or commitment.get("state_universe_sha256")
+        != sha256_text(
+            canonical_json(sorted(state.state_id for state in internal_states))
+        )
+        or commitment.get("action_matrix_sha256")
+        != sha256_text(canonical_json(action_matrix))
+        or commitment.get("internal_label_values_deserialized") is not False
+    ):
+        raise RuntimeError(f"{domain} internal state commitment is invalid")
+    return commitment
+
+
+def _algorithm_selection_checkpoint_binding(
+    *, args, config_path: Path
+) -> dict[str, Any]:
+    paths = {
+        "pm_v1_5_config": config_path,
+        "dual_preflight_report": args.dual_preflight_report,
+        "longitudinal_states": args.longitudinal_states,
+        "longitudinal_train_calibration_labels": (
+            args.longitudinal_train_calibration_labels
+        ),
+        "auxiliary_train_labels": args.auxiliary_train_labels,
+        "algorithm_selection_code": (
+            ROOT / "src" / "metacom_pm" / "pm_v1_5_algorithm_selection.py"
+        ),
+        "pm_v2_model_code": ROOT / "src" / "metacom_pm" / "pm_v2_model.py",
+        "training_script": Path(__file__),
+    }
+    return {
+        "protocol": "pm-v1.5-train-only-algorithm-selection-checkpoint-v1",
+        "run_identity": args.run_identity,
+        "seed": int(args.seed),
+        "inputs": {
+            name: {"path": str(path), "sha256": sha256_file(path)}
+            for name, path in sorted(paths.items())
+        },
+    }
+
+
+def _require_algorithm_selection_checkpoint(
+    path: Path, *, expected_binding: dict[str, Any]
+) -> tuple[str, dict[str, Any]]:
+    record = read_json(path)
+    core = {key: value for key, value in record.items() if key != "binding_sha256"}
+    if core.get("binding") != expected_binding:
+        raise RuntimeError("algorithm-selection checkpoint input binding drifted")
+    if record.get("binding_sha256") != sha256_text(canonical_json(core)):
+        raise RuntimeError("algorithm-selection checkpoint self-hash mismatch")
+    selected = str(core.get("selected_algorithm") or "")
+    report = dict(core.get("algorithm_selection") or {})
+    if (
+        not selected
+        or report.get("selected_algorithm") != selected
+        or report.get("selection_data_role") != "train_only"
+    ):
+        raise RuntimeError("algorithm-selection checkpoint content is invalid")
+    return selected, report
 
 
 def _ood_report(model, states) -> dict[str, Any]:
@@ -159,13 +294,15 @@ def main() -> None:
     parser.add_argument("--dual-preflight-report", type=Path, required=True)
     parser.add_argument("--longitudinal-states", type=Path, required=True)
     parser.add_argument("--longitudinal-train-calibration-labels", type=Path, required=True)
-    parser.add_argument("--longitudinal-internal-test-labels", type=Path, required=True)
-    parser.add_argument("--longitudinal-internal-seal", type=Path, required=True)
+    parser.add_argument("--longitudinal-internal-test-labels", type=Path)
+    parser.add_argument("--longitudinal-internal-seal", type=Path)
+    parser.add_argument("--longitudinal-internal-commitment", type=Path)
     parser.add_argument("--auxiliary-dir", type=Path, required=True)
     parser.add_argument("--auxiliary-train-labels", type=Path, required=True)
     parser.add_argument("--auxiliary-calibration-labels", type=Path, required=True)
-    parser.add_argument("--auxiliary-internal-test-labels", type=Path, required=True)
-    parser.add_argument("--auxiliary-internal-seal", type=Path, required=True)
+    parser.add_argument("--auxiliary-internal-test-labels", type=Path)
+    parser.add_argument("--auxiliary-internal-seal", type=Path)
+    parser.add_argument("--auxiliary-internal-commitment", type=Path)
     parser.add_argument("--shortcut-audit-report", type=Path, required=True)
     parser.add_argument("--shortcut-audit-attestation", type=Path)
     parser.add_argument("--rule-grid-report", type=Path, required=True)
@@ -174,6 +311,14 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=1701)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--allow-nonreportable", action="store_true")
+    parser.add_argument(
+        "--fit-only",
+        action="store_true",
+        help=(
+            "Fit/calibrate and freeze the candidate, then stop before opening "
+            "or requiring any internal-test label artifact."
+        ),
+    )
     args = parser.parse_args()
 
     config = load_config(args.pm_v1_5_config)
@@ -185,8 +330,23 @@ def main() -> None:
         or preflight.get("status") != "PASS"
         or preflight.get("internal_label_values_deserialized") is not False
         or preflight.get("pm_v1_5_config_sha256") != sha256_file(args.pm_v1_5_config)
+        or bool(preflight.get("fit_only")) != bool(args.fit_only)
     ):
         raise RuntimeError("dual-domain training preflight is missing or stale")
+    measurement_contract = dict(
+        preflight.get("frozen_esconv_auxiliary_measurement_contract") or {}
+    )
+    weak_supervision_mode = (
+        measurement_contract.get("protocol") == "pm-v1.5-llm-weak-supervision-v1"
+        and measurement_contract.get("status")
+        == "COMPLETE_WEAK_SUPERVISION_NOT_GOLD"
+        and measurement_contract.get("automatic_gold_label_claimed") is False
+    )
+    if args.fit_only and not weak_supervision_mode:
+        raise RuntimeError(
+            "fit-only training currently requires the content-addressed "
+            "non-gold weak-supervision contract"
+        )
     shortcut = read_json(args.shortcut_audit_report)
     rule_grid = read_json(args.rule_grid_report)
     expected_states_sha256 = sha256_file(args.longitudinal_states)
@@ -224,19 +384,6 @@ def main() -> None:
         required_output_paths={"rule_grid_report": args.rule_grid_report},
     )
 
-    long_seal = require_sealed_internal_label_bundle(
-        args.longitudinal_internal_seal,
-        internal_labels_path=args.longitudinal_internal_test_labels,
-    )
-    aux_seal = require_sealed_internal_label_bundle(
-        args.auxiliary_internal_seal,
-        internal_labels_path=args.auxiliary_internal_test_labels,
-    )
-    preflight_seals = dict(preflight.get("sealed_internal_bundles") or {})
-    if preflight_seals.get(LONGITUDINAL_DOMAIN) != long_seal:
-        raise RuntimeError("longitudinal internal seal differs from dual preflight")
-    if preflight_seals.get(ESCONV_AUXILIARY_DOMAIN) != aux_seal:
-        raise RuntimeError("ESConv auxiliary internal seal differs from dual preflight")
     encoder = FrozenTransformerSemanticEncoder.load(
         semantic_encoder_spec_from_config(config)
     )
@@ -253,6 +400,79 @@ def main() -> None:
         for split in ("train", "calibration", "internal_test")
         for state in load_states(auxiliary_state_paths[split])
     ]
+    if args.fit_only:
+        forbidden_internal_args = (
+            args.longitudinal_internal_test_labels,
+            args.longitudinal_internal_seal,
+            args.auxiliary_internal_test_labels,
+            args.auxiliary_internal_seal,
+        )
+        if any(value is not None for value in forbidden_internal_args):
+            raise RuntimeError(
+                "fit-only training forbids internal label/seal path arguments"
+            )
+        if (
+            args.longitudinal_internal_commitment is None
+            or args.auxiliary_internal_commitment is None
+        ):
+            raise RuntimeError(
+                "fit-only training requires both state-universe commitments"
+            )
+        long_seal = None
+        aux_seal = None
+        long_commitment = _require_internal_state_commitment(
+            args.longitudinal_internal_commitment,
+            longitudinal_states,
+            domain=LONGITUDINAL_DOMAIN,
+        )
+        aux_commitment = _require_internal_state_commitment(
+            args.auxiliary_internal_commitment,
+            auxiliary_states,
+            domain=ESCONV_AUXILIARY_DOMAIN,
+        )
+        preflight_commitments = dict(
+            preflight.get("internal_state_commitments") or {}
+        )
+        if preflight_commitments.get(LONGITUDINAL_DOMAIN) != long_commitment:
+            raise RuntimeError(
+                "longitudinal internal commitment differs from dual preflight"
+            )
+        if preflight_commitments.get(ESCONV_AUXILIARY_DOMAIN) != aux_commitment:
+            raise RuntimeError(
+                "ESConv auxiliary internal commitment differs from dual preflight"
+            )
+    else:
+        if any(
+            value is None
+            for value in (
+                args.longitudinal_internal_test_labels,
+                args.longitudinal_internal_seal,
+                args.auxiliary_internal_test_labels,
+                args.auxiliary_internal_seal,
+            )
+        ):
+            raise RuntimeError(
+                "legacy joint training/evaluation requires internal labels and seals"
+            )
+        long_commitment = None
+        aux_commitment = None
+        long_seal = require_sealed_internal_label_bundle(
+            args.longitudinal_internal_seal,
+            internal_labels_path=args.longitudinal_internal_test_labels,
+        )
+        aux_seal = require_sealed_internal_label_bundle(
+            args.auxiliary_internal_seal,
+            internal_labels_path=args.auxiliary_internal_test_labels,
+        )
+        preflight_seals = dict(preflight.get("sealed_internal_bundles") or {})
+        if preflight_seals.get(LONGITUDINAL_DOMAIN) != long_seal:
+            raise RuntimeError(
+                "longitudinal internal seal differs from dual preflight"
+            )
+        if preflight_seals.get(ESCONV_AUXILIARY_DOMAIN) != aux_seal:
+            raise RuntimeError(
+                "ESConv auxiliary internal seal differs from dual preflight"
+            )
     longitudinal_labels = _load_labels(args.longitudinal_train_calibration_labels)
     auxiliary_label_paths = {
         "train": args.auxiliary_train_labels,
@@ -285,6 +505,7 @@ def main() -> None:
                 minimum_low_mad_coverage_per_action_dimension=float(
                     reliable_cfg[split.value]["minimum_low_mad_coverage_per_action_dimension"]
                 ),
+                enforce_low_mad_coverage_gate=not weak_supervision_mode,
             )
             for split in (PMV2Split.TRAIN, PMV2Split.CALIBRATION)
         }
@@ -296,30 +517,60 @@ def main() -> None:
     labeling_cfg = config["labeling"]
     algorithm_cfg = config["algorithm_selection"]
     rule_cfg = config["transparent_rule_router"]
-    selected_algorithm, algorithm_selection = select_routing_algorithm_group_cv(
-        states=states_by_split[PMV2Split.TRAIN],
-        labels=labels_by_split[PMV2Split.TRAIN],
-        selection_config=initial_selection,
-        candidates=algorithm_cfg["candidates"],
-        folds=int(algorithm_cfg["folds"]),
-        n_models=int(algorithm_cfg["cv_bootstrap_models"]),
-        seed=args.seed,
-        dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
-        bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
-        use_precomputed_embeddings=bool(feature_cfg["optional_precomputed_semantic_embedding"]),
-        require_precomputed_embeddings=bool(feature_cfg["require_precomputed_semantic_embedding"]),
-        semantic_projection_dimensions=int(feature_cfg["semantic_projection_dimensions"]),
-        word_features=int(feature_cfg["word_hash_features"]),
-        char_features=int(feature_cfg["char_hash_features"]),
-        rule_grid=rule_cfg["grid"],
-        rule_minimum_quality=float(rule_cfg["train_minimum_quality"]),
-        rule_maximum_risk=float(rule_cfg["train_maximum_risk"]),
-        minimum_validation_quality=float(algorithm_cfg["minimum_validation_quality"]),
-        maximum_validation_risk=float(algorithm_cfg["maximum_validation_risk"]),
-        safe_residual_thresholds=algorithm_cfg["safe_residual_thresholds"],
-        simplicity_order=algorithm_cfg["simplicity_order"],
-        domain_key=training_domain_for_state,
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    algorithm_checkpoint_path = (
+        args.out_dir / "algorithm_selection_checkpoint.json"
     )
+    algorithm_checkpoint_binding = _algorithm_selection_checkpoint_binding(
+        args=args, config_path=args.pm_v1_5_config
+    )
+    if algorithm_checkpoint_path.exists():
+        selected_algorithm, algorithm_selection = (
+            _require_algorithm_selection_checkpoint(
+                algorithm_checkpoint_path,
+                expected_binding=algorithm_checkpoint_binding,
+            )
+        )
+    else:
+        selected_algorithm, algorithm_selection = select_routing_algorithm_group_cv(
+            states=states_by_split[PMV2Split.TRAIN],
+            labels=labels_by_split[PMV2Split.TRAIN],
+            selection_config=initial_selection,
+            candidates=algorithm_cfg["candidates"],
+            folds=int(algorithm_cfg["folds"]),
+            n_models=int(algorithm_cfg["cv_bootstrap_models"]),
+            seed=args.seed,
+            dimension_mad_scale=float(labeling_cfg["reliable_mad_threshold"]),
+            bootstrap_group_key=str(model_cfg.get("group_bootstrap_key", "user_id")),
+            use_precomputed_embeddings=bool(feature_cfg["optional_precomputed_semantic_embedding"]),
+            require_precomputed_embeddings=bool(feature_cfg["require_precomputed_semantic_embedding"]),
+            semantic_projection_dimensions=int(feature_cfg["semantic_projection_dimensions"]),
+            word_features=int(feature_cfg["word_hash_features"]),
+            char_features=int(feature_cfg["char_hash_features"]),
+            rule_grid=rule_cfg["grid"],
+            rule_minimum_quality=float(rule_cfg["train_minimum_quality"]),
+            rule_maximum_risk=float(rule_cfg["train_maximum_risk"]),
+            minimum_validation_quality=float(algorithm_cfg["minimum_validation_quality"]),
+            maximum_validation_risk=float(algorithm_cfg["maximum_validation_risk"]),
+            safe_residual_thresholds=algorithm_cfg["safe_residual_thresholds"],
+            simplicity_order=algorithm_cfg["simplicity_order"],
+            domain_key=training_domain_for_state,
+            parallel_folds=2,
+        )
+        checkpoint_core = {
+            "binding": algorithm_checkpoint_binding,
+            "selected_algorithm": selected_algorithm,
+            "algorithm_selection": algorithm_selection,
+        }
+        write_json(
+            algorithm_checkpoint_path,
+            {
+                **checkpoint_core,
+                "binding_sha256": sha256_text(
+                    canonical_json(checkpoint_core)
+                ),
+            },
+        )
     rule_router, rule_tuning = tune_transparent_rule_router(
         states=states_by_split[PMV2Split.TRAIN],
         labels=labels_by_split[PMV2Split.TRAIN],
@@ -433,21 +684,32 @@ def main() -> None:
             confidence_level=float(uncertainty_cfg["confidence_level"]),
         )
     grid_cfg = config["calibration_grid"]
-    tuning = tune_selection_config(
-        model,
-        states_by_split[PMV2Split.CALIBRATION],
-        labels_by_split[PMV2Split.CALIBRATION],
-        cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
-        risk_weights=[float(value) for value in grid_cfg["risk_weights"]],
-        resource_gains=[float(value) for value in grid_cfg["resource_gains"]],
-        strategy_gains=[float(value) for value in grid_cfg["strategy_gains"]],
-        max_risks=[float(value) for value in grid_cfg["max_risks"]],
-        minimum_quality=float(grid_cfg["minimum_quality"]),
-        objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
-        objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
-        objective_version=str(grid_cfg["objective_version"]),
-        domain_key=training_domain_for_state,
-    )
+    with _cache_selection_inference(model) as inference_cache:
+        tuning = tune_selection_config(
+            model,
+            states_by_split[PMV2Split.CALIBRATION],
+            labels_by_split[PMV2Split.CALIBRATION],
+            cost_weights=[float(value) for value in grid_cfg["cost_weights"]],
+            risk_weights=[float(value) for value in grid_cfg["risk_weights"]],
+            resource_gains=[float(value) for value in grid_cfg["resource_gains"]],
+            strategy_gains=[float(value) for value in grid_cfg["strategy_gains"]],
+            max_risks=[float(value) for value in grid_cfg["max_risks"]],
+            minimum_quality=float(grid_cfg["minimum_quality"]),
+            objective_risk_weight=float(grid_cfg["objective_risk_weight"]),
+            objective_cost_weight=float(grid_cfg["objective_cost_weight"]),
+            objective_version=str(grid_cfg["objective_version"]),
+            domain_key=training_domain_for_state,
+        )
+        tuning["inference_cache"] = {
+            "protocol": "selector-independent-state-inference-cache-v1",
+            "prediction_bundle_state_count": len(
+                inference_cache["prediction_bundle_cache"]
+            ),
+            "routing_score_state_count": len(
+                inference_cache["routing_score_cache"]
+            ),
+            "candidate_scientific_contract_changed": False,
+        }
     rule_router.selection_config = model.selection_config
 
     long_cal_states, long_cal_labels = _domain_rows(
@@ -459,8 +721,46 @@ def main() -> None:
     long_actions = sorted(set.intersection(*(set(state.allowed_actions) for state in long_cal_states)))
     long_frontier = _calibration_fixed_frontier(model, long_cal_states, long_cal_labels, long_actions)
     aux_frontier = _calibration_fixed_frontier(model, aux_cal_states, aux_cal_labels, ["M0+R0", "M0+RS"])
+    action_preflight = config["external_evaluation"]["action_preflight"]
+    pre_internal_action_viability = {
+        LONGITUDINAL_DOMAIN: calibration_action_viability(
+            long_frontier["policy"],
+            action_preflight=action_preflight,
+        ),
+        ESCONV_AUXILIARY_DOMAIN: calibration_action_viability(
+            aux_frontier["policy"],
+            action_preflight=action_preflight,
+        ),
+    }
+    calibration_candidate_supported = all(
+        row["status"] == "PASS"
+        for row in pre_internal_action_viability.values()
+    )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    if not args.fit_only and not calibration_candidate_supported:
+        failure_report = {
+            "protocol": DUAL_DOMAIN_TRAINING_PROTOCOL,
+            "status": "NOT_SUPPORTED_FOR_INTERNAL_TEST_CONSUMPTION",
+            "fit_only": False,
+            "internal_test_outcomes_opened": False,
+            "run_identity": args.run_identity,
+            "pre_internal_calibration_action_viability": (
+                pre_internal_action_viability
+            ),
+            "stopping_rule": (
+                "internal outcomes must not be deserialized or consumed when "
+                "either domain fails the frozen calibration viability gate"
+            ),
+        }
+        write_json(
+            args.out_dir / "pre_internal_viability_failure.json",
+            failure_report,
+        )
+        raise RuntimeError(
+            "dual-domain candidate failed the pre-internal calibration "
+            "action-viability gate; internal consumption is forbidden"
+        )
     checkpoint = args.out_dir / "pm_v1_5_dual_domain.joblib"
     rule_checkpoint = args.out_dir / "pm_v1_5_dual_domain_transparent_rule.joblib"
     model.save(checkpoint)
@@ -479,10 +779,28 @@ def main() -> None:
             "auxiliary_internal_states": auxiliary_state_paths["internal_test"],
             "auxiliary_train_labels": args.auxiliary_train_labels,
             "auxiliary_calibration_labels": args.auxiliary_calibration_labels,
+            "algorithm_selection_checkpoint": algorithm_checkpoint_path,
             "primary_checkpoint": checkpoint,
             "transparent_rule_checkpoint": rule_checkpoint,
-            "sealed_internal_longitudinal": args.longitudinal_internal_seal,
-            "sealed_internal_esconv_auxiliary": args.auxiliary_internal_seal,
+            **(
+                {
+                    "internal_state_commitment_longitudinal": (
+                        args.longitudinal_internal_commitment
+                    ),
+                    "internal_state_commitment_esconv_auxiliary": (
+                        args.auxiliary_internal_commitment
+                    ),
+                }
+                if args.fit_only
+                else {
+                    "sealed_internal_longitudinal": (
+                        args.longitudinal_internal_seal
+                    ),
+                    "sealed_internal_esconv_auxiliary": (
+                        args.auxiliary_internal_seal
+                    ),
+                }
+            ),
             "training_script": Path(__file__),
             "shortcut_audit_report": args.shortcut_audit_report,
             "shortcut_audit_attestation": shortcut_attestation,
@@ -497,10 +815,91 @@ def main() -> None:
             "longitudinal_best_fixed_action": long_frontier["best_fixed_action"],
             "auxiliary_fixed_actions": ["M0+R0", "M0+RS"],
             "selection_config_sha256": model.selection_config.digest(),
-            "longitudinal_internal_seal_sha256": long_seal["seal_sha256"],
-            "auxiliary_internal_seal_sha256": aux_seal["seal_sha256"],
+            **(
+                {
+                    "longitudinal_internal_commitment_sha256": (
+                        long_commitment["commitment_sha256"]
+                    ),
+                    "auxiliary_internal_commitment_sha256": (
+                        aux_commitment["commitment_sha256"]
+                    ),
+                    "internal_test_outcomes_opened": False,
+                }
+                if args.fit_only
+                else {
+                    "longitudinal_internal_seal_sha256": (
+                        long_seal["seal_sha256"]
+                    ),
+                    "auxiliary_internal_seal_sha256": aux_seal["seal_sha256"],
+                }
+            ),
         },
     )
+
+    if args.fit_only:
+        fit_report = {
+            "protocol": DUAL_DOMAIN_TRAINING_PROTOCOL,
+            "status": (
+                "CANDIDATE_FROZEN_BEFORE_INTERNAL_TEST"
+                if calibration_candidate_supported
+                else "CANDIDATE_NOT_SUPPORTED_BEFORE_INTERNAL_TEST"
+            ),
+            "fit_only": True,
+            "supervision_status": (
+                "LLM_WEAK_SUPERVISION_NOT_GOLD"
+                if weak_supervision_mode
+                else "AUTOMATIC_LABELS"
+            ),
+            "weak_supervision_contract": measurement_contract,
+            "internal_test_outcomes_opened": False,
+            "run_identity": args.run_identity,
+            "pm_v1_5_config_sha256": sha256_file(args.pm_v1_5_config),
+            "semantic_runtime": semantic_runtime,
+            "dual_input_report": inputs.report,
+            "domain_label_audits": domain_audits,
+            "algorithm_selection": algorithm_selection,
+            "algorithm_selection_checkpoint": str(
+                algorithm_checkpoint_path
+            ),
+            "algorithm_selection_checkpoint_sha256": sha256_file(
+                algorithm_checkpoint_path
+            ),
+            "selected_algorithm": selected_algorithm,
+            "training": model.training_report,
+            "equal_top_level_domain_weight": equal_domain_weight,
+            "pooled_ood_calibration": ood_calibration,
+            "per_domain_ood": per_domain_ood,
+            "pooled_uncertainty_calibration": uncertainty,
+            "per_domain_uncertainty": per_domain_uncertainty,
+            "selection_calibration": tuning,
+            "transparent_rule_train_only_tuning": rule_tuning,
+            "calibration_comparators": {
+                LONGITUDINAL_DOMAIN: long_frontier,
+                ESCONV_AUXILIARY_DOMAIN: aux_frontier,
+            },
+            "pre_internal_calibration_action_viability": (
+                pre_internal_action_viability
+            ),
+            "candidate_manifest": str(candidate_path),
+            "candidate_manifest_sha256": sha256_file(candidate_path),
+            "checkpoint": str(checkpoint),
+            "checkpoint_sha256": sha256_file(checkpoint),
+            "transparent_rule_checkpoint": str(rule_checkpoint),
+            "transparent_rule_checkpoint_sha256": sha256_file(
+                rule_checkpoint
+            ),
+            "next_stage": (
+                "generate/seal internal labels only after this candidate "
+                "manifest is immutable, then consume each domain once"
+                if calibration_candidate_supported
+                else (
+                    "stop before internal; redesign using train/calibration "
+                    "only and fit a new candidate identity"
+                )
+            ),
+        }
+        write_json(args.out_dir / "fit_report.json", fit_report)
+        return
 
     ledger_paths = {
         LONGITUDINAL_DOMAIN: args.out_dir / "internal_longitudinal_ledger.jsonl",

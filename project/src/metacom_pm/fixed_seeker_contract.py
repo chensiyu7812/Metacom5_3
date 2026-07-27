@@ -568,6 +568,97 @@ class FixedSeekerGenerationContract:
         return None
 
 
+FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL = (
+    "pm-v1.5-fixed-seeker-v3-formal-bundle-binding-v1"
+)
+
+
+def require_fixed_seeker_v3_formal_bundle(
+    binding_path: str | Path,
+    *,
+    root: Path,
+    required_stage: str,
+) -> dict[str, Any]:
+    """Fail closed unless the tracked binding matches the real bundle on disk.
+
+    The formal V3 fixed-seeker bundle is located and verified through this
+    one tracked, content-addressed binding file -- never by a hardcoded
+    output-directory basename. A caller that hardcodes
+    ``.../evoemo_fixed_tracks_v1_5_v3_formal_candidate`` cannot survive the
+    bundle living under a different, freshly-approved directory name (as
+    happens whenever a prior identity is permanently consumed and a new one
+    is approved into a new directory); binding on content instead of a path
+    name survives that rename for free. Every check here is independent of
+    the bundle's own internal attestation, so a forged directory with a
+    self-consistent-but-wrong attestation (same stage, different real bytes)
+    is still rejected: the tracks file and the attestation file themselves
+    must match the exact digests recorded in the binding at approval time,
+    not merely be internally consistent with each other.
+    """
+
+    path = Path(binding_path)
+    binding = read_json(path)
+    payload = {key: value for key, value in binding.items() if key != "binding_sha256"}
+    if binding.get("binding_sha256") != sha256_text(canonical_json(payload)):
+        raise RuntimeError(
+            f"fixed-seeker V3 formal-bundle binding hash mismatch: path={path}"
+        )
+    if binding.get("protocol") != FIXED_SEEKER_V3_FORMAL_BUNDLE_BINDING_PROTOCOL:
+        raise RuntimeError(
+            f"unexpected fixed-seeker V3 formal-bundle binding protocol: path={path}"
+        )
+    if binding.get("stage") != required_stage:
+        raise RuntimeError(
+            "fixed-seeker V3 formal-bundle binding stage does not match the "
+            f"required stage: bound={binding.get('stage')!r}, "
+            f"required={required_stage!r}"
+        )
+    output_directory = (root / str(binding["output_directory"])).resolve()
+    tracks_path = output_directory / "fixed_seeker_tracks.jsonl"
+    attestation_path = output_directory / "artifact_attestation.json"
+    observed_tracks_sha256 = sha256_file(tracks_path)
+    if observed_tracks_sha256 != binding["fixed_seeker_tracks_sha256"]:
+        raise RuntimeError(
+            "fixed-seeker V3 formal-bundle tracks file hash mismatch: "
+            f"path={tracks_path}, expected={binding['fixed_seeker_tracks_sha256']}, "
+            f"observed={observed_tracks_sha256}"
+        )
+    observed_attestation_sha256 = sha256_file(attestation_path)
+    if observed_attestation_sha256 != binding["artifact_attestation_sha256"]:
+        raise RuntimeError(
+            "fixed-seeker V3 formal-bundle attestation file hash mismatch: "
+            f"path={attestation_path}, "
+            f"expected={binding['artifact_attestation_sha256']}, "
+            f"observed={observed_attestation_sha256}"
+        )
+    attestation = read_json(attestation_path)
+    if attestation.get("stage") != required_stage:
+        raise RuntimeError(
+            "fixed-seeker V3 formal-bundle attestation stage mismatch: "
+            f"path={attestation_path}, stage={attestation.get('stage')!r}, "
+            f"required={required_stage!r}"
+        )
+    summary = read_json(output_directory / "summary.json")
+    expected_tracks = int(binding["expected_tracks"])
+    expected_logical_calls = int(binding["expected_logical_calls"])
+    if (
+        int(summary.get("expected_tracks") or -1) != expected_tracks
+        or int(summary.get("completed_tracks") or -1) != expected_tracks
+        or int(summary.get("expected_logical_calls") or -1) != expected_logical_calls
+        or int(summary.get("successful_logical_calls") or -1) != expected_logical_calls
+    ):
+        raise RuntimeError(
+            "fixed-seeker V3 formal-bundle track/call counts do not match the "
+            f"binding: path={output_directory / 'summary.json'}"
+        )
+    return {
+        "output_directory": output_directory,
+        "fixed_tracks_path": tracks_path,
+        "artifact_attestation_path": attestation_path,
+        "binding": dict(binding),
+    }
+
+
 def require_fixed_seeker_v3_sidecar_contract(
     sidecar_path: str | Path,
 ) -> "FixedSeekerGenerationContract":

@@ -942,6 +942,8 @@ def validate_raw_judge_family_subgroup_health(
     reject_constant_response_dimensions: bool = True,
     reject_constant_risk_dimensions: bool = True,
     check_risk_dimension_health: bool = False,
+    minimum_nonzero_observations: int = 0,
+    split_correlation_by_sign: bool = False,
     composite_spec: CompositeSpec | None = None,
     raise_on_failure: bool = True,
 ) -> dict[str, Any]:
@@ -982,6 +984,8 @@ def validate_raw_judge_family_subgroup_health(
             reject_constant_response_dimensions=reject_constant_response_dimensions,
             reject_constant_risk_dimensions=reject_constant_risk_dimensions,
             check_risk_dimension_health=check_risk_dimension_health,
+            minimum_nonzero_observations=minimum_nonzero_observations,
+            split_correlation_by_sign=split_correlation_by_sign,
             composite_spec=composite_spec,
             raise_on_failure=False,
         )
@@ -999,6 +1003,8 @@ def validate_raw_judge_family_subgroup_health(
         "observed_subgroups": sorted(observed),
         "failed_subgroups": failed_subgroups,
         "check_risk_dimension_health": check_risk_dimension_health,
+        "minimum_nonzero_observations": minimum_nonzero_observations,
+        "split_correlation_by_sign": split_correlation_by_sign,
         "subgroups": subgroup_reports,
     }
     if failed_subgroups and raise_on_failure:

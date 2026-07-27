@@ -751,10 +751,24 @@ class PMV2Model:
         }
         if algorithm == "absolute_outcome_factorized_hgb":
             self.routing_objective_head = None
+            reused_weighting = dict(
+                self.training_report.get(
+                    "domain_dialogue_state_action_weighting"
+                )
+                or {}
+            )
+            if not reused_weighting:
+                raise RuntimeError(
+                    "absolute routing objective cannot attest the prediction-head "
+                    "weighting it reuses"
+                )
             self.routing_objective_report = {
                 "algorithm": algorithm,
                 "target": "absolute_response_and_risk_heads",
                 "n_rows": len(labels),
+                "routing_head_fitted": False,
+                "reuses_prediction_heads": True,
+                "domain_dialogue_state_action_weighting": reused_weighting,
             }
             self.training_report["routing_objective"] = dict(
                 self.routing_objective_report
@@ -1772,8 +1786,13 @@ def calibrate_uncertainty_multiplier(
 
     The bootstrap multiplier is preregistered rather than selected on the same
     residuals: exactly one candidate is accepted.  Nonconformity is first
-    collapsed to one maximum per calibration user (over that user's states and
-    legal actions), then the finite-sample quantile is taken across users.
+    collapsed to one maximum per eligible calibration user (over that user's
+    states and legal actions), then the finite-sample quantile is taken across
+    users.  Every calibration user is eligible for response and composite
+    quality heads.  A user is excluded from a risk head only when that risk is
+    structurally inapplicable to every legal action available to that user
+    (for example, memory-misuse risks in the memoryless ESConv domain).  This
+    is an N/A exclusion, not an observed zero and not missing-label tolerance.
     Response/risk heads receive native-scale, head-wise radii and the response
     composite receives its own radius.  The construction does not claim joint
     simultaneous coverage across all 13 heads.
@@ -1869,36 +1888,68 @@ def calibrate_uncertainty_multiplier(
                     max(abs(observed_quality - mean) - z * std, 0.0)
                 )
 
-        def user_block_maxima(
-            values_by_user: dict[str, list[float]], *, head: str
-        ) -> list[float]:
-            missing = sorted(
-                user_id for user_id, values in values_by_user.items() if not values
+        def user_block_report(
+            values_by_user: dict[str, list[float]],
+            *,
+            head: str,
+            allow_structural_na: bool,
+        ) -> dict[str, Any]:
+            eligible_users = sorted(
+                user_id for user_id, values in values_by_user.items() if values
             )
-            if missing:
+            structurally_inapplicable_users = sorted(
+                set(values_by_user) - set(eligible_users)
+            )
+            if structurally_inapplicable_users and not allow_structural_na:
                 raise ValueError(
                     f"split conformal head {head} lacks applicable labels for users "
-                    f"{missing}"
+                    f"{structurally_inapplicable_users}"
                 )
-            return [
-                max(values_by_user[user_id]) for user_id in sorted(values_by_user)
-            ]
+            if not eligible_users:
+                raise ValueError(
+                    f"split conformal head {head} has no applicable calibration users"
+                )
+            report = _finite_sample_conformal_radius(
+                [max(values_by_user[user_id]) for user_id in eligible_users],
+                target_coverage,
+            )
+            report.update(
+                {
+                    "eligible_user_count": len(eligible_users),
+                    "eligible_users": eligible_users,
+                    "structurally_inapplicable_user_count": len(
+                        structurally_inapplicable_users
+                    ),
+                    "structurally_inapplicable_users": (
+                        structurally_inapplicable_users
+                    ),
+                    "eligibility_rule": (
+                        "at_least_one_legal_action_where_head_is_applicable"
+                    ),
+                }
+            )
+            return report
 
         response_reports = {
-            name: _finite_sample_conformal_radius(
-                user_block_maxima(values, head=name), target_coverage
+            name: user_block_report(
+                values,
+                head=name,
+                allow_structural_na=False,
             )
             for name, values in response_residuals.items()
         }
         risk_reports = {
-            name: _finite_sample_conformal_radius(
-                user_block_maxima(values, head=name), target_coverage
+            name: user_block_report(
+                values,
+                head=name,
+                allow_structural_na=True,
             )
             for name, values in risk_residuals.items()
         }
-        quality_report = _finite_sample_conformal_radius(
-            user_block_maxima(quality_residuals, head="quality_composite"),
-            target_coverage,
+        quality_report = user_block_report(
+            quality_residuals,
+            head="quality_composite",
+            allow_structural_na=False,
         )
         model.response_conformal_radii = {
             name: float(report["radius"])

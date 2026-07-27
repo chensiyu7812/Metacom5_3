@@ -745,6 +745,51 @@ def test_paired_delta_objective_is_fitted_over_complete_paired_states():
     assert model.choose(states[0]).chosen_action in states[0].allowed_actions
 
 
+def test_absolute_objective_attests_equal_domain_weighting_of_reused_heads():
+    states = [
+        make_state("absolute_a0", user_id="absolute_user_a0"),
+        make_state("absolute_a1", user_id="absolute_user_a1"),
+        make_state("absolute_b0", user_id="absolute_user_b0"),
+        make_state("absolute_b1", user_id="absolute_user_b1"),
+    ]
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+    domain_key = lambda state: (
+        "longitudinal_synthetic"
+        if state.user_id.startswith("absolute_user_a")
+        else "esconv_auxiliary"
+    )
+    model = PMV2Model.train(
+        states,
+        labels,
+        n_models=1,
+        word_features=8,
+        char_features=8,
+        use_precomputed_embeddings=False,
+        domain_key=domain_key,
+    )
+    model.fit_routing_objective(
+        states,
+        labels,
+        algorithm="absolute_outcome_factorized_hgb",
+        n_models=1,
+        seed=17,
+        domain_key=domain_key,
+    )
+    assert model.routing_objective_head is None
+    assert model.routing_objective_report["reuses_prediction_heads"] is True
+    weighting = model.routing_objective_report[
+        "domain_dialogue_state_action_weighting"
+    ]
+    assert weighting["domain_weight"] == {
+        "esconv_auxiliary": 0.5,
+        "longitudinal_synthetic": 0.5,
+    }
+
+
 def test_rule_residual_overrides_only_when_all_safe_delta_checks_pass():
     state = make_state("safe_residual")
     predictions = {
@@ -782,7 +827,7 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
         for state in states
         for action in state.allowed_actions
     ]
-    selected, report = select_routing_algorithm_group_cv(
+    kwargs = dict(
         states=states,
         labels=labels,
         selection_config=SelectionConfig(),
@@ -810,6 +855,7 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
         ],
         domain_key=domain_key,
     )
+    selected, report = select_routing_algorithm_group_cv(**kwargs)
     assert selected in {
         "state_centered_paired_delta_hgb",
         "absolute_outcome_factorized_hgb",
@@ -828,6 +874,16 @@ def test_algorithm_family_selection_is_train_user_group_disjoint():
                 "esconv": 0.5,
                 "longitudinal": 0.5,
             }
+    parallel_selected, parallel_report = select_routing_algorithm_group_cv(
+        **kwargs, parallel_folds=2
+    )
+    assert parallel_selected == selected
+    assert parallel_report["execution_parallel_folds"] == 2
+    sequential_scientific = dict(report)
+    parallel_scientific = dict(parallel_report)
+    sequential_scientific.pop("execution_parallel_folds")
+    parallel_scientific.pop("execution_parallel_folds")
+    assert parallel_scientific == sequential_scientific
 
 
 def test_training_rejects_composite_weight_hash_mismatch():
@@ -1238,6 +1294,139 @@ def test_split_conformal_radius_covers_nonzero_residual_with_zero_ensemble_std()
     assert report["coverage"]["quality"]["coverage"] == 1.0
     predictions = model.predict_actions(states[0])
     assert predictions["M0+R0"].risk_ucb == pytest.approx(1.0 / 3.0)
+
+
+def test_split_conformal_excludes_only_structural_risk_na_users():
+    memory_states = [
+        make_state(f"memory_{index}", user_id=f"memory_user_{index}")
+        for index in range(4)
+    ]
+    memoryless_states = []
+    for index in range(4):
+        state = make_state(
+            f"memoryless_{index}", user_id=f"memoryless_user_{index}"
+        )
+        inventory = {
+            source: summary.model_copy(
+                update={
+                    "available": False,
+                    "count": 0,
+                    "min_age_sessions": None,
+                    "median_age_sessions": None,
+                    "max_age_sessions": None,
+                    "estimated_tokens": 0,
+                }
+            )
+            for source, summary in state.inventory.items()
+        }
+        memoryless_states.append(
+            PMV2State.model_validate(
+                {
+                    **state.model_dump(mode="python"),
+                    "inventory": inventory,
+                    "allowed_actions": ["M0+R0", "M0+RS"],
+                }
+            )
+        )
+    states = memory_states + memoryless_states
+    model = PMV2Model(
+        feature_builder=RoutingBuilder(),
+        response_heads={name: ConstantHead(0.5) for name in RESPONSE_FIELDS},
+        risk_heads={name: ConstantHead(0.0) for name in RISK_FIELDS},
+        selection_config=SelectionConfig(max_risk_ucb=1.0),
+    )
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+
+    report = calibrate_uncertainty_multiplier(
+        model,
+        states,
+        labels,
+        z_candidates=[1.0],
+        target_coverage=0.80,
+        minimum_quality_coverage_lower_bound=0.50,
+        minimum_response_coverage_lower_bound=0.50,
+        minimum_risk_coverage_lower_bound=0.50,
+        coverage_confidence_level=0.95,
+    )
+
+    memory_misuse = report["risk_heads_applicable_only"][
+        "selected_context_misuse"
+    ]
+    assert memory_misuse["eligible_user_count"] == 4
+    assert memory_misuse["structurally_inapplicable_user_count"] == 4
+    assert memory_misuse["structurally_inapplicable_users"] == [
+        f"memoryless_user_{index}" for index in range(4)
+    ]
+    unsupported_claim = report["risk_heads_applicable_only"][
+        "unsupported_personal_claim"
+    ]
+    assert unsupported_claim["eligible_user_count"] == 8
+    assert unsupported_claim["structurally_inapplicable_user_count"] == 0
+    assert report["response_heads"]["emotional_support"][
+        "eligible_user_count"
+    ] == 8
+    assert report["quality_composite"]["eligible_user_count"] == 8
+
+
+def test_split_conformal_rejects_risk_head_with_no_applicable_users():
+    states = []
+    for index in range(4):
+        state = make_state(
+            f"all_memoryless_{index}", user_id=f"all_memoryless_user_{index}"
+        )
+        inventory = {
+            source: summary.model_copy(
+                update={
+                    "available": False,
+                    "count": 0,
+                    "min_age_sessions": None,
+                    "median_age_sessions": None,
+                    "max_age_sessions": None,
+                    "estimated_tokens": 0,
+                }
+            )
+            for source, summary in state.inventory.items()
+        }
+        states.append(
+            PMV2State.model_validate(
+                {
+                    **state.model_dump(mode="python"),
+                    "inventory": inventory,
+                    "allowed_actions": ["M0+R0", "M0+RS"],
+                }
+            )
+        )
+    model = PMV2Model(
+        feature_builder=RoutingBuilder(),
+        response_heads={name: ConstantHead(0.5) for name in RESPONSE_FIELDS},
+        risk_heads={name: ConstantHead(0.0) for name in RISK_FIELDS},
+        selection_config=SelectionConfig(max_risk_ucb=1.0),
+    )
+    labels = [
+        make_label(state, action)
+        for state in states
+        for action in state.allowed_actions
+    ]
+
+    with pytest.raises(
+        ValueError,
+        match="selected_context_misuse has no applicable calibration users",
+    ):
+        calibrate_uncertainty_multiplier(
+            model,
+            states,
+            labels,
+            z_candidates=[1.0],
+            target_coverage=0.80,
+            minimum_quality_coverage_lower_bound=0.50,
+            minimum_response_coverage_lower_bound=0.50,
+            minimum_risk_coverage_lower_bound=0.50,
+            coverage_confidence_level=0.95,
+        )
 
 
 def test_internal_wilson_coverage_gate_is_informative_not_all_hit_only():

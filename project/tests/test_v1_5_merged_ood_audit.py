@@ -93,6 +93,59 @@ def test_dimension_category_classifies_known_names():
     assert module._dimension_category("MP.representation_valid") == "other_metadata"
 
 
+def test_formal_state_count_includes_every_robustness_seed():
+    module = _load_module()
+    track_keys = [
+        ("user_a", 0, seed, "sim")
+        for seed in (101, 202, 303)
+    ]
+    n_seeds, n_states = module._expected_formal_turn_states(
+        total_scenarios=34,
+        track_keys=track_keys,
+        turn_indices=[3, 8],
+    )
+    assert n_seeds == 3
+    assert n_states == 204
+
+
+def test_evoemo_state_builder_injects_production_strategy_catalog(monkeypatch):
+    module = _load_module()
+    user = {"id": "user_a", "subsequent_topics": [{"idx": 0}]}
+    runtime_state = object()
+    pm_state = object()
+    catalog = object()
+    observed = {}
+
+    monkeypatch.setattr(module, "load_evoemo", lambda _path: [user])
+    monkeypatch.setattr(module, "build_evo_memory", lambda _user: ([], {}))
+    monkeypatch.setattr(module, "semantic_centroid", lambda *_args, **_kwargs: ())
+    monkeypatch.setattr(
+        module,
+        "make_evo_runtime_state",
+        lambda *_args, **_kwargs: runtime_state,
+    )
+
+    def fake_runtime_to_state(runtime, **kwargs):
+        observed.update(kwargs)
+        assert runtime is runtime_state
+        return pm_state
+
+    monkeypatch.setattr(module, "runtime_to_pmv2_state", fake_runtime_to_state)
+    states, metadata = module._build_evoemo_states(
+        evoemo_path=Path("unused.json"),
+        encoder=object(),
+        strategy_catalog_count=11_590,
+        strategy_estimated_tokens=260,
+        strategy_family_catalog=catalog,
+    )
+    assert states == [pm_state]
+    assert metadata["n_states"] == 1
+    assert observed["strategy_catalog_count"] == 11_590
+    assert observed["strategy_estimated_tokens"] == 260
+    assert observed["strategy_family_catalog"] is catalog
+    assert observed["semantic_encoder"] is not None
+
+
 def test_domain_report_handles_empty_states():
     module = _load_module()
     train = [_tiny_state("t0", mp_available=False), _tiny_state("t1", mp_available=False)]

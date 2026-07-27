@@ -35,6 +35,9 @@ from metacom_pm.pm_v1_5_shortcut_audit import (
     require_step0_shortcut_audit_pass,
 )
 from metacom_pm.v1_5_dual_domain_training import training_domain_for_state
+from metacom_pm.v1_5_training_readiness import (
+    require_longitudinal_judging_contract,
+)
 from metacom_pm.pm_v2_audit import (
     EXPECTED_REGIME_CHECKS,
     _regime_pass,
@@ -865,6 +868,46 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--train-calibration-judging-summary",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging_train_calibration"
+            / "summary.json"
+        ),
+    )
+    parser.add_argument(
+        "--train-calibration-judging-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging_train_calibration"
+            / "artifact_attestation.json"
+        ),
+    )
+    parser.add_argument(
+        "--internal-test-judging-summary",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging_internal_test"
+            / "summary.json"
+        ),
+    )
+    parser.add_argument(
+        "--internal-test-judging-attestation",
+        type=Path,
+        default=(
+            ROOT
+            / "outputs"
+            / "pm_v1_5_judging_internal_test"
+            / "artifact_attestation.json"
+        ),
+    )
+    parser.add_argument(
         "--out-dir",
         type=Path,
         default=ROOT / "outputs" / "pm_v1_5_model",
@@ -926,6 +969,14 @@ def main() -> None:
     sealed_internal_bundle = require_sealed_internal_label_bundle(
         args.sealed_internal_bundle,
         internal_labels_path=args.internal_test_labels,
+    )
+    internal_judging_contract = require_longitudinal_judging_contract(
+        summary_path=args.internal_test_judging_summary,
+        attestation_path=args.internal_test_judging_attestation,
+        labels_path=args.internal_test_labels,
+        label_scope="sealed_internal_test",
+        expected_label_rows=int(sealed_internal_bundle["row_count"]),
+        sealed_internal_bundle_path=args.sealed_internal_bundle,
     )
     model_cfg = pm_config["model"]
     feature_cfg = pm_config["features"]
@@ -1096,6 +1147,13 @@ def main() -> None:
         ActionLabel.model_validate(row)
         for row in iter_jsonl(args.train_calibration_labels)
     ]
+    train_calibration_judging_contract = require_longitudinal_judging_contract(
+        summary_path=args.train_calibration_judging_summary,
+        attestation_path=args.train_calibration_judging_attestation,
+        labels_path=args.train_calibration_labels,
+        label_scope="train_calibration",
+        expected_label_rows=len(labels),
+    )
     expected_weights_hash = composite_weights_digest(initial_selection.composite_spec)
     bad_label_hashes = sorted(
         {
@@ -1611,6 +1669,12 @@ def main() -> None:
             "states": args.states,
             "evaluator_contexts": args.evaluator_contexts,
             "train_calibration_labels": args.train_calibration_labels,
+            "train_calibration_judging_summary": (
+                args.train_calibration_judging_summary
+            ),
+            "train_calibration_judging_attestation": (
+                args.train_calibration_judging_attestation
+            ),
             "primary_checkpoint": checkpoint,
             "no_step0_checkpoint": no_step0_checkpoint,
             "no_state_bge_checkpoint": no_state_bge_checkpoint,
@@ -1628,6 +1692,10 @@ def main() -> None:
                 args.rule_grid_preflight_attestation
             ),
             "sealed_internal_bundle": args.sealed_internal_bundle,
+            "internal_test_judging_summary": args.internal_test_judging_summary,
+            "internal_test_judging_attestation": (
+                args.internal_test_judging_attestation
+            ),
         },
         parameters={
             "primary_candidate": selected_algorithm + "_with_step0",
@@ -1678,6 +1746,10 @@ def main() -> None:
             "sealed_internal_bundle_sha256": sealed_internal_bundle[
                 "seal_sha256"
             ],
+            "train_calibration_judging_contract": (
+                train_calibration_judging_contract
+            ),
+            "internal_test_judging_contract": internal_judging_contract,
         },
     )
     internal_consumption_ledger_path = (

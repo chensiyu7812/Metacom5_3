@@ -21,7 +21,10 @@ from metacom_pm.artifacts import (
 )
 from metacom_pm.config import endpoint_from_config, load_config
 from metacom_pm.evidence_filter import EvidenceFilterConfig
-from metacom_pm.fixed_seeker_contract import require_fixed_seeker_v3_sidecar_contract
+from metacom_pm.fixed_seeker_contract import (
+    require_fixed_seeker_v3_formal_bundle,
+    require_fixed_seeker_v3_sidecar_contract,
+)
 from metacom_pm.evoemo import (
     FIXED_SEEKER_V23_STAGE,
     evo_memory_global_catalog_digest,
@@ -1090,15 +1093,19 @@ def parse_args() -> argparse.Namespace:
         / "v1_5_strategy_card_evoemo_turn_overlap_audit_v1_5_bank.json",
     )
     parser.add_argument(
-        "--fixed-tracks",
+        "--fixed-tracks-bundle-binding",
         type=Path,
-        required=True,
+        default=ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "fixed_seeker_v3_formal_bundle_v1.json",
         help=(
-            "Non-truncated outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate "
-            "bundle; never reuse or overwrite the historical V1/V2 tracks."
+            "Tracked, content-addressed binding that locates and verifies "
+            "the formal V3 fixed-seeker bundle (non-truncated, never the "
+            "historical V1/V2 tracks) -- never a hardcoded output directory "
+            "basename."
         ),
     )
-    parser.add_argument("--fixed-tracks-attestation", type=Path, required=True)
     parser.add_argument(
         "--fixed-seeker-contract",
         type=Path,
@@ -1258,14 +1265,13 @@ def main() -> None:
     args = parse_args()
     if args.out.exists() and not args.overwrite:
         raise RuntimeError(f"refusing to overwrite existing freeze without --overwrite: {args.out}")
-    if (
-        args.fixed_tracks.parent.name != "evoemo_fixed_tracks_v1_5_v3_formal_candidate"
-        or args.fixed_tracks_attestation.parent != args.fixed_tracks.parent
-    ):
-        raise RuntimeError(
-            "V1.5 freeze requires its isolated "
-            "outputs/evoemo_fixed_tracks_v1_5_v3_formal_candidate bundle"
-        )
+    fixed_seeker_bundle = require_fixed_seeker_v3_formal_bundle(
+        args.fixed_tracks_bundle_binding,
+        root=ROOT,
+        required_stage=FIXED_SEEKER_V23_STAGE,
+    )
+    args.fixed_tracks = fixed_seeker_bundle["fixed_tracks_path"]
+    args.fixed_tracks_attestation = fixed_seeker_bundle["artifact_attestation_path"]
 
     experiment_config = load_config(args.config)
     pm_v1_5_config = load_config(args.pm_v1_5_config)
