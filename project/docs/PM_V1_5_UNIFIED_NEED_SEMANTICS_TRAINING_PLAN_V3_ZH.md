@@ -1,10 +1,15 @@
 # PM-v1.5 统一需求语义、可学习数据与裁判方案 V3
 
+> **2026-07-28 范围更新：** 本文保留为 V2.0 的细粒度诊断/多组件方法设计与 V1.5
+> 的历史研究依据；快速 V1.5 不再要求完成五类/全因子 SupportNeed fit 或继续补标，
+> 当前唯一执行入口见 `PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`。已完成的 39-group
+> 结果可以作为候选特征证据，但不能被包装成“已理解用户需求”。
+
 更新时间：2026-07-27
 用途：定义 PM 应学会的行为、如何从可见对话形成非临床的支持需求表征、BAAI 语义表示如何
 与 PM 正确连接、Strategy Bank 必须提供什么、能产生可辨识监督的数据，以及透明的分工评价
 标准。本文不是运行许可或状态清单；它回答的是“理解什么、学什么、用什么数据学、裁判究竟
-按什么判”。它完整继承 V2 的 matched-treatment 与拆职裁判设计，并取代 V2 成为唯一活跃
+按什么判”。它完整继承 V2 的 matched-treatment 与拆职裁判设计，并曾取代 V2 成为当时活跃
 的实质方法方案。
 
 ## 1. PM 到底要学会什么
@@ -580,12 +585,191 @@ encoder 不够”与“小样本/target 设计不成立”拆开，已在完全�
    改变预先写明的决策。
 
 原 75 个 outcome-blind train states 中另选的 24 条（16 expansion-fit、8 untouched
-confirmation）已经准备，但现在标记为 **PAUSED / 不开放标注**。这不是删除：等表示与
-target 分解完成后，它们仍可作为 untouched confirmation，避免在同一批标签上反复调方案。
+confirmation）已经准备。它们在下节资格赛完成前保持 **PAUSED / 不开放标注**，避免在
+同一批标签上反复调方案。
 
-所以 Phase 1 当前是“首批人工锚点完成、真实 learnability 不足、BGE-M3 不能救活五类、
-扩展人评暂停；先做 target decomposition 与 instruction-aware representation bakeoff”，
-不是 Need learnability PASS。
+### 10.7 2026-07-28 因子化表示资格赛与 Qwen/NLI 结果
+
+已按上节预注册方向新增独立 `v1_5_support_need_bakeoff.py`，并在同一 23 个非 abstain
+train dialogue group 上逐字节复跑。两份 1.1MB 报告完全一致，文件 SHA-256 都为
+`51d75895…7bc4ee`；报告内部 SHA-256 `3421c4ad…d75ac1` 覆盖完整 source lineage，
+binding 为
+`data/pm_v1_5_contracts/support_need_factorized_bakeoff_v1.json`。
+
+目标不再只用互斥五类，而拆为以下可重叠轴：
+
+- `need_to_be_heard`、`need_for_emotional_containment`、`need_for_exploration`；
+- `advance_readiness`、`focused_question_readiness`、`advice_readiness`；
+- 稀缺诊断轴 `planning_readiness` 与 partial-only `low_interaction_burden`；
+- 原五类 mode、phase、urgency 仍保留为 legacy/secondary diagnostics。
+
+同一 grouped nested-OOF、fold 内 PCA/ridge、inner-OOF calibration、one-SE 容量门下比较
+transparent observable、word/char lexical、BGE-small、BGE-M3、任务 instruction 固定的
+`Qwen/Qwen3-Embedding-0.6B`、`cross-encoder/nli-deberta-v3-base` 假设分数及预声明
+Qwen+NLI+observable hybrid。所有模型均绑定 exact revision/tree hash、local-files-only，
+不读 ESConv metadata、未来 supporter、strategy、survey、internal 或 external outcome。
+
+主要结果如下：
+
+| 因子 | 类别数（neg/pos） | 最佳 view | loss | recall（neg/pos） |
+|---|---:|---|---:|---:|
+| need to be heard | 12/11 | BGE-M3 current | .6529 | .667/.455 |
+| emotional containment | 10/13 | BGE-M3 current | .6782 | .300/.846 |
+| exploration | 16/7 | NLI current+full+observable | .5483 | 1.000/.286 |
+| advance readiness | 12/11 | NLI current | .6626 | .667/.545 |
+| focused-question readiness | 19/4 | BGE-M3 current | .4647 | 1.000/.000 |
+| advice readiness | 16/7 | observable structure | .6090 | 1.000/.000 |
+
+表内“最佳”只按 confidence-weighted OOF soft log-loss 排序，不能掩盖 minority collapse。
+另做非塌缩筛选后，focused-question 的 NLI current+full 为 `.4855`、recall
+`.947/.250`；advice 的 NLI full-visible 为 `.6370`、recall `1.000/.143`。它们都以更高
+loss 换回仅一个正例，不构成已过门的可靠轴。`planning_readiness` 只有 2 个正例，所有
+view 的正类 recall 都为 0。
+
+这回答了“是否应直接替换 BAAI”：
+
+1. **Qwen3 不晋级。** 它没有成为任何主因子的最佳 view；在 advice readiness 上还稳定
+   差于 lexical。focused-question 的平均 loss 虽改善且 bootstrap CI 略低于 0，但正类
+   recall 仍为 0，不能用置信度改善掩盖少数类塌缩。
+2. **BGE-M3 不是全局替代。** 它对 heard/containment/focused-question 有较好连续信号，
+   但 focused-question 正类仍完全漏掉。
+3. **NLI 适合作为轴特征，不是 gold。** 经低容量 OOF head 后，exploration 与 advance
+   有非零双向 recall；focused-question/advice 也只有以更高 loss 换回一个正例的弱信号。
+   固定零样本假设本身多数只在 chance 附近，说明必须由本任务人评校准，不能直接阈值化
+   部署。
+4. **因子化有实质价值但尚未过门。** heard/containment、exploration/advance 显示不同
+   表示器的轴特异信号，但 focused-question、advice 与 planning 仍受稀缺正类和 loss/
+   recall 取舍限制。预声明单一 Qwen+NLI hybrid 没有通过全部主因子检查，formal fit 与
+   representation promotion 均保持 `false`。
+
+因此下一步不再下载更大 encoder，也不打开全部 24 条扩展包。只开放预先冻结的 16 条
+`expansion_fit` 人评，专门增加会改变 exploration/question/advice 判断的独立锚点；8 条
+`untouched_confirmation` 继续不向标注页暴露。fit-only packet 已独立复现并绑定：
+
+- `outputs/pm_v1_5_support_need_factorized_fit_packet_v1_candidate/`
+- `data/pm_v1_5_contracts/support_need_factorized_fit_packet_v1.json`
+
+所以 Phase 1 当前是“目标分解与 encoder/NLI bakeoff 完成；Qwen 不晋级；BGE-M3/NLI
+保留为 axis-specific candidates；16 条 fit 人评待完成，8 条 confirmation 仍封存”，
+仍然不是 Need learnability PASS。
+
+### 10.8 16 条双人评合议、历史人评分流与 39-group 复核
+
+两位评审已分别完成全部 16 条 `expansion_fit`。两份原始 JSONL 都通过 exact ID
+coverage、abstain coherence、schema 和 user-only exact quote 校验。原始一致性为：
+support mode 12/16（κ=.6701）、phase 13/16（κ=.7037）、urgency 12/16
+（κ=.5188）、response burden 15/16（κ=.8873），goals exact-set 6/16。
+
+合议不是多数投票，也不把两位评审当两个独立样本：
+
+- scalar/goals 只能选 A 或 B 已提交的值；
+- explicit boundary quote 只能从 A/B 证据并集中删选，不能新造；
+- 特定选项不可行或拒绝某一种方法不能泛化成全局 advice rejection；
+- 原始 A/B、逐字段分歧、理由和删去的 9 项过宽证据全部写入 trace；
+- 16 个状态只增加 16 个 group。
+
+绑定见
+`data/pm_v1_5_contracts/support_need_fit_adjudication_v1.json`。与第一批合并后是 40 行、
+39 个 non-abstain 独立 dialogue group；8 条 confirmation 未读取。
+
+项目历史人评审计同时把任务角色彻底分开：
+
+- 可直接进入 SupportNeed fit：第一批 24 条与本批 16 条合议行；
+- 只能用于 judge：12 条 low-budget preference、12 条 role-decomposed preference/risk；
+- 只能完成后用于各自任务：32 条 component-effect、5 张 Bank card、generation A/B；
+  这些目前都是空模板；
+- candidate/repro/normalized copy 不增加人评数或 ESS；
+- 未来 V2 保留项目中的 generation/bank reviewer 文件也全是空模板。
+
+完整清单见
+`data/pm_v1_5_contracts/human_annotation_asset_audit_v1.json` 与
+`docs/PM_V1_5_HUMAN_ANNOTATION_ASSET_AUDIT_ZH.md`。两组 judge packet 的 24 个
+visible states 与当前 40 个 need states 零精确重叠，可以剥离 candidates、selected/
+authorized context 和旧 preference 后重新做 outcome-blind need 标注；但它们是
+response-difference-enriched active-learning pool，不用于类别 prevalence。
+
+39-group bakeoff 使用与 23-group 资格赛相同的 exact model revision、local-files-only、
+grouped nested OOF、fold 内投影/正则/校准和 paired bootstrap，并完成逐字节复跑。
+报告文件 SHA256 为 `6cd7de38…c9030c`，内部 SHA256 为
+`d9524618…67b4e`，binding 为
+`data/pm_v1_5_contracts/support_need_factorized_bakeoff_expanded_v1.json`。
+
+| 因子 | neg/pos | 最佳 view | loss | recall（neg/pos） | 相对 lexical 95% CI |
+|---|---:|---|---:|---:|---:|
+| need to be heard | 23/16 | NLI current | .6115 | .826/.500 | [-.150,-.014] |
+| emotional containment | 20/19 | NLI current | .6527 | .350/.579 | [-.096,-.006] |
+| exploration | 27/12 | BGE-small multiview+observable | .5736 | 1.000/.000 | [-.111,.005] |
+| advance readiness | 17/22 | NLI current | .6574 | .529/.727 | [-.069,.001] |
+| focused-question readiness | 32/7 | BGE-small current | .4638 | 1.000/.000 | [-.059,.007] |
+| advice readiness | 24/15 | observable structure | .6874 | .875/.200 | [-.047,.010] |
+
+`planning_readiness` 仍只有 3 个正例且最佳 view 正类 recall=0；
+`low_interaction_burden` 只有 3 个负例且最低-loss hybrid 负类 recall=0。flat 五类
+support mode 最佳仍是 observable，listen/explore/structured-planning recall 全为 0。
+Qwen current 在 secondary urgency 上最低 loss，但 acute recall=0，不能据此晋级。
+
+结论必须收窄：
+
+1. Qwen embedding 仍不晋级，没有任何主因子把它选为最低 loss；
+2. NLI 只在 heard/containment 上获得相对 lexical 的稳定 paired-loss 证据；它是轴特征，
+   不是零样本 gold 或统一表示器；
+3. 六个主因子中四个最佳 view 随 16 条新锚点改变，显示当前选模仍对小样本敏感；
+4. 预声明 Qwen+NLI+observable hybrid 未通过全部主轴检查；
+5. representation promotion、factorized formal fit、flat-mode fit 和 confirmation opening
+   全部保持 `false`。
+
+下一批只补 outcome-blind 的 exploration、focused-question、advice、planning 和
+non-low-burden 边界。可以先利用上述 24-state 历史 judge 对话池做新盲评，再补真正能
+增加 planning/多步骤负担反事实的 fresh states；不得用旧 judge preference 转标签，也
+不得打开 8 条 confirmation 调方案。
+
+### 10.9 主张不变，但 RAG treatment 与旧证据必须重置
+
+V3 的抽象 estimand 仍然是：
+
+> 在同一冻结 supporter、prompt、Bank、query builder、retriever/filter、decoding 和
+> accounting 下，pre-retrieval PM 能否相对同栈 fixed/rule 在质量不劣时减少不必要资源。
+
+因此因子化 SupportNeed 与 Bank V2 不要求改写论文的核心问题；它们改变的是解释变量和
+operational treatment。由 raw 11,590-card Bank 改成五张 technique-only V2 card 后，
+旧 generation outcomes、component labels、checkpoint、threshold 和 external freeze
+不能继续作为 V3 证据。它们只保留为历史失败/机制诊断。
+
+2026-07-28 的机器审计得到：
+
+- 旧 sweep 确实含完整 response-mechanism contract，并在当时锁定 raw Bank、lexical
+  retriever、top-k/floor、prompt、generator treatment 和 EF；当前
+  `retrieval.py/prompts.py/action_execution.py` 等仍匹配，`api.py` 已与旧哈希不同，
+  因而当前代码也不能冒充旧 run 的逐字复现；
+- Bank V2 修订版已在
+  `outputs/pm_v1_5_strategy_bank_v2_review_candidate_v2_repro_check/` 六文件逐字节复现；
+  旧 `outputs/pm_v1_5_strategy_bank_v2_review_repro_check/` 是首版 6,501-lineage
+  产物，不是 V2 的 reproduction，目录名不构成身份证据；
+- V2 仍为 `eligible_for_formal_rs=false`，五卡人评与 LLM 弱审计未完成；
+- V2 technique-only schema 还没有进入 action execution、filter、prompt compiler、
+  sweep、fixed baseline、ESConv 和 EvoEmo consumer；
+- 新 V3 必须为 clean-pair generation、train sweep、transparent rule、fixed
+  comparators、internal、ESConv、EvoEmo 七个岗位绑定完全相同的
+  `response_mechanism_contract`。不同 state 检出不同 item 是合法的；Bank/corpus/query/
+  retriever/settings 不同不是。
+
+审计绑定为
+`data/pm_v1_5_contracts/v3_claim_same_stack_audit_v1.json`，候选/复跑报告逐字节一致。
+状态为 `BLOCKED_BEFORE_V3_RAG_TREATMENT_GENERATION`。这不表示本地研究停工；当前合法
+工作是五卡审计、稀缺 need 边界补标、technique-only eligible-subset runtime 与七岗位
+identity dry-run。它明确禁止 paid clean R0/RS generation、formal fit、confirmation/
+internal/external opening，以及把历史 raw-RAG 数字写成 V3 方法结果。
+
+历史 judge 的 24 个零重叠 visible states 已按上述边界重新制成盲包：
+
+- 只保留 current user、recent dialogue、session summary；
+- 旧 candidates、selected/authorized context、preference/risk labels 全部未复制；
+- 新 blind ID 打断旧任务联结；candidate/repro 五文件逐字节相同；
+- 只作 response-difference-enriched active learning，不允许估计类别 prevalence。
+
+绑定为
+`data/pm_v1_5_contracts/support_need_historical_reannotation_packet_v1.json`。完成新标注后
+仍先重跑 grouped OOF 并检查稀缺轴；不会自动打开 formal fit 或八条 confirmation。
 
 ## 11. Strategy Bank 的内容审计与根修复
 
@@ -1229,7 +1413,7 @@ internal/external 一定有利，但消除了过去那种“先昂贵训练，�
 outcome-free 的 count/age/token/history/summary envelope 可以用于输入支持，但必须披露为
 external-shape-informed development。
 
-## 19. 唯一执行顺序
+## 19. 历史执行顺序
 
 ### Phase 0：零 API 根治（现在）
 
@@ -1254,6 +1438,9 @@ external-shape-informed development。
    `SupportNeedObservation`。首批已冻结 75 个 fresh dialogue/75 states 与 24 条
    emotion×position 人工 anchor；当前 raw Bank 与其 75/75 source overlap、1,094 cards，
    必须先在 Bank V2 删除为 0；
+   当前已完成第一批 24 与 expansion-fit 16 的合议及 39-group OOF，但稀缺边界仍未过门；
+   下一增量优先是 24 个历史 judge visible-state 的全量重新盲标和专门的
+   planning/non-low-burden 最小反事实，不打开 confirmation；
 2. **Effect 小额 pilot**：只从 Need/Bank 过门的 states 中选约 48–80 个，生成 MP/MS/ME/RS
    clean helpful/placebo/harm 单组件 matched pairs；不生成未经支持的交互或 all-three。
 

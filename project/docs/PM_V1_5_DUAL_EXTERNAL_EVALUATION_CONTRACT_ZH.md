@@ -1,6 +1,14 @@
 # PM v1.5 双外部评测与可见状态支持冻结合同
 
-状态：`DESIGN_FROZEN_CODE_IMPLEMENTED_NO_PAID_RUN`
+状态：`SUPERSEDED_AS_ACTIVE_ROUTE_BY_MINIMUM_PUBLISHABLE_PROTOCOL`
+
+> 2026-07-28 起，V1.5 活跃执行以
+> `PM_V1_5_MINIMUM_PUBLISHABLE_PROTOCOL_ZH.md` 为准。本文保留双外部设计背景，
+> 但“一次性消费”的代码锁、全双域同时通过和完整复杂门不再自动阻塞快速 V1.5。
+> 研究纪律改为非破坏性数据角色：evaluation outcome 若参与方法选择，该批数据自动降为
+> development；同版本复现/恢复允许重跑。另已确认旧 ESConv adapter 错把 corpus-level
+> `situation` 暴露为 session summary，旧 2,831 条状态不得进入新训练/评测；V2 adapter
+> 在 ESConv 单会话中固定 `current_session_summary=""`。
 
 ## 1. 研究问题与唯一允许的主张
 
@@ -32,6 +40,8 @@
 ### 2.2 ESConv
 
 - 使用当前 1,300-dialogue expanded release。
+- 单会话 PM 只看当前用户文本与之前可见对话；dataset `situation` 只作离线 provenance，
+  不得进入 PM feature、query 或 generator prompt，`current_session_summary` 固定为空。
 - 当前 split 是 seed=13 的稳定哈希、dialogue-level 自定义 70/15/15，原始
   计数为 934/186/180；剔除 84 个 EvoEmo 血缘源后为 875/172/169。
 - 该 split 不是原始 1,053-dialogue 版本的官方 split，论文和产物不得称其

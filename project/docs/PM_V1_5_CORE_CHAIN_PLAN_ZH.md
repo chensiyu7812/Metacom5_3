@@ -1,6 +1,40 @@
-# PM-v1.5 快速会议版：研究合同与执行顺序
+# PM-v1.5 核心链历史记录
 
-> **2026-07-23 权威更新：** 本文是 PM-v1.5 后续执行的唯一活跃主路线，只回答“研究要
+> **2026-08-02 执行入口迁移：** 本文不再维护当前任务顺序。后续唯一执行方案为
+> `docs/PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`，机器合同为
+> `data/pm_v1_5_contracts/final_execution_plan_v3.json`。本文只保留早期长链路状态和失败
+> 证据，不能据此开启新训练、人评或外部测试。
+
+> **2026-07-28 最低可发表路线覆盖：** 当前活跃执行合同改为
+> `PM_V1_5_MINIMUM_PUBLISHABLE_PROTOCOL_ZH.md`。V1.5 只要求：至少一个组件存在
+> dialogue/user-group OOF 学习信号；相对预注册 comparator 的即时回复质量与四类明确
+> interaction/grounding risk proxy 不明显恶化；实际 input tokens 至少有实用幅度下降。
+> “至少一个”只是最低成功主张；最终范围仍须尝试 MP/MS/ME/RS 四个 component heads，
+> 并保留全部 16 个合法动作，但不训练直接 16 分类。五类 SupportNeed fit、60–100 条
+> 继续补标、双家族全量裁判、七岗位
+> 内容寻址和不可逆 one-shot ledger 不再是 V1.5 前置门，保留给 V2.0 或历史审计。
+> 2026-07-28 数据审计同时发现旧 ESConv auxiliary 719 行与 external-test 2,112 行全部
+> 把 corpus-level `situation` 当作 PM-visible `current_session_summary`；这是实质
+> privileged-input 泄漏。旧 ESConv states/embeddings/responses/labels/checkpoint 不进入
+> 新 MVP，visible-dialogue-only V2 adapter 已修复，须零 API 重建。
+>
+> **2026-07-30 RS Step-1 因果纠偏（覆盖任何“直接跑第二批确认”的旧叙述）：**
+> 六卡 32-pair direct-effect pilot 已完成，但首个 22-feature PM_RS logistic 在 grouped
+> OOF proper scores 上差于 prevalence-only，BAAI-PCA4 也无增益。该候选还把
+> opportunity 留在 deterministic runtime、把 quality/risk 折成一个 hard action target，
+> 因而只是否定一个 post-eligibility residual，不是完整 Step-1 PM。当前必须遵守
+> `data/pm_v1_5_contracts/pm_step1_factorized_training_correction_v1.json`：
+> 独立建立 outcome-blind opportunity，quality 与 atomic risk 分头，cost 确定性进入
+> selector，四组件 bits 仍组合为 16 个合法动作。旧 wave-2 freeze 只作 secondary
+> prospective diagnostic；准备好的 64 次调用未执行。24x preflight 已拆成 data
+> collection 与 model promotion 两门：前者现允许准备最多 16 个 clean supplement
+> pairs，后者仍阻断。76-dialogue transparent opportunity baseline 和新
+> 16-pair/32-call supplement 已在零 outcome 下冻结；专用 execution preflight lineage
+> PASS 后已完成 32/32 次真实调用，现处于纠正协议的独立盲评阶段。旧 64-call wave-2
+> 仍未执行且不得替代本补充包。问题状态只见全局账本 `V15-TRAIN-16..21` 等新 ID，不在本文
+> 建立第二套问题清单。
+>
+> **2026-07-23 历史更新：** 本文在当时曾是 PM-v1.5 的活跃主路线，只回答“研究要
 > 证明什么、现在到哪、下一步按什么顺序做”。问题编号、根因和关闭状态只在
 > `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 维护；旧 V1 postmortem 为只读历史证据。
 > 不得在本文或其他文件再建立第二套活跃问题清单。
@@ -74,9 +108,27 @@
 > `listen/explore/structured_planning`。它只在较粗的 `dialogue_phase` 上显示真实改善
 >（accuracy 约 `.38→.56`），但 exploration recall 仍为 0。这说明 small encoder 有能力
 > 上限，却不是五类塌缩的主因；23 个独立 group、最少类仅 2 条以及互相重叠的 flat
-> target 才是当前首要瓶颈。另 24 条 fresh blind anchor 虽已确定性准备，但现已暂停，
-> 不向标注者开放；先比较任务分解、现有 BGE-M3 与 instruction-aware encoder，明确
-> 哪种新增标注会改变决策后再恢复。
+> target 才是当前首要瓶颈。2026-07-28 同一 23-group 合同下完成因子化
+> BGE-small/BGE-M3/Qwen3-Embedding-0.6B/DeBERTa-NLI bakeoff，并逐字节复跑。Qwen 没有
+> 成为任何主因子最佳 view，预声明 Qwen+NLI hybrid 未过全部主轴门，不能替换 BAAI；
+> BGE-M3 对 heard/containment 有信号，NLI OOF 特征对 exploration/advance 有双向
+> recall；focused-question/advice 只能以更高 loss 各换回一个正例，planning 的正类
+> recall 仍为 0。因而只开放预先冻结的 16 条
+> expansion-fit 人评，8 条 confirmation 继续不在盲评页暴露；formal fit 仍禁止。
+> **2026-07-28 expansion-fit 完成与历史人评审计：** 两位评审各完成 16/16，原始文件
+> 均通过 exact coverage/schema/user-quote 校验。合议保留全部 A/B 分歧但每个 state
+> 只形成一个 target；与首批合并为 40 行、39 个 non-abstain 独立 group，8 条
+> confirmation 仍封存。39-group bakeoff 在同一冻结模型与 grouped-OOF 协议下逐字节
+> 复跑：Qwen embedding 仍不是任何主因子的最佳 view；NLI current 在
+> `need_to_be_heard` 与 `emotional_containment` 上相对 lexical 的 paired 95% CI 排除
+> 0，在 `advance_readiness` 上仅为候选信号；exploration/focused-question 的最低-loss
+> view 仍有正类塌缩，advice 仍由 observable 最好，planning 只有 3 个正例。六个主因子
+> 中有 4 个最佳 view 相对 23-group 结果发生变化，预声明 hybrid 仍失败。因此
+> representation/formal/flat-mode fit 与 confirmation opening 全部保持 false，NLI 只保留
+> 为 axis-specific feature。全项目 101 个相关文件实际只有 46 个不同哈希；完成的非
+> SupportNeed 人评为两组 judge anchor 共 24 条，禁止并入 need fit。其 24 个对话状态与
+> 当前 40 条零精确重叠，可隐藏候选与旧结论后重新标注，但只能作为
+> response-difference-enriched active-learning pool。
 > 第一份 outcome-blind train-only packet 已确定性选出 75 个全新 ESConv 对话、每个
 > 对话一个 state，覆盖 13 个 problem、8 个 emotion，early/middle/late 各 25。24 条
 > 人工 anchor 按 emotion×position 轮转，三个位置各 8 且覆盖全部 8 个 emotion；人工
@@ -96,8 +148,16 @@
 > `data/pm_v1_5_contracts/strategy_bank_v2_candidate_v2.json`。五张 technique 文本
 > 与首版逐字段一致，旧人评只允许按精确 technique 内容迁移，不能沿用旧 card ID。
 > 当前状态是
-> `SUPPORT_NEED_EXPANSION_PAUSED_REPRESENTATION_AND_TARGET_DECOMPOSITION_AUDIT`；
+> `SUPPORT_NEED_EXPANDED_39_GROUP_DIAGNOSTIC_COMPLETE_MORE_BOUNDARY_ANCHORS_REQUIRED`；
 > Bank V2 五卡内容审计可以独立继续，但不得把 Bank 审计结果偷换成 need label。
+> 2026-07-28 又完成 V3 主张/同栈机器审计：抽象 estimand 不变，但从 raw Bank 改到
+> Bank V2 会改变 operational treatment，因此旧 response/checkpoint 均不得继承。
+> 当前 V2 五卡已在正确的 `candidate_v2_repro_check` 目录逐文件精确复现；旧无 `_v2`
+> 的 `review_repro_check` 是首版 lineage，目录名不能当同一身份。正式 V3 生成前必须让
+> clean-pair、train sweep、rule、fixed、internal、ESConv、EvoEmo 七类 consumer 绑定
+> 同一个 response-mechanism contract。当前审计诚实为
+> `BLOCKED_BEFORE_V3_RAG_TREATMENT_GENERATION`，并不阻塞五卡人评、LLM 弱审计和
+> outcome-blind SupportNeed 补标。
 >
 > 现有受追踪合同
 > `data/pm_v1_5_contracts/learnable_transfer_training_data_v2.json` 约束。它要求在生成
@@ -409,6 +469,10 @@ external 付费生成前失败。
    eligible retriever 对齐，并建立原子透明 metric registry。need heads 只允许 outcome-blind
    低维投影和强正则模型；旧 nearest-centroid/高维 HGB 是 baseline，不是默认实现。既有
    32 条旧-treatment 人工 packet 只保留为可选根因诊断，不再阻塞新方法，也不能校准新分布。
+   V3 同栈身份必须覆盖 clean component pairs、train sweep、同观测 rule、所有 fixed、
+   internal、ESConv 与 EvoEmo；除 requested action 外，Bank、eligible subset、query、
+   retriever/filter、prompt、generator/seed/normalization 与成本口径逐字段相同。
+   旧 raw-Bank outcome/checkpoint 不得跨 treatment 继承。
 2. 先用约 60–100 个新鲜 train-only states 做零 API need/Bank pilot；只使用 out-of-fold
    need prediction。通过后才从中选约 48–80 states，按
    `learnable_transfer_training_data_v2.json` 建同 prompt/seed 的 M0/MP/MS/ME/RS clean
@@ -430,6 +494,12 @@ external 付费生成前失败。
 6. candidate、threshold、comparator 与两项 external matrix 全部冻结后，才一次性消费
    internal，再在同一 study freeze 下运行 ESConv 和 EvoEmo/ES-MemEval-derived 外部
    评测。二者分别判定，不能互相补票。
+
+上述主张/同栈门现由
+`data/pm_v1_5_contracts/v3_claim_same_stack_audit_v1.json` 绑定。当前六个 blocker
+分别是 SupportNeed formal fit 未授权、Bank V2 人评未完成、LLM 弱审计未完成、Bank
+未 promotion、V2 runtime 未覆盖全部 consumer、七岗位 same-stack matrix 未冻结。
+这六项只阻断 V3 RAG treatment generation/formal fit，不阻断零 API 数据与实现工作。
 
 V1.5 不运行 PM-v2.2 的 180-generation/360-judge compatibility pilot；这是快速通道的
 明确范围缩减。代价是证据强度低于 V2.2，但不能用把全量 sweep 标成 “pilot” 的方式

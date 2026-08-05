@@ -1,5 +1,9 @@
 # PM-v1.5 SupportNeedObservation 人工标注指南
 
+> **2026-07-28 V1.5 快速路线说明：** 已完成的 40 条/39 non-abstain group 继续作为
+> train-only 特征诊断；历史 24 条 reannotation packet 与封存的 8 条 confirmation
+> 不再是 V1.5 发布前置任务。除非转入 V2.0 的完整 SupportNeed 研究，不需要继续标注。
+
 ## 1. 这份标注在判断什么
 
 标注对象是用户**此刻需要怎样被支持**，不是给 PM 直接指定动作，也不是判断应否
@@ -93,3 +97,74 @@ comfort 也可能适用。
 
 第一批原始标注保持逐字节不变，并通过 normalized V2 binding 保留。扩展包采用上述新
 schema，不要求返工第一批；两批都不是 PM action gold。
+
+## 8. 第二批因子化补充标注
+
+2026-07-28 的同一 23-dialogue-group 表示资格赛显示：
+
+- “是否推进”和“是否需要探索”已有可复现但仍弱的双向 NLI 信号；
+- “是否适合一个聚焦问题”和“是否可给建议”的最低-loss view 仍漏掉全部正类；NLI
+  只能以更高 loss 各换回一个正例，planning 正类仍全部漏掉；
+- Qwen3 instruction-aware embedding 没有整体胜过 BGE/NLI，不能靠继续换大模型代替
+  新鲜独立锚点。
+
+因此第二批只开放预先冻结的 16 条 `expansion_fit`，8 条
+`untouched_confirmation` 不出现在标注页面。标注者不需要知道每条的角色，也不得刻意
+制造平衡；仍按第 2 节顺序逐条判断。特别留意以下区别：
+
+1. 想“理解发生了什么”不自动等于当前适合追问；用户也可能先需要被听见或安慰；
+2. `explore` 只在一个聚焦、低负担问题确有必要时选择；
+3. `light_guidance` 表示一个可拒绝的小建议；`structured_planning` 要求用户已能承受
+   多步骤共同拆解；
+4. `recommended_response_burden` 独立填写，不由 support mode 机械推出；
+5. 无逐字明确边界时不填引文，不能把 assistant 的问题当作 user request。
+
+当前 fit-only 标注页为
+`outputs/pm_v1_5_support_need_factorized_fit_packet_v1_candidate/human_blind_review.html`。
+导出的 JSONL 仍须通过 exact coverage、abstain coherence 与 user-only quote 校验；完成
+后只是训练/校准 partial anchors，不自动授权 representation promotion、formal fit 或
+PM action。
+
+## 9. 第二批完成后的合议与历史资产边界
+
+两位评审已各自完成全部 16 条 fit-only 记录。原始表均通过 schema、exact coverage 和
+user-only quote 校验；support mode 一致 12/16，phase 一致 13/16，urgency 一致
+12/16，burden 一致 15/16，goals 完全一致 6/16。
+
+训练时不能把两份表展开成 32 个 dialogue group。正式输入是逐条保留 A/B 原判断并经过
+受约束合议得到的 16 行：
+
+- scalar 与 goals 只能在 A/B 已提交的答案中选择；
+- 显式边界证据只能从两份原始证据中删选，不能补造；
+- 特定方案不可行或拒绝某一个选项，不等于全局 `advice_rejected`；
+- 所有分歧和删除证据保留在 adjudication trace；
+- 8 条 `untouched_confirmation` 继续封存。
+
+第一批 24 行与本批 16 行合并后共 40 行，其中 39 行 non-abstain；每个状态仍只贡献
+一个独立 group。low-budget judge、role-decomposed judge、Strategy Bank review、
+generation semantic review 和 component-effect review 的任务对象均不同，不得并入
+SupportNeed fit。完整清单和允许用途见
+`docs/PM_V1_5_HUMAN_ANNOTATION_ASSET_AUDIT_ZH.md`。
+
+## 10. 历史 judge 可见状态重新盲评
+
+两组历史 judge anchor 各有 12 个 visible state，与当前 40 条 SupportNeed state 零精确
+重叠。它们原本展示过两个候选回复及 memory/strategy，因此旧偏好、风险判断和“哪个回复
+更好”绝不能变成 need 标签。新包已执行以下隔离：
+
+- 只复制 `current_user_text`、`recent_dialogue` 与 `session_summary`；
+- 不复制 candidate response、selected context、authorized context、action 或旧标注；
+- 为每条生成新的 `need_reann_*` blind ID；
+- private lineage 只保存来源任务与“不复制哪些字段”的审计事实；
+- 24 条只是 response-difference-enriched active-learning pool，不代表真实 mode 比例。
+
+标注仍完全使用本指南第 2–6 节与第二批相同的 V2 schema。尤其不要猜“旧系统为什么选中
+这条”，也不要为了补 planning 正类而把尚未准备行动的用户标成 structured planning。
+
+当前页面：
+`outputs/pm_v1_5_support_need_historical_reannotation_v1_candidate/human_blind_review.html`。
+导出文件必须重新通过 exact coverage、abstain coherence 和 user-only exact quote 校验。
+绑定：
+`data/pm_v1_5_contracts/support_need_historical_reannotation_packet_v1.json`。
+完成后只增加 24 个新 state group；不复用旧 judge label、不估计 prevalence、不自动授权
+formal fit，也不打开 8 条 confirmation。

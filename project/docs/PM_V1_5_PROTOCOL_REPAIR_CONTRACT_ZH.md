@@ -1,7 +1,10 @@
 # PM-v1.5_1 方法修复合同：Step-0、路由语义与三层 Gate
 
 更新时间：2026-07-19
-合同状态：**IMPLEMENTED / V8.6 PAID COMPATIBILITY PASS / AUTOMATED SEMANTIC REVIEW PENDING**
+合同状态：**HISTORICAL IMPLEMENTATION CONTRACT / SUPERSEDED FOR FUTURE EXECUTION**
+
+> 当前唯一执行入口为 `docs/PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`。本文仅用于复现旧
+> Step-0/V8.6 修复，不得单独开启新训练或外部评测。
 适用对象：下一次重新生成、重新训练、重新冻结的 PM-v1.5_1 运行
 
 任何后续局部修复还必须先检查 `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 中的全链路
