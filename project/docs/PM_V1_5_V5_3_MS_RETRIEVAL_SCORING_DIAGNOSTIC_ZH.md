@@ -1,5 +1,17 @@
 # V5.3 检索打分诊断（MS/MP/ME）——探索性发现，未经正式资格赛确认
 
+**2026-08-06更新：本文档两处结论已被后续核查修正/取代，读者请先看这里：**
+1. **"生产环境=裸lexical_score"这个前提是错的。** 真实P2/runtime selector是
+   `v1_5_candidate_discovery.discover_final_typed_memory_candidates`（内容词过滤→粗粒度
+   content-match tier→typed tier→lexical仅tie-break），不是本文档下面测的裸lexical。用正确
+   baseline重新做的同栈资格赛见`PM_V1_5_V5_3_MS_QUALIFYING_TRIAL_FINDINGS_20260806_ZH.md`——
+   结论方向没变（BGE配对显著更优，p≈0.0019），但具体数字不同：真正的信号在"完全不相关"这个
+   最坏情况上（生产40% vs BGE 4%），不是"exact fit到70%"。
+2. **"EvoEmo只有4条ME候选"是错的。** 这个数字来自我自己用regex直接扫原始对话、绕开了真正的
+   `evoemo.build_evo_memory()`编译器。实测单个用户通过`build_evo_memory()`产出**109条ME
+   候选**（不是全库4条）。ME真正的问题（覆盖率而非候选量）需要重新核实，本文档第3节的ME结论
+   暂不可信，待后续更新。
+
 状态：**探索性诊断，不是已审计结果，不是正式资格赛**。原始产出目录
 `outputs/pm_v1_5_v5_3_ms_retrieval_scoring_diagnostic_v1/`按项目artifact政策gitignore，
 未进git；本文档是sanitized summary，逐文件SHA256见同目录
