@@ -569,6 +569,244 @@ def build_support_need_expansion_packet(
     }
 
 
+def build_support_need_expansion_fit_packet(
+    *,
+    expansion_packet_dir: str | Path,
+    bakeoff_binding_path: str | Path,
+) -> dict[str, Any]:
+    """Expose only preregistered fit anchors while sealing confirmation rows."""
+
+    expansion_packet_dir = Path(expansion_packet_dir)
+    bakeoff_binding_path = Path(bakeoff_binding_path)
+    source_contract_path = expansion_packet_dir / "qualification_contract.json"
+    source_contract = json.loads(source_contract_path.read_text(encoding="utf-8"))
+    source_contract_core = dict(source_contract)
+    source_contract_sha256 = str(
+        source_contract_core.pop("contract_sha256", "")
+    )
+    if source_contract_sha256 != sha256_text(
+        canonical_json(source_contract_core)
+    ):
+        raise RuntimeError("support-need expansion source contract is invalid")
+    source_packet_rows = [
+        dict(row)
+        for row in iter_jsonl(
+            expansion_packet_dir / "human_blind_packet.jsonl"
+        )
+    ]
+    source_template_rows = [
+        dict(row)
+        for row in iter_jsonl(
+            expansion_packet_dir / "human_annotation_template.jsonl"
+        )
+    ]
+    source_private_rows = [
+        dict(row)
+        for row in iter_jsonl(expansion_packet_dir / "private_lineage.jsonl")
+    ]
+    if (
+        sha256_text(canonical_json(source_packet_rows))
+        != source_contract.get("selected_packet_sha256")
+        or sha256_text(canonical_json(source_template_rows))
+        != source_contract.get("template_sha256")
+        or sha256_text(canonical_json(source_private_rows))
+        != source_contract.get("private_lineage_sha256")
+    ):
+        raise RuntimeError("support-need expansion source files drifted")
+    packet_by_id = {
+        str(row["blind_item_id"]): row for row in source_packet_rows
+    }
+    template_by_id = {
+        str(row["blind_item_id"]): row for row in source_template_rows
+    }
+    private_by_id = {
+        str(row["blind_item_id"]): row for row in source_private_rows
+    }
+    if (
+        len(packet_by_id) != len(source_packet_rows)
+        or len(template_by_id) != len(source_template_rows)
+        or len(private_by_id) != len(source_private_rows)
+        or set(packet_by_id) != set(template_by_id)
+        or set(packet_by_id) != set(private_by_id)
+    ):
+        raise RuntimeError("support-need expansion source IDs are malformed")
+    fit_ids = {
+        blind_item_id
+        for blind_item_id, row in private_by_id.items()
+        if row.get("anchor_role") == "expansion_fit"
+    }
+    confirmation_ids = {
+        blind_item_id
+        for blind_item_id, row in private_by_id.items()
+        if row.get("anchor_role") == "untouched_confirmation"
+    }
+    if (
+        fit_ids & confirmation_ids
+        or fit_ids | confirmation_ids != set(packet_by_id)
+        or len(fit_ids) != int(source_contract.get("fit_anchor_count", -1))
+        or len(confirmation_ids)
+        != int(source_contract.get("untouched_confirmation_count", -1))
+    ):
+        raise RuntimeError("support-need expansion roles are malformed")
+    bakeoff_binding = json.loads(
+        bakeoff_binding_path.read_text(encoding="utf-8")
+    )
+    binding_project_root = bakeoff_binding_path.resolve().parents[2]
+
+    def resolve_bound_report(path_value: object) -> Path:
+        path = Path(str(path_value))
+        if path.is_absolute():
+            return path
+        candidates = (
+            binding_project_root / path,
+            Path.cwd() / path,
+            bakeoff_binding_path.parent / path,
+        )
+        return next(
+            (candidate for candidate in candidates if candidate.is_file()),
+            candidates[0],
+        )
+
+    candidate_binding = bakeoff_binding.get("candidate_report", {})
+    reproduction_binding = bakeoff_binding.get("reproduction_report", {})
+    candidate_report_path = resolve_bound_report(
+        candidate_binding.get("path", "")
+    )
+    reproduction_report_path = resolve_bound_report(
+        reproduction_binding.get("path", "")
+    )
+    if (
+        not candidate_report_path.is_file()
+        or not reproduction_report_path.is_file()
+        or sha256_file(candidate_report_path)
+        != candidate_binding.get("file_sha256")
+        or sha256_file(reproduction_report_path)
+        != reproduction_binding.get("file_sha256")
+        or candidate_report_path.read_bytes()
+        != reproduction_report_path.read_bytes()
+        or reproduction_binding.get("byte_identical_to_candidate") is not True
+        or int(reproduction_binding.get("field_diff_count", -1)) != 0
+    ):
+        raise RuntimeError(
+            "support-need factorized bakeoff reports are missing or drifted"
+        )
+    candidate_report = json.loads(
+        candidate_report_path.read_text(encoding="utf-8")
+    )
+    candidate_report_core = dict(candidate_report)
+    candidate_report_sha256 = str(
+        candidate_report_core.pop("report_sha256", "")
+    )
+    if (
+        candidate_report_sha256
+        != sha256_text(canonical_json(candidate_report_core))
+        or candidate_report_sha256
+        != candidate_binding.get("report_sha256")
+    ):
+        raise RuntimeError(
+            "support-need factorized bakeoff report hash is invalid"
+        )
+    if (
+        bakeoff_binding.get("status")
+        != (
+            "COMPLETE_REPRODUCIBLE_QWEN_NOT_PROMOTED_"
+            "AXIS_SPECIFIC_SIGNAL_MORE_HUMAN_ANCHORS_REQUIRED"
+        )
+        or bakeoff_binding.get("next_action", {}).get("decision")
+        != "COLLECT_ONLY_PREPARED_EXPANSION_FIT_ANCHORS"
+        or bakeoff_binding.get("formal_fit_authorized") is not False
+        or bakeoff_binding.get("representation_promotion_authorized")
+        is not False
+        or int(
+            bakeoff_binding.get("next_action", {}).get(
+                "fit_anchor_count", -1
+            )
+        )
+        != len(fit_ids)
+        or int(
+            bakeoff_binding.get("next_action", {}).get(
+                "untouched_confirmation_count", -1
+            )
+        )
+        != len(confirmation_ids)
+        or candidate_report.get("formal_fit_authorized") is not False
+        or candidate_report.get("representation_promotion_authorized")
+        is not False
+        or candidate_report.get("expansion_human_annotations_opened")
+        is not False
+        or candidate_report.get("internal_test_outcomes_opened") is not False
+        or candidate_report.get("external_outcomes_opened") is not False
+    ):
+        raise RuntimeError(
+            "support-need factorized bakeoff does not authorize fit anchors"
+        )
+    selected_packet_rows = [
+        row
+        for row in source_packet_rows
+        if str(row["blind_item_id"]) in fit_ids
+    ]
+    selected_template_rows = [
+        row
+        for row in source_template_rows
+        if str(row["blind_item_id"]) in fit_ids
+    ]
+    selected_private_rows = [
+        row
+        for row in source_private_rows
+        if str(row["blind_item_id"]) in fit_ids
+    ]
+    if any(
+        "anchor_role" in row
+        or set(row) & FORBIDDEN_BLIND_KEYS
+        for row in selected_packet_rows
+    ):
+        raise RuntimeError("fit-only blind packet exposes private lineage")
+    report_core = {
+        "protocol": "pm-v1.5-support-need-expansion-fit-packet-v1",
+        "status": "PREPARED_FIT_ANCHORS_CONFIRMATION_ROWS_NOT_EXPOSED",
+        "source_expansion_contract_sha256": source_contract_sha256,
+        "source_expansion_contract_file_sha256": sha256_file(
+            source_contract_path
+        ),
+        "source_bakeoff_binding_file_sha256": sha256_file(
+            bakeoff_binding_path
+        ),
+        "selected_packet_sha256": sha256_text(
+            canonical_json(selected_packet_rows)
+        ),
+        "template_sha256": sha256_text(
+            canonical_json(selected_template_rows)
+        ),
+        "private_lineage_sha256": sha256_text(
+            canonical_json(selected_private_rows)
+        ),
+        "confirmation_id_set_sha256": sha256_text(
+            canonical_json(sorted(confirmation_ids))
+        ),
+        "packet_size": len(selected_packet_rows),
+        "fit_anchor_count": len(selected_packet_rows),
+        "untouched_confirmation_count": len(confirmation_ids),
+        "confirmation_rows_exposed": False,
+        "blind_packet_exposes_anchor_role": False,
+        "selection_used_completed_human_labels": False,
+        "annotation_semantics": source_contract["annotation_semantics"],
+        "automatic_gold_label": False,
+        "pm_action_gold": False,
+        "api_calls_made": 0,
+        "internal_test_outcomes_opened": False,
+        "external_outcomes_opened": False,
+    }
+    return {
+        "packet_rows": selected_packet_rows,
+        "template_rows": selected_template_rows,
+        "private_rows": selected_private_rows,
+        "contract": {
+            **report_core,
+            "contract_sha256": sha256_text(canonical_json(report_core)),
+        },
+    }
+
+
 def validate_support_need_expansion_annotations(
     *,
     packet_dir: str | Path,

@@ -163,7 +163,7 @@ def _fixture():
         },
         "esconv_auxiliary_training": {
             "protocol": (
-                "pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1"
+                "pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2"
             ),
             "split_dialogue_counts": {
                 "train": 2,

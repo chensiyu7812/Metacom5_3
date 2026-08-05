@@ -8,6 +8,18 @@ endpoints:
     family: "openai_gpt4o"
     timeout_seconds: 240
 
+  # P2 uses a separately named endpoint because deterministic construction
+  # control and ordinary natural-language surface generation are different
+  # roles.  The model supplies safe surface variety only; a local compiler
+  # enforces chronology and typed candidate structure.  It is not a response
+  # judge and never reads H1/test outcomes.
+  p2_data_generator:
+    base_url: "https://api.openai.com"
+    model: "gpt-4o-mini"
+    api_key_env: "OPENAI_API_KEY"
+    family: "openai_gpt4o"
+    timeout_seconds: 240
+
   # Supporter generator: Llama-8B is mid-strength, more sensitive to evidence
   # than 70B models, and realistic for digital-human deployment.
   generator:
@@ -91,6 +103,10 @@ endpoints:
     # task that needs long chain-of-thought, so thinking is disabled here.
     thinking_mode: disabled
 
+  # Returns a real HTTP 410. Verified via GET /v1/models on NVIDIA's gateway
+  # (2026-07-28): this model is not listed and no Qwen model currently is --
+  # not a schema-mode issue (disabling strict mode did not change the
+  # result). No direct substitute is currently available on this gateway.
   training_judge_qwen122:
     base_url: "https://integrate.api.nvidia.com"
     model: "qwen/qwen3.5-122b-a10b"
@@ -98,9 +114,12 @@ endpoints:
     family: "qwen"
     timeout_seconds: 240
 
+  # z-ai/glm-5.1 returned a real HTTP 410 on NVIDIA's model catalog (verified
+  # via GET /v1/models: not listed, not a schema-mode issue). z-ai/glm-5.2 is
+  # its listed successor on the same gateway.
   training_judge_glm51:
     base_url: "https://integrate.api.nvidia.com"
-    model: "z-ai/glm-5.1"
+    model: "z-ai/glm-5.2"
     api_key_env: "NVIDIA_API_KEY"
     family: "glm"
     timeout_seconds: 180
@@ -123,6 +142,12 @@ endpoints:
     family: "google_gemini"
     transport: "gemini_generate_content"
     timeout_seconds: 180
+    # Unlike flash-lite, gemini-2.5-flash defaults to thinking enabled, and
+    # hidden thought tokens count against maxOutputTokens. Confirmed via a
+    # real judge call: an unrequested chain-of-thought consumed the output
+    # budget before any JSON content, producing a truncated/unterminated
+    # JSON body. thinkingBudget=0 disables thinking for this model.
+    gemini_thinking_budget: 0
 
   # Final/confirmatory judge: OpenAI family is independent from the default
   # Gemini training judge. Do not select a final judge from the same family as
@@ -143,6 +168,20 @@ endpoints:
     api_key_env: "ANTHROPIC_API_KEY"
     family: "anthropic_claude"
     timeout_seconds: 240
+
+  # Low-cost Claude judge candidate, evaluated after gemini-2.5-flash failed
+  # the E6-response pilot gate (pm-v1.5-v5.2-external-e6-gemini-pilot-v1,
+  # FAIL on ab_ba_consistency/quality_agreement/risk_agreement). Independent
+  # family from final_judge (openai_gpt4o) used as its calibration anchor.
+  # Same model already exercised in role_decomposed_judge_qualification_v1
+  # (candidate_key=anthropic_claude_haiku_4_5, 48/48 quality + 48/48 risk
+  # schema completion there).
+  training_judge_claude_haiku:
+    base_url: "https://api.anthropic.com"
+    model: "claude-haiku-4-5-20251001"
+    api_key_env: "ANTHROPIC_API_KEY"
+    family: "anthropic_claude"
+    timeout_seconds: 180
 
 protocol:
   generator_temperature: 0.0

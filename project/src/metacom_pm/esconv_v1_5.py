@@ -44,14 +44,14 @@ ESCONV_V1_5_SPLIT_PROTOCOL = (
     "pm-v1.5-esconv-expanded1300-custom-hash-70-15-15-dialogue-level-v1"
 )
 ESCONV_V1_5_ADAPTER_PROTOCOL = (
-    "pm-v1.5-esconv-single-session-same-checkpoint-adapter-v1"
+    "pm-v1.5-esconv-single-session-visible-dialogue-only-v2"
 )
 ESCONV_V1_5_TURN_PROTOCOL = (
     "pm-v1.5-esconv-all-support-eligible-turns-recent-even-window-v1"
 )
 ESCONV_V1_5_ALLOWED_ACTIONS = ("M0+R0", "M0+RS")
 ESCONV_V1_5_AUXILIARY_ADAPTER_PROTOCOL = (
-    "pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1"
+    "pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2"
 )
 ESCONV_V1_5_AUXILIARY_SEMANTIC_FAMILY = "esconv_auxiliary_strategy_routing"
 # Mirrors scripts/v1_5/20_generate_pm_v2_development_data_v1_5.py's own
@@ -258,7 +258,13 @@ def build_esconv_v1_5_test_artifacts(
             semantic_encoder,
             current_user_text=turn["current_user_text"],
             current_session_history=history,
-            current_session_summary=turn["situation"],
+            # ESConv's dialogue-level ``situation`` is corpus metadata, not a
+            # summary produced from the dialogue visible at this decision
+            # point.  Feeding it to the PM would create a privileged-input
+            # shortcut and would contradict the single-session deployment
+            # surface.  It remains available only in evaluator-side source
+            # data and Strategy-Bank provenance.
+            current_session_summary="",
         )
         runtime = RuntimeState(
             state_id=state_id,
@@ -268,7 +274,7 @@ def build_esconv_v1_5_test_artifacts(
             semantic_family="esconv_single_session_strategy_routing",
             current_user_text=turn["current_user_text"],
             current_session_history=history,
-            current_session_summary=turn["situation"],
+            current_session_summary="",
             session_index=1,
             inventory={
                 source: SourceCatalog(
@@ -291,6 +297,7 @@ def build_esconv_v1_5_test_artifacts(
                 "history_turn_target": history_turn_target,
                 "current_user_duplicated_in_history": False,
                 "memory_sources_structurally_unavailable": True,
+                "dialogue_level_situation_exposed_to_pm": False,
                 "semantic_query_protocol": UNIFIED_SEMANTIC_QUERY_PROTOCOL,
                 "semantic_query_sha256": prepared.semantic_query_sha256,
                 "semantic_query_vector_sha256": (
@@ -357,6 +364,7 @@ def build_esconv_v1_5_test_artifacts(
         "same_pm_checkpoint_required": True,
         "retraining_or_esconv_outcome_tuning_authorized": False,
         "memory_capability_claim_authorized": False,
+        "dialogue_level_situation_exposed_to_pm": False,
         "legal_actions": list(ESCONV_V1_5_ALLOWED_ACTIONS),
         "turn_selection_protocol": ESCONV_V1_5_TURN_PROTOCOL,
         "turn_selection_uses_response_or_judge_outcomes": False,
@@ -528,7 +536,9 @@ def build_esconv_v1_5_auxiliary_training_artifacts(
             semantic_encoder,
             current_user_text=turn["current_user_text"],
             current_session_history=history,
-            current_session_summary=turn["situation"],
+            # See the external adapter above: corpus-level ``situation`` is
+            # privileged metadata and is never a PM-visible session summary.
+            current_session_summary="",
         )
         runtime = RuntimeState(
             state_id=state_id,
@@ -538,7 +548,7 @@ def build_esconv_v1_5_auxiliary_training_artifacts(
             semantic_family=ESCONV_V1_5_AUXILIARY_SEMANTIC_FAMILY,
             current_user_text=turn["current_user_text"],
             current_session_history=history,
-            current_session_summary=turn["situation"],
+            current_session_summary="",
             session_index=1,
             inventory={
                 source: SourceCatalog(
@@ -567,6 +577,7 @@ def build_esconv_v1_5_auxiliary_training_artifacts(
                     prepared.semantic_query_vector_sha256
                 ),
                 "bank_disjoint_auxiliary_seed": True,
+                "dialogue_level_situation_exposed_to_pm": False,
             },
         )
         pm_state = runtime_to_pmv2_state(
@@ -639,6 +650,7 @@ def build_esconv_v1_5_auxiliary_training_artifacts(
         "sample_selection_rule": "first_eligible_train_sources_in_manifest_order",
         "sample_selection_is_outcome_free_deterministic_not_random": True,
         "bank_disjoint": True,
+        "dialogue_level_situation_exposed_to_pm": False,
         "strategy_bank_source_dialogue_overlap_count": len(
             {str(row["source_dialogue_id"]) for row in iter_jsonl(strategy_bank_path)}
             & set(seed_assignment)

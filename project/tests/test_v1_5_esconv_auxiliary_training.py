@@ -306,12 +306,18 @@ def test_auxiliary_builder_only_uses_the_seed_dialogues_and_isolates_gold_fields
         for row in iter_jsonl(tmp_path / "out" / split_name / "runtime_states.jsonl"):
             assert "gold_response" not in row
             assert "gold_strategy" not in row
+            assert row["current_session_summary"] == ""
+            assert (
+                row["provenance"]["dialogue_level_situation_exposed_to_pm"]
+                is False
+            )
             assert row["semantic_family"] == ESCONV_V1_5_AUXILIARY_SEMANTIC_FAMILY
             assert all(not source["available"] for source in row["inventory"].values())
         audit_rows = list(iter_jsonl(tmp_path / "out" / split_name / "audit_only.jsonl"))
         for row in audit_rows:
             assert "gold_response" in row
             assert row["evaluator_only"] is True
+    assert report["dialogue_level_situation_exposed_to_pm"] is False
 
 
 def test_auxiliary_builder_rejects_bank_overlapping_seed(tmp_path: Path) -> None:

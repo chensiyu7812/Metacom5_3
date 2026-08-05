@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 import time
 
 from .contracts import (
@@ -38,6 +38,7 @@ def execute_requested_retrievals(
     memory_items: Sequence[MemoryItem],
     memory_retriever: MemoryRetriever,
     strategy_retriever: StrategyRetriever,
+    memory_queries_by_source: Mapping[MemorySource, str] | None = None,
 ) -> tuple[list[MemoryItem], list[StrategyCard], list[RetrievalAttempt]]:
     """Execute and audit each requested retrieval channel independently.
 
@@ -69,7 +70,14 @@ def execute_requested_retrievals(
             )
             continue
         started = time.perf_counter()
-        rows = memory_retriever.retrieve(query, memory_items, frozenset({source}))
+        source_query = (
+            str(memory_queries_by_source[source])
+            if memory_queries_by_source is not None
+            else query
+        )
+        rows = memory_retriever.retrieve(
+            source_query, memory_items, frozenset({source})
+        )
         latency_ms = (time.perf_counter() - started) * 1000.0
         memory_view.extend(rows)
         attempts.append(

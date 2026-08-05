@@ -85,10 +85,16 @@ REQUIRED_EVIDENCE_CHECKS = {
 
 
 def audit_failure_ledger(path: str | Path) -> dict[str, Any]:
-    """Check that the single active failure ledger has unique issue IDs."""
+    """Check unique issue IDs and reconcile the reader-facing total."""
 
     text = Path(path).read_text(encoding="utf-8")
     ids = re.findall(r"\| (V15-[A-Z]+-\d+) \|", text)
+    declared_match = re.search(
+        r"本文共有\s*(\d+)\s*个互不重复的 V1\.5 issue ID", text
+    )
+    declared_issue_count = (
+        int(declared_match.group(1)) if declared_match else None
+    )
     duplicates = sorted(
         issue_id
         for issue_id, count in collections.Counter(ids).items()
@@ -100,6 +106,8 @@ def audit_failure_ledger(path: str | Path) -> dict[str, Any]:
         "sha256": sha256_file(path),
         "issue_count": len(ids),
         "unique_issue_count": len(set(ids)),
+        "declared_issue_count": declared_issue_count,
+        "declared_issue_count_matches": declared_issue_count == len(set(ids)),
         "duplicate_issue_ids": duplicates,
         "category_counts": dict(sorted(categories.items())),
         "required_v2_issue_ids_present": all(

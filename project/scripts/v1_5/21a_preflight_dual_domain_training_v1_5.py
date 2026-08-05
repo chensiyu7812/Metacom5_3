@@ -277,9 +277,10 @@ def _require_auxiliary_build_report(report_path: Path, auxiliary_dir: Path) -> d
     overlap_count = report.get("strategy_bank_source_dialogue_overlap_count")
     if (
         report.get("protocol")
-        != "pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1"
+        != "pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2"
         or report.get("status") != "COMPLETE"
         or report.get("bank_disjoint") is not True
+        or report.get("dialogue_level_situation_exposed_to_pm") is not False
         or not isinstance(overlap_count, int)
         or overlap_count != 0
     ):

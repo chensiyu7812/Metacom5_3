@@ -388,8 +388,15 @@ def test_esconv_v1_5_builder_uses_supported_history_and_same_feature_contract(
         if line
     )
     assert runtime["current_user_text"] == "I still feel lonely here."
+    assert runtime["current_session_summary"] == ""
+    assert (
+        runtime["provenance"]["dialogue_level_situation_exposed_to_pm"]
+        is False
+    )
     assert [row["content"] for row in runtime["current_session_history"]] == [
         "I recently moved.",
         "That sounds like a big transition.",
     ]
     assert runtime["allowed_actions"] == ["M0+R0", "M0+RS"]
+    assert report["summary_present_count"] == 0
+    assert report["dialogue_level_situation_exposed_to_pm"] is False

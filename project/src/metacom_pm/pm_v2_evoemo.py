@@ -39,8 +39,6 @@ from .evoemo import (
     _fixed_context_before_turn,
     _load_fixed_tracks,
     _track_key,
-    build_evo_memory,
-    evo_memory_global_catalog_digest,
     fixed_seeker_cost_planning_contract,
     load_evoemo,
     make_evo_runtime_state,
@@ -82,7 +80,19 @@ from .pm_v2_fixed_model import FixedActionPMV2Model
 from .pm_v2_model import PMV2Model, decision_fallback_kind
 from .prompts import generation_messages
 from .response_mechanism_contract import build_response_mechanism_contract
-from .retrieval import MemoryRetriever, StrategyRetriever, context_query
+from .retrieval import (
+    MemoryRetriever,
+    StrategyRetriever,
+    source_specific_memory_queries,
+)
+from .v1_5_candidate_discovery import (
+    choose_after_candidate_discovery,
+    discover_memory_candidates_by_source_query,
+)
+from .v1_5_memory_transport import (
+    bounded_memory_global_catalog_digest,
+    compile_bounded_memory,
+)
 from .text import conservative_token_bound, estimate_tokens, normalize_space
 
 
@@ -1015,7 +1025,7 @@ def run_pmv2_fixed_evoemo(
     # chunking, ids) -- record that separately so this run's manifest is
     # auditable against the memory builder that actually produced its
     # retrieval catalog, not just the source data.
-    evo_memory_digest = evo_memory_global_catalog_digest(users)
+    evo_memory_digest = bounded_memory_global_catalog_digest(users)
 
     ensure_run_manifest(
         manifest_path,
@@ -1131,7 +1141,7 @@ def run_pmv2_fixed_evoemo(
         return semantic_centroids_by_user[user_id]
 
     for user, topic in scenarios:
-        items, _ = build_evo_memory(user)
+        items, _ = compile_bounded_memory(user)
         user_id = str(user["id"])
         source_centroids = source_centroids_for_user(user_id, items)
         for seed in seeds:
@@ -1169,7 +1179,26 @@ def run_pmv2_fixed_evoemo(
                         semantic_encoder if requires_step0_observation else None
                     ),
                 )
-                decision = model.choose(pm_state)
+                queries = source_specific_memory_queries(
+                    runtime.current_user_text,
+                    [
+                        row.model_dump(mode="json")
+                        for row in runtime.current_session_history
+                    ],
+                    runtime.current_session_summary,
+                )
+                query = queries[MemorySource.ME]
+                discoveries = discover_memory_candidates_by_source_query(
+                    queries=queries,
+                    items=items,
+                    retriever=memory_retriever,
+                    session_index=runtime.session_index,
+                )
+                pm_state, decision = choose_after_candidate_discovery(
+                    model=model,
+                    pm_state=pm_state,
+                    discoveries=discoveries,
+                )
                 if semantic_encoder is not None and isinstance(pm_state, PMV2State):
                     preflight_states.append(pm_state)
                     if turn_index in evaluation_turn_indices:
@@ -1200,14 +1229,6 @@ def run_pmv2_fixed_evoemo(
                 )
                 if turn_index not in evaluation_turn_indices:
                     continue
-                query = context_query(
-                    runtime.current_user_text,
-                    [
-                        row.model_dump(mode="json")
-                        for row in runtime.current_session_history
-                    ],
-                    runtime.current_session_summary,
-                )
                 sources, strategy = parse_action_id(decision.chosen_action)
                 (
                     candidate_memory_view,
@@ -1219,7 +1240,21 @@ def run_pmv2_fixed_evoemo(
                     memory_items=items,
                     memory_retriever=memory_retriever,
                     strategy_retriever=strategy_retriever,
+                    memory_queries_by_source=queries,
                 )
+                expected_memory_ids = [
+                    item.memory_id
+                    for source in MemorySource
+                    if source in sources
+                    for item in discoveries[source].selected_items
+                ]
+                if [
+                    item.memory_id for item in candidate_memory_view
+                ] != expected_memory_ids:
+                    raise RuntimeError(
+                        "post-decision retrieval drifted from the candidate "
+                        "described to PM"
+                    )
                 if evidence_filter_config is not None:
                     filtered = filter_evidence(
                         requested_action_id=decision.chosen_action,
@@ -1793,7 +1828,7 @@ def run_pmv2_fixed_evoemo(
     ]
     try:
         for user, topic in scenarios:
-            items, _ = build_evo_memory(user)
+            items, _ = compile_bounded_memory(user)
             source_centroids = source_centroids_for_user(str(user["id"]), items)
             for seed in seeds:
                 track_key = _track_key(
@@ -1868,7 +1903,7 @@ def run_pmv2_fixed_evoemo(
                         if requires_step0_observation
                         else 0.0
                     )
-                    query = context_query(
+                    queries = source_specific_memory_queries(
                         runtime.current_user_text,
                         [
                             row.model_dump(mode="json")
@@ -1876,8 +1911,22 @@ def run_pmv2_fixed_evoemo(
                         ],
                         runtime.current_session_summary,
                     )
+                    query = queries[MemorySource.ME]
+                    discoveries = discover_memory_candidates_by_source_query(
+                        queries=queries,
+                        items=items,
+                        retriever=memory_retriever,
+                        session_index=runtime.session_index,
+                    )
                     pm_start = time.perf_counter()
-                    decision = model.choose(pm_state)
+                    (
+                        pm_state,
+                        decision,
+                    ) = choose_after_candidate_discovery(
+                        model=model,
+                        pm_state=pm_state,
+                        discoveries=discoveries,
+                    )
                     pm_ms = (time.perf_counter() - pm_start) * 1000.0
                     action_id = decision.chosen_action
                     sources, strategy = parse_action_id(action_id)
@@ -1891,7 +1940,21 @@ def run_pmv2_fixed_evoemo(
                         memory_items=items,
                         memory_retriever=memory_retriever,
                         strategy_retriever=strategy_retriever,
+                        memory_queries_by_source=queries,
                     )
+                    expected_memory_ids = [
+                        item.memory_id
+                        for source in MemorySource
+                        if source in sources
+                        for item in discoveries[source].selected_items
+                    ]
+                    if [
+                        item.memory_id for item in candidate_memory_view
+                    ] != expected_memory_ids:
+                        raise RuntimeError(
+                            "post-decision retrieval drifted from the "
+                            "candidate described to PM"
+                        )
                     retrieval_ms = sum(
                         row.latency_ms for row in retrieval_attempts if row.called
                     )

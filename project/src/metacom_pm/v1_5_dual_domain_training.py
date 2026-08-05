@@ -820,7 +820,7 @@ def validate_dual_domain_training_inputs(
     }
     aux_cfg = dict(pm_config.get("esconv_auxiliary_training") or {})
     if aux_cfg.get("protocol") != (
-        "pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1"
+        "pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2"
     ):
         raise ValueError("ESConv auxiliary training contract is missing or stale")
     expected_aux_groups = {

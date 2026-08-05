@@ -68,6 +68,11 @@ def endpoint_from_config(config: Mapping[str, Any], name: str) -> Endpoint:
             raw.get("supports_strict_json_schema", True)
         ),
         thinking_mode=str(raw.get("thinking_mode") or "provider_default"),
+        gemini_thinking_budget=(
+            int(raw["gemini_thinking_budget"])
+            if raw.get("gemini_thinking_budget") is not None
+            else None
+        ),
     )
 
 

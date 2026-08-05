@@ -70,6 +70,8 @@ def test_failure_ledger_has_unique_ids_and_v2_root_causes():
         ROOT / "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md"
     )
     assert audit["issue_count"] == audit["unique_issue_count"]
+    assert audit["declared_issue_count"] == audit["unique_issue_count"]
+    assert audit["declared_issue_count_matches"]
     assert audit["duplicate_issue_ids"] == []
     assert audit["required_v2_issue_ids_present"]
 

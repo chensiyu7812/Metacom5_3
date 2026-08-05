@@ -395,10 +395,11 @@ def test_auxiliary_build_report_accepts_exact_zero_bank_overlap(tmp_path):
         }
     report = {
         "protocol": (
-            "pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1"
+            "pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2"
         ),
         "status": "COMPLETE",
         "bank_disjoint": True,
+        "dialogue_level_situation_exposed_to_pm": False,
         "strategy_bank_source_dialogue_overlap_count": 0,
         "outputs": outputs,
     }

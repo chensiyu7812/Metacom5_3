@@ -60,7 +60,17 @@ def test_release_scan_and_study_freeze_cover_every_active_v1_5_script() -> None:
     assert all(freeze_includes_python(ROOT, path) for path in scripts)
 
 
-def test_every_v1_5_paid_entrypoint_calls_the_central_release_gate() -> None:
+def test_paid_entrypoints_use_legacy_release_or_active_resumable_mvp_guard() -> None:
+    registry = read_json(
+        ROOT
+        / "data"
+        / "pm_v1_5_contracts"
+        / "paid_entrypoint_registry_v1.json"
+    )
+    assert registry["status"] == "ACTIVE"
+    historical_unguarded = set(
+        registry["hash_preserved_historical_unguarded_entrypoints"]
+    )
     candidates = [
         *sorted((ROOT / "scripts" / "v1_5").glob("*.py")),
         *sorted((ROOT / "scripts").glob("v1_5_*.py")),
@@ -70,8 +80,32 @@ def test_every_v1_5_paid_entrypoint_calls_the_central_release_gate() -> None:
         source = path.read_text(encoding="utf-8")
         if 'add_argument("--run"' in source:
             paid_entrypoints.append(path)
-            assert "require_paid_run_release" in source, path
+            relative = path.relative_to(ROOT).as_posix()
+            if relative in historical_unguarded:
+                # These completed historical runners are deliberately not
+                # rewritten: several implementation hashes are part of prior
+                # execution seals.  Any new unguarded runner remains a failure.
+                assert "require_paid_run_release" not in source, path
+            elif "MVP_RESUMABLE_EXECUTION_PROTOCOL" in source:
+                assert "validate_minimum_rs_execution_inputs" in source, path
+                assert "human_review_binding.json" in source, path
+                assert '"one_shot_execution_required": False' in source, path
+                assert "require_paid_run_release" not in source, path
+            elif "MVP_JUDGE_RUNNER_PROTOCOL" in source:
+                assert "validate_rs_judge_inputs" in source, path
+                assert (
+                    "qualification_report_material_v2.json" in source
+                ), path
+                assert '"one_shot_execution_required": False' in source, path
+                assert "require_paid_run_release" not in source, path
+            else:
+                assert "require_paid_run_release" in source, path
     assert paid_entrypoints
+    assert historical_unguarded == {
+        path.relative_to(ROOT).as_posix()
+        for path in paid_entrypoints
+        if path.relative_to(ROOT).as_posix() in historical_unguarded
+    }
 
 
 def test_formal_chain_cannot_be_authorized_by_consumed_v4_review() -> None:

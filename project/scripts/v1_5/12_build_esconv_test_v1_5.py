@@ -50,7 +50,11 @@ def main() -> None:
     parser.add_argument(
         "--development-data-report",
         type=Path,
-        default=ROOT / "data" / "pm_v1_5" / "pm_v2_data_report.json",
+        default=(
+            ROOT
+            / "data/pm_v1_5_formal_v8_19_2_runtime_projection_repair_candidate"
+            / "pm_v2_data_report.json"
+        ),
     )
     args = parser.parse_args()
 

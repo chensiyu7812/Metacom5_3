@@ -417,7 +417,7 @@ semantic_diagnostics:
 # ESConv release under our already-frozen custom dialogue-level split; it is not
 # relabeled as the official split of the original 1,053-dialogue corpus.
 esconv_external_evaluation:
-  protocol: pm-v1.5-esconv-single-session-same-checkpoint-adapter-v1
+  protocol: pm-v1.5-esconv-single-session-visible-dialogue-only-v2
   split_protocol: pm-v1.5-esconv-expanded1300-custom-hash-70-15-15-dialogue-level-v1
   corpus_release: expanded_1300_dialogues
   split_is_official_original_1053_release: false
@@ -455,6 +455,7 @@ esconv_external_evaluation:
     automatic_overlap_metrics_appendix_only: true
   forbidden:
     - esconv_test_outcomes_for_model_or_threshold_selection
+    - esconv_dialogue_level_situation_as_pm_visible_summary
     - claim_of_long_term_memory_capability_from_esconv
     - pooling_esconv_and_evoemo_into_one_score
     - calling_the_custom_expanded_split_the_official_original_split
@@ -473,7 +474,7 @@ esconv_external_evaluation:
 # set").  The held-out 169-dialogue ESConv test split is untouched by this
 # block and never read by the auxiliary builder.
 esconv_auxiliary_training:
-  protocol: pm-v1.5-esconv-auxiliary-bank-disjoint-seed-training-support-v1
+  protocol: pm-v1.5-esconv-auxiliary-visible-dialogue-only-v2
   semantic_family: esconv_auxiliary_strategy_routing
   legal_actions: [M0+R0, M0+RS]
   seed_dialogue_count: 52
@@ -489,6 +490,7 @@ esconv_auxiliary_training:
   turn_selection_uses_response_strategy_or_judge_outcomes: false
   forbidden:
     - using_esconv_test_dialogues_for_auxiliary_training
+    - esconv_dialogue_level_situation_as_pm_visible_summary
     - randomly_resampling_the_52_seed_dialogues
     - equal_per_state_weighting_against_the_216_longitudinal_train_states
 

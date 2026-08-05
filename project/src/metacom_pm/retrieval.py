@@ -28,6 +28,57 @@ def context_query(
     return normalize_space("\n".join(parts))
 
 
+def seeker_only_context_query(
+    current_user_text: str,
+    history: Sequence[dict] | Sequence[object],
+    summary: str = "",
+) -> str:
+    """Build a retrieval query from seeker-authored visible evidence only.
+
+    Session-summary retrieval must not be steered by supporter-side
+    metacommunication such as "you already shared the prior summary".  The
+    helper accepts both runtime ``role=user`` turns and public
+    ``speaker=seeker`` turns so the same query contract can be used by the
+    internal and external pipelines.
+    """
+
+    parts = [summary]
+    for turn in history:
+        if isinstance(turn, dict):
+            role = str(turn.get("role") or turn.get("speaker") or "").lower()
+            content = str(turn.get("content") or "")
+        else:
+            role = str(
+                getattr(turn, "role", "") or getattr(turn, "speaker", "")
+            ).lower()
+            content = str(getattr(turn, "content", ""))
+        if role in {"user", "seeker"}:
+            parts.append(content)
+    parts.append(current_user_text)
+    return normalize_space("\n".join(parts))
+
+
+def source_specific_memory_queries(
+    current_user_text: str,
+    history: Sequence[dict] | Sequence[object],
+    summary: str,
+) -> dict[MemorySource, str]:
+    """Return the shared MP/MS/ME query contract for both domains.
+
+    MP and ME retain the established full visible context.  MS uses only
+    seeker-authored evidence so supporter phrasing cannot contaminate session
+    summary ranking.
+    """
+
+    full = context_query(current_user_text, history, summary)
+    seeker = seeker_only_context_query(current_user_text, history, summary)
+    return {
+        MemorySource.MP: full,
+        MemorySource.MS: seeker,
+        MemorySource.ME: full,
+    }
+
+
 class MemoryRetriever:
     def __init__(
         self,

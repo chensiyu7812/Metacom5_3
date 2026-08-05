@@ -94,7 +94,10 @@ _CANARY_STATE = RuntimeState(
         DialogueTurn(role="assistant", content="That does sound like a lot to carry."),
     ],
     current_session_summary="User has been under sustained stress from work.",
-    session_index=1,
+    # The memory canary was created in session 3, so the visible state must
+    # be later.  Keeping this causal makes the canary exercise the same
+    # fail-closed prior-history contract as real internal/external runs.
+    session_index=4,
     inventory={
         source: SourceCatalog(
             available=source is MemorySource.ME,
