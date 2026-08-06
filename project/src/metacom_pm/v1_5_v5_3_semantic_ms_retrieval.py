@@ -122,6 +122,37 @@ class BgeM3Encoder:
         return np.concatenate(pieces, axis=0)
 
 
+class CachedTextEncoder:
+    """Exact-text memoization wrapper for repeated same-catalog scoring.
+
+    P2R evaluates several counterfactual current turns against the same
+    13--33-session user catalog. Re-encoding every unchanged candidate for
+    every turn adds latency and memory churn but no new information. This
+    wrapper caches only the encoder's deterministic text vector; it does not
+    cache rankings, labels, actions, or outcomes and therefore cannot change
+    the scoring method.
+    """
+
+    def __init__(self, base: TextEncoder) -> None:
+        self.base = base
+        self._vectors: dict[str, object] = {}
+
+    def encode(self, texts: Sequence[str]):
+        import numpy as np
+
+        ordered = list(texts)
+        missing = list(dict.fromkeys(text for text in ordered if text not in self._vectors))
+        if missing:
+            vectors = self.base.encode(missing)
+            if len(vectors) != len(missing):
+                raise ValueError("encoder returned a different number of vectors than texts")
+            for text, vector in zip(missing, vectors):
+                self._vectors[text] = vector
+        if not ordered:
+            return np.zeros((0, 0), dtype="float32")
+        return np.stack([self._vectors[text] for text in ordered], axis=0)
+
+
 @dataclass(frozen=True)
 class RankedMsCandidate:
     item: MemoryItem

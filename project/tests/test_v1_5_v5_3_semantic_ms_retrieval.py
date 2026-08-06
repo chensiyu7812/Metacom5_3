@@ -3,6 +3,7 @@ import pytest
 
 from metacom_pm.contracts import MemoryItem, MemorySource
 from metacom_pm.v1_5_v5_3_semantic_ms_retrieval import (
+    CachedTextEncoder,
     RankedMsCandidate,
     rank_ms_candidates,
 )
@@ -101,3 +102,23 @@ def test_deterministic_tie_break_on_equal_score():
     # Equal cosine score -> tie-break by created_session desc, matching
     # retrieval.MemoryRetriever's convention.
     assert [r.item.memory_id for r in ranked] == ["mem_000000000002", "mem_000000000001"]
+
+
+def test_cached_encoder_reuses_exact_candidate_vectors_without_changing_values():
+    class CountingEncoder(FakeEncoder):
+        def __init__(self):
+            super().__init__(["wedding", "job"])
+            self.calls: list[list[str]] = []
+
+        def encode(self, texts):
+            self.calls.append(list(texts))
+            return super().encode(texts)
+
+    base = CountingEncoder()
+    cached = CachedTextEncoder(base)
+    first = cached.encode(["new wedding question", "same candidate"])
+    second = cached.encode(["new job question", "same candidate"])
+    assert len(base.calls) == 2
+    assert base.calls[0] == ["new wedding question", "same candidate"]
+    assert base.calls[1] == ["new job question"]
+    np.testing.assert_array_equal(first[1], second[1])
