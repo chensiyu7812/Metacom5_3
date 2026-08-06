@@ -289,6 +289,25 @@ def evidence_aware_generation_messages(
     not-yet-justified investment). Evidence also moves into the system
     message, separated from current_context, so it reads as background the
     assistant knows rather than more things the user just said in this turn.
+
+    2026-08-06 (later same day): a real Step1 MS minimal pilot (with-MS vs
+    without-MS paired generation, see PM_V1_5_V5_3_STEP1_MS_MINIMAL_PILOT_
+    FINDINGS_20260806_ZH.md) found the "without" arm -- a genuine M0+R0
+    program with zero evidence, exactly the untested path the M0+R0 note
+    below flags -- fell back to a generic canned reply in 4/12 real states
+    and needed a guard-triggered rewrite in 2 more (6/12 total), all on
+    TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID. Reproduced directly outside
+    the pilot with a real call on the same state: the model returned
+    used_evidence_ids=["user_message_1"] -- a self-invented id for the
+    user's own current turn, not a hallucinated memory fact. Root cause:
+    nothing ever told the model used_evidence_ids means "which item from
+    the Background facts list," so it invents a plausible-looking id
+    whenever it wants to note it drew on the user's message (which is
+    normal, every reply does). This degraded the M0+R0 baseline shared by
+    every "without X" arm across the MP/MS/RS pilots, not just MS's own
+    comparison. Fixed with an explicit scope instruction on
+    used_evidence_ids below; reproduced-then-fixed on the same real state
+    and seed before being trusted.
     """
 
     if not _clean(current_context):
@@ -334,6 +353,13 @@ def evidence_aware_generation_messages(
         "You may use first person only to describe your own present conversational act "
         "(e.g. \"I hear you\", \"I'm sorry\", \"I want to understand\"), never to narrate a "
         "personal life event, relationship, or biography."
+    )
+    system_lines.append(
+        "used_evidence_ids must only contain evidence_id values copied exactly from the "
+        "\"Background facts\" list below, if one is present. The user's current message is "
+        "not itself an evidence_id and must never be listed (for example, never invent an id "
+        "like \"user_message_1\"). If there is no Background facts list, or you did not rely "
+        "on any item from it, used_evidence_ids must be an empty list."
     )
     if program.current_user_known_aliases:
         # Deliberately no slash-separated pronoun notation here (e.g. writing
@@ -452,8 +478,19 @@ def typed_response_guard_errors(
     # check then discarded the whole reply over it). See
     # PM_V1_5_V5_3_MS_MP_ME_EFFECT_TEST_20260806_ZH.md. MS/ME keep the
     # existing strict requirement unchanged.
+    #
+    # 2026-08-06 (Step1 RS minimal pilot): RS is exempt for the identical
+    # reason. RS_ATOMIC_MOVE's support_move/when_to_use/when_not_to_use are
+    # response-shaping instructions ("offer grounded validation"), not a
+    # narrative fact to reference -- a reply that correctly follows the
+    # guidance has no obligation to cite it. Real paired with/without-RS
+    # generation found this exact contract firing on a real RS case (p14,
+    # AM04_tentative_paraphrase_check): a coherent RS-following reply
+    # discarded and replaced with a generic fallback purely because the
+    # model never echoed the card's evidence_id. See
+    # PM_V1_5_V5_3_STEP1_RS_MINIMAL_PILOT_FINDINGS_20260806_ZH.md.
     required_ids = {
-        item.evidence_id for item in program.evidence if item.component != "MP"
+        item.evidence_id for item in program.evidence if item.component not in {"MP", "RS"}
     }
     missing = required_ids - used_ids
     if missing:
@@ -540,12 +577,24 @@ def evidence_usage_plausibility_errors(
     the reply. It will not catch a paraphrased-but-genuine use, and it will
     not catch a superficial word-level echo that isn't real grounding either
     -- treat a pass as "no obvious non-use", not proof of real grounding.
+
+    2026-08-06 (Step1 RS minimal pilot): RS is skipped here for the same
+    reason it is exempt from REQUIRED_EVIDENCE_NOT_USED above -- this word-
+    overlap primitive assumes evidence is a narrative fact a faithful reply
+    should lexically echo (true for MS/ME), but RS_ATOMIC_MOVE's
+    literal_evidence is a behavioral instruction ("offer grounded
+    validation"); a reply that genuinely follows it (e.g. "that sounds
+    really hard") has no reason to share content words with the instruction
+    itself. Real paired generation found this exact false-positive 3/8
+    times (p7, p10, p15), always on the same guard, always discarding an
+    otherwise-clean RS-following reply. See PM_V1_5_V5_3_STEP1_RS_MINIMAL_
+    PILOT_FINDINGS_20260806_ZH.md.
     """
 
     reply_words = content_words(response.reply)
     used_ids = set(response.used_evidence_ids)
     for item in program.evidence:
-        if item.evidence_id not in used_ids:
+        if item.component == "RS" or item.evidence_id not in used_ids:
             continue
         evidence_words = content_words(item.literal_evidence)
         if evidence_words and not (evidence_words & reply_words):
