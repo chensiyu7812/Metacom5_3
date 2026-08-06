@@ -169,6 +169,52 @@ def test_mp_value_content_still_matches_after_label_stripped() -> None:
     )
 
 
+def test_mp_parenthetical_status_word_does_not_create_false_content_match() -> None:
+    # Regression: real p11 case -- "Education: high school (in progress)"
+    # fired 6/9 times on unrelated therapy-speak sentences via the word
+    # "progress" inside "(in progress)", not because the query was ever
+    # actually about the user's education status.
+    items = [
+        MemoryItem(
+            memory_id="mem_ffffffffffffffffffff",
+            source=MemorySource.MP,
+            created_session=0,
+            text="Education: high school (in progress)",
+        )
+    ]
+    result = discover_final_typed_memory_candidates(
+        queries=_queries(
+            "I guess I just need to remind myself that healing is not a linear "
+            "process. Setbacks like this encounter with John can happen."
+        ),
+        items=items,
+        source_metadata={},
+        session_index=1,
+    )
+    assert len(result[MemorySource.MP].selected_items) == 0
+
+
+def test_mp_high_school_still_matches_a_real_school_query() -> None:
+    items = [
+        MemoryItem(
+            memory_id="mem_aabbccddaabbccddaabb",
+            source=MemorySource.MP,
+            created_session=0,
+            text="Education: high school (in progress)",
+        )
+    ]
+    result = discover_final_typed_memory_candidates(
+        queries=_queries("I'm putting in a lot of effort to improve my study habits at high school."),
+        items=items,
+        source_metadata={},
+        session_index=1,
+    )
+    assert (
+        result[MemorySource.MP].selected_items[0].memory_id
+        == "mem_aabbccddaabbccddaabb"
+    )
+
+
 def test_ms_semantic_encoder_is_opt_in_default_stays_lexical() -> None:
     # Same items/query as the lexical-tiebreak default would rank one way;
     # with no encoder passed, behavior must be byte-for-byte the pre-existing

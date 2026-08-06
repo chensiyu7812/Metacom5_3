@@ -7,6 +7,7 @@ and decides whether the selected items may be injected into the generator.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
@@ -74,20 +75,36 @@ _PREFERENCE_SCOPE_WORDS = frozenset(
 )
 
 
+_MP_PARENTHETICAL_STATUS_RE = re.compile(r"\([^)]*\)")
+
+
 def _mp_match_document(text: str) -> str:
-    """Strip the structural "Label: " prefix evoemo.build_evo_memory() renders
-    MP items with (e.g. "Job: office worker") before content matching.
+    """Strip structural, non-content parts of an MP item's rendered text
+    before content matching: the "Label: " prefix evoemo.build_evo_memory()
+    renders MP items with (e.g. "Job: office worker"), and any parenthetical
+    status annotation in the value (e.g. "high school (in progress)").
 
     The label names a basic_info field, not conversational content: matched
     verbatim it made e.g. "Job: office worker" fire on any query that merely
     mentions the word "job" (including a query about someone else's job),
-    regardless of whether "office worker" itself was relevant. Only the value
-    should participate in content matching; the label stays in item.text for
-    rendering.
+    regardless of whether "office worker" itself was relevant. Confirmed on
+    the real 138-state panel: 3 users' MP selections were 100% driven by this
+    (PM_V1_5_V5_3_MP_VERIFICATION_FINDINGS_20260806_ZH.md).
+
+    Parenthetical status annotations are the same class of problem in the
+    value rather than the label: "(in progress)" contributed the generic
+    word "progress", which matched unrelated therapy-speak sentences
+    ("healing is not a linear process") on a completely different topic
+    (education status vs. an unrelated encounter/party) for 6/9 of one real
+    user's MP selections. Only "high school", the actual content, should
+    participate in matching -- the same rationale as stripping the label,
+    not a general stopword-list expansion (which would risk suppressing
+    real signal in MS/ME, per that same finding doc's discussion).
     """
 
     _, separator, value = text.partition(": ")
-    return value if separator else text
+    value = value if separator else text
+    return _MP_PARENTHETICAL_STATUS_RE.sub(" ", value)
 
 
 def final_typed_content_words(text: str) -> set[str]:
