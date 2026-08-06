@@ -21,7 +21,11 @@ def test_static_release_binds_six_card_bank_bge_and_six_baselines() -> None:
     assert binding.ms_retriever.snapshot_revision == EXPECTED_BGE_M3_REVISION
     assert binding.ms_retriever.local_files_only is True
     assert len(binding.response_baselines) == 6
-    assert binding.me_retriever_status == "PENDING_ONE_FROZEN_RERANKER_TRIAL"
+    assert binding.me_retriever.method == (
+        "PRODUCTION_LEXICAL_TYPED_TIER_EXACT_RANK1_COMPILE_OR_OFF"
+    )
+    assert binding.me_retriever.rank2_promotion_allowed is False
+    assert binding.me_retriever.bge_reranker_adopted is False
     assert binding.api_calls == 0
 
 

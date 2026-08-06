@@ -1,11 +1,12 @@
 """Outcome-blind static asset bindings for the V5.3 release.
 
 This is deliberately a *partial* release identity.  It freezes assets that
-are already decided (the six-card Strategy Bank, the local BGE-M3 snapshot
-for MS, the shared Step2/accountability/baseline implementations) while
-leaving the ME reranker and Step2 recovery policy visibly unresolved.  A
-formal P2 release must fill those fields and produce a new identity; callers
-cannot silently substitute another Bank, encoder snapshot, or implementation.
+are already decided (the six-card Strategy Bank, BGE-M3 for MS, the retained
+production lexical/typed-tier ranker for ME, and the shared Step2/
+accountability/baseline implementations) while leaving the Step2 recovery
+policy visibly unresolved.  A formal P2 release must fill that field and
+produce a new identity; callers cannot silently substitute another Bank,
+retriever, encoder snapshot, or implementation.
 """
 
 from __future__ import annotations
@@ -57,16 +58,29 @@ class SemanticRetrieverBinding(StrictModel):
     formal_runner_wiring_required: Literal[True] = True
 
 
+class MeRetrieverBinding(StrictModel):
+    component: Literal["ME"] = "ME"
+    method: Literal[
+        "PRODUCTION_LEXICAL_TYPED_TIER_EXACT_RANK1_COMPILE_OR_OFF"
+    ] = "PRODUCTION_LEXICAL_TYPED_TIER_EXACT_RANK1_COMPILE_OR_OFF"
+    candidate_discovery_implementation: FileBinding
+    atomic_compiler_implementation: FileBinding
+    qualification_report: FileBinding
+    rank2_promotion_allowed: Literal[False] = False
+    bge_reranker_adopted: Literal[False] = False
+    formal_runner_wiring_required: Literal[True] = True
+
+
 class StaticReleaseBindings(StrictModel):
     protocol: Literal["pm-v1.5-v5.3-static-release-bindings-v1"] = (
         STATIC_RELEASE_PROTOCOL
     )
-    status: Literal["STATIC_BINDINGS_FROZEN_ME_AND_RECOVERY_PENDING"] = (
-        "STATIC_BINDINGS_FROZEN_ME_AND_RECOVERY_PENDING"
+    status: Literal["STATIC_BINDINGS_FROZEN_RECOVERY_PENDING"] = (
+        "STATIC_BINDINGS_FROZEN_RECOVERY_PENDING"
     )
     strategy_bank: StrategyBankBinding
     ms_retriever: SemanticRetrieverBinding
-    me_retriever_status: Literal["PENDING_ONE_FROZEN_RERANKER_TRIAL"]
+    me_retriever: MeRetrieverBinding
     step2_recovery_policy_status: Literal[
         "PENDING_DEVELOPMENT_ONLY_REWRITE_VS_DIRECT_FALLBACK_COMPARISON"
     ]
@@ -136,7 +150,7 @@ def build_static_release_bindings(root: str | Path) -> StaticReleaseBindings:
     }
     payload = {
         "protocol": STATIC_RELEASE_PROTOCOL,
-        "status": "STATIC_BINDINGS_FROZEN_ME_AND_RECOVERY_PENDING",
+        "status": "STATIC_BINDINGS_FROZEN_RECOVERY_PENDING",
         "strategy_bank": StrategyBankBinding(
             relative_path=bank_relative,
             sha256=observed_bank_sha,
@@ -155,7 +169,18 @@ def build_static_release_bindings(root: str | Path) -> StaticReleaseBindings:
                 project_root, "src/metacom_pm/v1_5_candidate_discovery.py"
             ),
         ),
-        "me_retriever_status": "PENDING_ONE_FROZEN_RERANKER_TRIAL",
+        "me_retriever": MeRetrieverBinding(
+            candidate_discovery_implementation=_file_binding(
+                project_root, "src/metacom_pm/v1_5_candidate_discovery.py"
+            ),
+            atomic_compiler_implementation=_file_binding(
+                project_root, "src/metacom_pm/v1_5_v5_2_atomic_memory.py"
+            ),
+            qualification_report=_file_binding(
+                project_root,
+                "docs/PM_V1_5_V5_3_ME_RERANKER_QUALIFICATION_20260806_ZH.md",
+            ),
+        ),
         "step2_recovery_policy_status": (
             "PENDING_DEVELOPMENT_ONLY_REWRITE_VS_DIRECT_FALLBACK_COMPARISON"
         ),

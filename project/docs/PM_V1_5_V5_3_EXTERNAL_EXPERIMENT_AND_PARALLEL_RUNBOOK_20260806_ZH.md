@@ -515,7 +515,11 @@ Worker round-close以后，W1-W4的当前证据解释如下：
   同一effect-study hard-off实现下训练100%可进入、ESConv 94.4%、EvoEmo 95.6%；旧结论不得再引用。
   6-card系统的自然语义触发覆盖仍较窄，但在新的候选层分责中只影响透明规则/特征，不再清空候选池。
 - W4产生8族、32 state、每state 7候选的ME种子，其中14/32同时满足compiler-valid与intended exact Rank-1。
-  43.75%不是“ME无候选”，而是同主题竞争下Rank-1排序不稳；扩大正式数据前先做一次零API的ME reranker资格比较。
+  43.75%不是“ME无候选”，而是同主题竞争下Rank-1排序不稳。W6随后按预先写定的三种方法完成唯一一次
+  零API reranker资格比较：current production与纯BGE均为15/32 intended Rank-1，但纯BGE的
+  compiler-valid仅9/32；compiler-filter+BGE仅10/32，且相对production为0胜5负27平。因此V5.3不采用
+  ME-BGE，也不再搜索第四种排序器；冻结现有production lexical+typed-tier exact Rank-1，Rank-1编译失败
+  则该state的ME不可执行，不偷偷提升Rank-2。正式P2保留这一覆盖边界，依靠paired outcome学习“可用时是否值得开”。
 - W5由leader完成了字段投影、gold canary和同源文本重叠的主要部分：18用户、419个response因果投影及
   1,552个QA evaluator row均无未来/跨用户/gold可见性违规；当前14个ME种子的112个model-visible surface
   与3,505个外部question/answer/session surface为0 exact、0 normalized 8-gram overlap。正式完整superdomain
@@ -587,10 +591,9 @@ jq . data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json
 
 Worker只做候选/数据面，不改三份权威事实源：
 
-1. **ME reranker资格比较**：在同一32-state、同一7-candidate、同一因果边界上比较当前production排序、
-   BGE-M3与至多一个预先写清的hybrid；报告exact intended Rank-1、compiler-valid Rank-1、完全不相关率、
-   per-family paired win/loss。不得把32个state当32个独立用户做夸大的显著性检验，不调用生成API。
-2. **正式P2候选蓝图**：在reranker决定后物化MP/MS/ME/RS的state、用户、family、counterfactual group、
+1. **ME reranker资格比较（已完成，commit `6070157`）**：三法没有新方法胜出；leader冻结现有production
+   lexical+typed-tier exact Rank-1，编译失败即ME不可执行，禁止Rank-2补位，W6到此关闭。
+2. **正式P2候选蓝图**：按上述ME决定物化MP/MS/ME/RS的state、用户、family、counterfactual group、
    exact Rank-1及候选目录；保留MP preference/profile两个内部子域，MS明确走BGE-M3，RS固定6-card；
    只构造候选与split，不生成ON/OFF回复、不训练head、不读取quality/risk。
 3. 后续脚本使用`70w_...`、`71w_...`前缀，避免再与leader编号碰撞。
