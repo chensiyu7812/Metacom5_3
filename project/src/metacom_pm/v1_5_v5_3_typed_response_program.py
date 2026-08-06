@@ -299,19 +299,42 @@ def evidence_aware_generation_messages(
         f"Current goal: {program.current_goal}",
         "You are the assistant responding to the user. You are not the user and you are not "
         "role-playing the user.",
-        "Write one natural, coherent reply that genuinely incorporates every evidence item "
-        "below; every item listed has already been confirmed to have a natural use in this "
-        "reply, so use all of them.",
-        "Every evidence item below with an owner describes THAT PERSON's own fact, "
-        "statement, or past experience -- never yours, regardless of whether its literal "
-        "wording is first person, third person, or a name. Always address that person "
-        "directly, in the second person (for example: \"you mentioned...\", \"your "
-        "husband...\"). Never claim their spouse, child, job, education, relationship, "
-        "decision, emotion, or past action as your own experience or biography.",
+    ]
+    if program.evidence:
+        system_lines.append(
+            "Write one natural, coherent reply that genuinely incorporates every evidence "
+            "item below; every item listed has already been confirmed to have a natural use "
+            "in this reply, so use all of them."
+        )
+    else:
+        # 2026-08-06: found while checking a design question, not from a real
+        # failure -- with zero evidence (a genuine M0+R0 Step1 decision, not
+        # a degraded fallback -- see TypedResponseProgram.is_m0), the old
+        # instruction above referenced "every evidence item below" with
+        # nothing to point to. No test in this project's real-call history
+        # has exercised a true empty-evidence program (every real batch so
+        # far required at least one MS candidate to exist), so this was
+        # never actually observed misbehaving -- fixed on inspection, not on
+        # evidence of a real failure.
+        system_lines.append(
+            "There is no memory or profile evidence for this turn. Write one natural, "
+            "supportive reply grounded only in what the user has visibly said -- do not "
+            "claim or imply that you recall anything from an earlier session."
+        )
+    if program.evidence:
+        system_lines.append(
+            "Every evidence item below with an owner describes THAT PERSON's own fact, "
+            "statement, or past experience -- never yours, regardless of whether its literal "
+            "wording is first person, third person, or a name. Always address that person "
+            "directly, in the second person (for example: \"you mentioned...\", \"your "
+            "husband...\"). Never claim their spouse, child, job, education, relationship, "
+            "decision, emotion, or past action as your own experience or biography."
+        )
+    system_lines.append(
         "You may use first person only to describe your own present conversational act "
         "(e.g. \"I hear you\", \"I'm sorry\", \"I want to understand\"), never to narrate a "
-        "personal life event, relationship, or biography.",
-    ]
+        "personal life event, relationship, or biography."
+    )
     if program.current_user_known_aliases:
         # Deliberately no slash-separated pronoun notation here (e.g. writing
         # "you/your" as shorthand): a real live test found the generator

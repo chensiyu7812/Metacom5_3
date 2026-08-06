@@ -110,6 +110,30 @@ def test_owned_evidence_is_tagged_and_ownerless_evidence_is_not() -> None:
     assert "owner=none" in rs_line
 
 
+def test_genuine_m0_r0_gets_a_no_evidence_prompt_not_a_dangling_reference() -> None:
+    # 2026-08-06: found while answering a design question, not from a real
+    # failure -- every real-call batch this project has run so far required
+    # at least one MS candidate, so a genuine empty-evidence M0+R0 program
+    # (Step1 deciding no memory/profile/strategy is needed, distinct from a
+    # *degraded* fallback after a failed generation -- see
+    # TypedResponseProgram.is_m0) had never actually been built and sent
+    # through this function.
+    program = build_typed_response_program(
+        requested_action_id="M0+R0", current_goal="respond naturally to the current turn",
+        current_user_id="u1", candidates={},
+    )
+    assert program.is_m0
+    assert program.evidence == ()
+    system_text = evidence_aware_generation_messages(
+        current_context="I've had a rough day.", program=program
+    )[0]["content"]
+    assert "there is no memory or profile evidence for this turn" in system_text.lower()
+    # the old instruction, meaningless with nothing to point to, must not
+    # appear for this case
+    assert "incorporates every evidence item" not in system_text
+    assert "own experience or biography" not in system_text  # ownership rule is vacuous too
+
+
 def test_no_alias_instruction_when_no_known_aliases_given() -> None:
     program = build_typed_response_program(
         requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
