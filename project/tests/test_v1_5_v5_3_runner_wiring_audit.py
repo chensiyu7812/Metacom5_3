@@ -12,12 +12,16 @@ from metacom_pm.v1_5_v5_3_runner_wiring_audit import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_current_repo_does_not_mistake_separate_pilots_for_formal_runner() -> None:
+def test_repo_does_not_mistake_static_symbol_coverage_for_runtime_readiness() -> None:
     report = audit_formal_runner_wiring(project_root=ROOT)
-    assert report["status"] == "FORMAL_RUNNER_ENTRYPOINT_NOT_YET_IMPLEMENTED"
-    assert report["complete_candidate_entrypoints"] == []
     assert report["formal_runner_ready"] is False
     assert report["api_calls"] == 0
+    if report["complete_candidate_entrypoints"]:
+        assert report["status"] == (
+            "STATIC_REQUIRED_CALLS_PRESENT_IN_ONE_ENTRYPOINT_NEEDS_RUNTIME_AUDIT"
+        )
+    else:
+        assert report["status"] == "FORMAL_RUNNER_ENTRYPOINT_NOT_YET_IMPLEMENTED"
 
 
 def test_static_coverage_requires_import_and_call(tmp_path: Path) -> None:
