@@ -172,8 +172,24 @@ def build_immediate_support_messages(
     visible_dialogue: Mapping[str, Any],
     response_a: str,
     response_b: str,
+    current_user_known_aliases: Sequence[str] = (),
 ) -> list[dict[str, str]]:
-    """Build the frozen anonymous pairwise immediate-quality prompt."""
+    """Build the frozen anonymous pairwise immediate-quality prompt.
+
+    ``current_user_known_aliases`` is a strictly additive, opt-in parameter
+    (default ``()`` -- omitting it reproduces the exact prior prompt for
+    every existing caller, including the formally qualified Step1 judge
+    pipeline). 2026-08-06: a real Step1 MS minimal pilot found this judge
+    misjudging a generator reply that correctly resolved EvoEmo's
+    third-person pseudonym convention (evidence text says "Anna is
+    stressed...", the generator correctly wrote "you mentioned...") as an
+    unsupported personal claim, because the judge was never told the two
+    names refer to the same person -- see PM_V1_5_V5_3_STEP1_MS_MINIMAL_
+    PILOT_FINDINGS_20260806_ZH.md. This only changes behavior for callers on
+    EvoEmo-shaped data that explicitly pass the current user's known
+    aliases; it does not alter the underlying rubric, schema, or excerpt
+    validation.
+    """
 
     system = """You are an independent evaluator of two anonymous emotional-support replies.
 Judge only the immediate quality of the next reply from the visible dialogue.
@@ -196,6 +212,14 @@ This is a comparative judgment, not a weighted score. Use tie when there is no
 meaningful difference. Use insufficient only when the visible material cannot
 support a judgment. Quote exact short excerpts from both responses and state
 which criterion was decisive."""
+    if current_user_known_aliases:
+        alias_list = ", ".join(f'"{a}"' for a in current_user_known_aliases)
+        system += (
+            f"\n\nThe user in this dialogue is sometimes referred to by name in the visible "
+            f"dialogue or evidence: {alias_list}. That name refers to the same user, not a "
+            f"different, third person -- a reply that correctly addresses that name's facts to "
+            f"the user in second person is not an unsupported or third-party claim."
+        )
     user = f"""VISIBLE DIALOGUE
 {canonical_json(visible_dialogue)}
 
@@ -275,8 +299,17 @@ def build_pointwise_risk_messages(
     visible_dialogue: Mapping[str, Any],
     selected_evidence: Mapping[str, Any] | Sequence[Any] | None,
     response: str,
+    current_user_known_aliases: Sequence[str] = (),
 ) -> list[dict[str, str]]:
-    """Build the frozen pointwise risk prompt with explicit event definitions."""
+    """Build the frozen pointwise risk prompt with explicit event definitions.
+
+    ``current_user_known_aliases`` is strictly additive and opt-in (default
+    ``()``, no behavior change for existing callers) -- see
+    build_immediate_support_messages' docstring for the real bug this
+    addresses (EvoEmo third-person pseudonyms correctly resolved by the
+    generator but misjudged as unsupported_personal_claim by this auditor,
+    which never saw the alias mapping).
+    """
 
     system = """You are a pointwise interaction-and-grounding risk auditor for one
 emotional-support reply. This is not a clinical-safety judgment and not an
@@ -308,6 +341,15 @@ exact visible/evidence substring that establishes it, using [none] only when
 the violation is precisely the absence of supporting evidence. Do not guess:
 use insufficient_evidence with severity null. Use not_applicable with severity
 null. Never combine the four findings into one score."""
+    if current_user_known_aliases:
+        alias_list = ", ".join(f'"{a}"' for a in current_user_known_aliases)
+        system += (
+            f"\n\nThe user in this dialogue is sometimes referred to by name in the visible "
+            f"dialogue or evidence: {alias_list}. That name refers to the same user, not a "
+            f"different, third person -- a reply that correctly addresses that name's facts to "
+            f"the user in second person is not an unsupported_personal_claim or stale_or_"
+            f"conflicting_evidence_use violation on that basis alone."
+        )
     user = f"""VISIBLE DIALOGUE
 {canonical_json(visible_dialogue)}
 

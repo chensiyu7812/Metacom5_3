@@ -251,15 +251,17 @@ def _judge_call(client, schema, messages, *, seed_parts: tuple, max_tokens: int,
 
 
 def run_pair_judgment(judge_client, entry: dict, state: dict, with_reply: str, without_reply: str,
-                       mp_item: MemoryItem) -> dict:
+                       mp_item: MemoryItem, aliases: tuple[str, ...]) -> dict:
     visible = visible_dialogue_for(state)
 
     fwd_messages = build_immediate_support_messages(
-        visible_dialogue=visible, response_a=with_reply, response_b=without_reply
+        visible_dialogue=visible, response_a=with_reply, response_b=without_reply,
+        current_user_known_aliases=aliases,
     )
     rev_a, rev_b = reverse_quality_pair(response_a=with_reply, response_b=without_reply)
     rev_messages = build_immediate_support_messages(
-        visible_dialogue=visible, response_a=rev_a, response_b=rev_b
+        visible_dialogue=visible, response_a=rev_a, response_b=rev_b,
+        current_user_known_aliases=aliases,
     )
     fwd_parsed, _ = _judge_call(
         judge_client, ImmediateSupportJudgment, fwd_messages,
@@ -283,7 +285,8 @@ def run_pair_judgment(judge_client, entry: dict, state: dict, with_reply: str, w
         ("without_mp", without_reply, {"MS": entry["discoveries"][MemorySource.MS].selected_items[0].text}),
     ):
         risk_messages = build_pointwise_risk_messages(
-            visible_dialogue=visible, selected_evidence=selected_evidence, response=reply
+            visible_dialogue=visible, selected_evidence=selected_evidence, response=reply,
+            current_user_known_aliases=aliases,
         )
         risk_parsed, _ = _judge_call(
             judge_client, PointwiseRiskJudgment, risk_messages,
@@ -366,7 +369,8 @@ def main() -> None:
             }
             if with_resp is not None and without_resp is not None:
                 judgment = run_pair_judgment(
-                    judge_client, entry, state, with_resp.reply, without_resp.reply, mp_item
+                    judge_client, entry, state, with_resp.reply, without_resp.reply, mp_item,
+                    known_aliases_for(entry["user"]),
                 )
                 row["judgment"] = judgment
                 print(f"  [JUDGE quality={judgment['quality'].get('status')} "

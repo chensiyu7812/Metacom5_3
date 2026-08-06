@@ -230,15 +230,17 @@ def _judge_call(client, schema, messages, *, seed_parts: tuple, max_tokens: int,
 
 
 def run_pair_judgment(judge_client, state: dict, with_reply: str, without_reply: str,
-                       card: StrategyCard) -> dict:
+                       card: StrategyCard, aliases: tuple[str, ...]) -> dict:
     visible = visible_dialogue_for(state)
 
     fwd_messages = build_immediate_support_messages(
-        visible_dialogue=visible, response_a=with_reply, response_b=without_reply
+        visible_dialogue=visible, response_a=with_reply, response_b=without_reply,
+        current_user_known_aliases=aliases,
     )
     rev_a, rev_b = reverse_quality_pair(response_a=with_reply, response_b=without_reply)
     rev_messages = build_immediate_support_messages(
-        visible_dialogue=visible, response_a=rev_a, response_b=rev_b
+        visible_dialogue=visible, response_a=rev_a, response_b=rev_b,
+        current_user_known_aliases=aliases,
     )
     fwd_parsed, _ = _judge_call(
         judge_client, ImmediateSupportJudgment, fwd_messages,
@@ -261,7 +263,8 @@ def run_pair_judgment(judge_client, state: dict, with_reply: str, without_reply:
         ("without_rs", without_reply, {}),
     ):
         risk_messages = build_pointwise_risk_messages(
-            visible_dialogue=visible, selected_evidence=selected_evidence, response=reply
+            visible_dialogue=visible, selected_evidence=selected_evidence, response=reply,
+            current_user_known_aliases=aliases,
         )
         risk_parsed, _ = _judge_call(
             judge_client, PointwiseRiskJudgment, risk_messages,
@@ -351,7 +354,8 @@ def main() -> None:
             }
             if with_resp is not None and without_resp is not None:
                 judgment = run_pair_judgment(
-                    judge_client, state, with_resp.reply, without_resp.reply, card
+                    judge_client, state, with_resp.reply, without_resp.reply, card,
+                    known_aliases_for(entry["user"]),
                 )
                 row["judgment"] = judgment
                 print(f"  [JUDGE quality={judgment['quality'].get('status')} "

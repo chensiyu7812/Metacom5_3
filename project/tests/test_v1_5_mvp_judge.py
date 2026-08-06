@@ -33,6 +33,36 @@ def _quality(preference: str) -> ImmediateSupportJudgment:
     )
 
 
+# 2026-08-06: real Step1 MS minimal pilot found this judge misjudging a
+# generator reply that correctly resolved EvoEmo's third-person pseudonym
+# convention -- see build_immediate_support_messages' docstring.
+
+
+def test_no_alias_instruction_when_none_given() -> None:
+    messages = build_immediate_support_messages(
+        visible_dialogue={}, response_a="A", response_b="B"
+    )
+    assert "referred to by name" not in messages[0]["content"]
+    risk_messages = build_pointwise_risk_messages(
+        visible_dialogue={}, selected_evidence=None, response="A"
+    )
+    assert "referred to by name" not in risk_messages[0]["content"]
+
+
+def test_alias_instruction_present_when_given() -> None:
+    messages = build_immediate_support_messages(
+        visible_dialogue={}, response_a="A", response_b="B",
+        current_user_known_aliases=("Anna",),
+    )
+    assert '"Anna"' in messages[0]["content"]
+    assert "same user, not a" in messages[0]["content"]
+    risk_messages = build_pointwise_risk_messages(
+        visible_dialogue={}, selected_evidence=None, response="A",
+        current_user_known_aliases=("Anna",),
+    )
+    assert '"Anna"' in risk_messages[0]["content"]
+
+
 def test_ab_ba_agreement_maps_back_to_original_identity() -> None:
     resolved = resolve_ab_ba_quality(_quality("A"), _quality("B"))
     assert resolved["resolved_preference"] == "A"
