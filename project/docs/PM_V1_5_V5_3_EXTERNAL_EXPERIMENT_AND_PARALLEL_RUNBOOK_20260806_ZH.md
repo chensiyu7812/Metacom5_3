@@ -642,3 +642,16 @@ P2-READY。机器报告为
 MS/ME已冻结方法、Step2或三份权威事实源。W7R交付后Worker停止，Leader复审通过后才冻结split/N、刷新唯一
 P2 release并实现formal runner。W7R前禁止paired generation；这项限制来自学习数据与运行schema依赖，不是
 根据模型结果新增的性能阈值。
+
+### 9.4 W7R复审与Leader接管P2R（2026-08-07）
+
+Worker W7R由commit `b21edc4`交付。Leader确认其schema/lineage修复真实，但学习蓝图仍不合格：MP通过把
+preference缩成两个词绕开三词冗余启发式，16/16实质增量仍已在当前消息中；MS continuity positive
+16/16仍冗余且只有5/16 Rank-1为构造target，三候选池也未覆盖EvoEmo观察到的13–33规模；ME 40/40
+合法Step1运行时特征被一并清空；state-level group ID放大独立单位；RS/interaction缺少完整学习slot与MP覆盖。
+
+完整复审见
+`docs/PM_V1_5_V5_3_P2_CANDIDATE_BLUEPRINT_V2_LEADER_AUDIT_20260807_ZH.md`。下一步不再由Worker迭代
+措辞；Worker保持停止。Leader只做一次方法级P2R：结构化MP候选、隐藏答案的真实密度MS池、恢复ME/RS合法
+运行时slot、重建group/split单位与真实多组件interaction。零API静态复审通过后立即冻结P2 release并进入
+formal runner/P3，不再以审计计数为目标继续表面调词。
