@@ -38,7 +38,7 @@ dataset adapter / current visible state
   -> same-user strictly-past private resource store
   -> source-specific Top-k candidate discovery
   -> exact Rank-1 execution candidate
-  -> machine-provable hard eligibility
+  -> machine-provable structural validity + narrow semantic opportunity features
   -> four source-specific low-capacity value heads (MP/MS/ME/RS)
   -> 16-action joint projection, including legal M0+R0
   -> typed response program
@@ -94,7 +94,9 @@ superdomain、并把外部不可测能力留在内部实验的直接证据。
 
 - 相同 state、当前可见对话和同用户私有历史；
 - 相同 memory compiler、Strategy Bank、query builder、候选池和 exact Rank-1；
-- 相同 hard eligibility；
+- 相同的结构性无效检查，以及相同的语义机会特征计算；只有candidate absent、wrong owner、future/stale
+  invalid、明确当前拒绝、明确重复/已执行等可机械证明的情况才能hard-off，稀有语义机会不得在Step1前被
+  窄正则静默删除；
 - 相同 typed Step2、generator、temperature、seed、token cap、guard 和 fallback；
 - 相同评审页面、rubric、聚类单位和置信区间算法。
 
@@ -108,7 +110,7 @@ superdomain、并把外部不可测能力留在内部实验的直接证据。
 |---|---|
 | Retrieval | candidate-present、Top-1 fit、owner/time正确率、abstention、候选池规模、retrieval margin；可比时报告 Recall@k/nDCG@k |
 | Eligibility | owner/time、goal/function、boundary/burden、specific increment 四门及 hard denial 率 |
-| PM Step1 | ON/OFF率、概率与阈值、hard-gate violation、BA/recall/specificity/Brier（只在有gold的内部域）、相对 matched-random 的选择增益 |
+| PM Step1 | ON/OFF率、概率与阈值、structural-invalid ON、BA/recall/specificity/Brier（只在有gold的内部域）、相对 matched-random 的选择增益 |
 | Step2 | requested-realized exact match、generator received/used evidence、required-contribution、functional contribution、grounding fidelity、atomic-move compliance、scaffold exposure、fallback |
 | End-to-end | quality NetWin、material-risk rate、critical events、prompt/total tokens、API cost；latency只作描述性诊断 |
 
@@ -178,6 +180,19 @@ confirmation按下列目标判断；这些数值是透明的实质差异参考�
 如果learned PM相对fixed-high、transparent-rule和matched-random在质量上没有明显实质下降，同时risk或cost
 至少一个稳定改善，就可以称“有限PM具有可用的Pareto选择能力”；若四head只有部分超过规则，则按组件报告，
 不把整个系统宣布作废。
+
+完整四资源主张的最低“及格”证据分两层，不能混为一个神秘总分：
+
+1. **学会选择**：MP/MS/ME/RS每个head在内部user/family-held-out数据上都必须同时产生ON和OFF，balanced
+   accuracy点估计高于0.5、优于恒开/恒关，并至少不劣于transparent-rule；同时在相同ON率或相同cost下优于
+   matched-random。这里不要求0.8或0.9，也不因单个宽CI宣布算法不存在，但恒关不能算学会。
+2. **选择有用**：联合16动作learned-PM相对fixed-high保持质量、降低risk或cost；相对transparent-rule和
+   matched-random至少有一个不可由“单纯少开”解释的净改善。只有第一层而没有第二层，只能说分类器学到了
+   标签；只有第二层而第一层失败，只能说一种保守启发式碰巧省资源。
+
+外部域只测其真实覆盖的子集：ESConv测RS，EvoEmo测MP_PROFILE/MS/可获得的ME，ES-MemEval测历史检索与QA。
+MP_PREFERENCE和外部缺失的拒绝建议能力由内部受控环境承担。外部不能测到某个子构念，不会抹掉内部证据，
+但也不能伪称该子构念已完成外部验证。
 
 P5的ESConv/EvoEmo使用同一estimand和参考线并报告完整CI，但不设置新的神秘“通过门”。ESConv正式test
 有169个dialogue、EvoEmo有18个user cluster；把turn当独立人会虚增精度。P5直接回答方向、运输、机制、
