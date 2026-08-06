@@ -108,6 +108,49 @@ def test_owned_evidence_is_tagged_and_ownerless_evidence_is_not() -> None:
     assert "owner=none" in rs_line
 
 
+def test_no_alias_instruction_when_no_known_aliases_given() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
+    )
+    assert program.current_user_known_aliases == ()
+    system_text = evidence_aware_generation_messages(
+        current_context="hi", program=program
+    )[0]["content"]
+    assert "sometimes referred to by name" not in system_text
+
+
+def test_known_alias_resolves_third_person_pseudonym_to_the_user() -> None:
+    # 2026-08-06 regression: a real live re-test found the generator failing
+    # to resolve a third-person pseudonym in MS evidence text (EvoEmo's own
+    # narrative convention, e.g. "Anna") back to the person it's talking to,
+    # instead addressing it as a separate third party ("You mentioned
+    # Anna...I'm worried she might be..."). EvoEmo's basic_info.name is
+    # already known, structured data -- this threads it through explicitly
+    # rather than asking the model to infer it.
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1",
+        candidates={"MS": ms()}, current_user_known_aliases=("Anna", "Anna Li"),
+    )
+    assert program.current_user_known_aliases == ("Anna", "Anna Li")
+    system_text = evidence_aware_generation_messages(
+        current_context="hi", program=program
+    )[0]["content"]
+    assert "sometimes referred to by name" in system_text
+    assert '"Anna"' in system_text and '"Anna Li"' in system_text
+    assert "the same person you are talking to" in system_text
+    # no slash-notation pronoun shorthand anywhere -- see the sibling test's
+    # note on why the model cannot be trusted not to echo it verbatim.
+    assert "you/your" not in system_text
+
+
+def test_blank_known_aliases_are_dropped_not_rendered_as_empty_quotes() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1",
+        candidates={"MS": ms()}, current_user_known_aliases=("", "  ", "Anna"),
+    )
+    assert program.current_user_known_aliases == ("Anna",)
+
+
 def test_me_literal_evidence_uses_required_fields_not_optional_mechanism() -> None:
     program = build_typed_response_program(
         requested_action_id="ME+R0", current_goal="x", current_user_id="u1", candidates={"ME": me()},

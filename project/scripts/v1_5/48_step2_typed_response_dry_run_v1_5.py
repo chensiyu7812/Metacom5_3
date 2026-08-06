@@ -172,8 +172,22 @@ def find_demo_states(
     return ordered[:n]
 
 
+def known_aliases_for(user: dict) -> tuple[str, ...]:
+    """EvoEmo's own basic_info.name is known, structured data -- e.g. "Anna
+    Li" -- used by ~20-79% of a given user's MS session summaries to refer
+    to them in the third person (checked directly against the real data,
+    not assumed). Return both the full name and first name: MS text uses
+    either ("Anna" alone, or occasionally the full "Anna Li")."""
+
+    name = str((user.get("basic_info") or {}).get("name") or "").strip()
+    if not name:
+        return ()
+    first = name.split()[0]
+    return (first, name) if first != name else (name,)
+
+
 def build_program_and_messages(
-    state: dict, discoveries: dict, session_index: int, uid: str
+    state: dict, discoveries: dict, session_index: int, uid: str, user: dict
 ) -> tuple:
     candidates: dict[str, TypedResourceCandidate] = {}
     ms_item = discoveries[MemorySource.MS].selected_items[0]
@@ -185,6 +199,7 @@ def build_program_and_messages(
         requested_action_id = "MPMS+R0" if "MS" in candidates else "MP+R0"
 
     program = build_typed_response_program(
+        current_user_known_aliases=known_aliases_for(user),
         requested_action_id=requested_action_id,
         current_goal=OBSERVABLE_RESPONSE_TASK_GOAL,
         current_user_id=uid,
@@ -298,7 +313,9 @@ def main() -> None:
     try:
         for i, (state, discoveries, session_index) in enumerate(batch, 1):
             uid = state["user_id"]
-            program, messages = build_program_and_messages(state, discoveries, session_index, uid)
+            program, messages = build_program_and_messages(
+                state, discoveries, session_index, uid, users[uid]
+            )
             print(f"\n=== [{i}/{len(batch)}] state={state['state_id']} user={uid} "
                   f"action={program.requested_action_id} evidence={len(program.evidence)} ===")
 

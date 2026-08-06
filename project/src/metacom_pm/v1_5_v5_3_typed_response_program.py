@@ -111,6 +111,17 @@ class TypedResponseProgram:
     maximum_burden: int
     visible_style_constraints: tuple[str, ...]
     cannot_integrate_reason: str | None = field(default=None)
+    # 2026-08-06: some evidence sources (e.g. EvoEmo's own MS session
+    # summaries) refer to the current user by a third-person pseudonym
+    # ("Anna", "Emily") rather than "the seeker" or a pronoun. A real live
+    # test found the generator sometimes fails to resolve that name back to
+    # "you" and instead addresses it as a separate third party ("You
+    # mentioned Anna... I'm worried she might be..."). If the caller knows
+    # the current user's display name(s), passing them here lets the prompt
+    # resolve this explicitly instead of leaving it to the model to infer.
+    # Empty by default -- not every caller has this information, and not
+    # every evidence source uses named pseudonyms.
+    current_user_known_aliases: tuple[str, ...] = field(default=())
 
     @property
     def is_m0(self) -> bool:
@@ -152,6 +163,7 @@ def build_typed_response_program(
     candidates: Mapping[str, TypedResourceCandidate],
     cannot_integrate_reason: str | None = None,
     expected_execution_candidate_ids: Mapping[str, str] | None = None,
+    current_user_known_aliases: tuple[str, ...] = (),
 ) -> TypedResponseProgram:
     if not _clean(current_goal):
         raise ValueError("current_goal must be non-empty")
@@ -223,6 +235,9 @@ def build_typed_response_program(
             "no verbatim record-log phrasing",
         ),
         cannot_integrate_reason=cannot_integrate_reason,
+        current_user_known_aliases=tuple(
+            alias for alias in current_user_known_aliases if _clean(alias)
+        ),
     )
 
 
@@ -295,6 +310,24 @@ def evidence_aware_generation_messages(
         "You may use first person only to describe your own present conversational act "
         "(e.g. \"I hear you\", \"I'm sorry\", \"I want to understand\"), never to narrate a "
         "personal life event, relationship, or biography.",
+    ]
+    if program.current_user_known_aliases:
+        # Deliberately no slash-separated pronoun notation here (e.g. writing
+        # "you/your" as shorthand): a real live test found the generator
+        # copy the literal notational string into a visible reply instead of
+        # treating it as an instruction (see the 2026-08-06 fix in this same
+        # function). Full natural sentences only.
+        alias_list = ", ".join(f"\"{a}\"" for a in program.current_user_known_aliases)
+        system_lines.append(
+            f"The person you are talking to is sometimes referred to by name in evidence "
+            f"text below: {alias_list}. That name refers to the same person you are "
+            f"talking to right now, not a different, separate person. If evidence mentions "
+            f"that name, address that fact directly to the person you are talking to, the "
+            f"same way you would address any other evidence about them. Never talk about "
+            f"that name as if it were someone else (for example, never say something like "
+            f"\"I'm worried she might be feeling overwhelmed\")."
+        )
+    system_lines += [
         "Forbidden: inventing a current cause, a stable personality trait, an unmentioned "
         "third party, a diagnosis, or an outcome guarantee.",
         "Forbidden in the visible reply: internal labels (MP/MS/ME/RS), resource IDs, field "
