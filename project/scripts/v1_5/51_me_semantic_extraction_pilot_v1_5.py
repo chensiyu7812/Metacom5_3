@@ -21,19 +21,31 @@ plausible it looks -- same fail-closed principle already used throughout
 this project (describe_memory_candidate's causal-boundary assertion,
 compile_atomic_reusable_outcome's literal-span requirement).
 
-What this pilot does NOT verify (a known, disclosed limitation, not an
-oversight): whether an extracted "completed action" / "observed outcome"
-pair is genuinely completed/observed rather than hypothetical or future --
-that is a semantic question the independent review correctly flagged as
-not mechanically checkable the same way substring-existence is. Spans here
-are only checked for verbatim existence in the source; a human read of the
-results is still required before treating any of them as usable evidence.
+2026-08-06 v3: the v2 prompt (few-shot examples) fixed recall (0/15 -> 4/15
+claimed+verbatim-passed on a fresh sample) but a manual read of all 4 full
+source chunks found only 1 was genuinely sound -- 2 failed on exactly the
+dimension flagged above as unverified (a third-party's action attributed to
+the user; a future-tense plan treated as a completed action), 1 failed on a
+related dimension (the "outcome" was actually a purpose/goal clause, not
+something observed to have happened). verify_extracted_span() below closes
+this gap with three cheap, deterministic checks -- calibrated against
+exactly those 4 real examples (owner: reject if no first-person subject
+marker in action_span; completion: reject if action_span contains a future/
+modal marker; outcome: reject if outcome_span contains a future/modal
+marker or opens with a purpose-clause marker like "to "/"in order to").
+This reproduced the manual verdict exactly on all 4 real cases (accepts the
+1 genuinely sound one, rejects the other 3, one for each real failure mode
+found). Still a heuristic, not a proof -- calibrated on n=4, needs more
+real data to know how well it generalizes, and does not catch every way an
+extraction could be wrong (e.g. a third-person subject phrased with "I"
+somewhere else in the span would slip through the owner check).
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -88,6 +100,35 @@ EXTRACTION_SYSTEM_PROMPT = (
     "received, or something someone else did), return has_reusable_outcome=false and leave "
     "both spans empty."
 )
+
+
+_FIRST_PERSON_SUBJECT_RE = re.compile(r"\b(?:I|I've|I'm|I'd|my|me|we|we've|we're|our)\b", re.IGNORECASE)
+_FUTURE_MODAL_RE = re.compile(
+    r"\b(?:will|'ll|going to|gonna|would|plan to|planning to|hope to|hoping to|"
+    r"want to|wanting to|intend to|should|might|may|about to)\b",
+    re.IGNORECASE,
+)
+_PURPOSE_CLAUSE_RE = re.compile(r"^\s*(?:to |in order to |so that |so as to )", re.IGNORECASE)
+
+
+def verify_extracted_span(action_span: str, outcome_span: str) -> tuple[str, ...]:
+    """Cheap, deterministic checks calibrated on 4 real extractions (see the
+    module docstring's 2026-08-06 v3 note): reproduces a manual read of all
+    4 exactly (accepts the 1 sound one, rejects the other 3, one failure
+    reason each). Heuristic, not a proof -- n=4 calibration set, will miss
+    failure modes it wasn't calibrated against.
+    """
+
+    errors: list[str] = []
+    if not _FIRST_PERSON_SUBJECT_RE.search(action_span):
+        errors.append("ACTION_HAS_NO_FIRST_PERSON_SUBJECT")
+    if _FUTURE_MODAL_RE.search(action_span):
+        errors.append("ACTION_LOOKS_LIKE_A_FUTURE_PLAN_NOT_A_COMPLETED_ACTION")
+    if _FUTURE_MODAL_RE.search(outcome_span):
+        errors.append("OUTCOME_LOOKS_LIKE_A_FUTURE_PLAN_NOT_AN_OBSERVED_RESULT")
+    if _PURPOSE_CLAUSE_RE.search(outcome_span):
+        errors.append("OUTCOME_LOOKS_LIKE_A_PURPOSE_CLAUSE_NOT_AN_OBSERVED_RESULT")
+    return tuple(errors)
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -192,7 +233,7 @@ def main() -> None:
     client = OpenAICompatibleClient(endpoint)
 
     results = []
-    n_claimed = n_verbatim_valid = 0
+    n_claimed = n_verbatim_valid = n_fully_verified = 0
     try:
         for i, c in enumerate(chunks, 1):
             messages = [
@@ -216,10 +257,18 @@ def main() -> None:
                 row["outcome_span_verbatim_in_source"] = bool(outcome_ok)
                 valid = bool(action_ok and outcome_ok)
                 row["verbatim_validated"] = valid
+                semantic_errors = ()
                 if valid:
                     n_verbatim_valid += 1
+                    semantic_errors = verify_extracted_span(
+                        extracted["action_span"], extracted["outcome_span"]
+                    )
+                    row["semantic_verification_errors"] = list(semantic_errors)
+                    row["fully_verified"] = not semantic_errors
+                    if not semantic_errors:
+                        n_fully_verified += 1
                 print(f"\n[{i}/{len(chunks)}] {c['user_id']}: claimed=yes, "
-                      f"verbatim_validated={valid}")
+                      f"verbatim_validated={valid}, semantic_errors={semantic_errors}")
                 print(f"  action: {extracted['action_span']!r}")
                 print(f"  outcome: {extracted['outcome_span']!r}")
             else:
@@ -238,8 +287,12 @@ def main() -> None:
     print(f"chunks piloted: {len(chunks)}")
     print(f"extractor claimed a reusable outcome: {n_claimed}")
     print(f"claims that passed the verbatim-substring hard check: {n_verbatim_valid}")
-    print(f"pilot verbatim-validated rate: {n_verbatim_valid}/{len(chunks)} "
-          f"({n_verbatim_valid/len(chunks):.1%})" if chunks else "n/a")
+    print(f"of those, claims that ALSO passed owner/completion/purpose-clause checks: "
+          f"{n_fully_verified}")
+    print(f"pilot fully-verified rate: {n_fully_verified}/{len(chunks)} "
+          f"({n_fully_verified/len(chunks):.1%})" if chunks else "n/a")
+    print("NOTE: fully-verified is still a heuristic (calibrated on n=4), not proof of "
+          "correctness -- a human read is still warranted before trusting any candidate.")
     print(f"(for comparison: strict regex compiler's real rate on the full 747-chunk "
           f"panel was 0.40%, 3/747 -- this pilot only sampled chunks that regex already "
           f"rejects, so these two rates are not directly comparable as stated; see the "
