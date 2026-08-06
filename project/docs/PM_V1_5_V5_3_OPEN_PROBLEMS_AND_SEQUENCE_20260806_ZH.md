@@ -33,16 +33,17 @@ V2压力测试为了干净直接把这类candidate从干扰项里删掉了。**�
 
 ## 第一层：正式训练开始之前必须先有的基础设施
 
-### 5. 候选级Step1接口（`contribution_slot`）目前只是文档描述，没有真实代码实现
-`PM_V1_5_V5_3_INTEGRATED_EVIDENCE_EXECUTION_PLAN_20260805_ZH.md`第2.3节写清楚了每个组件
-"值得开启需要的可观察槽位"，但目前项目里能找到的真实特征构建代码（`PMV2FeatureBuilder`）
-是要被淘汰的旧pre-retrieval表示，没有一份代码真的在计算`goal_function_fit`、
-`specific_increment`、`current_redundancy`这些槽位。**这是接下来最关键的基础工程**——
-没有这层，"PM学会了什么"这句话没有任何具体所指。**怎么修**：把计划文档里那张表格，逐项
-翻译成真实、可测试的Python函数，复用今天已经验证过的组件（`compile_atomic_reusable_
-outcome`判断ME的`past_action_result`、`current_action_invitation`可以用简单的意图分类
-规则或小模型判断、RS已有`when_to_use`/`when_not_to_use`的结构化字段可以直接用）。工作量：
-中等，但是一次性的、后面所有工作都要用的基础设施，值得优先做。
+### 5. 候选级Step1接口（`contribution_slot`）——**已完成**
+`v1_5_v5_3_contribution_slot_features.py`（commit `611e75e`）：四个组件的槽位函数全部
+实现，最大程度复用已验证组件（`describe_memory_candidate()`提供age/margin/token/capacity
+这些共享数值槽位；`observable_flags()`——今天已经为RS验证过——被ME和MP复用为
+`current_action_invitation`/`preference_applies_to_response_act`，不是另起一套可能不
+一致的规则；`compile_atomic_reusable_outcome`/`compile_atomic_session_observation`
+提供ME/MS的候选有效性）。**用ME PM Effect试点那8个真实、双重校验过的case直接验证**，
+过程中发现并修复了两个真实问题（试点的邀请行动话术没有真的匹配`_ADVICE_WELCOME_RE`；
+冗余检查比较了候选全文导致同主题的ON/OFF案例都被误判成冗余，改成只比较结果span后修好），
+修复后8/8精确匹配。11个新单元测试，4个直接复现真实case，全部通过，相关模块36个既有
+测试无回归。
 
 ### 6. M0+R0证据幻觉残留（约30-33%）还没降到工程兼容门
 这个bug已经找到、部分修复（从50%降到30-33%），但审核建议在正式训练前要把Step2彻底冻结，
