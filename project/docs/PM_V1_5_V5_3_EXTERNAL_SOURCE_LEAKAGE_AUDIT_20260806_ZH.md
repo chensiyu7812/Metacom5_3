@@ -54,7 +54,7 @@
 
 ```bash
 PYTHONNOUSERSITE=1 PYTHONPATH=src \
-/home/tokkio/miniconda3/envs/distress_build/bin/python \
+/home/tokkio/snap/metacom_v33_pm_v1_5_repair/.venv-pm-v1-5/bin/python \
 scripts/v1_5/69_audit_v5_3_external_source_leakage_v1_5.py
 ```
 
@@ -62,7 +62,7 @@ scripts/v1_5/69_audit_v5_3_external_source_leakage_v1_5.py
 
 ```bash
 PYTHONNOUSERSITE=1 PYTHONPATH=src \
-/home/tokkio/miniconda3/envs/distress_build/bin/python \
+/home/tokkio/snap/metacom_v33_pm_v1_5_repair/.venv-pm-v1-5/bin/python \
 scripts/v1_5/69_audit_v5_3_external_source_leakage_v1_5.py \
   --internal-superdomain <frozen-json-or-jsonl>
 ```
