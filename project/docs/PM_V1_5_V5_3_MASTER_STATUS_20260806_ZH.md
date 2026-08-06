@@ -1,5 +1,12 @@
 # V5.3全组件状态总报告：V5.2到现在，修了什么、提升了多少、还剩什么（2026-08-06）
 
+> **状态：HISTORICAL_SNAPSHOT_ONLY / 不再作为当前事实源。** 本文在同日多轮诊断中持续追加，
+> 部分结论（尤其旧PMV2 backend的ME 0%支持、M0+R0残留fallback）已被后续范围审计或正式代码
+> 修复更新。当前状态只以
+> `PM_V1_5_V5_3_INTEGRATED_EVIDENCE_EXECUTION_PLAN_20260805_ZH.md`、
+> `data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json` 与
+> `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 三者为准；本文仅保留调查过程和历史证据。
+
 本报告回答一个问题："5.3能不能确保没问题，学出来的PM能用，和baseline可比，结果有意义？"
 覆盖MP/ME/MS/RS四个组件 + Step1（训练管线）+ Step2（真实生成兼容门），按"V5.2是什么状态→
 V5.3现在验证到什么程度→还剩什么没修"的顺序整理。取代之前的`PM_V1_5_V5_3_CONSOLIDATED_

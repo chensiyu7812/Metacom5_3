@@ -27,6 +27,7 @@ def test_me_on_case_action_invited_with_valid_candidate() -> None:
     )
     assert obs.past_action_result is True
     assert obs.current_action_invitation is True
+    assert obs.current_action_readiness == "INVITES_ACTION"
     assert obs.current_redundant is False
 
 
@@ -39,6 +40,7 @@ def test_me_off_case_action_declined() -> None:
     )
     assert obs.past_action_result is True
     assert obs.current_action_invitation is False
+    assert obs.current_action_readiness == "DECLINES_ACTION"
 
 
 def test_me_off_case_context_only_candidate_has_no_action_result() -> None:
@@ -72,6 +74,20 @@ def test_me_candidate_absent_reports_none_not_false() -> None:
     )
     assert obs.candidate_present is False
     assert obs.past_action_result is None
+
+
+def test_me_unknown_action_readiness_is_preserved_not_negative_gold() -> None:
+    candidate = "When work felt crowded, I wrote one note before replying, and it helped me feel calmer."
+    item = _item(candidate, source=MemorySource.ME)
+    obs = me_contribution_slots(
+        current_user_text="Work has felt crowded this week.",
+        candidate_text=candidate,
+        source_items=[item],
+        selected_items=[item],
+        session_index=45,
+    )
+    assert obs.current_action_readiness == "UNKNOWN"
+    assert obs.current_action_invitation is False
 
 
 def test_ms_continuity_request_detected() -> None:

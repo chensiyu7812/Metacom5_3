@@ -1,6 +1,7 @@
 {
   "protocol": "pm-v1.5-v5.3-integrated-evidence-execution-and-confirmation-v1",
-  "status": "PROPOSED_PRE_IMPLEMENTATION",
+  "status": "PROPOSED_P1_IN_PROGRESS",
+  "last_aligned_date": "2026-08-06",
   "supersedes_for_future_runs": [
     "pm-v1.5-v5.2-backend-locked-clause-append-executor"
   ],
@@ -59,12 +60,13 @@
       "candidate_age",
       "retrieval_margin",
       "incremental_input_tokens",
-      "component_specific_response_act_fit"
+      "component_specific_response_act_fit",
+      "action_readiness_three_state"
     ],
     "required_interactions": [
       "goal_function_fit_x_contribution_slot_available",
       "specific_increment_x_current_redundancy",
-      "past_action_result_x_current_action_invitation",
+      "past_action_result_x_current_action_readiness",
       "continuity_request_x_specific_prior_observation",
       "card_precondition_x_nonredundancy_x_burden_fit"
     ],
@@ -89,6 +91,9 @@
       "visible_style_constraints"
     ],
     "user_visible_internal_labels_allowed": false,
+    "generator_self_reported_trace_may_invalidate_m0_r0": false,
+    "m0_r0_used_evidence_ids_normalized_to_empty": true,
+    "raw_generator_trace_retained_for_telemetry": true,
     "second_free_llm_fallback_allowed": false,
     "fallback": "deterministic context-only M0 response retained as ITT outcome"
   },
@@ -102,7 +107,8 @@
       "retrieval_fit_label", "eligibility_owner_time", "eligibility_goal_function",
       "eligibility_boundary_burden", "eligibility_specific_increment",
       "pm_probability", "pm_threshold", "pm_decision", "requested_action", "realized_action",
-      "generator_received_evidence_ids", "used_evidence_ids", "functional_contribution",
+      "generator_received_evidence_ids", "generator_reported_used_evidence_ids",
+      "normalized_used_evidence_ids", "used_evidence_ids", "functional_contribution",
       "grounding_fidelity", "atomic_move_compliance", "fallback_reason",
       "quality_outcome", "risk_outcome", "prompt_tokens", "total_tokens",
       "primary_failure_owner", "secondary_failure_owner"
@@ -140,6 +146,13 @@
     "power_simulation_before_generation": true,
     "split_keys": ["synthetic_user", "semantic_family", "counterfactual_group"],
     "external_text_copying_allowed": false,
+    "external_subtype_prevalence_is_training_target": false,
+    "old_internal_rows_may_be_relabelled_in_place": false,
+    "me_positive_candidate_must_compile_and_bind_rank1": true,
+    "me_action_readiness_values": ["INVITES_ACTION", "DECLINES_ACTION", "UNKNOWN"],
+    "me_unknown_action_readiness_is_negative_gold": false,
+    "me_action_readiness_fresh_qualification_required": true,
+    "candidate_subtype_may_override_goal_relevance": false,
     "new_outcome_based_sample_expansion_allowed": false
   },
   "baselines": {

@@ -1,4 +1,12 @@
-# 真正的泛化检验：候选级特征在训练域和EvoEmo域之间的真实差距（2026-08-06，路线图第8项）
+# 历史诊断：旧 PMV2 后端与 EvoEmo 的候选级特征差距（2026-08-06）
+
+> **重要范围更正（2026-08-06）**：本文所谓“训练域”实际来自已经淘汰的 468-card PMV2
+> backend，不是当前 V3 exact Rank-1 effect construction，更不是尚未生成的 V5.3 FIT。
+> 因而本文 `past_action_result=0%` 只证明旧 backend 不能拿来训练新的 ME head，不能证明当前
+> 正式构造没有 ME 支持。当前构造的零 API 复核显示：128/128 个 effect state 的 exact Rank-1
+> ME 候选均通过同一 compiler 并正确绑定。当前结论见
+> `PM_V1_5_V5_3_ME_CURRENT_CONSTRUCTION_SUPPORT_AUDIT_20260806_ZH.md`；本文保留为历史诊断，
+> 不再作为 V5.3 readiness 证据。
 
 **2026-08-06后续更正**：独立审核指出`incremental_injected_tokens`/`age`这几个字段名字
 叫"候选级特征"，实际计算时用的是`describe_memory_candidate()`对整个`selected_items`
@@ -11,7 +19,7 @@ Rank-1候选自己的值。核实过是真的：训练域`selected_items`平均�
 就只读`selected_items[0]`），但token成本的差距从虚高的"7倍"修正为约"2.5倍"（真实注入
 的单条候选：训练域均值37 token，EvoEmo域均值92 token）。下文数字已更新为修正后的版本。
 
-## 这才是用户最初问的问题的正确答案
+## 本文仍能回答的窄问题
 
 之前测的两件事都不是这个问题本身：`PMV2FeatureBuilder`的OOD测的是要被淘汰的旧目录统计
 表示；检索器压力测试测的是"找不找得到候选"。这次（`60_contribution_slot_domain_

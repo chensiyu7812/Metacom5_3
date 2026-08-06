@@ -8,6 +8,7 @@ from metacom_pm.v1_5_v5_3_typed_response_program import (
     evidence_aware_generation_messages,
     evidence_usage_plausibility_errors,
     m0_fallback_response,
+    normalize_generator_response_for_program,
     parse_generator_response_dict,
     speaker_attribution_guard_errors,
     typed_response_guard_errors,
@@ -173,6 +174,50 @@ def test_genuine_m0_r0_gets_a_no_evidence_prompt_not_a_dangling_reference() -> N
     assert "own experience or biography" not in system_text  # ownership rule is vacuous too
 
 
+def test_genuine_m0_r0_normalizes_invented_trace_without_discarding_reply() -> None:
+    program = build_typed_response_program(
+        requested_action_id="M0+R0",
+        current_goal="respond naturally to the current turn",
+        current_user_id="u1",
+        candidates={},
+    )
+    raw = parse_generator_response_dict(
+        {
+            "reply": "That sounds like a difficult day.",
+            "used_evidence_ids": ["user_message_1"],
+            "realized_response_act": "reflection",
+        }
+    )
+    assert "TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID" in typed_response_guard_errors(
+        response=raw, program=program
+    )
+    normalized = normalize_generator_response_for_program(response=raw, program=program)
+    assert normalized.used_evidence_ids == ()
+    assert normalized.reported_used_evidence_ids == ("user_message_1",)
+    assert typed_response_guard_errors(response=normalized, program=program) == ()
+
+
+def test_evidence_program_does_not_normalize_unauthorized_trace() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0",
+        current_goal="continue the prior observation",
+        current_user_id="u1",
+        candidates={"MS": ms()},
+    )
+    raw = parse_generator_response_dict(
+        {
+            "reply": "You mentioned a shift change.",
+            "used_evidence_ids": ["user_message_1"],
+            "realized_response_act": "continuity reflection",
+        }
+    )
+    normalized = normalize_generator_response_for_program(response=raw, program=program)
+    assert normalized.used_evidence_ids == ("user_message_1",)
+    assert "TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID" in typed_response_guard_errors(
+        response=normalized, program=program
+    )
+
+
 def test_no_alias_instruction_when_no_known_aliases_given() -> None:
     program = build_typed_response_program(
         requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
@@ -324,6 +369,18 @@ def test_evidence_usage_plausibility_ignores_unclaimed_evidence() -> None:
     assert evidence_usage_plausibility_errors(response=reply_using_nothing, program=program) == ()
 
 
+def test_evidence_usage_plausibility_exempts_response_shaping_mp() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MP+R0",
+        current_goal="respond within the user's practical constraints",
+        current_user_id="u1",
+        candidates={"MP": mp()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+    response = _resp("What part of this feels most urgent today?", used=(evidence_id,))
+    assert evidence_usage_plausibility_errors(response=response, program=program) == ()
+
+
 def test_call_with_guard_and_rewrite_all_four_branches() -> None:
     program = build_typed_response_program(
         requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
@@ -380,6 +437,43 @@ def test_call_with_guard_and_rewrite_all_four_branches() -> None:
     client = _FakeClient([None])
     response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
     assert status == "no_structured_output" and response is None
+
+
+def test_call_path_keeps_clean_m0_reply_when_model_invents_trace_id() -> None:
+    program = build_typed_response_program(
+        requested_action_id="M0+R0",
+        current_goal="respond naturally",
+        current_user_id="u1",
+        candidates={},
+    )
+
+    class _Parsed:
+        def model_dump(self):
+            return {
+                "reply": "It sounds like today has been difficult.",
+                "used_evidence_ids": ["user_message_1"],
+                "realized_response_act": "reflection",
+            }
+
+    class _Client:
+        calls = 0
+
+        def chat(self, messages, response_schema=None):
+            self.calls += 1
+            return "ok", _Parsed()
+
+    client = _Client()
+    response, status, errors = call_with_guard_and_rewrite(
+        client,
+        None,
+        [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}],
+        program,
+    )
+    assert status == "clean"
+    assert errors == ()
+    assert client.calls == 1
+    assert response.used_evidence_ids == ()
+    assert response.reported_used_evidence_ids == ("user_message_1",)
 
 
 def test_call_with_guard_and_rewrite_fallback_boundary_when_rs_present() -> None:

@@ -252,6 +252,11 @@ class GeneratorResponse:
     reply: str
     used_evidence_ids: tuple[str, ...]
     realized_response_act: str
+    # Preserve the model's raw trace for telemetry when the runtime can
+    # deterministically normalize it.  A legal M0+R0 program has no
+    # authorized evidence, so an invented id must not invalidate an
+    # otherwise usable visible reply.
+    reported_used_evidence_ids: tuple[str, ...] = ()
 
 
 def parse_generator_response_dict(raw: Mapping[str, object]) -> GeneratorResponse:
@@ -263,7 +268,41 @@ def parse_generator_response_dict(raw: Mapping[str, object]) -> GeneratorRespons
     if not isinstance(used_ids, (list, tuple)) or not all(isinstance(i, str) for i in used_ids):
         raise ValueError("generator response used_evidence_ids must be a list of strings")
     return GeneratorResponse(
-        reply=_clean(reply), used_evidence_ids=tuple(used_ids), realized_response_act=_clean(act)
+        reply=_clean(reply),
+        used_evidence_ids=tuple(used_ids),
+        realized_response_act=_clean(act),
+        reported_used_evidence_ids=tuple(used_ids),
+    )
+
+
+def normalize_generator_response_for_program(
+    *, response: GeneratorResponse, program: TypedResponseProgram
+) -> GeneratorResponse:
+    """Apply only program-provable trace normalization.
+
+    ``used_evidence_ids`` is generator telemetry, not gold.  For a genuine
+    M0+R0 program the authorized evidence set is structurally empty, so the
+    realized set is deterministically empty regardless of what identifier
+    the model self-reports.  The raw report remains available for audit.
+    Evidence-bearing programs remain unchanged and are still checked
+    strictly by :func:`typed_response_guard_errors`.
+    """
+
+    reported = response.reported_used_evidence_ids or response.used_evidence_ids
+    if program.is_m0 and response.used_evidence_ids:
+        return GeneratorResponse(
+            reply=response.reply,
+            used_evidence_ids=(),
+            realized_response_act=response.realized_response_act,
+            reported_used_evidence_ids=tuple(reported),
+        )
+    if response.reported_used_evidence_ids:
+        return response
+    return GeneratorResponse(
+        reply=response.reply,
+        used_evidence_ids=response.used_evidence_ids,
+        realized_response_act=response.realized_response_act,
+        reported_used_evidence_ids=tuple(reported),
     )
 
 
@@ -578,23 +617,20 @@ def evidence_usage_plausibility_errors(
     not catch a superficial word-level echo that isn't real grounding either
     -- treat a pass as "no obvious non-use", not proof of real grounding.
 
-    2026-08-06 (Step1 RS minimal pilot): RS is skipped here for the same
-    reason it is exempt from REQUIRED_EVIDENCE_NOT_USED above -- this word-
-    overlap primitive assumes evidence is a narrative fact a faithful reply
-    should lexically echo (true for MS/ME), but RS_ATOMIC_MOVE's
-    literal_evidence is a behavioral instruction ("offer grounded
-    validation"); a reply that genuinely follows it (e.g. "that sounds
-    really hard") has no reason to share content words with the instruction
-    itself. Real paired generation found this exact false-positive 3/8
-    times (p7, p10, p15), always on the same guard, always discarding an
-    otherwise-clean RS-following reply. See PM_V1_5_V5_3_STEP1_RS_MINIMAL_
-    PILOT_FINDINGS_20260806_ZH.md.
+    MP and RS are skipped here for the same reason they are exempt from
+    REQUIRED_EVIDENCE_NOT_USED above.  This word-overlap primitive assumes
+    evidence is a narrative fact a faithful reply should lexically echo
+    (true for MS/ME).  MP preferences/profile constraints and RS atomic
+    moves are response-shaping instructions; a reply can genuinely follow
+    them without sharing content words with the instruction itself.  Real
+    paired generation found this false-positive for both component types;
+    the global ledger freezes the shared exemption in V15-PM-43.
     """
 
     reply_words = content_words(response.reply)
     used_ids = set(response.used_evidence_ids)
     for item in program.evidence:
-        if item.component == "RS" or item.evidence_id not in used_ids:
+        if item.component in {"MP", "RS"} or item.evidence_id not in used_ids:
             continue
         evidence_words = content_words(item.literal_evidence)
         if evidence_words and not (evidence_words & reply_words):
@@ -625,7 +661,9 @@ def call_with_guard_and_rewrite(client, response_schema, messages, program):
     result, parsed = client.chat(messages, response_schema=response_schema)
     if parsed is None:
         return None, "no_structured_output", (str(result),)
-    response = parse_generator_response_dict(parsed.model_dump())
+    response = normalize_generator_response_for_program(
+        response=parse_generator_response_dict(parsed.model_dump()), program=program
+    )
     errors = (
         typed_response_guard_errors(response=response, program=program)
         + speaker_attribution_guard_errors(response=response)
@@ -651,7 +689,9 @@ def call_with_guard_and_rewrite(client, response_schema, messages, program):
     ]
     result2, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
     if parsed2 is not None:
-        response2 = parse_generator_response_dict(parsed2.model_dump())
+        response2 = normalize_generator_response_for_program(
+            response=parse_generator_response_dict(parsed2.model_dump()), program=program
+        )
         errors2 = (
             typed_response_guard_errors(response=response2, program=program)
             + speaker_attribution_guard_errors(response=response2)

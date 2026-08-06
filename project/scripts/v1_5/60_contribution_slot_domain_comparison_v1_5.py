@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""The properly-scoped generalization check (roadmap item 8): do the
-candidate-level contribution_slot features (v1_5_v5_3_contribution_slot_
-features.py, commit 611e75e) show a distributional gap between the
-synthetic training domain and real EvoEmo, for the SAME top-1 candidate a
-real Step1 head would actually see?
+"""Legacy-backend contribution-slot transport diagnostic.
+
+Important scope correction (2026-08-06): the so-called training domain in
+this script is the obsolete 468-card PMV2 backend, not the current V3 exact
+Rank-1 effect construction and not future V5.3 FIT.  Its zero
+``past_action_result`` support proves that the legacy backend must not be
+reused for the new ME head.  It does *not* prove that the current formal
+construction lacks ME support.  See script 61 for the current-construction
+audit.
 
 This is deliberately NOT a repeat of the earlier PMV2FeatureBuilder OOD
 audit (PM_V1_5_V5_3_MASTER_STATUS_20260806_ZH.md section 9): that measured
@@ -186,6 +190,11 @@ def main() -> None:
 
     write_json(OUT_PATH, {
         "protocol": "pm-v1.5-contribution-slot-domain-comparison-v1",
+        "status": "LEGACY_PMV2_BACKEND_DIAGNOSTIC_NOT_CURRENT_V5_3_READINESS",
+        "synthetic_source_role": "obsolete_468_card_pmv2_backend",
+        "current_construction_audit": (
+            "scripts/v1_5/61_audit_v5_3_me_construction_support_v1_5.py"
+        ),
         "n_train": len(train_obs), "n_evoemo": len(evoemo_obs),
         "comparison": comparison,
     })

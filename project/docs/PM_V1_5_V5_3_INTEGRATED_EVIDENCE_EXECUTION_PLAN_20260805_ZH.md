@@ -1,8 +1,15 @@
 # PM V1.5 V5.3：证据整合执行器、效用路由与一次性再确认方案
 
-状态：`PROPOSED / NEW METHOD VERSION / PRE-IMPLEMENTATION / 2026-08-05`
+状态：`PROPOSED / NEW METHOD VERSION / P1 IN PROGRESS / LAST ALIGNED 2026-08-06`
 
 机器合同：`data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json`
+
+> **版本对齐记录**：本文、机器合同
+> `data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json` 与
+> `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md` 是三份权威事实源，分别承载人类计划、机器约束和
+> 失败/修复历史。任何会话新增的已验证进展、问题或假设推翻，必须同步回写相应事实源；开始新一轮
+> 工作前先核对三者状态，不得凭对话记忆判断进度。`PM_V1_5_V5_3_OPEN_PROBLEMS_AND_SEQUENCE_`
+> `20260806_ZH.md` 从本次对齐起只作历史快照，不再作为第四份活跃清单。
 
 ## 0. 直接结论
 
@@ -81,6 +88,12 @@ Rank-1 当前目标适配、PM价值判断、开场白质量、资源真实边�
 - execution candidate 必须同 user、严格过去、版本有效，并能回溯 literal evidence；
 - 检索排序不读回复、judge、gold action 或外部 outcome。
 
+> 实现状态（2026-08-06）：`58_retriever_scale_stress_test_v2_v1_5.py` 已在**构造性合同压力测试**
+> 中验证：给定编译器合格、话题对齐的信号候选时，MP/MS/ME 不会仅因真实目录规模而机械塌缩。
+> 这只排除了“规模必然导致崩溃”，不等于生产 Rank-1 在自然状态上已经可靠，也不等于 BGE-MS
+> 已正式晋级；MS 的真实用户级比较仍不显著且 BGE 目前仅为 opt-in challenger。V1 因构造错误所得
+> 的塌缩结论已撤回，详见账本 V15-EVAL-23。
+
 ### 2.2 Eligibility：只挡机器可证明的错误
 
 硬 OFF 仅包括：candidate absent、wrong owner、版本失效、已明确冲突、明确当前边界禁止、资源定义不完整。
@@ -101,11 +114,22 @@ Step1 不挑具体记忆，不写回复，也不预测复杂心理需求。每�
 | ME | 当前欢迎一个行动选项，且候选含过去动作及结果/机制 | 当前不要行动；只有背景事件；结果不可迁移 |
 | RS | 卡片的 atomic move 与当前请求/边界匹配且未在上一轮执行 | 动作已执行、重复、负担超限或 `when_to_use` 不成立 |
 
+> 实现状态（2026-08-06）：上表槽位已实现为候选级**原型代码**
+> `src/metacom_pm/v1_5_v5_3_contribution_slot_features.py`（commit `611e75e`），最大程度
+> 复用已验证组件（`describe_memory_candidate`/`observable_flags`/`compile_atomic_reusable_
+> outcome`/`compile_atomic_session_observation`），字段区分 `rank1_*`（仅用 exact Rank-1
+> 候选计算，代表真正会被注入执行的内容）与 `topk_*`（Top-k 诊断量，不代表实际注入内容，
+> 二者混用曾导致一次需要更正的域间差距虚高，见账本 V15-MEAS-51）。ME 的8个确定性模板 case
+> 在把措辞改为正则可识别形式后达到8/8，只证明 schema/规则管线一致，不证明自然语义泛化，
+> 也不产生 Effect FIT gold。**尚未做**：四组件 contribution-slot 的独立未见改写资格、MP/MS/RS
+> 的跨域支持审计，以及真实 paired outcome 标签。
+
 Primary 仍是四个 source-specific、低容量 L2 logistic value heads。输入包含预注册主效应和少量明确交互：
 
 - `goal_function_fit × contribution_slot_available`；
 - `specific_increment × current_redundancy`；
-- `past_action_result × current_action_invitation`（ME）；
+- `past_action_result × current_action_readiness`（ME，三态：邀请行动/拒绝行动/不明确；
+  `UNKNOWN` 不得折叠成负例）；
 - `continuity_request × specific_prior_observation`（MS）；
 - `preference_applies_to_response_act`（MP）；
 - `card_precondition × nonredundancy × burden_fit`（RS）；
@@ -196,6 +220,38 @@ functional contribution或grounding fidelity的gold；必须结合运行时绑�
 - `functional_contribution_rate`、`grounding_fidelity_rate`、`scaffold_exposure_rate`、`fallback_rate`；
 - quality/risk/cost 按 `retrieval_fit × pm_correct × execution_valid` 分层，禁止只报全局平均掩盖责任。
 
+### 2.7 P1现有工程进展（2026-08-06，见账本第20节）
+
+P1（实现 V5.3 executor，零新 outcome）已有以下真实、经代码验证的进展，供跨会话对齐当前状态：
+
+**已完成**：
+- 候选级 `contribution_slot` 原型代码（2.3节，commit `611e75e`），并完成 Rank-1/Top-k 字段拆分；
+- MP/ME/MS 构造性规模压力测试已排除“目录规模必然导致检索崩溃”（不等于自然状态资格）；
+- ME 编译器召回率修复（0.25%→1.89%，账本 V15-MEM-56）与检索排序断链修复
+  （真实138-state面板0/138→108/138，账本 V15-ARCH-33）；
+- `PMV2FeatureBuilder` 确认为已弃用的 pre-retrieval 表示，不作为 Step1 输入（账本 V15-ARCH-34）；
+- MP/RS 从 `REQUIRED_EVIDENCE_NOT_USED` 及其变体豁免（账本 V15-PM-43）；
+- judge 化名消解，修复 EvoEmo 第三方化名误判（账本 V15-GEN-36）。
+- 当前 V3/V5.2 已消费构造的 ME exact Rank-1 支持复核：128/128 个 effect state 均通过
+  compiler 且与构造目标精确绑定；这只证明当前构造可承载 ME，不是 V5.3 fresh 资格或效应证据。
+- 合法 `M0+R0` 的空证据trace已改为运行时确定性规范化：模型若自报`user_message_1`等不存在
+  ID，只作为原始telemetry保留，realized `used_evidence_ids`固定为空，不再丢弃正常无资源回复；
+  有授权证据的动作继续严格检查ID（账本V15-ARCH-35）。
+
+**已发现、尚未解决、P2冻结数据前必须处理**：
+- ME 试点目前只验证了 eligibility/特征管线，不是本文2.3/4.3节要求的真实 Effect FIT 标签
+  （账本 V15-EVAL-24）；MP/MS/RS 尚未各自跑过同等方法论；
+- 旧 `explicit_advice_welcome` 在当前已消费 effect 构造上识别为0/128；V5.3三态
+  `current_action_readiness` 原型在同一开发回放上识别128/128，但尚未经过内容独立资格，
+  不能当成已泛化；
+- MP/MS/RS 的候选级特征尚未各自做过训练域 vs EvoEmo域的正式对比（目前只对ME完成）。
+
+特别说明：EvoEmo 已暴露，只能用于 transport diagnosis，不能把其 `78.3%` subtype prevalence
+当作内部训练目标。训练域只需覆盖部署所需的特征范围和正/非正机制，不需要复制外部开启率。
+
+**尚未开始**：4.2节正式规模FIT数据生成、P2冻结、P3训练、P4/P5确认与外部证据——本节之前的
+全部阶段。
+
 ## 3. Generator 选择与冻结
 
 V5.3 可以更换 generator，因为这是新方法版本；所有 baseline 必须使用同一个新 generator。不能默认
@@ -226,6 +282,17 @@ RS 原子动作遵从≥95%，资源 required-contribution 自动可核验率≥
 
 每个 semantic family 内同时含 ON/OFF；topic、长度、前缀、候选数、资源 subtype 和标签解耦。
 同一模板换话题不算独立样本。split 按 synthetic user、semantic family、counterfactual group 全部隔离。
+
+> **P2前置合同（2026-08-06校正，见账本 V15-DATA-79）**：旧 468-card PMV2 backend 的
+> ME actual Rank-1 `past_action_result=0%`，因此不得复用；但当前 V3/V5.2 已消费构造的128个
+> effect state 已全部具有 compiler-valid 且精确绑定的 ME Rank-1。两件事不矛盾：前者淘汰旧
+> backend，后者证明新构造方法可用，但二者都不是未见 V5.3 效应证据。P2 不回写或重标旧语料，
+> 也不复制已消费行，而是新建内容独立的 V5.3 superdomain，并要求：
+> （1）设计为正例的 ME 原始历史经同一 compiler 后确有 action+result；（2）每个 intended-positive
+> state 的同 topic Rank-1 绑定通过；（3）负例覆盖 context-only、不可迁移、冗余、拒绝行动等机制；
+> （4）topic relevance 仍优先，不能为了追平 EvoEmo 的78.3%比例而让 subtype 覆盖目标匹配。
+> （5）行动准备度用三态记录，`UNKNOWN` 不作 OFF gold。正式数据必须至少提供预冻结的40个正与
+> 40个非正独立 group，并在未见用户/语义族/表述上复核。
 
 ### 4.2 样本规模由精度而不是方便决定
 

@@ -15,12 +15,12 @@ Deliberately reuses already-validated primitives rather than inventing new
 ones: describe_memory_candidate() (v1_5_candidate_discovery.py) already
 computes the candidate-level shared numeric features the plan calls for
 (top1 relevance, top1/top2 margin, relative age, token cost, capacity
-fraction) -- this module does not recompute those, it only adds the
-semantic slots that function does not cover. observable_flags()
-(v1_5_strategy_rag_runtime.py) already computes "does the current turn
-welcome advice/action" for RS; ME's current_action_invitation slot reuses
-it directly rather than duplicating the same judgment with a second,
-possibly-inconsistent regex. compile_atomic_reusable_outcome() and
+fraction) -- this module only adds the semantic slots that function does
+not cover.  ``observable_flags()`` remains the shared RS/MP structural
+observer.  ME uses a separate three-valued action-readiness observer because
+the old binary explicit-advice surface missed 128/128 consumed development
+states; UNKNOWN is retained rather than collapsed to a negative.
+compile_atomic_reusable_outcome() and
 compile_atomic_session_observation() (v1_5_v5_2_atomic_memory.py) are the
 same real, tested compilers used all session for ME/MS candidate validity.
 
@@ -44,6 +44,10 @@ from .v1_5_strategy_rag_runtime import observable_flags
 from .v1_5_v5_2_atomic_memory import (
     compile_atomic_reusable_outcome,
     compile_atomic_session_observation,
+)
+from .v1_5_v5_3_action_readiness import (
+    ActionReadiness,
+    observe_action_readiness,
 )
 
 
@@ -113,6 +117,7 @@ class ContributionSlotObservation:
     # ME
     past_action_result: bool | None = None
     current_action_invitation: bool | None = None
+    current_action_readiness: str | None = None
 
     # MS
     has_specific_prior_observation: bool | None = None
@@ -173,7 +178,7 @@ def me_contribution_slots(
         source=MemorySource.ME, query=current_user_text, source_items=source_items,
         selected_items=selected_items, session_index=session_index,
     )
-    flags = observable_flags(_dialogue_from_current_text(current_user_text))
+    readiness = observe_action_readiness(current_user_text)
     past_action_result = (
         compile_atomic_reusable_outcome(candidate_text) is not None
         if candidate_text else None
@@ -182,14 +187,14 @@ def me_contribution_slots(
     return ContributionSlotObservation(
         component="ME", **shared, current_redundant=redundant,
         past_action_result=past_action_result,
-        current_action_invitation=flags["explicit_advice_welcome"],
+        current_action_invitation=(readiness is ActionReadiness.INVITES_ACTION),
+        current_action_readiness=readiness.value,
     )
 
 
 # MS turns asking for continuity with the past ("last time", "like I said
 # before", "still the same issue", "we talked about this") -- a new,
-# not-yet-independently-validated heuristic (unlike observable_flags(),
-# which was already exercised this session for RS). Deliberately narrow and
+# not-yet-independently-validated heuristic. Deliberately narrow and
 # conservative rather than broad, matching this project's established
 # fail-closed convention for new regex signals.
 _CONTINUITY_REQUEST_RE = re.compile(

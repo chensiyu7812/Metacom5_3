@@ -47,6 +47,7 @@ from metacom_pm.v1_5_typed_resource_adapter import TypedResourceCandidate  # noq
 from metacom_pm.v1_5_v5_3_typed_response_program import (  # noqa: E402
     build_typed_response_program,
     call_with_guard_and_rewrite,
+    content_words,
     evidence_aware_generation_messages,
     evidence_usage_plausibility_errors,
     parse_generator_response_dict,
@@ -322,12 +323,20 @@ def main() -> None:
                 print(f"  status: {status}  (first-pass guard errors: {first_pass_errors})")
                 print(f"  reply: {response.reply[:200]}")
                 print(f"  used_evidence_ids: {response.used_evidence_ids}")
+                if response.reported_used_evidence_ids != response.used_evidence_ids:
+                    print(
+                        "  generator_reported_used_evidence_ids: "
+                        f"{response.reported_used_evidence_ids}"
+                    )
                 results.append(
                     {
                         "state_id": state["state_id"],
                         "user_id": uid,
                         "evidence_ids": [e.evidence_id for e in program.evidence],
                         "reply": response.reply,
+                        "generator_reported_used_evidence_ids": list(
+                            response.reported_used_evidence_ids
+                        ),
                         "used_evidence_ids": list(response.used_evidence_ids),
                         "realized_response_act": response.realized_response_act,
                         "status": status,
@@ -336,10 +345,20 @@ def main() -> None:
                 )
             else:
                 ms_item = discoveries[MemorySource.MS].selected_items[0]
+                # Exercise the lexical-use guard without copying a raw
+                # record fragment into the synthetic visible reply.  Some
+                # source summaries legitimately contain record-like words;
+                # quoting their first 60 characters made this dry-run test
+                # the leak guard rather than the intended parse/binding path.
+                safe_words = sorted(
+                    content_words(ms_item.text)
+                    - {"earlier", "record", "recorded", "seeker", "session"}
+                )
+                content_hint = safe_words[0] if safe_words else "situation"
                 fake_good = {
                     "reply": (
-                        f"That sounds like a lot to carry. Given what you noted before "
-                        f"({ms_item.text[:60]}...), how are you feeling about it today?"
+                        "That sounds like a lot to carry. "
+                        f"Does the {content_hint} part still feel relevant today?"
                     ),
                     "used_evidence_ids": [item.evidence_id for item in program.evidence],
                     "realized_response_act": "reflection",

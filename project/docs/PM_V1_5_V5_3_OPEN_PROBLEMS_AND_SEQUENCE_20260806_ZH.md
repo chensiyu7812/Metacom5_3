@@ -1,4 +1,11 @@
-# V5.3现在还剩什么问题：完整清单、怎么解决、先后顺序（2026-08-06）
+# V5.3历史开放问题快照（2026-08-06，已停止作为活跃事实源）
+
+状态：`SUPERSEDED_AS_LIVE_TRACKER / HISTORICAL_SNAPSHOT_ONLY`
+
+> 本文保留排查过程，但其中部分数字和推断已被后续审核更正。当前唯一活跃的人类计划、机器合同
+> 与问题账本分别为 `PM_V1_5_V5_3_INTEGRATED_EVIDENCE_EXECUTION_PLAN_20260805_ZH.md`、
+> `data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json` 和
+> `PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md`。不得从本文单独恢复当前状态或执行顺序。
 
 本文回答用户的直接问题："训练数据/泛化问题解决了吗？"——没有，只是风险画像变了。这份文档
 把今天（以及本次session）积累下来的**全部真实未解决问题**列清楚，每条给出解决思路和理由，
