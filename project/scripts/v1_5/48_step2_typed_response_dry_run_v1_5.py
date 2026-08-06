@@ -120,12 +120,19 @@ def _mp_candidate(item: MemoryItem, user_id: str) -> TypedResourceCandidate:
     )
 
 
-def find_demo_states(states: list[dict], users: dict, n: int) -> list[tuple[dict, dict, int]]:
+def find_demo_states(
+    states: list[dict], users: dict, n: int, exclude_state_ids: frozenset[str] = frozenset()
+) -> list[tuple[dict, dict, int]]:
     """Find up to n real states with a usable MS candidate (MP optional).
 
     Prefers spreading across distinct users first (so a small live batch
     isn't accidentally all one person's writing style), then fills any
     remaining slots from additional states of users already picked.
+
+    exclude_state_ids lets a re-test draw a genuinely independent sample
+    instead of resending the exact same states a previous run already used
+    (Codex's correct point: the original 10 became a regression set once
+    they were used to find/verify the fix, not fresh qualifying evidence).
 
     ME is deliberately not attempted here: the ME verification work already
     established a 0.40% strict-compiler pass rate, so requiring a real ME
@@ -134,6 +141,8 @@ def find_demo_states(states: list[dict], users: dict, n: int) -> list[tuple[dict
     """
     qualifying: list[tuple[dict, dict, int]] = []
     for state in states:
+        if state["state_id"] in exclude_state_ids:
+            continue
         uid = state["user_id"]
         user = users[uid]
         session_index = len(user.get("dialog_history") or []) + 1
@@ -247,10 +256,26 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    # A previous run's output becomes the exclusion set for this run (and is
+    # archived, not overwritten) -- reusing the same states after changing
+    # the prompt/guard would test "does it work on states we already looked
+    # at", not "does it generalize" (Codex's correct point: the original 10
+    # are a regression set now, not fresh qualifying evidence).
+    exclude_state_ids: frozenset[str] = frozenset()
+    out_path = OUT_DIR / "step2_live_responses.jsonl"
+    if args.live and out_path.exists():
+        previous = [json.loads(line) for line in out_path.read_text().splitlines() if line.strip()]
+        exclude_state_ids = frozenset(r["state_id"] for r in previous if "state_id" in r)
+        archive_path = OUT_DIR / "step2_live_responses_before_prompt_fix_20260806.jsonl"
+        if not archive_path.exists():
+            out_path.rename(archive_path)
+            print(f"archived previous run ({len(exclude_state_ids)} states) to {archive_path}")
+
     users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
     states = load_states()
-    batch = find_demo_states(states, users, args.n)
-    print(f"selected {len(batch)} states across {len({s['user_id'] for s, _, _ in batch})} distinct users")
+    batch = find_demo_states(states, users, args.n, exclude_state_ids=exclude_state_ids)
+    print(f"selected {len(batch)} states across {len({s['user_id'] for s, _, _ in batch})} distinct users"
+          f" (excluded {len(exclude_state_ids)} previously-tested states)")
 
     client = None
     response_schema = None
@@ -320,7 +345,6 @@ def main() -> None:
 
     if args.live:
         OUT_DIR.mkdir(parents=True, exist_ok=True)
-        out_path = OUT_DIR / "step2_live_responses.jsonl"
         with out_path.open("w") as f:
             for row in results:
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")

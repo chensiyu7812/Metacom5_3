@@ -88,8 +88,14 @@ def test_owned_evidence_is_tagged_and_ownerless_evidence_is_not() -> None:
         current_context="User: I'm nervous about this.", program=program
     )[0]["content"]
     assert "you are not role-playing the user" in system_text.lower()
-    assert "address as you/your" in system_text
+    assert "address them in the second person" in system_text
     assert "owner=none" in system_text
+    # regression: an earlier wording used the literal token "you/your" as a
+    # notational shorthand, which an 8B model echoed verbatim into a real
+    # reply ("That's a great approach, you/your...") instead of treating it
+    # as an instruction -- see the 2026-08-06 live re-test. Never reintroduce
+    # a literal slash-notation example the model could copy into output.
+    assert "you/your" not in system_text
     # both an "owned" and an "ownerless" evidence tag are present, and they
     # are distinguishable (not just both silently present somewhere).
     ms_evidence_id = program.evidence[0].evidence_id

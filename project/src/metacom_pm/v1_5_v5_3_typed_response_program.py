@@ -288,8 +288,9 @@ def evidence_aware_generation_messages(
         "reply, so use all of them.",
         "Every evidence item below with an owner describes THAT PERSON's own fact, "
         "statement, or past experience -- never yours, regardless of whether its literal "
-        "wording is first person, third person, or a name. Always address it to that person "
-        "as \"you/your\". Never claim their spouse, child, job, education, relationship, "
+        "wording is first person, third person, or a name. Always address that person "
+        "directly, in the second person (for example: \"you mentioned...\", \"your "
+        "husband...\"). Never claim their spouse, child, job, education, relationship, "
         "decision, emotion, or past action as your own experience or biography.",
         "You may use first person only to describe your own present conversational act "
         "(e.g. \"I hear you\", \"I'm sorry\", \"I want to understand\"), never to narrate a "
@@ -312,7 +313,7 @@ def evidence_aware_generation_messages(
         )
         boundary = f" -- boundary: {item.usage_boundary}" if item.usage_boundary else ""
         owner = (
-            f"owner=the person you are talking to (address as you/your)"
+            "owner=the person you are talking to (address them in the second person)"
             if item.owner_id
             else "owner=none (a permitted support move, not a personal fact)"
         )
