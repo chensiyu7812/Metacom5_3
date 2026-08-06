@@ -1,6 +1,6 @@
 # PM V1.5 V5.3 外部实验定义与双 Codex 并行运行手册
 
-状态：`COORDINATION AUTHORITY / PRE-P2 / NO FORMAL OUTCOME YET / 2026-08-06`
+状态：`COORDINATION AUTHORITY / CAPABILITY-FIRST REVISION / PRE-FORMAL-FIT / 2026-08-06`
 
 科学事实源仍为以下三份，本文件不建立第四套科学合同：
 
@@ -13,7 +13,9 @@
 - 把三个外部实验的可测能力、指标、判定口径和 baseline 集中展开；
 - 规定两个 Codex 会话的任务边界、依赖顺序和唯一交接点，避免同时修改同一事实源或提前消费 outcome。
 
-如本文件与上述三份事实源冲突，停止执行，由 leader 做一次三源同步后再继续。正式环境固定为：
+上述合同不是不可修订的教条。**在任何V5.3正式paired outcome生成前**，若真实数据、代码审计或链路目标
+证明合同不合理，可以由leader记录理由并同步修改三份事实源；正式outcome生成后才禁止为追分修改同一版本。
+如本文件与上述三份事实源冲突，先按研究需要判断哪一方应修正，再由leader做一次三源同步。正式环境固定为：
 
 ```text
 /home/tokkio/snap/metacom_v33_pm_v1_5_repair/.venv-pm-v1-5
@@ -58,7 +60,7 @@ dataset adapter / current visible state
 
 ### 1.2 当前还不能写成“已经达到”的部分
 
-截至本文件建立时，V5.3 达到的是“可进入正式 P2 冻结前资格收尾”，不是“PM 已经学会并泛化”：
+截至本文件建立时，V5.3 达到的是“目标和解决路线已清楚、可以直接做出来”，但还不是“PM 已经学会并泛化”：
 
 - 新 Step1 特征、typed Step2、M0 规范化和逐层账本已有实现或原型；
 - V5.3 四个 value head 尚未获得正式 paired ON/OFF outcome 并训练；
@@ -76,6 +78,11 @@ superdomain、并把外部不可测能力留在内部实验的直接证据。
 因此当前准确状态是：
 
 > 外测需要的 PM 和链路已经定义；主要 V5.2 架构错误已有对应修复；但“修改后的完整系统已达到外测要求”仍须经过 P2 冻结、P3 FIT、P4 fresh confirmation 后才能成立。
+
+这里不存在理论上“做不出来”的阻碍。三态观察器的2个正例不是能力上限，而是随机自然抽样不适合测稀有类别
+召回。正确工程解法是另建内容独立、措辞多样、类别平衡的资格集，必要时用窄语义分类器替代不断扩正则；
+自然样本只估计真实频率和假阳性。MP/MS/ME/RS的缺口也都已经能落到数据构造、检索、Step1或Step2的
+具体任务，不再是模糊地“继续做人评”。
 
 ---
 
@@ -154,23 +161,28 @@ Primary cost 是真实 generator input/prompt tokens。另报告 completion toke
 
 主系统相对 `fixed-high-eligible` 必须至少降低10%平均 input tokens。cost-matched/random-matched 的动作和 seed 必须在任何测试 outcome 前冻结。
 
-### 2.6 Response 系统判定门与外部证据层级
+### 2.6 “能用、及格”的系统目标与外部证据层级
 
-learned-PM-full 的正式 QRC 判定由 **P4内部fresh confirmation** 承担，沿用机器合同：
+本研究要的不是所有指标满分，而是一个相对基本策略**能用、可比、确实学过选择**的PM。P4内部fresh
+confirmation按下列目标判断；这些数值是透明的实质差异参考线，不是自然定律：
 
 1. 对 always-off：质量非劣（NetWin 95% CI下界 `>= -0.05`），且预测 ON strata 的质量 NetWin 点估计 `> 0`；
 2. 对 fixed-high：质量非劣；risk difference 的95% CI上界 `<= +0.05`；input tokens至少下降10%；
 3. 对 transparent-rule：质量和risk非劣，并在quality或cost至少一个维度严格改善；
 4. 对 cost/on-rate-matched-random：quality点估计更好或risk更低，证明不是单纯“少开”；
-5. `fabricated_recall`、`wrong_owner_personalization`、`explicit_boundary_violation` 三类 critical event 在正式判定单位上为0；
+5. `fabricated_recall`、`wrong_owner_personalization`、`explicit_boundary_violation` 三类 critical event 必须逐条报告、
+   不能被平均质量掩盖；研究原型出现事件不等于整项实验作废，但不能据此声称部署安全；
 6. 任一 material misuse 不得被质量或成本抵消；
 7. 每个可测组件必须单列 coverage、ON/OFF、functional use、risk 和 requested-realized，不能只报总平均。
 
-P5的ESConv/EvoEmo使用同一estimand、同一`-0.05/+0.05/10%`参考线并报告完整CI，但不承担新的
-confirmatory二元pass。现有power simulation最保守约需1095个独立group，而ESConv只有122个dialogue、
-EvoEmo只有12个正式response用户cluster；把turn当独立人会虚增精度。故P5只回答方向、运输、机制和失败边界。
-外部各域也不互相合并成一个“总通过率”。即使点估计达到参考线，也不能冒充全新外部确认；若论文需要
-正式external noninferiority，必须新增真正未触碰且规模足够的用户/数据集。
+如果learned PM相对fixed-high、transparent-rule和matched-random在质量上没有明显实质下降，同时risk或cost
+至少一个稳定改善，就可以称“有限PM具有可用的Pareto选择能力”；若四head只有部分超过规则，则按组件报告，
+不把整个系统宣布作废。
+
+P5的ESConv/EvoEmo使用同一estimand和参考线并报告完整CI，但不设置新的神秘“通过门”。ESConv正式test
+有169个dialogue、EvoEmo有18个user cluster；把turn当独立人会虚增精度。P5直接回答方向、运输、机制、
+失败边界，以及是否与“能用、及格”的系统目标一致。若将来要声称窄界限的external noninferiority，才需要
+规模更大的独立外部数据。
 
 ### 2.7 评审波次
 
@@ -188,7 +200,10 @@ P5 外部 response 只进行一次合并语义评测波次：
 
 ### 3.1 数据与单位
 
-- 当前可执行参考集：122个独立 ESConv test dialogues；正式 V5.3 物化前仍须重新验证 hash、dialogue 去重和无 corpus-level `situation` 泄漏；
+- 正式V5.3使用全部169个独立ESConv test dialogues，每段对话按固定协议选一个state；旧122只是排除47个
+  格式兼容试点对话后的历史子集，不再把“曾用于修执行格式”当永久排除理由；
+- 原始`ESConv.json`有1300段，但训练/开发部分可能参与Strategy Bank形成，不能把1300全部冒充test；
+- 正式物化前重新验证hash、dialogue去重和无corpus-level`situation`泄漏；
 - memory unavailable：MP/MS/ME 结构性 mask；
 - 独立统计单位：dialogue/user，不是单条 supporter turn；
 - 身份：corrected repaired replication，不用 ESConv outcome 训练或调 PM。
@@ -205,7 +220,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 ### 3.3 指标与标准
 
 - 机制：RS candidate coverage、eligible rate、ON/OFF、Top-1 fit、requested-realized、atomic compliance、fallback；
-- quality/risk/cost：第2节全部指标；同一QRC参考线用于解释，但不把122个dialogue包装成有充分power的外部确认门；
+- quality/risk/cost：第2节全部指标；同一QRC参考线用于解释，直接报告169个test dialogue上的效果和不确定性；
 - RS 子域成功还要求：有实质 ON 和 OFF 覆盖，不能通过“恒关”得到 QRC；具体最低 ON/OFF 支持由 P2 power/sample freeze 在 outcome 前写入机器合同；
 - 若 cost-matched-fixed 与 always-off 完全 alias，只生成一次物理回复并在逻辑表保留两个条件。
 
@@ -228,10 +243,11 @@ P5 外部 response 只进行一次合并语义评测波次：
 
 ### 4.1 数据与单位
 
-- 数据为18个合成长历史用户；p1–p6只用于开发/兼容性，不进入正式 P5 主统计；
-- p7–p18共12个用户、138个现有 response states，可作 V5.3 repaired replication 参考分母；正式物化须保持既有 state 集，不按 V5.2 outcome 重选；
+- 正式V5.3使用全部18个合成长历史用户、204个已固定response states（每个用户沿用既有固定track/turn）；
+- 旧p7–p18的12用户/138状态只是qualification/lockbox治理切分，不再作为永久丢弃p1–p6的理由；
+- 不按V5.2质量/risk重新挑state，直接使用完整预先存在的204-state panel；
 - 每个 state 只能访问该 user 且严格早于 current session 的历史；未来会话、其他用户和全库混检为机械无效；
-- 独立统计单位为 user；138个state绝不能当138个独立用户；
+- 独立统计单位为user；204个state绝不能当204个独立用户；
 - 所有 p1–p18 已有不同程度开发/结果暴露，不能称 pristine lockbox。
 
 ### 4.2 测什么
@@ -251,8 +267,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 - 第2节所有机制、quality、risk、cost指标；
 - candidate池按组件报告中位数/分位数、Top-1 fit、wrong-owner/未来泄漏必须为0；
 - user-cluster bootstrap为主；state-level结果只能作描述性；
-- 第2.6节QRC参考线用于判断方向是否与内部一致，但因12个用户和既有暴露，最高只能称 repaired replication，
-  不给本域单独贴confirmatory PASS/FAIL；
+- 第2.6节QRC参考线用于判断方向是否与内部一致；直接报告18用户上的估计和宽CI，不因样本较小停止实验；
 - MP/MS/ME 每个组件均报告 available、eligible、ON、used、functional、risk 的完整漏斗；候选缺席或 UNKNOWN 不得从分母静默删除；
 - Raw-session比较只回答“结构化表示与原始session上下文”的次问题，不替代policy主表。
 
@@ -284,8 +299,10 @@ P5 外部 response 只进行一次合并语义评测波次：
 
 ### 5.1 数据与单位
 
-- 官方公开 v1.0.0 artifact 共1,427题；当前已冻结、可与 V5.2 对照的 task-disjoint 主切片为 p13–p18 的418题；
-- V5.3 主诊断继续使用同一418题，不因既有分数重抽题。若以后扩到1,427题，必须建立独立 protocol，不能与418题混为同一确认；
+- 官方公开v1.0.0 artifact共1,427题，覆盖18个用户；V5.3主诊断使用全部1,427题，并明确这是公开
+  benchmark evaluation，不是未见lockbox；
+- 旧p13–p18的418题结果只作V5.2历史对照，不作为缩小V5.3主分母的理由；论文需说明公开artifact为
+  1,427题，与论文正文报告的1,209题manifest不同；
 - 五类：information extraction、temporal reasoning、conflict detection、user modeling、abstention；
 - 生成只看到 question 与该condition允许的历史，不看到 answer、evidence、capability 或 group；
 - 聚类单位为 user，另报告question-level bootstrap作敏感性。
@@ -305,10 +322,11 @@ Objective primary：
 
 1. 官方 normalization 后的 set-overlap Token F1；
 2. `bert-score==0.3.13`、`bert-base-uncased`、不rescale的 BERTScore F1；
-3. 按全部418题和五种capability分别macro average；
+3. 按全部1,427题和五种capability分别macro average；
 4. abstention accuracy、should-abstain false-answer rate；
 5. conflict-detection单列；
-6. 对可完整映射official evidence的341题报告session Recall@4和nDCG@4；其余无gold/拼写映射不完整题不得伪造检索分；
+6. 在全1,427题上重新物化official-evidence映射；只对可确定映射题报告session Recall@4/nDCG@4，
+   无gold或标识不完整题单列，不伪造检索分；旧418题中的341题数字只作历史对照；
 7. prompt/completion/total tokens、调用成本与latency诊断。
 
 LLM-as-Judge 0–2只能作第三敏感性指标，必须独立冻结prompt/model并报告与objective指标的一致性；不得作为训练gold或替代Token F1/BERTScore。
@@ -323,7 +341,9 @@ ES-MemEval是诊断，不承担V5.3 response QRC的二元通过门。必须报�
 - learned PM是否表现出有限QA运输；
 - 哪些capability或资源schema不在当前支持范围。
 
-不得把“QA learned输给fixed-high”写成response PM整体失败，也不得把“QA分数更高”写成四组件QRC通过。由于既有418题结果已经可见，V5.3不再事后发明QA非劣阈值；本域不使用新的二元pass/fail标签。
+不得把“QA learned输给fixed-high”写成response PM整体失败，也不得把“QA分数更高”写成四组件QRC通过。
+由于公开benchmark及部分旧结果已经可见，V5.3不再事后发明QA非劣阈值；本域直接用客观分数、paired差、
+uncertainty和成本回答“有没有运输”，不使用新的二元pass/fail标签。
 
 ### 5.5 Baselines
 
@@ -334,6 +354,48 @@ ES-MemEval是诊断，不承担V5.3 response QRC的二元通过门。必须报�
 5. `typed_memory_learned_pm`。
 
 `transparent_rule`可作预冻结次要诊断，但不进入官方五条件主表；cost-matched不适用于QA；RS对事实QA结构性N/A；Legacy V1.0不适用。
+
+### 5.6 EvoEmo / ES-MemEval 同源防作弊合同
+
+EvoEmo response 与 ES-MemEval QA 共享18个用户和底层历史。它们是**同一数据来源上的两种互补任务**，
+不能写成两份统计独立的外部数据，也不能把两者结果简单合并扩大样本量。
+
+这里“同源”本身不是作弊：RAG本来就应从该用户的合法历史中找答案或连续性证据。作弊发生在**可访问范围
+越过任务边界**时。尤其`data/external/evo_emo.json`在同一个user object里同时保存`dialog_history`与
+`questions`（后者含question、answer、evidence、capability等评测字段），因此不能把整个user object序列化给
+retriever、PM或generator。
+
+合法同源使用：
+
+- 当前用户只检索自己的、相对当前状态严格过去的原始会话；
+- QA query参与正常检索；response current turn参与正常检索；
+- typed memory由统一compiler从允许的原始历史确定性生成；
+- response memory的输入投影只允许预先存在的`basic_info`与严格过去的`dialog_history`；现有
+  `build_evo_memory()`正是这个范围，但正式runner仍须做字段级断言；
+- QA生成端只接收question文本与该condition允许的session history；answer/evidence等gold另存
+  evaluator-only文件，以question_id在生成完成后关联；
+- 所有baseline共享相同的可访问源历史、时间截断、query构造规则和gold不可见性；
+- `learned-PM / fixed-high / transparent-rule / matched-random`等**路由策略比较**共享同一候选池、检索器和
+  Step2；`official-session-RAG / full-history / typed-memory`等**表示方法比较**允许使用各自预先定义的表示与
+  检索器，否则就失去baseline含义，但不得改变源历史、时间边界或借助gold。
+
+禁止的同源泄漏：
+
+- QA `answer`、`answers`、`evidence`、`capability`、`question_group`进入query builder、retriever、PM或generator；
+- response路径读取或序列化`questions`；任一路径使用无时间索引的`event_experience`、`social_relationship`、
+  顶层`summaries`或`subsequent_topics`作为当前时点的可见记忆；
+- 使用未来session、当前答案所在supporter turn、其他用户历史或全库身份捷径；
+- 从官方evidence ID直接指定Top-k，或用gold answer/evidence调BGE阈值、融合权重、PM阈值；
+- 将ES-MemEval精确question/answer/evidence文本复制进P2内部superdomain；
+- 把EvoEmo response outcome或ES-MemEval QA分数用于修改同一V5.3版本。
+
+P2/P5前必须生成机器审计：字段访问白名单、每题/每state最大可见session index、candidate owner覆盖、未来/跨用户
+违规数（必须为0）、内部superdomain与外部question/answer/session的exact与规范化n-gram重叠、生成messages中gold字段
+命中数（必须为0）。另对最终serialized prompt做负向canary测试：把answer/evidence植入被禁止字段，若prompt或query
+发生变化则审计失败。BGE等组件可在历史开发诊断上选择，但一旦进入V5.3正式全1,427题评测就冻结，不再按分数修改。
+
+论文统一表述为：`one shared synthetic longitudinal source, evaluated through two task surfaces`；EvoEmo回答response
+QRC，ES-MemEval回答retrieval/QA，不把二者称为独立外部复现。
 
 ---
 
@@ -358,7 +420,7 @@ ES-MemEval是诊断，不承担V5.3 response QRC的二元通过门。必须报�
 
 ### 7.1 单一领导与共享文件规则
 
-- Leader Codex负责：本运行手册、三份权威事实源同步、P2 gate签字、正式生成计划、外部指标/baseline和最终聚合。
+- Leader Codex负责：本运行手册、三份权威事实源同步、P2-READY同版本确认、正式生成计划、外部指标/baseline和最终聚合。
 - Worker Codex负责：预先分配的独立诊断/资格脚本、独立output目录和分项报告。
 - Worker不得直接修改三份权威事实源；完成后以commit、报告路径和机器结果交给leader，由leader一次性同步。
 - 两个会话都不得使用`git add .`、不得amend/rebase对方commit、不得覆盖对方output目录。
@@ -376,7 +438,7 @@ ES-MemEval是诊断，不承担V5.3 response QRC的二元通过门。必须报�
 | W2 | MP/MS contribution-slot train-vs-external域审计 | Worker现有script 64及独立output | 同一候选级代码；Rank-1与Top-k不混写；按user/family报告，不把state当独立人 |
 | W3 | RS域审计 | 新script/output/report | card precondition、nonredundancy、burden fit、already executed在训练域与ESConv/EvoEmo的支持范围可比 |
 | W4 | 全新ME superdomain与真实密度审计 | 新数据构造脚本、manifest、零outcome报告 | 外部文本零复制；正/非正、至少8族；同用户多候选、同topic不同事件碰撞；intended-positive compiler-valid且exact Rank-1绑定 |
-| W5 | shortcut/leakage/duplicate审计 | 新report | topic/长度/前缀/候选数/subtype与标签解耦；user/family/group split零交叉；没有未来/他人历史 |
+| W5 | shortcut/leakage/duplicate/同源审计 | 新report | topic/长度/前缀/候选数/subtype与标签解耦；user/family/group split零交叉；没有未来/他人历史；P2与EvoEmo/ES-MemEval外部文本零复制；QA gold字段对生成/检索零可见 |
 
 W1–W5只产生观察/资格/数据构造证据，不生成paired response outcome，不训练head，不读quality/risk。
 
@@ -396,9 +458,11 @@ L1–L5不读取新的质量/risk outcome。L2若需真实付费compatibility调
 
 L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 
-1. 机器合同规定 `second_free_llm_fallback_allowed=false`，主计划也规定guard失败后直接确定性M0；但当前
-   `call_with_guard_and_rewrite()`仍会进行第二次自由LLM rewrite。必须在P1内二选一统一，默认以机器合同为准：
-   删除正式runner中的第二次自由调用，首轮失败直接保留错误并进入确定性M0；历史rewrite试验只作开发证据。
+1. 机器合同目前规定`second_free_llm_fallback_allowed=false`，但当前`call_with_guard_and_rewrite()`会进行一次
+   受约束rewrite。这里不机械服从旧合同，而按“系统能用且公平”选择：在已消费开发case上比较
+   `一次同generator、同证据、只纠正明确结构错误的rewrite`与`立即M0 fallback`。若rewrite显著降低fallback且
+   不新增未授权事实，允许把它正式写入Step2；所有baseline同样使用，并把第二次调用的tokens/cost/latency全部
+   计入。若不稳定则直接fallback。选择规则和最终合同必须在P3 outcome前冻结。
 2. 当前机器guard尚未完整实现“未授权专名/数字”检查；必须基于运行时授权实体/数值集合，而不是自然语言黑名单。
 3. `atomic_move_budget`目前主要是prompt约束；RS原子动作数、列表长度和一点式边界还缺可靠的结构化实现/校验。
    在无法机器确定的语义边界上不得假装硬判，必须在程序输出schema中把response acts结构化，再检查计数。
@@ -406,12 +470,14 @@ L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
    6-card `strategy_cards_v1_5_minimal.jsonl`。P1必须选择一个正式Bank，并把path、SHA、card count写进机器合同；
    FIT、ESConv、EvoEmo和所有baseline共享同一份，80-card训练证据与6-card运行结果不得混称同栈。
 
-### 7.4 唯一汇合门 G-P2
+### 7.4 唯一系统汇合点 P2-READY
 
-只有以下全部满足，leader才能把状态从P1改为P2 frozen：
+这不是为了增加“门”，而是防止两个会话在不同系统上分别生成数据。以下项目完成后，leader把两边工作合成
+唯一可运行版本；个别观察器不完美可以用UNKNOWN/OOD保守处理，不要求所有子模块满分：
 
 - W1–W5报告完成，已独立核对而非只接受结论；
-- realistic-density ME Rank-1支持通过；
+- realistic-density ME superdomain已经建立；其候选可用性、Rank-1支持和UNKNOWN覆盖有真实记录，若覆盖有限则
+  由Step1保守关闭并在报告中限定主张，不能拿一个不真实的稀疏候选池代替；
 - MP/MS/RS域差异已量化，任何out-of-support轴有明确UNKNOWN/OOD处理；
 - Strategy Bank path/SHA/card count唯一冻结，训练、FIT、confirmation、ESConv、EvoEmo和baseline无漂移；
 - L1账本runner、L2执行器兼容门、L3 baseline、L4 power/metric、L5外部scaffold完成；
@@ -419,8 +485,9 @@ L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 - 三份权威事实源由leader做一次同步commit；
 - 工作树无双方遗留的冲突修改；
 - 明确记录哪些外部数据已暴露，不能称lockbox。
+- EvoEmo/ES-MemEval同源审计通过：只共享合法的同用户历史，不共享gold/evidence/outcome，且不作统计独立相加。
 
-当前RS域审计可作为一个有限域描述，但不能直接完成G-P2：脚本已经正确地从训练`current_user_text`用
+当前RS域审计可作为一个有限域描述，但还不能直接完成P2-READY：脚本已经正确地从训练`current_user_text`用
 当前runtime重算，0/160触发是值得保留的训练构造缺口；然而ESConv代码默认只取文件前300段对话，
 与docstring声称的1300段全量不一致，而且报告只有触发率、没有gold precision/recall。W3必须先修正文档/采样
 身份、写入输入与实现hash，并增加有独立gold的资格层；不得把3.4%/10.1%触发率直接解释成准确率。
@@ -428,7 +495,7 @@ L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 ### 7.5 P2之后严格串行
 
 ```text
-G-P2 PASS
+P2-READY（两个会话确认使用同一系统版本）
   -> P3: 一次整批 paired ON/OFF FIT生成
   -> 一次primary + 20% overlap + 一次裁决
   -> 一次四head训练/阈值冻结
@@ -486,7 +553,8 @@ jq . data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json
 1. Worker已提交W2（commit `46aecf5`）和W3的域描述初版（commit `4257102`）。W2结论进入P2数据设计，
    但不是transport qualification；W3保留0/160训练触发这一构造缺口，同时必须修正“前300段ESConv”与
    “全量1300段”的身份表述并补有gold资格层。下一步优先W4/W5。W1现有70条自然样本结果保留，但必须
-   承认正例不足；平衡资格集在P2 gate前补齐。
+   承认正例不足；平衡资格集在P2-READY前补齐。
 2. Leader不触碰script 64，先完成L1的formal ledger runner接线审计与L2全动作兼容门设计。
-3. 两边完成后只在G-P2汇合一次；此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。
-4. G-P2未通过时，准确报告缺失项；不得用旧V5.2结果或EvoEmo开启率替代。
+3. 两边完成后只在P2-READY汇合一次；此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。
+4. P2-READY仍有缺失项时，直接修正明确的工程/数据缺口，或把无法覆盖的状态记为UNKNOWN/OOD；不得用旧V5.2
+   结果或EvoEmo开启率替代，也不得为了追求“全绿”无限循环做人评。
