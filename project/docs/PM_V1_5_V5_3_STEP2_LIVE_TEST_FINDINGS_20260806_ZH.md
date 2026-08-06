@@ -75,13 +75,57 @@ ID泄漏）确实被防住了，但一个新的、同样严重甚至更严重的
 多次采样），不能排除是这次采样运气差，但5/10这个比例大到不像纯噪声，值得在改prompt后立刻
 重新小批量验证，而不是无视它继续往前走。
 
-## 建议（未执行，等用户决定）
+## 2026-08-06修复与复测：核心bug已修复，发现并修好一个新问题，还有一个更细的问题留着
 
-1. 在`evidence_aware_generation_messages()`的system prompt里加一条明确指令，例如
-   "All evidence below describes the user's own past statements or facts, never yours；
-   always attribute it to the user (you/your), never claim it as your own experience"，
-   这是最直接、最小的改动。
-2. 改完prompt后，用同一批10个state（或者干净起见换一批新的，避免"调到过拟合这10条"的风险）
-   重新跑一次`--live`，人工核对这个问题是否被压下去、有没有引入新问题。
-3. 在此之前，不建议往前推进更大规模的Step2验证或任何"typed response program已经解决V5.2
-   问题"的结论——这个结论目前不成立，需要先看到prompt修正后的结果。
+用户看过独立复核者（另一个Codex）的方案分析后明确说"开始吧"，授权继续。落地了"最小归属修复"：
+`ExecutionEvidence`本来就有`owner_id`字段（真实存在，只是从没被渲染进prompt），现在每条证据都
+带上明确的owner标签，system prompt加了角色边界指令（"你不是用户、不能扮演用户"），证据从跟
+`current_context`混在一起的user消息挪到了单独的system消息。另外做了一个专门校准过的
+`speaker_attribution_guard_errors`（不是笼统关键词表，在原10条真实回复上验证：5/5明确违规
+全部抓到、4/4干净样本0误报），配一次定向重写+失败退回`m0_fallback_response`的兜底逻辑，最多
+重试一次，不会无限循环。这些改动本身不花钱（没有调用真实API），先用假client把重写/兜底4条
+分支全部测过，再动真格。
+
+**第一轮复测（10条全新独立样本，跟最初10条完全不重复）**：9/10首次通过guard，1/10（p7）被
+guard拦截、正确退到了安全兜底。**人工逐条通读全部10条真实回复**：8/10确认真正干净——包括
+两个跟最初最严重案例结构完全相同的场景，这次都对了：p10正确说"your husband"（不是"my
+husband"）、p16正确说"You're a project manager"（不是"As a project manager, I..."）。1/10
+（p7）被guard正确拦截。**但第6条（p12）冒出一个新问题**：模型把prompt里"you/your"这个记号
+写法**原文抄进了回复**里五次（"That's a great approach, you/your...Have you/your thought
+about how you/your will..."），读起来是坏掉的。这不是guard该管的那类错误（不是把用户的事说成
+自己的），guard正确地没有拦它，但确实是我自己prompt措辞的问题——用了一个模型会照抄的字面
+记号。已经改成不用斜杠记号的自然语言描述，加了一条回归测试锁定"system prompt里不能再出现
+you/your这个字面字符串"。
+
+**第二轮复测（5条，含1条刻意跟最初bug发现batch用同一个真实state做直接前后对照）**：4/5干净，
+1/5（还是p7）再次被guard拦截、退到兜底——同一个state连续两个prompt版本都触发同样的guard，
+说明guard在这个具体case上判断是稳定的，不是偶然噪声（具体触发的第一版回复文本没有留存日志，
+只存了最终结果，这是个小的记录缺口，不影响兜底机制本身已验证有效这个结论）。**最有说服力的
+一条**：state_f95b7e244d5934d33cdd（p10）这个state，在最初bug发现batch里就是那个，当时的
+真实回复是"I'm really proud of my husband...our son's behavior..."（凭空认了配偶和孩子）；
+这次用完全相同的state重跑，回复变成"I hear you're feeling a mix of emotions about your
+husband's new job...You mentioned earlier that your son's behavior..."——**同一个state、
+同一份证据，修复前后的真实回复直接对比，问题确认修复**。
+
+**复测中还发现一个更细、这次没有修的问题**：p11这条真实回复里，MS证据文本本身用了一个第三人称
+人名（EvoEmo数据集自己的叙事惯例，用一个化名指代用户本人，类似之前见过的"Emily"/"Jimmy"这类
+名字），模型的回复是"You mentioned earlier that Anna is stressed about them too, and I'm
+worried that she might be feeling overwhelmed"——**把证据文本里指代用户本人的化名"Anna"当成
+了一个独立于"you"的第三方**，造成"你提到Anna...我担心她"这种应该是同一个人却被拆成两个人的
+混乱指代。这不是这次guard设计要覆盖的范围（这不是"助手把用户的事说成自己的"，是"助手把用户的
+化名当成了别人"），现有guard没有也不应该拦这个——如实记录为一个新发现、尚未修复的独立问题，
+不在这轮授权范围内顺手改，留给用户决定要不要继续投入。
+
+## 建议（更新）
+
+1. **核心的说话人归属bug（助手把用户的事说成自己的）方向上已经确认修复**：15条真实复测（两轮
+   共15条，加最初10条共25条真实调用）里，0条再出现"assistant声称拥有用户配偶/子女/工作/学历"
+   这类错误；关键的同state前后对照（p10）直接证实。这个具体问题不再建议继续投入更多验证轮次，
+   可以视为这一轮修复的目标已达成。
+2. **"you/your"字面记号泄漏问题已发现并修复**，但只用5条新样本验证了"没有再复现"，样本量小，
+   如果后续要做更大规模Step2验证，这一点顺带留意一下即可，不需要专门再开一轮。
+3. **"证据里的化名被当成第三方"这个新发现的问题没有修**，是否要继续深挖、要不要在prompt里
+   补一条"证据里出现的任何名字都指的是你正在对话的这个人，不是另一个人"，等用户决定。
+4. 仍然维持此前的结论：这次测试全程绕过了Step1（强制注入而非PM路由决策）、用的是旧production
+   MS selector不是BGE、`current_goal`是诚实的占位任务描述不是真实意图识别——这些边界条件没变，
+   真正端到端的Step2验证还需要跟Step1真实接起来之后再测一次。
