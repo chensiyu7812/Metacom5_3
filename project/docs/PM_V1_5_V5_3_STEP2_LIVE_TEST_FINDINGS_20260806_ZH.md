@@ -137,3 +137,35 @@ worried that she might be feeling overwhelmed"——**把证据文本里指代�
 4. 仍然维持此前的结论：这次测试全程绕过了Step1（强制注入而非PM路由决策）、用的是旧production
    MS selector不是BGE、`current_goal`是诚实的占位任务描述不是真实意图识别——这些边界条件没变，
    真正端到端的Step2验证还需要跟Step1真实接起来之后再测一次。
+
+## 2026-08-06独立复核后的4处改进（commit待补）
+
+一位独立复核者（另一个Codex）核对了提交、代码和真实输出后，指出这批工作"真实且有价值，但
+'Step2已修好'说得偏满"——批评基本成立，逐条核实后采纳了其中3条低成本、值得立刻做的：
+
+1. **归属/guard/重写/回退这套编排逻辑（`call_with_guard_and_rewrite`）之前只存在于测试脚本
+   `48_step2_typed_response_dry_run_v1_5.py`里，不是正式可复用模块**——批评属实，已经整体
+   搬进核心模块`v1_5_v5_3_typed_response_program.py`，脚本改成从核心模块导入。搬运过程中
+   还顺手发现并修了一处遗漏：重写请求里的纠正指令原文还残留着"you/your"这个字面记号（跟之前
+   system prompt里修过的是同一类风险，只是这次在重写轮的user消息里，没在之前的测试批次里
+   被真正触发过），已经改成完整句子。
+2. **`used_evidence_ids`是模型自报，从来没跟回复正文做过核验**——批评属实。没有采纳对方提的
+   `realized_reply_span`逐字匹配schema（成本高，会给8B模型引入新的schema合规噪声，等于用
+   一个新问题的风险去换一个不确定收益）。改用更便宜的折中：新增
+   `evidence_usage_plausibility_errors`，复用项目里已经在用的`content_words`词面重合检查，
+   只抓"声称用了某条证据但回复正文里连一个词的痕迹都没有"这种最明显的情况——不追求完整
+   grounding验证，只堵最明显的自报造假。
+3. **M0 fallback之前写死成`"one_focused_question"`（固定追问），可能违反某些场景下"不该
+   提问、只需陈述"的边界**——批评属实，是真代码bug。改成根据`program.atomic_move_budget`
+   判断：有RS（预期有一个支持动作）时仍用追问，没有RS时改用`"concise_reflection"`（陈述句，
+   不追问）。这是个启发式改进，不是完整的边界感知系统，但比之前的硬编码更合理。
+
+**没有采纳的部分**（性价比不划算，不是不认同）：
+- "无依据推断兴奋/压力原因"——这个约束已经写在prompt里了（"Forbidden: inventing a current
+  cause"），如果仍在发生是合规率问题，需要真正的人工grounding审查才能量化，不能用正则/关键词
+  便宜堵住，成本级别接近V5.2当年的E7人审，不该现在临时插入。
+- 完整的`realized_reply_span`逐字grounding schema——见上面第2点，用更便宜的折中方案代替了。
+
+同时把`PM_V1_5_V5_3_CONSOLIDATED_FINDINGS_20260806_ZH.md`里"MP目前没有已知未修复问题"这句
+话的范围收窄了——对方指出这个措辞太乐观，只在"两类已量化的检索假匹配"这个具体范围内成立，
+MP候选的边际价值判断（Step1该不该开启）完全没碰过，这个批评也属实。
