@@ -593,18 +593,31 @@ Worker只做候选/数据面，不改三份权威事实源：
 
 1. **ME reranker资格比较（已完成，commit `6070157`）**：三法没有新方法胜出；leader冻结现有production
    lexical+typed-tier exact Rank-1，编译失败即ME不可执行，禁止Rank-2补位，W6到此关闭。
-2. **正式P2候选蓝图**：按上述ME决定物化MP/MS/ME/RS的state、用户、family、counterfactual group、
+2. **W7 正式P2候选蓝图**：按上述ME决定物化MP/MS/ME/RS的state、用户、family、counterfactual group、
    exact Rank-1及候选目录；保留MP preference/profile两个内部子域，MS明确走BGE-M3，RS固定6-card；
-   只构造候选与split，不生成ON/OFF回复、不训练head、不读取quality/risk。
+   只构造候选与split，不生成ON/OFF回复、不训练head、不读取quality/risk。W7必须遵守以下同栈细节：
+   - MP记录结构化`field_type/field_value/owner/subtype`，字段名前缀和通用填充词不得冒充相关性；
+   - MS使用release绑定的BGE-M3 snapshot和真实全因果同用户候选池，保存真实semantic score；
+   - ME使用production lexical+typed-tier exact Rank-1；Rank-1编译失败记`unavailable`，不得拿Rank-2补位；
+   - RS先用`rs_mechanical_candidate_pool()`形成机械安全池，再用`rs_shared_candidate_top1()`得到所有policy
+     共享的唯一候选：透明机会规则命中时使用其候选，否则使用确定性lexical fallback。透明规则只决定自己的
+     ON/OFF，不能替自己换另一张卡；
+   - 每个state保存可见对话、current goal、model-visible surface、完整Top-k ID、exact Rank-1 ID、owner/time/
+     version、subtype、score/margin、候选数、增量token、语义特征、hard-off原因和外部来源零复制所需hash；
+   - 构造单组件paired-effect主状态与多组件interaction状态，但不要求16动作等频；16动作结构兼容已由L2
+     单独验证。split按user/counterfactual group/content surface不交叉，family-stratified confirmation另保留
+     entire-family-held-out运输诊断。W7只报告真实唯一group数量，不自行复制模板或冻结最终N。
 3. 后续脚本使用`70w_...`、`71w_...`前缀，避免再与leader编号碰撞。
 
 Leader并行负责运行面：
 
-1. 将6-card Bank path/SHA/card count和BGE-M3 snapshot绑定到唯一V5.3 release配置，确保pilot与formal runner
-   不再靠调用者手动选择检索器。
-2. 完成L2全动作执行计划与显式rewrite-vs-direct-fallback开发比较设计；所有baseline共享同一选择，第二次调用
+1. 已将6-card Bank path/SHA/card count、BGE-M3 snapshot、ME production排序和共享RS Rank-1选择器绑定到
+   V5.3静态release；W7产物完成后再生成包含其hash的最终release identity。
+2. L2的16动作零API结构计划已完成；W7后从正式蓝图内容独立抽取代表状态，物化显式
+   rewrite-vs-direct-fallback开发比较计划；所有baseline共享同一选择，第二次调用
    的token/cost/latency完整计账。未获用户预算授权前只做零API物化和dry-run。
-3. 完成L4样本/cluster/metric freeze与L5正式外部projection接线；不读取新的response outcome。
+3. L4的metric/cluster/review定义已冻结；W7后按蓝图实际唯一group冻结真实N。L5字段投影/canary已完成，
+   正式蓝图交付后补做完整overlap、duplicate、shortcut和runner接线；不读取新的response outcome。
 4. Worker提交P2候选蓝图后，leader独立运行shortcut、duplicate、user/family/group split、同源overlap和
    exact candidate-lineage审计。
 

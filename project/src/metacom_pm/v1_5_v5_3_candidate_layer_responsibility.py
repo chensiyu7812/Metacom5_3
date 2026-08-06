@@ -86,6 +86,22 @@ class RSCandidatePool:
     candidates: tuple[RSCandidateObservation, ...]
 
 
+@dataclass(frozen=True)
+class RSSharedRank1:
+    """The single RS execution candidate shared by every policy arm.
+
+    ``transparent_priority`` means the narrow observable rule identified a
+    specific move.  ``lexical_fallback`` means no such signal fired, but the
+    mechanical pool remains available so the learned PM can still decide
+    whether the best common candidate is worth opening.  Policy arms may
+    change only the ON/OFF bit; they may not substitute another card.
+    """
+
+    observation: RSCandidateObservation
+    selection_mode: str
+    transparent_rule_on: bool
+
+
 def rs_mechanical_candidate_pool(
     *,
     recent_dialogue: Sequence[Mapping[str, Any] | object],
@@ -190,3 +206,34 @@ def rs_transparent_rule_top1(pool: RSCandidatePool) -> RSCandidateObservation | 
     if priority(top)[0] == 0:
         return None
     return top
+
+
+def rs_shared_candidate_top1(pool: RSCandidatePool) -> RSSharedRank1 | None:
+    """Select one common Rank-1 without turning low-recall semantics into a gate.
+
+    When the transparent opportunity rules identify a move, that move is the
+    shared candidate for *all* policy arms.  Otherwise a deterministic lexical
+    fallback keeps one candidate visible to fixed-high and learned-PM while
+    the transparent-rule baseline stays OFF.  This separates candidate
+    identity from the policy decision and prevents a baseline from winning by
+    receiving a different card.
+    """
+
+    if pool.hard_off or not pool.candidates:
+        return None
+    transparent = rs_transparent_rule_top1(pool)
+    if transparent is not None:
+        return RSSharedRank1(
+            observation=transparent,
+            selection_mode="transparent_priority",
+            transparent_rule_on=True,
+        )
+    lexical = max(
+        pool.candidates,
+        key=lambda obs: (obs.lexical_relevance, obs.move_id),
+    )
+    return RSSharedRank1(
+        observation=lexical,
+        selection_mode="lexical_fallback",
+        transparent_rule_on=False,
+    )

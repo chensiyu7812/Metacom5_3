@@ -6,6 +6,7 @@ from pathlib import Path
 from metacom_pm.contracts import StrategyCard
 from metacom_pm.v1_5_v5_3_candidate_layer_responsibility import (
     rs_mechanical_candidate_pool,
+    rs_shared_candidate_top1,
     rs_transparent_rule_top1,
 )
 
@@ -94,6 +95,39 @@ def test_transparent_rule_top1_picks_open_expression_when_signaled():
     top = rs_transparent_rule_top1(pool)
     assert top is not None
     assert top.move_id == "AM01_invite_open_expression"
+
+
+def test_shared_rank1_keeps_candidate_when_transparent_rule_is_off():
+    pool = rs_mechanical_candidate_pool(
+        recent_dialogue=_dialogue("Work has been a lot lately, I don't really know."),
+        cards=CARDS,
+    )
+    shared = rs_shared_candidate_top1(pool)
+    assert shared is not None
+    assert shared.selection_mode == "lexical_fallback"
+    assert shared.transparent_rule_on is False
+    assert shared.observation in pool.candidates
+
+
+def test_shared_rank1_uses_same_transparent_candidate_for_every_policy():
+    pool = rs_mechanical_candidate_pool(
+        recent_dialogue=_dialogue("I don't know where to start, something is bothering me."),
+        cards=CARDS,
+    )
+    transparent = rs_transparent_rule_top1(pool)
+    shared = rs_shared_candidate_top1(pool)
+    assert transparent is not None and shared is not None
+    assert shared.selection_mode == "transparent_priority"
+    assert shared.transparent_rule_on is True
+    assert shared.observation.move_id == transparent.move_id
+
+
+def test_shared_rank1_is_absent_only_under_mechanical_hard_off():
+    pool = rs_mechanical_candidate_pool(
+        recent_dialogue=_dialogue("Please stop this conversation now."),
+        cards=CARDS,
+    )
+    assert rs_shared_candidate_top1(pool) is None
 
 
 def test_missing_required_card_raises():
