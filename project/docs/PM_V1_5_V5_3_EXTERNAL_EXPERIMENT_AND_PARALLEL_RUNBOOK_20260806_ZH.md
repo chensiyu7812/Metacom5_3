@@ -483,7 +483,10 @@ jq . data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json
 
 ## 9. 当前下一步
 
-1. Worker继续完成其已占用的script 64，再依次提交W2、W3、W4/W5；W1现有70条自然样本结果保留，但必须承认正例不足，是否补平衡资格集由P2 gate统一决定。
+1. Worker已提交W2（commit `46aecf5`）和W3的域描述初版（commit `4257102`）。W2结论进入P2数据设计，
+   但不是transport qualification；W3保留0/160训练触发这一构造缺口，同时必须修正“前300段ESConv”与
+   “全量1300段”的身份表述并补有gold资格层。下一步优先W4/W5。W1现有70条自然样本结果保留，但必须
+   承认正例不足；平衡资格集在P2 gate前补齐。
 2. Leader不触碰script 64，先完成L1的formal ledger runner接线审计与L2全动作兼容门设计。
 3. 两边完成后只在G-P2汇合一次；此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。
 4. G-P2未通过时，准确报告缺失项；不得用旧V5.2结果或EvoEmo开启率替代。
