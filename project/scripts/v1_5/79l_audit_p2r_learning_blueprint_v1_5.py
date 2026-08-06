@@ -181,7 +181,7 @@ def main() -> None:
             accidental_cross_user_duplicate_groups += 1
 
     positive_answer_copy = 0
-    family_match = Counter()
+    family_alignment = Counter()
     for row in rows:
         candidate_id = row.candidate_lineage.candidate_id
         if candidate_id is None or candidate_id not in catalog:
@@ -192,8 +192,27 @@ def main() -> None:
         if row.state.state_condition == "positive_opportunity" and candidate_text in current_text:
             positive_answer_copy += 1
         state_topic = row.state.semantic_family.split("::", 1)[-1]
-        candidate_topic = item.get("topic_thread") or item.get("field_type") or item.get("field_value")
-        family_match[(row.state.component, state_topic == candidate_topic)] += 1
+        if row.state.interaction_key is not None and row.state.component == "MP":
+            # Interaction topics and MP field scopes use different taxonomies.
+            # Treating their labels as directly comparable created 12 false
+            # mismatches in the original audit.
+            family_alignment[(row.state.component, "not_applicable_interaction_taxonomy")] += 1
+        elif row.state.component == "MP":
+            candidate_topic = (
+                item.get("field_value")
+                if item.get("subtype") == "MP_PREFERENCE"
+                else item.get("field_type")
+            )
+            family_alignment[
+                (row.state.component, "match" if state_topic == candidate_topic else "mismatch")
+            ] += 1
+        elif row.state.component in {"MS", "ME"}:
+            candidate_topic = item.get("topic_thread")
+            family_alignment[
+                (row.state.component, "match" if state_topic == candidate_topic else "mismatch")
+            ] += 1
+        else:
+            family_alignment[(row.state.component, "not_applicable")] += 1
 
     evoemo = load_evoemo(ROOT / "data/external/evo_emo.json")
     overlap = _compact_surface_overlap(
@@ -206,6 +225,25 @@ def main() -> None:
         and all(model_input.candidate_present for model_input in row.components.values())
         for row in interactions
     )
+    interaction_candidate_alignment: list[dict[str, Any]] = []
+    for row in interactions:
+        topic = row.semantic_family.split("::", 1)[-1]
+        mismatched_components: list[str] = []
+        for component in ("MS", "ME"):
+            candidate_id = row.candidate_lineage[component].candidate_id
+            item = catalog.get(candidate_id or "", {})
+            if item.get("topic_thread") != topic:
+                mismatched_components.append(component)
+        interaction_candidate_alignment.append(
+            {
+                "interaction_id": row.interaction_id,
+                "mismatched_memory_components": mismatched_components,
+            }
+        )
+    interactions_with_memory_topic_mismatch = sum(
+        bool(row["mismatched_memory_components"])
+        for row in interaction_candidate_alignment
+    )
     observability = _condition_observability(rows)
     blockers = {
         **structural["critical_failures"],
@@ -214,6 +252,9 @@ def main() -> None:
         "external_exact_overlap": overlap["exact_collision_count"],
         "external_normalized_8gram_overlap": overlap["normalized_ngram_collision_count"],
         "interactions_missing_full_four_candidate_coverage": len(interactions) - full_four,
+        "interactions_with_memory_candidate_topic_mismatch": (
+            interactions_with_memory_topic_mismatch
+        ),
     }
     report = {
         "protocol": "pm-v1.5-v5.3-p2r-learning-blueprint-audit-v1",
@@ -231,8 +272,22 @@ def main() -> None:
             "accidental_cross_user_groups": accidental_cross_user_duplicate_groups,
         },
         "candidate_family_alignment": {
-            f"{component}:{'match' if match else 'mismatch'}": count
-            for (component, match), count in sorted(family_match.items())
+            f"{component}:{status}": count
+            for (component, status), count in sorted(family_alignment.items())
+        },
+        "interaction_memory_candidate_alignment": {
+            "checked_interactions": len(interactions),
+            "interactions_with_mismatch": interactions_with_memory_topic_mismatch,
+            "affected": [
+                row
+                for row in interaction_candidate_alignment
+                if row["mismatched_memory_components"]
+            ],
+            "scope_note": (
+                "MS/ME topic_thread must match the interaction topic before a row may "
+                "support a joint-effect claim. MP uses a different field-scope taxonomy "
+                "and is not judged by literal topic-label equality here."
+            ),
         },
         "transparent_observability": observability,
         "semantic_extension_policy": (

@@ -58,6 +58,8 @@ EvoEmo 有 7 类 profile，但没有回复偏好。因此 MP_PROFILE 可由外�
 - ChatGPT 只为 Claude 的 catalog 生成 current states；Claude 只为 ChatGPT 的 catalog 生成 current states；
 - `content_author`、`state_author` 只用于审计，绝不能进入 Step1 特征。
 
+固定分配方式：每个 superdomain 的 10 个 schedule 位置编号 0–9；ChatGPT 负责偶数位置 `0,2,4,6,8`，Claude 负责奇数位置 `1,3,5,7,9`。两个模型各自的用户 ID 按 superdomain 顺序连续编号，每域 5 人。模型不得自行交换位置或改变 session/event/relationship 配额。
+
 ### 3.2 八个 superdomain
 
 1. 工作、教育、考试、职业转换；
@@ -87,6 +89,8 @@ EvoEmo 有 7 类 profile，但没有回复偏好。因此 MP_PROFILE 可由外�
 
 每用户 4–6 个 recurring topic threads；每条 thread 至少 3 个不同 session，至少出现两种时间距离、两种 resolution status；涉及人物时至少有两个不同 entity，避免“同主题就是同事件”。
 
+每个 session 含 2–6 个自然对话 turns，至少一个 user turn；typed candidate 必须先自然出现在 user turn 中，再由结构字段引用，不能先写结构化候选再把它机械塞回对话。13-session 用户允许一场会话产生多类候选，但不得用同一句话同时冒充多个不同事件。
+
 ## 4. 目录资源的精确数量
 
 | 类型 | 每用户 | 总数 | 关键要求 |
@@ -99,6 +103,8 @@ EvoEmo 有 7 类 profile，但没有回复偏好。因此 MP_PROFILE 可由外�
 | ME_UNRESOLVED_EVENT | 5 | 400 | 有行动/事件但没有可复用正结果 |
 | ME_CONTEXT_EVENT | 4 | 320 | 只有背景，不得被编译成 reusable outcome |
 | 合计 | — | 3,024 | 不含 raw dialogue turns |
+
+每个用户的固定目录配额为：7 条基础 profile、3 条 preference、8 条 MS、10 条 reusable ME（8 core + 2 challenge）、5 条 unresolved ME、4 条 context ME。profile 更新按每域 schedule 位置分配：位置 0–1 各更新两个不同字段，位置 2–3 各更新一个字段，位置 4–9 不更新；因此每域 8 条、总计 64 条更新。偏好撤回/替换至少覆盖每域位置 0–1，并另外覆盖前四个 superdomain 的位置 2，共 20 用户。
 
 ### 4.1 MP_PROFILE
 
@@ -188,6 +194,8 @@ intended unresolved/context-only 候选必须 100% 被正式 compiler 拒绝。
 
 要求：`literal_source_span/action_span/result_span` 必须逐字存在于指定 user turn；不得引用 assistant 自己说的话作为用户记忆；summary 12–40 个英文词，不能复制整段对话。
 
+表面多样性验收：不同用户间 candidate 完整文本 exact duplicate=0；除短 profile 值外，各 subtype 的规范化完整文本唯一率至少 95%；任何跨用户高相似句族都要列出，若只是替换 topic/entity/数字的同一骨架则退回重写。profile 不靠包装句多样性凑数，而按结构化 `field_value + active version + applicability scope` 审计；同一域不得反复使用少数几个相同职业、地点和教育值。
+
 ## 6. Current-state 交叉生成
 
 状态作者只可看到以下 redacted blueprint：
@@ -251,9 +259,11 @@ intended unresolved/context-only 候选必须 100% 被正式 compiler 拒绝。
 
 每组四条件：真实前提、明确拒绝/stop、上一轮已执行、goal 或 burden mismatch。每张卡覆盖全部八个 superdomain，previous assistant move 必须可见。M0+R0 是正常对照，不是失败回复。
 
-### 6.5 多组件：320 个状态
+### 6.5 多组件：先生成 384 个，静态冻结 320 个
 
-完整 16 动作每个 20 个状态，均跨两个内容作者、八个 superdomain 和多个用户。动作由 MP/MS/ME 三个 bit 加 RS bit 构成，包含 M0+R0。候选 identity 必须先由统一检索栈冻结；不得为了凑组合替换 Rank-1。
+完整 16 动作先各生成 24 个 blueprint state，共 384 个；均跨两个内容作者、八个 superdomain 和多个用户。动作由 MP/MS/ME 三个 bit 加 RS bit 构成，包含 M0+R0。**每条 interaction 都必须让四类候选真实存在且可执行，即使该条预分配动作把其中部分或全部关闭**；否则模型会把“候选缺失”当成 OFF 的捷径，M0+R0 也不再是开关决策。候选 identity 必须先由统一检索栈冻结；不得为了凑组合替换 Rank-1。
+
+在读取任何回复、quality、risk 或 cost 前，按以下静态条件筛选：MP/MS/ME/RS 四类候选全部存在；四者 owner/time/version 正确；四者 actual Rank-1 的 topic/function 与当前 goal 或 response act 一致；current turn 没有泄漏候选。每个动作在通过者中按稳定 hash 取前 20 个，形成 320 个正式 interaction。若某动作不足 20 个，整批退回补内容，不得降低条件或换 Rank-2。
 
 interaction current state 不能显式列出四个组件条件。冲突必须自然出现，例如“需要接回旧观察，但这轮只想被听见”“profile 相关但当前已经说出”“过去办法有效但当前拒绝行动”。
 
@@ -280,7 +290,7 @@ interaction current state 不能显式列出四个组件条件。冲突必须自
 
 ## 8. 正式 paired-effect 子集
 
-2,944 个状态先全部经过机器审计，不全部付费生成。固定选取 1,088 个 effect states：
+总计生成 3,008 个 blueprint states；其中 interaction 静态筛选后形成 2,944 个正式状态，不全部付费生成。固定选取 1,088 个 effect states：
 
 - MP/MS/ME/RS 各 192 个单组件状态，共 768；
 - 320 个 16-action interaction 状态全部进入；
@@ -313,7 +323,7 @@ generator、temperature、seed、token cap、typed program、guard、rewrite/fal
 - 跨用户 exact duplicate current surface=0；
 - 外部 exact overlap=0；全部 normalized 8-gram 碰撞必须列出并复核，其中包含外部特有 topic/action/result/answer 的 source-significant overlap 必须为 0；普通英语功能短语的偶然碰撞只披露，不为了清零而把文本改得不自然；
 - ME executable core compiler pass=100%；intended invalid pass=0%；160 条 natural coverage challenge 的覆盖率原样报告，不改写到通过；
-- 六张 RS 卡、16 个联合动作全部覆盖；
+- 六张 RS 卡、16 个联合动作全部覆盖；正式 interaction 的跨话题/功能错配=0；
 - 每个 semantic family 至少跨两个 condition；正式核心 family 必须四条件齐全；
 - 长度、填充句数量、作者模型、domain 不得与 condition 一一对应；
 - 同一 counterfactual group 共用 prefix，只改变预先声明的最后回合语义因素；
@@ -337,7 +347,7 @@ generator、temperature、seed、token cap、typed program、guard、rewrite/fal
 ### ChatGPT Pro
 
 ```text
-你负责 PM V1.5 V5.3 formal P2R 数据的一半。严格遵守随附的《完整训练数据生成与验收合同》。先生成 40 个 catalog 用户，ID 为 p2r_formal_gpt_u000 至 u039，每个 superdomain 5 人。分批输出，每批 5 用户，每行一个纯 JSON 对象，不要 Markdown，不要解释。不得查看、引用或仿写 ESConv、EvoEmo、ES-MemEval 原文。
+你负责 PM V1.5 V5.3 formal P2R 数据的一半。严格遵守随附的《完整训练数据生成与验收合同》。先生成 40 个 catalog 用户，ID 为 p2r_formal_gpt_u000 至 u039，每个 superdomain 5 人，只承担每域 schedule 的偶数位置 0/2/4/6/8。逻辑上每 5 用户为一批，但为了避免输出截断，每次只输出 1 个完整用户、一个纯 JSON 对象，不要 Markdown，不要解释；等待该用户机器验收后再继续下一人。不得查看、引用或仿写 ESConv、EvoEmo、ES-MemEval 原文。
 
 catalog 完成并经机器检查后，你将只接收 Claude catalog 的 redacted state blueprints，为对方用户生成 current-state counterfactual groups。你不会看到 literal candidate、field value、过去 action/result、candidate ID 或 Rank-1。不要自行填写 ON/OFF、worth_opening、quality、risk、split 或最终回复。
 
@@ -347,7 +357,7 @@ catalog 完成并经机器检查后，你将只接收 Claude catalog 的 redacte
 ### Claude
 
 ```text
-你负责 PM V1.5 V5.3 formal P2R 数据的另一半。严格遵守随附的《完整训练数据生成与验收合同》。先生成 40 个 catalog 用户，ID 为 p2r_formal_claude_u000 至 u039，每个 superdomain 5 人。分批输出，每批 5 用户，每行一个纯 JSON 对象，不要 Markdown，不要解释。不得查看、引用或仿写 ESConv、EvoEmo、ES-MemEval 原文。
+你负责 PM V1.5 V5.3 formal P2R 数据的另一半。严格遵守随附的《完整训练数据生成与验收合同》。先生成 40 个 catalog 用户，ID 为 p2r_formal_claude_u000 至 u039，每个 superdomain 5 人，只承担每域 schedule 的奇数位置 1/3/5/7/9。逻辑上每 5 用户为一批，但为了避免输出截断，每次只输出 1 个完整用户、一个纯 JSON 对象，不要 Markdown，不要解释；等待该用户机器验收后再继续下一人。不得查看、引用或仿写 ESConv、EvoEmo、ES-MemEval 原文。
 
 catalog 完成并经机器检查后，你将只接收 ChatGPT Pro catalog 的 redacted state blueprints，为对方用户生成 current-state counterfactual groups。你不会看到 literal candidate、field value、过去 action/result、candidate ID 或 Rank-1。不要自行填写 ON/OFF、worth_opening、quality、risk、split 或最终回复。
 
@@ -382,7 +392,7 @@ tie、OFF 胜、资源未做功、fallback 和 material misuse 都保留在 ITT 
 | ME candidate | exact Rank-1 compile-or-off、无 Rank-2 promotion | 方法上是；外部低覆盖必须如实报告 |
 | RS candidate | 冻结 6-card Bank、机械 hard-off 与语义特征分责 | 方法上是；自然多轮正式数据仍缺 |
 | Step1 features | contribution slots 与透明/BGE 两条路线已接好 | 尚未训练、尚未证明及格 |
-| 16 动作 joint policy | 接口存在；当前仅 12 个四组件蓝图 | 正式训练覆盖不足，本合同补 320 个 interaction |
+| 16 动作 joint policy | 接口存在；当前 12 个四组件蓝图中 W9 发现 4 个跨话题错配 | 正式训练覆盖不足，本合同先造 384、静态冻结 320 |
 | Step2 typed generator | generator 看证据并整合整条回复；归属/化名 bug 已小样本修复 | 尚缺本合同全动作同栈验证与 rewrite/fallback 最终冻结 |
 | 质量/risk/cost 标签 | 旧 V5.2 不能迁移 | 正式 V5.3 标签为 0，必须生成 paired effects |
 | ES-MemEval QA adapter | 与 response PM 分责已有实现与客观结果 | 保持独立，不把 QA gold 灌入 response PM |

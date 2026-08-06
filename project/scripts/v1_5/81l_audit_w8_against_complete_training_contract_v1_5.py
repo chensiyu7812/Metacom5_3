@@ -78,7 +78,7 @@ def main() -> None:
         "MS": target_states["ms_states_total"] - int(component_counts["MS"]),
         "ME": target_states["me_states_total"] - int(component_counts["ME"]),
         "RS": target_states["rs_states_total"] - int(component_counts["RS"]),
-        "interaction": target_states["interaction_states_total"]
+        "interaction": target_states["formal_interaction_states_total"]
         - int(blueprint["interaction_count"]),
     }
 
