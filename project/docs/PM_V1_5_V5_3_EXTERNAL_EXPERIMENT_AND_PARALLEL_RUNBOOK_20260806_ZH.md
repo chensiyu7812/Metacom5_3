@@ -481,9 +481,12 @@ L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 2. 当前机器guard尚未完整实现“未授权专名/数字”检查；必须基于运行时授权实体/数值集合，而不是自然语言黑名单。
 3. `atomic_move_budget`目前主要是prompt约束；RS原子动作数、列表长度和一点式边界还缺可靠的结构化实现/校验。
    在无法机器确定的语义边界上不得假装硬判，必须在程序输出schema中把response acts结构化，再检查计数。
-4. RS资产尚有同栈漂移：当前V3训练候选审计记录的是80-card Strategy Bank，而近期V5.3 RS pilot读取的是
-   6-card `strategy_cards_v1_5_minimal.jsonl`。P1必须选择一个正式Bank，并把path、SHA、card count写进机器合同；
-   FIT、ESConv、EvoEmo和所有baseline共享同一份，80-card训练证据与6-card运行结果不得混称同栈。
+4. RS资产的同栈漂移已经由leader裁决：V5.3 primary固定使用6-card
+   `data/strategy/strategy_cards_v1_5_minimal.jsonl`，SHA256=`04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24`。
+   这份Bank低容量、topic-agnostic，且已有独立freeze；80-card V4 Bank自身manifest仍是
+   `BANK_CONTENT_FROZEN_H2_RETRIEVAL_PENDING`且`formal_rs_runtime_enabled=false`，本轮不把它混入primary。
+   它可以作为未来扩展或版本化次表，但不得与6-card训练/FIT/外测结果混称同栈。P2机器合同仍须写入
+   6-card path、SHA和card count，FIT、ESConv、EvoEmo与六个response baseline共享这一份。
 
 ### 7.4 唯一系统汇合点 P2-READY
 
@@ -502,10 +505,25 @@ L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 - 明确记录哪些外部数据已暴露，不能称lockbox。
 - EvoEmo/ES-MemEval同源审计通过：只共享合法的同用户历史，不共享gold/evidence/outcome，且不作统计独立相加。
 
-当前RS域审计可作为一个有限域描述，但还不能直接完成P2-READY：脚本已经正确地从训练`current_user_text`用
-当前runtime重算，0/160触发是值得保留的训练构造缺口；然而ESConv代码默认只取文件前300段对话，
-与docstring声称的1300段全量不一致，而且报告只有触发率、没有gold precision/recall。W3必须先修正文档/采样
-身份、写入输入与实现hash，并增加有独立gold的资格层；不得把3.4%/10.1%触发率直接解释成准确率。
+Worker round-close以后，W1-W4的当前证据解释如下：
+
+- W1的180条平衡资格集证明三态词法观察器高精度但低召回（INVITES 50%、DECLINES 33%、UNKNOWN 100%）。
+  因此它只能作为Step1特征，不能继续充当硬资格门；漏判保持UNKNOWN，不能自动变成OFF gold。
+- W2确认MP_PREFERENCE在EvoEmo结构性缺席，属于外测覆盖边界；MS specific-observation在内外域均有支持。
+  这不要求删除MP_PREFERENCE，而是内部单独测它、EvoEmo只报告MP_PROFILE。
+- W3的最初“训练域RS机会0%”结论是把6-card runtime错误地套到V3 effect-study构造上，已由脚本66纠正。
+  同一effect-study hard-off实现下训练100%可进入、ESConv 94.4%、EvoEmo 95.6%；旧结论不得再引用。
+  6-card系统的自然语义触发覆盖仍较窄，但在新的候选层分责中只影响透明规则/特征，不再清空候选池。
+- W4产生8族、32 state、每state 7候选的ME种子，其中14/32同时满足compiler-valid与intended exact Rank-1。
+  43.75%不是“ME无候选”，而是同主题竞争下Rank-1排序不稳；扩大正式数据前先做一次零API的ME reranker资格比较。
+- W5由leader完成了字段投影、gold canary和同源文本重叠的主要部分：18用户、419个response因果投影及
+  1,552个QA evaluator row均无未来/跨用户/gold可见性违规；当前14个ME种子的112个model-visible surface
+  与3,505个外部question/answer/session surface为0 exact、0 normalized 8-gram overlap。正式完整superdomain
+  物化后仍需重跑duplicate/shortcut/split/overlap审计，当前结果不是对尚不存在数据的预先PASS。
+
+正式训练规模不再机械照抄一个“128”数字。Leader必须在读取任何paired outcome前，根据最终可用独立
+user/family/group数、每个head的参数量、ON/OFF事件数及聚类精度模拟冻结N；构造数量不足时缩小主张或增加
+新独立group，不能复制近重复模板冒充样本量。
 
 ### 7.5 P2之后严格串行
 
@@ -563,13 +581,32 @@ jq . data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json
 
 ---
 
-## 9. 当前下一步
+## 9. 当前下一步（2026-08-06 Worker round-close后的顺序）
 
-1. Worker已提交W2（commit `46aecf5`）和W3的域描述初版（commit `4257102`）。W2结论进入P2数据设计，
-   但不是transport qualification；W3保留0/160训练触发这一构造缺口，同时必须修正“前300段ESConv”与
-   “全量1300段”的身份表述并补有gold资格层。下一步优先W4/W5。W1现有70条自然样本结果保留，但必须
-   承认正例不足；平衡资格集在P2-READY前补齐。
-2. Leader不触碰script 64，先完成L1的formal ledger runner接线审计与L2全动作兼容门设计。
-3. 两边完成后只在P2-READY汇合一次；此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。
-4. P2-READY仍有缺失项时，直接修正明确的工程/数据缺口，或把无法覆盖的状态记为UNKNOWN/OOD；不得用旧V5.2
-   结果或EvoEmo开启率替代，也不得为了追求“全绿”无限循环做人评。
+### 9.1 现在并行、零API
+
+Worker只做候选/数据面，不改三份权威事实源：
+
+1. **ME reranker资格比较**：在同一32-state、同一7-candidate、同一因果边界上比较当前production排序、
+   BGE-M3与至多一个预先写清的hybrid；报告exact intended Rank-1、compiler-valid Rank-1、完全不相关率、
+   per-family paired win/loss。不得把32个state当32个独立用户做夸大的显著性检验，不调用生成API。
+2. **正式P2候选蓝图**：在reranker决定后物化MP/MS/ME/RS的state、用户、family、counterfactual group、
+   exact Rank-1及候选目录；保留MP preference/profile两个内部子域，MS明确走BGE-M3，RS固定6-card；
+   只构造候选与split，不生成ON/OFF回复、不训练head、不读取quality/risk。
+3. 后续脚本使用`70w_...`、`71w_...`前缀，避免再与leader编号碰撞。
+
+Leader并行负责运行面：
+
+1. 将6-card Bank path/SHA/card count和BGE-M3 snapshot绑定到唯一V5.3 release配置，确保pilot与formal runner
+   不再靠调用者手动选择检索器。
+2. 完成L2全动作执行计划与显式rewrite-vs-direct-fallback开发比较设计；所有baseline共享同一选择，第二次调用
+   的token/cost/latency完整计账。未获用户预算授权前只做零API物化和dry-run。
+3. 完成L4样本/cluster/metric freeze与L5正式外部projection接线；不读取新的response outcome。
+4. Worker提交P2候选蓝图后，leader独立运行shortcut、duplicate、user/family/group split、同源overlap和
+   exact candidate-lineage审计。
+
+### 9.2 唯一汇合点
+
+上述两线完成后，leader一次性同步机器合同、计划与失败账本，产生唯一P2-READY release identity和付费预算。
+在此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。P2-READY以后严格按7.5节
+串行，不再用零散十几条人评结果反复改训练定义。
