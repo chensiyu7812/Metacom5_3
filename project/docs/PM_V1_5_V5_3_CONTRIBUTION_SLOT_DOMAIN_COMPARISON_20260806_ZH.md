@@ -1,5 +1,16 @@
 # 真正的泛化检验：候选级特征在训练域和EvoEmo域之间的真实差距（2026-08-06，路线图第8项）
 
+**2026-08-06后续更正**：独立审核指出`incremental_injected_tokens`/`age`这几个字段名字
+叫"候选级特征"，实际计算时用的是`describe_memory_candidate()`对整个`selected_items`
+（可能包含最多3条ME候选，不是只有真正会被注入的那1条）的聚合统计，不是真正exact
+Rank-1候选自己的值。核实过是真的：训练域`selected_items`平均只有1.14条（149/216是1条、
+30/216是2条），EvoEmo域**恒定是3条**（top_k=3，EvoEmo候选池够大总是能填满）——这个
+系统性差异会虚高聚合类指标的差距。**已修复**（`v1_5_v5_3_contribution_slot_features.py`
+拆成`rank1_*`——只用`selected_items[0]`单独计算——和`topk_*`——保留原有的Top-k聚合
+诊断，明确改名不再混称）。**`past_action_result`这个最核心的发现完全不受影响**（它本来
+就只读`selected_items[0]`），但token成本的差距从虚高的"7倍"修正为约"2.5倍"（真实注入
+的单条候选：训练域均值37 token，EvoEmo域均值92 token）。下文数字已更新为修正后的版本。
+
 ## 这才是用户最初问的问题的正确答案
 
 之前测的两件事都不是这个问题本身：`PMV2FeatureBuilder`的OOD测的是要被淘汰的旧目录统计
@@ -12,12 +23,12 @@ EvoEmo域（138个真实state）之间直接对比分布。
 
 | 特征 | 训练域 | EvoEmo域 | 差距 |
 |---|---|---|---|
-| `past_action_result`（候选是否真通过ME编译器） | **0.0%** | **78.3%** | **严重** |
-| `top_k_capacity_fraction` | 恒定0.667（零方差） | 恒定1.0（零方差） | 确认，无重叠 |
-| `incremental_injected_tokens` | 均值43 | 均值306 | 7倍 |
-| `top1_lexical_relevance` | 均值0.22 | 均值0.48 | 约2倍 |
-| `top1_top2_lexical_margin` | 均值0.14 | 均值0.02 | 反向7倍 |
-| `median_relative_age` | 均值0.22 | 均值0.38 | 明显 |
+| `past_action_result`（候选是否真通过ME编译器，**exact Rank-1**） | **0.0%** | **78.3%** | **严重** |
+| `rank1_injected_tokens`（**修正后：只算真正注入的那1条候选**） | 均值37 | 均值92 | 约2.5倍 |
+| `rank1_relative_age`（**修正后：只算exact Rank-1**） | 均值0.22 | 均值0.34 | 明显 |
+| `topk_capacity_fraction`（Top-k诊断，非exact Rank-1） | 恒定0.667（零方差） | 恒定1.0（零方差） | 确认，无重叠 |
+| `topk_top1_lexical_relevance`（Top-k诊断） | 均值0.22 | 均值0.48 | 约2倍 |
+| `topk_top1_top2_lexical_margin`（Top-k诊断） | 均值0.14 | 均值0.02 | 反向7倍 |
 | `current_redundant` | 42.5% | 13.0% | 明显 |
 | `current_action_invitation` | 0.0% | 0.0% | 两边都是0（见下） |
 

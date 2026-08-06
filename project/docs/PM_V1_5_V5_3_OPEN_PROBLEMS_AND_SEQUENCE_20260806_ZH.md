@@ -52,12 +52,16 @@ V2压力测试为了干净直接把这类candidate从干扰项里删掉了。**�
 学会不编造，或(b) 接受一个残留率、把这个guard的触发当成正常的"一次重写"流程的一部分，
 不强求降到0。这个需要先弄清楚"残留到什么程度算可接受"，是个门槛设计问题。
 
-### 7. ME PM Effect试点的方法已验证，但只做了ME一个组件、只有10个case
-**怎么修**：把同一套方法（确定性模板构造+双重真实校验，不是自由生成）复制到MP（区分
-PROFILE/PREFERENCE两种交互项）、MS（`continuity_request × specific_prior_observation`）、
-RS（`card_precondition × nonredundancy × burden_fit`）。每个组件的ON/OFF合同
-`PM_V1_5_V5_3_INTEGRATED_EVIDENCE_EXECUTION_PLAN_20260805_ZH.md`第2.3节已经写好，不需要
-重新设计，只需要按ME的样子实现。工作量：中等，三个组件重复同一套方法论。
+### 7. ME试点已更正为"eligibility/特征管线试点"，不是真正的Effect FIT——真正的FIT还没做
+独立审核指出（核实属实）：这次ME试点从没调用过生成器，"ON"/"OFF"标签是构造时假设的，
+不是真实生成ME-ON/ME-OFF两条回复比较出来的，不满足计划文档第252行"worth_opening=1"
+的真实定义。**怎么修**：真正的Effect FIT需要同一state、同一exact Rank-1候选、同一seed，
+生成ON和OFF两条真实回复，比较质量/risk，才能产生真实的边际效用标签——这跟已有的
+`52-55`号Step1 minimal pilot脚本（真实生成+真实judge打分）用的是同一套已验证的机制，
+只是需要用"是否符合eligibility"去筛选真正该测的state，而不是像之前那样构造假设性场景。
+另外发现"邀请行动"这类正则信号目前是靠调整话术去匹配正则、不是验证过泛化能力，需要更
+自然多样的改写去测，不能只用规则本身认识的措辞造题。工作量：中等偏大，四个组件重复同一
+套方法论。
 
 ## 第二层：真正的泛化问题——目前唯一还没被正确测过的部分
 

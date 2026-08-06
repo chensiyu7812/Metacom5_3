@@ -81,11 +81,13 @@ def _me_observation_for_state(
         source_items=me_items, selected_items=selected, session_index=session_index,
     )
     return {
-        "top1_lexical_relevance": obs.top1_lexical_relevance,
-        "top1_top2_lexical_margin": obs.top1_top2_lexical_margin,
-        "median_relative_age": obs.median_relative_age,
-        "incremental_injected_tokens": obs.incremental_injected_tokens,
-        "top_k_capacity_fraction": obs.top_k_capacity_fraction,
+        "rank1_relative_age": obs.rank1_relative_age,
+        "rank1_injected_tokens": obs.rank1_injected_tokens,
+        "topk_top1_lexical_relevance": obs.topk_top1_lexical_relevance,
+        "topk_top1_top2_lexical_margin": obs.topk_top1_top2_lexical_margin,
+        "topk_median_relative_age": obs.topk_median_relative_age,
+        "topk_incremental_injected_tokens": obs.topk_incremental_injected_tokens,
+        "topk_capacity_fraction": obs.topk_capacity_fraction,
         "current_redundant": obs.current_redundant,
         "past_action_result": obs.past_action_result,
         "current_action_invitation": obs.current_action_invitation,
@@ -168,8 +170,9 @@ def main() -> None:
     print(f"  n_evoemo_states_with_me_candidate={len(evoemo_obs)}")
 
     fields = [
-        "top1_lexical_relevance", "top1_top2_lexical_margin", "median_relative_age",
-        "incremental_injected_tokens", "top_k_capacity_fraction",
+        "rank1_relative_age", "rank1_injected_tokens",
+        "topk_top1_lexical_relevance", "topk_top1_top2_lexical_margin",
+        "topk_median_relative_age", "topk_incremental_injected_tokens", "topk_capacity_fraction",
         "current_redundant", "past_action_result", "current_action_invitation",
     ]
     comparison = {}

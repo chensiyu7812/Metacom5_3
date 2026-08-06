@@ -38,7 +38,7 @@ import re
 from typing import Any, Sequence
 
 from .contracts import MemoryItem, MemorySource
-from .text import content_word_match_level, content_words
+from .text import content_word_match_level, content_words, estimate_tokens
 from .v1_5_candidate_discovery import describe_memory_candidate
 from .v1_5_strategy_rag_runtime import observable_flags
 from .v1_5_v5_2_atomic_memory import (
@@ -79,15 +79,35 @@ def _is_redundant(current_user_text: str, candidate_text: str) -> bool:
 
 @dataclass(frozen=True)
 class ContributionSlotObservation:
+    """2026-08-06: an independent review found this dataclass originally
+    conflated two different things under names that read as "the candidate's
+    own" values -- see PM_V1_5_V5_3_CONTRIBUTION_SLOT_METHOD_CORRECTION_
+    20260806_ZH.md. Split explicitly now:
+
+    rank1_* fields describe ONLY the single exact-Rank-1 candidate that
+    v1_5_v5_3_typed_response_program.py actually injects into a real reply
+    (this project's "top-k discovery, top-1 execution" principle, applied
+    consistently here too) -- computed directly from that one MemoryItem,
+    not from describe_memory_candidate()'s selected_items aggregate.
+
+    topk_* fields are legitimate Top-k diagnostics (this project's plan
+    explicitly keeps Top-k descriptors for margin/coverage/OOD -- see
+    PM_V1_5_V5_3_INTEGRATED_EVIDENCE_EXECUTION_PLAN_20260805_ZH.md section
+    2.1) and may aggregate over more than one item. They must not be read
+    as "the injected candidate's own cost/age."
+    """
+
     component: str
     candidate_present: bool
-    top1_lexical_relevance: float = 0.0
-    top1_top2_lexical_margin: float = 0.0
-    minimum_relative_age: float | None = None
-    median_relative_age: float | None = None
-    maximum_relative_age: float | None = None
-    incremental_injected_tokens: int = 0
-    top_k_capacity_fraction: float = 0.0
+    rank1_relative_age: float | None = None
+    rank1_injected_tokens: int = 0
+    topk_top1_lexical_relevance: float = 0.0
+    topk_top1_top2_lexical_margin: float = 0.0
+    topk_minimum_relative_age: float | None = None
+    topk_median_relative_age: float | None = None
+    topk_maximum_relative_age: float | None = None
+    topk_incremental_injected_tokens: int = 0
+    topk_capacity_fraction: float = 0.0
     current_redundant: bool = False
 
     # ME
@@ -112,19 +132,32 @@ def _shared_descriptor_fields(
     *, source: MemorySource, query: str, source_items: Sequence[MemoryItem],
     selected_items: Sequence[MemoryItem], session_index: int,
 ) -> dict[str, Any]:
+    """rank1_* is computed from ONLY selected_items[0] -- the one item that
+    would actually be injected -- never from the full (possibly
+    multi-item, up to top_k) selected_items list describe_memory_candidate()
+    aggregates over. topk_* keeps using that aggregate, correctly labeled."""
+
     descriptor = describe_memory_candidate(
         source=source, query=query, source_items=source_items,
         selected_items=selected_items, session_index=session_index,
     )
+    rank1 = selected_items[0] if selected_items else None
+    rank1_relative_age = (
+        (session_index - rank1.created_session) / float(session_index)
+        if rank1 is not None else None
+    )
+    rank1_injected_tokens = estimate_tokens(rank1.text) if rank1 is not None else 0
     return {
         "candidate_present": descriptor["candidate_present"],
-        "top1_lexical_relevance": descriptor["top1_lexical_relevance"],
-        "top1_top2_lexical_margin": descriptor["top1_top2_lexical_margin"],
-        "minimum_relative_age": descriptor["minimum_relative_age"],
-        "median_relative_age": descriptor["median_relative_age"],
-        "maximum_relative_age": descriptor["maximum_relative_age"],
-        "incremental_injected_tokens": descriptor["incremental_injected_tokens"],
-        "top_k_capacity_fraction": descriptor["top_k_capacity_fraction"],
+        "rank1_relative_age": rank1_relative_age,
+        "rank1_injected_tokens": rank1_injected_tokens,
+        "topk_top1_lexical_relevance": descriptor["top1_lexical_relevance"],
+        "topk_top1_top2_lexical_margin": descriptor["top1_top2_lexical_margin"],
+        "topk_minimum_relative_age": descriptor["minimum_relative_age"],
+        "topk_median_relative_age": descriptor["median_relative_age"],
+        "topk_maximum_relative_age": descriptor["maximum_relative_age"],
+        "topk_incremental_injected_tokens": descriptor["incremental_injected_tokens"],
+        "topk_capacity_fraction": descriptor["top_k_capacity_fraction"],
     }
 
 
