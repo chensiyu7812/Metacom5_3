@@ -186,16 +186,23 @@ generator 必须看到上述程序与证据，并一次性输出自然回复和�
 P1 必须实现并在任何新 API 生成前冻结 `stagewise_accountability_ledger`。每个 state 至少保存：
 
 ```text
-state_id, user_id, semantic_family, counterfactual_group_id,
+row_id, state_id, user_id, semantic_family, counterfactual_group_id,
+policy_condition, seed_label, lifecycle_stage,
 candidate_ids_topk, exact_rank1_id, candidate_owner_id, candidate_version,
 retrieval_fit_label, eligibility_owner_time, eligibility_goal_function,
 eligibility_boundary_burden, eligibility_specific_increment,
-pm_probability, pm_threshold, pm_decision, requested_action,
+pm_probability, pm_threshold, pm_decision, pm_correct, requested_action,
 realized_action, generator_received_evidence_ids, used_evidence_ids,
-functional_contribution, grounding_fidelity, atomic_move_compliance,
+generator_reported_used_evidence_ids, normalized_used_evidence_ids,
+required_evidence_use, functional_contribution, grounding_fidelity,
+atomic_move_compliance, execution_valid, scaffold_exposure,
 fallback_reason, quality_outcome, risk_outcome, prompt_tokens, total_tokens,
 primary_failure_owner, secondary_failure_owner
 ```
+
+同一 `state_id` 会有多个 policy/action/seed realization，因此唯一键冻结为
+`state_id × policy_condition × seed_label`；不得只按 `state_id` 写一行后相互覆盖。候选、资格、
+PM 与功能/grounding 字段均按组件保存，不能把多组件动作压成一个无法追责的总布尔值。
 
 五层构念和主责固定如下，不得用最终质量一项替代：
 
@@ -237,6 +244,10 @@ P1（实现 V5.3 executor，零新 outcome）已有以下真实、经代码验�
 - 合法 `M0+R0` 的空证据trace已改为运行时确定性规范化：模型若自报`user_message_1`等不存在
   ID，只作为原始telemetry保留，realized `used_evidence_ids`固定为空，不再丢弃正常无资源回复；
   有授权证据的动作继续严格检查ID（账本V15-ARCH-35）。
+- `stagewise_accountability_ledger` 已实现为严格类型schema，唯一键为
+  `state_id × policy_condition × seed_label`，并补齐原合同遗漏的`pm_correct`、
+  `required_evidence_use`、`execution_valid`与`scaffold_exposure`等可计算字段；零API schema freeze
+  已通过（40个合同字段0缺失，账本V15-MEAS-54）。正式P2/E4 runner仍须逐行写入并做完整性断言。
 
 **已发现、尚未解决、P2冻结数据前必须处理**：
 - ME 试点目前只验证了 eligibility/特征管线，不是本文2.3/4.3节要求的真实 Effect FIT 标签
