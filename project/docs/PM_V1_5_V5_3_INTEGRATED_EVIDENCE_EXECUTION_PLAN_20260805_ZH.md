@@ -302,22 +302,24 @@ RS 原子动作遵从≥95%，资源 required-contribution 自动可核验率≥
 > （1）设计为正例的 ME 原始历史经同一 compiler 后确有 action+result；（2）每个 intended-positive
 > state 的同 topic Rank-1 绑定通过；（3）负例覆盖 context-only、不可迁移、冗余、拒绝行动等机制；
 > （4）topic relevance 仍优先，不能为了追平 EvoEmo 的78.3%比例而让 subtype 覆盖目标匹配。
-> （5）行动准备度用三态记录，`UNKNOWN` 不作 OFF gold。正式数据必须至少提供预冻结的40个正与
-> 40个非正独立 group，并在未见用户/语义族/表述上复核。
+> （5）行动准备度用三态记录，`UNKNOWN` 不作 OFF gold。正式数据必须在内容独立的用户/语义族/表述上
+> 覆盖 invitation、decline、redundant、goal-mismatch 和 unavailable 等可观察机制，但不得在真实paired
+> outcome产生前把构造条件叫作40个“正/非正gold”。
 
-### 4.2 样本规模由精度而不是方便决定
+### 4.2 样本规模由真实独立组、可识别性和可获得精度决定
 
-V5.2 只有64个 confirmation group，质量非劣 CI过宽。V5.3 在生成前用旧 V5.2 的 cluster-level
-方差做一次零API power simulation，冻结能让 NetWin 95% CI 以足够概率判定 `-0.05` 非劣界的 N；
-不得看到 V5.3 outcome 后补样本。
+旧V5.2 outcome可用于解释历史CI为何很宽，但不能再投影出一个必须靠复制模板达到的V5.3最低N。正式生成前
+先完成外部考卷反推的support matrix和候选蓝图，然后：
 
-最低工程下限：
+- 使用全部通过内容、身份、严格过去、shortcut和split审计的唯一user/family/counterfactual group；
+- 特征矩阵须有变化且可识别，四个head的每个关键运行时slot都同时存在支持与反例；
+- invitation/decline/redundant/goal-mismatch等是构造strata，不在outcome前假称正/非正label；
+- FIT/confirmation/sealed按user和family完整隔离，同一模板换话题或同用户多个state不增加独立N；
+- 在生成前按实际独立group、参数量、预期可报告CI宽度和预算冻结真实N；若不能支持窄非劣声明，就报告
+  实际估计和宽CI或缩小主张，不能复制近重复样本补到128/64/40。
 
-- EFFECT_FIT：每组件至少128个独立 group，且至少40个正、40个非正；
-- FRESH_CONFIRMATION：每组件至少64个独立 group；
-- SEALED_INTERNAL：每组件至少64个独立 group；
-- 每个组件至少8个语义族，任何单族不超过20%；
-- 具体 N 若 power simulation 要求更大，以更大值为准。
+外部结构依据及各组件训练支持范围见
+`docs/PM_V1_5_V5_3_EXTERNAL_EXAM_BACKWARD_TRAINING_SPEC_20260807_ZH.md`。
 
 每个 state 使用同一 seed 的 ON/OFF matched pair；如要估计生成波动，只在预冻结25%子集加第二 seed，
 不能把同一状态的多个 seed 当独立样本。

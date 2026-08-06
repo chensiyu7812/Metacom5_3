@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-v5.3-integrated-evidence-execution-and-confirmation-v1",
   "status": "PROPOSED_P1_IN_PROGRESS",
-  "last_aligned_date": "2026-08-06",
+  "last_aligned_date": "2026-08-07",
   "supersedes_for_future_runs": [
     "pm-v1.5-v5.2-backend-locked-clause-append-executor"
   ],
@@ -143,13 +143,14 @@
     "maximum_unauthorized_names_or_numbers": 0
   },
   "data": {
-    "minimum_fit_groups_per_component": 128,
-    "minimum_confirmation_groups_per_component": 64,
-    "minimum_sealed_groups_per_component": 64,
-    "minimum_positive_fit_groups_per_component": 40,
-    "minimum_nonpositive_fit_groups_per_component": 40,
-    "minimum_semantic_families_per_component": 8,
-    "maximum_single_family_share": 0.2,
+    "hard_minimum_group_counts_are_binding": false,
+    "sample_size_freeze_rule": "all unique qualified user/family/counterfactual groups after external-support, shortcut, split and feature-identifiability audit",
+    "constructed_opportunity_strata_are_outcome_labels": false,
+    "feature_matrix_variation_and_identifiability_required": true,
+    "fit_confirmation_sealed_user_and_family_disjoint": true,
+    "near_duplicate_template_variants_increase_independent_n": false,
+    "narrow_noninferiority_claim_requires_achievable_cluster_precision": true,
+    "insufficient_precision_action": "report actual estimate and wide interval or narrow claim; never clone near-duplicate groups",
     "power_simulation_before_generation": true,
     "split_keys": ["synthetic_user", "semantic_family", "counterfactual_group"],
     "external_text_copying_allowed": false,

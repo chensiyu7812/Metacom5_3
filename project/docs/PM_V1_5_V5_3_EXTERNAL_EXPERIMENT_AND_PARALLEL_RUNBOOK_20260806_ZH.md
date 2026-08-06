@@ -655,3 +655,19 @@ preference缩成两个词绕开三词冗余启发式，16/16实质增量仍已�
 措辞；Worker保持停止。Leader只做一次方法级P2R：结构化MP候选、隐藏答案的真实密度MS池、恢复ME/RS合法
 运行时slot、重建group/split单位与真实多组件interaction。零API静态复审通过后立即冻结P2 release并进入
 formal runner/P3，不再以审计计数为目标继续表面调词。
+
+### 9.5 三项外部考卷反推训练规格与双线重启（2026-08-07）
+
+Leader已直接读取ESConv、EvoEmo/ES-MemEval原始结构、冻结外部surface和W7R蓝图，形成
+`docs/PM_V1_5_V5_3_EXTERNAL_EXAM_BACKWARD_TRAINING_SPEC_20260807_ZH.md`及零API机器报告
+`outputs/pm_v1_5_v5_3_external_exam_backward_training_spec_v1/report.json`。
+
+结论：旧训练数据缺少纵向深度的判断成立，但应精确为“13–33条同用户严格过去目录、同主题竞争项、跨会话
+状态演化和自然互动轨迹不足”；它与MP题干复述、MS答案泄漏、ME合法特征清空、family-condition混杂和
+state-level group膨胀并存。外部结构规定支持范围，不直接提供`worth_opening` gold；正式标签仍由冻结Step2
+的paired ON/OFF quality-risk-cost effect产生。
+
+9.4的“Worker保持停止”在本节后改为一个新且边界独立的W8任务：Worker只构造外部文本零复制的longitudinal
+catalog asset，不构造current state、不计算Step1特征、不生成label、不修改三份权威事实源。Leader同时实现
+P2R state/schema/features/group/interaction。汇合后Leader导入catalog，Worker只读复核，Leader只运行一次最终
+静态审计；通过即冻结P2 release并进入formal runner/P3，不继续surface tuning。
