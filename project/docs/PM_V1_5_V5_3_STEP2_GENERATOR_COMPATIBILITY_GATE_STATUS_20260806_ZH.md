@@ -1,7 +1,14 @@
 # Step2 生成器兼容门——本环境可行性核实（2026-08-06）
 
-状态：**已核实为在本沙箱环境里不可执行真实LLM调用部分**，如实记录能做和不能做的边界，不是跳过
-或假装做过。
+**2026-08-06二次修正：本文档最初的核心结论错了，用户和另一位Codex都指出了这一点，这里先纠正
+再往下看。** 最初版本断言"本环境没有任何可用的LLM API凭据，真实生成调用在这里物理上无法执行"
+——这是错的。我的凭据检查只查了当前shell已导出的环境变量和项目目录内的`.env`文件，没有搜索
+用户家目录。用户家目录下实际存在`~/.metacom_v1_5_secrets.env`（以及`~/.pm_v1_5_judge.env`、
+`~/.pm_v1_5_openai.env`），`source`一下就能激活，里面确认包含`OPENAI_API_KEY`、
+`NVIDIA_API_KEY`、`GEMINI_API_KEY`、`ANTHROPIC_API_KEY`等真实凭据的变量名（只核对了变量名
+存在，没有打印、没有查看任何密钥值）。**真实LLM调用在这个环境里是可以执行的，此前"物理上无法
+执行"的结论是我的检查范围不够全面导致的错误结论，不是环境的真实限制**。下面第一部分的"环境
+凭据检查"保留作为记录（说明了错误检查过程本身），但其结论已被推翻，请以本节和文末更新为准。
 
 ## 背景
 
@@ -14,15 +21,17 @@ V5.2机械拼接方案（`compose_locked_response`：LLM生成的`primary_respon
 
 ## 核实内容
 
-1. **环境凭据检查**：
+1. **环境凭据检查（原始版本，结论已被文首2026-08-06修正推翻，保留记录检查过程本身）**：
    - `env | grep -iE "api_key|openai|anthropic|openrouter"` → 空（只有`CLAUDE_CODE_EXECPATH`
      这个跟本次任务无关的变量）。
    - 项目根目录及`project/`目录下无`.env`/`.env.*`文件。
    - `src/metacom_pm/api.py`的`Endpoint.api_key`属性：读取`os.environ.get(self.api_key_env,
      "")`，为空时直接`raise RuntimeError(f"Environment variable {self.api_key_env} is not
-     set")`——代码本身的fail-closed设计确认了"没配置就跑不起来"，不是我们绕过了什么检查。
-   - **结论：本环境没有任何可用的LLM API凭据，真实生成调用在这里物理上无法执行**，不是权限
-     问题，是根本没有密钥。
+     set")`——代码本身的fail-closed设计确认了"没配置就跑不起来"，这部分观察本身没错。
+   - ~~结论：本环境没有任何可用的LLM API凭据~~——**错误**。检查范围只覆盖了当前shell环境变量
+     和项目目录内的`.env`文件，没有搜索用户家目录下按约定命名的密钥文件
+     （`~/.metacom_v1_5_secrets.env`等）。`RuntimeError`确实会在密钥未`source`时触发，但这
+     只说明"当前shell没有加载密钥"，不能跳到"密钥不存在"这个更强的结论。
 
 2. **能做的部分：结构/契约层面的离线校验，全部通过**：
    - `test_v1_5_v5_3_typed_response_program.py`：11个单元测试全部通过（`pytest`，0.06秒）。
@@ -39,9 +48,53 @@ V5.2机械拼接方案（`compose_locked_response`：LLM生成的`primary_respon
 | 与V5.2 locked composer并存的代码路径没有相互破坏（同一批测试跑通） | 真实响应是否会因为要同时满足typed证据整合+对话连贯性两个目标而产生新的失败模式（如遗漏某条证据、误改证据措辞） |
 | 无API凭据环境下的fail-closed行为符合预期（`RuntimeError`而非静默跳过或使用假数据） | 端到端的人工/自动质量评审（这需要真实响应文本才能进行，本次完全没有生成任何真实响应） |
 
-**如实结论：Step2生成器兼容门在本次会话里没有被"通过"，也没有被"跳过"——它是被诚实标记为
-"本环境无法执行"**。如果要完成这一项，需要：(1) 用户提供真实LLM API凭据（哪个供应商、哪个
-模型，由用户决定，不由本次核查代为选择或猜测）；(2) 在有凭据的环境下对一小批真实typed证据
-跑生成，人工核对响应是否忠实整合了MS/ME/MP内容且没有编造。这两步都不在本次"接手自主推进"的
-授权范围内自动执行（涉及真实API调用产生费用，且此前的指令明确要求"不要立即付费运行"），留给
-用户决定是否、何时授权执行。
+**如实结论（2026-08-06修正后）：Step2生成器兼容门在本次会话里没有被"通过"，也没有被"跳过"，
+但此前"本环境无法执行"的判断本身是错的**。真实缺口不是凭据，是：(1) 没有任何脚本把
+`v1_5_v5_3_typed_response_program.py`接到真实端点上（见下方补充）；(2) 真实调用产生费用，
+此前指令明确要求"不要立即付费运行"，需要用户明确授权才能实际发起调用。这两步都不在本次"接手
+自主推进"的授权范围内自动执行，留给用户决定是否、何时授权执行——但请注意，"是否执行"跟"能不能
+执行"是两件事，本环境**能**执行，只是还没有被授权/没有被接线。
+
+## 2026-08-06补充：具体缺什么、怎么补——纯研究，没有调用任何API、没有花钱
+
+按用户要求"研究一下Step2怎么弄"，查了项目已有的端点配置和调用基础设施，不是猜测：
+
+### 凭据不是从零开始配——项目已经有一份写死了真实模型的配置
+
+`project/configs/experiment.yaml`（不是`.example`模板，是已经填好真实`base_url`/`model`的
+正式配置）里，跟Step2生成直接相关的端点是`generator`角色：
+
+```yaml
+generator:
+  base_url: "https://integrate.api.nvidia.com"
+  model: "meta/llama-3.1-8b-instruct"
+  api_key_env: "NVIDIA_API_KEY"
+  family: "llama"
+```
+
+配置里的注释解释了选型理由（"Supporter generator: Llama-8B is mid-strength, more sensitive
+to evidence than 70B models, and realistic for digital-human deployment"）。**这个凭据缺口
+其实已经不存在了**：`~/.metacom_v1_5_secrets.env`已经包含真实的`NVIDIA_API_KEY`，`source`
+一下就能激活，不需要重新决定用哪家、哪个模型——这个决定已经在配置里做过了，密钥也已经有了。
+配置注释里另外提到NVIDIA网关有个"free/prototyping tier"（40 RPM硬顶，见
+`training_judge_deepseek_flash`条目的注释），对一次小样本Step2检查而言，实际花费大概率很低，
+但具体额度、是否已经产生历史费用由用户自己在NVIDIA账号里确认，这里不替用户估算或承诺费用。
+
+### 光有密钥还不够——目前没有任何脚本把typed_response_program接到真实端点上
+
+搜了`project/scripts/`全目录，**没有任何脚本调用`v1_5_v5_3_typed_response_program.py`**——
+这跟该模块自己文档字符串里写的状态一致："implemented, unit-tested, NOT yet wired into any
+generation pipeline"。也就是说即使现在就拿到`NVIDIA_API_KEY`，也还差一个新脚本：加载几个
+真实typed证据状态（MS/MP/ME核查这几天已经产出了现成的候选数据可以复用）、按
+typed_response_program的输入契约组装、通过`OpenAICompatibleClient`（`api.py`里已有的调用
+封装）调用`generator`端点、把响应存下来供人工核对是否忠实整合了证据、没有编造。项目里已有
+脚本（如`project/scripts/v1_5/27i_materialize_v5_2_confirmation_plan_v1_5.py`等）演示了
+"读`experiment.yaml`配置→`endpoint_from_config`→调用generator端点"这一套现成模式，新脚本
+照这个模式写，不是从零发明调用方式。
+
+### 结论：这是"source一个已有的密钥文件 + 写一个新脚本 + 一句明确授权"，不是"无从下手"
+
+如果用户想推进：(1) `source ~/.metacom_v1_5_secrets.env`（凭据已经就绪，不需要新申请）；
+(2) 明确授权可以花一点钱做一次小样本（比如10-20个真实state）验证跑；之后我可以写这个新脚本
+并执行。在此之前，这一项保持"已研究清楚缺口、未执行"的状态，不会因为"密钥已经存在"就擅自
+发起真实调用——凭据可用不等于已经获得执行授权，这是两件独立的事。

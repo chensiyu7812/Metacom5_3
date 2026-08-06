@@ -4,6 +4,16 @@
 `build_evo_memory`候选池），但只跑了一遍，没有第二独立核查者**。目的是回答"MP的真实问题是什么"，
 不是给MP做资格赛（MP不存在"要不要换BGE"这个问题，见下）。
 
+**2026-08-06更新：第4节里提到的字段名前缀修正已经实现并验证，不再只是"未来方向"**。见
+`src/metacom_pm/v1_5_candidate_discovery.py`的`_mp_match_document()`（commit `8812492`）：
+在MP的内容匹配阶段把"Job: office worker"这类字段值前缀（"Job: "）先剥离，只用值本身
+（"office worker"）参与匹配，`item.text`本身（渲染用）不变，MS/ME完全不受影响。用真实138状态
+面板重跑`scripts/v1_5/46_mp_verification_same_stack_v1_5.py`确认修复生效：选中≥1条候选的
+状态数从55降到33/138；p12("office worker")、p14("freelancer")、p18("software engineer")
+三个此前100%靠"job"这个词撞词的用户，现在全部正确选出0条候选。新增2个回归测试
+（`test_mp_label_prefix_does_not_create_false_content_match`、
+`test_mp_value_content_still_matches_after_label_stripped`）锁定这个行为。
+
 复现：`scripts/v1_5/46_mp_verification_same_stack_v1_5.py`，产出：
 `outputs/pm_v1_5_v5_3_mp_verification_v1/mp_selection_all_states.jsonl`（gitignore，未进git，
 不含私有对话原文之外的额外私有信息，字段本身就是`current_user_text`等已在其他资格赛里处理过的
@@ -71,10 +81,14 @@ MS资格赛已经确认：生产环境的粗粒度content-match会被"stress/anx
 - 换BGE不能解决(a)类问题：字段名前缀撞词是字面拼写层面的问题，BGE语义相似度大概率同样会因为
   "job"这个词本身在文本里出现而给出较高相似度（语义上"job"确实和"job"相关，语义模型不会区分
   "字段名"和"内容"）。
-  这需要在检索之前的候选渲染阶段把字段名前缀从匹配用文本里剔除，或者在`CONTENT_MATCH_IGNORED_
-  WORDS`/`_FINAL_RETRIEVAL_GENERIC_WORDS`里补充"job"、"education"这类结构性字段名词。
+  这需要在检索之前的候选渲染阶段把字段名前缀从匹配用文本里剔除——**(a)类已经这样修了，见文首
+  2026-08-06更新**。
 - 换BGE对(b)类问题（"progress"撞词）效果不确定，需要专门测——但由于MP候选池每用户只有6-8条，
-  样本量小到不足以支撑MS那种配对资格赛，不建议对MP单独重复MS的资格赛流程。
+  样本量小到不足以支撑MS那种配对资格赛，不建议对MP单独重复MS的资格赛流程。**(b)类问题本次未修，
+  p11的"Education: high school (in progress)"仍会因为"progress"这个通用填充词零星命中不相关
+  话题**，如果后续要修，方向应该是在MP专属的匹配文本处理里再排除掉候选值本身携带的状态类填充词
+  （"in progress"这种），而不是动全局`CONTENT_MATCH_IGNORED_WORDS`（会误伤MS/ME里"job"等词的
+  真实信号）。
 - 这印证（而不是推翻）Codex此前"MP的问题在Step1资格判断/渲染方式，不在检索排序"的判断，现在有
   了具体、可复现、代码核实过的量化证据：**68次选中里35%是通用词而非事实内容驱动的假阳性**，
   且集中在5个可点名的用户/事实上，不是随机噪声。
