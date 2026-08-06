@@ -1,0 +1,96 @@
+{
+  "protocol": "pm-v1.5-v5.3-complete-training-data-generation-v1",
+  "status": "PROPOSED_CONTENT_GENERATION_CONTRACT",
+  "external_raw_text_allowed": false,
+  "formal_longitudinal_users": 80,
+  "catalog_authors": {
+    "chatgpt_pro": 40,
+    "claude": 40
+  },
+  "primary_superdomains": 8,
+  "users_per_superdomain": 10,
+  "session_counts_per_superdomain": [13, 15, 17, 19, 21, 23, 25, 27, 30, 33],
+  "formal_user_split": {
+    "fit": 48,
+    "development": 16,
+    "sealed_internal_confirmation": 16,
+    "per_superdomain": {
+      "fit": 6,
+      "development": 2,
+      "sealed_internal_confirmation": 2
+    },
+    "catalog_author_balanced": true,
+    "split_unit": "user_cluster"
+  },
+  "catalog_targets": {
+    "sessions": 1784,
+    "base_mp_profile_items": 560,
+    "profile_update_items": 64,
+    "mp_preference_items": 240,
+    "ms_session_items": 640,
+    "me_reusable_outcome_items": 800,
+    "me_reusable_executable_core_items": 640,
+    "me_reusable_natural_coverage_challenge_items": 160,
+    "me_unresolved_event_items": 400,
+    "me_context_event_items": 320,
+    "total_typed_catalog_items": 3024,
+    "recurring_topic_threads_per_user": [4, 6],
+    "relationships_per_user_schedule": [3, 4, 5, 6, 7, 8, 9, 11, 13, 15],
+    "events_per_user_schedule": [13, 16, 18, 20, 22, 24, 27, 30, 34, 37]
+  },
+  "current_state_targets": {
+    "mp_states_per_user": 12,
+    "mp_states_total": 960,
+    "ms_states_per_user": 8,
+    "ms_states_total": 640,
+    "me_states_per_user": 8,
+    "me_states_total": 640,
+    "rs_counterfactual_groups": 96,
+    "rs_variants_per_group": 4,
+    "rs_states_total": 384,
+    "interaction_states_per_action": 20,
+    "legal_actions": 16,
+    "interaction_states_total": 320,
+    "all_states_total": 2944
+  },
+  "formal_paired_effect_subset": {
+    "single_component_states_per_component": 192,
+    "single_component_states_total": 768,
+    "interaction_states": 320,
+    "effect_states_total": 1088,
+    "estimated_generation_calls_before_exact_dedup": 2496,
+    "labels_are_generated_by_frozen_on_off_effects": true,
+    "human_or_llm_intuition_worth_opening_labels_allowed": false
+  },
+  "hard_acceptance": {
+    "schema_validity_rate": 1.0,
+    "unique_primary_key_rate": 1.0,
+    "owner_violation_count": 0,
+    "future_or_current_memory_count": 0,
+    "inactive_version_selected_count": 0,
+    "external_exact_overlap_count": 0,
+    "external_source_significant_8gram_overlap_count": 0,
+    "gold_or_outcome_feature_leak_count": 0,
+    "cross_split_user_count": 0,
+    "cross_user_exact_current_surface_duplicate_groups": 0,
+    "me_executable_core_compiler_valid_rate": 1.0,
+    "me_intended_invalid_compiler_pass_rate": 0.0,
+    "me_natural_coverage_challenge_is_reported_not_rewritten_to_pass": true,
+    "all_six_rs_cards_present": true,
+    "all_sixteen_joint_actions_present": true,
+    "m0_r0_is_legal": true
+  },
+  "generation_separation": {
+    "catalog_author_must_not_generate_own_current_states": true,
+    "state_author_may_see_topic_and_condition_but_not_literal_candidate": true,
+    "construction_metadata_excluded_from_model_input": true,
+    "external_exam_answers_or_evidence_may_not_be_used_as_training_content": true
+  },
+  "actual_rank1_distribution": {
+    "mp_and_ms_positive_candidate_present_target": 1.0,
+    "me_positive_rank1_compiler_valid_range": [0.7, 0.85],
+    "negative_or_unknown_rows_with_candidate_present_minimum": 0.7,
+    "rank2_promotion_after_rank1_failure_allowed": false,
+    "intended_target_may_change_retrieval_or_query": false
+  }
+}
