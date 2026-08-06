@@ -3,10 +3,12 @@ import pytest
 from metacom_pm.v1_5_typed_resource_adapter import TypedResourceCandidate
 from metacom_pm.v1_5_v5_3_typed_response_program import (
     GeneratorResponse,
+    RewritePolicy,
     build_typed_response_program,
     call_with_guard_and_rewrite,
     evidence_aware_generation_messages,
     evidence_usage_plausibility_errors,
+    execute_typed_response,
     m0_fallback_response,
     normalize_generator_response_for_program,
     parse_generator_response_dict,
@@ -436,7 +438,68 @@ def test_call_with_guard_and_rewrite_all_four_branches() -> None:
     # no structured output
     client = _FakeClient([None])
     response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
-    assert status == "no_structured_output" and response is None
+    assert status == "fell_back_to_m0" and response is not None
+    assert client.calls == 1
+    assert response.used_evidence_ids == ()
+    assert response.reply == m0_fallback_response("concise_reflection")
+
+
+def test_explicit_rewrite_policy_makes_recovery_cost_observable() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0",
+        current_goal="x",
+        current_user_id="u1",
+        candidates={"MS": ms()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+    messages = [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}]
+
+    class _Parsed:
+        def __init__(self, reply):
+            self.reply = reply
+
+        def model_dump(self):
+            return {
+                "reply": self.reply,
+                "used_evidence_ids": [evidence_id],
+                "realized_response_act": "reflection",
+            }
+
+    class _Client:
+        def __init__(self):
+            self.calls = 0
+
+        def chat(self, messages, response_schema=None):
+            self.calls += 1
+            return "ok", _Parsed("I hear you.")
+
+    direct_client = _Client()
+    direct = execute_typed_response(
+        direct_client,
+        None,
+        messages,
+        program,
+        rewrite_policy=RewritePolicy.DETERMINISTIC_FALLBACK,
+    )
+    assert direct.status == "fell_back_to_m0"
+    assert direct.calls_made == 1
+    assert direct.rewrite_attempted is False
+    assert direct.realized_action_id == "M0+R0"
+
+    rewrite_client = _Client()
+    rewritten = execute_typed_response(
+        rewrite_client,
+        None,
+        messages,
+        program,
+        rewrite_policy=RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    )
+    assert rewritten.status == "fell_back_to_m0"
+    assert rewritten.calls_made == 2
+    assert rewritten.rewrite_attempted is True
+    assert rewritten.first_pass_errors == (
+        "EVIDENCE_CLAIMED_USED_BUT_NO_WORD_TRACE_IN_REPLY",
+    )
 
 
 def test_call_path_keeps_clean_m0_reply_when_model_invents_trace_id() -> None:

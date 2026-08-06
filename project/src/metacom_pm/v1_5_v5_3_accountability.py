@@ -18,7 +18,7 @@ from typing import Literal, Mapping, Sequence
 from pydantic import Field, field_validator, model_validator
 
 from .contracts import ALL_ACTION_IDS, StrictModel, parse_action_id
-from .io import append_jsonl, iter_jsonl, stable_hex
+from .io import append_jsonl, canonical_json, iter_jsonl, stable_hex
 
 
 ACCOUNTABILITY_PROTOCOL = "pm-v1.5-v5.3-stagewise-accountability-ledger-v1"
@@ -298,7 +298,14 @@ def validate_accountability_rows(
 
 
 def load_accountability_ledger(path: str | Path) -> list[StagewiseAccountabilityRow]:
-    rows = [StagewiseAccountabilityRow.model_validate(row) for row in iter_jsonl(path)]
+    # StrictModel deliberately rejects enum strings through the Python-object
+    # validation path.  JSONL necessarily serializes enums as strings, so the
+    # inverse operation must use Pydantic's JSON validation path; otherwise a
+    # row written by append_accountability_row cannot be read back.
+    rows = [
+        StagewiseAccountabilityRow.model_validate_json(canonical_json(row))
+        for row in iter_jsonl(path)
+    ]
     validate_accountability_rows(rows)
     return rows
 

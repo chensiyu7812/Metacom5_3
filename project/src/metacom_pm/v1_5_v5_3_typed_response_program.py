@@ -32,6 +32,7 @@ is consumed by the (separate) V5.2 execution scripts.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 import re
 from typing import Literal, Mapping
 
@@ -257,6 +258,44 @@ class GeneratorResponse:
     # authorized evidence, so an invented id must not invalidate an
     # otherwise usable visible reply.
     reported_used_evidence_ids: tuple[str, ...] = ()
+
+
+class RewritePolicy(str, Enum):
+    """Pre-outcome Step2 recovery alternatives.
+
+    The project has not yet selected which alternative belongs in the formal
+    V5.3 release.  Making the choice explicit lets consumed development cases
+    compare one bounded correction with immediate deterministic fallback
+    without silently changing the generator stack or hiding the second call.
+    """
+
+    SINGLE_BOUNDED_REWRITE = "single_bounded_rewrite"
+    DETERMINISTIC_FALLBACK = "deterministic_fallback"
+
+
+@dataclass(frozen=True)
+class TypedResponseExecutionResult:
+    response: GeneratorResponse | None
+    status: Literal[
+        "clean", "fixed_by_rewrite", "fell_back_to_m0", "no_structured_output"
+    ]
+    rewrite_policy: RewritePolicy
+    calls_made: int
+    rewrite_attempted: bool
+    first_pass_errors: tuple[str, ...]
+    final_guard_errors: tuple[str, ...]
+    requested_action_id: str
+    realized_action_id: str | None
+
+    @property
+    def used_evidence_ids(self) -> tuple[str, ...]:
+        return self.response.used_evidence_ids if self.response is not None else ()
+
+    @property
+    def reported_used_evidence_ids(self) -> tuple[str, ...]:
+        if self.response is None:
+            return ()
+        return self.response.reported_used_evidence_ids
 
 
 def parse_generator_response_dict(raw: Mapping[str, object]) -> GeneratorResponse:
@@ -638,9 +677,25 @@ def evidence_usage_plausibility_errors(
     return ()
 
 
-def call_with_guard_and_rewrite(client, response_schema, messages, program):
-    """Call the generator, check all guards, allow exactly one corrective
-    rewrite, then fall back to a deterministic M0 response.
+def _all_response_guard_errors(
+    *, response: GeneratorResponse, program: TypedResponseProgram
+) -> tuple[str, ...]:
+    return (
+        typed_response_guard_errors(response=response, program=program)
+        + speaker_attribution_guard_errors(response=response)
+        + evidence_usage_plausibility_errors(response=response, program=program)
+    )
+
+
+def execute_typed_response(
+    client,
+    response_schema,
+    messages,
+    program: TypedResponseProgram,
+    *,
+    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+) -> TypedResponseExecutionResult:
+    """Execute one typed response program with an explicit recovery policy.
 
     Moved here (2026-08-06) from a standalone runner script after an
     independent review correctly pointed out that the earlier location made
@@ -651,61 +706,138 @@ def call_with_guard_and_rewrite(client, response_schema, messages, program):
     (result, parsed_or_None)`` method) so this module does not need a hard
     dependency on any specific HTTP client implementation.
 
-    Returns (response_or_None, status, guard_errors) where status is one of
-    "clean", "fixed_by_rewrite", "fell_back_to_m0", or "no_structured_output".
-    Never retries more than once -- an unbounded fix-and-recheck loop is
-    exactly the "改prompt->人评->再改" cycle this project has been trying to
-    avoid; one directed attempt, then the safe deterministic fallback.
+    Never retries more than once.  ``calls_made`` and ``rewrite_attempted``
+    are returned explicitly so the formal runner can account for every token,
+    dollar, and latency contribution.  This function does not decide which
+    policy is scientifically preferable; that decision is frozen after a
+    development-only comparison and before formal paired outcomes.
     """
 
     result, parsed = client.chat(messages, response_schema=response_schema)
     if parsed is None:
-        return None, "no_structured_output", (str(result),)
+        errors = (str(result),)
+        fallback_boundary = (
+            "one_focused_question"
+            if program.atomic_move_budget > 0
+            else "concise_reflection"
+        )
+        fallback = parse_generator_response_dict(
+            {
+                "reply": m0_fallback_response(fallback_boundary),
+                "used_evidence_ids": [],
+                "realized_response_act": "m0_fallback",
+            }
+        )
+        return TypedResponseExecutionResult(
+            response=fallback,
+            status="fell_back_to_m0",
+            rewrite_policy=rewrite_policy,
+            calls_made=1,
+            rewrite_attempted=False,
+            first_pass_errors=errors,
+            final_guard_errors=errors,
+            requested_action_id=program.requested_action_id,
+            realized_action_id="M0+R0",
+        )
     response = normalize_generator_response_for_program(
         response=parse_generator_response_dict(parsed.model_dump()), program=program
     )
-    errors = (
-        typed_response_guard_errors(response=response, program=program)
-        + speaker_attribution_guard_errors(response=response)
-        + evidence_usage_plausibility_errors(response=response, program=program)
-    )
+    errors = _all_response_guard_errors(response=response, program=program)
     if not errors:
-        return response, "clean", ()
-
-    rewrite_messages = messages + [
-        {"role": "assistant", "content": response.reply},
-        {
-            "role": "user",
-            "content": (
-                "Your reply violated a stated rule -- for example, presenting someone "
-                "else's fact as your own experience, or claiming to use a piece of "
-                "evidence that has no real connection to what you wrote. Keep the same "
-                "content and evidence, but rewrite your reply, correctly addressing "
-                "evidence about the user directly to them, and only listing an evidence "
-                "id in used_evidence_ids if you genuinely incorporated it. Do not add "
-                "new facts."
-            ),
-        },
-    ]
-    result2, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
-    if parsed2 is not None:
-        response2 = normalize_generator_response_for_program(
-            response=parse_generator_response_dict(parsed2.model_dump()), program=program
+        return TypedResponseExecutionResult(
+            response=response,
+            status="clean",
+            rewrite_policy=rewrite_policy,
+            calls_made=1,
+            rewrite_attempted=False,
+            first_pass_errors=(),
+            final_guard_errors=(),
+            requested_action_id=program.requested_action_id,
+            realized_action_id=program.requested_action_id,
         )
-        errors2 = (
-            typed_response_guard_errors(response=response2, program=program)
-            + speaker_attribution_guard_errors(response=response2)
-            + evidence_usage_plausibility_errors(response=response2, program=program)
-        )
-        if not errors2:
-            return response2, "fixed_by_rewrite", errors
 
-    fallback_boundary = "one_focused_question" if program.atomic_move_budget > 0 else "concise_reflection"
+    if rewrite_policy is RewritePolicy.SINGLE_BOUNDED_REWRITE:
+        rewrite_messages = messages + [
+            {"role": "assistant", "content": response.reply},
+            {
+                "role": "user",
+                "content": (
+                    "Your reply violated a stated rule -- for example, presenting someone "
+                    "else's fact as your own experience, or claiming to use a piece of "
+                    "evidence that has no real connection to what you wrote. Keep the same "
+                    "content and evidence, but rewrite your reply, correctly addressing "
+                    "evidence about the user directly to them, and only listing an evidence "
+                    "id in used_evidence_ids if you genuinely incorporated it. Do not add "
+                    "new facts."
+                ),
+            },
+        ]
+        _, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
+        if parsed2 is not None:
+            response2 = normalize_generator_response_for_program(
+                response=parse_generator_response_dict(parsed2.model_dump()), program=program
+            )
+            errors2 = _all_response_guard_errors(response=response2, program=program)
+            if not errors2:
+                return TypedResponseExecutionResult(
+                    response=response2,
+                    status="fixed_by_rewrite",
+                    rewrite_policy=rewrite_policy,
+                    calls_made=2,
+                    rewrite_attempted=True,
+                    first_pass_errors=errors,
+                    final_guard_errors=(),
+                    requested_action_id=program.requested_action_id,
+                    realized_action_id=program.requested_action_id,
+                )
+        else:
+            errors2 = ("REWRITE_NO_STRUCTURED_OUTPUT",)
+    else:
+        errors2 = errors
+
+    fallback_boundary = (
+        "one_focused_question" if program.atomic_move_budget > 0 else "concise_reflection"
+    )
     fallback_reply = m0_fallback_response(fallback_boundary)
     fallback = parse_generator_response_dict(
         {"reply": fallback_reply, "used_evidence_ids": [], "realized_response_act": "m0_fallback"}
     )
-    return fallback, "fell_back_to_m0", errors
+    return TypedResponseExecutionResult(
+        response=fallback,
+        status="fell_back_to_m0",
+        rewrite_policy=rewrite_policy,
+        calls_made=(2 if rewrite_policy is RewritePolicy.SINGLE_BOUNDED_REWRITE else 1),
+        rewrite_attempted=(rewrite_policy is RewritePolicy.SINGLE_BOUNDED_REWRITE),
+        first_pass_errors=errors,
+        final_guard_errors=tuple(errors2),
+        requested_action_id=program.requested_action_id,
+        realized_action_id="M0+R0",
+    )
+
+
+def call_with_guard_and_rewrite(
+    client,
+    response_schema,
+    messages,
+    program,
+    *,
+    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+):
+    """Backward-compatible tuple API over :func:`execute_typed_response`.
+
+    Existing development scripts consume ``(response, status,
+    first_pass_errors)``.  New formal wiring should retain the complete
+    :class:`TypedResponseExecutionResult` instead.
+    """
+
+    execution = execute_typed_response(
+        client,
+        response_schema,
+        messages,
+        program,
+        rewrite_policy=rewrite_policy,
+    )
+    return execution.response, execution.status, execution.first_pass_errors
 
 
 _M0_FALLBACK_FAMILY: Mapping[str, str] = {
