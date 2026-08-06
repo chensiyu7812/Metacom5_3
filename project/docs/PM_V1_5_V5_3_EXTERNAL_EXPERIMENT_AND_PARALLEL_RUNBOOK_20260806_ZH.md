@@ -626,3 +626,19 @@ Leader并行负责运行面：
 上述两线完成后，leader一次性同步机器合同、计划与失败账本，产生唯一P2-READY release identity和付费预算。
 在此之前不生成正式paired outcome、不训练正式heads、不运行外部response/QA。P2-READY以后严格按7.5节
 串行，不再用零散十几条人评结果反复改训练定义。
+
+### 9.3 W7交付后的Leader审计与W7R（2026-08-06）
+
+Worker W7已由commit `78dbbf2`交付，静态release绑定真实一致，但Leader独立审计判定当前蓝图尚不能进入
+P2-READY。机器报告为
+`outputs/pm_v1_5_v5_3_p2_candidate_blueprint_audit_v1/report.json`，完整解释见
+`docs/PM_V1_5_V5_3_P2_CANDIDATE_BLUEPRINT_LEADER_AUDIT_20260806_ZH.md`。
+
+主要原因不是候选目录完全不可用，而是训练构念尚未可识别：MP正例把候选内容写进当前消息，MS只有单候选且
+未保存真实BGE分数，ME把intended target gold放入Step1 features，82/82 `current_goal`仍是构造标签，且每head
+只有7–8个独立counterfactual group。lineage与interaction执行surface也不完整。
+
+因此下一且唯一Worker任务为W7R：只修候选蓝图与真实独立group，零API、零outcome、零训练；不得修改Bank、
+MS/ME已冻结方法、Step2或三份权威事实源。W7R交付后Worker停止，Leader复审通过后才冻结split/N、刷新唯一
+P2 release并实现formal runner。W7R前禁止paired generation；这项限制来自学习数据与运行schema依赖，不是
+根据模型结果新增的性能阈值。
