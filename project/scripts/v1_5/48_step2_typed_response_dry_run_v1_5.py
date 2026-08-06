@@ -122,7 +122,8 @@ def _mp_candidate(item: MemoryItem, user_id: str) -> TypedResourceCandidate:
 
 
 def find_demo_states(
-    states: list[dict], users: dict, n: int, exclude_state_ids: frozenset[str] = frozenset()
+    states: list[dict], users: dict, n: int, exclude_state_ids: frozenset[str] = frozenset(),
+    ms_semantic_encoder=None,
 ) -> list[tuple[dict, dict, int]]:
     """Find up to n real states with a usable MS candidate (MP optional).
 
@@ -139,6 +140,16 @@ def find_demo_states(
     established a 0.40% strict-compiler pass rate, so requiring a real ME
     candidate for the demo would very likely fail on almost any state, for
     reasons already documented, not a bug in this script.
+
+    2026-08-06: scanning always used the cheap lexical-tiebreak path
+    (ms_semantic_encoder=None) even after BGE-M3 became the decided
+    default -- whether a state has >=1 MS candidate at all does not depend
+    on which scorer ranks it, so this does not change which states qualify
+    or their selection order. ms_semantic_encoder (if given) is only
+    applied once, to the final n-sized batch, not to every state examined
+    while scanning -- CPU BGE inference on every candidate pool of every
+    scanned state (not just the ones actually used) made this function slow
+    enough to matter in practice once it started running by default.
     """
     qualifying: list[tuple[dict, dict, int]] = []
     for state in states:
@@ -155,13 +166,13 @@ def find_demo_states(
             queries=queries, items=items, source_metadata={}, session_index=session_index,
         )
         if discoveries[MemorySource.MS].selected_items:
-            qualifying.append((state, discoveries, session_index))
+            qualifying.append((state, items, queries, session_index))
     if not qualifying:
         raise RuntimeError("no state in the panel had any MS candidate -- unexpected, investigate")
 
     seen_users: set[str] = set()
-    first_pass: list[tuple[dict, dict, int]] = []
-    rest: list[tuple[dict, dict, int]] = []
+    first_pass: list[tuple] = []
+    rest: list[tuple] = []
     for entry in qualifying:
         uid = entry[0]["user_id"]
         if uid not in seen_users:
@@ -169,8 +180,18 @@ def find_demo_states(
             first_pass.append(entry)
         else:
             rest.append(entry)
-    ordered = first_pass + rest
-    return ordered[:n]
+    ordered = (first_pass + rest)[:n]
+
+    # Real discovery (with the real scorer, if any) only for the states
+    # actually selected.
+    final: list[tuple[dict, dict, int]] = []
+    for state, items, queries, session_index in ordered:
+        discoveries = discover_final_typed_memory_candidates(
+            queries=queries, items=items, source_metadata={}, session_index=session_index,
+            ms_semantic_encoder=ms_semantic_encoder,
+        )
+        final.append((state, discoveries, session_index))
+    return final
 
 
 def known_aliases_for(user: dict) -> tuple[str, ...]:
@@ -222,7 +243,22 @@ def main() -> None:
         "--n", type=int, default=10,
         help="Number of real states to process (default 10, spread across distinct users where possible).",
     )
+    parser.add_argument(
+        "--no-bge-ms", action="store_true",
+        help="Use the legacy lexical-tiebreak MS ranking instead of the decided BGE-M3 "
+        "default (for A/B comparison only -- see PM_V1_5_V5_3_MS_QUALIFYING_TRIAL_"
+        "FINDINGS_20260806_ZH.md 's 'decision' section for why BGE-M3 is now the default).",
+    )
     args = parser.parse_args()
+
+    # 2026-08-06: BGE-M3 is the decided default for MS ranking (see the
+    # qualifying-trial doc's decision section) -- every real batch from this
+    # script now uses it unless --no-bge-ms explicitly asks for the legacy
+    # lexical-tiebreak baseline. Local model, no API key/network needed.
+    ms_semantic_encoder = None
+    if not args.no_bge_ms:
+        from metacom_pm.v1_5_v5_3_semantic_ms_retrieval import BgeM3Encoder  # noqa: PLC0415
+        ms_semantic_encoder = BgeM3Encoder()
 
     # A previous run's output becomes the exclusion set for this run (and is
     # archived, not overwritten) -- reusing the same states after changing
@@ -241,7 +277,10 @@ def main() -> None:
 
     users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
     states = load_states()
-    batch = find_demo_states(states, users, args.n, exclude_state_ids=exclude_state_ids)
+    batch = find_demo_states(
+        states, users, args.n, exclude_state_ids=exclude_state_ids,
+        ms_semantic_encoder=ms_semantic_encoder,
+    )
     print(f"selected {len(batch)} states across {len({s['user_id'] for s, _, _ in batch})} distinct users"
           f" (excluded {len(exclude_state_ids)} previously-tested states)")
 
