@@ -227,6 +227,44 @@ def test_ms_semantic_encoder_reranks_ms_only_when_passed() -> None:
     )
 
 
+def test_ms_semantic_encoder_reports_semantic_relevance_not_stale_lexical() -> None:
+    # Regression: describe_memory_candidate() computes top1_lexical_relevance
+    # from lexical_score over source_items regardless of which mechanism
+    # picked `selected` -- correct when lexical_score was part of ranking,
+    # stale/misleading once BGE picks a different top-1. The BGE branch must
+    # additionally report the score it actually ranked on.
+    items = [
+        MemoryItem(
+            memory_id="mem_88888888888888888888",
+            source=MemorySource.MS,
+            created_session=1,
+            text="Talked about the new job.",
+        ),
+        MemoryItem(
+            memory_id="mem_99999999999999999999",
+            source=MemorySource.MS,
+            created_session=2,
+            text="Discussed the upcoming financial planning seminar.",
+        ),
+    ]
+    encoder = FakeMsEncoder(["seminar", "job"])
+    result = discover_final_typed_memory_candidates(
+        queries=_queries("I'm anxious about the seminar."),
+        items=items,
+        source_metadata={},
+        session_index=3,
+        ms_semantic_encoder=encoder,
+    )
+    descriptor = result[MemorySource.MS].descriptor
+    assert "top1_semantic_relevance" in descriptor
+    assert "top1_top2_semantic_margin" in descriptor
+    # BGE picked mem_99999999999999999999 (matches "seminar"), which has zero
+    # lexical-word overlap with source_items text as scored independently by
+    # lexical_score -- the semantic relevance field must reflect the actual
+    # winning BGE score (> 0), not get left at a stale/unrelated number.
+    assert descriptor["top1_semantic_relevance"] > 0.0
+
+
 def test_ms_semantic_encoder_still_enforces_causal_boundary() -> None:
     # rank_ms_candidates itself has no session_index awareness; the causal
     # hard-assertion must still come from describe_memory_candidate, which

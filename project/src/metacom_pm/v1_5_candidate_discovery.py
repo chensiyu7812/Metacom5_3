@@ -551,16 +551,15 @@ def discover_final_typed_memory_candidates(
         ms_semantic_reranked = (
             source is MemorySource.MS and ms_semantic_encoder is not None
         )
+        semantic_ranked: list[Any] = []
         if ms_semantic_reranked:
             # Full MS pool, no content-word floor -- matches what the
             # qualifying trial actually measured (script 45), not a new,
             # unvalidated combination of the two mechanisms.
-            ranked = [
-                candidate.item
-                for candidate in rank_ms_candidates(
-                    query, list(source_items), encoder=ms_semantic_encoder
-                )
-            ]
+            semantic_ranked = rank_ms_candidates(
+                query, list(source_items), encoder=ms_semantic_encoder
+            )
+            ranked = [candidate.item for candidate in semantic_ranked]
         else:
             ranked = sorted(
                 eligible,
@@ -596,6 +595,31 @@ def discover_final_typed_memory_candidates(
                 "ms_semantic_reranked": ms_semantic_reranked,
             }
         )
+        if ms_semantic_reranked:
+            # describe_memory_candidate()'s top1_lexical_relevance/
+            # top1_top2_lexical_margin are computed from lexical_score over
+            # source_items regardless of which mechanism actually produced
+            # `selected` -- correct when lexical_score was itself part of
+            # ranking, but stale/misleading once BGE selects a different
+            # top-1. These two fields carry the score BGE actually ranked
+            # on, so a caller can tell the two apart. NOT wired into
+            # model_features/bucketing: those buckets were calibrated
+            # against lexical_score's distribution, and BGE cosine
+            # similarity is not the same scale -- recalibrating that is a
+            # separate decision, not made here.
+            semantic_scores = sorted(
+                (candidate.score for candidate in semantic_ranked), reverse=True
+            )
+            descriptor["top1_semantic_relevance"] = (
+                semantic_scores[0] if semantic_scores else 0.0
+            )
+            descriptor["top1_top2_semantic_margin"] = (
+                semantic_scores[0] - semantic_scores[1]
+                if len(semantic_scores) >= 2
+                else semantic_scores[0]
+                if semantic_scores
+                else 0.0
+            )
         descriptor["model_features"] = candidate_model_features(descriptor)
         discoveries[source] = MemoryCandidate(
             source=source,
