@@ -4,7 +4,9 @@ from metacom_pm.v1_5_typed_resource_adapter import TypedResourceCandidate
 from metacom_pm.v1_5_v5_3_typed_response_program import (
     GeneratorResponse,
     build_typed_response_program,
+    call_with_guard_and_rewrite,
     evidence_aware_generation_messages,
+    evidence_usage_plausibility_errors,
     m0_fallback_response,
     parse_generator_response_dict,
     speaker_attribution_guard_errors,
@@ -186,8 +188,8 @@ def test_execution_candidate_id_mismatch_is_rejected() -> None:
         )
 
 
-def _resp(reply: str) -> GeneratorResponse:
-    return GeneratorResponse(reply=reply, used_evidence_ids=(), realized_response_act="reflection")
+def _resp(reply: str, used: tuple[str, ...] = ()) -> GeneratorResponse:
+    return GeneratorResponse(reply=reply, used_evidence_ids=used, realized_response_act="reflection")
 
 
 def test_speaker_attribution_guard_catches_direct_biographical_claim() -> None:
@@ -217,6 +219,132 @@ def test_speaker_attribution_guard_allows_normal_assistant_first_person() -> Non
         "your husband recently changed jobs -- how are you feeling about that today?"
     )
     assert speaker_attribution_guard_errors(response=_resp(reply)) == ()
+
+
+def test_evidence_usage_plausibility_catches_claimed_but_untraced_evidence() -> None:
+    # 2026-08-06, per an independent review: used_evidence_ids is
+    # self-reported and was never checked against the reply at all. This is
+    # a deliberately cheap check (word-overlap, reusing the same primitive
+    # as candidate matching elsewhere), not a full grounding verifier.
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+    reply_with_no_trace = _resp(
+        "I hear you, that sounds really difficult.", used=(evidence_id,)
+    )
+    assert evidence_usage_plausibility_errors(response=reply_with_no_trace, program=program) == (
+        "EVIDENCE_CLAIMED_USED_BUT_NO_WORD_TRACE_IN_REPLY",
+    )
+
+
+def test_evidence_usage_plausibility_passes_when_evidence_word_appears() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+    # ms()'s prior_observation is "The seeker felt overloaded after a shift change."
+    reply_with_trace = _resp(
+        "I recall you mentioned a shift change recently -- how has that been?",
+        used=(evidence_id,),
+    )
+    assert evidence_usage_plausibility_errors(response=reply_with_trace, program=program) == ()
+
+
+def test_evidence_usage_plausibility_ignores_unclaimed_evidence() -> None:
+    # Evidence NOT listed in used_evidence_ids is not this check's business
+    # (that gap is REQUIRED_EVIDENCE_NOT_USED, a different, existing check).
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
+    )
+    reply_using_nothing = _resp("I hear you.", used=())
+    assert evidence_usage_plausibility_errors(response=reply_using_nothing, program=program) == ()
+
+
+def test_call_with_guard_and_rewrite_all_four_branches() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0", current_goal="x", current_user_id="u1", candidates={"MS": ms()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+    messages = [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}]
+
+    class _FakeParsed:
+        def __init__(self, d):
+            self._d = d
+
+        def model_dump(self):
+            return self._d
+
+    class _FakeClient:
+        def __init__(self, replies):
+            self.replies = list(replies)
+            self.calls = 0
+
+        def chat(self, messages, response_schema=None):
+            self.calls += 1
+            d = self.replies.pop(0)
+            if d is None:
+                return ("no schema", None)
+            return ("ok", _FakeParsed(d))
+
+    def resp_dict(reply):
+        return {"reply": reply, "used_evidence_ids": [evidence_id], "realized_response_act": "reflection"}
+
+    # clean first pass
+    client = _FakeClient([resp_dict("I recall your shift change -- how are you now?")])
+    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    assert status == "clean" and client.calls == 1 and errors == ()
+
+    # bad first pass (no word trace -> plausibility guard fires), good rewrite
+    client = _FakeClient([
+        resp_dict("I hear you."),
+        resp_dict("I recall your shift change -- that sounds hard."),
+    ])
+    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    assert status == "fixed_by_rewrite" and client.calls == 2
+    assert errors == ("EVIDENCE_CLAIMED_USED_BUT_NO_WORD_TRACE_IN_REPLY",)
+
+    # bad both times -> falls back to M0; MS+R0 has atomic_move_budget=0
+    # (no RS requested), so the context-aware fallback picks a statement,
+    # not a question -- see the 2026-08-06 fix for why this matters.
+    client = _FakeClient([resp_dict("I hear you."), resp_dict("I hear you.")])
+    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    assert status == "fell_back_to_m0" and client.calls == 2
+    assert response.used_evidence_ids == ()
+    assert response.reply == m0_fallback_response("concise_reflection")
+
+    # no structured output
+    client = _FakeClient([None])
+    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    assert status == "no_structured_output" and response is None
+
+
+def test_call_with_guard_and_rewrite_fallback_boundary_when_rs_present() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+RS", current_goal="x", current_user_id="u1",
+        candidates={"MS": ms(), "RS": rs()},
+    )
+    messages = [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}]
+
+    class _FakeParsed:
+        def __init__(self, d):
+            self._d = d
+
+        def model_dump(self):
+            return self._d
+
+    class _FakeClient:
+        def __init__(self, replies):
+            self.replies = list(replies)
+
+        def chat(self, messages, response_schema=None):
+            return ("ok", _FakeParsed(self.replies.pop(0)))
+
+    bad = {"reply": "I hear you.", "used_evidence_ids": [], "realized_response_act": "x"}
+    client = _FakeClient([bad, bad])
+    response, status, _errors = call_with_guard_and_rewrite(client, None, messages, program)
+    assert status == "fell_back_to_m0"
+    assert response.reply == m0_fallback_response("one_focused_question")
 
 
 def test_cannot_integrate_program_refuses_generation_and_falls_back() -> None:

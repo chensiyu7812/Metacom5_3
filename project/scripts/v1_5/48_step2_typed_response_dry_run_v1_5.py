@@ -46,8 +46,9 @@ from metacom_pm.v1_5_candidate_discovery import (  # noqa: E402
 from metacom_pm.v1_5_typed_resource_adapter import TypedResourceCandidate  # noqa: E402
 from metacom_pm.v1_5_v5_3_typed_response_program import (  # noqa: E402
     build_typed_response_program,
+    call_with_guard_and_rewrite,
     evidence_aware_generation_messages,
-    m0_fallback_response,
+    evidence_usage_plausibility_errors,
     parse_generator_response_dict,
     speaker_attribution_guard_errors,
     typed_response_guard_errors,
@@ -211,54 +212,6 @@ def build_program_and_messages(
     return program, messages
 
 
-def call_with_guard_and_rewrite(client, response_schema, messages, program):
-    """Call the generator, check both guards, allow exactly one corrective
-    rewrite, then fall back to the deterministic M0 response.
-
-    Returns (response_or_None, status, guard_errors) where status is one of
-    "clean", "fixed_by_rewrite", "fell_back_to_m0", or "no_structured_output".
-    Never retries more than once -- an unbounded fix-and-recheck loop is
-    exactly the "改prompt->人评->再改" cycle this project has been trying to
-    avoid; one directed attempt, then the safe deterministic fallback.
-    """
-
-    result, parsed = client.chat(messages, response_schema=response_schema)
-    if parsed is None:
-        return None, "no_structured_output", (str(result),)
-    response = parse_generator_response_dict(parsed.model_dump())
-    errors = typed_response_guard_errors(response=response, program=program) + \
-        speaker_attribution_guard_errors(response=response)
-    if not errors:
-        return response, "clean", ()
-
-    rewrite_messages = messages + [
-        {"role": "assistant", "content": response.reply},
-        {
-            "role": "user",
-            "content": (
-                "You incorrectly presented someone else's fact as your own experience, "
-                "or otherwise violated a stated rule. Keep the same content and evidence, "
-                "but rewrite your reply, correctly addressing evidence about the user as "
-                "\"you/your\" and never claiming it as your own biography. Do not add new "
-                "facts."
-            ),
-        },
-    ]
-    result2, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
-    if parsed2 is not None:
-        response2 = parse_generator_response_dict(parsed2.model_dump())
-        errors2 = typed_response_guard_errors(response=response2, program=program) + \
-            speaker_attribution_guard_errors(response=response2)
-        if not errors2:
-            return response2, "fixed_by_rewrite", errors
-
-    fallback_reply = m0_fallback_response("one_focused_question")
-    fallback = parse_generator_response_dict(
-        {"reply": fallback_reply, "used_evidence_ids": [], "realized_response_act": "m0_fallback"}
-    )
-    return fallback, "fell_back_to_m0", errors
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -353,8 +306,11 @@ def main() -> None:
                     "realized_response_act": "reflection",
                 }
                 response = parse_generator_response_dict(fake_good)
-                errors = typed_response_guard_errors(response=response, program=program) + \
-                    speaker_attribution_guard_errors(response=response)
+                errors = (
+                    typed_response_guard_errors(response=response, program=program)
+                    + speaker_attribution_guard_errors(response=response)
+                    + evidence_usage_plausibility_errors(response=response, program=program)
+                )
                 print(f"  dry-run synthetic response parses cleanly, guard errors: {errors}")
     finally:
         if client is not None:

@@ -35,6 +35,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Literal, Mapping
 
+from .text import content_words
 from .v1_5_typed_resource_adapter import TypedResourceCandidate
 from .v1_5b_policy_runtime import COMPONENTS, Component, action_component_bits
 
@@ -474,6 +475,107 @@ def speaker_attribution_guard_errors(*, response: GeneratorResponse) -> tuple[st
         if _PERSONAL_REFLECTION_VERB_RE.search(sentence) and _MY_OUR_POSSESSIVE_RE.search(sentence):
             return ("POSSIBLE_ASSISTANT_SELF_ATTRIBUTION_OF_USER_FACT",)
     return ()
+
+
+def evidence_usage_plausibility_errors(
+    *, response: GeneratorResponse, program: TypedResponseProgram
+) -> tuple[str, ...]:
+    """Cheap, deliberately incomplete check on ``used_evidence_ids``.
+
+    used_evidence_ids is self-reported by the generator and otherwise never
+    independently checked against the actual reply text (an independent
+    review flagged this correctly: a model can claim it used a piece of
+    evidence without any real trace of it in the reply). Building a full
+    verbatim-grounding schema (each use citing an exact substring of the
+    reply) was considered and deliberately not done -- it adds real new
+    failure surface for an 8B model (paraphrase/quoting/whitespace variance
+    would all fail an exact-match check even for genuinely correct usage),
+    and answers a different question (was evidence really grounded) than
+    the specific bug this module was built to fix (was it attributed to the
+    right person). This is the cheap middle ground: reuse the same
+    content-word-overlap primitive already used for candidate matching
+    elsewhere in this project (text.content_words) to catch only the most
+    blatant case -- claimed evidence with literally zero word-level trace in
+    the reply. It will not catch a paraphrased-but-genuine use, and it will
+    not catch a superficial word-level echo that isn't real grounding either
+    -- treat a pass as "no obvious non-use", not proof of real grounding.
+    """
+
+    reply_words = content_words(response.reply)
+    used_ids = set(response.used_evidence_ids)
+    for item in program.evidence:
+        if item.evidence_id not in used_ids:
+            continue
+        evidence_words = content_words(item.literal_evidence)
+        if evidence_words and not (evidence_words & reply_words):
+            return ("EVIDENCE_CLAIMED_USED_BUT_NO_WORD_TRACE_IN_REPLY",)
+    return ()
+
+
+def call_with_guard_and_rewrite(client, response_schema, messages, program):
+    """Call the generator, check all guards, allow exactly one corrective
+    rewrite, then fall back to a deterministic M0 response.
+
+    Moved here (2026-08-06) from a standalone runner script after an
+    independent review correctly pointed out that the earlier location made
+    this "a verified prototype, not production-reusable infrastructure" --
+    any real V5.3 executor needs this exact call/verify/retry/fallback
+    orchestration and previously would have had to reimplement it. ``client``
+    is duck-typed (anything with a ``.chat(messages, response_schema=...) ->
+    (result, parsed_or_None)`` method) so this module does not need a hard
+    dependency on any specific HTTP client implementation.
+
+    Returns (response_or_None, status, guard_errors) where status is one of
+    "clean", "fixed_by_rewrite", "fell_back_to_m0", or "no_structured_output".
+    Never retries more than once -- an unbounded fix-and-recheck loop is
+    exactly the "改prompt->人评->再改" cycle this project has been trying to
+    avoid; one directed attempt, then the safe deterministic fallback.
+    """
+
+    result, parsed = client.chat(messages, response_schema=response_schema)
+    if parsed is None:
+        return None, "no_structured_output", (str(result),)
+    response = parse_generator_response_dict(parsed.model_dump())
+    errors = (
+        typed_response_guard_errors(response=response, program=program)
+        + speaker_attribution_guard_errors(response=response)
+        + evidence_usage_plausibility_errors(response=response, program=program)
+    )
+    if not errors:
+        return response, "clean", ()
+
+    rewrite_messages = messages + [
+        {"role": "assistant", "content": response.reply},
+        {
+            "role": "user",
+            "content": (
+                "Your reply violated a stated rule -- for example, presenting someone "
+                "else's fact as your own experience, or claiming to use a piece of "
+                "evidence that has no real connection to what you wrote. Keep the same "
+                "content and evidence, but rewrite your reply, correctly addressing "
+                "evidence about the user directly to them, and only listing an evidence "
+                "id in used_evidence_ids if you genuinely incorporated it. Do not add "
+                "new facts."
+            ),
+        },
+    ]
+    result2, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
+    if parsed2 is not None:
+        response2 = parse_generator_response_dict(parsed2.model_dump())
+        errors2 = (
+            typed_response_guard_errors(response=response2, program=program)
+            + speaker_attribution_guard_errors(response=response2)
+            + evidence_usage_plausibility_errors(response=response2, program=program)
+        )
+        if not errors2:
+            return response2, "fixed_by_rewrite", errors
+
+    fallback_boundary = "one_focused_question" if program.atomic_move_budget > 0 else "concise_reflection"
+    fallback_reply = m0_fallback_response(fallback_boundary)
+    fallback = parse_generator_response_dict(
+        {"reply": fallback_reply, "used_evidence_ids": [], "realized_response_act": "m0_fallback"}
+    )
+    return fallback, "fell_back_to_m0", errors
 
 
 _M0_FALLBACK_FAMILY: Mapping[str, str] = {
