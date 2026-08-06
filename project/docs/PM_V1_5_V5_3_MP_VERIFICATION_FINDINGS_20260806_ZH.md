@@ -14,6 +14,15 @@
 （`test_mp_label_prefix_does_not_create_false_content_match`、
 `test_mp_value_content_still_matches_after_label_stripped`）锁定这个行为。
 
+**2026-08-06二次更新：(b)类"字段值内通用填充词"问题也已经修复**（commit `5edcf0d`）。
+`_mp_match_document()`现在还会剥离字段值里的括号状态标注（如"(in progress)"），先查过
+范围再动手：全部18个用户126个`basic_info`字段里，只有p11这1条带括号标注，所以这是一个
+针对已观察到模式的完整修复，不是扩大停用词表（那会有误伤MS/ME真实信号的风险）。真实重跑：
+p11的非零选中从9降到3（精确对应之前定位的6次"progress"撞词全部消失），整体MP非零选中状态
+从33降到27/138。**第4节里"p14张冠李戴"这个案例也确认是(a)类字段名前缀问题的另一种表现，
+不是独立的owner/entity机制**——(a)类修复后p14已经自然降到0次选中，不需要额外的
+`field_type`/`field_value`/`owner`结构化改动。
+
 复现：`scripts/v1_5/46_mp_verification_same_stack_v1_5.py`，产出：
 `outputs/pm_v1_5_v5_3_mp_verification_v1/mp_selection_all_states.jsonl`（gitignore，未进git，
 不含私有对话原文之外的额外私有信息，字段本身就是`current_user_text`等已在其他资格赛里处理过的
@@ -83,12 +92,8 @@ MS资格赛已经确认：生产环境的粗粒度content-match会被"stress/anx
   "字段名"和"内容"）。
   这需要在检索之前的候选渲染阶段把字段名前缀从匹配用文本里剔除——**(a)类已经这样修了，见文首
   2026-08-06更新**。
-- 换BGE对(b)类问题（"progress"撞词）效果不确定，需要专门测——但由于MP候选池每用户只有6-8条，
-  样本量小到不足以支撑MS那种配对资格赛，不建议对MP单独重复MS的资格赛流程。**(b)类问题本次未修，
-  p11的"Education: high school (in progress)"仍会因为"progress"这个通用填充词零星命中不相关
-  话题**，如果后续要修，方向应该是在MP专属的匹配文本处理里再排除掉候选值本身携带的状态类填充词
-  （"in progress"这种），而不是动全局`CONTENT_MATCH_IGNORED_WORDS`（会误伤MS/ME里"job"等词的
-  真实信号）。
+- (b)类问题（"progress"撞词）**已修复**（见文首二次更新）：在MP专属的匹配文本处理里剔除候选
+  值本身携带的括号状态标注，没有动全局`CONTENT_MATCH_IGNORED_WORDS`，不影响MS/ME的真实信号。
 - 这印证（而不是推翻）Codex此前"MP的问题在Step1资格判断/渲染方式，不在检索排序"的判断，现在有
   了具体、可复现、代码核实过的量化证据：**68次选中里35%是通用词而非事实内容驱动的假阳性**，
   且集中在5个可点名的用户/事实上，不是随机噪声。
