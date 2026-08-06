@@ -1,3 +1,6 @@
+import numpy as np
+import pytest
+
 from metacom_pm.contracts import MemoryItem, MemorySource
 from metacom_pm.v1_5_candidate_discovery import (
     FINAL_TYPED_CANDIDATE_DISCOVERY_PROTOCOL,
@@ -17,6 +20,25 @@ from pathlib import Path
 
 def _queries(text: str):
     return {source: text for source in MemorySource}
+
+
+class FakeMsEncoder:
+    """Deterministic keyword-match encoder, same pattern as
+    test_v1_5_v5_3_semantic_ms_retrieval.FakeEncoder -- avoids depending on
+    torch/transformers/model weights in this test file."""
+
+    def __init__(self, vocabulary: list[str]) -> None:
+        self.vocabulary = vocabulary
+
+    def encode(self, texts):
+        rows = []
+        for text in texts:
+            lowered = text.lower()
+            rows.append([1.0 if word in lowered else 0.0 for word in self.vocabulary])
+        matrix = np.array(rows, dtype="float32")
+        norms = np.linalg.norm(matrix, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        return matrix / norms
 
 
 def test_final_typed_discovery_filters_function_word_only_matches() -> None:
@@ -98,6 +120,161 @@ def test_final_typed_content_match_ignores_support_boilerplate() -> None:
         )
         == 0.0
     )
+
+
+def test_mp_label_prefix_does_not_create_false_content_match() -> None:
+    # Regression: MP items render as "Job: office worker" (see
+    # evoemo.build_evo_memory). Matching on the raw text made the structural
+    # label "Job" fire on any query mentioning "job", even one about someone
+    # else's job -- unrelated to whether "office worker" was ever true here.
+    items = [
+        MemoryItem(
+            memory_id="mem_dddddddddddddddddddd",
+            source=MemorySource.MP,
+            created_session=0,
+            text="Job: office worker",
+        )
+    ]
+    result = discover_final_typed_memory_candidates(
+        queries=_queries(
+            "My partner's job requires last-minute travel and it's stressful."
+        ),
+        items=items,
+        source_metadata={},
+        session_index=1,
+    )
+    assert len(result[MemorySource.MP].selected_items) == 0
+
+
+def test_mp_value_content_still_matches_after_label_stripped() -> None:
+    items = [
+        MemoryItem(
+            memory_id="mem_eeeeeeeeeeeeeeeeeeee",
+            source=MemorySource.MP,
+            created_session=0,
+            text="Job: office worker",
+        )
+    ]
+    result = discover_final_typed_memory_candidates(
+        queries=_queries(
+            "I'm exhausted from my office job, being an office worker is hard."
+        ),
+        items=items,
+        source_metadata={},
+        session_index=1,
+    )
+    assert (
+        result[MemorySource.MP].selected_items[0].memory_id
+        == "mem_eeeeeeeeeeeeeeeeeeee"
+    )
+
+
+def test_ms_semantic_encoder_is_opt_in_default_stays_lexical() -> None:
+    # Same items/query as the lexical-tiebreak default would rank one way;
+    # with no encoder passed, behavior must be byte-for-byte the pre-existing
+    # content-match-tier + lexical path (no accidental behavior change for
+    # any caller that does not pass ms_semantic_encoder).
+    items = [
+        MemoryItem(
+            memory_id="mem_11111111111111111111",
+            source=MemorySource.MS,
+            created_session=1,
+            text="Talked about the new job and feeling anxious about it.",
+        ),
+        MemoryItem(
+            memory_id="mem_22222222222222222222",
+            source=MemorySource.MS,
+            created_session=2,
+            text="Discussed the upcoming financial planning seminar.",
+        ),
+    ]
+    result = discover_final_typed_memory_candidates(
+        queries=_queries("I'm anxious about the seminar."),
+        items=items,
+        source_metadata={},
+        session_index=3,
+    )
+    assert result[MemorySource.MS].descriptor["ms_semantic_reranked"] is False
+
+
+def test_ms_semantic_encoder_reranks_ms_only_when_passed() -> None:
+    items = [
+        MemoryItem(
+            memory_id="mem_33333333333333333333",
+            source=MemorySource.MS,
+            created_session=1,
+            text="Talked about the new job.",
+        ),
+        MemoryItem(
+            memory_id="mem_44444444444444444444",
+            source=MemorySource.MS,
+            created_session=2,
+            text="Discussed the upcoming financial planning seminar.",
+        ),
+    ]
+    encoder = FakeMsEncoder(["seminar", "job"])
+    result = discover_final_typed_memory_candidates(
+        queries=_queries("I'm anxious about the seminar."),
+        items=items,
+        source_metadata={},
+        session_index=3,
+        ms_semantic_encoder=encoder,
+    )
+    assert result[MemorySource.MS].descriptor["ms_semantic_reranked"] is True
+    assert (
+        result[MemorySource.MS].selected_items[0].memory_id
+        == "mem_44444444444444444444"
+    )
+
+
+def test_ms_semantic_encoder_still_enforces_causal_boundary() -> None:
+    # rank_ms_candidates itself has no session_index awareness; the causal
+    # hard-assertion must still come from describe_memory_candidate, which
+    # every branch (lexical or BGE) routes through identically.
+    items = [
+        MemoryItem(
+            memory_id="mem_55555555555555555555",
+            source=MemorySource.MS,
+            created_session=5,
+            text="A future or current session summary about the seminar.",
+        ),
+    ]
+    encoder = FakeMsEncoder(["seminar"])
+    with pytest.raises(ValueError, match="current or future memory"):
+        discover_final_typed_memory_candidates(
+            queries=_queries("I'm anxious about the seminar."),
+            items=items,
+            source_metadata={},
+            session_index=5,
+            ms_semantic_encoder=encoder,
+        )
+
+
+def test_ms_semantic_encoder_does_not_affect_mp_or_me() -> None:
+    items = [
+        MemoryItem(
+            memory_id="mem_66666666666666666666",
+            source=MemorySource.MP,
+            created_session=0,
+            text="Job: office worker",
+        ),
+        MemoryItem(
+            memory_id="mem_77777777777777777777",
+            source=MemorySource.ME,
+            created_session=1,
+            text="I tried journaling and it helped me feel calmer.",
+        ),
+    ]
+    encoder = FakeMsEncoder(["job"])
+    result = discover_final_typed_memory_candidates(
+        queries=_queries("My office job and journaling helped."),
+        items=items,
+        source_metadata={},
+        session_index=2,
+        ms_semantic_encoder=encoder,
+    )
+    assert result[MemorySource.MP].descriptor["ms_semantic_reranked"] is False
+    assert result[MemorySource.ME].descriptor["ms_semantic_reranked"] is False
 
 
 def _strategy_cards():

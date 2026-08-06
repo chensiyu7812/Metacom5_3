@@ -12,6 +12,7 @@ from typing import Any, Mapping, Sequence
 
 from .contracts import MemoryItem, MemorySource
 from .retrieval import DEFAULT_MEMORY_TOP_K, MemoryRetriever
+from .v1_5_v5_3_semantic_ms_retrieval import TextEncoder, rank_ms_candidates
 from .text import (
     content_words,
     content_word_match_level,
@@ -71,6 +72,22 @@ _PREFERENCE_SCOPE_WORDS = frozenset(
         "time",
     }
 )
+
+
+def _mp_match_document(text: str) -> str:
+    """Strip the structural "Label: " prefix evoemo.build_evo_memory() renders
+    MP items with (e.g. "Job: office worker") before content matching.
+
+    The label names a basic_info field, not conversational content: matched
+    verbatim it made e.g. "Job: office worker" fire on any query that merely
+    mentions the word "job" (including a query about someone else's job),
+    regardless of whether "office worker" itself was relevant. Only the value
+    should participate in content matching; the label stays in item.text for
+    rendering.
+    """
+
+    _, separator, value = text.partition(": ")
+    return value if separator else text
 
 
 def final_typed_content_words(text: str) -> set[str]:
@@ -460,6 +477,7 @@ def discover_final_typed_memory_candidates(
     items: Sequence[MemoryItem],
     source_metadata: Mapping[str, Mapping[str, Any]],
     session_index: int,
+    ms_semantic_encoder: TextEncoder | None = None,
 ) -> dict[MemorySource, MemoryCandidate]:
     """Final transparent P2/runtime memory selection.
 
@@ -469,6 +487,20 @@ def discover_final_typed_memory_candidates(
     content word, prefer the coarse content-overlap tier, then use a
     source-typed structural tier and lexical score only as deterministic
     tie-breakers.  It reads compiler metadata, never gold or response outcome.
+
+    ``ms_semantic_encoder`` is opt-in and MS-only: when given, MS ranking
+    uses BGE-M3 cosine similarity over the full MS pool
+    (``v1_5_v5_3_semantic_ms_retrieval.rank_ms_candidates``) instead of the
+    content-match-tier + lexical tie-break above, exactly reproducing the
+    same-stack qualifying trial (``scripts/v1_5/45_ms_qualifying_trial_
+    same_stack_v1_5.py``; 138/138 states, bge win rate 70.7%, sign test
+    p=9.3e-5 -- see ``docs/PM_V1_5_V5_3_MS_QUALIFYING_TRIAL_FINDINGS_
+    20260806_ZH.md``). Left ``None`` by default: the trial is still
+    single-annotator with no independent second reviewer, so this does not
+    flip production behavior on its own. MP and ME are unaffected regardless
+    of this argument -- BGE has only been validated for MS (see that
+    module's docstring for why it must not be extended to MP/ME without
+    repeating the measurement).
     """
 
     missing = set(MemorySource) - set(queries)
@@ -498,7 +530,12 @@ def discover_final_typed_memory_candidates(
             return 0
 
         def match_level(item: MemoryItem) -> float:
-            content_level = final_typed_content_match_level(query, item.text)
+            document = (
+                _mp_match_document(item.text)
+                if source is MemorySource.MP
+                else item.text
+            )
+            content_level = final_typed_content_match_level(query, document)
             metadata = source_metadata.get(item.memory_id, {})
             if (
                 source is MemorySource.MP
@@ -506,22 +543,36 @@ def discover_final_typed_memory_candidates(
             ):
                 return max(
                     content_level,
-                    preference_scope_match_level(query, item.text),
+                    preference_scope_match_level(query, document),
                 )
             return content_level
 
         eligible = [item for item in source_items if match_level(item) > 0.0]
-        ranked = sorted(
-            eligible,
-            key=lambda item: (
-                match_level(item),
-                typed_tier(item),
-                lexical_score(query, item.text),
-                item.created_session,
-                item.memory_id,
-            ),
-            reverse=True,
+        ms_semantic_reranked = (
+            source is MemorySource.MS and ms_semantic_encoder is not None
         )
+        if ms_semantic_reranked:
+            # Full MS pool, no content-word floor -- matches what the
+            # qualifying trial actually measured (script 45), not a new,
+            # unvalidated combination of the two mechanisms.
+            ranked = [
+                candidate.item
+                for candidate in rank_ms_candidates(
+                    query, list(source_items), encoder=ms_semantic_encoder
+                )
+            ]
+        else:
+            ranked = sorted(
+                eligible,
+                key=lambda item: (
+                    match_level(item),
+                    typed_tier(item),
+                    lexical_score(query, item.text),
+                    item.created_session,
+                    item.memory_id,
+                ),
+                reverse=True,
+            )
         top_k = int(DEFAULT_MEMORY_TOP_K[source])
         selected = deduplicate_memory_items_by_text(ranked[:top_k])
         descriptor = describe_memory_candidate(
@@ -542,6 +593,7 @@ def discover_final_typed_memory_candidates(
                 "exact_text_duplicates_removed": min(len(ranked), top_k)
                 - len(selected),
                 "typed_rerank_outcome_read": False,
+                "ms_semantic_reranked": ms_semantic_reranked,
             }
         )
         descriptor["model_features"] = candidate_model_features(descriptor)
