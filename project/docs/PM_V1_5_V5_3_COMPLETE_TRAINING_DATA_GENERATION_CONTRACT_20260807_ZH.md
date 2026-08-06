@@ -4,6 +4,8 @@
 
 用途：交给 ChatGPT Pro 与 Claude 分工生成正式 P2R 内容；供 Leader 做机器验收、paired effect 生成、Step1 训练和用户簇级确认。本文不允许外部模型直接编写 `worth_opening` 标签。
 
+状态：`READY_FOR_DUAL_MODEL_CONTENT_GENERATION_NOT_EFFECT_FROZEN`。这表示 catalog/current-state 内容可以按本文开始生成；generator、judge、fallback 和付费 paired-effect 执行仍须在内容机器验收后另行冻结。
+
 ## 1. 先说结论：W8 可保留，但不能直接当完整训练集
 
 W8 的 20 用户纵向目录解决了旧数据的三个根本缺口：每用户 14–33 个会话、同主题多事件 hard negatives、owner/time/version 结构；121/121 intended ME 可编译、106/106 intended distractor 被拒绝，外部 exact/8-gram overlap 均为 0。这些结果可信，W8 应保留为结构回归与开发资产。
