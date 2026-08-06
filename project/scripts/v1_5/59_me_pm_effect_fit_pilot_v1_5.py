@@ -77,12 +77,17 @@ CONTEXT_ONLY_TEXT = {
     TOPIC_B: "In a prior session, the user last spring described a private incident involving financial uncertainty about rent.",
 }
 
-ACTION_INVITING_TURN = "I could really use a concrete idea for how to handle {topic}. What's something I could actually try?"
-ACTION_DECLINING_TURN = "I just need to vent about {topic} right now -- please don't give me any suggestions, I just want to be heard."
+# Phrasing verified directly against observable_flags()'s real
+# _ADVICE_WELCOME_RE/_LISTEN_ONLY_RE (v1_5_strategy_rag_runtime.py, already
+# validated this session for RS) rather than assumed to "read as" action-
+# inviting or action-declining -- see contribution_slot_features' own
+# module docstring for why reusing this one validated signal is preferred
+# over inventing a second, possibly-inconsistent regex.
+ACTION_INVITING_TURN = "I could really use some advice for handling {topic}. What should I do?"
+ACTION_DECLINING_TURN = "I just want to vent about {topic} right now. I don't want any advice, I just need you to listen."
 REDUNDANT_TURN = (
-    "I could really use a concrete idea for how to handle {topic}. Actually, I already "
-    "figured it out myself -- I wrote down the hardest moment before responding and it "
-    "helped me feel calmer, so I've got that covered."
+    "I could really use some advice for handling {topic}. What should I do? Actually, I "
+    "already figured it out myself -- it helped me feel calmer, so I've got that covered."
 )
 
 
