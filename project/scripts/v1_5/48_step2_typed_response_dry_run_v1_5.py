@@ -1,7 +1,9 @@
 """Step2 typed_response_program runner: real candidates, dry-run by default.
 
-Status: DRY-RUN ONLY in this session. Wires v1_5_v5_3_typed_response_program.py
-to a real production candidate (via the same discover_final_typed_memory_
+Status: supports a real small-batch --live run (explicitly authorized by the
+user on 2026-08-06, "step2可以继续", after being told this needs "source a
+key + agree to a small spend"). Wires v1_5_v5_3_typed_response_program.py to
+real production candidates (via the same discover_final_typed_memory_
 candidates()/build_evo_memory() functions used throughout the ME/MS/MP
 verification work) and to the real `generator` endpoint config in
 project/configs/experiment.yaml (Llama-3.1-8B-Instruct via NVIDIA), closing
@@ -9,16 +11,20 @@ the gap the module's own docstring flags: "implemented, unit-tested, NOT yet
 wired into any generation pipeline."
 
 This script makes NO network call unless invoked with --live. Without
---live, it builds the real TypedResponseProgram and the real generation
-messages from a real qualifying-panel state, prints them, and validates a
-synthetic (hand-written, clearly fake) response against
-parse_generator_response_dict + typed_response_guard_errors, to prove the
-downstream parsing/validation path is correct before any money is spent.
+--live, it builds real TypedResponseProgram(s) and real generation messages
+from real qualifying-panel states, prints them, and validates a synthetic
+(hand-written, clearly fake) response against parse_generator_response_dict
++ typed_response_guard_errors, to prove the downstream parsing/validation
+path is correct before any money is spent.
 
-Running with --live requires NVIDIA_API_KEY to be set (e.g.
-`source ~/.metacom_v1_5_secrets.env`) and is a real, billable API call --
-not run automatically, not run by importing this file, only by explicit
-`--live` on the command line. This session never passed --live.
+--live requires NVIDIA_API_KEY (`source ~/.metacom_v1_5_secrets.env`) and
+makes --n real, billable API calls (default 10, one per distinct user where
+possible, to avoid all calls landing on one user's writing style). Real
+responses are checked with the real typed_response_guard_errors (not the
+synthetic ones dry-run uses) and saved to
+outputs/pm_v1_5_v5_3_step2_live_test_v1/ (gitignored per this project's
+artifact policy -- may contain model-generated text derived from private
+EvoEmo user content).
 """
 
 from __future__ import annotations
@@ -47,6 +53,7 @@ from metacom_pm.v1_5_v5_3_typed_response_program import (  # noqa: E402
 
 EVOEMO = ROOT / "data/external/evo_emo.json"
 PANEL_DIR = ROOT / "outputs/pm_v1_5b_corrected_external_split_v1"
+OUT_DIR = ROOT / "outputs/pm_v1_5_v5_3_step2_live_test_v1"
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -97,14 +104,19 @@ def _mp_candidate(item: MemoryItem, user_id: str) -> TypedResourceCandidate:
     )
 
 
-def find_demo_state(states: list[dict], users: dict) -> tuple[dict, dict, int]:
-    """Find one real state with a usable MS candidate (MP optional).
+def find_demo_states(states: list[dict], users: dict, n: int) -> list[tuple[dict, dict, int]]:
+    """Find up to n real states with a usable MS candidate (MP optional).
+
+    Prefers spreading across distinct users first (so a small live batch
+    isn't accidentally all one person's writing style), then fills any
+    remaining slots from additional states of users already picked.
 
     ME is deliberately not attempted here: the ME verification work already
     established a 0.40% strict-compiler pass rate, so requiring a real ME
     candidate for the demo would very likely fail on almost any state, for
     reasons already documented, not a bug in this script.
     """
+    qualifying: list[tuple[dict, dict, int]] = []
     for state in states:
         uid = state["user_id"]
         user = users[uid]
@@ -116,25 +128,28 @@ def find_demo_state(states: list[dict], users: dict) -> tuple[dict, dict, int]:
         discoveries = discover_final_typed_memory_candidates(
             queries=queries, items=items, source_metadata={}, session_index=session_index,
         )
-        ms_selected = discoveries[MemorySource.MS].selected_items
-        if ms_selected:
-            return state, discoveries, session_index
-    raise RuntimeError("no state in the panel had any MS candidate -- unexpected, investigate")
+        if discoveries[MemorySource.MS].selected_items:
+            qualifying.append((state, discoveries, session_index))
+    if not qualifying:
+        raise RuntimeError("no state in the panel had any MS candidate -- unexpected, investigate")
+
+    seen_users: set[str] = set()
+    first_pass: list[tuple[dict, dict, int]] = []
+    rest: list[tuple[dict, dict, int]] = []
+    for entry in qualifying:
+        uid = entry[0]["user_id"]
+        if uid not in seen_users:
+            seen_users.add(uid)
+            first_pass.append(entry)
+        else:
+            rest.append(entry)
+    ordered = first_pass + rest
+    return ordered[:n]
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--live", action="store_true",
-        help="Make a real, billable API call. Requires NVIDIA_API_KEY. Never passed in this session.",
-    )
-    args = parser.parse_args()
-
-    users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
-    states = load_states()
-    state, discoveries, session_index = find_demo_state(states, users)
-    uid = state["user_id"]
-
+def build_program_and_messages(
+    state: dict, discoveries: dict, session_index: int, uid: str
+) -> tuple:
     candidates: dict[str, TypedResourceCandidate] = {}
     ms_item = discoveries[MemorySource.MS].selected_items[0]
     candidates["MS"] = _ms_candidate(ms_item, session_index, uid)
@@ -153,58 +168,98 @@ def main() -> None:
     messages = evidence_aware_generation_messages(
         current_context=state["current_user_text"], program=program
     )
+    return program, messages
 
-    print(f"demo state: {state['state_id']} (user={uid}, action={requested_action_id})")
-    print(f"evidence items: {len(program.evidence)}")
-    print("\n--- messages that would be sent to the generator endpoint ---")
-    for m in messages:
-        print(f"[{m['role']}] {m['content'][:500]}")
 
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--live", action="store_true",
+        help="Make real, billable API calls. Requires NVIDIA_API_KEY.",
+    )
+    parser.add_argument(
+        "--n", type=int, default=10,
+        help="Number of real states to process (default 10, spread across distinct users where possible).",
+    )
+    args = parser.parse_args()
+
+    users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
+    states = load_states()
+    batch = find_demo_states(states, users, args.n)
+    print(f"selected {len(batch)} states across {len({s['user_id'] for s, _, _ in batch})} distinct users")
+
+    client = None
+    response_schema = None
     if args.live:
         from metacom_pm.api import OpenAICompatibleClient  # noqa: PLC0415
         from metacom_pm.config import endpoint_from_config, load_config  # noqa: PLC0415
-        from pydantic import BaseModel  # noqa: PLC0415
+        from metacom_pm.contracts import StrictModel  # noqa: PLC0415
 
-        class _GeneratorResponseSchema(BaseModel):
+        class _GeneratorResponseSchema(StrictModel):
             reply: str
             used_evidence_ids: list[str]
             realized_response_act: str
 
+        response_schema = _GeneratorResponseSchema
         config = load_config(ROOT / "configs/experiment.yaml")
         endpoint = endpoint_from_config(config, "generator")
         client = OpenAICompatibleClient(endpoint)
-        try:
-            result, parsed = client.chat(messages, response_schema=_GeneratorResponseSchema)
-        finally:
-            client.close()
-        if parsed is None:
-            print(f"\nLIVE call did not return structured output: {result}")
-            return
-        response = parse_generator_response_dict(parsed.model_dump())
-        print(f"\n--- LIVE generator response ---\n{response}")
-    else:
-        # Dry-run: validate the downstream parse/guard path with a
-        # synthetic, clearly-fabricated response. This is NOT a real model
-        # output -- it only proves parse_generator_response_dict and
-        # typed_response_guard_errors accept a well-formed response and
-        # reject the things they are supposed to reject.
-        fake_good = {
-            "reply": (
-                f"That sounds like a lot to carry. Given what you noted before "
-                f"({ms_item.text[:60]}...), how are you feeling about it today?"
-            ),
-            "used_evidence_ids": [item.evidence_id for item in program.evidence],
-            "realized_response_act": "reflection",
-        }
-        response = parse_generator_response_dict(fake_good)
-        errors = typed_response_guard_errors(response=response, program=program)
-        print(f"\n--- dry-run: synthetic response parses cleanly, guard errors: {errors} ---")
 
-        fake_bad = dict(fake_good)
-        fake_bad["reply"] = "An earlier session recorded: something. " + fake_good["reply"]
-        bad_response = parse_generator_response_dict(fake_bad)
-        bad_errors = typed_response_guard_errors(response=bad_response, program=program)
-        print(f"--- dry-run: synthetic V5.2-leak-style response correctly flagged: {bad_errors} ---")
+    results: list[dict] = []
+    try:
+        for i, (state, discoveries, session_index) in enumerate(batch, 1):
+            uid = state["user_id"]
+            program, messages = build_program_and_messages(state, discoveries, session_index, uid)
+            print(f"\n=== [{i}/{len(batch)}] state={state['state_id']} user={uid} "
+                  f"action={program.requested_action_id} evidence={len(program.evidence)} ===")
+
+            if args.live:
+                result, parsed = client.chat(messages, response_schema=response_schema)
+                if parsed is None:
+                    print(f"  no structured output: {result}")
+                    results.append({"state_id": state["state_id"], "user_id": uid, "error": str(result)})
+                    continue
+                response = parse_generator_response_dict(parsed.model_dump())
+                errors = typed_response_guard_errors(response=response, program=program)
+                print(f"  reply: {response.reply[:200]}")
+                print(f"  used_evidence_ids: {response.used_evidence_ids}")
+                print(f"  guard_errors: {errors}")
+                results.append(
+                    {
+                        "state_id": state["state_id"],
+                        "user_id": uid,
+                        "evidence_ids": [e.evidence_id for e in program.evidence],
+                        "reply": response.reply,
+                        "used_evidence_ids": list(response.used_evidence_ids),
+                        "realized_response_act": response.realized_response_act,
+                        "guard_errors": list(errors),
+                    }
+                )
+            else:
+                ms_item = discoveries[MemorySource.MS].selected_items[0]
+                fake_good = {
+                    "reply": (
+                        f"That sounds like a lot to carry. Given what you noted before "
+                        f"({ms_item.text[:60]}...), how are you feeling about it today?"
+                    ),
+                    "used_evidence_ids": [item.evidence_id for item in program.evidence],
+                    "realized_response_act": "reflection",
+                }
+                response = parse_generator_response_dict(fake_good)
+                errors = typed_response_guard_errors(response=response, program=program)
+                print(f"  dry-run synthetic response parses cleanly, guard errors: {errors}")
+    finally:
+        if client is not None:
+            client.close()
+
+    if args.live:
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = OUT_DIR / "step2_live_responses.jsonl"
+        with out_path.open("w") as f:
+            for row in results:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+        n_clean = sum(1 for r in results if not r.get("error") and not r.get("guard_errors"))
+        print(f"\nwrote {out_path}: {len(results)} results, {n_clean} clean (no error, no guard violation)")
 
 
 if __name__ == "__main__":
