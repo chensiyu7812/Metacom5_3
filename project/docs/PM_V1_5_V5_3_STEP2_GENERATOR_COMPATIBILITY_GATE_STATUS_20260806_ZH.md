@@ -92,9 +92,21 @@ typed_response_program的输入契约组装、通过`OpenAICompatibleClient`（`
 "读`experiment.yaml`配置→`endpoint_from_config`→调用generator端点"这一套现成模式，新脚本
 照这个模式写，不是从零发明调用方式。
 
-### 结论：这是"source一个已有的密钥文件 + 写一个新脚本 + 一句明确授权"，不是"无从下手"
+### 结论：脚本已经写好了，缺的只剩"一句明确授权"
+
+**2026-08-06补充：新脚本已经写完并验证**，`scripts/v1_5/48_step2_typed_response_dry_run_v1_5.py`
+——用真实`discover_final_typed_memory_candidates`/`build_evo_memory`（跟脚本45-47同一套）
+从真实138状态面板里取一个MP+MS都有候选的state，组装成真实`TypedResponseProgram`，构造真实
+生成消息，默认（不带`--live`）**不发起任何网络请求**，只用一个手写的、明确标注为虚构的假
+响应验证`parse_generator_response_dict`+`typed_response_guard_errors`这条解析/校验链路是
+对的——已经实测跑通：正常响应校验通过（无错误），刻意构造一条V5.2式泄漏短语（"An earlier
+session recorded..."）的假响应被正确拦截（`RECORD_LOG_PHRASING_LEAK`）。`--live`模式需要
+`NVIDIA_API_KEY`，会发起真实付费调用，其代码路径（`OpenAICompatibleClient`/`endpoint_from_
+config`的import）延迟到`if args.live`分支内部，dry-run和直接import这个文件都不可能碰到
+网络——本次会话没有传过`--live`。
 
 如果用户想推进：(1) `source ~/.metacom_v1_5_secrets.env`（凭据已经就绪，不需要新申请）；
-(2) 明确授权可以花一点钱做一次小样本（比如10-20个真实state）验证跑；之后我可以写这个新脚本
-并执行。在此之前，这一项保持"已研究清楚缺口、未执行"的状态，不会因为"密钥已经存在"就擅自
-发起真实调用——凭据可用不等于已经获得执行授权，这是两件独立的事。
+(2) 明确授权可以花一点钱做一次小样本（比如10-20个真实state）验证跑；(3) 跑
+`python scripts/v1_5/48_step2_typed_response_dry_run_v1_5.py --live`（或者我扩展这个脚本
+支持批量跑多个state）。在此之前，这一项保持"脚本已就绪、未执行"的状态，不会因为"脚本写好了"
+就擅自发起真实调用——脚本就绪不等于已经获得执行授权，这是两件独立的事。
