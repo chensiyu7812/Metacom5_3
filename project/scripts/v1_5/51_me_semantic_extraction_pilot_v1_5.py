@@ -196,15 +196,42 @@ def main() -> None:
     parser.add_argument("--n", type=int, default=15, help="Number of uncompilable chunks to pilot.")
     args = parser.parse_args()
 
+    # 2026-08-06 v4 fix: a real re-test found this exclusion logic only ever
+    # excluded the IMMEDIATELY PRIOR run's chunks, not the full cross-run
+    # history. Consequence, confirmed with real data: two chunks tested (and
+    # rejected) in run 1, then baked into EXTRACTION_SYSTEM_PROMPT as v2
+    # few-shot examples, then correctly excluded in run 2 -- resurfaced in
+    # run 3 because run 3 only read run 2's output file, not run 1's
+    # archive. The model "found" both trivially (they are its own worked
+    # examples) and both were counted as fresh fully_verified successes,
+    # inflating that run's headline rate. A second bug compounded this: the
+    # archive step used a single fixed filename and skipped silently once
+    # that file existed, so run 2's real 15-chunk results were overwritten
+    # by run 3 with no archive ever made -- silent data loss. Fixed by (a)
+    # unioning memory_ids across every archived round, not just the latest,
+    # and (b) archiving every run under a round-numbered filename so a later
+    # run can never collide with an earlier archive.
     exclude_memory_ids: frozenset[str] = frozenset()
     out_path = OUT_DIR / "me_extraction_pilot_results.jsonl"
-    if args.live and out_path.exists():
-        previous = [json.loads(line) for line in out_path.read_text().splitlines() if line.strip()]
-        exclude_memory_ids = frozenset(r["memory_id"] for r in previous if "memory_id" in r)
-        archive_path = OUT_DIR / "me_extraction_pilot_results_v1_prompt_20260806.jsonl"
-        if not archive_path.exists():
+    if args.live:
+        prior_round_files = sorted(OUT_DIR.glob("me_extraction_pilot_results_round*.jsonl"))
+        all_prior_ids: set[str] = set()
+        for f in prior_round_files:
+            for r in load_jsonl(f):
+                if "memory_id" in r:
+                    all_prior_ids.add(r["memory_id"])
+        if out_path.exists():
+            current = load_jsonl(out_path)
+            for r in current:
+                if "memory_id" in r:
+                    all_prior_ids.add(r["memory_id"])
+            next_round = len(prior_round_files) + 1
+            archive_path = OUT_DIR / f"me_extraction_pilot_results_round{next_round}_20260806.jsonl"
             out_path.rename(archive_path)
-            print(f"archived v1-prompt run ({len(exclude_memory_ids)} chunks) to {archive_path}")
+            print(f"archived round {next_round} ({len(current)} chunks) to {archive_path}")
+        exclude_memory_ids = frozenset(all_prior_ids)
+        print(f"excluding {len(exclude_memory_ids)} memory_ids tested across all prior rounds "
+              f"({len(prior_round_files)} prior archives + current out_path if present)")
 
     users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
     uids = panel_user_ids()
