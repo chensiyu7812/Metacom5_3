@@ -222,8 +222,10 @@ def main() -> None:
                         "bge_ms_evidence": bge_program.evidence[-1].literal_evidence,
                         "production_reply": prod_resp.reply if prod_resp else None,
                         "production_status": prod_status,
+                        "production_first_pass_guard_errors": list(prod_errs),
                         "bge_reply": bge_resp.reply if bge_resp else None,
                         "bge_status": bge_status,
+                        "bge_first_pass_guard_errors": list(bge_errs),
                     }
                 )
     finally:

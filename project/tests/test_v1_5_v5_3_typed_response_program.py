@@ -14,6 +14,18 @@ from metacom_pm.v1_5_v5_3_typed_response_program import (
 )
 
 
+def mp() -> TypedResourceCandidate:
+    return TypedResourceCandidate(
+        component="MP",
+        subtype="MP_PROFILE",
+        resource_id="memory_profile_001",
+        candidate_version="v1",
+        source_kind="profile",
+        owner_id="u1",
+        profile_fact="Job: office worker",
+    )
+
+
 def ms() -> TypedResourceCandidate:
     return TypedResourceCandidate(
         component="MS",
@@ -74,6 +86,33 @@ def test_generator_sees_full_evidence_unlike_v5_2() -> None:
     assert messages[1]["role"] == "user"
     assert messages[1]["content"] == "User: I'm nervous about this."
     assert "shift change" not in messages[1]["content"]
+
+
+def test_mp_is_exempt_from_required_evidence_not_used_but_ms_is_not() -> None:
+    # 2026-08-06 regression: a real paired-generation test found MP's
+    # correctly-matched candidates repeatedly dragging an otherwise-clean
+    # MS-only reply into a fallback, because REQUIRED_EVIDENCE_NOT_USED
+    # required MP to be self-cited the same way MS/ME are, even though
+    # MP_PREFERENCE/MP_PROFILE should influence form/scope rather than be
+    # verbally referenced. See PM_V1_5_V5_3_MS_MP_ME_EFFECT_TEST_
+    # 20260806_ZH.md for the traced real-world failure this fixes.
+    program = build_typed_response_program(
+        requested_action_id="MPMS+R0", current_goal="x", current_user_id="u1",
+        candidates={"MP": mp(), "MS": ms()},
+    )
+    ms_id = next(e.evidence_id for e in program.evidence if e.component == "MS")
+    mp_id = next(e.evidence_id for e in program.evidence if e.component == "MP")
+
+    # MS cited, MP silently not cited -> no longer an error.
+    response = _resp("I hear you had a rough shift.", used=(ms_id,))
+    assert typed_response_guard_errors(response=response, program=program) == ()
+
+    # MP cited, MS silently not cited -> still an error (MS keeps the
+    # existing strict requirement).
+    response = _resp("Just checking in.", used=(mp_id,))
+    assert typed_response_guard_errors(response=response, program=program) == (
+        "REQUIRED_EVIDENCE_NOT_USED",
+    )
 
 
 def test_owned_evidence_is_tagged_and_ownerless_evidence_is_not() -> None:

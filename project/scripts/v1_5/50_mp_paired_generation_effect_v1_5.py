@@ -194,22 +194,26 @@ def main() -> None:
             print(f"  MP fact: {mp_item.text}")
 
             if args.live:
-                with_resp, with_status, _e1 = call_with_guard_and_rewrite(
+                with_resp, with_status, with_errs = call_with_guard_and_rewrite(
                     client, response_schema, with_messages, with_program
                 )
-                without_resp, without_status, _e2 = call_with_guard_and_rewrite(
+                without_resp, without_status, without_errs = call_with_guard_and_rewrite(
                     client, response_schema, without_messages, without_program
                 )
-                print(f"  [WITH MP, status={with_status}]: {with_resp.reply if with_resp else None}")
-                print(f"  [WITHOUT MP, status={without_status}]: {without_resp.reply if without_resp else None}")
+                print(f"  [WITH MP, status={with_status}, first_pass_errors={with_errs}]: "
+                      f"{with_resp.reply if with_resp else None}")
+                print(f"  [WITHOUT MP, status={without_status}, first_pass_errors={without_errs}]: "
+                      f"{without_resp.reply if without_resp else None}")
                 results.append(
                     {
                         "state_id": state["state_id"], "user_id": state["user_id"],
                         "mp_fact": mp_item.text,
                         "with_mp_reply": with_resp.reply if with_resp else None,
                         "with_mp_status": with_status,
+                        "with_mp_first_pass_guard_errors": list(with_errs),
                         "without_mp_reply": without_resp.reply if without_resp else None,
                         "without_mp_status": without_status,
+                        "without_mp_first_pass_guard_errors": list(without_errs),
                     }
                 )
     finally:

@@ -437,7 +437,25 @@ def typed_response_guard_errors(
     # by whatever built cannot_integrate/the program itself) to have a
     # natural use; the generator is not given discretion to silently skip
     # one. A gap here is a real Step2 nonuse event, not a quiet pass.
-    missing = authorized_ids - used_ids
+    #
+    # 2026-08-06: MP is exempt from this requirement -- an independent
+    # review correctly pointed out this check's "must be cited" contract is
+    # shaped for MS/ME (narrative fact the reply should reference), not MP.
+    # MP_PREFERENCE should change the reply's form/tone/length; MP_PROFILE
+    # should change a suggestion's scope/timing/feasibility -- neither
+    # necessarily leaves a citable trace even when correctly incorporated.
+    # A real paired-generation test found this exact contract actively
+    # harmful: 3/6 real states where a correctly-matched MP fact caused an
+    # otherwise-successful MS-only reply to fail this check and fall back to
+    # a generic M0 response (traced directly: the model wrote a coherent
+    # MS-grounded reply and never worked in the short MP fact, and this
+    # check then discarded the whole reply over it). See
+    # PM_V1_5_V5_3_MS_MP_ME_EFFECT_TEST_20260806_ZH.md. MS/ME keep the
+    # existing strict requirement unchanged.
+    required_ids = {
+        item.evidence_id for item in program.evidence if item.component != "MP"
+    }
+    missing = required_ids - used_ids
     if missing:
         errors.append("REQUIRED_EVIDENCE_NOT_USED")
     if len(response.used_evidence_ids) != len(set(response.used_evidence_ids)):
