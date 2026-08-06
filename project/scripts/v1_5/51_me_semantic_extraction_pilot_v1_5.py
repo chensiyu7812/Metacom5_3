@@ -48,17 +48,45 @@ EVOEMO = ROOT / "data/external/evo_emo.json"
 PANEL_DIR = ROOT / "outputs/pm_v1_5b_corrected_external_split_v1"
 OUT_DIR = ROOT / "outputs/pm_v1_5_v5_3_me_extraction_pilot_v1"
 
+# 2026-08-06 v2: the first version of this prompt (no examples) got 0/15 on
+# a real pilot. An independent review manually re-read the raw "abstained"
+# chunks and found at least 2 genuine misses (confirmed directly against the
+# saved chunk text, not taken on trust): a p18 chunk containing "i decided
+# to to yoga for better sleep its nice and going good" (messy grammar, but
+# a clear action+outcome), and a p9 chunk containing "I used this chat...
+# It helps... Yes it helps" (outcome mentioned before the action is named,
+# i.e. not in linear order). The recall failure looks like it came from (a)
+# no worked examples at all, and (b) messy/informal or non-linear phrasing
+# probably reading as "not confident enough" under a bare "abstain if
+# unsure" instruction. v2 adds real few-shot examples, including messy ones,
+# and says explicitly that bad grammar or informal phrasing is not by
+# itself a reason to abstain.
 EXTRACTION_SYSTEM_PROMPT = (
     "You will be given one chunk of a user's own past chat turns (their own words, in "
-    "order). Look for a specific, local instance of: the user did something (a concrete "
-    "past action they actually took, not a plan or hope), and they observed a specific "
-    "result from it (not a general feeling, not advice they received, not something a "
-    "third party did). Both the action and the result must be about the SAME local event.\n\n"
+    "order, sometimes informal or with typos). Look for a specific, local instance of: the "
+    "user did something (a concrete past action they actually took, not a plan or hope), and "
+    "they observed a specific result from it (not a general feeling, not advice they "
+    "received, not something a third party did). Both the action and the result must be "
+    "about the SAME local event. They do not have to appear in that order in the text, and "
+    "messy grammar, typos, or informal phrasing are NOT by themselves a reason to abstain -- "
+    "judge the content, not the writing quality.\n\n"
+    "Examples of chunks that DO contain one (has_reusable_outcome=true):\n"
+    "- \"I tried to focus on engaging one-on-one, which helped a bit, but it was hard to "
+    "shake the feeling of being judged.\" -> action_span=\"I tried to focus on engaging "
+    "one-on-one\", outcome_span=\"which helped a bit, but it was hard to shake the feeling "
+    "of being judged or not doing enough.\"\n"
+    "- \"...i decided to to yoga for better sleep its nice and going good ok.thank you\" "
+    "(messy grammar, still valid) -> action_span=\"i decided to to yoga for better sleep\", "
+    "outcome_span=\"its nice and going good\"\n"
+    "- \"It helps to have a person to talk to. I used this chat ... Yes it helps.\" (outcome "
+    "mentioned before the action is named -- still valid, look at the whole chunk) -> "
+    "action_span=\"I used this chat\", outcome_span=\"Yes it helps\"\n\n"
     "If you find one: return has_reusable_outcome=true, and action_span/outcome_span as "
-    "EXACT, VERBATIM substrings copied from the chunk (do not paraphrase, do not summarize, "
-    "do not fix grammar or punctuation -- copy the exact characters).\n\n"
-    "If you do not find one, or you are not confident, return has_reusable_outcome=false "
-    "and leave both spans empty. Do not guess."
+    "EXACT, VERBATIM substrings copied from the chunk (do not paraphrase, do not fix grammar "
+    "or punctuation -- copy the exact characters, including typos).\n\n"
+    "If there really is no local action+outcome pair (e.g. only a feeling, a plan, advice "
+    "received, or something someone else did), return has_reusable_outcome=false and leave "
+    "both spans empty."
 )
 
 
@@ -79,7 +107,9 @@ def panel_user_ids() -> list[str]:
     return uids
 
 
-def collect_uncompilable_chunks(users: dict, uids: list[str], n: int) -> list[dict]:
+def collect_uncompilable_chunks(
+    users: dict, uids: list[str], n: int, exclude_memory_ids: frozenset[str] = frozenset()
+) -> list[dict]:
     """Real ME chunks (via the real build_evo_memory() compiler) that FAIL
     the current strict regex -- these are the only chunks worth piloting an
     alternative extractor on; chunks that already pass need no pilot.
@@ -87,6 +117,12 @@ def collect_uncompilable_chunks(users: dict, uids: list[str], n: int) -> list[di
     Spreads across distinct users round-robin (one chunk per user per pass)
     rather than draining one user's pool first, so a small pilot sample
     isn't accidentally all one person's writing style.
+
+    exclude_memory_ids lets a re-test draw genuinely fresh material -- in
+    particular, two chunks from the first pilot round are now baked into
+    EXTRACTION_SYSTEM_PROMPT as few-shot examples (v2), so re-testing on
+    them would not be a fair read of whether the prompt improvement
+    generalizes, only whether the model can recognize its own example.
     """
 
     per_user: dict[str, list] = {}
@@ -95,7 +131,9 @@ def collect_uncompilable_chunks(users: dict, uids: list[str], n: int) -> list[di
         items, _extra = build_evo_memory(user)
         me_items = [it for it in items if it.source is MemorySource.ME]
         per_user[uid] = [
-            it for it in me_items if compile_atomic_reusable_outcome(it.text) is None
+            it for it in me_items
+            if compile_atomic_reusable_outcome(it.text) is None
+            and it.memory_id not in exclude_memory_ids
         ]
 
     chunks: list[dict] = []
@@ -117,11 +155,22 @@ def main() -> None:
     parser.add_argument("--n", type=int, default=15, help="Number of uncompilable chunks to pilot.")
     args = parser.parse_args()
 
+    exclude_memory_ids: frozenset[str] = frozenset()
+    out_path = OUT_DIR / "me_extraction_pilot_results.jsonl"
+    if args.live and out_path.exists():
+        previous = [json.loads(line) for line in out_path.read_text().splitlines() if line.strip()]
+        exclude_memory_ids = frozenset(r["memory_id"] for r in previous if "memory_id" in r)
+        archive_path = OUT_DIR / "me_extraction_pilot_results_v1_prompt_20260806.jsonl"
+        if not archive_path.exists():
+            out_path.rename(archive_path)
+            print(f"archived v1-prompt run ({len(exclude_memory_ids)} chunks) to {archive_path}")
+
     users = {str(u["id"]): u for u in json.loads(EVOEMO.read_text(encoding="utf-8"))}
     uids = panel_user_ids()
-    chunks = collect_uncompilable_chunks(users, uids, args.n)
+    chunks = collect_uncompilable_chunks(users, uids, args.n, exclude_memory_ids=exclude_memory_ids)
     print(f"selected {len(chunks)} real ME chunks that fail the current strict compiler, "
-          f"across {len({c['user_id'] for c in chunks})} distinct users")
+          f"across {len({c['user_id'] for c in chunks})} distinct users "
+          f"(excluded {len(exclude_memory_ids)} previously-piloted chunks)")
 
     if not args.live:
         for c in chunks:
@@ -181,7 +230,6 @@ def main() -> None:
         client.close()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = OUT_DIR / "me_extraction_pilot_results.jsonl"
     with out_path.open("w") as f:
         for row in results:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
