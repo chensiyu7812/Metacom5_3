@@ -7,6 +7,7 @@ from metacom_pm.v1_5_v5_3_typed_response_program import (
     evidence_aware_generation_messages,
     m0_fallback_response,
     parse_generator_response_dict,
+    speaker_attribution_guard_errors,
     typed_response_guard_errors,
 )
 
@@ -61,10 +62,44 @@ def test_generator_sees_full_evidence_unlike_v5_2() -> None:
     messages = evidence_aware_generation_messages(
         current_context="User: I'm nervous about this.", program=program
     )
-    assert "shift change" in messages[1]["content"]
-    assert "memory_session_001" in messages[1]["content"]
-    assert "strategy_card_001" in messages[1]["content"]
-    assert "conflict is unresolved or unsafe" in messages[1]["content"]
+    full_text = " ".join(m["content"] for m in messages)
+    assert "shift change" in full_text
+    assert "memory_session_001" in full_text
+    assert "strategy_card_001" in full_text
+    assert "conflict is unresolved or unsafe" in full_text
+    # current_context (what the user actually said this turn) stays isolated
+    # in its own user-role message, separate from background evidence.
+    assert messages[1]["role"] == "user"
+    assert messages[1]["content"] == "User: I'm nervous about this."
+    assert "shift change" not in messages[1]["content"]
+
+
+def test_owned_evidence_is_tagged_and_ownerless_evidence_is_not() -> None:
+    # 2026-08-06 regression: a real live test found the generator claiming
+    # the user's own facts (spouse, job, education) as its own experience,
+    # because owner_id was compiled onto ExecutionEvidence but never
+    # rendered into the request at all. Evidence with an owner must say so;
+    # RS (no owner_id -- not a personal fact) must not be mistagged as owned.
+    program = build_typed_response_program(
+        requested_action_id="MS+RS", current_goal="raise a concern with a friend",
+        current_user_id="u1", candidates={"MS": ms(), "RS": rs()},
+    )
+    system_text = evidence_aware_generation_messages(
+        current_context="User: I'm nervous about this.", program=program
+    )[0]["content"]
+    assert "you are not role-playing the user" in system_text.lower()
+    assert "address as you/your" in system_text
+    assert "owner=none" in system_text
+    # both an "owned" and an "ownerless" evidence tag are present, and they
+    # are distinguishable (not just both silently present somewhere).
+    ms_evidence_id = program.evidence[0].evidence_id
+    rs_evidence_id = program.evidence[1].evidence_id
+    assert program.evidence[0].component == "MS" and program.evidence[0].owner_id == "u1"
+    assert program.evidence[1].component == "RS" and program.evidence[1].owner_id is None
+    ms_line = next(line for line in system_text.split("\n") if ms_evidence_id in line)
+    rs_line = next(line for line in system_text.split("\n") if rs_evidence_id in line)
+    assert "owner=the person you are talking to" in ms_line
+    assert "owner=none" in rs_line
 
 
 def test_me_literal_evidence_uses_required_fields_not_optional_mechanism() -> None:
@@ -100,6 +135,39 @@ def test_execution_candidate_id_mismatch_is_rejected() -> None:
             candidates={"MS": ms()},
             expected_execution_candidate_ids={"MS": "memory_session_999"},
         )
+
+
+def _resp(reply: str) -> GeneratorResponse:
+    return GeneratorResponse(reply=reply, used_evidence_ids=(), realized_response_act="reflection")
+
+
+def test_speaker_attribution_guard_catches_direct_biographical_claim() -> None:
+    # Real 2026-08-06 live-test pattern (paraphrased, not the verbatim
+    # output): the model claimed the user's spouse/child as its own.
+    reply = "As a business owner, I've had my fair share of challenges, including my husband's job loss."
+    assert speaker_attribution_guard_errors(response=_resp(reply)) == (
+        "POSSIBLE_ASSISTANT_SELF_ATTRIBUTION_OF_USER_FACT",
+    )
+
+
+def test_speaker_attribution_guard_catches_extended_narrative_without_trigger_noun() -> None:
+    # Real 2026-08-06 pattern: no single forbidden noun, but a sustained
+    # first-person reflection co-occurring with a possessive in one sentence.
+    reply = (
+        "I've been thinking about how this might affect my long-term goals, "
+        "like saving for a house."
+    )
+    assert speaker_attribution_guard_errors(response=_resp(reply)) == (
+        "POSSIBLE_ASSISTANT_SELF_ATTRIBUTION_OF_USER_FACT",
+    )
+
+
+def test_speaker_attribution_guard_allows_normal_assistant_first_person() -> None:
+    reply = (
+        "I hear you, and I'm sorry this has been so hard. I recall that you mentioned "
+        "your husband recently changed jobs -- how are you feeling about that today?"
+    )
+    assert speaker_attribution_guard_errors(response=_resp(reply)) == ()
 
 
 def test_cannot_integrate_program_refuses_generation_and_falls_back() -> None:

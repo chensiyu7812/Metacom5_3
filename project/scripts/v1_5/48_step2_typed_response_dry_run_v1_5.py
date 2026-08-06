@@ -47,13 +47,29 @@ from metacom_pm.v1_5_typed_resource_adapter import TypedResourceCandidate  # noq
 from metacom_pm.v1_5_v5_3_typed_response_program import (  # noqa: E402
     build_typed_response_program,
     evidence_aware_generation_messages,
+    m0_fallback_response,
     parse_generator_response_dict,
+    speaker_attribution_guard_errors,
     typed_response_guard_errors,
 )
 
 EVOEMO = ROOT / "data/external/evo_emo.json"
 PANEL_DIR = ROOT / "outputs/pm_v1_5b_corrected_external_split_v1"
 OUT_DIR = ROOT / "outputs/pm_v1_5_v5_3_step2_live_test_v1"
+
+# 2026-08-06: EvoEmo's frozen runtime_state has no current_goal-like field
+# (checked: allowed_actions, card_id, current_session_history,
+# current_session_summary, current_user_text, inventory, provenance,
+# semantic_family, session_index, split, state_id, user_id -- nothing else).
+# The original version of this script wrote a plausible-sounding goal by
+# hand, which is exactly the kind of hidden/invented-intent leak this
+# project's own rule forbids (evaluator-only signals must never enter the
+# policy/generator view). Use an honest, observable task description
+# instead of pretending a real intent-recognition step already ran.
+OBSERVABLE_RESPONSE_TASK_GOAL = (
+    "Respond to the user's latest message based on the visible conversation, "
+    "respecting any explicit request or boundary stated in it."
+)
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -161,7 +177,7 @@ def build_program_and_messages(
 
     program = build_typed_response_program(
         requested_action_id=requested_action_id,
-        current_goal="respond to the seeker's current turn, integrating the confirmed evidence naturally",
+        current_goal=OBSERVABLE_RESPONSE_TASK_GOAL,
         current_user_id=uid,
         candidates=candidates,
     )
@@ -169,6 +185,54 @@ def build_program_and_messages(
         current_context=state["current_user_text"], program=program
     )
     return program, messages
+
+
+def call_with_guard_and_rewrite(client, response_schema, messages, program):
+    """Call the generator, check both guards, allow exactly one corrective
+    rewrite, then fall back to the deterministic M0 response.
+
+    Returns (response_or_None, status, guard_errors) where status is one of
+    "clean", "fixed_by_rewrite", "fell_back_to_m0", or "no_structured_output".
+    Never retries more than once -- an unbounded fix-and-recheck loop is
+    exactly the "改prompt->人评->再改" cycle this project has been trying to
+    avoid; one directed attempt, then the safe deterministic fallback.
+    """
+
+    result, parsed = client.chat(messages, response_schema=response_schema)
+    if parsed is None:
+        return None, "no_structured_output", (str(result),)
+    response = parse_generator_response_dict(parsed.model_dump())
+    errors = typed_response_guard_errors(response=response, program=program) + \
+        speaker_attribution_guard_errors(response=response)
+    if not errors:
+        return response, "clean", ()
+
+    rewrite_messages = messages + [
+        {"role": "assistant", "content": response.reply},
+        {
+            "role": "user",
+            "content": (
+                "You incorrectly presented someone else's fact as your own experience, "
+                "or otherwise violated a stated rule. Keep the same content and evidence, "
+                "but rewrite your reply, correctly addressing evidence about the user as "
+                "\"you/your\" and never claiming it as your own biography. Do not add new "
+                "facts."
+            ),
+        },
+    ]
+    result2, parsed2 = client.chat(rewrite_messages, response_schema=response_schema)
+    if parsed2 is not None:
+        response2 = parse_generator_response_dict(parsed2.model_dump())
+        errors2 = typed_response_guard_errors(response=response2, program=program) + \
+            speaker_attribution_guard_errors(response=response2)
+        if not errors2:
+            return response2, "fixed_by_rewrite", errors
+
+    fallback_reply = m0_fallback_response("one_focused_question")
+    fallback = parse_generator_response_dict(
+        {"reply": fallback_reply, "used_evidence_ids": [], "realized_response_act": "m0_fallback"}
+    )
+    return fallback, "fell_back_to_m0", errors
 
 
 def main() -> None:
@@ -214,16 +278,16 @@ def main() -> None:
                   f"action={program.requested_action_id} evidence={len(program.evidence)} ===")
 
             if args.live:
-                result, parsed = client.chat(messages, response_schema=response_schema)
-                if parsed is None:
-                    print(f"  no structured output: {result}")
-                    results.append({"state_id": state["state_id"], "user_id": uid, "error": str(result)})
+                response, status, first_pass_errors = call_with_guard_and_rewrite(
+                    client, response_schema, messages, program
+                )
+                if response is None:
+                    print(f"  no structured output: {first_pass_errors}")
+                    results.append({"state_id": state["state_id"], "user_id": uid, "error": str(first_pass_errors)})
                     continue
-                response = parse_generator_response_dict(parsed.model_dump())
-                errors = typed_response_guard_errors(response=response, program=program)
+                print(f"  status: {status}  (first-pass guard errors: {first_pass_errors})")
                 print(f"  reply: {response.reply[:200]}")
                 print(f"  used_evidence_ids: {response.used_evidence_ids}")
-                print(f"  guard_errors: {errors}")
                 results.append(
                     {
                         "state_id": state["state_id"],
@@ -232,7 +296,8 @@ def main() -> None:
                         "reply": response.reply,
                         "used_evidence_ids": list(response.used_evidence_ids),
                         "realized_response_act": response.realized_response_act,
-                        "guard_errors": list(errors),
+                        "status": status,
+                        "first_pass_guard_errors": list(first_pass_errors),
                     }
                 )
             else:
@@ -246,7 +311,8 @@ def main() -> None:
                     "realized_response_act": "reflection",
                 }
                 response = parse_generator_response_dict(fake_good)
-                errors = typed_response_guard_errors(response=response, program=program)
+                errors = typed_response_guard_errors(response=response, program=program) + \
+                    speaker_attribution_guard_errors(response=response)
                 print(f"  dry-run synthetic response parses cleanly, guard errors: {errors}")
     finally:
         if client is not None:
@@ -258,8 +324,16 @@ def main() -> None:
         with out_path.open("w") as f:
             for row in results:
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
-        n_clean = sum(1 for r in results if not r.get("error") and not r.get("guard_errors"))
-        print(f"\nwrote {out_path}: {len(results)} results, {n_clean} clean (no error, no guard violation)")
+        from collections import Counter  # noqa: PLC0415
+        status_counts = Counter(r.get("status", "error") for r in results)
+        print(f"\nwrote {out_path}: {len(results)} results, status breakdown: {dict(status_counts)}")
+        print(
+            "NOTE: 'clean' = first pass had no guard violation. 'fixed_by_rewrite'/"
+            "'fell_back_to_m0' mean a violation WAS caught on the first pass -- still "
+            "read the full reply text manually, do not trust guard-pass counts alone "
+            "(the speaker-attribution guard is a calibrated heuristic, not a complete "
+            "semantic check; see its docstring)."
+        )
 
 
 if __name__ == "__main__":

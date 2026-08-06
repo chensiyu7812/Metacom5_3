@@ -254,15 +254,46 @@ def parse_generator_response_dict(raw: Mapping[str, object]) -> GeneratorRespons
 def evidence_aware_generation_messages(
     *, current_context: str, program: TypedResponseProgram
 ) -> list[dict[str, str]]:
+    """Build the generator request.
+
+    2026-08-06: a real live test (10 real states, real NVIDIA-hosted
+    Llama-3.1-8B-Instruct calls) found 5/10 replies presented the user's own
+    evidence in first person as the assistant's own experience -- one
+    fabricated a spouse and child that belong to the user. The worst case's
+    evidence was clean third person ("Emily is feeling..."), so this is not
+    just "the model continued a quoted I" -- it is a narrator-identity
+    collapse the previous prompt never addressed. ExecutionEvidence already
+    carried owner_id (the real user id for MP/MS/ME, None for RS), but this
+    function never rendered it into the request at all, so the generator had
+    no signal whatsoever about whose facts these were. The fix below is
+    deliberately the minimal, already-available-data version of a claim
+    ownership tag (render owner_id, do not invent a new predicate/object
+    extraction layer -- see PM_V1_5_V5_3_STEP2_LIVE_TEST_FINDINGS_
+    20260806_ZH.md for why a full semantic Claim IR is a separate, harder,
+    not-yet-justified investment). Evidence also moves into the system
+    message, separated from current_context, so it reads as background the
+    assistant knows rather than more things the user just said in this turn.
+    """
+
     if not _clean(current_context):
         raise ValueError("current_context must be non-empty")
     if program.cannot_integrate_reason is not None:
         raise ValueError("cannot_integrate programs must not be sent to the generator")
     system_lines = [
         f"Current goal: {program.current_goal}",
+        "You are the assistant responding to the user. You are not the user and you are not "
+        "role-playing the user.",
         "Write one natural, coherent reply that genuinely incorporates every evidence item "
         "below; every item listed has already been confirmed to have a natural use in this "
         "reply, so use all of them.",
+        "Every evidence item below with an owner describes THAT PERSON's own fact, "
+        "statement, or past experience -- never yours, regardless of whether its literal "
+        "wording is first person, third person, or a name. Always address it to that person "
+        "as \"you/your\". Never claim their spouse, child, job, education, relationship, "
+        "decision, emotion, or past action as your own experience or biography.",
+        "You may use first person only to describe your own present conversational act "
+        "(e.g. \"I hear you\", \"I'm sorry\", \"I want to understand\"), never to narrate a "
+        "personal life event, relationship, or biography.",
         "Forbidden: inventing a current cause, a stable personality trait, an unmentioned "
         "third party, a diagnosis, or an outcome guarantee.",
         "Forbidden in the visible reply: internal labels (MP/MS/ME/RS), resource IDs, field "
@@ -280,14 +311,24 @@ def evidence_aware_generation_messages(
             else "this is presently true"
         )
         boundary = f" -- boundary: {item.usage_boundary}" if item.usage_boundary else ""
+        owner = (
+            f"owner=the person you are talking to (address as you/your)"
+            if item.owner_id
+            else "owner=none (a permitted support move, not a personal fact)"
+        )
         evidence_lines.append(
-            f"- evidence_id={item.evidence_id} component={item.component} "
+            f"- evidence_id={item.evidence_id} component={item.component} {owner} "
             f"epistemic_mode={item.epistemic_mode} ({tentativeness}): "
             f'"{item.literal_evidence}" -- required contribution: {item.required_contribution}{boundary}'
         )
+    if evidence_lines:
+        system_lines.append(
+            "Background facts the assistant already knows (not things the user is currently "
+            "saying in this turn):\n" + "\n".join(evidence_lines)
+        )
     return [
         {"role": "system", "content": " ".join(system_lines)},
-        {"role": "user", "content": _clean(current_context) + "\n\n" + "\n".join(evidence_lines)},
+        {"role": "user", "content": _clean(current_context)},
     ]
 
 
@@ -344,6 +385,61 @@ def typed_response_guard_errors(
     if len(response.used_evidence_ids) != len(set(response.used_evidence_ids)):
         errors.append("DUPLICATE_EVIDENCE_ID_IN_TRACE")
     return tuple(errors)
+
+
+# Heuristic only -- calibrated against the 10 real replies from the
+# 2026-08-06 live test (5 confirmed violations, 1 mixed, 4 clean; see
+# PM_V1_5_V5_3_STEP2_LIVE_TEST_FINDINGS_20260806_ZH.md), NOT a complete
+# semantic check. Two signals, checked independently:
+# (a) a direct first-person possessive over a biographical noun ("my
+#     husband", "my college degree" -- up to two words of adjective/modifier
+#     tolerated between the possessive and the noun); catches p7/p10's
+#     clearest cases.
+# (b) within a single sentence, a sustained-personal-reflection verb phrase
+#     ("I've been thinking/weighing/considering/...") co-occurring with a
+#     first-person possessive ("my"/"our") anywhere in that sentence --
+#     catches p9/p13's paraphrased narrative-voice cases, which have no
+#     single forbidden noun.
+# Recall on the 10-reply calibration set: 3/3 direct-noun cases caught, plus
+# the two narrative cases this second signal was added for. This will still
+# miss cases with neither signal -- treat a pass as "no obvious violation",
+# not proof of correct attribution. Independent human review on a fresh
+# sample is still required before trusting an aggregate pass rate.
+_FIRST_PERSON_BIOGRAPHICAL_NOUN_RE = re.compile(
+    r"\b(?:my|our)\b(?:\s+\w+){0,2}\s+(?:husband|wife|spouse|partner|"
+    r"ex[- ]?(?:boyfriend|girlfriend|partner|husband|wife)|son|daughter|"
+    r"child|kids?|mother|father|mom|dad|family|job|career|degree|boss|"
+    r"supervisor|manager|therapist|doctor|diagnosis|illness|pregnancy)\b"
+    r"|\bas a (?:business owner|graduate student|freelancer|software engineer|"
+    r"project manager|office worker)\b",
+    re.IGNORECASE,
+)
+_PERSONAL_REFLECTION_VERB_RE = re.compile(
+    r"\bi(?:'ve| have)?(?:\s+been)?\s+(?:trying to|struggling with|weighing|"
+    r"considering|dealing with|thinking about|working towards|facing|"
+    r"navigating|balancing|reflecting on|reminded of)\b",
+    re.IGNORECASE,
+)
+_MY_OUR_POSSESSIVE_RE = re.compile(r"\b(?:my|our)\b", re.IGNORECASE)
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+
+
+def speaker_attribution_guard_errors(*, response: GeneratorResponse) -> tuple[str, ...]:
+    """Heuristic fail-fast for the assistant claiming the user's evidence as
+    its own biography (see module-level 2026-08-06 note and the regex
+    docstrings above). Deliberately separate from typed_response_guard_errors:
+    that function is scoped to machine-checkable structural/binding errors
+    only (its own docstring), and folding an incomplete heuristic into it
+    would misrepresent this as a complete check.
+    """
+
+    cleaned = _clean(response.reply)
+    if _FIRST_PERSON_BIOGRAPHICAL_NOUN_RE.search(cleaned):
+        return ("POSSIBLE_ASSISTANT_SELF_ATTRIBUTION_OF_USER_FACT",)
+    for sentence in _SENTENCE_SPLIT_RE.split(cleaned):
+        if _PERSONAL_REFLECTION_VERB_RE.search(sentence) and _MY_OUR_POSSESSIVE_RE.search(sentence):
+            return ("POSSIBLE_ASSISTANT_SELF_ATTRIBUTION_OF_USER_FACT",)
+    return ()
 
 
 _M0_FALLBACK_FAMILY: Mapping[str, str] = {
