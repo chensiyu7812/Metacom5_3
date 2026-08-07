@@ -6,12 +6,21 @@ import json
 from pathlib import Path
 import subprocess
 
+import pytest
+
 from metacom_pm.v1_5_final_candidate_contract import FINAL_FEATURE_NAMES
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PANEL = ROOT / "outputs/pm_v1_5_v5_single_full_fit_outcome_review_v1"
 FEATURES = ROOT / "outputs/pm_v1_5_v5_fit_training_surface_v1"
+
+
+def requires_artifact(path: Path):
+    return pytest.mark.skipif(
+        not path.is_file(),
+        reason=f"artifact replay input is not included in a clean checkout: {path}",
+    )
 
 
 def _rows(path: Path) -> list[dict]:
@@ -27,6 +36,7 @@ def _load_aggregator():
     return module
 
 
+@requires_artifact(PANEL / "manifest.json")
 def test_v5_full_fit_panel_is_blind_balanced_and_group_aware() -> None:
     manifest = json.loads((PANEL / "manifest.json").read_text())
     quality = _rows(PANEL / "primary_quality_packet.jsonl")
@@ -87,6 +97,7 @@ def test_v5_full_fit_panel_is_blind_balanced_and_group_aware() -> None:
         assert actual == expected
 
 
+@requires_artifact(FEATURES / "freeze_report.json")
 def test_v5_fit_feature_rows_are_pre_action_and_frozen() -> None:
     report = json.loads((FEATURES / "freeze_report.json").read_text())
     rows = _rows(FEATURES / "fit_feature_rows_private.jsonl")
@@ -156,6 +167,7 @@ def test_v5_state_label_uses_itt_quality_risk_and_cost_rule() -> None:
     assert vetoed["hard_worth_opening"] == 0
 
 
+@requires_artifact(PANEL / "private_blind_key.jsonl")
 def test_v5_full_aggregation_entry_runs_without_post_outcome_repair(
     tmp_path: Path,
 ) -> None:

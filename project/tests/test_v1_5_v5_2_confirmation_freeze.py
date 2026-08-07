@@ -4,8 +4,17 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def requires_artifact(path: Path):
+    return pytest.mark.skipif(
+        not path.is_file(),
+        reason=f"artifact replay input is not included in a clean checkout: {path}",
+    )
 
 
 def _json(path: Path) -> dict:
@@ -32,6 +41,10 @@ def test_v5_2_confirmation_identity_is_content_disjoint_and_single_use() -> None
     )
 
 
+@requires_artifact(
+    ROOT
+    / "data/pm_v1_5_v5_2_confirmation_v1/private/candidate_rows_private.jsonl"
+)
 def test_v5_2_confirmation_candidate_and_group_shape() -> None:
     data_dir = ROOT / "data/pm_v1_5_v5_2_confirmation_v1/private"
     candidates = _jsonl(data_dir / "candidate_rows_private.jsonl")
@@ -58,6 +71,9 @@ def test_v5_2_confirmation_candidate_and_group_shape() -> None:
     )
 
 
+@requires_artifact(
+    ROOT / "outputs/pm_v1_5_v5_2_confirmation_plan_v1/freeze_manifest.json"
+)
 def test_v5_2_confirmation_plan_is_paired_and_policy_non_degenerate() -> None:
     plan_dir = ROOT / "outputs/pm_v1_5_v5_2_confirmation_plan_v1"
     manifest = _json(plan_dir / "freeze_manifest.json")
@@ -76,4 +92,3 @@ def test_v5_2_confirmation_plan_is_paired_and_policy_non_degenerate() -> None:
     assert learned_on == 65
     assert manifest["learned_requested_on_fraction"] == 65 / 128
     assert 0.10 <= learned_on / 128 <= 0.90
-

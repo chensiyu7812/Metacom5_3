@@ -3,9 +3,16 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "outputs/pm_v1_5_v5_2_confirmation_review_v1_candidate"
+
+pytestmark = pytest.mark.skipif(
+    not (REVIEW / "review_manifest.json").is_file(),
+    reason="V5.2 private human-review artifact bundle is not included in a clean checkout",
+)
 
 
 def jsonl(name: str) -> list[dict]:

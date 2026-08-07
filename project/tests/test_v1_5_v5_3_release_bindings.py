@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+import metacom_pm.v1_5_v5_3_release_bindings as release_bindings
 from metacom_pm.v1_5_v5_3_release_bindings import (
     EXPECTED_BGE_M3_REVISION,
     EXPECTED_STRATEGY_BANK_SHA256,
@@ -14,7 +15,19 @@ from metacom_pm.v1_5_v5_3_release_bindings import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_static_release_binds_six_card_bank_bge_and_six_baselines() -> None:
+@pytest.fixture
+def fake_bge_snapshot(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Exercise binding logic without relying on a developer's HF cache."""
+    snapshot = tmp_path / EXPECTED_BGE_M3_REVISION
+    snapshot.mkdir()
+    (snapshot / "config.json").write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(release_bindings, "DEFAULT_BGE_M3_SNAPSHOT", snapshot)
+    return snapshot
+
+
+def test_static_release_binds_six_card_bank_bge_and_six_baselines(
+    fake_bge_snapshot: Path,
+) -> None:
     binding = build_static_release_bindings(ROOT)
     assert binding.strategy_bank.card_count == 6
     assert binding.strategy_bank.sha256 == EXPECTED_STRATEGY_BANK_SHA256
@@ -29,7 +42,9 @@ def test_static_release_binds_six_card_bank_bge_and_six_baselines() -> None:
     assert binding.api_calls == 0
 
 
-def test_release_identity_changes_when_an_implementation_binding_changes() -> None:
+def test_release_identity_changes_when_an_implementation_binding_changes(
+    fake_bge_snapshot: Path,
+) -> None:
     binding = build_static_release_bindings(ROOT)
     data = binding.model_dump(mode="json")
     data["shared_implementations"]["typed_step2"]["sha256"] = "0" * 64

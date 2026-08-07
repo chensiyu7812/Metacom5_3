@@ -9,6 +9,14 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
+pytestmark = pytest.mark.skipif(
+    not (
+        ROOT
+        / "outputs/pm_v1_5b_final_external_panel_v2/panel_freeze_report.json"
+    ).is_file(),
+    reason="corrected external-split artifact bundle is not included in a clean checkout",
+)
+
 
 def _module():
     path = ROOT / "scripts/v1_5/24eu_freeze_corrected_external_split_v1_5.py"

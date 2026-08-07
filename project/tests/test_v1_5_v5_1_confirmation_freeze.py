@@ -4,16 +4,29 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 
+import pytest
+
 from metacom_pm.io import iter_jsonl, sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def requires_artifact(path: Path):
+    return pytest.mark.skipif(
+        not path.is_file(),
+        reason=f"artifact replay input is not included in a clean checkout: {path}",
+    )
+
+
 def _rows(path: Path) -> list[dict]:
     return [dict(row) for row in iter_jsonl(path)]
 
 
+@requires_artifact(
+    ROOT
+    / "outputs/pm_v1_5_v5_1_confirmation_surface_v1/data_integrity_report.json"
+)
 def test_confirmation_surface_is_outcome_blind_and_disjoint() -> None:
     out = ROOT / "outputs/pm_v1_5_v5_1_confirmation_surface_v1"
     report = json.loads((out / "data_integrity_report.json").read_text())
@@ -34,6 +47,9 @@ def test_confirmation_surface_is_outcome_blind_and_disjoint() -> None:
     assert set(groups.values()) == {2}
 
 
+@requires_artifact(
+    ROOT / "outputs/pm_v1_5_v5_1_confirmation_plan_v1/freeze_manifest.json"
+)
 def test_confirmation_call_and_policy_plan_is_complete_and_frozen() -> None:
     out = ROOT / "outputs/pm_v1_5_v5_1_confirmation_plan_v1"
     manifest = json.loads((out / "freeze_manifest.json").read_text())

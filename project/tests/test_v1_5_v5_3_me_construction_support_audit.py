@@ -1,11 +1,23 @@
 from pathlib import Path
 
+import pytest
 
+
+ROOT = Path(__file__).resolve().parents[1]
+BLUEPRINT = (
+    ROOT / "data/pm_v1_5_v3_effect_blueprint_v1/private/construction_blueprint.jsonl"
+)
+
+
+@pytest.mark.skipif(
+    not BLUEPRINT.is_file(),
+    reason="private V3 construction blueprint is not included in a clean checkout",
+)
 def test_current_v3_me_construction_support_and_observer_gap(tmp_path: Path) -> None:
     import importlib.util
 
     script = (
-        Path(__file__).resolve().parents[1]
+            ROOT
         / "scripts/v1_5/61_audit_v5_3_me_construction_support_v1_5.py"
     )
     spec = importlib.util.spec_from_file_location("me_support_audit", script)
