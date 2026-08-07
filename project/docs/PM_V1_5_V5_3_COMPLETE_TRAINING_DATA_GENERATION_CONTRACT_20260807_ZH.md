@@ -127,23 +127,11 @@ name/gender/age 多数情况下应当成为负例或低价值候选，不能为�
 - direct answer before explanation；
 - choices rather than commands。
 
-为保证两个作者各自产出精确的 20/类型，按各自用户 ordinal 对 4 取模固定三项组合。两个 pilot 在精确组合表冻结前已分别产生不同但合法的第 0 组，因此作者使用各自的均衡表；两张表都满足每类 20/作者、40/全体。
+验收按作者维护全局精确配额：每位作者 40 用户、每用户 3 个互不重复的偏好类型、每种类型最终恰好 20 条，因此全体六类各 40 条。部分批次必须满足“剩余用户仍能补足最终配额”的可达性检查；任一类型超过 20，或剩余用户已不足以补到 20，立即阻断。
 
-ChatGPT Pro：
+这里不再按用户 ordinal 强制某一组三项组合。原因是交给两个网页生成器的正式内容合同只冻结了全局六类各 40 条，并未包含后来在 pilot 验收器中追加的 ordinal 组合表。用事后组合表否决已经满足原合同、且全局仍平衡的数据，会把验收器变化误当成内容错误。此修正发生在正式扩量前，不读取 Step1 标签、生成效果或外部结果。
 
-- 0：reflection、direct answer、choices；
-- 1：concise factual、one optional suggestion、listen-only；
-- 2：concise factual、reflection、one optional suggestion；
-- 3：listen-only、direct answer、choices。
-
-Claude：
-
-- 0：reflection、one optional suggestion、direct answer；
-- 1：concise factual、listen-only、choices；
-- 2：concise factual、reflection、one optional suggestion；
-- 3：listen-only、direct answer、choices。
-
-每种组合在对应作者的 40 用户中出现 10 次，因此全体六类各 40 条。替换版本仍占三条 history item 中的一条，不额外增加配额。
+替换版本仍占三条 history item 中的一条，不额外增加配额。
 
 偏好必须能发生版本变化；当前用户没有复述偏好时也可成为候选。它只参加内部实验，不冒充 EvoEmo 原生能力。
 
@@ -433,7 +421,7 @@ scripts/v1_5/82l_validate_formal_longitudinal_user_v1_5.py \
   --input /absolute/path/to/one_user.json
 ```
 
-把多个用户文件放入同一目录后，`--input` 也可直接指向目录，验收器会逐用户检查并汇总。报告固定写到：
+把多个用户文件放入同一目录后，`--input` 也可直接指向目录；对于分散的网页附件，也可以重复传入 `--input file1 --input file2 ...`。验收器会把它们作为同一个批次逐用户检查并汇总。报告固定写到：
 
 `outputs/pm_v1_5_v5_3_formal_longitudinal_user_validation_v1/report.json`
 

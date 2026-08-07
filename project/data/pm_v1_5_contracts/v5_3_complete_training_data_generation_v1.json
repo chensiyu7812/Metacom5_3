@@ -61,19 +61,12 @@
     },
     "cross_user_candidate_exact_duplicates_allowed": 0,
     "normalized_unique_text_rate_minimum_except_short_profile_values": 0.95,
-    "preference_pattern_by_author_and_ordinal_mod_4": {
-      "chatgpt_pro": {
-        "0": ["reflection_before_question", "direct_answer_before_explanation", "choices_rather_than_commands"],
-        "1": ["concise_factual_answer", "one_optional_suggestion", "listen_only_no_advice"],
-        "2": ["concise_factual_answer", "reflection_before_question", "one_optional_suggestion"],
-        "3": ["listen_only_no_advice", "direct_answer_before_explanation", "choices_rather_than_commands"]
-      },
-      "claude": {
-        "0": ["reflection_before_question", "one_optional_suggestion", "direct_answer_before_explanation"],
-        "1": ["concise_factual_answer", "listen_only_no_advice", "choices_rather_than_commands"],
-        "2": ["concise_factual_answer", "reflection_before_question", "one_optional_suggestion"],
-        "3": ["listen_only_no_advice", "direct_answer_before_explanation", "choices_rather_than_commands"]
-      }
+    "preference_acceptance": {
+      "mode": "AUTHOR_GLOBAL_EXACT_QUOTA_WITH_PARTIAL_BATCH_FEASIBILITY_V1",
+      "users_per_author": 40,
+      "items_per_user": 3,
+      "items_per_type_per_author": 20,
+      "reason": "The web-generation contract froze the six global quotas but did not prescribe an ordinal-level combination table. Acceptance therefore enforces the supplied contract rather than a post-pilot schedule."
     },
     "minimum_threads_with_reusable_and_nonreusable_me": 4,
     "minimum_threads_with_all_three_me_roles": 1

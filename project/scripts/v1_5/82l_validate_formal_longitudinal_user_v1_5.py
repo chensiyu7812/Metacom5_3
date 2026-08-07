@@ -55,6 +55,9 @@ PREFERENCE_TYPES = {
     "direct_answer_before_explanation",
     "choices_rather_than_commands",
 }
+PRIMARY_SUPERDOMAIN_ALIASES = {
+    "relationships_trust": "relationships",
+}
 ME_SUBTYPES = {
     "ME_REUSABLE_OUTCOME",
     "ME_UNRESOLVED_EVENT",
@@ -158,6 +161,10 @@ def _normalize_user_schema(user: dict[str, Any]) -> tuple[dict[str, Any], list[s
 
     value = copy.deepcopy(user)
     actions: list[str] = []
+    primary_superdomain = value.get("primary_superdomain")
+    if primary_superdomain in PRIMARY_SUPERDOMAIN_ALIASES:
+        value["primary_superdomain"] = PRIMARY_SUPERDOMAIN_ALIASES[primary_superdomain]
+        actions.append(f"primary_superdomain:{primary_superdomain}->{value['primary_superdomain']}")
     sessions = list(value.get("sessions") or [])
     typed = [candidate for session in sessions for candidate in session.get("typed_candidates", [])]
     profile_evidence = {
@@ -453,22 +460,13 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
             previous = by_pref_id.get(supersedes)
             if previous is None or previous.get("active") is not False:
                 _add_issue(issues, code="PREFERENCE_SUPERSESSION", item_id=row.get("item_id"), message="invalid preference supersession")
-    if assignment is not None:
-        ordinal = int(user_id.rsplit("u", 1)[-1])
-        expected_preference_types = set(
-            contract["catalog_targets"]["preference_pattern_by_author_and_ordinal_mod_4"]
-            [author][str(ordinal % 4)]
+    actual_preference_types = {str(row.get("preference_type") or "") for row in preferences}
+    if len(actual_preference_types) != len(preferences):
+        _add_issue(
+            issues,
+            code="PREFERENCE_TYPES_NOT_DISTINCT",
+            message="the three preference-history items must use three distinct preference types",
         )
-        actual_preference_types = {str(row.get("preference_type") or "") for row in preferences}
-        if actual_preference_types != expected_preference_types:
-            _add_issue(
-                issues,
-                code="PREFERENCE_PATTERN",
-                message=(
-                    f"expected preference types {sorted(expected_preference_types)}, got "
-                    f"{sorted(actual_preference_types)}"
-                ),
-            )
 
     subtype_counts = Counter(candidate.get("subtype") for _, candidate in candidate_pairs)
     tier_counts = Counter(
@@ -597,7 +595,13 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=Path, required=True, help="one file or a directory of user JSON files")
+    parser.add_argument(
+        "--input",
+        type=Path,
+        action="append",
+        required=True,
+        help="one file or directory; repeat --input to validate several uploads as one batch",
+    )
     parser.add_argument("--contract", type=Path, default=DEFAULT_CONTRACT)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     args = parser.parse_args()
@@ -605,10 +609,11 @@ def main() -> None:
     contract = json.loads(args.contract.read_text(encoding="utf-8"))
     users: list[dict[str, Any]] = []
     source_files: list[str] = []
-    for path in _input_files(args.input):
-        rows = _read_json_values(path)
-        users.extend(rows)
-        source_files.extend([str(path)] * len(rows))
+    for input_path in args.input:
+        for path in _input_files(input_path):
+            rows = _read_json_values(path)
+            users.extend(rows)
+            source_files.extend([str(path)] * len(rows))
     normalized_rows = [_normalize_user_schema(user) for user in users]
     results = []
     for (normalized, actions), source_file in zip(normalized_rows, source_files, strict=True):
@@ -619,12 +624,50 @@ def main() -> None:
     duplicate_user_ids = [
         user_id for user_id, count in Counter(row["user_id"] for row in results).items() if count > 1
     ]
+    preference_contract = contract["catalog_targets"]["preference_acceptance"]
+    users_per_author = int(preference_contract["users_per_author"])
+    quota_per_type = int(preference_contract["items_per_type_per_author"])
+    preference_quota_by_author: dict[str, Any] = {}
+    batch_issues: list[dict[str, Any]] = []
+    for author in ("chatgpt_pro", "claude"):
+        author_users = [user for user in (row[0] for row in normalized_rows) if user.get("content_author") == author]
+        counts = Counter(
+            preference.get("preference_type")
+            for user in author_users
+            for preference in user.get("response_preference_history", [])
+        )
+        remaining_users = users_per_author - len(author_users)
+        impossible_types = sorted(
+            preference_type
+            for preference_type in PREFERENCE_TYPES
+            if counts[preference_type] > quota_per_type
+            or counts[preference_type] + max(0, remaining_users) < quota_per_type
+        )
+        if len(author_users) > users_per_author:
+            impossible_types = sorted(PREFERENCE_TYPES)
+        preference_quota_by_author[author] = {
+            "users_in_batch": len(author_users),
+            "remaining_user_capacity": remaining_users,
+            "counts": {key: counts[key] for key in sorted(PREFERENCE_TYPES)},
+            "final_target_per_type": quota_per_type,
+            "partial_batch_feasible": not impossible_types,
+            "impossible_types": impossible_types,
+        }
+        if impossible_types:
+            batch_issues.append(
+                {
+                    "severity": "hard",
+                    "code": "PREFERENCE_GLOBAL_QUOTA_UNREACHABLE",
+                    "author": author,
+                    "message": f"partial batch cannot reach final exact quota for {impossible_types}",
+                }
+            )
     status_counts = Counter(row["status"] for row in results)
     report = {
         "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-validation-v1",
         "status": (
             "HARD_BLOCKED"
-            if status_counts["HARD_CONTENT_BLOCKED"] or duplicate_user_ids
+            if status_counts["HARD_CONTENT_BLOCKED"] or duplicate_user_ids or batch_issues
             else "TYPED_CORE_COMPILER_BLOCKED"
             if status_counts["TYPED_CORE_COMPILER_BLOCKED"]
             else "MACHINE_PASS_BATCH_AND_SEMANTIC_REVIEW_PENDING"
@@ -633,6 +676,8 @@ def main() -> None:
         "input_files": sorted(set(source_files)),
         "user_count": len(results),
         "duplicate_user_ids": duplicate_user_ids,
+        "batch_issues": batch_issues,
+        "preference_quota_by_author": preference_quota_by_author,
         "status_counts": dict(sorted(status_counts.items())),
         "users": results,
         "batch_level_note": (
