@@ -64,6 +64,28 @@ ME_SUBTYPES = {
     "ME_CONTEXT_EVENT",
 }
 WORD_RE = re.compile(r"\b[\w'-]+\b", re.UNICODE)
+NAME_GROUNDING_IGNORED_TOKENS = {
+    "mr",
+    "mrs",
+    "ms",
+    "miss",
+    "dr",
+    "professor",
+    "aunt",
+    "auntie",
+    "uncle",
+}
+
+
+def _grounding_tokens(text: str) -> set[str]:
+    tokens: set[str] = set()
+    for raw in WORD_RE.findall(str(text).replace("’", "'")):
+        token = raw.casefold()
+        if token.endswith("'s"):
+            token = token[:-2]
+        if token and token not in NAME_GROUNDING_IGNORED_TOKENS:
+            tokens.add(token)
+    return tokens
 
 
 def _read_json_values(path: Path) -> list[dict[str, Any]]:
@@ -306,6 +328,8 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
 
     turn_lookup: dict[str, dict[str, Any]] = {}
     turn_session: dict[str, int] = {}
+    session_user_text: dict[int, str] = {}
+    entity_session_indices: dict[str, set[int]] = defaultdict(set)
     event_ids = {str(row.get("event_id") or "") for row in events}
     entity_ids = {"self"} | {str(row.get("entity_id") or "") for row in relationships}
     if "" in event_ids or len(event_ids) != len(events):
@@ -316,6 +340,12 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
     for session in sessions:
         index = session.get("session_index")
         dialogue = list(session.get("dialogue") or [])
+        if isinstance(index, int):
+            session_user_text[index] = "\n".join(
+                str(turn.get("text") or "")
+                for turn in dialogue
+                if turn.get("role") == "user"
+            )
         if not 2 <= len(dialogue) <= 6:
             _add_issue(
                 issues,
@@ -348,6 +378,8 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
         for entity_id in session.get("entity_ids", []):
             if entity_id not in entity_ids:
                 _add_issue(issues, code="SESSION_ENTITY_REF", message=f"session {index}: unknown entity {entity_id!r}")
+            elif entity_id != "self" and isinstance(index, int):
+                entity_session_indices[entity_id].add(index)
         for event_id in session.get("event_ids", []):
             if event_id not in event_ids:
                 _add_issue(issues, code="SESSION_EVENT_REF", message=f"session {index}: unknown event {event_id!r}")
@@ -376,6 +408,37 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
             or not valid_from <= valid_until <= len(sessions)
         ):
             _add_issue(issues, code="RELATIONSHIP_VALID_UNTIL", item_id=entity_id, message="invalid valid_until_session")
+        observed_sessions = sorted(entity_session_indices.get(entity_id, set()))
+        if not observed_sessions:
+            _add_issue(
+                issues,
+                code="RELATIONSHIP_NEVER_REFERENCED",
+                item_id=entity_id,
+                message="relationship entity never appears in any session entity_ids",
+            )
+        elif isinstance(valid_from, int) and observed_sessions[0] != valid_from:
+            _add_issue(
+                issues,
+                code="RELATIONSHIP_FIRST_SESSION_DRIFT",
+                item_id=entity_id,
+                message=(
+                    f"valid_from_session={valid_from}, but the first structured session reference "
+                    f"is session {observed_sessions[0]}"
+                ),
+            )
+        if isinstance(valid_from, int) and valid_from in session_user_text:
+            declared_name_tokens = _grounding_tokens(str(relationship.get("name") or ""))
+            visible_tokens = _grounding_tokens(session_user_text[valid_from])
+            if not declared_name_tokens or declared_name_tokens.isdisjoint(visible_tokens):
+                _add_issue(
+                    issues,
+                    code="RELATIONSHIP_NAME_NOT_GROUNDED",
+                    item_id=entity_id,
+                    message=(
+                        "relationship name (or stable role label used as name) is not present in "
+                        "the user dialogue at valid_from_session"
+                    ),
+                )
 
     all_items: list[dict[str, Any]] = [*profiles, *preferences]
     candidate_pairs = list(_candidate_rows(user))

@@ -91,7 +91,7 @@ EvoEmo 有 7 类 profile，但没有回复偏好。因此 MP_PROFILE 可由外�
 
 `13, 16, 18, 20, 22, 24, 27, 30, 34, 37`
 
-每用户 4–6 个 recurring topic threads；每条 thread 至少 3 个不同 session，至少出现两种时间距离、两种 resolution status；涉及人物时至少有两个不同 entity，避免“同主题就是同事件”。
+每用户 4–6 个 recurring topic threads；每条 thread 至少 3 个不同 session，至少出现两种时间距离、两种 resolution status；涉及人物时至少有两个不同 entity，避免“同主题就是同事件”。relationship 的 `valid_from_session` 必须等于该 entity 第一次被 session 引用的会话；`name` 必须在该会话的用户发言中逐字出现，或改用用户实际说出的稳定角色标签（如 `father`），不得为只说了“父亲/母亲/三位同学”的人物补造不可见姓名，也不得提前把后来才出现的姓名绑定到更早的匿名人物。
 
 每个 session 含 2–6 个自然对话 turns，至少一个 user turn；typed candidate 必须先自然出现在 user turn 中，再由结构字段引用，不能先写结构化候选再把它机械塞回对话。13-session 用户允许一场会话产生多类候选，但不得用同一句话同时冒充多个不同事件。
 
