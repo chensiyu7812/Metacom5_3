@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+import copy
 import json
 from pathlib import Path
 import re
@@ -145,6 +146,109 @@ def _candidate_rows(user: dict[str, Any]) -> Iterable[tuple[dict[str, Any], dict
     for session in user.get("sessions", []):
         for candidate in session.get("typed_candidates", []):
             yield session, candidate
+
+
+def _normalize_user_schema(user: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
+    """Losslessly normalize known pilot schema aliases into the canonical form.
+
+    This adapter may rename fields, derive cross-reference arrays, and copy an
+    already-verbatim span from a typed candidate into its top-level history
+    record.  It must never author or paraphrase user content.
+    """
+
+    value = copy.deepcopy(user)
+    actions: list[str] = []
+    sessions = list(value.get("sessions") or [])
+    typed = [candidate for session in sessions for candidate in session.get("typed_candidates", [])]
+    profile_evidence = {
+        candidate.get("profile_item_id"): candidate
+        for candidate in typed
+        if candidate.get("subtype") == "MP_PROFILE" and candidate.get("profile_item_id")
+    }
+    preference_evidence = {
+        candidate.get("preference_item_id"): candidate
+        for candidate in typed
+        if candidate.get("subtype") == "MP_PREFERENCE" and candidate.get("preference_item_id")
+    }
+
+    if "topic_threads" not in value and "recurring_topic_threads" in value:
+        value["topic_threads"] = [
+            {"thread_id": row.get("thread_id"), "label": row.get("label")}
+            for row in value.get("recurring_topic_threads", [])
+        ]
+        actions.append("recurring_topic_threads->topic_threads")
+
+    normalized_profiles: list[dict[str, Any]] = []
+    for row in value.get("profile_history", []):
+        item = dict(row)
+        if "item_id" not in item and item.get("profile_item_id"):
+            item["item_id"] = item["profile_item_id"]
+            actions.append("profile_item_id->item_id")
+        item.setdefault("subtype", "MP_PROFILE")
+        evidence = profile_evidence.get(item.get("item_id"), {})
+        item.setdefault("item_role", "update" if item.get("supersedes_item_id") else "base")
+        item.setdefault("source_turn_ids", evidence.get("source_turn_ids"))
+        item.setdefault("literal_source_span", evidence.get("literal_source_span"))
+        scope = item.get("applicability_scope")
+        if isinstance(scope, str):
+            item["applicability_scope"] = [scope]
+            actions.append("profile_applicability_scope_string->list")
+        normalized_profiles.append(item)
+    value["profile_history"] = normalized_profiles
+
+    normalized_preferences: list[dict[str, Any]] = []
+    for row in value.get("response_preference_history", []):
+        item = dict(row)
+        if "item_id" not in item and item.get("preference_item_id"):
+            item["item_id"] = item["preference_item_id"]
+            actions.append("preference_item_id->item_id")
+        item.setdefault("subtype", "MP_PREFERENCE")
+        evidence = preference_evidence.get(item.get("item_id"), {})
+        item.setdefault("source_turn_ids", evidence.get("source_turn_ids"))
+        item.setdefault("literal_source_span", evidence.get("literal_source_span"))
+        item.setdefault("preference_text", evidence.get("literal_source_span"))
+        normalized_preferences.append(item)
+    value["response_preference_history"] = normalized_preferences
+
+    normalized_relationships: list[dict[str, Any]] = []
+    for row in value.get("relationships", []):
+        item = dict(row)
+        if "relationship" not in item and "relation" in item:
+            item["relationship"] = item["relation"]
+            actions.append("relationship.relation->relationship")
+        if "valid_from_session" not in item and "first_mentioned_session" in item:
+            item["valid_from_session"] = item["first_mentioned_session"]
+            actions.append("relationship.first_mentioned_session->valid_from_session")
+        item.setdefault("valid_until_session", None)
+        normalized_relationships.append(item)
+    value["relationships"] = normalized_relationships
+
+    normalized_events: list[dict[str, Any]] = []
+    for row in value.get("events", []):
+        item = dict(row)
+        if "topic_thread_ids" not in item and item.get("thread_id"):
+            item["topic_thread_ids"] = [item["thread_id"]]
+            actions.append("event.thread_id->topic_thread_ids")
+        normalized_events.append(item)
+    value["events"] = normalized_events
+    events_by_session: dict[int, list[str]] = defaultdict(list)
+    for event in normalized_events:
+        if isinstance(event.get("session_index"), int) and event.get("event_id"):
+            events_by_session[int(event["session_index"])].append(str(event["event_id"]))
+
+    for session in sessions:
+        if "event_ids" not in session:
+            session["event_ids"] = events_by_session.get(int(session.get("session_index") or 0), [])
+            actions.append("derive_session_event_ids")
+        for candidate in session.get("typed_candidates", []):
+            subtype = candidate.get("subtype")
+            if subtype in ME_SUBTYPES:
+                candidate.setdefault("candidate_text", candidate.get("literal_source_span"))
+            if subtype == "ME_REUSABLE_OUTCOME" and "me_tier" not in candidate and "tier" in candidate:
+                candidate["me_tier"] = candidate["tier"]
+                actions.append("ME.tier->me_tier")
+    value["sessions"] = sessions
+    return value, sorted(set(actions))
 
 
 def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, Any]:
@@ -352,7 +456,8 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
     if assignment is not None:
         ordinal = int(user_id.rsplit("u", 1)[-1])
         expected_preference_types = set(
-            contract["catalog_targets"]["preference_pattern_by_author_ordinal_mod_4"][str(ordinal % 4)]
+            contract["catalog_targets"]["preference_pattern_by_author_and_ordinal_mod_4"]
+            [author][str(ordinal % 4)]
         )
         actual_preference_types = {str(row.get("preference_type") or "") for row in preferences}
         if actual_preference_types != expected_preference_types:
@@ -504,7 +609,13 @@ def main() -> None:
         rows = _read_json_values(path)
         users.extend(rows)
         source_files.extend([str(path)] * len(rows))
-    results = [_validate_user(user, contract) for user in users]
+    normalized_rows = [_normalize_user_schema(user) for user in users]
+    results = []
+    for (normalized, actions), source_file in zip(normalized_rows, source_files, strict=True):
+        result = _validate_user(normalized, contract)
+        result["normalization_actions"] = actions
+        result["source_file"] = source_file
+        results.append(result)
     duplicate_user_ids = [
         user_id for user_id, count in Counter(row["user_id"] for row in results).items() if count > 1
     ]
@@ -532,6 +643,14 @@ def main() -> None:
         "training_label_or_outcome_read": False,
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    canonical_dir = args.out_dir / "canonical_users"
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    canonical_output_paths: list[str] = []
+    for (normalized, _), result in zip(normalized_rows, results, strict=True):
+        output_path = canonical_dir / f"{result['user_id']}.json"
+        write_json(output_path, normalized)
+        canonical_output_paths.append(str(output_path))
+    report["canonical_output_paths"] = canonical_output_paths
     write_json(args.out_dir / "report.json", report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

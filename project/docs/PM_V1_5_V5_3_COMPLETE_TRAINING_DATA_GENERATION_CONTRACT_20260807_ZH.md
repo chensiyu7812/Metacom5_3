@@ -127,14 +127,23 @@ name/gender/age 多数情况下应当成为负例或低价值候选，不能为�
 - direct answer before explanation；
 - choices rather than commands。
 
-为保证两个作者各自产出精确的 20/类型，按各自用户 ordinal 对 4 取模固定三项组合：
+为保证两个作者各自产出精确的 20/类型，按各自用户 ordinal 对 4 取模固定三项组合。两个 pilot 在精确组合表冻结前已分别产生不同但合法的第 0 组，因此作者使用各自的均衡表；两张表都满足每类 20/作者、40/全体。
 
-- 0：reflection before question、direct answer before explanation、choices rather than commands；
-- 1：concise factual answer、one optional suggestion、listen-only/no advice；
-- 2：concise factual answer、reflection before question、one optional suggestion；
-- 3：listen-only/no advice、direct answer before explanation、choices rather than commands。
+ChatGPT Pro：
 
-每种组合在每位作者的 40 用户中出现 10 次，因此全体六类各 40 条。替换版本仍占三条 history item 中的一条，不额外增加配额。
+- 0：reflection、direct answer、choices；
+- 1：concise factual、one optional suggestion、listen-only；
+- 2：concise factual、reflection、one optional suggestion；
+- 3：listen-only、direct answer、choices。
+
+Claude：
+
+- 0：reflection、one optional suggestion、direct answer；
+- 1：concise factual、listen-only、choices；
+- 2：concise factual、reflection、one optional suggestion；
+- 3：listen-only、direct answer、choices。
+
+每种组合在对应作者的 40 用户中出现 10 次，因此全体六类各 40 条。替换版本仍占三条 history item 中的一条，不额外增加配额。
 
 偏好必须能发生版本变化；当前用户没有复述偏好时也可成为候选。它只参加内部实验，不冒充 EvoEmo 原生能力。
 
