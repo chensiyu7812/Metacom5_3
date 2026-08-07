@@ -73,6 +73,8 @@ EvoEmo 有 7 类 profile，但没有回复偏好。因此 MP_PROFILE 可由外�
 7. 财务、住房、通勤和现实安排；
 8. 社交不安、身份、创作与社区参与。
 
+机器键固定为：`work_education`、`relationships`、`family_caregiving`、`relocation_culture`、`sleep_health_energy`、`grief_life_transition`、`finance_housing`、`social_identity_creative`。primary domain 必须使用这些键；secondary domain 可使用更细的自然子域键。
+
 每个用户一个 primary domain、至少两个 secondary domain。不得让 domain 与任何 ON/OFF condition 一一绑定。
 
 ### 3.3 会话与事件的精确分布
@@ -125,6 +127,15 @@ name/gender/age 多数情况下应当成为负例或低价值候选，不能为�
 - direct answer before explanation；
 - choices rather than commands。
 
+为保证两个作者各自产出精确的 20/类型，按各自用户 ordinal 对 4 取模固定三项组合：
+
+- 0：reflection before question、direct answer before explanation、choices rather than commands；
+- 1：concise factual answer、one optional suggestion、listen-only/no advice；
+- 2：concise factual answer、reflection before question、one optional suggestion；
+- 3：listen-only/no advice、direct answer before explanation、choices rather than commands。
+
+每种组合在每位作者的 40 用户中出现 10 次，因此全体六类各 40 条。替换版本仍占三条 history item 中的一条，不额外增加配额。
+
 偏好必须能发生版本变化；当前用户没有复述偏好时也可成为候选。它只参加内部实验，不冒充 EvoEmo 原生能力。
 
 ### 4.3 MS_SESSION
@@ -140,11 +151,11 @@ name/gender/age 多数情况下应当成为负例或低价值候选，不能为�
 - observed result 或具体 mechanism；
 - source session、owner、entity、topic。
 
-同一 thread 至少同时包含 reusable、unresolved、context-only 候选。生成模型**不得看到编译器动词白名单**，动作、结果和语法表面都要自然变化。
+每用户至少 4 条 thread 同时包含 reusable 与至少一种 nonreusable ME；至少 1 条 thread 同时包含 reusable、unresolved、context-only 三种角色。不能要求全部 4–6 条 thread 都包含三种，因为每用户只有 5 条 unresolved 和 4 条 context 配额。生成模型**不得看到编译器动词白名单**，动作、结果和语法表面都要自然变化。
 
 800 条 reusable 分成两层：
 
-- `executable core` 640 条：在内容生成完成后由冻结 compiler 验证，必须 100% 可执行；如果自然、语义明确的文本被系统性拒绝，先修 compiler 并版本化复验，不允许把所有原文换成白名单句式来掩盖覆盖问题；
+- `executable core` 640 条：使用 `TYPED_EXACT_ACTION_RESULT_SPAN_V1` 验证 `action_span` 与 `result_span` 均逐字存在于同一 owner-correct user source；必须 100% 可执行。旧 `compile_atomic_reusable_outcome()` 正则覆盖率另行报告，只作为运输诊断，不再驱动源文本改写。如果自然、语义明确的文本被旧正则系统性拒绝，修复并版本化 adapter/compiler，不允许把所有原文换成白名单句式来掩盖覆盖问题；
 - `natural coverage challenge` 160 条：人工/双模型确认确有完成动作和观察结果，但刻意保留自然动词、跨句表达和不同语法。严格 compiler 的覆盖率只报告，不为通过而重写；未通过的条目不进入 core paired effect，但用于 compiler/BGE challenger 与外部运输诊断。
 
 intended unresolved/context-only 候选必须 100% 被正式 compiler 拒绝。
@@ -324,7 +335,7 @@ generator、temperature、seed、token cap、typed program、guard、rewrite/fal
 - current turn 逐字包含隐藏 candidate=0；
 - 跨用户 exact duplicate current surface=0；
 - 外部 exact overlap=0；全部 normalized 8-gram 碰撞必须列出并复核，其中包含外部特有 topic/action/result/answer 的 source-significant overlap 必须为 0；普通英语功能短语的偶然碰撞只披露，不为了清零而把文本改得不自然；
-- ME executable core compiler pass=100%；intended invalid pass=0%；160 条 natural coverage challenge 的覆盖率原样报告，不改写到通过；
+- ME typed exact-span executable core pass=100%；intended invalid 不得同时具有完成行动与结果 span；旧正则 compiler 覆盖率只报告；160 条 natural coverage challenge 的覆盖率原样报告，不改写到通过；
 - 六张 RS 卡、16 个联合动作全部覆盖；正式 interaction 的跨话题/功能错配=0；
 - 每个 semantic family 至少跨两个 condition；正式核心 family 必须四条件齐全；
 - 长度、填充句数量、作者模型、domain 不得与 condition 一一对应；
@@ -400,3 +411,28 @@ tie、OFF 胜、资源未做功、fallback 和 material misuse 都保留在 ITT 
 | ES-MemEval QA adapter | 与 response PM 分责已有实现与客观结果 | 保持独立，不把 QA gold 灌入 response PM |
 
 所以准确结论是：**系统定义和主要工程链路已经对齐外部要求；正式训练内容、效应标签、16 动作覆盖和端到端确认尚未完成。**
+
+## 16. 单用户与批次机器验收入口
+
+单个网页输出保存为 JSON/TXT 后运行：
+
+```bash
+cd /home/tokkio/snap/metacom_v33_pm_v1_5_repair/project
+PYTHONNOUSERSITE=1 PYTHONPATH=src \
+/home/tokkio/snap/metacom_v33_pm_v1_5_repair/.venv-pm-v1-5/bin/python \
+scripts/v1_5/82l_validate_formal_longitudinal_user_v1_5.py \
+  --input /absolute/path/to/one_user.json
+```
+
+把多个用户文件放入同一目录后，`--input` 也可直接指向目录，验收器会逐用户检查并汇总。报告固定写到：
+
+`outputs/pm_v1_5_v5_3_formal_longitudinal_user_validation_v1/report.json`
+
+状态解释：
+
+- `HARD_CONTENT_BLOCKED`：schema、配额、owner/time、source span、引用完整性或类型关系存在硬错误，只退回该用户；
+- `TYPED_CORE_COMPILER_BLOCKED`：正式 action/result exact-span compiler 未通过；
+- `SINGLE_USER_CONTENT_MACHINE_PASS_LEGACY_COMPILER_DIAGNOSTIC_AND_BATCH_REVIEW_PENDING`：单用户内容机器通过；旧正则覆盖率只是诊断，仍等待跨用户重复、多样性、全局配额、外部同源与集中语义复核；
+- 总报告 `MACHINE_PASS_BATCH_AND_SEMANTIC_REVIEW_PENDING`：当前输入没有单用户硬错误，但不能把单文件通过冒充整批正式验收。
+
+生成不必严格串行 80 次：先用 ChatGPT 与 Claude 各 1 个用户验证 schema；验收器稳定后，可在多个网页会话中并行生成，但每个回复仍只放 1 个完整用户，避免 60–100KB JSON 被截断。建议每累计 5–10 用户运行一次目录级批次验收；失败只返工对应用户或相似句族，不废弃已通过用户。

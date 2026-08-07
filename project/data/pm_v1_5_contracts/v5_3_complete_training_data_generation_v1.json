@@ -11,6 +11,16 @@
     "physical_output_users_per_response": 1
   },
   "primary_superdomains": 8,
+  "primary_superdomain_keys": [
+    "work_education",
+    "relationships",
+    "family_caregiving",
+    "relocation_culture",
+    "sleep_health_energy",
+    "grief_life_transition",
+    "finance_housing",
+    "social_identity_creative"
+  ],
   "users_per_superdomain": 10,
   "session_counts_per_superdomain": [13, 15, 17, 19, 21, 23, 25, 27, 30, 33],
   "formal_user_split": {
@@ -50,7 +60,15 @@
       "me_context_event": 4
     },
     "cross_user_candidate_exact_duplicates_allowed": 0,
-    "normalized_unique_text_rate_minimum_except_short_profile_values": 0.95
+    "normalized_unique_text_rate_minimum_except_short_profile_values": 0.95,
+    "preference_pattern_by_author_ordinal_mod_4": {
+      "0": ["reflection_before_question", "direct_answer_before_explanation", "choices_rather_than_commands"],
+      "1": ["concise_factual_answer", "one_optional_suggestion", "listen_only_no_advice"],
+      "2": ["concise_factual_answer", "reflection_before_question", "one_optional_suggestion"],
+      "3": ["listen_only_no_advice", "direct_answer_before_explanation", "choices_rather_than_commands"]
+    },
+    "minimum_threads_with_reusable_and_nonreusable_me": 4,
+    "minimum_threads_with_all_three_me_roles": 1
   },
   "current_state_targets": {
     "mp_states_per_user": 12,
@@ -91,6 +109,8 @@
     "cross_split_user_count": 0,
     "cross_user_exact_current_surface_duplicate_groups": 0,
     "me_executable_core_compiler_valid_rate": 1.0,
+    "me_executable_core_compiler": "TYPED_EXACT_ACTION_RESULT_SPAN_V1",
+    "legacy_regex_compiler_coverage_is_diagnostic_not_source_rewrite_target": true,
     "me_intended_invalid_compiler_pass_rate": 0.0,
     "me_natural_coverage_challenge_is_reported_not_rewritten_to_pass": true,
     "all_six_rs_cards_present": true,
