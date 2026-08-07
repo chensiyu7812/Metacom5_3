@@ -330,8 +330,13 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
     turn_session: dict[str, int] = {}
     session_user_text: dict[int, str] = {}
     entity_session_indices: dict[str, set[int]] = defaultdict(set)
+    event_session_indices: dict[str, set[int]] = defaultdict(set)
     event_ids = {str(row.get("event_id") or "") for row in events}
     entity_ids = {"self"} | {str(row.get("entity_id") or "") for row in relationships}
+    relationship_valid_from = {
+        str(row.get("entity_id") or ""): row.get("valid_from_session")
+        for row in relationships
+    }
     if "" in event_ids or len(event_ids) != len(events):
         _add_issue(issues, code="EVENT_IDS", message="event IDs must be non-empty and unique")
     if "" in entity_ids or len(entity_ids) != len(relationships) + 1:
@@ -380,21 +385,60 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
                 _add_issue(issues, code="SESSION_ENTITY_REF", message=f"session {index}: unknown entity {entity_id!r}")
             elif entity_id != "self" and isinstance(index, int):
                 entity_session_indices[entity_id].add(index)
+                valid_from = relationship_valid_from.get(entity_id)
+                if isinstance(valid_from, int) and index < valid_from:
+                    _add_issue(
+                        issues,
+                        code="SESSION_ENTITY_BEFORE_VALID_FROM",
+                        item_id=entity_id,
+                        message=f"session {index} references entity before valid_from_session={valid_from}",
+                    )
         for event_id in session.get("event_ids", []):
             if event_id not in event_ids:
                 _add_issue(issues, code="SESSION_EVENT_REF", message=f"session {index}: unknown event {event_id!r}")
+            elif isinstance(index, int):
+                event_session_indices[event_id].add(index)
 
     for event in events:
         event_id = str(event.get("event_id") or "")
         event_session = event.get("session_index")
         if not isinstance(event_session, int) or not 1 <= event_session <= len(sessions):
             _add_issue(issues, code="EVENT_SESSION", item_id=event_id, message="event session_index is invalid")
+        elif event_session_indices.get(event_id, set()) != {event_session}:
+            _add_issue(
+                issues,
+                code="EVENT_SESSION_REF_DRIFT",
+                item_id=event_id,
+                message=(
+                    f"event declares session {event_session}, but session event_ids reference it at "
+                    f"{sorted(event_session_indices.get(event_id, set()))}"
+                ),
+            )
         for thread_id in event.get("topic_thread_ids", []):
             if thread_id not in topic_set:
                 _add_issue(issues, code="EVENT_TOPIC_REF", item_id=event_id, message=f"unknown topic {thread_id!r}")
         for entity_id in event.get("entity_ids", []):
             if entity_id not in entity_ids:
                 _add_issue(issues, code="EVENT_ENTITY_REF", item_id=event_id, message=f"unknown entity {entity_id!r}")
+            else:
+                valid_from = relationship_valid_from.get(entity_id)
+                if (
+                    entity_id != "self"
+                    and isinstance(event_session, int)
+                    and isinstance(valid_from, int)
+                    and event_session < valid_from
+                ):
+                    _add_issue(
+                        issues,
+                        code="EVENT_ENTITY_BEFORE_VALID_FROM",
+                        item_id=event_id,
+                        message=f"entity {entity_id!r} is not valid until session {valid_from}",
+                    )
+
+    self_name_tokens: set[str] = set()
+    for profile in profiles:
+        if profile.get("field_type") == "name" and profile.get("item_role", "base") == "base":
+            self_name_tokens |= _grounding_tokens(str(profile.get("field_value") or ""))
 
     for relationship in relationships:
         entity_id = str(relationship.get("entity_id") or "")
@@ -427,7 +471,9 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
                 ),
             )
         if isinstance(valid_from, int) and valid_from in session_user_text:
-            declared_name_tokens = _grounding_tokens(str(relationship.get("name") or ""))
+            declared_name_tokens = (
+                _grounding_tokens(str(relationship.get("name") or "")) - self_name_tokens
+            )
             visible_tokens = _grounding_tokens(session_user_text[valid_from])
             if not declared_name_tokens or declared_name_tokens.isdisjoint(visible_tokens):
                 _add_issue(
@@ -437,6 +483,21 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
                     message=(
                         "relationship name (or stable role label used as name) is not present in "
                         "the user dialogue at valid_from_session"
+                    ),
+                )
+            visible_name_sessions = sorted(
+                index
+                for index, text in session_user_text.items()
+                if declared_name_tokens & _grounding_tokens(text)
+            )
+            if visible_name_sessions and visible_name_sessions[0] != valid_from:
+                _add_issue(
+                    issues,
+                    code="RELATIONSHIP_FIRST_VISIBLE_MENTION_DRIFT",
+                    item_id=entity_id,
+                    message=(
+                        f"valid_from_session={valid_from}, but the first visible use of the declared "
+                        f"name/role is session {visible_name_sessions[0]}"
                     ),
                 )
 
@@ -470,6 +531,20 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
         for entity_id in item.get("entity_ids", []):
             if entity_id not in entity_ids:
                 _add_issue(issues, code="ITEM_ENTITY_REF", item_id=item_id, message=f"unknown entity {entity_id!r}")
+            else:
+                valid_from = relationship_valid_from.get(entity_id)
+                if (
+                    entity_id != "self"
+                    and source_sessions
+                    and isinstance(valid_from, int)
+                    and min(source_sessions) < valid_from
+                ):
+                    _add_issue(
+                        issues,
+                        code="ITEM_ENTITY_BEFORE_VALID_FROM",
+                        item_id=item_id,
+                        message=f"entity {entity_id!r} is not valid until session {valid_from}",
+                    )
         topic = item.get("topic_thread")
         if topic is not None and topic not in topic_set:
             _add_issue(issues, code="ITEM_TOPIC_REF", item_id=item_id, message=f"unknown topic {topic!r}")
