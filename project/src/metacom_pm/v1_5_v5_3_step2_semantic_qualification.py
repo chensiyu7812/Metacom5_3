@@ -377,3 +377,45 @@ def build_semantic_qualification_plan() -> SemanticQualificationPlan:
         n=24,
     )
     return SemanticQualificationPlan.model_validate(payload)
+
+
+def semantic_qualification_programs() -> dict[str, TypedResponseProgram]:
+    """Rebuild the exact typed program bound to every frozen qualification case.
+
+    The serialized plan intentionally stores model-visible messages rather than
+    private candidate objects.  A real executor still needs the program to run
+    the same owner/evidence/atomic-move guards.  This helper deterministically
+    reconstructs those programs and asserts that their messages and case IDs
+    remain byte-identical to the frozen plan, preventing a runner from silently
+    validating a different program than the one the endpoint received.
+    """
+
+    frozen = build_semantic_qualification_plan()
+    frozen_by_key = {
+        (case.semantic_family, case.action_id): case for case in frozen.cases
+    }
+    programs: dict[str, TypedResponseProgram] = {}
+    for family in _FAMILIES:
+        available = _candidates(family)
+        for action_id in ALL_ACTION_IDS:
+            bits = action_component_bits(action_id)
+            selected = {component: available[component] for component in COMPONENTS if bits[component]}
+            expected_ids = {component: selected[component].resource_id for component in selected}
+            program = build_typed_response_program(
+                requested_action_id=action_id,
+                current_goal=family.current_goal,
+                current_user_id=f"{family.family_id}_user",
+                candidates=selected,
+                expected_execution_candidate_ids=expected_ids,
+            )
+            case = frozen_by_key[(family.family_id, action_id)]
+            messages = evidence_aware_generation_messages(
+                current_context=family.current_context,
+                program=program,
+            )
+            if messages != case.messages:
+                raise RuntimeError("qualification program messages drifted from frozen case")
+            programs[case.case_id] = program
+    if set(programs) != {case.case_id for case in frozen.cases}:
+        raise RuntimeError("qualification program coverage differs from frozen cases")
+    return programs

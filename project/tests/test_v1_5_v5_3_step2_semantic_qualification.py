@@ -6,6 +6,7 @@ from metacom_pm.contracts import ALL_ACTION_IDS
 from metacom_pm.v1_5_v5_3_step2_semantic_qualification import (
     SemanticQualificationPlan,
     build_semantic_qualification_plan,
+    semantic_qualification_programs,
     semantic_qualification_surface_rows,
 )
 
@@ -39,3 +40,12 @@ def test_semantic_surface_rows_exclude_prompt_boilerplate() -> None:
     assert len(rows) == 4 * 9
     assert len({row["surface_id"] for row in rows}) == len(rows)
     assert all("backend" not in row["text"].casefold() for row in rows)
+
+
+def test_every_frozen_case_rehydrates_its_exact_typed_program() -> None:
+    plan = build_semantic_qualification_plan()
+    programs = semantic_qualification_programs()
+    assert set(programs) == {case.case_id for case in plan.cases}
+    for case in plan.cases:
+        assert programs[case.case_id].requested_action_id == case.action_id
+        assert [item.evidence_id for item in programs[case.case_id].evidence] == case.evidence_ids
