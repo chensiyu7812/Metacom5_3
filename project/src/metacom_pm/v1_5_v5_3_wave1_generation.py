@@ -197,6 +197,100 @@ def validate_world(
     if {item["preference_type"] for item in world["preference_plan"]} != set(preference_types):
         raise ValueError("preference plan differs from frozen assignment")
 
+    thread_ids = [str(row["thread_id"]) for row in world["topic_threads"]]
+    event_ids = [str(row["event_id"]) for row in world["events"]]
+    entity_ids = [str(row["entity_id"]) for row in world["relationships"]]
+    for label, values in (
+        ("topic thread", thread_ids), ("event", event_ids), ("relationship entity", entity_ids)
+    ):
+        if len(values) != len(set(values)):
+            raise ValueError(f"duplicate {label} id")
+    known_threads = set(thread_ids)
+    known_entities = set(entity_ids) | {"self"}
+    events_by_id = {str(row["event_id"]): row for row in world["events"]}
+    sessions_by_index = {
+        int(row["session_index"]): row for row in world["session_plan"]
+    }
+    for session_index, session in sessions_by_index.items():
+        unknown_threads = set(session["topic_thread_ids"]) - known_threads
+        unknown_entities = set(session["entity_ids"]) - known_entities
+        if unknown_threads:
+            raise ValueError(
+                f"session {session_index} references unknown threads: {sorted(unknown_threads)}"
+            )
+        if unknown_entities:
+            raise ValueError(
+                f"session {session_index} references unknown entities: {sorted(unknown_entities)}"
+            )
+        for event_id in session["event_ids"]:
+            if event_id not in events_by_id:
+                raise ValueError(f"session {session_index} references unknown event {event_id}")
+            if int(events_by_id[event_id]["session_index"]) != session_index:
+                raise ValueError(f"event {event_id} session index disagrees with session plan")
+    for event_id, event in events_by_id.items():
+        session_index = int(event["session_index"])
+        if session_index not in sessions_by_index:
+            raise ValueError(f"event {event_id} has unknown session")
+        if event_id not in sessions_by_index[session_index]["event_ids"]:
+            raise ValueError(f"event {event_id} is absent from its session plan")
+        unknown_threads = set(event["topic_thread_ids"]) - known_threads
+        unknown_entities = set(event["entity_ids"]) - known_entities
+        if unknown_threads:
+            raise ValueError(f"event {event_id} references unknown threads: {sorted(unknown_threads)}")
+        if unknown_entities:
+            raise ValueError(f"event {event_id} references unknown entities: {sorted(unknown_entities)}")
+
+    for relationship in world["relationships"]:
+        entity_id = str(relationship["entity_id"])
+        references = [
+            session_index
+            for session_index, session in sessions_by_index.items()
+            if entity_id in session["entity_ids"]
+        ] + [
+            int(event["session_index"])
+            for event in world["events"]
+            if entity_id in event["entity_ids"]
+        ]
+        if not references:
+            raise ValueError(f"relationship entity {entity_id} is never used")
+        valid_from = int(relationship["valid_from_session"])
+        if min(references) != valid_from:
+            raise ValueError(
+                f"relationship entity {entity_id} first appears in {min(references)}, not {valid_from}"
+            )
+        valid_until = relationship.get("valid_until_session")
+        if valid_until is not None and max(references) > int(valid_until):
+            raise ValueError(f"relationship entity {entity_id} appears after valid_until")
+
+    profile_by_id = {str(row["item_id"]): row for row in world["profile_plan"]}
+    if len(profile_by_id) != len(world["profile_plan"]):
+        raise ValueError("duplicate profile item id")
+    for item in world["profile_plan"]:
+        source_session = int(item["source_session"])
+        if not 1 <= source_session <= n:
+            raise ValueError(f"profile item {item['item_id']} has invalid source session")
+        if source_session != int(item["valid_from_session"]):
+            raise ValueError(f"profile item {item['item_id']} source/valid-from mismatch")
+        if item["item_role"] == "update":
+            prior = profile_by_id.get(str(item.get("supersedes_item_id")))
+            if prior is None:
+                raise ValueError(f"profile update {item['item_id']} has no prior version")
+            if prior["field_type"] != item["field_type"]:
+                raise ValueError(f"profile update {item['item_id']} changes field identity")
+            if prior.get("valid_until_session") != int(item["valid_from_session"]) - 1:
+                raise ValueError(f"profile update {item['item_id']} has a noncontiguous validity chain")
+            if bool(prior["active"]) or not bool(item["active"]):
+                raise ValueError(f"profile update {item['item_id']} has invalid active flags")
+    preference_ids = [str(row["item_id"]) for row in world["preference_plan"]]
+    if len(preference_ids) != len(set(preference_ids)):
+        raise ValueError("duplicate preference item id")
+    for item in world["preference_plan"]:
+        source_session = int(item["source_session"])
+        if not 1 <= source_session <= n:
+            raise ValueError(f"preference item {item['item_id']} has invalid source session")
+        if source_session != int(item["valid_from_session"]):
+            raise ValueError(f"preference item {item['item_id']} source/valid-from mismatch")
+
 
 def chunk_prompt(
     assignment: dict[str, Any], world: dict[str, Any], start: int, end: int

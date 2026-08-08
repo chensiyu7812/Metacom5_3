@@ -58,6 +58,8 @@ def main() -> None:
     if args.world_json is not None:
         world = read_json(args.world_json)
         validate_world(world, assignment, preferences, excerpt)
+        write_json(user_dir / "world.json", world)
+        files.append(str(user_dir / "world.json"))
         for index, (start, end) in enumerate(chunk_ranges(int(assignment["session_count"])), 1):
             path = user_dir / f"0{index + 1}_chunk_{index}_prompt.txt"
             path.write_text(
