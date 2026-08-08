@@ -268,18 +268,26 @@ def main() -> None:
         }
     )
     failures = []
+    review_required = []
     if source_fidelity["protected_surface_drift_count"]:
         failures.append("protected_source_surface_drift")
-    if cross_user["cross_user_exact_groups"] or cross_user["cross_user_normalized_8gram_groups"]:
-        failures.append("cross_user_duplicate_or_8gram_overlap")
-    if external_overlap["exact_collision_count"] or external_overlap["normalized_ngram_collision_count"]:
-        failures.append("external_text_overlap")
+    if cross_user["cross_user_exact_groups"]:
+        failures.append("cross_user_exact_duplicate")
+    if cross_user["cross_user_normalized_8gram_groups"]:
+        review_required.append("cross_user_normalized_8gram_overlap_requires_source_review")
+    if external_overlap["exact_collision_count"]:
+        failures.append("external_exact_text_overlap")
+    if external_overlap["normalized_ngram_collision_count"]:
+        review_required.append("external_normalized_8gram_overlap_requires_source_review")
     if relationship_future_fields:
         failures.append("relationship_future_or_alias_fields_remain")
 
     report = {
-        "protocol": "pm-v1.5-v5.3-formal-longitudinal-repaired-batch-audit-v1",
-        "status": "PASS" if not failures else "FAIL",
+        "protocol": "pm-v1.5-v5.3-formal-longitudinal-repaired-batch-audit-v2",
+        "status": (
+            "FAIL" if failures else "REVIEW_REQUIRED_NORMALIZED_OVERLAP"
+            if review_required else "PASS"
+        ),
         "users": len(users),
         "formal_surfaces": len(surfaces),
         "source_fidelity": source_fidelity,
@@ -304,6 +312,15 @@ def main() -> None:
         ),
         "relationship_future_or_alias_fields": relationship_future_fields,
         "failures": failures,
+        "review_required": review_required,
+        "overlap_policy": {
+            "exact_collision": "hard_fail",
+            "normalized_8gram_only": "manual_source_significance_review_no_automatic_rewrite",
+            "reason": (
+                "A lexical n-gram rule cannot reliably distinguish copied source-specific text "
+                "from generic support language. Only exact collisions fail automatically."
+            ),
+        },
         "api_calls": 0,
         "training_label_or_outcome_read": False,
     }

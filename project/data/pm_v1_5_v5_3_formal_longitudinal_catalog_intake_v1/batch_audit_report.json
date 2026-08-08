@@ -1,5 +1,5 @@
 {
-  "protocol": "pm-v1.5-v5.3-formal-longitudinal-repaired-batch-audit-v1",
+  "protocol": "pm-v1.5-v5.3-formal-longitudinal-repaired-batch-audit-v2",
   "status": "PASS",
   "users": 11,
   "formal_surfaces": 1950,
@@ -39,6 +39,12 @@
   "external_surface_note": "EvoEmo sessions and embedded ES-MemEval questions/answers come from the shared released artifact; ESConv is scanned separately.",
   "relationship_future_or_alias_fields": [],
   "failures": [],
+  "review_required": [],
+  "overlap_policy": {
+    "exact_collision": "hard_fail",
+    "normalized_8gram_only": "manual_source_significance_review_no_automatic_rewrite",
+    "reason": "A lexical n-gram rule cannot reliably distinguish copied source-specific text from generic support language. Only exact collisions fail automatically."
+  },
   "api_calls": 0,
   "training_label_or_outcome_read": false
 }

@@ -690,3 +690,24 @@ P2R state/schema/features/group/interaction。汇合后Leader导入catalog，Wor
 `±0.05`继续作为参考非劣界，而非“PM学没学会”的魔法门。sealed 16用户的宽CI必须诚实报告并降低证据等级，
 但只要learned policy没有坍缩、胜过透明/固定/matched controls且quality点估计没有实质恶化、risk或cost改善，
 仍可报告为`DIRECTIONALLY_USABLE`；不能把宽CI伪装成强确认，也不能反过来抹去可学习信号。
+
+### 9.7 80人数据合同V2与当前并行边界（2026-08-08）
+
+正式生成合同升级为
+`data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2.json`，解释文档为
+`docs/PM_V1_5_V5_3_COMPLETE_TRAINING_DATA_GENERATION_CONTRACT_V2_20260808_ZH.md`。旧V1保留作历史，
+不再指导后续用户生成。V2不废弃当前11人；11人已按V2重验，单用户与整批机器审计均通过。
+
+V2关键修正：规划N不作科学硬门；interaction使用同一state完整16动作；shortcut只审nuisance而不禁止模型读取
+合法语义；user/counterfactual/template簇不跨split但广义能力跨split；ME实际Rank-1比例只报告不追数；QA多证据
+结构与response effect标签分离；quality/risk/function/cost保持多目标并由联合投影权衡。
+
+当前允许并行的两条线只有：
+
+1. 按`v5_3_wave1_sentinel_assignments_v1.json`继续生成13个跨域哨兵用户并累计做批次审计；
+2. 运行已经内容独立的64条Step2资格赛。零API执行preflight绑定identity
+   `v53step2semexec_8f51ee42c67e85c41b3721b9d1b731fe`、NVIDIA Llama-3.1-8B、最多64逻辑/128物理调用、
+   禁止自由rewrite、最坏代理费用`$0.196608`与授权上限`$0.20`。在用户显式批准该identity和上限以前API=0。
+
+两线都不允许读取或修改正式paired effect标签。Wave1不必等待Step2完成；但正式paid paired-effect generation必须
+等待Step2资格收口、完整catalog/current-state静态审计与新的effect执行identity。

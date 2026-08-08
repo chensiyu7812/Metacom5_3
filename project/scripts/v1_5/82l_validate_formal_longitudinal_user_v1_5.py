@@ -30,7 +30,7 @@ from metacom_pm.v1_5_v5_2_atomic_memory import compile_atomic_reusable_outcome
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONTRACT = (
-    ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v1.json"
+    ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2.json"
 )
 DEFAULT_OUT_DIR = (
     ROOT / "outputs/pm_v1_5_v5_3_formal_longitudinal_user_validation_v1"
@@ -802,7 +802,7 @@ def main() -> None:
             )
     status_counts = Counter(row["status"] for row in results)
     report = {
-        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-validation-v1",
+        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-validation-v2",
         "status": (
             "HARD_BLOCKED"
             if status_counts["HARD_CONTENT_BLOCKED"] or duplicate_user_ids or batch_issues
@@ -820,7 +820,9 @@ def main() -> None:
         "users": results,
         "batch_level_note": (
             "Per-user machine pass is necessary but not sufficient. Duplicate, diversity, "
-            "global quota, external-overlap and semantic-review checks require a batch."
+            "global quota, external-overlap, multi-evidence structure and semantic-review "
+            "checks require a batch. Raw semantic text is not treated as a forbidden shortcut; "
+            "only nuisance metadata/style leakage is probed downstream."
         ),
         "api_calls": 0,
         "training_label_or_outcome_read": False,
