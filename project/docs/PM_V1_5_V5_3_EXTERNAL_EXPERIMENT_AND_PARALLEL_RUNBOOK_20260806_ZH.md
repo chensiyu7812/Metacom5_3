@@ -464,7 +464,7 @@ W1–W5只产生观察/资格/数据构造证据，不生成paired response outc
 | ID | 任务 | 完成定义 |
 |---|---|---|
 | L1 | 正式runner接入`StagewiseAccountabilityRow` | 每个 expected `state×policy×seed`恰好一行；五层字段完整；缺行/重复行fail-closed |
-| L2 | Step2全动作兼容门 | 历史已消费case；覆盖M0+R0、M0+RS、四单组件和联合动作；schema/evidence binding 100%，atomic compliance≥95%，required-contribution自动率≥90%，内部标签/未授权专名数字0 |
+| L2 | Step2全动作兼容资格 | 内容独立case覆盖M0+R0、M0+RS、四单组件和联合动作；assignment/owner/evidence binding为硬不变量；requested→realized、functional contribution、atomic compliance、fallback和risk按动作/组件完整报告，不再由一个魔法百分比替代语义审计 |
 | L3 | V5.3 baseline materializer | 六主baseline同候选/执行器/generator/seed；alias物理去重；cost/random在outcome前冻结 |
 | L4 | power与评测freeze | FIT/confirmation/sealed的N、split、quality/risk/cost、cluster bootstrap、20% overlap和裁决协议写入机器合同 |
 | L5 | 外部plan scaffold | 只物化数据身份、state、candidate lineage和逻辑条件，不生成回复；ESConv/EvoEmo/QA hash与gold边界检查通过 |
@@ -473,11 +473,10 @@ L1–L5不读取新的质量/risk outcome。L2若需真实付费compatibility调
 
 L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 
-1. 机器合同目前规定`second_free_llm_fallback_allowed=false`，但当前`call_with_guard_and_rewrite()`会进行一次
-   受约束rewrite。这里不机械服从旧合同，而按“系统能用且公平”选择：在已消费开发case上比较
-   `一次同generator、同证据、只纠正明确结构错误的rewrite`与`立即M0 fallback`。若rewrite显著降低fallback且
-   不新增未授权事实，允许把它正式写入Step2；所有baseline同样使用，并把第二次调用的tokens/cost/latency全部
-   计入。若不稳定则直接fallback。选择规则和最终合同必须在P3 outcome前冻结。
+1. 正式V5.3已选择`deterministic_fallback`：每个逻辑臂至多一次自由生成；guard失败作为requested-action
+   ITT outcome保留并单独实现`M0+R0` fallback。`single_bounded_rewrite`仅保留为已消费开发case的版本化诊断，
+   不得成为正式baseline的隐式第二次调用。这样同时消除了执行合同冲突、额外成本漂移和rewrite引入新事实的
+   归因混杂。
 2. 当前机器guard尚未完整实现“未授权专名/数字”检查；必须基于运行时授权实体/数值集合，而不是自然语言黑名单。
 3. `atomic_move_budget`目前主要是prompt约束；RS原子动作数、列表长度和一点式边界还缺可靠的结构化实现/校验。
    在无法机器确定的语义边界上不得假装硬判，必须在程序输出schema中把response acts结构化，再检查计数。
@@ -613,9 +612,9 @@ Leader并行负责运行面：
 
 1. 已将6-card Bank path/SHA/card count、BGE-M3 snapshot、ME production排序和共享RS Rank-1选择器绑定到
    V5.3静态release；W7产物完成后再生成包含其hash的最终release identity。
-2. L2的16动作零API结构计划已完成；W7后从正式蓝图内容独立抽取代表状态，物化显式
-   rewrite-vs-direct-fallback开发比较计划；所有baseline共享同一选择，第二次调用
-   的token/cost/latency完整计账。未获用户预算授权前只做零API物化和dry-run。
+2. L2的16动作零API结构计划已完成；正式recovery固定为deterministic fallback。另建立4个内容独立语义族×
+   16动作的64-case资格计划；未获用户预算授权前只物化消息、身份和review字段，不把结构PASS冒充真实generator
+   兼容PASS。
 3. L4的metric/cluster/review定义已冻结；W7后按蓝图实际唯一group冻结真实N。L5字段投影/canary已完成，
    正式蓝图交付后补做完整overlap、duplicate、shortcut和runner接线；不读取新的response outcome。
 4. Worker提交P2候选蓝图后，leader独立运行shortcut、duplicate、user/family/group split、同源overlap和
@@ -671,3 +670,23 @@ state-level group膨胀并存。外部结构规定支持范围，不直接提供
 catalog asset，不构造current state、不计算Step1特征、不生成label、不修改三份权威事实源。Leader同时实现
 P2R state/schema/features/group/interaction。汇合后Leader导入catalog，Worker只读复核，Leader只运行一次最终
 静态审计；通过即冻结P2 release并进入formal runner/P3，不继续surface tuning。
+
+### 9.6 正式effect前的最终方法收口（2026-08-08）
+
+四项决定已在读取正式paired outcome前写入代码与合同：
+
+1. Step1按requested-component ITT学习四个低容量component bundle；quality、on/off material risk、
+   functional contribution、fallback与cost分字段保存。cost是运行时已知量，不另训练cost head；uncertain不
+   为平衡类别强塞成正负标签。
+2. 正式Step2每个逻辑臂只允许一次自由generator调用；guard失败确定性回退M0+R0并作为该requested action的
+   ITT outcome记账。single bounded rewrite只保留为development diagnostic。
+3. 新64-case语义资格计划覆盖4个独立内容族×完整16动作。36个语义surface对ESConv、EvoEmo/ES-MemEval及
+   当前11人formal intake的exact/normalized 8-gram均为0。该结果只证明内容独立与结构计划；真实同栈生成尚需
+   单独费用identity，不得称为兼容通过。
+4. 当前P2R开发蓝图868行只对应44用户；MP/MS/ME各20用户、RS 36用户，保守primary feature容量只有4/4/4/7，
+   不能把12–15个可变列全部投入训练。完整formal blueprint后重跑同一rank/support审计并裁剪primary features；
+   多余列仅作探索消融。
+
+`±0.05`继续作为参考非劣界，而非“PM学没学会”的魔法门。sealed 16用户的宽CI必须诚实报告并降低证据等级，
+但只要learned policy没有坍缩、胜过透明/固定/matched controls且quality点估计没有实质恶化、risk或cost改善，
+仍可报告为`DIRECTIONALLY_USABLE`；不能把宽CI伪装成强确认，也不能反过来抹去可学习信号。

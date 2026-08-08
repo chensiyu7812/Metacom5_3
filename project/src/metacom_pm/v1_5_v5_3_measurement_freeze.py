@@ -94,6 +94,10 @@ def build_measurement_freeze(root: str | Path) -> MeasurementFreeze:
                 project_root,
                 "data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json",
             ),
+            _reference(
+                project_root,
+                "src/metacom_pm/v1_5_v5_3_step1_objectives.py",
+            ),
         ],
         "response_policies": list(POLICIES),
         "learned_pm_comparators": [
@@ -178,6 +182,17 @@ def build_measurement_freeze(root: str | Path) -> MeasurementFreeze:
             "relative_to_transparent_rule_requires_nonworse_qr_and_strict_q_or_cost_gain": True,
             "partial_head_success_reported_per_component_not_hidden": True,
             "pareto_claim_requires_both_selection_learning_and_end_to_end_usefulness": True,
+            "evidence_tiers": {
+                "SUPPORTED": "point estimate and cluster interval meet the reference comparison",
+                "DIRECTIONALLY_USABLE": (
+                    "selection is nontrivial and practical point estimates are acceptable, "
+                    "but the cluster interval is wide"
+                ),
+                "NOT_SUPPORTED": (
+                    "constant collapse, no matched-control gain, or materially bad point estimate"
+                ),
+            },
+            "wide_interval_alone_means_pm_not_learned": False,
         },
         "clustering": {
             "internal_fit": "counterfactual_group_id",

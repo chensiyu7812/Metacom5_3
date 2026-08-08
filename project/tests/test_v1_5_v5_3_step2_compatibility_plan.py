@@ -20,7 +20,7 @@ def test_plan_materializes_all_16_actions_without_semantic_claim() -> None:
     assert len(plan.rows) == 16
     assert plan.api_calls == 0
     assert plan.semantic_generator_compatibility_claimed is False
-    assert plan.recovery_policy_selected is None
+    assert plan.recovery_policy_selected == "deterministic_fallback"
     assert {row.structural_status for row in plan.rows} == {"PASS"}
 
 

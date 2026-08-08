@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-v5.3-integrated-evidence-execution-and-confirmation-v1",
-  "status": "PROPOSED_P1_IN_PROGRESS",
-  "last_aligned_date": "2026-08-07",
+  "status": "PRE_EFFECT_METHOD_CLOSURE_SEMANTIC_STEP2_QUALIFICATION_PENDING",
+  "last_aligned_date": "2026-08-08",
   "supersedes_for_future_runs": [
     "pm-v1.5-v5.2-backend-locked-clause-append-executor"
   ],
@@ -41,6 +41,10 @@
   },
   "step1": {
     "estimand": "requested-component ITT value under the frozen V5.3 executor",
+    "objective_contract": "src/metacom_pm/v1_5_v5_3_step1_objectives.py",
+    "quality_risk_function_and_cost_measurements_remain_separate": true,
+    "incremental_cost_is_runtime_known_not_a_learned_outcome_head": true,
+    "uncertain_outcomes_are_not_forced_to_binary": true,
     "hard_denials": [
       "candidate_absent",
       "wrong_owner",
@@ -49,10 +53,10 @@
       "explicit_current_boundary_denial",
       "resource_definition_incomplete"
     ],
-    "primary_model": "source-specific L2 logistic value heads",
+    "primary_model": "four component-specific low-capacity value bundles with adoptable-opening primary and support-qualified risk auxiliary",
     "group_weighting": "equal counterfactual-group weight",
     "class_weight": null,
-    "required_features": [
+    "candidate_runtime_feature_library_not_all_forced_into_primary": [
       "goal_function_fit",
       "contribution_slot_available",
       "specific_increment",
@@ -63,13 +67,15 @@
       "component_specific_response_act_fit",
       "action_readiness_three_state"
     ],
-    "required_interactions": [
+    "candidate_interactions_subject_to_pre_effect_identifiability_support": [
       "goal_function_fit_x_contribution_slot_available",
       "specific_increment_x_current_redundancy",
       "past_action_result_x_current_action_readiness",
       "continuity_request_x_specific_prior_observation",
       "card_precondition_x_nonredundancy_x_burden_fit"
     ],
+    "primary_feature_capacity_rule": "after the full formal blueprint, remove constant/audit-only/nondeployable columns and cap each primary head by both user-cluster and counterfactual-group support; current development diagnostic caps are MP=4, MS=4, ME=4, RS=7",
+    "unsupported_features_role": "exploratory ablation only, never silently added to the primary head",
     "bge_role": "one frozen challenger only"
   },
   "step2": {
@@ -135,12 +141,20 @@
     "development_cases_only": true,
     "maximum_candidates": 2,
     "new_fit_or_confirmation_quality_may_select_generator": false,
-    "minimum_schema_completion": 1.0,
-    "minimum_evidence_binding": 1.0,
-    "minimum_atomic_move_compliance": 0.95,
-    "minimum_required_contribution_automatic_rate": 0.9,
-    "maximum_internal_label_exposures": 0,
-    "maximum_unauthorized_names_or_numbers": 0
+    "hard_invariants": [
+      "assignment_owner_and_evidence_id_binding_errors_equal_zero",
+      "fabricated_recall_wrong_owner_and_internal_label_exposures_equal_zero",
+      "no_second_free_generation_call"
+    ],
+    "descriptive_not_magic_pass_percentages": [
+      "schema_completion",
+      "requested_to_realized",
+      "functional_contribution",
+      "atomic_move_compliance",
+      "fallback",
+      "adoptable_reply"
+    ],
+    "qualification_decision": "apply the hard invariants, then report the full semantic profile and choose the fixed generator before paired effect; do not tune a 90 or 95 percent gate to force a pass"
   },
   "data": {
     "hard_minimum_group_counts_are_binding": false,
@@ -181,8 +195,10 @@
   "evaluation": {
     "quality_primary": "cluster-level NetWin",
     "quality_noninferiority_margin": -0.05,
+    "quality_noninferiority_margin_is_reference_not_binary_learning_gate": true,
     "confidence_interval": "95% cluster bootstrap",
     "risk_noninferiority_margin": 0.05,
+    "wide_cluster_interval_alone_means_pm_not_learned": false,
     "minimum_input_token_reduction_vs_fixed_high": 0.1,
     "critical_event_unit": "independent state, clustered by user where applicable",
     "maximum_critical_fabricated_recall_wrong_owner_or_explicit_boundary_events": 0,

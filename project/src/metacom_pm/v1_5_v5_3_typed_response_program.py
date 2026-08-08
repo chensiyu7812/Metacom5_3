@@ -263,10 +263,10 @@ class GeneratorResponse:
 class RewritePolicy(str, Enum):
     """Pre-outcome Step2 recovery alternatives.
 
-    The project has not yet selected which alternative belongs in the formal
-    V5.3 release.  Making the choice explicit lets consumed development cases
-    compare one bounded correction with immediate deterministic fallback
-    without silently changing the generator stack or hiding the second call.
+    The formal V5.3 release uses deterministic fallback.  The bounded rewrite
+    remains an explicit development-only diagnostic so historical comparisons
+    stay reproducible, but it is never the default and must not silently add a
+    second free generation call to a formal policy arm.
     """
 
     SINGLE_BOUNDED_REWRITE = "single_bounded_rewrite"
@@ -693,7 +693,7 @@ def execute_typed_response(
     messages,
     program: TypedResponseProgram,
     *,
-    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    rewrite_policy: RewritePolicy = RewritePolicy.DETERMINISTIC_FALLBACK,
 ) -> TypedResponseExecutionResult:
     """Execute one typed response program with an explicit recovery policy.
 
@@ -708,9 +708,11 @@ def execute_typed_response(
 
     Never retries more than once.  ``calls_made`` and ``rewrite_attempted``
     are returned explicitly so the formal runner can account for every token,
-    dollar, and latency contribution.  This function does not decide which
-    policy is scientifically preferable; that decision is frozen after a
-    development-only comparison and before formal paired outcomes.
+    dollar, and latency contribution.  The formal default is deterministic
+    fallback: a guard failure remains a valid requested-action ITT outcome and
+    realizes a separately-accounted M0+R0 fallback after exactly one model
+    call.  A caller may request the bounded rewrite only for an explicitly
+    versioned development diagnostic.
     """
 
     result, parsed = client.chat(messages, response_schema=response_schema)
@@ -821,7 +823,7 @@ def call_with_guard_and_rewrite(
     messages,
     program,
     *,
-    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    rewrite_policy: RewritePolicy = RewritePolicy.DETERMINISTIC_FALLBACK,
 ):
     """Backward-compatible tuple API over :func:`execute_typed_response`.
 

@@ -422,7 +422,13 @@ def test_call_with_guard_and_rewrite_all_four_branches() -> None:
         resp_dict("I hear you."),
         resp_dict("I recall your shift change -- that sounds hard."),
     ])
-    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    response, status, errors = call_with_guard_and_rewrite(
+        client,
+        None,
+        messages,
+        program,
+        rewrite_policy=RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    )
     assert status == "fixed_by_rewrite" and client.calls == 2
     assert errors == ("EVIDENCE_CLAIMED_USED_BUT_NO_WORD_TRACE_IN_REPLY",)
 
@@ -430,12 +436,19 @@ def test_call_with_guard_and_rewrite_all_four_branches() -> None:
     # (no RS requested), so the context-aware fallback picks a statement,
     # not a question -- see the 2026-08-06 fix for why this matters.
     client = _FakeClient([resp_dict("I hear you."), resp_dict("I hear you.")])
-    response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
+    response, status, errors = call_with_guard_and_rewrite(
+        client,
+        None,
+        messages,
+        program,
+        rewrite_policy=RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    )
     assert status == "fell_back_to_m0" and client.calls == 2
     assert response.used_evidence_ids == ()
     assert response.reply == m0_fallback_response("concise_reflection")
 
-    # no structured output
+    # no structured output is an immediate one-call fallback under either
+    # formal or diagnostic recovery; there is no malformed reply to rewrite.
     client = _FakeClient([None])
     response, status, errors = call_with_guard_and_rewrite(client, None, messages, program)
     assert status == "fell_back_to_m0" and response is not None
@@ -443,6 +456,43 @@ def test_call_with_guard_and_rewrite_all_four_branches() -> None:
     assert response.used_evidence_ids == ()
     assert response.reply == m0_fallback_response("concise_reflection")
 
+
+def test_formal_default_is_one_call_deterministic_fallback() -> None:
+    program = build_typed_response_program(
+        requested_action_id="MS+R0",
+        current_goal="x",
+        current_user_id="u1",
+        candidates={"MS": ms()},
+    )
+    evidence_id = program.evidence[0].evidence_id
+
+    class _Parsed:
+        def model_dump(self):
+            return {
+                "reply": "I hear you.",
+                "used_evidence_ids": [evidence_id],
+                "realized_response_act": "reflection",
+            }
+
+    class _Client:
+        def __init__(self):
+            self.calls = 0
+
+        def chat(self, messages, response_schema=None):
+            self.calls += 1
+            return "ok", _Parsed()
+
+    client = _Client()
+    result = execute_typed_response(
+        client,
+        None,
+        [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}],
+        program,
+    )
+    assert result.rewrite_policy is RewritePolicy.DETERMINISTIC_FALLBACK
+    assert result.status == "fell_back_to_m0"
+    assert result.calls_made == 1
+    assert result.rewrite_attempted is False
 
 def test_explicit_rewrite_policy_makes_recovery_cost_observable() -> None:
     program = build_typed_response_program(
