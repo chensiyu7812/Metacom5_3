@@ -64,3 +64,19 @@ def test_wave1_preferences_preserve_final_quota_reachability() -> None:
     for author in counts:
         remaining_users = 40 - user_counts[author]
         assert all(0 <= 20 - count <= remaining_users for count in counts[author].values())
+
+
+def test_wave1a_and_wave1b_are_an_exact_partition_of_frozen_wave1() -> None:
+    def ids(name: str) -> list[str]:
+        return [
+            row["user_id"]
+            for row in json.loads((ROOT / "data/pm_v1_5_contracts" / name).read_text(encoding="utf-8"))["rows"]
+        ]
+
+    full = ids("v5_3_wave1_sentinel_assignments_v1.json")
+    canary = ids("v5_3_wave1a_canary_assignments_v1.json")
+    scale = ids("v5_3_wave1b_scale_assignments_v1.json")
+    assert canary == ["p2r_formal_gpt_u010", "p2r_formal_claude_u005"]
+    assert len(scale) == 11
+    assert len(set(canary + scale)) == 13
+    assert set(canary + scale) == set(full)

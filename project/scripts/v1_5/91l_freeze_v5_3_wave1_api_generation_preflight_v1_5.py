@@ -125,7 +125,7 @@ def build_contract() -> dict[str, object]:
     return {
         **binding,
         "run_identity": identity,
-        "status": "AWAITING_SEPARATE_WAVE1_IDENTITY_AND_COST_AUTHORIZATION",
+        "status": "SUPERSEDED_UNAPPROVED_FULL_BATCH_IDENTITY_WEB_FIRST_TWO_STAGE_SELECTED",
         "api_calls": 0,
     }
 

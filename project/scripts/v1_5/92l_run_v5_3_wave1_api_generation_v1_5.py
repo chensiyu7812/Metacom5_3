@@ -166,6 +166,8 @@ def main() -> None:
     args = parser.parse_args()
 
     preflight = read_json(PREFLIGHT)
+    if str(preflight.get("status", "")).startswith("SUPERSEDED"):
+        raise RuntimeError("full-batch Wave-1 API identity was superseded before authorization")
     if args.run_identity != preflight["run_identity"]:
         raise RuntimeError("run identity differs from frozen Wave-1 preflight")
     if abs(args.maximum_usd - float(preflight["requested_authorization_ceiling_usd"])) > 1e-12:

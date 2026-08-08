@@ -2,6 +2,8 @@
 
 日期：2026-08-08
 
+> 2026-08-08 更新：用户决定改为 Wave 1A（2 人 canary）与 Wave 1B（11 人扩展），并优先使用网页端生成。下述整批 API identity 从未获批、API=0，现标记为 `SUPERSEDED_UNAPPROVED_FULL_BATCH_IDENTITY`，不得执行。若未来改回 API，将分别冻结两个新 identity。
+
 ## 冻结执行面
 
 - identity：`v53wave1gen_97e54c624611f1d4915a85a69c7d71ea`
