@@ -108,6 +108,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FUNCTION_FEASIBILITY_COMPLETE_BASELINE_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -974,6 +975,36 @@ def validate_active_authority() -> dict[str, Any]:
                     )
                 )
                 or (
+                    active_v3.get("id") == "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
+                    and active_v3_document.get("status")
+                    == "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
+                    and active_v3_document["observed"]["states"] == 16
+                    and active_v3_document["observed"]["learned_ms_on_states"] == 7
+                    and active_v3_document["observed"]["quality_pi_final_learned_on"]
+                    == "5 MS-win / 2 RS-only-win"
+                    and active_v3_document["observed"]["verified_function_pi_final_learned_on"] == "0/7"
+                    and active_v3_document["observed"]["verified_function_pi_final_all"] == "0/16"
+                    and active_v3_document["observed"]["source_availability_pi_final_all"] == "8/16"
+                    and active_v3_document["observed"]["conditional_execution_success_pi_final"] == "0/8"
+                    and active_v3_document["observed"]["closure_states_learned_ms_off"] == 2
+                    and active_v3_document["authorization"]["repeat_disagreement_adjudication"] is False
+                    and active_v3_document["authorization"]["modify_raw_A_B"] is False
+                    and active_v3_document["authorization"]["declare_independent_human_IAA"] is False
+                    and active_v3_document["authorization"]["declare_MS_pass"] is False
+                    and active_v3_document["authorization"]["r0_existing_arm_zero_api_diagnostic_design"] is True
+                    and active_v3_document["authorization"]["r0_diagnostic_execution"] is False
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["response_generation"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and sha(resolve(active_v3_document["problem_ledger"]["path"]))
+                    == active_v3_document["problem_ledger"]["sha256"]
+                    and all(
+                        entry in resolve(active_v3_document["problem_ledger"]["path"]).read_text(encoding="utf-8")
+                        for entry in active_v3_document["problem_ledger"]["required_entries"]
+                    )
+                    and all(sha(resolve(item["path"])) == item["sha256"] for item in active_v3_document["artifacts"])
+                )
+                or (
                     active_v3.get("id") == "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY"
                     and active_v3_document.get("status")
                     == "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED"
@@ -1140,6 +1171,9 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
+            "DESIGN_ZERO_API_EXISTING_R0_SLICE_DIAGNOSTIC_TO_SEPARATE_RS_CROWD_OUT_FROM_GENERAL_MS_NONUSE"
+            if active_v3.get("id") == "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
+            else
             "FREEZE_HUMAN_A_AND_HUMAN_B_JSON_EXPORTS_THEN_ZERO_API_AGGREGATION"
             if active_v3.get("id") == "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY"
             else

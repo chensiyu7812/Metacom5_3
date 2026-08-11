@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -13,13 +13,13 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "active_v3_phase": {
-    "id": "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
-    "status": "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED",
+    "id": "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+    "status": "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_dual_human_bundle_closeout_v1.json",
-      "sha256": "d19a83192fb58c01cf642d430cf411271f410870f8ff14699130bc755988cef7"
+      "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_pi_adjudicated_closeout_v1.json",
+      "sha256": "9495bdf456dbdac2dd2245b71b448f68d3a16b80703cfa5cd04db93889718f54"
     },
-    "scope": "Two offline independent humans may each review the fixed 16 Quality, 32 absolute Risk, and 16 source-aware Function items; Quality source is hidden and MS position is 8/8; no labels exist yet; private key and aggregation remain closed until both raw exports freeze; no MP/ME or external work",
+    "scope": "HUMAN_B explicitly contains the PI adjudication and is final; HUMAN_A is sensitivity only. Learned-MS-ON verified Function is 0/7 and all-16 Function is 0/16 in the PI final, so MS does not pass in the RS-fixed-on slice. The relief-plus-closure limitation belongs to RS/response-act routing. Only zero-API design of an existing-arm R0 interaction diagnostic is next; no repeat adjudication, API, refit, threshold change, MP/ME, or external work.",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
@@ -335,8 +335,8 @@
           },
           "failure_ledger": {
             "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-            "sha256": "c380e5aed5faf1d1c7980684d2362e990e73f519e9415ca08330a880924ddf1e",
-            "required_text": "V15-MEAS-81"
+            "sha256": "ea812a0d39c7864a7131a2bb2e6509f6d61212ed44a2abc86b2eff76581d1401",
+            "required_text": "V15-REL-38"
           },
           "does_not_change_historical_v3_contract_hash": true
         },
@@ -461,6 +461,26 @@
         "aggregation_authority": false,
         "api_calls_authorized": 0,
         "next_gate": "FREEZE_TWO_INDEPENDENT_HUMAN_JSON_EXPORTS_THEN_ZERO_API_AGGREGATION"
+      },
+      "rs_ms_pi_adjudicated_closeout": {
+        "status": "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+        "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_pi_adjudicated_closeout_v1.json",
+        "sha256": "9495bdf456dbdac2dd2245b71b448f68d3a16b80703cfa5cd04db93889718f54",
+        "quality_exact_agreement": "11/16",
+        "risk_family_cell_exact_agreement": "187/192",
+        "function_exact_agreement": "15/16",
+        "learned_ms_on_function_pi_final": "0/7",
+        "all_function_pi_final": "0/16",
+        "source_availability_pi_final": "8/16",
+        "conditional_execution_success_pi_final": "0/8",
+        "human_B_evidence_role": "PI_ADJUDICATED_FINAL",
+        "human_A_evidence_role": "SENSITIVITY_ONLY",
+        "independent_human_IAA_eligible": false,
+        "repeat_adjudication_authority": false,
+        "declare_ms_pass_authority": false,
+        "r0_diagnostic_execution_authority": false,
+        "api_calls_authorized": 0,
+        "next_gate": "DESIGN_ZERO_API_EXISTING_R0_SLICE_DIAGNOSTIC_TO_SEPARATE_RS_CROWD_OUT_FROM_GENERAL_MS_NONUSE"
       }
     },
     "allowed": [
@@ -502,6 +522,7 @@
       "zero-API design of a bounded MS meaning-absorption executor qualification under paper1_v3_ms_atomic_checkpoint_closeout_v1.json",
       "unit and integration tests",
       "offline independent HUMAN_A and HUMAN_B annotation of the exact hash-bound RS+MS 16/32/16 blind bundle without private-key access",
+      "zero-API design of an existing-arm R0 Function diagnostic that cannot modify raw HUMAN_A or HUMAN_B files",
       "documentation and evidence-index updates"
     ],
     "forbidden": [
