@@ -1,0 +1,267 @@
+{
+  "protocol": "pm-v1.5-paper1-system-semantic-execution-root-cause-audit-v1",
+  "date": "2026-08-11",
+  "status": "ROOT_CAUSE_LOCALIZED_PAPER1_IMPLEMENTABLE_EXTERNAL_FINAL_NOT_READY",
+  "api_calls": 0,
+  "headline": "The four-head/16-action design remains correct. Current failure is not general retrieval absence: in the learned-MS-ON RS slice all 7 Rank-1 sources were PI-usable and 6/7 were generator-claimed, yet human verified Function was 0/7. The immediate bottleneck is source-to-response realization and response-act interaction, not a need for another general semantic model.",
+  "semantic_understanding_definition": {
+    "what_it_is": "bounded candidate retrieval plus low-capacity component-specific suitability prediction",
+    "what_it_is_not": "a general human-intent or full language-understanding model",
+    "measurable_proportions": {
+      "RS_grouped_oof_balanced_accuracy": 0.7416834809296017,
+      "MS_teacher_label_oof_balanced_accuracy": 0.7449165239726028,
+      "MS_teacher_label_oof_ci95": {
+        "low": 0.6662002175368138,
+        "high": 0.8213480205632179
+      },
+      "MP_consensus_diagnostic_balanced_accuracy": 0.6836080586080586,
+      "ME_historical_balanced_accuracy": 0.37425710331352274,
+      "warning": "These are construct-specific cross-group prediction metrics, not percentages of human utterances understood."
+    },
+    "runtime_nonunderstanding_behavior": {
+      "candidate_absent_or_structurally_invalid": "turn that component OFF",
+      "probability_below_threshold": "turn that component OFF",
+      "formal_runtime_uncertainty_band": "not implemented",
+      "all_four_off": "M0+R0",
+      "partial_off": "preserve remaining components and compile the corresponding one of 16 actions"
+    }
+  },
+  "retrieval_and_execution": {
+    "candidate_availability": {
+      "ME": {
+        "absent": 4272,
+        "availability_rate": 0.08893154190658989,
+        "connected_groups_with_present_candidate": 15,
+        "present": 417,
+        "reuse": {
+          "hhi": 0.06557631592567673,
+          "top_candidate_count": 45,
+          "top_candidate_share": 0.1079136690647482,
+          "unique_candidates": 23
+        },
+        "rows": 4689,
+        "runtime_owners_with_present_candidate": 15
+      },
+      "MP": {
+        "absent": 3843,
+        "availability_rate": 0.18042226487523993,
+        "connected_groups_with_present_candidate": 17,
+        "present": 846,
+        "reuse": {
+          "hhi": 0.040753595001369256,
+          "top_candidate_count": 84,
+          "top_candidate_share": 0.09929078014184398,
+          "unique_candidates": 65
+        },
+        "rows": 4689,
+        "runtime_owners_with_present_candidate": 18
+      },
+      "MS": {
+        "absent": 247,
+        "availability_rate": 0.9473235231392622,
+        "connected_groups_with_present_candidate": 17,
+        "present": 4442,
+        "reuse": {
+          "hhi": 0.0008616738305572793,
+          "top_candidate_count": 17,
+          "top_candidate_share": 0.003827104907699235,
+          "unique_candidates": 2036
+        },
+        "rows": 4689,
+        "runtime_owners_with_present_candidate": 18
+      }
+    },
+    "co_presence": {
+      "MP": 44,
+      "MP+MS": 709,
+      "MP+MS+ME": 93,
+      "MS": 3316,
+      "MS+ME": 324,
+      "NONE": 203
+    },
+    "ms_panel_source_discrimination_descriptive": {
+      "tp": 7,
+      "fn": 1,
+      "fp": 0,
+      "tn": 8,
+      "recall": 0.875,
+      "specificity": 1.0,
+      "balanced_accuracy": 0.9375,
+      "claim_limit": "small, deliberately selected 16-state development panel; not a generalization estimate"
+    },
+    "learned_on_rs_slice": {
+      "states": 7,
+      "source_usable": 7,
+      "generator_claimed_ms": 6,
+      "pi_verified_function": 0,
+      "pi_quality_ms_better": 5,
+      "pi_quality_rs_only_better": 2,
+      "absorption_harm_rate_identifiable": false,
+      "forced_ms_arm_quality_loss_rate": 0.2857142857142857,
+      "reason_not_identifiable": "There are zero human-verified Function cases, so Quality losses cannot be attributed to successful memory absorption."
+    },
+    "all_rs_slice": {
+      "states": 16,
+      "source_usable": 8,
+      "generator_claimed_ms": 12,
+      "pi_verified_function": 0,
+      "pi_quality": {
+        "MS_ON_BETTER": 10,
+        "RS_ONLY_BETTER": 5,
+        "EQUIVALENT": 1
+      }
+    },
+    "literal_splice": {
+      "active_v3_exact_full_source_copies": 0,
+      "active_v3_mean_token_jaccard_suitable": 0.08485948291131162,
+      "legacy_v2_hard_splice_code_still_present": true,
+      "active_v3_path_requires_literal_or_lexical_overlap": false
+    }
+  },
+  "four_head_architecture": {
+    "design": "one unified base state/fold table; four component-specific candidate views and binary heads; combine four bits into 16 actions; execute jointly",
+    "current_realization": "partial: RS has carried OOF evidence, MS has a teacher-suitability checkpoint, MP is diagnostic, ME is weak; current 16-state system panel fixed RS ON and varied MS only",
+    "head_rows": [
+      {
+        "component": "RS",
+        "candidate_surface": "six-card bank on ESConv/EvoEmo dialogue",
+        "available_pct": 100.0,
+        "bounded_oof": 74.2,
+        "oof_n": 15781,
+        "groups": 1047,
+        "current_status": "selector signal carried; current 16-state panel fixed RS ON"
+      },
+      {
+        "component": "MP",
+        "candidate_surface": "profile field with current lexical scope match",
+        "available_pct": 18.0,
+        "bounded_oof": 68.4,
+        "oof_n": 136,
+        "groups": 17,
+        "current_status": "exact-consensus diagnostic only; CI/label route not formal"
+      },
+      {
+        "component": "MS",
+        "candidate_surface": "BGE-M3 Rank-1 over strictly-past same-owner seeker turns",
+        "available_pct": 94.7,
+        "bounded_oof": 74.5,
+        "oof_n": 201,
+        "groups": 17,
+        "current_status": "teacher suitability learnable; PI verified Function 0/7"
+      },
+      {
+        "component": "ME",
+        "candidate_surface": "typed lexical Rank-1 action-result memory",
+        "available_pct": 8.9,
+        "bounded_oof": 37.4,
+        "oof_n": 417,
+        "groups": 15,
+        "current_status": "sparse candidate surface and failed historical OOF"
+      }
+    ],
+    "architecture_rows": [
+      {
+        "layer": "1. Unified state surface",
+        "current": "present",
+        "target": "one state ID and one connected-group fold shared by all heads"
+      },
+      {
+        "layer": "2. Component Rank-1",
+        "current": "present",
+        "target": "separate MP/MS/ME/RS candidate and features per state"
+      },
+      {
+        "layer": "3. Four independent heads",
+        "current": "partial",
+        "target": "four binary probabilities; independent OFF/abstain; no shared label"
+      },
+      {
+        "layer": "4. 16-action compiler",
+        "current": "implemented",
+        "target": "combine four bits; no one-memory cap"
+      },
+      {
+        "layer": "5. Joint response program",
+        "current": "implemented, MS human Function failed in RS slice",
+        "target": "one coherent reply; multiple resources may support one response act"
+      },
+      {
+        "layer": "6. Offline responsibility",
+        "current": "implemented in measurement, not yet full external",
+        "target": "separate retrieval, selector, executor, generator, Quality/Risk/Cost"
+      }
+    ]
+  },
+  "root_causes": [
+    "Evidence stages were repeatedly conflated: candidate availability, proxy-label predictability, generator telemetry, human Function, and response Quality are different estimands.",
+    "Historical MS labels used source-session lineage while runtime acted on an atomic turn; the target unit was wrong.",
+    "Actual Rank-1 quality and suitability were not separated; low-information/current-echo candidates were sometimes treated as positive memory.",
+    "Legacy V2 forced literal use and lexical trace; active V3 removes this, but legacy code remains a routing hazard.",
+    "Current V3 generator can decline a resource, yet the RS-fixed-on slice produced no human-verifiable MS contribution even when the source was usable; RS crowd-out versus general executor nonuse is unresolved.",
+    "LLM measurement endpoints were overpromoted despite schema, token-budget, order, and attribution failures; proxy 12/12 Function later became PI 0/7 in the relevant slice.",
+    "The authority file itself exposes both a current V3 phase and a stale terminal current_phase."
+  ],
+  "endpoint_compatibility": {
+    "rows": [
+      {
+        "endpoint": "Claude Haiku 4.5",
+        "local_observation": "204/204 MS suitability calls completed; multi-empty-string Function schema suffered semantic field shifting",
+        "diagnosis": "schema/serialization contract failure, not evidence of semantic incapacity",
+        "minimal_fix": "native structured output or strict tool schema; discriminated evidence array/span IDs; no parallel empty evidence strings; 3-control pilot"
+      },
+      {
+        "endpoint": "Gemini 2.5 Flash",
+        "local_observation": "10/11 completed controls exact; 1 mismatch; 1 unresolved control missing after hidden-thought truncation",
+        "diagnosis": "promising semantics, unqualified transport/budget wrapper",
+        "minimal_fix": "verify wire thinkingBudget=0 and native JSON schema; 3-control pilot including UNRESOLVED; stop if thought budget still uncontrolled"
+      }
+    ],
+    "gemini_control_evidence": {
+      "completed": 11,
+      "exact": 10,
+      "mismatch_ids": [
+        "msfctrl_9a55af6b688ae989d7b8da17"
+      ],
+      "missing_ids": [
+        "msfctrl_b2b52311040f027e75dada03"
+      ]
+    }
+  },
+  "minimum_repair_route": [
+    "Normalize one machine authority pointer and forbid legacy V2 imports in all active runners.",
+    "Add per-head three-way runtime accounting: ON, OFF, UNCERTAIN_AS_OFF. Learn/calibrate uncertainty only on outer-train; do not map one uncertain head to global M0+R0.",
+    "Use existing 7 learned-ON states for a zero-API R0-vs-RS interaction diagnosis. This tests whether RS crowds out MS without new generation or new labels.",
+    "If existing MS+R0 replies contain source-attributable Function, fix joint response planning and retest a tiny frozen slice. If not, run one 8-16-state retrieval-oracle x executor-oracle decomposition before any new head training.",
+    "Run one transport-only Claude/Gemini compatibility pilot with three controls. Endpoint choice is a measurement implementation decision, not a new scientific model search.",
+    "Then run a versioned external development smoke test. After one predeclared repair, freeze and execute cross-fitted ESConv, ES-MemEval, and EvoEmo reports with same-stack baselines."
+  ],
+  "hf_model_decision": {
+    "decision": "DO_NOT_ADD_A_NEW_GENERAL_INTENT_MODEL_NOW",
+    "reason": "The learned-on panel already selected usable sources 7/7; the observed break is downstream realization. Another encoder cannot repair a response that ignores an already usable source.",
+    "conditional_future": "Only if the retrieval-oracle decomposition shows actual Rank-1 is the dominant bottleneck, pre-register one cross-encoder reranker challenger against BGE-M3. Do not run an open-ended Hugging Face model search."
+  },
+  "authority_conflict": {
+    "active_v3_phase": "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+    "active_v3_status": "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+    "stale_nested_current_phase": "MS_SESSION_ALIGNED_FINAL_OOF_V2",
+    "stale_nested_status": "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT",
+    "assessment": "The top-level active_v3_phase is current, but the same authority file still exposes an older terminal current_phase. This is a real machine-routing hazard and must be normalized before any new runner is authorized."
+  },
+  "source_hashes": {
+    "data/pm_v1_5_contracts/active_method_authority_v1.json": "da6d381aaa5322d43b42064bc2c9b7a7f4fd68df1c0b84b73447b690e77b5597",
+    "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.json": "0e4c29e54fd0951411ed6b686b2f37aee1f62c557e0f0eee4b7ee7298d497041",
+    "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82",
+    "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json": "db6b800f216b64f25ed16f8f8004d0ee9545113ad5788ebd1a56f7c10f99ab55",
+    "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811/report.json": "41e7d4d2c32e41bfb01dc58229792dea1aa085ee856a4a5832bd77c90282f402",
+    "outputs/pm_v1_5_paper1_source_annotated_grouped_learnability_20260810/report.json": "1e63131e91ca34d5b17c048ff85265951ef7720ef083512ea70603b699016044",
+    "outputs/pm_v1_5_paper1_v3_ms_executor_mechanical_audit_20260811/report.json": "41c7941df83c38d15b2bec89db94979b9b2626d8fb932bb014e21c3e050ce03d",
+    "data/pm_v1_5_contracts/paper1_v3_rs_ms_pi_adjudicated_closeout_v1.json": "9495bdf456dbdac2dd2245b71b448f68d3a16b80703cfa5cd04db93889718f54",
+    "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/human_B_raw_frozen.json": "a2965960f3a8a9640e64a117178fe16ef357a2889ed70f6a0dacaa3add849523",
+    "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/unblinded_quality_raw.jsonl": "3ae40a7802458c99d6f10d20ed5092d29ac184e083f27b7efcc4ba01a8fdc77d",
+    "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/policy_actions_private.jsonl": "47b7150ec4cd08e1d734219e40ea5590ff0c65b86de16af46ca277bf60a6d19f",
+    "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl": "3d24ffb565da2bfb6f031d5bb4119621fe54449e2b92256417b9c30505229bcb",
+    "outputs/pm_v1_5_paper1_v3_ms_executor_trace_recovery_20260811/recovered_first_response_results_private.jsonl": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec",
+    "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811/reviews.jsonl": "43b80b4463bcaa62049897b279c0247af64407ccc204885144d0946efd81ad2d",
+    "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"
+  }
+}
