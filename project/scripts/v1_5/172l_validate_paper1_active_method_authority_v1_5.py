@@ -49,12 +49,16 @@ def validate_active_authority() -> dict[str, Any]:
     development_report = development.get("completed_report") or {}
     rescue = feasibility.get("memory_head_rescue_design_candidate") or {}
     rescue_document = read(resolve(rescue["path"])) if rescue.get("path") else {}
+    v3_repair = feasibility.get("component_general_v3_repair_contract") or {}
+    v3_repair_document = read(resolve(v3_repair["path"])) if v3_repair.get("path") else {}
     known_authority_statuses = {
         "ACTIVE_ZERO_API_V2_TERMINAL_ROUTING_FAIL_SYSTEM_FEASIBILITY_DESIGN_ONLY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_SYSTEM_FEASIBILITY_GENERATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_DEVELOPMENT_MEASUREMENT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_RESCUE_DESIGN_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MEMORY_RESCUE_V2_DESIGN_AUDIT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_REPAIR_CONTRACT_AUDIT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -124,6 +128,54 @@ def validate_active_authority() -> dict[str, Any]:
         "rescue_v2_preserves_all_sixteen_requested_actions": not rescue or (
             rescue_document["paper_success_requirement"]["sixteen_requested_actions_unchanged"] is True
         ),
+        "v3_repair_contract_bound_and_nonexecuting": not v3_repair or (
+            sha(resolve(v3_repair["path"])) == v3_repair["sha256"]
+            and v3_repair.get("execution_authority") is False
+            and all(value is False for value in v3_repair_document["authorization"].values())
+        ),
+        "v3_repair_validation_report_bound_if_present": not v3_repair
+        or not v3_repair.get("validation_report")
+        or (
+            sha(resolve(v3_repair["validation_report"]["path"]))
+            == v3_repair["validation_report"]["sha256"]
+            and read(resolve(v3_repair["validation_report"]["path"]))["status"]
+            == v3_repair["validation_report"]["required_status"]
+        ),
+        "v3_repair_human_plan_and_ledger_hashes_match": not v3_repair or (
+            sha(resolve(v3_repair_document["human_plan"]["path"]))
+            == v3_repair_document["human_plan"]["sha256"]
+            and sha(resolve(v3_repair_document["global_failure_ledger"]["path"]))
+            == v3_repair_document["global_failure_ledger"]["sha256"]
+            and v3_repair_document["global_failure_ledger"]["required_section"]
+            in resolve(v3_repair_document["global_failure_ledger"]["path"]).read_text(encoding="utf-8")
+        ),
+        "v3_repair_preserves_old_v2_hashes": not v3_repair or all(
+            sha(resolve(row["path"])) == row["sha256"]
+            for row in v3_repair_document["historical_evidence"]
+        ),
+        "v3_repair_scope_actions_pairs_and_tracks_frozen": not v3_repair or (
+            v3_repair_document["research_success"]["requested_action_count"] == 16
+            and set(v3_repair_document["v3_executor"]["pair_rules_required"])
+            == {"MP-MS", "MP-ME", "MP-RS", "MS-ME", "MS-RS", "ME-RS"}
+            and set(v3_repair_document["external_tracks"])
+            == {"ESConv", "EvoEmo", "ES-MemEval"}
+            and "MP_PREFERENCE" in v3_repair_document["component_scope"]["forbidden"]
+        ),
+        "v3_repair_forbids_literal_lexical_and_generic_nonuse_fallback": not v3_repair or (
+            v3_repair_document["v3_executor"]["meaning_absorption"]["literal_mention_required"] is False
+            and v3_repair_document["v3_executor"]["meaning_absorption"]["lexical_overlap_required"] is False
+            and v3_repair_document["v3_executor"]["guard"]["fixed_generic_safe_nonuse_fallback_forbidden"] is True
+        ),
+        "v3_repair_separates_five_action_layers": not v3_repair or (
+            v3_repair_document["action_accounting"]["layers"]
+            == [
+                "requested",
+                "structurally_eligible",
+                "jointly_planned",
+                "generator_claimed",
+                "offline_verified_functional",
+            ]
+        ),
     }
     failed = [name for name, passed in checks.items() if not passed]
     return {
@@ -142,7 +194,19 @@ def validate_active_authority() -> dict[str, Any]:
             "human_plan_sha256": sha(plan_path),
             "paid_release_sha256": sha(paid_path),
         },
-        "next": "INDEPENDENTLY_AUDIT_MEMORY_HEAD_RESCUE_DESIGN_NO_EXECUTION" if rescue else ("EXECUTE_ONLY_THE_CONTENT_ADDRESSED_SYSTEM_FEASIBILITY_PHASE" if live else "DESIGN_SEPARATE_SAME_STACK_SYSTEM_FEASIBILITY_NO_EXECUTION_AUTHORITY"),
+        "next": (
+            "DESIGN_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_PHASE"
+            if v3_repair
+            else (
+                "INDEPENDENTLY_AUDIT_MEMORY_HEAD_RESCUE_DESIGN_NO_EXECUTION"
+                if rescue
+                else (
+                    "EXECUTE_ONLY_THE_CONTENT_ADDRESSED_SYSTEM_FEASIBILITY_PHASE"
+                    if live
+                    else "DESIGN_SEPARATE_SAME_STACK_SYSTEM_FEASIBILITY_NO_EXECUTION_AUTHORITY"
+                )
+            )
+        ),
         "api_calls": 0,
         "responses_generated": 0,
         "pm_trained": True,

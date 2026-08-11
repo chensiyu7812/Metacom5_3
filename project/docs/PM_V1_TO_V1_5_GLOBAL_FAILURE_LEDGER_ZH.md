@@ -1,7 +1,7 @@
 # PM V1 → V1.5_1 全局失效模式账本与不可回归合同
 
-更新时间：2026-08-10
-适用分支：`pm-v1.5_1` 及当前修复分支 `pm-v1.5-hybrid-retrieval`
+更新时间：2026-08-11
+适用分支：历史 `pm-v1.5_1`、`pm-v1.5-hybrid-retrieval` 及当前修复分支 `recovery/pm-v1.5-accumulated-20260805`
 文档性质：历史复盘、研究有效性威胁账本、改动影响检查表；不是实验结果，也不替代冻结配置
 
 > **单一问题源：** 本文是 PM-v1.5 当前唯一允许新增、关闭或升级问题状态的全局问题清单。
@@ -77,6 +77,15 @@ item、多源 interference、16-way noisy argmax pseudo-oracle，以及 EvoEmo f
 生成新 response、尚未通过 train-only learnability，也未授权 formal fit。不得写成“PM
 已经成功”，也不得把“代码和 readiness 门完成”写成“科学结果必然成功”。
 
+**2026-08-11 Paper 1 共同 V3 收口：** 公共主干的首次低容量 grouped OOF 已得到 RS PASS；
+MS V2 pooled BA=`.59933`，按冻结门正式 FAIL，但 same-stack 显示 predicted-ON 对 executor clean
+有 `+26.2pp` 富集。68 个 ON 只有 15 个形成独立过去信息贡献、7 个完整 functional；learned
+相对 always-off NetWin=`-.279`，相对 fixed-high=`+.353`。代码审计确认 V2 仍强迫 exact prior-user
+statement、literal mention 和 lexical overlap，并把 safe non-use 换成低质量固定 M0。故旧 V2
+永久关闭为失败/诊断证据；新路线先实现 component-general V3，再并行资格纯
+`MP_PROFILE` 与 atomic MS，ME 按真实 typed coverage 可失败。Git `8337f15` 已封存此前累计状态；
+V3 使用新文件，不原位改旧代码或旧结果。
+
 **2026-07-30 RS 最小路径纠偏：** 六卡 matched-pair pilot 已产生 32 个独立 dialogue
 group。盲评方向为 RS 14、R0 10、tie 8；RS 增量总 token 平均约增加 56%，说明固定
 Bank treatment 有稀疏条件价值，但不是普遍收益。随后训练的 22 特征 logistic 在 grouped
@@ -92,7 +101,7 @@ fail-closed；旧 wave-2 freeze 仅保留为失败候选的次要前瞻诊断。
 
 ### 1.4 全部问题的根因总索引（详细行仍以第 4、6、7 节为准）
 
-截至 2026-08-06，本文共有 503 个互不重复的 V1.5 issue ID（按表格 ID 逐行复算且无
+截至 2026-08-11，本文共有 599 个互不重复的 V1/V1.5 issue ID（按文档中的 ID 逐项去重复算且无
 重复）。逐条历史不删除；下表只把
 它们压缩到未来每次改动都必须检查的 12 条因果链。某一层 PASS 不能替另一层补票。
 
@@ -1228,3 +1237,26 @@ claim evaluator。
 | V15-MEAS-68 | C0 | 角色拆分后的pairwise Quality虽64/64完成，但AB/BA揭示严重位置偏差：A仅16/24一致，B仅13/24一致；主要不一致模式为forward选OFF、reverse选ON，即两次都偏爱展示位置B。双reviewer可用共识覆盖仅11/24=.458。若忽略AB/BA直接平均winner，会制造系统性ON/OFF标签 | pairwise Quality永久FAIL，不以高双评条件agreement=.909翻转。冻结新的arm-blind逐回复绝对四轴评分：每reviewer独立随机六个匿名case，candidate/function/risk/cost全隐藏，同reviewer同seed ON-OFF作差。新尺子16/16一次完成、96/96 resolved；轴within-one=.995、回复综合Spearman=.838、paired uplift Spearman=.623、方向覆盖=.875/一致=.952，全部过预冻结门 | `PAIRWISE_POSITION_BIAS_DETECTED_ABSOLUTE_PAIRED_DIFFERENCE_QUALITY_PASS` |
 | V15-MEAS-69 | C0 | canary Function二值双评为19/24=.7917，按冻结>=.80门正式FAIL，不因只差1条降线。逐项核查5个分歧发现构念污染：部分reviewer把回复中额外名字/关系/建议的潜在风险直接判成资源未做功；另有ME framing与RS use-condition边界理解不一致 | 旧19/24 IAA与5个分歧永久保留为unresolved，不用第三人多数票回写。Function下一版只记录三件事：候选贡献是否出现、组件规定response act是否实现、候选自身owner/time/use-boundary是否满足；回复其他unsupported/risky内容只进入独立absolute Risk，不能取消已实现功能。新构念须先冻结并在fresh wave确认，未过不得启动全88 state | `FUNCTION_CONTRIBUTION_AND_RESPONSE_RISK_ORTHOGONAL_REPAIR_REQUIRED` |
 | V15-MEAS-70 | C0 | absolute Quality通过的8个canary state uplift全部为正（.25–1.292）。这证明generator能吸收资源并产生可测收益，但不证明PM学会“何时OFF”；若把任意`uplift>0`直接当ON gold，会在无成本标签下把四head推向always-on | canary只作effect feasibility，不训练。正式development用连续deployment-ITT uplift；meaningful benefit/equivalence margin只可依据development pilot与baseline变异一次冻结，cost仅在16动作joint projection进入。各head必须在family-grouped OOF上优于训练折均值并呈现跨独立family的高于margin与不高于margin支持，否则该head固定OFF。最终及格只看held-out policy对预注册baseline的Q/R/F/C表现 | `POSITIVE_CANARY_EFFECT_IS_FEASIBILITY_NOT_ALWAYS_ON_GOLD_FINAL_PASS_IS_POLICY_PERFORMANCE` |
+
+## 23. 2026-08-11 Paper 1 共同 V3：literal splice、MP 范围回退与全链路修复
+
+本节由已完成的 68-state / 136-call MS same-stack development audit 和随后代码审计触发。它不删除
+第 22 节的任何历史结论；它说明为什么旧 source-annotated V2 即使有方向性路由信号，放入真实
+generator stack 后仍然不能及格，以及下一版本必须一次修哪些层。
+
+| ID | 严重度 | 问题与证据 | 修复与不可回归要求 | 状态 |
+|---|---|---|---|---|
+| V15-IMPL-13 | C0 | V2 prompt 明确要求使用 `exact prior-user statement`，MS/ME 又恒设 `requires_literal_mention=true`；guard 进一步要求旧句与回复有词面交集。这把 retrieval evidence 当成待拼接文本，而不是让 generator 吸收含义。68 个 ON 中只有 15 个形成独立过去信息贡献、7 个完整 functional | V3 exact source 只作 audit evidence 和 owner/time-tagged meaning cue；MP/MS/ME 均禁止 literal-use requirement，guard 禁止以 lexical overlap、长度或 generator telemetry 判断 function。旧 V2 模块只读保留，新建 V3 模块和 fail-closed tests | `V3_DESIGN_FROZEN_IMPLEMENTATION_PENDING` |
+| V15-ARCH-41 | C0 | V2 虽命名四种 role，但只处理 MS–ME pair；MP–MS、MP–ME、MP–RS、MS–RS、ME–RS 的重复、冲突、负担和 primary-act 竞争没有完整机器语义。四组件仍可能变成并列素材 | V3 为六个 component pair 全部定义 outcome-blind relation；RS/R0 恰有一个 primary act，默认最多一个显式 memory contribution、一个低负担 invitation；UNKNOWN/REDUNDANT/CONFLICT 确定性压制并记账。全 16 requested actions 使用同一 projector/executor | `ALL_PAIR_COMPONENT_GENERAL_PLANNER_DESIGN_FROZEN_IMPLEMENTATION_PENDING` |
+| V15-ARCH-42 | C0 | 旧账本主要只有 requested/feasible/realized；generator 自报 use、guard 接受和真正 source-aware function 仍可能混为一个 bit，造成 PM、executor 和 measurement 互相替罪 | 每条 policy observation 分别保存 `requested → structurally_eligible → jointly_planned → generator_claimed → offline_verified_functional`。任何层不得覆盖上一层；PM correctness 只对已解决 prospective suitability 的 requested bit 负责 | `FIVE_LAYER_ACTION_ACCOUNTABILITY_FROZEN_IMPLEMENTATION_PENDING` |
+| V15-RETR-19 | C0 | MS V1 把 session-level author lineage 下放给 source session 中任意 turn；V2 改回完整 session 后，realizer 虽能挑非寒暄 span，但 author ancestry 仍不能证明该 exact span 当前有增量。父 session 正确会把 Thanks/泛化句错误继承成正例 | session/event 只负责 provenance、owner、strict-past 和 grouping；PM gold 必须落在 frozen actual atomic Rank-1 自身。phatic、meta-reference、current echo、wrong event、stale/resolved/conflict 和 no-material-change 分开记录；Rank-1 miss 不生成 PM negative | `ATOMIC_CANDIDATE_GOLD_UNIT_FROZEN_NEW_SURFACE_PENDING` |
+| V15-LABEL-01 | C0 | EvoEmo `influenced_by` 是 positive-only author lineage：有边不保证 exact candidate 值得用于下一回复，无边也不等于不适合。V2 将 141 个 no-ancestor state 直接当 negative，使模型学习不完整图而非 suitability | `influenced_by` 永久退出 worth-opening gold，只能作 evaluator-only provenance/grouping。MP/MS 使用 runtime state + actual candidate 的 prospective suitability；future response、summary、observation、event outcome、QA 和 generator outcome 均禁止 | `POSITIVE_ONLY_LINEAGE_RETIRED_AS_SUITABILITY_GOLD` |
+| V15-MEAS-71 | C0 | P2B 已证明 current-target、increment、minimum、boundary 在负例上逻辑耦合；要求四轴分别达到独立 agreement/accuracy 会因同一事实同时改变多个轴而反复失败。另一方面把四轴完全删除又会退回模糊 holistic helpfulness | 每 component 只标一个 anchored `SUITABLE/NOT_SUITABLE/SEMANTIC_ABSTAIN` 主决定和 primary reason code；四项保留为 reviewer checklist/evidence，不作四个独立训练 target 或资格门。结构 hard facts 由机器负责，unresolved 不用多数票或 LLM 默认值补齐 | `SINGLE_BINARY_SUITABILITY_WITH_COUPLED_CHECKLIST_FROZEN_NEW_QUALIFICATION_PENDING` |
+| V15-MP-35 | C0 | 救援 V1 错把已经取消的 preference 问题扩展成“MP 整体无 public gold”，将 MP 在第一篇暂缓；这与 Paper 1 已冻结的 `MP_PROFILE` 范围和 EvoEmo 真实 profile surface 冲突，属于版本回退 | MP 永久定义为 Profile-based Personalization；`MP_PREFERENCE`、`candidate_is_preference`、`preference_applies_to_response_act` 禁止回流。现有 846 个 MP execution candidates 进入与 MS 并列的零 API资格；profile presence 不等于 ON，必须静默改变约束、细节、framing 或必要前提 | `MP_PROFILE_SCOPE_RESTORED_PARALLEL_RESCUE_PENDING_LABELS` |
+| V15-DATA-99 | C0 | MP 若直接使用姓名、原始职业、地点、国籍、性别、完整 profile value，17-group grouped model 可能记住 owner identity；若只凭 profile 是否存在标 ON，又会学成 always-on 或 decorative citation | Primary feature 只允许 field type、scope-fit、novelty/current redundancy、age、retrieval score/margin、bounded applicability 和 cost；原始 identity/value 禁止。负例必须覆盖 already-visible、no-scope-fit、decorative-only、unsupported inference、stale/conflict 和 no-material-change | `MP_IDENTITY_FREE_FEATURE_AND_NEGATIVE_FAMILY_DESIGN_FROZEN_SURFACE_AUDIT_PENDING` |
+| V15-STAT-05 | C1 | EvoEmo/ES-MemEval 的纵向 response surface 只有 17 个 connected owner groups，session/state 数和同源 QA wrapper 不能增加独立 N。继续生成 synthetic users 只为缩窄 CI 会改变 population 并制造伪独立性 | 使用低容量 model、connected-group outer folds、source alias binding、owner-cluster bootstrap、proper score 和宽 CI；17 groups 限制 claim precision，不阻断训练。ES-MemEval 同源用户不作第二份独立复现 | `PERMANENT_PUBLIC_GROUP_LIMIT_MITIGATED_NOT_REMOVED` |
+| V15-GEN-37 | C0 | V2 对 safe memory non-use、telemetry 缺失或 lexical non-overlap统一使用固定 `It sounds like that's been weighing on you.`；本轮 21 个 fallback 在盲质量比较中全部输给 OFF，说明 guard 本身制造系统伤害 | safe non-use 必须保留 current-grounded reply并把 claimed/verified bit降OFF；只有 owner/time/scaffold 污染才删除对应 personal component并至多一次冻结重生成，同时保留独立安全 RS。transport/schema failure 使用所有 baseline 相同路径 | `SAFE_NONUSE_AND_CONTAMINATION_FALLBACK_SEPARATION_FROZEN_IMPLEMENTATION_PENDING` |
+| V15-BASE-01 | C0 | learned MS 能减少 fixed-high 伤害，但仍输 always-off；若只报告对 fixed-high 的优势会把“少犯错”写成“已有净价值”。RS-only 又是当前最强且科学上必要的 memory incremental comparator | V3 正式 baseline 固定 always-off、RS-only、fixed-high eligible、transparent suitability rule、learned qualified、cost-matched fixed、cost-and-ON-rate-matched random；共享 exact state/Rank-1/projector/executor/generator/seed/guard/evaluator/cost。只有相对 RS-only/always-off 出现 verified memory function 和可接受 Q/R 才支持 memory-PM | `SAME_STACK_BASELINE_MATRIX_FROZEN_EXECUTION_PENDING` |
+| V15-EXT-13 | C1 | 修复若只在 EvoEmo same-stack 内成功而省略 ESConv 或 ES-MemEval，会丢失原 5.2 的互补证明链；反过来把 QA gold 混入 response PM 又会形成后见泄漏 | 三轨全部保留：ESConv=RS/即时支持，EvoEmo=纵向 MP/MS/ME response transport，ES-MemEval=独立 retrieval/QA/multi-evidence/abstention；QA gold 与 response PM 物理分离，同源纵向用户不重复计独立证据 | `THREE_COMPLEMENTARY_PUBLIC_TRACKS_FROZEN_NOT_YET_EXECUTED` |
+| V15-GIT-01 | C1 | 当前修复分支自 2026-08-05 后累计 24 个 tracked changes 和 219 个 untracked code/contract/doc/test 路径；若在这一未提交状态继续 V3，旧版本、当前 authority 和新实现无法可靠回溯 | 已检查无 env/key/credential/大文件且 `git diff --check` 通过；提交 `8337f15` 完整封存 243 paths。以后 V3 方案、实现、数据阶段分别提交；不得 reset/delete 历史，V2 文件只读，新 phase 以 exact path/hash 激活 | `ACCUMULATED_STATE_CHECKPOINTED_AT_8337F15` |
+| V15-GIT-02 | C0 | 文件名新、mtime 新或 prose 声称 active 曾多次使错误旧方案重新生效；本次已实际出现“MP preference 已取消”却被 V1 rescue 重新解释为 MP 整体暂缓 | active authority 必须 hash-bind V3 contract/plan；validator 明查 MP profile-only、16 actions、all-pair、no-literal/no-lexical/no-generic-safe-nonuse、五层 action、三外部轨和默认执行权限全 false。旧 rescue V1 明确 superseded | `V3_AUTHORITY_BINDING_VALIDATOR_PASS_G2_PHASE_MAY_BE_DESIGNED` |

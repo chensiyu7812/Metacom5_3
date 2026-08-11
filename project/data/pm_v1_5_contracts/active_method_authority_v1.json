@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MEMORY_RESCUE_V2_DESIGN_AUDIT",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -152,6 +152,19 @@
         "sha256": "96a861a82e04683bf531de2272bf5ec4d19799c4f9a359ce17d1cc7118cb216f",
         "decision": "repair the shared V3 executor first; preserve RS; qualify profile-only MP and atomic MS in parallel; keep ME as a sparse optional head",
         "execution_authority": false
+      },
+      "component_general_v3_repair_contract": {
+        "status": "ZERO_API_REPAIR_CONTRACT_VALIDATED_G2_PHASE_MAY_BE_DESIGNED",
+        "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+        "sha256": "6c20200ce4b31064bb00a414fa82594cee88c0d7344ab878970a926ee644f517",
+        "git_baseline": "8337f15",
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_component_general_v3_repair_contract_validation_20260811/report.json",
+          "sha256": "a918d67504bdddd1cb224c233c13e2bbc7836e86685db943a60531881455d87b",
+          "required_status": "V3_REPAIR_CONTRACT_PASS_G2_PHASE_MAY_BE_DESIGNED"
+        },
+        "next_gate": "G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_TESTS",
+        "execution_authority": false
       }
     },
     "allowed": [
@@ -165,6 +178,8 @@
       "quality arm-key access only after all 68 blind A/B/TIE judgments are frozen",
       "source-aware MS function review and literal-event risk diagnosis of the already generated responses",
       "read-only independent audit of paper1_memory_head_rescue_decision_v2.json",
+      "read-only independent validation of paper1_component_general_v3_repair_contract_v1.json and its bound failure-ledger section",
+      "zero-API design of the G2 component-general V3 implementation phase and implementation-tree manifest",
       "zero-API design of machine invariants that prevent literal-memory forcing and telemetry-to-quality fallback conflation",
       "unit and integration tests",
       "documentation and evidence-index updates"
