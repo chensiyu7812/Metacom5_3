@@ -1,0 +1,38 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-oracle-plan-responsibility-audit-analysis-v1",
+  "status": "ZERO_API_DEVELOPMENT_AUDIT_COMPLETE_BLIND_PACKET_READY_REVIEW_NOT_AUTHORIZED",
+  "observed_generation": {
+    "states": 8,
+    "generator_claimed_ms": 5,
+    "guard_reported_clean": 8,
+    "actual_scaffold_exposure_found_by_source_aware_audit": 1
+  },
+  "unblinded_development_function": {
+    "counts": {
+      "NOT_USED_FINAL": 3,
+      "FUNCTIONAL": 2,
+      "EXECUTION_FAILURE": 1,
+      "SAFE_NONUSE_CORRECT": 2
+    },
+    "intended_use_denominator": 6,
+    "intended_use_functional": 2,
+    "intended_use_not_used": 3,
+    "intended_use_execution_failure": 1,
+    "safe_nonuse_denominator": 2,
+    "safe_nonuse_correct": 2
+  },
+  "diagnosis": {
+    "kelly_case_fixed": true,
+    "generic_nli_model_needed": false,
+    "candidate_specific_plan_is_sufficient_for_some_cases": true,
+    "candidate_specific_plan_is_not_sufficient_for_reliable_memory_function": true,
+    "teacher_suitable_contains_nonincremental_or_entity_unsafe_cases": true,
+    "guard_misses_plan_scaffold_exposure": true,
+    "primary_bottleneck": "MS gold and selected-candidate material increment are not aligned with source-attributable execution; generator/guard is a secondary bottleneck."
+  },
+  "next_decision": "Do not retrain yet. Repair the MS supervision unit so ON requires a source-grounded candidate-specific response change that is not already available from current context; add plan-scaffold guard; then rerun grouped OOF once on the corrected frozen labels.",
+  "claim_limit": "Single-Codex unblinded development diagnosis. Blind packets are materialized but review execution is not authorized.",
+  "api_calls": 0,
+  "pm_fits": 0,
+  "training_labels_changed": 0
+}

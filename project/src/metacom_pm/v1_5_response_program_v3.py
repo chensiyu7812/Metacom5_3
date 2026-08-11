@@ -45,6 +45,11 @@ _TRACE_ONLY_ERRORS = frozenset(
         "DUPLICATE_EVIDENCE_ID_IN_TRACE",
     }
 )
+_PLAN_FIELD_MARKER_RE = re.compile(
+    r"\b(?:support_phase|immediate_goal|candidate_increment|resource_disposition|"
+    r"entity_link_status|allowed_change|forbidden_inference)\s*=",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -170,6 +175,24 @@ def response_guard_errors_v3(
         errors.append("INTERNAL_LABEL_OR_ID_LEAK")
     if _RECORD_LOG_RE.search(reply):
         errors.append("INTERNAL_RESOURCE_OR_SCAFFOLD_EXPOSURE")
+    if _PLAN_FIELD_MARKER_RE.search(reply):
+        errors.append("PLAN_SCAFFOLD_EXPOSURE")
+    # Candidate-specific plans are written as instructions, not user-facing
+    # prose.  A model can occasionally emit one instruction verbatim while
+    # still producing schema-valid JSON.  Detect a substantial exact prefix
+    # in either direction without requiring ordinary semantic overlap.
+    reply_folded = reply.casefold()
+    if len(reply_folded) >= 40 and any(
+        (field := _compact(value).casefold())
+        and (field.startswith(reply_folded) or reply_folded.startswith(field))
+        for resource in plan.resources
+        for value in (
+            resource.meaning_cue,
+            resource.allowed_response_change,
+            resource.forbidden_inference,
+        )
+    ):
+        errors.append("PLAN_SCAFFOLD_EXPOSURE")
     authorized = {resource.evidence_id for resource in plan.resources}
     used = tuple(response.used_evidence_ids)
     if set(used) - authorized:

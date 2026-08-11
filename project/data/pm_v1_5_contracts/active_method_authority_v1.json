@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -13,18 +13,18 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "active_v3_phase": {
-    "id": "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
-    "status": "EXACT_8_ORACLE_PLAN_MS_R0_CALLS_AUTHORIZED_ONCE",
+    "id": "MS_SUPERVISION_UNIT_REPAIR_DESIGN",
+    "status": "ORACLE_AUDIT_COMPLETE_MS_SUPERVISION_UNIT_REPAIR_DESIGN_NEXT_NO_REFIT",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_oracle_plan_upper_bound_execution_phase_v1.json",
-      "sha256": "c3fbb3f35b476dcb719ede8e9d4438688dd4befc36781dd4681c01d6054db380"
+      "path": "data/pm_v1_5_contracts/paper1_ms_supervision_unit_repair_design_v1.json",
+      "sha256": "f037579bd0787cf1db9211a4775245bb2d6b10595ef7bc9ad0731c6b3b1efef9"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "Execute exactly eight source-bound MS+R0 oracle-plan upper-bound calls: six USE_IF_NATURAL and two SAFE_NONUSE controls. This diagnoses whether the fixed generator can follow a correct candidate-specific plan; the oracle is never PM input or gold. No PM refit, threshold change, training-label creation, MP/ME work, baseline execution, or external work is authorized.",
-    "api_calls_authorized": 8,
+    "scope": "The oracle responsibility audit is complete: 2/6 intended-use states were source-attributable FUNCTIONAL, 3/6 were not used, 1/6 exposed a plan instruction, and 2/2 safe-nonuse controls were correct. The tested generic NLI model is rejected. Design only a zero-API repair of the MS supervision unit so positive labels require a distinct past-only candidate increment and material response change. No review API, label change, PM refit, threshold change, generator call, MP/ME work, baseline execution, or external work is authorized.",
+    "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
   },
@@ -339,7 +339,7 @@
           },
           "failure_ledger": {
             "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-            "sha256": "804dc8655b41189d323f05fb55d13c0988e455a13da218f18926bddf1c61ac7d",
+            "sha256": "57278d8dd7bfb7a325d07a97cfb2584a8e6387653063872c466743e8386328dd",
             "required_text": "V15-REL-38"
           },
           "does_not_change_historical_v3_contract_hash": true
@@ -596,7 +596,7 @@
   "old_runner_rule": "Historical scripts remain reproducible evidence but must fail active readiness unless a new active phase manifest names their exact implementation hash and the current method contract permits their stage.",
   "paid_execution_guard": {
     "central_release_path": "outputs/pm_v1_5_paid_run_release.json",
-    "required_current_value": true,
+    "required_current_value": false,
     "phase_must_explicitly_authorize": true,
     "release_manifest_must_bind_method_and_authority_hashes": true,
     "no_environment_secret_or_cli_flag_can_override": true

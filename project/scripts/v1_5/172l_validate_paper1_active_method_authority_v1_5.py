@@ -118,6 +118,8 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_RESPONSIBILITY_AUDIT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -1256,6 +1258,51 @@ def validate_active_authority() -> dict[str, Any]:
                         ]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_ORACLE_PLAN_RESPONSIBILITY_AUDIT"
+                    and active_v3_document.get("status")
+                    == "ORACLE_PLAN_GENERATION_COMPLETE_PAID_RELEASE_CLOSED_ZERO_API_RESPONSIBILITY_AUDIT_NEXT"
+                    and active_v3_document["observed"]["logical_calls"] == 8
+                    and active_v3_document["observed"]["semantic_calls"] == 8
+                    and active_v3_document["observed"]["transport_retries"] == 0
+                    and active_v3_document["observed"]["total_tokens"] == 8896
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["zero_api_responsibility_audit"] is True
+                    and active_v3_document["authorization"]["blind_review_execution"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["MP_or_ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                    and sha(resolve(active_v3_document["executed_phase"]["path"]))
+                    == active_v3_document["executed_phase"]["sha256"]
+                )
+                or (
+                    active_v3.get("id") == "MS_SUPERVISION_UNIT_REPAIR_DESIGN"
+                    and active_v3_document.get("status")
+                    == "ORACLE_AUDIT_COMPLETE_MS_SUPERVISION_UNIT_REPAIR_DESIGN_NEXT_NO_REFIT"
+                    and active_v3_document["method_version"]
+                    == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
+                    and active_v3_document["diagnostic_result"]["intended_use_controls"] == 6
+                    and active_v3_document["diagnostic_result"]["source_attributable_functional"] == 2
+                    and active_v3_document["diagnostic_result"]["not_used"] == 3
+                    and active_v3_document["diagnostic_result"]["execution_failure"] == 1
+                    and active_v3_document["diagnostic_result"]["safe_nonuse_correct"] == 2
+                    and active_v3_document["diagnostic_result"]["generic_nli_accepted"] is False
+                    and active_v3_document["repaired_MS_supervision_unit"]["teacher_suitable_is_not_automatically_positive"] is True
+                    and active_v3_document["bounded_next_phase"]["no_open_review_repair_loop"] is True
+                    and active_v3_document["authorization"]["zero_api_packet_design"] is True
+                    and active_v3_document["authorization"]["review_calls"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["evidence"]
+                    )
+                )
             )
         ),
     }
@@ -1279,6 +1326,12 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "DESIGN_ZERO_API_MS_SUPERVISION_REPAIR_PACKET_FROM_FROZEN_201_ROWS"
+            if active_v3.get("id") == "MS_SUPERVISION_UNIT_REPAIR_DESIGN"
+            else
+            "RUN_ZERO_API_SOURCE_AWARE_RESPONSIBILITY_AUDIT_AND_BUILD_BLIND_PACKET"
+            if active_v3.get("id") == "MS_ORACLE_PLAN_RESPONSIBILITY_AUDIT"
+            else
             "EXECUTE_EXACT_8_MS_ORACLE_PLAN_UPPER_BOUND_CALLS"
             if active_v3.get("id") == "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION"
             else

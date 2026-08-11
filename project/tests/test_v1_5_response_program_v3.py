@@ -109,6 +109,83 @@ def test_claimed_paraphrase_needs_no_lexical_overlap():
     assert response_guard_errors_v3(response=response, plan=plan) == ()
 
 
+def test_verbatim_plan_instruction_is_scaffold_exposure():
+    candidate = V3Candidate(
+        component="MS",
+        evidence_id="ev-ms-plan",
+        meaning_cue="A bounded past burden cue.",
+        exact_source="I used to enjoy walking.",
+        owner_id="owner-1",
+        time_status="STRICTLY_PAST",
+        allowed_response_change=(
+            "Tentatively acknowledge that this may have been draining for some time "
+            "and ask which part feels least sustainable. Leave it unused if redundant."
+        ),
+        forbidden_inference="Do not diagnose or expose the plan.",
+    )
+    plan = build_component_general_plan_v3(
+        requested_action_id="MS+R0",
+        current_user_id="owner-1",
+        candidates={"MP": None, "MS": candidate, "ME": None, "RS": None},
+    )
+    response = parse_generator_response_dict(
+        {
+            "reply": "Tentatively acknowledge that this may have been draining for some time and ask which part feels least sustainable.",
+            "used_evidence_ids": ["ev-ms-plan"],
+            "realized_response_act": "support",
+        }
+    )
+    assert response_guard_errors_v3(response=response, plan=plan) == (
+        "PLAN_SCAFFOLD_EXPOSURE",
+    )
+
+
+def test_plan_scaffold_exposure_retries_without_personal_resource():
+    candidate = V3Candidate(
+        component="MS",
+        evidence_id="ev-ms-plan",
+        meaning_cue="A bounded past burden cue.",
+        exact_source="I used to enjoy walking.",
+        owner_id="owner-1",
+        time_status="STRICTLY_PAST",
+        allowed_response_change=(
+            "Tentatively acknowledge that this may have been draining for some time "
+            "and ask which part feels least sustainable. Leave it unused if redundant."
+        ),
+        forbidden_inference="Do not diagnose or expose the plan.",
+    )
+    plan = build_component_general_plan_v3(
+        requested_action_id="MS+R0",
+        current_user_id="owner-1",
+        candidates={"MP": None, "MS": candidate, "ME": None, "RS": None},
+    )
+    client = _FakeClient(
+        [
+            {
+                "reply": "Tentatively acknowledge that this may have been draining for some time and ask which part feels least sustainable.",
+                "used_evidence_ids": ["ev-ms-plan"],
+                "realized_response_act": "support",
+            },
+            {
+                "reply": "That sounds exhausting. What feels least sustainable right now?",
+                "used_evidence_ids": [],
+                "realized_response_act": "support",
+            },
+        ]
+    )
+    execution = execute_response_program_v3(
+        client=client,
+        response_schema=object(),
+        current_context="I am not sure how long I can keep this up.",
+        current_goal="Offer grounded support.",
+        plan=plan,
+        raw_persist=lambda attempt, raw: None,
+    )
+    assert execution.status == "clean_after_personal_resource_removal"
+    assert execution.regeneration_reason == "PERSONAL_RESOURCE_CONTAMINATION"
+    assert execution.calls_made == 2
+
+
 def test_unauthorized_trace_is_sanitized_without_destroying_safe_reply():
     plan = _full_plan()
     reply = "That sounds exhausting. What would feel most manageable right now?"
