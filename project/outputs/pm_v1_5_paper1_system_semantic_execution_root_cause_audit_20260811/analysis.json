@@ -3,7 +3,7 @@
   "date": "2026-08-11",
   "status": "ROOT_CAUSE_LOCALIZED_PAPER1_IMPLEMENTABLE_EXTERNAL_FINAL_NOT_READY",
   "api_calls": 0,
-  "headline": "The four-head/16-action design remains correct, and Paper 1 success is now frozen as RS plus at least two passing memory heads among MP/MS/ME. Current MS failure is not general retrieval absence: in the learned-MS-ON RS slice all 7 Rank-1 sources were PI-usable and 6/7 were generator-claimed, yet human verified Function was 0/7. The runner also supplied only a generic meaning instruction rather than a candidate-specific semantic proposition and response-change plan.",
+  "headline": "The four-head/16-action design remains correct, but the current 16-state panel did not deploy a learned RS head: RS was fixed ON. At two closure states, AM01 was only a lexical fallback with all opportunity flags false and transparent-rule OFF. The corrected five-layer contract now separates candidate suitability, response-act fit, component Function, response Quality/Risk, and Cost. Current MS failure is still downstream of source availability: all 7 selected sources were PI-usable, but verified Function was 0/7.",
   "primary_success_rule": {
     "machine_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
     "required_strategy_heads": [
@@ -143,25 +143,52 @@
       "diagnosis": "V3 removed forced literal splice, but the promised semantic adapter was not implemented: the generator still had to infer both the source meaning and its useful role from raw text."
     },
     "existing_r0_diagnostic": {
-      "PI_matched_source_usable": 7,
+      "blind_sha256": "16120e0d9bafec50dd4a962145bfb57a0762a73795e4e5618fb155eb1e1b52ac",
       "cases": 7,
-      "connected_groups": 7,
       "formal_source_aware_Function": "PENDING_PI_REVIEW",
-      "generator_claimed_MS": 3,
-      "generator_reported_nonuse": 4,
-      "interpretation_rule": {
-        "any_verified_function": "RS crowd-out contributed to the RS-slice failure, but the size and repeatability still require reporting.",
-        "zero_verified_function": "RS crowd-out is insufficient as the explanation; candidate-specific semantic planning and generator realization remain failed or missing."
-      },
-      "matched_learned_MS_ON_states": 7,
-      "requested_action": "MS+R0",
+      "private_sha256": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec",
+      "unchanged_from_v1": true,
       "all_sources_matched_PI_usable": true,
       "formal_labels_pending": true
+    },
+    "closure_forced_card_correction": {
+      "actual_rank1_move": "AM01_invite_open_expression",
+      "all_lexical_fallback": true,
+      "all_observable_opportunity_flags_false": true,
+      "all_transparent_rule_off": true,
+      "cases": 2,
+      "formal_quality_direction": "PENDING_PI_REVIEW",
+      "rows": [
+        {
+          "actual_rank1_id": "strat_d67684c91ef222d434a4",
+          "all_observable_opportunity_flags_false": true,
+          "interpretation": "The card remained mechanically visible and won only the lexical fallback. The old experiment forced it ON; no compatible learned-RS checkpoint was applied.",
+          "move_id": "AM01_invite_open_expression",
+          "preidentified_closure_signal": "plan formed + anger reduced + repeated thanks",
+          "protocol": "pm-v1.5-paper1-v3-closure-actual-rank1-audit-v1",
+          "selection_mode": "lexical_fallback",
+          "state_id": "evo::p13::esc1198::seeker_turn::25",
+          "transparent_rule_on": false
+        },
+        {
+          "actual_rank1_id": "strat_d67684c91ef222d434a4",
+          "all_observable_opportunity_flags_false": true,
+          "interpretation": "The card remained mechanically visible and won only the lexical fallback. The old experiment forced it ON; no compatible learned-RS checkpoint was applied.",
+          "move_id": "AM01_invite_open_expression",
+          "preidentified_closure_signal": "feels lighter + plan to seek support + repeated thanks",
+          "protocol": "pm-v1.5-paper1-v3-closure-actual-rank1-audit-v1",
+          "selection_mode": "lexical_fallback",
+          "state_id": "evo::p1::p1_conv_1::seeker_turn::25",
+          "transparent_rule_on": false
+        }
+      ],
+      "valid_estimand": "response-act fit and downstream generator consequence",
+      "invalid_estimand": "learned RS routing or learned RS pass/fail"
     }
   },
   "four_head_architecture": {
     "design": "one unified base state/fold table; four component-specific candidate views and binary heads; combine four bits into 16 actions; execute jointly",
-    "current_realization": "partial: RS has carried OOF evidence, MS has a teacher-suitability checkpoint, MP is diagnostic, ME is weak; current 16-state system panel fixed RS ON and varied MS only",
+    "current_realization": "partial: RS has grouped OOF evidence but no compatible full-fit checkpoint for this surface; MS has a teacher-suitability checkpoint, MP is diagnostic, ME is weak; current 16-state panel fixed RS ON and varied MS only",
     "head_rows": [
       {
         "component": "RS",
@@ -223,15 +250,72 @@
       },
       {
         "layer": "5. Joint response program",
-        "current": "implemented, MS human Function failed in RS slice",
-        "target": "one coherent reply; multiple resources may support one response act"
+        "current": "implemented, but RS is mandatory primary act whenever present",
+        "target": "phase-appropriate R0/RS primary act; multiple suitable resources may jointly support one coherent reply"
       },
       {
         "layer": "6. Offline responsibility",
-        "current": "implemented in measurement, not yet full external",
-        "target": "separate retrieval, selector, executor, generator, Quality/Risk/Cost"
+        "current": "five-layer contract frozen; formal external telemetry incomplete",
+        "target": "separate suitability, act fit, Function, Quality/Risk, and complete Cost"
       }
     ]
+  },
+  "measurement": {
+    "contract_status": "FROZEN_ZERO_API_MEASUREMENT_DEFINITIONS",
+    "layers": [
+      "CANDIDATE_SUITABILITY",
+      "RESPONSE_ACT_FIT",
+      "COMPONENT_FUNCTION",
+      "RESPONSE_OUTCOME",
+      "COST"
+    ],
+    "responsibility": {
+      "diagnostic_view": "Assign the earliest evidenced failure among semantic observation, retrieval/Rank-1, head selection, joint planning, generator realization, guard/fallback, and evaluator measurement.",
+      "deployment_view": "Also report intention-to-treat performance of the final requested policy, because upstream failures still affect the deployed system.",
+      "no_double_charge": "A response-act error may cause poor Quality, but it is not relabeled as memory nonuse; a generator fabrication may be Risk without making the selected candidate unsuitable in hindsight."
+    },
+    "cost": {
+      "estimated_input_tokens_available": {
+        "always_off": {
+          "mean": 846.8125,
+          "total": 13549
+        },
+        "closest_cost_fixed_unqualified": {
+          "mean": 1053.375,
+          "total": 16854
+        },
+        "cost_and_on_rate_matched_random_rs": {
+          "mean": 1110.75,
+          "total": 17772
+        },
+        "fixed_high_rs_ms": {
+          "mean": 1263.6875,
+          "total": 20219
+        },
+        "learned_ms_r0_slice": {
+          "mean": 944.5625,
+          "total": 15113
+        },
+        "rs_fixed_on_plus_learned_ms": {
+          "mean": 1113.5,
+          "total": 17816
+        },
+        "rs_only": {
+          "mean": 983.625,
+          "total": 15738
+        },
+        "transparent_rs_ms": {
+          "mean": 1147.1875,
+          "total": 18355
+        }
+      },
+      "formal_status": "LEGACY_TRACE_COST_INCOMPLETE_ESTIMATES_ONLY",
+      "latency_ms_observed": false,
+      "provider_input_tokens_observed": false,
+      "provider_output_tokens_observed": false,
+      "usd_observed": false
+    },
+    "cost_claim_limit": "The current legacy panel has estimated input tokens, not complete observed provider usage, latency, or USD."
   },
   "root_causes": [
     "Evidence stages were repeatedly conflated: candidate availability, proxy-label predictability, generator telemetry, human Function, and response Quality are different estimands.",
@@ -239,6 +323,7 @@
     "Actual Rank-1 quality and suitability were not separated; low-information/current-echo candidates were sometimes treated as positive memory.",
     "Legacy V2 forced literal use and lexical trace; active V3 removes this, but legacy code remains a routing hazard.",
     "Current V3 generator can decline a resource, yet the RS-fixed-on slice produced no human-verifiable MS contribution even when the source was usable; RS crowd-out versus general executor nonuse is unresolved.",
+    "The 16-state panel hard-coded RS ON. The two closure cards came from lexical fallback rather than an opportunity signal, so the old closure packet could not evaluate learned RS routing.",
     "The V3 runner populated meaning_cue and allowed_response_change with identical generic templates for every candidate. It did not materialize the candidate-specific semantic proposition, current-goal relation, boundary, or concrete response change promised by the architecture.",
     "LLM measurement endpoints were overpromoted despite schema, token-budget, order, and attribution failures; proxy 12/12 Function later became PI 0/7 in the relevant slice.",
     "The authority file itself exposes both a current V3 phase and a stale terminal current_phase."
@@ -272,7 +357,7 @@
   "minimum_repair_route": [
     "Normalize one machine authority pointer and forbid legacy V2 imports in all active runners.",
     "Add per-head three-way runtime accounting: ON, OFF, UNCERTAIN_AS_OFF. Learn/calibrate uncertainty only on outer-train; do not map one uncertain head to global M0+R0.",
-    "Complete the already materialized 7-item existing-arm MS+R0 Function review and the separate 2-item M0+R0 versus M0+RS closure review; neither requires API calls, refitting, or threshold changes.",
+    "Complete the 7-item existing-arm MS+R0 Function review and the corrected 2-item no-RS-card R0 versus forced-AM01 closure review; neither requires API calls, refitting, or threshold changes, and the closure result must not be called learned RS performance.",
     "If MS+R0 has any verified Function, quantify RS crowd-out and repair joint response planning. If it remains 0/7, implement the missing bounded semantic-use-plan adapter before any new head fit: candidate proposition, current-goal relation, exact response change, owner/time boundary, and nonuse condition.",
     "After MS execution is repaired, develop MP and ME under the same independent-head/joint-execution discipline. The primary system requires at least two passing memory heads; one memory head is not sufficient.",
     "Run one transport-only Claude/Gemini compatibility pilot with three controls. Endpoint choice is a measurement implementation decision, not a new scientific model search.",
@@ -284,14 +369,14 @@
     "conditional_future": "Only if the retrieval-oracle decomposition shows actual Rank-1 is the dominant bottleneck, pre-register one cross-encoder reranker challenger against BGE-M3. Do not run an open-ended Hugging Face model search."
   },
   "authority_conflict": {
-    "active_v3_phase": "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
-    "active_v3_status": "ZERO_API_EXISTING_ARM_DIAGNOSTIC_PACKETS_READY_PI_REVIEW_NEXT",
+    "active_v3_phase": "R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
+    "active_v3_status": "ZERO_API_CORRECTED_PACKETS_READY_PI_REVIEW_NEXT",
     "stale_nested_current_phase": "MS_SESSION_ALIGNED_FINAL_OOF_V2",
     "stale_nested_status": "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT",
     "assessment": "The top-level active_v3_phase is current, but the same authority file still exposes an older terminal current_phase. This is a real machine-routing hazard and must be normalized before any new runner is authorized."
   },
   "source_hashes": {
-    "data/pm_v1_5_contracts/active_method_authority_v1.json": "d93d6039dc7df2f75d736e6dc19367117699314ea87961513b16c6dd209fdcf3",
+    "data/pm_v1_5_contracts/active_method_authority_v1.json": "145780734f22c6d2fe832a17ddbb9416fe2c435dca9f3b4eca7e0465fbc9bea7",
     "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.json": "0e4c29e54fd0951411ed6b686b2f37aee1f62c557e0f0eee4b7ee7298d497041",
     "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82",
     "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json": "db6b800f216b64f25ed16f8f8004d0ee9545113ad5788ebd1a56f7c10f99ab55",
@@ -307,8 +392,10 @@
     "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811/reviews.jsonl": "43b80b4463bcaa62049897b279c0247af64407ccc204885144d0946efd81ad2d",
     "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2",
     "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3",
-    "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/report.json": "70346e5dcddcb6418e871c58f339a6216342770bcc273c1400bacbfcf17c62bb",
-    "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_private_key.jsonl": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec",
+    "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/report.json": "3548f66b9e5ae8ebccdde919fc29469171cea1266b904486f6512c3b6640b36f",
+    "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/r0_function_private_key.jsonl": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec",
+    "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/closure_actual_rank1_audit.jsonl": "46093e880915ea9da64b447643101a59bd0b3a34f5b9650f1e6338ea3452da9f",
+    "data/pm_v1_5_contracts/paper1_v3_five_layer_measurement_contract_v1.json": "49a7e1d069069c27f21a56944ecdccda945007ac22a224d5f93ca276be02cb16",
     "scripts/v1_5/230l_materialize_paper1_v3_ms_executor_qualification_preflight_v1_5.py": "8dd7704278640299f599c39bc0d3de3c5a1627a8234dacb7c72bc2ae58f2cacc",
     "scripts/v1_5/232l_run_paper1_v3_ms_executor_qualification_v1_5.py": "5fa3435755939711b283b43417bb8fe307fb0a35e7ac449f4d6de88914ce75b9"
   }

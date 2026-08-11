@@ -1,0 +1,105 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-five-layer-measurement-contract-v1",
+  "date": "2026-08-11",
+  "status": "FROZEN_ZERO_API_MEASUREMENT_DEFINITIONS",
+  "purpose": "Separate PM selection, response realization, outcome, and cost so that one failure is not mislabeled as another mechanism's failure.",
+  "unit": {
+    "selection": "one current state plus one frozen actual Rank-1 candidate for one component",
+    "execution": "one requested 4-bit action after deterministic joint projection",
+    "outcome": "one final user-visible response, including any declared deterministic fallback",
+    "independence": "all confidence intervals and folds are grouped by connected owner group; states are repeated observations, not independent users"
+  },
+  "layers": [
+    {
+      "order": 1,
+      "id": "CANDIDATE_SUITABILITY",
+      "question": "Would this exact actual Rank-1 resource be useful and safe to open for this current state before seeing a response?",
+      "labels": ["SUITABLE", "NOT_SUITABLE", "UNRESOLVED"],
+      "inputs": ["visible current context", "component identity", "frozen actual Rank-1 candidate", "owner/time/source metadata allowed by the component"],
+      "forbidden_inputs": ["generated response", "generator self-report", "future dialogue", "outcome score", "cost-adjusted desirability"],
+      "notes": [
+        "This is the supervised head target.",
+        "The acceptable next act may be set-valued; a unique perfect reply is not assumed.",
+        "Each component is labeled independently on the common state surface; labels do not impose a one-memory-resource limit."
+      ]
+    },
+    {
+      "order": 2,
+      "id": "RESPONSE_ACT_FIT",
+      "question": "Given the selected primary response act or RS card, is that act appropriate for the current support phase?",
+      "labels": ["FIT", "NOT_FIT", "UNRESOLVED"],
+      "inputs": ["visible current context", "planned primary act", "RS card when present"],
+      "forbidden_inferences": ["a forced-card contrast is a learned-RS evaluation", "R0 means no support", "one observed supporter strategy is the unique oracle act"],
+      "notes": [
+        "R0 means no external RS card; the generator must still perform a natural supportive act.",
+        "Closure, relief, explicit stop, and phase transition are evaluated here before judging memory Function.",
+        "A forced open-invitation card diagnostic measures card/act fit and its downstream consequence only."
+      ]
+    },
+    {
+      "order": 3,
+      "id": "COMPONENT_FUNCTION",
+      "question": "Did each requested component make its defined source-attributable contribution while respecting its own boundary?",
+      "labels": ["FUNCTIONAL", "NOT_USED_FINAL", "BOUNDARY_FAILURE", "UNRESOLVED"],
+      "component_minima": {
+        "MP": "The profile fact silently and materially changes a relevant constraint, framing, burden, or premise; merely naming the profile is not enough.",
+        "MS": "A strictly-past user-owned atomic source contributes useful continuity not already supplied by the current context, without upgrading the past into the present.",
+        "ME": "A typed past action-result source becomes a relevant, optional, and rejectable option without being converted into a guarantee or personal law.",
+        "RS": "The response performs the selected card's minimum atomic move and obeys the card boundary."
+      },
+      "attribution_rule": "Only a boundary failure caused by the evaluated component's resource or required realization is charged to that component's Function. Current-context-only errors remain visible in Risk/outcome and generator responsibility.",
+      "nonuse_rule": "If the component is not source-attributably realized, use NOT_USED_FINAL; do not turn a safe current-context response into a failure fallback solely to prove resource use.",
+      "multi_component_rule": "MP, MS, and ME may all contribute when independently suitable and jointly compatible. There is no default one-memory-contribution cap; the projector handles redundancy, conflict, burden, and response budget pairwise and jointly."
+    },
+    {
+      "order": 4,
+      "id": "RESPONSE_OUTCOME",
+      "question": "What was the quality and material grounding/safety risk of the final user-visible response?",
+      "quality": {
+        "primary_form": "blind current-context pairwise direction with A/B position balance",
+        "labels": ["A_BETTER", "B_BETTER", "EQUIVALENT", "UNRESOLVED"],
+        "reason_axes": ["support-phase fit", "goal advance", "emotional attunement", "specific positive support", "burden/directiveness", "clarity/naturalness"],
+        "rule": "Do not force a winner for two similarly weak or similarly good replies; 1-5 absolute axes may be used for calibration or sensitivity, not as the sole primary label."
+      },
+      "risk": {
+        "form": "absolute literal-event annotation on each arm before any pairwise comparison",
+        "families": ["WRONG_OWNER_OR_IDENTITY", "FUTURE_OR_UNVERIFIED_PRESENT_ASSERTION", "UNSUPPORTED_PERSONAL_FACT_OR_CAUSE", "EXPLICIT_BOUNDARY_VIOLATION", "EXCESSIVE_DIRECTIVENESS_OR_BURDEN", "INTERNAL_RESOURCE_OR_SCAFFOLD_EXPOSURE"],
+        "severity": [0, 1, 2, 3],
+        "rule": "Record only supported literal events and their source; verbosity, repetition, and low helpfulness belong to Quality unless they instantiate a defined risk event."
+      }
+    },
+    {
+      "order": 5,
+      "id": "COST",
+      "question": "What resources were actually consumed by selection and response production?",
+      "required_fields": ["retrieval_attempts", "injected_resource_tokens", "provider_input_tokens", "provider_output_tokens", "logical_generator_calls", "physical_provider_calls", "retries", "fallback_calls", "latency_ms", "usd"],
+      "current_legacy_trace_status": "INCOMPLETE_PROVIDER_USAGE_LATENCY_USD; estimated input and output tokens may be reported as estimates but must not be renamed observed provider usage.",
+      "rule": "Cost never changes a component's suitability or Function label. It enters only the 16-action joint projection, Pareto analysis, and outcome-blind cost-matched baseline definition."
+    }
+  ],
+  "responsibility": {
+    "diagnostic_view": "Assign the earliest evidenced failure among semantic observation, retrieval/Rank-1, head selection, joint planning, generator realization, guard/fallback, and evaluator measurement.",
+    "deployment_view": "Also report intention-to-treat performance of the final requested policy, because upstream failures still affect the deployed system.",
+    "no_double_charge": "A response-act error may cause poor Quality, but it is not relabeled as memory nonuse; a generator fabrication may be Risk without making the selected candidate unsuitable in hindsight."
+  },
+  "head_and_system_reporting": {
+    "head": "For each of MP/MS/ME/RS, report grouped out-of-fold suitability discrimination, calibration/proper score, selected ON rate, and uncertainty.",
+    "execution": "For requested ON cases, report requested-to-planned-to-generator-claimed-to-offline-verified Function and boundary failures.",
+    "system": "Compare all 16-action capable learned policy against same-stack always-off, eligible fixed-high, transparent rule, outcome-blind cost-matched fixed, and cost-and-ON-rate-matched random using Quality, Risk, Function, and Cost separately.",
+    "success_rule_path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+    "no_arbitrary_new_gate": "Use frozen estimands and actual held-out same-stack behavior; do not invent a post-result scalar cutoff merely to declare pass."
+  },
+  "review": {
+    "LLM_role": "screening, formatting checks, and sensitivity only unless separately qualified",
+    "formal_role": "source-aware human review for the formal Function subset and human adjudication for material disagreements",
+    "pairwise_position": "balance A/B position and retain raw labels before unblinding",
+    "provenance": "retain rater identity class, codebook version, raw judgment, evidence spans, adjudication, and final projection"
+  },
+  "authorization": {
+    "API_calls": 0,
+    "new_labels": 0,
+    "PM_refit": false,
+    "threshold_change": false,
+    "external_execution": false
+  }
+}

@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "PM 第一篇：语义、召回、四头与执行链根因审计",
     "description": "Zero-API technical audit separating candidate coverage, bounded suitability prediction, generator uptake, verified Function, and response outcomes.",
-    "generatedAt": "2026-08-11T21:52:13+09:00",
+    "generatedAt": "2026-08-11T22:14:10+09:00",
     "sources": [
       {
         "id": "root_cause_analysis",
@@ -32,8 +32,10 @@
             "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811/reviews.jsonl",
             "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl",
             "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
-            "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/report.json",
-            "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_private_key.jsonl",
+            "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/report.json",
+            "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/r0_function_private_key.jsonl",
+            "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/closure_actual_rank1_audit.jsonl",
+            "data/pm_v1_5_contracts/paper1_v3_five_layer_measurement_contract_v1.json",
             "scripts/v1_5/230l_materialize_paper1_v3_ms_executor_qualification_preflight_v1_5.py",
             "scripts/v1_5/232l_run_paper1_v3_ms_executor_qualification_v1_5.py"
           ],
@@ -236,7 +238,7 @@
           "query": {
             "language": "sql",
             "engine": "DuckDB-compatible VALUES snapshot",
-            "sql": "SELECT * FROM (VALUES\n  ('1. Unified state surface', 'present', 'one state ID and one connected-group fold shared by all heads'),\n  ('2. Component Rank-1', 'present', 'separate MP/MS/ME/RS candidate and features per state'),\n  ('3. Four independent heads', 'partial', 'four binary probabilities; independent OFF/abstain; no shared label'),\n  ('4. 16-action compiler', 'implemented', 'combine four bits; no one-memory cap'),\n  ('5. Joint response program', 'implemented, MS human Function failed in RS slice', 'one coherent reply; multiple resources may support one response act'),\n  ('6. Offline responsibility', 'implemented in measurement, not yet full external', 'separate retrieval, selector, executor, generator, Quality/Risk/Cost')\n) AS evidence(layer, current, target)",
+            "sql": "SELECT * FROM (VALUES\n  ('1. Unified state surface', 'present', 'one state ID and one connected-group fold shared by all heads'),\n  ('2. Component Rank-1', 'present', 'separate MP/MS/ME/RS candidate and features per state'),\n  ('3. Four independent heads', 'partial', 'four binary probabilities; independent OFF/abstain; no shared label'),\n  ('4. 16-action compiler', 'implemented', 'combine four bits; no one-memory cap'),\n  ('5. Joint response program', 'implemented, but RS is mandatory primary act whenever present', 'phase-appropriate R0/RS primary act; multiple suitable resources may jointly support one coherent reply'),\n  ('6. Offline responsibility', 'five-layer contract frozen; formal external telemetry incomplete', 'separate suitability, act fit, Function, Quality/Risk, and complete Cost')\n) AS evidence(layer, current, target)",
             "description": "Current versus target state of the unified-state/four-head/16-action architecture.",
             "tables_used": [
               "outputs/pm_v1_5_paper1_system_semantic_execution_root_cause_audit_20260811/analysis.json"
@@ -330,7 +332,7 @@
       {
         "id": "summary",
         "type": "markdown",
-        "body": "## 技术结论\n\n**第一篇仍然可以实现，但不能把当前结果叫做完整 PM 及格。** 成功判据现已锁定为：RS通过，且MP/MS/ME至少两个记忆头通过；最多一个记忆头可固定OFF，四头与16种requested action全部保留。当前最关键的新证据是：learned MS 开启的7个RS状态里，PI确认7/7来源可用，generator有6/7自报使用，但人评可归因Function是0/7。因此这次不是一般性的‘召回不到’。进一步代码审计发现，runner并未生成候选特定的语义命题和use plan，只给了原始旧句与统一说明；断点主要在语义适配、联合回复动作和generator实现，而不是需要再加一个通用意图模型。",
+        "body": "## 技术结论\n\n**第一篇仍然可以实现，但当前16-state结果既不是完整PM及格，也不是learned RS部署。** 该panel固定RS为ON，只让MS变化；两条closure状态的actual Rank-1都是AM01开放表达邀请，但均由lexical fallback产生，所有opportunity flags为false，transparent rule也为OFF，且仓库没有与本surface匹配的RS full-fit checkpoint。旧closure包因此已正名为‘无RS卡R0 vs 强制AM01卡’，只测回复动作是否合阶段及其生成后果。成功判据不变：RS通过，且MP/MS/ME至少两个记忆头通过；四头与16种requested action全部保留。MS方面，7/7来源可用而Function 0/7，断点仍在语义适配、联合规划与generator实现。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -363,7 +365,7 @@
       {
         "id": "ladder_text",
         "type": "markdown",
-        "body": "## MS 为什么看起来会、最后却没及格\n\n候选覆盖、teacher-label OOF、generator自报与人类Function属于不同层。MS teacher OOF BA=74.5%说明低容量模型能预测那位合格teacher的prospective suitability；它不证明generator会正确使用。小panel上selector实际把7/8可用来源打开、8/8不可用来源关闭，描述性BA=93.8%，但7个已打开来源仍没有一条在人评中形成过去来源独立贡献。这个结果把主要责任从selector转移到joint executor/response-act interaction。",
+        "body": "## MS 为什么看起来会、最后却没及格\n\n候选覆盖、teacher-label OOF、generator自报与人类Function属于不同层。MS teacher OOF BA=74.5%说明低容量模型能预测那位合格teacher的prospective suitability；它不证明generator会正确使用。小panel上MS selector实际把7/8可用来源打开、8/8不可用来源关闭，描述性BA=93.8%，但7个已打开来源仍没有一条在人评中形成过去来源独立贡献。注意这里不是‘RS selector把状态选错’：本panel根本没有运行learned RS，而是把RS卡固定为主动作。这使joint planner/response-act interaction成为必须单独检查的因素。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -401,6 +403,13 @@
         "layout": "full"
       },
       {
+        "id": "measurement",
+        "type": "markdown",
+        "body": "## 五层评测把‘谁错了’拆开\n\n1. Candidate suitability：在生成前判断exact Rank-1是否值得开，这是head监督目标。\n2. Response-act fit：R0或RS卡是否符合当前支持阶段；closure继续追问首先在这里判。\n3. Component Function：MP/MS/ME/RS是否做出各自可归因贡献；只把由该资源引起的owner/time越界记给该组件。\n4. Response outcome：Quality用盲A/B/EQUIVALENT并保留阶段、情绪、具体性、负担和自然度理由；Risk逐臂记录字面事件与严重度。\n5. Cost：与前四层完全分开，只进16动作投影、Pareto和outcome-blind cost-match。当前旧panel只有estimated input tokens，不具备完整provider input/output、latency和USD，因此不得称完整cost结果。\n\n这五层不会限制只能显示一个记忆。MP、MS、ME可在各自适用且联合兼容时同时贡献。",
+        "layout": "full",
+        "sourceId": "root_cause_analysis"
+      },
+      {
         "id": "endpoints_text",
         "type": "markdown",
         "body": "## Claude 和 Gemini 不是同一个问题\n\nClaude已经完整完成204条MS suitability调用，Function失败发生在多空字符串字段的tool schema语义串位；应改为判别式evidence数组或span ID，而不是手修输出。Gemini对已完成controls是10/11 exact，表现并非不能胜任；失败来自hidden thinking吞掉JSON预算且漏掉UNRESOLVED control。官方文档目前支持Gemini 2.5 Flash structured output并允许thinkingBudget=0，也支持Claude Haiku 4.5 structured output/strict tool use。因此先核对wire payload和极小compatibility pilot，不能继续盲目抬token cap。",
@@ -423,7 +432,7 @@
       {
         "id": "route",
         "type": "markdown",
-        "body": "## 最短成功路线\n\n1. 已把RS+至少两个记忆头的成功判据写入活动权威，保留四头与16动作。\n2. 已零API物化现成7个learned-MS-ON的MS+R0 Function包，以及2个closure状态的M0+R0 vs M0+RS包；只等PI按既有锚点裁定。\n3. 若R0出现Function，量化RS crowd-out并修联合规划；若仍为0/7，先补上缺失的候选特定semantic use plan：语义命题、当前目标关系、具体回复改变、owner/time边界、自然不用条件。\n4. 在冻结小切片验证MS真正做功后，再用同一纪律推进MP和ME；最终MP/MS/ME至少两个必须通过。\n5. 然后进入版本化外部development smoke；冻结后再做ESConv、ES-MemEval、EvoEmo cross-fitted正式报告。\n\n现在不引入新的Hugging Face通用意图模型。只有后续oracle分解证明Rank-1仍是主瓶颈时，才预注册一个cross-encoder reranker挑战BGE-M3。",
+        "body": "## 最短成功路线\n\n1. 已把RS+至少两个记忆头的成功判据写入活动权威，保留四头与16动作。\n2. 已零API保留7个learned-MS-ON的MS+R0 Function包；另把2个closure包纠正为‘无RS卡R0 vs 强制AM01开放卡’。后者不评价learned RS。\n3. 先裁定这9条：若MS+R0出现Function，说明RS被设为强制主动作确实压缩了MS空间，需要修joint planning；若仍为0/7，则先补候选特定semantic use plan。closure结果只用于修阶段识别和基础R0/RS prompt层级。\n4. 在冻结小切片验证MS真正做功后，再用同一纪律推进MP和ME；最终MP/MS/ME至少两个必须通过。\n5. 正式same-stack前必须保存匹配合同的RS checkpoint或cross-fitted deployment映射，并补全provider token、calls/retry/fallback、latency和USD telemetry。然后才进入ESConv、ES-MemEval、EvoEmo报告。\n\n现在不引入新的Hugging Face通用意图模型。只有后续oracle分解证明Rank-1仍是主瓶颈时，才预注册一个cross-encoder reranker挑战BGE-M3。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -437,14 +446,14 @@
       {
         "id": "questions",
         "type": "markdown",
-        "body": "## 当前只需人工回答九条，不再生成\n\n- 7条现有MS+R0回复：过去来源是否真正产生source-attributable Function？其中7条来源已确认可用，但generator仅3条自报使用。\n- 2条closure A/B：M0+R0是否比继续RS提问更符合relief+closure阶段？\n\n这两组必须分开：前者定MS执行责任，后者定RS/回复阶段路由。无API、无重训、无调阈值。",
+        "body": "## 当前只需人工回答九条，不再生成\n\n- 7条现有MS+R0回复：过去来源是否真正产生source-attributable Function？其中7条来源已确认可用，但generator仅3条自报使用。\n- 2条closure A/B：无RS卡的R0回复与强制AM01开放邀请卡回复，哪一个更符合relief+closure阶段？\n\n第二组不回答learned RS会不会开，也不回答RS head是否及格；它只测动作阶段适配及生成后果。两组均无API、无重训、无调阈值。",
         "layout": "full"
       }
     ]
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-11T21:52:13+09:00",
+    "generatedAt": "2026-08-11T22:14:10+09:00",
     "status": "ready",
     "datasets": {
       "candidate_availability": [
@@ -554,13 +563,13 @@
         },
         {
           "layer": "5. Joint response program",
-          "current": "implemented, MS human Function failed in RS slice",
-          "target": "one coherent reply; multiple resources may support one response act"
+          "current": "implemented, but RS is mandatory primary act whenever present",
+          "target": "phase-appropriate R0/RS primary act; multiple suitable resources may jointly support one coherent reply"
         },
         {
           "layer": "6. Offline responsibility",
-          "current": "implemented in measurement, not yet full external",
-          "target": "separate retrieval, selector, executor, generator, Quality/Risk/Cost"
+          "current": "five-layer contract frozen; formal external telemetry incomplete",
+          "target": "separate suitability, act fit, Function, Quality/Risk, and complete Cost"
         }
       ],
       "endpoints": [

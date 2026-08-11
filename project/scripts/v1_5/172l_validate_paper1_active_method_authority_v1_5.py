@@ -116,6 +116,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -995,6 +996,35 @@ def validate_active_authority() -> dict[str, Any]:
                     )
                 )
                 or (
+                    active_v3.get("id") == "R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT"
+                    and active_v3_document.get("status")
+                    == "ZERO_API_CORRECTED_PACKETS_READY_PI_REVIEW_NEXT"
+                    and active_v3_document["primary_success_rule"]["machine_predicate"]
+                    == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["cases"] == 7
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["connected_groups"] == 7
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["unchanged_from_v1"] is True
+                    and active_v3_document["diagnostic"]["forced_open_card_closure"]["cases"] == 2
+                    and active_v3_document["diagnostic"]["forced_open_card_closure"]["actual_rank1_selection_mode"]
+                    == "lexical_fallback"
+                    and active_v3_document["diagnostic"]["forced_open_card_closure"]["all_observable_opportunity_flags_false"] is True
+                    and active_v3_document["diagnostic"]["forced_open_card_closure"]["all_transparent_rule_off"] is True
+                    and active_v3_document["diagnostic"]["forced_open_card_closure"]["compatible_full_fit_RS_checkpoint_exists"] is False
+                    and active_v3_document["authorization"]["PI_source_aware_Function_review"] is True
+                    and active_v3_document["authorization"]["PI_forced_open_card_closure_quality_review"] is True
+                    and active_v3_document["authorization"]["API_calls"] == 0
+                    and active_v3_document["authorization"]["response_generation"] is False
+                    and active_v3_document["authorization"]["PM_refit"] is False
+                    and active_v3_document["authorization"]["threshold_change"] is False
+                    and active_v3_document["authorization"]["training_label_creation"] is False
+                    and sha(resolve(active_v3_document["measurement_contract"]["path"]))
+                    == active_v3_document["measurement_contract"]["sha256"]
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
+                or (
                     active_v3.get("id") == "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT"
                     and active_v3_document.get("status")
                     == "ZERO_API_EXISTING_ARM_DIAGNOSTIC_PACKETS_READY_PI_REVIEW_NEXT"
@@ -1218,6 +1248,9 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "PI_REVIEW_SEVEN_R0_FUNCTION_AND_TWO_FORCED_OPEN_CARD_CLOSURE_ITEMS"
+            if active_v3.get("id") == "R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT"
+            else
             "PI_REVIEW_SEVEN_R0_FUNCTION_AND_TWO_CLOSURE_ROUTING_EXISTING_ARM_ITEMS"
             if active_v3.get("id") == "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT"
             else
