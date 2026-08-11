@@ -1,0 +1,93 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-oracle-plan-upper-bound-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "EXACT_8_ORACLE_PLAN_MS_R0_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Test the fixed generator's best-case capacity to absorb a source-grounded candidate-specific MS plan, including six intended-use and two safe-nonuse controls, before any PM retraining.",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "promoted_from_commit": "7eb23a6e0cc749ae866202e681b007fd3e0789a1",
+  "input_bindings": [
+    {
+      "role": "zero_api_parent_contract",
+      "path": "data/pm_v1_5_contracts/paper1_semantic_adapter_ablation_v1.json",
+      "sha256": "47296466e5bc1bca629a4e240c5b9a3e8721202ab3ac271a4ad096c2b4cda99e"
+    },
+    {
+      "role": "oracle_plans",
+      "path": "data/pm_v1_5_contracts/paper1_ms_oracle_semantic_plans_v1.json",
+      "sha256": "a6e959de84dbd8afbac51b5326da7711367a42018008130a427267df2628c1f8"
+    },
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_preflight_20260811/report.json",
+      "sha256": "8f273bab3e92f09f2aaaace803ee1a8741a45292fd4ed5ce9fdcf05d886c874e"
+    },
+    {
+      "role": "exact_eight_call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_preflight_20260811/physical_call_plan_private.jsonl",
+      "sha256": "a3d069b30cc5b785428783f998436e77bb992b6362dfe46b7f65b15a40ef553b"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "5626b22d84603918792beb500dab6a18a604fe060615f7fd3b4b21181f9e48ce"
+    },
+    {
+      "role": "raw_first_live_runner",
+      "path": "scripts/v1_5/258l_run_paper1_ms_oracle_plan_upper_bound_v1_5.py",
+      "sha256": "6a11e84040614dcab8127850131bc8c44bc17c27ac42b76bcccc0915b8366247"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_oracle_plan_upper_bound_execution_v1.json",
+      "sha256": "4027e7958c9802dc069587d2d9b1392aa97302af07e39057054d1c1a23e442c1"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_ms_oracle_plan_upper_bound_v1",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 8,
+    "use_if_natural_controls": 6,
+    "safe_nonuse_controls": 2,
+    "requested_action": "MS+R0",
+    "logical_primary_calls": 8,
+    "maximum_semantic_calls_with_contamination_retry": 16,
+    "maximum_transport_attempts": 32,
+    "absolute_usd_cap": 0.01,
+    "run_identity": "94f1546096581e3bc9ce0ad0510567df38aab6ba5537c945ad990cd79ae070aa",
+    "reuse_frozen_state_seed": true,
+    "raw_first": true,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_live_20260811"
+  },
+  "authorization": {
+    "generator_calls": true,
+    "offline_blind_measurement": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "training_label_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "invariants": {
+    "full_sixteen_action_space_unchanged": true,
+    "oracle_is_never_pm_input_or_gold": true,
+    "exact_source_is_audit_provenance_not_literal_splice": true,
+    "safe_nonuse_is_a_correct_execution_outcome": true,
+    "generator_claim_is_not_function_gold": true,
+    "existing_R0_and_generic_MS_arms_are_immutable_controls": true
+  },
+  "user_authorization": {
+    "exact_phrase": "试试吧，推进吧。然后注意版本不要乱，不要漂移",
+    "scope_interpretation": "Proceed with the bounded semantic/oracle diagnosis while preserving version isolation; no PM refit or external experiment.",
+    "absolute_usd_cap": 0.01
+  },
+  "next": "CLOSE_PAID_RELEASE_THEN_BUILD_ZERO_API_BLIND_THREE_ARM_FUNCTION_AND_QUALITY_PACKET"
+}

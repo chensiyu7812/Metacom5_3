@@ -117,6 +117,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -161,6 +162,7 @@ def validate_active_authority() -> dict[str, Any]:
                 "MS_SINGLE_TEACHER_PUBLIC_EXECUTION",
                 "MS_EXECUTOR_QUALIFICATION_EXECUTION",
                 "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION",
+                "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
             }
             else paid.get("paid_execution_authorized") is False
             and authority["paid_execution_guard"]["required_current_value"] is False
@@ -1225,6 +1227,35 @@ def validate_active_authority() -> dict[str, Any]:
                         ]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION"
+                    and active_v3_document.get("status")
+                    == "EXACT_8_ORACLE_PLAN_MS_R0_CALLS_AUTHORIZED_ONCE"
+                    and active_v3_document["method_version"]
+                    == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
+                    and active_v3_document["experiment_revision"]
+                    == "SEMANTIC_ADAPTER_ABLATION_V1"
+                    and active_v3_document["execution"]["states"] == 8
+                    and active_v3_document["execution"]["use_if_natural_controls"] == 6
+                    and active_v3_document["execution"]["safe_nonuse_controls"] == 2
+                    and active_v3_document["execution"]["logical_primary_calls"] == 8
+                    and active_v3_document["execution"]["absolute_usd_cap"] == 0.01
+                    and active_v3_document["authorization"]["generator_calls"] is True
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["threshold_change"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["MP_or_ME_work"] is False
+                    and active_v3_document["authorization"]["baseline_or_external_calls"] is False
+                    and active_v3_document["invariants"]["full_sixteen_action_space_unchanged"] is True
+                    and active_v3_document["invariants"]["oracle_is_never_pm_input_or_gold"] is True
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
             )
         ),
     }
@@ -1248,6 +1279,9 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "EXECUTE_EXACT_8_MS_ORACLE_PLAN_UPPER_BOUND_CALLS"
+            if active_v3.get("id") == "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION"
+            else
             "PI_REVIEW_SEVEN_R0_FUNCTION_AND_TWO_FORCED_OPEN_CARD_CLOSURE_ITEMS"
             if active_v3.get("id") == "R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT"
             else

@@ -1,0 +1,42 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-oracle-plan-upper-bound-preflight-v1",
+  "status": "ZERO_API_PREFLIGHT_PASS_LIVE_PHASE_MAY_BE_HASH_BOUND",
+  "checks": {
+    "exact_eight_calls": true,
+    "six_use_two_safe_nonuse": true,
+    "one_ms_r0_call_per_state": true,
+    "frozen_seed_reused": true,
+    "candidate_specific_fields_visible": true,
+    "safe_nonuse_visible": true,
+    "literal_splice_forbidden": true,
+    "response_schema_frozen": true,
+    "teacher_label_not_provider_visible": true,
+    "zero_api": true
+  },
+  "calls": 8,
+  "parent_commit": "7eb23a6e0cc749ae866202e681b007fd3e0789a1",
+  "bindings": {
+    "contract": {
+      "path": "data/pm_v1_5_contracts/paper1_semantic_adapter_ablation_v1.json",
+      "sha256": "47296466e5bc1bca629a4e240c5b9a3e8721202ab3ac271a4ad096c2b4cda99e"
+    },
+    "oracle": {
+      "path": "data/pm_v1_5_contracts/paper1_ms_oracle_semantic_plans_v1.json",
+      "sha256": "a6e959de84dbd8afbac51b5326da7711367a42018008130a427267df2628c1f8"
+    },
+    "cases": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/qualification_cases_private.jsonl",
+      "sha256": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0"
+    },
+    "config": {
+      "path": "configs/paper1_ms_oracle_plan_upper_bound_execution_v1.json",
+      "sha256": "4027e7958c9802dc069587d2d9b1392aa97302af07e39057054d1c1a23e442c1"
+    },
+    "call_plan": {
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_preflight_20260811/physical_call_plan_private.jsonl",
+      "sha256": "a3d069b30cc5b785428783f998436e77bb992b6362dfe46b7f65b15a40ef553b"
+    }
+  },
+  "api_calls": 0,
+  "pm_fits": 0
+}

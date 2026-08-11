@@ -47,6 +47,7 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
     }
     assert active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
     assert sha(ROOT / active["contract_path"]) == active["contract_sha256"]
@@ -56,7 +57,8 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
     assert amendment["base_method"]["method_id"] == active["method_id"]
     assert authority["current_phase"]["status"] == "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT"
     assert paid["paid_execution_authorized"] is (
-        authority["active_v3_phase"]["id"] == "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION"
+        authority["active_v3_phase"]["id"]
+        in {"MS_EXECUTOR_FUNCTION_PROXY_EXECUTION", "MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION"}
     )
 
 
