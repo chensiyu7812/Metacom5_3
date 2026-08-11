@@ -2,9 +2,9 @@
 
 日期：2026-08-11
 
-状态：`G4A_V2_PACKET_AND_CONTROL_AUDIT_PASS / G4B_REVIEW_PHASE_DESIGN_NEXT / OLD_ARTIFACTS_IMMUTABLE`
+状态：`2026-08-12_ACTIVE_BUNDLE_PASS / FINAL_MS_CONTROL_REPAIR_DESIGN_COMPLETE / FRESH_CONTROL_MATERIALIZATION_NEXT_ZERO_API`
 
-Git 基线：`8337f15`（`Checkpoint accumulated PM V5.3-V5.4 and Paper1 recovery`）
+Git 历史基线：`8337f15`；当前分支：`work/paper1-semantic-adapter-ablation-20260811`。执行身份以活动 bundle 的逐文件 SHA 为准，不以本行 commit 文本推断。
 
 机器合同：`data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json`
 
@@ -23,11 +23,11 @@ protocol。旧 same-stack 的 68 states、136 calls、盲评结果永久属于 V
 
 Paper 1 的最低成功结构保持为：
 
-> **RS 必须成立，且 MP_PROFILE、MS、ME 至少一个记忆头具有 cross-fitted routing signal、真实
+> **RS 必须成立，且 MP_PROFILE、MS、ME 至少两个记忆头分别具有 cross-fitted routing signal、真实
 > functional contribution，并在同栈比较中不以不可接受的质量或 material risk 为代价。**
 
 优先争取 RS + MP_PROFILE + MS；ME 按公共数据真实 action-result 覆盖能学到多少报告多少。四头全都
-完美从来不是最低要求；只有 RS 而没有任何记忆做功仍不满足论文的 memory-PM 主张。
+完美从来不是最低要求；RS-only 或 RS 加恰一个记忆头都不满足论文的 primary memory-PM 主张。
 
 ## 1. 本次修复回答的核心问题
 
@@ -409,7 +409,7 @@ G4A 已完成：
 
 - ESConv、EvoEmo、ES-MemEval 分轨报告；
 - 只按实际通过 head 和 gate 写主张；
-- 只有 RS 则 memory-PM 主张失败；RS + 任一 memory head 才满足最低目标。
+- RS-only 或 RS + 恰一个 memory head 均为 primary failure；只有 RS + 至少两个 memory heads 才满足最低目标。
 
 ## 10. 必须成为机器测试的不可回归项
 
@@ -528,3 +528,80 @@ L2 logistic 得到：
 response-PM suitability gold。真正标签必须由 reviewer 对 `current state + exact atomic Rank-1` 前瞻判断能否形成
 具体、非重复、owner/time-safe 的 response change。该标签路线通过后，MS 单独 OOF，再与已通过 RS 进入共享
 16-action V3 executor；MP 只有在补齐 outcome-blind state-to-profile material-use representation 后才恢复。
+
+## 12. 2026-08-12 完成路线与语义边界附录（当前有效）
+
+本附录覆盖本文前部所有与“RS + 任一记忆头即可成功”相冲突的历史句子。当前唯一成功谓词为：
+
+```text
+RS_pass AND count_pass(MP, MS, ME) >= 2
+```
+
+### 12.1 语义理解不再作为一个万能模块
+
+正式系统只解决四个窄问题：RS 当前回复动作是否合适，MP profile 是否能实质改变回复约束，MS 的严格过去
+候选是否提供当前不可见且可用的连续性增量，ME 的过去 action-result 是否能成为当前可拒绝选项。系统不需要
+先输出一个开放式“用户真实意图”，也不声称理解全部隐喻、暗示、关系动力或临床需要。
+
+语义模型采用三层而不是单模型接管：
+
+1. deterministic 层处理候选缺席、owner/time/version/compiler、明确 stop/refusal、closure 等可证明边界；
+2. 冻结语义模型只输出候选—当前目标的 relation features，不直接造 gold 或 hard gate；
+3. 每个 component 的低容量 grouped head 独立输出概率，并用仅在 outer-train 校准的
+   `OFF / UNCERTAIN_AS_OFF / ON` 区间编译四个 bit。
+
+一个 head 不确定只关闭该 bit；其余 head 不受影响。只有四个 bit 都 OFF 时才成为 `M0+R0`。运行时必须按
+候选缺失、结构非法、语义拒答、head 未资格、预测 OFF、cost 投影分别报告 OFF 原因，禁止用一个总 OFF 比例
+冒充“理解率”。正式 coverage 是每 head 在合法候选分母上的 semantic-resolution rate。
+
+通用 NLI 已在明显关系/closure 对照上失败，永久禁止进入正式 PM。下一位零 API challenger 冻结为
+instruction-aware `Qwen/Qwen3-Reranker-0.6B`；`BAAI/bge-reranker-v2-m3` 作为轻量 reranker comparator。
+二者都只允许成为 relation feature。只有在全新、结果无关的 candidate-increment、current-echo、wrong-event、
+closure、meta-question 和 abstain controls 上明显优于现有 BGE/lexical，并在 grouped OOF 中带来增益，才保留；
+否则不增加系统复杂度。Jina reranker 因 `CC-BY-NC-4.0` 和 remote-code 依赖不作为 primary。
+
+### 12.2 “理解不了”闭环的准确状态
+
+`v1_5_v5_3_semantic_off_accounting.py` 已能记录语义 abstain 与各类 OFF；
+`v1_5_head_semantic_abstention.py` 已实现四 head 独立三态编译，并要求 threshold 绑定 outer-train artifact。
+但在各 head 完成 source-aware 标签与 grouped OOF 以前，没有合法 calibration artifact，因此不得填一个经验阈值
+冒充闭环完成。当前状态是：安全接口和动作编译完成，正式概率校准与 runner wiring 待各 head 训练阶段完成。
+
+### 12.3 最小人工、最大可审计的测量
+
+不再把大量 1–5 分人评或单个 LLM judge 当 gold。按对象拆成四种证据：
+
+- schema、exact source、owner/time、compiler、scaffold、token/call/latency/USD：机器确定性；
+- suitability training label：两家已通过 fresh controls 的不同模型家族独立结构化判断；只有 exact resolved
+  consensus 进入 primary label，分歧/abstain 保持 unlabeled/runtime OFF；
+- Function：只在 learned-ON 与匹配的 OFF 小样本上做 source-aware binary evidence audit；generator 自报无效；
+- Quality：同 state/seed 的盲 pairwise `A/B/TIE/ABSTAIN`；Risk 为字面事件族 absolute audit；Cost 机器计算。
+
+人工只保留两次小规模工作：一个冻结 anchor/control set 校准 rubric，以及最终分层抽样 sanity audit。人工不负责
+强行裁完所有模糊 case，不把人与模型分歧投票成 gold。若 anchor 与自动判断系统性不同，该测量岗位停止，不以
+第三人多数票续命。
+
+### 12.4 从现在到结果只允许四个阶段
+
+1. **语义资格与标签**：完成 MS 最终一次修正版 controls；通过后一次双模型 201 条 source-aware 标注。与此同时
+   只做 MP material-response-change 与 typed ME 的零 API control/surface 修复，不生成回复。
+2. **四头一次训练**：RS 在当前合同下重新封存可执行 checkpoint；MP/MS/ME 各自一套 label、一个低容量 head、
+   grouped OOF 和 outer-train abstention calibration。四头独立学、同一 state schema/feature builder、联合编译
+   16 actions。禁止把四头改成 16-class softmax。
+3. **小型执行资格**：每个拟通过 memory head 仅在少量 positive/negative/abstain anchors 上检查 planned→claimed→
+   verified Function，以及 meaning absorption、safe non-use 和 owner/time/scaffold；不过则归 executor/generator，
+   不回头改 PM 标签。
+4. **一次同栈与三个公共报告**：learned、always-off、RS-only、fixed-high、transparent、cost-matched fixed、
+   ON-rate/cost-matched random 共用同一 retriever、planner、generator、guard、seed 与 cost。ESConv、EvoEmo、
+   ES-MemEval 分轨报告；Quality、Risk、Function、Cost 不合成一个含混总分。
+
+完成定义不再是某个武断 BA 数字：每个通过 head 必须 nondegenerate、proper score 优于简单 baseline、在真实 groups
+上有双向支持、learned-ON 中出现可重复 verified Function，并在同栈不造成 material Quality/Risk regression。
+最终系统还必须满足 RS + 至少两个 memory heads，并在质量—风险—成本 Pareto 上相对至少一个强 baseline 有意义。
+
+### 12.5 版本控制
+
+后续不再新增 V4/V5 方法名。唯一入口是
+`data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json`；它绑定当前 phase、成功谓词、V3 planner/executor、
+语义 abstention、source-aware instrument、问题账本和禁止导入的 V2 literal-splice 文件。任何脚本/API/fit 若不先
+通过 bundle validator 即 fail closed。历史 authority 仍保存全部追溯关系，但不再作为人类或新 runner 的启动入口。

@@ -123,6 +123,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_REPAIR_PACKET_READY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_REPAIR_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FINAL_CONTROL_DESIGN_COMPLETE",
     }
     current_execution = authority.get("current_execution_phase") or {}
     checks = {
@@ -1411,6 +1412,30 @@ def validate_active_authority() -> dict[str, Any]:
                 )
                 or (
                     active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
+                    and active_v3_document.get("protocol")
+                    == "pm-v1.5-paper1-active-execution-bundle-v1"
+                    and active_v3_document.get("status")
+                    == "ACTIVE_ZERO_API_FINAL_MS_CONTROL_REPAIR_DESIGN_NO_REVIEW_OR_FIT"
+                    and active_v3_document["current_phase"]["status"]
+                    == "FINAL_CONTROL_CONSTRUCT_REPAIR_DESIGN_COMPLETE_FRESH_MATERIALIZATION_NEXT_ZERO_API"
+                    and active_v3_document["method"]["effective_primary_success_predicate"]
+                    == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+                    and active_v3_document["method"]["requested_action_count"] == 16
+                    and active_v3_document["current_phase"]["authorization"]
+                    == {
+                        "api_calls": 0,
+                        "training_labels": 0,
+                        "diagnostic_fits": 0,
+                        "generator_calls": 0,
+                        "external_execution": False,
+                    }
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["files"]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
                     and active_v3_document.get("status")
                     == "CONTROL_QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_ONE_CONSTRUCT_REPAIR_DESIGN_NEXT"
                     and active_v3_document["observed"]["logical_calls"] == 24
@@ -1456,7 +1481,7 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
-            "DESIGN_ONE_FINAL_CONTROL_CONSTRUCT_REPAIR_NO_THRESHOLD_RELAXATION"
+            "MATERIALIZE_AND_AUDIT_FRESH_MS_CONTROLS_ZERO_API"
             if active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
             else
             "EXECUTE_EXACT_24_SOURCE_ANNOTATED_CONTROL_CALLS"
@@ -1560,7 +1585,8 @@ def validate_active_authority() -> dict[str, Any]:
         ),
         "api_calls": 0,
         "responses_generated": 0,
-        "pm_trained": True,
+        "current_primary_pm_trained": False,
+        "historical_v2_checkpoint_exists_but_failed_current_primary": True,
         "additional_pm_fit_authorized": False,
         "external_outcomes_read": False,
     }

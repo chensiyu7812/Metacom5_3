@@ -103,6 +103,8 @@ SUITABLE requires every condition:
 6) that change preserves the user's current focus and does not upgrade past into present certainty;
 7) you can state a concrete safe-nonuse condition.
 
+For ONE_QUESTION, the entity/event link must already be resolved and the past-only proposition must change the content of a current-oriented support question. Asking whether the candidate is relevant, asking which candidate entity/event the user meant, or asking permission to inspect the old memory is meta-clarification, not candidate Function. If the entity/event link itself is unresolved, choose SEMANTIC_ABSTAIN rather than inventing a question that makes the candidate appear useful.
+
 NOT_SUITABLE includes: social closing/low information; current context already supplies the increment; wrong entity/event; stale/resolved/conflicting history; topic-only relevance with no current response change; use would shift focus away from the current need; or the user forbids past-session use.
 
 SEMANTIC_ABSTAIN is only for evidence genuinely missing from the shown text: unresolved entity/event, redundancy, material response change, or owner/time boundary. Do not use abstain merely because the case requires judgment.

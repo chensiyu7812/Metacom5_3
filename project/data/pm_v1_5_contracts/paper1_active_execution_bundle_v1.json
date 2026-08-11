@@ -1,0 +1,181 @@
+{
+  "protocol": "pm-v1.5-paper1-active-execution-bundle-v1",
+  "date": "2026-08-12",
+  "status": "ACTIVE_ZERO_API_FINAL_MS_CONTROL_REPAIR_DESIGN_NO_REVIEW_OR_FIT",
+  "purpose": "One small fail-closed entry point. Historical files remain auditable but cannot become active by filename, chronology, or conversational memory.",
+  "git": {
+    "branch": "work/paper1-semantic-adapter-ablation-20260811",
+    "parent_baseline_commit": "0630d3062b5ae334d779c0692fbdc61fdd64716f",
+    "new_method_version_forbidden": true,
+    "allowed_experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1"
+  },
+  "method": {
+    "base_method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+    "effective_primary_success_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "base_v2_rs_plus_ms_predicate_is_historical_only": true,
+    "requested_action_count": 16,
+    "independent_heads_joint_execution": true
+  },
+  "current_phase": {
+    "id": "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN",
+    "status": "FINAL_CONTROL_CONSTRUCT_REPAIR_DESIGN_COMPLETE_FRESH_MATERIALIZATION_NEXT_ZERO_API",
+    "parent_phase": {
+      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
+      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
+    },
+    "next_scientific_action": "Materialize and independently audit the already-designed fresh MS controls; review calls remain separately unauthorized.",
+    "authorization": {
+      "api_calls": 0,
+      "training_labels": 0,
+      "diagnostic_fits": 0,
+      "generator_calls": 0,
+      "external_execution": false
+    }
+  },
+  "semantic_runtime": {
+    "claim": "component-specific bounded resource suitability, not unrestricted human-language understanding",
+    "retrieval_encoder_role": "BGE-M3 similarity/retrieval only",
+    "generic_nli": "REJECTED",
+    "next_zero_api_challenger": "Qwen/Qwen3-Reranker-0.6B",
+    "challenger_role": "relation feature only; never gold or hard gate",
+    "uncertain_as_off": "INTERFACE_IMPLEMENTED_OUTER_TRAIN_CALIBRATION_AND_RUNNER_WIRING_PENDING",
+    "uncertain_scope": "only the uncertain component bit is OFF; other bits remain independent"
+  },
+  "measurement": {
+    "bulk_1_to_5_human_rating": "RETIRED",
+    "training_label": "dual qualified model-family exact resolved consensus; disagreements and abstentions remain unlabeled/off",
+    "human_role": "small frozen anchor set and final stratified sanity audit only",
+    "quality": "blind same-state same-seed pairwise A/B/TIE/ABSTAIN",
+    "risk": "absolute literal event-family audit plus attributable direction",
+    "function": "source-aware binary evidence on selected learned-ON and matched OFF slices",
+    "cost": "deterministic retrieval/injection/token/call/retry/latency/USD accounting"
+  },
+  "files": [
+    {
+      "role": "effective_primary_success_rule",
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+      "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
+    },
+    {
+      "role": "component_general_repair_contract",
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+      "sha256": "901cd420f7ef4dd88805d77d2ce0fe1d098bf226bd8a3c313e981ffea6e9d904"
+    },
+    {
+      "role": "historical_base_method_not_effective_success_rule",
+      "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_v2.json",
+      "sha256": "1ebbd3ad0a3ffdde44d4e573e9c30e6c75da2e046677ad1c2fb39f1d0368c184"
+    },
+    {
+      "role": "parent_current_phase_closeout",
+      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
+      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
+    },
+    {
+      "role": "final_ms_control_construct_repair_design",
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_construct_repair_design_v1.json",
+      "sha256": "52e1b498c2d7cd7ed790e8212817464de238279d65b423f748adf5113ba8615a"
+    },
+    {
+      "role": "semantic_challenger_contract",
+      "path": "data/pm_v1_5_contracts/paper1_semantic_adapter_ablation_v1.json",
+      "sha256": "47296466e5bc1bca629a4e240c5b9a3e8721202ab3ac271a4ad096c2b4cda99e"
+    },
+    {
+      "role": "current_human_plan_with_20260812_addendum",
+      "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
+      "sha256": "274625a97cce7e7b6dbafd3d3a58fedd44f21978b3217b681d28f5b32885247f"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "a9ca6b8c269c235fb1c29d92327fa72a51babfcd4ca58ac0e9654a8255c36bcd"
+    },
+    {
+      "role": "v3_factorial_planner",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "v3_meaning_absorption_executor",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    },
+    {
+      "role": "semantic_off_reason_accounting",
+      "path": "src/metacom_pm/v1_5_v5_3_semantic_off_accounting.py",
+      "sha256": "756b3f11a871fe3dd8f361c64722b26cde539cb6792cd15a9855a1110c611021"
+    },
+    {
+      "role": "per_head_uncertain_as_off_compiler",
+      "path": "src/metacom_pm/v1_5_head_semantic_abstention.py",
+      "sha256": "dedf736fd71aa2e7c0fd40ed0cc7653d9509f183c1558c5588b3048dde240ed5"
+    },
+    {
+      "role": "source_aware_ms_review_instrument",
+      "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+      "sha256": "6988957ebdf765382de5d5001231e19ddaf4275d7e8970dfa00f6984a1059541"
+    },
+    {
+      "role": "four_bit_action_runtime",
+      "path": "src/metacom_pm/v1_5b_policy_runtime.py",
+      "sha256": "6fe65fb5176c657c46a8e26df96ec9248e1469319e8cfa614cf75d2527efe73c"
+    },
+    {
+      "role": "typed_response_program",
+      "path": "src/metacom_pm/v1_5_v5_3_typed_response_program.py",
+      "sha256": "362598d1c12a18a49872eb63e7eb2fe72e5a5314120add02521fc0a6f32e38c6"
+    },
+    {
+      "role": "source_review_endpoint_config",
+      "path": "configs/paper1_ms_source_annotated_review_endpoints_v1.json",
+      "sha256": "cf04956ad8c8c00b9cfe3dc1ad5eeb85c30fc06970581177e9275a1d36f90c37"
+    },
+    {
+      "role": "ms_repair_packet_report",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/report.json",
+      "sha256": "927ba00ebd9ee688863bb51b68511ac867af208d0e4ad62304fa87f676586fd7"
+    },
+    {
+      "role": "failed_source_control_audit",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_control_audit_20260812/report.json",
+      "sha256": "93e625277bddfaf46022517b2f8da7a48f8ddda32924a7b6c62f66eb08532665"
+    },
+    {
+      "role": "generic_nli_rejection_report",
+      "path": "outputs/pm_v1_5_paper1_semantic_adapter_zero_api_20260811/report.json",
+      "sha256": "d625de8b36d11e1806a43df1a09fa9f78245ffc5e1cf5e816e74b8ab11ac3bab"
+    }
+  ],
+  "legacy_import_denylist": [
+    {
+      "path": "src/metacom_pm/v1_5_memory_response_plan_v2.py",
+      "sha256": "8d4118a4458e719475ca768ab484b6467efeef8ae296d7f3b3b43838c4330937",
+      "active_import_forbidden": true
+    },
+    {
+      "path": "src/metacom_pm/v1_5_memory_realization_v2.py",
+      "sha256": "13c6424cffc88878a2989f8d2d0ef88c6c08e4fd3be997a7de1041a675d06555",
+      "active_import_forbidden": true
+    },
+    {
+      "path": "scripts/v1_5/198l_run_paper1_ms_same_stack_generation_v1_5.py",
+      "sha256": "5a3a7b5e9834ee8603655c1095e3845fd733d25d52f5fdb039123593911f97f8",
+      "active_import_forbidden": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "current_human_plan_with_20260812_addendum",
+      "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
+      "sha256": "274625a97cce7e7b6dbafd3d3a58fedd44f21978b3217b681d28f5b32885247f"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "a9ca6b8c269c235fb1c29d92327fa72a51babfcd4ca58ac0e9654a8255c36bcd"
+    }
+  ],
+  "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-2026-08-12-完成路线与语义边界附录当前有效",
+  "runner_start_rule": "Validate this bundle and active_method_authority_v1.json; do not infer currency from any other file."
+}
