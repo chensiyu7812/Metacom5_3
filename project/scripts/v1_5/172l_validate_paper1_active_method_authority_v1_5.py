@@ -196,6 +196,18 @@ def validate_active_authority() -> dict[str, Any]:
                 "offline_verified_functional",
             ]
         ),
+        "v3_repair_suitability_is_per_component_and_nonexclusive": not v3_repair or (
+            v3_repair_document["suitability_gold"][
+                "components_may_all_be_suitable_in_the_same_state"
+            ]
+            is True
+            and v3_repair_document["suitability_gold"][
+                "one_of_k_softmax_or_winner_take_all_forbidden"
+            ]
+            is True
+            and "state by component"
+            in v3_repair_document["suitability_gold"]["decision_grain"]
+        ),
         "g2_phase_bound_and_zero_api_only": not g2 or (
             sha(resolve(g2["path"])) == g2["sha256"]
             and g2_document["status"]

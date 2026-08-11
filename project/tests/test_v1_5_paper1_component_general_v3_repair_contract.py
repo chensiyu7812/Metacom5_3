@@ -41,3 +41,12 @@ def test_full_sixteen_action_design_has_no_global_one_memory_cap():
     assert policy[
         "unknown_redundant_or_conflicting_relation_automatically_suppresses_a_bit"
     ] is False
+
+
+def test_suitability_decisions_are_per_component_and_nonexclusive():
+    contract = _module()._read(_module().CONTRACT)
+    suitability = contract["suitability_gold"]
+
+    assert "state by component" in suitability["decision_grain"]
+    assert suitability["components_may_all_be_suitable_in_the_same_state"] is True
+    assert suitability["one_of_k_softmax_or_winner_take_all_forbidden"] is True

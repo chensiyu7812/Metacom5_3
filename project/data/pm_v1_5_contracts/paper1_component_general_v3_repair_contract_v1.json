@@ -9,7 +9,7 @@
   },
   "human_plan": {
     "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-    "sha256": "a90a350fb0cb0cc3e4634b91736c677926373cca609a656a3392d4875575d053"
+    "sha256": "4140e283fcf1fb6ac8c42e05ece471a4e4aa5d09e45fde7547ac9ec74f3b9310"
   },
   "parent_rescue_decision": {
     "path": "data/pm_v1_5_contracts/paper1_memory_head_rescue_decision_v2.json",
@@ -79,6 +79,9 @@
       "NOT_SUITABLE",
       "SEMANTIC_ABSTAIN"
     ],
+    "decision_grain": "one non-exclusive decision per runtime-visible state by component by frozen actual Rank-1 candidate",
+    "components_may_all_be_suitable_in_the_same_state": true,
+    "one_of_k_softmax_or_winner_take_all_forbidden": true,
     "checklist_not_independent_labels": [
       "current target/entity/response-function fit",
       "specific nonredundant increment",
@@ -221,6 +224,8 @@
     "safe nonuse never triggers a fixed generic fallback",
     "RS remains the sole primary act when ON",
     "requested/eligible/planned/claimed/verified bits are distinct",
+    "component suitability decisions are non-exclusive and may all be SUITABLE in the same state",
+    "one-of-K, softmax, winner-take-all, and at-most-one-positive-memory labels are forbidden",
     "source or retrieval invalidity never becomes a PM semantic negative",
     "future/summary/observation/event/QA gold never enters runtime x or prompt",
     "cost never defines a positive head label",

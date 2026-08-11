@@ -79,6 +79,15 @@ def validate() -> dict[str, Any]:
         is True
         and contract["suitability_gold"]["primary_decision"]
         == ["SUITABLE", "NOT_SUITABLE", "SEMANTIC_ABSTAIN"],
+        "component_suitability_is_nonexclusive": contract["suitability_gold"][
+            "components_may_all_be_suitable_in_the_same_state"
+        ]
+        is True
+        and contract["suitability_gold"][
+            "one_of_k_softmax_or_winner_take_all_forbidden"
+        ]
+        is True
+        and "state by component" in contract["suitability_gold"]["decision_grain"],
         "all_six_component_pairs": set(contract["v3_executor"]["pair_rules_required"])
         == {"MP-MS", "MP-ME", "MP-RS", "MS-ME", "MS-RS", "ME-RS"},
         "one_primary_without_one_memory_cap": contract["v3_executor"]["response_budget"]

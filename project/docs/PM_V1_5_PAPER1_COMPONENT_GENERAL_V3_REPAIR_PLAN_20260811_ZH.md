@@ -2,7 +2,7 @@
 
 日期：2026-08-11
 
-状态：`ZERO_API_REPAIR_PLAN_FROZEN / IMPLEMENTATION_NOT_STARTED / OLD_ARTIFACTS_IMMUTABLE`
+状态：`G2_ZERO_API_IMPLEMENTATION_PASS / G3_SURFACE_AUDIT_NEXT / OLD_ARTIFACTS_IMMUTABLE`
 
 Git 基线：`8337f15`（`Checkpoint accumulated PM V5.3-V5.4 and Paper1 recovery`）
 
@@ -81,8 +81,10 @@ requested
   → offline verified functional
 ```
 
-五层 action 必须分开保存。联合 projector 可以因为候选缺失、冲突、冗余或负担把 requested bit
-投影为 planned OFF，但不能悄悄改变 requested policy，也不能把 16 动作改写成少数离散类别。
+五层 action 必须分开保存。联合 projector 只可以因为候选缺失、owner/time/version/compiler 非法或明确
+hard safety/boundary veto 把 requested bit 投影为 planned OFF；冲突、冗余或负担只作为 synthesis 条件和
+interaction outcome 记录，不能在 outcome 前删 bit。projector 不能悄悄改变 requested policy，也不能把
+16 动作改写成少数离散类别。
 
 ### 2.2 有限语义，不声称开放式人类理解
 
@@ -170,6 +172,11 @@ ME 先做零 API coverage audit。真实独立 group 和双向 action-readiness 
 3. 当前下一回复是否能实现该 component minimum；
 4. 当前 boundary 是否允许。
 
+这里的“一个主决定”严格指**每个 `state × component × actual Rank-1 candidate` 产生一个标签**，不是
+“每个 state 只能选一个 component”。MP、MS、ME、RS 的 suitability 相互非排他；同一 state 可以有
+四个 `SUITABLE`，随后形成完整 `MP+MS+ME+RS` requested/planned action。禁止将此任务实现为 softmax、
+winner-take-all、one-of-K 或“最多一个 positive memory”的标注器。
+
 四项彼此逻辑耦合，不再分别要求 κ/accuracy 门，也不分别作为四个训练标签。最终 decision 必须绑定
 预编号 source/current span 和一个 primary reason code。结构 hard negative 可机器判；material-use-plan、
 current echo 和 boundary 的语义边界使用 anchored 双人校准。未解决 case 不以多数票或 LLM 默认值补齐。
@@ -203,7 +210,7 @@ mention 或 lexical overlap。
 | MP + 任意组件 | MP 只能静默修改已选 primary act；若只能念 profile 或引入 stereotype，MP OFF |
 | MS + ME | 只要二者各自 structurally eligible 且无 hard safety/boundary veto，就允许同时进入联合规划；relation 用于组织 coherent synthesis 和分层测量，不得在看到 outcome 前自动删 bit |
 | MS + RS | MS 只能为 RS 提供上下文，不能增加第二个问题、解释任务或建议 |
-| ME + RS | RS=建议类时不得再加独立 ME option；相同 act 才能合并 |
+| ME + RS | 两个 requested/planned bit 均保留；ME 必须尝试作为 RS primary act 的证据、实例或同一动作内的可拒绝选项，不另起第二个 primary task；若无法自然做功，记 generator/offline non-use，不回写 planned bit |
 | MP + MS/ME | MP 可改变记忆表达的约束/负担，但不能把 profile 当作支持 memory 真实性的证据 |
 | UNKNOWN/REDUNDANT/CONFLICT | 不在正式 16-action interaction 前自动压制 component；分别用澄清、合并或显式冲突处理指导 synthesis，并记录 claimed/verified use、负担、Quality、Risk、Function、Cost |
 
@@ -302,7 +309,8 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 - Quality regret、oracle-set inclusion；
 - material/critical risk 两臂绝对率；
 - frontier excess cost；
-- component pair 的 suppression、fallback 和 burden。
+- component pair 的结构投影原因、claimed/verified non-use、fallback 和 burden；不得把语义 pair relation
+  本身报告成 pre-outcome suppression。
 
 透明规则不是稻草人。如果 learned 只能复现规则，就主张“低容量模型复现 bounded routing”；只有 held-out
 结果确实更好才主张 learned superiority。
@@ -313,7 +321,7 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 
 - `8337f15` 保存此前全部历史；
 - V3 只用新文件；V2 文件只读；
-- active authority 只绑定 V3 design，API/label/fit 权限保持 false。
+- active authority 已绑定并关闭 G2 实现，当前只允许 G3 零 API候选面审计设计；API/label/fit 权限保持 false。
 
 ### G1 — 合同和问题账本
 
@@ -380,22 +388,26 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 9. RS ON 时仍是唯一 primary act；
 10. MP 只作 silent profile modifier；
 11. requested/eligible/planned/claimed/verified 五层分别落盘；
-12. source/retrieval invalid 不生成 PM semantic negative；
-13. `influenced_by`、summary、observation、future、QA gold 不进入 x、prompt 或 runtime；
-14. generator telemetry 不产生 function gold；
-15. cost 不进入 head positive label；
-16. baseline 共用同一 V3 stack；
-17. transport retry 只允许无有效 completion，且 raw-first 持久化；
-18. paid release、label creation、fit 和 external 默认 false，必须新 phase manifest 精确授权。
+12. suitability 是每个 component candidate 的非排他 binary/abstain 决定，禁止 one-of-K、softmax、
+    winner-take-all 或每 state 最多一个 positive memory；
+13. source/retrieval invalid 不生成 PM semantic negative；
+14. `influenced_by`、summary、observation、future、QA gold 不进入 x、prompt 或 runtime；
+15. generator telemetry 不产生 function gold；
+16. cost 不进入 head positive label；
+17. baseline 共用同一 V3 stack；
+18. transport retry 只允许无有效 completion，且 raw-first 持久化；
+19. paid release、label creation、fit 和 external 默认 false，必须新 phase manifest 精确授权。
 
 ## 11. 当前准确位置
 
-截至本方案冻结时：
+截至 G2 验收完成时：
 
 - 旧 V2 RS 已通过，MS 路由正式失败但有 directional signal；
 - 旧 same-stack 已证明 hard splice / lexical guard / generic fallback 是系统瓶颈；
 - MP 已纠正为 profile-only 并恢复为第一优先级；
-- V3 共同执行逻辑完成设计，尚未实现；
+- V3 共同执行逻辑、16-action planner、meaning-absorption prompt、五层 action accounting、safe non-use、
+  owner 检查和污染重试已经完成零 API 实现并通过 G2；
 - MP/MS 新 candidate surface、gold、OOF 尚未开始；
 - 没有新 API、标签、fit、baseline 或 external outcome；
-- 下一步唯一允许工作是 G1 validator 收口后进入 G2 的零 API V3 实现与测试。
+- 下一步唯一允许工作是 G3 的公共 MP_PROFILE/atomic MS/typed ME 候选面零 API 审计；通过前不得创建
+  suitability 标签、拟合新 head 或调用 generator/reviewer API。
