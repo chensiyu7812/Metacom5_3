@@ -1,0 +1,239 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-same-stack-baseline-plan-v1",
+  "status": "ZERO_API_BASELINE_ACTIONS_MATERIALIZED_EXISTING_RESPONSES_ONLY_FORMAL_OUTCOMES_NOT_YET_SCORED",
+  "scientific_question": "Does the frozen learned atomic-MS gate add value over RS-only when both policies reuse the same V3 response stack?",
+  "scope_correction": {
+    "valid_name": "RS fixed ON plus learned MS",
+    "invalid_name": "jointly learned RS+MS deployment policy",
+    "reason": "The carried RS result has grouped-OOF PASS evidence but the active method did not create a matching full-fit RS checkpoint for these EvoEmo states.",
+    "primary_incremental_contrast": "rs_fixed_on_plus_learned_ms versus rs_only",
+    "interaction_diagnostic": "learned_ms_r0_slice versus always_off, compared descriptively with the RS-on slice"
+  },
+  "panel": {
+    "states": 16,
+    "connected_groups": 8,
+    "existing_physical_responses": 64,
+    "new_generator_calls": 0,
+    "all_four_actions_per_state": true,
+    "actions": [
+      "M0+R0",
+      "MS+R0",
+      "M0+RS",
+      "MS+RS"
+    ]
+  },
+  "frozen_ms": {
+    "threshold": 0.5,
+    "predicted_on": 7,
+    "predicted_off": 9,
+    "qualification_sample_teacher_cross_tab_development_only": {
+      "teacher_suitable_predicted_on": 7,
+      "teacher_suitable_predicted_off": 1,
+      "teacher_not_suitable_predicted_on": 0,
+      "teacher_not_suitable_predicted_off": 8
+    },
+    "not_an_external_or_oof_metric": true
+  },
+  "transparent_rule": {
+    "definition": "MS ON iff actual Rank-1 is neither low-information nor an exact/containment current echo",
+    "semantic_suitability_not_claimed": true,
+    "predicted_on": 9
+  },
+  "policies": [
+    {
+      "policy": "always_off",
+      "states": 16,
+      "action_counts": {
+        "M0+R0": 16
+      },
+      "ms_on": 0,
+      "rs_on": 0,
+      "total_estimated_input_tokens": 13549,
+      "mean_estimated_input_tokens": 846.8125,
+      "accepted_proxy_function_coverage": 0,
+      "accepted_proxy_function_labels": {}
+    },
+    {
+      "policy": "rs_only",
+      "states": 16,
+      "action_counts": {
+        "M0+RS": 16
+      },
+      "ms_on": 0,
+      "rs_on": 16,
+      "total_estimated_input_tokens": 15738,
+      "mean_estimated_input_tokens": 983.625,
+      "accepted_proxy_function_coverage": 0,
+      "accepted_proxy_function_labels": {}
+    },
+    {
+      "policy": "fixed_high_rs_ms",
+      "states": 16,
+      "action_counts": {
+        "MS+RS": 16
+      },
+      "ms_on": 16,
+      "rs_on": 16,
+      "total_estimated_input_tokens": 20219,
+      "mean_estimated_input_tokens": 1263.6875,
+      "accepted_proxy_function_coverage": 11,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 7,
+        "SURFACE_ECHO_ONLY": 1,
+        "NOT_USED_FINAL": 2,
+        "BOUNDARY_FAILURE": 1
+      }
+    },
+    {
+      "policy": "transparent_rs_ms",
+      "states": 16,
+      "action_counts": {
+        "MS+RS": 9,
+        "M0+RS": 7
+      },
+      "ms_on": 9,
+      "rs_on": 16,
+      "total_estimated_input_tokens": 18355,
+      "mean_estimated_input_tokens": 1147.1875,
+      "accepted_proxy_function_coverage": 8,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 7,
+        "SURFACE_ECHO_ONLY": 1
+      }
+    },
+    {
+      "policy": "rs_fixed_on_plus_learned_ms",
+      "states": 16,
+      "action_counts": {
+        "MS+RS": 7,
+        "M0+RS": 9
+      },
+      "ms_on": 7,
+      "rs_on": 16,
+      "total_estimated_input_tokens": 17816,
+      "mean_estimated_input_tokens": 1113.5,
+      "accepted_proxy_function_coverage": 6,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 6
+      }
+    },
+    {
+      "policy": "learned_ms_r0_slice",
+      "states": 16,
+      "action_counts": {
+        "MS+R0": 7,
+        "M0+R0": 9
+      },
+      "ms_on": 7,
+      "rs_on": 0,
+      "total_estimated_input_tokens": 15113,
+      "mean_estimated_input_tokens": 944.5625,
+      "accepted_proxy_function_coverage": 5,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 5
+      }
+    },
+    {
+      "policy": "closest_cost_fixed_unqualified",
+      "states": 16,
+      "action_counts": {
+        "MS+R0": 16
+      },
+      "ms_on": 16,
+      "rs_on": 0,
+      "total_estimated_input_tokens": 16854,
+      "mean_estimated_input_tokens": 1053.375,
+      "accepted_proxy_function_coverage": 13,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 9,
+        "NOT_USED_FINAL": 4
+      }
+    },
+    {
+      "policy": "cost_and_on_rate_matched_random_rs",
+      "states": 16,
+      "action_counts": {
+        "M0+RS": 9,
+        "MS+RS": 7
+      },
+      "ms_on": 7,
+      "rs_on": 16,
+      "total_estimated_input_tokens": 17772,
+      "mean_estimated_input_tokens": 1110.75,
+      "accepted_proxy_function_coverage": 6,
+      "accepted_proxy_function_labels": {
+        "FUNCTIONAL": 4,
+        "NOT_USED_FINAL": 1,
+        "BOUNDARY_FAILURE": 1
+      }
+    }
+  ],
+  "matched_controls": {
+    "cost_matched_fixed": {
+      "action": "MS+R0",
+      "target_total_estimated_input_tokens": 17816,
+      "fixed_total_estimated_input_tokens": 16854,
+      "absolute_difference": 962,
+      "relative_mismatch": 0.0539964077233947,
+      "qualified_at_5_percent": false
+    },
+    "cost_and_on_rate_matched_random_rs": {
+      "shift": 6,
+      "learned_ms_on_count": 7,
+      "random_ms_on_count": 7,
+      "changed_states": 8,
+      "changed_fraction": 0.5,
+      "target_total_estimated_input_tokens": 17816,
+      "random_total_estimated_input_tokens": 17772,
+      "relative_cost_mismatch": 0.002469690166142793,
+      "qualified_at_5_percent": true
+    }
+  },
+  "minimal_measurement": {
+    "learned_vs_rs_only_nonalias_states": 7,
+    "learned_vs_fixed_high_nonalias_states": 9,
+    "learned_vs_matched_random_nonalias_states": 8,
+    "unique_rs_slice_ms_on_off_pairs_needed_for_all_primary_comparisons": 16,
+    "existing_quality_packet_can_be_reused": true,
+    "existing_risk_packet_can_be_reused": true,
+    "accepted_proxy_function_is_development_only": true
+  },
+  "current_interpretability": {
+    "function": "partial development proxy may be joined where available",
+    "quality": "not yet scored",
+    "risk": "not yet scored",
+    "cost": "fully deterministic and reported",
+    "baseline_winner_can_be_declared_now": false
+  },
+  "decision": "PROCEED_TO_ONE_BLIND_RS_SLICE_OUTCOME_MEASUREMENT_WITHOUT_NEW_GENERATION_OR_REFIT",
+  "source_hashes": {
+    "cases": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0",
+    "calls": "44868bf02d050a4046142f1e0be631203ecb79905bc60400641cdb751ac4a225",
+    "recovered_results": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec",
+    "teacher_labels": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364",
+    "ms_checkpoint": "68fc2f909783d7b46daa37ba2fef453598c4bf24b8935fc6122c2c41ed1d3993",
+    "accepted_function_reviews": "e68824d575e43a27fc8046608dd55ae61b0eecfa3e3d17a31a0bcb3c57bb800b",
+    "private_mapping": "3d24ffb565da2bfb6f031d5bb4119621fe54449e2b92256417b9c30505229bcb",
+    "quality_packet": "9cd2aeba9f1ca7a631200d967801856a78ec273864b8130540852017adca80ff",
+    "risk_packet": "affc8408d160a609eb59bee4cada66a06e12d92a86444b8dc2c403059d744215",
+    "function_packet": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"
+  },
+  "api_calls": 0,
+  "pm_fits": 0,
+  "responses_generated": 0,
+  "next": "FREEZE_AND_RUN_MINIMAL_BLIND_16_PAIR_RS_SLICE_QUALITY_RISK_FUNCTION_MEASUREMENT",
+  "measurement_artifacts": {
+    "quality_16_pairs": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/quality_rs_slice_blind.jsonl",
+      "sha256": "1f4c922bc864d34f305d63556038a705d7f2b981728b2f48dcd6b4e25140521b"
+    },
+    "risk_32_absolute_arms": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/risk_rs_slice_blind.jsonl",
+      "sha256": "5fbe6c4be99cde0c02854bd7f1ba5f0708369564bd7bba06c54bf2a7d1228228"
+    },
+    "function_16_ms_rs_responses": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/function_ms_rs_blind.jsonl",
+      "sha256": "b61b9ed990dc455266b71fbff317b85c2e60f651cac35eb424e94df42574b587"
+    }
+  }
+}

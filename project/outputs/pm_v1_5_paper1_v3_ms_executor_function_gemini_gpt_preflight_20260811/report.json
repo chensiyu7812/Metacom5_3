@@ -1,0 +1,52 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-function-gemini-gpt-preflight-v1",
+  "status": "PASS_CLEAN_NON_ANTHROPIC_SEQUENTIAL_REVIEW_MAY_BE_AUTHORIZED",
+  "checks": {
+    "original_controls_and_gold_unchanged": true,
+    "exact_12_controls_32_public": true,
+    "exact_88_calls": true,
+    "two_independent_non_anthropic_families": true,
+    "control_balance": true,
+    "gold_never_provider_visible": true,
+    "public_teacher_assignment_not_visible": true,
+    "function_only": true,
+    "zero_api": true
+  },
+  "failed_checks": [],
+  "reviewers": {
+    "FUNCTION_PROXY_GEMINI": "google_gemini_2_5_flash",
+    "FUNCTION_PROXY_GPT": "openai_gpt_5_mini"
+  },
+  "qualification_gate_per_reviewer": {
+    "exact_label_min": "10/12",
+    "functional_min": "3/4",
+    "not_used_min": "2/3",
+    "surface_echo_min": "1/2",
+    "boundary_failure": "2/2",
+    "unresolved": "1/1",
+    "public_calls_if_gate_fails": 0
+  },
+  "execution": {
+    "control_calls": 24,
+    "public_calls_if_both_qualify": 64,
+    "maximum_logical_calls": 88,
+    "max_attempts_per_call": 2,
+    "absolute_usd_cap": 2.0
+  },
+  "artifacts": {
+    "controls": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_controls_blind.jsonl",
+      "sha256": "110de96abee26837e476619e457e843cfbfaa0b3e7c3c148e7064e470ec74933"
+    },
+    "gold": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl",
+      "sha256": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"
+    },
+    "plan": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gemini_gpt_preflight_20260811/call_plan_private.jsonl",
+      "sha256": "3b6af6bce3cc2eae3871656c39b410c358a190a7396fdeb8b32709cd2547396f"
+    }
+  },
+  "abandoned_transport": "Anthropic strict tool-use only; no Claude judgment is used in qualification or public review",
+  "api_calls": 0
+}

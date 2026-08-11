@@ -104,6 +104,9 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFICATION_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_MEASUREMENT_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFIED_REVIEW_PENDING",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_FUNCTION_PROXY_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FUNCTION_FEASIBILITY_COMPLETE_BASELINE_DESIGN_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -134,6 +137,7 @@ def validate_active_authority() -> dict[str, Any]:
             if active_v3.get("id") in {
                 "MS_SINGLE_TEACHER_PUBLIC_EXECUTION",
                 "MS_EXECUTOR_QUALIFICATION_EXECUTION",
+                "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION",
             }
             else paid.get("paid_execution_authorized") is False
             and authority["paid_execution_guard"]["required_current_value"] is False
@@ -968,6 +972,116 @@ def validate_active_authority() -> dict[str, Any]:
                         ]
                     )
                 )
+                or (
+                    active_v3.get("id") == "RS_MS_SAME_STACK_BASELINE_PLAN_COMPLETE"
+                    and active_v3_document.get("status")
+                    == "ZERO_API_BASELINE_ACTIONS_AND_MINIMAL_BLIND_RS_SLICE_MATERIALIZED"
+                    and active_v3_document.get("decision")
+                    == "ONE_BLIND_16_PAIR_RS_SLICE_OUTCOME_MEASUREMENT_MAY_BE_DESIGNED_NO_GENERATION_OR_REFIT"
+                    and active_v3_document["scope"]["primary_policy"]
+                    == "RS fixed ON plus learned MS"
+                    and active_v3_document["scope"]["primary_comparator"] == "RS-only"
+                    and active_v3_document["scope"]["global_action_space_unchanged"] == 16
+                    and active_v3_document["observed"]["states"] == 16
+                    and active_v3_document["observed"]["connected_groups"] == 8
+                    and active_v3_document["observed"]["existing_responses"] == 64
+                    and active_v3_document["observed"]["learned_ms_on"] == 7
+                    and active_v3_document["observed"]["learned_ms_off"] == 9
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["response_generation"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["threshold_change"] is False
+                    and active_v3_document["authorization"]["quality_or_risk_label_creation"] is False
+                    and active_v3_document["authorization"]["blind_measurement_phase_design"] is True
+                    and active_v3_document["authorization"]["blind_measurement_execution"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_EXECUTOR_FUNCTION_PARTIAL_FEASIBILITY_COMPLETE"
+                    and active_v3_document.get("status")
+                    == "POSITIVE_MEANING_ABSORPTION_SUPPORTED_NEGATIVE_SELF_SUPPRESSION_WEAK_PARTIAL_PROXY_ONLY"
+                    and active_v3_document.get("decision")
+                    == "PROCEED_TO_BOUNDED_RS_MS_SAME_STACK_BASELINE_DESIGN_NOT_PAPER_FINAL_FUNCTION_CLAIM"
+                    and active_v3_document["observed"]["accepted_public_reviews"] == 24
+                    and active_v3_document["observed"]["planned_public_reviews"] == 32
+                    and active_v3_document["observed"]["suitable_functional"] == "12/12"
+                    and active_v3_document["observed"]["not_suitable_safe_nonuse"] == "6/12"
+                    and active_v3_document["observed"]["paper_final_function_pass"] is False
+                    and active_v3_document["measurement_boundary"]["single_proxy"] is True
+                    and active_v3_document["measurement_boundary"]["human_gold"] is False
+                    and active_v3_document["paid_release"]["paid_execution_authorized"] is False
+                    and active_v3_document["paid_release"]["stage_approvals_empty"] is True
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["baseline_design_zero_api"] is True
+                    and active_v3_document["authorization"]["baseline_execution"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION"
+                    and active_v3_document.get("status")
+                    in {
+                        "SEQUENTIAL_TWO_PROXY_FUNCTION_CONTROL_QUALIFICATION_THEN_PUBLIC_REVIEW_AUTHORIZED_ONCE",
+                        "ONE_PRE_GOLD_CONTROL_CARRIED_THEN_SEQUENTIAL_TWO_PROXY_REVIEW_AUTHORIZED_ONCE",
+                        "CLEAN_GEMINI_GPT_SEQUENTIAL_FUNCTION_CONTROL_THEN_PUBLIC_REVIEW_AUTHORIZED_ONCE",
+                        "EIGHT_PRE_GOLD_CONTROLS_CARRIED_AFTER_TRANSIENT_THEN_REMAINING_REVIEW_AUTHORIZED_ONCE",
+                        "EIGHT_PRE_GOLD_CONTROLS_CARRIED_PROVIDER_BUDGET_BOUND_REVIEW_AUTHORIZED_ONCE",
+                        "SINGLE_QUALIFIED_PROXY_FUNCTION_FEASIBILITY_AUTHORIZED_ONCE",
+                        "GPT_FUNCTION_ID_ONLY_REPAIR_THEN_TEN_PUBLIC_CALLS_AUTHORIZED_ONCE",
+                    }
+                    and (
+                        active_v3_document["execution"].get("control_calls") in {12, 24}
+                        or (
+                            active_v3_document["execution"].get("control_reviews_carried") == 12
+                            and active_v3_document["execution"].get("public_reviews_carried") == 21
+                            and active_v3_document["execution"].get("public_reviews_recovered_zero_api") == 1
+                            and active_v3_document["execution"].get("maximum_new_logical_calls") == 10
+                            and active_v3_document["execution"].get("label_or_evidence_changed_by_repair") is False
+                        )
+                        or (
+                            active_v3_document["execution"].get("control_reviews_total") == 24
+                            and active_v3_document["execution"].get("control_reviews_carried") in {1, 8}
+                            and active_v3_document["execution"].get("maximum_new_control_calls")
+                            == 24 - active_v3_document["execution"].get("control_reviews_carried")
+                            and active_v3_document["execution"].get("maximum_new_logical_calls")
+                            == 88 - active_v3_document["execution"].get("control_reviews_carried")
+                            and active_v3_document["execution"].get("carry_is_pre_gold") is True
+                            and (
+                                active_v3_document["execution"].get("carry_changes_label_or_decision_evidence") is False
+                                or active_v3_document["execution"].get("carry_changes_labels") is False
+                            )
+                        )
+                    )
+                    and (
+                        active_v3_document["execution"].get("public_calls_only_if_both_qualify") == 64
+                        or active_v3_document["execution"].get("public_calls_only_if_proxy_qualifies") == 32
+                        or active_v3_document["execution"].get("maximum_new_public_calls") == 10
+                    )
+                    and active_v3_document["execution"].get("maximum_logical_calls", 88) in {44, 88}
+                    and active_v3_document["execution"]["absolute_usd_cap"] in {0.5, 1.0, 2.0}
+                    and active_v3_document["authorization"]["function_proxy_api_calls"] is True
+                    and active_v3_document["authorization"]["human_gold_claim"] is False
+                    and active_v3_document["authorization"]["quality_or_risk_judging"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
             )
         ),
     }
@@ -990,7 +1104,15 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "COMPLETE_TWO_IDENTIFIED_HUMAN_BLIND_REVIEWS_OR_QUALIFY_A_PROXY_SEPARATELY"
+            "DESIGN_ONE_BLIND_RS_SLICE_OUTCOME_MEASUREMENT_PHASE"
+            if active_v3.get("id") == "RS_MS_SAME_STACK_BASELINE_PLAN_COMPLETE"
+            else
+            "MATERIALIZE_ZERO_API_RS_MS_SAME_STACK_BASELINE_PLAN_FROM_EXISTING_ARMS"
+            if active_v3.get("id") == "MS_EXECUTOR_FUNCTION_PARTIAL_FEASIBILITY_COMPLETE"
+            else
+            "RUN_SEQUENTIAL_FUNCTION_PROXY_CONTROLS_THEN_PUBLIC_REVIEWS"
+            if active_v3.get("id") == "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION"
+            else "COMPLETE_TWO_IDENTIFIED_HUMAN_BLIND_REVIEWS_OR_QUALIFY_A_PROXY_SEPARATELY"
             if active_v3.get("id") == "MS_EXECUTOR_QUALIFIED_REVIEW_PENDING"
             else "MATERIALIZE_BLIND_SOURCE_AWARE_MS_EXECUTOR_MEASUREMENT_PACKET_ZERO_API"
             if active_v3.get("id")

@@ -1,0 +1,51 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-function-proxy-execution-phase-v2",
+  "date": "2026-08-11",
+  "status": "ONE_PRE_GOLD_CONTROL_CARRIED_THEN_SEQUENTIAL_TWO_PROXY_REVIEW_AUTHORIZED_ONCE",
+  "purpose": "Recover one valid pre-gold paid control response by a label-invariant structural projection, execute only the remaining controls, and open the public Function packet only if both proxies independently qualify.",
+  "promoted_from_authority_sha256": "fef5f59654ae6f6aad489309fffa92b39ddf0e79e957967497e8591feccc01bf",
+  "input_bindings": [
+    {"role": "preflight", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/report.json", "sha256": "539ca441c7d05dceac791d139cedb6e1c6ab75adb690e65681a4568c65285e1c"},
+    {"role": "fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_controls_blind.jsonl", "sha256": "110de96abee26837e476619e457e843cfbfaa0b3e7c3c148e7064e470ec74933"},
+    {"role": "private_control_gold", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl", "sha256": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"},
+    {"role": "exact_call_plan", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/call_plan_private.jsonl", "sha256": "9e075368ec7b66522a988506c3230c7cb8f47785f28265950fcdb0a9481aa481"},
+    {"role": "blind_public_function_packet", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/function_packet_blind.jsonl", "sha256": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"},
+    {"role": "consumed_pre_gold_raw", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_reviews_20260811/raw_attempts_before_gold.jsonl", "sha256": "4824015b418dab06c2be49676b1bcf5b26f6ddc40553360d640058f6017620b6"}
+  ],
+  "implementation_bindings": [
+    {"role": "original_scientific_instrument", "path": "src/metacom_pm/v1_5_ms_executor_function_review.py", "sha256": "07ea4228495b4ccee6ab261a707ebf6049eed6dfa9344bdc38d53e68e621ebf3"},
+    {"role": "provider_safe_label_invariant_projection", "path": "src/metacom_pm/v1_5_ms_executor_function_review_v2.py", "sha256": "91bd45017caade07fe6e418c7cc60cb3e67342d2dea117650f0324fc6ef06020"},
+    {"role": "original_raw_first_runner", "path": "scripts/v1_5/237l_run_paper1_v3_ms_executor_function_proxy_reviews_v1_5.py", "sha256": "bcf0c7f594b72979c1f8860863ff5f100376b86cf0834c6973d7dccae3225b9b"},
+    {"role": "carry_forward_runner", "path": "scripts/v1_5/238l_continue_paper1_v3_ms_executor_function_proxy_reviews_v1_5.py", "sha256": "52a39a8e75623a44b6abae1f350bba73f688fb968c1f6a4bb26277d1d17592b5"},
+    {"role": "execution_config", "path": "configs/paper1_v3_ms_executor_function_proxy_execution_v2.json", "sha256": "68ff8da7f98c50ffa62ff123e12b5bf70b2f4619be76520faaa19e73c597c91a"},
+    {"role": "endpoint_config", "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json", "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"}
+  ],
+  "execution": {
+    "reviewers": ["Anthropic Claude Haiku 4.5", "OpenAI GPT-5 mini"],
+    "control_reviews_total": 24,
+    "control_reviews_carried": 1,
+    "maximum_new_control_calls": 23,
+    "public_calls_only_if_both_qualify": 64,
+    "maximum_new_logical_calls": 87,
+    "maximum_new_physical_attempts": 174,
+    "absolute_usd_cap": 2.0,
+    "run_identity": "2328562dc624b7ff584fe7dfc0405d45f4bbf4c51be3f01f7e29913e0f700f19",
+    "raw_first": true,
+    "gold_provider_visible": false,
+    "carry_is_pre_gold": true,
+    "carry_changes_label_or_decision_evidence": false
+  },
+  "authorization": {
+    "function_proxy_api_calls": true,
+    "human_gold_claim": false,
+    "quality_or_risk_judging": false,
+    "pm_refit": false,
+    "prompt_or_guard_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_reviews_continuation_20260811",
+  "next": "CLOSE_PAID_RELEASE_AND_RUN_ZERO_API_PRE_ADJUDICATION_FUNCTION_ANALYSIS"
+}

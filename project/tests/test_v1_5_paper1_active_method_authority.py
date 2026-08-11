@@ -40,6 +40,9 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4_SUITABILITY_PACKET_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFIED_REVIEW_PENDING",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_FUNCTION_PROXY_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FUNCTION_FEASIBILITY_COMPLETE_BASELINE_DESIGN_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
     }
     assert active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
     assert sha(ROOT / active["contract_path"]) == active["contract_sha256"]
@@ -48,7 +51,9 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
     assert contract["method_id"] == active["method_id"]
     assert amendment["base_method"]["method_id"] == active["method_id"]
     assert authority["current_phase"]["status"] == "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT"
-    assert paid["paid_execution_authorized"] is False
+    assert paid["paid_execution_authorized"] is (
+        authority["active_v3_phase"]["id"] == "MS_EXECUTOR_FUNCTION_PROXY_EXECUTION"
+    )
 
 
 def test_v2_claim_and_action_space_are_narrow_and_explicit() -> None:

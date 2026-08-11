@@ -1,0 +1,355 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "MS 执行器 Function 部分盲评可行性审计",
+    "description": "Technical audit of whether the V3 MS executor realizes suitable memory and suppresses unsuitable memory.",
+    "generatedAt": "2026-08-11T12:00:00+09:00",
+    "sources": [
+      {
+        "id": "derived_function_audit",
+        "label": "MS executor partial Function feasibility audit",
+        "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_partial_feasibility_audit_20260811/report.json",
+        "query": {
+          "language": "sql",
+          "engine": "DuckDB-compatible audit SQL",
+          "sql": "SELECT * FROM (VALUES ('TEACHER_SUITABLE', 12, 12, 0, 0, 0, 1.0), ('TEACHER_NOT_SUITABLE', 12, 4, 6, 1, 1, 0.5)) AS t(teacher_class, observed_n, functional, not_used_final, surface_echo_only, boundary_failure, expected_behavior_rate)",
+          "description": "Hash-bound join of accepted blind Function reviews to the private teacher-class mapping.",
+          "tables_used": [
+            "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_id_repair_continuation_20260811/reviews.jsonl",
+            "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl"
+          ],
+          "filters": [
+            "stage=PUBLIC",
+            "locally validated exact evidence only",
+            "24 accepted of 32 planned"
+          ],
+          "metric_definitions": [
+            "Suitable Function rate = FUNCTIONAL labels / accepted TEACHER_SUITABLE responses.",
+            "Negative safe-nonuse rate = NOT_USED_FINAL labels / accepted TEACHER_NOT_SUITABLE responses."
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "expected_behavior_rate",
+        "title": "Expected executor behavior rate by suitability class",
+        "subtitle": "Accepted blind reviews only: 12 suitable and 12 not-suitable responses",
+        "type": "bar",
+        "dataset": "teacher_outcomes",
+        "sourceId": "derived_function_audit",
+        "layout": "full",
+        "encodings": {
+          "x": {
+            "field": "teacher_class",
+            "type": "nominal",
+            "label": "Frozen suitability class"
+          },
+          "y": {
+            "field": "expected_behavior_rate",
+            "type": "quantitative",
+            "format": "percent",
+            "label": "Expected behavior rate"
+          }
+        },
+        "valueFormat": "percent",
+        "maxRows": 2,
+        "question": "Does the executor realize suitable MS and decline unsuitable MS when MS is requested?",
+        "rationale": "A two-category bar makes the asymmetric 100% versus 50% behavior immediately visible; the adjacent exact table preserves label counts.",
+        "emptyState": "No accepted Function reviews are available."
+      }
+    ],
+    "tables": [
+      {
+        "id": "teacher_outcomes",
+        "title": "Function labels by frozen suitability class",
+        "subtitle": "24 accepted blind reviews; exact counts are primary because coverage is partial",
+        "dataset": "teacher_outcomes",
+        "defaultSort": {
+          "field": "teacher_class",
+          "direction": "desc"
+        },
+        "density": "spacious",
+        "sourceId": "derived_function_audit",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "teacher_class",
+            "label": "Frozen class",
+            "type": "text"
+          },
+          {
+            "field": "observed_n",
+            "label": "n",
+            "format": "number"
+          },
+          {
+            "field": "functional",
+            "label": "Functional",
+            "format": "number"
+          },
+          {
+            "field": "not_used_final",
+            "label": "Safe non-use",
+            "format": "number"
+          },
+          {
+            "field": "surface_echo_only",
+            "label": "Surface echo",
+            "format": "number"
+          },
+          {
+            "field": "boundary_failure",
+            "label": "Boundary fail",
+            "format": "number"
+          },
+          {
+            "field": "expected_behavior_rate",
+            "label": "Expected behavior rate",
+            "format": "percent"
+          }
+        ]
+      },
+      {
+        "id": "rs_segments",
+        "title": "Function behavior by response-strategy condition",
+        "subtitle": "R0 and RS each retain suitable and unsuitable cases",
+        "dataset": "rs_segments",
+        "defaultSort": {
+          "field": "rs_condition",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "derived_function_audit",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "rs_condition",
+            "label": "Response strategy",
+            "type": "text"
+          },
+          {
+            "field": "teacher_class",
+            "label": "Frozen class",
+            "type": "text"
+          },
+          {
+            "field": "observed_n",
+            "label": "n",
+            "format": "number"
+          },
+          {
+            "field": "functional",
+            "label": "Functional",
+            "format": "number"
+          },
+          {
+            "field": "not_used_final",
+            "label": "Safe non-use",
+            "format": "number"
+          },
+          {
+            "field": "other_or_failure",
+            "label": "Other/failure",
+            "format": "number"
+          },
+          {
+            "field": "expected_behavior_rate",
+            "label": "Expected behavior rate",
+            "format": "percent"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# MS 执行器 Function 部分盲评可行性审计",
+        "layout": "full"
+      },
+      {
+        "id": "summary",
+        "type": "markdown",
+        "body": "## 技术结论\n\n**可以进入受限的 RS+MS 同栈 baseline 设计，但不能把本轮称为完整 Function 通过。** 在 24 条严格验收的正式盲评中，冻结为 suitable 的 12 条全部被判为 FUNCTIONAL，R0 与 RS 各 6/6；这支持执行器具备吸收合适记忆并自然做功的能力。冻结为 not-suitable 的 12 条只有 6 条安全不使用，另有 4 条被代理判为 FUNCTIONAL、1 条边界失败、1 条表面复述，说明执行器不能替代 PM 门控。",
+        "layout": "full",
+        "sourceId": "derived_function_audit"
+      },
+      {
+        "id": "finding_positive",
+        "type": "markdown",
+        "body": "## 合适记忆的正向实现信号很强\n\n12/12 suitable 回复均满足严格的 source quote 与 response quote 逐字证据门，并在 R0 与 RS 条件下各为 6/6。这不是回复质量胜负，但证明新版执行器没有再把记忆强制逐字拼接；它至少能在合适状态中形成可见的连续性或更知情的当前动作。",
+        "layout": "full",
+        "sourceId": "derived_function_audit"
+      },
+      {
+        "id": "expected_behavior_chart",
+        "type": "chart",
+        "chartId": "expected_behavior_rate",
+        "layout": "full"
+      },
+      {
+        "id": "teacher_table",
+        "type": "table",
+        "tableId": "teacher_outcomes",
+        "layout": "full"
+      },
+      {
+        "id": "finding_negative",
+        "type": "markdown",
+        "body": "## 不合适记忆仍需由 PM 拦住\n\nnot-suitable 仅 6/12 自然降为 NOT_USED_FINAL。反事实地强制请求 MS 时，执行器仍可能使用无增量来源；因此最终系统的意义来自 selector、projector 与 executor 联合工作，不能指望 generator 自己修复错误调用。",
+        "layout": "full",
+        "sourceId": "derived_function_audit"
+      },
+      {
+        "id": "rs_table",
+        "type": "table",
+        "tableId": "rs_segments",
+        "layout": "full"
+      },
+      {
+        "id": "scope",
+        "type": "markdown",
+        "body": "## 范围、粒度与指标\n\n分析单位是一条 MS-ON 最终回复的 source-aware Function 标签。suitable 的预期行为是 FUNCTIONAL；not-suitable 的预期行为是安全不使用 NOT_USED_FINAL。计划 32 条，实际严格验收 24 条（75%），覆盖全部 8 个 connected groups；缺失项在 teacher class 上为 4/4 平衡，但执行顺序并非随机抽样。",
+        "layout": "full",
+        "sourceId": "derived_function_audit"
+      },
+      {
+        "id": "method",
+        "type": "markdown",
+        "body": "## 方法与责任边界\n\nGPT-5 mini 先在内容不相交的 12 道控制题上取得 11/12 并通过逐类资格门，随后才查看正式盲包。每个 FUNCTIONAL 必须同时给出旧来源和最终回复中的逐字证据；生成器 telemetry 不可作为证明。本报告只分析通过本地严格验证的 24 条，未把失败输出裁剪成有效标签。",
+        "layout": "full"
+      },
+      {
+        "id": "limits",
+        "type": "markdown",
+        "body": "## 限制与稳健性\n\n本轮是单 LLM 代理的部分开发测量，不是人评、双模型复现或论文终值。代理在终止项中把当前对话的感谢错误归因给过去记忆，并把当前对话片段当作回复证据，说明它会在 current/past 重叠时过度判定 Function。由此，正向 12/12 可作为能力存在证据；负向 4 个 FUNCTIONAL 不能直接当 gold，也不能据此估计真实误用率。",
+        "layout": "full"
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "body": "## 下一步\n\n1. 零 API 物化同一 16 states 上 learned RS+MS、RS-only、fixed-high、transparent rule 与 cost-matched fixed 的动作。\n2. 复用已生成的四臂回复，不重新生成、不调 selector 阈值。\n3. baseline 的 Function 只作开发诊断；论文最终值对 learned policy 实际选中的回复做小规模 source-aware 人工裁决。\n4. 在 MS baseline 完成前不重新打开 MP 或 ME。",
+        "layout": "full"
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## 尚待回答\n\n- learned MS selector 在这 16 个 states 上实际开启哪些来源？\n- 把不合适来源挡在 executor 之前后，RS+MS 是否在质量不下降的同时减少误用与成本？\n- current-echo 负例的人类裁决是否确认单代理的过度归因？",
+        "layout": "full"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-11T12:00:00+09:00",
+    "status": "partial",
+    "datasets": {
+      "teacher_outcomes": [
+        {
+          "teacher_class": "TEACHER_SUITABLE",
+          "expected_executor_behavior": "FUNCTIONAL",
+          "observed_n": 12,
+          "functional": 12,
+          "not_used_final": 0,
+          "surface_echo_only": 0,
+          "boundary_failure": 0,
+          "unresolved": 0,
+          "expected_behavior_count": 12,
+          "expected_behavior_rate": 1.0
+        },
+        {
+          "teacher_class": "TEACHER_NOT_SUITABLE",
+          "expected_executor_behavior": "NOT_USED_FINAL",
+          "observed_n": 12,
+          "functional": 4,
+          "not_used_final": 6,
+          "surface_echo_only": 1,
+          "boundary_failure": 1,
+          "unresolved": 0,
+          "expected_behavior_count": 6,
+          "expected_behavior_rate": 0.5
+        }
+      ],
+      "rs_segments": [
+        {
+          "rs_condition": "R0",
+          "teacher_class": "TEACHER_SUITABLE",
+          "observed_n": 6,
+          "functional": 6,
+          "not_used_final": 0,
+          "other_or_failure": 0,
+          "expected_behavior_rate": 1.0
+        },
+        {
+          "rs_condition": "R0",
+          "teacher_class": "TEACHER_NOT_SUITABLE",
+          "observed_n": 7,
+          "functional": 3,
+          "not_used_final": 4,
+          "other_or_failure": 0,
+          "expected_behavior_rate": 0.5714285714285714
+        },
+        {
+          "rs_condition": "RS",
+          "teacher_class": "TEACHER_SUITABLE",
+          "observed_n": 6,
+          "functional": 6,
+          "not_used_final": 0,
+          "other_or_failure": 0,
+          "expected_behavior_rate": 1.0
+        },
+        {
+          "rs_condition": "RS",
+          "teacher_class": "TEACHER_NOT_SUITABLE",
+          "observed_n": 5,
+          "functional": 1,
+          "not_used_final": 2,
+          "other_or_failure": 2,
+          "expected_behavior_rate": 0.4
+        }
+      ]
+    },
+    "accessIssues": [
+      {
+        "id": "partial_coverage",
+        "scope": "public Function packet",
+        "dataset": "teacher_outcomes",
+        "message": "8 of 32 public reviews are not accepted: one substantive proxy error stopped execution and seven later calls were deliberately not run."
+      },
+      {
+        "id": "single_proxy",
+        "scope": "measurement validity",
+        "message": "Only one model proxy qualified and produced accepted public labels; no human or second-model agreement is claimed."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "derived_function_audit",
+      "label": "MS executor partial Function feasibility audit",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_partial_feasibility_audit_20260811/report.json",
+      "query": {
+        "language": "sql",
+        "engine": "DuckDB-compatible audit SQL",
+        "sql": "SELECT * FROM (VALUES ('TEACHER_SUITABLE', 12, 12, 0, 0, 0, 1.0), ('TEACHER_NOT_SUITABLE', 12, 4, 6, 1, 1, 0.5)) AS t(teacher_class, observed_n, functional, not_used_final, surface_echo_only, boundary_failure, expected_behavior_rate)",
+        "description": "Hash-bound join of accepted blind Function reviews to the private teacher-class mapping.",
+        "tables_used": [
+          "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_id_repair_continuation_20260811/reviews.jsonl",
+          "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl"
+        ],
+        "filters": [
+          "stage=PUBLIC",
+          "locally validated exact evidence only",
+          "24 accepted of 32 planned"
+        ],
+        "metric_definitions": [
+          "Suitable Function rate = FUNCTIONAL labels / accepted TEACHER_SUITABLE responses.",
+          "Negative safe-nonuse rate = NOT_USED_FINAL labels / accepted TEACHER_NOT_SUITABLE responses."
+        ]
+      }
+    }
+  ]
+}
