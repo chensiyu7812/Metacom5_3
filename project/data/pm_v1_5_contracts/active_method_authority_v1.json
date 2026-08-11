@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-12",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_EXECUTION",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_REPAIR_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -13,35 +13,35 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "current_execution_phase": {
-    "id": "MS_SOURCE_ANNOTATED_CONTROL_EXECUTION",
-    "status": "EXACT_24_SOURCE_ANNOTATED_CONTROL_CALLS_AUTHORIZED_ONCE",
+    "id": "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN",
+    "status": "CONTROL_QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_ONE_CONSTRUCT_REPAIR_DESIGN_NEXT",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_execution_phase_v1.json",
-      "sha256": "52f08e1f135d475da4ef16ea142a77a60b1a908ef6c8eacd4231a2e49ca1cbd0"
+      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
+      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "Execute exactly 24 fixed non-training control reviews: 12 GPT-5.6 primary and 12 Gemini challenger. No 201-item review, training-label change, fit, threshold change, generator, MP/ME, baseline, or external work is authorized.",
-    "api_calls_authorized": 24,
+    "scope": "The first source-aware qualification is consumed: transport/schema passed 24/24, scientific gates failed at GPT 10/12 and Gemini 9/12. Design exactly one control-construct repair that fixes invalid recurrence/redundancy and event-binding surfaces and forbids meta-questions as Function. No review calls, 201-item reannotation, labels, fits, generator, MP/ME, baseline, or external work.",
+    "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
   },
   "active_v3_phase": {
     "compatibility_alias_of": "current_execution_phase",
-    "id": "MS_SOURCE_ANNOTATED_CONTROL_EXECUTION",
-    "status": "EXACT_24_SOURCE_ANNOTATED_CONTROL_CALLS_AUTHORIZED_ONCE",
+    "id": "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN",
+    "status": "CONTROL_QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_ONE_CONSTRUCT_REPAIR_DESIGN_NEXT",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_execution_phase_v1.json",
-      "sha256": "52f08e1f135d475da4ef16ea142a77a60b1a908ef6c8eacd4231a2e49ca1cbd0"
+      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
+      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
     "scope": "Compatibility alias only. All new runners must consume current_execution_phase.",
-    "api_calls_authorized": 24,
+    "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
   },
@@ -615,7 +615,7 @@
   "old_runner_rule": "Historical scripts remain reproducible evidence but must fail active readiness unless a new active phase manifest names their exact implementation hash and the current method contract permits their stage.",
   "paid_execution_guard": {
     "central_release_path": "outputs/pm_v1_5_paid_run_release.json",
-    "required_current_value": true,
+    "required_current_value": false,
     "phase_must_explicitly_authorize": true,
     "release_manifest_must_bind_method_and_authority_hashes": true,
     "no_environment_secret_or_cli_flag_can_override": true

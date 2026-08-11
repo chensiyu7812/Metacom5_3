@@ -122,6 +122,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_REPAIR_PACKET_READY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_REPAIR_DESIGN",
     }
     current_execution = authority.get("current_execution_phase") or {}
     checks = {
@@ -280,6 +281,25 @@ def validate_active_authority() -> dict[str, Any]:
                         for artifact in read(resolve(binding["path"])).get("artifacts", [])
                     )
                     for binding in active_v3_document.get("input_bindings", [])
+                )
+            )
+            or (
+                active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
+                and (
+                    any(
+                        artifact.get("role") == "global_failure_ledger"
+                        and sha(resolve(artifact["path"])) == artifact["sha256"]
+                        for artifact in active_v3_document.get("artifacts", [])
+                    )
+                    or any(
+                        binding.get("role") == "repair_packet_closeout"
+                        and any(
+                            artifact.get("role") == "global_failure_ledger"
+                            and sha(resolve(artifact["path"])) == artifact["sha256"]
+                            for artifact in read(resolve(binding["path"])).get("artifacts", [])
+                        )
+                        for binding in read(resolve(active_v3_document["executed_phase"]["path"])).get("input_bindings", [])
+                    )
                 )
             )
         ),
@@ -1389,6 +1409,29 @@ def validate_active_authority() -> dict[str, Any]:
                         for item in active_v3_document["input_bindings"]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
+                    and active_v3_document.get("status")
+                    == "CONTROL_QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_ONE_CONSTRUCT_REPAIR_DESIGN_NEXT"
+                    and active_v3_document["observed"]["logical_calls"] == 24
+                    and active_v3_document["observed"]["schema_and_local_valid"] == 24
+                    and active_v3_document["observed"]["primary_exact"] == 10
+                    and active_v3_document["observed"]["challenger_exact"] == 9
+                    and active_v3_document["observed"]["public_201_calls"] == 0
+                    and active_v3_document["authorization"]["one_control_construct_repair_design"] is True
+                    and active_v3_document["authorization"]["review_calls"] is False
+                    and active_v3_document["authorization"]["public_201_reannotation"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["pm_fit_or_threshold_change"] is False
+                    and active_v3_document["invariants"]["qualification_thresholds_not_relaxed"] is True
+                    and active_v3_document["invariants"]["failed_identity_consumed_no_rerun"] is True
+                    and sha(resolve(active_v3_document["executed_phase"]["path"]))
+                    == active_v3_document["executed_phase"]["sha256"]
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
             )
         ),
     }
@@ -1413,6 +1456,9 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "DESIGN_ONE_FINAL_CONTROL_CONSTRUCT_REPAIR_NO_THRESHOLD_RELAXATION"
+            if active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
+            else
             "EXECUTE_EXACT_24_SOURCE_ANNOTATED_CONTROL_CALLS"
             if active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_EXECUTION"
             else
