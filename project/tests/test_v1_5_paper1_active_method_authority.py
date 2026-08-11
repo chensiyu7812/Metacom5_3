@@ -35,6 +35,7 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MEMORY_RESCUE_V2_DESIGN_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_REPAIR_CONTRACT_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
     }
     assert active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
     assert sha(ROOT / active["contract_path"]) == active["contract_sha256"]

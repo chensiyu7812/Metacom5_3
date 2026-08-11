@@ -51,6 +51,8 @@ def validate_active_authority() -> dict[str, Any]:
     rescue_document = read(resolve(rescue["path"])) if rescue.get("path") else {}
     v3_repair = feasibility.get("component_general_v3_repair_contract") or {}
     v3_repair_document = read(resolve(v3_repair["path"])) if v3_repair.get("path") else {}
+    g2 = feasibility.get("component_general_v3_g2_implementation") or {}
+    g2_document = read(resolve(g2["path"])) if g2.get("path") else {}
     known_authority_statuses = {
         "ACTIVE_ZERO_API_V2_TERMINAL_ROUTING_FAIL_SYSTEM_FEASIBILITY_DESIGN_ONLY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_SYSTEM_FEASIBILITY_GENERATION",
@@ -59,6 +61,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MEMORY_RESCUE_V2_DESIGN_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_REPAIR_CONTRACT_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -192,6 +195,32 @@ def validate_active_authority() -> dict[str, Any]:
                 "offline_verified_functional",
             ]
         ),
+        "g2_phase_bound_and_zero_api_only": not g2 or (
+            sha(resolve(g2["path"])) == g2["sha256"]
+            and g2["execution_authority"] is True
+            and g2_document["status"]
+            == "G2_ZERO_API_IMPLEMENTATION_AND_TESTS_AUTHORIZED_ONCE"
+            and g2_document["git_baseline"] == g2["git_baseline"]
+            and g2_document["promoted_from_authority_sha256"]
+            == "f36f5d2a73e809b155d4d9f325f815d1d1a11614ffa98097eafe5a2c6b9fa530"
+            and all(g2_document["forbidden"].values())
+            and g2_document["allowed"]["new_v3_code"] is True
+            and g2_document["allowed"]["zero_api_validator"] is True
+        ),
+        "g2_phase_preserves_all_sixteen_without_one_memory_cap": not g2 or (
+            any(
+                "compile all 16 requested actions" in item
+                for item in g2_document["required_capabilities"]
+            )
+            and any(
+                "without imposing a global one-memory cap" in item
+                for item in g2_document["required_capabilities"]
+            )
+            and any(
+                "full MP+MS+ME+RS" in item
+                for item in g2_document["required_non_regression_tests"]
+            )
+        ),
     }
     failed = [name for name, passed in checks.items() if not passed]
     return {
@@ -211,7 +240,9 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "DESIGN_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_PHASE"
+            "EXECUTE_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_AND_TESTS"
+            if g2
+            else "DESIGN_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_PHASE"
             if v3_repair
             else (
                 "INDEPENDENTLY_AUDIT_MEMORY_HEAD_RESCUE_DESIGN_NO_EXECUTION"

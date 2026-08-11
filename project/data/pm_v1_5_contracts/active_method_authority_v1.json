@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -165,6 +165,14 @@
         },
         "next_gate": "G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_TESTS",
         "execution_authority": false
+      },
+      "component_general_v3_g2_implementation": {
+        "status": "G2_ZERO_API_IMPLEMENTATION_AND_TESTS_AUTHORIZED_ONCE",
+        "path": "data/pm_v1_5_contracts/paper1_component_general_v3_g2_implementation_phase_v1.json",
+        "sha256": "febf9ad749087827c81f2c32068b6d60618959e2392575dd8ccf2994584ca76f",
+        "git_baseline": "3d6f709ec3ea4442023580101b82489987d86bd6",
+        "scope": "new V3 modules, tests, and zero-API G2 validator only",
+        "execution_authority": true
       }
     },
     "allowed": [
@@ -181,6 +189,7 @@
       "read-only independent validation of paper1_component_general_v3_repair_contract_v1.json and its bound failure-ledger section",
       "zero-API design of the G2 component-general V3 implementation phase and implementation-tree manifest",
       "zero-API design of machine invariants that prevent literal-memory forcing and telemetry-to-quality fallback conflation",
+      "the exact zero-API V3 implementation and tests authorized by paper1_component_general_v3_g2_implementation_phase_v1.json",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
