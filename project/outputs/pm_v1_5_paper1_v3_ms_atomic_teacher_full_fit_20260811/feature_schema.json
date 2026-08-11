@@ -1,0 +1,34 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-atomic-suitability-feature-schema-v1",
+  "ordered_features": [
+    "selection_score",
+    "top1_top2_margin",
+    "log1p_candidate_age_sessions",
+    "log1p_candidate_word_count",
+    "log1p_strict_past_pool_count",
+    "low_information_rank1",
+    "exact_or_containment_current_echo"
+  ],
+  "transforms": {
+    "candidate_age_sessions": "log1p",
+    "candidate_word_count": "log1p",
+    "strict_past_pool_count": "log1p",
+    "booleans": "0_or_1",
+    "pipeline": "StandardScaler then L2 logistic"
+  },
+  "decision_threshold": 0.5,
+  "semantic_abstention_runtime_default": "OFF",
+  "hard_no_candidate_runtime_default": "OFF",
+  "forbidden_runtime_inputs": [
+    "identity or group keys",
+    "case/state/candidate identifiers as features",
+    "raw dialogue text in this checkpoint",
+    "teacher reason codes",
+    "event timeline",
+    "summary",
+    "observation",
+    "influenced_by",
+    "QA answer",
+    "QA evidence"
+  ]
+}

@@ -1,0 +1,254 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-atomic-teacher-logo-oof-report-v1",
+  "status": "MS_ATOMIC_TEACHER_OOF_SIGNAL_PRESENT_FULL_FIT_MAY_BE_DESIGNED",
+  "estimand": "cross-group prediction of a qualified teacher's prospective suitability decision for the frozen actual atomic MS Rank-1 candidate",
+  "denominator": {
+    "resolved_rows": 201,
+    "abstentions_excluded": 3,
+    "groups": 17,
+    "on": 73,
+    "off": 128,
+    "folds": 17
+  },
+  "model": {
+    "features": [
+      "selection_score",
+      "top1_top2_margin",
+      "log1p_candidate_age_sessions",
+      "log1p_candidate_word_count",
+      "log1p_strict_past_pool_count",
+      "low_information_rank1",
+      "exact_or_containment_current_echo"
+    ],
+    "identity_text_and_ids_forbidden": true,
+    "classifier": "StandardScaler + L2 logistic C=0.10 class_weight=balanced liblinear",
+    "threshold": 0.5,
+    "threshold_tuned": false,
+    "feature_or_model_search_after_labels": false,
+    "split": "LeaveOneConnectedGroupOut",
+    "seed": 20260811
+  },
+  "primary_metrics": {
+    "roc_auc": 0.8289811643835616,
+    "average_precision": 0.7135741914436261,
+    "balanced_accuracy_at_0_5": 0.7449165239726028,
+    "recall_at_0_5": 0.7945205479452054,
+    "specificity_at_0_5": 0.6953125,
+    "brier": 0.17203363897672208,
+    "prevalence_brier": 0.23380438835459819,
+    "brier_gain_vs_train_prevalence": 0.061770749377876105,
+    "log_loss": 0.5086069403705762,
+    "prevalence_log_loss": 0.660685570415607,
+    "log_loss_gain_vs_train_prevalence": 0.15207863004503086,
+    "predicted_on": 97,
+    "predicted_off": 104,
+    "predicted_on_fraction": 0.48258706467661694
+  },
+  "retrieval_only_metrics": {
+    "roc_auc": 0.8182791095890412,
+    "average_precision": 0.7132880854561822,
+    "balanced_accuracy_at_0_5": 0.7429366438356164,
+    "recall_at_0_5": 0.7671232876712328,
+    "specificity_at_0_5": 0.71875,
+    "brier": 0.17726930516890504,
+    "prevalence_brier": 0.23380438835459819,
+    "brier_gain_vs_train_prevalence": 0.05653508318569314,
+    "log_loss": 0.5317654817146656,
+    "prevalence_log_loss": 0.660685570415607,
+    "log_loss_gain_vs_train_prevalence": 0.1289200887009414,
+    "predicted_on": 92,
+    "predicted_off": 109,
+    "predicted_on_fraction": 0.4577114427860697
+  },
+  "veto_only_metrics": {
+    "roc_auc": 0.6709653253424657,
+    "average_precision": 0.45474670813579143,
+    "balanced_accuracy_at_0_5": 0.6923694349315068,
+    "recall_at_0_5": 0.9863013698630136,
+    "specificity_at_0_5": 0.3984375,
+    "brier": 0.20543060192812074,
+    "prevalence_brier": 0.23380438835459819,
+    "brier_gain_vs_train_prevalence": 0.02837378642647745,
+    "log_loss": 0.5877393432727956,
+    "prevalence_log_loss": 0.660685570415607,
+    "log_loss_gain_vs_train_prevalence": 0.0729462271428114,
+    "predicted_on": 149,
+    "predicted_off": 52,
+    "predicted_on_fraction": 0.7412935323383084
+  },
+  "owner_cluster_bootstrap_95_ci": {
+    "auc": {
+      "low": 0.7744377219596222,
+      "high": 0.8861115424430641
+    },
+    "balanced_accuracy": {
+      "low": 0.6662002175368138,
+      "high": 0.8213480205632179
+    },
+    "brier_gain": {
+      "low": 0.03518620245306775,
+      "high": 0.09069668379199247
+    },
+    "log_loss_gain": {
+      "low": 0.09166295254219904,
+      "high": 0.2192364672251509
+    }
+  },
+  "directional_viability_checks": {
+    "roc_auc_above_chance": true,
+    "balanced_accuracy_above_chance": true,
+    "brier_beats_train_fold_prevalence": true,
+    "log_loss_beats_train_fold_prevalence": true,
+    "nondegenerate_on_and_off": true
+  },
+  "interpretation_rule": "These are feasibility checks, not a paper success line. Final adequacy is determined by meaning-absorption executor qualification and same-stack Quality/Risk/Function/Cost comparisons.",
+  "folds": [
+    {
+      "fold": 1,
+      "held_out_group": "evo_component::p1",
+      "n": 12,
+      "on": 2,
+      "off": 10,
+      "train_prevalence": 0.37566137566137564
+    },
+    {
+      "fold": 2,
+      "held_out_group": "evo_component::p10",
+      "n": 12,
+      "on": 6,
+      "off": 6,
+      "train_prevalence": 0.3544973544973545
+    },
+    {
+      "fold": 3,
+      "held_out_group": "evo_component::p11",
+      "n": 12,
+      "on": 6,
+      "off": 6,
+      "train_prevalence": 0.3544973544973545
+    },
+    {
+      "fold": 4,
+      "held_out_group": "evo_component::p12",
+      "n": 12,
+      "on": 4,
+      "off": 8,
+      "train_prevalence": 0.36507936507936506
+    },
+    {
+      "fold": 5,
+      "held_out_group": "evo_component::p13__p18",
+      "n": 12,
+      "on": 1,
+      "off": 11,
+      "train_prevalence": 0.38095238095238093
+    },
+    {
+      "fold": 6,
+      "held_out_group": "evo_component::p14",
+      "n": 11,
+      "on": 5,
+      "off": 6,
+      "train_prevalence": 0.35789473684210527
+    },
+    {
+      "fold": 7,
+      "held_out_group": "evo_component::p15",
+      "n": 12,
+      "on": 4,
+      "off": 8,
+      "train_prevalence": 0.36507936507936506
+    },
+    {
+      "fold": 8,
+      "held_out_group": "evo_component::p16",
+      "n": 12,
+      "on": 4,
+      "off": 8,
+      "train_prevalence": 0.36507936507936506
+    },
+    {
+      "fold": 9,
+      "held_out_group": "evo_component::p17",
+      "n": 12,
+      "on": 4,
+      "off": 8,
+      "train_prevalence": 0.36507936507936506
+    },
+    {
+      "fold": 10,
+      "held_out_group": "evo_component::p2",
+      "n": 12,
+      "on": 8,
+      "off": 4,
+      "train_prevalence": 0.3439153439153439
+    },
+    {
+      "fold": 11,
+      "held_out_group": "evo_component::p3",
+      "n": 12,
+      "on": 4,
+      "off": 8,
+      "train_prevalence": 0.36507936507936506
+    },
+    {
+      "fold": 12,
+      "held_out_group": "evo_component::p4",
+      "n": 12,
+      "on": 3,
+      "off": 9,
+      "train_prevalence": 0.37037037037037035
+    },
+    {
+      "fold": 13,
+      "held_out_group": "evo_component::p5",
+      "n": 11,
+      "on": 4,
+      "off": 7,
+      "train_prevalence": 0.3631578947368421
+    },
+    {
+      "fold": 14,
+      "held_out_group": "evo_component::p6",
+      "n": 12,
+      "on": 6,
+      "off": 6,
+      "train_prevalence": 0.3544973544973545
+    },
+    {
+      "fold": 15,
+      "held_out_group": "evo_component::p7",
+      "n": 11,
+      "on": 2,
+      "off": 9,
+      "train_prevalence": 0.3736842105263158
+    },
+    {
+      "fold": 16,
+      "held_out_group": "evo_component::p8",
+      "n": 12,
+      "on": 5,
+      "off": 7,
+      "train_prevalence": 0.35978835978835977
+    },
+    {
+      "fold": 17,
+      "held_out_group": "evo_component::p9",
+      "n": 12,
+      "on": 5,
+      "off": 7,
+      "train_prevalence": 0.35978835978835977
+    }
+  ],
+  "predictions": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/oof_predictions.jsonl",
+    "sha256": "65513da6c33abb9b25ed3b9d14f2fb1f0f36ac9a34c682c26494c967db1f2146",
+    "rows": 201
+  },
+  "teacher_not_human_gold": true,
+  "full_fit_checkpoint_created": false,
+  "api_calls": 0,
+  "generator_calls": 0,
+  "baseline_calls": 0,
+  "external_test_reads": 0
+}

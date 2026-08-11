@@ -1,0 +1,214 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "PM V1.5：MS 原子适用性训练结果",
+    "description": "MS 单头从原子监督到跨组 OOF 与冻结 checkpoint 的技术报告",
+    "generatedAt": "2026-08-11T05:45:00Z",
+    "sources": [
+      {
+        "id": "ms-oof",
+        "label": "MS atomic teacher LOGO OOF report",
+        "query": {
+          "engine": "duckdb",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json')",
+          "description": "Read the frozen 201-row, 17-connected-group OOF report and comparator metrics.",
+          "tables_used": [
+            "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json",
+            "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/oof_predictions.jsonl"
+          ],
+          "filters": ["201 resolved MS teacher labels", "3 semantic abstentions excluded", "17 leave-one-connected-group-out folds"],
+          "metric_definitions": [
+            "ROC AUC is pooled over all cross-fitted probabilities.",
+            "Balanced accuracy is the mean of positive recall and negative recall at the frozen 0.5 threshold.",
+            "Brier gain is train-fold prevalence Brier minus primary-model Brier; positive is better."
+          ]
+        }
+      },
+      {
+        "id": "ms-labels",
+        "label": "MS single-teacher label-freeze report",
+        "query": {
+          "engine": "duckdb",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/report.json')",
+          "description": "Read the frozen atomic MS teacher-label counts and group coverage.",
+          "tables_used": [
+            "project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/report.json",
+            "project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/ms_teacher_labels.jsonl"
+          ],
+          "filters": ["204 MS cases", "17 connected groups", "actual atomic Rank-1 only"],
+          "metric_definitions": ["Resolved binary labels map SUITABLE to 1 and NOT_SUITABLE to 0; SEMANTIC_ABSTAIN remains unlabeled and defaults OFF at runtime."]
+        }
+      },
+      {
+        "id": "ms-checkpoint",
+        "label": "MS atomic full-fit checkpoint report",
+        "query": {
+          "engine": "duckdb",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json')",
+          "description": "Read the frozen full-fit model specification, hashes and claim boundary.",
+          "tables_used": [
+            "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json",
+            "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/feature_schema.json",
+            "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/ms_atomic_suitability_model.joblib"
+          ],
+          "filters": ["same frozen seven features and model used by OOF", "no threshold tuning", "no response outcomes"],
+          "metric_definitions": ["Checkpoint trained on all 201 resolved teacher labels after cross-fitted feasibility was frozen."]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "id": "auc-card",
+        "description": "Across 17 connected groups; 95% cluster-bootstrap interval 0.774–0.886.",
+        "dataset": "headline",
+        "sourceId": "ms-oof",
+        "metrics": [{"label": "Cross-group ROC AUC", "field": "auc", "format": "number"}]
+      },
+      {
+        "id": "ba-card",
+        "description": "Frozen 0.5 threshold; positive recall 0.795 and negative recall 0.695.",
+        "dataset": "headline",
+        "sourceId": "ms-oof",
+        "metrics": [{"label": "Balanced accuracy", "field": "balanced_accuracy", "format": "percent"}]
+      },
+      {
+        "id": "brier-card",
+        "description": "Lower is better; train-fold prevalence baseline is 0.234.",
+        "dataset": "headline",
+        "sourceId": "ms-oof",
+        "metrics": [
+          {"label": "Brier score", "field": "brier", "format": "number"},
+          {"label": "vs prevalence", "field": "brier_gain", "format": "number", "signed": true}
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "auc-comparison",
+        "title": "Cross-fitted AUC by frozen feature set",
+        "subtitle": "201 resolved atomic MS cases; higher is better",
+        "type": "bar",
+        "dataset": "comparators",
+        "sourceId": "ms-oof",
+        "question": "Does the complete low-capacity selector outperform narrower candidate-surface and veto-only models?",
+        "rationale": "A horizontal categorical bar makes three fixed model comparisons immediately legible.",
+        "encodings": {
+          "x": {"field": "model", "type": "nominal", "label": "Frozen model"},
+          "y": {"field": "auc", "type": "quantitative", "label": "ROC AUC", "format": "number"},
+          "tooltip": [
+            {"field": "auc", "type": "quantitative", "label": "ROC AUC", "format": "number"},
+            {"field": "balanced_accuracy", "type": "quantitative", "label": "Balanced accuracy", "format": "percent"},
+            {"field": "brier_gain", "type": "quantitative", "label": "Brier gain", "format": "number"},
+            {"field": "rows", "type": "quantitative", "label": "Rows", "format": "number"}
+          ]
+        },
+        "xAxisTitle": "Frozen model",
+        "yAxisTitle": "ROC AUC",
+        "valueFormat": "number",
+        "layout": "full",
+        "maxRows": 3
+      }
+    ],
+    "tables": [
+      {
+        "id": "stage-table",
+        "title": "MS evidence chain and remaining gate",
+        "subtitle": "Completed artifacts are frozen; executor qualification is intentionally pending",
+        "dataset": "stages",
+        "defaultSort": {"field": "order", "direction": "asc"},
+        "density": "spacious",
+        "sourceId": "ms-checkpoint",
+        "layout": "full",
+        "columns": [
+          {"field": "order", "label": "Order", "format": "number", "role": "value"},
+          {"field": "stage", "label": "Stage", "type": "text"},
+          {"field": "status", "label": "Status", "type": "text"},
+          {"field": "evidence", "label": "Evidence", "type": "text"},
+          {"field": "claim", "label": "What it supports", "type": "text"}
+        ]
+      }
+    ],
+    "blocks": [
+      {"id": "title", "type": "markdown", "body": "# PM V1.5：MS 原子适用性训练结果", "layout": "full"},
+      {"id": "summary", "type": "markdown", "body": "## 技术摘要\n\n**MS 头已经训练出来，并出现稳定的跨用户组可学习信号。** 201 条 resolved 原子标签、17 个 connected groups 的唯一一次 LOGO OOF 得到 AUC 0.829、balanced accuracy 0.745，且概率质量优于 train-fold prevalence。冻结的 full-fit checkpoint 已生成。\n\n**这还不是端到端 PM 通过。** 当前结果只证明 selector 能判断 actual atomic Rank-1 是否值得用于下一条回复；它不证明 generator 已自然吸收记忆，也不证明 RS+MS 已经优于 always-off、RS-only 或 fixed-high。下一道唯一硬门是 V3 meaning-absorption executor 资格赛。", "layout": "full"},
+      {"id": "headline-strip", "type": "metric-strip", "cardIds": ["auc-card", "ba-card", "brier-card"], "layout": "full"},
+      {"id": "signal", "type": "markdown", "body": "## 跨组信号已明显越过随机水平\n\n模型在每一折完全留出一个 connected user group；身份、group key、state/candidate ID、原始文本、teacher reason code、event lineage 和 QA 字段都不进入特征。17-group bootstrap 的 AUC 区间为 0.774–0.886，balanced accuracy 区间为 0.666–0.821，Brier 改善区间为 0.035–0.091。因而这次结果不是靠一个用户或一个 split 偶然撑起。", "layout": "full", "sourceId": "ms-oof"},
+      {"id": "auc-chart", "type": "chart", "chartId": "auc-comparison", "layout": "full"},
+      {"id": "chart-interpretation", "type": "markdown", "body": "完整模型的 AUC 为 0.829，候选表面/检索模型为 0.818，veto-only 模型为 0.671。**含义是：当前 MS 主要学会了候选是否具体、有信息量、与当前内容不重复，并利用有限的语义检索几何；它不是无限制的人类语义理解器。** 完整模型相对候选表面模型的增益较小，因此论文必须把语义能力界限写清，并把最终价值交给 executor 和 same-stack 结果验证。", "layout": "full", "sourceId": "ms-oof"},
+      {"id": "labels", "type": "markdown", "body": "## 新监督修复了旧 MS 的错误学习目标\n\n204 条 actual MS Rank-1 中有 73 条 SUITABLE、128 条 NOT_SUITABLE、3 条 SEMANTIC_ABSTAIN。21 个低信息候选全部被判 OFF；32 个 current-echo 候选中 30 个被判 OFF、1 个 ON、1 个 abstain。标签单位因此从‘来源 session 是祖先’改成‘这句具体旧话能否非冗余地改变当前回复’，不会再把 thanks、hello 或泛化情绪因为 session 对而教成 ON。", "layout": "full", "sourceId": "ms-labels"},
+      {"id": "spec", "type": "markdown", "body": "## 模型规格已冻结，没有按结果调参\n\nCheckpoint 使用 7 个运行时可得特征：selection score、top1–top2 margin、memory age、candidate word count、strict-past pool size、low-information flag 和 current-echo flag。模型为 StandardScaler + L2 logistic，C=0.1，class_weight=balanced，阈值 0.5。OOF 之前已冻结这些选择；之后没有搜索特征、阈值或模型。教师监督来自通过新鲜 MS anchors 的单一 LLM teacher，明确不是 human gold。", "layout": "full", "sourceId": "ms-checkpoint"},
+      {"id": "stage-evidence", "type": "table", "tableId": "stage-table", "layout": "full"},
+      {"id": "limits", "type": "markdown", "body": "## 仍未解决的是调用后的执行，而不是 selector 可学习性\n\n当前 checkpoint 的 estimand 是 prospective resource suitability，不是 response quality uplift。V3 executor 必须证明：MS-ON 时 generator 能把严格过去的 user-owned cue 当作 tentative continuity，不能复制用户第一人称、不能把过去升级为现在、不能泄露 scaffold；自然用不上时保留当前上下文回复并把 realized MS 降为 OFF，不能触发旧固定句 fallback。Quality、literal Risk、offline source-aware Function 与 Cost 必须继续独立记录。", "layout": "full"},
+      {"id": "next", "type": "markdown", "body": "## 推荐的下一步\n\n1. 零 API 冻结一组同时含 teacher-suitable 与 teacher-not-suitable 的 MS executor 资格样本，并物化 same-state MS-ON/MS-OFF 调用计划。\n2. 只使用 component-general V3 response program；V2 literal-splice runner 永久禁止。\n3. 先验证 meaning absorption、owner/time、safe non-use 和污染重试，再启动 RS+MS same-stack baselines。\n4. 在 MS selector 与 executor 都闭环之前，不讨论或训练 MP/ME。", "layout": "full"},
+      {"id": "questions", "type": "markdown", "body": "## 仍需回答的问题\n\n- 在 teacher-suitable MS 上，offline-verified functional rate 是否明显高于 teacher-not-suitable 强制 ON？\n- MS-ON 相对 same-state OFF 是否在质量不下降的前提下增加连续性功能，而不增加 material risk？\n- learned RS+MS 是否能同时优于 always-off/RS-only，并显著少于 fixed-high 的误用与成本？", "layout": "full"}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-11T05:45:00Z",
+    "status": "ready",
+    "datasets": {
+      "headline": [
+        {"auc": 0.8289811643835616, "balanced_accuracy": 0.7449165239726028, "brier": 0.17203363897672208, "brier_gain": 0.061770749377876105, "rows": 201, "groups": 17}
+      ],
+      "comparators": [
+        {"model": "Full 7-feature selector", "auc": 0.8289811643835616, "balanced_accuracy": 0.7449165239726028, "brier_gain": 0.061770749377876105, "average_precision": 0.7135741914436261, "rows": 201, "groups": 17},
+        {"model": "Candidate-surface / retrieval", "auc": 0.8182791095890412, "balanced_accuracy": 0.7429366438356164, "brier_gain": 0.05653508318569314, "average_precision": 0.7132880854561822, "rows": 201, "groups": 17},
+        {"model": "Low-information + echo veto", "auc": 0.6709653253424657, "balanced_accuracy": 0.6923694349315068, "brier_gain": 0.02837378642647745, "average_precision": 0.45474670813579143, "rows": 201, "groups": 17}
+      ],
+      "stages": [
+        {"order": 1, "stage": "Atomic teacher labels", "status": "Complete", "evidence": "204 cases; 201 resolved; 17 groups", "claim": "Concrete-candidate suitability supervision exists"},
+        {"order": 2, "stage": "Grouped OOF", "status": "Signal present", "evidence": "AUC 0.829; BA 0.745; Brier 0.172", "claim": "Selector generalizes across connected groups"},
+        {"order": 3, "stage": "Full-fit checkpoint", "status": "Frozen", "evidence": "Content-addressed joblib + feature schema", "claim": "MS selector is trained and reproducible"},
+        {"order": 4, "stage": "Meaning-absorption executor", "status": "Pending qualification", "evidence": "No new generator qualification yet", "claim": "No end-to-end PM claim yet"}
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "ms-oof",
+      "label": "MS atomic teacher LOGO OOF report",
+      "query": {
+        "engine": "duckdb",
+        "language": "sql",
+        "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json')",
+        "description": "Read the frozen 201-row, 17-connected-group OOF report and comparator metrics.",
+        "tables_used": ["project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json", "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/oof_predictions.jsonl"],
+        "filters": ["201 resolved MS teacher labels", "3 semantic abstentions excluded", "17 leave-one-connected-group-out folds"],
+        "metric_definitions": ["ROC AUC is pooled over cross-fitted probabilities.", "Balanced accuracy is the mean of positive and negative recall at threshold 0.5.", "Brier gain is prevalence Brier minus model Brier."]
+      }
+    },
+    {
+      "id": "ms-labels",
+      "label": "MS single-teacher label-freeze report",
+      "query": {
+        "engine": "duckdb",
+        "language": "sql",
+        "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/report.json')",
+        "description": "Read frozen atomic MS label counts and group coverage.",
+        "tables_used": ["project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/report.json", "project/outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/ms_teacher_labels.jsonl"],
+        "filters": ["204 MS cases", "17 connected groups", "actual atomic Rank-1 only"],
+        "metric_definitions": ["SUITABLE maps to 1, NOT_SUITABLE to 0, and SEMANTIC_ABSTAIN remains unlabeled and defaults OFF."]
+      }
+    },
+    {
+      "id": "ms-checkpoint",
+      "label": "MS atomic full-fit checkpoint report",
+      "query": {
+        "engine": "duckdb",
+        "language": "sql",
+        "sql": "SELECT * FROM read_json_auto('project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json')",
+        "description": "Read frozen full-fit model specification, hashes and claim boundary.",
+        "tables_used": ["project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json", "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/feature_schema.json", "project/outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/ms_atomic_suitability_model.joblib"],
+        "filters": ["same frozen seven features and model used by OOF", "no threshold tuning", "no response outcomes"],
+        "metric_definitions": ["Checkpoint trained on all 201 resolved labels after cross-fitted feasibility was frozen."]
+      }
+    }
+  ]
+}

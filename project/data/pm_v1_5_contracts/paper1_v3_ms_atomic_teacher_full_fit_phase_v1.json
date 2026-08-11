@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-atomic-teacher-full-fit-phase-v1",
+  "date": "2026-08-11",
+  "status": "MS_ATOMIC_TEACHER_FROZEN_FULL_FIT_AUTHORIZED_ONCE_EXECUTOR_STILL_REQUIRED",
+  "scope": "Fit exactly one full-data MS atomic suitability checkpoint with the already frozen OOF model, features, and threshold. This phase creates no response and makes no end-to-end claim.",
+  "input_bindings": [
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/ms_teacher_labels.jsonl", "sha256": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364"},
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json", "sha256": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82", "required_status": "MS_ATOMIC_TEACHER_OOF_SIGNAL_PRESENT_FULL_FIT_MAY_BE_DESIGNED"},
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/oof_predictions.jsonl", "sha256": "65513da6c33abb9b25ed3b9d14f2fb1f0f36ac9a34c682c26494c967db1f2146"}
+  ],
+  "implementation_bindings": [
+    {"path": "scripts/v1_5/229l_fit_paper1_v3_ms_atomic_teacher_full_model_v1_5.py", "sha256": "1c29105246048ac80de9cc39557d0616dc5cc4b0e321ee8804da98ff97b2c232"}
+  ],
+  "frozen_fit": {
+    "resolved_rows": 201,
+    "connected_groups": 17,
+    "positive": 73,
+    "negative": 128,
+    "features": [
+      "selection_score",
+      "top1_top2_margin",
+      "log1p_candidate_age_sessions",
+      "log1p_candidate_word_count",
+      "log1p_strict_past_pool_count",
+      "low_information_rank1",
+      "exact_or_containment_current_echo"
+    ],
+    "classifier": "StandardScaler + L2 logistic",
+    "C": 0.1,
+    "class_weight": "balanced",
+    "threshold": 0.5,
+    "seed": 20260811
+  },
+  "authorization": {"full_fit_runs": 1, "api_calls": 0, "generator_calls": 0, "executor_qualification_runs": 0, "baseline_runs": 0, "mp_or_me_work": 0, "external_test_reads": 0},
+  "claim_boundary": "Checkpoint existence means the MS selector is trained against teacher suitability. It does not mean memory is correctly absorbed into a response or that the combined PM beats baselines.",
+  "forbidden": [
+    "changing the model, features, hyperparameters, split interpretation, or threshold",
+    "using in-sample fit metrics as evidence of generalization",
+    "calling any API or generator",
+    "starting MP or ME work",
+    "claiming end-to-end success before executor qualification and same-stack comparison"
+  ],
+  "next": "FIT_EXACT_ONE_MS_ATOMIC_SUITABILITY_CHECKPOINT"
+}

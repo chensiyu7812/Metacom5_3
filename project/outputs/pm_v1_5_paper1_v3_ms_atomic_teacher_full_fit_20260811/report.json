@@ -1,0 +1,111 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-atomic-teacher-full-fit-report-v1",
+  "status": "MS_ATOMIC_SUITABILITY_CHECKPOINT_FIT_EXECUTOR_QUALIFICATION_REQUIRED",
+  "training_target": "qualified single-LLM-teacher prospective suitability for actual atomic MS Rank-1; not human gold and not response uplift",
+  "denominator": {
+    "resolved_rows": 201,
+    "groups": 17,
+    "on": 73,
+    "off": 128,
+    "abstentions_excluded": 3
+  },
+  "frozen_model": {
+    "features": [
+      "selection_score",
+      "top1_top2_margin",
+      "log1p_candidate_age_sessions",
+      "log1p_candidate_word_count",
+      "log1p_strict_past_pool_count",
+      "low_information_rank1",
+      "exact_or_containment_current_echo"
+    ],
+    "C": 0.1,
+    "class_weight": "balanced",
+    "threshold": 0.5,
+    "seed": 20260811
+  },
+  "parameters": {
+    "scaler_mean": [
+      0.7409881467546396,
+      0.048362067238015324,
+      1.4200916282081233,
+      2.4589459554755733,
+      4.342315475265333,
+      0.1044776119402985,
+      0.15422885572139303
+    ],
+    "scaler_scale": [
+      0.15011964696961227,
+      0.06041803494212572,
+      0.7675095358402522,
+      0.6205925456927529,
+      1.049753245164468,
+      0.3058791273420774,
+      0.36116798831605085
+    ],
+    "logistic_intercept": -0.23932908159803037,
+    "standardized_coefficients": {
+      "selection_score": -0.4102555643632412,
+      "top1_top2_margin": -0.1988743800704286,
+      "log1p_candidate_age_sessions": 0.07002761092650231,
+      "log1p_candidate_word_count": 0.7662928675311019,
+      "log1p_strict_past_pool_count": 0.045724718397766775,
+      "low_information_rank1": -0.4529109312697612,
+      "exact_or_containment_current_echo": -0.45393850218429016
+    }
+  },
+  "upstream_oof": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json",
+    "sha256": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82",
+    "primary_metrics": {
+      "roc_auc": 0.8289811643835616,
+      "average_precision": 0.7135741914436261,
+      "balanced_accuracy_at_0_5": 0.7449165239726028,
+      "recall_at_0_5": 0.7945205479452054,
+      "specificity_at_0_5": 0.6953125,
+      "brier": 0.17203363897672208,
+      "prevalence_brier": 0.23380438835459819,
+      "brier_gain_vs_train_prevalence": 0.061770749377876105,
+      "log_loss": 0.5086069403705762,
+      "prevalence_log_loss": 0.660685570415607,
+      "log_loss_gain_vs_train_prevalence": 0.15207863004503086,
+      "predicted_on": 97,
+      "predicted_off": 104,
+      "predicted_on_fraction": 0.48258706467661694
+    },
+    "bootstrap_95_ci": {
+      "auc": {
+        "low": 0.7744377219596222,
+        "high": 0.8861115424430641
+      },
+      "balanced_accuracy": {
+        "low": 0.6662002175368138,
+        "high": 0.8213480205632179
+      },
+      "brier_gain": {
+        "low": 0.03518620245306775,
+        "high": 0.09069668379199247
+      },
+      "log_loss_gain": {
+        "low": 0.09166295254219904,
+        "high": 0.2192364672251509
+      }
+    }
+  },
+  "artifacts": {
+    "checkpoint": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/ms_atomic_suitability_model.joblib",
+      "sha256": "68fc2f909783d7b46daa37ba2fef453598c4bf24b8935fc6122c2c41ed1d3993"
+    },
+    "feature_schema": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/feature_schema.json",
+      "sha256": "a269c7c1ba3d6e1f2574be75fefb5ea78c762b3c89152574eb335002c159f30b"
+    }
+  },
+  "claim_boundary": "The MS selector is now trained. It is not yet a successful end-to-end PM until V3 meaning-absorption execution and same-stack outcomes pass.",
+  "api_calls": 0,
+  "generator_calls": 0,
+  "baseline_calls": 0,
+  "external_test_reads": 0,
+  "next": "QUALIFY_V3_MS_MEANING_ABSORPTION_EXECUTOR_ON_FROZEN_ELIGIBLE_AND_INELIGIBLE_CASES"
+}

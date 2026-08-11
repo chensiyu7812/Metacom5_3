@@ -1,0 +1,56 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-single-teacher-label-freeze-phase-v1",
+  "date": "2026-08-11",
+  "status": "MS_EXACT_204_ZERO_API_LABEL_FREEZE_AUTHORIZED_ONCE_OOF_GENERATOR_FORBIDDEN",
+  "scope": "Freeze the 199 already validated MS teacher decisions plus exactly five raw, schema-valid NOT_SUITABLE decisions after deterministic reason-code alias normalization. Create nullable binary teacher labels and diagnostics only.",
+  "input_bindings": [
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_reviews_20260811/live_report.json", "sha256": "5de357b29f871982699dae30750361ea1a323117ef32c6491377de1d2dba3d64"},
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_reviews_20260811/physical_attempt_ledger.jsonl", "sha256": "4399bb94ff4b848eb969209c0ac1a7a0bd51547943d121c51b4fab77c5797d9c"},
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_reviews_20260811/raw_physical_attempts.jsonl", "sha256": "31a73e81e6ef13e5fb8c6f81025ca45cd62e8186f424d95fd0ebe20b3b43a07d"},
+    {"path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_reviews_20260811/teacher_reviews.jsonl", "sha256": "f5886ce3461c15ceefa5451b3eae820335a36986c2df769289d05083e412591b"},
+    {"path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_packet.jsonl", "sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8"},
+    {"path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_private_20260811/private_case_key.jsonl", "sha256": "e34556683a85925eecbf58de9ebff2b4e74a7ebc986d3f7d53acf3a77041348c"},
+    {"path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl", "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52"}
+  ],
+  "implementation_binding": {
+    "path": "scripts/v1_5/227l_freeze_paper1_v3_ms_single_teacher_labels_v1_5.py",
+    "sha256": "1f8b93afb9e1c3f4bdae6a1aeb12802ab8592e68afab9148ca67c67c208c065e"
+  },
+  "alias_projection": {
+    "ALREADY_VISIBLE": "CURRENT_ECHO_OR_CONTAINMENT",
+    "ALREADY_VISIBLE_OR_ALREADY_CHOSEN": "CURRENT_ECHO_OR_CONTAINMENT"
+  },
+  "alias_recovery_preconditions": {
+    "exact_missing_reviews": 5,
+    "all_decisions": "NOT_SUITABLE",
+    "all_candidate_and_visible_span_ids_must_validate_after_alias": true,
+    "all_checklist_attestations_must_validate": true,
+    "semantic_rejudgment": false,
+    "paid_retry": false
+  },
+  "label_projection": {
+    "SUITABLE": 1,
+    "NOT_SUITABLE": 0,
+    "SEMANTIC_ABSTAIN": null,
+    "abstention_runtime_default": "OFF",
+    "teacher_is_human_gold": false
+  },
+  "authorization": {
+    "api_calls": 0,
+    "label_freeze_runs": 1,
+    "pm_fits": 0,
+    "generator_calls": 0,
+    "baseline_runs": 0,
+    "external_test_reads": 0,
+    "mp_or_me_work": 0
+  },
+  "forbidden": [
+    "rerunning any of the 204 teacher calls",
+    "content-dependent repair of the five raw decisions",
+    "using influenced_by, event timeline, summaries, observations, QA answers, or QA evidence as response-PM labels",
+    "model fitting before a separately hash-bound identity-free grouped OOF design is active",
+    "calling any generator",
+    "opening MP or ME work"
+  ],
+  "next": "EXECUTE_EXACT_ONE_ZERO_API_LABEL_FREEZE_AND_REPORT_CLASS_CAPACITY"
+}

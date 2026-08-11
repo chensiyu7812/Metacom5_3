@@ -96,6 +96,11 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_MEASUREMENT_FAILURE_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MP_DIAGNOSTIC_CLOSEOUT_MS_ATOMIC_LABEL_AUDIT_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SINGLE_TEACHER_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SINGLE_TEACHER_LABEL_FREEZE",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ATOMIC_TEACHER_LOGO_OOF",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ATOMIC_TEACHER_FULL_FIT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFICATION_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -120,8 +125,13 @@ def validate_active_authority() -> dict[str, Any]:
         "registry_canonical_matches": registry["canonical_next"] == active["method_id"],
         "registry_records_terminal_failure": len(versions) == 1 and versions[0]["result"] == "TERMINAL_MECHANICAL_PRIMARY_FAIL_BORDERLINE_DIRECTIONAL_ONLY" and versions[0]["formal_training_allowed"] is False,
         "human_plan_records_no_v3": "V2 到此关闭，不再建立 V3" in plan_path.read_text(encoding="utf-8"),
-        "paid_release_false": paid.get("paid_execution_authorized") is False,
-        "authority_requires_paid_false": authority["paid_execution_guard"]["required_current_value"] is False,
+        "paid_release_matches_active_phase": (
+            paid.get("paid_execution_authorized") is True
+            and authority["paid_execution_guard"]["required_current_value"] is True
+            if active_v3.get("id") == "MS_SINGLE_TEACHER_PUBLIC_EXECUTION"
+            else paid.get("paid_execution_authorized") is False
+            and authority["paid_execution_guard"]["required_current_value"] is False
+        ),
         "live_phase_binding_valid_if_present": not live or (
             live_path is not None
             and live_path.is_file()
@@ -716,6 +726,166 @@ def validate_active_authority() -> dict[str, Any]:
                         ]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_SINGLE_TEACHER_PUBLIC_EXECUTION"
+                    and active_v3_document.get("status")
+                    == "MS_EXACT_204_SINGLE_QUALIFIED_TEACHER_CALLS_AUTHORIZED_ONCE_LABEL_FIT_GENERATOR_FORBIDDEN"
+                    and active_v3_document["execution"]["logical_calls"] == 204
+                    and active_v3_document["execution"]["connected_groups"] == 17
+                    and active_v3_document["execution"]["absolute_usd_cap"] == 2.5
+                    and active_v3_document["label_contract"]["teacher_supervision_not_human_gold"]
+                    is True
+                    and active_v3_document["label_contract"]["reviewer_b_failure_remains_recorded"]
+                    is True
+                    and active_v3_document["label_contract"]["influenced_by_as_label"]
+                    is False
+                    and active_v3_document["label_contract"]["es_memeval_qa_evidence_as_label"]
+                    is False
+                    and active_v3_document["authorization"]["teacher_api_calls"]
+                    is True
+                    and active_v3_document["authorization"]["training_label_projection"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and active_v3_document["authorization"]["baseline_calls"] is False
+                    and active_v3_document["authorization"]["external_calls"] is False
+                    and active_v3_document["nonexclusive_invariant"]["heads_train_and_qualify_separately"]
+                    is True
+                    and active_v3_document["nonexclusive_invariant"]["qualified_heads_execute_jointly"]
+                    is True
+                    and active_v3_document["nonexclusive_invariant"]["does_not_impose_one_memory_cap"]
+                    is True
+                    and active_v3_document["nonexclusive_invariant"]["all_16_requested_actions_remain_downstream"]
+                    is True
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_SINGLE_TEACHER_LABEL_FREEZE"
+                    and active_v3_document.get("status")
+                    == "MS_EXACT_204_ZERO_API_LABEL_FREEZE_AUTHORIZED_ONCE_OOF_GENERATOR_FORBIDDEN"
+                    and active_v3_document["alias_recovery_preconditions"]["exact_missing_reviews"]
+                    == 5
+                    and active_v3_document["alias_recovery_preconditions"]["all_decisions"]
+                    == "NOT_SUITABLE"
+                    and active_v3_document["alias_recovery_preconditions"]["semantic_rejudgment"]
+                    is False
+                    and active_v3_document["alias_recovery_preconditions"]["paid_retry"]
+                    is False
+                    and active_v3_document["label_projection"]
+                    == {
+                        "SUITABLE": 1,
+                        "NOT_SUITABLE": 0,
+                        "SEMANTIC_ABSTAIN": None,
+                        "abstention_runtime_default": "OFF",
+                        "teacher_is_human_gold": False,
+                    }
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["label_freeze_runs"] == 1
+                    and active_v3_document["authorization"]["pm_fits"] == 0
+                    and active_v3_document["authorization"]["generator_calls"] == 0
+                    and active_v3_document["authorization"]["mp_or_me_work"] == 0
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["input_bindings"]
+                    )
+                    and sha(resolve(active_v3_document["implementation_binding"]["path"]))
+                    == active_v3_document["implementation_binding"]["sha256"]
+                )
+                or (
+                    active_v3.get("id") == "MS_ATOMIC_TEACHER_LOGO_OOF"
+                    and active_v3_document.get("status")
+                    == "MS_ATOMIC_SINGLE_TEACHER_EXACT_ONE_IDENTITY_FREE_LOGO_OOF_AUTHORIZED"
+                    and active_v3_document["frozen_denominator"]
+                    == {
+                        "resolved_rows": 201,
+                        "abstentions_excluded": 3,
+                        "connected_groups": 17,
+                        "positive": 73,
+                        "negative": 128,
+                    }
+                    and active_v3_document["frozen_primary_model"]["C"] == 0.1
+                    and active_v3_document["frozen_primary_model"]["threshold"] == 0.5
+                    and active_v3_document["frozen_primary_model"]["split"]
+                    == "LeaveOneConnectedGroupOut"
+                    and active_v3_document["authorization"]["oof_runs"] == 1
+                    and active_v3_document["authorization"]["full_fit_checkpoints"] == 0
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["generator_calls"] == 0
+                    and active_v3_document["authorization"]["mp_or_me_work"] == 0
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        and (
+                            "required_status" not in item
+                            or read(resolve(item["path"]))["status"] == item["required_status"]
+                        )
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_ATOMIC_TEACHER_FULL_FIT"
+                    and active_v3_document.get("status")
+                    == "MS_ATOMIC_TEACHER_FROZEN_FULL_FIT_AUTHORIZED_ONCE_EXECUTOR_STILL_REQUIRED"
+                    and active_v3_document["frozen_fit"]["resolved_rows"] == 201
+                    and active_v3_document["frozen_fit"]["connected_groups"] == 17
+                    and active_v3_document["frozen_fit"]["positive"] == 73
+                    and active_v3_document["frozen_fit"]["negative"] == 128
+                    and active_v3_document["frozen_fit"]["C"] == 0.1
+                    and active_v3_document["frozen_fit"]["threshold"] == 0.5
+                    and active_v3_document["authorization"]["full_fit_runs"] == 1
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["generator_calls"] == 0
+                    and active_v3_document["authorization"]["executor_qualification_runs"] == 0
+                    and active_v3_document["authorization"]["mp_or_me_work"] == 0
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        and (
+                            "required_status" not in item
+                            or read(resolve(item["path"]))["status"] == item["required_status"]
+                        )
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_EXECUTOR_QUALIFICATION_DESIGN"
+                    and active_v3_document.get("status")
+                    == "MS_ATOMIC_SELECTOR_TRAINED_OOF_SIGNAL_PRESENT_EXECUTOR_QUALIFICATION_NEXT"
+                    and active_v3_document["training_supervision"]["resolved_binary"] == 201
+                    and active_v3_document["training_supervision"]["connected_groups"] == 17
+                    and active_v3_document["training_supervision"]["influenced_by_or_qa_used_as_label"]
+                    is False
+                    and active_v3_document["cross_fitted_evidence"]["roc_auc"]
+                    == 0.8289811643835616
+                    and active_v3_document["cross_fitted_evidence"]["balanced_accuracy_at_0_5"]
+                    == 0.7449165239726028
+                    and active_v3_document["checkpoint"]["rerun_or_refit_allowed"] is False
+                    and active_v3_document["next_authority"]
+                    == {"phase": "MS_EXECUTOR_QUALIFICATION_DESIGN", "api_calls": 0, "pm_fits": 0, "mp_or_me_work": 0}
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        and (
+                            "required_status" not in item
+                            or read(resolve(item["path"]))["status"] == item["required_status"]
+                        )
+                        for item in [
+                            active_v3_document["cross_fitted_evidence"],
+                            active_v3_document["checkpoint"]["report"],
+                            active_v3_document["checkpoint"]["model"],
+                            active_v3_document["checkpoint"]["feature_schema"],
+                        ]
+                    )
+                )
             )
         ),
     }
@@ -738,7 +908,17 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "DESIGN_MS_SOURCE_AWARE_EXACT_TURN_LABEL_ROUTE_READINESS_AUDIT_ZERO_API"
+            "DESIGN_BOUNDED_MS_MEANING_ABSORPTION_QUALIFICATION_ZERO_API"
+            if active_v3.get("id") == "MS_EXECUTOR_QUALIFICATION_DESIGN"
+            else "FIT_EXACT_ONE_MS_ATOMIC_SUITABILITY_CHECKPOINT"
+            if active_v3.get("id") == "MS_ATOMIC_TEACHER_FULL_FIT"
+            else "RUN_EXACT_ONE_FROZEN_MS_ATOMIC_TEACHER_LOGO_OOF"
+            if active_v3.get("id") == "MS_ATOMIC_TEACHER_LOGO_OOF"
+            else "EXECUTE_ONE_ZERO_API_MS_LABEL_FREEZE"
+            if active_v3.get("id") == "MS_SINGLE_TEACHER_LABEL_FREEZE"
+            else "EXECUTE_EXACT_204_MS_SINGLE_TEACHER_CALLS"
+            if active_v3.get("id") == "MS_SINGLE_TEACHER_PUBLIC_EXECUTION"
+            else "DESIGN_MS_SOURCE_AWARE_EXACT_TURN_LABEL_ROUTE_READINESS_AUDIT_ZERO_API"
             if active_v3.get("id")
             == "MP_DIAGNOSTIC_CLOSEOUT_MS_ATOMIC_LABEL_AUDIT_DESIGN"
             else "RUN_EXACT_ONE_FROZEN_MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF"
