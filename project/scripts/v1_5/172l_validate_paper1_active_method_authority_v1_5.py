@@ -101,6 +101,9 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ATOMIC_TEACHER_LOGO_OOF",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ATOMIC_TEACHER_FULL_FIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFICATION_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFICATION_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_MEASUREMENT_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_QUALIFIED_REVIEW_PENDING",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -128,7 +131,10 @@ def validate_active_authority() -> dict[str, Any]:
         "paid_release_matches_active_phase": (
             paid.get("paid_execution_authorized") is True
             and authority["paid_execution_guard"]["required_current_value"] is True
-            if active_v3.get("id") == "MS_SINGLE_TEACHER_PUBLIC_EXECUTION"
+            if active_v3.get("id") in {
+                "MS_SINGLE_TEACHER_PUBLIC_EXECUTION",
+                "MS_EXECUTOR_QUALIFICATION_EXECUTION",
+            }
             else paid.get("paid_execution_authorized") is False
             and authority["paid_execution_guard"]["required_current_value"] is False
         ),
@@ -886,6 +892,82 @@ def validate_active_authority() -> dict[str, Any]:
                         ]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_EXECUTOR_QUALIFICATION_EXECUTION"
+                    and active_v3_document.get("status")
+                    == "EXACT_64_MS_EXECUTOR_QUALIFICATION_CALLS_AUTHORIZED_ONCE_NO_REFIT_NO_MP_ME"
+                    and active_v3_document["execution"]["states"] == 16
+                    and active_v3_document["execution"]["connected_groups"] == 8
+                    and active_v3_document["execution"]["logical_primary_calls"] == 64
+                    and active_v3_document["execution"]["absolute_usd_cap"] == 0.05
+                    and active_v3_document["authorization"]["generator_calls"] is True
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and active_v3_document["invariants"]["global_requested_action_count"] == 16
+                    and active_v3_document["invariants"]["one_memory_cap"] is False
+                    and active_v3_document["invariants"]["MS_RS_relation"] == "COMPLEMENTARY"
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                )
+                or (
+                    active_v3.get("id")
+                    == "MS_EXECUTOR_QUALIFICATION_MEASUREMENT_DESIGN"
+                    and active_v3_document.get("status")
+                    == "MS_EXECUTOR_GENERATION_COMPLETE_TRACE_RESPONSIBILITY_REPAIRED_SOURCE_AWARE_MEASUREMENT_NEXT"
+                    and active_v3_document["live_result"]["logical_primary_calls"] == 64
+                    and active_v3_document["zero_api_recovery"]["rows"] == 64
+                    and active_v3_document["zero_api_recovery"]["trace_sanitized"] == 11
+                    and active_v3_document["zero_api_recovery"]["content_contamination_requiring_retry"] == 0
+                    and active_v3_document["paid_release"]["paid_execution_authorized"] is False
+                    and active_v3_document["paid_release"]["stage_approvals_empty"] is True
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            active_v3_document["executed_phase"],
+                            active_v3_document["live_result"],
+                            *active_v3_document["raw_artifacts"],
+                            active_v3_document["responsibility_correction"]["patched_response_program"],
+                            active_v3_document["zero_api_recovery"]["report"],
+                            active_v3_document["zero_api_recovery"]["recovered_first_replies"],
+                            active_v3_document["paid_release"],
+                        ]
+                    )
+                )
+                or (
+                    active_v3.get("id") == "MS_EXECUTOR_QUALIFIED_REVIEW_PENDING"
+                    and active_v3_document.get("status")
+                    == "MS_EXECUTOR_BLIND_MEASUREMENT_PACKET_READY_QUALIFIED_REVIEW_REQUIRED"
+                    and active_v3_document["measurement_packet"]["function_items"] == 32
+                    and active_v3_document["measurement_packet"]["quality_pairs"] == 32
+                    and active_v3_document["measurement_packet"]["risk_items"] == 64
+                    and active_v3_document["mechanical_audit"]["exact_source_copies"] == 0
+                    and active_v3_document["mechanical_audit"]["generator_claim_is_function_gold"] is False
+                    and active_v3_document["claim_boundary"]["MS_selector_trained"] is True
+                    and active_v3_document["claim_boundary"]["MS_executor_function_pass"]
+                    == "PENDING_QUALIFIED_BLIND_REVIEW"
+                    and active_v3_document["authorization"]["api_judge_calls"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["MP_work"] is False
+                    and active_v3_document["authorization"]["ME_work"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            active_v3_document["measurement_packet"],
+                            active_v3_document["mechanical_audit"],
+                        ]
+                    )
+                )
             )
         ),
     }
@@ -908,7 +990,14 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "DESIGN_BOUNDED_MS_MEANING_ABSORPTION_QUALIFICATION_ZERO_API"
+            "COMPLETE_TWO_IDENTIFIED_HUMAN_BLIND_REVIEWS_OR_QUALIFY_A_PROXY_SEPARATELY"
+            if active_v3.get("id") == "MS_EXECUTOR_QUALIFIED_REVIEW_PENDING"
+            else "MATERIALIZE_BLIND_SOURCE_AWARE_MS_EXECUTOR_MEASUREMENT_PACKET_ZERO_API"
+            if active_v3.get("id")
+            == "MS_EXECUTOR_QUALIFICATION_MEASUREMENT_DESIGN"
+            else "EXECUTE_EXACT_64_MS_MEANING_ABSORPTION_CALLS"
+            if active_v3.get("id") == "MS_EXECUTOR_QUALIFICATION_EXECUTION"
+            else "DESIGN_BOUNDED_MS_MEANING_ABSORPTION_QUALIFICATION_ZERO_API"
             if active_v3.get("id") == "MS_EXECUTOR_QUALIFICATION_DESIGN"
             else "FIT_EXACT_ONE_MS_ATOMIC_SUITABILITY_CHECKPOINT"
             if active_v3.get("id") == "MS_ATOMIC_TEACHER_FULL_FIT"

@@ -1,0 +1,91 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-qualification-preflight-report-v1",
+  "status": "MS_V3_EXECUTOR_QUALIFICATION_PREFLIGHT_PASS_LIVE_PHASE_MAY_BE_DESIGNED",
+  "checks": {
+    "exact_16_states_64_calls": true,
+    "eight_groups_each_with_one_suitable_and_one_not": true,
+    "each_state_has_four_nonexclusive_actions": true,
+    "same_seed_within_state": true,
+    "v3_meaning_absorption_prompt_only": true,
+    "safe_nonuse_instruction_present": true,
+    "no_one_memory_cap_and_global_16_actions_unchanged": true,
+    "ms_rs_pair_is_complementary_not_suppressive": true,
+    "teacher_class_never_provider_visible": true,
+    "response_schema_frozen": true,
+    "no_api_calls": true,
+    "no_pm_refit": true,
+    "no_mp_or_me_work": true
+  },
+  "failed_checks": [],
+  "sample": {
+    "states": 16,
+    "groups": 8,
+    "teacher_suitable": 8,
+    "teacher_not_suitable": 8,
+    "negative_strata": {
+      "ORDINARY_ATOMIC": 5,
+      "CURRENT_ECHO": 3
+    }
+  },
+  "actions": {
+    "M0+R0": 16,
+    "MS+R0": 16,
+    "M0+RS": 16,
+    "MS+RS": 16
+  },
+  "generator": {
+    "config": "configs/experiment.yaml:endpoints.generator",
+    "model": "meta/llama-3.1-8b-instruct",
+    "temperature": 0.7,
+    "max_output_tokens": 512,
+    "paired_seed_per_state": true,
+    "planned_physical_calls": 64,
+    "maximum_transport_attempts_per_call": 2,
+    "explicit_usd_cap": 0.05
+  },
+  "qualification_measurement": {
+    "machine": [
+      "structured completion",
+      "guard status",
+      "no internal-label/scaffold leak",
+      "no unauthorized evidence ID",
+      "no forced literal or lexical-use gate"
+    ],
+    "offline_source_aware": [
+      "MS functional contribution",
+      "owner/time correctness",
+      "past-not-current handling",
+      "safe nonuse"
+    ],
+    "paired": [
+      "quality",
+      "literal risk events",
+      "function",
+      "cost"
+    ],
+    "generator_claimed_used_evidence_is_not_function_gold": true
+  },
+  "artifacts": {
+    "cases": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_20260811/qualification_cases_private.jsonl",
+      "sha256": "27a594597cd0792c1f745941e2874daae7d79f666a11b866c1d3b640b4b29ad3"
+    },
+    "calls": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_20260811/physical_call_plan_private.jsonl",
+      "sha256": "aeed2ad65c84188f212a5383830a76b7c4e04f5479c2be50dbd76f0a00782008"
+    }
+  },
+  "source_hashes": {
+    "authority": "e155b5f0102264ead463605bfffa88fe7414b8c6652bcac761f02a5be35d34a1",
+    "checkpoint_closeout": "be72086a67f128c5f78ef9ff890dc47710ab31b3bc6f7e33fcf0d60800174c82",
+    "labels": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364",
+    "packet": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8",
+    "generator_config": "f473e7179b29d16bc965d3d74cc070844e14565b3ff3e29ea3ebd64665ce6b6f",
+    "response_program_v3": "ecdb0b120df92aaf7c561fac61c5129e09a3978c76f4cfbe87b761342c7f8fe4",
+    "component_general_v3": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+  },
+  "api_calls": 0,
+  "pm_fits": 0,
+  "live_execution_authorized_by_this_report": false,
+  "next": "INDEPENDENTLY_AUDIT_SAMPLE_PROMPTS_AND_HASH_BIND_EXACT_64_CALL_LIVE_PHASE"
+}

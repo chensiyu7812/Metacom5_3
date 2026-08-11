@@ -1,0 +1,66 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-measurement-packet-report-v1",
+  "status": "PASS_BLIND_ANCHORED_PACKET_READY_FOR_INSTRUMENT_QUALIFICATION",
+  "checks": {
+    "exact_denominators": true,
+    "two_rs_conditions_per_state": true,
+    "balanced_teacher_classes_private_only": true,
+    "private_assignment_absent_from_blind_packets": true,
+    "function_is_source_aware_pointwise": true,
+    "quality_is_same_state_paired_and_function_blind": true,
+    "risk_requires_six_explicit_families": true,
+    "no_free_1_to_5_primary_score": true,
+    "generator_telemetry_absent": true,
+    "zero_api_materialization": true
+  },
+  "failed_checks": [],
+  "denominators": {
+    "function_on_responses": 32,
+    "quality_pairs": 32,
+    "risk_absolute_responses": 64,
+    "states": 16,
+    "connected_groups": 8
+  },
+  "measurement_separation": {
+    "function": "source-aware pointwise MS realization",
+    "risk": "absolute literal events for both arms, six explicit families",
+    "quality": "same-state same-seed paired material preference with function/risk/cost excluded",
+    "safe_nonuse": "derived only after blind judgments: teacher-not-suitable plus NOT_USED_FINAL and no material risk is executor success"
+  },
+  "historical_rules_reused": [
+    "generator telemetry is never function gold",
+    "FUNCTIONAL needs source and response evidence",
+    "wrong owner/time/boundary is not functional",
+    "risk zero is explicit per family and absence of a deterministic hit is not proof of safety",
+    "quality direction is within-state and does not double-count risk/function/cost",
+    "unresolved is preserved and never silently mapped to OFF or safe"
+  ],
+  "artifacts": {
+    "function": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/function_packet_blind.jsonl",
+      "sha256": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"
+    },
+    "quality": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/quality_packet_blind.jsonl",
+      "sha256": "9cd2aeba9f1ca7a631200d967801856a78ec273864b8130540852017adca80ff"
+    },
+    "risk": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/risk_packet_blind.jsonl",
+      "sha256": "affc8408d160a609eb59bee4cada66a06e12d92a86444b8dc2c403059d744215"
+    },
+    "private_mapping": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl",
+      "sha256": "3d24ffb565da2bfb6f031d5bb4119621fe54449e2b92256417b9c30505229bcb"
+    }
+  },
+  "source_hashes": {
+    "authority": "ff9df297ae21a26c19eb04fd28879272e498215eb911f47939089d00f86b6f88",
+    "closeout": "09f5486f82638780de43c59dc74974b80ed76ebbed2e4c5cf7ec2b1485f22478",
+    "cases": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0",
+    "calls": "44868bf02d050a4046142f1e0be631203ecb79905bc60400641cdb751ac4a225",
+    "recovered_results": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec"
+  },
+  "api_calls": 0,
+  "pm_fits": 0,
+  "next": "QUALIFY_MEASUREMENT_INSTRUMENT_ON_PAST_ANCHORS_OR_TWO_IDENTIFIED_HUMANS_BEFORE_FINAL_EXECUTOR_VERDICT"
+}

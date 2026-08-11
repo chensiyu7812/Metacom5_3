@@ -1,0 +1,90 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-qualification-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "EXACT_64_MS_EXECUTOR_QUALIFICATION_CALLS_AUTHORIZED_ONCE_NO_REFIT_NO_MP_ME",
+  "purpose": "Test whether the frozen V3 executor can absorb a selected strictly-past MS meaning into one coherent reply, safely decline an unsuitable cue, preserve owner/time boundaries, and compose MS with RS without literal splicing or bit suppression.",
+  "promoted_from_authority_sha256": "e155b5f0102264ead463605bfffa88fe7414b8c6652bcac761f02a5be35d34a1",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/report.json",
+      "sha256": "53ba8664be1a3354f85e555bb5ff2b056f44ae1719711672b308b2d242efb32d"
+    },
+    {
+      "role": "exact_16_private_cases",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/qualification_cases_private.jsonl",
+      "sha256": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0"
+    },
+    {
+      "role": "exact_64_call_plan",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/physical_call_plan_private.jsonl",
+      "sha256": "44868bf02d050a4046142f1e0be631203ecb79905bc60400641cdb751ac4a225"
+    },
+    {
+      "role": "independent_zero_api_audit",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_audit_20260811/report.json",
+      "sha256": "afa6ee4e977860397a6f08d15aa5ff248a5c7c95d419eda1287cbdaa96d3aa47"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ecdb0b120df92aaf7c561fac61c5129e09a3978c76f4cfbe87b761342c7f8fe4"
+    },
+    {
+      "role": "raw_first_live_runner",
+      "path": "scripts/v1_5/232l_run_paper1_v3_ms_executor_qualification_v1_5.py",
+      "sha256": "5fa3435755939711b283b43417bb8fe307fb0a35e7ac449f4d6de88914ce75b9"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_v3_ms_executor_qualification_execution_v1.json",
+      "sha256": "daaad905a83410eb6fa3431ac6bd52909ba52f1b10d84bcdbd670cde516b3ccb"
+    }
+  ],
+  "execution": {
+    "component": "MS",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 16,
+    "connected_groups": 8,
+    "teacher_suitable_states": 8,
+    "teacher_not_suitable_states": 8,
+    "requested_actions_per_state": ["M0+R0", "MS+R0", "M0+RS", "MS+RS"],
+    "logical_primary_calls": 64,
+    "maximum_semantic_calls_with_contamination_retry": 128,
+    "maximum_transport_attempts": 256,
+    "absolute_usd_cap": 0.05,
+    "run_identity": "155536487c9dd48b11d5036a7894fcb8b7996f2c02b1757d76a8c781cf95b2cb",
+    "same_seed_within_state": true,
+    "raw_first": true,
+    "teacher_class_provider_visible": false
+  },
+  "authorization": {
+    "generator_calls": true,
+    "offline_source_aware_measurement": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "training_label_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "invariants": {
+    "global_requested_action_count": 16,
+    "qualification_subset_does_not_change_action_space": true,
+    "MS_RS_relation": "COMPLEMENTARY",
+    "one_memory_cap": false,
+    "literal_or_lexical_use_requirement": false,
+    "safe_nonuse_preserves_current_context_reply": true,
+    "generator_claim_is_not_function_gold": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811",
+  "next": "CLOSE_PAID_RELEASE_THEN_ZERO_API_SOURCE_AWARE_EXECUTOR_MEASUREMENT"
+}

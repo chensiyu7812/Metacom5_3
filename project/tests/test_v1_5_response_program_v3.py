@@ -109,6 +109,36 @@ def test_claimed_paraphrase_needs_no_lexical_overlap():
     assert response_guard_errors_v3(response=response, plan=plan) == ()
 
 
+def test_unauthorized_trace_is_sanitized_without_destroying_safe_reply():
+    plan = _full_plan()
+    reply = "That sounds exhausting. What would feel most manageable right now?"
+    client = _FakeClient(
+        [
+            {
+                "reply": reply,
+                "used_evidence_ids": ["invented-topic", "ev-rs", "ev-rs"],
+                "realized_response_act": "support",
+            }
+        ]
+    )
+    execution = execute_response_program_v3(
+        client=client,
+        response_schema=object(),
+        current_context="I am overwhelmed today.",
+        current_goal="Offer grounded support.",
+        plan=plan,
+        raw_persist=lambda attempt, raw: None,
+    )
+    assert execution.status == "clean_safe_personal_nonuse_trace_sanitized"
+    assert execution.calls_made == 1
+    assert execution.response.reply == reply
+    assert execution.response.used_evidence_ids == ("ev-rs",)
+    assert set(execution.guard_errors) == {
+        "TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID",
+        "DUPLICATE_EVIDENCE_ID_IN_TRACE",
+    }
+
+
 def test_contamination_gets_one_retry_without_personal_resources_but_keeps_rs():
     plan = _full_plan()
     client = _FakeClient(

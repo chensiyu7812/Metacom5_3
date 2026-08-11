@@ -39,6 +39,12 @@ _RECORD_LOG_RE = re.compile(
     re.IGNORECASE,
 )
 _PERSONAL_COMPONENTS = frozenset({"MP", "MS", "ME"})
+_TRACE_ONLY_ERRORS = frozenset(
+    {
+        "TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID",
+        "DUPLICATE_EVIDENCE_ID_IN_TRACE",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -246,15 +252,20 @@ def execute_response_program_v3(
         )
     response = _parse_response(parsed)
     errors = response_guard_errors_v3(response=response, plan=plan)
-    hard_contamination = any(
-        error != "DUPLICATE_EVIDENCE_ID_IN_TRACE"
-        for error in errors
-    )
+    # Evidence IDs are untrusted generator telemetry.  Bad telemetry must be
+    # sanitized, but it is not evidence that the natural-language reply is
+    # contaminated and must never destroy an otherwise safe reply.
+    hard_contamination = any(error not in _TRACE_ONLY_ERRORS for error in errors)
     if not hard_contamination:
-        if "DUPLICATE_EVIDENCE_ID_IN_TRACE" in errors:
+        if any(error in _TRACE_ONLY_ERRORS for error in errors):
+            authorized = {resource.evidence_id for resource in plan.resources}
             response = GeneratorResponse(
                 reply=response.reply,
-                used_evidence_ids=tuple(dict.fromkeys(response.used_evidence_ids)),
+                used_evidence_ids=tuple(
+                    evidence_id
+                    for evidence_id in dict.fromkeys(response.used_evidence_ids)
+                    if evidence_id in authorized
+                ),
                 realized_response_act=response.realized_response_act,
                 reported_used_evidence_ids=response.reported_used_evidence_ids,
             )
@@ -267,11 +278,15 @@ def execute_response_program_v3(
             accounting.generator_claimed[component]
             for component in _PERSONAL_COMPONENTS
         )
-        status = (
-            "clean_safe_personal_nonuse"
-            if any_planned_personal and not any_claimed_personal
-            else "clean"
-        )
+        trace_sanitized = any(error in _TRACE_ONLY_ERRORS for error in errors)
+        if any_planned_personal and not any_claimed_personal:
+            status = (
+                "clean_safe_personal_nonuse_trace_sanitized"
+                if trace_sanitized
+                else "clean_safe_personal_nonuse"
+            )
+        else:
+            status = "clean_trace_sanitized" if trace_sanitized else "clean"
         return ResponseExecutionV3(
             response=response,
             status=status,
