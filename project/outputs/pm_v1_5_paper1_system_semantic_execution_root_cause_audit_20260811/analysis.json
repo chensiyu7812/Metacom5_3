@@ -3,7 +3,24 @@
   "date": "2026-08-11",
   "status": "ROOT_CAUSE_LOCALIZED_PAPER1_IMPLEMENTABLE_EXTERNAL_FINAL_NOT_READY",
   "api_calls": 0,
-  "headline": "The four-head/16-action design remains correct. Current failure is not general retrieval absence: in the learned-MS-ON RS slice all 7 Rank-1 sources were PI-usable and 6/7 were generator-claimed, yet human verified Function was 0/7. The immediate bottleneck is source-to-response realization and response-act interaction, not a need for another general semantic model.",
+  "headline": "The four-head/16-action design remains correct, and Paper 1 success is now frozen as RS plus at least two passing memory heads among MP/MS/ME. Current MS failure is not general retrieval absence: in the learned-MS-ON RS slice all 7 Rank-1 sources were PI-usable and 6/7 were generator-claimed, yet human verified Function was 0/7. The runner also supplied only a generic meaning instruction rather than a candidate-specific semantic proposition and response-change plan.",
+  "primary_success_rule": {
+    "machine_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "required_strategy_heads": [
+      "RS"
+    ],
+    "required_memory_pass_count": 2,
+    "memory_head_pool": [
+      "MP",
+      "MS",
+      "ME"
+    ],
+    "maximum_memory_heads_fixed_off": 1,
+    "RS_only": "PRIMARY_FAILURE",
+    "RS_plus_exactly_one_memory_head": "PRIMARY_FAILURE",
+    "RS_plus_at_least_two_memory_heads": "ELIGIBLE_FOR_PRIMARY_SYSTEM_CLAIM_IF_END_TO_END_COMPARISON_ALSO_SUPPORTS_IT",
+    "three_memory_heads_pass": "DESIRABLE_NOT_REQUIRED"
+  },
   "semantic_understanding_definition": {
     "what_it_is": "bounded candidate retrieval plus low-capacity component-specific suitability prediction",
     "what_it_is_not": "a general human-intent or full language-understanding model",
@@ -116,6 +133,30 @@
       "active_v3_mean_token_jaccard_suitable": 0.08485948291131162,
       "legacy_v2_hard_splice_code_still_present": true,
       "active_v3_path_requires_literal_or_lexical_overlap": false
+    },
+    "meaning_cue_implementation": {
+      "candidate_specific_semantic_proposition_supplied": false,
+      "candidate_specific_response_change_plan_supplied": false,
+      "actual_meaning_cue": "Interpret the single strictly past user-owned source supplied below as a tentative continuity cue; do not treat it as current or quote it.",
+      "actual_allowed_response_change": "If it materially helps, use the past meaning to acknowledge continuity or ask a more informed current-oriented question.",
+      "raw_exact_source_also_supplied": true,
+      "diagnosis": "V3 removed forced literal splice, but the promised semantic adapter was not implemented: the generator still had to infer both the source meaning and its useful role from raw text."
+    },
+    "existing_r0_diagnostic": {
+      "PI_matched_source_usable": 7,
+      "cases": 7,
+      "connected_groups": 7,
+      "formal_source_aware_Function": "PENDING_PI_REVIEW",
+      "generator_claimed_MS": 3,
+      "generator_reported_nonuse": 4,
+      "interpretation_rule": {
+        "any_verified_function": "RS crowd-out contributed to the RS-slice failure, but the size and repeatability still require reporting.",
+        "zero_verified_function": "RS crowd-out is insufficient as the explanation; candidate-specific semantic planning and generator realization remain failed or missing."
+      },
+      "matched_learned_MS_ON_states": 7,
+      "requested_action": "MS+R0",
+      "all_sources_matched_PI_usable": true,
+      "formal_labels_pending": true
     }
   },
   "four_head_architecture": {
@@ -198,6 +239,7 @@
     "Actual Rank-1 quality and suitability were not separated; low-information/current-echo candidates were sometimes treated as positive memory.",
     "Legacy V2 forced literal use and lexical trace; active V3 removes this, but legacy code remains a routing hazard.",
     "Current V3 generator can decline a resource, yet the RS-fixed-on slice produced no human-verifiable MS contribution even when the source was usable; RS crowd-out versus general executor nonuse is unresolved.",
+    "The V3 runner populated meaning_cue and allowed_response_change with identical generic templates for every candidate. It did not materialize the candidate-specific semantic proposition, current-goal relation, boundary, or concrete response change promised by the architecture.",
     "LLM measurement endpoints were overpromoted despite schema, token-budget, order, and attribution failures; proxy 12/12 Function later became PI 0/7 in the relevant slice.",
     "The authority file itself exposes both a current V3 phase and a stale terminal current_phase."
   ],
@@ -230,8 +272,9 @@
   "minimum_repair_route": [
     "Normalize one machine authority pointer and forbid legacy V2 imports in all active runners.",
     "Add per-head three-way runtime accounting: ON, OFF, UNCERTAIN_AS_OFF. Learn/calibrate uncertainty only on outer-train; do not map one uncertain head to global M0+R0.",
-    "Use existing 7 learned-ON states for a zero-API R0-vs-RS interaction diagnosis. This tests whether RS crowds out MS without new generation or new labels.",
-    "If existing MS+R0 replies contain source-attributable Function, fix joint response planning and retest a tiny frozen slice. If not, run one 8-16-state retrieval-oracle x executor-oracle decomposition before any new head training.",
+    "Complete the already materialized 7-item existing-arm MS+R0 Function review and the separate 2-item M0+R0 versus M0+RS closure review; neither requires API calls, refitting, or threshold changes.",
+    "If MS+R0 has any verified Function, quantify RS crowd-out and repair joint response planning. If it remains 0/7, implement the missing bounded semantic-use-plan adapter before any new head fit: candidate proposition, current-goal relation, exact response change, owner/time boundary, and nonuse condition.",
+    "After MS execution is repaired, develop MP and ME under the same independent-head/joint-execution discipline. The primary system requires at least two passing memory heads; one memory head is not sufficient.",
     "Run one transport-only Claude/Gemini compatibility pilot with three controls. Endpoint choice is a measurement implementation decision, not a new scientific model search.",
     "Then run a versioned external development smoke test. After one predeclared repair, freeze and execute cross-fitted ESConv, ES-MemEval, and EvoEmo reports with same-stack baselines."
   ],
@@ -241,27 +284,32 @@
     "conditional_future": "Only if the retrieval-oracle decomposition shows actual Rank-1 is the dominant bottleneck, pre-register one cross-encoder reranker challenger against BGE-M3. Do not run an open-ended Hugging Face model search."
   },
   "authority_conflict": {
-    "active_v3_phase": "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
-    "active_v3_status": "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+    "active_v3_phase": "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
+    "active_v3_status": "ZERO_API_EXISTING_ARM_DIAGNOSTIC_PACKETS_READY_PI_REVIEW_NEXT",
     "stale_nested_current_phase": "MS_SESSION_ALIGNED_FINAL_OOF_V2",
     "stale_nested_status": "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT",
     "assessment": "The top-level active_v3_phase is current, but the same authority file still exposes an older terminal current_phase. This is a real machine-routing hazard and must be normalized before any new runner is authorized."
   },
   "source_hashes": {
-    "data/pm_v1_5_contracts/active_method_authority_v1.json": "da6d381aaa5322d43b42064bc2c9b7a7f4fd68df1c0b84b73447b690e77b5597",
+    "data/pm_v1_5_contracts/active_method_authority_v1.json": "d93d6039dc7df2f75d736e6dc19367117699314ea87961513b16c6dd209fdcf3",
     "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.json": "0e4c29e54fd0951411ed6b686b2f37aee1f62c557e0f0eee4b7ee7298d497041",
     "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82",
     "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json": "db6b800f216b64f25ed16f8f8004d0ee9545113ad5788ebd1a56f7c10f99ab55",
     "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811/report.json": "41e7d4d2c32e41bfb01dc58229792dea1aa085ee856a4a5832bd77c90282f402",
     "outputs/pm_v1_5_paper1_source_annotated_grouped_learnability_20260810/report.json": "1e63131e91ca34d5b17c048ff85265951ef7720ef083512ea70603b699016044",
     "outputs/pm_v1_5_paper1_v3_ms_executor_mechanical_audit_20260811/report.json": "41c7941df83c38d15b2bec89db94979b9b2626d8fb932bb014e21c3e050ce03d",
-    "data/pm_v1_5_contracts/paper1_v3_rs_ms_pi_adjudicated_closeout_v1.json": "9495bdf456dbdac2dd2245b71b448f68d3a16b80703cfa5cd04db93889718f54",
+    "data/pm_v1_5_contracts/paper1_v3_rs_ms_pi_adjudicated_closeout_v1.json": "6289192d3625617f23f34e1fd1315dfac04f407ecdd910a89ad15f67a7ba06ed",
     "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/human_B_raw_frozen.json": "a2965960f3a8a9640e64a117178fe16ef357a2889ed70f6a0dacaa3add849523",
     "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/unblinded_quality_raw.jsonl": "3ae40a7802458c99d6f10d20ed5092d29ac184e083f27b7efcc4ba01a8fdc77d",
     "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/policy_actions_private.jsonl": "47b7150ec4cd08e1d734219e40ea5590ff0c65b86de16af46ca277bf60a6d19f",
     "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl": "3d24ffb565da2bfb6f031d5bb4119621fe54449e2b92256417b9c30505229bcb",
     "outputs/pm_v1_5_paper1_v3_ms_executor_trace_recovery_20260811/recovered_first_response_results_private.jsonl": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec",
     "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811/reviews.jsonl": "43b80b4463bcaa62049897b279c0247af64407ccc204885144d0946efd81ad2d",
-    "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"
+    "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2",
+    "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3",
+    "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/report.json": "70346e5dcddcb6418e871c58f339a6216342770bcc273c1400bacbfcf17c62bb",
+    "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_private_key.jsonl": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec",
+    "scripts/v1_5/230l_materialize_paper1_v3_ms_executor_qualification_preflight_v1_5.py": "8dd7704278640299f599c39bc0d3de3c5a1627a8234dacb7c72bc2ae58f2cacc",
+    "scripts/v1_5/232l_run_paper1_v3_ms_executor_qualification_v1_5.py": "5fa3435755939711b283b43417bb8fe307fb0a35e7ac449f4d6de88914ce75b9"
   }
 }

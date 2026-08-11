@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "PM 第一篇：语义、召回、四头与执行链根因审计",
     "description": "Zero-API technical audit separating candidate coverage, bounded suitability prediction, generator uptake, verified Function, and response outcomes.",
-    "generatedAt": "2026-08-11T21:16:11+09:00",
+    "generatedAt": "2026-08-11T21:52:13+09:00",
     "sources": [
       {
         "id": "root_cause_analysis",
@@ -30,7 +30,12 @@
             "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/private_mapping.jsonl",
             "outputs/pm_v1_5_paper1_v3_ms_executor_trace_recovery_20260811/recovered_first_response_results_private.jsonl",
             "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811/reviews.jsonl",
-            "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl"
+            "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl",
+            "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+            "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/report.json",
+            "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_private_key.jsonl",
+            "scripts/v1_5/230l_materialize_paper1_v3_ms_executor_qualification_preflight_v1_5.py",
+            "scripts/v1_5/232l_run_paper1_v3_ms_executor_qualification_v1_5.py"
           ],
           "filters": [
             "zero API",
@@ -325,7 +330,7 @@
       {
         "id": "summary",
         "type": "markdown",
-        "body": "## 技术结论\n\n**第一篇仍然可以实现，但不能把当前结果叫做完整 PM 及格。** 四头独立判断、组合成16动作、再联合执行的总体逻辑是对的。当前最关键的新证据是：learned MS 开启的7个RS状态里，PI确认7/7来源可用，generator有6/7自报使用，但人评可归因Function是0/7。因此这次不是一般性的‘召回不到’，也不是需要再加一个大语义模型；断点在可用来源如何形成一条可确认、且不压低回复的贡献，以及RS是否把MS挤掉。",
+        "body": "## 技术结论\n\n**第一篇仍然可以实现，但不能把当前结果叫做完整 PM 及格。** 成功判据现已锁定为：RS通过，且MP/MS/ME至少两个记忆头通过；最多一个记忆头可固定OFF，四头与16种requested action全部保留。当前最关键的新证据是：learned MS 开启的7个RS状态里，PI确认7/7来源可用，generator有6/7自报使用，但人评可归因Function是0/7。因此这次不是一般性的‘召回不到’。进一步代码审计发现，runner并未生成候选特定的语义命题和use plan，只给了原始旧句与统一说明；断点主要在语义适配、联合回复动作和generator实现，而不是需要再加一个通用意图模型。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -371,21 +376,21 @@
       {
         "id": "splice",
         "type": "markdown",
-        "body": "## 还有没有硬拼接\n\n旧V2代码仍要求exact prior-user statement、词面重合和强制use，仍留在仓库里，是版本路由风险。当前V3实验路径已经删除这些义务：32条MS-ON回复exact source整段复制为0，平均token Jaccard很低；safe non-use保留正常回复，不再因telemetry错误替换成固定句。因此‘当前实验仍在硬拼接’不成立，但‘仓库仍可能误调旧路径’成立。",
+        "body": "## 没有逐字硬拼接，但也没有真正完成语义吸收\n\n旧V2代码仍要求exact prior-user statement、词面重合和强制use，仍留在仓库里，是版本路由风险。当前V3路径已删除这些义务：32条MS-ON回复exact source整段复制为0，safe non-use也不再触发固定句。然而runner把每条候选的meaning_cue都写成同一句通用指令，把allowed_response_change也写成同一句通用建议；它没有提供候选特定的语义命题、当前目标关系、owner/time边界和具体回复改变。因此当前不是‘字面硬拼’，而是‘把原始旧句交给generator临场猜怎样用’，仍未达到设计中的meaning absorption。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
       {
         "id": "harm",
         "type": "markdown",
-        "body": "## 吸收后反而变差的比例，目前算不出来\n\nPI终值在7个learned-ON状态上是MS+RS 5胜、RS-only 2胜；若只看强制MS臂，变差是2/7=28.6%。但Function为0/7，所以没有任何分母能证明‘记忆已被吸收后导致变差’。这2条只能叫MS请求臂较差，原因可能是生成措辞、RS随机差异或资源干扰，不能归因于成功吸收。",
+        "body": "## ‘吸收后反而变差’目前是错误归因\n\nPI终值在7个learned-ON状态上是MS+RS 5胜、RS-only 2胜；若只看请求臂，较差是2/7=28.6%。但Function为0/7，没有任何一条证明记忆真正进入并改变了回复，所以不能称‘吸收后变差’。责任必须分层：来源是否可用（本7条均可用）、semantic use plan是否存在（当前缺失）、generator是否实现（未被人工确认）、RS/R0是否选对、以及最终Quality/Risk。只有Function先成立，才有资格计算真正的absorption harm。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
       {
         "id": "architecture_text",
         "type": "markdown",
-        "body": "## 你设想的统一数据、独立四头、联合16动作是正确方案\n\n统一的是state ID、当前上下文、owner group和outer fold；不统一的是四个head的候选、特征和标签。每个state可产生四条component-view训练行，四个binary head分别输出概率，再组合成16种requested action。joint planner必须允许多个记忆同时存在，并将它们组织到一条连贯回复中；cost只在四头输出后的投影/比较中使用。",
+        "body": "## 统一数据、独立四头、联合16动作是正确方案\n\n统一的是state ID、当前上下文、owner group和outer fold；不统一的是四个head的候选、特征和标签。每个state可产生四条component-view训练行，四个binary head分别输出概率，再组合成16种requested action。joint planner必须允许多个记忆同时存在，并将它们组织到一条连贯回复中；cost只在四头输出后的投影/比较中使用。第一篇的最低成功不是RS+单一记忆，而是RS通过且MP/MS/ME至少两个通过；最多一个记忆头可固定OFF。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -418,7 +423,7 @@
       {
         "id": "route",
         "type": "markdown",
-        "body": "## 最短成功路线\n\n1. 先做零API版本正规化和每head的UNCERTAIN_AS_OFF记账。\n2. 用现成7个learned-ON states检查MS+R0是否出现Function，定位RS crowd-out；不重生成。\n3. 若R0仍为0，只做8–16条retrieval-oracle × executor-oracle分解，确认是Rank-1还是实现层。\n4. 只修一个被证实的瓶颈，做极小同栈复测。\n5. 随后进入版本化外部development smoke；冻结后再做ESConv、ES-MemEval、EvoEmo cross-fitted正式报告。\n\n现在不引入新的Hugging Face意图模型。只有oracle分解证明Rank-1是主瓶颈时，才预注册一个cross-encoder reranker挑战BGE-M3；否则加模型只会增加调参面。",
+        "body": "## 最短成功路线\n\n1. 已把RS+至少两个记忆头的成功判据写入活动权威，保留四头与16动作。\n2. 已零API物化现成7个learned-MS-ON的MS+R0 Function包，以及2个closure状态的M0+R0 vs M0+RS包；只等PI按既有锚点裁定。\n3. 若R0出现Function，量化RS crowd-out并修联合规划；若仍为0/7，先补上缺失的候选特定semantic use plan：语义命题、当前目标关系、具体回复改变、owner/time边界、自然不用条件。\n4. 在冻结小切片验证MS真正做功后，再用同一纪律推进MP和ME；最终MP/MS/ME至少两个必须通过。\n5. 然后进入版本化外部development smoke；冻结后再做ESConv、ES-MemEval、EvoEmo cross-fitted正式报告。\n\n现在不引入新的Hugging Face通用意图模型。只有后续oracle分解证明Rank-1仍是主瓶颈时，才预注册一个cross-encoder reranker挑战BGE-M3。",
         "layout": "full",
         "sourceId": "root_cause_analysis"
       },
@@ -432,14 +437,14 @@
       {
         "id": "questions",
         "type": "markdown",
-        "body": "## 下一轮只回答三个问题\n\n- 同样7个可用来源在MS+R0下，是否能出现人可确认的source-attributable Function？\n- 若不能，retrieval oracle与executor oracle谁能恢复Function？\n- closure/relief状态下，RS head能否稳定OFF并让R0自然收尾？\n\n这三个问题回答后，就不再需要靠版本感觉判断MP/MS/ME‘有没有希望’。",
+        "body": "## 当前只需人工回答九条，不再生成\n\n- 7条现有MS+R0回复：过去来源是否真正产生source-attributable Function？其中7条来源已确认可用，但generator仅3条自报使用。\n- 2条closure A/B：M0+R0是否比继续RS提问更符合relief+closure阶段？\n\n这两组必须分开：前者定MS执行责任，后者定RS/回复阶段路由。无API、无重训、无调阈值。",
         "layout": "full"
       }
     ]
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-11T21:16:11+09:00",
+    "generatedAt": "2026-08-11T21:52:13+09:00",
     "status": "ready",
     "datasets": {
       "candidate_availability": [

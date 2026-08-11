@@ -45,6 +45,7 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
     }
     assert active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
     assert sha(ROOT / active["contract_path"]) == active["contract_sha256"]
@@ -69,6 +70,21 @@ def test_v2_claim_and_action_space_are_narrow_and_explicit() -> None:
     assert rule["effective_primary_head_rule"]["machine_predicate"] == "RS_pass AND MS_pass"
     assert rule["observed_result"]["paper1_primary_pass"] is False
     assert all(term in contract["claim"]["primary"] for term in ("quality", "risk", "function", "cost"))
+
+
+def test_active_v3_primary_success_requires_two_memory_heads_without_shrinking_actions() -> None:
+    authority = read(AUTHORITY_PATH)
+    binding = authority["active_v3_phase"]["primary_success_rule"]
+    rule_path = ROOT / binding["path"]
+    rule = read(rule_path)
+
+    assert sha(rule_path) == binding["sha256"]
+    assert rule["primary_success_predicate"]["machine_predicate"] == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+    assert rule["primary_success_predicate"]["required_memory_pass_count"] == 2
+    assert rule["primary_success_predicate"]["maximum_memory_heads_fixed_off"] == 1
+    assert rule["component_scope"]["all_four_heads_must_be_defined_and_reported"] is True
+    assert rule["component_scope"]["all_sixteen_requested_actions_remain_in_the_scientific_design"] is True
+    assert rule["component_scope"]["memory_heads_are_independent_nonexclusive_binary_decisions"] is True
 
 
 def test_v2_runtime_boundary_and_no_loop_rule_are_explicit() -> None:

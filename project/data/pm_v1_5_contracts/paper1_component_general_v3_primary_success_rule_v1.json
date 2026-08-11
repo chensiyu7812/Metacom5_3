@@ -1,0 +1,79 @@
+{
+  "protocol": "pm-v1.5-paper1-component-general-v3-primary-success-rule-v1",
+  "date": "2026-08-11",
+  "status": "ACTIVE_V3_PRIMARY_SUCCESS_RULE_NO_FINAL_RESULT_YET",
+  "purpose": "Freeze the minimum scientifically meaningful Paper 1 claim without requiring every memory head to pass and without allowing an RS-only or single-memory-head system to count as success.",
+  "bindings": {
+    "base_method": {
+      "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_v2.json",
+      "sha256": "1ebbd3ad0a3ffdde44d4e573e9c30e6c75da2e046677ad1c2fb39f1d0368c184"
+    },
+    "component_general_repair_contract": {
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+      "sha256": "901cd420f7ef4dd88805d77d2ce0fe1d098bf226bd8a3c313e981ffea6e9d904"
+    },
+    "component_general_planner": {
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    "response_program": {
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "5626b22d84603918792beb500dab6a18a604fe060615f7fd3b4b21181f9e48ce"
+    }
+  },
+  "component_scope": {
+    "strategy_head": "RS",
+    "memory_heads": ["MP", "MS", "ME"],
+    "all_four_heads_must_be_defined_and_reported": true,
+    "all_sixteen_requested_actions_remain_in_the_scientific_design": true,
+    "memory_heads_are_independent_nonexclusive_binary_decisions": true,
+    "joint_execution_after_independent_head_decisions": true
+  },
+  "primary_success_predicate": {
+    "machine_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "required_strategy_heads": ["RS"],
+    "required_memory_pass_count": 2,
+    "memory_head_pool": ["MP", "MS", "ME"],
+    "maximum_memory_heads_fixed_off": 1,
+    "RS_only": "PRIMARY_FAILURE",
+    "RS_plus_exactly_one_memory_head": "PRIMARY_FAILURE",
+    "RS_plus_at_least_two_memory_heads": "ELIGIBLE_FOR_PRIMARY_SYSTEM_CLAIM_IF_END_TO_END_COMPARISON_ALSO_SUPPORTS_IT",
+    "three_memory_heads_pass": "DESIRABLE_NOT_REQUIRED"
+  },
+  "head_pass_definition": {
+    "selector": "The component-specific grouped/cross-fitted selector must be nondegenerate and improve on the named simple baseline under its frozen prospective suitability estimand; no single arbitrary BA threshold can override the full evidence.",
+    "candidate_support": "The public candidate surface must contain both applicable and non-applicable or abstention cases across real connected groups; candidate presence alone is not a pass.",
+    "verified_function": "When the learned policy requests the component, source-aware offline review must observe a nonzero and reproducible component-attributable contribution; generator telemetry is insufficient.",
+    "same_stack_outcome": "Against the component-off and other frozen same-stack baselines, the learned component must show useful conditional behavior without a material Quality or Risk regression; Function, Quality, Risk, and Cost remain separate.",
+    "responsibility": "A head cannot fail because another component's response act was fixed incorrectly; interaction slices must separate selector, retrieval, joint planning, generator realization, and measurement responsibility."
+  },
+  "failed_head_behavior": {
+    "at_most_one_failed_memory_head": "fixed OFF in the qualified learned deployment policy and reported as a component limitation",
+    "two_or_more_failed_memory_heads": "Paper 1 primary PM claim fails even if RS passes",
+    "action_space_reporting": "Keep the conceptual 16-action space and report structural projections; do not delete the failed component from the design or rewrite the project as a smaller action space."
+  },
+  "current_evidence_not_a_final_result": {
+    "RS": "selector evidence exists; compatible full learned deployment and closure-aware response-act evaluation remain incomplete",
+    "MP": "candidate surface exists; formal label/transport and end-to-end evidence remain incomplete",
+    "MS": "teacher-suitability selector signal exists; RS-fixed-on verified Function is 0/7 and therefore no end-to-end pass",
+    "ME": "typed surface exists but is sparse; no current formal pass",
+    "paper1_primary_pass": false,
+    "reason": "Fewer than two memory heads currently have complete selector plus verified-Function plus same-stack outcome support."
+  },
+  "forbidden_reinterpretations": [
+    "RS plus MS alone automatically counts as the complete minimum system",
+    "one memory head pass is enough for the Paper 1 primary claim",
+    "a failed memory head is removed from the conceptual design or the 16 requested actions",
+    "candidate coverage or OOF discrimination alone counts as a head pass",
+    "Quality wins with zero verified Function count as memory benefit",
+    "cost changes a component suitability label"
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "response_generation": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "external_execution": false,
+    "zero_api_existing_arm_diagnostics": true
+  }
+}

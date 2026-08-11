@@ -70,6 +70,12 @@ def validate_active_authority() -> dict[str, Any]:
         if active_v3_manifest.get("path")
         else {}
     )
+    primary_success_binding = active_v3.get("primary_success_rule") or {}
+    primary_success_document = (
+        read(resolve(primary_success_binding["path"]))
+        if primary_success_binding.get("path")
+        else {}
+    )
     known_authority_statuses = {
         "ACTIVE_ZERO_API_V2_TERMINAL_ROUTING_FAIL_SYSTEM_FEASIBILITY_DESIGN_ONLY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_SYSTEM_FEASIBILITY_GENERATION",
@@ -109,10 +115,24 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
         "authority_keeps_terminal_routing_result": authority["status"] in known_authority_statuses,
+        "v3_primary_success_rule_is_content_addressed": bool(primary_success_binding)
+        and sha(resolve(primary_success_binding["path"])) == primary_success_binding["sha256"],
+        "v3_primary_requires_rs_plus_two_memory_heads": (
+            primary_success_document.get("primary_success_predicate", {}).get("machine_predicate")
+            == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+            and primary_success_document.get("primary_success_predicate", {}).get("required_memory_pass_count") == 2
+            and primary_success_document.get("primary_success_predicate", {}).get("maximum_memory_heads_fixed_off") == 1
+        ),
+        "v3_primary_preserves_four_heads_and_sixteen_actions": (
+            primary_success_document.get("component_scope", {}).get("all_four_heads_must_be_defined_and_reported") is True
+            and primary_success_document.get("component_scope", {}).get("all_sixteen_requested_actions_remain_in_the_scientific_design") is True
+            and primary_success_document.get("component_scope", {}).get("memory_heads_are_independent_nonexclusive_binary_decisions") is True
+        ),
         "active_method_is_v2": active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
         "contract_hash_matches": contract_path.is_file() and sha(contract_path) == active["contract_sha256"],
         "contract_method_matches": contract["method_id"] == active["method_id"],
@@ -975,6 +995,32 @@ def validate_active_authority() -> dict[str, Any]:
                     )
                 )
                 or (
+                    active_v3.get("id") == "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT"
+                    and active_v3_document.get("status")
+                    == "ZERO_API_EXISTING_ARM_DIAGNOSTIC_PACKETS_READY_PI_REVIEW_NEXT"
+                    and active_v3_document["primary_success_rule"]["machine_predicate"]
+                    == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["cases"] == 7
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["connected_groups"] == 7
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["matched_PI_usable_sources"] == 7
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["generator_claimed_MS"] == 3
+                    and active_v3_document["diagnostic"]["MS_R0_Function"]["formal_source_aware_Function"]
+                    == "PENDING_PI_REVIEW"
+                    and active_v3_document["diagnostic"]["closure_routing"]["cases"] == 2
+                    and active_v3_document["diagnostic"]["closure_routing"]["kept_separate_from_MS_Function"] is True
+                    and active_v3_document["authorization"]["PI_source_aware_Function_review"] is True
+                    and active_v3_document["authorization"]["PI_closure_quality_review"] is True
+                    and active_v3_document["authorization"]["API_calls"] == 0
+                    and active_v3_document["authorization"]["response_generation"] is False
+                    and active_v3_document["authorization"]["PM_refit"] is False
+                    and active_v3_document["authorization"]["threshold_change"] is False
+                    and active_v3_document["authorization"]["training_label_creation"] is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
+                or (
                     active_v3.get("id") == "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
                     and active_v3_document.get("status")
                     == "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
@@ -1169,8 +1215,12 @@ def validate_active_authority() -> dict[str, Any]:
             "method_registry_sha256": sha(registry_path),
             "human_plan_sha256": sha(plan_path),
             "paid_release_sha256": sha(paid_path),
+            "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "PI_REVIEW_SEVEN_R0_FUNCTION_AND_TWO_CLOSURE_ROUTING_EXISTING_ARM_ITEMS"
+            if active_v3.get("id") == "R0_FUNCTION_CLOSURE_PACKETS_READY_PI_REVIEW_NEXT"
+            else
             "DESIGN_ZERO_API_EXISTING_R0_SLICE_DIAGNOSTIC_TO_SEPARATE_RS_CROWD_OUT_FROM_GENERAL_MS_NONUSE"
             if active_v3.get("id") == "RS_MS_PI_ADJUDICATED_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT"
             else

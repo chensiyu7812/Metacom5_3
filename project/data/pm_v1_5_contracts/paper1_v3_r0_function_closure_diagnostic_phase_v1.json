@@ -1,0 +1,66 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-r0-function-closure-diagnostic-phase-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_EXISTING_ARM_DIAGNOSTIC_PACKETS_READY_PI_REVIEW_NEXT",
+  "purpose": "Freeze the existing-response diagnostic that separates RS crowd-out from general MS non-realization, while measuring closure routing in a separate current-context-only contrast.",
+  "primary_success_rule": {
+    "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+    "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3",
+    "machine_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2"
+  },
+  "diagnostic": {
+    "MS_R0_Function": {
+      "cases": 7,
+      "connected_groups": 7,
+      "matched_learned_MS_ON_states": 7,
+      "matched_PI_usable_sources": 7,
+      "generator_claimed_MS": 3,
+      "formal_source_aware_Function": "PENDING_PI_REVIEW"
+    },
+    "closure_routing": {
+      "cases": 2,
+      "comparison": "M0+R0 versus M0+RS",
+      "formal_current_phase_quality_direction": "PENDING_PI_REVIEW",
+      "kept_separate_from_MS_Function": true
+    }
+  },
+  "artifacts": [
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/report.json",
+      "sha256": "70346e5dcddcb6418e871c58f339a6216342770bcc273c1400bacbfcf17c62bb"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_blind.jsonl",
+      "sha256": "16120e0d9bafec50dd4a962145bfb57a0762a73795e4e5618fb155eb1e1b52ac"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/r0_function_private_key.jsonl",
+      "sha256": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/closure_quality_blind.jsonl",
+      "sha256": "32e258afccce4d104da25fd4767f17ce8370aead3ba860f7055edf4c12e2d97c"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_closure_diagnostic_20260811/closure_quality_private_key.jsonl",
+      "sha256": "d9b0567743d55fe947cc2e0777316376dddc7872ebb662512ec4ebb9d0d68ba8"
+    }
+  ],
+  "interpretation": {
+    "R0_any_verified_Function": "RS crowd-out contributed to the RS-slice failure; repair joint planning and quantify the interaction.",
+    "R0_zero_verified_Function": "RS crowd-out is not a sufficient explanation; implement the missing candidate-specific semantic-use-plan adapter before new head fitting or generation.",
+    "closure": "Closure results govern RS/response-act routing only and never relabel MS suitability or Function."
+  },
+  "authorization": {
+    "PI_source_aware_Function_review": true,
+    "PI_closure_quality_review": true,
+    "API_calls": 0,
+    "response_generation": false,
+    "PM_refit": false,
+    "threshold_change": false,
+    "training_label_creation": false,
+    "MP_execution": false,
+    "ME_execution": false,
+    "external_execution": false
+  }
+}
