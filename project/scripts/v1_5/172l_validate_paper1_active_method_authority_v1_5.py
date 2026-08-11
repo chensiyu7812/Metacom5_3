@@ -120,10 +120,22 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_RESPONSIBILITY_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_REPAIR_PACKET_READY",
     }
+    current_execution = authority.get("current_execution_phase") or {}
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
         "authority_keeps_terminal_routing_result": authority["status"] in known_authority_statuses,
+        "one_current_execution_pointer_with_explicit_alias": (
+            bool(current_execution)
+            and active_v3.get("compatibility_alias_of") == "current_execution_phase"
+            and active_v3.get("id") == current_execution.get("id")
+            and active_v3.get("status") == current_execution.get("status")
+            and active_v3.get("active_phase_manifest")
+            == current_execution.get("active_phase_manifest")
+            and authority["current_phase"].get("historical_only") is True
+            and authority["current_phase"].get("must_not_route_execution") is True
+        ),
         "v3_primary_success_rule_is_content_addressed": bool(primary_success_binding)
         and sha(resolve(primary_success_binding["path"])) == primary_success_binding["sha256"],
         "v3_primary_requires_rs_plus_two_memory_heads": (
@@ -244,6 +256,15 @@ def validate_active_authority() -> dict[str, Any]:
                 == g4b["append_only_documentation_addendum"]["failure_ledger"]["sha256"]
                 and g4b["append_only_documentation_addendum"]["failure_ledger"]["required_text"]
                 in resolve(g4b["append_only_documentation_addendum"]["failure_ledger"]["path"]).read_text(encoding="utf-8")
+            )
+            or (
+                active_v3.get("id") == "MS_SUPERVISION_REPAIR_PACKET_READY"
+                and any(
+                    item.get("role") == "global_failure_ledger"
+                    and sha(resolve(item["path"])) == item["sha256"]
+                    and "## 26. 2026-08-12 MS监督单位修复" in resolve(item["path"]).read_text(encoding="utf-8")
+                    for item in active_v3_document.get("artifacts", [])
+                )
             )
         ),
         "v3_repair_preserves_old_v2_hashes": not v3_repair or all(
@@ -1303,6 +1324,34 @@ def validate_active_authority() -> dict[str, Any]:
                         for item in active_v3_document["evidence"]
                     )
                 )
+                or (
+                    active_v3.get("id") == "MS_SUPERVISION_REPAIR_PACKET_READY"
+                    and active_v3_document.get("status")
+                    == "MS_REPAIR_PACKET_MATERIALIZED_ZERO_API_FIXED_CONTROL_QUALIFICATION_DESIGN_NEXT"
+                    and active_v3_document["method_version"]
+                    == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
+                    and active_v3_document["experiment_revision"]
+                    == "SEMANTIC_ADAPTER_ABLATION_V1"
+                    and active_v3_document["observed"]["resolved_review_units"] == 201
+                    and active_v3_document["observed"]["repaired_target_complete_before_reannotation"] == 0
+                    and active_v3_document["observed"]["qualification_controls"] == 12
+                    and active_v3_document["observed"]["control_distribution"]
+                    == {"SUITABLE": 5, "NOT_SUITABLE": 5, "SEMANTIC_ABSTAIN": 2}
+                    and active_v3_document["authorization"]["control_qualification_design"] is True
+                    and active_v3_document["authorization"]["control_review_execution"] is False
+                    and active_v3_document["authorization"]["public_201_reannotation"] is False
+                    and active_v3_document["authorization"]["training_label_change"] is False
+                    and active_v3_document["authorization"]["pm_fit_or_threshold_change"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and active_v3_document["invariants"]["one_per_component_label_not_one_memory_cap"] is True
+                    and active_v3_document["invariants"]["sixteen_requested_actions_unchanged"] is True
+                    and sha(resolve(active_v3_document["executed_phase"]["path"]))
+                    == active_v3_document["executed_phase"]["sha256"]
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
             )
         ),
     }
@@ -1311,7 +1360,8 @@ def validate_active_authority() -> dict[str, Any]:
         "protocol": "pm-v1.5-paper1-active-method-authority-readiness-v2",
         "status": "ACTIVE_AUTHORITY_PASS_V2_TERMINAL_WITH_SEPARATE_SYSTEM_FEASIBILITY" if not failed else "ACTIVE_AUTHORITY_FAIL_CLOSED",
         "active_method_id": active["method_id"],
-        "current_phase": authority["current_phase"]["id"],
+        "current_phase": current_execution.get("id"),
+        "historical_v2_phase": authority["current_phase"]["id"],
         "active_v3_phase": active_v3.get("id"),
         "checks": checks,
         "failed_checks": failed,
@@ -1326,6 +1376,9 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "DESIGN_FIXED_12_CONTROL_SOURCE_AWARE_QUALIFICATION_NO_PUBLIC_REANNOTATION"
+            if active_v3.get("id") == "MS_SUPERVISION_REPAIR_PACKET_READY"
+            else
             "DESIGN_ZERO_API_MS_SUPERVISION_REPAIR_PACKET_FROM_FROZEN_201_ROWS"
             if active_v3.get("id") == "MS_SUPERVISION_UNIT_REPAIR_DESIGN"
             else

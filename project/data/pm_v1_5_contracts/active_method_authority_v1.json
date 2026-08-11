@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
-  "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
+  "date": "2026-08-12",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_REPAIR_PACKET_READY",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -12,18 +12,35 @@
     "human_plan_path": "docs/PM_V1_5_PAPER1_V1_LEARNABILITY_FAILURE_AND_MS_UNIT_ALIGNMENT_20260810_ZH.md",
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
-  "active_v3_phase": {
-    "id": "MS_SUPERVISION_UNIT_REPAIR_DESIGN",
-    "status": "ORACLE_AUDIT_COMPLETE_MS_SUPERVISION_UNIT_REPAIR_DESIGN_NEXT_NO_REFIT",
+  "current_execution_phase": {
+    "id": "MS_SUPERVISION_REPAIR_PACKET_READY",
+    "status": "MS_REPAIR_PACKET_MATERIALIZED_ZERO_API_FIXED_CONTROL_QUALIFICATION_DESIGN_NEXT",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_supervision_unit_repair_design_v1.json",
-      "sha256": "f037579bd0787cf1db9211a4775245bb2d6b10595ef7bc9ad0731c6b3b1efef9"
+      "path": "data/pm_v1_5_contracts/paper1_ms_supervision_repair_packet_closeout_v1.json",
+      "sha256": "c4d42eba684bc33423c6147b1c2ae19f6f57e2bb423ba4dc3b64f5c4ed863b67"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "The oracle responsibility audit is complete: 2/6 intended-use states were source-attributable FUNCTIONAL, 3/6 were not used, 1/6 exposed a plan instruction, and 2/2 safe-nonuse controls were correct. The tested generic NLI model is rejected. Design only a zero-API repair of the MS supervision unit so positive labels require a distinct past-only candidate increment and material response change. No review API, label change, PM refit, threshold change, generator call, MP/ME work, baseline execution, or external work is authorized.",
+    "scope": "The exact 201 resolved MS units and 12 fixed non-training controls are materialized with old teacher labels, model predictions, folds, groups and outcomes hidden. Old labels are 0/201 complete for the repaired source-attributable target. Only design of the fixed control qualification is authorized. No review execution, public reannotation, label change, PM fit, threshold change, generator call, MP/ME work, baseline, or external work is authorized.",
+    "api_calls_authorized": 0,
+    "training_labels_authorized": 0,
+    "diagnostic_fits_authorized": 0
+  },
+  "active_v3_phase": {
+    "compatibility_alias_of": "current_execution_phase",
+    "id": "MS_SUPERVISION_REPAIR_PACKET_READY",
+    "status": "MS_REPAIR_PACKET_MATERIALIZED_ZERO_API_FIXED_CONTROL_QUALIFICATION_DESIGN_NEXT",
+    "active_phase_manifest": {
+      "path": "data/pm_v1_5_contracts/paper1_ms_supervision_repair_packet_closeout_v1.json",
+      "sha256": "c4d42eba684bc33423c6147b1c2ae19f6f57e2bb423ba4dc3b64f5c4ed863b67"
+    },
+    "primary_success_rule": {
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+      "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
+    },
+    "scope": "Compatibility alias only. All new runners must consume current_execution_phase.",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
@@ -48,6 +65,8 @@
   "current_phase": {
     "id": "MS_SESSION_ALIGNED_FINAL_OOF_V2",
     "status": "FINAL_OOF_CONSUMED_PRIMARY_FAIL_NO_FURTHER_PM_FIT",
+    "historical_only": true,
+    "must_not_route_execution": true,
     "promoted_from_authority_sha256": "3662a25ae0721de9588d824c749622bc4a0d58e50694f5d045655d0e55bf7e92",
     "executed_under_authority_sha256": "0e233b2a7bd16bea1980119987682368d01233197fb13ef6547ed6dbd445a979",
     "completed_V2_oof": {

@@ -1,0 +1,77 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-supervision-repair-packet-phase-v1",
+  "date": "2026-08-12",
+  "status": "ZERO_API_MS_SUPERVISION_REPAIR_PACKET_MATERIALIZATION_AUTHORIZED_ONCE",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "purpose": "Materialize an outcome-blind, prediction-blind source-aware MS reannotation packet from the exact frozen 201 resolved teacher rows, plus a fixed non-training qualification control set. This phase changes no training label and fits no model.",
+  "input_bindings": [
+    {
+      "role": "frozen_ms_teacher_labels",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/ms_teacher_labels.jsonl",
+      "sha256": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364"
+    },
+    {
+      "role": "original_ms_public_surfaces",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_packet.jsonl",
+      "sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8"
+    },
+    {
+      "role": "fresh_control_surfaces",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_controls.jsonl",
+      "sha256": "5a94d628d74cbed7a384f6b32a7c5a224b0a3bc7fbb994387adc345250fb3bcc"
+    },
+    {
+      "role": "fresh_control_gold_not_training",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_private_20260811/control_gold_key.jsonl",
+      "sha256": "7a8c5587f4bb4e5b65ebba668b2318a0ce4d54972775c0bfb95a30253233de35"
+    },
+    {
+      "role": "supervision_repair_design",
+      "path": "data/pm_v1_5_contracts/paper1_ms_supervision_unit_repair_design_v1.json",
+      "sha256": "f037579bd0787cf1db9211a4775245bb2d6b10595ef7bc9ad0731c6b3b1efef9"
+    }
+  ],
+  "output_bindings": {
+    "public_directory": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812",
+    "private_directory": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_private_20260812"
+  },
+  "scientific_unit": "visible current state x frozen actual atomic Rank-1 MS candidate",
+  "resolved_rows_expected": 201,
+  "semantic_abstentions_preserved_outside_training_packet": 3,
+  "qualification_controls": {
+    "count": 12,
+    "not_training": true,
+    "required_strata": [
+      "TRUE_PAST_ONLY_INCREMENT",
+      "LOW_INFORMATION",
+      "CURRENT_REDUNDANCY",
+      "WRONG_ENTITY_OR_EVENT",
+      "STALE_OR_RESOLVED",
+      "CURRENT_BOUNDARY_FORBIDS_HISTORY",
+      "ENTITY_UNRESOLVED",
+      "MATERIAL_USE_UNRESOLVED"
+    ]
+  },
+  "public_blinding": {
+    "teacher_decision_hidden": true,
+    "teacher_reason_hidden": true,
+    "model_prediction_hidden": true,
+    "selection_score_hidden": true,
+    "outer_fold_hidden": true,
+    "outcomes_hidden": true,
+    "group_and_owner_keys_hidden": true
+  },
+  "annotation_is_one_per_component_decision": true,
+  "annotation_does_not_impose_single_memory_cap": true,
+  "sixteen_requested_actions_unchanged": true,
+  "authorization": {
+    "zero_api_materialization": true,
+    "human_or_model_review": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  }
+}
