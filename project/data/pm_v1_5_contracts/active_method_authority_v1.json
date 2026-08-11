@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B_REVIEW_PHASE_DESIGN",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_MEASUREMENT_FAILURE_AUDIT",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -11,6 +11,17 @@
     "method_amendment_sha256": "8d4343fdfc74f5853d75c5974c1280a93a1f09813c0a4279779a70ad31f96ed6",
     "human_plan_path": "docs/PM_V1_5_PAPER1_V1_LEARNABILITY_FAILURE_AND_MS_UNIT_ALIGNMENT_20260810_ZH.md",
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
+  },
+  "active_v3_phase": {
+    "id": "G4B3_MP_MEASUREMENT_FAILURE_AUDIT",
+    "status": "READ_ONLY_METHOD_AUDIT_ACTIVE_FORMAL_LABEL_FIT_GENERATOR_BASELINE_EXTERNAL_FORBIDDEN",
+    "active_phase_manifest": {
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4b3_mp_measurement_failure_closeout_v1.json",
+      "sha256": "ca63a16f3f5531a76c03fdf10fa21b39c56ba9bf411a274aa7f35d2e45428a28"
+    },
+    "scope": "read-only method-level audit of the frozen MP measurement failure; no threshold, prompt, label promotion or fit changes",
+    "api_calls_authorized": 0,
+    "training_labels_authorized": 0
   },
   "validated_p1_design_candidate": {
     "path": "data/pm_v1_5_contracts/paper1_p1_public_source_group_manifest_candidate_v1.json",
@@ -270,6 +281,117 @@
           "required_status": "G4A_V2_PACKET_INDEPENDENT_AUDIT_PASS_G4B_REVIEW_PHASE_MAY_BE_DESIGNED"
         },
         "execution_authority": false
+      },
+      "component_general_v3_g4b_review": {
+        "status": "G4B1_V2_FINAL_MP_ONLY_QUALIFIED_G4B2_PUBLIC_DUAL_REVIEW_ACTIVE",
+        "path": "data/pm_v1_5_contracts/paper1_v3_g4b_review_design_v1.json",
+        "sha256": "3b709a2ea0ac954387101d53e5222cefcbcbe3e9eda7b523a4a2d405cf33fe82",
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4b_review_design_validation_v2_20260811/report.json",
+          "sha256": "6fb1c26c4984d9b933f03ad86a6c32c2501cd71312906e40200e90525a1dc223",
+          "required_status": "G4B_REVIEW_DESIGN_PASS_EXACT_CONTROL_EXECUTION_PHASE_MAY_BE_DESIGNED"
+        },
+        "preflight_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_v2_20260811/report.json",
+          "sha256": "ab333ef49da729bb13b6856b5e3b3d552daef718b56eee557c03cde6e3fd733f",
+          "required_status": "G4B_REVIEW_PREFLIGHT_PASS_CONTROL_EXECUTION_PHASE_MAY_BE_DESIGNED"
+        },
+        "active_control_phase": {
+          "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_control_execution_phase_v1.json",
+          "sha256": "40f47c293fdfb018fae98458ad6744feeff92ccf1474a7bfe0ffe30c54e8d1d0",
+          "required_status": "G4B1_EXACT_72_CONTROL_REVIEW_CALLS_AUTHORIZED_PUBLIC_AND_GOLD_FORBIDDEN"
+        },
+        "completed_control_reviews": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/controls_live_report.json",
+          "sha256": "eaf26f27fce9aa926abcc11503a36e8c1121dd4f1385cebc14291ef66c35208a",
+          "required_status": "G4B_CONTROL_REVIEWS_COMPLETE"
+        },
+        "active_qualification_phase": {
+          "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_control_qualification_phase_v1.json",
+          "sha256": "9f32ecadb848ba7174cd3ea59f7c8f6d74c0ee7384c613c64ff78f00b6abaaaa",
+          "required_status": "G4B1_ZERO_API_POST_FREEZE_CONTROL_GOLD_QUALIFICATION_AUTHORIZED_ONCE"
+        },
+        "control_execution_authority": false,
+        "control_qualification_authority": false,
+        "public_execution_authority": false,
+        "control_gold_access": false,
+        "label_or_fit_authority": false,
+        "v1_qualification_result": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4b1_control_qualification_20260811/report.json",
+          "sha256": "f2a7ca53e4d6a0ac5acdbef119588dfbebc9f5f67a3b36925c45246d33f55f90",
+          "required_status": "G4B1_CONTROL_QUALIFICATION_FAIL_NO_MEMORY_PUBLIC_REVIEW"
+        },
+        "v1_failure_audit": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4b1_v1_failure_audit_20260811/report.json",
+          "sha256": "d754e5081efda0691ff7c2e3df80b11ece0ec4d93582130967f10accd318438b",
+          "required_status": "G4B1_V1_INSTRUMENT_IMPLEMENTATION_FAIL_FRESH_ANCHORED_V2_MAY_BE_DESIGNED_ONCE"
+        },
+        "append_only_documentation_addendum": {
+          "repair_plan": {
+            "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
+            "sha256": "38a9ea60e4862f91e1a1a6c3f00480a7b65d1526302f6a9eacac2760f44ebd31",
+            "required_text": "G4B1 V1 控制资格结果与一次性 V2 修复"
+          },
+          "failure_ledger": {
+            "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+            "sha256": "117bcada44513efe2f8f771742ed70587f48080ea7f915739370f3db9f9cab22",
+            "required_text": "V15-MEAS-76"
+          },
+          "does_not_change_historical_v3_contract_hash": true
+        },
+        "anchored_v2": {
+          "design": {
+            "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_anchored_v2_design_v1.json",
+            "sha256": "184b928e2bf81931d5bb3acc5011f632e37aed17a4dc98d363519c4c5b3e4a3c"
+          },
+          "fresh_controls": {
+            "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_controls_20260811/report.json",
+            "sha256": "68143759ad6012e007088b486d3160890c0125cea09fc678f320a32049738848",
+            "required_status": "G4B1_ANCHORED_V2_FRESH_CONTROLS_PASS_EXECUTION_NOT_AUTHORIZED"
+          },
+          "preflight": {
+            "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_preflight_20260811/report.json",
+            "sha256": "4715a080226d005b409023fd8ef37710835b1515b2f0c125dd8efdee09654540",
+            "required_status": "G4B1_ANCHORED_V2_PREFLIGHT_PASS_EXECUTION_PHASE_MAY_BE_DESIGNED"
+          },
+          "active_phase": {
+            "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_anchored_v2_control_execution_phase_v1.json",
+            "sha256": "34e87129a04fb1c5bd6332dc6a1461423397faabb778eeee4ae6e92cfcd8279b",
+            "required_status": "G4B1_ANCHORED_V2_EXACT_72_CONTROL_CALLS_AUTHORIZED_ONCE_GOLD_PUBLIC_FORBIDDEN"
+          },
+          "primary_decision_freeze": {
+            "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_primary_decision_freeze_20260811/report.json",
+            "sha256": "94f739aac0aa5be51fa1a50ed2e4b0e0cb7d96adf04b67bf5f827638edcad9f0",
+            "required_status": "G4B1_V2_PRIMARY_DECISIONS_72_FROZEN_ONE_AUX_REASON_INVALID_GOLD_MAY_BE_OPENED_SEPARATELY"
+          },
+          "active_qualification_phase": {
+            "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_anchored_v2_qualification_phase_v1.json",
+            "sha256": "f93daabd0ac0922e55b0f450ee68a0fd60a0f93e6878b34b3d97b3748f8a38ee",
+            "required_status": "G4B1_ANCHORED_V2_ZERO_API_GOLD_QUALIFICATION_AUTHORIZED_ONCE"
+          },
+          "qualification_result": {
+            "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_qualification_20260811/report.json",
+            "sha256": "5787bec691db50c576daa7e514d50f9f9d42550558211389a20ca2cc65ac8fb4",
+            "required_status": "G4B1_ANCHORED_V2_QUALIFICATION_PASS_PUBLIC_REVIEW_MAY_BE_DESIGNED",
+            "eligible_components": ["MP"],
+            "fixed_off_components": ["MS", "ME"]
+          },
+          "public_preflight": {
+            "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_preflight_v2_20260811/report.json",
+            "sha256": "f5fe6fedd92a97afe3c0b0c52d324cf440c0468b6e748a931b2f453dc2112bf0",
+            "required_status": "G4B2_MP_PUBLIC_PREFLIGHT_PASS_EXECUTION_PHASE_MAY_BE_DESIGNED"
+          },
+          "active_public_phase": {
+            "path": "data/pm_v1_5_contracts/paper1_v3_g4b2_mp_public_execution_phase_v1.json",
+            "sha256": "0b3451559e0246530484ec29d6eea03fecdebcacdeace5342bf4264bce925d93",
+            "required_status": "G4B2_EXACT_408_MP_PUBLIC_DUAL_REVIEW_CALLS_AUTHORIZED_ONCE_PRIVATE_MAPPING_LABEL_FIT_FORBIDDEN"
+          },
+          "control_execution_authority": false,
+          "control_qualification_authority": false,
+          "public_execution_authority": true,
+          "private_mapping_label_fit_authority": false,
+          "no_third_loop": true
+        }
       }
     },
     "allowed": [
@@ -296,6 +418,12 @@
       "the exact one-time zero-API G4A V2 control-repair rematerialization authorized by paper1_v3_g4a_packet_materialization_phase_v2.json",
       "read-only validation of the completed G4A V2 packet and independent audit",
       "zero-API design of a separately hash-bound G4B reviewer qualification and dual-review execution phase",
+      "the exact 72 G4B1 control reviewer logical calls authorized by paper1_v3_g4b1_control_execution_phase_v1.json",
+      "raw-first persistence of those exact provider returns and strict single-decision reviews",
+      "the one-time zero-API post-freeze control-gold qualification authorized by paper1_v3_g4b1_control_qualification_phase_v1.json",
+      "the exact 72 fresh anchored V2 control reviewer calls authorized by paper1_v3_g4b1_anchored_v2_control_execution_phase_v1.json",
+      "the exact 408 MP-only public dual-review calls authorized by paper1_v3_g4b2_mp_public_execution_phase_v1.json",
+      "raw-first persistence of the exact MP public provider returns without opening private case mapping",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
@@ -307,8 +435,8 @@
       "labels from the failed four-axis instrument",
       "safe-yield label creation",
       "any generator API call outside paper1_ms_same_stack_live_execution_phase_v1.json",
-      "any reviewer API call or any human-confirmation claim from the single-reviewer development audit",
-      "paid execution",
+      "any reviewer API call outside the exact anchored V2 G4B2 MP public phase or any human-confirmation claim from LLM reviews",
+      "paid execution outside the exact G4B2 MP public phase and its 3.5 USD cap",
       "safe-yield, quality, risk, or function label creation",
       "any further PM fit, threshold selection, feature change, or V2 rerun",
       "threshold tuning or full-fit checkpoint creation",

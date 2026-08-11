@@ -450,3 +450,59 @@ G4A 已完成：
 - 下一步唯一允许工作是 G4B reviewer qualification 与 public dual-review phase 的零 API 设计；必须先
   绑定两个独立 reviewer、controls、strict schema、raw-first ledger、component-specific gate 和费用上限。
   在 G4B 新 phase 明确授权前，不得调用 reviewer、创建 suitability 标签、拟合新 head 或调用 generator。
+
+### G4B1 V1 控制资格结果与一次性 V2 修复
+
+G4B1 V1 已实际完成 72/72 控制题：72 次均首轮得到合法严格结构，raw-first 完整，费用
+`$0.13455725`，未读取 public packet、未创建标签、未 fit、未调用 generator。随后独立零 API 打开
+gold，三组件按冻结门均未资格化；这份 FAIL 永久保留。
+
+但该 FAIL 不能解释成三头不可学。Reviewer A 对全部 30 个明确 SUITABLE/NOT 控制为 30/30，仅
+`SEMANTIC_ABSTAIN` 为 1/6；Reviewer B 对明确题为 21/30、abstain 为 0/6。实现审计同时发现：G4
+设计明确要求 `worked_training_anchors_before_qualification=true`，实际 provider-visible prompt 没有
+任何 worked anchor，旧 preflight/validator 也漏检了这个前置要求。因此 V1 的正确状态是
+`INSTRUMENT_IMPLEMENTATION_FAIL`，不是 `MP/MS/ME_FIXED_OFF`。
+
+只允许一次 G4B1 V2：把原本已冻结要求的 component-specific 三分类 worked anchors 真正放入 prompt，
+使用与 V1 controls、507 public cases 内容不相交的 fresh held-out controls；reviewer、三分类、12/head
+构成、10/12、9/10、2/2、critical-boundary 门全部不变。V2 仍必须 controls-first、runner 不读 gold、
+raw-first、结果冻结后再单独开 gold。若 V2 再失败，不得第三轮调 prompt/control/门槛。
+
+### G4B1 anchored V2 最终资格结果
+
+anchored V2 在 72 个全新 held-out controls 上完成一次冻结资格判定。两位 reviewer 的身份、三分类、
+样本构成与门槛均未改变，gold 只在 72 个 primary decisions 落盘后首次打开；没有 public review、训练标签、
+PM fit 或 generator call。
+
+- Reviewer A：MP `12/12`、MS `11/12`、ME `12/12`，三组件均资格化；
+- Reviewer B：MP `11/12`，资格化；MS `7/12`、ME `10/12` 但 resolved 仅 `8/10`，均未资格化；
+- component-specific 结果：仅 MP 同时通过两位 reviewer；MS、ME 在本条 LLM 标注路线固定 OFF，不进行
+  第三轮 prompt/control/gate 修改；
+- 一条 MS 回复的 primary decision、span 与 checklist 完整，但辅助 reason code 违反 component 白名单；
+  在 gold 打开前只冻结 primary decision并保留 auxiliary-invalid 标记，没有重试或修理由。该题不是 critical
+  boundary，不能用来翻转 Reviewer B 的 MS 资格失败；
+- 下一阶段只允许为 204 个 MP cases 设计两位已资格 reviewer 的 408-call public review。公共双评完成前不打开
+  private case mapping；只有 `SUITABLE/SUITABLE` 与 `NOT/NOT` exact consensus 才能形成 primary binary
+  label，分歧或 abstain 一律 unresolved/runtime OFF。
+
+这使 Paper 1 的最低可行结构从“只有 RS”推进为“已通过的 RS + 可进入正式标签/OOF 的 MP”。这仍不是 MP
+已经学会的证明；下一道科学门是 17 connected groups 上的一次 grouped OOF，之后才是同栈 executor 与
+baseline 结果。
+
+### G4B2/G4B3 公共 MP 双评实测
+
+204 个 MP public cases 已由两位资格化 reviewer 独立完成。主运行 408 次物理调用中 407 条合法，1 条
+Anthropic HTTP 529 无 completion；后者通过独立、同 prompt/seed/item 的一次 no-completion continuation
+补齐，其余 407 条零重跑。主运行费用 `$0.88741975`，continuation 不读 private mapping；两人各 204 条
+冻结后才首次打开 case mapping。
+
+pre-adjudication 结果：exact three-class agreement=`0.6667`、resolved binary agreement=`0.7234`、
+Gwet AC1=`0.5660`，均未过预冻结的 `0.75/0.80/0.60` 门。尽管 exact resolved consensus 已有 136 条
+（ON=52、OFF=84、17 groups、两类各至少 12/15 groups），当前合同仍判 MP 正式标签路线 FAIL；不得用
+第三人裁决回写 agreement，也不得在看到结果后降门直接 OOF。
+
+分歧诊断显示并非单一 field 可安全删除：Reviewer A=`126 NOT/62 YES/16 ABSTAIN`，Reviewer B=`105
+NOT/99 YES/0 ABSTAIN`；最大分歧为 A NOT/B YES 42 条，且遍布 job、location、education 与所有 folds。
+这说明 held-out controls 能通过不等于真实公共 surface 上的 material personalization 边界已稳定。下一步必须
+先做方法级定责：判断 136 条高置信 consensus 是否可被预先缩窄为“可实现语义范围”的探索性训练集，或改用
+真正的人类 source-aware annotation；在新合同明确前，MP fit、generator 与 baseline 均保持关闭。

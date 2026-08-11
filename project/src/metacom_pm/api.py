@@ -349,7 +349,11 @@ def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
             return "rate_limited_429", status_code
         if status_code == 408:
             return "request_timeout_408", status_code
-        if status_code in RETRYABLE_HTTP_STATUS_CODES:
+        # Provider-specific overload codes such as Anthropic HTTP 529 are
+        # still server-side 5xx transport failures.  Keep the named constant
+        # for documentation/backward compatibility, but classify the full
+        # HTTP 5xx range consistently for caller-bounded retry policy.
+        if 500 <= status_code <= 599:
             return "http_5xx", status_code
         return "other", status_code
     if isinstance(exc, httpx.HTTPError):

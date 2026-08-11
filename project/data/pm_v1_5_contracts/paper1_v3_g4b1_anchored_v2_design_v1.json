@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b1-anchored-v2-design-v1",
+  "date": "2026-08-11",
+  "status": "G4B1_ANCHORED_V2_ONE_TIME_INSTRUMENT_REPAIR_FROZEN_EXECUTION_NOT_AUTHORIZED",
+  "purpose": "Correct the V1 omission of provider-visible worked training anchors already required by G4, then run one final qualification wave on content-new controls without changing reviewers, decisions, class composition or gates.",
+  "v1_frozen_failure": {
+    "qualification_path": "outputs/pm_v1_5_paper1_v3_g4b1_control_qualification_20260811/report.json",
+    "required_status": "G4B1_CONTROL_QUALIFICATION_FAIL_NO_MEMORY_PUBLIC_REVIEW",
+    "failure_audit_path": "outputs/pm_v1_5_paper1_v3_g4b1_v1_failure_audit_20260811/report.json",
+    "failure_audit_sha256": "d754e5081efda0691ff7c2e3df80b11ece0ec4d93582130967f10accd318438b",
+    "failure_audit_required_status": "G4B1_V1_INSTRUMENT_IMPLEMENTATION_FAIL_FRESH_ANCHORED_V2_MAY_BE_DESIGNED_ONCE",
+    "v1_public_calls": 0,
+    "v1_training_labels_or_fit": 0,
+    "v1_outputs_immutable": true
+  },
+  "only_change": {
+    "implemented_missing_requirement": "component-specific worked SUITABLE, NOT_SUITABLE and SEMANTIC_ABSTAIN anchors are included in every provider-visible system prompt",
+    "fresh_controls": "36 new held-out surfaces per reviewer; zero normalized 8-gram overlap with V1 controls, 507 public cases or worked anchors",
+    "machine_guard": "all 72 prompts must visibly contain the component-specific worked-anchor block"
+  },
+  "unchanged": {
+    "reviewers": [
+      "Anthropic claude-haiku-4-5-20251001",
+      "OpenAI gpt-5-mini-2025-08-07"
+    ],
+    "decisions": ["SUITABLE", "NOT_SUITABLE", "SEMANTIC_ABSTAIN"],
+    "controls_per_component": 12,
+    "composition_per_component": {"SUITABLE": 5, "NOT_SUITABLE": 5, "SEMANTIC_ABSTAIN": 2},
+    "exact_correct_min": "10/12",
+    "resolved_correct_min": "9/10",
+    "abstain_correct_required": "2/2",
+    "critical_boundary_required": true,
+    "one_case_per_call": true,
+    "raw_first": true,
+    "gold_first_access_after_all_72_results_freeze": true,
+    "nonexclusive_component_decisions": true,
+    "all_16_downstream_actions_preserved": true
+  },
+  "bindings": [
+    {"role": "anchored_v2_prompt_controls", "path": "src/metacom_pm/v1_5_g4b_anchored_review_v2.py", "sha256": "8fa7059dbf27a88fd1707ce51fe5e74900e74889a9b5bc0b7026f155caf8039e"},
+    {"role": "fresh_control_materializer", "path": "scripts/v1_5/213l_materialize_paper1_v3_g4b1_anchored_v2_controls_v1_5.py", "sha256": "aa1a40146c50ff087ac669fc47e8aabe23735cecc5864f3bf05ef54c5c3bc420"},
+    {"role": "fresh_control_report", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_controls_20260811/report.json", "sha256": "68143759ad6012e007088b486d3160890c0125cea09fc678f320a32049738848"},
+    {"role": "reviewer_a_fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_controls_20260811/reviewer_a_controls.jsonl", "sha256": "fab5b208a11532375d5402493fbb6c76897bb676c35aa34f02bf7235bd5ec4d1"},
+    {"role": "reviewer_b_fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_controls_20260811/reviewer_b_controls.jsonl", "sha256": "1eb33a3bc5728fea2fac779e9582c0b55ce96749b1da6bf568f040a3744fc37a"},
+    {"role": "v2_execution_wrapper", "path": "scripts/v1_5/214l_run_paper1_v3_g4b1_anchored_v2_controls_v1_5.py", "sha256": "92a81ffc2c6a3c2a5d6f3cf23502dc869da4b53e5f51b6c179554dd8bf4df7b8"},
+    {"role": "frozen_raw_first_base_runner", "path": "scripts/v1_5/209l_run_paper1_v3_g4b_reviews_v1_5.py", "sha256": "eb038a03211b0bfe568d8eecd0785f291ba13c30174d41cd71f2961d5e5db865"},
+    {"role": "v2_preflight", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_preflight_20260811/report.json", "sha256": "4715a080226d005b409023fd8ef37710835b1515b2f0c125dd8efdee09654540"},
+    {"role": "v2_call_plan", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_preflight_20260811/call_plan.jsonl", "sha256": "0674e645f0270eb6fd7ccbd666775aab28cc646598a58bdaff0608368ecb9a86"},
+    {"role": "v2_cost_ceiling", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_preflight_20260811/cost_ceiling.json", "sha256": "e88dc8300e52a75eae45dfa8634fa4904fd70cd28a9de091168f95dbc28cdbd7"},
+    {"role": "v2_targeted_tests", "path": "tests/test_v1_5_paper1_v3_g4b_anchored_v2.py", "sha256": "aba124ad4f0ee82c41ed67dc0d0fb455fe48f73abd5d0b8dfe5d0dd4677fd9ba"}
+  ],
+  "no_third_loop": "If this fresh anchored V2 qualification fails, do not revise prompt, controls, examples, reviewer identities, classes or gates a third time. Close failed components for LLM labeling or switch only to a separately preregistered non-LLM annotation route.",
+  "authorization": {
+    "control_reviewer_calls": false,
+    "control_gold_access": false,
+    "public_reviewer_calls": false,
+    "training_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": false
+  },
+  "next_gate": "HASH_BOUND_G4B1_ANCHORED_V2_EXACT_72_CONTROL_EXECUTION_PHASE"
+}

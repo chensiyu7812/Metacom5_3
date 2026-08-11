@@ -61,6 +61,15 @@ def validate_active_authority() -> dict[str, Any]:
     g4a_document = read(resolve(g4a["path"])) if g4a.get("path") else {}
     g4a_v2 = feasibility.get("component_general_v3_g4a_packet_materialization_v2") or {}
     g4a_v2_document = read(resolve(g4a_v2["path"])) if g4a_v2.get("path") else {}
+    g4b = feasibility.get("component_general_v3_g4b_review") or {}
+    g4b_document = read(resolve(g4b["path"])) if g4b.get("path") else {}
+    active_v3 = authority.get("active_v3_phase") or {}
+    active_v3_manifest = active_v3.get("active_phase_manifest") or {}
+    active_v3_document = (
+        read(resolve(active_v3_manifest["path"]))
+        if active_v3_manifest.get("path")
+        else {}
+    )
     known_authority_statuses = {
         "ACTIVE_ZERO_API_V2_TERMINAL_ROUTING_FAIL_SYSTEM_FEASIBILITY_DESIGN_ONLY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_SYSTEM_FEASIBILITY_GENERATION",
@@ -77,6 +86,14 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4A_PACKET_MATERIALIZATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4A_V2_PACKET_MATERIALIZATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B_REVIEW_PHASE_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B1_CONTROL_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B1_CONTROL_QUALIFICATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B1_ANCHORED_V2_CONTROL_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B1_ANCHORED_V2_QUALIFICATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B2_MP_PUBLIC_REVIEW_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B2_MP_PUBLIC_529_CONTINUATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_PRE_ADJUDICATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_MEASUREMENT_FAILURE_AUDIT",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -160,12 +177,25 @@ def validate_active_authority() -> dict[str, Any]:
             == v3_repair["validation_report"]["required_status"]
         ),
         "v3_repair_human_plan_and_ledger_hashes_match": not v3_repair or (
-            sha(resolve(v3_repair_document["human_plan"]["path"]))
-            == v3_repair_document["human_plan"]["sha256"]
-            and sha(resolve(v3_repair_document["global_failure_ledger"]["path"]))
-            == v3_repair_document["global_failure_ledger"]["sha256"]
-            and v3_repair_document["global_failure_ledger"]["required_section"]
-            in resolve(v3_repair_document["global_failure_ledger"]["path"]).read_text(encoding="utf-8")
+            (
+                sha(resolve(v3_repair_document["human_plan"]["path"]))
+                == v3_repair_document["human_plan"]["sha256"]
+                and sha(resolve(v3_repair_document["global_failure_ledger"]["path"]))
+                == v3_repair_document["global_failure_ledger"]["sha256"]
+                and v3_repair_document["global_failure_ledger"]["required_section"]
+                in resolve(v3_repair_document["global_failure_ledger"]["path"]).read_text(encoding="utf-8")
+            )
+            or (
+                bool(g4b.get("append_only_documentation_addendum"))
+                and sha(resolve(g4b["append_only_documentation_addendum"]["repair_plan"]["path"]))
+                == g4b["append_only_documentation_addendum"]["repair_plan"]["sha256"]
+                and g4b["append_only_documentation_addendum"]["repair_plan"]["required_text"]
+                in resolve(g4b["append_only_documentation_addendum"]["repair_plan"]["path"]).read_text(encoding="utf-8")
+                and sha(resolve(g4b["append_only_documentation_addendum"]["failure_ledger"]["path"]))
+                == g4b["append_only_documentation_addendum"]["failure_ledger"]["sha256"]
+                and g4b["append_only_documentation_addendum"]["failure_ledger"]["required_text"]
+                in resolve(g4b["append_only_documentation_addendum"]["failure_ledger"]["path"]).read_text(encoding="utf-8")
+            )
         ),
         "v3_repair_preserves_old_v2_hashes": not v3_repair or all(
             sha(resolve(row["path"])) == row["sha256"]
@@ -411,6 +441,194 @@ def validate_active_authority() -> dict[str, Any]:
                 )
             )
         ),
+        "g4b_design_preflight_and_control_phase_bound": not g4b or (
+            sha(resolve(g4b["path"])) == g4b["sha256"]
+            and g4b_document["status"]
+            == "G4B_ZERO_API_REVIEW_DESIGN_FROZEN_V1_PREFLIGHT_FAIL_PRESERVED_V2_PREFLIGHT_PASS_EXECUTION_NOT_AUTHORIZED"
+            and sha(resolve(g4b["validation_report"]["path"]))
+            == g4b["validation_report"]["sha256"]
+            and read(resolve(g4b["validation_report"]["path"]))["status"]
+            == g4b["validation_report"]["required_status"]
+            and sha(resolve(g4b["preflight_report"]["path"]))
+            == g4b["preflight_report"]["sha256"]
+            and read(resolve(g4b["preflight_report"]["path"]))["status"]
+            == g4b["preflight_report"]["required_status"]
+            and sha(resolve(g4b["active_control_phase"]["path"]))
+            == g4b["active_control_phase"]["sha256"]
+            and (
+                (
+                    active_v3.get("id") == "G4B1_CONTROL_REVIEW_EXECUTION"
+                    and active_v3_manifest.get("path")
+                    == g4b["active_control_phase"]["path"]
+                    and active_v3_manifest.get("sha256")
+                    == g4b["active_control_phase"]["sha256"]
+                    and active_v3_document.get("status")
+                    == g4b["active_control_phase"]["required_status"]
+                    and active_v3_document["authorization"]["control_reviewer_calls"]
+                    is True
+                    and active_v3_document["authorization"]["control_gold_access"]
+                    is False
+                    and active_v3_document["authorization"]["public_reviewer_calls"]
+                    is False
+                    and active_v3_document["authorization"]["suitability_label_creation"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                )
+                or (
+                    active_v3.get("id") == "G4B1_CONTROL_REVIEW_EXECUTION"
+                    and bool(g4b.get("anchored_v2"))
+                    and sha(resolve(g4b["v1_qualification_result"]["path"]))
+                    == g4b["v1_qualification_result"]["sha256"]
+                    and read(resolve(g4b["v1_qualification_result"]["path"]))["status"]
+                    == g4b["v1_qualification_result"]["required_status"]
+                    and sha(resolve(g4b["v1_failure_audit"]["path"]))
+                    == g4b["v1_failure_audit"]["sha256"]
+                    and read(resolve(g4b["v1_failure_audit"]["path"]))["status"]
+                    == g4b["v1_failure_audit"]["required_status"]
+                    and sha(resolve(g4b["anchored_v2"]["design"]["path"]))
+                    == g4b["anchored_v2"]["design"]["sha256"]
+                    and sha(resolve(g4b["anchored_v2"]["fresh_controls"]["path"]))
+                    == g4b["anchored_v2"]["fresh_controls"]["sha256"]
+                    and read(resolve(g4b["anchored_v2"]["fresh_controls"]["path"]))["status"]
+                    == g4b["anchored_v2"]["fresh_controls"]["required_status"]
+                    and sha(resolve(g4b["anchored_v2"]["preflight"]["path"]))
+                    == g4b["anchored_v2"]["preflight"]["sha256"]
+                    and read(resolve(g4b["anchored_v2"]["preflight"]["path"]))["status"]
+                    == g4b["anchored_v2"]["preflight"]["required_status"]
+                    and active_v3_manifest.get("path")
+                    == g4b["anchored_v2"]["active_phase"]["path"]
+                    and active_v3_manifest.get("sha256")
+                    == g4b["anchored_v2"]["active_phase"]["sha256"]
+                    and active_v3_document.get("status")
+                    == g4b["anchored_v2"]["active_phase"]["required_status"]
+                    and active_v3_document["authorization"]["control_reviewer_calls"]
+                    is True
+                    and active_v3_document["authorization"]["control_gold_access"]
+                    is False
+                    and active_v3_document["authorization"]["public_reviewer_calls"]
+                    is False
+                    and active_v3_document["authorization"]["training_label_creation"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                )
+                or (
+                    active_v3.get("id") == "G4B1_CONTROL_QUALIFICATION"
+                    and sha(resolve(g4b["completed_control_reviews"]["path"]))
+                    == g4b["completed_control_reviews"]["sha256"]
+                    and read(resolve(g4b["completed_control_reviews"]["path"]))["status"]
+                    == g4b["completed_control_reviews"]["required_status"]
+                    and active_v3_manifest.get("path")
+                    == g4b["active_qualification_phase"]["path"]
+                    and active_v3_manifest.get("sha256")
+                    == g4b["active_qualification_phase"]["sha256"]
+                    and active_v3_document.get("status")
+                    == g4b["active_qualification_phase"]["required_status"]
+                    and active_v3_document["authorization"]["control_gold_access"]
+                    is True
+                    and active_v3_document["authorization"]["public_reviewer_calls"]
+                    is False
+                    and active_v3_document["authorization"]["training_label_creation"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                )
+                or (
+                    active_v3.get("id") == "G4B1_ANCHORED_V2_CONTROL_QUALIFICATION"
+                    and bool(g4b.get("anchored_v2"))
+                    and sha(resolve(g4b["anchored_v2"]["primary_decision_freeze"]["path"]))
+                    == g4b["anchored_v2"]["primary_decision_freeze"]["sha256"]
+                    and read(resolve(g4b["anchored_v2"]["primary_decision_freeze"]["path"]))["status"]
+                    == g4b["anchored_v2"]["primary_decision_freeze"]["required_status"]
+                    and active_v3_manifest.get("path")
+                    == g4b["anchored_v2"]["active_qualification_phase"]["path"]
+                    and active_v3_manifest.get("sha256")
+                    == g4b["anchored_v2"]["active_qualification_phase"]["sha256"]
+                    and active_v3_document.get("status")
+                    == g4b["anchored_v2"]["active_qualification_phase"]["required_status"]
+                    and active_v3_document["authorization"]["control_gold_access"]
+                    is True
+                    and active_v3_document["authorization"]["zero_api_qualification"]
+                    is True
+                    and active_v3_document["authorization"]["public_reviewer_calls"]
+                    is False
+                    and active_v3_document["authorization"]["training_label_creation"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and active_v3_document["no_third_instrument_loop"] is True
+                )
+                or (
+                    active_v3.get("id") == "G4B2_PUBLIC_DUAL_REVIEW_EXECUTION"
+                    and bool(g4b.get("anchored_v2"))
+                    and sha(resolve(g4b["anchored_v2"]["qualification_result"]["path"]))
+                    == g4b["anchored_v2"]["qualification_result"]["sha256"]
+                    and read(resolve(g4b["anchored_v2"]["qualification_result"]["path"]))["status"]
+                    == g4b["anchored_v2"]["qualification_result"]["required_status"]
+                    and g4b["anchored_v2"]["qualification_result"]["eligible_components"]
+                    == ["MP"]
+                    and g4b["anchored_v2"]["qualification_result"]["fixed_off_components"]
+                    == ["MS", "ME"]
+                    and sha(resolve(g4b["anchored_v2"]["public_preflight"]["path"]))
+                    == g4b["anchored_v2"]["public_preflight"]["sha256"]
+                    and read(resolve(g4b["anchored_v2"]["public_preflight"]["path"]))["status"]
+                    == g4b["anchored_v2"]["public_preflight"]["required_status"]
+                    and active_v3_manifest.get("path")
+                    == g4b["anchored_v2"]["active_public_phase"]["path"]
+                    and active_v3_manifest.get("sha256")
+                    == g4b["anchored_v2"]["active_public_phase"]["sha256"]
+                    and active_v3_document.get("status")
+                    == g4b["anchored_v2"]["active_public_phase"]["required_status"]
+                    and active_v3_document["execution"]["eligible_components"]
+                    == ["MP"]
+                    and active_v3_document["execution"]["logical_calls"] == 408
+                    and active_v3_document["authorization"]["public_reviewer_calls"]
+                    is True
+                    and active_v3_document["authorization"]["private_case_mapping_access"]
+                    is False
+                    and active_v3_document["authorization"]["training_label_creation"]
+                    is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and active_v3_document["nonexclusive_invariant"]["does_not_impose_one_memory_cap"]
+                    is True
+                    and active_v3_document["nonexclusive_invariant"]["all_16_requested_actions_remain_downstream"]
+                    is True
+                )
+                or (
+                    active_v3.get("id") == "G4B2_MP_PUBLIC_529_NO_COMPLETION_CONTINUATION"
+                    and active_v3_document.get("status")
+                    == "G4B2_SINGLE_HTTP_529_NO_COMPLETION_CONTINUATION_AUTHORIZED_ONCE"
+                    and active_v3_document["execution"]["logical_calls"] == 1
+                    and active_v3_document["execution"]["source_status_code"] == 529
+                    and active_v3_document["execution"]["source_provider_text"] is None
+                    and active_v3_document["execution"]["other_407_calls_must_not_run"] is True
+                    and active_v3_document["authorization"]["private_case_mapping_access"] is False
+                    and active_v3_document["authorization"]["training_label_creation"] is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                )
+                or (
+                    active_v3.get("id") == "G4B3_MP_PRE_ADJUDICATION"
+                    and active_v3_document.get("status")
+                    == "G4B3_ZERO_API_MP_PRIVATE_MAPPING_AND_EXACT_CONSENSUS_LABEL_CREATION_AUTHORIZED_ONCE"
+                    and active_v3_document["authorization"]["private_case_mapping_access"] is True
+                    and active_v3_document["authorization"]["exact_consensus_label_creation"] is True
+                    and active_v3_document["authorization"]["adjudication"] is False
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                    and active_v3_document["label_rule"]["one_of_k_or_one_memory_cap"] is False
+                    and active_v3_document["label_rule"]["all_16_actions_remain_downstream"] is True
+                )
+                or (
+                    active_v3.get("id") == "G4B3_MP_MEASUREMENT_FAILURE_AUDIT"
+                    and active_v3_document.get("status")
+                    == "G4B3_MP_REAL_SURFACE_MEASUREMENT_FAIL_FORMAL_FIT_BLOCKED_METHOD_AUDIT_ONLY"
+                    and active_v3_document["authorization"]["read_only_method_audit"] is True
+                    and active_v3_document["authorization"]["reviewer_calls"] is False
+                    and active_v3_document["authorization"]["label_promotion"] is False
+                    and active_v3_document["authorization"]["pm_fit"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                )
+            )
+        ),
     }
     failed = [name for name, passed in checks.items() if not passed]
     return {
@@ -418,6 +636,7 @@ def validate_active_authority() -> dict[str, Any]:
         "status": "ACTIVE_AUTHORITY_PASS_V2_TERMINAL_WITH_SEPARATE_SYSTEM_FEASIBILITY" if not failed else "ACTIVE_AUTHORITY_FAIL_CLOSED",
         "active_method_id": active["method_id"],
         "current_phase": authority["current_phase"]["id"],
+        "active_v3_phase": active_v3.get("id"),
         "checks": checks,
         "failed_checks": failed,
         "hashes": {
@@ -430,7 +649,21 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "DESIGN_G4B_REVIEWER_QUALIFICATION_AND_DUAL_REVIEW_PHASE_ZERO_API"
+            "RUN_ZERO_API_METHOD_LEVEL_SOURCE_AWARE_MP_MEASUREMENT_FAILURE_AUDIT"
+            if active_v3.get("id") == "G4B3_MP_MEASUREMENT_FAILURE_AUDIT"
+            else "RUN_ZERO_API_G4B3_MP_PRE_ADJUDICATION_EXACT_CONSENSUS"
+            if active_v3.get("id") == "G4B3_MP_PRE_ADJUDICATION"
+            else "EXECUTE_EXACT_ONE_G4B2_MP_HTTP_529_NO_COMPLETION_CONTINUATION"
+            if active_v3.get("id") == "G4B2_MP_PUBLIC_529_NO_COMPLETION_CONTINUATION"
+            else "EXECUTE_EXACT_408_G4B2_MP_PUBLIC_DUAL_REVIEWS_NO_PRIVATE_MAPPING"
+            if active_v3.get("id") == "G4B2_PUBLIC_DUAL_REVIEW_EXECUTION"
+            else "RUN_ZERO_API_G4B1_ANCHORED_V2_POST_FREEZE_CONTROL_QUALIFICATION"
+            if active_v3.get("id") == "G4B1_ANCHORED_V2_CONTROL_QUALIFICATION"
+            else "RUN_ZERO_API_G4B1_POST_FREEZE_CONTROL_QUALIFICATION"
+            if active_v3.get("id") == "G4B1_CONTROL_QUALIFICATION"
+            else "EXECUTE_EXACT_72_G4B1_CONTROL_REVIEW_CALLS_NO_GOLD"
+            if active_v3.get("id") == "G4B1_CONTROL_REVIEW_EXECUTION"
+            else "DESIGN_G4B_REVIEWER_QUALIFICATION_AND_DUAL_REVIEW_PHASE_ZERO_API"
             if g4a_v2 and g4a_v2.get("execution_authority") is False
             else "EXECUTE_G4A_V2_ZERO_API_CONTROL_REPAIR_REMATERIALIZATION"
             if g4a_v2 and g4a_v2.get("execution_authority") is True

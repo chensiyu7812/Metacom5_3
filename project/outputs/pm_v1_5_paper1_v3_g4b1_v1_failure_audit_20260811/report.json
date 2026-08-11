@@ -1,0 +1,60 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b1-v1-failure-audit-v1",
+  "status": "G4B1_V1_INSTRUMENT_IMPLEMENTATION_FAIL_FRESH_ANCHORED_V2_MAY_BE_DESIGNED_ONCE",
+  "checks": {
+    "frozen_scientific_result_is_fail": true,
+    "all_72_reviews_completed_first_attempt": true,
+    "public_labels_fit_generator_are_zero": true,
+    "g4_required_worked_anchors": true,
+    "provider_prompt_omitted_worked_anchors": true,
+    "reviewer_a_resolved_signal_is_not_collapsed": true,
+    "reviewer_b_has_suitability_overcall_not_transport_failure": true,
+    "abstention_is_the_shared_failure_surface": true
+  },
+  "failed_checks": [],
+  "frozen_v1_result_remains": "G4B1_CONTROL_QUALIFICATION_FAIL_NO_MEMORY_PUBLIC_REVIEW",
+  "reviewer_performance": {
+    "REVIEWER_A": {
+      "resolved_correct": 30,
+      "resolved_total": 30,
+      "abstain_correct": 1,
+      "abstain_total": 6,
+      "qualified_components": []
+    },
+    "REVIEWER_B": {
+      "resolved_correct": 21,
+      "resolved_total": 30,
+      "abstain_correct": 0,
+      "abstain_total": 6,
+      "qualified_components": []
+    }
+  },
+  "root_cause": "The provider-visible qualification instrument omitted the worked training anchors explicitly required by the upstream G4 contract. Reviewer A retained perfect resolved binary discrimination but did not learn the narrow abstention boundary; Reviewer B additionally overcalled SUITABLE. This is an instrument implementation failure before PM labels or fitting, not evidence that all memory heads are unlearnable.",
+  "only_permitted_repair": {
+    "preserve": [
+      "reviewer identities",
+      "three decisions",
+      "12 controls per component with 5/5/2 composition",
+      "10/12 exact, 9/10 resolved, 2/2 abstain and critical-boundary gates",
+      "raw-first and delayed-gold execution"
+    ],
+    "change_once": [
+      "implement component-specific worked anchors already required by G4",
+      "use fresh held-out controls disjoint from V1 and public cases",
+      "add a machine check that anchors are provider-visible"
+    ],
+    "if_v2_fails": "no third prompt/control/gate revision; close failed components or use only a separately preregistered non-LLM annotation route"
+  },
+  "api_calls_in_audit": 0,
+  "new_reviews_labels_or_fit": 0,
+  "inputs": {
+    "qualification": {
+      "path": "outputs/pm_v1_5_paper1_v3_g4b1_control_qualification_20260811/report.json",
+      "sha256": "f2a7ca53e4d6a0ac5acdbef119588dfbebc9f5f67a3b36925c45246d33f55f90"
+    },
+    "live": {
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/controls_live_report.json",
+      "sha256": "eaf26f27fce9aa926abcc11503a36e8c1121dd4f1385cebc14291ef66c35208a"
+    }
+  }
+}

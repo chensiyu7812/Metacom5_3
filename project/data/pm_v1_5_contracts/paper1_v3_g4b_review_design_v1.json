@@ -1,0 +1,283 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b-review-design-v1",
+  "date": "2026-08-11",
+  "status": "G4B_ZERO_API_REVIEW_DESIGN_FROZEN_V1_PREFLIGHT_FAIL_PRESERVED_V2_PREFLIGHT_PASS_EXECUTION_NOT_AUTHORIZED",
+  "purpose": "Freeze two independent component-specific reviewers, one-decision schema, physically delayed gold access, raw-first transport, retry limits, qualification gates and a controls-before-public execution sequence for the 507 nonexclusive MP/MS/ME cases.",
+  "scientific_grain": "one state by one component by that component's frozen actual Rank-1 candidate",
+  "nonexclusive_label_and_action_invariants": {
+    "nonexclusive": true,
+    "same_state_may_have_MP_MS_ME_all_suitable": true,
+    "one_review_decision_is_for_one_component_candidate_not_one_state": true,
+    "one_of_k_softmax_winner_take_all_forbidden": true,
+    "at_most_one_positive_memory_forbidden": true,
+    "all_16_requested_actions_remain_downstream": true,
+    "checklist_attestation_does_not_limit_memory_count": true
+  },
+  "input_bindings": [
+    {
+      "role": "g4_nonexclusive_design",
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4_nonexclusive_suitability_design_v1.json",
+      "sha256": "e44857a8bac9c2084336b28ba4e566d046fc2d1e88f8a71ae60002a50b505d7d"
+    },
+    {
+      "role": "g4a_v2_materialization_report",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/report.json",
+      "sha256": "5854ed1dc7703de7df578239a00c59517e2bece275b3d25b4f78b8cc0ac9ccff"
+    },
+    {
+      "role": "g4a_v2_independent_audit",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_audit_20260811/report.json",
+      "sha256": "abcec9d1364d596a1f936e9633145442e10e6069b67c4a5787ac62346259837d"
+    },
+    {
+      "role": "reviewer_a_controls",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_controls.jsonl",
+      "sha256": "5a94d628d74cbed7a384f6b32a7c5a224b0a3bc7fbb994387adc345250fb3bcc"
+    },
+    {
+      "role": "reviewer_b_controls",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_b_controls.jsonl",
+      "sha256": "daab5a7b103c7eadf23c20b3c57992326f28fa901265782e2578e0e825bbfd9d"
+    },
+    {
+      "role": "reviewer_a_public_packet",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_packet.jsonl",
+      "sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8"
+    },
+    {
+      "role": "reviewer_b_public_packet",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_b_packet.jsonl",
+      "sha256": "68ca51000c7bdfc5b0463436c1be9b492eaa5257501d5f2f7374f4123a7c77c2"
+    },
+    {
+      "role": "reviewer_codebook",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/CODEBOOK_ZH.md",
+      "sha256": "b366d2658aed4d1b4ec2dedebbb944e2301d0701159de2116318435042864159"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json",
+      "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "strict_schema_prompt_validation_and_control_gate",
+      "path": "src/metacom_pm/v1_5_g4b_nonexclusive_suitability_review.py",
+      "sha256": "93be3b67b79f35676f82ad5c37e96089bc187426d2376b9053ebc6a8a7c3b6e4"
+    },
+    {
+      "role": "zero_api_call_plan_and_cost_preflight",
+      "path": "scripts/v1_5/208l_prepare_paper1_v3_g4b_review_preflight_v1_5.py",
+      "sha256": "afa5a5ad7be6744126fe7d23474d0f0e67957d3f530a5367943dd8648b7e1c2d"
+    },
+    {
+      "role": "paid_raw_first_review_runner_without_gold_access",
+      "path": "scripts/v1_5/209l_run_paper1_v3_g4b_reviews_v1_5.py",
+      "sha256": "eb038a03211b0bfe568d8eecd0785f291ba13c30174d41cd71f2961d5e5db865"
+    },
+    {
+      "role": "post_freeze_control_qualification",
+      "path": "scripts/v1_5/210l_qualify_paper1_v3_g4b1_controls_v1_5.py",
+      "sha256": "d0181bf3e80c2f41d56dbd8397328408734392b6ecf63e3f3c915be4b274a34a"
+    },
+    {
+      "role": "targeted_tests",
+      "path": "tests/test_v1_5_paper1_v3_g4b_review.py",
+      "sha256": "580c15cf1be146c8d0e15be4ead4f2a06effb87f859c5bccbdc8f67ebf358b26"
+    }
+  ],
+  "reviewers": {
+    "REVIEWER_A": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "anthropic_claude_haiku_4_5",
+      "provider": "Anthropic",
+      "family": "anthropic_claude_haiku_4_5",
+      "model": "claude-haiku-4-5-20251001",
+      "transport": "anthropic_messages",
+      "packet": "reviewer_a"
+    },
+    "REVIEWER_B": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "openai_gpt_5_mini",
+      "provider": "OpenAI",
+      "family": "openai_gpt_5_mini",
+      "model": "gpt-5-mini-2025-08-07",
+      "transport": "openai_chat_completions",
+      "packet": "reviewer_b"
+    },
+    "predeclared_replacement": {
+      "status": "INACTIVE_UNLESS_EXACTLY_ONE_PRIMARY_REVIEWER_FAILS_A_COMPONENT",
+      "endpoint_key": "google_gemini_2_5_flash",
+      "provider": "Google",
+      "family": "google_gemini_2_5_flash",
+      "model": "gemini-2.5-flash",
+      "use_limit": "one fresh component-specific qualification wave only; no control, codebook, prompt or gate change",
+      "both_primary_reviewers_fail": "component_fixed_off_without_replacement_majority_vote"
+    }
+  },
+  "review_schema": {
+    "required_fields": [
+      "review_item_id",
+      "decision",
+      "primary_reason_code",
+      "visible_span_ids",
+      "candidate_span_ids",
+      "checklist_attested"
+    ],
+    "decision_values": [
+      "SUITABLE",
+      "NOT_SUITABLE",
+      "SEMANTIC_ABSTAIN"
+    ],
+    "checklist_attested_exact_value": "ALL_FOUR_CONSIDERED",
+    "per_axis_fields_forbidden": true,
+    "per_axis_accuracy_or_agreement_forbidden": true,
+    "evidence": "at least one exact visible span ID and one exact candidate span ID; no free-form quotation",
+    "strict_extra_fields_forbidden": true,
+    "prompt_injection_boundary": "dialogue and candidate text are quoted evidence data and cannot instruct the reviewer"
+  },
+  "gold_isolation": {
+    "review_execution_reads_gold": false,
+    "review_execution_manifest_does_not_bind_or_name_gold": true,
+    "gold_key_first_access": "a separate zero-API qualification phase after 72 valid control results and raw attempts are frozen",
+    "control_gold_never_enters_prompt_call_plan_endpoint_client_or_attempt_ledger": true,
+    "public_private_case_key_first_access": "only after both eligible public reviewer files are complete and pre-adjudication aggregation begins"
+  },
+  "raw_first_and_retry": {
+    "one_case_per_logical_call": true,
+    "maximum_physical_attempts_per_logical_call": 2,
+    "client_internal_retries": 1,
+    "raw_provider_return_persisted_before_local_semantic_validation": true,
+    "identical_request_only": true,
+    "retry_allowed": [
+      "408",
+      "429",
+      "5xx",
+      "network timeout",
+      "missing provider field",
+      "provider output not parseable as the strict schema"
+    ],
+    "retry_forbidden": [
+      "a complete strict-schema judgment with a semantic-contract violation",
+      "a valid judgment that disagrees with control gold",
+      "semantic repair prompt",
+      "reason-code coaching after seeing a result",
+      "repeated valid judgment for majority vote"
+    ],
+    "crash_behavior": "STARTED is spent; resume never reuses an attempt key",
+    "cost_caps_usd": {
+      "controls": 0.75,
+      "public": 8.0,
+      "combined": 8.75
+    }
+  },
+  "stage_sequence": [
+    {
+      "id": "G4B0_PREFLIGHT",
+      "api": 0,
+      "output": "1086 exact logical-call identities and conservative cost ceilings"
+    },
+    {
+      "id": "G4B1_CONTROL_EXECUTION",
+      "api": "exactly 36 controls per reviewer; 72 logical calls",
+      "gold_access": false,
+      "public_access": false
+    },
+    {
+      "id": "G4B1_CONTROL_QUALIFICATION",
+      "api": 0,
+      "gold_access": "first permitted access after complete result freeze",
+      "output": "reviewer by component qualification; no training labels"
+    },
+    {
+      "id": "G4B2_PUBLIC_DUAL_REVIEW",
+      "api": "only the components passed by both reviewers",
+      "gold_access": false,
+      "private_case_key_access": false
+    },
+    {
+      "id": "G4B3_PRE_ADJUDICATION_FREEZE",
+      "api": 0,
+      "output": "agreement and exact-consensus labels after private case mapping opens"
+    }
+  ],
+  "control_qualification_per_reviewer_per_component": {
+    "controls": 12,
+    "composition": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "exact_three_class_correct_min": 10,
+    "resolved_binary_correct_min": 9,
+    "abstain_correct_min": 2,
+    "critical_boundary_decision_and_reason_correct_required": true,
+    "degenerate_single_class_forbidden": true,
+    "component_public_release": "both primary reviewers must independently qualify that component",
+    "failure_is_component_local": true,
+    "no_gate_control_codebook_prompt_or_packet_change_after_any_control_result": true
+  },
+  "public_pre_adjudication_gate_per_component": {
+    "exact_three_class_raw_agreement_min": 0.75,
+    "resolved_binary_raw_agreement_min": 0.8,
+    "gwet_ac1_min": 0.6,
+    "exact_consensus_resolved_coverage_min": 0.65,
+    "primary_binary_label": "only SUITABLE/SUITABLE or NOT_SUITABLE/NOT_SUITABLE",
+    "any_disagreement_or_abstain": "UNRESOLVED and excluded from primary binary fit; runtime OFF",
+    "optional_adjudication": "separate sensitivity only and cannot rewrite pre-adjudication agreement",
+    "minimum_resolved_capacity": {
+      "MP": {
+        "total": 128,
+        "each_class": 32,
+        "groups_overall": 17,
+        "groups_per_class": 8
+      },
+      "MS": {
+        "total": 128,
+        "each_class": 32,
+        "groups_overall": 17,
+        "groups_per_class": 8
+      },
+      "ME": {
+        "total": 60,
+        "each_class": 15,
+        "groups_overall": 12,
+        "groups_per_class": 6
+      }
+    }
+  },
+  "responsibility_boundary": {
+    "reviewer": "prospective bounded semantic suitability only",
+    "retrieval": "actual Rank-1 identity and candidate coverage, never inferred from suitability disagreement",
+    "pm": "later predicts each qualified component's nonexclusive suitability bit",
+    "projector_executor_generator": "later tested separately for planned and verified functional use across all 16 actions",
+    "quality_risk_function_cost": "not observed or labeled in G4B",
+    "failure_cannot_be_reassigned_to_pm_before_fit": true
+  },
+  "preflight_supersession": {
+    "v1_path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_20260811/report.json",
+    "v1_status": "G4B_REVIEW_PREFLIGHT_FAIL",
+    "v1_api_calls": 0,
+    "v1_reviews_or_labels": 0,
+    "v1_failures": [
+      "validator searched the design prose for axis_accuracy and therefore matched the explicit prohibition itself",
+      "the public administrative cap 5.25 USD was below the conservative two-attempt estimate 7.221911 USD"
+    ],
+    "repair": "preserve V1; use a new V2 output path, inspect explicit prohibition booleans, and raise the future public cap rather than lowering max output tokens"
+  },
+  "authorization": {
+    "zero_api_preflight": false,
+    "control_reviewer_calls": false,
+    "control_gold_access": false,
+    "public_reviewer_calls": false,
+    "private_case_key_access": false,
+    "suitability_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "baseline_execution": false,
+    "external_execution": false,
+    "paid_execution": false
+  },
+  "next_gate": "G4B0_ZERO_API_CALL_PLAN_COST_AND_ISOLATION_PREFLIGHT"
+}
