@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -13,13 +13,13 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "active_v3_phase": {
-    "id": "RS_MS_SAME_STACK_BASELINE_PLAN_COMPLETE",
-    "status": "ZERO_API_BASELINE_ACTIONS_AND_MINIMAL_BLIND_RS_SLICE_MATERIALIZED",
+    "id": "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
+    "status": "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED",
     "active_phase_manifest": {
-      "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_same_stack_baseline_plan_closeout_v1.json",
-      "sha256": "6b68722056b7fd95891d3779b0f8f38d387e29389d13838b1c6e7eabbca01819"
+      "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_dual_human_bundle_closeout_v1.json",
+      "sha256": "d19a83192fb58c01cf642d430cf411271f410870f8ff14699130bc755988cef7"
     },
-    "scope": "Existing 16-state four-arm responses are bound to RS-only, RS-fixed-on plus learned-MS, fixed-high, transparent, closest-cost, and qualified cost/on-rate-matched-random policies; no response outcomes scored; next is one blind RS-slice measurement design; no MP/ME or external work",
+    "scope": "Two offline independent humans may each review the fixed 16 Quality, 32 absolute Risk, and 16 source-aware Function items; Quality source is hidden and MS position is 8/8; no labels exist yet; private key and aggregation remain closed until both raw exports freeze; no MP/ME or external work",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
@@ -335,8 +335,8 @@
           },
           "failure_ledger": {
             "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-            "sha256": "c0a8e6eb6d8ca0b3e8ce4662fd04e45c3167fa9ae13f56720d2f2b3223cae25b",
-            "required_text": "V15-BASE-02"
+            "sha256": "c380e5aed5faf1d1c7980684d2362e990e73f519e9415ca08330a880924ddf1e",
+            "required_text": "V15-MEAS-81"
           },
           "does_not_change_historical_v3_contract_hash": true
         },
@@ -444,6 +444,23 @@
         "checkpoint_status": "TRAINED_HASH_FROZEN_NO_REFIT",
         "executor_qualification_design_authority": true,
         "next_gate": "DESIGN_BOUNDED_MS_MEANING_ABSORPTION_QUALIFICATION_ZERO_API"
+      },
+      "rs_ms_dual_human_measurement": {
+        "status": "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED",
+        "path": "data/pm_v1_5_contracts/paper1_v3_rs_ms_dual_human_bundle_closeout_v1.json",
+        "sha256": "d19a83192fb58c01cf642d430cf411271f410870f8ff14699130bc755988cef7",
+        "machine_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/report.json",
+          "sha256": "2ad8996820810f4743ac068ca1041e8e85bd0fb49630976fffbf2d4c08b3f422",
+          "required_status": "DUAL_HUMAN_BLIND_BUNDLE_READY"
+        },
+        "quality_source_hidden": true,
+        "quality_ms_on_position": {"A": 8, "B": 8},
+        "human_labels_created": 0,
+        "private_key_access_authority": false,
+        "aggregation_authority": false,
+        "api_calls_authorized": 0,
+        "next_gate": "FREEZE_TWO_INDEPENDENT_HUMAN_JSON_EXPORTS_THEN_ZERO_API_AGGREGATION"
       }
     },
     "allowed": [
@@ -484,6 +501,7 @@
       "the exact one-time frozen MS atomic suitability full fit authorized by paper1_v3_ms_atomic_teacher_full_fit_phase_v1.json",
       "zero-API design of a bounded MS meaning-absorption executor qualification under paper1_v3_ms_atomic_checkpoint_closeout_v1.json",
       "unit and integration tests",
+      "offline independent HUMAN_A and HUMAN_B annotation of the exact hash-bound RS+MS 16/32/16 blind bundle without private-key access",
       "documentation and evidence-index updates"
     ],
     "forbidden": [

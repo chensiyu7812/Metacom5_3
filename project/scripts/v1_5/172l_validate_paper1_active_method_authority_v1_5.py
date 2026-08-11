@@ -107,6 +107,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_EXECUTOR_FUNCTION_PROXY_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FUNCTION_FEASIBILITY_COMPLETE_BASELINE_DESIGN_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_BASELINE_PLAN_COMPLETE_BLIND_OUTCOME_DESIGN_NEXT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -973,6 +974,41 @@ def validate_active_authority() -> dict[str, Any]:
                     )
                 )
                 or (
+                    active_v3.get("id") == "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY"
+                    and active_v3_document.get("status")
+                    == "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED"
+                    and active_v3_document["scope"]["quality_pairs_per_reviewer"] == 16
+                    and active_v3_document["scope"]["risk_absolute_items_per_reviewer"] == 32
+                    and active_v3_document["scope"]["function_source_aware_items_per_reviewer"] == 16
+                    and active_v3_document["scope"]["total_items_per_reviewer"] == 64
+                    and active_v3_document["scope"]["independent_full_overlap"] is True
+                    and active_v3_document["pre_review_repairs"]["quality_past_source_hidden"] is True
+                    and active_v3_document["pre_review_repairs"]["quality_ms_on_position_v2"]
+                    == {"A": 8, "B": 8}
+                    and active_v3_document["pre_review_repairs"]["response_text_changes"] == 0
+                    and active_v3_document["pre_review_repairs"]["labels_seen_before_repair"] == 0
+                    and active_v3_document["measurement_rules"]["raw_A_B_disagreements_preserved"] is True
+                    and active_v3_document["measurement_rules"]["majority_vote_forbidden"] is True
+                    and active_v3_document["authorization"]["human_offline_annotation"] is True
+                    and active_v3_document["authorization"]["llm_reviewer_calls"] is False
+                    and active_v3_document["authorization"]["api_calls"] == 0
+                    and active_v3_document["authorization"]["response_generation"] is False
+                    and active_v3_document["authorization"]["pm_refit"] is False
+                    and active_v3_document["authorization"]["private_key_access_before_both_human_files_freeze"] is False
+                    and active_v3_document["authorization"]["aggregation_before_both_human_files_freeze"] is False
+                    and sha(resolve(active_v3_document["problem_ledger"]["path"]))
+                    == active_v3_document["problem_ledger"]["sha256"]
+                    and all(
+                        entry
+                        in resolve(active_v3_document["problem_ledger"]["path"]).read_text(encoding="utf-8")
+                        for entry in active_v3_document["problem_ledger"]["required_entries"]
+                    )
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in active_v3_document["artifacts"]
+                    )
+                )
+                or (
                     active_v3.get("id") == "RS_MS_SAME_STACK_BASELINE_PLAN_COMPLETE"
                     and active_v3_document.get("status")
                     == "ZERO_API_BASELINE_ACTIONS_AND_MINIMAL_BLIND_RS_SLICE_MATERIALIZED"
@@ -1104,6 +1140,9 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
+            "FREEZE_HUMAN_A_AND_HUMAN_B_JSON_EXPORTS_THEN_ZERO_API_AGGREGATION"
+            if active_v3.get("id") == "RS_MS_DUAL_HUMAN_BLIND_BUNDLE_READY"
+            else
             "DESIGN_ONE_BLIND_RS_SLICE_OUTCOME_MEASUREMENT_PHASE"
             if active_v3.get("id") == "RS_MS_SAME_STACK_BASELINE_PLAN_COMPLETE"
             else
