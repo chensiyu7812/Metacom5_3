@@ -62,6 +62,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_REPAIR_CONTRACT_AUDIT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -197,7 +198,6 @@ def validate_active_authority() -> dict[str, Any]:
         ),
         "g2_phase_bound_and_zero_api_only": not g2 or (
             sha(resolve(g2["path"])) == g2["sha256"]
-            and g2["execution_authority"] is True
             and g2_document["status"]
             == "G2_ZERO_API_IMPLEMENTATION_AND_TESTS_AUTHORIZED_ONCE"
             and g2_document["git_baseline"] == g2["git_baseline"]
@@ -206,6 +206,18 @@ def validate_active_authority() -> dict[str, Any]:
             and all(g2_document["forbidden"].values())
             and g2_document["allowed"]["new_v3_code"] is True
             and g2_document["allowed"]["zero_api_validator"] is True
+            and (
+                g2["execution_authority"] is True
+                or (
+                    g2["execution_authority"] is False
+                    and g2["status"]
+                    == "G2_COMPONENT_GENERAL_V3_IMPLEMENTATION_COMPLETE_G3_SURFACE_AUDIT_MAY_BE_DESIGNED"
+                    and sha(resolve(g2["validation_report"]["path"]))
+                    == g2["validation_report"]["sha256"]
+                    and read(resolve(g2["validation_report"]["path"]))["status"]
+                    == g2["validation_report"]["required_status"]
+                )
+            )
         ),
         "g2_phase_preserves_all_sixteen_without_one_memory_cap": not g2 or (
             any(
@@ -240,7 +252,9 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "EXECUTE_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_AND_TESTS"
+            "DESIGN_G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT"
+            if g2 and g2.get("execution_authority") is False
+            else "EXECUTE_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_AND_TESTS"
             if g2
             else "DESIGN_G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_PHASE"
             if v3_repair

@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -156,23 +156,29 @@
       "component_general_v3_repair_contract": {
         "status": "ZERO_API_REPAIR_CONTRACT_VALIDATED_G2_PHASE_MAY_BE_DESIGNED",
         "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
-        "sha256": "f5adb323c8d11689061b118740b77b23a2f54e3975ac5629fe8f5fea38118208",
+        "sha256": "ea41504e85b62ecbdd93fdcc5518aba62be1902be84f681286bc24fc880f21d3",
         "git_baseline": "8337f15",
         "validation_report": {
           "path": "outputs/pm_v1_5_paper1_component_general_v3_repair_contract_validation_20260811/report.json",
-          "sha256": "d987811c49dd842c0a1d113dfc160420d46f5b17dbf82e5be1604aa1b9967be8",
+          "sha256": "2a80ee5f3eda59b32982f725d1d8fa48c5733b8c582ed8fd8b6b1d2d1fb51aea",
           "required_status": "V3_REPAIR_CONTRACT_PASS_G2_PHASE_MAY_BE_DESIGNED"
         },
         "next_gate": "G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_TESTS",
         "execution_authority": false
       },
       "component_general_v3_g2_implementation": {
-        "status": "G2_ZERO_API_IMPLEMENTATION_AND_TESTS_AUTHORIZED_ONCE",
+        "status": "G2_COMPONENT_GENERAL_V3_IMPLEMENTATION_COMPLETE_G3_SURFACE_AUDIT_MAY_BE_DESIGNED",
         "path": "data/pm_v1_5_contracts/paper1_component_general_v3_g2_implementation_phase_v1.json",
-        "sha256": "febf9ad749087827c81f2c32068b6d60618959e2392575dd8ccf2994584ca76f",
+        "sha256": "73ded940f0e8320ff15fa32a45d4a2efba1a0ba497c83d92cdce4c4cc81091a8",
         "git_baseline": "3d6f709ec3ea4442023580101b82489987d86bd6",
         "scope": "new V3 modules, tests, and zero-API G2 validator only",
-        "execution_authority": true
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_component_general_v3_g2_validation_20260811/report.json",
+          "sha256": "61df96e4ea6a34e1d4ce7a11abc7c1e5614085a30a314b672688f677d5246521",
+          "required_status": "G2_COMPONENT_GENERAL_V3_IMPLEMENTATION_PASS_G3_SURFACE_AUDIT_MAY_BE_DESIGNED"
+        },
+        "next_gate": "G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT",
+        "execution_authority": false
       }
     },
     "allowed": [
@@ -189,7 +195,8 @@
       "read-only independent validation of paper1_component_general_v3_repair_contract_v1.json and its bound failure-ledger section",
       "zero-API design of the G2 component-general V3 implementation phase and implementation-tree manifest",
       "zero-API design of machine invariants that prevent literal-memory forcing and telemetry-to-quality fallback conflation",
-      "the exact zero-API V3 implementation and tests authorized by paper1_component_general_v3_g2_implementation_phase_v1.json",
+      "read-only audit and testing of the completed component-general V3 G2 implementation",
+      "zero-API design of the G3 public MP/MS/ME candidate surface audit",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
