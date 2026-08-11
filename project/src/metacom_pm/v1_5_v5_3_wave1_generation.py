@@ -9,8 +9,10 @@ the author model.
 from __future__ import annotations
 
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
+import random
 from typing import Any, Iterable
 
 
@@ -87,14 +89,35 @@ def preference_assignments(
 
 
 def candidate_requirements(
-    user_id: str, topic_thread_ids: list[str], session_count: int
+    user_id: str,
+    topic_thread_ids: list[str],
+    session_count: int,
+    candidate_schedule_seed: str | None = None,
 ) -> list[dict[str, Any]]:
-    """Materialize exact per-user candidate slots without authoring their text."""
+    """Materialize exact quotas with user-specific sessions and thread rotations.
+
+    The old Wave-1 helper put every subtype in the same session positions.  That
+    made session age a near-perfect proxy for subtype/tier.  V2.1 freezes a
+    private construction seed and deterministically permutes sessions instead.
+    """
 
     if len(topic_thread_ids) < 4:
         raise ValueError("at least four topic threads are required")
-    threads = topic_thread_ids[:4]
+    seed = candidate_schedule_seed or f"v53-candidates:{user_id}"
+    rng = random.Random(int(hashlib.sha256(seed.encode("utf-8")).hexdigest(), 16))
+    threads = list(topic_thread_ids[:4])
+    rng.shuffle(threads)
     rows: list[dict[str, Any]] = []
+
+    def scheduled_sessions(count: int, salt: str) -> list[int]:
+        local = random.Random(
+            int(hashlib.sha256(f"{seed}:{salt}".encode("utf-8")).hexdigest(), 16)
+        )
+        pool = list(range(1, session_count + 1))
+        local.shuffle(pool)
+        if count <= session_count:
+            return pool[:count]
+        return [pool[index % session_count] for index in range(count)]
 
     def add(
         subtype: str,
@@ -103,6 +126,7 @@ def candidate_requirements(
         *,
         tiers: list[str | None] | None = None,
     ) -> None:
+        thread_offset = int(hashlib.sha256(f"{seed}:{prefix}:thread".encode("utf-8")).hexdigest(), 16) % 4
         for ordinal, session_index in enumerate(session_indices, 1):
             if not 1 <= session_index <= session_count:
                 raise ValueError("candidate session outside user chronology")
@@ -110,27 +134,27 @@ def candidate_requirements(
                 "candidate_id": f"{user_id}_{prefix}_{ordinal:03d}",
                 "subtype": subtype,
                 "session_index": session_index,
-                "topic_thread": threads[(ordinal - 1) % 4],
+                "topic_thread": threads[(ordinal - 1 + thread_offset) % 4],
             }
             if tiers is not None:
                 row["me_tier"] = tiers[ordinal - 1]
             rows.append(row)
 
-    add("MS_SESSION", range(1, 9), "ms")
+    add("MS_SESSION", scheduled_sessions(8, "ms"), "ms")
     add(
         "ME_REUSABLE_OUTCOME",
-        range(2, 10),
+        scheduled_sessions(8, "me_core"),
         "me_reusable_core",
         tiers=["executable_core"] * 8,
     )
     add(
         "ME_REUSABLE_OUTCOME",
-        (10, 11),
+        scheduled_sessions(2, "me_challenge"),
         "me_reusable_challenge",
         tiers=["natural_coverage_challenge"] * 2,
     )
-    add("ME_UNRESOLVED_EVENT", (1, 4, 7, 10, 12), "me_unresolved")
-    add("ME_CONTEXT_EVENT", (2, 5, 8, 13), "me_context")
+    add("ME_UNRESOLVED_EVENT", scheduled_sessions(5, "me_unresolved"), "me_unresolved")
+    add("ME_CONTEXT_EVENT", scheduled_sessions(4, "me_context"), "me_context")
     return rows
 
 
@@ -143,7 +167,7 @@ def world_prompt(
     event_count = int(
         contract_excerpt["events_per_user_schedule"][assignment["schedule_position"]]
     )
-    update_count = 2 if assignment["schedule_position"] <= 1 else 1
+    update_count = int(assignment["profile_update_count"])
     system = """You author one wholly synthetic longitudinal emotional-support user.
 Return exactly one JSON object and no prose or Markdown. Do not copy any benchmark,
 external dataset, existing person, or exam content. The assignment metadata is for
@@ -161,12 +185,12 @@ Exact requirements:
 - exactly {relationship_count} relationships, each {{entity_id,name,relationship,valid_from_session,valid_until_session}}. Every non-self entity first appears exactly at valid_from_session and never earlier.
 - exactly {event_count} events distributed across all {assignment['session_count']} sessions; every session has at least one event. Each event has {{event_id,session_index,topic_thread_ids,entity_ids,resolution_status,description}}.
 - profile_plan has the seven base fields {list(BASE_PROFILE_FIELDS)} plus exactly {update_count} later updates to distinct mutable fields. Every item has {{item_id,item_role,field_type,field_value,valid_from_session,valid_until_session,version,active,supersedes_item_id,applicability_scope,source_session}}. Superseded versions end immediately before the update begins.
-- preference_plan has exactly these three types: {preference_types}. Each has {{item_id,preference_type,preference_text,valid_from_session,valid_until_session,version,active,supersedes_item_id,source_session}}. They are stable, user-expressed interaction preferences, not construction labels.
+- preference_plan has three base items with exactly these types: {preference_types}. Apply preference_version_mode={assignment.get('preference_version_mode', 'stable')!r}: stable adds no row; replacement or withdrawal adds one later version row linked by supersedes_item_id. These are user-expressed interaction preferences, never construction labels.
 - session_plan has exactly sessions 1..{assignment['session_count']}; each row has {{session_index,relative_time,event_ids,topic_thread_ids,entity_ids,resolution_status,narrative_goal}}.
-- Include at least one temporal sequence, one genuine update/conflict, one evolving user-model trajectory, and one session where no old evidence answers the new question.
+- qa_transport_bundles contains exactly four audit-only rows: temporal_sequence, conflict_or_update, user_model_trajectory, abstention_no_evidence. The first three cite at least two ordered evidence_session_indices; abstention_no_evidence cites an empty list and explains why the world contains no answer. These rows never become response-PM effect labels or model features.
 - Use English natural-language content. Keep names, locations, occupations, relationships and chronology internally consistent.
 
-Output keys exactly: secondary_superdomains, topic_threads, relationships, events, profile_plan, preference_plan, session_plan."""
+Output keys exactly: secondary_superdomains, topic_threads, relationships, events, profile_plan, preference_plan, session_plan, qa_transport_bundles."""
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
@@ -175,7 +199,7 @@ def validate_world(
 ) -> None:
     expected_keys = {
         "secondary_superdomains", "topic_threads", "relationships", "events",
-        "profile_plan", "preference_plan", "session_plan",
+        "profile_plan", "preference_plan", "session_plan", "qa_transport_bundles",
     }
     if set(world) != expected_keys:
         raise ValueError(f"world keys differ: {sorted(set(world) ^ expected_keys)}")
@@ -192,10 +216,31 @@ def validate_world(
     if set(item["field_type"] for item in world["profile_plan"] if item["item_role"] == "base") != set(BASE_PROFILE_FIELDS):
         raise ValueError("base profile fields mismatch")
     update_count = sum(item["item_role"] == "update" for item in world["profile_plan"])
-    if update_count != 2:
-        raise ValueError("Wave-1 schedule requires exactly two profile updates")
-    if {item["preference_type"] for item in world["preference_plan"]} != set(preference_types):
+    if update_count != int(assignment["profile_update_count"]):
+        raise ValueError("profile update count differs from the independent assignment")
+    base_preferences = [
+        item for item in world["preference_plan"] if not item.get("supersedes_item_id")
+    ]
+    if {item["preference_type"] for item in base_preferences} != set(preference_types):
         raise ValueError("preference plan differs from frozen assignment")
+    expected_preference_rows = 3 + int(
+        assignment.get("preference_version_mode", "stable") != "stable"
+    )
+    if len(world["preference_plan"]) != expected_preference_rows:
+        raise ValueError("preference version mode/row count mismatch")
+    bundles = world["qa_transport_bundles"]
+    if {row.get("bundle_type") for row in bundles} != {
+        "temporal_sequence", "conflict_or_update", "user_model_trajectory",
+        "abstention_no_evidence",
+    }:
+        raise ValueError("four required QA transport bundle types are missing")
+    for row in bundles:
+        evidence = [int(value) for value in row.get("evidence_session_indices", [])]
+        if row["bundle_type"] == "abstention_no_evidence":
+            if evidence:
+                raise ValueError("abstention QA bundle must have no evidence sessions")
+        elif len(evidence) < 2 or evidence != sorted(evidence):
+            raise ValueError("evidence QA bundles require two ordered sessions")
 
     thread_ids = [str(row["thread_id"]) for row in world["topic_threads"]]
     event_ids = [str(row["event_id"]) for row in world["events"]]
@@ -298,7 +343,8 @@ def chunk_prompt(
     thread_ids = [row["thread_id"] for row in world["topic_threads"]]
     requirements = [
         row for row in candidate_requirements(
-            assignment["user_id"], thread_ids, int(assignment["session_count"])
+            assignment["user_id"], thread_ids, int(assignment["session_count"]),
+            assignment.get("candidate_schedule_seed"),
         ) if start <= row["session_index"] <= end
     ]
     profiles = [
@@ -312,7 +358,25 @@ def chunk_prompt(
     ]
     relevant_event_ids = {event_id for row in session_plan for event_id in row["event_ids"]}
     relevant_events = [row for row in world["events"] if row["event_id"] in relevant_event_ids]
-    system = """You render one chunk of a previously frozen synthetic user world.
+    causal_world = {
+        "secondary_superdomains": world["secondary_superdomains"],
+        "topic_threads": world["topic_threads"],
+        "relationships": [
+            row for row in world["relationships"]
+            if int(row["valid_from_session"]) <= end
+        ],
+        "events": [row for row in world["events"] if int(row["session_index"]) <= end],
+        "profile_plan": [
+            row for row in world["profile_plan"] if int(row["source_session"]) <= end
+        ],
+        "preference_plan": [
+            row for row in world["preference_plan"] if int(row["source_session"]) <= end
+        ],
+        "session_plan": [
+            row for row in world["session_plan"] if int(row["session_index"]) <= end
+        ],
+    }
+    system = """You render one causally masked chunk of a frozen synthetic user world.
 Return exactly one JSON object and no prose or Markdown. Do not change, add, merge,
 or rename world facts, entities, threads, events, profile values, preference types,
 session indices, or required candidate IDs. Every literal_source_span, action_span,
@@ -320,8 +384,8 @@ and result_span must be an exact character-for-character substring of one USER t
 in the same session. Never put construction labels in dialogue."""
     user = f"""Render sessions {start} through {end} for {assignment['user_id']}.
 
-Frozen world:
-{json.dumps(world, ensure_ascii=False, sort_keys=True)}
+Causal world slice through session {end}; no fact after this boundary is available:
+{json.dumps(causal_world, ensure_ascii=False, sort_keys=True)}
 
 This chunk's session plan:
 {json.dumps(session_plan, ensure_ascii=False, sort_keys=True)}
@@ -372,7 +436,7 @@ def assemble_user(
     for item in profiles + preferences:
         item.pop("source_session", None)
     return {
-        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-v1",
+        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-v2-1",
         "user_id": assignment["user_id"],
         "content_author": assignment["content_author"],
         "primary_superdomain": assignment["primary_superdomain"],
@@ -383,4 +447,5 @@ def assemble_user(
         "relationships": world["relationships"],
         "events": world["events"],
         "sessions": sessions,
+        "qa_transport_bundles": world["qa_transport_bundles"],
     }

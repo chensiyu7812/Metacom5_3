@@ -1,0 +1,116 @@
+{
+  "protocol": "pm-v1.5-v5.3-atomic-semantic-suitability-calibration-v1",
+  "status": "ATOMIC_DEVELOPMENT_FAILED_ROUTE_GOLD_RETIRED_SUPERSEDED_BY_V5_4_FACTORIAL_OUTCOME_ORACLE",
+  "date": "2026-08-10",
+  "purpose": "Replace an unreliable single candidate-applicability label with independently reviewable semantic axes while keeping machine structural validity and response outcomes separate.",
+  "development_evidence": {
+    "packet": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_suitability_packet_blind.jsonl",
+    "report": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_agreement_report.json",
+    "diagnosis": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_disagreement_diagnostics.json",
+    "groups": 64,
+    "projection_raw_agreement": 0.53125,
+    "projection_cohen_kappa": 0.2902033271719039,
+    "directional_difference": "Reviewer A DO_NOT_OPEN=37 versus Reviewer B=14; Reviewer B OPEN_ELIGIBLE=43 versus Reviewer A=19",
+    "private_paired_outcome_key_opened": false,
+    "status": "COMPOSITE_LABEL_FAILED_DEVELOPMENT_ONLY"
+  },
+  "structural_truth_not_reviewed_as_semantics": {
+    "machine_axes": [
+      "candidate_present",
+      "same_user_owner",
+      "strictly_past",
+      "active_version",
+      "source_lineage_exists",
+      "typed_compiler_valid"
+    ],
+    "failure": "RETRIEVAL_INVALID_NO_PM_LABEL",
+    "rule": "absence of a prior fact from the current dialogue does not make that verified prior candidate invalid",
+    "semantic_source_fidelity": "if a candidate summary itself needs verification, use a separate evaluator-only literal-source audit; do not ask the current-applicability reviewer to infer provenance"
+  },
+  "atomic_semantic_axes": {
+    "CURRENT_GOAL_ENTITY_FIT": {
+      "question": "Can the candidate's specific contribution bear on the current user's entity, goal, tension, or response need, rather than merely sharing a topic?",
+      "labels": ["YES", "NO", "UNRESOLVED"]
+    },
+    "SPECIFIC_CONTRIBUTION_ALREADY_VISIBLE": {
+      "question": "Is the material contribution the candidate would add already explicit in the visible current dialogue?",
+      "labels": ["YES", "NO", "UNRESOLVED"]
+    },
+    "COMPONENT_FUNCTION_CAN_CHANGE_RESPONSE": {
+      "question": "Could this component-specific contribution change the response content or response act in a grounded way?",
+      "labels": ["YES", "NO", "UNRESOLVED"]
+    },
+    "CURRENT_BOUNDARY_PERMITS_COMPONENT": {
+      "question": "Does the visible current boundary permit this component's function, including advice/listen, repetition, burden, and acute-safety constraints?",
+      "labels": ["YES", "NO", "UNRESOLVED"]
+    }
+  },
+  "component_function_minimums": {
+    "MP": "a verified preference, constraint, profile, or relationship fact can materially personalize or constrain the current response; a name or topical echo is insufficient",
+    "MS": "a specific strictly-prior observation can accurately bridge the current thread, unresolved distinction, or continuity need",
+    "ME": "a specific past episode or action-result can change whether or how a present action, warning, or option is framed; same-topic context alone is insufficient",
+    "RS": "the selected card's one atomic move fits the current dialogue phase and has not already been performed or explicitly declined"
+  },
+  "deterministic_projection": {
+    "OPEN_ELIGIBLE": "all four axes are resolved and equal YES except SPECIFIC_CONTRIBUTION_ALREADY_VISIBLE, which equals NO",
+    "DO_NOT_OPEN": "CURRENT_GOAL_ENTITY_FIT=NO or SPECIFIC_CONTRIBUTION_ALREADY_VISIBLE=YES or COMPONENT_FUNCTION_CAN_CHANGE_RESPONSE=NO or CURRENT_BOUNDARY_PERMITS_COMPONENT=NO",
+    "ABSTAIN": "no decisive DO_NOT_OPEN axis is present and at least one required axis is UNRESOLVED",
+    "priority": "machine structural invalid precedes semantic projection; semantic DO_NOT_OPEN precedes uncertainty only when a resolved NO/YES condition is independently sufficient",
+    "free_form_composite_label_forbidden": true
+  },
+  "review_design": {
+    "first_stage": "re-review the same 64 development candidates with two independent model families using four atomic fields and exactly one grounded current-turn evidence ID per field; no paired outcome opens",
+    "development_use_only": true,
+    "promotion_gate": {
+      "each_axis_raw_agreement_min": 0.80,
+      "each_axis_cohen_kappa_min": 0.60,
+      "projected_decision_raw_agreement_min": 0.80,
+      "projected_decision_cohen_kappa_min": 0.60,
+      "component_development_support": "at least 3 consensus OPEN_ELIGIBLE and 3 consensus DO_NOT_OPEN per component"
+    },
+    "confirmation": "only after development passes, freeze a new unused outcome-hidden 64-group confirmation with support quotas; development groups and labels never enter confirmation",
+    "majority_vote_is_gold": false,
+    "private_paired_outcomes_remain_closed": true
+  },
+  "completed_development_outcome": {
+    "report": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/atomic_semantic_development_report.json",
+    "reviewer_A_complete": 64,
+    "reviewer_B_complete_after_one_transport_recovery": 62,
+    "common_groups": 62,
+    "axis_raw_agreement": {
+      "CURRENT_GOAL_ENTITY_FIT": 0.7258064516129032,
+      "SPECIFIC_CONTRIBUTION_ALREADY_VISIBLE": 0.6774193548387096,
+      "COMPONENT_FUNCTION_CAN_CHANGE_RESPONSE": 0.6935483870967742,
+      "CURRENT_BOUNDARY_PERMITS_COMPONENT": 0.7903225806451613
+    },
+    "axis_cohen_kappa": {
+      "CURRENT_GOAL_ENTITY_FIT": 0.27906976744186046,
+      "SPECIFIC_CONTRIBUTION_ALREADY_VISIBLE": -0.047297297297297196,
+      "COMPONENT_FUNCTION_CAN_CHANGE_RESPONSE": 0.23852617970265055,
+      "CURRENT_BOUNDARY_PERMITS_COMPONENT": 0.3051724137931036
+    },
+    "projection_raw_agreement": 0.6129032258064516,
+    "projection_cohen_kappa": 0.2076677316293929,
+    "all_axis_gates_pass": false,
+    "projection_gate_pass": false,
+    "all_component_bidirectional_support_pass": false,
+    "confirmation_authorized": false,
+    "private_paired_outcomes_opened": false,
+    "successor_contract": "v5_4_factorial_outcome_oracle_learning_v1.json"
+  },
+  "runtime_boundary": {
+    "model_does_not_receive_evaluator_only_source_spans": true,
+    "deployable_inputs": "current dialogue, exact Rank-1 candidate text/typed metadata, frozen BGE representation, and bounded observable features",
+    "axis_or_projection_uncertainty": "componentwise OFF with SEMANTIC_ABSTAIN reason",
+    "failed_head": "fixed OFF in learned_pm_qualified",
+    "transparent_rule": "separate baseline only"
+  },
+  "current_authorization": {
+    "atomic_development_review": false,
+    "function_quality_risk_roles": false,
+    "private_outcome_unblinding": false,
+    "new_paired_effect_generation": false,
+    "pm_training": false
+  },
+  "api_calls_for_contract": 0
+}

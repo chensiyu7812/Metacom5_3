@@ -1,0 +1,159 @@
+{
+  "protocol": "pm-v1.5-v5.3-semantic-coverage-off-accounting-v1",
+  "status": "FROZEN_BEFORE_ROLE_DECOMPOSED_CALIBRATION_V2",
+  "date": "2026-08-10",
+  "purpose": "Make Rank-1 identity, semantic coverage, abstention, OFF causes, action aliases, and failure responsibility measurable without rewarding an always-OFF policy.",
+  "authority": {
+    "measurement_contract": "v5_3_measurement_accountability_repair_v1.json",
+    "baseline_contract": "v5_3_baseline_matrix_v1.json",
+    "implementation": "src/metacom_pm/v1_5_v5_3_semantic_off_accounting.py",
+    "current_snapshot_report": "outputs/pm_v1_5_v5_3_semantic_off_accounting_20260810/report.json"
+  },
+  "rank1_definition": {
+    "unit": "one exact candidate identity per component and deployment-visible state after the frozen source-local retriever ranks the legal pool",
+    "not_gold": true,
+    "not_oracle": true,
+    "topk_role": "Top-k identities and scores are audit-only; Step1 and Step2 may execute only the frozen actual Rank-1 for that component",
+    "freeze_time": "after the current state and legal strictly-prior catalog exist, before action, generation, paired outcome, or evaluation is read",
+    "required_lineage": [
+      "state_id",
+      "component",
+      "rank1_candidate_id",
+      "candidate_owner_id",
+      "candidate_source_time_or_session",
+      "candidate_version",
+      "retriever_protocol_and_snapshot",
+      "rank1_score_and_tie_break",
+      "topk_candidate_ids"
+    ],
+    "absence": "if no structurally legal Rank-1 exists, that component is structurally OFF and the PM receives no semantic value label for it"
+  },
+  "off_reason_taxonomy": [
+    "CANDIDATE_ABSENT",
+    "STRUCTURAL_INVALID_OWNER_TIME_VERSION",
+    "SAFETY_HARD_OFF",
+    "SEMANTIC_DO_NOT_OPEN_REDUNDANT",
+    "SEMANTIC_DO_NOT_OPEN_NOT_USEFUL",
+    "SEMANTIC_ABSTAIN_OUT_OF_SUPPORT",
+    "SEMANTIC_ABSTAIN_LOW_CONFIDENCE",
+    "HEAD_NOT_QUALIFIED",
+    "VALUE_PREDICTED_OFF",
+    "VALUE_UNRESOLVED",
+    "JOINT_PROJECTION_COST_FRONTIER_OFF",
+    "ON"
+  ],
+  "fail_closed_policy": {
+    "componentwise_not_global": true,
+    "state_level_semantic_abstention": "only the unresolved component bit is forced OFF; other qualified bits continue independently",
+    "head_level_failure": "a head failing label-support or cross-fitted learnability is fixed OFF in learned_pm_qualified for every state",
+    "transparent_rule_boundary": "transparent_rule is a separate named baseline only and is never substituted for a failed learned head",
+    "current_v5_3": "all four formal heads failed; no learned_pm_qualified external arm is authorized; a mechanical all-failed projection would alias always_off at M0+R0",
+    "examples": {
+      "memory_all_off_rs_on": "M0+RS",
+      "memory_all_off_rs_off": "M0+R0",
+      "mp_on_others_off": "MP+R0"
+    }
+  },
+  "metric_definitions": {
+    "candidate_availability_rate": {
+      "numerator": "states with a frozen structurally legal actual Rank-1 for the component",
+      "denominator": "all deployment states in the named panel",
+      "owner": "catalog/retrieval"
+    },
+    "structural_off_rate": {
+      "numerator": "states with candidate absent or structurally invalid",
+      "denominator": "all deployment states in the named panel",
+      "owner": "catalog/retrieval/eligibility"
+    },
+    "semantic_resolution_coverage": {
+      "numerator": "structurally legal candidate states receiving resolved OPEN_ELIGIBLE or DO_NOT_OPEN",
+      "denominator": "states with a structurally legal actual Rank-1",
+      "owner": "bounded semantic interface"
+    },
+    "semantic_abstention_rate": {
+      "numerator": "structurally legal candidate states routed ABSTAIN for out-of-support or low-confidence semantics",
+      "denominator": "states with a structurally legal actual Rank-1",
+      "owner": "bounded semantic interface"
+    },
+    "conditional_on_rate": {
+      "numerator": "final requested ON states for the component",
+      "denominator": "states with a structurally legal actual Rank-1",
+      "owner": "semantic interface plus PM plus joint projection"
+    },
+    "policy_on_rate": {
+      "numerator": "final requested ON states for the component",
+      "denominator": "all deployment states in the named panel",
+      "owner": "complete policy"
+    },
+    "selective_semantic_accuracy": {
+      "numerator": "resolved semantic decisions matching a separately resolved candidate-suitability oracle",
+      "denominator": "states where both runtime semantic decision and oracle are resolved",
+      "guardrail": "must be reported beside semantic_resolution_coverage; accuracy without coverage is invalid"
+    },
+    "false_on_rate": {
+      "numerator": "resolved OFF_ONLY or DO_NOT_OPEN states requested ON",
+      "denominator": "resolved oracle-OFF states",
+      "owner": "PM only when Rank-1 and oracle are valid"
+    },
+    "false_off_rate": {
+      "numerator": "resolved ON_ONLY states requested OFF",
+      "denominator": "resolved oracle-ON states",
+      "owner": "PM or semantic abstention, reported separately by OFF reason"
+    },
+    "always_off_alias_rate": {
+      "numerator": "states where learned_pm_qualified action equals M0+R0",
+      "denominator": "all states",
+      "interpretation": "a high value is not success; if the learned arm has no nonalias contrast or measurable benefit over always_off, no PM-value claim is allowed"
+    },
+    "requested_realized_functional_funnel": {
+      "stages": ["candidate_available", "semantic_resolved", "requested_ON", "received", "used", "functional", "risk_safe"],
+      "denominators": "each stage reports both all-state and prior-stage conditional denominators"
+    }
+  },
+  "anti_gaming_guards": [
+    "never report one global OFF rate without component and OFF-reason decomposition",
+    "never treat paired experimental arm allocation as a policy ON/OFF rate",
+    "never treat Rank-1 presence as semantic applicability or ON gold",
+    "report conditional_on_rate beside unconditional policy_on_rate",
+    "report semantic coverage beside selective accuracy",
+    "compare learned routing against always_off and cost-and-ON-rate-matched random",
+    "if learned actions alias always_off, retain the alias and prohibit a semantic-selection benefit claim"
+  ],
+  "responsibility_order": {
+    "candidate_absent": "catalog/data coverage",
+    "wrong_rank1_or_wrong_owner_time_event": "retrieval/candidate layer",
+    "resolved_candidate_but_wrong_semantic_suitability": "semantic eligibility interface",
+    "resolved_oracle_but_wrong_component_request": "PM Step1",
+    "correct_request_but_not_received_or_functional": "Step2 executor",
+    "unsafe_raw reply incorrectly accepted": "guard",
+    "correct full mechanism but harmful response": "resource-generator interaction",
+    "oracle or reviewers unresolved": "measurement; no forced blame",
+    "out_of_support": "scope/OOD; report abstention rather than error unless a coverage target was preregistered"
+  },
+  "current_evidence_snapshot": {
+    "evoemo_all_seeker_turns": 4689,
+    "states_with_completed_prior_session": 4442,
+    "preliminary_rank1_presence_all_turns": {
+      "MP": {"count": 842, "rate": 0.1795692045},
+      "MS": {"count": 3270, "rate": 0.6973768394},
+      "ME": {"count": 2000, "rate": 0.4265301770}
+    },
+    "preliminary_structural_off_lower_bound_all_turns": {
+      "MP": 0.8204307955,
+      "MS": 0.3026231606,
+      "ME": 0.5734698230
+    },
+    "all_three_memory_rank1_present": {"count": 770, "rate": 0.1642141181},
+    "formal_576_pair_arm_rate": "50 percent OFF by experimental construction; forbidden as a policy-rate estimate",
+    "current_final_learned_policy_rate": "NOT_AVAILABLE_NO_QUALIFIED_HEAD_AND_NO_AUTHORIZED_LEARNED_ARM"
+  },
+  "required_before_external_policy_execution": [
+    "role-decomposed measurement calibration passes",
+    "runtime semantic abstention and OOD rules are machine-executable and frozen",
+    "each learned head has clean bidirectional support across at least 12 independent clusters",
+    "head-level qualification map is frozen",
+    "every failed head maps to FIXED_OFF in learned_pm_qualified",
+    "action and OFF-reason trace is materialized before response outcomes are opened"
+  ],
+  "api_calls_for_contract": 0
+}

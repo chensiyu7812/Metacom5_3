@@ -1,0 +1,228 @@
+{
+  "protocol": "pm-v1.5-v5.3-public-backbone-effect-learning-v1",
+  "status": "PRE_EFFECT_PUBLIC_BACKBONE_FROZEN",
+  "route_decision": {
+    "primary_research_backbone": "ESConv plus the 18-user EvoEmo/ES-MemEval public release",
+    "new_longitudinal_synthetic_users": "STOP_FOR_PAPER_1_PRIMARY_ANALYSIS",
+    "existing_11_synthetic_users": "engineering_stress_tests_and_failure_analysis_only",
+    "new_generation_scope": "paired_response_effects_only_after_all_pre-effect_gates_pass"
+  },
+  "source_freeze": {
+    "evoemo_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/external/evo_emo.json",
+    "evoemo_sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "evoemo_users": 18,
+    "evoemo_sessions": 401,
+    "evoemo_session_ids_unique_globally": 400,
+    "evoemo_composite_user_session_keys_unique": 401,
+    "globally_shared_session_owners": {
+      "esc1198": [
+        "p13",
+        "p18"
+      ]
+    },
+    "evoemo_seeker_turns": 4689,
+    "esconv_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/external/ESConv.json",
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "esconv_dialogues": 1300,
+    "esconv_manifest_path": "/home/tokkio/snap/metacom_v33_pm_v1_5_repair/project/data/strategy/esconv_split_manifest_v1_5.jsonl",
+    "esconv_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "evoemo_unique_esconv_seed_ids": 84,
+    "esconv_quarantined_seed_ids": 84,
+    "esconv_eligible_after_quarantine": 1216,
+    "esconv_eligible_by_split": {
+      "test": 169,
+      "train": 875,
+      "validation": 172
+    }
+  },
+  "historical_exposure": {
+    "all_18_evoemo_users_previously_used_for_development": true,
+    "evoemo_pristine_confirmation": false,
+    "permitted_description": "previously exposed public development benchmark with fully cross-fitted predictions",
+    "fresh_confirmation_required_for_strong_external_claim": true
+  },
+  "observability_boundary": {
+    "runtime_allowed": [
+      "authorized onboarding basic_info profile",
+      "current dialogue prefix ending at the current seeker turn",
+      "completed-session summary and utt_id-grounded observations, opened only after session close",
+      "conv_id-grounded event annotations plus strictly-prior exact seeker action-result spans",
+      "frozen actual Rank-1 descriptors and transparent RS card descriptors"
+    ],
+    "runtime_denied_evoemo_fields": [
+      "questions",
+      "summaries",
+      "subsequent_topics",
+      "future_dialog_history[].summary",
+      "future_dialog_history[].observation",
+      "current_unclosed_session.summary",
+      "current_unclosed_session.observation"
+    ],
+    "denied_uses": [
+      "state selection",
+      "candidate ranking",
+      "PM features",
+      "worth-opening labels",
+      "judge evidence other than an audit-only leakage check"
+    ],
+    "profile_assumption": "basic_info is an authorized onboarding resource available before session 1, not inferred from future dialogue"
+  },
+  "candidate_materialization": {
+    "state_grain": "each seeker turn with its within-session prefix; memory sources use completed prior sessions only",
+    "MP": "basic_info except name at onboarding plus relationship updates after source conv_id closes; frozen actual Rank-1 is not gold",
+    "MS": "official session-local summary plus utt_id-grounded turn observations, available only after source session close",
+    "ME": "conv_id-grounded context events plus strict exact action/result spans, available only after source session close",
+    "RS": "six-card definition bank; ESConv seed dialogues used by EvoEmo are quarantined",
+    "actual_rank1_only": true,
+    "rank2_promotion_after_effects": false,
+    "semantic_usefulness_prefilter": false
+  },
+  "effect_estimand": {
+    "unit": "requested-component intention-to-treat effect on the same frozen state and same frozen actual Rank-1 candidate",
+    "arms": "component ON versus OFF under the same generator, seed policy, executor, guard, and fallback",
+    "component_training_target": "replicate-aggregated conditional positive-support-contribution uplift for the requested component",
+    "quality_target_form": "continuous/ordinal ON-minus-OFF effect or pairwise soft target; tie is zero uplift/0.5, never forced negative",
+    "material_risk_target": "separate absolute-arm and incremental risk auxiliary; never intersected into the quality target",
+    "functional_use_target": "separate mechanism diagnostic and executor-validity audit; never required to turn a real quality gain positive",
+    "replication": "three pre-frozen paired generator seeds per formal effect group; aggregate before deriving the target",
+    "cost_enters_component_training_label": false,
+    "cost_use": "deterministic penalty only during 16-action joint projection and separate reporting",
+    "construction_condition_is_gold": false,
+    "candidate_presence_is_gold": false
+  },
+  "measurement": {
+    "quality_axis_name": "positive_support_contribution_not_overall_quality",
+    "quality_dimensions": [
+      "goal_advance",
+      "emotional_support",
+      "specific_useful_contribution",
+      "clarity_and_naturalness"
+    ],
+    "overall_acceptability": "reported separately and subject to risk veto",
+    "risk_families": [
+      "R1_explicit_boundary_violation",
+      "R2_unsupported_or_wrong_owner_personal_grounding",
+      "R3_excessive_directiveness_or_burden"
+    ],
+    "risk_records": "absolute events for both arms plus incremental/resource-attributable direction",
+    "system_integrity": "resource/scaffold exposure is a separate event family",
+    "cost": "incremental tokens, latency, fallback/recovery and monetary cost reported separately",
+    "no_double_count_rule": "record each primary event once, but do not force positive contribution and risk to be statistically independent",
+    "judge_independence": "primary judge model family must differ from the frozen generator family; judge prompts and thresholds freeze pre-effect",
+    "human_audit": "predeclared stratified blind subset, two independent human raters, agreement plus adjudication; never used for post-hoc prompt tuning"
+  },
+  "cross_fitting": {
+    "outer_protocol": "six user-held-out folds; 15 development users and 3 held-out users per fold",
+    "outer_folds": [
+      {
+        "fold": 1,
+        "held_out_users": [
+          "p12",
+          "p13",
+          "p18"
+        ],
+        "held_out_sessions": 57
+      },
+      {
+        "fold": 2,
+        "held_out_users": [
+          "p14",
+          "p8",
+          "p9"
+        ],
+        "held_out_sessions": 71
+      },
+      {
+        "fold": 3,
+        "held_out_users": [
+          "p1",
+          "p17",
+          "p4"
+        ],
+        "held_out_sessions": 67
+      },
+      {
+        "fold": 4,
+        "held_out_users": [
+          "p15",
+          "p3",
+          "p7"
+        ],
+        "held_out_sessions": 69
+      },
+      {
+        "fold": 5,
+        "held_out_users": [
+          "p11",
+          "p2",
+          "p5"
+        ],
+        "held_out_sessions": 69
+      },
+      {
+        "fold": 6,
+        "held_out_users": [
+          "p10",
+          "p16",
+          "p6"
+        ],
+        "held_out_sessions": 68
+      }
+    ],
+    "shared_source_grouping": "users sharing any raw session ID are inseparable; composite (user_id, session_id) is the session primary key",
+    "inner_protocol": "all model choice, regularization, calibration and thresholds use user-grouped inner validation inside the 15 outer-training users",
+    "representation_rule": "any learned vocabulary/encoder/calibrator is fitted only inside the outer-training users; globally fixed third-party encoders must be frozen pre-effect",
+    "automation_rule": "freeze once, run all six folds without between-fold method edits",
+    "rs_rule": "ESConv dialogue groups are split separately; all 84 EvoEmo seed IDs are permanently excluded"
+  },
+  "qualification_gates": {
+    "pre_effect": [
+      "source hash and denominator freeze",
+      "84-seed ESConv quarantine",
+      "strict chronology and forbidden-field audit",
+      "actual Rank-1 effect-state manifest freeze",
+      "judge qualification and generator/Step2 compatibility",
+      "cross-family judge plus frozen double-human blind audit plan"
+    ],
+    "head_engineering_gate_provisional": {
+      "balanced_accuracy_point": 0.65,
+      "recall_and_specificity_point_each": 0.6,
+      "brier": "must beat within-fold prevalence constant and transparent rule",
+      "noncollapse": "OOF predictions must contain both ON and OFF",
+      "support": "report distinct contributing users per class; state counts may not substitute for users",
+      "interpretation": "engineering adoption gate, not a powered scientific guarantee"
+    },
+    "learnability_first_design": {
+      "state_sampling": "balance observable pre-treatment strata, never outcome classes",
+      "per_component_strata": {
+        "MP": "onboarding profile versus relationship update; relevance, age, redundancy, response-act fit",
+        "MS": "session summary versus turn observation; relevance, age, continuity and redundancy",
+        "ME": "context event versus reusable action-result; relevance, age, current action readiness and redundancy",
+        "RS": "candidate move, dialogue phase, semantic candidate-state fit, advice/readiness and repetition/burden"
+      },
+      "primary_feature_capacity": "4-7 nonconstant deployable features per component",
+      "required_semantic_feature": "one frozen candidate-state semantic similarity or a cross-fitted bounded dialogue-act representation",
+      "transparent_regex_flags_alone_are_forbidden_for_RS": true,
+      "ties_are_training_information_not_negative_class_padding": true
+    },
+    "fold_failure": "fail closed to OFF or the predeclared transparent rule for that component in that fold",
+    "system_reference_gates": {
+      "quality_netwin_margin": -0.05,
+      "material_risk_margin": 0.05,
+      "minimum_input_token_reduction": 0.1,
+      "critical_grounding_events": 0
+    }
+  },
+  "inference_and_claims": {
+    "independent_cluster": "user for EvoEmo and dialogue for ESConv",
+    "state_is_not_independent_user": true,
+    "report": "OOF point estimates, user/dialogue-cluster bootstrap or permutation intervals, raw support, abstentions and all failed heads",
+    "primary_comparator_predeclared": true,
+    "eighteen_users_support_broad_generalization": false,
+    "guaranteed": "workflow closure, leakage barriers, reproducibility and fail-closed behavior",
+    "not_guaranteed": "a learnable effect, passing metrics, narrow confidence intervals or clinical/general-population validity",
+    "fresh_confirmation": "required before describing the result as independent confirmation or broad external validation"
+  },
+  "api_calls": 0,
+  "freeze_identity": "v53public_b673d32b1cd036862adccc1b"
+}

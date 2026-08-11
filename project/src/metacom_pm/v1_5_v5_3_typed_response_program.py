@@ -68,6 +68,10 @@ _REQUIRED_CONTRIBUTION_BY_COMPONENT: Mapping[str, str] = {
         "offer a specific past action-and-result as one declinable option; "
         "never escalate a single past outcome into a rule or guarantee"
     ),
+    "ME_CONTEXT_EVENT": (
+        "use one specific prior event only as past context that materially clarifies "
+        "the reply, and tentatively check rather than assume present continuity"
+    ),
     "RS": "complete exactly one atomic support move, with no appended second task",
 }
 
@@ -76,6 +80,7 @@ _EPISTEMIC_MODE_BY_COMPONENT: Mapping[str, EpistemicMode] = {
     "MP_PROFILE": "current_fact",
     "MS": "unverified_continuity",
     "ME": "defeasible_analogy",
+    "ME_CONTEXT_EVENT": "unverified_continuity",
     "RS": "current_fact",
 }
 
@@ -136,6 +141,8 @@ def _literal_evidence_for(candidate: TypedResourceCandidate) -> str:
     if candidate.component == "MS":
         return _clean(candidate.prior_observation)
     if candidate.component == "ME":
+        if candidate.subtype == "ME_CONTEXT_EVENT":
+            return _clean(candidate.past_event)
         # past_action/observed_outcome are the fields TypedResourceCandidate
         # actually requires and validates for ME_REUSABLE_OUTCOME; the
         # optional ``mechanism`` field is a V5.2-specific "literal_span:"
@@ -154,7 +161,9 @@ def _usage_boundary_for(candidate: TypedResourceCandidate) -> str:
 
 
 def _evidence_key(candidate: TypedResourceCandidate) -> str:
-    return candidate.subtype if candidate.component == "MP" else candidate.component
+    if candidate.component == "MP" or candidate.subtype == "ME_CONTEXT_EVENT":
+        return candidate.subtype
+    return candidate.component
 
 
 def build_typed_response_program(

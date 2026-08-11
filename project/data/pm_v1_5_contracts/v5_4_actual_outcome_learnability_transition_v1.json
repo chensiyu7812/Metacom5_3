@@ -1,0 +1,121 @@
+{
+  "protocol": "pm-v1.5-v5.4-actual-outcome-learnability-transition-v1",
+  "status": "METHOD_FROZEN_EFFECT_MANIFEST_AND_MEASUREMENT_PREFLIGHT_ONLY",
+  "date": "2026-08-10",
+  "authority": {
+    "scope": "The transition from outcome-blind authored states to the first randomized value evidence",
+    "supersedes": [
+      "v5_4_factorial_outcome_oracle_learning_v1.json requirement that construction-assignment prediction pass before any effect feasibility",
+      "v5_4_state_local_rank1_factorial_oracle_v1.json wording that a pre-authoring assignment remains a valid observability target after actual Rank-1 changes"
+    ],
+    "preserves": [
+      "state-local actual Rank-1 frozen across matched action arms",
+      "all 16 legal actions and four component heads",
+      "construction assignment excluded from PM features and value gold",
+      "deployment ITT as the primary value estimand",
+      "quality, absolute risk, functional execution, and cost as separate objects"
+    ]
+  },
+  "triggering_evidence": {
+    "machine_and_fidelity": {
+      "state_local_rank1_report": "outputs/pm_v1_5_v5_4_v4_state_local_actual_rank1_20260810/report.json",
+      "state_local_candidate_valid": "96/96",
+      "fresh_fidelity_report": "outputs/pm_v1_5_v5_4_v4_fidelity_v2_20260810/fidelity_v2_final_resolved_report.json",
+      "fresh_fidelity_resolved_pass": "48/48"
+    },
+    "bounded_observability_v1": {
+      "report": "outputs/pm_v1_5_v5_4_bounded_semantic_observability_20260810/report.json",
+      "status": "BOUNDED_OBSERVABILITY_FAIL_NO_EFFECT_CALLS",
+      "overall_balanced_accuracy": 0.6041666666666667,
+      "response_effect_or_oracle_read": false
+    },
+    "target_drift_diagnosis": {
+      "report": "outputs/pm_v1_5_v5_4_observability_target_drift_diagnosis_20260810/report.json",
+      "actual_rank1_changed_from_authoring_anchor": "26/96 states",
+      "both_variants_retain_anchor_pairs": {"MP": 11, "MS": 4, "ME": 10, "RS": 4},
+      "input_scope_error": "V1 used only the final current-user turn even though the deployable full visible dialogue is required and available",
+      "conclusion": "V1 is neither a pass nor evidence that the PM optimizer cannot learn; its target/input pairing is not a valid promotion instrument"
+    }
+  },
+  "why_assignment_prediction_is_retired_as_a_hard_gate": {
+    "construction_assignment": "describes the authoring edit relative to a source anchor and remains useful for coverage diagnostics",
+    "actual_runtime_input": "contains the completed state and its independently materialized production actual Rank-1",
+    "mismatch": "when Rank-1 changes, the old assignment need not describe the actual candidate's value or redundancy",
+    "no_reviewer_substitution": "subjective should-open or semantic applicability review has already failed repeatability and is not reintroduced as gold",
+    "correct_value_evidence": "randomized same-state requested-action outcomes"
+  },
+  "pre_effect_feature_integrity": {
+    "required_views": [
+      "complete deployment-visible dialogue with role markers",
+      "latest current-user turn",
+      "state-local actual Rank-1 candidate text",
+      "typed component subtype and bounded age/availability descriptors",
+      "frozen full-dialogue/current-turn/candidate semantic relation features"
+    ],
+    "forbidden": [
+      "construction assignment or low-mode",
+      "author endpoint or A/B position",
+      "candidate, family, fold, user, dialogue, or template IDs",
+      "EvoEmo summary, observation, event timeline, QA answers, or evidence annotations",
+      "response, quality, risk, function, cost, or oracle outcomes"
+    ],
+    "gate": "100 percent feature materialization, finite values, no forbidden field, family binding frozen, and nuisance/duplicate audit recorded",
+    "not_a_value_test": true
+  },
+  "development_effect_feasibility": {
+    "panel": "all 48 V4 public-source families and both completed variants, retained regardless of source-anchor identity because actual outcome is state-local",
+    "states": 96,
+    "component_states": {"MP": 24, "MS": 24, "ME": 24, "RS": 24},
+    "matched_actions": "target component OFF versus ON on an otherwise M0+R0 background",
+    "generator_seeds_per_arm": 3,
+    "generator_calls": 576,
+    "arm_invariance": "same completed state, actual candidate set, generator identity, prompt compiler, seed, output cap, and guard",
+    "assignment_analysis": "secondary design diagnostic only; never a target and not required to align after candidate drift",
+    "first_gate": {
+      "treatment_uptake": "requested-received-used-functional funnel is measured per component; fallback and non-use remain deployment ITT",
+      "effect_support": "continuous Q effects are nonconstant and both above-margin and at-or-below-margin effects occur across independent families",
+      "measurement": "dual independent role-specific judgments or frozen adjudication resolve enough Q and absolute R; unresolved is never converted to zero/OFF",
+      "critical_grounding": "wrong-owner/future/private-source critical events are reported separately and prevent unsafe oracle promotion"
+    }
+  },
+  "development_learnability": {
+    "primary_target": "replicate-aggregated continuous deployment-ITT positive-support-contribution uplift",
+    "models": "a predeclared finite set of transparent, full-dialogue BGE-relation, and fixed pretrained semantic-relation low-capacity candidates selected only inside nested grouped cross-fitting",
+    "split": "source user/dialogue, semantic family, counterfactual pair, source anchor, and template cluster remain bound",
+    "capacity": "component head effective fitted degrees of freedom at most 3 in each outer training fold",
+    "gates": {
+      "relative_oof_mse": "<=0.95 versus fold-training mean",
+      "oof_spearman": ">=0.15",
+      "nonconstant_prediction_and_target": true,
+      "resolved_coverage": ">=0.70",
+      "both_effect_sides": "at least 8 independent families per component across above-margin and at-or-below-margin effects; otherwise that head is fixed OFF"
+    },
+    "formal_confirmation": "any selected representation/model is frozen, then tested on fresh unused families; V4 development performance is never reported as pristine confirmation"
+  },
+  "measurement_before_live_calls": {
+    "quality": "anonymous AB/BA positive-support-contribution only; no function, risk, or cost mixed into Q",
+    "risk": "absolute events for both arms first, then candidate-attributable direction; unresolved is not SAFE",
+    "function": "candidate contribution plus literal response evidence plus component-specific response-act minimum; generator self-report is telemetry only",
+    "cost": "deterministic injected tokens plus separate provider token/latency/USD telemetry; no cost in component labels",
+    "required_preflight": "freeze schemas, endpoints, hashes, seeds, attempt ledger, raw provider reply persistence, retry rules, deterministic fallback, and USD cap before live generation"
+  },
+  "responsibility": {
+    "candidate_layer": "actual Rank-1 absent, invalid, wrong owner/time/version, or semantically poor",
+    "representation_scope": "deployable full state-candidate relation is not observable or is outside qualified confidence",
+    "pm": "only after resolved held-out effect/oracle evidence and qualified representation, the selected request is incompatible with the oracle set",
+    "step2": "oracle-compatible request is not received, used, grounded, or functionally realized, or triggers fallback",
+    "measurement": "Q/R/F cannot be resolved reproducibly",
+    "deployment_itt": "the policy is still charged with final consequences while the mechanism table names the earliest evidenced failure"
+  },
+  "current_authorization": {
+    "feature_surface_materialization": true,
+    "effect_manifest_and_cost_preflight": true,
+    "measurement_schema_and_clear_control_preflight": true,
+    "live_response_effect_calls": false,
+    "live_quality_risk_function_calls": false,
+    "pm_training": false,
+    "full_16_action_execution": false,
+    "external_evaluation": false
+  },
+  "api_calls_for_contract": 0
+}

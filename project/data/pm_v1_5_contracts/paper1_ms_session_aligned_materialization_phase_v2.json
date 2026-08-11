@@ -1,0 +1,58 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-session-aligned-materialization-phase-v2",
+  "date": "2026-08-10",
+  "status": "MS_SESSION_ALIGNED_ZERO_API_MATERIALIZATION_CANDIDATE",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "parent_authority_sha256": "fd5c636846c6facbdc5a0938adaa9059c85568f24e8d9454618512fac43c2dd7",
+  "source": {
+    "path": "data/external/evo_emo.json",
+    "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"
+  },
+  "input_roles": {
+    "legacy_evo_states": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl"
+  },
+  "input_bindings": [
+    {"role": "method_v2", "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_v2.json", "sha256": "1ebbd3ad0a3ffdde44d4e573e9c30e6c75da2e046677ad1c2fb39f1d0368c184"},
+    {"role": "evoemo_source", "path": "data/external/evo_emo.json", "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"},
+    {"role": "frozen_owner_group_assignments", "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl", "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"}
+  ],
+  "implementation_bindings": [
+    {"role": "chronology_loader", "path": "src/metacom_pm/evoemo.py", "sha256": "357eed1b163e54c4241e7398985266ddfa78f7980e0acb99ac88ef33cfcc40fb"},
+    {"role": "author_ancestry_label", "path": "src/metacom_pm/v1_5_paper1_annotated_labels.py", "sha256": "1ab5e6e6bef78738a60ddaab50965e3ed4bdd09146617c6fbdb7c80ee12dbb17"},
+    {"role": "session_aligned_surface", "path": "src/metacom_pm/v1_5_paper1_session_aligned_ms.py", "sha256": "a652764c45c6eac4d314b6233e696652904a84f8ef79983e854a3589ca4e5d1f"},
+    {"role": "one_shot_materializer", "path": "scripts/v1_5/193l_materialize_paper1_ms_session_aligned_v2_v1_5.py", "sha256": "c0855595937e36d4e3a7a0e933807de1da795591d7eaadbf291ee44fbfea6e3c"}
+  ],
+  "local_semantic_encoder": {
+    "model_id": "BAAI/bge-m3",
+    "snapshot_path": "/home/tokkio/.cache/huggingface/hub/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181",
+    "snapshot_tree_sha256": "f0384ec76e05ff5439dd455f7d65ea523bd90c6273c106cfe9c3629a867b80ba",
+    "pooling": "normalized CLS",
+    "network": false
+  },
+  "outputs": {
+    "public_dir": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810",
+    "private_dir": "outputs/pm_v1_5_paper1_ms_session_aligned_labels_private_20260810",
+    "report_dir": "outputs/pm_v1_5_paper1_ms_session_aligned_materialization_20260810"
+  },
+  "authorization": {
+    "session_aligned_surface_materialization": true,
+    "actual_rank1_materialization": true,
+    "author_annotation_label_materialization": true,
+    "pm_fit": false,
+    "api_calls": false,
+    "response_generation": false,
+    "baseline_or_external_outcomes": false,
+    "paid_execution": false
+  },
+  "allowed": [
+    "create new content-addressed V2 public runtime artifacts",
+    "create physically separate private author-ancestry labels",
+    "aggregate pre-fit class and owner-group capacity counts"
+  ],
+  "forbidden": [
+    "overwrite or rerun V1 artifacts",
+    "PM fitting or threshold selection",
+    "summary, observation, event, influenced_by, or QA fields in runtime artifacts",
+    "API calls, responses, baselines, or external outcomes"
+  ]
+}

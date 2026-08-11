@@ -1,0 +1,301 @@
+{
+  "protocol": "pm-v1.5-paper1-p1-public-source-group-manifest-candidate-v1",
+  "date": "2026-08-10",
+  "status": "P1_DESIGN_CANDIDATE_NOT_EXECUTION_AUTHORITY",
+  "purpose": "Freeze the public-source bytes, chronology, canonical group identities, runtime/evaluator boundary, and candidate-construction design before any public state is materialized, labeled, generated, or fitted.",
+  "method_binding": {
+    "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+    "active_contract_path": "data/pm_v1_5_contracts/paper1_bounded_suitability_safe_yield_closeout_v1.json",
+    "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+    "parent_authority_path": "data/pm_v1_5_contracts/active_method_authority_v1.json",
+    "parent_authority_sha256": "e348d800b75ed02dfcde37a8c17d5622a8d9b5bf1022ac60def5aedc5558ea0d",
+    "parent_phase": "P0_ZERO_API_CLAIM_LABEL_VERSION_FREEZE",
+    "candidate_phase": "P1_PUBLIC_SOURCE_AND_CANONICAL_GROUP_MATERIALIZATION"
+  },
+  "authorization": {
+    "design_and_validation_only": true,
+    "public_state_materialization": false,
+    "candidate_materialization": false,
+    "suitability_or_safe_yield_annotation": false,
+    "response_generation": false,
+    "reviewer_or_generator_api_calls": false,
+    "pm_training": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false,
+    "activation_rule": "A separate promoted phase manifest must bind this candidate manifest's exact SHA256 and the exact implementation hashes. This candidate file cannot authorize itself."
+  },
+  "source_bindings": {
+    "ESConv": {
+      "path": "data/external/ESConv.json",
+      "sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+      "dialogues": 1300,
+      "split_manifest_path": "data/strategy/esconv_split_manifest_v1_5.jsonl",
+      "split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+      "split_counts": {
+        "train": 934,
+        "validation": 186,
+        "test": 180
+      },
+      "evoemo_seed_quarantine": 84,
+      "nonoverlap_counts": {
+        "train": 875,
+        "validation": 172,
+        "test": 169
+      },
+      "join_rule": "manifest index and dialogue_id esconv_%04d must match the raw list position exactly; reordering or missing rows fails closed"
+    },
+    "EvoEmo_and_ES_MemEval": {
+      "path": "data/external/evo_emo.json",
+      "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+      "users": 18,
+      "composite_owner_session_rows": 401,
+      "globally_unique_raw_session_ids": 400,
+      "questions": 1427,
+      "question_capabilities_evaluator_only": {
+        "information extraction": 309,
+        "user modeling": 306,
+        "temporal reasoning": 284,
+        "conflict detection": 267,
+        "abstention": 261
+      },
+      "chronology_loader": {
+        "path": "src/metacom_pm/evoemo.py",
+        "sha256": "357eed1b163e54c4241e7398985266ddfa78f7980e0acb99ac88ef33cfcc40fb",
+        "entrypoint": "load_evoemo",
+        "ordering_rule": "ascending_iso_date_then_original_position_for_ties"
+      }
+    }
+  },
+  "canonical_identity_and_grouping": {
+    "ESConv": {
+      "runtime_owner_key": "esconv::<dialogue_id>",
+      "split_group_key": "esconv::<dialogue_id>",
+      "state_key": "esconv::<dialogue_id>::seeker_turn::<raw_turn_index>",
+      "rule": "all states and generator replicates from one raw dialogue remain in one group",
+      "quarantine_rule": "every manifest row marked excluded_for_evoemo_overlap is excluded from ESConv training, validation, and test use"
+    },
+    "EvoEmo": {
+      "runtime_owner_key": "evo::<wrapper_user_id>",
+      "catalog_primary_key": "evo::<wrapper_user_id>::<raw_session_id>::<raw_turn_index>",
+      "state_key": "evo::<wrapper_user_id>::<raw_session_id>::seeker_turn::<raw_turn_index>",
+      "split_group_key": "connected component of wrapper users linked by any shared raw session id",
+      "shared_raw_session_owners": {
+        "esc1198": [
+          "p13",
+          "p18"
+        ]
+      },
+      "shared_session_rule": "p13 and p18 are inseparable for every outer split, but their runtime owners and private catalogs remain separate; no candidate may cross wrapper_user_id",
+      "other_users": "singleton connected components unless a future byte-identical or normalized-near-duplicate audit links them before labels"
+    },
+    "ES_MemEval": {
+      "question_key": "esmemeval::<wrapper_user_id>::<question_group_id>::<question_idx>",
+      "split_group_key": "the same EvoEmo connected source-user component used by the response track",
+      "statistical_cluster": "wrapper user with p13 and p18 bound in one resampling component for leakage-safe sensitivity",
+      "no_cross_task_independence_inflation": true
+    },
+    "constructed_family_rule": "If any counterfactual family, template cluster, generator replicate family, or normalized near-duplicate component is later created, every member is bound to one split and its group key is recorded before labels or outcomes."
+  },
+  "frozen_outer_folds": {
+    "origin": "outcome-blind session-balanced folds already frozen in v5_3_public_backbone_effect_learning_v1; retained because they bind p13 and p18 and do not depend on response outcomes",
+    "folds": [
+      {
+        "fold": 1,
+        "held_out_users": ["p12", "p13", "p18"],
+        "held_out_sessions": 57,
+        "held_out_questions": 303
+      },
+      {
+        "fold": 2,
+        "held_out_users": ["p14", "p8", "p9"],
+        "held_out_sessions": 71,
+        "held_out_questions": 271
+      },
+      {
+        "fold": 3,
+        "held_out_users": ["p1", "p17", "p4"],
+        "held_out_sessions": 67,
+        "held_out_questions": 261
+      },
+      {
+        "fold": 4,
+        "held_out_users": ["p15", "p3", "p7"],
+        "held_out_sessions": 69,
+        "held_out_questions": 182
+      },
+      {
+        "fold": 5,
+        "held_out_users": ["p11", "p2", "p5"],
+        "held_out_sessions": 69,
+        "held_out_questions": 237
+      },
+      {
+        "fold": 6,
+        "held_out_users": ["p10", "p16", "p6"],
+        "held_out_sessions": 68,
+        "held_out_questions": 173
+      }
+    ],
+    "response_cross_fit_rule": "for each held-out user, every learned representation, calibration, threshold, and PM parameter is fitted without that user's connected component",
+    "full_fit_rule": "a final all-development-groups fit may be produced only after all grouped OOF predictions and head qualification decisions are frozen; it is not used to score those same public response states"
+  },
+  "observability_boundary": {
+    "ESConv_runtime_allowed": [
+      "dialog[].speaker",
+      "dialog[].content up to and including the current seeker turn",
+      "six-card RS candidate descriptors after production Rank-1 selection"
+    ],
+    "ESConv_runtime_forbidden": [
+      "situation",
+      "survey_score",
+      "seeker_question1",
+      "seeker_question2",
+      "supporter_question1",
+      "supporter_question2",
+      "problem_type",
+      "emotion_type",
+      "experience_type",
+      "dialog[].annotation",
+      "future turns",
+      "observed supporter response selected as target gold"
+    ],
+    "EvoEmo_runtime_allowed": [
+      "basic_info except name as an owner-bound onboarding profile available before session 1",
+      "timestamp-normalized completed prior raw sessions for the same wrapper user",
+      "current raw dialogue prefix ending at the current seeker turn",
+      "literal exact-span MP, MS, and ME candidates compiled only from those allowed fields",
+      "six-card RS candidate descriptors after production Rank-1 selection"
+    ],
+    "EvoEmo_runtime_forbidden": [
+      "name",
+      "summary",
+      "observation",
+      "event_experience",
+      "social_relationship",
+      "summaries",
+      "subsequent_topics",
+      "questions",
+      "question capability",
+      "question answer",
+      "question evidence",
+      "future session or future current-session turns",
+      "construction assignment",
+      "historical response outcome or PM prediction"
+    ],
+    "ES_MemEval_generator_visible": [
+      "opaque question_id",
+      "question text",
+      "the frozen QA system's permitted same-owner strictly-past raw history surface"
+    ],
+    "ES_MemEval_evaluator_only": [
+      "wrapper user id mapping when not operationally necessary",
+      "question group id",
+      "capability",
+      "answer",
+      "evidence"
+    ],
+    "physical_separation_rule": "generator-visible and evaluator-only QA artifacts are separate files with separate hashes; no shared row object containing answer or evidence may be passed to the generator"
+  },
+  "candidate_construction_design": {
+    "common": {
+      "state_grain": "every eligible seeker turn with a nonempty current utterance; outcome-blind sampling may later choose a subset using visible structural strata only",
+      "strict_past": "memory candidates may use completed prior sessions only; the current session never becomes memory for its own state",
+      "actual_rank1": "freeze the exact production Rank-1 after structural gates and typed compilation; never promote Rank-2, edit the query, or relabel after annotations or response outcomes",
+      "no_semantic_usefulness_prefilter": true,
+      "candidate_absence": "structural unavailable with component OFF; it is not a PM negative label",
+      "owner_failure": "invalid candidate/retrieval row excluded from PM labels and reported to the responsible stage"
+    },
+    "MP_PROFILE": {
+      "source": "same-owner EvoEmo basic_info except name",
+      "materialization": "one exact key-value fact per nonempty permitted field, available from session 1",
+      "ranking": "frozen production typed candidate discovery; raw profile values may be rendered to the generator but dataset/user identity and fold are forbidden PM features",
+      "not_authorized": "social_relationship and any profile inferred from future dialogue"
+    },
+    "MS_SESSION": {
+      "source": "same-owner seeker utterances from timestamp-normalized completed prior raw sessions",
+      "materialization": "one literal source turn per item after bounded atomic-session validation; no model-authored summary or observation",
+      "compiler_path": "src/metacom_pm/v1_5_v5_2_atomic_memory.py",
+      "compiler_sha256": "2ce59ce078503fa4c3e7a336f603b757f28f09722b454e5be90fa202026b96ed",
+      "ranker_path": "src/metacom_pm/v1_5_v5_3_semantic_ms_retrieval.py",
+      "ranker_sha256": "66f155b4e2abaed2e5d3707c357d02a9b5197e60b8ef574def4985aee9ed6bfa",
+      "ranker_status": "candidate binding only; activation still requires the P1 implementation manifest and local snapshot binding"
+    },
+    "ME_REUSABLE_OUTCOME": {
+      "source": "same-owner seeker utterances from timestamp-normalized completed prior raw sessions",
+      "materialization": "only literal within-turn action-result spans accepted by compile_atomic_reusable_outcome; no event timeline, summary, observation, or QA evidence",
+      "compiler_path": "src/metacom_pm/v1_5_v5_2_atomic_memory.py",
+      "compiler_sha256": "2ce59ce078503fa4c3e7a336f603b757f28f09722b454e5be90fa202026b96ed",
+      "ranker": "production lexical plus typed-tier exact Rank-1 compile-or-OFF",
+      "coverage_rule": "low natural coverage is reported and may make the ME head fail qualification; no synthetic event may be inserted to rescue it"
+    },
+    "RS_ATOMIC_MOVE": {
+      "bank_path": "data/strategy/strategy_cards_v1_5_minimal.jsonl",
+      "bank_sha256": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24",
+      "card_count": 6,
+      "bank_freeze_path": "data/strategy/strategy_rag_v1_5_minimal_freeze.json",
+      "bank_freeze_sha256": "2bae017a000ab2b6425f63cd3337d727a9c6f12f133ef01ba5eb5af4a026206a",
+      "rank1_selector_path": "src/metacom_pm/v1_5_v5_3_candidate_layer_responsibility.py",
+      "rank1_selector_sha256": "280cfec2a927853813bb40b3bf8ffb0fec26d3a187e76c6934ea535028767a6b",
+      "forbidden_substitutions": [
+        "80-card or other expanded Strategy Bank",
+        "legacy raw RAG bank",
+        "observed ESConv strategy annotation as oracle",
+        "different RS retriever for ESConv and EvoEmo"
+      ]
+    },
+    "shared_candidate_discovery": {
+      "path": "src/metacom_pm/v1_5_candidate_discovery.py",
+      "sha256": "067a94e93d02ef4889e6b05ac2e5a620d2be8bceb81e6825210c4a084f05c2ca",
+      "status": "candidate binding only; P1 implementation must prove owner, strict-past, compiler, exact-lineage, and Rank-1 invariants before activation"
+    }
+  },
+  "dataset_roles": {
+    "ESConv": {
+      "train_nonoverlap": "RS grouped OOF training and development-only measurement qualification; observed supporter strategy/response is not PM gold",
+      "validation_nonoverlap": "fresh RS measurement/threshold confirmation before final test; no test outcome feedback",
+      "test_nonoverlap": "169-dialogue same-stack final RS response evaluation only"
+    },
+    "EvoEmo": {
+      "response": "six-fold cross-fitted MP_PROFILE, MS_SESSION, ME_REUSABLE_OUTCOME and auxiliary RS routing plus same-stack response evaluation",
+      "confidence_unit": "source user; state and generator replicate counts do not substitute for users"
+    },
+    "ES_MemEval": {
+      "role": "separate QA retrieval, multi-evidence, temporal/conflict/user-modeling, and abstention diagnostic",
+      "response_pm_training_labels": false,
+      "answer_or_evidence_used_for_response_state_candidate_or_feature": false,
+      "pooled_with_response_outcomes": false
+    }
+  },
+  "planned_p1_outputs_not_created_by_this_manifest": {
+    "source_index": "outputs/pm_v1_5_paper1_p1_public_surface/source_index.json",
+    "esconv_state_surface": "outputs/pm_v1_5_paper1_p1_public_surface/esconv_states_unlabeled.jsonl",
+    "evoemo_state_surface": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+    "evoemo_candidate_catalog": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+    "actual_rank1_surface": "outputs/pm_v1_5_paper1_p1_public_surface/actual_rank1_unlabeled.jsonl",
+    "qa_generator_visible": "outputs/pm_v1_5_paper1_p1_public_surface/qa_generator_visible.jsonl",
+    "qa_evaluator_only": "outputs/pm_v1_5_paper1_p1_public_surface_private/qa_evaluator_only.jsonl",
+    "canonical_group_manifest": "outputs/pm_v1_5_paper1_p1_public_surface/canonical_groups.jsonl",
+    "audit_report": "outputs/pm_v1_5_paper1_p1_public_surface/audit_report.json"
+  },
+  "legacy_non_reuse": {
+    "old_evoemo_204_state_panel": "selection identities may be compared as an audit index only; old runtime_state and current_session_summary are forbidden",
+    "old_esconv_122_state_panel": "incomplete denominator and not reusable",
+    "old_qa_418_gold": "incomplete denominator and not reusable as the 1,427-question plan",
+    "old_suitability_labels": "V3 and V5.3 labels are not public-backbone training gold under the active method",
+    "old_pm_checkpoints": "never active"
+  },
+  "promotion_requirements": [
+    "candidate manifest validator passes against source bytes and current active authority",
+    "a no-model P1 materializer implementation is separately hash-bound and tested with future/owner/gold negative canaries",
+    "planned output schemas are frozen, including separate runtime and evaluator-only QA schemas",
+    "source and candidate counts are measured without reading quality, risk, function, response, PM, or external outcomes",
+    "central paid release remains false",
+    "the active authority is promoted by naming the exact candidate-manifest and implementation hashes; this candidate file is not edited in place"
+  ],
+  "api_calls": 0,
+  "responses_generated": 0,
+  "labels_created": 0,
+  "pm_trained": false,
+  "external_outcomes_read": false
+}

@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-same-stack-preflight-materialization-phase-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_MATERIALIZATION_AUTHORIZED_ONCE_LIVE_EXECUTION_FORBIDDEN",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "purpose": "Freeze the outcome-blind 68-state exact-span surface, 136 physical generator calls, and 204 policy aliases before any same-stack response exists.",
+  "input_bindings": [
+    {"path": "data/pm_v1_5_contracts/paper1_borderline_ms_same_stack_feasibility_candidate_v1.json", "sha256": "3e8574402c31dacdaa6e79fe3d42cff22023b8048298f25720c448e4a1980d46"},
+    {"path": "data/pm_v1_5_contracts/paper1_memory_realization_and_joint_composition_candidate_v1.json", "sha256": "87fc868eb2cb81bf4d2182a648f07bf467f7e25ff31988380830babc546dac6e"},
+    {"path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_checkpoint_states_unlabeled.jsonl", "sha256": "cc0b688057a5eb5221dd5561ff83d06825c96109865eb4b39d75385277004327"},
+    {"path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_raw_session_candidates_unlabeled.jsonl", "sha256": "cfd9b5710b7c95de2296fda82bb9ba8dc1ddd76b29dcfef5fb1a5c098f807934"},
+    {"path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_actual_rank1_unlabeled.jsonl", "sha256": "add49426d3fdad02f9fa2be198ed8e66c26c7946d85148685dd6c4664f579902"},
+    {"path": "outputs/pm_v1_5_paper1_ms_session_aligned_final_oof_private_20260810/ms_grouped_oof_predictions.jsonl", "sha256": "b91606abdba2eead2fa60655d7c97f4e45e012924279ba4cf3e020da7aecbae8"},
+    {"path": "configs/experiment.yaml", "sha256": "f473e7179b29d16bc965d3d74cc070844e14565b3ff3e29ea3ebd64665ce6b6f"}
+  ],
+  "implementation_bindings": [
+    {"path": "src/metacom_pm/v1_5_memory_realization_v2.py", "sha256": "13c6424cffc88878a2989f8d2d0ef88c6c08e4fd3be997a7de1041a675d06555"},
+    {"path": "src/metacom_pm/v1_5_memory_response_plan_v2.py", "sha256": "8d4118a4458e719475ca768ab484b6467efeef8ae296d7f3b3b43838c4330937"},
+    {"path": "src/metacom_pm/v1_5_ms_same_stack_feasibility.py", "sha256": "7a75d56f1849d59bc5801e4bbd6fcbf03c6b3c8e0582bc1923c3bcd0b229a087"},
+    {"path": "scripts/v1_5/197l_materialize_paper1_ms_same_stack_preflight_v1_5.py", "sha256": "284f41990ea58a9c7000e7ad3e5b4e14afb4010ad889f50d9ded145ee7630add"}
+  ],
+  "local_semantic_encoder": {
+    "model_id": "BAAI/bge-m3",
+    "snapshot_path": "/home/tokkio/.cache/huggingface/hub/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181",
+    "snapshot_tree_sha256": "f0384ec76e05ff5439dd455f7d65ea523bd90c6273c106cfe9c3629a867b80ba",
+    "pooling": "normalized CLS",
+    "network": false
+  },
+  "selection": {
+    "eligible_rows": 383,
+    "groups": 17,
+    "states_per_group": 4,
+    "planned_states": 68,
+    "rule": "fixed protocol hash of state_id; no label, probability, response, effect, or reviewer stratification",
+    "actual_rank1_immutable": true,
+    "OOF_decision_immutable": true
+  },
+  "call_surface": {
+    "physical_actions_per_state": ["M0+R0", "MS+R0"],
+    "physical_calls": 136,
+    "logical_policies": ["always_off", "fixed_high_MS", "cross_fitted_learned_MS"],
+    "logical_observations": 204,
+    "paired_seed_per_state": 1,
+    "order_counterbalanced_by_hash": true
+  },
+  "outputs": {
+    "directory": "outputs/pm_v1_5_paper1_ms_same_stack_preflight_20260811",
+    "physical_plan": "physical_call_plan_private.jsonl",
+    "aliases": "logical_policy_aliases_private.jsonl",
+    "report": "report.json"
+  },
+  "forbidden": [
+    "API calls",
+    "response or reviewer outcome reads",
+    "PM refit, threshold, feature, label, or sample change",
+    "summary, observation, event timeline, QA evidence, or future-turn runtime input",
+    "raw prior session in generator messages"
+  ]
+}

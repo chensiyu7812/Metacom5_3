@@ -18,10 +18,10 @@ from metacom_pm.v1_5_v5_3_wave1_generation import (  # noqa: E402
 )
 
 
-CONTRACT = ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2.json"
-ASSIGNMENTS = ROOT / "data/pm_v1_5_contracts/v5_3_wave1_sentinel_assignments_v1.json"
+CONTRACT = ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2_1.json"
+ASSIGNMENTS = ROOT / "data/pm_v1_5_contracts/v5_3_wave1_sentinel_assignments_v2_1.json"
 EXISTING = ROOT / "data/pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1/canonical_users"
-DEFAULT_OUT = ROOT / "outputs/pm_v1_5_v5_3_wave1_web_prompt_packets_v1"
+DEFAULT_OUT = ROOT / "outputs/pm_v1_5_v5_3_wave1_web_prompt_packets_v2_1"
 
 
 def _surface(messages: list[dict[str, str]]) -> str:
@@ -68,11 +68,16 @@ def main() -> None:
             files.append(str(path))
         status = "WORLD_VALID_AND_THREE_CHUNK_PROMPTS_READY"
     manifest = {
-        "protocol": "pm-v1.5-v5.3-wave1-web-prompt-packet-v1",
+        "protocol": "pm-v1.5-v5.3-wave1-web-prompt-packet-v2-1",
         "status": status,
         "user_id": args.user_id,
         "assignment": assignment,
         "frozen_preference_types": preferences,
+        "fresh_chat_rule": (
+            "Run the world prompt in one fresh web chat. Run every materialized "
+            "chunk prompt in a separate fresh chat so the realizer cannot retain "
+            "the planner's future facts. Never paste V1 or V2 into those chats."
+        ),
         "files": files,
         "api_calls": 0,
     }

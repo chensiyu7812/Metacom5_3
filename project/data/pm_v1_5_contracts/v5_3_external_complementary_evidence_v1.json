@@ -1,0 +1,233 @@
+{
+  "protocol": "pm-v1.5-v5.3-external-complementary-evidence-v1",
+  "status": "FROZEN_BEFORE_V5_3_EXTERNAL_EXECUTION",
+  "purpose": "Freeze the three complementary public-data experiments, their task-specific baselines, metric boundaries, and failure-prevention gates for Paper 1",
+  "authority": {
+    "public_backbone": "v5_3_public_backbone_effect_learning_v1.json",
+    "metric_oracle_responsibility": "v5_3_metric_responsibility_and_oracle_v1.json",
+    "baseline_matrix": "v5_3_baseline_matrix_v1.json",
+    "historical_method_source": [
+      "v5_2_external_e2_plan_v1.json",
+      "v5_2_external_e5_scoring_v1.json",
+      "PM_V1_5_V5_3_EXTERNAL_EXPERIMENT_AND_PARALLEL_RUNBOOK_20260806_ZH.md",
+      "PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md"
+    ],
+    "new_synthetic_longitudinal_users_required": false,
+    "paired_effect_generation_is_the_only_new_training_outcome_generation": true
+  },
+  "shared_response_stack": {
+    "identity_required_within_each_response_estimand": [
+      "visible current state",
+      "same-user strictly-prior source store",
+      "memory compiler",
+      "six-card RS Strategy Bank",
+      "query builder",
+      "candidate pool and actual Rank-1",
+      "eligibility checks",
+      "typed response program",
+      "generator endpoint and version",
+      "temperature, seed schedule, token cap",
+      "guard and deterministic fallback",
+      "quality/risk/cost evaluators"
+    ],
+    "only_policy_bits_may_change": true,
+    "rs_bank_shared_between_esconv_and_evoemo": true,
+    "task_specific_retrieval_boundary": "Response MP/MS/ME/RS routing comparisons share their response retrievers. ES-MemEval official session-RAG and raw/full-history baselines retain their predeclared task-specific representations and retrievers because they are representation baselines, not alternate PM policies.",
+    "two_domain_specific_pms_forbidden": true,
+    "domain_id_as_pm_feature_forbidden": true
+  },
+  "whole_response_generation_gate": {
+    "required": "The generator receives the typed response program and literal authorized evidence before generation and emits one coherent user-visible reply plus a private structured evidence-use trace.",
+    "forbidden": [
+      "primary_response plus locked_clauses",
+      "post-hoc concatenation of retrieved text",
+      "resource wrappers appended after generation",
+      "visible MP/MS/ME/RS labels or resource IDs",
+      "claiming requested evidence was used solely because it appeared in the prompt"
+    ],
+    "multi_component_qualification_before_joint_panel": {
+      "requested_to_received_per_component": "must be 1.00 structurally",
+      "single_component_functional_use_reference": ">=0.80",
+      "multi_component_all_functional_reference": ">=0.70",
+      "critical_wrong_owner_or_future": 0,
+      "scaffold_exposure": 0,
+      "report": [
+        "partial use",
+        "evidence competition",
+        "fallback",
+        "burden/overload",
+        "per-component requested-received-used-functional funnel"
+      ]
+    }
+  },
+  "experiments": {
+    "ESConv_response": {
+      "role_in_proof_chain": "single-session RS routing, immediate support quality, explicit boundaries, and the no-longitudinal-memory mask",
+      "data": "all 169 official test dialogues, one state each; Strategy Bank derives only from quarantined-clean train lineage; validation is development-only and does not enter the final response denominator",
+      "independent_cluster": "dialogue",
+      "resource_mask": {
+        "MP": "unavailable",
+        "MS": "unavailable",
+        "ME": "unavailable",
+        "RS": "eligible through the same frozen six-card bank and response retriever used in EvoEmo"
+      },
+      "primary_questions": [
+        "Does the PM keep memory bits OFF when longitudinal memory is unavailable?",
+        "Does RS activation improve or preserve immediate support without violating explicit listen/advice/burden boundaries?",
+        "Does learned RS beat always-off and transparent/fixed/cost-matched alternatives on the quality-risk-cost tradeoff?"
+      ],
+      "main_conditions": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified_RS_subdomain",
+        "cost_matched_fixed",
+        "cost_and_on_rate_matched_random"
+      ],
+      "primary_metrics": [
+        "blind_support_netwin",
+        "explicit_boundary_violation_rate",
+        "excessive_directiveness_rate",
+        "requested_realized_exact_match",
+        "RS requested-received-used-functional funnel",
+        "generation input tokens and USD cost"
+      ],
+      "cannot_prove": [
+        "longitudinal memory",
+        "MP/MS/ME personalization",
+        "clinical benefit"
+      ]
+    },
+    "EvoEmo_longitudinal_response": {
+      "role_in_proof_chain": "longitudinal typed-memory routing, evidence integration, grounding, continuity, interaction, and cost transport",
+      "data": "all 18 users and the pre-existing 204-state response panel; all policy predictions are user-held-out/cross-fitted",
+      "independent_cluster": "user",
+      "state_count_is_not_user_count": true,
+      "visible_history": "same-user strictly-prior sessions only; current unclosed summary/observation, future sessions, other users, QA fields, and hindsight-only top-level summaries are denied",
+      "primary_questions": [
+        "Can MP profile/constraint, MS continuity/observation, and available ME action-result candidates be selected conditionally?",
+        "Does the typed executor absorb selected evidence into one natural response with correct owner/time/epistemic framing?",
+        "Does learned PM preserve quality and risk while reducing evidence and token cost relative to fixed-high?",
+        "At which stage do failures originate?"
+      ],
+      "main_conditions": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified",
+        "cost_matched_fixed",
+        "cost_and_on_rate_matched_random"
+      ],
+      "secondary_conditions": [
+        "learned_full_minus_each_component",
+        "component_fixed_arms",
+        "raw_session_top4_plus_same_strategy",
+        "all_raw_sessions_plus_same_strategy"
+      ],
+      "primary_metrics": [
+        "blind_support_netwin",
+        "unsupported_or_wrong_owner_personal_grounding_rate",
+        "stale_or_conflicting_evidence_use_rate",
+        "explicit_boundary_violation_rate",
+        "excessive_directiveness_rate",
+        "component availability-eligibility-ON-used-functional-risk funnels",
+        "oracle-set inclusion and policy regret where the 16-action panel supplies a resolved oracle",
+        "generation input tokens and USD cost"
+      ],
+      "cannot_prove": [
+        "MP preference when the public source contains no such resource",
+        "natural coverage of every one of 16 actions",
+        "universal language understanding",
+        "clinical outcomes"
+      ]
+    },
+    "ES_MemEval_QA": {
+      "role_in_proof_chain": "memory retrieval, information extraction, temporal reasoning, conflict detection, user modeling, and abstention",
+      "data": "official public v1.0.0 artifact: all 1,427 questions across all 18 users",
+      "official_release_note": "The public artifact count is used; it is not relabeled as an exact reproduction of the paper's 1,209-question selection without that selection manifest.",
+      "independent_cluster": "user",
+      "capabilities": [
+        "information_extraction",
+        "temporal_reasoning",
+        "conflict_detection",
+        "user_modeling",
+        "abstention"
+      ],
+      "generator_visible": [
+        "question",
+        "condition-authorized same-user history or typed candidates"
+      ],
+      "evaluator_only": [
+        "answer",
+        "answers",
+        "evidence",
+        "capability",
+        "question_group",
+        "official evidence-to-session mapping"
+      ],
+      "main_conditions": [
+        "no_memory",
+        "full_history",
+        "official_session_rag_top4",
+        "typed_memory_fixed_high",
+        "typed_memory_learned_pm_qualified"
+      ],
+      "objective_metrics": [
+        "official-normalized set-overlap Token F1",
+        "BERTScore F1 using bert-score==0.3.13 and bert-base-uncased without baseline rescaling",
+        "macro results over all questions and each capability",
+        "abstention accuracy and should-abstain false-answer rate",
+        "conflict-detection result",
+        "session Recall@4 and nDCG@4 only on deterministically mappable evidence questions",
+        "prompt/completion/total tokens and USD cost"
+      ],
+      "llm_judge": "optional robustness diagnostic only; never training gold and never a replacement for Token F1/BERTScore",
+      "interpretation": "cross-task transport diagnostic for retrieval and QA; not response QRC and not proof that all four response heads learned",
+      "RS": "structurally N/A for factual QA"
+    }
+  },
+  "complementary_evidence_rule": {
+    "all_three_required_for_complete_paper1_execution": true,
+    "ESConv_cannot_substitute_for_EvoEmo": true,
+    "EvoEmo_response_cannot_substitute_for_ES_MemEval_QA": true,
+    "ES_MemEval_QA_cannot_substitute_for_response_quality_risk": true,
+    "results_are_reported_by_task_and_not_pooled_into_one_effect_size": true
+  },
+  "leakage_and_shortcut_gates": {
+    "response_denied_fields": [
+      "questions",
+      "answers",
+      "evidence",
+      "capability",
+      "question_group",
+      "future session summaries/observations",
+      "other-user history"
+    ],
+    "qa_gold_changes_query_retrieval_pm_or_prompt": "must be false under a negative-canary test",
+    "shared_session_id_rule": "session primary key is (user_id, session_id); users sharing a raw session ID remain in the same fold",
+    "ESConv_seed_quarantine": "all 84 ESConv dialogues used in EvoEmo lineage remain excluded from RS train/evaluation overlap",
+    "candidate_actual_rank1_frozen_before_outcomes": true,
+    "external_outcomes_may_not_change_v5_3": true
+  },
+  "historical_failure_prevention": {
+    "treatment_identity_drift": "content-address every state, candidate, prompt, runner, generator, evaluator, and policy condition",
+    "pseudoreplication": "cluster by user for longitudinal/QA and dialogue for ESConv; never use states, seeds, judge orders, or aliases as independent users",
+    "candidate_retriever_pm_conflation": "mandatory stagewise responsibility ledger and actual-Rank1-only execution",
+    "requested_realized_conflation": "report requested, received, used, functional, realized, and fallback separately",
+    "semantic_pseudo_gold": "no construction condition, regex, candidate presence, UNKNOWN, or external prevalence may become an ON/OFF label",
+    "posthoc_append": "whole-response generation gate; appended evidence clauses are a hard protocol failure",
+    "outcome_informed_repair": "after this freeze, report failures and fail closed; do not change states, representations, prompts, thresholds, or denominators",
+    "qa_gold_leakage": "evaluator-only mapping is joined only after predictions are immutable"
+  },
+  "execution_order": [
+    "complete all six formal effect folds and repair transport failures only",
+    "freeze formal OOF head predictions or fail each head closed",
+    "qualify multi-component whole-response execution",
+    "run the 32-48 common-state all-16-action interaction/oracle panel",
+    "freeze external manifests, unique prompt hashes, and evaluator-only QA mapping",
+    "execute ESConv response, EvoEmo response, and ES-MemEval QA under one V5.3 release",
+    "score and report all three tracks without method feedback"
+  ],
+  "stop_rule": "Once any formal or external outcome is opened, only deterministic transport repair with identical state, prompt, seed, endpoint, and archived failure is allowed; all scientific method changes require a new named version.",
+  "api_calls_for_contract": 0
+}

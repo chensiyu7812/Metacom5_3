@@ -1,0 +1,89 @@
+{
+  "protocol": "pm-v1.5-paper1-source-annotated-resource-suitability-method-v2",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "date": "2026-08-10",
+  "status": "ZERO_API_METHOD_CANDIDATE_REQUIRES_PHASE_AUTHORITY",
+  "purpose": "Keep the learned RS result and repair the MS supervision unit so the public author relation and the runtime resource are both session-level.",
+  "supersedes": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+  "change_class": "LABEL_RESOURCE_UNIT_ALIGNMENT_AFTER_FIRST_FROZEN_OOF",
+  "v1_terminal_evidence": {
+    "report_path": "outputs/pm_v1_5_paper1_source_annotated_grouped_learnability_20260810/report.json",
+    "report_sha256": "1e63131e91ca34d5b17c048ff85265951ef7720ef083512ea70603b699016044",
+    "RS": "PASS",
+    "MS": "FAIL_FIXED_OFF",
+    "ME": "FAIL_FIXED_OFF",
+    "MP": "FAIL_FIXED_OFF",
+    "primary_pass": false
+  },
+  "claim": {
+    "primary": "A low-capacity auditable PM can conditionally open RS and a strictly-past session memory whose source is supported by public author annotations, while failed heads remain OFF and final quality, risk, function, and cost are measured independently.",
+    "machine_predicate": "carried_forward_RS_pass AND session_aligned_MS_pass",
+    "not_claimed": [
+      "unrestricted semantic understanding",
+      "turn-level author annotation inside EvoEmo",
+      "all four heads learned",
+      "annotation suitability guarantees generator use or quality gain"
+    ]
+  },
+  "action_space": {
+    "components": ["MP", "MS", "ME", "RS"],
+    "legal_actions": 16,
+    "MP": "fixed OFF",
+    "ME": "fixed OFF",
+    "projection": "qualified RS/MS probabilities followed by deterministic eligibility, conflict, risk, and cost projection"
+  },
+  "RS": {
+    "method": "identical to V1",
+    "learnability_evidence_may_be_carried_forward_by_exact_hash": true,
+    "future supporter annotation_remains_evaluator_only": true
+  },
+  "MS": {
+    "unit": "one current-session checkpoint plus one frozen actual Rank-1 prior-session resource",
+    "checkpoint": "first current seeker turn where cumulative visible seeker text reaches at least 50 whitespace-delimited words",
+    "pre_checkpoint_behavior": "MS hard OFF because the current session has insufficient bounded target evidence",
+    "candidate": "all nonempty seeker turns from one completed strictly-past session, in raw order, with exact text and speaker boundaries",
+    "candidate_max_observed_words_pre_fit": 457,
+    "rank1": "frozen BGE-M3 cosine between the complete visible current-session prefix and each eligible prior-session resource",
+    "positive": "actual Rank-1 source_session_id belongs to the recursive strict-past ancestor-session set in EvoEmo event_experience.influenced_by",
+    "negative": "actual Rank-1 exists but its source_session_id is not in that set",
+    "one_learning_row_per_current_session": true,
+    "forbidden_runtime_fields": ["summary", "observation", "event", "influenced_by", "QA answer", "QA evidence", "future turn"]
+  },
+  "learning": {
+    "split": "six frozen connected-owner outer folds; p13 and p18 remain bound",
+    "features": ["BGE-M3 selection score", "top1-top2 margin", "log1p memory age", "current-prefix/candidate token Jaccard"],
+    "classifier": "StandardScaler plus L2 logistic regression C=0.10, class_weight=balanced, liblinear, seed=20260810",
+    "threshold": 0.5,
+    "gates": {
+      "balanced_accuracy_min": 0.60,
+      "recall_min": 0.55,
+      "specificity_min": 0.55,
+      "brier_must_beat_prevalence": true,
+      "predicted_on_fraction_min": 0.15,
+      "predicted_off_fraction_min": 0.15,
+      "positive_owner_groups_min": 12,
+      "negative_owner_groups_min": 12
+    },
+    "uncertainty": "report pooled OOF, equal-owner macro metrics, and owner-cluster bootstrap; do not treat sessions as independent users"
+  },
+  "physical_separation": {
+    "public_runtime_artifacts": "checkpoint states, exact raw prior-session resources, actual Rank-1 and runtime features; label fields null",
+    "private_evaluator_artifact": "event-ancestry labels only",
+    "event_graph_never_enters_x": true
+  },
+  "no_loop_rules": [
+    "Do not change the 50-word checkpoint after label or fit results.",
+    "Do not change the author-ancestry label.",
+    "Do not change features, classifier, threshold, or gates after the V2 capacity audit.",
+    "Do not add synthetic users, human/LLM labels, encoder challengers, or rescue packets.",
+    "Allow exactly one V2 grouped OOF if the pre-fit audit passes; otherwise stop."
+  ],
+  "authorization": {
+    "surface_rank1_label_materialization": false,
+    "pm_fit": false,
+    "api_calls": false,
+    "response_generation": false,
+    "external_outcomes": false,
+    "paid_execution": false
+  }
+}

@@ -1,0 +1,276 @@
+{
+  "protocol": "pm-v1.5-paper1-memory-head-rescue-decision-v2",
+  "date": "2026-08-11",
+  "status": "ZERO_API_ARCHITECTURE_AND_HEAD_RESCUE_DESIGN_CANDIDATE_NOT_EXECUTION_AUTHORITY",
+  "purpose": "Correct the V1 rescue version drift, repair the shared post-retrieval execution layer before any new fit, and qualify profile-only MP and atomic MS as parallel memory-head candidates while preserving RS and treating ME as a sparse optional head.",
+  "supersedes": {
+    "path": "data/pm_v1_5_contracts/paper1_memory_head_rescue_decision_v1.json",
+    "sha256": "b9268e57579cdf9219305c8f689853415d4d7116aa99d5e41bf30bec18e1803e",
+    "reason": "V1 incorrectly deferred all MP even though the frozen paper plan had already removed MP_PREFERENCE, retained MP_PROFILE, and the P2 atomic design contained a usable profile-personalization minimum. V1 also described role-aware composition as more complete than the implemented executor actually was."
+  },
+  "evidence_bindings": [
+    {
+      "path": "outputs/pm_v1_5_paper1_ms_same_stack_development_audit_20260811/report.json",
+      "sha256": "5e2f70d88c458320a1329140d5d37953eff3460bce7a5280ad8a0a085562166c",
+      "use": "same-stack evidence that forced MS use and fallback reduced quality"
+    },
+    {
+      "path": "data/pm_v1_5_contracts/paper1_p2_atomic_suitability_design_candidate_v1.json",
+      "sha256": "7fa860798c872fb3e183f50ca65d6ea12e6e1a2a9d1e2afb0cfde4e3433af1dd",
+      "use": "component minima and prospective response-use boundaries; its four axes are retained as a decision checklist, not as four statistically independent gold labels"
+    },
+    {
+      "path": "docs/PM_V1_5_PAPER1_P2B_CONTROL_FAILURE_AND_LABEL_SOURCE_PIVOT_20260810_ZH.md",
+      "sha256": "daa897e37581effa4ceb98ffff8b12845ca7a2a0c874ba7d05b59893aefaabde",
+      "use": "evidence that independent per-axis reviewer gates failed because the axes are logically coupled"
+    },
+    {
+      "path": "docs/PM_V1_5_PAPER1_CLOSEOUT_PLAN_20260810_ZH.md",
+      "sha256": "7d3e4faa2a204e924bd1352f8bd919976758a202140a8ce11dedadf48a6d6a71",
+      "use": "frozen scope that trains MP_PROFILE and excludes MP_PREFERENCE"
+    },
+    {
+      "path": "data/pm_v1_5_contracts/paper1_memory_realization_and_joint_composition_candidate_v1.json",
+      "sha256": "87fc868eb2cb81bf4d2182a648f07bf467f7e25ff31988380830babc546dac6e",
+      "use": "partial role taxonomy and requested-to-feasible projection to be superseded by the component-general V3 executor"
+    }
+  ],
+  "paper_success_requirement": {
+    "RS_required": true,
+    "at_least_one_of_MP_PROFILE_MS_ME_required": true,
+    "preferred_result": "RS plus both MP_PROFILE and MS qualify; ME is reported at the level supported by real typed action-result coverage",
+    "minimum_result": "RS plus at least one memory head produces cross-fitted routing signal and verified same-stack functional memory contribution without worse material risk or unacceptable quality loss",
+    "failure_condition": "RS is the only functioning learned head, or every memory head remains fixed OFF or lacks end-to-end functional contribution",
+    "all_four_heads_perfect_not_required": true,
+    "sixteen_requested_actions_unchanged": true
+  },
+  "scope_correction": {
+    "MP": "MP_PROFILE means Profile-based Personalization only. Preference is removed from Paper 1 and must not re-enter candidate generation, features, labels, prompts, metrics, or claims.",
+    "forbidden_legacy_fields": [
+      "candidate_is_preference",
+      "preference_applies_to_response_act",
+      "MP_PREFERENCE"
+    ],
+    "profile_is_not_identity_feature": "The low-capacity PM may see profile field type, scope-fit, novelty, age, retrieval score/margin, and bounded constraint/applicability indicators; it may not memorize the user's name, exact job, location, nationality, gender, or raw profile value as an identity shortcut.",
+    "profile_presence_is_not_gold": "A profile item is ON only when it can materially change a response constraint, logistical detail, framing choice, or relevant premise now. Merely restating the profile is OFF."
+  },
+  "root_cause_disposition": [
+    {
+      "cause": "SESSION_OR_LINEAGE_GOLD_VS_ATOMIC_RESOURCE_MISMATCH",
+      "class": "SOLVABLE_NOW",
+      "resolution": "Freeze an atomic actual Rank-1 item and label that exact item. Session/event lineage remains provenance and split metadata, never a positive suitability label."
+    },
+    {
+      "cause": "TOPICAL_RELEVANCE_CONFUSED_WITH_INCREMENTAL_RESPONSE_VALUE",
+      "class": "SOLVABLE_NOW",
+      "resolution": "Use component-specific suitability decisions that require a concrete prospective use plan and reject current semantic echoes, generic topical overlap, stale facts, and facts that would not change the reply."
+    },
+    {
+      "cause": "RETRIEVAL_OBJECT_TREATED_AS_GENERATOR_TEXT",
+      "class": "SOLVABLE_NOW",
+      "resolution": "The exact source remains audit evidence. A deterministic realization step converts it into an owner/time-tagged meaning cue plus an allowed use mode; the generator must synthesize rather than quote or splice it."
+    },
+    {
+      "cause": "FOUR_COMPONENTS_TREATED_AS_PARALLEL_TEXT_BLOCKS",
+      "class": "SOLVABLE_NOW",
+      "resolution": "A shared V3 planner assigns one primary discourse act, silent modifiers, optional continuity/option roles, pairwise compatibility, response-act budget, and deterministic suppression before one coherent generation call."
+    },
+    {
+      "cause": "EVOEMO_INFLUENCED_BY_IS_POSITIVE_ONLY_LINEAGE",
+      "class": "SOURCE_LIMITATION_WITH_SOLVABLE_GOLD_REPLACEMENT",
+      "resolution": "Do not use influenced_by as worth-opening gold. Create prospective exact-candidate suitability labels from runtime-visible state plus exact candidate; keep the graph evaluator-only for provenance and grouping."
+    },
+    {
+      "cause": "FUNCTION_REVIEW_BOUNDARIES_UNSTABLE",
+      "class": "SOLVABLE_MEASUREMENT_PROBLEM",
+      "resolution": "Use one binary component-specific suitability/function decision with anchored positive, hard-negative, and boundary examples plus reason codes. The old four axes are a checklist and evidence record, not four independent pass gates. Requested, generator-claimed, and independently verified use remain separate."
+    },
+    {
+      "cause": "SEVENTEEN_CONNECTED_OWNER_GROUPS",
+      "class": "IRREDUCIBLE_PUBLIC_DATA_LIMIT",
+      "resolution": "Use low-capacity models, connected-group outer folds, identity-free features, proper scores, owner-cluster intervals, and same-stack baselines. Do not inflate independence with sessions, wrappers, ES-MemEval copies, or synthetic users. This limits claim precision, not whether a head can be trained."
+    },
+    {
+      "cause": "GENERATOR_OWNER_TIME_COPY_AND_FALLBACK_FAILURES",
+      "class": "SOLVABLE_NOW_WITH_RESIDUAL_MEASUREMENT",
+      "resolution": "Remove lexical-use requirements; preserve safe current-grounded replies on non-use; regenerate without contaminated personal evidence only for actual owner/time/scaffold violations; measure remaining generator errors separately."
+    }
+  ],
+  "head_program": [
+    {
+      "priority": 0,
+      "head": "RS",
+      "decision": "PRESERVE_QUALIFIED_REQUIRED_HEAD",
+      "reason": "The grouped OOF routing result already passed. RS remains the sole primary response act when ON and participates in the same V3 composition and baseline stack."
+    },
+    {
+      "priority": 1,
+      "head": "MP_PROFILE",
+      "decision": "PARALLEL_ZERO_API_RESCUE_CANDIDATE",
+      "reason": "EvoEmo supplies explicit profile records and the frozen P1B surface has 846 MP execution candidates. Profile type/scope and current applicability provide a bounded, identity-free personalization problem. Presence alone is insufficient, so prospective material-transformation labels are still required.",
+      "minimum": "The profile fact silently changes at least one response constraint, logistical detail, framing choice, or materially relevant premise.",
+      "negative_families": [
+        "PROFILE_ALREADY_VISIBLE",
+        "NO_CURRENT_SCOPE_FIT",
+        "DECORATIVE_RESTATEMENT_ONLY",
+        "UNSUPPORTED_STEREOTYPE_OR_INFERENCE",
+        "STALE_OR_CONFLICTING_PROFILE",
+        "NO_MATERIAL_RESPONSE_CHANGE",
+        "NO_CANDIDATE"
+      ]
+    },
+    {
+      "priority": 1,
+      "head": "MS",
+      "decision": "PARALLEL_ZERO_API_RESCUE_CANDIDATE",
+      "reason": "The prior V2 model showed borderline discrimination and execution enrichment, but the session-level label and forced-use executor were wrong. Atomic exact-candidate suitability and meaning absorption directly target the observed failures.",
+      "minimum": "One verified strictly-prior user-owned fact or episode adds nonredundant continuity that changes understanding of or action on the current issue.",
+      "negative_families": [
+        "CURRENT_SEMANTIC_ECHO",
+        "SAME_TOPIC_WRONG_EVENT",
+        "LOW_INFORMATION_OR_META_REFERENCE",
+        "STALE_RESOLVED_OR_CONFLICTING",
+        "NO_MATERIAL_RESPONSE_CHANGE",
+        "WRONG_OWNER_OR_TIME",
+        "NO_CANDIDATE"
+      ]
+    },
+    {
+      "priority": 2,
+      "head": "ME",
+      "decision": "SPARSE_OPTIONAL_HEAD_AND_PREDECLARED_CONTINGENCY",
+      "reason": "Typed action-result has a clear function but only 417 execution candidates and limited cross-group positive support. Audit real typed coverage before any label or fit; do not invent events to rescue prevalence.",
+      "minimum": "A verified past user action-result pair supports one tentative, declinable present option without implying a rule, cause, or guaranteed repeat."
+    }
+  ],
+  "suitability_gold_v2": {
+    "unit": "one current runtime-visible state plus one frozen actual Rank-1 atomic candidate for one component",
+    "primary_label": "one binary SUITABLE or NOT_SUITABLE decision, with SEMANTIC_ABSTAIN mapped to runtime OFF and reported as coverage",
+    "decision_checklist_not_independent_targets": [
+      "current target fit",
+      "specific nonredundant increment",
+      "component minimum can be realized now",
+      "current boundary permits the act"
+    ],
+    "reason_for_single_gold": "The four checklist questions are logically coupled. Requiring independent per-axis agreement recreated the P2B measurement failure and is forbidden.",
+    "label_source": "machine-resolved structural facts plus anchored source-aware human adjudication of the single component-specific decision; an LLM may assist only after a human-human calibration passes and may never silently replace unresolved human cases",
+    "forbidden_gold_sources": [
+      "future supporter reply",
+      "event influenced_by as worth-opening truth",
+      "summary or observation",
+      "QA answer or evidence",
+      "generator response or outcome",
+      "PM prediction",
+      "identity or fold"
+    ],
+    "actual_rank1_freeze": "Retrieval query, candidate pool, atomic segmentation, ranker, score, tie-break, and Rank-1 identity are frozen before semantic labels are read."
+  },
+  "component_general_executor_v3": {
+    "status": "REQUIRED_BEFORE_ANY_NEW_HEAD_LABEL_OR_FIT",
+    "pipeline": [
+      "runtime-visible current state",
+      "actual Rank-1 per requested component",
+      "component-specific safe realization",
+      "prospective use plan",
+      "all-pair compatibility and burden projection",
+      "one primary discourse act plus bounded modifiers",
+      "one coherent generator call",
+      "structural safety guard",
+      "offline source-aware function verification"
+    ],
+    "component_roles": {
+      "MP_PROFILE": "SILENT_CONSTRAINT_OR_FRAMING_MODIFIER",
+      "MS": "OPTIONAL_TENTATIVE_CONTINUITY_BRIDGE",
+      "ME": "OPTIONAL_DECLINABLE_PAST_OPTION",
+      "RS": "PRIMARY_ATOMIC_SUPPORT_ACT",
+      "R0": "PRIMARY_CURRENT_GROUNDED_SUPPORT_ACT_WHEN_RS_OFF"
+    },
+    "required_use_plan_fields": [
+      "component",
+      "owner",
+      "time_status",
+      "candidate_meaning",
+      "allowed_response_change",
+      "forbidden_inference",
+      "literal_mention_forbidden_or_optional",
+      "burden_units",
+      "response_act_relation"
+    ],
+    "joint_projection": {
+      "one_primary_act": "Exactly one of RS or R0 owns the reply's primary discourse act.",
+      "MP_with_any": "MP may coexist only as a silent modifier and only when it changes the chosen act without restatement, stereotype, or conflict.",
+      "MS_with_ME": "Default to one explicit memory contribution. Both may coexist only when a frozen outcome-blind relation says they form one coherent chain and total burden remains within budget; UNKNOWN, REDUNDANT, or CONFLICT suppresses the lower-priority item deterministically.",
+      "MS_with_RS": "MS may supply context to the RS act but may not create a second question, second interpretation task, or competing advice act.",
+      "ME_with_RS": "If RS already offers a micro-step, ME cannot add a second option unless the two are explicitly the same act; otherwise one is suppressed.",
+      "response_budget": "One primary act, at most one explicit memory contribution, and at most one low-burden invitation. MP consumes no visible act but must produce an auditable response-choice delta."
+    },
+    "meaning_absorption": [
+      "Exact candidate text remains in the audit packet but is presented to the generator as source evidence, never as prose to insert.",
+      "No component requires literal mention or lexical overlap.",
+      "First-person user text must never be copied into the assistant voice.",
+      "The generator may omit a memory cue that does not naturally improve the current-grounded reply; omission downgrades the realized component to OFF and is not a quality failure by itself.",
+      "Generator telemetry is a claim of attempted use, not proof of function."
+    ],
+    "guard_and_fallback": {
+      "safe_nonuse": "Keep the current-grounded reply, record requested ON / feasible ON / generator-claimed OFF, and do not replace it with a generic fallback.",
+      "owner_time_scaffold_contamination": "Discard the contaminated reply and run at most one frozen regeneration with the contaminated personal component removed while preserving any independently safe RS act.",
+      "transport_or_schema_failure": "Apply the same transport fallback and accounting to every policy and baseline.",
+      "offline_function": "Only a blinded source-aware reviewer can mark verified component function; lexical overlap and telemetry cannot."
+    },
+    "required_machine_invariants": [
+      "no requires_literal_mention for MP, MS, or ME",
+      "no lexical overlap requirement for function or guard success",
+      "no safe non-use converted into fixed generic M0 output",
+      "no exact user first-person candidate copied into assistant reply",
+      "no cross-component evidence union without an explicit pair relation",
+      "RS remains the only primary act when ON",
+      "MP is silent and profile-only",
+      "requested, structurally eligible, planned, generator-claimed, and offline-verified action bits are stored separately",
+      "all 16 requested actions traverse the same projector and executor in tests"
+    ]
+  },
+  "what_is_and_is_not_solved_by_v2": {
+    "solved_at_design_level": [
+      "MP preference removal and profile-only definition",
+      "atomic-resource rather than parent-session gold unit",
+      "single suitability decision rather than independent-axis gate",
+      "component roles and all-pair composition requirements",
+      "meaning absorption instead of hard splice",
+      "safe non-use versus actual safety contamination",
+      "responsibility boundaries"
+    ],
+    "not_yet_implemented_or_empirically_verified": [
+      "component-general V3 planner/executor and its tests",
+      "profile-only MP actual Rank-1 realization and labels",
+      "atomic MS actual Rank-1 labels",
+      "MP/MS grouped OOF",
+      "ME usable coverage",
+      "16-action same-stack system comparison under V3",
+      "dual-human final function/risk confirmation"
+    ],
+    "irreducible_limits": [
+      "17 independent connected longitudinal groups",
+      "incomplete author lineage as suitability truth",
+      "finite typed ME coverage",
+      "bounded rather than unrestricted semantic understanding"
+    ]
+  },
+  "next_authorized_sequence_after_independent_design_audit": [
+    "Implement and test the shared component-general V3 realization, planner, generator program, guard, and telemetry separation with zero API calls; test all 16 requested actions and every component pair.",
+    "Run a zero-API surface audit for MP_PROFILE, atomic MS, and typed ME: candidate counts, owner groups, profile-field/action-result coverage, negative-family coverage, feature leakage, and current-echo rates.",
+    "Freeze identity-free feature schemas and one binary anchored suitability packet for MP_PROFILE and MS; qualify ME only if real coverage supports bidirectional grouped learning.",
+    "Create labels once, then run one grouped OOF per eligible head. Preserve RS; qualify any memory head that shows nontrivial cross-fitted discrimination, proper-score gain, ON/OFF support, and negative-family coverage without post-result tuning.",
+    "Before paid scale-up, validate V3 on a small hand-confirmed eligible/ineligible executor packet for absorption, function, boundary safety, and safe non-use.",
+    "Run one frozen 16-action same-stack comparison of learned qualified, RS-only, always-off, fixed-high eligible, transparent rule, cost-matched fixed, and on-rate-matched random policies.",
+    "Report ESConv routing/support, EvoEmo longitudinal personalization/continuity, and ES-MemEval QA transport as three complementary tracks."
+  ],
+  "authorization": {
+    "PM_refit": false,
+    "label_creation": false,
+    "candidate_materialization": false,
+    "generator_calls": false,
+    "reviewer_API_calls": false,
+    "external_outcomes": false,
+    "paid_execution": false
+  }
+}

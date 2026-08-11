@@ -56,13 +56,19 @@ class RiskOutcome(str, Enum):
 
 class FailureOwner(str, Enum):
     NONE = "NONE"
+    CATALOG_ADAPTER = "CATALOG_ADAPTER"
     RETRIEVER = "RETRIEVER"
     HARD_ELIGIBILITY = "HARD_ELIGIBILITY"
+    ELIGIBILITY_SEMANTIC = "ELIGIBILITY_SEMANTIC"
     PM_STEP1 = "PM_STEP1"
     EXECUTOR = "EXECUTOR"
     GENERATOR = "GENERATOR"
+    STEP2_GENERATOR = "STEP2_GENERATOR"
     RESOURCE_NONPOSITIVE = "RESOURCE_NONPOSITIVE"
+    RESOURCE_GENERATOR_INTERACTION = "RESOURCE_GENERATOR_INTERACTION"
     OUTCOME_NOISE = "OUTCOME_NOISE"
+    MEASUREMENT = "MEASUREMENT"
+    SCOPE_OOD = "SCOPE_OOD"
     FULL_SYSTEM = "FULL_SYSTEM"
     UNKNOWN = "UNKNOWN"
 
@@ -93,6 +99,9 @@ class StagewiseAccountabilityRow(StrictModel):
     row_id: str = Field(min_length=1)
     state_id: str = Field(min_length=1)
     user_id: str = Field(min_length=1)
+    domain: str | None = None
+    outer_fold: int | None = Field(default=None, ge=1, le=6)
+    effect_group_id: str | None = None
     semantic_family: str = Field(min_length=1)
     counterfactual_group_id: str = Field(min_length=1)
     policy_condition: str = Field(min_length=1)
@@ -102,7 +111,15 @@ class StagewiseAccountabilityRow(StrictModel):
     candidate_ids_topk: dict[Component, list[str]]
     exact_rank1_id: dict[Component, str | None]
     candidate_owner_id: dict[Component, str | None]
+    candidate_source_time: dict[Component, str | None] = Field(
+        default_factory=lambda: {component: None for component in COMPONENTS}
+    )
     candidate_version: dict[Component, str | None]
+    candidate_present: dict[Component, TernaryAssessment] = Field(
+        default_factory=lambda: {
+            component: TernaryAssessment.UNKNOWN for component in COMPONENTS
+        }
+    )
     retrieval_fit_label: dict[Component, TernaryAssessment]
     eligibility_owner_time: dict[Component, TernaryAssessment]
     eligibility_goal_function: dict[Component, TernaryAssessment]
@@ -110,9 +127,16 @@ class StagewiseAccountabilityRow(StrictModel):
     eligibility_specific_increment: dict[Component, TernaryAssessment]
 
     pm_probability: dict[Component, float | None]
+    pm_component_scores: dict[Component, float | None] = Field(
+        default_factory=lambda: {component: None for component in COMPONENTS}
+    )
     pm_threshold: dict[Component, float | None]
     pm_decision: dict[Component, bool | None]
     pm_correct: dict[Component, TernaryAssessment]
+    component_oracle_label: dict[Component, str | None] = Field(
+        default_factory=lambda: {component: None for component in COMPONENTS}
+    )
+    joint_oracle_action_ids: list[str] = Field(default_factory=list)
     requested_action: str
     realized_action: str | None
 
@@ -139,16 +163,20 @@ class StagewiseAccountabilityRow(StrictModel):
         "candidate_ids_topk",
         "exact_rank1_id",
         "candidate_owner_id",
+        "candidate_source_time",
         "candidate_version",
+        "candidate_present",
         "retrieval_fit_label",
         "eligibility_owner_time",
         "eligibility_goal_function",
         "eligibility_boundary_burden",
         "eligibility_specific_increment",
         "pm_probability",
+        "pm_component_scores",
         "pm_threshold",
         "pm_decision",
         "pm_correct",
+        "component_oracle_label",
         "required_evidence_use",
         "functional_contribution",
         "grounding_fidelity",
@@ -168,6 +196,15 @@ class StagewiseAccountabilityRow(StrictModel):
     def realized_action_is_legal(cls, value: str | None) -> str | None:
         if value is not None:
             parse_action_id(value)
+        return value
+
+    @field_validator("joint_oracle_action_ids")
+    @classmethod
+    def oracle_actions_are_legal_and_unique(cls, value: list[str]) -> list[str]:
+        if len(value) != len(set(value)):
+            raise ValueError("joint_oracle_action_ids contains duplicates")
+        for action_id in value:
+            parse_action_id(action_id)
         return value
 
     @field_validator("pm_probability", "pm_threshold")

@@ -1,0 +1,203 @@
+{
+  "protocol": "pm-v1.5-v5.3-baseline-matrix-v1",
+  "status": "METHOD_FROZEN_BEFORE_V5_3_EXTERNAL_OUTCOMES",
+  "purpose": "Distinguish whether the learned PM adds benefit, avoids unnecessary resources, beats transparent rules, and selects better than an amount-matched nonsemantic policy without mixing policy and memory-representation comparisons.",
+  "authority": {
+    "metric_contract": "v5_3_metric_responsibility_and_oracle_v1.json",
+    "external_contract": "v5_3_external_complementary_evidence_v1.json",
+    "baseline_planner": "src/metacom_pm/v1_5_v5_3_response_baselines.py",
+    "historical_sources": [
+      "v5_2_external_e2_plan_v1.json",
+      "PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md",
+      "PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md"
+    ]
+  },
+  "reuse_decision": {
+    "directly_reusable": [
+      "baseline research questions and domain applicability",
+      "ES-MemEval five-condition structure",
+      "official-aligned Token F1 and frozen BERTScore definitions",
+      "Raw Session Top-4 and All Raw Sessions as EvoEmo representation baselines",
+      "same-state alias deduplication and logical-arm retention"
+    ],
+    "must_be_rematerialized_or_rerun": [
+      "all response baseline prompts and generations under V5.3 typed whole-response Step2",
+      "all V5.3 candidate snapshots, actual Rank-1 identities, actions, seeds, token accounting, and evaluator packets",
+      "all 1,427-question ES-MemEval plans and predictions",
+      "all raw-session response baselines on the final 204-state EvoEmo panel"
+    ],
+    "historical_only_unless_exact_current_stack_replay": [
+      "V1.0 learned PM scores",
+      "V5.1/V5.2 response quality and risk scores",
+      "V5.2 locked-clause append responses",
+      "old 122-dialogue ESConv response panel",
+      "old 418-question QA aggregate"
+    ],
+    "reason": "V5.3 changes the training target and response executor; old outcomes combine different states, compilers, prompts, generators, and evidence-integration semantics."
+  },
+  "response_core": {
+    "conditions": [
+      {
+        "id": "always_off",
+        "action": "M0+R0",
+        "question": "Does learned routing create conditional benefit relative to injecting no optional resource?",
+        "role": "required reference"
+      },
+      {
+        "id": "fixed_high_eligible",
+        "action": "enable every structurally eligible component",
+        "question": "Can learned routing preserve quality/risk while using less context than an always-use-available-resources system?",
+        "role": "required high-resource reference"
+      },
+      {
+        "id": "transparent_rule",
+        "action": "frozen human-readable deployment-visible rules",
+        "question": "Does learned conditional value add anything beyond a simple auditable heuristic?",
+        "role": "required low-capacity comparator"
+      },
+      {
+        "id": "learned_pm_qualified",
+        "action": "OOF/cross-fitted predictions from formally passing heads; every failed or state-level abstaining head is fixed OFF; transparent_rule is a separate baseline and is never substituted inside this arm",
+        "question": "What does the deployable V5.3 PM do?",
+        "role": "target policy"
+      },
+      {
+        "id": "cost_matched_fixed",
+        "action": "one outcome-blind fixed action per preregistered broad stratum, selected only to approximate learned deterministic injected-token cost",
+        "question": "Could a static resource bundle at similar cost explain the result?",
+        "role": "selection-specific comparator subject to qualification"
+      },
+      {
+        "id": "cost_and_on_rate_matched_random",
+        "action": "outcome-blind constrained permutation of learned action bundles within exchangeable cells",
+        "question": "Is semantic state-to-action matching better than using the same amount and component frequency at random?",
+        "role": "strongest selection-specific comparator subject to qualification"
+      }
+    ],
+    "qualified_policy_naming": {
+      "learned_pm_full_allowed": "only when all four formal heads pass; then it is an alias of learned_pm_qualified",
+      "partial_head_case": "the main deployable arm remains learned_pm_qualified and failed heads are visibly fixed OFF; an unqualified all-head arm is not a main baseline",
+      "transparent_rule_separation": "transparent_rule remains an independent logical arm; it cannot repair or replace a failed learned head"
+    },
+    "same_stack_invariants": [
+      "same visible state",
+      "same candidate discovery and actual Rank-1",
+      "same eligible mask",
+      "same typed whole-response Step2",
+      "same generator/model/temperature/seed/token cap",
+      "same guard/fallback",
+      "same evaluator and cluster unit"
+    ],
+    "physical_alias_rule": "Identical state, action, evidence material, and seed generate once; all logical policy aliases remain in the analysis table and alias rates are reported.",
+    "primary_comparison_hierarchy": {
+      "system_value": [
+        "learned_pm_qualified versus always_off",
+        "learned_pm_qualified versus fixed_high_eligible"
+      ],
+      "modeling_value": [
+        "learned_pm_qualified versus transparent_rule"
+      ],
+      "selection_beyond_resource_amount": [
+        "learned_pm_qualified versus qualified cost_matched_fixed",
+        "learned_pm_qualified versus qualified cost_and_on_rate_matched_random"
+      ],
+      "no_single_omnibus_score": true
+    }
+  },
+  "matched_controls": {
+    "cost_matched_fixed": {
+      "stratum_rule": "domain plus preregistered broad opportunity stratum; no stratum may be defined from response/evaluation outcomes",
+      "minimum_states_per_stratum": 12,
+      "candidate_actions": "all 16 actions projected through the state's eligible mask",
+      "selection": "choose the single fixed action whose mean deterministic incremental injected-prompt tokens are closest to learned_pm_qualified; stable protocol hash breaks ties",
+      "qualification": "absolute relative deterministic-cost mismatch at most 5 percent; otherwise name/report closest-cost-fixed and do not claim a cost-matched comparison"
+    },
+    "cost_and_on_rate_matched_random": {
+      "exchangeability_cell": "domain/broad stratum plus exact eligible mask; token length is not an exact cell key",
+      "assignment": "permute learned action bundles only within cells, preserving the component action distribution exactly; among outcome-blind protocol-hash candidate permutations choose the one minimizing deterministic injected-token cost mismatch",
+      "qualification": [
+        "component ON counts exactly equal learned within the full panel",
+        "total deterministic incremental injected-prompt-token mismatch at most 5 percent",
+        "at least 25 percent of states receive a different action than learned",
+        "no response, Q, risk, judge, or external outcome is used"
+      ],
+      "failure": "if qualification fails, report the alias/mismatch and omit superiority language against this arm; never keep the name matched-random for an effectively identical policy"
+    }
+  },
+  "domain_matrix": {
+    "ESConv_response": {
+      "main": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified",
+        "cost_matched_fixed",
+        "cost_and_on_rate_matched_random"
+      ],
+      "mask": "MP/MS/ME unavailable; comparisons reduce to the RS bit",
+      "alias_handling": "retain logical arms, deduplicate identical physical calls, and report when fixed/cost-matched arms collapse to always_off or fixed_high"
+    },
+    "EvoEmo_response": {
+      "main": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified",
+        "cost_matched_fixed",
+        "cost_and_on_rate_matched_random"
+      ],
+      "secondary_representation": [
+        "raw_session_top4_plus_same_RS",
+        "all_raw_sessions_plus_same_RS"
+      ],
+      "secondary_mechanism": [
+        "learned_qualified_minus_each_passing_component",
+        "single-component fixed arms",
+        "16-action oracle upper bound on the separate interaction panel"
+      ]
+    },
+    "ES_MemEval_QA": {
+      "main": [
+        "no_memory",
+        "full_history",
+        "official_session_rag_top4",
+        "typed_memory_fixed_high",
+        "typed_memory_learned_pm_qualified"
+      ],
+      "not_applicable": [
+        "RS",
+        "response transparent_rule as a main QA comparator",
+        "cost_matched_fixed",
+        "cost_and_on_rate_matched_random",
+        "Legacy V1.0"
+      ]
+    }
+  },
+  "representation_baseline_boundary": {
+    "raw_session_top4_and_full_history": "secondary system/representation comparisons, not legal PM actions and not evidence that policy routing alone caused a difference",
+    "same_requirements": "same source user, strictly-past cutoff, current query, generator endpoint, seed, output cap, and evaluator",
+    "allowed_difference": "the predeclared memory representation/retrieval method and resulting context only"
+  },
+  "legacy_boundary": {
+    "V1_0": "historical context only unless exact current-stack replay is possible; raw-session questions are already covered by current-stack raw baselines",
+    "V5_2_append": "architecture-failure historical ablation, not a main PM baseline; old scores cannot be pooled with V5.3",
+    "current_stack_replay": "must use the final V5.3 states, candidate identities, generator, seeds, evaluator, and a clearly named altered-executor system ablation"
+  },
+  "reporting": {
+    "per_comparison": [
+      "state/user/dialogue denominator",
+      "logical and unique physical call counts",
+      "alias rate",
+      "action and component ON distributions",
+      "deterministic planned and realized provider token costs",
+      "quality NetWin with cluster interval",
+      "material risk difference and critical events",
+      "requested-realized and functional funnels"
+    ],
+    "matched_control_diagnostics_required_before_outcomes": true,
+    "failed_or_aliased_baseline_must_remain_visible": true,
+    "cross_domain_pooled_effect_forbidden": true
+  },
+  "no_feedback_rule": "Baseline definitions, matching tolerance, exchangeability cells, alias rules, and domain applicability cannot change after V5.3 response or QA outcomes are opened.",
+  "api_calls_for_contract": 0
+}

@@ -1,0 +1,246 @@
+{
+  "protocol": "pm-v1.5-v5.3-metric-responsibility-and-oracle-v1",
+  "status": "FROZEN_BEFORE_FORMAL_EFFECT_AGGREGATION",
+  "authority": {
+    "scope": "V5.3 public-backbone effect learning, policy correctness, response evaluation, and failure attribution",
+    "supersedes": {
+      "contract": "minimum_publishable_metric_registry_v1.json",
+      "only_for": [
+        "component learnability target",
+        "component adoption gate",
+        "PM correct-call measurement"
+      ],
+      "reason": "V5.3 learns continuous replicate-aggregated paired effects rather than a construction-derived binary opportunity label; the older response quality, risk, and cost definitions remain useful where explicitly carried forward below"
+    },
+    "also_supersedes": {
+      "contract_sections": [
+        "v5_3_public_backbone_effect_learning_v1.json:qualification_gates.head_engineering_gate_provisional",
+        "src/metacom_pm/v1_5_v5_3_measurement_freeze.py:step1_learning_evidence",
+        "v5_3_integrated_evidence_execution_v1.json:stagewise_accountability.required_metrics.pm_value_selection_balanced_accuracy"
+      ],
+      "replacement": "v5_3_public_formal_effect_freeze_v1.json:formal_engineering_gate_each_head",
+      "reason": "the development pilot selected and froze the continuous formal target and representation after the public-backbone contract's provisional binary gate"
+    },
+    "does_not_modify_frozen_live_runner": true,
+    "formal_effect_freeze": "v5_3_public_formal_effect_freeze_v1.json"
+  },
+  "research_question": "Conditional on a frozen, deployment-visible current state and a frozen actual Rank-1 candidate, can a low-capacity PM predict the candidate's conditional marginal support contribution and select a safe, low-cost action better than fixed or transparent policies?",
+  "semantic_scope": {
+    "in_scope": "bounded deployable semantic representation of the current dialogue, candidate, explicit boundaries, time, owner, redundancy, and action readiness",
+    "fixed_encoder_role": "BGE-family embeddings are frozen representations, not a claim of complete language understanding",
+    "out_of_scope": "unrestricted human-level pragmatic inference, diagnosis, hidden intent, and universal natural-language understanding",
+    "unknown_policy": "UNKNOWN or out-of-support semantics are not negative gold; they are abstain/fail-closed-to-OFF or transparent-rule cases and are reported separately",
+    "claim_wording": "The experiment conditions on candidate discovery and a bounded semantic interface; it does not assume that semantic error is impossible"
+  },
+  "analysis_grain": {
+    "effect_group": "one frozen state, one frozen actual Rank-1 candidate, one requested component, and three paired ON/OFF generator seeds",
+    "training_row": "one replicate-aggregated effect group",
+    "independent_cluster_memory": "EvoEmo user",
+    "independent_cluster_rs": "ESConv dialogue",
+    "state_is_not_an_independent_user": true,
+    "aliases_orders_judges_and_replicates_do_not_create_new_groups": true
+  },
+  "separate_axes": {
+    "Q": {
+      "name": "positive_support_contribution",
+      "role": "primary component training target and response benefit axis",
+      "definition": "replicate-aggregated ON-minus-OFF contribution over goal advance, emotional support, specific useful contribution, and clarity/naturalness",
+      "not_equal_to": [
+        "overall acceptability",
+        "grounding safety",
+        "functional use",
+        "cost"
+      ]
+    },
+    "R": {
+      "name": "material_interaction_and_grounding_risk",
+      "role": "separate guardrail",
+      "definition": "absolute events in both arms plus resource-attributable direction for explicit-boundary violation, unsupported/wrong-owner personal grounding, and excessive directiveness/burden",
+      "material_minimum_severity": 2,
+      "critical_events": "severity 3 or machine-provable wrong-owner/future/private-source fabrication; never hidden in a pooled rate"
+    },
+    "F": {
+      "name": "functional_execution",
+      "role": "mechanism and executor-adherence diagnostic",
+      "definition": "requested evidence was received, used for its required contribution, grounded to the right owner/time, and realized without scaffold exposure or atomic-move violation",
+      "not_a_positive_quality_label": true
+    },
+    "C": {
+      "name": "resource_and_generation_cost",
+      "role": "joint-action projection and separate reporting only",
+      "definition": "injected items, provider-recorded input/output tokens, latency, fallback/recovery, and monetary cost",
+      "enters_component_training_target": false
+    },
+    "D": {
+      "name": "decision_correctness",
+      "role": "PM routing evaluation",
+      "definition": "component resolved-label compatibility, 16-action oracle-set inclusion, policy regret, harmful false-on, beneficial false-off, and calibration"
+    }
+  },
+  "component_learning": {
+    "target": "continuous replicate-aggregated positive-support-contribution uplift",
+    "ties": "remain zero",
+    "negative_effects": "remain negative",
+    "missing_or_executor_invalid": "excluded from resolved effect labels and counted as unresolved; never converted to OFF gold",
+    "construction_condition_candidate_presence_and_intended_use_are_not_gold": true,
+    "formal_gate_each_head": {
+      "oof_mse": "at least 5 percent below the fold-training-mean predictor",
+      "oof_spearman": "at least 0.15",
+      "support": "nonconstant target and predictions across at least 12 independent clusters",
+      "binary_balanced_accuracy": "diagnostic only"
+    },
+    "failed_head_policy": "fail closed to OFF or the predeclared transparent rule without outcome-selected repair"
+  },
+  "component_correct_call_labels": {
+    "purpose": "diagnose whether a component request was supportable without forcing the continuous training target into a brittle binary label",
+    "quality_equivalence_margin": {
+      "value": 0.1,
+      "scale": "positive_support_contribution normalized to [-1, 1]",
+      "origin": "predeclared practical indifference band, larger than one minimal aggregate scoring step and fixed before formal aggregation",
+      "sensitivity": [0.05, 0.15],
+      "sensitivity_cannot_replace_primary": true
+    },
+    "labels": {
+      "ON_ONLY": "execution is valid and Q uplift is greater than +0.10",
+      "OFF_ONLY": "execution is valid and Q uplift is less than -0.10",
+      "EITHER": "execution is valid and absolute Q uplift is at most 0.10; cost or risk may later prefer OFF but does not rewrite the component value label",
+      "UNRESOLVED": "missing Q outcome, judge abstention/order conflict beyond the frozen resolver, transport failure, fallback, requested evidence not functionally used, or candidate/owner/time invalidity"
+    },
+    "risk_overlay": {
+      "SAFE": "risk was adjudicated and no resource-attributable material/critical event occurred",
+      "UNSAFE": "risk was adjudicated and a resource-attributable material/critical event occurred",
+      "UNRESOLVED": "risk was not adjudicated or attribution is unresolved",
+      "independence_rule": "risk overlay never rewrites the Q value label; final deployment/oracle-set eligibility requires SAFE, while benefit-only correctness is reported on the resolved Q denominator"
+    },
+    "resolved_denominator": "ON_ONLY plus OFF_ONLY plus EITHER",
+    "required_reports": [
+      "label counts and unresolved reasons",
+      "beneficial false-off rate on ON_ONLY",
+      "harmful false-on rate on OFF_ONLY",
+      "compatibility accuracy counting either action correct on EITHER",
+      "coverage over all groups and over resolved groups",
+      "unsafe_selected rate and risk-resolved coverage reported separately from value compatibility"
+    ],
+    "prohibitions": [
+      "UNKNOWN equals OFF",
+      "tie equals negative",
+      "candidate present equals ON",
+      "construction condition equals gold",
+      "executor failure proves the resource should be OFF",
+      "material risk rewrites a positive Q contribution as a negative Q label",
+      "cost makes an ON component effect negative"
+    ]
+  },
+  "joint_action_oracle": {
+    "actions": [
+      "M0+R0",
+      "M0+RS",
+      "MP+R0",
+      "MP+RS",
+      "MS+R0",
+      "MS+RS",
+      "ME+R0",
+      "ME+RS",
+      "MPMS+R0",
+      "MPMS+RS",
+      "MPE+R0",
+      "MPE+RS",
+      "MSE+R0",
+      "MSE+RS",
+      "MPMSME+R0",
+      "MPMSME+RS"
+    ],
+    "panel": "32-48 outcome-blind common public-backbone states, each executed under all 16 actions after formal heads qualify",
+    "same_state_requirement": "all 16 actions use the same current state, candidate set, generator, seed schedule, guard, and evaluator; different actions may not be assigned to different states",
+    "oracle_set_construction": [
+      "mark structurally infeasible, wrong-owner, future, or critical-risk actions invalid",
+      "among valid and risk-adjudicated actions, find the highest replicate-aggregated Q",
+      "retain every action within 0.10 Q of the best",
+      "within Q-equivalent actions, retain the exact minimum deterministic incremental injected-prompt-token cost frontier; all exact cost ties remain in the set",
+      "if measurement or risk status prevents this construction, mark the state oracle unresolved"
+    ],
+    "primary_decision_metrics": {
+      "oracle_set_inclusion_accuracy": "fraction of resolved states where the PM action is a member of the oracle set",
+      "quality_regret": "best safe valid Q minus selected-action Q; reported separately from cost",
+      "excess_deterministic_cost_on_quality_frontier": "selected deterministic incremental injected-prompt tokens minus the minimum among Q-equivalent safe actions",
+      "critical_invalid_action_rate": "selected structurally invalid or critical-risk actions divided by all selected actions",
+      "requested_realized_exact_match": "requested action equals realized action; ordinary M0+R0 is not fallback",
+      "partial_component_realization": "per-component requested-to-received-to-used-to-functional funnel for multi-component actions"
+    },
+    "cost_utility": {
+      "form": "lexicographic: exclude structural-invalid and material/critical-risk actions; apply the 0.10 Q indifference band; then minimize deterministic incremental injected-prompt tokens",
+      "cost_measure_for_oracle": "deterministic incremental injected-prompt tokens computed before generation; realized provider tokens, USD, and latency remain separate outcomes",
+      "no_hidden_composite_score": true,
+      "full_parameter_values_freeze_before_panel_outcomes": true
+    }
+  },
+  "stagewise_responsibility": {
+    "required_ledger_fields": [
+      "row_id",
+      "state_id",
+      "user_id",
+      "domain",
+      "outer_fold",
+      "effect_group_id",
+      "candidate_ids_topk",
+      "exact_rank1_id",
+      "candidate_owner_id",
+      "candidate_source_time",
+      "candidate_version",
+      "candidate_present",
+      "retrieval_fit",
+      "eligibility_owner_time",
+      "eligibility_goal_function",
+      "eligibility_boundary_burden",
+      "eligibility_specific_increment",
+      "pm_component_scores",
+      "requested_action",
+      "oracle_label_or_set",
+      "pm_correct",
+      "generator_received_evidence_ids",
+      "generator_reported_used_evidence_ids",
+      "normalized_used_evidence_ids",
+      "realized_action",
+      "functional_contribution",
+      "grounding_fidelity",
+      "atomic_move_compliance",
+      "scaffold_exposure",
+      "fallback_reason",
+      "quality_outcome",
+      "risk_outcome",
+      "prompt_tokens",
+      "total_tokens",
+      "primary_failure_owner",
+      "secondary_failure_owner"
+    ],
+    "failure_owner_rules": {
+      "catalog_or_adapter": "candidate absent because a valid strictly-prior source was not materialized, or source owner/time/version is wrong before retrieval",
+      "retriever": "valid candidate exists but actual Rank-1 is semantically wrong, stale, redundant, or wrong-owner",
+      "eligibility_or_semantic_interface": "candidate is incorrectly hard-denied or incorrectly admitted by a deployment-visible rule/semantic feature",
+      "pm": "on a resolved oracle, PM selects OFF for ON_ONLY, ON for OFF_ONLY, or an action outside the joint oracle set",
+      "step2_or_generator": "PM requests an oracle-compatible action but evidence is not received/used, requested action is not realized, scaffold leaks, or fallback occurs",
+      "resource_generator_interaction": "candidate, eligibility, PM, and execution are valid but clean use still lowers Q or creates a material risk",
+      "measurement": "judge/human disagreement, missing outcome, evaluator failure, or unresolved risk adjudication",
+      "scope_or_ood": "state lies outside the frozen semantic or representation envelope and the system abstains/fails closed"
+    },
+    "two_views": {
+      "deployment_itt": "the deployed policy is charged with all downstream outcomes of its requested action, including fallback",
+      "mechanism_blame": "the stagewise ledger separately identifies the earliest supported causal failure owner",
+      "both_must_be_reported": true
+    }
+  },
+  "response_system_metrics_carried_forward": {
+    "quality": "blind same-state NetWin with ties retained and user/dialogue-cluster uncertainty; noninferiority margin -0.05",
+    "risk": "absolute and paired material event rates; learned-minus-comparator upper margin +0.05; every severity-3 event listed",
+    "cost": "provider-recorded generation input tokens; minimum practical reduction 10 percent versus fixed-high, with output tokens/USD/latency separate",
+    "comparators": [
+      "always_off",
+      "fixed_high_eligible",
+      "transparent_rule",
+      "cost_matched_fixed",
+      "cost_and_on_rate_matched_random"
+    ]
+  },
+  "no_feedback_rule": "formal or external outcomes may be analyzed and reported but may not change this V5.3 representation, labels, margins, prompts, candidate ranking, or decision thresholds",
+  "api_calls_for_contract": 0
+}

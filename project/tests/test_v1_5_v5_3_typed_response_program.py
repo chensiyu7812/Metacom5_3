@@ -701,3 +701,25 @@ def test_parse_generator_response_dict_rejects_malformed_shape() -> None:
         parse_generator_response_dict({"reply": "hi"})
     with pytest.raises(ValueError):
         parse_generator_response_dict({"reply": "hi", "used_evidence_ids": "not_a_list", "realized_response_act": "x"})
+
+
+def test_context_event_program_uses_literal_event_and_unverified_continuity():
+    candidate = TypedResourceCandidate(
+        component="ME",
+        subtype="ME_CONTEXT_EVENT",
+        resource_id="mem_abcdef1234567890",
+        candidate_version="v1",
+        source_kind="event",
+        owner_id="u1",
+        strictly_prior=True,
+        age_sessions=3,
+        past_event="The user previously moved to a new apartment.",
+    )
+    program = build_typed_response_program(
+        requested_action_id="ME+R0",
+        current_goal="Respond to the latest user message.",
+        current_user_id="u1",
+        candidates={"ME": candidate},
+    )
+    assert program.evidence[0].literal_evidence == candidate.past_event
+    assert program.evidence[0].epistemic_mode == "unverified_continuity"

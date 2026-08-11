@@ -1,0 +1,50 @@
+{
+  "protocol": "pm-v1.5-paper1-p2b-control-failure-closeout-phase-v1",
+  "date": "2026-08-10",
+  "status": "P2B_CONTROL_MEASUREMENT_TERMINAL_FAIL_PUBLIC_CALLS_BLOCKED",
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "parent_authority_sha256": "51448cdbbb096d0a37a488b9ceca15d5d9ef5603ca2d998f2839bd8ec64b6c1f",
+  "completed_execution": {
+    "logical_calls": 48,
+    "physical_attempts": 48,
+    "transport_failures": 0,
+    "observed_cost_usd": 0.098877,
+    "public_calls": 0,
+    "pm_fit": false
+  },
+  "bindings": [
+    {
+      "role": "physical_attempt_ledger",
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_reviews_20260810/physical_attempt_ledger.jsonl",
+      "sha256": "6ce82bd7d1aac2a17b853d22bd70de5e8883cb1f0a129fb91d8fb98b71a62118"
+    },
+    {
+      "role": "control_qualification_report",
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_reviews_20260810/control_qualification_report.json",
+      "sha256": "8f942de492d4c77d753fc377fa507f2763119832ec4a49da6cf43f1b0141c720"
+    },
+    {
+      "role": "control_measurement_closeout",
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_reviews_20260810/control_measurement_closeout.json",
+      "sha256": "f3c2f783e1048e89939c60d5d09dc4011be8d18fcdb0e194d1aa6b2c873f88e1"
+    },
+    {
+      "role": "human_root_cause_and_pivot",
+      "path": "docs/PM_V1_5_PAPER1_P2B_CONTROL_FAILURE_AND_LABEL_SOURCE_PIVOT_20260810_ZH.md",
+      "sha256": "daa897e37581effa4ceb98ffff8b12845ca7a2a0c874ba7d05b59893aefaabde"
+    }
+  ],
+  "root_cause": "The four atomic suitability axes are not operationally independent on negative cases; LLM judgments cannot be treated as reproducible training gold.",
+  "allowed_next": [
+    "zero-API design and audit of evaluator-only public author annotations as labels",
+    "zero-API capacity and split-support calculations",
+    "versioned method-candidate and label-factory implementation",
+    "tests and independent validators"
+  ],
+  "forbidden": [
+    "all further calls under the P2B reviewer plan",
+    "public suitability labels from the failed four-axis instrument",
+    "PM fitting before the replacement label factory and learnability phase are separately promoted",
+    "response generation, safe-yield measurement, baselines, or external outcomes"
+  ]
+}

@@ -22,6 +22,7 @@ ResourceSubtype = Literal[
     "MP_PROFILE",
     "MS_SESSION_OBSERVATION",
     "ME_REUSABLE_OUTCOME",
+    "ME_CONTEXT_EVENT",
     "RS_ATOMIC_MOVE",
 ]
 
@@ -30,6 +31,7 @@ _EXPECTED_COMPONENT: dict[ResourceSubtype, Component] = {
     "MP_PROFILE": "MP",
     "MS_SESSION_OBSERVATION": "MS",
     "ME_REUSABLE_OUTCOME": "ME",
+    "ME_CONTEXT_EVENT": "ME",
     "RS_ATOMIC_MOVE": "RS",
 }
 
@@ -61,6 +63,7 @@ class TypedResourceCandidate:
     prior_observation: str = ""
     past_action: str = ""
     observed_outcome: str = ""
+    past_event: str = ""
     mechanism: str = ""
     support_move: str = ""
     when_to_use: str = ""
@@ -78,6 +81,7 @@ class TypedResourceCandidate:
             "MP_PROFILE": "profile",
             "MS_SESSION_OBSERVATION": "session",
             "ME_REUSABLE_OUTCOME": "event",
+            "ME_CONTEXT_EVENT": "event",
             "RS_ATOMIC_MOVE": "strategy",
         }[self.subtype]
         if self.source_kind != expected_source:
@@ -98,6 +102,7 @@ class TypedResourceCandidate:
             "MP_PROFILE": (self.profile_fact,),
             "MS_SESSION_OBSERVATION": (self.prior_observation,),
             "ME_REUSABLE_OUTCOME": (self.past_action, self.observed_outcome),
+            "ME_CONTEXT_EVENT": (self.past_event,),
             "RS_ATOMIC_MOVE": (
                 self.support_move,
                 self.when_to_use,
@@ -180,6 +185,14 @@ def compile_typed_resource(
             "Attribute this to the user's prior experience. Offer it only as a tentative, "
             "rejectable option; never claim it will work now or that the current situation "
             "has the same cause."
+        )
+        attribution_required = True
+    elif candidate.subtype == "ME_CONTEXT_EVENT":
+        evidence = f"A prior event in this user's history recorded: {_clean(candidate.past_event)}"
+        instruction = (
+            "Use this only as explicitly past context when it materially clarifies the "
+            "reply. Do not claim that it is still active or caused the current state; "
+            "if continuity matters, check it tentatively and make correction easy."
         )
         attribution_required = True
     else:

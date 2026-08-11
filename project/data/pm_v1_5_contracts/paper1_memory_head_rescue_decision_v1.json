@@ -1,0 +1,184 @@
+{
+  "protocol": "pm-v1.5-paper1-memory-head-rescue-decision-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_RESCUE_DESIGN_CANDIDATE_NOT_EXECUTION_AUTHORITY",
+  "purpose": "Choose one memory head that can support the paper together with the already-qualified RS head, and repair candidate, label, realization, guard, and accountability as one system rather than tuning the failed V2 MS classifier.",
+  "evidence_bindings": [
+    {"path": "outputs/pm_v1_5_paper1_ms_same_stack_development_audit_20260811/report.json", "sha256": "5e2f70d88c458320a1329140d5d37953eff3460bce7a5280ad8a0a085562166c"},
+    {"path": "outputs/pm_v1_5_paper1_ms_session_aligned_final_oof_20260810/report.json", "sha256": "938a48016d6e98f9a080675d421b19d309939f4d5052f4f45a9924200392620d"},
+    {"path": "outputs/pm_v1_5_paper1_source_annotated_grouped_learnability_20260810/report.json", "sha256": "1e63131e91ca34d5b17c048ff85265951ef7720ef083512ea70603b699016044"},
+    {"path": "src/metacom_pm/v1_5_memory_response_plan_v2.py", "sha256": "8d4118a4458e719475ca768ab484b6467efeef8ae296d7f3b3b43838c4330937"},
+    {"path": "src/metacom_pm/v1_5_memory_realization_v2.py", "sha256": "13c6424cffc88878a2989f8d2d0ef88c6c08e4fd3be997a7de1041a675d06555"},
+    {"path": "docs/PM_V1_5_MEMORY_MODULE_ROOT_CAUSE_AUDIT_20260803_ZH.md", "sha256": "5acbfb7b41ac5543757d769e8ea01422f3aa6efdb86eb9f09f89931900186ab5"}
+  ],
+  "paper_success_requirement": {
+    "RS_required": true,
+    "at_least_one_memory_head_required": true,
+    "four_heads_all_pass_not_required": true,
+    "memory_only_failure_condition": "RS passes but MP, MS, and ME all remain fixed OFF or show no end-to-end functional memory contribution.",
+    "primary_end_to_end_evidence": "The learned RS-plus-memory policy must be compared with always-off, fixed-high, transparent-rule, cost-matched fixed, and RS-only under the same retriever, projector, executor, generator, guard, and measurement stack."
+  },
+  "head_priority": [
+    {
+      "rank": 1,
+      "head": "MS",
+      "decision": "RESCUE_FIRST",
+      "why": [
+        "V2 grouped OOF was borderline rather than collapsed: pooled BA 0.5993, AUC 0.6335, Brier better than prevalence.",
+        "In the frozen same-stack sample, predicted-ON states had 81.1% clean execution versus 54.8% for predicted-OFF states, a +26.2 point clustered-bootstrap enrichment.",
+        "Public longitudinal sessions directly support strictly-past continuity without requiring generated profiles or inferred action outcomes."
+      ],
+      "current_failure": "The author-ancestry gold and session-level Rank-1 do not identify whether the selected exact statement adds a useful, nonredundant contribution to the current reply."
+    },
+    {
+      "rank": 2,
+      "head": "ME",
+      "decision": "CONTINGENCY_AFTER_MS_ZERO_API_AUDIT",
+      "why": [
+        "Typed past action-result evidence has a clearer response function than free-form profile facts.",
+        "Past Step2 diagnostics showed that an eligible action-result can be converted into a declinable present option."
+      ],
+      "current_failure": "Only 417 source-annotated rows and 71 positives across 15 groups produced BA 0.3743 and recall 0.1127; action-readiness and exact intended Rank-1 coverage are not yet adequate."
+    },
+    {
+      "rank": 3,
+      "head": "MP",
+      "decision": "DEFER_FOR_PAPER1",
+      "why": [
+        "Stable profile presence does not establish material response transformation.",
+        "The current public surface has no stable author gold for when a profile fact should change the reply."
+      ]
+    }
+  ],
+  "same_stack_diagnosis": {
+    "states": 68,
+    "connected_groups": 17,
+    "quality_fixed_high_vs_always_off": {"on_preferred": 9, "off_preferred": 52, "tie": 7, "netwin": -0.6324},
+    "quality_learned_vs_always_off": {"learned_preferred": 7, "always_off_preferred": 26, "tie": 35, "netwin": -0.2794},
+    "quality_learned_vs_fixed_high": {"learned_preferred": 26, "fixed_high_preferred": 2, "tie": 40, "netwin": 0.3529},
+    "memory_function": {"prior_contribution_present": 15, "fully_functional": 7, "selected_by_learned": 4, "missed_by_learned": 3},
+    "root_interpretation": "The V2 MS head reduces bad executions relative to fixed-high, but it does not distinguish the seven truly functional memory states and its executor usually degrades response quality."
+  },
+  "recurring_root_causes": [
+    {
+      "id": "SESSION_OR_ANCESTRY_GOLD_VS_EXACT_USE_MISMATCH",
+      "evidence": "A prior session can be an event ancestor while its selected exact turn is generic, redundant, stale, or irrelevant.",
+      "repair": "Gold is attached to the actual atomic Rank-1 evidence item, not to its parent session or event lineage."
+    },
+    {
+      "id": "RETRIEVAL_RELEVANCE_VS_INCREMENTAL_RESPONSE_VALUE",
+      "evidence": "53 of 68 ON arms made no distinct prior contribution even though all candidates passed structural retrieval.",
+      "repair": "Candidate eligibility explicitly measures semantic current-echo, use-mode relevance, specificity, owner/time safety, and a prospective material response change."
+    },
+    {
+      "id": "EXACT_QUOTE_FORCED_INSTEAD_OF_MEANING_ABSORBED",
+      "evidence": "V2 sends exact first-person user text to the generator, requires literal MS/ME mention, and rejects claimed use with no lexical word overlap.",
+      "repair": "Exact text remains the audit source, but the generator is instructed to synthesize and never copy it; lexical overlap is not evidence of function."
+    },
+    {
+      "id": "TELEMETRY_FAILURE_TREATED_AS_RESPONSE_SAFETY_FAILURE",
+      "evidence": "Nineteen semantic guard failures were replaced by one generic M0 sentence; all 21 fallback ON replies lost the blind quality comparison.",
+      "repair": "Failure to use memory downgrades the realized bit to OFF while preserving a safe current-grounded reply; only genuine safety/ownership failures trigger a no-memory regeneration."
+    },
+    {
+      "id": "CONTRACT_PROSE_NOT_ENFORCED_BY_TEST",
+      "evidence": "The V2 contract forbids telling the generator every retrieved item must be used, but implementation still sets requires_literal_mention for every MS/ME item.",
+      "repair": "A machine invariant fails any executor that requires lexical memory mention, uses cross-component evidence union, or replaces safe non-use with a quality-poor fixed sentence."
+    }
+  ],
+  "MS_V3_candidate_and_gold": {
+    "runtime_candidate": "one strictly-past atomic seeker evidence item with source user, source session, source turn, exact quote, time relation, and active/conflict status",
+    "candidate_discovery": "split seeker turns into bounded atomic clauses; exclude phatic, meta-memory, incomplete-reference, and owner/time-invalid items before semantic ranking",
+    "actual_rank1": "highest frozen production score after structural eligibility; no query or candidate change after gold or outcome access",
+    "prospective_suitability_axes": [
+      "DISTINCT_FROM_CURRENT: the meaning is not already present in the visible dialogue",
+      "IMMEDIATE_GOAL_RELEVANT: the specific old content can serve the current support goal, not merely share a topic",
+      "MATERIAL_USE_PLAN_EXISTS: an explicit use mode would change a question, interpretation, constraint, or option",
+      "OWNER_TIME_BOUNDARY_SAFE: it is the current user's past statement and is not silently upgraded to present truth"
+    ],
+    "gold": "ON only when all four prospective axes are YES; otherwise OFF with one primary negative family",
+    "negative_families": [
+      "CURRENT_SEMANTIC_ECHO",
+      "SAME_TOPIC_WRONG_EVENT",
+      "LOW_INFORMATION_OR_META_REFERENCE",
+      "STALE_RESOLVED_OR_CONFLICTING",
+      "NO_MATERIAL_RESPONSE_CHANGE",
+      "WRONG_OWNER_OR_TIME",
+      "NO_CANDIDATE"
+    ],
+    "label_source": "source-aware researcher annotation with anchored examples; objective hard negatives are machine-derived, ambiguous semantic axes receive human review",
+    "label_independence": "event ancestry, future supporter text, summaries, observations, QA answers/evidence, response outcomes, generator traces, and PM features cannot determine gold",
+    "bounded_semantics": {
+      "recognized_use_modes": [
+        "continue an explicit unresolved question or plan",
+        "compare a prior coping action or constraint with a current update",
+        "avoid asking for a specific fact already supplied only in a past session",
+        "tentatively connect the same person/event when a new development changes the support goal"
+      ],
+      "unknown_behavior": "OFF with semantic-coverage accounting",
+      "claim": "bounded resource suitability, not unrestricted human semantic understanding"
+    }
+  },
+  "MS_V3_executor": {
+    "model_visible_evidence": "owner-tagged, past-tagged source quote plus a prospective use mode; the quote is context to reason over, not text to insert",
+    "generation_rules": [
+      "Synthesize one coherent reply around the current user goal before considering the memory cue.",
+      "Never copy the first-person source quote or expose evidence IDs, components, fields, or scaffolds.",
+      "If the memory cue does not naturally improve the reply, omit it and report the MS bit as unrealized OFF.",
+      "If used, mark continuity tentatively and leave explicit room for change."
+    ],
+    "forbidden_implementation": [
+      "requires_literal_mention for MS or ME",
+      "positive lexical-overlap requirement between source quote and reply",
+      "verbatim user first-person content in the assistant voice",
+      "fixed generic quality fallback for safe memory non-use"
+    ],
+    "postconditions": {
+      "safe_nonuse": "keep the generated current-grounded reply, set realized MS OFF, and count requested-versus-realized adherence separately",
+      "owner_time_or_scaffold_violation": "discard the contaminated reply and perform at most one frozen no-memory generation; count the extra call and cost",
+      "transport_failure": "use the same no-memory failure policy as all baselines",
+      "function_measurement": "source-aware offline judgment of contribution, MS function, and owner/time boundary; generator telemetry never establishes function"
+    }
+  },
+  "MS_V3_learning": {
+    "model": "low-capacity grouped classifier with probabilities; classifier family and feature schema freeze before semantic labels are read",
+    "features": [
+      "frozen semantic relevance score and top1-top2 margin",
+      "semantic novelty/current-echo score",
+      "atomic specificity and low-information indicators",
+      "bounded use-mode indicators",
+      "memory age and same-entity/thread indicators",
+      "stale/conflict/status indicators available strictly before the current response"
+    ],
+    "grouping": "connected public user group; duplicated source conversations remain in one group",
+    "evaluation": "grouped OOF with BA, recall, specificity, ROC-AUC, Brier versus prevalence, calibration, ON/OFF fraction, and per-negative-family recall",
+    "no_gate_chasing": "No threshold or feature change is allowed after grouped OOF. Point estimates and owner-cluster intervals are reported; a single arbitrary BA cutoff is not the paper's success definition.",
+    "pre_API_selection_rule": "MS remains the chosen memory head only if grouped OOF improves both discrimination over chance/always-off and proper scoring over prevalence while retaining nontrivial ON and OFF predictions. If not, run the already-predeclared ME zero-API contingency rather than generator calls."
+  },
+  "end_to_end_success_definition": {
+    "policy_call_accuracy": "agreement of requested MS ON/OFF with the prospective source-aware suitability gold on grouped OOF or an outer held-out surface",
+    "executor_adherence": "among requested ON, the fractions realized functional, safely downgraded OFF, safety-regenerated, and failed transport",
+    "memory_value": "the learned RS-plus-memory policy has positive meaningful-quality NetWin versus RS-only/always-off and produces verified functional memory contributions",
+    "baseline_value": "versus fixed-high and cost-matched fixed policies, learned routing reduces inappropriate memory calls, fallback/safety events, or cost without worse support quality",
+    "risk": "literal owner/time/scaffold events and independent absolute risk are reported separately from quality and function",
+    "uncertainty": "cluster by connected user; do not count sessions or state-action aliases as independent users",
+    "claim_if_only_RS_passes": "paper objective not met",
+    "claim_if_RS_plus_MS_or_ME_passes": "paper objective met even if the other two memory heads remain fixed OFF and are reported as limitations"
+  },
+  "next_authorized_sequence_after_independent_design_audit": [
+    "Freeze an MS V3 atomic candidate and prospective suitability packet using all available public outer-train folds; no generator calls.",
+    "Complete anchored source-aware labels and run one grouped OOF; do not tune after results.",
+    "If MS satisfies the pre-API selection rule, freeze a small hand-confirmed eligible executor qualification and test synthesis/guard behavior without PM changes.",
+    "Only after both zero-API routing and executor qualification, run one new same-stack outer evaluation against RS-only, fixed-high, transparent-rule, and cost-matched baselines.",
+    "If MS fails before API, execute the frozen ME contingency; do not return to MP or generate longitudinal synthetic users."
+  ],
+  "authorization": {
+    "PM_refit": false,
+    "label_creation": false,
+    "candidate_materialization": false,
+    "generator_calls": false,
+    "reviewer_API_calls": false,
+    "external_outcomes": false,
+    "paid_execution": false
+  }
+}

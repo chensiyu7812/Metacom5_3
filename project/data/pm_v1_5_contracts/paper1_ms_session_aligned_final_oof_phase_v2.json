@@ -1,0 +1,51 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-session-aligned-final-oof-phase-v2",
+  "date": "2026-08-10",
+  "status": "MS_SESSION_ALIGNED_SINGLE_FINAL_OOF_CANDIDATE",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "parent_authority_sha256": "3662a25ae0721de9588d824c749622bc4a0d58e50694f5d045655d0e55bf7e92",
+  "input_bindings": [
+    {"role": "method_v2", "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_v2.json", "sha256": "1ebbd3ad0a3ffdde44d4e573e9c30e6c75da2e046677ad1c2fb39f1d0368c184"},
+    {"role": "materialization_report", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_materialization_20260810/report.json", "sha256": "e88e9d181f4a0e055d58d99cb7070f9880fff43ff7b0cdc92f20b2a90d9825b4"},
+    {"role": "independent_final_audit", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_final_audit_20260810/report.json", "sha256": "d11053d55645b77eae5a141dc1b329809c43e343fb7d3b0e2d72970c9adf6626"},
+    {"role": "runtime_states", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_checkpoint_states_unlabeled.jsonl", "sha256": "cc0b688057a5eb5221dd5561ff83d06825c96109865eb4b39d75385277004327"},
+    {"role": "runtime_candidates", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_raw_session_candidates_unlabeled.jsonl", "sha256": "cfd9b5710b7c95de2296fda82bb9ba8dc1ddd76b29dcfef5fb1a5c098f807934"},
+    {"role": "actual_rank1", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_public_20260810/ms_actual_rank1_unlabeled.jsonl", "sha256": "add49426d3fdad02f9fa2be198ed8e66c26c7946d85148685dd6c4664f579902"},
+    {"role": "private_labels", "path": "outputs/pm_v1_5_paper1_ms_session_aligned_labels_private_20260810/ms_session_aligned_labels.jsonl", "sha256": "b3260c7ecd4c557e1c5c1d899ac311dc3617226f0efa274c667643ca646d89c8"},
+    {"role": "carried_RS_report", "path": "outputs/pm_v1_5_paper1_source_annotated_grouped_learnability_20260810/report.json", "sha256": "1e63131e91ca34d5b17c048ff85265951ef7720ef083512ea70603b699016044"}
+  ],
+  "implementation_bindings": [
+    {"role": "session_aligned_feature_primitives", "path": "src/metacom_pm/v1_5_paper1_session_aligned_ms.py", "sha256": "a652764c45c6eac4d314b6233e696652904a84f8ef79983e854a3589ca4e5d1f"},
+    {"role": "single_final_oof_runner", "path": "scripts/v1_5/195l_run_paper1_ms_session_aligned_final_oof_v2_v1_5.py", "sha256": "4800cc87a0aabfeb2ff29ee08de6920f428617de30fb9c4e2c8e5ebe7588b957"}
+  ],
+  "frozen_model": {
+    "features": ["BGE-M3 selection score", "top1-top2 margin", "log1p memory age", "token Jaccard"],
+    "classifier": "StandardScaler plus L2 logistic regression C=0.10 class_weight=balanced liblinear seed=20260810",
+    "threshold": 0.5,
+    "brier_probability": "analytic training-prior correction",
+    "split": "six frozen connected-owner outer folds"
+  },
+  "gates": {
+    "balanced_accuracy_min": 0.60,
+    "recall_min": 0.55,
+    "specificity_min": 0.55,
+    "brier_must_beat_prevalence": true,
+    "predicted_on_fraction_min": 0.15,
+    "predicted_off_fraction_min": 0.15
+  },
+  "authorization": {
+    "one_grouped_oof_fit": true,
+    "private_oof_predictions": true,
+    "full_fit_checkpoint": false,
+    "api_calls": false,
+    "response_generation": false,
+    "baseline_or_external_outcomes": false,
+    "paid_execution": false
+  },
+  "forbidden": [
+    "any second V2 OOF",
+    "feature, model, threshold, gate, checkpoint, label, or split changes after this phase activates",
+    "full fit or external evaluation before this result closes",
+    "synthetic or reviewer rescue data"
+  ]
+}

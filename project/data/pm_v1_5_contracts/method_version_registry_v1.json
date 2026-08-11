@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-method-version-registry-v1",
-  "date": "2026-08-03",
-  "status": "V5_ITT_METHOD_ACTIVE_FULL_FIT_PANEL_AND_PRE_LABEL_TRAINING_SURFACE_READY",
+  "date": "2026-08-10",
+  "status": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_ACTIVE_ZERO_API",
   "purpose": "Prevent repeated reuse of failed methods under new packet names and keep Step1, Step2, data, and evaluation evidence roles separate.",
   "versions": [
     {
@@ -66,7 +66,8 @@
     {
       "id": "V1_5_V5_ITT_SEPARATED_POLICY",
       "method": "existing outcome-blind opportunity layer plus four requested-action ITT value heads under one frozen deterministic typed adapter and response-only generator",
-      "result": "CANONICAL_ACTIVE_METHOD_FIT_EXECUTION_COMPLETE_SINGLE_FULL_OUTCOME_PANEL_READY",
+      "result": "HISTORICAL_FIT_EXECUTION_COMPLETE_SUPERSEDED_FOR_FUTURE_EXECUTION",
+      "historical_result": "CANONICAL_ACTIVE_METHOD_FIT_EXECUTION_COMPLETE_SINGLE_FULL_OUTCOME_PANEL_READY",
       "change_class": "ESTIMAND_AND_PIPELINE_CORRECTION_BEFORE_NEW_FIT_OR_EXTERNAL_OUTCOMES",
       "step1_step2_joint_training": false,
       "step2_human_gate_before_fit": false,
@@ -76,9 +77,124 @@
       "fit_generation_plan": "outputs/pm_v1_5_v5_itt_fit_plan_v2/freeze_manifest.json",
       "fit_outcome_panel": "outputs/pm_v1_5_v5_single_full_fit_outcome_review_v1/manifest.json",
       "fit_training_surface": "outputs/pm_v1_5_v5_fit_training_surface_v1/freeze_report.json",
-      "statistical_unit": "256 state-candidate units nested in 128 two-unit counterfactual groups"
+      "statistical_unit": "256 state-candidate units nested in 128 two-unit counterfactual groups",
+      "superseded_for_future_execution_by": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+      "supersession_reason": "V5/V5.3/V5.4 evidence showed that positive-support-contribution direction was not a reproducible primary training target; historical outcomes remain frozen."
+    },
+    {
+      "id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+      "method": "bounded structural and semantic suitability gate plus four low-capacity requested-action safe-functional-yield probability heads, deterministic 16-action projection, and end-to-end quality/risk/function/cost confirmation",
+      "result": "TERMINAL_MEASUREMENT_FAIL_SUPERSEDED_FOR_FUTURE_TRAINING",
+      "change_class": "PRIMARY_TRAINING_ESTIMAND_AND_CLAIM_TIER_CLOSEOUT_AFTER_V5_4_MEASUREMENT_FAILURE",
+      "active_contract": "data/pm_v1_5_contracts/paper1_bounded_suitability_safe_yield_closeout_v1.json",
+      "active_method_amendment": "data/pm_v1_5_contracts/paper1_primary_head_success_amendment_v1.json",
+      "active_authority": "data/pm_v1_5_contracts/active_method_authority_v1.json",
+      "quality_role": "mandatory final system guardrail, not PM training gold",
+      "head_claim_tiers": {
+        "4": "full four-component learned PM",
+        "2_or_3": "primary partial multi-component learned PM only when RS and at least one memory head pass",
+        "1": "component-specific result only; RS-only and memory-only both fail the Paper 1 primary PM claim",
+        "0": "no learned PM"
+      },
+      "paper1_primary_head_predicate": "RS_pass AND count_pass(MP,MS,ME)>=1",
+      "preferred_target_heads": ["RS", "MP", "MS"],
+      "bounded_sparse_head": "ME",
+      "failed_head": "fixed OFF in learned_pm_qualified",
+      "public_training_sources": [
+        "ESConv outer-train for RS",
+        "EvoEmo outer-train folds for MP_PROFILE, MS_SESSION, ME_REUSABLE_OUTCOME and auxiliary RS"
+      ],
+      "external_diagnostic_only": "ES-MemEval QA gold never trains the response PM",
+      "formal_training_allowed": false,
+      "current_phase": "P2B_CONTROL_FAILED_ANNOTATED_LABEL_REDESIGN_PENDING",
+      "superseded_for_future_training_by": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+      "terminal_evidence": "48/48 control calls completed; four-axis gold failed precommitted per-axis accuracy for every component; public calls=0 and PM fit=false",
+      "reusable": [
+        "typed candidate ontology and compilers",
+        "state-local actual Rank-1 lineage",
+        "integrated typed executor and deterministic fallback",
+        "stagewise responsibility schema",
+        "material-risk taxonomy",
+        "cost and same-stack baseline scaffolds"
+      ],
+      "forbidden": [
+        "reuse V5/V5.3 checkpoints",
+        "reuse V5.3 public suitability labels as gold",
+        "use Quality uplift as the primary PM label",
+        "generate new longitudinal synthetic users",
+        "append a new small packet after a component fails",
+        "activate an artifact by filename recency instead of active manifest hash"
+      ]
+    },
+    {
+      "id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+      "method": "public-author strategy and longitudinal source-link suitability heads with runtime/evaluator physical separation, deterministic 16-action projection, and end-to-end quality/risk/function/cost confirmation",
+      "result": "TERMINAL_PRIMARY_FAIL_SUPERSEDED_BY_SESSION_ALIGNED_V2",
+      "change_class": "LABEL_SOURCE_AND_ESTIMAND_REPLACEMENT_AFTER_TERMINAL_P2B_CONSTRUCT_FAILURE",
+      "active_contract": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_candidate_v1.json",
+      "active_method_amendment": "data/pm_v1_5_contracts/paper1_source_annotated_primary_head_rule_v1.json",
+      "active_authority": "data/pm_v1_5_contracts/active_method_authority_v1.json",
+      "paper1_primary_head_predicate": "RS_pass AND count_pass(MP,MS,ME)>=1",
+      "initial_fixed_off": ["MP"],
+      "expected_primary_route": ["RS", "MS"],
+      "sparse_optional_head": "ME",
+      "quality_role": "mandatory final system guardrail, never a PM label",
+      "formal_training_allowed": false,
+      "current_phase": "GROUPED_LEARNABILITY_COMPLETED_PRIMARY_FAIL",
+      "learnability_result": {
+        "RS_balanced_accuracy": 0.7416834809296017,
+        "RS_status": "PASS",
+        "MS_balanced_accuracy": 0.5959667323673556,
+        "MS_status": "FAIL_FIXED_OFF",
+        "ME_status": "FAIL_FIXED_OFF",
+        "primary_pass": false
+      },
+      "root_cause": "EvoEmo author ancestry is session-level while V1 exposed individual-turn MS candidates",
+      "superseded_for_future_training_by": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+      "external_tracks": ["ESConv", "EvoEmo", "ES-MemEval"],
+      "forbidden": [
+        "LLM-created four-axis training gold",
+        "future supporter strategy or event ancestry in runtime features",
+        "synthetic rescue users or appended rescue packets",
+        "threshold or gate reduction after held-out results"
+      ]
+    },
+    {
+      "id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+      "method": "carried author-annotated RS plus session-aligned raw prior-session MS resources, one bounded checkpoint per current session, four-scalar low-capacity routing, and deterministic 16-action projection",
+      "result": "TERMINAL_MECHANICAL_PRIMARY_FAIL_BORDERLINE_DIRECTIONAL_ONLY",
+      "change_class": "LABEL_RESOURCE_UNIT_ALIGNMENT_AFTER_FIRST_FROZEN_OOF",
+      "active_contract": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_v2.json",
+      "active_method_amendment": "data/pm_v1_5_contracts/paper1_source_annotated_primary_head_rule_v2.json",
+      "active_authority": "data/pm_v1_5_contracts/active_method_authority_v1.json",
+      "paper1_primary_head_predicate": "RS_pass AND MS_pass",
+      "formal_training_allowed": false,
+      "current_phase": "MS_SESSION_ALIGNED_FINAL_OOF_V2",
+      "learnability_result": {
+        "RS_status": "PASS_CARRIED_BY_EXACT_HASH",
+        "MS_pooled_balanced_accuracy": 0.5993336478358297,
+        "MS_equal_owner_macro_balanced_accuracy": 0.6057210411016639,
+        "MS_recall": 0.6330935251798561,
+        "MS_specificity": 0.5655737704918032,
+        "MS_roc_auc": 0.6334768250972993,
+        "MS_brier": 0.2208384648760654,
+        "MS_prevalence_brier": 0.23121024753048963,
+        "MS_status": "FAIL_FIXED_OFF",
+        "primary_pass": false
+      },
+      "root_causes": [
+        "EvoEmo influenced_by is positive-only causal ancestry rather than an exhaustive suitability graph",
+        "141 no-ancestor states and 103 retrieval-miss states are not equally reliable semantic negatives",
+        "17 connected owner groups produce wide cross-user uncertainty"
+      ],
+      "allowed_next": "one separately frozen same-stack system feasibility using immutable cross-fitted predictions, explicitly exploratory and unable to relabel V2 routing as PASS",
+      "forbidden": [
+        "V3 label, checkpoint, encoder, feature, threshold, gate, or rescue-packet loop",
+        "call 0.59933 a formal PASS",
+        "treat sessions as independent users"
+      ]
     }
   ],
-  "canonical_next": "V1_5_V5_ITT_SEPARATED_POLICY",
+  "canonical_next": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
   "external_lockbox_read_for_version_selection": false
 }

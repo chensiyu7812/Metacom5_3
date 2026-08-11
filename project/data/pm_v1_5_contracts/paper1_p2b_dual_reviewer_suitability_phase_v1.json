@@ -1,0 +1,123 @@
+{
+  "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+  "active_method_amendment_sha256": "5896aa748c489af1d1fcd222aa3eaf2e91354945580af8706f020cfb7375fc76",
+  "date": "2026-08-10",
+  "execution": {
+    "absolute_usd_cap": 6.0,
+    "controls_first": true,
+    "formal_agreement_before_adjudication": true,
+    "maximum_output_tokens": 900,
+    "maximum_physical_attempts_per_logical_call": 2,
+    "public_component_calls_only_if_both_reviewers_pass_that_component": true,
+    "retry": "same byte-identical provider-visible request only; no semantic repair message",
+    "seed_base": 20260810,
+    "temperature": 0.0
+  },
+  "forbidden": [
+    "response or paired-effect generation",
+    "safe-yield label creation",
+    "PM fitting or threshold selection",
+    "baseline or external outcome scoring",
+    "prompt edits, extra controls, appended public cases, or lowered gates after any control response"
+  ],
+  "implementation_bindings": [
+    {
+      "path": "src/metacom_pm/v1_5_paper1_suitability.py",
+      "role": "projection_and_metrics",
+      "sha256": "ee4b8142546068d027b386f3222b3b4bf73cfb9c1715789e0a91e172e807ecb7"
+    },
+    {
+      "path": "src/metacom_pm/v1_5_paper1_suitability_review.py",
+      "role": "review_schema_prompt_controls",
+      "sha256": "68eda6483a0881dbb6540eabcd232ae996ec1ae8aecdc10ee47d74585a9a37d3"
+    },
+    {
+      "path": "scripts/v1_5/185l_run_paper1_p2b_dual_suitability_review_v1_5.py",
+      "role": "paid_control_and_public_review_runner",
+      "sha256": "1173b8a4a810a0d66e712c3ff5cfd6751cf764b9c9558d8971bd9bcedea9a406"
+    },
+    {
+      "path": "scripts/v1_5/186l_analyze_paper1_p2b_pre_adjudication_v1_5.py",
+      "role": "zero_api_pre_adjudication_analyzer",
+      "sha256": "f46afafb72af48f92ac8165768543384137682c46feb5f7feb3a2af3eb4266b6"
+    },
+    {
+      "path": "configs/paper1_p2b_review_execution_v1.json",
+      "role": "central_paid_release_execution_config",
+      "sha256": "6e0fdb33f1e97e8391bd7be0697e6065f3552e7f0448d16d107f036117f30e82"
+    }
+  ],
+  "input_bindings": [
+    {
+      "path": "data/pm_v1_5_contracts/paper1_p2_atomic_suitability_design_candidate_v1.json",
+      "role": "p2_atomic_design",
+      "sha256": "7fa860798c872fb3e183f50ca65d6ea12e6e1a2a9d1e2afb0cfde4e3433af1dd"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2a_suitability_packet/reviewer_a_packet_unlabeled.jsonl",
+      "role": "reviewer_a_public_packet",
+      "sha256": "289226c699ead15ff0fd154683ce0ea6ce1938f84d03175b3b49c9b5bf976a6a"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2a_suitability_packet/reviewer_b_packet_unlabeled.jsonl",
+      "role": "reviewer_b_public_packet",
+      "sha256": "9565a511b0a7937c9b55b0f91d00fa8b8c3a714f5b085947de1d151d9a41f5b4"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2a_suitability_packet_private/private_case_key.jsonl",
+      "role": "private_case_key_analysis_only_after_reviews_frozen",
+      "sha256": "06eb16a4985d9ac37807a86f84472dba2fe412ed1cbf461c94a0f196d4fc6b57"
+    },
+    {
+      "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json",
+      "role": "endpoint_config",
+      "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_20260810/reviewer_a_controls_unlabeled.jsonl",
+      "role": "reviewer_a_controls",
+      "sha256": "c5c0d444c3d829e5d79ebc97e7f1025a9cae6a2823ef5d29cf6b47c089578878"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_20260810/reviewer_b_controls_unlabeled.jsonl",
+      "role": "reviewer_b_controls",
+      "sha256": "6f617b7b93b9d1469cbd14ee32a2b64505d6b70b76b7e4d7bf768e698ab21c15"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_private_20260810/control_gold_key.jsonl",
+      "role": "private_control_gold",
+      "sha256": "0b09a51459749a7575824f62db61b5333d218dedb7325838a31e0a86dc404d6f"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_20260810/call_plan.jsonl",
+      "role": "call_plan",
+      "sha256": "578963c35dd5caba7923e56311000f065a95f706dc26ad3cc17f25137a9eede7"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_20260810/cost_ceiling.json",
+      "role": "cost_ceiling",
+      "sha256": "8c4ae861ed18b260dcd10e9d0df2b8c320ce40770eafc960a402a4bf71e50c5a"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p2b_dual_review_freeze_20260810/report.json",
+      "role": "zero_api_freeze_report",
+      "sha256": "62927f768c25d1857d863e8137338ace23a4ae22eb5bbf15493d9ba5db446400"
+    }
+  ],
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "parent_authority_sha256": "79bb9066e07f5fdba8241cca32da8180381e5af51e1828b503ea62c3d89220e9",
+  "protocol": "pm-v1.5-paper1-p2b-dual-reviewer-suitability-phase-v1",
+  "reviewers": {
+    "REVIEWER_A": {
+      "endpoint_key": "anthropic_claude_haiku_4_5",
+      "model": "claude-haiku-4-5-20251001",
+      "transport": "anthropic_messages"
+    },
+    "REVIEWER_B": {
+      "endpoint_key": "openai_gpt_5_mini",
+      "model": "gpt-5-mini-2025-08-07",
+      "transport": "openai_chat_completions"
+    }
+  },
+  "status": "P2B_EXECUTION_CANDIDATE_REQUIRES_AUTHORITY_PROMOTION_AND_PAID_RELEASE"
+}

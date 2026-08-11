@@ -112,7 +112,10 @@ def test_world_validation_rejects_unknown_cross_references() -> None:
             for item in user["profile_history"]
         ],
         "preference_plan": [
-            plan_item(item, {"subtype", "owner_id", "source_turn_ids", "literal_source_span"})
+            {
+                **plan_item(item, {"subtype", "owner_id", "source_turn_ids", "literal_source_span"}),
+                "supersedes_item_id": None,
+            }
             for item in user["response_preference_history"]
         ],
         "session_plan": [
@@ -126,6 +129,12 @@ def test_world_validation_rejects_unknown_cross_references() -> None:
                 "narrative_goal": item["summary"],
             }
             for item in user["sessions"]
+        ],
+        "qa_transport_bundles": [
+            {"bundle_type": "temporal_sequence", "evidence_session_indices": [1, 2]},
+            {"bundle_type": "conflict_or_update", "evidence_session_indices": [1, 2]},
+            {"bundle_type": "user_model_trajectory", "evidence_session_indices": [1, 2]},
+            {"bundle_type": "abstention_no_evidence", "evidence_session_indices": []},
         ],
     }
     contract = json.loads(
@@ -141,6 +150,8 @@ def test_world_validation_rejects_unknown_cross_references() -> None:
         "primary_superdomain": user["primary_superdomain"],
         "schedule_position": 0,
         "session_count": 13,
+        "profile_update_count": 2,
+        "preference_version_mode": "stable",
     }
     preferences = [item["preference_type"] for item in user["response_preference_history"]]
     validate_world(world, assignment, preferences, excerpt)

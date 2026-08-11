@@ -4,6 +4,7 @@ import pytest
 
 from metacom_pm.v1_5_typed_resource_adapter import (
     TypedResourceCandidate,
+    compile_typed_resource,
     compile_typed_bundle,
     deterministic_context_only_fallback,
     response_guard_errors,
@@ -171,3 +172,20 @@ def test_free_temporal_language_is_left_to_grounding_risk_review():
     assert response_guard_errors(
         response="Take a pause before returning to it.", bundle=empty
     ) == ()
+
+
+def test_context_event_compiles_as_tentative_past_context():
+    candidate = TypedResourceCandidate(
+        component="ME",
+        subtype="ME_CONTEXT_EVENT",
+        resource_id="mem_1234567890abcdef",
+        candidate_version="v1",
+        source_kind="event",
+        owner_id="u1",
+        strictly_prior=True,
+        age_sessions=2,
+        past_event="Two weeks ago the user changed teams at work.",
+    )
+    directive = compile_typed_resource(candidate, current_user_id="u1")
+    assert "prior event" in directive.evidence
+    assert "still active" in directive.response_instruction

@@ -1,0 +1,73 @@
+{
+  "protocol": "pm-v1.5-v5.3-public-formal-effect-manifest-v1",
+  "status": "PRE_EFFECT_FROZEN",
+  "formal_freeze_identity": "v53formal_56c79440f9d20e67f20cf071",
+  "source_hashes": {
+    "evoemo": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "esconv": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "esconv_manifest": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "strategy_cards": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24",
+    "development_manifest": "cf3d9f3b8cd2ce6fd76a62b40882075fa526e82e238b1308d926cc626a4df4d5",
+    "public_contract": "38e7aa8b8a30cad00d19ebd810a01fd5e2542b3c1ec97c2a205e0b46558d5a54",
+    "formal_freeze": "5e15460e535b78011cd547d0cc933ffb88681bd31fc1e777d8ce22915d9ba8c2",
+    "formal_manifest_source": "baf5c324864f90b0e9db22072e9e24c75c9f368586e9ca6ae57276fa9ac99535",
+    "pool_materializer_source": "0a206635520e2c9dfb6282fe85c5c84d87dd38b015a256a98119f65664affc99",
+    "typed_adapter_source": "8d2c424dbb5b8d7a5872b64137a4321db8676b8188b6364e9fa21ecd03e9f260",
+    "formal_manifest_materializer": "570cf929991d42ae4d56e17179442764faf4bf840dea61afed4333678a73e079"
+  },
+  "groups": 576,
+  "groups_per_component": {
+    "MP": 144,
+    "MS": 144,
+    "ME": 144,
+    "RS": 144
+  },
+  "paired_generator_seeds_per_group": 3,
+  "selection": "outcome-blind factor-coverage actual Rank-1; 8 states per user/head; distinct RS dialogues",
+  "development_exclusion": "all 96 development source states and 24 RS dialogues excluded before selection",
+  "outer_fold_binding": "memory by frozen user fold; RS exactly 24 held-out dialogue groups per fold",
+  "head_design": {
+    "MP": {
+      "representation": "OUTER_TRAIN_PCA_3_CURRENT_STATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "MS": {
+      "representation": "OUTER_TRAIN_PCA_5_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "ME": {
+      "representation": "GLOBAL_FIXED_RANDOM_PROJECTION_3_CANDIDATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "RS": {
+      "representation": "OUTER_TRAIN_PCA_5_STATE_X_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    }
+  },
+  "target": "continuous replicate-aggregated positive-support-contribution uplift; ties remain zero and negative effects remain negative",
+  "risk": "automatic Gemini risk judge failed canary and is excluded from labels and formal authorization; machine-critical events plus stratified blind human audit",
+  "call_budget": {
+    "generator_calls": 3456,
+    "quality_judge_calls": 1152,
+    "function_judge_calls": 576,
+    "automatic_risk_judge_calls": 0,
+    "base_calls": 5184,
+    "estimated_qf_judge_usd_from_development_rate": 0.7041228,
+    "hard_qf_judge_usd_cap_with_20_percent_headroom": 0.84,
+    "generator_pricing": "frozen NVIDIA hosted prototype endpoint currently free/rate-limited"
+  },
+  "live_execution_allowed": false,
+  "live_blockers": [
+    "independent manifest/hash/cost review before paid formal execution"
+  ],
+  "api_calls": 0,
+  "manifest_identity": "v53formalmanifest_08ed53e1165d18577fdd1f49"
+}

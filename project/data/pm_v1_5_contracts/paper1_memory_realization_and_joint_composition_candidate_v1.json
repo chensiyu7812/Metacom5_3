@@ -1,0 +1,106 @@
+{
+  "protocol": "pm-v1.5-paper1-memory-realization-and-joint-composition-candidate-v1",
+  "date": "2026-08-10",
+  "status": "ZERO_API_IMPLEMENTED_CANDIDATE_GENERATION_NOT_AUTHORIZED",
+  "research_claim_unchanged": "A bounded, auditable four-component PM can conditionally route response resources and outperform scientifically matched fixed policies under one shared executor.",
+  "problem_closed_by_this_version": "Rank-1 is a retrieval object, not automatically generator-ready evidence. The old executor conflated component selection, evidence realization, and multi-resource composition.",
+  "causal_pipeline": [
+    "candidate catalog",
+    "actual Rank-1 retrieval",
+    "PM requested four-bit action",
+    "component-specific exact realization",
+    "deterministic joint feasibility projection",
+    "one typed response plan",
+    "generator uptake",
+    "guard/fallback",
+    "quality, risk, function, and cost measurement"
+  ],
+  "component_semantics": {
+    "MP": {
+      "role": "SILENT_RESPONSE_MODIFIER",
+      "generator_behavior": "change format, burden, timing, or practical framing; do not cite the profile merely to prove use",
+      "minimum_function": "an observable response choice changes because of an active preference or directly relevant stable constraint"
+    },
+    "MS": {
+      "role": "TENTATIVE_CONTINUITY_BRIDGE",
+      "retrieval_unit": "strictly-past raw seeker session",
+      "realization_unit": "one source-exact informative seeker turn selected from actual Rank-1 using current visible seeker text only",
+      "generator_behavior": "use as a past reference with an explicit opening for whether it still applies now",
+      "minimum_function": "the span prevents redundant exploration or materially connects a specific prior focus to the current request"
+    },
+    "ME": {
+      "role": "DECLINABLE_PAST_OPTION",
+      "realization_unit": "source-exact past action plus observed result",
+      "generator_behavior": "offer the past action/result as one optional analogy, never as a rule, cause, or guarantee",
+      "minimum_function": "the action-result pair changes a present option or interpretation without overgeneralization"
+    },
+    "RS": {
+      "role": "PRIMARY_SUPPORT_ACT",
+      "generator_behavior": "execute exactly one atomic support move",
+      "minimum_function": "the selected support move is actually performed and remains the reply's primary discourse act"
+    }
+  },
+  "joint_rules": {
+    "requested_action_space": 16,
+    "requested_action_space_unchanged": true,
+    "requested_feasible_realized_are_separate": true,
+    "MP_never_requires_literal_mention": true,
+    "RS_owns_primary_discourse_act_when_on": true,
+    "R0_is_primary_act_when_RS_off": true,
+    "MS_and_ME_may_coexist_only_when_outcome_blind_relation_is_COMPLEMENTARY": true,
+    "unknown_redundant_or_conflicting_MS_ME": "retain the higher frozen PM score, with deterministic ME tie-break, and record the suppressed component",
+    "missing_safe_realization": "project that component OFF and record NO_SAFE_REALIZED_RESOURCE",
+    "forbidden_prompt_rule": "do not tell the generator that every retrieved item is useful and must be used",
+    "same_projector_for_all_baselines": true
+  },
+  "MS_exact_span_selector": {
+    "query": "all currently visible seeker turns only",
+    "pool": "exact seeker turns inside frozen actual Rank-1 session",
+    "closed_structural_filter": "remove only greetings, thanks, acknowledgements, bare backchannels, and empty turns",
+    "ranker": "the same frozen local BAAI/bge-m3 normalized CLS encoder",
+    "output": "one exact source span; no summary or paraphrase",
+    "abstention": "if no informative exact span exists, project MS OFF before generation",
+    "forbidden_inputs": [
+      "author ancestry label",
+      "event timeline",
+      "session summary or observation",
+      "QA answer or evidence",
+      "future turn",
+      "response outcome or reviewer judgment"
+    ]
+  },
+  "zero_API_diagnostic": {
+    "path": "outputs/pm_v1_5_paper1_ms_memory_realization_diagnostic_20260810/report.json",
+    "status": "ZERO_API_REALIZATION_DIAGNOSTIC_PASS",
+    "all_actual_rank1_rows": 383,
+    "sessions_containing_low_information_turns": 65,
+    "unfiltered_semantic_top_low_information": 0,
+    "selector_abstentions": 0,
+    "selected_exact_source_spans": 383,
+    "selected_visible_exact_redundancy": 0,
+    "median_selected_to_raw_word_ratio": 0.0871559633027523
+  },
+  "what_this_does_not_solve": [
+    "EvoEmo author ancestry is positive-only session lineage and is not an exhaustive current-usefulness oracle",
+    "MP still needs active-trigger and response-transformation suitability rather than profile presence",
+    "ME still needs adequate typed action-result coverage and transfer-condition variation",
+    "a correct composition plan does not guarantee a low-capacity head can learn from few independent owner groups",
+    "generator functional uptake and downstream net benefit still require same-stack outcome evidence"
+  ],
+  "implementation": {
+    "module": "src/metacom_pm/v1_5_memory_realization_v2.py",
+    "response_plan_module": "src/metacom_pm/v1_5_memory_response_plan_v2.py",
+    "tests": [
+      "tests/test_v1_5_memory_realization_v2.py",
+      "tests/test_v1_5_memory_response_plan_v2.py"
+    ],
+    "diagnostic": "scripts/v1_5/196l_diagnose_paper1_ms_memory_realization_v1_5.py"
+  },
+  "authorization": {
+    "PM_refit": false,
+    "label_or_threshold_change": false,
+    "generator_calls": false,
+    "review_calls": false,
+    "paid_execution": false
+  }
+}

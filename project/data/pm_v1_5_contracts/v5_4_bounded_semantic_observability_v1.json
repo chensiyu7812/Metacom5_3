@@ -1,0 +1,65 @@
+{
+  "protocol": "pm-v1.5-v5.4-bounded-semantic-observability-v1",
+  "status": "PRECOMPUTATION_FROZEN_NO_EFFECT_OUTCOME_READ",
+  "date": "2026-08-10",
+  "purpose": "Test whether a frozen low-capacity deployable state-candidate representation can distinguish the randomized construction edit before any response-effect call. This is a support test, not PM value gold.",
+  "inputs": {
+    "runtime_state_candidate_surface": "outputs/pm_v1_5_v5_4_v4_state_local_actual_rank1_20260810/runtime_state_candidate_surface_no_ids_no_assignment.jsonl",
+    "construction_assignment_private_evaluator_only": "outputs/pm_v1_5_v5_4_state_local_authoring_v4_20260810/construction_assignment_private_do_not_join.jsonl",
+    "fidelity_final": "outputs/pm_v1_5_v5_4_v4_fidelity_v2_20260810/fidelity_v2_final_resolved_report.json"
+  },
+  "representation": {
+    "encoder": "BAAI/bge-m3 local snapshot 5617a9f61b028005a4858fdac845db406aefb181",
+    "raw_semantic_block": [
+      "normalized current-user embedding",
+      "normalized actual-candidate embedding",
+      "current minus candidate embedding",
+      "elementwise current times candidate embedding"
+    ],
+    "fold_local_unsupervised_reduction": "center on training rows and retain exactly three SVD principal components; test rows use the training center/basis",
+    "additional_scalar": "current-candidate cosine",
+    "candidate_id_user_id_family_id_assignment_author_and_outcome_forbidden": true
+  },
+  "model_and_split": {
+    "heads": "four separate component-specific ridge least-squares classifiers",
+    "parameters_per_head": "intercept + 3 semantic PCs + 1 cosine",
+    "ridge_lambda": 10.0,
+    "decision_threshold": 0.0,
+    "folds": 6,
+    "grouping": "A/B of one semantic family always held out together; exactly two families per component per fold",
+    "fold_assignment": "stable hash order within component, round-robin into six folds",
+    "feature_standardization": "training-fold mean and scale only",
+    "hyperparameter_or_threshold_search": false
+  },
+  "nuisance_probe": {
+    "features": [
+      "word count",
+      "character count",
+      "question-mark count",
+      "punctuation count",
+      "assigned author endpoint",
+      "A/B position"
+    ],
+    "model": "same ridge lambda and grouped folds",
+    "semantic text_or_candidate_content_forbidden": true
+  },
+  "frozen_gates": {
+    "semantic_overall_balanced_accuracy": ">=0.75",
+    "semantic_overall_macro_f1": ">=0.75",
+    "semantic_each_component_balanced_accuracy": ">=0.65",
+    "nuisance_only_balanced_accuracy": "<=0.60",
+    "normalized_exact_current_user_text_cross_family_duplicate": 0,
+    "nonconstant_labels_and_predictions_each_component": true
+  },
+  "interpretation": {
+    "pass": "The bounded representation can observe the designed distinction. It still does not prove ON helps; only randomized same-state outcomes can do that.",
+    "fail": "Revise or narrow the representation/support claim before effects. Do not turn failed observability into OFF gold and do not blame PM optimization."
+  },
+  "authorization": {
+    "embedding_and_zero_api_observability_test": true,
+    "response_effect_calls": false,
+    "pm_training": false,
+    "private_response_or_oracle_outcome_read": false
+  },
+  "api_calls_for_contract": 0
+}

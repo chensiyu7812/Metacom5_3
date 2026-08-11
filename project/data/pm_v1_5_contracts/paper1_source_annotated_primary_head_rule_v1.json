@@ -1,0 +1,22 @@
+{
+  "protocol": "pm-v1.5-paper1-source-annotated-primary-head-rule-v1",
+  "date": "2026-08-10",
+  "status": "ZERO_API_METHOD_RULE_AWAITING_AUTHORITY",
+  "base_method": {
+    "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+    "contract_path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_candidate_v1.json",
+    "contract_sha256": "013af2f82dd5d7e4bbdb724c29c7849389d06adb2ca2e45ec4fb29b524d6e245"
+  },
+  "required_strategy_head": "RS",
+  "memory_head_set": ["MP", "MS", "ME"],
+  "minimum_passing_memory_heads": 1,
+  "effective_machine_predicate": "RS_pass AND count_pass(MP,MS,ME)>=1",
+  "initial_fixed_off": ["MP"],
+  "expected_primary_route": "RS plus MS; ME may pass but is sparse",
+  "RS_only": "primary failure",
+  "memory_only": "primary failure",
+  "authorization_change": "none",
+  "api_calls": 0,
+  "labels_created": 0,
+  "pm_fit": false
+}

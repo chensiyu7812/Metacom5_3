@@ -1,0 +1,93 @@
+{
+  "protocol": "pm-v1.5-paper1-p1b-actual-rank1-materialization-phase-v1",
+  "date": "2026-08-10",
+  "status": "P1B_ACTIVE_ZERO_API_ACTUAL_RANK1",
+  "purpose": "Authorize exactly one outcome-blind pass that freezes the actual execution candidate for each permitted public state-component surface. This phase creates retrieval observations only: no suitability label, response, judge outcome, PM fit, threshold, baseline result, or external score.",
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+  "active_method_amendment_sha256": "5896aa748c489af1d1fcd222aa3eaf2e91354945580af8706f020cfb7375fc76",
+  "parent_authority_sha256": "e0e7b047523374520f2b68795cc50fa584cefb11eb286f7d5bf4760cf8e636cc",
+  "input_bindings": [
+    {
+      "role": "esconv_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/esconv_states_unlabeled.jsonl",
+      "sha256": "d1ccedca10c95644ac58ddfb28796deb95aa810dcdbbdd5ee6ceddaf011cfc6f"
+    },
+    {
+      "role": "evoemo_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+      "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"
+    },
+    {
+      "role": "evoemo_candidates",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+      "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"
+    },
+    {
+      "role": "strategy_bank",
+      "path": "data/strategy/strategy_cards_v1_5_minimal.jsonl",
+      "sha256": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "rank1_library",
+      "path": "src/metacom_pm/v1_5_paper1_rank1.py",
+      "sha256": "04055bbdfcb183673a89abc5c1fd0ef4226989db25f71be426f08065e7c34984"
+    },
+    {
+      "role": "authority_gated_rank1_materializer",
+      "path": "scripts/v1_5/179l_materialize_paper1_p1b_actual_rank1_v1_5.py",
+      "sha256": "d7faf60070657876b18648e4fc3e49af7babb2f755c7530e6b3252d74ceb8c7b"
+    }
+  ],
+  "preflight_evidence": [
+    {
+      "path": "outputs/pm_v1_5_paper1_p1_structural_surface_final_audit_20260810/report.json",
+      "sha256": "847c4a1ba7d91f80f022f0a4845ad63f111b1e47da671da875cec21b02a00a3b",
+      "required_status": "P1_STRUCTURAL_SURFACE_FINAL_PASS_P1B_RANK1_MAY_BE_DESIGNED"
+    }
+  ],
+  "local_semantic_encoder": {
+    "scope": "MS_only",
+    "model": "BAAI/bge-m3",
+    "snapshot_path": "/home/tokkio/.cache/huggingface/hub/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181",
+    "snapshot_tree_sha256": "f0384ec76e05ff5439dd455f7d65ea523bd90c6273c106cfe9c3629a867b80ba",
+    "network_allowed": false
+  },
+  "frozen_rank1_paths": {
+    "MP": "Current seeker text is matched to a frozen six-field applicability-scope vocabulary; Rank-1 is scope tier, literal lexical score, availability session, and opaque candidate ID descending. Profile values never define eligibility.",
+    "MS": "Local BGE-M3 cosine Rank-1 over every strictly-past same-owner MS candidate, with availability session and opaque candidate ID as deterministic tie-breaks.",
+    "ME": "At least one non-generic content word must overlap; rank by content tier, lexical score, availability session, and opaque candidate ID. If actual Rank-1 fails the typed atomic outcome compiler, the component is absent and Rank-2 is never promoted.",
+    "RS": "The shared six-card candidate uses deterministic transparent priority when an observable opportunity fires and lexical fallback otherwise; explicit stop and active high-stakes are the only whole-pool hard-offs. Candidate identity is shared by every later policy arm."
+  },
+  "expected_surface": {
+    "esconv_rs_rows": 18341,
+    "evoemo_rows_per_component": 4689,
+    "evoemo_components": [
+      "MP",
+      "MS",
+      "ME",
+      "RS"
+    ],
+    "total_rows": 37097
+  },
+  "authorization": {
+    "structural_surface_materialization": false,
+    "actual_rank1_materialization": true,
+    "api_calls": false,
+    "response_generation": false,
+    "label_creation": false,
+    "pm_training": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false
+  },
+  "outputs": {
+    "output_dir": "outputs/pm_v1_5_paper1_p1b_actual_rank1"
+  },
+  "required_terminal_status": "P1B_ACTUAL_RANK1_MATERIALIZATION_PASS_LABELS_AND_OUTCOMES_ABSENT",
+  "next_if_pass": "FREEZE_P2_ATOMIC_SUITABILITY_LABEL_PACKET_AND_REVIEWER_QUALIFICATION_WITHOUT_CHANGING_RANK1",
+  "next_if_fail": "REPAIR_ONLY_A_DEMONSTRATED_RETRIEVAL_IMPLEMENTATION_OR_CAUSALITY_DEFECT; DO_NOT TUNE AGAINST LABELS OR OUTCOMES",
+  "api_calls_for_phase_manifest": 0
+}

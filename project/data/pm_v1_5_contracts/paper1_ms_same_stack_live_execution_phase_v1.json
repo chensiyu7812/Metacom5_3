@@ -1,0 +1,60 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-same-stack-live-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "EXACT_136_CALL_GENERATOR_EXECUTION_AUTHORIZED_REVIEW_FORBIDDEN",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "purpose": "Execute each frozen M0+R0 and MS+R0 state-action-seed exactly once, preserving raw structured provider output before deterministic guard/fallback.",
+  "input_bindings": [
+    {"path": "outputs/pm_v1_5_paper1_ms_same_stack_preflight_20260811/report.json", "sha256": "9289f21020bb39917db22d4f7273ed5ed28bd8bcebc14bd0bd8eb009d92c3854"},
+    {"path": "outputs/pm_v1_5_paper1_ms_same_stack_preflight_20260811/physical_call_plan_private.jsonl", "sha256": "6c4a03c397ae0528d9ce9ad5d5d48d66b08a85a2c0f64ba8a2d170331aab3aa0"},
+    {"path": "outputs/pm_v1_5_paper1_ms_same_stack_preflight_20260811/logical_policy_aliases_private.jsonl", "sha256": "72aa7a11d0f5c5cf5e50cb5ecca6cf2b40f1c0ef411fce5221cb72497a62f12c"},
+    {"path": "configs/experiment.yaml", "sha256": "f473e7179b29d16bc965d3d74cc070844e14565b3ff3e29ea3ebd64665ce6b6f"}
+  ],
+  "implementation_bindings": [
+    {"path": "src/metacom_pm/v1_5_memory_realization_v2.py", "sha256": "13c6424cffc88878a2989f8d2d0ef88c6c08e4fd3be997a7de1041a675d06555"},
+    {"path": "src/metacom_pm/v1_5_memory_response_plan_v2.py", "sha256": "8d4118a4458e719475ca768ab484b6467efeef8ae296d7f3b3b43838c4330937"},
+    {"path": "src/metacom_pm/v1_5_ms_same_stack_feasibility.py", "sha256": "7a75d56f1849d59bc5801e4bbd6fcbf03c6b3c8e0582bc1923c3bcd0b229a087"},
+    {"path": "scripts/v1_5/198l_run_paper1_ms_same_stack_generation_v1_5.py", "sha256": "5a3a7b5e9834ee8603655c1095e3845fd733d25d52f5fdb039123593911f97f8"}
+  ],
+  "generator": {
+    "endpoint": "configs/experiment.yaml:endpoints.generator",
+    "base_url": "https://integrate.api.nvidia.com",
+    "model": "meta/llama-3.1-8b-instruct",
+    "temperature": 0.7,
+    "max_output_tokens": 512,
+    "seed": "one frozen paired seed per state",
+    "physical_calls": 136,
+    "transport_attempts_max": 2,
+    "transport_retry": "identical request only after 429/408/5xx/network timeout",
+    "semantic_rewrite_attempts": 0,
+    "provider_price": "currently free prototype endpoint",
+    "explicit_USD_cap": 0.05
+  },
+  "execution_invariants": [
+    "raw structured provider reply is persisted before guard/fallback",
+    "guard failure and evidence nonuse are valid deployment outcomes and realize deterministic M0+R0",
+    "no completed physical call is regenerated",
+    "three policy aliases reuse the same physical response",
+    "no response changes PM label, feature, decision, threshold, candidate, exact span, sample, prompt, or seed"
+  ],
+  "outputs": {
+    "directory": "outputs/pm_v1_5_paper1_ms_same_stack_generation_20260811",
+    "raw_attempts": "raw_provider_attempts_before_guard.jsonl",
+    "physical_results": "generator_results_private.jsonl",
+    "logical_results": "logical_policy_results_private.jsonl",
+    "report": "report.json"
+  },
+  "authorized": [
+    "136 frozen generator physical calls",
+    "identical transport continuation for missing valid completion only",
+    "machine execution aggregation"
+  ],
+  "forbidden": [
+    "reviewer API calls or human labels",
+    "quality, risk, function, or suitability judgment",
+    "PM refit, threshold selection, feature or label change",
+    "sample, candidate, exact span, prompt, schema, model, seed, or guard revision after any response exists",
+    "external experiment execution",
+    "paid execution above the explicit cap"
+  ]
+}

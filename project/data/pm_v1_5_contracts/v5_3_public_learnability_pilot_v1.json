@@ -1,0 +1,113 @@
+{
+  "protocol": "pm-v1.5-v5.3-public-learnability-pilot-v1",
+  "status": "PRE_EFFECT_FROZEN",
+  "source_hashes": {
+    "evoemo": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "esconv": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "esconv_manifest": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "strategy_cards": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24",
+    "qrf_judge_source": "398549789e77a1ee880855c00c556f4f27a7eeb402e8196795a7e8c4e5668cba"
+  },
+  "pilot_scope": {
+    "memory_users": [
+      "p12",
+      "p13",
+      "p18"
+    ],
+    "groups_per_component": 24,
+    "paired_generator_seeds_per_group": 3,
+    "selection": "outcome-blind greedy coverage over pre-treatment candidate type, relevance, age, redundancy/readiness, user/session; RS uses distinct ESConv dialogues",
+    "actual_rank1_only": true
+  },
+  "learnability_protection": {
+    "continuous_replicate_aggregated_effect_target": true,
+    "tie_is_zero_not_negative": true,
+    "positive_support_contribution_separate_from_absolute_risk": true,
+    "functional_use_is_diagnostic_not_label_intersection": true,
+    "cost_only_after_four_heads": true,
+    "candidate_state_semantic_feature": "frozen local BAAI/bge-m3 cosine",
+    "head_capacity": "4-7 deployable nonconstant features plus regularization",
+    "primary_features": {
+      "MP": [
+        "candidate_state_bge_m3_cosine",
+        "topk_top1_lexical_relevance",
+        "rank1_relative_age",
+        "rank1_injected_tokens",
+        "current_redundant",
+        "candidate_subtype"
+      ],
+      "MS": [
+        "candidate_state_bge_m3_cosine",
+        "topk_top1_lexical_relevance",
+        "rank1_relative_age",
+        "rank1_injected_tokens",
+        "current_redundant",
+        "candidate_subtype"
+      ],
+      "ME": [
+        "candidate_state_bge_m3_cosine",
+        "topk_top1_lexical_relevance",
+        "rank1_relative_age",
+        "rank1_injected_tokens",
+        "current_redundant",
+        "past_action_result"
+      ],
+      "RS": [
+        "candidate_state_bge_m3_cosine",
+        "candidate_subtype",
+        "dialogue_phase_bucket",
+        "card_precondition_met",
+        "observable_explicit_advice_welcome",
+        "observable_question_repetition_block"
+      ]
+    },
+    "outcome_adaptive_resampling_forbidden": true
+  },
+  "execution_freeze": {
+    "generator_endpoint": "generator",
+    "generator_family": "llama",
+    "training_judge_endpoint": "training_judge",
+    "training_judge_family": "google_gemini",
+    "judge_replication_batching": "three paired seeds judged together",
+    "quality_order_balance": [
+      "ON_as_A",
+      "ON_as_B"
+    ],
+    "risk": "one blinded six-response absolute-arm event audit per group",
+    "function": "one blinded three-ON-response typed-use audit per group",
+    "retry_cap": "10 percent of base calls; no silent model substitution",
+    "qrf_protocol": "pm-v1.5-v5.3-qrf-judge-v1",
+    "qrf_zero_api_fixture_tests": "PASS"
+  },
+  "call_and_token_budget": {
+    "effect_groups": 96,
+    "paired_replicates_per_group": 3,
+    "generator_calls": 576,
+    "judge_calls": 384,
+    "base_calls": 960,
+    "maximum_retry_calls_10_percent": 96,
+    "hard_call_cap": 1056,
+    "estimated_generator_input_tokens": 669174,
+    "maximum_generator_output_tokens": 138240,
+    "maximum_judge_input_tokens": 1017600,
+    "maximum_judge_output_tokens": 316800,
+    "usd_not_frozen": false,
+    "pricing_checked_utc_date": "2026-08-09",
+    "generator_price": "NVIDIA hosted prototype endpoint: free API endpoint; rate limited",
+    "judge_price_usd_per_1m_input_tokens": 0.1,
+    "judge_price_usd_per_1m_output_tokens": 0.4,
+    "judge_base_maximum_usd": 0.22848,
+    "full_pilot_hard_usd_cap_including_10_percent_retry": 0.26,
+    "eight_group_canary_hard_usd_cap": 0.03,
+    "pricing_sources": [
+      "https://build.nvidia.com/meta/llama-3_1-8b-instruct?nim=hosted&section=deploy",
+      "https://ai.google.dev/gemini-api/docs/pricing"
+    ]
+  },
+  "live_execution_allowed": false,
+  "live_blockers": [
+    "run 2-group-per-head generator/Step2 schema canary before the 96-group batch"
+  ],
+  "api_calls": 0,
+  "freeze_identity": "v53pilot_fbc9171c89591be186985edc"
+}

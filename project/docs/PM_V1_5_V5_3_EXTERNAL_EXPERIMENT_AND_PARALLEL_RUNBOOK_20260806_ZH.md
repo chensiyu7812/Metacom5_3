@@ -183,16 +183,18 @@ confirmation按下列目标判断；这些数值是透明的实质差异参考�
 
 完整四资源主张的最低“及格”证据分两层，不能混为一个神秘总分：
 
-1. **学会选择**：MP/MS/ME/RS每个head在内部user/family-held-out数据上都必须同时产生ON和OFF，balanced
-   accuracy点估计高于0.5、优于恒开/恒关，并至少不劣于transparent-rule；同时在相同ON率或相同cost下优于
-   matched-random。这里不要求0.8或0.9，也不因单个宽CI宣布算法不存在，但恒关不能算学会。
+1. **学会预测边际价值**：MP/MS/ME/RS 每个 head 在公共主干的 user/dialogue-held-out formal effects 上，
+   grouped OOF MSE 至少比 fold-training-mean predictor 低 5%，OOF Spearman 至少 `0.15`，target 与 prediction
+   非常数且至少覆盖 12 个独立 cluster。训练目标是连续 positive-support-contribution uplift；balanced accuracy
+   仅为 resolved `ON_ONLY/OFF_ONLY/EITHER` 调用诊断，不再控制正式 learnability gate。任一 head 失败即按预冻结
+   规则关闭，不从 outcome 反挑 state、representation 或阈值。
 2. **选择有用**：联合16动作learned-PM相对fixed-high保持质量、降低risk或cost；相对transparent-rule和
    matched-random至少有一个不可由“单纯少开”解释的净改善。只有第一层而没有第二层，只能说分类器学到了
    标签；只有第二层而第一层失败，只能说一种保守启发式碰巧省资源。
 
 外部域只测其真实覆盖的子集：ESConv测RS，EvoEmo测MP_PROFILE/MS/可获得的ME，ES-MemEval测历史检索与QA。
-MP_PREFERENCE和外部缺失的拒绝建议能力由内部受控环境承担。外部不能测到某个子构念，不会抹掉内部证据，
-但也不能伪称该子构念已完成外部验证。
+MP_PREFERENCE等公共数据缺失子构念只保留为明确的未验证范围或已有工程压力测试，不再要求为论文一生成新的长期
+合成用户。外部不能测到某个子构念，不能伪称该子构念已经完成外部验证。
 
 P5的ESConv/EvoEmo使用同一estimand和参考线并报告完整CI，但不设置新的神秘“通过门”。ESConv正式test
 有169个dialogue、EvoEmo有18个user cluster；把turn当独立人会虚增精度。P5直接回答方向、运输、机制、
@@ -246,7 +248,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 1. `always_off`：M0+R0；
 2. `fixed_high_eligible`：所有 eligible RS 开；
 3. `transparent_rule`：冻结人工规则；
-4. `learned_pm_full`：外部动作空间仍为16动作，但 MP/MS/ME被结构性mask，实际检验RS bit；
+4. `learned_pm_qualified`：外部动作空间仍为16动作，但 MP/MS/ME被结构性mask，实际检验RS bit；正式失败head按预注册规则fail closed；
 5. `cost_matched_fixed`：当前栈、outcome-blind冻结；
 6. `cost_and_on_rate_matched_random`：按RS开启率/成本和预冻结seed随机。
 
@@ -293,7 +295,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 1. `always_off`；
 2. `fixed_high_eligible`；
 3. `transparent_rule`；
-4. `learned_pm_full`；
+4. `learned_pm_qualified`；
 5. `cost_matched_fixed`；
 6. `cost_and_on_rate_matched_random`。
 
@@ -420,16 +422,20 @@ QRC，ES-MemEval回答retrieval/QA，不把二者称为独立外部复现。
 |---|---|---|---|
 | always-off / no-memory | 主 | 主 | 主 |
 | fixed-high-eligible / typed fixed-high | 主（RS） | 主 | 主 |
-| transparent-rule | 主 | 主 | 可选次表 |
-| learned-PM-full / typed learned | 主（RS子域） | 主 | 主压力测试 |
+| transparent-rule | 主 | 主 | 不适用（QA使用下列五条件） |
+| learned-PM-qualified / typed learned-qualified | 主（RS子域） | 主 | 主 |
 | cost-matched-fixed | 主，alias则去重 | 主 | 不适用 |
 | cost/on-rate-matched-random | 主 | 主 | 不适用 |
-| Raw Session Top-4 | 不适用 | 次表 | 主 |
-| All Raw Sessions / full history | 不适用 | 次表 | 主 |
-| learned-full-minus-one | 内部/可选RS消融 | 次表 | 不适用 |
+| Raw Session Top-4 / official-session-RAG-top4 | 不适用 | 次表 | 主 |
+| All Raw Sessions / full-history | 不适用 | 次表 | 主 |
+| learned-qualified-minus-one | 内部/可选RS消融 | 次表 | 不适用 |
 | Legacy V1.0 current-stack replay | 条件性次表 | 条件性次表 | 不适用 |
 
 ---
+
+ES-MemEval 的五个互斥正式条件固定为 `no_memory`、`full_history`、`official_session_rag_top4`、
+`typed_memory_fixed_high`、`typed_memory_learned_pm_qualified`；response 侧的 rule/matched baselines 不跨任务硬搬到 QA。
+机器权威和 matching 资格见 `data/pm_v1_5_contracts/v5_3_baseline_matrix_v1.json`。
 
 ## 7. 双 Codex 不冲突执行协议
 
