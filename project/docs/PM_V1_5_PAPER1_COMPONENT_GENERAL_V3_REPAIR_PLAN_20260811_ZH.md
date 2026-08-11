@@ -2,7 +2,7 @@
 
 日期：2026-08-11
 
-状态：`G2_ZERO_API_IMPLEMENTATION_PASS / G3_SURFACE_AUDIT_NEXT / OLD_ARTIFACTS_IMMUTABLE`
+状态：`G4A_V2_PACKET_AND_CONTROL_AUDIT_PASS / G4B_REVIEW_PHASE_DESIGN_NEXT / OLD_ARTIFACTS_IMMUTABLE`
 
 Git 基线：`8337f15`（`Checkpoint accumulated PM V5.3-V5.4 and Paper1 recovery`）
 
@@ -321,7 +321,8 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 
 - `8337f15` 保存此前全部历史；
 - V3 只用新文件；V2 文件只读；
-- active authority 已绑定并关闭 G2 实现，当前只允许 G3 零 API候选面审计设计；API/label/fit 权限保持 false。
+- active authority 已绑定并关闭 G2、G3、G4 design 与 G4A V2 packet/control 物化；当前只允许 G4B
+  reviewer qualification/review phase 的零 API 设计；reviewer/API、label、fit 权限保持 false。
 
 ### G1 — 合同和问题账本
 
@@ -344,12 +345,47 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 - ME 417 candidates 的 typed action-result/readiness/transfer/group 双向支持；
 - identity shortcut、future/summary/QA leakage 为零。
 
+已完成结果：
+
+- 4,689 states、18 runtime wrappers、17 connected groups；
+- MP/MS/ME present 分别为 846/4,442/417；
+- atomic MS 保留 21 条 low-information 与 32 条 current echo 作为 G4 的高价值候选面，不自动贴负标；
+- 93 个 state 同时存在 MP+MS+ME，证明公共面真实支持多组件并存；
+- ME 虽 417 行全部 typed compiler-valid，但只有 15 groups、23 个 distinct action-result，故保持 provisional。
+
 ### G4 — Suitability 资格和一次性标签
 
 - MP_PROFILE、MS 使用全新 anchored binary packet；
 - 四项 checklist 只作解释，不设独立轴门；
 - 双人 overlap 先证明 binary decision 和 primary reason code 可复现；
 - unresolved 保留，禁止 LLM 默认填 0/1。
+
+已完成的 design gate 固定：
+
+- 学习/审核单位是 `state × component × actual Rank-1`，不是每 state 一项；
+- 同一 state 可在 MP/MS/ME 三包中各出现一次，三项可同时 `SUITABLE`；禁止 one-of-K、softmax、
+  winner-take-all 和最多一个 positive memory；
+- MP=204（每 connected group 12）、MS=204（每 group 12）、ME=99（15 groups、每 group 最多 7），
+  共 507 cases；14 个存在三组件共现的 groups 至少保留一个共享 state 的三条独立 case；
+- 四项 checklist 只要求审核者确认已经考虑，不提交四个 YES/NO/UNKNOWN，不计算四轴 κ/accuracy；
+- 每个 component 的资格、agreement 和 label-capacity 独立判定，一个头失败不再机械关闭其他头；
+- 只把双评 `SUITABLE/SUITABLE` 或 `NOT/NOT` exact consensus 用作 primary binary label；分歧或任一
+  abstain 保持 unresolved/runtime OFF；第三方裁决不能回写 pre-adjudication agreement；
+- 该设计没有授权 packet materialization、reviewer/API、label、fit、generator、baseline 或 external。
+
+G4A 已完成：
+
+- V1 首次物化的 507-case 公共选择与盲化机器门通过，但在 reviewer 调用前的语义复核中发现 5 个 MP
+  正 control 已在 current turn 泄露 profile fact，另 1 个 ME 负 control 允许合理的 tentative 用法；
+- V1 没有 reviewer call 或标签，所有输出保留且标为 control semantic fail，不覆盖、不伪装成通过；
+- V2 仅改这 6 个 control surface，其他 30 controls 不变；507 cases、A/B packet 与 private case key 的
+  SHA-256 与 V1 完全相同；
+- V2 独立审计确认 MP/MS/ME=`204/204/99`、17/17/15 groups、14 个 all-three shared groups、全部 21
+  low-information MS、32 echo MS、12 MP redundancy 和 23 ME candidates 均被保留；
+- 公共 payload 无 gold、group/fold/owner alias、score/margin、future/summary/QA/outcome/PM prediction；
+  reviewer calls、labels、PM fit、generator calls 均为 0；
+- 下一阶段必须先冻结 G4B 的 reviewer 身份/模型、资格 controls、批次、schema、raw-first ledger、费用上限和
+  component-specific stop rule，不能直接拿现成环境变量启动调用。
 
 ### G5 — 一次 grouped OOF
 
@@ -400,14 +436,17 @@ eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应�
 
 ## 11. 当前准确位置
 
-截至 G2 验收完成时：
+截至 G4A V2 独立审计完成时：
 
 - 旧 V2 RS 已通过，MS 路由正式失败但有 directional signal；
 - 旧 same-stack 已证明 hard splice / lexical guard / generic fallback 是系统瓶颈；
 - MP 已纠正为 profile-only 并恢复为第一优先级；
 - V3 共同执行逻辑、16-action planner、meaning-absorption prompt、五层 action accounting、safe non-use、
   owner 检查和污染重试已经完成零 API 实现并通过 G2；
-- MP/MS 新 candidate surface、gold、OOF 尚未开始；
+- G3 已确认 MP/MS 可进入 G4，ME 结构合法但因 15 groups/23 candidates 保持 provisional；
+- G4 已冻结并物化 507-case 非排他单决定盲包与 36 个 fresh controls；V2 独立审计通过，但尚未执行任何
+  reviewer、创建 gold 或运行 OOF；
 - 没有新 API、标签、fit、baseline 或 external outcome；
-- 下一步唯一允许工作是 G3 的公共 MP_PROFILE/atomic MS/typed ME 候选面零 API 审计；通过前不得创建
-  suitability 标签、拟合新 head 或调用 generator/reviewer API。
+- 下一步唯一允许工作是 G4B reviewer qualification 与 public dual-review phase 的零 API 设计；必须先
+  绑定两个独立 reviewer、controls、strict schema、raw-first ledger、component-specific gate 和费用上限。
+  在 G4B 新 phase 明确授权前，不得调用 reviewer、创建 suitability 标签、拟合新 head 或调用 generator。

@@ -156,7 +156,6 @@ def validate() -> dict[str, Any]:
         "failed_checks": failed,
         "hashes": {
             "contract_sha256": _sha(CONTRACT),
-            "authority_sha256": _sha(AUTHORITY),
             "human_plan_sha256": _sha(plan_path),
             "failure_ledger_sha256": _sha(ledger_path),
         },

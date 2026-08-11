@@ -55,6 +55,12 @@ def validate_active_authority() -> dict[str, Any]:
     g2_document = read(resolve(g2["path"])) if g2.get("path") else {}
     g3 = feasibility.get("component_general_v3_g3_candidate_surface_audit") or {}
     g3_document = read(resolve(g3["path"])) if g3.get("path") else {}
+    g4 = feasibility.get("component_general_v3_g4_nonexclusive_suitability_design") or {}
+    g4_document = read(resolve(g4["path"])) if g4.get("path") else {}
+    g4a = feasibility.get("component_general_v3_g4a_packet_materialization") or {}
+    g4a_document = read(resolve(g4a["path"])) if g4a.get("path") else {}
+    g4a_v2 = feasibility.get("component_general_v3_g4a_packet_materialization_v2") or {}
+    g4a_v2_document = read(resolve(g4a_v2["path"])) if g4a_v2.get("path") else {}
     known_authority_statuses = {
         "ACTIVE_ZERO_API_V2_TERMINAL_ROUTING_FAIL_SYSTEM_FEASIBILITY_DESIGN_ONLY",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_MS_SYSTEM_FEASIBILITY_GENERATION",
@@ -67,6 +73,10 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4_SUITABILITY_PACKET_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4A_PACKET_PHASE_DESIGN",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4A_PACKET_MATERIALIZATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4A_V2_PACKET_MATERIALIZATION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B_REVIEW_PHASE_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -292,6 +302,115 @@ def validate_active_authority() -> dict[str, Any]:
             ]
             is True
         ),
+        "g4_design_bound_validated_and_nonexecuting": not g4 or (
+            sha(resolve(g4["path"])) == g4["sha256"]
+            and g4["status"]
+            == "G4_NONEXCLUSIVE_SUITABILITY_DESIGN_COMPLETE_G4A_PACKET_PHASE_MAY_BE_DESIGNED"
+            and g4["execution_authority"] is False
+            and sha(resolve(g4["validation_report"]["path"]))
+            == g4["validation_report"]["sha256"]
+            and read(resolve(g4["validation_report"]["path"]))["status"]
+            == g4["validation_report"]["required_status"]
+            and all(value is False for value in g4_document["authorization"].values())
+        ),
+        "g4_design_is_per_component_not_one_memory": not g4 or (
+            g4_document["scientific_unit"]["nonexclusive"] is True
+            and g4_document["scientific_unit"][
+                "same_state_may_enter_multiple_component_packets"
+            ]
+            is True
+            and g4_document["scientific_unit"][
+                "same_state_may_receive_suitable_for_all_present_components"
+            ]
+            is True
+            and g4_document["scientific_unit"][
+                "one_of_k_softmax_winner_take_all_forbidden"
+            ]
+            is True
+            and g4_document["packet_capacity"]["total_planned_cases"] == 507
+            and g4["planned_cases"]
+            == {"MP": 204, "MS": 204, "ME": 99, "total": 507}
+        ),
+        "g4_checklist_is_not_four_labels": not g4 or (
+            g4_document["review_instrument"]["one_primary_decision_only"] is True
+            and g4_document["review_instrument"][
+                "per_axis_yes_no_unknown_outputs_forbidden"
+            ]
+            is True
+            and g4_document["review_instrument"][
+                "per_axis_accuracy_kappa_or_gate_forbidden"
+            ]
+            is True
+        ),
+        "g4a_phase_bound_and_zero_api_materialization_only": not g4a or (
+            sha(resolve(g4a["path"])) == g4a["sha256"]
+            and g4a_document["status"]
+            == "G4A_ZERO_API_NONEXCLUSIVE_PACKET_AND_FRESH_CONTROLS_AUTHORIZED_ONCE"
+            and g4a_document["promoted_from_authority_sha256"]
+            == "b3f95a24693f8c039ccd26387b32b7e1b09f3b4e9f34f9749ee412e3f5bb30ec"
+            and sha(resolve(g4a["validation_report"]["path"]))
+            == g4a["validation_report"]["sha256"]
+            and read(resolve(g4a["validation_report"]["path"]))["status"]
+            == g4a["validation_report"]["required_status"]
+            and g4a_document["authorization"]["packet_materialization"] is True
+            and g4a_document["authorization"]["fresh_control_materialization"]
+            is True
+            and g4a_document["authorization"]["reviewer_calls"] is False
+            and g4a_document["authorization"]["suitability_label_creation"]
+            is False
+            and g4a_document["authorization"]["pm_fit"] is False
+            and g4a_document["authorization"]["paid_execution"] is False
+            and (
+                g4a["execution_authority"] is True
+                or (
+                    g4a["execution_authority"] is False
+                    and g4a["status"]
+                    == "G4A_V1_PUBLIC_PACKET_MACHINE_PASS_CONTROLS_SEMANTIC_FAIL_SUPERSEDED_BEFORE_REVIEW"
+                    and sha(resolve(g4a["completed_report"]["path"]))
+                    == g4a["completed_report"]["sha256"]
+                    and read(resolve(g4a["completed_report"]["path"]))["status"]
+                    == g4a["completed_report"]["required_status"]
+                    and sha(resolve(g4a["semantic_audit"]["path"]))
+                    == g4a["semantic_audit"]["sha256"]
+                    and read(resolve(g4a["semantic_audit"]["path"]))["status"]
+                    == g4a["semantic_audit"]["required_status"]
+                )
+            )
+        ),
+        "g4a_v2_control_repair_bound_and_zero_api_only": not g4a_v2 or (
+            sha(resolve(g4a_v2["path"])) == g4a_v2["sha256"]
+            and g4a_v2_document["status"]
+            == "G4A_V2_ZERO_API_CONTROL_REPAIR_AND_PACKET_REMATERIALIZATION_AUTHORIZED_ONCE"
+            and g4a_v2_document["promoted_from_authority_sha256"]
+            == "89afda8fc0e6dad0cbae0cf9878d4a66d572cb61185ab914418297c25fe633a7"
+            and sha(resolve(g4a_v2["validation_report"]["path"]))
+            == g4a_v2["validation_report"]["sha256"]
+            and read(resolve(g4a_v2["validation_report"]["path"]))["status"]
+            == g4a_v2["validation_report"]["required_status"]
+            and g4a_v2_document["control_delta"]["changed_surfaces"] == 6
+            and g4a_v2_document["control_delta"]["unchanged_surfaces"] == 30
+            and g4a_v2_document["authorization"]["reviewer_calls"] is False
+            and g4a_v2_document["authorization"]["suitability_label_creation"]
+            is False
+            and g4a_v2_document["authorization"]["pm_fit"] is False
+            and g4a_v2_document["authorization"]["paid_execution"] is False
+            and (
+                g4a_v2["execution_authority"] is True
+                or (
+                    g4a_v2["execution_authority"] is False
+                    and g4a_v2["status"]
+                    == "G4A_V2_PACKET_AND_CONTROL_INDEPENDENT_AUDIT_COMPLETE_G4B_REVIEW_PHASE_MAY_BE_DESIGNED"
+                    and sha(resolve(g4a_v2["completed_report"]["path"]))
+                    == g4a_v2["completed_report"]["sha256"]
+                    and read(resolve(g4a_v2["completed_report"]["path"]))["status"]
+                    == g4a_v2["completed_report"]["required_status"]
+                    and sha(resolve(g4a_v2["independent_audit"]["path"]))
+                    == g4a_v2["independent_audit"]["sha256"]
+                    and read(resolve(g4a_v2["independent_audit"]["path"]))["status"]
+                    == g4a_v2["independent_audit"]["required_status"]
+                )
+            )
+        ),
     }
     failed = [name for name, passed in checks.items() if not passed]
     return {
@@ -311,7 +430,15 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "DESIGN_G4_NONEXCLUSIVE_ANCHORED_SUITABILITY_PACKET_ZERO_API"
+            "DESIGN_G4B_REVIEWER_QUALIFICATION_AND_DUAL_REVIEW_PHASE_ZERO_API"
+            if g4a_v2 and g4a_v2.get("execution_authority") is False
+            else "EXECUTE_G4A_V2_ZERO_API_CONTROL_REPAIR_REMATERIALIZATION"
+            if g4a_v2 and g4a_v2.get("execution_authority") is True
+            else "EXECUTE_G4A_ZERO_API_PACKET_AND_FRESH_CONTROL_MATERIALIZATION"
+            if g4a and g4a.get("execution_authority") is True
+            else "DESIGN_G4A_ZERO_API_PACKET_AND_FRESH_CONTROL_MATERIALIZATION_PHASE"
+            if g4 and g4.get("execution_authority") is False
+            else "DESIGN_G4_NONEXCLUSIVE_ANCHORED_SUITABILITY_PACKET_ZERO_API"
             if g3 and g3.get("execution_authority") is False
             else "EXECUTE_G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT_ZERO_API"
             if g3

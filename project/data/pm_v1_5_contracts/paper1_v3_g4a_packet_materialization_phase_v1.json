@@ -1,0 +1,119 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4a-packet-materialization-phase-v1",
+  "date": "2026-08-11",
+  "status": "G4A_ZERO_API_NONEXCLUSIVE_PACKET_AND_FRESH_CONTROLS_AUTHORIZED_ONCE",
+  "promoted_from_authority_sha256": "b3f95a24693f8c039ccd26387b32b7e1b09f3b4e9f34f9749ee412e3f5bb30ec",
+  "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+  "purpose": "Authorize exactly one deterministic, outcome-blind materialization of 507 nonexclusive MP/MS/ME review cases, two independently ordered blind packets, 36 fresh component-specific held-out controls per reviewer, a physically private construction key and a zero-API audit report.",
+  "input_bindings": [
+    {
+      "role": "g4_design",
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4_nonexclusive_suitability_design_v1.json",
+      "sha256": "e44857a8bac9c2084336b28ba4e566d046fc2d1e88f8a71ae60002a50b505d7d"
+    },
+    {
+      "role": "g4_design_validation",
+      "path": "outputs/pm_v1_5_paper1_v3_g4_nonexclusive_suitability_design_20260811/report.json",
+      "sha256": "80cc516460997fa9c4ea1642d3d6b5e6ac4cd1487dc0bc57d0d23c9eca9fdf04"
+    },
+    {
+      "role": "g3_diagnostics",
+      "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl",
+      "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52"
+    },
+    {
+      "role": "evoemo_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+      "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"
+    },
+    {
+      "role": "evoemo_candidates",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+      "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"
+    },
+    {
+      "role": "actual_rank1_unlabeled",
+      "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl",
+      "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"
+    }
+  ],
+  "allowed_new_paths": [
+    "src/metacom_pm/v1_5_g4_nonexclusive_suitability_packet.py",
+    "scripts/v1_5/206l_materialize_paper1_v3_g4a_packet_v1_5.py",
+    "tests/test_v1_5_paper1_v3_g4a_packet.py",
+    "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811",
+    "outputs/pm_v1_5_paper1_v3_g4a_packet_private_20260811"
+  ],
+  "selection_contract": {
+    "MP": 204,
+    "MS": 204,
+    "ME": 99,
+    "total": 507,
+    "same_state_cross_component_allowed": true,
+    "all_three_shared_state_groups_required": 14,
+    "within_component_duplicate_case_forbidden": true,
+    "proxy_flags_are_sampling_only": true,
+    "suitability_labels_remain_null": true
+  },
+  "fresh_controls": {
+    "components": [
+      "MP",
+      "MS",
+      "ME"
+    ],
+    "per_component": 12,
+    "per_component_distribution": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "total": 36,
+    "must_not_reuse_old_p2b_control_or_public_case": true,
+    "gold_key_physically_private": true
+  },
+  "blinding_contract": {
+    "reviewer_packets": 2,
+    "independent_deterministic_orders": true,
+    "public_case_id_is_reviewer_specific": true,
+    "private_case_key_not_in_public_payload": true,
+    "same_state_cross_component_link_not_visible": true,
+    "fold_group_owner_alias_score_margin_proxy_flags_private": true,
+    "future_summary_observation_event_qa_outcome_pm_prediction_forbidden": true
+  },
+  "outputs": {
+    "public_dir": "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811",
+    "private_dir": "outputs/pm_v1_5_paper1_v3_g4a_packet_private_20260811",
+    "public_files": [
+      "reviewer_a_packet.jsonl",
+      "reviewer_b_packet.jsonl",
+      "reviewer_a_controls.jsonl",
+      "reviewer_b_controls.jsonl",
+      "CODEBOOK_ZH.md",
+      "report.json",
+      "report.html"
+    ],
+    "private_files": [
+      "private_case_key.jsonl",
+      "control_gold_key.jsonl"
+    ]
+  },
+  "required_terminal_status": "G4A_PACKET_MATERIALIZATION_PASS_REVIEW_EXECUTION_NOT_AUTHORIZED",
+  "authorization": {
+    "read_bound_inputs": true,
+    "packet_materialization": true,
+    "fresh_control_materialization": true,
+    "private_key_materialization": true,
+    "json_and_html_report": true,
+    "reviewer_calls": false,
+    "human_label_collection": false,
+    "suitability_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": false,
+    "baseline_execution": false,
+    "external_execution": false,
+    "overwrite_successful_output": false
+  },
+  "next_if_pass": "INDEPENDENT_PACKET_AUDIT_THEN_SEPARATE_G4B_REVIEWER_QUALIFICATION_AND_REVIEW_PHASE_DESIGN",
+  "next_if_fail": "REPAIR_ONLY_MACHINE_SELECTION_BLINDING_OR_SCHEMA_DEFECT_WITHOUT_LABELS_OR_OUTCOMES"
+}

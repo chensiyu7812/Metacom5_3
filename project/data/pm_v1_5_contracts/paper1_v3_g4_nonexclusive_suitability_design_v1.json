@@ -1,0 +1,281 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4-nonexclusive-suitability-design-v1",
+  "date": "2026-08-11",
+  "status": "G4_ZERO_API_DESIGN_FROZEN_PACKET_MATERIALIZATION_NOT_AUTHORIZED",
+  "promoted_from_authority_sha256": "641fb8eb059c873bb13f93bde3bdbbe5c621a7eecc5af3a0993bc423f53c8b2b",
+  "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+  "purpose": "Freeze a learnable, source-grounded and nonexclusive suitability label design for MP_PROFILE, atomic MS and provisional typed ME without reviving the failed four-axis instrument or collapsing multiple memories into one choice.",
+  "upstream": {
+    "g3_phase": {
+      "path": "data/pm_v1_5_contracts/paper1_v3_g3_candidate_surface_audit_phase_v1.json",
+      "sha256": "6842f95d90d20f5dc194558b046d75ce89086c0d372b4119b6ece0ee5c46982b"
+    },
+    "g3_report": {
+      "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.json",
+      "sha256": "0e4c29e54fd0951411ed6b686b2f37aee1f62c557e0f0eee4b7ee7298d497041",
+      "required_status": "G3_CANDIDATE_SURFACE_PASS_MP_MS_G4_PACKET_DESIGN_READY_ME_PROVISIONAL"
+    },
+    "g3_diagnostics": {
+      "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl",
+      "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52",
+      "rows": 14067,
+      "labels_created": 0
+    },
+    "repair_contract": {
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+      "sha256_at_design": "8fe7ff0f927f7f232f355371c888fefd25693f26a7163e3b09edeec432fa59f1"
+    }
+  },
+  "scientific_unit": {
+    "grain": "one runtime-visible state by one component by that component's frozen actual Rank-1 candidate",
+    "primary_decision_values": [
+      "SUITABLE",
+      "NOT_SUITABLE",
+      "SEMANTIC_ABSTAIN"
+    ],
+    "nonexclusive": true,
+    "same_state_may_enter_multiple_component_packets": true,
+    "same_state_may_receive_suitable_for_all_present_components": true,
+    "one_of_k_softmax_winner_take_all_forbidden": true,
+    "at_most_one_positive_memory_forbidden": true,
+    "component_absence_is_not_a_semantic_case": true,
+    "structural_or_retrieval_invalidity_is_not_a_semantic_negative": true
+  },
+  "review_instrument": {
+    "one_primary_decision_only": true,
+    "checklist_is_attestation_not_four_labels": [
+      "TARGET_ENTITY_AND_RESPONSE_FUNCTION_CONSIDERED",
+      "SPECIFIC_NONREDUNDANT_INCREMENT_CONSIDERED",
+      "COMPONENT_MINIMUM_REALIZABLE_NOW_CONSIDERED",
+      "CURRENT_BOUNDARY_CONSIDERED"
+    ],
+    "per_axis_yes_no_unknown_outputs_forbidden": true,
+    "per_axis_accuracy_kappa_or_gate_forbidden": true,
+    "required_submission": [
+      "review_item_id",
+      "decision",
+      "primary_reason_code",
+      "visible_span_ids",
+      "candidate_span_ids",
+      "checklist_attested"
+    ],
+    "evidence_mode": "pre-numbered exact span identifiers only; no free-form copied quotations required",
+    "abstain_rule": "Use SEMANTIC_ABSTAIN only when the frozen visible state and candidate do not resolve the bounded suitability question; never use it as a confidence score or silently convert it to NOT_SUITABLE.",
+    "not_a_quality_judgment": true,
+    "not_an_effect_or_worth_opening_judgment": true,
+    "not_a_comparison_between_components": true
+  },
+  "component_anchors": {
+    "MP": {
+      "name": "Profile-based Personalization",
+      "suitable_minimum": "The profile candidate can silently change a concrete constraint, logistical detail, framing choice or materially relevant premise of the next response.",
+      "suitable_reason_codes": [
+        "MATERIAL_CONSTRAINT",
+        "MATERIAL_LOGISTICAL_DETAIL",
+        "MATERIAL_FRAMING",
+        "MATERIAL_PREMISE"
+      ],
+      "not_suitable_reason_codes": [
+        "ALREADY_VISIBLE",
+        "DECORATIVE_ONLY",
+        "CURRENT_SCOPE_MISMATCH",
+        "UNSUPPORTED_INFERENCE_REQUIRED",
+        "CURRENT_BOUNDARY_FORBIDS_PROFILE",
+        "NO_MATERIAL_RESPONSE_CHANGE"
+      ],
+      "forbidden_positive_shortcut": "Profile presence, profession naming or topic overlap alone never establishes SUITABLE."
+    },
+    "MS": {
+      "name": "Atomic cross-session memory",
+      "suitable_minimum": "The exact strictly-past seeker evidence adds a current-unseen continuity cue that can change understanding, one question, a response constraint or the current option while preserving uncertainty about whether it still holds.",
+      "suitable_reason_codes": [
+        "CHANGES_CURRENT_UNDERSTANDING",
+        "CHANGES_ONE_QUESTION",
+        "CHANGES_RESPONSE_CONSTRAINT",
+        "CHANGES_CURRENT_OPTION"
+      ],
+      "not_suitable_reason_codes": [
+        "LOW_INFORMATION_OR_PHATIC",
+        "CURRENT_ECHO_OR_CONTAINMENT",
+        "WRONG_ENTITY_OR_EVENT",
+        "STALE_RESOLVED_OR_CONFLICTING",
+        "TOPIC_ONLY_NO_RESPONSE_CHANGE",
+        "CURRENT_BOUNDARY_FORBIDS_HISTORY",
+        "INCOMPLETE_OR_UNINTERPRETABLE_REFERENCE"
+      ],
+      "forbidden_positive_shortcut": "Source-session ancestry, influenced_by lineage, semantic topic overlap or retrieval score alone never establishes SUITABLE."
+    },
+    "ME": {
+      "name": "Typed past action-result option",
+      "suitable_minimum": "The exact past action-result can serve the current goal as tentative user-owned evidence or one easily declined transferable option without becoming a rule or guarantee.",
+      "suitable_reason_codes": [
+        "CURRENT_READY_USER_EVIDENCE",
+        "CURRENT_READY_DECLINABLE_OPTION",
+        "TRANSFERABLE_WITH_TENTATIVE_FRAMING"
+      ],
+      "not_suitable_reason_codes": [
+        "CURRENT_GOAL_NOT_ACTION_READY",
+        "ACTION_RESULT_NOT_TRANSFERABLE",
+        "ALREADY_VISIBLE_OR_ALREADY_CHOSEN",
+        "CURRENT_BOUNDARY_FORBIDS_ACTION_OR_HISTORY",
+        "WOULD_REQUIRE_RULE_OR_GUARANTEE",
+        "WRONG_ENTITY_OR_EVENT"
+      ],
+      "forbidden_positive_shortcut": "Typed compiler validity or a complete action-result pair alone never establishes SUITABLE.",
+      "independent_of_rs": "Judge ME on its own prospective resource suitability; do not mark it NOT_SUITABLE merely because RS is also present. ME-RS interaction is measured later by the joint planner and same-stack outcomes."
+    }
+  },
+  "packet_capacity": {
+    "MP": {
+      "candidate_present_surface": 846,
+      "connected_groups": 17,
+      "planned_cases": 204,
+      "per_group_target": 12,
+      "sampling": [
+        "include all 12 exact-current-profile-value redundancy flags",
+        "within every connected group include at least two non-job profile-field cases when available",
+        "balance high and low scope score and margin without treating either as a label",
+        "diversify actual candidate identity and candidate age"
+      ]
+    },
+    "MS": {
+      "candidate_present_surface": 4442,
+      "connected_groups": 17,
+      "planned_cases": 204,
+      "per_group_target": 12,
+      "sampling": [
+        "include every one of the 21 low-information Rank-1 cases",
+        "include every one of the 32 exact-or-containment current-echo cases",
+        "within group fill across score, margin, age, length and candidate reuse",
+        "proxy strata select review coverage but never create a target label"
+      ]
+    },
+    "ME": {
+      "candidate_present_surface": 417,
+      "connected_groups": 15,
+      "unique_action_result_candidates": 23,
+      "planned_cases": 99,
+      "per_group_cap": 7,
+      "sampling": [
+        "include all 15 connected groups, including the one group with only one present case",
+        "include all 23 distinct action-result candidates at least once",
+        "then fill up to seven per group across score, margin, age and candidate reuse",
+        "remain provisional until bidirectional resolved labels exist across groups"
+      ]
+    },
+    "total_planned_cases": 507,
+    "co_presence_requirement": "For each of the 14 groups containing MP+MS+ME co-present states, include at least one shared state in all three component packets; keep three separate review cases and permit three SUITABLE decisions.",
+    "outcome_blind_selection": true,
+    "selection_flags_are_not_labels": true,
+    "sample_size_rationale": "Twelve cases per MP/MS connected group yields 204 reviewed cases per primary memory head, so a typical outer-train partition retains roughly 160 cases for a frozen low-dimensional regularized model while group count, not state count, remains the uncertainty unit. ME uses the largest nearly balanced capped sample supported by its sparse 15-group surface."
+  },
+  "blinding_and_leakage": {
+    "reviewer_visible": [
+      "component definition and minimum",
+      "role-marked runtime-visible dialogue through the current seeker turn",
+      "exact frozen candidate spans with owner/time kind but no identity alias",
+      "pre-numbered visible and candidate span identifiers"
+    ],
+    "physically_private": [
+      "state_id and runtime owner alias",
+      "connected group and outer fold",
+      "selection score and top1-top2 margin",
+      "diagnostic sampling stratum and proxy flags",
+      "candidate reuse count and selection order"
+    ],
+    "forbidden_everywhere_in_review_payload": [
+      "future supporter reply",
+      "summary",
+      "observation",
+      "event outcome or future event",
+      "influenced_by as truth",
+      "QA answer or evidence",
+      "generator response or outcome",
+      "quality, risk, function or cost outcome",
+      "PM prediction",
+      "construction intent",
+      "fold or dataset split"
+    ],
+    "same_state_cross_component_link_hidden_from_reviewer": true
+  },
+  "reviewer_qualification": {
+    "reviewer_count": 2,
+    "independent_and_blinded": true,
+    "reviewer_type_and_provenance_must_be_recorded": true,
+    "llm_reviewer_must_never_be_called_human": true,
+    "worked_training_anchors_before_qualification": true,
+    "held_out_controls_per_component": 12,
+    "control_composition_per_component": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "component_specific_gate": {
+      "exact_three_class_accuracy_min": 0.8333333333333334,
+      "resolved_binary_accuracy_min": 0.9,
+      "abstain_controls_correct_min": 2,
+      "critical_boundary_controls_correct_required": true,
+      "degenerate_single_class_output_forbidden": true
+    },
+    "failure_behavior": "A reviewer failing one component may not label that component's public packet. Failure does not disable other qualified components. A fresh predeclared replacement reviewer may qualify once; controls, thresholds and codebook may not be changed after seeing qualification results.",
+    "old_p2b_controls_or_public_cases_reused_as_held_out_controls": false
+  },
+  "pre_adjudication_and_label_freeze": {
+    "public_packet_dual_review_required": true,
+    "agreement_is_computed_before_any_adjudication": true,
+    "component_specific_measurement_gate": {
+      "exact_three_class_raw_agreement_min": 0.75,
+      "resolved_binary_raw_agreement_min": 0.8,
+      "gwet_ac1_min": 0.6,
+      "exact_consensus_resolved_coverage_min": 0.65
+    },
+    "primary_training_label_rule": "Only exact SUITABLE/SUITABLE or NOT_SUITABLE/NOT_SUITABLE consensus creates a primary binary training label.",
+    "disagreement_or_any_abstain": "UNRESOLVED; runtime defaults OFF and the row is excluded from primary binary training.",
+    "adjudication": "Optional identified third-reviewer adjudication is reported separately and may support sensitivity analysis, but never rewrites pre-adjudication agreement and is not required to manufacture primary labels.",
+    "minimum_resolved_training_capacity": {
+      "MP": {
+        "total": 128,
+        "each_class": 32,
+        "groups_overall": 17,
+        "groups_per_class": 8
+      },
+      "MS": {
+        "total": 128,
+        "each_class": 32,
+        "groups_overall": 17,
+        "groups_per_class": 8
+      },
+      "ME": {
+        "total": 60,
+        "each_class": 15,
+        "groups_overall": 12,
+        "groups_per_class": 6
+      }
+    },
+    "head_failure_behavior": "A component that fails reproducibility or resolved-capacity gates is fixed OFF for Paper 1; no threshold, sample, reason-code or codebook edits on the same reviewed cases.",
+    "one_review_wave_only": true
+  },
+  "learning_boundary": {
+    "labels_are_resource_suitability_not_response_uplift": true,
+    "cost_does_not_define_label": true,
+    "features_are_frozen_before_label_open": true,
+    "connected_group_outer_folds_required": true,
+    "same_source_aliases_never_cross_fold": true,
+    "same_state_component_cases_remain_separate_rows_but_share_group": true,
+    "no_identity_or_raw_profile_value_feature": true,
+    "no_training_or_threshold_selection_authorized_by_this_design": true
+  },
+  "authorization": {
+    "packet_materialization": false,
+    "control_materialization": false,
+    "reviewer_calls": false,
+    "human_label_collection": false,
+    "suitability_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": false,
+    "baseline_execution": false,
+    "external_execution": false
+  },
+  "next_gate": "G4A_ZERO_API_NONEXCLUSIVE_PACKET_AND_FRESH_CONTROL_MATERIALIZATION_PHASE_DESIGN"
+}

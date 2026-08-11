@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4_SUITABILITY_PACKET_DESIGN",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B_REVIEW_PHASE_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -156,11 +156,11 @@
       "component_general_v3_repair_contract": {
         "status": "ZERO_API_REPAIR_CONTRACT_VALIDATED_G2_PHASE_MAY_BE_DESIGNED",
         "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
-        "sha256": "8fe7ff0f927f7f232f355371c888fefd25693f26a7163e3b09edeec432fa59f1",
+        "sha256": "24c544c464f0df82740ff07fbbdbf7d659f1ceb5400faf44f79d8d0d59c51c61",
         "git_baseline": "8337f15",
         "validation_report": {
           "path": "outputs/pm_v1_5_paper1_component_general_v3_repair_contract_validation_20260811/report.json",
-          "sha256": "8aa2aa9825856e47bbf4d8a6b1d9ea850aba5218df72e5cbbf2b16c13883491b",
+          "sha256": "7ecf93751fd08498631b392997a2412321e394877af44f5ac71208dc1faa5411",
           "required_status": "V3_REPAIR_CONTRACT_PASS_G2_PHASE_MAY_BE_DESIGNED"
         },
         "next_gate": "G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_TESTS",
@@ -203,6 +203,73 @@
         },
         "next_gate": "G4_NONEXCLUSIVE_ANCHORED_SUITABILITY_PACKET_DESIGN",
         "execution_authority": false
+      },
+      "component_general_v3_g4_nonexclusive_suitability_design": {
+        "status": "G4_NONEXCLUSIVE_SUITABILITY_DESIGN_COMPLETE_G4A_PACKET_PHASE_MAY_BE_DESIGNED",
+        "path": "data/pm_v1_5_contracts/paper1_v3_g4_nonexclusive_suitability_design_v1.json",
+        "sha256": "e44857a8bac9c2084336b28ba4e566d046fc2d1e88f8a71ae60002a50b505d7d",
+        "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+        "scope": "zero-API design of 507 nonexclusive state-by-component suitability cases and fresh component-specific reviewer qualification only",
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4_nonexclusive_suitability_design_20260811/report.json",
+          "sha256": "80cc516460997fa9c4ea1642d3d6b5e6ac4cd1487dc0bc57d0d23c9eca9fdf04",
+          "required_status": "G4_NONEXCLUSIVE_SUITABILITY_DESIGN_PASS_G4A_PACKET_PHASE_MAY_BE_DESIGNED"
+        },
+        "planned_cases": {
+          "MP": 204,
+          "MS": 204,
+          "ME": 99,
+          "total": 507
+        },
+        "nonexclusive": true,
+        "next_gate": "G4A_ZERO_API_NONEXCLUSIVE_PACKET_AND_FRESH_CONTROL_MATERIALIZATION_PHASE_DESIGN",
+        "execution_authority": false
+      },
+      "component_general_v3_g4a_packet_materialization": {
+        "status": "G4A_V1_PUBLIC_PACKET_MACHINE_PASS_CONTROLS_SEMANTIC_FAIL_SUPERSEDED_BEFORE_REVIEW",
+        "path": "data/pm_v1_5_contracts/paper1_v3_g4a_packet_materialization_phase_v1.json",
+        "sha256": "d209a8c9a05ce06639ef05a99cd9d8a164dc2e2e8ea16035f5f2c08b86606ee7",
+        "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_phase_validation_20260811/report.json",
+          "sha256": "a348f6bc161de3ba87d2d7532151969a531b5418798d891e3cd122dd20cc264c",
+          "required_status": "G4A_PACKET_PHASE_PASS_ZERO_API_MATERIALIZATION_MAY_BE_AUTHORIZED"
+        },
+        "scope": "exactly one zero-API materialization of 507 unlabeled nonexclusive cases, 36 fresh controls per reviewer, private keys and audit reports",
+        "completed_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/report.json",
+          "sha256": "0e2645faa4d42ad96758d01192da8930f1a37f24fa666571b0c99424ee225e11",
+          "required_status": "G4A_PACKET_MATERIALIZATION_PASS_REVIEW_EXECUTION_NOT_AUTHORIZED"
+        },
+        "semantic_audit": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_control_semantic_audit_20260811/report.json",
+          "sha256": "14df383ab8bb3d18dbc422c4d67792d92970a5c3b4c3814c87eee58255dbc93c",
+          "required_status": "G4A_V1_PUBLIC_PACKET_MACHINE_PASS_CONTROLS_SEMANTIC_FAIL_SUPERSEDE_BEFORE_REVIEW"
+        },
+        "execution_authority": false
+      },
+      "component_general_v3_g4a_packet_materialization_v2": {
+        "status": "G4A_V2_PACKET_AND_CONTROL_INDEPENDENT_AUDIT_COMPLETE_G4B_REVIEW_PHASE_MAY_BE_DESIGNED",
+        "path": "data/pm_v1_5_contracts/paper1_v3_g4a_packet_materialization_phase_v2.json",
+        "sha256": "6b2136d89a457a50304c3076624bf95533afa74b59f137b4ee4cf936c5060f02",
+        "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_phase_v2_validation_20260811/report.json",
+          "sha256": "e52bdc309ecfe43370fe98cfda60415d00b471a2ae27199c437d61513dac7d66",
+          "required_status": "G4A_V2_PACKET_PHASE_PASS_ZERO_API_REMATERIALIZATION_MAY_BE_AUTHORIZED"
+        },
+        "scope": "preserve V1 outputs; rematerialize the same 507 cases in new paths while changing exactly five MP-positive and one ME-negative fresh control",
+        "completed_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/report.json",
+          "sha256": "5854ed1dc7703de7df578239a00c59517e2bece275b3d25b4f78b8cc0ac9ccff",
+          "required_status": "G4A_V2_PACKET_MATERIALIZATION_PASS_REVIEW_EXECUTION_NOT_AUTHORIZED"
+        },
+        "independent_audit": {
+          "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_audit_20260811/report.json",
+          "sha256": "abcec9d1364d596a1f936e9633145442e10e6069b67c4a5787ac62346259837d",
+          "required_status": "G4A_V2_PACKET_INDEPENDENT_AUDIT_PASS_G4B_REVIEW_PHASE_MAY_BE_DESIGNED"
+        },
+        "execution_authority": false
       }
     },
     "allowed": [
@@ -223,6 +290,12 @@
       "zero-API design of the G3 public MP/MS/ME candidate surface audit",
       "read-only audit of the completed G3 candidate surface diagnostics and report",
       "zero-API design of the G4 nonexclusive anchored MP/MS suitability packet and provisional ME capacity packet",
+      "read-only validation of the completed G4 nonexclusive suitability design",
+      "zero-API design of the G4A 507-case packet and fresh held-out control materialization phase",
+      "the exact one-time zero-API G4A packet/control/private-key materialization authorized by paper1_v3_g4a_packet_materialization_phase_v1.json",
+      "the exact one-time zero-API G4A V2 control-repair rematerialization authorized by paper1_v3_g4a_packet_materialization_phase_v2.json",
+      "read-only validation of the completed G4A V2 packet and independent audit",
+      "zero-API design of a separately hash-bound G4B reviewer qualification and dual-review execution phase",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
