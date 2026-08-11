@@ -9,15 +9,20 @@
   },
   "human_plan": {
     "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-    "sha256": "cff641350e73b07a74091c92a1c3fbda32c43c8e25a4dd0a573c86fb01cab386"
+    "sha256": "a90a350fb0cb0cc3e4634b91736c677926373cca609a656a3392d4875575d053"
   },
   "parent_rescue_decision": {
     "path": "data/pm_v1_5_contracts/paper1_memory_head_rescue_decision_v2.json",
     "sha256": "96a861a82e04683bf531de2272bf5ec4d19799c4f9a359ce17d1cc7118cb216f"
   },
+  "parent_rule_override": {
+    "superseded_rule": "Default to at most one explicit memory contribution and suppress one component for unknown, redundant, or conflicting relations.",
+    "replacement": "There is no global one-memory cap. Every requested memory bit remains jointly planned when structurally eligible and not blocked by an explicit hard safety or boundary veto.",
+    "reason": "The one-memory cap collapses unobserved MS-ME and higher-order treatments before generation, conflicts with the 16-action factorial design, and prevents interaction effects from being measured."
+  },
   "global_failure_ledger": {
     "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-    "sha256": "98e666506fdbc054ae6c4853afae2ac65a01d99c16b3b57b603be9169facb60a",
+    "sha256": "bd0455fc55d3de11063b5a6c0d252159e8a8ad8d1d8a858428d3ca0198fcc454",
     "required_section": "23. 2026-08-11 Paper 1 共同 V3：literal splice、MP 范围回退与全链路修复"
   },
   "historical_evidence": [
@@ -106,7 +111,8 @@
     },
     "response_budget": {
       "primary_acts": 1,
-      "explicit_memory_contributions_max": 1,
+      "explicit_memory_contributions_max": 2,
+      "global_one_memory_cap": false,
       "low_burden_invitations_max": 1,
       "MP_visible_act": false
     },
@@ -118,6 +124,19 @@
       "MS-RS",
       "ME-RS"
     ],
+    "pre_outcome_joint_policy": {
+      "preserve_all_requested_bits_when_structurally_eligible_and_no_hard_safety_veto": true,
+      "unknown_redundant_or_conflicting_relation_automatically_suppresses_a_bit": false,
+      "pair_relation_role": "guide coherent synthesis and stratify interaction outcomes, never erase a structurally eligible factorial treatment before outcome measurement",
+      "only_pre_outcome_projection_reasons": [
+        "candidate absent",
+        "owner invalid",
+        "time invalid",
+        "version invalid",
+        "compiler invalid",
+        "explicit hard safety or boundary veto"
+      ]
+    },
     "meaning_absorption": {
       "exact_source_is_audit_evidence_not_insert_text": true,
       "literal_mention_required": false,
@@ -195,7 +214,8 @@
     "V2 evidence hashes remain unchanged",
     "MP is profile-only",
     "all 16 requested actions compile",
-    "all six component pairs have explicit relations",
+    "all six component pairs have explicit relations without a global one-memory cap",
+    "all 16 requested actions remain the corresponding 16 jointly planned actions when candidates are structurally eligible and no hard safety veto applies",
     "no personal component requires literal mention",
     "no lexical overlap establishes use or function",
     "safe nonuse never triggers a fixed generic fallback",

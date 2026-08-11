@@ -25,3 +25,19 @@ def test_component_general_v3_repair_contract_passes_all_checks():
     assert report["labels_created"] == 0
     assert report["pm_fit"] is False
     assert report["v3_implementation_authorized"] is False
+
+
+def test_full_sixteen_action_design_has_no_global_one_memory_cap():
+    contract = _module()._read(_module().CONTRACT)
+    budget = contract["v3_executor"]["response_budget"]
+    policy = contract["v3_executor"]["pre_outcome_joint_policy"]
+
+    assert budget["primary_acts"] == 1
+    assert budget["explicit_memory_contributions_max"] == 2
+    assert budget["global_one_memory_cap"] is False
+    assert policy[
+        "preserve_all_requested_bits_when_structurally_eligible_and_no_hard_safety_veto"
+    ] is True
+    assert policy[
+        "unknown_redundant_or_conflicting_relation_automatically_suppresses_a_bit"
+    ] is False

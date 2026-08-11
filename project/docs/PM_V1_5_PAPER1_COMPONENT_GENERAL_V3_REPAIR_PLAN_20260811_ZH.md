@@ -201,14 +201,18 @@ mention 或 lexical overlap。
 | 组合 | 规则 |
 |---|---|
 | MP + 任意组件 | MP 只能静默修改已选 primary act；若只能念 profile 或引入 stereotype，MP OFF |
-| MS + ME | 默认最多一个显式记忆贡献；只有二者构成一个 coherent chain 且总负担合格时共存 |
+| MS + ME | 只要二者各自 structurally eligible 且无 hard safety/boundary veto，就允许同时进入联合规划；relation 用于组织 coherent synthesis 和分层测量，不得在看到 outcome 前自动删 bit |
 | MS + RS | MS 只能为 RS 提供上下文，不能增加第二个问题、解释任务或建议 |
 | ME + RS | RS=建议类时不得再加独立 ME option；相同 act 才能合并 |
 | MP + MS/ME | MP 可改变记忆表达的约束/负担，但不能把 profile 当作支持 memory 真实性的证据 |
-| UNKNOWN/REDUNDANT/CONFLICT | 使用冻结 score/priority 和固定 tie-break 压制一个 component，记录原因 |
+| UNKNOWN/REDUNDANT/CONFLICT | 不在正式 16-action interaction 前自动压制 component；分别用澄清、合并或显式冲突处理指导 synthesis，并记录 claimed/verified use、负担、Quality、Risk、Function、Cost |
 
-回复预算固定为：一个 primary act、最多一个显式 memory contribution、最多一个低负担 invitation。
-MP 不占显式 act，但必须产生可审计的 response-choice delta。
+回复组织固定为：恰好一个 primary act、最多一个低负担 invitation，但**不设置全局单记忆上限**。
+MS 与 ME 可同时支持同一个 primary act；MP 不占显式 act，但必须产生可审计的 response-choice delta。
+当 MP/MS/ME/RS 均 structurally eligible 且无 hard veto 时，完整 `MP+MS+ME+RS` 是合法的 jointly
+planned action。只有 candidate absent、owner/time/version/compiler invalid 或明确 hard safety/boundary veto
+可以在 outcome 前把 requested bit 投影为 OFF。冗余、冲突、负担和 generator non-use 是要测的交互结果，
+不能由透明规则预先消灭。
 
 ### 5.3 Meaning absorption prompt
 
@@ -290,7 +294,8 @@ same-stack policy 对 baselines 的 Q/R/F/Cost 和 functional memory contributio
 - cost-matched fixed；
 - cost-and-ON-rate-matched random。
 
-全 16-action interaction 在同一 state 上运行，不允许不同 action 分配不同 state。报告：
+全 16-action interaction 在同一 state 上运行，不允许不同 action 分配不同 state。当候选均 structurally
+eligible 且无 hard veto 时，16 个 requested actions 必须保持为对应的 16 个 jointly planned actions。报告：
 
 - 四 bit Hamming/exact/oracle-compatible；
 - requested→eligible→planned→claimed→verified funnel；

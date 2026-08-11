@@ -161,6 +161,22 @@ def validate_active_authority() -> dict[str, Any]:
             == {"ESConv", "EvoEmo", "ES-MemEval"}
             and "MP_PREFERENCE" in v3_repair_document["component_scope"]["forbidden"]
         ),
+        "v3_repair_preserves_full_sixteen_without_one_memory_cap": not v3_repair or (
+            v3_repair_document["v3_executor"]["response_budget"]["global_one_memory_cap"]
+            is False
+            and v3_repair_document["v3_executor"]["response_budget"][
+                "explicit_memory_contributions_max"
+            ]
+            == 2
+            and v3_repair_document["v3_executor"]["pre_outcome_joint_policy"][
+                "preserve_all_requested_bits_when_structurally_eligible_and_no_hard_safety_veto"
+            ]
+            is True
+            and v3_repair_document["v3_executor"]["pre_outcome_joint_policy"][
+                "unknown_redundant_or_conflicting_relation_automatically_suppresses_a_bit"
+            ]
+            is False
+        ),
         "v3_repair_forbids_literal_lexical_and_generic_nonuse_fallback": not v3_repair or (
             v3_repair_document["v3_executor"]["meaning_absorption"]["literal_mention_required"] is False
             and v3_repair_document["v3_executor"]["meaning_absorption"]["lexical_overlap_required"] is False

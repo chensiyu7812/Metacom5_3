@@ -81,13 +81,22 @@ def validate() -> dict[str, Any]:
         == ["SUITABLE", "NOT_SUITABLE", "SEMANTIC_ABSTAIN"],
         "all_six_component_pairs": set(contract["v3_executor"]["pair_rules_required"])
         == {"MP-MS", "MP-ME", "MP-RS", "MS-ME", "MS-RS", "ME-RS"},
-        "one_primary_bounded_response_budget": contract["v3_executor"]["response_budget"]
+        "one_primary_without_one_memory_cap": contract["v3_executor"]["response_budget"]
         == {
             "primary_acts": 1,
-            "explicit_memory_contributions_max": 1,
+            "explicit_memory_contributions_max": 2,
+            "global_one_memory_cap": False,
             "low_burden_invitations_max": 1,
             "MP_visible_act": False,
-        },
+        }
+        and contract["v3_executor"]["pre_outcome_joint_policy"][
+            "preserve_all_requested_bits_when_structurally_eligible_and_no_hard_safety_veto"
+        ]
+        is True
+        and contract["v3_executor"]["pre_outcome_joint_policy"][
+            "unknown_redundant_or_conflicting_relation_automatically_suppresses_a_bit"
+        ]
+        is False,
         "no_literal_or_lexical_use_gate": contract["v3_executor"]["meaning_absorption"][
             "literal_mention_required"
         ]
