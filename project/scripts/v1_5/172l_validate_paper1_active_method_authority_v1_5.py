@@ -66,6 +66,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G2_IMPLEMENTATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_EXECUTION",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4_SUITABILITY_PACKET_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -250,7 +251,6 @@ def validate_active_authority() -> dict[str, Any]:
         ),
         "g3_surface_audit_bound_zero_api_and_unlabeled": not g3 or (
             sha(resolve(g3["path"])) == g3["sha256"]
-            and g3["execution_authority"] is True
             and g3_document["status"]
             == "G3_ZERO_API_PUBLIC_CANDIDATE_SURFACE_AUDIT_AUTHORIZED_ONCE"
             and g3_document["promoted_from_authority_sha256"]
@@ -260,6 +260,23 @@ def validate_active_authority() -> dict[str, Any]:
             and g3_document["authorization"]["reviewer_calls"] is False
             and g3_document["authorization"]["pm_fit"] is False
             and g3_document["authorization"]["paid_execution"] is False
+            and (
+                g3["execution_authority"] is True
+                or (
+                    g3["execution_authority"] is False
+                    and g3["status"]
+                    == "G3_CANDIDATE_SURFACE_COMPLETE_MP_MS_G4_PACKET_DESIGN_READY_ME_PROVISIONAL"
+                    and sha(resolve(g3["validation_report"]["path"]))
+                    == g3["validation_report"]["sha256"]
+                    and read(resolve(g3["validation_report"]["path"]))["status"]
+                    == g3["validation_report"]["required_status"]
+                    and sha(resolve(g3["diagnostic_rows"]["path"]))
+                    == g3["diagnostic_rows"]["sha256"]
+                    and g3["diagnostic_rows"]["labels_created"] == 0
+                    and sha(resolve(g3["html_report"]["path"]))
+                    == g3["html_report"]["sha256"]
+                )
+            )
         ),
         "g3_surface_audit_preserves_nonexclusive_components": not g3 or (
             g3_document["nonexclusive_requirement"][
@@ -294,7 +311,9 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "EXECUTE_G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT_ZERO_API"
+            "DESIGN_G4_NONEXCLUSIVE_ANCHORED_SUITABILITY_PACKET_ZERO_API"
+            if g3 and g3.get("execution_authority") is False
+            else "EXECUTE_G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT_ZERO_API"
             if g3
             else "DESIGN_G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT"
             if g2 and g2.get("execution_authority") is False

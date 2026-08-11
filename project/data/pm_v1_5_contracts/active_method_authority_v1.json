@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_EXECUTION",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4_SUITABILITY_PACKET_DESIGN",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -156,11 +156,11 @@
       "component_general_v3_repair_contract": {
         "status": "ZERO_API_REPAIR_CONTRACT_VALIDATED_G2_PHASE_MAY_BE_DESIGNED",
         "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
-        "sha256": "447c30bea620d28af357f49d474cf6b1f8ead7fe613981b8dd00db64a9a04256",
+        "sha256": "8fe7ff0f927f7f232f355371c888fefd25693f26a7163e3b09edeec432fa59f1",
         "git_baseline": "8337f15",
         "validation_report": {
           "path": "outputs/pm_v1_5_paper1_component_general_v3_repair_contract_validation_20260811/report.json",
-          "sha256": "bd5e4e40aa749979f57db9d4216c275a346ca0d59a70c5e5598d4edc54cfc829",
+          "sha256": "8aa2aa9825856e47bbf4d8a6b1d9ea850aba5218df72e5cbbf2b16c13883491b",
           "required_status": "V3_REPAIR_CONTRACT_PASS_G2_PHASE_MAY_BE_DESIGNED"
         },
         "next_gate": "G2_COMPONENT_GENERAL_V3_ZERO_API_IMPLEMENTATION_TESTS",
@@ -181,12 +181,28 @@
         "execution_authority": false
       },
       "component_general_v3_g3_candidate_surface_audit": {
-        "status": "G3_ZERO_API_PUBLIC_CANDIDATE_SURFACE_AUDIT_AUTHORIZED_ONCE",
+        "status": "G3_CANDIDATE_SURFACE_COMPLETE_MP_MS_G4_PACKET_DESIGN_READY_ME_PROVISIONAL",
         "path": "data/pm_v1_5_contracts/paper1_v3_g3_candidate_surface_audit_phase_v1.json",
         "sha256": "6842f95d90d20f5dc194558b046d75ce89086c0d372b4119b6ece0ee5c46982b",
         "git_baseline": "4613311c2d12e3fbd4334910d9e7403a464112ec",
         "scope": "bound public-input profiling and unlabeled MP/MS/ME candidate diagnostics only",
-        "execution_authority": true
+        "validation_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.json",
+          "sha256": "0e4c29e54fd0951411ed6b686b2f37aee1f62c557e0f0eee4b7ee7298d497041",
+          "required_status": "G3_CANDIDATE_SURFACE_PASS_MP_MS_G4_PACKET_DESIGN_READY_ME_PROVISIONAL"
+        },
+        "diagnostic_rows": {
+          "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl",
+          "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52",
+          "rows": 14067,
+          "labels_created": 0
+        },
+        "html_report": {
+          "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/report.html",
+          "sha256": "15d64a285ab0f529f2615c72c539012a0ae83948532df87513ceae31ecd36e18"
+        },
+        "next_gate": "G4_NONEXCLUSIVE_ANCHORED_SUITABILITY_PACKET_DESIGN",
+        "execution_authority": false
       }
     },
     "allowed": [
@@ -205,7 +221,8 @@
       "zero-API design of machine invariants that prevent literal-memory forcing and telemetry-to-quality fallback conflation",
       "read-only audit and testing of the completed component-general V3 G2 implementation",
       "zero-API design of the G3 public MP/MS/ME candidate surface audit",
-      "the exact zero-API G3 candidate surface audit authorized by paper1_v3_g3_candidate_surface_audit_phase_v1.json",
+      "read-only audit of the completed G3 candidate surface diagnostics and report",
+      "zero-API design of the G4 nonexclusive anchored MP/MS suitability packet and provisional ME capacity packet",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
