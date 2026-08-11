@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-active-method-authority-v1",
   "date": "2026-08-11",
-  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_DESIGN",
+  "status": "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G3_SURFACE_AUDIT_EXECUTION",
   "purpose": "Provide one machine-readable pointer that prevents historical plans, runners, labels, checkpoints, and external surfaces from silently becoming current again.",
   "active_method": {
     "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
@@ -179,6 +179,14 @@
         },
         "next_gate": "G3_PUBLIC_MP_MS_ME_CANDIDATE_SURFACE_AUDIT",
         "execution_authority": false
+      },
+      "component_general_v3_g3_candidate_surface_audit": {
+        "status": "G3_ZERO_API_PUBLIC_CANDIDATE_SURFACE_AUDIT_AUTHORIZED_ONCE",
+        "path": "data/pm_v1_5_contracts/paper1_v3_g3_candidate_surface_audit_phase_v1.json",
+        "sha256": "6842f95d90d20f5dc194558b046d75ce89086c0d372b4119b6ece0ee5c46982b",
+        "git_baseline": "4613311c2d12e3fbd4334910d9e7403a464112ec",
+        "scope": "bound public-input profiling and unlabeled MP/MS/ME candidate diagnostics only",
+        "execution_authority": true
       }
     },
     "allowed": [
@@ -197,6 +205,7 @@
       "zero-API design of machine invariants that prevent literal-memory forcing and telemetry-to-quality fallback conflation",
       "read-only audit and testing of the completed component-general V3 G2 implementation",
       "zero-API design of the G3 public MP/MS/ME candidate surface audit",
+      "the exact zero-API G3 candidate surface audit authorized by paper1_v3_g3_candidate_surface_audit_phase_v1.json",
       "unit and integration tests",
       "documentation and evidence-index updates"
     ],
