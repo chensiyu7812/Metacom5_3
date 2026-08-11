@@ -1,0 +1,137 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "MP 冻结诊断 OOF：有 pooled 信号，但主要是 profile-field 先验",
+    "description": "136 条 exact-consensus MP 子集的 17-group LOGO 结果、透明 comparator 与条件性归因。",
+    "generatedAt": "2026-08-11T00:00:00+09:00",
+    "sources": [
+      {
+        "id": "src_mp_oof",
+        "label": "Frozen MP diagnostic LOGO OOF and interpretation audit",
+        "query": {
+          "engine": "LocalArtifact",
+          "language": "json",
+          "sql": "Read-only projection of the frozen report.json and its independent interpretation audit; no query-time filtering or model rerun.",
+          "description": "Exact frozen metrics from the sole authorized 17-fold Leave-One-connected-group-Out diagnostic.",
+          "executed_at": "2026-08-11T00:00:00+09:00",
+          "tables_used": ["diagnostic_oof_report", "diagnostic_interpretation_audit"],
+          "filters": ["MP only", "136 exact-consensus rows", "17 connected groups", "no adjudication"],
+          "metric_definitions": [
+            "AUC and balanced accuracy: higher is better.",
+            "Brier score and log loss: lower is better.",
+            "Within-field pair concordance compares an ON row with an OFF row from the same profile field."
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "discrimination_comparison",
+        "title": "Pooled discrimination：完整模型与字段先验几乎相同",
+        "subtitle": "136 rows；17-group LOGO；AUC 与 BA 均为越高越好",
+        "type": "bar",
+        "dataset": "discrimination_rows",
+        "source": {
+          "id": "src_mp_oof",
+          "label": "Frozen MP diagnostic LOGO OOF and interpretation audit",
+          "path": "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811/report.json",
+          "query": {
+            "sql": "SELECT * FROM (VALUES ('AUC','full_identity_free',0.6372481684981685),('AUC','profile_field_only',0.6320970695970697),('BA@0.5','full_identity_free',0.6836080586080586),('BA@0.5','profile_field_only',0.7037545787545787)) AS t(metric,model,value)",
+            "description": "Frozen pooled discrimination metrics for the sole diagnostic OOF and transparent field-only comparator.",
+            "tables_used": ["diagnostic_oof_report"],
+            "filters": ["MP only", "136 exact-consensus rows", "17 connected groups"],
+            "metric_definitions": ["AUC and balanced accuracy are higher-is-better."]
+          }
+        },
+        "encodings": {
+          "x": {"field": "metric", "type": "nominal", "label": "指标"},
+          "y": {"field": "value", "type": "quantitative", "label": "分数", "format": "decimal"},
+          "color": {"field": "model", "type": "nominal", "label": "模型"},
+          "tooltip": [
+            {"field": "model", "type": "nominal", "label": "模型"},
+            {"field": "value", "type": "quantitative", "label": "值"}
+          ]
+        },
+        "layout": "full",
+        "sourceId": "src_mp_oof"
+      }
+    ],
+    "tables": [
+      {
+        "id": "metric_table",
+        "title": "冻结指标全表",
+        "subtitle": "AUC/BA 高为好；Brier/log-loss 低为好",
+        "dataset": "metric_rows",
+        "source": {
+          "id": "src_mp_oof",
+          "label": "Frozen MP diagnostic LOGO OOF and interpretation audit",
+          "path": "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811/report.json",
+          "query": {
+            "sql": "SELECT * FROM (VALUES ('full_identity_free',0.6372481684981685,0.6836080586080586,0.22771863779174364,0.6512690928024486,45),('profile_field_only',0.6320970695970697,0.7037545787545787,0.21402431206422295,0.6203475974512133,39)) AS t(model,auc,balanced_accuracy,brier,log_loss,predicted_on)",
+            "description": "Frozen primary and transparent-comparator metrics.",
+            "tables_used": ["diagnostic_oof_report"],
+            "filters": ["no post-result threshold or feature selection"],
+            "metric_definitions": ["AUC/BA higher is better", "Brier/log loss lower is better"]
+          }
+        },
+        "density": "spacious",
+        "sourceId": "src_mp_oof",
+        "columns": [
+          {"field": "model", "label": "模型", "type": "text"},
+          {"field": "auc", "label": "AUC", "format": "decimal"},
+          {"field": "balanced_accuracy", "label": "BA@0.5", "format": "decimal"},
+          {"field": "brier", "label": "Brier", "format": "decimal"},
+          {"field": "log_loss", "label": "Log loss", "format": "decimal"},
+          {"field": "predicted_on", "label": "预测 ON", "format": "number"}
+        ]
+      }
+    ],
+    "blocks": [
+      {"id": "title", "type": "markdown", "body": "# MP 冻结诊断 OOF：有 pooled 信号，但主要是 profile-field 先验", "layout": "full"},
+      {"id": "answer", "type": "markdown", "sourceId": "src_mp_oof", "body": "## 结论先行\n\n完整模型 AUC=`0.6372`、BA=`0.6836`，说明 136 条高共识子集不是纯随机；但只看 `profile_field` 的透明模型 BA=`0.7038`、Brier=`0.2140`，反而优于完整模型。完整模型只多 `0.0052` AUC，同 field 内 ON–OFF pair concordance 仅 `0.3845`。因此当前 MP 学到的主要是字段先验，不是‘这个具体状态现在该不该个性化’。", "layout": "full"},
+      {"id": "chart", "type": "chart", "chartId": "discrimination_comparison", "layout": "full"},
+      {"id": "table", "type": "table", "tableId": "metric_table", "layout": "full"},
+      {"id": "ci", "type": "markdown", "sourceId": "src_mp_oof", "body": "## 不确定性\n\nOwner-cluster bootstrap 95% CI：AUC `[0.4452, 0.7742]`，BA `[0.5504, 0.7849]`，Brier gain `[-0.0377, 0.0899]`。只有 17 个 connected groups，区间宽；不能把 136 行当成 136 个独立用户。", "layout": "full"},
+      {"id": "root", "type": "markdown", "body": "## 根因定责\n\n标签侧：两位 reviewer 更容易对 education/job/location 等字段的总体倾向达成一致，却没有稳定解决具体 state 的 material response change。特征侧：现有特征主要是 field、lexical scope、retrieval position 和 redundancy，缺少可靠的 `state → profile value → response change` 表示。这不是四头分别训练、16 动作空间或单记忆上限导致的。", "layout": "full"},
+      {"id": "routing", "type": "markdown", "body": "## 稳定 head 状态\n\n- RS：`OOF_PASS`，不变。\n- MP：`SURFACE_PASS / LABEL_FAIL / DIAGNOSTIC_FIELD_PRIOR_SIGNAL_ONLY`，暂停正式 fit。\n- MS：`SURFACE_PASS / V3_LABEL_UNPROVEN`，进入 source-aware exact-turn 标签路线审计。\n- ME：`LIMITED_SURFACE / LABEL_FAIL / CONTINGENCY_ONLY`。\n\n四头继续分别训练与资格化；通过的 head 才在共享 16-action V3 executor 中联合执行。", "layout": "full"},
+      {"id": "boundary", "type": "markdown", "body": "## 不可跨越的监督边界\n\nEvoEmo `influenced_by` 只可用于分层与来源诊断，不能把 session ancestry 继承给任意 atomic turn。ES-MemEval QA evidence 只可评估检索/语义表示，不能成为 response-PM suitability gold。否则会得到容易学习但任务错误的标签。", "layout": "full"},
+      {"id": "next", "type": "markdown", "body": "## 下一步\n\n冻结本结果，不调阈值或特征。下一门只设计 MS 的 source-aware exact-turn 标签路线：reviewer 必须针对 `current state + actual atomic Rank-1` 判断是否存在具体、非重复、owner/time-safe 的 response change。标签路线通过后才运行一次 MS grouped OOF，再与 RS 进入共同 executor 与 baseline。", "layout": "full"}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-11T00:00:00+09:00",
+    "status": "ready",
+    "datasets": {
+      "discrimination_rows": [
+        {"metric": "AUC", "model": "完整 identity-free 模型", "value": 0.6372481684981685},
+        {"metric": "AUC", "model": "仅 profile_field", "value": 0.6320970695970697},
+        {"metric": "BA@0.5", "model": "完整 identity-free 模型", "value": 0.6836080586080586},
+        {"metric": "BA@0.5", "model": "仅 profile_field", "value": 0.7037545787545787}
+      ],
+      "metric_rows": [
+        {"model": "完整 identity-free 模型", "auc": 0.6372481684981685, "balanced_accuracy": 0.6836080586080586, "brier": 0.22771863779174364, "log_loss": 0.6512690928024486, "predicted_on": 45},
+        {"model": "仅 profile_field", "auc": 0.6320970695970697, "balanced_accuracy": 0.7037545787545787, "brier": 0.21402431206422295, "log_loss": 0.6203475974512133, "predicted_on": 39}
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "src_mp_oof",
+      "label": "Frozen MP diagnostic LOGO OOF and interpretation audit",
+      "query": {
+        "engine": "LocalArtifact",
+        "language": "json",
+        "sql": "Read-only projection of the frozen report.json and its independent interpretation audit; no query-time filtering or model rerun.",
+        "description": "Exact frozen metrics from the sole authorized 17-fold Leave-One-connected-group-Out diagnostic.",
+        "executed_at": "2026-08-11T00:00:00+09:00",
+        "tables_used": ["diagnostic_oof_report", "diagnostic_interpretation_audit"],
+        "filters": ["MP only", "136 exact-consensus rows", "17 connected groups", "no adjudication"],
+        "metric_definitions": ["AUC and balanced accuracy: higher is better.", "Brier score and log loss: lower is better.", "Within-field pair concordance compares an ON row with an OFF row from the same profile field."]
+      }
+    }
+  ]
+}

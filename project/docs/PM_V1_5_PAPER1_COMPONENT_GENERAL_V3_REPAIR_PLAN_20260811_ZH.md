@@ -506,3 +506,25 @@ NOT/99 YES/0 ABSTAIN`；最大分歧为 A NOT/B YES 42 条，且遍布 job、loc
 这说明 held-out controls 能通过不等于真实公共 surface 上的 material personalization 边界已稳定。下一步必须
 先做方法级定责：判断 136 条高置信 consensus 是否可被预先缩窄为“可实现语义范围”的探索性训练集，或改用
 真正的人类 source-aware annotation；在新合同明确前，MP fit、generator 与 baseline 均保持关闭。
+
+### MP 136 条共识子集的冻结诊断 OOF 与稳定路由
+
+已按一次性合同完成 17-fold Leave-One-connected-group-Out 诊断；没有调阈值、换特征、保存 full-fit
+checkpoint、调用 generator 或读取外部 outcome。136 条 exact-consensus（ON=52、OFF=84）上的低容量
+L2 logistic 得到：
+
+- AUC=`0.6372`、BA@0.5=`0.6836`、Brier=`0.2277`，方向上确实不是纯随机；
+- 但只使用 `profile_field` 的透明 comparator 得到 AUC=`0.6321`、BA=`0.7038`、Brier=`0.2140`；
+- 完整特征仅增加 `0.0052` pooled AUC，却使 BA、Brier 与 log-loss 全部变差；
+- 在同一个 profile field 内比较 ON–OFF pair，完整模型 concordance=`0.3845`，没有证明状态级条件判断。
+
+因此这不是“MP 已经通过”，也不是“四头分别训练失败”。准确解释是：当前共识子集包含稳定的 field prior，
+但尚未包含/表示可靠的 `current state → profile value → material response change` 条件信号。MP 固定为
+`SURFACE_PASS / LABEL_FAIL / DIAGNOSTIC_FIELD_PRIOR_SIGNAL_ONLY`，不得用这 136 条创建正式 checkpoint 或
+进入 baseline。RS 的 `OOF_PASS` 不变；MS 保持 `SURFACE_PASS / V3_LABEL_UNPROVEN`；ME 保持 provisional。
+
+下一条主路线转向 MS 的 source-aware atomic label route 审计：EvoEmo `influenced_by` 只能帮助按 lineage
+分层抽样，不能把 session ancestry 下放给任意 turn；ES-MemEval QA evidence 只能诊断检索/语义表示，不能成为
+response-PM suitability gold。真正标签必须由 reviewer 对 `current state + exact atomic Rank-1` 前瞻判断能否形成
+具体、非重复、owner/time-safe 的 response change。该标签路线通过后，MS 单独 OOF，再与已通过 RS 进入共享
+16-action V3 executor；MP 只有在补齐 outcome-blind state-to-profile material-use representation 后才恢复。

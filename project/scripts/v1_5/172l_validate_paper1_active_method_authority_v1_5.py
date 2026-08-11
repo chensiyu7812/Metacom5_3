@@ -94,6 +94,8 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B2_MP_PUBLIC_529_CONTINUATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_PRE_ADJUDICATION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_G4B3_MP_MEASUREMENT_FAILURE_AUDIT",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MP_DIAGNOSTIC_CLOSEOUT_MS_ATOMIC_LABEL_AUDIT_DESIGN",
     }
     checks = {
         "authority_protocol": authority["protocol"] == "pm-v1.5-active-method-authority-v1",
@@ -627,6 +629,93 @@ def validate_active_authority() -> dict[str, Any]:
                     and active_v3_document["authorization"]["pm_fit"] is False
                     and active_v3_document["authorization"]["generator_calls"] is False
                 )
+                or (
+                    active_v3.get("id") == "MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF"
+                    and active_v3_document.get("status")
+                    == "MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF_AUTHORIZED_ONCE_FORMAL_PROMOTION_CHECKPOINT_GENERATOR_FORBIDDEN"
+                    and active_v3_document["promoted_from_authority_sha256"]
+                    == "dda77972a54730a8f85ade3e58247b42e1c64a31174831db5893e179c76c296f"
+                    and active_v3_document["frozen_design"]["rows"] == 136
+                    and active_v3_document["frozen_design"]["owner_connected_groups"] == 17
+                    and active_v3_document["frozen_design"]["split"]
+                    == "17-fold LeaveOneGroupOut"
+                    and active_v3_document["frozen_design"]["threshold"] == 0.5
+                    and active_v3_document["authorization"]["diagnostic_fit_exactly_once"]
+                    is True
+                    and active_v3_document["authorization"]["formal_label_promotion"]
+                    is False
+                    and active_v3_document["authorization"]["threshold_selection"]
+                    is False
+                    and active_v3_document["authorization"]["feature_change_after_result"]
+                    is False
+                    and active_v3_document["authorization"]["full_fit_checkpoint"]
+                    is False
+                    and active_v3_document["authorization"]["generator_calls"]
+                    is False
+                    and active_v3_document["authorization"]["reviewer_calls"]
+                    is False
+                    and active_v3_document["authorization"]["baseline_outcome_calls"]
+                    is False
+                    and active_v3_document["authorization"]["external_outcome_calls"]
+                    is False
+                    and active_v3_document["nonexclusive_invariant"]["does_not_impose_one_memory_cap"]
+                    is True
+                    and active_v3_document["nonexclusive_invariant"]["all_16_requested_actions_remain_downstream"]
+                    is True
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        for item in [
+                            *active_v3_document["input_bindings"],
+                            *active_v3_document["implementation_bindings"],
+                        ]
+                    )
+                    and sha(resolve(active_v3_document["readiness_audit"]["path"]))
+                    == active_v3_document["readiness_audit"]["sha256"]
+                    and read(resolve(active_v3_document["readiness_audit"]["path"]))["status"]
+                    == active_v3_document["readiness_audit"]["required_status"]
+                )
+                or (
+                    active_v3.get("id")
+                    == "MP_DIAGNOSTIC_CLOSEOUT_MS_ATOMIC_LABEL_AUDIT_DESIGN"
+                    and active_v3_document.get("status")
+                    == "MP_DIAGNOSTIC_FIELD_PRIOR_DOMINATED_FORMAL_ROUTE_REMAINS_FAIL_MS_SOURCE_AWARE_ATOMIC_LABEL_AUDIT_NEXT"
+                    and active_v3_document["stable_head_status"]["RS"] == "OOF_PASS"
+                    and "DIAGNOSTIC_FIELD_PRIOR_SIGNAL_ONLY"
+                    in active_v3_document["stable_head_status"]["MP"]
+                    and "V3_LABEL_UNPROVEN"
+                    in active_v3_document["stable_head_status"]["MS"]
+                    and active_v3_document["training_and_execution_invariant"]["heads_train_and_qualify_separately"]
+                    is True
+                    and active_v3_document["training_and_execution_invariant"]["qualified_heads_execute_jointly"]
+                    is True
+                    and active_v3_document["training_and_execution_invariant"]["requested_action_count"]
+                    == 16
+                    and active_v3_document["training_and_execution_invariant"]["global_one_memory_cap"]
+                    is False
+                    and active_v3_document["authorization"]["mp_refit"] is False
+                    and active_v3_document["authorization"]["full_fit_checkpoint"] is False
+                    and active_v3_document["authorization"]["generator_calls"] is False
+                    and active_v3_document["authorization"]["influenced_by_as_response_pm_gold"]
+                    is False
+                    and active_v3_document["authorization"]["es_memeval_qa_evidence_as_response_pm_gold"]
+                    is False
+                    and all(
+                        sha(resolve(item["path"])) == item["sha256"]
+                        and (
+                            "required_status" not in item
+                            or read(resolve(item["path"]))["status"]
+                            == item["required_status"]
+                        )
+                        for item in [
+                            active_v3_document["executed_phase"],
+                            active_v3_document["oof_report"],
+                            active_v3_document["predictions"],
+                            active_v3_document["independent_interpretation_audit"],
+                            active_v3_document["documentation"]["repair_plan"],
+                            active_v3_document["documentation"]["failure_ledger"],
+                        ]
+                    )
+                )
             )
         ),
     }
@@ -649,7 +738,12 @@ def validate_active_authority() -> dict[str, Any]:
             "paid_release_sha256": sha(paid_path),
         },
         "next": (
-            "RUN_ZERO_API_METHOD_LEVEL_SOURCE_AWARE_MP_MEASUREMENT_FAILURE_AUDIT"
+            "DESIGN_MS_SOURCE_AWARE_EXACT_TURN_LABEL_ROUTE_READINESS_AUDIT_ZERO_API"
+            if active_v3.get("id")
+            == "MP_DIAGNOSTIC_CLOSEOUT_MS_ATOMIC_LABEL_AUDIT_DESIGN"
+            else "RUN_EXACT_ONE_FROZEN_MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF"
+            if active_v3.get("id") == "MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF"
+            else "RUN_ZERO_API_METHOD_LEVEL_SOURCE_AWARE_MP_MEASUREMENT_FAILURE_AUDIT"
             if active_v3.get("id") == "G4B3_MP_MEASUREMENT_FAILURE_AUDIT"
             else "RUN_ZERO_API_G4B3_MP_PRE_ADJUDICATION_EXACT_CONSENSUS"
             if active_v3.get("id") == "G4B3_MP_PRE_ADJUDICATION"
