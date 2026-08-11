@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-v1.5-paper1-semantic-adapter-zero-api-analysis-v1",
+  "status": "ZERO_API_PROBE_COMPLETE",
+  "decision": "REJECT_THIS_OFF_THE_SHELF_NLI_MODEL_FOR_FORMAL_PM; KEEP_ORACLE_PLAN_UPPER_BOUND_TEST",
+  "obvious_relation_controls_correct": 0,
+  "obvious_relation_controls_total": 9,
+  "closure_controls_correct": 0,
+  "closure_controls_total": 2,
+  "support_phase_top_labels": {
+    "COMFORT": 4,
+    "ACTION_PLANNING": 5,
+    "EXPLORATION": 5,
+    "RELIEF_CLOSURE": 2
+  },
+  "candidate_relation_top_labels": {
+    "DISTRACTING": 5,
+    "REDUNDANT_CURRENT": 1,
+    "DISTINCT_HELPFUL": 9,
+    "STALE_OR_CONFLICTING": 1
+  },
+  "oracle_plan_checks": {
+    "exactly_eight_unique_plans": true,
+    "exact_frozen_teacher_suitable_case_set": true,
+    "all_required_fields_nonempty": true,
+    "each_plan_has_explicit_safe_nonuse": true,
+    "no_plan_forces_literal_copy": true,
+    "use_and_nonuse_controls_both_present": true,
+    "exactly_six_use_two_nonuse": true
+  },
+  "oracle_plan_checks_pass": true,
+  "environment_and_hash_checks": {
+    "api_calls_forbidden": true,
+    "pm_fits_forbidden": true,
+    "python_no_user_site": true,
+    "cuda_device_frozen": true,
+    "python_executable_frozen": true,
+    "isolated_branch": true,
+    "model_revision_path_frozen": true,
+    "input_hash::outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/qualification_cases_private.jsonl": true,
+    "input_hash::outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/generator_results_private.jsonl": true,
+    "input_hash::outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/forced_open_card_closure_quality_blind.jsonl": true,
+    "input_hash::data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json": true,
+    "input_hash::src/metacom_pm/v1_5_response_program_v3.py": true,
+    "model_hash::README.md": true,
+    "model_hash::added_tokens.json": true,
+    "model_hash::config.json": true,
+    "model_hash::model.safetensors": true,
+    "model_hash::special_tokens_map.json": true,
+    "model_hash::spm.model": true,
+    "model_hash::tokenizer.json": true,
+    "model_hash::tokenizer_config.json": true
+  },
+  "api_calls": 0,
+  "training_labels_created": 0,
+  "pm_fits": 0,
+  "threshold_changes": 0,
+  "claim_limit": "Small frozen development probe; no human-language understanding percentage and no formal PM result.",
+  "next_step": "Independently audit the eight oracle plans. Only then design a content-addressed, cost-capped generator upper-bound phase."
+}
