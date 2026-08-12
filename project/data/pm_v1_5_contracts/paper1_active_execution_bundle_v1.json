@@ -15,16 +15,17 @@
     "base_v2_rs_plus_ms_predicate_is_historical_only": true,
     "requested_action_count": 16,
     "independent_heads_joint_execution": true,
-    "ms_label_route_retired": true
+    "ms_label_route_retired": false,
+    "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "MS_LABEL_ROUTE_RETIRED_MP_ME_RESCUE_NEXT",
-    "status": "MS_QUALIFICATION_FAIL_PERMANENTLY_CONSUMED_MP_AND_ME_ONLY_NEXT",
+    "id": "MS_CONSTRUCT_CORRECTED_ROUTE_REOPENED_FRESH_ANCHOR_SET_NEXT",
+    "status": "ZERO_API_RETROSPECTIVE_EVIDENCE_STRONG_RUBRIC_FIXED_BALANCED_ANCHOR_SET_NOT_YET_AUTHORED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_qualification_closeout_v1.json",
-      "sha256": "ec2fa53b66a86ee8200f7381839935aa5aa6ea4674d96bb700a0d890c5d373d7"
+      "path": "data/pm_v1_5_contracts/paper1_ms_construct_correction_v1.json",
+      "sha256": "8493ad53e9c800bafec01a5ea3e758568048e3280b99f9ef23128b1bca6cce4f"
     },
-    "next_scientific_action": "MS is retired as a candidate memory head per its own pre-registered fallback. Primary success (RS + at least two memory heads) must now come from RS + MP + ME. Next work: MP formal suitability labels + grouped OOF, and ME typed action-result surface/label work, both zero-API to start.",
+    "next_scientific_action": "Author a small, fresh, genuinely balanced set of negative/abstain anchor items that actually instantiate misattribution/invalidation risk under the corrected rubric (zero API). Then decide, with the user, whether to run one more small paid qualification round or proceed directly to the larger formal 201-item x 2-reviewer labeling pass.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -69,8 +70,8 @@
     },
     {
       "role": "parent_current_phase_closeout",
-      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_qualification_closeout_v1.json",
-      "sha256": "ec2fa53b66a86ee8200f7381839935aa5aa6ea4674d96bb700a0d890c5d373d7"
+      "path": "data/pm_v1_5_contracts/paper1_ms_construct_correction_v1.json",
+      "sha256": "8493ad53e9c800bafec01a5ea3e758568048e3280b99f9ef23128b1bca6cce4f"
     },
     {
       "role": "final_ms_control_construct_repair_design",
@@ -85,12 +86,12 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "d6cf31ec74218a2a852f52546336fb2123d1176ea4f03e43f93ef150c5c880cf"
+      "sha256": "a15312dadbf72001f49b1387e7d8c6a4ca673207446325de7a5ef86c92252c62"
     },
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "e3c77a2d3de8ce1374fb6af60a5806e1d48005ee62a0df03e308c94a0b7cb982"
+      "sha256": "a0921e0fa1ee384804a771e74f9a1c83d7c698b723571c7b1f3dc4bb6ab700d3"
     },
     {
       "role": "v3_factorial_planner",
@@ -115,7 +116,7 @@
     {
       "role": "source_aware_ms_review_instrument",
       "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
-      "sha256": "6988957ebdf765382de5d5001231e19ddaf4275d7e8970dfa00f6984a1059541"
+      "sha256": "70d574209ee3cff2f3dfb970c18bed5f109831fa13d37347696c24544055a1eb"
     },
     {
       "role": "four_bit_action_runtime",
@@ -161,6 +162,11 @@
       "role": "ms_final_control_repair_qualification_audit_report",
       "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_qualification_audit_20260812/report.json",
       "sha256": "2f37102824b0dbca9d3002ac178b5ed32dc0eb941156179928621f62f917425d"
+    },
+    {
+      "role": "ms_construct_correction_retrospective_rescore_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_retrospective_rescore_20260812/report.json",
+      "sha256": "b6eb10f34c2e9f5e4c2d2dacc6f23f744eafa26b63f0d15b3efdb051ae65ee6a"
     }
   ],
   "legacy_import_denylist": [
@@ -184,14 +190,14 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "d6cf31ec74218a2a852f52546336fb2123d1176ea4f03e43f93ef150c5c880cf"
+      "sha256": "a15312dadbf72001f49b1387e7d8c6a4ca673207446325de7a5ef86c92252c62"
     },
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "e3c77a2d3de8ce1374fb6af60a5806e1d48005ee62a0df03e308c94a0b7cb982"
+      "sha256": "a0921e0fa1ee384804a771e74f9a1c83d7c698b723571c7b1f3dc4bb6ab700d3"
     }
   ],
-  "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-7-2026-08-12-同日晚些时候唯一一次-fresh-identity-资格赛未过ms-label-route-正式停止",
+  "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",
   "runner_start_rule": "Validate this bundle and active_method_authority_v1.json; do not infer currency from any other file."
 }

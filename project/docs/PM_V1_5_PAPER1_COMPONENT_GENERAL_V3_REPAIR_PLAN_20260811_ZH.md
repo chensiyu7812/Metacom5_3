@@ -2,7 +2,7 @@
 
 日期：2026-08-11
 
-状态：`2026-08-12_MS_LABEL_ROUTE_RETIRED / MP_AND_ME_RESCUE_NEXT`
+状态：`2026-08-12_MS_CONSTRUCT_CORRECTED_ROUTE_REOPENED / FRESH_BALANCED_ANCHOR_SET_NEXT`
 
 Git 历史基线：`8337f15`；当前分支：`work/paper1-semantic-adapter-ablation-20260811`。执行身份以活动 bundle 的逐文件 SHA 为准，不以本行 commit 文本推断。
 
@@ -674,3 +674,44 @@ Gemini 仍用同样底层倾向绕了过去。
 **当前有效结论**：Paper 1 的最低成功结构（RS + 至少两个记忆头）现在只能靠 RS + MP + ME 达成，MS 不再
 是候选记忆头之一。下一步是 MP 与 ME 的正式标签/grouped OOF 工作；MS 相关的所有产物、脚本、合同保留
 作只读证据，不再被活动 bundle 当作待完成项。
+
+**以上结论已被 §12.8 部分推翻，MS 重新打开。**
+
+### 12.8 2026-08-12（当晚再次）用户质疑后重新审查：根因是构念过严，不是模型不行，MS 重新打开
+
+用户直接质疑："是不是资格赛本身有问题。或者是两个模型的问题。MS按照信号比例来说应该是可以学出来的。"
+并引用了已独立验证两次的 grouped OOF 信号：`outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json`
+的 `balanced_accuracy_at_0_5 = 0.7449`，bootstrap 95% CI `[0.666, 0.821]`。（这个数字本身测的是旧
+single-LLM-teacher 构念，不是这轮的source-attributable构念，两把尺子不能直接划等号，但方向上的质疑
+是对的。）
+
+对5条mismatch做了对抗性重读（不预设自己的gold是对的），发现4条"困难负例/abstain"其实是用referential/
+structural测试写的（是不是同一实体、命题是否仍严格为真、是否禁止一切消歧问题），而不是真正该用的
+functional risk测试（用了会不会造成错误归因或否定用户当下感受，还是确实低风险有帮助）。两个独立模型
+家族在同一批题上收敛到同一"错误"答案——如果纯粹是能力不够，更应该看到两家分歧而不是一致，这更像是
+在质疑同一个有争议的构念边界。
+
+**零API retrospective re-score**（不调用任何API，只是把已经收集的24条真实回答换一把尺子重判）：
+
+| Reviewer | 旧尺子 | 新尺子 |
+|---|---|---|
+| Gemini challenger | 7/12 (58.3%) | 11/12 (91.7%) |
+| GPT-5.6 primary | 9/11 (81.8%，1条transport失败未计分) | 10/11 (90.9%) |
+
+**已重写`src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py`的rubric**（condition 6）：
+- 从"是否同一实体/是否仍严格为真"的身份测试，改为"是否有错误归因风险、是否会让用户感觉当下的感受被
+  否定或稀释"的functional risk测试；
+- ONE_QUESTION 区分"在一个小的、可枚举的候选集合里点名具体候选内容"（合法，属于真正使用了记忆）与
+  "完全不带具体内容、只问是否相关"（仍然禁止）；
+- 稳定的通用偏好类事实不再因为"不能100%确认这次一定适用"就默认abstain——只要用户能轻易纠正/拒绝，
+  就按正常RESPONSE_CONSTRAINT/DECLINABLE_OPTION处理。
+
+**明确的警告，不能跳过**：修正后这12条题的分布已经严重失衡（9 SUITABLE / 3 NOT_SUITABLE / 0
+SEMANTIC_ABSTAIN），已经不是一个均衡的验证集了。不能把这次retrospective re-score当成"补考通过"直接
+宣布round 2资格赛事后合格；这只能证明round 2的失败主要是构念过严造成的，不能证明修正后的构念本身已经
+完整验证过。
+
+**结论**：MS label route从"永久退休"改为"构念已修正、路线重新打开"。下一步是零API设计一批全新的、
+真正均衡的负例/abstain锚点题（要能真实体现修正后rubric里的"错误归因/否定用户感受"风险，而不是像这轮
+一样其实是可以辩护的正例），再决定是再花一次小钱做资格赛，还是直接进入更大规模的201条双模型正式标注
+（后者样本量更大、且本来就有"只取两家一致"的内建纠错机制）。这个决定涉及真实费用，需要用户单独批准。
