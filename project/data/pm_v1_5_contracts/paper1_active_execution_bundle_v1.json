@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_MS_CONTENT_FOLLOWING_CORRECTED_RS_65PCT_MS_38PCT_MP_NEXT",
-    "status": "SELF_CITATION_PROXY_CORRECTED_BY_INDEPENDENT_JUDGE_RS_UNDERCOUNTED_MS_UNRELIABLE_BOTH_WAYS",
+    "id": "RS_MS_QUALITY_RISK_COST_MEASURED_CLAIM_NOT_SUPPORTED_RESTATEMENT_FAMILY_ROOT_CAUSE_MP_NEXT",
+    "status": "FORMAL_BLIND_MEASUREMENT_COMPLETE_BASELINE_WINS_QUALITY_94PCT_ROOT_CAUSE_IDENTIFIED",
     "parent_phase": {
-      "path": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_analysis_20260812/analysis.json",
-      "sha256": "2a3f50add59405b84f77721332549e5f55ecb5fa1de029e7a63cf958bc30cc6c"
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_quality_risk_cost_measurement_closeout_v1.json",
+      "sha256": "495d1356ef64c05033acb53af98e39d475880f54e6182c073e3cd150dcf7cfdf"
     },
-    "next_scientific_action": "Real, independently-verified content-following rates: RS 65.2% (corrected up sharply from the 8.8% self-citation figure -- self-citation had perfect precision but only 20% recall), MS 38.5% (corrected DOWN from the 53.8% self-citation figure -- self-citation overclaimed in 5/13 cases, likely conflating RS's 'restate a change' satisfaction with MS credit given their thematic overlap). This still only answers the FUNCTION question, not quality/risk/cost -- a formal blind pairwise measurement (234l pattern) is still required before any 'RS+MS helps' claim. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item.",
+    "next_scientific_action": "Formal blind quality/risk measurement (234l pattern, 102 calls, $0.9807) does NOT support the original 'RS+MS helps without losing quality, at comparable-or-lower cost' claim. Quality: baseline preferred 32/34 (94.1%). Cost: routed ~6.2% fewer tokens/call (real, but purchased by the quality loss, not a favorable trade). Risk: roughly flat, routed slightly higher. Root cause is localized and mechanistic: 31/34 routed calls selected the 'Restatement or Paraphrasing' RS family, whose support_move instruction forbids the very things (forward-moving questions, warmth) that make baseline preferred -- not a failure of RS opportunity routing, RS Step2 retrieval, or MS memory injection, all independently verified working. Actionable next steps: revise the Restatement family's instruction to allow forward momentum, and/or address RS's known card-selection skew toward this one family (298l). Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item; RS quality fix requires a user decision on scope.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -322,6 +322,16 @@
       "role": "rs_ms_content_following_review_live_report",
       "path": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_live_20260812/report.json",
       "sha256": "67a4c94126d00b2c42aec40c572e6ca588ba4aa3538d4049d6c7be5f543e2c11"
+    },
+    {
+      "role": "paper1_rs_ms_quality_risk_measurement_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_quality_risk_measurement_execution_phase_v1.json",
+      "sha256": "3b2e96b20f8d957e5540b6dc82d7932955c2628d5e34f675b941674cd51b694a"
+    },
+    {
+      "role": "rs_ms_quality_risk_cost_measurement_closeout",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_quality_risk_cost_measurement_closeout_v1.json",
+      "sha256": "495d1356ef64c05033acb53af98e39d475880f54e6182c073e3cd150dcf7cfdf"
     }
   ],
   "legacy_import_denylist": [

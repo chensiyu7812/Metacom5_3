@@ -1,0 +1,56 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-quality-risk-cost-measurement-closeout-v1",
+  "date": "2026-08-12",
+  "status": "FORMAL_BLIND_MEASUREMENT_COMPLETE_ORIGINAL_CLAIM_NOT_SUPPORTED_ROOT_CAUSE_IDENTIFIED",
+  "measurement_design": {
+    "pattern": "234l pattern: position-randomized blind pairwise quality (baseline vs routed, material-preference only), absolute per-response risk scoring (both arms scored independently, never paired, to avoid contrast bias).",
+    "scope": "All 34 real baseline-vs-routed pairs from the completed RS+MS EvoEmo external test (300l), including the 11 transport/schema-fallback routed replies -- included honestly as real PM behavior, not filtered out.",
+    "reviewer": "GPT-5.6 (gpt-5.6-sol), independent, blind to generator_claimed and to condition."
+  },
+  "quality": {
+    "baseline_wins": 32,
+    "routed_wins": 2,
+    "equivalent": 0,
+    "unresolved": 0,
+    "baseline_win_rate": 0.9412,
+    "root_cause": "31/34 routed calls selected the 'Restatement or Paraphrasing' RS family, whose support_move instruction is deliberately narrow: restate only, in one sentence, no question, no advice, no second move. Baseline replies are naturally longer, warmer, and forward-moving. Spot-read of judge rationales confirms this is real and coherent, not a length-bias artifact -- judges consistently cite baseline 'inviting the next step' vs routed 'merely restating without advancing the conversation.' This traces to RS's card-selection being heavily skewed toward this one family (already disclosed in round 12, 298l: 'selection is skewed toward Restatement or Paraphrasing... the unconditionally-eligible default family'), and to that family's own restrictive support_move wording -- not to a routing or content-following failure."
+  },
+  "risk": {
+    "baseline_total_severity": 6,
+    "routed_total_severity": 9,
+    "baseline_mean": 0.1765,
+    "routed_mean": 0.2647,
+    "note": "Both arms low-risk overall (mean <0.3 of 18 possible). All nonzero hits in one family: unsupported_personal_fact_or_upgraded_past_to_current. Routed slightly higher, consistent with MS's imperfect content-following (38.5% verified, round 106) occasionally introducing an unsupported personal-fact framing. Real but small difference, not alarming."
+  },
+  "cost": {
+    "baseline_avg_tokens_per_call": 716.9,
+    "routed_avg_tokens_per_call": 672.5,
+    "pct_change": -6.19,
+    "note": "Routed uses ~6% fewer tokens per call than baseline, driven almost entirely by shorter completions (47.3 vs 95.9 tokens -- RS's single-move brevity constraint), not shorter prompts (625.2 vs 621.0 -- nearly identical, the fixed all-four-slot prompt template dominates over actual resource injection). No established real $/token price exists for meta/llama-3.1-8b-instruct via this project's NVIDIA endpoint, so token counts are the primary honest cost metric."
+  },
+  "conclusion_vs_original_claim": "The original research claim under test was some form of 'PM (RS+MS) does not lose quality, and costs less than baseline' or 'PM is better on quality/risk at comparable cost.' This formal blind measurement does NOT support that claim as currently implemented. Quality is dramatically worse for routed (94.1% baseline-preferred), not comparable. Cost is modestly lower for routed, but that saving is purchased by giving up quality on 94% of pairs -- not a favorable trade in either direction the user asked about (same quality lower cost, or same cost better quality/lower risk). Risk is roughly flat. The failure is localized and mechanistically understood: it is a strategy-card-content and card-selection-skew problem (the dominant family's own instruction forbids the very things -- questions, forward momentum -- that make baseline replies preferred), not a failure of RS's opportunity routing, RS's Step2 card retrieval, or MS's memory injection mechanism, all three of which were independently verified functioning in prior rounds this session (RS opportunity routing H2-transfer BA=0.8634; RS Step2 retrieval 96.8% coverage; RS content-following 65.2% verified; MS suitability BA=0.8121; MS content-following 38.5% verified).",
+  "actionable_next_steps": [
+    "The clearest, most localized fix: revise the 'Restatement or Paraphrasing' family's support_move instructions to allow (or require) ending with a forward-moving question or brief warm acknowledgement, rather than a bare restate-only single move -- then re-measure quality on a fresh sample.",
+    "Separately: investigate why RS's card selection is skewed 31/34 toward this one family (already flagged as a known limitation in round 12/298l) -- broadening real selection across the other 4 families might avoid over-relying on the family that happens to have this restrictive instruction.",
+    "MP rule-based Step1 rescue remains the next concrete work item per the user's standing directive, independent of this finding."
+  ],
+  "artifacts": {
+    "quality_risk_analysis": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_cost_analysis_20260812/analysis.json",
+      "sha256": "55d850b51eb02b69b25d140b73e19d4b91f9da3b18fd410e8420d0e3a577fc6a"
+    },
+    "live_report": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_live_20260812/report.json",
+      "sha256": "80b1b31407043450914d8e8d8805c3bd5c5901708aa682cdbb7978126df9fe9e"
+    }
+  },
+  "real_costs": {
+    "quality_risk_measurement_review_usd": 0.9807,
+    "content_following_review_usd": 0.2443,
+    "total_measurement_spend_this_session_usd": 1.225
+  },
+  "authorization": {
+    "rs_family_instruction_revision": "requires_user_decision",
+    "rs_card_selection_rebalance": "requires_user_decision"
+  }
+}
