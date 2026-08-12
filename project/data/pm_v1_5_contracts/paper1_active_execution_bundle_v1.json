@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "MS_ABSTENTION_CALIBRATED_RS_REFREEZE_AND_EXECUTOR_ELIGIBILITY_NEXT",
-    "status": "MS_OFF_MAX_0_567_ON_MIN_0_729_UNCERTAIN_BAND_50PCT_POSITIVE_RATE_RS_STATUS_CHECKED_PRE_PAPER1_CHECKPOINT_FOUND",
+    "id": "RS_REFROZEN_MS_TRAINED_EXECUTOR_ELIGIBILITY_AND_EXTERNAL_WIRING_NEXT",
+    "status": "RS_PASS_CONFIRMED_UNCHANGED_MS_TRAINED_AND_CALIBRATED_BOTH_READY_FOR_EXECUTOR_QUALIFICATION",
     "parent_phase": {
-      "path": "outputs/pm_v1_5_paper1_ms_outer_train_abstention_calibration_20260812/report.json",
-      "sha256": "e311d93850610d1019823832654d9c4abbada08db0a24f39693b61cfb67632f0"
+      "path": "outputs/pm_v1_5_paper1_rs_opportunity_router_refreeze_20260812/report.json",
+      "sha256": "47e0d40a94b8365d1a90ac7e7dc84d861200d53e519750a9bdfdcd6da240cfee"
     },
-    "next_scientific_action": "MS now has both a trained checkpoint and calibrated OUTER_TRAIN_ONLY abstention thresholds (off_max=0.567, on_min=0.729; ON bucket 82.6% empirical precision, OFF bucket 95.1% empirical negative rate, UNCERTAIN bucket correctly isolates a genuinely 50/50 group). User asked to move toward external (ESConv/EvoEmo/ES-MemEval) testing of RS+MS. RS status checked: a real passed opportunity-router fit exists (outputs/pm_v1_5_same_bank_rs_opportunity_router_fit_v1, human H2-transfer balanced accuracy about 0.85) but predates this Paper1 phase (2026-08-01) and is not yet bound into this bundle -- needs a re-freeze under the current contract before use. Remaining before any external test: (1) MS small executor eligibility check (planned to claimed to verified Function on frozen anchors), (2) RS re-freeze/binding into this bundle, (3) wiring both into the real generation pipeline for one external dataset. None designed or started yet.",
+    "next_scientific_action": "RS re-freeze confirmed PASS (human H2-transfer balanced_accuracy=0.8634, checkpoint and Strategy Bank V4 input byte-identical to original 2026-08-01 fit, now bound into this bundle for the first time). MS has a trained checkpoint (LOGO-OOF BA=0.8121) and calibrated OUTER_TRAIN_ONLY abstention thresholds. Both components RS and MS now have real, verified artifacts. Per the plan's frozen 4-stage route (Sec 12.4), before either can be used in a real external (ESConv/EvoEmo/ES-MemEval) generation test, stage 3 requires a small executor eligibility check per component (planned->claimed->verified Function on frozen positive/negative/abstain anchors, meaning-absorption, safe non-use, owner/time/scaffold) -- not designed or started for either component yet. Wiring RS+MS checkpoints into src/metacom_pm/v1_5b_policy_runtime.py's compile_component_bits / v1_5_head_semantic_abstention.py's compile_independent_head_decisions for real generation also not yet done (that function requires probabilities for all 4 of MP/MS/ME/RS simultaneously -- MP and ME are not part of this session's completed work).",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "22d181209ca64c680eeec2fc83b26e41891602d5d9396a94361ff59ba6e44ccd"
+      "sha256": "a57b9a9c9d00c37b79849626a0a66d6dfbc5dd150294c5e937e5a6732ea87dd1"
     },
     {
       "role": "v3_factorial_planner",
@@ -242,6 +242,11 @@
       "role": "ms_outer_train_abstention_calibration_report",
       "path": "outputs/pm_v1_5_paper1_ms_outer_train_abstention_calibration_20260812/report.json",
       "sha256": "e311d93850610d1019823832654d9c4abbada08db0a24f39693b61cfb67632f0"
+    },
+    {
+      "role": "rs_opportunity_router_refreeze_report",
+      "path": "outputs/pm_v1_5_paper1_rs_opportunity_router_refreeze_20260812/report.json",
+      "sha256": "47e0d40a94b8365d1a90ac7e7dc84d861200d53e519750a9bdfdcd6da240cfee"
     }
   ],
   "legacy_import_denylist": [
@@ -270,7 +275,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "22d181209ca64c680eeec2fc83b26e41891602d5d9396a94361ff59ba6e44ccd"
+      "sha256": "a57b9a9c9d00c37b79849626a0a66d6dfbc5dd150294c5e937e5a6732ea87dd1"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",
