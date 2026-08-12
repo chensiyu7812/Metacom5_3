@@ -1,0 +1,34 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-realistic-anchor-qualification-closeout-v1",
+  "date": "2026-08-12",
+  "status": "QUALIFICATION_FAIL_REVIEWER_MODEL_BIAS_IDENTIFIED_NOT_CONSTRUCT_ALONE",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_realistic_anchor_qualification_execution_phase_v1.json",
+    "sha256": "42ce8bfd829d4b06c0c2308059c9441fb8b3a0ba856c207b92cfb41ddadfe064"
+  },
+  "observed": {
+    "logical_calls": 24,
+    "schema_and_local_valid": 24,
+    "primary_exact": "10/12",
+    "challenger_exact": "7/12",
+    "observed_cost_usd": 0.2043,
+    "public_201_calls": 0,
+    "training_labels_created_or_changed": 0,
+    "fits": 0
+  },
+  "root_cause": [
+    "GPT-5.6 (10/12) performed well on realistically-crude items. Its 2 misses are both defensible: (a) the new stale/resolved credit-card item was mis-specified by me -- it is structurally identical to the biopsy-relief item corrected to SUITABLE in the prior round (resolved past worry contextualizing a correctly-labeled present state), but I re-applied the old strict rule when authoring it, reproducing my own already-diagnosed error; (b) the bare-context abstain item was called NOT_SUITABLE instead of SEMANTIC_ABSTAIN -- same directional outcome (don't use it), different reason-code granularity, a benign near-miss.",
+    "Gemini (7/12) shows a strong, now 3-round-consistent bias toward inventing an UNDERSTANDING-style justification for SUITABLE almost regardless of family. Critically, Gemini flipped msrepaircontrol_dc20b8c45568cbdc576c6c33 (the low-information/phatic 'thank you' item) to SUITABLE this round -- a BYTE-IDENTICAL item both reviewers matched correctly in round 2. Only the rubric wording changed between rounds. This is evidence the rubric's added functional-risk language made the challenger MORE liberal across the board, not just correctly more liberal on the specific cases it was meant to fix, and that Gemini at thinking_budget=0 is not a stable/reliable reviewer for this task regardless of how the rubric is worded."
+  ],
+  "decision": "Do not author a 4th control-item batch. The evidence has shifted from 'construct is wrong' (round 2) through 'construct was over-strict' (round 2 correction) to 'the challenger reviewer model/config is the dominant remaining bottleneck' (this round). Recommend testing a nonzero Gemini thinking budget or a different challenger model/config before any further control-item work, and fixing the one self-inconsistent item (stale/resolved credit-card) to match the already-corrected construct. This is a real-money decision (changes reviewer cost) requiring separate user approval, not made unilaterally here.",
+  "authorization": {
+    "further_control_item_authoring": false,
+    "reviewer_config_change": "requires_user_decision",
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  }
+}
