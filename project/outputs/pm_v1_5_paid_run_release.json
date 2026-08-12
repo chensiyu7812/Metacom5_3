@@ -2,7 +2,7 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "1b71be8292070a8e418aa5d06fd80a44f2d116e6735586fa2c6567d4fe6e9307",
+  "config_sha256": "6ba39872c243c68f5da2c8df2def4be0fba8ef0407370b4ac69f9a900c8d1eaf",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
@@ -4377,6 +4377,33 @@
         "training_labels_or_fits": 0,
         "rerun_allowed": false,
         "note": "Thinking budget genuinely used (9290 tokens) but produced byte-identical exact-match count to the zero-thinking round -- clean null result. Root cause is the challenger model itself, not its thinking config. Recommend swapping challenger to a different model family (e.g. Claude Haiku 4.5) rather than further Gemini config tuning."
+      }
+    },
+    "paper1_ms_claude_haiku_challenger_probe_v1": {
+      "stage": "paper1_ms_claude_haiku_challenger_probe_v1",
+      "run_identity": "b659f77dffcc9057c2bc8b7213ede5f6f6ac610acf08ca15fa89155b9779e788",
+      "approval_identity": "b659f77dffcc9057c2bc8b7213ede5f6f6ac610acf08ca15fa89155b9779e788",
+      "maximum_estimated_usd": 0.75,
+      "exact_user_phrase": "批准,执行",
+      "scope": "Exactly 12 Claude Haiku 4.5 (Anthropic, strict tool use) calls against the same 12-item realistic anchor set, fresh reviewer identity MS_ANCHOR_CHALLENGER_CLAUDE_HAIKU. GPT-5.6 primary side is not re-called; its already-real 10/12 result from the realistic-anchor round is reused.",
+      "status": "CONSUMED_COMPLETE_QUALIFICATION_FAIL_BUT_LARGE_IMPROVEMENT_OVER_GEMINI",
+      "approved_at_utc": "2026-08-12T03:07:58.979379+00:00",
+      "output_directory": "outputs/pm_v1_5_paper1_ms_claude_haiku_challenger_probe_live_20260812",
+      "planned_logical_calls": 12,
+      "maximum_physical_attempts": 24,
+      "absolute_cost_ceiling_usd": 0.75,
+      "public_201_calls_authorized": 0,
+      "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": true,
+      "consumed_at_utc": "2026-08-12T03:07:58.979379+00:00",
+      "result": {
+        "logical_calls": 12,
+        "schema_and_local_valid": 12,
+        "exact_decisions": "9/12 (vs Gemini 7/12 no-thinking and 7/12 with thinking; still below the required >=11/12 gate)",
+        "observed_cost_usd": 0.059217,
+        "public_201_calls": 0,
+        "training_labels_or_fits": 0,
+        "rerun_allowed": false,
+        "note": "Genuinely independent model family (Anthropic vs Google) improved exact-match by +2 over both Gemini variants, a real signal that some of the bias was model-family-specific. But 2 of the 3 remaining mismatches show the same systematic failure mode as Gemini: treating a stale/unresolved past item as contributing a permissible UNDERSTANDING increment when it should be NOT_SUITABLE or SEMANTIC_ABSTAIN. This suggests the construct itself still leaves room for this error even in a stronger/different model, not purely a Gemini-specific quirk."
       }
     }
   }

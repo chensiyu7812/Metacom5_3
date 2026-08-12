@@ -1,0 +1,24 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-claude-haiku-challenger-endpoints-v1",
+  "candidates": {
+    "anthropic_claude_haiku_4_5_challenger": {
+      "anthropic_strict_tool_use": true,
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "base_url": "https://api.anthropic.com",
+      "family": "anthropic_claude_haiku_4_5",
+      "input_usd_per_million_tokens": 1.0,
+      "model": "claude-haiku-4-5-20251001",
+      "output_usd_per_million_tokens": 5.0,
+      "supports_strict_json_schema": true,
+      "transport": "anthropic_messages"
+    }
+  },
+  "request_contract": {
+    "client_internal_retries": 1,
+    "maximum_physical_attempts_per_logical_call": 2,
+    "max_output_tokens": 1200,
+    "seed": 20260812,
+    "temperature": 0.0
+  },
+  "design_note": "Isolated endpoint config for the Claude Haiku 4.5 challenger-model-swap probe only (paper1_ms_source_annotated_review_endpoints_v1.json is a hash-bound artifact referenced by multiple frozen phase contracts and must not be mutated). Tests a genuinely independent model family (Anthropic) after the gemini-thinking probe (paper1_ms_gemini_thinking_probe_v1) showed a clean null result ruling out thinking budget as the cause of the Gemini challenger's systematic bias. anthropic_strict_tool_use mirrors the shape already validated elsewhere in this project (configs/pm_v1_5_role_decomposed_judge_qualification_v1.json)."
+}
