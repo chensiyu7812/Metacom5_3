@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-restatement-warm-close-regeneration-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_31_RESTATEMENT_WARM_CLOSE_REGENERATION_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Regenerate the 31 Restatement-or-Paraphrasing-family routed replies from the RS+MS EvoEmo external test with the RS guidance swapped to the warm-close variant, isolating one variable, to test whether the quality loss root cause is fixable.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_preflight_20260812/report.json",
+      "sha256": "6d33d0c4d0ae43ca29eacc4ba3e8a8d4c0edebffa686a69eaecd6f7fb3e540e3",
+      "required_status": "PASS_REGENERATION_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_preflight_20260812/physical_call_plan_private.jsonl",
+      "sha256": "b7242b8fe7c22221c5e51f01568c386ca8e42ddd42f371dd23b580236e878b26"
+    },
+    {
+      "role": "regeneration_map",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_preflight_20260812/regeneration_map_private.jsonl",
+      "sha256": "28e6a713ac48e40bd4f77d35be054604ae501bdb4d972b52c7528b7ff8dada3d"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_restatement_warm_close_regeneration_execution_v1.json",
+      "sha256": "6c35be50a1b735802af01020ec8b62cc13e056f003bcb7faa744a95edb4a125f"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    }
+  ],
+  "execution": {
+    "component": "RS warm-close variant regeneration",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "logical_calls": 31,
+    "run_identity": "b241fcd9230ce2aa328dd1ed0dfa51cae3bb14d978466e0a18abb45a5254f8cc",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_live_20260812",
+    "absolute_usd_cap": 0.15
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 31,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": true
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This regenerates only routed replies -- baseline replies are reused unchanged from the original external test."
+  ]
+}

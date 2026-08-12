@@ -1,0 +1,54 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-restatement-warm-close-requality-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_31_RESTATEMENT_WARM_CLOSE_REQUALITY_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Quality-only blind re-measurement of the 31 warm-close-variant regenerated replies against the original baseline replies, to test whether the identified fix (permit a warm close/open question) recovers quality.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_preflight_20260812/report.json",
+      "sha256": "6a6c25e4b32b72c82ac915045e65bfa87237778ab1f4984029e8601c84230f30",
+      "required_status": "PASS_REQUALITY_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "quality_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_preflight_20260812/quality_packet_blind.jsonl",
+      "sha256": "05e3c9508517e364ff98b92f46ee4f892e43e00817fa723ee48be81fe9db3cd5"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "c81326aa2f62f4bdb4e001a7be5734cf8798db5b0264e678e7186ec8f4126939"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_restatement_warm_close_requality_execution_v1.json",
+      "sha256": "1daa1c31f6e5b8b7e2b18eacf69da4e0a1116f9b20fb884ce8023f4efa77c007"
+    }
+  ],
+  "execution": {
+    "component": "RS warm-close variant requality",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 31,
+    "run_identity": "8fbe179a590ce564e999fc5ddbe4fd34aa5f5536f7c495f6e374d11487ef5c7b",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_live_20260812",
+    "absolute_usd_cap": 0.5
+  },
+  "authorization": {
+    "control_review_api_calls": 31,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}
