@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_STEP2_CARD_RETRIEVAL_BUILT_AND_VALIDATED_MP_NEXT",
-    "status": "RS_V4_CARD_RETRIEVAL_96_8PCT_COVERAGE_ALL_5_FAMILIES_SELECTED_41_OF_79_CARDS_USED",
+    "id": "RS_MS_EVOEMO_EXTERNAL_TEST_COMPLETE_MECHANISM_CLEAN_LOW_UPTAKE_ON_WEAK_GENERATOR",
+    "status": "70_OF_70_CALLS_CLEAN_MECHANISM_ZERO_LEAKS_RS_8_8PCT_MS_36_8PCT_CLAIMED_USED_RATE_ON_LLAMA_3_1_8B",
     "parent_phase": {
-      "path": "outputs/pm_v1_5_paper1_rs_v4_card_retrieval_validation_20260812/report.json",
-      "sha256": "423e07b6823542f0feb532652a7b1a7be2f9b90799618d6981c8599b49d43e8b"
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_evoemo_external_test_closeout_v1.json",
+      "sha256": "e472498ef0d70e0bbda09b3075b99dfa4e0a67d327a13ce25f49a35cf93a8881"
     },
-    "next_scientific_action": "RS Step2 (real card selection, not the single fixed generic card) now exists: eligible_families() family gating + lexical_score() TF-cosine ranking (both reused from already-proven components, not invented) assembled against the 79 LLM-audit-qualified V4 cards. Validated zero-API on the full 4689-state real EvoEmo corpus: 96.8% selection coverage, all 5 strategy families selected somewhere, real non-degenerate score distribution (0.066-0.462). Honest limitation: selection is skewed toward Restatement or Paraphrasing (the unconditionally-eligible default family) and only 41/79 cards are ever selected on this corpus. Not yet validated: whether the selected card's content is actually appropriate per turn beyond family/lexical matching -- an executor-pilot-style check (like MS's) would be the next check if a real RS+MS external test uses this. Per user direction, MP rule-based Step1 is the next concrete work item.",
+    "next_scientific_action": "Not yet a formal blind quality/risk/function measurement (234l pattern still required before any quantified 'RS+MS helps' claim). Open question for the user: whether the low RS/MS uptake (8.8%/36.8% claimed-used rate) is a real ceiling on this weak 8B generator specifically, worth re-testing on a stronger generator, before concluding anything about RS/MS real-world utility. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item regardless.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -287,6 +287,26 @@
       "role": "rs_v4_card_retrieval_validation_report",
       "path": "outputs/pm_v1_5_paper1_rs_v4_card_retrieval_validation_20260812/report.json",
       "sha256": "423e07b6823542f0feb532652a7b1a7be2f9b90799618d6981c8599b49d43e8b"
+    },
+    {
+      "role": "paper1_rs_ms_evoemo_external_test_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_evoemo_external_test_execution_phase_v1.json",
+      "sha256": "a13b51a69cab5f3814b0f1329bf7b4b0d53e31c932f58d513a6d49779d1ff321"
+    },
+    {
+      "role": "rs_ms_evoemo_external_test_closeout",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_evoemo_external_test_closeout_v1.json",
+      "sha256": "e472498ef0d70e0bbda09b3075b99dfa4e0a67d327a13ce25f49a35cf93a8881"
+    },
+    {
+      "role": "rs_ms_evoemo_external_test_analysis",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_analysis_20260812/analysis.json",
+      "sha256": "44af0671866ee1467df7aad6e9153a7fd68ae627b727313db6eba55ceaa3c24f"
+    },
+    {
+      "role": "rs_ms_evoemo_external_test_live_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812/live_report.json",
+      "sha256": "1c7689c738c61f7eaba111eb2f05f9741cf0c53decd3239baa3852669c14008a"
     }
   ],
   "legacy_import_denylist": [

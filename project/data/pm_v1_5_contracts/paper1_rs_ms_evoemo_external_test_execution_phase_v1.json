@@ -1,0 +1,69 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-evoemo-external-test-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_70_RS_MS_EVOEMO_EXTERNAL_TEST_CALLS_AUTHORIZED_ONCE_NO_REFIT_NO_MP_ME",
+  "purpose": "Larger, real-card-selection RS+MS external test on real EvoEmo dialogue, MP/ME forced OFF, same-state same-seed baseline pairing preserved.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_preflight_20260812/report.json",
+      "sha256": "9660daf8d4365142aa5874436d7e2d1e87748c8d50191b22880677d9608bc1fe",
+      "required_status": "PASS_EXTERNAL_TEST_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "qualification_cases",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_preflight_20260812/qualification_cases_private.jsonl",
+      "sha256": "b60760aa6e386ffbc19ce44a25e3857b87ef6c70f6e54db9f205d92f57acbf81"
+    },
+    {
+      "role": "physical_call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_preflight_20260812/physical_call_plan_private.jsonl",
+      "sha256": "5ce1af1af49b88d6ac7375ca2a7fcad640ecc0794a28520cc85eb014a4f9aef3"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_evoemo_external_test_execution_v1.json",
+      "sha256": "158be99d7fcd22fba1e7600613fce8293bb23557c3d5f9bdc6b2eb62ada2b0f9"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    },
+    {
+      "role": "raw_first_live_runner",
+      "path": "scripts/v1_5/300l_run_paper1_rs_ms_evoemo_external_test_v1_5.py",
+      "sha256": "94f066ef9a320d346310ddf764168608e790f82f6a72c1e6d7c632e9d6cb3413"
+    }
+  ],
+  "execution": {
+    "component": "RS+MS",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 36,
+    "baseline_calls": 36,
+    "routed_calls": 34,
+    "run_identity": "88daa9006ea2bd1c9eb99250b2a9097ffb7f5e7716c035b9d1aaf211f8f9e8db",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812",
+    "absolute_usd_cap": 0.15
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 70,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": true
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "Running generation is not itself a success claim -- a paired baseline-vs-routed measurement step is required before any RS+MS-helps claim."
+  ]
+}

@@ -13,28 +13,28 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "current_execution_phase": {
-    "id": "RS_STEP2_CARD_RETRIEVAL_BUILT_AND_VALIDATED_MP_NEXT",
-    "status": "RS_V4_CARD_RETRIEVAL_96_8PCT_COVERAGE_ALL_5_FAMILIES_SELECTED_41_OF_79_CARDS_USED",
+    "id": "RS_MS_EVOEMO_EXTERNAL_TEST_COMPLETE_MECHANISM_CLEAN_LOW_UPTAKE_ON_WEAK_GENERATOR",
+    "status": "70_OF_70_CALLS_CLEAN_MECHANISM_ZERO_LEAKS_RS_8_8PCT_MS_36_8PCT_CLAIMED_USED_RATE_ON_LLAMA_3_1_8B",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "dcfe2b7af83d5724bb12c0eddcf46375058d2b413c2ab5e957ea00b5cf361dea"
+      "sha256": "440ef977f48a652187703c0b4479be60b399ceefa8623356159fb2326d6f9ead"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "RS Step2 (real card selection, not the single fixed generic card) now exists: eligible_families() family gating + lexical_score() TF-cosine ranking (both reused from already-proven components, not invented) assembled against the 79 LLM-audit-qualified V4 cards. Validated zero-API on the full 4689-state real EvoEmo corpus: 96.8% selection coverage, all 5 strategy families selected somewhere, real non-degenerate score distribution (0.066-0.462). Honest limitation: selection is skewed toward Restatement or Paraphrasing (the unconditionally-eligible default family) and only 41/79 cards are ever selected on this corpus. Not yet validated: whether the selected card's content is actually appropriate per turn beyond family/lexical matching -- an executor-pilot-style check (like MS's) would be the next check if a real RS+MS external test uses this. Per user direction, MP rule-based Step1 is the next concrete work item.",
+    "scope": "70/70 real generator calls complete (36 baseline M0+R0 + 34 routed, MP/ME forced off). Mechanism clean: zero routed-call unauthorized-evidence leaks, hash-binding held including a re-materialized identical-identity retry after fixing an evidence_id persistence bug. Functional read: RS claimed used in 8.8% of candidate-present routed calls, MS in 36.8% -- generator capability limitation, not a routing/selection logic failure.",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
   },
   "active_v3_phase": {
     "compatibility_alias_of": "current_execution_phase",
-    "id": "RS_STEP2_CARD_RETRIEVAL_BUILT_AND_VALIDATED_MP_NEXT",
-    "status": "RS_V4_CARD_RETRIEVAL_96_8PCT_COVERAGE_ALL_5_FAMILIES_SELECTED_41_OF_79_CARDS_USED",
+    "id": "RS_MS_EVOEMO_EXTERNAL_TEST_COMPLETE_MECHANISM_CLEAN_LOW_UPTAKE_ON_WEAK_GENERATOR",
+    "status": "70_OF_70_CALLS_CLEAN_MECHANISM_ZERO_LEAKS_RS_8_8PCT_MS_36_8PCT_CLAIMED_USED_RATE_ON_LLAMA_3_1_8B",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "dcfe2b7af83d5724bb12c0eddcf46375058d2b413c2ab5e957ea00b5cf361dea"
+      "sha256": "440ef977f48a652187703c0b4479be60b399ceefa8623356159fb2326d6f9ead"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
