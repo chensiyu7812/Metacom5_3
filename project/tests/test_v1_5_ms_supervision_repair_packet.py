@@ -88,7 +88,7 @@ def test_authority_has_one_current_execution_pointer() -> None:
     alias = authority["active_v3_phase"]
     assert alias["compatibility_alias_of"] == "current_execution_phase"
     assert alias["id"] == current["id"]
-    assert current["id"] == "RS_RESTATEMENT_WARM_CLOSE_QUALITY_GAIN_TRADED_FOR_DOUBLED_HALLUCINATION_RISK_MP_NEXT"
+    assert current["id"] == "RS_ESCONV_EXTERNAL_TEST_COMPLETE_REPLICATES_EVOEMO_FINDING_ES_MEMEVAL_DEFERRED_MP_NEXT"
     assert alias["active_phase_manifest"] == current["active_phase_manifest"]
     assert authority["current_phase"]["historical_only"] is True
     assert authority["current_phase"]["must_not_route_execution"] is True

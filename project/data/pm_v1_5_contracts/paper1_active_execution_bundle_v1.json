@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_RESTATEMENT_WARM_CLOSE_QUALITY_GAIN_TRADED_FOR_DOUBLED_HALLUCINATION_RISK_MP_NEXT",
-    "status": "FAIRNESS_GAP_CLOSED_RISK_DOUBLED_MEAN_0_29_TO_0_61_QUALITY_GAIN_NOT_A_CLEAN_WIN",
+    "id": "RS_ESCONV_EXTERNAL_TEST_COMPLETE_REPLICATES_EVOEMO_FINDING_ES_MEMEVAL_DEFERRED_MP_NEXT",
+    "status": "TWO_OF_THREE_EXTERNAL_TRACKS_COMPLETE_BOTH_REPLICATE_CLAIM_NOT_SUPPORTED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_rs_restatement_warm_close_fix_attempt_closeout_v1.json",
-      "sha256": "daa1b9a4e546183a2d9af30701bab952aef82ffc743f4ae14468c234a0946c2d"
+      "path": "data/pm_v1_5_contracts/paper1_rs_esconv_external_test_closeout_v1.json",
+      "sha256": "9baee961bb97057ee18ddf90449f468c453c23ae22c343914ada391f4c67e00d"
     },
-    "next_scientific_action": "User-flagged fairness gap closed: risk was re-measured on the 31 warm-close routed replies with the exact same instrument used for the original measurement (not skipped on an unverified assumption). Result: risk more than doubled (mean 0.29 -> 0.61, nonzero 6/31 -> 12/31), almost entirely from unsupported personal-fact invention, once the generator was given more freedom to add a warm close. The warm-close fix is therefore NOT a clean improvement -- it trades partial quality recovery for materially higher hallucination-type risk. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item; any further RS iteration must measure quality and risk together.",
+    "next_scientific_action": "ESConv (RS-only, second track) independently replicates the EvoEmo finding: baseline quality-preferred 94.4% (vs EvoEmo's 94.1%), routed risk 4x baseline (vs EvoEmo's ~1.5x, worse here), same root cause (89% Restatement-or-Paraphrasing family selection), plus a new safety-signal-handling gap (3/18). Two structurally different domains reproducing the same magnitude confirms this is a real property of the current RS card design, not an EvoEmo-specific artifact. ES-MemEval remains queued as a separate, properly-scoped future track (per the original protocol, not a reuse of the disconnected old V5.2 results) -- deferred per explicit user direction, not abandoned. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -352,6 +352,21 @@
       "role": "paper1_rs_ms_restatement_warm_close_rerisk_execution_phase",
       "path": "data/pm_v1_5_contracts/paper1_rs_ms_restatement_warm_close_rerisk_execution_phase_v1.json",
       "sha256": "251fc453af72d2f65728cb77813a6dacb9bc62ef2d6b77499ef441a631b3f466"
+    },
+    {
+      "role": "paper1_rs_esconv_external_test_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_esconv_external_test_execution_phase_v1.json",
+      "sha256": "ad7f5fd09699ab96b38e6700d59e729858fafacd0edc3d40848122ae73580383"
+    },
+    {
+      "role": "paper1_rs_esconv_quality_risk_measurement_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_esconv_quality_risk_measurement_execution_phase_v1.json",
+      "sha256": "6b2f79b5087def3e08617287c7c7839834b4aaae33508c089ca307b0c774708e"
+    },
+    {
+      "role": "rs_esconv_external_test_closeout",
+      "path": "data/pm_v1_5_contracts/paper1_rs_esconv_external_test_closeout_v1.json",
+      "sha256": "9baee961bb97057ee18ddf90449f468c453c23ae22c343914ada391f4c67e00d"
     }
   ],
   "legacy_import_denylist": [

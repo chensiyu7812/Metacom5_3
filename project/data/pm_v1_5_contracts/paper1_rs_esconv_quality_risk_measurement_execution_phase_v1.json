@@ -1,0 +1,61 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-esconv-quality-risk-measurement-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_54_RS_ESCONV_QUALITY_RISK_MEASUREMENT_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Formal blind quality (paired) and risk (absolute) measurement of the RS ESConv external test's 18 real baseline-vs-routed pairs, same instrument as the EvoEmo measurement.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_quality_risk_measurement_preflight_20260812/report.json",
+      "sha256": "b1c87afbb94690d453a7728ab8aa9ba1a0ea925f51a055e41c596ef2e89e04ae",
+      "required_status": "PASS_MEASUREMENT_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "quality_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_quality_risk_measurement_preflight_20260812/quality_packet_blind.jsonl",
+      "sha256": "64800a71f9d907f132e010dcab47b8c6933d03a05c27d71147a47e103ae6faf2"
+    },
+    {
+      "role": "risk_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_quality_risk_measurement_preflight_20260812/risk_packet_blind.jsonl",
+      "sha256": "fc9c66d0ba5c2429fb3d282f00f216f7c74c3d4b25cd194fa4db218a473ea242"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_quality_risk_measurement_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "8ff0d631bbfafea333002d0ca0c0d1fb179f3b365e1169aaf20f6b9218153cf0"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_esconv_quality_risk_measurement_execution_v1.json",
+      "sha256": "04a062dbff4e6f74d84a51997e52b8ee3cdc29781087a27f5db9ecb807eb052d"
+    }
+  ],
+  "execution": {
+    "component": "RS ESConv quality/risk blind measurement",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 54,
+    "quality_calls": 18,
+    "risk_calls": 36,
+    "run_identity": "ceb68fad32b4a4d1cab2714a190455d8887caec5585b72e9fe42a7b975f569ea",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_esconv_quality_risk_measurement_live_20260812",
+    "absolute_usd_cap": 0.7
+  },
+  "authorization": {
+    "control_review_api_calls": 54,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}
