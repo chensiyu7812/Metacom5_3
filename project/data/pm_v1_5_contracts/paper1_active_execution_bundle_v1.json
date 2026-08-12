@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "MS_REVIEWER_MODEL_BIAS_IDENTIFIED_USER_DECISION_NEXT",
-    "status": "QUALIFICATION_FAIL_ROOT_CAUSE_SHIFTED_TO_CHALLENGER_REVIEWER_CONFIG_NOT_CONSTRUCT_ALONE",
+    "id": "MS_CHALLENGER_MODEL_SWAP_RECOMMENDED_USER_DECISION_NEXT",
+    "status": "GEMINI_THINKING_BUDGET_RULED_OUT_AS_ROOT_CAUSE_CLEAN_NULL_RESULT",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_realistic_anchor_qualification_closeout_v1.json",
-      "sha256": "306ad69bd6fd068f7f7f38a7e5cce5e731f40602e547d7673e1d91abf32c43e5"
+      "path": "data/pm_v1_5_contracts/paper1_ms_gemini_thinking_probe_closeout_v1.json",
+      "sha256": "4d6bc88a1c94801656653bb3b282e1fd4a210da6c63c7c1d5a8f8a620b8ab148"
     },
-    "next_scientific_action": "User decides: test a nonzero Gemini thinking budget or a different challenger model/config (a real-money reviewer-config change), versus other options, before any further MS control-item authoring. One self-inconsistent item (stale/resolved credit-card) should also be fixed to match the already-corrected construct regardless of which path is chosen.",
+    "next_scientific_action": "User decides whether to test a genuinely different challenger model family (e.g. Claude Haiku 4.5) for the MS qualification, and if so approve a fresh small paid probe before any further control-item work or the larger 201-item formal labeling pass.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -70,8 +70,8 @@
     },
     {
       "role": "parent_current_phase_closeout",
-      "path": "data/pm_v1_5_contracts/paper1_ms_realistic_anchor_qualification_closeout_v1.json",
-      "sha256": "306ad69bd6fd068f7f7f38a7e5cce5e731f40602e547d7673e1d91abf32c43e5"
+      "path": "data/pm_v1_5_contracts/paper1_ms_gemini_thinking_probe_closeout_v1.json",
+      "sha256": "4d6bc88a1c94801656653bb3b282e1fd4a210da6c63c7c1d5a8f8a620b8ab148"
     },
     {
       "role": "final_ms_control_construct_repair_design",
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "0989f9359eacaa23b2339c618d378c9e6d3baee2931e02d75017c53fa5f621e7"
+      "sha256": "2d28fcd7bba5e7f409a2e5c271145cb14f143e46bb93c1926d4f0b9c274173b5"
     },
     {
       "role": "v3_factorial_planner",
@@ -182,6 +182,16 @@
       "role": "ms_realistic_anchor_qualification_audit_report",
       "path": "outputs/pm_v1_5_paper1_ms_realistic_anchor_qualification_audit_20260812/report.json",
       "sha256": "513e763245ab49faf79f335347b3c9012cc453bd6c0d584e6cc3edf7a9404a13"
+    },
+    {
+      "role": "ms_gemini_thinking_probe_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_ms_gemini_thinking_probe_execution_phase_v1.json",
+      "sha256": "bcae79ba018d7773406d1fc956800585e049eeb0b05a6e7f06bfb3f3f8438cca"
+    },
+    {
+      "role": "ms_gemini_thinking_probe_audit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_gemini_thinking_probe_audit_20260812/report.json",
+      "sha256": "cfb3fe3fb24a98c17bdf29efa1a37275957b8153e9dfcee8a489a2fdc71054ee"
     }
   ],
   "legacy_import_denylist": [
@@ -210,7 +220,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "0989f9359eacaa23b2339c618d378c9e6d3baee2931e02d75017c53fa5f621e7"
+      "sha256": "2d28fcd7bba5e7f409a2e5c271145cb14f143e46bb93c1926d4f0b9c274173b5"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",

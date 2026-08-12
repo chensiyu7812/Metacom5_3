@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-gemini-thinking-probe-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_12_GEMINI_THINKING_PROBE_CALLS_AUTHORIZED_ONCE",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_gemini_thinking_probe_preflight_20260812/report.json",
+      "sha256": "44085e474bae788faed13431bacc00bcf994f032959f240eecb7468f2caa1fbe",
+      "required_status": "PASS_EXACT_12_CALL_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_gemini_thinking_probe_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "173cdad4470175031b14f768fdfcc0524fe594c793785fdc4ba071e61697919f"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_ms_gemini_thinking_endpoints_v1.json",
+      "sha256": "11be85578a7c505c92042976ec73b707125963264e729153f1efd511a5a57f74"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_gemini_thinking_probe_execution_v1.json",
+      "sha256": "1b71be8292070a8e418aa5d06fd80a44f2d116e6735586fa2c6567d4fe6e9307"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+      "sha256": "70d574209ee3cff2f3dfb970c18bed5f109831fa13d37347696c24544055a1eb"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_ms_gemini_thinking_probe_v1",
+    "run_identity": "3b47c75209864d78c030f05d74ad0a7fcded2356a4ff30a04c958332f99249fa",
+    "logical_calls": 12,
+    "maximum_physical_attempts": 24,
+    "absolute_usd_cap": 0.75,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_gemini_thinking_probe_live_20260812",
+    "reviewers": {
+      "MS_ANCHOR_CHALLENGER_GEMINI_THINKING": "google_gemini_2_5_flash_thinking"
+    }
+  },
+  "qualification_gates_are_frozen_in_preflight": true,
+  "authorization": {
+    "control_review_api_calls": 12,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Do not call any of the 201 public reannotation items in this phase.",
+    "Do not relax qualification gates after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}
