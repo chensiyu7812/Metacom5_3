@@ -2,7 +2,7 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "6ba39872c243c68f5da2c8df2def4be0fba8ef0407370b4ac69f9a900c8d1eaf",
+  "config_sha256": "cd7e296a18bf945fcc9d1e89eb820165a36af25211e2e95c44fbbfdc60679a8e",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
@@ -4404,6 +4404,38 @@
         "training_labels_or_fits": 0,
         "rerun_allowed": false,
         "note": "Genuinely independent model family (Anthropic vs Google) improved exact-match by +2 over both Gemini variants, a real signal that some of the bias was model-family-specific. But 2 of the 3 remaining mismatches show the same systematic failure mode as Gemini: treating a stale/unresolved past item as contributing a permissible UNDERSTANDING increment when it should be NOT_SUITABLE or SEMANTIC_ABSTAIN. This suggests the construct itself still leaves room for this error even in a stronger/different model, not purely a Gemini-specific quirk."
+      }
+    },
+    "paper1_ms_formal_201_labeling_v1": {
+      "stage": "paper1_ms_formal_201_labeling_v1",
+      "run_identity": "1e60be2e0bab999315e32ba03a9c13ebe11aab70c2c30cfab20e538e8322b7e1",
+      "approval_identity": "1e60be2e0bab999315e32ba03a9c13ebe11aab70c2c30cfab20e538e8322b7e1",
+      "maximum_estimated_usd": 8.79,
+      "exact_user_phrase": "批准,执行",
+      "scope": "Formal 201-item x 2 qualified reviewer (GPT-5.6 primary, Claude Haiku 4.5 challenger) source-aware labeling pass against the already-materialized public packet, binary-collapsed exact-agreement-only consensus.",
+      "status": "CONSUMED_COMPLETE_127_OF_201_CONSENSUS_LABELS_PRODUCED",
+      "approved_at_utc": "2026-08-12T06:33:33.463523+00:00",
+      "output_directory": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_live_20260812",
+      "planned_logical_calls": 402,
+      "maximum_physical_attempts": 804,
+      "absolute_cost_ceiling_usd": 8.79,
+      "public_201_calls_authorized": 402,
+      "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": false,
+      "consumed_at_utc": "2026-08-12T06:33:33.463523+00:00",
+      "result": {
+        "logical_calls": 402,
+        "schema_and_local_valid": 389,
+        "transport_failures": 13,
+        "consensus_labeled": 127,
+        "disagreement_unlabeled": 61,
+        "coverage_fraction": 0.6318,
+        "consensus_binary_label_distribution": {
+          "USE": 34,
+          "DO_NOT_USE": 93
+        },
+        "observed_cost_usd": 4.965,
+        "rerun_allowed": false,
+        "note": "First real MS training-label set produced this session. 127/201 items reached binary-collapsed exact agreement between GPT-5.6 primary and Claude Haiku 4.5 challenger; genuine disagreement (61) stays unlabeled per the exact-consensus-only philosophy, not forced to a side."
       }
     }
   }
