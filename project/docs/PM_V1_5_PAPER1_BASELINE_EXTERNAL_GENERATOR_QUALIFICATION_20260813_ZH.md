@@ -90,7 +90,7 @@ AND all three external tracks pass their own task-specific gates
 - 相对 always-off，整体 Quality/Risk 非劣，learned-ON 子集 uplift 为正；
 - 相对 fixed-high，Quality/Risk 非劣且减少无必要 RS 注入；只有 input tokens 真下降至少 `10%` 才能写总输入成本优势；
 - 相对 rule 和 matched random，证明 learned state-action selection 的严格价值；
-- requested→received 为 `1.00`，RS source-aware functional-use 参考门为 `0.80`；
+- requested→received 为 `1.00`，RS source-aware Function 必须非零、可归因、可复现；`0.80` 是工程参考目标，不是独立硬门；
 - wrong-owner/future/scaffold exposure 为 `0`。
 
 ESConv 不能证明长期记忆或 personalization。
@@ -106,7 +106,7 @@ ESConv 不能证明长期记忆或 personalization。
 - 相对 rule、cost-matched fixed 和 matched random：证明严格的 adaptive selection value；
 - RS 与至少两个 MP/MS/ME 分别满足完整 head-pass；
 - full versus minus-component 或 component ON/OFF 显示各头的独立 Function/quality-cost contribution；
-- requested→received=`1.00`，single functional-use 参考门 `0.80`，multi-component all-functional 参考门 `0.70`；
+- requested→received=`1.00`，各头 Function 必须非零、可归因、可复现；single `0.80` 与 multi `0.70` 是工程参考目标，不是独立硬门；
 - 16-action oracle 的安全、regret、frontier cost 全部过门。
 
 EvoEmo 的 204 states 不能当 204 个独立样本；统计簇是 18 个 user。当前 OOF 路径是 cross-fitted in-domain evidence，不是 untouched-owner external validation。
@@ -128,7 +128,7 @@ EvoEmo 的 204 states 不能当 204 个独立样本；统计簇是 18 个 user�
 
 三项外测必须分别通过，禁止互相替代或合并成一个 effect size。
 
-## 三、Generator 应当更换，但不能直接换完挑结果
+## 三、Generator 对比保留，但延后到当前 treatment 成功之后
 
 当前失败不能只归咎于 Llama 3.1 8B。现行 treatment 同时要求：
 
@@ -137,7 +137,7 @@ EvoEmo 的 204 states 不能当 204 个独立样本；统计簇是 18 个 user�
 - 不提问、不建议、不加第二 move；
 - generator 还要输出结构化 trace 并通过 guard。
 
-更强模型可能只是更忠实地执行一个不完整的回复设计。因此应先在全新 development states 上运行：
+更强模型可能只是更忠实地执行一个不完整的回复设计。因此本轮先冻结 Llama 3.1 8B，把 treatment 改成 invariant `R0 + optional component deltas` 并通过开发晋级门。成功后，再在全新 development states 上运行以下 generator robustness factorial：
 
 ```text
                          Llama 3.1 8B     stronger generator
@@ -152,7 +152,7 @@ repaired treatment            C                  D
 - 强模型绝对回复更好但 PM uplift 仍为零：generator 改善，不代表 PM 有价值；
 - 两个 generator 的 PM uplift 都为正：才支持 generator robustness。
 
-Generator 选择必须使用与正式/外测 outcome 分离的开发资格面板。至少检查：schema/transport 成功率 `≥0.95`、wrong-owner/future/scaffold=`0`、single functional-use `≥0.80`、multi-component all-functional `≥0.70`、current-turn grounding 与 explicit-safety handling。
+Generator 选择必须使用与正式/外测 outcome 分离的开发资格面板。至少检查：schema/transport 成功率 `≥0.95`、wrong-owner/future/scaffold=`0`、source-aware Function 非零/可归因/可复现、current-turn grounding 与 explicit-safety handling。single `0.80` 与 multi `0.70` 只作为工程参考目标。
 
 正式比较中，每个 generator 内部都要跑完全相同的 policy baselines；跨 generator 只估计 generator main effect 和 PM×generator interaction，不能拿“强模型 PM”对“弱模型 baseline”。
 

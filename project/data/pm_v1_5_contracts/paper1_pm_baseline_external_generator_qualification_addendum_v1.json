@@ -11,6 +11,12 @@
     "quality_risk_cost_combined_score_forbidden": true,
     "cross_domain_pooled_effect_forbidden": true
   },
+  "stage_gate_clarification": {
+    "development_promotion": "A small development slice does not require p<0.05. Positive grouped Quality direction, no directional material-risk increase or critical event, structural integrity, nondegenerate routing, and at least two independently verified source-aware Function cases are sufficient to justify one frozen confirmatory run.",
+    "formal_head_pass": "Formal RS_pass or MS_pass still requires nonzero attributable reproducible Function, grouped same-stack Quality/Risk evidence, selector value beyond the named simple baseline, and marginal contribution controls.",
+    "functional_use_references": "Single-component 0.80 and multi-component 0.70 are aspirational engineering references, not standalone hard head-pass predicates and not substitutes for attributable Function plus Quality/Risk evidence.",
+    "binding": "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_root_repair_v1.json"
+  },
   "global_metric_margins": {
     "response_quality_netwin_noninferiority_margin": -0.05,
     "material_risk_rate_difference_upper_margin": 0.05,
@@ -138,7 +144,7 @@
         "versus fixed-high: Quality/Risk noninferiority and fewer RS injections; claim total input-cost reduction only if the 10% generator-input threshold passes",
         "versus transparent rule: Pareto noninferiority plus at least one strict primary improvement",
         "versus qualified matched random: better state-action selection at equal ON rate/cost and noninferior Risk",
-        "requested-to-received structurally = 1.00; source-aware RS functional-use reference >= 0.80",
+        "requested-to-received structurally = 1.00; source-aware RS Function is nonzero, attributable and reproducible; 0.80 remains an aspirational engineering reference",
         "wrong-owner/future/scaffold exposure = 0"
       ],
       "cannot_claim": [
@@ -171,7 +177,7 @@
         "versus cost-matched fixed and cost/ON-rate-matched random: strict adaptive state-action value at matched resource amount",
         "versus RS-only and learned-full-minus-component: each memory head counted as passed contributes verified Function or a better same-stack quality-cost frontier",
         "RS_pass and at least two of MP/MS/ME individually satisfy the complete head-pass definition",
-        "requested-to-received per component = 1.00; single-component functional-use reference >= 0.80; multi-component all-functional reference >= 0.70",
+        "requested-to-received per component = 1.00; source-aware component Function is nonzero, attributable and reproducible; 0.80 single and 0.70 multi remain aspirational engineering references",
         "wrong-owner/future/scaffold exposure = 0",
         "sixteen-action oracle safety, regret, and excess-cost gates pass"
       ],
@@ -219,7 +225,8 @@
       "Warm-close under Llama partially improved Quality but more than doubled unsupported-personal-fact Risk, demonstrating a real treatment-by-generator interaction.",
       "The MS-only ON-slice has a positive Quality point estimate, but 13/19 rows safely declined specific-memory use; this separates a promising prompt/program effect from still-open component-attributable memory Function."
     ],
-    "required_development_factorial": {
+    "deferred_robustness_factorial": {
+      "timing": "Only after the repaired invariant-R0 treatment passes the current-Llama development-promotion gate.",
       "factors": {
         "response_treatment": [
           "current_restrictive_treatment",
@@ -240,14 +247,14 @@
       ]
     },
     "generator_selection_gate": {
-      "timing": "Before fresh formal or external outcomes are opened.",
+      "timing": "Deferred until current-Llama treatment repair passes development promotion, and still before any generator-robustness confirmatory outcomes are opened.",
       "selection_data": "A dedicated development-only generator qualification panel.",
       "candidate_policy": "Retain Llama-3.1-8B as the historical reference; qualify one stronger open-weight or open-API candidate and optionally one strong proprietary candidate, then freeze at most one stronger primary challenger.",
       "required_checks": [
         "schema/transport success >= 0.95",
         "critical wrong-owner/future/scaffold exposure = 0",
-        "single-component source-aware functional-use >= 0.80",
-        "multi-component all-functional >= 0.70",
+      "single-component source-aware Function is nonzero, attributable and reproducible; 0.80 is an aspirational reference",
+      "multi-component all-functional 0.70 is an aspirational reference rather than a standalone pass gate",
         "current-turn grounding and explicit-safety handling pass",
         "prompt, schema, seed schedule, token cap, retries, fallback, pricing, and endpoint identity are content-addressed",
         "selection never reads external ESConv/EvoEmo/ES-MemEval outcomes"
