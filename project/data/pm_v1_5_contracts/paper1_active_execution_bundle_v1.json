@@ -17,13 +17,13 @@
     "independent_heads_joint_execution": true
   },
   "current_phase": {
-    "id": "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN",
-    "status": "FINAL_CONTROL_CONSTRUCT_REPAIR_DESIGN_COMPLETE_FRESH_MATERIALIZATION_NEXT_ZERO_API",
+    "id": "MS_FINAL_CONTROL_REPAIR_MATERIALIZED_AUDIT_PASS",
+    "status": "FRESH_CONTROLS_MATERIALIZED_LOCAL_AUDIT_PASS_REVIEW_CALLS_NOT_YET_AUTHORIZED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
-      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json",
+      "sha256": "2342e870d37fa9ab455bda357be840cd9d39b8824f35f31d6e780d937f26a427"
     },
-    "next_scientific_action": "Materialize and independently audit the already-designed fresh MS controls; review calls remain separately unauthorized.",
+    "next_scientific_action": "Authorize and run the fresh-identity 24-call qualification (12 items x GPT-5.6 + Gemini) exactly once against these 12 fresh controls. This is the last permitted MS control-construct check; on failure the pre-registered fallback is to retire the MS label route and proceed with MP/ME only.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -68,8 +68,8 @@
     },
     {
       "role": "parent_current_phase_closeout",
-      "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_closeout_v1.json",
-      "sha256": "b9e5301e8fd46bbf458e0a482efc416de81d3385e8dbd0d929fbcfb46e72fa25"
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json",
+      "sha256": "2342e870d37fa9ab455bda357be840cd9d39b8824f35f31d6e780d937f26a427"
     },
     {
       "role": "final_ms_control_construct_repair_design",
@@ -84,12 +84,12 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "274625a97cce7e7b6dbafd3d3a58fedd44f21978b3217b681d28f5b32885247f"
+      "sha256": "3193f0ae8ba487af183285b51a012b8253b45b54a90156406f84adfbadaa1b8a"
     },
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "a9ca6b8c269c235fb1c29d92327fa72a51babfcd4ca58ac0e9654a8255c36bcd"
+      "sha256": "79fd1e40e766d795e86569cfd9b44959e201dde217ac10061b0eedd121c87910"
     },
     {
       "role": "v3_factorial_planner",
@@ -145,6 +145,11 @@
       "role": "generic_nli_rejection_report",
       "path": "outputs/pm_v1_5_paper1_semantic_adapter_zero_api_20260811/report.json",
       "sha256": "d625de8b36d11e1806a43df1a09fa9f78245ffc5e1cf5e816e74b8ab11ac3bab"
+    },
+    {
+      "role": "ms_final_control_materialization_and_audit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/report.json",
+      "sha256": "73857d0a81786887b602e0871b46586a844026e7cb9e05b9cd25e6df7fee7a7a"
     }
   ],
   "legacy_import_denylist": [
@@ -168,7 +173,7 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "274625a97cce7e7b6dbafd3d3a58fedd44f21978b3217b681d28f5b32885247f"
+      "sha256": "3193f0ae8ba487af183285b51a012b8253b45b54a90156406f84adfbadaa1b8a"
     },
     {
       "role": "global_failure_ledger",

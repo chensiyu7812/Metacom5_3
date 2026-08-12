@@ -1,0 +1,70 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-final-control-repair-materialization-closeout-v1",
+  "date": "2026-08-12",
+  "status": "FRESH_CONTROLS_MATERIALIZED_LOCAL_AUDIT_PASS_REVIEW_CALLS_NOT_YET_AUTHORIZED",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "executed_script": {
+    "path": "scripts/v1_5/266l_materialize_paper1_ms_final_control_repair_v1_5.py",
+    "sha256": "3460d9a6e2e9471049d23237160b41817a1c90d3a7876883da065800978a2e7c"
+  },
+  "design": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_final_control_construct_repair_design_v1.json",
+    "sha256": "52e1b498c2d7cd7ed790e8212817464de238279d65b423f748adf5113ba8615a"
+  },
+  "artifacts": [
+    {
+      "role": "controls_blind",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/final_control_repair_controls_blind.jsonl",
+      "sha256": "ba6906000d41f71b8b45d5f9494943b306e4f30ff33c5b417e252de9fdf379bb"
+    },
+    {
+      "role": "materialization_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/report.json",
+      "sha256": "73857d0a81786887b602e0871b46586a844026e7cb9e05b9cd25e6df7fee7a7a",
+      "required_status": "ZERO_API_FRESH_CONTROLS_MATERIALIZED_LOCAL_CONSTRUCT_AUDIT_PASS_REVIEW_CALLS_NOT_YET_AUTHORIZED"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "79fd1e40e766d795e86569cfd9b44959e201dde217ac10061b0eedd121c87910"
+    }
+  ],
+  "observed": {
+    "items": 12,
+    "distribution": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "families_covered": 11,
+    "max_content_overlap_jaccard_vs_retired_12": 0.214286,
+    "max_content_overlap_jaccard_vs_public_201": 0.169231,
+    "api_calls": 0,
+    "training_labels_created_or_changed": 0,
+    "fits": 0
+  },
+  "construct_repairs_verified": {
+    "defect_1_current_echo_recurrence": "final_control_neg_recurrence_echo now states the recurrence proposition in the visible current text itself, so the past candidate is a true redundancy, not a hidden increment.",
+    "defect_2_event_binding": "final_control_pos_question_event_a/b visibly bind the same entity/event via an explicit continuity phrase ('same call' / 'same conversation') before crediting the past-only proposition.",
+    "defect_3_meta_question_forbidden": "final_control_abstain_entity_meta_forbidden's forbidden_focus_shift explicitly names asking which entity/whether-relevant as forbidden meta-clarification, not candidate Function."
+  },
+  "authorization": {
+    "fresh_control_materialization": true,
+    "review_calls": false,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "invariants": {
+    "content_disjoint_from_retired_and_public_201": true,
+    "sixteen_actions_unchanged": true,
+    "no_single_memory_cap": true,
+    "retired_identity_not_reused": true,
+    "one_new_reviewer_identity_required_for_next_qualification": true
+  },
+  "next_gate": "Authorize and run the fresh-identity 24-call qualification (12 items x GPT-5.6 + Gemini) exactly once. If it fails, retire the MS label route per the pre-registered fallback and proceed with MP/ME only."
+}

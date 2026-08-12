@@ -2,7 +2,7 @@
 
 日期：2026-08-11
 
-状态：`2026-08-12_ACTIVE_BUNDLE_PASS / FINAL_MS_CONTROL_REPAIR_DESIGN_COMPLETE / FRESH_CONTROL_MATERIALIZATION_NEXT_ZERO_API`
+状态：`2026-08-12_MS_FINAL_CONTROL_REPAIR_MATERIALIZED_AUDIT_PASS / FRESH_IDENTITY_24_CALL_QUALIFICATION_NEXT_NOT_YET_AUTHORIZED`
 
 Git 历史基线：`8337f15`；当前分支：`work/paper1-semantic-adapter-ablation-20260811`。执行身份以活动 bundle 的逐文件 SHA 为准，不以本行 commit 文本推断。
 
@@ -605,3 +605,42 @@ closure、meta-question 和 abstain controls 上明显优于现有 BGE/lexical�
 `data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json`；它绑定当前 phase、成功谓词、V3 planner/executor、
 语义 abstention、source-aware instrument、问题账本和禁止导入的 V2 literal-splice 文件。任何脚本/API/fit 若不先
 通过 bundle validator 即 fail closed。历史 authority 仍保存全部追溯关系，但不再作为人类或新 runner 的启动入口。
+
+### 12.6 2026-08-12 完成 fresh control 物化与本地审计（零 API）
+
+在 PI 明确授权"接手推进"之后执行，仍严格遵守本节 12.4 阶段一的边界：只做零 API 的物化与本地审计，
+不触碰 review calls、201 条重标、训练标签或 fit。
+
+新增脚本：
+- `scripts/v1_5/266l_materialize_paper1_ms_final_control_repair_v1_5.py`：手写并冻结 12 条全新 MS
+  control（distribution 5 SUITABLE / 5 NOT_SUITABLE / 2 SEMANTIC_ABSTAIN），覆盖
+  `paper1_ms_final_control_construct_repair_design_v1.json` 要求的全部 5 个负例族、4 个正例族（其中
+  `PAST_ONLY_QUESTION_INCREMENT_WITH_RESOLVED_EVENT` 占 2 条）、2 个 abstain 族。每条金标答案都通过
+  生产用的 `MSSourceAnnotatedSuitabilityReview` pydantic 合同与 `validate_review()` 真实校验，不是脚本自造
+  的近似检查。同时机器核对了三处历史缺陷是否已修复：
+  - 复发/echo 混淆：`final_control_neg_recurrence_echo` 的当前文本本身已包含"again"和"third time this
+    month"，使过去来源确为纯冗余；
+  - 事件绑定：两条 `PAST_ONLY_QUESTION_INCREMENT_WITH_RESOLVED_EVENT` 正例在当前文本中都有显式连续性
+    短语（"same call"/"same conversation"）先绑定实体事件，再计入过去专属命题；
+  - meta-question 漏洞：`final_control_abstain_entity_meta_forbidden` 的 `forbidden_focus_shift` 显式把
+    "is this related to something from before"类问题标为不构成 candidate Function。
+  与退休 12 条、公开 201 条的内容重叠（token Jaccard）实测最大值分别为 0.214 与 0.169，判定为内容不相交。
+- `scripts/v1_5/267l_advance_paper1_bundle_to_ms_final_control_materialized_v1_5.py`：冻结
+  `paper1_ms_final_control_repair_materialization_closeout_v1.json`，并把 `paper1_active_execution_bundle_v1.json`
+  的 `current_phase` 从 `MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN` 推进到
+  `MS_FINAL_CONTROL_REPAIR_MATERIALIZED_AUDIT_PASS`，同步更新 `active_method_authority_v1.json` 的
+  `current_execution_phase`/`active_v3_phase` 指针哈希。
+
+独立重跑 `265l_validate_paper1_active_execution_bundle_v1_5.py`：`PASS_ACTIVE_BUNDLE_ZERO_API_DESIGN_ONLY`，
+14 项 check 全绿。
+
+产物：
+- `outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/final_control_repair_controls_blind.jsonl`（12 条盲控制题）
+- `outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/report.json`
+- `outputs/pm_v1_5_paper1_ms_final_control_repair_private_20260812/final_control_repair_key.jsonl`（金标，仅私有）
+- `data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json`
+
+下一个硬门（尚未授权，本轮未执行）：用一个全新 reviewer 身份，对这 12 条控制题跑一次 24 次调用
+（GPT-5.6 + Gemini），这是 MS control-construct 修复路线允许的最后一次检查。若科学门再次未过，按预注册
+fallback 停止 MS label route，转向仅 MP/ME。这一步涉及真实 API 费用，需要在此文档外单独授权后再执行，
+不在本轮"接手推进"的零成本范围内自动展开。
