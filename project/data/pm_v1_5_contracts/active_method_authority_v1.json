@@ -14,16 +14,16 @@
   },
   "current_execution_phase": {
     "id": "MS_CLAUDE_HAIKU_CHALLENGER_PARTIAL_IMPROVEMENT_USER_DECISION_NEXT",
-    "status": "CLAUDE_HAIKU_9_OF_12_BEATS_GEMINI_7_OF_12_BUT_BELOW_GATE_SHARED_RESIDUAL_BIAS_FOUND",
+    "status": "CLAUDE_HAIKU_9_OF_12_BUT_ONE_ITEM_WAS_A_CONFIRMED_GOLD_KEY_BUG_CORRECTED_TO_10_OF_12_ACCOUNTABILITY_REVIEW_IN_PROGRESS",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "34d3615e2a1aba6115075746c814c74e5fde45bd461657f68eeebc3f204497c7"
+      "sha256": "9e1e6f10714c9d1cc9567095f62b69b1352b1cdbe0694b6a508bc289df21d8de"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "User decides whether to tighten the MS suitability construct/rubric against the two cross-model-reproduced failure patterns (STALE_RESOLVED_OR_CONFLICTING treated as UNDERSTANDING; MATERIAL_CHANGE_UNRESOLVED treated as SUITABLE) before any further challenger-model search or the larger 201-item formal labeling pass.",
+    "scope": "Zero-API accountability review found the round-3/4/5 anchor key had a confirmed gold bug on msrepaircontrol_5ff308bb11f16ae336b63a1d (STALE_RESOLVED_OR_CONFLICTING credit-card item): all 4 independent reviewer judgments across 3 model families (GPT-5.6, Gemini no-thinking, Gemini thinking, Claude Haiku 4.5) unanimously said SUITABLE against a NOT_SUITABLE gold -- a fix I had already diagnosed in round 3 (V15-MEAS-91) but never actually applied to the key file. Corrected and retrospectively re-scored (282l, zero API): GPT-5.6 10->11/12, Gemini 7->8/12 (both variants), Claude Haiku 9->10/12. Full per-item cross-round table shows the remaining Claude Haiku misses split into a Gemini-shared vague-candidate over-interpretation gap (MATERIAL_CHANGE_UNRESOLVED, 1/4 reviewers correct) and a same-direction near-miss on the SEMANTIC_ABSTAIN vs NOT_SUITABLE boundary (GPT-5.6 makes the identical near-miss). User asked for a full responsibility breakdown (model vs construct vs gate/item design) before deciding next step; this is not yet decided.",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
@@ -31,10 +31,10 @@
   "active_v3_phase": {
     "compatibility_alias_of": "current_execution_phase",
     "id": "MS_CLAUDE_HAIKU_CHALLENGER_PARTIAL_IMPROVEMENT_USER_DECISION_NEXT",
-    "status": "CLAUDE_HAIKU_9_OF_12_BEATS_GEMINI_7_OF_12_BUT_BELOW_GATE_SHARED_RESIDUAL_BIAS_FOUND",
+    "status": "CLAUDE_HAIKU_9_OF_12_BUT_ONE_ITEM_WAS_A_CONFIRMED_GOLD_KEY_BUG_CORRECTED_TO_10_OF_12_ACCOUNTABILITY_REVIEW_IN_PROGRESS",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "34d3615e2a1aba6115075746c814c74e5fde45bd461657f68eeebc3f204497c7"
+      "sha256": "9e1e6f10714c9d1cc9567095f62b69b1352b1cdbe0694b6a508bc289df21d8de"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
