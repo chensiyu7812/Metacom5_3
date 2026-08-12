@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "MS_HEAD_TRAINED_BA_0812_ABSTENTION_CALIBRATION_AND_EXECUTOR_QUALIFICATION_NEXT",
-    "status": "MS_SOURCE_ANNOTATED_CONSENSUS_LOGO_OOF_BA_0_8121_CI_0_738_0_883_FULL_FIT_CHECKPOINT_CREATED",
+    "id": "MS_ABSTENTION_CALIBRATED_RS_REFREEZE_AND_EXECUTOR_ELIGIBILITY_NEXT",
+    "status": "MS_OFF_MAX_0_567_ON_MIN_0_729_UNCERTAIN_BAND_50PCT_POSITIVE_RATE_RS_STATUS_CHECKED_PRE_PAPER1_CHECKPOINT_FOUND",
     "parent_phase": {
-      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_full_fit_20260812/report.json",
-      "sha256": "581f31f9c87dc0e61ff3b81e08cdb7a50d43acd20c5531c7503b0e26a05174d3"
+      "path": "outputs/pm_v1_5_paper1_ms_outer_train_abstention_calibration_20260812/report.json",
+      "sha256": "e311d93850610d1019823832654d9c4abbada08db0a24f39693b61cfb67632f0"
     },
-    "next_scientific_action": "MS now has a real trained checkpoint (127-item dual-qualified-reviewer consensus, LOGO-OOF balanced_accuracy_at_0_5=0.8121, 95% CI [0.738,0.883], roc_auc=0.8887 -- exceeds the retired looser single-teacher construct's 0.7449). Per the plan's frozen 4-stage route (Sec 12.4), the next real steps are: (1) calibrate OUTER_TRAIN_ONLY ON/OFF/UNCERTAIN thresholds for v1_5_head_semantic_abstention.py's HeadAbstentionThresholds from this OOF's held-out probabilities, (2) small executor eligibility check (planned->claimed->verified Function) before this checkpoint is wired into any real generation. Neither is designed or started in this session.",
+    "next_scientific_action": "MS now has both a trained checkpoint and calibrated OUTER_TRAIN_ONLY abstention thresholds (off_max=0.567, on_min=0.729; ON bucket 82.6% empirical precision, OFF bucket 95.1% empirical negative rate, UNCERTAIN bucket correctly isolates a genuinely 50/50 group). User asked to move toward external (ESConv/EvoEmo/ES-MemEval) testing of RS+MS. RS status checked: a real passed opportunity-router fit exists (outputs/pm_v1_5_same_bank_rs_opportunity_router_fit_v1, human H2-transfer balanced accuracy about 0.85) but predates this Paper1 phase (2026-08-01) and is not yet bound into this bundle -- needs a re-freeze under the current contract before use. Remaining before any external test: (1) MS small executor eligibility check (planned to claimed to verified Function on frozen anchors), (2) RS re-freeze/binding into this bundle, (3) wiring both into the real generation pipeline for one external dataset. None designed or started yet.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "d84b11dcc2243fe536be088037a2a87611079299a2104d1d97f0bf56d2a5662f"
+      "sha256": "22d181209ca64c680eeec2fc83b26e41891602d5d9396a94361ff59ba6e44ccd"
     },
     {
       "role": "v3_factorial_planner",
@@ -237,6 +237,11 @@
       "role": "ms_source_annotated_consensus_full_fit_report",
       "path": "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_full_fit_20260812/report.json",
       "sha256": "581f31f9c87dc0e61ff3b81e08cdb7a50d43acd20c5531c7503b0e26a05174d3"
+    },
+    {
+      "role": "ms_outer_train_abstention_calibration_report",
+      "path": "outputs/pm_v1_5_paper1_ms_outer_train_abstention_calibration_20260812/report.json",
+      "sha256": "e311d93850610d1019823832654d9c4abbada08db0a24f39693b61cfb67632f0"
     }
   ],
   "legacy_import_denylist": [
@@ -265,7 +270,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "d84b11dcc2243fe536be088037a2a87611079299a2104d1d97f0bf56d2a5662f"
+      "sha256": "22d181209ca64c680eeec2fc83b26e41891602d5d9396a94361ff59ba6e44ccd"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",

@@ -13,28 +13,28 @@
     "method_registry_path": "data/pm_v1_5_contracts/method_version_registry_v1.json"
   },
   "current_execution_phase": {
-    "id": "MS_HEAD_TRAINED_BA_0812_ABSTENTION_CALIBRATION_AND_EXECUTOR_QUALIFICATION_NEXT",
-    "status": "MS_SOURCE_ANNOTATED_CONSENSUS_LOGO_OOF_BA_0_8121_CI_0_738_0_883_FULL_FIT_CHECKPOINT_CREATED",
+    "id": "MS_ABSTENTION_CALIBRATED_RS_REFREEZE_AND_EXECUTOR_ELIGIBILITY_NEXT",
+    "status": "MS_OFF_MAX_0_567_ON_MIN_0_729_UNCERTAIN_BAND_50PCT_POSITIVE_RATE_RS_STATUS_CHECKED_PRE_PAPER1_CHECKPOINT_FOUND",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "6613d5f3b5df0752c161b275fdee7d1826d155abc38b8f905ed9114fd6c21e2a"
+      "sha256": "4ed72554b9edb3409f62ff66517a955d26fa020b302d5832bd00c4b482d7e85b"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
       "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
     },
-    "scope": "MS now has a real trained checkpoint (127-item dual-qualified-reviewer consensus, LOGO-OOF balanced_accuracy_at_0_5=0.8121, 95% CI [0.738,0.883], roc_auc=0.8887 -- exceeds the retired looser single-teacher construct's 0.7449). Per the plan's frozen 4-stage route (Sec 12.4), the next real steps are: (1) calibrate OUTER_TRAIN_ONLY ON/OFF/UNCERTAIN thresholds for v1_5_head_semantic_abstention.py's HeadAbstentionThresholds from this OOF's held-out probabilities, (2) small executor eligibility check (planned->claimed->verified Function) before this checkpoint is wired into any real generation. Neither is designed or started in this session.",
+    "scope": "MS now has both a trained checkpoint and calibrated OUTER_TRAIN_ONLY abstention thresholds (off_max=0.567, on_min=0.729; ON bucket 82.6% empirical precision, OFF bucket 95.1% empirical negative rate, UNCERTAIN bucket correctly isolates a genuinely 50/50 group). User asked to move toward external (ESConv/EvoEmo/ES-MemEval) testing of RS+MS. RS status checked: a real passed opportunity-router fit exists (outputs/pm_v1_5_same_bank_rs_opportunity_router_fit_v1, human H2-transfer balanced accuracy about 0.85) but predates this Paper1 phase (2026-08-01) and is not yet bound into this bundle -- needs a re-freeze under the current contract before use. Remaining before any external test: (1) MS small executor eligibility check (planned to claimed to verified Function on frozen anchors), (2) RS re-freeze/binding into this bundle, (3) wiring both into the real generation pipeline for one external dataset. None designed or started yet.",
     "api_calls_authorized": 0,
     "training_labels_authorized": 0,
     "diagnostic_fits_authorized": 0
   },
   "active_v3_phase": {
     "compatibility_alias_of": "current_execution_phase",
-    "id": "MS_HEAD_TRAINED_BA_0812_ABSTENTION_CALIBRATION_AND_EXECUTOR_QUALIFICATION_NEXT",
-    "status": "MS_SOURCE_ANNOTATED_CONSENSUS_LOGO_OOF_BA_0_8121_CI_0_738_0_883_FULL_FIT_CHECKPOINT_CREATED",
+    "id": "MS_ABSTENTION_CALIBRATED_RS_REFREEZE_AND_EXECUTOR_ELIGIBILITY_NEXT",
+    "status": "MS_OFF_MAX_0_567_ON_MIN_0_729_UNCERTAIN_BAND_50PCT_POSITIVE_RATE_RS_STATUS_CHECKED_PRE_PAPER1_CHECKPOINT_FOUND",
     "active_phase_manifest": {
       "path": "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json",
-      "sha256": "6613d5f3b5df0752c161b275fdee7d1826d155abc38b8f905ed9114fd6c21e2a"
+      "sha256": "4ed72554b9edb3409f62ff66517a955d26fa020b302d5832bd00c4b482d7e85b"
     },
     "primary_success_rule": {
       "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
