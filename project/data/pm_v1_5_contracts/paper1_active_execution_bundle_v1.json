@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_STEP2_CONTENT_UNBLOCKED_79_QUALIFIED_CARDS_CARD_SELECTION_DESIGN_AND_MP_NEXT",
-    "status": "RS_STRATEGY_CARD_LLM_AUDIT_79_OF_80_QUALIFIED_ACROSS_ALL_5_FAMILIES_STEP2_CONTENT_NOW_REAL",
+    "id": "RS_STEP2_CARD_RETRIEVAL_BUILT_AND_VALIDATED_MP_NEXT",
+    "status": "RS_V4_CARD_RETRIEVAL_96_8PCT_COVERAGE_ALL_5_FAMILIES_SELECTED_41_OF_79_CARDS_USED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_rs_strategy_card_llm_audit_closeout_v1.json",
-      "sha256": "68afa14eef299a032ed92294b5f6c73ca4093673b47b0a80248ac134a8876371"
+      "path": "outputs/pm_v1_5_paper1_rs_v4_card_retrieval_validation_20260812/report.json",
+      "sha256": "423e07b6823542f0feb532652a7b1a7be2f9b90799618d6981c8599b49d43e8b"
     },
-    "next_scientific_action": "RS's Step2 content gap is now partially addressed: 79 of 80 Strategy Bank V4 cards passed an independent LLM content-safety/scope audit across all 5 strategy families (a real substitute for, not equivalent to, the project's own never-completed human review gate -- labeled llm_audit_qualified, not eligible_for_formal_rs, which remains false for every card). RS's opportunity-routing decision (Step1) is validated on ESConv and EvoEmo/ES-MemEval; RS now has genuinely diverse real content to select from instead of one generic fallback card. Remaining before a real RS+MS external test: (1) design real card-selection/ranking logic (given a routed RS-ON decision, pick the best-fitting qualified card for the context -- not yet built, currently still using the fixed generic card in the executor pilot's wiring), (2) per user direction, MP rule-based Step1 is the next concrete work item after this.",
+    "next_scientific_action": "RS Step2 (real card selection, not the single fixed generic card) now exists: eligible_families() family gating + lexical_score() TF-cosine ranking (both reused from already-proven components, not invented) assembled against the 79 LLM-audit-qualified V4 cards. Validated zero-API on the full 4689-state real EvoEmo corpus: 96.8% selection coverage, all 5 strategy families selected somewhere, real non-degenerate score distribution (0.066-0.462). Honest limitation: selection is skewed toward Restatement or Paraphrasing (the unconditionally-eligible default family) and only 41/79 cards are ever selected on this corpus. Not yet validated: whether the selected card's content is actually appropriate per turn beyond family/lexical matching -- an executor-pilot-style check (like MS's) would be the next check if a real RS+MS external test uses this. Per user direction, MP rule-based Step1 is the next concrete work item.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "9597b08e082656e769c0cb3e35b7be0b7b3b0e9de77444e47e3b53a41f701b38"
+      "sha256": "bc900a692d3d106ee68b24f1e78aa7562b9114c3e16ef5d87b94b31ad557bcf6"
     },
     {
       "role": "v3_factorial_planner",
@@ -282,6 +282,11 @@
       "role": "rs_strategy_card_llm_audit_qualified_bank_report",
       "path": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_qualified_bank_20260812/report.json",
       "sha256": "cc49b6e332a0b0a2e489a2a5a161eaae2304b530e622b6d8fa4e3c8dd9653eed"
+    },
+    {
+      "role": "rs_v4_card_retrieval_validation_report",
+      "path": "outputs/pm_v1_5_paper1_rs_v4_card_retrieval_validation_20260812/report.json",
+      "sha256": "423e07b6823542f0feb532652a7b1a7be2f9b90799618d6981c8599b49d43e8b"
     }
   ],
   "legacy_import_denylist": [
@@ -310,7 +315,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "9597b08e082656e769c0cb3e35b7be0b7b3b0e9de77444e47e3b53a41f701b38"
+      "sha256": "bc900a692d3d106ee68b24f1e78aa7562b9114c3e16ef5d87b94b31ad557bcf6"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",
