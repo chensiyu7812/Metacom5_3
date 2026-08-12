@@ -1,0 +1,68 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-evoemo-executor-pilot-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_10_RS_MS_EVOEMO_PILOT_CALLS_AUTHORIZED_ONCE_NO_REFIT_NO_MP_ME",
+  "purpose": "Test whether the current V3 executor correctly uses/safely-declines the newly trained MS checkpoint's routed decision and the re-frozen RS opportunity router's routed decision on real EvoEmo dialogue, paired same-seed against an M0+R0 baseline for later blind quality/risk/function comparison.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_preflight_20260812/report.json",
+      "sha256": "2640a157f3792a330242f52a13858c7594b90f7932d5c86472f15a3a4ee181e0"
+    },
+    {
+      "role": "qualification_cases",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_preflight_20260812/qualification_cases_private.jsonl",
+      "sha256": "90755506c5b8aa6851ecb54733b435d86624ddb5507f70d947b76df08ec93836"
+    },
+    {
+      "role": "physical_call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_preflight_20260812/physical_call_plan_private.jsonl",
+      "sha256": "6d84801a67fb102a5d0d5450c67364a0edc4b8fd0e75c0668967b834bd2f67d1"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_evoemo_executor_pilot_execution_v1.json",
+      "sha256": "3e628f60f2685f725b31dd49ca49dafbec41fd97085d8059d7275a9dc1c75de3"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    },
+    {
+      "role": "raw_first_live_runner",
+      "path": "scripts/v1_5/292l_run_paper1_rs_ms_evoemo_executor_pilot_v1_5.py",
+      "sha256": "15f7cbdfe6954f308e79008ec85a3ed84cc90c694fa8942a6bf79e76e98cb050"
+    }
+  ],
+  "execution": {
+    "component": "RS+MS",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 6,
+    "baseline_calls": 6,
+    "routed_calls": 4,
+    "run_identity": "74eca68ba0393c71dd1dc09add92511e998a102d2e20386b6621b8b32906ef02",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812",
+    "absolute_usd_cap": 0.05
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 10,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": true
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "Running generation is not itself a success claim -- a paired baseline-vs-routed measurement step is required before any 'RS+MS helps' claim."
+  ]
+}

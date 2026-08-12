@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_REFROZEN_MS_TRAINED_EXECUTOR_ELIGIBILITY_AND_EXTERNAL_WIRING_NEXT",
-    "status": "RS_PASS_CONFIRMED_UNCHANGED_MS_TRAINED_AND_CALIBRATED_BOTH_READY_FOR_EXECUTOR_QUALIFICATION",
+    "id": "RS_MS_EVOEMO_EXECUTOR_PILOT_CLEAN_FORMAL_MEASUREMENT_AND_MP_ME_RESCUE_NEXT",
+    "status": "EXECUTOR_WIRING_VALIDATED_10_OF_10_CLEAN_ZERO_GUARD_ERRORS_QUALITATIVE_SIGNAL_POSITIVE",
     "parent_phase": {
-      "path": "outputs/pm_v1_5_paper1_rs_opportunity_router_refreeze_20260812/report.json",
-      "sha256": "47e0d40a94b8365d1a90ac7e7dc84d861200d53e519750a9bdfdcd6da240cfee"
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_evoemo_executor_pilot_closeout_v1.json",
+      "sha256": "1a465f99340a0e8673223b666fd83f182c956fe46709574fd4a809fb75a5506d"
     },
-    "next_scientific_action": "RS re-freeze confirmed PASS (human H2-transfer balanced_accuracy=0.8634, checkpoint and Strategy Bank V4 input byte-identical to original 2026-08-01 fit, now bound into this bundle for the first time). MS has a trained checkpoint (LOGO-OOF BA=0.8121) and calibrated OUTER_TRAIN_ONLY abstention thresholds. Both components RS and MS now have real, verified artifacts. Per the plan's frozen 4-stage route (Sec 12.4), before either can be used in a real external (ESConv/EvoEmo/ES-MemEval) generation test, stage 3 requires a small executor eligibility check per component (planned->claimed->verified Function on frozen positive/negative/abstain anchors, meaning-absorption, safe non-use, owner/time/scaffold) -- not designed or started for either component yet. Wiring RS+MS checkpoints into src/metacom_pm/v1_5b_policy_runtime.py's compile_component_bits / v1_5_head_semantic_abstention.py's compile_independent_head_decisions for real generation also not yet done (that function requires probabilities for all 4 of MP/MS/ME/RS simultaneously -- MP and ME are not part of this session's completed work).",
+    "next_scientific_action": "RS+MS executor pilot on real EvoEmo dialogue complete: 10/10 calls clean, zero guard errors, zero contamination, exact requested/planned/eligible action match throughout. This closes the 'no generation wiring exists' gap. Qualitative read of the 4 real routed-vs-baseline pairs is positive (MS shows real past-tense meaning absorption in both ON cases; RS shows a clear open-question effect in 2/3 authorized cases, safely declines the 3rd) but is NOT a formal blind quality/risk/function measurement -- per the user's own standard ('外部测试成功了才能说研究成功了'), a quantified claim still requires the formal paired blind comparison step (234l pattern), not run yet. User also asked to return to rescuing MP and ME once this RS+MS thread is in a good place -- that work has not started this session.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "a57b9a9c9d00c37b79849626a0a66d6dfbc5dd150294c5e937e5a6732ea87dd1"
+      "sha256": "d20110a41678e968d41794b8ebfff9e3a2e97aeb4dcfc913ff9440c471318834"
     },
     {
       "role": "v3_factorial_planner",
@@ -247,6 +247,16 @@
       "role": "rs_opportunity_router_refreeze_report",
       "path": "outputs/pm_v1_5_paper1_rs_opportunity_router_refreeze_20260812/report.json",
       "sha256": "47e0d40a94b8365d1a90ac7e7dc84d861200d53e519750a9bdfdcd6da240cfee"
+    },
+    {
+      "role": "rs_ms_evoemo_executor_pilot_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_evoemo_executor_pilot_execution_phase_v1.json",
+      "sha256": "39fa950b7b7cb413f75e022d6d41f037a9b24c3317a163bef6c917d748108656"
+    },
+    {
+      "role": "rs_ms_evoemo_executor_pilot_live_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812/live_report.json",
+      "sha256": "0b2a6293177106f3619ab7df0e9bbc0fb14b8ff19e5cb8e47b4c2e764a8f60bd"
     }
   ],
   "legacy_import_denylist": [
@@ -275,7 +285,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "a57b9a9c9d00c37b79849626a0a66d6dfbc5dd150294c5e937e5a6732ea87dd1"
+      "sha256": "d20110a41678e968d41794b8ebfff9e3a2e97aeb4dcfc913ff9440c471318834"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",

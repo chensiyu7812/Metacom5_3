@@ -2,7 +2,7 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "cd7e296a18bf945fcc9d1e89eb820165a36af25211e2e95c44fbbfdc60679a8e",
+  "config_sha256": "3e628f60f2685f725b31dd49ca49dafbec41fd97085d8059d7275a9dc1c75de3",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
@@ -4436,6 +4436,34 @@
         "observed_cost_usd": 4.965,
         "rerun_allowed": false,
         "note": "First real MS training-label set produced this session. 127/201 items reached binary-collapsed exact agreement between GPT-5.6 primary and Claude Haiku 4.5 challenger; genuine disagreement (61) stays unlabeled per the exact-consensus-only philosophy, not forced to a side."
+      }
+    },
+    "paper1_rs_ms_evoemo_executor_pilot_v1": {
+      "stage": "paper1_rs_ms_evoemo_executor_pilot_v1",
+      "run_identity": "74eca68ba0393c71dd1dc09add92511e998a102d2e20386b6621b8b32906ef02",
+      "approval_identity": "74eca68ba0393c71dd1dc09add92511e998a102d2e20386b6621b8b32906ef02",
+      "maximum_estimated_usd": 0.05,
+      "exact_user_phrase": "批准,执行",
+      "scope": "Real RS+MS executor pilot on 6 real EvoEmo states (10 generator calls: 6 baseline M0+R0 + 4 routed), testing the newly trained MS checkpoint + re-frozen RS opportunity router, MP/ME forced OFF.",
+      "status": "CONSUMED_COMPLETE_10_OF_10_CLEAN_EXECUTION_ZERO_GUARD_ERRORS",
+      "approved_at_utc": "2026-08-12T07:51:37.523713+00:00",
+      "output_directory": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812",
+      "planned_logical_calls": 10,
+      "maximum_physical_attempts": 40,
+      "absolute_cost_ceiling_usd": 0.05,
+      "public_201_calls_authorized": 0,
+      "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": true,
+      "consumed_at_utc": "2026-08-12T07:51:37.523713+00:00",
+      "result": {
+        "logical_calls": 10,
+        "execution_status_counts": {
+          "clean": 10
+        },
+        "guard_errors": 0,
+        "contamination_retries": 0,
+        "requested_planned_exact": 10,
+        "rerun_allowed": false,
+        "note": "First real generation calls this session driven by the newly trained MS checkpoint + calibrated abstention thresholds and the re-frozen RS opportunity router, on real EvoEmo dialogue, MP/ME forced OFF via candidate-absence. Zero guard violations across all 10 calls. Qualitative read: MS shows real meaning-absorption in both ON cases (natural past-tense reference, no verbatim copy); RS shows a clear open-question effect in 2/3 authorized cases, safely declined (used_evidence empty) in the 3rd. Paired baseline vs routed replies are saved for follow-up blind comparison; this pilot alone is not a formal quality claim."
       }
     }
   }
