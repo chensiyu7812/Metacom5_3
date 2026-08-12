@@ -1,0 +1,73 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-final-control-repair-qualification-closeout-v1",
+  "date": "2026-08-12",
+  "status": "QUALIFICATION_FAIL_MS_LABEL_ROUTE_RETIRED_PER_PRE_REGISTERED_FALLBACK",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_execution_phase_v1.json",
+    "sha256": "34b1c1af391a0c24dade774da2cdbb5b04d21dedb89a0200cfe0653994909c1e"
+  },
+  "artifacts": [
+    {
+      "role": "live_results",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_live_20260812/control_results_private.jsonl",
+      "sha256": "7e224a16f960a0e09b6a22f29f30f042926e1bfea938ac8139b63e59b339ea59"
+    },
+    {
+      "role": "raw_before_local_validation",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_live_20260812/raw_provider_outputs_before_local_validation.jsonl",
+      "sha256": "85cff9338fd7fa85e1bd8ac23ceaeea1d9b200dc8a52d568e044c24403d67b96"
+    },
+    {
+      "role": "audit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_qualification_audit_20260812/report.json",
+      "sha256": "2f37102824b0dbca9d3002ac178b5ed32dc0eb941156179928621f62f917425d",
+      "required_status": "QUALIFICATION_FAIL_MS_LABEL_ROUTE_MUST_BE_RETIRED_PER_PRE_REGISTERED_FALLBACK"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "e3c77a2d3de8ce1374fb6af60a5806e1d48005ee62a0df03e308c94a0b7cb982"
+    }
+  ],
+  "observed": {
+    "logical_calls": 24,
+    "schema_and_local_valid": 23,
+    "primary_exact": "9/11",
+    "primary_denominator": 11,
+    "primary_transport_failures": 1,
+    "challenger_exact": "7/12",
+    "challenger_denominator": 12,
+    "observed_cost_usd": 0.193249,
+    "public_201_calls": 0,
+    "training_labels_created_or_changed": 0,
+    "fits": 0
+  },
+  "root_cause": [
+    "Every one of the 5 'hard negative/abstain' families (TRUE_CURRENT_REDUNDANCY_INCLUDING_RECURRENCE, WRONG_ENTITY_OR_EVENT, STALE_RESOLVED_OR_CONFLICTING, ENTITY_OR_EVENT_UNRESOLVED_WITH_META_QUESTION_FORBIDDEN, MATERIAL_CHANGE_UNRESOLVED) was flipped to SUITABLE by at least one reviewer; the 2 'obvious negative' families (LOW_INFORMATION_OR_PHATIC, CURRENT_BOUNDARY_FORBIDS_HISTORY) were both scored correctly by both reviewers.",
+    "Both independent model families converged on flipping the same 2 items (WRONG_ENTITY_OR_EVENT: brother-vs-sister retirement stress; STALE_RESOLVED_OR_CONFLICTING: biopsy relief), each time reasoning that the past information provides useful contrast or emotional depth -- i.e. treating narrative/contrastive value as sufficient for material increment even when the specific proposition is the wrong entity or is superseded/conflicting. This is convergent evidence of a genuine interpretive opening in the SUITABLE construct, not independent reviewer noise.",
+    "The recurrence/echo item (fixed after round 1's diagnosis so the current text itself now states the recurrence) was still flipped by the Gemini challenger, which read the past source as 'deepening understanding of the pattern' rather than recognizing it as pure repetition of an already-stated fact.",
+    "The meta-question item (also fixed after round 1) was still flipped by the Gemini challenger into a literal disambiguating question ('is this the Priya one'), the exact move the rubric text explicitly named and forbade -- the model complied with the letter of asking 'one question' while violating the intent.",
+    "Round 1 diagnosed 3 specific construct defects and repaired them; round 2 shows the underlying tendency is broader than those 3 defects -- LLM reviewers systematically over-credit any past information that could plausibly deepen, contrast, or emotionally contextualize the current turn, regardless of whether it is redundant, wrong-entity, resolved, unresolved, or a meta-question. A third rubric patch is not pre-registered and is not authorized."
+  ],
+  "decision": "STOP_MS_LABEL_ROUTE_NO_FURTHER_CONTROL_REPAIR; per paper1_ms_final_control_construct_repair_design_v1.json's own scientific_gate.failure_action, proceed with MP and ME only. This identity and this control-construct repair route are permanently consumed and must not be reused or re-attempted.",
+  "authorization": {
+    "one_final_control_construct_repair_attempt": true,
+    "consumed_and_failed": true,
+    "further_ms_control_repair": false,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": true,
+    "baseline_or_external_calls": false
+  },
+  "invariants": {
+    "qualification_thresholds_not_relaxed": true,
+    "failed_identity_consumed_no_rerun": true,
+    "sixteen_actions_unchanged": true,
+    "no_single_memory_cap": true,
+    "ms_permanently_off_pending_future_reconsideration": true
+  }
+}

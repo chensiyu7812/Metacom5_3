@@ -1,0 +1,68 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-final-control-repair-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_24_FINAL_CONTROL_REPAIR_CALLS_AUTHORIZED_ONCE",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "input_bindings": [
+    {
+      "role": "materialization_closeout",
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json",
+      "sha256": "2342e870d37fa9ab455bda357be840cd9d39b8824f35f31d6e780d937f26a427"
+    },
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_preflight_20260812/report.json",
+      "sha256": "758bc1bb8e5898ec7ab622b2b5e68287a6b97abe4bc9d016d75eaf5e44f3611f",
+      "required_status": "PASS_EXACT_24_CONTROL_CALL_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "6cfa889c6f332ce09fc27ec7a084ce6b9a6767e443a86b248bf027115c4b18e9"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_ms_source_annotated_review_endpoints_v1.json",
+      "sha256": "cf04956ad8c8c00b9cfe3dc1ad5eeb85c30fc06970581177e9275a1d36f90c37"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_final_control_repair_execution_v1.json",
+      "sha256": "05d4d31ef24a68832de4ec31540853f0c4ca236e5bd07f9f41f94226960d8697"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+      "sha256": "6988957ebdf765382de5d5001231e19ddaf4275d7e8970dfa00f6984a1059541"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_ms_final_control_repair_qualification_v1",
+    "run_identity": "a76c2de61fe41689e3f1c721f81aa56ec10a1d11c8863dacca9d5907b18eff90",
+    "logical_calls": 24,
+    "maximum_physical_attempts": 48,
+    "absolute_usd_cap": 0.75,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_final_control_repair_live_20260812",
+    "reviewers": {
+      "MS_FINAL_PRIMARY_GPT56": "openai_gpt_5_6_sol",
+      "MS_FINAL_CHALLENGER_GEMINI": "google_gemini_2_5_flash"
+    }
+  },
+  "qualification_gates_are_frozen_in_preflight": true,
+  "authorization": {
+    "control_review_api_calls": 24,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Do not call any of the 201 public reannotation items in this phase.",
+    "Do not relax qualification gates after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

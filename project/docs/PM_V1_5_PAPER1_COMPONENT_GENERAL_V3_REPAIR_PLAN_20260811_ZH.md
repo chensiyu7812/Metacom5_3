@@ -2,7 +2,7 @@
 
 日期：2026-08-11
 
-状态：`2026-08-12_MS_FINAL_CONTROL_REPAIR_MATERIALIZED_AUDIT_PASS / FRESH_IDENTITY_24_CALL_QUALIFICATION_NEXT_NOT_YET_AUTHORIZED`
+状态：`2026-08-12_MS_LABEL_ROUTE_RETIRED / MP_AND_ME_RESCUE_NEXT`
 
 Git 历史基线：`8337f15`；当前分支：`work/paper1-semantic-adapter-ablation-20260811`。执行身份以活动 bundle 的逐文件 SHA 为准，不以本行 commit 文本推断。
 
@@ -644,3 +644,33 @@ closure、meta-question 和 abstain controls 上明显优于现有 BGE/lexical�
 （GPT-5.6 + Gemini），这是 MS control-construct 修复路线允许的最后一次检查。若科学门再次未过，按预注册
 fallback 停止 MS label route，转向仅 MP/ME。这一步涉及真实 API 费用，需要在此文档外单独授权后再执行，
 不在本轮"接手推进"的零成本范围内自动展开。
+
+### 12.7 2026-08-12（同日晚些时候）唯一一次 fresh-identity 资格赛：未过，MS label route 正式停止
+
+用户明确批准（原话："我批准，最高费用 $0.75"）后，用全新身份
+`a76c2de61fe41689e3f1c721f81aa56ec10a1d11c8863dacca9d5907b18eff90`、全新 reviewer 身份
+（`MS_FINAL_PRIMARY_GPT56` / `MS_FINAL_CHALLENGER_GEMINI`）跑了这唯一一次 24 次调用：
+
+- GPT-5.6：11/12 transport/schema valid（1条`repair_item_id_mismatch`），9/11 exact；
+- Gemini：12/12 transport/schema valid，7/12 exact；
+- 实际费用 $0.193249，在 $0.75 上限内；
+- 两项科学门（primary 12/12、challenger ≥11/12）均未过。
+
+**未过的模式非常一致，不是随机噪音**：12 条里 2 个"明显负例"族（低信息、用户明确划界）两个 reviewer
+全对；5 个"困难负例/abstain"族（复发冗余、错实体、stale/resolved、meta-question 禁止、
+material-change unresolved）逐一至少被一个 reviewer 翻成 SUITABLE。两个独立模型家族还收敛在同样
+2 条上翻错（brother-vs-sister 错实体、biopsy stale-relief），理由都是"过去信息提供有用的对比/情感
+深度"——把叙事/对比价值当成 material increment 的充分条件，即使具体命题是错实体或已被现状取代。
+第一轮诊断修的 2 个具体缺陷（复发未写入当前文本、meta-question 未禁止）即使已经按第一轮设计修复，
+Gemini 仍用同样底层倾向绕了过去。
+
+这说明第一轮"3 个具体 construct 缺陷"的诊断范围太窄——真正的根因是 LLM reviewer 系统性地倾向于
+只要过去信息能提供某种对比/加深/情感呼应，就判定为 material increment，而不管它是否冗余、错实体、
+已解决或本身就不明确。这是本方案 §12.4 阶段一预注册的"唯一一次最终修复"，按
+`paper1_ms_final_control_construct_repair_design_v1.json` 自己的
+`scientific_gate.failure_action` 执行：不再做第三次 rubric 修补（未预注册、不授权），MS label route
+正式停止。身份已在中央 `outputs/pm_v1_5_paid_run_release.json` 永久标记 consumed+fail，不可重跑。
+
+**当前有效结论**：Paper 1 的最低成功结构（RS + 至少两个记忆头）现在只能靠 RS + MP + ME 达成，MS 不再
+是候选记忆头之一。下一步是 MP 与 ME 的正式标签/grouped OOF 工作；MS 相关的所有产物、脚本、合同保留
+作只读证据，不再被活动 bundle 当作待完成项。

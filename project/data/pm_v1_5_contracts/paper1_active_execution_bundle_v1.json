@@ -14,16 +14,17 @@
     "effective_primary_success_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
     "base_v2_rs_plus_ms_predicate_is_historical_only": true,
     "requested_action_count": 16,
-    "independent_heads_joint_execution": true
+    "independent_heads_joint_execution": true,
+    "ms_label_route_retired": true
   },
   "current_phase": {
-    "id": "MS_FINAL_CONTROL_REPAIR_MATERIALIZED_AUDIT_PASS",
-    "status": "FRESH_CONTROLS_MATERIALIZED_LOCAL_AUDIT_PASS_REVIEW_CALLS_NOT_YET_AUTHORIZED",
+    "id": "MS_LABEL_ROUTE_RETIRED_MP_ME_RESCUE_NEXT",
+    "status": "MS_QUALIFICATION_FAIL_PERMANENTLY_CONSUMED_MP_AND_ME_ONLY_NEXT",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json",
-      "sha256": "2342e870d37fa9ab455bda357be840cd9d39b8824f35f31d6e780d937f26a427"
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_qualification_closeout_v1.json",
+      "sha256": "ec2fa53b66a86ee8200f7381839935aa5aa6ea4674d96bb700a0d890c5d373d7"
     },
-    "next_scientific_action": "Authorize and run the fresh-identity 24-call qualification (12 items x GPT-5.6 + Gemini) exactly once against these 12 fresh controls. This is the last permitted MS control-construct check; on failure the pre-registered fallback is to retire the MS label route and proceed with MP/ME only.",
+    "next_scientific_action": "MS is retired as a candidate memory head per its own pre-registered fallback. Primary success (RS + at least two memory heads) must now come from RS + MP + ME. Next work: MP formal suitability labels + grouped OOF, and ME typed action-result surface/label work, both zero-API to start.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -68,8 +69,8 @@
     },
     {
       "role": "parent_current_phase_closeout",
-      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_materialization_closeout_v1.json",
-      "sha256": "2342e870d37fa9ab455bda357be840cd9d39b8824f35f31d6e780d937f26a427"
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_qualification_closeout_v1.json",
+      "sha256": "ec2fa53b66a86ee8200f7381839935aa5aa6ea4674d96bb700a0d890c5d373d7"
     },
     {
       "role": "final_ms_control_construct_repair_design",
@@ -84,12 +85,12 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "3193f0ae8ba487af183285b51a012b8253b45b54a90156406f84adfbadaa1b8a"
+      "sha256": "d6cf31ec74218a2a852f52546336fb2123d1176ea4f03e43f93ef150c5c880cf"
     },
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "79fd1e40e766d795e86569cfd9b44959e201dde217ac10061b0eedd121c87910"
+      "sha256": "e3c77a2d3de8ce1374fb6af60a5806e1d48005ee62a0df03e308c94a0b7cb982"
     },
     {
       "role": "v3_factorial_planner",
@@ -150,6 +151,16 @@
       "role": "ms_final_control_materialization_and_audit_report",
       "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_20260812/report.json",
       "sha256": "73857d0a81786887b602e0871b46586a844026e7cb9e05b9cd25e6df7fee7a7a"
+    },
+    {
+      "role": "ms_final_control_repair_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_ms_final_control_repair_execution_phase_v1.json",
+      "sha256": "34b1c1af391a0c24dade774da2cdbb5b04d21dedb89a0200cfe0653994909c1e"
+    },
+    {
+      "role": "ms_final_control_repair_qualification_audit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_qualification_audit_20260812/report.json",
+      "sha256": "2f37102824b0dbca9d3002ac178b5ed32dc0eb941156179928621f62f917425d"
     }
   ],
   "legacy_import_denylist": [
@@ -173,14 +184,14 @@
     {
       "role": "current_human_plan_with_20260812_addendum",
       "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
-      "sha256": "3193f0ae8ba487af183285b51a012b8253b45b54a90156406f84adfbadaa1b8a"
+      "sha256": "d6cf31ec74218a2a852f52546336fb2123d1176ea4f03e43f93ef150c5c880cf"
     },
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "a9ca6b8c269c235fb1c29d92327fa72a51babfcd4ca58ac0e9654a8255c36bcd"
+      "sha256": "e3c77a2d3de8ce1374fb6af60a5806e1d48005ee62a0df03e308c94a0b7cb982"
     }
   ],
-  "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-2026-08-12-完成路线与语义边界附录当前有效",
+  "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-7-2026-08-12-同日晚些时候唯一一次-fresh-identity-资格赛未过ms-label-route-正式停止",
   "runner_start_rule": "Validate this bundle and active_method_authority_v1.json; do not infer currency from any other file."
 }
