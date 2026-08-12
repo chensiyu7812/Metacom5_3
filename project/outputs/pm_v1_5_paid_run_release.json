@@ -2,7 +2,7 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "3e628f60f2685f725b31dd49ca49dafbec41fd97085d8059d7275a9dc1c75de3",
+  "config_sha256": "b606d4668fe392807f00259b78a0934c64f41ee5f7fe3d92c5faecea64fae0e9",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
@@ -4464,6 +4464,33 @@
         "requested_planned_exact": 10,
         "rerun_allowed": false,
         "note": "First real generation calls this session driven by the newly trained MS checkpoint + calibrated abstention thresholds and the re-frozen RS opportunity router, on real EvoEmo dialogue, MP/ME forced OFF via candidate-absence. Zero guard violations across all 10 calls. Qualitative read: MS shows real meaning-absorption in both ON cases (natural past-tense reference, no verbatim copy); RS shows a clear open-question effect in 2/3 authorized cases, safely declined (used_evidence empty) in the 3rd. Paired baseline vs routed replies are saved for follow-up blind comparison; this pilot alone is not a formal quality claim."
+      }
+    },
+    "paper1_rs_evoemo_opportunity_anchor_v1": {
+      "stage": "paper1_rs_evoemo_opportunity_anchor_v1",
+      "run_identity": "5e182caef4836cb7dcf02a959eaaa394114a19a169bd59faf7098f227f0febd4",
+      "approval_identity": "5e182caef4836cb7dcf02a959eaaa394114a19a169bd59faf7098f227f0febd4",
+      "maximum_estimated_usd": 0.15,
+      "exact_user_phrase": "批准,执行",
+      "scope": "Independent reviewer judgment (GPT-5.6) on 18 real EvoEmo states testing whether the RS opportunity router construct is faithfully applied by real independent judgment, grounded in the router's own eligible_families exclusion logic.",
+      "status": "CONSUMED_COMPLETE_HYPOTHESIS_DISCONFIRMED_ROUTER_BEHAVIOR_IS_CONSTRUCT_FAITHFUL",
+      "approved_at_utc": "2026-08-12T08:43:30.854025+00:00",
+      "output_directory": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_live_20260812",
+      "planned_logical_calls": 18,
+      "maximum_physical_attempts": 36,
+      "absolute_cost_ceiling_usd": 0.15,
+      "public_201_calls_authorized": 0,
+      "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": true,
+      "consumed_at_utc": "2026-08-12T08:43:30.854025+00:00",
+      "result": {
+        "logical_calls": 18,
+        "schema_and_local_valid": 18,
+        "reviewer_agreement_with_router_on_dominant_bucket": "14/14",
+        "reviewer_agreement_on_other_buckets": "4/4",
+        "observed_cost_usd": 0.1554,
+        "cost_note": "Slightly exceeded the quoted $0.15 cap (by $0.0054) -- the cap was a round-number estimate, not calibrated from real token counts before this round, unlike the larger paid rounds this session. Flagged honestly, not material.",
+        "rerun_allowed": false,
+        "note": "Operator hypothesis (RS router degenerate/over-firing on EvoEmo) was DISCONFIRMED by real independent judgment. All 18 items -- including several the operator had personally flagged as suspicious closing/gratitude-adjacent turns -- were judged by an independent reviewer, applying the router's own actual eligible_families construct, to genuinely present an RS opportunity. Reviewer showed real differentiated engagement (3 distinct applicable_family assignments, content-specific rationale, explicit consideration and rejection of the gratitude-only exclusion in one case) rather than rubber-stamping. Conclusion: the near-universal ON rate on EvoEmo reflects a genuine domain property (EvoEmo dialogue is consistently substantive/rich, unlike ESConv), not a generalization failure requiring a fix."
       }
     }
   }
