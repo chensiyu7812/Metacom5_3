@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-only-ablation-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_19_MS_ONLY_ABLATION_CALLS_AUTHORIZED_ONCE_NO_RS",
+  "purpose": "Clean MS-only same-stack ablation (RS forced off) on the 19 real ms_decision=ON EvoEmo states, to isolate MS's own marginal contribution -- every prior measurement had MS confounded with RS.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_only_ablation_preflight_20260812/report.json",
+      "sha256": "2f5cef51dd865432cfa5ad374a7ecb16e538d1d055df251e58f2c74d7949c105",
+      "required_status": "PASS_ABLATION_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_only_ablation_preflight_20260812/physical_call_plan_private.jsonl",
+      "sha256": "58eae693eee3d16e0f940c3f5c68d6f4009455e113eeb14a63e09125a3b70488"
+    },
+    {
+      "role": "ablation_map",
+      "path": "outputs/pm_v1_5_paper1_ms_only_ablation_preflight_20260812/ablation_map_private.jsonl",
+      "sha256": "30038dfe1c22636a908d932b08d550ebebdfc3ea6d4a8c35a4bb59aec94ce50a"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_only_ablation_execution_v1.json",
+      "sha256": "b189504c495eb1da9b7a84d34513a20537b89b4f6259b98d9b72394261ce8821"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    }
+  ],
+  "execution": {
+    "component": "MS-only",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 19,
+    "run_identity": "14b5feb52675d95c3c1d44110a8feebf155acaff2fa79207db442d77bf38843a",
+    "output_directory": "outputs/pm_v1_5_paper1_ms_only_ablation_live_20260812",
+    "absolute_usd_cap": 0.15
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 19,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": true
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "Baseline replies are reused unchanged from the original external test -- only the MS-only arm is newly generated."
+  ]
+}

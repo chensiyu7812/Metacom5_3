@@ -1,0 +1,33 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-evidence-based-default-off-policy-v1",
+  "date": "2026-08-13",
+  "status": "PROVISIONAL_FAIL_CLOSED_DEPLOYMENT_POLICY_NOT_AN_RS_HEAD_PASS",
+  "decision": "RS defaults to OFF under the current Strategy Bank V4 card content and current generator. This prevents known quality loss while a versioned treatment redesign and generator-factor diagnostic are developed.",
+  "evidence": {
+    "same_stack_outcome_pairs": 33,
+    "denominator_note": "EvoEmo pure RS-only (MS off) pairs plus ESConv pairs under the current Llama treatment; position-randomized blind quality review.",
+    "baseline_win_rate": 0.939,
+    "routed_win_rate": 0.061,
+    "independent_groups_with_realized_treatment": 28,
+    "independent_groups_showing_material_benefit": 2,
+    "bounded_interpretation": "The observed current-treatment result strongly disfavors deploying RS ON by default. Winning-case rationales suggest that some routed wins arose when baseline made an error that the narrow routed response avoided. This is a diagnosis and hypothesis, not proof that benefit is intrinsically unpredictable or independent of sample size; observable state features could still predict such baseline-error risk in future data."
+  },
+  "relationship_to_primary_success_rule": {
+    "binds_to": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+    "effect_on_same_stack_outcome": "NOT PASS. Comparing OFF with OFF is a deployment identity check, not evidence that a learned RS component has useful conditional behavior against RS-off and same-stack baselines.",
+    "effect_on_selector_nondegeneracy": "NOT PASS. An effectively always-off component equals the simple baseline and cannot demonstrate a learned selection improvement.",
+    "formal_rs_pass": false,
+    "paper1_primary_consequence": "Because the primary predicate requires RS_pass, default-off keeps the primary claim open/failed until a redesigned RS treatment passes prospectively. It cannot be used to satisfy the predicate by definition.",
+    "not_a_reinterpretation_of": "The historical rs_open_close_construct_v2.json is not bound to the current authority; this policy is only a fail-closed operational decision grounded in the current paired-outcome data."
+  },
+  "reversal_conditions": [
+    "A versioned Strategy Bank or response-program redesign is frozen before outcomes and shows useful grouped same-stack behavior against RS-off.",
+    "A generator-factor experiment shows that a qualified stronger generator changes the treatment effect, followed by fresh confirmation under the frozen selected generator.",
+    "Enough independent groups with genuine material benefit accumulate to train and prospectively confirm a nondegenerate eligibility rule."
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "pm_refit": false,
+    "external_execution": false
+  }
+}

@@ -124,6 +124,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SOURCE_CONTROL_REPAIR_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FINAL_CONTROL_DESIGN_COMPLETE",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_ZERO_API_GENERATOR_TREATMENT_FACTORIAL_DESIGN",
     }
     current_execution = authority.get("current_execution_phase") or {}
     checks = {
@@ -301,6 +302,17 @@ def validate_active_authority() -> dict[str, Any]:
                         )
                         for binding in read(resolve(active_v3_document["executed_phase"]["path"])).get("input_bindings", [])
                     )
+                )
+            )
+            or (
+                active_v3_manifest.get("path")
+                == "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json"
+                and any(
+                    item.get("role") == "global_failure_ledger"
+                    and sha(resolve(item["path"])) == item["sha256"]
+                    and "## 26. 2026-08-12 MS监督单位修复"
+                    in resolve(item["path"]).read_text(encoding="utf-8")
+                    for item in active_v3_document.get("files", [])
                 )
             )
         ),
@@ -617,6 +629,24 @@ def validate_active_authority() -> dict[str, Any]:
                     and active_v3_document["authorization"]["training_label_creation"]
                     is False
                     and active_v3_document["authorization"]["pm_fit"] is False
+                )
+                or (
+                    active_v3_manifest.get("path")
+                    == "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json"
+                    and active_v3_document.get("method", {}).get(
+                        "effective_primary_success_predicate"
+                    )
+                    == "RS_pass AND count_pass(MP,MS,ME) >= 2"
+                    and active_v3_document.get("current_phase", {}).get(
+                        "authorization"
+                    )
+                    == {
+                        "api_calls": 0,
+                        "training_labels": 0,
+                        "diagnostic_fits": 0,
+                        "generator_calls": 0,
+                        "external_execution": False,
+                    }
                 )
                 or (
                     active_v3.get("id") == "G4B1_CONTROL_QUALIFICATION"

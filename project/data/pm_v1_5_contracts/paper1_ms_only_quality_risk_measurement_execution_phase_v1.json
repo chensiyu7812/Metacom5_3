@@ -1,0 +1,61 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-only-quality-risk-measurement-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_57_MS_ONLY_QUALITY_RISK_MEASUREMENT_CALLS_AUTHORIZED_ONCE",
+  "purpose": "First clean, unconfounded measurement of MS's own same_stack_outcome criterion (RS forced off), same instrument as the EvoEmo/ESConv measurements.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_preflight_20260812/report.json",
+      "sha256": "2b4ba7cbe75e86ad1febf010650a6ce999d9da4bb6f20d05f68e801343cc5bed",
+      "required_status": "PASS_MEASUREMENT_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "quality_packet",
+      "path": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_preflight_20260812/quality_packet_blind.jsonl",
+      "sha256": "b8ecf8f6f4ee94cb87e371db842e35b924c753db91dd0db838ed6c4083d2e84b"
+    },
+    {
+      "role": "risk_packet",
+      "path": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_preflight_20260812/risk_packet_blind.jsonl",
+      "sha256": "03dc6e5c307fda0e885a472520b496fdaae5a7d51414bbc93c5590ce20dacb3c"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "f6880437d088a5d45257f7abedc4e33e6886e398975e30e79015b64ae727c7e1"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_only_quality_risk_measurement_execution_v1.json",
+      "sha256": "1dcb37e02e5b16df7d01377e2c8767202b6d2fadb940200af8bda20bd15a81e1"
+    }
+  ],
+  "execution": {
+    "component": "MS-only quality/risk blind measurement",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 57,
+    "quality_calls": 19,
+    "risk_calls": 38,
+    "run_identity": "8bdc75a7794d27dff792bc8d4de982362af0be2c380305120298d00e1930613c",
+    "output_directory": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_live_20260812",
+    "absolute_usd_cap": 0.7
+  },
+  "authorization": {
+    "control_review_api_calls": 57,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

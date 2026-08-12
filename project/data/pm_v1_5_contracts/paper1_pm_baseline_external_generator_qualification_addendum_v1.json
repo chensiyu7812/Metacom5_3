@@ -1,0 +1,295 @@
+{
+  "protocol": "pm-v1.5-paper1-pm-baseline-external-generator-qualification-addendum-v1",
+  "date": "2026-08-13",
+  "status": "ACTIVE_ZERO_API_QUALIFICATION_ADDENDUM_NO_EXECUTION_AUTHORITY",
+  "purpose": "Freeze what comparisons are required for a qualified learned PM, how each of the three external experiments contributes to the claim, and how generator capacity may be changed without outcome-driven model selection.",
+  "authority_boundary": {
+    "does_not_modify_historical_measurement": true,
+    "running_phase_at_authoring": "MS_ONLY_QUALITY_RISK_MEASUREMENT_EXECUTION (now closed)",
+    "bound_only_after_running_phase_closeout": true,
+    "effective_primary_success_predicate_preserved": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "quality_risk_cost_combined_score_forbidden": true,
+    "cross_domain_pooled_effect_forbidden": true
+  },
+  "global_metric_margins": {
+    "response_quality_netwin_noninferiority_margin": -0.05,
+    "material_risk_rate_difference_upper_margin": 0.05,
+    "generation_input_token_reduction_vs_fixed_high_min": 0.10,
+    "matched_control_absolute_cost_mismatch_max": 0.05,
+    "matched_random_min_different_action_fraction": 0.25,
+    "sixteen_action_quality_equivalence_band": 0.10,
+    "sixteen_action_frontier_excess_cost_max": 0.05,
+    "qa_token_f1_noninferiority_margin_proposed": -0.03,
+    "qa_false_answer_rate_difference_upper_margin_proposed": 0.05,
+    "qa_margin_note": "The QA margins must be bound before ES-MemEval outcomes are opened. If a disjoint development estimate is available, it may replace the proposed values once; otherwise these proposed values become final."
+  },
+  "policy_qualification_is_conjunctive": {
+    "machine_predicate": "head_count_pass AND system_value_pass AND modeling_value_pass AND selection_value_pass AND oracle_safety_efficiency_pass AND external_evidence_pass",
+    "head_count_pass": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "no_single_comparison_is_sufficient": true,
+    "default_off_is_safe_failure_behavior_not_a_head_pass": true,
+    "off_vs_off_nonregression_is_not_same_stack_component_benefit": true
+  },
+  "baseline_qualification_matrix": [
+    {
+      "baseline": "always_off",
+      "proof_role": "System value relative to no optional resource.",
+      "required_result": [
+        "overall blind Quality NetWin cluster-95%-CI lower bound > -0.05",
+        "overall Quality NetWin point estimate >= 0",
+        "every prespecified material-risk learned-minus-baseline cluster-95%-CI upper bound <= +0.05",
+        "all severity-3 events disclosed and no critical event hidden by aggregation",
+        "on the frozen learned-ON slice, same-state randomized deployment-ITT component or policy uplift has a positive point estimate and is reported with a cluster interval"
+      ],
+      "failure_meaning": "Optional-resource PM does not preserve the no-resource quality/risk floor; cost savings cannot rescue the claim."
+    },
+    {
+      "baseline": "fixed_high_eligible",
+      "proof_role": "Resource efficiency relative to enabling every structurally eligible component.",
+      "required_result": [
+        "Quality and every material-risk proxy are noninferior under the same margins",
+        "mean actual generator input tokens are at least 10% lower",
+        "retrieval calls, retries, output tokens, latency, and USD are reported separately",
+        "shorter incomplete replies may not be used as the mechanism of the claimed input-cost saving"
+      ],
+      "failure_meaning": "The router has not established a meaningful high-resource cost advantage at preserved response quality/risk."
+    },
+    {
+      "baseline": "transparent_rule",
+      "proof_role": "Modeling value beyond a frozen auditable heuristic.",
+      "required_result": [
+        "Quality, risk, and cost are Pareto-noninferior",
+        "at least one preregistered primary selection outcome is strictly better",
+        "the learned selector beats the named simple baseline under grouped/cross-fitted prediction evidence"
+      ],
+      "failure_meaning": "A transparent rule is sufficient; no learned-PM advantage may be claimed."
+    },
+    {
+      "baseline": "qualified_cost_matched_fixed",
+      "proof_role": "Adaptive value beyond a static bundle at the same resource cost.",
+      "qualification": "Absolute deterministic injected-cost mismatch <= 5% within preregistered outcome-blind broad strata.",
+      "required_result": [
+        "at matched cost, learned PM is strictly better on Quality, verified Function, or material Risk",
+        "all remaining primary outcomes are noninferior"
+      ],
+      "failure_meaning": "A static same-cost bundle explains the result; conditional routing value is not established."
+    },
+    {
+      "baseline": "qualified_cost_and_on_rate_matched_random",
+      "proof_role": "Semantic state-to-action matching beyond using the same amount and frequency of resources at random.",
+      "qualification": [
+        "component ON counts exactly match learned PM",
+        "total deterministic injected-cost mismatch <= 5%",
+        "at least 25% of states receive a different action",
+        "assignment uses no response, Quality, Risk, Function, judge, or external outcome"
+      ],
+      "required_result": [
+        "learned PM has strictly better cluster-level Quality or beneficial-ON/harmful-ON selection performance",
+        "material Risk remains noninferior"
+      ],
+      "failure_meaning": "The result is explained by resource amount or ON rate rather than learned state-action matching."
+    },
+    {
+      "baseline": "component_fixed_arms_and_learned_full_minus_component",
+      "proof_role": "Per-head marginal contribution and prevention of component free-riding.",
+      "required_result": [
+        "every component counted as passed has nonzero reproducible source-aware verified Function",
+        "component-ON versus matched component-OFF has useful same-stack conditional behavior without material Quality/Risk regression",
+        "full learned versus full-minus-component shows a component-attributable contribution or a better quality-cost frontier",
+        "a failed or abstaining head remains OFF and cannot inherit another component's benefit"
+      ],
+      "failure_meaning": "The component does not count toward RS plus two memory-head success."
+    },
+    {
+      "baseline": "sixteen_action_safe_oracle_frontier",
+      "proof_role": "Joint-action correctness, safety, regret, and excess-cost assessment.",
+      "required_result": [
+        "unsafe or structurally invalid selection rate = 0",
+        "deployment-ITT Quality regret is within the frozen 0.10 equivalence band",
+        "excess deterministic cost on the safe quality frontier <= 5%",
+        "oracle-set inclusion and beneficial-false-OFF/harmful-false-ON are better than transparent rule and matched random"
+      ],
+      "failure_meaning": "Independent component heads do not compose into a qualified joint 16-action policy."
+    }
+  ],
+  "head_pass_definition": {
+    "selector": "Nondegenerate grouped/cross-fitted signal that improves on the named simple baseline; both ON and OFF or abstention behavior must occur.",
+    "candidate_support": "Real connected groups contain applicable and non-applicable or abstention support; candidate presence or retrieval coverage alone is not a pass.",
+    "verified_function": "Source-aware offline review observes nonzero reproducible component-attributable contribution; generator self-report is insufficient.",
+    "same_stack_outcome": "Against component-OFF and other frozen same-stack baselines, the learned component shows useful conditional deployment-ITT behavior without material Quality/Risk regression.",
+    "default_off_rule": "Default OFF is the required safe behavior for a failed head, but it cannot satisfy selector, Function, or marginal-outcome evidence and therefore cannot create a head pass."
+  },
+  "external_experiments": {
+    "ESConv_response": {
+      "proof_role": "Single-session RS routing and immediate support; longitudinal memory is structurally unavailable.",
+      "independent_cluster": "dialogue",
+      "required_conditions": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified_RS_subdomain",
+        "qualified_cost_matched_fixed",
+        "qualified_cost_and_on_rate_matched_random"
+      ],
+      "required_pass": [
+        "MP/MS/ME requested-ON count = 0",
+        "RS learned policy is nondegenerate",
+        "versus always-off: overall Quality/Risk noninferiority and positive learned-ON-slice paired uplift",
+        "versus fixed-high: Quality/Risk noninferiority and fewer RS injections; claim total input-cost reduction only if the 10% generator-input threshold passes",
+        "versus transparent rule: Pareto noninferiority plus at least one strict primary improvement",
+        "versus qualified matched random: better state-action selection at equal ON rate/cost and noninferior Risk",
+        "requested-to-received structurally = 1.00; source-aware RS functional-use reference >= 0.80",
+        "wrong-owner/future/scaffold exposure = 0"
+      ],
+      "cannot_claim": [
+        "longitudinal memory",
+        "MP/MS/ME personalization",
+        "clinical benefit"
+      ]
+    },
+    "EvoEmo_longitudinal_response": {
+      "proof_role": "Joint RS plus longitudinal MP/MS/ME routing, typed evidence integration, grounding, interaction, and response cost.",
+      "independent_cluster": "user",
+      "required_conditions": [
+        "always_off",
+        "fixed_high_eligible",
+        "transparent_rule",
+        "learned_pm_qualified",
+        "qualified_cost_matched_fixed",
+        "qualified_cost_and_on_rate_matched_random",
+        "RS-only",
+        "single-component fixed arms",
+        "learned_full_minus_each_passing_component",
+        "raw_session_top4_plus_same_RS",
+        "all_raw_sessions_plus_same_RS",
+        "sixteen_action_oracle_panel"
+      ],
+      "required_pass": [
+        "versus always-off: overall Quality/Risk noninferiority, nonnegative Quality point estimate, and positive frozen learned-ON-slice deployment-ITT uplift",
+        "versus fixed-high: Quality/Risk noninferiority and at least 10% lower mean generator input tokens",
+        "versus transparent rule: Pareto noninferiority plus strict learned-selection value",
+        "versus cost-matched fixed and cost/ON-rate-matched random: strict adaptive state-action value at matched resource amount",
+        "versus RS-only and learned-full-minus-component: each memory head counted as passed contributes verified Function or a better same-stack quality-cost frontier",
+        "RS_pass and at least two of MP/MS/ME individually satisfy the complete head-pass definition",
+        "requested-to-received per component = 1.00; single-component functional-use reference >= 0.80; multi-component all-functional reference >= 0.70",
+        "wrong-owner/future/scaffold exposure = 0",
+        "sixteen-action oracle safety, regret, and excess-cost gates pass"
+      ],
+      "evidence_boundary": "EvoEmo state count is not user count. OOF predictions on labeled users are cross-fitted in-domain evidence, not untouched-owner external validation."
+    },
+    "ES_MemEval_QA": {
+      "proof_role": "Memory retrieval, information extraction, temporal reasoning, conflict detection, user modeling, and abstention transport; not response Quality/Risk and RS is N/A.",
+      "independent_cluster": "user",
+      "required_conditions": [
+        "no_memory",
+        "full_history",
+        "official_session_rag_top4",
+        "typed_memory_fixed_high",
+        "typed_memory_learned_pm_qualified"
+      ],
+      "required_pass": [
+        "versus no-memory on answerable memory-required questions: Token F1 uplift cluster-95%-CI lower bound > 0",
+        "versus typed-memory-fixed-high: Token F1 noninferior within the final frozen margin, BERTScore direction consistent, conflict/abstention/false-answer outcomes noninferior, and input tokens at least 10% lower",
+        "versus official session-RAG Top4: objective QA and abstention/risk outcomes are Pareto-noninferior and at least one primary outcome strictly improves",
+        "versus full history: a preregistered accuracy-cost Pareto advantage; any accepted accuracy loss must stay within the frozen QA margin",
+        "information extraction, temporal reasoning, conflict detection, user modeling, and abstention are reported separately and no critical capability failure is averaged away",
+        "wrong-user/future/answer/evidence leakage = 0; should-abstain false-answer learned-minus-comparator upper bound <= +0.05"
+      ],
+      "llm_judge_role": "Optional robustness diagnostic only; objective Token F1/BERTScore and deterministic retrieval metrics remain primary.",
+      "cannot_claim": [
+        "response-policy immediate support quality",
+        "RS effectiveness",
+        "independent new-user evidence beyond the shared 18-user longitudinal source"
+      ]
+    }
+  },
+  "external_complete_rule": {
+    "machine_predicate": "ESConv_RS_pass AND EvoEmo_longitudinal_response_pass AND ES_MemEval_transport_QA_pass",
+    "all_three_required_for_complete_execution": true,
+    "tracks_are_not_substitutable": true,
+    "tracks_are_not_pooled": true,
+    "paper1_primary_claim_also_requires": "RS_pass AND count_pass(MP,MS,ME) >= 2"
+  },
+  "generator_factor_design": {
+    "scientific_role": "Generator is a treatment moderator and system component, not a response-policy baseline.",
+    "current_evidence": [
+      "Current Llama-3.1-8B results conflate generator capacity with a restrictive RS treatment/compiler.",
+      "RS ON is compiled as the sole primary act while the dominant Restatement card forbids a question, advice, or second move.",
+      "A stronger instruction follower may reproduce the same incomplete reply more faithfully; changing generator alone is not an identified repair.",
+      "Warm-close under Llama partially improved Quality but more than doubled unsupported-personal-fact Risk, demonstrating a real treatment-by-generator interaction.",
+      "The MS-only ON-slice has a positive Quality point estimate, but 13/19 rows safely declined specific-memory use; this separates a promising prompt/program effect from still-open component-attributable memory Function."
+    ],
+    "required_development_factorial": {
+      "factors": {
+        "response_treatment": [
+          "current_restrictive_treatment",
+          "repaired_closure_and_grounding_treatment"
+        ],
+        "generator": [
+          "meta/llama-3.1-8b-instruct reference",
+          "one outcome-blind-qualified stronger generator"
+        ]
+      },
+      "arms": 4,
+      "population": "Fresh development states disjoint from external confirmation outcomes and from any generator-selection outcome panel.",
+      "interpretation": [
+        "treatment improvement under both generators identifies a design/compiler limitation",
+        "improvement only under the stronger generator identifies a capacity or instruction-following interaction",
+        "no PM uplift despite stronger absolute replies means the PM/resource treatment still lacks value",
+        "positive PM uplift under both generators supports generator-robust routing"
+      ]
+    },
+    "generator_selection_gate": {
+      "timing": "Before fresh formal or external outcomes are opened.",
+      "selection_data": "A dedicated development-only generator qualification panel.",
+      "candidate_policy": "Retain Llama-3.1-8B as the historical reference; qualify one stronger open-weight or open-API candidate and optionally one strong proprietary candidate, then freeze at most one stronger primary challenger.",
+      "required_checks": [
+        "schema/transport success >= 0.95",
+        "critical wrong-owner/future/scaffold exposure = 0",
+        "single-component source-aware functional-use >= 0.80",
+        "multi-component all-functional >= 0.70",
+        "current-turn grounding and explicit-safety handling pass",
+        "prompt, schema, seed schedule, token cap, retries, fallback, pricing, and endpoint identity are content-addressed",
+        "selection never reads external ESConv/EvoEmo/ES-MemEval outcomes"
+      ]
+    },
+    "current_candidate_inventory_20260813": {
+      "historical_reference": "meta/llama-3.1-8b-instruct",
+      "primary_open_api_candidates_already_represented_in_local_configs": [
+        "qwen3.7-max family",
+        "deepseek-v4-pro or deepseek-v4-flash family"
+      ],
+      "proprietary_capacity_probe": "gpt-5.6-terra for quality/cost balance or gpt-5.6-sol for a frontier upper-bound probe; GPT-4o is not the current first-choice capacity probe.",
+      "selection_preference": "Use one non-OpenAI generator as the primary challenger while GPT-5.6 remains a judge, reducing same-family generator/judge preference. GPT-5.6 may be a generator probe only with a non-OpenAI and/or human judge anchor.",
+      "freeze_rule": "Resolve exact dated model ID, endpoint, price, transport, prompt, token cap and retry policy immediately before a paid development bakeoff; never use floating aliases in confirmatory runs."
+    },
+    "formal_comparison_rule": [
+      "Within each generator stratum, all policy baselines share the same generator and same semantic executor contract.",
+      "Cross-generator comparisons estimate generator main effect and PM-by-generator interaction; they do not replace within-generator PM baselines.",
+      "Different provider seed semantics are not assumed identical; use multiple preregistered replicates and cluster at dialogue/user, not seed.",
+      "A model-family-independent judge panel or human anchor is required to reduce generator-family self-preference.",
+      "Results from different generator-treatment hashes are never pooled as exchangeable outcomes."
+    ],
+    "claim_language": {
+      "only_stronger_generator_passes": "PM is qualified with the named stronger generator; Llama-3.1-8B is a negative capacity/executor boundary. No generator-agnostic claim.",
+      "both_generators_pass": "PM routing is robust across the two frozen generator strata.",
+      "stronger_absolute_quality_but_no_pm_increment": "The stronger generator improves replies, but PM conditional resource value is unsupported.",
+      "generator_selected_after_external_results": "Exploratory only; cannot support confirmatory Paper 1 claims."
+    }
+  },
+  "required_next_actions": [
+    "Treat the completed MS-only result as directional ON-slice development evidence, not as a formal MS head pass.",
+    "Bind this addendum and its human-readable companion into the active bundle.",
+    "Keep the corrected RS default-off record explicit that off-vs-off nonregression is not a passed same-stack component outcome.",
+    "Freeze a zero-API generator surface/cost/schema inventory before proposing any paid generator bakeoff.",
+    "Repair and qualify the RS treatment/compiler on fresh development states before any new external RS confirmation."
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "reviewer_calls": 0,
+    "training_labels": 0,
+    "fits": 0,
+    "external_execution": false
+  }
+}

@@ -49,8 +49,9 @@ def test_active_v2_authority_is_content_addressed_and_fail_closed() -> None:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_R0_FUNCTION_FORCED_OPEN_CARD_PACKETS_CORRECTED_PI_REVIEW_NEXT",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_UPPER_BOUND_EXECUTION",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_ORACLE_PLAN_RESPONSIBILITY_AUDIT",
-        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
-    }
+            "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_SUPERVISION_UNIT_REPAIR_DESIGN",
+            "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_ZERO_API_GENERATOR_TREATMENT_FACTORIAL_DESIGN",
+        }
     assert active["method_id"] == "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2"
     assert sha(ROOT / active["contract_path"]) == active["contract_sha256"]
     assert sha(ROOT / active["method_amendment_path"]) == active["method_amendment_sha256"]
@@ -124,6 +125,7 @@ def test_authority_validator_passes_and_writes_no_new_outcome(tmp_path: Path) ->
     assert report["failed_checks"] == []
     assert report["api_calls"] == 0
     assert report["responses_generated"] == 0
-    assert report["pm_trained"] is True
+    assert report["current_primary_pm_trained"] is False
+    assert report["historical_v2_checkpoint_exists_but_failed_current_primary"] is True
     assert report["additional_pm_fit_authorized"] is False
     assert report["external_outcomes_read"] is False
