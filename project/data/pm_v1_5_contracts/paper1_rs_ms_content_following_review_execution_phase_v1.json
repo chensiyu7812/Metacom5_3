@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-content-following-review-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_23_RS_MS_CONTENT_FOLLOWING_REVIEW_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Independent, generator_claimed-blind reviewer judgment of whether the RS+MS EvoEmo external test's routed replies actually follow the MS/RS guidance content, correcting the brittle used_evidence_ids self-citation proxy.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_preflight_20260812/report.json",
+      "sha256": "032e208012682d27aeca5cf26282730694aeb51042ca4a9369abee156b15734f",
+      "required_status": "PASS_REVIEW_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "anchors",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_preflight_20260812/anchors_private.jsonl",
+      "sha256": "6862239712dbad9eb7576a38d1732b687727d53a7b47d391f895f53eb18c109f"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "c76ea5130805e75f9995ea5e040573ff2b841dbaadc9d7712a3bababb24f7411"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_content_following_review_endpoints_v1.json",
+      "sha256": "0c0f0e2ff1d4b73360d660e48a6cfd54bee5dd78be0e37ec285bbfd0192f0eca"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_content_following_review_execution_v1.json",
+      "sha256": "3709af6a2f142d4cb93590a074c8170cefb7e2eade0136442d77c49ee2bee32a"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "content_following_review_instrument",
+      "path": "src/metacom_pm/v1_5_rs_ms_content_following_review.py",
+      "sha256": "ec8ca203b91b4cb6a46b4a66b0290494d6bd58039fd7a2ecf9a27296249739ee"
+    }
+  ],
+  "execution": {
+    "component": "RS+MS content-following review",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 23,
+    "run_identity": "62d8163fbee12b93cd692b6543c977cc5c82e1a8af96d7fdf0f2dd2e01b5463d",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_content_following_review_live_20260812",
+    "absolute_usd_cap": 0.3
+  },
+  "authorization": {
+    "control_review_api_calls": 23,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This is a measurement-correction review, not a re-run of the external test -- zero generator calls, zero new baseline/routed replies."
+  ]
+}
