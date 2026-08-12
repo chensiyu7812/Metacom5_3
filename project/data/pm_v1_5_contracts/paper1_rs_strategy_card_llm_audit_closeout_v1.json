@@ -1,0 +1,29 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-strategy-card-llm-audit-closeout-v1",
+  "date": "2026-08-12",
+  "status": "LLM_AUDIT_COMPLETE_79_OF_80_QUALIFIED_STEP2_CONTENT_NOW_AVAILABLE",
+  "observed": {
+    "cards_audited": 80,
+    "llm_audit_qualified": 79,
+    "llm_audit_not_qualified": 1,
+    "not_qualified_card_id": "strategy_v4_a854e4cab17a997c6e8d19b1",
+    "not_qualified_reason": "unsupported_inference -- guidance could ask the generator to affirm 'demonstrated ability' even when the stated use case (merely weighing options) doesn't establish that ability was demonstrated",
+    "additional_risk_flags_found_beyond_existing_tags": 0,
+    "observed_cost_usd": 0.948,
+    "families_covered": 5
+  },
+  "prior_failed_attempt": {
+    "run_identity": "f52dacab8247ac396440659c33d03b8ec10bed03a1b2816e0cf7da1a1ace7ad0",
+    "status": "CONSUMED_ZERO_COST_TOTAL_SCHEMA_FAILURE",
+    "cause": "StrategyCardLLMAudit had two list fields with default_factory=list, which OpenAI strict-mode schema conversion rejects. Error raised locally before any network call -- confirmed $0 cost. Fixed and added a permanent preflight check (direct call to openai_strict_json_schema(Model)) to catch this class of bug before future approval rituals."
+  },
+  "conclusion": "This LLM audit substitutes for the project's own previously-designed but never-executed 5-card human review content gate (docs/PM_V1_5_NEW_UNIFIED_PLAN_NEED_JUDGE_DATA_ZH.md Sec 8.2), at the user's explicit direction, because real human review is not being done now. It is explicitly a weaker status than the project's own human-verified convention -- cards are labeled llm_audit_qualified, not eligible_for_formal_rs (which remains false for every card). RS now has 79 real, content-diverse, LLM-audited strategy cards across all 5 families instead of a single generic fallback -- this unblocks designing real RS Step2 card-selection/ranking logic, which is a separate, still-unbuilt next step.",
+  "artifacts": {
+    "all_cards_annotated": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_qualified_bank_20260812/strategy_cards_v4_llm_audited.jsonl",
+    "qualified_only": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_qualified_bank_20260812/strategy_cards_v4_llm_audit_qualified_only.jsonl"
+  },
+  "authorization": {
+    "rs_step2_card_selection_ranking_design": "requires_user_decision",
+    "further_card_content_editing": false
+  }
+}

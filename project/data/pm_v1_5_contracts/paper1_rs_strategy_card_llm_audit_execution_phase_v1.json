@@ -1,0 +1,46 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-strategy-card-llm-audit-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_80_RS_STRATEGY_CARD_LLM_AUDIT_CALLS_AUTHORIZED_ONCE",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_preflight_20260812/report.json",
+      "sha256": "80a465a6f83ea4e17075db4728cc809661f9cadfaa5beb487ddc31feffa336c1",
+      "required_status": "PASS_EXACT_80_CALL_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "dbc06821f02ca183ed87b1e03a3cf7978336dd8c18594208f3b3af8a63e8d45a"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_strategy_card_llm_audit_endpoints_v1.json",
+      "sha256": "0f5a40d5d2c1f4642d33923297c8d2e21d5c60e7202dd58374270dde0e1f6196"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_strategy_card_llm_audit_execution_v1.json",
+      "sha256": "0e5758ea2ac6e2b19375caf272b2034486b5fb6f274f3f11c6f6a3821dcd09f9"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_strategy_card_llm_audit.py",
+      "sha256": "d6368908e932b7f6dbe24326d951ef52e73e6a1a4973ce4cdde5a3a96f045269"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_rs_strategy_card_llm_audit_v1",
+    "run_identity": "49174c79dac8dd09bb9c487ab73044491daa67c0fa769b8aedf9bd6006fc4da6",
+    "logical_calls": 80,
+    "maximum_physical_attempts": 160,
+    "absolute_usd_cap": 1.2,
+    "output_directory": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_live_20260812"
+  },
+  "stop_rules": [
+    "Do not relax or change the review construct after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

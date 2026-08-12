@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_EVOEMO_CONSTRUCT_VALIDATED_MP_RULE_BASED_STEP1_NEXT",
-    "status": "RS_HYPOTHESIS_DISCONFIRMED_18_OF_18_INDEPENDENT_AGREEMENT_ROUTER_IS_DOMAIN_FAITHFUL",
+    "id": "RS_STEP2_CONTENT_UNBLOCKED_79_QUALIFIED_CARDS_CARD_SELECTION_DESIGN_AND_MP_NEXT",
+    "status": "RS_STRATEGY_CARD_LLM_AUDIT_79_OF_80_QUALIFIED_ACROSS_ALL_5_FAMILIES_STEP2_CONTENT_NOW_REAL",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_rs_evoemo_opportunity_anchor_closeout_v1.json",
-      "sha256": "a2e00af09ac3c6dfe50e7c8930576a2cd361f80bcf177b3a38d0dff56a3fc9b1"
+      "path": "data/pm_v1_5_contracts/paper1_rs_strategy_card_llm_audit_closeout_v1.json",
+      "sha256": "68afa14eef299a032ed92294b5f6c73ca4093673b47b0a80248ac134a8876371"
     },
-    "next_scientific_action": "Independent reviewer round (294l, 18 real EvoEmo states) disconfirmed the operator's hypothesis that RS's near-universal ON rate on EvoEmo was a generalization failure: 18/18 agreement that these states genuinely present an RS opportunity, applying the router's own construct. RS Step1 is not shown to need a fix on EvoEmo (and therefore ES-MemEval, which shares the same dialogue substrate). RS Step2 (real card-selection, vs the current fixed generic evidence card) remains a separate, unaddressed gap for a future round. Per user direction, MP rule-based Step1 is the next concrete work item -- not started yet.",
+    "next_scientific_action": "RS's Step2 content gap is now partially addressed: 79 of 80 Strategy Bank V4 cards passed an independent LLM content-safety/scope audit across all 5 strategy families (a real substitute for, not equivalent to, the project's own never-completed human review gate -- labeled llm_audit_qualified, not eligible_for_formal_rs, which remains false for every card). RS's opportunity-routing decision (Step1) is validated on ESConv and EvoEmo/ES-MemEval; RS now has genuinely diverse real content to select from instead of one generic fallback card. Remaining before a real RS+MS external test: (1) design real card-selection/ranking logic (given a routed RS-ON decision, pick the best-fitting qualified card for the context -- not yet built, currently still using the fixed generic card in the executor pilot's wiring), (2) per user direction, MP rule-based Step1 is the next concrete work item after this.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "681be8f76ad8ced6ad2ddf5c9030269133fcbf1ae080caffc235a8e4cf910043"
+      "sha256": "9597b08e082656e769c0cb3e35b7be0b7b3b0e9de77444e47e3b53a41f701b38"
     },
     {
       "role": "v3_factorial_planner",
@@ -267,6 +267,21 @@
       "role": "rs_evoemo_opportunity_anchor_live_report",
       "path": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_live_20260812/report.json",
       "sha256": "11f4903b80437694299c6e38471ca99959e666ae147223f120c744dd54da6b63"
+    },
+    {
+      "role": "rs_strategy_card_llm_audit_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_strategy_card_llm_audit_execution_phase_v1.json",
+      "sha256": "3d7fa71482da38853c9e8893c7e4048d3dde5a9460718d58bdf7fce791de2840"
+    },
+    {
+      "role": "rs_strategy_card_llm_audit_live_report",
+      "path": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_live_20260812/report.json",
+      "sha256": "d7603a541671c12dd907753dd98f107960c0bfbd771f8c3a5fd446d4c6eda57a"
+    },
+    {
+      "role": "rs_strategy_card_llm_audit_qualified_bank_report",
+      "path": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_qualified_bank_20260812/report.json",
+      "sha256": "cc49b6e332a0b0a2e489a2a5a161eaae2304b530e622b6d8fa4e3c8dd9653eed"
     }
   ],
   "legacy_import_denylist": [
@@ -295,7 +310,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "681be8f76ad8ced6ad2ddf5c9030269133fcbf1ae080caffc235a8e4cf910043"
+      "sha256": "9597b08e082656e769c0cb3e35b7be0b7b3b0e9de77444e47e3b53a41f701b38"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",

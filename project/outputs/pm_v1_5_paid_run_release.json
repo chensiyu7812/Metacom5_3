@@ -2,7 +2,7 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "b606d4668fe392807f00259b78a0934c64f41ee5f7fe3d92c5faecea64fae0e9",
+  "config_sha256": "0e5758ea2ac6e2b19375caf272b2034486b5fb6f274f3f11c6f6a3821dcd09f9",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
@@ -4491,6 +4491,32 @@
         "cost_note": "Slightly exceeded the quoted $0.15 cap (by $0.0054) -- the cap was a round-number estimate, not calibrated from real token counts before this round, unlike the larger paid rounds this session. Flagged honestly, not material.",
         "rerun_allowed": false,
         "note": "Operator hypothesis (RS router degenerate/over-firing on EvoEmo) was DISCONFIRMED by real independent judgment. All 18 items -- including several the operator had personally flagged as suspicious closing/gratitude-adjacent turns -- were judged by an independent reviewer, applying the router's own actual eligible_families construct, to genuinely present an RS opportunity. Reviewer showed real differentiated engagement (3 distinct applicable_family assignments, content-specific rationale, explicit consideration and rejection of the gratitude-only exclusion in one case) rather than rubber-stamping. Conclusion: the near-universal ON rate on EvoEmo reflects a genuine domain property (EvoEmo dialogue is consistently substantive/rich, unlike ESConv), not a generalization failure requiring a fix."
+      }
+    },
+    "paper1_rs_strategy_card_llm_audit_v1": {
+      "stage": "paper1_rs_strategy_card_llm_audit_v1",
+      "run_identity": "49174c79dac8dd09bb9c487ab73044491daa67c0fa769b8aedf9bd6006fc4da6",
+      "approval_identity": "49174c79dac8dd09bb9c487ab73044491daa67c0fa769b8aedf9bd6006fc4da6",
+      "maximum_estimated_usd": 1.2,
+      "exact_user_phrase": "批准,执行",
+      "scope": "Independent GPT-5.6 content-safety/scope audit, one call per Strategy Bank V4 card (80 cards, all 5 families), retry after a prior identity failed at $0 due to a schema bug.",
+      "status": "CONSUMED_COMPLETE_79_OF_80_LLM_AUDIT_QUALIFIED",
+      "approved_at_utc": "2026-08-12T10:26:03.755670+00:00",
+      "output_directory": "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_live_20260812",
+      "planned_logical_calls": 80,
+      "maximum_physical_attempts": 160,
+      "absolute_cost_ceiling_usd": 1.2,
+      "public_201_calls_authorized": 0,
+      "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": true,
+      "consumed_at_utc": "2026-08-12T10:26:03.755670+00:00",
+      "result": {
+        "logical_calls": 80,
+        "schema_and_local_valid": 80,
+        "llm_audit_qualified": 79,
+        "llm_audit_not_qualified": 1,
+        "observed_cost_usd": 0.948,
+        "rerun_allowed": false,
+        "note": "79/80 cards passed independent LLM content-safety/scope audit across all 5 strategy families. The 1 rejected card had a specific, content-grounded finding (unsupported_inference -- the guidance could ask the generator to affirm demonstrated ability even when only weighing options was visible). 0 cards had additional risk flags beyond their existing tags, suggesting the bank's original curation was already largely accurate. This is a weaker substitute for the project's own designed human review gate, not equivalent -- labeled llm_audit_qualified, not eligible_for_formal_rs, which remains false for every card."
       }
     }
   }
