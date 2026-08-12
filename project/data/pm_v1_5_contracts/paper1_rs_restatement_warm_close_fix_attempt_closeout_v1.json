@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-paper1-rs-restatement-warm-close-fix-attempt-closeout-v1",
   "date": "2026-08-12",
-  "status": "PARTIAL_REAL_IMPROVEMENT_DOES_NOT_FLIP_CONCLUSION",
+  "status": "PARTIAL_QUALITY_IMPROVEMENT_TRADED_FOR_MORE_THAN_DOUBLED_RISK_NOT_A_CLEAN_WIN",
   "hypothesis_tested": "Both RS execution profiles (minimal and dialogic) forbid appending advice AND a new question/probe. Permitting a brief warm close or one open question (while still forbidding advice, to preserve the family's identity) should recover quality lost to this constraint.",
   "hypothesis_correction_before_testing": "The initial narrower hypothesis (minimal profile specifically is the problem) was checked and disconfirmed before building any fix: dialogic actually lost to baseline WORSE (21/21=100%) than minimal (11/13=84.6%), because both profiles share the same no-question/no-advice constraint.",
   "method": "Regenerated the 31 Restatement-family routed replies (300l's external test) with only the RS guidance text swapped to the warm-close variant (308l) -- MS candidate, seed, dialogue, requested_action_id held byte-identical. Re-ran the same blind pairwise quality instrument (305l/306l pattern) comparing the new replies against the SAME original baseline replies.",
@@ -10,20 +10,28 @@
     "baseline_win_rate_after_fix": 0.7419,
     "new_routed_win_rate_after_fix": 0.0968,
     "equivalent_after_fix": 0.1613,
-    "same_31_cases_both_measurements": true
+    "same_31_cases_both_measurements": true,
+    "baseline_risk_mean_same_31": 0.1935,
+    "old_routed_risk_mean_before_fix": 0.2903,
+    "new_routed_risk_mean_after_fix": 0.6129,
+    "new_routed_risk_nonzero_items": 12,
+    "old_routed_risk_nonzero_items": 6,
+    "risk_family_driving_the_increase": "unsupported_personal_fact_or_upgraded_past_to_current (17/19 severity points)"
   },
-  "interpretation": "Real, meaningful, but partial improvement. Baseline win rate dropped 19.4 points (93.5% -> 74.2%), and a genuine EQUIVALENT verdict appeared for the first time (0/31 before, 5/31 after) -- the hypothesis was directionally correct and the fix has real effect, not noise. But it does not flip the overall conclusion: baseline still wins a clear majority (74.2%). Two compounding causes visible in remaining-loss judge rationales: (1) the warm-close instruction is not followed 100% of the time by this weak 8B generator, consistent with the ~65% RS content-following rate independently verified earlier this session -- some replies still end bare, without the permitted warm close/question; (2) even when the warm close IS added, some replies anchor their restatement to OLDER conversation content rather than the seeker's LATEST turn, reading as less responsive/in-the-moment than baseline, which naturally tends to engage with the most recent message. A few remaining-win/equivalent examples also show a genuine RS strength: in at least one case, baseline's premature move into advice-giving ('Have you considered talking to your manager or HR') was judged as adding pressure, while the routed reply's restraint was preferred -- confirming restraint is not universally a weakness, just insufficient on its own without also being current and warm.",
-  "conclusion_vs_original_claim": "Still does not support the original claim that PM (RS+MS) matches or beats baseline on quality. The gap narrowed substantially with a small, targeted, well-reasoned fix, which is itself informative: the quality problem is real but not fundamental to RS/MS's mechanism -- it is fixable in degree, through card-content design, but a single instruction tweak did not fully close it. Further improvement would likely require addressing the two remaining causes identified (generator instruction-following reliability, and recency-anchoring of the restated content), which is a deeper card-design and possibly a stronger-generator question, not solved by this round.",
+  "interpretation": "Real, meaningful, but partial quality improvement -- traded for a real, meaningful risk increase, not a clean win. Baseline win rate dropped 19.4 points (93.5% -> 74.2%), and a genuine EQUIVALENT verdict appeared for the first time (0/31 before, 5/31 after) -- the hypothesis was directionally correct and the fix has real quality effect, not noise. But it does not flip the overall conclusion: baseline still wins a clear majority (74.2%). Two compounding causes visible in remaining-loss judge rationales: (1) the warm-close instruction is not followed 100% of the time by this weak 8B generator, consistent with the ~65% RS content-following rate independently verified earlier this session; (2) even when added, some replies anchor their restatement to OLDER conversation content rather than the latest turn. CRITICAL ADDITION (user-flagged fairness gap, closed by 313l/314l): risk was NOT re-measured in the first pass of this round on the unverified assumption it was unaffected. Re-measuring with the exact same instrument shows risk more than DOUBLED (mean 0.29 -> 0.61, nonzero items 6/31 -> 12/31), almost entirely from the model inventing specific unsupported personal details (e.g. 'financial pressure', 'this new job', 'parents apologizing for being strict' -- none present in the actual conversation) once given more generative freedom to add a warm close. This is the real cost side of the quality gain, and it was invisible until the same measurement standard was applied to both conditions.",
+  "conclusion_vs_original_claim": "Still does not support the original claim that PM (RS+MS) matches or beats baseline on quality, and the warm-close fix is not a straightforward improvement to adopt -- it partially recovers quality at the cost of more than doubling hallucination-type risk. The quality problem is real but not fundamental to RS/MS's mechanism (fixable in degree through card-content design), but this particular fix has its own real downside that a quality-only re-measurement would have missed entirely. Any future iteration must measure quality AND risk together, not sequentially with assumptions substituting for the untested dimension.",
   "real_costs": {
     "regeneration_usd_uncalibrated_flat_cap": 0.15,
     "requality_measurement_usd": 0.2684,
-    "total_this_round_usd": 0.4184
+    "rerisk_measurement_usd": 0.3591,
+    "total_this_round_usd": 0.7775
   },
-  "session_total_measurement_and_review_spend_usd": 1.8734,
+  "session_total_measurement_and_review_spend_usd": 2.2325,
   "artifacts": {
     "variant_definition": "outputs/pm_v1_5_restatement_family_warm_close_variant_20260812/restatement_warm_close_variants.jsonl",
     "regeneration_results": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_live_20260812/generator_results_private.jsonl",
-    "requality_results": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_live_20260812/results_private.jsonl"
+    "requality_results": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_requality_live_20260812/results_private.jsonl",
+    "rerisk_results": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_rerisk_live_20260812/results_private.jsonl"
   },
   "next_scientific_action": "Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item. Any further RS quality work (recency-anchoring fix, stronger generator retest, broader family rebalancing) requires a separate user decision -- not pursued further in this round.",
   "authorization": {

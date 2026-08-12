@@ -1,0 +1,54 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-restatement-warm-close-rerisk-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_31_RESTATEMENT_WARM_CLOSE_RERISK_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Close a fairness gap: apply the exact same risk instrument used in the original quality/risk measurement to the 31 new warm-close routed replies, so the before/after comparison covers quality AND risk consistently, not quality alone.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_rerisk_preflight_20260812/report.json",
+      "sha256": "3ce00b63e68f381440402bf125394933ee4611fb5fbd1b70e3f13130d36f38e2",
+      "required_status": "PASS_RERISK_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "risk_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_rerisk_preflight_20260812/risk_packet_blind.jsonl",
+      "sha256": "9aa1b15b337138455acaf9cdd58d51891ac1485ef75abb0f898a45cade07e128"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_rerisk_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "9bc1e7fe50e4b0aaa550ff0de9e5f0ad6173fcb229c47dad0b735b9fe6f0b2e2"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_restatement_warm_close_rerisk_execution_v1.json",
+      "sha256": "fdc84632e8c631c523c41adf6e44fac7b0f772f366c5e9cad6c74bcbac37288b"
+    }
+  ],
+  "execution": {
+    "component": "RS warm-close variant rerisk",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 31,
+    "run_identity": "1d39c2114b10299f64e348c0242ccd5175f1a1859cbd30e67ffcda4a4929c425",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_rerisk_live_20260812",
+    "absolute_usd_cap": 0.5
+  },
+  "authorization": {
+    "control_review_api_calls": 31,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

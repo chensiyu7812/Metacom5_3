@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "RS_RESTATEMENT_WARM_CLOSE_PARTIAL_IMPROVEMENT_74PCT_STILL_BASELINE_PREFERRED_MP_NEXT",
-    "status": "TARGETED_FIX_TESTED_BASELINE_WIN_RATE_93_5PCT_TO_74_2PCT_NOT_FLIPPED",
+    "id": "RS_RESTATEMENT_WARM_CLOSE_QUALITY_GAIN_TRADED_FOR_DOUBLED_HALLUCINATION_RISK_MP_NEXT",
+    "status": "FAIRNESS_GAP_CLOSED_RISK_DOUBLED_MEAN_0_29_TO_0_61_QUALITY_GAIN_NOT_A_CLEAN_WIN",
     "parent_phase": {
       "path": "data/pm_v1_5_contracts/paper1_rs_restatement_warm_close_fix_attempt_closeout_v1.json",
-      "sha256": "4c4b254c78fbe45b1f36bafa2e27f88a59063d4dcd60a20cc9b4cdd310f2ee00"
+      "sha256": "daa1b9a4e546183a2d9af30701bab952aef82ffc743f4ae14468c234a0946c2d"
     },
-    "next_scientific_action": "Warm-close variant fix tested on the 31 Restatement-family pairs: baseline win rate dropped 93.5% -> 74.2% (real, same 31 cases, first-ever EQUIVALENT verdicts appeared), confirming the diagnosed root cause was directionally correct, but the fix did not flip the overall conclusion -- baseline still wins a clear majority. Remaining-loss judge rationales point to two further causes: imperfect generator instruction-following (~65% RS content-following ceiling) and the restated content sometimes anchoring to older conversation turns rather than the latest one. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item; further RS quality iteration requires a separate user decision.",
+    "next_scientific_action": "User-flagged fairness gap closed: risk was re-measured on the 31 warm-close routed replies with the exact same instrument used for the original measurement (not skipped on an unverified assumption). Result: risk more than doubled (mean 0.29 -> 0.61, nonzero 6/31 -> 12/31), almost entirely from unsupported personal-fact invention, once the generator was given more freedom to add a warm close. The warm-close fix is therefore NOT a clean improvement -- it trades partial quality recovery for materially higher hallucination-type risk. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item; any further RS iteration must measure quality and risk together.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -346,7 +346,12 @@
     {
       "role": "rs_restatement_warm_close_fix_attempt_closeout",
       "path": "data/pm_v1_5_contracts/paper1_rs_restatement_warm_close_fix_attempt_closeout_v1.json",
-      "sha256": "4c4b254c78fbe45b1f36bafa2e27f88a59063d4dcd60a20cc9b4cdd310f2ee00"
+      "sha256": "daa1b9a4e546183a2d9af30701bab952aef82ffc743f4ae14468c234a0946c2d"
+    },
+    {
+      "role": "paper1_rs_ms_restatement_warm_close_rerisk_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_restatement_warm_close_rerisk_execution_phase_v1.json",
+      "sha256": "251fc453af72d2f65728cb77813a6dacb9bc62ef2d6b77499ef441a631b3f466"
     }
   ],
   "legacy_import_denylist": [
