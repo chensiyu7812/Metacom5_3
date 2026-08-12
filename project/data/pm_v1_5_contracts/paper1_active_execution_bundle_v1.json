@@ -19,13 +19,13 @@
     "ms_construct_corrected_pending_fresh_balanced_validation": true
   },
   "current_phase": {
-    "id": "MS_FORMAL_201_LABELING_COMPLETE_127_LABELS_HEAD_TRAINING_DESIGN_NEXT",
-    "status": "FORMAL_201_LABELING_COMPLETE_127_OF_201_CONSENSUS_LABELS_PRODUCED",
+    "id": "MS_HEAD_TRAINED_BA_0812_ABSTENTION_CALIBRATION_AND_EXECUTOR_QUALIFICATION_NEXT",
+    "status": "MS_SOURCE_ANNOTATED_CONSENSUS_LOGO_OOF_BA_0_8121_CI_0_738_0_883_FULL_FIT_CHECKPOINT_CREATED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_ms_formal_201_labeling_closeout_v1.json",
-      "sha256": "6331e8afff8c5a8d7bc7df1f5fd4df84cf04f5517995ea117dda0eebc6f62aac"
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_full_fit_20260812/report.json",
+      "sha256": "581f31f9c87dc0e61ff3b81e08cdb7a50d43acd20c5531c7503b0e26a05174d3"
     },
-    "next_scientific_action": "MS now has a real, defensible 127-item training-label set (34 USE / 93 DO_NOT_USE, 61 genuine-disagreement items correctly left unlabeled). Next step per the plan's frozen 4-stage completion route is per-head grouped OOF + outer-train abstention calibration training (Sec 12.4 stage 2) -- not designed or started in this session. Requires separate design work and a fresh explicit decision before any fit.",
+    "next_scientific_action": "MS now has a real trained checkpoint (127-item dual-qualified-reviewer consensus, LOGO-OOF balanced_accuracy_at_0_5=0.8121, 95% CI [0.738,0.883], roc_auc=0.8887 -- exceeds the retired looser single-teacher construct's 0.7449). Per the plan's frozen 4-stage route (Sec 12.4), the next real steps are: (1) calibrate OUTER_TRAIN_ONLY ON/OFF/UNCERTAIN thresholds for v1_5_head_semantic_abstention.py's HeadAbstentionThresholds from this OOF's held-out probabilities, (2) small executor eligibility check (planned->claimed->verified Function) before this checkpoint is wired into any real generation. Neither is designed or started in this session.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -91,7 +91,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "3f068fa81b6f625674fc15e9b03d922e421b3b06d43f892ad6800458d16acb2c"
+      "sha256": "d84b11dcc2243fe536be088037a2a87611079299a2104d1d97f0bf56d2a5662f"
     },
     {
       "role": "v3_factorial_planner",
@@ -227,6 +227,16 @@
       "role": "ms_formal_201_labeling_audit_report",
       "path": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_audit_20260812/report.json",
       "sha256": "eb8b3d67ccdf86f0b9858e5b095e5cc431315ba372cf0b82f696c524a5d6f2fa"
+    },
+    {
+      "role": "ms_source_annotated_consensus_logo_oof_report",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_logo_oof_20260812/report.json",
+      "sha256": "70c184dd0cd55c666423d27edcd9276dd22351a3578b2eed6219c2153bb9dcfd"
+    },
+    {
+      "role": "ms_source_annotated_consensus_full_fit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_full_fit_20260812/report.json",
+      "sha256": "581f31f9c87dc0e61ff3b81e08cdb7a50d43acd20c5531c7503b0e26a05174d3"
     }
   ],
   "legacy_import_denylist": [
@@ -255,7 +265,7 @@
     {
       "role": "global_failure_ledger",
       "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
-      "sha256": "3f068fa81b6f625674fc15e9b03d922e421b3b06d43f892ad6800458d16acb2c"
+      "sha256": "d84b11dcc2243fe536be088037a2a87611079299a2104d1d97f0bf56d2a5662f"
     }
   ],
   "human_start_here": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md#12-8-2026-08-12-当晚再次用户质疑后重新审查根因是构念过严不是模型不行ms-重新打开",
