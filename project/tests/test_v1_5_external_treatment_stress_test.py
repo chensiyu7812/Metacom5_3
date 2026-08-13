@@ -74,3 +74,30 @@ def test_diagnostic_does_not_impersonate_formal_learned_pm() -> None:
     assert "not a qualified learned four-head policy" in design["routing_and_candidate_policy"]["joint_system_label"]
     assert "not formal learned-PM confirmation" in report["scope_label"]
     assert report["authorization"] == {"api_calls": 0, "generator_calls": 0, "judge_calls": 0, "fits": 0}
+
+
+def test_partial_run_is_transport_incomplete_and_has_no_scientific_decision() -> None:
+    closeout = read(ROOT / "data/pm_v1_5_contracts/paper1_external_treatment_stress_test_partial_closeout_v1.json")
+    assert closeout["status"] == "CONSUMED_INCOMPLETE_42_OF_90_TRANSPORT_RATE_LIMIT_NO_SCIENTIFIC_DECISION"
+    assert closeout["execution"]["completed_schema_valid_calls"] == 42
+    assert closeout["execution"]["missing_calls"] == 48
+    assert closeout["failure_class"]["content_or_schema_failure"] is False
+    assert closeout["identity_disposition"]["same_identity_resume_forbidden"] is True
+
+
+def test_continuation_contains_only_the_48_missing_unchanged_calls() -> None:
+    original = read_jsonl(OUT / "call_plan_private.jsonl")
+    completed = read_jsonl(ROOT / "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813/generator_results_private.jsonl")
+    continuation_dir = ROOT / "outputs/pm_v1_5_paper1_external_treatment_stress_test_continuation_preflight_20260813"
+    continuation = read_jsonl(continuation_dir / "call_plan_private.jsonl")
+    report = read(continuation_dir / "report.json")
+    original_ids = {row["physical_call_id"] for row in original}
+    completed_ids = {row["physical_call_id"] for row in completed}
+    continuation_ids = {row["physical_call_id"] for row in continuation}
+    assert len(original_ids) == 90
+    assert len(completed_ids) == 42
+    assert len(continuation_ids) == 48
+    assert not (completed_ids & continuation_ids)
+    assert completed_ids | continuation_ids == original_ids
+    assert report["checks"]["all_prompt_hashes_unchanged"] is True
+    assert report["scientific_plan_changes"] == 0

@@ -1,0 +1,43 @@
+{
+  "protocol": "pm-v1.5-paper1-external-treatment-stress-test-partial-closeout-v1",
+  "date": "2026-08-13",
+  "status": "CONSUMED_INCOMPLETE_42_OF_90_TRANSPORT_RATE_LIMIT_NO_SCIENTIFIC_DECISION",
+  "run_identity": "ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8",
+  "execution": {
+    "planned_logical_calls": 90,
+    "completed_schema_valid_calls": 42,
+    "missing_calls": 48,
+    "owners_with_any_completed_arm": 10,
+    "owners_with_all_five_arms_complete": 7,
+    "arm_counts_completed": {"always_off": 9, "full": 10, "minus_MP": 7, "minus_MS": 8, "minus_RS": 8},
+    "arm_counts_missing": {"always_off": 9, "full": 8, "minus_MP": 11, "minus_MS": 10, "minus_RS": 10},
+    "finish_reason_complete": 42,
+    "schema_valid_nonempty_replies": 42,
+    "prompt_hash_matches": 42,
+    "prompt_tokens": 46476,
+    "completion_tokens": 4932,
+    "total_tokens": 51408,
+    "observed_cost_usd": 0.0,
+    "approved_cap_usd": 0.0
+  },
+  "failure_class": {
+    "type": "provider_rate_limit_429",
+    "failed_rows": 48,
+    "all_failed_rows_retryable_provider_error": true,
+    "content_or_schema_failure": false,
+    "scientific_interpretation": "None. The arm matrix is incomplete and imbalanced, so no Quality/Risk/Cost/Function comparison may be computed or reported from this partial run."
+  },
+  "identity_disposition": {
+    "consumed": true,
+    "same_identity_resume_forbidden": true,
+    "successful_rows_must_not_be_rerun": true,
+    "permitted_next": "One fresh content-addressed continuation containing exactly the 48 missing original physical calls, unchanged prompts/seeds/schema, with transport pacing/backoff only."
+  },
+  "artifacts": {
+    "generator_results_private": {"path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813/generator_results_private.jsonl", "sha256": "5590f660ebe4c0bc149726ef863808b9760c200c8840894c25d8d4f60374a0a2"},
+    "raw_provider_attempts_before_guard": {"path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813/raw_provider_attempts_before_guard.jsonl", "sha256": "9657741ebf87e9859bf14001766a05d1ca341511209878257e6bdba9b0a01806"},
+    "summary": {"path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813/summary.json", "sha256": "40ece3726bfb319a4f38f5d4ed0b566e437a12caa1a671d7e73865b3fcee92e0"}
+  },
+  "measurement_boundary": "No reply content was used to change samples, prompts, arms, routing, thresholds, or the planned Function interpretation. Only transport completeness and hashes were inspected.",
+  "next": "Materialize a fresh zero-cost 48-call continuation identity and request explicit approval."
+}
