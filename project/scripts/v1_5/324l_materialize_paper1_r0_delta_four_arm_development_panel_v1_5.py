@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-"""Materialize (zero-API) the four-arm R0/RS/MS-delta development panel on
-the V4 compiler, per execution_order[2-4] of
-paper1_rs_ms_r0_delta_root_repair_v1.json.
+"""Historical materializer for the withdrawn V1 four-arm panel.
+
+Do not use this script for scientific qualification. Its most-recent MS
+candidate heuristic and incomplete negative controls were retired by
+paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json. A distinct
+Panel V2 materializer must prospectively implement the V2 strata instead
+of silently changing this historical recipe.
 
 Selects FRESH EvoEmo states (disjoint from every state already scored or
 judged this session) with real MS candidates and real RS retrieval
@@ -57,6 +61,10 @@ def stable_hex(*values: object, length: int = 24) -> str:
 
 
 def main() -> None:
+    raise RuntimeError(
+        "Historical V1 panel materializer is retired; build the prospectively "
+        "reviewed Function Observability/Panel V2 manifest instead"
+    )
     if OUT.exists():
         raise RuntimeError("R0-delta four-arm development panel exists; refusing overwrite")
     authority = read_json(AUTHORITY)

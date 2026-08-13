@@ -57,12 +57,23 @@ def main() -> None:
     }
     current = authority["current_execution_phase"]
     alias = authority["active_v3_phase"]
+    active_revision = bundle["experiment_version"]["active_revision"]
+    registry = read(ROOT / bundle["experiment_version"]["registry"])
+    revision_binding = next(
+        row for row in registry["revisions"] if row["version"] == active_revision
+    )
+    revision = read(ROOT / revision_binding["path"])
     expected_bundle = {"path": str(BUNDLE.relative_to(ROOT)), "sha256": sha(BUNDLE)}
     checks = {
         "bundle_protocol": bundle["protocol"] == "pm-v1.5-paper1-active-execution-bundle-v1",
         "all_file_hashes_match": all(file_checks.values()),
         "authority_points_to_bundle": current["active_phase_manifest"] == expected_bundle,
         "one_current_pointer_and_alias": alias.get("compatibility_alias_of") == "current_execution_phase" and alias["active_phase_manifest"] == expected_bundle,
+        "authority_and_bundle_phase_match": current["id"] == bundle["current_phase"]["id"] and current["status"] == bundle["current_phase"]["status"],
+        "active_experiment_revision_is_content_addressed": revision_binding["sha256"] == sha(ROOT / revision_binding["path"]),
+        "function_v2_has_no_latent_binary_count_gate": revision["function_observability_v2"]["development_decision_rule"]["standalone_binary_function_count_gate"] is False,
+        "old_56_call_panel_withdrawn": revision["historical_evidence_disposition"]["existing_four_arm_panel"]["current_disposition"] == "DO_NOT_EXECUTE_AS_MS_SCIENTIFIC_QUALIFICATION",
+        "experiment_revision_does_not_change_method_version": registry["method_boundary"]["new_method_version_created"] is False,
         "success_is_rs_plus_two_memory": bundle["method"]["effective_primary_success_predicate"] == "RS_pass AND count_pass(MP,MS,ME) >= 2",
         "sixteen_actions_compile": len(all_actions) == 16,
         "independent_heads_joint_execution": bundle["method"]["independent_heads_joint_execution"] is True,

@@ -126,6 +126,7 @@ def validate_active_authority() -> dict[str, Any]:
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_MS_FINAL_CONTROL_DESIGN_COMPLETE",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_ZERO_API_GENERATOR_TREATMENT_FACTORIAL_DESIGN",
         "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_ZERO_API_R0_DELTA_TREATMENT_REPAIR",
+        "ACTIVE_V2_TERMINAL_ROUTING_FAIL_COMPONENT_GENERAL_V3_ZERO_API_FUNCTION_OBSERVABILITY_V2_PANEL_V2_REBUILD",
     }
     current_execution = authority.get("current_execution_phase") or {}
     checks = {
@@ -1512,6 +1513,9 @@ def validate_active_authority() -> dict[str, Any]:
             "v3_primary_success_rule_sha256": sha(resolve(primary_success_binding["path"])),
         },
         "next": (
+            "REBUILD_AND_MACHINE_AUDIT_PROSPECTIVE_FUNCTION_OBSERVABILITY_PANEL_V2_ZERO_API"
+            if active_v3.get("id") == "RS_MS_FUNCTION_OBSERVABILITY_V2_PANEL_V2_REBUILD_ZERO_API"
+            else
             "MATERIALIZE_AND_AUDIT_FRESH_MS_CONTROLS_ZERO_API"
             if active_v3.get("id") == "MS_SOURCE_ANNOTATED_CONTROL_REPAIR_DESIGN"
             else
