@@ -2,25 +2,25 @@
   "protocol": "pm-v1.5-central-paid-run-release-v1",
   "status": "APPROVED",
   "release_revision": "pm-v1.5_1",
-  "config_sha256": "720e884c8cdd47e40aa4ce92b8868f2dfc7c086c558e92c238da8d6921700f11",
+  "config_sha256": "3f648683079a6808c82a5ef4722675691d454a20e98fe589a3fb36a1bc384c2f",
   "prepared_from_code_commit_sha": "9b238389ed37f1a04d651b53523ab07aee323285",
   "prepared_at_utc": "2026-07-22T05:26:28.146992Z",
   "approved_execution_config_commit_sha": null,
   "approved_at_utc": "2026-08-12T02:42:16.326123+00:00",
   "paid_execution_authorized": false,
   "current_authorization": {
-    "stage": "paper1_rs_ms_panel_v2_v1",
-    "run_identity": "017835c6e90d5913a51751b522be9fa3320c1d40ccf62ff41d7055414657492e",
-    "approval_identity": "017835c6e90d5913a51751b522be9fa3320c1d40ccf62ff41d7055414657492e",
-    "maximum_estimated_usd": 0.0,
-    "exact_user_phrase": "我批准MP 面板，$0。我批准RS+MS Panel V2， $0",
-    "scope": "50 M0+R0/M0+RS/MS+R0/MS+RS generation calls on the 13-state hand-curated RS/MS Panel V2 (paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json), Llama free tier.",
+    "stage": "paper1_rs_ms_panel_v2_blind_review_v2",
+    "run_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+    "approval_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+    "maximum_estimated_usd": 1.35,
+    "exact_user_phrase": "我批准，$1.35",
+    "scope": "101 blind-review calls (25 Quality + 50 Risk + 26 Function/interaction) on the RS/MS Panel V2 real replies, gpt-5.6-sol judge, no new generation.",
     "status": "CONSUMED_COMPLETE_SEE_STAGE_CONSUMPTIONS",
-    "approved_at_utc": "2026-08-13T10:00:00Z",
-    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_live_20260813",
-    "planned_logical_calls": 50,
-    "maximum_physical_attempts": 100,
-    "absolute_cost_ceiling_usd": 0.0,
+    "approved_at_utc": "2026-08-13T11:00:00Z",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_live_20260813",
+    "planned_logical_calls": 101,
+    "maximum_physical_attempts": 202,
+    "absolute_cost_ceiling_usd": 1.35,
     "public_201_calls_authorized": 0,
     "training_label_change_pm_fit_mp_me_baseline_external_not_authorized": true
   },
@@ -37,7 +37,8 @@
     "paper1_ms_only_ablation_v1": "14b5feb52675d95c3c1d44110a8feebf155acaff2fa79207db442d77bf38843a",
     "paper1_ms_only_quality_risk_measurement_v1": "8bdc75a7794d27dff792bc8d4de982362af0be2c380305120298d00e1930613c",
     "paper1_mp_development_panel_v1": "2634bb8c30040acd36c1aea17ba5be2685017cba8b87bcf35239b959c4009357",
-    "paper1_rs_ms_panel_v2_v1": "017835c6e90d5913a51751b522be9fa3320c1d40ccf62ff41d7055414657492e"
+    "paper1_rs_ms_panel_v2_v1": "017835c6e90d5913a51751b522be9fa3320c1d40ccf62ff41d7055414657492e",
+    "paper1_rs_ms_panel_v2_blind_review_v2": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4"
   },
   "pending_unapproved_dry_runs": {
     "dual_domain_train_only_role_decomposed_judge_qualification_v1_final": {
@@ -4818,6 +4819,16 @@
       "output_directory": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_live_20260813",
       "observed_cost_usd": 0.0,
       "result_summary": "2/5 CLEAR_USE cases CLEAR from 2 distinct owners; development_promotion requirement met for MS; RS-MS interaction caution noted (n=2, one case lost MS content when RS also fired)."
+    },
+    "paper1_rs_ms_panel_v2_blind_review_v2": {
+      "stage": "paper1_rs_ms_panel_v2_blind_review_v2",
+      "run_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+      "approval_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+      "status": "CONSUMED_COMPLETE_101_OF_101_FIRST_VERSION_DEVELOPMENT_PROMOTION_PARTIAL",
+      "output_directory": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_live_20260813",
+      "observed_cost_usd": 0.833,
+      "result_summary": "RS_pass_this_round=true (quality 5-4, risk clean, function 4 CLEAR/7 CLEAR-or-PLAUSIBLE owners). MS_pass_this_round=false: ms_risk failed (material unsupported-personal-fact risk on both of MS own CLEAR Function cases, evo::p18 and evo::p8). interaction_pass_this_round=false: ms_rs_combined_risk failed critically on evo::p6, a topical-mismatch negative control that held for MS alone but leaked sensitive irrelevant content when RS also fired.",
+      "closeout": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json"
     }
   }
 }

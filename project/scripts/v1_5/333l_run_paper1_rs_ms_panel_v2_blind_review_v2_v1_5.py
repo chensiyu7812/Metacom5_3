@@ -23,8 +23,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from metacom_pm.api import make_client  # noqa: E402
-from metacom_pm.config import endpoint_from_config, load_config  # noqa: E402
+from metacom_pm.api import Endpoint, make_client  # noqa: E402
+from metacom_pm.config import load_config  # noqa: E402
 from metacom_pm.io import read_json, read_jsonl, sha256_file, write_json, write_jsonl  # noqa: E402
 from metacom_pm.paid_run_release import require_paid_run_release  # noqa: E402
 from metacom_pm.v1_5_function_observability_v2_blind_review import FunctionObservabilityV2BlindReview  # noqa: E402
@@ -67,6 +67,20 @@ ID_KEY_BY_KIND = {
     "ms_function_independent": "blind_item_id",
     "ms_rs_interaction_pairwise": "pair_id",
 }
+
+
+def _endpoint(raw: dict[str, Any]) -> Endpoint:
+    return Endpoint(
+        base_url=str(raw["base_url"]),
+        model=str(raw["model"]),
+        api_key_env=str(raw["api_key_env"]),
+        family=str(raw["family"]),
+        transport=str(raw["transport"]),
+        supports_strict_json_schema=bool(raw["supports_strict_json_schema"]),
+        temperature_mode=str(raw.get("temperature_mode", "explicit")),
+        max_output_tokens_parameter=str(raw.get("max_output_tokens_parameter", "max_tokens")),
+        openai_reasoning_effort=(str(raw["openai_reasoning_effort"]) if raw.get("openai_reasoning_effort") is not None else None),
+    )
 
 
 def require_authority() -> dict[str, Any]:
@@ -158,7 +172,8 @@ def main() -> None:
     )
     config = load_config(CONFIG)
     endpoint_config = load_config(ROOT / "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json")
-    client = make_client(endpoint_from_config(endpoint_config, "openai_gpt_5_6_sol"))
+    endpoint_records = endpoint_config["candidates"]
+    client = make_client(_endpoint(endpoint_records["openai_gpt_5_6_sol"]))
     consecutive_failures = 0
     try:
         for call in sorted(calls, key=lambda row: row["logical_call_id"]):
