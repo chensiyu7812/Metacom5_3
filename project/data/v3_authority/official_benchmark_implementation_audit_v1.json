@@ -1,0 +1,92 @@
+{
+  "protocol": "metacom-v3-official-benchmark-implementation-audit-v1",
+  "date": "2026-08-13",
+  "status": "OFFICIAL_PROTOCOLS_PINNED_LOCAL_QUALIFICATION_REQUIRED",
+  "scope": "Zero-API inspection of the official public repositories and model metadata. No benchmark inference, scorer execution, or paid judge call was performed.",
+  "benchmarks": {
+    "ESC-Eval": {
+      "paper": "EMNLP 2024 main, ACL Anthology 2024.emnlp-main.883",
+      "repository": "https://github.com/AIFlames/Esc-Eval",
+      "commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+      "release_tag": null,
+      "license_file_present": false,
+      "dependency_lock_present": false,
+      "public_card_files": [
+        {"path": "data/card_high_en.json", "cards": 331, "language": "en", "sha256": "2c63cf0f65cbe159b38837e0da368667201d34e42c6e5ea1bedbcf35cb7ab4e8"},
+        {"path": "data/card_high_zh.json", "cards": 324, "language": "zh", "sha256": "5579955ea5f74f20f9c8541a4370e387d2c58c575346db7c8c7ea9d2e6502d"}
+      ],
+      "observed_total_high_quality_cards": 655,
+      "test_files_are_examples_not_a_formal_split": {"en": 3, "zh": 3},
+      "official_model_artifacts": {
+        "ESC-Role": {
+          "hub_id": "haidequanbu/ESC-Role",
+          "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+          "observed_files": 19,
+          "architecture_surface": "eight safetensor shards plus tokenizer/config files",
+          "license_claim_on_model_card": "apache-2.0"
+        },
+        "ESC-RANK": {
+          "hub_id": "haidequanbu/ESC-RANK",
+          "revision": "450bf2eb5376c79e371aaf432925810243de1527",
+          "observed_files": 143,
+          "surface": "language-specific PEFT adapters for seven dimensions plus checkpoints and tokenizer copies",
+          "license_claim_on_model_card": "apache-2.0",
+          "metadata_warning": "The model page reports that root config.json is invalid JSON."
+        }
+      },
+      "code_findings": [
+        "evaluate.py hard-codes Qwen1.5-7B and Meta-Llama-3-8B-Instruct candidate paths and five dialogue rounds; it is not a generic frozen runner for Llama 3.1 8B.",
+        "score.py depends on InternLM2-chat-7B and PEFT adapters but no package versions or base-model revision are pinned.",
+        "score.py loads the fluency adapter from ./ESC-RANK1/fluency while the other adapters use ./ESC-RANK, so the published tree cannot run unchanged at that point.",
+        "The repository has no license file and no requirements, environment, setup, or pyproject lock surface.",
+        "The public data contain all 655 high-quality role cards reported by the paper, but no train/dev/test split manifest for candidate qualification."
+      ],
+      "qualification": "OFFICIAL_PAPER_AND_DATA_ANCHOR_VALID_RUNNER_AND_SCORER_UNQUALIFIED",
+      "allowed_use_now": "Pin protocol, role-card identity, construct, and published reference distribution; build a local wrapper and calibration before treating any score as a pass decision.",
+      "forbidden_use_now": "Do not call a score produced by the unmodified repository a qualified generator pass."
+    },
+    "ESC-Judge": {
+      "paper": "EMNLP 2025 main, ACL Anthology 2025.emnlp-main.811",
+      "repository": "https://github.com/navidmdn/ESC-Judge",
+      "commit": "1ad30da04f9d0a171b7e4c1d0f5edf55587b21a9",
+      "release_tag": null,
+      "license_file_present": true,
+      "license": "Apache-2.0",
+      "dependency_lock_present": false,
+      "public_role_surfaces": [
+        {"path": "data/roles-v1.json", "jsonl_records": 100, "sha256": "6e42d09a61904e05268320a07229f0e65dcc60a76ffb2a2df522dac9088b1dac"},
+        {"path": "data/generated_personas.json", "jsonl_records": 10, "sha256": "ab9c6e4016081e959b72f209a151f35ad89b6b63a0a699963b763a8abad378ad"},
+        {"path": "data/roles-v2.json", "jsonl_records": 2, "sha256": "542c499f9fde2d6bc25c9372f48a1247b7b6941a58d95df911914cde02f3c3a3"}
+      ],
+      "paper_surface": {"roles": 25, "conversation_triplets": 375, "judge": "o1-mini", "human_check_pairs": 100},
+      "code_findings": [
+        "The repository publishes 100 roles in roles-v1.json but does not publish the frozen identity of the 25 roles used in the paper.",
+        "The README pins o1-mini for the comparison example, while code defaults are mixed across o1-mini and o4-mini.",
+        "multidim_merge_and_judge.py uses temperature 1.0, filesystem file order, and one A/B orientation per pair; no paired A/B swap or position-bias aggregation is implemented.",
+        "The simulation script fixes 14 alternating turns in code, while run scripts do not freeze seeds or a dependency environment.",
+        "No requirements, environment, setup, or pyproject dependency lock is present."
+      ],
+      "qualification": "OFFICIAL_THEORY_AND_RUBRIC_ANCHOR_VALID_EXACT_PAPER_REPLAY_UNAVAILABLE",
+      "allowed_use_now": "Use E-I-A as a sensitivity construct after locally freezing roles, candidate/reference generation, symmetric ordering, tie/invalid handling, model snapshot, and human anchors.",
+      "forbidden_use_now": "Do not describe a new run as exact paper replication or use it as the sole absolute generator pass."
+    },
+    "ES-MemEval": {
+      "paper": "WWW 2026 formal paper",
+      "repository": "https://github.com/slptongji/ES-MemEval",
+      "tag": "v1.0.0",
+      "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+      "license_file_present": false,
+      "public_history_commits": 2,
+      "data_changed_between_public_commits": false,
+      "paper_counts": {"qa": 1209, "summaries": 125, "generation_scenarios": 34},
+      "public_counts": {"qa": 1427, "summaries": 125, "generation_scenarios": 34},
+      "qa_delta": 218,
+      "issue_search_result": "No public repository issue or git history entry explains or identifies the final-paper 1209-row QA subset.",
+      "qualification": "PUBLIC_V1_0_0_TASK_REPRODUCIBLE_FINAL_PAPER_QA_IDENTITY_UNAVAILABLE",
+      "allowed_use_now": "Run and name the public v1.0.0 1427-row task as a distinct artifact, or wait for authoritative 1209 IDs.",
+      "forbidden_use_now": "Do not call the 1427-row public task or the historical 418-row project slice an exact reproduction of the final-paper 1209 QA set."
+    }
+  },
+  "decision": "Recognized benchmarks remain central, but recognition does not waive local measurement qualification. P0 exits only after an executable wrapper, identity manifest, calibration or sensitivity evidence, and claim boundary are frozen.",
+  "external_contact_boundary": "No issue, email, or author contact was sent. A request for final ES-MemEval 1209 row IDs remains a possible later action requiring separate authorization."
+}

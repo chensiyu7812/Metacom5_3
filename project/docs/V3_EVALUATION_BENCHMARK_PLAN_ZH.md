@@ -11,6 +11,8 @@
 
 当前阻塞项是：ES-MemEval 1,209/1,427 的逐题身份、ESC-RANK 本地校准、same-stack reference、ESC-Judge position sensitivity、人类 anchor、ESC-Eval 与 ESConv/ExTES 重叠筛查、Quality/Risk NI margin 来源，以及 Risk 双评/裁决和不确定性上界。
 
+官方实现的静态审计已经完成，详见 `V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和 `data/v3_authority/official_benchmark_implementation_audit_v1.json`。这一步确认了ESC-Eval 655张高质量卡的公开身份，但也确认官方runner/scorer不能原样作为合格测量工具；ESC-Judge的公开100角色无法还原论文实际25角色，且仓库没有实现双向位置互换。因此“官方协议锚定”和“本地测量资格化”必须同时成立。
+
 ## 考卷与主张映射
 
 | 考卷 | 主张 | 主指标 | 单位 | 不允许的外推 |
@@ -35,6 +37,8 @@
 9. hard safety/integrity event 与 `UNCERTAIN` 的处理；
 10. benchmark 运行只能决定是否通过，不能反向修改 selector、sample 或 treatment。
 
+完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。其中统计单位和主张边界已完成；数据身份、runtime replay、scorer/reference、margin、overlap与Risk instrument仍阻塞正式执行。
+
 ## ESC-Eval 资格方案
 
 - 主运行必须保持官方 role cards、交互方式和七维完整报告；
@@ -52,6 +56,8 @@
 - judge family 与 generator family 尽量分离，并保留一小批人工 anchor；
 - 只作 robustness，不代替 ESC-Eval 绝对定位。
 
+每个candidate/reference pair必须以A/B与B/A两个顺序评判。顺序翻转导致胜者翻转时标记`POSITION_UNSTABLE`；`TIE`、`INVALID`、`REFUSAL`均单列，不得强制归入candidate胜或负。
+
 官方论文的实验边界也必须保留：25个合成角色、375个对话三元组、o1-mini judge；人工一致性只在随机抽取的100对、两位博士级标注者上验证。论文报告的85%/83%/86%是该设置下 Exploration/Insight/Action 的匹配率，不是跨 judge、跨语言或真实用户的通用可靠性保证。
 
 ## PM 自定义专项考卷
@@ -63,6 +69,8 @@
 - Function 看 current context、授权 source 与匿名回复，作为 mechanism evidence；
 - Cost 使用实际 generator input/output tokens，并分开报告 retrieval/retry/latency/USD；
 - 所有统计按 dialogue/user 聚类，重复 state/seed 只增加簇内精度。
+
+正式Risk由两名独立盲评员覆盖所有treatment reply及同状态baseline，而不是只抽样。所有event presence分歧、`UNCERTAIN`和material/critical标签进入第三方裁决；零critical只能报告“未观察到”及单侧上界，不能写作零风险。具体协议见 `data/v3_authority/risk_adjudication_protocol_v1.json`。
 
 ## 通过线冻结原则
 

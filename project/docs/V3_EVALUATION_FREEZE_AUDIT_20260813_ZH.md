@@ -14,10 +14,13 @@
 4. **ESC-Eval适合作为外部资格考，但有明确construct边界。** 论文评测655张角色卡、14个模型、约8.5K段对话和59,654项人工标注；同时依赖模拟用户、GPT-4抽取角色卡和14名非英语母语标注者。建议rubric对超过五条有效建议给最高分，与本项目低负担原则不完全一致。
 5. **ESC-Judge适合作为敏感性分析。** 它提供E-I-A成对比较和位置互换流程，但论文实证只有25个合成角色，judge为o1-mini，人工核验是两位博士级标注者对100个pair的判断。
 
+6. **官方实现并不等于可直接复现。** ESC-Eval公开的英文331与中文324张高质量卡总数与论文655一致，但仓库没有依赖锁或许可证文件，runner硬编码旧候选模型，scorer还存在`ESC-RANK1/fluency`路径不一致。ESC-Judge公开100个`roles-v1`角色，却没有给出论文25角色身份；当前comparison脚本也没有实现A/B双向互换。
+7. **ES-MemEval的公开历史无法恢复1209题。** `v1.0.0`仓库只有两个公开commit，数据文件未发生变化；检查到的公开issue也没有解释或列出1209/1427映射。因此不能靠继续翻git解决，必须获取权威ID或明确采用独立命名的1427-row public task。
+
 ## Issues Found
 
 1. **Critical — ES-MemEval formal row identity unavailable.** 没有正式1,209题ID就不能声称精确复现论文，也不能把1,427题或418题静默等同于正式考卷。
-2. **Critical — No qualified generator pass margin.** 当前没有在公开人工标签上校准ESC-RANK，也没有同栈reference和outcome-blind NI margin；因此不能仅凭一个ESC自动分数决定微调。
+2. **Critical — No qualified generator pass margin.** 当前没有在公开人工标签上校准ESC-RANK，也没有同栈reference和outcome-blind NI margin；而官方scorer仓库本身存在路径与环境缺口，因此不能仅凭一个ESC自动分数决定微调。
 3. **High — Training/exam overlap unresolved.** ESC-Eval角色卡和ESC-Role训练来源含ESConv/ExTES；若以后用这些数据做generator SFT，必须先冻结考试身份并做source/dialogue/semantic overlap筛查。
 4. **High — PM Quality/Risk margins not anchored.** 现有pairwise judge可作测量组件，但尚无公开anchor、人类小样本校准、跨judge稳定性和practical-effect依据来冻结NI margin。
 5. **High — Atomic Risk taxonomy is ahead of adjudication.** 事件类别已明确，但还缺双评、分歧裁决、`UNCERTAIN`处理和owner-cluster上界方案。

@@ -56,13 +56,13 @@
     "shared_source_rule": "EvoEmo response and ES-MemEval are two tasks on the same 18 synthetic users, not independent population replications."
   },
   "p0_gates": [
-    {"gate": "dataset_identity", "status": "PARTIAL", "blocker": "ES-MemEval final-paper 1209 rows are not identifiable from public v1.0.0 1427 rows."},
-    {"gate": "official_implementation_pin", "status": "PARTIAL", "blocker": "Repository commits are identified, but ESC-Eval/ESC-Judge code and runtime dependencies are not yet vendored or locally replayed."},
+    {"gate": "dataset_identity", "status": "BLOCKED_EXTERNAL_IDENTITY", "blocker": "ES-MemEval final-paper 1209 rows are absent from public git history; choose an authoritative 1209 mapping or explicitly use the public-v1.0.0-1427 task."},
+    {"gate": "official_implementation_pin", "status": "AUDITED_REPLAY_BLOCKED", "blocker": "Official commits, data shapes, and model revisions are pinned; ESC-Eval has an adapter-path defect and no dependency lock, while ESC-Judge lacks the paper-25 manifest, symmetric order implementation, and dependency lock. Local wrappers remain required."},
     {"gate": "scorer_and_judge_qualification", "status": "BLOCKED", "blocker": "ESC-RANK local calibration, same-stack reference, ESC-Judge position sensitivity, and human anchors are not executed."},
     {"gate": "pass_margins", "status": "BLOCKED", "blocker": "No evidence-anchored Quality/Risk or generator NI margins are frozen."},
     {"gate": "overlap_screen", "status": "BLOCKED", "blocker": "ESC-Eval role sources overlap ESConv/ExTES; source, dialogue, and semantic overlap identities are not yet materialized."},
     {"gate": "statistical_units", "status": "FROZEN", "blocker": null},
-    {"gate": "atomic_risk_taxonomy", "status": "PARTIAL", "blocker": "Event taxonomy is frozen; double-review/adjudication and uncertainty bounds remain to be specified."},
+    {"gate": "atomic_risk_taxonomy", "status": "PROTOCOL_FROZEN_IMPLEMENTATION_PENDING", "blocker": "Event taxonomy, dual review, adjudication, UNCERTAIN, and uncertainty reporting are frozen; packet/schema fixture is not implemented."},
     {"gate": "function_role", "status": "FROZEN_SECONDARY", "blocker": null}
   ],
   "current_stress_test_policy": {
@@ -90,5 +90,9 @@
     "risk adjudication protocol",
     "margin justification design",
     "test and validator updates"
-  ]
+  ],
+  "implementation_audit": "official_benchmark_implementation_audit_v1.json",
+  "p0_exit_checklist": "p0_exit_checklist_v1.json",
+  "generator_measurement_contract": "generator_qualification_measurement_contract_v1.json",
+  "risk_adjudication_protocol": "risk_adjudication_protocol_v1.json"
 }

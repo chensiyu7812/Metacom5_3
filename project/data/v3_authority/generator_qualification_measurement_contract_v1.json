@@ -1,0 +1,54 @@
+{
+  "protocol": "metacom-v3-generator-qualification-measurement-contract-v1",
+  "date": "2026-08-13",
+  "status": "DESIGN_FROZEN_NUMERIC_MARGINS_PENDING_CALIBRATION",
+  "purpose": "Separate generator competence from PM selection and executor realization before any head verdict.",
+  "candidate": {
+    "model": "Meta-Llama-3.1-8B-Instruct",
+    "exact_revision": "PENDING_RUNTIME_BINDING",
+    "generation_settings": "PENDING_RUNTIME_BINDING",
+    "prompt_hash": "PENDING_WRAPPER_MATERIALIZATION"
+  },
+  "primary_exam": {
+    "name": "ESC-Eval",
+    "role_card_identity": "official high-quality 655-card surface at repository commit 9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "reported_outcomes": ["fluency", "coherence", "empathy", "support_strategy", "suggestion", "diversity", "human_likeness", "overall", "completion_rate"],
+    "aggregation": "Report language, dimension, role-card, and cluster uncertainty separately; no sole composite pass.",
+    "scorer_rule": "ESC-RANK is UNQUALIFIED until its exact runtime reproduces a declared human-label calibration target. If public calibration labels are unavailable, label the official scorer UNQUALIFIED and predeclare an alternative with human anchors.",
+    "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
+    "pass_margin": "NOT_NUMERICALLY_FROZEN"
+  },
+  "sensitivity_exam": {
+    "name": "ESC-Judge",
+    "constructs": ["Exploration", "Insight", "Action"],
+    "role_identity": "A project-frozen subset from the 100 public roles; the unpublished paper-25 identity must not be implied.",
+    "pairing": "Candidate and same-stack reference receive the same role. Every comparison is judged in both A/B orders.",
+    "position_policy": "A result is stable only when the winner is unchanged or both orientations resolve to tie; order-flip disagreement is POSITION_UNSTABLE.",
+    "tie_invalid_policy": "TIE, INVALID, REFUSAL, and POSITION_UNSTABLE are explicit outcomes and never coerced to a win.",
+    "judge_identity": "Exact provider/model snapshot, prompt hash, temperature, seed if supported, retry, and parser must be bound before calls.",
+    "human_anchor": "A blinded role-stratified sample receives two independent reviewers; discrepancies measure instrument reliability, not candidate correctness alone."
+  },
+  "executor_exam": {
+    "name": "approved-plan-and-evidence-realization",
+    "input": "Same context plus a frozen approved response plan and authorized evidence/resource delta.",
+    "comparators": ["plan_without_resource", "plan_with_resource"],
+    "primary_outcomes": ["plan_slot_realization", "authorized_fact_fidelity", "atomic_risk", "naturalness_and_burden"],
+    "interpretation": "Identifies whether a qualified ESC generator can execute PM outputs; it is not selector evidence."
+  },
+  "same_stack_reference": {
+    "selection_status": "PENDING",
+    "requirements": ["accessible under one frozen stack", "not trained or tuned on the qualification outputs", "exact revision and cost disclosed", "identical cards, turns, sampling policy, retry, and scoring"]
+  },
+  "margin_derivation": {
+    "forbidden": ["derive from candidate formal outcomes", "copy a published model delta across different stacks", "average away a failed guardrail"],
+    "required_inputs": ["human inter-reviewer disagreement", "scorer/judge repeatability", "position sensitivity", "same-stack reference variation", "outcome-blind smallest practically important difference"],
+    "decision": "Margins remain unset until these inputs exist; no generator pass/fail may be issued meanwhile."
+  },
+  "decision_tree": [
+    {"if": "ESC capability fails", "then": "Consider leakage-screened ESC SFT and rerun qualification."},
+    {"if": "ESC passes but executor realization fails", "then": "Train only plan/evidence execution, not the selector, then rerun executor and qualification."},
+    {"if": "ESC and executor pass but PM fails", "then": "Repair candidate, treatment, or selector; generator tuning cannot rescue the claim."},
+    {"if": "ESC and executor pass and PM passes", "then": "Freeze the generator for every PM and baseline comparison."}
+  ],
+  "authority": "This contract authorizes design and zero-API implementation only. It does not authorize model downloads, inference, paid judges, or fine-tuning."
+}

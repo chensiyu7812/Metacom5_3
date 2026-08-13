@@ -35,11 +35,21 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     profile_path = AUTHORITY_DIR / "v3_active_test_profile_v1.json"
     evaluation_path = AUTHORITY_DIR / "v3_evaluation_freeze_contract_v1.json"
     reconciliation_path = AUTHORITY_DIR / "es_memeval_repository_reconciliation_v1.json"
+    implementation_path = AUTHORITY_DIR / "official_benchmark_implementation_audit_v1.json"
+    snapshot_path = AUTHORITY_DIR / "official_benchmark_surface_snapshot_v1.json"
+    checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
+    generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    risk_protocol_path = AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
     authority = _load_json(authority_path)
     assets = _load_json(assets_path)
     profile = _load_json(profile_path)
     evaluation = _load_json(evaluation_path)
     reconciliation = _load_json(reconciliation_path)
+    implementation = _load_json(implementation_path)
+    snapshot = _load_json(snapshot_path)
+    checklist = _load_json(checklist_path)
+    generator_contract = _load_json(generator_contract_path)
+    risk_protocol = _load_json(risk_protocol_path)
 
     failures: list[str] = []
 
@@ -63,7 +73,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("execution phases are not the frozen V3-P0..V3-P6 sequence")
 
     memeval = authority["external_tracks"]["ES_MemEval"]
-    if memeval["status"] != "BLOCKED_ON_OFFICIAL_VERSION_RECONCILIATION":
+    if memeval["status"] != "BLOCKED_ON_FORMAL_1209_IDENTITY_OR_PUBLIC_1427_NAMING_DECISION":
         failures.append("ES-MemEval version discrepancy is not an explicit blocker")
     if not all(token in memeval["version_discrepancy"] for token in ("1209", "1427", "418")):
         failures.append("ES-MemEval discrepancy does not bind all known counts")
@@ -73,6 +83,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "docs" / "V3_EVALUATION_BENCHMARK_PLAN_ZH.md",
         PROJECT_ROOT / "docs" / "V3_DATASET_AND_EVIDENCE_CARDS_ZH.md",
         PROJECT_ROOT / "docs" / "V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md",
+        PROJECT_ROOT / "scripts" / "v3" / "01_audit_official_benchmark_surfaces.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -108,7 +120,42 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     if sum(row["difference"] for row in comparison[:-1]) != 218:
         failures.append("ES-MemEval capability deltas do not sum to 218")
 
-    for path in (authority_path, assets_path, profile_path, evaluation_path, reconciliation_path):
+    if implementation["status"] != "OFFICIAL_PROTOCOLS_PINNED_LOCAL_QUALIFICATION_REQUIRED":
+        failures.append("official implementation audit status changed")
+    if snapshot["ESC-Eval"]["high_quality_cards"] != {"en": 331, "zh": 324, "total": 655}:
+        failures.append("ESC-Eval public 655-card identity changed")
+    if snapshot["ESC-Eval"]["commit"] != implementation["benchmarks"]["ESC-Eval"]["commit"]:
+        failures.append("ESC-Eval audit/snapshot commit mismatch")
+    if snapshot["ESC-Judge"]["roles_v1_records"] != 100:
+        failures.append("ESC-Judge public role count changed")
+    if snapshot["ESC-Judge"]["explicit_bidirectional_order_aggregation_present"] is not False:
+        failures.append("ESC-Judge position-order audit changed without qualification update")
+    if snapshot["ES-MemEval"]["qa"] != 1427 or snapshot["ES-MemEval"]["public_git_commits"] != 2:
+        failures.append("ES-MemEval public history surface changed")
+    if checklist["p0_exit_now"] is not False:
+        failures.append("P0 checklist unexpectedly permits exit")
+    complete_gates = {gate["gate"] for gate in checklist["gates"] if gate["status"] == "COMPLETE"}
+    if complete_gates != {"statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
+        failures.append("P0 complete-gate set changed without authority update")
+    if generator_contract["primary_exam"]["pass_margin"] != "NOT_NUMERICALLY_FROZEN":
+        failures.append("generator margin was set without qualification evidence")
+    if risk_protocol["statistics"]["noninferiority_margin"] != "NOT_NUMERICALLY_FROZEN_PENDING_FIXTURE_AND_HUMAN_CALIBRATION":
+        failures.append("Risk margin was set without instrument calibration")
+    if "uncertain" not in risk_protocol["events"]:
+        failures.append("atomic Risk protocol lost UNCERTAIN")
+
+    for path in (
+        authority_path,
+        assets_path,
+        profile_path,
+        evaluation_path,
+        reconciliation_path,
+        implementation_path,
+        snapshot_path,
+        checklist_path,
+        generator_contract_path,
+        risk_protocol_path,
+    ):
         if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
             failures.append(f"legacy absolute path leaked into {path.name}")
 
@@ -146,6 +193,12 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "evaluation_freeze_status": evaluation["status"],
         "dataset_cards": [card["dataset"] for card in dataset_cards],
         "es_memeval_identity": {"formal_paper_qa": paper_qa, "public_v1_0_0_qa": public_qa, "difference": public_qa - paper_qa},
+        "official_benchmark_surfaces": {
+            "esc_eval_cards": snapshot["ESC-Eval"]["high_quality_cards"]["total"],
+            "esc_judge_public_roles": snapshot["ESC-Judge"]["roles_v1_records"],
+            "es_memeval_public_git_commits": snapshot["ES-MemEval"]["public_git_commits"],
+        },
+        "p0_exit_now": checklist["p0_exit_now"],
         "private_evidence": private_result,
     }
 

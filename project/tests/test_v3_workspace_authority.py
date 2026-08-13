@@ -39,3 +39,26 @@ def test_evaluation_freeze_blocks_head_tuning_and_binds_dataset_identity() -> No
         "public_v1_0_0_qa": 1427,
         "difference": 218,
     }
+
+
+def test_official_benchmark_surfaces_are_pinned_but_not_overclaimed() -> None:
+    result = _validator_module().validate(require_private_evidence=True)
+    assert result["official_benchmark_surfaces"] == {
+        "esc_eval_cards": 655,
+        "esc_judge_public_roles": 100,
+        "es_memeval_public_git_commits": 2,
+    }
+    assert result["p0_exit_now"] is False
+
+
+def test_margins_remain_unset_until_measurement_qualification() -> None:
+    module = _validator_module()
+    generator = module._load_json(
+        module.AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    )
+    risk = module._load_json(
+        module.AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
+    )
+    assert generator["primary_exam"]["pass_margin"] == "NOT_NUMERICALLY_FROZEN"
+    assert risk["statistics"]["noninferiority_margin"].startswith("NOT_NUMERICALLY_FROZEN")
+    assert "uncertain" in risk["events"]

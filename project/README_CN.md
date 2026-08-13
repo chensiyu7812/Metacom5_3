@@ -7,6 +7,10 @@
 > judge 宣布 head 学会或正式失败。下面的旧 PM-v1.5/V3.3
 > 内容保留用于历史追溯，不再单独授权未来调用。
 
+> 官方benchmark实现审计与P0逐项退出门见
+> `docs/V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和
+> `data/v3_authority/p0_exit_checklist_v1.json`；generator资格测量与Risk双评协议已分别机器化，仍不授权API执行。
+
 > 当前 PM-v1.5 唯一执行路线见
 > `docs/PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`，机器可读阶段与门槛见
 > `data/pm_v1_5_contracts/final_execution_plan_v2.json`。旧的 minimum/core-chain/reverse-
