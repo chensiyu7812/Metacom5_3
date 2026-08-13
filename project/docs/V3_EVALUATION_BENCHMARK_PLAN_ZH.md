@@ -1,13 +1,13 @@
 # MetaCom V3 Evaluation Benchmark Plan
 
 日期：2026-08-13
-状态：`V3-P0 DESIGN FROZEN / V3-P1 MEASUREMENT QUALIFICATION PENDING / NO API AUTHORITY`
+状态：`V3-P0 EVIDENCE ARCHITECTURE + OFFICIAL SCALE MAPPING FROZEN / V3-P1 MEASUREMENT QUALIFICATION PENDING / NO INFERENCE AUTHORITY`
 
 机器合同：`data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 
 ## 当前冻结裁定
 
-整体状态为 `P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。目前的42/90 stress-test回复继续保留，但先做generator选择：8B保留才可能按原identity补48次；若换成70B，旧轮归档为不可补成正式混栈矩阵的诊断。无论哪种情况，都不能按旧 Quality/Function 口径作最终判决。
+整体状态为 `P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。这只表示证据责任和考法已冻结，不表示量表可靠性、数值及格线或generator已经合格。目前的42/90 stress-test回复继续保留，但先比较8B、70B与Qwen 3.7 Plus；若更换generator，旧轮归档为不可补成正式混栈矩阵的诊断。
 
 ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。ESC本地协议、重叠筛查、ESC-RANK公开artifact责任、same-stack reference和margin推导均已冻结。P1剩余的是执行性的测量资格化：修复scorer runtime、双人非正式anchor、Risk fixture、数值margin登记与generator选择。
 
@@ -17,7 +17,7 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 
 | 考卷 | 主张 | 主指标 | 单位 | 不允许的外推 |
 |---|---|---|---|---|
-| ESC-Eval | generator 的多轮 ESC 基础能力 | 官方七维、Average、完成率 | role card / dialogue | PM价值、临床效果 |
+| ESC-Eval | generator 的多轮 ESC 基础能力 | 官方Fluency、Expression、Empathy、Information、Skill、Humanoid、Overall七维；完成率另列 | role card / dialogue | PM价值、临床效果 |
 | ESC-Judge | generator 相对 reference 的 E-I-A 支持策略 | Exploration/Insight/Action pairwise | synthetic role | 绝对及格分、真实用户效果 |
 | ES-MemEval | 长期记忆能力 | retrieval、Token F1、BERTScore、conflict、abstention、false answer | user | RS价值、独立于EvoEmo的新用户复现 |
 | ESConv | RS/R0 单会话 PM | blind pairwise Quality、atomic Risk、Cost、selection | dialogue | 纵向 memory |
@@ -37,7 +37,7 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 9. hard safety/integrity event 与 `UNCERTAIN` 的处理；
 10. benchmark 运行只能决定是否通过，不能反向修改 selector、sample 或 treatment。
 
-完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`，九个设计门全部完成。P0完成只代表“考法已冻结”，不代表scorer、人评或generator已通过；`evaluation_margin_justification_v1.json`列出的P1登记项仍阻塞正式判决。
+完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`，九个证据架构门完成。此前量表合同混入项目自定义维度的问题已经修正；P0仍只代表“证据架构与推导程序冻结”，不代表scorer、人评、数值decision line或generator已通过。
 
 ## ESC-Eval 资格方案
 
@@ -47,6 +47,10 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 - 同栈reference冻结为NVIDIA `meta/llama-3.3-70b-instruct`，与8B交错复跑；hosted route不暴露不可变weight revision的限制必须披露；
 - generator选择由硬可靠性、executor、同栈E-I-A和Risk共同决定，不用ESC-RANK Average设一个伪精确分数线；
 - low-burden guardrail 单独审计，防止建议数量奖励制造“高分但不合适”的系统。
+
+原论文七维与公开adapter的固定映射为：`Fluency→fluency`、`Expression→diversity`、`Empathy→empathic`、`Information→suggestion`、`Skill→tech`、`Humanoid→human`、`Overall→overall`。`completion_rate/low_burden/no_premature_action/safety_signal_handling`是项目guardrail，不得伪装成ESC-RANK官方维度。
+
+G0不直接宣告generator合格。它在24张英文卡（ESconv 8、MHP 5、ExTES 5、Psych 3、EPITOME 3）和16个owner-unique executor开发包上比较8B、70B与`qwen3.7-plus-2026-05-26`。executor包完整复用一个已退役开发面板，8B结果可能已知，因而只用于工程能力诊断，绝不是held-out PM证据；每包固定比较R0-only与最大授权delta，且后者在12包同时含MS和RS，不能据此识别单头效应。硬门失败者淘汰；剩余候选只按Pareto支配关系筛除，不制造加权总分。多个非支配候选进入ESC-Judge双顺序与人类anchor；最终选中者必须再跑完整英文ESC-Eval和完整executor。
 
 ## ESC-Judge 稳健性方案
 

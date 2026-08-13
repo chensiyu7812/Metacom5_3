@@ -11,6 +11,7 @@
   "generator_selection": {
     "recognized_absolute_profile": {
       "instrument": "repaired ESC-RANK on ESC-Eval",
+      "official_dimensions": ["Fluency", "Expression", "Empathy", "Information", "Skill", "Humanoid", "Overall"],
       "decision_role": "descriptive seven-dimension external profile; never a sole pass/fail cutoff",
       "reason": "The public row-level human calibration labels and split identities are unavailable."
     },
@@ -25,6 +26,12 @@
       "reference": "meta/llama-3.3-70b-instruct",
       "primary_replacement_trigger": "reference has a lower hard-failure rate, or wins at least two of Exploration/Insight/Action after mandatory A/B order aggregation with Holm-adjusted one-sided paired sign-test p<0.05, and has no material/critical atomic-Risk increase",
       "inconclusive_rule": "Do not switch based only on an unadjusted Average or a directionally favorable but order-unstable result."
+    },
+    "cross_family_challenger": {
+      "model": "qwen3.7-plus-2026-05-26",
+      "provider": "Alibaba Cloud Model Studio Singapore",
+      "screening_contract": "g0_generator_bakeoff_contract_v1.json",
+      "decision_rule": "Hard-gate eligibility followed by Pareto screening; no weighted ESC-RANK composite and no automatic replacement based on a single Average."
     },
     "executor_gate": {
       "unit": "approved plan/evidence packet",

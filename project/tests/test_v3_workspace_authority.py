@@ -41,7 +41,7 @@ def test_v3_execution_phases_do_not_authorize_api_calls() -> None:
 
 def test_evaluation_design_freeze_is_complete_and_binds_dataset_identity() -> None:
     result = _validator_module().validate(require_private_evidence=False)
-    assert result["evaluation_freeze_status"] == "P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED"
+    assert result["evaluation_freeze_status"] == "P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED"
     assert set(result["dataset_cards"]) == {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}
     assert result["es_memeval_identity"] == {
         "formal_paper_qa": 1209,
@@ -130,3 +130,25 @@ def test_atomic_risk_design_gate_is_complete_but_human_qualification_remains_p1(
     )
     assert qualification["public_identifier_contains_target_or_variant"] is False
     assert "HASH_COMMITMENT_ONLY" in qualification["gold_release_policy"]
+
+
+def test_g0_qwen_screen_is_frozen_without_api_execution() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
+    assert result["g0_generator_screen"] == {
+        "cards": 24,
+        "executor_packets": 16,
+        "qwen_model": "qwen3.7-plus-2026-05-26",
+        "qwen_paid_logical_calls": 152,
+        "run_identity": "7a4d43f9049583d7151d0200f856ad04c8b2090f625171baa4b9868ecbd9de40",
+    }
+
+
+def test_generator_contract_uses_paper_dimensions_and_separate_guardrails() -> None:
+    module = _validator_module()
+    contract = module._load_json(
+        module.AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    )
+    assert [row["paper_name"] for row in contract["primary_exam"]["official_reported_dimensions"]] == [
+        "Fluency", "Expression", "Empathy", "Information", "Skill", "Humanoid", "Overall"
+    ]
+    assert "completion_rate" in contract["primary_exam"]["separate_project_metrics"]

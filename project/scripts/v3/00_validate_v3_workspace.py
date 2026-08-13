@@ -39,6 +39,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     snapshot_path = AUTHORITY_DIR / "official_benchmark_surface_snapshot_v1.json"
     checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
     generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    g0_contract_path = AUTHORITY_DIR / "g0_generator_bakeoff_contract_v1.json"
+    g0_preflight_path = AUTHORITY_DIR / "g0_generator_bakeoff_preflight_v1.json"
+    g0_screen_manifest_path = AUTHORITY_DIR / "g0_esc_eval_screening_manifest_v1.jsonl"
+    g0_executor_manifest_path = AUTHORITY_DIR / "g0_executor_screening_manifest_v1.jsonl"
+    g0_runtime_setup_path = AUTHORITY_DIR / "g0_local_runtime_setup_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -62,6 +67,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     snapshot = _load_json(snapshot_path)
     checklist = _load_json(checklist_path)
     generator_contract = _load_json(generator_contract_path)
+    g0_contract = _load_json(g0_contract_path)
+    g0_preflight = _load_json(g0_preflight_path)
+    g0_runtime_setup = _load_json(g0_runtime_setup_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -84,7 +92,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("execution boundary is empty")
     if any(phase.get("api_authority") for phase in authority["execution_phases"]):
         failures.append("a planning phase unexpectedly authorizes API execution")
-    if evaluation["status"] != "P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED":
+    if evaluation["status"] != "P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED":
         failures.append("evaluation P0/P1 boundary changed")
     required_blocks = {"unqualified scorer or judge use", "numeric Quality/Risk margin absent", "same-stack generator selection incomplete"}
     if not required_blocks.issubset(set(evaluation["p1_blocks_before_formal_verdict"])):
@@ -114,6 +122,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "06_run_v3_active_tests.py",
         PROJECT_ROOT / "scripts" / "v3" / "07_audit_esc_rank_public_qualification.py",
         PROJECT_ROOT / "scripts" / "v3" / "08_materialize_esc_rank_runtime_preflight.py",
+        PROJECT_ROOT / "scripts" / "v3" / "09_materialize_g0_generator_bakeoff.py",
+        PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "11_smoke_g0_local_models.py",
+        PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -128,7 +141,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 53:
+    if profile["expected_test_count"] != 57:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -233,6 +246,46 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("Risk fixture gold is not bound by an embargoed hash commitment")
     if not generator_contract["primary_exam"]["pass_margin"].startswith("NO_SOLE_ESC_RANK_NUMERIC_CUTOFF"):
         failures.append("generator contract permits an unsupported sole ESC-RANK cutoff")
+    official_dimensions = [
+        {"paper_name": "Fluency", "public_adapter_key": "fluency"},
+        {"paper_name": "Expression", "public_adapter_key": "diversity"},
+        {"paper_name": "Empathy", "public_adapter_key": "empathic"},
+        {"paper_name": "Information", "public_adapter_key": "suggestion"},
+        {"paper_name": "Skill", "public_adapter_key": "tech"},
+        {"paper_name": "Humanoid", "public_adapter_key": "human"},
+        {"paper_name": "Overall", "public_adapter_key": "overall"},
+    ]
+    if generator_contract["primary_exam"]["official_reported_dimensions"] != official_dimensions:
+        failures.append("generator contract does not bind the official ESC-RANK seven-dimension mapping")
+    if g0_contract["official_esc_rank_dimensions"] != official_dimensions:
+        failures.append("G0 contract ESC-RANK dimension mapping drifted")
+    g0_rows_bytes = g0_screen_manifest_path.read_bytes()
+    g0_rows = [json.loads(line) for line in g0_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(g0_rows) != 24 or len({row["card_key"] for row in g0_rows}) != 24:
+        failures.append("G0 ESC-Eval screen is not 24 unique cards")
+    if hashlib.sha256(g0_rows_bytes).hexdigest() != g0_preflight["screening_sample"]["manifest_sha256"]:
+        failures.append("G0 ESC-Eval screening manifest hash mismatch")
+    g0_executor_bytes = g0_executor_manifest_path.read_bytes()
+    g0_executor_rows = [json.loads(line) for line in g0_executor_bytes.decode("utf-8").splitlines() if line]
+    if len(g0_executor_rows) != 32 or len({row["packet_id"] for row in g0_executor_rows}) != 16:
+        failures.append("G0 executor screen is not 32 calls over 16 packets")
+    if len({row["owner_cluster_id"] for row in g0_executor_rows}) != 16:
+        failures.append("G0 executor screen is not owner-unique")
+    if hashlib.sha256(g0_executor_bytes).hexdigest() != g0_preflight["executor_sample"]["manifest_sha256"]:
+        failures.append("G0 executor screening manifest hash mismatch")
+    if g0_preflight["api_calls"] != 0 or g0_preflight["contains_role_card_or_dialogue_text"] is not False:
+        failures.append("G0 preflight is not text-free and zero-call")
+    if g0_preflight["status"] != "ZERO_CALL_PREFLIGHT_PASS_EXECUTION_REQUIRES_EXPLICIT_BUDGET_APPROVAL":
+        failures.append("G0 preflight status changed")
+    if g0_preflight["logical_calls"]["qwen_paid_logical_calls"] != 152:
+        failures.append("G0 Qwen logical-call budget changed")
+    if g0_runtime_setup["status"] != "PASS_ZERO_GENERATION" or g0_runtime_setup["api_calls"] != 0 or g0_runtime_setup["model_generation_calls"] != 0:
+        failures.append("G0 local official-model runtime did not pass a zero-generation smoke")
+    if len(g0_runtime_setup["esc_rank"]["loaded_adapter_keys"]) != 14:
+        failures.append("G0 local ESC-RANK runtime did not attach all 14 adapters")
+    qwen = next((row for row in g0_contract["candidates"] if row["candidate_id"] == "qwen37_plus_primary_challenger"), None)
+    if not qwen or qwen["model"] != "qwen3.7-plus-2026-05-26" or qwen.get("enable_thinking") is not False:
+        failures.append("G0 Qwen dated non-thinking endpoint is not frozen")
     if esc_rank_audit["status"] != "PUBLIC_SCORER_REPLAYABLE_ONLY_AFTER_REPAIR_HUMAN_CALIBRATION_NOT_INDEPENDENTLY_REPRODUCIBLE":
         failures.append("ESC-RANK public qualification decision changed")
     if esc_rank_audit["api_calls"] != 0 or esc_rank_audit["model_inference_calls"] != 0:
@@ -270,6 +323,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         snapshot_path,
         checklist_path,
         generator_contract_path,
+        g0_contract_path,
+        g0_preflight_path,
+        g0_runtime_setup_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -331,6 +387,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "esc_rank_public_qualification": {"public_human_label_rows": 0, "primary_adapters": 14, "inference_calls": 0},
         "esc_rank_runtime_preflight": {"status": "STATIC_PASS", "weights_downloaded": 0, "inference_calls": 0},
         "same_stack_reference": same_stack_reference["reference"]["model_route"],
+        "g0_generator_screen": {
+            "cards": len(g0_rows),
+            "executor_packets": len({row["packet_id"] for row in g0_executor_rows}),
+            "qwen_model": qwen["model"] if qwen else None,
+            "qwen_paid_logical_calls": g0_preflight["logical_calls"]["qwen_paid_logical_calls"],
+            "run_identity": g0_preflight["run_identity"],
+        },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
         "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},

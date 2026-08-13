@@ -1,7 +1,7 @@
 # MetaCom V3 P0 官方实现审计与退出计划
 
 日期：2026-08-13  
-状态：`P0 DESIGN FREEZE COMPLETE / 9 OF 9 DESIGN GATES / P1 MEASUREMENT QUALIFICATION NEXT / NO INFERENCE AUTHORITY`
+状态：`P0 EVIDENCE ARCHITECTURE + OFFICIAL SCALE MAPPING COMPLETE / 9 OF 9 ARCHITECTURE GATES / P1 MEASUREMENT QUALIFICATION NEXT / NO INFERENCE AUTHORITY`
 
 ## 结论
 
@@ -33,7 +33,9 @@
 
 ## P0 的真实完成状态
 
-P0九个设计门现已全部完成：
+P0九个证据架构门现已全部完成；这不等于测量有效性已经解决。原合同曾把项目自定义维度混入ESC-Eval outcome，现已严格纠正为原论文七维与公开adapter逐项映射：
+
+`Fluency/fluency`、`Expression/diversity`、`Empathy/empathic`、`Information/suggestion`、`Skill/tech`、`Humanoid/human`、`Overall/overall`。完成率、低负担、不过早行动和安全处理单独报告。
 
 1. ~~对 ES-MemEval 作一次明确选择。~~ 已冻结`ES-MemEval-Public-v1.0.0-1427`、1427行逐题身份和非精确1209复现边界；
 2. ~~为三个官方 benchmark 建立本地协议 wrapper 和 runtime 边界。~~ 已物化655张ESC-Eval卡、ESC-Judge 25/100角色选择、150个双向E-I-A单元和ES-MemEval 1427行身份；真正模型依赖等候选/reference/scorer身份冻结后再锁；
@@ -43,18 +45,18 @@ P0九个设计门现已全部完成：
 6. Risk packet/schema/盲分配的无正式数据设计门已完成；两名人类评审在看gold前完成18包/36任务资格化并冻结数值margin，是P1正式判决前门槛；
 7. outcome-blind margin合同已冻结：P0冻结推导、硬工程门与上限，P1用非正式anchor登记数值，不得从正式结果倒推。
 
-机器可读清单见 `data/v3_authority/p0_exit_checklist_v1.json`。当前状态为`P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED`；它不授权API调用、人评执行、微调或正式pass/fail。
+机器可读清单见 `data/v3_authority/p0_exit_checklist_v1.json`。当前状态明确为“架构与量表映射完成、P1测量资格待完成”；它不授权API推理、人评执行、微调或正式pass/fail。
 
 ## 下一批最短工作：P1
 
 下一批不再回到head内部循环，而是做一次有边界的测量与generator资格化：
 
 1. ESC-RANK静态overlay preflight已完成：InternLM2/adapters revision、两处路径修正和只接受完整`0..4`的parser均已锁；P1还需隔离依赖环境、权重下载与load smoke（须另批）；
-2. 为8B与同栈70B生成ESC-Eval/ESC-Judge/executor小型pilot的精确identity、调用量和预算，批准后再运行；
+2. 已为8B、同栈70B与Qwen 3.7 Plus生成24卡ESC screen和16包既有开发executor诊断的G0 identity、调用量和预算；后者明确不是held-out PM证据，批准后先跑transport canary，再完成screen；
 3. Risk 18包双评与非正式Quality anchor只用于量表校准，登记数值margin后即关闭，不消费正式PM回复；
-4. 选定并冻结一个generator。若70B明确解决executor/reliability瓶颈，旧8B的42/90轮只归档为诊断，不再花48次补成混栈“正式结果”；若8B保留，才按原identity补齐。
+4. 硬门合格且Pareto非支配的候选才进入ESC-Judge/人类anchor；最终选中者完成G1全英文ESC-Eval和executor后冻结。若不再使用8B，旧42/90轮只归档为诊断，不再补成混栈“正式结果”。
 
-本轮ESC-RANK公开审计为零推理：14个主adapter身份、论文Table 4 hard/±1 accuracy、官方代码缺陷和0行公开逐条人标均已物化。NVIDIA仅做了两次鉴权模型目录GET以确认8B/70B路由存在，推理调用0、生成token 0、成本0、凭据未落盘。
+公开审计阶段为零推理：14个主adapter身份、论文Table 4 hard/±1 accuracy、官方代码缺陷和0行公开逐条人标均已物化。随后在隔离Python 3.11环境下载固定revision的ESC-Role、InternLM2和ESC-RANK，并在A6000完成零生成加载烟测：14个adapter全部挂载，API调用0、生成token 0。NVIDIA与阿里云只做鉴权模型目录GET确认冻结路由存在，凭据未落盘；真实推理仍须绑定identity和费用批准。
 
 42/90 的外部 stress 回复继续保留。它们不作废，但在 P0 完成前不按旧标准作最终判决；48条 continuation 也不因本文件自动获得执行授权。
 

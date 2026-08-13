@@ -2,9 +2,9 @@
 
 日期：2026-08-13
 
-## Overall Assessment: P0 design revision complete; P1 measurement qualification required
+## Overall Assessment: P0 evidence architecture and official scale mapping complete; P1 measurement qualification required
 
-当前 V3 的四层证据方向正确，P0已完成数据身份、官方实现责任、scorer用途、margin推导、统计单位与主张边界冻结。evaluation仍未达到可以裁定“PM学会/没学会”的状态，因为P1数值校准、runtime资格和generator选择尚未执行。内部 Quality/Risk/Function panel 只保留为开发诊断。
+当前 V3 的四层证据方向正确，P0已完成数据身份、官方实现责任、scorer用途、margin推导程序、统计单位与主张边界冻结；官方ESC-RANK七维映射错误也已纠正。evaluation仍未达到可以裁定“PM学会/没学会”的状态，因为P1数值校准、runtime资格、judge/人类一致性和generator选择尚未执行。内部 Quality/Risk/Function panel 只保留为开发诊断。
 
 ## 已验证
 
@@ -46,7 +46,7 @@
 
 ## 2026-08-13 执行进展
 
-P0九个设计门均已进入可审计实现。新增ESC-RANK公开资格审计、同栈reference和margin合同后，P0退出；Risk人类资格、数值margin和benchmark pilot移动到P1，继续阻塞正式判决但不阻塞设计完成。
+P0九个证据架构门均已进入可审计实现。这里不再用“9/9”暗示评价有效性已经解决：Risk人类资格、数值margin、scorer/judge可靠性和benchmark结果仍在P1阻塞正式判决。G0现比较8B、70B和Qwen 3.7 Plus，不能用ESC-RANK Average单独选模型。
 
 旧48次冻结生成不再自动成为下一步：先选择generator；保留8B才补，换70B则旧42/90归档，禁止混栈补齐。
 

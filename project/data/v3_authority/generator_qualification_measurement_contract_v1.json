@@ -1,18 +1,29 @@
 {
   "protocol": "metacom-v3-generator-qualification-measurement-contract-v1",
   "date": "2026-08-13",
-  "status": "P0_DESIGN_FROZEN_P1_MEASUREMENT_QUALIFICATION_PENDING",
+  "status": "P0_EVIDENCE_ARCHITECTURE_AND_OFFICIAL_SCALE_MAPPING_FROZEN_P1_MEASUREMENT_QUALIFICATION_PENDING",
   "purpose": "Separate generator competence from PM selection and executor realization before any head verdict.",
   "candidate": {
-    "model": "meta/llama-3.1-8b-instruct",
-    "provider_route": "NVIDIA hosted NIM API; hosted route does not expose an immutable weight revision",
-    "generation_settings": "temperature=0, top_p=1, max_output_tokens_per_turn=512, five turns",
-    "prompt_hash": "PENDING_WRAPPER_MATERIALIZATION"
+    "models": ["meta/llama-3.1-8b-instruct", "meta/llama-3.3-70b-instruct", "qwen3.7-plus-2026-05-26"],
+    "provider_routes": ["NVIDIA hosted NIM API; hosted route does not expose an immutable weight revision", "Alibaba Cloud Model Studio Singapore OpenAI-compatible API; dated model snapshot"],
+    "generation_settings": "G0: temperature=0, top_p=1, max_output_tokens_per_turn=256, five turns for every candidate; G1 settings must be frozen before full execution",
+    "screening_contract": "g0_generator_bakeoff_contract_v1.json",
+    "local_runtime_setup": "g0_local_runtime_setup_v1.json",
+    "prompt_identity": "Bound by g0_esc_eval_screening_manifest_v1.jsonl, g0_executor_screening_manifest_v1.jsonl, and g0_generator_bakeoff_preflight_v1.json"
   },
   "primary_exam": {
     "name": "ESC-Eval",
     "role_card_identity": "official high-quality 655-card surface at repository commit 9ad46e7b5e247e824dae4633910eaa82be668beb",
-    "reported_outcomes": ["fluency", "coherence", "empathy", "support_strategy", "suggestion", "diversity", "human_likeness", "overall", "completion_rate"],
+    "official_reported_dimensions": [
+      {"paper_name": "Fluency", "public_adapter_key": "fluency"},
+      {"paper_name": "Expression", "public_adapter_key": "diversity"},
+      {"paper_name": "Empathy", "public_adapter_key": "empathic"},
+      {"paper_name": "Information", "public_adapter_key": "suggestion"},
+      {"paper_name": "Skill", "public_adapter_key": "tech"},
+      {"paper_name": "Humanoid", "public_adapter_key": "human"},
+      {"paper_name": "Overall", "public_adapter_key": "overall"}
+    ],
+    "separate_project_metrics": ["completion_rate", "low_burden_support", "no_premature_action", "safety_signal_handling"],
     "aggregation": "Report language, dimension, role-card, and cluster uncertainty separately; no sole composite pass.",
     "scorer_rule": "The official ESC-RANK paper construct is retained and the repaired scorer may produce a recognized descriptive seven-dimension profile. It is UNQUALIFIED as a sole absolute pass/fail instrument because public row-level human calibration labels and split identities are unavailable.",
     "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
@@ -31,6 +42,7 @@
   "executor_exam": {
     "name": "approved-plan-and-evidence-realization",
     "input": "Same context plus a frozen approved response plan and authorized evidence/resource delta.",
+    "g0_development_sample_disclosure": "G0 reuses all 16 owner-unique packets from a retired development panel and is not held out. It diagnoses execution feasibility only; final qualification requires a separately frozen G1 executor closeout.",
     "comparators": ["plan_without_resource", "plan_with_resource"],
     "primary_outcomes": ["plan_slot_realization", "authorized_fact_fidelity", "atomic_risk", "naturalness_and_burden"],
     "interpretation": "Identifies whether a qualified ESC generator can execute PM outputs; it is not selector evidence."
@@ -54,5 +66,5 @@
     {"if": "ESC and executor pass but PM fails", "then": "Repair candidate, treatment, or selector; generator tuning cannot rescue the claim."},
     {"if": "ESC and executor pass and PM passes", "then": "Freeze the generator for every PM and baseline comparison."}
   ],
-  "authority": "This contract authorizes design, public metadata checks, and zero-inference implementation only. It does not authorize model-weight downloads, inference, paid judges, human-review execution, or fine-tuning."
+  "authority": "This contract authorizes design, public metadata checks, zero-inference implementation, and local setup of pinned public ESC-Role/ESC-RANK weights. It does not authorize supporter inference, paid judges, human-review execution, or fine-tuning."
 }
