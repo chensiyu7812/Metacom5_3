@@ -1,7 +1,7 @@
 # MetaCom V3 P0 官方实现审计与退出计划
 
 日期：2026-08-13  
-状态：`P0 IN PROGRESS / NO API AUTHORITY`
+状态：`P0 IN PROGRESS / 5 OF 9 REQUIRED GATES COMPLETE / NO API AUTHORITY`
 
 ## 结论
 
@@ -31,14 +31,14 @@
 
 ## P0 的真实完成条件
 
-P0 目前尚未完成，但数据身份门已经完成。以下其余事项完成后才允许继续 head 调参、formal judge 或微调：
+P0 目前尚未完成；数据身份、官方实现/本地协议 dry run、训练—考试重叠、统计单位和主张边界五门已经完成。以下其余事项完成后才允许继续 head 调参、formal judge 或微调：
 
 1. ~~对 ES-MemEval 作一次明确选择。~~ 已冻结`ES-MemEval-Public-v1.0.0-1427`、1427行逐题身份和非精确1209复现边界；
-2. 为三个官方 benchmark 建立本地 wrapper 和依赖锁，所有输入、模型、prompt、轮数、retry 与 parser 有 hash；
+2. ~~为三个官方 benchmark 建立本地协议 wrapper 和 runtime 边界。~~ 已物化655张ESC-Eval卡、ESC-Judge 25/100角色选择、150个双向E-I-A单元和ES-MemEval 1427行身份；真正模型依赖等候选/reference/scorer身份冻结后再锁；
 3. 资格化 ESC scorer/judge；不能复现的官方 scorer 必须标 `UNQUALIFIED`，不能静默替换；
 4. 冻结同栈 reference，再从人类分歧、重复性、位置效应和实用差异推导 NI margin；
-5. 物化 ESConv/ExTES 与 ESC-Eval 的 source、exact、normalized、semantic overlap；
-6. 完成 Risk packet、双评、裁决、`UNCERTAIN` 和 owner-cluster 上界的无正式数据 dry run。
+5. ~~物化 ESConv/ExTES 与 ESC-Eval 的 source、exact、normalized、semantic overlap。~~ 228张同源卡已完成全源比对；若两源都用于SFT，英文污染隔离主考卷为103张；
+6. Risk packet/schema/盲分配的无正式数据 dry run 已完成；仍须两名人类评审在看gold前完成18包/36任务资格化，并冻结裁决与margin。
 
 机器可读清单见 `data/v3_authority/p0_exit_checklist_v1.json`。只要任一 REQUIRED gate 未完成，状态就保持 `P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING`。
 
@@ -46,10 +46,12 @@ P0 目前尚未完成，但数据身份门已经完成。以下其余事项完�
 
 下一批仍然不花 API：
 
-1. 写三个 deterministic wrapper 的输入清单和 runtime lock；
-2. 建 ESC-Eval 与可能训练源的 overlap manifest；
-3. 实现 Risk packet/schema fixture；
-4. 给同栈 reference、scorer calibration 和 human anchor 出一次独立预算与 identity，再请求批准。
+1. 完成 Risk 18包的双人盲评资格化；
+2. 恢复并资格化ESC-RANK公开人标校准；若不可恢复，预声明其不合格并冻结替代方案；
+3. 冻结同栈reference、ESC-Judge身份和human anchor的小额执行设计；
+4. 用人类分歧、位置效应、同栈变异和实用差异推导margin，再单独请求预算与执行批准。
+
+本轮所有新物化均为零API、零正式回复：benchmark dry run为655卡、25角色、150个双向判卷单元；overlap为228张卡，exact/containment均为0、语义最高0.892；Risk为18包、9个安全控制、36个双评任务。Risk公开packet ID已去除事件/正负标签，gold在双评锁定前只公开SHA-256承诺、本体由Git忽略。语义相似度不被解释为原始对话精确来源，source标签才是SFT污染隔离的决定规则。
 
 42/90 的外部 stress 回复继续保留。它们不作废，但在 P0 完成前不按旧标准作最终判决；48条 continuation 也不因本文件自动获得执行授权。
 

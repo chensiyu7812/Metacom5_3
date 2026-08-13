@@ -43,6 +43,10 @@
 4. 冻结ESC-Judge版本、judge、位置互换、tie/invalid处理和少量human anchor。
 5. 物化ESConv/ExTES与ESC-Eval source/dialogue/semantic overlap表。
 6. 完成atomic Risk codebook、双评/裁决与critical-event上界。
+
+## 2026-08-13 执行进展
+
+本审计列出的 implementation、overlap 和 Risk mechanical 三项已经进入可审计实现：官方commit与本地runtime边界已锁；ESC-Eval中228张ESConv/ExTES同源卡已完成source/exact/normalized/semantic物化；Risk已生成18个fixture包和36个盲评任务。这里不回写原审计判断：Risk仍未通过人类资格化，scorer/reference/margin也仍阻塞P0退出。
 7. 之后才补48次冻结生成并按新评价层级判读；不允许回到旧Function veto。
 
 ## Confidence

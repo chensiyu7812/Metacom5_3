@@ -13,12 +13,13 @@
 
 V3-P0 完成前，禁止新增 head 调参、selector refit、正式 judge、generator 微调或正式外测通过声明。原因不是保守，而是当前还没有完整回答五个先验问题：数据是哪一版、考卷测什么、及格线从哪里来、独立统计单位是什么、结果允许支持哪条主张。
 
-当前四张结构化 dataset card 已建立，但 P0 尚未通过：
+当前四张结构化 dataset card 已建立，P0九门已有五门完成，但尚未整体通过：
 
 - ESConv 的 commit、文件哈希、1,300 个 dialogue 与 38,365 个 turn 已核验；
 - EvoEmo/ES-MemEval 公开 `v1.0.0` tag 和 `evo_emo.json` 哈希已核验；
 - 正式论文是 1,209 道 QA，公开 `v1.0.0` 文件实际是 1,427 道，差异 218 道且覆盖五种 capability；
-- ESC-Eval 与 ESC-Judge 的官方仓库 commit 已定位，但 scorer 校准、same-stack reference、pass margin 和 overlap screen 尚未完成。
+- ESC-Eval/ESC-Judge 本地零调用协议已物化（655卡、25/100角色、150个双向E-I-A单元）；228张ESConv/ExTES同源卡的全文源比对和语义邻居也已冻结；
+- scorer校准、same-stack reference、pass margin和Risk双人fixture资格仍未完成。
 
 因此，现在可以做的是版本对齐、scorer 资格设计、重叠筛查和 Risk adjudication；不能再用同一批内部样本迭代一个自建总分来宣布“学会/没学会”。
 

@@ -16,10 +16,19 @@ def _validator_module():
     return module
 
 
-def test_v3_workspace_authority_and_private_evidence_are_consistent() -> None:
-    result = _validator_module().validate(require_private_evidence=True)
+def test_v3_public_workspace_authority_is_consistent() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
     assert result["valid"], result["failures"]
-    assert result["private_evidence"]["present"] is True
+
+
+def test_local_private_evidence_is_consistent_when_present() -> None:
+    module = _validator_module()
+    private_root = module.REPO_ROOT / module._load_json(
+        module.AUTHORITY_DIR / "v3_asset_compatibility_manifest_v1.json"
+    )["private_evidence"]["path"]
+    result = module.validate(require_private_evidence=private_root.is_dir())
+    assert result["valid"], result["failures"]
+    assert result["private_evidence"]["present"] is private_root.is_dir()
 
 
 def test_v3_execution_phases_do_not_authorize_api_calls() -> None:
@@ -31,7 +40,7 @@ def test_v3_execution_phases_do_not_authorize_api_calls() -> None:
 
 
 def test_evaluation_freeze_blocks_head_tuning_and_binds_dataset_identity() -> None:
-    result = _validator_module().validate(require_private_evidence=True)
+    result = _validator_module().validate(require_private_evidence=False)
     assert result["evaluation_freeze_status"] == "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING"
     assert set(result["dataset_cards"]) == {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}
     assert result["es_memeval_identity"] == {
@@ -42,7 +51,7 @@ def test_evaluation_freeze_blocks_head_tuning_and_binds_dataset_identity() -> No
 
 
 def test_official_benchmark_surfaces_are_pinned_but_not_overclaimed() -> None:
-    result = _validator_module().validate(require_private_evidence=True)
+    result = _validator_module().validate(require_private_evidence=False)
     assert result["official_benchmark_surfaces"] == {
         "esc_eval_cards": 655,
         "esc_judge_public_roles": 100,
@@ -65,9 +74,43 @@ def test_margins_remain_unset_until_measurement_qualification() -> None:
 
 
 def test_es_memeval_public_1427_identity_is_complete_and_not_overclaimed() -> None:
-    result = _validator_module().validate(require_private_evidence=True)
+    result = _validator_module().validate(require_private_evidence=False)
     assert result["es_memeval_primary_task"] == "ES-MemEval-Public-v1.0.0-1427"
     assert result["es_memeval_row_identity"] == {
         "rows": 1427,
         "sha256": "e530e58b489ee87641a80fed9da696a559cdfd50c5772eb50734bf5468ee730c",
     }
+
+
+def test_official_benchmark_protocol_dry_run_is_text_free_and_zero_call() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
+    assert result["benchmark_dry_run"] == {
+        "esc_eval_cards": 655,
+        "esc_judge_roles": 25,
+        "esc_judge_units": 150,
+        "api_calls": 0,
+    }
+
+
+def test_training_exam_overlap_freezes_a_contamination_aware_holdout() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
+    assert result["esc_overlap"] == {
+        "rows": 228,
+        "clean_english_if_esconv_extes_sft": 103,
+    }
+
+
+def test_atomic_risk_fixture_is_mechanically_ready_but_not_human_qualified() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
+    assert result["risk_instrument"] == {
+        "packets": 18,
+        "assignments": 36,
+        "formal_replies_consumed": 0,
+    }
+    assert "atomic_risk_adjudication" not in result["p0_complete_gates"]
+    module = _validator_module()
+    qualification = module._load_json(
+        module.AUTHORITY_DIR / "risk_instrument_qualification_v1.json"
+    )
+    assert qualification["public_identifier_contains_target_or_variant"] is False
+    assert "HASH_COMMITMENT_ONLY" in qualification["gold_release_policy"]

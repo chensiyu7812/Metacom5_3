@@ -1,7 +1,7 @@
 {
   "protocol": "metacom-v3-p0-exit-checklist-v1",
   "date": "2026-08-13",
-  "status": "IN_PROGRESS_DATASET_IDENTITY_COMPLETE_EXECUTION_BLOCKS_REMAIN",
+  "status": "IN_PROGRESS_FIVE_OF_NINE_REQUIRED_GATES_COMPLETE",
   "rule": "Every REQUIRED gate must be COMPLETE before new head tuning, selector refit, formal PM judging, generator fine-tuning, or formal external pass claims.",
   "gates": [
     {
@@ -17,9 +17,9 @@
       "id": "P0-IMPL-01",
       "gate": "official_implementation_pin",
       "required": true,
-      "status": "AUDITED_REPLAY_BLOCKED",
-      "completed_evidence": ["Official commits pinned", "ESC-Eval 655-card counts and model revisions pinned", "ESC-Judge public role surfaces and paper mismatch pinned", "Static code defects documented"],
-      "remaining_action": "Materialize versioned local wrappers, lock runtime dependencies, and prove a deterministic no-call dry run for each benchmark.",
+      "status": "COMPLETE",
+      "completed_evidence": ["Official commits pinned", "ESC-Eval 655-card identities materialized", "ESC-Judge deterministic 25-of-100 role selection materialized", "All 150 E-I-A bidirectional-order units materialized", "ES-MemEval public-v1.0.0 row identity materialized", "Zero-call text-free dry run and runtime boundary locked"],
+      "remaining_action": null,
       "exit_artifact": "benchmark_runtime_lock_v1.json"
     },
     {
@@ -53,18 +53,18 @@
       "id": "P0-OVERLAP-01",
       "gate": "training_exam_overlap",
       "required": true,
-      "status": "BLOCKED",
-      "completed_evidence": ["ESC-Eval source overlap with ESConv/ExTES documented"],
-      "remaining_action": "Materialize source-level, exact-dialogue, normalized-text, and semantic-neighbor mappings before any SFT decision.",
+      "status": "COMPLETE",
+      "completed_evidence": ["All 228 ESConv/ExTES-derived ESC-Eval cards identified", "Full 1,300-row ESConv and 11,178-row ExTES sources compared", "Exact normalized and containment mappings materialized", "Pinned local BGE semantic top-3 mappings materialized", "If both sources are used for SFT, contamination-aware English holdout frozen at 103 cards"],
+      "remaining_action": null,
       "exit_artifact": "esc_training_exam_overlap_v1.jsonl"
     },
     {
       "id": "P0-RISK-01",
       "gate": "atomic_risk_adjudication",
       "required": true,
-      "status": "PROTOCOL_FROZEN_IMPLEMENTATION_PENDING",
-      "completed_evidence": ["Nine-category event taxonomy", "Dual-review and adjudication protocol", "UNCERTAIN retained separately", "Owner-cluster uncertainty policy"],
-      "remaining_action": "Build packet renderer, schema validator, blinded allocation, and a dry-run fixture; do not consume formal replies.",
+      "status": "INSTRUMENT_DRY_RUN_COMPLETE_HUMAN_QUALIFICATION_PENDING",
+      "completed_evidence": ["Nine-category event taxonomy", "Dual-review and adjudication protocol", "UNCERTAIN retained separately", "Owner-cluster uncertainty policy", "18 blinded fixture packets and 9 safe controls", "36 deterministic dual-review assignments", "Schema and mechanical validation pass with zero formal replies"],
+      "remaining_action": "Two independent reviewers must label the fixture packet before gold is revealed; then freeze event/severity agreement, adjudication behavior, and the Risk margin.",
       "exit_artifact": "risk_instrument_qualification_v1.json"
     },
     {
@@ -87,10 +87,10 @@
     }
   ],
   "next_executable_zero_api_order": [
-    "Build deterministic benchmark wrappers and dependency lock without downloading large models.",
-    "Materialize ESC-Eval source and overlap identities.",
-    "Implement Risk packet/schema dry run.",
-    "Freeze reference candidate and calibration design, then request separate execution approval with an exact budget."
+    "Run two-reviewer blinded Risk fixture qualification without consuming formal replies.",
+    "Recover and qualify ESC-RANK human-label calibration or predeclare it unqualified.",
+    "Freeze one same-stack reference and ESC-Judge identity with an exact execution budget.",
+    "Derive outcome-blind pass margins from calibration, order effects, reference variation, and practical effect size."
   ],
   "p0_exit_now": false
 }

@@ -9,7 +9,7 @@
 
 整体状态为 `P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING`。这意味着目前的42/90 stress-test回复可以保留，冻结的48次 continuation 也可以在条件满足并重新批准后补齐，但不能继续按旧 Quality/Function 口径做最终判决，更不能从不完整 arm 或自建总分宣布 head pass/fail。
 
-ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。当前阻塞项缩减为：ESC-Eval本地runtime/scorer资格、same-stack reference、ESC-Judge position sensitivity与人类anchor、ESC-Eval与ESConv/ExTES重叠筛查、Quality/Risk NI margin来源，以及Risk packet/schema资格化。
+ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。ESC本地协议dry run和ESConv/ExTES重叠筛查也已完成。当前阻塞项缩减为：ESC scorer资格、same-stack reference、ESC-Judge人类anchor、Quality/Risk NI margin来源，以及Risk人类fixture资格化。
 
 官方实现的静态审计已经完成，详见 `V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和 `data/v3_authority/official_benchmark_implementation_audit_v1.json`。这一步确认了ESC-Eval 655张高质量卡的公开身份，但也确认官方runner/scorer不能原样作为合格测量工具；ESC-Judge的公开100角色无法还原论文实际25角色，且仓库没有实现双向位置互换。因此“官方协议锚定”和“本地测量资格化”必须同时成立。
 
@@ -37,7 +37,7 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 9. hard safety/integrity event 与 `UNCERTAIN` 的处理；
 10. benchmark 运行只能决定是否通过，不能反向修改 selector、sample 或 treatment。
 
-完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。其中数据身份、统计单位和主张边界已完成；runtime replay、scorer/reference、margin、overlap与Risk instrument仍阻塞正式执行。
+完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。九个required gate中，数据身份、官方实现/本地协议dry run、重叠筛查、统计单位和主张边界五项完成；scorer、reference、margin与Risk人类资格化仍阻塞正式执行。
 
 ## ESC-Eval 资格方案
 

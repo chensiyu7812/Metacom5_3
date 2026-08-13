@@ -37,8 +37,7 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
-      - name: Run blocking V5.3 clean-release suite
-        run: pytest -q tests/test_v1_5_v5_3_*.py
-      - name: Run complete historical suite (diagnostic)
-        continue-on-error: true
-        run: pytest -q
+      - name: Validate V3 public authority
+        run: python scripts/v3/00_validate_v3_workspace.py
+      - name: Run V3 clean-checkout release suite
+        run: python scripts/v3/06_run_v3_active_tests.py

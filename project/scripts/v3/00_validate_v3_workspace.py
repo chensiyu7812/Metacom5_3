@@ -40,6 +40,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
     generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
     risk_protocol_path = AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
+    runtime_lock_path = AUTHORITY_DIR / "benchmark_runtime_lock_v1.json"
+    benchmark_dry_run_path = AUTHORITY_DIR / "benchmark_protocol_dry_run_manifest_v1.json"
+    overlap_summary_path = AUTHORITY_DIR / "esc_training_exam_overlap_summary_v1.json"
+    overlap_rows_path = AUTHORITY_DIR / "esc_training_exam_overlap_v1.jsonl"
+    risk_qualification_path = AUTHORITY_DIR / "risk_instrument_qualification_v1.json"
+    risk_packets_path = AUTHORITY_DIR / "atomic_risk_fixture_packets_v1.jsonl"
+    risk_assignments_path = AUTHORITY_DIR / "atomic_risk_fixture_assignments_v1.jsonl"
     memeval_decision_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
     memeval_row_identity_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
     authority = _load_json(authority_path)
@@ -52,6 +59,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     checklist = _load_json(checklist_path)
     generator_contract = _load_json(generator_contract_path)
     risk_protocol = _load_json(risk_protocol_path)
+    runtime_lock = _load_json(runtime_lock_path)
+    benchmark_dry_run = _load_json(benchmark_dry_run_path)
+    overlap_summary = _load_json(overlap_summary_path)
+    risk_qualification = _load_json(risk_qualification_path)
     memeval_decision = _load_json(memeval_decision_path)
 
     failures: list[str] = []
@@ -89,6 +100,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "docs" / "V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md",
         PROJECT_ROOT / "scripts" / "v3" / "01_audit_official_benchmark_surfaces.py",
         PROJECT_ROOT / "scripts" / "v3" / "02_materialize_es_memeval_public_identity.py",
+        PROJECT_ROOT / "scripts" / "v3" / "03_materialize_benchmark_protocol_dry_run.py",
+        PROJECT_ROOT / "scripts" / "v3" / "04_materialize_esc_training_exam_overlap.py",
+        PROJECT_ROOT / "scripts" / "v3" / "05_materialize_atomic_risk_instrument.py",
+        PROJECT_ROOT / "scripts" / "v3" / "06_run_v3_active_tests.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -128,6 +143,18 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
 
     if implementation["status"] != "OFFICIAL_PROTOCOLS_PINNED_LOCAL_QUALIFICATION_REQUIRED":
         failures.append("official implementation audit status changed")
+    if runtime_lock["status"] != "LOCAL_PROTOCOL_DRY_RUN_COMPLETE_MODEL_EXECUTION_NOT_AUTHORIZED":
+        failures.append("benchmark runtime lock status changed")
+    if runtime_lock["authorization"] != {"model_calls": False, "judge_calls": False, "fine_tuning": False}:
+        failures.append("benchmark runtime lock unexpectedly authorizes execution")
+    if hashlib.sha256(benchmark_dry_run_path.read_bytes()).hexdigest() != runtime_lock["dry_run"]["sha256"]:
+        failures.append("benchmark dry-run hash does not match runtime lock")
+    if benchmark_dry_run["api_calls"] != 0 or benchmark_dry_run["contains_role_or_dialogue_text"] is not False:
+        failures.append("benchmark dry run is not zero-call and text-free")
+    if benchmark_dry_run["ESC-Eval"]["card_count"] != 655:
+        failures.append("benchmark dry run lost the 655 ESC-Eval cards")
+    if (benchmark_dry_run["ESC-Judge"]["public_role_count"], benchmark_dry_run["ESC-Judge"]["selected_role_count"], benchmark_dry_run["ESC-Judge"]["judge_unit_count"]) != (100, 25, 150):
+        failures.append("benchmark dry run lost the frozen ESC-Judge 100/25/150 shape")
     if snapshot["ESC-Eval"]["high_quality_cards"] != {"en": 331, "zh": 324, "total": 655}:
         failures.append("ESC-Eval public 655-card identity changed")
     if snapshot["ESC-Eval"]["commit"] != implementation["benchmarks"]["ESC-Eval"]["commit"]:
@@ -160,8 +187,38 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     if checklist["p0_exit_now"] is not False:
         failures.append("P0 checklist unexpectedly permits exit")
     complete_gates = {gate["gate"] for gate in checklist["gates"] if gate["status"] == "COMPLETE"}
-    if complete_gates != {"dataset_identity", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
+    if complete_gates != {"dataset_identity", "official_implementation_pin", "training_exam_overlap", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
         failures.append("P0 complete-gate set changed without authority update")
+    overlap_bytes = overlap_rows_path.read_bytes()
+    overlap_rows = [json.loads(line) for line in overlap_bytes.decode("utf-8").splitlines() if line]
+    if overlap_summary["cards_in_known_training_source_scope"] != 228 or len(overlap_rows) != 228:
+        failures.append("ESC training/exam overlap row count changed")
+    if hashlib.sha256(overlap_bytes).hexdigest() != overlap_summary["row_manifest"]["sha256"]:
+        failures.append("ESC training/exam overlap row hash mismatch")
+    if overlap_summary["qualification_identity_policy"]["clean_english_holdout_if_esconv_and_extes_train"]["cards"] != 103:
+        failures.append("contamination-aware ESC English holdout changed")
+    if overlap_summary["contains_source_or_card_text"] is not False or overlap_summary["api_calls"] != 0:
+        failures.append("ESC overlap artifact is not zero-call and text-free")
+    forbidden_overlap_fields = {"text", "raw_text", "source_text", "card_text", "problem", "problem_text"}
+    if any(key in forbidden_overlap_fields for row in overlap_rows for key in row):
+        failures.append("ESC overlap rows unexpectedly expose benchmark/source text")
+    risk_packets = [json.loads(line) for line in risk_packets_path.read_text(encoding="utf-8").splitlines() if line]
+    risk_assignments = [json.loads(line) for line in risk_assignments_path.read_text(encoding="utf-8").splitlines() if line]
+    if risk_qualification["status"] != "INSTRUMENT_DRY_RUN_COMPLETE_HUMAN_QUALIFICATION_PENDING":
+        failures.append("Risk instrument qualification status changed")
+    if (len(risk_packets), len(risk_assignments), risk_qualification["review_tasks"]) != (18, 36, 36):
+        failures.append("Risk fixture/assignment shape changed")
+    if risk_qualification["mechanical_validation_failures"] or risk_qualification["formal_replies_consumed"] != 0:
+        failures.append("Risk fixture failed validation or consumed formal replies")
+    if any("gold" in key or "expected" in key for row in risk_packets + risk_assignments for key in row):
+        failures.append("blinded Risk packets or assignments expose gold")
+    leaked_id_tokens = {*risk_protocol["events"], "positive", "safe", "ambiguous"}
+    if risk_qualification["public_identifier_contains_target_or_variant"] is not False:
+        failures.append("Risk qualification does not attest blinded public identifiers")
+    if any(any(token in row["packet_id"] for token in leaked_id_tokens) for row in risk_packets + risk_assignments):
+        failures.append("Risk public packet identifiers expose target or fixture variant")
+    if len(risk_qualification["artifact_hashes"]["gold"]) != 64 or "HASH_COMMITMENT_ONLY" not in risk_qualification["gold_release_policy"]:
+        failures.append("Risk fixture gold is not bound by an embargoed hash commitment")
     if generator_contract["primary_exam"]["pass_margin"] != "NOT_NUMERICALLY_FROZEN":
         failures.append("generator margin was set without qualification evidence")
     if risk_protocol["statistics"]["noninferiority_margin"] != "NOT_NUMERICALLY_FROZEN_PENDING_FIXTURE_AND_HUMAN_CALIBRATION":
@@ -180,6 +237,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         checklist_path,
         generator_contract_path,
         risk_protocol_path,
+        runtime_lock_path,
+        benchmark_dry_run_path,
+        overlap_summary_path,
+        risk_qualification_path,
         memeval_decision_path,
     ):
         if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
@@ -225,6 +286,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "es_memeval_public_git_commits": snapshot["ES-MemEval"]["public_git_commits"],
         },
         "p0_exit_now": checklist["p0_exit_now"],
+        "p0_complete_gates": sorted(complete_gates),
+        "benchmark_dry_run": {"esc_eval_cards": 655, "esc_judge_roles": 25, "esc_judge_units": 150, "api_calls": 0},
+        "esc_overlap": {"rows": len(overlap_rows), "clean_english_if_esconv_extes_sft": 103},
+        "risk_instrument": {"packets": len(risk_packets), "assignments": len(risk_assignments), "formal_replies_consumed": 0},
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
         "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},
         "private_evidence": private_result,
