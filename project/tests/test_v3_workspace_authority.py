@@ -139,7 +139,7 @@ def test_g0_qwen_screen_is_frozen_without_api_execution() -> None:
         "executor_packets": 16,
         "qwen_model": "qwen3.7-plus-2026-05-26",
         "qwen_paid_logical_calls": 152,
-        "run_identity": "7a4d43f9049583d7151d0200f856ad04c8b2090f625171baa4b9868ecbd9de40",
+        "run_identity": "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e",
     }
 
 

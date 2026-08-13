@@ -8,6 +8,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RUNNER = PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py"
+EXECUTOR = PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py"
 
 
 def _module(path: Path, name: str):
@@ -29,7 +30,7 @@ def test_g0_manifest_materialization_is_stable_and_text_free() -> None:
     executor = [json.loads(line) for line in executor_bytes.decode("utf-8").splitlines() if line]
     assert report["api_calls"] == 0
     assert report["contains_role_card_or_dialogue_text"] is False
-    assert report["run_identity"] == "7a4d43f9049583d7151d0200f856ad04c8b2090f625171baa4b9868ecbd9de40"
+    assert report["run_identity"] == "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e"
     assert hashlib.sha256(rows_bytes).hexdigest() == report["screening_sample"]["manifest_sha256"]
     assert hashlib.sha256(executor_bytes).hexdigest() == report["executor_sample"]["manifest_sha256"]
     assert len(rows) == len({row["card_key"] for row in rows}) == 24
@@ -56,6 +57,21 @@ def test_role_seed_is_common_across_candidate_trajectories() -> None:
     runner = _module(RUNNER, "v3_g0_runner")
     assert runner._role_seed("english::ESconv::1", 1) == runner._role_seed("english::ESconv::1", 1)
     assert runner._role_seed("english::ESconv::1", 1) != runner._role_seed("english::ESconv::1", 2)
+    events = [
+        {"event": "trajectory_terminal_failure", "card_key": "card-a", "candidate_id": "slow-route"},
+        {"event": "supporter_succeeded", "card_key": "card-a", "candidate_id": "other-route"},
+    ]
+    assert runner._terminal_trajectories(events) == {("card-a", "slow-route")}
+    runner._require_ledger_identity([{"run_identity": "bound"}], "bound", "fixture")
+    try:
+        runner._require_ledger_identity([{"run_identity": "old"}], "bound", "fixture")
+    except RuntimeError as exc:
+        assert "another run identity" in str(exc)
+    else:  # pragma: no cover - fail-closed assertion
+        raise AssertionError("mixed-identity ledger was accepted")
+
+    executor = _module(EXECUTOR, "v3_g0_executor")
+    executor._require_ledger_identity([{"run_identity": "bound"}], "bound", "fixture")
 
 
 def test_qwen_identity_is_dated_and_thinking_is_disabled() -> None:

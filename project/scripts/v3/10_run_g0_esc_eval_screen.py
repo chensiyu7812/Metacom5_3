@@ -51,6 +51,12 @@ def _append_jsonl(path: Path, record: dict[str, Any]) -> None:
         os.fsync(handle.fileno())
 
 
+def _require_ledger_identity(events: list[dict[str, Any]], run_identity: str, label: str) -> None:
+    mismatched = [row for row in events if row.get("run_identity") != run_identity]
+    if mismatched:
+        raise RuntimeError(f"{label} contains {len(mismatched)} event(s) from another run identity")
+
+
 def _git_head(repo: Path) -> str:
     return subprocess.run(
         ["git", "-C", str(repo), "rev-parse", "HEAD"],
@@ -179,6 +185,14 @@ def _pending_role_by_unit(events: list[dict[str, Any]]) -> dict[str, dict[str, A
     return pending
 
 
+def _terminal_trajectories(events: list[dict[str, Any]]) -> set[tuple[str, str]]:
+    return {
+        (row["card_key"], row["candidate_id"])
+        for row in events
+        if row.get("event") == "trajectory_terminal_failure"
+    }
+
+
 def _history_for(events: list[dict[str, Any]], card_key: str, candidate_id: str) -> list[dict[str, str]]:
     rows = [
         row
@@ -235,7 +249,9 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     ledger = args.out / "private_turn_ledger.jsonl"
     events = _read_jsonl(ledger)
+    _require_ledger_identity(events, preflight["run_identity"], "dialogue ledger")
     budget_events = _read_jsonl(args.qwen_budget_ledger)
+    _require_ledger_identity(budget_events, preflight["run_identity"], "Qwen budget ledger")
     if _qwen_cost_usd(budget_events) > args.max_usd:
         raise RuntimeError("existing Qwen usage already exceeds approved max-usd")
 
@@ -255,6 +271,9 @@ def main() -> int:
             for candidate in candidates:
                 cid = candidate["candidate_id"]
                 card_key = identity["card_key"]
+                if (card_key, cid) in _terminal_trajectories(_read_jsonl(ledger)):
+                    continue
+                trajectory_closed = False
                 for turn in range(1, 6):
                     events = _read_jsonl(ledger)
                     completed = _completed_by_unit(events)
@@ -343,8 +362,28 @@ def main() -> int:
                                     "timestamp_unix": time.time(),
                                 },
                             )
-                            if attempt >= 2 or exc.last_retry_class not in {"rate_limited_429", "request_timeout_408", "http_5xx", "network_timeout"}:
+                            retryable = exc.last_retry_class in {
+                                "rate_limited_429", "request_timeout_408", "http_5xx", "network_timeout"
+                            }
+                            if not retryable:
                                 raise
+                            if attempt >= 2:
+                                _append_jsonl(
+                                    ledger,
+                                    {
+                                        "event": "trajectory_terminal_failure",
+                                        "run_identity": preflight["run_identity"],
+                                        "screen_id": identity["screen_id"],
+                                        "card_key": card_key,
+                                        "candidate_id": cid,
+                                        "terminal_turn": turn,
+                                        "terminal_failure_class": exc.last_retry_class,
+                                        "attempts_exhausted": attempt,
+                                        "timestamp_unix": time.time(),
+                                    },
+                                )
+                                trajectory_closed = True
+                                break
                             time.sleep(min(float(exc.retry_after_seconds or 5.0), 30.0))
                             continue
                         usage = call.usage
@@ -387,13 +426,24 @@ def main() -> int:
                             },
                         )
                         break
+                    if trajectory_closed:
+                        break
     finally:
         for client in clients.values():
             client.close()
 
     events = _read_jsonl(ledger)
     success = [row for row in events if row.get("event") == "supporter_succeeded"]
+    terminal = [row for row in events if row.get("event") == "trajectory_terminal_failure"]
     expected = len(selected) * len(contract["candidates"]) * 5
+    expected_trajectories = len(selected) * len(contract["candidates"])
+    completed_trajectories = len(
+        {
+            (row["card_key"], row["candidate_id"])
+            for row in success
+            if row["turn"] == 5
+        }
+    )
     summary = {
         "protocol": "metacom-v3-g0-esc-eval-screen-run-summary-v1",
         "run_identity": preflight["run_identity"],
@@ -401,13 +451,16 @@ def main() -> int:
         "successful_supporter_turns": len(success),
         "expected_supporter_turns": expected,
         "complete": len(success) == expected,
+        "execution_closed": completed_trajectories + len(terminal) == expected_trajectories,
+        "completed_trajectories": completed_trajectories,
+        "terminal_failed_trajectories": len(terminal),
         "qwen_estimated_usd_across_g0_surfaces": _qwen_cost_usd(_read_jsonl(args.qwen_budget_ledger)),
         "formal_qualification": False,
         "next": "Run local repaired ESC-RANK and the separately frozen executor screen; do not select from unscored dialogue text.",
     }
     (args.out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0 if summary["complete"] else 2
+    return 0 if summary["execution_closed"] else 2
 
 
 if __name__ == "__main__":

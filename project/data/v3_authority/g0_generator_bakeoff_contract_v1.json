@@ -61,7 +61,8 @@
     "transient_retry_limit": 1,
     "deterministic_or_content_failure_retry_limit": 0,
     "interleaving": "card then candidate; candidate order is deterministically rotated by card",
-    "invalid_and_missing_policy": "ITT: retain failures; never replace a card or silently rerun with a changed prompt"
+    "invalid_and_missing_policy": "ITT: retain failures; never replace a card or silently rerun with a changed prompt",
+    "failure_scope": "After the one allowed transient retry is exhausted, close only that candidate trajectory/call as a terminal ITT failure and continue independent candidates. Non-transient contract, identity, authentication, or budget failures abort the entire run."
   },
   "esc_eval_screen": {
     "exam_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
@@ -106,7 +107,7 @@
     "primary_measures": ["valid_realization", "required_slot_realization", "authorized_fact_fidelity", "atomic_risk", "naturalness_and_burden"]
   },
   "stage_order": [
-    "G0A transport canary: two cards and two executor packets for all three candidates",
+    "G0A transport canary: two cards and two executor packets for all three candidates; candidate-scoped terminal transport failures are retained under ITT and do not suppress independent candidates",
     "G0B complete the 24-card ESC screen and 16-packet executor screen only if the canary has no deterministic contract failure",
     "G0C advance only hard-gate-eligible nondominated candidates to ESC-Judge and human-anchor sensitivity",
     "G1 run the full English ESC-Eval and full executor qualification only for the selected final generator"

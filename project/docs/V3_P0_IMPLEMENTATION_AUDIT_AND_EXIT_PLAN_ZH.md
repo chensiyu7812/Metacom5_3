@@ -56,6 +56,8 @@ P0九个证据架构门现已全部完成；这不等于测量有效性已经解
 3. Risk 18包双评与非正式Quality anchor只用于量表校准，登记数值margin后即关闭，不消费正式PM回复；
 4. 硬门合格且Pareto非支配的候选才进入ESC-Judge/人类anchor；最终选中者完成G1全英文ESC-Eval和executor后冻结。若不再使用8B，旧42/90轮只归档为诊断，不再补成混栈“正式结果”。
 
+第一次G0A canary在identity `7a4d43f9...`下发现70B托管路线多次`network_timeout`，并暴露runner把候选级终止失败错误升级为进程级退出。该identity已消费且Qwen调用/费用均为0，不得恢复冒用。修复只改变失败作用域：耗尽一次瞬时重试后将该候选trajectory/call记为ITT终止并继续独立候选；身份、鉴权、非瞬时合同和预算错误仍整体中止。替代identity额外绑定ESC runner、executor runner、scorer、transport与schema源码hash。
+
 公开审计阶段为零推理：14个主adapter身份、论文Table 4 hard/±1 accuracy、官方代码缺陷和0行公开逐条人标均已物化。随后在隔离Python 3.11环境下载固定revision的ESC-Role、InternLM2和ESC-RANK，并在A6000完成零生成加载烟测：14个adapter全部挂载，API调用0、生成token 0。NVIDIA与阿里云只做鉴权模型目录GET确认冻结路由存在，凭据未落盘；真实推理仍须绑定identity和费用批准。
 
 42/90 的外部 stress 回复继续保留。它们不作废，但在 P0 完成前不按旧标准作最终判决；48条 continuation 也不因本文件自动获得执行授权。

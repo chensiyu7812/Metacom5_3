@@ -91,6 +91,14 @@ def _executor_sample(executor_dir: Path) -> list[dict[str, Any]]:
 def materialize(executor_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     dry_path = AUTHORITY_DIR / "benchmark_protocol_dry_run_manifest_v1.json"
     contract_path = AUTHORITY_DIR / "g0_generator_bakeoff_contract_v1.json"
+    executable_paths = {
+        "10_run_g0_esc_eval_screen.py": PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
+        "12_run_g0_executor_screen.py": PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
+        "13_score_g0_esc_rank.py": PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
+        "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
+        "metacom_pm/esc_rank_runtime.py": PROJECT_ROOT / "src" / "metacom_pm" / "esc_rank_runtime.py",
+        "metacom_pm/v1_5_ms_same_stack_feasibility.py": PROJECT_ROOT / "src" / "metacom_pm" / "v1_5_ms_same_stack_feasibility.py",
+    }
     dry = json.loads(dry_path.read_text(encoding="utf-8"))
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
     executor = _executor_sample(executor_dir)
@@ -161,6 +169,7 @@ def materialize(executor_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]
             "g0_generator_bakeoff_contract_v1.json": _sha_file(contract_path),
             "executor_development_cases_private.jsonl": _sha_file(executor_dir / "development_cases_private.jsonl"),
             "executor_physical_call_plan_private.jsonl": _sha_file(executor_dir / "physical_call_plan_private.jsonl"),
+            **{f"executable::{name}": _sha_file(path) for name, path in executable_paths.items()},
         },
         "run_identity": "PENDING_RENDER",
     }

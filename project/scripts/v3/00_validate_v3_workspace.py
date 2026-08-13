@@ -44,6 +44,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_screen_manifest_path = AUTHORITY_DIR / "g0_esc_eval_screening_manifest_v1.jsonl"
     g0_executor_manifest_path = AUTHORITY_DIR / "g0_executor_screening_manifest_v1.jsonl"
     g0_runtime_setup_path = AUTHORITY_DIR / "g0_local_runtime_setup_v1.json"
+    g0_canary_closeout_path = AUTHORITY_DIR / "g0_canary_identity_7a4d_closeout_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -70,6 +71,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_contract = _load_json(g0_contract_path)
     g0_preflight = _load_json(g0_preflight_path)
     g0_runtime_setup = _load_json(g0_runtime_setup_path)
+    g0_canary_closeout = _load_json(g0_canary_closeout_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -279,10 +281,27 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("G0 preflight status changed")
     if g0_preflight["logical_calls"]["qwen_paid_logical_calls"] != 152:
         failures.append("G0 Qwen logical-call budget changed")
+    executable_bindings = {
+        "10_run_g0_esc_eval_screen.py": PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
+        "12_run_g0_executor_screen.py": PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
+        "13_score_g0_esc_rank.py": PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
+        "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
+        "metacom_pm/esc_rank_runtime.py": PROJECT_ROOT / "src" / "metacom_pm" / "esc_rank_runtime.py",
+        "metacom_pm/v1_5_ms_same_stack_feasibility.py": PROJECT_ROOT / "src" / "metacom_pm" / "v1_5_ms_same_stack_feasibility.py",
+    }
+    for name, path in executable_bindings.items():
+        expected = g0_preflight["input_hashes"].get(f"executable::{name}")
+        observed = hashlib.sha256(path.read_bytes()).hexdigest()
+        if expected != observed:
+            failures.append(f"G0 executable binding drifted: {name}")
     if g0_runtime_setup["status"] != "PASS_ZERO_GENERATION" or g0_runtime_setup["api_calls"] != 0 or g0_runtime_setup["model_generation_calls"] != 0:
         failures.append("G0 local official-model runtime did not pass a zero-generation smoke")
     if len(g0_runtime_setup["esc_rank"]["loaded_adapter_keys"]) != 14:
         failures.append("G0 local ESC-RANK runtime did not attach all 14 adapters")
+    if g0_canary_closeout["observed_before_fail_closed_stop"]["qwen_physical_attempts"] != 0:
+        failures.append("superseded G0 canary unexpectedly consumed Qwen inference")
+    if g0_canary_closeout["status"] != "CONSUMED_CANARY_IMPLEMENTATION_SCOPE_DEFECT_QWEN_ZERO_COST_SUPERSEDED":
+        failures.append("superseded G0 canary closeout status changed")
     qwen = next((row for row in g0_contract["candidates"] if row["candidate_id"] == "qwen37_plus_primary_challenger"), None)
     if not qwen or qwen["model"] != "qwen3.7-plus-2026-05-26" or qwen.get("enable_thinking") is not False:
         failures.append("G0 Qwen dated non-thinking endpoint is not frozen")
@@ -326,6 +345,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_contract_path,
         g0_preflight_path,
         g0_runtime_setup_path,
+        g0_canary_closeout_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,

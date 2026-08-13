@@ -62,6 +62,12 @@ def _append_jsonl(path: Path, record: dict[str, Any]) -> None:
         os.fsync(handle.fileno())
 
 
+def _require_ledger_identity(events: list[dict[str, Any]], run_identity: str, label: str) -> None:
+    mismatched = [row for row in events if row.get("run_identity") != run_identity]
+    if mismatched:
+        raise RuntimeError(f"{label} contains {len(mismatched)} event(s) from another run identity")
+
+
 def _candidate_endpoint(record: dict[str, Any]):
     from metacom_pm.api import Endpoint
 
@@ -164,10 +170,15 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     ledger = args.out / "private_executor_ledger.jsonl"
     events = _read_jsonl(ledger)
+    _require_ledger_identity(events, preflight["run_identity"], "executor ledger")
+    budget_events = _read_jsonl(args.qwen_budget_ledger)
+    _require_ledger_identity(budget_events, preflight["run_identity"], "Qwen budget ledger")
     completed = {
         (row["packet_id"], row["screen_arm"], row["candidate_id"])
         for row in events
-        if row.get("event") in {"executor_succeeded", "executor_invalid_output"}
+        if row.get("event") in {
+            "executor_succeeded", "executor_invalid_output", "executor_terminal_failure"
+        }
     }
     from metacom_pm.api import OpenAICompatibleClient, RetryableProviderError
     from metacom_pm.v1_5_ms_same_stack_feasibility import SameStackGeneratorOutput
@@ -234,8 +245,25 @@ def main() -> int:
                         retryable = exc.last_retry_class in {
                             "rate_limited_429", "request_timeout_408", "http_5xx", "network_timeout"
                         }
-                        if attempt >= 2 or not retryable:
+                        if not retryable:
                             raise
+                        if attempt >= 2:
+                            _append_jsonl(
+                                ledger,
+                                {
+                                    "event": "executor_terminal_failure",
+                                    "run_identity": preflight["run_identity"],
+                                    "packet_id": identity["packet_id"],
+                                    "owner_cluster_id": identity["owner_cluster_id"],
+                                    "screen_arm": identity["screen_arm"],
+                                    "source_action_id": identity["source_action_id"],
+                                    "candidate_id": cid,
+                                    "failure_class": exc.last_retry_class,
+                                    "attempts_exhausted": attempt,
+                                    "timestamp_unix": time.time(),
+                                },
+                            )
+                            break
                         time.sleep(min(float(exc.retry_after_seconds or 5.0), 30.0))
                         continue
                     usage = result.usage
@@ -287,7 +315,9 @@ def main() -> int:
     events = _read_jsonl(ledger)
     terminal = [
         row for row in events
-        if row.get("event") in {"executor_succeeded", "executor_invalid_output"}
+        if row.get("event") in {
+            "executor_succeeded", "executor_invalid_output", "executor_terminal_failure"
+        }
         and row.get("packet_id") in set(packet_ids)
     ]
     expected = args.limit * 2 * len(contract["candidates"])
@@ -296,6 +326,8 @@ def main() -> int:
         "run_identity": preflight["run_identity"],
         "terminal_calls": len(terminal),
         "valid_structured_outputs": sum(row["event"] == "executor_succeeded" for row in terminal),
+        "invalid_structured_outputs": sum(row["event"] == "executor_invalid_output" for row in terminal),
+        "transport_terminal_failures": sum(row["event"] == "executor_terminal_failure" for row in terminal),
         "expected_calls": expected,
         "complete": len(terminal) == expected,
         "qwen_estimated_usd_across_g0_surfaces": _qwen_cost_usd(_read_jsonl(args.qwen_budget_ledger)),
