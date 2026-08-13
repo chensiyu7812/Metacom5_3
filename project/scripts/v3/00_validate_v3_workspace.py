@@ -39,6 +39,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     snapshot_path = AUTHORITY_DIR / "official_benchmark_surface_snapshot_v1.json"
     checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
     generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
+    same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
+    margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
+    esc_rank_runtime_preflight_path = AUTHORITY_DIR / "esc_rank_runtime_preflight_v1.json"
     risk_protocol_path = AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
     runtime_lock_path = AUTHORITY_DIR / "benchmark_runtime_lock_v1.json"
     benchmark_dry_run_path = AUTHORITY_DIR / "benchmark_protocol_dry_run_manifest_v1.json"
@@ -58,6 +62,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     snapshot = _load_json(snapshot_path)
     checklist = _load_json(checklist_path)
     generator_contract = _load_json(generator_contract_path)
+    esc_rank_audit = _load_json(esc_rank_audit_path)
+    same_stack_reference = _load_json(same_stack_reference_path)
+    margin_contract = _load_json(margin_contract_path)
+    esc_rank_runtime_preflight = _load_json(esc_rank_runtime_preflight_path)
     risk_protocol = _load_json(risk_protocol_path)
     runtime_lock = _load_json(runtime_lock_path)
     benchmark_dry_run = _load_json(benchmark_dry_run_path)
@@ -76,11 +84,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("execution boundary is empty")
     if any(phase.get("api_authority") for phase in authority["execution_phases"]):
         failures.append("a planning phase unexpectedly authorizes API execution")
-    if evaluation["status"] != "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING":
-        failures.append("evaluation P0 status no longer blocks premature head decisions")
-    required_blocks = {"new head tuning", "selector refit", "formal PM judge calls", "generator fine-tuning"}
-    if not required_blocks.issubset(set(evaluation["execution_blocks_until_p0_complete"])):
-        failures.append("evaluation P0 execution blocks are incomplete")
+    if evaluation["status"] != "P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED":
+        failures.append("evaluation P0/P1 boundary changed")
+    required_blocks = {"unqualified scorer or judge use", "numeric Quality/Risk margin absent", "same-stack generator selection incomplete"}
+    if not required_blocks.issubset(set(evaluation["p1_blocks_before_formal_verdict"])):
+        failures.append("evaluation P1 formal-verdict blocks are incomplete")
 
     phase_ids = [phase["phase"] for phase in authority["execution_phases"]]
     if phase_ids != [f"V3-P{index}" for index in range(7)]:
@@ -104,6 +112,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "04_materialize_esc_training_exam_overlap.py",
         PROJECT_ROOT / "scripts" / "v3" / "05_materialize_atomic_risk_instrument.py",
         PROJECT_ROOT / "scripts" / "v3" / "06_run_v3_active_tests.py",
+        PROJECT_ROOT / "scripts" / "v3" / "07_audit_esc_rank_public_qualification.py",
+        PROJECT_ROOT / "scripts" / "v3" / "08_materialize_esc_rank_runtime_preflight.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -118,7 +128,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 39:
+    if profile["expected_test_count"] != 53:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -143,7 +153,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
 
     if implementation["status"] != "OFFICIAL_PROTOCOLS_PINNED_LOCAL_QUALIFICATION_REQUIRED":
         failures.append("official implementation audit status changed")
-    if runtime_lock["status"] != "LOCAL_PROTOCOL_DRY_RUN_COMPLETE_MODEL_EXECUTION_NOT_AUTHORIZED":
+    if runtime_lock["status"] != "P0_PROTOCOL_AND_IDENTITIES_FROZEN_P1_RUNTIME_QUALIFICATION_NOT_AUTHORIZED":
         failures.append("benchmark runtime lock status changed")
     if runtime_lock["authorization"] != {"model_calls": False, "judge_calls": False, "fine_tuning": False}:
         failures.append("benchmark runtime lock unexpectedly authorizes execution")
@@ -184,10 +194,12 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("ES-MemEval row identity unexpectedly contains benchmark text")
     if memeval_decision["formal_paper_boundary"]["forbidden_wording"] == "":
         failures.append("ES-MemEval exact-paper-replication boundary is empty")
-    if checklist["p0_exit_now"] is not False:
-        failures.append("P0 checklist unexpectedly permits exit")
+    if checklist["p0_exit_now"] is not True:
+        failures.append("P0 design checklist is not complete")
+    if checklist["p0_completion_authorizes_api_calls"] or checklist["p0_completion_authorizes_formal_verdicts"]:
+        failures.append("P0 design completion unexpectedly authorizes execution or verdicts")
     complete_gates = {gate["gate"] for gate in checklist["gates"] if gate["status"] == "COMPLETE"}
-    if complete_gates != {"dataset_identity", "official_implementation_pin", "training_exam_overlap", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
+    if complete_gates != {"dataset_identity", "official_implementation_pin", "scorer_and_judge_role_and_qualification_plan", "same_stack_reference", "pass_margin_derivation_plan", "training_exam_overlap", "atomic_risk_instrument_design", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
         failures.append("P0 complete-gate set changed without authority update")
     overlap_bytes = overlap_rows_path.read_bytes()
     overlap_rows = [json.loads(line) for line in overlap_bytes.decode("utf-8").splitlines() if line]
@@ -219,8 +231,30 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("Risk public packet identifiers expose target or fixture variant")
     if len(risk_qualification["artifact_hashes"]["gold"]) != 64 or "HASH_COMMITMENT_ONLY" not in risk_qualification["gold_release_policy"]:
         failures.append("Risk fixture gold is not bound by an embargoed hash commitment")
-    if generator_contract["primary_exam"]["pass_margin"] != "NOT_NUMERICALLY_FROZEN":
-        failures.append("generator margin was set without qualification evidence")
+    if not generator_contract["primary_exam"]["pass_margin"].startswith("NO_SOLE_ESC_RANK_NUMERIC_CUTOFF"):
+        failures.append("generator contract permits an unsupported sole ESC-RANK cutoff")
+    if esc_rank_audit["status"] != "PUBLIC_SCORER_REPLAYABLE_ONLY_AFTER_REPAIR_HUMAN_CALIBRATION_NOT_INDEPENDENTLY_REPRODUCIBLE":
+        failures.append("ESC-RANK public qualification decision changed")
+    if esc_rank_audit["api_calls"] != 0 or esc_rank_audit["model_inference_calls"] != 0:
+        failures.append("ESC-RANK public audit unexpectedly consumed inference")
+    if esc_rank_audit["sources"]["ESC-Eval"]["public_human_label_rows"] != 0:
+        failures.append("ESC-RANK audit human-label availability changed without review")
+    if esc_rank_audit["sources"]["ESC-RANK"]["primary_language_dimension_adapters"] != 14:
+        failures.append("ESC-RANK adapter surface changed")
+    if same_stack_reference["status"] != "REFERENCE_SELECTED_ZERO_INFERENCE_EXECUTION_PENDING_APPROVAL":
+        failures.append("same-stack reference status changed")
+    if same_stack_reference["reference"]["model_route"] != "meta/llama-3.3-70b-instruct":
+        failures.append("same-stack reference route changed")
+    if same_stack_reference["accessibility_check"]["inference_calls"] != 0:
+        failures.append("same-stack accessibility check unexpectedly used inference")
+    if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
+        failures.append("margin derivation status changed")
+    if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
+        failures.append("formal outcomes can change calibration values")
+    if esc_rank_runtime_preflight["status"] != "STATIC_OVERLAY_PREFLIGHT_PASS_WEIGHTS_AND_INFERENCE_NOT_EXECUTED":
+        failures.append("ESC-RANK static runtime preflight status changed")
+    if esc_rank_runtime_preflight["inference_calls"] != 0 or esc_rank_runtime_preflight["model_weights_downloaded"] != 0:
+        failures.append("ESC-RANK runtime preflight unexpectedly consumed weights or inference")
     if risk_protocol["statistics"]["noninferiority_margin"] != "NOT_NUMERICALLY_FROZEN_PENDING_FIXTURE_AND_HUMAN_CALIBRATION":
         failures.append("Risk margin was set without instrument calibration")
     if "uncertain" not in risk_protocol["events"]:
@@ -236,6 +270,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         snapshot_path,
         checklist_path,
         generator_contract_path,
+        esc_rank_audit_path,
+        same_stack_reference_path,
+        margin_contract_path,
+        esc_rank_runtime_preflight_path,
         risk_protocol_path,
         runtime_lock_path,
         benchmark_dry_run_path,
@@ -290,6 +328,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "benchmark_dry_run": {"esc_eval_cards": 655, "esc_judge_roles": 25, "esc_judge_units": 150, "api_calls": 0},
         "esc_overlap": {"rows": len(overlap_rows), "clean_english_if_esconv_extes_sft": 103},
         "risk_instrument": {"packets": len(risk_packets), "assignments": len(risk_assignments), "formal_replies_consumed": 0},
+        "esc_rank_public_qualification": {"public_human_label_rows": 0, "primary_adapters": 14, "inference_calls": 0},
+        "esc_rank_runtime_preflight": {"status": "STATIC_PASS", "weights_downloaded": 0, "inference_calls": 0},
+        "same_stack_reference": same_stack_reference["reference"]["model_route"],
+        "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
         "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},
         "private_evidence": private_result,

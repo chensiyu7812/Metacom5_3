@@ -1,0 +1,232 @@
+{
+  "protocol": "metacom-v3-esc-rank-public-qualification-audit-v1",
+  "date": "2026-08-13",
+  "status": "PUBLIC_SCORER_REPLAYABLE_ONLY_AFTER_REPAIR_HUMAN_CALIBRATION_NOT_INDEPENDENTLY_REPRODUCIBLE",
+  "contains_role_card_dialogue_prompt_or_label_text": false,
+  "api_calls": 0,
+  "model_weights_downloaded": 0,
+  "model_inference_calls": 0,
+  "sources": {
+    "paper": {
+      "identity": "ACL Anthology 2024.emnlp-main.883",
+      "reported_dialogues_approx": 8500,
+      "reported_manual_dimension_scores": 59654,
+      "dimensions": [
+        "fluency",
+        "expression",
+        "empathy",
+        "information",
+        "skill",
+        "humanoid",
+        "overall"
+      ],
+      "annotation_process": "one initial score followed by secondary review; not two retained independent labels",
+      "annotators": 14,
+      "split": "random 7:1:2 train/validation/test",
+      "raw_split_row_identities_public": false,
+      "inter_reviewer_agreement_reported": false,
+      "published_scorer_table": {
+        "hard_accuracy_percent": {
+          "fluency": [
+            88.45,
+            81.66
+          ],
+          "expression": [
+            65.72,
+            68.39
+          ],
+          "empathy": [
+            69.7,
+            77.02
+          ],
+          "information": [
+            75.1,
+            77.02
+          ],
+          "skill": [
+            79.72,
+            68.61
+          ],
+          "humanoid": [
+            57.51,
+            70.77
+          ],
+          "overall": [
+            57.89,
+            55.45
+          ],
+          "average": [
+            70.53,
+            71.27
+          ]
+        },
+        "within_one_point_accuracy_percent": {
+          "fluency": [
+            99.87,
+            99.24
+          ],
+          "expression": [
+            99.49,
+            99.67
+          ],
+          "empathy": [
+            99.1,
+            98.71
+          ],
+          "information": [
+            98.97,
+            99.46
+          ],
+          "skill": [
+            96.79,
+            99.57
+          ],
+          "humanoid": [
+            98.84,
+            98.17
+          ],
+          "overall": [
+            99.49,
+            99.35
+          ],
+          "average": [
+            98.93,
+            99.17
+          ]
+        }
+      },
+      "accuracy_soft_definition": "prediction within one ordinal point of the accepted score"
+    },
+    "ESC-Eval": {
+      "commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+      "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+      "public_example_shapes": {
+        "data/test_en.json": {
+          "json_type": "array",
+          "records": 3
+        },
+        "data/test_zh.json": {
+          "json_type": "array",
+          "records": 3
+        },
+        "result/2024-06-24/Qwen_7B_en.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "result/2024-06-24/Qwen_7B_zh.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "result/2024-06-24/llama3_en.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "result/2024-06-24/llama3_zh.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "score/Qwen_7B_en.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "score/Qwen_7B_zh.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "score/llama3_en.json": {
+          "json_type": "object",
+          "records": 3
+        },
+        "score/llama3_zh.json": {
+          "json_type": "object",
+          "records": 3
+        }
+      },
+      "public_human_label_rows": 0,
+      "public_train_validation_test_identity_manifest_present": false
+    },
+    "ESC-RANK": {
+      "hub_id": "haidequanbu/ESC-RANK",
+      "revision": "450bf2eb5376c79e371aaf432925810243de1527",
+      "license_claim": "apache-2.0 model-card metadata",
+      "primary_language_dimension_adapters": 14,
+      "primary_adapter_lfs_bytes": 146917232,
+      "all_adapter_weight_files_including_checkpoint": 15,
+      "training_result_files": 14,
+      "training_result_keys": [
+        "epoch",
+        "train_loss",
+        "train_runtime",
+        "train_samples_per_second",
+        "train_steps_per_second"
+      ],
+      "validation_or_test_predictions_present": false,
+      "validation_or_test_human_labels_present": false,
+      "adapter_base_revision_pinned": false
+    },
+    "ESC-Role": {
+      "hub_id": "haidequanbu/ESC-Role",
+      "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+      "license_claim": "apache-2.0 model-card metadata",
+      "weight_shards": 8,
+      "weight_lfs_bytes": 28334637304
+    },
+    "InternLM2_base": {
+      "hub_id": "internlm/internlm2-chat-7b",
+      "official_code_uses_floating_identifier": true,
+      "local_wrapper_revision_to_pin": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2"
+    }
+  },
+  "static_execution_findings": [
+    {
+      "severity": "BLOCKING_FOR_UNMODIFIED_REPLAY",
+      "finding": "first fluency adapter paths use ./ESC-RANK1 while the published adapter tree is ./ESC-RANK",
+      "present": true
+    },
+    {
+      "severity": "BLOCKING_FOR_EXACT_REPRODUCTION",
+      "finding": "InternLM2 base model revision is not pinned by official code or adapter metadata",
+      "present": true
+    },
+    {
+      "severity": "MEASUREMENT_DEFECT",
+      "finding": "official parser accepts the first occurrence of any digit 0..4 anywhere in free-form output",
+      "present": true
+    },
+    {
+      "severity": "CONSTRUCT_WARNING",
+      "finding": "the Information rubric rewards recommendation count and can conflict with low-burden support",
+      "present": true
+    },
+    {
+      "severity": "TEXT_TRANSFORM_WARNING",
+      "finding": "the scorer rewrites the English AI-assistant role marker to a Chinese role marker",
+      "present": true
+    }
+  ],
+  "qualification_decision": {
+    "official_paper_construct_anchor": "QUALIFIED_WITH_STATED_BOUNDARIES",
+    "official_655_card_exam_identity": "QUALIFIED",
+    "official_scorer_as_descriptive_secondary_metric": "ELIGIBLE_AFTER_LOCAL_PATH_REVISION_AND_STRICT_PARSER_REPAIR",
+    "official_scorer_as_absolute_pass_fail_instrument": "UNQUALIFIED_NO_PUBLIC_ROW_LEVEL_HUMAN_CALIBRATION",
+    "published_model_table_as_reference_distribution": "DESCRIPTIVE_ONLY_DIFFERENT_MODEL_RUNTIME_AND_UNPUBLISHED_ROW_IDENTITIES",
+    "required_local_parser": "accept only a full-string ordinal matching ^[0-4]$; otherwise INVALID",
+    "required_reporting": [
+      "all seven dimensions separately",
+      "hard ordinal score distribution",
+      "invalid/completion rate",
+      "low-burden guardrail separately",
+      "no sole Average-based verdict"
+    ]
+  },
+  "p0_methodological_resolution": {
+    "decision": "Do not search indefinitely for unavailable public labels and do not invent a calibrated ESC-RANK cutoff.",
+    "next_phase_use": "Run repaired ESC-RANK as a recognized descriptive benchmark; use same-stack paired reference, ESC-Judge order-swap sensitivity, mechanical reliability, executor realization, and a separately frozen human anchor for decisions.",
+    "does_not_authorize": [
+      "weight download",
+      "inference",
+      "judge calls",
+      "fine-tuning"
+    ]
+  }
+}

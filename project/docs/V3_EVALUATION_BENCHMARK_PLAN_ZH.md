@@ -1,15 +1,15 @@
 # MetaCom V3 Evaluation Benchmark Plan
 
 日期：2026-08-13
-状态：`DRAFTED FOR V3-P0 FREEZE / NO API AUTHORITY`
+状态：`V3-P0 DESIGN FROZEN / V3-P1 MEASUREMENT QUALIFICATION PENDING / NO API AUTHORITY`
 
 机器合同：`data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 
 ## 当前冻结裁定
 
-整体状态为 `P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING`。这意味着目前的42/90 stress-test回复可以保留，冻结的48次 continuation 也可以在条件满足并重新批准后补齐，但不能继续按旧 Quality/Function 口径做最终判决，更不能从不完整 arm 或自建总分宣布 head pass/fail。
+整体状态为 `P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。目前的42/90 stress-test回复继续保留，但先做generator选择：8B保留才可能按原identity补48次；若换成70B，旧轮归档为不可补成正式混栈矩阵的诊断。无论哪种情况，都不能按旧 Quality/Function 口径作最终判决。
 
-ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。ESC本地协议dry run和ESConv/ExTES重叠筛查也已完成。当前阻塞项缩减为：ESC scorer资格、same-stack reference、ESC-Judge人类anchor、Quality/Risk NI margin来源，以及Risk人类fixture资格化。
+ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。ESC本地协议、重叠筛查、ESC-RANK公开artifact责任、same-stack reference和margin推导均已冻结。P1剩余的是执行性的测量资格化：修复scorer runtime、双人非正式anchor、Risk fixture、数值margin登记与generator选择。
 
 官方实现的静态审计已经完成，详见 `V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和 `data/v3_authority/official_benchmark_implementation_audit_v1.json`。这一步确认了ESC-Eval 655张高质量卡的公开身份，但也确认官方runner/scorer不能原样作为合格测量工具；ESC-Judge的公开100角色无法还原论文实际25角色，且仓库没有实现双向位置互换。因此“官方协议锚定”和“本地测量资格化”必须同时成立。
 
@@ -37,15 +37,15 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 9. hard safety/integrity event 与 `UNCERTAIN` 的处理；
 10. benchmark 运行只能决定是否通过，不能反向修改 selector、sample 或 treatment。
 
-完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。九个required gate中，数据身份、官方实现/本地协议dry run、重叠筛查、统计单位和主张边界五项完成；scorer、reference、margin与Risk人类资格化仍阻塞正式执行。
+完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`，九个设计门全部完成。P0完成只代表“考法已冻结”，不代表scorer、人评或generator已通过；`evaluation_margin_justification_v1.json`列出的P1登记项仍阻塞正式判决。
 
 ## ESC-Eval 资格方案
 
 - 主运行必须保持官方 role cards、交互方式和七维完整报告；
-- ESC-RANK 在本地需要用公开人工标注进行校准，若不能复现则 scorer 状态为 `UNQUALIFIED`；
+- ESC-RANK公开仓库没有逐条人工标注与split ID，因此不再无期限“寻找后再开始”：其论文construct和655卡考卷保留，修复版scorer作描述性七维外部指标，作为单独绝对pass/fail工具明确为`UNQUALIFIED`；
 - published Llama3-8B/ChatGPT/ESC-specialized 分数只作背景，不能与不同代码、模型版本和 prompt 的新分数直接作正式 NI；
-- 至少一个 reference 在同一 V3 stack 中复跑；
-- pass 用 cluster interval 与冻结 NI margin；
+- 同栈reference冻结为NVIDIA `meta/llama-3.3-70b-instruct`，与8B交错复跑；hosted route不暴露不可变weight revision的限制必须披露；
+- generator选择由硬可靠性、executor、同栈E-I-A和Risk共同决定，不用ESC-RANK Average设一个伪精确分数线；
 - low-burden guardrail 单独审计，防止建议数量奖励制造“高分但不合适”的系统。
 
 ## ESC-Judge 稳健性方案
@@ -81,4 +81,4 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 - Function 非零、可归因、可复现，但不要求每次 ON 都有清晰可见的措辞；
 - 任何无法验证的比较标 `INCONCLUSIVE`，不能强制判为 pass/fail。
 
-当前唯一已有数值底线是相对 fixed-high 的实际 generator input tokens 至少降低10%；它仍不能抵消 Quality/Risk 恶化。其余 generator 与 Quality/Risk NI margin 不能从正式 outcome 反推，必须由公开人工标签上的 scorer calibration、same-stack reference 变异和 outcome-blind practical-effect 论证共同确定。
+当前预注册硬线包括generator对话/turn有效率≥95%、executor结构有效率≥90%、必需slot实现≥80%、适用事实忠实度≥90%，以及相对fixed-high的实际generator input tokens至少降低10%。Quality/Risk的数值NI margin在P1由非正式双评anchor与Risk fixture登记，最大Quality margin不得超过paired-preference-probability的0.10；仍不得从正式outcome反推。完整规则见`evaluation_margin_justification_v1.json`。

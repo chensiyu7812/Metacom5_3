@@ -1,0 +1,34 @@
+{
+  "protocol": "metacom-v3-esc-rank-runtime-preflight-v1",
+  "date": "2026-08-13",
+  "status": "STATIC_OVERLAY_PREFLIGHT_PASS_WEIGHTS_AND_INFERENCE_NOT_EXECUTED",
+  "runtime_identity": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "esc_role_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "base_model": "internlm/internlm2-chat-7b",
+    "base_model_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "dtype": "float16",
+    "decoding": "do_sample=false;temperature=0",
+    "parser": "full-string ordinal ^[0-4]$ or INVALID"
+  },
+  "official_score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+  "path_repaired_score_py_sha256": "ef2f1037f6ef75c961768f99ad89c1404844ce5319f99b5051143871fbee601f",
+  "bounded_source_changes": [
+    "./ESC-RANK1/fluency -> ./ESC-RANK/fluency",
+    "./ESC-RANK1/fluency_en -> ./ESC-RANK/fluency_en"
+  ],
+  "parser_overlay": "metacom_pm.esc_rank_runtime.parse_strict_ordinal",
+  "strict_parser_contract": "trim whitespace, accept only a complete single digit 0..4, otherwise INVALID",
+  "official_prompt_or_dialogue_text_embedded": false,
+  "model_weights_downloaded": 0,
+  "inference_calls": 0,
+  "generated_tokens": 0,
+  "remaining_p1_steps": [
+    "create an isolated dependency environment and record package lock",
+    "download the pinned InternLM2 base and ESC-RANK adapters after explicit approval",
+    "run load and deterministic smoke checks",
+    "bind the full scorer request/output ledger before benchmark inference"
+  ],
+  "authorization": "This preflight authorizes no download, inference, judge call, or benchmark verdict."
+}

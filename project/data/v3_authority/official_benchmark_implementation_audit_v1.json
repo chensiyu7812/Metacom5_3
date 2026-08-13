@@ -38,12 +38,13 @@
         "evaluate.py hard-codes Qwen1.5-7B and Meta-Llama-3-8B-Instruct candidate paths and five dialogue rounds; it is not a generic frozen runner for Llama 3.1 8B.",
         "score.py depends on InternLM2-chat-7B and PEFT adapters but no package versions or base-model revision are pinned.",
         "score.py loads the fluency adapter from ./ESC-RANK1/fluency while the other adapters use ./ESC-RANK, so the published tree cannot run unchanged at that point.",
+        "score.py accepts the first occurrence of any digit 0..4 in free-form output instead of requiring a strict ordinal-only response.",
         "The repository has no license file and no requirements, environment, setup, or pyproject lock surface.",
-        "The public data contain all 655 high-quality role cards reported by the paper, but no train/dev/test split manifest for candidate qualification."
+        "The public data contain all 655 high-quality role cards reported by the paper, but no row-level human calibration labels or train/dev/test split identity manifest."
       ],
-      "qualification": "OFFICIAL_PAPER_AND_DATA_ANCHOR_VALID_RUNNER_AND_SCORER_UNQUALIFIED",
-      "allowed_use_now": "Pin protocol, role-card identity, construct, and published reference distribution; build a local wrapper and calibration before treating any score as a pass decision.",
-      "forbidden_use_now": "Do not call a score produced by the unmodified repository a qualified generator pass."
+      "qualification": "OFFICIAL_PAPER_AND_DATA_ANCHOR_VALID_REPAIRED_SCORER_DESCRIPTIVE_ONLY_NO_ABSOLUTE_PASS",
+      "allowed_use_now": "Pin protocol, role-card identity, construct, and published reference distribution; after path/revision/parser repair, report the seven dimensions descriptively alongside hard reliability, executor, same-stack reference, ESC-Judge, and Risk evidence.",
+      "forbidden_use_now": "Do not call a score produced by the unmodified repository a qualified generator pass or invent a calibrated cutoff from Table 4."
     },
     "ESC-Judge": {
       "paper": "EMNLP 2025 main, ACL Anthology 2025.emnlp-main.811",
@@ -87,6 +88,6 @@
       "forbidden_use_now": "Do not call the 1427-row public task or the historical 418-row project slice an exact reproduction of the final-paper 1209 QA set."
     }
   },
-  "decision": "Recognized benchmarks remain central, but recognition does not waive local measurement qualification. P0 exits only after an executable wrapper, identity manifest, calibration or sensitivity evidence, and claim boundary are frozen.",
+  "decision": "Recognized benchmarks remain central, but recognition does not waive local measurement qualification. P0 freezes identities, scorer responsibility, reference, threshold derivation, and claim boundaries; executable runtime qualification and numeric calibration occur in P1 before any formal verdict.",
   "external_contact_boundary": "No issue, email, or author contact was sent. A request for final ES-MemEval 1209 row IDs remains a possible later action requiring separate authorization."
 }

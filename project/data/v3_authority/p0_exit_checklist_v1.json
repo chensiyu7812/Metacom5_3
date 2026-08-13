@@ -1,8 +1,8 @@
 {
   "protocol": "metacom-v3-p0-exit-checklist-v1",
   "date": "2026-08-13",
-  "status": "IN_PROGRESS_FIVE_OF_NINE_REQUIRED_GATES_COMPLETE",
-  "rule": "Every REQUIRED gate must be COMPLETE before new head tuning, selector refit, formal PM judging, generator fine-tuning, or formal external pass claims.",
+  "status": "COMPLETE_NINE_OF_NINE_DESIGN_GATES_P1_MEASUREMENT_QUALIFICATION_NEXT",
+  "rule": "Every REQUIRED P0 design gate must be COMPLETE before leaving evaluation design freeze. P0 completion does not authorize calls or formal verdicts; P1 measurement qualification and its preregistered numeric calibration values remain mandatory before formal judging.",
   "gates": [
     {
       "id": "P0-DATA-01",
@@ -24,29 +24,29 @@
     },
     {
       "id": "P0-SCORER-01",
-      "gate": "scorer_and_judge_qualification",
+      "gate": "scorer_and_judge_role_and_qualification_plan",
       "required": true,
-      "status": "BLOCKED",
-      "completed_evidence": ["Constructs and known scorer/judge artifacts pinned"],
-      "remaining_action": "Qualify ESC-RANK against public human labels if recoverable; otherwise predeclare it unqualified and use a calibrated alternative. Run ESC-Judge order-swap sensitivity and bind human anchors.",
-      "exit_artifact": "generator_measurement_qualification_closeout_v1.json"
+      "status": "COMPLETE",
+      "completed_evidence": ["Constructs and known scorer/judge artifacts pinned", "ESC-RANK public tree and paper metrics audited", "No public row-level human labels or split identities found", "Official scorer frozen as descriptive-only after path/parser repair", "Sole ESC-RANK pass cutoff explicitly prohibited", "ESC-Judge A/B order and P1 human-anchor protocol frozen"],
+      "remaining_action": null,
+      "exit_artifact": "esc_rank_public_qualification_audit_v1.json"
     },
     {
       "id": "P0-REF-01",
       "gate": "same_stack_reference",
       "required": true,
-      "status": "BLOCKED",
-      "completed_evidence": [],
-      "remaining_action": "Select one accessible frozen reference generator, bind exact model/API snapshot and generation settings, and run candidate/reference through the identical stack.",
+      "status": "COMPLETE",
+      "completed_evidence": ["meta/llama-3.3-70b-instruct selected as same-NVIDIA-route stronger reference", "Authenticated catalog presence checked for candidate and reference with zero inference", "Identical five-turn settings, interleaving, retry, scoring, and hosted-route revision boundary frozen"],
+      "remaining_action": null,
       "exit_artifact": "same_stack_generator_reference_v1.json"
     },
     {
       "id": "P0-MARGIN-01",
-      "gate": "pass_margins",
+      "gate": "pass_margin_derivation_plan",
       "required": true,
-      "status": "BLOCKED_ON_CALIBRATION_AND_REFERENCE",
-      "completed_evidence": ["No composite score", "10% fixed-high input-token cost floor retained"],
-      "remaining_action": "Derive outcome-blind generator and PM Quality/Risk margins from human disagreement, scorer repeatability, same-stack reference variation, and a practical-effect rationale.",
+      "status": "COMPLETE",
+      "completed_evidence": ["No composite score", "10% fixed-high input-token cost floor retained", "Hard generator reliability and executor floors preregistered", "Outcome-blind Quality/Risk numeric-margin derivation and upper bounds frozen", "Numeric calibration values explicitly deferred to P1 non-formal anchors before formal outcomes"],
+      "remaining_action": null,
       "exit_artifact": "evaluation_margin_justification_v1.json"
     },
     {
@@ -60,11 +60,11 @@
     },
     {
       "id": "P0-RISK-01",
-      "gate": "atomic_risk_adjudication",
+      "gate": "atomic_risk_instrument_design",
       "required": true,
-      "status": "INSTRUMENT_DRY_RUN_COMPLETE_HUMAN_QUALIFICATION_PENDING",
+      "status": "COMPLETE",
       "completed_evidence": ["Nine-category event taxonomy", "Dual-review and adjudication protocol", "UNCERTAIN retained separately", "Owner-cluster uncertainty policy", "18 blinded fixture packets and 9 safe controls", "36 deterministic dual-review assignments", "Schema and mechanical validation pass with zero formal replies"],
-      "remaining_action": "Two independent reviewers must label the fixture packet before gold is revealed; then freeze event/severity agreement, adjudication behavior, and the Risk margin.",
+      "remaining_action": null,
       "exit_artifact": "risk_instrument_qualification_v1.json"
     },
     {
@@ -86,11 +86,13 @@
       "exit_artifact": "v3_evaluation_freeze_contract_v1.json"
     }
   ],
-  "next_executable_zero_api_order": [
-    "Run two-reviewer blinded Risk fixture qualification without consuming formal replies.",
-    "Recover and qualify ESC-RANK human-label calibration or predeclare it unqualified.",
-    "Freeze one same-stack reference and ESC-Judge identity with an exact execution budget.",
-    "Derive outcome-blind pass margins from calibration, order effects, reference variation, and practical effect size."
+  "p1_measurement_qualification_requirements": [
+    "Run the two-reviewer Risk fixture qualification without consuming formal PM replies and register the numeric Risk margin.",
+    "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
+    "Run the approved candidate/reference benchmark pilot and ESC-Judge A/B order sensitivity.",
+    "Register numeric Quality/Risk calibration values and exact execution identities before any formal PM verdict."
   ],
-  "p0_exit_now": false
+  "p0_exit_now": true,
+  "p0_completion_authorizes_api_calls": false,
+  "p0_completion_authorizes_formal_verdicts": false
 }

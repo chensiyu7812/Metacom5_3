@@ -1,0 +1,76 @@
+{
+  "protocol": "metacom-v3-same-stack-generator-reference-v1",
+  "date": "2026-08-13",
+  "status": "REFERENCE_SELECTED_ZERO_INFERENCE_EXECUTION_PENDING_APPROVAL",
+  "purpose": "Distinguish a weak-generator bottleneck from PM, memory, selector, or treatment failure before formal PM claims.",
+  "candidate": {
+    "provider": "NVIDIA hosted NIM API",
+    "base_url": "https://integrate.api.nvidia.com/v1",
+    "model_route": "meta/llama-3.1-8b-instruct",
+    "role": "current diagnostic generator",
+    "historical_project_use": true
+  },
+  "reference": {
+    "provider": "NVIDIA hosted NIM API",
+    "base_url": "https://integrate.api.nvidia.com/v1",
+    "model_route": "meta/llama-3.3-70b-instruct",
+    "role": "stronger same-provider upper-bound and replacement comparator",
+    "selection_reason": "Same provider and wrapper as the current generator, materially stronger instruction-following class, public NVIDIA model card, and currently exposed by the authenticated model catalog.",
+    "official_surface": "https://build.nvidia.com/meta/llama-3_3-70b-instruct",
+    "official_surface_observed": {
+      "parameters": "71B",
+      "context_length": "131K",
+      "free_endpoint_available": true,
+      "official_example_route": "meta/llama-3.3-70b-instruct"
+    }
+  },
+  "accessibility_check": {
+    "checked_at": "2026-08-13 Asia/Tokyo",
+    "authenticated_catalog_endpoint": "GET https://integrate.api.nvidia.com/v1/models",
+    "candidate_present": true,
+    "reference_present": true,
+    "model_catalog_http_requests": 2,
+    "inference_calls": 0,
+    "generated_tokens": 0,
+    "observed_cost_usd": 0,
+    "secrets_logged_or_committed": false
+  },
+  "same_stack_lock": {
+    "role_cards": "identical card identity and order",
+    "role_player": "identical ESC-Role revision and dialogue wrapper",
+    "turns": 5,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_output_tokens_per_turn": 512,
+    "seed": "omit unless the endpoint documents deterministic seed support for both routes",
+    "retry": "same bounded transport policy; failed attempts and terminal invalids retained",
+    "scoring": "identical repaired ESC-RANK runtime, strict ordinal parser, ESC-Judge orientation pairs, guardrails, and cost ledger",
+    "prompt_identity": "must be content-addressed before execution",
+    "interleaving": "candidate and reference calls interleaved by card to reduce time/provider drift"
+  },
+  "provider_revision_boundary": {
+    "exact_weight_revision_exposed_by_hosted_api": false,
+    "interpretation": "This is a frozen provider-route comparison, not a bitwise weight-revision reproduction.",
+    "required_at_execution": [
+      "UTC timestamp",
+      "request hash",
+      "provider-returned model string",
+      "response headers allowed by the client",
+      "retry and latency ledger",
+      "fresh GET /v1/models presence check"
+    ],
+    "fail_closed": "If either route disappears or the provider-returned identity changes materially during the interleaved run, label the comparison PROVIDER_SNAPSHOT_UNSTABLE and do not force a verdict."
+  },
+  "decision_role": {
+    "not_an_absolute_human_quality_gold": true,
+    "not_a_required_noninferiority_target_for_the_8b_model": true,
+    "replacement_signal": "If the 70B reference is decisively better on executor reliability or at least two E-I-A constructs without an atomic-Risk regression, replace the 8B generator and rerun generator qualification before PM confirmation.",
+    "retention_signal": "Retain the 8B generator only if its hard reliability gates pass and the 70B comparison does not show a preregistered decisive advantage.",
+    "formal_pm_rule": "After generator selection, every learned PM arm and every baseline must use the same selected frozen generator."
+  },
+  "authorization": {
+    "this_artifact_authorizes_inference": false,
+    "this_artifact_authorizes_paid_calls": false,
+    "next_step_requires_fresh_identity_budget_and_user_approval": true
+  }
+}

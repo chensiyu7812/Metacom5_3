@@ -1,12 +1,12 @@
 {
   "protocol": "metacom-v3-generator-qualification-measurement-contract-v1",
   "date": "2026-08-13",
-  "status": "DESIGN_FROZEN_NUMERIC_MARGINS_PENDING_CALIBRATION",
+  "status": "P0_DESIGN_FROZEN_P1_MEASUREMENT_QUALIFICATION_PENDING",
   "purpose": "Separate generator competence from PM selection and executor realization before any head verdict.",
   "candidate": {
-    "model": "Meta-Llama-3.1-8B-Instruct",
-    "exact_revision": "PENDING_RUNTIME_BINDING",
-    "generation_settings": "PENDING_RUNTIME_BINDING",
+    "model": "meta/llama-3.1-8b-instruct",
+    "provider_route": "NVIDIA hosted NIM API; hosted route does not expose an immutable weight revision",
+    "generation_settings": "temperature=0, top_p=1, max_output_tokens_per_turn=512, five turns",
     "prompt_hash": "PENDING_WRAPPER_MATERIALIZATION"
   },
   "primary_exam": {
@@ -14,9 +14,9 @@
     "role_card_identity": "official high-quality 655-card surface at repository commit 9ad46e7b5e247e824dae4633910eaa82be668beb",
     "reported_outcomes": ["fluency", "coherence", "empathy", "support_strategy", "suggestion", "diversity", "human_likeness", "overall", "completion_rate"],
     "aggregation": "Report language, dimension, role-card, and cluster uncertainty separately; no sole composite pass.",
-    "scorer_rule": "ESC-RANK is UNQUALIFIED until its exact runtime reproduces a declared human-label calibration target. If public calibration labels are unavailable, label the official scorer UNQUALIFIED and predeclare an alternative with human anchors.",
+    "scorer_rule": "The official ESC-RANK paper construct is retained and the repaired scorer may produce a recognized descriptive seven-dimension profile. It is UNQUALIFIED as a sole absolute pass/fail instrument because public row-level human calibration labels and split identities are unavailable.",
     "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
-    "pass_margin": "NOT_NUMERICALLY_FROZEN"
+    "pass_margin": "NO_SOLE_ESC_RANK_NUMERIC_CUTOFF; hard reliability, executor, and same-stack decision rules are frozen in evaluation_margin_justification_v1.json"
   },
   "sensitivity_exam": {
     "name": "ESC-Judge",
@@ -26,7 +26,7 @@
     "position_policy": "A result is stable only when the winner is unchanged or both orientations resolve to tie; order-flip disagreement is POSITION_UNSTABLE.",
     "tie_invalid_policy": "TIE, INVALID, REFUSAL, and POSITION_UNSTABLE are explicit outcomes and never coerced to a win.",
     "judge_identity": "Exact provider/model snapshot, prompt hash, temperature, seed if supported, retry, and parser must be bound before calls.",
-    "human_anchor": "A blinded role-stratified sample receives two independent reviewers; discrepancies measure instrument reliability, not candidate correctness alone."
+    "human_anchor": "A role-stratified non-formal sample receives two independent reviewers in P1; discrepancies qualify the instrument and numeric margin before formal outcomes, not during P0 design freeze."
   },
   "executor_exam": {
     "name": "approved-plan-and-evidence-realization",
@@ -36,13 +36,17 @@
     "interpretation": "Identifies whether a qualified ESC generator can execute PM outputs; it is not selector evidence."
   },
   "same_stack_reference": {
-    "selection_status": "PENDING",
-    "requirements": ["accessible under one frozen stack", "not trained or tuned on the qualification outputs", "exact revision and cost disclosed", "identical cards, turns, sampling policy, retry, and scoring"]
+    "selection_status": "SELECTED_ZERO_INFERENCE",
+    "model": "meta/llama-3.3-70b-instruct",
+    "provider": "same NVIDIA hosted NIM API as candidate",
+    "contract": "same_stack_generator_reference_v1.json",
+    "requirements": ["identical cards, role player, turns, sampling policy, retry, scoring, and interleaved execution", "provider route and observed runtime identity disclosed", "hosted API non-immutable-weight boundary disclosed"]
   },
   "margin_derivation": {
     "forbidden": ["derive from candidate formal outcomes", "copy a published model delta across different stacks", "average away a failed guardrail"],
-    "required_inputs": ["human inter-reviewer disagreement", "scorer/judge repeatability", "position sensitivity", "same-stack reference variation", "outcome-blind smallest practically important difference"],
-    "decision": "Margins remain unset until these inputs exist; no generator pass/fail may be issued meanwhile."
+    "required_inputs": ["P1 non-formal human inter-reviewer disagreement", "scorer/judge repeatability", "position sensitivity", "same-stack reference variation", "outcome-blind smallest practically important difference"],
+    "derivation_contract": "evaluation_margin_justification_v1.json",
+    "decision": "P0 freezes the derivation and hard engineering gates. Numeric Quality/Risk calibration values are registered in P1 before formal verdicts; they cannot be recovered from formal outcomes."
   },
   "decision_tree": [
     {"if": "ESC capability fails", "then": "Consider leakage-screened ESC SFT and rerun qualification."},
@@ -50,5 +54,5 @@
     {"if": "ESC and executor pass but PM fails", "then": "Repair candidate, treatment, or selector; generator tuning cannot rescue the claim."},
     {"if": "ESC and executor pass and PM passes", "then": "Freeze the generator for every PM and baseline comparison."}
   ],
-  "authority": "This contract authorizes design and zero-API implementation only. It does not authorize model downloads, inference, paid judges, or fine-tuning."
+  "authority": "This contract authorizes design, public metadata checks, and zero-inference implementation only. It does not authorize model-weight downloads, inference, paid judges, human-review execution, or fine-tuning."
 }

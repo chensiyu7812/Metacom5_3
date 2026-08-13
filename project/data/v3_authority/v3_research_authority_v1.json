@@ -1,7 +1,7 @@
 {
   "protocol": "metacom-v3-research-authority-v1",
   "date": "2026-08-13",
-  "status": "ACTIVE_V3_PLANNING_AND_MIGRATION_AUTHORITY_NO_API_EXECUTION_AUTHORITY",
+  "status": "ACTIVE_V3_P0_DESIGN_COMPLETE_P1_MEASUREMENT_QUALIFICATION_NO_API_EXECUTION_AUTHORITY",
   "source_revision": {
     "repository": "chensiyu7812/Metacom5_3",
     "source_workspace": "legacy snap workspace",
@@ -16,9 +16,13 @@
     "benchmark_runtime_lock": "data/v3_authority/benchmark_runtime_lock_v1.json",
     "training_exam_overlap": "data/v3_authority/esc_training_exam_overlap_summary_v1.json",
     "generator_measurement_contract": "data/v3_authority/generator_qualification_measurement_contract_v1.json",
+    "esc_rank_public_qualification_audit": "data/v3_authority/esc_rank_public_qualification_audit_v1.json",
+    "esc_rank_runtime_preflight": "data/v3_authority/esc_rank_runtime_preflight_v1.json",
+    "same_stack_generator_reference": "data/v3_authority/same_stack_generator_reference_v1.json",
+    "evaluation_margin_justification": "data/v3_authority/evaluation_margin_justification_v1.json",
     "risk_adjudication_protocol": "data/v3_authority/risk_adjudication_protocol_v1.json",
     "risk_instrument_qualification": "data/v3_authority/risk_instrument_qualification_v1.json",
-    "status": "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING",
+    "status": "P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED",
     "dataset_cards": [
       "data/v3_authority/dataset_cards/esconv_dataset_card_v1.json",
       "data/v3_authority/dataset_cards/evoemo_dataset_card_v1.json",
@@ -37,8 +41,8 @@
   "evidence_layers": [
     {
       "layer": "generator_qualification",
-      "primary": "ESC-Eval official protocol with a locally qualified scorer and same-stack reference anchor",
-      "robustness": "ESC-Judge pairwise E-I-A comparison",
+      "primary": "ESC-Eval official protocol with repaired ESC-RANK as a descriptive profile, plus hard reliability and executor gates",
+      "robustness": "ESC-Judge pairwise E-I-A comparison against a selected same-NVIDIA-route Llama 3.3 70B reference",
       "cannot_prove": "PM routing value, longitudinal memory, clinical safety"
     },
     {
@@ -122,34 +126,35 @@
       "name": "workspace_and_evaluation_freeze",
       "actions": [
         "Reconcile dataset versions, hashes, sample counts, statistical units, and overlap; resolve or explicitly name the ES-MemEval 1209-versus-1427 identity.",
-        "Qualify the ESC-Eval scorer, same-stack reference, ESC-Judge sensitivity protocol, low-burden guardrail, and outcome-blind pass margins.",
-        "Freeze atomic Risk event adjudication and preserve UNCERTAIN as a separate outcome.",
+        "Audit the ESC-Eval scorer, freeze its descriptive-versus-decision role, select the same-stack reference, and freeze ESC-Judge order handling and low-burden guardrails.",
+        "Freeze outcome-blind margin derivation and atomic Risk event adjudication while preserving UNCERTAIN as a separate outcome.",
         "Separate active tests from historical replay tests and bind the V3 evidence manifest."
       ],
       "api_authority": false,
-      "exit": "V3 validator passes and ES-MemEval version identity is either resolved or explicitly blocked."
+      "exit": "COMPLETE: all nine design gates pass the V3 validator; no inference or formal verdict is thereby authorized."
     },
     {
       "phase": "V3-P1",
-      "name": "complete_frozen_external_stress_diagnostic",
+      "name": "measurement_and_generator_qualification",
       "actions": [
-        "Complete exactly the 48 missing physical calls under the already frozen continuation plan after explicit approval.",
-        "Judge primary same-state Quality, atomic source-aware Risk, and Cost; keep Function secondary.",
-        "Do not tune samples, treatments, thresholds, or selectors from this consumed external-corpus slice."
+        "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
+        "Run the approved Llama 3.1 8B versus same-stack Llama 3.3 70B ESC-Eval/ESC-Judge pilot and the approved-plan/evidence executor test.",
+        "Complete dual-review non-formal Quality/Risk calibration and register numeric margins before formal outcomes.",
+        "Select and freeze one generator for every subsequent learned-policy and baseline arm."
       ],
       "api_authority": false,
-      "exit": "All 90 arms complete and the 18-owner directional/marginal diagnostic is closed without post-outcome edits."
+      "exit": "Scorer/judge runtime, numeric calibration values, Risk fixture qualification, and selected generator are content-addressed and qualified."
     },
     {
       "phase": "V3-P2",
-      "name": "generator_and_executor_qualification",
+      "name": "frozen_external_stress_diagnostic_disposition",
       "actions": [
-        "Run ESC-Eval under a pinned official implementation and same-stack reference anchor.",
-        "Run ESC-Judge as a theory-grounded sensitivity comparison.",
-        "Run an evidence-conditioned executor realization test with PM decisions fixed."
+        "If Llama 3.1 8B is retained, complete exactly the 48 missing physical calls under the already frozen continuation plan after explicit approval.",
+        "If the generator changes, preserve the 42/90 run as an immutable incomplete diagnostic and do not mix generators inside its arm matrix.",
+        "Use any complete diagnostic only to locate treatment/executor failure; do not tune samples, thresholds, or selectors from it."
       ],
       "api_authority": false,
-      "exit": "Freeze the current generator if qualified; otherwise perform leakage-screened execution-only SFT and requalify before PM confirmation."
+      "exit": "The old stress panel is either honestly completed on 8B or formally archived as generator-incompatible; no mixed-stack verdict is issued."
     },
     {
       "phase": "V3-P3",
@@ -210,7 +215,7 @@
       "new paid services",
       "formal external execution"
     ],
-    "p0_blocks_until_complete": [
+    "p1_measurement_gate_blocks_until_complete": [
       "new head tuning",
       "selector refit",
       "formal judge calls",

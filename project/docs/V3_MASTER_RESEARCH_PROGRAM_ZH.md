@@ -9,17 +9,17 @@
 - `data/v3_authority/v3_asset_compatibility_manifest_v1.json`
 - `data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 
-## 当前最高优先级：先冻结判卷规则
+## 当前最高优先级：P0判卷设计已冻结，进入P1测量与generator资格化
 
-V3-P0 完成前，禁止新增 head 调参、selector refit、正式 judge、generator 微调或正式外测通过声明。原因不是保守，而是当前还没有完整回答五个先验问题：数据是哪一版、考卷测什么、及格线从哪里来、独立统计单位是什么、结果允许支持哪条主张。
+V3-P0九个设计门已经完成：数据版本、考卷责任、阈值推导、统计单位和主张边界均已冻结。P0完成不等于量表或generator已经通过；在P1修复scorer runtime、完成非正式校准、选择generator和登记数值margin前，仍禁止正式PM判决、head调参或selector refit。
 
-当前四张结构化 dataset card 已建立，P0九门已有五门完成，但尚未整体通过：
+当前四张结构化 dataset card 与九个P0设计门均已完成：
 
 - ESConv 的 commit、文件哈希、1,300 个 dialogue 与 38,365 个 turn 已核验；
 - EvoEmo/ES-MemEval 公开 `v1.0.0` tag 和 `evo_emo.json` 哈希已核验；
 - 正式论文是 1,209 道 QA，公开 `v1.0.0` 文件实际是 1,427 道，差异 218 道且覆盖五种 capability；
 - ESC-Eval/ESC-Judge 本地零调用协议已物化（655卡、25/100角色、150个双向E-I-A单元）；228张ESConv/ExTES同源卡的全文源比对和语义邻居也已冻结；
-- scorer校准、same-stack reference、pass margin和Risk双人fixture资格仍未完成。
+- ESC-RANK公开artifact审计确认逐条人标未发布，因此修复后只作描述性外部七维指标；同栈reference已冻结为NVIDIA Llama 3.3 70B；margin推导与Risk双人fixture设计已冻结，实际校准属于P1。
 
 因此，现在可以做的是版本对齐、scorer 资格设计、重叠筛查和 Risk adjudication；不能再用同一批内部样本迭代一个自建总分来宣布“学会/没学会”。
 
@@ -80,8 +80,8 @@ AND ES-MemEval track pass
 | MS | V1.1 Quality 1胜3负2平；Risk 安全；Function 0/6 | 候选“新颖”不等于对当前 response plan 有增量，executor 也可忽略 | 用 P1 外部边际结果决定是否做 response-plan-relevant USE/ASK 修复 |
 | MP | V1.1 Quality 5胜1负1平；Risk 安全；Function 0/5 | 通用职业/教育事实没有改变一个具体 slot | 固定 R0 plan 后，只允许可修改建议、时间、格式、物流的 constraint |
 | ME | 尚未重建为可靠第一版 head | 不影响先完成 RS+MP+MS 组合 | 主链成功后有界救援 |
-| Generator | Llama 3.1 8B 已用于大量诊断 | 尚无公认 ESC benchmark 资格 | ESC-Eval 主测 + ESC-Judge 稳健性 + evidence-conditioned executor test |
-| 外部 stress test | 42/90 完成；48 个 429 | arm 不完整，禁止任何科学比较 | 经新批准后仅补 48 个缺失调用 |
+| Generator | Llama 3.1 8B 已用于大量诊断；同栈70B reference已选 | 尚无公认 ESC benchmark 资格；8B曾有15.7%结构化失败，可能是瓶颈 | 修复版ESC-RANK描述性主测 + ESC-Judge同栈稳健性 + evidence-conditioned executor；据此冻结8B或70B |
+| 外部 stress test | 42/90 完成；48 个 429 | arm 不完整，且若generator更换则不能混栈补齐 | 先做generator选择；保留8B才考虑按原identity补48，否则归档为诊断 |
 
 ## 评价体系
 
@@ -90,9 +90,9 @@ AND ES-MemEval track pass
 不能直接把 ESC-Eval 论文中 Llama3-8B 的公开分数当作当前 Llama 3.1 8B 的硬线。正式做法是：
 
 - pin 官方代码 commit、role-card identity、ESC-Role/ESC-RANK identity、turn cap、prompt、sampling 和 scorer；
-- 本地复核 scorer 在公开人工标注上的可用性；
-- 在同一执行栈中运行一个冻结 reference；
-- 用 role-card/dialogue 聚类区间定义 noninferiority，而不是拍脑袋定 60/70 分；
+- 公开仓库无逐条人工标注与split ID，因此ESC-RANK不承担单独pass/fail；修复路径、浮动revision和宽松parser后作七维描述性外部指标；
+- 在同一NVIDIA执行栈中以Llama 3.3 70B作reference，交错运行并记录provider alias边界；
+- 以硬完成率、executor、同栈E-I-A和Risk共同选generator，不拍脑袋定ESC Average 60/70分；
 - 完整报告七维，特别防止 suggestion 数量奖励掩盖低负担支持原则；
 - ESC-Judge 只作 E-I-A 成对稳健性分析，不取代绝对能力定位。
 
@@ -174,9 +174,9 @@ ESC-Eval 合格，但 evidence-conditioned realization 不合格
 
 ## 最短落地顺序
 
-1. **V3-P0：完成评测冻结。** 对齐四个 dataset card、ES-MemEval 版本、ESC scorer/reference、Risk adjudication、primary outcomes、NI margin 和 active test profile；未通过前不调 head。
-2. **V3-P1：完成当前外部诊断。** 只补冻结的 48 个缺失调用；不更改 prompt/seed/arm；完成后按 Quality/Risk/Cost 主指标和 Function 次指标闭环。
-3. **V3-P2：Generator 资格。** ESC-Eval 主测、ESC-Judge 稳健性、executor realization；决定是否需要执行型 SFT。
+1. **V3-P0：评测设计冻结，已完成。** 四个dataset card、ES-MemEval版本、scorer责任、same-stack reference、Risk、margin推导和active tests均已冻结；零推理。
+2. **V3-P1：测量与Generator资格。** ESC-RANK静态overlay已完成，下一步建隔离runtime并做load smoke；随后做8B/70B ESC-Eval、ESC-Judge、executor小型资格试验，完成非正式Quality/Risk校准并登记数值margin，冻结一个generator。
+3. **V3-P2：处置旧外部诊断。** 8B保留才按原identity补48；若换generator则把42/90归档为不可混栈诊断，直接在新generator上进入有界treatment资格化。
 4. **V3-P3：只修真正失败的 treatment。** 避免再做大而泛的内部循环。
 5. **V3-P4：selector 与 baseline 一次冻结。** 只有固定 treatment 有用后才学 selector。
 6. **V3-P5：三项正式外测。** 分轨、分簇、不可替代、不可池化。

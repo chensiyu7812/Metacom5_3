@@ -39,9 +39,9 @@ def test_v3_execution_phases_do_not_authorize_api_calls() -> None:
     assert all(phase["api_authority"] is False for phase in authority["execution_phases"])
 
 
-def test_evaluation_freeze_blocks_head_tuning_and_binds_dataset_identity() -> None:
+def test_evaluation_design_freeze_is_complete_and_binds_dataset_identity() -> None:
     result = _validator_module().validate(require_private_evidence=False)
-    assert result["evaluation_freeze_status"] == "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING"
+    assert result["evaluation_freeze_status"] == "P0_DESIGN_FREEZE_COMPLETE_P1_MEASUREMENT_QUALIFICATION_REQUIRED"
     assert set(result["dataset_cards"]) == {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}
     assert result["es_memeval_identity"] == {
         "formal_paper_qa": 1209,
@@ -57,10 +57,10 @@ def test_official_benchmark_surfaces_are_pinned_but_not_overclaimed() -> None:
         "esc_judge_public_roles": 100,
         "es_memeval_public_git_commits": 2,
     }
-    assert result["p0_exit_now"] is False
+    assert result["p0_exit_now"] is True
 
 
-def test_margins_remain_unset_until_measurement_qualification() -> None:
+def test_numeric_margins_remain_p1_calibration_values_not_formal_outcome_values() -> None:
     module = _validator_module()
     generator = module._load_json(
         module.AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
@@ -68,9 +68,25 @@ def test_margins_remain_unset_until_measurement_qualification() -> None:
     risk = module._load_json(
         module.AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
     )
-    assert generator["primary_exam"]["pass_margin"] == "NOT_NUMERICALLY_FROZEN"
+    assert generator["primary_exam"]["pass_margin"].startswith("NO_SOLE_ESC_RANK_NUMERIC_CUTOFF")
     assert risk["statistics"]["noninferiority_margin"].startswith("NOT_NUMERICALLY_FROZEN")
     assert "uncertain" in risk["events"]
+
+
+def test_esc_rank_public_calibration_boundary_and_same_stack_reference_are_frozen() -> None:
+    result = _validator_module().validate(require_private_evidence=False)
+    assert result["esc_rank_public_qualification"] == {
+        "public_human_label_rows": 0,
+        "primary_adapters": 14,
+        "inference_calls": 0,
+    }
+    assert result["same_stack_reference"] == "meta/llama-3.3-70b-instruct"
+    assert result["numeric_calibration_phase"] == "P1_PENDING_BEFORE_FORMAL_VERDICT"
+    assert result["esc_rank_runtime_preflight"] == {
+        "status": "STATIC_PASS",
+        "weights_downloaded": 0,
+        "inference_calls": 0,
+    }
 
 
 def test_es_memeval_public_1427_identity_is_complete_and_not_overclaimed() -> None:
@@ -100,14 +116,14 @@ def test_training_exam_overlap_freezes_a_contamination_aware_holdout() -> None:
     }
 
 
-def test_atomic_risk_fixture_is_mechanically_ready_but_not_human_qualified() -> None:
+def test_atomic_risk_design_gate_is_complete_but_human_qualification_remains_p1() -> None:
     result = _validator_module().validate(require_private_evidence=False)
     assert result["risk_instrument"] == {
         "packets": 18,
         "assignments": 36,
         "formal_replies_consumed": 0,
     }
-    assert "atomic_risk_adjudication" not in result["p0_complete_gates"]
+    assert "atomic_risk_instrument_design" in result["p0_complete_gates"]
     module = _validator_module()
     qualification = module._load_json(
         module.AUTHORITY_DIR / "risk_instrument_qualification_v1.json"

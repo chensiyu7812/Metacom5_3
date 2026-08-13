@@ -34,7 +34,7 @@ work/v3-research-program-20260813
 
 共 39 个 active tests 全部通过。
 
-另有 6 个 V3 authority、evaluation-freeze、official-benchmark surface、public-1427 identity、margin-freeze 与 private-evidence consistency tests 通过；合并验证为 45 tests passed。
+另有14个ESC-RANK strict-parser/runtime-overlay测试和11个V3 authority、evaluation-freeze、official-benchmark、public-1427、same-stack reference、margin-phase与private-evidence consistency测试通过；合并验证为64 tests passed。
 
 完整 legacy pytest 不能作为 clean-clone release gate：它读取大量未提交历史 outputs、已消费人评包和阶段性 materialization。缺失路径导致大量预期失败和 11 个 setup errors；这说明旧测试缺少 active/replay 分层，不说明 V3 path relocation 破坏代码。
 

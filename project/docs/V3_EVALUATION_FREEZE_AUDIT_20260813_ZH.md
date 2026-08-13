@@ -2,9 +2,9 @@
 
 日期：2026-08-13
 
-## Overall Assessment: Needs revision before new head decisions
+## Overall Assessment: P0 design revision complete; P1 measurement qualification required
 
-当前 V3 的四层证据方向正确，但 evaluation 尚未达到可以裁定“PM学会/没学会”的状态。内部 Quality/Risk/Function panel 只可保留为开发诊断；正式研究必须先完成数据身份、官方实现、scorer、margin、统计单位与主张边界冻结。
+当前 V3 的四层证据方向正确，P0已完成数据身份、官方实现责任、scorer用途、margin推导、统计单位与主张边界冻结。evaluation仍未达到可以裁定“PM学会/没学会”的状态，因为P1数值校准、runtime资格和generator选择尚未执行。内部 Quality/Risk/Function panel 只保留为开发诊断。
 
 ## 已验证
 
@@ -21,10 +21,10 @@
 ## Issues Found
 
 1. **Resolved with claim boundary — ES-MemEval formal row identity unavailable.** V3不再等待不可见的1209 ID，而是使用完整public-v1.0.0-1427并禁止精确论文复现措辞；418题仍不得替代主任务。
-2. **Critical — No qualified generator pass margin.** 当前没有在公开人工标签上校准ESC-RANK，也没有同栈reference和outcome-blind NI margin；而官方scorer仓库本身存在路径与环境缺口，因此不能仅凭一个ESC自动分数决定微调。
-3. **High — Training/exam overlap unresolved.** ESC-Eval角色卡和ESC-Role训练来源含ESConv/ExTES；若以后用这些数据做generator SFT，必须先冻结考试身份并做source/dialogue/semantic overlap筛查。
-4. **High — PM Quality/Risk margins not anchored.** 现有pairwise judge可作测量组件，但尚无公开anchor、人类小样本校准、跨judge稳定性和practical-effect依据来冻结NI margin。
-5. **High — Atomic Risk taxonomy is ahead of adjudication.** 事件类别已明确，但还缺双评、分歧裁决、`UNCERTAIN`处理和owner-cluster上界方案。
+2. **Resolved at design level — ESC-RANK cannot supply an absolute pass line.** 公开仓库无逐条人标或split ID；修复版scorer仅作描述性七维外部指标。generator决策改由硬可靠性、executor、同栈70B、ESC-Judge与Risk共同支持。
+3. **Resolved — Training/exam overlap.** 228张ESConv/ExTES同源卡已逐项冻结；若两源都用于SFT，英文主考卷隔离为103张。
+4. **Resolved at design level — PM Quality/Risk margin derivation.** P0已冻结非正式双评anchor、上限与登记流程；具体数值必须在P1、正式outcome前写入。
+5. **Resolved at design level — Atomic Risk.** taxonomy、双评、裁决、`UNCERTAIN`、owner cluster、18包/36分配和gold承诺已冻结；实际双评资格属于P1。
 6. **Medium — Current stress run is incomplete.** 42/90只能说明执行进度；48次缺失补齐前，arm差异和head结果均不可计算。
 
 ## KPI与通过标准建议
@@ -35,19 +35,20 @@
 - 不建立Quality/Risk/Function/Cost复合总分；任何主指标恶化不能由成本或Function抵消。
 - fixed-high成本线暂定输入token至少降低10%；其余margin待calibration/reference后冻结，不能事后从正式结果选择。
 
-## Required fixes before P0 exit
+## Required fixes before P0 exit（已完成）
 
 1. ~~获取或重建正式1,209题ID。~~ 已完成替代路径：冻结`ES-MemEval-Public-v1.0.0-1427`及逐题manifest，并禁止写精确论文复现。
-2. 固定ESC-Eval代码/data/scorer commit，在公开human annotation上重算校准表现。
-3. 冻结一个same-stack generator reference，预先确定cluster和NI margin推导方法。
-4. 冻结ESC-Judge版本、judge、位置互换、tie/invalid处理和少量human anchor。
-5. 物化ESConv/ExTES与ESC-Eval source/dialogue/semantic overlap表。
-6. 完成atomic Risk codebook、双评/裁决与critical-event上界。
+2. ~~固定ESC-Eval代码/data/scorer commit，在公开human annotation上重算校准表现。~~ 已确认人标不公开，冻结“描述性可用、绝对pass不合格”的替代责任。
+3. ~~冻结一个same-stack generator reference，预先确定cluster和NI margin推导方法。~~ 已选NVIDIA Llama 3.3 70B并冻结规则。
+4. ~~冻结ESC-Judge版本、judge、位置互换、tie/invalid处理和少量human anchor。~~ 设计已冻结，P1执行待单独批准。
+5. ~~物化ESConv/ExTES与ESC-Eval source/dialogue/semantic overlap表。~~ 已完成228行与103卡隔离考卷。
+6. ~~完成atomic Risk codebook、双评/裁决与critical-event上界。~~ 设计与fixture已完成，P1执行待批准。
 
 ## 2026-08-13 执行进展
 
-本审计列出的 implementation、overlap 和 Risk mechanical 三项已经进入可审计实现：官方commit与本地runtime边界已锁；ESC-Eval中228张ESConv/ExTES同源卡已完成source/exact/normalized/semantic物化；Risk已生成18个fixture包和36个盲评任务。这里不回写原审计判断：Risk仍未通过人类资格化，scorer/reference/margin也仍阻塞P0退出。
-7. 之后才补48次冻结生成并按新评价层级判读；不允许回到旧Function veto。
+P0九个设计门均已进入可审计实现。新增ESC-RANK公开资格审计、同栈reference和margin合同后，P0退出；Risk人类资格、数值margin和benchmark pilot移动到P1，继续阻塞正式判决但不阻塞设计完成。
+
+旧48次冻结生成不再自动成为下一步：先选择generator；保留8B才补，换70B则旧42/90归档，禁止混栈补齐。
 
 ## Confidence
 

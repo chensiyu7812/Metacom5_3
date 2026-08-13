@@ -1,7 +1,7 @@
 {
   "protocol": "metacom-v3-benchmark-runtime-lock-v1",
   "date": "2026-08-13",
-  "status": "LOCAL_PROTOCOL_DRY_RUN_COMPLETE_MODEL_EXECUTION_NOT_AUTHORIZED",
+  "status": "P0_PROTOCOL_AND_IDENTITIES_FROZEN_P1_RUNTIME_QUALIFICATION_NOT_AUTHORIZED",
   "purpose": "Bind the official benchmark source revisions and the local text-free protocol materializers before any candidate, reference, scorer, or judge call.",
   "official_sources": {
     "ESC-Eval": {
@@ -23,7 +23,7 @@
     "python": "3.11",
     "protocol_materializers_require_network": false,
     "protocol_materializers_require_api": false,
-    "large_model_dependency_lock_status": "DEFERRED_UNTIL_CANDIDATE_REFERENCE_SCORER_AND_JUDGE_IDENTITIES_ARE_FROZEN"
+    "large_model_dependency_lock_status": "P1_REPAIRED_SCORER_ENVIRONMENT_MATERIALIZATION_PENDING"
   },
   "local_materializers": [
     {
@@ -34,6 +34,14 @@
       "path": "scripts/v3/03_materialize_benchmark_protocol_dry_run.py",
       "sha256": "cf88d7088b661bde4c92ab73f494552ef1ee0d42475e2a4109124777f787dc74",
       "role": "ESC-Eval card identity plus ESC-Judge deterministic role and bidirectional-order unit materializer"
+    },
+    {
+      "path": "scripts/v3/07_audit_esc_rank_public_qualification.py",
+      "role": "zero-inference public ESC-RANK paper/repository/model-tree qualification audit"
+    },
+    {
+      "path": "scripts/v3/08_materialize_esc_rank_runtime_preflight.py",
+      "role": "bounded official path overlay, immutable model revision identity, and strict ordinal parser preflight"
     }
   ],
   "dry_run": {
@@ -47,11 +55,10 @@
     "api_calls": 0
   },
   "execution_blockers": [
-    "candidate generator revision and generation settings",
-    "same-stack reference generator",
-    "qualified ESC scorer",
-    "qualified ESC-Judge model and human anchors",
-    "numerically justified pass margins"
+    "repaired ESC-RANK executable environment and strict parser are not materialized",
+    "ESC-Judge runtime model and P1 human anchor are not qualified",
+    "numeric Quality/Risk calibration values are not registered",
+    "generator/reference inference identity, budget, and explicit user approval do not yet exist"
   ],
   "authorization": {
     "model_calls": false,
