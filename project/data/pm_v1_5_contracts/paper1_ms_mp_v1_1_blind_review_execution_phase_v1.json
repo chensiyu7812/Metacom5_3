@@ -1,0 +1,53 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-mp-v1-1-blind-review-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_50_CALL_PLAN_READY_EXPLICIT_USER_APPROVAL_REQUIRED",
+  "purpose": "Independently judge the completed MS/MP V1.1 generation rounds against the development gate frozen before generation. Full context is used throughout; Risk is source-aware; MP Function is a position-balanced same-state pair test because MP must constrain without reciting its profile source.",
+  "bindings": [
+    {"role": "manifest_report", "path": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_manifest_20260813/report.json", "sha256": "45c7d237126159604c3786a411fa5c998d6fac8a9d9d7712732c1d11b2db1236"},
+    {"role": "call_plan", "path": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_manifest_20260813/calls_private.jsonl", "sha256": "0e97bb039f62447bd71ca88873341d534d2375d5a420c3f162ec2b1767020be0"},
+    {"role": "private_map", "path": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_manifest_20260813/private_map.jsonl", "sha256": "0718446cf7e6f4374b46135485d183fc97d32332cc327a406606db486701a4e3"},
+    {"role": "execution_config", "path": "configs/paper1_ms_mp_v1_1_blind_review_execution_v1.json", "sha256": "0e1e15ab9f1821cfcad11e76ff561660113086178f5a9067fe1cebe7fdafa71e"},
+    {"role": "endpoint_config", "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json", "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"},
+    {"role": "runner", "path": "scripts/v1_5/340l_run_paper1_ms_mp_v1_1_blind_review_v1_5.py", "sha256": "a9f884ad5792c3c320f355cfba1e66bceb8455caaedbd7c5e7cc67c2e7d82294"},
+    {"role": "aggregator", "path": "scripts/v1_5/341l_aggregate_paper1_ms_mp_v1_1_blind_review_v1_5.py", "sha256": "630fec747e87647717e61cb66483fd32b6f2e572b29933553a1090d016307e39"},
+    {"role": "frozen_gate", "path": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_development_gate_v1.json", "sha256": "9de73c0bd2abeb2061366d1d8bd0bc9aa8ebc355ec6e2de4e58b0b3ce1a78793"},
+    {"role": "mp_function_schema", "path": "src/metacom_pm/v1_5_mp_function_pair_blind_review.py", "sha256": "98760409164a4e604d858569261d6e09e8f6eeb69506e20047a9962b8e1402b9"},
+    {"role": "source_aware_risk_schema", "path": "src/metacom_pm/v1_5_source_aware_risk_blind_review.py", "sha256": "8a1637b607807b6d85f0a646cca7e0313c5ff189c28b2a461488718779eee0e8"},
+    {"role": "function_schema", "path": "src/metacom_pm/v1_5_function_observability_v2_blind_review.py", "sha256": "32e3a701a683e6331872b8aaaca6efdc42e098c076c8bf8dc807756df1b8dc1f"},
+    {"role": "quality_schema", "path": "src/metacom_pm/v1_5_rs_ms_quality_risk_blind_review.py", "sha256": "0f8399f57fd8755219a578d5ba61166d7ccedf77e2c2c97e03aa37961dcaf189"},
+    {"role": "execution_phase", "path": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_blind_review_execution_phase_v1.json", "sha256": null}
+  ],
+  "execution": {
+    "judge": "gpt-5.6-sol",
+    "judge_family": "openai_gpt_5_6_sol",
+    "generator_family": "llama",
+    "family_separated": true,
+    "logical_calls": 50,
+    "maximum_physical_attempts": 100,
+    "run_identity": "ee31b18ad6792ebef2d21aab2b8bef75bc5eff63ce8829f3a960f14bed7c3c72",
+    "estimated_usd": 0.894,
+    "absolute_usd_cap": 1.1,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_live_20260813"
+  },
+  "call_breakdown": {
+    "quality": 13,
+    "source_aware_risk": 26,
+    "function": 11,
+    "total": 50
+  },
+  "authorization": {
+    "judge_calls": 0,
+    "generator_calls": 0,
+    "external_test_calls": 0,
+    "note": "Prepared and frozen only. No call until exact identity and $1.10 cap are explicitly approved."
+  },
+  "stop_rules": [
+    "Provider receives only the public_call allowlist; private arm and telemetry fields never cross the boundary.",
+    "Persist raw output before local validation.",
+    "Abort after five consecutive failures.",
+    "Consume the identity after its first live attempt even if incomplete.",
+    "Do not change thresholds, remove cases, or rerun after seeing results.",
+    "The aggregate is development promotion only, never formal head or external-test pass."
+  ]
+}
