@@ -40,6 +40,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
     generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
     risk_protocol_path = AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
+    memeval_decision_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
+    memeval_row_identity_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
     authority = _load_json(authority_path)
     assets = _load_json(assets_path)
     profile = _load_json(profile_path)
@@ -50,6 +52,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     checklist = _load_json(checklist_path)
     generator_contract = _load_json(generator_contract_path)
     risk_protocol = _load_json(risk_protocol_path)
+    memeval_decision = _load_json(memeval_decision_path)
 
     failures: list[str] = []
 
@@ -73,8 +76,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("execution phases are not the frozen V3-P0..V3-P6 sequence")
 
     memeval = authority["external_tracks"]["ES_MemEval"]
-    if memeval["status"] != "BLOCKED_ON_FORMAL_1209_IDENTITY_OR_PUBLIC_1427_NAMING_DECISION":
-        failures.append("ES-MemEval version discrepancy is not an explicit blocker")
+    if memeval["status"] != "FROZEN_AS_ES_MEMEVAL_PUBLIC_V1_0_0_1427_NOT_EXACT_PAPER_REPLICATION":
+        failures.append("ES-MemEval public-1427 identity decision changed")
     if not all(token in memeval["version_discrepancy"] for token in ("1209", "1427", "418")):
         failures.append("ES-MemEval discrepancy does not bind all known counts")
 
@@ -85,6 +88,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "docs" / "V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md",
         PROJECT_ROOT / "docs" / "V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md",
         PROJECT_ROOT / "scripts" / "v3" / "01_audit_official_benchmark_surfaces.py",
+        PROJECT_ROOT / "scripts" / "v3" / "02_materialize_es_memeval_public_identity.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -114,6 +118,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     public_qa = es_memeval["public_repository"]["observed_counts"]["qa"]
     if (paper_qa, public_qa, public_qa - paper_qa) != (1209, 1427, 218):
         failures.append("ES-MemEval 1209/1427/218 identity conflict changed")
+    if es_memeval["status"] != "FROZEN_AS_ES_MEMEVAL_PUBLIC_V1_0_0_1427_WITH_DISCLOSURE":
+        failures.append("ES-MemEval dataset card lost the public-1427 decision")
     comparison = reconciliation["qa_count_comparison"]
     if comparison[-1] != {"capability": "total", "formal_paper": 1209, "public_v1_0_0": 1427, "difference": 218}:
         failures.append("ES-MemEval reconciliation total is inconsistent")
@@ -132,10 +138,29 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("ESC-Judge position-order audit changed without qualification update")
     if snapshot["ES-MemEval"]["qa"] != 1427 or snapshot["ES-MemEval"]["public_git_commits"] != 2:
         failures.append("ES-MemEval public history surface changed")
+    row_identity_bytes = memeval_row_identity_path.read_bytes()
+    row_identity_records = [json.loads(line) for line in row_identity_bytes.decode("utf-8").splitlines() if line]
+    row_identity_sha256 = hashlib.sha256(row_identity_bytes).hexdigest()
+    if len(row_identity_records) != 1427 or len({row["row_id"] for row in row_identity_records}) != 1427:
+        failures.append("ES-MemEval public-1427 row identity is incomplete or non-unique")
+    if row_identity_sha256 != memeval_decision["identity_manifest"]["sha256"]:
+        failures.append("ES-MemEval public-1427 row identity hash mismatch")
+    local_memeval_path = PROJECT_ROOT / "data" / "external" / "evo_emo.json"
+    if hashlib.sha256(local_memeval_path.read_bytes()).hexdigest() != memeval_decision["source"]["sha256"]:
+        failures.append("local ES-MemEval/EvoEmo file does not match the frozen public-v1.0.0 source")
+    capability_counts: dict[str, int] = {}
+    for row in row_identity_records:
+        capability_counts[row["capability"]] = capability_counts.get(row["capability"], 0) + 1
+    if capability_counts != memeval_decision["identity_manifest"]["capability_counts"]:
+        failures.append("ES-MemEval public-1427 capability counts changed")
+    if any("question" in row or "answer" in row or "evidence" in row for row in row_identity_records):
+        failures.append("ES-MemEval row identity unexpectedly contains benchmark text")
+    if memeval_decision["formal_paper_boundary"]["forbidden_wording"] == "":
+        failures.append("ES-MemEval exact-paper-replication boundary is empty")
     if checklist["p0_exit_now"] is not False:
         failures.append("P0 checklist unexpectedly permits exit")
     complete_gates = {gate["gate"] for gate in checklist["gates"] if gate["status"] == "COMPLETE"}
-    if complete_gates != {"statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
+    if complete_gates != {"dataset_identity", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
         failures.append("P0 complete-gate set changed without authority update")
     if generator_contract["primary_exam"]["pass_margin"] != "NOT_NUMERICALLY_FROZEN":
         failures.append("generator margin was set without qualification evidence")
@@ -155,6 +180,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         checklist_path,
         generator_contract_path,
         risk_protocol_path,
+        memeval_decision_path,
     ):
         if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
             failures.append(f"legacy absolute path leaked into {path.name}")
@@ -199,6 +225,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "es_memeval_public_git_commits": snapshot["ES-MemEval"]["public_git_commits"],
         },
         "p0_exit_now": checklist["p0_exit_now"],
+        "es_memeval_primary_task": memeval_decision["primary_task_name"],
+        "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},
         "private_evidence": private_result,
     }
 

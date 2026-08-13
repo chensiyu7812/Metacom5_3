@@ -12,6 +12,7 @@ Start here:
 - `project/data/v3_authority/v3_research_authority_v1.json`
 - `project/data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 - `project/data/v3_authority/p0_exit_checklist_v1.json`
+- `project/data/v3_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json`
 - `V3_MIGRATION_REPORT_ZH.md`
 - `project/reports/v3_master_research_program_20260813/report.html`
 

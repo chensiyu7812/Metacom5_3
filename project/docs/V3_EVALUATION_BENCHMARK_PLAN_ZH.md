@@ -9,7 +9,7 @@
 
 整体状态为 `P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING`。这意味着目前的42/90 stress-test回复可以保留，冻结的48次 continuation 也可以在条件满足并重新批准后补齐，但不能继续按旧 Quality/Function 口径做最终判决，更不能从不完整 arm 或自建总分宣布 head pass/fail。
 
-当前阻塞项是：ES-MemEval 1,209/1,427 的逐题身份、ESC-RANK 本地校准、same-stack reference、ESC-Judge position sensitivity、人类 anchor、ESC-Eval 与 ESConv/ExTES 重叠筛查、Quality/Risk NI margin 来源，以及 Risk 双评/裁决和不确定性上界。
+ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。当前阻塞项缩减为：ESC-Eval本地runtime/scorer资格、same-stack reference、ESC-Judge position sensitivity与人类anchor、ESC-Eval与ESConv/ExTES重叠筛查、Quality/Risk NI margin来源，以及Risk packet/schema资格化。
 
 官方实现的静态审计已经完成，详见 `V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和 `data/v3_authority/official_benchmark_implementation_audit_v1.json`。这一步确认了ESC-Eval 655张高质量卡的公开身份，但也确认官方runner/scorer不能原样作为合格测量工具；ESC-Judge的公开100角色无法还原论文实际25角色，且仓库没有实现双向位置互换。因此“官方协议锚定”和“本地测量资格化”必须同时成立。
 
@@ -37,7 +37,7 @@
 9. hard safety/integrity event 与 `UNCERTAIN` 的处理；
 10. benchmark 运行只能决定是否通过，不能反向修改 selector、sample 或 treatment。
 
-完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。其中统计单位和主张边界已完成；数据身份、runtime replay、scorer/reference、margin、overlap与Risk instrument仍阻塞正式执行。
+完整P0退出门已物化为 `data/v3_authority/p0_exit_checklist_v1.json`。其中数据身份、统计单位和主张边界已完成；runtime replay、scorer/reference、margin、overlap与Risk instrument仍阻塞正式执行。
 
 ## ESC-Eval 资格方案
 

@@ -1,17 +1,17 @@
 {
   "protocol": "metacom-v3-p0-exit-checklist-v1",
   "date": "2026-08-13",
-  "status": "IN_PROGRESS_EXECUTION_BLOCKS_REMAIN",
+  "status": "IN_PROGRESS_DATASET_IDENTITY_COMPLETE_EXECUTION_BLOCKS_REMAIN",
   "rule": "Every REQUIRED gate must be COMPLETE before new head tuning, selector refit, formal PM judging, generator fine-tuning, or formal external pass claims.",
   "gates": [
     {
       "id": "P0-DATA-01",
       "gate": "dataset_identity",
       "required": true,
-      "status": "BLOCKED_EXTERNAL_IDENTITY",
-      "completed_evidence": ["Four dataset cards", "ESConv hash match", "EvoEmo public v1.0.0 hash and 18-owner shape", "ES-MemEval public 1427-row reconciliation"],
-      "remaining_action": "Obtain authoritative final-paper 1209 QA IDs or freeze the public-v1.0.0-1427 task name and abandon exact-paper-reproduction wording.",
-      "exit_artifact": "es_memeval_formal_or_public_identity_decision_v1.json"
+      "status": "COMPLETE",
+      "completed_evidence": ["Four dataset cards", "ESConv hash match", "EvoEmo public v1.0.0 hash and 18-owner shape", "ES-MemEval-Public-v1.0.0-1427 exact row identity manifest", "Explicit no-exact-1209-replication wording"],
+      "remaining_action": null,
+      "exit_artifact": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
     },
     {
       "id": "P0-IMPL-01",

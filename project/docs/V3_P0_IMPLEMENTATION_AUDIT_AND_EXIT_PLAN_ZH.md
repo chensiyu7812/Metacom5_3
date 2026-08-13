@@ -31,9 +31,9 @@
 
 ## P0 的真实完成条件
 
-P0 目前尚未完成。以下事项完成后才允许继续 head 调参、formal judge 或微调：
+P0 目前尚未完成，但数据身份门已经完成。以下其余事项完成后才允许继续 head 调参、formal judge 或微调：
 
-1. 对 ES-MemEval 作一次明确选择：拿到权威1209 ID，或正式命名并使用 public-v1.0.0-1427，放弃“精确论文复现”措辞；
+1. ~~对 ES-MemEval 作一次明确选择。~~ 已冻结`ES-MemEval-Public-v1.0.0-1427`、1427行逐题身份和非精确1209复现边界；
 2. 为三个官方 benchmark 建立本地 wrapper 和依赖锁，所有输入、模型、prompt、轮数、retry 与 parser 有 hash；
 3. 资格化 ESC scorer/judge；不能复现的官方 scorer 必须标 `UNQUALIFIED`，不能静默替换；
 4. 冻结同栈 reference，再从人类分歧、重复性、位置效应和实用差异推导 NI margin；

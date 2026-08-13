@@ -137,15 +137,16 @@
       {"id": "evaluation_audit", "label": "V3 evaluation freeze audit", "path": "docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md"},
       {"id": "implementation_audit", "label": "Official benchmark implementation audit", "path": "data/v3_authority/official_benchmark_implementation_audit_v1.json"},
       {"id": "p0_exit", "label": "V3 P0 exit checklist", "path": "data/v3_authority/p0_exit_checklist_v1.json"},
-      {"id": "risk_protocol", "label": "Atomic Risk adjudication protocol", "path": "data/v3_authority/risk_adjudication_protocol_v1.json"}
+      {"id": "risk_protocol", "label": "Atomic Risk adjudication protocol", "path": "data/v3_authority/risk_adjudication_protocol_v1.json"},
+      {"id": "memeval_identity", "label": "ES-MemEval public-1427 identity decision", "path": "data/v3_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json"}
     ],
     "blocks": [
       {
         "id": "technical_summary",
         "type": "markdown",
-        "body": "## 技术摘要\n\n**V3 已从旧 snap 独立出来，但没有重启研究。** 它精确继承提交 `ef318c3` 的代码历史，并只复制当前 12 个私有证据目录；29 个文件、1,994,348 个内容字节的组合 SHA-256 已复核一致。旧虚拟环境、3.3GB 历史输出、secrets、空白或方法失效的人评均不进入活动包。\n\n**当前最高优先级是冻结评价，而不是继续修 head。** 研究分成 generator qualification、memory capability、PM causal value 和 personalization integrity 四层。Quality、atomic Risk 与Cost是PM主要estimand；Function只作非零、可复现的机制证据。P0完成前禁止新增head调参、selector refit、正式judge和微调。\n\n**官方实现审计已完成，但P0仍未退出。** ESC-Eval 655张高质量卡完整公开；其runner/scorer却缺依赖锁且存在路径缺陷。ESC-Judge公开100角色，但论文25角色身份和双向位置互换没有在仓库固化。ES-MemEval正式论文1,209 QA与公开1,427 QA相差218，公共git历史也无法恢复正式ID。42/90 stress run仍只是冻结诊断。"
+        "body": "## 技术摘要\n\n**V3 已从旧 snap 独立出来，但没有重启研究。** 它精确继承提交 `ef318c3` 的代码历史，并只复制当前 12 个私有证据目录；29 个文件、1,994,348 个内容字节的组合 SHA-256 已复核一致。旧虚拟环境、3.3GB 历史输出、secrets、空白或方法失效的人评均不进入活动包。\n\n**当前最高优先级是冻结评价，而不是继续修 head。** 研究分成 generator qualification、memory capability、PM causal value 和 personalization integrity 四层。Quality、atomic Risk 与Cost是PM主要estimand；Function只作非零、可复现的机制证据。P0完成前禁止新增head调参、selector refit、正式judge和微调。\n\n**官方实现审计已完成，ES-MemEval数据身份门已关闭。** 主任务冻结为`ES-MemEval-Public-v1.0.0-1427`及1427行逐题hash manifest，不声称精确复现论文1209题。ESC-Eval 655张卡虽完整公开，但runner/scorer缺依赖锁且存在路径缺陷；ESC-Judge公开100角色，但论文25角色身份和双向位置互换未固化。42/90 stress run仍只是冻结诊断。"
       },
-      {"id": "p0_heading", "type": "markdown", "body": "## 评价冻结是当前研究总入口\n\n一个head只有在数据版本、考卷、及格线、统计单位和可支持主张都事前绑定后，才有资格被判为学会或失败。官方代码静态审计已完成：统计单位与主张边界两门完成；数据身份、runtime replay、scorer/reference、NI margin、overlap和Risk instrument仍是硬阻塞。每一门已绑定明确退出产物，不再靠内部循环临时改变标准。"},
+      {"id": "p0_heading", "type": "markdown", "body": "## 评价冻结是当前研究总入口\n\n一个head只有在数据版本、考卷、及格线、统计单位和可支持主张都事前绑定后，才有资格被判为学会或失败。官方代码静态审计已完成：数据身份、统计单位与主张边界三门完成；runtime replay、scorer/reference、NI margin、overlap和Risk instrument仍是硬阻塞。每一门已绑定明确退出产物，不再靠内部循环临时改变标准。"},
       {"id": "p0_gate_block", "type": "table", "tableId": "p0_gate_table"},
       {"id": "external_completion_block", "type": "chart", "chartId": "external_completion_chart"},
       {"id": "asset_heading", "type": "markdown", "body": "## 什么能直接迁，什么只能当历史证据\n\n迁移采用两个相互独立的判断：文件和代码能否完整复用，以及旧结果能否支持相同主张。V4 compiler、MS pre-decision、source-aware Risk 与 MP 模板可直接作为开发基础；旧结果必须保留原实验条件和失败边界。"},
@@ -160,7 +161,7 @@
       {"id": "phase_heading", "type": "markdown", "body": "## 下一步：一次诊断、一次定位、一次冻结\n\nV3 不再重复‘内部改一点—再打一次模糊分’。先封住 P0 的版本和评价漏洞，再补齐既有外部诊断；随后资格化 generator/executor，仅对诊断确定失败的 treatment 做有界修复。固定 treatment 先证明有用，selector 后训练，正式外测最后一次冻结执行。"},
       {"id": "phase_block", "type": "table", "tableId": "phase_table"},
       {"id": "limitations", "type": "markdown", "body": "## 局限与阻塞项\n\n当前42/90 stress run不完整，不能出方向结论；Llama 3.1 8B尚未经过同栈ESC资格化；公开v1.0.0的1,427题无法通过公共git历史映射为正式论文1,209题；EvoEmo与ES-MemEval共享18个合成用户。ESC-Eval与ESC-Judge官方仓库也缺少精确复现所需的环境或样本/顺序冻结，所以必须增加本地wrapper、calibration和low-burden guardrail。V3不能保证自然数据必然支持预期主张，但可以保证正面结果不依赖不完整arm、错误独立单位、事后阈值或一个不可解释的Function judge。"},
-      {"id": "further_questions", "type": "markdown", "body": "## 正式执行前仍需回答\n\n- ES-MemEval最终采用权威1209，还是明确命名的public-v1.0.0-1427 task？\n- ESC-Eval scorer能否在公开人工标注上复现；若不能，替代测量如何用human anchor资格化？\n- 哪个可访问generator作为同栈reference，位置效应和重复性多大？\n- source/exact/normalized/semantic overlap排除多少训练与考试样本？\n- 18-owner聚类区间是否足以支撑正式主张，还是只能支撑受限外部有效性？"
+      {"id": "further_questions", "type": "markdown", "body": "## 正式执行前仍需回答\n\n- ESC-Eval scorer能否在公开人工标注上复现；若不能，替代测量如何用human anchor资格化？\n- 哪个可访问generator作为同栈reference，位置效应和重复性多大？\n- source/exact/normalized/semantic overlap排除多少训练与考试样本？\n- Risk packet/schema能否在全事件合成fixture上通过双评资格？\n- 18-owner聚类区间是否足以支撑正式主张，还是只能支撑受限外部有效性？"
       }
     ]
   },
@@ -174,7 +175,7 @@
         {"status": "Missing after HTTP 429", "calls": 48, "share": 0.5333}
       ],
       "p0_gates": [
-        {"gate": "Dataset identity", "status": "BLOCKED EXTERNAL IDENTITY", "evidence": "ESConv/EvoEmo hashes pinned; public history cannot recover paper-1209", "blocker": "Obtain 1209 IDs or explicitly select public-v1.0.0-1427"},
+        {"gate": "Dataset identity", "status": "COMPLETE", "evidence": "ESConv/EvoEmo hashes pinned; ES-MemEval-Public-v1.0.0-1427 has 1427 unique row identities", "blocker": "None; exact-paper-1209 replication is explicitly not claimed"},
         {"gate": "Official implementation", "status": "AUDITED / REPLAY BLOCKED", "evidence": "Commits, 655 cards, 100 public roles, model revisions and code defects pinned", "blocker": "Local wrappers and runtime locks not materialized"},
         {"gate": "Scorer and reference", "status": "BLOCKED", "evidence": "Published protocols identified", "blocker": "ESC-RANK calibration, same-stack reference, position sensitivity, human anchors"},
         {"gate": "Pass margins", "status": "BLOCKED", "evidence": "10% input-token floor versus fixed-high retained", "blocker": "Generator and Q/R NI margins lack calibration/reference anchors"},
@@ -234,7 +235,8 @@
     {"id": "evaluation_audit", "label": "V3 evaluation freeze audit", "path": "docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md"},
     {"id": "implementation_audit", "label": "Official benchmark implementation audit", "path": "data/v3_authority/official_benchmark_implementation_audit_v1.json"},
     {"id": "p0_exit", "label": "V3 P0 exit checklist", "path": "data/v3_authority/p0_exit_checklist_v1.json"},
-    {"id": "risk_protocol", "label": "Atomic Risk adjudication protocol", "path": "data/v3_authority/risk_adjudication_protocol_v1.json"}
+    {"id": "risk_protocol", "label": "Atomic Risk adjudication protocol", "path": "data/v3_authority/risk_adjudication_protocol_v1.json"},
+    {"id": "memeval_identity", "label": "ES-MemEval public-1427 identity decision", "path": "data/v3_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json"}
   ],
   "package_info": {"originUrl": "artifact://metacom-v3-master-research-program-20260813"}
 }

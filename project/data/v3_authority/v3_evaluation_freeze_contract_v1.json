@@ -56,7 +56,7 @@
     "shared_source_rule": "EvoEmo response and ES-MemEval are two tasks on the same 18 synthetic users, not independent population replications."
   },
   "p0_gates": [
-    {"gate": "dataset_identity", "status": "BLOCKED_EXTERNAL_IDENTITY", "blocker": "ES-MemEval final-paper 1209 rows are absent from public git history; choose an authoritative 1209 mapping or explicitly use the public-v1.0.0-1427 task."},
+    {"gate": "dataset_identity", "status": "COMPLETE_PUBLIC_1427_DISCLOSED", "blocker": null},
     {"gate": "official_implementation_pin", "status": "AUDITED_REPLAY_BLOCKED", "blocker": "Official commits, data shapes, and model revisions are pinned; ESC-Eval has an adapter-path defect and no dependency lock, while ESC-Judge lacks the paper-25 manifest, symmetric order implementation, and dependency lock. Local wrappers remain required."},
     {"gate": "scorer_and_judge_qualification", "status": "BLOCKED", "blocker": "ESC-RANK local calibration, same-stack reference, ESC-Judge position sensitivity, and human anchors are not executed."},
     {"gate": "pass_margins", "status": "BLOCKED", "blocker": "No evidence-anchored Quality/Risk or generator NI margins are frozen."},
@@ -94,5 +94,6 @@
   "implementation_audit": "official_benchmark_implementation_audit_v1.json",
   "p0_exit_checklist": "p0_exit_checklist_v1.json",
   "generator_measurement_contract": "generator_qualification_measurement_contract_v1.json",
-  "risk_adjudication_protocol": "risk_adjudication_protocol_v1.json"
+  "risk_adjudication_protocol": "risk_adjudication_protocol_v1.json",
+  "es_memeval_identity_decision": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
 }

@@ -62,3 +62,12 @@ def test_margins_remain_unset_until_measurement_qualification() -> None:
     assert generator["primary_exam"]["pass_margin"] == "NOT_NUMERICALLY_FROZEN"
     assert risk["statistics"]["noninferiority_margin"].startswith("NOT_NUMERICALLY_FROZEN")
     assert "uncertain" in risk["events"]
+
+
+def test_es_memeval_public_1427_identity_is_complete_and_not_overclaimed() -> None:
+    result = _validator_module().validate(require_private_evidence=True)
+    assert result["es_memeval_primary_task"] == "ES-MemEval-Public-v1.0.0-1427"
+    assert result["es_memeval_row_identity"] == {
+        "rows": 1427,
+        "sha256": "e530e58b489ee87641a80fed9da696a559cdfd50c5772eb50734bf5468ee730c",
+    }

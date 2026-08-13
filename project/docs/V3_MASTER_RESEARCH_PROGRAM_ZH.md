@@ -69,7 +69,7 @@ AND ES-MemEval track pass
 - 全部旧 pytest 作为 clean-clone release gate：大量测试读取已经消费或失效的人评包；
 - snap 下的 5.2GB editable venv 作为可移植环境：其中 `.pth` 指向旧 snap 源码；
 - 失败、空白、方法失效的人评包作为证据；
-- 未对齐的 ES-MemEval “1209 / 1427 / 418”题目身份。
+- ES-MemEval “1209 / 1427 / 418”差异保留为版本边界；V3主任务已冻结为可复现的`ES-MemEval-Public-v1.0.0-1427`，不声称精确复现论文1209题。
 
 ## 当前科学状态
 
@@ -146,7 +146,7 @@ Risk 取消单一 1–5 印象分，记录以下事件：
 
 ### ES-MemEval：长期记忆能力
 
-- 先解决正式论文 1209 QA、公开 artifact 1427 和历史 418 子集的身份差异；
+- 使用已冻结的`ES-MemEval-Public-v1.0.0-1427`逐题身份；历史418只作诊断，论文1209只作不可精确复现的文献边界；
 - 条件为 no-memory、full history、official session-RAG Top4、typed fixed-high、typed learned PM；
 - answerable memory-required QA 优于 no-memory；
 - 相对 fixed-high 准确性/false-answer/abstention 非劣且 input tokens 至少低 10%；
