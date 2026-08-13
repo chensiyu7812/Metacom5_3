@@ -1,0 +1,99 @@
+{
+  "protocol": "metacom-v3-asset-compatibility-manifest-v1",
+  "date": "2026-08-13",
+  "source_commit": "ef318c3e35982e277883e06c5ec25cc7392eab67",
+  "migration_mode": "independent local clone plus curated private-evidence copy",
+  "directly_reusable": [
+    {
+      "asset": "tracked source, scripts, configs, contracts, tests, and external public data",
+      "location": "project/",
+      "basis": "exact checkout of source commit",
+      "qualification": "V3 active test profile must pass"
+    },
+    {
+      "asset": "R0-delta compiler V4, MS pre-decision, source-aware Risk, MP profile-delta templates",
+      "location": "project/src/metacom_pm and project/scripts/v1_5",
+      "basis": "39 targeted tests pass in the clean V3 clone",
+      "qualification": "development treatment only; not a formal head pass"
+    },
+    {
+      "asset": "external treatment stress-test partial run",
+      "location": "private_evidence/current_20260813/pm_v1_5_paper1_external_treatment_stress_test_live_20260813",
+      "basis": "42 schema-valid frozen calls and committed hashes",
+      "qualification": "continuation only; no scientific comparison until 90/90"
+    },
+    {
+      "asset": "fresh continuation preflight",
+      "location": "private_evidence/current_20260813/pm_v1_5_paper1_external_treatment_stress_test_continuation_preflight_20260813",
+      "basis": "48 missing calls only; unchanged prompts/seeds/schema",
+      "qualification": "requires explicit run approval"
+    }
+  ],
+  "reusable_with_reinterpretation": [
+    {
+      "asset": "MS/MP V1.1 generations and blind reviews",
+      "use": "development failure diagnosis and treatment design",
+      "forbidden_use": "formal MS_pass, MP_pass, or external confirmation"
+    },
+    {
+      "asset": "old RS ESConv and EvoEmo response results",
+      "use": "negative evidence about replacement/restatement treatment",
+      "forbidden_use": "verdict on additive R0-plus-RS-delta"
+    },
+    {
+      "asset": "historical V5.2 ES-MemEval results",
+      "use": "versioned diagnostic and cost/retrieval triangulation",
+      "forbidden_use": "current V3 learned-PM pass or independent external replication"
+    },
+    {
+      "asset": "Function reviews",
+      "use": "secondary mechanism calibration",
+      "forbidden_use": "sole first-version veto or generator self-report as evidence"
+    }
+  ],
+  "not_directly_reusable": [
+    {
+      "asset": "legacy active execution bundle as V3 authority",
+      "reason": "it references many ignored or missing historical output paths and mixes consumed stages with current work",
+      "replacement": "v3_research_authority_v1.json"
+    },
+    {
+      "asset": "entire legacy pytest suite as a clean-checkout release gate",
+      "reason": "many tests require untracked historical outcome packets and intentionally consumed human-review artifacts",
+      "replacement": "V3 active profile plus optional historical replay profile"
+    },
+    {
+      "asset": "legacy editable virtual environment as a portable runtime",
+      "reason": "the .pth and direct_url metadata point to the snap workspace",
+      "replacement": "temporary use only with V3 PYTHONPATH; create a V3-pinned environment before formal execution"
+    },
+    {
+      "asset": "failed, empty, or methodologically invalid human-review packets",
+      "reason": "no valid evidence and explicitly excluded from the V3 active package",
+      "replacement": "retain only immutable historical references where necessary"
+    },
+    {
+      "asset": "ES-MemEval question identity",
+      "reason": "1209 paper count, 1427 local artifact claim, and 418 historical subset are unreconciled",
+      "replacement": "pin official release/tag/commit and produce a row-level reconciliation"
+    }
+  ],
+  "private_evidence": {
+    "path": "private_evidence/current_20260813",
+    "tracked": false,
+    "upload_forbidden": true,
+    "directory_count": 12,
+    "file_count": 29,
+    "bytes": 1994348,
+    "deterministic_combined_sha256": "355203e7ef433c469a921cb81ca29115131b077cd5821b96bd3cc5407afa5282",
+    "copy_validation": "rsync --checksum dry-run returned zero differences"
+  },
+  "excluded_from_migration": [
+    "source .git directory",
+    "source virtual environment",
+    "pytest and Python caches",
+    "secrets and environment files",
+    "3.3 GB legacy ignored output tree outside the curated evidence set",
+    "untracked legacy HTML report bundle"
+  ]
+}

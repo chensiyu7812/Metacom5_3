@@ -1,5 +1,10 @@
 # MetaCom-PM：检索前情绪支持资源分配
 
+> **2026-08-13 V3 新入口：** 当前研究、数据集、benchmark、迁移和执行顺序的唯一新权威见
+> `docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md` 与
+> `data/v3_authority/v3_research_authority_v1.json`。下面的旧 PM-v1.5/V3.3
+> 内容保留用于历史追溯，不再单独授权未来调用。
+
 > 当前 PM-v1.5 唯一执行路线见
 > `docs/PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`，机器可读阶段与门槛见
 > `data/pm_v1_5_contracts/final_execution_plan_v2.json`。旧的 minimum/core-chain/reverse-

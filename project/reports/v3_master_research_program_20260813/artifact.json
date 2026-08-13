@@ -1,0 +1,202 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "MetaCom V3：研究总方案、迁移审计与成功路径",
+    "description": "将历史实验、老师关于 dataset/evaluation 的反馈和当前外测进度统一为一条可审计的 RS+MP+MS 研究路线。",
+    "generatedAt": "2026-08-13T15:53:54+09:00",
+    "charts": [
+      {
+        "id": "external_completion_chart",
+        "title": "Frozen external stress run completeness",
+        "subtitle": "42 schema-valid calls; 48 missing after provider HTTP 429; no arm comparison is permitted yet",
+        "headerMarkdown": "This is an execution-completeness view, not a treatment outcome.",
+        "type": "bar",
+        "dataset": "external_completion",
+        "sourceId": "authority",
+        "source": {
+          "label": "Frozen external stress execution status",
+          "path": "data/v3_authority/v3_research_authority_v1.json",
+          "query": {
+            "engine": "duckdb",
+            "language": "sql",
+            "sql": "WITH external_completion(status, calls, share) AS (VALUES ('Schema-valid', 42, 0.4667), ('Missing after HTTP 429', 48, 0.5333)) SELECT status, calls, share FROM external_completion",
+            "description": "Materializes only frozen physical-call completion status; it contains no treatment outcome.",
+            "executed_at": "2026-08-13T15:53:54+09:00"
+          }
+        },
+        "valueFormat": "number",
+        "encodings": {
+          "x": {"field": "status", "type": "nominal", "label": "Call status"},
+          "y": {"field": "calls", "type": "quantitative", "label": "Physical calls"},
+          "color": {"field": "status", "type": "nominal", "label": "Status"},
+          "tooltip": [
+            {"field": "calls", "type": "quantitative", "label": "Calls"},
+            {"field": "share", "type": "quantitative", "label": "Share", "format": "percent"}
+          ]
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "asset_table",
+        "title": "资产迁移与证据兼容性",
+        "subtitle": "能搬动不等于能沿用原结论；V3 分别约束代码可运行性与科学解释。",
+        "dataset": "asset_compatibility",
+        "source": {"label": "V3 asset compatibility manifest", "path": "data/v3_authority/v3_asset_compatibility_manifest_v1.json", "query": {"engine": "artifact-snapshot", "sql": "SELECT class, asset, allowed_use, boundary FROM asset_compatibility", "description": "Curated projection of the V3 migration compatibility manifest."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "class", "label": "分类", "type": "text"},
+          {"field": "asset", "label": "资产", "type": "text"},
+          {"field": "allowed_use", "label": "允许用途", "type": "text"},
+          {"field": "boundary", "label": "边界", "type": "text"}
+        ]
+      },
+      {
+        "id": "state_table",
+        "title": "当前科学状态",
+        "subtitle": "内部 panel 结果不再冒充正式 head pass；42/90 外部运行也不作不完整比较。",
+        "dataset": "current_state",
+        "source": {"label": "V3 research authority", "path": "data/v3_authority/v3_research_authority_v1.json", "query": {"engine": "artifact-snapshot", "sql": "SELECT item, observed, interpretation, next_decision FROM current_state", "description": "Current head, generator, and external-run status frozen in the V3 authority."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "item", "label": "对象", "type": "text"},
+          {"field": "observed", "label": "已观察结果", "type": "text"},
+          {"field": "interpretation", "label": "正确解释", "type": "text"},
+          {"field": "next_decision", "label": "下一决策", "type": "text"}
+        ]
+      },
+      {
+        "id": "evidence_table",
+        "title": "四层证据架构",
+        "subtitle": "每层只证明自己的问题，防止 generator、memory、PM 与 risk 评测相互替代。",
+        "dataset": "evidence_layers",
+        "source": {"label": "V3 research authority", "path": "data/v3_authority/v3_research_authority_v1.json", "query": {"engine": "artifact-snapshot", "sql": "SELECT layer, primary_measure, proves, cannot_prove FROM evidence_layers", "description": "Evidence-layer projection from the active V3 authority."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "layer", "label": "证据层", "type": "text"},
+          {"field": "primary_measure", "label": "主测量", "type": "text"},
+          {"field": "proves", "label": "允许主张", "type": "text"},
+          {"field": "cannot_prove", "label": "不能外推", "type": "text"}
+        ]
+      },
+      {
+        "id": "external_table",
+        "title": "资格考与三条正式外测",
+        "subtitle": "ESC-Eval/ESC-Judge 只资格化 generator；三项 PM 外测分别承担不可替代的证明任务。",
+        "dataset": "external_tracks",
+        "source": {"label": "V3 evaluation benchmark plan", "path": "docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md", "query": {"engine": "artifact-snapshot", "sql": "SELECT track, scope, unit, comparator, pass_shape FROM external_tracks", "description": "Frozen task-to-claim mapping for V3 evaluation."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "track", "label": "考卷", "type": "text"},
+          {"field": "scope", "label": "检验范围", "type": "text"},
+          {"field": "unit", "label": "统计单位", "type": "text"},
+          {"field": "comparator", "label": "关键对手", "type": "text"},
+          {"field": "pass_shape", "label": "合格形状", "type": "text"}
+        ]
+      },
+      {
+        "id": "phase_table",
+        "title": "V3 最短执行序列",
+        "subtitle": "先补完冻结诊断和资格化 generator，再做有界 treatment 修复，最后冻结 selector 与正式外测。",
+        "dataset": "execution_phases",
+        "source": {"label": "V3 research authority", "path": "data/v3_authority/v3_research_authority_v1.json", "query": {"engine": "artifact-snapshot", "sql": "SELECT phase, objective, output, exit_gate FROM execution_phases ORDER BY phase", "description": "Execution phases V3-P0 through V3-P6."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "phase", "label": "阶段", "type": "text"},
+          {"field": "objective", "label": "目标", "type": "text"},
+          {"field": "output", "label": "关键产物", "type": "text"},
+          {"field": "exit_gate", "label": "退出门", "type": "text"}
+        ]
+      }
+    ],
+    "sources": [
+      {"id": "authority", "label": "V3 research authority", "path": "data/v3_authority/v3_research_authority_v1.json"},
+      {"id": "assets", "label": "V3 asset compatibility manifest", "path": "data/v3_authority/v3_asset_compatibility_manifest_v1.json"},
+      {"id": "tests", "label": "V3 active test profile", "path": "data/v3_authority/v3_active_test_profile_v1.json"},
+      {"id": "master", "label": "V3 master research program", "path": "docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md"},
+      {"id": "benchmark", "label": "V3 evaluation benchmark plan", "path": "docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md"},
+      {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"}
+    ],
+    "blocks": [
+      {
+        "id": "technical_summary",
+        "type": "markdown",
+        "body": "## 技术摘要\n\n**V3 已从旧 snap 独立出来，但没有重启研究。** 它精确继承提交 `ef318c3` 的代码历史，并只复制当前 12 个私有证据目录；29 个文件、1,994,348 个内容字节的组合 SHA-256 已复核一致。旧虚拟环境、3.3GB 历史输出、secrets、空白或方法失效的人评均不进入活动包。\n\n**研究主线改为四层证据，不再用一个模糊 judge 解决所有问题。** ESC-Eval/ESC-Judge 资格化 generator；ES-MemEval 测 memory capability；同状态 baseline 矩阵测 PM causal value；atomic source-aware audit 测 personalization integrity。Quality、Risk、Function、Cost 不合成一个总分，Function 降为必要但非唯一的机制证据。\n\n**最近的外部 stress run 应先补完，但只是一轮方向性诊断。** 当前 42/90 arms 完成，48 个因 HTTP 429 缺失；不能比较不完整 arm。补齐后按 18 owner 的 Quality/Risk/Cost 主指标闭环，再据此只修真正失败的 RS、MP 或 MS treatment。正式成功仍要求 generator qualified、RS 通过、MP/MS/ME 至少两个通过，以及 ESConv、EvoEmo、ES-MemEval 三轨分别过门。"
+      },
+      {"id": "external_completion_block", "type": "chart", "chartId": "external_completion_chart"},
+      {"id": "asset_heading", "type": "markdown", "body": "## 什么能直接迁，什么只能当历史证据\n\n迁移采用两个相互独立的判断：文件和代码能否完整复用，以及旧结果能否支持相同主张。V4 compiler、MS pre-decision、source-aware Risk 与 MP 模板可直接作为开发基础；旧结果必须保留原实验条件和失败边界。"},
+      {"id": "asset_block", "type": "table", "tableId": "asset_table"},
+      {"id": "state_heading", "type": "markdown", "body": "## 当前情况不是‘全部失败’，而是 treatment 与测量尚未闭环\n\nMP 的 Quality 方向正但没有可归因 slot change；MS 安全但 Quality 和 Function 未过；旧 RS 只否定 replacement/restatement treatment。三者都不能直接宣布 head pass，也不应继续在相同内部样本上无边界迭代。"},
+      {"id": "state_block", "type": "table", "tableId": "state_table"},
+      {"id": "evidence_heading", "type": "markdown", "body": "## 方法学重构\n\n老师强调 dataset 与 evaluation 是正确的关键转向。V3 在 outcome 前绑定数据版本、statistical unit、overlap、judge/scorer 资格、primary estimand 和不可外推边界。这样才能判断究竟是 generator 不会支持、memory 没找对、resource delta 没做功、selector 不会选，还是评价方法本身不可识别。"},
+      {"id": "evidence_block", "type": "table", "tableId": "evidence_table"},
+      {"id": "external_heading", "type": "markdown", "body": "## Benchmark 与正式外测如何分工\n\nESC-Eval 不是第四个 PM 外测，而是 generator prerequisite。ESConv 只承担 RS 单会话因果价值；EvoEmo 承担纵向响应、组件边际与 interaction；ES-MemEval 承担客观 memory 能力。EvoEmo 与 ES-MemEval 共享 18 个合成用户，必须明确为两个任务，不得包装成两个独立人群复现。"},
+      {"id": "external_block", "type": "table", "tableId": "external_table"},
+      {"id": "methodology", "type": "markdown", "body": "## 核心 estimand 与 PM 通过条件\n\n主要 estimand 是同状态 deployment-ITT 的 Quality、atomic Risk 与实际 generator token Cost。learned PM 需要同时面对 always-off、fixed-high、transparent rule、cost-matched fixed、cost-and-ON-rate-matched random、full-minus-component 和 safe-oracle。相对 fixed-high 至少节省 10% 实际输入 token；相对规则和匹配随机至少一项预注册 selection outcome 严格更好；每个计入成功的 head 必须有可复现的非零边际贡献。\n\nRisk 按 wrong owner、future exposure、past-to-current upgrade、stale/conflict、fabrication、irrelevant sensitive exposure、boundary violation、scaffold exposure 和 uncertain 分事件报告。它支持个性化完整性，不支持临床安全主张。"},
+      {"id": "phase_heading", "type": "markdown", "body": "## 下一步：一次诊断、一次定位、一次冻结\n\nV3 不再重复‘内部改一点—再打一次模糊分’。先封住 P0 的版本和评价漏洞，再补齐既有外部诊断；随后资格化 generator/executor，仅对诊断确定失败的 treatment 做有界修复。固定 treatment 先证明有用，selector 后训练，正式外测最后一次冻结执行。"},
+      {"id": "phase_block", "type": "table", "tableId": "phase_table"},
+      {"id": "limitations", "type": "markdown", "body": "## 局限与阻塞项\n\n当前 42/90 stress run 不完整，不能出方向结论；Llama 3.1 8B 尚未经过同栈 ESC 资格化；ES-MemEval 的 1209/1427/418 题身份未对齐；EvoEmo 独立 owner 只有 18；已有内部 panel 已被开发消费。V3 不能保证自然数据必然支持预期主张，但可以保证正面结果不再依赖不完整 arm、错误独立单位、事后阈值或一个不可解释的 Function judge。"},
+      {"id": "further_questions", "type": "markdown", "body": "## 正式执行前仍需回答\n\n- ES-MemEval 1209、1427 与历史 418 的逐题关系是什么？\n- ESC-Eval scorer 能否在公开人工标注上复现，并给出同栈 reference anchor？\n- 补齐 90/90 后，RS、MP、MS 的 full-minus-component 和 ON-slice 方向分别是什么？\n- 若 generator 合格而 component 仍不做功，失败位于 candidate、delta interface 还是 selector target？\n- 18-owner 聚类区间是否足以支撑正式主张，还是只能支撑受限外部有效性？"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-13T15:53:54+09:00",
+    "status": "ready",
+    "datasets": {
+      "external_completion": [
+        {"status": "Schema-valid", "calls": 42, "share": 0.4667},
+        {"status": "Missing after HTTP 429", "calls": 48, "share": 0.5333}
+      ],
+      "asset_compatibility": [
+        {"class": "直接复用", "asset": "提交 ef318c3 的 tracked code/config/contracts/public data", "allowed_use": "V3 开发基线", "boundary": "需通过 active clean-checkout profile"},
+        {"class": "直接复用", "asset": "V4 R0+delta、MS pre-decision、source-aware Risk、MP templates", "allowed_use": "treatment 开发与外部诊断", "boundary": "不是正式 head pass"},
+        {"class": "直接复用", "asset": "42/90 stress 输出与 48-call continuation", "allowed_use": "仅补齐同一冻结诊断", "boundary": "90/90 前禁止比较"},
+        {"class": "重解释复用", "asset": "MS/MP V1.1、旧 RS、V5.2 ES-MemEval、Function reviews", "allowed_use": "失败归因与机制校准", "boundary": "不得作为 V3 formal pass"},
+        {"class": "不直接复用", "asset": "legacy execution bundle、全量旧 pytest、snap editable venv", "allowed_use": "历史 replay 或临时运行", "boundary": "不能成为 clean V3 authority/runtime"},
+        {"class": "排除迁移", "asset": "3.3GB 历史输出、failed/empty human review、secrets", "allowed_use": "无", "boundary": "私有证据禁止上传"}
+      ],
+      "current_state": [
+        {"item": "RS", "observed": "旧 replacement treatment 负向", "interpretation": "不裁定 additive R0+RS delta", "next_decision": "用完整外部 stress 的边际结果裁定"},
+        {"item": "MS", "observed": "V1.1 Quality 1/3/2；Risk 安全；Function 0/6", "interpretation": "新颖候选未转化为 response value", "next_decision": "必要时修 response-plan-relevant USE/ASK"},
+        {"item": "MP", "observed": "V1.1 Quality 5/1/1；Risk 安全；Function 0/5", "interpretation": "通用事实没有改变具体 slot", "next_decision": "plan-first constraint delta"},
+        {"item": "ME", "observed": "未形成可靠第一版 head", "interpretation": "不在最短主张路径", "next_decision": "P6 有界救援"},
+        {"item": "Generator", "observed": "Llama 3.1 8B 大量诊断，未资格化", "interpretation": "PM 与 executor 缺陷仍可混淆", "next_decision": "ESC-Eval 主测 + ESC-Judge sensitivity"},
+        {"item": "外部 stress", "observed": "42/90 valid；48 次 HTTP 429", "interpretation": "不完整 arm，不可比较", "next_decision": "仅补冻结 48 calls"}
+      ],
+      "evidence_layers": [
+        {"layer": "Generator qualification", "primary_measure": "ESC-Eval；ESC-Judge sensitivity", "proves": "基础多轮情绪支持执行能力", "cannot_prove": "PM routing 或 memory 价值"},
+        {"layer": "Memory capability", "primary_measure": "ES-MemEval QA/summary/generation", "proves": "检索、时间、冲突、拒答、建模", "cannot_prove": "RS response value"},
+        {"layer": "PM causal value", "primary_measure": "同状态 baseline matrix", "proves": "learned state-action matching 的增量", "cannot_prove": "绝对 generator 能力"},
+        {"layer": "Personalization integrity", "primary_measure": "atomic source-aware event audit", "proves": "个性化事实使用完整性", "cannot_prove": "临床安全"}
+      ],
+      "external_tracks": [
+        {"track": "ESC-Eval + ESC-Judge", "scope": "Generator prerequisite", "unit": "role/dialogue", "comparator": "same-stack frozen reference", "pass_shape": "官方维度 NI + E-I-A robustness；不计 PM 外测"},
+        {"track": "ESConv", "scope": "RS 单会话；memory OFF", "unit": "dialogue", "comparator": "off/high/rule/matched controls", "pass_shape": "Q/R NI；ON slice 正；selection 严格优于非学习对手"},
+        {"track": "EvoEmo", "scope": "RS+MP+MS/ME 响应与 joint policy", "unit": "18 users", "comparator": "factorial/full-minus/raw-RAG/full-history/oracle", "pass_shape": "至少 RS+两 memory heads 安全边际正；joint policy 过门"},
+        {"track": "ES-MemEval", "scope": "长期 memory capability", "unit": "18 users", "comparator": "no-memory/full-history/session-RAG/fixed-high", "pass_shape": "memory-required 优于 off；对 high NI 且 input token 低≥10%"}
+      ],
+      "execution_phases": [
+        {"phase": "P0", "objective": "工作区、数据与评测冻结", "output": "dataset cards、scorer/risk protocol、active tests", "exit_gate": "validator 通过；ES-MemEval 已对齐或明确阻塞"},
+        {"phase": "P1", "objective": "补完冻结外部诊断", "output": "90/90 Q/R/Cost + secondary Function", "exit_gate": "18-owner closeout；不事后调参"},
+        {"phase": "P2", "objective": "Generator/executor 资格", "output": "ESC-Eval、ESC-Judge、realization", "exit_gate": "冻结 generator 或仅做执行型 SFT 后复测"},
+        {"phase": "P3", "objective": "有界 treatment 修复", "output": "R0+RS、plan-first MP、relevant MS", "exit_gate": "三 head 均有安全正向开发证据"},
+        {"phase": "P4", "objective": "Selector 与 baseline 冻结", "output": "grouped selector、threshold、matched controls", "exit_gate": "非退化 policy 胜过命名规则"},
+        {"phase": "P5", "objective": "三项正式外测", "output": "ESConv/EvoEmo/ES-MemEval closeout", "exit_gate": "分轨过门且 component predicate 成立"},
+        {"phase": "P6", "objective": "强 generator 与 ME 稳健性", "output": "moderator replication / bounded ME", "exit_gate": "诚实报告 generator-specific 或 robust claim"}
+      ]
+    }
+  },
+  "sources": [
+    {"id": "authority", "label": "V3 research authority", "path": "data/v3_authority/v3_research_authority_v1.json"},
+    {"id": "assets", "label": "V3 asset compatibility manifest", "path": "data/v3_authority/v3_asset_compatibility_manifest_v1.json"},
+    {"id": "tests", "label": "V3 active test profile", "path": "data/v3_authority/v3_active_test_profile_v1.json"},
+    {"id": "master", "label": "V3 master research program", "path": "docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md"},
+    {"id": "benchmark", "label": "V3 evaluation benchmark plan", "path": "docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md"},
+    {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"}
+  ],
+  "package_info": {"originUrl": "artifact://metacom-v3-master-research-program-20260813"}
+}
