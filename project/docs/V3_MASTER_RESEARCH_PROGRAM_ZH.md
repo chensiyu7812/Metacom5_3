@@ -176,6 +176,8 @@ ESC-Eval 合格，但 evidence-conditioned realization 不合格
 
 1. **V3-P0：评测设计冻结，已完成。** 四个dataset card、ES-MemEval版本、scorer责任、same-stack reference、Risk、margin推导和active tests均已冻结；零推理。
 2. **V3-P1：测量与Generator资格。** ESC-RANK静态overlay与官方七维映射已完成；旧弱prompt/256-token-cap G0已经关闭。替代G0用统一的ESConv/ExTES/ESCoT/ESC-Judge对齐prompt，省略provider输出cap，比较8B、70B以及Qwen non-thinking/thinking；先2卡canary，再24卡Quality/latency/Pareto screen。硬门合格且非支配的候选才进入ESC-Judge/人类anchor和approved-plan/evidence executor；最终选中者再跑更大资格集并冻结。
+
+截至2026-08-14，替代G0的2卡canary已机械通过：40/40完整生成、无length finish，费用`$0.0194692`。Qwen non-thinking在本轮呈现约2.15s median且无重试；thinking约14.46s并把绝大多数额外token用在隐藏reasoning；70B约68.94s且6/10 turn需要重试。由于只有两张卡且尚未做E-I-A双顺序质量评审，这些数据只能定位运行与成本，不选定最终generator。
 3. **V3-P2：处置旧外部诊断。** 8B保留才按原identity补48；若换generator则把42/90归档为不可混栈诊断，直接在新generator上进入有界treatment资格化。
 4. **V3-P3：只修真正失败的 treatment。** 避免再做大而泛的内部循环。
 5. **V3-P4：selector 与 baseline 一次冻结。** 只有固定 treatment 有用后才学 selector。

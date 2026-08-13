@@ -61,6 +61,8 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 先跑2卡canary，仅检验transport、prompt、自然完成和预算机制，绝不从2卡选模型；再跑24卡development screen。硬门失败者淘汰，剩余候选按Quality、atomic Risk和latency的Pareto关系筛选，不制造加权总分，也不让低延迟覆盖质量失败。最终候选另跑approved-plan/evidence executor和更大资格集；executor仍只识别generator能否实现已批准内容，不是PM selector证据。
 
+2卡canary已在identity `9852e4c4...`下完成：40/40 supporter turn成功，0次length finish，0条terminal trajectory，Qwen实际费用`$0.0194692`。8B、Qwen non-thinking和Qwen thinking均10/10首次成功；70B虽经重试得到10/10文本，但10个turn中只有4个首次成功，出现5次network timeout和1次HTTP 5xx。成功请求自身的median latency分别约为8B 0.53s、Qwen non-thinking 2.15s、Qwen thinking 14.46s、70B 68.94s；70B数值还不含失败请求等待，因此只是下界。Qwen thinking消耗8,965 billed completion tokens，其中provider报告8,302 reasoning tokens；non-thinking总计628 completion tokens，而两者推断的可见token分别663与628。该结果只证明新runtime与无截断合同可运行；Quality尚未正式判断，禁止从两张卡选择generator。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；

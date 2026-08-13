@@ -148,6 +148,9 @@ def test_g0_qwen_screen_is_frozen_without_api_execution() -> None:
         "candidate_configurations": 4,
         "researcher_output_token_cap": None,
         "run_identity": "9852e4c492a027c145bd1216bd7a5584a348ed9f3323c872797280a02e21ed62",
+        "canary_status": "CANARY_MECHANICAL_PASS_QUALITY_NOT_YET_JUDGED_NO_GENERATOR_SELECTED",
+        "canary_successful_turns": 40,
+        "canary_qwen_actual_usd": 0.019469200000000002,
     }
 
 

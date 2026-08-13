@@ -50,6 +50,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0r2_prompt_path = AUTHORITY_DIR / "g0_research_aligned_supporter_prompt_v1.json"
     g0r2_preflight_path = AUTHORITY_DIR / "g0_research_aligned_generator_preflight_v2.json"
     g0r2_manifest_path = AUTHORITY_DIR / "g0_research_aligned_screening_manifest_v2.jsonl"
+    g0r2_closeout_path = AUTHORITY_DIR / "g0_research_aligned_canary_closeout_v2.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -81,6 +82,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0r2_contract = _load_json(g0r2_contract_path)
     g0r2_prompt = _load_json(g0r2_prompt_path)
     g0r2_preflight = _load_json(g0r2_preflight_path)
+    g0r2_closeout = _load_json(g0r2_closeout_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -140,6 +142,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
         PROJECT_ROOT / "scripts" / "v3" / "15_materialize_g0_research_aligned_generator.py",
         PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
+        PROJECT_ROOT / "scripts" / "v3" / "17_closeout_g0_research_aligned_canary.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -154,7 +157,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 71:
+    if profile["expected_test_count"] != 74:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -350,6 +353,16 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     }
     if qwen_modes != {False, True}:
         failures.append("research-aligned G0 does not bind both Qwen modes")
+    if g0r2_closeout["run_identity"] != g0r2_preflight["run_identity"]:
+        failures.append("research-aligned canary closeout identity drifted")
+    if g0r2_closeout["status"] != "CANARY_MECHANICAL_PASS_QUALITY_NOT_YET_JUDGED_NO_GENERATOR_SELECTED":
+        failures.append("research-aligned canary status overclaims or changed")
+    if g0r2_closeout["api_scope"]["supporter_successful_turns"] != 40 or g0r2_closeout["api_scope"]["judge_calls"] != 0:
+        failures.append("research-aligned canary call accounting drifted")
+    if g0r2_closeout["generation_contract_observed"]["provider_length_finishes"] != 0:
+        failures.append("research-aligned canary contains a provider length finish")
+    if g0r2_closeout["zero_api_interpretation"]["selection"] != "FORBIDDEN_FROM_TWO_CARD_CANARY":
+        failures.append("research-aligned canary improperly selects a generator")
     g0r2_executables = {
         "16_run_g0_research_aligned_esc.py": PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
         "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
@@ -402,6 +415,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0r2_contract_path,
         g0r2_prompt_path,
         g0r2_preflight_path,
+        g0r2_closeout_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -477,6 +491,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "candidate_configurations": len(g0r2_contract["candidates"]),
             "researcher_output_token_cap": g0r2_contract["shared_generation_contract"]["researcher_output_token_cap"],
             "run_identity": g0r2_preflight["run_identity"],
+            "canary_status": g0r2_closeout["status"],
+            "canary_successful_turns": g0r2_closeout["api_scope"]["supporter_successful_turns"],
+            "canary_qwen_actual_usd": g0r2_closeout["qwen_budget"]["actual_usd"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
