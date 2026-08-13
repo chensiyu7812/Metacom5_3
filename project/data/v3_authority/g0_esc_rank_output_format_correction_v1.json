@@ -1,0 +1,33 @@
+{
+  "protocol": "metacom-v3-g0-esc-rank-output-format-correction-v1",
+  "date": "2026-08-13",
+  "run_identity": "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e",
+  "trigger": {
+    "completed_dimension_calls_at_detection": 105,
+    "strict_full_string_valid": 0,
+    "observed_form": "The <adapter-specific dimension> score is <0-4>[.]",
+    "interpretation": "FORMAT_INCOMPATIBILITY_NOT_ZERO_QUALITY"
+  },
+  "primary_result": {
+    "preserved": true,
+    "parser": "full-string ^[0-4]$ or INVALID",
+    "role": "The frozen primary result remains invalid under its own parser and cannot be used to rank candidates."
+  },
+  "public_reference_parser": {
+    "behavior": "Search labels 0,1,2,3,4 in order and accept the first digit found anywhere in the response.",
+    "adopted": false,
+    "reason": "A broad substring search can mistake unrelated digits or explanatory prose for the ordinal."
+  },
+  "zero_inference_sensitivity": {
+    "script": "project/scripts/v3/14_derive_g0_esc_rank_anchored_scores.py",
+    "new_model_calls": 0,
+    "accepted_forms": [
+      "full-string ordinal 0 through 4",
+      "exact adapter-specific labelled sentence with an optional final period"
+    ],
+    "all_other_text": "INVALID",
+    "raw_output_mutated": false,
+    "decision_role": "format-compatibility sensitivity and descriptive seven-dimension profile only"
+  },
+  "research_boundary": "Neither parser result alone establishes generator qualification, PM effectiveness, real-user benefit, or clinical safety."
+}
