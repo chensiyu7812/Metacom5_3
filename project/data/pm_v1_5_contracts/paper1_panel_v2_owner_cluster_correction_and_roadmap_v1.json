@@ -1,0 +1,88 @@
+{
+  "protocol": "pm-v1.5-paper1-panel-v2-owner-cluster-correction-and-roadmap-v1",
+  "date": "2026-08-13",
+  "status": "ACTIVE_ZERO_API_CORRECTED_LABELS_JUDGE_MANIFEST_PENDING_APPROVAL",
+  "purpose": "Correct two overclaims from the 325l/327l/328l (MP) and 326l/329l/330l (RS/MS) rounds, then sequence the full path to an honest RS_pass/MP_pass/MS_pass and three external closures. No relabeled result may be read as a formal head pass or a formal head failure.",
+  "owner_cluster_violation": {
+    "requirement_violated": "panel population must be at most one state per owner (paper1_mp_rule_based_step1_v1.json#panel_v1_requirements.population; paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json#panel_v2_requirements.population)",
+    "mp_panel": {
+      "path": "outputs/pm_v1_5_paper1_mp_development_panel_20260813/development_cases_private.jsonl",
+      "violations": [
+        {"owner": "evo::p2", "count": 2, "case_ids": ["mpdev_894698741e3be2b55a8d", "mpdev_08996f5e142349d4cbda"], "both_stratum": "CONSTRAIN_eligible"},
+        {"owner": "evo::p9", "count": 2, "case_ids": ["mpdev_7b98b1d596ce3447e678", "mpdev_92a158d318694a631bd6"], "strata": ["IGNORE_current_context_redundant", "IGNORE_topical_mismatch"]}
+      ],
+      "consequence": "The reported '6 CONSTRAIN_eligible states, 5 field types' spans only 5 distinct owners, not 6; the '4 IGNORE states' span only 3 distinct owners, not 4. Every finding computed from this panel must be read at owner-cluster resolution, not state resolution."
+    },
+    "rs_ms_panel_v2": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_20260813/development_cases_private.jsonl",
+      "violations": [
+        {"owner": "evo::p1", "count": 2, "case_ids": ["rsmsv2dev_ec683fee6550e869fdf7", "rsmsv2dev_3cacbd91bd06099ec6e5"], "strata": ["CLEAR_USE", "IGNORE_low_information_greeting"]}
+      ],
+      "consequence": "The panel's 13 states span 12 distinct owners, not 13. This does not invalidate the two-distinct-owner CLEAR finding (evo::p1 and evo::p8 remain two distinct owners for the CLEAR verdict specifically), but the panel's general population claim was wrong and must not recur."
+    },
+    "root_cause": "Neither 325l nor 326l checked owner-uniqueness across the FULL curated set -- only within-stratum diversity was checked (e.g. 'N distinct field types among the CONSTRAIN_eligible states'), not across-stratum reuse of the same owner. This is the same class of error already corrected once this session for the MS-only ablation's clustered significance test; it recurred here because the check was never made a mechanical panel-build invariant.",
+    "required_fix_for_future_panels": "Every future panel materializer must assert len({state['runtime_owner_key'] for state in all_curated_states}) == len(all_curated_states) before writing the panel report, not just per-stratum owner counts."
+  },
+  "corrected_status": {
+    "MP": {
+      "prior_label": "MP_DEVELOPMENT_BLOCKED_ZERO_OBSERVABLE_CONTRIBUTION (implied a head-level negative)",
+      "corrected_label": "PANEL_TREATMENT_INTERFACE_INCONCLUSIVE",
+      "explicitly_not": [
+        "a formal MP head failure",
+        "evidence that MP as a head concept cannot work",
+        "a result that blocks a future, differently-designed MP panel"
+      ],
+      "reason": "0/6 CONSTRAIN_eligible cases (5 distinct owners after clustering) showed observable contribution, but a direct read of the M0+R0 replies shows none of them contained a concrete wording/timing/logistics slot for the MP fact to modify in the first place -- the replies were uniformly generic emotional validation with no proposed suggestion, schedule, or logistic detail. This means the panel could not distinguish 'MP has no effect' from 'MP was never given a modifiable target' -- the treatment interface (raw field-scope trigger against an unconstrained R0 reply) is the more likely culprit than the MP concept itself. See root_fix_mp below for the corrected interface design."
+    },
+    "MS": {
+      "prior_label": "MS_DEVELOPMENT_PROMOTION_MET_ON_MAIN_EFFECT (implied full development_promotion)",
+      "corrected_label": "FUNCTION_SUBGATE_POSITIVE",
+      "explicitly_not": [
+        "full development_promotion",
+        "MS_pass",
+        "evidence sufficient to proceed directly to formal external qualification"
+      ],
+      "reason": "Only the Function observability sub-gate was checked (2/5 CLEAR_USE cases CLEAR from 2 distinct owners after clustering). Quality, Risk, and same_stack_outcome -- three of the four head_pass_definition sub-criteria -- were not measured in this round. A positive Function subgate is necessary but not sufficient for development_promotion, let alone MS_pass."
+    }
+  },
+  "six_step_roadmap": {
+    "step_1_correction": {"status": "IN_PROGRESS", "this_contract": true},
+    "step_2_blind_review_manifest": {
+      "status": "MANIFEST_BUILT_AWAITING_APPROVAL",
+      "scope": "Reuse the existing 50 real RS/MS Panel V2 replies (no new generation). RS: M0+R0 vs M0+RS strategy realization + Quality, absolute Risk both arms. MS: M0+R0 vs MS+R0 Quality/Risk, independent blind re-verification of 5 CLEAR_USE + 2 ASK Function. Interaction: MS+R0 vs MS+RS crowd-out check on the same 7 states. Owner-clustered analysis (evo::p1's two states count as one cluster).",
+      "manifest_path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_20260813/report.json"
+    },
+    "step_3_root_fix_mp": {
+      "status": "NOT_STARTED",
+      "scope": "Freeze the R0 response plan first; MP may only transform an already-present concrete wording/burden/timing/format/logistics slot in that plan, never fire on raw field-word match alone. gender/nationality default IGNORE. Primary qualification slice narrows to job/education/location; age only for genuine objective life-stage constraints. Rebuild an owner-unique, non-redundant MP Panel V1.1 (>=6 real CONSTRAIN opportunities, >=4 IGNORE controls), machine-audited before any generation request."
+    },
+    "step_4_selector_honesty": {
+      "status": "NOT_STARTED",
+      "scope": "The scale-stable opportunity heads are not formal selectors. MP and MS are not promoted. ME's 97.1% ON rate is degenerate, not qualified. Refreeze a low-capacity selector per component that is grouped/cross-fitted, holds out an untouched confirmation split, beats prevalence and transparent-rule baselines, transports non-degenerately externally (not 0% or near-always-on), and never reads external outcomes to tune its threshold."
+    },
+    "step_5_formal_chain": {
+      "status": "NOT_STARTED",
+      "scope": "Only after all three head treatments AND their selectors pass development gates: ESConv (RS vs always-off/fixed-high/rule/cost-and-ON-rate-matched-random), EvoEmo (RS/MP/MS individually, jointly, and full-minus-component vs every fixed/rule/random/cost-matched/oracle baseline), ES-MemEval (no-memory/full-history/official-RAG-Top4/typed-fixed-high/learned-PM, reporting MP and MS marginal contribution separately). Each track clustered by dialogue or user; no cross-task pooling."
+    },
+    "step_6_me_bounded_rescue": {
+      "status": "NOT_STARTED",
+      "scope": "Zero-API only: repair compiler-valid candidate eligibility prefiltering and measure the natural ON-rate. Only if a non-degenerate selector results does a small Function panel follow; otherwise ME stays LIMITED_SURFACE/SELECTOR_SUPPORT, fixed OFF, and does not block the RS+MP+MS main line."
+    }
+  },
+  "forbidden_reinterpretations": [
+    "MS's FUNCTION_SUBGATE_POSITIVE is not MS_pass or full development_promotion",
+    "MP's PANEL_TREATMENT_INTERFACE_INCONCLUSIVE is not a formal MP head failure and does not block a redesigned panel",
+    "reusing any development-panel result as external-track confirmatory evidence",
+    "post-hoc sample deletion or re-stratification after seeing generation outcomes",
+    "presenting a controlled-selector or development-panel score as an external track pass",
+    "changing a development or formal gate's threshold after seeing the result it would otherwise fail",
+    "treating any single-panel, small-n, first-party or even one independent-reviewer finding as sufficient for a formal head pass"
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "judge_calls": 0,
+    "external_execution": false,
+    "zero_api_correction_and_manifest_only": true
+  }
+}

@@ -58,7 +58,7 @@ def test_panel_v2_has_use_ask_ignore_and_critical_controls() -> None:
 def test_experiment_registry_changes_no_method_version() -> None:
     registry = _read(REGISTRY)
     assert registry["method_boundary"]["new_method_version_created"] is False
-    assert registry["active_revision"] == "FUNCTION_OBSERVABILITY_V2_AND_FOUR_ARM_PANEL_V2"
+    assert registry["active_revision"] == "PANEL_V2_OWNER_CLUSTER_CORRECTION_AND_ROADMAP"
     active = next(row for row in registry["revisions"] if row["version"] == registry["active_revision"])
     assert active["live_calls_authorized"] == 0
 
