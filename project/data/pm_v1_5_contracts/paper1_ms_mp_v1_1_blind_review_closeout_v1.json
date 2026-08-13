@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-mp-v1-1-blind-review-closeout-v1",
+  "date": "2026-08-13",
+  "status": "COMPLETE_50_OF_50_FIRST_VERSION_DEVELOPMENT_PROMOTION_NOT_MET",
+  "run_identity": "ee31b18ad6792ebef2d21aab2b8bef75bc5eff63ce8829f3a960f14bed7c3c72",
+  "execution": {
+    "planned_logical_calls": 50,
+    "completed_valid_calls": 50,
+    "quality_calls": 13,
+    "source_aware_risk_calls": 26,
+    "function_calls": 11,
+    "finish_reason_complete": 50,
+    "failed_calls": 0,
+    "prompt_tokens": 50847,
+    "completion_tokens": 8740,
+    "total_tokens": 59587,
+    "observed_cost_usd": 0.516435,
+    "approved_hard_cap_usd": 1.1
+  },
+  "frozen_gate_result": {
+    "MS": {
+      "quality": {"wins": 1, "losses": 3, "neutral": 2, "pass": false},
+      "risk": {"material_increase_cases": 0, "critical_cases": 0, "pass": true},
+      "function": {"clear": 0, "clear_or_plausible": 0, "judged": 6, "pass": false},
+      "ignore_integrity": {"leaks": 0, "pass": true},
+      "pass_this_round": false
+    },
+    "MP": {
+      "quality": {"wins": 5, "losses": 1, "neutral": 1, "pass": true},
+      "risk": {"material_increase_cases": 0, "critical_cases": 0, "pass": true},
+      "function": {"clear": 0, "clear_or_plausible": 0, "judged": 5, "pass": false},
+      "pass_this_round": false
+    },
+    "both_pass": false,
+    "label": "FIRST_VERSION_DEVELOPMENT_PROMOTION_NOT_MET"
+  },
+  "root_cause_read": {
+    "MS": "This is not a Risk failure. The source-aware reviewer found no material/critical increase, but all six prospective USE/ASK replies showed zero observable source contribution and Quality was 1-3. Several curated sources were novel yet not response-useful (for example, a name-only fact or a past episode unrelated to the current support move). The V1.1 curation operationalized absence-from-current-context more strongly than counterfactual response utility, while the Llama executor retained discretion to ignore the resource. Candidate usefulness and executor realization therefore both require repair before selector work.",
+    "MP": "Quality improved 5-1 with no Risk increase, but all five CONSTRAIN cases had zero profile-attributable incremental constraint. The generic job/education facts did not uniquely change wording, burden, timing, format, logistics, or a practical option. Query-level invitation to give advice was insufficient to guarantee a modifiable baseline slot. A plan-first, constraint-second interface with genuinely actionable profile fields is required.",
+    "not_supported": [
+      "treating the MP Quality result alone as MP Function or MP_pass",
+      "treating safe nonuse as MS Function or MS_pass",
+      "proceeding to selector freezing or any formal external test",
+      "lowering the frozen Function threshold or deleting cases",
+      "re-running this consumed identity"
+    ]
+  },
+  "next_required_repair": {
+    "MS": "Prospectively curate source-current pairs by counterfactual response-plan delta, not novelty alone; require a safe, relevant response move that cannot be obtained from full current context, then make the pre-decided USE/ASK move explicit in the response plan while keeping IGNORE resources physically absent.",
+    "MP": "Freeze a concrete R0 response plan first, identify an actual modifiable slot, then apply only actionable profile constraints to that slot; exclude generic occupation/education facts that cannot support a unique bounded constraint.",
+    "sequencing": "Build new owner-unique zero-API repair packets and frozen gates first. Do not fit selectors, rescue ME, or enter ESConv/EvoEmo/ES-MemEval until both treatments demonstrate Quality, Risk, and Function."
+  },
+  "artifacts": {
+    "results_private_jsonl_sha256": "6b8e26d8b8c28c2bde0f01bbb16569eaf995ea096be946bc70d267b5a50ac740",
+    "raw_provider_outputs_before_validation_jsonl_sha256": "9ff599745284358ad6c18550a6976137107d631ad85aa03c2c0f5eed711cca9e",
+    "summary_json_sha256": "00153f899ab71b37b8dee38e8d536c8844ffbe1710a25666373d61b3f83f7ca1",
+    "aggregate_report_json_sha256": "08410202aed2420f74aefd33a34235c37123e6508bd485bd08c47f3b8835f23f"
+  }
+}

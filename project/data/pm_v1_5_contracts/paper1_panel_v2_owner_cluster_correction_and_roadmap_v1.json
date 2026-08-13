@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-paper1-panel-v2-owner-cluster-correction-and-roadmap-v1",
   "date": "2026-08-13",
-  "status": "ACTIVE_ZERO_API_CORRECTED_LABELS_JUDGE_MANIFEST_PENDING_APPROVAL",
+  "status": "MS_MP_V1_1_BLIND_REVIEW_COMPLETE_TREATMENT_REPAIR_REQUIRED",
   "purpose": "Correct two overclaims from the 325l/327l/328l (MP) and 326l/329l/330l (RS/MS) rounds, then sequence the full path to an honest RS_pass/MP_pass/MS_pass and three external closures. No relabeled result may be read as a formal head pass or a formal head failure.",
   "owner_cluster_violation": {
     "requirement_violated": "panel population must be at most one state per owner (paper1_mp_rule_based_step1_v1.json#panel_v1_requirements.population; paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json#panel_v2_requirements.population)",
@@ -91,17 +91,26 @@
       "development_gate": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_development_gate_v1.json"
     },
     "step_3_5_ms_mp_blind_review": {
-      "status": "EXACT_50_CALL_MANIFEST_READY_EXPLICIT_USER_APPROVAL_REQUIRED",
+      "status": "EXECUTED_50_OF_50_FIRST_VERSION_DEVELOPMENT_PROMOTION_NOT_MET",
       "manifest": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_manifest_20260813/report.json",
       "execution_phase": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_blind_review_execution_phase_v1.json",
       "run_identity": "ee31b18ad6792ebef2d21aab2b8bef75bc5eff63ce8829f3a960f14bed7c3c72",
       "calls": 50,
       "estimated_usd": 0.894,
       "absolute_usd_cap": 1.1,
+      "observed_cost_usd": 0.516435,
+      "closeout": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_blind_review_closeout_v1.json",
+      "result": "MS Quality 1-3-2 fail, Risk pass, Function 0/6 fail, IGNORE integrity pass. MP Quality 5-1-1 pass, Risk pass, Function 0/5 fail. Neither head passes development promotion.",
       "scope": "13 blind Quality + 26 full-context source-aware Risk + 11 Function. Frozen development gate only; no formal head or external-test claim."
     },
+    "step_3_6_treatment_interface_repair": {
+      "status": "NEXT_ZERO_API_DESIGN_REQUIRED",
+      "MS": "Replace novelty-driven CLEAR_USE curation with counterfactual response-plan utility and make the safe selected USE/ASK move explicit in the response plan; keep IGNORE physical exclusion.",
+      "MP": "Freeze a concrete R0 plan and require an actual modifiable slot before applying an actionable profile constraint; generic job/education fields without a unique delta are ineligible.",
+      "forbidden": "No threshold relaxation, case deletion, identity rerun, selector fit, ME rescue, or external test before fresh treatment qualification."
+    },
     "step_4_selector_honesty": {
-      "status": "NOT_STARTED",
+      "status": "BLOCKED_ON_MS_MP_TREATMENT_FUNCTION",
       "scope": "The scale-stable opportunity heads are not formal selectors. MP and MS are not promoted. ME's 97.1% ON rate is degenerate, not qualified. Refreeze a low-capacity selector per component that is grouped/cross-fitted, holds out an untouched confirmation split, beats prevalence and transparent-rule baselines, transports non-degenerately externally (not 0% or near-always-on), and never reads external outcomes to tune its threshold."
     },
     "step_5_formal_chain": {

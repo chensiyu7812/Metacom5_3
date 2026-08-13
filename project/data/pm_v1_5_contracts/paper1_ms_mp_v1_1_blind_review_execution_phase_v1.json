@@ -1,7 +1,7 @@
 {
   "protocol": "pm-v1.5-paper1-ms-mp-v1-1-blind-review-execution-phase-v1",
   "date": "2026-08-13",
-  "status": "EXACT_50_CALL_PLAN_READY_EXPLICIT_USER_APPROVAL_REQUIRED",
+  "status": "CONSUMED_COMPLETE_50_OF_50_DEVELOPMENT_PROMOTION_NOT_MET",
   "purpose": "Independently judge the completed MS/MP V1.1 generation rounds against the development gate frozen before generation. Full context is used throughout; Risk is source-aware; MP Function is a position-balanced same-state pair test because MP must constrain without reciting its profile source.",
   "bindings": [
     {"role": "manifest_report", "path": "outputs/pm_v1_5_paper1_ms_mp_v1_1_blind_review_manifest_20260813/report.json", "sha256": "45c7d237126159604c3786a411fa5c998d6fac8a9d9d7712732c1d11b2db1236"},
@@ -38,9 +38,10 @@
   },
   "authorization": {
     "judge_calls": 0,
+    "judge_calls_consumed": 50,
     "generator_calls": 0,
     "external_test_calls": 0,
-    "note": "Prepared and frozen only. No call until exact identity and $1.10 cap are explicitly approved."
+    "note": "The exact approved 50 calls completed. Identity is permanently consumed; no rerun or additional call is authorized. Frozen development promotion was not met."
   },
   "stop_rules": [
     "Provider receives only the public_call allowlist; private arm and telemetry fields never cross the boundary.",
