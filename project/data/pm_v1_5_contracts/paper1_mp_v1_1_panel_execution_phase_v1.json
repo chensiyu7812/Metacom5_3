@@ -1,0 +1,28 @@
+{
+  "protocol": "pm-v1.5-paper1-mp-v1-1-panel-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_15_MP_V1_1_CALLS_AUTHORIZED_AT_APPROVAL_TIME_ONLY",
+  "purpose": "Second real MP generation round (step_3_root_fix_mp), curated only on states where the query plausibly invites a concrete, modifiable suggestion/logistics slot, owner-unique across the whole panel, full visible_current_session_dialogue as context. Reuses the frozen Llama generator, zero cost.",
+  "input_bindings": [
+    {"role": "panel_report", "path": "outputs/pm_v1_5_paper1_mp_v1_1_panel_20260813/report.json", "sha256": "1573171c1f898f0386164dfcdfd7c32144fed7fe31ac3102ce87e7ce8fea60e1"},
+    {"role": "development_cases", "path": "outputs/pm_v1_5_paper1_mp_v1_1_panel_20260813/development_cases_private.jsonl", "sha256": "8cb7120acdc6ec0feb8a9de527cd7b9b1120c45182e14cd5b5bfbb540daa08ef"},
+    {"role": "execution_config", "path": "configs/paper1_mp_v1_1_panel_execution_v1.json", "sha256": "00a5227aaab28048e25762bbea15e173e3b338b75b1e5eda024c6e35a30fce71"}
+  ],
+  "implementation_bindings": [
+    {"role": "component_general_v3", "path": "src/metacom_pm/v1_5_component_general_v3.py", "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"},
+    {"role": "response_program_v4", "path": "src/metacom_pm/v1_5_response_program_v4.py", "sha256": "17ca4c5efe5c521046fa37493d269b02d05334b81db5fbd1756eff3868ba8534"},
+    {"role": "mp_profile_delta_templates_v1", "path": "src/metacom_pm/v1_5_mp_profile_delta_templates_v1.py", "sha256": "f19343d1565e2ad5b2638c60a2886c80174b05f8fba5c9f94ff7e29e4b568adc"},
+    {"role": "text_dialogue_helper", "path": "src/metacom_pm/text.py", "sha256": "7a8c41fa5cb2479de90f9cd69c404896593e77bc9113deb9b1daf97f5d2f23bb"}
+  ],
+  "execution": {
+    "component": "MP-v1.1", "generator": "meta/llama-3.1-8b-instruct", "states": 8,
+    "logical_calls": 15, "run_identity": "a600edec699e10891ec47eee24deca1ff2db7ad6337b588f195502856985825b",
+    "output_directory": "outputs/pm_v1_5_paper1_mp_v1_1_panel_live_20260813", "absolute_usd_cap": 0.0
+  },
+  "authorization": {"control_review_api_calls": 0, "generator_calls": 15, "training_label_change": false, "pm_fit_or_threshold_change": false, "public_201_calls_authorized": 0, "external_test_calls": false},
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This is a development panel, not formal MP_pass -- results feed the frozen MP v1.1 development gate, not a qualification claim."
+  ]
+}

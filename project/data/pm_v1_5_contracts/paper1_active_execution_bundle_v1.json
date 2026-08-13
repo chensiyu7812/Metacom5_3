@@ -25,13 +25,13 @@
     "compiler_version": "R0_DELTA_COMPILER_V4_0"
   },
   "current_phase": {
-    "id": "RS_MS_PANEL_V2_BLIND_REVIEW_V2_CLOSED_MIXED_RESULT",
-    "status": "RS_PASS_THIS_ROUND_MS_AND_INTERACTION_FAIL_ON_RISK_SEE_CLOSEOUT",
+    "id": "MS_MP_V1_1_PANELS_BUILT_AWAITING_APPROVAL",
+    "status": "CONTEXT_TRUNCATION_CORRECTED_ROOT_FIXES_APPLIED_TWO_PANELS_DRY_RUN_VERIFIED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json",
-      "sha256": "772c06ba32223b102b562694cd330d6f11ced0bd6a7a1d67109ea198ff74615b"
+      "path": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_development_gate_v1.json",
+      "sha256": "9de73c0bd2abeb2061366d1d8bd0bc9aa8ebc355ec6e2de4e58b0b3ce1a78793"
     },
-    "next_scientific_action": "The approved 101-call blind review completed 101/101 at $0.833 (under the $1.35 cap). Real, owner-clustered result against the frozen gate: rs_pass_this_round=true (Quality 5 owner-wins vs 4 losses, Risk clean, Function 4 CLEAR/7 CLEAR-or-PLAUSIBLE owners). ms_pass_this_round=false -- ms_risk failed: the risk reviewer, blind to the private MS source exactly as any real reader would be, flagged BOTH of MS's own CLEAR Function cases (evo::p18 California-job-offer, evo::p8 Emily-connection) as introducing an unsupported personal fact at material severity -- the very mechanism that makes MS's contribution observable (true non-visible information) is indistinguishable to a blind reader from an invented detail. interaction_pass_this_round=false -- ms_rs_combined_risk failed critically on evo::p6: a topical-mismatch negative control (an infidelity-temptation MS source, unrelated to a work-opportunity question) that correctly held to only minor baseline risk when MS fired alone, LEAKED the mismatched sensitive content directly into the reply (\"tempted to act on some impulses,\" \"feeling blindsided\") once RS also fired, at critical severity. Full quotes and rationale in paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json. Overall label: FIRST_VERSION_DEVELOPMENT_PROMOTION_PARTIAL. Per the frozen gate's own next_if_partial_or_not_met rule: report exactly what failed (done here and in the closeout); do not re-run with an adjusted threshold without a new explicit user decision. RS may proceed toward step_4 selector honesty once that step starts; MS needs a source-disclosure or unsupported-fact-mitigation redesign before development promotion; the evo::p6 RS-MS negative-control leak is a priority safety finding to investigate before any joint RS+MS composition claim.",
+    "next_scientific_action": "User-directed correction accepted and root-fixed, zero-API only: (1) paper1_rs_ms_panel_v2_context_truncation_correction_v1.json reclassifies MS from the 101-call round as CONTEXT_TRUNCATED_MEASUREMENT_INCONCLUSIVE (not a formal failure) -- evo::p18/evo::p8's risk/Function labels were computed against current_user_text only, but both cited facts (California, Emily) were already stated earlier in the same session; evo::p6's MS+RS leak is confirmed unaffected and stands as a real finding. (2) New v1_5_source_aware_risk_blind_review.py shows the reviewer the full dialogue AND authorized source together across six distinct dimensions, replacing the source-blind instrument that caused the truncation confound. (3) New v1_5_ms_pre_decision.py root-fixes the evo::p6 leak mechanism: MS USE/ASK/IGNORE is decided before compilation; IGNORE candidates are never constructed, so their source is physically absent from every arm including MS+RS -- proven directly against the real leaked p6 source and RS card via test_v1_5_ms_pre_decision.py. (4) MS Panel V1.1 (9 states, 9 owners, 30 calls) and MP Panel V1.1 (8 states, 8 owners, 15 calls) rebuilt with full visible_current_session_dialogue, owner-uniqueness verified across the WHOLE panel, and MS's panel deliberately reuses the exact leaked p6 source on a fresh state as a live regression probe. Both dry-run verified. (5) paper1_ms_mp_v1_1_development_gate_v1.json freezes the pass criteria (owner-clustered Quality/Risk/Function per head, plus a hard MS ignore-integrity phrase-leak scan) before any call. Present both run identities, 45 total calls, $0 cost (frozen Llama), and all zero-API checks for approval; no generator or judge call is authorized yet. If both heads pass this gate, proceed directly to step_4 selector honesty and the formal external chain -- do not rescue ME first.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -482,7 +482,7 @@
     {
       "role": "panel_v2_owner_cluster_correction_and_roadmap",
       "path": "data/pm_v1_5_contracts/paper1_panel_v2_owner_cluster_correction_and_roadmap_v1.json",
-      "sha256": "45a8c16c10900c7b33950b6af79bf427833c6929081d0ef75a5dd2287c066d06"
+      "sha256": "36faca5d26db69d45bd9b708f6106f14d6fba683fdc63dab31e2b59de757e377"
     },
     {
       "role": "rs_ms_panel_v2_blind_review_v2_execution_phase",
@@ -503,6 +503,36 @@
       "role": "rs_ms_panel_v2_blind_review_v2_closeout",
       "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json",
       "sha256": "772c06ba32223b102b562694cd330d6f11ced0bd6a7a1d67109ea198ff74615b"
+    },
+    {
+      "role": "context_truncation_correction",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_context_truncation_correction_v1.json",
+      "sha256": "14ef9219de73fe0371830bbe16b98e643cd7f5fb67e13381bc06739c2855b746"
+    },
+    {
+      "role": "ms_mp_v1_1_development_gate",
+      "path": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_development_gate_v1.json",
+      "sha256": "9de73c0bd2abeb2061366d1d8bd0bc9aa8ebc355ec6e2de4e58b0b3ce1a78793"
+    },
+    {
+      "role": "ms_v1_1_panel_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_ms_v1_1_panel_execution_phase_v1.json",
+      "sha256": "d6ed3428328527a42fe55d2ca18aed56a465411af24036a77a5600efb679d6be"
+    },
+    {
+      "role": "mp_v1_1_panel_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_mp_v1_1_panel_execution_phase_v1.json",
+      "sha256": "248a1a905a8bef4b4fff8277089783236517ecbe2d3838323d467bb23fb60ea3"
+    },
+    {
+      "role": "ms_v1_1_panel_report",
+      "path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/report.json",
+      "sha256": "d305984d8d18f64720e9f2a1de4177341ab0a96f394cc761a409d3a298f76764"
+    },
+    {
+      "role": "mp_v1_1_panel_report",
+      "path": "outputs/pm_v1_5_paper1_mp_v1_1_panel_20260813/report.json",
+      "sha256": "1573171c1f898f0386164dfcdfd7c32144fed7fe31ac3102ce87e7ce8fea60e1"
     }
   ],
   "legacy_import_denylist": [

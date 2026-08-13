@@ -40,14 +40,18 @@ def test_six_step_roadmap_present_and_only_step_1_2_active():
         "step_1_correction",
         "step_2_blind_review_manifest",
         "step_2_5_v2_manifest_and_frozen_gate",
+        "step_2_6_context_truncation_correction",
         "step_3_root_fix_mp",
+        "step_3_ms_root_fix",
         "step_4_selector_honesty",
         "step_5_formal_chain",
         "step_6_me_bounded_rescue",
     }
     assert roadmap["step_2_blind_review_manifest"]["status"] == "SUPERSEDED_BY_STEP_2_5_V2_MANIFEST"
-    for key in ("step_3_root_fix_mp", "step_4_selector_honesty", "step_5_formal_chain", "step_6_me_bounded_rescue"):
+    for key in ("step_4_selector_honesty", "step_5_formal_chain", "step_6_me_bounded_rescue"):
         assert roadmap[key]["status"] == "NOT_STARTED"
+    for key in ("step_3_root_fix_mp", "step_3_ms_root_fix"):
+        assert roadmap[key]["status"] == "V1_1_PANEL_BUILT_AWAITING_APPROVAL"
 
 
 def test_forbidden_reinterpretations_cover_both_corrected_labels():

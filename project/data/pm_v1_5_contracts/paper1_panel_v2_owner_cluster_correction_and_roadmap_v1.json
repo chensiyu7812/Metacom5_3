@@ -60,11 +60,30 @@
       "closeout": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json",
       "run_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
       "observed_cost_usd": 0.833,
-      "result": "rs_pass_this_round=true. ms_pass_this_round=false (ms_risk failed: material unsupported-personal-fact risk on evo::p18 and evo::p8, MS's own two CLEAR Function cases). interaction_pass_this_round=false (ms_rs_combined_risk failed critically on evo::p6: a topical-mismatch negative control held for MS alone but leaked sensitive irrelevant content -- infidelity-temptation source content into a work-opportunity reply -- once RS also fired). See closeout for full evidence and quotes."
+      "result": "rs_pass_this_round=true (not yet formally confirmed, see step_2_6 -- RS calls also used current_user_text only). ms_pass_this_round was initially computed false (ms_risk failed on evo::p18/evo::p8), but step_2_6 found this was a context-truncation measurement bug, not a real MS failure -- see corrected status there. interaction_pass_this_round=false remains valid and unaffected: ms_rs_combined_risk failed critically on evo::p6, a topical-mismatch negative control that leaked sensitive irrelevant content once RS also fired, confirmed independent of the truncation bug."
+    },
+    "step_2_6_context_truncation_correction": {
+      "status": "ACTIVE_ZERO_API_MS_RECLASSIFIED_CONTEXT_TRUNCATED_MEASUREMENT_INCONCLUSIVE",
+      "scope": "All 101-call Quality/Risk/Function calls, and the panel's own CLEAR_USE curation, used only current_user_text instead of the full visible_current_session_dialogue. evo::p18 (California offer) and evo::p8 (Emily) both had their 'unsupported'/'CLEAR' content already stated earlier in the same session -- neither the risk flag nor the Function label can be trusted. evo::p6's leak is unaffected (verified: nothing related appears anywhere in its full session) and remains a confirmed MS+RS composition failure. MS status corrected to CONTEXT_TRUNCATED_MEASUREMENT_INCONCLUSIVE, explicitly not a formal failure.",
+      "contract": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_context_truncation_correction_v1.json",
+      "forward_policy": "Every future generator/selector/Quality/Risk/Function call must use the full visible_current_session_dialogue. Function CLEAR/PLAUSIBLE requires confirming content is not recoverable from the FULL session, not just the latest turn."
     },
     "step_3_root_fix_mp": {
-      "status": "NOT_STARTED",
-      "scope": "Freeze the R0 response plan first; MP may only transform an already-present concrete wording/burden/timing/format/logistics slot in that plan, never fire on raw field-word match alone. gender/nationality default IGNORE. Primary qualification slice narrows to job/education/location; age only for genuine objective life-stage constraints. Rebuild an owner-unique, non-redundant MP Panel V1.1 (>=6 real CONSTRAIN opportunities, >=4 IGNORE controls), machine-audited before any generation request."
+      "status": "V1_1_PANEL_BUILT_AWAITING_APPROVAL",
+      "operationalization": "Zero-API panel curation selects CONSTRAIN candidates only where the query text plausibly invites a concrete suggestion/logistics/scheduling response (a full generation-time R0-plan-freeze architecture was out of scope for a zero-API round). gender/nationality excluded (default IGNORE); age excluded (no genuine life-stage-constraint example found this pass).",
+      "panel_path": "outputs/pm_v1_5_paper1_mp_v1_1_panel_20260813/report.json",
+      "execution_phase": "data/pm_v1_5_contracts/paper1_mp_v1_1_panel_execution_phase_v1.json",
+      "run_identity": "a600edec699e10891ec47eee24deca1ff2db7ad6337b588f195502856985825b",
+      "honest_scope": "5 CONSTRAIN states (job x4, education x1), short of the original >=6/3-field target -- location field yielded no genuine concrete-slot candidates in this corpus on manual review."
+    },
+    "step_3_ms_root_fix": {
+      "status": "V1_1_PANEL_BUILT_AWAITING_APPROVAL",
+      "scope": "Root-fixes both bugs from the 101-call closeout: full visible_current_session_dialogue used throughout (curation and compilation), and MS USE/ASK/IGNORE pre-decided before compilation (v1_5_ms_pre_decision.py) so IGNORE sources are physically absent from every arm including MS+RS. The exact evo::p6 leaked source is reused verbatim on a fresh state as a live regression probe.",
+      "panel_path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/report.json",
+      "execution_phase": "data/pm_v1_5_contracts/paper1_ms_v1_1_panel_execution_phase_v1.json",
+      "run_identity": "105908227c3dc981349962bb6bc3a26c9edf21ae7289aaa975eaa41c79d06302",
+      "honest_scope": "1 ASK case, no dedicated stale/conflict case found this pass -- disclosed, not fabricated.",
+      "development_gate": "data/pm_v1_5_contracts/paper1_ms_mp_v1_1_development_gate_v1.json"
     },
     "step_4_selector_honesty": {
       "status": "NOT_STARTED",

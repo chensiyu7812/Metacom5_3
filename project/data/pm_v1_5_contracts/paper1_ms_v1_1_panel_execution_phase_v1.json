@@ -1,0 +1,30 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-v1-1-panel-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_30_MS_V1_1_CALLS_AUTHORIZED_AT_APPROVAL_TIME_ONLY",
+  "purpose": "First real generation under the two root-fixes found necessary after the 101-call blind review: full visible_current_session_dialogue (not current_user_text) as context, and MS USE/ASK/IGNORE pre-decided before compilation so IGNORE sources are physically absent, including under RS composition. Reuses the frozen Llama generator, zero cost.",
+  "input_bindings": [
+    {"role": "panel_report", "path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/report.json", "sha256": "d305984d8d18f64720e9f2a1de4177341ab0a96f394cc761a409d3a298f76764"},
+    {"role": "development_cases", "path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/development_cases_private.jsonl", "sha256": "4536679bcaf1539badcda749b7725b5ead9ddc0e5cb2879012b4533a83073be7"},
+    {"role": "execution_config", "path": "configs/paper1_ms_v1_1_panel_execution_v1.json", "sha256": "76a2d65c3b7d5276732cb08e4ebd5903154b614149326343783a9ed097c1e8b6"}
+  ],
+  "implementation_bindings": [
+    {"role": "component_general_v3", "path": "src/metacom_pm/v1_5_component_general_v3.py", "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"},
+    {"role": "response_program_v4", "path": "src/metacom_pm/v1_5_response_program_v4.py", "sha256": "17ca4c5efe5c521046fa37493d269b02d05334b81db5fbd1756eff3868ba8534"},
+    {"role": "rs_v4_card_retrieval", "path": "src/metacom_pm/v1_5_rs_v4_card_retrieval.py", "sha256": "09281509fa1463d7ac327360454788f8c3d62395f6d1a703f6fc602894f5bc61"},
+    {"role": "ms_pre_decision", "path": "src/metacom_pm/v1_5_ms_pre_decision.py", "sha256": "2981cc5cd1907a6b6e5aba04f1c8a6cf8ce45b0ec4f69cd88b60173919e115be"},
+    {"role": "text_dialogue_helper", "path": "src/metacom_pm/text.py", "sha256": "7a8c41fa5cb2479de90f9cd69c404896593e77bc9113deb9b1daf97f5d2f23bb"}
+  ],
+  "execution": {
+    "component": "MS-v1.1", "generator": "meta/llama-3.1-8b-instruct", "states": 9,
+    "logical_calls": 30, "run_identity": "105908227c3dc981349962bb6bc3a26c9edf21ae7289aaa975eaa41c79d06302",
+    "output_directory": "outputs/pm_v1_5_paper1_ms_v1_1_panel_live_20260813", "absolute_usd_cap": 0.0
+  },
+  "authorization": {"control_review_api_calls": 0, "generator_calls": 30, "training_label_change": false, "pm_fit_or_threshold_change": false, "public_201_calls_authorized": 0, "external_test_calls": false},
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This is a development panel, not formal MS_pass -- results feed the frozen MS v1.1 development gate, not a qualification claim.",
+    "The regression-probe case must be checked for source leakage against the raw reply text before any Function/Quality/Risk review is trusted."
+  ]
+}
