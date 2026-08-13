@@ -25,13 +25,13 @@
     "compiler_version": "R0_DELTA_COMPILER_V4_0"
   },
   "current_phase": {
-    "id": "PANEL_V2_OWNER_CLUSTER_CORRECTION_JUDGE_MANIFEST_PENDING",
-    "status": "LABELS_CORRECTED_MP_INCONCLUSIVE_MS_SUBGATE_POSITIVE_BLIND_REVIEW_MANIFEST_AWAITING_APPROVAL",
+    "id": "RS_MS_PANEL_V2_BLIND_REVIEW_V2_EXECUTION",
+    "status": "EXACT_101_CALLS_BOUND_AWAITING_EXPLICIT_APPROVAL_V1_89CALL_IDENTITY_SUPERSEDED",
     "parent_phase": {
-      "path": "data/pm_v1_5_contracts/paper1_panel_v2_owner_cluster_correction_and_roadmap_v1.json",
-      "sha256": "05729179e62e493cc3b834a4b47637b953f1ef84d5745426ceabd6e826c66180"
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_execution_phase_v1.json",
+      "sha256": "89b1803b048e18b2ac0881a012c8a82199b1aaaafc7e7e7916f698be4b7f025b"
     },
-    "next_scientific_action": "User-directed correction: both panels violated the one-state-per-owner population requirement (MP: evo::p2 and evo::p9 each contribute 2 states; RS/MS: evo::p1 contributes 2). Labels corrected -- MP is PANEL_TREATMENT_INTERFACE_INCONCLUSIVE (not a head failure: none of the 6 M0+R0 replies contained a concrete slot for MP to modify, so the panel cannot distinguish 'MP has no effect' from 'MP was never given a modifiable target'). MS is FUNCTION_SUBGATE_POSITIVE (not development_promotion: only the Function sub-gate was checked, Quality/Risk/same_stack_outcome were not). See paper1_panel_v2_owner_cluster_correction_and_roadmap_v1.json for the full six-step roadmap to an honest RS_pass/MP_pass/MS_pass. Immediate next step (step 2 of 6): a zero-API blind-review judge manifest reusing the existing 50 real RS/MS replies (no new generation) -- RS Quality+strategy-realization+absolute Risk, MS Quality+Risk+independent Function re-verification, MS+R0-vs-MS+RS interaction crowd-out check, owner-clustered analysis. Present exact manifest, run identity, call count and cost cap for approval before any judge call.",
+    "next_scientific_action": "User accepted the Step 1 correction and directed a redesigned Step 2.5, all zero-API: the prior 89-call/$1.05 manifest (run_identity 4ee5607d...) is registered SUPERSEDED_UNUSED in outputs/pm_v1_5_paid_run_release.json#stale_unapproved_dry_runs and must never be approved. A new 101-call manifest (25 Quality + 50 Risk incl. the 12 new MS+RS absolute-risk calls + 26 Function/interaction, the interaction check now a blind pairwise MS+R0-vs-MS+RS comparison with PRESERVED/STRENGTHENED/WEAKENED/NONE_IN_EITHER/UNCERTAIN verdicts instead of two single-point labels) is fully bound in this execution phase: every input/message/schema/runner-source hash, endpoint/model, seed policy, temperature, max_output_tokens, output directory, a hard $1.35 cost cap, and explicit stop rules. The runner enforces a provider-safety boundary (only messages+schema+temperature+seed+max_output_tokens ever reach client.chat(); case_id/arm/owner_cluster never do). Frozen owner-clustered development-gate criteria and a closeout template are bound alongside (see gate contract). This round uses only current_user_text, not the frozen full expected-visible-context, and is explicitly scoped to development-gate use only -- never a substitute for the three formal external experiments. Present run identity c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4, 101 calls, $1.35 cap, and all zero-API checks for approval; no judge call is authorized yet. If RS/MS pass the frozen gate, proceed directly to MP root-fix and the three formal external chains -- do not rescue ME first.",
     "authorization": {
       "api_calls": 0,
       "training_labels": 0,
@@ -482,7 +482,22 @@
     {
       "role": "panel_v2_owner_cluster_correction_and_roadmap",
       "path": "data/pm_v1_5_contracts/paper1_panel_v2_owner_cluster_correction_and_roadmap_v1.json",
-      "sha256": "05729179e62e493cc3b834a4b47637b953f1ef84d5745426ceabd6e826c66180"
+      "sha256": "4da28139b96ab6e7514f0e8a3903432167d64735b173b32d6e0f1bb0b3a05d83"
+    },
+    {
+      "role": "rs_ms_panel_v2_blind_review_v2_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_execution_phase_v1.json",
+      "sha256": "89b1803b048e18b2ac0881a012c8a82199b1aaaafc7e7e7916f698be4b7f025b"
+    },
+    {
+      "role": "rs_ms_panel_v2_blind_review_v2_development_gate",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_development_gate_v1.json",
+      "sha256": "76b5f18ebfc5669caa06449d384fcc12b233419417711ea47a987391afee67fc"
+    },
+    {
+      "role": "rs_ms_panel_v2_blind_review_v2_closeout_template",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_template_v1.json",
+      "sha256": "c93297957e16073e951c53dd5f9fe70f33904caa7ffccd1e8cb3e19ee799d288"
     }
   ],
   "legacy_import_denylist": [

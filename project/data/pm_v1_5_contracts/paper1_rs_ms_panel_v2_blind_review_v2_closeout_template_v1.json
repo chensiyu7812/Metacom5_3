@@ -1,0 +1,42 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-panel-v2-blind-review-v2-closeout-template-v1",
+  "status": "TEMPLATE_NOT_A_RESULT_FILL_ONLY_AFTER_334L_AGGREGATE_RUNS_ON_REAL_RESULTS",
+  "purpose": "Pin the closeout's shape before any judge call, so the eventual real closeout only fills in numbers already defined by the frozen gate contract -- it cannot redefine criteria, add new baselines, or drop an owner cluster after seeing results.",
+  "instructions_for_whoever_fills_this_in": [
+    "Copy outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_aggregate_20260813/report.json's criteria and verdict blocks verbatim into the fields below.",
+    "Do not edit any pass_rule, threshold, or owner-cluster membership found there.",
+    "State the label exactly as computed: FIRST_VERSION_DEVELOPMENT_PROMOTION_MET / _PARTIAL / _NOT_MET.",
+    "If PARTIAL, name exactly which of rs_pass_this_round / ms_pass_this_round / interaction_pass_this_round failed and quote the specific owner clusters and verdicts responsible.",
+    "Restate the scope_limitation (current_user_text only) verbatim -- this closeout can never be cited as an external-test pass.",
+    "State the next step exactly per the frozen gate: MET -> proceed to MP root-fix + formal external chain (not ME); PARTIAL/NOT_MET -> report exactly what failed, do not re-run with an adjusted threshold without a new explicit user decision."
+  ],
+  "fields_to_fill": {
+    "run_identity": null,
+    "completed_calls": null,
+    "aggregate_report_sha256": null,
+    "criteria": {
+      "rs_quality": null,
+      "ms_quality": null,
+      "rs_risk": null,
+      "ms_risk": null,
+      "rs_function": null,
+      "ms_function": null,
+      "ms_rs_interaction": null,
+      "ms_rs_combined_risk": null
+    },
+    "verdict": {
+      "rs_pass_this_round": null,
+      "ms_pass_this_round": null,
+      "interaction_pass_this_round": null,
+      "label": null
+    },
+    "scope_limitation_restated": null,
+    "next_action": null
+  },
+  "forbidden": [
+    "filling this in before 334l has run on real, complete (101/101) results",
+    "changing any criterion, threshold, or owner-cluster membership while filling this in",
+    "presenting the filled closeout as MS_pass, RS_pass, or a formal external-test result",
+    "omitting a PARTIAL or NOT_MET outcome or reframing it as a pass"
+  ]
+}

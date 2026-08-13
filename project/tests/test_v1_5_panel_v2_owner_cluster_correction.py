@@ -39,11 +39,13 @@ def test_six_step_roadmap_present_and_only_step_1_2_active():
     assert set(roadmap) == {
         "step_1_correction",
         "step_2_blind_review_manifest",
+        "step_2_5_v2_manifest_and_frozen_gate",
         "step_3_root_fix_mp",
         "step_4_selector_honesty",
         "step_5_formal_chain",
         "step_6_me_bounded_rescue",
     }
+    assert roadmap["step_2_blind_review_manifest"]["status"] == "SUPERSEDED_BY_STEP_2_5_V2_MANIFEST"
     for key in ("step_3_root_fix_mp", "step_4_selector_honesty", "step_5_formal_chain", "step_6_me_bounded_rescue"):
         assert roadmap[key]["status"] == "NOT_STARTED"
 

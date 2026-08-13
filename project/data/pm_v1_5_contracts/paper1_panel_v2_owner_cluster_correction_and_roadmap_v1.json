@@ -48,9 +48,19 @@
   "six_step_roadmap": {
     "step_1_correction": {"status": "IN_PROGRESS", "this_contract": true},
     "step_2_blind_review_manifest": {
-      "status": "MANIFEST_BUILT_AWAITING_APPROVAL",
-      "scope": "Reuse the existing 50 real RS/MS Panel V2 replies (no new generation). RS: M0+R0 vs M0+RS strategy realization + Quality, absolute Risk both arms. MS: M0+R0 vs MS+R0 Quality/Risk, independent blind re-verification of 5 CLEAR_USE + 2 ASK Function. Interaction: MS+R0 vs MS+RS crowd-out check on the same 7 states. Owner-clustered analysis (evo::p1's two states count as one cluster).",
-      "manifest_path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_20260813/report.json"
+      "status": "SUPERSEDED_BY_STEP_2_5_V2_MANIFEST",
+      "superseded_by": "step_2_5_v2_manifest_and_frozen_gate",
+      "manifest_path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_20260813/report.json (89-call, run_identity 4ee5607d..., registered SUPERSEDED_UNUSED)"
+    },
+    "step_2_5_v2_manifest_and_frozen_gate": {
+      "status": "MANIFEST_EXECUTION_CONTRACT_RUNNER_AGGREGATOR_CLOSEOUT_TEMPLATE_BUILT_AWAITING_APPROVAL",
+      "scope": "101-call manifest (25 Quality + 50 Risk incl. MS+RS + 26 Function/interaction, interaction now blind pairwise MS+R0-vs-MS+RS with PRESERVED/STRENGTHENED/WEAKENED/NONE_IN_EITHER/UNCERTAIN). Full execution contract binds every input/message/schema/runner-source hash, endpoint/model, seed/temperature/max_tokens, output directory, a $1.35 hard cost cap, and stop rules. Runner enforces a provider-safety boundary (only messages+schema+temperature+seed+max_output_tokens reach the provider). Frozen owner-clustered development-gate criteria and a closeout template are bound before any call.",
+      "manifest_path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/report.json",
+      "execution_phase": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_execution_phase_v1.json",
+      "development_gate": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_development_gate_v1.json",
+      "closeout_template": "data/pm_v1_5_contracts/paper1_rs_ms_panel_v2_blind_review_v2_closeout_template_v1.json",
+      "run_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+      "cost_cap_usd": 1.35
     },
     "step_3_root_fix_mp": {
       "status": "NOT_STARTED",
