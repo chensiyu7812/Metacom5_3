@@ -17,7 +17,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .contracts import StrategyCard
 from .text import lexical_score
-from .v1_5_candidate_discovery import final_typed_content_match_level
+from .v1_5_candidate_discovery import _mp_match_document, final_typed_content_match_level
 from .v1_5_v5_2_atomic_memory import compile_atomic_reusable_outcome
 from .v1_5_v5_3_candidate_layer_responsibility import (
     rs_mechanical_candidate_pool,
@@ -174,7 +174,9 @@ def rank_mp(
         )
         if scope_score <= 0.0:
             continue
-        surface_score = lexical_score(query, str(candidate["literal_text"]))
+        surface_score = lexical_score(
+            query, _mp_match_document(str(candidate["literal_text"]))
+        )
         ranked.append(
             (
                 float(scope_score),

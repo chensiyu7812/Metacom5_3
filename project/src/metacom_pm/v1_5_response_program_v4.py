@@ -67,8 +67,13 @@ def _resource_delta(resource: PlannedV3Resource) -> str:
         )
     if resource.component == "MP":
         return (
-            "Optional MP profile delta: silently adjust wording, burden, timing, or format only "
-            f"when the supported preference constrains this reply; never recite it. {common}"
+            "Optional MP profile delta: decide CONSTRAIN or IGNORE. CONSTRAIN only when the "
+            "stored profile fact changes a concrete wording, burden, timing, or format choice "
+            "you would otherwise have made differently; IGNORE when it would not change "
+            "anything concrete about this reply. A CONSTRAIN decision must be visible as an "
+            "actual change to that concrete choice, never only a mental note; never state, "
+            "recite, or imply the literal profile value itself. Declaring CONSTRAIN without a "
+            f"concrete change is the same as IGNORE. {common}"
         )
     if resource.component == "ME":
         return (

@@ -24,11 +24,12 @@ def _candidate(component: str) -> V3Candidate:
 
 
 def _plan(action: str):
+    mem, strategy = action.split("+")
     candidates = {
-        "MP": None,
-        "MS": _candidate("MS") if "MS" in action else None,
+        "MP": _candidate("MP") if "MP" in mem else None,
+        "MS": _candidate("MS") if "MS" in mem else None,
         "ME": None,
-        "RS": _candidate("RS") if "RS" in action else None,
+        "RS": _candidate("RS") if strategy == "RS" else None,
     }
     return build_component_general_plan_v3(
         requested_action_id=action,
@@ -71,6 +72,22 @@ def test_joint_arm_has_explicit_composition_order_without_erasing_r0():
     assert "current-turn and safety foundation; supported personal-memory delta; strategy delta" in prompt
     assert "Never duplicate content or erase R0" in prompt
     assert "Do not add generic warmth, questions, advice, or length merely because a resource is present" in prompt
+
+
+def test_mp_has_constrain_ignore_and_declared_without_change_is_ignore():
+    prompt = _prompt("MP+R0")
+    assert "decide CONSTRAIN or IGNORE" in prompt
+    assert "never only a mental note" in prompt
+    assert "Declaring CONSTRAIN without a concrete change is the same as IGNORE" in prompt
+    assert "never state, recite, or imply the literal profile value itself" in prompt
+
+
+def test_mp_and_ms_are_both_deltas_and_can_coexist_with_rs():
+    prompt = _prompt("MPMS+RS")
+    assert "Optional MP profile delta" in prompt
+    assert "Optional MS continuity delta" in prompt
+    assert "Optional RS strategy delta" in prompt
+    assert all(line in prompt for line in r0_foundation_contract_v4())
 
 
 def test_excluding_ms_keeps_rs_and_the_same_r0_foundation():
