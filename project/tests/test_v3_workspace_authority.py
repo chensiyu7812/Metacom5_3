@@ -134,12 +134,20 @@ def test_atomic_risk_design_gate_is_complete_but_human_qualification_remains_p1(
 
 def test_g0_qwen_screen_is_frozen_without_api_execution() -> None:
     result = _validator_module().validate(require_private_evidence=False)
-    assert result["g0_generator_screen"] == {
+    assert result["g0_superseded_prompt_cap_screen"] == {
+        "status": "STOPPED_PROMPT_AND_OUTPUT_CAP_MEASUREMENT_INVALID_FOR_MAXIMUM_CAPABILITY",
         "cards": 24,
         "executor_packets": 16,
         "qwen_model": "qwen3.7-plus-2026-05-26",
         "qwen_paid_logical_calls": 152,
         "run_identity": "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e",
+    }
+    assert result["g0_research_aligned_generator"] == {
+        "cards": 24,
+        "canary_cards": 2,
+        "candidate_configurations": 4,
+        "researcher_output_token_cap": None,
+        "run_identity": "9852e4c492a027c145bd1216bd7a5584a348ed9f3323c872797280a02e21ed62",
     }
 
 

@@ -52,11 +52,13 @@ P0九个证据架构门现已全部完成；这不等于测量有效性已经解
 下一批不再回到head内部循环，而是做一次有边界的测量与generator资格化：
 
 1. ESC-RANK静态overlay preflight已完成：InternLM2/adapters revision、两处路径修正和只接受完整`0..4`的parser均已锁；P1还需隔离依赖环境、权重下载与load smoke（须另批）；
-2. 已为8B、同栈70B与Qwen 3.7 Plus生成24卡ESC screen和16包既有开发executor诊断的G0 identity、调用量和预算；后者明确不是held-out PM证据，批准后先跑transport canary，再完成screen；
+2. 旧G0 `bd2b4a12...`在运行中暴露supporter prompt过弱和256-token统一截断，已停止且禁止用于最大能力排序。替代G0绑定了先行研究对齐prompt、无研究者输出上限、8B/70B/Qwen non-thinking/Qwen thinking四配置，以及Quality/latency/Pareto责任；先跑2卡canary，再完成24卡screen。16包旧executor继续保留为既有开发诊断，但须在base supporter候选明确后用同样无截断原则另行冻结；
 3. Risk 18包双评与非正式Quality anchor只用于量表校准，登记数值margin后即关闭，不消费正式PM回复；
 4. 硬门合格且Pareto非支配的候选才进入ESC-Judge/人类anchor；最终选中者完成G1全英文ESC-Eval和executor后冻结。若不再使用8B，旧42/90轮只归档为诊断，不再补成混栈“正式结果”。
 
 第一次G0A canary在identity `7a4d43f9...`下发现70B托管路线多次`network_timeout`，并暴露runner把候选级终止失败错误升级为进程级退出。该identity已消费且Qwen调用/费用均为0，不得恢复冒用。修复只改变失败作用域：耗尽一次瞬时重试后将该候选trajectory/call记为ITT终止并继续独立候选；身份、鉴权、非瞬时合同和预算错误仍整体中止。替代identity额外绑定ESC runner、executor runner、scorer、transport与schema源码hash。
+
+第二次G0 `bd2b4a12...`并非某个模型已经失败，而是measurement本身失败：Qwen 25/45、8B 21/45的成功turn被256-token上限截断，supporter system prompt又只有一句通用助手说明。完整关闭证据见`g0_bd2b_prompt_cap_measurement_closeout_v1.json`。替代方案不设研究者输出cap；为了仍服从用户总预算，Qwen runner在每次调用前按文档最大65,536输出token预留最坏费用，预留放不进批准额度就不发起。
 
 公开审计阶段为零推理：14个主adapter身份、论文Table 4 hard/±1 accuracy、官方代码缺陷和0行公开逐条人标均已物化。随后在隔离Python 3.11环境下载固定revision的ESC-Role、InternLM2和ESC-RANK，并在A6000完成零生成加载烟测：14个adapter全部挂载，API调用0、生成token 0。NVIDIA与阿里云只做鉴权模型目录GET确认冻结路由存在，凭据未落盘；真实推理仍须绑定identity和费用批准。
 

@@ -6,10 +6,11 @@
   "candidate": {
     "models": ["meta/llama-3.1-8b-instruct", "meta/llama-3.3-70b-instruct", "qwen3.7-plus-2026-05-26"],
     "provider_routes": ["NVIDIA hosted NIM API; hosted route does not expose an immutable weight revision", "Alibaba Cloud Model Studio Singapore OpenAI-compatible API; dated model snapshot"],
-    "generation_settings": "G0: temperature=0, top_p=1, max_output_tokens_per_turn=256, five turns for every candidate; G1 settings must be frozen before full execution",
-    "screening_contract": "g0_generator_bakeoff_contract_v1.json",
+    "generation_settings": "Research-aligned G0: temperature=0, no researcher output-token cap, provider max-output parameter omitted, five turns per dialogue; natural length, completion, quality, and end-to-end latency are outcomes. Qwen non-thinking and thinking are separate declared configurations.",
+    "screening_contract": "g0_research_aligned_generator_contract_v2.json",
     "local_runtime_setup": "g0_local_runtime_setup_v1.json",
-    "prompt_identity": "Bound by g0_esc_eval_screening_manifest_v1.jsonl, g0_executor_screening_manifest_v1.jsonl, and g0_generator_bakeoff_preflight_v1.json"
+    "prompt_identity": "Bound by g0_research_aligned_supporter_prompt_v1.json, g0_research_aligned_screening_manifest_v2.jsonl, and g0_research_aligned_generator_preflight_v2.json",
+    "superseded_measurement": "bd2b4a12... used only 'You are a helpful assistant!' plus a uniform 256-token cap and was stopped; g0_bd2b_prompt_cap_measurement_closeout_v1.json forbids using it to rank maximum capability."
   },
   "primary_exam": {
     "name": "ESC-Eval",
@@ -24,6 +25,7 @@
       {"paper_name": "Overall", "public_adapter_key": "overall"}
     ],
     "separate_project_metrics": ["completion_rate", "low_burden_support", "no_premature_action", "safety_signal_handling"],
+    "prompt_layer_boundary": "Exact official-wrapper reproduction and prior-work-grounded research qualification are separately named results. The latter is primary for generator choice and may not be presented as an exact official zero-shot replication.",
     "aggregation": "Report language, dimension, role-card, and cluster uncertainty separately; no sole composite pass.",
     "scorer_rule": "The official ESC-RANK paper construct is retained and the repaired scorer may produce a recognized descriptive seven-dimension profile. It is UNQUALIFIED as a sole absolute pass/fail instrument because public row-level human calibration labels and split identities are unavailable.",
     "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],

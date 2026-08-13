@@ -46,7 +46,9 @@
 
 ## 2026-08-13 执行进展
 
-P0九个证据架构门均已进入可审计实现。这里不再用“9/9”暗示评价有效性已经解决：Risk人类资格、数值margin、scorer/judge可靠性和benchmark结果仍在P1阻塞正式判决。G0现比较8B、70B和Qwen 3.7 Plus，不能用ESC-RANK Average单独选模型。
+P0九个证据架构门均已进入可审计实现。这里不再用“9/9”暗示评价有效性已经解决：Risk人类资格、数值margin、scorer/judge可靠性和benchmark结果仍在P1阻塞正式判决。G0现比较8B、70B以及Qwen 3.7 Plus的non-thinking/thinking两个声明配置，不能用ESC-RANK Average单独选模型。
+
+2026-08-14又补了一项直接影响measurement validity的修正：旧G0用通用`You are a helpful assistant!`和统一256-token cap，不能代表模型在本研究任务上的最强能力。它已停止并禁止用于generator排序。替代identity使用先行研究对齐的统一supporter prompt，provider输出上限参数完全省略；自然长度、完整性、Quality和端到端latency共同报告。这个结果叫“research-aligned supporter qualification”，不得冒充exact official-wrapper reproduction。
 
 旧48次冻结生成不再自动成为下一步：先选择generator；保留8B才补，换70B则旧42/90归档，禁止混栈补齐。
 

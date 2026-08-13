@@ -1,0 +1,65 @@
+{
+  "protocol": "metacom-v3-g0-bd2b-prompt-cap-measurement-closeout-v1",
+  "date": "2026-08-14",
+  "run_identity": "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e",
+  "status": "STOPPED_PROMPT_AND_OUTPUT_CAP_MEASUREMENT_INVALID_FOR_MAXIMUM_CAPABILITY",
+  "why_stopped": [
+    "The supporter system prompt was only 'You are a helpful assistant!'.",
+    "Every candidate was forced through a 256-token output cap even though the pinned ESC-Eval code used inconsistent model-specific caps and the research question is maximum usable supporter capability.",
+    "Visible mid-sentence provider length stops were common, so downstream quality scoring would partly measure researcher-induced truncation.",
+    "The run was stopped before completion and must not be resumed under this identity."
+  ],
+  "observed_at_stop": {
+    "esc": {
+      "llama31_8b_incumbent": {
+        "successful_turns": 45,
+        "completed_dialogues": 9,
+        "provider_length_finishes": 21,
+        "median_end_to_end_latency_ms": 1271.3938050437719
+      },
+      "llama33_70b_capacity_reference": {
+        "successful_turns": 27,
+        "completed_dialogues": 4,
+        "terminal_trajectories": 4,
+        "failed_attempts": 19,
+        "provider_length_finishes": 9,
+        "median_end_to_end_latency_ms": 75375.81037194468
+      },
+      "qwen37_plus_primary_challenger": {
+        "successful_turns": 45,
+        "completed_dialogues": 9,
+        "provider_length_finishes": 25,
+        "median_end_to_end_latency_ms": 5125.96765300259
+      }
+    },
+    "executor": {
+      "llama31_8b_incumbent_successes": 9,
+      "llama33_70b_capacity_reference_successes": 8,
+      "llama33_70b_capacity_reference_failures": 1,
+      "qwen37_plus_primary_challenger_successes": 9
+    },
+    "qwen": {
+      "physical_attempts": 54,
+      "input_tokens": 29953,
+      "output_tokens": 9570,
+      "estimated_usd_under_the_then-frozen_price_contract": 0.029221852
+    }
+  },
+  "immutable_private_evidence_hashes": {
+    "project/outputs/v3_g0_generator_screen_bd2b_20260813/private_turn_ledger.jsonl": "6c36e3317f9c2aed03a4e55e3a4352d14059a23baf702f677259dcda69ad5218",
+    "project/outputs/v3_g0_executor_screen_bd2b_20260813/private_executor_ledger.jsonl": "d25b904ce9c016ebc995ea75f0ad30fb77d6af512e4a910ee14e4f6a4f8bffbb",
+    "project/outputs/v3_g0_generator_bakeoff_bd2b_20260813/qwen_budget_ledger.jsonl": "08894a746b03cbf30f41bd166ee36a131c28a6daeb48393cbf7cd96ce430f514"
+  },
+  "permitted_use": [
+    "transport reliability diagnosis under the old surface",
+    "descriptive end-to-end latency under the old surface",
+    "evidence that the 256-token cap was binding"
+  ],
+  "forbidden_use": [
+    "ranking maximum supporter capability",
+    "declaring any generator qualified or disqualified for the research",
+    "official ESC-Eval reproduction claims",
+    "PM effectiveness claims"
+  ],
+  "replacement": "metacom-v3-g0-research-aligned-generator-comparison-v2"
+}

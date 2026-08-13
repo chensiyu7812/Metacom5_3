@@ -50,7 +50,16 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 
 原论文七维与公开adapter的固定映射为：`Fluency→fluency`、`Expression→diversity`、`Empathy→empathic`、`Information→suggestion`、`Skill→tech`、`Humanoid→human`、`Overall→overall`。`completion_rate/low_burden/no_premature_action/safety_signal_handling`是项目guardrail，不得伪装成ESC-RANK官方维度。
 
-G0不直接宣告generator合格。它在24张英文卡（ESconv 8、MHP 5、ExTES 5、Psych 3、EPITOME 3）和16个owner-unique executor开发包上比较8B、70B与`qwen3.7-plus-2026-05-26`。executor包完整复用一个已退役开发面板，8B结果可能已知，因而只用于工程能力诊断，绝不是held-out PM证据；每包固定比较R0-only与最大授权delta，且后者在12包同时含MS和RS，不能据此识别单头效应。硬门失败者淘汰；剩余候选只按Pareto支配关系筛除，不制造加权总分。多个非支配候选进入ESC-Judge双顺序与人类anchor；最终选中者必须再跑完整英文ESC-Eval和完整executor。
+G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责任正式拆开：
+
+1. **官方wrapper复现层**：只有完全保持官方prompt、模型特定生成参数和scorer处理时，才可称为官方零样本复现；其作用是published comparability，不能独自决定本研究用哪个generator。
+2. **研究对齐资格层（主层）**：保持ESC-Eval 24张英文开发卡、五轮role-player与样本身份不变，但给所有候选同一份依据ESConv、LLM emotional-support preference-bias、ExTES、ESCoT和ESC-Judge冻结的supporter prompt。它明确要求按Exploration–Insight–Action阶段和readiness选择支持动作，不暴露策略标签或思维链。
+
+旧identity `bd2b4a12...`只用了`You are a helpful assistant!`，又统一施加256-token上限；45个Qwen turn中25个、45个8B turn中21个以`length`结束。该轮已在`g0_bd2b_prompt_cap_measurement_closeout_v1.json`中关闭：可用于旧surface的transport/latency诊断和证明上限确实binding，禁止用于最大能力排序或generator通过/淘汰。
+
+替代G0在相同24卡上比较四个**配置**：8B、70B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking upper bound。provider请求完全省略`max_tokens/max_completion_tokens`；回复长度、是否自然完成、低负担/啰嗦度、tokens与finish reason都成为结果，而不是研究者预先截断。Quality以ESC-Judge的Exploration、Insight、Action双顺序pairwise为主，ESC-RANK七维只作描述性敏感性，人类小anchor在最终冻结前执行；延迟报告完整非流式端到端median/p90、吞吐与失败率，不虚构跨provider不可比的TTFT。
+
+先跑2卡canary，仅检验transport、prompt、自然完成和预算机制，绝不从2卡选模型；再跑24卡development screen。硬门失败者淘汰，剩余候选按Quality、atomic Risk和latency的Pareto关系筛选，不制造加权总分，也不让低延迟覆盖质量失败。最终候选另跑approved-plan/evidence executor和更大资格集；executor仍只识别generator能否实现已批准内容，不是PM selector证据。
 
 ## ESC-Judge 稳健性方案
 

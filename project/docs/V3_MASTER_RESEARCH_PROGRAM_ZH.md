@@ -80,7 +80,7 @@ AND ES-MemEval track pass
 | MS | V1.1 Quality 1胜3负2平；Risk 安全；Function 0/6 | 候选“新颖”不等于对当前 response plan 有增量，executor 也可忽略 | 用 P1 外部边际结果决定是否做 response-plan-relevant USE/ASK 修复 |
 | MP | V1.1 Quality 5胜1负1平；Risk 安全；Function 0/5 | 通用职业/教育事实没有改变一个具体 slot | 固定 R0 plan 后，只允许可修改建议、时间、格式、物流的 constraint |
 | ME | 尚未重建为可靠第一版 head | 不影响先完成 RS+MP+MS 组合 | 主链成功后有界救援 |
-| Generator | Llama 3.1 8B 已用于大量诊断；70B同栈reference与Qwen 3.7 Plus跨家族challenger已冻结 | 尚无公认 ESC benchmark 资格；8B曾有15.7%结构化失败，可能是瓶颈 | 先跑24卡G0 ESC screen + 16包既有开发executor诊断；合格且非支配者才进入ESC-Judge与完整G1 |
+| Generator | Llama 3.1 8B 已用于大量诊断；70B同栈reference与Qwen 3.7 Plus跨家族challenger已冻结 | 旧G0被弱prompt和256-token cap污染，不能判模型能力；尚无公认ESC benchmark资格 | 先跑无研究者输出cap、先行研究对齐prompt的2卡canary，再跑24卡Quality/latency G0；Qwen non-thinking/thinking分列，非支配者才进入ESC-Judge、executor与完整G1 |
 | 外部 stress test | 42/90 完成；48 个 429 | arm 不完整，且若generator更换则不能混栈补齐 | 先做generator选择；保留8B才考虑按原identity补48，否则归档为诊断 |
 
 ## 评价体系
@@ -175,7 +175,7 @@ ESC-Eval 合格，但 evidence-conditioned realization 不合格
 ## 最短落地顺序
 
 1. **V3-P0：评测设计冻结，已完成。** 四个dataset card、ES-MemEval版本、scorer责任、same-stack reference、Risk、margin推导和active tests均已冻结；零推理。
-2. **V3-P1：测量与Generator资格。** ESC-RANK静态overlay与官方七维映射已完成；G0冻结比较8B、70B和`qwen3.7-plus-2026-05-26`，先做24卡英文ESC screen与16包已使用过的executor工程诊断（不作为held-out PM证据），只有硬门合格且Pareto非支配的候选才进入ESC-Judge/人类anchor；最终选中者再跑完整英文ESC-Eval与完整executor并冻结。
+2. **V3-P1：测量与Generator资格。** ESC-RANK静态overlay与官方七维映射已完成；旧弱prompt/256-token-cap G0已经关闭。替代G0用统一的ESConv/ExTES/ESCoT/ESC-Judge对齐prompt，省略provider输出cap，比较8B、70B以及Qwen non-thinking/thinking；先2卡canary，再24卡Quality/latency/Pareto screen。硬门合格且非支配的候选才进入ESC-Judge/人类anchor和approved-plan/evidence executor；最终选中者再跑更大资格集并冻结。
 3. **V3-P2：处置旧外部诊断。** 8B保留才按原identity补48；若换generator则把42/90归档为不可混栈诊断，直接在新generator上进入有界treatment资格化。
 4. **V3-P3：只修真正失败的 treatment。** 避免再做大而泛的内部循环。
 5. **V3-P4：selector 与 baseline 一次冻结。** 只有固定 treatment 有用后才学 selector。

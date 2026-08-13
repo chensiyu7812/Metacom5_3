@@ -45,6 +45,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_executor_manifest_path = AUTHORITY_DIR / "g0_executor_screening_manifest_v1.jsonl"
     g0_runtime_setup_path = AUTHORITY_DIR / "g0_local_runtime_setup_v1.json"
     g0_canary_closeout_path = AUTHORITY_DIR / "g0_canary_identity_7a4d_closeout_v1.json"
+    g0_bd2b_closeout_path = AUTHORITY_DIR / "g0_bd2b_prompt_cap_measurement_closeout_v1.json"
+    g0r2_contract_path = AUTHORITY_DIR / "g0_research_aligned_generator_contract_v2.json"
+    g0r2_prompt_path = AUTHORITY_DIR / "g0_research_aligned_supporter_prompt_v1.json"
+    g0r2_preflight_path = AUTHORITY_DIR / "g0_research_aligned_generator_preflight_v2.json"
+    g0r2_manifest_path = AUTHORITY_DIR / "g0_research_aligned_screening_manifest_v2.jsonl"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -72,6 +77,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_preflight = _load_json(g0_preflight_path)
     g0_runtime_setup = _load_json(g0_runtime_setup_path)
     g0_canary_closeout = _load_json(g0_canary_closeout_path)
+    g0_bd2b_closeout = _load_json(g0_bd2b_closeout_path)
+    g0r2_contract = _load_json(g0r2_contract_path)
+    g0r2_prompt = _load_json(g0r2_prompt_path)
+    g0r2_preflight = _load_json(g0r2_preflight_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -129,6 +138,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "11_smoke_g0_local_models.py",
         PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
         PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
+        PROJECT_ROOT / "scripts" / "v3" / "15_materialize_g0_research_aligned_generator.py",
+        PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -143,7 +154,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 66:
+    if profile["expected_test_count"] != 71:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -281,11 +292,14 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("G0 preflight status changed")
     if g0_preflight["logical_calls"]["qwen_paid_logical_calls"] != 152:
         failures.append("G0 Qwen logical-call budget changed")
+    # The consumed bd2b identity remains an immutable historical artifact.
+    # Its API hash intentionally no longer matches the live client because
+    # the replacement runtime added an explicit no-cap mode; the closeout
+    # forbids resuming or using bd2b to rank maximum capability.
     executable_bindings = {
         "10_run_g0_esc_eval_screen.py": PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
         "12_run_g0_executor_screen.py": PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
         "13_score_g0_esc_rank.py": PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
-        "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
         "metacom_pm/esc_rank_runtime.py": PROJECT_ROOT / "src" / "metacom_pm" / "esc_rank_runtime.py",
         "metacom_pm/v1_5_ms_same_stack_feasibility.py": PROJECT_ROOT / "src" / "metacom_pm" / "v1_5_ms_same_stack_feasibility.py",
     }
@@ -305,6 +319,44 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     qwen = next((row for row in g0_contract["candidates"] if row["candidate_id"] == "qwen37_plus_primary_challenger"), None)
     if not qwen or qwen["model"] != "qwen3.7-plus-2026-05-26" or qwen.get("enable_thinking") is not False:
         failures.append("G0 Qwen dated non-thinking endpoint is not frozen")
+    if g0_bd2b_closeout["run_identity"] != g0_preflight["run_identity"]:
+        failures.append("bd2b measurement closeout is not bound to the consumed identity")
+    if g0_bd2b_closeout["status"] != "STOPPED_PROMPT_AND_OUTPUT_CAP_MEASUREMENT_INVALID_FOR_MAXIMUM_CAPABILITY":
+        failures.append("bd2b prompt/cap measurement was not correctly retired")
+    if "ranking maximum supporter capability" not in g0_bd2b_closeout["forbidden_use"]:
+        failures.append("bd2b closeout does not forbid maximum-capability ranking")
+
+    g0r2_rows_bytes = g0r2_manifest_path.read_bytes()
+    g0r2_rows = [json.loads(line) for line in g0r2_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(g0r2_rows) != 24 or len({row["card_key"] for row in g0r2_rows}) != 24:
+        failures.append("research-aligned G0 manifest is not 24 unique cards")
+    if sum(bool(row["canary"]) for row in g0r2_rows) != 2:
+        failures.append("research-aligned G0 canary is not exactly two cards")
+    if hashlib.sha256(g0r2_rows_bytes).hexdigest() != g0r2_preflight["sample"]["manifest_sha256"]:
+        failures.append("research-aligned G0 manifest hash mismatch")
+    joined_prompt = "\n\n".join(section.strip() for section in g0r2_prompt["prompt_sections"])
+    if hashlib.sha256(joined_prompt.encode("utf-8")).hexdigest() != g0r2_preflight["prompt"]["joined_prompt_sha256"]:
+        failures.append("research-aligned supporter prompt hash mismatch")
+    if g0r2_contract["shared_generation_contract"]["researcher_output_token_cap"] is not None:
+        failures.append("research-aligned G0 unexpectedly imposes an output cap")
+    if g0r2_prompt["output_length_policy"]["researcher_token_cap"] is not None:
+        failures.append("research-aligned prompt unexpectedly imposes an output cap")
+    if len(g0r2_contract["candidates"]) != 4:
+        failures.append("research-aligned G0 lost a candidate configuration")
+    qwen_modes = {
+        row.get("enable_thinking")
+        for row in g0r2_contract["candidates"]
+        if row["candidate_id"].startswith("qwen37_plus_")
+    }
+    if qwen_modes != {False, True}:
+        failures.append("research-aligned G0 does not bind both Qwen modes")
+    g0r2_executables = {
+        "16_run_g0_research_aligned_esc.py": PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
+        "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
+    }
+    for name, path in g0r2_executables.items():
+        if hashlib.sha256(path.read_bytes()).hexdigest() != g0r2_preflight["input_hashes"].get(f"executable::{name}"):
+            failures.append(f"research-aligned G0 executable binding drifted: {name}")
     if esc_rank_audit["status"] != "PUBLIC_SCORER_REPLAYABLE_ONLY_AFTER_REPAIR_HUMAN_CALIBRATION_NOT_INDEPENDENTLY_REPRODUCIBLE":
         failures.append("ESC-RANK public qualification decision changed")
     if esc_rank_audit["api_calls"] != 0 or esc_rank_audit["model_inference_calls"] != 0:
@@ -346,6 +398,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_preflight_path,
         g0_runtime_setup_path,
         g0_canary_closeout_path,
+        g0_bd2b_closeout_path,
+        g0r2_contract_path,
+        g0r2_prompt_path,
+        g0r2_preflight_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -407,12 +463,20 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "esc_rank_public_qualification": {"public_human_label_rows": 0, "primary_adapters": 14, "inference_calls": 0},
         "esc_rank_runtime_preflight": {"status": "STATIC_PASS", "weights_downloaded": 0, "inference_calls": 0},
         "same_stack_reference": same_stack_reference["reference"]["model_route"],
-        "g0_generator_screen": {
+        "g0_superseded_prompt_cap_screen": {
+            "status": g0_bd2b_closeout["status"],
             "cards": len(g0_rows),
             "executor_packets": len({row["packet_id"] for row in g0_executor_rows}),
             "qwen_model": qwen["model"] if qwen else None,
             "qwen_paid_logical_calls": g0_preflight["logical_calls"]["qwen_paid_logical_calls"],
             "run_identity": g0_preflight["run_identity"],
+        },
+        "g0_research_aligned_generator": {
+            "cards": len(g0r2_rows),
+            "canary_cards": sum(bool(row["canary"]) for row in g0r2_rows),
+            "candidate_configurations": len(g0r2_contract["candidates"]),
+            "researcher_output_token_cap": g0r2_contract["shared_generation_contract"]["researcher_output_token_cap"],
+            "run_identity": g0r2_preflight["run_identity"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

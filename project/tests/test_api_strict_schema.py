@@ -332,6 +332,45 @@ def test_default_endpoint_still_uses_strict_json_schema_mode() -> None:
     )
 
 
+def test_openai_compatible_payload_can_omit_provider_output_cap() -> None:
+    endpoint = Endpoint(
+        base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        model="qwen3.7-plus-2026-05-26",
+        api_key_env="IGNORED",
+        family="qwen",
+        enable_thinking=False,
+    )
+    payload = chat_request_payload(
+        endpoint,
+        [{"role": "user", "content": "Respond naturally."}],
+        temperature=0.0,
+        max_tokens=None,
+        seed=None,
+        response_schema=None,
+    )
+    assert "max_tokens" not in payload
+    assert "max_completion_tokens" not in payload
+    assert payload["enable_thinking"] is False
+
+
+def test_native_transports_reject_missing_required_output_cap() -> None:
+    anthropic = Endpoint(
+        base_url="https://api.anthropic.com",
+        model="claude-haiku-4-5-20251001",
+        api_key_env="IGNORED",
+        transport="anthropic_messages",
+    )
+    with pytest.raises(ValueError, match="requires an explicit max_tokens"):
+        chat_request_payload(
+            anthropic,
+            [{"role": "user", "content": "Respond."}],
+            temperature=0.0,
+            max_tokens=None,
+            seed=None,
+            response_schema=None,
+        )
+
+
 def test_anthropic_strict_tool_projection_strips_provider_numeric_and_array_bounds():
     class BoundedOutput(BaseModel):
         model_config = ConfigDict(extra="forbid", strict=True)
