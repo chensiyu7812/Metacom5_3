@@ -3,6 +3,13 @@
 日期：2026-08-13
 状态：`ACTIVE P0 AUDIT`
 
+结构化卡片：
+
+- `data/v3_authority/dataset_cards/esconv_dataset_card_v1.json`
+- `data/v3_authority/dataset_cards/evoemo_dataset_card_v1.json`
+- `data/v3_authority/dataset_cards/es_memeval_dataset_card_v1.json`
+- `data/v3_authority/dataset_cards/esc_eval_dataset_card_v1.json`
+
 | 数据源 | 来源与性质 | 主要单位 | 允许检验 | 关键风险 | 当前状态 |
 |---|---|---|---|---|---|
 | ESConv | 人工众包、单会话、带支持策略标签 | dialogue | RS、即时支持 | ESC-Eval role cards 可能同源；无纵向 owner | 可用；只进 RS track |
@@ -14,10 +21,14 @@
 
 ## ES-MemEval 版本对齐任务
 
+2026-08-13 的官方仓库实查已经把“可能不一致”升级为“确定不一致”：GitHub `v1.0.0` tag 指向 commit `6926242`，其中 `data/evo_emo.json` SHA-256 为 `f30698e8...d420`，实际包含18 users、401 sessions、1,427 QA、125 summaries、34 generation scenarios；WWW 2026正式论文则报告1,209 QA，其他三个总数一致。
+
+五类 QA 的公开文件/正式论文差异依次为：IE 309/271、TR 284/236、CD 267/226、UM 306/251、Abstention 261/225，总计多218道。仅凭计数无法知道正式论文删掉了哪218道，因此正式 V3 当前仍阻塞。机器审计见 `data/v3_authority/es_memeval_repository_reconciliation_v1.json`。
+
 必须产生一个逐文件、逐题的 reconciliation artifact：
 
 - WWW 2026 paper：1209 QA；
-- 当前本地方案：1427-question public artifact；
+- 官方公开 `v1.0.0` artifact：1,427 questions；
 - 历史 V5.2：418-question subset；
 - 对每个集合记录来源 tag/commit、路径、SHA-256、question ID、capability、owner、是否 answerable、是否进入历史运行；
 - 解释新增/删除/重编号，而不是只比较总数；

@@ -1,0 +1,94 @@
+{
+  "protocol": "metacom-v3-evaluation-freeze-contract-v1",
+  "date": "2026-08-13",
+  "status": "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING",
+  "decision": "The project must first freeze data identity, examination protocol, pass criteria, statistical unit, and claim boundary. No internal judge score may substitute for a recognized task-specific benchmark.",
+  "evidence_architecture": [
+    {
+      "claim": "generator_basic_emotional_support_capability",
+      "primary_exam": "ESC-Eval official multi-turn protocol",
+      "sensitivity": "ESC-Judge same-role pairwise Exploration-Insight-Action comparison",
+      "primary_metrics": ["seven official ESC-Eval dimensions", "overall", "completion_rate"],
+      "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
+      "pass_rule_status": "BLOCKED_ON_SCORER_CALIBRATION_REFERENCE_AND_MARGIN",
+      "claim_boundary": "Generator qualification only; no PM value, real-user effectiveness, or clinical safety claim."
+    },
+    {
+      "claim": "longitudinal_memory_capability",
+      "primary_exam": "ES-MemEval official QA, summarization, and dialogue-generation tasks",
+      "primary_metrics": ["Token_F1", "BERTScore", "Recall_at_k", "nDCG_at_k", "event_precision_recall_F1", "abstention_false_answer", "observation_recall_weighted_score"],
+      "secondary_metrics": ["task-specific LLM-as-judge scores"],
+      "pass_rule_status": "BLOCKED_ON_1209_VERSUS_1427_ROW_IDENTITY",
+      "claim_boundary": "Memory capability only; does not prove RS or learned PM selection value."
+    },
+    {
+      "claim": "learned_pm_state_action_selection_value",
+      "primary_exam": "frozen same-state deployment-ITT baseline matrix",
+      "primary_metrics": ["blind_pairwise_quality", "atomic_source_aware_risk", "actual_generator_input_tokens"],
+      "secondary_metrics": ["source_aware_function", "requested_to_received", "latency", "USD"],
+      "comparators": ["always_off", "fixed_high", "transparent_rule", "cost_matched_fixed", "cost_and_on_rate_matched_random", "full_minus_component", "safe_oracle"],
+      "pass_rule_status": "BLOCKED_ON_MARGIN_AND_JUDGE_QUALIFICATION",
+      "claim_boundary": "Causal value of the frozen learned selector under the frozen generator; no generator-agnostic claim without replication."
+    },
+    {
+      "claim": "personalization_and_memory_integrity",
+      "primary_exam": "atomic source-aware event audit",
+      "primary_metrics": ["event_rate_per_reply", "event_rate_per_exposure", "owner_affected_rate"],
+      "events": ["wrong_owner_or_entity", "future_information_exposure", "past_to_current_upgrade", "stale_or_conflicting_information_use", "fabricated_personal_history", "irrelevant_sensitive_exposure", "explicit_boundary_violation", "internal_scaffold_exposure", "uncertain"],
+      "pass_rule_status": "TAXONOMY_FROZEN_ADJUDICATION_AND_UCB_PENDING",
+      "claim_boundary": "Personalization integrity only; not comprehensive clinical safety."
+    }
+  ],
+  "metric_policy": {
+    "composite_score_forbidden": true,
+    "primary_pm_estimand": "Same-state deployment-ITT contrasts on Quality, atomic Risk, and measured Cost.",
+    "function_role": "Secondary mechanism and attribution evidence. A counted head needs nonzero reproducible source-aware contribution, but Function is not a sole subjective veto and need not be visible in every ON response.",
+    "uncertain_policy": "UNCERTAIN remains its own category and cannot be forced into no-risk.",
+    "cost_definition": "Actual generator input/output tokens, retrieval, retries, latency, and USD are reported separately. At least 10% lower input tokens versus fixed-high is the provisional cost floor; this does not override Quality or Risk.",
+    "margin_policy": "No Quality/Risk or generator noninferiority margin may be chosen from observed formal outcomes. It must be anchored to scorer calibration, same-stack reference variation, and an outcome-blind practical-effect rationale."
+  },
+  "statistical_units": {
+    "ESC_Eval": "role_card_or_dialogue, with clustering fixed before execution",
+    "ESC_Judge": "synthetic_role",
+    "ESConv": "dialogue",
+    "EvoEmo": "user; 18 users",
+    "ES_MemEval": "user; 18 users; questions are repeated measurements and not independent samples",
+    "shared_source_rule": "EvoEmo response and ES-MemEval are two tasks on the same 18 synthetic users, not independent population replications."
+  },
+  "p0_gates": [
+    {"gate": "dataset_identity", "status": "PARTIAL", "blocker": "ES-MemEval final-paper 1209 rows are not identifiable from public v1.0.0 1427 rows."},
+    {"gate": "official_implementation_pin", "status": "PARTIAL", "blocker": "Repository commits are identified, but ESC-Eval/ESC-Judge code and runtime dependencies are not yet vendored or locally replayed."},
+    {"gate": "scorer_and_judge_qualification", "status": "BLOCKED", "blocker": "ESC-RANK local calibration, same-stack reference, ESC-Judge position sensitivity, and human anchors are not executed."},
+    {"gate": "pass_margins", "status": "BLOCKED", "blocker": "No evidence-anchored Quality/Risk or generator NI margins are frozen."},
+    {"gate": "overlap_screen", "status": "BLOCKED", "blocker": "ESC-Eval role sources overlap ESConv/ExTES; source, dialogue, and semantic overlap identities are not yet materialized."},
+    {"gate": "statistical_units", "status": "FROZEN", "blocker": null},
+    {"gate": "atomic_risk_taxonomy", "status": "PARTIAL", "blocker": "Event taxonomy is frozen; double-review/adjudication and uncertainty bounds remain to be specified."},
+    {"gate": "function_role", "status": "FROZEN_SECONDARY", "blocker": null}
+  ],
+  "current_stress_test_policy": {
+    "completed_calls": 42,
+    "missing_calls": 48,
+    "total_calls": 90,
+    "allowed_interpretation": "Frozen opportunity-enriched treatment diagnostic after all arms are complete.",
+    "forbidden_interpretation": "Formal three-track pass, generator qualification, or a final head verdict under the old Quality/Function rubric.",
+    "continuation_rule": "The exact 48-call continuation may run only under its frozen identity after P0 execution prerequisites and a new explicit approval; no prompt, sample, seed, arm, or treatment change.",
+    "judging_rule": "Do not perform final judging under the legacy composite or Function-veto logic."
+  },
+  "execution_blocks_until_p0_complete": [
+    "new head tuning",
+    "selector refit",
+    "new development panel chosen from observed outcomes",
+    "formal PM judge calls",
+    "generator fine-tuning",
+    "formal external pass claims"
+  ],
+  "allowed_zero_api_work": [
+    "dataset reconciliation",
+    "official repository and file hashing",
+    "scorer calibration design",
+    "overlap-screen construction",
+    "risk adjudication protocol",
+    "margin justification design",
+    "test and validator updates"
+  ]
+}

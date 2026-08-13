@@ -1,0 +1,25 @@
+{
+  "protocol": "metacom-v3-dataset-card-v1",
+  "dataset": "ESConv",
+  "date": "2026-08-13",
+  "status": "IDENTITY_PINNED_USABLE_FOR_RS_TRACK",
+  "official_source": {
+    "repository": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "commit": "f262d062ad74cb39b17ea476facc81568ddcba24",
+    "file": "ESConv.json",
+    "local_path": "data/external/ESConv.json",
+    "sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "remote_hash_matches_local": true
+  },
+  "observed_shape": {
+    "dialogues": 1300,
+    "turn_records": 38365,
+    "language": "English",
+    "longitudinal_owner_identity": false
+  },
+  "analysis_grain": "dialogue",
+  "allowed_claims": ["RS opportunity", "single-session emotional-support response Quality/Risk/Cost", "strategy transport"],
+  "forbidden_claims": ["longitudinal MP/MS/ME value", "real-user clinical effectiveness", "memory capability"],
+  "overlap_risk": "ESC-Eval role-card and ESC-Role construction uses ESConv among its sources. Any generator training on ESConv requires source/dialogue/semantic overlap screening against the frozen ESC-Eval exam.",
+  "remaining_p0_work": ["freeze train/dev/test dialogue IDs", "bind split hashes", "materialize overlap screen against ESC-Eval"]
+}

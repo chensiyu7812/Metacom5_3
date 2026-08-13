@@ -7,6 +7,20 @@
 
 - `data/v3_authority/v3_research_authority_v1.json`
 - `data/v3_authority/v3_asset_compatibility_manifest_v1.json`
+- `data/v3_authority/v3_evaluation_freeze_contract_v1.json`
+
+## 当前最高优先级：先冻结判卷规则
+
+V3-P0 完成前，禁止新增 head 调参、selector refit、正式 judge、generator 微调或正式外测通过声明。原因不是保守，而是当前还没有完整回答五个先验问题：数据是哪一版、考卷测什么、及格线从哪里来、独立统计单位是什么、结果允许支持哪条主张。
+
+当前四张结构化 dataset card 已建立，但 P0 尚未通过：
+
+- ESConv 的 commit、文件哈希、1,300 个 dialogue 与 38,365 个 turn 已核验；
+- EvoEmo/ES-MemEval 公开 `v1.0.0` tag 和 `evo_emo.json` 哈希已核验；
+- 正式论文是 1,209 道 QA，公开 `v1.0.0` 文件实际是 1,427 道，差异 218 道且覆盖五种 capability；
+- ESC-Eval 与 ESC-Judge 的官方仓库 commit 已定位，但 scorer 校准、same-stack reference、pass margin 和 overlap screen 尚未完成。
+
+因此，现在可以做的是版本对齐、scorer 资格设计、重叠筛查和 Risk adjudication；不能再用同一批内部样本迭代一个自建总分来宣布“学会/没学会”。
 
 ## 结论先行
 
@@ -159,7 +173,7 @@ ESC-Eval 合格，但 evidence-conditioned realization 不合格
 
 ## 最短落地顺序
 
-1. **V3-P0：完成评测冻结。** 对齐四个 dataset card、ES-MemEval 版本、ESC scorer、Risk events、primary outcomes 和 active test profile。
+1. **V3-P0：完成评测冻结。** 对齐四个 dataset card、ES-MemEval 版本、ESC scorer/reference、Risk adjudication、primary outcomes、NI margin 和 active test profile；未通过前不调 head。
 2. **V3-P1：完成当前外部诊断。** 只补冻结的 48 个缺失调用；不更改 prompt/seed/arm；完成后按 Quality/Risk/Cost 主指标和 Function 次指标闭环。
 3. **V3-P2：Generator 资格。** ESC-Eval 主测、ESC-Judge 稳健性、executor realization；决定是否需要执行型 SFT。
 4. **V3-P3：只修真正失败的 treatment。** 避免再做大而泛的内部循环。

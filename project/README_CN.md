@@ -2,7 +2,9 @@
 
 > **2026-08-13 V3 新入口：** 当前研究、数据集、benchmark、迁移和执行顺序的唯一新权威见
 > `docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md` 与
-> `data/v3_authority/v3_research_authority_v1.json`。下面的旧 PM-v1.5/V3.3
+> `data/v3_authority/v3_research_authority_v1.json`。当前 evaluation 硬门见
+> `data/v3_authority/v3_evaluation_freeze_contract_v1.json`；P0 完成前禁止以新一轮内部
+> judge 宣布 head 学会或正式失败。下面的旧 PM-v1.5/V3.3
 > 内容保留用于历史追溯，不再单独授权未来调用。
 
 > 当前 PM-v1.5 唯一执行路线见

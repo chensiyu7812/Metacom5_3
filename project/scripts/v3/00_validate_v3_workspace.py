@@ -33,9 +33,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     authority_path = AUTHORITY_DIR / "v3_research_authority_v1.json"
     assets_path = AUTHORITY_DIR / "v3_asset_compatibility_manifest_v1.json"
     profile_path = AUTHORITY_DIR / "v3_active_test_profile_v1.json"
+    evaluation_path = AUTHORITY_DIR / "v3_evaluation_freeze_contract_v1.json"
+    reconciliation_path = AUTHORITY_DIR / "es_memeval_repository_reconciliation_v1.json"
     authority = _load_json(authority_path)
     assets = _load_json(assets_path)
     profile = _load_json(profile_path)
+    evaluation = _load_json(evaluation_path)
+    reconciliation = _load_json(reconciliation_path)
 
     failures: list[str] = []
 
@@ -48,6 +52,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("execution boundary is empty")
     if any(phase.get("api_authority") for phase in authority["execution_phases"]):
         failures.append("a planning phase unexpectedly authorizes API execution")
+    if evaluation["status"] != "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING":
+        failures.append("evaluation P0 status no longer blocks premature head decisions")
+    required_blocks = {"new head tuning", "selector refit", "formal PM judge calls", "generator fine-tuning"}
+    if not required_blocks.issubset(set(evaluation["execution_blocks_until_p0_complete"])):
+        failures.append("evaluation P0 execution blocks are incomplete")
 
     phase_ids = [phase["phase"] for phase in authority["execution_phases"]]
     if phase_ids != [f"V3-P{index}" for index in range(7)]:
@@ -63,6 +72,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "docs" / "V3_MASTER_RESEARCH_PROGRAM_ZH.md",
         PROJECT_ROOT / "docs" / "V3_EVALUATION_BENCHMARK_PLAN_ZH.md",
         PROJECT_ROOT / "docs" / "V3_DATASET_AND_EVIDENCE_CARDS_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -80,7 +90,25 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     if profile["expected_test_count"] != 39:
         failures.append("active profile expected test count changed without authority update")
 
-    for path in (authority_path, assets_path, profile_path):
+    dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
+    if {card["dataset"] for card in dataset_cards} != {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}:
+        failures.append("the four required structured dataset cards are incomplete")
+    esconv = next(card for card in dataset_cards if card["dataset"] == "ESConv")
+    esconv_path = PROJECT_ROOT / esconv["official_source"]["local_path"]
+    if hashlib.sha256(esconv_path.read_bytes()).hexdigest() != esconv["official_source"]["sha256"]:
+        failures.append("local ESConv file does not match its pinned official hash")
+    es_memeval = next(card for card in dataset_cards if card["dataset"] == "ES-MemEval")
+    paper_qa = es_memeval["formal_paper"]["reported_counts"]["qa"]
+    public_qa = es_memeval["public_repository"]["observed_counts"]["qa"]
+    if (paper_qa, public_qa, public_qa - paper_qa) != (1209, 1427, 218):
+        failures.append("ES-MemEval 1209/1427/218 identity conflict changed")
+    comparison = reconciliation["qa_count_comparison"]
+    if comparison[-1] != {"capability": "total", "formal_paper": 1209, "public_v1_0_0": 1427, "difference": 218}:
+        failures.append("ES-MemEval reconciliation total is inconsistent")
+    if sum(row["difference"] for row in comparison[:-1]) != 218:
+        failures.append("ES-MemEval capability deltas do not sum to 218")
+
+    for path in (authority_path, assets_path, profile_path, evaluation_path, reconciliation_path):
         if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
             failures.append(f"legacy absolute path leaked into {path.name}")
 
@@ -115,6 +143,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),
         "expected_active_test_count": profile["expected_test_count"],
+        "evaluation_freeze_status": evaluation["status"],
+        "dataset_cards": [card["dataset"] for card in dataset_cards],
+        "es_memeval_identity": {"formal_paper_qa": paper_qa, "public_v1_0_0_qa": public_qa, "difference": public_qa - paper_qa},
         "private_evidence": private_result,
     }
 

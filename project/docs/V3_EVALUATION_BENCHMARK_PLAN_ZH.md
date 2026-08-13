@@ -3,6 +3,14 @@
 日期：2026-08-13
 状态：`DRAFTED FOR V3-P0 FREEZE / NO API AUTHORITY`
 
+机器合同：`data/v3_authority/v3_evaluation_freeze_contract_v1.json`
+
+## 当前冻结裁定
+
+整体状态为 `P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING`。这意味着目前的42/90 stress-test回复可以保留，冻结的48次 continuation 也可以在条件满足并重新批准后补齐，但不能继续按旧 Quality/Function 口径做最终判决，更不能从不完整 arm 或自建总分宣布 head pass/fail。
+
+当前阻塞项是：ES-MemEval 1,209/1,427 的逐题身份、ESC-RANK 本地校准、same-stack reference、ESC-Judge position sensitivity、人类 anchor、ESC-Eval 与 ESConv/ExTES 重叠筛查、Quality/Risk NI margin 来源，以及 Risk 双评/裁决和不确定性上界。
+
 ## 考卷与主张映射
 
 | 考卷 | 主张 | 主指标 | 单位 | 不允许的外推 |
@@ -44,6 +52,8 @@
 - judge family 与 generator family 尽量分离，并保留一小批人工 anchor；
 - 只作 robustness，不代替 ESC-Eval 绝对定位。
 
+官方论文的实验边界也必须保留：25个合成角色、375个对话三元组、o1-mini judge；人工一致性只在随机抽取的100对、两位博士级标注者上验证。论文报告的85%/83%/86%是该设置下 Exploration/Insight/Action 的匹配率，不是跨 judge、跨语言或真实用户的通用可靠性保证。
+
 ## PM 自定义专项考卷
 
 - 同一个 current context、candidate pool、retrieval、R0、generator、seed policy 和输出预算；
@@ -62,3 +72,5 @@
 - critical integrity event 不被平均分掩盖；
 - Function 非零、可归因、可复现，但不要求每次 ON 都有清晰可见的措辞；
 - 任何无法验证的比较标 `INCONCLUSIVE`，不能强制判为 pass/fail。
+
+当前唯一已有数值底线是相对 fixed-high 的实际 generator input tokens 至少降低10%；它仍不能抵消 Quality/Risk 恶化。其余 generator 与 Quality/Risk NI margin 不能从正式 outcome 反推，必须由公开人工标签上的 scorer calibration、same-stack reference 变异和 outcome-blind practical-effect 论证共同确定。

@@ -28,3 +28,14 @@ def test_v3_execution_phases_do_not_authorize_api_calls() -> None:
         module.AUTHORITY_DIR / "v3_research_authority_v1.json"
     )
     assert all(phase["api_authority"] is False for phase in authority["execution_phases"])
+
+
+def test_evaluation_freeze_blocks_head_tuning_and_binds_dataset_identity() -> None:
+    result = _validator_module().validate(require_private_evidence=True)
+    assert result["evaluation_freeze_status"] == "P0_NOT_COMPLETE_BLOCKS_HEAD_TUNING_AND_FORMAL_JUDGING"
+    assert set(result["dataset_cards"]) == {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}
+    assert result["es_memeval_identity"] == {
+        "formal_paper_qa": 1209,
+        "public_v1_0_0_qa": 1427,
+        "difference": 218,
+    }

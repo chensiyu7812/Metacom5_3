@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "MetaCom V3：研究总方案、迁移审计与成功路径",
     "description": "将历史实验、老师关于 dataset/evaluation 的反馈和当前外测进度统一为一条可审计的 RS+MP+MS 研究路线。",
-    "generatedAt": "2026-08-13T15:53:54+09:00",
+    "generatedAt": "2026-08-13T16:13:15+09:00",
     "charts": [
       {
         "id": "external_completion_chart",
@@ -109,6 +109,20 @@
           {"field": "output", "label": "关键产物", "type": "text"},
           {"field": "exit_gate", "label": "退出门", "type": "text"}
         ]
+      },
+      {
+        "id": "p0_gate_table",
+        "title": "Evaluation P0 冻结状态",
+        "subtitle": "在 blocker 解除前，不允许用新的内部循环裁定 head pass/fail。",
+        "dataset": "p0_gates",
+        "source": {"label": "V3 evaluation freeze contract", "path": "data/v3_authority/v3_evaluation_freeze_contract_v1.json", "query": {"engine": "artifact-snapshot", "sql": "SELECT gate, status, evidence, blocker FROM p0_gates", "description": "Decision-critical P0 gates after official-source and local-artifact reconciliation."}},
+        "density": "spacious",
+        "columns": [
+          {"field": "gate", "label": "Gate", "type": "text"},
+          {"field": "status", "label": "状态", "type": "text"},
+          {"field": "evidence", "label": "已核验证据", "type": "text"},
+          {"field": "blocker", "label": "剩余阻塞", "type": "text"}
+        ]
       }
     ],
     "sources": [
@@ -117,14 +131,19 @@
       {"id": "tests", "label": "V3 active test profile", "path": "data/v3_authority/v3_active_test_profile_v1.json"},
       {"id": "master", "label": "V3 master research program", "path": "docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md"},
       {"id": "benchmark", "label": "V3 evaluation benchmark plan", "path": "docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md"},
-      {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"}
+      {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"},
+      {"id": "evaluation_freeze", "label": "V3 evaluation freeze contract", "path": "data/v3_authority/v3_evaluation_freeze_contract_v1.json"},
+      {"id": "memeval_reconciliation", "label": "ES-MemEval repository reconciliation", "path": "data/v3_authority/es_memeval_repository_reconciliation_v1.json"},
+      {"id": "evaluation_audit", "label": "V3 evaluation freeze audit", "path": "docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md"}
     ],
     "blocks": [
       {
         "id": "technical_summary",
         "type": "markdown",
-        "body": "## 技术摘要\n\n**V3 已从旧 snap 独立出来，但没有重启研究。** 它精确继承提交 `ef318c3` 的代码历史，并只复制当前 12 个私有证据目录；29 个文件、1,994,348 个内容字节的组合 SHA-256 已复核一致。旧虚拟环境、3.3GB 历史输出、secrets、空白或方法失效的人评均不进入活动包。\n\n**研究主线改为四层证据，不再用一个模糊 judge 解决所有问题。** ESC-Eval/ESC-Judge 资格化 generator；ES-MemEval 测 memory capability；同状态 baseline 矩阵测 PM causal value；atomic source-aware audit 测 personalization integrity。Quality、Risk、Function、Cost 不合成一个总分，Function 降为必要但非唯一的机制证据。\n\n**最近的外部 stress run 应先补完，但只是一轮方向性诊断。** 当前 42/90 arms 完成，48 个因 HTTP 429 缺失；不能比较不完整 arm。补齐后按 18 owner 的 Quality/Risk/Cost 主指标闭环，再据此只修真正失败的 RS、MP 或 MS treatment。正式成功仍要求 generator qualified、RS 通过、MP/MS/ME 至少两个通过，以及 ESConv、EvoEmo、ES-MemEval 三轨分别过门。"
+        "body": "## 技术摘要\n\n**V3 已从旧 snap 独立出来，但没有重启研究。** 它精确继承提交 `ef318c3` 的代码历史，并只复制当前 12 个私有证据目录；29 个文件、1,994,348 个内容字节的组合 SHA-256 已复核一致。旧虚拟环境、3.3GB 历史输出、secrets、空白或方法失效的人评均不进入活动包。\n\n**当前最高优先级是冻结评价，而不是继续修 head。** 研究分成 generator qualification、memory capability、PM causal value 和 personalization integrity 四层。Quality、atomic Risk 与Cost是PM主要estimand；Function只作非零、可复现的机制证据。P0完成前禁止新增head调参、selector refit、正式judge和微调。\n\n**官方数据审计已经发现实质版本冲突。** ESConv本地文件与官方commit哈希一致；EvoEmo/ES-MemEval公开`v1.0.0`可定位，但正式论文的1,209 QA与公开文件1,427 QA相差218道，当前不能声称精确复现。42/90 stress run仍只是冻结的opportunity-enriched diagnostic，48个缺失arm补齐前不能比较，补齐后也不能沿用旧Function-veto口径。"
       },
+      {"id": "p0_heading", "type": "markdown", "body": "## 评价冻结是当前研究总入口\n\n一个head只有在数据版本、考卷、及格线、统计单位和可支持主张都事前绑定后，才有资格被判为学会或失败。现阶段已定位四个官方数据身份和仓库commit，但scorer calibration、same-stack reference、NI margin、overlap screen与Risk adjudication仍未完成。"},
+      {"id": "p0_gate_block", "type": "table", "tableId": "p0_gate_table"},
       {"id": "external_completion_block", "type": "chart", "chartId": "external_completion_chart"},
       {"id": "asset_heading", "type": "markdown", "body": "## 什么能直接迁，什么只能当历史证据\n\n迁移采用两个相互独立的判断：文件和代码能否完整复用，以及旧结果能否支持相同主张。V4 compiler、MS pre-decision、source-aware Risk 与 MP 模板可直接作为开发基础；旧结果必须保留原实验条件和失败边界。"},
       {"id": "asset_block", "type": "table", "tableId": "asset_table"},
@@ -137,19 +156,29 @@
       {"id": "methodology", "type": "markdown", "body": "## 核心 estimand 与 PM 通过条件\n\n主要 estimand 是同状态 deployment-ITT 的 Quality、atomic Risk 与实际 generator token Cost。learned PM 需要同时面对 always-off、fixed-high、transparent rule、cost-matched fixed、cost-and-ON-rate-matched random、full-minus-component 和 safe-oracle。相对 fixed-high 至少节省 10% 实际输入 token；相对规则和匹配随机至少一项预注册 selection outcome 严格更好；每个计入成功的 head 必须有可复现的非零边际贡献。\n\nRisk 按 wrong owner、future exposure、past-to-current upgrade、stale/conflict、fabrication、irrelevant sensitive exposure、boundary violation、scaffold exposure 和 uncertain 分事件报告。它支持个性化完整性，不支持临床安全主张。"},
       {"id": "phase_heading", "type": "markdown", "body": "## 下一步：一次诊断、一次定位、一次冻结\n\nV3 不再重复‘内部改一点—再打一次模糊分’。先封住 P0 的版本和评价漏洞，再补齐既有外部诊断；随后资格化 generator/executor，仅对诊断确定失败的 treatment 做有界修复。固定 treatment 先证明有用，selector 后训练，正式外测最后一次冻结执行。"},
       {"id": "phase_block", "type": "table", "tableId": "phase_table"},
-      {"id": "limitations", "type": "markdown", "body": "## 局限与阻塞项\n\n当前 42/90 stress run 不完整，不能出方向结论；Llama 3.1 8B 尚未经过同栈 ESC 资格化；ES-MemEval 的 1209/1427/418 题身份未对齐；EvoEmo 独立 owner 只有 18；已有内部 panel 已被开发消费。V3 不能保证自然数据必然支持预期主张，但可以保证正面结果不再依赖不完整 arm、错误独立单位、事后阈值或一个不可解释的 Function judge。"},
+      {"id": "limitations", "type": "markdown", "body": "## 局限与阻塞项\n\n当前42/90 stress run不完整，不能出方向结论；Llama 3.1 8B尚未经过同栈ESC资格化；公开v1.0.0的1,427题无法仅凭计数映射为正式论文1,209题；EvoEmo与ES-MemEval共享18个合成用户；已有内部panel已被开发消费。ESC-Eval本身也使用模拟用户、GPT-4抽取角色卡，并包含可能偏好多建议的rubric，故必须增加低负担guardrail。V3不能保证自然数据必然支持预期主张，但可以保证正面结果不依赖不完整arm、错误独立单位、事后阈值或一个不可解释的Function judge。"},
       {"id": "further_questions", "type": "markdown", "body": "## 正式执行前仍需回答\n\n- ES-MemEval 1209、1427 与历史 418 的逐题关系是什么？\n- ESC-Eval scorer 能否在公开人工标注上复现，并给出同栈 reference anchor？\n- 补齐 90/90 后，RS、MP、MS 的 full-minus-component 和 ON-slice 方向分别是什么？\n- 若 generator 合格而 component 仍不做功，失败位于 candidate、delta interface 还是 selector target？\n- 18-owner 聚类区间是否足以支撑正式主张，还是只能支撑受限外部有效性？"
       }
     ]
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-13T15:53:54+09:00",
+    "generatedAt": "2026-08-13T16:13:15+09:00",
     "status": "ready",
     "datasets": {
       "external_completion": [
         {"status": "Schema-valid", "calls": 42, "share": 0.4667},
         {"status": "Missing after HTTP 429", "calls": 48, "share": 0.5333}
+      ],
+      "p0_gates": [
+        {"gate": "Dataset identity", "status": "PARTIAL", "evidence": "ESConv hash pinned; EvoEmo v1.0.0 pinned; 1209/1427 conflict verified", "blocker": "Final-paper 1209 question IDs unavailable"},
+        {"gate": "Official implementation", "status": "PARTIAL", "evidence": "ESC-Eval/ESC-Judge/ES-MemEval repository commits identified", "blocker": "Code/data not yet vendored and replayed locally"},
+        {"gate": "Scorer and reference", "status": "BLOCKED", "evidence": "Published protocols identified", "blocker": "ESC-RANK calibration, same-stack reference, position sensitivity, human anchors"},
+        {"gate": "Pass margins", "status": "BLOCKED", "evidence": "10% input-token floor versus fixed-high retained", "blocker": "Generator and Q/R NI margins lack calibration/reference anchors"},
+        {"gate": "Overlap screen", "status": "BLOCKED", "evidence": "ESC-Eval sources include ESConv/ExTES", "blocker": "Source/dialogue/semantic mapping not materialized"},
+        {"gate": "Statistical units", "status": "FROZEN", "evidence": "dialogue for ESConv; user for shared 18-user longitudinal source", "blocker": "None"},
+        {"gate": "Atomic Risk", "status": "PARTIAL", "evidence": "Nine events including UNCERTAIN frozen", "blocker": "Double review, adjudication, owner-cluster UCB"},
+        {"gate": "Function role", "status": "FROZEN SECONDARY", "evidence": "Nonzero reproducible mechanism support, not sole veto", "blocker": "None"}
       ],
       "asset_compatibility": [
         {"class": "直接复用", "asset": "提交 ef318c3 的 tracked code/config/contracts/public data", "allowed_use": "V3 开发基线", "boundary": "需通过 active clean-checkout profile"},
@@ -196,7 +225,10 @@
     {"id": "tests", "label": "V3 active test profile", "path": "data/v3_authority/v3_active_test_profile_v1.json"},
     {"id": "master", "label": "V3 master research program", "path": "docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md"},
     {"id": "benchmark", "label": "V3 evaluation benchmark plan", "path": "docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md"},
-    {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"}
+    {"id": "datasets", "label": "V3 dataset and evidence cards", "path": "docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md"},
+    {"id": "evaluation_freeze", "label": "V3 evaluation freeze contract", "path": "data/v3_authority/v3_evaluation_freeze_contract_v1.json"},
+    {"id": "memeval_reconciliation", "label": "ES-MemEval repository reconciliation", "path": "data/v3_authority/es_memeval_repository_reconciliation_v1.json"},
+    {"id": "evaluation_audit", "label": "V3 evaluation freeze audit", "path": "docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md"}
   ],
   "package_info": {"originUrl": "artifact://metacom-v3-master-research-program-20260813"}
 }

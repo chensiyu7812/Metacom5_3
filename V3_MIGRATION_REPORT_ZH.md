@@ -34,7 +34,7 @@ work/v3-research-program-20260813
 
 共 39 个 active tests 全部通过。
 
-另有 2 个 V3 authority / private-evidence consistency tests 通过；合并验证为 41 tests passed。
+另有 3 个 V3 authority、evaluation-freeze 与 private-evidence consistency tests 通过；合并验证为 42 tests passed。
 
 完整 legacy pytest 不能作为 clean-clone release gate：它读取大量未提交历史 outputs、已消费人评包和阶段性 materialization。缺失路径导致大量预期失败和 11 个 setup errors；这说明旧测试缺少 active/replay 分层，不说明 V3 path relocation 破坏代码。
 
@@ -53,8 +53,10 @@ work/v3-research-program-20260813
 
 - 总方案：`project/docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md`
 - Evaluation plan：`project/docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md`
+- Evaluation freeze audit：`project/docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md`
 - Dataset cards：`project/docs/V3_DATASET_AND_EVIDENCE_CARDS_ZH.md`
 - 机器权威：`project/data/v3_authority/v3_research_authority_v1.json`
+- Evaluation 硬门：`project/data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 - 迁移矩阵：`project/data/v3_authority/v3_asset_compatibility_manifest_v1.json`
 - 验证器：`project/scripts/v3/00_validate_v3_workspace.py`
 - 可审阅总报告：`project/reports/v3_master_research_program_20260813/report.html`
