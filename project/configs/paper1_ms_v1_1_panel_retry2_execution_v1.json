@@ -1,0 +1,21 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-v1-1-panel-retry2-execution-config-v1",
+  "release_revision": "pm-v1.5_1",
+  "execution_release": {
+    "protocol": "pm-v1.5-central-paid-run-release-v1",
+    "status": "PAID_RUN_RELEASED",
+    "release_revision": "pm-v1.5_1",
+    "approval_manifest": "outputs/pm_v1_5_paid_run_release.json"
+  },
+  "endpoints": {
+    "generator": {
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "family": "llama",
+      "timeout_seconds": 180
+    }
+  },
+  "phase_manifest_path": "data/pm_v1_5_contracts/paper1_ms_v1_1_panel_retry2_execution_phase_v1.json",
+  "absolute_usd_cap": 0.0
+}
