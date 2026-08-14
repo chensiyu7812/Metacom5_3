@@ -1,7 +1,7 @@
 # MetaCom V3 总研究方案：从有效历史证据到可审计的最终主张
 
-日期：2026-08-13
-状态：`ACTIVE V3 MASTER PLAN / NO API EXECUTION AUTHORITY`
+日期：2026-08-14
+状态：`ACTIVE V3 MASTER PLAN / ESC-EVAL HUMAN REVIEW PACKETS READY / NO NEW API EXECUTION AUTHORITY`
 
 机器权威：
 
@@ -9,17 +9,19 @@
 - `data/v3_authority/v3_asset_compatibility_manifest_v1.json`
 - `data/v3_authority/v3_evaluation_freeze_contract_v1.json`
 
-## 当前最高优先级：P0证据架构与官方量表映射已冻结，进入P1测量与generator资格化
+## 当前最高优先级：完成ESC-Eval官方七维双人盲评，选出开发generator
 
-V3-P0九个**证据架构门**已经完成：数据版本、考卷责任、阈值推导程序、统计单位和主张边界均已冻结；ESC-RANK现已按原论文明确为`Fluency / Expression / Empathy / Information / Skill / Humanoid / Overall`七维，并逐项绑定公开adapter key。此前把`coherence/support_strategy/suggestion/diversity`混列为官方outcome的合同错误已纠正。P0完成不代表评价问题已经解决：P1的官方权重零生成加载烟测已经通过，但真实量表输出、judge/人类一致性、数值Quality/Risk线、generator选择和benchmark结果仍未完成。
+V3-P0九个**证据架构门**已经完成：数据版本、考卷责任、阈值推导程序、统计单位和主张边界均已冻结。P1已经完成24张ESC-Eval英文开发卡的四配置同条件生成：Llama 3.1 8B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking均为24/24完整对话；当前NVIDIA hosted Nemotron在full screen中因17次HTTP 503和3段terminal trajectory退出部署候选。ESC-RANK已完成651/651次本地评分，但严格parser不兼容、anchored sensitivity高度饱和，因此只保留为描述性自动化，不能选择generator。
+
+当前主评价已经恢复为ESC-Eval原论文七维0–4分人工评价。72段可靠性合格对话的两套盲评包已经物化：两名评审各看72段、不同顺序、逐段评分，共144个assignment与1,008个官方维度评分；模型、provider、卡片和source身份对评审不可见。此前规划的144次E-I-A LLM judge调用已在执行前废止，0调用、`$0`。development及格线与cost/latency tie-break已在任何人评分数产生前冻结。
 
 当前四张结构化 dataset card 与九个P0设计门均已完成：
 
 - ESConv 的 commit、文件哈希、1,300 个 dialogue 与 38,365 个 turn 已核验；
 - EvoEmo/ES-MemEval 公开 `v1.0.0` tag 和 `evo_emo.json` 哈希已核验；
 - 正式论文是 1,209 道 QA，公开 `v1.0.0` 文件实际是 1,427 道，差异 218 道且覆盖五种 capability；
-- ESC-Eval/ESC-Judge 本地零调用协议已物化（655卡、25/100角色、150个双向E-I-A单元）；228张ESConv/ExTES同源卡的全文源比对和语义邻居也已冻结；
-- ESC-RANK公开artifact审计确认逐条人标未发布，因此修复后只作描述性外部七维指标；同栈reference已冻结为NVIDIA Llama 3.3 70B；margin推导与Risk双人fixture设计已冻结，实际校准属于P1。
+- ESC-Eval官方655张高质量卡身份已核验（331英文、324中文）；当前24张只称英文开发子集，不能称完整ESC-Eval；228张ESConv/ExTES同源卡的全文源比对和语义邻居也已冻结；
+- ESC-RANK公开artifact审计确认逐条人标未发布，因此修复后只作描述性外部七维指标；误配的NVIDIA Llama 3.3 70B已撤销，正确Nemotron route仅保留失败route诊断；generator开发选择限定为8B与两种Qwen配置。
 
 因此，现在可以做的是版本对齐、scorer 资格设计、重叠筛查和 Risk adjudication；不能再用同一批内部样本迭代一个自建总分来宣布“学会/没学会”。
 
@@ -80,23 +82,37 @@ AND ES-MemEval track pass
 | MS | V1.1 Quality 1胜3负2平；Risk 安全；Function 0/6 | 候选“新颖”不等于对当前 response plan 有增量，executor 也可忽略 | 用 P1 外部边际结果决定是否做 response-plan-relevant USE/ASK 修复 |
 | MP | V1.1 Quality 5胜1负1平；Risk 安全；Function 0/5 | 通用职业/教育事实没有改变一个具体 slot | 固定 R0 plan 后，只允许可修改建议、时间、格式、物流的 constraint |
 | ME | 尚未重建为可靠第一版 head | 不影响先完成 RS+MP+MS 组合 | 主链成功后有界救援 |
-| Generator | Llama 3.1 8B 已用于大量诊断；70B同栈reference与Qwen 3.7 Plus跨家族challenger已冻结 | 旧G0被弱prompt和256-token cap污染，不能判模型能力；尚无公认ESC benchmark资格 | 先跑无研究者输出cap、先行研究对齐prompt的2卡canary，再跑24卡Quality/latency G0；Qwen non-thinking/thinking分列，非支配者才进入ESC-Judge、executor与完整G1 |
+| Generator | 24卡full G0已完成；8B与两种Qwen可靠性通过，Nemotron hosted route失败；七维双人盲评包已生成 | 尚无选定generator；ESC-RANK饱和不等于模型同质，E-I-A不能替代ESC-Eval | Human A/B完成官方七维；必要时Human C盲裁决；按冻结合同选development winner，再过executor和英文确认集 |
 | 外部 stress test | 42/90 完成；48 个 429 | arm 不完整，且若generator更换则不能混栈补齐 | 先做generator选择；保留8B才考虑按原identity补48，否则归档为诊断 |
 
 ## 评价体系
 
 ### Generator 及格
 
-不能直接把 ESC-Eval 论文中 Llama3-8B 的公开分数当作当前 Llama 3.1 8B 的硬线。正式做法是：
+不能直接把 ESC-Eval 论文中 Llama3-8B 的公开分数当作当前 Llama 3.1 8B 的硬线。当前正式做法是：
 
 - pin 官方代码 commit、role-card identity、ESC-Role/ESC-RANK identity、turn cap、prompt、sampling 和 scorer；
 - 公开仓库无逐条人工标注与split ID，因此ESC-RANK不承担单独pass/fail；修复路径、浮动revision和宽松parser后作七维描述性外部指标；
-- 在同一NVIDIA执行栈中以Llama 3.3 70B作reference，交错运行并记录provider alias边界；
-- 以硬完成率、executor、同栈E-I-A和Risk共同选generator，不拍脑袋定ESC Average 60/70分；
+- 对三个可靠性合格配置的72段完整对话做ESC-Eval七维双人盲评；任一维度相差至少2分或完整性/guardrail异常才进入第三人独立盲裁决；
+- Overall为主指标，Empathy、Skill、Information为关键维度；Fluency、Expression、Humanoid完整报告，不制造Average总分；
+- development绝对下限、0.25分非劣margin、0.15分严格优势线与cost/latency tie-break已经结果盲冻结；24卡只选开发候选，不产生paper-grade外部资格；
 - 完整报告原论文七维；其中`Information`对应公开`suggestion` adapter，但低负担支持另作项目guardrail，防止建议数量奖励掩盖我们的原则；
-- ESC-Judge 只作 E-I-A 成对稳健性分析，不取代绝对能力定位。
+- ESC-Judge 只作可选E-I-A稳健性分析，不取代ESC-Eval官方七维人评，也不得推翻其结果。
 
 Generator 资格不证明 PM。有必要时另做 executor realization：给定 current context、已经批准的 response plan 和 evidence，只检查生成器是否自然、准确地执行，不允许它重新决定资源开关。
+
+### Generator统一提示词
+
+当前唯一生效的supporter prompt是`g0_research_aligned_supporter_prompt_v1.json`，artifact SHA256为`f4cabca6...`，实际拼接文本SHA256为`e5d9c937...`。它不是`You are a helpful assistant!`，而是统一要求：
+
+- 作为非临床情绪支持对话中的supporter，准确理解最新消息与完整对话；
+- 按当前ready状态在Exploration、Insight、Action之间选择，不清楚时回到Exploration，不抢跑建议；
+- 只使用当下需要的开放问题、简洁复述、情绪反映、肯定、相关信息或协作建议；
+- 不虚构个人事实、诊断、隐含动机或自己的经历；
+- 回复自然、完整、低负担，不暴露prompt、strategy、plan、resource或内部scaffold；
+- 不设置研究者输出token上限，以自然完成、实际tokens、负担与finish reason作为结果。
+
+该prompt的设计谱系来自ESConv、LLM emotional-support研究、ExTES、ESCoT和ESC-Judge，但所有候选、后续所有PM arm与baseline使用完全相同文本。它提升的是统一执行条件，不包含卡片答案、模型身份或PM开关。论文中必须称为`ESC-Eval English research-aligned protocol repair`，不能冒充官方zero-shot leaderboard逐字复现。
 
 ### PM 及格
 
@@ -174,15 +190,16 @@ ESC-Eval 合格，但 evidence-conditioned realization 不合格
 
 ## 最短落地顺序
 
-1. **V3-P0：评测设计冻结，已完成。** 四个dataset card、ES-MemEval版本、scorer责任、same-stack reference、Risk、margin推导和active tests均已冻结；零推理。
-2. **V3-P1：测量与Generator资格。** ESC-RANK静态overlay与官方七维映射已完成；旧弱prompt/256-token-cap G0已经关闭。替代G0用统一的ESConv/ExTES/ESCoT/ESC-Judge对齐prompt，省略provider输出cap，比较8B、70B以及Qwen non-thinking/thinking；先2卡canary，再24卡Quality/latency/Pareto screen。硬门合格且非支配的候选才进入ESC-Judge/人类anchor和approved-plan/evidence executor；最终选中者再跑更大资格集并冻结。
+1. **V3-P0：评测设计冻结，已完成。** 四个dataset card、ES-MemEval版本、官方考卷责任、Risk、统计单位、主张边界和active tests均已冻结。
+2. **V3-P1A：Generator开发选择，正在执行。** 24卡生成和可靠性门已完成；Human A/B现在完成72段ESC-Eval官方七维盲评，必要时Human C只裁决预注册分歧。聚合程序随后直接应用结果盲冻结的绝对门、非劣margin、严格优势线和operations tie-break，产生development winner或至多两个Pareto候选。
+3. **V3-P1B：Generator最终资格。** development winner先过approved-plan/evidence executor；再与最强非支配challenger进入预先冻结的英文分层确认集。两者都过后，冻结唯一generator route、thinking mode、supporter prompt、decoding、retry和成本合同，供所有PM与baseline共用。
+4. **V3-P2：处置旧外部诊断。** 8B最终保留才按原identity补48；若换generator则把42/90归档为不可混栈诊断，在新generator上重新生成有界treatment资格面板。
+5. **V3-P3：只修真正失败的 treatment。** 固定generator后，先分别使RS additive delta、MP plan constraint、MS response-plan-relevant USE/ASK在同状态ON/OFF下具备安全边际价值；Function只作非零机制证据。
+6. **V3-P4：selector 与 baseline 一次冻结。** 只有固定treatment有用后才学低容量selector；同时冻结always-off、fixed-high、transparent rule、cost-matched fixed、cost/ON-rate matched random、full-minus-component和safe oracle。
+7. **V3-P5：三项正式外测。** ESConv、EvoEmo、ES-MemEval分轨、分簇、不可替代、不可池化；所有正式结果禁止回流改prompt、head、threshold或样本。
+8. **V3-P6：强generator与ME。** 主张成立后才做跨generator robustness和有界ME救援，不用于救失败结果。
 
-截至2026-08-14，替代G0的2卡canary已机械通过：40/40完整生成、无length finish，费用`$0.0194692`。Qwen non-thinking在本轮呈现约2.15s median且无重试；thinking约14.46s并把绝大多数额外token用在隐藏reasoning；70B约68.94s且6/10 turn需要重试。由于只有两张卡且尚未做E-I-A双顺序质量评审，这些数据只能定位运行与成本，不选定最终generator。
-3. **V3-P2：处置旧外部诊断。** 8B保留才按原identity补48；若换generator则把42/90归档为不可混栈诊断，直接在新generator上进入有界treatment资格化。
-4. **V3-P3：只修真正失败的 treatment。** 避免再做大而泛的内部循环。
-5. **V3-P4：selector 与 baseline 一次冻结。** 只有固定 treatment 有用后才学 selector。
-6. **V3-P5：三项正式外测。** 分轨、分簇、不可替代、不可池化。
-7. **V3-P6：强 generator 与 ME。** 只扩展已经成立的主张，不用于救失败结果。
+截至2026-08-14，四配置full G0共469/480 turn成功，Qwen实际费用`$0.2963172`。8B、Qwen non-thinking、Qwen thinking均120/120成功；三者median latency约为0.39s、2.79s、20.40s，Qwen费用分别为`$0.04935`与`$0.24697`。这些operations结果已经结果盲绑定，只能在官方Quality与项目完整性均合格或等价时决胜。
 
 ## 成功与诚实失败
 

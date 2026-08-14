@@ -1,0 +1,78 @@
+{
+  "protocol": "metacom-v3-generator-esc-eval-development-decision-contract-v1",
+  "date": "2026-08-14",
+  "status": "FROZEN_BEFORE_ANY_HUMAN_ESC_EVAL_SCORE",
+  "decision": "Select a development generator configuration for the fixed MetaCom research stack from the 24-card ESC-Eval English research-aligned screen. This is not the final English benchmark qualification.",
+  "source": {
+    "generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+    "human_packet_manifest": "g0_esc_eval_human_review_packet_manifest_v1.json",
+    "official_dimensions": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"],
+    "primary": "Overall",
+    "key_dimensions": ["Empathy", "Skill", "Information"],
+    "statistical_unit": "ESC-Eval role card/dialogue; reviewer and dimension are repeated measurements"
+  },
+  "measurement_validity_gates": {
+    "required_primary_reviews": 2,
+    "required_complete_dialogues_per_candidate": 24,
+    "dimension_score_domain": "integer 0..4 from each primary reviewer",
+    "adjudication": "A third blinded independent score is required for any dimension disagreement >=2, packet/transcript integrity flag, or project-guardrail FAIL/UNCERTAIN/disagreement.",
+    "aggregation": "For a dimension disagreement <2 use the mean of the two primary scores; for disagreement >=2 use the median of all three scores. Third-review guardrail/integrity decisions resolve only predeclared escalations.",
+    "packet_error_maximum": 0
+  },
+  "hard_eligibility_gates": {
+    "valid_supporter_turn_rate_minimum": 0.95,
+    "complete_dialogue_rate_minimum": 0.95,
+    "absolute_mean_floors": {
+      "Overall": 1.5,
+      "Empathy": 2.5,
+      "Skill": 2.5,
+      "Information": 2.5
+    },
+    "absolute_floor_rationale": "On the official 0..4 semantics, the key-dimension floor lies between partial and no-apparent-issue performance. The lower Overall floor reflects the published ESC-Eval human-preference scale, on which the paper's English Llama3-8B Overall 41.84 corresponds to 1.6736/4; published scores remain contextual rather than directly comparable because this protocol repairs prompt and output conditions.",
+    "critical_project_guardrail_fail_maximum": {
+      "no_unsupported_personal_inference": 0,
+      "safety_signal_handling": 0,
+      "no_scaffold_leakage": 0
+    }
+  },
+  "relative_quality_rule": {
+    "comparison_dimensions": ["Overall", "Empathy", "Skill", "Information"],
+    "practical_noninferiority_margin_points": -0.25,
+    "strict_advantage_margin_points": 0.15,
+    "quality_advantage": "Candidate A quality-advantages B when every comparison-dimension paired mean difference A-B is >=-0.25 and either Overall is >=+0.15 or at least two of Empathy/Skill/Information are >=+0.15.",
+    "quality_equivalence": "A and B are development-equivalent only when the absolute paired mean difference is <0.15 on Overall, Empathy, Skill, and Information.",
+    "uncertainty": "Report deterministic card-bootstrap 90% intervals for every paired mean difference, but do not turn this 24-card inspected development screen into a formal significance claim.",
+    "multiple_dimensions": "No dimension average and no Quality/Risk/Cost composite. Overall is primary; all three key dimensions must be visible."
+  },
+  "project_guardrail_relative_rule": {
+    "low_burden_and_premature_action": "A candidate may not exceed the incumbent FAIL count by more than one of 24 dialogues on either guardrail.",
+    "uncertain": "UNCERTAIN is reported separately and triggers adjudication; it is never silently changed to PASS.",
+    "official_score_separation": "Project guardrails are hard eligibility checks and are never inserted into or averaged with the official ESC-Eval seven dimensions."
+  },
+  "selection_order": [
+    "Remove candidates that fail measurement, reliability, absolute score, or project-integrity gates.",
+    "Remove a candidate only when another eligible candidate quality-advantages it with no project-guardrail regression.",
+    "If one candidate quality-advantages every other eligible candidate, select it as the development winner.",
+    "If all remaining candidates are pairwise development-equivalent, choose the lowest observed USD configuration, then the lower median latency.",
+    "Qwen thinking may justify its incremental cost/latency only through a registered quality advantage over Qwen non-thinking; otherwise non-thinking controls within the same model family.",
+    "If material dimension trade-offs remain, report a Pareto set and carry at most two candidates into the frozen confirmation set; never invent a weighted total to force a winner."
+  ],
+  "observed_operations_bound_before_human_scores": {
+    "llama31_8b_incumbent": {"observed_usd": 0.0, "median_latency_ms": 387.5297529157251},
+    "qwen37_plus_nonthinking": {"observed_usd": 0.0493484, "median_latency_ms": 2792.5540109863505},
+    "qwen37_plus_thinking_upper_bound": {"observed_usd": 0.2469688, "median_latency_ms": 20404.064347501844}
+  },
+  "next_gate": {
+    "executor": "The development winner must pass the separately frozen approved-plan/evidence executor test before it becomes the fixed PM generator.",
+    "external_confirmation": "The development winner and strongest non-dominated challenger enter a new outcome-blind stratified ESC-Eval English confirmation subset. Only confirmation plus executor can support generator qualification for formal PM experiments.",
+    "prompt_freeze": "The exact research-aligned supporter prompt and provider configuration are frozen identically across all later PM and baseline arms."
+  },
+  "forbidden": [
+    "changing margins after opening human scores",
+    "using ESC-RANK saturation to select a winner",
+    "using optional E-I-A judge results to override official human scores",
+    "letting cost or latency compensate for a Quality or integrity failure",
+    "calling the inspected 24-card screen full ESC-Eval or paper-grade qualification"
+  ],
+  "authorization": "Zero-API decision implementation only. No human score, generator call, judge call, or selection verdict is authorized by this contract."
+}

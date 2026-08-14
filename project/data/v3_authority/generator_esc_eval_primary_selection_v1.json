@@ -1,7 +1,7 @@
 {
   "protocol": "metacom-v3-generator-esc-eval-primary-selection-v1",
   "date": "2026-08-14",
-  "status": "ESC_EVAL_PRIMARY_RESTORED_EXISTING_24_CARD_DEVELOPMENT_DIALOGUES_AWAIT_OFFICIAL_SEVEN_DIMENSION_HUMAN_REVIEW",
+  "status": "ESC_EVAL_PRIMARY_RESTORED_TWO_BLINDED_HUMAN_PACKETS_MATERIALIZED_REVIEWS_PENDING",
   "decision": "Fairly choose the generator configuration for the later PM research using ESC-Eval as the external benchmark, without presenting an adapted in-house judge as the benchmark itself.",
   "official_anchor": {
     "paper": "Zhao et al., ESC-Eval, EMNLP 2024 main conference",
@@ -38,6 +38,8 @@
   "development_selection": {
     "surface": "24 previously frozen English high-quality ESC-Eval development cards spanning MHP, EPITOME, ExTES, ESConv, and Psych",
     "generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+    "human_review_packet_manifest": "g0_esc_eval_human_review_packet_manifest_v1.json",
+    "development_decision_contract": "generator_esc_eval_development_decision_contract_v1.json",
     "candidate_dialogues": {
       "llama31_8b_incumbent": 24,
       "qwen37_plus_nonthinking": 24,
@@ -45,7 +47,7 @@
     },
     "excluded_from_selection": {"nemotron3_nano_30b_a3b_default_thinking": "hosted-route reliability hard failure"},
     "official_esc_rank_result": "Completed 651 local dimension inferences including descriptive Nemotron subset. Strict format validity was 0/651; anchored sensitivity was valid but heavily saturated, so ESC-RANK remains descriptive and cannot select the generator.",
-    "next_measurement": "Two independent blinded human reviewers score all 72 reliability-eligible complete dialogues on the official seven 0-to-4 dimensions. Dialogue order and candidate labels are blinded; each reviewer sees one dialogue at a time, not a model bundle.",
+    "next_measurement": "The two independent blinded review packets are materialized. Human A and Human B must now score all 72 reliability-eligible complete dialogues on the official seven 0-to-4 dimensions; each sees one dialogue at a time and a different order, with candidate/model/provider/card/source identity absent.",
     "assignments": 144,
     "dimension_ratings": 1008,
     "statistical_unit": "ESC-Eval role card/dialogue; seven dimensions and five turns are repeated measures.",
@@ -60,6 +62,14 @@
     "objective_tie_breakers_after_quality_and_integrity": ["actual USD", "billed input/output tokens", "median and p90 latency"],
     "no_weighted_quality_risk_cost_composite": true,
     "selection_rule": "Retain hard-gate passers. A unique development winner requires noninferiority on the registered Overall, Empathy, Skill, and Information margins, strict superiority on Overall or at least two key dimensions, and no project-guardrail regression. If configurations are human-rated equivalent, choose the least costly/fastest. If dimensions materially trade off, retain the Pareto set and do not invent one winner."
+  },
+  "prompt_freeze": {
+    "artifact": "g0_research_aligned_supporter_prompt_v1.json",
+    "artifact_sha256": "f4cabca6c4d0ad2bdc3a4614405957c4220dffd92896cf28a7799ff91fe42661",
+    "joined_prompt_sha256": "e5d9c937c729dcd6214ace6fff3421659ed9eab06d04b976f6df0b3589a9e73f",
+    "candidate_symmetry": "The exact same system prompt is used for Llama, Qwen non-thinking, Qwen thinking, every later PM arm, and every baseline arm.",
+    "research_lineage": ["ESConv", "LLM emotional-support evaluation", "ExTES", "ESCoT", "ESC-Judge"],
+    "boundaries": ["no researcher output-token cap", "no exposed strategy label or chain of thought", "no PM head or memory fact on the base-capability surface", "not an exact official zero-shot wrapper reproduction"]
   },
   "confirmation_after_development": {
     "surface": "All 331 official English high-quality ESC-Eval cards, or an explicitly named frozen stratified English subset if full execution is infeasible; never call a subset the full benchmark.",

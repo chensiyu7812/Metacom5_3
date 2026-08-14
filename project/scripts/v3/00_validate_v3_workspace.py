@@ -63,6 +63,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     generator_fair_selection_path = AUTHORITY_DIR / "generator_fair_selection_protocol_v1.json"
     g0_fair_judge_canary_path = AUTHORITY_DIR / "g0_fair_judge_canary_preflight_v1.json"
     generator_esc_eval_primary_selection_path = AUTHORITY_DIR / "generator_esc_eval_primary_selection_v1.json"
+    g0_esc_eval_human_review_packet_path = AUTHORITY_DIR / "g0_esc_eval_human_review_packet_manifest_v1.json"
+    generator_esc_eval_development_decision_path = AUTHORITY_DIR / "generator_esc_eval_development_decision_contract_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -107,6 +109,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     generator_fair_selection = _load_json(generator_fair_selection_path)
     g0_fair_judge_canary = _load_json(g0_fair_judge_canary_path)
     generator_esc_eval_primary_selection = _load_json(generator_esc_eval_primary_selection_path)
+    g0_esc_eval_human_review_packet = _load_json(g0_esc_eval_human_review_packet_path)
+    generator_esc_eval_development_decision = _load_json(generator_esc_eval_development_decision_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -185,7 +189,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 96:
+    if profile["expected_test_count"] != 100:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -509,6 +513,23 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("repaired ESC-Eval protocol is mislabeled as exact reproduction")
     if "Optional sensitivity" not in generator_esc_eval_primary_selection["role_of_other_evaluators"]["esc_judge_eia"]:
         failures.append("ESC-Judge E-I-A regained primary selection authority")
+    if (g0_esc_eval_human_review_packet["dialogues"], g0_esc_eval_human_review_packet["reviewers"], g0_esc_eval_human_review_packet["assignments"], g0_esc_eval_human_review_packet["official_dimension_ratings"]) != (72, 2, 144, 1008):
+        failures.append("ESC-Eval human-review packet accounting drifted")
+    if g0_esc_eval_human_review_packet["source_generation_identity"] != g0_four_generator_closeout["run_identity"]:
+        failures.append("ESC-Eval human-review packet source identity drifted")
+    if g0_esc_eval_human_review_packet["joined_supporter_prompt_sha256"] != g0_four_generator_preflight["prompt"]["joined_prompt_sha256"]:
+        failures.append("ESC-Eval human-review packet supporter prompt drifted")
+    if not all(g0_esc_eval_human_review_packet["blinding_checks"].values()):
+        failures.append("ESC-Eval human-review packet lost a blinding invariant")
+    if g0_esc_eval_human_review_packet["selection_verdict"] != "NOT_AUTHORIZED_BEFORE_TWO_REVIEWS_AND_ANY_REQUIRED_ADJUDICATION":
+        failures.append("human-review materialization improperly selects a generator")
+    if generator_esc_eval_development_decision["status"] != "FROZEN_BEFORE_ANY_HUMAN_ESC_EVAL_SCORE":
+        failures.append("generator development decision was not frozen before human scores")
+    if generator_esc_eval_development_decision["source"]["primary"] != "Overall":
+        failures.append("generator development decision lost ESC-Eval Overall primary")
+    relative_rule = generator_esc_eval_development_decision["relative_quality_rule"]
+    if (relative_rule["practical_noninferiority_margin_points"], relative_rule["strict_advantage_margin_points"]) != (-0.25, 0.15):
+        failures.append("generator development decision numerical lines drifted")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -553,6 +574,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         generator_fair_selection_path,
         g0_fair_judge_canary_path,
         generator_esc_eval_primary_selection_path,
+        g0_esc_eval_human_review_packet_path,
+        generator_esc_eval_development_decision_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -690,6 +713,21 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "human_assignments": generator_esc_eval_primary_selection["development_selection"]["assignments"],
             "dimension_ratings": generator_esc_eval_primary_selection["development_selection"]["dimension_ratings"],
             "exact_official_reproduction": generator_esc_eval_primary_selection["protocol_repair_boundary"]["exact_official_reproduction"],
+        },
+        "g0_esc_eval_human_review_packet": {
+            "status": g0_esc_eval_human_review_packet["status"],
+            "dialogues": g0_esc_eval_human_review_packet["dialogues"],
+            "reviewers": g0_esc_eval_human_review_packet["reviewers"],
+            "assignments": g0_esc_eval_human_review_packet["assignments"],
+            "official_dimension_ratings": g0_esc_eval_human_review_packet["official_dimension_ratings"],
+            "api_calls": g0_esc_eval_human_review_packet["api_calls"],
+        },
+        "generator_esc_eval_development_decision": {
+            "status": generator_esc_eval_development_decision["status"],
+            "primary": generator_esc_eval_development_decision["source"]["primary"],
+            "key_dimensions": generator_esc_eval_development_decision["source"]["key_dimensions"],
+            "noninferiority_margin": generator_esc_eval_development_decision["relative_quality_rule"]["practical_noninferiority_margin_points"],
+            "strict_advantage_margin": generator_esc_eval_development_decision["relative_quality_rule"]["strict_advantage_margin_points"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

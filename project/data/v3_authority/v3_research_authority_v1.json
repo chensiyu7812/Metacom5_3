@@ -35,6 +35,8 @@
     "generator_fair_selection_protocol": "data/v3_authority/generator_fair_selection_protocol_v1.json",
     "g0_fair_judge_canary_preflight": "data/v3_authority/g0_fair_judge_canary_preflight_v1.json",
     "generator_esc_eval_primary_selection": "data/v3_authority/generator_esc_eval_primary_selection_v1.json",
+    "g0_esc_eval_human_review_packet_manifest": "data/v3_authority/g0_esc_eval_human_review_packet_manifest_v1.json",
+    "generator_esc_eval_development_decision_contract": "data/v3_authority/generator_esc_eval_development_decision_contract_v1.json",
     "evaluation_margin_justification": "data/v3_authority/evaluation_margin_justification_v1.json",
     "risk_adjudication_protocol": "data/v3_authority/risk_adjudication_protocol_v1.json",
     "risk_instrument_qualification": "data/v3_authority/risk_instrument_qualification_v1.json",
@@ -96,7 +98,7 @@
   },
   "external_tracks": {
     "generator_prerequisite": {
-      "name": "ESC-Eval plus ESC-Judge sensitivity",
+      "name": "ESC-Eval official seven-dimension primary plus optional ESC-Judge sensitivity",
       "role": "Qualify the frozen generator before formal PM claims.",
       "counts_as_pm_external_track": false
     },
@@ -134,7 +136,7 @@
     "MP": "V1.1 showed Quality 5 wins / 1 loss / 1 neutral with no material Risk increase, but zero attributable Function across 5 CONSTRAIN cases; plan-first constraint treatment is required.",
     "ME": "Deferred bounded rescue; not required before RS plus two memory heads can be attempted with MP and MS.",
     "external_stress_test": "42 of 90 generator calls are schema-valid; 48 are missing due provider HTTP 429. The incomplete arm matrix permits no scientific decision.",
-    "generator": "The 24-card ESC-Eval development generation is complete: Llama 3.1 8B and Qwen 3.7 Plus non-thinking/thinking each have 24 complete dialogues; hosted Nemotron failed both 0.95 reliability gates. ESC-RANK completed 651/651 local scores at $0 but was format-incompatible under the strict parser and saturated under the anchored sensitivity, so it did not select a generator. The proposed 144-call adapted E-I-A canary was superseded before any call (0 calls, $0). Active selection now requires two independent blinded humans to score the 72 eligible dialogues on ESC-Eval's official seven dimensions; E-I-A and ESC-RANK are secondary only."
+    "generator": "The 24-card ESC-Eval development generation is complete: Llama 3.1 8B and Qwen 3.7 Plus non-thinking/thinking each have 24 complete dialogues; hosted Nemotron failed both 0.95 reliability gates. ESC-RANK completed 651/651 local scores at $0 but was format-incompatible under the strict parser and saturated under the anchored sensitivity, so it did not select a generator. The proposed 144-call adapted E-I-A canary was superseded before any call (0 calls, $0). Two independent blinded ESC-Eval seven-dimension packets are now materialized for all 72 eligible dialogues; the numerical development decision contract was frozen before human scores. Human A/B completion and any predeclared Human C adjudication are the only remaining inputs before a development generator decision."
   },
   "execution_phases": [
     {
@@ -154,7 +156,7 @@
       "name": "measurement_and_generator_qualification",
       "actions": [
         "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
-        "Score all 72 reliability-eligible 24-card development dialogues with two independent blinded humans on ESC-Eval's official seven dimensions; keep hosted Nemotron descriptive-only after its full-screen reliability failure.",
+        "Complete the already-materialized Human A/B packets for all 72 reliability-eligible development dialogues on ESC-Eval's official seven dimensions; use Human C only for predeclared disagreement/integrity escalation.",
         "Complete dual-review non-formal Quality/Risk calibration and register numeric margins before formal outcomes.",
         "Select and freeze one generator for every subsequent learned-policy and baseline arm."
       ],

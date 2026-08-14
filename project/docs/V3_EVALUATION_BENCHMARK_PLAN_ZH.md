@@ -81,6 +81,8 @@ generator选择现在由`generator_esc_eval_primary_selection_v1.json`主控，`
 
 当前三种可靠性合格配置各有24段完整对话，共72段。主评价不是新增LLM自定义盲评，而是两名独立盲评者逐段按ESC-Eval官方七维0–4分评分：72段×2人=`144`个dialogue assignment、共`1008`个维度评分。任一维度相差至少2分、无效对话或完整性疑虑进入第三位盲评裁决。先过可靠性与完整性硬门，再看Overall主指标及Empathy、Skill、Information关键维度；只有质量和风险等价时，成本和延迟才可决胜。
 
+该双评审包现已物化为`g0_esc_eval_human_review_packet_manifest_v1.json`：两位评审顺序独立、逐段而非成组展示，公开页面不含具体模型、provider、卡片或source标识。数值development决策线也已在任何人评分数出现前冻结于`generator_esc_eval_development_decision_contract_v1.json`；聚合程序不会自行修改门槛或强行制造winner。
+
 此前物化的144-call E-I-A judge canary（identity `6bfd7830...`）已经在任何调用前废止：0调用、`$0`，runner会拒绝执行。它只是ESC-Judge风格的可选敏感性工具，不是ESC-Eval官方七维评价，不能选择generator。现有24卡只支持具名开发筛选；论文级英文资格需在全部331张官方英文高质量卡，或事先冻结并明确命名的英文分层确认子集上复核，不能把24卡称为完整ESC-Eval。
 
 ## ESC-Judge 稳健性方案
