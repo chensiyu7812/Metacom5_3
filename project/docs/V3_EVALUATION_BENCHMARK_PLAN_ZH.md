@@ -65,6 +65,8 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 正确Nemotron route已物化为新的零调用identity。transport canary仍用同两张卡、同prompt、同role-player与同seed，10个supporter turn，不设输出上限，并把三类现象分开：只有HTTP 429/Retry-After叫明确限流；timeout/408/5xx叫route instability；正常完成但median/p90过线叫slow service。任一冻结操作门失败就停止Nemotron，不让它拖慢24卡主测；这只淘汰当前托管route，不是宣称模型本体能力差。
 
+该Nemotron canary已在identity `92bd2e53...`下完成并通过操作门：10/10均首次成功，0次HTTP 429、timeout、5xx或terminal trajectory；成功请求median约1.69s、p90约3.23s，10次均自然`stop`且无length finish。托管响应在10次中均含独立reasoning字段，但NVIDIA usage未给出独立reasoning token计数，因此1,601 billed completion tokens不能伪装成可见回答token。此结果只证明低并发小样本route可用；Nemotron保留进入更大Quality/Risk/latency比较，仍未选择generator。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；
