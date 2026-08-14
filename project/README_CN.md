@@ -1,84 +1,44 @@
-# MetaCom-PM：检索前情绪支持资源分配
+# Policy Manager（PM）第一篇论文研究包
 
-> **2026-08-13 V3 新入口：** 当前研究、数据集、benchmark、迁移和执行顺序的唯一新权威见
-> `docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md` 与
-> `data/v3_authority/v3_research_authority_v1.json`。当前 evaluation 硬门见
-> `data/v3_authority/v3_evaluation_freeze_contract_v1.json`；P0 完成前禁止以新一轮内部
-> judge 宣布 head 学会或正式失败。下面的旧 PM-v1.5/V3.3
-> 内容保留用于历史追溯，不再单独授权未来调用。
+> **方法名不是 MetaCom。** `Metacom5_3` 仅为历史仓库/工程名称。
+>
+> **2026-08-14 起唯一研究主线：**
+> `docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260814_ZH.md`
+>
+> **机器可读冻结合同：**
+> `data/pm_v1_5_contracts/pm_final_frozen_research_program_20260814_v1.json`
+>
+> 仓库根目录 `AGENTS.md` 对 Codex/其他 agent 固定了防漂移规则。旧 PM-v1/v1.5/v2/V3/V5、synthetic-user、EvoEmo external、Function/Risk/Quality gate 文档和代码保留为历史/诊断/可复用实现证据；若与 2026-08-14 authority 冲突，以新 authority 为准。
 
-> 官方benchmark实现审计与P0逐项退出门见
-> `docs/V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和
-> `data/v3_authority/p0_exit_checklist_v1.json`；generator资格测量与Risk双评协议已分别机器化，仍不授权API执行。
+## 当前 Paper-1 一句话定义
 
-> 当前 PM-v1.5 唯一执行路线见
-> `docs/PM_V1_5_FINAL_RESEARCH_PLAN_ZH.md`，机器可读阶段与门槛见
-> `data/pm_v1_5_contracts/final_execution_plan_v2.json`。旧的 minimum/core-chain/reverse-
-> designed/canonical-freeze 文档只保留为历史证据，不再分别下达任务。当前旧 ESConv states
-> 含 corpus-level `situation` privileged input，不得进入新训练或最终评测。
+Policy Manager 把 **Strategy-RAG（RS）** 与三类长期记忆 **MP/MS/ME** 视为四种可选外部资源。Retriever/candidate layer 负责找具体候选；Step 1 的四个低容量二分类 head 决定当前是否值得使用；Step 2 只执行已经批准的资源；冻结 Generator 负责生成自然语言。
 
-本包实现第一篇论文的冻结范围：**纯文本、固定生成器之外、监督式 pre-evidence Policy Manager**。PM 只在实际取回证据前选择 MP、MS、ME 与 ESConv Strategy RAG，不实现 POMDP、RL、distress、安全门控、多模态或记忆写回。
+Primary learner 是四个 **L2-regularized logistic regression** heads，监督信号来自 matched ON/OFF component-effect labels；不训练直接 16-class classifier，也不把 RS 改成 ESConv strategy-category predictor。
 
-## 数据边界
+## 第一篇正式证据结构
 
-- `data/synthetic/runtime_states.jsonl` 与 `memory_backend.jsonl`：已清洗、物理隔离的合成训练输入。含旧 private/audit 字段的历史源卡不随 clean release 分发。
-- `data/external/evo_emo.json`：EvoEmo 全部 18 用户、401 历史会话、34 个对话生成场景；只用于冻结后的外部评测。
-- `data/strategy/strategy_cards.jsonl`：随包附带的**预构建 pilot 策略库**。它只允许 generator/judge pilot，不能用于论文确认性结果。
-- 正式 ESConv 结果前，必须将本地官方 `ESConv.json` 导入 `data/external/ESConv.json`，重建 Strategy Bank，并通过 ESConv↔EvoEmo 重叠审计。
-- ESConv test 从不进入 Strategy RAG；EvoEmo 从不进入 PM 训练、阈值选择、prompt 修改或 generator 选择。
+- **RQ0 / Generator qualification：** ESC-Eval。
+- **RQ1 / Selective Strategy-RAG：** ESConv train-only 构建/训练 Strategy-RAG，最终在 ESC-Eval 上比较 `R0 / RS Fixed-High / RS Matched-Random / Learned RS-PM`。
+- **RQ2 / Selective typed memory：** ES-MemEval 上比较 `No Memory / Full History / Official RAG Top-4 / Typed Fixed-High / Typed Matched-Random / Learned Typed-Memory PM`。
+- **Ablation：** `Learned - MP / -MS / -ME`，不重新训练 PM。
+- **Cost：** 真实记录 generator input tokens、resource-injected tokens、latency、total tokens、API cost 等；目标是官方 benchmark performance 不出现 material degradation 时减少资源/生成成本。
 
-## 本地 ESConv 接入
+Published historical baseline scores 只作参考。正式 PM 主张必须在同一个冻结 Generator、同一个 task prompt、同一个 scorer 下重跑 same-stack baselines。
 
-项目已经支持直接复制你本地现有的官方文件：
+## 当前执行顺序
 
-```bash
-python scripts/02_download_esconv.py \
-  --source /你的本地项目/ESConv.json \
-  --overwrite
-python scripts/03_build_strategy_bank.py
-python scripts/12_build_esconv_test.py
-```
+1. 完成正在运行的 ESC-Eval Generator qualification；
+2. 冻结一个 Generator；
+3. 做 bounded official-protocol sanity reproduction；
+4. 冻结 Strategy Bank、strict-past typed memory catalog 和 training-only outcome measurement；
+5. 生成 RS/MP/MS/ME matched ON/OFF effect labels；
+6. 训练四个 L2 logistic heads；
+7. 冻结 PM、same-stack baselines、matched-random schedules；
+8. 跑 RQ1 ESC-Eval；
+9. 跑 RQ2 ES-MemEval QA/Summary/DG；
+10. 跑 MP/MS/ME component-minus ablation；
+11. 汇总 official metrics + Cost + cluster-aware uncertainty + 最小 integrity diagnostics；
+12. main outcomes 解封后不得改变 Generator、prompt、retriever、margin、sample subset 或成功定义。
 
-若不提供 `--source`，脚本会从固定官方 commit 下载。两种方式都会记录 SHA256；Strategy Bank 只使用 dialogue-level train split，并排除与 EvoEmo 重叠的对话。
-
-## 两级门禁
-
-1. `release_preflight.json.status == API_PILOT_READY`：只说明静态、数据与 mock 测试通过，可以运行小规模真实 API pilot。
-2. `release_preflight.json.confirmatory_ready == true` 且 `outputs/study_freeze.json` 有效：才允许正式 ESConv/EvoEmo 脚本运行。
-
-正式脚本 `13`–`17` 会强制校验：
-
-- config；
-- checkpoint；
-- validation-only selection；
-- M2b selected-set omission labels（正式 V3.3 训练/调参必需）；
-- official ESConv / frozen EvoEmo；
-- rebuilt Strategy Bank；
-- ESConv test runtime；
-- EvoEmo fixed seeker tracks 及其 attestation；
-- prompt 与核心代码哈希。
-
-任何文件变化、换 checkpoint、换 selection、缩小 ESConv/EvoEmo 子集，都会硬失败。
-
-## 必须遵守的运行原则
-
-1. 先填写 `configs/experiment.yaml` 的真实 endpoint 与 model 名称。
-2. 先运行 generator variance 和 20-card judge pilot。
-3. 只有 judge gate 通过才允许全量生成标签和训练 PM。
-4. 用官方 ESConv 重建 Strategy Bank 后重新运行 preflight；只有 `confirmatory_ready=true` 才能冻结研究。
-5. 冻结后不得根据 ESConv test 或 EvoEmo 结果更换 generator、修改阈值、规则、prompt 或样本子集。
-
-完整命令见 `docs/RUNBOOK_CN.md`，研究边界见 `docs/STUDY_PROTOCOL_CN.md`。
-
-
-## 本地 ESConv 与正式门禁
-
-本地已有官方 `ESConv.json` 时运行：
-
-```bash
-python scripts/02_download_esconv.py --source /path/to/ESConv.json --overwrite
-python scripts/03_build_strategy_bank.py
-python scripts/12_build_esconv_test.py
-```
-
-正式外部评测必须先运行 `scripts/20_freeze_study.py`。脚本 13–17 默认 fail-closed；只有显式 `--allow-unfrozen-debug` 才能做不可报告的调试。
+详细字段、baseline、表格模板、统计单位、success/stop rules、责任划分与防泄漏要求全部见唯一 authority 文档。
