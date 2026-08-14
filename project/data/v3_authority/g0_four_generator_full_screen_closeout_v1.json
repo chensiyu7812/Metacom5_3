@@ -1,0 +1,190 @@
+{
+  "protocol": "metacom-v3-g0-four-generator-full-screen-closeout-v1",
+  "date": "2026-08-14",
+  "run_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+  "status": "GENERATION_COMPLETE_THREE_CONFIGS_RELIABILITY_PASS_NEMOTRON_RELIABILITY_HARD_FAIL_QUALITY_NOT_JUDGED",
+  "scope": {
+    "cards": 24,
+    "turns_per_dialogue": 5,
+    "candidate_configurations": 4,
+    "expected_supporter_turns": 480,
+    "successful_supporter_turns": 469,
+    "terminal_trajectories": 3,
+    "judge_calls": 0,
+    "researcher_output_token_cap": null,
+    "provider_output_parameter_omitted": true
+  },
+  "candidates": {
+    "llama31_8b_incumbent": {
+      "model": "meta/llama-3.1-8b-instruct",
+      "successful_turns": 120,
+      "expected_turns": 120,
+      "valid_turn_rate": 1.0,
+      "completed_dialogues": 24,
+      "expected_dialogues": 24,
+      "completed_dialogue_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 120,
+      "provider_length_finishes": 0,
+      "latency_ms": {
+        "median": 387.5297529157251,
+        "p90": 1298.6081344308338,
+        "minimum": 203.42646399512887,
+        "maximum": 4095.972820883617
+      },
+      "completion_tokens_billed_total": 8007,
+      "visible_words_total": 6729,
+      "visible_words_median": 57.5,
+      "visible_words_p90": 78.10000000000001,
+      "observed_cost_usd": 0,
+      "reliability_gate": "PASS"
+    },
+    "qwen37_plus_nonthinking": {
+      "model": "qwen3.7-plus-2026-05-26",
+      "enable_thinking": false,
+      "successful_turns": 120,
+      "expected_turns": 120,
+      "valid_turn_rate": 1.0,
+      "completed_dialogues": 24,
+      "expected_dialogues": 24,
+      "completed_dialogue_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 120,
+      "provider_length_finishes": 0,
+      "latency_ms": {
+        "median": 2792.5540109863505,
+        "p90": 3778.4223758382727,
+        "minimum": 1330.6855449918658,
+        "maximum": 5083.632267080247
+      },
+      "completion_tokens_billed_total": 11802,
+      "provider_reported_reasoning_tokens_total": 0,
+      "visible_words_total": 9953,
+      "visible_words_median": 81.5,
+      "visible_words_p90": 125.10000000000001,
+      "observed_cost_usd": 0.0493484,
+      "reliability_gate": "PASS"
+    },
+    "qwen37_plus_thinking_upper_bound": {
+      "model": "qwen3.7-plus-2026-05-26",
+      "enable_thinking": true,
+      "successful_turns": 120,
+      "expected_turns": 120,
+      "valid_turn_rate": 1.0,
+      "completed_dialogues": 24,
+      "expected_dialogues": 24,
+      "completed_dialogue_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 120,
+      "provider_length_finishes": 0,
+      "latency_ms": {
+        "median": 20404.064347501844,
+        "p90": 27448.76924189739,
+        "minimum": 9241.300445050001,
+        "maximum": 33910.782892024145
+      },
+      "completion_tokens_billed_total": 136175,
+      "provider_reported_reasoning_tokens_total": 125865,
+      "visible_tokens_inferred_as_completion_minus_reasoning": 10310,
+      "visible_words_total": 8163,
+      "visible_words_median": 67.0,
+      "visible_words_p90": 100.0,
+      "observed_cost_usd": 0.2469688,
+      "reliability_gate": "PASS"
+    },
+    "nemotron3_nano_30b_a3b_default_thinking": {
+      "model": "nvidia/nemotron-3-nano-30b-a3b",
+      "reasoning_mode": "provider default",
+      "successful_turns": 109,
+      "expected_turns": 120,
+      "valid_turn_rate": 0.9083333333333333,
+      "completed_dialogues": 21,
+      "expected_dialogues": 24,
+      "completed_dialogue_rate": 0.875,
+      "failed_physical_attempts": 17,
+      "failure_classes": {
+        "http_5xx_503": 17,
+        "explicit_http_429": 0,
+        "network_or_request_timeout": 0
+      },
+      "logical_units_recovered_after_one_503": 11,
+      "terminal_trajectories": 3,
+      "terminal_turns": [
+        2,
+        1,
+        4
+      ],
+      "unattempted_turns_after_trajectory_terminal": 8,
+      "provider_complete_finishes": 109,
+      "provider_length_finishes": 0,
+      "latency_ms": {
+        "median": 2153.6255911923945,
+        "p90": 4373.075952054934,
+        "minimum": 582.9726890660822,
+        "maximum": 10057.066457113251
+      },
+      "completion_tokens_billed_total": 21344,
+      "provider_reported_reasoning_token_count_available": false,
+      "provider_reasoning_field_present_turns": 109,
+      "visible_words_total": 7273,
+      "visible_words_median": 62,
+      "visible_words_p90": 100.0,
+      "observed_cost_usd": 0,
+      "reliability_gate": "HARD_FAIL_VALID_TURN_AND_COMPLETED_DIALOGUE_RATES_BELOW_0_95"
+    }
+  },
+  "budget": {
+    "approved_ceiling_usd": 0.5,
+    "qwen_actual_usd": 0.2963172,
+    "qwen_nonthinking_usd": 0.0493484,
+    "qwen_thinking_usd": 0.2469688,
+    "within_approved_ceiling": true,
+    "point_estimate_usd": 0.2336304,
+    "point_estimate_error_usd": 0.0626868,
+    "interpretation": "The two-card linear point estimate underpredicted full-screen cost because some thinking trajectories used longer reasoning. The hard pre-call reserve remained effective and the approved ceiling was not approached."
+  },
+  "mechanical_content_audit": {
+    "terminal_punctuation_turns": 469,
+    "markdown_heading_turns": 0,
+    "markdown_list_turns": 2,
+    "markdown_list_turns_candidate": "nemotron3_nano_30b_a3b_default_thinking",
+    "internal_scaffold_or_strategy_label_pattern_turns": 0,
+    "boundary": "Pattern checks are mechanical only. Low burden, premature action, atomic integrity, and emotional-support quality remain unjudged."
+  },
+  "decision": {
+    "reliability_eligible_for_quality_selection": [
+      "llama31_8b_incumbent",
+      "qwen37_plus_nonthinking",
+      "qwen37_plus_thinking_upper_bound"
+    ],
+    "reliability_ineligible": [
+      "nemotron3_nano_30b_a3b_default_thinking"
+    ],
+    "nemotron_successful_subset_policy": "May receive clearly labeled descriptive quality analysis on common completed cards, but cannot re-enter deployment selection under this route/identity and may not be analyzed as if all 24 dialogues completed.",
+    "quality_judged": false,
+    "risk_judged": false,
+    "generator_selected": false,
+    "next": "Freeze and separately approve order-swapped E-I-A Quality plus atomic low-burden/integrity review. Selection is restricted to the three reliability-eligible configurations."
+  },
+  "claim_boundary": {
+    "supported": [
+      "All four declared configurations were attempted across the frozen 24-card development screen under one run identity.",
+      "Llama 3.1 8B and both Qwen configurations passed the frozen generation reliability gates.",
+      "The hosted Nemotron route failed the frozen reliability gates because of repeated HTTP 503 responses and three terminal dialogues."
+    ],
+    "not_supported": [
+      "Any candidate is superior in emotional-support quality.",
+      "Any candidate has passed final ESC-Eval or executor qualification.",
+      "Nemotron model weights are intrinsically unreliable independent of the observed hosted route.",
+      "PM value, clinical safety, or real-user benefit."
+    ]
+  },
+  "private_evidence_hashes": {
+    "project/outputs/v3_g0_four_generator_full_screen_v1_20260814/private_turn_ledger.jsonl": "d7b434876dbd6357f629d67a1bb69937689af634f5af452adb2df85861370ac3",
+    "project/outputs/v3_g0_four_generator_full_screen_v1_20260814/qwen_budget_ledger.jsonl": "c28794257f2402657b6d82017becc00381de18c036959135369b0e456a481cce",
+    "project/outputs/v3_g0_four_generator_full_screen_v1_20260814/summary.json": "7c7721735ae67d68f344367730b0cd989b6665e8788745ce9463b801849e864a"
+  }
+}

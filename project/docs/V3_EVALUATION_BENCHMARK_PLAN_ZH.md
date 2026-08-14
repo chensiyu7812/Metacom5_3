@@ -69,6 +69,8 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 下一轮四配置full G0已零调用物化：24张开发卡×五轮×Llama 3.1 8B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking、Nemotron 3 Nano，共480次supporter调用与480次本地role-player生成；其中Qwen付费调用240次，judge调用为0。四个配置全部在新identity下重跑，不把不同日期、不同candidate set的canary回复拼进正式矩阵。两卡Qwen实际费用线性外推约`$0.2336`，只是规划点估计；runner仍按无输出cap的65,536-token最坏预留逐次熔断。生成完成后另行冻结E/I/A双顺序Quality、原子Risk和描述性ESC-RANK评分，不以transport指标选择模型。
 
+该full G0生成现已完成：469/480个turn成功，Qwen实际费用`$0.2963172`。Llama 3.1 8B、Qwen non-thinking、Qwen thinking均120/120成功、24/24对话完成且无transport失败；Nemotron仅109/120成功，出现17次HTTP 503和3/24条terminal trajectory，turn有效率90.83%、完整对话率87.5%，均低于冻结的95%硬门。因此当前NVIDIA hosted Nemotron route退出部署generator选择；其109条成功回复只能在共同完成卡上作明确标注的描述性质量分析，不能删掉失败卡后伪装完整结果。Quality、原子Risk和低负担尚未评分，故8B与两种Qwen之间仍未选定generator。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；
