@@ -81,6 +81,8 @@ generator选择现在由`generator_fair_selection_protocol_v1.json`统一约束�
 
 决策顺序是硬门而不是加权：先过对话可靠性和绝对完整性，再看Exploration、Insight、Action；成本和延迟只能在Quality/Risk合格且等价的配置之间决胜，不能用“便宜”抵消质量失败，也不能用“更强但昂贵”的先验偏袒thinking。第一步仅运行6张跨来源卡的测量资格canary：108次E/I/A双顺序、18次重复性、18次绝对低负担/完整性，共144次。该canary只决定judge工具是否稳定、有分辨率，绝不选generator；通过后才补齐剩余18张卡的378次调用。正式PM外测前还必须加入至少12个分层unit、两名独立盲评者的人类anchor。
 
+该144-call canary已零调用物化为identity `6bfd7830...`。六张卡按公开source与development order结果盲选定，覆盖MHP、EPITOME、ExTES、Psych和两张ESConv；provider可见文本不含任何candidate/model/provider标签。完整双对话prompt实测约102万字符，不能沿用历史短prompt judge的单次价格：按约25.6万input tokens和每次260 output tokens的点估计为`$2.40193`，建议硬上限`$3.34`。此identity仍只授权instrument qualification，不授权generator胜负。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；

@@ -2,7 +2,7 @@
   "protocol": "metacom-v3-active-test-profile-v1",
   "date": "2026-08-13",
   "purpose": "Clean-checkout release gate for code paths used by the current V3 RS, MP, MS, Risk, compiler, and external-stress program.",
-  "expected_test_count": 91,
+  "expected_test_count": 93,
   "environment": {
     "working_directory": "project",
     "pythonpath": "src",
@@ -27,6 +27,7 @@
     "tests/test_v3_g0_four_generator_esc_rank_preflight.py",
     "tests/test_v3_g0_four_generator_esc_rank_closeout.py",
     "tests/test_v3_generator_fair_selection_protocol.py",
+    "tests/test_v3_g0_fair_judge_canary_preflight.py",
     "tests/test_v3_g0_esc_rank_anchored_derivative.py"
   ],
   "historical_replay_policy": "Tests requiring ignored historical outputs or consumed human-review packets are evidence-replay tests, not clean-checkout release gates. They must be run only with an explicit versioned materialization manifest."
