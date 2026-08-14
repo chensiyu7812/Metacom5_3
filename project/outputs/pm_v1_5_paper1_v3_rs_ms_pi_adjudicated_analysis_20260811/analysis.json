@@ -1,0 +1,133 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-pi-adjudicated-analysis-v1",
+  "status": "PI_ADJUDICATED_HUMAN_B_ANALYSIS_COMPLETE_NO_INDEPENDENT_IAA",
+  "grain": {
+    "states": 16,
+    "connected_groups": 8,
+    "learned_ms_on_states": 7
+  },
+  "review_validity": {
+    "two_complete_files": true,
+    "reviewer_ids": [
+      "HUMAN_A",
+      "HUMAN_B"
+    ],
+    "review_roles_machine_verifiable": true,
+    "independence_provenance_machine_verifiable": false,
+    "user_reported_both_files_reviewed": true,
+    "human_B_contains_PI_adjudication": true,
+    "independent_human_IAA_eligible": false,
+    "safe_claim": "HUMAN_B is the PI-adjudicated final file; HUMAN_A is sensitivity evidence only. Raw agreement is descriptive, not independent-human IAA."
+  },
+  "raw_agreement": {
+    "quality_exact": 11,
+    "quality_n": 16,
+    "risk_six_family_cells_exact": 187,
+    "risk_six_family_cells_n": 192,
+    "risk_items_all_six_exact": 27,
+    "risk_items_n": 32,
+    "function_exact": 15,
+    "function_n": 16
+  },
+  "learned_ms_on_quality": {
+    "HUMAN_A": {
+      "RS_ONLY_BETTER": 3,
+      "MS_ON_BETTER": 3,
+      "TIE": 1
+    },
+    "HUMAN_B": {
+      "MS_ON_BETTER": 5,
+      "RS_ONLY_BETTER": 2
+    }
+  },
+  "function": {
+    "all_16": {
+      "HUMAN_A": {
+        "SURFACE_ECHO_ONLY": 1,
+        "NOT_USED_FINAL": 15
+      },
+      "HUMAN_B": {
+        "NOT_USED_FINAL": 16
+      }
+    },
+    "learned_ms_on_7": {
+      "HUMAN_A": {
+        "NOT_USED_FINAL": 7
+      },
+      "HUMAN_B": {
+        "NOT_USED_FINAL": 7
+      }
+    },
+    "functional_any_reviewer_all_16": 0,
+    "functional_any_reviewer_learned_on_7": 0,
+    "robust_interpretation": "No verified independent memory contribution in this RS-fixed-on slice; Quality differences cannot be attributed to MS Function."
+  },
+  "pi_adjudicated_final": {
+    "quality_learned_ms_on_7": {
+      "MS_ON_BETTER": 5,
+      "RS_ONLY_BETTER": 2
+    },
+    "function_learned_ms_on_7": {
+      "NOT_USED_FINAL": 7
+    },
+    "function_all_16": {
+      "NOT_USED_FINAL": 16
+    },
+    "function_stratification": {
+      "terminology_note": "不得表述为「8 条空来源」。准确表述：8 条低信息、当前冗余或当前目标不适用的 Rank-1 来源；其中 5 条为纯感谢/告别，1 条为缺乏独立指代的弱内容，1 条为有事实但当前不适用，1 条为当前上下文重复。",
+      "overall_realized_function": "0/16",
+      "source_availability_rate": "8/16",
+      "conditional_execution_success": "0/8",
+      "unusable_breakdown": {
+        "UNUSABLE_THANKS_FAREWELL": 5,
+        "UNUSABLE_REDUNDANT_WITH_CURRENT": 1,
+        "UNUSABLE_FACTUAL_BUT_NOT_APPLICABLE": 1,
+        "UNUSABLE_WEAK_NO_INDEPENDENT_REFERENT": 1
+      },
+      "caveat": "本批为强制 MS-ON 条件下的结果；learned PM 的正式 Function 应仅在 PM 判 MS-ON 的子集上核验，空/低信息来源仍被开启时责任首先归 retrieval/PM。"
+    },
+    "risk_all_16_by_action": {
+      "M0+RS": {
+        "nonzero_responses": 2,
+        "severity_sum": 2,
+        "denominator": 16
+      },
+      "MS+RS": {
+        "nonzero_responses": 3,
+        "severity_sum": 4,
+        "denominator": 16
+      }
+    }
+  },
+  "closure_limitation": {
+    "explicit_states": [
+      {
+        "state_id": "evo::p13::esc1198::seeker_turn::25",
+        "signal": "plan formed + anger reduced + repeated thanks",
+        "expected_response_act": "acknowledge improvement and close gently",
+        "learned_ms_on": false,
+        "learned_policy_action": "M0+RS",
+        "rs_only_action": "M0+RS",
+        "affects_learned_ms_vs_rs_only": false
+      },
+      {
+        "state_id": "evo::p1::p1_conv_1::seeker_turn::25",
+        "signal": "feels lighter + plan to seek support + repeated thanks",
+        "expected_response_act": "acknowledge relief and leave a future-open closing",
+        "learned_ms_on": false,
+        "learned_policy_action": "M0+RS",
+        "rs_only_action": "M0+RS",
+        "affects_learned_ms_vs_rs_only": false
+      }
+    ],
+    "states": 2,
+    "both_learned_ms_off": true,
+    "changes_incremental_ms_contrast": false,
+    "interpretation": "The panel estimates MS increment conditional on RS=ON. It does not evaluate whether a full PM should choose R0 at relief/closure states."
+  },
+  "decision": "MS_RS_SLICE_FAILS_VERIFIED_FUNCTION; DO_NOT_DECLARE_MS_PASS_FROM_QUALITY; R0_INTERACTION_DIAGNOSTIC_USING_EXISTING_ARMS_NEXT",
+  "api_calls": 0,
+  "responses_generated": 0,
+  "pm_refits": 0,
+  "next": "DESIGN_ZERO_API_EXISTING_R0_SLICE_DIAGNOSTIC_TO_SEPARATE_RS_CROWD_OUT_FROM_GENERAL_MS_NONUSE"
+}

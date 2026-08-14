@@ -1,0 +1,26 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-formal-201-labeling-closeout-v1",
+  "date": "2026-08-12",
+  "status": "FORMAL_201_LABELING_COMPLETE_127_CONSENSUS_LABELS",
+  "observed": {
+    "packet_items": 201,
+    "consensus_labeled": 127,
+    "coverage_fraction": 0.6318,
+    "disagreement_unlabeled": 61,
+    "transport_failure_unlabeled": 13,
+    "consensus_binary_label_distribution": {"USE": 34, "DO_NOT_USE": 93},
+    "observed_cost_usd": 4.965
+  },
+  "artifacts": {
+    "results": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_live_20260812/control_results_private.jsonl",
+    "audit_report": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_audit_20260812/report.json",
+    "consensus_labels": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_audit_20260812/consensus_labels_private.jsonl",
+    "disagreement_items": "outputs/pm_v1_5_paper1_ms_formal_201_labeling_audit_20260812/disagreement_items_private.jsonl"
+  },
+  "conclusion": "First real MS training-label set produced this session, using the qualified GPT-5.6 primary + Claude Haiku 4.5 challenger pairing and the binary-collapsed exact-agreement-only consensus rule adopted in paper1_ms_qualification_final_decision_v1.json. 127 items now have a real, defensible USE/DO_NOT_USE label; the 61 genuine-disagreement items are correctly left unlabeled rather than forced. 13 items had a transport/schema failure on one side (repair_item_id_mismatch or local semantic validation) and are also unlabeled -- acceptable noise at this scale, not re-run under this identity per the one-shot rule.",
+  "next_scientific_action": "These 127 labels are the real input to the next stage of the plan's 4-stage completion route (per-head grouped OOF + outer-train abstention calibration training, docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md Sec 12.4 stage 2). Not started in this session -- requires separate design work before any fit.",
+  "authorization": {
+    "further_ms_reviewer_qualification_work": false,
+    "ms_head_training_design": "requires_user_decision"
+  }
+}

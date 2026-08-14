@@ -1,0 +1,64 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-source-annotated-control-preflight-v1",
+  "status": "PASS_EXACT_24_CONTROL_CALL_EXECUTION_PHASE_MAY_BE_DESIGNED",
+  "checks": {
+    "unique_current_execution_pointer": true,
+    "exact_12_blind_controls": true,
+    "exact_24_dual_family_calls": true,
+    "two_provider_families": true,
+    "control_distribution_5_5_2": true,
+    "gold_and_old_teacher_never_provider_visible": true,
+    "one_strict_schema": true,
+    "gemini_thinking_explicitly_zero": true,
+    "gpt_reasoning_effort_frozen_low": true,
+    "zero_api_zero_label_zero_fit": true
+  },
+  "reviewers": {
+    "MS_SOURCE_PRIMARY_GPT56": "openai_gpt_5_6_sol",
+    "MS_SOURCE_CHALLENGER_GEMINI": "google_gemini_2_5_flash"
+  },
+  "qualification_gate": {
+    "primary_gpt56": {
+      "schema_valid": "12/12",
+      "exact_final_decision": "12/12",
+      "opposite_suitable_vs_not_suitable_errors": 0,
+      "positive": "5/5",
+      "negative": "5/5",
+      "abstain": "2/2"
+    },
+    "challenger_gemini": {
+      "schema_valid": "12/12",
+      "exact_final_decision_min": "11/12",
+      "opposite_suitable_vs_not_suitable_errors": 0,
+      "positive_min": "4/5",
+      "negative_min": "4/5",
+      "abstain_min": "1/2"
+    },
+    "source_plan_field_audit": "All 24 outputs must name a source-attributable increment or explicit NONE/UNRESOLVED, a permitted response change or explicit NONE/UNRESOLVED, a forbidden focus shift, and a safe nonuse condition. This is audited before any 201-item review authorization.",
+    "no_threshold_relaxation_after_results": true
+  },
+  "execution_bounds": {
+    "logical_calls": 24,
+    "maximum_physical_attempts": 48,
+    "absolute_usd_cap": 0.75,
+    "public_201_calls_if_qualification_fails": 0
+  },
+  "artifacts": {
+    "call_plan": {
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_control_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "dd270e72fdc02262f601e8a67589fabc930c79dbf3886393966c583d398b2d18"
+    }
+  },
+  "source_hashes": {
+    "authority": "1dae73dc69079fb61955a7799f18fbc8e5f3cd467c8b9e32a5ed856a6bf077e8",
+    "closeout": "c4d42eba684bc33423c6147b1c2ae19f6f57e2bb423ba4dc3b64f5c4ed863b67",
+    "controls": "5c1f9e30f99227d12e2f127116186c772e22fd989a7df04ea1326f3ef9278c78",
+    "control_key_private": "24ba25c316cf1657203c884a2af6435153ede56589078b718605b81390d52fd0",
+    "endpoints": "cf04956ad8c8c00b9cfe3dc1ad5eeb85c30fc06970581177e9275a1d36f90c37",
+    "instrument": "59f420519881e2efbd9f744c0bf5c7a165cdc4abbc919a2246cb91a6ac2e65c9"
+  },
+  "api_calls": 0,
+  "training_labels_created_or_changed": 0,
+  "fits": 0,
+  "next": "INDEPENDENT_ZERO_API_PREFLIGHT_AUDIT_THEN_EXACT_24_CONTROL_CALL_PHASE"
+}

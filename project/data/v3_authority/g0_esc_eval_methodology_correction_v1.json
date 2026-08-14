@@ -1,0 +1,37 @@
+{
+  "protocol": "metacom-v3-g0-esc-eval-methodology-correction-v1",
+  "date": "2026-08-14",
+  "status": "CORRECTION_FROZEN_BEFORE_ANY_FURTHER_GENERATION",
+  "trigger": "Primary human review and PI inspection showed that supportive, conservative, autonomy-preserving dialogues were being labelled failed solely by a project-created Information floor.",
+  "primary_source_findings": {
+    "paper": "Zhao et al., ESC-Eval, EMNLP 2024, Appendix C Table 16 and Table 2",
+    "official_repository_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "official_pass_line_published": false,
+    "official_reporting": "Seven 0-to-4 dimensions are aggregated and reported for 14 reference models; the paper does not define a universal qualified/unqualified cutoff.",
+    "information_construct": "Recommendation reasonableness/effectiveness and quantity. Score 3 explicitly permits fewer than five suggestions when all are effective; score 4 favors many effective suggestions.",
+    "paper_observed_tradeoff": "General models can score highly through long, structured suggestions while scoring poorly on human-like and human-centric response qualities.",
+    "official_example_wrapper": "The public Qwen and Llama wrappers insert 'You are a helpful assistant!'; Qwen uses max_new_tokens=512 and Llama uses max_new_tokens=256."
+  },
+  "corrections": [
+    "The 2.5 absolute floor is a historical project-created rule, not an official ESC-Eval pass line.",
+    "The 24-card custom-prompt results are a named official-rubric profile, not an exact official benchmark reproduction.",
+    "No prompt repair will be made merely to raise advice count or the Information dimension.",
+    "Official benchmark reproduction and research-aligned suitability are separate evidence layers.",
+    "Autonomy support, low burden, premature advice, and relationship-intervention risk are project-specific complementary constructs and remain outside the official seven-dimension score."
+  ],
+  "current_evidence_interpretation": {
+    "human_a_b_assignments_each": 72,
+    "exact_dimension_agreement_rate": 0.8333333333333334,
+    "qwen_nonthinking": "Strong custom-protocol profile and deployment-oriented Pareto candidate; not yet officially qualified.",
+    "qwen_thinking": "Small Overall/Empathy advantage but substantially higher latency/cost and lower Expression/Information point estimates.",
+    "llama_8b": "Inferior to both Qwen configurations on the current human profile; remains useful as the incumbent/reference.",
+    "pi_qualitative_observation": "Many responses were judged good and appropriately conservative; direct advice can be counterproductive in sensitive family and relationship contexts. This is recorded as PI interpretation, not converted into an official ESC-Eval score."
+  },
+  "revised_generator_evidence_sequence": [
+    "Official-protocol ESC-Eval reproduction first, with no invented pass line and scores positioned against published reference distributions.",
+    "Research-aligned prompt profile second, preserving the already well-received supporter behavior.",
+    "Separate autonomy/low-burden/relationship-risk and executor checks before freezing the generator for PM experiments."
+  ],
+  "claim_rule": "The project may select a generator for its study through transparent multi-criterion evidence, but must not call that choice an official ESC-Eval pass unless the benchmark itself defines such a pass.",
+  "api_calls": 0
+}

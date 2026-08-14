@@ -1,0 +1,70 @@
+{
+  "protocol": "pm-v1.5-paper1-mp-rule-based-step1-v1",
+  "date": "2026-08-13",
+  "status": "ACTIVE_ZERO_API_MP_STEP1_STEP2_REALIZATION_REPAIRED_PANEL_NOT_YET_BUILT",
+  "purpose": "Rescue MP (Profile-based Personalization) using the same invariant-R0-plus-typed-delta architecture already repaired for RS and MS, targeting the pending 'MP rule-based Step1' item first stated in commit ee59e13 (2026-08-12) and repeated in four closeout contracts without prior execution.",
+  "audit_finding": {
+    "prior_assumption_corrected": "The prior diagnosis (V15-ARCH-28, docs/PM_V1_5_V5_3_MP_VERIFICATION_FINDINGS_20260806_ZH.md) is real but incomplete: it is not that MP Step1 has no rule-based mechanism at all. src/metacom_pm/v1_5_paper1_rank1.py already implements a rule-based, field-type scope gate (MP_PROFILE_SCOPE_V1: age/education/gender/job/location/nationality) as the primary Step1 eligibility filter in rank_mp() -- literal candidate text is only a secondary tie-breaker, not the gate. This scope table already existed when the 5/128 functional-realization measurement (V15-ARCH-28) and the field-prior-dominated LOGO OOF (V15-MEAS-78) were run.",
+    "actual_root_cause": "src/metacom_pm/v1_5_response_program_v4.py (the repaired R0-delta compiler built for RS/MS this session) already contains a fourth branch for MP, and the generic PlannedV3Resource schema already carries meaning_cue/allowed_response_change/forbidden_inference for every component -- but no script has ever authored real, field-type-specific content for those three MP fields. Every MP resource ever compiled used only the generic validation placeholder f'bounded {component} response change' (scripts/v1_5/202l_validate_paper1_component_general_v3_g2_v1_5.py:60), unlike MS which has always had case-specific authored allowed_response_change content (232l, 266l). A generator given only 'bounded MP response change' as its sole concrete instruction has nothing to realize, which is the most direct explanation for 'practical constraint mostly only declared, never changing the reply' (V15-ARCH-28, MP=5/128).",
+    "secondary_defect": "rank_mp()'s literal-text tie-breaker did not use the label-prefix/parenthetical-status stripping already implemented in _mp_match_document() (v1_5_candidate_discovery.py, written specifically to fix the diagnosed 'Job: office worker' false-positive pattern from the 2026-08-06 V5.3 finding) -- it was only wired into a different, non-Paper1 candidate-discovery path. This affects tie-break ordering among already scope-matched candidates, not the primary eligibility gate, so it is a real but secondary defect relative to the missing realization content."
+  },
+  "repair_applied": {
+    "new_module": {
+      "path": "src/metacom_pm/v1_5_mp_profile_delta_templates_v1.py",
+      "content": "Six field-type realization templates (meaning_cue, allowed_response_change, forbidden_inference), one per MP_PROFILE_SCOPE_V1 field, covering exactly those six fields (enforced at import time). Field-type level, not per-case, because MP's candidate space is a small closed set of structural fields shared across users -- consistent with 'profile is not an identity feature' (paper1_memory_head_rescue_decision_v2.json) and the compiler's 'never recite it' instruction. No template mentions a literal field value."
+    },
+    "compiler_change": {
+      "path": "src/metacom_pm/v1_5_response_program_v4.py",
+      "function": "_resource_delta",
+      "change": "MP branch changed from an unstructured 'silently adjust... when it constrains' suggestion to an explicit forced decision: CONSTRAIN or IGNORE, mirroring MS's forced USE/ASK/IGNORE. CONSTRAIN requires a concrete, visible change to wording/burden/timing/format; declaring CONSTRAIN without a concrete change is explicitly defined as equivalent to IGNORE. This gives MP the same auditable, typed decision space RS and MS already have, and directly targets the 'declared but not enacted' failure mode."
+    },
+    "step1_tie_break_fix": {
+      "path": "src/metacom_pm/v1_5_paper1_rank1.py",
+      "function": "rank_mp",
+      "change": "literal-text tie-break now matches through _mp_match_document() (label-prefix and parenthetical-status stripped) instead of raw literal_text, consistent with the fix already applied elsewhere in the codebase for the same diagnosed bug."
+    },
+    "tests_added": [
+      "tests/test_v1_5_mp_profile_delta_templates.py (template coverage, non-placeholder content, unknown-field failure, and an end-to-end compiler-prompt integration check)",
+      "tests/test_v1_5_response_program_v4.py::test_mp_has_constrain_ignore_and_declared_without_change_is_ignore",
+      "tests/test_v1_5_response_program_v4.py::test_mp_and_ms_are_both_deltas_and_can_coexist_with_rs"
+    ],
+    "regression": "Full pytest suite run after this change; only the pre-existing, unrelated failure set changed count is expected to remain at 19 (tracked separately, not part of this contract)."
+  },
+  "mp_decision_space": {
+    "options": ["CONSTRAIN", "IGNORE"],
+    "CONSTRAIN": "The stored profile fact concretely changes a wording, burden, timing, or format choice in this specific reply; the change must be visible in the reply text, never only a latent consideration.",
+    "IGNORE": "The fact does not change anything concrete about this reply, including because it is out of scope for the current topic, already reflected by the R0 foundation, or would require reciting the literal value to matter.",
+    "forbidden": [
+      "reciting, stating, or paraphrasing the literal profile value",
+      "using the profile field to infer an unstated trait, competence, status, or emotional cause (see per-field forbidden_inference in v1_5_mp_profile_delta_templates_v1.py)",
+      "counting a CONSTRAIN decision with no visible reply change as functional realization"
+    ]
+  },
+  "measurement_reuse": {
+    "source": "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json",
+    "reused_as_is": [
+      "function_observability_v2.layers (structural_realization hard gate; observable_contribution CLEAR/PLAUSIBLE/NONE/UNCERTAIN; system_value)",
+      "development_decision_rule (no standalone binary Function count gate; block only on critical leakage, uniformly-NONE opportunities, or Quality/Risk moving against the treatment)"
+    ],
+    "mp_specific_addition": "observable_contribution review unit for MP is a blind same-state R0 versus R0-plus-MP response pair, same as MS; CLEAR requires a concrete, source-consistent wording/burden/timing/format difference that is not explainable as generic R0 quality variation."
+  },
+  "panel_v1_requirements": {
+    "scientific_role": "Treatment qualification only, not formal MP_pass. A later confirmatory run must use rank_mp()'s frozen scope gate rather than oracle-selected states.",
+    "population": "Fresh EvoEmo development states, at most one state per owner, disjoint from any future external confirmation outcomes.",
+    "minimum_strata": {
+      "CONSTRAIN_eligible": "at least 4 states covering at least 3 distinct MP_PROFILE_SCOPE_V1 field types (not just 4 owners with the same field type -- a field-type-level authoring bug would not be caught by owner diversity alone), each with a topic that genuinely intersects that field's allowed_response_change scope",
+      "IGNORE_controls": "at least 4 states covering: current-context-redundant profile fact, topically out-of-scope profile fact (query does not touch any MP_PROFILE_SCOPE_V1 field), wrong-owner candidate, and a state with no MP candidate at all (natural off)"
+    },
+    "candidate_review": "Field-type and topic-relevance are frozen before generation by direct inspection against MP_PROFILE_SCOPE_V1, with generation outcomes unavailable -- mirrors Panel V2's outcome-blind stratification.",
+    "call_budget": "Prefer no more than 24 generator calls for this first MP panel (fewer states than RS/MS Panel V2 since MP has only two arms, M0+R0 vs MP+R0, per state -- RS/MS interaction is out of scope for this panel).",
+    "next_action": "Zero-API select and machine-audit the actual EvoEmo states for this panel (B1), then present one exact run identity and cost cap for approval before any generator call."
+  },
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "judge_calls": 0,
+    "pm_refit": false,
+    "external_execution": false,
+    "zero_api_code_and_contract_repair": true
+  }
+}

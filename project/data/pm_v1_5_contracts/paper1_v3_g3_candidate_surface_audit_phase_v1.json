@@ -1,0 +1,146 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g3-candidate-surface-audit-phase-v1",
+  "date": "2026-08-11",
+  "status": "G3_ZERO_API_PUBLIC_CANDIDATE_SURFACE_AUDIT_AUTHORIZED_ONCE",
+  "promoted_from_authority_sha256": "d70c9db50e2fefe30e597ae0846f3066dc86e78bae8d1799d362e027a7ce4b93",
+  "git_baseline": "4613311c2d12e3fbd4334910d9e7403a464112ec",
+  "repair_contract": {
+    "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+    "sha256": "447c30bea620d28af357f49d474cf6b1f8ead7fe613981b8dd00db64a9a04256"
+  },
+  "input_bindings": [
+    {
+      "role": "evoemo_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+      "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"
+    },
+    {
+      "role": "evoemo_candidates",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+      "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"
+    },
+    {
+      "role": "actual_rank1_unlabeled",
+      "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl",
+      "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"
+    },
+    {
+      "role": "canonical_groups",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/canonical_groups.jsonl",
+      "sha256": "6569d8026700376c356c598b6ab55389730dced851680c97b40799e2c16d7e49"
+    }
+  ],
+  "intended_grain": "one diagnostic row per EvoEmo state by MP, MS, or ME actual Rank-1; no suitability label",
+  "expected_denominators": {
+    "evoemo_states": 4689,
+    "component_rows_each": 4689,
+    "MP_present": 846,
+    "MS_present": 4442,
+    "ME_present": 417,
+    "runtime_owners": 18,
+    "connected_groups": 17
+  },
+  "nonexclusive_requirement": {
+    "one_decision_per_state_component_candidate": true,
+    "multiple_components_may_be_suitable_in_one_state": true,
+    "one_of_k_softmax_winner_take_all_forbidden": true,
+    "co_present_components_must_remain_separate_rows": true
+  },
+  "diagnostic_families": {
+    "MP": [
+      "profile_field",
+      "scope_match_level",
+      "connected_group",
+      "exact_profile_value_already_visible",
+      "candidate_reuse_concentration"
+    ],
+    "MS": [
+      "atomic_single_seeker_turn",
+      "low_information_rank1",
+      "exact_or_containment_current_echo",
+      "strict_past_age",
+      "selection_margin",
+      "candidate_reuse_concentration",
+      "semantic_review_needed_for_stale_wrong_event_or_material_use"
+    ],
+    "ME": [
+      "typed_action_and_result_exact",
+      "compiler_valid",
+      "strict_past_age",
+      "connected_group",
+      "candidate_reuse_concentration",
+      "semantic_review_needed_for_action_readiness_and_transfer"
+    ]
+  },
+  "interpretation_rules": [
+    "low-information, current-echo, current-redundant, stale, wrong-event, and no-material-use actual Rank-1 rows remain candidate-present negative families; they are never inherited positives from session lineage",
+    "structural invalidity and Rank-1 absence create no PM semantic negative",
+    "G3 proxy flags are diagnostics and sampling strata, never suitability labels",
+    "stale, wrong-event, material-use, action-readiness, and transfer require the later anchored semantic decision and cannot be filled by lexical heuristics",
+    "candidate IDs, owner IDs, state IDs, raw profile values, fold, and raw text are audit or grouping fields, never primary low-capacity model features",
+    "future supporter replies, summary, observation, event timeline, influenced_by, QA answer, and QA evidence are forbidden"
+  ],
+  "primary_feature_allowlist_by_head": {
+    "MP": [
+      "profile_field_type",
+      "scope_match_level",
+      "current_exact_redundancy_indicator",
+      "candidate_age",
+      "selection_score",
+      "top1_top2_margin",
+      "strict_past_pool_count",
+      "incremental_token_cost"
+    ],
+    "MS": [
+      "low_information_indicator",
+      "current_exact_echo_indicator",
+      "candidate_age",
+      "selection_score",
+      "top1_top2_margin",
+      "strict_past_pool_count",
+      "candidate_length_bucket",
+      "incremental_token_cost"
+    ],
+    "ME": [
+      "typed_compiler_valid",
+      "action_length_bucket",
+      "result_length_bucket",
+      "candidate_age",
+      "selection_score",
+      "top1_top2_margin",
+      "strict_past_pool_count",
+      "incremental_token_cost"
+    ]
+  },
+  "allowed_new_paths": [
+    "scripts/v1_5/203l_audit_paper1_v3_g3_candidate_surface_v1_5.py",
+    "tests/test_v1_5_paper1_v3_g3_candidate_surface.py"
+  ],
+  "outputs": {
+    "directory": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811",
+    "diagnostic_rows": "candidate_surface_diagnostics_unlabeled.jsonl",
+    "report_json": "report.json",
+    "report_html": "report.html"
+  },
+  "pass_logic": {
+    "structural_gate": "all grain, key, join, owner, strict-past, exact-span, compiler, hash, leakage, nonexclusive-row, and connected-group checks pass",
+    "MP_next": "G4 packet design allowed when MP present rows cover connected groups and candidate-present negative strata are retained",
+    "MS_next": "G4 packet design allowed when atomic rows and candidate-present low-information/current-echo strata are explicitly preserved for anchored decisions",
+    "ME_next": "G4 inclusion is provisional until anchored action-readiness and transfer decisions show bidirectional support across real connected groups",
+    "no_mechanical_accuracy_threshold": true
+  },
+  "authorization": {
+    "zero_api_read_and_profile_bound_public_inputs": true,
+    "write_unlabeled_diagnostic_rows": true,
+    "write_json_and_html_audit_report": true,
+    "modify_or_overwrite_bound_inputs": false,
+    "candidate_reranking_or_rank2_promotion": false,
+    "suitability_label_creation": false,
+    "generator_calls": false,
+    "reviewer_calls": false,
+    "pm_fit": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false
+  }
+}

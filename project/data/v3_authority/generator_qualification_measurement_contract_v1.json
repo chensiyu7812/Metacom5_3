@@ -1,0 +1,72 @@
+{
+  "protocol": "metacom-v3-generator-qualification-measurement-contract-v1",
+  "date": "2026-08-13",
+  "status": "P0_EVIDENCE_ARCHITECTURE_AND_OFFICIAL_SCALE_MAPPING_FROZEN_P1_MEASUREMENT_QUALIFICATION_PENDING",
+  "purpose": "Separate generator competence from PM selection and executor realization before any head verdict.",
+  "candidate": {
+    "models": ["meta/llama-3.1-8b-instruct", "meta/llama-3.3-70b-instruct", "qwen3.7-plus-2026-05-26"],
+    "provider_routes": ["NVIDIA hosted NIM API; hosted route does not expose an immutable weight revision", "Alibaba Cloud Model Studio Singapore OpenAI-compatible API; dated model snapshot"],
+    "generation_settings": "Research-aligned G0: temperature=0, no researcher output-token cap, provider max-output parameter omitted, five turns per dialogue; natural length, completion, quality, and end-to-end latency are outcomes. Qwen non-thinking and thinking are separate declared configurations.",
+    "screening_contract": "g0_research_aligned_generator_contract_v2.json",
+    "local_runtime_setup": "g0_local_runtime_setup_v1.json",
+    "prompt_identity": "Bound by g0_research_aligned_supporter_prompt_v1.json, g0_research_aligned_screening_manifest_v2.jsonl, and g0_research_aligned_generator_preflight_v2.json",
+    "superseded_measurement": "bd2b4a12... used only 'You are a helpful assistant!' plus a uniform 256-token cap and was stopped; g0_bd2b_prompt_cap_measurement_closeout_v1.json forbids using it to rank maximum capability."
+  },
+  "primary_exam": {
+    "name": "ESC-Eval",
+    "role_card_identity": "official high-quality 655-card surface at repository commit 9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "official_reported_dimensions": [
+      {"paper_name": "Fluency", "public_adapter_key": "fluency"},
+      {"paper_name": "Expression", "public_adapter_key": "diversity"},
+      {"paper_name": "Empathy", "public_adapter_key": "empathic"},
+      {"paper_name": "Information", "public_adapter_key": "suggestion"},
+      {"paper_name": "Skill", "public_adapter_key": "tech"},
+      {"paper_name": "Humanoid", "public_adapter_key": "human"},
+      {"paper_name": "Overall", "public_adapter_key": "overall"}
+    ],
+    "separate_project_metrics": ["completion_rate", "low_burden_support", "no_premature_action", "safety_signal_handling"],
+    "prompt_layer_boundary": "Exact official-wrapper reproduction and prior-work-grounded research qualification are separately named results. The latter is primary for generator choice and may not be presented as an exact official zero-shot replication.",
+    "aggregation": "Report language, dimension, role-card, and cluster uncertainty separately; no sole composite pass.",
+    "scorer_rule": "The official ESC-RANK paper construct is retained and the repaired scorer may produce a recognized descriptive seven-dimension profile. It is UNQUALIFIED as a sole absolute pass/fail instrument because public row-level human calibration labels and split identities are unavailable.",
+    "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
+    "pass_margin": "NO_SOLE_ESC_RANK_NUMERIC_CUTOFF; hard reliability, executor, and same-stack decision rules are frozen in evaluation_margin_justification_v1.json"
+  },
+  "sensitivity_exam": {
+    "name": "ESC-Judge",
+    "constructs": ["Exploration", "Insight", "Action"],
+    "role_identity": "A project-frozen subset from the 100 public roles; the unpublished paper-25 identity must not be implied.",
+    "pairing": "Candidate and same-stack reference receive the same role. Every comparison is judged in both A/B orders.",
+    "position_policy": "A result is stable only when the winner is unchanged or both orientations resolve to tie; order-flip disagreement is POSITION_UNSTABLE.",
+    "tie_invalid_policy": "TIE, INVALID, REFUSAL, and POSITION_UNSTABLE are explicit outcomes and never coerced to a win.",
+    "judge_identity": "Exact provider/model snapshot, prompt hash, temperature, seed if supported, retry, and parser must be bound before calls.",
+    "human_anchor": "A role-stratified non-formal sample receives two independent reviewers in P1; discrepancies qualify the instrument and numeric margin before formal outcomes, not during P0 design freeze."
+  },
+  "executor_exam": {
+    "name": "approved-plan-and-evidence-realization",
+    "input": "Same context plus a frozen approved response plan and authorized evidence/resource delta.",
+    "g0_development_sample_disclosure": "G0 reuses all 16 owner-unique packets from a retired development panel and is not held out. It diagnoses execution feasibility only; final qualification requires a separately frozen G1 executor closeout.",
+    "comparators": ["plan_without_resource", "plan_with_resource"],
+    "primary_outcomes": ["plan_slot_realization", "authorized_fact_fidelity", "atomic_risk", "naturalness_and_burden"],
+    "interpretation": "Identifies whether a qualified ESC generator can execute PM outputs; it is not selector evidence."
+  },
+  "same_stack_reference": {
+    "selection_status": "SELECTED_ZERO_INFERENCE",
+    "model": "meta/llama-3.3-70b-instruct",
+    "provider": "same NVIDIA hosted NIM API as candidate",
+    "contract": "same_stack_generator_reference_v1.json",
+    "requirements": ["identical cards, role player, turns, sampling policy, retry, scoring, and interleaved execution", "provider route and observed runtime identity disclosed", "hosted API non-immutable-weight boundary disclosed"]
+  },
+  "margin_derivation": {
+    "forbidden": ["derive from candidate formal outcomes", "copy a published model delta across different stacks", "average away a failed guardrail"],
+    "required_inputs": ["P1 non-formal human inter-reviewer disagreement", "scorer/judge repeatability", "position sensitivity", "same-stack reference variation", "outcome-blind smallest practically important difference"],
+    "derivation_contract": "evaluation_margin_justification_v1.json",
+    "decision": "P0 freezes the derivation and hard engineering gates. Numeric Quality/Risk calibration values are registered in P1 before formal verdicts; they cannot be recovered from formal outcomes."
+  },
+  "decision_tree": [
+    {"if": "ESC capability fails", "then": "Consider leakage-screened ESC SFT and rerun qualification."},
+    {"if": "ESC passes but executor realization fails", "then": "Train only plan/evidence execution, not the selector, then rerun executor and qualification."},
+    {"if": "ESC and executor pass but PM fails", "then": "Repair candidate, treatment, or selector; generator tuning cannot rescue the claim."},
+    {"if": "ESC and executor pass and PM passes", "then": "Freeze the generator for every PM and baseline comparison."}
+  ],
+  "authority": "This contract authorizes design, public metadata checks, zero-inference implementation, and local setup of pinned public ESC-Role/ESC-RANK weights. It does not authorize supporter inference, paid judges, human-review execution, or fine-tuning."
+}

@@ -30,7 +30,7 @@ from metacom_pm.v1_5_v5_2_atomic_memory import compile_atomic_reusable_outcome
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONTRACT = (
-    ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v1.json"
+    ROOT / "data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2_1.json"
 )
 DEFAULT_OUT_DIR = (
     ROOT / "outputs/pm_v1_5_v5_3_formal_longitudinal_user_validation_v1"
@@ -119,6 +119,25 @@ def _input_files(path: Path) -> list[Path]:
 
 
 def _expected_assignment(user_id: str, content_author: str, contract: dict[str, Any]) -> dict[str, Any] | None:
+    manifest_ref = contract.get("assignment_manifest")
+    if manifest_ref:
+        manifest = json.loads((ROOT / str(manifest_ref)).read_text(encoding="utf-8"))
+        row = next((item for item in manifest["rows"] if item["user_id"] == user_id), None)
+        if row is None or row["content_author"] != content_author:
+            return None
+        position = int(row["schedule_position"])
+        return {
+            "expected_author": content_author,
+            "domain_index": PRIMARY_SUPERDOMAINS.index(row["primary_superdomain"]),
+            "expected_primary_superdomain": row["primary_superdomain"],
+            "schedule_position": position,
+            "sessions": int(row["session_count"]),
+            "relationships": int(contract["catalog_targets"]["relationships_per_user_schedule"][position]),
+            "events": int(contract["catalog_targets"]["events_per_user_schedule"][position]),
+            "profile_updates": int(row["profile_update_count"]),
+            "preference_version_mode": row["preference_version_mode"],
+            "grandfathered_existing_user": bool(row["grandfathered_existing_user"]),
+        }
     match = re.fullmatch(r"p2r_formal_(gpt|claude)_u(\d{3})", user_id)
     if not match:
         return None
@@ -285,7 +304,11 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
     user_id = str(user.get("user_id") or "")
     author = str(user.get("content_author") or "")
     assignment = _expected_assignment(user_id, author, contract)
-    if user.get("protocol") != "pm-v1.5-v5.3-formal-longitudinal-user-v1":
+    protocol = user.get("protocol")
+    if protocol not in {
+        "pm-v1.5-v5.3-formal-longitudinal-user-v1",
+        "pm-v1.5-v5.3-formal-longitudinal-user-v2-1",
+    }:
         _add_issue(issues, code="PROTOCOL", message="unexpected or missing protocol")
     if assignment is None:
         _add_issue(issues, code="USER_ASSIGNMENT", message="user_id/content_author assignment is invalid")
@@ -586,8 +609,15 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
         if len(active) != 1:
             _add_issue(issues, code="PROFILE_ACTIVE_VERSION", message=f"field {field_type!r} must have exactly one active version")
 
-    if len(preferences) != 3:
-        _add_issue(issues, code="PREFERENCE_COUNT", message=f"expected 3 preference-history items, got {len(preferences)}")
+    expected_preference_rows = 3
+    if (
+        protocol == "pm-v1.5-v5.3-formal-longitudinal-user-v2-1"
+        and assignment is not None
+        and assignment.get("preference_version_mode") in {"replacement", "withdrawal"}
+    ):
+        expected_preference_rows = 4
+    if len(preferences) != expected_preference_rows:
+        _add_issue(issues, code="PREFERENCE_COUNT", message=f"expected {expected_preference_rows} preference-history items, got {len(preferences)}")
     for row in preferences:
         if row.get("preference_type") not in PREFERENCE_TYPES:
             _add_issue(issues, code="PREFERENCE_TYPE", item_id=row.get("item_id"), message="unsupported preference type")
@@ -598,13 +628,57 @@ def _validate_user(user: dict[str, Any], contract: dict[str, Any]) -> dict[str, 
             previous = by_pref_id.get(supersedes)
             if previous is None or previous.get("active") is not False:
                 _add_issue(issues, code="PREFERENCE_SUPERSESSION", item_id=row.get("item_id"), message="invalid preference supersession")
-    actual_preference_types = {str(row.get("preference_type") or "") for row in preferences}
-    if len(actual_preference_types) != len(preferences):
+    if (
+        protocol == "pm-v1.5-v5.3-formal-longitudinal-user-v1"
+        or (assignment is not None and assignment.get("grandfathered_existing_user"))
+    ):
+        # V1 represented a replacement compactly inside three total rows.  It
+        # remains valid grandfathered history; V2.1 uses three base rows plus
+        # an optional fourth version row only for newly authored users.
+        base_preferences = preferences
+    else:
+        base_preferences = [row for row in preferences if not row.get("supersedes_item_id")]
+    actual_preference_types = {str(row.get("preference_type") or "") for row in base_preferences}
+    if len(base_preferences) != 3 or len(actual_preference_types) != 3:
         _add_issue(
             issues,
             code="PREFERENCE_TYPES_NOT_DISTINCT",
-            message="the three preference-history items must use three distinct preference types",
+            message="the three base preference items must use three distinct preference types",
         )
+
+    if protocol == "pm-v1.5-v5.3-formal-longitudinal-user-v2-1":
+        bundles = list(user.get("qa_transport_bundles") or [])
+        expected_bundle_types = {
+            "temporal_sequence", "conflict_or_update", "user_model_trajectory",
+            "abstention_no_evidence",
+        }
+        if {row.get("bundle_type") for row in bundles} != expected_bundle_types:
+            _add_issue(issues, code="QA_TRANSPORT_BUNDLES", message="missing or duplicate V2.1 QA transport bundle type")
+        for row in bundles:
+            evidence = row.get("evidence_session_indices") or []
+            if row.get("bundle_type") == "abstention_no_evidence":
+                if evidence:
+                    _add_issue(issues, code="QA_ABSTENTION_EVIDENCE", message="abstention slot must cite no evidence")
+            elif len(evidence) < 2 or evidence != sorted(evidence):
+                _add_issue(issues, code="QA_MULTI_EVIDENCE", message="QA bundle needs two ordered evidence sessions")
+
+        # Exact future-value smoke gate.  This cannot solve general semantic
+        # leakage, but it hard-fails the common generator error where a later
+        # profile value or entity name appears verbatim in earlier dialogue.
+        for row in profiles:
+            valid_from = row.get("valid_from_session")
+            value = str(row.get("field_value") or "").strip().casefold()
+            if isinstance(valid_from, int) and valid_from > 1 and len(value) >= 3:
+                earlier = "\n".join(session_user_text.get(index, "") for index in range(1, valid_from)).casefold()
+                if value in earlier:
+                    _add_issue(issues, code="FUTURE_PROFILE_VALUE_LEAK", item_id=row.get("item_id"), message="later profile value appears before valid_from_session")
+        for row in relationships:
+            valid_from = row.get("valid_from_session")
+            name = str(row.get("name") or "").strip().casefold()
+            if isinstance(valid_from, int) and valid_from > 1 and len(name) >= 3:
+                earlier = "\n".join(session_user_text.get(index, "") for index in range(1, valid_from)).casefold()
+                if name in earlier:
+                    _add_issue(issues, code="FUTURE_ENTITY_NAME_LEAK", item_id=row.get("entity_id"), message="relationship name appears before valid_from_session")
 
     subtype_counts = Counter(candidate.get("subtype") for _, candidate in candidate_pairs)
     tier_counts = Counter(
@@ -802,7 +876,7 @@ def main() -> None:
             )
     status_counts = Counter(row["status"] for row in results)
     report = {
-        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-validation-v1",
+        "protocol": "pm-v1.5-v5.3-formal-longitudinal-user-validation-v2",
         "status": (
             "HARD_BLOCKED"
             if status_counts["HARD_CONTENT_BLOCKED"] or duplicate_user_ids or batch_issues
@@ -820,7 +894,9 @@ def main() -> None:
         "users": results,
         "batch_level_note": (
             "Per-user machine pass is necessary but not sufficient. Duplicate, diversity, "
-            "global quota, external-overlap and semantic-review checks require a batch."
+            "global quota, external-overlap, multi-evidence structure and semantic-review "
+            "checks require a batch. Raw semantic text is not treated as a forbidden shortcut; "
+            "only nuisance metadata/style leakage is probed downstream."
         ),
         "api_calls": 0,
         "training_label_or_outcome_read": False,

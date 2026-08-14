@@ -68,6 +68,10 @@ _REQUIRED_CONTRIBUTION_BY_COMPONENT: Mapping[str, str] = {
         "offer a specific past action-and-result as one declinable option; "
         "never escalate a single past outcome into a rule or guarantee"
     ),
+    "ME_CONTEXT_EVENT": (
+        "use one specific prior event only as past context that materially clarifies "
+        "the reply, and tentatively check rather than assume present continuity"
+    ),
     "RS": "complete exactly one atomic support move, with no appended second task",
 }
 
@@ -76,6 +80,7 @@ _EPISTEMIC_MODE_BY_COMPONENT: Mapping[str, EpistemicMode] = {
     "MP_PROFILE": "current_fact",
     "MS": "unverified_continuity",
     "ME": "defeasible_analogy",
+    "ME_CONTEXT_EVENT": "unverified_continuity",
     "RS": "current_fact",
 }
 
@@ -136,6 +141,8 @@ def _literal_evidence_for(candidate: TypedResourceCandidate) -> str:
     if candidate.component == "MS":
         return _clean(candidate.prior_observation)
     if candidate.component == "ME":
+        if candidate.subtype == "ME_CONTEXT_EVENT":
+            return _clean(candidate.past_event)
         # past_action/observed_outcome are the fields TypedResourceCandidate
         # actually requires and validates for ME_REUSABLE_OUTCOME; the
         # optional ``mechanism`` field is a V5.2-specific "literal_span:"
@@ -154,7 +161,9 @@ def _usage_boundary_for(candidate: TypedResourceCandidate) -> str:
 
 
 def _evidence_key(candidate: TypedResourceCandidate) -> str:
-    return candidate.subtype if candidate.component == "MP" else candidate.component
+    if candidate.component == "MP" or candidate.subtype == "ME_CONTEXT_EVENT":
+        return candidate.subtype
+    return candidate.component
 
 
 def build_typed_response_program(
@@ -263,10 +272,10 @@ class GeneratorResponse:
 class RewritePolicy(str, Enum):
     """Pre-outcome Step2 recovery alternatives.
 
-    The project has not yet selected which alternative belongs in the formal
-    V5.3 release.  Making the choice explicit lets consumed development cases
-    compare one bounded correction with immediate deterministic fallback
-    without silently changing the generator stack or hiding the second call.
+    The formal V5.3 release uses deterministic fallback.  The bounded rewrite
+    remains an explicit development-only diagnostic so historical comparisons
+    stay reproducible, but it is never the default and must not silently add a
+    second free generation call to a formal policy arm.
     """
 
     SINGLE_BOUNDED_REWRITE = "single_bounded_rewrite"
@@ -693,7 +702,7 @@ def execute_typed_response(
     messages,
     program: TypedResponseProgram,
     *,
-    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    rewrite_policy: RewritePolicy = RewritePolicy.DETERMINISTIC_FALLBACK,
 ) -> TypedResponseExecutionResult:
     """Execute one typed response program with an explicit recovery policy.
 
@@ -708,9 +717,11 @@ def execute_typed_response(
 
     Never retries more than once.  ``calls_made`` and ``rewrite_attempted``
     are returned explicitly so the formal runner can account for every token,
-    dollar, and latency contribution.  This function does not decide which
-    policy is scientifically preferable; that decision is frozen after a
-    development-only comparison and before formal paired outcomes.
+    dollar, and latency contribution.  The formal default is deterministic
+    fallback: a guard failure remains a valid requested-action ITT outcome and
+    realizes a separately-accounted M0+R0 fallback after exactly one model
+    call.  A caller may request the bounded rewrite only for an explicitly
+    versioned development diagnostic.
     """
 
     result, parsed = client.chat(messages, response_schema=response_schema)
@@ -821,7 +832,7 @@ def call_with_guard_and_rewrite(
     messages,
     program,
     *,
-    rewrite_policy: RewritePolicy = RewritePolicy.SINGLE_BOUNDED_REWRITE,
+    rewrite_policy: RewritePolicy = RewritePolicy.DETERMINISTIC_FALLBACK,
 ):
     """Backward-compatible tuple API over :func:`execute_typed_response`.
 

@@ -183,16 +183,18 @@ confirmation按下列目标判断；这些数值是透明的实质差异参考�
 
 完整四资源主张的最低“及格”证据分两层，不能混为一个神秘总分：
 
-1. **学会选择**：MP/MS/ME/RS每个head在内部user/family-held-out数据上都必须同时产生ON和OFF，balanced
-   accuracy点估计高于0.5、优于恒开/恒关，并至少不劣于transparent-rule；同时在相同ON率或相同cost下优于
-   matched-random。这里不要求0.8或0.9，也不因单个宽CI宣布算法不存在，但恒关不能算学会。
+1. **学会预测边际价值**：MP/MS/ME/RS 每个 head 在公共主干的 user/dialogue-held-out formal effects 上，
+   grouped OOF MSE 至少比 fold-training-mean predictor 低 5%，OOF Spearman 至少 `0.15`，target 与 prediction
+   非常数且至少覆盖 12 个独立 cluster。训练目标是连续 positive-support-contribution uplift；balanced accuracy
+   仅为 resolved `ON_ONLY/OFF_ONLY/EITHER` 调用诊断，不再控制正式 learnability gate。任一 head 失败即按预冻结
+   规则关闭，不从 outcome 反挑 state、representation 或阈值。
 2. **选择有用**：联合16动作learned-PM相对fixed-high保持质量、降低risk或cost；相对transparent-rule和
    matched-random至少有一个不可由“单纯少开”解释的净改善。只有第一层而没有第二层，只能说分类器学到了
    标签；只有第二层而第一层失败，只能说一种保守启发式碰巧省资源。
 
 外部域只测其真实覆盖的子集：ESConv测RS，EvoEmo测MP_PROFILE/MS/可获得的ME，ES-MemEval测历史检索与QA。
-MP_PREFERENCE和外部缺失的拒绝建议能力由内部受控环境承担。外部不能测到某个子构念，不会抹掉内部证据，
-但也不能伪称该子构念已完成外部验证。
+MP_PREFERENCE等公共数据缺失子构念只保留为明确的未验证范围或已有工程压力测试，不再要求为论文一生成新的长期
+合成用户。外部不能测到某个子构念，不能伪称该子构念已经完成外部验证。
 
 P5的ESConv/EvoEmo使用同一estimand和参考线并报告完整CI，但不设置新的神秘“通过门”。ESConv正式test
 有169个dialogue、EvoEmo有18个user cluster；把turn当独立人会虚增精度。P5直接回答方向、运输、机制、
@@ -246,7 +248,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 1. `always_off`：M0+R0；
 2. `fixed_high_eligible`：所有 eligible RS 开；
 3. `transparent_rule`：冻结人工规则；
-4. `learned_pm_full`：外部动作空间仍为16动作，但 MP/MS/ME被结构性mask，实际检验RS bit；
+4. `learned_pm_qualified`：外部动作空间仍为16动作，但 MP/MS/ME被结构性mask，实际检验RS bit；正式失败head按预注册规则fail closed；
 5. `cost_matched_fixed`：当前栈、outcome-blind冻结；
 6. `cost_and_on_rate_matched_random`：按RS开启率/成本和预冻结seed随机。
 
@@ -293,7 +295,7 @@ P5 外部 response 只进行一次合并语义评测波次：
 1. `always_off`；
 2. `fixed_high_eligible`；
 3. `transparent_rule`；
-4. `learned_pm_full`；
+4. `learned_pm_qualified`；
 5. `cost_matched_fixed`；
 6. `cost_and_on_rate_matched_random`。
 
@@ -420,16 +422,20 @@ QRC，ES-MemEval回答retrieval/QA，不把二者称为独立外部复现。
 |---|---|---|---|
 | always-off / no-memory | 主 | 主 | 主 |
 | fixed-high-eligible / typed fixed-high | 主（RS） | 主 | 主 |
-| transparent-rule | 主 | 主 | 可选次表 |
-| learned-PM-full / typed learned | 主（RS子域） | 主 | 主压力测试 |
+| transparent-rule | 主 | 主 | 不适用（QA使用下列五条件） |
+| learned-PM-qualified / typed learned-qualified | 主（RS子域） | 主 | 主 |
 | cost-matched-fixed | 主，alias则去重 | 主 | 不适用 |
 | cost/on-rate-matched-random | 主 | 主 | 不适用 |
-| Raw Session Top-4 | 不适用 | 次表 | 主 |
-| All Raw Sessions / full history | 不适用 | 次表 | 主 |
-| learned-full-minus-one | 内部/可选RS消融 | 次表 | 不适用 |
+| Raw Session Top-4 / official-session-RAG-top4 | 不适用 | 次表 | 主 |
+| All Raw Sessions / full-history | 不适用 | 次表 | 主 |
+| learned-qualified-minus-one | 内部/可选RS消融 | 次表 | 不适用 |
 | Legacy V1.0 current-stack replay | 条件性次表 | 条件性次表 | 不适用 |
 
 ---
+
+ES-MemEval 的五个互斥正式条件固定为 `no_memory`、`full_history`、`official_session_rag_top4`、
+`typed_memory_fixed_high`、`typed_memory_learned_pm_qualified`；response 侧的 rule/matched baselines 不跨任务硬搬到 QA。
+机器权威和 matching 资格见 `data/pm_v1_5_contracts/v5_3_baseline_matrix_v1.json`。
 
 ## 7. 双 Codex 不冲突执行协议
 
@@ -464,7 +470,7 @@ W1–W5只产生观察/资格/数据构造证据，不生成paired response outc
 | ID | 任务 | 完成定义 |
 |---|---|---|
 | L1 | 正式runner接入`StagewiseAccountabilityRow` | 每个 expected `state×policy×seed`恰好一行；五层字段完整；缺行/重复行fail-closed |
-| L2 | Step2全动作兼容门 | 历史已消费case；覆盖M0+R0、M0+RS、四单组件和联合动作；schema/evidence binding 100%，atomic compliance≥95%，required-contribution自动率≥90%，内部标签/未授权专名数字0 |
+| L2 | Step2全动作兼容资格 | 内容独立case覆盖M0+R0、M0+RS、四单组件和联合动作；assignment/owner/evidence binding为硬不变量；requested→realized、functional contribution、atomic compliance、fallback和risk按动作/组件完整报告，不再由一个魔法百分比替代语义审计 |
 | L3 | V5.3 baseline materializer | 六主baseline同候选/执行器/generator/seed；alias物理去重；cost/random在outcome前冻结 |
 | L4 | power与评测freeze | FIT/confirmation/sealed的N、split、quality/risk/cost、cluster bootstrap、20% overlap和裁决协议写入机器合同 |
 | L5 | 外部plan scaffold | 只物化数据身份、state、candidate lineage和逻辑条件，不生成回复；ESConv/EvoEmo/QA hash与gold边界检查通过 |
@@ -473,11 +479,10 @@ L1–L5不读取新的质量/risk outcome。L2若需真实付费compatibility调
 
 L2 当前有四项已核实阻塞，不能只跑现有单测后宣布通过：
 
-1. 机器合同目前规定`second_free_llm_fallback_allowed=false`，但当前`call_with_guard_and_rewrite()`会进行一次
-   受约束rewrite。这里不机械服从旧合同，而按“系统能用且公平”选择：在已消费开发case上比较
-   `一次同generator、同证据、只纠正明确结构错误的rewrite`与`立即M0 fallback`。若rewrite显著降低fallback且
-   不新增未授权事实，允许把它正式写入Step2；所有baseline同样使用，并把第二次调用的tokens/cost/latency全部
-   计入。若不稳定则直接fallback。选择规则和最终合同必须在P3 outcome前冻结。
+1. 正式V5.3已选择`deterministic_fallback`：每个逻辑臂至多一次自由生成；guard失败作为requested-action
+   ITT outcome保留并单独实现`M0+R0` fallback。`single_bounded_rewrite`仅保留为已消费开发case的版本化诊断，
+   不得成为正式baseline的隐式第二次调用。这样同时消除了执行合同冲突、额外成本漂移和rewrite引入新事实的
+   归因混杂。
 2. 当前机器guard尚未完整实现“未授权专名/数字”检查；必须基于运行时授权实体/数值集合，而不是自然语言黑名单。
 3. `atomic_move_budget`目前主要是prompt约束；RS原子动作数、列表长度和一点式边界还缺可靠的结构化实现/校验。
    在无法机器确定的语义边界上不得假装硬判，必须在程序输出schema中把response acts结构化，再检查计数。
@@ -613,9 +618,9 @@ Leader并行负责运行面：
 
 1. 已将6-card Bank path/SHA/card count、BGE-M3 snapshot、ME production排序和共享RS Rank-1选择器绑定到
    V5.3静态release；W7产物完成后再生成包含其hash的最终release identity。
-2. L2的16动作零API结构计划已完成；W7后从正式蓝图内容独立抽取代表状态，物化显式
-   rewrite-vs-direct-fallback开发比较计划；所有baseline共享同一选择，第二次调用
-   的token/cost/latency完整计账。未获用户预算授权前只做零API物化和dry-run。
+2. L2的16动作零API结构计划已完成；正式recovery固定为deterministic fallback。另建立4个内容独立语义族×
+   16动作的64-case资格计划；未获用户预算授权前只物化消息、身份和review字段，不把结构PASS冒充真实generator
+   兼容PASS。
 3. L4的metric/cluster/review定义已冻结；W7后按蓝图实际唯一group冻结真实N。L5字段投影/canary已完成，
    正式蓝图交付后补做完整overlap、duplicate、shortcut和runner接线；不读取新的response outcome。
 4. Worker提交P2候选蓝图后，leader独立运行shortcut、duplicate、user/family/group split、同源overlap和
@@ -671,3 +676,44 @@ state-level group膨胀并存。外部结构规定支持范围，不直接提供
 catalog asset，不构造current state、不计算Step1特征、不生成label、不修改三份权威事实源。Leader同时实现
 P2R state/schema/features/group/interaction。汇合后Leader导入catalog，Worker只读复核，Leader只运行一次最终
 静态审计；通过即冻结P2 release并进入formal runner/P3，不继续surface tuning。
+
+### 9.6 正式effect前的最终方法收口（2026-08-08）
+
+四项决定已在读取正式paired outcome前写入代码与合同：
+
+1. Step1按requested-component ITT学习四个低容量component bundle；quality、on/off material risk、
+   functional contribution、fallback与cost分字段保存。cost是运行时已知量，不另训练cost head；uncertain不
+   为平衡类别强塞成正负标签。
+2. 正式Step2每个逻辑臂只允许一次自由generator调用；guard失败确定性回退M0+R0并作为该requested action的
+   ITT outcome记账。single bounded rewrite只保留为development diagnostic。
+3. 新64-case语义资格计划覆盖4个独立内容族×完整16动作。36个语义surface对ESConv、EvoEmo/ES-MemEval及
+   当前11人formal intake的exact/normalized 8-gram均为0。该结果只证明内容独立与结构计划；真实同栈生成尚需
+   单独费用identity，不得称为兼容通过。
+4. 当前P2R开发蓝图868行只对应44用户；MP/MS/ME各20用户、RS 36用户，保守primary feature容量只有4/4/4/7，
+   不能把12–15个可变列全部投入训练。完整formal blueprint后重跑同一rank/support审计并裁剪primary features；
+   多余列仅作探索消融。
+
+`±0.05`继续作为参考非劣界，而非“PM学没学会”的魔法门。sealed 16用户的宽CI必须诚实报告并降低证据等级，
+但只要learned policy没有坍缩、胜过透明/固定/matched controls且quality点估计没有实质恶化、risk或cost改善，
+仍可报告为`DIRECTIONALLY_USABLE`；不能把宽CI伪装成强确认，也不能反过来抹去可学习信号。
+
+### 9.7 80人数据合同V2与当前并行边界（2026-08-08）
+
+正式生成合同升级为
+`data/pm_v1_5_contracts/v5_3_complete_training_data_generation_v2.json`，解释文档为
+`docs/PM_V1_5_V5_3_COMPLETE_TRAINING_DATA_GENERATION_CONTRACT_V2_20260808_ZH.md`。旧V1保留作历史，
+不再指导后续用户生成。V2不废弃当前11人；11人已按V2重验，单用户与整批机器审计均通过。
+
+V2关键修正：规划N不作科学硬门；interaction使用同一state完整16动作；shortcut只审nuisance而不禁止模型读取
+合法语义；user/counterfactual/template簇不跨split但广义能力跨split；ME实际Rank-1比例只报告不追数；QA多证据
+结构与response effect标签分离；quality/risk/function/cost保持多目标并由联合投影权衡。
+
+当前允许并行的两条线只有：
+
+1. 按`v5_3_wave1_sentinel_assignments_v1.json`继续生成13个跨域哨兵用户并累计做批次审计；
+2. 运行已经内容独立的64条Step2资格赛。零API执行preflight绑定identity
+   `v53step2semexec_8f51ee42c67e85c41b3721b9d1b731fe`、NVIDIA Llama-3.1-8B、最多64逻辑/128物理调用、
+   禁止自由rewrite、最坏代理费用`$0.196608`与授权上限`$0.20`。在用户显式批准该identity和上限以前API=0。
+
+两线都不允许读取或修改正式paired effect标签。Wave1不必等待Step2完成；但正式paid paired-effect generation必须
+等待Step2资格收口、完整catalog/current-state静态审计与新的effect执行identity。

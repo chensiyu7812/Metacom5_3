@@ -1,0 +1,90 @@
+{
+  "protocol": "pm-v1.5-v5.4-fidelity-and-rank1-gate-v1",
+  "status": "FROZEN_AFTER_AUTHORING_V2_MACHINE_PASS_BEFORE_FIDELITY_OR_RANK1_RESULTS",
+  "date": "2026-08-10",
+  "scope": "The 48 source-prefix-locked public-anchor pairs and 96 current-user variants produced by V5.4 authoring V2",
+  "inputs": {
+    "authoring_packet_private": "outputs/pm_v1_5_v5_4_source_prefix_locked_authoring_v2_20260810/source_prefix_locked_authoring_packet_private.jsonl",
+    "authored_pairs": "outputs/pm_v1_5_v5_4_source_prefix_locked_authoring_v2_20260810/authored_pairs_source_prefix_locked_outcome_blind.jsonl",
+    "runtime_unlabeled": "outputs/pm_v1_5_v5_4_source_prefix_locked_authoring_v2_20260810/runtime_visible_variants_unlabeled.jsonl",
+    "machine_audit": "outputs/pm_v1_5_v5_4_source_prefix_locked_authoring_v2_20260810/authoring_v2_machine_audit_report.json"
+  },
+  "measurement_boundary": {
+    "fidelity_is": "A construction-quality gate: public-world faithfulness, dialogue continuity, realization of the randomized descriptive assignment, and one-axis minimality.",
+    "fidelity_is_not": [
+      "a should-open label",
+      "a component value target",
+      "a response-quality prediction",
+      "an oracle action",
+      "permission to inspect paired outcomes"
+    ],
+    "construction_assignment_is_evaluator_only": true,
+    "assignment_excluded_from_pm_features_generator_effect_judges": true,
+    "private_paired_outcomes_remain_closed": true
+  },
+  "dual_reviewer_fidelity": {
+    "reviewers": [
+      "anthropic_claude_haiku_4_5",
+      "openai_gpt_5_mini"
+    ],
+    "both_review_all_48_pairs": true,
+    "author_identity_hidden": true,
+    "other_reviewer_hidden": true,
+    "response_and_outcome_hidden": true,
+    "fields": {
+      "WORLD_FIDELITY_A_B": "PASS only if the variant can be a faithful current continuation using the locked public prefix, original current turn as world/tone reference, and verified prior candidate without inventing a past result, diagnosis, identity, owner, relationship, or future fact.",
+      "DIALOGUE_COHERENCE_A_B": "PASS only if the variant is a natural continuation of the exact locked prefix, including public datasets with empty prefixes or consecutive same-role segmentation.",
+      "ASSIGNMENT_FIDELITY_A_B": "PASS only if the variant expresses its private descriptive construction instruction. This is instruction compliance, not a judgment of whether ON will help.",
+      "SINGLE_AXIS_MINIMALITY": "PASS only if A and B retain the same user, entity, topic, tone, goal frame, and approximate burden while differing only in the assigned current response-need, redundancy, or boundary factor.",
+      "UNSUPPORTED_CRITICAL_FACT": "PRESENT only for a newly asserted unsupported past event/result, diagnosis, owner/identity, relationship, acute-safety fact, or future fact; ordinary present emotion or request wording is not a critical invention.",
+      "RESPONSE_OR_SCAFFOLD_LEAK": "PRESENT if either variant writes the assistant's final response or exposes component, resource, construction, route, evaluator, or expected-outcome scaffolding."
+    },
+    "labels": ["PASS", "FAIL", "UNRESOLVED"],
+    "pair_projection": {
+      "PASS": "all A/B world, coherence, and assignment fields PASS; SINGLE_AXIS_MINIMALITY PASS; unsupported critical fact ABSENT; response/scaffold leak ABSENT",
+      "FAIL": "at least one resolved required field FAIL or one prohibited event PRESENT",
+      "UNRESOLVED": "no resolved failure is present and at least one required field is UNRESOLVED"
+    },
+    "instrument_gates_frozen_before_calls": {
+      "transport_complete_each_reviewer": "48/48",
+      "projected_raw_agreement": ">=0.80",
+      "projected_cohen_kappa": ">=0.60",
+      "dual_consensus_pass_total": ">=42/48",
+      "dual_consensus_pass_each_component": ">=10/12",
+      "dual_consensus_unsupported_critical_fact": 0,
+      "dual_consensus_response_or_scaffold_leak": 0
+    },
+    "single_reviewer_critical_flag": "Requires an outcome-blind adjudication before the pair can pass; it is not erased by majority vote.",
+    "disagreement_policy": "Retain both raw judgments and mark pair unresolved; never manufacture gold by majority vote or by opening outcomes.",
+    "failure_action": "Stop before Rank-1 promotion, representation testing, response effects, or PM training; diagnose the construction instrument separately."
+  },
+  "production_rank1_recomputation": {
+    "order": "May be implemented in parallel, but no pair is promoted until the fidelity gate passes or every fidelity issue is outcome-blind resolved.",
+    "runtime_query": "the exact source prefix plus the authored current user turn",
+    "candidate_pool": "the same-user strictly-prior public-source pool reconstructed by the frozen production adapter; no evaluator-only answer, summary, future event, or construction assignment",
+    "retriever": "the frozen V5.3 production candidate discovery and six-card RS runtime identified by release bindings",
+    "topk_role": "audit only",
+    "execution_candidate": "exact production Rank-1 after typed compiler and hard structural gates",
+    "pair_isolation_requirement": "A and B must both retain the same non-null exact Rank-1 resource id as the frozen source candidate; otherwise candidate identity changes with the treatment and the pair cannot identify a state-semantic effect for that resource.",
+    "rank1_shift_or_absence": "retrieval/data-construction failure with no PM label; never promote Rank-2, edit the query after seeing Rank-1, or call it semantic OFF",
+    "required_reports": [
+      "candidate availability by component and variant",
+      "exact frozen-candidate Rank-1 retention by component",
+      "A/B same-Rank1 stability by family",
+      "rank1 shift target ids and margins",
+      "typed compiler validity",
+      "owner, strict-past, version, and source-lineage integrity"
+    ],
+    "promotion_requirement": "12 accepted same-candidate families per component before effect feasibility. If fewer survive, replenish from new outcome-blind anchors and rerun this same frozen gate; do not relax it."
+  },
+  "downstream_authorization": {
+    "fidelity_review": true,
+    "rank1_recomputation": true,
+    "bounded_representation_observability": false,
+    "response_effect_calls": false,
+    "quality_risk_function_judging": false,
+    "pm_training": false,
+    "external_experiments": false
+  },
+  "api_calls_for_contract": 0
+}

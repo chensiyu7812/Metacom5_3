@@ -1,0 +1,52 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-function-gpt-id-repair-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "GPT_FUNCTION_ID_ONLY_REPAIR_THEN_TEN_PUBLIC_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Recover one completed GPT Function judgment whose copied opaque ID omitted its final two characters, then execute only the ten missing public reviews.",
+  "input_bindings": [
+    {"role": "fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_controls_blind.jsonl", "sha256": "110de96abee26837e476619e457e843cfbfaa0b3e7c3c148e7064e470ec74933"},
+    {"role": "private_control_gold", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl", "sha256": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"},
+    {"role": "gpt_only_call_plan", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_only_preflight_20260811/call_plan_private.jsonl", "sha256": "ee7352c407345eb62404d87348f1e3fae1d41d66f6a9e2ebab5e3c6389e5ec5e"},
+    {"role": "blind_public_function_packet", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/function_packet_blind.jsonl", "sha256": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"},
+    {"role": "accepted_reviews", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_only_reviews_20260811/reviews.jsonl", "sha256": "e170810af6b3dc41621dfb083c28d80bc40b118c91f67f5a7cda780d1c49d484"},
+    {"role": "raw_with_recoverable_response", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_only_reviews_20260811/raw_attempts_before_gold.jsonl", "sha256": "b729565df814929626e7fee2b64a78bbac38c1c9cd7b9013b84a2a19f62bb3c9"}
+  ],
+  "implementation_bindings": [
+    {"role": "scientific_instrument", "path": "src/metacom_pm/v1_5_ms_executor_function_review.py", "sha256": "07ea4228495b4ccee6ab261a707ebf6049eed6dfa9344bdc38d53e68e621ebf3"},
+    {"role": "raw_first_engine", "path": "scripts/v1_5/237l_run_paper1_v3_ms_executor_function_proxy_reviews_v1_5.py", "sha256": "bcf0c7f594b72979c1f8860863ff5f100376b86cf0834c6973d7dccae3225b9b"},
+    {"role": "id_repair_continuation_runner", "path": "scripts/v1_5/246l_continue_paper1_v3_ms_executor_function_gpt_id_repair_v1_5.py", "sha256": "9be8dc81f48ca4158ec6d5e8fe65e8144bd4e6adb3bd662b44edf5c6d3c69bcb"},
+    {"role": "execution_config", "path": "configs/paper1_v3_ms_executor_function_gpt_id_repair_execution_v1.json", "sha256": "262e12ebdb64b6275658c78337da4b8eafc993eb79a4812f34b854ced266a437"},
+    {"role": "endpoint_config", "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json", "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"}
+  ],
+  "execution": {
+    "reviewer": "OpenAI GPT-5 mini",
+    "control_reviews_carried": 12,
+    "public_reviews_carried": 21,
+    "public_reviews_recovered_zero_api": 1,
+    "maximum_new_public_calls": 10,
+    "maximum_new_logical_calls": 10,
+    "maximum_new_physical_attempts": 20,
+    "absolute_usd_cap": 0.5,
+    "run_identity": "f8aea0263e97534f65c711336e005896a1a50774331be2f43d6bfbc8f253c7d6",
+    "gold_provider_visible": false,
+    "label_or_evidence_changed_by_repair": false
+  },
+  "claim_boundary": {
+    "development_feasibility_proxy": true,
+    "dual_model_agreement": false,
+    "human_gold": false,
+    "paper_final_function_measurement": false
+  },
+  "authorization": {
+    "function_proxy_api_calls": true,
+    "human_gold_claim": false,
+    "quality_or_risk_judging": false,
+    "pm_refit": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gpt_id_repair_continuation_20260811",
+  "next": "CLOSE_PAID_RELEASE_AND_RUN_ZERO_API_FUNCTION_FEASIBILITY_ANALYSIS"
+}

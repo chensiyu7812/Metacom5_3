@@ -1,0 +1,40 @@
+{
+  "protocol": "metacom-v3-g0-research-aligned-generator-preflight-v2",
+  "date": "2026-08-14",
+  "status": "ZERO_CALL_PREFLIGHT_PASS_EXECUTION_REQUIRES_IDENTITY_SPECIFIC_APPROVAL",
+  "api_calls": 0,
+  "contains_role_card_or_dialogue_text": false,
+  "prompt": {
+    "artifact": "g0_research_aligned_supporter_prompt_v1.json",
+    "joined_prompt_sha256": "e5d9c937c729dcd6214ace6fff3421659ed9eab06d04b976f6df0b3589a9e73f",
+    "researcher_output_token_cap": null,
+    "provider_output_parameter": "OMITTED"
+  },
+  "sample": {
+    "development_cards": 24,
+    "canary_cards": 2,
+    "manifest_sha256": "abd94ca856016956758918b5577b46b23d67fb7efdf0b233b4904355eea50a35",
+    "prior_use": "The 24-card G0 sample has already been inspected and is development-only; it is not held out."
+  },
+  "logical_calls": {
+    "canary_supporter_all_configurations": 40,
+    "canary_qwen_paid_calls": 20,
+    "full_supporter_all_configurations": 480,
+    "full_qwen_paid_calls": 240,
+    "local_role_calls_match_supporter_calls": true,
+    "judge_calls": 0
+  },
+  "budget": {
+    "approval_ceiling_is_external_to_identity": true,
+    "strict_pre_call_reserve": "Before each Qwen call, reserve a conservative byte-count upper bound for this request's input plus the documented 65,536-token maximum output at the applicable price tier. Do not start the call if observed spend plus the reserve exceeds the user-approved ceiling.",
+    "reason_no_fixed_full_run_ceiling": "With no per-call output cap, a low fixed total cannot guarantee both completion of every call and a hard cost ceiling. The runner instead refuses to start a call unless its worst-case documented reserve fits inside the user-approved ceiling."
+  },
+  "input_hashes": {
+    "g0_research_aligned_generator_contract_v2.json": "169244ba3e5a7cdba64970bd768bd46471fd4942520a6c2072a92a7e240eb160",
+    "g0_research_aligned_supporter_prompt_v1.json": "f4cabca6c4d0ad2bdc3a4614405957c4220dffd92896cf28a7799ff91fe42661",
+    "g0_esc_eval_screening_manifest_v1.jsonl": "16e33473b085a11e2decd00f6fb32df539de0318a729f4ad86338701875d1d3a",
+    "executable::16_run_g0_research_aligned_esc.py": "84f4b21bead542fe6929d88f05b9665b0c3edf388671ca470f29c458aac107ba",
+    "executable::metacom_pm/api.py": "b2f28cbff8e73c397097b3c8f30b73814a50b5631a41184535c78bc14335fb3b"
+  },
+  "run_identity": "9852e4c492a027c145bd1216bd7a5584a348ed9f3323c872797280a02e21ed62"
+}

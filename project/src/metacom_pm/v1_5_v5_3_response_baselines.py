@@ -6,11 +6,13 @@ bindings.  Bindings with the same state, action and seed are collapsed to one
 physical call while every policy alias is retained.
 
 The matched-random control permutes learned actions only within exchangeable
-cells that have the same stratum, eligibility mask and per-component token-cost
-vector.  Consequently it exactly preserves component ON counts and estimated
-incremental resource cost without reading a response or evaluation outcome.
-Small cells may make this arm alias the learned arm; that lack of contrast is
-reported rather than hidden.
+cells that have the same broad stratum and eligibility mask.  It exactly
+preserves the component action distribution, then chooses among deterministic
+protocol-hash cyclic permutations to minimize (not force exact equality of)
+known injected-token cost.  A frozen cost tolerance and minimum changed-state
+fraction determine whether the control earns the name "matched"; an aliased or
+poorly matched arm remains visible but cannot support selection-superiority
+language.
 """
 
 from __future__ import annotations
@@ -35,16 +37,16 @@ PolicyName = Literal[
     "transparent_rule",
     "cost_matched_fixed",
     "cost_and_on_rate_matched_random",
-    "learned_pm_full",
+    "learned_pm_qualified",
 ]
 
 POLICIES: tuple[PolicyName, ...] = (
     "always_off",
     "fixed_high_eligible",
     "transparent_rule",
+    "learned_pm_qualified",
     "cost_matched_fixed",
     "cost_and_on_rate_matched_random",
-    "learned_pm_full",
 )
 
 
@@ -120,6 +122,8 @@ class BaselineFreeze:
     seed_labels: tuple[str, ...]
     cost_matched_fixed_action_by_stratum: Mapping[str, str]
     matched_random_seed: str
+    matched_random_cost_tolerance: float = 0.05
+    matched_random_minimum_changed_fraction: float = 0.25
 
     def __post_init__(self) -> None:
         if not self.protocol.strip() or not self.matched_random_seed.strip():
@@ -133,6 +137,10 @@ class BaselineFreeze:
         )
         if invalid:
             raise ValueError(f"invalid cost-matched action(s): {sorted(invalid)}")
+        if not 0.0 <= self.matched_random_cost_tolerance <= 1.0:
+            raise ValueError("matched-random cost tolerance must be within [0, 1]")
+        if not 0.0 <= self.matched_random_minimum_changed_fraction <= 1.0:
+            raise ValueError("matched-random changed fraction must be within [0, 1]")
 
 
 def _project(bits: Mapping[str, bool], eligible: Mapping[str, bool]) -> dict[Component, bool]:
@@ -146,7 +154,6 @@ def _exchangeability_cell(state: FrozenResponseState) -> tuple[Any, ...]:
     return (
         state.stratum,
         tuple(bool(state.eligible_bits[component]) for component in COMPONENTS),
-        tuple(int(state.incremental_tokens[component]) for component in COMPONENTS),
     )
 
 
@@ -170,32 +177,51 @@ def matched_random_actions(
                 state.state_id,
             ),
         )
-        shift = 0 if len(ordered) == 1 else 1 + int(
-            _stable_hex(seed, repr(cell), "shift", length=8), 16
-        ) % (len(ordered) - 1)
-        before_counts = {component: 0 for component in COMPONENTS}
-        after_counts = {component: 0 for component in COMPONENTS}
-        before_cost = 0
-        after_cost = 0
-        changed = 0
-        for index, recipient in enumerate(ordered):
-            donor = ordered[(index + shift) % len(ordered)]
-            donor_bits = _strict_bits(donor.learned_pm_bits, field="learned_pm_bits")
-            random_bits = _project(donor_bits, recipient.eligible_bits)
+        candidate_shifts = [0] if len(ordered) == 1 else list(range(1, len(ordered)))
+        candidates = []
+        for shift in candidate_shifts:
+            candidate_assignments = []
+            before_counts = {component: 0 for component in COMPONENTS}
+            after_counts = {component: 0 for component in COMPONENTS}
+            before_cost = 0
+            after_cost = 0
+            changed = 0
+            for index, recipient in enumerate(ordered):
+                donor = ordered[(index + shift) % len(ordered)]
+                donor_bits = _strict_bits(donor.learned_pm_bits, field="learned_pm_bits")
+                random_bits = _project(donor_bits, recipient.eligible_bits)
+                candidate_assignments.append((recipient, donor, random_bits))
+                changed += int(random_bits != dict(recipient.learned_pm_bits))
+                for component in COMPONENTS:
+                    before_counts[component] += int(recipient.learned_pm_bits[component])
+                    after_counts[component] += int(random_bits[component])
+                    before_cost += int(recipient.learned_pm_bits[component]) * int(
+                        recipient.incremental_tokens[component]
+                    )
+                    after_cost += int(random_bits[component]) * int(
+                        recipient.incremental_tokens[component]
+                    )
+            if before_counts != after_counts:
+                raise AssertionError("matched-random component counts were not preserved")
+            candidates.append((
+                abs(after_cost - before_cost),
+                -changed,
+                _stable_hex(seed, repr(cell), str(shift), length=32),
+                shift,
+                candidate_assignments,
+                before_counts,
+                before_cost,
+                after_cost,
+                changed,
+            ))
+        (
+            _, _, _, shift, selected_assignments, before_counts,
+            before_cost, after_cost, changed,
+        ) = min(candidates, key=lambda item: item[:3])
+        for recipient, donor, random_bits in selected_assignments:
             assigned[recipient.state_id] = random_bits
             donors[recipient.state_id] = donor.state_id
-            changed += int(random_bits != dict(recipient.learned_pm_bits))
-            for component in COMPONENTS:
-                before_counts[component] += int(recipient.learned_pm_bits[component])
-                after_counts[component] += int(random_bits[component])
-                before_cost += int(recipient.learned_pm_bits[component]) * int(
-                    recipient.incremental_tokens[component]
-                )
-                after_cost += int(random_bits[component]) * int(
-                    recipient.incremental_tokens[component]
-                )
-        if before_counts != after_counts or before_cost != after_cost:
-            raise AssertionError("matched-random invariants were not preserved")
+        cost_mismatch = abs(after_cost - before_cost) / max(before_cost, 1)
         audits.append(
             {
                 "cell_sha256": sha256(_canonical_json(cell).encode("utf-8")).hexdigest(),
@@ -204,12 +230,81 @@ def matched_random_actions(
                 "shift": shift,
                 "changed_assignments": changed,
                 "component_on_counts": before_counts,
-                "estimated_incremental_tokens": before_cost,
+                "learned_estimated_incremental_tokens": before_cost,
+                "random_estimated_incremental_tokens": after_cost,
+                "relative_cost_mismatch": cost_mismatch,
                 "exact_on_rate_match": True,
-                "exact_estimated_cost_match": True,
+                "exact_estimated_cost_match": before_cost == after_cost,
             }
         )
     return assigned, donors, audits
+
+
+def choose_cost_matched_fixed_actions(
+    states: Sequence[FrozenResponseState],
+    *, protocol: str, tolerance: float = 0.05, minimum_states_per_stratum: int = 12,
+) -> tuple[dict[str, str], list[dict[str, Any]]]:
+    """Choose one static action per broad stratum using cost telemetry only."""
+
+    if not protocol.strip():
+        raise ValueError("cost-matched fixed protocol must be non-empty")
+    if not 0.0 <= tolerance <= 1.0:
+        raise ValueError("cost-matched fixed tolerance must be within [0, 1]")
+    if minimum_states_per_stratum < 2:
+        raise ValueError("minimum states per stratum must be at least two")
+    by_stratum: dict[str, list[FrozenResponseState]] = {}
+    for state in states:
+        by_stratum.setdefault(state.stratum, []).append(state)
+    actions: dict[str, str] = {}
+    audits: list[dict[str, Any]] = []
+    for stratum, members in sorted(by_stratum.items()):
+        if len(members) < minimum_states_per_stratum:
+            raise ValueError(
+                f"cost-matched fixed stratum {stratum!r} has {len(members)} states; "
+                f"minimum is {minimum_states_per_stratum}"
+            )
+        learned_total = sum(
+            sum(
+                int(state.incremental_tokens[component])
+                for component in COMPONENTS
+                if state.learned_pm_bits[component]
+            )
+            for state in members
+        )
+        candidates = []
+        for action_id in ALL_ACTION_IDS:
+            action_bits = action_component_bits(action_id)
+            total = sum(
+                sum(
+                    int(state.incremental_tokens[component])
+                    for component in COMPONENTS
+                    if action_bits[component] and state.eligible_bits[component]
+                )
+                for state in members
+            )
+            candidates.append((
+                abs(total - learned_total),
+                _stable_hex(protocol, stratum, action_id, length=32),
+                action_id,
+                total,
+            ))
+        difference, _, selected_action, selected_total = min(
+            candidates, key=lambda item: item[:2]
+        )
+        mismatch = difference / max(learned_total, 1)
+        actions[stratum] = selected_action
+        audits.append({
+            "stratum": stratum,
+            "states": len(members),
+            "selected_action": selected_action,
+            "learned_total_deterministic_incremental_tokens": learned_total,
+            "fixed_total_deterministic_incremental_tokens": selected_total,
+            "relative_cost_mismatch": mismatch,
+            "tolerance": tolerance,
+            "qualified": mismatch <= tolerance,
+            "response_or_evaluation_outcome_read": False,
+        })
+    return actions, audits
 
 
 def _policy_bits(
@@ -226,7 +321,7 @@ def _policy_bits(
         return eligible, None
     if policy == "transparent_rule":
         return _project(state.transparent_rule_bits, eligible), None
-    if policy == "learned_pm_full":
+    if policy == "learned_pm_qualified":
         return _project(state.learned_pm_bits, eligible), None
     if policy == "cost_and_on_rate_matched_random":
         return _project(random_bits[state.state_id], eligible), None
@@ -359,6 +454,21 @@ def build_response_baseline_plan(
 
     alias_groups = [row for row in physical if len(row["policy_aliases"]) > 1]
     random_changed = sum(item["changed_assignments"] for item in cell_audit)
+    learned_random_cost = sum(
+        int(item["learned_estimated_incremental_tokens"]) for item in cell_audit
+    )
+    assigned_random_cost = sum(
+        int(item["random_estimated_incremental_tokens"]) for item in cell_audit
+    )
+    random_cost_mismatch = abs(assigned_random_cost - learned_random_cost) / max(
+        learned_random_cost, 1
+    )
+    random_changed_fraction = random_changed / len(states)
+    matched_random_qualified = (
+        all(item["exact_on_rate_match"] for item in cell_audit)
+        and random_cost_mismatch <= freeze.matched_random_cost_tolerance
+        and random_changed_fraction >= freeze.matched_random_minimum_changed_fraction
+    )
     report = {
         "protocol": freeze.protocol,
         "status": "COMPLETE_ZERO_API_OUTCOME_BLIND_BASELINE_SCAFFOLD",
@@ -371,13 +481,17 @@ def build_response_baseline_plan(
         "matched_random": {
             "exchangeability_cells": len(cell_audit),
             "changed_state_assignments": random_changed,
+            "changed_state_fraction": random_changed_fraction,
             "has_nonalias_contrast": random_changed > 0,
             "all_cells_exact_on_rate_match": all(
                 item["exact_on_rate_match"] for item in cell_audit
             ),
-            "all_cells_exact_estimated_cost_match": all(
-                item["exact_estimated_cost_match"] for item in cell_audit
-            ),
+            "learned_estimated_incremental_tokens": learned_random_cost,
+            "random_estimated_incremental_tokens": assigned_random_cost,
+            "relative_cost_mismatch": random_cost_mismatch,
+            "cost_tolerance": freeze.matched_random_cost_tolerance,
+            "minimum_changed_fraction": freeze.matched_random_minimum_changed_fraction,
+            "qualified": matched_random_qualified,
             "cell_audit": cell_audit,
         },
         "fairness_attestations": {

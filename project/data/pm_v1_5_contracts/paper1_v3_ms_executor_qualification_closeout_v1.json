@@ -1,0 +1,76 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-qualification-closeout-v1",
+  "date": "2026-08-11",
+  "status": "MS_EXECUTOR_GENERATION_COMPLETE_TRACE_RESPONSIBILITY_REPAIRED_SOURCE_AWARE_MEASUREMENT_NEXT",
+  "purpose": "Close the one-time live generator phase, preserve every raw result, record the trace-only responsibility defect without hiding it, and activate zero-API source-aware measurement over the recovered first replies.",
+  "promoted_from_authority_sha256": "ab64c5bfbd82171ab2ed1d08a412c4465331afd4e483867211bb3cdb794b4d30",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_v3_ms_executor_qualification_execution_phase_v1.json",
+    "sha256": "f364cd934c16637aa0452afd0ae751eb5c4e072d7f1225886414139dbe52ea22"
+  },
+  "live_result": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/live_report.json",
+    "sha256": "a748865542f3a8bbec41a40d2aa6e92d0704a0291b7ec8e210507071f0a2aa5b",
+    "logical_primary_calls": 64,
+    "raw_transport_attempt_rows": 75,
+    "observed_cost_usd": 0.0
+  },
+  "raw_artifacts": [
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/generator_results_private.jsonl",
+      "sha256": "b794eed37596166b2d066a43d5f48f425b6bf242effcf805b92f0b28c6e1663f"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/raw_provider_attempts_before_guard.jsonl",
+      "sha256": "7013512f93fbd51156b4180ddc0e0c3cf4913fc4581274e5910cf98c486b7115"
+    }
+  ],
+  "responsibility_correction": {
+    "observed_defect": "Eleven first replies contained only unauthorized generator telemetry IDs; the reply text had no machine-detected content contamination, but the execution-time guard incorrectly regenerated them.",
+    "old_execution_response_program_sha256": "ecdb0b120df92aaf7c561fac61c5129e09a3978c76f4cfbe87b761342c7f8fe4",
+    "correct_rule": "Untrusted generator telemetry is intersected with authorized evidence IDs and cannot by itself destroy a safe natural-language reply. Only reply-content contamination may trigger personal-resource removal and one retry.",
+    "patched_response_program": {
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "5626b22d84603918792beb500dab6a18a604fe060615f7fd3b4b21181f9e48ce"
+    },
+    "regression_test": "test_unauthorized_trace_is_sanitized_without_destroying_safe_reply",
+    "paid_rerun": false,
+    "extra_paid_retry_outputs_used_as_scientific_outcomes": false
+  },
+  "zero_api_recovery": {
+    "report": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_trace_recovery_20260811/report.json",
+      "sha256": "0ce38887fab39305d2422757eb8317157d9b59ba05a53b9e34552a16513155f9"
+    },
+    "recovered_first_replies": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_trace_recovery_20260811/recovered_first_response_results_private.jsonl",
+      "sha256": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec"
+    },
+    "rows": 64,
+    "trace_sanitized": 11,
+    "content_contamination_requiring_retry": 0
+  },
+  "paid_release": {
+    "path": "outputs/pm_v1_5_paid_run_release.json",
+    "sha256": "d7908ee4389e223f0bda7954fa4eb4936dc4170ae450a3e0d64232525a73032f",
+    "paid_execution_authorized": false,
+    "stage_approvals_empty": true,
+    "identity_permanently_consumed": "155536487c9dd48b11d5036a7894fcb8b7996f2c02b1757d76a8c781cf95b2cb"
+  },
+  "authorization": {
+    "zero_api_source_aware_measurement_design": true,
+    "api_calls": 0,
+    "pm_refit": false,
+    "label_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_execution": false
+  },
+  "claim_boundary": {
+    "MS_selector_trained": true,
+    "MS_executor_machine_generation_complete": true,
+    "MS_executor_source_aware_function_pass": "NOT_YET_MEASURED",
+    "end_to_end_RS_plus_MS_pass": false
+  },
+  "next": "MATERIALIZE_BLIND_SOURCE_AWARE_MS_EXECUTOR_MEASUREMENT_PACKET_ZERO_API"
+}

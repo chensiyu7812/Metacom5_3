@@ -1,0 +1,111 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-panel-v2-blind-review-v2-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_101_BLIND_REVIEW_CALLS_AUTHORIZED_AT_APPROVAL_TIME_ONLY",
+  "purpose": "Blind quality/risk/function/interaction review of the 50 already-real RS/MS Panel V2 replies (no new generation), redesigned per explicit user direction to add MS+RS absolute Risk and replace the single-point interaction check with a blind pairwise MS+R0-vs-MS+RS comparison, and to bind a complete, auditable execution contract before any call.",
+  "supersedes": {
+    "stage": "paper1_rs_ms_panel_v2_blind_review_v1",
+    "run_identity": "4ee5607d47e9285860464fb8e47b933a22289a90d1f72482386155d332b6a600",
+    "status": "SUPERSEDED_UNUSED",
+    "reason": "Missing MS+RS absolute Risk; interaction check was single-point rather than blind pairwise; no bound execution contract existed."
+  },
+  "input_bindings": [
+    {
+      "role": "manifest_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/report.json",
+      "sha256": "0bf2e72693e068ef1cde000f6ffd84c0a50b30e4e317cebb78c4b0b55d27bdb2"
+    },
+    {
+      "role": "quality_calls",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/quality_calls_private.jsonl",
+      "sha256": "8458c8d2219bd5c64775e42b70c7b14d312066b9b749185636a538361134ffcf"
+    },
+    {
+      "role": "risk_calls",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/risk_calls_private.jsonl",
+      "sha256": "96644d775355b4dc6c81d0f647daac42beb12275cb2ff516c3a31aee52f72f0a"
+    },
+    {
+      "role": "function_calls",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/function_calls_private.jsonl",
+      "sha256": "e0f5a23fead499706e4532295fa8a69379bfa845b1164802c7803e203c3c4670"
+    },
+    {
+      "role": "private_map",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_manifest_v2_20260813/private_map.jsonl",
+      "sha256": "4d362aac4f2d6674906712aa7b662358286d6257feda8fb975d03060f71e772f"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_panel_v2_blind_review_v2_execution_v1.json",
+      "sha256": "3f648683079a6808c82a5ef4722675691d454a20e98fe589a3fb36a1bc384c2f"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "quality_risk_instrument",
+      "path": "src/metacom_pm/v1_5_rs_ms_quality_risk_blind_review.py",
+      "sha256": "0f8399f57fd8755219a578d5ba61166d7ccedf77e2c2c97e03aa37961dcaf189"
+    },
+    {
+      "role": "function_observability_v2_instrument",
+      "path": "src/metacom_pm/v1_5_function_observability_v2_blind_review.py",
+      "sha256": "32e3a701a683e6331872b8aaaca6efdc42e098c076c8bf8dc807756df1b8dc1f"
+    },
+    {
+      "role": "interaction_instrument",
+      "path": "src/metacom_pm/v1_5_ms_rs_interaction_blind_review.py",
+      "sha256": "884dac50a6e490951794cfdd801751613bd5c1f9cebb92132decfc003aaf83cb"
+    },
+    {
+      "role": "runner_source",
+      "path": "scripts/v1_5/333l_run_paper1_rs_ms_panel_v2_blind_review_v2_v1_5.py",
+      "sha256": "e5d099774768f2424dcc19f30eddfc47bf1527ec9dd1f4784d21e3fbe9746f74"
+    }
+  ],
+  "schema_bindings": {
+    "quality_schema_sha256": "24e15590a8978687627a41ad41f2273fe2d540c863dc5310d4c3d3a9f6de8245",
+    "risk_schema_sha256": "6dbb744135867bc74fe5b8749d5364c1c9e401c1958e3eea32ce8c8cee7410e7",
+    "function_schema_sha256": "dbfa1116f9d3b5c87745fe9bccee52ecbb600b9fb15f4eeb19ef58f5e6da493f",
+    "interaction_schema_sha256": "1604a912d6914949735b65245d3396babda13ce4f402b045f72203719eaa9e48"
+  },
+  "execution": {
+    "reviewer_id": "RS_MS_PANEL_V2_BLIND_REVIEW_V2_GPT56",
+    "endpoint_key": "openai_gpt_5_6_sol",
+    "judge_model": "gpt-5.6-sol",
+    "logical_calls": 101,
+    "run_identity": "c6426edaae0e1db5f2b1ed66ee91a895ea2ef2173df078ad53db0c1df290f0f4",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_live_20260813",
+    "temperature": 0.0,
+    "max_output_tokens": 500,
+    "seed_policy": "20260813 + (sha256(REVIEWER_ID, item_or_pair_id)[:8] as int) % 100000, deterministic per call",
+    "absolute_usd_cap": 1.35,
+    "maximum_physical_attempts": 202
+  },
+  "runner_contract": {
+    "provider_safe_keys": ["messages", "temperature", "max_output_tokens", "seed", "schema_sha256"],
+    "forbidden_from_provider_payload": ["case_id", "arm", "owner_cluster", "kind", "logical_call_id", "pair_id", "blind_item_id", "item_id", "a_arm", "b_arm", "ms_rs_position"],
+    "enforcement": "The runner reads only the public_call projection (see PROVIDER_SAFE_KEYS in 332l/333l) when constructing the client.chat() invocation; local bookkeeping fields are held in a separate dict never passed to the client. A pre-call assertion rejects any call whose public_call key set is not exactly the allowlist."
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Abort the entire run immediately (no further calls) if 5 consecutive physical attempts fail non-retryably.",
+    "Abort immediately if any single call's response fails schema validation twice (both physical attempts).",
+    "Never exceed absolute_usd_cap; the run must stop, not truncate silently, if projected spend would cross it.",
+    "Consume this identity after the first real call even if the run is incomplete.",
+    "Every call must be resumable: a rerun with the same identity must skip already-completed logical_call_ids."
+  ],
+  "authorization": {
+    "control_review_api_calls": 0,
+    "judge_calls": 101,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "external_test_calls": false
+  }
+}

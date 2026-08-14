@@ -1,0 +1,52 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-function-budget-bound-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "EIGHT_PRE_GOLD_CONTROLS_CARRIED_PROVIDER_BUDGET_BOUND_REVIEW_AUTHORIZED_ONCE",
+  "purpose": "Resume the unchanged Function review after eliminating the deterministic Gemini truncation caused by a 600-token runner hardcode.",
+  "input_bindings": [
+    {"role": "budget_fix_report", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_token_budget_fix_20260811/report.json", "sha256": "f02ec7c0b3939efa41fe745eea34949670fefaa9567a4785d28acfdb560a631b"},
+    {"role": "fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_controls_blind.jsonl", "sha256": "110de96abee26837e476619e457e843cfbfaa0b3e7c3c148e7064e470ec74933"},
+    {"role": "private_control_gold", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl", "sha256": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"},
+    {"role": "budget_bound_call_plan", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_token_budget_fix_20260811/call_plan_private.jsonl", "sha256": "52a8f46fae952baa433c9d1d65dff34a340e39ed73bf069f2174193d4038a225"},
+    {"role": "blind_public_function_packet", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/function_packet_blind.jsonl", "sha256": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"},
+    {"role": "accepted_pre_gold_reviews", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_gemini_gpt_reviews_20260811/reviews.jsonl", "sha256": "1c7ca8016d431b8752609beb5a42a845b6e9b42d14867a71c866a14bd5b9b6ba"}
+  ],
+  "implementation_bindings": [
+    {"role": "scientific_instrument", "path": "src/metacom_pm/v1_5_ms_executor_function_review.py", "sha256": "07ea4228495b4ccee6ab261a707ebf6049eed6dfa9344bdc38d53e68e621ebf3"},
+    {"role": "raw_first_engine", "path": "scripts/v1_5/237l_run_paper1_v3_ms_executor_function_proxy_reviews_v1_5.py", "sha256": "bcf0c7f594b72979c1f8860863ff5f100376b86cf0834c6973d7dccae3225b9b"},
+    {"role": "budget_bound_runner", "path": "scripts/v1_5/243l_continue_paper1_v3_ms_executor_function_budget_bound_reviews_v1_5.py", "sha256": "4e7f8fcaf62a6d69ea5302c7700150b9a14ea1afe5ce495747a008c8aa7e306e"},
+    {"role": "execution_config", "path": "configs/paper1_v3_ms_executor_function_budget_bound_execution_v1.json", "sha256": "73881c33e3c207fd1e11f1beec6c0e6e2d0da20324bfbb14b734d44f70be1b91"},
+    {"role": "endpoint_config", "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json", "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"}
+  ],
+  "execution": {
+    "reviewers": ["Google Gemini 2.5 Flash", "OpenAI GPT-5 mini"],
+    "control_reviews_total": 24,
+    "control_reviews_carried": 8,
+    "maximum_new_control_calls": 16,
+    "public_calls_only_if_both_qualify": 64,
+    "maximum_new_logical_calls": 80,
+    "maximum_new_physical_attempts": 160,
+    "gemini_max_output_tokens": 1400,
+    "gpt_max_output_tokens": 600,
+    "absolute_usd_cap": 2.0,
+    "run_identity": "b4761409556a89d081d7e3d491033974447f82f8e02ef71afd1e67bdae4420d2",
+    "raw_first": true,
+    "gold_provider_visible": false,
+    "carry_is_pre_gold": true,
+    "carry_changes_labels": false,
+    "abandoned_claude_responses_used": false
+  },
+  "authorization": {
+    "function_proxy_api_calls": true,
+    "human_gold_claim": false,
+    "quality_or_risk_judging": false,
+    "pm_refit": false,
+    "prompt_or_guard_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_executor_function_budget_bound_reviews_20260811",
+  "next": "CLOSE_PAID_RELEASE_AND_RUN_ZERO_API_PRE_ADJUDICATION_FUNCTION_ANALYSIS"
+}

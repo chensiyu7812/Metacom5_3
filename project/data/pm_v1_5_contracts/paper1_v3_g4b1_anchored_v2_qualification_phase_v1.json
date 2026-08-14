@@ -1,0 +1,34 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b1-anchored-v2-qualification-phase-v1",
+  "date": "2026-08-11",
+  "status": "G4B1_ANCHORED_V2_ZERO_API_GOLD_QUALIFICATION_AUTHORIZED_ONCE",
+  "purpose": "Open fresh V2 control gold only after 72 raw primary decisions froze. Preserve the one invalid auxiliary reason and apply unchanged gates.",
+  "input_bindings": [
+    {"role": "primary_decision_freeze_report", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_primary_decision_freeze_20260811/report.json", "sha256": "94f739aac0aa5be51fa1a50ed2e4b0e0cb7d96adf04b67bf5f827638edcad9f0"},
+    {"role": "reviewer_a_primary_decisions", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_primary_decision_freeze_20260811/reviewer_a_primary_decisions.jsonl", "sha256": "3d453c40acc1862b3017d5d37a53b9c7aa68b27d831858b03fceba338fe226d4"},
+    {"role": "reviewer_b_primary_decisions", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_primary_decision_freeze_20260811/reviewer_b_primary_decisions.jsonl", "sha256": "865135b754622c31ca600918c8b24103889089e55dc345fbbbe06c765caacdfb"},
+    {"role": "fresh_v2_control_gold_first_access_here", "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_controls_private_20260811/control_gold_key.jsonl", "sha256": "6cff7698e7c6501db8668c7e14a4480987f02a301846c00db5cdae41c93543c6"}
+  ],
+  "implementation_bindings": [
+    {"role": "unchanged_control_gate", "path": "src/metacom_pm/v1_5_g4b_nonexclusive_suitability_review.py", "sha256": "93be3b67b79f35676f82ad5c37e96089bc187426d2376b9053ebc6a8a7c3b6e4"},
+    {"role": "anchored_v2_qualifier", "path": "scripts/v1_5/217l_qualify_paper1_v3_g4b1_anchored_v2_controls_v1_5.py", "sha256": "8158aeec7af841169147212f5a8b720e4897555803a62452dc32a2024c01b002"}
+  ],
+  "gate_unchanged": {
+    "exact": "10/12",
+    "resolved": "9/10",
+    "abstain": "2/2",
+    "critical_boundary": true,
+    "both_reviewers_per_component": true
+  },
+  "authorization": {
+    "control_gold_access": true,
+    "zero_api_qualification": true,
+    "public_reviewer_calls": false,
+    "training_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": false
+  },
+  "no_third_instrument_loop": true,
+  "output_directory": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_qualification_20260811"
+}

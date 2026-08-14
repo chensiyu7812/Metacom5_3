@@ -1,0 +1,396 @@
+{
+  "protocol": "pm-v1.5-v5.3-measurement-accountability-repair-v1",
+  "status": "CALIBRATION_V2_CANDIDATE_COMPOSITE_FAILED_ATOMIC_SEMANTIC_REPAIR_REQUIRED_NO_TRAINING",
+  "date": "2026-08-10",
+  "authority": {
+    "scope": "post-formal measurement, semantic-label eligibility, responsibility attribution, and learnability start gates",
+    "preserves": [
+      "the completed 576-group V5.3 formal result",
+      "the failure of all four V5.3 formal heads",
+      "the frozen 16-action vocabulary",
+      "all spent manifests, replies, judgments, and OOF predictions"
+    ],
+    "does_not_requalify_v5_3": true,
+    "does_not_authorize_v5_4_generation": true,
+    "supersedes_for_future_training_only": [
+      "uncalibrated functional-use judgments as training evidence",
+      "quality uplift alone as a component opportunity label",
+      "UNKNOWN or missing execution/risk evidence being treated as OFF gold",
+      "the three-user development pilot as sufficient model-selection evidence"
+    ],
+    "implementation": "src/metacom_pm/v1_5_v5_3_measurement_repair.py"
+  },
+  "system_definition": {
+    "formalism": "one-step executor-mediated offline contextual bandit",
+    "context": "deployment-visible current dialogue plus legal strictly-prior actual Rank-1 candidates",
+    "action": "one of the frozen 16 MP/MS/ME/RS combinations",
+    "policy": "the four-head PM followed by frozen joint projection",
+    "executor": "typed Step2 generator plus deterministic guard/fallback",
+    "outcome_vector": [
+      "positive_support_contribution_Q",
+      "material_interaction_and_grounding_risk_R",
+      "functional_execution_F",
+      "resource_and_generation_cost_C"
+    ],
+    "why_not_rl": "an RL algorithm cannot repair ambiguous state, invalid rewards, missing raw execution traces, or mixed responsibility; it would optimize those errors"
+  },
+  "five_independent_truth_objects": {
+    "candidate_truth": {
+      "question": "Is the frozen actual Rank-1 candidate valid, about the right owner/time/event, currently applicable, nonredundant, and useful for this response?",
+      "labels": [
+        "VALID_APPLICABLE",
+        "VALID_REDUNDANT",
+        "VALID_NOT_USEFUL",
+        "INVALID_WRONG_OWNER_TIME_EVENT",
+        "UNRESOLVED"
+      ],
+      "not_determined_by": [
+        "candidate presence",
+        "construction intent",
+        "retrieval score alone",
+        "ON response quality"
+      ]
+    },
+    "pm_opportunity_truth": {
+      "question": "Assuming a valid candidate and correct functional execution, is requesting this component beneficial, harmful, or equivalent?",
+      "labels": [
+        "ON_ONLY",
+        "OFF_ONLY",
+        "EITHER",
+        "UNRESOLVED"
+      ],
+      "equivalence_margin_Q": 0.1,
+      "requires": [
+        "candidate_truth=VALID_APPLICABLE",
+        "functional_execution=FUNCTIONAL",
+        "risk is resolved safe",
+        "paired Q is reviewable"
+      ]
+    },
+    "execution_truth": {
+      "question": "Did Step2 receive and functionally realize the requested resource with correct owner/time/boundary?",
+      "final_labels": [
+        "FUNCTIONAL",
+        "SURFACE_ECHO_ONLY",
+        "NOT_USED_FINAL",
+        "BOUNDARY_FAILURE",
+        "PENDING_SEMANTIC_REVIEW"
+      ],
+      "raw_labels": [
+        "PRESENT_REVIEW_REQUIRED",
+        "UNRESOLVED_RAW_MISSING"
+      ]
+    },
+    "guard_truth": {
+      "question": "Was accepting or rejecting the raw Step2 response correct?",
+      "labels": [
+        "TRUE_ACCEPT",
+        "TRUE_REJECT",
+        "FALSE_ACCEPT",
+        "FALSE_REJECT",
+        "PENDING_SEMANTIC_REVIEW",
+        "UNRESOLVED_RAW_MISSING"
+      ]
+    },
+    "deployment_outcome_truth": {
+      "question": "What happened after the requested action in the complete deployed system?",
+      "axes": [
+        "Q",
+        "R",
+        "F",
+        "C",
+        "requested_action",
+        "realized_action",
+        "fallback"
+      ],
+      "analysis": "intention-to-treat; downstream failures remain charged to the deployed policy while mechanism blame is reported separately"
+    }
+  },
+  "semantic_suitability_before_marginal_value": {
+    "purpose": "supply learnable OFF examples without turning executor failure or invalid retrieval into PM gold",
+    "labels": {
+      "OPEN_ELIGIBLE": "independent candidate truth is VALID_APPLICABLE",
+      "DO_NOT_OPEN": "independent candidate truth is VALID_REDUNDANT or VALID_NOT_USEFUL",
+      "RETRIEVAL_INVALID_NO_PM_LABEL": "candidate truth is INVALID_WRONG_OWNER_TIME_EVENT",
+      "ABSTAIN": "candidate truth is UNRESOLVED or reviewers disagree"
+    },
+    "marginal_value_scope": "paired Q ON_ONLY/OFF_ONLY/EITHER is learned only inside OPEN_ELIGIBLE after FUNCTIONAL execution and risk SAFE",
+    "final_component_decision": "DO_NOT_OPEN and ABSTAIN route OFF; OPEN_ELIGIBLE proceeds to the low-capacity marginal-value head; retrieval-invalid is charged upstream and excluded from PM supervision",
+    "construction_condition_is_not_gold": true
+  },
+  "measurement_hard_rules": {
+    "functional_execution": [
+      "a deterministic context-only M0 fallback is NOT_USED_FINAL for every ON-only candidate",
+      "if the rejected first-pass reply was not saved, raw execution and guard correctness are UNRESOLVED_RAW_MISSING",
+      "functional use requires a response-bound evidence excerpt and the exact candidate contribution, not topical overlap",
+      "wrong owner, wrong time, wrong event, scaffold exposure, or atomic-move violation cannot be FUNCTIONAL",
+      "surface repetition without changing the response act is SURFACE_ECHO_ONLY",
+      "generator self-report is telemetry, never gold"
+    ],
+    "quality": [
+      "Q is positive_support_contribution, not overall acceptability, risk, function, or cost",
+      "both arms are judged with the same verified-past panel and candidate context available for factual checking",
+      "Q judges do not receive F/R/C labels and do not decide candidate applicability",
+      "positive Q without independently qualified F remains deployment ITT and cannot become ON_ONLY gold"
+    ],
+    "risk": [
+      "record absolute events in both arms before resource attribution",
+      "wrong-owner, future, private-source fabrication, explicit-boundary violation, and excessive directiveness are distinct events",
+      "CANARY_UNQUALIFIED, missing, or disputed risk is UNRESOLVED, never SAFE",
+      "risk does not rewrite Q; it controls safe oracle eligibility"
+    ],
+    "cost": [
+      "cost never enters a component head label",
+      "deterministic incremental injected tokens are used only after safe Q equivalence in joint projection",
+      "provider input/output tokens, latency, fallback, and USD remain separate deployment outcomes"
+    ]
+  },
+  "semantic_boundary": {
+    "claim": "The PM learns bounded deployment-visible distinctions, not unrestricted human semantics.",
+    "allowed_inputs": [
+      "current dialogue text",
+      "typed candidate text and metadata available at runtime",
+      "strictly-prior owner/time/version facts",
+      "frozen BGE-family embeddings",
+      "explicit low-dimensional redundancy, readiness, boundary, and action-result features"
+    ],
+    "forbidden_inputs": [
+      "EvoEmo summary or observation fields",
+      "future event timeline",
+      "QA answers or evidence annotations",
+      "topic grouping unavailable at runtime",
+      "construction condition",
+      "paired outcomes",
+      "fold identity or source-user aliases"
+    ],
+    "unknown_policy": "out-of-support, reviewer-disputed, or representation-insufficient states are UNRESOLVED and force only that component bit OFF in learned_pm_qualified; transparent_rule remains a separate baseline and is never substituted for a failed or abstaining learned head",
+    "paper_assumption": "candidate discovery and bounded semantic representation are measured modules with stated coverage; their errors are not silently charged to Step1"
+  },
+  "action_and_oracle": {
+    "actions": [
+      "M0+R0",
+      "M0+RS",
+      "MP+R0",
+      "MP+RS",
+      "MS+R0",
+      "MS+RS",
+      "ME+R0",
+      "ME+RS",
+      "MPMS+R0",
+      "MPMS+RS",
+      "MPE+R0",
+      "MPE+RS",
+      "MSE+R0",
+      "MSE+RS",
+      "MPMSME+R0",
+      "MPMSME+RS"
+    ],
+    "oracle_set": "among structurally valid and risk-resolved actions, retain every action within 0.10 Q of the best, then retain the minimum deterministic injected-token frontier including exact ties",
+    "unresolved_rule": "if candidate, execution, Q, or risk is unresolved, no oracle action is fabricated",
+    "metrics": [
+      "oracle_set_inclusion_accuracy",
+      "quality_regret",
+      "excess_deterministic_cost_on_quality_frontier",
+      "critical_invalid_action_rate",
+      "requested_realized_exact_match",
+      "per_component_requested_received_used_functional_funnel"
+    ]
+  },
+  "responsibility_views": {
+    "deployment_itt": "the full policy is evaluated by its requested action and final response, including fallback",
+    "mechanism_blame_order": [
+      "candidate/catalog/retrieval",
+      "semantic eligibility interface",
+      "PM Step1 on a resolved oracle only",
+      "Step2 executor",
+      "guard/fallback",
+      "resource-generator interaction",
+      "measurement",
+      "scope/OOD"
+    ],
+    "pm_can_be_blamed_only_if": "the candidate and opportunity oracle are resolved before action, and requested action is incompatible with that oracle",
+    "executor_can_be_blamed_only_if": "the PM request is oracle-compatible but the candidate is not correctly received and functionally realized",
+    "resource_interaction_can_be_blamed_only_if": "candidate, PM, executor, guard, Q, and risk are all resolved and valid, but correct resource use still worsens the response",
+    "unknown_is_not_blame": true
+  },
+  "repair_sequence": [
+    {
+      "gate": "A_FULL_576_DERIVATIVE",
+      "required": "all 576 groups and 1,728 replicates receive no-overwrite accountability rows; fallback F is deterministically repaired; original Q is retained only as deployment ITT",
+      "artifact": "outputs/pm_v1_5_v5_3_formal_accountability_derivative_20260810/report.json",
+      "outcome": "PASS_COMPLETE"
+    },
+    {
+      "gate": "B_DUAL_REVIEWER_CALIBRATION",
+      "required": "two independent outcome-blind reviewers label the same frozen 64-group packet before the private key is opened; disagreements are adjudicated without changing the rubric",
+      "outcome": "COMPLETE_BUT_MEASUREMENT_AGREEMENT_FAILED"
+    },
+    {
+      "gate": "C_MEASUREMENT_READINESS",
+      "required": "candidate clear-applicability and F-qualified-vs-nonqualified each achieve raw agreement at least 0.80 and Cohen kappa at least 0.60; Q directional preference achieves raw agreement at least 0.70 and kappa at least 0.40",
+      "failure_action": "repair rubric/judge and run a new named calibration sample; do not relabel until a chosen threshold passes",
+      "outcome": "FAIL_CLOSED"
+    },
+    {
+      "gate": "D_LABEL_SUPPORT",
+      "required": "each learned head has resolved clean examples on both sides of the decision boundary across at least 12 independent clusters, with no single user or dialogue supplying more than 15 percent of effective weight"
+    },
+    {
+      "gate": "E_CROSS_FITTED_LEARNABILITY",
+      "required": "on user/dialogue-grouped nested cross-fitting, the predeclared low-capacity head improves OOF MSE by at least 5 percent over the fold-training mean and has OOF Spearman at least 0.15; sign and calibration diagnostics must not contradict the gain",
+      "failure_action": "the head is fixed OFF in learned_pm_qualified; transparent_rule remains a separate comparator; no outcome-driven feature or threshold revision"
+    },
+    {
+      "gate": "F_JOINT_POLICY",
+      "required": "only heads passing D and E enter the 16-action projector; nonpassing heads are fixed OFF; compare the resulting partial learned policy against all frozen baselines"
+    }
+  ],
+  "calibration_v1_outcome_20260810": {
+    "packet": "outputs/pm_v1_5_v5_3_dual_reviewer_calibration_20260810/review_packet_blind.jsonl",
+    "agreement_report": "outputs/pm_v1_5_v5_3_dual_reviewer_calibration_20260810/agreement_report.json",
+    "technical_report": "outputs/pm_v1_5_v5_3_measurement_repair_report_20260810/report.html",
+    "reviewers": [
+      "Anthropic Claude Haiku 4.5",
+      "OpenAI GPT-5 mini"
+    ],
+    "groups": 64,
+    "replicates": 192,
+    "private_key_opened_only_after_both_reviews_schema_valid_and_hash_frozen": true,
+    "candidate_clear_applicability": {
+      "raw_agreement": 0.734375,
+      "cohen_kappa": 0.06529209621993128,
+      "pass": false
+    },
+    "functional_qualified": {
+      "raw_agreement": 0.671875,
+      "cohen_kappa": 0.23617075018944161,
+      "pass": false
+    },
+    "response_preference_direction": {
+      "raw_agreement": 0.6302083333333334,
+      "cohen_kappa": 0.1844451091833681,
+      "pass": false
+    },
+    "directional_reviewer_bias": {
+      "candidate_clear_A_vs_B": [49, 58],
+      "function_qualified_A_vs_B": [118, 155],
+      "on_better_A_vs_B": [121, 154]
+    },
+    "groups_with_any_key_disagreement": 45,
+    "provisionally_fully_labelable_groups": {
+      "total": 20,
+      "MP": 5,
+      "MS": 8,
+      "ME": 6,
+      "RS": 1
+    },
+    "training_authorized": false
+  },
+  "role_decomposed_calibration_v2_required": {
+    "sample": "new outcome-hidden 64-group sample from unused formal groups; exclude the prior 32 and calibration-v1 64 groups",
+    "selection": "16 per component, maximum-coverage balanced before outcome by candidate subtype, cluster, fold, redundancy/readiness diagnostics, and expected open-like versus do-not-open-like strata; construction strata are never gold. If the unused natural pool cannot supply balance, freeze and report the deficit rather than fabricate or outcome-select rows",
+    "staged_execution": "run two independent candidate-suitability reviewers first while the private outcome key remains closed; continue to function/quality/risk roles only if candidate agreement and resolved bidirectional support justify the additional review calls",
+    "independent_roles": {
+      "candidate_suitability": "sees current dialogue and candidate only; produces candidate truth and OPEN_ELIGIBLE/DO_NOT_OPEN/invalid/abstain projection",
+      "functional_execution": "sees candidate and one ON reply only; uses component-specific function rules and exact evidence IDs; never sees OFF or preference",
+      "quality_preference": "sees same verified-past panel plus blinded ON/OFF replies in randomized order; never sees candidate/function/risk labels",
+      "risk": "records absolute events per arm before resource attribution; never sees quality preference"
+    },
+    "component_specific_function_minimums": {
+      "MP": "the profile, preference, or relationship fact changes personalization or response act; names/topic echoes alone fail",
+      "MS": "the response explicitly and accurately bridges a specific prior observation to the current state",
+      "ME": "the action-result evidence changes whether/how an action is proposed or avoided",
+      "RS": "the selected strategy card's atomic move is realized without extra competing move or burden"
+    },
+    "agreement_gates_unchanged": true,
+    "majority_vote_is_gold": false,
+    "consensus_only_policy": "only reviewer agreement or frozen central adjudication becomes resolved; all other rows remain UNRESOLVED",
+    "paid_paired_effect_calls_before_pass": false
+  },
+  "calibration_v2_candidate_outcome_20260810": {
+    "packet": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_suitability_packet_blind.jsonl",
+    "report": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_agreement_report.json",
+    "diagnosis": "outputs/pm_v1_5_v5_3_role_decomposed_calibration_v2_20260810/candidate_disagreement_diagnostics.json",
+    "groups": 64,
+    "reviewers_complete": [64, 64],
+    "projection_raw_agreement": 0.53125,
+    "projection_cohen_kappa": 0.2902033271719039,
+    "candidate_measurement_gate_pass": false,
+    "development_bidirectional_support_gate_pass": false,
+    "other_roles_executed": false,
+    "private_paired_outcome_key_opened": false,
+    "next_contract": "v5_3_atomic_semantic_suitability_calibration_v1.json",
+    "training_authorized": false
+  },
+  "small_sample_capacity": {
+    "memory_independent_clusters": 18,
+    "outer_cross_fit": "six user-grouped folds; aliases and shared source dialogues remain bound",
+    "minimum_outer_training_clusters": 15,
+    "maximum_effective_free_parameters_per_memory_head": 3,
+    "derivation": "floor(15 independent outer-training clusters / 5)",
+    "model_family": "predeclared regularized linear or monotone low-capacity model; no neural fine-tuning and no outcome-selected feature search",
+    "three_user_pilot": "diagnostic only and forbidden for final representation selection",
+    "claim": "18 users can support a narrow low-capacity cross-fitted feasibility result with cluster uncertainty; it cannot guarantee narrow confidence intervals or all-head success",
+    "no_1095_user_requirement": true
+  },
+  "semantic_off_accounting": {
+    "contract": "v5_3_semantic_coverage_off_accounting_v1.json",
+    "rank1_is_not_gold": true,
+    "failed_heads_fixed_off_in_learned_policy": true,
+    "transparent_rule_is_separate_baseline_only": true,
+    "required_reporting": [
+      "candidate availability and structural OFF",
+      "semantic resolution coverage and abstention",
+      "conditional and unconditional ON rates",
+      "OFF-reason decomposition",
+      "16-action distribution and always-off alias rate",
+      "requested-received-used-functional-safe funnel"
+    ]
+  },
+  "baseline_matrix": [
+    "always_off",
+    "fixed_high_eligible",
+    "old_v1_0_policy_when_runtime-compatible",
+    "transparent_rule",
+    "cost_matched_fixed",
+    "cost_and_on_rate_matched_random",
+    "oracle_upper_bound_on_resolved_panel"
+  ],
+  "minimum_success_claim": {
+    "primary": "the qualified partial learned PM provides measurable conditional benefit over always-off and is not inferior in response quality while improving risk or context cost relative to at least one nontrivial fixed/transparent comparator",
+    "component_reporting": "inside learned_pm_qualified, report each of MP/MS/ME/RS as learned-qualified or fixed-OFF; transparent_rule is a separate baseline only; do not require all four to pass in order to evaluate a scientifically valid partial policy",
+    "cannot_be_guaranteed_by_contract": "positive empirical effect on unseen clusters",
+    "what_is_guaranteed": "an unlearnable or invalidly measured head cannot silently enter the final learned policy"
+  },
+  "current_evidence": {
+    "root_cause_audit": "outputs/pm_v1_5_v5_3_learnability_root_cause_audit_20260809/report.json",
+    "single_reviewer_blind_audit": "outputs/pm_v1_5_v5_3_blind_semantic_audit_20260809/analysis.json",
+    "formal_oof": "outputs/pm_v1_5_v5_3_public_formal_oof_20260809/formal_oof_report.json",
+    "dual_reviewer_calibration": "outputs/pm_v1_5_v5_3_dual_reviewer_calibration_20260810/agreement_report.json",
+    "dual_reviewer_disagreement_diagnostics": "outputs/pm_v1_5_v5_3_dual_reviewer_calibration_20260810/disagreement_diagnostics.json",
+    "known_failures": [
+      "70 ON replicates fell back to M0 and 28 were nevertheless labeled USED",
+      "the frozen 32-group audit found 46 of 82 reviewable nonqualified uses labeled USED by the original judge",
+      "original Q sign and manual preference sign agreed on only 17 of 32 groups",
+      "only 7 of 32 audited groups jointly had a clearly applicable candidate, three reviewable replicates, at least two functional uses, and no boundary violation",
+      "all 576 formal groups have risk_instrument_status CANARY_UNQUALIFIED",
+      "the 576 natural states contain no controlled semantic high/low counterfactual family",
+      "the original memory pilot selected 5-6-dimensional heads from only two training users per held-out user"
+      ,"combined dual-reviewer calibration failed all candidate, function, and preference agreement gates and yielded only 20/64 provisionally fully labelable groups"
+    ]
+  },
+  "current_stop_rules": {
+    "new_paid_paired_effect_generation": false,
+    "new_pm_training": false,
+    "v5_4_anchor_execution": false,
+    "allowed_now": [
+      "no-API derived audits",
+      "outcome-blind reviewer packet materialization",
+      "reviewer calibration and adjudication",
+      "new role-decomposed outcome-blind calibration on unused public groups",
+      "schema tests",
+      "baseline and metric wiring without outcome tuning"
+    ]
+  },
+  "api_calls_for_contract": 0
+}

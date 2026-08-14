@@ -1,0 +1,100 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-supervision-unit-repair-design-v1",
+  "date": "2026-08-11",
+  "status": "ORACLE_AUDIT_COMPLETE_MS_SUPERVISION_UNIT_REPAIR_DESIGN_NEXT_NO_REFIT",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "decision": "Repair MS supervision at the actual atomic-candidate material-increment level before any new fit. Do not add the tested generic NLI model and do not tune the existing checkpoint.",
+  "evidence": [
+    {
+      "role": "zero_api_semantic_model_probe",
+      "path": "outputs/pm_v1_5_paper1_semantic_adapter_zero_api_20260811/report.json",
+      "sha256": "d625de8b36d11e1806a43df1a09fa9f78245ffc5e1cf5e816e74b8ab11ac3bab",
+      "required_decision": "REJECT_THIS_OFF_THE_SHELF_NLI_MODEL_FOR_FORMAL_PM; KEEP_ORACLE_PLAN_UPPER_BOUND_TEST"
+    },
+    {
+      "role": "oracle_plan_responsibility_audit",
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_responsibility_audit_20260811/report.json",
+      "sha256": "7e37b785ec2911aad2bd811bc90ea17ba477fc6a5a0465d2b5573b64cc63dc37",
+      "required_status": "ZERO_API_DEVELOPMENT_AUDIT_COMPLETE_BLIND_PACKET_READY_REVIEW_NOT_AUTHORIZED"
+    },
+    {
+      "role": "responsibility_analysis",
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_responsibility_audit_20260811/analysis.json",
+      "sha256": "83db4640a39ddfbf3c21b4ef69880b89bc5efe4862b3cd58186c19912f13e715"
+    },
+    {
+      "role": "development_annotations_not_gold",
+      "path": "data/pm_v1_5_contracts/paper1_ms_oracle_plan_development_audit_v1.json",
+      "sha256": "72e2598a1fdc356280ac664a92b0728afe3a293209e27bafb468918368c9980b"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "57278d8dd7bfb7a325d07a97cfb2584a8e6387653063872c466743e8386328dd"
+    },
+    {
+      "role": "repaired_plan_scaffold_guard",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    }
+  ],
+  "diagnostic_result": {
+    "intended_use_controls": 6,
+    "source_attributable_functional": 2,
+    "not_used": 3,
+    "execution_failure": 1,
+    "safe_nonuse_controls": 2,
+    "safe_nonuse_correct": 2,
+    "kelly_fixed": true,
+    "generic_nli_accepted": false
+  },
+  "repaired_MS_supervision_unit": {
+    "unit": "visible current state x frozen actual atomic Rank-1 MS candidate",
+    "positive_requires_all": [
+      "candidate_owner_and_strict_past_time_are_valid",
+      "candidate_entity_link_to_the_current_topic_is_resolved",
+      "candidate_adds_a_specific_proposition_not_already_supplied_by_current_context",
+      "the_immediate_support_goal_is_explicit",
+      "at_least_one_candidate_specific_allowed_response_change_is_material_and_natural",
+      "the_allowed_change_preserves_current_focus_and_owner_time_boundaries",
+      "a_safe_nonuse_condition_is explicit"
+    ],
+    "negative_includes": [
+      "low_information_or_social_closing_source",
+      "current_context_already_entails_the_candidate_increment",
+      "entity_link_unresolved",
+      "same_topic_but_no_immediate_goal_contribution",
+      "stale_or_conflicting_without_a_safe_tentative_use",
+      "any_use_plan_would_shift_attention_away_from_the_current_need"
+    ],
+    "teacher_suitable_is_not_automatically_positive": true,
+    "reviewer_must_supply": [
+      "current_goal_quote",
+      "past_source_quote",
+      "candidate_increment",
+      "allowed_response_change",
+      "forbidden_focus_shift",
+      "nonuse_condition",
+      "binary_suitability_or_abstain"
+    ],
+    "one_label_only": "The checklist supports one per-component suitability decision; it does not impose one-memory-at-a-time and does not change the 16-action space."
+  },
+  "bounded_next_phase": {
+    "step_1": "Materialize a zero-API audit packet from the existing 201 resolved MS teacher rows with no outcomes or current model predictions visible.",
+    "step_2": "Run a small fixed control qualification that specifically tests redundancy, unresolved entity links, stale comparisons, and true past-only increments.",
+    "step_3": "If the measurement instrument qualifies, perform exactly one structured reannotation pass; otherwise stop MS and do not generate more responses.",
+    "step_4": "Freeze corrected labels, run one grouped LOGO OOF, and only if it passes validate the repaired executor on a fresh held-out slice.",
+    "no_open_review_repair_loop": true
+  },
+  "authorization": {
+    "zero_api_packet_design": true,
+    "review_calls": false,
+    "training_label_change": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  }
+}

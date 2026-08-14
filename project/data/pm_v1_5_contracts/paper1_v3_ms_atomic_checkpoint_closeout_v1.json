@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-atomic-checkpoint-closeout-v1",
+  "date": "2026-08-11",
+  "status": "MS_ATOMIC_SELECTOR_TRAINED_OOF_SIGNAL_PRESENT_EXECUTOR_QUALIFICATION_NEXT",
+  "training_supervision": {
+    "type": "single qualified LLM teacher distillation; not human gold and not response uplift",
+    "cases": 204,
+    "resolved_binary": 201,
+    "suitable": 73,
+    "not_suitable": 128,
+    "semantic_abstain": 3,
+    "connected_groups": 17,
+    "influenced_by_or_qa_used_as_label": false
+  },
+  "cross_fitted_evidence": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_logo_oof_20260811/report.json",
+    "sha256": "086ad79f671e3326600f1b48e7dc51c6934bc704fab8bb634b0987be32a84b82",
+    "required_status": "MS_ATOMIC_TEACHER_OOF_SIGNAL_PRESENT_FULL_FIT_MAY_BE_DESIGNED",
+    "roc_auc": 0.8289811643835616,
+    "balanced_accuracy_at_0_5": 0.7449165239726028,
+    "recall_at_0_5": 0.7945205479452054,
+    "specificity_at_0_5": 0.6953125,
+    "brier": 0.17203363897672208,
+    "prevalence_brier": 0.23380438835459819,
+    "owner_cluster_bootstrap_95_ci": {
+      "roc_auc": [0.7744377219596222, 0.8861115424430641],
+      "balanced_accuracy": [0.6662002175368138, 0.8213480205632179],
+      "brier_gain": [0.03518620245306775, 0.09069668379199247]
+    }
+  },
+  "checkpoint": {
+    "report": {"path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json", "sha256": "db6b800f216b64f25ed16f8f8004d0ee9545113ad5788ebd1a56f7c10f99ab55", "required_status": "MS_ATOMIC_SUITABILITY_CHECKPOINT_FIT_EXECUTOR_QUALIFICATION_REQUIRED"},
+    "model": {"path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/ms_atomic_suitability_model.joblib", "sha256": "68fc2f909783d7b46daa37ba2fef453598c4bf24b8935fc6122c2c41ed1d3993"},
+    "feature_schema": {"path": "outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/feature_schema.json", "sha256": "a269c7c1ba3d6e1f2574be75fefb5ea78c762b3c89152574eb335002c159f30b"},
+    "rerun_or_refit_allowed": false
+  },
+  "interpretation": {
+    "what_is_now_true": "The MS selector can discriminate atomic candidate suitability across connected user groups and a frozen full-fit checkpoint exists.",
+    "what_is_not_yet_true": "The end-to-end PM has not yet shown that selected memories are naturally absorbed into better replies or that RS+MS beats same-stack baselines.",
+    "semantic_scope": "The observed signal is bounded candidate usefulness—specificity, nonredundancy, age/pool context and semantic retrieval geometry—not unrestricted human-level language understanding.",
+    "retrieval_only_auc": 0.8182791095890412,
+    "full_model_auc": 0.8289811643835616
+  },
+  "executor_qualification_requirements": [
+    "Use the component-general V3 response program, never V2 literal-splice code.",
+    "Generate same-state MS-ON and MS-OFF arms with the same generator, seed policy, schema and current context.",
+    "Exact source is provenance/interpretation input; no literal mention or lexical-overlap requirement.",
+    "Safe non-use keeps the current-context reply and downgrades realized MS OFF; it never triggers the old generic fallback.",
+    "Only owner/time/scaffold contamination permits one personal-resource-free retry.",
+    "Offline source-aware function, literal risk events, quality and cost remain separate; generator telemetry is not function gold.",
+    "Qualification must contain both teacher-suitable and teacher-not-suitable atomic cases and must not impose a one-memory cap or change the 16-action design."
+  ],
+  "next_authority": {
+    "phase": "MS_EXECUTOR_QUALIFICATION_DESIGN",
+    "api_calls": 0,
+    "pm_fits": 0,
+    "mp_or_me_work": 0
+  }
+}

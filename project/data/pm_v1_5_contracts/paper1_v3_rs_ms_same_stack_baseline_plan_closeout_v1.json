@@ -1,0 +1,47 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-same-stack-baseline-plan-closeout-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_BASELINE_ACTIONS_AND_MINIMAL_BLIND_RS_SLICE_MATERIALIZED",
+  "decision": "ONE_BLIND_16_PAIR_RS_SLICE_OUTCOME_MEASUREMENT_MAY_BE_DESIGNED_NO_GENERATION_OR_REFIT",
+  "scope": {
+    "primary_policy": "RS fixed ON plus learned MS",
+    "primary_comparator": "RS-only",
+    "not_claimed": "jointly learned RS+MS deployment policy",
+    "global_action_space_unchanged": 16,
+    "bounded_panel_actions": ["M0+R0", "MS+R0", "M0+RS", "MS+RS"]
+  },
+  "observed": {
+    "states": 16,
+    "connected_groups": 8,
+    "existing_responses": 64,
+    "learned_ms_on": 7,
+    "learned_ms_off": 9,
+    "accepted_proxy_function_on_learned": "6/7 available; 6/6 FUNCTIONAL",
+    "matched_random": "7 MS ON; 8/16 assignments changed; 0.247% prompt-cost mismatch",
+    "fixed_cost_candidate": "MS+R0; 5.40% mismatch; unqualified at frozen 5% tolerance"
+  },
+  "artifacts": [
+    {"role": "machine_report", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/report.json", "sha256": "48636a8d7b49e154cb6e8ca0cd87919438935e0f7d6f7231a149a427997ba32a"},
+    {"role": "private_policy_bindings", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/policy_actions_private.jsonl", "sha256": "47b7150ec4cd08e1d734219e40ea5590ff0c65b86de16af46ca277bf60a6d19f"},
+    {"role": "blind_quality_16_pairs", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/quality_rs_slice_blind.jsonl", "sha256": "1f4c922bc864d34f305d63556038a705d7f2b981728b2f48dcd6b4e25140521b"},
+    {"role": "blind_risk_32_arms", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/risk_rs_slice_blind.jsonl", "sha256": "5fbe6c4be99cde0c02854bd7f1ba5f0708369564bd7bba06c54bf2a7d1228228"},
+    {"role": "blind_function_16_ms_rs", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_same_stack_baseline_plan_20260811/function_ms_rs_blind.jsonl", "sha256": "b61b9ed990dc455266b71fbff317b85c2e60f651cac35eb424e94df42574b587"},
+    {"role": "human_report", "path": "docs/PM_V1_5_PAPER1_V3_RS_MS_SAME_STACK_BASELINE_PLAN_20260811_ZH.md", "sha256": "2edbf8ef86c8f2d0832e308ecde2f37e542e21044f082e57a4d2b0c35b6f4326"},
+    {"role": "materializer", "path": "scripts/v1_5/248l_materialize_paper1_v3_rs_ms_same_stack_baselines_v1_5.py", "sha256": "ff1e47aae7c21bc756ce9bb1984cbe722c4ff67c235d260472647fb3d3bbae30"},
+    {"role": "policy_module", "path": "src/metacom_pm/v1_5_ms_rs_same_stack_baselines.py", "sha256": "11944f7d942befbcdc4bfe0e140c5ab7c83d303039a3d25a53f0316c9232342a"},
+    {"role": "tests", "path": "tests/test_v1_5_ms_rs_same_stack_baselines.py", "sha256": "2e06c7518520dc59b064681ea0ad8e4aaa4115a38182c0c2a6c0188e5f63f885"}
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "response_generation": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "quality_or_risk_label_creation": false,
+    "blind_measurement_phase_design": true,
+    "blind_measurement_execution": false,
+    "MP_work": false,
+    "ME_work": false,
+    "external_work": false
+  },
+  "next": "DESIGN_ONE_BLIND_RS_SLICE_OUTCOME_MEASUREMENT_PHASE_USING_ONLY_THE_BOUND_16_32_16_PACKETS"
+}

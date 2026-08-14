@@ -1,0 +1,82 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b-review-preflight-report-v1",
+  "status": "G4B_REVIEW_PREFLIGHT_FAIL",
+  "checks": {
+    "single_decision_schema_has_no_retired_axes": true,
+    "one_case_per_logical_call": true,
+    "control_execution_cannot_name_gold_or_private_paths": true,
+    "reviewer_families_are_independent": true,
+    "strict_schema_supported_by_both": true,
+    "control_calls_are_exactly_72": true,
+    "public_calls_are_exactly_1014_but_not_authorized": true,
+    "four_axis_accuracy_is_absent": false,
+    "nonexclusive_contract_is_explicit": true,
+    "gold_first_access_is_post_response_qualification": true
+  },
+  "failed_checks": [
+    "four_axis_accuracy_is_absent"
+  ],
+  "reviewers": {
+    "REVIEWER_A": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "anthropic_claude_haiku_4_5",
+      "provider": "Anthropic",
+      "family": "anthropic_claude_haiku_4_5",
+      "model": "claude-haiku-4-5-20251001",
+      "transport": "anthropic_messages",
+      "packet": "reviewer_a"
+    },
+    "REVIEWER_B": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "openai_gpt_5_mini",
+      "provider": "OpenAI",
+      "family": "openai_gpt_5_mini",
+      "model": "gpt-5-mini-2025-08-07",
+      "transport": "openai_chat_completions",
+      "packet": "reviewer_b"
+    },
+    "predeclared_replacement": {
+      "status": "INACTIVE_UNLESS_EXACTLY_ONE_PRIMARY_REVIEWER_FAILS_A_COMPONENT",
+      "endpoint_key": "google_gemini_2_5_flash",
+      "provider": "Google",
+      "family": "google_gemini_2_5_flash",
+      "model": "gemini-2.5-flash",
+      "use_limit": "one fresh component-specific qualification wave only; no control, codebook, prompt or gate change",
+      "both_primary_reviewers_fail": "component_fixed_off_without_replacement_majority_vote"
+    }
+  },
+  "logical_calls": 1086,
+  "call_counts": {
+    "controls": 72,
+    "public_not_authorized": 1014
+  },
+  "call_plan": {
+    "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_20260811/call_plan.jsonl",
+    "sha256": "eb67b1f166a4aa2fd4b7f7659ed8364063ccf6c06eb4822f8f5710272213bd1e",
+    "rows": 1086
+  },
+  "cost_ceiling": {
+    "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_20260811/cost_ceiling.json",
+    "sha256": "b0f91e9d020c37a86981f3628c741d85c920664ecedc3d5de8b8a3614582aca1",
+    "protocol": "pm-v1.5-paper1-v3-g4b-cost-ceiling-v1",
+    "method": "ceil(chars/3*1.5) input + full 500 output tokens, charged for both attempts",
+    "CONTROL": {
+      "logical_calls": 72,
+      "maximum_physical_attempts": 144,
+      "conservative_computed_usd": 0.4361460000000001,
+      "absolute_usd_cap": 0.75
+    },
+    "PUBLIC": {
+      "logical_calls": 1014,
+      "maximum_physical_attempts": 2028,
+      "conservative_computed_usd": 7.221910999999996,
+      "absolute_usd_cap": 5.25
+    },
+    "combined_absolute_usd_cap": 6.0
+  },
+  "api_calls": 0,
+  "reviews_created": 0,
+  "labels_created": 0,
+  "public_execution_authorized": false,
+  "next_gate": "G4B1_EXACT_72_CONTROL_CALL_EXECUTION_PHASE"
+}

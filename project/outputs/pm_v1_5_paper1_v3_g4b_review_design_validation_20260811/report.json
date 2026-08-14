@@ -1,0 +1,42 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b-review-design-validation-v1",
+  "status": "G4B_REVIEW_DESIGN_PASS_EXACT_CONTROL_EXECUTION_PHASE_MAY_BE_DESIGNED",
+  "checks": {
+    "all_design_bindings_match": true,
+    "v1_failed_preflight_preserved": true,
+    "v1_had_zero_api_labels_reviews": true,
+    "v2_preflight_passed": true,
+    "v2_preflight_has_no_failed_checks": true,
+    "single_decision_schema_only": true,
+    "retired_axes_absent_from_schema": true,
+    "nonexclusive_and_sixteen_actions_preserved": true,
+    "runner_has_no_gold_or_private_key_path": true,
+    "controls_are_72_one_case_calls": true,
+    "public_1014_calls_not_authorized": true,
+    "control_cap_exceeds_conservative_bound": true,
+    "public_cap_exceeds_conservative_bound": true,
+    "gold_is_delayed_until_separate_phase": true,
+    "control_failure_is_component_local": true,
+    "valid_judgment_never_retried_for_gold_disagreement": true,
+    "all_execution_permissions_remain_false": true
+  },
+  "failed_checks": [],
+  "design": {
+    "path": "data/pm_v1_5_contracts/paper1_v3_g4b_review_design_v1.json",
+    "sha256": "3026b6f34a919e7d3b07b00dcb1531e611055ce80372e97afb93bd232585a7a0"
+  },
+  "preflight": {
+    "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_v2_20260811/report.json",
+    "sha256": "ab333ef49da729bb13b6856b5e3b3d552daef718b56eee557c03cde6e3fd733f",
+    "call_plan_sha256": "eb67b1f166a4aa2fd4b7f7659ed8364063ccf6c06eb4822f8f5710272213bd1e"
+  },
+  "grain": "one state by one component by that component's frozen actual Rank-1 candidate",
+  "control_logical_calls": 72,
+  "public_logical_calls_not_authorized": 1014,
+  "control_cap_usd": 0.75,
+  "future_public_cap_usd": 8.0,
+  "api_calls": 0,
+  "reviews_created": 0,
+  "labels_created": 0,
+  "next_gate": "G4B1_EXACT_72_CONTROL_CALL_EXECUTION_PHASE"
+}

@@ -1,0 +1,174 @@
+{
+  "protocol": "pm-v1.5-v5.3-public-formal-effect-freeze-v1",
+  "status": "FORMAL_EFFECT_COUNTS_AND_HEADS_FROZEN",
+  "development_pilot_groups": 96,
+  "formal_groups": {
+    "MP": 144,
+    "MS": 144,
+    "ME": 144,
+    "RS": 144
+  },
+  "formal_total_groups": 576,
+  "paired_generator_seeds_per_group": 3,
+  "memory_allocation": "8 outcome-blind factor-balanced actual-Rank1 states per head per EvoEmo user across all 18 users; all 96 development states excluded",
+  "rs_allocation": "144 distinct quarantined-clean ESConv train dialogue groups; all development dialogue-state keys excluded",
+  "target": "continuous replicate-aggregated positive-support-contribution uplift; ties remain zero and negative effects remain negative",
+  "heads": {
+    "MP": {
+      "representation": "OUTER_TRAIN_PCA_3_CURRENT_STATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "MS": {
+      "representation": "OUTER_TRAIN_PCA_5_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "ME": {
+      "representation": "GLOBAL_FIXED_RANDOM_PROJECTION_3_CANDIDATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    },
+    "RS": {
+      "representation": "OUTER_TRAIN_PCA_5_STATE_X_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "no_further_representation_selection": true
+    }
+  },
+  "outer_evaluation": {
+    "memory": "six frozen 15-user-train/3-user-test folds from public-backbone contract",
+    "RS": "six 120-dialogue-train/24-dialogue-test grouped folds",
+    "PCA_fit": "outer-training groups only",
+    "scaler_fit": "outer-training groups only",
+    "threshold_and_calibration": "inner grouped development only"
+  },
+  "formal_engineering_gate_each_head": {
+    "continuous_mse": "OOF MSE at least 5 percent below fold-training-mean predictor",
+    "ranking": "OOF Spearman at least 0.15",
+    "support": "nonconstant target and predictions across at least 12 independent clusters",
+    "binary_balanced_accuracy": "diagnostic only; not appropriate when true uplift is mostly positive"
+  },
+  "failure_rule": "a failed formal head is not repaired by adding outcome-selected states or changing representation; it fails closed to OFF/transparent rule",
+  "risk": "automatic Gemini risk judge failed canary and is excluded from labels and formal authorization; machine-critical events plus stratified blind human audit",
+  "cost": "never enters component target; used only in final 16-action projection",
+  "interaction_followup": "after head qualification, freeze 32-48 common states and run all 16 actions",
+  "guarantee_boundary": "this maximizes learnability and freezes a real pass/fail test; it cannot mathematically guarantee that unseen formal OOF heads pass",
+  "pilot_analysis": {
+    "MP": {
+      "component": "MP",
+      "groups": 24,
+      "independent_clusters": 3,
+      "target_mean": 0.3125,
+      "target_sd": 0.23856707905268376,
+      "target_sign_counts": {
+        "negative": 1,
+        "positive": 22,
+        "tie": 1
+      },
+      "mean_within_group_replicate_sd": 0.224039022756184,
+      "replicate_sign_consistent_groups": 21,
+      "functional_use_counts": {
+        "USED": 72
+      },
+      "frozen_representation": "OUTER_TRAIN_PCA_3_CURRENT_STATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "oof_mse": 0.04731908255689734,
+      "fold_train_mean_baseline_mse": 0.059696903935185175,
+      "relative_mse": 0.7926555556092686,
+      "mse_reduction": 0.2073444443907314,
+      "oof_spearman": 0.3780646403937279,
+      "development_engineering_signal": true,
+      "binary_balanced_accuracy_not_primary": true
+    },
+    "MS": {
+      "component": "MS",
+      "groups": 24,
+      "independent_clusters": 3,
+      "target_mean": 0.20138888888888892,
+      "target_sd": 0.3478858392718242,
+      "target_sign_counts": {
+        "positive": 16,
+        "tie": 4,
+        "negative": 4
+      },
+      "mean_within_group_replicate_sd": 0.19058127885215,
+      "replicate_sign_consistent_groups": 18,
+      "functional_use_counts": {
+        "USED": 69,
+        "NOT_USED": 3
+      },
+      "frozen_representation": "OUTER_TRAIN_PCA_5_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "oof_mse": 0.11869510921383358,
+      "fold_train_mean_baseline_mse": 0.14293529369212962,
+      "relative_mse": 0.8304114830413591,
+      "mse_reduction": 0.16958851695864086,
+      "oof_spearman": 0.15230303339843537,
+      "development_engineering_signal": true,
+      "binary_balanced_accuracy_not_primary": true
+    },
+    "ME": {
+      "component": "ME",
+      "groups": 24,
+      "independent_clusters": 3,
+      "target_mean": 0.17361111111111108,
+      "target_sd": 0.3816176687321577,
+      "target_sign_counts": {
+        "negative": 6,
+        "positive": 16,
+        "tie": 2
+      },
+      "mean_within_group_replicate_sd": 0.16879871034014868,
+      "replicate_sign_consistent_groups": 21,
+      "functional_use_counts": {
+        "NOT_USED": 2,
+        "USED": 70
+      },
+      "frozen_representation": "GLOBAL_FIXED_RANDOM_PROJECTION_3_CANDIDATE_BGE",
+      "model_dimensions": 6,
+      "ridge_alpha": 10.0,
+      "oof_mse": 0.09845904339426174,
+      "fold_train_mean_baseline_mse": 0.1719654224537037,
+      "relative_mse": 0.5725514000977072,
+      "mse_reduction": 0.4274485999022928,
+      "oof_spearman": 0.527965492111078,
+      "development_engineering_signal": true,
+      "binary_balanced_accuracy_not_primary": true
+    },
+    "RS": {
+      "component": "RS",
+      "groups": 24,
+      "independent_clusters": 24,
+      "target_mean": 0.16666666666666666,
+      "target_sd": 0.31445643615856533,
+      "target_sign_counts": {
+        "negative": 6,
+        "positive": 18
+      },
+      "mean_within_group_replicate_sd": 0.25023224434617486,
+      "replicate_sign_consistent_groups": 20,
+      "functional_use_counts": {
+        "USED": 67,
+        "NOT_USED": 5
+      },
+      "frozen_representation": "OUTER_TRAIN_PCA_5_STATE_X_CANDIDATE_BGE",
+      "model_dimensions": 5,
+      "ridge_alpha": 10.0,
+      "oof_mse": 0.08993324114924221,
+      "fold_train_mean_baseline_mse": 0.10631655092592592,
+      "relative_mse": 0.8459006651927745,
+      "mse_reduction": 0.15409933480722549,
+      "oof_spearman": 0.2703893977471926,
+      "development_engineering_signal": true,
+      "binary_balanced_accuracy_not_primary": true
+    }
+  },
+  "api_calls_for_freeze": 0,
+  "freeze_identity": "v53formal_56c79440f9d20e67f20cf071"
+}

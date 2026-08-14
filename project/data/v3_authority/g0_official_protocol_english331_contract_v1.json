@@ -1,0 +1,77 @@
+{
+  "protocol": "metacom-v3-g0-official-protocol-english331-contract-v1",
+  "date": "2026-08-14",
+  "status": "FROZEN_ZERO_CALL_BEFORE_MANIFEST_AND_PREFLIGHT",
+  "purpose": "Apply the public ESC-Eval English interaction protocol to the deployment-oriented Qwen candidate and the Llama 8B incumbent on all 331 public English high-quality cards.",
+  "naming": "ESC-Eval official-protocol application to current hosted candidates; not an exact reproduction of the paper's model weights or serving stacks",
+  "primary_sources": {
+    "paper": "Zhao et al., ESC-Eval, EMNLP 2024",
+    "repository_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "official_evaluate_py_sha256": "e66bda0e1093c2bec7c46daa6a64584cc6153e1f1bfde94b3fa2fd3c8f5629f8",
+    "role_player_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7"
+  },
+  "candidates": [
+    {
+      "candidate_id": "llama31_8b_incumbent_official_wrapper",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "enable_thinking": null,
+      "max_output_tokens": 256,
+      "wrapper_basis": "public evaluate.py llama3 example"
+    },
+    {
+      "candidate_id": "qwen37_plus_nonthinking_official_wrapper",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "enable_thinking": false,
+      "max_output_tokens": 512,
+      "wrapper_basis": "public evaluate.py Qwen example"
+    }
+  ],
+  "official_interaction_surface": {
+    "cards": 331,
+    "language": "english",
+    "card_file": "data/card_high_en.json",
+    "supporter_system_prompt": "You are a helpful assistant!",
+    "turns_per_dialogue": 5,
+    "supporter_temperature": 0.0,
+    "role_player_prompt_and_opener": "verbatim from public evaluate.py",
+    "role_player_max_output_tokens": 512,
+    "role_player_temperature": 0.7,
+    "role_player_top_p": 0.8,
+    "role_player_top_k": 20,
+    "role_player_repetition_penalty": 1.05,
+    "determinism_overlay": "Role-player seed is content-addressed by card and turn; official code does not publish seeds.",
+    "candidate_order": "deterministically rotated by card",
+    "missing_policy": "ITT; retain candidate-scoped terminal failures and do not replace cards"
+  },
+  "evaluation": {
+    "official_dimensions": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"],
+    "official_pass_line": null,
+    "primary_interpretation": "Report the seven-dimensional profile and position it against Table 2 reference models; do not manufacture an official pass/fail.",
+    "automatic_scorer": "Pinned public ESC-RANK with official parsing plus the already registered fixed-label sensitivity; parser resolution limitations remain explicit.",
+    "human_anchor": "DEFERRED_NONPRIMARY_SUPPLEMENT. No new custom human gate is active before the official scorer profile is reported.",
+    "unit": "role card / five-turn dialogue"
+  },
+  "separation_from_research_stack": {
+    "official_wrapper_only": true,
+    "research_aligned_prompt_unchanged": "g0_research_aligned_supporter_prompt_v1.json",
+    "reason": "The official wrapper measures published-protocol behavior. The uncapped research-aligned prompt measures suitability for MetaCom and remains identical across later PM/baseline arms.",
+    "information_gaming_forbidden": true
+  },
+  "operations": {
+    "logical_supporter_calls": 3310,
+    "qwen_paid_logical_calls": 1655,
+    "local_role_calls": 3310,
+    "judge_calls_during_generation": 0,
+    "observed_qwen_cost_extrapolation_usd": 0.68,
+    "requested_ceiling_recommendation_usd": 1.25,
+    "budget_rule": "Before each Qwen call, reserve conservative input bytes plus the frozen 512-token output cap at documented Qwen prices."
+  },
+  "claim_boundary": "This can support an English official-protocol benchmark profile for the current hosted configurations. It cannot establish clinical safety, real-user benefit, Chinese performance, PM value, or weight-level superiority independent of provider/runtime.",
+  "authorization": "Zero-call materialization only. Execution requires a content-addressed identity and explicit user approval."
+}

@@ -1,0 +1,107 @@
+{
+  "protocol": "metacom-v3-generator-esc-eval-primary-selection-v1",
+  "date": "2026-08-14",
+  "status": "PRIMARY_REVIEWS_RECEIVED_CUSTOM_PROTOCOL_PROFILE_ONLY_OFFICIAL_REPRODUCTION_NEXT",
+  "decision": "Fairly choose the generator configuration for the later PM research using ESC-Eval as the external benchmark, without presenting an adapted in-house judge as the benchmark itself.",
+  "official_anchor": {
+    "paper": "Zhao et al., ESC-Eval, EMNLP 2024 main conference",
+    "repository_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "role_player_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "official_high_quality_cards": {"total": 655, "english": 331, "chinese": 324},
+    "interaction": "ESC-Role and the model under evaluation conduct a five-turn dialogue at temperature 0.",
+    "official_dimensions_0_to_4": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"],
+    "paper_primary_evaluation": "Human annotators score the seven dimensions; ESC-RANK is trained as an automated scorer from those annotations."
+  },
+  "protocol_repair_boundary": {
+    "exact_official_reproduction": false,
+    "name": "ESC-Eval English research-aligned protocol repair",
+    "why_not_exact": [
+      "The public evaluate.py applies a generic helpful-assistant system message and asymmetric 256/512 output caps across example model wrappers.",
+      "The public scorer has path, base-revision, parser, and role-marker defects documented in the V3 qualification audit.",
+      "The intended research generator must receive the same prior-work-grounded emotional-support prompt in every PM and baseline arm."
+    ],
+    "retained_official_elements": [
+      "official high-quality ESC-Eval role-card identities",
+      "official pinned ESC-Role",
+      "five-turn interactive dialogue",
+      "temperature 0",
+      "official seven evaluation dimensions and 0-to-4 behavioral anchors"
+    ],
+    "uniform_repairs": [
+      "one identical research-aligned supporter prompt for every candidate",
+      "no researcher output-token cap for any candidate",
+      "same role-player revision and common seed by card and turn position",
+      "strict and anchored scorer parsing reported separately",
+      "all deviations named in the paper; no claim of exact official leaderboard reproduction"
+    ]
+  },
+  "development_selection": {
+    "surface": "24 previously frozen English high-quality ESC-Eval development cards spanning MHP, EPITOME, ExTES, ESConv, and Psych",
+    "generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+    "human_review_packet_manifest": "g0_esc_eval_human_review_packet_manifest_v1.json",
+    "development_decision_contract": "generator_esc_eval_development_decision_contract_v1.json",
+    "candidate_dialogues": {
+      "llama31_8b_incumbent": 24,
+      "qwen37_plus_nonthinking": 24,
+      "qwen37_plus_thinking_upper_bound": 24
+    },
+    "excluded_from_selection": {"nemotron3_nano_30b_a3b_default_thinking": "hosted-route reliability hard failure"},
+    "official_esc_rank_result": "Completed 651 local dimension inferences including descriptive Nemotron subset. Strict format validity was 0/651; anchored sensitivity was valid but heavily saturated, so ESC-RANK remains descriptive and cannot select the generator.",
+    "review_result": "Human A and Human B each scored all 72 dialogues. Schema/identity validation passed; exact agreement was 420/504 official-dimension cells (83.33%), with seven dialogues containing eight cells that differed by at least two points.",
+    "methodology_correction": "The historical project-created absolute floors are not official ESC-Eval pass lines. They no longer authorize an official pass/fail verdict or prompt optimization toward advice quantity. See g0_esc_eval_methodology_correction_v1.json.",
+    "next_measurement": "Run a separately named official-wrapper reproduction and place its seven-dimensional profile against the paper's published reference distribution. Preserve the current research-aligned prompt for study suitability rather than repairing it merely to increase Information.",
+    "assignments": 144,
+    "dimension_ratings": 1008,
+    "statistical_unit": "ESC-Eval role card/dialogue; seven dimensions and five turns are repeated measures.",
+    "adjudication": "Any dimension disagreement of at least 2 points, any invalid transcript flag, and any explicit integrity concern receives a third blinded adjudication."
+  },
+  "metric_and_decision_hierarchy": {
+    "hard_gates": ["turn valid rate >=0.95", "complete-dialogue rate >=0.95", "no material/critical integrity event"],
+    "official_primary": "Overall 0-to-4 paired card-level human rating",
+    "official_key_dimensions": ["Empathy", "Skill", "Information"],
+    "official_secondary_dimensions": ["Fluency", "Expression", "Humanoid"],
+    "project_guardrail_separate_from_benchmark": ["low burden", "no premature action", "no unsupported personal inference", "safety-signal handling", "no scaffold leakage"],
+    "objective_tie_breakers_after_quality_and_integrity": ["actual USD", "billed input/output tokens", "median and p90 latency"],
+    "no_weighted_quality_risk_cost_composite": true,
+    "selection_rule": "Retain hard-gate passers. A unique development winner requires noninferiority on the registered Overall, Empathy, Skill, and Information margins, strict superiority on Overall or at least two key dimensions, and no project-guardrail regression. If configurations are human-rated equivalent, choose the least costly/fastest. If dimensions materially trade off, retain the Pareto set and do not invent one winner."
+  },
+  "prompt_freeze": {
+    "artifact": "g0_research_aligned_supporter_prompt_v1.json",
+    "artifact_sha256": "f4cabca6c4d0ad2bdc3a4614405957c4220dffd92896cf28a7799ff91fe42661",
+    "joined_prompt_sha256": "e5d9c937c729dcd6214ace6fff3421659ed9eab06d04b976f6df0b3589a9e73f",
+    "candidate_symmetry": "The exact same system prompt is used for Llama, Qwen non-thinking, Qwen thinking, every later PM arm, and every baseline arm.",
+    "research_lineage": ["ESConv", "LLM emotional-support evaluation", "ExTES", "ESCoT", "ESC-Judge"],
+    "boundaries": ["no researcher output-token cap", "no exposed strategy label or chain of thought", "no PM head or memory fact on the base-capability surface", "not an exact official zero-shot wrapper reproduction"]
+  },
+  "confirmation_after_development": {
+    "surface": "All 331 official English high-quality ESC-Eval cards, or an explicitly named frozen stratified English subset if full execution is infeasible; never call a subset the full benchmark.",
+    "candidates": "Development winner and strongest non-dominated challenger under the predeclared rule.",
+    "evaluation": [
+      "complete five-turn generation with the same repaired protocol",
+      "seven-dimension ESC-RANK descriptive profile with parser limitations",
+      "two-human official seven-dimension scoring on a source/category-stratified confirmation subset frozen before generation outcomes",
+      "objective reliability, token, USD, and latency reporting"
+    ],
+    "before_formal_pm": "The generator configuration and prompt are then frozen identically for every PM and baseline arm."
+  },
+  "official_reproduction_priority": {
+    "first": true,
+    "supporter_system_prompt": "You are a helpful assistant!",
+    "turns": 5,
+    "temperature": 0,
+    "published_wrapper_output_caps": {"Qwen_example": 512, "Llama3_example": 256},
+    "interpretation": "Report the official seven-dimensional profile and location relative to published reference models. ESC-Eval defines no universal pass cutoff, so the result is a benchmark position rather than an official pass/fail certificate.",
+    "separation": "The asymmetric official example caps are retained only on the exact-wrapper reproduction surface; the MetaCom research-aligned generator remains uncapped and is reported separately."
+  },
+  "role_of_other_evaluators": {
+    "esc_judge_eia": "Optional sensitivity analysis only; cannot replace ESC-Eval seven-dimensional primary evaluation.",
+    "custom_llm_quality": "Development diagnostics only unless independently human-qualified; cannot be described as a public benchmark.",
+    "atomic_risk": "Required project integrity guardrail, not part of the ESC-Eval official score and not full clinical safety."
+  },
+  "claim_boundary": {
+    "development_24": "Supports only a development-screen generator choice on a named ESC-Eval English subset.",
+    "english_331": "Can support a repaired-protocol ESC-Eval English qualification, not an exact official leaderboard reproduction.",
+    "not_supported": ["real-user effect", "clinical safety", "Chinese performance without the 324 Chinese cards", "model-weight superiority independent of hosted route"]
+  },
+  "authorization": "Zero-call correction and human-packet design only. No generator, judge, scorer, or human-review consumption is authorized by this file."
+}

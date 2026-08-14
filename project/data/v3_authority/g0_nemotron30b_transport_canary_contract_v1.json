@@ -1,0 +1,66 @@
+{
+  "protocol": "metacom-v3-g0-nemotron30b-transport-canary-v1",
+  "date": "2026-08-14",
+  "status": "DESIGN_FROZEN_ZERO_CALL_PREFLIGHT_PENDING",
+  "purpose": "Determine whether the correct user-specified NVIDIA hosted Nemotron route is operationally usable enough to retain in G0; this small canary cannot select a generator or establish quality.",
+  "candidate": {
+    "candidate_id": "nemotron3_nano_30b_a3b_default_thinking",
+    "provider": "NVIDIA hosted NIM API",
+    "base_url": "https://integrate.api.nvidia.com",
+    "model": "nvidia/nemotron-3-nano-30b-a3b",
+    "api_key_env": "NVIDIA_API_KEY",
+    "configuration_role": "corrected same-provider provisional challenger",
+    "reasoning_mode": "provider default (official hosted route defaults to thinking)",
+    "reasoning_budget": "provider default; no researcher override"
+  },
+  "same_surface_lock": {
+    "supporter_prompt": "g0_research_aligned_supporter_prompt_v1.json",
+    "screening_manifest": "first two canary rows of g0_research_aligned_screening_manifest_v2.jsonl",
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "role_player_model": "haidequanbu/ESC-Role",
+    "role_player_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "role_seed_policy": "Reuse metacom-v3-g0r2-role-seed|card_key|turn",
+    "cards": 2,
+    "turns_per_dialogue": 5,
+    "logical_supporter_calls": 10,
+    "temperature": 0.0,
+    "researcher_output_token_cap": null,
+    "provider_output_parameter": "OMITTED",
+    "transient_retry_limit": 1,
+    "content_retry_limit": 0
+  },
+  "diagnostic_taxonomy": {
+    "explicit_rate_limit": "HTTP 429 and Retry-After evidence only",
+    "route_instability": "network timeout, HTTP 408, or HTTP 5xx",
+    "slow_service": "successful request wall-clock latency above the frozen operational thresholds",
+    "reasoning_overhead": "provider-reported reasoning tokens and successful-call latency; reported separately and never relabeled as a 429"
+  },
+  "early_stop_safeguards": [
+    "Stop after two explicit HTTP 429 physical attempts.",
+    "Stop after two terminal trajectories caused by exhausted transient retries.",
+    "After at least three successful turns, stop if successful-request median latency exceeds 45 seconds."
+  ],
+  "operational_retention_gate": {
+    "successful_turns": 10,
+    "completed_dialogues": 2,
+    "first_attempt_success_rate_minimum": 0.9,
+    "explicit_429_physical_attempts_maximum": 0,
+    "terminal_trajectories_maximum": 0,
+    "successful_request_median_latency_seconds_maximum": 10.0,
+    "successful_request_p90_latency_seconds_maximum": 30.0,
+    "provider_length_finishes_maximum": 0,
+    "internal_scaffold_exposure_maximum": 0,
+    "rule": "All thresholds must pass. The thresholds are operational screening criteria, not a quality ranking. Failure removes Nemotron from the 24-card G0; it does not imply that the underlying model is generally weak."
+  },
+  "post_gate_candidate_policy": {
+    "pass": "Retain Nemotron as a provisional third-family configuration for later quality comparison; no generator is selected by this canary.",
+    "fail": "Do not spend further G0 calls on Nemotron. Continue G0 with Llama 3.1 8B and Qwen 3.7 Plus; Qwen thinking may remain a declared sensitivity configuration rather than the default deployment candidate."
+  },
+  "budget": {
+    "nvidia_hosted_endpoint_observed_price_usd": 0,
+    "maximum_authorizable_usd": 0,
+    "fail_closed_if_paid_route_or_charge_detected": true
+  },
+  "claim_boundary": "This is a two-card transport/latency/reliability check. It cannot establish emotional-support quality, PM value, clinical safety, model superiority, or formal ESC-Eval performance.",
+  "authorization": "Zero-call materialization and local tests only. The ten hosted inference calls require approval of the rendered identity, even though the approved cost ceiling is zero dollars."
+}

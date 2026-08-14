@@ -1,0 +1,86 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-supervision-repair-packet-closeout-v1",
+  "date": "2026-08-12",
+  "status": "MS_REPAIR_PACKET_MATERIALIZED_ZERO_API_FIXED_CONTROL_QUALIFICATION_DESIGN_NEXT",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_supervision_repair_packet_phase_v1.json",
+    "sha256": "68533a26b6fb23562e8727d7c1d4e00e92183ab602356245243e3d17408ced90"
+  },
+  "artifacts": [
+    {
+      "role": "materialization_report",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/report.json",
+      "sha256": "927ba00ebd9ee688863bb51b68511ac867af208d0e4ad62304fa87f676586fd7",
+      "required_status": "ZERO_API_MS_REPAIR_PACKET_READY_QUALIFICATION_NOT_RUN_REANNOTATION_NOT_AUTHORIZED"
+    },
+    {
+      "role": "blind_201_item_packet",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/ms_reannotation_packet_blind.jsonl",
+      "sha256": "6e24a6f4c15cf748065b3d7c5657eac7b3c42732454f2f6a719256df92a100f8"
+    },
+    {
+      "role": "blind_qualification_controls",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/qualification_controls_blind.jsonl",
+      "sha256": "5c1f9e30f99227d12e2f127116186c772e22fd989a7df04ea1326f3ef9278c78"
+    },
+    {
+      "role": "frozen_codebook",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/CODEBOOK_ZH.md",
+      "sha256": "a23bbc04a47167e54d0c09089ef66111a868f13410f936efba3e64e442b6391c"
+    },
+    {
+      "role": "private_201_item_key",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_private_20260812/ms_reannotation_private_key.jsonl",
+      "sha256": "797de20fb33c8bed12d2b38b5dbb73781e1a401665c4044ced6b30ebc499c93f"
+    },
+    {
+      "role": "private_nontraining_control_key",
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_private_20260812/qualification_control_key.jsonl",
+      "sha256": "24ba25c316cf1657203c884a2af6435153ede56589078b718605b81390d52fd0"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "3af73d2c762efab3a20c5110e23a1a787a1db6249bc21d87d9ec3a1a4c7b9de3"
+    }
+  ],
+  "observed": {
+    "old_label_rows": 204,
+    "resolved_review_units": 201,
+    "prior_abstentions_preserved": 3,
+    "connected_groups": 17,
+    "old_on": 73,
+    "old_off": 128,
+    "old_positive_dominant_reason_count": 70,
+    "old_positive_dominant_reason_rate": 0.958904109589041,
+    "repaired_target_complete_before_reannotation": 0,
+    "qualification_controls": 12,
+    "control_distribution": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "public_forbidden_keys_found": 0
+  },
+  "decision": "The old teacher labels remain immutable development evidence but are not repaired gold. Qualify the frozen source-aware instrument on the 12 fixed non-training controls before authorizing any 201-item reannotation.",
+  "next_phase_may_only_design": "FIXED_12_CONTROL_SOURCE_AWARE_QUALIFICATION",
+  "authorization": {
+    "control_qualification_design": true,
+    "control_review_execution": false,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "invariants": {
+    "one_per_component_label_not_one_memory_cap": true,
+    "memory_heads_independent_and_nonexclusive": true,
+    "sixteen_requested_actions_unchanged": true,
+    "machine_audit_flags_never_auto_label": true,
+    "old_outputs_never_overwritten": true
+  }
+}

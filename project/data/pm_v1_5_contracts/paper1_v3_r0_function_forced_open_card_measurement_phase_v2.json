@@ -1,0 +1,85 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-r0-function-forced-open-card-measurement-phase-v2",
+  "date": "2026-08-11",
+  "status": "ZERO_API_CORRECTED_PACKETS_READY_PI_REVIEW_NEXT",
+  "purpose": "Preserve the seven-item MS+R0 Function diagnostic while correcting the two closure cases from an invalid learned-RS interpretation to a forced-card response-act diagnostic.",
+  "supersedes_for_execution_only": {
+    "path": "data/pm_v1_5_contracts/paper1_v3_r0_function_closure_diagnostic_phase_v1.json",
+    "history_preserved": true,
+    "reason": "V1 correctly froze existing responses but ambiguously called the forced open-card arm M0+RS closure routing."
+  },
+  "primary_success_rule": {
+    "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+    "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3",
+    "machine_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2"
+  },
+  "measurement_contract": {
+    "path": "data/pm_v1_5_contracts/paper1_v3_five_layer_measurement_contract_v1.json",
+    "sha256": "49a7e1d069069c27f21a56944ecdccda945007ac22a224d5f93ca276be02cb16"
+  },
+  "diagnostic": {
+    "MS_R0_Function": {
+      "cases": 7,
+      "connected_groups": 7,
+      "matched_learned_MS_ON_states": 7,
+      "matched_PI_usable_sources": 7,
+      "formal_source_aware_Function": "PENDING_PI_REVIEW",
+      "unchanged_from_v1": true
+    },
+    "forced_open_card_closure": {
+      "cases": 2,
+      "comparison": "NO_RS_CARD_R0 versus FORCED_AM01_OPEN_INVITATION_CARD",
+      "actual_rank1_selection_mode": "lexical_fallback",
+      "all_observable_opportunity_flags_false": true,
+      "all_transparent_rule_off": true,
+      "compatible_full_fit_RS_checkpoint_exists": false,
+      "formal_current_phase_quality_direction": "PENDING_PI_REVIEW",
+      "valid_estimand": "response-act fit and downstream generator consequence at two preidentified closure states",
+      "invalid_estimands": ["learned RS routing accuracy", "learned RS deployment ON/OFF rate", "RS head pass/fail"],
+      "kept_separate_from_MS_Function": true
+    }
+  },
+  "artifacts": [
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/report.json",
+      "sha256": "3548f66b9e5ae8ebccdde919fc29469171cea1266b904486f6512c3b6640b36f"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/r0_function_blind.jsonl",
+      "sha256": "16120e0d9bafec50dd4a962145bfb57a0762a73795e4e5618fb155eb1e1b52ac"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/r0_function_private_key.jsonl",
+      "sha256": "59d84b4ead76da5e5df007b9d4941a05638a10a5068cf573af4b2ce6279d82ec"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/forced_open_card_closure_quality_blind.jsonl",
+      "sha256": "176b1b3afea2e92a839b6480758dd3697aa07199eb8e74622ea51562d7ad2789"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/forced_open_card_closure_quality_private_key.jsonl",
+      "sha256": "c86e825adb2d75057c334944dbd69104ee2d0656bb97dbfdd599f434e3e160ee"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/closure_actual_rank1_audit.jsonl",
+      "sha256": "46093e880915ea9da64b447643101a59bd0b3a34f5b9650f1e6338ea3452da9f"
+    }
+  ],
+  "cost": {
+    "current_evidence": "estimated input tokens only; reconstructed output-token estimates may be descriptive",
+    "missing_from_legacy_trace": ["observed provider input tokens", "observed provider output tokens", "latency_ms", "usd"],
+    "rule": "Do not call the current estimates complete cost telemetry and do not use cost to relabel component suitability or Function."
+  },
+  "authorization": {
+    "PI_source_aware_Function_review": true,
+    "PI_forced_open_card_closure_quality_review": true,
+    "API_calls": 0,
+    "response_generation": false,
+    "PM_refit": false,
+    "threshold_change": false,
+    "training_label_creation": false,
+    "MP_execution": false,
+    "ME_execution": false,
+    "external_execution": false
+  }
+}

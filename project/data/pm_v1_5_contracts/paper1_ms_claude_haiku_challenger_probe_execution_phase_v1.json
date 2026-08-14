@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-claude-haiku-challenger-probe-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_12_CLAUDE_HAIKU_CHALLENGER_PROBE_CALLS_AUTHORIZED_ONCE",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_claude_haiku_challenger_probe_preflight_20260812/report.json",
+      "sha256": "699d4535a49113474400390e879438f11c0ab3600edde0c17181b8025d9c153a",
+      "required_status": "PASS_EXACT_12_CALL_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_claude_haiku_challenger_probe_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "48e54293e9d6df98d77aa7b24674ef0d8763921426db6a65a6e15211e4dc33b7"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_ms_claude_haiku_challenger_endpoints_v1.json",
+      "sha256": "78a9455e12faf7cec849ce1d5429ee80dc70acf02efaa47eb46f4d88e590fb47"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_claude_haiku_challenger_probe_execution_v1.json",
+      "sha256": "6ba39872c243c68f5da2c8df2def4be0fba8ef0407370b4ac69f9a900c8d1eaf"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+      "sha256": "70d574209ee3cff2f3dfb970c18bed5f109831fa13d37347696c24544055a1eb"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_ms_claude_haiku_challenger_probe_v1",
+    "run_identity": "b659f77dffcc9057c2bc8b7213ede5f6f6ac610acf08ca15fa89155b9779e788",
+    "logical_calls": 12,
+    "maximum_physical_attempts": 24,
+    "absolute_usd_cap": 0.75,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_claude_haiku_challenger_probe_live_20260812",
+    "reviewers": {
+      "MS_ANCHOR_CHALLENGER_CLAUDE_HAIKU": "anthropic_claude_haiku_4_5_challenger"
+    }
+  },
+  "qualification_gates_are_frozen_in_preflight": true,
+  "authorization": {
+    "control_review_api_calls": 12,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Do not call any of the 201 public reannotation items in this phase.",
+    "Do not relax qualification gates after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

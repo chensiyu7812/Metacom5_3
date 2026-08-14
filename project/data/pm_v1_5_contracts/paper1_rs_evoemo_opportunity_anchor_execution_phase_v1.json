@@ -1,0 +1,51 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-evoemo-opportunity-anchor-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_18_RS_EVOEMO_OPPORTUNITY_ANCHOR_CALLS_AUTHORIZED_ONCE",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_preflight_20260812/report.json",
+      "sha256": "6e075cac08e57c9623e7b9f84c0c281730b37a54340a36f0be093bea96b4191e",
+      "required_status": "PASS_ANCHOR_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "anchors",
+      "path": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_preflight_20260812/anchors_private.jsonl",
+      "sha256": "0aa596edf705d7c453ae7f1e7f980dcc426796ea2dfc32118ac36428f124b72d"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "dd2f5b8f186f716b4c83fe0118db5757dbdb7442065efcfaf57a43824609bfcd"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_evoemo_opportunity_anchor_endpoints_v1.json",
+      "sha256": "960043166df5f4633e06ccf22e89fb2a837dbd71340f1688806078cd6b42b628"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_evoemo_opportunity_anchor_execution_v1.json",
+      "sha256": "b606d4668fe392807f00259b78a0934c64f41ee5f7fe3d92c5faecea64fae0e9"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_rs_opportunity_evoemo_review.py",
+      "sha256": "8fa57591d31397880417f37867f3a4dfe1dd15627fd414074956f1a3547d4322"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_rs_evoemo_opportunity_anchor_v1",
+    "run_identity": "5e182caef4836cb7dcf02a959eaaa394114a19a169bd59faf7098f227f0febd4",
+    "logical_calls": 18,
+    "maximum_physical_attempts": 36,
+    "absolute_usd_cap": 0.15,
+    "output_directory": "outputs/pm_v1_5_paper1_rs_evoemo_opportunity_anchor_live_20260812"
+  },
+  "stop_rules": [
+    "Do not relax or change the review construct after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

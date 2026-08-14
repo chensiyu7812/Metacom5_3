@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-v1.5-paper1-primary-head-success-amendment-v1",
+  "date": "2026-08-10",
+  "status": "ACTIVE_METHOD_AMENDMENT_BEFORE_P1_EXECUTION",
+  "purpose": "Require Paper 1's learned result to demonstrate both strategy routing and longitudinal-memory routing rather than allowing any arbitrary pair of heads to satisfy the primary claim.",
+  "base_method": {
+    "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+    "contract_path": "data/pm_v1_5_contracts/paper1_bounded_suitability_safe_yield_closeout_v1.json",
+    "contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43"
+  },
+  "effective_primary_head_rule": {
+    "required_strategy_head": "RS",
+    "memory_head_set": ["MP", "MS", "ME"],
+    "minimum_passing_memory_heads": 1,
+    "machine_predicate": "RS_pass AND count_pass(MP,MS,ME)>=1",
+    "minimum_passing_head_count": 2,
+    "valid_minimum_combinations": [
+      ["RS", "MP"],
+      ["RS", "MS"],
+      ["RS", "ME"]
+    ],
+    "larger_valid_combinations": [
+      ["RS", "MP", "MS"],
+      ["RS", "MP", "ME"],
+      ["RS", "MS", "ME"],
+      ["RS", "MP", "MS", "ME"]
+    ]
+  },
+  "claim_tiers": {
+    "FULL_FOUR_COMPONENT_LEARNED_PM": "RS, MP, MS, and ME all pass",
+    "PRIMARY_PARTIAL_MULTI_COMPONENT_LEARNED_PM": "RS passes and at least one of MP, MS, or ME passes; every failed head is fixed OFF and named",
+    "RS_ONLY_ROUTER_PRIMARY_FAIL": "RS passes but no memory head passes; report the RS component result, but the Paper 1 PM primary claim fails because longitudinal memory routing was not learned",
+    "MEMORY_ONLY_PRIMARY_FAIL": "one or more memory heads pass but RS fails; report component results, but the Paper 1 PM primary claim fails because strategy routing was not learned",
+    "NO_LEARNED_HEAD": "no head passes"
+  },
+  "development_priority": {
+    "preferred_target_heads": ["RS", "MP", "MS"],
+    "bounded_sparse_head": "ME",
+    "reason": "The public-source audit shows broad RS/MP/MS source support and sparse but nonzero exact action-result support for ME. Priority changes sampling and reporting emphasis only; it cannot change labels, floors, folds, or outcome-blind actual Rank-1 selection."
+  },
+  "unchanged": [
+    "four legal component bits and all 16 legal actions",
+    "per-head suitability and safe-functional-yield definitions",
+    "per-head grouped OOF learning floors",
+    "failed heads fixed OFF in learned_pm_qualified",
+    "same-stack baselines",
+    "end-to-end Quality, material-risk, function, and cost requirements",
+    "ESConv, EvoEmo, and ES-MemEval source roles and leakage boundaries",
+    "no new longitudinal synthetic users",
+    "no threshold relaxation or extra repair packet after confirmation"
+  ],
+  "effective_override": {
+    "base_field": "partial_head_claim_tiers.paper1_primary_minimum",
+    "base_value": "at least 2 qualified heads plus a same-stack end-to-end system result on every applicable public track",
+    "effective_value": "RS plus at least one of MP, MS, or ME must pass, followed by same-stack end-to-end system results on every applicable public track"
+  },
+  "authorization_change": "none",
+  "api_calls": 0,
+  "responses_generated": 0,
+  "labels_created": 0,
+  "pm_trained": false,
+  "external_outcomes_read": false
+}

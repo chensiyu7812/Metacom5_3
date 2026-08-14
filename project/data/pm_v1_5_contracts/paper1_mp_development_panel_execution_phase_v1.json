@@ -1,0 +1,67 @@
+{
+  "protocol": "pm-v1.5-paper1-mp-development-panel-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_19_MP_DEVELOPMENT_PANEL_CALLS_AUTHORIZED",
+  "purpose": "First real generation of the MP rule-based Step1/Step2 repair (paper1_mp_rule_based_step1_v1.json): 10 hand-curated EvoEmo states, M0+R0 and MP+R0 arms, to observe whether the new CONSTRAIN/IGNORE decision and field-type realization templates produce a real, auditable functional realization instead of the prior 5/128 declared-but-not-enacted pattern.",
+  "input_bindings": [
+    {
+      "role": "mp_rule_based_step1_contract",
+      "path": "data/pm_v1_5_contracts/paper1_mp_rule_based_step1_v1.json",
+      "sha256": "9c8738cab412fbd345fa6e62630918cc587553e6538528758160ee2c024a6d99"
+    },
+    {
+      "role": "panel_report",
+      "path": "outputs/pm_v1_5_paper1_mp_development_panel_20260813/report.json",
+      "sha256": "dbd42e8712af1699205896c3711ab39f3504f63535d07e34de7bbf9687e6dde2"
+    },
+    {
+      "role": "development_cases",
+      "path": "outputs/pm_v1_5_paper1_mp_development_panel_20260813/development_cases_private.jsonl",
+      "sha256": "55c20dd8acec057fab7f0d060ac4ea98ff52edc90d293080c06fd85e5fb26000"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_mp_development_panel_execution_v1.json",
+      "sha256": "1912fed7f3bb9c0bd7d95c3ce86f5eb10d13d3932857230f213c76672c738939"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "response_program_v4",
+      "path": "src/metacom_pm/v1_5_response_program_v4.py",
+      "sha256": "17ca4c5efe5c521046fa37493d269b02d05334b81db5fbd1756eff3868ba8534"
+    },
+    {
+      "role": "mp_profile_delta_templates_v1",
+      "path": "src/metacom_pm/v1_5_mp_profile_delta_templates_v1.py",
+      "sha256": "f19343d1565e2ad5b2638c60a2886c80174b05f8fba5c9f94ff7e29e4b568adc"
+    }
+  ],
+  "execution": {
+    "component": "MP",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 10,
+    "logical_calls": 19,
+    "run_identity": "2634bb8c30040acd36c1aea17ba5be2685017cba8b87bcf35239b959c4009357",
+    "output_directory": "outputs/pm_v1_5_paper1_mp_development_panel_live_20260813",
+    "absolute_usd_cap": 0.0
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 19,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "public_201_calls_authorized": 0,
+    "external_test_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This is a development panel, not formal MP_pass -- results feed development_promotion, not a qualification claim."
+  ]
+}

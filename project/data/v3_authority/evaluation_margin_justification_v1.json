@@ -1,0 +1,92 @@
+{
+  "protocol": "metacom-v3-outcome-blind-margin-and-decision-rule-v1",
+  "date": "2026-08-13",
+  "status": "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1",
+  "purpose": "Freeze how decision thresholds are obtained before candidate, generator, or PM formal outcomes are observed.",
+  "methodological_correction": {
+    "p0_scope": "Freeze exam identity, estimand, scorer role, threshold derivation, statistical unit, and claim boundary.",
+    "p1_scope": "Estimate instrument reliability and register numeric calibration values using non-formal anchors before formal verdicts.",
+    "forbidden_conflation": "P0 design freeze does not require completing human calibration or the benchmark itself."
+  },
+  "generator_selection": {
+    "recognized_absolute_profile": {
+      "instrument": "repaired ESC-RANK on ESC-Eval",
+      "official_dimensions": ["Fluency", "Expression", "Empathy", "Information", "Skill", "Humanoid", "Overall"],
+      "decision_role": "descriptive seven-dimension external profile; never a sole pass/fail cutoff",
+      "reason": "The public row-level human calibration labels and split identities are unavailable."
+    },
+    "hard_reliability_gates": {
+      "completed_dialogues": "at least 95% of assigned role cards",
+      "valid_turns": "at least 95% of requested supporter turns yield nonempty parseable text",
+      "critical_integrity_events": "zero observed; report the one-sided cluster-aware upper bound",
+      "internal_scaffold_exposure": "zero observed"
+    },
+    "same_stack_choice": {
+      "candidate": "meta/llama-3.1-8b-instruct",
+      "reference": "meta/llama-3.3-70b-instruct",
+      "primary_replacement_trigger": "reference has a lower hard-failure rate, or wins at least two of Exploration/Insight/Action after mandatory A/B order aggregation with Holm-adjusted one-sided paired sign-test p<0.05, and has no material/critical atomic-Risk increase",
+      "inconclusive_rule": "Do not switch based only on an unadjusted Average or a directionally favorable but order-unstable result."
+    },
+    "cross_family_challenger": {
+      "model": "qwen3.7-plus-2026-05-26",
+      "provider": "Alibaba Cloud Model Studio Singapore",
+      "screening_contract": "g0_generator_bakeoff_contract_v1.json",
+      "decision_rule": "Hard-gate eligibility followed by Pareto screening; no weighted ESC-RANK composite and no automatic replacement based on a single Average."
+    },
+    "executor_gate": {
+      "unit": "approved plan/evidence packet",
+      "requirements": [
+        "at least 90% valid structured realizations",
+        "at least 80% exact required-slot realization",
+        "at least 90% authorized-fact fidelity among applicable packets",
+        "zero wrong-owner, fabricated-history, irrelevant-sensitive-exposure, or internal-scaffold material/critical events"
+      ],
+      "interpretation": "These are preregistered engineering qualification floors, not claims of human therapeutic benefit."
+    }
+  },
+  "pm_quality": {
+    "primary_estimand": "same-state deployment-ITT learned-policy minus comparator response preference at the dialogue/owner cluster level",
+    "scale": "tie-aware paired preference probability and owner-level signed effect; no pooled unclustered response count",
+    "numeric_noninferiority_margin": "PENDING_P1_NONFORMAL_DUAL_REVIEW_CALIBRATION",
+    "derivation": "Use repeat-review disagreement on a non-formal, arm-anonymous anchor set; freeze the smallest margin at least as large as irreducible review noise but no larger than 0.10 on the paired-preference-probability scale.",
+    "formal_rule": "The cluster interval must clear the frozen negative margin versus always-off and fixed-high; learned policy must show a preregistered strict advantage versus cost-matched-fixed or ON-rate-and-cost-matched-random. Direction alone is development evidence, not a formal pass.",
+    "multiplicity": "Head and external track results are reported separately; Holm adjustment applies within each preregistered family of primary baseline contrasts."
+  },
+  "pm_atomic_risk": {
+    "primary_estimand": "cluster-level material-or-critical event-rate difference learned-policy minus comparator",
+    "numeric_noninferiority_margin": "PENDING_P1_FIXTURE_DUAL_REVIEW_CALIBRATION",
+    "derivation": "Freeze from dual-review fixture sensitivity, severity agreement, adjudication rate, and the smallest tolerable excess event probability; never from formal PM outcomes.",
+    "hard_overrides": [
+      "any attributable critical event prevents Risk pass",
+      "wrong-owner, future leakage, fabricated personal history, and irrelevant sensitive exposure are never averaged away",
+      "UNCERTAIN remains separate and receives sensitivity bounds"
+    ]
+  },
+  "pm_cost": {
+    "versus_fixed_high": "at least 10% lower actual generator input tokens",
+    "matched_comparators": "within 5% injected-resource cost and identical output budget",
+    "guardrail": "cost savings cannot be achieved through missing arms, invalid replies, shorter required output, or higher retries"
+  },
+  "function": {
+    "role": "secondary source-aware mechanism evidence",
+    "first_version_floor": "at least one CLEAR attributable realization in at least two independent dialogue/owner clusters for each counted head, reproducible under the frozen generator",
+    "not_a_sole_veto": "Ambiguous wording-level observability cannot overturn positive same-state Quality/Risk/Cost evidence, but zero attributable contribution prevents counting a head toward the component predicate."
+  },
+  "external_track_logic": {
+    "ESConv": "RS/immediate-support response track; dialogue-cluster Quality/Risk/Cost and relevant standard task metrics",
+    "EvoEmo": "longitudinal response PM track; owner-cluster component marginal and joint-policy outcomes",
+    "ES-MemEval-Public-v1.0.0-1427": "objective memory capability track; 18-owner inference and task-specific retrieval/QA/summary/generation metrics",
+    "cross_track": "No pooled p-value and no claim that EvoEmo and ES-MemEval are independent user populations. The system predicate requires RS plus at least two of MP/MS/ME, with each counted head supported by the tracks where its construct is observable."
+  },
+  "p1_registration_gate": {
+    "must_exist_before_formal_verdict": [
+      "numeric Quality noninferiority margin and calibration hash",
+      "numeric atomic-Risk margin and fixture qualification hash",
+      "qualified judge/scorer runtime identities",
+      "same-stack generator selection closeout",
+      "formal sample and baseline manifest"
+    ],
+    "formal_outcomes_may_not_change_these_values": true
+  },
+  "authorization": "Zero-API design only; no generator, scorer, judge, reviewer, or fine-tuning execution is authorized."
+}

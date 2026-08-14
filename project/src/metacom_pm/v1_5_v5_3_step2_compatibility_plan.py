@@ -85,13 +85,13 @@ class Step2CompatibilityPlan(StrictModel):
         STEP2_COMPATIBILITY_PROTOCOL
     )
     status: Literal[
-        "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_AND_RECOVERY_SELECTION_PENDING"
-    ] = "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_AND_RECOVERY_SELECTION_PENDING"
+        "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_PENDING_RECOVERY_FROZEN"
+    ] = "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_PENDING_RECOVERY_FROZEN"
     typed_step2_relative_path: str = Field(min_length=1)
     typed_step2_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     rows: list[ActionCompatibilityRow]
     recovery_policy_alternatives: list[str]
-    recovery_policy_selected: None = None
+    recovery_policy_selected: Literal["deterministic_fallback"] = "deterministic_fallback"
     semantic_generator_compatibility_claimed: Literal[False] = False
     generated_response_or_quality_risk_outcome_read: Literal[False] = False
     api_calls: Literal[0] = 0
@@ -227,12 +227,12 @@ def build_step2_compatibility_plan(root: str | Path) -> Step2CompatibilityPlan:
         )
     payload = {
         "protocol": STEP2_COMPATIBILITY_PROTOCOL,
-        "status": "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_AND_RECOVERY_SELECTION_PENDING",
+        "status": "STRUCTURAL_PASS_SEMANTIC_COMPATIBILITY_PENDING_RECOVERY_FROZEN",
         "typed_step2_relative_path": step2_relative,
         "typed_step2_sha256": sha256_file(project_root / step2_relative),
         "rows": rows,
         "recovery_policy_alternatives": [policy.value for policy in RewritePolicy],
-        "recovery_policy_selected": None,
+        "recovery_policy_selected": "deterministic_fallback",
         "semantic_generator_compatibility_claimed": False,
         "generated_response_or_quality_risk_outcome_read": False,
         "api_calls": 0,

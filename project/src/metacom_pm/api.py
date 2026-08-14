@@ -349,7 +349,11 @@ def _classify_retryable_exception(exc: BaseException) -> tuple[str, int | None]:
             return "rate_limited_429", status_code
         if status_code == 408:
             return "request_timeout_408", status_code
-        if status_code in RETRYABLE_HTTP_STATUS_CODES:
+        # Provider-specific overload codes such as Anthropic HTTP 529 are
+        # still server-side 5xx transport failures.  Keep the named constant
+        # for documentation/backward compatibility, but classify the full
+        # HTTP 5xx range consistently for caller-bounded retry policy.
+        if 500 <= status_code <= 599:
             return "http_5xx", status_code
         return "other", status_code
     if isinstance(exc, httpx.HTTPError):
@@ -816,7 +820,7 @@ def chat_request_payload(
     messages: list[dict[str, str]],
     *,
     temperature: float,
-    max_tokens: int,
+    max_tokens: int | None,
     seed: int | None,
     response_schema: Type[BaseModel] | None,
 ) -> dict[str, Any]:
@@ -824,6 +828,10 @@ def chat_request_payload(
 
     transport = endpoint_transport(endpoint)
     if transport == "anthropic_messages":
+        if max_tokens is None:
+            raise ValueError(
+                "anthropic_messages requires an explicit max_tokens value"
+            )
         if (
             endpoint.temperature_mode != "explicit"
             or endpoint.max_output_tokens_parameter != "max_tokens"
@@ -866,6 +874,10 @@ def chat_request_payload(
             }
         return payload
     if transport == "gemini_generate_content":
+        if max_tokens is None:
+            raise ValueError(
+                "gemini_generate_content requires an explicit max_tokens value"
+            )
         if (
             endpoint.temperature_mode != "explicit"
             or endpoint.max_output_tokens_parameter != "max_tokens"
@@ -936,12 +948,13 @@ def chat_request_payload(
         raise ValueError(
             f"unsupported temperature mode: {endpoint.temperature_mode}"
         )
-    output_parameter = endpoint.max_output_tokens_parameter
-    if output_parameter not in {"max_tokens", "max_completion_tokens"}:
-        raise ValueError(  # pragma: no cover - Literal
-            f"unsupported max-output parameter: {output_parameter}"
-        )
-    payload[output_parameter] = int(max_tokens)
+    if max_tokens is not None:
+        output_parameter = endpoint.max_output_tokens_parameter
+        if output_parameter not in {"max_tokens", "max_completion_tokens"}:
+            raise ValueError(  # pragma: no cover - Literal
+                f"unsupported max-output parameter: {output_parameter}"
+            )
+        payload[output_parameter] = int(max_tokens)
     if seed is not None:
         payload["seed"] = int(seed)
     if endpoint.thinking_mode != "provider_default":
@@ -1058,7 +1071,7 @@ class OpenAICompatibleClient:
         messages: list[dict[str, str]],
         *,
         temperature: float = 0.0,
-        max_tokens: int = 512,
+        max_tokens: int | None = 512,
         seed: int | None = None,
         response_schema: Type[T] | None = None,
         retries: int = 3,

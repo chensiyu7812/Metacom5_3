@@ -1,0 +1,233 @@
+{
+  "protocol": "pm-v1.5-paper1-p2-atomic-bounded-suitability-design-candidate-v1",
+  "date": "2026-08-10",
+  "status": "ZERO_API_DESIGN_CANDIDATE_NO_REAL_LABELS_AUTHORIZED",
+  "purpose": "Freeze a component-specific, evidence-anchored qualification instrument over completed actual Rank-1 rows. It replaces holistic 'would this help' judgments and 1-5 scores with four tri-state atoms. Suitability is an upstream high-precision mask and abstention surface; it is not response quality and does not replace the later requested-action safe-functional-yield target.",
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "parent_authority_sha256": "84ebc906c4d455d56119ad4d307dd38f9652ce57469b35e6c9ee04c5903ac21f",
+  "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+  "active_method_amendment_sha256": "5896aa748c489af1d1fcd222aa3eaf2e91354945580af8706f020cfb7375fc76",
+  "rank1_input": {
+    "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl",
+    "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5",
+    "required_final_audit": {
+      "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1_final_audit_20260810/report.json",
+      "sha256": "2a683df99773b3114c8f5c56aa514587aadf8b649a0a4d653d677d49e456d455",
+      "status": "P1B_ACTUAL_RANK1_FINAL_PASS_P2_LABEL_DESIGN_MAY_BEGIN"
+    }
+  },
+  "measurement_implementation": {
+    "path": "src/metacom_pm/v1_5_paper1_suitability.py",
+    "sha256": "4c6c87f4df0b23d18ae1e22da9259e05173acef3817ca8f69ea99ed0fd26d425",
+    "role": "mechanical four-axis projection, exact-span schema validation, pre-adjudication raw agreement, Gwet AC1, resolved coverage, and bidirectional independent-group gates"
+  },
+  "truth_boundaries": {
+    "machine_only_not_reviewed": [
+      "candidate presence",
+      "same runtime owner",
+      "strictly past availability",
+      "source lineage",
+      "typed compiler validity",
+      "actual Rank-1 identity"
+    ],
+    "semantic_reviewer_only": [
+      "current_target_fit",
+      "specific_increment_available",
+      "component_minimum_possible_now",
+      "current_boundary_permits"
+    ],
+    "forbidden_to_review_or_infer": [
+      "whether a generated response later used the candidate",
+      "response quality",
+      "response risk",
+      "response cost",
+      "construction condition or expected label",
+      "another reviewer judgment",
+      "PM prediction or baseline action",
+      "QA answer or evidence"
+    ]
+  },
+  "axes": {
+    "current_target_fit": {
+      "question": "Does this exact actual Rank-1 candidate address the current user's visible target entity, issue, or requested response function?",
+      "YES": "The visible dialogue and candidate support the same current target; topical similarity alone is insufficient when the entity or requested function differs.",
+      "NO": "A different topic/entity is targeted, or the current goal does not call for the candidate's function.",
+      "UNKNOWN": "The visible dialogue does not resolve the current target strongly enough for YES or NO."
+    },
+    "specific_increment_available": {
+      "question": "Would the candidate contribute at least one specific fact, episode, action-result relation, or response act not already available in the visible dialogue?",
+      "YES": "A faithful use could add a named, candidate-specific increment.",
+      "NO": "The same information/function is already visible, or the candidate offers only generic topical repetition.",
+      "UNKNOWN": "Paraphrase or redundancy cannot be resolved from the two frozen surfaces."
+    },
+    "component_minimum_possible_now": {
+      "question": "Could a faithful next response realize this component's exact minimum now, without importing any other resource?",
+      "YES": "The component-specific minimum below can be realized in the next response.",
+      "NO": "Only decorative mention, generic continuity, unrelated recollection, or a different strategy act is possible.",
+      "UNKNOWN": "The minimum cannot be determined from visible state and candidate alone."
+    },
+    "current_boundary_permits": {
+      "question": "Does the visible current boundary permit this exact component act at this point?",
+      "YES": "No visible stop, refusal, listen-only conflict, high-stakes ordinary-card conflict, or clearly excessive burden blocks the act.",
+      "NO": "A visible boundary directly conflicts with the component act.",
+      "UNKNOWN": "The boundary is materially ambiguous; uncertainty is not silently treated as permission."
+    }
+  },
+  "component_minima": {
+    "MP": {
+      "minimum": "The stored profile fact changes at least one response constraint, logistical detail, framing choice, or materially relevant premise.",
+      "does_not_count": [
+        "merely naming the profile fact",
+        "using a fact already stated in the visible dialogue without added function",
+        "stereotyping or inferring an unsupported consequence from age, gender, nationality, education, job, or location"
+      ]
+    },
+    "MS": {
+      "minimum": "A verified strictly-prior session observation adds cross-session continuity or context that changes understanding of the current issue.",
+      "does_not_count": [
+        "generic 'you mentioned before' language",
+        "same-topic repetition that adds no prior-session detail",
+        "treating a past state as definitely current"
+      ]
+    },
+    "ME": {
+      "minimum": "A verified past action-result relation can be used as tentative, user-owned evidence or an optional transferable possibility while preserving past tense and uncertainty.",
+      "does_not_count": [
+        "recounting an old event without using the action-result relation",
+        "guaranteeing the past result will recur",
+        "using an action-result that does not serve the current goal"
+      ]
+    },
+    "RS": {
+      "minimum_by_move": {
+        "AM01_invite_open_expression": "The concern is not yet clear and one non-presupposing open invitation is an appropriate next act.",
+        "AM02_ask_one_focused_clarification": "Exactly one missing feeling, fact, timing detail, or goal would materially improve understanding, without repeating a resolved question.",
+        "AM04_tentative_paraphrase_check": "A brief grounded paraphrase with explicit room for correction is appropriate; no new motive or diagnosis is needed.",
+        "AM05_grounded_validation": "A visible feeling, difficulty, loss, or tension can be acknowledged without intensifying or inventing it.",
+        "AM10_offer_one_optional_micro_step": "Advice is explicitly welcomed, the goal is clear, and exactly one low-risk, low-burden, easily declined step fits.",
+        "AM14_supportive_transition": "The user visibly signals fatigue, completion, focus change, or closure, and a bounded transition/close is the appropriate next act."
+      },
+      "does_not_count": [
+        "any supportive language that does not realize the selected card",
+        "a leading question when the card requires non-presupposing expression",
+        "advice without explicit welcome for AM10",
+        "closing merely because the lexical fallback selected AM14"
+      ]
+    }
+  },
+  "projection": {
+    "SUITABLE": "all four axes YES",
+    "NOT_SUITABLE": "one or more axes NO, even if another axis is UNKNOWN",
+    "UNKNOWN": "no axis NO and at least one axis UNKNOWN",
+    "runtime_unknown": "OFF with SEMANTIC_ABSTAIN",
+    "candidate_absent": "structural OFF with no semantic label and no PM negative"
+  },
+  "review_surface": {
+    "visible": [
+      "complete role-marked runtime-visible dialogue through current seeker turn",
+      "exact actual Rank-1 increment/guidance",
+      "component and component-specific minimum",
+      "pre-numbered visible and candidate span IDs"
+    ],
+    "hidden": [
+      "diagnostic sampling stratum",
+      "selection score and margin",
+      "transparent-priority versus lexical-fallback mode",
+      "user or fold labels beyond opaque case identity",
+      "expected positive/negative direction",
+      "responses and every downstream outcome"
+    ],
+    "response_schema": {
+      "per_axis_decision": [
+        "YES",
+        "NO",
+        "UNKNOWN"
+      ],
+      "evidence": "select only pre-numbered span IDs; do not copy or paraphrase evidence",
+      "absence": "a resolved decision with no positive span requires a frozen absence reason code",
+      "unknown": "UNKNOWN requires a frozen unknown reason code",
+      "derived_label": "machine projected; reviewer cannot override"
+    },
+    "forbidden_scales": [
+      "1-5 suitability",
+      "overall helpfulness",
+      "overall response quality",
+      "confidence used as a substitute for an atomic decision"
+    ]
+  },
+  "qualification_packet_design": {
+    "MP": {
+      "items": 34,
+      "canonical_groups": 17,
+      "outcome_blind_diagnostic_pair_per_group": "stronger scope/nonredundancy-like versus weaker scope/redundancy-like"
+    },
+    "MS": {
+      "items": 34,
+      "canonical_groups": 17,
+      "outcome_blind_diagnostic_pair_per_group": "higher semantic relation/continuity-cue-like versus lower relation/no-continuity-like"
+    },
+    "ME": {
+      "items": 28,
+      "canonical_groups": 14,
+      "outcome_blind_diagnostic_pair_per_group": "stronger action-result/current-function match versus weaker content-only match",
+      "disclosure": "Only 15 groups contain any ME actual Rank-1 and one has a single row; failure remains an allowed sparse-head result."
+    },
+    "RS": {
+      "items": 36,
+      "canonical_groups": 36,
+      "outcome_blind_diagnostic_balance": "18 transparent-priority-like and 18 lexical-fallback-like cases, with move-family coverage"
+    },
+    "total_items": 132,
+    "same_state_repeated": false,
+    "diagnostic_stratum_is_label": false,
+    "reviewers": 2,
+    "independent_blind_passes_before_adjudication": true
+  },
+  "qualification_gates_per_component": {
+    "per_axis_raw_agreement_min": 0.8,
+    "per_axis_gwet_ac1_min": 0.6,
+    "derived_raw_agreement_min": 0.8,
+    "resolved_coverage_min": 0.8,
+    "consensus_suitable_independent_groups_min": 8,
+    "consensus_not_suitable_independent_groups_min": 8,
+    "agreement_is_pre_adjudication": true,
+    "adjudication_cannot_rewrite_agreement": true,
+    "failed_component": "fixed OFF; no codebook rewrite, extra packet, threshold reduction, or sample append"
+  },
+  "adjudication": {
+    "allowed_only_after_raw_metrics_frozen": true,
+    "sees_other_reviewer_labels": false,
+    "sees_pm_features_predictions_outcomes": false,
+    "purpose": "resolve already-enumerated cases for coverage after instrument qualification, not rescue failed agreement",
+    "provenance": "CONSENSUS or ADJUDICATED retained per row"
+  },
+  "safe_functional_yield_separation": {
+    "not_present_in_this_packet": true,
+    "later_replicate_target": "candidate contribution present AND component minimum realized AND no material risk",
+    "generator_nonuse_or_fallback": "0 in deployment ITT and separately attributed to executor/guard",
+    "quality": "final system guardrail only, never back-propagated into suitability"
+  },
+  "no_loop_rules": [
+    "Do not use actual response outcomes to choose or relabel suitability cases.",
+    "Do not promote diagnostic high/low strata to gold.",
+    "Do not merge candidate absent with NOT_SUITABLE.",
+    "Do not lower a gate by one item after seeing reviewer results.",
+    "Do not add a new small packet for a failed component.",
+    "Do not change actual Rank-1 after any judgment exists."
+  ],
+  "authorization": {
+    "real_packet_materialization": false,
+    "reviewer_calls": false,
+    "label_creation": false,
+    "response_generation": false,
+    "pm_training": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false
+  },
+  "api_calls_for_design": 0,
+  "labels_created": 0,
+  "responses_generated": 0,
+  "pm_trained": false,
+  "external_outcomes_read": false
+}

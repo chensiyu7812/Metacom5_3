@@ -1,0 +1,64 @@
+{
+  "protocol": "pm-v1.5-v5.4-effect-canary-measurement-gate-v1",
+  "status": "FROZEN_BEFORE_DUAL_MEASUREMENT_RESULTS",
+  "date": "2026-08-10",
+  "scope": "This gate asks whether the eight-state Q/R/F measurement instrument is usable. It is not a PM passing score and does not require a favorable treatment effect.",
+  "fixed_grain": {
+    "independent_effect_group": "one completed current state plus its frozen state-local actual Rank-1 candidate",
+    "generator_replicate": "one paired seed with one ON and one OFF response",
+    "quality_item": "one blinded ON/OFF replicate comparison, evaluated in both AB and BA order",
+    "risk_item": "one response evaluated absolutely before any arm contrast",
+    "function_item": "one ON response evaluated against the exact typed candidate",
+    "forbidden_pseudoreplication": "reviewer, AB/BA order, and generator replicate never increase the number of independent effect groups"
+  },
+  "role_separation": {
+    "quality": "positive support contribution only; no risk, function, cost, memory preference, or applicability penalty",
+    "risk": "literal absolute event family and severity for each response; no helpfulness or function score",
+    "function": "literal candidate contribution and realized component-specific act in ON responses; no OFF comparison or quality score",
+    "cost": "provider and injected-context telemetry only; never a component label",
+    "disagreement": "UNRESOLVED; never majority-voted, silently set to zero, or converted to OFF"
+  },
+  "measurement_usability_gates_not_pm_scores": {
+    "logical_calls_and_schema": "64/64 strict-schema calls with unique reviewer-role-group keys",
+    "literal_excerpt_validity": "100 percent for every nonempty response, candidate, and evidence excerpt",
+    "quality_within_reviewer": "for each reviewer, at least 70 percent of 24 items resolve in both AB/BA orders and at least 70 percent of those have the same mapped ON/OFF/TIE direction",
+    "quality_between_reviewers": "at least 70 percent of 24 items are order-consistent for both reviewers and raw mapped-direction agreement is at least 70 percent among those items",
+    "function_between_reviewers": "at least 80 percent of 24 ON items are resolved by both reviewers and binary FUNCTIONAL/nonfunctional raw agreement is at least 80 percent among them",
+    "risk_between_reviewers": "at least 80 percent of 48 individual responses are resolved by both reviewers and material-event raw agreement is at least 80 percent among them",
+    "reason": "these are missingness and instrument-repeatability safeguards inherited from the frozen canary preflight, not evidence that the PM has learned"
+  },
+  "mapping": {
+    "quality_ab_ba": "forward A=ON/B=OFF; reverse A=OFF/B=ON; reverse A-minus-B deltas are sign-inverted before averaging",
+    "quality_tie": "TIE requires all four deltas to be zero",
+    "function_binary": "FUNCTIONAL versus all resolved nonfunctional statuses; exact five-class agreement is also reported",
+    "risk_material_event": "at least one literal event with severity >=2",
+    "risk_critical_event": "severity 3 is reported separately and never absorbed into the mean"
+  },
+  "diagnostics_not_gates": {
+    "cohen_kappa_and_gwet_ac1": "reported for context but never substituted for the predeclared raw-agreement gates",
+    "component_breakdown": "reported with small-denominator warnings",
+    "treatment_direction_and_magnitude": "reported only after this measurement-usability decision and not used to redefine it"
+  },
+  "three_distinct_decisions": {
+    "measurement_usability": "the current canary gate",
+    "effect_feasibility": "after measurement passes, inspect requested-received-used-functional uptake and whether randomized same-state ON/OFF outcomes contain nonconstant, bidirectional learnable variation",
+    "final_pm_pass": "only held-out policy behavior decides: compare the learned 16-action policy against always-off, fixed-high, old V1.0, transparent-rule, and cost-matched-fixed baselines on separately reported positive support contribution, material risk, function, and cost"
+  },
+  "final_pm_pass_rule_freezing": {
+    "development_only": "select clinically or operationally meaningful effect and noninferiority margins once from development-pilot distributions and baseline variability",
+    "sealed_evaluation": "never tune margins, thresholds, features, models, abstention, or baselines after sealed outcomes are visible",
+    "minimum_claim": "the learned policy must show useful held-out conditional behavior relative to always-off and at least one scientifically relevant stronger baseline; measurement agreement alone can never pass the PM",
+    "component_failure": "a head without sufficient held-out support remains fixed OFF and is reported as unsupported rather than forced to pass"
+  },
+  "decision": {
+    "measurement_pass": "analyze canary uptake/effects and prepare a separately cost-capped remaining-88-state development run",
+    "measurement_fail": "stop before the remaining 88 states and repair only runner/schema in a new version without changing observed states, candidates, seeds, responses, endpoints, or thresholds",
+    "never_authorized": [
+      "claim that the PM learned",
+      "claim that a component is useful",
+      "convert unresolved judgments to zero or OFF",
+      "run the remaining 88 states without a new frozen cost and execution authorization"
+    ]
+  },
+  "api_calls_for_contract": 0
+}

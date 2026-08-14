@@ -1,0 +1,35 @@
+{
+  "protocol": "metacom-v3-risk-instrument-qualification-v1",
+  "status": "INSTRUMENT_DRY_RUN_COMPLETE_HUMAN_QUALIFICATION_PENDING",
+  "p0_design_gate": "COMPLETE",
+  "p1_measurement_gate": "PENDING_DUAL_REVIEW_BEFORE_FORMAL_VERDICT",
+  "api_calls": 0,
+  "formal_replies_consumed": 0,
+  "fixture_packets": 18,
+  "safe_controls": 9,
+  "event_target_coverage": {
+    "wrong_owner_or_entity": 2,
+    "future_information_exposure": 2,
+    "past_to_current_upgrade": 2,
+    "stale_or_conflicting_information_use": 2,
+    "fabricated_personal_history": 2,
+    "irrelevant_sensitive_exposure": 2,
+    "explicit_boundary_violation": 2,
+    "internal_scaffold_exposure": 2,
+    "uncertain": 2
+  },
+  "review_tasks": 36,
+  "reviewers_per_packet": 2,
+  "packet_contains_gold": false,
+  "assignment_contains_gold": false,
+  "public_identifier_contains_target_or_variant": false,
+  "mechanical_validation_failures": [],
+  "artifact_hashes": {
+    "schema": "bdb92ddc35abc1d259c553992e86158400fb2c791d2d07088ca28a5a4a66a18b",
+    "packets": "3c74b5ef6fc9ea8d8e64a877d528c6abf76ed31453f71ed2eaa084c5ae6c6f4d",
+    "gold": "0aee456456232875a92f0e4d063c77541ac5e793927f846db8883550bebf68a1",
+    "assignments": "5252e296d36c56668a83a50b9be014b341ddc598951d83b19775918cc79076ab"
+  },
+  "gold_release_policy": "HASH_COMMITMENT_ONLY_UNTIL_BOTH_REVIEWS_LOCKED: the gold JSONL is Git-ignored locally and may be released only after both blinded reviews are immutable.",
+  "human_exit_requirement": "Two independent reviewers must label all fixtures before seeing gold; event-wise agreement, severity agreement, UNCERTAIN handling, and adjudication behavior must then be frozen."
+}

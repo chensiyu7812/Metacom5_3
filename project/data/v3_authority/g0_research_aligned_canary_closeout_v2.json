@@ -1,0 +1,206 @@
+{
+  "protocol": "metacom-v3-g0-research-aligned-canary-closeout-v2",
+  "date": "2026-08-14",
+  "run_identity": "9852e4c492a027c145bd1216bd7a5584a348ed9f3323c872797280a02e21ed62",
+  "status": "CANARY_MECHANICAL_PASS_QUALITY_NOT_YET_JUDGED_NO_GENERATOR_SELECTED",
+  "api_scope": {
+    "supporter_successful_turns": 40,
+    "local_role_player_turns": 40,
+    "judge_calls": 0,
+    "cards": 2,
+    "candidate_configurations": 4
+  },
+  "pre_call_runtime_incident": {
+    "status": "CORRECTED_BEFORE_ANY_PROVIDER_CALL",
+    "description": "CUDA_VISIBLE_DEVICES=1 mapped torch cuda:0 to the A4500 because PyTorch device order differed from nvidia-smi numbering; local ESC-Role loading stopped with OOM at shard 5/8.",
+    "provider_calls": 0,
+    "qwen_cost_usd": 0,
+    "correction": "Unset CUDA_VISIBLE_DEVICES and use torch cuda:0, which resolved to the RTX A6000; prompt, sample, provider payload, and run identity were unchanged."
+  },
+  "generation_contract_observed": {
+    "researcher_output_token_cap": null,
+    "provider_output_parameter_omitted_on_all_successes": true,
+    "all_successes_used_bound_prompt": true,
+    "provider_length_finishes": 0,
+    "nonempty_terminal_punctuation_turns": 40
+  },
+  "candidates": {
+    "llama31_8b_incumbent": {
+      "successful_turns": 10,
+      "completed_dialogues": 2,
+      "first_attempt_successful_turns": 10,
+      "first_attempt_success_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "failure_classes": {},
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 10,
+      "provider_length_finishes": 0,
+      "terminal_punctuation": 10,
+      "latency_ms": {
+        "median": 530.8661609888077,
+        "p90": 2125.4012713441625,
+        "minimum": 354.484471026808,
+        "maximum": 2132.24029308185,
+        "scope": "successful request wall-clock only; failed attempt time is separately visible in failed_physical_attempts"
+      },
+      "completion_tokens": {
+        "total_billed": 571,
+        "median_billed": 59.0,
+        "p90_billed": 91.0,
+        "reasoning_total_if_provider_reported": 0,
+        "visible_total_inferred_as_completion_minus_reasoning": 571
+      },
+      "visible_output": {
+        "words_total": 470,
+        "words_median": 49.5,
+        "words_p90": 73.2,
+        "markdown_heading_turns": 0,
+        "markdown_list_turns": 0,
+        "scaffold_leak_pattern_turns": 0
+      },
+      "throughput": {
+        "median_billed_completion_tokens_per_second": 65.60906566808937,
+        "warning": "For thinking mode, billed completion tokens include hidden reasoning and are not visible-answer throughput."
+      },
+      "qwen_actual_usd": 0
+    },
+    "llama33_70b_capacity_reference": {
+      "successful_turns": 10,
+      "completed_dialogues": 2,
+      "first_attempt_successful_turns": 4,
+      "first_attempt_success_rate": 0.4,
+      "failed_physical_attempts": 6,
+      "failure_classes": {
+        "http_5xx": 1,
+        "network_timeout": 5
+      },
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 10,
+      "provider_length_finishes": 0,
+      "terminal_punctuation": 10,
+      "latency_ms": {
+        "median": 68942.78492103331,
+        "p90": 123045.13480265159,
+        "minimum": 39221.60715004429,
+        "maximum": 145196.3725881651,
+        "scope": "successful request wall-clock only; failed attempt time is separately visible in failed_physical_attempts"
+      },
+      "completion_tokens": {
+        "total_billed": 886,
+        "median_billed": 92.5,
+        "p90_billed": 147.89999999999998,
+        "reasoning_total_if_provider_reported": 0,
+        "visible_total_inferred_as_completion_minus_reasoning": 886
+      },
+      "visible_output": {
+        "words_total": 755,
+        "words_median": 78.0,
+        "words_p90": 131.2,
+        "markdown_heading_turns": 0,
+        "markdown_list_turns": 0,
+        "scaffold_leak_pattern_turns": 0
+      },
+      "throughput": {
+        "median_billed_completion_tokens_per_second": 0.9673889475402198,
+        "warning": "For thinking mode, billed completion tokens include hidden reasoning and are not visible-answer throughput."
+      },
+      "qwen_actual_usd": 0
+    },
+    "qwen37_plus_nonthinking": {
+      "successful_turns": 10,
+      "completed_dialogues": 2,
+      "first_attempt_successful_turns": 10,
+      "first_attempt_success_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "failure_classes": {},
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 10,
+      "provider_length_finishes": 0,
+      "terminal_punctuation": 10,
+      "latency_ms": {
+        "median": 2145.5340824322775,
+        "p90": 2664.1129372175783,
+        "minimum": 1680.3497248329222,
+        "maximum": 2668.378750095144,
+        "scope": "successful request wall-clock only; failed attempt time is separately visible in failed_physical_attempts"
+      },
+      "completion_tokens": {
+        "total_billed": 628,
+        "median_billed": 64.5,
+        "p90_billed": 92.9,
+        "reasoning_total_if_provider_reported": 0,
+        "visible_total_inferred_as_completion_minus_reasoning": 628
+      },
+      "visible_output": {
+        "words_total": 519,
+        "words_median": 54.0,
+        "words_p90": 75.1,
+        "markdown_heading_turns": 0,
+        "markdown_list_turns": 0,
+        "scaffold_leak_pattern_turns": 0
+      },
+      "throughput": {
+        "median_billed_completion_tokens_per_second": 31.8481195049862,
+        "warning": "For thinking mode, billed completion tokens include hidden reasoning and are not visible-answer throughput."
+      },
+      "qwen_actual_usd": 0.0030632000000000003
+    },
+    "qwen37_plus_thinking_upper_bound": {
+      "successful_turns": 10,
+      "completed_dialogues": 2,
+      "first_attempt_successful_turns": 10,
+      "first_attempt_success_rate": 1.0,
+      "failed_physical_attempts": 0,
+      "failure_classes": {},
+      "terminal_trajectories": 0,
+      "provider_complete_finishes": 10,
+      "provider_length_finishes": 0,
+      "terminal_punctuation": 10,
+      "latency_ms": {
+        "median": 14459.65160196647,
+        "p90": 22826.990036014464,
+        "minimum": 9648.923052009195,
+        "maximum": 33241.31517787464,
+        "scope": "successful request wall-clock only; failed attempt time is separately visible in failed_physical_attempts"
+      },
+      "completion_tokens": {
+        "total_billed": 8965,
+        "median_billed": 793.5,
+        "p90_billed": 1298.8999999999999,
+        "reasoning_total_if_provider_reported": 8302,
+        "visible_total_inferred_as_completion_minus_reasoning": 663
+      },
+      "visible_output": {
+        "words_total": 512,
+        "words_median": 45.5,
+        "words_p90": 77.89999999999999,
+        "markdown_heading_turns": 0,
+        "markdown_list_turns": 0,
+        "scaffold_leak_pattern_turns": 0
+      },
+      "throughput": {
+        "median_billed_completion_tokens_per_second": 55.04147904624941,
+        "warning": "For thinking mode, billed completion tokens include hidden reasoning and are not visible-answer throughput."
+      },
+      "qwen_actual_usd": 0.016406
+    }
+  },
+  "qwen_budget": {
+    "approved_ceiling_usd": 0.25,
+    "actual_usd": 0.019469200000000002,
+    "within_ceiling": true
+  },
+  "zero_api_interpretation": {
+    "mechanical_canary_result": "PASS: all 40 turns completed without researcher-induced or provider length truncation, prompt/scaffold pattern leakage, or terminal trajectory loss.",
+    "operational_warning": "The hosted 70B route required retries on 6 of 10 turns (5 network timeouts and 1 HTTP 5xx); successful-response latency alone understates its user-observed cost.",
+    "qwen_mode_tradeoff": "Thinking used 8,302 reported reasoning tokens and 8,965 billed completion tokens versus 628 for non-thinking, while inferred visible tokens were 663 versus 628. Quality has not been judged, so this is a cost/latency observation, not evidence that thinking helps or hurts quality.",
+    "selection": "FORBIDDEN_FROM_TWO_CARD_CANARY",
+    "next": "Freeze and separately approve the order-swapped E-I-A quality review, or run the 24-card generation screen first; neither is authorized by this closeout."
+  },
+  "claim_boundary": "This canary validates the runtime and removes the old prompt/cap confound. It does not qualify a generator, estimate PM value, reproduce the exact official zero-shot wrapper, or establish clinical safety.",
+  "private_evidence_hashes": {
+    "private_turn_ledger.jsonl": "9824e50c9226d34d2793f2ecc743e1dd384e5801ed1acf91451fb08f0b6d64d6",
+    "qwen_budget_ledger.jsonl": "17959dbeffcc3ea7c5f8741591d699e29de4a2e6686d84e77018ef689382492f",
+    "summary.json": "2a0339361bc930db9d512a566d671ab70732c0aae941e0fa7c900e1ddcb35c5d"
+  }
+}

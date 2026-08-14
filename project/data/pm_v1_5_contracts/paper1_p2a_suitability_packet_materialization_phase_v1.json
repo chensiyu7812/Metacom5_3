@@ -1,0 +1,77 @@
+{
+  "protocol": "pm-v1.5-paper1-p2a-suitability-packet-materialization-phase-v1",
+  "date": "2026-08-10",
+  "status": "P2A_ACTIVE_ZERO_API_PACKET_ONLY",
+  "purpose": "Authorize one deterministic, outcome-blind materialization of two independently ordered unlabeled reviewer packets plus a physically private case key. No reviewer call or judgment is authorized.",
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+  "active_method_amendment_sha256": "5896aa748c489af1d1fcd222aa3eaf2e91354945580af8706f020cfb7375fc76",
+  "parent_authority_sha256": "33ee19f94d97b6da3724aae8e453f55100e69468f2f79e7ff6df153459bea8f3",
+  "input_bindings": [
+    {
+      "role": "p2_design",
+      "path": "data/pm_v1_5_contracts/paper1_p2_atomic_suitability_design_candidate_v1.json",
+      "sha256": "7fa860798c872fb3e183f50ca65d6ea12e6e1a2a9d1e2afb0cfde4e3433af1dd"
+    },
+    {
+      "role": "p2_design_validation",
+      "path": "outputs/pm_v1_5_paper1_p2_atomic_suitability_design_20260810/report.json",
+      "sha256": "2913fe49fba15345cae64e09e2de0a4f7edb542bfd32385439fea6443d2a7ca9"
+    },
+    {
+      "role": "rank1",
+      "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl",
+      "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"
+    },
+    {
+      "role": "esconv_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/esconv_states_unlabeled.jsonl",
+      "sha256": "d1ccedca10c95644ac58ddfb28796deb95aa810dcdbbdd5ee6ceddaf011cfc6f"
+    },
+    {
+      "role": "evoemo_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+      "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"
+    },
+    {
+      "role": "evoemo_candidates",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+      "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"
+    },
+    {
+      "role": "strategy_bank",
+      "path": "data/strategy/strategy_cards_v1_5_minimal.jsonl",
+      "sha256": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "blind_packet_library",
+      "path": "src/metacom_pm/v1_5_paper1_suitability_packet.py",
+      "sha256": "12c80336b70e865ba709aef9936f2aa363d00c96c0278a9e61bd00fa78864571"
+    },
+    {
+      "role": "authority_gated_materializer",
+      "path": "scripts/v1_5/183l_materialize_paper1_p2a_suitability_packet_v1_5.py",
+      "sha256": "671dd5c9af0745d7c18998711d3f040e4363ba925b4ae7ce3d9c5529077a7162"
+    }
+  ],
+  "authorization": {
+    "qualification_packet_materialization": true,
+    "reviewer_calls": false,
+    "label_creation": false,
+    "response_generation": false,
+    "pm_training": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false
+  },
+  "outputs": {
+    "public_dir": "outputs/pm_v1_5_paper1_p2a_suitability_packet",
+    "private_dir": "outputs/pm_v1_5_paper1_p2a_suitability_packet_private"
+  },
+  "required_terminal_status": "P2A_SUITABILITY_PACKET_PASS_REVIEW_CALLS_NOT_AUTHORIZED",
+  "next_if_pass": "INDEPENDENT_PACKET_AUDIT_THEN_DESIGN_SEPARATE_REVIEWER_CALL_PHASE",
+  "next_if_fail": "REPAIR_ONLY_MACHINE_PACKET_OR_BLINDING_DEFECT; DO_NOT CHANGE_CASES_USING_LABELS_OR_OUTCOMES",
+  "api_calls_for_phase_manifest": 0
+}

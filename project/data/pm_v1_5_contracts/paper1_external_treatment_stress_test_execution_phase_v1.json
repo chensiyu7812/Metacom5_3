@@ -1,0 +1,51 @@
+{
+  "protocol": "pm-v1.5-paper1-external-treatment-stress-test-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "EXACT_18_OWNER_90_CALL_EXTERNAL_DIAGNOSTIC_AUTHORIZED",
+  "purpose": "Execute the PI-approved, opportunity-enriched external-corpus treatment diagnostic exactly once. This estimates current V4 RS/MP/MS treatment capacity and marginal contribution; it is not formal learned-PM external confirmation.",
+  "approval": {
+    "exact_user_phrase": "我批准运行 identity ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8，最高 $0",
+    "run_identity": "ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8",
+    "absolute_usd_cap": 0.0
+  },
+  "input_bindings": [
+    {"role": "design", "path": "data/pm_v1_5_contracts/paper1_external_treatment_stress_test_design_v1.json", "sha256": "91569c10c0eb90ec4a833e11152a7a5aad4f82f08dece084a53c2fdecbb35ded"},
+    {"role": "preflight_report", "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/report.json", "sha256": "54c80c9fa2ae2ecd959f3ce8ffb46a7ab62bcb58d0ab74ac19efc680c69f4480"},
+    {"role": "cases", "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/cases_private.jsonl", "sha256": "b7116248fdf01a04d342c3d836304ef751fdbbeceb47be8b664c4aefb280d639"},
+    {"role": "call_plan", "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/call_plan_private.jsonl", "sha256": "9c8ea099f16255bf2e61d8cf6d780e32397cedb6a6f22ea703713fff20c7ca47"},
+    {"role": "selector_runtime_validation", "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/selector_runtime_validation.json", "sha256": "ed71d66fd86c9da54627da386a76590bac1d786d1fdbf4d048e453ff3d829139"},
+    {"role": "execution_config", "path": "configs/paper1_external_treatment_stress_test_execution_v1.json", "sha256": "1abbd9da9d49479e16956309a10b0c58e737ec9baf9c645073c71b63f3cd1b91"}
+  ],
+  "implementation_bindings": [
+    {"role": "live_runner", "path": "scripts/v1_5/342l_run_paper1_external_treatment_stress_test_v1_5.py", "sha256": "974bf1b9bab85666071b7dba0e6378995e7e6cc7381a4c1d80da0ececbdd9d02"},
+    {"role": "strict_response_schema", "path": "src/metacom_pm/v1_5_ms_same_stack_feasibility.py", "sha256": "7a75d56f1849d59bc5801e4bbd6fcbf03c6b3c8e0582bc1923c3bcd0b229a087"},
+    {"role": "central_release_guard", "path": "src/metacom_pm/paid_run_release.py", "sha256": "8d6cf35fa9fa06d78c21e2cd719d19aa8b78d4f77492363d8111ef7ad5ed1c63"}
+  ],
+  "execution": {
+    "stage": "paper1_external_treatment_stress_test_v1",
+    "run_identity": "ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 18,
+    "owners": 18,
+    "arms_per_state": 5,
+    "logical_calls": 90,
+    "maximum_physical_attempts": 180,
+    "absolute_usd_cap": 0.0,
+    "output_directory": "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813"
+  },
+  "authorization": {
+    "generator_calls": 90,
+    "judge_calls": 0,
+    "training_labels": 0,
+    "fits": 0,
+    "threshold_changes": 0,
+    "formal_external_claim": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before aggregation.",
+    "Do not replace, delete, or resample any of the 18 states after responses are observed.",
+    "Consume this identity after its first live start even if transport is incomplete.",
+    "Do not run judge calls under this identity; judging requires a separately frozen manifest, identity, and approval.",
+    "Do not relabel this opportunity-enriched hybrid treatment test as natural-distribution learned-PM performance."
+  ]
+}

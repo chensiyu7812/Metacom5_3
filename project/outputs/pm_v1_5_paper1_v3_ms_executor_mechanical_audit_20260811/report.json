@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-mechanical-signal-audit-v1",
+  "status": "MECHANICAL_AUDIT_COMPLETE_SEMANTIC_FUNCTION_AND_QUALITY_STILL_REQUIRED",
+  "ms_on_responses": 32,
+  "teacher_suitable": 16,
+  "teacher_not_suitable": 16,
+  "generator_telemetry": {
+    "suitable_claimed": 10,
+    "suitable_nonuse": 6,
+    "not_suitable_claimed": 7,
+    "not_suitable_nonuse": 9,
+    "descriptive_claim_discrimination_balanced_accuracy": 0.59375,
+    "by_response_act": {
+      "TEACHER_NOT_SUITABLE|R0|CLAIMED": 2,
+      "TEACHER_NOT_SUITABLE|R0|NONUSE": 6,
+      "TEACHER_NOT_SUITABLE|RS|CLAIMED": 5,
+      "TEACHER_NOT_SUITABLE|RS|NONUSE": 3,
+      "TEACHER_SUITABLE|R0|CLAIMED": 3,
+      "TEACHER_SUITABLE|R0|NONUSE": 5,
+      "TEACHER_SUITABLE|RS|CLAIMED": 7,
+      "TEACHER_SUITABLE|RS|NONUSE": 1
+    },
+    "not_function_gold": true
+  },
+  "literal_splice_checks": {
+    "exact_full_source_copies": 0,
+    "mean_unique_token_jaccard_suitable": 0.08485948291131162,
+    "mean_unique_token_jaccard_not_suitable": 0.04748228705117998,
+    "interpretation": "No exact source copy was observed. Low lexical overlap supports removal of forced literal splicing but does not prove semantic function."
+  },
+  "responsibility": {
+    "selector": "already evaluated by 17-group OOF",
+    "executor": "requires blind source-aware Function/Risk/paired-Quality judgments",
+    "generator_telemetry": "diagnostic only; false names and omissions cannot decide function"
+  },
+  "bindings": {
+    "cases": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0",
+    "results": "a44b7fedeecc7a8239744204487ac3592ec0c29e2384285cdbc7badfb88b9aec",
+    "measurement_packet_report": "770a5a76af1edc81f7a435b5a8ee21352fd5e7cb81530dadc807632f79318858"
+  },
+  "api_calls": 0,
+  "pm_fits": 0,
+  "next": "COMPLETE_QUALIFIED_BLIND_MEASUREMENT_PACKET"
+}

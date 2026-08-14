@@ -1,0 +1,102 @@
+{
+  "protocol": "pm-v1.5-paper1-semantic-adapter-ablation-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_SEMANTIC_ADAPTER_AND_ORACLE_PLAN_PROBE_ONLY",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "purpose": "Determine whether a bounded semantic state representation and a candidate-specific use plan address the diagnosed MS planning bottleneck before any further PM fit or generator call.",
+  "version_control": {
+    "immutable_parent_commit": "0335ebdd03f3181f930f7ce0e9619068e001a1a2",
+    "immutable_parent_tag": "pm-v1.5-paper1-semantic-diagnosis-baseline-20260811",
+    "isolated_branch": "work/paper1-semantic-adapter-ablation-20260811",
+    "rule": "This is an experiment revision, not a new V4/V5 method. Historical outputs remain immutable and are never overwritten."
+  },
+  "authority": {
+    "api_calls_authorized": 0,
+    "training_labels_authorized": 0,
+    "pm_fits_authorized": 0,
+    "threshold_changes_authorized": 0,
+    "external_evaluation_authorized": false,
+    "next_live_phase": "FORBIDDEN_UNTIL_ZERO_API_REPORT_AND_CONTENT_ADDRESSED_LIVE_MANIFEST_PASS"
+  },
+  "frozen_inputs": [
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_preflight_v3_20260811/qualification_cases_private.jsonl",
+      "sha256": "a97f822c9a072293550673bc7efaf6037652654c6dcbe98f0e7c8d6447c878f0",
+      "rows": 16
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/generator_results_private.jsonl",
+      "sha256": "b794eed37596166b2d066a43d5f48f425b6bf242effcf805b92f0b28c6e1663f",
+      "rows": 64
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_r0_function_forced_open_card_closure_diagnostic_v2_20260811/forced_open_card_closure_quality_blind.jsonl",
+      "sha256": "176b1b3afea2e92a839b6480758dd3697aa07199eb8e74622ea51562d7ad2789",
+      "rows": 2
+    },
+    {
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+      "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
+    },
+    {
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "5626b22d84603918792beb500dab6a18a604fe060615f7fd3b4b21181f9e48ce"
+    }
+  ],
+  "semantic_model": {
+    "repository": "cross-encoder/nli-deberta-v3-base",
+    "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+    "snapshot_path": "/home/tokkio/.cache/huggingface/pm_v1_5_semantic_adapter/models--cross-encoder--nli-deberta-v3-base/snapshots/6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+    "execution": {
+      "python": "/home/tokkio/miniconda3/envs/sim_eval/bin/python",
+      "python_no_user_site": true,
+      "cuda_visible_devices": "0",
+      "torch": "2.10.0+cu128",
+      "transformers": "5.3.0"
+    },
+    "verified_files": {
+      "README.md": "c38ae8fb13e12d744661486bf343f99e1c623065",
+      "added_tokens.json": "71b89921f9568175266f31ac7e5ed6c39f008fd3",
+      "config.json": "f421929530a688a116ac1f95911e6aa06bd4820d",
+      "model.safetensors": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa",
+      "special_tokens_map.json": "21ee423233314af53c84b2a229398f8b425672f5",
+      "spm.model": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+      "tokenizer.json": "12cc2e86bad0e731393847b017b32a7405ebd4f8",
+      "tokenizer_config.json": "734481711f0d172bd376a6d06c545286d58d8159"
+    },
+    "role": "Frozen diagnostic feature extractor only. It neither creates suitability gold nor replaces grouped out-of-fold evaluation.",
+    "bounded_outputs": [
+      "support_phase",
+      "immediate_support_goal",
+      "candidate_relation_to_current",
+      "closure_signal"
+    ]
+  },
+  "oracle_plan_probe": {
+    "states": 8,
+    "selection": "All eight previously frozen TEACHER_SUITABLE MS qualification states; no outcome-based reselection.",
+    "arms_planned_for_any_later_live_test": [
+      "M0_R0",
+      "GENERIC_MS_R0",
+      "ORACLE_PLAN_MS_R0"
+    ],
+    "oracle_fields": [
+      "oracle_disposition",
+      "material_increment_assessment",
+      "entity_link_status",
+      "support_phase",
+      "immediate_goal",
+      "candidate_increment",
+      "good_use",
+      "forbidden_focus_shift",
+      "nonuse_condition"
+    ],
+    "claim_limit": "An oracle plan is an upper-bound implementation control. It is prohibited as a PM feature, training label, formal test-time input, or reported learned result. USE_IF_NATURAL and SAFE_NONUSE states must be reported separately."
+  },
+  "decision_rule": {
+    "semantic_model": "Retain only if it discriminates at least one prespecified semantic construct beyond the existing structural features without corrupting closure controls; otherwise reject it rather than adding complexity.",
+    "generator_upper_bound": "A later live oracle-plan arm is justified only after the eight plans are source-grounded, current-goal-centered, and independently auditable. If an oracle arm cannot materially realize MS, the fixed generator/executor is the bottleneck and PM retraining remains forbidden.",
+    "no_magic_understanding_claim": true
+  }
+}

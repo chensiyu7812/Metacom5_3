@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-executor-function-proxy-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "SEQUENTIAL_TWO_PROXY_FUNCTION_CONTROL_QUALIFICATION_THEN_PUBLIC_REVIEW_AUTHORIZED_ONCE",
+  "purpose": "Obtain a reproducible dual-model feasibility measurement of MS executor Function without calling either proxy human gold. Public calls run only if both models independently pass the frozen fresh controls.",
+  "promoted_from_authority_sha256": "0a4f4d4c95070ff45e40675ccc0b428775e0e689e9a69b90fd51bb27d082575c",
+  "input_bindings": [
+    {"role": "preflight", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/report.json", "sha256": "539ca441c7d05dceac791d139cedb6e1c6ab75adb690e65681a4568c65285e1c"},
+    {"role": "fresh_controls", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_controls_blind.jsonl", "sha256": "110de96abee26837e476619e457e843cfbfaa0b3e7c3c148e7064e470ec74933"},
+    {"role": "private_control_gold", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/fresh_control_gold_private.jsonl", "sha256": "7aa7af0a3f24ef83bced90ec7e2323fc7e33b296880b1a57dda3526e4d09f5f2"},
+    {"role": "exact_call_plan", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_preflight_20260811/call_plan_private.jsonl", "sha256": "9e075368ec7b66522a988506c3230c7cb8f47785f28265950fcdb0a9481aa481"},
+    {"role": "blind_public_function_packet", "path": "outputs/pm_v1_5_paper1_v3_ms_executor_measurement_packet_20260811/function_packet_blind.jsonl", "sha256": "a6eb6a92c4c7a4cff011feaf0c80bf7906414c69c9d8055ae9396844079f5215"}
+  ],
+  "implementation_bindings": [
+    {"role": "function_instrument", "path": "src/metacom_pm/v1_5_ms_executor_function_review.py", "sha256": "07ea4228495b4ccee6ab261a707ebf6049eed6dfa9344bdc38d53e68e621ebf3"},
+    {"role": "raw_first_sequential_runner", "path": "scripts/v1_5/237l_run_paper1_v3_ms_executor_function_proxy_reviews_v1_5.py", "sha256": "bcf0c7f594b72979c1f8860863ff5f100376b86cf0834c6973d7dccae3225b9b"},
+    {"role": "execution_config", "path": "configs/paper1_v3_ms_executor_function_proxy_execution_v1.json", "sha256": "19c91e5c113b1d67f7cdf5b617f02443627354f1723d980e55c0686cb07401a6"},
+    {"role": "endpoint_config", "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json", "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"}
+  ],
+  "execution": {
+    "reviewers": ["Anthropic Claude Haiku 4.5", "OpenAI GPT-5 mini"],
+    "control_calls": 24,
+    "public_calls_only_if_both_qualify": 64,
+    "maximum_logical_calls": 88,
+    "maximum_physical_attempts": 176,
+    "absolute_usd_cap": 2.0,
+    "run_identity": "bc5aef709ce301e5fa70327dc734e90b689b6fb4c169441237149981b516722b",
+    "raw_first": true,
+    "gold_provider_visible": false
+  },
+  "authorization": {
+    "function_proxy_api_calls": true,
+    "human_gold_claim": false,
+    "quality_or_risk_judging": false,
+    "pm_refit": false,
+    "prompt_or_guard_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "baseline_or_external_calls": false,
+    "paid_execution": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_executor_function_proxy_reviews_20260811",
+  "next": "CLOSE_PAID_RELEASE_AND_RUN_ZERO_API_PRE_ADJUDICATION_FUNCTION_ANALYSIS"
+}

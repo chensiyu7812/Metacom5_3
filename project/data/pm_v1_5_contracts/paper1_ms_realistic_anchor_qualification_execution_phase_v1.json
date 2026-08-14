@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-realistic-anchor-qualification-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_24_REALISTIC_ANCHOR_QUALIFICATION_CALLS_AUTHORIZED_ONCE",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_ms_realistic_anchor_qualification_preflight_20260812/report.json",
+      "sha256": "7a9a7a2331cc5c66dd9a044aa9852a7c8754d80091fed9fe86f113d0f096a9ee",
+      "required_status": "PASS_EXACT_24_CONTROL_CALL_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_ms_realistic_anchor_qualification_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "0fde828900a6ca6351c9799a901c19e8838364406816738d3748ce0a15ba9e91"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_ms_source_annotated_review_endpoints_v1.json",
+      "sha256": "cf04956ad8c8c00b9cfe3dc1ad5eeb85c30fc06970581177e9275a1d36f90c37"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_realistic_anchor_qualification_execution_v1.json",
+      "sha256": "e3a6ffe3898855adc8fb1fb646b04a3837bf9b74219ccc7e8a72ec7d0960e183"
+    },
+    {
+      "role": "review_instrument",
+      "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+      "sha256": "70d574209ee3cff2f3dfb970c18bed5f109831fa13d37347696c24544055a1eb"
+    }
+  ],
+  "execution": {
+    "stage": "paper1_ms_realistic_anchor_qualification_v1",
+    "run_identity": "baf51882dba48b3a4594b23c699ec6d92a3ef2149fbb6b95258480601bf36fa1",
+    "logical_calls": 24,
+    "maximum_physical_attempts": 48,
+    "absolute_usd_cap": 0.75,
+    "output_directory": "outputs/pm_v1_5_paper1_ms_realistic_anchor_qualification_live_20260812",
+    "reviewers": {
+      "MS_ANCHOR_PRIMARY_GPT56": "openai_gpt_5_6_sol",
+      "MS_ANCHOR_CHALLENGER_GEMINI": "google_gemini_2_5_flash"
+    }
+  },
+  "qualification_gates_are_frozen_in_preflight": true,
+  "authorization": {
+    "control_review_api_calls": 24,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Do not call any of the 201 public reannotation items in this phase.",
+    "Do not relax qualification gates after seeing results.",
+    "Persist raw provider output and validation failure before any aggregation.",
+    "Consume this identity after the first real run even if incomplete."
+  ]
+}

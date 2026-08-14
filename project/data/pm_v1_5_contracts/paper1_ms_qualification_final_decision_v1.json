@@ -1,0 +1,40 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-qualification-final-decision-v1",
+  "date": "2026-08-12",
+  "status": "MS_QUALIFIED_PRIMARY_GPT56_CHALLENGER_CLAUDE_HAIKU_4_5",
+  "decision": "User adopted the binary-collapsed scoring convention for the MS qualification gate (SEMANTIC_ABSTAIN merged into NOT_SUITABLE for exact-match gate purposes only; the underlying review instrument still emits full 3-way final_suitability, and SEMANTIC_ABSTAIN remains a real, separately-tracked outcome downstream) and approved GPT-5.6 (primary) + Claude Haiku 4.5 (challenger) as the qualified reviewer pairing.",
+  "precedent": {
+    "path": "docs/PM_V1_5_D2_PRIMARY_REVIEW_ANALYSIS_20260731_ZH.md",
+    "summary": "Two independent human clinician reviewers on a comparable task: strict 3-way Cohen's kappa .4854 (below its own .75 gate); binary-collapsed kappa .6175 (production-acceptable range). Same collapse logic applied here."
+  },
+  "external_corroboration": [
+    "Follow-up emotional-support strategy-annotation study: Fleiss' kappa ~.458 on a comparable categorical task, nearly identical to this project's own .4854.",
+    "General LLM-judge-agreement literature: human-human pairwise agreement only 69-75% (mean 72%), below the 91.7%-100% this gate demanded on a harder 3-way task.",
+    "ES-MemEval (arXiv:2602.01885, the actual target benchmark): does not attempt fine-grained subjective suitability labeling; QA/abstention are grounded in objectively-checkable constructed event timelines, and the one genuinely subjective task (dialogue quality) uses a single coarse LLM-judge scale, not multi-reviewer 3-way consensus."
+  ],
+  "final_results_binary_collapsed": {
+    "gold_source": "outputs/pm_v1_5_paper1_ms_realistic_anchor_set_private_20260812/realistic_anchor_key.jsonl (corrected, 282l)",
+    "rescore_report": "outputs/pm_v1_5_paper1_ms_realistic_anchor_binary_collapsed_rescore_20260812/report.json",
+    "primary_gpt56": {"binary": "12/12", "three_way": "11/12", "gate_required": "12/12", "pass": true},
+    "challenger_claude_haiku_4_5": {"binary": "11/12", "three_way": "10/12", "gate_required": ">=11/12", "pass": true},
+    "challenger_gemini_no_thinking_retired": {"binary": "8/12", "three_way": "8/12", "gate_required": ">=11/12", "pass": false},
+    "challenger_gemini_thinking_retired": {"binary": "9/12", "three_way": "8/12", "gate_required": ">=11/12", "pass": false}
+  },
+  "retired_challenger": {
+    "model_family": "google_gemini_2_5_flash",
+    "reason": "Fails the qualification gate even under the binary-collapsed convention; its errors are real USE/DO_NOT_USE direction flips, not boundary-precision misses, so the scoring-granularity fix does not rescue it. Ruled out separately: thinking budget is not the cause (round 4 null result)."
+  },
+  "known_open_gap_not_blocking": {
+    "family": "MATERIAL_CHANGE_UNRESOLVED",
+    "description": "Vague/content-free candidate text over-interpreted as a specific claim. Shared across Gemini and Claude Haiku (only GPT-5.6 got it right); not Gemini-specific. Worth a targeted prompt tightening later but does not block proceeding to the formal 201-item pass, since it is a single item pattern, not a systemic failure of the qualified pairing."
+  },
+  "governs": {
+    "qualification_gate_scoring": "binary_collapsed",
+    "formal_201_item_pass_consensus_rule": "binary_collapsed_exact_agreement_only (same convention applied for consistency; disagreement/abstain-vs-not-suitable-split stays unlabeled, matching the existing exact-consensus-only philosophy)"
+  },
+  "authorization": {
+    "api_calls": 0,
+    "training_labels": 0,
+    "diagnostic_fits": 0
+  }
+}

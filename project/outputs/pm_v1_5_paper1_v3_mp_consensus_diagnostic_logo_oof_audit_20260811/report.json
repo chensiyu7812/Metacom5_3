@@ -1,0 +1,153 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-mp-consensus-diagnostic-logo-oof-audit-v1",
+  "status": "MP_DIAGNOSTIC_POOLED_SIGNAL_FIELD_PRIOR_DOMINATED_NO_FORMAL_PROMOTION",
+  "answer": {
+    "pooled_cross_user_signal_present": true,
+    "evidence_of_state_conditional_signal_beyond_profile_field": false,
+    "formal_mp_label_route_passed": false,
+    "formal_mp_fit_or_checkpoint_authorized": false
+  },
+  "pooled_metrics": {
+    "primary": {
+      "roc_auc": 0.6372481684981685,
+      "average_precision": 0.5532634132357297,
+      "balanced_accuracy_at_0_5": 0.6836080586080586,
+      "recall_at_0_5": 0.5576923076923077,
+      "specificity_at_0_5": 0.8095238095238095,
+      "brier": 0.22771863779174364,
+      "prevalence_brier": 0.25441646180303895,
+      "brier_gain_vs_prevalence": 0.026697824011295307,
+      "log_loss": 0.6512690928024486,
+      "predicted_on": 45,
+      "predicted_off": 91
+    },
+    "profile_field_only": {
+      "roc_auc": 0.6320970695970697,
+      "average_precision": 0.5519129441983249,
+      "balanced_accuracy_at_0_5": 0.7037545787545787,
+      "recall_at_0_5": 0.5384615384615384,
+      "specificity_at_0_5": 0.8690476190476191,
+      "brier": 0.21402431206422295,
+      "prevalence_brier": 0.25441646180303895,
+      "brier_gain_vs_prevalence": 0.040392149738816,
+      "log_loss": 0.6203475974512133,
+      "predicted_on": 39,
+      "predicted_off": 97
+    },
+    "primary_minus_field_only": {
+      "roc_auc": 0.005151098901098772,
+      "balanced_accuracy_at_0_5": -0.020146520146520075,
+      "brier_gain_where_positive_is_better": -0.01369432572752069,
+      "log_loss_gain_where_positive_is_better": -0.03092149535123534
+    }
+  },
+  "conditional_diagnostics": {
+    "primary_within_profile_field": {
+      "eligible_positive_negative_pairs": 1216,
+      "concordant": 467,
+      "tied": 1,
+      "pair_concordance": 0.38445723684210525
+    },
+    "field_only_within_profile_field": {
+      "eligible_positive_negative_pairs": 1216,
+      "concordant": 311,
+      "tied": 36,
+      "pair_concordance": 0.27055921052631576
+    },
+    "mixed_label_groups": 10,
+    "all_groups": 17,
+    "by_profile_field": [
+      {
+        "profile_field": "age",
+        "rows": 7,
+        "on": 3,
+        "off": 4,
+        "primary_brier": 0.2908733357421987,
+        "field_only_brier": 0.26620447973066785,
+        "primary_auc_within_field": 0.25,
+        "field_only_auc_within_field": 0.0
+      },
+      {
+        "profile_field": "education",
+        "rows": 36,
+        "on": 28,
+        "off": 8,
+        "primary_brier": 0.20128965199793525,
+        "field_only_brier": 0.1917730562925268,
+        "primary_auc_within_field": 0.42410714285714285,
+        "field_only_auc_within_field": 0.03571428571428571
+      },
+      {
+        "profile_field": "gender",
+        "rows": 3,
+        "on": 0,
+        "off": 3,
+        "primary_brier": 0.516281678870803,
+        "field_only_brier": 0.22826889205928935
+      },
+      {
+        "profile_field": "job",
+        "rows": 69,
+        "on": 19,
+        "off": 50,
+        "primary_brier": 0.2300885327327694,
+        "field_only_brier": 0.22293840566388504,
+        "primary_auc_within_field": 0.381578947368421,
+        "field_only_auc_within_field": 0.3378947368421053
+      },
+      {
+        "profile_field": "location",
+        "rows": 17,
+        "on": 2,
+        "off": 15,
+        "primary_brier": 0.20574735489124138,
+        "field_only_brier": 0.20153271653769272,
+        "primary_auc_within_field": 0.23333333333333334,
+        "field_only_auc_within_field": 0.0
+      },
+      {
+        "profile_field": "nationality",
+        "rows": 4,
+        "on": 0,
+        "off": 4,
+        "primary_brier": 0.1911337723078685,
+        "field_only_brier": 0.2116080519904929
+      }
+    ]
+  },
+  "interpretation": [
+    "The pooled MP result is directionally above chance, so the exact-consensus subset is not random.",
+    "The profile-field-only comparator has better balanced accuracy, Brier score, and log loss; the full feature set improves pooled AUC by only about 0.005.",
+    "Within the same profile field, the primary model's positive-negative pair concordance is below 0.5. The observed pooled discrimination therefore does not establish state-specific profile suitability.",
+    "The 136-row consensus subset is selected by reviewer agreement and cannot repair the failed 204-case measurement route."
+  ],
+  "root_cause": {
+    "label_side": "reviewers agree strongly on profile-field priors but not reliably on the bounded material-use decision for a concrete state",
+    "feature_side": "the frozen features mainly describe field type, lexical scope, retrieval position, and redundancy; they do not encode a reliable state-to-profile material response change",
+    "not_the_cause": [
+      "the four heads being trained separately",
+      "the 16-action requested space",
+      "a global one-memory cap",
+      "threshold tuning, because none occurred"
+    ]
+  },
+  "routing": {
+    "MP": "SURFACE_PASS__LABEL_FAIL__DIAGNOSTIC_FIELD_PRIOR_SIGNAL_ONLY__PAUSE_FORMAL_FIT",
+    "RS": "OOF_PASS__UNCHANGED",
+    "MS": "SURFACE_PASS__V3_LABEL_UNPROVEN__NEXT_SOURCE_AWARE_ATOMIC_LABEL_ROUTE_AUDIT",
+    "ME": "LIMITED_SURFACE__LABEL_FAIL__CONTINGENCY_ONLY",
+    "joint_execution": "V3_EXECUTOR_DESIGN_PRESERVED__NOT_EVALUATED_BY_THIS_DIAGNOSTIC"
+  },
+  "next": [
+    "freeze this MP diagnostic without feature or threshold repair",
+    "use EvoEmo influenced_by only to stratify a source-aware atomic MS annotation audit; never inherit a session label onto a turn",
+    "use ES-MemEval QA evidence only to diagnose retrieval/semantic representation, never as response-PM suitability gold",
+    "only after a prospective exact-turn MS label route passes, train MS separately and then evaluate RS+MS through the shared 16-action V3 executor",
+    "return to MP later with an outcome-blind state-to-profile material-use representation rather than profile-field priors"
+  ],
+  "api_calls": 0,
+  "generator_calls": 0,
+  "baseline_calls": 0,
+  "external_calls": 0,
+  "threshold_or_feature_changes_after_result": false
+}

@@ -92,7 +92,9 @@ ES-MemEval 主要检验跨会话事实、时间、冲突、拒答和 QA 检索�
 4. 获得付费授权后一次生成，不用结果反向修改题目；
 5. 独立评估质量、grounding risk、资源做功和 token/cost，并据此生成 Step1 worth-opening 标签；
 6. 分别训练透明 head 与 BGE 增强 head，做用户簇/语义族分组验证；
-7. 比较 always-off、fixed-high、transparent-rule、cost-matched-fixed、learned-PM-full、learned-PM-conservative，以及必要的旧 V1.0/原始 session RAG 次表；
+7. 比较 always-off、fixed-high-eligible、transparent-rule、learned-PM-qualified，以及通过预冻结资格的
+   cost-matched-fixed 和 cost/on-rate-matched-random；只有四个 head 全部通过时才把 learned-PM-qualified 别名写成
+   learned-PM-full。旧 V1.0/原始 session RAG 只作符合当前执行栈边界的次表；
 8. 只有内部确认完成后，才在 ESConv、EvoEmo、ES-MemEval 上运行同一冻结栈。
 
 本轮没有冻结“神奇及格线”。V5.3 的最低有意义结果定义仍是：learned PM 相对人工透明规则表现出可学习增量；相对 fixed-high 明显降低资源与 token 成本及 grounding risk；相对 always-off 的质量不出现不可接受下降。点估计、区间、用户簇稳定性和失败边界同时报告。

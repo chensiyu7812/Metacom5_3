@@ -1,0 +1,78 @@
+{
+  "api_calls": 0,
+  "checks": {
+    "12_fixed_nontraining_controls": true,
+    "17_connected_groups": true,
+    "201_resolved_rows": true,
+    "204_label_rows": true,
+    "204_unique_label_ids": true,
+    "204_unique_ms_surfaces": true,
+    "3_prior_abstentions_excluded_not_recast": true,
+    "annotation_template_has_all_required_fields": true,
+    "complete_one_to_one_join": true,
+    "control_decision_distribution_5_5_2": true,
+    "no_training_label_changed": true,
+    "public_blinding_forbidden_keys_absent": true,
+    "public_ids_unique": true,
+    "public_rows_exactly_201": true,
+    "sixteen_actions_and_nonexclusive_heads_preserved": true,
+    "zero_api_zero_fit": true
+  },
+  "counts": {
+    "connected_groups": 17,
+    "prior_abstentions_preserved_outside_packet": 3,
+    "qualification_controls": 12,
+    "resolved_reannotation_items": 201,
+    "source_labels": 204
+  },
+  "decisive_finding": "The old 201 binary labels are structurally complete for the retired target but 0/201 complete for the repaired source-attributable target; direct refit would be invalid.",
+  "fits": 0,
+  "next_gate": "Run the fixed 12-control qualification with the frozen codebook. Only a qualified instrument may unlock exactly one 201-item reannotation pass.",
+  "private_artifacts": {
+    "case_key": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_private_20260812/ms_reannotation_private_key.jsonl",
+      "sha256": "797de20fb33c8bed12d2b38b5dbb73781e1a401665c4044ced6b30ebc499c93f"
+    },
+    "control_key": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_private_20260812/qualification_control_key.jsonl",
+      "sha256": "24ba25c316cf1657203c884a2af6435153ede56589078b718605b81390d52fd0"
+    }
+  },
+  "protocol": "pm-v1.5-paper1-ms-supervision-repair-packet-report-v1",
+  "public_artifacts": {
+    "codebook": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/CODEBOOK_ZH.md",
+      "sha256": "a23bbc04a47167e54d0c09089ef66111a868f13410f936efba3e64e442b6391c"
+    },
+    "data_quality_profile": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/data_quality_profile.json",
+      "sha256": "f3d08068478464e6b0c46efc844edbe77e80cd69b2c342f65a00fd61ef07094c"
+    },
+    "qualification_controls": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/qualification_controls_blind.jsonl",
+      "sha256": "5c1f9e30f99227d12e2f127116186c772e22fd989a7df04ea1326f3ef9278c78"
+    },
+    "report_html": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/report.html",
+      "sha256": "9aea72dca4d9e7c02d4cfef3d289f2cb1b0c04385b1a7e7ba4c94701087a764b"
+    },
+    "review_packet": {
+      "path": "outputs/pm_v1_5_paper1_ms_supervision_repair_packet_20260812/ms_reannotation_packet_blind.jsonl",
+      "sha256": "6e24a6f4c15cf748065b3d7c5657eac7b3c42732454f2f6a719256df92a100f8"
+    }
+  },
+  "quality_risks": [
+    "73 old positives collapse 95.9% into CHANGES_CURRENT_OPTION rather than carrying candidate-specific response plans.",
+    "Old binary labels contain none of the four new source-attribution fields; they cannot be reused as repaired gold.",
+    "Machine lexical flags are audit strata only and are forbidden from auto-labeling."
+  ],
+  "source_hashes": {
+    "fresh_control_gold_not_training": "7a8c5587f4bb4e5b65ebba668b2318a0ce4d54972775c0bfb95a30253233de35",
+    "fresh_control_surfaces": "5a94d628d74cbed7a384f6b32a7c5a224b0a3bc7fbb994387adc345250fb3bcc",
+    "frozen_ms_teacher_labels": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364",
+    "original_ms_public_surfaces": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8",
+    "supervision_repair_design": "f037579bd0787cf1db9211a4775245bb2d6b10595ef7bc9ad0731c6b3b1efef9"
+  },
+  "status": "ZERO_API_MS_REPAIR_PACKET_READY_QUALIFICATION_NOT_RUN_REANNOTATION_NOT_AUTHORIZED",
+  "training_labels_created_or_changed": 0
+}

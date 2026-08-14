@@ -1,0 +1,75 @@
+{
+  "protocol": "pm-v1.5-v5.4-fidelity-and-rank1-gate-v2",
+  "status": "PRE_REPAIR_FROZEN_OUTCOME_CLOSED_V1_FAILURE_NOT_REQUALIFIED",
+  "date": "2026-08-10",
+  "supersedes_for_future_calls_only": "pm-v1.5-v5.4-fidelity-and-rank1-gate-v1",
+  "historical_result": {
+    "v1_status": "FIDELITY_GATE_FAIL_NO_PROMOTION",
+    "v1_result_must_remain_failed": true,
+    "posthoc_metric_substitution_forbidden": true
+  },
+  "trusted_world_evidence": {
+    "union": [
+      "exact locked public prefix",
+      "original public current user turn supplied only as a world and tone reference",
+      "verified strictly-prior typed candidate"
+    ],
+    "candidate_is_verified_fact_not_required_current_content": true,
+    "candidate_omission_is_not_world_fidelity_failure": true,
+    "candidate_current_relevance_is_not_world_fidelity": true,
+    "unsupported_fact_definition": "A past event/result, diagnosis, identity/owner, relationship, acute-safety fact, future fact, or strengthened specificity not entailed by any trusted-world source."
+  },
+  "role_and_assignment_boundary": {
+    "authored_surface": "current user turn only",
+    "assistant_move_is_prospective": true,
+    "user_turn_must_not_execute_or_impersonate_assistant_move": true,
+    "assignment_is_descriptive_construction_only_not_value_gold": true,
+    "rs_removed_low_mode": "MOVE_ALREADY_PERFORMED",
+    "reason_removed": "Whether an assistant move already occurred is fixed by the shared locked prefix and cannot be manipulated by changing only the final user turn.",
+    "rs_replacement_low_modes": [
+      "CURRENT_TURN_EXPLICITLY_DECLINES_THE_MOVE",
+      "CURRENT_TURN_RESOLVES_OR_REMOVES_THE_MOVE_NEED",
+      "CURRENT_TURN_MAKES_THE_MOVE_REDUNDANT_WITHOUT_CLAIMING_IT_ALREADY_OCCURRED"
+    ]
+  },
+  "fresh_panel": {
+    "pairs": 48,
+    "pairs_per_component": 12,
+    "all_six_old_rs_move_already_performed_pairs_must_be_reauthored": true,
+    "all_v1_nonpass_or_disagreement_pairs_must_be_replaced_or_rewritten": true,
+    "all_repairs_must_remain_outcome_blind": true,
+    "full_48_pair_fresh_dual_review_required": true,
+    "reviewers": [
+      "anthropic_claude_haiku_4_5",
+      "openai_gpt_5_mini"
+    ]
+  },
+  "fresh_reliability_gates_frozen_before_calls": {
+    "transport_complete_each_reviewer": "48/48",
+    "projected_raw_agreement": ">=0.80",
+    "projected_gwet_ac1": ">=0.60",
+    "cohen_kappa": "reported as a prevalence-sensitive diagnostic, not a sole gate",
+    "dual_consensus_pass_total": ">=42/48",
+    "dual_consensus_pass_each_component": ">=10/12",
+    "dual_consensus_unsupported_critical_fact": 0,
+    "dual_consensus_response_or_scaffold_leak": 0,
+    "all_single_reviewer_critical_flags": "outcome-blind adjudication required"
+  },
+  "rank1_boundary": {
+    "memory_query_as_implemented": "authored current user turn only; the public prefix is generator context but is not consumed by the frozen V5.3 memory retriever",
+    "rs_query_as_implemented": "locked public prefix plus authored current user turn, truncated by the frozen RS runtime",
+    "same_frozen_candidate_required_for_A_and_B": true,
+    "rank2_promotion_forbidden": true,
+    "rank1_shift_is_retrieval_or_construction_failure_not_pm_off_gold": true,
+    "accepted_families_required_per_component_before_effect": 12
+  },
+  "authorization": {
+    "outcome_blind_repair": true,
+    "production_rank1_diagnostic": true,
+    "fresh_fidelity_review_after_repair": true,
+    "response_effect_calls": false,
+    "quality_risk_function_judging": false,
+    "pm_training": false
+  },
+  "api_calls_for_contract": 0
+}

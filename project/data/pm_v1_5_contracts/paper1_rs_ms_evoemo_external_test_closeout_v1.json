@@ -1,0 +1,75 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-evoemo-external-test-closeout-v1",
+  "date": "2026-08-12",
+  "status": "RS_MS_EVOEMO_EXTERNAL_TEST_CLEAN_EXECUTION_MIXED_FUNCTIONAL_SIGNAL_FORMAL_BLIND_MEASUREMENT_NOT_YET_DONE",
+  "observed": {
+    "states": 36,
+    "logical_calls": 70,
+    "baseline_calls": 36,
+    "routed_calls": 34,
+    "distinct_rs_cards_used": 11,
+    "execution_status_counts": {
+      "clean": 35,
+      "clean_trace_sanitized": 18,
+      "clean_safe_personal_nonuse": 6,
+      "transport_or_schema_fallback": 11
+    },
+    "guard_error_counts": {
+      "TRACE_REFERENCES_UNAUTHORIZED_EVIDENCE_ID": 18,
+      "NO_STRUCTURED_OUTPUT:RetryableProviderError": 11
+    },
+    "contamination_retries": 0,
+    "requested_planned_exact": 70,
+    "observed_cost_usd_uncalibrated_flat_cap": 0.15
+  },
+  "mechanism_cleanliness": {
+    "zero_routed_calls_leaked_unauthorized_evidence_id": true,
+    "baseline_trace_sanitization_rate": "18/36 -- baseline authorizes zero evidence IDs, so any evidence-id-shaped text this 8B generator spontaneously invents is flagged; the guard caught and safely sanitized all 18, zero unsanitized leaks anywhere in the run.",
+    "note": "Hash-binding, candidate-absence MP/ME-off gating, and the fail-closed prompt-drift check all held across all 70 calls, including the retried-after-fix identity (byte-identical messages to the originally approved plan, confirmed by direct diff before re-running)."
+  },
+  "functional_read": {
+    "ms_function": {
+      "candidate_present_calls": 19,
+      "transport_or_schema_failed_calls": 6,
+      "structurally_eligible_calls": 13,
+      "generator_claimed_used": 7,
+      "claimed_rate_over_candidate_present": 0.3684,
+      "claimed_rate_over_structurally_eligible": 0.5385
+    },
+    "rs_function": {
+      "candidate_present_calls": 34,
+      "transport_or_schema_failed_calls": 11,
+      "structurally_eligible_calls": 23,
+      "generator_claimed_used": 3,
+      "claimed_rate_over_candidate_present": 0.0882,
+      "claimed_rate_over_structurally_eligible": 0.1304
+    },
+    "note": "The routing/selection mechanism (MS suitability head, RS opportunity router + Step2 card retrieval) is demonstrably wired correctly and produces non-degenerate output. But this weak 8B generator largely ignores the injected candidate content: RS is claimed actually used in only 8.8% of the routed calls where an RS card was present (13.0% among calls that produced valid structured output at all), and MS in 36.8% (53.8% among structurally valid calls). This echoes the earlier independent human-study warning on this same generator family (0/16 verified MS function despite 5/7 quality preference) -- quality preference and verified function have already been shown to diverge sharply here, and this run adds a similar, even sharper divergence for RS.",
+    "generator_reliability": "11/70 (15.7%) of all calls failed to produce valid structured JSON output at all (meta/llama-3.1-8b-instruct capability limit, not a PM/RS/MS logic issue) and fell back to a generic safe reply with generator_claimed all-False."
+  },
+  "qualitative_paired_examples": "See outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_analysis_20260812/analysis.json -> paired_examples_where_generator_claimed_ms_or_rs (7 cases). Several show a real, on-topic MS restatement of an explicitly-described change (e.g. rsmsext_31689ed5: baseline gives a generic supportive question, routed reply specifically restates \"You're now considering going on a trip with Matthew's family instead of your parents' place\") -- qualitatively consistent with real MS function when the generator does claim to use it, not obvious hallucination.",
+  "artifacts": {
+    "live_report": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812/live_report.json",
+      "sha256": "1c7689c738c61f7eaba111eb2f05f9741cf0c53decd3239baa3852669c14008a"
+    },
+    "results": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812/generator_results_private.jsonl",
+      "sha256": "5774acfbcfa94a18e7fb38b03c7a646214f7aa9471f722f4f774c10e0a0f40e9"
+    },
+    "raw": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812/raw_provider_attempts_before_guard.jsonl",
+      "sha256": "6e34cf0957f56c2308cfe188ccae3e0ab86b70c8c9886eebc379ce9bb1b56049"
+    },
+    "analysis": {
+      "path": "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_analysis_20260812/analysis.json",
+      "sha256": "44af0671866ee1467df7aad6e9153a7fd68ae627b727313db6eba55ceaa3c24f"
+    }
+  },
+  "conclusion": "The V3 executor mechanism correctly wires the trained MS checkpoint and the real RS Step1+Step2 pipeline into a real, previously-unseen, larger (36-state, 70-call) EvoEmo external test, MP/ME forced off, with zero contamination and zero unauthorized-evidence leaks. This closes the 'does RS+MS work end-to-end on real EvoEmo dialogue outside the lab' mechanism question. It does NOT close the 'does RS+MS help' research question: on this particular weak (8B) generator, RS is claimed used in under 9% of the calls where it was offered, and MS in under 37% -- running the pipeline is not itself evidence of benefit, per the project's own standing rule that baseline comparison and formal blind measurement matter more than completion.",
+  "next_scientific_action": "A formal blind pairwise quality/risk/function measurement (234l pattern) is still the only way to make any quantified 'RS+MS helps' claim. Separately, the low RS/MS uptake rate on this weak generator raises an open question worth flagging to the user: whether a stronger generator would change the uptake rate materially, before concluding anything about RS/MS's real-world utility. Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item after this external test.",
+  "authorization": {
+    "formal_blind_measurement_design": "requires_user_decision",
+    "stronger_generator_reattempt": "requires_user_decision"
+  }
+}

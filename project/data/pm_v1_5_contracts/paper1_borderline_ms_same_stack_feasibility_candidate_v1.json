@@ -1,0 +1,78 @@
+{
+  "protocol": "pm-v1.5-paper1-borderline-ms-same-stack-feasibility-candidate-v1",
+  "date": "2026-08-10",
+  "status": "ZERO_API_REALIZATION_DIAGNOSTIC_PASS_EXECUTION_FREEZE_PENDING",
+  "purpose": "Determine whether the immutable cross-fitted MS policy has real same-stack response value despite missing the pooled routing floor by 0.00067; this cannot convert the routing result to PASS.",
+  "routing_evidence": {
+    "report_path": "outputs/pm_v1_5_paper1_ms_session_aligned_final_oof_20260810/report.json",
+    "report_sha256": "938a48016d6e98f9a080675d421b19d309939f4d5052f4f45a9924200392620d",
+    "oof_path": "outputs/pm_v1_5_paper1_ms_session_aligned_final_oof_private_20260810/ms_grouped_oof_predictions.jsonl",
+    "oof_sha256": "b91606abdba2eead2fa60655d7c97f4e45e012924279ba4cf3e020da7aecbae8",
+    "formal_status": "FAIL_FIXED_OFF",
+    "use_in_this_phase": "immutable exploratory policy only"
+  },
+  "sample": {
+    "eligible_rows": 383,
+    "independent_connected_owner_groups": 17,
+    "selection": "four states per connected owner group by fixed hash order using protocol plus state_id; no label, prediction probability, response, or outcome stratification",
+    "planned_states": 68,
+    "statistical_unit": "connected owner group",
+    "state_rows_never_counted_as_independent_users": true
+  },
+  "isolated_policies": {
+    "always_off": "MP0 MS0 ME0 RS0",
+    "fixed_high_MS": "MP0 MS1 ME0 RS0 whenever an actual Rank-1 exists",
+    "cross_fitted_learned_MS": "MP0, immutable OOF MS decision, ME0, RS0",
+    "reason_RS_is_held_off": "isolate memory responsibility; the separately passed RS head is evaluated on ESConv and combined only after MS feasibility",
+    "global_action_space_remains_16": true
+  },
+  "same_stack": {
+    "current_state": "identical visible checkpoint prefix",
+    "actual_rank1": "identical frozen raw prior-session resource",
+    "realization": "actual Rank-1 remains the frozen raw prior session, then one source-exact informative seeker span is selected outcome-blind using visible seeker text only; full raw session is never forced into the generator",
+    "composition": "MS is a tentative continuity bridge inside one response plan; it is not an appended sentence and not an unconditional fact about the present",
+    "adapter": "all policies use the same memory-realization and joint-composition candidate contract",
+    "adapter_contract": "data/pm_v1_5_contracts/paper1_memory_realization_and_joint_composition_candidate_v1.json",
+    "forbidden": "post-hoc retrieval text appended to an already generated response",
+    "generator_model_prompt_seed_guard": "identical across policies except the authorized MS bit and bound resource",
+    "paired_seed_per_state": 1,
+    "logical_policy_observations": 204,
+    "deduplicated_physical_generator_calls": 136,
+    "deduplication_rule": "for each state, learned aliases always-off or fixed-high because its immutable OOF decision is binary; generate each distinct state-action-seed once and retain all policy aliases"
+  },
+  "zero_API_realization_diagnostic": {
+    "path": "outputs/pm_v1_5_paper1_ms_memory_realization_diagnostic_20260810/report.json",
+    "status": "ZERO_API_REALIZATION_DIAGNOSTIC_PASS",
+    "states": 383,
+    "fixed_hash_feasibility_states": 68,
+    "selector_abstentions": 0,
+    "selected_low_information_spans": 0,
+    "selected_visible_exact_redundancy": 0
+  },
+  "measurement": {
+    "quality": "blind paired win/tie/loss with concrete anchors; no 1-5 scale and no training-label role",
+    "risk": "six explicit literal event families, each yes/no plus severity and exact response span; verbosity or low helpfulness is not risk",
+    "function": "requested resource appeared materially, changed the response in a source-grounded way, and respected owner/time/boundary; exact evidence spans required",
+    "cost": "injected context, provider input/output tokens, latency, and USD reported separately",
+    "primary_reviewer": "human",
+    "independent_overlap": "at least 20% plus every material-risk event",
+    "LLM_judge": "sensitivity only; disagreement never overwrites human primary and never changes PM labels",
+    "aggregation": "paired owner-cluster estimates and intervals; raw win/tie/loss and event counts retained"
+  },
+  "decision": {
+    "feasibility_success": [
+      "learned versus always-off quality is not directionally worse and predicted-ON strata show positive function or quality signal",
+      "learned versus fixed-high materially reduces injected context",
+      "learned does not increase material risk versus either comparator",
+      "requested-to-materially-used accounting is complete and generator failures remain assigned to Step2 rather than relabeled as PM errors"
+    ],
+    "interpretation_if_success": "directionally usable frozen MS policy; still not a formal routing-head PASS and not yet a paper confirmation",
+    "interpretation_if_failure": "terminate the memory PM claim; no new label, model, threshold, or reviewer loop"
+  },
+  "authorization": {
+    "sample_materialization": false,
+    "generator_calls": false,
+    "review_calls": false,
+    "paid_execution": false
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-quality-risk-measurement-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_102_RS_MS_QUALITY_RISK_MEASUREMENT_CALLS_AUTHORIZED_ONCE",
+  "purpose": "Formal blind quality (paired) and risk (absolute) measurement of the RS+MS EvoEmo external test's 34 real baseline-vs-routed pairs, following the project's established 234l pattern.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_preflight_20260812/report.json",
+      "sha256": "6c3f776808b7bc62c33c8f61fec885da81abba156929814ab7d3e3b8b09273cd",
+      "required_status": "PASS_MEASUREMENT_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "quality_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_preflight_20260812/quality_packet_blind.jsonl",
+      "sha256": "31afe9f3819c5653b5cf6cacec19d565a28a35581ba55e710654784f2ca16567"
+    },
+    {
+      "role": "risk_packet",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_preflight_20260812/risk_packet_blind.jsonl",
+      "sha256": "f869875297ccb38da82ac1df809b0e396a726141a1e35d682a9d909d3d7825fa"
+    },
+    {
+      "role": "call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_preflight_20260812/call_plan_private.jsonl",
+      "sha256": "4fd4fe10616a94b048ebc1e1787ecf04b96e0d181eb3bf7897aac809faea1ef8"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_endpoints_v1.json",
+      "sha256": "daa52afecb2b747d079bdde059cacd558820471a43f71415ada4f6578bee727c"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_ms_quality_risk_measurement_execution_v1.json",
+      "sha256": "43b5d8c74b79c62cbc2dcd75fa82fd887b190df25afdac0866bb86fef9dae0bc"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "quality_risk_review_instrument",
+      "path": "src/metacom_pm/v1_5_rs_ms_quality_risk_blind_review.py",
+      "sha256": "0f8399f57fd8755219a578d5ba61166d7ccedf77e2c2c97e03aa37961dcaf189"
+    }
+  ],
+  "execution": {
+    "component": "RS+MS quality/risk blind measurement",
+    "generator": "gpt-5.6-sol",
+    "logical_calls": 102,
+    "quality_calls": 34,
+    "risk_calls": 68,
+    "run_identity": "79afa9dd66f7bee0a08cfb5ac4413f4d40e9b4f6fc5e4f8ec15243d8b3b54467",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_ms_quality_risk_measurement_live_20260812",
+    "absolute_usd_cap": 1.2
+  },
+  "authorization": {
+    "control_review_api_calls": 102,
+    "generator_calls": 0,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "stop_rules": [
+    "Persist raw provider output before any local validation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "This is a measurement round, not a re-run of the external test -- zero generator calls, zero new baseline/routed replies."
+  ]
+}

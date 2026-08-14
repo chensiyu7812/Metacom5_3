@@ -1,0 +1,161 @@
+{
+  "protocol": "pm-v1.5-paper1-source-annotated-resource-suitability-method-candidate-v1",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+  "date": "2026-08-10",
+  "status": "ZERO_API_METHOD_FREEZE_AWAITING_SEPARATE_PHASE_AUTHORITY",
+  "purpose": "Train a low-capacity PM from stable public author annotations that identify the next support-function family or longitudinal source relation, while keeping every label-only field physically absent from runtime features, retrieval, actual Rank-1, projection, executor, and generator.",
+  "supersedes_for_future_training": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "supersession_reason": "The frozen P2B control study completed 48/48 calls but proved the four semantic atoms are not operationally independent. No public labels or PM fit were created under the failed instrument.",
+  "claim": {
+    "primary": "A low-capacity auditable PM can conditionally open RS and at least one memory resource whose actual Rank-1 source is supported by public author annotations, reducing unnecessary resource injection and deterministic context cost without materially degrading end-to-end support quality or increasing material risk under a fixed stack.",
+    "not_claimed": [
+      "The PM predicts a globally optimal human response.",
+      "The PM solves unrestricted semantic understanding.",
+      "An annotation-suitable resource guarantees generator use or quality improvement.",
+      "All four heads must pass.",
+      "A failed learned head may be replaced by a rule and still be called learned."
+    ],
+    "paper1_primary_machine_predicate": "RS_pass AND count_pass(MP,MS,ME)>=1"
+  },
+  "action_space": {
+    "component_bits": ["MP", "MS", "ME", "RS"],
+    "legal_actions": 16,
+    "direct_16_class_training": false,
+    "joint_policy": "qualified per-component probabilities followed by deterministic eligibility, conflict, risk, and cost projection",
+    "failed_head": "fixed OFF"
+  },
+  "label_factory": {
+    "common": {
+      "unit": "state plus frozen actual Rank-1 component candidate",
+      "candidate_absent": "STRUCTURAL_ABSENT; no semantic label and no PM negative",
+      "positive_name": "SOURCE_ANNOTATED_SUITABLE",
+      "negative_name": "SOURCE_ANNOTATED_NOT_SUITABLE",
+      "unknown_name": "LABEL_UNAVAILABLE_FIXED_OFF",
+      "label_only_fields_never_features": true
+    },
+    "RS": {
+      "source": "ESConv first nonempty supporter turn after the current seeker turn and its public strategy annotation",
+      "mapping": {
+        "Question": ["AM01_invite_open_expression", "AM02_ask_one_focused_clarification"],
+        "Restatement or Paraphrasing": ["AM04_tentative_paraphrase_check"],
+        "Reflection of feelings": ["AM05_grounded_validation"],
+        "Affirmation and Reassurance": ["AM05_grounded_validation"],
+        "Providing Suggestions": ["AM10_offer_one_optional_micro_step"]
+      },
+      "AM14": "positive only for a frozen explicit current-user closure/fatigue signal plus a bounded closing next supporter response; otherwise negative",
+      "unmapped_strategy": "negative for the selected card, not a claim that the human response was bad",
+      "future_supporter_content_feature": false,
+      "future_strategy_annotation_feature": false
+    },
+    "MS": {
+      "source": "EvoEmo event_experience influenced_by graph",
+      "positive": "actual Rank-1 source_session_id is the conv_id of a recursive strict-past ancestor event of at least one event assigned to the current source session",
+      "negative": "actual Rank-1 exists but its source session is not in that recursive ancestor set",
+      "event_text_feature": false,
+      "influenced_by_feature": false
+    },
+    "ME": {
+      "source": "the same EvoEmo recursive event ancestry plus typed action-result compiler truth",
+      "positive": "typed actual Rank-1 ME source session is in the current session's recursive strict-past ancestor set",
+      "negative": "typed actual Rank-1 ME exists but its source session is not in that set",
+      "sparse_head_may_fail": true
+    },
+    "MP": {
+      "status": "FIXED_OFF_UNTIL_AN_INDEPENDENT_EXPLICIT_AUTHOR_RELATION_EXISTS",
+      "reason": "basic_info alone does not state when a profile fact materially changes the next response; the failed LLM instrument cannot supply that gold",
+      "transparent_scope_rule_role": "baseline and retrieval eligibility only, never learned-head gold"
+    }
+  },
+  "physical_separation": {
+    "runtime_and_feature_surface": [
+      "visible dialogue prefix through current seeker turn",
+      "actual Rank-1 typed candidate or card",
+      "runtime-valid retrieval observations frozen before labels",
+      "strict-past chronology and component availability"
+    ],
+    "evaluator_only_label_surface": [
+      "future supporter turn content",
+      "future supporter strategy annotation",
+      "EvoEmo event_experience",
+      "EvoEmo influenced_by",
+      "ES-MemEval answer, evidence, and capability"
+    ],
+    "forbidden_anywhere_in_pm_x": [
+      "summary",
+      "observation",
+      "event text",
+      "influenced_by ids or ancestor counts",
+      "future response tokens",
+      "future strategy",
+      "QA answer/evidence/capability",
+      "label, PM prediction, or downstream outcome"
+    ],
+    "separate_files_and_hashes_required": true
+  },
+  "learning": {
+    "model_family": "regularized logistic regression or equivalently lower-capacity linear probabilistic classifier",
+    "features": "runtime-only text/vector similarity, candidate/card identity, chronology, availability, selection score and margin; no label-only field",
+    "split": "ESConv official train/development/test by raw dialogue; EvoEmo six connected-owner outer folds with p13/p18 bound",
+    "threshold_selection": "development only, once; never changed after held-out results",
+    "head_floor": {
+      "grouped_oof_balanced_accuracy_min": 0.60,
+      "recall_min": 0.55,
+      "specificity_min": 0.55,
+      "brier_must_beat_prevalence": true,
+      "predicted_on_fraction_min": 0.15,
+      "predicted_off_fraction_min": 0.15
+    },
+    "primary": "RS and at least one of MS or ME must pass because MP begins fixed OFF"
+  },
+  "responsibility": {
+    "source_or_label": "missing/malformed author annotation or invalid ancestry graph",
+    "retrieval": "actual Rank-1 absent, wrong owner, not strict past, invalid typed candidate, or wrong frozen identity",
+    "PM": "valid runtime feature row and stable label exist, but grouped held-out prediction is wrong",
+    "projection": "head prediction is correct but deterministic joint action violates frozen eligibility/conflict/cost rules",
+    "executor_generator": "requested valid resource is not materially used, is misused, or creates material risk",
+    "measurement": "final quality/risk/function evaluator is unreliable or unresolved",
+    "system": "end-to-end learned policy misses noninferiority/risk/cost claims",
+    "earliest_evidenced_failure_wins": true,
+    "deployment_itt_still_retains_final_consequence": true
+  },
+  "same_stack_baselines": [
+    "always_off",
+    "fixed_high_eligible",
+    "transparent_source_annotation_rule_oracle_report_only",
+    "transparent_runtime_suitability_rule",
+    "learned_pm_qualified",
+    "cost_matched_fixed",
+    "cost_and_on_rate_matched_random"
+  ],
+  "final_system_measurement": {
+    "quality": "independent end-to-end noninferiority guardrail; never a PM label",
+    "material_risk": "absolute event families measured independently and not offset by quality or cost",
+    "function": "requested candidate contribution and exact component minimum realized",
+    "cost": "deterministic injected context plus provider tokens, latency, and USD reported separately",
+    "generator_integration": "resource content is absorbed through the frozen typed adapter before response generation; simple post-hoc retrieval concatenation is forbidden"
+  },
+  "external_tracks": {
+    "ESConv": "RS training/development/test and same-stack response experiment",
+    "EvoEmo": "longitudinal MS/ME cross-fitted routing and end-to-end response experiment",
+    "ES_MemEval": "QA transport and memory retrieval diagnostic only; QA gold never trains response PM"
+  },
+  "no_loop_rules": [
+    "Do not return to LLM-created four-axis gold.",
+    "Do not use future supporter or event-graph fields as PM features.",
+    "Do not change the annotation mapping after any fitted or held-out result.",
+    "Do not append synthetic users or small rescue packets after a failed head.",
+    "Do not lower the head floor after results.",
+    "Do not call the annotation oracle a deployable baseline."
+  ],
+  "authorization": {
+    "label_materialization": false,
+    "pm_fit": false,
+    "reviewer_or_generator_api_calls": false,
+    "response_generation": false,
+    "baseline_or_external_outcomes": false,
+    "paid_execution": false
+  },
+  "api_calls": 0,
+  "labels_created": 0,
+  "pm_fit": false
+}

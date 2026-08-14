@@ -1,0 +1,80 @@
+{
+  "protocol": "pm-v1.5-paper1-component-general-v3-g2-implementation-phase-v1",
+  "date": "2026-08-11",
+  "status": "G2_ZERO_API_IMPLEMENTATION_AND_TESTS_AUTHORIZED_ONCE",
+  "promoted_from_authority_sha256": "f36f5d2a73e809b155d4d9f325f815d1d1a11614ffa98097eafe5a2c6b9fa530",
+  "repair_contract": {
+    "path": "data/pm_v1_5_contracts/paper1_component_general_v3_repair_contract_v1.json",
+    "sha256": "447c30bea620d28af357f49d474cf6b1f8ead7fe613981b8dd00db64a9a04256"
+  },
+  "human_plan": {
+    "path": "docs/PM_V1_5_PAPER1_COMPONENT_GENERAL_V3_REPAIR_PLAN_20260811_ZH.md",
+    "sha256": "4140e283fcf1fb6ac8c42e05ece471a4e4aa5d09e45fde7547ac9ec74f3b9310"
+  },
+  "git_baseline": "3d6f709ec3ea4442023580101b82489987d86bd6",
+  "old_evidence_must_remain_unchanged": [
+    {
+      "path": "src/metacom_pm/v1_5_memory_realization_v2.py",
+      "sha256": "13c6424cffc88878a2989f8d2d0ef88c6c08e4fd3be997a7de1041a675d06555"
+    },
+    {
+      "path": "src/metacom_pm/v1_5_memory_response_plan_v2.py",
+      "sha256": "8d4118a4458e719475ca768ab484b6467efeef8ae296d7f3b3b43838c4330937"
+    }
+  ],
+  "allowed_new_implementation_paths": [
+    "src/metacom_pm/v1_5_component_general_v3.py",
+    "src/metacom_pm/v1_5_response_program_v3.py",
+    "tests/test_v1_5_component_general_v3.py",
+    "tests/test_v1_5_response_program_v3.py",
+    "scripts/v1_5/202l_validate_paper1_component_general_v3_g2_v1_5.py"
+  ],
+  "required_capabilities": [
+    "compile all 16 requested actions without changing the requested action",
+    "separate requested, structurally eligible, jointly planned, generator claimed, and offline verified functional actions",
+    "represent MP as profile-only silent modifier",
+    "represent MS as tentative continuity cue and ME as declinable past option",
+    "keep RS or R0 as exactly one primary act",
+    "resolve all six component pairs with explicit outcome-blind relations",
+    "enforce one primary act and at most one low-burden invitation without imposing a global one-memory cap",
+    "preserve every requested component bit in the jointly planned action when structurally eligible and not blocked by a hard safety or boundary veto",
+    "treat exact source as audit evidence and a meaning cue, never as required insert text",
+    "allow safe nonuse without fixed generic fallback",
+    "regenerate at most once only after owner, time, or scaffold contamination while preserving independently safe RS",
+    "keep generator telemetry separate from offline function"
+  ],
+  "required_non_regression_tests": [
+    "all 16 requested actions traverse the V3 planner",
+    "all six component pairs have explicit relation coverage without pre-outcome suppression for unknown, redundant, or conflicting relations",
+    "the full MP+MS+ME+RS requested action remains fully planned when all candidates are structurally eligible and no hard veto applies",
+    "MP_PREFERENCE and legacy preference features are rejected",
+    "literal mention and lexical overlap are never required",
+    "safe nonuse preserves the generated reply and downgrades claimed bits",
+    "owner/time/scaffold contamination invokes at most one personal-resource-free regeneration",
+    "RS remains planned during memory-only contamination recovery",
+    "transport/schema failure uses deterministic shared fallback without being called semantic function",
+    "V2 evidence hashes remain unchanged"
+  ],
+  "completion_artifacts": {
+    "validation_report": "outputs/pm_v1_5_paper1_component_general_v3_g2_validation_20260811/report.json",
+    "required_status": "G2_COMPONENT_GENERAL_V3_IMPLEMENTATION_PASS_G3_SURFACE_AUDIT_MAY_BE_DESIGNED",
+    "implementation_hashes_required": true
+  },
+  "allowed": {
+    "new_v3_code": true,
+    "new_v3_unit_tests": true,
+    "zero_api_validator": true,
+    "authority_and_failure_ledger_status_update_after_pass": true
+  },
+  "forbidden": {
+    "edit_v2_evidence_modules": true,
+    "candidate_materialization": true,
+    "label_creation": true,
+    "PM_fit": true,
+    "generator_calls": true,
+    "reviewer_calls": true,
+    "baseline_execution": true,
+    "external_execution": true,
+    "paid_execution": true
+  }
+}

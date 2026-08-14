@@ -1,0 +1,853 @@
+#!/usr/bin/env python3
+"""Validate the portable, tracked V3 authority and optional private evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = PROJECT_ROOT.parent
+AUTHORITY_DIR = PROJECT_ROOT / "data" / "v3_authority"
+
+
+def _load_json(path: Path) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def _combined_private_hash(root: Path) -> str:
+    lines: list[bytes] = []
+    for path in sorted(item for item in root.rglob("*") if item.is_file()):
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        relative = path.relative_to(REPO_ROOT).as_posix()
+        lines.append(f"{digest}  {relative}\n".encode("utf-8"))
+    return hashlib.sha256(b"".join(lines)).hexdigest()
+
+
+def validate(require_private_evidence: bool = False) -> dict[str, Any]:
+    authority_path = AUTHORITY_DIR / "v3_research_authority_v1.json"
+    official_first_path = AUTHORITY_DIR / "v3_official_first_evaluation_authority_v1.json"
+    core_program_path = AUTHORITY_DIR / "v3_core_research_program_v1.json"
+    assets_path = AUTHORITY_DIR / "v3_asset_compatibility_manifest_v1.json"
+    profile_path = AUTHORITY_DIR / "v3_active_test_profile_v1.json"
+    evaluation_path = AUTHORITY_DIR / "v3_evaluation_freeze_contract_v1.json"
+    reconciliation_path = AUTHORITY_DIR / "es_memeval_repository_reconciliation_v1.json"
+    implementation_path = AUTHORITY_DIR / "official_benchmark_implementation_audit_v1.json"
+    snapshot_path = AUTHORITY_DIR / "official_benchmark_surface_snapshot_v1.json"
+    checklist_path = AUTHORITY_DIR / "p0_exit_checklist_v1.json"
+    generator_contract_path = AUTHORITY_DIR / "generator_qualification_measurement_contract_v1.json"
+    g0_contract_path = AUTHORITY_DIR / "g0_generator_bakeoff_contract_v1.json"
+    g0_preflight_path = AUTHORITY_DIR / "g0_generator_bakeoff_preflight_v1.json"
+    g0_screen_manifest_path = AUTHORITY_DIR / "g0_esc_eval_screening_manifest_v1.jsonl"
+    g0_executor_manifest_path = AUTHORITY_DIR / "g0_executor_screening_manifest_v1.jsonl"
+    g0_runtime_setup_path = AUTHORITY_DIR / "g0_local_runtime_setup_v1.json"
+    g0_canary_closeout_path = AUTHORITY_DIR / "g0_canary_identity_7a4d_closeout_v1.json"
+    g0_bd2b_closeout_path = AUTHORITY_DIR / "g0_bd2b_prompt_cap_measurement_closeout_v1.json"
+    g0r2_contract_path = AUTHORITY_DIR / "g0_research_aligned_generator_contract_v2.json"
+    g0r2_prompt_path = AUTHORITY_DIR / "g0_research_aligned_supporter_prompt_v1.json"
+    g0r2_preflight_path = AUTHORITY_DIR / "g0_research_aligned_generator_preflight_v2.json"
+    g0r2_manifest_path = AUTHORITY_DIR / "g0_research_aligned_screening_manifest_v2.jsonl"
+    g0r2_closeout_path = AUTHORITY_DIR / "g0_research_aligned_canary_closeout_v2.json"
+    g0_wrong_reference_correction_path = AUTHORITY_DIR / "g0_wrong_70b_reference_correction_v1.json"
+    g0_nemotron_contract_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_contract_v1.json"
+    g0_nemotron_preflight_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_preflight_v1.json"
+    g0_nemotron_closeout_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_closeout_v1.json"
+    g0_four_generator_contract_path = AUTHORITY_DIR / "g0_four_generator_full_screen_contract_v1.json"
+    g0_four_generator_preflight_path = AUTHORITY_DIR / "g0_four_generator_full_screen_preflight_v1.json"
+    g0_four_generator_closeout_path = AUTHORITY_DIR / "g0_four_generator_full_screen_closeout_v1.json"
+    g0_four_generator_esc_rank_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_preflight_v1.json"
+    g0_four_generator_esc_rank_closeout_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_closeout_v1.json"
+    generator_fair_selection_path = AUTHORITY_DIR / "generator_fair_selection_protocol_v1.json"
+    g0_fair_judge_canary_path = AUTHORITY_DIR / "g0_fair_judge_canary_preflight_v1.json"
+    generator_esc_eval_primary_selection_path = AUTHORITY_DIR / "generator_esc_eval_primary_selection_v1.json"
+    g0_esc_eval_human_review_packet_path = AUTHORITY_DIR / "g0_esc_eval_human_review_packet_manifest_v1.json"
+    generator_esc_eval_development_decision_path = AUTHORITY_DIR / "generator_esc_eval_development_decision_contract_v1.json"
+    esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
+    same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
+    margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
+    esc_rank_runtime_preflight_path = AUTHORITY_DIR / "esc_rank_runtime_preflight_v1.json"
+    risk_protocol_path = AUTHORITY_DIR / "risk_adjudication_protocol_v1.json"
+    runtime_lock_path = AUTHORITY_DIR / "benchmark_runtime_lock_v1.json"
+    benchmark_dry_run_path = AUTHORITY_DIR / "benchmark_protocol_dry_run_manifest_v1.json"
+    overlap_summary_path = AUTHORITY_DIR / "esc_training_exam_overlap_summary_v1.json"
+    overlap_rows_path = AUTHORITY_DIR / "esc_training_exam_overlap_v1.jsonl"
+    risk_qualification_path = AUTHORITY_DIR / "risk_instrument_qualification_v1.json"
+    risk_packets_path = AUTHORITY_DIR / "atomic_risk_fixture_packets_v1.jsonl"
+    risk_assignments_path = AUTHORITY_DIR / "atomic_risk_fixture_assignments_v1.jsonl"
+    memeval_decision_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
+    memeval_row_identity_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
+    official_esc_contract_path = AUTHORITY_DIR / "g0_official_protocol_english331_contract_v1.json"
+    official_esc_manifest_path = AUTHORITY_DIR / "g0_official_protocol_english331_manifest_v1.jsonl"
+    official_esc_preflight_path = AUTHORITY_DIR / "g0_official_protocol_english331_preflight_v1.json"
+    authority = _load_json(authority_path)
+    official_first = _load_json(official_first_path)
+    core_program = _load_json(core_program_path)
+    assets = _load_json(assets_path)
+    profile = _load_json(profile_path)
+    evaluation = _load_json(evaluation_path)
+    reconciliation = _load_json(reconciliation_path)
+    implementation = _load_json(implementation_path)
+    snapshot = _load_json(snapshot_path)
+    checklist = _load_json(checklist_path)
+    generator_contract = _load_json(generator_contract_path)
+    g0_contract = _load_json(g0_contract_path)
+    g0_preflight = _load_json(g0_preflight_path)
+    g0_runtime_setup = _load_json(g0_runtime_setup_path)
+    g0_canary_closeout = _load_json(g0_canary_closeout_path)
+    g0_bd2b_closeout = _load_json(g0_bd2b_closeout_path)
+    g0r2_contract = _load_json(g0r2_contract_path)
+    g0r2_prompt = _load_json(g0r2_prompt_path)
+    g0r2_preflight = _load_json(g0r2_preflight_path)
+    g0r2_closeout = _load_json(g0r2_closeout_path)
+    g0_wrong_reference_correction = _load_json(g0_wrong_reference_correction_path)
+    g0_nemotron_contract = _load_json(g0_nemotron_contract_path)
+    g0_nemotron_preflight = _load_json(g0_nemotron_preflight_path)
+    g0_nemotron_closeout = _load_json(g0_nemotron_closeout_path)
+    g0_four_generator_contract = _load_json(g0_four_generator_contract_path)
+    g0_four_generator_preflight = _load_json(g0_four_generator_preflight_path)
+    g0_four_generator_closeout = _load_json(g0_four_generator_closeout_path)
+    g0_four_generator_esc_rank = _load_json(g0_four_generator_esc_rank_path)
+    g0_four_generator_esc_rank_closeout = _load_json(g0_four_generator_esc_rank_closeout_path)
+    generator_fair_selection = _load_json(generator_fair_selection_path)
+    g0_fair_judge_canary = _load_json(g0_fair_judge_canary_path)
+    generator_esc_eval_primary_selection = _load_json(generator_esc_eval_primary_selection_path)
+    g0_esc_eval_human_review_packet = _load_json(g0_esc_eval_human_review_packet_path)
+    generator_esc_eval_development_decision = _load_json(generator_esc_eval_development_decision_path)
+    esc_rank_audit = _load_json(esc_rank_audit_path)
+    same_stack_reference = _load_json(same_stack_reference_path)
+    margin_contract = _load_json(margin_contract_path)
+    esc_rank_runtime_preflight = _load_json(esc_rank_runtime_preflight_path)
+    risk_protocol = _load_json(risk_protocol_path)
+    runtime_lock = _load_json(runtime_lock_path)
+    benchmark_dry_run = _load_json(benchmark_dry_run_path)
+    overlap_summary = _load_json(overlap_summary_path)
+    risk_qualification = _load_json(risk_qualification_path)
+    memeval_decision = _load_json(memeval_decision_path)
+    official_esc_contract = _load_json(official_esc_contract_path)
+    official_esc_preflight = _load_json(official_esc_preflight_path)
+
+    failures: list[str] = []
+
+    expected_commit = "ef318c3e35982e277883e06c5ec25cc7392eab67"
+    if authority["source_revision"]["source_commit"] != expected_commit:
+        failures.append("unexpected authority source commit")
+    if authority.get("active_evaluation_authority") != "data/v3_authority/v3_official_first_evaluation_authority_v1.json":
+        failures.append("official-first authority is not active")
+    if authority.get("active_research_program") != "data/v3_authority/v3_core_research_program_v1.json":
+        failures.append("core research program is not active")
+    if official_first.get("active_research_program") != authority.get("active_research_program"):
+        failures.append("research and evaluation authorities disagree on the active core program")
+    if core_program.get("status") != "ACTIVE_SOLE_RESEARCH_PROGRAM_OFFICIAL_BENCHMARK_FIRST":
+        failures.append("core research program status changed")
+    if core_program.get("primary_success_shape", {}).get("typed_memory") != "count(useful(MP), useful(MS), useful(ME)) >= 2":
+        failures.append("two-of-three typed-memory contribution requirement changed")
+    if core_program.get("generalization_scope", {}).get("unseen_user_supervised_generalization") != "NOT_A_PAPER1_REQUIREMENT":
+        failures.append("Paper 1 unseen-user claim boundary changed")
+    if core_program.get("evidence_source_roles", {}).get("EvoEmo", "").startswith("retained diagnostic") is False:
+        failures.append("EvoEmo was silently restored as a required primary track")
+    baseline_layers = core_program.get("baseline_evidence_layers", {})
+    if baseline_layers.get("published_reference", {}).get("causal_comparator") is not False:
+        failures.append("published old-model scores were promoted to causal baselines")
+    if baseline_layers.get("official_protocol_sanity_reproduction", {}).get("causal_comparator") is not False:
+        failures.append("official protocol sanity reproduction was promoted to a PM comparator")
+    if baseline_layers.get("same_stack_baseline_rerun", {}).get("causal_comparator") is not True:
+        failures.append("same-stack rerun is no longer the primary PM comparator")
+    pm_architecture = core_program.get("pm_architecture", {})
+    if pm_architecture.get("identity") != "ONE_FACTORIZED_PRE_GENERATION_PM":
+        failures.append("core program no longer defines one factorized PM")
+    if pm_architecture.get("component_heads") != ["MP", "MS", "ME", "RS"]:
+        failures.append("factorized PM component head surface changed")
+    if pm_architecture.get("step2", {}).get("is_second_pm") is not False:
+        failures.append("Step 2 was incorrectly promoted to a second PM")
+    task_masks = pm_architecture.get("task_action_masks", {})
+    if task_masks.get("ESConv_and_ESC_Eval_strategy", {}).get("hard_off") != ["MP", "MS", "ME"]:
+        failures.append("ESConv/ESC-Eval strategy action mask changed")
+    if task_masks.get("ES_MemEval_QA_and_Summary", {}).get("hard_off") != ["RS"]:
+        failures.append("ES-MemEval QA/Summary action mask changed")
+    if task_masks.get("ES_MemEval_Dialogue_Generation", {}).get("hard_off") != ["RS"]:
+        failures.append("ES-MemEval official-aligned dialogue generation must keep RS fixed")
+    if pm_architecture.get("optional_future_joint_adaptation", {}).get("active") is not False:
+        failures.append("custom four-head DG adaptation was activated before official results")
+    if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
+        failures.append("official-first authority status changed")
+    if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
+        failures.append("official-first benchmark order changed")
+    if official_first["only_project_defined_primary_metric_retained"]["metric"] != "Cost":
+        failures.append("a project-defined primary metric other than Cost is active")
+    if official_first["custom_evidence_demotion"]["status"] != "RETAINED_FOR_PROVENANCE_DEFAULT_NOT_EXECUTED_NOT_PRIMARY":
+        failures.append("custom evidence is no longer demoted")
+    if assets["source_commit"] != expected_commit:
+        failures.append("authority/asset source commit mismatch")
+    if authority["execution_boundary"]["this_file_authorizes"] == []:
+        failures.append("execution boundary is empty")
+    if any(phase.get("api_authority") for phase in authority["execution_phases"]):
+        failures.append("a planning phase unexpectedly authorizes API execution")
+    if evaluation["status"] != "P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED":
+        failures.append("evaluation P0/P1 boundary changed")
+    required_blocks = {"unqualified scorer or judge use", "numeric Quality/Risk margin absent", "same-stack generator selection incomplete"}
+    if not required_blocks.issubset(set(evaluation["p1_blocks_before_formal_verdict"])):
+        failures.append("evaluation P1 formal-verdict blocks are incomplete")
+
+    phase_ids = [phase["phase"] for phase in authority["execution_phases"]]
+    if phase_ids != [f"V3-P{index}" for index in range(7)]:
+        failures.append("execution phases are not the frozen V3-P0..V3-P6 sequence")
+
+    memeval = authority["external_tracks"]["ES_MemEval"]
+    if memeval["status"] != "FROZEN_AS_ES_MEMEVAL_PUBLIC_V1_0_0_1427_NOT_EXACT_PAPER_REPLICATION":
+        failures.append("ES-MemEval public-1427 identity decision changed")
+    if not all(token in memeval["version_discrepancy"] for token in ("1209", "1427", "418")):
+        failures.append("ES-MemEval discrepancy does not bind all known counts")
+
+    required_documents = [
+        PROJECT_ROOT / "docs" / "V3_MASTER_RESEARCH_PROGRAM_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_CORE_RESEARCH_PROGRAM_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_EVALUATION_BENCHMARK_PLAN_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_DATASET_AND_EVIDENCE_CARDS_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md",
+        PROJECT_ROOT / "scripts" / "v3" / "01_audit_official_benchmark_surfaces.py",
+        PROJECT_ROOT / "scripts" / "v3" / "02_materialize_es_memeval_public_identity.py",
+        PROJECT_ROOT / "scripts" / "v3" / "03_materialize_benchmark_protocol_dry_run.py",
+        PROJECT_ROOT / "scripts" / "v3" / "04_materialize_esc_training_exam_overlap.py",
+        PROJECT_ROOT / "scripts" / "v3" / "05_materialize_atomic_risk_instrument.py",
+        PROJECT_ROOT / "scripts" / "v3" / "06_run_v3_active_tests.py",
+        PROJECT_ROOT / "scripts" / "v3" / "07_audit_esc_rank_public_qualification.py",
+        PROJECT_ROOT / "scripts" / "v3" / "08_materialize_esc_rank_runtime_preflight.py",
+        PROJECT_ROOT / "scripts" / "v3" / "09_materialize_g0_generator_bakeoff.py",
+        PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "11_smoke_g0_local_models.py",
+        PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
+        PROJECT_ROOT / "scripts" / "v3" / "15_materialize_g0_research_aligned_generator.py",
+        PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
+        PROJECT_ROOT / "scripts" / "v3" / "17_closeout_g0_research_aligned_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "18_materialize_g0_nemotron30b_transport_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "19_run_g0_nemotron30b_transport_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "21_materialize_g0_four_generator_full_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "22_run_g0_four_generator_full_screen.py",
+        REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
+    ]
+    failures.extend(
+        f"missing required document: {path.relative_to(REPO_ROOT)}"
+        for path in required_documents
+        if not path.is_file()
+    )
+
+    test_paths = [PROJECT_ROOT / relative for relative in profile["tests"]]
+    failures.extend(
+        f"missing active test: {path.relative_to(PROJECT_ROOT)}"
+        for path in test_paths
+        if not path.is_file()
+    )
+    if profile["expected_test_count"] != 100:
+        failures.append("active profile expected test count changed without authority update")
+
+    dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
+    if {card["dataset"] for card in dataset_cards} != {"ESConv", "EvoEmo", "ES-MemEval", "ESC-Eval"}:
+        failures.append("the four required structured dataset cards are incomplete")
+    esconv = next(card for card in dataset_cards if card["dataset"] == "ESConv")
+    esconv_path = PROJECT_ROOT / esconv["official_source"]["local_path"]
+    if hashlib.sha256(esconv_path.read_bytes()).hexdigest() != esconv["official_source"]["sha256"]:
+        failures.append("local ESConv file does not match its pinned official hash")
+    es_memeval = next(card for card in dataset_cards if card["dataset"] == "ES-MemEval")
+    paper_qa = es_memeval["formal_paper"]["reported_counts"]["qa"]
+    public_qa = es_memeval["public_repository"]["observed_counts"]["qa"]
+    if (paper_qa, public_qa, public_qa - paper_qa) != (1209, 1427, 218):
+        failures.append("ES-MemEval 1209/1427/218 identity conflict changed")
+    if es_memeval["status"] != "FROZEN_AS_ES_MEMEVAL_PUBLIC_V1_0_0_1427_WITH_DISCLOSURE":
+        failures.append("ES-MemEval dataset card lost the public-1427 decision")
+    comparison = reconciliation["qa_count_comparison"]
+    if comparison[-1] != {"capability": "total", "formal_paper": 1209, "public_v1_0_0": 1427, "difference": 218}:
+        failures.append("ES-MemEval reconciliation total is inconsistent")
+    if sum(row["difference"] for row in comparison[:-1]) != 218:
+        failures.append("ES-MemEval capability deltas do not sum to 218")
+
+    if implementation["status"] != "OFFICIAL_PROTOCOLS_PINNED_LOCAL_QUALIFICATION_REQUIRED":
+        failures.append("official implementation audit status changed")
+    if runtime_lock["status"] != "P0_PROTOCOL_AND_IDENTITIES_FROZEN_P1_RUNTIME_QUALIFICATION_NOT_AUTHORIZED":
+        failures.append("benchmark runtime lock status changed")
+    if runtime_lock["authorization"] != {"model_calls": False, "judge_calls": False, "fine_tuning": False}:
+        failures.append("benchmark runtime lock unexpectedly authorizes execution")
+    if hashlib.sha256(benchmark_dry_run_path.read_bytes()).hexdigest() != runtime_lock["dry_run"]["sha256"]:
+        failures.append("benchmark dry-run hash does not match runtime lock")
+    if benchmark_dry_run["api_calls"] != 0 or benchmark_dry_run["contains_role_or_dialogue_text"] is not False:
+        failures.append("benchmark dry run is not zero-call and text-free")
+    if benchmark_dry_run["ESC-Eval"]["card_count"] != 655:
+        failures.append("benchmark dry run lost the 655 ESC-Eval cards")
+    if (benchmark_dry_run["ESC-Judge"]["public_role_count"], benchmark_dry_run["ESC-Judge"]["selected_role_count"], benchmark_dry_run["ESC-Judge"]["judge_unit_count"]) != (100, 25, 150):
+        failures.append("benchmark dry run lost the frozen ESC-Judge 100/25/150 shape")
+    if snapshot["ESC-Eval"]["high_quality_cards"] != {"en": 331, "zh": 324, "total": 655}:
+        failures.append("ESC-Eval public 655-card identity changed")
+    if snapshot["ESC-Eval"]["commit"] != implementation["benchmarks"]["ESC-Eval"]["commit"]:
+        failures.append("ESC-Eval audit/snapshot commit mismatch")
+    if snapshot["ESC-Judge"]["roles_v1_records"] != 100:
+        failures.append("ESC-Judge public role count changed")
+    if snapshot["ESC-Judge"]["explicit_bidirectional_order_aggregation_present"] is not False:
+        failures.append("ESC-Judge position-order audit changed without qualification update")
+    if snapshot["ES-MemEval"]["qa"] != 1427 or snapshot["ES-MemEval"]["public_git_commits"] != 2:
+        failures.append("ES-MemEval public history surface changed")
+    row_identity_bytes = memeval_row_identity_path.read_bytes()
+    row_identity_records = [json.loads(line) for line in row_identity_bytes.decode("utf-8").splitlines() if line]
+    row_identity_sha256 = hashlib.sha256(row_identity_bytes).hexdigest()
+    if len(row_identity_records) != 1427 or len({row["row_id"] for row in row_identity_records}) != 1427:
+        failures.append("ES-MemEval public-1427 row identity is incomplete or non-unique")
+    if row_identity_sha256 != memeval_decision["identity_manifest"]["sha256"]:
+        failures.append("ES-MemEval public-1427 row identity hash mismatch")
+    local_memeval_path = PROJECT_ROOT / "data" / "external" / "evo_emo.json"
+    if hashlib.sha256(local_memeval_path.read_bytes()).hexdigest() != memeval_decision["source"]["sha256"]:
+        failures.append("local ES-MemEval/EvoEmo file does not match the frozen public-v1.0.0 source")
+    capability_counts: dict[str, int] = {}
+    for row in row_identity_records:
+        capability_counts[row["capability"]] = capability_counts.get(row["capability"], 0) + 1
+    if capability_counts != memeval_decision["identity_manifest"]["capability_counts"]:
+        failures.append("ES-MemEval public-1427 capability counts changed")
+    if any("question" in row or "answer" in row or "evidence" in row for row in row_identity_records):
+        failures.append("ES-MemEval row identity unexpectedly contains benchmark text")
+    if memeval_decision["formal_paper_boundary"]["forbidden_wording"] == "":
+        failures.append("ES-MemEval exact-paper-replication boundary is empty")
+    if checklist["p0_exit_now"] is not True:
+        failures.append("P0 design checklist is not complete")
+    if checklist["p0_completion_authorizes_api_calls"] or checklist["p0_completion_authorizes_formal_verdicts"]:
+        failures.append("P0 design completion unexpectedly authorizes execution or verdicts")
+    complete_gates = {gate["gate"] for gate in checklist["gates"] if gate["status"] == "COMPLETE"}
+    if complete_gates != {"dataset_identity", "official_implementation_pin", "scorer_and_judge_role_and_qualification_plan", "same_stack_reference", "pass_margin_derivation_plan", "training_exam_overlap", "atomic_risk_instrument_design", "statistical_units_and_estimands", "claim_boundaries_and_function_role"}:
+        failures.append("P0 complete-gate set changed without authority update")
+    overlap_bytes = overlap_rows_path.read_bytes()
+    overlap_rows = [json.loads(line) for line in overlap_bytes.decode("utf-8").splitlines() if line]
+    if overlap_summary["cards_in_known_training_source_scope"] != 228 or len(overlap_rows) != 228:
+        failures.append("ESC training/exam overlap row count changed")
+    if hashlib.sha256(overlap_bytes).hexdigest() != overlap_summary["row_manifest"]["sha256"]:
+        failures.append("ESC training/exam overlap row hash mismatch")
+    if overlap_summary["qualification_identity_policy"]["clean_english_holdout_if_esconv_and_extes_train"]["cards"] != 103:
+        failures.append("contamination-aware ESC English holdout changed")
+    if overlap_summary["contains_source_or_card_text"] is not False or overlap_summary["api_calls"] != 0:
+        failures.append("ESC overlap artifact is not zero-call and text-free")
+    forbidden_overlap_fields = {"text", "raw_text", "source_text", "card_text", "problem", "problem_text"}
+    if any(key in forbidden_overlap_fields for row in overlap_rows for key in row):
+        failures.append("ESC overlap rows unexpectedly expose benchmark/source text")
+    risk_packets = [json.loads(line) for line in risk_packets_path.read_text(encoding="utf-8").splitlines() if line]
+    risk_assignments = [json.loads(line) for line in risk_assignments_path.read_text(encoding="utf-8").splitlines() if line]
+    if risk_qualification["status"] != "INSTRUMENT_DRY_RUN_COMPLETE_HUMAN_QUALIFICATION_PENDING":
+        failures.append("Risk instrument qualification status changed")
+    if (len(risk_packets), len(risk_assignments), risk_qualification["review_tasks"]) != (18, 36, 36):
+        failures.append("Risk fixture/assignment shape changed")
+    if risk_qualification["mechanical_validation_failures"] or risk_qualification["formal_replies_consumed"] != 0:
+        failures.append("Risk fixture failed validation or consumed formal replies")
+    if any("gold" in key or "expected" in key for row in risk_packets + risk_assignments for key in row):
+        failures.append("blinded Risk packets or assignments expose gold")
+    leaked_id_tokens = {*risk_protocol["events"], "positive", "safe", "ambiguous"}
+    if risk_qualification["public_identifier_contains_target_or_variant"] is not False:
+        failures.append("Risk qualification does not attest blinded public identifiers")
+    if any(any(token in row["packet_id"] for token in leaked_id_tokens) for row in risk_packets + risk_assignments):
+        failures.append("Risk public packet identifiers expose target or fixture variant")
+    if len(risk_qualification["artifact_hashes"]["gold"]) != 64 or "HASH_COMMITMENT_ONLY" not in risk_qualification["gold_release_policy"]:
+        failures.append("Risk fixture gold is not bound by an embargoed hash commitment")
+    if not generator_contract["primary_exam"]["pass_margin"].startswith("NO_SOLE_ESC_RANK_NUMERIC_CUTOFF"):
+        failures.append("generator contract permits an unsupported sole ESC-RANK cutoff")
+    official_dimensions = [
+        {"paper_name": "Fluency", "public_adapter_key": "fluency"},
+        {"paper_name": "Expression", "public_adapter_key": "diversity"},
+        {"paper_name": "Empathy", "public_adapter_key": "empathic"},
+        {"paper_name": "Information", "public_adapter_key": "suggestion"},
+        {"paper_name": "Skill", "public_adapter_key": "tech"},
+        {"paper_name": "Humanoid", "public_adapter_key": "human"},
+        {"paper_name": "Overall", "public_adapter_key": "overall"},
+    ]
+    if generator_contract["primary_exam"]["official_reported_dimensions"] != official_dimensions:
+        failures.append("generator contract does not bind the official ESC-RANK seven-dimension mapping")
+    if g0_contract["official_esc_rank_dimensions"] != official_dimensions:
+        failures.append("G0 contract ESC-RANK dimension mapping drifted")
+    g0_rows_bytes = g0_screen_manifest_path.read_bytes()
+    g0_rows = [json.loads(line) for line in g0_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(g0_rows) != 24 or len({row["card_key"] for row in g0_rows}) != 24:
+        failures.append("G0 ESC-Eval screen is not 24 unique cards")
+    if hashlib.sha256(g0_rows_bytes).hexdigest() != g0_preflight["screening_sample"]["manifest_sha256"]:
+        failures.append("G0 ESC-Eval screening manifest hash mismatch")
+    g0_executor_bytes = g0_executor_manifest_path.read_bytes()
+    g0_executor_rows = [json.loads(line) for line in g0_executor_bytes.decode("utf-8").splitlines() if line]
+    if len(g0_executor_rows) != 32 or len({row["packet_id"] for row in g0_executor_rows}) != 16:
+        failures.append("G0 executor screen is not 32 calls over 16 packets")
+    if len({row["owner_cluster_id"] for row in g0_executor_rows}) != 16:
+        failures.append("G0 executor screen is not owner-unique")
+    if hashlib.sha256(g0_executor_bytes).hexdigest() != g0_preflight["executor_sample"]["manifest_sha256"]:
+        failures.append("G0 executor screening manifest hash mismatch")
+    if g0_preflight["api_calls"] != 0 or g0_preflight["contains_role_card_or_dialogue_text"] is not False:
+        failures.append("G0 preflight is not text-free and zero-call")
+    if g0_preflight["status"] != "ZERO_CALL_PREFLIGHT_PASS_EXECUTION_REQUIRES_EXPLICIT_BUDGET_APPROVAL":
+        failures.append("G0 preflight status changed")
+    if g0_preflight["logical_calls"]["qwen_paid_logical_calls"] != 152:
+        failures.append("G0 Qwen logical-call budget changed")
+    # The consumed bd2b identity remains an immutable historical artifact.
+    # Its API hash intentionally no longer matches the live client because
+    # the replacement runtime added an explicit no-cap mode; the closeout
+    # forbids resuming or using bd2b to rank maximum capability.
+    executable_bindings = {
+        "10_run_g0_esc_eval_screen.py": PROJECT_ROOT / "scripts" / "v3" / "10_run_g0_esc_eval_screen.py",
+        "12_run_g0_executor_screen.py": PROJECT_ROOT / "scripts" / "v3" / "12_run_g0_executor_screen.py",
+        "13_score_g0_esc_rank.py": PROJECT_ROOT / "scripts" / "v3" / "13_score_g0_esc_rank.py",
+        "metacom_pm/esc_rank_runtime.py": PROJECT_ROOT / "src" / "metacom_pm" / "esc_rank_runtime.py",
+        "metacom_pm/v1_5_ms_same_stack_feasibility.py": PROJECT_ROOT / "src" / "metacom_pm" / "v1_5_ms_same_stack_feasibility.py",
+    }
+    for name, path in executable_bindings.items():
+        expected = g0_preflight["input_hashes"].get(f"executable::{name}")
+        observed = hashlib.sha256(path.read_bytes()).hexdigest()
+        if expected != observed:
+            failures.append(f"G0 executable binding drifted: {name}")
+    if g0_runtime_setup["status"] != "PASS_ZERO_GENERATION" or g0_runtime_setup["api_calls"] != 0 or g0_runtime_setup["model_generation_calls"] != 0:
+        failures.append("G0 local official-model runtime did not pass a zero-generation smoke")
+    if len(g0_runtime_setup["esc_rank"]["loaded_adapter_keys"]) != 14:
+        failures.append("G0 local ESC-RANK runtime did not attach all 14 adapters")
+    if g0_canary_closeout["observed_before_fail_closed_stop"]["qwen_physical_attempts"] != 0:
+        failures.append("superseded G0 canary unexpectedly consumed Qwen inference")
+    if g0_canary_closeout["status"] != "CONSUMED_CANARY_IMPLEMENTATION_SCOPE_DEFECT_QWEN_ZERO_COST_SUPERSEDED":
+        failures.append("superseded G0 canary closeout status changed")
+    qwen = next((row for row in g0_contract["candidates"] if row["candidate_id"] == "qwen37_plus_primary_challenger"), None)
+    if not qwen or qwen["model"] != "qwen3.7-plus-2026-05-26" or qwen.get("enable_thinking") is not False:
+        failures.append("G0 Qwen dated non-thinking endpoint is not frozen")
+    if g0_bd2b_closeout["run_identity"] != g0_preflight["run_identity"]:
+        failures.append("bd2b measurement closeout is not bound to the consumed identity")
+    if g0_bd2b_closeout["status"] != "STOPPED_PROMPT_AND_OUTPUT_CAP_MEASUREMENT_INVALID_FOR_MAXIMUM_CAPABILITY":
+        failures.append("bd2b prompt/cap measurement was not correctly retired")
+    if "ranking maximum supporter capability" not in g0_bd2b_closeout["forbidden_use"]:
+        failures.append("bd2b closeout does not forbid maximum-capability ranking")
+
+    g0r2_rows_bytes = g0r2_manifest_path.read_bytes()
+    g0r2_rows = [json.loads(line) for line in g0r2_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(g0r2_rows) != 24 or len({row["card_key"] for row in g0r2_rows}) != 24:
+        failures.append("research-aligned G0 manifest is not 24 unique cards")
+    if sum(bool(row["canary"]) for row in g0r2_rows) != 2:
+        failures.append("research-aligned G0 canary is not exactly two cards")
+    if hashlib.sha256(g0r2_rows_bytes).hexdigest() != g0r2_preflight["sample"]["manifest_sha256"]:
+        failures.append("research-aligned G0 manifest hash mismatch")
+    joined_prompt = "\n\n".join(section.strip() for section in g0r2_prompt["prompt_sections"])
+    if hashlib.sha256(joined_prompt.encode("utf-8")).hexdigest() != g0r2_preflight["prompt"]["joined_prompt_sha256"]:
+        failures.append("research-aligned supporter prompt hash mismatch")
+    if g0r2_contract["shared_generation_contract"]["researcher_output_token_cap"] is not None:
+        failures.append("research-aligned G0 unexpectedly imposes an output cap")
+    if g0r2_prompt["output_length_policy"]["researcher_token_cap"] is not None:
+        failures.append("research-aligned prompt unexpectedly imposes an output cap")
+    if len(g0r2_contract["candidates"]) != 4:
+        failures.append("research-aligned G0 lost a candidate configuration")
+    qwen_modes = {
+        row.get("enable_thinking")
+        for row in g0r2_contract["candidates"]
+        if row["candidate_id"].startswith("qwen37_plus_")
+    }
+    if qwen_modes != {False, True}:
+        failures.append("research-aligned G0 does not bind both Qwen modes")
+    if g0r2_closeout["run_identity"] != g0r2_preflight["run_identity"]:
+        failures.append("research-aligned canary closeout identity drifted")
+    if g0r2_closeout["status"] != "CANARY_MECHANICAL_PASS_QUALITY_NOT_YET_JUDGED_NO_GENERATOR_SELECTED":
+        failures.append("research-aligned canary status overclaims or changed")
+    if g0r2_closeout["api_scope"]["supporter_successful_turns"] != 40 or g0r2_closeout["api_scope"]["judge_calls"] != 0:
+        failures.append("research-aligned canary call accounting drifted")
+    if g0r2_closeout["generation_contract_observed"]["provider_length_finishes"] != 0:
+        failures.append("research-aligned canary contains a provider length finish")
+    if g0r2_closeout["zero_api_interpretation"]["selection"] != "FORBIDDEN_FROM_TWO_CARD_CANARY":
+        failures.append("research-aligned canary improperly selects a generator")
+    g0r2_executables = {
+        "16_run_g0_research_aligned_esc.py": PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
+        "metacom_pm/api.py": PROJECT_ROOT / "src" / "metacom_pm" / "api.py",
+    }
+    for name, path in g0r2_executables.items():
+        if hashlib.sha256(path.read_bytes()).hexdigest() != g0r2_preflight["input_hashes"].get(f"executable::{name}"):
+            failures.append(f"research-aligned G0 executable binding drifted: {name}")
+    if esc_rank_audit["status"] != "PUBLIC_SCORER_REPLAYABLE_ONLY_AFTER_REPAIR_HUMAN_CALIBRATION_NOT_INDEPENDENTLY_REPRODUCIBLE":
+        failures.append("ESC-RANK public qualification decision changed")
+    if esc_rank_audit["api_calls"] != 0 or esc_rank_audit["model_inference_calls"] != 0:
+        failures.append("ESC-RANK public audit unexpectedly consumed inference")
+    if esc_rank_audit["sources"]["ESC-Eval"]["public_human_label_rows"] != 0:
+        failures.append("ESC-RANK audit human-label availability changed without review")
+    if esc_rank_audit["sources"]["ESC-RANK"]["primary_language_dimension_adapters"] != 14:
+        failures.append("ESC-RANK adapter surface changed")
+    if same_stack_reference["status"] != "REFERENCE_SELECTED_ZERO_INFERENCE_EXECUTION_PENDING_APPROVAL":
+        failures.append("same-stack reference status changed")
+    if same_stack_reference["reference"]["model_route"] != "meta/llama-3.3-70b-instruct":
+        failures.append("same-stack reference route changed")
+    if same_stack_reference["accessibility_check"]["inference_calls"] != 0:
+        failures.append("same-stack accessibility check unexpectedly used inference")
+    if g0_wrong_reference_correction["status"] != "CORRECTED_70B_REMOVED_FROM_CANDIDATE_SET_RAW_EVIDENCE_RETAINED":
+        failures.append("wrong 70B reference is not explicitly corrected")
+    if g0_wrong_reference_correction["correction"]["wrong_route"] != same_stack_reference["reference"]["model_route"]:
+        failures.append("wrong-reference correction does not bind the historical 70B route")
+    corrected_reference = g0_wrong_reference_correction["correction"]["intended_route"]
+    if corrected_reference != "nvidia/nemotron-3-nano-30b-a3b":
+        failures.append("corrected Nemotron route changed")
+    if g0_nemotron_contract["candidate"]["model"] != corrected_reference:
+        failures.append("Nemotron canary does not use the corrected route")
+    if g0_nemotron_preflight["model"] != corrected_reference or g0_nemotron_preflight["api_calls"] != 0:
+        failures.append("Nemotron preflight is not a zero-call corrected-route identity")
+    if g0_nemotron_preflight["run_identity"] != "92bd2e530a22525ad7a8afc6daff1d6d178faad42c9c6dbd01349eeba5f740bc":
+        failures.append("Nemotron transport identity drifted")
+    if g0_nemotron_closeout["run_identity"] != g0_nemotron_preflight["run_identity"]:
+        failures.append("Nemotron transport closeout identity drifted")
+    if g0_nemotron_closeout["status"] != "OPERATIONAL_RETENTION_GATE_PASS_QUALITY_NOT_JUDGED_NO_GENERATOR_SELECTED":
+        failures.append("Nemotron transport closeout overclaims or changed")
+    if not g0_nemotron_closeout["frozen_gate_evaluation"]["all_operational_thresholds_pass"]:
+        failures.append("Nemotron was retained without passing every frozen operational threshold")
+    if g0_nemotron_closeout["decision"]["quality_judged"] or g0_nemotron_closeout["decision"]["generator_selected"]:
+        failures.append("Nemotron transport canary improperly judged quality or selected a generator")
+    full_candidate_ids = [row["candidate_id"] for row in g0_four_generator_contract["candidates"]]
+    if full_candidate_ids != g0_four_generator_preflight["candidate_ids"] or len(set(full_candidate_ids)) != 4:
+        failures.append("full G0 four-configuration candidate identity drifted")
+    if "meta/llama-3.3-70b-instruct" in g0_four_generator_preflight["models"]:
+        failures.append("wrong 70B route leaked into corrected full G0")
+    if g0_four_generator_preflight["run_identity"] != "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668":
+        failures.append("full G0 four-generator identity drifted")
+    if (g0_four_generator_preflight["logical_supporter_calls"], g0_four_generator_preflight["qwen_paid_logical_calls"], g0_four_generator_preflight["judge_calls"]) != (480, 240, 0):
+        failures.append("full G0 four-generator call accounting drifted")
+    if g0_four_generator_closeout["run_identity"] != g0_four_generator_preflight["run_identity"]:
+        failures.append("full G0 four-generator closeout identity drifted")
+    if g0_four_generator_closeout["scope"]["successful_supporter_turns"] != 469:
+        failures.append("full G0 successful-turn accounting drifted")
+    reliable = g0_four_generator_closeout["decision"]["reliability_eligible_for_quality_selection"]
+    if set(reliable) != {"llama31_8b_incumbent", "qwen37_plus_nonthinking", "qwen37_plus_thinking_upper_bound"}:
+        failures.append("full G0 reliability-eligible set changed")
+    if g0_four_generator_closeout["decision"]["reliability_ineligible"] != ["nemotron3_nano_30b_a3b_default_thinking"]:
+        failures.append("Nemotron reliability hard failure was not retained")
+    if g0_four_generator_closeout["decision"]["quality_judged"] or g0_four_generator_closeout["decision"]["generator_selected"]:
+        failures.append("full G0 mechanical closeout improperly judges or selects quality")
+    if g0_four_generator_esc_rank["source_generation_identity"] != g0_four_generator_closeout["run_identity"]:
+        failures.append("four-generator ESC-RANK source identity drifted")
+    if (g0_four_generator_esc_rank["complete_dialogues"], g0_four_generator_esc_rank["local_inference_calls"]) != (93, 651):
+        failures.append("four-generator ESC-RANK call accounting drifted")
+    if g0_four_generator_esc_rank["api_calls"] != 0 or g0_four_generator_esc_rank["estimated_usd"] != 0:
+        failures.append("four-generator ESC-RANK preflight incorrectly declares external spend")
+    if g0_four_generator_esc_rank["decision_boundary"]["quality_selection"] != "NOT_AUTHORIZED_BY_THIS_IDENTITY":
+        failures.append("ESC-RANK descriptive identity improperly authorizes generator selection")
+    if g0_four_generator_esc_rank_closeout["score_run_identity"] != g0_four_generator_esc_rank["score_run_identity"]:
+        failures.append("four-generator ESC-RANK closeout identity drifted")
+    if g0_four_generator_esc_rank_closeout["execution"]["final_local_inference_calls"] != 651:
+        failures.append("four-generator ESC-RANK final call count drifted")
+    if (g0_four_generator_esc_rank_closeout["measurement_result"]["primary_strict_parser"]["valid"], g0_four_generator_esc_rank_closeout["measurement_result"]["anchored_format_sensitivity"]["valid"]) != (0, 651):
+        failures.append("four-generator ESC-RANK parser result drifted")
+    if g0_four_generator_esc_rank_closeout["decision"]["generator_selected"]:
+        failures.append("saturated ESC-RANK profile improperly selected a generator")
+    if generator_fair_selection["selection_set"]["eligible"] != g0_four_generator_closeout["decision"]["reliability_eligible_for_quality_selection"]:
+        failures.append("fair generator selection set drifted from reliability closeout")
+    canary = generator_fair_selection["qualification_canary"]
+    if (canary["eia_calls"], canary["repeatability_calls"], canary["absolute_guardrail_calls"], canary["total_calls"]) != (108, 18, 18, 144):
+        failures.append("fair generator judge-canary accounting drifted")
+    if generator_fair_selection["pairwise_resolution"]["no_composite"] is not True:
+        failures.append("fair generator protocol lost the no-composite rule")
+    if canary["active"] is not False:
+        failures.append("superseded E-I-A canary is still active")
+    if generator_fair_selection["full_g0_after_canary"]["active"] is not False:
+        failures.append("superseded full E-I-A plan is still active")
+    if generator_fair_selection["metric_hierarchy"]["primary_quality"] != ["ESC-Eval Overall 0-to-4 blinded human rating"]:
+        failures.append("fair generator protocol does not use ESC-Eval Overall as primary Quality")
+    if g0_fair_judge_canary["candidates"] != generator_fair_selection["selection_set"]["eligible"]:
+        failures.append("fair judge canary candidate set drifted")
+    if g0_fair_judge_canary["call_accounting"] != {"eia_dual_order": 108, "repeatability": 18, "absolute_guardrail": 18, "total": 144}:
+        failures.append("fair judge canary call accounting drifted")
+    if g0_fair_judge_canary["budget"]["suggested_ceiling_usd"] != 3.34:
+        failures.append("fair judge canary budget drifted")
+    if "cannot select" not in g0_fair_judge_canary["canary_boundary"]:
+        failures.append("fair judge canary improperly authorizes selection")
+    if not g0_fair_judge_canary["status"].startswith("SUPERSEDED_BEFORE_ANY_CALL"):
+        failures.append("fair judge canary was not superseded before calls")
+    supersession = g0_fair_judge_canary["supersession"]
+    if (supersession["api_calls_made"], supersession["usd_spent"], supersession["former_identity_authorized"]) != (0, 0, False):
+        failures.append("superseded fair judge identity retains calls, spend, or authority")
+    official = generator_esc_eval_primary_selection["official_anchor"]
+    if official["official_high_quality_cards"] != {"total": 655, "english": 331, "chinese": 324}:
+        failures.append("ESC-Eval official card counts drifted")
+    if official["official_dimensions_0_to_4"] != ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"]:
+        failures.append("ESC-Eval official seven-dimension order drifted")
+    esc_development = generator_esc_eval_primary_selection["development_selection"]
+    if set(esc_development["candidate_dialogues"].values()) != {24}:
+        failures.append("ESC-Eval development candidate dialogue counts drifted")
+    if (esc_development["assignments"], esc_development["dimension_ratings"]) != (144, 1008):
+        failures.append("ESC-Eval human-review accounting drifted")
+    if generator_esc_eval_primary_selection["protocol_repair_boundary"]["exact_official_reproduction"] is not False:
+        failures.append("repaired ESC-Eval protocol is mislabeled as exact reproduction")
+    if "Optional sensitivity" not in generator_esc_eval_primary_selection["role_of_other_evaluators"]["esc_judge_eia"]:
+        failures.append("ESC-Judge E-I-A regained primary selection authority")
+    if (g0_esc_eval_human_review_packet["dialogues"], g0_esc_eval_human_review_packet["reviewers"], g0_esc_eval_human_review_packet["assignments"], g0_esc_eval_human_review_packet["official_dimension_ratings"]) != (72, 2, 144, 1008):
+        failures.append("ESC-Eval human-review packet accounting drifted")
+    if g0_esc_eval_human_review_packet["source_generation_identity"] != g0_four_generator_closeout["run_identity"]:
+        failures.append("ESC-Eval human-review packet source identity drifted")
+    if g0_esc_eval_human_review_packet["joined_supporter_prompt_sha256"] != g0_four_generator_preflight["prompt"]["joined_prompt_sha256"]:
+        failures.append("ESC-Eval human-review packet supporter prompt drifted")
+    if not all(g0_esc_eval_human_review_packet["blinding_checks"].values()):
+        failures.append("ESC-Eval human-review packet lost a blinding invariant")
+    if g0_esc_eval_human_review_packet["selection_verdict"] != "NO_ACTIVE_SELECTION_AUTHORITY_UNDER_OFFICIAL_FIRST_CONTRACT":
+        failures.append("historical custom human packet regained selection authority")
+    if generator_esc_eval_development_decision["status"] != "FROZEN_BEFORE_ANY_HUMAN_ESC_EVAL_SCORE":
+        failures.append("generator development decision was not frozen before human scores")
+    if generator_esc_eval_development_decision["source"]["primary"] != "Overall":
+        failures.append("generator development decision lost ESC-Eval Overall primary")
+    relative_rule = generator_esc_eval_development_decision["relative_quality_rule"]
+    if (relative_rule["practical_noninferiority_margin_points"], relative_rule["strict_advantage_margin_points"]) != (-0.25, 0.15):
+        failures.append("generator development decision numerical lines drifted")
+    if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
+        failures.append("margin derivation status changed")
+    if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
+        failures.append("formal outcomes can change calibration values")
+    if esc_rank_runtime_preflight["status"] != "STATIC_OVERLAY_PREFLIGHT_PASS_WEIGHTS_AND_INFERENCE_NOT_EXECUTED":
+        failures.append("ESC-RANK static runtime preflight status changed")
+    if esc_rank_runtime_preflight["inference_calls"] != 0 or esc_rank_runtime_preflight["model_weights_downloaded"] != 0:
+        failures.append("ESC-RANK runtime preflight unexpectedly consumed weights or inference")
+    if risk_protocol["statistics"]["noninferiority_margin"] != "NOT_NUMERICALLY_FROZEN_PENDING_FIXTURE_AND_HUMAN_CALIBRATION":
+        failures.append("Risk margin was set without instrument calibration")
+    if "uncertain" not in risk_protocol["events"]:
+        failures.append("atomic Risk protocol lost UNCERTAIN")
+
+    official_esc_rows_bytes = official_esc_manifest_path.read_bytes()
+    official_esc_rows = [json.loads(line) for line in official_esc_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(official_esc_rows) != 331 or len({row["card_key"] for row in official_esc_rows}) != 331:
+        failures.append("official ESC-Eval English-331 manifest is incomplete")
+    if hashlib.sha256(official_esc_rows_bytes).hexdigest() != official_esc_preflight["input_hashes"][official_esc_manifest_path.name]:
+        failures.append("official ESC-Eval English-331 manifest hash drift")
+    if official_esc_contract["evaluation"]["official_pass_line"] is not None:
+        failures.append("an unofficial ESC-Eval pass line was reintroduced")
+    if official_esc_preflight["logical_calls"] != {"supporter": 3310, "local_role": 3310, "qwen_paid": 1655, "judge": 0}:
+        failures.append("official ESC-Eval English-331 call accounting changed")
+    identity_payload = official_esc_preflight["identity_payload"]
+    expected_official_identity = hashlib.sha256(json.dumps(identity_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    if official_esc_preflight["run_identity"] != expected_official_identity:
+        failures.append("official ESC-Eval English-331 identity mismatch")
+
+    for path in (
+        authority_path,
+        official_first_path,
+        assets_path,
+        profile_path,
+        evaluation_path,
+        reconciliation_path,
+        implementation_path,
+        snapshot_path,
+        checklist_path,
+        generator_contract_path,
+        g0_contract_path,
+        g0_preflight_path,
+        g0_runtime_setup_path,
+        g0_canary_closeout_path,
+        g0_bd2b_closeout_path,
+        g0r2_contract_path,
+        g0r2_prompt_path,
+        g0r2_preflight_path,
+        g0r2_closeout_path,
+        g0_wrong_reference_correction_path,
+        g0_nemotron_contract_path,
+        g0_nemotron_preflight_path,
+        g0_nemotron_closeout_path,
+        g0_four_generator_contract_path,
+        g0_four_generator_preflight_path,
+        g0_four_generator_closeout_path,
+        g0_four_generator_esc_rank_path,
+        g0_four_generator_esc_rank_closeout_path,
+        generator_fair_selection_path,
+        g0_fair_judge_canary_path,
+        generator_esc_eval_primary_selection_path,
+        g0_esc_eval_human_review_packet_path,
+        generator_esc_eval_development_decision_path,
+        esc_rank_audit_path,
+        same_stack_reference_path,
+        margin_contract_path,
+        esc_rank_runtime_preflight_path,
+        risk_protocol_path,
+        runtime_lock_path,
+        benchmark_dry_run_path,
+        overlap_summary_path,
+        risk_qualification_path,
+        memeval_decision_path,
+        official_esc_contract_path,
+        official_esc_preflight_path,
+    ):
+        if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
+            failures.append(f"legacy absolute path leaked into {path.name}")
+
+    private_spec = assets["private_evidence"]
+    private_root = REPO_ROOT / private_spec["path"]
+    private_result: dict[str, Any] = {"present": private_root.is_dir()}
+    if private_root.is_dir():
+        files = [path for path in private_root.rglob("*") if path.is_file()]
+        private_result.update(
+            {
+                "file_count": len(files),
+                "bytes": sum(path.stat().st_size for path in files),
+                "combined_sha256": _combined_private_hash(private_root),
+            }
+        )
+        if private_result["file_count"] != private_spec["file_count"]:
+            failures.append("private evidence file count mismatch")
+        if private_result["bytes"] != private_spec["bytes"]:
+            failures.append("private evidence byte count mismatch")
+        if private_result["combined_sha256"] != private_spec["deterministic_combined_sha256"]:
+            failures.append("private evidence combined hash mismatch")
+    elif require_private_evidence:
+        failures.append("private evidence is required locally but not present")
+    else:
+        private_result["public_clone_status"] = "not_present_public_ok"
+
+    return {
+        "protocol": "metacom-v3-workspace-validation-v1",
+        "valid": not failures,
+        "failures": failures,
+        "source_commit": expected_commit,
+        "active_evaluation_authority": {
+            "status": official_first["status"],
+            "primary_tracks": [row["benchmark"] for row in official_first["active_primary_tracks"]],
+            "only_project_metric": official_first["only_project_defined_primary_metric_retained"]["metric"],
+            "custom_evidence": official_first["custom_evidence_demotion"]["status"],
+        },
+        "active_research_program": {
+            "status": core_program["status"],
+            "research_questions": [row["id"] for row in core_program["research_questions"]],
+            "typed_memory_requirement": core_program["primary_success_shape"]["typed_memory"],
+            "unseen_user_generalization": core_program["generalization_scope"]["unseen_user_supervised_generalization"],
+            "evoemo_role": core_program["evidence_source_roles"]["EvoEmo"],
+            "causal_baseline_layer": "same_stack_baseline_rerun",
+            "pm_identity": core_program["pm_architecture"]["identity"],
+            "step2_is_second_pm": core_program["pm_architecture"]["step2"]["is_second_pm"],
+            "official_dg_action_surface": core_program["pm_architecture"]["task_action_masks"]["ES_MemEval_Dialogue_Generation"]["legal_action_surface"],
+            "custom_joint_dg_active": core_program["pm_architecture"]["optional_future_joint_adaptation"]["active"],
+        },
+        "phase_ids": phase_ids,
+        "active_test_files": len(test_paths),
+        "expected_active_test_count": profile["expected_test_count"],
+        "evaluation_freeze_status": evaluation["status"],
+        "dataset_cards": [card["dataset"] for card in dataset_cards],
+        "es_memeval_identity": {"formal_paper_qa": paper_qa, "public_v1_0_0_qa": public_qa, "difference": public_qa - paper_qa},
+        "official_benchmark_surfaces": {
+            "esc_eval_cards": snapshot["ESC-Eval"]["high_quality_cards"]["total"],
+            "esc_judge_public_roles": snapshot["ESC-Judge"]["roles_v1_records"],
+            "es_memeval_public_git_commits": snapshot["ES-MemEval"]["public_git_commits"],
+        },
+        "p0_exit_now": checklist["p0_exit_now"],
+        "p0_complete_gates": sorted(complete_gates),
+        "benchmark_dry_run": {"esc_eval_cards": 655, "esc_judge_roles": 25, "esc_judge_units": 150, "api_calls": 0},
+        "esc_overlap": {"rows": len(overlap_rows), "clean_english_if_esconv_extes_sft": 103},
+        "risk_instrument": {"packets": len(risk_packets), "assignments": len(risk_assignments), "formal_replies_consumed": 0},
+        "esc_rank_public_qualification": {"public_human_label_rows": 0, "primary_adapters": 14, "inference_calls": 0},
+        "esc_rank_runtime_preflight": {"status": "STATIC_PASS", "weights_downloaded": 0, "inference_calls": 0},
+        "same_stack_reference": corrected_reference,
+        "historical_wrong_reference": same_stack_reference["reference"]["model_route"],
+        "g0_superseded_prompt_cap_screen": {
+            "status": g0_bd2b_closeout["status"],
+            "cards": len(g0_rows),
+            "executor_packets": len({row["packet_id"] for row in g0_executor_rows}),
+            "qwen_model": qwen["model"] if qwen else None,
+            "qwen_paid_logical_calls": g0_preflight["logical_calls"]["qwen_paid_logical_calls"],
+            "run_identity": g0_preflight["run_identity"],
+        },
+        "g0_research_aligned_generator": {
+            "cards": len(g0r2_rows),
+            "canary_cards": sum(bool(row["canary"]) for row in g0r2_rows),
+            "candidate_configurations": len(g0r2_contract["candidates"]),
+            "researcher_output_token_cap": g0r2_contract["shared_generation_contract"]["researcher_output_token_cap"],
+            "run_identity": g0r2_preflight["run_identity"],
+            "canary_status": g0r2_closeout["status"],
+            "canary_successful_turns": g0r2_closeout["api_scope"]["supporter_successful_turns"],
+            "canary_qwen_actual_usd": g0r2_closeout["qwen_budget"]["actual_usd"],
+        },
+        "g0_nemotron_transport_canary": {
+            "model": g0_nemotron_preflight["model"],
+            "run_identity": g0_nemotron_preflight["run_identity"],
+            "preflight_api_calls": g0_nemotron_preflight["api_calls"],
+            "observed_supporter_calls": g0_nemotron_closeout["api_scope"]["supporter_successful_turns"],
+            "logical_supporter_calls": g0_nemotron_preflight["logical_supporter_calls"],
+            "status": g0_nemotron_closeout["status"],
+            "median_latency_ms": g0_nemotron_closeout["latency_ms"]["median"],
+            "p90_latency_ms": g0_nemotron_closeout["latency_ms"]["p90"],
+        },
+        "g0_four_generator_full_screen": {
+            "run_identity": g0_four_generator_preflight["run_identity"],
+            "candidate_configurations": len(g0_four_generator_preflight["candidate_ids"]),
+            "cards": g0_four_generator_preflight["cards"],
+            "logical_supporter_calls": g0_four_generator_preflight["logical_supporter_calls"],
+            "qwen_paid_logical_calls": g0_four_generator_preflight["qwen_paid_logical_calls"],
+            "judge_calls": g0_four_generator_preflight["judge_calls"],
+            "point_estimate_usd": g0_four_generator_preflight["budget"]["linear_24_card_point_estimate_usd"],
+            "status": g0_four_generator_closeout["status"],
+            "successful_supporter_turns": g0_four_generator_closeout["scope"]["successful_supporter_turns"],
+            "qwen_actual_usd": g0_four_generator_closeout["budget"]["qwen_actual_usd"],
+            "reliability_eligible": g0_four_generator_closeout["decision"]["reliability_eligible_for_quality_selection"],
+            "reliability_ineligible": g0_four_generator_closeout["decision"]["reliability_ineligible"],
+        },
+        "g0_four_generator_esc_rank": {
+            "score_run_identity": g0_four_generator_esc_rank["score_run_identity"],
+            "complete_dialogues": g0_four_generator_esc_rank["complete_dialogues"],
+            "local_inference_calls": g0_four_generator_esc_rank["local_inference_calls"],
+            "estimated_usd": g0_four_generator_esc_rank["estimated_usd"],
+            "status": g0_four_generator_esc_rank_closeout["status"],
+            "primary_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["primary_strict_parser"]["valid"],
+            "anchored_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["anchored_format_sensitivity"]["valid"],
+            "generator_selected": g0_four_generator_esc_rank_closeout["decision"]["generator_selected"],
+        },
+        "generator_fair_selection": {
+            "status": generator_fair_selection["status"],
+            "eligible": generator_fair_selection["selection_set"]["eligible"],
+            "superseded_canary_planned_calls": generator_fair_selection["qualification_canary"]["total_calls"],
+            "superseded_full_additional_calls": generator_fair_selection["full_g0_after_canary"]["additional_calls"],
+            "no_composite": generator_fair_selection["pairwise_resolution"]["no_composite"],
+            "eia_canary_active": generator_fair_selection["qualification_canary"]["active"],
+        },
+        "g0_fair_judge_canary": {
+            "run_identity": g0_fair_judge_canary["run_identity"],
+            "cards": len(g0_fair_judge_canary["cards"]),
+            "logical_calls": g0_fair_judge_canary["call_accounting"]["total"],
+            "point_estimate_usd": g0_fair_judge_canary["budget"]["point_estimate_usd"],
+            "suggested_ceiling_usd": g0_fair_judge_canary["budget"]["suggested_ceiling_usd"],
+            "status": g0_fair_judge_canary["status"],
+        },
+        "generator_esc_eval_primary_selection": {
+            "status": generator_esc_eval_primary_selection["status"],
+            "official_dimensions": generator_esc_eval_primary_selection["official_anchor"]["official_dimensions_0_to_4"],
+            "eligible_dialogues": sum(generator_esc_eval_primary_selection["development_selection"]["candidate_dialogues"].values()),
+            "human_assignments": generator_esc_eval_primary_selection["development_selection"]["assignments"],
+            "dimension_ratings": generator_esc_eval_primary_selection["development_selection"]["dimension_ratings"],
+            "exact_official_reproduction": generator_esc_eval_primary_selection["protocol_repair_boundary"]["exact_official_reproduction"],
+        },
+        "g0_esc_eval_human_review_packet": {
+            "status": g0_esc_eval_human_review_packet["status"],
+            "dialogues": g0_esc_eval_human_review_packet["dialogues"],
+            "reviewers": g0_esc_eval_human_review_packet["reviewers"],
+            "assignments": g0_esc_eval_human_review_packet["assignments"],
+            "official_dimension_ratings": g0_esc_eval_human_review_packet["official_dimension_ratings"],
+            "api_calls": g0_esc_eval_human_review_packet["api_calls"],
+        },
+        "generator_esc_eval_development_decision": {
+            "status": generator_esc_eval_development_decision["status"],
+            "primary": generator_esc_eval_development_decision["source"]["primary"],
+            "key_dimensions": generator_esc_eval_development_decision["source"]["key_dimensions"],
+            "noninferiority_margin": generator_esc_eval_development_decision["relative_quality_rule"]["practical_noninferiority_margin_points"],
+            "strict_advantage_margin": generator_esc_eval_development_decision["relative_quality_rule"]["strict_advantage_margin_points"],
+        },
+        "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
+        "es_memeval_primary_task": memeval_decision["primary_task_name"],
+        "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},
+        "official_esc_eval_english331": {
+            "cards": len(official_esc_rows),
+            "run_identity": official_esc_preflight["run_identity"],
+            "supporter_calls": official_esc_preflight["logical_calls"]["supporter"],
+            "qwen_paid_calls": official_esc_preflight["logical_calls"]["qwen_paid"],
+            "recommended_max_usd": official_esc_preflight["budget"]["recommended_approval_ceiling_usd"],
+            "official_pass_line": official_esc_contract["evaluation"]["official_pass_line"],
+        },
+        "private_evidence": private_result,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--require-private-evidence", action="store_true")
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args()
+    result = validate(require_private_evidence=args.require_private_evidence)
+    rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(rendered, encoding="utf-8")
+    print(rendered, end="")
+    return 0 if result["valid"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

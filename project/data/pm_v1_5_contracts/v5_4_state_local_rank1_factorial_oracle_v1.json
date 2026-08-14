@@ -1,0 +1,161 @@
+{
+  "protocol": "pm-v1.5-v5.4-state-local-rank1-factorial-oracle-v1",
+  "status": "METHOD_CORRECTION_FROZEN_V4_AUTHORING_ONLY_NO_EFFECT_OR_TRAINING",
+  "date": "2026-08-10",
+  "authority": {
+    "scope": "Current-state construction, production Rank-1 timing, factorial action invariance, PM correct-call truth, and failure responsibility",
+    "supersedes": [
+      "v5_4_fidelity_and_rank1_gate_v1.json cross-state same-candidate promotion requirement",
+      "v5_4_fidelity_and_rank1_gate_v2.json same_frozen_candidate_required_for_A_and_B",
+      "v5_4_factorial_outcome_oracle_learning_v1.json wording that defines one cross-state semantic pair as sharing an unchanged candidate"
+    ],
+    "preserves": [
+      "four components and all 16 legal actions",
+      "actual production Rank-1 only, with no Rank-2 promotion",
+      "strict past, owner, version, typed, and source-lineage gates",
+      "within-state randomized action outcomes as correct-call evidence",
+      "construction assignment excluded from PM gold and runtime features",
+      "quality, material risk, function, and cost as separate measurements"
+    ]
+  },
+  "triggering_evidence": {
+    "fidelity_v1": {
+      "report": "outputs/pm_v1_5_v5_4_fidelity_review_20260810/fidelity_agreement_report.json",
+      "status": "FIDELITY_GATE_FAIL_NO_PROMOTION",
+      "dual_consensus_pass": "39/48",
+      "raw_agreement": 0.875,
+      "cohen_kappa": 0.4482758620689655,
+      "diagnostic_gwet_ac1_not_requalification": 0.84
+    },
+    "source_prefix_v2_rank1": {
+      "report": "outputs/pm_v1_5_v5_4_actual_rank1_recomputation_20260810/report.json",
+      "original_source_anchor_reproduction": "48/48",
+      "A_B_both_retain_original_candidate": {
+        "MP": "5/12",
+        "MS": "4/12",
+        "ME": "6/12",
+        "RS": "7/12"
+      },
+      "interpretation": "The production reconstruction is valid, but cross-state candidate identity is not invariant under authored current-state changes. This does not invalidate a state-local factorial estimand."
+    },
+    "rank1_stable_authoring_v3_transport": {
+      "report": "outputs/pm_v1_5_v5_4_rank1_stable_authoring_v3_20260810/authoring_v3_live_report.json",
+      "completed_pairs": 27,
+      "physical_attempts": 79,
+      "failure_pattern": "An exact shared-cue transport constraint rejected 21 pairs and pushed wording toward candidate repetition; the incomplete V3 panel is diagnostic only.",
+      "response_effect_or_oracle_outcome_read": false
+    }
+  },
+  "correct_causal_unit": {
+    "state": "one complete deployment-visible dialogue ending in one current user turn",
+    "candidate_freeze_order": [
+      "finish and freeze the current state",
+      "run the frozen production retriever and typed structural gates",
+      "freeze that state's exact actual Rank-1 candidate independently for each component",
+      "run requested actions and outcomes"
+    ],
+    "within_state_invariance": "Every action arm, baseline, replicate, and judge comparison for one state must use the same frozen state-local candidates, generator, guard, and seed schedule.",
+    "cross_state_noninvariance": "Two authored A/B states are different deployment states and may legitimately have different actual Rank-1 identities. Cross-state candidate equality is a diagnostic subset, not a promotion gate.",
+    "why": "The randomized causal contrast is among actions within a state. Candidate changes across different states are observable deployment variation, while candidate changes across action arms within one state would confound the treatment."
+  },
+  "candidate_and_pm_boundary": {
+    "actual_rank1_is": "the top structurally legal production candidate for that completed state",
+    "actual_rank1_is_not": [
+      "should-open gold",
+      "proof of semantic relevance",
+      "a candidate selected after response outcomes",
+      "an evaluator-selected best candidate"
+    ],
+    "candidate_absent": "component structurally unavailable for that state; no component ON effect label is created",
+    "candidate_wrong_or_irrelevant": "retain the state and measure requested-action ITT if structurally valid; diagnose retrieval responsibility, and allow the safe oracle to prefer OFF",
+    "rank2_promotion": false,
+    "candidate_id_in_pm_features": false,
+    "allowed_candidate_features": "typed subtype, bounded age/cost/score descriptors, candidate text representation, and current-state/candidate interaction representation",
+    "construction_assignment_in_pm_features": false
+  },
+  "outcome_blind_state_support_design": {
+    "A_B_role": "Balanced support and bounded-semantic-observability diagnostic only; never a causal ON/OFF effect pair and never PM value gold.",
+    "family_binding": "A, B, source prefix, source anchor, actual state-local candidates, paraphrases, and templates stay in one split.",
+    "authoring_target": "Create natural candidate-related opportunity, redundancy, self-contained, resolution, and boundary variation without copying an assistant response or inventing world facts.",
+    "candidate_availability_gate": "For the targeted component, every accepted authored state must have a non-null, typed, owner/time/version-valid state-local actual Rank-1. Identity need not match its sibling state or original source anchor.",
+    "balance": "At least 12 accepted A states and 12 accepted B states per component before development effects, with construction orientation, author, subtype, length, source cluster, and template nuisance balanced.",
+    "source_candidate_role": "World-faithful authoring context and anchor-selection diagnostic only. The source candidate is replaced by the completed state's actual production Rank-1 before any action call."
+  },
+  "fidelity_v2": {
+    "trusted_world_union": [
+      "exact locked public prefix",
+      "original public current turn as world/tone reference",
+      "verified source candidate as a strictly-prior world fact"
+    ],
+    "candidate_omission_or_relevance_is_not_world_fidelity": true,
+    "assistant_move_is_prospective": true,
+    "removed_rs_mode": "MOVE_ALREADY_PERFORMED",
+    "full_panel_fresh_dual_review": true,
+    "frozen_gates": {
+      "raw_agreement": ">=0.80",
+      "gwet_ac1": ">=0.60",
+      "cohen_kappa": "report diagnostic",
+      "dual_consensus_pass": ">=42/48 and >=10/12 per component",
+      "dual_critical_world_or_scaffold_events": 0
+    },
+    "failed_v1_never_requalified": true
+  },
+  "bounded_semantics": {
+    "claim": "The PM is required to learn only distinctions represented by the frozen low-capacity observable feature surface; it is not claimed to understand arbitrary human semantics.",
+    "pre_effect_observability": "Family-held-out construction-assignment prediction must reach balanced accuracy and macro-F1 >=0.75 overall and balanced accuracy >=0.65 per component, while nuisance-only prediction remains <=0.60.",
+    "failure": "Revise or narrow representation before effects; do not label the state OFF and do not blame PM training.",
+    "deployment_unknown": "If the frozen representation is outside qualified support or confidence is unresolved, the affected bit fails closed; M0+R0 versus M0+RS is then determined only by independently qualified RS and safety rules."
+  },
+  "sixteen_action_correct_call": {
+    "actions": 16,
+    "direct_16_class_classifier": false,
+    "development_execution": "Each accepted state runs the complete 16 requested actions under matched seeds after all four state-local candidates are frozen.",
+    "oracle_set": [
+      "exclude structurally invalid actions",
+      "exclude resolved material or critical-risk actions",
+      "find the best safe deployment-ITT positive-support quality",
+      "retain every safe action within the frozen 0.10 quality equivalence margin",
+      "within that frontier retain exact minimum deterministic injected-token cost actions, preserving ties"
+    ],
+    "pm_correct": "the PM-selected requested action is a member of the held-out state oracle set",
+    "primary_metrics": [
+      "oracle-set inclusion accuracy",
+      "deployment-ITT quality regret",
+      "unsafe or structurally invalid selection rate",
+      "excess deterministic cost on the quality frontier",
+      "beneficial false-OFF and harmful false-ON by component",
+      "requested-realized adherence and received-used-functional funnel"
+    ]
+  },
+  "training_and_qualification": {
+    "component_target": "state-local matched requested-component ON/OFF deployment-ITT continuous quality contribution under frozen backgrounds and seeds",
+    "risk": "separate absolute and attributable event measurement; unresolved risk removes an action from the safe oracle and never becomes a quality label",
+    "function": "separate mechanism measurement; not required to define deployment ITT",
+    "cost": "known only at joint projection/oracle stage; never contaminates a component quality target",
+    "model": "regularized low-capacity four-head conditional-effect model followed by 16-action projection",
+    "qualification": "family/user/dialogue-grouped cross-fitting; construction label never used as target; formal and external stages remain blocked until development effect separability and held-out learnability pass"
+  },
+  "failure_responsibility": {
+    "data_construction": "world, role, minimality, or nuisance isolation fails",
+    "candidate_layer": "candidate absent, invalid, wrong owner/time/version, or production Rank-1 is semantically poor",
+    "representation_scope": "the relevant state-candidate distinction is not observable to the frozen PM feature surface",
+    "pm": "given valid state-local candidates, qualified observable support, resolved held-out action outcomes, and a trained head, the selected action is outside the oracle set",
+    "step2_generator": "an oracle-compatible requested action is not received, used, grounded, or functionally realized, or triggers fallback",
+    "guard": "the guard incorrectly accepts or rejects relative to its frozen contract",
+    "resource_generator_interaction": "clean use itself lowers quality or causes attributable risk",
+    "measurement": "outcome or risk remains unresolved",
+    "deployment_itt": "the deployed policy is still charged with the final consequence while mechanism reporting names the earliest evidenced failure layer"
+  },
+  "current_authorization": {
+    "outcome_blind_v4_state_authoring": true,
+    "state_local_actual_rank1_materialization": true,
+    "fresh_fidelity_review_after_complete_machine_pass": true,
+    "bounded_observability_test": false,
+    "response_effect_calls": false,
+    "quality_risk_function_judging": false,
+    "sixteen_action_execution": false,
+    "pm_training": false,
+    "private_historical_outcome_read": false
+  },
+  "api_calls_for_contract": 0
+}

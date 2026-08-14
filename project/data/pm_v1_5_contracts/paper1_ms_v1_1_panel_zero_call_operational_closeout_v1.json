@@ -1,0 +1,22 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-v1-1-panel-zero-call-operational-closeout-v1",
+  "date": "2026-08-13",
+  "status": "CONSUMED_INCOMPLETE_ZERO_PROVIDER_CALLS_MISSING_NVIDIA_API_KEY",
+  "run_identity": "105908227c3dc981349962bb6bc3a26c9edf21ae7289aaa975eaa41c79d06302",
+  "approved_cost_cap_usd": 0.0,
+  "attempted_at_utc": "2026-08-13T03:37:26Z",
+  "planned_logical_calls": 30,
+  "started_provider_calls": 0,
+  "completed_provider_calls": 0,
+  "observed_cost_usd": 0.0,
+  "output_directory": "outputs/pm_v1_5_paper1_ms_v1_1_panel_live_20260813",
+  "output_directory_state": "directory_created_before_client_initialization; no files written",
+  "failure": {
+    "type": "RuntimeError",
+    "message": "Environment variable NVIDIA_API_KEY is not set",
+    "boundary": "make_client/OpenAICompatibleClient initialization, before the first HTTP request"
+  },
+  "scientific_effect": "NONE. No response was generated and no development criterion was observed.",
+  "identity_rule": "The frozen execution phase requires consumption after the first --live attempt even when incomplete. This identity and output directory must not be reused.",
+  "next_action": "Make NVIDIA_API_KEY available to the executing Codex environment without printing or committing it, then materialize a fresh content-bound continuation identity and fresh output directory for the unchanged 30-call plan. MP identity a600edec... remains approved and unconsumed; do not attempt it until the key preflight passes."
+}

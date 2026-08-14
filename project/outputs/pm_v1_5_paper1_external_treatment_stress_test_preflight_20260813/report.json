@@ -1,0 +1,120 @@
+{
+  "protocol": "pm-v1.5-paper1-external-treatment-stress-test-preflight-v1",
+  "status": "PASS_EXACT_18_OWNER_90_CALL_EXPLORATORY_PROPOSAL_HUMAN_APPROVAL_REQUIRED",
+  "run_identity": "ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8",
+  "scope_label": "development-informed external-corpus opportunity-enriched treatment diagnostic; not formal learned-PM confirmation",
+  "states": 18,
+  "owners": 18,
+  "arms_per_state": [
+    "always_off",
+    "full",
+    "minus_RS",
+    "minus_MP",
+    "minus_MS"
+  ],
+  "logical_generator_calls": 90,
+  "maximum_physical_attempts": 180,
+  "generator": "meta/llama-3.1-8b-instruct",
+  "estimated_generator_cost_usd": 0.0,
+  "proposed_generator_usd_cap": 0.0,
+  "checks": {
+    "exact_18_states": true,
+    "one_state_per_owner": true,
+    "no_previously_generated_state": true,
+    "exact_5_arms_per_state": true,
+    "same_seed_within_state": true,
+    "all_requested_equal_structurally_eligible_and_jointly_planned": true,
+    "all_full_arms_are_mp_ms_rs": true,
+    "full_context_used": true,
+    "zero_api_zero_fit": true
+  },
+  "selection": {
+    "salt": "PAPER1_EXTERNAL_TREATMENT_STRESS_TEST_V1_OWNER_UNIQUE",
+    "eligible_counts_by_owner": {
+      "evo::p1": 48,
+      "evo::p10": 27,
+      "evo::p11": 16,
+      "evo::p12": 23,
+      "evo::p13": 29,
+      "evo::p14": 16,
+      "evo::p15": 12,
+      "evo::p16": 16,
+      "evo::p17": 13,
+      "evo::p18": 21,
+      "evo::p2": 22,
+      "evo::p3": 12,
+      "evo::p4": 23,
+      "evo::p5": 20,
+      "evo::p6": 25,
+      "evo::p7": 7,
+      "evo::p8": 38,
+      "evo::p9": 30
+    },
+    "exclusion_counts": {
+      "mp_candidate_absent": 3788,
+      "ms_candidate_absent": 40,
+      "ms_not_learned_on": 369,
+      "previously_generated": 93,
+      "rs_not_learned_on": 1
+    },
+    "consumed_generation_state_count": 161,
+    "consumed_generation_paths": [
+      "outputs/pm_v1_5_paper1_mp_development_panel_live_20260813/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_mp_v1_1_panel_live_20260813/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_ms_only_ablation_live_20260812/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_live_20260811/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_ms_same_stack_generation_20260811/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_ms_v1_1_panel_live_retry2_20260813/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_rs_ms_evoemo_external_test_live_20260812/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_rs_ms_panel_v2_live_20260813/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_rs_ms_restatement_warm_close_regeneration_live_20260812/generator_results_private.jsonl",
+      "outputs/pm_v1_5_paper1_v3_ms_executor_qualification_live_20260811/generator_results_private.jsonl"
+    ],
+    "response_or_judge_outcomes_read_for_selection": false
+  },
+  "planned_judging_after_generation": {
+    "quality_pairs": 72,
+    "source_aware_absolute_risk_replies": 90,
+    "secondary_function_subset": "6 frozen cases per component (18 calls total), selected before opening replies",
+    "estimated_judge_cost_usd": 1.93,
+    "proposed_judge_cap_usd": 2.4,
+    "judge_execution_requires_separate_identity_and_explicit_approval": true
+  },
+  "artifacts": {
+    "design": {
+      "path": "data/pm_v1_5_contracts/paper1_external_treatment_stress_test_design_v1.json",
+      "sha256": "91569c10c0eb90ec4a833e11152a7a5aad4f82f08dece084a53c2fdecbb35ded"
+    },
+    "cases": {
+      "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/cases_private.jsonl",
+      "sha256": "b7116248fdf01a04d342c3d836304ef751fdbbeceb47be8b664c4aefb280d639"
+    },
+    "call_plan": {
+      "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/call_plan_private.jsonl",
+      "sha256": "9c8ea099f16255bf2e61d8cf6d780e32397cedb6a6f22ea703713fff20c7ca47"
+    },
+    "selector_runtime_validation": {
+      "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_preflight_20260813/selector_runtime_validation.json",
+      "sha256": "ed71d66fd86c9da54627da386a76590bac1d786d1fdbf4d048e453ff3d829139"
+    }
+  },
+  "input_hashes": {
+    "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a",
+    "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab",
+    "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5",
+    "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52",
+    "outputs/pm_v1_5_paper1_ms_source_annotated_consensus_full_fit_20260812/ms_source_annotated_suitability_model.joblib": "925cf017f8b440be6aacbed128df78a80eb45ffe188278e89d9811e17d42f9cd",
+    "outputs/pm_v1_5_paper1_ms_outer_train_abstention_calibration_20260812/ms_head_abstention_thresholds.json": "2cdaf554bb59c1a0e8b583b385e5cd7e9d54ea2c890699bc9f7c2428e234181c",
+    "outputs/pm_v1_5_same_bank_rs_opportunity_router_fit_v1/rs_opportunity_router.joblib": "0cc4d85de657a88639bd8e635c22c4ece91d4f741ef6766e565ad899c01a3a94",
+    "outputs/pm_v1_5_same_bank_rs_opportunity_router_fit_v1/fit_report.json": "3a7305a315755b76ad0a86b256b6c368ffbea94238275e8306b524f5e3275112",
+    "outputs/pm_v1_5_paper1_rs_strategy_card_llm_audit_qualified_bank_20260812/strategy_cards_v4_llm_audit_qualified_only.jsonl": "c4f503917a6490428552c1adcb1de5060e407786aea3ea2bf0238d907698c538"
+  },
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "judge_calls": 0,
+    "fits": 0
+  },
+  "next": "Present this exact generator run identity and $0 cap for explicit approval; only then bind an execution phase and run the 90 calls."
+}

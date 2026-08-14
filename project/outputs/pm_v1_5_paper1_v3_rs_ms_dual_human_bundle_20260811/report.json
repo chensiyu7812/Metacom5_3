@@ -1,0 +1,78 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-dual-human-bundle-v1",
+  "status": "DUAL_HUMAN_BLIND_BUNDLE_READY",
+  "checks": {
+    "exact_denominators_16_32_16": true,
+    "quality_position_balance_8_8": true,
+    "quality_hides_past_source_action_teacher_and_policy": true,
+    "quality_has_no_identical_pairs": true,
+    "quality_current_dialogues_unique": true,
+    "risk_ids_unique": true,
+    "function_ids_unique": true,
+    "risk_six_families": true,
+    "dual_human_full_overlap": true,
+    "no_api_no_labels_no_generation_no_refit": true
+  },
+  "failed_checks": [],
+  "findings": {
+    "quality_v1_source_visibility": "HIGH measurement-bias risk; removed before review",
+    "quality_v1_ms_position": {
+      "A": 5,
+      "B": 11
+    },
+    "quality_v2_ms_position": {
+      "A": 8,
+      "B": 8
+    },
+    "responses_changed": 0,
+    "policy_threshold_or_checkpoint_changed": false
+  },
+  "review": {
+    "reviewers": [
+      "HUMAN_A",
+      "HUMAN_B"
+    ],
+    "items_per_reviewer": 64,
+    "independent_full_overlap": true,
+    "adjudication_after_both_frozen_only": true,
+    "majority_vote_forbidden": true
+  },
+  "artifacts": {
+    "quality_v2": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/quality_current_context_only_blind_v2.jsonl",
+      "sha256": "26ad6d3e5e933019faf3a68166d7389424689f95755101f98c862ecee3ee0585"
+    },
+    "quality_private_key": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/quality_private_key_v2.jsonl",
+      "sha256": "27c5d4144577a8e45d8c00918857f9dee7ba1c0e3427e424dab9148374acc5f6"
+    },
+    "risk": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/risk_absolute_blind.jsonl",
+      "sha256": "5fbe6c4be99cde0c02854bd7f1ba5f0708369564bd7bba06c54bf2a7d1228228"
+    },
+    "function": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/function_source_aware_blind.jsonl",
+      "sha256": "b61b9ed990dc455266b71fbff317b85c2e60f651cac35eb424e94df42574b587"
+    },
+    "human_A": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/human_review_A.html",
+      "sha256": "7dad9d36957a050a4676cd51a0800eabcbd3cba69e4a4196c18d98a8a4c1b941"
+    },
+    "human_B": {
+      "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/human_review_B.html",
+      "sha256": "7e67ac09bbaccf24dbcad01fbea28734a4458daf766fd422cf392d9de9bc9d65"
+    }
+  },
+  "source_hashes": {
+    "contract": "3d9a014a58cf376437ad372eb8a553f5d2de12438bb30f8f6b65bc08e02825f9",
+    "quality_v1": "1f4c922bc864d34f305d63556038a705d7f2b981728b2f48dcd6b4e25140521b",
+    "risk_v1": "5fbe6c4be99cde0c02854bd7f1ba5f0708369564bd7bba06c54bf2a7d1228228",
+    "function_v1": "b61b9ed990dc455266b71fbff317b85c2e60f651cac35eb424e94df42574b587",
+    "private_mapping": "3d24ffb565da2bfb6f031d5bb4119621fe54449e2b92256417b9c30505229bcb"
+  },
+  "api_calls": 0,
+  "labels_created": 0,
+  "responses_generated": 0,
+  "pm_fits": 0,
+  "next": "FREEZE_TWO_INDEPENDENT_HUMAN_ANNOTATION_FILES_THEN_ZERO_API_AGGREGATE"
+}

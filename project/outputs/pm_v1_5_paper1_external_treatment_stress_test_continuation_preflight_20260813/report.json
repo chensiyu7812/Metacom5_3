@@ -1,0 +1,58 @@
+{
+  "protocol": "pm-v1.5-paper1-external-treatment-stress-test-continuation-preflight-v1",
+  "status": "PASS_EXACT_48_MISSING_CALL_CONTINUATION_APPROVAL_REQUIRED",
+  "run_identity": "4d632c7e7293951e5e30ee06e17c3f1692c374bcd98f485309c43af6c7cd16cb",
+  "parent_identity": "ebc61ee4b7e9d563034528d8a2095a729ab72d660c8c73991cb4bddf63b164e8",
+  "carried_successes": 42,
+  "new_logical_calls": 48,
+  "combined_target": 90,
+  "remaining_arm_counts": {
+    "always_off": 9,
+    "full": 8,
+    "minus_MP": 11,
+    "minus_MS": 10,
+    "minus_RS": 10
+  },
+  "scientific_plan_changes": 0,
+  "transport_only_change": {
+    "pace_seconds": 1.5,
+    "rate_limit_backoff_seconds": 30.0,
+    "maximum_attempts_per_missing_call": 3
+  },
+  "estimated_cost_usd": 0.0,
+  "proposed_absolute_usd_cap": 0.0,
+  "checks": {
+    "no_success_rerun": true,
+    "all_remaining_from_original_plan": true,
+    "all_prompt_hashes_unchanged": true
+  },
+  "artifacts": {
+    "call_plan": {
+      "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_continuation_preflight_20260813/call_plan_private.jsonl",
+      "sha256": "c033d01ad40129ce84f64ccbbf34c89be413295d91d1d00044826ef56d321fae"
+    },
+    "partial_results": {
+      "path": "outputs/pm_v1_5_paper1_external_treatment_stress_test_live_20260813/generator_results_private.jsonl",
+      "sha256": "5590f660ebe4c0bc149726ef863808b9760c200c8840894c25d8d4f60374a0a2"
+    },
+    "partial_closeout": {
+      "path": "data/pm_v1_5_contracts/paper1_external_treatment_stress_test_partial_closeout_v1.json",
+      "sha256": "0903ed200d1483b9cc223838aaa3fbc6aec003485c68e690604ec0ffea4cfc59"
+    },
+    "config": {
+      "path": "configs/paper1_external_treatment_stress_test_continuation_v1.json",
+      "sha256": "50e2b4f0365c239bbdf41e80c27ddb6069983629f291df910d8c867f6c73868b"
+    },
+    "runner": {
+      "path": "scripts/v1_5/344l_run_paper1_external_treatment_stress_test_continuation_v1_5.py",
+      "sha256": "bc4edca29501addc52e8111046b7a0aedb45493d32589e48c1080e38fd5d8a49"
+    }
+  },
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "judge_calls": 0,
+    "fits": 0
+  },
+  "next": "Request explicit approval for this exact continuation identity and $0 cap."
+}

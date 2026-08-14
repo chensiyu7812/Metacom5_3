@@ -1,0 +1,61 @@
+{
+  "protocol": "metacom-v3-g0-four-generator-esc-rank-preflight-v1",
+  "date": "2026-08-14",
+  "status": "ZERO_CALL_PREFLIGHT_PASS_LOCAL_INFERENCE_REQUIRES_IDENTITY_SPECIFIC_APPROVAL",
+  "api_calls": 0,
+  "paid_calls": 0,
+  "estimated_usd": 0,
+  "source_generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+  "source_ledger_sha256": "d7b434876dbd6357f629d67a1bb69937689af634f5af452adb2df85861370ac3",
+  "score_run_identity": "c22b402c57c6fc14b0a6bd976dc8af012e2e2245862f81616c96223ba04c5a3d",
+  "complete_dialogues": 93,
+  "candidate_dialogue_counts": {
+    "llama31_8b_incumbent": 24,
+    "nemotron3_nano_30b_a3b_default_thinking": 21,
+    "qwen37_plus_nonthinking": 24,
+    "qwen37_plus_thinking_upper_bound": 24
+  },
+  "local_inference_calls": 651,
+  "hardware_plan": "Load pinned InternLM2-chat-7B plus seven pinned English ESC-RANK adapters on RTX A6000 (cuda:1); deterministic decoding.",
+  "measurement": {
+    "protocol": "metacom-v3-g0-four-generator-esc-rank-identity-v1",
+    "source_generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+    "source_ledger_sha256": "d7b434876dbd6357f629d67a1bb69937689af634f5af452adb2df85861370ac3",
+    "candidate_dialogue_counts": {
+      "llama31_8b_incumbent": 24,
+      "nemotron3_nano_30b_a3b_default_thinking": 21,
+      "qwen37_plus_nonthinking": 24,
+      "qwen37_plus_thinking_upper_bound": 24
+    },
+    "dimensions": [
+      "Fluency",
+      "Expression",
+      "Empathy",
+      "Information",
+      "Humanoid",
+      "Skill",
+      "Overall"
+    ],
+    "local_inference_calls": 651,
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "internlm2_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "scorer_sha256": "365f3aee1a0c51e730a0b67d05a900589bde126582d21765c0958271785d40e1",
+    "base_scorer_dependency_sha256": "d0e51dd4757342585a7f2830db5428ad348459981511950f57bf201e8e3a34a5",
+    "anchored_derivative_sha256": "7d515839d10a6bdca07f3573ebc6641e4eed310dccf4a5060eddf27f8cb204f6",
+    "primary_parser": "full-string ^[0-4]$ or INVALID",
+    "sensitivity_parser": "exact adapter-specific labelled sentence or full-string ordinal"
+  },
+  "decision_boundary": {
+    "reliability_eligible_selection_set": [
+      "llama31_8b_incumbent",
+      "qwen37_plus_nonthinking",
+      "qwen37_plus_thinking_upper_bound"
+    ],
+    "nemotron_policy": "Score 21 complete dialogues descriptively only; missing trajectories and reliability hard failure remain in force.",
+    "esc_rank_role": "Recognized external seven-dimension descriptive profile; no sole average and no absolute pass/fail cutoff.",
+    "quality_selection": "NOT_AUTHORIZED_BY_THIS_IDENTITY",
+    "judge_calls": "NOT_AUTHORIZED_BY_THIS_IDENTITY"
+  },
+  "identity_payload_sha256": "c22b402c57c6fc14b0a6bd976dc8af012e2e2245862f81616c96223ba04c5a3d"
+}

@@ -1,0 +1,67 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-dual-human-bundle-closeout-v1",
+  "date": "2026-08-11",
+  "status": "DUAL_HUMAN_BLIND_BUNDLE_READY_LABELS_NOT_STARTED",
+  "decision": "TWO_INDEPENDENT_HUMAN_ANNOTATION_FILES_MAY_BE_CREATED_OFFLINE; NO_UNBLINDING_OR_AGGREGATION_BEFORE_BOTH_FREEZE",
+  "scope": {
+    "states": 16,
+    "connected_groups": 8,
+    "quality_pairs_per_reviewer": 16,
+    "risk_absolute_items_per_reviewer": 32,
+    "function_source_aware_items_per_reviewer": 16,
+    "total_items_per_reviewer": 64,
+    "reviewers": ["HUMAN_A", "HUMAN_B"],
+    "independent_full_overlap": true
+  },
+  "pre_review_repairs": {
+    "quality_past_source_hidden": true,
+    "quality_ms_on_position_v1": {"A": 5, "B": 11},
+    "quality_ms_on_position_v2": {"A": 8, "B": 8},
+    "presentation_swaps": 3,
+    "response_text_changes": 0,
+    "policy_threshold_or_checkpoint_changes": 0,
+    "labels_seen_before_repair": 0
+  },
+  "artifacts": [
+    {"role": "machine_report", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/report.json", "sha256": "2ad8996820810f4743ac068ca1041e8e85bd0fb49630976fffbf2d4c08b3f422"},
+    {"role": "technical_report_artifact", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/artifact.json", "sha256": "b9df676aa31c991bc2ef66a54deac33e14ae9236399ffed6c0c815710ffce5d8"},
+    {"role": "portable_technical_report", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/report.html", "sha256": "db836713a495b3322c988e5195467cdb0d5d78a4a1bffab33f70a4b1c181d7d1"},
+    {"role": "quality_public_v2", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/quality_current_context_only_blind_v2.jsonl", "sha256": "26ad6d3e5e933019faf3a68166d7389424689f95755101f98c862ecee3ee0585"},
+    {"role": "quality_private_key_v2", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/quality_private_key_v2.jsonl", "sha256": "27c5d4144577a8e45d8c00918857f9dee7ba1c0e3427e424dab9148374acc5f6"},
+    {"role": "risk_public", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/risk_absolute_blind.jsonl", "sha256": "5fbe6c4be99cde0c02854bd7f1ba5f0708369564bd7bba06c54bf2a7d1228228"},
+    {"role": "function_public", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/function_source_aware_blind.jsonl", "sha256": "b61b9ed990dc455266b71fbff317b85c2e60f651cac35eb424e94df42574b587"},
+    {"role": "human_A_offline_ui", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/human_review_A.html", "sha256": "7dad9d36957a050a4676cd51a0800eabcbd3cba69e4a4196c18d98a8a4c1b941"},
+    {"role": "human_B_offline_ui", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_dual_human_bundle_20260811/human_review_B.html", "sha256": "7e67ac09bbaccf24dbcad01fbea28734a4458daf766fd422cf392d9de9bc9d65"},
+    {"role": "two_human_freeze_and_audit_receiver", "path": "scripts/v1_5/251l_freeze_and_audit_paper1_v3_rs_ms_human_reviews_v1_5.py", "sha256": "792ebd550065224ddb020afc6c3cecfce123f1c668d906ec948860db36f63ce6"},
+    {"role": "receiver_fail_closed_tests", "path": "tests/test_v1_5_rs_ms_two_human_freeze.py", "sha256": "092468e2c7189fe23e90d0f6a415f22eb88c3735e427caf9c281215c120ab8f0"}
+  ],
+  "measurement_rules": {
+    "quality_current_context_only": true,
+    "risk_absolute_not_pairwise": true,
+    "function_source_aware": true,
+    "cost_machine_only": true,
+    "raw_A_B_disagreements_preserved": true,
+    "majority_vote_forbidden": true,
+    "adjudication_only_after_both_raw_files_frozen": true,
+    "human_labels_are_not_training_labels": true
+  },
+  "authorization": {
+    "human_offline_annotation": true,
+    "llm_reviewer_calls": false,
+    "api_calls": 0,
+    "response_generation": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "private_key_access_before_both_human_files_freeze": false,
+    "aggregation_before_both_human_files_freeze": false,
+    "MP_work": false,
+    "ME_work": false,
+    "external_work": false
+  },
+  "problem_ledger": {
+    "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+    "sha256": "c380e5aed5faf1d1c7980684d2362e990e73f519e9415ca08330a880924ddf1e",
+    "required_entries": ["V15-MEAS-80", "V15-MEAS-81"]
+  },
+  "next": "FREEZE_HUMAN_A_AND_HUMAN_B_JSON_EXPORTS_THEN_RUN_ZERO_API_VALIDATION_AGREEMENT_AND_DISAGREEMENT_MATERIALIZATION"
+}

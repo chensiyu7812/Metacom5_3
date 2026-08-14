@@ -1,0 +1,85 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-only-ablation-closeout-v1",
+  "date": "2026-08-13",
+  "status": "MS_ON_SLICE_DIRECTIONAL_POSITIVE_DEVELOPMENT_EVIDENCE_NOT_A_HEAD_PASS",
+  "scope": "Nineteen EvoEmo states selected because the existing cross-fitted MS policy was ON; RS was forced OFF in the routed arm and the original M0+R0 response was reused as baseline.",
+  "design_assessment": {
+    "what_is_cleanly_isolated": "The response-program contrast is MS-only versus M0+R0 on the selected ON slice, so it removes the prior RS response-act confound.",
+    "what_is_not_external": "The 19 states come from the same 127-item labeled/OOF development pool and represent 11 independent users. This is a cross-fitted in-domain ON-slice ablation, not a fresh untouched external confirmation and not a full-policy comparison over ON and OFF states.",
+    "judge_limit": "All quality and risk calls use one GPT-5.6 judge family. Position blinding is valid, but this is not multi-family or human-confirmed evidence.",
+    "baseline_reuse_condition": "Baseline reuse is valid only for the exact frozen state, seed, generator and baseline prompt. It does not make the comparison concurrent and it does not remove provider nondeterminism."
+  },
+  "result": {
+    "n_pairs": 19,
+    "independent_user_groups": 11,
+    "quality_routed_wins": 12,
+    "quality_baseline_wins": 4,
+    "quality_equivalent": 3,
+    "quality_routed_win_rate": 0.6316,
+    "quality_routed_win_rate_wilson_95": [
+      0.4104,
+      0.8085
+    ],
+    "quality_baseline_win_rate": 0.2105,
+    "pair_level_one_sided_exact_sign_p_excluding_ties": 0.0384,
+    "group_level_directions": {
+      "positive": 7,
+      "negative": 2,
+      "tied": 2,
+      "one_sided_exact_sign_p_excluding_ties": 0.0898
+    },
+    "risk_baseline_mean_total_severity": 0.1579,
+    "risk_routed_mean_total_severity": 0.0,
+    "risk_paired_directions": {
+      "routed_lower": 3,
+      "equal": 16,
+      "routed_higher": 0,
+      "one_sided_exact_sign_p_excluding_ties": 0.125
+    }
+  },
+  "mechanistic_split": {
+    "independently_clean_generator_rows": 6,
+    "safe_personal_nonuse_rows": 13,
+    "quality_by_execution_status": {
+      "clean": {
+        "routed_win": 4,
+        "baseline_win": 2,
+        "equivalent": 0
+      },
+      "clean_safe_personal_nonuse": {
+        "routed_win": 8,
+        "baseline_win": 2,
+        "equivalent": 3
+      }
+    },
+    "interpretation": "Most quality wins occurred when the generator declined to use the specific memory. The result therefore supports the total MS-treatment prompt/program on this slice, but it does not by itself show that recalling and using a specific past fact caused the benefit. Generator self-citation is telemetry and cannot replace independent Function review."
+  },
+  "relationship_to_primary_success_rule": {
+    "criterion": "same_stack_outcome",
+    "new_status": "DIRECTIONAL_POSITIVE_DEVELOPMENT_EVIDENCE_REQUIRES_FRESH_GROUPED_CONFIRMATION",
+    "remaining_ms_pass_criteria": {
+      "selector": "PROMISING: cross-fitted BA=0.8121 on the current in-domain pool; external generalization remains unconfirmed.",
+      "candidate_support": "SUPPORTED on the current real connected surface.",
+      "verified_function": "OPEN: the prior 5/13 independent content-following result was measured in an RS-confounded response treatment; the current MS-only run has 6/19 generator-claimed uses but no independent source-aware Function review.",
+      "same_stack_outcome": "PROMISING, not final: positive on the selected ON slice, but only 11 groups, one judge family, no full-policy OFF slice, and no fresh external confirmation."
+    },
+    "formal_ms_pass": false,
+    "formal_paper1_primary_pass": false
+  },
+  "real_costs": {
+    "ablation_generation_usd_uncalibrated_flat_cap": 0.15,
+    "quality_risk_measurement_usd": 0.5518,
+    "total_this_round_usd": 0.7018
+  },
+  "stage_gate_interpretation": "The 11-owner result passes a development-promotion gate because quality and risk directions are favorable and no critical risk was observed; p<0.05 is not required for a small development slice. It remains short of formal MS_pass because independent MS-only source-aware Function and fresh grouped confirmation are open.",
+  "next_scientific_action": "Keep the current Llama generator frozen. Independently verify MS Function on the six clean claimed-use MS-only rows and matched safe-nonuse controls, then qualify the invariant R0-plus-MS-delta treatment on an outcome-blind development panel before any fresh grouped confirmation.",
+  "artifacts": {
+    "ablation_results": "outputs/pm_v1_5_paper1_ms_only_ablation_live_20260812/generator_results_private.jsonl",
+    "measurement_results": "outputs/pm_v1_5_paper1_ms_only_quality_risk_measurement_live_20260812/results_private.jsonl"
+  },
+  "authorization": {
+    "api_calls": 0,
+    "pm_refit": false,
+    "external_execution": false
+  }
+}

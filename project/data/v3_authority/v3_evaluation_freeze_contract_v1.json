@@ -1,0 +1,123 @@
+{
+  "protocol": "metacom-v3-evaluation-freeze-contract-v1",
+  "date": "2026-08-13",
+  "status": "P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED",
+  "decision": "Data identity, evidence architecture, examination protocol, threshold-derivation procedure, statistical unit, and claim boundary are frozen. The official ESC-RANK seven-dimension mapping is now explicit. Numeric decision lines and instrument reliability remain unresolved until P1; P0 completion does not qualify an instrument or authorize a verdict.",
+  "evidence_architecture": [
+    {
+      "claim": "generator_basic_emotional_support_capability",
+      "primary_exam": "ESC-Eval official multi-turn protocol",
+      "sensitivity": "ESC-Judge same-role pairwise Exploration-Insight-Action comparison",
+      "primary_metrics": ["Fluency", "Expression", "Empathy", "Information", "Skill", "Humanoid", "Overall"],
+      "separate_project_metrics": ["completion_rate", "low_burden_support", "no_premature_action", "safety_signal_handling"],
+      "guardrails": ["low_burden_support", "no_premature_action", "safety_signal_handling"],
+      "pass_rule_status": "DESIGN_FROZEN_ESC_RANK_DESCRIPTIVE_ONLY_SAME_STACK_AND_HARD_GATES_PREREGISTERED_P1_EXECUTION_PENDING",
+      "claim_boundary": "Generator qualification only; no PM value, real-user effectiveness, or clinical safety claim."
+    },
+    {
+      "claim": "longitudinal_memory_capability",
+      "primary_exam": "ES-MemEval official QA, summarization, and dialogue-generation tasks",
+      "primary_metrics": ["Token_F1", "BERTScore", "Recall_at_k", "nDCG_at_k", "event_precision_recall_F1", "abstention_false_answer", "observation_recall_weighted_score"],
+      "secondary_metrics": ["task-specific LLM-as-judge scores"],
+      "pass_rule_status": "FROZEN_AS_PUBLIC_V1_0_0_1427_NOT_EXACT_PAPER_1209_REPLICATION",
+      "claim_boundary": "Memory capability only; does not prove RS or learned PM selection value."
+    },
+    {
+      "claim": "learned_pm_state_action_selection_value",
+      "primary_exam": "frozen same-state deployment-ITT baseline matrix",
+      "primary_metrics": ["blind_pairwise_quality", "atomic_source_aware_risk", "actual_generator_input_tokens"],
+      "secondary_metrics": ["source_aware_function", "requested_to_received", "latency", "USD"],
+      "comparators": ["always_off", "fixed_high", "transparent_rule", "cost_matched_fixed", "cost_and_on_rate_matched_random", "full_minus_component", "safe_oracle"],
+      "pass_rule_status": "DERIVATION_FROZEN_NUMERIC_P1_CALIBRATION_AND_FORMAL_MANIFEST_REQUIRED",
+      "claim_boundary": "Causal value of the frozen learned selector under the frozen generator; no generator-agnostic claim without replication."
+    },
+    {
+      "claim": "personalization_and_memory_integrity",
+      "primary_exam": "atomic source-aware event audit",
+      "primary_metrics": ["event_rate_per_reply", "event_rate_per_exposure", "owner_affected_rate"],
+      "events": ["wrong_owner_or_entity", "future_information_exposure", "past_to_current_upgrade", "stale_or_conflicting_information_use", "fabricated_personal_history", "irrelevant_sensitive_exposure", "explicit_boundary_violation", "internal_scaffold_exposure", "uncertain"],
+      "pass_rule_status": "INSTRUMENT_DESIGN_FROZEN_P1_DUAL_REVIEW_AND_NUMERIC_UCB_REGISTRATION_REQUIRED",
+      "claim_boundary": "Personalization integrity only; not comprehensive clinical safety."
+    }
+  ],
+  "metric_policy": {
+    "composite_score_forbidden": true,
+    "primary_pm_estimand": "Same-state deployment-ITT contrasts on Quality, atomic Risk, and measured Cost.",
+    "function_role": "Secondary mechanism and attribution evidence. A counted head needs nonzero reproducible source-aware contribution, but Function is not a sole subjective veto and need not be visible in every ON response.",
+    "uncertain_policy": "UNCERTAIN remains its own category and cannot be forced into no-risk.",
+    "cost_definition": "Actual generator input/output tokens, retrieval, retries, latency, and USD are reported separately. At least 10% lower input tokens versus fixed-high is the provisional cost floor; this does not override Quality or Risk.",
+    "margin_policy": "No Quality/Risk or generator noninferiority margin may be chosen from observed formal outcomes. It must be anchored to scorer calibration, same-stack reference variation, and an outcome-blind practical-effect rationale."
+  },
+  "statistical_units": {
+    "ESC_Eval": "role_card_or_dialogue, with clustering fixed before execution",
+    "ESC_Judge": "synthetic_role",
+    "ESConv": "dialogue",
+    "EvoEmo": "user; 18 users",
+    "ES_MemEval": "user; 18 users; questions are repeated measurements and not independent samples",
+    "shared_source_rule": "EvoEmo response and ES-MemEval are two tasks on the same 18 synthetic users, not independent population replications."
+  },
+  "p0_gates": [
+    {"gate": "dataset_identity", "status": "COMPLETE_PUBLIC_1427_DISCLOSED", "blocker": null},
+    {"gate": "official_implementation_pin", "status": "COMPLETE_LOCAL_PROTOCOL_DRY_RUN", "blocker": null},
+    {"gate": "scorer_and_judge_role", "status": "COMPLETE_DESCRIPTIVE_AND_DECISION_ROLES_FROZEN", "blocker": null},
+    {"gate": "same_stack_reference", "status": "COMPLETE_CORRECTED_NEMOTRON_3_NANO_30B_ROUTE_OPERATIONAL_GATE_PASS_QUALITY_PENDING", "blocker": null},
+    {"gate": "margin_derivation", "status": "COMPLETE_OUTCOME_BLIND_DERIVATION_AND_HARD_GATES_FROZEN", "blocker": null},
+    {"gate": "overlap_screen", "status": "COMPLETE_FOR_DECLARED_ESCONV_EXTES_SOURCES", "blocker": null},
+    {"gate": "statistical_units", "status": "FROZEN", "blocker": null},
+    {"gate": "atomic_risk_instrument_design", "status": "COMPLETE_MECHANICAL_PACKET_SCHEMA_GOLD_AND_ASSIGNMENT_FREEZE", "blocker": null},
+    {"gate": "function_role", "status": "FROZEN_SECONDARY", "blocker": null}
+  ],
+  "current_stress_test_policy": {
+    "completed_calls": 42,
+    "missing_calls": 48,
+    "total_calls": 90,
+    "allowed_interpretation": "Frozen opportunity-enriched treatment diagnostic after all arms are complete.",
+    "forbidden_interpretation": "Formal three-track pass, generator qualification, or a final head verdict under the old Quality/Function rubric.",
+    "continuation_rule": "Do not spend the 48-call continuation before generator selection: if 8B is retained it may run under the exact frozen identity after approval; if 8B is replaced it remains an immutable incomplete diagnostic and is not mixed with new-generator arms.",
+    "judging_rule": "Do not perform final judging under the legacy composite or Function-veto logic."
+  },
+  "p1_blocks_before_formal_verdict": [
+    "unqualified scorer or judge use",
+    "numeric Quality/Risk margin absent",
+    "same-stack generator selection incomplete",
+    "Risk fixture dual-review qualification incomplete",
+    "formal sample and baseline manifest absent"
+  ],
+  "allowed_zero_api_work": [
+    "dataset reconciliation",
+    "official repository and file hashing",
+    "scorer calibration design",
+    "overlap-screen construction",
+    "risk adjudication protocol",
+    "margin justification design",
+    "test and validator updates"
+  ],
+  "implementation_audit": "official_benchmark_implementation_audit_v1.json",
+  "benchmark_runtime_lock": "benchmark_runtime_lock_v1.json",
+  "training_exam_overlap": "esc_training_exam_overlap_summary_v1.json",
+  "p0_exit_checklist": "p0_exit_checklist_v1.json",
+  "generator_measurement_contract": "generator_qualification_measurement_contract_v1.json",
+  "g0_generator_bakeoff_contract": "g0_generator_bakeoff_contract_v1.json",
+  "g0_generator_bakeoff_preflight": "g0_generator_bakeoff_preflight_v1.json",
+  "esc_rank_public_qualification_audit": "esc_rank_public_qualification_audit_v1.json",
+  "esc_rank_runtime_preflight": "esc_rank_runtime_preflight_v1.json",
+  "same_stack_generator_reference": "same_stack_generator_reference_v1.json",
+  "wrong_70b_reference_correction": "g0_wrong_70b_reference_correction_v1.json",
+  "nemotron30b_transport_contract": "g0_nemotron30b_transport_canary_contract_v1.json",
+  "nemotron30b_transport_preflight": "g0_nemotron30b_transport_canary_preflight_v1.json",
+  "nemotron30b_transport_closeout": "g0_nemotron30b_transport_canary_closeout_v1.json",
+  "g0_four_generator_full_screen_contract": "g0_four_generator_full_screen_contract_v1.json",
+  "g0_four_generator_full_screen_preflight": "g0_four_generator_full_screen_preflight_v1.json",
+  "g0_four_generator_full_screen_closeout": "g0_four_generator_full_screen_closeout_v1.json",
+  "g0_four_generator_esc_rank_preflight": "g0_four_generator_esc_rank_preflight_v1.json",
+  "g0_four_generator_esc_rank_closeout": "g0_four_generator_esc_rank_closeout_v1.json",
+  "generator_fair_selection_protocol": "generator_fair_selection_protocol_v1.json",
+  "g0_fair_judge_canary_preflight": "g0_fair_judge_canary_preflight_v1.json",
+  "generator_esc_eval_primary_selection": "generator_esc_eval_primary_selection_v1.json",
+  "g0_esc_eval_human_review_packet_manifest": "g0_esc_eval_human_review_packet_manifest_v1.json",
+  "generator_esc_eval_development_decision_contract": "generator_esc_eval_development_decision_contract_v1.json",
+  "evaluation_margin_justification": "evaluation_margin_justification_v1.json",
+  "risk_adjudication_protocol": "risk_adjudication_protocol_v1.json",
+  "risk_instrument_qualification": "risk_instrument_qualification_v1.json",
+  "es_memeval_identity_decision": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
+}

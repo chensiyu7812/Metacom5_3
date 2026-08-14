@@ -1,0 +1,99 @@
+{
+  "protocol": "metacom-v3-g0-generator-bakeoff-preflight-v1",
+  "date": "2026-08-13",
+  "status": "ZERO_CALL_PREFLIGHT_PASS_EXECUTION_REQUIRES_EXPLICIT_BUDGET_APPROVAL",
+  "api_calls": 0,
+  "contains_role_card_or_dialogue_text": false,
+  "official_dimensions": [
+    {
+      "paper_name": "Fluency",
+      "public_adapter_key": "fluency"
+    },
+    {
+      "paper_name": "Expression",
+      "public_adapter_key": "diversity"
+    },
+    {
+      "paper_name": "Empathy",
+      "public_adapter_key": "empathic"
+    },
+    {
+      "paper_name": "Information",
+      "public_adapter_key": "suggestion"
+    },
+    {
+      "paper_name": "Skill",
+      "public_adapter_key": "tech"
+    },
+    {
+      "paper_name": "Humanoid",
+      "public_adapter_key": "human"
+    },
+    {
+      "paper_name": "Overall",
+      "public_adapter_key": "overall"
+    }
+  ],
+  "screening_sample": {
+    "language": "english",
+    "cards": 24,
+    "source_counts": {
+      "ESconv": 8,
+      "MHP": 5,
+      "ExTES": 5,
+      "Psych": 3,
+      "EPITOME": 3
+    },
+    "selection_rule": "within-source lowest SHA256(metacom-v3-g0-esc-eval-screen-v1|card_key)",
+    "manifest_sha256": "16e33473b085a11e2decd00f6fb32df539de0318a729f4ad86338701875d1d3a"
+  },
+  "executor_sample": {
+    "packets": 16,
+    "calls_per_candidate": 32,
+    "owner_unique": true,
+    "manifest_sha256": "0e06ffe7baacfb5281cc8d98c9f19831e94de02a9be063daff8860e144a4370a",
+    "prior_use_disclosure": "These inputs and incumbent 8B outputs come from a retired development panel and are not held out. Reuse is acceptable only for G0 executor engineering diagnosis; it cannot establish PM effectiveness, external validity, or a confirmatory generator advantage."
+  },
+  "logical_calls": {
+    "supporter_per_candidate": 120,
+    "local_esc_role_per_candidate": 120,
+    "supporter_all_candidates": 360,
+    "local_esc_role_all_candidates": 360,
+    "executor_per_candidate": 32,
+    "qwen_paid_logical_calls": 152
+  },
+  "cost_ceiling": {
+    "qwen_region": "Singapore/International",
+    "qwen_pricing_cny_per_million_input_tokens": 2.998,
+    "qwen_pricing_cny_per_million_output_tokens": 11.991,
+    "budget_conversion_cny_per_usd": 7.0,
+    "qwen_max_logical_calls": 152,
+    "qwen_max_physical_attempts": 304,
+    "qwen_max_input_tokens_per_call_for_budget": 8192,
+    "qwen_max_output_tokens_per_call_for_budget": 256,
+    "conservative_usd_stop_limit": 1.25,
+    "nvidia_hosted_assumption": "USD 0 under the currently observed developer/free route; stop rather than silently use another paid route",
+    "local_role_and_scorer_api_cost": 0,
+    "esc_judge_and_human_anchor": "excluded and require a separate manifest and approval"
+  },
+  "selection_boundary": {
+    "screening_elimination": "Eliminate a candidate that fails a hard gate. Among hard-gate-eligible candidates, eliminate only when another candidate weakly improves every applicable primary ESC/executor measure, strictly improves at least one, and has no worse atomic Risk.",
+    "no_composite": true,
+    "esc_rank_average_cannot_select": true,
+    "inconclusive": "Multiple nondominated candidates advance; cost and reproducibility break ties only after ESC-Judge order-swap and the non-formal human anchor.",
+    "formal_generator_freeze": "G0 cannot itself qualify the final generator; G1 full English ESC-Eval and full executor closeout are required."
+  },
+  "input_hashes": {
+    "benchmark_protocol_dry_run_manifest_v1.json": "5b1bfee5b1007a09f9b03be762277d8d175c9b8059cf3b5c8efdb7d512b9a89b",
+    "g0_generator_bakeoff_contract_v1.json": "59c3812cf60ccdcaeb9c58114eb1a62b68ad6bf03534afaf9677870303cacc80",
+    "executor_development_cases_private.jsonl": "0be3ca23e6e878f6eeb16c9a4001c5ce9adc94d82e94bde08170a14b29bc1cfa",
+    "executor_physical_call_plan_private.jsonl": "f806c074a92f40ac7f227d617d204667c18e94f10ccf26fd58d78ff396ff43f9",
+    "executable::10_run_g0_esc_eval_screen.py": "67a20a9892715166c8a758c76d16135c2d2411723d86c62c2af4e7b321478a1a",
+    "executable::12_run_g0_executor_screen.py": "b9283d5c2fa44ea8a51b166bae54e05e419adafa16ad14d9d5f15574b330cfe3",
+    "executable::13_score_g0_esc_rank.py": "d0e51dd4757342585a7f2830db5428ad348459981511950f57bf201e8e3a34a5",
+    "executable::metacom_pm/api.py": "165186152e5336928406b33970666664a12f909962a36a01c3e4648e337a66f5",
+    "executable::metacom_pm/esc_rank_runtime.py": "fa64dfb81c72d1f01b94113b3cc2bbed4bb75693556359f3fa4f08bff4b72efa",
+    "executable::metacom_pm/v1_5_ms_same_stack_feasibility.py": "7a75d56f1849d59bc5801e4bbd6fcbf03c6b3c8e0582bc1923c3bcd0b229a087"
+  },
+  "run_identity": "bd2b4a12ab0794855a45b7d7dcdf153cf9265e4e981f8467b725f0032f8f559e"
+}

@@ -1,0 +1,161 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-single-teacher-label-freeze-report-v1",
+  "status": "MS_SINGLE_TEACHER_LABEL_FREEZE_PASS_OOF_DESIGN_MAY_BEGIN",
+  "checks": {
+    "exact_204_reviews_frozen": true,
+    "exact_five_zero_api_alias_recoveries": true,
+    "only_frozen_aliases_used": true,
+    "all_candidates_atomic": true,
+    "both_resolved_classes_exist": true,
+    "all_17_logo_training_folds_have_both_classes": true,
+    "three_abstentions_remain_unlabeled_and_runtime_off": true,
+    "no_api_calls": true,
+    "teacher_not_human_gold": true,
+    "no_influenced_by_or_qa_gold_used": true,
+    "no_generator_or_response_outcome_read": true
+  },
+  "failed_checks": [],
+  "counts": {
+    "cases": 204,
+    "resolved_binary": 201,
+    "decisions": {
+      "NOT_SUITABLE": 128,
+      "SEMANTIC_ABSTAIN": 3,
+      "SUITABLE": 73
+    },
+    "groups": 17,
+    "alias_recoveries": {
+      "ALREADY_VISIBLE->CURRENT_ECHO_OR_CONTAINMENT": 2,
+      "ALREADY_VISIBLE_OR_ALREADY_CHOSEN->CURRENT_ECHO_OR_CONTAINMENT": 3
+    }
+  },
+  "strata": {
+    "CURRENT_ECHO": {
+      "total": 32,
+      "suitable": 1,
+      "not_suitable": 30,
+      "abstain": 0,
+      "semantic_abstain": 1
+    },
+    "LOW_INFORMATION": {
+      "total": 21,
+      "suitable": 0,
+      "not_suitable": 21,
+      "abstain": 0
+    },
+    "ORDINARY_ATOMIC": {
+      "total": 151,
+      "suitable": 72,
+      "not_suitable": 77,
+      "abstain": 0,
+      "semantic_abstain": 2
+    }
+  },
+  "per_group_decisions": {
+    "evo_component::p1": {
+      "NOT_SUITABLE": 10,
+      "SUITABLE": 2
+    },
+    "evo_component::p10": {
+      "NOT_SUITABLE": 6,
+      "SUITABLE": 6
+    },
+    "evo_component::p11": {
+      "NOT_SUITABLE": 6,
+      "SUITABLE": 6
+    },
+    "evo_component::p12": {
+      "NOT_SUITABLE": 8,
+      "SUITABLE": 4
+    },
+    "evo_component::p13__p18": {
+      "NOT_SUITABLE": 11,
+      "SUITABLE": 1
+    },
+    "evo_component::p14": {
+      "NOT_SUITABLE": 6,
+      "SEMANTIC_ABSTAIN": 1,
+      "SUITABLE": 5
+    },
+    "evo_component::p15": {
+      "NOT_SUITABLE": 8,
+      "SUITABLE": 4
+    },
+    "evo_component::p16": {
+      "NOT_SUITABLE": 8,
+      "SUITABLE": 4
+    },
+    "evo_component::p17": {
+      "NOT_SUITABLE": 8,
+      "SUITABLE": 4
+    },
+    "evo_component::p2": {
+      "NOT_SUITABLE": 4,
+      "SUITABLE": 8
+    },
+    "evo_component::p3": {
+      "NOT_SUITABLE": 8,
+      "SUITABLE": 4
+    },
+    "evo_component::p4": {
+      "NOT_SUITABLE": 9,
+      "SUITABLE": 3
+    },
+    "evo_component::p5": {
+      "NOT_SUITABLE": 7,
+      "SEMANTIC_ABSTAIN": 1,
+      "SUITABLE": 4
+    },
+    "evo_component::p6": {
+      "NOT_SUITABLE": 6,
+      "SUITABLE": 6
+    },
+    "evo_component::p7": {
+      "NOT_SUITABLE": 9,
+      "SEMANTIC_ABSTAIN": 1,
+      "SUITABLE": 2
+    },
+    "evo_component::p8": {
+      "NOT_SUITABLE": 7,
+      "SUITABLE": 5
+    },
+    "evo_component::p9": {
+      "NOT_SUITABLE": 7,
+      "SUITABLE": 5
+    }
+  },
+  "logo_train_both_classes": {
+    "evo_component::p1": true,
+    "evo_component::p10": true,
+    "evo_component::p11": true,
+    "evo_component::p12": true,
+    "evo_component::p13__p18": true,
+    "evo_component::p14": true,
+    "evo_component::p15": true,
+    "evo_component::p16": true,
+    "evo_component::p17": true,
+    "evo_component::p2": true,
+    "evo_component::p3": true,
+    "evo_component::p4": true,
+    "evo_component::p5": true,
+    "evo_component::p6": true,
+    "evo_component::p7": true,
+    "evo_component::p8": true,
+    "evo_component::p9": true
+  },
+  "artifacts": {
+    "frozen_teacher_reviews": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/frozen_teacher_reviews.jsonl",
+      "sha256": "bda01981567595abfd832b0fa87faeb52a8877847ab17344dc18507807c54fe8"
+    },
+    "ms_teacher_labels": {
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_label_freeze_20260811/ms_teacher_labels.jsonl",
+      "sha256": "727325c8251d207081ccb007fd08419e98a41fe33184a54c8492602f44a9d364"
+    }
+  },
+  "supervision_claim": "single qualified LLM teacher distillation; not human gold",
+  "abstention_runtime_policy": "OFF",
+  "api_calls": 0,
+  "pm_fit_count": 0,
+  "next": "FREEZE_IDENTITY_FREE_LOW_CAPACITY_GROUPED_OOF_BEFORE_FIRST_FIT"
+}

@@ -1,0 +1,29 @@
+{
+  "protocol": "metacom-v3-dataset-card-v1",
+  "dataset": "ESC-Eval",
+  "date": "2026-08-13",
+  "status": "OFFICIAL_IDENTITY_DISCOVERED_SCORER_AND_PASS_MARGIN_NOT_QUALIFIED",
+  "formal_paper": {
+    "venue": "EMNLP 2024 Main Conference",
+    "acl_url": "https://aclanthology.org/2024.emnlp-main.883/",
+    "reported_counts": {"selected_role_cards": 655, "evaluated_models": 14, "interactive_dialogues_approx": 8500, "manual_annotations": 59654, "dimensions": 7}
+  },
+  "official_repository": {
+    "repository": "https://github.com/AIFlames/Esc-Eval",
+    "main_commit_observed_2026_08_13": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "release_tag": null,
+    "local_vendor_status": "NOT_YET_MATERIALIZED"
+  },
+  "analysis_grain": "role card/dialogue; final clustering rule must be frozen after local schema inspection",
+  "role_source_boundary": "Role cards were extracted by GPT-4 from seven existing datasets; ESC-Role training includes ESConv and ExTES-derived data.",
+  "known_limitations": [
+    "simulated rather than real users",
+    "role-card bias from GPT-4 extraction and source datasets",
+    "14 proficient but non-native English annotators",
+    "the suggestion rubric can reward more than five valid suggestions, which conflicts with the project's low-burden principle"
+  ],
+  "allowed_claims": ["recognized external qualification of multi-turn emotional-support generator behavior", "same-stack reference positioning"],
+  "forbidden_claims": ["PM selection value", "real-user outcome", "clinical safety certification", "absolute truth from ESC-RANK alone"],
+  "required_companion": "ESC-Judge is a pairwise E-I-A sensitivity analysis, not a second independent truth source.",
+  "remaining_p0_work": ["pin vendored code and data hashes", "calibrate ESC-RANK against released human labels", "run a same-stack reference", "freeze NI margin", "add low-burden and safety-signal guardrails", "screen ESConv/ExTES overlap before any SFT"]
+}

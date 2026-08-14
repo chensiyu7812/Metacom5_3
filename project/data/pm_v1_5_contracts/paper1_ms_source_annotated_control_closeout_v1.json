@@ -1,0 +1,70 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-source-annotated-control-closeout-v1",
+  "date": "2026-08-12",
+  "status": "CONTROL_QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_ONE_CONSTRUCT_REPAIR_DESIGN_NEXT",
+  "method_version": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+  "experiment_revision": "SEMANTIC_ADAPTER_ABLATION_V1",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_source_annotated_control_execution_phase_v1.json",
+    "sha256": "52f08e1f135d475da4ef16ea142a77a60b1a908ef6c8eacd4231a2e49ca1cbd0"
+  },
+  "artifacts": [
+    {
+      "role": "live_results",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_control_live_20260812/control_results_private.jsonl",
+      "sha256": "23ccb3b616f51499d4bf3fd10b93ed14f03505474b66e7e52488edf8a8aac11f"
+    },
+    {
+      "role": "raw_before_local_validation",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_control_live_20260812/raw_provider_outputs_before_local_validation.jsonl",
+      "sha256": "a11523a7e3bcb0f2b956060255599c52fe546c50155409811c850f018c1b154b"
+    },
+    {
+      "role": "audit_report",
+      "path": "outputs/pm_v1_5_paper1_ms_source_annotated_control_audit_20260812/report.json",
+      "sha256": "93e625277bddfaf46022517b2f8da7a48f8ddda32924a7b6c62f66eb08532665",
+      "required_status": "QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_CONTROL_CONSTRUCT_REPAIR_ONCE_REQUIRED"
+    },
+    {
+      "role": "global_failure_ledger",
+      "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+      "sha256": "b52bd192af2edc1abac089ca8c8064f21219c689fd72670743c0ff1ff1960ccb"
+    }
+  ],
+  "observed": {
+    "logical_calls": 24,
+    "schema_and_local_valid": 24,
+    "primary_exact": 10,
+    "primary_denominator": 12,
+    "challenger_exact": 9,
+    "challenger_denominator": 12,
+    "prompt_tokens": 18328,
+    "completion_tokens": 7576,
+    "observed_cost_usd": 0.182381,
+    "public_201_calls": 0,
+    "training_labels_created_or_changed": 0,
+    "fits": 0
+  },
+  "root_cause": [
+    "The retired echo control contains a real cross-session recurrence increment and has an invalid NOT_SUITABLE key for the repaired construct.",
+    "The sister positive does not bind the current event to the past event and is legitimately abstainable.",
+    "The rubric must forbid treating a meta-question about whether an unresolved candidate is relevant as candidate Function."
+  ],
+  "authorization": {
+    "one_control_construct_repair_design": true,
+    "review_calls": false,
+    "public_201_reannotation": false,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "generator_calls": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "invariants": {
+    "qualification_thresholds_not_relaxed": true,
+    "failed_identity_consumed_no_rerun": true,
+    "old_control_key_retired_not_rewritten": true,
+    "sixteen_actions_unchanged": true,
+    "no_single_memory_cap": true
+  }
+}

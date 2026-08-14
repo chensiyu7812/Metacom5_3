@@ -1,0 +1,36 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-source-annotated-review-endpoints-v1",
+  "candidates": {
+    "openai_gpt_5_6_sol": {
+      "api_key_env": "OPENAI_API_KEY",
+      "base_url": "https://api.openai.com/v1",
+      "family": "openai_gpt_5_6_sol",
+      "input_usd_per_million_tokens": 5.0,
+      "max_output_tokens_parameter": "max_completion_tokens",
+      "model": "gpt-5.6-sol",
+      "openai_reasoning_effort": "low",
+      "output_usd_per_million_tokens": 30.0,
+      "supports_strict_json_schema": true,
+      "temperature_mode": "omit",
+      "transport": "openai_chat_completions"
+    },
+    "google_gemini_2_5_flash": {
+      "api_key_env": "GEMINI_API_KEY",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta",
+      "family": "google_gemini_2_5_flash",
+      "gemini_thinking_budget": 0,
+      "input_usd_per_million_tokens": 0.3,
+      "model": "gemini-2.5-flash",
+      "output_usd_per_million_tokens": 2.5,
+      "supports_strict_json_schema": true,
+      "transport": "gemini_generate_content"
+    }
+  },
+  "request_contract": {
+    "client_internal_retries": 1,
+    "maximum_physical_attempts_per_logical_call": 2,
+    "max_output_tokens": 1200,
+    "seed": 20260812,
+    "temperature": 0.0
+  }
+}

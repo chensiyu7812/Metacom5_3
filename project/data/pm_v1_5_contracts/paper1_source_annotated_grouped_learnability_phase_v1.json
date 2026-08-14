@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-v1.5-paper1-source-annotated-grouped-learnability-phase-v1",
+  "date": "2026-08-10",
+  "status": "GROUPED_OOF_PILOT_CANDIDATE_REQUIRES_AUTHORITY_PROMOTION",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+  "parent_authority_sha256": "d8015d6f9eb0d32948039278839443d48e80fcfd57f931b42af8c8377b834b8d",
+  "input_bindings": [
+    {"role": "method_contract", "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_candidate_v1.json", "sha256": "013af2f82dd5d7e4bbdb724c29c7849389d06adb2ca2e45ec4fb29b524d6e245"},
+    {"role": "private_labels", "path": "outputs/pm_v1_5_paper1_source_annotated_labels_private_20260810/source_annotated_labels.jsonl", "sha256": "0e53fb50dcd09422a5181c212dfc0ac9b5dd38abef47169a59c4a7a58c667936"},
+    {"role": "label_materialization_report", "path": "outputs/pm_v1_5_paper1_source_annotated_labels_20260810/report.json", "sha256": "38a9fd1e88c4960f431ba8d1d8808ee97455266bbcecf8a01d66eb1340154854"},
+    {"role": "label_final_audit", "path": "outputs/pm_v1_5_paper1_source_annotated_labels_final_audit_20260810/report.json", "sha256": "b50053f3f74f635aea677daf42c27380ad06a5d6640f8d15cd141a2628f207a5"},
+    {"role": "actual_rank1", "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl", "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"},
+    {"role": "esconv_runtime_states", "path": "outputs/pm_v1_5_paper1_p1_public_surface/esconv_states_unlabeled.jsonl", "sha256": "d1ccedca10c95644ac58ddfb28796deb95aa810dcdbbdd5ee6ceddaf011cfc6f"},
+    {"role": "evoemo_runtime_states", "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl", "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"},
+    {"role": "evoemo_runtime_candidates", "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl", "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"},
+    {"role": "strategy_cards", "path": "data/strategy/strategy_cards_v1_5_minimal.jsonl", "sha256": "04c3af44d54ae9875cd817364ff46e90aa954e0bee81b295af279b1b38964d24"}
+  ],
+  "implementation_bindings": [
+    {"role": "one_shot_grouped_oof_runner", "path": "scripts/v1_5/192l_run_paper1_source_annotated_grouped_learnability_v1_5.py", "sha256": "f39ceb1ce09f212e824ce78690e01df7c6470cf1e0f150283c3b86bc2238fbee"}
+  ],
+  "frozen_model": {
+    "text": "word TF-IDF ngram 1-2, min_df 3, max_features 3000, sublinear_tf",
+    "numeric": "selection score, margin, log pool, log turn index, log visible words, log candidate words, log memory age",
+    "classifier": "L2 logistic regression C=0.25, class_weight=balanced, liblinear, seed=20260810",
+    "decision_threshold": 0.5,
+    "brier_probability": "analytic training-prior correction of balanced probability"
+  },
+  "split": {
+    "RS": "ESConv train+validation only, raw-dialogue grouped 5-fold OOF; official test excluded",
+    "MS_ME": "six frozen connected-owner outer folds",
+    "replicates_or_states_never_split_from_group": true
+  },
+  "gates_per_head": {
+    "balanced_accuracy_min": 0.60,
+    "recall_min": 0.55,
+    "specificity_min": 0.55,
+    "brier_must_beat_prevalence": true,
+    "predicted_on_fraction_min": 0.15,
+    "predicted_off_fraction_min": 0.15
+  },
+  "primary": "RS_pass AND count_pass(MP,MS,ME)>=1; MP is pre-fixed OFF",
+  "allowed": ["one grouped OOF diagnostic pass", "private OOF predictions", "aggregate qualification report"],
+  "forbidden": ["model or feature tuning after results", "threshold tuning", "full fit checkpoint", "official ESConv test scoring", "API calls", "responses, baselines, or external outcomes", "rescue packet or synthetic users"]
+}

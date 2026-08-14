@@ -1,0 +1,71 @@
+{
+  "protocol": "metacom-v3-g0-official-protocol-english331-preflight-v1",
+  "date": "2026-08-14",
+  "status": "ZERO_CALL_PASS_EXPLICIT_IDENTITY_AND_COST_APPROVAL_REQUIRED",
+  "run_identity": "a3b8e9724da312625d98273e41db32b2105c8a41b8ee0b360a6e28d5d1a754d1",
+  "api_calls": 0,
+  "contains_role_card_or_dialogue_text": false,
+  "official_surface": {
+    "cards": 331,
+    "turns": 5,
+    "supporter_system_prompt_sha256": "b91a2c58f278756ff6cc0f0b4cd5a0ee9fc1d1ba79c12be6fe02fa011b9f0df2",
+    "official_pass_line": null,
+    "output_caps": {
+      "llama31_8b_incumbent_official_wrapper": 256,
+      "qwen37_plus_nonthinking_official_wrapper": 512
+    }
+  },
+  "logical_calls": {
+    "supporter": 3310,
+    "local_role": 3310,
+    "qwen_paid": 1655,
+    "judge": 0
+  },
+  "budget": {
+    "qwen_point_estimate_usd": 0.68,
+    "recommended_approval_ceiling_usd": 1.25,
+    "ceiling_not_part_of_identity": true,
+    "strict_pre_call_rule": "Observed Qwen spend plus conservative capped-call reserve must fit before every call."
+  },
+  "input_hashes": {
+    "g0_official_protocol_english331_contract_v1.json": "2ddd673006c8e76cdc599278643de0d0363c1effff396676be000368a6b262f7",
+    "g0_official_protocol_english331_manifest_v1.jsonl": "0547a3c939be5789e695aff95838d75b8e4f7d33704cbe97714970e8b8eb9a5f",
+    "executable::33_run_g0_official_protocol_english331.py": "27fd6b3a8655083ab7a208e51bd5279b0ac4dbb90f9102a8ec1c4d9b0515d755",
+    "executable::16_run_g0_research_aligned_esc.py": "84f4b21bead542fe6929d88f05b9665b0c3edf388671ca470f29c458aac107ba",
+    "executable::metacom_pm/api.py": "b2f28cbff8e73c397097b3c8f30b73814a50b5631a41184535c78bc14335fb3b"
+  },
+  "identity_payload": {
+    "protocol": "metacom-v3-g0-official-protocol-english331-run-identity-v1",
+    "input_hashes": {
+      "g0_official_protocol_english331_contract_v1.json": "2ddd673006c8e76cdc599278643de0d0363c1effff396676be000368a6b262f7",
+      "g0_official_protocol_english331_manifest_v1.jsonl": "0547a3c939be5789e695aff95838d75b8e4f7d33704cbe97714970e8b8eb9a5f",
+      "executable::33_run_g0_official_protocol_english331.py": "27fd6b3a8655083ab7a208e51bd5279b0ac4dbb90f9102a8ec1c4d9b0515d755",
+      "executable::16_run_g0_research_aligned_esc.py": "84f4b21bead542fe6929d88f05b9665b0c3edf388671ca470f29c458aac107ba",
+      "executable::metacom_pm/api.py": "b2f28cbff8e73c397097b3c8f30b73814a50b5631a41184535c78bc14335fb3b"
+    },
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "esc_role_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "candidate_configurations": [
+      {
+        "candidate_id": "llama31_8b_incumbent_official_wrapper",
+        "base_url": "https://integrate.api.nvidia.com",
+        "model": "meta/llama-3.1-8b-instruct",
+        "enable_thinking": null,
+        "max_output_tokens": 256
+      },
+      {
+        "candidate_id": "qwen37_plus_nonthinking_official_wrapper",
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "model": "qwen3.7-plus-2026-05-26",
+        "enable_thinking": false,
+        "max_output_tokens": 512
+      }
+    ],
+    "cards": 331,
+    "turns": 5,
+    "logical_supporter_calls": 3310,
+    "qwen_paid_logical_calls": 1655,
+    "judge_calls": 0
+  },
+  "claim_boundary": "Official-protocol English profile for current hosted candidates; no official pass line, PM value, clinical-safety, or real-user claim."
+}

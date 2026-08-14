@@ -1,0 +1,99 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4a-packet-materialization-phase-v2",
+  "date": "2026-08-11",
+  "status": "G4A_V2_ZERO_API_CONTROL_REPAIR_AND_PACKET_REMATERIALIZATION_AUTHORIZED_ONCE",
+  "promoted_from_authority_sha256": "89afda8fc0e6dad0cbae0cf9878d4a66d572cb61185ab914418297c25fe633a7",
+  "git_baseline": "65e64ab9b7fa25847ba63cb354f3d98a1ca59adb",
+  "purpose": "Preserve the G4A V1 machine-valid 507-case selection as evidence, repair exactly five MP-positive and one ME-negative fresh control before any review, and materialize one canonical V2 packet in new paths without labels or API calls.",
+  "supersedes": {
+    "phase_path": "data/pm_v1_5_contracts/paper1_v3_g4a_packet_materialization_phase_v1.json",
+    "phase_sha256": "d209a8c9a05ce06639ef05a99cd9d8a164dc2e2e8ea16035f5f2c08b86606ee7",
+    "v1_report_path": "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/report.json",
+    "v1_report_sha256": "0e2645faa4d42ad96758d01192da8930f1a37f24fa666571b0c99424ee225e11",
+    "semantic_audit_path": "outputs/pm_v1_5_paper1_v3_g4a_control_semantic_audit_20260811/report.json",
+    "semantic_audit_sha256": "14df383ab8bb3d18dbc422c4d67792d92970a5c3b4c3814c87eee58255dbc93c",
+    "v1_reviewer_execution": 0,
+    "v1_labels_created": 0,
+    "v1_outputs_immutable": true
+  },
+  "input_bindings": [
+    {
+      "role": "g4_design",
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4_nonexclusive_suitability_design_v1.json",
+      "sha256": "e44857a8bac9c2084336b28ba4e566d046fc2d1e88f8a71ae60002a50b505d7d"
+    },
+    {
+      "role": "g4_design_validation",
+      "path": "outputs/pm_v1_5_paper1_v3_g4_nonexclusive_suitability_design_20260811/report.json",
+      "sha256": "80cc516460997fa9c4ea1642d3d6b5e6ac4cd1487dc0bc57d0d23c9eca9fdf04"
+    },
+    {
+      "role": "g3_diagnostics",
+      "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl",
+      "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52"
+    },
+    {
+      "role": "evoemo_states",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl",
+      "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"
+    },
+    {
+      "role": "evoemo_candidates",
+      "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl",
+      "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"
+    },
+    {
+      "role": "actual_rank1_unlabeled",
+      "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl",
+      "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"
+    }
+  ],
+  "implementation_binding": {
+    "path": "src/metacom_pm/v1_5_g4_nonexclusive_suitability_packet.py",
+    "sha256": "651b65c9815885f8e6f8867989192639cfe3c91e266cbfa38773fd738ff0cecb"
+  },
+  "carry_invariants": {
+    "reviewer_a_packet_sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8",
+    "reviewer_b_packet_sha256": "68ca51000c7bdfc5b0463436c1be9b492eaa5257501d5f2f7374f4123a7c77c2",
+    "private_case_key_sha256": "e34556683a85925eecbf58de9ebff2b4e74a7ebc986d3f7d53acf3a77041348c",
+    "public_cases": 507,
+    "MP": 204,
+    "MS": 204,
+    "ME": 99,
+    "all_three_shared_groups": 14
+  },
+  "control_delta": {
+    "total_controls": 36,
+    "unchanged_surfaces": 30,
+    "changed_surfaces": 6,
+    "changed_MP_positive": 5,
+    "changed_ME_negative": 1,
+    "per_component_distribution_unchanged": {
+      "SUITABLE": 5,
+      "NOT_SUITABLE": 5,
+      "SEMANTIC_ABSTAIN": 2
+    },
+    "four_axis_fields_forbidden": true
+  },
+  "outputs": {
+    "public_dir": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811",
+    "private_dir": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_private_20260811"
+  },
+  "required_terminal_status": "G4A_V2_PACKET_MATERIALIZATION_PASS_REVIEW_EXECUTION_NOT_AUTHORIZED",
+  "authorization": {
+    "packet_rematerialization_in_new_paths": true,
+    "fresh_control_repair": true,
+    "private_key_rematerialization": true,
+    "json_and_html_report": true,
+    "reviewer_calls": false,
+    "human_label_collection": false,
+    "suitability_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": false,
+    "baseline_execution": false,
+    "external_execution": false,
+    "overwrite_v1_or_v2_output": false
+  },
+  "next_if_pass": "INDEPENDENT_V2_PACKET_AND_CONTROL_AUDIT_THEN_SEPARATE_G4B_REVIEW_PHASE_DESIGN"
+}

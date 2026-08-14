@@ -1,0 +1,113 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b1-control-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "G4B1_EXACT_72_CONTROL_REVIEW_CALLS_AUTHORIZED_PUBLIC_AND_GOLD_FORBIDDEN",
+  "purpose": "Execute exactly 36 fresh held-out controls for each of two identified independent LLM reviewers. Freeze raw provider returns and valid single-decision judgments without reading control gold or public cases.",
+  "input_bindings": [
+    {
+      "role": "g4b_review_design",
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4b_review_design_v1.json",
+      "sha256": "3b709a2ea0ac954387101d53e5222cefcbcbe3e9eda7b523a4a2d405cf33fe82"
+    },
+    {
+      "role": "g4b_design_validation",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_review_design_validation_v2_20260811/report.json",
+      "sha256": "6fb1c26c4984d9b933f03ad86a6c32c2501cd71312906e40200e90525a1dc223"
+    },
+    {
+      "role": "g4b_v2_preflight_report",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_v2_20260811/report.json",
+      "sha256": "ab333ef49da729bb13b6856b5e3b3d552daef718b56eee557c03cde6e3fd733f"
+    },
+    {
+      "role": "frozen_call_plan_controls_subset_only",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_v2_20260811/call_plan.jsonl",
+      "sha256": "eb67b1f166a4aa2fd4b7f7659ed8364063ccf6c06eb4822f8f5710272213bd1e"
+    },
+    {
+      "role": "cost_ceiling",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_review_preflight_v2_20260811/cost_ceiling.json",
+      "sha256": "6e762b7f21b112ff415c22905cce66757e20b30e1bf8fc3c00e700900187384b"
+    },
+    {
+      "role": "reviewer_a_controls_only",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_controls.jsonl",
+      "sha256": "5a94d628d74cbed7a384f6b32a7c5a224b0a3bc7fbb994387adc345250fb3bcc"
+    },
+    {
+      "role": "reviewer_b_controls_only",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_b_controls.jsonl",
+      "sha256": "daab5a7b103c7eadf23c20b3c57992326f28fa901265782e2578e0e825bbfd9d"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json",
+      "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "strict_one_decision_review_contract",
+      "path": "src/metacom_pm/v1_5_g4b_nonexclusive_suitability_review.py",
+      "sha256": "93be3b67b79f35676f82ad5c37e96089bc187426d2376b9053ebc6a8a7c3b6e4"
+    },
+    {
+      "role": "raw_first_paid_runner_without_gold_access",
+      "path": "scripts/v1_5/209l_run_paper1_v3_g4b_reviews_v1_5.py",
+      "sha256": "eb038a03211b0bfe568d8eecd0785f291ba13c30174d41cd71f2961d5e5db865"
+    }
+  ],
+  "reviewers": {
+    "REVIEWER_A": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "anthropic_claude_haiku_4_5",
+      "model": "claude-haiku-4-5-20251001"
+    },
+    "REVIEWER_B": {
+      "annotator_type": "LLM_REVIEWER_NOT_HUMAN",
+      "endpoint_key": "openai_gpt_5_mini",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "execution": {
+    "run_stage": "controls",
+    "logical_calls": 72,
+    "REVIEWER_A": 36,
+    "REVIEWER_B": 36,
+    "one_case_per_logical_call": true,
+    "maximum_physical_attempts_per_logical_call": 2,
+    "maximum_output_tokens": 500,
+    "temperature": 0.0,
+    "absolute_usd_cap": 0.75,
+    "output_directory": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811",
+    "raw_first": true,
+    "gold_access": false,
+    "public_packet_access": false
+  },
+  "forbidden": [
+    "control gold key access, hashing or loading by the review runner",
+    "private public-case key access",
+    "public review calls",
+    "control qualification during live execution",
+    "semantic retry after a complete strict-schema judgment",
+    "prompt, codebook, controls, reasons or threshold edits after any result",
+    "suitability training labels",
+    "PM fitting or threshold selection",
+    "generator, baseline or external execution"
+  ],
+  "authorization": {
+    "control_reviewer_calls": true,
+    "paid_execution_up_to_usd_cap": true,
+    "raw_attempt_persistence": true,
+    "valid_control_review_persistence": true,
+    "control_gold_access": false,
+    "public_reviewer_calls": false,
+    "suitability_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "baseline_execution": false,
+    "external_execution": false
+  },
+  "required_terminal_status": "G4B_CONTROL_REVIEWS_COMPLETE",
+  "next_if_complete": "SEPARATE_ZERO_API_G4B1_CONTROL_QUALIFICATION_PHASE"
+}

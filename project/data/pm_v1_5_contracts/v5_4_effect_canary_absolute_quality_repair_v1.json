@@ -1,0 +1,66 @@
+{
+  "protocol": "pm-v1.5-v5.4-effect-canary-absolute-quality-repair-v1",
+  "status": "FROZEN_BEFORE_ABSOLUTE_QUALITY_CALLS",
+  "date": "2026-08-10",
+  "trigger": {
+    "failed_measurement_report": "outputs/pm_v1_5_v5_4_effect_canary_measurement_analysis_20260810/report.json",
+    "pairwise_quality_status": "permanently failed for effect-target use",
+    "reviewer_a_ab_ba_consistency": "16/24",
+    "reviewer_b_ab_ba_consistency": "13/24",
+    "diagnosis": "position bias: the dominant inconsistent pattern selected response B in both forward and reversed presentation",
+    "not_changed": "the eight states, 48 generator responses, actual Rank-1 candidates, seeds, endpoints, risk judgments, function judgments, and failed pairwise artifact remain frozen"
+  },
+  "estimand": "For each reviewer and paired generator seed, independently score each response on four positive-support axes, then subtract OFF from ON. Reviewer severity offsets cancel inside the same-reviewer paired difference.",
+  "blinding_and_order": {
+    "case_id": "opaque hash; arm and replicate are absent from the prompt",
+    "order": "six cases independently deterministically shuffled for each reviewer and effect group",
+    "visible_to_quality_reviewer": [
+      "deployment-visible dialogue",
+      "one anonymous response represented by exact pre-numbered spans",
+      "four positive-support axis anchors"
+    ],
+    "hidden": [
+      "ON/OFF arm",
+      "actual candidate and component identity",
+      "other reviewer and pairwise judgments",
+      "risk, function, cost, construction, oracle, and PM outputs"
+    ]
+  },
+  "axes_and_anchors": {
+    "goal_advance": "1 actively obstructs or misses the current goal; 2 weak/minimally relevant; 3 adequate; 4 strong concrete advance; 5 exceptional advance without overreach",
+    "emotional_attunement": "1 actively mismatched; 2 generic or weak; 3 adequate; 4 specifically attuned; 5 exceptionally precise and proportionate",
+    "specific_positive_support": "1 no useful supportive contribution or harmful contribution; 2 slight/generic; 3 adequate; 4 clearly useful and specific; 5 exceptional immediate contribution",
+    "clarity_naturalness": "1 confusing/unnatural; 2 notably awkward; 3 acceptable; 4 clear and natural; 5 exceptionally clear, concise, and natural",
+    "orthogonality": "do not subtract grounding risk, resource function/non-use, candidate applicability, memory preference, length, latency, tokens, or USD"
+  },
+  "fixed_grain": {
+    "calls": "2 reviewers x 8 effect groups = 16",
+    "response_items": "48 per reviewer",
+    "paired_effect_items": "24 per reviewer",
+    "independent_effect_groups": 8,
+    "pseudoreplication_warning": "responses, paired seeds, reviewers, and axes do not increase the independent effect-group count"
+  },
+  "measurement_usability_not_pm_pass": {
+    "completion_and_exact_ids": "16/16 calls; 96/96 response items; every evidence ID resolves to its own case",
+    "axis_within_one_point_agreement": ">=0.75 over 192 response-axis comparisons",
+    "response_composite_spearman": ">=0.50 over 48 matched responses",
+    "paired_uplift_spearman": ">=0.30 over 24 matched ON-minus-OFF effects",
+    "material_direction_definition": "reviewer-specific composite ON-minus-OFF with absolute magnitude >=0.25; smaller magnitude is TIE",
+    "paired_direction_resolved_coverage": ">=0.50 of 24 paired effects where both reviewers have a material direction or both say TIE",
+    "paired_direction_raw_agreement": ">=0.70 among dual-resolved paired effects",
+    "diagnostics": "MAE, exact agreement, per-axis results, Pearson, reviewer mean/scale, and component breakdown are reported but do not replace the gates"
+  },
+  "effect_target_rule_if_measurement_passes": {
+    "replicate_uplift": "mean of the two reviewer-specific four-axis ON-minus-OFF composites",
+    "state_uplift": "mean of three paired replicate uplifts; reviewer/replicate remain repeated measurements, not new states",
+    "unresolved": "no target if measurement usability fails; never set disagreement to zero or OFF",
+    "canary": "diagnostic only and never used to train the PM"
+  },
+  "final_pm_pass": "unchanged: only held-out 16-action policy behavior against predeclared baselines on separately reported support, material risk, function, and cost can pass the PM",
+  "cost": {
+    "new_absolute_quality_usd_cap": 0.30,
+    "realized_prior_measurement_proxy_usd": 0.279,
+    "cumulative_canary_cap_remains": 1.0
+  },
+  "api_calls_for_contract": 0
+}

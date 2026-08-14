@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b2-mp-public-preflight-report-v1",
+  "status": "G4B2_MP_PUBLIC_PREFLIGHT_PASS_EXECUTION_PHASE_MAY_BE_DESIGNED",
+  "checks": {
+    "qualification_routes_mp_only": true,
+    "ms_me_fixed_off_without_third_loop": true,
+    "exact_408_public_calls": true,
+    "two_independent_reviewer_families": true,
+    "anchored_prompt_is_provider_visible": true,
+    "runner_does_not_name_private_mapping_or_gold": true,
+    "public_packet_contains_no_labels": true,
+    "all_16_actions_remain_downstream": true
+  },
+  "failed_checks": [],
+  "eligible_components": [
+    "MP"
+  ],
+  "fixed_off_components": [
+    "MS",
+    "ME"
+  ],
+  "logical_calls": 408,
+  "public_cases": 204,
+  "reviewers_per_case": 2,
+  "call_plan": {
+    "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_preflight_v2_20260811/call_plan.jsonl",
+    "sha256": "75405ceaf0be448acdb3f94c0cc4348d8d86e676a52e0d3d1bde82cd22f3273b",
+    "rows": 408
+  },
+  "cost_ceiling": {
+    "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_preflight_v2_20260811/cost_ceiling.json",
+    "sha256": "f15478a6fbb8abd6f51c2fd301b0bf349f655265b90446b85f04f4b6f61d5b39",
+    "protocol": "pm-v1.5-paper1-v3-g4b2-mp-public-cost-ceiling-v1",
+    "logical_calls": 408,
+    "maximum_physical_attempts": 816,
+    "conservative_computed_usd": 3.0043589999999973,
+    "absolute_usd_cap": 3.5,
+    "method": "ceil(chars/3*1.5) input + full 500 output tokens, both attempts"
+  },
+  "api_calls": 0,
+  "labels_created": 0,
+  "private_case_mapping_read": false,
+  "next_gate": "G4B2_EXACT_408_MP_PUBLIC_DUAL_REVIEW_EXECUTION_PHASE"
+}

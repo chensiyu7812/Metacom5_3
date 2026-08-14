@@ -1,0 +1,21 @@
+{
+  "protocol": "pm-v1.5-paper1-external-treatment-stress-test-selector-runtime-validation-v1",
+  "date": "2026-08-13",
+  "status": "PASS_NATIVE_RS_RUNTIME_REPRODUCES_FROZEN_SELECTION",
+  "issue_detected": "The project execution environment currently has scikit-learn 1.9.0, while the frozen RS opportunity checkpoint was serialized by scikit-learn 1.7.2. Loading it under 1.9.0 emitted InconsistentVersionWarning.",
+  "resolution": "A clean temporary environment with scikit-learn 1.7.2 loaded the frozen RS checkpoint natively and recomputed RS probabilities for all 18 selected states.",
+  "checks": {
+    "native_sklearn_version": "1.7.2",
+    "selected_states_checked": 18,
+    "maximum_absolute_rs_probability_delta_vs_preflight": 0.0,
+    "all_selected_rs_probabilities_at_least_0_5": true,
+    "selected_case_file_unchanged": true
+  },
+  "bindings": {
+    "rs_checkpoint_sha256": "0cc4d85de657a88639bd8e635c22c4ece91d4f741ef6766e565ad899c01a3a94",
+    "cases_private_sha256": "b7116248fdf01a04d342c3d836304ef751fdbbeceb47be8b664c4aefb280d639"
+  },
+  "scientific_effect": "The cross-version warning does not change the selected population, RS ON decisions, or frozen prompt plan. The live generator runner will consume the already-content-addressed call plan and will not deserialize either selector.",
+  "api_calls": 0,
+  "fits": 0
+}

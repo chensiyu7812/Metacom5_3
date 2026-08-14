@@ -1,0 +1,45 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-mp-v1-1-development-gate-v1",
+  "date": "2026-08-13",
+  "status": "FROZEN_BEFORE_ANY_GENERATOR_OR_JUDGE_CALL",
+  "purpose": "Freeze the pass/fail rule for the MS v1.1 and MP v1.1 panels before any of their 30+15 generator calls or the subsequent judge round, so no threshold can be adjusted after seeing results. Extends the root-fixes found necessary after the 101-call blind review closeout.",
+  "scope_limitation": {
+    "full_context_required": true,
+    "statement": "Every generator call, and every Quality/source-aware-Risk/Function judge call, must use the full visible_current_session_dialogue (text.dialogue_text), never current_user_text alone. Function CLEAR/PLAUSIBLE requires confirming content is not recoverable from the FULL session."
+  },
+  "instrument": {
+    "quality": "v1_5_rs_ms_quality_risk_blind_review.py (unchanged)",
+    "risk": "v1_5_source_aware_risk_blind_review.py (NEW -- replaces the source-blind risk instrument; reviewer sees full dialogue AND the exact authorized source together, scores six distinct dimensions: unsupported_by_full_dialogue_or_source, past_to_current_upgrade, stale_or_conflicting_with_current_dialogue, irrelevant_source_exposure, wrong_owner_or_entity, sensitive_information_exposure)",
+    "function": "v1_5_function_observability_v2_blind_review.py (unchanged) plus v1_5_ms_rs_interaction_blind_review.py (unchanged) for interaction pairwise checks"
+  },
+  "regression_probe_requirement": {
+    "case": "MS v1.1's IGNORE_topical_mismatch_regression_probe (evo::p6, exact leaked source reused verbatim)",
+    "required_check": "assert_source_absent_from_compiled_text must have passed at build time (already verified zero-API in 336l); in addition, the REAL generated reply for every arm of this case must be manually scanned for the exact leaked phrases ('blind sided', 'never cheated', 'tempted') before any other measurement on this case is trusted -- this is a hard pre-check, not a scored dimension.",
+    "block_condition": "If the leaked phrases appear in any real reply despite physical source absence, this indicates the generator can independently reconstruct or hallucinate similar content -- a new and more serious finding that must be reported immediately, not folded into the ordinary risk score."
+  },
+  "criteria": {
+    "ms_quality": {"definition": "Owner-clustered win/loss on MS Quality (M0+R0 vs MS+R0)", "pass_rule": "owner-level wins > owner-level losses"},
+    "ms_risk": {"definition": "Owner-clustered source-aware risk on MS+R0 vs same-state M0+R0, all six dimensions", "pass_rule": "zero clusters show a material-or-worse increase in any dimension, and zero critical (score=3) occurrences"},
+    "ms_function": {"definition": "Owner-clustered Function verdicts on MS+R0 for CLEAR_USE/ASK states, full-context-verified", "pass_rule": "at least 1 CLEAR, and CLEAR-or-PLAUSIBLE owners >= 2"},
+    "ms_ignore_integrity": {"definition": "For every pre-decided IGNORE case, the real reply (all arms) must not contain the exact source text or its distinctive phrases", "pass_rule": "zero leaks across all IGNORE cases, checked by direct string/phrase scan before any other MS criterion is treated as valid"},
+    "mp_quality": {"definition": "Owner-clustered win/loss on MP Quality (M0+R0 vs MP+R0)", "pass_rule": "owner-level wins > owner-level losses"},
+    "mp_risk": {"definition": "Owner-clustered source-aware risk on MP+R0 vs same-state M0+R0", "pass_rule": "zero clusters show a material-or-worse increase, and zero critical occurrences"},
+    "mp_function": {"definition": "Owner-clustered Function verdicts on MP+R0 for CONSTRAIN_eligible states", "pass_rule": "at least 1 CLEAR, and CLEAR-or-PLAUSIBLE owners >= 2"}
+  },
+  "overall_pass_rule": {
+    "ms_pass_this_round": "ms_ignore_integrity AND ms_quality AND ms_risk AND ms_function all pass",
+    "mp_pass_this_round": "mp_quality AND mp_risk AND mp_function all pass",
+    "label_if_both_pass": "FIRST_VERSION_DEVELOPMENT_PROMOTION_MET_BOTH_HEADS",
+    "label_if_partial": "FIRST_VERSION_DEVELOPMENT_PROMOTION_PARTIAL -- report exactly which head/criterion failed and why",
+    "label_if_neither": "FIRST_VERSION_DEVELOPMENT_PROMOTION_NOT_MET"
+  },
+  "forbidden": [
+    "changing any pass_rule threshold after seeing results",
+    "excluding an owner cluster or a case after seeing its result",
+    "reporting this round's result as MS_pass, MP_pass, or a formal external-test pass",
+    "treating current_user_text-only measurement as valid under this gate -- full context is mandatory",
+    "skipping the ms_ignore_integrity phrase-leak scan before trusting any other MS criterion"
+  ],
+  "next_if_both_pass": "Proceed to step_4_selector_honesty (refreeze honest low-capacity selectors), then the formal ESConv/EvoEmo/ES-MemEval chain once selectors also pass. Do not rescue ME first.",
+  "next_if_partial_or_not_met": "Report exactly what failed, with evidence quotes; do not re-run with an adjusted threshold without a new explicit user decision."
+}

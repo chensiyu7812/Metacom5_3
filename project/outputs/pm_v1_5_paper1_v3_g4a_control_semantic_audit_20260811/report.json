@@ -1,0 +1,49 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4a-control-semantic-audit-v1",
+  "date": "2026-08-11",
+  "status": "G4A_V1_PUBLIC_PACKET_MACHINE_PASS_CONTROLS_SEMANTIC_FAIL_SUPERSEDE_BEFORE_REVIEW",
+  "scope": {
+    "public_cases": 507,
+    "public_case_selection_or_payload_defect_found": false,
+    "fresh_controls": 36,
+    "reviewer_calls": 0,
+    "labels_created": 0
+  },
+  "findings": [
+    {
+      "id": "G4A-CONTROL-MP-POSITIVE-REDUNDANCY",
+      "severity": "BLOCKING_BEFORE_REVIEW",
+      "count": 5,
+      "finding": "The five intended MP-positive controls repeated or strongly disclosed the profile constraint in the visible current turn, so they did not cleanly test profile-provided nonredundant material change.",
+      "repair": "Keep the same response goal but remove the profile fact from the current turn; the profile candidate alone must supply rotating-shift, no-car, written-format, caregiving or overnight-work constraint."
+    },
+    {
+      "id": "G4A-CONTROL-ME-GUARANTEE-NONUNIQUE",
+      "severity": "BLOCKING_BEFORE_REVIEW",
+      "count": 1,
+      "finding": "The intended ME NOT_SUITABLE guarantee control could still permit the candidate as tentative evidence while refusing the requested guarantee, so the frozen negative was not unique.",
+      "repair": "Replace it with a clear current non-action grief goal and an unrelated meeting action-result."
+    }
+  ],
+  "unchanged_and_carryable": {
+    "reviewer_a_packet_path": "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/reviewer_a_packet.jsonl",
+    "reviewer_a_packet_sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8",
+    "reviewer_b_packet_path": "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/reviewer_b_packet.jsonl",
+    "reviewer_b_packet_sha256": "68ca51000c7bdfc5b0463436c1be9b492eaa5257501d5f2f7374f4123a7c77c2",
+    "private_case_key_path": "outputs/pm_v1_5_paper1_v3_g4a_packet_private_20260811/private_case_key.jsonl",
+    "private_case_key_sha256": "e34556683a85925eecbf58de9ebff2b4e74a7ebc986d3f7d53acf3a77041348c"
+  },
+  "superseded_only": [
+    "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/reviewer_a_controls.jsonl",
+    "outputs/pm_v1_5_paper1_v3_g4a_packet_20260811/reviewer_b_controls.jsonl",
+    "outputs/pm_v1_5_paper1_v3_g4a_packet_private_20260811/control_gold_key.jsonl"
+  ],
+  "governance": {
+    "v1_outputs_preserved": true,
+    "overwrite_forbidden": true,
+    "v2_must_use_new_paths": true,
+    "same_507_public_cases_required": true,
+    "exactly_six_control_surfaces_may_change": true,
+    "reviewer_execution_before_v2_pass_forbidden": true
+  }
+}

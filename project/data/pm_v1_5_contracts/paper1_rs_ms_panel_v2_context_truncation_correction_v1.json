@@ -1,0 +1,64 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-panel-v2-context-truncation-correction-v1",
+  "date": "2026-08-13",
+  "status": "ACTIVE_ZERO_API_MS_RECLASSIFIED_INCONCLUSIVE_NOT_FORMAL_FAILURE",
+  "purpose": "Correct a real measurement-instrument bug found in the 101-call blind review (paper1_rs_ms_panel_v2_blind_review_v2_closeout_v1.json): every Quality/Risk/Function call, and the panel's own CLEAR_USE curation, used only current_user_text (the single latest turn) as 'current context' instead of the full visible_current_session_dialogue. This makes any 'not recoverable from current context alone' or 'unsupported personal fact' judgment potentially wrong whenever the cited content was already stated earlier in the SAME session.",
+  "raw_101_calls": {
+    "disposition": "PRESERVED_NOT_OVERWRITTEN",
+    "paths": [
+      "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_live_20260813/results_private.jsonl",
+      "outputs/pm_v1_5_paper1_rs_ms_panel_v2_blind_review_v2_live_20260813/raw_provider_outputs_before_validation.jsonl"
+    ],
+    "note": "These 101 real judge outputs remain valid raw data. Only their INTERPRETATION for p18 and p8 is corrected here; nothing is deleted, re-run, or overwritten."
+  },
+  "evidence": {
+    "p18_evo_p18": {
+      "case_id": "rsmsv2dev_4d41ab4699893879841f",
+      "current_user_text_only": "Mixed, to be honest. I feel like I'm in the right place for my family, but I can't help feeling a bit of what-if about the job offer.",
+      "already_visible_earlier_in_same_session": "It's still stressful. I had hoped to make a change to reduce the stress, but declining the California offer made me feel trapped.",
+      "consequence": "Both 'California' and the fact that the offer was declined are stated by the seeker earlier in this same session, well before the judged turn. The MS+R0/MS+RS risk score of 2 (unsupported_personal_fact_or_upgraded_past_to_current) and the Function verdict of CLEAR were both computed by a reviewer/reviewer-proxy shown only current_user_text -- neither the risk flag nor the Function CLEAR label can be trusted as measuring the private MS source's contribution versus the full visible session."
+    },
+    "p8_evo_p8": {
+      "case_id": "rsmsv2dev_8b84438410c171f16d98",
+      "current_user_text_only": "I appreciate that. I do feel stronger. Sometimes I just need reassurance that I'm on the right path.",
+      "already_visible_earlier_in_same_session": "I'm trying to stay grounded with journaling and occasional hikes. Emily's support also helps.",
+      "consequence": "Emily is named earlier in this same session. Same consequence as p18: neither the MS+R0 risk score of 2 nor the Function verdict of CLEAR can be trusted as measuring the private MS source specifically."
+    },
+    "p6_evo_p6_unaffected": {
+      "case_id": "rsmsv2dev_cebea31eb849ee2d32be",
+      "full_session_checked": true,
+      "finding": "The full visible_current_session_dialogue for this state is entirely about job-performance anxiety, competence worry, and asking coworkers for help -- no mention of impulses, being blindsided, or any relationship/infidelity content anywhere in the session. The MS+RS reply's leaked phrases ('tempted to act on some impulses', 'feeling blindsided') cannot be explained by within-session visibility; they trace only to the topically mismatched, cross-session MS source. This finding is NOT affected by the context-truncation bug and remains a confirmed MS+RS composition leak on a negative control."
+    }
+  },
+  "reclassification": {
+    "ms_status": {
+      "prior_label": "ms_pass_this_round = false (ms_risk failed)",
+      "corrected_label": "CONTEXT_TRUNCATED_MEASUREMENT_INCONCLUSIVE",
+      "explicitly_not": [
+        "a formal MS failure",
+        "proof that MS's CLEAR Function cases (p18, p8) introduce unsupported facts",
+        "proof that MS's Function evidence for p18/p8 is invalid -- it is simply unproven under a correct measurement, not proven false"
+      ],
+      "p18_p8_status": "NEITHER confirmed material/critical risk NOR confirmed valid MS Function. Both require re-measurement against the full visible_current_session_dialogue before either claim can be made.",
+      "p6_status": "PRESERVED as a confirmed, unaffected finding: a real MS+RS composition leak on a topical-mismatch negative control."
+    },
+    "rs_status": {
+      "note": "rs_pass_this_round from the 101-call round is UNCHANGED in principle (RS Quality/Risk/Function did not depend on distinguishing MS-source content from session content the same way), but RS's own Quality/Risk/Function calls also only used current_user_text -- a full re-measurement under the corrected context policy is required before RS_pass can be claimed formally. Not re-litigated here; folded into the next round's full-context policy."
+    }
+  },
+  "root_cause": {
+    "bug": "326l's panel curation, 330l's first-party Function review, and 332l's blind-review manifest all built 'current context' as `_compact(state['current_user_text'])` -- the single latest seeker turn -- instead of rendering the full `visible_current_session_dialogue`. The R0 foundation contract itself says 'use the visible current dialogue as the response foundation', which already presumed full-session context; the bug was at the calling-script level, not in the compiler's design.",
+    "why_it_matters_beyond_p18_p8": "Any CLEAR_USE curation rationale of the form 'the current turn never says X' is only valid if 'current turn' means the full session, not the last line. Every prior CLEAR_USE/ASK selection this round must be re-verified against the full session before being trusted."
+  },
+  "forward_policy": {
+    "full_context_required": "Every future generator call, Quality/Risk/Function judge call, and panel curation decision must use the full visible_current_session_dialogue, not current_user_text alone.",
+    "function_incremental_contribution": "Function CLEAR/PLAUSIBLE requires the reviewer to confirm the cited content is not recoverable from the FULL visible session -- not merely from the latest turn.",
+    "next_action": "Rebuild the MS panel and its Risk instrument under this policy (see paper1_ms_v1_1_full_context_panel_and_root_fix_v1.json), and re-verify p18/p8-style candidates against the full session before any future CLEAR_USE claim."
+  },
+  "authorization": {
+    "api_calls": 0,
+    "judge_calls": 0,
+    "external_execution": false,
+    "zero_api_correction_only": true
+  }
+}

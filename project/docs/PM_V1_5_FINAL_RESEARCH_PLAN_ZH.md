@@ -1,6 +1,12 @@
-# PM V1.5 最终执行方案 V3：有限语义、效用路由、同栈内外验证
+# PM V1.5 历史执行方案 V3：有限语义、效用路由、同栈内外验证
 
-状态：`ACTIVE / SINGLE SOURCE OF EXECUTION TRUTH / 2026-08-04`
+状态：`HISTORICAL_SUPERSEDED_DO_NOT_EXECUTE / 2026-08-10`
+
+> 本文保留为 V3 历史方法与失败脉络，不再授权任何数据生成、训练、API、baseline 或外部执行。
+> 当前唯一机器权威是
+> `data/pm_v1_5_contracts/active_method_authority_v1.json`；当前人类执行说明是
+> `docs/PM_V1_5_PAPER1_CLOSEOUT_PLAN_20260810_ZH.md`。任何旧脚本、checkpoint 或 PASS artifact
+> 只有在 active phase manifest 逐路径、逐 SHA256 绑定后才可复用。
 
 机器合同：`data/pm_v1_5_contracts/final_execution_plan_v3.json`  
 分层架构：`data/pm_v1_5_contracts/staged_policy_architecture_v2.json`

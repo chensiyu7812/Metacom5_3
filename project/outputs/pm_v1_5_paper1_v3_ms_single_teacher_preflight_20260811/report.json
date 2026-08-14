@@ -1,0 +1,81 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-single-teacher-preflight-report-v1",
+  "status": "MS_SINGLE_QUALIFIED_TEACHER_PREFLIGHT_PASS_EXECUTION_PHASE_MAY_BE_DESIGNED",
+  "checks": {
+    "reviewer_a_ms_frozen_qualification_11_of_12": true,
+    "reviewer_a_resolved_9_of_10_and_abstain_2_of_2": true,
+    "reviewer_b_failure_recorded_not_used": true,
+    "exact_204_atomic_ms_cases": true,
+    "exact_17_connected_groups_12_each": true,
+    "low_information_and_echo_strata_preserved": true,
+    "packet_private_g3_one_to_one": true,
+    "provider_payload_has_no_label_or_future_keys": true,
+    "anchored_ms_examples_provider_visible": true,
+    "single_teacher_not_human_or_dual_gold": true,
+    "influenced_by_and_qa_gold_not_training_targets": true,
+    "all_16_actions_remain_downstream": true
+  },
+  "failed_checks": [],
+  "supervision_identity": {
+    "type": "single qualified LLM teacher; not human gold and not dual-review consensus",
+    "reviewer_id": "REVIEWER_A",
+    "endpoint_key": "anthropic_claude_haiku_4_5",
+    "model": "claude-haiku-4-5-20251001",
+    "frozen_control_result": {
+      "exact": "11/12",
+      "resolved": "9/10",
+      "abstain": "2/2"
+    }
+  },
+  "surface": {
+    "cases": 204,
+    "connected_groups": 17,
+    "cases_per_group": {
+      "evo_component::p1": 12,
+      "evo_component::p10": 12,
+      "evo_component::p11": 12,
+      "evo_component::p12": 12,
+      "evo_component::p13__p18": 12,
+      "evo_component::p14": 12,
+      "evo_component::p15": 12,
+      "evo_component::p16": 12,
+      "evo_component::p17": 12,
+      "evo_component::p2": 12,
+      "evo_component::p3": 12,
+      "evo_component::p4": 12,
+      "evo_component::p5": 12,
+      "evo_component::p6": 12,
+      "evo_component::p7": 12,
+      "evo_component::p8": 12,
+      "evo_component::p9": 12
+    },
+    "distinct_candidates": 176,
+    "low_information_cases": 21,
+    "current_echo_cases": 32
+  },
+  "label_projection_after_freeze": {
+    "SUITABLE": 1,
+    "NOT_SUITABLE": 0,
+    "SEMANTIC_ABSTAIN": "unresolved; excluded from binary fit and runtime defaults OFF",
+    "minimum_training_capacity_is_diagnostic_not_a_scientific_pass_line": "both resolved classes must exist across multiple connected groups; final adequacy is OOF and same-stack performance"
+  },
+  "call_plan": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_preflight_20260811/call_plan.jsonl",
+    "sha256": "ff93595f6dd10b8b08275005d82a1bcb7f553e63d9cd6975fffa77609ea4f2ec",
+    "rows": 204
+  },
+  "cost_ceiling": {
+    "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_preflight_20260811/cost_ceiling.json",
+    "sha256": "3356a4c72c15d595c9e3f69a1b2f0d1c729a1b0afc1c3f182bb5aca291240747",
+    "protocol": "pm-v1.5-paper1-v3-ms-single-teacher-cost-ceiling-v1",
+    "logical_calls": 204,
+    "maximum_physical_attempts": 408,
+    "conservative_computed_usd": 2.426686,
+    "absolute_usd_cap": 2.5,
+    "method": "ceil(chars/3*1.5) input + full 500 output tokens, both attempts"
+  },
+  "api_calls": 0,
+  "labels_created": 0,
+  "private_case_mapping_read_for_integrity_only": true,
+  "next": "HASH_BOUND_EXACT_204_MS_SINGLE_TEACHER_EXECUTION_PHASE"
+}

@@ -1,0 +1,86 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b1-control-qualification-phase-v1",
+  "date": "2026-08-11",
+  "status": "G4B1_ZERO_API_POST_FREEZE_CONTROL_GOLD_QUALIFICATION_AUTHORIZED_ONCE",
+  "purpose": "After both LLM reviewers' 72 valid control decisions and raw attempts are immutable, open the private control key for the first time and apply the frozen component-specific gates without creating public labels.",
+  "input_bindings": [
+    {
+      "role": "completed_control_execution_phase",
+      "path": "data/pm_v1_5_contracts/paper1_v3_g4b1_control_execution_phase_v1.json",
+      "sha256": "40f47c293fdfb018fae98458ad6744feeff92ccf1474a7bfe0ffe30c54e8d1d0"
+    },
+    {
+      "role": "control_live_report",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/controls_live_report.json",
+      "sha256": "eaf26f27fce9aa926abcc11503a36e8c1121dd4f1385cebc14291ef66c35208a"
+    },
+    {
+      "role": "reviewer_a_frozen_controls",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/reviewer_a_controls_reviews.jsonl",
+      "sha256": "fbbaa6858f3739f9407e7c1fabdd501c04b30390766b7fe84d45396148b88dbc"
+    },
+    {
+      "role": "reviewer_b_frozen_controls",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/reviewer_b_controls_reviews.jsonl",
+      "sha256": "c93bbd5deffe60e5b1fa6c5e4a9313688e0518e364fe8c86a37b80b9cd0e53b5"
+    },
+    {
+      "role": "raw_attempt_freeze",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/raw_physical_attempts.jsonl",
+      "sha256": "4ea010fbbd378a72a0364f563119c1048c33ed48fadcb584740aa18b4963fd9f"
+    },
+    {
+      "role": "physical_attempt_ledger",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b_reviews_20260811/physical_attempt_ledger.jsonl",
+      "sha256": "9c4ba954d9a57ce09dc0edaf6581fcd41b98091302a61659a801dfc95aaf41b8"
+    },
+    {
+      "role": "private_control_gold_first_access_here",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_private_20260811/control_gold_key.jsonl",
+      "sha256": "7a8c5587f4bb4e5b65ebba668b2318a0ce4d54972775c0bfb95a30253233de35"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "frozen_single_decision_control_gate",
+      "path": "src/metacom_pm/v1_5_g4b_nonexclusive_suitability_review.py",
+      "sha256": "93be3b67b79f35676f82ad5c37e96089bc187426d2376b9053ebc6a8a7c3b6e4"
+    },
+    {
+      "role": "zero_api_post_freeze_qualifier",
+      "path": "scripts/v1_5/210l_qualify_paper1_v3_g4b1_controls_v1_5.py",
+      "sha256": "d0181bf3e80c2f41d56dbd8397328408734392b6ecf63e3f3c915be4b274a34a"
+    }
+  ],
+  "frozen_gate_per_reviewer_per_component": {
+    "exact_three_class_correct_min": "10/12",
+    "resolved_binary_correct_min": "9/10",
+    "abstain_controls_correct": "2/2",
+    "critical_boundary_decision_and_reason_correct": true,
+    "nondegenerate_output": true,
+    "public_component_eligible": "both reviewers independently QUALIFIED"
+  },
+  "authorization": {
+    "control_gold_access": true,
+    "zero_api_qualification": true,
+    "public_reviewer_calls": false,
+    "replacement_reviewer_calls": false,
+    "public_private_case_key_access": false,
+    "training_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "baseline_execution": false,
+    "external_execution": false,
+    "paid_execution": false
+  },
+  "forbidden": [
+    "editing any frozen reviewer result, raw attempt, control, codebook, prompt, reason code or threshold",
+    "replaying a failed primary reviewer after seeing gold",
+    "majority vote or third model unless the separately predeclared replacement condition is activated",
+    "calling control qualification a human evaluation",
+    "creating public suitability labels or fitting a PM"
+  ],
+  "output_directory": "outputs/pm_v1_5_paper1_v3_g4b1_control_qualification_20260811",
+  "next_if_any_component_passes": "DESIGN_G4B2_PUBLIC_DUAL_REVIEW_FOR_PASSED_COMPONENTS_ONLY",
+  "next_if_no_component_passes": "CLOSEOUT_OR_PREDECLARED_REPLACEMENT_REVIEWER_PHASE"
+}

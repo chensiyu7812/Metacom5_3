@@ -1,8 +1,104 @@
 # PM V1.5 V5.3：证据整合执行器、效用路由与一次性再确认方案
 
-状态：`PROPOSED / NEW METHOD VERSION / P1 IN PROGRESS / LAST ALIGNED 2026-08-06`
+状态：`V5.3 FORMAL + SEMANTIC GOLD FAILED / V5.4 FACTORIAL OUTCOME-ORACLE DESIGN FROZEN / STATE-VARIANT AUTHORING ONLY / NO EFFECT OR TRAINING / LAST ALIGNED 2026-08-10`
 
 机器合同：`data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json`
+
+> **2026-08-10 测量与定责修复（当前最高优先级）**：576 个正式 effect group 已完成，但 MP、MS、ME、RS
+> 四个 head 全部未通过冻结门；这个结果保留，绝不重新解释为通过。后验根因审计又发现：70 个 ON replicate
+> 落入确定性 M0 fallback，其中 28 个仍被旧 function judge 判成 `USED`；冻结的 32-group 盲审中，82 个可审
+> replicate 有 46 个“人工不合格但旧 judge 判 USED”，旧 Q 符号与人工偏好符号仅 17/32 一致；全部 576 组的
+> risk instrument 均为 `CANARY_UNQUALIFIED`。因此当前禁止把旧 Q/F 直接当 PM gold，禁止新训练和新 paired-effect
+> API。权威修复合同为 `data/pm_v1_5_contracts/v5_3_measurement_accountability_repair_v1.json`。
+
+> 当前系统明确视为**带执行器的一步离线 contextual bandit**，不是端到端 RL。必须独立冻结五件事实：候选是否
+> 有效且当前适用、PM 机会标签、Step2 是否真正做功、guard 接受/拒绝是否正确、完整部署结果 Q/R/F/C。候选存在、
+> 文本相关、Q 为正或 generator 自报使用，任何一个都不能单独生成“该开”标签；未知统一是 `UNRESOLVED`，不是
+> OFF gold。
+
+> 修复顺序固定为：全 576 组无覆盖派生账本 → 64 组双 reviewer outcome-blind 校准 → candidate/F/Q 一致性门 →
+> 每个 head 的独立 cluster 双向标签支持 → 按用户/对话 grouped nested cross-fitting 的低容量可学习性门 → 仅合格
+> head 进入原有 16 动作联合投影。18 个纵向用户不扩成 1095 人；六折外层训练最少 15 人，因此 memory head 的
+> 有效自由参数上限固定为 `floor(15/5)=3`。这不能保证未见数据一定取得正效果，但能保证不可学习或测量无效的 head
+> 不会混入最终 learned policy。`learned-PM-qualified` 内未合格或逐状态 abstain 的 head 一律固定 OFF；
+> `transparent-rule` 只保留为独立 baseline，不能塞进 learned arm 替失败 head 兜底。这样仍允许形成科学有效的
+> partial learned PM，但不会在看到结果后选择更有利的 fallback。
+
+> **2026-08-10 实际推进结果**：全 576 组、1,728 replicate 的无覆盖责任派生账本已完成；70 个 ON fallback
+> 已确定性改记为 final `NOT_USED_FINAL`，70 个未保存 raw reply 的 execution/guard 保持 unresolved。随后从未审的正式
+> group 中冻结 64 组（每组件 16）、192 replicate 的 outcome-blind 双 reviewer 包；Claude Haiku 4.5 与 GPT-5 mini
+> 独立完成后才打开 private key。三个门全部失败：candidate raw agreement/κ=`.734/.065`，F=`.672/.236`，Q 偏好
+> `=.630/.184`；45/64 组至少一个关键维度分歧。Reviewer B 又系统性更宽松（candidate clear 58 vs 49、F qualified
+> 155 vs 118、ON better 154 vs 121）。只有 20/64 组暂时满足完整共识，其中 MP/MS/ME/RS=`5/8/6/1`；训练继续禁止。
+
+> 这次失败还暴露出“所有 candidate 非适用都无 PM 标签”会再次让 OFF 边界消失。修复后每组件先学习一个窄的
+> semantic suitability：`VALID_APPLICABLE→OPEN_ELIGIBLE`，`VALID_REDUNDANT/VALID_NOT_USEFUL→DO_NOT_OPEN`，
+> wrong-owner/time 归 retrieval 且不生成 PM gold，分歧则 abstain。只有 OPEN_ELIGIBLE 状态才进入
+> `FUNCTIONAL + risk SAFE + paired Q` 的边际价值头。下一次校准必须使用新的未触碰 64 组，并将 candidate、F、Q、R
+> 拆成四个互盲 evaluator；禁止继续用一个综合 prompt、禁止多数票冒充 gold，也禁止在测量门通过前追加 paid effects。
+> 新 64 组先只运行两位 candidate-suitability reviewer，private outcome key 保持关闭；只有 candidate 一致性与
+> resolved 双向支持值得继续时，才支付 function/quality/risk 三个角色。未使用自然池的预处理诊断实际只有
+> MP/MS/ME=`0/5/1` 个 open-like（RS=43）；必须如实报告该支持缺口，禁止为了凑 8/8 偷看 outcome 或伪造 state。
+
+> **candidate-only V2 实际结果**：两位 reviewer 已完成 64/64；Claude 两条仅因证据 ID 超限，经同模型、同 rubric、
+> exactly-one-evidence 的命名 transport recovery 补齐，原失败尝试永久保留。五类 exact agreement/κ=`.500/.319`，
+> 折成 OPEN/DO_NOT/INVALID 后也只有 `.531/.290`，故 candidate 门失败，function/quality/risk 未执行，private paired
+> outcome key 未打开。A 判 OPEN/DO_NOT=`19/37`，B=`43/14`；30/64 在最终投影上分歧，其中24组是 A关/B开。
+> 根因不是角色仍混合，而是单个 `VALID_APPLICABLE` 仍混合结构合法、当前目标/实体相关、冗余和能否改变回复。
+> 下一测量对象改成四个互相独立的三态轴：current-goal/entity fit、specific contribution already visible、
+> component function can change response、current boundary permits；结构 owner/time/version/source lineage 由机器门负责。
+> 权威增量合同为 `data/pm_v1_5_contracts/v5_3_atomic_semantic_suitability_calibration_v1.json`。
+
+> **atomic 实测与路线终结修正**：同一 64 组的两位 atomic reviewer 最终可共同分析 62 组；四轴
+> agreement=`.677–.790`、κ=`-.047–.305`，OPEN/DO_NOT/ABSTAIN 投影仅 `.613/.208`，四组件均没有
+> 预冻要求的共识双向支持。B 的 3 条 schema 缺失经一次只明列合法 TURN id 的 transport recovery 后仍缺 2 条；
+> 原始失败全部保留，private outcome key 始终未开。因此 composite 和 atomic reviewer route gold 一并永久退役，
+> 不再继续发明第五种“should open”问法。
+
+> 新的权威路线是 `data/pm_v1_5_contracts/v5_4_factorial_outcome_oracle_learning_v1.json`：机器只判
+> candidate owner/time/version/source 与硬安全；公共 anchor 的 controlled current-state assignment 只用于证明数据支持
+> 和冻结表示能否看见差异，不是价值标签。PM 主目标改为随机 requested ON/OFF 的真实 deployment ITT effect，保留
+> generator 不使用与 fallback；clean execution 另作机制定责。development 必须依次通过 fidelity/leakage、零 outcome
+> representation observability、真实 effect separability 和 family-held-out 低容量 head 四门，才可冻结 fresh formal。
+> head 合格后仍在 32 个自然 state 上完整执行 16 actions，以安全、Q 等价带和确定性成本构造 oracle set。架构没有变成
+> 16-class，也没有退回 rule；只是终于把“正确调用”交给随机 outcome，而不是交给 reviewer 的主观可能性。
+
+> **state authoring V1 实际结果**：48 对/96 variant 的 outcome-blind 计划已严格配平组件、作者、A/B 位置和
+> low-mode；真实 authoring 完成 45 对/90 variant，过程中所有 response effect、Q/R/F judge 和 private outcome 调用均为
+> 0。去标签 runtime 文件通过 assignment/outcome 零泄漏、exact duplicate 零、scaffold 零、candidate 全文复制零，
+> 但机器门仍失败：MP/MS/ME/RS 仅 `12/11/10/12` family，7 对复用源 assistant 句，8 对不是足够接近的词面
+> minimal pair。因此 V1 不进入 fidelity、Rank-1 重算或 representation test。唯一授权的 authoring V2 必须锁死公共
+> source visible prefix，只生成两个 alternative final user turns；不再让作者模型生成 assistant prefix。
+
+> **source-prefix-locked authoring V2 实际结果**：V2 锁死每个公共 anchor 删除原末尾 user turn后的完整 prefix，
+> 保留公共数据真实存在的空 prefix、assistant 起点和连续 user segmentation；模型只输出 A/B 两条 current user turn。
+> 48/48 pair、96/96 variant 已完成，MP/MS/ME/RS 各12、Claude/GPT各24。机器审计 12/12 门通过：prefix
+> 零修改、生成 assistant=0、minimal-pair surface 全通过、candidate全文/scaffold/exact duplicate=0、runtime 中
+> assignment/outcome=0。2 对保留一条真实公共 original current turn，分别属于 incremental 和 low 各1，占比4.17%，
+> 因而 source-origin 不能单独预测 condition；这是保留自然文本，不是复制训练答案。当前只晋级到独立 world/single-axis
+> fidelity 与 production actual Rank-1 重算；representation test、effect、训练和外部实验仍未授权。
+
+> **2026-08-10 Rank-1 / OFF / 语义 coverage 对齐**：Rank-1 只表示冻结检索器在合法候选池中排第一的
+> exact candidate，不是 gold、oracle 或“正确记忆”。OFF 必须拆成 candidate absent、结构非法、安全 hard-off、
+> semantic redundant/not-useful、semantic abstain、head 未合格、value predicted OFF 和 joint cost projection OFF；
+> 禁止只报一个全局 OFF 率。正式同时报告 candidate availability、semantic resolution coverage、conditional ON、
+> false-ON/false-OFF、always-off alias 和 requested→received→used→functional→safe funnel。机器合同为
+> `data/pm_v1_5_contracts/v5_3_semantic_coverage_off_accounting_v1.json`。
+
+> **2026-08-09 数据路线修订（优先级高于本文旧的数据扩量描述）**：第一篇论文停止把新增 80 个
+> 长期合成用户作为主统计样本，改用 ESConv + 18-user EvoEmo/ES-MemEval 公共数据主干，只在
+> 预效应门全部通过后生成同状态 paired responses/effects。权威增量合同为
+> `data/pm_v1_5_contracts/v5_3_public_backbone_effect_learning_v1.json`，完整解释见
+> `PM_V1_5_V5_3_PUBLIC_BACKBONE_EFFECT_LEARNING_20260809_ZH.md`。现有 11 个合成用户保留为工程
+> 压力测试和失败案例库，不进入论文一的主要推断分母。
+
+> **2026-08-09 指标与外部实验修订（优先级同样高于本文旧段落）**：组件训练改为连续
+> positive-support-contribution uplift；正式门为 grouped OOF MSE 相对 fold-training-mean 至少改善 5% 且
+> Spearman 至少 `.15`。正确调用使用 `ON_ONLY/OFF_ONLY/EITHER/UNRESOLVED` 与 16-action oracle set，
+> 不再使用 construction-derived binary Brier gold。权威合同为
+> `data/pm_v1_5_contracts/v5_3_metric_responsibility_and_oracle_v1.json` 和
+> `data/pm_v1_5_contracts/v5_3_external_complementary_evidence_v1.json`，完整说明见
+> `PM_V1_5_V5_3_METRIC_ORACLE_RESPONSIBILITY_AND_EXTERNAL_FREEZE_20260809_ZH.md`。
 
 > **版本对齐记录**：本文、机器合同
 > `data/pm_v1_5_contracts/v5_3_integrated_evidence_execution_v1.json` 与
@@ -124,21 +220,15 @@ Step1 不挑具体记忆，不写回复，也不预测复杂心理需求。每�
 > 也不产生 Effect FIT gold。**尚未做**：四组件 contribution-slot 的独立未见改写资格、MP/MS/RS
 > 的跨域支持审计，以及真实 paired outcome 标签。
 
-Primary 仍是四个 source-specific、低容量 L2 logistic value heads。输入包含预注册主效应和少量明确交互：
+Primary 是四个 source-specific、低容量 Ridge continuous-value heads。正式 representation 已在 development
+pilot 后一次冻结：MP=`outer-train PCA3 current-state BGE + 3 operational features`，MS=`outer-train PCA5
+candidate BGE`，ME=`global fixed random projection3 candidate BGE + 3 operational features`，RS=`outer-train
+PCA5 state×candidate BGE`；四者 Ridge `alpha=10`。PCA/scaler 只在 outer-training cluster 内拟合，正式 outcome
+不得再触发 representation selection。
 
-- `goal_function_fit × contribution_slot_available`；
-- `specific_increment × current_redundancy`；
-- `past_action_result × current_action_readiness`（ME，三态：邀请行动/拒绝行动/不明确；
-  `UNKNOWN` 不得折叠成负例）；
-- `continuity_request × specific_prior_observation`（MS）；
-- `preference_applies_to_response_act`（MP）；
-- `card_precondition × nonredundancy × burden_fit`（RS）；
-- candidate age、retrieval margin、预计新增 token。
-
-训练损失使用按 counterfactual group 等权的、未作 class balancing 的二元交叉熵加 L2；不再用
-`class_weight=balanced` 后又要求概率击败自然 prevalence Brier。FIT 内只允许预注册的 `C` 小网格，
-按 grouped nested CV 的 Brier 与 balanced accuracy 联合选择一次；阈值在 FIT 内按预注册 QRC 约束选择，
-随后冻结。BGE 只允许一个冻结 challenger，不替代 primary。
+每个 effect group 使用三个预冻结 paired generator seeds，先聚合 ON-minus-OFF continuous uplift 再训练。tie 保持
+零、负效应保持负值；cost、risk、functional-use 与 construction condition 均不得进入质量 target。三态行动准备度、
+owner/time、redundancy、candidate age 等仍是可审计机制字段或固定 operational feature；`UNKNOWN` 不得折叠成负例。
 
 ### 2.4 Step2：typed response program，而不是 clause append
 
@@ -210,7 +300,7 @@ PM 与功能/grounding 字段均按组件保存，不能把多组件动作压成
 |---|---|---|---|
 | Retrieval | exact Rank-1 是否属于正确用户/时间/对象并服务当前目标 | `retrieval_top1_fit_rate`、owner/time正确率、Recall@k或better-rank rate、abstention | retriever |
 | Eligibility | 候选是否真实、边界允许且提供具体增量 | owner/time、goal/function、boundary/burden、specific increment四门 | hard eligibility |
-| PM Step1 | 候选可用时，本轮请求它是否有正的冻结执行器边际价值 | BA、recall、specificity、Brier、LOFO、ON/OFF比例、相对matched-random选择提升 | PM |
+| PM Step1 | 候选可用时，本轮的连续冻结执行器边际价值是多少，最终动作是否落入可接受集合 | grouped OOF MSE相对均值、Spearman、resolved-label false-on/false-off、oracle-set inclusion、regret、ON/OFF比例 | PM |
 | Step2 | PM请求的 exact evidence 是否被忠实、自然且按动作合同使用 | requested/realized exact match、required-evidence use、functional contribution、grounding fidelity、atomic compliance、fallback | executor/generator |
 | End-to-end | 完整策略是否达到质量—风险—成本平衡 | NetWin、material risk、critical events、token/cost | full system |
 
@@ -222,7 +312,7 @@ functional contribution或grounding fidelity的gold；必须结合运行时绑�
 预冻结聚合必须同时报告：
 
 - `retrieval_top1_fit_rate` 与候选缺失/abstention；
-- `pm_hard_gate_violation_rate`、`pm_value_selection_balanced_accuracy`；
+- `pm_hard_gate_violation_rate`、OOF MSE/Spearman、resolved-label coverage/false-on/false-off、oracle-set inclusion/regret；
 - `requested_realized_exact_match_rate`、`required_evidence_use_rate`；
 - `functional_contribution_rate`、`grounding_fidelity_rate`、`scaffold_exposure_rate`、`fallback_rate`；
 - quality/risk/cost 按 `retrieval_fit × pm_correct × execution_valid` 分层，禁止只报全局平均掩盖责任。
@@ -392,9 +482,13 @@ seed 和评分。不同的只能是资源开关策略。
 1. `always-off`：合法 `M0+R0`；
 2. `fixed-high-eligible`：打开所有存在且通过硬资格的组件；
 3. `transparent-rule`：预冻结人工规则；
-4. `learned-PM-full`：四个 V5.3 value head 与16动作投影；
-5. `cost-matched-fixed`：仅用 FIT/qualification 的 input-token 分布选择一次固定动作；
-6. `cost/on-rate-matched-random`：按组件和成本分层、预冻结seed随机开关，用于检验 learned 的收益是否
+4. `learned-PM-qualified`：正式通过的 V5.3 value head 使用 cross-fitted 预测；未通过的 head 按预声明规则
+   fail closed，再进行16动作联合投影。只有四个 head 全部通过时才可把它别名写成 `learned-PM-full`；
+5. `cost-matched-fixed`：不读取 response/effect outcome，只按预冻结宽 stratum，从全部16动作中选择一个
+   deterministic injected-token cost 最接近 learned 的固定动作；每个 stratum 至少12个 state，成本误差不超过
+   5% 才可称 cost-matched；
+6. `cost/on-rate-matched-random`：在 `宽 stratum × exact eligible mask` 内对 learned 动作束作确定性约束置换，
+   精确保留各组件 ON count，成本误差不超过5%，且至少25% state 真正换动作，用于检验 learned 的收益是否
    只是“少开”而不是“会选”。
 
 ### 6.2 次表和消融
@@ -405,7 +499,9 @@ seed 和评分。不同的只能是资源开关策略。
 - Legacy V1.0 只有能在当前栈精确 replay 才作同栈 baseline，否则只列历史结果；
 - oracle candidate/effect 只作不可部署上界。
 
-cost-matched 和 random-matched 必须在测试 outcome 前冻结；与其他臂完全alias时只计一次物理调用。
+cost-matched 和 random-matched 必须在测试 outcome 前冻结；与其他臂完全alias时只计一次物理调用，但保留
+逻辑臂并报告 alias rate。任一 matching 资格不通过时，必须显式降名或停止相应优越性主张，不能保留
+“matched”名称。机器权威定义见 `data/pm_v1_5_contracts/v5_3_baseline_matrix_v1.json`。
 
 ## 7. 评测设计修正
 
@@ -442,11 +538,12 @@ V5.3 只允许三次预冻结的正式语义评测波次：P3整批FIT、P4一�
 
 ## 8. 最终成功门
 
-### 8.1 Step1机制门（内部fresh confirmation）
+### 8.1 Step1机制门（公共主干 grouped OOF formal effects）
 
-每个head：balanced accuracy≥`.65`、recall/specificity≥`.60`、Brier优于prevalence和transparent rule、
-预测ON/OFF各≥15%、leave-family-out BA≥`.60`、五seed/重采样稳定性满足预冻结门。四head全过才称完整
-four-component PM learned；否则按组件报告，但仍可测试系统级Pareto。
+每个 head：OOF MSE 至少比各 fold 的 train-mean predictor 低 5%，OOF Spearman≥`.15`，target 与 prediction
+非恒定且至少覆盖 12 个独立 cluster。四 head 全过才称完整 four-component marginal-value PM learned；否则失败
+head 按预冻结规则关机并逐组件报告。binary balanced accuracy、recall/specificity 只在 resolved
+`ON_ONLY/OFF_ONLY/EITHER` 诊断中报告，不得替代 continuous formal gate。
 
 ### 8.2 系统QRC门
 
@@ -477,3 +574,25 @@ learned-PM必须同时满足：
 
 科学成功不能预先保证。若在这些条件下仍未通过，结论将是“在当前资源、有限语义和固定generator下，
 低容量PM未能稳定取得预注册QRC平衡”，而不是继续修改到通过。只有这种停止规则，最终的正结果才可信。
+
+## 10. 2026-08-10：state-local actual Rank-1 方法修正
+
+V5.4 fidelity V1与production Rank-1复算揭示，原先把两个不同current-state分支A/B强制绑定同一candidate，
+不是16动作factorial的必要条件。A/B本来就是两个部署状态；真正的随机因果比较发生在**同一个state内部**。
+
+正式顺序现冻结为：
+
+1. 完成并冻结一个current state；
+2. 对该state运行生产检索器与typed结构门，独立物化MP/MS/ME/RS各自actual Rank-1；
+3. 候选不存在则该component在该state结构不可用，不生成ON effect标签；
+4. 把该state及其四个state-local candidate冻结，完整运行同一state的16动作；
+5. 从同state requested-action deployment-ITT的Q/R/F/C构造safe quality-equivalent minimum-cost oracle set；
+6. PM选中oracle set内任一动作才算“调用对了”。
+
+因此，跨A/B候选ID不同不是作弊也不是action confounding；同一state的不同动作臂拿到不同候选才是污染。
+候选ID、authoring assignment、family/template ID均禁止进入PM特征。PM只读部署可见state、candidate正文的冻结表示与
+typed/age/cost/score等有界描述。若actual Rank-1语义很差，candidate/retrieval层单列责任；部署ITT仍记录请求后果，
+oracle可以正确偏向OFF，不能把错误候选伪装成PM语义标签。
+
+当前状态：V2 fidelity失败；V3 exact-cue authoring只完成27/48并退为诊断；只授权新的outcome-blind V4 state authoring、
+state-local Rank-1物化，以及完整机器门通过后的fresh fidelity。representation、effect、16动作正式执行和PM训练仍关闭。

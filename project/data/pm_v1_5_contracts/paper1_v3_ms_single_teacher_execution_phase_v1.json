@@ -1,0 +1,100 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-ms-single-teacher-execution-phase-v1",
+  "date": "2026-08-11",
+  "status": "MS_EXACT_204_SINGLE_QUALIFIED_TEACHER_CALLS_AUTHORIZED_ONCE_LABEL_FIT_GENERATOR_FORBIDDEN",
+  "purpose": "Collect one bounded prospective MS suitability decision for each frozen atomic actual Rank-1 case from the already qualified Reviewer A. These are teacher-distillation labels, not human gold or dual-review consensus.",
+  "promoted_from_authority_sha256": "15e9ff9e7ff365c51103242ebfb4c681db84d41130ada6994cf789f3ee55da60",
+  "input_bindings": [
+    {
+      "role": "reviewer_a_ms_qualification",
+      "path": "outputs/pm_v1_5_paper1_v3_g4b1_anchored_v2_qualification_20260811/report.json",
+      "sha256": "5787bec691db50c576daa7e514d50f9f9d42550558211389a20ca2cc65ac8fb4"
+    },
+    {
+      "role": "reviewer_a_blind_public_packet",
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_20260811/reviewer_a_packet.jsonl",
+      "sha256": "be66ff89ad3c3a1857ebc4d87bb1cb20113214021b6d4aac335ff5699974b9e8"
+    },
+    {
+      "role": "single_teacher_preflight",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_preflight_20260811/report.json",
+      "sha256": "240aa93f93cc16820516d36aa5a174fd69ece4560a7c234859ff4819f65a8ce6"
+    },
+    {
+      "role": "exact_204_call_plan",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_preflight_20260811/call_plan.jsonl",
+      "sha256": "ff93595f6dd10b8b08275005d82a1bcb7f553e63d9cd6975fffa77609ea4f2ec"
+    },
+    {
+      "role": "cost_ceiling",
+      "path": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_preflight_20260811/cost_ceiling.json",
+      "sha256": "3356a4c72c15d595c9e3f69a1b2f0d1c729a1b0afc1c3f182bb5aca291240747"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "anchored_provider_visible_instrument",
+      "path": "src/metacom_pm/v1_5_g4b_anchored_review_v2.py",
+      "sha256": "8fa7059dbf27a88fd1707ce51fe5e74900e74889a9b5bc0b7026f155caf8039e"
+    },
+    {
+      "role": "raw_first_single_teacher_runner",
+      "path": "scripts/v1_5/226l_run_paper1_v3_ms_single_teacher_reviews_v1_5.py",
+      "sha256": "f36183b117e41cf0048b785d301384d1f3d5a21d3416b435474f72bceeb9e7a1"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_v3_ms_single_teacher_execution_v1.json",
+      "sha256": "308f1411afda031848c135d973cbf8d6f82a30c3542ea586c8bee6d078ac1a81"
+    },
+    {
+      "role": "endpoint_config",
+      "path": "configs/pm_v1_5_strict_judge_bakeoff_v1.json",
+      "sha256": "5bfaa85f3d96784dc088a37fc275e43e7b3ae1f140018eb82ae13d3c59db46be"
+    }
+  ],
+  "execution": {
+    "component": "MS",
+    "teacher": "REVIEWER_A / Anthropic claude-haiku-4-5-20251001",
+    "frozen_control_result": "11/12 exact; 9/10 resolved; 2/2 abstain",
+    "public_cases": 204,
+    "connected_groups": 17,
+    "logical_calls": 204,
+    "maximum_physical_attempts": 408,
+    "absolute_usd_cap": 2.5,
+    "raw_first": true,
+    "one_case_per_call": true,
+    "retry_only_transport_or_schema_without_valid_judgment": true,
+    "semantic_decision_violation_is_terminal_no_retry": true
+  },
+  "label_contract": {
+    "teacher_supervision_not_human_gold": true,
+    "SUITABLE_projects_to": 1,
+    "NOT_SUITABLE_projects_to": 0,
+    "SEMANTIC_ABSTAIN": "unresolved and excluded from binary fit; runtime default OFF",
+    "no_prompt_control_sample_or_gate_change_after_distribution": true,
+    "reviewer_b_failure_remains_recorded": true,
+    "influenced_by_as_label": false,
+    "es_memeval_qa_evidence_as_label": false,
+    "final_scientific_adequacy_source": "grouped OOF plus V3 executor function and same-stack quality/risk/function/cost baselines"
+  },
+  "authorization": {
+    "teacher_api_calls": true,
+    "private_case_mapping_access": false,
+    "training_label_projection": false,
+    "pm_fit": false,
+    "checkpoint": false,
+    "generator_calls": false,
+    "baseline_calls": false,
+    "external_calls": false,
+    "paid_execution": true
+  },
+  "nonexclusive_invariant": {
+    "heads_train_and_qualify_separately": true,
+    "qualified_heads_execute_jointly": true,
+    "does_not_impose_one_memory_cap": true,
+    "all_16_requested_actions_remain_downstream": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_ms_single_teacher_reviews_20260811",
+  "next": "ZERO_API_FREEZE_RESOLVED_MS_TEACHER_LABELS_AND_AUDIT_CLASS_GROUP_CAPACITY"
+}

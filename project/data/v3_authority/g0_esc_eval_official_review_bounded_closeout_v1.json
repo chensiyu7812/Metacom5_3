@@ -1,0 +1,61 @@
+{
+  "protocol": "metacom-v3-g0-esc-eval-official-review-bounded-closeout-v1",
+  "date": "2026-08-14",
+  "status": "METHODOLOGY_CORRECTED_CUSTOM_PROTOCOL_PROFILE_NO_OFFICIAL_PASS_LINE",
+  "source": {
+    "generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+    "human_a_user_provided_sha256": "3d48742cb1706c69c3f8aba682bbada6c4c7ba58b76f6984411e9a14fe59e704",
+    "human_b_user_provided_sha256": "c45b12346fb909827afcc91557cd150664d3d6392d3b2f4b54e37af36d0c9571",
+    "reviewer_provenance": "User-provided files label reviewers HUMAN_A and HUMAN_B; Codex validated schema and frozen assignment identity but cannot independently verify reviewer ontology.",
+    "scope_declared_by_both_files": "Official ESC-Eval seven dimensions only; project guardrails explicitly not scored."
+  },
+  "data_quality": {
+    "reviews": 2,
+    "assignments_per_review": 72,
+    "assignment_id_missing": 0,
+    "assignment_id_extra": 0,
+    "duplicate_assignment_ids": 0,
+    "invalid_dimension_key_sets": 0,
+    "scores_outside_integer_0_to_4": 0,
+    "mean_7d_mismatches": 0,
+    "display_order_duplicates_or_gaps": 0,
+    "official_dimension_cells": 504,
+    "exact_agreement_cells": 420,
+    "exact_agreement_rate": 0.8333333333333334,
+    "disagreement_ge_2_cells": 8,
+    "dialogues_with_disagreement_ge_2": 7,
+    "maximum_disagreement": 2
+  },
+  "two_review_means_before_required_c": {
+    "llama31_8b_incumbent": {"Fluency": 2.9583333333333335, "Expression": 1.9375, "Empathy": 2.9166666666666665, "Information": 1.8333333333333333, "Humanoid": 1.625, "Skill": 2.375, "Overall": 2.4166666666666665},
+    "qwen37_plus_nonthinking": {"Fluency": 3.625, "Expression": 3.3958333333333335, "Empathy": 3.2083333333333335, "Information": 2.25, "Humanoid": 2.4375, "Skill": 2.5625, "Overall": 3.2291666666666665},
+    "qwen37_plus_thinking_upper_bound": {"Fluency": 3.375, "Expression": 3.0833333333333335, "Empathy": 3.375, "Information": 2.0, "Humanoid": 2.4375, "Skill": 2.5208333333333335, "Overall": 3.3125}
+  },
+  "partial_identification_over_all_possible_human_c_scores_0_to_4": {
+    "llama31_8b_incumbent": {"Overall": [2.4166666666666665, 2.4166666666666665], "Empathy": [2.9166666666666665, 2.9166666666666665], "Skill": [2.375, 2.375], "Information": [1.8333333333333333, 1.8333333333333333]},
+    "qwen37_plus_nonthinking": {"Overall": [3.2291666666666665, 3.2291666666666665], "Empathy": [3.2083333333333335, 3.2083333333333335], "Skill": [2.5625, 2.5625], "Information": [2.125, 2.375]},
+    "qwen37_plus_thinking_upper_bound": {"Overall": [3.2708333333333335, 3.3541666666666665], "Empathy": [3.375, 3.375], "Skill": [2.5208333333333335, 2.5208333333333335], "Information": [1.9166666666666667, 2.0833333333333335]}
+  },
+  "superseded_internal_gate_application": {
+    "historically_preregistered_information_absolute_mean_floor": 2.5,
+    "mathematical_result_under_that_internal_rule": "All candidates' Information upper bounds were below 2.5.",
+    "methodology_correction": "ESC-Eval publishes no official pass line. The project-created 2.5 floor may be retained only as historical provenance; it cannot define official benchmark failure, generator incompetence, or a need to increase advice quantity.",
+    "official_benchmark_pass_or_fail_from_this_run": "NOT_DEFINED",
+    "human_c_required_for_exact_descriptive_means": true,
+    "project_guardrails_measured": false,
+    "generator_qualified": false
+  },
+  "interpretation": {
+    "primary": "This identity is an ESC-Eval-rubric human profile of a research-aligned custom supporter prompt, not an exact official ESC-Eval reproduction and not an official pass/fail exam.",
+    "official_information_boundary": "The official Information rubric explicitly combines recommendation effectiveness and recommendation quantity. A lower Information score can coexist with a humane, autonomy-preserving response and must not automatically trigger more or earlier advice.",
+    "relative": "Both Qwen modes are stronger than the 8B incumbent on Overall and several official dimensions. Qwen non-thinking is the deployment-oriented Pareto candidate because it is stronger on Fluency, Expression and Information than thinking while observed USD and median latency are far lower; thinking retains a small Overall and Empathy advantage.",
+    "not_allowed": "Do not present the project-created 2.5 floor as official, optimize response behavior to suggestion count, call this custom-prompt subset full ESC-Eval, or call any candidate officially qualified from this identity."
+  },
+  "disposition": {
+    "human_c_packet": "Materialized for exact descriptive completion of the seven cells with large reviewer disagreement; it is not needed to manufacture a pass/fail verdict.",
+    "guardrail_addendum": "Materialized as a separate project-specific audit; it must never be averaged into the official seven dimensions.",
+    "prompt_v2": "Cancelled before generation. The official Information construct does not justify changing an otherwise well-received supporter prompt toward more advice.",
+    "next": "Run a separately named official-protocol reproduction using the official helpful-assistant wrapper and published evaluation surface; retain the current research-aligned prompt unchanged for the later PM stack and evaluate autonomy, low burden, and relationship-intervention risk separately."
+  },
+  "api_calls_for_ingestion_and_closeout": 0
+}

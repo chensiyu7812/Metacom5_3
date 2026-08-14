@@ -1,0 +1,177 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-source-annotated-control-audit-v1",
+  "status": "QUALIFICATION_FAIL_NO_PUBLIC_REANNOTATION_CONTROL_CONSTRUCT_REPAIR_ONCE_REQUIRED",
+  "gates": {
+    "all_24_schema_and_local_valid": true,
+    "gpt_exact_12_of_12": false,
+    "gemini_exact_at_least_11_of_12": false,
+    "no_public_201_calls": true,
+    "no_training_labels_or_fits": true
+  },
+  "reviewers": {
+    "MS_SOURCE_CHALLENGER_GEMINI": {
+      "schema_and_local_valid": 12,
+      "exact_decisions": 9,
+      "confusion": {
+        "NOT_SUITABLE->NOT_SUITABLE": 4,
+        "NOT_SUITABLE->SUITABLE": 1,
+        "SEMANTIC_ABSTAIN->SUITABLE": 2,
+        "SUITABLE->SUITABLE": 5
+      },
+      "mismatches": [
+        {
+          "repair_item_id": "msrepaircontrol_8f91e52072ee9673fd7f24cc",
+          "expected": "SEMANTIC_ABSTAIN",
+          "observed": "SUITABLE",
+          "review": {
+            "allowed_response_change": "Acknowledge the user's current feeling and ask if evening walks are still something they consider for tension relief, given their past positive experience.",
+            "allowed_response_change_type": "ONE_QUESTION",
+            "candidate_increment": "The user previously found evening walks helpful for reducing tension.",
+            "current_goal_span_ids": [
+              "V001"
+            ],
+            "current_support_goal": "The user is expressing a change in their feelings and is unsure if a past issue is still relevant. The goal is to acknowledge this change and potentially explore the relevance of past information.",
+            "decision_reason_code": "PAST_ONLY_QUESTION_INCREMENT",
+            "entity_link": "RESOLVED",
+            "final_suitability": "SUITABLE",
+            "forbidden_focus_shift": "Do not assume the user's current feelings are directly related to evening walks or tension. Do not offer solutions without further understanding.",
+            "nonuse_condition": "If the user explicitly states that past methods are no longer relevant or that their current feelings are unrelated to tension or walks.",
+            "past_source_span_ids": [
+              "C001"
+            ],
+            "repair_item_id": "msrepaircontrol_8f91e52072ee9673fd7f24cc"
+          }
+        },
+        {
+          "repair_item_id": "msrepaircontrol_7dd6195a6ace9263d0442e08",
+          "expected": "NOT_SUITABLE",
+          "observed": "SUITABLE",
+          "review": {
+            "allowed_response_change": "The current statement focuses on a specific instance (today's meeting) and a specific number of interruptions (three). The past statement indicates this is a recurring pattern, which changes the understanding from a single event to a repeated behavior. This could lead to a response that acknowledges the pattern, such as \"It sounds like this isn't the first time your manager has interrupted you in meetings.\"",
+            "allowed_response_change_type": "UNDERSTANDING",
+            "candidate_increment": "The user's manager has a history of repeatedly interrupting them in meetings.",
+            "current_goal_span_ids": [
+              "V001"
+            ],
+            "current_support_goal": "The user wants to discuss their manager interrupting them three times in today's meeting, specifically focusing on that exact pattern.",
+            "decision_reason_code": "PAST_ONLY_UNDERSTANDING_INCREMENT",
+            "entity_link": "RESOLVED",
+            "final_suitability": "SUITABLE",
+            "forbidden_focus_shift": "Shifting the focus to only discuss past events without addressing the current incident.",
+            "nonuse_condition": "If the user explicitly states they only want to discuss today's meeting and not past occurrences, or if the current context already implies a recurring pattern.",
+            "past_source_span_ids": [
+              "C001"
+            ],
+            "repair_item_id": "msrepaircontrol_7dd6195a6ace9263d0442e08"
+          }
+        },
+        {
+          "repair_item_id": "msrepaircontrol_a4b837fac95fba3959c2413e",
+          "expected": "SEMANTIC_ABSTAIN",
+          "observed": "SUITABLE",
+          "review": {
+            "allowed_response_change": "Ask the user if the current problem involves the roommate or the parent, or if it's a new conflict.",
+            "allowed_response_change_type": "ONE_QUESTION",
+            "candidate_increment": "The user previously mentioned conflicts with a roommate and a parent.",
+            "current_goal_span_ids": [
+              "V001"
+            ],
+            "current_support_goal": "The user is indicating a recurring problem at home and that they have not specified who was involved or what happened this time.",
+            "decision_reason_code": "PAST_ONLY_QUESTION_INCREMENT",
+            "entity_link": "RESOLVED",
+            "final_suitability": "SUITABLE",
+            "forbidden_focus_shift": "Do not assume the current problem is with either the roommate or the parent, or that it's a new conflict. The user explicitly states they have not said who was involved.",
+            "nonuse_condition": "If the user explicitly states they do not want to discuss past conflicts or if they immediately specify who was involved in the current problem.",
+            "past_source_span_ids": [
+              "C001"
+            ],
+            "repair_item_id": "msrepaircontrol_a4b837fac95fba3959c2413e"
+          }
+        }
+      ]
+    },
+    "MS_SOURCE_PRIMARY_GPT56": {
+      "schema_and_local_valid": 12,
+      "exact_decisions": 10,
+      "confusion": {
+        "NOT_SUITABLE->NOT_SUITABLE": 4,
+        "NOT_SUITABLE->SUITABLE": 1,
+        "SEMANTIC_ABSTAIN->SEMANTIC_ABSTAIN": 2,
+        "SUITABLE->SEMANTIC_ABSTAIN": 1,
+        "SUITABLE->SUITABLE": 4
+      },
+      "mismatches": [
+        {
+          "repair_item_id": "msrepaircontrol_cbf7de1d0c5bb9b14fd730bd",
+          "expected": "SUITABLE",
+          "observed": "SEMANTIC_ABSTAIN",
+          "review": {
+            "allowed_response_change": "UNRESOLVED: If both spans concern the same call, the candidate could support one focused question about whether the conversation ending immediately after money was mentioned made the call feel different; the event identity is not established.",
+            "allowed_response_change_type": "UNRESOLVED",
+            "candidate_increment": "UNRESOLVED: C001 supplies the specific proposition that the sister ended a prior call immediately after money was mentioned, but it is unclear whether this is the call referenced in V001.",
+            "current_goal_span_ids": [
+              "V001"
+            ],
+            "current_support_goal": "The user wants \"one focused question\" to help untangle why the call with their sister felt different.",
+            "decision_reason_code": "ENTITY_OR_EVENT_UNRESOLVED",
+            "entity_link": "UNRESOLVED",
+            "final_suitability": "SEMANTIC_ABSTAIN",
+            "forbidden_focus_shift": "Do not redirect from understanding why the currently referenced call felt different or assume that the prior call in C001 is that same call.",
+            "nonuse_condition": "Do not use C001 unless the currently referenced call is confirmed to be the prior call that ended after money was mentioned.",
+            "past_source_span_ids": [
+              "C001"
+            ],
+            "repair_item_id": "msrepaircontrol_cbf7de1d0c5bb9b14fd730bd"
+          }
+        },
+        {
+          "repair_item_id": "msrepaircontrol_7dd6195a6ace9263d0442e08",
+          "expected": "NOT_SUITABLE",
+          "observed": "SUITABLE",
+          "review": {
+            "allowed_response_change": "Acknowledge that the repeated interruptions in today’s meeting may be part of a pattern that also occurred in an earlier meeting, while keeping today’s incident as the focus and not implying the pattern is ongoing beyond the two reported occasions.",
+            "allowed_response_change_type": "UNDERSTANDING",
+            "candidate_increment": "The manager had also interrupted the user repeatedly in a previous meeting, so today’s three interruptions are not the only reported instance.",
+            "current_goal_span_ids": [
+              "V001"
+            ],
+            "current_support_goal": "Discuss the exact pattern that the user's manager interrupted them three times in today’s meeting.",
+            "decision_reason_code": "PAST_ONLY_UNDERSTANDING_INCREMENT",
+            "entity_link": "RESOLVED",
+            "final_suitability": "SUITABLE",
+            "forbidden_focus_shift": "Do not redirect the discussion into a general review of the earlier meeting or treat the prior report as proof of the manager’s present motives or an unbroken ongoing pattern.",
+            "nonuse_condition": "Do not use the prior incident if the response is meant to address only the details or handling of today’s meeting and recurrence would not materially affect that discussion.",
+            "past_source_span_ids": [
+              "C001"
+            ],
+            "repair_item_id": "msrepaircontrol_7dd6195a6ace9263d0442e08"
+          }
+        }
+      ]
+    }
+  },
+  "transport_and_schema_result": "PASS_24_OF_24",
+  "scientific_gate_result": "FAIL_GPT_10_OF_12_GEMINI_9_OF_12",
+  "root_cause": {
+    "control_gold_defect": "The old CURRENT_ECHO control says today's manager interruption versus a prior meeting. The past candidate adds cross-session recurrence, so both reviewers reasonably mark a real past-only increment; the old NOT_SUITABLE key is not valid for the repaired construct.",
+    "ambiguous_positive_control": "The sister-call positive does not establish that the current and past calls are the same event; GPT correctly abstains under the new resolved-entity requirement.",
+    "missing_no_meta_question_rule": "Gemini treats asking whether an unresolved candidate is relevant as the candidate doing work. The repaired construct must state that a meta-question about candidate relevance does not itself establish a suitable increment."
+  },
+  "decision": "Do not relax gates and do not run the 201 items. Retire these 12 expected keys for this repaired construct. Permit one content-independent control repair that makes recurrence/redundancy and event identity explicit and adds the no-meta-question rule; then use a fresh identity exactly once.",
+  "usage": {
+    "prompt_tokens": 18328,
+    "completion_tokens": 7576,
+    "total_tokens": 25904
+  },
+  "observed_cost_usd": 0.182381,
+  "absolute_cap_usd": 0.75,
+  "api_calls": 24,
+  "public_201_calls": 0,
+  "training_labels_created_or_changed": 0,
+  "fits": 0,
+  "source_hashes": {
+    "results": "23ccb3b616f51499d4bf3fd10b93ed14f03505474b66e7e52488edf8a8aac11f",
+    "raw": "a11523a7e3bcb0f2b956060255599c52fe546c50155409811c850f018c1b154b",
+    "key": "24ba25c316cf1657203c884a2af6435153ede56589078b718605b81390d52fd0"
+  }
+}

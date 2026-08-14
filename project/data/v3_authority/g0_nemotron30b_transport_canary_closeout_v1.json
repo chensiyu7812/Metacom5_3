@@ -1,0 +1,83 @@
+{
+  "protocol": "metacom-v3-g0-nemotron30b-transport-canary-closeout-v1",
+  "date": "2026-08-14",
+  "run_identity": "92bd2e530a22525ad7a8afc6daff1d6d178faad42c9c6dbd01349eeba5f740bc",
+  "model": "nvidia/nemotron-3-nano-30b-a3b",
+  "status": "OPERATIONAL_RETENTION_GATE_PASS_QUALITY_NOT_JUDGED_NO_GENERATOR_SELECTED",
+  "api_scope": {
+    "supporter_successful_turns": 10,
+    "local_role_player_turns": 10,
+    "cards": 2,
+    "completed_dialogues": 2,
+    "judge_calls": 0,
+    "observed_cost_usd": 0
+  },
+  "transport": {
+    "first_attempt_successful_turns": 10,
+    "first_attempt_success_rate": 1.0,
+    "failed_physical_attempts": 0,
+    "explicit_http_429_attempts": 0,
+    "request_timeout_or_network_timeout_attempts": 0,
+    "http_5xx_attempts": 0,
+    "terminal_trajectories": 0,
+    "early_stop_reason": null,
+    "interpretation": "No explicit rate limiting or route instability was observed in this ten-turn hosted-route canary. This does not prove the route will remain unconstrained at higher concurrency or volume."
+  },
+  "latency_ms": {
+    "median": 1692.4157399917021,
+    "p90": 3230.9735596179958,
+    "minimum": 733.7166969664395,
+    "maximum": 4251.085235038772,
+    "scope": "Non-streaming successful request wall-clock from request start through complete response receipt."
+  },
+  "generation": {
+    "researcher_output_token_cap": null,
+    "provider_output_parameter_omitted": true,
+    "provider_complete_finishes": 10,
+    "provider_length_finishes": 0,
+    "provider_default_reasoning_present_turns": 10,
+    "provider_reported_reasoning_token_count_available": false,
+    "completion_tokens_billed_total": 1601,
+    "completion_tokens_billed_median": 154.5,
+    "visible_words_total": 394,
+    "visible_words_median": 40.5,
+    "visible_words_p90": 61.99999999999999,
+    "terminal_punctuation_turns": 10,
+    "markdown_heading_turns": 0,
+    "markdown_list_turns": 0,
+    "internal_scaffold_or_strategy_label_turns": 0,
+    "accounting_boundary": "NVIDIA usage did not expose a separate reasoning-token count. Billed completion tokens therefore must not be relabeled as visible-answer tokens; reasoning presence is verified from the private raw response field only."
+  },
+  "frozen_gate_evaluation": {
+    "successful_turns_10": true,
+    "completed_dialogues_2": true,
+    "first_attempt_success_rate_at_least_0_9": true,
+    "explicit_429_attempts_at_most_0": true,
+    "terminal_trajectories_at_most_0": true,
+    "median_latency_at_most_10_seconds": true,
+    "p90_latency_at_most_30_seconds": true,
+    "provider_length_finishes_at_most_0": true,
+    "internal_scaffold_exposure_at_most_0": true,
+    "all_operational_thresholds_pass": true
+  },
+  "decision": {
+    "candidate_retained": true,
+    "candidate_deleted_from_g0": false,
+    "next_role": "Provisional candidate for a larger same-surface Quality/Risk/latency comparison against Llama 3.1 8B and Qwen 3.7 Plus.",
+    "quality_judged": false,
+    "generator_selected": false,
+    "reason": "The canary answered only transport, completion, and latency questions; two development cards cannot establish emotional-support quality or model superiority."
+  },
+  "claim_boundary": {
+    "supported": "The corrected NVIDIA hosted route was operationally usable in this frozen low-volume, sequential two-card canary.",
+    "not_supported": [
+      "No rate limit exists at higher volume or concurrency.",
+      "Nemotron quality exceeds Qwen or Llama 3.1 8B.",
+      "Nemotron passes ESC-Eval, executor qualification, PM evaluation, or clinical safety."
+    ]
+  },
+  "private_evidence_hashes": {
+    "project/outputs/v3_g0_nemotron30b_transport_canary_v1_20260814/private_turn_ledger.jsonl": "d9dafebdeeb9f5b9b6b0a7282f29801902a0ecb1b23842f4115bd8b057f2a517",
+    "project/outputs/v3_g0_nemotron30b_transport_canary_v1_20260814/summary.json": "a0a3a326a92feaacab38481a4557465e5306883facad9e334edeac724e64b189"
+  }
+}

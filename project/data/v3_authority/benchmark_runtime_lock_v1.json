@@ -1,0 +1,68 @@
+{
+  "protocol": "metacom-v3-benchmark-runtime-lock-v1",
+  "date": "2026-08-13",
+  "status": "P0_PROTOCOL_AND_IDENTITIES_FROZEN_P1_RUNTIME_QUALIFICATION_NOT_AUTHORIZED",
+  "purpose": "Bind the official benchmark source revisions and the local text-free protocol materializers before any candidate, reference, scorer, or judge call.",
+  "official_sources": {
+    "ESC-Eval": {
+      "repository": "https://github.com/AIFlames/Esc-Eval",
+      "commit": "9ad46e7b5e247e824dae4633910eaa82be668beb"
+    },
+    "ESC-Judge": {
+      "repository": "https://github.com/navidmdn/ESC-Judge",
+      "commit": "1ad30da04f9d0a171b7e4c1d0f5edf55587b21a9",
+      "license": "Apache-2.0"
+    },
+    "ES-MemEval": {
+      "repository": "https://github.com/slptongji/ES-MemEval",
+      "tag": "v1.0.0",
+      "commit": "692624208acc077b8867698c1d6fcd998dee641a"
+    }
+  },
+  "local_runtime": {
+    "python": "3.11",
+    "protocol_materializers_require_network": false,
+    "protocol_materializers_require_api": false,
+    "large_model_dependency_lock_status": "P1_REPAIRED_SCORER_ENVIRONMENT_MATERIALIZATION_PENDING"
+  },
+  "local_materializers": [
+    {
+      "path": "scripts/v3/02_materialize_es_memeval_public_identity.py",
+      "role": "ES-MemEval public-v1.0.0 row identity and task-surface materializer"
+    },
+    {
+      "path": "scripts/v3/03_materialize_benchmark_protocol_dry_run.py",
+      "sha256": "cf88d7088b661bde4c92ab73f494552ef1ee0d42475e2a4109124777f787dc74",
+      "role": "ESC-Eval card identity plus ESC-Judge deterministic role and bidirectional-order unit materializer"
+    },
+    {
+      "path": "scripts/v3/07_audit_esc_rank_public_qualification.py",
+      "role": "zero-inference public ESC-RANK paper/repository/model-tree qualification audit"
+    },
+    {
+      "path": "scripts/v3/08_materialize_esc_rank_runtime_preflight.py",
+      "role": "bounded official path overlay, immutable model revision identity, and strict ordinal parser preflight"
+    }
+  ],
+  "dry_run": {
+    "manifest": "benchmark_protocol_dry_run_manifest_v1.json",
+    "sha256": "5b1bfee5b1007a09f9b03be762277d8d175c9b8059cf3b5c8efdb7d512b9a89b",
+    "esc_eval_cards": 655,
+    "esc_judge_public_roles": 100,
+    "esc_judge_selected_roles": 25,
+    "esc_judge_bidirectional_units": 150,
+    "contains_role_or_dialogue_text": false,
+    "api_calls": 0
+  },
+  "execution_blockers": [
+    "repaired ESC-RANK executable environment and strict parser are not materialized",
+    "ESC-Judge runtime model and P1 human anchor are not qualified",
+    "numeric Quality/Risk calibration values are not registered",
+    "generator/reference inference identity, budget, and explicit user approval do not yet exist"
+  ],
+  "authorization": {
+    "model_calls": false,
+    "judge_calls": false,
+    "fine_tuning": false
+  }
+}

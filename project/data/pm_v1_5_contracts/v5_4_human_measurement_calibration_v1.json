@@ -1,0 +1,87 @@
+{
+  "protocol": "pm-v1.5-v5.4-human-measurement-calibration-v1",
+  "status": "FROZEN_BEFORE_HUMAN_ANNOTATIONS",
+  "date": "2026-08-10",
+  "packet": {
+    "directory": "outputs/pm_v1_5_v5_4_human_measurement_calibration_20260810",
+    "human_reviewers": 2,
+    "independent_before_freeze": true,
+    "underlying_items": 96,
+    "quality_responses": 24,
+    "quality_paired_seed_effects": 12,
+    "function_on_responses": 24,
+    "risk_responses": 48,
+    "risk_original_controls": 24,
+    "risk_single_enrichments": 24,
+    "risk_families": 6,
+    "risk_enrichments_per_family": 4
+  },
+  "truth_precedence": {
+    "human_independent_labels": "primary calibration evidence",
+    "central_adjudication": "resolves only observed human disagreements after both independent files are frozen",
+    "risk_construction_intent": "sampling and sensitivity diagnostic only; never overrides human judgment",
+    "old_llm_judgments": "kept closed until both human files and any adjudication are frozen",
+    "adjudicated_agreement": "never reported as pre-adjudication inter-rater agreement"
+  },
+  "human_instrument_gates": {
+    "quality": {
+      "axis_within_one_point_agreement": ">=0.80 over 96 axis comparisons",
+      "response_composite_spearman": ">=0.60 over 24 responses",
+      "score_difference_gt_1": "central adjudication required; within-one scores are averaged",
+      "failure": "quality human construct not stable; do not qualify an LLM quality proxy"
+    },
+    "function": {
+      "dual_resolved_coverage": ">=0.80 of 24",
+      "each_atomic_axis_raw_agreement": ">=0.80 among dual-resolved",
+      "derived_function_raw_agreement": ">=0.80 among dual-resolved",
+      "any_axis_disagreement": "central adjudication required",
+      "failure": "function codebook remains ambiguous; stop fresh development wave"
+    },
+    "risk": {
+      "dual_resolved_coverage": ">=0.90 of 48",
+      "material_event_raw_agreement": ">=0.85 among dual-resolved",
+      "critical_event_disagreement": "always central adjudication",
+      "material_presence_or_family_disagreement": "central adjudication required",
+      "failure": "risk human construct not stable; risk requires direct human measurement"
+    }
+  },
+  "llm_proxy_qualification_after_human_freeze": {
+    "quality": {
+      "response_composite_spearman_vs_human": ">=0.60",
+      "paired_uplift_spearman_vs_human": ">=0.40",
+      "material_direction_raw_agreement": ">=0.75",
+      "use_if_pass": "development-scale absolute Quality proxy with frozen human audit; sealed claims retain human sampling"
+    },
+    "function": {
+      "derived_function_raw_agreement_vs_human": ">=0.80",
+      "each_atomic_axis_raw_agreement_vs_human": ">=0.80",
+      "component_results": "reported separately; no overall pass may hide a component below 4/6",
+      "use_if_pass": "mechanism diagnostic only, never the causal value label"
+    },
+    "risk": {
+      "material_event_sensitivity_vs_human": ">=0.90",
+      "no_material_event_specificity_vs_human": ">=0.85",
+      "critical_event_sensitivity": "1.00 on all human-confirmed critical items",
+      "family_macro_recall": ">=0.80 across human-supported families",
+      "use_if_pass": "ordinary development screening only; all LLM disagreements and severity >=2 remain human-reviewed",
+      "failure": "LLM risk is not a gold proxy; use human labels for all risk claims"
+    }
+  },
+  "aggregation": {
+    "quality": "average two human scores when within one point; adjudicate only axis differences greater than one or unresolved",
+    "function": "FUNCTIONAL iff contribution, required act, and candidate boundary are all YES; any NO is NONFUNCTIONAL; any UNRESOLVED is UNRESOLVED",
+    "risk": "material iff any human-confirmed event severity >=2; critical iff severity=3",
+    "missing": "never zero-impute or convert to OFF/safe/nonfunctional",
+    "grain": "human reviewer and adjudicator are repeated measurements, not independent states"
+  },
+  "authorization": {
+    "human_a_review": true,
+    "human_b_review": true,
+    "aggregation_before_both_freeze": false,
+    "adjudication_before_disagreements_known": false,
+    "new_api_calls": false,
+    "pm_training": false,
+    "external_experiments": false
+  },
+  "api_calls_for_contract": 0
+}

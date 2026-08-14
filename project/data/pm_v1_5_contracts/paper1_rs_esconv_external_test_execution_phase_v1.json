@@ -1,0 +1,69 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-esconv-external-test-execution-phase-v1",
+  "date": "2026-08-12",
+  "status": "EXACT_60_RS_ESCONV_EXTERNAL_TEST_CALLS_AUTHORIZED_ONCE_NO_REFIT_NO_MP_MS_ME",
+  "purpose": "RS-only external test on real ESConv dialogue (second of the project's three external tracks), same V3 stack and instrument choices as the EvoEmo track for a genuinely comparable result.",
+  "input_bindings": [
+    {
+      "role": "preflight_report",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_external_test_preflight_20260812/report.json",
+      "sha256": "321403e220e2c6ce8aa87ebf741618905fe18375912a8da0551295832012b227",
+      "required_status": "PASS_EXTERNAL_TEST_PROPOSAL_READY_HUMAN_APPROVAL_REQUIRED_BEFORE_ANY_API_CALL"
+    },
+    {
+      "role": "qualification_cases",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_external_test_preflight_20260812/qualification_cases_private.jsonl",
+      "sha256": "bd2747b2adf66875e0750124ea108cff77481cfaf817dbdeedb891fd3f7113a9"
+    },
+    {
+      "role": "physical_call_plan",
+      "path": "outputs/pm_v1_5_paper1_rs_esconv_external_test_preflight_20260812/physical_call_plan_private.jsonl",
+      "sha256": "24c84af4459ede95b6bcee88c30ac3a27b1f35cd974825aba21d6f8455ed8217"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_rs_esconv_external_test_execution_v1.json",
+      "sha256": "1e5964102008a59a7fc818d745c879d023192225a5d51cd8a749186477e9068b"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "meaning_absorption_response_program_v3",
+      "path": "src/metacom_pm/v1_5_response_program_v3.py",
+      "sha256": "ccf841ac49b6efc91f2dd5d11ae8c5f3b0932f6945352bc98627199055ce7f01"
+    },
+    {
+      "role": "raw_first_live_runner",
+      "path": "scripts/v1_5/316l_run_paper1_rs_esconv_external_test_v1_5.py",
+      "sha256": "e51560caa5035af32488191a2dc127ab00482f93e3712d2763f10dd7c8557e48"
+    }
+  ],
+  "execution": {
+    "component": "RS",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 36,
+    "baseline_calls": 36,
+    "routed_calls": 24,
+    "run_identity": "e465d082215aa5be14d9ebc6de63e263dc7a82fa113763204c43dde0c3b6bd8c",
+    "output_directory": "outputs/pm_v1_5_paper1_rs_esconv_external_test_live_20260812",
+    "absolute_usd_cap": 0.15
+  },
+  "authorization": {
+    "control_review_api_calls": 0,
+    "generator_calls": 60,
+    "training_label_change": false,
+    "pm_fit_or_threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": true
+  },
+  "stop_rules": [
+    "Persist raw provider output before any guard/aggregation.",
+    "Consume this identity after the first real run even if incomplete.",
+    "Running generation is not itself a success claim -- a paired baseline-vs-routed measurement step is required before any RS-helps claim."
+  ]
+}

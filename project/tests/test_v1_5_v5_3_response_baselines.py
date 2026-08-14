@@ -7,6 +7,7 @@ from metacom_pm.v1_5_v5_3_response_baselines import (
     BaselineFreeze,
     FrozenResponseState,
     build_response_baseline_plan,
+    choose_cost_matched_fixed_actions,
 )
 
 
@@ -76,7 +77,7 @@ def test_matched_random_exactly_preserves_on_counts_and_estimated_cost():
     ]
     plan = build_response_baseline_plan(states, freeze=freeze())
     rows = [row for row in plan["logical_bindings"] if row["seed_label"] == "a"]
-    learned = [row for row in rows if row["policy"] == "learned_pm_full"]
+    learned = [row for row in rows if row["policy"] == "learned_pm_qualified"]
     random = [
         row for row in rows if row["policy"] == "cost_and_on_rate_matched_random"
     ]
@@ -91,6 +92,7 @@ def test_matched_random_exactly_preserves_on_counts_and_estimated_cost():
         row["estimated_incremental_tokens"] for row in random
     )
     assert plan["report"]["matched_random"]["has_nonalias_contrast"]
+    assert plan["report"]["matched_random"]["qualified"]
 
 
 def test_singleton_exchangeability_cell_reports_no_random_contrast():
@@ -100,12 +102,27 @@ def test_singleton_exchangeability_cell_reports_no_random_contrast():
     )
     assert not plan["report"]["matched_random"]["has_nonalias_contrast"]
     logical = plan["logical_bindings"]
-    learned = next(row for row in logical if row["policy"] == "learned_pm_full")
+    learned = next(row for row in logical if row["policy"] == "learned_pm_qualified")
     random = next(
         row for row in logical
         if row["policy"] == "cost_and_on_rate_matched_random"
     )
     assert learned["physical_call_id"] == random["physical_call_id"]
+    assert plan["report"]["matched_random"]["qualified"] is False
+
+
+def test_matched_random_does_not_split_cells_on_exact_token_vectors():
+    states = [
+        state(1, {"MP": True, "MS": False, "ME": False, "RS": False}, tokens={"MP": 20, "MS": 30, "ME": 40, "RS": 25}),
+        state(2, {"MP": False, "MS": True, "ME": False, "RS": False}, tokens={"MP": 21, "MS": 29, "ME": 42, "RS": 24}),
+        state(3, {"MP": False, "MS": False, "ME": True, "RS": False}, tokens={"MP": 19, "MS": 31, "ME": 39, "RS": 27}),
+        state(4, {"MP": False, "MS": False, "ME": False, "RS": True}, tokens={"MP": 22, "MS": 28, "ME": 41, "RS": 26}),
+    ]
+    report = build_response_baseline_plan(states, freeze=freeze())["report"]["matched_random"]
+    assert report["exchangeability_cells"] == 1
+    assert report["changed_state_fraction"] >= 0.25
+    assert report["all_cells_exact_on_rate_match"] is True
+    assert report["relative_cost_mismatch"] <= report["cost_tolerance"]
 
 
 def test_fixed_and_all_other_policies_cannot_bypass_eligibility():
@@ -129,4 +146,29 @@ def test_invalid_candidate_eligibility_identity_is_rejected():
             incremental_tokens={"MP": 10, "MS": 0, "ME": 0, "RS": 0},
             transparent_rule_bits={"MP": False, "MS": False, "ME": False, "RS": False},
             learned_pm_bits={"MP": False, "MS": False, "ME": False, "RS": False},
+        )
+
+
+def test_cost_matched_fixed_is_chosen_from_all_actions_without_outcomes():
+    states = [
+        state(
+            index,
+            {"MP": False, "MS": False, "ME": False, "RS": True},
+        )
+        for index in range(12)
+    ]
+    actions, audit = choose_cost_matched_fixed_actions(
+        states, protocol="frozen-cost-match",
+    )
+    assert actions == {"external": "M0+RS"}
+    assert audit[0]["qualified"] is True
+    assert audit[0]["relative_cost_mismatch"] == 0.0
+    assert audit[0]["response_or_evaluation_outcome_read"] is False
+
+
+def test_cost_matched_fixed_rejects_tiny_strata():
+    with pytest.raises(ValueError, match="minimum is 12"):
+        choose_cost_matched_fixed_actions(
+            [state(1, {"MP": False, "MS": False, "ME": False, "RS": True})],
+            protocol="frozen-cost-match",
         )

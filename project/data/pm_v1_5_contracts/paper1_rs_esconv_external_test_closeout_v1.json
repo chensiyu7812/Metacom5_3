@@ -1,0 +1,36 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-esconv-external-test-closeout-v1",
+  "date": "2026-08-12",
+  "status": "SECOND_TRACK_REPLICATES_EVOEMO_FINDING_CLAIM_NOT_SUPPORTED",
+  "scope": "RS-only (MP/MS/ME structurally unavailable, confirmed on every real ESConv state, not assumed): 36 real ESConv test-split states, 60 real generator calls, 18 eligible baseline-vs-routed pairs measured with the exact same instrument as the EvoEmo quality/risk measurement.",
+  "mechanism": {
+    "rs_router_reused_zero_new_training": true,
+    "unauthorized_evidence_leaks": 0,
+    "baseline_trace_sanitizations": 15,
+    "note": "RS opportunity router applied to fresh ESConv states without retraining (it was originally trained on ESConv). Mechanism clean: zero unauthorized-evidence leaks in routed calls."
+  },
+  "quality": {
+    "baseline_win_rate": 0.9444,
+    "routed_win_rate": 0.0556,
+    "n_pairs": 18,
+    "family_distribution": {"Restatement or Paraphrasing": 16, "Providing Suggestions": 1, "Reflection of feelings": 1},
+    "note": "Replicates EvoEmo almost exactly (94.1%-94.4% baseline preference on both domains). Same root cause: 16/18 (89%) selected the 'Restatement or Paraphrasing' family, whose restate-only instruction forbids the forward momentum (questions, warmth) that makes baseline preferred."
+  },
+  "risk": {
+    "baseline_mean": 0.1667,
+    "routed_mean": 0.6667,
+    "ratio": 4.0,
+    "family_breakdown": {"unsupported_personal_fact_or_upgraded_past_to_current": 9, "missing_or_wrong_handling_of_an_explicit_safety_signal": 3},
+    "note": "Risk is 4x higher for routed on ESConv (larger gap than EvoEmo's original 1.5x). New finding: 3/18 routed replies scored nonzero on missing/wrong handling of an explicit safety signal -- a mentioned 'depressed' feeling and a physical forklift-operation safety concern both went unaddressed because the narrow single-move restatement format focuses on one thing and skips the rest of the turn's content. This is a real, legitimate, safety-relevant cost of the current RS card design, replicated independently on a structurally different domain."
+  },
+  "conclusion_vs_original_claim": "Independently replicates the EvoEmo finding on a second, structurally different domain (single-session ESConv vs longitudinal EvoEmo; RS-only vs RS+MS). The claim ('PM/RS helps without losing quality, at comparable-or-lower cost') is NOT supported here either, and the safety cost (4x risk ratio, including a new explicit-safety-signal-handling gap) is more pronounced than on EvoEmo. This strengthens confidence that the root cause is a genuine property of the 'Restatement or Paraphrasing' family's current card design (not an EvoEmo-specific artifact), since it reproduces with the same magnitude and same mechanism on an entirely different corpus and generator context.",
+  "real_costs": {
+    "external_test_generation_usd_uncalibrated_flat_cap": 0.15,
+    "quality_risk_measurement_usd": 0.563,
+    "total_this_track_usd": 0.713
+  },
+  "next_scientific_action": "Per explicit user direction, MP rule-based Step1 rescue is the next concrete work item. ES-MemEval remains queued as a separate, properly-scoped follow-up (per the original paper/protocol requirements, not a reuse of the disconnected old V5.2-stack results) -- not pursued in this round.",
+  "authorization": {
+    "es_memeval_proper_protocol_execution": "deferred_per_user_direction_not_abandoned"
+  }
+}

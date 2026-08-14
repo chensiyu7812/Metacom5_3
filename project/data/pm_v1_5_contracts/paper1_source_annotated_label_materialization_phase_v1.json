@@ -1,0 +1,30 @@
+{
+  "protocol": "pm-v1.5-paper1-source-annotated-label-materialization-phase-v1",
+  "date": "2026-08-10",
+  "status": "LABEL_MATERIALIZATION_CANDIDATE_REQUIRES_AUTHORITY_PROMOTION",
+  "method_id": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V1",
+  "parent_authority_sha256": "3e85d87ec7687512fb6ce3faff01a447cc6888f4252c04e3f81692199002ab03",
+  "input_bindings": [
+    {"role": "method_contract", "path": "data/pm_v1_5_contracts/paper1_source_annotated_resource_suitability_method_candidate_v1.json", "sha256": "013af2f82dd5d7e4bbdb724c29c7849389d06adb2ca2e45ec4fb29b524d6e245"},
+    {"role": "primary_rule", "path": "data/pm_v1_5_contracts/paper1_source_annotated_primary_head_rule_v1.json", "sha256": "46e83f12a3f2f56d324a3d4513a05265f531bc4c8a19db9f9b725bd1649bd363"},
+    {"role": "capacity_audit", "path": "outputs/pm_v1_5_paper1_source_annotated_label_capacity_20260810/report.json", "sha256": "228f6258cb0b61e7df118ff97a924742ee0e0de6f73228aeee6b1791e5436263"},
+    {"role": "method_validation", "path": "outputs/pm_v1_5_paper1_source_annotated_method_validation_20260810/report.json", "sha256": "a811913a4cd19e4f9e8b9632cf8cd57875dcde8aba00cb82f0b0e7b8149ab8cb"},
+    {"role": "esconv_evaluator_source", "path": "data/external/ESConv.json", "sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af"},
+    {"role": "evoemo_evaluator_source", "path": "data/external/evo_emo.json", "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"},
+    {"role": "actual_rank1", "path": "outputs/pm_v1_5_paper1_p1b_actual_rank1/actual_rank1_unlabeled.jsonl", "sha256": "e70187b9dadc9e0c4b5e3e627ebe3d3cfb7bb1c78e86c716c59f1158bce47ae5"},
+    {"role": "esconv_runtime_states", "path": "outputs/pm_v1_5_paper1_p1_public_surface/esconv_states_unlabeled.jsonl", "sha256": "d1ccedca10c95644ac58ddfb28796deb95aa810dcdbbdd5ee6ceddaf011cfc6f"},
+    {"role": "evoemo_runtime_states", "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_states_unlabeled.jsonl", "sha256": "38d4de590bf231908db931a608b08d4c0b6ff90ba042074e1e7be219fc482e3a"},
+    {"role": "evoemo_runtime_candidates", "path": "outputs/pm_v1_5_paper1_p1_public_surface/evoemo_candidates_unlabeled.jsonl", "sha256": "81bf59179499c13df0f99e6360aa840b1487146d318a5577d4012d50f183deab"},
+    {"role": "esconv_split_manifest", "path": "data/strategy/esconv_split_manifest_v1_5.jsonl", "sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63"}
+  ],
+  "implementation_bindings": [
+    {"role": "label_primitives", "path": "src/metacom_pm/v1_5_paper1_annotated_labels.py", "sha256": "1ab5e6e6bef78738a60ddaab50965e3ed4bdd09146617c6fbdb7c80ee12dbb17"},
+    {"role": "one_shot_materializer", "path": "scripts/v1_5/190l_materialize_paper1_source_annotated_labels_v1_5.py", "sha256": "bb2a74a4966c649a793bf3cbed007d0b842a7c4ac4caf7b5a481285e338bde93"}
+  ],
+  "outputs": {
+    "public_report": "outputs/pm_v1_5_paper1_source_annotated_labels_20260810/report.json",
+    "private_labels": "outputs/pm_v1_5_paper1_source_annotated_labels_private_20260810/source_annotated_labels.jsonl"
+  },
+  "allowed": ["one deterministic zero-API label materialization pass", "schema/count/leakage validation"],
+  "forbidden": ["PM fitting", "threshold selection", "API calls", "response generation", "baseline or external outcomes", "MP labels", "modification of runtime feature files"]
+}

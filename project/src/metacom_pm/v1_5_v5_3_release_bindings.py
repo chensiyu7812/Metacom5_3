@@ -1,12 +1,12 @@
 """Outcome-blind static asset bindings for the V5.3 release.
 
-This is deliberately a *partial* release identity.  It freezes assets that
+This is deliberately a *pre-effect* release identity.  It freezes assets that
 are already decided (the six-card Strategy Bank, BGE-M3 for MS, the retained
-production lexical/typed-tier ranker for ME, and the shared Step2/
-accountability/baseline implementations) while leaving the Step2 recovery
-policy visibly unresolved.  A formal P2 release must fill that field and
-produce a new identity; callers cannot silently substitute another Bank,
-retriever, encoder snapshot, or implementation.
+production lexical/typed-tier ranker for ME, the shared Step2/accountability/
+baseline implementations, and deterministic Step2 fallback).  Semantic
+generator compatibility is still a separate prerequisite; callers cannot
+silently substitute another Bank, retriever, encoder snapshot, recovery
+policy, or implementation.
 """
 
 from __future__ import annotations
@@ -75,15 +75,16 @@ class StaticReleaseBindings(StrictModel):
     protocol: Literal["pm-v1.5-v5.3-static-release-bindings-v1"] = (
         STATIC_RELEASE_PROTOCOL
     )
-    status: Literal["STATIC_BINDINGS_FROZEN_RECOVERY_PENDING"] = (
-        "STATIC_BINDINGS_FROZEN_RECOVERY_PENDING"
+    status: Literal["STATIC_BINDINGS_FROZEN_SEMANTIC_COMPATIBILITY_PENDING"] = (
+        "STATIC_BINDINGS_FROZEN_SEMANTIC_COMPATIBILITY_PENDING"
     )
     strategy_bank: StrategyBankBinding
     ms_retriever: SemanticRetrieverBinding
     me_retriever: MeRetrieverBinding
-    step2_recovery_policy_status: Literal[
-        "PENDING_DEVELOPMENT_ONLY_REWRITE_VS_DIRECT_FALLBACK_COMPARISON"
-    ]
+    step2_recovery_policy: Literal["deterministic_fallback"] = "deterministic_fallback"
+    bounded_rewrite_role: Literal["development_diagnostic_only"] = (
+        "development_diagnostic_only"
+    )
     shared_implementations: dict[str, FileBinding]
     response_baselines: list[str]
     generated_response_or_quality_risk_outcome_read: Literal[False] = False
@@ -147,10 +148,13 @@ def build_static_release_bindings(root: str | Path) -> StaticReleaseBindings:
             project_root,
             "src/metacom_pm/v1_5_v5_3_candidate_layer_responsibility.py",
         ),
+        "step1_multiobjective_estimand": _file_binding(
+            project_root, "src/metacom_pm/v1_5_v5_3_step1_objectives.py"
+        ),
     }
     payload = {
         "protocol": STATIC_RELEASE_PROTOCOL,
-        "status": "STATIC_BINDINGS_FROZEN_RECOVERY_PENDING",
+        "status": "STATIC_BINDINGS_FROZEN_SEMANTIC_COMPATIBILITY_PENDING",
         "strategy_bank": StrategyBankBinding(
             relative_path=bank_relative,
             sha256=observed_bank_sha,
@@ -181,9 +185,8 @@ def build_static_release_bindings(root: str | Path) -> StaticReleaseBindings:
                 "docs/PM_V1_5_V5_3_ME_RERANKER_QUALIFICATION_20260806_ZH.md",
             ),
         ),
-        "step2_recovery_policy_status": (
-            "PENDING_DEVELOPMENT_ONLY_REWRITE_VS_DIRECT_FALLBACK_COMPARISON"
-        ),
+        "step2_recovery_policy": "deterministic_fallback",
+        "bounded_rewrite_role": "development_diagnostic_only",
         "shared_implementations": implementations,
         "response_baselines": list(POLICIES),
         "generated_response_or_quality_risk_outcome_read": False,

@@ -1,0 +1,24 @@
+{
+  "protocol": "metacom-v3-g0-canary-superseded-identity-closeout-v1",
+  "date": "2026-08-13",
+  "run_identity": "7a4d43f9049583d7151d0200f856ad04c8b2090f625171baa4b9868ecbd9de40",
+  "status": "CONSUMED_CANARY_IMPLEMENTATION_SCOPE_DEFECT_QWEN_ZERO_COST_SUPERSEDED",
+  "requested_scope": {
+    "esc_eval_cards": 2,
+    "executor_packets": 2,
+    "candidates": 3
+  },
+  "observed_before_fail_closed_stop": {
+    "llama31_8b_successful_turns": 5,
+    "llama33_70b_successful_turns": 3,
+    "llama33_70b_failed_physical_attempts": 4,
+    "llama33_70b_terminal_point": "card 1, turn 4, two consecutive network_timeout outcomes",
+    "qwen_physical_attempts": 0,
+    "qwen_observed_cost_usd": 0.0,
+    "executor_calls": 0
+  },
+  "root_cause": "The contract required ITT retention of a candidate-scoped terminal transport failure, but the runner raised the exhausted retry to process scope and suppressed independent candidates, including Qwen.",
+  "repair": "Candidate trajectory/call failures now close at candidate scope; deterministic contract, identity, authentication, and budget failures remain process-fatal. Runner and transport source hashes are bound into the replacement identity.",
+  "reuse_policy": "This identity is consumed and may not be resumed or represented as a completed G0 canary. Its raw private ledger remains immutable local evidence and is not committed.",
+  "api_cost_scope": "NVIDIA hosted calls were on the observed free route; no Qwen paid inference occurred."
+}

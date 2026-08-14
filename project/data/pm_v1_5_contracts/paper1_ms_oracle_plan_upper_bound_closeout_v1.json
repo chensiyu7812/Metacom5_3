@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-oracle-plan-upper-bound-closeout-v1",
+  "date": "2026-08-11",
+  "status": "ORACLE_PLAN_GENERATION_COMPLETE_PAID_RELEASE_CLOSED_ZERO_API_RESPONSIBILITY_AUDIT_NEXT",
+  "executed_phase": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_oracle_plan_upper_bound_execution_phase_v1.json",
+    "sha256": "c3fbb3f35b476dcb719ede8e9d4438688dd4befc36781dd4681c01d6054db380",
+    "run_identity": "94f1546096581e3bc9ce0ad0510567df38aab6ba5537c945ad990cd79ae070aa"
+  },
+  "observed": {
+    "logical_calls": 8,
+    "semantic_calls": 8,
+    "transport_retries": 0,
+    "clean_or_safe_nonuse": 8,
+    "generator_claimed_ms": 5,
+    "prompt_tokens": 7926,
+    "completion_tokens": 970,
+    "total_tokens": 8896,
+    "live_report_usage_field_note": "The live report queried input_tokens/output_tokens while this provider reports prompt_tokens/completion_tokens; total_tokens was correct. This closeout records the complete observed schema without mutating the executed runner or raw rows."
+  },
+  "artifacts": [
+    {
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_live_20260811/generator_results_private.jsonl",
+      "sha256": "fee682531c3e5b5e75ed9d10fdc47dd605b41e4721e9f5f23246413d90eaea8f",
+      "rows": 8
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_live_20260811/raw_provider_attempts_before_guard.jsonl",
+      "sha256": "76105901a669f3b2e316853832da96c7cb278e0e1b3246f5a1a586c9e95786fe",
+      "rows": 8
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_ms_oracle_plan_upper_bound_live_20260811/report.json",
+      "sha256": "028571525a9a0833a1cf847d1f1c067a59463a7297b0dab583e1de91a8d28ae5"
+    }
+  ],
+  "authorization": {
+    "api_calls": 0,
+    "zero_api_responsibility_audit": true,
+    "blind_packet_materialization": true,
+    "blind_review_execution": false,
+    "pm_refit": false,
+    "training_label_change": false,
+    "threshold_change": false,
+    "MP_or_ME_work": false,
+    "baseline_or_external_calls": false
+  },
+  "required_audit_layers": [
+    "candidate_increment_really_distinct_from_current",
+    "oracle_plan_followed",
+    "source_attributable_MS_function",
+    "plan_or_source_scaffold_exposure",
+    "quality_direction_vs_existing_R0_and_generic_MS",
+    "risk_and_owner_time_boundary",
+    "complete_cost"
+  ],
+  "claim_limit": "Generation completion and generator telemetry are not Function or Quality evidence. The oracle is an implementation upper bound, never a learned PM result.",
+  "next": "ZERO_API_SOURCE_AWARE_RESPONSIBILITY_AUDIT_AND_BLIND_PACKET"
+}

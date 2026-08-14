@@ -1,0 +1,279 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "MP 共识标签：可做诊断 OOF，但不能作为正式标签通过",
+    "description": "G4B3 失败后的数据质量、选择偏差和诊断性学习价值审计。",
+    "generatedAt": "2026-08-11T00:00:00+09:00",
+    "sources": [
+      {
+        "id": "src_mp_audit",
+        "label": "Frozen MP consensus-readiness audit",
+        "query": {
+          "engine": "SQLite",
+          "language": "sql",
+          "sql": "WITH field_audit(profile_field,cases,resolved,resolution_rate,on_count,off_count,groups) AS (VALUES\n('age',7,7,1.0,3,4,5),\n('education',49,36,0.7346938775510204,28,8,12),\n('gender',5,3,0.6,0,3,3),\n('job',110,69,0.6272727272727273,19,50,16),\n('location',28,17,0.6071428571428571,2,15,12),\n('nationality',5,4,0.8,0,4,4)\n) SELECT * FROM field_audit;",
+          "description": "Profile-field resolution and class capacity from the frozen 204-case MP dual review.",
+          "executed_at": "2026-08-11T00:00:00+09:00",
+          "tables_used": [
+            "field_audit"
+          ],
+          "filters": [
+            "MP only",
+            "204 frozen public cases",
+            "no adjudication"
+          ],
+          "metric_definitions": [
+            "Resolution rate = exact resolved consensus / reviewed cases within profile field."
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "field_resolution",
+        "title": "各 profile field 的共识覆盖率",
+        "subtitle": "204 个冻结 MP cases；柱高为 exact resolved consensus 比例",
+        "type": "bar",
+        "dataset": "field_rows",
+        "encodings": {
+          "x": {
+            "field": "profile_field",
+            "type": "nominal",
+            "label": "Profile field"
+          },
+          "y": {
+            "field": "resolution_rate",
+            "type": "quantitative",
+            "label": "共识覆盖率",
+            "format": "percent"
+          },
+          "tooltip": [
+            {
+              "field": "cases",
+              "type": "quantitative",
+              "label": "Cases"
+            },
+            {
+              "field": "on",
+              "type": "quantitative",
+              "label": "ON"
+            },
+            {
+              "field": "off",
+              "type": "quantitative",
+              "label": "OFF"
+            }
+          ]
+        },
+        "valueFormat": "percent",
+        "layout": "full",
+        "sourceId": "src_mp_audit"
+      }
+    ],
+    "tables": [
+      {
+        "id": "field_table",
+        "title": "字段级容量与选择偏差",
+        "subtitle": "Exact counts；用于判断 consensus-only 子集的运输范围",
+        "dataset": "field_rows",
+        "defaultSort": {
+          "field": "cases",
+          "direction": "desc"
+        },
+        "density": "spacious",
+        "sourceId": "src_mp_audit",
+        "columns": [
+          {
+            "field": "profile_field",
+            "label": "字段",
+            "type": "text"
+          },
+          {
+            "field": "cases",
+            "label": "Cases",
+            "format": "number"
+          },
+          {
+            "field": "resolved",
+            "label": "Resolved",
+            "format": "number"
+          },
+          {
+            "field": "resolution_rate",
+            "label": "覆盖率",
+            "format": "percent"
+          },
+          {
+            "field": "on",
+            "label": "ON",
+            "format": "number"
+          },
+          {
+            "field": "off",
+            "label": "OFF",
+            "format": "number"
+          },
+          {
+            "field": "groups",
+            "label": "Groups",
+            "format": "number"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# MP 共识标签：可做诊断 OOF，但不能作为正式标签通过",
+        "layout": "full"
+      },
+      {
+        "id": "summary",
+        "type": "markdown",
+        "sourceId": "src_mp_audit",
+        "body": "## 技术结论：运行一次诊断 OOF 有价值，但研究主张仍被阻断\n\n136/204 条形成 exact resolved consensus，包含 ON=52、OFF=84，并覆盖全部 17 个 connected groups；这足以测试冻结低容量特征是否存在跨用户信号。原 G4B3 一致性 FAIL 和 68 条 unresolved 必须保留，因此诊断结果只能代表较容易的共识子群，不能成为正式 MP 标签或论文结论。",
+        "layout": "full"
+      },
+      {
+        "id": "selection",
+        "type": "markdown",
+        "sourceId": "src_mp_audit",
+        "body": "## 共识筛选不是完全随机缺失\n\n不同 profile field 的共识覆盖率范围为 60.0%–100.0%，不同 connected group 为 58.3%–91.7%。因此只在 136 条上得到的 OOF 性能必须解释为 high-confidence semantic scope，而不是全部 MP opportunity。",
+        "layout": "full"
+      },
+      {
+        "id": "chart",
+        "type": "chart",
+        "chartId": "field_resolution",
+        "layout": "full"
+      },
+      {
+        "id": "table",
+        "type": "table",
+        "tableId": "field_table",
+        "layout": "full"
+      },
+      {
+        "id": "definitions",
+        "type": "markdown",
+        "body": "## 数据、grain 与特征边界\n\n分析单位是 `state × MP × actual Rank-1`。标签仅来自两位 reviewer 的 `SUITABLE/SUITABLE` 或 `NOT/NOT`；其他组合均 unresolved。诊断模型只允许 profile field 类型、current redundancy、candidate age、scope match、retrieval score/margin 和严格过去池规模；用户 ID、原始 profile value、姓名和原始候选文本禁止进入特征。",
+        "layout": "full"
+      },
+      {
+        "id": "method",
+        "type": "markdown",
+        "body": "## 方法与稳健性\n\n审计对 204 条 label rows、204 条 private mapping 和 G3 outcome-blind diagnostics 做一对一完整性检查。所有 17 groups 在 resolved 子集中出现，OFF/ON 分别覆盖 15/12 groups。诊断阶段必须使用 leave-one-connected-group-out；不得把 136 行当 136 个独立用户，也不得在看到预测后改变特征或阈值。",
+        "layout": "full"
+      },
+      {
+        "id": "limits",
+        "type": "markdown",
+        "body": "## 限制：它回答可学习性，不回答正式有效性\n\n若 diagnostic OOF 失败，可直接停止 MP 自动标签路线；若成功，只说明高置信语义子群存在可预测结构，仍需真正的 source-aware 双人标注或新的前瞻构念合同才能支持正式 OOF。任何结果都不能回写 G4B3 的失败门。",
+        "layout": "full"
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "body": "## 下一步\n\n1. 冻结一次 leave-one-group-out diagnostic OOF 和 prevalence/field-only comparators。\n2. 只报告连续概率、AUC、balanced accuracy、Brier 与 17-group bootstrap，不按结果选阈值。\n3. 成功后再决定是否投入真正双人 source-aware 标注；失败则 MP 保持 OFF，转向独立 MS/ME 人工标签路线。",
+        "layout": "full"
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## 尚待回答\n\n- 冻结的 identity-free 特征能否跨 connected group 预测 consensus-only suitability？\n- 一致性失败主要来自构念本身，还是 B reviewer 的系统性宽松？\n- 若诊断信号存在，人类双评能否把适用边界稳定扩展到 unresolved cases？",
+        "layout": "full"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-11T00:00:00+09:00",
+    "status": "ready",
+    "datasets": {
+      "field_rows": [
+        {
+          "profile_field": "age",
+          "cases": 7,
+          "resolved": 7,
+          "resolution_rate": 1.0,
+          "on": 3,
+          "off": 4,
+          "groups": 5
+        },
+        {
+          "profile_field": "education",
+          "cases": 49,
+          "resolved": 36,
+          "resolution_rate": 0.7346938775510204,
+          "on": 28,
+          "off": 8,
+          "groups": 12
+        },
+        {
+          "profile_field": "gender",
+          "cases": 5,
+          "resolved": 3,
+          "resolution_rate": 0.6,
+          "on": 0,
+          "off": 3,
+          "groups": 3
+        },
+        {
+          "profile_field": "job",
+          "cases": 110,
+          "resolved": 69,
+          "resolution_rate": 0.6272727272727273,
+          "on": 19,
+          "off": 50,
+          "groups": 16
+        },
+        {
+          "profile_field": "location",
+          "cases": 28,
+          "resolved": 17,
+          "resolution_rate": 0.6071428571428571,
+          "on": 2,
+          "off": 15,
+          "groups": 12
+        },
+        {
+          "profile_field": "nationality",
+          "cases": 5,
+          "resolved": 4,
+          "resolution_rate": 0.8,
+          "on": 0,
+          "off": 4,
+          "groups": 4
+        }
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "src_mp_audit",
+      "label": "Frozen MP consensus-readiness audit",
+      "query": {
+        "engine": "SQLite",
+        "language": "sql",
+        "sql": "WITH field_audit(profile_field,cases,resolved,resolution_rate,on_count,off_count,groups) AS (VALUES\n('age',7,7,1.0,3,4,5),\n('education',49,36,0.7346938775510204,28,8,12),\n('gender',5,3,0.6,0,3,3),\n('job',110,69,0.6272727272727273,19,50,16),\n('location',28,17,0.6071428571428571,2,15,12),\n('nationality',5,4,0.8,0,4,4)\n) SELECT * FROM field_audit;",
+        "description": "Profile-field resolution and class capacity from the frozen 204-case MP dual review.",
+        "executed_at": "2026-08-11T00:00:00+09:00",
+        "tables_used": [
+          "field_audit"
+        ],
+        "filters": [
+          "MP only",
+          "204 frozen public cases",
+          "no adjudication"
+        ],
+        "metric_definitions": [
+          "Resolution rate = exact resolved consensus / reviewed cases within profile field."
+        ]
+      }
+    }
+  ]
+}

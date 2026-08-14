@@ -1,0 +1,18 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-gemini-thinking-probe-closeout-v1",
+  "date": "2026-08-12",
+  "status": "THINKING_BUDGET_NOT_ROOT_CAUSE_CHALLENGER_MODEL_SWAP_RECOMMENDED",
+  "observed": {
+    "gemini_no_thinking_exact": "7/12",
+    "gemini_thinking_2048_exact": "7/12",
+    "delta": 0,
+    "thinking_tokens_actually_used": 9290,
+    "observed_cost_usd": 0.036847
+  },
+  "conclusion": "Clean, well-controlled null result: same 12 items, same gold, same primary (reused), only variable changed was gemini_thinking_budget (0 -> 2048), and 9290 thinking tokens were genuinely spent. Exact-match count did not move at all. This rules out 'insufficient reasoning budget' as the explanation for Gemini 2.5 Flash's systematic bias toward inventing an UNDERSTANDING framing to justify SUITABLE. The bias is a property of the model/family itself, not its configured thinking depth.",
+  "recommendation": "Swap the challenger to a genuinely different model family (e.g. Claude Haiku 4.5) rather than further Gemini config tuning.",
+  "authorization": {
+    "further_gemini_config_tuning": false,
+    "challenger_model_swap": "requires_user_decision"
+  }
+}

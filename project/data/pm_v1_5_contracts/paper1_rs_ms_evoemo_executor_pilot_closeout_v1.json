@@ -1,0 +1,36 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-evoemo-executor-pilot-closeout-v1",
+  "date": "2026-08-12",
+  "status": "RS_MS_EVOEMO_EXECUTOR_PILOT_CLEAN_EXECUTION_QUALITATIVE_SIGNAL_POSITIVE_FORMAL_BLIND_MEASUREMENT_NOT_YET_DONE",
+  "observed": {
+    "states": 6,
+    "logical_calls": 10,
+    "baseline_calls": 6,
+    "routed_calls": 4,
+    "execution_status_counts": {"clean": 10},
+    "guard_errors": 0,
+    "contamination_retries": 0,
+    "requested_planned_exact": 10,
+    "observed_cost_usd_uncalibrated_flat_cap": 0.05
+  },
+  "qualitative_paired_read": {
+    "ms_on_cases": 2,
+    "ms_on_meaningfully_different_from_baseline": 2,
+    "ms_evidence_actually_claimed_used": 2,
+    "rs_on_cases": 3,
+    "rs_on_meaningfully_different_from_baseline": 2,
+    "rs_evidence_actually_claimed_used": 2,
+    "rs_safely_declined_when_authorized": 1,
+    "note": "This is a direct qualitative read of 10 real replies by the session operator, not a formal blind multi-rater judgment. It is proportionate to a 6-state pilot but is NOT the paired quality/risk/function measurement this project's own methodology (234l precedent) requires before any 'RS+MS helps' claim. A formal blind pairwise comparison step (same-state/same-seed A/B, position-randomized, judged by an independent qualified reviewer) is the real next step if a quantified claim is wanted."
+  },
+  "artifacts": {
+    "results": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812/generator_results_private.jsonl",
+    "raw": "outputs/pm_v1_5_paper1_rs_ms_evoemo_executor_pilot_live_20260812/raw_provider_attempts_before_guard.jsonl"
+  },
+  "conclusion": "The current V3 executor mechanism (component_general_v3 + response_program_v3) correctly wires in the newly trained MS checkpoint and the re-frozen RS opportunity router on real, previously-unseen EvoEmo dialogue, with MP/ME forced OFF -- zero guard violations, zero contamination, exact requested/planned/eligible action match on all 10 calls. This closes the 'wiring does not exist' gap identified earlier this session. It does not yet constitute a quantified 'RS+MS beats baseline' research claim -- that requires the formal paired blind measurement step, not run in this session.",
+  "next_scientific_action": "Design (zero-API) a formal same-state/same-seed blind pairwise quality/risk/function comparison over the 4 real routed-vs-baseline pairs (and any future larger EvoEmo executor run), mirroring 234l's measurement packet construction, before any quantified 'RS+MS helps' claim is made.",
+  "authorization": {
+    "formal_blind_measurement_design": "requires_user_decision",
+    "larger_scale_evoemo_executor_run": "requires_user_decision"
+  }
+}

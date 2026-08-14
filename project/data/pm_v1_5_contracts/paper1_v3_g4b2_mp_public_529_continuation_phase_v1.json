@@ -1,0 +1,37 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-g4b2-mp-public-529-continuation-phase-v1",
+  "date": "2026-08-11",
+  "status": "G4B2_SINGLE_HTTP_529_NO_COMPLETION_CONTINUATION_AUTHORIZED_ONCE",
+  "input_bindings": [
+    {"role": "original_raw_attempts", "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_reviews_20260811/raw_physical_attempts.jsonl", "sha256": "c7346bd85211c4ed117ec71182f9f8caba9abe49f0249d7a1e18a7759a8a9529"},
+    {"role": "original_reviewer_a_203", "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_reviews_20260811/reviewer_a_public_reviews.jsonl", "sha256": "a57c5da872fae48d67e7d9acee9badcdae2ab8d61130193041c6b29a58730b37"},
+    {"role": "original_reviewer_b_204", "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_reviews_20260811/reviewer_b_public_reviews.jsonl", "sha256": "b4983368625bd23709a807721e9c6168a46c0c1f01850865cc0cfc2462298c33"},
+    {"role": "original_incomplete_report", "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_reviews_20260811/public_live_report.json", "sha256": "d4aaddb230c8faf7e3bcb003a21034d8fcc99056ddbcaff113a56bf3a12c14bd"},
+    {"role": "frozen_call_plan", "path": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_preflight_v2_20260811/call_plan.jsonl", "sha256": "75405ceaf0be448acdb3f94c0cc4348d8d86e676a52e0d3d1bde82cd22f3273b"}
+  ],
+  "implementation_bindings": [
+    {"role": "single_call_continuation", "path": "scripts/v1_5/220l_continue_paper1_v3_g4b2_single_529_no_completion_v1_5.py", "sha256": "fc651414889df9630f8ef56eabf8538e82bf53615feab36a9ee4718bfc8f5bad"},
+    {"role": "full_5xx_transport_classification", "path": "src/metacom_pm/api.py", "sha256": "165186152e5336928406b33970666664a12f909962a36a01c3e4648e337a66f5"},
+    {"role": "continuation_config", "path": "configs/paper1_v3_g4b2_mp_public_529_continuation_v1.json", "sha256": "706a32550c1d900606023a8cc16c4179c5c7a07b7c8f28a94251ef489f3f7989"}
+  ],
+  "execution": {
+    "review_item_id": "g4review_018c774d40263c714d3a2a4b",
+    "reviewer_id": "REVIEWER_A",
+    "source_status_code": 529,
+    "source_provider_text": null,
+    "logical_calls": 1,
+    "maximum_physical_attempts": 2,
+    "absolute_usd_cap": 0.05,
+    "same_prompt_seed_item_required": true,
+    "other_407_calls_must_not_run": true
+  },
+  "authorization": {
+    "one_no_completion_continuation_call": true,
+    "private_case_mapping_access": false,
+    "training_label_creation": false,
+    "pm_fit": false,
+    "generator_calls": false,
+    "paid_execution": true
+  },
+  "output_directory": "outputs/pm_v1_5_paper1_v3_g4b2_mp_public_529_continuation_20260811"
+}

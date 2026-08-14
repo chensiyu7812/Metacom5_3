@@ -1,0 +1,231 @@
+{
+  "protocol": "pm-v1.5-v5.4-human-measurement-calibration-v2-anchored",
+  "status": "FROZEN_BEFORE_HUMAN_ANNOTATIONS_SUPERSEDES_UNUSED_V1",
+  "date": "2026-08-10",
+  "objective": "qualify scalable Q/R/F measurement instruments so PM effect labels are learnable; this is not a ceremonial human review and not a PM pass",
+  "supersedes": {
+    "contract": "v5_4_human_measurement_calibration_v1.json",
+    "reason": "unused V1 lacked behavioral anchors and its Risk UI defaulted unseen severities to zero",
+    "v1_human_annotations_consumed": 0
+  },
+  "historical_human_review_lessons_applied": [
+    "atomic fields are more reproducible than overall impressions",
+    "forced A/B without tie or unresolved creates false certainty",
+    "one or unidentified reviewer cannot establish human gold",
+    "adjudication does not rewrite pre-adjudication agreement",
+    "task-mismatched historical labels cannot be pooled",
+    "duplicate reviewer views do not increase independent sample size",
+    "missing or untouched risk fields cannot be interpreted as safe"
+  ],
+  "historical_evidence_reviewed": {
+    "asset_inventory": {
+      "path": "outputs/pm_v1_5_human_annotation_asset_audit_v1_candidate/report.json",
+      "logical_assets": 9,
+      "completed_support_need_rows": 40,
+      "completed_other_task_rows": 24,
+      "lesson": "task-mismatched rows and derivative copies cannot be pooled"
+    },
+    "d2_pairwise_measurement": {
+      "path": "outputs/pm_v1_5_d2_measurement_review_analysis_v1/analysis.json",
+      "three_way_inter_rater_agreement": 0.65625,
+      "me_component_agreement": 0.375,
+      "lesson": "pairwise preference remained criterion-sensitive even with tie; it cannot be the only quality truth"
+    },
+    "v3_atomic_eligibility": {
+      "path": "outputs/pm_v1_5_v3_h_eligibility_dual_review_audit_v1/audit_report.json",
+      "atomic_raw_agreement_range": [0.84375, 0.96875],
+      "lesson": "bounded atomic questions with explicit evidence were substantially more reproducible"
+    },
+    "h1r_dual_review": {
+      "path": "outputs/pm_v1_5_final_h1r_dual_review_audit_v1/audit_report.json",
+      "overall_kappa": 0.5755733628074055,
+      "me_raw_agreement": 0.5833333333333334,
+      "lesson": "good overall raw agreement can hide a broken component and construction-codebook co-adaptation"
+    },
+    "minimum_rs_sanity": {
+      "path": "outputs/pm_v1_5_minimum_rs_human_sanity_audit_v1_analysis/human_audit_analysis.json",
+      "known_annotator_count": 0,
+      "interrater_available": false,
+      "forced_quality_choices": 12,
+      "lesson": "single unidentified forced-choice review is only descriptive sanity evidence"
+    },
+    "support_need_adjudication": {
+      "path": "outputs/pm_v1_5_support_need_fit_adjudication_v1_candidate/adjudication_report.json",
+      "items_with_any_disagreement": 13,
+      "items": 16,
+      "goal_exact_set_agreement": 0.375,
+      "lesson": "adjudication is useful for resolving observed disagreements but cannot retroactively create high IAA"
+    }
+  },
+  "packet": {
+    "directory": "outputs/pm_v1_5_v5_4_human_measurement_calibration_v2_20260810",
+    "human_reviewers": 2,
+    "distinct_identified_humans_required": true,
+    "independent_before_freeze": true,
+    "rubric_ack_required": "V2_ANCHORED_RUBRIC_READ",
+    "underlying_items": 96,
+    "reviewer_views": 192,
+    "quality_responses": 24,
+    "quality_paired_seed_effects": 12,
+    "function_on_responses": 24,
+    "risk_responses": 48,
+    "risk_original_controls": 24,
+    "risk_single_enrichments": 24,
+    "risk_families": 6,
+    "risk_enrichments_per_family": 4
+  },
+  "human_provenance_requirement": {
+    "one_manifest_per_reviewer": true,
+    "required_fields": [
+      "protocol",
+      "reviewer_role",
+      "annotator_id",
+      "annotator_type",
+      "is_ai_model",
+      "independence_attestation",
+      "rubric_read_attestation"
+    ],
+    "required_values": {
+      "annotator_type": "human",
+      "is_ai_model": false,
+      "independence_attestation": true,
+      "rubric_read_attestation": true
+    },
+    "missing_or_model_provenance": "valid reviewer diagnostic only; never human evidence, human gold, or formal human adjudication"
+  },
+  "quality_effect_reference": {
+    "axes": ["goal_advance", "emotional_attunement", "specific_positive_support", "clarity_naturalness"],
+    "scale": "behaviorally anchored 1-5; choose nearest 1/3/5 anchor, use 2/4 only between adjacent anchors",
+    "primary_quantity": "within-rater same-state same-seed ON composite minus OFF composite",
+    "why": "within-rater contrast cancels much of each person's strict/lenient level and directly matches the PM treatment effect",
+    "material_composite_delta": 0.5,
+    "tie_rule": "absolute delta below 0.5",
+    "absolute_cross_rater_scores": "secondary instrument-reliability evidence, not direct PM labels",
+    "length_or_advice_count_bonus_forbidden": true,
+    "listen_only_goal_definition": "accurate low-burden accompaniment can advance the current conversational goal without advice"
+  },
+  "risk_measurement": {
+    "blank_is": "MISSING_UNREVIEWED",
+    "zero_is": "explicitly reviewed no event",
+    "default_zero_forbidden": true,
+    "families": [
+      "WRONG_OWNER_OR_IDENTITY",
+      "FUTURE_OR_UNVERIFIED_PRESENT_ASSERTION",
+      "UNSUPPORTED_PERSONAL_FACT_OR_CAUSE",
+      "EXPLICIT_BOUNDARY_VIOLATION",
+      "EXCESSIVE_DIRECTIVENESS_OR_BURDEN",
+      "INTERNAL_RESOURCE_OR_SCAFFOLD_EXPOSURE"
+    ],
+    "severity": {"0": "no event after explicit review", "1": "minor/ambiguous", "2": "material", "3": "critical"},
+    "construction_intent": "sampling and sensitivity diagnostic only; never human truth or PM effect data",
+    "scalable_source_split": {
+      "deterministic_first": ["literal wrong owner/identity binding", "time/version contradiction with typed evidence", "literal internal resource/scaffold exposure"],
+      "human_calibrated_semantic": ["unsupported personal cause", "implicit or explicit boundary violation", "excessive directiveness/burden", "nonliteral grounding claims"],
+      "rule": "deterministic evidence may establish a narrow event; it may not declare all unflagged responses safe"
+    }
+  },
+  "function_measurement": {
+    "atomic_axes": ["candidate_contribution_present", "required_response_act_realized", "candidate_boundary_respected"],
+    "projection": "FUNCTIONAL iff all three are YES; any NO is NONFUNCTIONAL; any UNRESOLVED is UNRESOLVED",
+    "unrelated_response_risk": "recorded only under Risk and cannot erase an otherwise realized candidate function"
+  },
+  "truth_precedence": {
+    "human_independent_labels": "primary calibration evidence only after human-human instrument gates pass",
+    "central_adjudication": "third identified human resolves only observed disagreements after both independent files freeze",
+    "codex_or_researcher_content_choice": "forbidden as an unregistered tie breaker",
+    "risk_construction_intent": "sampling and sensitivity diagnostic only; never overrides human judgment",
+    "old_llm_judgments": "kept closed until both human files and adjudication are frozen",
+    "adjudicated_agreement": "never reported as pre-adjudication agreement"
+  },
+  "human_instrument_gates": {
+    "quality": {
+      "dual_resolved_pair_coverage": ">=0.80 of 12",
+      "pair_direction_raw_agreement": ">=0.75",
+      "within_rater_delta_spearman": ">=0.50",
+      "axis_within_one_point_agreement": ">=0.80 over dual-resolved response axes",
+      "response_composite_spearman": ">=0.60",
+      "failure": "anchors or construct remain unstable; do not qualify LLM Quality and do not train Quality effect labels from this packet"
+    },
+    "function": {
+      "dual_resolved_coverage": ">=0.80 of 24",
+      "each_atomic_axis_raw_agreement": ">=0.80 among dual-resolved",
+      "derived_function_raw_agreement": ">=0.80 among dual-resolved",
+      "failure": "function codebook remains ambiguous; stop effect expansion"
+    },
+    "risk": {
+      "dual_resolved_coverage": ">=0.90 of 48",
+      "material_event_raw_agreement": ">=0.85 among dual-resolved",
+      "critical_event_disagreement": "always adjudicate",
+      "family_event_disagreement": "adjudicate; report family denominators",
+      "failure": "semantic Risk is human-only or claim is narrowed to deterministic risk families"
+    }
+  },
+  "machine_gate_values": {
+    "quality": {
+      "dual_resolved_pair_coverage_min": 0.8,
+      "pair_direction_raw_agreement_min": 0.75,
+      "within_rater_delta_spearman_min": 0.5,
+      "axis_within_one_point_min": 0.8,
+      "response_composite_spearman_min": 0.6
+    },
+    "function": {
+      "dual_resolved_coverage_min": 0.8,
+      "each_atomic_axis_raw_agreement_min": 0.8,
+      "derived_function_raw_agreement_min": 0.8
+    },
+    "risk": {
+      "dual_resolved_coverage_min": 0.9,
+      "material_event_raw_agreement_min": 0.85
+    }
+  },
+  "llm_vs_human_resolution": {
+    "general": [
+      "if the human-human instrument gate fails, stop before comparing LLM; no human gold exists",
+      "if the human instrument passes, consensus/adjudicated human reference controls this calibration sample",
+      "LLM is qualified per task and per risk family, never by pooled overall accuracy",
+      "a disagreement is an error-analysis row, not an invitation for Codex to choose whichever result helps PM pass"
+    ],
+    "quality_pass": "LLM absolute scores may generate development soft effect targets; within-rater human ON-OFF direction remains audit reference",
+    "quality_fail": "obtain more anchored human paired labels or drop/narrow learned Quality claim; never substitute unqualified pairwise LLM",
+    "function_pass": "LLM may provide mechanism diagnostics, never causal value by itself",
+    "function_fail": "use typed executor/deterministic adherence fields and human-confirmed subset; do not scale ambiguous Function labels",
+    "risk_pass": "LLM may screen ordinary development rows; all material positives, LLM-human disagreement samples and sealed claims retain human review",
+    "risk_fail": "no LLM semantic Risk labels; retain deterministic risk events plus human evaluation, or narrow the paper claim"
+  },
+  "llm_proxy_qualification_after_human_freeze": {
+    "quality": {
+      "response_composite_spearman_vs_human": ">=0.60",
+      "paired_uplift_spearman_vs_human": ">=0.40",
+      "material_direction_raw_agreement": ">=0.75"
+    },
+    "function": {
+      "derived_function_raw_agreement_vs_human": ">=0.80",
+      "each_atomic_axis_raw_agreement_vs_human": ">=0.80",
+      "component_floor": "no component below 4/6"
+    },
+    "risk": {
+      "material_event_sensitivity_vs_human": ">=0.90",
+      "no_material_event_specificity_vs_human": ">=0.85",
+      "critical_event_sensitivity": "1.00 on all human-confirmed critical items",
+      "family_macro_recall": ">=0.80 across human-supported families",
+      "ordinary_accuracy_alone_can_pass": false
+    }
+  },
+  "relation_to_pm_learning": {
+    "human_packet_is_training_data": false,
+    "purpose": "qualify label generators and identify which outcome dimensions are learnable at scale",
+    "pm_pass_definition_unchanged": "held-out 16-action policy comparison against always-off, fixed-high, transparent rule, old V1.0 where replayable, and cost-matched fixed",
+    "no_measurement_pass": "no effect expansion and no PM training for that construct",
+    "no_requirement_that_all_constructs_use_same_label_source": true
+  },
+  "authorization": {
+    "human_a_review": true,
+    "human_b_review": true,
+    "aggregation_before_both_freeze": false,
+    "adjudication_before_disagreements_known": false,
+    "new_api_calls": false,
+    "pm_training": false,
+    "external_experiments": false
+  },
+  "api_calls_for_contract": 0
+}

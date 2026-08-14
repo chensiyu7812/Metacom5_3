@@ -1,0 +1,62 @@
+{
+  "protocol": "pm-v1.5-paper1-p1-structural-materialization-phase-v1",
+  "date": "2026-08-10",
+  "status": "P1_ACTIVE_ZERO_API_STRUCTURAL_MATERIALIZATION",
+  "purpose": "Authorize one deterministic pass that materializes unlabeled public state references, literal candidate catalogs, canonical groups, and physically separated QA surfaces. Actual Rank-1, labels, responses, model calls, training, baselines, and outcome scoring remain forbidden.",
+  "method_id": "PAPER1_BOUNDED_SUITABILITY_SAFE_YIELD_V1",
+  "active_contract_sha256": "488f82880d7c02ae83d4e5fbe7d4015c2265478b8e77efedd8856fa34c057e43",
+  "active_method_amendment_sha256": "5896aa748c489af1d1fcd222aa3eaf2e91354945580af8706f020cfb7375fc76",
+  "parent_authority_sha256": "05653b938c8f8e6789d67cee54ebaa4f1302d494af64667af61180a318037af2",
+  "p1_candidate_manifest": {
+    "path": "data/pm_v1_5_contracts/paper1_p1_public_source_group_manifest_candidate_v1.json",
+    "sha256": "8498c9660bbd8cebc312a0638f76c27a7f379ca887fbffbaf6f6fe8d91ecbc6a"
+  },
+  "implementation_bindings": [
+    {
+      "role": "structural_surface_library",
+      "path": "src/metacom_pm/v1_5_paper1_public_surface.py",
+      "sha256": "f9f027cc214518a85e9ccdd55442788075a10384d1bf0bfe880fcfca4f052494"
+    },
+    {
+      "role": "authority_gated_materializer",
+      "path": "scripts/v1_5/175l_materialize_paper1_p1_public_structural_surface_v1_5.py",
+      "sha256": "6cc86e2f35b0cead53c7efce7867f5c58d360151151882d3a31c35ceb84828cb"
+    }
+  ],
+  "preflight_evidence": [
+    {
+      "path": "outputs/pm_v1_5_paper1_closeout_p0_readiness_20260810/report.json",
+      "sha256": "8a30dc1dbdd97676d6ad32b32e050ba822a357a7f5b41c7865402e9ea428c55c",
+      "required_status": "P0_AUTHORITY_PASS_P1_MANIFEST_MAY_BE_DESIGNED_NOT_EXECUTED"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_p1_manifest_design_20260810/report.json",
+      "sha256": "cccc54ec6f2edd7c850571c2f4bc728312b26cd5492c84342d1cf3cd0a5521eb",
+      "required_status": "P1_MANIFEST_DESIGN_PASS_EXECUTION_STILL_NOT_AUTHORIZED"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_public_raw_candidate_support_20260810/report.json",
+      "sha256": "51893035c7c71ffa4fc18eb683debfabae79d777debec59ef3c0adbb8600fc39",
+      "required_status": "RAW_SUPPORT_PRESENT_ACTUAL_RANK1_AND_LEARNABILITY_NOT_YET_ESTABLISHED"
+    }
+  ],
+  "authorization": {
+    "structural_surface_materialization": true,
+    "actual_rank1_materialization": false,
+    "api_calls": false,
+    "response_generation": false,
+    "label_creation": false,
+    "pm_training": false,
+    "baseline_execution": false,
+    "external_outcome_scoring": false,
+    "paid_execution": false
+  },
+  "outputs": {
+    "public_dir": "outputs/pm_v1_5_paper1_p1_public_surface",
+    "private_dir": "outputs/pm_v1_5_paper1_p1_public_surface_private"
+  },
+  "required_terminal_status": "P1_STRUCTURAL_SURFACE_PASS_ACTUAL_RANK1_NOT_YET_MATERIALIZED",
+  "next_if_pass": "DESIGN_AND_HASH_BIND_P1B_ACTUAL_RANK1_MATERIALIZATION_WITHOUT_LABELS_OR_OUTCOMES",
+  "next_if_fail": "REPAIR_ONLY_THE_EVIDENCED_STRUCTURAL_IMPLEMENTATION_DEFECT_WITHOUT_CHANGING_SOURCE_SPLIT_LABEL_OR_SUCCESS_CONTRACT",
+  "api_calls_for_phase_manifest": 0
+}

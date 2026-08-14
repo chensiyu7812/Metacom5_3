@@ -1,0 +1,144 @@
+{
+  "protocol": "metacom-v3-g0-generator-bakeoff-contract-v1",
+  "date": "2026-08-13",
+  "status": "DESIGN_FROZEN_ZERO_CALL_PREFLIGHT_READY",
+  "purpose": "Screen the incumbent, same-stack capacity reference, and Qwen challenger before any new PM treatment or selector outcome is generated.",
+  "scope_boundary": {
+    "g0_is": "A development-only model and runtime screen that may advance candidates to full qualification.",
+    "g0_is_not": "A formal ESC-Eval result, a PM pass, or evidence for real-user or clinical effectiveness.",
+    "old_external_stress_outcomes_used_for_card_selection": false,
+    "executor_inputs_are_held_out": false,
+    "executor_interpretation": "The executor screen deliberately reuses all 16 owner-unique packets from a retired development panel. Existing 8B outcomes may be known, so this is an engineering capability diagnostic, not held-out evidence or a PM effect estimate. No packet is selected or dropped using the new Qwen outcome."
+  },
+  "official_esc_rank_dimensions": [
+    {"paper_name": "Fluency", "public_adapter_key": "fluency"},
+    {"paper_name": "Expression", "public_adapter_key": "diversity"},
+    {"paper_name": "Empathy", "public_adapter_key": "empathic"},
+    {"paper_name": "Information", "public_adapter_key": "suggestion"},
+    {"paper_name": "Skill", "public_adapter_key": "tech"},
+    {"paper_name": "Humanoid", "public_adapter_key": "human"},
+    {"paper_name": "Overall", "public_adapter_key": "overall"}
+  ],
+  "project_guardrails_not_esc_rank_dimensions": [
+    "completion_rate",
+    "low_burden_support",
+    "no_premature_action",
+    "safety_signal_handling",
+    "atomic_personalization_integrity"
+  ],
+  "candidates": [
+    {
+      "candidate_id": "llama31_8b_incumbent",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "role": "incumbent"
+    },
+    {
+      "candidate_id": "llama33_70b_capacity_reference",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.3-70b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "role": "same_stack_capacity_reference"
+    },
+    {
+      "candidate_id": "qwen37_plus_primary_challenger",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "role": "primary_cross_family_challenger",
+      "enable_thinking": false
+    }
+  ],
+  "shared_generation_contract": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_output_tokens_per_turn": 256,
+    "seed_policy": "omit where deterministic decoding and provider route do not guarantee seed equivalence",
+    "transient_retry_limit": 1,
+    "deterministic_or_content_failure_retry_limit": 0,
+    "interleaving": "card then candidate; candidate order is deterministically rotated by card",
+    "invalid_and_missing_policy": "ITT: retain failures; never replace a card or silently rerun with a changed prompt",
+    "failure_scope": "After the one allowed transient retry is exhausted, close only that candidate trajectory/call as a terminal ITT failure and continue independent candidates. Non-transient contract, identity, authentication, or budget failures abort the entire run."
+  },
+  "esc_eval_screen": {
+    "exam_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "language": "english",
+    "cards": 24,
+    "turns_per_dialogue": 5,
+    "source_quotas": {"ESconv": 8, "MHP": 5, "ExTES": 5, "Psych": 3, "EPITOME": 3},
+    "role_player": {
+      "model": "haidequanbu/ESC-Role",
+      "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+      "runtime": "local RTX A6000 BF16",
+      "generation": {
+        "max_output_tokens_per_turn": 512,
+        "do_sample": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "top_k": 20,
+        "repetition_penalty": 1.05,
+        "seed_policy": "common deterministic SHA256(card_key|turn) seed across candidate trajectories; histories remain candidate-dependent"
+      },
+      "dynamic_per_candidate": true,
+      "shared_seeker_trajectory_across_candidates_forbidden": true
+    },
+    "scorer": {
+      "base_model": "internlm/internlm2-chat-7b",
+      "base_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+      "adapter_model": "haidequanbu/ESC-RANK",
+      "adapter_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+      "runtime": "local repaired strict-ordinal scorer",
+      "decision_role": "descriptive profile and Pareto diagnostic only"
+    }
+  },
+  "executor_screen": {
+    "source": "16 owner-unique development-only V4 R0-delta packets frozen before Qwen execution",
+    "source_artifact_sha256": "f806c074a92f40ac7f227d617d204667c18e94f10ccf26fd58d78ff396ff43f9",
+    "prior_use_disclosure": "These inputs and incumbent 8B outputs come from a retired development panel and are not held out. Reuse is acceptable only for G0 executor engineering diagnosis; it cannot establish PM effectiveness, external validity, or a confirmatory generator advantage.",
+    "arms_per_packet": ["R0_ONLY", "MAX_AUTHORIZED_DELTA"],
+    "exact_arm_rule": "For every packet use M0+R0 as R0_ONLY. Use MS+RS as MAX_AUTHORIZED_DELTA when a real RS card exists; otherwise use MS+R0. This changes more than one component in 12 packets and therefore cannot identify an individual-head causal effect.",
+    "packets": 16,
+    "logical_calls_per_candidate": 32,
+    "formal_external_outcome": false,
+    "primary_measures": ["valid_realization", "required_slot_realization", "authorized_fact_fidelity", "atomic_risk", "naturalness_and_burden"]
+  },
+  "stage_order": [
+    "G0A transport canary: two cards and two executor packets for all three candidates; candidate-scoped terminal transport failures are retained under ITT and do not suppress independent candidates",
+    "G0B complete the 24-card ESC screen and 16-packet executor screen only if the canary has no deterministic contract failure",
+    "G0C advance only hard-gate-eligible nondominated candidates to ESC-Judge and human-anchor sensitivity",
+    "G1 run the full English ESC-Eval and full executor qualification only for the selected final generator"
+  ],
+  "hard_gates": {
+    "completed_dialogues": ">=0.95",
+    "valid_supporter_turns": ">=0.95",
+    "critical_integrity_events": "0 observed, with upper bound reported",
+    "internal_scaffold_exposure": "0 observed",
+    "executor_thresholds_are_engineering_floors": true
+  },
+  "selection_rule": {
+    "screening_elimination": "Eliminate a candidate that fails a hard gate. Among hard-gate-eligible candidates, eliminate only when another candidate weakly improves every applicable primary ESC/executor measure, strictly improves at least one, and has no worse atomic Risk.",
+    "no_composite": true,
+    "esc_rank_average_cannot_select": true,
+    "inconclusive": "Multiple nondominated candidates advance; cost and reproducibility break ties only after ESC-Judge order-swap and the non-formal human anchor.",
+    "formal_generator_freeze": "G0 cannot itself qualify the final generator; G1 full English ESC-Eval and full executor closeout are required."
+  },
+  "cost_ceiling": {
+    "qwen_region": "Singapore/International",
+    "qwen_pricing_cny_per_million_input_tokens": 2.998,
+    "qwen_pricing_cny_per_million_output_tokens": 11.991,
+    "budget_conversion_cny_per_usd": 7.0,
+    "qwen_max_logical_calls": 152,
+    "qwen_max_physical_attempts": 304,
+    "qwen_max_input_tokens_per_call_for_budget": 8192,
+    "qwen_max_output_tokens_per_call_for_budget": 256,
+    "conservative_usd_stop_limit": 1.25,
+    "nvidia_hosted_assumption": "USD 0 under the currently observed developer/free route; stop rather than silently use another paid route",
+    "local_role_and_scorer_api_cost": 0,
+    "esc_judge_and_human_anchor": "excluded and require a separate manifest and approval"
+  },
+  "authorization": "This file authorizes zero-call materialization and local public-weight setup only. It does not authorize supporter inference, judge calls, human review, or fine-tuning."
+}

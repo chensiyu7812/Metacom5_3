@@ -1,0 +1,140 @@
+{
+  "protocol": "metacom-v3-g0-research-aligned-generator-comparison-v2",
+  "date": "2026-08-14",
+  "status": "DESIGN_FROZEN_ZERO_CALL_PREFLIGHT_PENDING",
+  "purpose": "Compare each candidate configuration's strongest usable emotional-support capability, response quality, and end-to-end latency without a researcher-imposed output-length cap.",
+  "measurement_layers": {
+    "official_reproduction": "A future, separately named exact-wrapper reproduction may report published comparability. It is not the primary generator qualification and may not be mixed with this prompt-aligned result.",
+    "research_aligned_base_supporter": "Primary G0 comparison. Uses the same frozen, prior-work-grounded supporter prompt and the pinned ESC-Eval role-card/role-player dialogue surface.",
+    "plan_evidence_executor": "A later same-generator test supplies a frozen approved plan/evidence resource and tests faithful realization; it is separate from base supporter competence and from PM selection value."
+  },
+  "candidates": [
+    {
+      "candidate_id": "llama31_8b_incumbent",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "configuration_role": "incumbent"
+    },
+    {
+      "candidate_id": "llama33_70b_capacity_reference",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.3-70b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "configuration_role": "same-family capacity reference"
+    },
+    {
+      "candidate_id": "qwen37_plus_nonthinking",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "enable_thinking": false,
+      "configuration_role": "deployment-oriented cross-family challenger"
+    },
+    {
+      "candidate_id": "qwen37_plus_thinking_upper_bound",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "enable_thinking": true,
+      "configuration_role": "Qwen quality upper-bound configuration; latency and cost remain part of the result"
+    }
+  ],
+  "shared_generation_contract": {
+    "temperature": 0.0,
+    "top_p": "provider default because the shared client does not expose a provider-equivalent top_p contract",
+    "researcher_output_token_cap": null,
+    "provider_output_parameter": "OMITTED",
+    "seed": null,
+    "turns_per_dialogue": 5,
+    "transient_retry_limit": 1,
+    "content_retry_limit": 0,
+    "candidate_order": "deterministically rotated by card",
+    "missing_policy": "ITT: retain candidate-scoped terminal failures; never replace cards or change prompt/runtime mid-identity",
+    "latency_primary": "non-streaming request wall-clock milliseconds from request start through complete response receipt",
+    "latency_secondary": [
+      "provider-reported usage tokens",
+      "completion tokens per second where usage is present"
+    ],
+    "ttft_policy": "Not claimed because the frozen non-streaming endpoints do not expose comparable TTFT for every provider."
+  },
+  "dialogue_surface": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "language": "english",
+    "development_cards": 24,
+    "canary_cards": 2,
+    "source_quotas": {
+      "ESconv": 8,
+      "MHP": 5,
+      "ExTES": 5,
+      "Psych": 3,
+      "EPITOME": 3
+    },
+    "role_player_model": "haidequanbu/ESC-Role",
+    "role_player_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "role_player_generation": {
+      "max_output_tokens_per_turn": 512,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "repetition_penalty": 1.05,
+      "common_seed_policy": "SHA256(card_key|turn), common by position but histories remain candidate-dependent"
+    }
+  },
+  "measurement": {
+    "primary_quality": "ESC-Judge Exploration, Insight, and Action pairwise comparisons with A/B order swap; categories remain separate and no unsupported weighted total decides the winner.",
+    "quality_sensitivity": [
+      "ESC-RANK seven-dimension descriptive profile after its parser is declared",
+      "small blinded human anchor before final generator freeze"
+    ],
+    "completion": [
+      "provider finish reason",
+      "complete-sentence audit",
+      "valid non-empty reply rate"
+    ],
+    "natural_length": [
+      "completion tokens",
+      "word count",
+      "character count",
+      "low-burden or verbosity judgment"
+    ],
+    "risk_guardrail": "Atomic personalization/integrity events are audited separately; absence of those events is not a clinical-safety claim.",
+    "latency": [
+      "median and p90 end-to-end latency by candidate configuration",
+      "completion-token throughput where usage is reported",
+      "candidate-scoped timeout/failure rate"
+    ]
+  },
+  "selection_rule": {
+    "canary_role": "transport, prompt, natural-completion, and budget sanity only; two cards cannot select a generator",
+    "full_g0_role": "24-card development comparison; quality and latency are reported jointly on a Pareto frontier",
+    "hard_failures": [
+      "valid supporter turn rate below 0.95",
+      "completed dialogue rate below 0.95",
+      "any observed critical integrity event",
+      "any internal prompt or scaffold exposure"
+    ],
+    "no_composite": true,
+    "no_length_cutoff": true,
+    "latency_cannot_override_quality": true,
+    "advance_rule": "Advance every hard-gate-eligible configuration not Pareto-dominated on quality, risk, and latency to the larger qualification stage; do not manufacture a single winner from two canary cards."
+  },
+  "qwen_budget_contract": {
+    "pricing_source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+    "pricing_snapshot_date": "2026-08-14",
+    "model_snapshot": "qwen3.7-plus-2026-05-26",
+    "input_usd_per_million_tokens_0_to_256k": 0.4,
+    "output_usd_per_million_tokens_0_to_256k": 1.6,
+    "input_usd_per_million_tokens_256k_to_1m": 1.2,
+    "output_usd_per_million_tokens_256k_to_1m": 4.8,
+    "documented_max_output_tokens": 65536,
+    "strict_budget_rule": "Before each Qwen call, reserve a conservative byte-count upper bound for this request's input plus the documented 65,536-token maximum output at the applicable price tier. Do not start the call if observed spend plus the reserve exceeds the user-approved ceiling.",
+    "normal_cost_is_expected_to_be_far_below_reserve": true
+  },
+  "claim_boundary": "G0 is development-only and reuses an already inspected 24-card sample. It can compare generator configurations and debug the measurement, but cannot establish PM value, exact official ESC-Eval replication, clinical safety, or real-user benefit.",
+  "authorization": "Zero-call materialization, tests, and local role-model reuse only. New provider inference and judge calls require identity-specific user approval."
+}

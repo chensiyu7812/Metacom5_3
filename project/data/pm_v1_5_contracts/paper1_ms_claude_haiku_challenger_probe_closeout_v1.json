@@ -1,0 +1,39 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-claude-haiku-challenger-probe-closeout-v1",
+  "date": "2026-08-12",
+  "status": "PARTIAL_IMPROVEMENT_STILL_BELOW_GATE_RESIDUAL_BIAS_PATTERN_SHARED_WITH_GEMINI",
+  "observed": {
+    "gemini_no_thinking_exact": "7/12",
+    "gemini_thinking_2048_exact": "7/12",
+    "claude_haiku_4_5_exact": "9/12",
+    "delta_vs_gemini": 2,
+    "observed_cost_usd": 0.059217,
+    "gate_required": ">=11/12"
+  },
+  "mismatches_summary": [
+    {
+      "repair_family": "STALE_RESOLVED_OR_CONFLICTING",
+      "expected": "NOT_SUITABLE",
+      "observed": "SUITABLE",
+      "pattern": "same bias as Gemini: treats a resolved/stale past worry as an UNDERSTANDING increment that 'earns' the current relief"
+    },
+    {
+      "repair_family": "MATERIAL_CHANGE_UNRESOLVED",
+      "expected": "SEMANTIC_ABSTAIN",
+      "observed": "SUITABLE",
+      "pattern": "same bias as Gemini: treats an unresolved material change as still usable to enrich understanding"
+    },
+    {
+      "repair_family": "ENTITY_OR_EVENT_UNRESOLVED_WITH_META_QUESTION_FORBIDDEN",
+      "expected": "SEMANTIC_ABSTAIN",
+      "observed": "NOT_SUITABLE",
+      "pattern": "different failure mode: correctly rejects the candidate but picks the wrong negative bucket (NOT_SUITABLE instead of SEMANTIC_ABSTAIN) -- a boundary-line miss, not an over-eager UNDERSTANDING invention"
+    }
+  ],
+  "conclusion": "Swapping to a genuinely independent challenger model family (Anthropic Claude Haiku 4.5 vs the Google Gemini 2.5 Flash family used in every prior round) produced a real, decisive improvement (+2 exact matches, 9/12 vs 7/12), confirming part of the prior bias was model-family-specific. But 2 of the 3 remaining Claude Haiku mismatches reproduce the identical systematic error Gemini made: treating a stale/unresolved past item as a permissible UNDERSTANDING increment. This is no longer explainable purely as 'wrong challenger model' -- it recurs across two independent model families on the same construct, which points at the review construct/rubric itself still leaving room for this specific error, not (only) at model choice.",
+  "recommendation": "Before spending more on challenger-model search, tighten the suitability construct/rubric specifically against the STALE_RESOLVED_OR_CONFLICTING and MATERIAL_CHANGE_UNRESOLVED failure patterns (both mismatches independently reproduced across Gemini and Claude), then re-test with the same 12-item anchor set before considering the larger 201-item pass.",
+  "authorization": {
+    "further_challenger_model_search": "requires_user_decision",
+    "construct_tightening": "requires_user_decision"
+  }
+}

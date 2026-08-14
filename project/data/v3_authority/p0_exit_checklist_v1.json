@@ -1,0 +1,98 @@
+{
+  "protocol": "metacom-v3-p0-exit-checklist-v1",
+  "date": "2026-08-13",
+  "status": "COMPLETE_NINE_OF_NINE_EVIDENCE_ARCHITECTURE_GATES_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_NEXT",
+  "rule": "Every REQUIRED P0 evidence-architecture gate must be COMPLETE before leaving design freeze. This is not a claim that the evaluation problem is solved: P1 instrument reliability, human anchoring, numeric Quality/Risk decision lines, and actual benchmark results remain mandatory before formal judging.",
+  "gates": [
+    {
+      "id": "P0-DATA-01",
+      "gate": "dataset_identity",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Four dataset cards", "ESConv hash match", "EvoEmo public v1.0.0 hash and 18-owner shape", "ES-MemEval-Public-v1.0.0-1427 exact row identity manifest", "Explicit no-exact-1209-replication wording"],
+      "remaining_action": null,
+      "exit_artifact": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
+    },
+    {
+      "id": "P0-IMPL-01",
+      "gate": "official_implementation_pin",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Official commits pinned", "ESC-Eval 655-card identities materialized", "ESC-Judge deterministic 25-of-100 role selection materialized", "All 150 E-I-A bidirectional-order units materialized", "ES-MemEval public-v1.0.0 row identity materialized", "Zero-call text-free dry run and runtime boundary locked"],
+      "remaining_action": null,
+      "exit_artifact": "benchmark_runtime_lock_v1.json"
+    },
+    {
+      "id": "P0-SCORER-01",
+      "gate": "scorer_and_judge_role_and_qualification_plan",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Constructs and known scorer/judge artifacts pinned", "ESC-RANK public tree and paper metrics audited", "No public row-level human labels or split identities found", "Paper dimensions explicitly mapped to public adapter keys: Fluency/fluency, Expression/diversity, Empathy/empathic, Information/suggestion, Skill/tech, Humanoid/human, Overall/overall", "Project guardrails separated from official dimensions", "Official scorer frozen as descriptive-only after path/parser repair", "Sole ESC-RANK pass cutoff explicitly prohibited", "ESC-Judge A/B order and P1 human-anchor protocol frozen"],
+      "remaining_action": null,
+      "exit_artifact": "esc_rank_public_qualification_audit_v1.json"
+    },
+    {
+      "id": "P0-REF-01",
+      "gate": "same_stack_reference",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["meta/llama-3.3-70b-instruct selected as same-NVIDIA-route stronger reference", "Authenticated catalog presence checked for candidate and reference with zero inference", "Identical five-turn settings, interleaving, retry, scoring, and hosted-route revision boundary frozen"],
+      "remaining_action": null,
+      "exit_artifact": "same_stack_generator_reference_v1.json"
+    },
+    {
+      "id": "P0-MARGIN-01",
+      "gate": "pass_margin_derivation_plan",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["No composite score", "10% fixed-high input-token cost floor retained", "Hard generator reliability and executor floors preregistered", "Outcome-blind Quality/Risk numeric-margin derivation and upper bounds frozen", "Numeric calibration values explicitly deferred to P1 non-formal anchors before formal outcomes"],
+      "remaining_action": null,
+      "exit_artifact": "evaluation_margin_justification_v1.json"
+    },
+    {
+      "id": "P0-OVERLAP-01",
+      "gate": "training_exam_overlap",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["All 228 ESConv/ExTES-derived ESC-Eval cards identified", "Full 1,300-row ESConv and 11,178-row ExTES sources compared", "Exact normalized and containment mappings materialized", "Pinned local BGE semantic top-3 mappings materialized", "If both sources are used for SFT, contamination-aware English holdout frozen at 103 cards"],
+      "remaining_action": null,
+      "exit_artifact": "esc_training_exam_overlap_v1.jsonl"
+    },
+    {
+      "id": "P0-RISK-01",
+      "gate": "atomic_risk_instrument_design",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Nine-category event taxonomy", "Dual-review and adjudication protocol", "UNCERTAIN retained separately", "Owner-cluster uncertainty policy", "18 blinded fixture packets and 9 safe controls", "36 deterministic dual-review assignments", "Schema and mechanical validation pass with zero formal replies"],
+      "remaining_action": null,
+      "exit_artifact": "risk_instrument_qualification_v1.json"
+    },
+    {
+      "id": "P0-STATS-01",
+      "gate": "statistical_units_and_estimands",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Dialogue unit for ESConv", "Owner unit for EvoEmo and ES-MemEval", "Shared 18-user dependence disclosed", "Same-state deployment-ITT primary estimand"],
+      "remaining_action": null,
+      "exit_artifact": "v3_evaluation_freeze_contract_v1.json"
+    },
+    {
+      "id": "P0-CLAIM-01",
+      "gate": "claim_boundaries_and_function_role",
+      "required": true,
+      "status": "COMPLETE",
+      "completed_evidence": ["Four-layer evidence architecture", "Function secondary mechanism role", "Personalization integrity is not clinical safety", "ESC qualification is not a PM track"],
+      "remaining_action": null,
+      "exit_artifact": "v3_evaluation_freeze_contract_v1.json"
+    }
+  ],
+  "p1_measurement_qualification_requirements": [
+    "Run the two-reviewer Risk fixture qualification without consuming formal PM replies and register the numeric Risk margin.",
+    "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
+    "Run the approved candidate/reference benchmark pilot and ESC-Judge A/B order sensitivity.",
+    "Register numeric Quality/Risk calibration values and exact execution identities before any formal PM verdict."
+  ],
+  "p0_exit_now": true,
+  "p0_completion_authorizes_api_calls": false,
+  "p0_completion_authorizes_formal_verdicts": false
+}

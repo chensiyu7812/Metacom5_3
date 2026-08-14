@@ -1,0 +1,90 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-v1-1-panel-retry2-execution-phase-v1",
+  "date": "2026-08-13",
+  "status": "FRESH_IDENTITY_READY_ENVIRONMENT_AND_USER_APPROVAL_REQUIRED",
+  "purpose": "Operational continuation of the unchanged, frozen 30-call MS V1.1 plan after the first identity was consumed with zero provider calls because NVIDIA_API_KEY was absent. No scientific input, prompt, model, parameter, or gate changes; only stage identity and output directory are fresh.",
+  "parent_zero_call_closeout": {
+    "path": "data/pm_v1_5_contracts/paper1_ms_v1_1_panel_zero_call_operational_closeout_v1.json",
+    "consumed_identity": "105908227c3dc981349962bb6bc3a26c9edf21ae7289aaa975eaa41c79d06302"
+  },
+  "input_bindings": [
+    {
+      "role": "panel_report",
+      "path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/report.json",
+      "sha256": "d305984d8d18f64720e9f2a1de4177341ab0a96f394cc761a409d3a298f76764"
+    },
+    {
+      "role": "development_cases",
+      "path": "outputs/pm_v1_5_paper1_ms_v1_1_panel_20260813/development_cases_private.jsonl",
+      "sha256": "4536679bcaf1539badcda749b7725b5ead9ddc0e5cb2879012b4533a83073be7"
+    },
+    {
+      "role": "execution_config",
+      "path": "configs/paper1_ms_v1_1_panel_retry2_execution_v1.json",
+      "sha256": "8cac5dc3a5e5ea18bea15a9d712eecf9edc31980faba59ed9f6fdb5343b87325"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "role": "original_frozen_runner",
+      "path": "scripts/v1_5/337l_run_paper1_ms_v1_1_panel_v1_5.py",
+      "sha256": "1916296696c40763cae481c0c01d1a6193551a2c4851201be65051cb906f2127"
+    },
+    {
+      "role": "fresh_identity_wrapper",
+      "path": "scripts/v1_5/337m_run_paper1_ms_v1_1_panel_retry2_v1_5.py",
+      "sha256": "4531630fb12a8097db87e3b6a1a68731d6cfbd4a4e313b9ee3db38c33a0dc8ef"
+    },
+    {
+      "role": "component_general_v3",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "response_program_v4",
+      "path": "src/metacom_pm/v1_5_response_program_v4.py",
+      "sha256": "17ca4c5efe5c521046fa37493d269b02d05334b81db5fbd1756eff3868ba8534"
+    },
+    {
+      "role": "rs_v4_card_retrieval",
+      "path": "src/metacom_pm/v1_5_rs_v4_card_retrieval.py",
+      "sha256": "09281509fa1463d7ac327360454788f8c3d62395f6d1a703f6fc602894f5bc61"
+    },
+    {
+      "role": "ms_pre_decision",
+      "path": "src/metacom_pm/v1_5_ms_pre_decision.py",
+      "sha256": "2981cc5cd1907a6b6e5aba04f1c8a6cf8ce45b0ec4f69cd88b60173919e115be"
+    },
+    {
+      "role": "text_dialogue_helper",
+      "path": "src/metacom_pm/text.py",
+      "sha256": "7a8c41fa5cb2479de90f9cd69c404896593e77bc9113deb9b1daf97f5d2f23bb"
+    }
+  ],
+  "identity_protocol": "sha256(canonical_json({protocol,parent_consumed_identity,parent_failure,scientific_plan_change,call_plan,calls,model,temperature,max_output_tokens,seed,absolute_usd_cap,output_directory,bindings}))",
+  "execution": {
+    "component": "MS-v1.1",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "states": 9,
+    "logical_calls": 30,
+    "temperature": 0.2,
+    "max_output_tokens": 400,
+    "seed": 7,
+    "run_identity": "44bcf2b29ca1b6bf69b43f6ba0c10ebee17b15c0165028eff7741fef8647e3b0",
+    "output_directory": "outputs/pm_v1_5_paper1_ms_v1_1_panel_live_retry2_20260813",
+    "absolute_usd_cap": 0.0
+  },
+  "authorization": {
+    "generator_calls": 0,
+    "external_test_calls": false,
+    "judge_calls": 0,
+    "note": "Prepared only. A readable NVIDIA_API_KEY environment preflight and fresh explicit user approval of this exact identity are both required before activation."
+  },
+  "stop_rules": [
+    "Do not attempt --live while NVIDIA_API_KEY is absent; avoid consuming another identity at zero calls.",
+    "Persist raw provider output before validation.",
+    "Consume this identity after its first --live attempt even if incomplete.",
+    "Do not reuse the parent output directory or parent identity.",
+    "This remains a development panel, not an external-test or head-pass result."
+  ]
+}

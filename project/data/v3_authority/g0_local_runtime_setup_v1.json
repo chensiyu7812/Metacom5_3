@@ -1,0 +1,52 @@
+{
+  "protocol": "metacom-v3-g0-local-model-load-smoke-v1",
+  "date": "2026-08-13",
+  "status": "PASS_ZERO_GENERATION",
+  "model_generation_calls": 0,
+  "api_calls": 0,
+  "device": {
+    "requested": "cuda:0",
+    "name": "NVIDIA RTX A6000",
+    "capability": [
+      8,
+      6
+    ]
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.3.1+cu121",
+    "transformers": "4.38.2",
+    "accelerate": "0.27.2",
+    "peft": "0.10.0"
+  },
+  "version_identity_sha256": "8efb368012021a158d8cc61284fe6750503d3bf3ecc7b0f7c43cafa69dcb2fa2",
+  "esc_role": {
+    "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "model_class": "Qwen2ForCausalLM",
+    "parameters": 14167290880,
+    "chat_template_present": true
+  },
+  "esc_rank": {
+    "revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "base_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "base_model_class": "InternLM2ForCausalLM",
+    "base_parameters": 7774408704,
+    "loaded_adapter_keys": [
+      "diversity",
+      "diversity_en",
+      "empathic",
+      "empathic_en",
+      "fluency",
+      "fluency_en",
+      "human",
+      "human_en",
+      "overall",
+      "overall_en",
+      "suggestion",
+      "suggestion_en",
+      "tech",
+      "tech_en"
+    ]
+  },
+  "note": "Weight loading and adapter attachment passed; no prompt, role card, scorer input, or generated token was consumed."
+}

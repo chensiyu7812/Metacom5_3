@@ -39,6 +39,9 @@ def test_static_release_binds_six_card_bank_bge_and_six_baselines(
     )
     assert binding.me_retriever.rank2_promotion_allowed is False
     assert binding.me_retriever.bge_reranker_adopted is False
+    assert binding.step2_recovery_policy == "deterministic_fallback"
+    assert binding.bounded_rewrite_role == "development_diagnostic_only"
+    assert "step1_multiobjective_estimand" in binding.shared_implementations
     assert binding.api_calls == 0
 
 

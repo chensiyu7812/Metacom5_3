@@ -1,0 +1,65 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-panel-v2-blind-review-v2-development-gate-v1",
+  "date": "2026-08-13",
+  "status": "FROZEN_BEFORE_ANY_JUDGE_CALL",
+  "purpose": "Freeze the exact pass/fail rule for this round's RS/MS development-gate check before any of the 101 blind-review calls are made, so no threshold, grouping, or sample can be adjusted after seeing results.",
+  "scope_limitation": {
+    "current_user_text_only": true,
+    "statement": "This entire round (the 50 real replies and all 101 blind-review calls) was generated and judged against only current_user_text, not the frozen full expected-visible-context used by the formal external tracks. This round can only certify a development gate -- it can never be read as, cited as, or substituted for a formal ESConv, EvoEmo, or ES-MemEval external-test pass. The three formal external experiments must be run separately against the frozen full expected-visible-context, per paper1_panel_v2_owner_cluster_correction_and_roadmap_v1.json#six_step_roadmap.step_5_formal_chain."
+  },
+  "analysis_unit": {
+    "clustering": "owner_cluster (runtime_owner_key), not state or call. evo::p1 contributes 2 of the 13 panel states and must count as one cluster in every criterion below.",
+    "small_sample_disclosure": "This is a first-version development promotion check on 12-13 owner clusters. No p-value or significance test is required or claimed. A pass here is directional development evidence only."
+  },
+  "criteria": {
+    "rs_quality": {
+      "definition": "Cluster RS Quality verdicts (M0+R0 vs M0+RS) by owner. A cluster is a 'win' if its verdict favors M0+RS, a 'loss' if it favors M0+R0; EQUIVALENT/UNRESOLVED count as neither.",
+      "pass_rule": "owner-level wins > owner-level losses"
+    },
+    "ms_quality": {
+      "definition": "Cluster MS Quality verdicts (M0+R0 vs MS+R0) by owner, same win/loss rule as rs_quality.",
+      "pass_rule": "owner-level wins > owner-level losses"
+    },
+    "rs_risk": {
+      "definition": "For each owner cluster's M0+RS risk scores, compare against the same state's M0+R0 risk scores per family. An increase from <2 to >=2 in any family is a material-or-worse increase; any family scoring 3 is critical.",
+      "pass_rule": "zero clusters show a material-or-worse increase relative to M0+R0, and zero critical (score=3) occurrences in M0+RS"
+    },
+    "ms_risk": {
+      "definition": "Same as rs_risk, comparing MS+R0 against the same state's M0+R0 risk scores.",
+      "pass_rule": "zero clusters show a material-or-worse increase relative to M0+R0, and zero critical (score=3) occurrences in MS+R0"
+    },
+    "rs_function": {
+      "definition": "RS strategy-realization Function verdicts, clustered by owner.",
+      "pass_rule": "at least 1 CLEAR, and the set of owners with CLEAR or PLAUSIBLE spans at least 2 distinct owners"
+    },
+    "ms_function": {
+      "definition": "MS independent Function verdicts (on MS+R0), clustered by owner.",
+      "pass_rule": "at least 1 CLEAR, and the set of owners with CLEAR or PLAUSIBLE spans at least 2 distinct owners"
+    },
+    "ms_rs_interaction": {
+      "definition": "Decode each pairwise MS+R0-vs-MS+RS verdict to RS's effect on MS (v1_5_ms_rs_interaction_blind_review.decode_interaction_verdict), clustered by owner.",
+      "pass_rule": "owner-level count(PRESERVED or STRENGTHENED) >= owner-level count(WEAKENED)"
+    },
+    "ms_rs_combined_risk": {
+      "definition": "MS+RS risk scores compared against the same state's M0+R0 risk scores per family, clustered by owner.",
+      "pass_rule": "zero clusters show a material-or-worse increase relative to M0+R0, and zero critical (score=3) occurrences in MS+RS"
+    }
+  },
+  "overall_pass_rule": {
+    "rs_pass_this_round": "rs_quality AND rs_risk AND rs_function all pass",
+    "ms_pass_this_round": "ms_quality AND ms_risk AND ms_function all pass",
+    "interaction_pass_this_round": "ms_rs_interaction AND ms_rs_combined_risk both pass",
+    "label_if_all_pass": "FIRST_VERSION_DEVELOPMENT_PROMOTION_MET",
+    "label_if_partial": "FIRST_VERSION_DEVELOPMENT_PROMOTION_PARTIAL -- report exactly which of rs_pass_this_round / ms_pass_this_round / interaction_pass_this_round failed and why",
+    "label_if_none": "FIRST_VERSION_DEVELOPMENT_PROMOTION_NOT_MET"
+  },
+  "forbidden": [
+    "changing any pass_rule threshold after seeing results",
+    "excluding an owner cluster or a call after seeing its result",
+    "reporting FIRST_VERSION_DEVELOPMENT_PROMOTION_MET as MS_pass, RS_pass, or a formal external-test pass",
+    "computing or reporting a significance test as if it were required or decisive at this sample size",
+    "using this round's current_user_text-only replies as evidence in the formal external chain"
+  ],
+  "next_if_promotion_met": "Proceed directly to MP root-fix (step_3_root_fix_mp) and the three formal external chains (step_5_formal_chain) under the frozen full expected-visible-context. Do not rescue ME first (step_6_me_bounded_rescue stays last).",
+  "next_if_partial_or_not_met": "Report exactly which criterion failed, on which owner clusters, with quotes; do not relabel or re-run with a different threshold without a new explicit user decision."
+}

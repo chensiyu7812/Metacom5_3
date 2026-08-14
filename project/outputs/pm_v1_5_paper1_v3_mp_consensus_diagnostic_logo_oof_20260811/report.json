@@ -1,0 +1,206 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-mp-consensus-diagnostic-logo-oof-report-v1",
+  "status": "MP_CONSENSUS_DIAGNOSTIC_OOF_COMPLETE_NO_FORMAL_PROMOTION",
+  "scope": "high-confidence exact-consensus MP subpopulation only",
+  "denominator": {
+    "rows": 136,
+    "groups": 17,
+    "on": 52,
+    "off": 84,
+    "folds": 17
+  },
+  "model": {
+    "features": [
+      "profile_field",
+      "redundant",
+      "candidate_age_sessions",
+      "scope_match_level",
+      "selection_score",
+      "top1_top2_margin",
+      "strict_past_pool_count"
+    ],
+    "C": 0.1,
+    "class_weight": "balanced",
+    "threshold": 0.5,
+    "split": "LeaveOneGroupOut",
+    "seed": 20260811
+  },
+  "primary_metrics": {
+    "roc_auc": 0.6372481684981685,
+    "average_precision": 0.5532634132357297,
+    "balanced_accuracy_at_0_5": 0.6836080586080586,
+    "recall_at_0_5": 0.5576923076923077,
+    "specificity_at_0_5": 0.8095238095238095,
+    "brier": 0.22771863779174364,
+    "prevalence_brier": 0.25441646180303895,
+    "brier_gain_vs_prevalence": 0.026697824011295307,
+    "log_loss": 0.6512690928024486,
+    "predicted_on": 45,
+    "predicted_off": 91
+  },
+  "field_only_metrics": {
+    "roc_auc": 0.6320970695970697,
+    "average_precision": 0.5519129441983249,
+    "balanced_accuracy_at_0_5": 0.7037545787545787,
+    "recall_at_0_5": 0.5384615384615384,
+    "specificity_at_0_5": 0.8690476190476191,
+    "brier": 0.21402431206422295,
+    "prevalence_brier": 0.25441646180303895,
+    "brier_gain_vs_prevalence": 0.040392149738816,
+    "log_loss": 0.6203475974512133,
+    "predicted_on": 39,
+    "predicted_off": 97
+  },
+  "owner_cluster_bootstrap_95_ci": {
+    "auc": {
+      "low": 0.44524075968947563,
+      "high": 0.7741987786570755
+    },
+    "balanced_accuracy": {
+      "low": 0.5504152609239811,
+      "high": 0.7848730768903306
+    },
+    "brier_gain": {
+      "low": -0.037685300281188425,
+      "high": 0.08994158065734434
+    }
+  },
+  "directional_checks": {
+    "auc_above_chance_point": true,
+    "balanced_accuracy_above_chance_point": true,
+    "brier_better_than_train_prevalence": true,
+    "primary_auc_at_least_field_only": true,
+    "nondegenerate_predictions": true
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "held_out_group": "evo_component::p1",
+      "n": 7,
+      "on": 0,
+      "off": 7
+    },
+    {
+      "fold": 2,
+      "held_out_group": "evo_component::p10",
+      "n": 8,
+      "on": 0,
+      "off": 8
+    },
+    {
+      "fold": 3,
+      "held_out_group": "evo_component::p11",
+      "n": 7,
+      "on": 6,
+      "off": 1
+    },
+    {
+      "fold": 4,
+      "held_out_group": "evo_component::p12",
+      "n": 7,
+      "on": 1,
+      "off": 6
+    },
+    {
+      "fold": 5,
+      "held_out_group": "evo_component::p13__p18",
+      "n": 8,
+      "on": 0,
+      "off": 8
+    },
+    {
+      "fold": 6,
+      "held_out_group": "evo_component::p14",
+      "n": 7,
+      "on": 0,
+      "off": 7
+    },
+    {
+      "fold": 7,
+      "held_out_group": "evo_component::p15",
+      "n": 8,
+      "on": 8,
+      "off": 0
+    },
+    {
+      "fold": 8,
+      "held_out_group": "evo_component::p16",
+      "n": 9,
+      "on": 1,
+      "off": 8
+    },
+    {
+      "fold": 9,
+      "held_out_group": "evo_component::p17",
+      "n": 11,
+      "on": 9,
+      "off": 2
+    },
+    {
+      "fold": 10,
+      "held_out_group": "evo_component::p2",
+      "n": 9,
+      "on": 8,
+      "off": 1
+    },
+    {
+      "fold": 11,
+      "held_out_group": "evo_component::p3",
+      "n": 7,
+      "on": 7,
+      "off": 0
+    },
+    {
+      "fold": 12,
+      "held_out_group": "evo_component::p4",
+      "n": 9,
+      "on": 3,
+      "off": 6
+    },
+    {
+      "fold": 13,
+      "held_out_group": "evo_component::p5",
+      "n": 8,
+      "on": 0,
+      "off": 8
+    },
+    {
+      "fold": 14,
+      "held_out_group": "evo_component::p6",
+      "n": 8,
+      "on": 2,
+      "off": 6
+    },
+    {
+      "fold": 15,
+      "held_out_group": "evo_component::p7",
+      "n": 9,
+      "on": 3,
+      "off": 6
+    },
+    {
+      "fold": 16,
+      "held_out_group": "evo_component::p8",
+      "n": 7,
+      "on": 1,
+      "off": 6
+    },
+    {
+      "fold": 17,
+      "held_out_group": "evo_component::p9",
+      "n": 7,
+      "on": 3,
+      "off": 4
+    }
+  ],
+  "predictions": {
+    "path": "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811/oof_predictions.jsonl",
+    "sha256": "2295136fecaec9dd8a1fb7f355bce370fda4ee1895295ef18ca6900620ed23bb"
+  },
+  "formal_label_route_remains_fail": true,
+  "threshold_or_feature_selection_after_result": false,
+  "api_calls": 0,
+  "generator_calls": 0,
+  "baseline_calls": 0,
+  "external_calls": 0
+}

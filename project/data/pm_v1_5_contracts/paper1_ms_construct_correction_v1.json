@@ -1,0 +1,30 @@
+{
+  "protocol": "pm-v1.5-paper1-ms-construct-correction-v1",
+  "date": "2026-08-12",
+  "status": "CONSTRUCT_CORRECTED_ZERO_API_RETROSPECTIVE_EVIDENCE_STRONG_FRESH_BALANCED_ANCHOR_SET_NEXT",
+  "trigger": "User challenged the round-2 qualification FAIL conclusion directly (\"是不是资格赛本身有问题...MS 按照信号比例来说应该是可以学出来的\"), citing the pre-existing grouped-OOF balanced accuracy signal (0.7449, 95% CI [0.666, 0.821], outputs/pm_v1_5_paper1_v3_ms_atomic_teacher_full_fit_20260811/report.json) as evidence the underlying construct should be learnable.",
+  "adversarial_reanalysis": "Re-read all 5 round-2 mismatches without defending the original gold. 4 of 5 'hard negative/abstain' items encoded a referential/structural test (same entity? still literally true? any disambiguating question forbidden?) rather than the functional risk test that actually matters (misattribution or invalidation risk vs. plausible help). Two independent model families converging on the same answers on the same items is evidence the construct was contestable, not that both models share a capability gap.",
+  "retrospective_rescore": {
+    "path": "outputs/pm_v1_5_paper1_ms_final_control_repair_retrospective_rescore_20260812/report.json",
+    "sha256": "b6eb10f34c2e9f5e4c2d2dacc6f23f744eafa26b63f0d15b3efdb051ae65ee6a",
+    "method": "Zero-API: corrected gold key re-applied to the exact same 24 already-collected, already-paid-for responses.",
+    "result": {
+      "gemini_challenger": "7/12 -> 11/12",
+      "gpt56_primary": "9/11 -> 10/11 (1 item unscored, transport failure unrelated to construct)"
+    },
+    "caveat": "Original was 5 SUITABLE / 5 NOT_SUITABLE / 2 SEMANTIC_ABSTAIN. After correction it is heavily SUITABLE-skewed and has zero SEMANTIC_ABSTAIN exemplars left -- this set can no longer serve as a balanced qualification gate on its own."
+  },
+  "rubric_fix": {
+    "path": "src/metacom_pm/v1_5_ms_source_annotated_suitability_review.py",
+    "sha256": "70d574209ee3cff2f3dfb970c18bed5f109831fa13d37347696c24544055a1eb",
+    "summary": "Condition 6 rewritten from a bare identity/temporal test to an explicit functional-risk test (misattribution/invalidation risk vs. plausible help). ONE_QUESTION rule now distinguishes content-bearing disambiguating questions among a small enumerable candidate set (legitimate) from content-free relevance-only questions (still forbidden). Stable general preferences no longer default to SEMANTIC_ABSTAIN merely for lacking literal present-instance confirmation."
+  },
+  "not_yet_done": [
+    "A fresh, small, genuinely balanced anchor set (real negative/abstain exemplars that actually instantiate misattribution/invalidation risk under the corrected rubric) has not been authored yet.",
+    "No further paid qualification or 201-item formal labeling has been authorized or run."
+  ],
+  "decision": "REVERSE_MS_LABEL_ROUTE_RETIREMENT_PENDING_FRESH_BALANCED_VALIDATION; MS returns to active investigation, primary success predicate may again draw on MS as one of the two required memory heads if a fresh, balanced check validates the corrected construct.",
+  "api_calls": 0,
+  "training_labels_created_or_changed": 0,
+  "fits": 0
+}

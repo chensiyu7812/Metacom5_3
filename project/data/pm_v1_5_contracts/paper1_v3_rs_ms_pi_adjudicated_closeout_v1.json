@@ -1,0 +1,57 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-pi-adjudicated-closeout-v1",
+  "date": "2026-08-11",
+  "status": "PI_ADJUDICATED_RS_MS_FUNCTION_FAIL_R0_DIAGNOSTIC_DESIGN_NEXT",
+  "decision": "HUMAN_B_IS_PI_FINAL; HUMAN_A_IS_SENSITIVITY; MS_FAILS_VERIFIED_FUNCTION_IN_RS_FIXED_ON_SLICE; NO_REPEAT_ADJUDICATION",
+  "observed": {
+    "states": 16,
+    "connected_groups": 8,
+    "learned_ms_on_states": 7,
+    "quality_pi_final_learned_on": "5 MS-win / 2 RS-only-win",
+    "quality_human_A_sensitivity_learned_on": "3 MS-win / 3 RS-only-win / 1 tie",
+    "verified_function_pi_final_learned_on": "0/7",
+    "verified_function_pi_final_all": "0/16",
+    "source_availability_pi_final_all": "8/16",
+    "conditional_execution_success_pi_final": "0/8",
+    "risk_pi_final_m0_rs": "2/16 nonzero; severity sum 2; no critical",
+    "risk_pi_final_ms_rs": "3/16 nonzero; severity sum 4; no critical",
+    "explicit_relief_closure_states": 2,
+    "closure_states_learned_ms_off": 2
+  },
+  "interpretation": {
+    "memory_claim": "The PI-final Quality direction cannot establish an MS benefit because verified memory Function is 0/7 on the learned-MS-ON states and 0/16 overall.",
+    "closure_claim": "Relief-plus-closure requires an R0-capable response-act policy. The two identified closure states do not alter this MS incremental contrast because learned MS is OFF and both compared policies execute M0+RS there.",
+    "review_provenance": "HUMAN_B explicitly records adjudicated_by PI (study owner) and is the final study-owner decision file. HUMAN_A is sensitivity evidence. Raw agreement is descriptive and is not independent-human IAA.",
+    "responsibility": "Low-information or redundant actual Rank-1 sources diagnose retrieval/PM suitability failure; source-usable cases with no realized contribution diagnose executor/joint-planning failure. Current-context-only errors remain Risk/Quality errors and do not become memory Function failures unless attributable to the strictly-past source."
+  },
+  "artifacts": [
+    {"role": "human_A_sensitivity_raw", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/human_A_raw_frozen.json", "sha256": "27d45865bff9a90549d034a7a799bda7a3ea373438500312cfe81a06a57b3330"},
+    {"role": "human_B_pi_final_raw", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/human_B_raw_frozen.json", "sha256": "a2965960f3a8a9640e64a117178fe16ef357a2889ed70f6a0dacaa3add849523"},
+    {"role": "mechanical_freeze_report", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/report.json", "sha256": "e9ec822eebf76a6488e44361424467276696600dcc99aa34ebfb0732acdec64c"},
+    {"role": "unblinded_quality_raw", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_two_human_freeze_20260811/unblinded_quality_raw.jsonl", "sha256": "3ae40a7802458c99d6f10d20ed5092d29ac184e083f27b7efcc4ba01a8fdc77d"},
+    {"role": "pi_adjudicated_analysis", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_pi_adjudicated_analysis_20260811/analysis.json", "sha256": "4efde773ef2da6ccfbb3def350188ed0c7ed07812596edb74d05b79535ef2a37"},
+    {"role": "technical_report_artifact", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_pi_adjudicated_analysis_20260811/artifact.json", "sha256": "5e7f8ec9e33654bc849d6da0fcf2644002f181a97f366607cbe4f4a6035e682b"},
+    {"role": "technical_report", "path": "outputs/pm_v1_5_paper1_v3_rs_ms_pi_adjudicated_analysis_20260811/report.html", "sha256": "270964aa6aef37eccf6ae1f0bae027b8bc2ea7b611e0895b3e606d70334688c4"}
+  ],
+  "problem_ledger": {
+    "path": "docs/PM_V1_TO_V1_5_GLOBAL_FAILURE_LEDGER_ZH.md",
+    "sha256": "aea2d6aa341d36a1926f6b8b87a2dadd6e7b4391cfff201fcd8094cacaf57e18",
+    "required_entries": ["V15-MEAS-82", "V15-BASE-03", "V15-REL-38"]
+  },
+  "authorization": {
+    "repeat_disagreement_adjudication": false,
+    "modify_raw_A_B": false,
+    "declare_independent_human_IAA": false,
+    "declare_MS_pass": false,
+    "r0_existing_arm_zero_api_diagnostic_design": true,
+    "r0_diagnostic_execution": false,
+    "api_calls": 0,
+    "response_generation": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "external_work": false
+  },
+  "next": "DESIGN_ZERO_API_EXISTING_R0_SLICE_DIAGNOSTIC_TO_SEPARATE_RS_CROWD_OUT_FROM_GENERAL_MS_NONUSE"
+}

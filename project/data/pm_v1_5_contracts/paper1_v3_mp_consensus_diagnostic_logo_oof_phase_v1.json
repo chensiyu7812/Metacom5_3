@@ -1,0 +1,87 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-mp-consensus-diagnostic-logo-oof-phase-v1",
+  "date": "2026-08-11",
+  "status": "MP_CONSENSUS_DIAGNOSTIC_LOGO_OOF_AUTHORIZED_ONCE_FORMAL_PROMOTION_CHECKPOINT_GENERATOR_FORBIDDEN",
+  "purpose": "Run one frozen diagnostic Leave-One-Group-Out OOF on the 136 exact-consensus MP labels to determine whether a cross-user learnable signal exists inside the high-confidence subpopulation. This is not a repair of the failed measurement gate and cannot create formal gold.",
+  "promoted_from_authority_sha256": "dda77972a54730a8f85ade3e58247b42e1c64a31174831db5893e179c76c296f",
+  "readiness_audit": {
+    "path": "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_oof_readiness_audit_20260811/report.json",
+    "sha256": "b2d563a8447523d549e69b44b90a30fc701629fb236c0d4b9d9c07875cd5e13a",
+    "required_status": "MP_CONSENSUS_DIAGNOSTIC_OOF_INTERPRETABLE_FORMAL_LABEL_ROUTE_REMAINS_FAIL"
+  },
+  "input_bindings": [
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_g4b3_mp_pre_adjudication_20260811/mp_consensus_labels.jsonl",
+      "sha256": "e8cf2712e20addf44bb372fd514b88abddae87c1842fb61252c9101e221a610b",
+      "rows_used": 136,
+      "role": "diagnostic exact-consensus binary labels only"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_g4a_packet_v2_private_20260811/private_case_key.jsonl",
+      "sha256": "e34556683a85925eecbf58de9ebff2b4e74a7ebc986d3f7d53acf3a77041348c",
+      "role": "case-to-source binding and profile-field metadata"
+    },
+    {
+      "path": "outputs/pm_v1_5_paper1_v3_g3_candidate_surface_audit_20260811/candidate_surface_diagnostics_unlabeled.jsonl",
+      "sha256": "126dc55e09a53e85f4969f264a1c2551626b5a1727ac49a5a52c28c741d60a52",
+      "role": "frozen identity-free structural and retrieval features"
+    }
+  ],
+  "implementation_bindings": [
+    {
+      "path": "scripts/v1_5/223l_run_paper1_v3_mp_consensus_diagnostic_logo_oof_v1_5.py",
+      "sha256": "3118a0830bf65832c5362a46fb1c099e1f2433fd4a8d87e8a81359ed4ced2f3b"
+    }
+  ],
+  "frozen_design": {
+    "component": "MP_PROFILE",
+    "decision_grain": "state by component; independent of MS, ME, and RS labels",
+    "rows": 136,
+    "owner_connected_groups": 17,
+    "labels": {"ON": 52, "OFF": 84},
+    "split": "17-fold LeaveOneGroupOut",
+    "model": "identity-free L2 logistic regression",
+    "C": 0.1,
+    "class_weight": "balanced",
+    "threshold": 0.5,
+    "features": [
+      "profile_field",
+      "redundant",
+      "candidate_age_sessions",
+      "scope_match_level",
+      "selection_score",
+      "top1_top2_margin",
+      "strict_past_pool_count"
+    ],
+    "comparators": ["train-fold prevalence", "profile-field-only transparent logistic"],
+    "cluster_bootstrap_repetitions": 5000,
+    "seed": 20260811
+  },
+  "authorization": {
+    "diagnostic_fit_exactly_once": true,
+    "formal_label_promotion": false,
+    "threshold_selection": false,
+    "feature_change_after_result": false,
+    "full_fit_checkpoint": false,
+    "generator_calls": false,
+    "reviewer_calls": false,
+    "baseline_outcome_calls": false,
+    "external_outcome_calls": false,
+    "paid_execution": false
+  },
+  "output": {
+    "directory": "outputs/pm_v1_5_paper1_v3_mp_consensus_diagnostic_logo_oof_20260811",
+    "required_status": "MP_CONSENSUS_DIAGNOSTIC_OOF_COMPLETE_NO_FORMAL_PROMOTION",
+    "must_not_preexist": true
+  },
+  "interpretation": {
+    "positive_result_means": "the exact-consensus MP subpopulation contains identity-free cross-user discrimination worth preserving for a future source-aware measurement route",
+    "positive_result_does_not_mean": "the failed dual-review agreement gate passed, all 204 MP cases are labeled, MP is formally qualified, a full-fit PM may be saved, or an external claim may be made",
+    "negative_result_means": "the present public MP surface and current stable-consensus labels do not support this low-capacity formulation; no tuning loop is authorized"
+  },
+  "nonexclusive_invariant": {
+    "does_not_impose_one_memory_cap": true,
+    "all_16_requested_actions_remain_downstream": true,
+    "joint_execution_is_out_of_scope_for_this_diagnostic": true
+  }
+}

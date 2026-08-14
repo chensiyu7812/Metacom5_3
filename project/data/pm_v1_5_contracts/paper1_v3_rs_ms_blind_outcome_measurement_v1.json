@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-v1.5-paper1-v3-rs-ms-blind-outcome-measurement-v1",
+  "date": "2026-08-11",
+  "status": "ZERO_API_PACKET_REPAIR_AND_DUAL_HUMAN_UI_MATERIALIZATION_ONLY",
+  "purpose": "Measure the existing RS-slice responses without leaking MS use into Quality or mixing Quality, Risk, Function, and Cost.",
+  "panel": {
+    "quality_pairs": 16,
+    "risk_absolute_arms": 32,
+    "function_ms_rs_responses": 16,
+    "connected_groups": 8,
+    "new_generation": 0
+  },
+  "quality": {
+    "visible": ["current dialogue", "anonymous response A", "anonymous response B"],
+    "hidden": ["strictly-past source", "MS action", "teacher class", "policy", "Function", "Risk", "Cost"],
+    "labels": ["A_BETTER", "B_BETTER", "EQUIVALENT", "UNRESOLVED"],
+    "material_rule": "Prefer an arm only for a meaningful improvement in immediate goal advance, emotional attunement, or specific positive support without offsetting burden.",
+    "position_balance": "MS-ON must appear as A in exactly 8 pairs and B in exactly 8 pairs; deterministic hash chooses the three presentation swaps.",
+    "required_evidence": "one exact quote from each response plus one contrast reason"
+  },
+  "risk": {
+    "grain": "one absolute response",
+    "six_families_explicit": true,
+    "severity": [0, 1, 2, 3],
+    "nonzero_requires_exact_response_span": true,
+    "helpfulness_or_nonuse_is_not_risk": true
+  },
+  "function": {
+    "grain": "one MS+RS response",
+    "labels": ["FUNCTIONAL", "NOT_USED_FINAL", "SURFACE_ECHO_ONLY", "BOUNDARY_FAILURE", "UNRESOLVED"],
+    "functional_requires_source_and_response_exact_evidence": true,
+    "current_context_alone_explains_response_means_not_functional": true,
+    "generator_telemetry_is_gold": false
+  },
+  "review": {
+    "reviewers": ["HUMAN_A", "HUMAN_B"],
+    "independent_full_overlap": true,
+    "raw_disagreement_preserved": true,
+    "majority_vote_forbidden": true,
+    "adjudication": "Only exact disagreements receive a third source-aware human decision after both independent files are frozen; raw A/B remain unchanged.",
+    "free_1_to_5_primary_scores_forbidden": true
+  },
+  "interpretation": {
+    "development_feasibility_only": true,
+    "primary_contrast": "RS fixed ON plus learned MS versus RS-only",
+    "paper_final_external_claim": false,
+    "pass_is_not_decided_by_one_arbitrary_scalar": true,
+    "required_joint_readout": ["pairwise Quality", "absolute and attributable Risk", "verified Function", "Cost"]
+  },
+  "authorization": {
+    "packet_repair_zero_api": true,
+    "human_ui_materialization_zero_api": true,
+    "human_labels": false,
+    "llm_reviewer_calls": false,
+    "response_generation": false,
+    "pm_refit": false,
+    "threshold_change": false,
+    "MP_work": false,
+    "ME_work": false,
+    "external_work": false
+  },
+  "next": "MATERIALIZE_AND_AUDIT_DUAL_HUMAN_BLIND_REVIEW_BUNDLE_ZERO_API"
+}

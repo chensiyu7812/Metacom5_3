@@ -1,0 +1,129 @@
+{
+  "protocol": "metacom-v3-generator-fair-selection-protocol-v1",
+  "date": "2026-08-14",
+  "status": "CORRECTED_ESC_EVAL_SEVEN_DIMENSION_HUMAN_PRIMARY_EIA_CANARY_SUPERSEDED_BEFORE_CALLS",
+  "decision": "Select one generator configuration for every later PM and baseline arm without allowing provider, prompt, judge, missingness, or cost asymmetry to manufacture the winner.",
+  "candidate_unit": "Declared model configuration plus hosted route, reasoning mode, prompt, decoding policy, and retry policy; conclusions about a hosted route do not automatically generalize to model weights.",
+  "fairness_dimensions": {
+    "input_fairness": [
+      "identical frozen card identities and five-turn horizon",
+      "identical research-aligned supporter prompt",
+      "identical role-player revision and common seed by card and turn position",
+      "no researcher output-token cap for any candidate",
+      "candidate order deterministically rotated during generation"
+    ],
+    "measurement_fairness": [
+      "all reliability-eligible candidates receive complete official seven-dimension ESC-Eval human review",
+      "candidate and provider labels are absent from reviewer-visible text",
+      "each reviewer sees one dialogue at a time rather than a candidate bundle",
+      "Overall is primary while Empathy, Skill, and Information remain separate key outcomes",
+      "low burden and integrity are absolute per-dialogue project guardrails, not hidden additions to the official score",
+      "optional E-I-A or automated scores cannot override the blinded human ESC-Eval result"
+    ],
+    "statistical_fairness": [
+      "ESC-Eval role card/dialogue is the primary paired unit",
+      "turns and seven scorer dimensions are repeated measures, not independent samples",
+      "transport failure, invalid output, refusal, and unresolved judgment remain explicit ITT outcomes",
+      "no complete-case deletion may return a reliability-ineligible route to selection",
+      "uncertainty is cluster-resampled by role card and reported per construct"
+    ],
+    "decision_fairness": [
+      "reliability and integrity are hard gates",
+      "quality constructs are not averaged with cost, latency, or each other",
+      "cost and latency cannot compensate for a Quality or Risk failure",
+      "among configurations that are Quality/Risk noninferior, lower observed input-output cost and latency are legitimate tie breakers",
+      "thinking mode must demonstrate a Quality advantage or guardrail advantage to justify its incremental cost and latency"
+    ]
+  },
+  "evidence_roles": {
+    "esc_rank": "Published external seven-dimension descriptive profile; never a sole pass line or winner because public row labels are unavailable and observed resolution is low.",
+    "eia_pairwise": "Optional secondary sensitivity only. It is not ESC-Eval's official evaluation and cannot control generator selection.",
+    "absolute_guardrail": "Independent low-burden and integrity audit covering premature action, pressure, unsupported personal inference, safety-signal handling, scaffold leakage, and excessive response burden.",
+    "objective_operations": "ITT completion, provider failures, tokens, USD, end-to-end latency, and natural finish reason.",
+    "human_primary": "Two independent blinded humans score all 72 complete development dialogues on ESC-Eval's official seven dimensions before generator selection."
+  },
+  "selection_set": {
+    "eligible": [
+      "llama31_8b_incumbent",
+      "qwen37_plus_nonthinking",
+      "qwen37_plus_thinking_upper_bound"
+    ],
+    "descriptive_only": ["nemotron3_nano_30b_a3b_default_thinking"],
+    "reason": "Nemotron failed both frozen 0.95 hosted-route reliability gates; its successful subset cannot enter winner calculations."
+  },
+  "metric_hierarchy": {
+    "hard_gates": [
+      "turn valid rate >= 0.95",
+      "complete-dialogue rate >= 0.95",
+      "no material or critical absolute integrity regression",
+      "no candidate-specific review validity failure"
+    ],
+    "primary_quality": ["ESC-Eval Overall 0-to-4 blinded human rating"],
+    "key_quality_dimensions": ["Empathy", "Skill", "Information"],
+    "guardrails": ["low burden", "no premature action", "no unsupported personal inference", "safety-signal handling", "no internal scaffold leakage"],
+    "tie_breakers_after_qualification": ["actual USD", "billed input/output tokens", "median and p90 end-to-end latency"],
+    "diagnostics_only": ["ESC-Judge-style E-I-A pairwise sensitivity", "ESC-RANK anchored ordinals", "reply word count", "mechanical punctuation/list scans"]
+  },
+  "pairwise_resolution": {
+    "active_for_primary_selection": false,
+    "role": "Retained only for any future optional E-I-A sensitivity analysis.",
+    "orientation_outcomes": ["A_BETTER", "B_BETTER", "TIE", "INVALID", "REFUSAL"],
+    "stable_rule": "The canonical candidate winner must be identical after mapping both orientations back to candidate identity, or both orientations must be TIE.",
+    "unstable_rule": "Any winner flip, one-sided tie, invalid, or refusal is POSITION_UNSTABLE/UNRESOLVED and never coerced into a win.",
+    "card_summary": "Report candidate wins, losses, stable ties, and unstable/unresolved separately for each E-I-A construct.",
+    "no_composite": true
+  },
+  "qualification_canary": {
+    "purpose": "SUPERSEDED BEFORE CALLS. Retained only as an auditable record of a proposed optional E-I-A sensitivity instrument; it cannot qualify or select the generator.",
+    "active": false,
+    "cards": 6,
+    "selection": "Outcome-blind source-stratified subset: one MHP, one EPITOME, one ExTES, one Psych, and two ESConv cards, bound before calls.",
+    "candidate_pairs": 3,
+    "constructs": 3,
+    "orientations": 2,
+    "eia_calls": 108,
+    "repeatability_calls": 18,
+    "absolute_guardrail_calls": 18,
+    "total_calls": 144,
+    "judge": "gpt-5.6-sol, OpenAI family; no eligible OpenAI generator",
+    "engineering_gates": {
+      "schema_and_local_validation_rate": ">=0.95",
+      "overall_orientation_stability": ">=0.80",
+      "per_construct_orientation_stability_floor": ">=0.70",
+      "repeatability_exact_category_agreement": ">=0.80",
+      "resolution_floor": "At least 6 of 54 dual-order pair-construct units produce a stable non-tie; otherwise instrument is too insensitive for selection.",
+      "guardrail_validity_rate": ">=0.95"
+    },
+    "failure_action": "No calls are permitted. Generator selection returns to the ESC-Eval official seven-dimension human-primary track."
+  },
+  "full_g0_after_canary": {
+    "active": false,
+    "purpose": "Superseded before calls; retained only to account for the former optional E-I-A plan.",
+    "remaining_cards": 18,
+    "additional_eia_calls": 324,
+    "additional_absolute_guardrail_calls": 54,
+    "additional_calls": 378,
+    "selection_rule": "First retain only hard-gate passers. Declare pairwise Quality dominance only if a candidate is noninferior on all three registered construct margins and strictly better on at least one, with no guardrail regression. If no dominance exists, keep the Pareto set and choose the least costly/fastest only among configurations registered as Quality/Risk equivalent; otherwise report no unique winner and expand evidence rather than inventing a weighted score."
+  },
+  "human_anchor_gate": {
+    "required_before": "development generator selection and every formal PM external experiment",
+    "sample": "All 72 complete reliability-eligible dialogues from the frozen 24-card development surface.",
+    "reviewers": 2,
+    "blindness": "No model/provider/condition labels, no LLM rationale, independent first pass.",
+    "report": "Official seven-dimension scores, inter-reviewer agreement, disagreements, and adjudication; LLM outputs remain descriptive or optional sensitivity only."
+  },
+  "claim_boundary": {
+    "can_support": [
+      "development-screen selection of a generator configuration for the same frozen research stack",
+      "comparative official ESC-Eval seven-dimension human ratings, integrity, cost, latency, and reliability evidence on the frozen development surface"
+    ],
+    "cannot_support": [
+      "clinical safety",
+      "real-user benefit",
+      "absolute superiority of model weights independent of hosted route",
+      "official ESC-Judge reproduction of the unpublished paper-25 role identities",
+      "formal PM value before same-generator PM baseline experiments"
+    ]
+  },
+  "authorization": "The former E-I-A identity is superseded and authorizes no calls. Active generator selection is governed by generator_esc_eval_primary_selection_v1.json."
+}
