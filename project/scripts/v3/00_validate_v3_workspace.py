@@ -150,6 +150,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("Paper 1 unseen-user claim boundary changed")
     if core_program.get("evidence_source_roles", {}).get("EvoEmo", "").startswith("retained diagnostic") is False:
         failures.append("EvoEmo was silently restored as a required primary track")
+    baseline_layers = core_program.get("baseline_evidence_layers", {})
+    if baseline_layers.get("published_reference", {}).get("causal_comparator") is not False:
+        failures.append("published old-model scores were promoted to causal baselines")
+    if baseline_layers.get("official_protocol_sanity_reproduction", {}).get("causal_comparator") is not False:
+        failures.append("official protocol sanity reproduction was promoted to a PM comparator")
+    if baseline_layers.get("same_stack_baseline_rerun", {}).get("causal_comparator") is not True:
+        failures.append("same-stack rerun is no longer the primary PM comparator")
     if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
         failures.append("official-first authority status changed")
     if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
@@ -680,6 +687,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "typed_memory_requirement": core_program["primary_success_shape"]["typed_memory"],
             "unseen_user_generalization": core_program["generalization_scope"]["unseen_user_supervised_generalization"],
             "evoemo_role": core_program["evidence_source_roles"]["EvoEmo"],
+            "causal_baseline_layer": "same_stack_baseline_rerun",
         },
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),

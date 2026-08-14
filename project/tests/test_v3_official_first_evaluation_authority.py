@@ -37,6 +37,20 @@ def test_core_program_requires_two_typed_memory_heads_without_unseen_user_overcl
     assert core["useful_memory_head_definition"]["metric_authority"].startswith("Only ES-MemEval official")
 
 
+def test_primary_baselines_are_same_stack_not_published_score_substitutes():
+    core = load("v3_core_research_program_v1.json")
+    layers = core["baseline_evidence_layers"]
+    assert layers["published_reference"]["causal_comparator"] is False
+    assert layers["official_protocol_sanity_reproduction"]["causal_comparator"] is False
+    assert layers["same_stack_baseline_rerun"]["causal_comparator"] is True
+    assert "generator_and_mode" in layers["same_stack_baseline_rerun"]["invariants"]
+    rq1 = next(row for row in core["research_questions"] if row["id"] == "RQ1")
+    rq2 = next(row for row in core["research_questions"] if row["id"] == "RQ2")
+    assert all("same_stack" in name for name in rq1["comparators"])
+    assert all("same_stack" in name for name in rq2["comparators"])
+    assert any("matched_Random" in name for name in rq2["comparators"])
+
+
 def test_esc_eval_official_protocol_has_no_invented_pass_line():
     contract = load("g0_official_protocol_english331_contract_v1.json")
     assert contract["official_interaction_surface"]["supporter_system_prompt"] == "You are a helpful assistant!"

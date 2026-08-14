@@ -39,7 +39,7 @@ RS/MP/MS/ME 是可解释的实现部件，不再各自绑定一套项目自建�
 ### RQ1：学习型策略分配是否比不分配或非自适应分配更有效？
 
 - 学习来源：ESConv 官方 train/dev 结构和策略标签。
-- 基础检验：ESConv 官方 held-out 数据，复现论文可比条件（Vanilla、Random、Learned/Joint；Oracle 只作有标签上界）。
+- 基础检验：ESConv 官方 held-out 数据，把论文定义的条件（Vanilla、Random、Learned/Joint；Oracle 只作有标签上界）移植到同一个冻结 generator 和基础 prompt 下重新运行；不把论文旧模型的现成分数当成我们的因果 baseline。
 - 外部结果考卷：ESC-Eval；保持同一 generator、同一 role card、同一交互协议，只改变策略资源的分配方式。
 - 主要比较：无显式策略、频率/开启率匹配随机策略、学习型策略 PM；固定策略只作必要参照。
 - 主要结果：ESConv 官方结果与 ESC-Eval 官方七维；Cost 单列。
@@ -51,7 +51,7 @@ RS/MP/MS/ME 是可解释的实现部件，不再各自绑定一套项目自建�
 
 - 考卷：`ES-MemEval-Public-v1.0.0-1427` 的全部 1427 QA、125 summary 和 34 dialogue-generation scenario。
 - 指标：仅使用对应任务的官方指标；QA、summary、dialogue generation 分开报告，不制造跨任务总分。
-- 主要条件：官方/论文可复现的 Full History 与固定 RAG/top-k baseline、学习型 memory PM；No Memory 仅在官方任务允许时作为诊断下界。
+- 主要条件：把官方定义的 Full History、固定 RAG/top-k 和 No Memory 条件移植到同一个冻结 generator、官方任务 prompt 与 scorer 下重新运行，再与学习型 memory PM 比较。
 - 主要结果：官方任务表现与 Cost 的 Pareto 关系。
 - 统计单位：18 个 user；题目和场景是 user 内重复测量，不能当作 1427 个独立用户。
 - 可支持主张：显式、类型化、状态依赖的 memory allocation 在公开长期记忆 benchmark 上具有系统价值。
@@ -81,10 +81,18 @@ AND count(useful(MP), useful(MS), useful(ME)) >= 2
 
 Baseline 是实验条件，不是新评价体系。
 
+### 三层证据不能混用
+
+1. **论文已发表分数**：只作历史参考分布。原论文使用的 generator、prompt、上下文窗口和运行环境与我们不同，不能直接计算“我们的 PM 比论文 baseline 提升多少”。
+2. **官方协议/代码 sanity reproduction**：用少量或一个代表配置确认 dataset split、prompt 拼接、retrieval、scorer 和指标方向与官方一致。如果模型revision、API或paper row身份无法精确恢复，就明确称为协议验证，不追求复刻每个旧数值。
+3. **同栈 baseline rerun（论文主比较）**：冻结同一个 generator、基础prompt、decoding、候选历史、评测实例和官方 scorer，只改变资源分配策略。这一层才识别 PM 的边际价值，并完整记录 Cost。
+
+因此，下一步不是复跑官方论文里全部 Mistral、Phi、GPT 配置。我们先验证官方管线，然后在最终选定的 MetaCom generator 上重新运行官方定义的 baseline 条件。
+
 ### 策略实验
 
 - Vanilla / no explicit strategy；
-- Random 或频率匹配策略；
+- 与 learned PM 的策略频率/开启率匹配的 Random；
 - Learned strategy PM；
 - Oracle：仅在 ESConv 有 gold 策略标签的 held-out 数据上作上界。
 
@@ -92,11 +100,20 @@ Baseline 是实验条件，不是新评价体系。
 
 - Full History / fixed-high；
 - 官方固定 RAG/top-k；
+- 与 learned PM 的memory类型、开启率和预算匹配的 Random，用来排除“只是少放context”的解释；
 - Learned typed-memory PM；
 - `full-minus-MP`、`full-minus-MS`、`full-minus-ME`，只用于 component accountability；
 - No Memory：仅作允许且有解释意义的下界。
 
-如需证明“自适应”而不只是“少给 context”，可增加与学习型 PM 实际 memory 用量匹配的固定或随机策略；它仍使用同一官方指标，不构成第三套自定义考卷。
+matched Random 是“学习型选择有价值”主张所必需的因果对照，但仍使用同一官方 benchmark 指标，不构成第三套自定义考卷。Transparent rule、六动作oracle等旧矩阵不自动恢复；只有它们回答额外必要问题时才增加。
+
+### 公平运行时约束
+
+- 所有正式比较使用同一冻结 generator/model mode、相同基础prompt模板、decoding、retry和输出处理；
+- ESConv/ESC-Eval各arm只改变strategy policy给出的动作；
+- ES-MemEval各arm只改变可见历史或检索/typed-memory policy，官方问题文本和评分prompt不变；
+- baseline可以拥有其定义所需的不同context量，这正是处理差异，但不能拥有更强generator或专属prompt优化；
+- published score、不同generator的官方复现和同栈PM结果分表报告，禁止混成一张可直接排名的表。
 
 ## 6. 论文成功形态
 
@@ -128,7 +145,7 @@ EvoEmo、旧同状态实验、原子 Risk 和 Function 审计继续保留。只�
 ## 8. 从现在开始的落地顺序
 
 1. 完成正在运行的 ESC-Eval English-331 官方协议生成与官方评分；在 Llama 3.1 8B 和 Qwen 3.7 Plus non-thinking 中选定研究 generator。
-2. 用选定 generator 复现 ESConv 与 ES-MemEval 的官方 baseline，先确认数据、prompt、scorer、统计单位和成本账本完整。
+2. 先做 ESConv 与 ES-MemEval 官方数据/协议/scorer sanity reproduction；随后用选定 generator 同栈重跑官方定义的 baseline 条件及 matched Random，先确认数据、prompt、统计单位和成本账本完整。
 3. 物化一个 PM 接口：strategy action + typed memory action；复用旧 MP/MS/ME 候选编译、严格过去边界和 cost accounting，废弃旧 head pass gate。
 4. 先完成 RQ1：ESConv 训练/held-out 检验，再在 ESC-Eval 非 ESConv 来源卡上评价策略选择。
 5. 再完成 RQ2：ES-MemEval 全任务的 Full History、固定 RAG、learned PM 和 component-minus；MP/MS/ME eligible mapping 必须在结果前生成。

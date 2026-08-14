@@ -34,13 +34,13 @@
       "question": "Does a learned strategy policy allocate emotional-support actions better than absent or non-adaptive strategy policies?",
       "learning_source": "ESConv",
       "exams": ["ESConv official held-out conditions", "ESC-Eval official outcomes"],
-      "comparators": ["Vanilla", "Random_or_frequency_matched", "Learned_strategy_PM", "Oracle_on_labeled_ESConv_only"]
+      "comparators": ["Vanilla_same_stack", "Learned_frequency_matched_Random_same_stack", "Learned_strategy_PM_same_stack", "Oracle_on_labeled_ESConv_only_same_stack"]
     },
     {
       "id": "RQ2",
       "question": "Does a learned typed-memory policy improve the official long-term-memory performance-cost tradeoff?",
       "exam": "ES-MemEval-Public-v1.0.0-1427",
-      "comparators": ["Full_History_or_fixed_high", "official_fixed_RAG_or_top_k", "Learned_typed_memory_PM", "No_Memory_if_interpretable"],
+      "comparators": ["Full_History_or_fixed_high_same_stack", "official_fixed_RAG_or_top_k_same_stack", "Learned_usage_matched_Random_same_stack", "Learned_typed_memory_PM_same_stack", "No_Memory_same_stack_if_interpretable"],
       "component_ablations": ["full_minus_MP", "full_minus_MS", "full_minus_ME"]
     }
   ],
@@ -76,6 +76,25 @@
     "project_metric": "Cost only: tokens, retrieval/embedding compute, retries, latency, and USD.",
     "forbidden_aggregate": "No project-created cross-task quality score."
   },
+  "baseline_evidence_layers": {
+    "published_reference": {
+      "role": "Historical external positioning only.",
+      "causal_comparator": false,
+      "reason": "Published generators, prompts, context windows, revisions, and runtimes differ from the MetaCom study stack."
+    },
+    "official_protocol_sanity_reproduction": {
+      "role": "Validate dataset split, prompt assembly, retrieval, scorer, and metric direction with a representative official configuration.",
+      "causal_comparator": false,
+      "scope": "Do not rerun every historical Mistral, Phi, GPT, or other published configuration unless a specific reproducibility question requires it."
+    },
+    "same_stack_baseline_rerun": {
+      "role": "Primary causal comparison for PM value.",
+      "causal_comparator": true,
+      "invariants": ["generator_and_mode", "base_prompt_template", "decoding", "retry_and_output_handling", "evaluation_instances", "official_scorer"],
+      "allowed_difference": "Only the named strategy or memory-allocation condition and the context it legitimately selects.",
+      "cost": "Measure every condition separately."
+    }
+  },
   "evidence_source_roles": {
     "ESConv": "strategy learning and official held-out strategy experiment",
     "ESC-Eval": "generator prerequisite and external strategy-outcome exam",
@@ -97,7 +116,7 @@
   ],
   "execution_order": [
     "Complete the active ESC-Eval English-331 official-protocol generator comparison and select one frozen generator.",
-    "Reproduce official ESConv and ES-MemEval baselines with the frozen generator and a complete Cost ledger.",
+    "Run a bounded official-protocol sanity reproduction for ESConv and ES-MemEval, then rerun the official baseline conditions and usage-matched Random on the frozen same-stack generator with a complete Cost ledger.",
     "Materialize one PM interface with a strategy action and MP/MS/ME typed-memory actions; reuse valid causal-boundary and cost-accounting assets, not legacy pass gates.",
     "Run RQ1 on ESConv held-out data and ESC-Eval non-ESConv-source primary analysis.",
     "Run RQ2 on complete ES-MemEval public v1.0.0 with outcome-blind head eligibility and component-minus ablations.",
