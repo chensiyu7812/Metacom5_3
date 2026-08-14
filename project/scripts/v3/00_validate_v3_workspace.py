@@ -55,6 +55,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_nemotron_contract_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_contract_v1.json"
     g0_nemotron_preflight_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_preflight_v1.json"
     g0_nemotron_closeout_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_closeout_v1.json"
+    g0_four_generator_contract_path = AUTHORITY_DIR / "g0_four_generator_full_screen_contract_v1.json"
+    g0_four_generator_preflight_path = AUTHORITY_DIR / "g0_four_generator_full_screen_preflight_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -91,6 +93,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_nemotron_contract = _load_json(g0_nemotron_contract_path)
     g0_nemotron_preflight = _load_json(g0_nemotron_preflight_path)
     g0_nemotron_closeout = _load_json(g0_nemotron_closeout_path)
+    g0_four_generator_contract = _load_json(g0_four_generator_contract_path)
+    g0_four_generator_preflight = _load_json(g0_four_generator_preflight_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -153,6 +157,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "17_closeout_g0_research_aligned_canary.py",
         PROJECT_ROOT / "scripts" / "v3" / "18_materialize_g0_nemotron30b_transport_canary.py",
         PROJECT_ROOT / "scripts" / "v3" / "19_run_g0_nemotron30b_transport_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "21_materialize_g0_four_generator_full_screen.py",
+        PROJECT_ROOT / "scripts" / "v3" / "22_run_g0_four_generator_full_screen.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -167,7 +173,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 79:
+    if profile["expected_test_count"] != 82:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -415,6 +421,15 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("Nemotron was retained without passing every frozen operational threshold")
     if g0_nemotron_closeout["decision"]["quality_judged"] or g0_nemotron_closeout["decision"]["generator_selected"]:
         failures.append("Nemotron transport canary improperly judged quality or selected a generator")
+    full_candidate_ids = [row["candidate_id"] for row in g0_four_generator_contract["candidates"]]
+    if full_candidate_ids != g0_four_generator_preflight["candidate_ids"] or len(set(full_candidate_ids)) != 4:
+        failures.append("full G0 four-configuration candidate identity drifted")
+    if "meta/llama-3.3-70b-instruct" in g0_four_generator_preflight["models"]:
+        failures.append("wrong 70B route leaked into corrected full G0")
+    if g0_four_generator_preflight["run_identity"] != "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668":
+        failures.append("full G0 four-generator identity drifted")
+    if (g0_four_generator_preflight["logical_supporter_calls"], g0_four_generator_preflight["qwen_paid_logical_calls"], g0_four_generator_preflight["judge_calls"]) != (480, 240, 0):
+        failures.append("full G0 four-generator call accounting drifted")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -451,6 +466,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_nemotron_contract_path,
         g0_nemotron_preflight_path,
         g0_nemotron_closeout_path,
+        g0_four_generator_contract_path,
+        g0_four_generator_preflight_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -540,6 +557,16 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "status": g0_nemotron_closeout["status"],
             "median_latency_ms": g0_nemotron_closeout["latency_ms"]["median"],
             "p90_latency_ms": g0_nemotron_closeout["latency_ms"]["p90"],
+        },
+        "g0_four_generator_full_screen": {
+            "run_identity": g0_four_generator_preflight["run_identity"],
+            "candidate_configurations": len(g0_four_generator_preflight["candidate_ids"]),
+            "cards": g0_four_generator_preflight["cards"],
+            "logical_supporter_calls": g0_four_generator_preflight["logical_supporter_calls"],
+            "qwen_paid_logical_calls": g0_four_generator_preflight["qwen_paid_logical_calls"],
+            "judge_calls": g0_four_generator_preflight["judge_calls"],
+            "point_estimate_usd": g0_four_generator_preflight["budget"]["linear_24_card_point_estimate_usd"],
+            "status": g0_four_generator_preflight["status"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

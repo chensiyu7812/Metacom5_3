@@ -67,6 +67,8 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 该Nemotron canary已在identity `92bd2e53...`下完成并通过操作门：10/10均首次成功，0次HTTP 429、timeout、5xx或terminal trajectory；成功请求median约1.69s、p90约3.23s，10次均自然`stop`且无length finish。托管响应在10次中均含独立reasoning字段，但NVIDIA usage未给出独立reasoning token计数，因此1,601 billed completion tokens不能伪装成可见回答token。此结果只证明低并发小样本route可用；Nemotron保留进入更大Quality/Risk/latency比较，仍未选择generator。
 
+下一轮四配置full G0已零调用物化：24张开发卡×五轮×Llama 3.1 8B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking、Nemotron 3 Nano，共480次supporter调用与480次本地role-player生成；其中Qwen付费调用240次，judge调用为0。四个配置全部在新identity下重跑，不把不同日期、不同candidate set的canary回复拼进正式矩阵。两卡Qwen实际费用线性外推约`$0.2336`，只是规划点估计；runner仍按无输出cap的65,536-token最坏预留逐次熔断。生成完成后另行冻结E/I/A双顺序Quality、原子Risk和描述性ESC-RANK评分，不以transport指标选择模型。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；

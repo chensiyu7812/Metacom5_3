@@ -1,0 +1,56 @@
+{
+  "protocol": "metacom-v3-g0-four-generator-full-screen-preflight-v1",
+  "date": "2026-08-14",
+  "status": "ZERO_CALL_PREFLIGHT_PASS_EXECUTION_REQUIRES_IDENTITY_SPECIFIC_APPROVAL",
+  "api_calls": 0,
+  "contains_role_card_or_dialogue_text": false,
+  "candidate_ids": [
+    "llama31_8b_incumbent",
+    "qwen37_plus_nonthinking",
+    "qwen37_plus_thinking_upper_bound",
+    "nemotron3_nano_30b_a3b_default_thinking"
+  ],
+  "models": [
+    "meta/llama-3.1-8b-instruct",
+    "qwen3.7-plus-2026-05-26",
+    "qwen3.7-plus-2026-05-26",
+    "nvidia/nemotron-3-nano-30b-a3b"
+  ],
+  "cards": 24,
+  "sample": {
+    "development_cards": 24,
+    "manifest_sha256": "abd94ca856016956758918b5577b46b23d67fb7efdf0b233b4904355eea50a35",
+    "prior_use": "The cards were previously inspected and remain development-only."
+  },
+  "turns_per_dialogue": 5,
+  "logical_supporter_calls": 480,
+  "local_role_player_calls": 480,
+  "qwen_paid_logical_calls": 240,
+  "judge_calls": 0,
+  "researcher_output_token_cap": null,
+  "prompt_sha256": "e5d9c937c729dcd6214ace6fff3421659ed9eab06d04b976f6df0b3589a9e73f",
+  "prompt": {
+    "artifact": "g0_research_aligned_supporter_prompt_v1.json",
+    "joined_prompt_sha256": "e5d9c937c729dcd6214ace6fff3421659ed9eab06d04b976f6df0b3589a9e73f",
+    "researcher_output_token_cap": null,
+    "provider_output_parameter": "OMITTED"
+  },
+  "manifest_sha256": "abd94ca856016956758918b5577b46b23d67fb7efdf0b233b4904355eea50a35",
+  "budget": {
+    "approval_ceiling_external_to_identity": true,
+    "two_card_observed_qwen_usd": 0.0194692,
+    "linear_24_card_point_estimate_usd": 0.2336304,
+    "strict_pre_call_reserve": "Before each Qwen call, reserve a conservative byte-count upper bound for input plus the documented 65,536-token maximum output. Do not start a call if observed spend plus that reserve exceeds the user-approved ceiling.",
+    "suggested_ceiling_usd": 0.5
+  },
+  "input_hashes": {
+    "g0_four_generator_full_screen_contract_v1.json": "5c6951f6075f44779ac3037b59073a5206de8acf51a00b53aed41affbac7624c",
+    "g0_research_aligned_supporter_prompt_v1.json": "f4cabca6c4d0ad2bdc3a4614405957c4220dffd92896cf28a7799ff91fe42661",
+    "g0_research_aligned_screening_manifest_v2.jsonl": "abd94ca856016956758918b5577b46b23d67fb7efdf0b233b4904355eea50a35",
+    "g0_nemotron30b_transport_canary_closeout_v1.json": "1f1c283dc5e5d7d444e5a6921725dc109376aeb67e356b22bfd10c0d6b119f6f",
+    "16_run_g0_research_aligned_esc.py": "84f4b21bead542fe6929d88f05b9665b0c3edf388671ca470f29c458aac107ba",
+    "22_run_g0_four_generator_full_screen.py": "f93b3ba3d20fd9aabfa58b74c0d0de59d2c660a18535616ee0b8fbb674747528",
+    "api.py": "b2f28cbff8e73c397097b3c8f30b73814a50b5631a41184535c78bc14335fb3b"
+  },
+  "run_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668"
+}

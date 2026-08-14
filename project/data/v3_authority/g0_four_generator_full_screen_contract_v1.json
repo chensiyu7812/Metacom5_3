@@ -1,0 +1,124 @@
+{
+  "protocol": "metacom-v3-g0-four-generator-full-screen-v1",
+  "date": "2026-08-14",
+  "status": "DESIGN_FROZEN_ZERO_CALL_PREFLIGHT_PENDING",
+  "purpose": "Generate a clean, same-identity 24-card development screen for four operationally eligible generator configurations before separate Quality, Risk, and descriptive external scoring.",
+  "candidates": [
+    {
+      "candidate_id": "llama31_8b_incumbent",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "configuration_role": "incumbent"
+    },
+    {
+      "candidate_id": "qwen37_plus_nonthinking",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "enable_thinking": false,
+      "configuration_role": "deployment-oriented challenger"
+    },
+    {
+      "candidate_id": "qwen37_plus_thinking_upper_bound",
+      "provider": "Alibaba Cloud Model Studio Singapore OpenAI-compatible API",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3.7-plus-2026-05-26",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "enable_thinking": true,
+      "configuration_role": "same-model thinking upper-bound sensitivity"
+    },
+    {
+      "candidate_id": "nemotron3_nano_30b_a3b_default_thinking",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "nvidia/nemotron-3-nano-30b-a3b",
+      "api_key_env": "NVIDIA_API_KEY",
+      "configuration_role": "corrected provisional challenger retained after operational canary",
+      "reasoning_mode": "provider default"
+    }
+  ],
+  "shared_generation_contract": {
+    "temperature": 0.0,
+    "top_p": "provider default because a verified provider-equivalent shared top_p contract is unavailable",
+    "researcher_output_token_cap": null,
+    "provider_output_parameter": "OMITTED",
+    "seed": null,
+    "turns_per_dialogue": 5,
+    "transient_retry_limit": 1,
+    "content_retry_limit": 0,
+    "candidate_order": "deterministically rotated by card",
+    "missing_policy": "Deployment ITT: retain candidate-scoped failed attempts and terminal trajectories; never replace a card, mix another identity, or change the prompt/runtime during the run.",
+    "latency_primary": "non-streaming request wall-clock milliseconds from request start through complete response receipt",
+    "ttft_policy": "Not claimed because comparable streamed TTFT is not frozen across providers."
+  },
+  "dialogue_surface": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "language": "english",
+    "development_cards": 24,
+    "canary_cards": 0,
+    "source_quotas": {
+      "ESconv": 8,
+      "MHP": 5,
+      "ExTES": 5,
+      "Psych": 3,
+      "EPITOME": 3
+    },
+    "role_player_model": "haidequanbu/ESC-Role",
+    "role_player_revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+    "role_player_generation": {
+      "max_output_tokens_per_turn": 512,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "repetition_penalty": 1.05,
+      "common_seed_policy": "Reuse SHA256(metacom-v3-g0r2-role-seed|card_key|turn), common by position while histories remain candidate-dependent."
+    }
+  },
+  "call_accounting": {
+    "supporter_logical_calls": 480,
+    "local_role_player_calls": 480,
+    "nvidia_supporter_calls": 240,
+    "qwen_paid_supporter_calls": 240,
+    "judge_calls": 0,
+    "fresh_rerun_rule": "All 24 cards and all four configurations are regenerated under this identity. Earlier canary replies are not copied into the full screen."
+  },
+  "post_generation_measurement": {
+    "mechanical": [
+      "valid turn and completed-dialogue rate",
+      "provider finish reason and natural completion",
+      "visible length and provider-reported usage",
+      "median and p90 latency",
+      "retry, 429, timeout, 5xx, terminal trajectory, and USD accounting"
+    ],
+    "quality": "Separately frozen ESC-Judge Exploration, Insight, and Action pairwise comparisons with both A/B orders; no judge calls are authorized by this generation identity.",
+    "external_descriptive": "Repaired ESC-RANK seven-dimension profile remains descriptive rather than a sole pass/fail instrument.",
+    "risk": "Atomic integrity and low-burden audit is separate from ESC-Judge and must not be averaged into an unsupported composite.",
+    "selection": "No generator is selected from transport metrics alone. Quality cannot be traded away for latency, and the four-configuration result is reported as a Pareto comparison."
+  },
+  "hard_mechanical_gates": {
+    "valid_supporter_turn_rate_minimum": 0.95,
+    "completed_dialogue_rate_minimum": 0.95,
+    "critical_integrity_events_maximum": 0,
+    "internal_prompt_or_scaffold_exposure_maximum": 0,
+    "note": "Critical integrity and scaffold gates require the later content audit; generation completion alone cannot mark them passed."
+  },
+  "qwen_budget_contract": {
+    "pricing_source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+    "pricing_snapshot_date": "2026-08-14",
+    "model_snapshot": "qwen3.7-plus-2026-05-26",
+    "input_usd_per_million_tokens_0_to_256k": 0.4,
+    "output_usd_per_million_tokens_0_to_256k": 1.6,
+    "input_usd_per_million_tokens_256k_to_1m": 1.2,
+    "output_usd_per_million_tokens_256k_to_1m": 4.8,
+    "documented_max_output_tokens": 65536,
+    "strict_budget_rule": "Before each Qwen call, reserve a conservative byte-count upper bound for input plus the documented 65,536-token maximum output. Do not start a call if observed spend plus that reserve exceeds the user-approved ceiling.",
+    "two_card_observed_cost_usd": 0.0194692,
+    "linear_24_card_point_estimate_usd": 0.2336304,
+    "point_estimate_is_not_a_cap": true
+  },
+  "claim_boundary": "This 24-card sample was already inspected and is development-only. It can screen generator configurations and measurement behavior but cannot establish exact official ESC-Eval replication, final generator qualification, PM value, clinical safety, or real-user benefit.",
+  "authorization": "Zero-call materialization and tests only. All 480 supporter calls require identity-specific approval with a positive Qwen USD ceiling."
+}
