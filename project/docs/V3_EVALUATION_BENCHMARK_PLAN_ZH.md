@@ -75,6 +75,12 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 该identity现已在物理A6000上完成651/651次评分，费用`$0`。严格裸数字parser为0/651有效，原因是公开adapter稳定输出带维度标签的句子，故结论是输出协议不兼容而不是四个generator全部质量失败。预冻结的固定标签句式sensitivity为651/651有效，但Fluency、Expression、Empathy在三种可靠性合格配置的全部24张卡上完全同分，Overall也几乎恒定；Suggestion与Humanoid呈相反方向的局部差异，不能支持单一优胜者。两次因CUDA ordinal映射错误而落在A4500的部分尝试已隔离、不参与正式汇总。ESC-RANK因此完成了“公认外部描述性考卷”的责任，同时实证确认其不能独立承担generator选择。
 
+### 公平generator选择协议
+
+generator选择现在由`generator_fair_selection_protocol_v1.json`统一约束。“公平”不仅指同prompt，还包括：同24张卡和五轮轨迹、相同role-player与按位置共享seed、无研究者输出cap；三种可靠性合格配置组成完整pair graph；E/I/A每个比较都做A/B与B/A；模型/provider标签对judge不可见；card/dialogue是统计单位，turn与维度不是独立样本；transport失败、INVALID、REFUSAL和位置不稳定全部保留为ITT结果；Quality、绝对完整性、cost、latency不合成一个总分。
+
+决策顺序是硬门而不是加权：先过对话可靠性和绝对完整性，再看Exploration、Insight、Action；成本和延迟只能在Quality/Risk合格且等价的配置之间决胜，不能用“便宜”抵消质量失败，也不能用“更强但昂贵”的先验偏袒thinking。第一步仅运行6张跨来源卡的测量资格canary：108次E/I/A双顺序、18次重复性、18次绝对低负担/完整性，共144次。该canary只决定judge工具是否稳定、有分辨率，绝不选generator；通过后才补齐剩余18张卡的378次调用。正式PM外测前还必须加入至少12个分层unit、两名独立盲评者的人类anchor。
+
 ## ESC-Judge 稳健性方案
 
 - 以同一 synthetic role 分别运行 candidate 与 reference；

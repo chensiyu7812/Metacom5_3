@@ -60,6 +60,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_closeout_path = AUTHORITY_DIR / "g0_four_generator_full_screen_closeout_v1.json"
     g0_four_generator_esc_rank_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_preflight_v1.json"
     g0_four_generator_esc_rank_closeout_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_closeout_v1.json"
+    generator_fair_selection_path = AUTHORITY_DIR / "generator_fair_selection_protocol_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -101,6 +102,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_closeout = _load_json(g0_four_generator_closeout_path)
     g0_four_generator_esc_rank = _load_json(g0_four_generator_esc_rank_path)
     g0_four_generator_esc_rank_closeout = _load_json(g0_four_generator_esc_rank_closeout_path)
+    generator_fair_selection = _load_json(generator_fair_selection_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -179,7 +181,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 88:
+    if profile["expected_test_count"] != 91:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -463,6 +465,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("four-generator ESC-RANK parser result drifted")
     if g0_four_generator_esc_rank_closeout["decision"]["generator_selected"]:
         failures.append("saturated ESC-RANK profile improperly selected a generator")
+    if generator_fair_selection["selection_set"]["eligible"] != g0_four_generator_closeout["decision"]["reliability_eligible_for_quality_selection"]:
+        failures.append("fair generator selection set drifted from reliability closeout")
+    canary = generator_fair_selection["qualification_canary"]
+    if (canary["eia_calls"], canary["repeatability_calls"], canary["absolute_guardrail_calls"], canary["total_calls"]) != (108, 18, 18, 144):
+        failures.append("fair generator judge-canary accounting drifted")
+    if generator_fair_selection["pairwise_resolution"]["no_composite"] is not True:
+        failures.append("fair generator protocol lost the no-composite rule")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -504,6 +513,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_four_generator_closeout_path,
         g0_four_generator_esc_rank_path,
         g0_four_generator_esc_rank_closeout_path,
+        generator_fair_selection_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -617,6 +627,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "primary_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["primary_strict_parser"]["valid"],
             "anchored_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["anchored_format_sensitivity"]["valid"],
             "generator_selected": g0_four_generator_esc_rank_closeout["decision"]["generator_selected"],
+        },
+        "generator_fair_selection": {
+            "status": generator_fair_selection["status"],
+            "eligible": generator_fair_selection["selection_set"]["eligible"],
+            "canary_calls": generator_fair_selection["qualification_canary"]["total_calls"],
+            "full_additional_calls": generator_fair_selection["full_g0_after_canary"]["additional_calls"],
+            "no_composite": generator_fair_selection["pairwise_resolution"]["no_composite"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
