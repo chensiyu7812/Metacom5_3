@@ -59,6 +59,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_preflight_path = AUTHORITY_DIR / "g0_four_generator_full_screen_preflight_v1.json"
     g0_four_generator_closeout_path = AUTHORITY_DIR / "g0_four_generator_full_screen_closeout_v1.json"
     g0_four_generator_esc_rank_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_preflight_v1.json"
+    g0_four_generator_esc_rank_closeout_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_closeout_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -99,6 +100,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_preflight = _load_json(g0_four_generator_preflight_path)
     g0_four_generator_closeout = _load_json(g0_four_generator_closeout_path)
     g0_four_generator_esc_rank = _load_json(g0_four_generator_esc_rank_path)
+    g0_four_generator_esc_rank_closeout = _load_json(g0_four_generator_esc_rank_closeout_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -177,7 +179,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 86:
+    if profile["expected_test_count"] != 88:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -453,6 +455,14 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("four-generator ESC-RANK preflight incorrectly declares external spend")
     if g0_four_generator_esc_rank["decision_boundary"]["quality_selection"] != "NOT_AUTHORIZED_BY_THIS_IDENTITY":
         failures.append("ESC-RANK descriptive identity improperly authorizes generator selection")
+    if g0_four_generator_esc_rank_closeout["score_run_identity"] != g0_four_generator_esc_rank["score_run_identity"]:
+        failures.append("four-generator ESC-RANK closeout identity drifted")
+    if g0_four_generator_esc_rank_closeout["execution"]["final_local_inference_calls"] != 651:
+        failures.append("four-generator ESC-RANK final call count drifted")
+    if (g0_four_generator_esc_rank_closeout["measurement_result"]["primary_strict_parser"]["valid"], g0_four_generator_esc_rank_closeout["measurement_result"]["anchored_format_sensitivity"]["valid"]) != (0, 651):
+        failures.append("four-generator ESC-RANK parser result drifted")
+    if g0_four_generator_esc_rank_closeout["decision"]["generator_selected"]:
+        failures.append("saturated ESC-RANK profile improperly selected a generator")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -493,6 +503,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_four_generator_preflight_path,
         g0_four_generator_closeout_path,
         g0_four_generator_esc_rank_path,
+        g0_four_generator_esc_rank_closeout_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -602,7 +613,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "complete_dialogues": g0_four_generator_esc_rank["complete_dialogues"],
             "local_inference_calls": g0_four_generator_esc_rank["local_inference_calls"],
             "estimated_usd": g0_four_generator_esc_rank["estimated_usd"],
-            "status": g0_four_generator_esc_rank["status"],
+            "status": g0_four_generator_esc_rank_closeout["status"],
+            "primary_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["primary_strict_parser"]["valid"],
+            "anchored_valid": g0_four_generator_esc_rank_closeout["measurement_result"]["anchored_format_sensitivity"]["valid"],
+            "generator_selected": g0_four_generator_esc_rank_closeout["decision"]["generator_selected"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

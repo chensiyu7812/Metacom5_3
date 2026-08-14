@@ -1,0 +1,108 @@
+{
+  "protocol": "metacom-v3-g0-four-generator-esc-rank-closeout-v1",
+  "date": "2026-08-14",
+  "score_run_identity": "c22b402c57c6fc14b0a6bd976dc8af012e2e2245862f81616c96223ba04c5a3d",
+  "source_generation_identity": "45d820f440b333552f0a27822d540260efacc13a377672831157762598cf5668",
+  "status": "COMPLETE_PRIMARY_FORMAT_INCOMPATIBLE_ANCHORED_DESCRIPTIVE_LOW_RESOLUTION_NO_GENERATOR_SELECTED",
+  "execution": {
+    "complete_dialogues": 93,
+    "dimensions_per_dialogue": 7,
+    "final_local_inference_calls": 651,
+    "paid_api_calls": 0,
+    "actual_usd": 0,
+    "final_hardware": "NVIDIA RTX A6000, physical UUID GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+    "deterministic_decode": true
+  },
+  "measurement_result": {
+    "primary_strict_parser": {
+      "rule": "full-string ^[0-4]$ or INVALID",
+      "valid": 0,
+      "invalid": 651,
+      "interpretation": "PUBLIC_ADAPTER_OUTPUT_PROTOCOL_INCOMPATIBLE_NOT_MODEL_QUALITY_FAILURE"
+    },
+    "anchored_format_sensitivity": {
+      "rule": "exact adapter-specific labelled sentence or full-string ordinal",
+      "valid": 651,
+      "invalid": 0,
+      "broad_digit_search_used": false,
+      "role": "DESCRIPTIVE_SENSITIVITY_ONLY"
+    }
+  },
+  "candidate_profiles": {
+    "llama31_8b_incumbent": {
+      "dialogues": 24,
+      "reliability_selection_eligible": true,
+      "anchored_means": {"fluency": 3.0, "diversity": 3.0, "empathic": 3.0, "suggestion": 2.7916666666666665, "human": 2.9583333333333335, "tech": 3.0, "overall": 1.9583333333333333}
+    },
+    "qwen37_plus_nonthinking": {
+      "dialogues": 24,
+      "reliability_selection_eligible": true,
+      "anchored_means": {"fluency": 3.0, "diversity": 3.0, "empathic": 3.0, "suggestion": 2.9166666666666665, "human": 2.5, "tech": 2.9166666666666665, "overall": 2.0}
+    },
+    "qwen37_plus_thinking_upper_bound": {
+      "dialogues": 24,
+      "reliability_selection_eligible": true,
+      "anchored_means": {"fluency": 3.0, "diversity": 3.0, "empathic": 3.0, "suggestion": 2.7083333333333335, "human": 2.75, "tech": 3.0, "overall": 2.0}
+    },
+    "nemotron3_nano_30b_a3b_default_thinking": {
+      "dialogues": 21,
+      "reliability_selection_eligible": false,
+      "subset_policy": "DESCRIPTIVE_COMPLETE_DIALOGUES_ONLY",
+      "anchored_means": {"fluency": 3.0, "diversity": 3.0, "empathic": 3.0, "suggestion": 2.857142857142857, "human": 2.761904761904762, "tech": 3.0, "overall": 2.0}
+    }
+  },
+  "eligible_same_card_pairwise": {
+    "llama31_8b_incumbent_vs_qwen37_plus_nonthinking": {
+      "suggestion": {"first_wins": 1, "first_losses": 4, "ties": 19},
+      "human": {"first_wins": 12, "first_losses": 1, "ties": 11},
+      "tech": {"first_wins": 2, "first_losses": 0, "ties": 22},
+      "overall": {"first_wins": 0, "first_losses": 1, "ties": 23}
+    },
+    "llama31_8b_incumbent_vs_qwen37_plus_thinking_upper_bound": {
+      "suggestion": {"first_wins": 4, "first_losses": 2, "ties": 18},
+      "human": {"first_wins": 5, "first_losses": 0, "ties": 19},
+      "tech": {"first_wins": 0, "first_losses": 0, "ties": 24},
+      "overall": {"first_wins": 0, "first_losses": 1, "ties": 23}
+    },
+    "qwen37_plus_nonthinking_vs_qwen37_plus_thinking_upper_bound": {
+      "suggestion": {"first_wins": 5, "first_losses": 0, "ties": 19},
+      "human": {"first_wins": 2, "first_losses": 8, "ties": 14},
+      "tech": {"first_wins": 0, "first_losses": 2, "ties": 22},
+      "overall": {"first_wins": 0, "first_losses": 0, "ties": 24}
+    },
+    "constant_dimensions_all_three_eligible": ["fluency", "diversity", "empathic"]
+  },
+  "instrument_diagnosis": {
+    "finding": "The anchored derivative is heavily saturated: all eligible candidates tie on every Fluency, Expression, and Empathy card, and Overall differs on only two candidate-card observations. Suggestion and Humanoid produce some trade-offs but do not yield a defensible single winner.",
+    "supports": "A recognized external seven-dimension descriptive profile with explicit parser and resolution limitations.",
+    "does_not_support": ["absolute ESC capability pass", "generator superiority", "clinical safety", "PM value"],
+    "generator_selected": false
+  },
+  "excluded_execution_attempts": [
+    {
+      "reason": "CUDA ordinal mapping placed the model on A4500 instead of the frozen A6000 plan",
+      "partial_rows": 145,
+      "ledger_sha256": "7632465fffb58c8bbe28c4b83770379c1371c56d7199134786176935c42d4b10",
+      "included_in_formal_summary": false,
+      "overlap_raw_output_equal_to_final": "140/145"
+    },
+    {
+      "reason": "CUDA_VISIBLE_DEVICES used nvidia-smi index rather than CUDA ordinal and again exposed A4500",
+      "partial_rows": 80,
+      "ledger_sha256": "23323270e2a05f428fc14a50091af800e18d288624e296ec5ad40077b54dcb3a",
+      "included_in_formal_summary": false,
+      "overlap_raw_output_equal_to_final": "79/80"
+    }
+  ],
+  "decision": {
+    "generator_selected": false,
+    "nemotron_reliability_failure_retained": true,
+    "next": "Run separately frozen order-swapped E-I-A pairwise Quality and absolute low-burden/integrity review for the three reliability-eligible candidates; retain latency and cost as non-compensating Pareto outcomes."
+  },
+  "private_evidence_hashes": {
+    "final_score_ledger": "fa2977cf3aeb69f4f4b0670fd6a627a7a399740eebea60a491c88c158eb3cb18",
+    "primary_summary": "37249a5fe067ba858413119d5bcc2fb813da091ac81aa8daee45e8b1d099adc2",
+    "anchored_score_ledger": "3a72423f519e9ceea7166ff2b9c02cf38ff9b1f5c5f1ac7a2d97dadb9c5546ef",
+    "anchored_summary": "1cdb8cfff17138af36d1865eca68001ac2db1dfd04f3ea3e60e382cf6e2a6453"
+  }
+}
