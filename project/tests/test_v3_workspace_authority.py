@@ -19,6 +19,13 @@ def _validator_module():
 def test_v3_public_workspace_authority_is_consistent() -> None:
     result = _validator_module().validate(require_private_evidence=False)
     assert result["valid"], result["failures"]
+    assert result["active_research_program"] == {
+        "status": "ACTIVE_SOLE_RESEARCH_PROGRAM_OFFICIAL_BENCHMARK_FIRST",
+        "research_questions": ["RQ0", "RQ1", "RQ2"],
+        "typed_memory_requirement": "count(useful(MP), useful(MS), useful(ME)) >= 2",
+        "unseen_user_generalization": "NOT_A_PAPER1_REQUIREMENT",
+        "evoemo_role": "retained diagnostic/supplement only; not a required primary track or independent population",
+    }
 
 
 def test_local_private_evidence_is_consistent_when_present() -> None:

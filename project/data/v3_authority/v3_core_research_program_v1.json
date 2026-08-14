@@ -1,0 +1,116 @@
+{
+  "protocol": "metacom-v3-core-research-program-v1",
+  "date": "2026-08-14",
+  "status": "ACTIVE_SOLE_RESEARCH_PROGRAM_OFFICIAL_BENCHMARK_FIRST",
+  "human_readable_plan": "docs/V3_CORE_RESEARCH_PROGRAM_ZH.md",
+  "evaluation_authority": "data/v3_authority/v3_official_first_evaluation_authority_v1.json",
+  "thesis": "A learned pre-generation Policy Manager conditionally allocates emotional-support strategy and typed longitudinal-memory resources, preserving or improving public benchmark outcomes while reducing measured resource cost relative to non-adaptive high-resource baselines.",
+  "study_type": "FIRST_PAPER_EXISTENCE_AND_FEASIBILITY",
+  "policy_decisions": {
+    "strategy": {
+      "legacy_implementation_name": "RS",
+      "official_learning_source": "ESConv strategy taxonomy and official train/dev structure",
+      "primary_outcome_exam": "ESC-Eval official protocol and seven dimensions"
+    },
+    "memory": {
+      "heads": {
+        "MP": "stable profile, preference, and user constraint",
+        "MS": "cross-session episode, event, and continuity",
+        "ME": "past action and observed outcome"
+      },
+      "primary_exam": "ES-MemEval-Public-v1.0.0-1427 official QA, summarization, and dialogue-generation tasks"
+    }
+  },
+  "research_questions": [
+    {
+      "id": "RQ0",
+      "question": "Does the frozen generator have adequate observable emotional-support capability for the study?",
+      "exam": "ESC-Eval",
+      "role": "PREREQUISITE_NOT_PM_EVIDENCE",
+      "outcomes": "Official seven-dimension profile, completion/reliability, and Cost; no invented official pass line."
+    },
+    {
+      "id": "RQ1",
+      "question": "Does a learned strategy policy allocate emotional-support actions better than absent or non-adaptive strategy policies?",
+      "learning_source": "ESConv",
+      "exams": ["ESConv official held-out conditions", "ESC-Eval official outcomes"],
+      "comparators": ["Vanilla", "Random_or_frequency_matched", "Learned_strategy_PM", "Oracle_on_labeled_ESConv_only"]
+    },
+    {
+      "id": "RQ2",
+      "question": "Does a learned typed-memory policy improve the official long-term-memory performance-cost tradeoff?",
+      "exam": "ES-MemEval-Public-v1.0.0-1427",
+      "comparators": ["Full_History_or_fixed_high", "official_fixed_RAG_or_top_k", "Learned_typed_memory_PM", "No_Memory_if_interpretable"],
+      "component_ablations": ["full_minus_MP", "full_minus_MS", "full_minus_ME"]
+    }
+  ],
+  "primary_success_shape": {
+    "generator": "RQ0 is completed and one reproducible same-stack generator is selected from official outcomes, reliability, and Cost without claiming an ESC-Eval official pass certificate.",
+    "strategy": "Learned strategy allocation shows value over Vanilla and/or matched Random on official ESConv/ESC-Eval outcomes.",
+    "memory_system": "Learned typed-memory allocation shows a better official-outcome/Cost tradeoff than Full History and/or official fixed RAG.",
+    "typed_memory": "count(useful(MP), useful(MS), useful(ME)) >= 2",
+    "overall": "generator AND strategy AND memory_system AND typed_memory"
+  },
+  "useful_memory_head_definition": {
+    "metric_authority": "Only ES-MemEval official task metrics; no custom Function or Quality score.",
+    "eligibility": "Outcome-blind semantic mapping of official instances to MP/MS/ME before model outcomes are inspected.",
+    "contrast": "Same-stack full system versus full-minus-head on that eligible slice.",
+    "minimum_evidence": "Nonzero directionally correct paired improvement replicated in at least two independent user or fact/event clusters, with nonnegative net eligible-slice effect and user-cluster uncertainty reported.",
+    "stronger_optional_evidence": "Per-head aggregate statistical significance is reportable but is not required for every head in Paper 1.",
+    "insufficient_surface": "NOT_IDENTIFIABLE_ON_THIS_BENCHMARK and cannot count toward the two-head requirement."
+  },
+  "generalization_scope": {
+    "required": "Held-out evaluation instances or strict temporal suffixes whose query, gold outcome, and future sessions were unavailable during fitting.",
+    "same_user_adaptation": "ALLOWED_AND_ALIGNED_WITH_LONGITUDINAL_PERSONALIZATION",
+    "unseen_user_supervised_generalization": "NOT_A_PAPER1_REQUIREMENT",
+    "claim_boundary": "Performance and adaptive value on the public benchmark user/task distribution; not fully independent real-user population generalization."
+  },
+  "statistical_units": {
+    "ESConv": "dialogue; turns are repeated within dialogue",
+    "ESC-Eval": "role-card dialogue; turns and dimensions are repeated measures",
+    "ES-MemEval": "user (18); questions, summaries, and scenarios are repeated within user"
+  },
+  "official_first_metrics": {
+    "ESC-Eval": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"],
+    "ES-MemEval": "Use task-specific official metrics separately for QA, summarization, and dialogue generation.",
+    "project_metric": "Cost only: tokens, retrieval/embedding compute, retries, latency, and USD.",
+    "forbidden_aggregate": "No project-created cross-task quality score."
+  },
+  "evidence_source_roles": {
+    "ESConv": "strategy learning and official held-out strategy experiment",
+    "ESC-Eval": "generator prerequisite and external strategy-outcome exam",
+    "ES-MemEval": "primary typed-memory system and component-ablation exam",
+    "EvoEmo": "retained diagnostic/supplement only; not a required primary track or independent population"
+  },
+  "source_overlap_rule": {
+    "current_generator_qualification": "No PM training is involved, so the English-331 full run remains valid for generator qualification.",
+    "future_strategy_pm": "Report all 331 cards, but use non-ESConv-source cards for the primary cross-source analysis after ESConv training; also exclude ExTES-source cards if ExTES enters training."
+  },
+  "explicit_nonclaims": [
+    "clinical safety or psychotherapy effectiveness",
+    "long-term improvement in real users",
+    "all four legacy heads have independent causal value",
+    "MP, MS, ME, and RS each pass on every dataset",
+    "all three memory heads are statistically significant",
+    "fully independent unseen-real-user population generalization",
+    "independent causal identification of strategy-by-memory interaction"
+  ],
+  "execution_order": [
+    "Complete the active ESC-Eval English-331 official-protocol generator comparison and select one frozen generator.",
+    "Reproduce official ESConv and ES-MemEval baselines with the frozen generator and a complete Cost ledger.",
+    "Materialize one PM interface with a strategy action and MP/MS/ME typed-memory actions; reuse valid causal-boundary and cost-accounting assets, not legacy pass gates.",
+    "Run RQ1 on ESConv held-out data and ESC-Eval non-ESConv-source primary analysis.",
+    "Run RQ2 on complete ES-MemEval public v1.0.0 with outcome-blind head eligibility and component-minus ablations.",
+    "Report official outcomes, clustered uncertainty, Cost, head contribution, and exact claim boundary.",
+    "Add a minimal preregistered supplemental analysis only if an essential claim is structurally unidentifiable from official tasks."
+  ],
+  "default_blocked_as_drift": [
+    "new custom Quality/Risk/Function pass gates",
+    "new small head panels used to tune prompts or judges",
+    "EvoEmo as a required third primary pass track",
+    "per-head pass requirements on every dataset",
+    "unseen-user generalization engineering for Paper 1",
+    "outcome-informed changes to slices, baselines, metrics, or statistical units"
+  ],
+  "api_authority": false
+}

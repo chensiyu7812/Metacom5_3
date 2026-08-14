@@ -32,6 +32,7 @@ def _combined_private_hash(root: Path) -> str:
 def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     authority_path = AUTHORITY_DIR / "v3_research_authority_v1.json"
     official_first_path = AUTHORITY_DIR / "v3_official_first_evaluation_authority_v1.json"
+    core_program_path = AUTHORITY_DIR / "v3_core_research_program_v1.json"
     assets_path = AUTHORITY_DIR / "v3_asset_compatibility_manifest_v1.json"
     profile_path = AUTHORITY_DIR / "v3_active_test_profile_v1.json"
     evaluation_path = AUTHORITY_DIR / "v3_evaluation_freeze_contract_v1.json"
@@ -85,6 +86,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     official_esc_preflight_path = AUTHORITY_DIR / "g0_official_protocol_english331_preflight_v1.json"
     authority = _load_json(authority_path)
     official_first = _load_json(official_first_path)
+    core_program = _load_json(core_program_path)
     assets = _load_json(assets_path)
     profile = _load_json(profile_path)
     evaluation = _load_json(evaluation_path)
@@ -136,6 +138,18 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("unexpected authority source commit")
     if authority.get("active_evaluation_authority") != "data/v3_authority/v3_official_first_evaluation_authority_v1.json":
         failures.append("official-first authority is not active")
+    if authority.get("active_research_program") != "data/v3_authority/v3_core_research_program_v1.json":
+        failures.append("core research program is not active")
+    if official_first.get("active_research_program") != authority.get("active_research_program"):
+        failures.append("research and evaluation authorities disagree on the active core program")
+    if core_program.get("status") != "ACTIVE_SOLE_RESEARCH_PROGRAM_OFFICIAL_BENCHMARK_FIRST":
+        failures.append("core research program status changed")
+    if core_program.get("primary_success_shape", {}).get("typed_memory") != "count(useful(MP), useful(MS), useful(ME)) >= 2":
+        failures.append("two-of-three typed-memory contribution requirement changed")
+    if core_program.get("generalization_scope", {}).get("unseen_user_supervised_generalization") != "NOT_A_PAPER1_REQUIREMENT":
+        failures.append("Paper 1 unseen-user claim boundary changed")
+    if core_program.get("evidence_source_roles", {}).get("EvoEmo", "").startswith("retained diagnostic") is False:
+        failures.append("EvoEmo was silently restored as a required primary track")
     if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
         failures.append("official-first authority status changed")
     if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
@@ -168,6 +182,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
 
     required_documents = [
         PROJECT_ROOT / "docs" / "V3_MASTER_RESEARCH_PROGRAM_ZH.md",
+        PROJECT_ROOT / "docs" / "V3_CORE_RESEARCH_PROGRAM_ZH.md",
         PROJECT_ROOT / "docs" / "V3_EVALUATION_BENCHMARK_PLAN_ZH.md",
         PROJECT_ROOT / "docs" / "V3_DATASET_AND_EVIDENCE_CARDS_ZH.md",
         PROJECT_ROOT / "docs" / "V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md",
@@ -658,6 +673,13 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "primary_tracks": [row["benchmark"] for row in official_first["active_primary_tracks"]],
             "only_project_metric": official_first["only_project_defined_primary_metric_retained"]["metric"],
             "custom_evidence": official_first["custom_evidence_demotion"]["status"],
+        },
+        "active_research_program": {
+            "status": core_program["status"],
+            "research_questions": [row["id"] for row in core_program["research_questions"]],
+            "typed_memory_requirement": core_program["primary_success_shape"]["typed_memory"],
+            "unseen_user_generalization": core_program["generalization_scope"]["unseen_user_supervised_generalization"],
+            "evoemo_role": core_program["evidence_source_roles"]["EvoEmo"],
         },
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),

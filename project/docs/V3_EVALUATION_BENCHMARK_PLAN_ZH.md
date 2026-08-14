@@ -3,7 +3,13 @@
 日期：2026-08-13
 状态：`OFFICIAL-FIRST ACTIVE / CUSTOM GATES RETAINED AS NONPRIMARY HISTORY / NO INFERENCE AUTHORITY`
 
-当前唯一机器authority：`data/v3_authority/v3_official_first_evaluation_authority_v1.json`
+当前研究主线：`docs/V3_CORE_RESEARCH_PROGRAM_ZH.md`
+
+当前唯一机器evaluation authority：`data/v3_authority/v3_official_first_evaluation_authority_v1.json`
+
+研究结构已经收敛为一个 PM、两类决策和两项核心实验：ESConv→strategy PM→ESC-Eval，以及 typed memory PM→ES-MemEval。EvoEmo与旧同状态面板降级为可选诊断，不再是第三个必过主轨。三个 memory heads（MP/MS/ME）仍然显式保留，并要求至少两个在ES-MemEval官方指标的结果盲eligible slice和full-minus-head消融上显示非零、跨至少两个独立簇复现的正向贡献；这不是恢复旧Function/Quality总门。
+
+第一篇论文允许同一长期用户在适应阶段和后续评测阶段出现，不主张监督PM对完全未见真实用户的泛化。必须隔离的是评测query、gold outcome和未来session，而不是为了一个不属于本文的主张强制leave-one-user-out。
 
 ## 2026-08-14 Official-first总纠正
 
@@ -38,16 +44,17 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 
 官方实现的静态审计已经完成，详见 `V3_P0_IMPLEMENTATION_AUDIT_AND_EXIT_PLAN_ZH.md` 和 `data/v3_authority/official_benchmark_implementation_audit_v1.json`。这一步确认了ESC-Eval 655张高质量卡的公开身份，但也确认官方runner/scorer不能原样作为合格测量工具；ESC-Judge的公开100角色无法还原论文实际25角色，且仓库没有实现双向位置互换。因此“官方协议锚定”和“本地测量资格化”必须同时成立。
 
-## 考卷与主张映射
+## 考卷与主张映射（2026-08-14 当前版）
 
 | 考卷 | 主张 | 主指标 | 单位 | 不允许的外推 |
 |---|---|---|---|---|
 | ESC-Eval | generator 的多轮 ESC 基础能力 | 官方Fluency、Expression、Empathy、Information、Skill、Humanoid、Overall七维；完成率另列 | role card / dialogue | PM价值、临床效果 |
-| ESC-Judge | generator 相对 reference 的 E-I-A 支持策略 | Exploration/Insight/Action pairwise | synthetic role | 绝对及格分、真实用户效果 |
-| ES-MemEval | 长期记忆能力 | retrieval、Token F1、BERTScore、conflict、abstention、false answer | user | RS价值、独立于EvoEmo的新用户复现 |
-| ESConv | RS/R0 单会话 PM | blind pairwise Quality、atomic Risk、Cost、selection | dialogue | 纵向 memory |
-| EvoEmo response | RS/MP/MS/ME 与 joint policy | same-state Quality/Risk/Cost、marginal、interaction | 18 users | 204+ states 视为独立样本 |
-| Atomic Risk Audit | 个性化完整性 | 8类事件 + uncertain | reply/exposure/owner | 完整临床安全 |
+| ESConv | strategy PM 的监督来源与held-out策略检验 | 官方策略标签与论文可比条件 | dialogue | 纵向 memory、真实用户效果 |
+| ESC-Eval | generator资格；strategy PM的外部结果考卷 | 官方Fluency、Expression、Empathy、Information、Skill、Humanoid、Overall七维；完成率另列 | role card / dialogue | memory能力、临床效果 |
+| ES-MemEval | typed memory PM系统价值；MP/MS/ME component-minus | QA、summary、dialogue generation各自官方指标 | user（18） | 未见真实用户泛化、RS价值 |
+| Cost | 与所有官方结果并列的资源责任 | tokens、retrieval/embedding、retry、latency、USD | dialogue/user/condition | 不能改写官方质量分 |
+
+ESC-Judge、EvoEmo response、Atomic Risk Audit和旧same-state矩阵全部是默认不执行的补充/历史证据；只有官方任务无法识别论文必要主张时，才能最小化预注册恢复。
 
 ## 冻结前必须完成
 

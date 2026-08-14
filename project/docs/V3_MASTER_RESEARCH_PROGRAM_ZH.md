@@ -1,7 +1,9 @@
 # MetaCom V3 总研究方案：从有效历史证据到可审计的最终主张
 
 日期：2026-08-14
-状态：`ACTIVE V3 MASTER PLAN / ESC-EVAL HUMAN REVIEW PACKETS READY / NO NEW API EXECUTION AUTHORITY`
+状态：`SUPERSEDED BY V3_CORE_RESEARCH_PROGRAM_ZH.md / RETAINED FOR PROVENANCE`
+
+> 2026-08-14 方法论更新：当前唯一研究主线已改为 `V3_CORE_RESEARCH_PROGRAM_ZH.md`。本文件以下内容记录 official-first 纠正前的旧三外测/head-pass 方案，不再拥有未来执行或成败裁决权，尤其不得据此恢复自定义 Quality/Risk/Function 门、EvoEmo 必过轨道或“每个 head 在每个数据集分别通过”的要求。
 
 机器权威：
 

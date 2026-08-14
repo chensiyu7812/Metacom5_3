@@ -3,7 +3,8 @@
   "date": "2026-08-13",
   "status": "SUPERSEDED_FOR_FUTURE_EVALUATION_BY_OFFICIAL_FIRST_AUTHORITY_HISTORY_RETAINED",
   "active_evaluation_authority": "data/v3_authority/v3_official_first_evaluation_authority_v1.json",
-  "supersession_note": "All project-created gates and experiments below are retained as development provenance but have no future execution or verdict authority until the official ESC-Eval and ES-MemEval tracks are complete. Cost is the only project-defined metric that remains active.",
+  "active_research_program": "data/v3_authority/v3_core_research_program_v1.json",
+  "supersession_note": "The active research questions, claims, evidence roles, and execution order are defined only by v3_core_research_program_v1.json. All project-created gates and the older three-external-track/head-pass program below are retained as development provenance and have no future execution or verdict authority. Cost is the only project-defined metric that remains active.",
   "source_revision": {
     "repository": "chensiyu7812/Metacom5_3",
     "source_workspace": "legacy snap workspace",
@@ -52,11 +53,13 @@
     "rule": "Data identity, exam, pass margin, statistical unit, and claim boundary must be frozen before a head can be judged learned or formally failed."
   },
   "research_claim": {
-    "system_claim": "A learned pre-evidence Policy Manager can conditionally allocate optional emotional-support strategy and longitudinal-memory resources while preserving response quality and personalized-memory integrity, reducing resource cost relative to fixed-high, and outperforming transparent and resource-matched non-adaptive policies.",
-    "primary_component_predicate": "RS_pass AND count_pass(MP, MS, ME) >= 2",
-    "first_target_configuration": "RS + MP + MS; ME remains a bounded optional rescue after the first three heads and the formal evaluation chain are stable.",
+    "status": "SUPERSEDED_BY_ACTIVE_RESEARCH_PROGRAM",
+    "system_claim": "See v3_core_research_program_v1.json: one PM makes strategy and typed-memory allocation decisions, evaluated first by official ESConv, ESC-Eval, and ES-MemEval outcomes plus Cost.",
+    "primary_component_predicate": "strategy_value AND memory_system_value AND count(useful(MP), useful(MS), useful(ME)) >= 2",
+    "first_target_configuration": "No memory head is preselected from legacy internal panels; at least two are identified by outcome-blind ES-MemEval official-metric component ablations.",
     "clinical_claim_forbidden": true,
-    "generator_agnostic_claim_requires_cross_generator_replication": true
+    "generator_agnostic_claim_requires_cross_generator_replication": true,
+    "unseen_user_generalization_required": false
   },
   "evidence_layers": [
     {
@@ -99,6 +102,7 @@
     "objective_triangulation": "ES-MemEval retrieval, Token F1, BERTScore, conflict, abstention, and false-answer outcomes."
   },
   "external_tracks": {
+    "status": "HISTORICAL_THREE_TRACK_DESIGN_SUPERSEDED_BY_CORE_RESEARCH_PROGRAM",
     "generator_prerequisite": {
       "name": "ESC-Eval official seven-dimension primary plus optional ESC-Judge sensitivity",
       "role": "Qualify the frozen generator before formal PM claims.",
@@ -124,6 +128,7 @@
     }
   },
   "pm_pass_shape": {
+    "status": "HISTORICAL_CUSTOM_GATE_MATRIX_DEFAULT_NOT_EXECUTED",
     "versus_always_off": "Quality and atomic Risk noninferior; learned-ON slice has positive same-state value.",
     "versus_fixed_high": "Quality and atomic Risk noninferior; actual generator input tokens at least 10% lower; output completeness cannot be the saving mechanism.",
     "versus_transparent_rule": "Pareto noninferior with at least one preregistered strict selection improvement.",

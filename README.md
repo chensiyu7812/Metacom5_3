@@ -4,6 +4,8 @@ This is the active independent workspace for the Paper 1 Policy Manager research
 
 Start here:
 
+- `project/docs/V3_CORE_RESEARCH_PROGRAM_ZH.md` — current sole research-question and execution roadmap
+- `project/data/v3_authority/v3_core_research_program_v1.json` — machine-readable active research contract
 - `project/docs/V3_MASTER_RESEARCH_PROGRAM_ZH.md`
 - `project/docs/V3_EVALUATION_BENCHMARK_PLAN_ZH.md`
 - `project/docs/V3_EVALUATION_FREEZE_AUDIT_20260813_ZH.md`
@@ -16,4 +18,4 @@ Start here:
 - `V3_MIGRATION_REPORT_ZH.md`
 - `project/reports/v3_master_research_program_20260813/report.html`
 
-The historical V3.3 / PM-v1.5 files remain available for provenance, but they are not independent current authorities. Future execution must follow the V3 authority and still requires explicit approval for generator, judge, fine-tuning, or formal external calls.
+The historical V3.3 / PM-v1.5 files and the older V3 master plan remain available for provenance, but they are not independent current authorities. Future research questions and execution order follow `v3_core_research_program_v1.json`; evaluation follows the official-first authority. Generator, judge, fine-tuning, and formal external calls still require explicit approval.

@@ -16,11 +16,25 @@ def load(name: str):
 def test_official_first_is_the_only_active_evaluation_authority():
     root = load("v3_research_authority_v1.json")
     active = load("v3_official_first_evaluation_authority_v1.json")
+    core = load("v3_core_research_program_v1.json")
     assert root["active_evaluation_authority"].endswith("v3_official_first_evaluation_authority_v1.json")
+    assert root["active_research_program"].endswith("v3_core_research_program_v1.json")
+    assert active["active_research_program"] == root["active_research_program"]
+    assert core["status"] == "ACTIVE_SOLE_RESEARCH_PROGRAM_OFFICIAL_BENCHMARK_FIRST"
     assert active["status"] == "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST"
     assert [row["benchmark"] for row in active["active_primary_tracks"]] == ["ESC-Eval", "ES-MemEval"]
     assert active["only_project_defined_primary_metric_retained"]["metric"] == "Cost"
     assert active["custom_evidence_demotion"]["status"] == "RETAINED_FOR_PROVENANCE_DEFAULT_NOT_EXECUTED_NOT_PRIMARY"
+
+
+def test_core_program_requires_two_typed_memory_heads_without_unseen_user_overclaim():
+    core = load("v3_core_research_program_v1.json")
+    assert core["primary_success_shape"]["typed_memory"] == "count(useful(MP), useful(MS), useful(ME)) >= 2"
+    assert set(core["policy_decisions"]["memory"]["heads"]) == {"MP", "MS", "ME"}
+    assert core["generalization_scope"]["same_user_adaptation"].startswith("ALLOWED")
+    assert core["generalization_scope"]["unseen_user_supervised_generalization"] == "NOT_A_PAPER1_REQUIREMENT"
+    assert core["evidence_source_roles"]["EvoEmo"].startswith("retained diagnostic")
+    assert core["useful_memory_head_definition"]["metric_authority"].startswith("Only ES-MemEval official")
 
 
 def test_esc_eval_official_protocol_has_no_invented_pass_line():
