@@ -1,7 +1,7 @@
 {
   "protocol": "metacom-v3-generator-esc-eval-primary-selection-v1",
   "date": "2026-08-14",
-  "status": "ESC_EVAL_PRIMARY_RESTORED_TWO_BLINDED_HUMAN_PACKETS_MATERIALIZED_REVIEWS_PENDING",
+  "status": "PRIMARY_REVIEWS_RECEIVED_CUSTOM_PROTOCOL_PROFILE_ONLY_OFFICIAL_REPRODUCTION_NEXT",
   "decision": "Fairly choose the generator configuration for the later PM research using ESC-Eval as the external benchmark, without presenting an adapted in-house judge as the benchmark itself.",
   "official_anchor": {
     "paper": "Zhao et al., ESC-Eval, EMNLP 2024 main conference",
@@ -47,7 +47,9 @@
     },
     "excluded_from_selection": {"nemotron3_nano_30b_a3b_default_thinking": "hosted-route reliability hard failure"},
     "official_esc_rank_result": "Completed 651 local dimension inferences including descriptive Nemotron subset. Strict format validity was 0/651; anchored sensitivity was valid but heavily saturated, so ESC-RANK remains descriptive and cannot select the generator.",
-    "next_measurement": "The two independent blinded review packets are materialized. Human A and Human B must now score all 72 reliability-eligible complete dialogues on the official seven 0-to-4 dimensions; each sees one dialogue at a time and a different order, with candidate/model/provider/card/source identity absent.",
+    "review_result": "Human A and Human B each scored all 72 dialogues. Schema/identity validation passed; exact agreement was 420/504 official-dimension cells (83.33%), with seven dialogues containing eight cells that differed by at least two points.",
+    "methodology_correction": "The historical project-created absolute floors are not official ESC-Eval pass lines. They no longer authorize an official pass/fail verdict or prompt optimization toward advice quantity. See g0_esc_eval_methodology_correction_v1.json.",
+    "next_measurement": "Run a separately named official-wrapper reproduction and place its seven-dimensional profile against the paper's published reference distribution. Preserve the current research-aligned prompt for study suitability rather than repairing it merely to increase Information.",
     "assignments": 144,
     "dimension_ratings": 1008,
     "statistical_unit": "ESC-Eval role card/dialogue; seven dimensions and five turns are repeated measures.",
@@ -81,6 +83,15 @@
       "objective reliability, token, USD, and latency reporting"
     ],
     "before_formal_pm": "The generator configuration and prompt are then frozen identically for every PM and baseline arm."
+  },
+  "official_reproduction_priority": {
+    "first": true,
+    "supporter_system_prompt": "You are a helpful assistant!",
+    "turns": 5,
+    "temperature": 0,
+    "published_wrapper_output_caps": {"Qwen_example": 512, "Llama3_example": 256},
+    "interpretation": "Report the official seven-dimensional profile and location relative to published reference models. ESC-Eval defines no universal pass cutoff, so the result is a benchmark position rather than an official pass/fail certificate.",
+    "separation": "The asymmetric official example caps are retained only on the exact-wrapper reproduction surface; the MetaCom research-aligned generator remains uncapped and is reported separately."
   },
   "role_of_other_evaluators": {
     "esc_judge_eia": "Optional sensitivity analysis only; cannot replace ESC-Eval seven-dimensional primary evaluation.",

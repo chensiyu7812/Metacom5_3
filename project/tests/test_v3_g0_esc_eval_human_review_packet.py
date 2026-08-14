@@ -31,7 +31,9 @@ def test_packet_blinding_and_source_identity_are_bound() -> None:
         "reviewer_orders_independent": True,
         "same_card_candidates_not_adjacent": True,
     }
-    assert packet["api_calls"] == 0 and packet["selection_verdict"].startswith("NOT_AUTHORIZED")
+    assert packet["api_calls"] == 0
+    assert packet["status"] == "HISTORICAL_CUSTOM_PROTOCOL_REVIEWS_RECEIVED_DEMOTED_NONPRIMARY"
+    assert packet["selection_verdict"] == "NO_ACTIVE_SELECTION_AUTHORITY_UNDER_OFFICIAL_FIRST_CONTRACT"
 
 
 def test_development_decision_contract_is_outcome_blind_and_official_primary() -> None:

@@ -31,6 +31,7 @@ def _combined_private_hash(root: Path) -> str:
 
 def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     authority_path = AUTHORITY_DIR / "v3_research_authority_v1.json"
+    official_first_path = AUTHORITY_DIR / "v3_official_first_evaluation_authority_v1.json"
     assets_path = AUTHORITY_DIR / "v3_asset_compatibility_manifest_v1.json"
     profile_path = AUTHORITY_DIR / "v3_active_test_profile_v1.json"
     evaluation_path = AUTHORITY_DIR / "v3_evaluation_freeze_contract_v1.json"
@@ -79,7 +80,11 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     risk_assignments_path = AUTHORITY_DIR / "atomic_risk_fixture_assignments_v1.jsonl"
     memeval_decision_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json"
     memeval_row_identity_path = AUTHORITY_DIR / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
+    official_esc_contract_path = AUTHORITY_DIR / "g0_official_protocol_english331_contract_v1.json"
+    official_esc_manifest_path = AUTHORITY_DIR / "g0_official_protocol_english331_manifest_v1.jsonl"
+    official_esc_preflight_path = AUTHORITY_DIR / "g0_official_protocol_english331_preflight_v1.json"
     authority = _load_json(authority_path)
+    official_first = _load_json(official_first_path)
     assets = _load_json(assets_path)
     profile = _load_json(profile_path)
     evaluation = _load_json(evaluation_path)
@@ -121,12 +126,24 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     overlap_summary = _load_json(overlap_summary_path)
     risk_qualification = _load_json(risk_qualification_path)
     memeval_decision = _load_json(memeval_decision_path)
+    official_esc_contract = _load_json(official_esc_contract_path)
+    official_esc_preflight = _load_json(official_esc_preflight_path)
 
     failures: list[str] = []
 
     expected_commit = "ef318c3e35982e277883e06c5ec25cc7392eab67"
     if authority["source_revision"]["source_commit"] != expected_commit:
         failures.append("unexpected authority source commit")
+    if authority.get("active_evaluation_authority") != "data/v3_authority/v3_official_first_evaluation_authority_v1.json":
+        failures.append("official-first authority is not active")
+    if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
+        failures.append("official-first authority status changed")
+    if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
+        failures.append("official-first benchmark order changed")
+    if official_first["only_project_defined_primary_metric_retained"]["metric"] != "Cost":
+        failures.append("a project-defined primary metric other than Cost is active")
+    if official_first["custom_evidence_demotion"]["status"] != "RETAINED_FOR_PROVENANCE_DEFAULT_NOT_EXECUTED_NOT_PRIMARY":
+        failures.append("custom evidence is no longer demoted")
     if assets["source_commit"] != expected_commit:
         failures.append("authority/asset source commit mismatch")
     if authority["execution_boundary"]["this_file_authorizes"] == []:
@@ -521,8 +538,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("ESC-Eval human-review packet supporter prompt drifted")
     if not all(g0_esc_eval_human_review_packet["blinding_checks"].values()):
         failures.append("ESC-Eval human-review packet lost a blinding invariant")
-    if g0_esc_eval_human_review_packet["selection_verdict"] != "NOT_AUTHORIZED_BEFORE_TWO_REVIEWS_AND_ANY_REQUIRED_ADJUDICATION":
-        failures.append("human-review materialization improperly selects a generator")
+    if g0_esc_eval_human_review_packet["selection_verdict"] != "NO_ACTIVE_SELECTION_AUTHORITY_UNDER_OFFICIAL_FIRST_CONTRACT":
+        failures.append("historical custom human packet regained selection authority")
     if generator_esc_eval_development_decision["status"] != "FROZEN_BEFORE_ANY_HUMAN_ESC_EVAL_SCORE":
         failures.append("generator development decision was not frozen before human scores")
     if generator_esc_eval_development_decision["source"]["primary"] != "Overall":
@@ -543,8 +560,24 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     if "uncertain" not in risk_protocol["events"]:
         failures.append("atomic Risk protocol lost UNCERTAIN")
 
+    official_esc_rows_bytes = official_esc_manifest_path.read_bytes()
+    official_esc_rows = [json.loads(line) for line in official_esc_rows_bytes.decode("utf-8").splitlines() if line]
+    if len(official_esc_rows) != 331 or len({row["card_key"] for row in official_esc_rows}) != 331:
+        failures.append("official ESC-Eval English-331 manifest is incomplete")
+    if hashlib.sha256(official_esc_rows_bytes).hexdigest() != official_esc_preflight["input_hashes"][official_esc_manifest_path.name]:
+        failures.append("official ESC-Eval English-331 manifest hash drift")
+    if official_esc_contract["evaluation"]["official_pass_line"] is not None:
+        failures.append("an unofficial ESC-Eval pass line was reintroduced")
+    if official_esc_preflight["logical_calls"] != {"supporter": 3310, "local_role": 3310, "qwen_paid": 1655, "judge": 0}:
+        failures.append("official ESC-Eval English-331 call accounting changed")
+    identity_payload = official_esc_preflight["identity_payload"]
+    expected_official_identity = hashlib.sha256(json.dumps(identity_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    if official_esc_preflight["run_identity"] != expected_official_identity:
+        failures.append("official ESC-Eval English-331 identity mismatch")
+
     for path in (
         authority_path,
+        official_first_path,
         assets_path,
         profile_path,
         evaluation_path,
@@ -586,6 +619,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         overlap_summary_path,
         risk_qualification_path,
         memeval_decision_path,
+        official_esc_contract_path,
+        official_esc_preflight_path,
     ):
         if "/home/tokkio/snap/" in path.read_text(encoding="utf-8"):
             failures.append(f"legacy absolute path leaked into {path.name}")
@@ -618,6 +653,12 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "valid": not failures,
         "failures": failures,
         "source_commit": expected_commit,
+        "active_evaluation_authority": {
+            "status": official_first["status"],
+            "primary_tracks": [row["benchmark"] for row in official_first["active_primary_tracks"]],
+            "only_project_metric": official_first["only_project_defined_primary_metric_retained"]["metric"],
+            "custom_evidence": official_first["custom_evidence_demotion"]["status"],
+        },
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),
         "expected_active_test_count": profile["expected_test_count"],
@@ -732,6 +773,14 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],
         "es_memeval_row_identity": {"rows": len(row_identity_records), "sha256": row_identity_sha256},
+        "official_esc_eval_english331": {
+            "cards": len(official_esc_rows),
+            "run_identity": official_esc_preflight["run_identity"],
+            "supporter_calls": official_esc_preflight["logical_calls"]["supporter"],
+            "qwen_paid_calls": official_esc_preflight["logical_calls"]["qwen_paid"],
+            "recommended_max_usd": official_esc_preflight["budget"]["recommended_approval_ceiling_usd"],
+            "official_pass_line": official_esc_contract["evaluation"]["official_pass_line"],
+        },
         "private_evidence": private_result,
     }
 

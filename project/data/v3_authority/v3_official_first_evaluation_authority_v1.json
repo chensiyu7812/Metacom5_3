@@ -1,0 +1,74 @@
+{
+  "protocol": "metacom-v3-official-first-evaluation-authority-v1",
+  "date": "2026-08-14",
+  "status": "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST",
+  "decision": "Until the two official benchmark tracks are complete, only ESC-Eval, ES-MemEval, their official metrics/protocols, and measured Cost may control evaluation execution or research interpretation.",
+  "active_primary_tracks": [
+    {
+      "order": 1,
+      "benchmark": "ESC-Eval",
+      "purpose": "Evaluate and choose the study generator's emotional-support capability.",
+      "official_surface": "All 331 public English high-quality role cards, pinned ESC-Role, five-turn interaction, public helpful-assistant wrappers, official seven dimensions, and pinned ESC-RANK.",
+      "metrics": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"],
+      "pass_line": null,
+      "decision_form": "Report profile and reference-distribution position. Select a study generator transparently; never describe the selection as an official pass certificate because ESC-Eval publishes no universal pass line.",
+      "active_contract": "g0_official_protocol_english331_contract_v1.json"
+    },
+    {
+      "order": 2,
+      "benchmark": "ES-MemEval",
+      "purpose": "Evaluate the study system's personalized long-term emotional-support memory capability.",
+      "official_surface": "Complete public v1.0.0 artifact: 1427 QA, 125 summarization items, and 34 dialogue-generation scenarios across 18 users.",
+      "metrics": ["QA Token F1", "QA BERTScore", "official QA LLM-as-Judge", "retrieval Recall@k", "retrieval nDCG@k", "ROUGE-1/2/L", "event precision/recall/F1", "official summary LLM score", "official dialogue-generation observation metrics"],
+      "pass_line": null,
+      "identity": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json",
+      "paper_boundary": "The WWW 2026 paper reports 1209 QA rows, while the complete public v1.0.0 artifact contains 1427 and does not expose the paper's 1209 row identities. Results must use the public-1427 name and cannot claim exact paper-row replication."
+    }
+  ],
+  "only_project_defined_primary_metric_retained": {
+    "metric": "Cost",
+    "components": ["input tokens", "output tokens", "retrieval/embedding compute", "API retries", "latency", "USD"],
+    "role": "Report alongside official benchmark outcomes; Cost cannot alter or redefine an official benchmark score."
+  },
+  "custom_evidence_demotion": {
+    "status": "RETAINED_FOR_PROVENANCE_DEFAULT_NOT_EXECUTED_NOT_PRIMARY",
+    "includes": [
+      "all project-created absolute pass floors and noninferiority margins",
+      "custom Quality, Risk, Function, executor, and treatment-development gates",
+      "ESC-Judge-style adapted judge runs",
+      "same-state PM baseline matrices and head-specific panels",
+      "prompt-repair experiments",
+      "custom autonomy, low-burden, premature-action, integrity, and relationship-risk rubrics"
+    ],
+    "history_policy": "Do not delete prior files or outcomes; retain them as immutable development provenance. They have no active decision authority under this contract.",
+    "reactivation_rule": "A supplemental measure may be reactivated only after both official tracks are reported and a specific desired claim is shown to be structurally unidentifiable from official outcomes. The gap, minimal added construct, scoring protocol, and claim boundary must then be preregistered before new outcomes."
+  },
+  "prompt_policy": {
+    "official_track": "Use the public benchmark wrapper even when it differs from the eventual product prompt.",
+    "research_stack": "Preserve g0_research_aligned_supporter_prompt_v1.json unchanged; do not optimize it against official score dimensions before the official track is reported.",
+    "no_metric_gaming": true
+  },
+  "execution_order": [
+    "Complete ESC-Eval official-protocol English-331 generation for Qwen non-thinking and Llama 8B incumbent.",
+    "Run the pinned public ESC-RANK using its official output handling and report all seven dimensions plus reference-table position and Cost.",
+    "Select/freeze the study generator based on the official profile, reliability, and Cost without inventing an official pass line.",
+    "Run ES-MemEval-Public-v1.0.0-1427 QA first, then its 125 summary and 34 dialogue-generation tasks, using official prompts, baselines, and metrics.",
+    "Map the resulting official evidence to the intended research claims and register only the smallest unavoidable supplemental experiment, if any."
+  ],
+  "forbidden_until_official_tracks_complete": [
+    "new PM head tuning or selector fitting driven by custom scores",
+    "new custom blind-judge calls",
+    "changing the research-aligned supporter prompt to raise a single official dimension",
+    "declaring a head or the study successful/failed from retained custom gates",
+    "presenting a public-artifact subset as a complete official benchmark"
+  ],
+  "supersedes_for_future_execution": [
+    "v3_evaluation_freeze_contract_v1.json",
+    "generator_esc_eval_development_decision_contract_v1.json",
+    "generator_fair_selection_protocol_v1.json",
+    "evaluation_margin_justification_v1.json",
+    "risk_adjudication_protocol_v1.json",
+    "risk_instrument_qualification_v1.json"
+  ],
+  "api_authority": false
+}

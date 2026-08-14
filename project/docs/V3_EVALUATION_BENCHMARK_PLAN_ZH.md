@@ -1,11 +1,36 @@
 # MetaCom V3 Evaluation Benchmark Plan
 
 日期：2026-08-13
-状态：`V3-P0 EVIDENCE ARCHITECTURE + OFFICIAL SCALE MAPPING FROZEN / V3-P1 MEASUREMENT QUALIFICATION PENDING / NO INFERENCE AUTHORITY`
+状态：`OFFICIAL-FIRST ACTIVE / CUSTOM GATES RETAINED AS NONPRIMARY HISTORY / NO INFERENCE AUTHORITY`
 
-机器合同：`data/v3_authority/v3_evaluation_freeze_contract_v1.json`
+当前唯一机器authority：`data/v3_authority/v3_official_first_evaluation_authority_v1.json`
+
+## 2026-08-14 Official-first总纠正
+
+在ESC-Eval人评暴露出自定义`2.5`门槛与研究者实际质量判断冲突后，项目停止让自定义evaluation反复控制研究。所有项目自设及格线、Quality/Risk/Function、executor、head panel、same-state baseline矩阵、改写版judge和prompt修复实验，全部降级为**保留但默认不执行的开发历史**。唯一继续全程主报的项目自定义量是实际Cost（tokens、检索/embedding、retry、latency、USD），且Cost不得改写官方分数。
+
+当前研究主线只有：
+
+1. **ESC-Eval官方协议**：331张公开英文高质量卡、固定ESC-Role、五轮交互、官方wrapper、官方七维和ESC-RANK。官方没有统一pass line，因此报告七维画像及其在论文参考模型分布中的位置，不再制造“2.5即合格”。
+2. **ES-MemEval官方公开任务**：`Public-v1.0.0-1427`全部QA、125个summary和34个dialogue-generation scenario，使用官方prompt、baseline和指标。正式论文1209题与公开1427题身份不一致必须披露，不能伪装精确paper-row复现。
+
+两张官方考卷完成后，先逐条判断它们能支持哪些论文主张。只有明确证明某个必要主张在官方任务结构上不可识别，才允许预注册一个最小补充实验；不能再先造门、反复内部循环，再用它决定研究是否成功。
 
 ## 当前冻结裁定
+
+### 2026-08-14 人评后的方法论纠正
+
+ESC-Eval原论文没有发布统一的“及格线”。此前在结果前冻结的`Information >= 2.5`是项目内部development规则，不是官方门槛；它保留为历史预注册记录，但不再有权把模型宣布为“ESC-Eval官方不合格”，也不能据此要求generator增加建议。当前24卡结果必须称为“研究对齐prompt上的ESC-Eval官方七维rubric画像”，不能称为官方wrapper复现或完整ESC-Eval。
+
+官方`Information`维度同时评价建议的数量和有效性：少于五条但全部有效可以得到较高分，很多建议且全部有效才会达到最高档。论文自身也指出，通用模型会通过更长、更结构化的建议获得较高建议分，却在人类感和以人为本上较弱。MetaCom强调的自主决定、低负担、不过早行动和家庭/伴侣关系干预风险，因此必须作为独立补充构念报告，不能塞进官方七维，也不能为了刷`Information`而牺牲它们。
+
+新的证据顺序是：
+
+1. 先按官方wrapper、五轮ESC-Role和官方七维跑具名“官方协议复现”，把结果放到论文已发表参考模型分布中，不制造pass/fail；
+2. 再报告当前研究对齐prompt的人评画像，用于判断这个generator是否适合MetaCom实际产品理念；
+3. 最后单独通过自主性、低负担、关系干预风险、完整性和approved-plan/evidence executor，才把generator冻结给所有PM与baseline。
+
+对应机器裁定为`g0_esc_eval_methodology_correction_v1.json`。此前拟议的“为了补Information而新增更多建议”的prompt-v2在任何新生成前撤销。
 
 整体状态为 `P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。这只表示证据责任和考法已冻结，不表示量表可靠性、数值及格线或generator已经合格。目前的42/90 stress-test回复继续保留；generator主线比较8B与Qwen 3.7 Plus，正确的NVIDIA补充候选是`nvidia/nemotron-3-nano-30b-a3b`，且必须先过小型transport gate。若更换generator，旧轮归档为不可补成正式混栈矩阵的诊断。
 
