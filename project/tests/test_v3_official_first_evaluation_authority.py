@@ -62,8 +62,10 @@ def test_one_factorized_pm_uses_task_masks_and_keeps_step1_step2_separate():
     masks = pm["task_action_masks"]
     assert masks["ESConv_and_ESC_Eval_strategy"]["hard_off"] == ["MP", "MS", "ME"]
     assert masks["ES_MemEval_QA_and_Summary"]["hard_off"] == ["RS"]
-    assert masks["ES_MemEval_Dialogue_Generation"]["hard_off"] == []
-    assert masks["ES_MemEval_Dialogue_Generation"]["legal_action_surface"] == "full 16-action joint space"
+    assert masks["ES_MemEval_Dialogue_Generation"]["hard_off"] == ["RS"]
+    assert masks["ES_MemEval_Dialogue_Generation"]["official_memory_settings"] == ["No_Memory", "Full_History", "RAG"]
+    assert pm["optional_future_joint_adaptation"]["active"] is False
+    assert "never an official ES-MemEval" in pm["optional_future_joint_adaptation"]["naming_boundary"]
 
 
 def test_esc_eval_official_protocol_has_no_invented_pass_line():

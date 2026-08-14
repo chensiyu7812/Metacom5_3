@@ -46,9 +46,11 @@ Step 2 不是第二个 PM，也不重新判断开关。它接收 Step 1 已冻�
 |---|---|---|
 | ESConv、ESC-Eval strategy实验 | `M0+R0`或`M0+RS`；MP/MS/ME hard-OFF | 没有可归因的纵向私有记忆 |
 | ES-MemEval QA、Summary | MP/MS/ME子集；RS hard-OFF | 不是支持回复任务，RS不可识别 |
-| ES-MemEval Dialogue Generation | 完整MP/MS/ME/RS 16动作可用 | 同时观察长期记忆、个性化与情绪支持 |
+| ES-MemEval Dialogue Generation（官方优先主分析） | MP/MS/ME子集；RS固定为同一基础条件 | 官方DG比较的是No-Mem、Full-History、RAG等memory settings，虽评价ES但没有RS策略干预 |
 
-因此 ESConv 与 ES-MemEval 不是训练两个 PM，而是在两个结构上不同但互补的 observation/action slices 上训练和评估同一个 factorized PM。ES-MemEval Dialogue Generation 是四头共同进入同一 Step 2 的集成证据；QA/Summary提供更干净的memory客观能力证据。
+因此 ESConv 与 ES-MemEval 不是训练两个 PM，而是在两个结构上不同但互补的 observation/action slices 上训练和评估同一个 factorized PM。官方ES-MemEval Dialogue Generation可以检验memory选择是否改善长期记忆、个性化和支持回复，但**不能直接证明RS与三个memory heads的完整16动作联合策略**。第一篇论文当前也不主张独立识别strategy×memory interaction。
+
+只有在ESConv、ESC-Eval和ES-MemEval官方主结果完成后，若“同一个factorized PM”仍缺少必要的端到端联合运行证据，才允许把ES-MemEval DG扩展为一个预注册的最小`RS fixed/off × memory policy`补充实验。它必须明确称为MetaCom adaptation，不得称为ES-MemEval官方条件；在此之前不激活完整16动作DG实验。
 
 RS/MP/MS/ME 不再各自绑定一套项目自建“总及格门”。研究结果由公开 benchmark 的官方任务指标裁决，head 的价值通过同一官方指标下的 component-minus 消融解释。
 
@@ -82,7 +84,7 @@ RS/MP/MS/ME 不再各自绑定一套项目自建“总及格门”。研究结�
 - 主要结果：官方任务表现与 Cost 的 Pareto 关系。
 - 统计单位：18 个 user；题目和场景是 user 内重复测量，不能当作 1427 个独立用户。
 - 可支持主张：显式、类型化、状态依赖的 memory allocation 在公开长期记忆 benchmark 上具有系统价值。
-- 集成责任：QA/Summary只测memory slice；Dialogue Generation开放RS与memory heads的完整联合动作，用官方LT-Mem、Personalization和ES结果验证它们确实通过同一Step 2共同工作。
+- DG责任：QA/Summary测更客观的memory能力；Dialogue Generation在RS固定条件下比较No-Mem、Full-History、官方RAG和typed-memory PM，并使用官方observation指标与LT-Mem、Personalization、ES评分。它不承担四头16动作联合证明。
 
 第一篇论文不要求“在完全未见用户上泛化”。允许同一长期用户在适应阶段与之后的评测阶段出现，这与个性化系统的目标一致；但评测 query、gold outcome 和未来 session 不得进入拟合。若官方 release 没有可直接使用的 train/test 划分，则采用用户内严格时间前缀→后缀，或按事实/事件组隔离的 outcome-blind cross-fitting。结论边界明确写成“在该公开 benchmark 的用户与任务分布上”。
 

@@ -169,8 +169,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("ESConv/ESC-Eval strategy action mask changed")
     if task_masks.get("ES_MemEval_QA_and_Summary", {}).get("hard_off") != ["RS"]:
         failures.append("ES-MemEval QA/Summary action mask changed")
-    if task_masks.get("ES_MemEval_Dialogue_Generation", {}).get("hard_off") != []:
-        failures.append("ES-MemEval dialogue generation no longer exposes the full joint PM")
+    if task_masks.get("ES_MemEval_Dialogue_Generation", {}).get("hard_off") != ["RS"]:
+        failures.append("ES-MemEval official-aligned dialogue generation must keep RS fixed")
+    if pm_architecture.get("optional_future_joint_adaptation", {}).get("active") is not False:
+        failures.append("custom four-head DG adaptation was activated before official results")
     if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
         failures.append("official-first authority status changed")
     if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
@@ -704,7 +706,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "causal_baseline_layer": "same_stack_baseline_rerun",
             "pm_identity": core_program["pm_architecture"]["identity"],
             "step2_is_second_pm": core_program["pm_architecture"]["step2"]["is_second_pm"],
-            "integrated_action_surface": core_program["pm_architecture"]["task_action_masks"]["ES_MemEval_Dialogue_Generation"]["legal_action_surface"],
+            "official_dg_action_surface": core_program["pm_architecture"]["task_action_masks"]["ES_MemEval_Dialogue_Generation"]["legal_action_surface"],
+            "custom_joint_dg_active": core_program["pm_architecture"]["optional_future_joint_adaptation"]["active"],
         },
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),

@@ -28,7 +28,8 @@ def test_v3_public_workspace_authority_is_consistent() -> None:
         "causal_baseline_layer": "same_stack_baseline_rerun",
         "pm_identity": "ONE_FACTORIZED_PRE_GENERATION_PM",
         "step2_is_second_pm": False,
-        "integrated_action_surface": "full 16-action joint space",
+        "official_dg_action_surface": "eight memory subsets with one fixed common strategy condition",
+        "custom_joint_dg_active": False,
     }
 
 

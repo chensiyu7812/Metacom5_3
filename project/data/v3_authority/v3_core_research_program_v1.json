@@ -40,11 +40,19 @@
         "legal_action_surface": "eight memory subsets with R0 fixed"
       },
       "ES_MemEval_Dialogue_Generation": {
-        "legal_components": ["MP", "MS", "ME", "RS"],
-        "hard_off": [],
-        "legal_action_surface": "full 16-action joint space",
-        "role": "Official-benchmark integration evidence for one PM and one Step 2."
+        "legal_components": ["MP", "MS", "ME"],
+        "hard_off": ["RS"],
+        "legal_action_surface": "eight memory subsets with one fixed common strategy condition",
+        "official_memory_settings": ["No_Memory", "Full_History", "RAG"],
+        "official_outcomes": ["observation_recall", "observation_weighted_score", "LT_Mem", "Personalization", "Emotional_Support"],
+        "role": "Official-aligned response evaluation of memory allocation; not official evidence for MetaCom's four-head 16-action joint policy."
       }
+    },
+    "optional_future_joint_adaptation": {
+      "active": false,
+      "activation_rule": "Only after official ESConv, ESC-Eval, and ES-MemEval results show that an essential one-PM integration claim remains unidentifiable.",
+      "possible_design": "A minimal preregistered RS fixed/off by memory-policy extension on ES-MemEval dialogue generation.",
+      "naming_boundary": "MetaCom supplemental adaptation, never an official ES-MemEval condition."
     },
     "prompt_invariance": {
       "within_task": "Same base task prompt, generator, decoding, and output handling across arms; only the legitimately selected strategy or memory resource block may differ.",
