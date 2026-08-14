@@ -7,7 +7,7 @@
 
 ## 当前冻结裁定
 
-整体状态为 `P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。这只表示证据责任和考法已冻结，不表示量表可靠性、数值及格线或generator已经合格。目前的42/90 stress-test回复继续保留，但先比较8B、70B与Qwen 3.7 Plus；若更换generator，旧轮归档为不可补成正式混栈矩阵的诊断。
+整体状态为 `P0_EVIDENCE_ARCHITECTURE_FREEZE_COMPLETE_OFFICIAL_SCALE_MAPPING_REPAIRED_P1_MEASUREMENT_QUALIFICATION_REQUIRED`。这只表示证据责任和考法已冻结，不表示量表可靠性、数值及格线或generator已经合格。目前的42/90 stress-test回复继续保留；generator主线比较8B与Qwen 3.7 Plus，正确的NVIDIA补充候选是`nvidia/nemotron-3-nano-30b-a3b`，且必须先过小型transport gate。若更换generator，旧轮归档为不可补成正式混栈矩阵的诊断。
 
 ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEval-Public-v1.0.0-1427`，逐题身份清单覆盖1427行/18 owner，明确不声称复现论文1209题。ESC本地协议、重叠筛查、ESC-RANK公开artifact责任、same-stack reference和margin推导均已冻结。P1剩余的是执行性的测量资格化：修复scorer runtime、双人非正式anchor、Risk fixture、数值margin登记与generator选择。
 
@@ -44,7 +44,7 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 - 主运行必须保持官方 role cards、交互方式和七维完整报告；
 - ESC-RANK公开仓库没有逐条人工标注与split ID，因此不再无期限“寻找后再开始”：其论文construct和655卡考卷保留，修复版scorer作描述性七维外部指标，作为单独绝对pass/fail工具明确为`UNQUALIFIED`；
 - published Llama3-8B/ChatGPT/ESC-specialized 分数只作背景，不能与不同代码、模型版本和 prompt 的新分数直接作正式 NI；
-- 同栈reference冻结为NVIDIA `meta/llama-3.3-70b-instruct`，与8B交错复跑；hosted route不暴露不可变weight revision的限制必须披露；
+- 2026-08-14纠正：此前把用户指定的Nemotron误写成NVIDIA `meta/llama-3.3-70b-instruct`。70B原始结果只保留为误配route诊断，不能用于generator选择；正确route为`nvidia/nemotron-3-nano-30b-a3b`，先按冻结的429、失败率与median/p90延迟门槛做2卡transport canary；hosted route不暴露不可变weight revision的限制仍须披露；
 - generator选择由硬可靠性、executor、同栈E-I-A和Risk共同决定，不用ESC-RANK Average设一个伪精确分数线；
 - low-burden guardrail 单独审计，防止建议数量奖励制造“高分但不合适”的系统。
 
@@ -57,11 +57,13 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 旧identity `bd2b4a12...`只用了`You are a helpful assistant!`，又统一施加256-token上限；45个Qwen turn中25个、45个8B turn中21个以`length`结束。该轮已在`g0_bd2b_prompt_cap_measurement_closeout_v1.json`中关闭：可用于旧surface的transport/latency诊断和证明上限确实binding，禁止用于最大能力排序或generator通过/淘汰。
 
-替代G0在相同24卡上比较四个**配置**：8B、70B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking upper bound。provider请求完全省略`max_tokens/max_completion_tokens`；回复长度、是否自然完成、低负担/啰嗦度、tokens与finish reason都成为结果，而不是研究者预先截断。Quality以ESC-Judge的Exploration、Insight、Action双顺序pairwise为主，ESC-RANK七维只作描述性敏感性，人类小anchor在最终冻结前执行；延迟报告完整非流式端到端median/p90、吞吐与失败率，不虚构跨provider不可比的TTFT。
+替代G0在相同24卡上以8B和Qwen 3.7 Plus non-thinking为主候选，Qwen thinking作能力上界敏感性；Nemotron只有先过单独transport gate才加入。误配的70B不再是候选。provider请求完全省略`max_tokens/max_completion_tokens`；回复长度、是否自然完成、低负担/啰嗦度、tokens与finish reason都成为结果，而不是研究者预先截断。Quality以ESC-Judge的Exploration、Insight、Action双顺序pairwise为主，ESC-RANK七维只作描述性敏感性，人类小anchor在最终冻结前执行；延迟报告完整非流式端到端median/p90、吞吐与失败率，不虚构跨provider不可比的TTFT。
 
 先跑2卡canary，仅检验transport、prompt、自然完成和预算机制，绝不从2卡选模型；再跑24卡development screen。硬门失败者淘汰，剩余候选按Quality、atomic Risk和latency的Pareto关系筛选，不制造加权总分，也不让低延迟覆盖质量失败。最终候选另跑approved-plan/evidence executor和更大资格集；executor仍只识别generator能否实现已批准内容，不是PM selector证据。
 
-2卡canary已在identity `9852e4c4...`下完成：40/40 supporter turn成功，0次length finish，0条terminal trajectory，Qwen实际费用`$0.0194692`。8B、Qwen non-thinking和Qwen thinking均10/10首次成功；70B虽经重试得到10/10文本，但10个turn中只有4个首次成功，出现5次network timeout和1次HTTP 5xx。成功请求自身的median latency分别约为8B 0.53s、Qwen non-thinking 2.15s、Qwen thinking 14.46s、70B 68.94s；70B数值还不含失败请求等待，因此只是下界。Qwen thinking消耗8,965 billed completion tokens，其中provider报告8,302 reasoning tokens；non-thinking总计628 completion tokens，而两者推断的可见token分别663与628。该结果只证明新runtime与无截断合同可运行；Quality尚未正式判断，禁止从两张卡选择generator。
+2卡canary已在identity `9852e4c4...`下完成：40/40 supporter turn成功，0次length finish，0条terminal trajectory，Qwen实际费用`$0.0194692`。8B、Qwen non-thinking和Qwen thinking均10/10首次成功；误配70B虽经重试得到10/10文本，但10个turn中只有4个首次成功，出现5次network timeout和1次HTTP 5xx。该70B观测不能代表Nemotron，也不得进入模型排序。其余成功请求的median latency约为8B 0.53s、Qwen non-thinking 2.15s、Qwen thinking 14.46s。Qwen thinking消耗8,965 billed completion tokens，其中provider报告8,302 reasoning tokens；non-thinking总计628 completion tokens，而两者推断的可见token分别663与628。该结果只证明新runtime与无截断合同可运行；Quality尚未正式判断，禁止从两张卡选择generator。
+
+正确Nemotron route已物化为新的零调用identity。transport canary仍用同两张卡、同prompt、同role-player与同seed，10个supporter turn，不设输出上限，并把三类现象分开：只有HTTP 429/Retry-After叫明确限流；timeout/408/5xx叫route instability；正常完成但median/p90过线叫slow service。任一冻结操作门失败就停止Nemotron，不让它拖慢24卡主测；这只淘汰当前托管route，不是宣称模型本体能力差。
 
 ## ESC-Judge 稳健性方案
 

@@ -40,7 +40,7 @@ P0九个证据架构门现已全部完成；这不等于测量有效性已经解
 1. ~~对 ES-MemEval 作一次明确选择。~~ 已冻结`ES-MemEval-Public-v1.0.0-1427`、1427行逐题身份和非精确1209复现边界；
 2. ~~为三个官方 benchmark 建立本地协议 wrapper 和 runtime 边界。~~ 已物化655张ESC-Eval卡、ESC-Judge 25/100角色选择、150个双向E-I-A单元和ES-MemEval 1427行身份；真正模型依赖等候选/reference/scorer身份冻结后再锁；
 3. ESC-RANK已完成公开artifact审计：论文/考卷构念有效，修复后可作描述性指标；由于逐条人标未公开，绝对pass/fail用途明确标为`UNQUALIFIED`；
-4. 同栈reference已选为NVIDIA同接口`meta/llama-3.3-70b-instruct`，五轮、temperature=0、交错执行与provider alias不可精确钉权重的边界已冻结；
+4. 同栈reference已纠正：此前的`meta/llama-3.3-70b-instruct`是误配route，只保留诊断证据；用户指定的正确route为`nvidia/nemotron-3-nano-30b-a3b`，需先通过冻结的2卡transport gate。五轮、temperature=0、无研究者输出上限及provider alias不可精确钉权重的边界保持冻结；
 5. ~~物化 ESConv/ExTES 与 ESC-Eval 的 source、exact、normalized、semantic overlap。~~ 228张同源卡已完成全源比对；若两源都用于SFT，英文污染隔离主考卷为103张；
 6. Risk packet/schema/盲分配的无正式数据设计门已完成；两名人类评审在看gold前完成18包/36任务资格化并冻结数值margin，是P1正式判决前门槛；
 7. outcome-blind margin合同已冻结：P0冻结推导、硬工程门与上限，P1用非正式anchor登记数值，不得从正式结果倒推。
@@ -52,7 +52,7 @@ P0九个证据架构门现已全部完成；这不等于测量有效性已经解
 下一批不再回到head内部循环，而是做一次有边界的测量与generator资格化：
 
 1. ESC-RANK静态overlay preflight已完成：InternLM2/adapters revision、两处路径修正和只接受完整`0..4`的parser均已锁；P1还需隔离依赖环境、权重下载与load smoke（须另批）；
-2. 旧G0 `bd2b4a12...`在运行中暴露supporter prompt过弱和256-token统一截断，已停止且禁止用于最大能力排序。替代G0绑定了先行研究对齐prompt、无研究者输出上限、8B/70B/Qwen non-thinking/Qwen thinking四配置，以及Quality/latency/Pareto责任；先跑2卡canary，再完成24卡screen。16包旧executor继续保留为既有开发诊断，但须在base supporter候选明确后用同样无截断原则另行冻结；
+2. 旧G0 `bd2b4a12...`在运行中暴露supporter prompt过弱和256-token统一截断，已停止且禁止用于最大能力排序。替代G0绑定了先行研究对齐prompt、无研究者输出上限、8B/Qwen non-thinking主候选与Qwen thinking敏感性。误配70B已退出；正确Nemotron先过transport gate才可加入Quality/latency/Pareto比较。16包旧executor继续保留为既有开发诊断，但须在base supporter候选明确后用同样无截断原则另行冻结；
 3. Risk 18包双评与非正式Quality anchor只用于量表校准，登记数值margin后即关闭，不消费正式PM回复；
 4. 硬门合格且Pareto非支配的候选才进入ESC-Judge/人类anchor；最终选中者完成G1全英文ESC-Eval和executor后冻结。若不再使用8B，旧42/90轮只归档为诊断，不再补成混栈“正式结果”。
 

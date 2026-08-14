@@ -80,7 +80,8 @@ def test_esc_rank_public_calibration_boundary_and_same_stack_reference_are_froze
         "primary_adapters": 14,
         "inference_calls": 0,
     }
-    assert result["same_stack_reference"] == "meta/llama-3.3-70b-instruct"
+    assert result["same_stack_reference"] == "nvidia/nemotron-3-nano-30b-a3b"
+    assert result["historical_wrong_reference"] == "meta/llama-3.3-70b-instruct"
     assert result["numeric_calibration_phase"] == "P1_PENDING_BEFORE_FORMAL_VERDICT"
     assert result["esc_rank_runtime_preflight"] == {
         "status": "STATIC_PASS",

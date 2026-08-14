@@ -51,6 +51,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0r2_preflight_path = AUTHORITY_DIR / "g0_research_aligned_generator_preflight_v2.json"
     g0r2_manifest_path = AUTHORITY_DIR / "g0_research_aligned_screening_manifest_v2.jsonl"
     g0r2_closeout_path = AUTHORITY_DIR / "g0_research_aligned_canary_closeout_v2.json"
+    g0_wrong_reference_correction_path = AUTHORITY_DIR / "g0_wrong_70b_reference_correction_v1.json"
+    g0_nemotron_contract_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_contract_v1.json"
+    g0_nemotron_preflight_path = AUTHORITY_DIR / "g0_nemotron30b_transport_canary_preflight_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -83,6 +86,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0r2_prompt = _load_json(g0r2_prompt_path)
     g0r2_preflight = _load_json(g0r2_preflight_path)
     g0r2_closeout = _load_json(g0r2_closeout_path)
+    g0_wrong_reference_correction = _load_json(g0_wrong_reference_correction_path)
+    g0_nemotron_contract = _load_json(g0_nemotron_contract_path)
+    g0_nemotron_preflight = _load_json(g0_nemotron_preflight_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -143,6 +149,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         PROJECT_ROOT / "scripts" / "v3" / "15_materialize_g0_research_aligned_generator.py",
         PROJECT_ROOT / "scripts" / "v3" / "16_run_g0_research_aligned_esc.py",
         PROJECT_ROOT / "scripts" / "v3" / "17_closeout_g0_research_aligned_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "18_materialize_g0_nemotron30b_transport_canary.py",
+        PROJECT_ROOT / "scripts" / "v3" / "19_run_g0_nemotron30b_transport_canary.py",
         REPO_ROOT / "V3_MIGRATION_REPORT_ZH.md",
     ]
     failures.extend(
@@ -157,7 +165,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 74:
+    if profile["expected_test_count"] != 77:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -384,6 +392,19 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("same-stack reference route changed")
     if same_stack_reference["accessibility_check"]["inference_calls"] != 0:
         failures.append("same-stack accessibility check unexpectedly used inference")
+    if g0_wrong_reference_correction["status"] != "CORRECTED_70B_REMOVED_FROM_CANDIDATE_SET_RAW_EVIDENCE_RETAINED":
+        failures.append("wrong 70B reference is not explicitly corrected")
+    if g0_wrong_reference_correction["correction"]["wrong_route"] != same_stack_reference["reference"]["model_route"]:
+        failures.append("wrong-reference correction does not bind the historical 70B route")
+    corrected_reference = g0_wrong_reference_correction["correction"]["intended_route"]
+    if corrected_reference != "nvidia/nemotron-3-nano-30b-a3b":
+        failures.append("corrected Nemotron route changed")
+    if g0_nemotron_contract["candidate"]["model"] != corrected_reference:
+        failures.append("Nemotron canary does not use the corrected route")
+    if g0_nemotron_preflight["model"] != corrected_reference or g0_nemotron_preflight["api_calls"] != 0:
+        failures.append("Nemotron preflight is not a zero-call corrected-route identity")
+    if g0_nemotron_preflight["run_identity"] != "92bd2e530a22525ad7a8afc6daff1d6d178faad42c9c6dbd01349eeba5f740bc":
+        failures.append("Nemotron transport identity drifted")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -416,6 +437,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0r2_prompt_path,
         g0r2_preflight_path,
         g0r2_closeout_path,
+        g0_wrong_reference_correction_path,
+        g0_nemotron_contract_path,
+        g0_nemotron_preflight_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -476,7 +500,8 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "risk_instrument": {"packets": len(risk_packets), "assignments": len(risk_assignments), "formal_replies_consumed": 0},
         "esc_rank_public_qualification": {"public_human_label_rows": 0, "primary_adapters": 14, "inference_calls": 0},
         "esc_rank_runtime_preflight": {"status": "STATIC_PASS", "weights_downloaded": 0, "inference_calls": 0},
-        "same_stack_reference": same_stack_reference["reference"]["model_route"],
+        "same_stack_reference": corrected_reference,
+        "historical_wrong_reference": same_stack_reference["reference"]["model_route"],
         "g0_superseded_prompt_cap_screen": {
             "status": g0_bd2b_closeout["status"],
             "cards": len(g0_rows),
@@ -494,6 +519,12 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "canary_status": g0r2_closeout["status"],
             "canary_successful_turns": g0r2_closeout["api_scope"]["supporter_successful_turns"],
             "canary_qwen_actual_usd": g0r2_closeout["qwen_budget"]["actual_usd"],
+        },
+        "g0_nemotron_transport_canary": {
+            "model": g0_nemotron_preflight["model"],
+            "run_identity": g0_nemotron_preflight["run_identity"],
+            "api_calls": g0_nemotron_preflight["api_calls"],
+            "logical_supporter_calls": g0_nemotron_preflight["logical_supporter_calls"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

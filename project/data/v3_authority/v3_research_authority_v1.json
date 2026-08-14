@@ -23,6 +23,9 @@
     "esc_rank_public_qualification_audit": "data/v3_authority/esc_rank_public_qualification_audit_v1.json",
     "esc_rank_runtime_preflight": "data/v3_authority/esc_rank_runtime_preflight_v1.json",
     "same_stack_generator_reference": "data/v3_authority/same_stack_generator_reference_v1.json",
+    "wrong_70b_reference_correction": "data/v3_authority/g0_wrong_70b_reference_correction_v1.json",
+    "nemotron30b_transport_contract": "data/v3_authority/g0_nemotron30b_transport_canary_contract_v1.json",
+    "nemotron30b_transport_preflight": "data/v3_authority/g0_nemotron30b_transport_canary_preflight_v1.json",
     "evaluation_margin_justification": "data/v3_authority/evaluation_margin_justification_v1.json",
     "risk_adjudication_protocol": "data/v3_authority/risk_adjudication_protocol_v1.json",
     "risk_instrument_qualification": "data/v3_authority/risk_instrument_qualification_v1.json",
@@ -46,7 +49,7 @@
     {
       "layer": "generator_qualification",
       "primary": "ESC-Eval official protocol with repaired ESC-RANK as a descriptive profile, plus hard reliability and executor gates",
-      "robustness": "ESC-Judge pairwise E-I-A comparison against a selected same-NVIDIA-route Llama 3.3 70B reference",
+      "robustness": "ESC-Judge pairwise E-I-A comparison among operationally eligible frozen candidates; the mistaken Llama 3.3 70B route is diagnostic-only, and the intended NVIDIA route is Nemotron 3 Nano 30B A3B pending its transport gate",
       "cannot_prove": "PM routing value, longitudinal memory, clinical safety"
     },
     {
@@ -122,7 +125,7 @@
     "MP": "V1.1 showed Quality 5 wins / 1 loss / 1 neutral with no material Risk increase, but zero attributable Function across 5 CONSTRAIN cases; plan-first constraint treatment is required.",
     "ME": "Deferred bounded rescue; not required before RS plus two memory heads can be attempted with MP and MS.",
     "external_stress_test": "42 of 90 generator calls are schema-valid; 48 are missing due provider HTTP 429. The incomplete arm matrix permits no scientific decision.",
-    "generator": "Llama 3.1 8B is a frozen diagnostic generator, not yet qualified by a recognized ESC benchmark."
+    "generator": "Llama 3.1 8B and Qwen 3.7 Plus passed the two-card uncapped mechanical canary but are not quality-qualified. Llama 3.3 70B was a mistaken route and is diagnostic-only. Nemotron 3 Nano 30B A3B is the corrected provisional route and has a zero-call transport identity awaiting approval."
   },
   "execution_phases": [
     {
@@ -142,7 +145,7 @@
       "name": "measurement_and_generator_qualification",
       "actions": [
         "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
-        "Run the approved Llama 3.1 8B versus same-stack Llama 3.3 70B ESC-Eval/ESC-Judge pilot and the approved-plan/evidence executor test.",
+        "Run the corrected Nemotron 3 Nano operational canary; retain it only if its frozen 429, reliability, and latency gate passes, then compare operationally eligible Llama 3.1 8B, Qwen, and any retained Nemotron configuration on ESC quality and approved-plan/evidence execution.",
         "Complete dual-review non-formal Quality/Risk calibration and register numeric margins before formal outcomes.",
         "Select and freeze one generator for every subsequent learned-policy and baseline arm."
       ],
