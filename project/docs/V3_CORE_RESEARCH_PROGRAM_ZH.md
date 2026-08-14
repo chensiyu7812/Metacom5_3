@@ -14,17 +14,43 @@ MetaCom 在生成前显式管理两类可选资源：情绪支持策略与长期
 
 这是一项“有无与可行性”研究：先证明显式、类型化、可学习的资源管理确实有价值，不主张临床疗效，也不要求监督学习的 PM 泛化到完全未见的真实用户。
 
-## 2. 系统构造
+## 2. 系统构造：一个 factorized PM，不是两个 PM
 
-PM 在 generator 之前做两项决定：
+PM 是同一个 pre-generation policy manager，保留四个可解释输出 head 和一个联合动作编译器：
 
-1. `strategy decision`：当前应该采用哪类情绪支持动作；实现上继承旧 RS，但动作空间和监督优先采用 ESConv 的官方策略体系。
-2. `memory decision`：当前是否需要长期记忆、需要哪一种、取多少；实现上保留三个显式 memory heads：
-   - `MP`：相对稳定的用户画像、偏好和约束；
-   - `MS`：跨 session 的事件、经历和连续性；
-   - `ME`：过去行动及其结果，可用于避免重复无效建议或复用有效经验。
+- `RS`：当前应该采用哪类情绪支持动作；动作空间和监督优先采用 ESConv 的官方策略体系。
+- `MP`：是否需要相对稳定的用户画像、偏好和约束。
+- `MS`：是否需要跨 session 的事件、经历和连续性。
+- `ME`：是否需要过去行动及其结果，以避免重复无效建议或复用有效经验。
 
-RS/MP/MS/ME 是可解释的实现部件，不再各自绑定一套项目自建“总及格门”。研究结果由公开 benchmark 的官方任务指标裁决，head 的价值通过同一官方指标下的 component-minus 消融解释。
+四个 head 可以使用各自最匹配的训练信号和参数；第一篇论文不要求它们共享同一组神经网络权重。称为“一个 PM”的依据是：它们共享同一候选观察合同、决策时点、联合预算/冲突投影、动作空间、执行器、generator、trace和Cost账本，并共同输出一个合法动作，而不是各自产生一套互不相干的系统回复。
+
+### Step 1：选择资源
+
+1. 统一 candidate layer 从 RS Bank 与严格过去的 MP/MS/ME memory stores 中发现候选；不同资源类型可以有相应索引，但同一实验的所有 policy arm 必须共享候选池、retriever配置和实际候选。
+2. owner、严格过去、冲突、明确边界和资源存在性只作机械 hard mask。
+3. 四个 factorized heads 根据运行时可见状态判断各资源是否值得开启。
+4. task action mask、预算和冲突投影把四个输出编译为一个合法 joint action；完整系统仍对应 MP/MS/ME/RS 四 bit 的 16 动作空间。
+
+Step 1 是唯一 PM 决策层。它发生在 candidate discovery 之后、资源注入和生成之前；不读取评测答案、未来session、generator回复或官方结果。
+
+### Step 2：执行动作
+
+Step 2 不是第二个 PM，也不重新判断开关。它接收 Step 1 已冻结的 joint action 和 exact candidates，构造成 typed resource program，通过当前benchmark的task adapter注入prompt，再由同一个冻结generator完成任务。RS/MP/MS/ME 的 source、owner、time和实际注入情况进入统一trace。
+
+不同benchmark的任务prompt不可能逐字相同：ESC是支持回复，ES-MemEval还包含QA和summary。公平要求是同一任务内部各arm共享基础prompt和generator，只允许Step 1所选资源块不同；跨任务使用各自官方adapter，不能为了追求字面相同而破坏官方协议。
+
+### Benchmark只是动作掩码不同
+
+| Benchmark/task | 同一个PM的可用动作 | 结构性关闭原因 |
+|---|---|---|
+| ESConv、ESC-Eval strategy实验 | `M0+R0`或`M0+RS`；MP/MS/ME hard-OFF | 没有可归因的纵向私有记忆 |
+| ES-MemEval QA、Summary | MP/MS/ME子集；RS hard-OFF | 不是支持回复任务，RS不可识别 |
+| ES-MemEval Dialogue Generation | 完整MP/MS/ME/RS 16动作可用 | 同时观察长期记忆、个性化与情绪支持 |
+
+因此 ESConv 与 ES-MemEval 不是训练两个 PM，而是在两个结构上不同但互补的 observation/action slices 上训练和评估同一个 factorized PM。ES-MemEval Dialogue Generation 是四头共同进入同一 Step 2 的集成证据；QA/Summary提供更干净的memory客观能力证据。
+
+RS/MP/MS/ME 不再各自绑定一套项目自建“总及格门”。研究结果由公开 benchmark 的官方任务指标裁决，head 的价值通过同一官方指标下的 component-minus 消融解释。
 
 ## 3. 研究问题与实验一一对应
 
@@ -44,6 +70,7 @@ RS/MP/MS/ME 是可解释的实现部件，不再各自绑定一套项目自建�
 - 主要比较：无显式策略、频率/开启率匹配随机策略、学习型策略 PM；固定策略只作必要参照。
 - 主要结果：ESConv 官方结果与 ESC-Eval 官方七维；Cost 单列。
 - 可支持主张：学习型 strategy decision 对公开 ESC 任务有选择价值。
+- 系统身份：调用统一 PM，但由 task mask 将 MP/MS/ME 机械关闭；不是另训一个“strategy PM产品”。
 
 如果策略 PM 使用 ESConv 训练，ESC-Eval 中由 ESConv 派生的 role cards 不能承担独立迁移证据。完整 331 卡仍全量报告，但跨来源迁移的主要分析使用预先确定的非 ESConv 来源卡；若以后加入 ExTES 训练，则同时排除 ExTES 来源卡。
 
@@ -55,6 +82,7 @@ RS/MP/MS/ME 是可解释的实现部件，不再各自绑定一套项目自建�
 - 主要结果：官方任务表现与 Cost 的 Pareto 关系。
 - 统计单位：18 个 user；题目和场景是 user 内重复测量，不能当作 1427 个独立用户。
 - 可支持主张：显式、类型化、状态依赖的 memory allocation 在公开长期记忆 benchmark 上具有系统价值。
+- 集成责任：QA/Summary只测memory slice；Dialogue Generation开放RS与memory heads的完整联合动作，用官方LT-Mem、Personalization和ES结果验证它们确实通过同一Step 2共同工作。
 
 第一篇论文不要求“在完全未见用户上泛化”。允许同一长期用户在适应阶段与之后的评测阶段出现，这与个性化系统的目标一致；但评测 query、gold outcome 和未来 session 不得进入拟合。若官方 release 没有可直接使用的 train/test 划分，则采用用户内严格时间前缀→后缀，或按事实/事件组隔离的 outcome-blind cross-fitting。结论边界明确写成“在该公开 benchmark 的用户与任务分布上”。
 
@@ -112,6 +140,7 @@ matched Random 是“学习型选择有价值”主张所必需的因果对照�
 - 所有正式比较使用同一冻结 generator/model mode、相同基础prompt模板、decoding、retry和输出处理；
 - ESConv/ESC-Eval各arm只改变strategy policy给出的动作；
 - ES-MemEval各arm只改变可见历史或检索/typed-memory policy，官方问题文本和评分prompt不变；
+- 所有条件使用同一PM runtime与Step 2合同；benchmark只施加预先声明的task action mask，不替换成另一套policy manager；
 - baseline可以拥有其定义所需的不同context量，这正是处理差异，但不能拥有更强generator或专属prompt优化；
 - published score、不同generator的官方复现和同栈PM结果分表报告，禁止混成一张可直接排名的表。
 
@@ -146,7 +175,7 @@ EvoEmo、旧同状态实验、原子 Risk 和 Function 审计继续保留。只�
 
 1. 完成正在运行的 ESC-Eval English-331 官方协议生成与官方评分；在 Llama 3.1 8B 和 Qwen 3.7 Plus non-thinking 中选定研究 generator。
 2. 先做 ESConv 与 ES-MemEval 官方数据/协议/scorer sanity reproduction；随后用选定 generator 同栈重跑官方定义的 baseline 条件及 matched Random，先确认数据、prompt、统计单位和成本账本完整。
-3. 物化一个 PM 接口：strategy action + typed memory action；复用旧 MP/MS/ME 候选编译、严格过去边界和 cost accounting，废弃旧 head pass gate。
+3. 物化一个factorized PM接口：四个Step 1 head→task mask与joint projection→一个legal action→统一Step 2；复用旧MP/MS/ME候选编译、严格过去边界和cost accounting，废弃旧head pass gate。
 4. 先完成 RQ1：ESConv 训练/held-out 检验，再在 ESC-Eval 非 ESConv 来源卡上评价策略选择。
 5. 再完成 RQ2：ES-MemEval 全任务的 Full History、固定 RAG、learned PM 和 component-minus；MP/MS/ME eligible mapping 必须在结果前生成。
 6. 汇总官方指标、user/dialogue cluster uncertainty 和 Cost，判断完整主张或诚实缩小后的主张。

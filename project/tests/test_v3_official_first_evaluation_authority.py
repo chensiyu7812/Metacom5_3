@@ -51,6 +51,21 @@ def test_primary_baselines_are_same_stack_not_published_score_substitutes():
     assert any("matched_Random" in name for name in rq2["comparators"])
 
 
+def test_one_factorized_pm_uses_task_masks_and_keeps_step1_step2_separate():
+    core = load("v3_core_research_program_v1.json")
+    pm = core["pm_architecture"]
+    assert pm["identity"] == "ONE_FACTORIZED_PRE_GENERATION_PM"
+    assert pm["component_heads"] == ["MP", "MS", "ME", "RS"]
+    assert pm["shared_model_weights_required"] is False
+    assert pm["step1"]["timing"] == "post_candidate_discovery_pre_injection_pre_generation"
+    assert pm["step2"]["is_second_pm"] is False
+    masks = pm["task_action_masks"]
+    assert masks["ESConv_and_ESC_Eval_strategy"]["hard_off"] == ["MP", "MS", "ME"]
+    assert masks["ES_MemEval_QA_and_Summary"]["hard_off"] == ["RS"]
+    assert masks["ES_MemEval_Dialogue_Generation"]["hard_off"] == []
+    assert masks["ES_MemEval_Dialogue_Generation"]["legal_action_surface"] == "full 16-action joint space"
+
+
 def test_esc_eval_official_protocol_has_no_invented_pass_line():
     contract = load("g0_official_protocol_english331_contract_v1.json")
     assert contract["official_interaction_surface"]["supporter_system_prompt"] == "You are a helpful assistant!"

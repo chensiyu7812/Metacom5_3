@@ -157,6 +157,20 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("official protocol sanity reproduction was promoted to a PM comparator")
     if baseline_layers.get("same_stack_baseline_rerun", {}).get("causal_comparator") is not True:
         failures.append("same-stack rerun is no longer the primary PM comparator")
+    pm_architecture = core_program.get("pm_architecture", {})
+    if pm_architecture.get("identity") != "ONE_FACTORIZED_PRE_GENERATION_PM":
+        failures.append("core program no longer defines one factorized PM")
+    if pm_architecture.get("component_heads") != ["MP", "MS", "ME", "RS"]:
+        failures.append("factorized PM component head surface changed")
+    if pm_architecture.get("step2", {}).get("is_second_pm") is not False:
+        failures.append("Step 2 was incorrectly promoted to a second PM")
+    task_masks = pm_architecture.get("task_action_masks", {})
+    if task_masks.get("ESConv_and_ESC_Eval_strategy", {}).get("hard_off") != ["MP", "MS", "ME"]:
+        failures.append("ESConv/ESC-Eval strategy action mask changed")
+    if task_masks.get("ES_MemEval_QA_and_Summary", {}).get("hard_off") != ["RS"]:
+        failures.append("ES-MemEval QA/Summary action mask changed")
+    if task_masks.get("ES_MemEval_Dialogue_Generation", {}).get("hard_off") != []:
+        failures.append("ES-MemEval dialogue generation no longer exposes the full joint PM")
     if official_first["status"] != "ACTIVE_SOLE_EVALUATION_AUTHORITY_OFFICIAL_BENCHMARKS_FIRST":
         failures.append("official-first authority status changed")
     if [row["benchmark"] for row in official_first["active_primary_tracks"]] != ["ESC-Eval", "ES-MemEval"]:
@@ -688,6 +702,9 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "unseen_user_generalization": core_program["generalization_scope"]["unseen_user_supervised_generalization"],
             "evoemo_role": core_program["evidence_source_roles"]["EvoEmo"],
             "causal_baseline_layer": "same_stack_baseline_rerun",
+            "pm_identity": core_program["pm_architecture"]["identity"],
+            "step2_is_second_pm": core_program["pm_architecture"]["step2"]["is_second_pm"],
+            "integrated_action_surface": core_program["pm_architecture"]["task_action_masks"]["ES_MemEval_Dialogue_Generation"]["legal_action_surface"],
         },
         "phase_ids": phase_ids,
         "active_test_files": len(test_paths),

@@ -26,6 +26,9 @@ def test_v3_public_workspace_authority_is_consistent() -> None:
         "unseen_user_generalization": "NOT_A_PAPER1_REQUIREMENT",
         "evoemo_role": "retained diagnostic/supplement only; not a required primary track or independent population",
         "causal_baseline_layer": "same_stack_baseline_rerun",
+        "pm_identity": "ONE_FACTORIZED_PRE_GENERATION_PM",
+        "step2_is_second_pm": False,
+        "integrated_action_surface": "full 16-action joint space",
     }
 
 

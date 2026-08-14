@@ -6,6 +6,51 @@
   "evaluation_authority": "data/v3_authority/v3_official_first_evaluation_authority_v1.json",
   "thesis": "A learned pre-generation Policy Manager conditionally allocates emotional-support strategy and typed longitudinal-memory resources, preserving or improving public benchmark outcomes while reducing measured resource cost relative to non-adaptive high-resource baselines.",
   "study_type": "FIRST_PAPER_EXISTENCE_AND_FEASIBILITY",
+  "pm_architecture": {
+    "identity": "ONE_FACTORIZED_PRE_GENERATION_PM",
+    "component_heads": ["MP", "MS", "ME", "RS"],
+    "shared_model_weights_required": false,
+    "single_pm_basis": [
+      "shared_candidate_observation_contract",
+      "shared_post_candidate_pre_injection_decision_time",
+      "shared_hard_masks_budget_and_conflict_projection",
+      "shared_four_bit_16_action_space",
+      "shared_typed_step2_executor",
+      "shared_frozen_generator_within_the_study",
+      "shared_execution_trace_and_cost_ledger"
+    ],
+    "step1": {
+      "role": "The only policy decision layer: score component opportunities and project them through task, safety, budget, and conflict masks into one legal joint action.",
+      "timing": "post_candidate_discovery_pre_injection_pre_generation",
+      "forbidden_runtime_inputs": ["evaluation_gold", "future_session", "generator_response", "official_metric_outcome"]
+    },
+    "step2": {
+      "role": "Execute the already-selected legal action with exact typed candidates and the task adapter; never reopen component ON/OFF decisions.",
+      "is_second_pm": false
+    },
+    "task_action_masks": {
+      "ESConv_and_ESC_Eval_strategy": {
+        "legal_components": ["RS"],
+        "hard_off": ["MP", "MS", "ME"],
+        "legal_action_surface": ["M0+R0", "M0+RS"]
+      },
+      "ES_MemEval_QA_and_Summary": {
+        "legal_components": ["MP", "MS", "ME"],
+        "hard_off": ["RS"],
+        "legal_action_surface": "eight memory subsets with R0 fixed"
+      },
+      "ES_MemEval_Dialogue_Generation": {
+        "legal_components": ["MP", "MS", "ME", "RS"],
+        "hard_off": [],
+        "legal_action_surface": "full 16-action joint space",
+        "role": "Official-benchmark integration evidence for one PM and one Step 2."
+      }
+    },
+    "prompt_invariance": {
+      "within_task": "Same base task prompt, generator, decoding, and output handling across arms; only the legitimately selected strategy or memory resource block may differ.",
+      "across_tasks": "Use each benchmark's official task adapter; literal prompt equality across ESC, QA, summarization, and dialogue generation is neither possible nor required."
+    }
+  },
   "policy_decisions": {
     "strategy": {
       "legacy_implementation_name": "RS",
@@ -117,7 +162,7 @@
   "execution_order": [
     "Complete the active ESC-Eval English-331 official-protocol generator comparison and select one frozen generator.",
     "Run a bounded official-protocol sanity reproduction for ESConv and ES-MemEval, then rerun the official baseline conditions and usage-matched Random on the frozen same-stack generator with a complete Cost ledger.",
-    "Materialize one PM interface with a strategy action and MP/MS/ME typed-memory actions; reuse valid causal-boundary and cost-accounting assets, not legacy pass gates.",
+    "Materialize one factorized PM interface: four Step-1 heads, task action mask and joint projection, one legal action, and one typed Step-2 executor; reuse valid causal-boundary and cost-accounting assets, not legacy pass gates.",
     "Run RQ1 on ESConv held-out data and ESC-Eval non-ESConv-source primary analysis.",
     "Run RQ2 on complete ES-MemEval public v1.0.0 with outcome-blind head eligibility and component-minus ablations.",
     "Report official outcomes, clustered uncertainty, Cost, head contribution, and exact claim boundary.",
