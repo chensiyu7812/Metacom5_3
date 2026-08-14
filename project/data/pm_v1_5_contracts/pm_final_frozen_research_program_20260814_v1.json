@@ -1,0 +1,289 @@
+{
+  "protocol": "pm-final-frozen-research-program-20260814-v1",
+  "status": "ACTIVE_SINGLE_SOURCE_OF_RESEARCH_TRUTH",
+  "authority_document": "project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260814_ZH.md",
+  "method_name": "Policy Manager",
+  "repository_name_is_method_name": false,
+  "forbidden_method_name": "MetaCom",
+  "paper_scope": "first_paper_existence_and_usability",
+  "primary_research_question": "Can a low-capacity auditable Policy Manager selectively allocate Strategy-RAG and typed long-term-memory resources to preserve or improve official benchmark performance while reducing unnecessary injected context and generator cost under a frozen generator stack?",
+  "not_claimed": [
+    "clinical diagnosis",
+    "latent true user need inference",
+    "direct ESConv strategy-category prediction",
+    "broad unseen-user population generalization",
+    "identified high-order RSxMPxMSxME causal interactions",
+    "Tokkio multimodal effectiveness",
+    "memory writeback effectiveness",
+    "end-to-end reinforcement learning"
+  ],
+  "architecture": {
+    "decision_boundary": "post_candidate_discovery_pre_injection_pre_generation",
+    "components": ["RS", "MP", "MS", "ME"],
+    "component_bits": 4,
+    "legal_joint_actions": 16,
+    "direct_16_classification": false,
+    "step1": "four binary resource-value gates plus deterministic eligibility_budget_conflict projection",
+    "step2": "typed executor that binds already-approved exact resources and may not reopen or suppress components",
+    "generator": "frozen instruction-tuned LLM; generation only, not PM",
+    "retrieval_cost_claim": "not primary because candidate discovery precedes PM",
+    "primary_cost_claim": "reduced resource injection and generator input/generation cost"
+  },
+  "resource_semantics": {
+    "RS": "whether to inject the Strategy-RAG candidate retrieved from an ESConv-train-only Strategy Bank; NOT a strategy-category classifier",
+    "MP": "stable or slowly changing profile/preference/constraint memory",
+    "MS": "strictly-past cross-session event and continuity memory",
+    "ME": "strictly-past action-outcome or experience-outcome memory"
+  },
+  "learning": {
+    "paradigm": "supervised_learning",
+    "primary_model": "standardized L2-regularized logistic regression",
+    "heads": 4,
+    "supervision": "matched ON/OFF component-effect labels",
+    "label_values": ["positive_open", "nonpositive_off", "unknown"],
+    "unknown_used_for_training": false,
+    "training_outcome_measurement_is_final_paper_evaluator": false,
+    "quality_training_dimensions": [
+      "goal_fulfillment",
+      "emotional_support_value",
+      "useful_contribution",
+      "clarity_and_naturalness"
+    ],
+    "atomic_training_risk": [
+      "explicit_boundary_violation",
+      "grounding_or_personal_evidence_violation",
+      "excessive_directiveness_or_interaction_burden"
+    ]
+  },
+  "dataset_roles": {
+    "ESConv": {
+      "role": "Strategy Bank construction, Strategy Retriever development, RS ON/OFF training-effect source, held-out in-domain diagnostics",
+      "strategy_bank_source": "train_only",
+      "gold_strategy_is_rs_gate_gold": false,
+      "proves_longitudinal_memory": false
+    },
+    "ESC-Eval": {
+      "role": "RQ0 generator qualification and RQ1 formal multi-turn ESC outcome benchmark",
+      "primary_rq1_slice": "non_ESConv_source_English_role_cards",
+      "full_English_set": "secondary_full_report",
+      "absolute_pass_line": false,
+      "primary_rq1_metric": "Overall"
+    },
+    "ES-MemEval": {
+      "role": "RQ2 formal long-term-memory benchmark",
+      "artifact_identity": "ES-MemEval-Public-v1.0.0-1427",
+      "paper_1209_exact_replication_claimed": false,
+      "tasks": ["QA", "Summarization", "Dialogue_Generation"],
+      "same_user_longitudinal_adaptation_allowed": true,
+      "future_session_leakage_allowed": false,
+      "evaluation_gold_visible_to_runtime_pm": false
+    },
+    "EvoEmo": {
+      "role": "underlying longitudinal resource and optional diagnostic only",
+      "primary_external_gate": false
+    }
+  },
+  "baseline_principle": {
+    "published_scores": "reference_only_not_causal",
+    "bounded_official_reproduction": "pipeline_sanity_only_not_causal",
+    "same_stack_rerun": "formal_causal_comparison",
+    "same_stack_invariants": [
+      "frozen_generator",
+      "base_task_prompt",
+      "decoding_and_seed_schedule",
+      "official_evaluator",
+      "resource_candidate_identity_when_applicable"
+    ]
+  },
+  "rq0_generator_qualification": {
+    "benchmark": "ESC-Eval",
+    "fields": [
+      "Fluency",
+      "Expression",
+      "Empathy",
+      "Information",
+      "Skillful",
+      "Humanoid",
+      "Overall",
+      "Average",
+      "dialogue_completion_rate",
+      "generator_input_tokens",
+      "median_latency_ms",
+      "api_cost_usd"
+    ],
+    "generator_change_after_pm_effect_generation": false,
+    "fine_tuning_default": false
+  },
+  "rq1_strategy_rag": {
+    "name": "Selective Strategy-RAG allocation",
+    "training_source": "ESConv_train_only",
+    "formal_benchmark": "ESC-Eval",
+    "arms": [
+      "R0_No_Strategy_RAG",
+      "RS_Fixed_High",
+      "RS_Matched_Random",
+      "Learned_RS_PM"
+    ],
+    "esconv_oracle_is_primary_baseline": false,
+    "esconv_strategy_accuracy_is_primary_pm_metric": false,
+    "primary_metric": "ESC-Eval Overall",
+    "secondary_metrics": [
+      "Fluency",
+      "Expression",
+      "Empathy",
+      "Information",
+      "Skillful",
+      "Humanoid"
+    ],
+    "diagnostics": [
+      "strategy_family_match_at_1",
+      "strategy_family_match_at_3_if_available",
+      "rs_candidate_present_rate",
+      "rs_on_rate",
+      "strategy_card_tokens_injected",
+      "step2_uptake"
+    ]
+  },
+  "rq2_memory": {
+    "name": "Selective typed-memory allocation",
+    "formal_benchmark": "ES-MemEval",
+    "same_mp_ms_me_parameters_across_tasks": true,
+    "task_type_may_be_runtime_feature": true,
+    "rs_fixed_in_official_main_analysis": true,
+    "arms": [
+      "No_Memory",
+      "Full_History",
+      "Official_RAG_Top4",
+      "Typed_Fixed_High",
+      "Typed_Matched_Random",
+      "Learned_Typed_Memory_PM"
+    ],
+    "qa_metrics": [
+      "F1",
+      "BERTScore",
+      "LLM_as_Judge_0_2",
+      "Recall_at_k",
+      "nDCG_at_k"
+    ],
+    "qa_capability_slices": ["IE", "TR", "CD", "Abs", "UM", "All"],
+    "summary_metrics": [
+      "ROUGE_1",
+      "ROUGE_2",
+      "ROUGE_L",
+      "Event_Precision",
+      "Event_Recall",
+      "Event_F1",
+      "LLM_Score_0_5"
+    ],
+    "dialogue_generation_metrics": [
+      "Observation_Recall",
+      "Weighted_Score",
+      "LT_Memory_1_5",
+      "Personalization_1_5",
+      "Emotional_Support_1_5"
+    ]
+  },
+  "memory_ablation": {
+    "variants": ["Full_Learned_PM", "Learned_minus_MP", "Learned_minus_MS", "Learned_minus_ME"],
+    "retrain_for_ablation": false,
+    "typed_memory_claim_requires_useful_heads_min": 2,
+    "useful_head_definition": [
+      "eligible_slice_frozen_before_outcome",
+      "positive_paired_effect_on_at_least_one_preregistered_official_primary_metric",
+      "aggregate_effect_positive",
+      "positive_direction_in_at_least_two_independent_user_or_fact_event_clusters",
+      "user_cluster_uncertainty_reported"
+    ]
+  },
+  "cost_fields": {
+    "primary": ["generator_input_tokens", "resource_injected_tokens"],
+    "required": [
+      "output_tokens",
+      "total_tokens",
+      "retrieval_calls",
+      "embedding_calls",
+      "retrieval_latency_ms",
+      "generator_latency_ms",
+      "end_to_end_latency_ms",
+      "p95_latency_ms",
+      "retry_count",
+      "api_cost_usd_if_recoverable"
+    ],
+    "material_input_token_reduction_vs_high_resource_baseline_min": 0.10,
+    "cost_can_offset_material_quality_failure": false,
+    "cost_can_offset_invalid_integrity_failure": false
+  },
+  "success_rules": {
+    "noninferiority_margin_must_be_frozen_before_main_outcomes": true,
+    "noninferiority_margin_source": "evaluator_qualification_and_repeatability_slice_or_predeclared_small_effect_threshold_if_effectively_deterministic",
+    "rq1": [
+      "Learned_RS_PM noninferior to RS_Fixed_High on ESC-Eval Overall",
+      "generator_input_tokens reduced by at least 10 percent versus RS_Fixed_High",
+      "Learned_RS_PM has positive paired effect versus RS_Matched_Random",
+      "no material overall degradation versus R0"
+    ],
+    "rq2": [
+      "Learned typed-memory PM broadly noninferior to Typed_Fixed_High on preregistered official task-primary outcomes",
+      "generator_input_tokens reduced by at least 10 percent versus Typed_Fixed_High",
+      "Learned PM shows positive overall selection value versus Typed_Matched_Random",
+      "all differences versus Official_RAG_Top4 and Full_History reported",
+      "at least two of MP MS ME satisfy useful-head definition"
+    ]
+  },
+  "statistics": {
+    "rq1_cluster": "role_card_or_dialogue",
+    "rq2_highest_cluster": "user",
+    "rq2_users": 18,
+    "treat_qa_items_as_independent_users": false,
+    "same_user_train_and_eval_allowed_with_target_and_future_isolation": true,
+    "cluster_aware_uncertainty_required": true
+  },
+  "minimal_integrity_audit": [
+    "wrong_owner_or_cross_user_retrieval",
+    "future_leakage",
+    "fabricated_or_unsupported_personal_history",
+    "stale_or_conflicting_memory_misuse",
+    "explicit_boundary_violation_when_applicable",
+    "excessive_directiveness_when_applicable",
+    "internal_scaffold_or_resource_label_exposure"
+  ],
+  "responsibility_ledger": [
+    "retrieval_candidate",
+    "observation_eligibility",
+    "pm_step1",
+    "joint_projection",
+    "step2_executor",
+    "generator",
+    "resource_hypothesis_or_system_ceiling"
+  ],
+  "execution_order": [
+    "finish_current_ESC_Eval_generator_qualification",
+    "freeze_one_generator",
+    "bounded_official_protocol_sanity_reproduction",
+    "freeze_Strategy_Bank_and_strict_past_typed_memory_catalog",
+    "freeze_and_qualify_training_only_outcome_measurement",
+    "generate_RS_MP_MS_ME_matched_ON_OFF_effect_labels",
+    "train_four_L2_logistic_heads",
+    "freeze_PM_same_stack_baselines_and_matched_random_schedules",
+    "run_RQ1_ESC_Eval_four_arm_experiment",
+    "run_RQ2_ES_MemEval_six_arm_QA_Summary_DG_experiments",
+    "run_minus_MP_minus_MS_minus_ME_ablation",
+    "report_official_outcomes_cost_cluster_uncertainty_and_minimal_integrity",
+    "write_claims_without_posthoc_redefinition"
+  ],
+  "forbidden_drift": [
+    "rename_method_to_MetaCom",
+    "turn_RS_into_ESConv_strategy_category_classifier",
+    "train_direct_16_class_policy",
+    "make_strategy_ACC_BLEU_ROUGE_the_RQ1_primary_outcome",
+    "use_ESConv_Oracle_as_RS_gate_gold_or_primary_baseline",
+    "restore_EvoEmo_as_primary_first_paper_outcome_gate",
+    "turn_ES_MemEval_DG_into_an_official_RS_MP_MS_ME_joint_interaction_experiment",
+    "use_published_historical_model_scores_as_causal_baselines",
+    "restore_large_self_defined_Quality_Function_Risk_composite_as_primary_paper_verdict",
+    "change_generator_prompt_retriever_margin_or_sample_subset_after_main_outcomes",
+    "generate_synthetic_users_or_gold_to_rescue_a_failed_head",
+    "change_research_question_to_match_legacy_implementation_without_explicit_user_authorization"
+  ],
+  "research_change_process": "Any proposed change to forbidden_drift items must be labeled PROPOSED RESEARCH CHANGE — NOT AUTHORIZED and requires explicit user approval before authority files are edited."
+}
