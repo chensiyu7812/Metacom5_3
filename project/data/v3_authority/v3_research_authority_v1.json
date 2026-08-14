@@ -34,6 +34,7 @@
     "g0_four_generator_esc_rank_closeout": "data/v3_authority/g0_four_generator_esc_rank_closeout_v1.json",
     "generator_fair_selection_protocol": "data/v3_authority/generator_fair_selection_protocol_v1.json",
     "g0_fair_judge_canary_preflight": "data/v3_authority/g0_fair_judge_canary_preflight_v1.json",
+    "generator_esc_eval_primary_selection": "data/v3_authority/generator_esc_eval_primary_selection_v1.json",
     "evaluation_margin_justification": "data/v3_authority/evaluation_margin_justification_v1.json",
     "risk_adjudication_protocol": "data/v3_authority/risk_adjudication_protocol_v1.json",
     "risk_instrument_qualification": "data/v3_authority/risk_instrument_qualification_v1.json",
@@ -56,8 +57,8 @@
   "evidence_layers": [
     {
       "layer": "generator_qualification",
-      "primary": "ESC-Eval official protocol with repaired ESC-RANK as a descriptive profile, plus hard reliability and executor gates",
-      "robustness": "ESC-Judge pairwise E-I-A comparison among operationally eligible frozen candidates; the mistaken Llama 3.3 70B route is diagnostic-only, and the intended NVIDIA route is Nemotron 3 Nano 30B A3B pending its transport gate",
+      "primary": "ESC-Eval official seven-dimension 0-to-4 evaluation with two independent blinded human reviewers, plus hard reliability and executor gates; ESC-RANK remains descriptive automation",
+      "robustness": "ESC-Judge pairwise E-I-A is optional sensitivity only and cannot control generator selection; hosted Nemotron is descriptive-only after its full-screen reliability hard failure",
       "cannot_prove": "PM routing value, longitudinal memory, clinical safety"
     },
     {
@@ -133,7 +134,7 @@
     "MP": "V1.1 showed Quality 5 wins / 1 loss / 1 neutral with no material Risk increase, but zero attributable Function across 5 CONSTRAIN cases; plan-first constraint treatment is required.",
     "ME": "Deferred bounded rescue; not required before RS plus two memory heads can be attempted with MP and MS.",
     "external_stress_test": "42 of 90 generator calls are schema-valid; 48 are missing due provider HTTP 429. The incomplete arm matrix permits no scientific decision.",
-    "generator": "The 24-card four-configuration G0 generation is complete. Llama 3.1 8B and Qwen 3.7 Plus non-thinking/thinking passed reliability; hosted Nemotron failed both 0.95 reliability gates. ESC-RANK completed 651/651 local scores at $0: its strict parser was format-incompatible (0/651 valid), while the predeclared anchored sensitivity was 651/651 valid but heavily saturated and did not select a generator. Order-swapped E-I-A Quality and absolute low-burden/integrity remain pending."
+    "generator": "The 24-card ESC-Eval development generation is complete: Llama 3.1 8B and Qwen 3.7 Plus non-thinking/thinking each have 24 complete dialogues; hosted Nemotron failed both 0.95 reliability gates. ESC-RANK completed 651/651 local scores at $0 but was format-incompatible under the strict parser and saturated under the anchored sensitivity, so it did not select a generator. The proposed 144-call adapted E-I-A canary was superseded before any call (0 calls, $0). Active selection now requires two independent blinded humans to score the 72 eligible dialogues on ESC-Eval's official seven dimensions; E-I-A and ESC-RANK are secondary only."
   },
   "execution_phases": [
     {
@@ -141,7 +142,7 @@
       "name": "workspace_and_evaluation_freeze",
       "actions": [
         "Reconcile dataset versions, hashes, sample counts, statistical units, and overlap; resolve or explicitly name the ES-MemEval 1209-versus-1427 identity.",
-        "Audit the ESC-Eval scorer, freeze its descriptive-versus-decision role, select the same-stack reference, and freeze ESC-Judge order handling and low-burden guardrails.",
+        "Audit ESC-Eval, freeze its official seven-dimension human-primary role and ESC-RANK's descriptive role, and keep ESC-Judge E-I-A and low-burden guardrails separate as sensitivity/project measures.",
         "Freeze outcome-blind margin derivation and atomic Risk event adjudication while preserving UNCERTAIN as a separate outcome.",
         "Separate active tests from historical replay tests and bind the V3 evidence manifest."
       ],
@@ -153,7 +154,7 @@
       "name": "measurement_and_generator_qualification",
       "actions": [
         "Materialize the repaired ESC-RANK runtime with pinned base/adapters and strict full-string ordinal parsing.",
-        "The corrected Nemotron 3 Nano operational canary passed; compare operationally eligible Llama 3.1 8B, Qwen, and retained Nemotron on ESC quality and approved-plan/evidence execution.",
+        "Score all 72 reliability-eligible 24-card development dialogues with two independent blinded humans on ESC-Eval's official seven dimensions; keep hosted Nemotron descriptive-only after its full-screen reliability failure.",
         "Complete dual-review non-formal Quality/Risk calibration and register numeric margins before formal outcomes.",
         "Select and freeze one generator for every subsequent learned-policy and baseline arm."
       ],

@@ -62,6 +62,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_esc_rank_closeout_path = AUTHORITY_DIR / "g0_four_generator_esc_rank_closeout_v1.json"
     generator_fair_selection_path = AUTHORITY_DIR / "generator_fair_selection_protocol_v1.json"
     g0_fair_judge_canary_path = AUTHORITY_DIR / "g0_fair_judge_canary_preflight_v1.json"
+    generator_esc_eval_primary_selection_path = AUTHORITY_DIR / "generator_esc_eval_primary_selection_v1.json"
     esc_rank_audit_path = AUTHORITY_DIR / "esc_rank_public_qualification_audit_v1.json"
     same_stack_reference_path = AUTHORITY_DIR / "same_stack_generator_reference_v1.json"
     margin_contract_path = AUTHORITY_DIR / "evaluation_margin_justification_v1.json"
@@ -105,6 +106,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
     g0_four_generator_esc_rank_closeout = _load_json(g0_four_generator_esc_rank_closeout_path)
     generator_fair_selection = _load_json(generator_fair_selection_path)
     g0_fair_judge_canary = _load_json(g0_fair_judge_canary_path)
+    generator_esc_eval_primary_selection = _load_json(generator_esc_eval_primary_selection_path)
     esc_rank_audit = _load_json(esc_rank_audit_path)
     same_stack_reference = _load_json(same_stack_reference_path)
     margin_contract = _load_json(margin_contract_path)
@@ -183,7 +185,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         for path in test_paths
         if not path.is_file()
     )
-    if profile["expected_test_count"] != 93:
+    if profile["expected_test_count"] != 96:
         failures.append("active profile expected test count changed without authority update")
 
     dataset_cards = [_load_json(PROJECT_ROOT / relative) for relative in authority["evaluation_freeze"]["dataset_cards"]]
@@ -474,6 +476,12 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("fair generator judge-canary accounting drifted")
     if generator_fair_selection["pairwise_resolution"]["no_composite"] is not True:
         failures.append("fair generator protocol lost the no-composite rule")
+    if canary["active"] is not False:
+        failures.append("superseded E-I-A canary is still active")
+    if generator_fair_selection["full_g0_after_canary"]["active"] is not False:
+        failures.append("superseded full E-I-A plan is still active")
+    if generator_fair_selection["metric_hierarchy"]["primary_quality"] != ["ESC-Eval Overall 0-to-4 blinded human rating"]:
+        failures.append("fair generator protocol does not use ESC-Eval Overall as primary Quality")
     if g0_fair_judge_canary["candidates"] != generator_fair_selection["selection_set"]["eligible"]:
         failures.append("fair judge canary candidate set drifted")
     if g0_fair_judge_canary["call_accounting"] != {"eia_dual_order": 108, "repeatability": 18, "absolute_guardrail": 18, "total": 144}:
@@ -482,6 +490,25 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         failures.append("fair judge canary budget drifted")
     if "cannot select" not in g0_fair_judge_canary["canary_boundary"]:
         failures.append("fair judge canary improperly authorizes selection")
+    if not g0_fair_judge_canary["status"].startswith("SUPERSEDED_BEFORE_ANY_CALL"):
+        failures.append("fair judge canary was not superseded before calls")
+    supersession = g0_fair_judge_canary["supersession"]
+    if (supersession["api_calls_made"], supersession["usd_spent"], supersession["former_identity_authorized"]) != (0, 0, False):
+        failures.append("superseded fair judge identity retains calls, spend, or authority")
+    official = generator_esc_eval_primary_selection["official_anchor"]
+    if official["official_high_quality_cards"] != {"total": 655, "english": 331, "chinese": 324}:
+        failures.append("ESC-Eval official card counts drifted")
+    if official["official_dimensions_0_to_4"] != ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skill", "Overall"]:
+        failures.append("ESC-Eval official seven-dimension order drifted")
+    esc_development = generator_esc_eval_primary_selection["development_selection"]
+    if set(esc_development["candidate_dialogues"].values()) != {24}:
+        failures.append("ESC-Eval development candidate dialogue counts drifted")
+    if (esc_development["assignments"], esc_development["dimension_ratings"]) != (144, 1008):
+        failures.append("ESC-Eval human-review accounting drifted")
+    if generator_esc_eval_primary_selection["protocol_repair_boundary"]["exact_official_reproduction"] is not False:
+        failures.append("repaired ESC-Eval protocol is mislabeled as exact reproduction")
+    if "Optional sensitivity" not in generator_esc_eval_primary_selection["role_of_other_evaluators"]["esc_judge_eia"]:
+        failures.append("ESC-Judge E-I-A regained primary selection authority")
     if margin_contract["status"] != "DERIVATION_RULE_FROZEN_NUMERIC_CALIBRATION_VALUES_PENDING_P1":
         failures.append("margin derivation status changed")
     if margin_contract["p1_registration_gate"]["formal_outcomes_may_not_change_these_values"] is not True:
@@ -525,6 +552,7 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         g0_four_generator_esc_rank_closeout_path,
         generator_fair_selection_path,
         g0_fair_judge_canary_path,
+        generator_esc_eval_primary_selection_path,
         esc_rank_audit_path,
         same_stack_reference_path,
         margin_contract_path,
@@ -642,9 +670,10 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
         "generator_fair_selection": {
             "status": generator_fair_selection["status"],
             "eligible": generator_fair_selection["selection_set"]["eligible"],
-            "canary_calls": generator_fair_selection["qualification_canary"]["total_calls"],
-            "full_additional_calls": generator_fair_selection["full_g0_after_canary"]["additional_calls"],
+            "superseded_canary_planned_calls": generator_fair_selection["qualification_canary"]["total_calls"],
+            "superseded_full_additional_calls": generator_fair_selection["full_g0_after_canary"]["additional_calls"],
             "no_composite": generator_fair_selection["pairwise_resolution"]["no_composite"],
+            "eia_canary_active": generator_fair_selection["qualification_canary"]["active"],
         },
         "g0_fair_judge_canary": {
             "run_identity": g0_fair_judge_canary["run_identity"],
@@ -653,6 +682,14 @@ def validate(require_private_evidence: bool = False) -> dict[str, Any]:
             "point_estimate_usd": g0_fair_judge_canary["budget"]["point_estimate_usd"],
             "suggested_ceiling_usd": g0_fair_judge_canary["budget"]["suggested_ceiling_usd"],
             "status": g0_fair_judge_canary["status"],
+        },
+        "generator_esc_eval_primary_selection": {
+            "status": generator_esc_eval_primary_selection["status"],
+            "official_dimensions": generator_esc_eval_primary_selection["official_anchor"]["official_dimensions_0_to_4"],
+            "eligible_dialogues": sum(generator_esc_eval_primary_selection["development_selection"]["candidate_dialogues"].values()),
+            "human_assignments": generator_esc_eval_primary_selection["development_selection"]["assignments"],
+            "dimension_ratings": generator_esc_eval_primary_selection["development_selection"]["dimension_ratings"],
+            "exact_official_reproduction": generator_esc_eval_primary_selection["protocol_repair_boundary"]["exact_official_reproduction"],
         },
         "numeric_calibration_phase": "P1_PENDING_BEFORE_FORMAL_VERDICT",
         "es_memeval_primary_task": memeval_decision["primary_task_name"],

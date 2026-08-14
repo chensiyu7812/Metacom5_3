@@ -68,6 +68,8 @@ def main() -> int:
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = parser.parse_args()
     preflight = json.loads(PREFLIGHT.read_text(encoding="utf-8"))
+    if preflight["status"] != "ZERO_CALL_PREFLIGHT_PASS_IDENTITY_SPECIFIC_APPROVAL_REQUIRED":
+        raise RuntimeError("this judge canary was superseded before calls and cannot run")
     calls = read_jsonl(MANIFEST)
     if args.approved_identity != preflight["run_identity"]:
         raise RuntimeError("approved identity does not match the frozen judge canary")

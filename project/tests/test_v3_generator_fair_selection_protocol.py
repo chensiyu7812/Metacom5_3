@@ -15,8 +15,9 @@ def test_fair_selection_separates_quality_guardrails_operations_and_cost() -> No
     protocol = _protocol()
     hierarchy = protocol["metric_hierarchy"]
     assert hierarchy["primary_quality"] == [
-        "Exploration paired preference", "Insight paired preference", "Action paired preference"
+        "ESC-Eval Overall 0-to-4 blinded human rating"
     ]
+    assert hierarchy["key_quality_dimensions"] == ["Empathy", "Skill", "Information"]
     assert "actual USD" in hierarchy["tie_breakers_after_qualification"]
     assert "no material or critical absolute integrity regression" in hierarchy["hard_gates"]
     assert protocol["pairwise_resolution"]["no_composite"] is True
@@ -30,9 +31,11 @@ def test_fair_selection_canary_is_measurement_only_and_accounts_for_every_call()
     assert canary["repeatability_calls"] == 18
     assert canary["absolute_guardrail_calls"] == 18
     assert canary["total_calls"] == 144
-    assert "cannot select" in canary["purpose"]
+    assert canary["active"] is False
+    assert "SUPERSEDED BEFORE CALLS" in canary["purpose"]
     assert protocol["full_g0_after_canary"]["additional_calls"] == 378
-    assert protocol["authorization"].startswith("Design and zero-call")
+    assert protocol["full_g0_after_canary"]["active"] is False
+    assert "superseded" in protocol["authorization"]
 
 
 def test_fair_selection_retains_itt_and_does_not_rehabilitate_nemotron_subset() -> None:

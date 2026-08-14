@@ -45,7 +45,7 @@ ES-MemEval身份已按结果盲原则解决：正式主任务命名为`ES-MemEva
 - ESC-RANK公开仓库没有逐条人工标注与split ID，因此不再无期限“寻找后再开始”：其论文construct和655卡考卷保留，修复版scorer作描述性七维外部指标，作为单独绝对pass/fail工具明确为`UNQUALIFIED`；
 - published Llama3-8B/ChatGPT/ESC-specialized 分数只作背景，不能与不同代码、模型版本和 prompt 的新分数直接作正式 NI；
 - 2026-08-14纠正：此前把用户指定的Nemotron误写成NVIDIA `meta/llama-3.3-70b-instruct`。70B原始结果只保留为误配route诊断，不能用于generator选择；正确route为`nvidia/nemotron-3-nano-30b-a3b`，先按冻结的429、失败率与median/p90延迟门槛做2卡transport canary；hosted route不暴露不可变weight revision的限制仍须披露；
-- generator选择由硬可靠性、executor、同栈E-I-A和Risk共同决定，不用ESC-RANK Average设一个伪精确分数线；
+- generator选择由硬可靠性、ESC-Eval官方七维双人盲评、executor与项目Risk共同决定；ESC-RANK只作描述性自动化，E-I-A只作可选敏感性分析；
 - low-burden guardrail 单独审计，防止建议数量奖励制造“高分但不合适”的系统。
 
 原论文七维与公开adapter的固定映射为：`Fluency→fluency`、`Expression→diversity`、`Empathy→empathic`、`Information→suggestion`、`Skill→tech`、`Humanoid→human`、`Overall→overall`。`completion_rate/low_burden/no_premature_action/safety_signal_handling`是项目guardrail，不得伪装成ESC-RANK官方维度。
@@ -57,7 +57,7 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 旧identity `bd2b4a12...`只用了`You are a helpful assistant!`，又统一施加256-token上限；45个Qwen turn中25个、45个8B turn中21个以`length`结束。该轮已在`g0_bd2b_prompt_cap_measurement_closeout_v1.json`中关闭：可用于旧surface的transport/latency诊断和证明上限确实binding，禁止用于最大能力排序或generator通过/淘汰。
 
-替代G0在相同24卡上以8B和Qwen 3.7 Plus non-thinking为主候选，Qwen thinking作能力上界敏感性；Nemotron只有先过单独transport gate才加入。误配的70B不再是候选。provider请求完全省略`max_tokens/max_completion_tokens`；回复长度、是否自然完成、低负担/啰嗦度、tokens与finish reason都成为结果，而不是研究者预先截断。Quality以ESC-Judge的Exploration、Insight、Action双顺序pairwise为主，ESC-RANK七维只作描述性敏感性，人类小anchor在最终冻结前执行；延迟报告完整非流式端到端median/p90、吞吐与失败率，不虚构跨provider不可比的TTFT。
+替代G0在相同24卡上以8B和Qwen 3.7 Plus non-thinking为主候选，Qwen thinking作能力上界敏感性；Nemotron只有先过单独transport gate才加入。误配的70B不再是候选。provider请求完全省略`max_tokens/max_completion_tokens`；回复长度、是否自然完成、低负担/啰嗦度、tokens与finish reason都成为结果，而不是研究者预先截断。Quality主评价使用ESC-Eval官方Fluency、Expression、Empathy、Information、Humanoid、Skill、Overall七维0–4分双人盲评；ESC-RANK只作描述性自动化，ESC-Judge E-I-A只作可选敏感性分析；延迟报告完整非流式端到端median/p90、吞吐与失败率，不虚构跨provider不可比的TTFT。
 
 先跑2卡canary，仅检验transport、prompt、自然完成和预算机制，绝不从2卡选模型；再跑24卡development screen。硬门失败者淘汰，剩余候选按Quality、atomic Risk和latency的Pareto关系筛选，不制造加权总分，也不让低延迟覆盖质量失败。最终候选另跑approved-plan/evidence executor和更大资格集；executor仍只识别generator能否实现已批准内容，不是PM selector证据。
 
@@ -67,7 +67,7 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 该Nemotron canary已在identity `92bd2e53...`下完成并通过操作门：10/10均首次成功，0次HTTP 429、timeout、5xx或terminal trajectory；成功请求median约1.69s、p90约3.23s，10次均自然`stop`且无length finish。托管响应在10次中均含独立reasoning字段，但NVIDIA usage未给出独立reasoning token计数，因此1,601 billed completion tokens不能伪装成可见回答token。此结果只证明低并发小样本route可用；Nemotron保留进入更大Quality/Risk/latency比较，仍未选择generator。
 
-下一轮四配置full G0已零调用物化：24张开发卡×五轮×Llama 3.1 8B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking、Nemotron 3 Nano，共480次supporter调用与480次本地role-player生成；其中Qwen付费调用240次，judge调用为0。四个配置全部在新identity下重跑，不把不同日期、不同candidate set的canary回复拼进正式矩阵。两卡Qwen实际费用线性外推约`$0.2336`，只是规划点估计；runner仍按无输出cap的65,536-token最坏预留逐次熔断。生成完成后另行冻结E/I/A双顺序Quality、原子Risk和描述性ESC-RANK评分，不以transport指标选择模型。
+下一轮四配置full G0已零调用物化：24张开发卡×五轮×Llama 3.1 8B、Qwen 3.7 Plus non-thinking、Qwen 3.7 Plus thinking、Nemotron 3 Nano，共480次supporter调用与480次本地role-player生成；其中Qwen付费调用240次，judge调用为0。四个配置全部在新identity下重跑，不把不同日期、不同candidate set的canary回复拼进正式矩阵。两卡Qwen实际费用线性外推约`$0.2336`，只是规划点估计；runner仍按无输出cap的65,536-token最坏预留逐次熔断。生成完成后按ESC-Eval官方七维做人类主评价、原子Risk审计和描述性ESC-RANK评分，不以transport指标选择模型。
 
 该full G0生成现已完成：469/480个turn成功，Qwen实际费用`$0.2963172`。Llama 3.1 8B、Qwen non-thinking、Qwen thinking均120/120成功、24/24对话完成且无transport失败；Nemotron仅109/120成功，出现17次HTTP 503和3/24条terminal trajectory，turn有效率90.83%、完整对话率87.5%，均低于冻结的95%硬门。因此当前NVIDIA hosted Nemotron route退出部署generator选择；其109条成功回复只能在共同完成卡上作明确标注的描述性质量分析，不能删掉失败卡后伪装完整结果。Quality、原子Risk和低负担尚未评分，故8B与两种Qwen之间仍未选定generator。
 
@@ -77,11 +77,11 @@ G0不直接宣告generator合格。2026-08-14的方法修正把两种不同责�
 
 ### 公平generator选择协议
 
-generator选择现在由`generator_fair_selection_protocol_v1.json`统一约束。“公平”不仅指同prompt，还包括：同24张卡和五轮轨迹、相同role-player与按位置共享seed、无研究者输出cap；三种可靠性合格配置组成完整pair graph；E/I/A每个比较都做A/B与B/A；模型/provider标签对judge不可见；card/dialogue是统计单位，turn与维度不是独立样本；transport失败、INVALID、REFUSAL和位置不稳定全部保留为ITT结果；Quality、绝对完整性、cost、latency不合成一个总分。
+generator选择现在由`generator_esc_eval_primary_selection_v1.json`主控，`generator_fair_selection_protocol_v1.json`保留通用公平约束。“公平”不仅指同prompt，还包括：同24张官方英文开发卡和五轮轨迹、相同role-player与按位置共享seed、无研究者输出cap；模型/provider标签对评审不可见；card/dialogue是统计单位，turn与七个维度不是独立样本；transport失败、无效输出与完整性事件全部保留为ITT结果；Quality、Risk、cost、latency不合成一个总分。
 
-决策顺序是硬门而不是加权：先过对话可靠性和绝对完整性，再看Exploration、Insight、Action；成本和延迟只能在Quality/Risk合格且等价的配置之间决胜，不能用“便宜”抵消质量失败，也不能用“更强但昂贵”的先验偏袒thinking。第一步仅运行6张跨来源卡的测量资格canary：108次E/I/A双顺序、18次重复性、18次绝对低负担/完整性，共144次。该canary只决定judge工具是否稳定、有分辨率，绝不选generator；通过后才补齐剩余18张卡的378次调用。正式PM外测前还必须加入至少12个分层unit、两名独立盲评者的人类anchor。
+当前三种可靠性合格配置各有24段完整对话，共72段。主评价不是新增LLM自定义盲评，而是两名独立盲评者逐段按ESC-Eval官方七维0–4分评分：72段×2人=`144`个dialogue assignment、共`1008`个维度评分。任一维度相差至少2分、无效对话或完整性疑虑进入第三位盲评裁决。先过可靠性与完整性硬门，再看Overall主指标及Empathy、Skill、Information关键维度；只有质量和风险等价时，成本和延迟才可决胜。
 
-该144-call canary已零调用物化为identity `6bfd7830...`。六张卡按公开source与development order结果盲选定，覆盖MHP、EPITOME、ExTES、Psych和两张ESConv；provider可见文本不含任何candidate/model/provider标签。完整双对话prompt实测约102万字符，不能沿用历史短prompt judge的单次价格：按约25.6万input tokens和每次260 output tokens的点估计为`$2.40193`，建议硬上限`$3.34`。此identity仍只授权instrument qualification，不授权generator胜负。
+此前物化的144-call E-I-A judge canary（identity `6bfd7830...`）已经在任何调用前废止：0调用、`$0`，runner会拒绝执行。它只是ESC-Judge风格的可选敏感性工具，不是ESC-Eval官方七维评价，不能选择generator。现有24卡只支持具名开发筛选；论文级英文资格需在全部331张官方英文高质量卡，或事先冻结并明确命名的英文分层确认子集上复核，不能把24卡称为完整ESC-Eval。
 
 ## ESC-Judge 稳健性方案
 

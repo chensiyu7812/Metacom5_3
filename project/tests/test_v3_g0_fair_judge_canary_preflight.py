@@ -28,6 +28,10 @@ def test_fair_judge_canary_is_source_stratified_and_call_complete() -> None:
 
 def test_fair_judge_canary_binds_independent_judge_budget_and_no_selection() -> None:
     report = _preflight()
+    assert report["status"].startswith("SUPERSEDED_BEFORE_ANY_CALL")
+    assert report["supersession"]["api_calls_made"] == 0
+    assert report["supersession"]["usd_spent"] == 0
+    assert report["supersession"]["former_identity_authorized"] is False
     assert report["judge"]["family"] == "openai_gpt_5_6_sol"
     assert report["judge"]["model"] == "gpt-5.6-sol"
     assert 2.0 < report["budget"]["point_estimate_usd"] < report["budget"]["suggested_ceiling_usd"]
