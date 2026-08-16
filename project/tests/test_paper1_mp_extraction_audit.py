@@ -5,12 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from metacom_pm.paper1.data.es_memeval import load_users
+from metacom_pm.paper1.data.materializer import build_sanitized_runtime_users, load_raw_users
 from metacom_pm.paper1.data.memory_source import (
     MemorySourceUser,
     Session,
     Turn,
-    parse_memory_source_users,
 )
 from metacom_pm.paper1.features.mp_extraction_audit import (
     CATEGORY_PATTERNS,
@@ -25,7 +24,7 @@ EVO_PATH = ROOT / "data/external/evo_emo.json"
 
 @pytest.fixture(scope="module")
 def real_users():
-    return parse_memory_source_users(load_users(EVO_PATH))
+    return build_sanitized_runtime_users(load_raw_users(EVO_PATH))
 
 
 def test_primary_compiler_hits_matches_the_production_compiler_count(real_users):
@@ -111,6 +110,37 @@ def test_audit_report_json_serializable_and_contains_no_evidence_or_gold_tokens(
     rendered = json.dumps(report).lower()
     for token in ("evidence", "\"gold\"", "\"answer\""):
         assert token not in rendered
+
+
+def test_primary_rule_description_no_longer_falsely_claims_a_tried_self_report(real_users):
+    # B21.1: the audit's "rule" text previously (incorrectly) said the
+    # primary compiler includes a past-tense "tried" self-report -- that
+    # pattern belongs to memory/me.py (ME), not memory/mp.py. is_profile_
+    # disclosure() never checks for "tried" at all; the description must
+    # match the actual compiler exactly.
+    report = build_audit_report(real_users)
+    rule_text = report["primary_compiler"]["rule"].lower()
+    assert "tried" not in rule_text
+    assert "i'm a/an" in rule_text or "i work as" in rule_text
+
+
+def test_expansion_diagnostic_proposal_never_widens_the_primary_compiler(real_users):
+    # B21.2/B21.3: family_relationship/occupation/diagnosis get a diagnostic
+    # proposal only -- exact spans/counts and an honest false-positive
+    # finding, never a rule adopted into the primary compiler, never
+    # basic_info, never a synthetic rescue for MP's sparse coverage.
+    report = build_audit_report(real_users)
+    proposal = report["expansion_diagnostic_proposal"]
+    assert proposal["status"] == "DIAGNOSTIC_PROPOSAL_ONLY_NOT_ADOPTED"
+    for category in ("family_relationship", "occupation_diagnostic", "diagnosis_diagnostic"):
+        row = proposal[category]
+        assert row["mechanical_precision_first_rule_available"] is False
+        assert "finding" in row
+    assert proposal["family_relationship"]["total_matches"] > 50
+    assert report["identifiability_limitation"]
+    assert "synthetic" in report["identifiability_limitation"].lower()
+    # the primary compiler's own count must still be unchanged by this audit
+    assert report["primary_compiler"]["unique_hit_count"] == 3
 
 
 def test_synthetic_user_with_no_matches_produces_empty_categories():

@@ -4,9 +4,11 @@ from pathlib import Path
 
 import pytest
 
+from metacom_pm.paper1.contracts import TaskType
 from metacom_pm.paper1.data.es_memeval import load_users
 from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users
-from metacom_pm.paper1.data.memory_source import enumerate_targets, parse_memory_source_users
+from metacom_pm.paper1.data.materializer import build_sanitized_runtime_users, load_raw_users
+from metacom_pm.paper1.data.memory_source import Target, enumerate_targets
 from metacom_pm.paper1.splits import (
     GROUP_COMPONENT_STATUS,
     OUTER_FOLD_PACKING_STATUS,
@@ -19,21 +21,42 @@ from metacom_pm.paper1.splits import (
     pack_components_into_outer_folds,
     summarize_outer_fold_packing,
 )
-from metacom_pm.paper1.splits.evidence import enumerate_split_evidence
+from metacom_pm.paper1.splits.evidence import SplitEvidenceRecord, enumerate_split_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 EVO_PATH = ROOT / "data/external/evo_emo.json"
 
 
 def _load():
-    raw = load_users(EVO_PATH)
+    raw = load_raw_users(EVO_PATH)
     # B12: targets come from the sanitized loader; evidence_records from the
     # fully independent evaluator/split-only loader -- never one object that
     # has both.
-    users = parse_memory_source_users(raw)
+    users = build_sanitized_runtime_users(raw)
     targets = enumerate_targets(users)
-    evidence_records = enumerate_split_evidence(parse_evaluator_users(raw))
+    evidence_records = enumerate_split_evidence(parse_evaluator_users(load_users(EVO_PATH)))
     return users, targets, evidence_records
+
+
+def _target(target_id="p1::q::1", owner_id="p1", group_key="p1::qa::q"):
+    return Target(
+        target_id=target_id,
+        task_type=TaskType.QA,
+        owner_id=owner_id,
+        primary_group_key=group_key,
+        cutoff_rank=1,
+        visible_query_text="does this matter?",
+    )
+
+
+def _evidence(target_id="p1::q::1", owner_id="p1", group_key="p1::qa::q", refs=("esc1:1",)):
+    return SplitEvidenceRecord(
+        target_id=target_id,
+        task_type=TaskType.QA,
+        owner_id=owner_id,
+        primary_group_key=group_key,
+        evidence_refs=refs,
+    )
 
 
 def test_canonical_evidence_fingerprint_is_order_independent_and_deduplicated():
@@ -247,6 +270,87 @@ def test_pack_components_into_outer_folds_balances_target_counts_reasonably():
     ideal = len(targets) / 5
     assert all(count > 0 for count in counts)
     assert max(counts) < ideal * 1.5
+
+
+# --- B22: fail-closed target<->evidence join, exercised at the public API --
+#
+# _join_targets_with_evidence itself is private; these tests drive it only
+# through build_group_component_assignments / build_group_components /
+# build_shared_session_sensitivity_components, the actual public entry
+# points a caller (or a future script) would use.
+
+
+def test_group_component_assignments_raise_on_a_missing_evidence_record():
+    targets = (_target(),)
+    with pytest.raises(ValueError, match="no matching evidence record"):
+        build_group_component_assignments(targets, ())
+
+
+def test_group_component_assignments_raise_on_a_duplicate_evidence_target_id():
+    targets = (_target(),)
+    evidence = (_evidence(), _evidence())
+    with pytest.raises(ValueError, match="duplicate target_id"):
+        build_group_component_assignments(targets, evidence)
+
+
+def test_group_component_assignments_raise_on_an_extra_evidence_record():
+    targets = (_target(),)
+    evidence = (_evidence(), _evidence(target_id="p1::q::2"))
+    with pytest.raises(ValueError, match="unknown target_id"):
+        build_group_component_assignments(targets, evidence)
+
+
+def test_group_component_assignments_raise_on_an_owner_mismatch():
+    targets = (_target(owner_id="p1"),)
+    evidence = (_evidence(owner_id="p2"),)
+    with pytest.raises(ValueError, match="owner mismatch"):
+        build_group_component_assignments(targets, evidence)
+
+
+def test_group_component_assignments_raise_on_a_task_type_mismatch():
+    targets = (_target(),)
+    mismatched = SplitEvidenceRecord(
+        target_id="p1::q::1",
+        task_type=TaskType.SUMMARY,
+        owner_id="p1",
+        primary_group_key="p1::qa::q",
+        evidence_refs=("esc1:1",),
+    )
+    with pytest.raises(ValueError, match="task_type mismatch"):
+        build_group_component_assignments(targets, (mismatched,))
+
+
+def test_group_component_assignments_raise_on_a_primary_group_key_mismatch():
+    targets = (_target(group_key="p1::qa::q"),)
+    evidence = (_evidence(group_key="p1::qa::other"),)
+    with pytest.raises(ValueError, match="primary_group_key mismatch"):
+        build_group_component_assignments(targets, evidence)
+
+
+def test_group_components_also_go_through_the_same_fail_closed_join():
+    # build_group_components shares _group_key_components with
+    # build_group_component_assignments -- confirm the join is enforced here
+    # too, not only on the assignment-list entry point.
+    targets = (_target(),)
+    with pytest.raises(ValueError, match="no matching evidence record"):
+        build_group_components(targets, ())
+
+
+def test_shared_session_sensitivity_components_also_go_through_the_fail_closed_join():
+    users, targets, _evidence_records = _load()
+    p1_targets = tuple(t for t in targets if t.owner_id == "p1")[:2]
+    p1_users = tuple(u for u in users if u.owner_id == "p1")
+    with pytest.raises(ValueError, match="no matching evidence record"):
+        build_shared_session_sensitivity_components(p1_targets, p1_users, ())
+
+
+def test_group_component_assignments_do_not_raise_on_the_real_valid_corpus_join():
+    # sanity check: the fail-closed join above must not be so strict it
+    # rejects the actual, valid, full corpus.
+    _users, targets, evidence_records = _load()
+    assignments = build_group_component_assignments(targets, evidence_records)
+    assert len(assignments) == len(targets)
+    assert len({a.group_component_id for a in assignments}) == 477
 
 
 # --- B15: the packer's determinism/seed-sensitivity contract ---------------

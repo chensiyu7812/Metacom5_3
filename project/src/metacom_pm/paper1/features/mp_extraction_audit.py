@@ -200,11 +200,20 @@ def build_audit_report(users: tuple[MemorySourceUser, ...], *, examples_per_cate
         "reads_basic_info": False,
         "reads_outcome_or_gold_fields": False,
         "primary_compiler": {
+            # B21.1: corrected. This previously (incorrectly) said the rule
+            # includes a past-tense "tried" self-report -- that pattern
+            # belongs to metacom_pm.paper1.memory.me (ME), not mp.py. MP's
+            # is_profile_disclosure() never checks for "tried" at all.
             "rule": (
-                "seeker turn matches a past-tense 'tried' self-report OR one of the "
-                "fixed patterns in metacom_pm.paper1.memory.mp (occupation/work, age, "
-                "name, residence, study, family status, stated diagnosis) -- see "
-                "is_profile_disclosure() for the exact patterns"
+                "seeker turn matches the role pattern \"I'm a/an <word>\" (word not in "
+                "a filler-word stoplist: bit/little/lot/mix/few/couple/bunch/ton/sort/"
+                "kind/part/way) OR one of seven fixed patterns in "
+                "metacom_pm.paper1.memory.mp: occupation (\"I work as/at/in/for\"), age "
+                "(\"I'm/I am <N> years old\"), name (\"my name is\"), residence (\"I "
+                "live in\"), study (\"I study\"/\"I'm studying\"/\"I major in\"), family "
+                "status (\"I'm married\"/\"I have a/two/three kids\"), or a stated "
+                "diagnosis (\"I've been diagnosed with\") -- see is_profile_disclosure() "
+                "for the exact regexes"
             ),
             "unique_hit_count": len(primary_hits),
             "hits": [
@@ -219,13 +228,74 @@ def build_audit_report(users: tuple[MemorySourceUser, ...], *, examples_per_cate
             ],
         },
         "category_coverage_audit": category_summary,
+        "expansion_diagnostic_proposal": {
+            "status": "DIAGNOSTIC_PROPOSAL_ONLY_NOT_ADOPTED",
+            "family_relationship": {
+                "total_matches": category_summary["family_relationship"]["total_matches"],
+                "finding": (
+                    "Reading a sample of real hits (see category_coverage_audit."
+                    "family_relationship.example_hits and the corpus scan behind this "
+                    "report) shows the pattern reliably finds a stable existence fact "
+                    "(\"has parents\"/\"has a mother\"), but the matched text is almost "
+                    "always a *situational* narrative wrapped around that fact -- e.g. "
+                    "\"My parents just showed up unannounced, and it's really stressing "
+                    "me out\" or \"My parents visited recently, and they didn't make it "
+                    "easier\" -- not a standalone durable attribute comparable to "
+                    "occupation/residence/diagnosis. Adopting the raw match as MP content "
+                    "would inject an episodic narrative under the Profile head, blurring "
+                    "the MP vs. MS/ME construct boundary rather than adding a genuine "
+                    "profile fact."
+                ),
+                "mechanical_precision_first_rule_available": False,
+                "reason_no_rule": (
+                    "Distinguishing \"stable relationship-existence disclosure\" from "
+                    "\"situational event narrated using a relationship term\" requires "
+                    "judging whether the surrounding clause states a fact about the "
+                    "relationship itself vs. narrates a transient event -- that is a "
+                    "semantic judgment, not a lexical pattern this project can express "
+                    "precision-first without an LLM or hand-curated per-example "
+                    "blacklist, both forbidden for candidate construction."
+                ),
+            },
+            "occupation_diagnostic": {
+                "total_matches": category_summary["occupation"]["total_matches"],
+                "finding": (
+                    "Only 2 matches corpus-wide, both from the same owner (p10), both "
+                    "narrating the same ongoing work-stress situation rather than a bare "
+                    "occupation statement (\"I work hard at my job in an office... my job "
+                    "is now twice the work\"). Too sparse and too situational to propose "
+                    "as an expansion on its own."
+                ),
+                "mechanical_precision_first_rule_available": False,
+            },
+            "diagnosis_diagnostic": {
+                "total_matches": category_summary["diagnosis"]["total_matches"],
+                "finding": (
+                    "1 match corpus-wide (\"My therapist said something about self-worth "
+                    "the other day\"), and it reports what the *therapist* said, not a "
+                    "self-disclosed diagnosis -- would not actually qualify as a stated "
+                    "diagnosis even under a looser reading."
+                ),
+                "mechanical_precision_first_rule_available": False,
+            },
+        },
+        "identifiability_limitation": (
+            "B21.3: no fully-enumerable, mechanical, precision-first expansion rule was "
+            "found for any of the six audited categories this round. residence and study "
+            "have zero corpus matches at all (support-seeking dialogue in this corpus "
+            "essentially never states a city or school). occupation and diagnosis are too "
+            "sparse and situational to generalize from. family_relationship has real "
+            "volume but conflates a stable existence fact with situational narration in a "
+            "way this project cannot mechanically separate without semantic judgment. "
+            "This is reported as an honest MP identifiability/coverage limitation, not "
+            "resolved by loosening the primary compiler -- per AGENTS.md, no synthetic "
+            "rescue for a sparse head."
+        ),
         "next_step_note": (
-            "This audit deliberately does not change memory/mp.py this round. "
-            "family_relationship in particular has a much larger raw match count "
-            "than the other categories (mentioning 'my mother/father/parents' is "
-            "common in support-seeking dialogue) -- whether that indicates a stable "
-            "profile fact or just situational context is a construct question for "
-            "a future rule-freezing round, not something this audit resolves by "
-            "itself."
+            "This audit deliberately does not change memory/mp.py this round. If a "
+            "future round wants to pursue family_relationship, the open question is "
+            "specifically how to mechanically separate 'stable relationship fact' from "
+            "'situational event narrated via a relationship term' -- not whether the "
+            "raw match count is large enough to bother with."
         ),
     }

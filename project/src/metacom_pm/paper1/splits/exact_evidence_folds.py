@@ -114,6 +114,63 @@ def _group_component_id(members: tuple[str, ...]) -> str:
     return f"component::{digest}"
 
 
+def _join_targets_with_evidence(
+    targets: tuple[Target, ...], evidence_records: tuple[SplitEvidenceRecord, ...]
+) -> dict[str, SplitEvidenceRecord]:
+    """B22: fail-closed target<->evidence join.
+
+    A silent join bug here (a missing/duplicate/extra evidence record, or one
+    whose owner/task/group-key metadata quietly disagrees with the target it
+    is keyed to) would corrupt the fold-fingerprint computation without ever
+    raising -- exactly the kind of error the rest of this module's owner-
+    namespacing and identity-validation work is meant to prevent. Every one
+    of the following is checked and raises immediately, rather than trusting
+    a bare dict lookup:
+
+    - no duplicate ``target_id`` across ``evidence_records``;
+    - the set of ``target_id`` values in ``evidence_records`` exactly equals
+      the set in ``targets`` (no missing, no extra);
+    - for every target, its evidence record's ``owner_id``, ``task_type``,
+      and ``primary_group_key`` all match the target's own.
+    """
+
+    evidence_ids = [r.target_id for r in evidence_records]
+    if len(evidence_ids) != len(set(evidence_ids)):
+        duplicates = sorted({t for t in evidence_ids if evidence_ids.count(t) > 1})
+        raise ValueError(f"duplicate target_id in evidence_records: {duplicates}")
+
+    evidence_by_target = {r.target_id: r for r in evidence_records}
+    target_ids = {t.target_id for t in targets}
+    evidence_target_ids = set(evidence_by_target)
+
+    missing = target_ids - evidence_target_ids
+    if missing:
+        raise ValueError(f"{len(missing)} target(s) have no matching evidence record: {sorted(missing)[:5]}...")
+    extra = evidence_target_ids - target_ids
+    if extra:
+        raise ValueError(f"{len(extra)} evidence record(s) reference unknown target_id: {sorted(extra)[:5]}...")
+
+    for target in targets:
+        record = evidence_by_target[target.target_id]
+        if record.owner_id != target.owner_id:
+            raise ValueError(
+                f"evidence/target owner mismatch for {target.target_id!r}: "
+                f"evidence owner {record.owner_id!r} != target owner {target.owner_id!r}"
+            )
+        if record.task_type is not target.task_type:
+            raise ValueError(
+                f"evidence/target task_type mismatch for {target.target_id!r}: "
+                f"evidence {record.task_type!r} != target {target.task_type!r}"
+            )
+        if record.primary_group_key != target.primary_group_key:
+            raise ValueError(
+                f"evidence/target primary_group_key mismatch for {target.target_id!r}: "
+                f"evidence {record.primary_group_key!r} != target {target.primary_group_key!r}"
+            )
+
+    return evidence_by_target
+
+
 def _group_key_components(
     targets: tuple[Target, ...], evidence_records: tuple[SplitEvidenceRecord, ...]
 ) -> tuple[dict[str, str | None], dict[str, tuple[str, ...]]]:
@@ -124,7 +181,7 @@ def _group_key_components(
     group keys in its component (including itself).
     """
 
-    evidence_by_target = {r.target_id: r for r in evidence_records}
+    evidence_by_target = _join_targets_with_evidence(targets, evidence_records)
     fingerprint_by_target = {
         target.target_id: canonical_evidence_fingerprint(
             target.owner_id, evidence_by_target[target.target_id].evidence_refs
@@ -383,10 +440,18 @@ class SharedSessionSensitivityComponent:
     target_ids: tuple[str, ...]
 
 
-def _session_footprint(
-    context_session_ids: tuple[str, ...], evidence_refs: tuple[str, ...], known_session_ids: set[str]
-) -> frozenset[str]:
-    footprint = set(context_session_ids)
+def _session_footprint(evidence_refs: tuple[str, ...], known_session_ids: set[str]) -> frozenset[str]:
+    """Session ids referenced by an evidence/related-session ref list.
+
+    B17: no longer combined with ``Target.context_session_ids`` (removed --
+    the full ``dialog_history`` is strict-past for every target regardless
+    of task type, so there is no more per-target "premise session" concept
+    at all). This footprint is evidence-only, exactly like the primary
+    exact-evidence fingerprint above -- the broader notion here is just
+    "any shared session", not "exact identical evidence set".
+    """
+
+    footprint: set[str] = set()
     for ref in evidence_refs:
         prefix = ref.split(":", 1)[0]
         if prefix in known_session_ids:
@@ -406,11 +471,13 @@ def build_shared_session_sensitivity_components(
     the cross-owner fingerprint-collision risk that motivated namespacing
     ``canonical_evidence_fingerprint`` above. Sensitivity-only per AGENTS.md
     rule 6: reported separately, never used to compute the primary
-    ``group_component_id``. Reads evidence only via
-    ``evidence_records`` (B8), joined by ``target_id``.
+    ``group_component_id``. Reads evidence only via ``evidence_records``
+    (B8), joined by ``target_id`` through the same fail-closed join (B22) as
+    the primary component construction.
     """
 
-    evidence_by_target = {r.target_id: r.evidence_refs for r in evidence_records}
+    evidence_by_record = _join_targets_with_evidence(targets, evidence_records)
+    evidence_by_target = {target_id: r.evidence_refs for target_id, r in evidence_by_record.items()}
     sessions_by_owner = {u.owner_id: {s.session_id for s in u.sessions} for u in users}
     uf = _UnionFind()
     targets_by_owner: dict[str, list[Target]] = {}
@@ -422,9 +489,7 @@ def build_shared_session_sensitivity_components(
         known_session_ids = sessions_by_owner.get(owner_id, set())
         session_to_targets: dict[str, list[str]] = {}
         for target in owner_targets:
-            footprint = _session_footprint(
-                target.context_session_ids, evidence_by_target[target.target_id], known_session_ids
-            )
+            footprint = _session_footprint(evidence_by_target[target.target_id], known_session_ids)
             for session_id in footprint:
                 session_to_targets.setdefault(session_id, []).append(target.target_id)
         for target_ids in session_to_targets.values():
