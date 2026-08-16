@@ -9,6 +9,7 @@ from .treatment import (
 )
 from .freeze import (
     ArtifactBinding,
+    EffectMeasurementFreeze,
     FreezeStatus,
     PreOutcomeFreezeManifest,
     bind_artifact,
@@ -18,6 +19,7 @@ __all__ = [
     "ResourceBlock",
     "RunBinding",
     "ArtifactBinding",
+    "EffectMeasurementFreeze",
     "FreezeStatus",
     "PreOutcomeFreezeManifest",
     "bind_artifact",

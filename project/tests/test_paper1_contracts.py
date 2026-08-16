@@ -17,10 +17,25 @@ from metacom_pm.paper1.contracts import (
 
 
 def test_soft_effect_preserves_ties_and_uncertainty_without_a_pass_gate():
-    target = SoftEffectTarget(on_wins=2, off_wins=1, ties=1, uncertain=2)
+    target = SoftEffectTarget(
+        on_better=2,
+        off_better=1,
+        equivalent=1,
+        uncertain=2,
+        invalid=1,
+    )
     assert target.measured_pairs == 4
-    assert target.positive_effect_fraction == pytest.approx(0.625)
+    assert target.nonpositive_pairs == 2
+    assert target.positive_effect_fraction == pytest.approx(0.5)
+    assert target.excluded_pairs == 3
+    assert target.total_pairs == 7
     assert target.uncertain == 2
+    assert target.invalid == 1
+
+
+def test_equivalent_is_nonpositive_not_half_a_positive_effect():
+    target = SoftEffectTarget(on_better=1, off_better=0, equivalent=2, uncertain=0)
+    assert target.positive_effect_fraction == pytest.approx(1 / 3)
 
 
 def test_primary_policy_rule_is_strictly_greater_than_point_five():

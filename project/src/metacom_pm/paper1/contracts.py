@@ -63,6 +63,16 @@ class TreatmentDeliveryStatus(StrEnum):
     TECHNICAL_FAILURE = "technical_failure"
 
 
+class PairedOutcome(StrEnum):
+    """Raw paired-effect result before constructing a learner target."""
+
+    ON_BETTER = "on_better"
+    OFF_BETTER = "off_better"
+    EQUIVALENT = "equivalent"
+    UNCERTAIN = "uncertain"
+    INVALID = "invalid"
+
+
 class CandidateLineage(StrictContract):
     source: str
     owner_id: str = Field(description="Audit/grouping only; forbidden as a model feature")
@@ -154,21 +164,40 @@ class TreatmentDeliveryTrace(StrictContract):
 
 
 class SoftEffectTarget(StrictContract):
-    on_wins: int = Field(ge=0)
-    off_wins: int = Field(ge=0)
-    ties: int = Field(ge=0)
+    """Aggregated raw paired outcomes for a positive-effect binomial target.
+
+    Equivalent is a valid nonpositive trial. Uncertain and invalid retain their
+    distinct audit meanings but do not enter the likelihood denominator.
+    """
+
+    on_better: int = Field(ge=0)
+    off_better: int = Field(ge=0)
+    equivalent: int = Field(ge=0)
     uncertain: int = Field(ge=0)
+    invalid: int = Field(default=0, ge=0)
 
     @property
     def measured_pairs(self) -> int:
-        return self.on_wins + self.off_wins + self.ties
+        return self.on_better + self.off_better + self.equivalent
+
+    @property
+    def nonpositive_pairs(self) -> int:
+        return self.off_better + self.equivalent
+
+    @property
+    def excluded_pairs(self) -> int:
+        return self.uncertain + self.invalid
+
+    @property
+    def total_pairs(self) -> int:
+        return self.measured_pairs + self.excluded_pairs
 
     @property
     def positive_effect_fraction(self) -> float | None:
         denominator = self.measured_pairs
         if denominator == 0:
             return None
-        return (self.on_wins + 0.5 * self.ties) / denominator
+        return self.on_better / denominator
 
 
 class PolicyDecision(StrictContract):

@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-pre-outcome-freeze-v1",
   "status": "DRAFT_AWAITING_M1_INTEGRATION",
-  "source_tree_sha": "a3f98a42f59040e6f9f040b29231d839659e764f",
+  "source_tree_sha": "5fd70113138e88119d8d529e829bad7874c81209",
   "generator": {
     "selection_status": "FINAL",
     "provider": "NVIDIA hosted NIM",
@@ -22,6 +22,16 @@
         "repo_relative_path": "src/metacom_pm/esc_rank_runtime.py",
         "sha256": "fa64dfb81c72d1f01b94113b3cc2bbed4bb75693556359f3fa4f08bff4b72efa",
         "role": "ESC-RANK parsing/runtime"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/contracts.py",
+        "sha256": "3ee71f2a7eeb737de57ba117d832b757f09af2a522c2f55d29843a27547fc7da",
+        "role": "paired outcome and shared contracts"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/core/freeze.py",
+        "sha256": "419578d287122b974d91139c0273a37101ca795b1125c74db053f68e3b10224b",
+        "role": "pre-outcome freeze validator"
       },
       {
         "repo_relative_path": "src/metacom_pm/paper1/core/treatment.py",
@@ -63,6 +73,7 @@
   "feature_schemas": [],
   "cross_fit": null,
   "effect_seed_schedule": [],
+  "effect_measurements": [],
   "matched_random": null,
   "api_call_plan": null,
   "cost_in_label_or_loss": false,
@@ -77,6 +88,7 @@
     "bind_new_paper1_generation_runners_and_prompt_templates",
     "freeze_decoding_and_max_tokens",
     "freeze_effect_seed_schedule",
+    "freeze_task_specific_material_better_and_equivalence_rules",
     "freeze_matched_random_seed_and_proposals",
     "materialize_api_call_plan"
   ],

@@ -15,11 +15,23 @@
 - 正式能力结论只来自 ESC-Eval / ES-MemEval 官方指标；Cost 是独立效率轴；内部 Q/R 只用于 RS 弱监督或补充诊断。
 - ES-MemEval 主任务名称固定为 `ES-MemEval-Public-v1.0.0-1427`。这是 pinned public artifact，不是论文 1209-QA 行级精确复现。
 
-## 2. 训练目标改为 benefit-only soft effect
+## 2. 训练目标改为 materially-positive realized effect
 
-每个 eligible state 保存全部 repeated ON/OFF 结果：ON wins、OFF wins、ties 与 uncertain。不得先用 `2/3`、70% 或其他比例制造 hard PASS state。
+每个 eligible state 保存全部 repeated ON/OFF 原始结果：`ON better`、`OFF better`、`equivalent`、`uncertain` 与 `invalid`。不得先用 `2/3`、70% 或其他比例制造 hard PASS state，也不得把 uncertain 与机械 invalid 混为一类。
 
-Primary target 是 positive marginal effect 的 soft/binomial target。Cost 不进入 label、loss、`CostWorthIt` 或 `positive_open` 派生门。
+Primary estimand 是：
+
+```text
+q_h(x,c) = P(Y_ON materially better than Y_OFF | x, c, frozen stack)
+```
+
+其中 `materially better` 与 `equivalent` 必须按 ESC response、QA、Summary、DG 的官方 outcome surface 分任务在 M2 预冻结，不能看过正式结果后改。训练计数固定为：`ON better = 1`；`OFF better = 0`；`equivalent = 0`；`uncertain = missing`；`invalid = missing + integrity record`。因此：
+
+```text
+positive_effect_fraction = on_better / (on_better + off_better + equivalent)
+```
+
+可用 repeats 的数量进入 binomial likelihood/样本权重；不另设 minimum-N PASS gate。原始五类 outcome 必须保留，供 uncertainty、measurement quality 与错误分析使用。这个 learner 估计的是“出现实质正收益的概率”，不是 Quality、Risk、Cost 或任意 utility magnitude。Cost 不进入 label、loss、`CostWorthIt` 或 `positive_open` 派生门。
 
 Primary policy rule 预冻结为：
 
@@ -75,7 +87,7 @@ target gold/reference/outcome 只能由 evaluator 读取。正式 RQ2 分数必�
 ## 6. 正式证据结构，不设论文总 PASS
 
 - Learned vs R0：资源系统整体价值；
-- Learned vs Matched-Random：相同 realized ON rate / 相近 injected-token budget 下的 state-dependent selection 价值；
+- Learned vs Matched-Random：相同 realized ON rate / **相同 injected-token budget** 下的 state-dependent selection 价值；若原始候选长度不能精确匹配，须在正式运行前冻结 padding/token-bin construction，不得以“相近”替代主对照；
 - Learned vs Fixed-High：官方能力与客观成本的 tradeoff；
 - RQ2 Typed Fixed-High：区分 typed representation 与 learned selection；
 - `-MP/-MS/-ME`：逐头按官方指标报告贡献，支持几头就主张几头。
@@ -93,8 +105,8 @@ RQ1 报告 ESC-Eval 七维完整 outcome family；核心是预注册 contrast，
 - 不打开正式 benchmark outcome；
 - 允许做固定样本、只看 finish reason/token usage 的 256/512 ESC cap 工程检查，但不得读取 ESC capability score 来选 cap。
 
-zero-outcome census 后一次性冻结 candidate/bundle、feature schema、exact fold grouping、task-specific effect anchor、Generator/Step2/runtime manifest、seed schedule、primary threshold 和 matched-random construction。正式 N 使用 outcome-blind 的 available/budgeted sample 并报告 realized N，不设效果资格线。
+zero-outcome census 后一次性冻结 candidate/bundle、feature schema、exact fold grouping、四类任务的 materially-better/equivalent/uncertain/invalid coding、Generator/Step2/runtime manifest、seed schedule、primary threshold 和 matched-random construction。正式 N 使用 outcome-blind 的 available/budgeted sample 并报告 realized N，不设效果资格线。
 
 ## 8. 一句话冻结
 
-> 同行官方指标评价最终能力；Matched-Random 识别 selection value；Cost 单独评价效率；训练只学习 benefit probability；硬失败只保护实验完整性，不再发明经验性通过门。
+> 同行官方指标评价最终能力；Matched-Random 识别 selection value；Cost 单独评价效率；训练只学习 materially-positive realized paired effect 的概率；硬失败只保护实验完整性，不再发明经验性通过门。

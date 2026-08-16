@@ -13,7 +13,7 @@ from typing import Any
 
 from pydantic import Field, model_validator
 
-from ..contracts import Head, StrictContract
+from ..contracts import Head, StrictContract, TaskType
 
 
 class FreezeStatus(StrEnum):
@@ -101,6 +101,37 @@ class MatchedRandomFreeze(StrictContract):
     cost_enters_training_label: bool = False
 
 
+class EffectMeasurementFreeze(StrictContract):
+    """Task-specific coding frozen before any formal paired outcomes are opened."""
+
+    task_type: TaskType
+    scorer_id: str = Field(min_length=1)
+    materially_better_rule: str = Field(min_length=1)
+    equivalent_rule: str = Field(min_length=1)
+    uncertain_rule: str = Field(min_length=1)
+    invalid_rule: str = Field(min_length=1)
+    on_better_target: int = 1
+    off_better_target: int = 0
+    equivalent_target: int = 0
+    uncertain_enters_likelihood: bool = False
+    invalid_enters_likelihood: bool = False
+    preserve_raw_outcome: bool = True
+
+    @model_validator(mode="after")
+    def enforce_positive_effect_coding(self) -> "EffectMeasurementFreeze":
+        if (
+            self.on_better_target != 1
+            or self.off_better_target != 0
+            or self.equivalent_target != 0
+        ):
+            raise ValueError("positive-effect coding must be ON=1, OFF=0, equivalent=0")
+        if self.uncertain_enters_likelihood or self.invalid_enters_likelihood:
+            raise ValueError("uncertain and invalid pairs cannot enter the training likelihood")
+        if not self.preserve_raw_outcome:
+            raise ValueError("raw paired outcomes must be preserved")
+        return self
+
+
 class ApiCallPlan(StrictContract):
     generation_cells: int = Field(ge=0)
     official_scorer_cells: int = Field(ge=0)
@@ -119,6 +150,7 @@ class PreOutcomeFreezeManifest(StrictContract):
     feature_schemas: tuple[FeatureSchemaFreeze, ...] = ()
     cross_fit: CrossFitFreeze | None = None
     effect_seed_schedule: tuple[int, ...] = ()
+    effect_measurements: tuple[EffectMeasurementFreeze, ...] = ()
     matched_random: MatchedRandomFreeze | None = None
     api_call_plan: ApiCallPlan | None = None
     cost_in_label_or_loss: bool = False
@@ -145,6 +177,11 @@ class PreOutcomeFreezeManifest(StrictContract):
             raise ValueError("utility/outcome features are forbidden")
         if any(schema.contains_other_component_bits for schema in self.feature_schemas):
             raise ValueError("route A forbids other-component feature bits")
+        if self.matched_random is not None and (
+            not self.matched_random.exact_on_count_by_prefrozen_stratum
+            or not self.matched_random.exact_injected_token_budget
+        ):
+            raise ValueError("matched random requires exact prefrozen ON counts and token budget")
 
         if self.status is FreezeStatus.FROZEN:
             if self.pending_items:
@@ -179,6 +216,11 @@ class PreOutcomeFreezeManifest(StrictContract):
                 raise ValueError("frozen manifest requires packed outer/inner cross-fitting")
             if not self.effect_seed_schedule or self.matched_random is None:
                 raise ValueError("frozen manifest requires effect and matched-random seeds")
+            if (
+                len(self.effect_measurements) != len(TaskType)
+                or {measurement.task_type for measurement in self.effect_measurements} != set(TaskType)
+            ):
+                raise ValueError("frozen manifest requires task-specific effect measurement rules")
             if self.matched_random.seed is None or self.matched_random.proposals is None:
                 raise ValueError("frozen matched-random construction is incomplete")
             if self.api_call_plan is None:

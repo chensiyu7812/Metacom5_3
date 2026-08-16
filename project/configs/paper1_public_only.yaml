@@ -25,11 +25,19 @@ generator:
   paper1_full_stack_manifest: PENDING_ZERO_OUTCOME_FREEZE
 learning:
   model: standardized_L2_logistic_regression_per_head
-  target: probability_of_positive_marginal_effect
+  target: probability_of_materially_positive_realized_paired_effect
   canonical_background: all_other_optional_components_off
   primary_threshold: 0.5
   cost_in_label_or_loss: false
   empirical_pass_gates: false
+  paired_outcome_coding:
+    on_better: 1
+    off_better: 0
+    equivalent: 0
+    uncertain: missing_excluded_from_likelihood
+    invalid: missing_excluded_from_likelihood_plus_integrity_record
+    preserve_raw_outcome: true
+    task_specific_material_better_and_equivalence_rules: PENDING_ZERO_OUTCOME_FREEZE
 cross_fit:
   claim: within_benchmark_cross_fitted_longitudinal_adaptation
   qa_group: owner_plus_question_group_id
@@ -56,7 +64,7 @@ pending_zero_outcome_freeze:
   - candidate_bundle_design
   - exact_feature_schema
   - exact_fold_manifest
-  - task_specific_effect_anchors
+  - task_specific_material_better_and_equivalence_rules
   - generator_step2_runtime_manifest
   - seed_schedule
   - matched_random_construction

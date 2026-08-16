@@ -11,10 +11,19 @@ def test_reconciliation_is_highest_precedence_and_removes_old_gates():
     )
     assert contract["status"] == "ACTIVE_HIGHEST_PRECEDENCE_PRE_OUTCOME_OVERRIDE"
     assert contract["learning_route"]["primary_threshold"] == 0.5
+    assert contract["learning_route"]["target"] == (
+        "probability_of_materially_positive_realized_paired_effect"
+    )
     assert contract["learning_route"]["cost_in_label_or_loss"] is False
     assert contract["repeated_effect"]["qualification_pass_gate"] is False
+    assert contract["repeated_effect"]["outcome_coding"]["equivalent"] == 0
+    assert "excluded_from_likelihood" in contract["repeated_effect"]["outcome_coding"]["uncertain"]
+    assert "excluded_from_likelihood" in contract["repeated_effect"]["outcome_coding"]["invalid"]
     assert contract["measurement_validity"]["semantic_nonuse_is_valid_realized_effect"] is True
     assert contract["formal_evidence"]["binary_paper_pass_fail_forbidden"] is True
+    assert contract["formal_evidence"]["matched_random_budget_constraint"] == (
+        "same_realized_on_rate_and_exact_injected_token_budget"
+    )
     assert len(contract["superseded_empirical_gates"]) == 7
 
 
