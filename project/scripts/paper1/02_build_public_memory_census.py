@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT = Path(__file__).resolve().parents[2]
+REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
 from metacom_pm.paper1.data.es_memeval import (  # noqa: E402
@@ -50,6 +51,12 @@ def _canonical(value: Any) -> str:
 
 def _sha_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _relpath(path: Path) -> str:
+    """Repo-relative POSIX path -- B10: never an absolute or worktree-specific path."""
+
+    return path.resolve().relative_to(REPO).as_posix()
 
 
 def _write_jsonl(rows: list[dict[str, Any]], path: Path) -> str:
@@ -93,14 +100,19 @@ def build() -> dict[str, Any]:
         "protocol": "pm-paper1-public-memory-census-build-v1",
         "status": "ZERO_OUTCOME_TARGETS_AND_CENSUS_BUILT",
         "outcome_calls": 0,
+        "evidence_usage": "NONE_THIS_SCRIPT_NEVER_READS_QA_SUMMARY_EVIDENCE_SEE_03_BUILD_PUBLIC_MEMORY_FOLDS",
         "es_memeval_identity": identity,
         "outputs": {
-            "targets": {"path": str(targets_path), "rows": len(target_rows), "sha256": targets_sha256},
+            "targets": {
+                "path": _relpath(targets_path),
+                "rows": len(target_rows),
+                "sha256": targets_sha256,
+            },
             "candidate_census_manifest": {
-                "path": str(census_paths["manifest"]),
+                "path": _relpath(census_paths["manifest"]),
                 "rows": len(census_rows),
             },
-            "candidate_census_summary": {"path": str(census_paths["summary"])},
+            "candidate_census_summary": {"path": _relpath(census_paths["summary"])},
         },
         "census_summary": census_summary,
     }

@@ -277,11 +277,22 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
             r.top_candidate_lexical_overlap for r in covered if r.top_candidate_lexical_overlap is not None
         ]
         already_visible_total = sum(r.already_visible_count for r in subset)
-        candidate_total = sum(r.candidate_count for r in subset)
+        # target_candidate_edges: total (target, candidate) pairs -- i.e. how
+        # many times some candidate was offered to some target. NOT the same
+        # as the number of distinct underlying memories: the same MP/MS/ME
+        # candidate is legitimately offered again to every later target it
+        # remains strict-past-eligible for, so this number is always >=
+        # unique_candidate_count and should never be read as a memory count.
+        target_candidate_edges = sum(r.candidate_count for r in subset)
+        unique_candidate_ids = {snap.candidate_id for r in subset for snap in r.candidates}
+        owners_with_any_candidate = {r.owner_id for r in subset if r.candidate_count > 0}
         return {
             "targets_total": len(subset),
             "targets_with_coverage": len(covered),
             "coverage_fraction": (len(covered) / len(subset)) if subset else None,
+            "unique_candidate_count": len(unique_candidate_ids),
+            "owners_with_any_candidate": len(owners_with_any_candidate),
+            "target_candidate_edges": target_candidate_edges,
             "candidate_count_mean": statistics.fmean(candidate_counts) if candidate_counts else None,
             "candidate_count_max": max((r.candidate_count for r in subset), default=None),
             "candidate_count_variance": _variance(candidate_counts),
@@ -290,7 +301,7 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
             "age_days_mean_of_means": statistics.fmean(age_means) if age_means else None,
             "age_days_variance_of_means": _variance(age_means),
             "already_visible_fraction_of_candidates": (
-                already_visible_total / candidate_total if candidate_total else None
+                already_visible_total / target_candidate_edges if target_candidate_edges else None
             ),
             "top_candidate_lexical_overlap_mean": statistics.fmean(overlaps) if overlaps else None,
             "top_candidate_lexical_overlap_variance": _variance(overlaps),
@@ -312,6 +323,17 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
         "targets_total": len(seen_targets),
         "targets_by_task": targets_by_task,
         "identity_anomalies": identity_anomalies,
+        "interpretation_note": (
+            "targets_with_coverage and target_candidate_edges count "
+            "(target, candidate) pairs -- how many times some candidate was "
+            "offered to some target -- not distinct memories. The same "
+            "candidate is legitimately re-offered to every later strict-"
+            "past-eligible target, so target_candidate_edges is always >= "
+            "unique_candidate_count, sometimes by a wide margin for a small, "
+            "reused candidate pool (see unique_candidate_count and "
+            "owners_with_any_candidate for the distinct-memory view, e.g. "
+            "MP's small self-disclosure pool)."
+        ),
         "per_head": per_head,
         "per_head_per_task": per_head_per_task,
     }
@@ -326,7 +348,10 @@ def write_census_manifest(
     manifest_path.write_text(rendered, encoding="utf-8")
 
     summary_with_hash = dict(summary)
-    summary_with_hash["manifest_path"] = str(manifest_path)
+    # B10: portable -- record only the sibling filename, never an absolute
+    # or worktree-specific path. The manifest and summary always live next
+    # to each other in the same directory by construction.
+    summary_with_hash["manifest_filename"] = manifest_path.name
     summary_with_hash["manifest_sha256"] = _sha_text(rendered)
     summary_with_hash["manifest_rows"] = len(rows)
     summary_path = out_dir / "es_memeval_public_candidate_census_summary_v1.json"

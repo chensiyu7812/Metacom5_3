@@ -1,17 +1,29 @@
 #!/usr/bin/env python3
-"""Build the primary exact-evidence fold assignments and the sensitivity slice.
+"""Build primary exact-evidence group components and the sensitivity slice.
 
 Zero-outcome, Codex-B lane. Reads the same public
 ``data/external/evo_emo.json`` targets as
 ``02_build_public_memory_census.py`` and writes:
 
 - ``es_memeval_public_fold_assignments_v1.jsonl``: the primary mechanical
-  fold grouping (QA by ``owner::question_group_id``, Summary/DG one target
-  per item) with cross-task union only on a byte-identical canonical
-  evidence-set fingerprint.
+  group-component grouping (QA by ``owner::question_group_id``, Summary/DG
+  one target per item) with cross-task union only on a byte-identical,
+  owner-namespaced canonical evidence-set fingerprint. ``group_component_id``
+  is the same value as the shared contract's ``fold_id`` field, exposed
+  under its own honest name too -- status ``PREPACK_EXACT_EVIDENCE_
+  COMPONENT``. This is *not* an outer cross-validation fold: see
+  ``metacom_pm.paper1.splits.exact_evidence_folds`` module docstring. Outer-
+  fold packing (``pack_components_into_outer_folds``) is implemented and
+  tested but deliberately not invoked here -- this script does not choose
+  n_outer_folds or a seed this round (status
+  ``OUTER_FOLD_PACKING_PENDING_M2_FREEZE``).
 - ``es_memeval_public_shared_session_sensitivity_v1.jsonl``: the broader
   shared-session connected-component grouping. Sensitivity-only -- never
-  used to compute the primary ``fold_id`` above (AGENTS.md rule 6).
+  used to compute the primary group component above (AGENTS.md rule 6).
+
+Evidence usage: this is the *only* build script that reads QA/Summary
+``evidence`` (via ``metacom_pm.paper1.splits.evidence``, B8's sole reader).
+``02_build_public_memory_census.py`` never touches it.
 
 Asserts the pre-outcome lock is engaged before doing anything.
 """
@@ -26,11 +38,14 @@ from pathlib import Path
 from typing import Any
 
 PROJECT = Path(__file__).resolve().parents[2]
+REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
 from metacom_pm.paper1.data.es_memeval import enumerate_targets, load_users, parse_users  # noqa: E402
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 from metacom_pm.paper1.splits import (  # noqa: E402
+    GROUP_COMPONENT_STATUS,
+    OUTER_FOLD_PACKING_STATUS,
     build_fold_assignments,
     build_shared_session_sensitivity_components,
 )
@@ -45,6 +60,12 @@ def _canonical(value: Any) -> str:
 
 def _sha_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _relpath(path: Path) -> str:
+    """Repo-relative POSIX path -- B10: never an absolute or worktree-specific path."""
+
+    return path.resolve().relative_to(REPO).as_posix()
 
 
 def _write_jsonl(rows: list[dict[str, Any]], path: Path) -> str:
@@ -69,9 +90,15 @@ def build() -> dict[str, Any]:
     fold_rows = [
         {
             "protocol": "pm-paper1-public-memory-fold-assignment-v1",
+            "status": GROUP_COMPONENT_STATUS,
             "target_id": a.target_id,
             "task_type": a.task_type.value,
+            # `fold_id` is the shared FoldAssignment contract's required
+            # field name; `group_component_id` is the same value under its
+            # honest name -- read the module docstring before assuming
+            # either one means "outer CV fold".
             "fold_id": a.fold_id,
+            "group_component_id": a.fold_id,
             "primary_group_key": a.primary_group_key,
             "exact_evidence_fingerprint": a.exact_evidence_fingerprint,
             "all_arms_seeds_repeats_bound": a.all_arms_seeds_repeats_bound,
@@ -95,26 +122,42 @@ def build() -> dict[str, Any]:
     sensitivity_path = OUT_DIR / "es_memeval_public_shared_session_sensitivity_v1.jsonl"
     sensitivity_sha256 = _write_jsonl(sensitivity_rows, sensitivity_path)
 
-    n_primary_folds = len({row["fold_id"] for row in fold_rows})
+    n_group_components = len({row["group_component_id"] for row in fold_rows})
     n_cross_task_unions = sum(
         1
-        for fold_id in {row["fold_id"] for row in fold_rows}
-        if len({r["task_type"] for r in fold_rows if r["fold_id"] == fold_id}) > 1
+        for gcid in {row["group_component_id"] for row in fold_rows}
+        if len({r["task_type"] for r in fold_rows if r["group_component_id"] == gcid}) > 1
     )
 
     report = {
         "protocol": "pm-paper1-public-memory-folds-build-v1",
-        "status": "PRIMARY_EXACT_EVIDENCE_FOLDS_AND_SENSITIVITY_BUILT",
+        "status": "PRIMARY_GROUP_COMPONENTS_AND_SENSITIVITY_BUILT",
         "outcome_calls": 0,
+        "evidence_usage": (
+            "THIS_SCRIPT_IS_THE_ONLY_BUILD_SCRIPT_THAT_READS_QA_SUMMARY_EVIDENCE"
+            "_VIA_SPLITS_EVIDENCE_ENUMERATE_SPLIT_EVIDENCE"
+        ),
+        "group_component_status": GROUP_COMPONENT_STATUS,
+        "outer_fold_packing_status": OUTER_FOLD_PACKING_STATUS,
+        "outer_fold_packing_note": (
+            "pack_components_into_outer_folds is implemented and unit-tested "
+            "(see tests/test_paper1_splits_folds.py) but not invoked by this "
+            "script: n_outer_folds and seed are M2-freeze decisions, not "
+            "self-selected this round."
+        ),
         "targets_total": len(targets),
         "primary_group_keys_total": len({t.primary_group_key for t in targets}),
-        "primary_folds_total": n_primary_folds,
-        "primary_folds_spanning_multiple_task_types": n_cross_task_unions,
+        "group_components_total": n_group_components,
+        "group_components_spanning_multiple_task_types": n_cross_task_unions,
         "sensitivity_components_total": len(sensitivity_rows),
         "outputs": {
-            "fold_assignments": {"path": str(folds_path), "rows": len(fold_rows), "sha256": folds_sha256},
+            "fold_assignments": {
+                "path": _relpath(folds_path),
+                "rows": len(fold_rows),
+                "sha256": folds_sha256,
+            },
             "shared_session_sensitivity": {
-                "path": str(sensitivity_path),
+                "path": _relpath(sensitivity_path),
                 "rows": len(sensitivity_rows),
                 "sha256": sensitivity_sha256,
                 "status": "SENSITIVITY_ONLY",
