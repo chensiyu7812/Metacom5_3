@@ -15,6 +15,9 @@ RS_SUMMARY = PROJECT / "data/paper1_public_rs/esconv_rs_zero_outcome_census_summ
 RS_RETRIEVER_AUDIT = (
     PROJECT / "data/paper1_public_rs/esconv_rs_retriever_comparison_summary_v1.json"
 )
+RS_FAMILY_AUDIT = (
+    PROJECT / "data/paper1_evaluator_only_rs/esconv_rs_strategy_family_match_summary_v1.json"
+)
 RS_RENDER_AUDIT = (
     PROJECT / "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json"
 )
@@ -69,6 +72,7 @@ def _decision(
 def main() -> int:
     rs = _load(RS_SUMMARY)
     rs_retriever = _load(RS_RETRIEVER_AUDIT)
+    rs_family = _load(RS_FAMILY_AUDIT)
     rs_render = _load(RS_RENDER_AUDIT)
     reconciliation = _load(RECONCILIATION)
     scorer = _load(SCORER_AUDIT)
@@ -88,6 +92,10 @@ def main() -> int:
     exemplar = rs_render["exemplar_content_shape_proxies"]
     boundary = rs_render["boundary_horizon_decision_surface"]
     retriever_pairwise = rs_retriever["diagnostics"]["pairwise_method_agreement"]
+    heldout_family = {
+        method: values["by_effect_state_split"]["validation"]
+        for method, values in rs_family["methods"].items()
+    }
 
     decisions = [
         _decision(
@@ -130,9 +138,9 @@ def main() -> int:
             5,
             "rs_retriever",
             "RS semantic retriever",
-            f"A full zero-outcome surface compared lexical Jaccard, BGE-small and BGE-M3 over {rs_retriever['universe']['decision_state_count']} visible-prefix states with leave-current-dialogue-out. Top-1 card agreement is {retriever_pairwise['lexical_jaccard__vs__bge_small']['top1_same_card_rate']:.2%} for lexical/small, {retriever_pairwise['lexical_jaccard__vs__bge_m3']['top1_same_card_rate']:.2%} for lexical/M3 and {retriever_pairwise['bge_small__vs__bge_m3']['top1_same_card_rate']:.2%} for small/M3. These are behavior-agreement diagnostics without applicability gold or Generator outcomes. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision.",
-            "Keep BGE-small only as an RS lightweight challenger/smoke-test and BGE-M3 as the official-RAG identity/leading typed-memory candidate. For RS, review the full behavior surface together with the still-pending applicability measurement; then freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls. Do not infer a winner from method agreement, score magnitude or model size.",
-            "ZERO_OUTCOME_BEHAVIOR_SURFACE_COMPLETE_APPLICABILITY_AND_RESEARCH_FREEZE_PENDING",
+            f"A full zero-outcome surface compared lexical Jaccard, BGE-small and BGE-M3 over {rs_retriever['universe']['decision_state_count']} visible-prefix states with leave-current-dialogue-out. Top-1 card agreement is {retriever_pairwise['lexical_jaccard__vs__bge_small']['top1_same_card_rate']:.2%} for lexical/small, {retriever_pairwise['lexical_jaccard__vs__bge_m3']['top1_same_card_rate']:.2%} for lexical/M3 and {retriever_pairwise['bge_small__vs__bge_m3']['top1_same_card_rate']:.2%} for small/M3. On the held-out ESConv validation diagnostic, Top-1 family match is lexical {heldout_family['lexical_jaccard']['strategy_family_match_at_1']:.2%}, small {heldout_family['bge_small']['strategy_family_match_at_1']:.2%}, M3 {heldout_family['bge_m3']['strategy_family_match_at_1']:.2%}; Top-3 is lexical {heldout_family['lexical_jaccard']['strategy_family_match_at_3']:.2%}, small {heldout_family['bge_small']['strategy_family_match_at_3']:.2%}, M3 {heldout_family['bge_m3']['strategy_family_match_at_3']:.2%}. No method dominates both cutoffs. Family match is evaluator-only coarse strategy agreement, not applicability, RS ON/OFF gold, or Generator outcome. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision.",
+            "Keep BGE-small only as an RS lightweight challenger/smoke-test and BGE-M3 as the official-RAG identity/leading typed-memory candidate. For RS Top-1, the remaining researcher choice is principally transparent lexical simplicity versus M3 stack unification/semantic representation; the held-out family diagnostic does not establish a decisive winner. Freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls. Do not infer utility from family match, score magnitude or model size.",
+            "ZERO_OUTCOME_BEHAVIOR_AND_FAMILY_DIAGNOSTICS_COMPLETE_RESEARCH_FREEZE_PENDING",
             True,
         ),
         _decision(
@@ -268,6 +276,14 @@ def main() -> int:
                 "winner_selected": rs_retriever["scientific_scope"]["winner_selected"],
                 "formal_outcome_calls": rs_retriever["scientific_scope"]["formal_outcome_calls"],
             },
+            "rs_strategy_family_evaluator_diagnostic": {
+                "path": str(RS_FAMILY_AUDIT.relative_to(PROJECT)),
+                "sha256": _sha256(RS_FAMILY_AUDIT),
+                "status": rs_family.get("status"),
+                "evaluator_only": rs_family["scope"]["evaluator_only"],
+                "winner_selected": rs_family["scope"]["winner_selected"],
+                "formal_outcome_calls": rs_family["scope"]["formal_outcome_calls"],
+            },
             "rs_renderer_boundary_audit": {
                 "path": str(RS_RENDER_AUDIT.relative_to(PROJECT)),
                 "sha256": _sha256(RS_RENDER_AUDIT),
@@ -353,6 +369,15 @@ def main() -> int:
                 pair: values["top1_same_card_rate"]
                 for pair, values in retriever_pairwise.items()
             },
+            "retriever_heldout_validation_strategy_family_match": {
+                method: {
+                    "at_1": values["strategy_family_match_at_1"],
+                    "at_3": values["strategy_family_match_at_3"],
+                    "macro_at_1": values["macro_strategy_family_match_at_1"],
+                    "macro_at_3": values["macro_strategy_family_match_at_3"],
+                }
+                for method, values in heldout_family.items()
+            },
         },
         "decisions": decisions,
         "researcher_decision_ids": [
@@ -393,6 +418,7 @@ def main() -> int:
     copies = {
         RS_SUMMARY: source_dir / "rs_zero_outcome_summary.json",
         RS_RETRIEVER_AUDIT: source_dir / "rs_retriever_comparison.json",
+        RS_FAMILY_AUDIT: source_dir / "rs_strategy_family_diagnostic.json",
         RS_RENDER_AUDIT: source_dir / "rs_renderer_boundary_audit.json",
         RECONCILIATION: source_dir / "execution_reconciliation.json",
         SCORER_AUDIT: source_dir / "official_scorer_audit.json",
@@ -444,6 +470,28 @@ def main() -> int:
                 "metric_definitions": [
                     "Top-1 agreement is the fraction of states where two methods return the same source-card identity first.",
                     "Top-k set Jaccard is method agreement, not candidate relevance, utility, or official benchmark performance.",
+                ],
+            },
+        },
+        {
+            "id": "rs-strategy-family-diagnostic",
+            "label": "Evaluator-only ESConv strategy-family match diagnostic",
+            "path": "sources/rs_strategy_family_diagnostic.json",
+            "query": {
+                "engine": "duckdb",
+                "language": "sql",
+                "sql": "SELECT * FROM read_json_auto('sources/rs_strategy_family_diagnostic.json')",
+                "description": "Load held-out retriever family-match sanity metrics generated by script 12.",
+                "tables_used": ["sources/rs_strategy_family_diagnostic.json"],
+                "filters": [
+                    "evaluator_only = true",
+                    "formal_outcome_calls = 0",
+                    "winner_selected = false",
+                    "validation split reported separately",
+                ],
+                "metric_definitions": [
+                    "Strategy-family match@k asks whether any of the first k retrieved source cards shares the coarse target supporter strategy annotation.",
+                    "It is a retriever sanity diagnostic, not applicability, PM ON/OFF gold, or Generator benefit.",
                 ],
             },
         },

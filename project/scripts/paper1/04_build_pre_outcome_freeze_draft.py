@@ -76,6 +76,10 @@ def build() -> PreOutcomeFreezeManifest:
                 "RS lexical/BGE-small/BGE-M3 zero-outcome behavior comparison",
             ),
             (
+                "data/paper1_evaluator_only_rs/esconv_rs_strategy_family_match_summary_v1.json",
+                "evaluator-only ESConv strategy-family retriever diagnostic",
+            ),
+            (
                 "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
                 "text-free per-card RS renderer token and exemplar-shape audit",
             ),
