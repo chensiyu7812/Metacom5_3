@@ -7,10 +7,20 @@ from .treatment import (
     parse_resource_blocks,
     render_resource_block,
 )
+from .freeze import (
+    ArtifactBinding,
+    FreezeStatus,
+    PreOutcomeFreezeManifest,
+    bind_artifact,
+)
 
 __all__ = [
     "ResourceBlock",
     "RunBinding",
+    "ArtifactBinding",
+    "FreezeStatus",
+    "PreOutcomeFreezeManifest",
+    "bind_artifact",
     "inspect_treatment_delivery",
     "parse_resource_blocks",
     "render_resource_block",
