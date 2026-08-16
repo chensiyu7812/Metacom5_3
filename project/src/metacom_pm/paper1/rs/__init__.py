@@ -7,12 +7,22 @@ from .strategy_bank import (
     build_strategy_source_catalog,
     rank_strategy_cards,
 )
+from .zero_outcome_census import (
+    RSCensusRow,
+    RSDecisionState,
+    build_rs_decision_states,
+    build_rs_zero_outcome_census,
+)
 
 __all__ = [
     "RandomizationUnit",
+    "RSCensusRow",
+    "RSDecisionState",
     "StrategyRetrieval",
     "StrategySourceCard",
     "build_matched_random_schedule",
+    "build_rs_decision_states",
+    "build_rs_zero_outcome_census",
     "build_strategy_source_catalog",
     "rank_strategy_cards",
 ]

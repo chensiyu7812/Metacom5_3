@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Materialize a text-free, zero-outcome ESConv Strategy source identity."""
+"""Materialize the dialogue-only, text-free ESConv Strategy source identity."""
 
 from __future__ import annotations
 
@@ -37,12 +37,16 @@ def main() -> int:
     parser.add_argument(
         "--identity-out",
         type=Path,
-        default=Path("data/paper1_authority/esconv_strategy_source_identity_v1.jsonl"),
+        default=Path(
+            "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl"
+        ),
     )
     parser.add_argument(
         "--summary-out",
         type=Path,
-        default=Path("data/paper1_authority/esconv_strategy_source_summary_v1.json"),
+        default=Path(
+            "data/paper1_public_rs/esconv_strategy_source_summary_dialogue_only_v2.json"
+        ),
     )
     args = parser.parse_args()
 
@@ -56,12 +60,12 @@ def main() -> int:
             handle.write(
                 json.dumps(
                     {
-                        "protocol": "pm-paper1-esconv-strategy-source-identity-v1",
+                        "protocol": "pm-paper1-esconv-strategy-source-dialogue-only-v2",
                         "card_id": card.card_id,
                         "source_dialogue_id": card.source_dialogue_id,
                         "source_turn_index": card.source_turn_index,
                         "source_split": card.source_split,
-                        "strategy_label": card.strategy_label,
+                        "source_strategy_annotation": card.strategy_label,
                         "retrieval_text_sha256": card.retrieval_text_sha256,
                         "example_response_sha256": card.example_response_sha256,
                     },
@@ -76,7 +80,7 @@ def main() -> int:
     retrieval_words = [len(card.retrieval_text.split()) for card in cards]
     response_words = [len(card.example_response.split()) for card in cards]
     summary = {
-        "protocol": "pm-paper1-esconv-strategy-source-summary-v1",
+        "protocol": "pm-paper1-esconv-strategy-source-summary-dialogue-only-v2",
         "status": "ZERO_OUTCOME_SOURCE_CATALOG_ONLY_NOT_CANDIDATE_BUNDLE_FREEZE",
         "source": {
             "artifact": str(args.esconv),
@@ -86,6 +90,8 @@ def main() -> int:
             "split_is_official": False,
             "source_split": "train",
             "evoemo_overlap_dialogues_excluded": True,
+            "retrieval_text_source": "preceding_visible_dialogue_turns_only",
+            "esconv_situation_excluded": True,
         },
         "counts": {
             "cards": len(cards),

@@ -2,8 +2,9 @@
 
 This is deliberately a source catalog, not the final frozen Strategy-RAG
 bundle.  Top-k, token caps, rendering and the final retrieval backend remain
-M2 freeze items.  No response quality, feedback, survey score or downstream
-outcome is read here.
+M2 freeze items.  Retrieval keys use only dialogue turns that preceded the
+source response.  ESConv's author-written ``situation`` and all response
+quality, feedback, survey or downstream outcome fields are not read here.
 """
 
 from __future__ import annotations
@@ -56,7 +57,10 @@ class StrategySourceCard(StrictContract):
     source_dialogue_id: str = Field(pattern=r"^esconv_[0-9]{4}$")
     source_turn_index: int = Field(ge=0)
     source_split: str = "train"
-    strategy_label: str = Field(min_length=1)
+    strategy_label: str = Field(
+        min_length=1,
+        description="Source-card annotation; never the current state's gold label",
+    )
     retrieval_text: str = Field(min_length=1)
     guidance_text: str = Field(min_length=1)
     example_response: str = Field(min_length=1)
@@ -100,6 +104,7 @@ def build_strategy_source_catalog(
     esconv_path: str | Path,
     split_manifest_path: str | Path,
     preceding_turns: int = 6,
+    exclude_evoemo_overlap: bool = True,
 ) -> tuple[StrategySourceCard, ...]:
     """Extract train-only annotated supporter turns without outcome fields."""
 
@@ -117,12 +122,13 @@ def build_strategy_source_catalog(
     seen: set[tuple[str, str]] = set()
     for dialogue_index, row in enumerate(data):
         split = split_rows[dialogue_index]
-        if split["split"] != "train" or split["excluded_for_evoemo_overlap"]:
+        if split["split"] != "train":
+            continue
+        if exclude_evoemo_overlap and split["excluded_for_evoemo_overlap"]:
             continue
         dialogue = row.get("dialog")
         if not isinstance(dialogue, list):
             raise ValueError(f"invalid dialogue at ESConv index {dialogue_index}")
-        situation = _normalize(row.get("situation"))
         dialogue_id = split["dialogue_id"]
         for turn_index, turn in enumerate(dialogue):
             if turn.get("speaker") != "supporter":
@@ -137,8 +143,11 @@ def build_strategy_source_catalog(
                 for item in prior
                 if _normalize(item.get("content"))
             )
-            retrieval_text = "\n".join(value for value in (situation, context) if value)
+            retrieval_text = context
             if not retrieval_text:
+                # A source response can be its own retrieval key when it has no
+                # preceding dialogue.  This is candidate-side public text, not
+                # target-state or outcome information.
                 retrieval_text = response
             duplicate_key = (_normalize(retrieval_text).casefold(), response.casefold())
             if duplicate_key in seen:
