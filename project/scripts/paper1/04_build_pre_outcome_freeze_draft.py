@@ -72,6 +72,10 @@ def build() -> PreOutcomeFreezeManifest:
                 "ESConv RS Phase-1 zero-outcome census summary",
             ),
             (
+                "data/paper1_public_rs/esconv_rs_retriever_comparison_summary_v1.json",
+                "RS lexical/BGE-small/BGE-M3 zero-outcome behavior comparison",
+            ),
+            (
                 "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
                 "text-free per-card RS renderer token and exemplar-shape audit",
             ),
@@ -103,7 +107,7 @@ def build() -> PreOutcomeFreezeManifest:
             "integrate_repaired_public_memory_census",
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
-            "freeze_rs_retriever_after_outcome_blind_lexical_bge_small_bge_m3_comparison",
+            "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
             "reconcile_official_bge_m3_runtime_and_local_safetensors_revision",
             "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
             "freeze_rs_boundary_horizon_and_candidate_mapping",

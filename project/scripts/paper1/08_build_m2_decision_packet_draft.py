@@ -12,6 +12,9 @@ from zoneinfo import ZoneInfo
 
 PROJECT = Path(__file__).resolve().parents[2]
 RS_SUMMARY = PROJECT / "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json"
+RS_RETRIEVER_AUDIT = (
+    PROJECT / "data/paper1_public_rs/esconv_rs_retriever_comparison_summary_v1.json"
+)
 RS_RENDER_AUDIT = (
     PROJECT / "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json"
 )
@@ -65,6 +68,7 @@ def _decision(
 
 def main() -> int:
     rs = _load(RS_SUMMARY)
+    rs_retriever = _load(RS_RETRIEVER_AUDIT)
     rs_render = _load(RS_RENDER_AUDIT)
     reconciliation = _load(RECONCILIATION)
     scorer = _load(SCORER_AUDIT)
@@ -83,6 +87,7 @@ def main() -> int:
     rendered = rs_render["renderer_variants"]
     exemplar = rs_render["exemplar_content_shape_proxies"]
     boundary = rs_render["boundary_horizon_decision_surface"]
+    retriever_pairwise = rs_retriever["diagnostics"]["pairwise_method_agreement"]
 
     decisions = [
         _decision(
@@ -125,9 +130,9 @@ def main() -> int:
             5,
             "rs_retriever",
             "RS semantic retriever",
-            f"Lexical Jaccard was used only for Phase-1 availability. The zero-outcome environment attestation hash-verified two distinct candidates: lightweight English BAAI/bge-small-en-v1.5@{environment['bge_small_encoder_candidate']['revision']} with CUDA shape {environment['bge_small_encoder_candidate']['probe']['shape']}, and BAAI/bge-m3@{environment['bge_m3_encoder_candidate']['revision']} with CUDA shape {environment['bge_m3_encoder_candidate']['probe']['shape']}. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision. Neither local snapshot is thereby frozen for the Paper-1 RS retriever.",
-            "Keep BGE-small only as an RS lightweight challenger/smoke-test. Reproduce Official RAG with the BGE-M3 model identity, and treat BGE-M3 as the leading typed-memory candidate. For RS, compare lexical, BGE-small and BGE-M3 on the final dialogue-only Bank using an outcome-blind retrieval/applicability audit; then freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls.",
-            "DUAL_ENCODER_ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_COMPARISON_AND_FREEZE_PENDING",
+            f"A full zero-outcome surface compared lexical Jaccard, BGE-small and BGE-M3 over {rs_retriever['universe']['decision_state_count']} visible-prefix states with leave-current-dialogue-out. Top-1 card agreement is {retriever_pairwise['lexical_jaccard__vs__bge_small']['top1_same_card_rate']:.2%} for lexical/small, {retriever_pairwise['lexical_jaccard__vs__bge_m3']['top1_same_card_rate']:.2%} for lexical/M3 and {retriever_pairwise['bge_small__vs__bge_m3']['top1_same_card_rate']:.2%} for small/M3. These are behavior-agreement diagnostics without applicability gold or Generator outcomes. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision.",
+            "Keep BGE-small only as an RS lightweight challenger/smoke-test and BGE-M3 as the official-RAG identity/leading typed-memory candidate. For RS, review the full behavior surface together with the still-pending applicability measurement; then freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls. Do not infer a winner from method agreement, score magnitude or model size.",
+            "ZERO_OUTCOME_BEHAVIOR_SURFACE_COMPLETE_APPLICABILITY_AND_RESEARCH_FREEZE_PENDING",
             True,
         ),
         _decision(
@@ -256,6 +261,13 @@ def main() -> int:
                 "path": str(RS_SUMMARY.relative_to(PROJECT)),
                 "sha256": _sha256(RS_SUMMARY),
             },
+            "rs_retriever_comparison": {
+                "path": str(RS_RETRIEVER_AUDIT.relative_to(PROJECT)),
+                "sha256": _sha256(RS_RETRIEVER_AUDIT),
+                "status": rs_retriever.get("status"),
+                "winner_selected": rs_retriever["scientific_scope"]["winner_selected"],
+                "formal_outcome_calls": rs_retriever["scientific_scope"]["formal_outcome_calls"],
+            },
             "rs_renderer_boundary_audit": {
                 "path": str(RS_RENDER_AUDIT.relative_to(PROJECT)),
                 "sha256": _sha256(RS_RENDER_AUDIT),
@@ -337,6 +349,10 @@ def main() -> int:
             "boundary_narrow_persistent_states": boundary[
                 "visible_prefix_narrow_explicit_revocation"
             ]["states_with_any_explicit_boundary"],
+            "retriever_top1_same_card_rates": {
+                pair: values["top1_same_card_rate"]
+                for pair, values in retriever_pairwise.items()
+            },
         },
         "decisions": decisions,
         "researcher_decision_ids": [
@@ -376,6 +392,7 @@ def main() -> int:
     source_dir.mkdir(parents=True, exist_ok=True)
     copies = {
         RS_SUMMARY: source_dir / "rs_zero_outcome_summary.json",
+        RS_RETRIEVER_AUDIT: source_dir / "rs_retriever_comparison.json",
         RS_RENDER_AUDIT: source_dir / "rs_renderer_boundary_audit.json",
         RECONCILIATION: source_dir / "execution_reconciliation.json",
         SCORER_AUDIT: source_dir / "official_scorer_audit.json",
@@ -405,6 +422,28 @@ def main() -> int:
                 "metric_definitions": [
                     "Candidate coverage = states with at least one fold-exclusive source card / audited states.",
                     "Word-cap coverage = states whose diagnostic retrieved guidance+example bundle is at or below the named word cap / audited states.",
+                ],
+            },
+        },
+        {
+            "id": "rs-retriever-comparison",
+            "label": "RS zero-outcome retriever behavior comparison",
+            "path": "sources/rs_retriever_comparison.json",
+            "query": {
+                "engine": "duckdb",
+                "language": "sql",
+                "sql": "SELECT * FROM read_json_auto('sources/rs_retriever_comparison.json')",
+                "description": "Load the text-free lexical/BGE-small/BGE-M3 behavior surface generated by script 11.",
+                "tables_used": ["sources/rs_retriever_comparison.json"],
+                "filters": [
+                    "formal_outcome_calls = 0",
+                    "winner_selected = false",
+                    "leave-current-dialogue-out",
+                    "target response and target strategy annotation unread",
+                ],
+                "metric_definitions": [
+                    "Top-1 agreement is the fraction of states where two methods return the same source-card identity first.",
+                    "Top-k set Jaccard is method agreement, not candidate relevance, utility, or official benchmark performance.",
                 ],
             },
         },

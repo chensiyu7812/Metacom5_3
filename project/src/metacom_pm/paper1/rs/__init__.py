@@ -18,6 +18,12 @@ from .strategy_bank import (
     build_strategy_source_catalog,
     rank_strategy_cards,
 )
+from .retriever_audit import (
+    REQUIRED_RETRIEVER_METHODS,
+    RSRetrieverComparisonRow,
+    RetrieverRanking,
+    build_retriever_comparison_rows,
+)
 from .zero_outcome_census import (
     RSCensusRow,
     RSDecisionState,
@@ -31,12 +37,16 @@ __all__ = [
     "ExemplarContentProxies",
     "RSCensusRow",
     "RSDecisionState",
+    "RSRetrieverComparisonRow",
+    "REQUIRED_RETRIEVER_METHODS",
     "RenderVariant",
     "StrategyRetrieval",
     "StrategySourceCard",
+    "RetrieverRanking",
     "build_matched_random_schedule",
     "build_rs_decision_states",
     "build_rs_zero_outcome_census",
+    "build_retriever_comparison_rows",
     "build_strategy_source_catalog",
     "explicit_boundaries",
     "exemplar_content_proxies",
