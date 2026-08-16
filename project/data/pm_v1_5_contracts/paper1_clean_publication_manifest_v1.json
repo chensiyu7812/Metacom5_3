@@ -1,0 +1,130 @@
+{
+  "protocol": "pm-v1.5-paper1-clean-publication-manifest-v1",
+  "date": "2026-08-13",
+  "status": "CURRENT_CLEAN_PUBLICATION_ZERO_API_NO_LIVE_AUTHORITY",
+  "repository": "chensiyu7812/Metacom5_3",
+  "base_commit": "818a309e32c699ee07b4873866fc64db0277e8bd",
+  "source_snapshot_commit": "d3dfc18",
+  "purpose": "Publish only the current Paper 1 RS/MS research architecture, measurement, baseline, external-test, claim and responsibility surfaces without uploading obsolete failures, failed human or model reviews, private packets, historical execution outputs, or unfinished MP work.",
+  "interpretation_order": [
+    "docs/PAPER1_CURRENT_RESEARCH_HANDOFF_20260813_ZH.md",
+    "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json",
+    "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_root_repair_v1.json",
+    "data/pm_v1_5_contracts/paper1_pm_baseline_external_generator_qualification_addendum_v1.json"
+  ],
+  "current_boundary": {
+    "method": "PAPER1_SOURCE_ANNOTATED_RESOURCE_SUITABILITY_V2",
+    "method_version_changed": false,
+    "compiler": "R0_DELTA_COMPILER_V4_0",
+    "measurement": "FUNCTION_OBSERVABILITY_V2",
+    "panel": "FOUR_ARM_PANEL_V2_REBUILD_REQUIRED",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "generator_frozen": true,
+    "first_milestone": "SELECTIVE_RS_PLUS_MS_PM",
+    "full_paper1_predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2",
+    "live_calls_authorized": 0,
+    "judge_calls_authorized": 0,
+    "fits_authorized": 0
+  },
+  "included_files": [
+    {
+      "role": "current_handoff_and_responsibility_matrix",
+      "path": "docs/PAPER1_CURRENT_RESEARCH_HANDOFF_20260813_ZH.md",
+      "sha256": "5cebf97c08513f4b61fec74deec085549fb2f2f8024f73b8ce278768e78bd27f"
+    },
+    {
+      "role": "current_function_and_panel_plan",
+      "path": "docs/PM_V1_5_FUNCTION_OBSERVABILITY_AND_PANEL_V2_20260813_ZH.md",
+      "sha256": "53d45012c6e30569e0b89c1f697ce0a011c2d1c337bb6cb468addf94b3fb38d5"
+    },
+    {
+      "role": "root_architecture_plan",
+      "path": "docs/PM_V1_5_RS_MS_R0_DELTA_ROOT_REPAIR_20260813_ZH.md",
+      "sha256": "e5ffee7e4c6cb12a4646739cbc55bb76baaba81f58e11a627cf8010d64e163a5"
+    },
+    {
+      "role": "baseline_external_and_generator_plan",
+      "path": "docs/PM_V1_5_PAPER1_BASELINE_EXTERNAL_GENERATOR_QUALIFICATION_20260813_ZH.md",
+      "sha256": "5ced9616f5a83fedd96f2619118cc0a84caf8097d69cde57032fd7a97a898061"
+    },
+    {
+      "role": "current_measurement_and_panel_contract",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_measurement_and_panel_revision_v2.json",
+      "sha256": "5c890c88106dfaa7283d23608009b85d6e6e172b981c7c7dfa53126b27134d26"
+    },
+    {
+      "role": "root_architecture_contract",
+      "path": "data/pm_v1_5_contracts/paper1_rs_ms_r0_delta_root_repair_v1.json",
+      "sha256": "5cb370a3ecd7831e9981b817d6ebf3706a783db6f7108056c1bd723da9826799"
+    },
+    {
+      "role": "baseline_external_generator_contract",
+      "path": "data/pm_v1_5_contracts/paper1_pm_baseline_external_generator_qualification_addendum_v1.json",
+      "sha256": "db52e01d719381d7fda381ae0f6ae4afa9b0e63689929e1e42b31f8d825d6d4f"
+    },
+    {
+      "role": "experiment_version_registry",
+      "path": "data/pm_v1_5_contracts/paper1_experiment_version_registry_v1.json",
+      "sha256": "7e5aefec936807cb4472cddabc1ad63019d1beb50fdf800ef800129826f5490f"
+    },
+    {
+      "role": "full_paper1_success_predicate",
+      "path": "data/pm_v1_5_contracts/paper1_component_general_v3_primary_success_rule_v1.json",
+      "sha256": "bbdf85a438b93bc86df5bfb01540a643ea07d1859ad16492d900864733166ad3"
+    },
+    {
+      "role": "four_head_component_planner",
+      "path": "src/metacom_pm/v1_5_component_general_v3.py",
+      "sha256": "91465529886bcc43a0c39ed3c8a37d7dbb9100aaa280cfdbe9af9c549eca876f"
+    },
+    {
+      "role": "invariant_r0_delta_compiler",
+      "path": "src/metacom_pm/v1_5_response_program_v4.py",
+      "sha256": "05ab56b13dfc256ab43b2e5507a4d98080b3c8422e8486738fd102a6744d7e4e"
+    },
+    {
+      "role": "component_planner_tests",
+      "path": "tests/test_v1_5_component_general_v3.py",
+      "sha256": "c1b3454de3ca597118e882a6118b6c6c40a248cef7997d7d5aa67142f8a3c612"
+    },
+    {
+      "role": "compiler_tests",
+      "path": "tests/test_v1_5_response_program_v4.py",
+      "sha256": "9fb08d40fb0532f8b0ed37625b57313d3d9b309f168f987e74de4731af6d394a"
+    },
+    {
+      "role": "clean_publication_scope_tests",
+      "path": "tests/test_paper1_clean_publication_manifest.py",
+      "sha256": "8b963b501659a08cf27fddaf0c8d07969027b6bea926769e9dbb31713eb10ed4"
+    }
+  ],
+  "excluded_from_this_publication": [
+    {
+      "category": "historical_or_failed_execution_outputs",
+      "patterns": ["outputs/**", "reports/**"],
+      "reason": "Includes obsolete attempts, negative closeouts, provider traces and development artifacts that are not current authority."
+    },
+    {
+      "category": "failed_or_obsolete_reviews",
+      "patterns": ["**/*human*review*", "**/*dual*review*", "**/*claimed_use_source_review*", "**/*adjudicat*"],
+      "reason": "Failed, underqualified, first-party or superseded review results must not be presented as current evidence."
+    },
+    {
+      "category": "private_or_blind_packets",
+      "patterns": ["**/*private*", "**/*blind_packet*", "**/*private_key*", "**/*raw_provider*"],
+      "reason": "Not needed for the current design handoff and may contain mappings or traces inappropriate for a clean publication."
+    },
+    {
+      "category": "superseded_execution_authority_and_closeouts",
+      "patterns": ["data/pm_v1_5_contracts/*execution_phase*", "data/pm_v1_5_contracts/*closeout*", "data/pm_v1_5_contracts/active_method_authority_v1.json", "data/pm_v1_5_contracts/paper1_active_execution_bundle_v1.json"],
+      "reason": "Those internal surfaces bind the excluded laboratory history. This clean publication manifest is the sole publication-scope pointer."
+    },
+    {
+      "category": "unfinished_mp_rescue_draft",
+      "patterns": ["data/pm_v1_5_contracts/paper1_mp_rule_based_step1_v1.json", "src/metacom_pm/v1_5_mp_profile_delta_templates_v1.py", "tests/test_v1_5_mp_*"],
+      "reason": "The local draft is not bound into the current experiment registry, currently invalidates the active compiler hash, and conflicts with the frozen RS/MS-first execution order."
+    }
+  ],
+  "historical_reference_policy": "Current contracts may record hashes or reasons from excluded local laboratory artifacts for audit continuity. Their absence from this clean branch is intentional and does not promote or republish those artifacts.",
+  "next_action": "Rebuild and machine-audit prospective Function Observability / Four-Arm Panel V2 zero-API, then request approval for one exact run identity and cost cap."
+}
