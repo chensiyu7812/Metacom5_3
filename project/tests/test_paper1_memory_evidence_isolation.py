@@ -59,7 +59,7 @@ from metacom_pm.paper1.data.memory_source import (
     Turn,
     enumerate_targets,
 )
-from metacom_pm.paper1.features import build_census, mp_extraction_audit, zero_outcome_census
+from metacom_pm.paper1.features import build_census, me_candidate_audit, mp_extraction_audit, zero_outcome_census
 from metacom_pm.paper1.features.zero_outcome_census import CandidateFeatureSnapshot, EligiblePoolRow
 from metacom_pm.paper1.memory import me as memory_me
 from metacom_pm.paper1.memory import mp as memory_mp
@@ -118,6 +118,7 @@ RUNTIME_SURFACE_MODULES = (
     features_pkg,
     zero_outcome_census,
     mp_extraction_audit,
+    me_candidate_audit,
 )
 
 

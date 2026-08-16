@@ -49,6 +49,36 @@ ends in "?") is discarded regardless of wording.
 Both fixes are purely syntactic pattern changes, not semantic/LLM judgment,
 and grounded by scanning the whole corpus before and after the change (see
 project memory / commit message for the before/after counts).
+
+B20 repair note: two more real counter-examples survived B11's fix, both
+found by per-candidate audit:
+
+- p3, session ``p3_conv_10``, turn 9: "I tried, but it just ended up
+  becoming another argument." -- "tried" has no action complement at all
+  (the sentence never says *what* was tried), so "ended up becoming another
+  argument" cannot be a result of a specific action.
+- p14, session ``p14_conv_9``, turn 9: "We've tried talking, but sometimes
+  it just ends in arguments. I think we both feel overwhelmed. He's been a
+  bit better about his work hours, which helps, but there's still a lot to
+  mend between us." -- "which helps" grammatically refers back to "his work
+  hours" (the subject of the immediately preceding clause), not to "tried
+  talking" two sentences earlier. A subject/topic shift, not a real
+  action-result link.
+
+Two more mechanical requirements fix both without any per-candidate
+blacklist: (1) the "tried" match must be followed by a non-empty action
+complement before the next comma -- "tried," with nothing between "tried"
+and the comma is rejected outright (fixes the first case); (2) the
+result-relation search is now bounded to the *same sentence* as the "tried"
+clause (never crosses a ``.``/``!``/``?``) -- a result-relation match in a
+later, independent sentence is exactly the shape a subject/topic shift takes
+(fixes the second case, and is the more general, more defensible mechanical
+proxy for "no intermediate subject shift" than trying to detect the shift
+directly). This also correctly retires one previously-accepted case
+(p8, ``p8_conv_11`` turn 15: "...from meditation apps. They help in
+stressful moments...") whose result clause was in a separate sentence too --
+losing it is the intended, honest effect of the stricter same-sentence rule,
+not a new bug.
 """
 
 from __future__ import annotations
@@ -97,10 +127,10 @@ _RESULT_RELATION_PATTERNS = (
 _SENTENCE_TERMINATOR_PATTERN = re.compile(r"[.!?]")
 
 
-def _first_result_relation_match(text: str, start: int) -> re.Match[str] | None:
+def _first_result_relation_match(text: str, start: int, limit: int) -> re.Match[str] | None:
     best: re.Match[str] | None = None
     for pattern in _RESULT_RELATION_PATTERNS:
-        candidate = pattern.search(text, start)
+        candidate = pattern.search(text, start, limit)
         if candidate is not None and (best is None or candidate.start() < best.start()):
             best = candidate
     return best
@@ -113,24 +143,44 @@ def _is_question_context(text: str, position: int) -> bool:
     return terminator is not None and terminator.group(0) == "?"
 
 
+def _has_action_complement(text: str, tried_end: int) -> bool:
+    """False for a bare "tried," with nothing between "tried" and the comma.
+
+    B20: "I tried, but ..." never states what was tried, so it can never be
+    a valid action span no matter what follows.
+    """
+
+    remainder = text[tried_end:].lstrip()
+    return not remainder.startswith(",")
+
+
 def find_self_reported_action_result_spans(
     text: str,
 ) -> tuple[tuple[int, int], tuple[int, int]] | None:
     """Split a seeker turn into (action_span, outcome_span) char offsets, or None.
 
-    Requires a past-tense "tried" self-report followed later in the same
-    turn by an explicit result-relation clause (see module docstring for
-    exactly what qualifies and why). Returns None for: no "tried" at all;
-    "tried" with no qualifying result clause; a candidate result clause that
-    turns out to be an infinitival/possessive/locational use of
-    "help"/"work" (excluded by requiring a back-referring subject); or a
-    candidate result clause inside a question.
+    Requires: a past-tense "tried" self-report; a non-empty action
+    complement immediately after it (not bare "tried,"); and an explicit
+    result-relation clause found *within the same sentence* as the "tried"
+    clause (search never crosses a ``.``/``!``/``?`` -- B20: a result-relation
+    match in a later, independent sentence is exactly the shape a subject/
+    topic shift takes, e.g. "we've tried talking ... his work hours, which
+    helps" -- "which helps" refers to "his work hours", not the tried
+    action). Returns None for: no "tried" at all; "tried" with no action
+    complement; no qualifying result clause in the same sentence; a
+    candidate result clause that is actually an infinitival/possessive/
+    locational use of "help"/"work" (excluded by requiring a back-referring
+    subject); or a candidate result clause inside a question.
     """
 
     tried_match = _TRIED_SELF_REPORT_PATTERN.search(text)
     if tried_match is None:
         return None
-    outcome_match = _first_result_relation_match(text, tried_match.end())
+    if not _has_action_complement(text, tried_match.end()):
+        return None
+    boundary_match = _SENTENCE_TERMINATOR_PATTERN.search(text, tried_match.end())
+    sentence_boundary = boundary_match.start() if boundary_match is not None else len(text)
+    outcome_match = _first_result_relation_match(text, tried_match.end(), sentence_boundary)
     if outcome_match is None:
         return None
     if _is_question_context(text, outcome_match.start()):
