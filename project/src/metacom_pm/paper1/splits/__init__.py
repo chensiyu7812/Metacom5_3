@@ -20,6 +20,10 @@ longer uses that type for this purpose).
 packer; see ``exact_evidence_folds`` module docstring for why it is not yet
 invoked to produce a frozen artifact this round
 (``OUTER_FOLD_PACKING_STATUS`` = ``OUTER_FOLD_PACKING_PENDING_M2_FREEZE``).
+
+B26: ``outer_fold_decision_surface`` enumerates that packer over a grid of
+(K, seed) pairs purely as a diagnostic decision *surface* -- see that
+module's docstring for why it never selects or freezes one point.
 """
 
 from .exact_evidence_folds import (
@@ -34,16 +38,30 @@ from .exact_evidence_folds import (
     pack_components_into_outer_folds,
     summarize_outer_fold_packing,
 )
+from .outer_fold_decision_surface import (
+    DEFAULT_K_VALUES,
+    DEFAULT_SEED_VALUES,
+    FoldDiagnostics,
+    PackingSurfacePoint,
+    enumerate_packing_surface,
+    summarize_packing_surface,
+)
 
 __all__ = [
+    "DEFAULT_K_VALUES",
+    "DEFAULT_SEED_VALUES",
+    "FoldDiagnostics",
     "GROUP_COMPONENT_STATUS",
-    "OUTER_FOLD_PACKING_STATUS",
     "GroupComponent",
     "GroupComponentAssignment",
+    "OUTER_FOLD_PACKING_STATUS",
+    "PackingSurfacePoint",
     "build_group_component_assignments",
     "build_group_components",
     "build_shared_session_sensitivity_components",
     "canonical_evidence_fingerprint",
+    "enumerate_packing_surface",
     "pack_components_into_outer_folds",
     "summarize_outer_fold_packing",
+    "summarize_packing_surface",
 ]
