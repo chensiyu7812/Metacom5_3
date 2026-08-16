@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-m2-decision-packet-draft-v1",
   "status": "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK",
-  "generated_at": "2026-08-16T22:47:42+09:00",
+  "generated_at": "2026-08-16T23:21:58+09:00",
   "authority": {
     "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
     "route": "A_first_order_factorized",
@@ -39,8 +39,16 @@
     },
     "preoutcome_draft": {
       "path": "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json",
-      "sha256": "bbda98729c7547ad0947241f697de49cb41bd470db5aead4bd795fa7d88ca0d8",
+      "sha256": "b1395c4b999151494bcb9bf18a1278ff6e4b6d9ffe826e2e9aceb2af2ad82e54",
       "status": "DRAFT_AWAITING_M1_INTEGRATION"
+    },
+    "local_environment_attestation": {
+      "path": "data/paper1_authority/paper1_local_environment_attestation_v1.json",
+      "sha256": "d58c6d6d550e2d9592653455e596dad5f56b2c5591e391a2caaac8b55f96a466",
+      "status": "ENGINEERING_CAPABLE_NOT_RESEARCH_FROZEN",
+      "outcome_calls": 0,
+      "tokenizer_provider_parity": "PENDING_M2_FREEZE",
+      "retriever_candidate_role": "ENGINEERING_CAPABILITY_CANDIDATE_NOT_RETRIEVER_FREEZE"
     }
   },
   "rs_findings": {
@@ -99,16 +107,16 @@
       "order": 5,
       "decision_id": "rs_retriever",
       "item": "RS semantic retriever",
-      "evidence": "Lexical Jaccard was used only for Phase-1 availability and has non-zero variance; it is too slow and semantically weak for the formal runner.",
-      "recommendation": "Bind BAAI/bge-small-en-v1.5 with an immutable revision, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Run only an engineering-capability check before freeze.",
-      "status": "IMPLEMENTATION_PENDING_EXACT_REVISION",
+      "evidence": "Lexical Jaccard was used only for Phase-1 availability. A separate zero-outcome engineering attestation hash-verified BAAI/bge-small-en-v1.5 revision 5c38ec7c405ec4b44b94cc5a9bb96e735b38267a and completed a CUDA normalized-CLS forward pass with shape [2, 384]; this proves runtime capability, not that the retriever is frozen.",
+      "recommendation": "Decide once whether to bind this exact BGE candidate, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Do not promote the engineering probe to a research choice automatically.",
+      "status": "ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_FREEZE_PENDING",
       "researcher_approval_required": true
     },
     {
       "order": 6,
       "decision_id": "rs_render_and_cap",
       "item": "RS rendering and resource token cap",
-      "evidence": "Locally SHA-verified tokenizer bytes downloaded from the declared public Llama-3.1 mirror give guidance-only median 72 tokens; guidance+exemplar median 125, p95 158 and max 301. A 192-token cap contains 99.33% of cards. The script verifies bytes, not the caller-declared remote repo/revision.",
+      "evidence": "The dedicated Python 3.11 runtime hash-verified tokenizer bytes for NousResearch/Meta-Llama-3.1-8B-Instruct at revision d10aef7999a2b5ba950ab3974312feeedbfe0b77. Those bytes give guidance-only median 72 tokens; guidance+exemplar median 125, p95 158 and max 301. A 192-token cap contains 99.33% of cards. NVIDIA NIM provider parity remains unverified.",
       "recommendation": "Freeze the exact renderer variant before outcomes. If exemplar is retained, use the explicit other-dialogue/style-only delimiter and preserve guidance before exemplar under truncation. Verify tokenizer parity with the NVIDIA NIM stack before freezing the cap.",
       "status": "CENSUS_COMPLETE_PROVIDER_PARITY_AND_VARIANT_PENDING",
       "researcher_approval_required": true
