@@ -103,6 +103,8 @@ def build() -> PreOutcomeFreezeManifest:
             "integrate_repaired_public_memory_census",
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
+            "freeze_rs_retriever_after_outcome_blind_lexical_bge_small_bge_m3_comparison",
+            "reconcile_official_bge_m3_runtime_and_local_safetensors_revision",
             "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
             "freeze_rs_boundary_horizon_and_candidate_mapping",
             "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",

@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "Paper 1 M2 预冻结决策包（零 outcome 草案）",
     "description": "Route A 的 Phase-1 证据、阻断项与待确认 M2 决策。",
-    "generatedAt": "2026-08-16T23:21:58+09:00",
+    "generatedAt": "2026-08-17T00:29:39+09:00",
     "sources": [
       {
         "id": "rs-census",
@@ -362,7 +362,7 @@
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-16T23:21:58+09:00",
+    "generatedAt": "2026-08-17T00:29:39+09:00",
     "status": "ready",
     "datasets": {
       "headlines": [
@@ -530,9 +530,9 @@
           "order": 5,
           "decision_id": "rs_retriever",
           "item": "RS semantic retriever",
-          "evidence": "Lexical Jaccard was used only for Phase-1 availability. A separate zero-outcome engineering attestation hash-verified BAAI/bge-small-en-v1.5 revision 5c38ec7c405ec4b44b94cc5a9bb96e735b38267a and completed a CUDA normalized-CLS forward pass with shape [2, 384]; this proves runtime capability, not that the retriever is frozen.",
-          "recommendation": "Decide once whether to bind this exact BGE candidate, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Do not promote the engineering probe to a research choice automatically.",
-          "status": "ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_FREEZE_PENDING",
+          "evidence": "Lexical Jaccard was used only for Phase-1 availability. The zero-outcome environment attestation hash-verified two distinct candidates: lightweight English BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a with CUDA shape [2, 384], and BAAI/bge-m3@9a0624b896d81da7492a910ffa53731274b6cf3d with CUDA shape [2, 1024]. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision. Neither local snapshot is thereby frozen for the Paper-1 RS retriever.",
+          "recommendation": "Keep BGE-small only as an RS lightweight challenger/smoke-test. Reproduce Official RAG with the BGE-M3 model identity, and treat BGE-M3 as the leading typed-memory candidate. For RS, compare lexical, BGE-small and BGE-M3 on the final dialogue-only Bank using an outcome-blind retrieval/applicability audit; then freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls.",
+          "status": "DUAL_ENCODER_ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_COMPARISON_AND_FREEZE_PENDING",
           "researcher_approval_required": true,
           "approval_label": "Required"
         },
