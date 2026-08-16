@@ -12,6 +12,9 @@ from zoneinfo import ZoneInfo
 
 PROJECT = Path(__file__).resolve().parents[2]
 RS_SUMMARY = PROJECT / "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json"
+RS_RENDER_AUDIT = (
+    PROJECT / "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json"
+)
 RECONCILIATION = (
     PROJECT / "data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json"
 )
@@ -59,6 +62,7 @@ def _decision(
 
 def main() -> int:
     rs = _load(RS_SUMMARY)
+    rs_render = _load(RS_RENDER_AUDIT)
     reconciliation = _load(RECONCILIATION)
     scorer = _load(SCORER_AUDIT)
     rq0 = _load(RQ0_CONTRACT)
@@ -72,6 +76,9 @@ def main() -> int:
     counts = rs["counts"]
     situation = rs["privileged_field_audit"]["situation"]
     bundle = rs["outcome_blind_distributions"]["diagnostic_bundle_injected_words"]
+    rendered = rs_render["renderer_variants"]
+    exemplar = rs_render["exemplar_content_shape_proxies"]
+    boundary = rs_render["boundary_horizon_decision_surface"]
 
     decisions = [
         _decision(
@@ -123,22 +130,40 @@ def main() -> int:
             6,
             "rs_render_and_cap",
             "RS rendering and resource token cap",
-            f"For Top-1, diagnostic guidance+example length is median {bundle['1']['median']} words, p95 {bundle['1']['p95']} and max {bundle['1']['max']}.",
-            "Preserve guidance before exemplar when truncating; provisionally target a 256-resource-token cap, but freeze only after an exact Llama tokenizer census of the final renderer.",
-            "TOKENIZER_CENSUS_PENDING",
+            f"Locally SHA-verified tokenizer bytes downloaded from the declared public Llama-3.1 mirror give guidance-only median {rendered['guidance_only']['resource_token_distribution']['median']} tokens; guidance+exemplar median {rendered['guidance_plus_exemplar']['resource_token_distribution']['median']}, p95 {rendered['guidance_plus_exemplar']['resource_token_distribution']['p95']} and max {rendered['guidance_plus_exemplar']['resource_token_distribution']['max']}. A 192-token cap contains {rendered['guidance_plus_exemplar']['cap_coverage']['192']['coverage_fraction']:.2%} of cards. The script verifies bytes, not the caller-declared remote repo/revision.",
+            "Freeze the exact renderer variant before outcomes. If exemplar is retained, use the explicit other-dialogue/style-only delimiter and preserve guidance before exemplar under truncation. Verify tokenizer parity with the NVIDIA NIM stack before freezing the cap.",
+            "CENSUS_COMPLETE_PROVIDER_PARITY_AND_VARIANT_PENDING",
             True,
         ),
         _decision(
             7,
-            "rs_feature_schema",
-            "RS observable features",
-            "Advice-request appears in 308 states; listen-only appears in 0 and no-probing in 1 under the conservative deterministic parser.",
-            "Retain similarity, candidate move type, recent previously-injected same-move count, advice-request flag and exact resource-token count. Keep listen-only/no-probing as deterministic boundary rules, not learned features.",
+            "rs_exemplar_policy",
+            "RS example-response treatment policy",
+            f"Among {exemplar['cards_total']} cards, guidance-only collapses to {rendered['guidance_only']['distinct_render_count']} distinct resource strings, while guidance+exemplar retains {rendered['guidance_plus_exemplar']['distinct_render_count']}. The source exemplar has first-person references in {exemplar['card_counts']['first_person_reference']}, kinship terms in {exemplar['card_counts']['kinship_reference']}, time/number references in {exemplar['card_counts']['time_or_number_reference']} and non-initial capitalized-token proxies in {exemplar['card_counts']['capitalized_token_reference']}. These are descriptive text-shape proxies, not risk labels.",
+            "Choose once between guidance-only and guidance+exemplar. Guidance-only is an eight-move strategy prompt rather than card-specific RAG; guidance+exemplar preserves card identity and is therefore the closer Strategy-RAG treatment. Any copying, factual carryover, misuse or semantic non-use after valid delivery remains a realized treatment effect and error-analysis signal, never a post-treatment invalidation rule.",
             "RESEARCHER_DECISION_REQUIRED",
             True,
         ),
         _decision(
             8,
+            "rs_boundary_horizon",
+            "Explicit user-boundary horizon and strategy mapping",
+            f"Current-user-run parsing activates a boundary in {boundary['current_user_run_only']['states_with_any_explicit_boundary']} of {rs_render['universe']['decision_states']} states; prefix persistence activates one in {boundary['visible_prefix_narrow_explicit_revocation']['states_with_any_explicit_boundary']}. No audited state loses every compatible candidate.",
+            "Apply boundaries identically to every arm at candidate level: listen-only blocks Suggestions and Question, no-advice blocks Suggestions, and no-probing blocks Question. Freeze either current-run-only or narrow explicit persistence; never turn the sparse flags into learned features or close the whole RS head.",
+            "RESEARCHER_DECISION_REQUIRED",
+            True,
+        ),
+        _decision(
+            9,
+            "rs_feature_schema",
+            "RS observable features",
+            f"Advice-request appears in 308 states in the original request-feature census. The stricter current-run boundary audit finds listen-only in {boundary['current_user_run_only']['active_marker_state_counts']['listen_only']}, no-advice in {boundary['current_user_run_only']['active_marker_state_counts']['no_advice']} and no-probing in {boundary['current_user_run_only']['active_marker_state_counts']['no_probing']} states; the former single no-probing hit referred to what third parties might ask and was a false positive.",
+            "Retain similarity, candidate move type, recent previously-injected same-move count, advice-request flag and exact resource-token count. Keep listen-only/no-probing as deterministic boundary rules, not learned features.",
+            "RESEARCHER_DECISION_REQUIRED",
+            True,
+        ),
+        _decision(
+            10,
             "memory_census",
             "MP/MS/ME candidate census",
             "Codex B is repairing official evaluation-time visibility, sanitized runtime artifacts and ME linkage; current B coverage numbers are superseded for freeze purposes.",
@@ -147,7 +172,7 @@ def main() -> int:
             False,
         ),
         _decision(
-            9,
+            11,
             "outer_folds",
             "Outer-fold K and seed",
             "Exact-evidence components exist on B but must be rebuilt/join-validated after runtime-boundary repair; component IDs are not folds.",
@@ -156,7 +181,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            10,
+            12,
             "effect_coding",
             "Multi-metric effect coding",
             "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
@@ -165,7 +190,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            11,
+            13,
             "generator_stack",
             "Generator and decoding stack",
             "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
@@ -174,7 +199,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            12,
+            14,
             "repeated_effects",
             "Repeated paired effects",
             "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
@@ -183,7 +208,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            13,
+            15,
             "primary_policy",
             "PM decision threshold",
             "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
@@ -192,7 +217,7 @@ def main() -> int:
             False,
         ),
         _decision(
-            14,
+            16,
             "matched_random",
             "Matched-Random construction",
             "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
@@ -201,7 +226,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            15,
+            17,
             "formal_unlock",
             "Outcome/API unlock",
             "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
@@ -226,6 +251,12 @@ def main() -> int:
             "rs_zero_outcome_summary": {
                 "path": str(RS_SUMMARY.relative_to(PROJECT)),
                 "sha256": _sha256(RS_SUMMARY),
+            },
+            "rs_renderer_boundary_audit": {
+                "path": str(RS_RENDER_AUDIT.relative_to(PROJECT)),
+                "sha256": _sha256(RS_RENDER_AUDIT),
+                "status": rs_render.get("status"),
+                "tokenizer": rs_render.get("tokenizer"),
             },
             "official_scorer_audit": {
                 "path": str(SCORER_AUDIT.relative_to(PROJECT)),
@@ -259,6 +290,27 @@ def main() -> int:
                 "situation_not_verbatim_contained_anywhere_in_dialogue"
             ]
             / situation["dialogues_with_nonempty_situation"],
+            "guidance_plus_exemplar_median_tokens": rendered[
+                "guidance_plus_exemplar"
+            ]["resource_token_distribution"]["median"],
+            "guidance_only_distinct_renders": rendered["guidance_only"][
+                "distinct_render_count"
+            ],
+            "guidance_plus_exemplar_distinct_renders": rendered[
+                "guidance_plus_exemplar"
+            ]["distinct_render_count"],
+            "guidance_plus_exemplar_p95_tokens": rendered[
+                "guidance_plus_exemplar"
+            ]["resource_token_distribution"]["p95"],
+            "guidance_plus_exemplar_192_cap_coverage": rendered[
+                "guidance_plus_exemplar"
+            ]["cap_coverage"]["192"]["coverage_fraction"],
+            "boundary_current_run_states": boundary["current_user_run_only"][
+                "states_with_any_explicit_boundary"
+            ],
+            "boundary_narrow_persistent_states": boundary[
+                "visible_prefix_narrow_explicit_revocation"
+            ]["states_with_any_explicit_boundary"],
         },
         "decisions": decisions,
         "researcher_decision_ids": [
@@ -298,6 +350,7 @@ def main() -> int:
     source_dir.mkdir(parents=True, exist_ok=True)
     copies = {
         RS_SUMMARY: source_dir / "rs_zero_outcome_summary.json",
+        RS_RENDER_AUDIT: source_dir / "rs_renderer_boundary_audit.json",
         RECONCILIATION: source_dir / "execution_reconciliation.json",
         SCORER_AUDIT: source_dir / "official_scorer_audit.json",
         RQ0_CONTRACT: source_dir / "rq0_generator_contract.json",
@@ -326,6 +379,27 @@ def main() -> int:
                 "metric_definitions": [
                     "Candidate coverage = states with at least one fold-exclusive source card / audited states.",
                     "Word-cap coverage = states whose diagnostic retrieved guidance+example bundle is at or below the named word cap / audited states.",
+                ],
+            },
+        },
+        {
+            "id": "rs-render-audit",
+            "label": "ESConv RS renderer and explicit-boundary audit",
+            "path": "sources/rs_renderer_boundary_audit.json",
+            "query": {
+                "engine": "duckdb",
+                "language": "sql",
+                "sql": "SELECT * FROM read_json_auto('sources/rs_renderer_boundary_audit.json')",
+                "description": "Load the zero-outcome exact-token renderer and mechanical boundary decision surface generated by script 09.",
+                "tables_used": ["sources/rs_renderer_boundary_audit.json"],
+                "filters": [
+                    "formal_outcome_calls = 0",
+                    "candidate-level boundary mapping",
+                    "no composite exemplar risk score",
+                ],
+                "metric_definitions": [
+                    "Resource tokens are tokenizer.json encodings of the delimited resource substring with special tokens disabled.",
+                    "Boundary prevalence counts deterministic high-precision markers; it is not a utility label.",
                 ],
             },
         },
@@ -521,7 +595,10 @@ def main() -> int:
                     "body": (
                         "## Bundle 越大，处理对象越难解释且成本迅速上升\n\n"
                         f"Top-1 的 diagnostic injected length 中位数为 {bundle['1']['median']} words；Top-4 为 {bundle['4']['median']} words。"
-                        "下图只展示结构性成本形状：它支持优先冻结单卡 treatment，但 word cap 不能替代最终 Llama tokenizer census。"
+                        "下图只展示结构性成本形状。独立 renderer census 使用本地 SHA-verified tokenizer bytes（远端 mirror/revision 由调用参数声明）："
+                        f"guidance+exemplar 中位数 {rendered['guidance_plus_exemplar']['resource_token_distribution']['median']} tokens，"
+                        f"192-token cap 覆盖 {rendered['guidance_plus_exemplar']['cap_coverage']['192']['coverage_fraction']:.2%}。"
+                        "该 tokenizer 与 NVIDIA NIM 的实际 parity 仍需在 freeze 前确认。"
                     ),
                 },
                 {"id": "bundle-chart", "type": "chart", "chartId": "bundle-cap-coverage", "layout": "full"},
@@ -560,6 +637,8 @@ def main() -> int:
                         "## 限制与稳健性边界\n\n"
                         "RS 结果描述的是 availability，不是 positive-effect prevalence，也不能证明 PM 可学习。"
                         "当前 lexical ranking 不能支持正式 retrieval claim。`listen-only` 和 `no-probing` 在训练 state 中为零或近零，因此不得作为可学习特征。"
+                        "它们只能作为所有 arms 共享的 candidate-level 机械边界。Exemplar 中的人称、关系、时间与实体形状仅作诊断；"
+                        "有效交付后的复制、误用或不采用都属于 realized treatment effect，不得事后删样本。"
                         "Memory census、outer folds 和 combined API volume 仍取决于 B 的 runtime-boundary 修复。"
                     ),
                 },
@@ -581,7 +660,9 @@ def main() -> int:
                     "body": (
                         "## 仍需回答的问题\n\n"
                         "- legacy EvoEmo-overlap exclusion 是否继续作为 primary，还是只保留 sensitivity？\n"
-                        "- 是否接受 Top-1 single-card RS treatment 与 provisional 256-token resource cap？\n"
+                        "- 是否接受 Top-1 single-card RS treatment，并选择 guidance-only 或明确分隔的 guidance+exemplar？\n"
+                        "- 显式 boundary 采用 current-run-only，还是只允许明确撤销的窄 persistence？\n"
+                        "- provider tokenizer parity 核验后，是否采用 192-token resource cap？\n"
                         "- 是否用 authority-aligned task anchors/guards 替换当前 exact Pareto draft？\n"
                         "- temperature=0、seed=null 的 NIM 调用如何定义真正独立的 repeated effect？"
                     ),

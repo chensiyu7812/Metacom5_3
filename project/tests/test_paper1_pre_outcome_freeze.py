@@ -154,6 +154,8 @@ def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
     }
     assert "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl" in paths
     assert "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl" in paths
+    assert "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl" in paths
+    assert "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json" in paths
     assert "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl" not in paths
     assert manifest["status"] == "DRAFT_AWAITING_M1_INTEGRATION"
     assert manifest["formal_outcome_calls_at_freeze"] == 0
@@ -170,6 +172,15 @@ def test_m2_decision_packet_is_a_locked_draft_with_explicit_researcher_choices()
     assert packet["formal_outcome_calls"] == 0
     assert packet["formal_unlock"] is False
     assert packet["researcher_decision_ids"]
+    assert "rs_exemplar_policy" in packet["researcher_decision_ids"]
+    assert "rs_boundary_horizon" in packet["researcher_decision_ids"]
+    renderer = packet["evidence"]["rs_renderer_boundary_audit"]
+    assert renderer["status"] == (
+        "ZERO_OUTCOME_DECISION_SURFACE_NOT_RENDERER_OR_BOUNDARY_FREEZE"
+    )
+    assert renderer["tokenizer"]["provider_parity_status"].startswith(
+        "PUBLIC_LLAMA31_TOKENIZER_MIRROR_"
+    )
     assert any(
         row["status"] == "BLOCKED_PENDING_B_REPAIR" for row in packet["decisions"]
     )

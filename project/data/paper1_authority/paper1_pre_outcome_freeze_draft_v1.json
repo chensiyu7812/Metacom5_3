@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-pre-outcome-freeze-v1",
   "status": "DRAFT_AWAITING_M1_INTEGRATION",
-  "source_tree_sha": "993f6a986b2bec835c8042c5ddcec6c964f2e1f4",
+  "source_tree_sha": "5f9134efba7d0a27527e286a3e1cc8e9b09259b7",
   "generator": {
     "selection_status": "FINAL",
     "provider": "NVIDIA hosted NIM",
@@ -84,6 +84,16 @@
       "role": "ESConv RS Phase-1 zero-outcome census summary"
     },
     {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
+      "sha256": "05088aabdf93f9fc81bfb8abd3b6438e0ae5dcafaea91b1ba369c5b3602a5f73",
+      "role": "text-free per-card RS renderer token and exemplar-shape audit"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json",
+      "sha256": "b153dd4c42accdb3d4aba7dd450eda787687826cf8cd12ffa9ee7efa64179ee9",
+      "role": "RS renderer-token and explicit-boundary zero-outcome decision surface"
+    },
+    {
       "repo_relative_path": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
       "sha256": "205722b60b67172c1bf994784aec562362e6de3c53083e6e6070078a85861ce2",
       "role": "pinned official scorer source and effect-surface audit"
@@ -103,6 +113,9 @@
     "integrate_repaired_public_memory_census",
     "freeze_final_candidate_bundle_per_head",
     "freeze_rs_effect_state_overlap_policy",
+    "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
+    "freeze_rs_boundary_horizon_and_candidate_mapping",
+    "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",
     "freeze_exact_feature_schema_per_head",
     "pack_exact_evidence_components_into_outer_folds",
     "freeze_inner_fold_count",

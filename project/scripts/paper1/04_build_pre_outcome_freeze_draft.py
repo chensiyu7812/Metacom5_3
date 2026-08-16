@@ -72,6 +72,14 @@ def build() -> PreOutcomeFreezeManifest:
                 "ESConv RS Phase-1 zero-outcome census summary",
             ),
             (
+                "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
+                "text-free per-card RS renderer token and exemplar-shape audit",
+            ),
+            (
+                "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json",
+                "RS renderer-token and explicit-boundary zero-outcome decision surface",
+            ),
+            (
                 "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
                 "pinned official scorer source and effect-surface audit",
             ),
@@ -91,6 +99,9 @@ def build() -> PreOutcomeFreezeManifest:
             "integrate_repaired_public_memory_census",
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
+            "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
+            "freeze_rs_boundary_horizon_and_candidate_mapping",
+            "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",
             "freeze_exact_feature_schema_per_head",
             "pack_exact_evidence_components_into_outer_folds",
             "freeze_inner_fold_count",

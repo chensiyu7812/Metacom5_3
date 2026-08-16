@@ -1,0 +1,160 @@
+{
+  "protocol": "pm-paper1-rs-renderer-boundary-audit-v1",
+  "status": "ZERO_OUTCOME_DECISION_SURFACE_NOT_RENDERER_OR_BOUNDARY_FREEZE",
+  "formal_outcome_calls": 0,
+  "formal_unlock": false,
+  "universe": {
+    "strategy_cards": 12169,
+    "decision_states": 11883,
+    "source_policy": "conservative_existing_project_overlap_exclusion",
+    "leave_current_dialogue_out_applies_to_formal_retrieval": true
+  },
+  "tokenizer": {
+    "source_repo": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+    "special_tokens_added_for_resource_substring": false,
+    "artifact_identity_status": "LOCAL_TOKENIZER_BYTES_SHA256_VERIFIED",
+    "source_attribution_status": "CALLER_DECLARED_PUBLIC_MIRROR_REPO_AND_REVISION_NOT_REMOTE_REVERIFIED_BY_THIS_SCRIPT",
+    "provider_parity_status": "PUBLIC_LLAMA31_TOKENIZER_MIRROR_NOT_YET_VERIFIED_AGAINST_NVIDIA_NIM_USAGE"
+  },
+  "renderer_variants": {
+    "guidance_only": {
+      "distinct_render_count": 8,
+      "resource_token_distribution": {
+        "min": 69,
+        "p25": 69,
+        "median": 72,
+        "p75": 73,
+        "p90": 81,
+        "p95": 81,
+        "max": 81
+      },
+      "cap_coverage": {
+        "128": {
+          "cards_within_cap": 12169,
+          "cards_total": 12169,
+          "coverage_fraction": 1.0
+        },
+        "192": {
+          "cards_within_cap": 12169,
+          "cards_total": 12169,
+          "coverage_fraction": 1.0
+        },
+        "256": {
+          "cards_within_cap": 12169,
+          "cards_total": 12169,
+          "coverage_fraction": 1.0
+        }
+      }
+    },
+    "guidance_plus_exemplar": {
+      "distinct_render_count": 11807,
+      "resource_token_distribution": {
+        "min": 105,
+        "p25": 116,
+        "median": 125,
+        "p75": 136,
+        "p90": 148,
+        "p95": 158,
+        "max": 301
+      },
+      "cap_coverage": {
+        "128": {
+          "cards_within_cap": 7179,
+          "cards_total": 12169,
+          "coverage_fraction": 0.5899416550250637
+        },
+        "192": {
+          "cards_within_cap": 12087,
+          "cards_total": 12169,
+          "coverage_fraction": 0.993261566274961
+        },
+        "256": {
+          "cards_within_cap": 12163,
+          "cards_total": 12169,
+          "coverage_fraction": 0.9995069438737776
+        }
+      }
+    }
+  },
+  "exemplar_content_shape_proxies": {
+    "note": "Mechanical text-shape diagnostics only; no composite score and no eligibility rule.",
+    "cards_total": 12169,
+    "card_counts": {
+      "capitalized_token_reference": 594,
+      "first_person_reference": 5963,
+      "kinship_reference": 605,
+      "time_or_number_reference": 594
+    },
+    "source_context_lexical_overlap_distribution": {
+      "min": 0.0,
+      "p25": 0.05309734513274336,
+      "median": 0.08571428571428572,
+      "p75": 0.12307692307692308,
+      "p90": 0.16666666666666666,
+      "p95": 0.20430107526881722,
+      "max": 1.0
+    }
+  },
+  "boundary_horizon_decision_surface": {
+    "current_user_run_only": {
+      "states_with_any_explicit_boundary": 1,
+      "active_marker_state_counts": {
+        "listen_only": 1,
+        "no_advice": 0,
+        "no_probing": 0
+      },
+      "candidate_edges_mechanically_blocked": 4420,
+      "states_with_no_compatible_candidate_remaining": 0
+    },
+    "visible_prefix_any_marker_no_revocation": {
+      "states_with_any_explicit_boundary": 9,
+      "active_marker_state_counts": {
+        "listen_only": 9,
+        "no_advice": 0,
+        "no_probing": 0
+      },
+      "candidate_edges_mechanically_blocked": 39780,
+      "states_with_no_compatible_candidate_remaining": 0
+    },
+    "visible_prefix_narrow_explicit_revocation": {
+      "states_with_any_explicit_boundary": 9,
+      "active_marker_state_counts": {
+        "listen_only": 9,
+        "no_advice": 0,
+        "no_probing": 0
+      },
+      "candidate_edges_mechanically_blocked": 39780,
+      "states_with_no_compatible_candidate_remaining": 0
+    }
+  },
+  "boundary_candidate_mapping": {
+    "status": "PROVISIONAL_LABEL_LEVEL_MAPPING_RESEARCHER_DECISION_REQUIRED",
+    "listen_only_blocks": [
+      "Providing Suggestions",
+      "Question"
+    ],
+    "no_advice_blocks": [
+      "Providing Suggestions"
+    ],
+    "no_probing_blocks": [
+      "Question"
+    ],
+    "whole_head_off": false,
+    "learned_feature_status": "FORBIDDEN_ZERO_OR_NEAR_ZERO_VARIANCE",
+    "all_resource_arms_must_share_rule": true
+  },
+  "card_manifest": {
+    "path": "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
+    "rows": 12169,
+    "sha256": "05088aabdf93f9fc81bfb8abd3b6438e0ae5dcafaea91b1ba369c5b3602a5f73",
+    "contains_raw_dialogue_or_example_text": false
+  },
+  "researcher_decisions_still_required": [
+    "guidance_only_vs_guidance_plus_exemplar",
+    "boundary_horizon_and_label_level_candidate_mapping",
+    "resource_token_cap",
+    "provider_tokenizer_parity_check"
+  ]
+}
