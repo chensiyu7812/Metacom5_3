@@ -83,6 +83,10 @@ def build() -> PreOutcomeFreezeManifest:
                 "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
                 "pinned official scorer source and effect-surface audit",
             ),
+            (
+                "data/paper1_authority/paper1_local_environment_attestation_v1.json",
+                "zero-outcome local runtime, tokenizer, and encoder capability attestation",
+            ),
         )
     )
     return PreOutcomeFreezeManifest(

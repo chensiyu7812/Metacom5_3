@@ -21,6 +21,9 @@ RECONCILIATION = (
 SCORER_AUDIT = PROJECT / "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json"
 RQ0_CONTRACT = PROJECT / "data/v3_authority/rq0_llama31_8b_esc_eval_exact_contract_v1.json"
 PREOUTCOME_DRAFT = PROJECT / "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json"
+ENVIRONMENT_ATTESTATION = (
+    PROJECT / "data/paper1_authority/paper1_local_environment_attestation_v1.json"
+)
 PACKET_OUT = PROJECT / "data/paper1_authority/paper1_m2_decision_packet_draft_v1.json"
 REPORT_DIR = PROJECT / "reports/paper1_m2_decision_packet_draft_20260816"
 
@@ -67,6 +70,7 @@ def main() -> int:
     scorer = _load(SCORER_AUDIT)
     rq0 = _load(RQ0_CONTRACT)
     preoutcome = _load(PREOUTCOME_DRAFT)
+    environment = _load(ENVIRONMENT_ATTESTATION)
     generated_at = datetime.now(ZoneInfo("Asia/Tokyo")).replace(microsecond=0).isoformat()
 
     conservative = rs["overlap_policy_sensitivity"]["conservative_existing_project_flag"]
@@ -121,16 +125,16 @@ def main() -> int:
             5,
             "rs_retriever",
             "RS semantic retriever",
-            "Lexical Jaccard was used only for Phase-1 availability and has non-zero variance; it is too slow and semantically weak for the formal runner.",
-            "Bind BAAI/bge-small-en-v1.5 with an immutable revision, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Run only an engineering-capability check before freeze.",
-            "IMPLEMENTATION_PENDING_EXACT_REVISION",
+            f"Lexical Jaccard was used only for Phase-1 availability. A separate zero-outcome engineering attestation hash-verified BAAI/bge-small-en-v1.5 revision {environment['bge_small_encoder_candidate']['revision']} and completed a CUDA normalized-CLS forward pass with shape {environment['bge_small_encoder_candidate']['probe']['shape']}; this proves runtime capability, not that the retriever is frozen.",
+            "Decide once whether to bind this exact BGE candidate, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Do not promote the engineering probe to a research choice automatically.",
+            "ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_FREEZE_PENDING",
             True,
         ),
         _decision(
             6,
             "rs_render_and_cap",
             "RS rendering and resource token cap",
-            f"Locally SHA-verified tokenizer bytes downloaded from the declared public Llama-3.1 mirror give guidance-only median {rendered['guidance_only']['resource_token_distribution']['median']} tokens; guidance+exemplar median {rendered['guidance_plus_exemplar']['resource_token_distribution']['median']}, p95 {rendered['guidance_plus_exemplar']['resource_token_distribution']['p95']} and max {rendered['guidance_plus_exemplar']['resource_token_distribution']['max']}. A 192-token cap contains {rendered['guidance_plus_exemplar']['cap_coverage']['192']['coverage_fraction']:.2%} of cards. The script verifies bytes, not the caller-declared remote repo/revision.",
+            f"The dedicated Python 3.11 runtime hash-verified tokenizer bytes for {environment['llama_tokenizer_candidate']['repo']} at revision {environment['llama_tokenizer_candidate']['revision']}. Those bytes give guidance-only median {rendered['guidance_only']['resource_token_distribution']['median']} tokens; guidance+exemplar median {rendered['guidance_plus_exemplar']['resource_token_distribution']['median']}, p95 {rendered['guidance_plus_exemplar']['resource_token_distribution']['p95']} and max {rendered['guidance_plus_exemplar']['resource_token_distribution']['max']}. A 192-token cap contains {rendered['guidance_plus_exemplar']['cap_coverage']['192']['coverage_fraction']:.2%} of cards. NVIDIA NIM provider parity remains unverified.",
             "Freeze the exact renderer variant before outcomes. If exemplar is retained, use the explicit other-dialogue/style-only delimiter and preserve guidance before exemplar under truncation. Verify tokenizer parity with the NVIDIA NIM stack before freezing the cap.",
             "CENSUS_COMPLETE_PROVIDER_PARITY_AND_VARIANT_PENDING",
             True,
@@ -271,6 +275,18 @@ def main() -> int:
                 "path": str(PREOUTCOME_DRAFT.relative_to(PROJECT)),
                 "sha256": _sha256(PREOUTCOME_DRAFT),
                 "status": preoutcome.get("status"),
+            },
+            "local_environment_attestation": {
+                "path": str(ENVIRONMENT_ATTESTATION.relative_to(PROJECT)),
+                "sha256": _sha256(ENVIRONMENT_ATTESTATION),
+                "status": environment.get("status"),
+                "outcome_calls": environment.get("outcome_calls"),
+                "tokenizer_provider_parity": environment[
+                    "llama_tokenizer_candidate"
+                ]["nvidia_nim_provider_parity"],
+                "retriever_candidate_role": environment[
+                    "bge_small_encoder_candidate"
+                ]["role"],
             },
         },
         "rs_findings": {
