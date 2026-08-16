@@ -1,0 +1,179 @@
+{
+  "protocol": "pm-final-frozen-research-program-20260816-v2",
+  "status": "ACTIVE_SINGLE_SOURCE_OF_RESEARCH_TRUTH",
+  "authority_document": "project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md",
+  "training_contract": "project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md",
+  "supersedes_authority": "project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260814_ZH.md",
+  "method_name": "Policy Manager",
+  "repository_name_is_method_name": false,
+  "forbidden_method_name": "MetaCom",
+  "generator_status": "FROZEN_BEFORE_THIS_RESEARCH_UPDATE",
+  "generator_change_allowed_after_effect_generation": false,
+  "paper_scope": "first_paper_first_order_selective_external_resource_allocation",
+  "primary_research_question": "Can a low-capacity auditable pre-injection Policy Manager learn first-order state-by-candidate marginal utility for Strategy-RAG, Profile Memory, cross-session Memory, and Experience Memory, preserving or improving official benchmark performance while reducing unnecessary generator context and cost?",
+  "components": ["RS", "MP", "MS", "ME"],
+  "resource_semantics": {
+    "RS": "whether to inject the retrieved Strategy-RAG candidate from an ESConv-train-only Strategy Bank; not a strategy-category classifier",
+    "MP": "PROFILE MEMORY ONLY; stable/current user profile facts; MP_PREFERENCE is excluded from Paper 1",
+    "MS": "strictly-past same-user cross-session event/session-continuity memory; no current-message fallback",
+    "ME": "strictly-past same-user action-to-user-observed-outcome experience memory"
+  },
+  "mp_preference_policy": {
+    "included_in_paper1": false,
+    "response_preference_history_runtime_pool": false,
+    "preference_features_allowed": false,
+    "historical_assets_role": "future_work_or_historical_only"
+  },
+  "learning_route": {
+    "name": "A_first_order_factorized",
+    "other_optional_components_during_component_effect_contrast": "ALL_OFF",
+    "background_component_bits_allowed_as_model_features": false,
+    "interaction_aware_learning_claimed": false,
+    "legal_runtime_combinations": 16,
+    "direct_16_classification": false,
+    "runtime_combination_interpretation": "composition_of_four_independent_first_order_decisions",
+    "historical_background_conditioned_results_role": "interaction_diagnostic_future_work_only"
+  },
+  "decision_boundary": "post_candidate_discovery_pre_injection_pre_generation",
+  "candidate_unit": "source-specific bounded exact candidate or candidate bundle",
+  "candidate_bundle_rules": {
+    "source_specific_topk_or_token_cap_frozen_before_main_outcomes": true,
+    "same_exact_bundle_within_on_off_pair": true,
+    "same_candidate_machinery_across_typed_fixed_random_learned": true
+  },
+  "eligibility": {
+    "ineligible_is_learned_off": false,
+    "ineligible_policy": "deterministic_off_excluded_from_classifier",
+    "eligible_labels": ["positive_open", "nonpositive_off", "unknown"],
+    "unknown_used_for_training": false,
+    "RS": ["current_query_alignment", "ESConv_train_only_bank", "atomic_move_boundary_compatibility", "no_structural_hard_exclusion", "no_explicit_same_move_repetition"],
+    "MP": ["MP_PROFILE_only", "same_owner", "active_current_version", "not_superseded", "strictly_past_visible", "no_current_conflict", "traceable_source", "sensitive_profile_requires_current_relevance"],
+    "MS": ["same_owner", "strictly_prior_session_or_event", "no_current_or_future_session", "no_last_message_fallback", "entity_time_thread_valid", "no_visible_current_conflict"],
+    "ME": ["same_owner", "strictly_past", "action_present", "user_observed_outcome_present", "action_outcome_lineage_traceable", "no_visible_conflict", "ordinary_safe_transfer_scope"]
+  },
+  "learning": {
+    "paradigm": "supervised_learning_from_matched_component_effect",
+    "primary_model": "four_standardized_L2_regularized_logistic_regression_heads",
+    "target": "probability_of_material_benefit_given_current_state_and_eligible_exact_candidate",
+    "canonical_background": "all_other_optional_components_off",
+    "label_policy": {
+      "positive_open": "ON materially better under qualified measurement",
+      "nonpositive_off": "OFF materially better or materially equivalent",
+      "unknown": "unstable_unexecuted_or_unadjudicable"
+    }
+  },
+  "feature_policy": {
+    "preferred_effective_feature_count_per_head": "4_to_6_plus_optional_runtime_task_dummies",
+    "zero_variance_removed_before_outcome": true,
+    "common_forbidden": ["generated_response", "judge_score", "final_label", "gold_answer", "gold_strategy", "gold_evidence", "future_session", "split_identity", "dataset_identity", "opaque_user_or_candidate_id", "construction_intent", "other_component_on_off_bits", "MP_PREFERENCE_metadata"],
+    "RS": ["rs_candidate_state_match", "rs_atomic_move_fit", "rs_recent_move_nonredundancy", "rs_burden_fit"],
+    "MP": ["mp_profile_state_relevance", "mp_incremental_information", "mp_response_feasibility_impact", "mp_profile_scope_specificity"],
+    "MS": ["ms_state_topic_match", "ms_continuity_need", "ms_incremental_information", "ms_state_change_or_open_thread_value", "ms_relative_age"],
+    "ME": ["me_state_experience_match", "me_goal_action_fit", "me_transferability", "me_incremental_information", "me_relative_age"],
+    "optional_memory_task_encoding": ["task_is_summary", "task_is_dialogue_generation"],
+    "optional_task_encoding_must_be_frozen_before_effect_outcomes": true
+  },
+  "measurement_qualification": {
+    "required_before_full_effect_generation": true,
+    "eligible_states_per_head": 8,
+    "total_states": 32,
+    "independent_on_off_pairs_per_state": 3,
+    "total_pairs": 96,
+    "total_generator_responses": 192,
+    "primary_reviewer_pairs": 96,
+    "second_reviewer_overlap_pairs": 32,
+    "state_direction_rule": "at_least_2_of_3_matching_non_uncertain",
+    "state_reproducible_direction_rate_min": 0.70,
+    "inter_reviewer_exact_agreement_min": 0.75,
+    "uncertain_fraction_max": 0.10,
+    "fail_consequence": "single_pair_hard_labels_forbidden"
+  },
+  "formal_effect_dataset": {
+    "target_eligible_contrast_groups_per_head": 128,
+    "preferred_minimum_eligible_groups_per_head": 96,
+    "effective_independent_group_minimum": "max(48, 5 * effective_feature_count)",
+    "memory_users_target_min": 12,
+    "force_label_balance": false,
+    "synthetic_rescue_for_failed_or_sparse_head": false,
+    "effect_row_required_fields": ["effect_group_id", "component", "task_type", "grouping_user_id", "fact_event_cluster_id", "visible_state", "exact_candidate_bundle", "candidate_lineage", "eligibility", "model_features", "canonical_background", "on_off_treatments", "generator_prompt_executor_seed_hashes", "anonymous_pair", "treatment_execution", "training_outcome", "cost"]
+  },
+  "existing_data_reuse": {
+    "strategy_bank_logic": "reusable_after_ESConv_train_only_hash_audit",
+    "MP_PROFILE_assets": "reusable_as_resource_and_qualification_assets",
+    "MP_PREFERENCE_assets": "excluded_from_paper1",
+    "qualified_MS_assets": "reusable_as_candidate_assets_only_after_strict_prior_audit",
+    "qualified_ME_action_observed_outcome_assets": "reusable_as compiler_eligibility_assets",
+    "old_256_effect_labels": "heterogeneity_diagnostic_only_not_final_gold",
+    "old_MS_effect_labels": "invalid_for_formal_training",
+    "old_background_conditioned_effects": "interaction_diagnostic_only",
+    "tracked_formal_longitudinal_intake_status": "INCOMPLETE_NOT_80_USER_FINAL_CORPUS"
+  },
+  "dataset_roles": {
+    "ESConv": "RS Strategy Bank, Retriever, and effect training source; held-out in-domain diagnostics",
+    "ESC-Eval": "RQ0/RQ1 official multi-turn ESC evaluation",
+    "ES-MemEval_EvoEmo": "MP/MS/ME strict-past candidate source and RQ2 official evaluation with outcome-isolated cross-fitting",
+    "historical_synthetic_longitudinal": "eligibility_feature_compiler_debug_and_diagnostics_not_primary_paper_evidence"
+  },
+  "cross_fitting": {
+    "memory_same_user_longitudinal_adaptation_allowed": true,
+    "target_outcome_and_same_fact_event_cluster_isolated": true,
+    "runtime_future_forbidden": true,
+    "runtime_gold_forbidden": true,
+    "default_fold_target": 5,
+    "fold_count_frozen_after_zero_outcome_coverage_audit": true,
+    "highest_uncertainty_cluster": "user"
+  },
+  "evaluation": {
+    "official_metrics_only_for_primary_capability_claims": true,
+    "RQ1_arms": ["R0_No_Strategy_RAG", "RS_Fixed_High", "RS_Matched_Random", "Learned_RS_PM"],
+    "RQ1_metrics": ["Fluency", "Expression", "Empathy", "Information", "Skillful", "Humanoid", "Overall"],
+    "RQ2_arms": ["No_Memory", "Full_History", "Official_RAG_Top4", "Typed_Fixed_High", "Typed_Matched_Random", "Learned_Typed_Memory_PM"],
+    "RQ2_QA_final_answer_quality": ["F1", "BERTScore", "LLM_as_Judge"],
+    "RQ2_QA_retrieval_diagnostics": ["Recall_at_k", "nDCG_at_k"],
+    "RQ2_summary_reference_overlap": ["ROUGE_1", "ROUGE_2", "ROUGE_L"],
+    "RQ2_summary_event_coverage": ["Event_Precision", "Event_Recall", "Event_F1"],
+    "RQ2_summary_semantic_faithfulness": ["LLM_Score"],
+    "RQ2_DG_memory_utilization": ["Observation_Recall", "Weighted_Score"],
+    "RQ2_DG_long_term_support": ["LT_Memory", "Personalization", "Emotional_Support"],
+    "posthoc_choose_only_winning_metric_as_primary": false,
+    "cross_task_custom_composite": false
+  },
+  "same_stack_invariants": ["frozen_generator", "same_base_task_prompt", "same_step2_compiler", "same_candidate_machinery", "same_token_caps", "same_item_or_role_card_seed_schedule", "same_official_scorer"],
+  "cost": {
+    "primary": ["generator_input_tokens", "resource_injected_tokens"],
+    "required": ["output_tokens", "total_tokens", "retrieval_calls", "embedding_calls", "retrieval_latency_ms", "generator_latency_ms", "end_to_end_latency_ms", "p95_latency_ms", "retry_count", "api_cost_usd_if_recoverable"],
+    "material_input_token_reduction_vs_high_resource_baseline_min": 0.10,
+    "cannot_offset_material_quality_or_integrity_failure": true
+  },
+  "memory_ablation": {
+    "variants": ["Full_Learned_PM", "Learned_minus_MP", "Learned_minus_MS", "Learned_minus_ME"],
+    "retrain": false,
+    "typed_memory_claim_requires_useful_heads_min": 2
+  },
+  "immediate_execution_order": [
+    "migrate_code_to_MP_PROFILE_only_and_remove_final_background_bits",
+    "run_zero_outcome_ES_MemEval_EvoEmo_coverage_audit",
+    "freeze_source_specific_candidate_bundle_topk_token_caps",
+    "freeze_final_feature_schema",
+    "run_32_state_repeated_effect_qualification",
+    "freeze_formal_N_splits_and_call_plan",
+    "generate_final_RS_MP_MS_ME_matched_on_off_responses",
+    "perform_training_only_blind_outcome_review",
+    "train_four_L2_first_order_heads",
+    "freeze_thresholds_PM_baselines_and_matched_random_schedules",
+    "run_RQ1_ESC_Eval",
+    "run_RQ2_ES_MemEval",
+    "run_minus_MP_MS_ME_ablation",
+    "report_official_metrics_cost_cluster_uncertainty_and_minimal_integrity"
+  ],
+  "forbidden_drift": [
+    "reintroduce_MP_PREFERENCE_into_Paper1",
+    "use_other_component_background_bits_as_final_head_features",
+    "reuse_old_MS_fallback_effect_labels_as_formal_training",
+    "train_direct_16_class_policy",
+    "turn_RS_into_strategy_category_classifier",
+    "use_synthetic_gold_to_rescue_sparse_or_failed_head",
+    "choose_only_favorable_official_metric_after_results",
+    "change_generator_prompt_retriever_feature_schema_sample_or_threshold_after_main_outcomes"
+  ]
+}
