@@ -5,17 +5,20 @@ Zero-outcome, Codex-B lane. Reads the same public
 ``data/external/evo_emo.json`` targets as
 ``02_build_public_memory_census.py`` and writes:
 
-- ``es_memeval_public_fold_assignments_v1.jsonl``: the primary mechanical
-  group-component grouping (QA by ``owner::question_group_id``, Summary/DG
-  one target per item) with cross-task union only on a byte-identical,
-  owner-namespaced canonical evidence-set fingerprint. ``group_component_id``
-  is the same value as the shared contract's ``fold_id`` field, exposed
-  under its own honest name too -- status ``PREPACK_EXACT_EVIDENCE_
-  COMPONENT``. This is *not* an outer cross-validation fold: see
-  ``metacom_pm.paper1.splits.exact_evidence_folds`` module docstring. Outer-
-  fold packing (``pack_components_into_outer_folds``) is implemented and
-  tested but deliberately not invoked here -- this script does not choose
-  n_outer_folds or a seed this round (status
+- ``es_memeval_public_group_component_assignments_v1.jsonl`` (B14: renamed
+  from ``es_memeval_public_fold_assignments_v1.jsonl``, which is deleted):
+  the primary mechanical group-component grouping (QA by
+  ``owner::question_group_id``, Summary/DG one target per item) with
+  cross-task union only on a byte-identical, owner-namespaced canonical
+  evidence-set fingerprint. ``group_component_id`` is built by
+  ``GroupComponentAssignment``, a type this lane owns outright -- it is
+  never written into the shared, frozen ``contracts.FoldAssignment.fold_id``
+  field. Status ``PREPACK_EXACT_EVIDENCE_COMPONENT``. This is *not* an outer
+  cross-validation fold: see
+  ``metacom_pm.paper1.splits.exact_evidence_folds`` module docstring.
+  Outer-fold packing (``pack_components_into_outer_folds``) is implemented
+  and tested but deliberately not invoked here -- this script does not
+  choose n_outer_folds or a seed this round (status
   ``OUTER_FOLD_PACKING_PENDING_M2_FREEZE``).
 - ``es_memeval_public_shared_session_sensitivity_v1.jsonl``: the broader
   shared-session connected-component grouping. Sensitivity-only -- never
@@ -41,17 +44,20 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
-from metacom_pm.paper1.data.es_memeval import enumerate_targets, load_users, parse_users  # noqa: E402
+from metacom_pm.paper1.data.es_memeval import load_users  # noqa: E402
+from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users  # noqa: E402
+from metacom_pm.paper1.data.memory_source import enumerate_targets, parse_memory_source_users  # noqa: E402
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 from metacom_pm.paper1.splits import (  # noqa: E402
     GROUP_COMPONENT_STATUS,
     OUTER_FOLD_PACKING_STATUS,
-    build_fold_assignments,
+    build_group_component_assignments,
     build_shared_session_sensitivity_components,
 )
 from metacom_pm.paper1.splits.evidence import enumerate_split_evidence  # noqa: E402
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
+LEGACY_FOLD_ASSIGNMENTS_PATH = OUT_DIR / "es_memeval_public_fold_assignments_v1.jsonl"
 
 
 def _canonical(value: Any) -> str:
@@ -78,36 +84,44 @@ def build() -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
 
-    users = parse_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
+    raw = load_users(PROJECT / "data" / "external" / "evo_emo.json")
+    # B12: two fully independent parses of the same raw JSON. `users`
+    # (sanitized) drives target identity/cutoff, exactly like
+    # 02_build_public_memory_census.py; `evaluator_users` is parsed only to
+    # feed the splits-only evidence reader below and is never passed to
+    # anything that also touches candidates/features.
+    users = parse_memory_source_users(raw)
+    evaluator_users = parse_evaluator_users(raw)
     targets = enumerate_targets(users)
     # B8: evidence is read once, here, via the splits-only evidence module,
     # and threaded through by target_id -- candidates/features never see it.
-    evidence_records = enumerate_split_evidence(users)
+    evidence_records = enumerate_split_evidence(evaluator_users)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    fold_assignments = build_fold_assignments(targets, evidence_records)
-    fold_rows = [
+    # B14: delete the legacy fold_assignments artifact if a previous run
+    # left it behind -- it is replaced by group_component_assignments below,
+    # not kept alongside it.
+    if LEGACY_FOLD_ASSIGNMENTS_PATH.exists():
+        LEGACY_FOLD_ASSIGNMENTS_PATH.unlink()
+
+    component_assignments = build_group_component_assignments(targets, evidence_records)
+    component_rows = [
         {
-            "protocol": "pm-paper1-public-memory-fold-assignment-v1",
+            "protocol": "pm-paper1-public-memory-group-component-assignment-v1",
             "status": GROUP_COMPONENT_STATUS,
             "target_id": a.target_id,
             "task_type": a.task_type.value,
-            # `fold_id` is the shared FoldAssignment contract's required
-            # field name; `group_component_id` is the same value under its
-            # honest name -- read the module docstring before assuming
-            # either one means "outer CV fold".
-            "fold_id": a.fold_id,
-            "group_component_id": a.fold_id,
+            "group_component_id": a.group_component_id,
             "primary_group_key": a.primary_group_key,
             "exact_evidence_fingerprint": a.exact_evidence_fingerprint,
             "all_arms_seeds_repeats_bound": a.all_arms_seeds_repeats_bound,
             "target_outcome_excluded_from_fit": a.target_outcome_excluded_from_fit,
         }
-        for a in fold_assignments
+        for a in component_assignments
     ]
-    folds_path = OUT_DIR / "es_memeval_public_fold_assignments_v1.jsonl"
-    folds_sha256 = _write_jsonl(fold_rows, folds_path)
+    components_path = OUT_DIR / "es_memeval_public_group_component_assignments_v1.jsonl"
+    components_sha256 = _write_jsonl(component_rows, components_path)
 
     sensitivity = build_shared_session_sensitivity_components(targets, users, evidence_records)
     sensitivity_rows = [
@@ -122,15 +136,15 @@ def build() -> dict[str, Any]:
     sensitivity_path = OUT_DIR / "es_memeval_public_shared_session_sensitivity_v1.jsonl"
     sensitivity_sha256 = _write_jsonl(sensitivity_rows, sensitivity_path)
 
-    n_group_components = len({row["group_component_id"] for row in fold_rows})
+    n_group_components = len({row["group_component_id"] for row in component_rows})
     n_cross_task_unions = sum(
         1
-        for gcid in {row["group_component_id"] for row in fold_rows}
-        if len({r["task_type"] for r in fold_rows if r["group_component_id"] == gcid}) > 1
+        for gcid in {row["group_component_id"] for row in component_rows}
+        if len({r["task_type"] for r in component_rows if r["group_component_id"] == gcid}) > 1
     )
 
     report = {
-        "protocol": "pm-paper1-public-memory-folds-build-v1",
+        "protocol": "pm-paper1-public-memory-group-component-assignments-build-v1",
         "status": "PRIMARY_GROUP_COMPONENTS_AND_SENSITIVITY_BUILT",
         "outcome_calls": 0,
         "evidence_usage": (
@@ -145,16 +159,21 @@ def build() -> dict[str, Any]:
             "script: n_outer_folds and seed are M2-freeze decisions, not "
             "self-selected this round."
         ),
+        "legacy_fold_assignments_artifact_removed": (
+            "es_memeval_public_fold_assignments_v1.jsonl (B14: renamed to "
+            "es_memeval_public_group_component_assignments_v1.jsonl, the old "
+            "fold_id-named artifact is deleted, not kept alongside)"
+        ),
         "targets_total": len(targets),
         "primary_group_keys_total": len({t.primary_group_key for t in targets}),
         "group_components_total": n_group_components,
         "group_components_spanning_multiple_task_types": n_cross_task_unions,
         "sensitivity_components_total": len(sensitivity_rows),
         "outputs": {
-            "fold_assignments": {
-                "path": _relpath(folds_path),
-                "rows": len(fold_rows),
-                "sha256": folds_sha256,
+            "group_component_assignments": {
+                "path": _relpath(components_path),
+                "rows": len(component_rows),
+                "sha256": components_sha256,
             },
             "shared_session_sensitivity": {
                 "path": _relpath(sensitivity_path),

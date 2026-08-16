@@ -6,12 +6,10 @@ import pytest
 import yaml
 
 from metacom_pm.paper1.contracts import TaskType
-from metacom_pm.paper1.data.es_memeval import (
-    PAPER_QA_COUNT,
-    PUBLIC_QA_COUNT,
+from metacom_pm.paper1.data.es_memeval import PAPER_QA_COUNT, PUBLIC_QA_COUNT, load_users
+from metacom_pm.paper1.data.memory_source import (
     enumerate_targets,
-    load_users,
-    parse_users,
+    parse_memory_source_users,
     validate_es_memeval_identity,
 )
 
@@ -35,7 +33,7 @@ def test_paper_vs_public_qa_boundary_is_documented_and_distinct():
 
 
 def test_parsed_counts_match_es_memeval_public_1427_shape():
-    users = parse_users(load_users(EVO_PATH))
+    users = parse_memory_source_users(load_users(EVO_PATH))
     assert len(users) == 18
     assert sum(len(u.sessions) for u in users) == 401
     targets = enumerate_targets(users)
@@ -76,7 +74,7 @@ def test_sessions_are_resorted_into_true_chronological_order_even_when_raw_order
     raw_timestamps = [s["timestamp"] for s in raw_p3["dialog_history"]]
     assert raw_timestamps != sorted(raw_timestamps), "expected p3 to be a known out-of-order case"
 
-    users = parse_users(raw)
+    users = parse_memory_source_users(raw)
     p3 = next(u for u in users if u.owner_id == "p3")
     dates = [s.date for s in p3.sessions]
     assert dates == sorted(dates)
@@ -90,7 +88,7 @@ def test_topic_and_emotion_normalize_list_or_string_shapes():
     raw_session = next(s for s in raw_p1["dialog_history"] if s["id"] == "p1_conv_24")
     assert isinstance(raw_session["topic"], list), "expected a known list-typed topic case"
 
-    users = parse_users(raw)
+    users = parse_memory_source_users(raw)
     p1 = next(u for u in users if u.owner_id == "p1")
     session = p1.session_by_id("p1_conv_24")
     assert isinstance(session.topic, str)
@@ -98,7 +96,7 @@ def test_topic_and_emotion_normalize_list_or_string_shapes():
 
 
 def test_question_group_with_unresolvable_owner_is_flagged_not_guessed():
-    users = parse_users(load_users(EVO_PATH))
+    users = parse_memory_source_users(load_users(EVO_PATH))
     targets = enumerate_targets(users)
     anomalies = [t for t in targets if t.identity_anomaly is not None]
     assert len(anomalies) == 5
@@ -110,7 +108,26 @@ def test_question_group_with_unresolvable_owner_is_flagged_not_guessed():
 
 
 def test_target_never_carries_gold_answer_text():
-    users = parse_users(load_users(EVO_PATH))
+    users = parse_memory_source_users(load_users(EVO_PATH))
     targets = enumerate_targets(users)
     rendered = json.dumps([t.__dict__ for t in targets[:50]], default=str)
     assert "answer" not in rendered
+
+
+def test_sanitized_and_evaluator_parses_agree_on_session_identity():
+    # B12: two fully independent parsers read the same raw JSON. They must
+    # never silently diverge on session identity/order, or the strict-past
+    # cutoff computed from one would not match the evidence read from the
+    # other.
+    from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users
+
+    raw = load_users(EVO_PATH)
+    sanitized = parse_memory_source_users(raw)
+    evaluator = parse_evaluator_users(raw)
+    assert {u.owner_id for u in sanitized} == {u.owner_id for u in evaluator}
+    sanitized_by_owner = {u.owner_id: u for u in sanitized}
+    evaluator_by_owner = {u.owner_id: u for u in evaluator}
+    for owner_id in sanitized_by_owner:
+        s_sessions = [(s.session_id, s.chronological_rank) for s in sanitized_by_owner[owner_id].sessions]
+        e_sessions = [(s.session_id, s.chronological_rank) for s in evaluator_by_owner[owner_id].sessions]
+        assert s_sessions == e_sessions

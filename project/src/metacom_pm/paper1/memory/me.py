@@ -1,40 +1,54 @@
-"""ME (Episodic memory): a strictly-past action + an actual user-observed result.
+"""ME (Episodic memory): a strictly-past, seeker-self-reported action + observed result.
 
-B7 repair note: an earlier version paired any supporter "action cue" turn
-(``try``, ``you might``, ...) with whatever seeker turn happened to come
-next in the same session, and called that pairing "the observed result".
-That is wrong -- a real false positive found in the corpus (p1, session
-``p1_conv_27``): supporter turn 15 "Have you already thought about what you
-might write next?" (matched the ``you might`` cue) paired with turn 16 "I'm
-thinking about exploring the theme of resilience...", which reports neither
-an executed action nor an observed outcome. This module now requires an
-explicit, deterministic signal of *both* execution and outcome before any
-pairing is made; a bare "next turn" is never sufcient.
+B11 repair note: B7 replaced the original "next seeker turn = result" bug
+with two patterns, one of which (``supporter_suggestion_then_reported_
+result``) paired an earlier supporter action-cue turn with whatever later
+qualifying seeker turn happened to occur next -- purely on temporal order,
+with no actual identity/coreference link between the specific suggestion and
+the specific later turn. Audited: 53 of the resulting 63 candidates were
+this pattern, and manual inspection found real, non-topical pairings (e.g.
+four sleep/relationship suggestions from session ``esc1024`` all mechanically
+paired to an unrelated HR-workplace turn in a later session, ``esc1172``,
+purely because it was the nearest later turn that happened to match the
+outcome test). There is no reliable deterministic way to verify that a given
+later seeker turn is actually reporting on a given earlier suggestion
+(that requires coreference/topic linkage this project does not have a
+mechanical method for), so per AGENTS.md's "no synthetic rescue for a sparse
+head", that pattern is deleted rather than patched. ``is_action_cue`` and
+the supporter-suggestion pairing are gone; if a future round adds a real
+mechanical coreference check, that pattern can be reintroduced, gated on
+that check actually existing.
 
-Two grounded extraction patterns (grounded in real corpus text, not
-invented -- see the regex construction notes below):
+The one remaining pattern, ``self_reported_same_turn``, is also tightened
+this round. The old outcome test (bare ``help``/``work`` word presence
+anywhere after "tried") produced real false positives found by inspection:
 
-1. ``self_reported_same_turn`` (preferred, per AGENTS.md's general
-   preference for the seeker's own first-person account): a single seeker
-   turn that both self-reports a past action ("I tried ...", "I've tried
-   ...") *and* states an explicit help/work-family outcome, positive or
-   negative ("... which helped", "... but it didn't work"). The turn is
-   split into two exact char spans: the action clause and the outcome
-   clause. Grounded in 10 real occurrences found by scanning every seeker
-   turn in the corpus for this pattern, e.g. (p12, p12_conv_2, turn 14):
-   "I tried meditation and some breathing exercises which were somewhat
-   helpful before."
+- p1, session ``esc1172``, turn 4: "...Will that help, or just get me in
+  trouble?" -- a *question*, not a stated outcome.
+- p9, session ``p9_conv_13``, turn 7: "I tried to help, gave first aid..."
+  -- "help" is the object of "tried to", i.e. part of the *action*, not an
+  outcome.
+- p14, session ``p14_conv_6``, turn 7: "...he seems so wrapped up in his
+  work." -- "work" is a possessed noun (his job), not a verb describing an
+  effect.
+- p16, session ``p16_conv_7``, turn 5: "...affecting my motivation at
+  work." -- "at work" is a location noun phrase, not an outcome.
 
-2. ``supporter_suggestion_then_reported_result``: a supporter turn matching
-   the existing action-cue patterns, paired with the *nearest* later seeker
-   turn (same session first, else the nearest strictly-later session) that
-   itself matches the pattern-1 self-report-with-outcome test. Acknowledgment
-   turns ("okay", "thanks", "I'll try that") and stated-intention turns
-   ("I'm thinking about ...") never match this test, so they can no longer
-   be mistaken for an observed result.
+The fix: an outcome must be an explicit *result-relation* clause -- a
+help/work-family verb with a back-referring subject ("it/that/this/which/
+they/these helped/worked/helps/works", "which were helpful"), an explicit
+negation ("didn't help", "doesn't work", "hasn't helped", "wasn't
+helpful"), or one of the other explicit result connectives named in scope
+("ended in/up ...", "made me/them/it ..."). Requiring a subject pronoun
+mechanically rules out "tried to help" (no subject immediately before
+"help") and "his/at work" (the token before "work" is not a qualifying
+subject) without any hand-written blacklist for those specific phrases.
+Any candidate match falling inside a question (the containing sentence
+ends in "?") is discarded regardless of wording.
 
-Neither pattern reads a session's ``summary``/``observation`` field or any
-evaluator annotation -- both operate purely on seeker/supporter turn text.
+Both fixes are purely syntactic pattern changes, not semantic/LLM judgment,
+and grounded by scanning the whole corpus before and after the change (see
+project memory / commit message for the before/after counts).
 """
 
 from __future__ import annotations
@@ -43,28 +57,7 @@ import hashlib
 import re
 from dataclasses import dataclass
 
-from metacom_pm.paper1.data.es_memeval import Turn, UserRecord
-
-_ACTION_CUE_PATTERNS = (
-    re.compile(r"\btry\b", re.IGNORECASE),
-    re.compile(r"\byou\s+could\b", re.IGNORECASE),
-    re.compile(r"\byou\s+should\b", re.IGNORECASE),
-    re.compile(r"why\s+don'?t\s+you\b", re.IGNORECASE),
-    re.compile(r"\bwhy\s+not\b", re.IGNORECASE),
-    re.compile(r"\byou\s+might\b", re.IGNORECASE),
-    re.compile(r"\byou\s+may\s+want\s+to\b", re.IGNORECASE),
-    re.compile(r"\bconsider\b", re.IGNORECASE),
-    re.compile(r"\bi\s+suggest\b", re.IGNORECASE),
-    re.compile(r"\bi\s+recommend\b", re.IGNORECASE),
-    re.compile(r"\bmaybe\s+you\b", re.IGNORECASE),
-    re.compile(r"\bhow\s+about\b", re.IGNORECASE),
-    re.compile(r"\bwhat\s+if\s+you\b", re.IGNORECASE),
-)
-
-
-def is_action_cue(text: str) -> bool:
-    return any(pattern.search(text) for pattern in _ACTION_CUE_PATTERNS)
-
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Turn
 
 # Past-tense self-report of having already taken an action ("I tried ...",
 # "I've tried ...", "we tried ..."). Deliberately requires the past-tense
@@ -74,18 +67,50 @@ _TRIED_SELF_REPORT_PATTERN = re.compile(
     r"\b(?:i(?:'ve|'d|\s+have)?|we(?:'ve)?(?:\s+have)?)\s+tri(?:ed|es)\b", re.IGNORECASE
 )
 
-# An explicit help/work-family outcome statement, positive or negative. Both
+# An explicit result-relation clause, positive or negative -- both
 # directions are valid observed results (AGENTS.md: a worse/negative effect
-# is still a valid realized outcome, not something to exclude).
-_OUTCOME_STATEMENT_PATTERN = re.compile(
-    r"\b(?:"
-    r"did(?:n'?t|\s+not)\s+(?:really\s+)?(?:help|work)(?:ed)?"
-    r"|has(?:n'?t|\s+not)\s+(?:really\s+)?help(?:ed)?"
-    r"|help(?:ed|s|ful)?"
-    r"|work(?:ed|s)?"
-    r")\b",
-    re.IGNORECASE,
+# is still a valid realized outcome, not something to exclude). Each pattern
+# requires a back-referring subject or an explicit negation/connective, so a
+# bare occupational/infinitival/interrogative use of "help"/"work" never
+# qualifies on its own.
+_RESULT_RELATION_PATTERNS = (
+    # "it/that/this/which/they/these (really/actually/...) helped/worked/help(s)/work(s)"
+    re.compile(
+        r"\b(?:it|that|this|which|they|these)\s+"
+        r"(?:really\s+|actually\s+|definitely\s+|also\s+|somewhat\s+)?"
+        r"(?:helped|worked|helps?\b|works?\b)",
+        re.IGNORECASE,
+    ),
+    # "it/that/this/which/they/these was/were/is/are ... helpful"
+    re.compile(
+        r"\b(?:it|that|this|which|they|these)\s+(?:was|were|is|are)\s+(?:\w+\s+)?helpful\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bdid(?:n'?t|\s+not)\s+(?:really\s+)?(?:help|work)(?:ed)?\b", re.IGNORECASE),
+    re.compile(r"\bdoes(?:n'?t|\s+not)\s+(?:really\s+)?(?:help|work)\b", re.IGNORECASE),
+    re.compile(r"\bhas(?:n'?t|\s+not)\s+(?:really\s+)?help(?:ed)?\b", re.IGNORECASE),
+    re.compile(r"\bwas(?:n'?t|\s+not)\s+(?:very\s+|really\s+)?helpful\b", re.IGNORECASE),
+    re.compile(r"\bended\s+(?:in|up)\b", re.IGNORECASE),
+    re.compile(r"\bmade\s+(?:me|things|it|him|her|us)\s+\w+", re.IGNORECASE),
 )
+
+_SENTENCE_TERMINATOR_PATTERN = re.compile(r"[.!?]")
+
+
+def _first_result_relation_match(text: str, start: int) -> re.Match[str] | None:
+    best: re.Match[str] | None = None
+    for pattern in _RESULT_RELATION_PATTERNS:
+        candidate = pattern.search(text, start)
+        if candidate is not None and (best is None or candidate.start() < best.start()):
+            best = candidate
+    return best
+
+
+def _is_question_context(text: str, position: int) -> bool:
+    """True if the sentence containing ``position`` ends in "?"."""
+
+    terminator = _SENTENCE_TERMINATOR_PATTERN.search(text, position)
+    return terminator is not None and terminator.group(0) == "?"
 
 
 def find_self_reported_action_result_spans(
@@ -94,18 +119,21 @@ def find_self_reported_action_result_spans(
     """Split a seeker turn into (action_span, outcome_span) char offsets, or None.
 
     Requires a past-tense "tried" self-report followed later in the same
-    turn by an explicit help/work-family outcome statement. Acknowledgment-
-    only text ("okay", "thanks"), stated intentions ("I'll try", "I'm
-    thinking about ..."), and "tried" without any stated outcome (e.g. "I
-    tried to just sit ... but the words still didn't come") all correctly
-    return None.
+    turn by an explicit result-relation clause (see module docstring for
+    exactly what qualifies and why). Returns None for: no "tried" at all;
+    "tried" with no qualifying result clause; a candidate result clause that
+    turns out to be an infinitival/possessive/locational use of
+    "help"/"work" (excluded by requiring a back-referring subject); or a
+    candidate result clause inside a question.
     """
 
     tried_match = _TRIED_SELF_REPORT_PATTERN.search(text)
     if tried_match is None:
         return None
-    outcome_match = _OUTCOME_STATEMENT_PATTERN.search(text, tried_match.end())
+    outcome_match = _first_result_relation_match(text, tried_match.end())
     if outcome_match is None:
+        return None
+    if _is_question_context(text, outcome_match.start()):
         return None
     action_span = (tried_match.start(), outcome_match.start())
     outcome_span = (outcome_match.start(), len(text))
@@ -114,31 +142,24 @@ def find_self_reported_action_result_spans(
     return action_span, outcome_span
 
 
-def find_executed_result_span(text: str) -> tuple[int, int] | None:
-    """A seeker turn's full "I tried X and it helped/didn't help"-shaped span, or None.
-
-    Reuses ``find_self_reported_action_result_spans``: a turn only counts as
-    an observed *result* of some earlier suggestion if it itself clears the
-    same bar -- explicit execution and an explicit stated outcome. The
-    returned span covers the whole qualifying clause (from "tried" onward),
-    since the executed-ness and the outcome are both part of what the reader
-    needs to see.
-    """
-
-    spans = find_self_reported_action_result_spans(text)
-    if spans is None:
-        return None
-    action_span, _outcome_span = spans
-    return (action_span[0], len(text))
-
-
 def _span_hash(text: str, span: tuple[int, int]) -> str:
     return hashlib.sha256(text[span[0] : span[1]].encode("utf-8")).hexdigest()
 
 
 @dataclass(frozen=True)
 class ActionResultEpisode:
-    pattern: str  # "self_reported_same_turn" | "supporter_suggestion_then_reported_result"
+    """One (action span, observed-result span) pair.
+
+    ``pattern`` is currently always ``"self_reported_same_turn"`` (B11: the
+    supporter-suggestion cross-turn pattern was removed for lacking a
+    mechanical action-identity link -- see module docstring). The action/
+    result session/turn fields are kept separate rather than collapsed to a
+    single session/turn, so a future properly-linked cross-turn pattern
+    could be reintroduced without changing this contract or the compiler's
+    strict-past check in ``candidates/compilers.py``.
+    """
+
+    pattern: str
     owner_id: str
     action_session_id: str
     action_session_chronological_rank: int
@@ -181,7 +202,16 @@ class ActionResultEpisode:
         return _span_hash(self.result_turn.content, self.result_span)
 
 
-def _self_reported_episodes(user: UserRecord) -> list[ActionResultEpisode]:
+def extract_action_result_episodes(user: MemorySourceUser) -> tuple[ActionResultEpisode, ...]:
+    """Every deterministically-qualifying same-turn (action span, result span) pair.
+
+    Coverage is expected to be much sparser than either the original next-
+    turn rule or B7's cross-turn pattern -- see AGENTS.md's "no synthetic
+    rescue for a sparse ... head": this module keeps that sparsity honest
+    rather than loosening the qualifying condition or resurrecting a
+    temporal-only cross-turn pairing.
+    """
+
     episodes: list[ActionResultEpisode] = []
     for session in user.sessions:
         for turn in session.seeker_turns():
@@ -205,67 +235,4 @@ def _self_reported_episodes(user: UserRecord) -> list[ActionResultEpisode]:
                     result_span=result_span,
                 )
             )
-    return episodes
-
-
-def _nearest_qualifying_result(
-    sessions: tuple, session_index: int, turn_position: int
-):
-    """The nearest later seeker turn (same session, else nearest later session)
-    that itself passes ``find_executed_result_span``; None if none exists."""
-
-    action_session = sessions[session_index]
-    for later in action_session.turns[turn_position + 1 :]:
-        if later.role == "seeker":
-            span = find_executed_result_span(later.content)
-            if span is not None:
-                return action_session, later, span
-    for later_session in sessions[session_index + 1 :]:
-        for later_turn in later_session.seeker_turns():
-            span = find_executed_result_span(later_turn.content)
-            if span is not None:
-                return later_session, later_turn, span
-    return None
-
-
-def _suggestion_result_episodes(user: UserRecord) -> list[ActionResultEpisode]:
-    episodes: list[ActionResultEpisode] = []
-    sessions = user.sessions
-    for session_index, action_session in enumerate(sessions):
-        for turn_position, turn in enumerate(action_session.turns):
-            if turn.role != "supporter" or not is_action_cue(turn.content):
-                continue
-            found = _nearest_qualifying_result(sessions, session_index, turn_position)
-            if found is None:
-                continue
-            result_session, result_turn, result_span = found
-            episodes.append(
-                ActionResultEpisode(
-                    pattern="supporter_suggestion_then_reported_result",
-                    owner_id=user.owner_id,
-                    action_session_id=action_session.session_id,
-                    action_session_chronological_rank=action_session.chronological_rank,
-                    action_observed_at=action_session.timestamp,
-                    action_turn=turn,
-                    action_span=(0, len(turn.content)),
-                    result_session_id=result_session.session_id,
-                    result_session_chronological_rank=result_session.chronological_rank,
-                    result_observed_at=result_session.timestamp,
-                    result_turn=result_turn,
-                    result_span=result_span,
-                )
-            )
-    return episodes
-
-
-def extract_action_result_episodes(user: UserRecord) -> tuple[ActionResultEpisode, ...]:
-    """Every deterministically-qualifying (action span, observed-result span) pair.
-
-    Both extraction patterns require an explicit outcome statement; there is
-    no "next turn counts as the result" fallback. Coverage is expected to be
-    much sparser than a naive next-turn rule -- see AGENTS.md's "no synthetic
-    rescue for a sparse ... head": this module keeps that sparsity honest
-    rather than loosening the qualifying condition.
-    """
-
-    return tuple(_self_reported_episodes(user) + _suggestion_result_episodes(user))
+    return tuple(episodes)

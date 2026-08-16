@@ -9,7 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from metacom_pm.paper1.data.es_memeval import enumerate_targets, load_users, parse_users
+from metacom_pm.paper1.data.es_memeval import load_users
+from metacom_pm.paper1.data.memory_source import enumerate_targets, parse_memory_source_users
 from metacom_pm.paper1.features import build_census, summarize_census
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,7 +61,7 @@ def test_census_summary_manifest_filename_is_not_a_path():
 
 
 def test_census_summary_reports_unique_candidate_and_owner_counts_per_head():
-    users = parse_users(load_users(EVO_PATH))
+    users = parse_memory_source_users(load_users(EVO_PATH))
     targets = enumerate_targets(users)
     rows = build_census(users, targets)
     summary = summarize_census(rows)
@@ -80,10 +81,15 @@ def test_census_summary_reports_unique_candidate_and_owner_counts_per_head():
 
 
 def test_mp_unique_candidates_and_owners_are_exactly_three_edges_are_118():
-    # Ground-truth numbers for the current corpus + MP self-disclosure
-    # pattern (memory/mp.py): if this ever changes, it must be a deliberate,
-    # reviewed change to the extraction pattern, not silent drift.
-    users = parse_users(load_users(EVO_PATH))
+    # B16: these are the *current compiler regression count* for the corpus
+    # + MP self-disclosure pattern (memory/mp.py) -- not an asserted ground
+    # truth about how many self-disclosures actually exist in the corpus
+    # (see scripts/paper1/04_audit_mp_self_disclosure_coverage.py for the
+    # honest coverage audit, which finds plausibly-missed categories this
+    # strict pattern does not catch). If this count ever changes, it must be
+    # a deliberate, reviewed change to the extraction pattern, not silent
+    # drift.
+    users = parse_memory_source_users(load_users(EVO_PATH))
     targets = enumerate_targets(users)
     rows = build_census(users, targets)
     summary = summarize_census(rows)
@@ -99,7 +105,7 @@ def test_mp_unique_candidates_and_owners_are_exactly_three_edges_are_118():
 
 
 def test_census_summary_interpretation_note_is_present_and_non_empty():
-    users = parse_users(load_users(EVO_PATH))
+    users = parse_memory_source_users(load_users(EVO_PATH))
     targets = enumerate_targets(users)[:10]
     rows = build_census(users, targets)
     summary = summarize_census(rows)

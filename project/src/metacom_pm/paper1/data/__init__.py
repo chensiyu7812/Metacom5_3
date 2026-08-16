@@ -1,35 +1,40 @@
-"""Public-only ES-MemEval/EvoEmo dataset loaders for Paper-1 memory/RQ2 work."""
+"""Public-only ES-MemEval/EvoEmo dataset loaders for Paper-1 memory/RQ2 work.
 
-from .es_memeval import (
-    PAPER_QA_COUNT,
-    PUBLIC_QA_COUNT,
-    QuestionGroup,
-    QuestionItem,
-    Session,
-    SubsequentTopic,
-    SummaryItem,
+B12: only the sanitized runtime surface (``memory_source``) is exported here.
+The evaluator/split-only, evidence-bearing types
+(``UserRecord``/``QuestionItem``/``SummaryItem``/``parse_users``) live in
+``metacom_pm.paper1.data.es_memeval`` and are deliberately *not* re-exported
+from this package -- only ``metacom_pm.paper1.splits.evidence`` should ever
+import them, and it does so via an explicit submodule import
+(``from metacom_pm.paper1.data.es_memeval import ...``), never through here.
+"""
+
+from .es_memeval import PAPER_QA_COUNT, PUBLIC_QA_COUNT, Session, Turn, load_users
+from .memory_source import (
+    MemorySourceQuestionGroup,
+    MemorySourceQuestionItem,
+    MemorySourceSubsequentTopic,
+    MemorySourceSummaryItem,
+    MemorySourceUser,
     Target,
-    Turn,
-    UserRecord,
     enumerate_targets,
-    load_users,
-    parse_users,
+    parse_memory_source_users,
     validate_es_memeval_identity,
 )
 
 __all__ = [
     "PAPER_QA_COUNT",
     "PUBLIC_QA_COUNT",
-    "QuestionGroup",
-    "QuestionItem",
+    "MemorySourceQuestionGroup",
+    "MemorySourceQuestionItem",
+    "MemorySourceSubsequentTopic",
+    "MemorySourceSummaryItem",
+    "MemorySourceUser",
     "Session",
-    "SubsequentTopic",
-    "SummaryItem",
     "Target",
     "Turn",
-    "UserRecord",
     "enumerate_targets",
     "load_users",
-    "parse_users",
+    "parse_memory_source_users",
     "validate_es_memeval_identity",
 ]

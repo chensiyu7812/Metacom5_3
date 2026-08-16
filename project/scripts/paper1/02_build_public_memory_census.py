@@ -2,9 +2,12 @@
 """Build the public-only zero-outcome memory target enumeration and census.
 
 Zero-outcome, Codex-B (public data / memory / RQ2) lane. Reads only
-``data/external/evo_emo.json`` (ES-MemEval-Public-v1.0.0-1427) through
-``metacom_pm.paper1.data.es_memeval``, compiles MP/MS/ME candidates via
-``metacom_pm.paper1.candidates``, and writes:
+``data/external/evo_emo.json`` (ES-MemEval-Public-v1.0.0-1427) through the
+sanitized ``metacom_pm.paper1.data.memory_source`` loader (B12: never
+``metacom_pm.paper1.data.es_memeval``, the evaluator/split-only,
+evidence-bearing module -- this script cannot reach QA/Summary evidence at
+all), compiles MP/MS/ME candidates via ``metacom_pm.paper1.candidates``, and
+writes:
 
 - ``es_memeval_public_targets_v1.jsonl``: every QA/Summary/DG target, its
   strict-past cutoff rank, and its identity-anomaly flag (no gold text).
@@ -33,10 +36,10 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
-from metacom_pm.paper1.data.es_memeval import (  # noqa: E402
+from metacom_pm.paper1.data.es_memeval import load_users  # noqa: E402
+from metacom_pm.paper1.data.memory_source import (  # noqa: E402
     enumerate_targets,
-    load_users,
-    parse_users,
+    parse_memory_source_users,
     validate_es_memeval_identity,
 )
 from metacom_pm.paper1.features import build_census, summarize_census, write_census_manifest  # noqa: E402
@@ -71,7 +74,7 @@ def build() -> dict[str, Any]:
 
     identity = validate_es_memeval_identity(PROJECT)
 
-    users = parse_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
+    users = parse_memory_source_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
     targets = enumerate_targets(users)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

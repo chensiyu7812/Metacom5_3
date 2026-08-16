@@ -14,23 +14,28 @@ owner-namespaced evidence-set fingerprints are byte-identical (rule 5 in the
 execution reconciliation doc). This module never unions targets just because
 they touch overlapping sessions -- that broader connected-component notion
 exists only as ``build_shared_session_sensitivity_components``, explicitly
-kept out of ``fold_id``/``group_component_id`` and usable for sensitivity
+kept out of ``group_component_id`` and usable for sensitivity
 analysis only (rule 6).
 
-B9 terminology note (important -- do not conflate the two): the union-find
-merge below produces **group components** (``group_component_id``,
-status ``PREPACK_EXACT_EVIDENCE_COMPONENT``): atomic, unsplittable packing
-units that must never be separated across an outer train/held-out split.
-This is *not* the same thing as an outer cross-validation fold. 514 primary
-group keys collapsing to 477 components is not "477-fold CV" -- it is 477
+B9/B14 terminology note (important -- do not conflate the two): the
+union-find merge below produces **group components**
+(``GroupComponentAssignment.group_component_id``, status
+``PREPACK_EXACT_EVIDENCE_COMPONENT``): atomic, unsplittable packing units
+that must never be separated across an outer train/held-out split. This is
+*not* the same thing as an outer cross-validation fold. 514 primary group
+keys collapsing to 477 components is not "477-fold CV" -- it is 477
 indivisible pre-pack units still waiting to be packed into whatever number
-of actual outer folds the M2 freeze decides on. ``FoldAssignment.fold_id``
-(the shared, frozen contract field) is populated with the group-component id
-because the contract requires *some* string there pre-freeze; read it as
-"which atomic component", not "which of N outer folds". Outer-fold packing
-itself is implemented here (``pack_components_into_outer_folds``) but not
-invoked by the M1-B manifest-generation script: this round does not choose
-n_outer_folds or a seed (status ``OUTER_FOLD_PACKING_PENDING_M2_FREEZE``).
+of actual outer folds the M2 freeze decides on. B14: this is no longer
+expressed by writing the component id into the shared, frozen
+``contracts.FoldAssignment.fold_id`` field -- a field literally named
+``fold_id`` invited exactly the "is this the outer fold" confusion the B9
+docstring caveat was trying to prevent. ``GroupComponentAssignment`` is a
+type this module owns outright, with a field named ``group_component_id``
+and no ``fold_id`` field at all; ``contracts.py`` is not modified. Outer-fold
+packing itself is implemented here (``pack_components_into_outer_folds``)
+but not invoked by the M1-B manifest-generation script: this round does not
+choose n_outer_folds or a seed (status
+``OUTER_FOLD_PACKING_PENDING_M2_FREEZE``).
 
 B8: gold-adjacent evidence is consumed here exclusively via
 ``metacom_pm.paper1.splits.evidence.SplitEvidenceRecord`` -- this module
@@ -46,8 +51,8 @@ import hashlib
 import random
 from dataclasses import dataclass
 
-from metacom_pm.paper1.contracts import FoldAssignment
-from metacom_pm.paper1.data.es_memeval import Target, UserRecord
+from metacom_pm.paper1.contracts import TaskType
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
 from metacom_pm.paper1.splits.evidence import SplitEvidenceRecord
 
 GROUP_COMPONENT_STATUS = "PREPACK_EXACT_EVIDENCE_COMPONENT"
@@ -151,13 +156,47 @@ def _group_key_components(
     return fingerprint_by_target, members_by_group_key
 
 
-def build_fold_assignments(
-    targets: tuple[Target, ...], evidence_records: tuple[SplitEvidenceRecord, ...]
-) -> tuple[FoldAssignment, ...]:
-    """One ``FoldAssignment`` per target. ``fold_id`` holds a group-component id.
+@dataclass(frozen=True)
+class GroupComponentAssignment:
+    """One target's group-component identity. B14: owned entirely by
+    ``metacom_pm.paper1.splits``, not the shared ``contracts.FoldAssignment``.
 
-    See the module docstring's B9 note: this is a ``PREPACK_EXACT_EVIDENCE_
-    COMPONENT`` id, not an outer cross-validation fold index.
+    B9 found that writing the group-component id into
+    ``FoldAssignment.fold_id`` (a field name owned by Codex A's shared,
+    frozen contract) invited exactly the confusion it was trying to
+    document away: a field literally named ``fold_id`` reads as "the outer
+    CV fold", no matter how much docstring disclaims that. B14 removes the
+    ambiguity structurally instead of by caveat: this type is defined here,
+    has no field named ``fold_id`` at all, and is never constructed from or
+    coerced into ``contracts.FoldAssignment``. ``contracts.py`` itself is
+    untouched -- this is a new, independent type, not a change to the
+    shared contract.
+
+    ``group_component_id`` is the same value the old ``fold_id`` held
+    (identical hashes, identical grouping) -- only the field name and type
+    changed, not the semantics. Status is always ``PREPACK_EXACT_EVIDENCE_
+    COMPONENT`` (``GROUP_COMPONENT_STATUS``): this is *not* an outer
+    cross-validation fold index, see the module docstring.
+    """
+
+    target_id: str
+    task_type: TaskType
+    group_component_id: str
+    primary_group_key: str
+    exact_evidence_fingerprint: str | None
+    all_arms_seeds_repeats_bound: bool
+    target_outcome_excluded_from_fit: bool
+
+
+def build_group_component_assignments(
+    targets: tuple[Target, ...], evidence_records: tuple[SplitEvidenceRecord, ...]
+) -> tuple[GroupComponentAssignment, ...]:
+    """One ``GroupComponentAssignment`` per target (B14, replaces the old
+    ``FoldAssignment``-based ``build_fold_assignments``).
+
+    Deliberately a *different function* from actual outer-fold packing
+    (``pack_components_into_outer_folds``): this only assigns each target to
+    its atomic pre-pack component, never to one of N outer folds.
     ``evidence_records`` must come from
     ``metacom_pm.paper1.splits.evidence.enumerate_split_evidence`` over the
     same ``users``/``targets`` -- joined here by ``target_id``, never read
@@ -172,10 +211,10 @@ def build_fold_assignments(
     assignments = []
     for target in targets:
         assignments.append(
-            FoldAssignment(
+            GroupComponentAssignment(
                 target_id=target.target_id,
                 task_type=target.task_type,
-                fold_id=component_id_by_group_key[target.primary_group_key],
+                group_component_id=component_id_by_group_key[target.primary_group_key],
                 primary_group_key=target.primary_group_key,
                 exact_evidence_fingerprint=fingerprint_by_target[target.target_id],
                 all_arms_seeds_repeats_bound=True,
@@ -246,18 +285,39 @@ def pack_components_into_outer_folds(
     target count (primary objective, largest-first greedy bin-balancing) and
     reports -- and lets the caller inspect -- the resulting task-type and
     owner distribution per fold, but never reads any answer/gold/outcome
-    field. ``seed`` only breaks ties among equally-sized components, so the
-    result is reproducible for a given ``(components, n_outer_folds, seed)``
-    and does not depend on dict/set iteration order.
+    field.
+
+    B15 fix: an earlier version shuffled by ``seed`` and then re-sorted by
+    ``(-target_count, component_id)`` -- since every component already has a
+    globally unique ``component_id``, that secondary sort key was a full
+    total order on its own, so the seeded shuffle changed nothing; the same
+    tie order came out for every seed. Fixed by sorting on ``-target_count``
+    *alone* (Python's ``sorted`` is stable, so components with equal
+    ``target_count`` keep whatever relative order the seeded shuffle put
+    them in) -- ``component_id`` never enters the comparison. The shuffle's
+    own input order is itself deterministic (components sorted by
+    ``component_id`` first), so the same ``(components, n_outer_folds,
+    seed)`` always reproduces the same assignment, and a different ``seed``
+    can change the tie order -- and therefore the final fold assignment --
+    for equally-sized components.
     """
 
-    if n_outer_folds < 1:
-        raise ValueError("n_outer_folds must be >= 1")
+    if not components:
+        raise ValueError("components must not be empty")
+    component_ids = [c.component_id for c in components]
+    if len(component_ids) != len(set(component_ids)):
+        raise ValueError("components must not contain duplicate component_id values")
+    if n_outer_folds < 2:
+        raise ValueError("n_outer_folds must be >= 2")
+    if n_outer_folds > len(components):
+        raise ValueError("n_outer_folds must not exceed the number of components")
 
-    rng = random.Random(seed)
-    shuffled = list(components)
-    rng.shuffle(shuffled)
-    ordered = sorted(shuffled, key=lambda c: (-c.target_count, c.component_id))
+    deterministic_base_order = sorted(components, key=lambda c: c.component_id)
+    shuffled = list(deterministic_base_order)
+    random.Random(seed).shuffle(shuffled)
+    # Stable sort: ties (equal target_count) keep the seeded shuffle's
+    # relative order instead of falling back to a seed-independent key.
+    ordered = sorted(shuffled, key=lambda c: -c.target_count)
 
     fold_target_counts = [0] * n_outer_folds
     fold_task_counts: list[dict[str, int]] = [dict() for _ in range(n_outer_folds)]
@@ -280,6 +340,10 @@ def pack_components_into_outer_folds(
                 fold_task_counts[best_fold].get(task_name, 0) + count
             )
 
+    if set(assignment) != set(component_ids):
+        raise AssertionError(
+            "internal error: outer-fold assignment does not exactly cover every component"
+        )
     return assignment
 
 
@@ -310,7 +374,7 @@ def summarize_outer_fold_packing(
 class SharedSessionSensitivityComponent:
     """Sensitivity-only broad grouping: any shared session, not exact evidence match.
 
-    Never feeds ``fold_id``/``primary_group_key``/``group_component_id`` --
+    Never feeds ``group_component_id``/``primary_group_key`` --
     AGENTS.md rule 6 requires this connected-component notion stay strictly
     a sensitivity check.
     """
@@ -332,7 +396,7 @@ def _session_footprint(
 
 def build_shared_session_sensitivity_components(
     targets: tuple[Target, ...],
-    users: tuple[UserRecord, ...],
+    users: tuple[MemorySourceUser, ...],
     evidence_records: tuple[SplitEvidenceRecord, ...],
 ) -> tuple[SharedSessionSensitivityComponent, ...]:
     """Broad connected components of targets sharing any session, per owner.
@@ -342,7 +406,7 @@ def build_shared_session_sensitivity_components(
     the cross-owner fingerprint-collision risk that motivated namespacing
     ``canonical_evidence_fingerprint`` above. Sensitivity-only per AGENTS.md
     rule 6: reported separately, never used to compute the primary
-    ``fold_id``/``group_component_id``. Reads evidence only via
+    ``group_component_id``. Reads evidence only via
     ``evidence_records`` (B8), joined by ``target_id``.
     """
 

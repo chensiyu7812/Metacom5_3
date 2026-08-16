@@ -23,7 +23,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from metacom_pm.paper1.data.es_memeval import Turn, UserRecord
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Turn
 
 _ROLE_STOPWORDS = frozenset(
     {
@@ -92,7 +92,7 @@ class ProfileDisclosure:
         return (f"{self.session_id}:{self.turn.idx}",)
 
 
-def extract_profile_disclosures(user: UserRecord) -> tuple[ProfileDisclosure, ...]:
+def extract_profile_disclosures(user: MemorySourceUser) -> tuple[ProfileDisclosure, ...]:
     """Every seeker turn across all of a user's sessions that self-discloses."""
 
     disclosures: list[ProfileDisclosure] = []

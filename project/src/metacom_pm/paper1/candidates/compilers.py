@@ -1,7 +1,7 @@
 """Deterministic MP/MS/ME candidate compilers.
 
-Each compiler takes a parsed ``UserRecord`` and a ``Target`` (see
-``metacom_pm.paper1.data.es_memeval``) and returns zero or more frozen
+Each compiler takes a parsed ``MemorySourceUser`` and a ``Target`` (see
+``metacom_pm.paper1.data.memory_source``) and returns zero or more frozen
 ``CandidateRecord`` contract objects (``metacom_pm.paper1.contracts``),
 restricted to memory items whose owning session is strictly past relative to
 the target's ``cutoff_rank``.
@@ -19,7 +19,7 @@ from __future__ import annotations
 import hashlib
 
 from metacom_pm.paper1.contracts import CandidateLineage, CandidateRecord, Head
-from metacom_pm.paper1.data.es_memeval import Target, UserRecord
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
 from metacom_pm.paper1.memory.me import ActionResultEpisode, extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import ProfileDisclosure, extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import SessionDocument, extract_session_documents
@@ -44,7 +44,7 @@ def _token_count(content: str) -> int:
     return len(content.split())
 
 
-def _require_owner_match(user: UserRecord, target: Target) -> None:
+def _require_owner_match(user: MemorySourceUser, target: Target) -> None:
     if user.owner_id != target.owner_id:
         raise ValueError(
             f"owner mismatch: user {user.owner_id!r} does not own target {target.target_id!r} "
@@ -154,6 +154,55 @@ def _me_candidate(episode: ActionResultEpisode) -> CandidateRecord:
     )
 
 
+def _validate_session_identity(
+    user: MemorySourceUser,
+    *,
+    owner_id: str,
+    session_id: str,
+    session_chronological_rank: int,
+    observed_at: str,
+) -> None:
+    """Fail closed on any candidate-cache/session identity mismatch (B13).
+
+    ``disclosures``/``documents``/``episodes`` passed into
+    ``compile_*_candidates`` may be a cache built elsewhere (e.g. once per
+    owner in ``features.zero_outcome_census.build_census``) rather than
+    freshly extracted here. This checks every item -- cached or fresh --
+    against the actual ``user`` being compiled for: the item's owner must
+    match, its session must actually belong to that owner, and the cached
+    rank/timestamp must match what ``user.sessions`` currently says for that
+    session id. A mismatch on any of these means the cache is wrong (built
+    for a different owner, stale against updated session data, or simply
+    handed to the wrong ``user``) and must raise immediately rather than
+    silently compile a candidate that looks plausible but is not actually
+    this user's strict-past material. Checking only ``user.owner_id ==
+    target.owner_id`` (``_require_owner_match``) does not catch this: that
+    only validates the *target*, never the individual cache items.
+    """
+
+    if owner_id != user.owner_id:
+        raise ValueError(
+            f"candidate cache item owner {owner_id!r} does not match user {user.owner_id!r}"
+        )
+    try:
+        session = user.session_by_id(session_id)
+    except KeyError:
+        raise ValueError(
+            f"candidate cache item references session {session_id!r}, which is not one of "
+            f"{user.owner_id!r}'s sessions"
+        ) from None
+    if session.chronological_rank != session_chronological_rank:
+        raise ValueError(
+            f"candidate cache item for session {session_id!r} has a stale chronological_rank "
+            f"{session_chronological_rank!r} (current user data: {session.chronological_rank!r})"
+        )
+    if session.timestamp != observed_at:
+        raise ValueError(
+            f"candidate cache item for session {session_id!r} has a stale observed_at "
+            f"{observed_at!r} (current user data: {session.timestamp!r})"
+        )
+
+
 def _is_strict_past(session_id: str, session_rank: int, target: Target) -> bool:
     """Strict past = before the cutoff rank AND not one of the target's own
     premise/context sessions.
@@ -171,7 +220,7 @@ def _is_strict_past(session_id: str, session_rank: int, target: Target) -> bool:
 
 
 def compile_mp_candidates(
-    user: UserRecord,
+    user: MemorySourceUser,
     target: Target,
     disclosures: tuple[ProfileDisclosure, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
@@ -179,12 +228,22 @@ def compile_mp_candidates(
     if target.cutoff_rank is None:
         return ()
     items = disclosures if disclosures is not None else extract_profile_disclosures(user)
-    eligible = [d for d in items if _is_strict_past(d.session_id, d.session_chronological_rank, target)]
+    eligible = []
+    for d in items:
+        _validate_session_identity(
+            user,
+            owner_id=d.owner_id,
+            session_id=d.session_id,
+            session_chronological_rank=d.session_chronological_rank,
+            observed_at=d.observed_at,
+        )
+        if _is_strict_past(d.session_id, d.session_chronological_rank, target):
+            eligible.append(d)
     return tuple(_mp_candidate(d) for d in eligible)
 
 
 def compile_ms_candidates(
-    user: UserRecord,
+    user: MemorySourceUser,
     target: Target,
     documents: tuple[SessionDocument, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
@@ -192,7 +251,17 @@ def compile_ms_candidates(
     if target.cutoff_rank is None:
         return ()
     items = documents if documents is not None else extract_session_documents(user)
-    eligible = [d for d in items if _is_strict_past(d.session_id, d.session_chronological_rank, target)]
+    eligible = []
+    for d in items:
+        _validate_session_identity(
+            user,
+            owner_id=d.owner_id,
+            session_id=d.session_id,
+            session_chronological_rank=d.session_chronological_rank,
+            observed_at=d.observed_at,
+        )
+        if _is_strict_past(d.session_id, d.session_chronological_rank, target):
+            eligible.append(d)
     return tuple(_ms_candidate(d) for d in eligible)
 
 
@@ -213,7 +282,7 @@ def _me_is_strict_past(episode: ActionResultEpisode, target: Target) -> bool:
 
 
 def compile_me_candidates(
-    user: UserRecord,
+    user: MemorySourceUser,
     target: Target,
     episodes: tuple[ActionResultEpisode, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
@@ -221,12 +290,33 @@ def compile_me_candidates(
     if target.cutoff_rank is None:
         return ()
     items = episodes if episodes is not None else extract_action_result_episodes(user)
-    eligible = [e for e in items if _me_is_strict_past(e, target)]
+    eligible = []
+    for e in items:
+        # both sides of the episode must independently satisfy identity
+        # binding -- an episode can span two sessions (B7's remaining
+        # same-turn pattern always has action_session == result_session, but
+        # nothing here should rely on that not changing in the future)
+        _validate_session_identity(
+            user,
+            owner_id=e.owner_id,
+            session_id=e.action_session_id,
+            session_chronological_rank=e.action_session_chronological_rank,
+            observed_at=e.action_observed_at,
+        )
+        _validate_session_identity(
+            user,
+            owner_id=e.owner_id,
+            session_id=e.result_session_id,
+            session_chronological_rank=e.result_session_chronological_rank,
+            observed_at=e.result_observed_at,
+        )
+        if _me_is_strict_past(e, target):
+            eligible.append(e)
     return tuple(_me_candidate(e) for e in eligible)
 
 
 def compile_candidate_bundle(
-    user: UserRecord,
+    user: MemorySourceUser,
     target: Target,
     *,
     disclosures: tuple[ProfileDisclosure, ...] | None = None,

@@ -6,10 +6,12 @@ nothing else. No candidate is scored for usefulness, no PASS/FAIL judgment is
 made, and no gold answer/summary/observation field is ever read. This module
 only consumes ``Target.context_session_ids`` (task-premise sessions, safe at
 decision time) for the current-context features. It structurally cannot
-touch QA/Summary answer-justifying evidence at all (B8): ``Target`` -- the
-only object this module imports from ``data.es_memeval`` -- carries no
-evidence field; that data is physically isolated in
-``metacom_pm.paper1.splits.evidence``, which this module never imports.
+touch QA/Summary answer-justifying evidence at all (B8/B12): this module
+imports only ``MemorySourceUser``/``Target`` from
+``metacom_pm.paper1.data.memory_source``, the sanitized runtime module that
+never constructs an evidence-bearing type in the first place; it never
+imports ``metacom_pm.paper1.data.es_memeval`` or
+``metacom_pm.paper1.splits.evidence`` at all.
 """
 
 from __future__ import annotations
@@ -26,7 +28,7 @@ from typing import Any
 
 from metacom_pm.paper1.candidates import compile_candidate_bundle
 from metacom_pm.paper1.contracts import CandidateRecord, Head, TaskType
-from metacom_pm.paper1.data.es_memeval import Target, UserRecord
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
 from metacom_pm.paper1.memory.me import extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import extract_session_documents
@@ -118,14 +120,14 @@ class TargetHeadCensusRow:
         }
 
 
-def _anchor_date(user: UserRecord, target: Target) -> date | None:
+def _anchor_date(user: MemorySourceUser, target: Target) -> date | None:
     if not target.context_session_ids:
         return None
     dates = [user.session_by_id(sid).date for sid in target.context_session_ids]
     return max(dates)
 
 
-def _context_words(user: UserRecord, target: Target) -> frozenset[str]:
+def _context_words(user: MemorySourceUser, target: Target) -> frozenset[str]:
     if not target.context_session_ids:
         return frozenset()
     text_parts = []
@@ -184,7 +186,7 @@ def _score_candidates(
 
 
 def _row_for_head(
-    user: UserRecord,
+    user: MemorySourceUser,
     target: Target,
     head: Head,
     candidates: tuple[CandidateRecord, ...],
@@ -218,7 +220,7 @@ def _row_for_head(
 
 
 def build_census(
-    users: tuple[UserRecord, ...], targets: tuple[Target, ...]
+    users: tuple[MemorySourceUser, ...], targets: tuple[Target, ...]
 ) -> tuple[TargetHeadCensusRow, ...]:
     """Build one census row per (target, head) with zero outcome reads."""
 

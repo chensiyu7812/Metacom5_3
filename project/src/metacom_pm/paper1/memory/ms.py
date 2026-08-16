@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from metacom_pm.paper1.data.es_memeval import Session, UserRecord
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Session
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,7 @@ def _compile_transcript(session: Session) -> str:
     return "\n".join(f"{turn.role}: {turn.content}" for turn in session.turns)
 
 
-def extract_session_documents(user: UserRecord) -> tuple[SessionDocument, ...]:
+def extract_session_documents(user: MemorySourceUser) -> tuple[SessionDocument, ...]:
     """One ``SessionDocument`` per session, in chronological order."""
 
     return tuple(
