@@ -1,0 +1,218 @@
+{
+  "protocol": "pm-paper1-m2-decision-packet-draft-v1",
+  "status": "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK",
+  "generated_at": "2026-08-16T20:10:11+09:00",
+  "authority": {
+    "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
+    "route": "A_first_order_factorized",
+    "official_benchmark_first": true,
+    "cost_separate": true,
+    "empirical_pass_gates": false
+  },
+  "evidence": {
+    "rs_zero_outcome_summary": {
+      "path": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+      "sha256": "6488419b0ed0a3e68bb7eea2f4a2a1805427632a7d0786c9011a313717766b53"
+    },
+    "official_scorer_audit": {
+      "path": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
+      "sha256": "205722b60b67172c1bf994784aec562362e6de3c53083e6e6070078a85861ce2",
+      "status": "ZERO_OUTCOME_SOURCE_AUDIT_COMPLETE_CODING_AND_SCORER_FREEZE_PENDING"
+    },
+    "rq0_contract": {
+      "path": "data/v3_authority/rq0_llama31_8b_esc_eval_exact_contract_v1.json",
+      "sha256": "c98e71c7fd6c0b85c023a13d5f016c7536219b0a4ce24556198bdcaf86474642"
+    },
+    "preoutcome_draft": {
+      "path": "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json",
+      "sha256": "970de113e18f14a8d31779eab5103d7e5858262e5c3756d31fe23effa7acb813",
+      "status": "DRAFT_AWAITING_M1_INTEGRATION"
+    }
+  },
+  "rs_findings": {
+    "dialogue_only_cards": 12169,
+    "cards_removed_vs_situation_conditioned_v1": 234,
+    "decision_states": 11883,
+    "leave_dialogue_out_candidate_coverage": 1.0,
+    "nonzero_lexical_overlap_coverage": 0.9999158461667929,
+    "nonverbatim_situation_rate": 0.9653846153846154
+  },
+  "decisions": [
+    {
+      "order": 1,
+      "decision_id": "rs_visible_source",
+      "item": "RS source visibility",
+      "evidence": "The prior v1 catalog used ESConv situation text; 1,255/1,300 situations are not verbatim present anywhere in dialogue.",
+      "recommendation": "Adopt dialogue-only v2 identities and permanently forbid situation/outcome/questionnaire fields in active RS catalog/state code.",
+      "status": "IMPLEMENTED_AWAITING_INTEGRATION",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 2,
+      "decision_id": "rs_overlap_policy",
+      "item": "Legacy EvoEmo-overlap exclusion",
+      "evidence": "Legacy-conservative universe: 12169 cards/11883 states; authority-literal ESConv train + train/dev: 12906 cards/12656 states.",
+      "recommendation": "Use the authority-literal ESConv train Bank and train/dev effect states. Treat the old EvoEmo flag as a disclosed sensitivity, because RS is fixed across RQ2 memory arms and the highest program does not require this exclusion.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 3,
+      "decision_id": "rs_state_grain",
+      "item": "RS decision-state grain",
+      "evidence": "11883 non-overlap states were reconstructed as one supporter run after at least one visible seeker turn; initial greetings and consecutive supporter fragments are not separate PM calls.",
+      "recommendation": "Freeze this response-opportunity grain; query/state must stop before the target supporter response and future turns.",
+      "status": "RECOMMENDED_FOR_FREEZE",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 4,
+      "decision_id": "rs_candidate_bundle",
+      "item": "RS candidate bundle",
+      "evidence": "Diagnostic injected-word medians are 37 for k=1, 77 for k=2 and 157 for k=4; all states have leave-dialogue-out candidates.",
+      "recommendation": "Freeze one retrieved card (Top-1) as the exact RS treatment. This preserves a single interpretable candidate identity and avoids learning the value of an internally heterogeneous bundle.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 5,
+      "decision_id": "rs_retriever",
+      "item": "RS semantic retriever",
+      "evidence": "Lexical Jaccard was used only for Phase-1 availability and has non-zero variance; it is too slow and semantically weak for the formal runner.",
+      "recommendation": "Bind BAAI/bge-small-en-v1.5 with an immutable revision, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Run only an engineering-capability check before freeze.",
+      "status": "IMPLEMENTATION_PENDING_EXACT_REVISION",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 6,
+      "decision_id": "rs_render_and_cap",
+      "item": "RS rendering and resource token cap",
+      "evidence": "For Top-1, diagnostic guidance+example length is median 37 words, p95 65 and max 189.",
+      "recommendation": "Preserve guidance before exemplar when truncating; provisionally target a 256-resource-token cap, but freeze only after an exact Llama tokenizer census of the final renderer.",
+      "status": "TOKENIZER_CENSUS_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 7,
+      "decision_id": "rs_feature_schema",
+      "item": "RS observable features",
+      "evidence": "Advice-request appears in 308 states; listen-only appears in 0 and no-probing in 1 under the conservative deterministic parser.",
+      "recommendation": "Retain similarity, candidate move type, recent previously-injected same-move count, advice-request flag and exact resource-token count. Keep listen-only/no-probing as deterministic boundary rules, not learned features.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 8,
+      "decision_id": "memory_census",
+      "item": "MP/MS/ME candidate census",
+      "evidence": "Codex B is repairing official evaluation-time visibility, sanitized runtime artifacts and ME linkage; current B coverage numbers are superseded for freeze purposes.",
+      "recommendation": "Do not choose memory bundle size, features or fold packing until the repaired B artifacts are integrated and independently validated.",
+      "status": "BLOCKED_PENDING_B_REPAIR",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 9,
+      "decision_id": "outer_folds",
+      "item": "Outer-fold K and seed",
+      "evidence": "Exact-evidence components exist on B but must be rebuilt/join-validated after runtime-boundary repair; component IDs are not folds.",
+      "recommendation": "After B integration, compare only zero-outcome fold-size/task/owner balance and select K/seed once. Do not optimize using effect or benchmark outcomes.",
+      "status": "BLOCKED_PENDING_B_REPAIR",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 10,
+      "decision_id": "effect_coding",
+      "item": "Multi-metric effect coding",
+      "evidence": "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
+      "recommendation": "Prefer authority-aligned task anchors: QA LLM-as-Judge primary with F1/BERTScore auxiliaries; Summary Event-F1 primary with official LLM guard and ROUGE explanatory; DG Weighted Score primary with Observation Recall and three official ratings as guards. Freeze exact tie/conflict logic before calls and retain every raw official metric.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 11,
+      "decision_id": "generator_stack",
+      "item": "Generator and decoding stack",
+      "evidence": "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
+      "recommendation": "Carry the RQ0 Generator identity, prompt, temperature=0 and max output tokens=256 into Paper 1, adding only a hash-bound typed resource block and treatment-delivery trace.",
+      "status": "PROMPT_AND_EXECUTOR_BINDING_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 12,
+      "decision_id": "repeated_effects",
+      "item": "Repeated paired effects",
+      "evidence": "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
+      "recommendation": "Use three matched repeat IDs only if they produce independently executed generation/scoring traces; byte-identical duplicate generations must not be counted as independent ON wins. Do not convert three repeats into a 2-of-3 PASS label.",
+      "status": "IMPLEMENTATION_BLOCKER_REPRODUCIBILITY_RULE_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 13,
+      "decision_id": "primary_policy",
+      "item": "PM decision threshold",
+      "evidence": "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
+      "recommendation": "Keep 0.5 unchanged. Report Brier/log-loss/calibration diagnostics without calibration PASS gates.",
+      "status": "ALREADY_FROZEN_BY_AUTHORITY",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 14,
+      "decision_id": "matched_random",
+      "item": "Matched-Random construction",
+      "evidence": "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
+      "recommendation": "Freeze strata before outcomes, use a seed derived from the reviewed freeze-manifest hash, and use fixed padded resource caps so Learned and Random match realized ON count and token budget.",
+      "status": "SEED_AND_STRATA_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 15,
+      "decision_id": "formal_unlock",
+      "item": "Outcome/API unlock",
+      "evidence": "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
+      "recommendation": "Keep formal outcome/training/benchmark access locked. Materialize the API call plan only after the combined M2 manifest validates with no pending scientific fields.",
+      "status": "LOCKED",
+      "researcher_approval_required": false
+    }
+  ],
+  "researcher_decision_ids": [
+    "rs_overlap_policy",
+    "rs_state_grain",
+    "rs_candidate_bundle",
+    "rs_retriever",
+    "rs_render_and_cap",
+    "rs_feature_schema",
+    "outer_folds",
+    "effect_coding",
+    "generator_stack",
+    "repeated_effects",
+    "matched_random"
+  ],
+  "integration_order": [
+    "complete_A_RS_repair_and_commit",
+    "receive_and_audit_B_runtime_boundary_repair",
+    "integrate_B_commits_into_A",
+    "rebuild_combined_zero_outcome_artifacts",
+    "resolve_researcher_decisions_once",
+    "materialize_and_validate_M2_freeze",
+    "only_then_unlock_effect_calls"
+  ],
+  "report_chart_map": [
+    {
+      "segment": "Bundle cost shape",
+      "question": "How quickly does bundle size consume a fixed diagnostic word cap?",
+      "family": "comparison",
+      "type": "grouped_bar",
+      "dataset": "bundle_cap_coverage",
+      "fields": [
+        "cap_words",
+        "bundle_size",
+        "coverage"
+      ],
+      "supported_claim": "Larger bundles consume the resource budget faster; the chart does not measure outcome quality.",
+      "palette_policy": "relaxed_multi_category_three_roots",
+      "delivery": "portable_html_native_artifact_chart"
+    }
+  ],
+  "formal_outcome_calls": 0,
+  "formal_unlock": false
+}

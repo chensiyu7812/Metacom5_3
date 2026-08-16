@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -15,6 +16,8 @@ from metacom_pm.paper1.core.freeze import (
     PreOutcomeFreezeManifest,
     bind_artifact,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _generator():
@@ -138,3 +141,35 @@ def test_matched_random_must_match_prefrozen_on_counts_and_exact_token_budget():
                 exact_injected_token_budget=False,
             ),
         )
+
+
+def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
+    manifest = json.loads(
+        (ROOT / "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    paths = {
+        row["repo_relative_path"] for row in manifest["official_evaluation_artifacts"]
+    }
+    assert "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl" in paths
+    assert "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl" in paths
+    assert "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl" not in paths
+    assert manifest["status"] == "DRAFT_AWAITING_M1_INTEGRATION"
+    assert manifest["formal_outcome_calls_at_freeze"] == 0
+    assert manifest["notes"]["formal_unlock"] is False
+
+
+def test_m2_decision_packet_is_a_locked_draft_with_explicit_researcher_choices():
+    packet = json.loads(
+        (ROOT / "data/paper1_authority/paper1_m2_decision_packet_draft_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert packet["status"] == "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK"
+    assert packet["formal_outcome_calls"] == 0
+    assert packet["formal_unlock"] is False
+    assert packet["researcher_decision_ids"]
+    assert any(
+        row["status"] == "BLOCKED_PENDING_B_REPAIR" for row in packet["decisions"]
+    )

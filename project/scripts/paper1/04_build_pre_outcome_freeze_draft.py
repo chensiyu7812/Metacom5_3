@@ -60,8 +60,16 @@ def build() -> PreOutcomeFreezeManifest:
                 "ES-MemEval public 1427 QA identity",
             ),
             (
-                "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl",
-                "ESConv train-only RS source identity",
+                "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+                "ESConv train-only dialogue-visible RS source identity",
+            ),
+            (
+                "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl",
+                "ESConv outcome-blind RS decision-state identity",
+            ),
+            (
+                "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+                "ESConv RS Phase-1 zero-outcome census summary",
             ),
             (
                 "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
@@ -82,6 +90,7 @@ def build() -> PreOutcomeFreezeManifest:
         pending_items=(
             "integrate_repaired_public_memory_census",
             "freeze_final_candidate_bundle_per_head",
+            "freeze_rs_effect_state_overlap_policy",
             "freeze_exact_feature_schema_per_head",
             "pack_exact_evidence_components_into_outer_folds",
             "freeze_inner_fold_count",

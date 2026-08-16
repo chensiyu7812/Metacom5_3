@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-pre-outcome-freeze-v1",
   "status": "DRAFT_AWAITING_M1_INTEGRATION",
-  "source_tree_sha": "2aea127dd548dae57e206ad82af516003b86ff09",
+  "source_tree_sha": "993f6a986b2bec835c8042c5ddcec6c964f2e1f4",
   "generator": {
     "selection_status": "FINAL",
     "provider": "NVIDIA hosted NIM",
@@ -69,9 +69,19 @@
       "role": "ES-MemEval public 1427 QA identity"
     },
     {
-      "repo_relative_path": "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl",
-      "sha256": "819f58ba23be2888994f61b7a43a9cc360449fde4efb160fc137a080d08312f9",
-      "role": "ESConv train-only RS source identity"
+      "repo_relative_path": "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+      "sha256": "f7b785d2058061f0b874b93a582ae59bba75432e083680a8088e44972a489d97",
+      "role": "ESConv train-only dialogue-visible RS source identity"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl",
+      "sha256": "e41e6486cdb67ec1d0445e3dabe010d805786cc2aef736a538ed321c1ea2c40e",
+      "role": "ESConv outcome-blind RS decision-state identity"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+      "sha256": "6488419b0ed0a3e68bb7eea2f4a2a1805427632a7d0786c9011a313717766b53",
+      "role": "ESConv RS Phase-1 zero-outcome census summary"
     },
     {
       "repo_relative_path": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
@@ -92,6 +102,7 @@
   "pending_items": [
     "integrate_repaired_public_memory_census",
     "freeze_final_candidate_bundle_per_head",
+    "freeze_rs_effect_state_overlap_policy",
     "freeze_exact_feature_schema_per_head",
     "pack_exact_evidence_components_into_outer_folds",
     "freeze_inner_fold_count",
