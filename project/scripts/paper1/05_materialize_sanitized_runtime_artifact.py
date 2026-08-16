@@ -10,7 +10,10 @@ evaluator, out of this lane's scope) allowed to read
 Summary ``question`` text, and opaque DG target identity (idx only) --
 nothing else. No ``answer``, no ``evidence``, no gold/reference summary, no
 ``observation``, no Summary ``group``, no DG ``related_sessions``/``topic``/
-background, no ``basic_info``.
+background, no ``basic_info``. B23: no session-level ``emotion``/``topic``
+label either -- verified against the official harness's room-construction
+code that the tested system's document store is built from only timestamp
+and turn role/content, never those two dataset-author labels.
 
 ``02_build_public_memory_census.py`` and ``04_audit_mp_self_disclosure_
 coverage.py`` read *only* this artifact (via ``metacom_pm.paper1.data.
@@ -57,6 +60,17 @@ FORBIDDEN_ARTIFACT_TOKENS = (
     '"summary"',
 )
 
+# B23: emotion/topic are common English words that could plausibly appear
+# inside legitimate dialogue turn *content* (e.g. a seeker saying "let's
+# change the topic"). Checked as exact JSON *keys* (quoted name immediately
+# followed by the canonical, no-space ':' separator this artifact always
+# uses) rather than a bare word/substring scan, so this never flags ordinary
+# dialogue content -- only an actual "emotion"/"topic" field.
+FORBIDDEN_ARTIFACT_KEY_TOKENS = (
+    '"emotion":',
+    '"topic":',
+)
+
 
 def _sha_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -78,14 +92,20 @@ def build() -> dict[str, Any]:
     evo_path = PROJECT / "data" / "external" / "evo_emo.json"
     materialize_report = write_sanitized_runtime_artifact(evo_path, ARTIFACT_PATH)
 
-    # B18: a schema-level self-check, not just an AST/import scan -- the
+    # B18/B23: a schema-level self-check, not just an AST/import scan -- the
     # written artifact file itself must not contain any forbidden key, byte
-    # for byte.
+    # for byte. FORBIDDEN_ARTIFACT_KEY_TOKENS is checked separately from
+    # FORBIDDEN_ARTIFACT_TOKENS because it targets exact JSON *keys*
+    # (quote+name+quote+colon) rather than a bare word/substring, so common
+    # English words that legitimately appear in dialogue content never
+    # false-positive here.
     artifact_text = ARTIFACT_PATH.read_text(encoding="utf-8")
     found_forbidden = [tok for tok in FORBIDDEN_ARTIFACT_TOKENS if tok in artifact_text]
-    if found_forbidden:
+    found_forbidden_keys = [tok for tok in FORBIDDEN_ARTIFACT_KEY_TOKENS if tok in artifact_text]
+    if found_forbidden or found_forbidden_keys:
         raise RuntimeError(
-            f"sanitized runtime artifact unexpectedly contains forbidden key(s): {found_forbidden}"
+            "sanitized runtime artifact unexpectedly contains forbidden key(s): "
+            f"{found_forbidden + found_forbidden_keys}"
         )
 
     report = {
@@ -96,6 +116,8 @@ def build() -> dict[str, Any]:
         "forbidden_key_scan": {
             "tokens_checked": list(FORBIDDEN_ARTIFACT_TOKENS),
             "found": found_forbidden,
+            "exact_key_tokens_checked": list(FORBIDDEN_ARTIFACT_KEY_TOKENS),
+            "exact_key_tokens_found": found_forbidden_keys,
         },
         "materialize_report": materialize_report,
         "outputs": {

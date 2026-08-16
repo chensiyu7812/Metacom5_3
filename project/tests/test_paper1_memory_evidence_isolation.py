@@ -64,6 +64,7 @@ from metacom_pm.paper1.features.zero_outcome_census import CandidateFeatureSnaps
 from metacom_pm.paper1.memory import me as memory_me
 from metacom_pm.paper1.memory import mp as memory_mp
 from metacom_pm.paper1.memory import ms as memory_ms
+from metacom_pm.paper1.memory.ms import SessionDocument
 from metacom_pm.paper1.splits.evidence import SplitEvidenceRecord, enumerate_split_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -83,6 +84,8 @@ FORBIDDEN_ATTR_OR_KEY_NAMES = {
     "more_details",
     "physical_condition",
     "psychological_condition",
+    "emotion",
+    "topic",
 }
 
 # The evaluator/split-only types+functions: legitimate only inside
@@ -166,7 +169,7 @@ def test_sanitized_runtime_types_never_carry_a_forbidden_field_structurally():
     # B18.3: shape-level check, independent of whether any current code path
     # happens to populate a forbidden field -- the dataclass itself must not
     # have room for one.
-    for dc in (MemorySourceUser, Session, Turn, Target):
+    for dc in (MemorySourceUser, Session, Turn, Target, SessionDocument):
         field_names = {f.name for f in dataclasses.fields(dc)}
         hit = field_names & FORBIDDEN_ATTR_OR_KEY_NAMES
         assert hit == set(), f"{dc.__name__} carries forbidden field(s): {hit}"
@@ -288,9 +291,39 @@ def test_freshly_materialized_artifact_bytes_contain_no_forbidden_json_key(tmp_p
     found = [tok for tok in forbidden_tokens if tok in artifact_text]
     assert found == [], f"sanitized runtime artifact unexpectedly contains: {found}"
 
+    # B23: emotion/topic checked as exact JSON keys (quoted name + the
+    # canonical no-space ':' separator), not a bare word scan -- the corpus
+    # legitimately contains dialogue turns that use these as ordinary
+    # English words (e.g. "let's change the topic"), which must never trip
+    # this check; only an actual "emotion"/"topic" *field* may.
+    forbidden_key_tokens = ('"emotion":', '"topic":')
+    found_keys = [tok for tok in forbidden_key_tokens if tok in artifact_text]
+    assert found_keys == [], f"sanitized runtime artifact unexpectedly contains key(s): {found_keys}"
+
     payload = json.loads(artifact_text)
     assert payload["schema"] == materializer.SANITIZED_ARTIFACT_SCHEMA_VERSION
-    assert len(payload["users"]) == 18
+
+
+def test_dialogue_content_containing_the_words_emotion_or_topic_is_not_flagged(tmp_path):
+    # B23 grounding: the real corpus has dialogue turns that legitimately use
+    # "emotion(s)"/"topic(s)" as ordinary English words (e.g. p1/esc786 turn
+    # 18 discusses "friendship", p1/p1_conv_6 turn 4 says "a mix of
+    # emotions") -- confirm this content survives materialization verbatim
+    # and that the precise-key forbidden scan does not flag it.
+    raw = load_raw_users(EVO_PATH)
+    p1 = next(u for u in raw if u["id"] == "p1")
+    turn_texts = [t["content"] for s in p1["dialog_history"] for t in s["dialogue"]]
+    assert any("emotion" in t.lower() for t in turn_texts), "expected a known real 'emotion(s)' mention"
+    assert any("topic" in t.lower() for t in turn_texts), "expected a known real 'topic(s)' mention"
+
+    out_path = tmp_path / "sanitized_runtime_artifact.json"
+    materializer.write_sanitized_runtime_artifact(EVO_PATH, out_path)
+    artifact_text = out_path.read_text(encoding="utf-8")
+    assert '"emotion":' not in artifact_text
+    assert '"topic":' not in artifact_text
+    # the ordinary-word content itself is preserved verbatim, just never as a key
+    assert "emotion" in artifact_text.lower()
+    assert "topic" in artifact_text.lower()
 
 
 def test_materialized_artifact_round_trips_through_load_sanitized_runtime_users(tmp_path):

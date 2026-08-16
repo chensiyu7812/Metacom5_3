@@ -145,12 +145,9 @@ def test_expansion_diagnostic_proposal_never_widens_the_primary_compiler(real_us
 
 def test_synthetic_user_with_no_matches_produces_empty_categories():
     session = Session(
-        owner_id="synthetic",
         session_id="s1",
         timestamp="2024-01-01",
         chronological_rank=0,
-        emotion="neutral",
-        topic="test",
         turns=(Turn(idx=1, role="seeker", content="I feel okay today, just a bit tired."),),
     )
     user = MemorySourceUser(

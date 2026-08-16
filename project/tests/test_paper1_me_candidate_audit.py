@@ -97,12 +97,9 @@ def test_manifest_row_shape_matches_the_dataclass():
 
 def test_synthetic_user_with_no_qualifying_episodes_produces_zero_rows():
     session = Session(
-        owner_id="synthetic",
         session_id="s1",
         timestamp="2024-01-01",
         chronological_rank=0,
-        emotion="neutral",
-        topic="test",
         turns=(Turn(idx=1, role="seeker", content="I feel okay today, just a bit tired."),),
     )
     user = MemorySourceUser(
@@ -115,12 +112,9 @@ def test_synthetic_user_with_no_qualifying_episodes_produces_zero_rows():
 
 def test_synthetic_user_with_one_qualifying_episode_is_fully_disclosed():
     session = Session(
-        owner_id="synthetic",
         session_id="s1",
         timestamp="2024-01-01",
         chronological_rank=0,
-        emotion="neutral",
-        topic="test",
         turns=(Turn(idx=1, role="seeker", content="I tried meditation and it helped a bit."),),
     )
     user = MemorySourceUser(

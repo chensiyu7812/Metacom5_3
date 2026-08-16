@@ -1,4 +1,4 @@
-"""Sanitized runtime types for ES-MemEval-Public-v1.0.0-1427 (B12/B17/B18).
+"""Sanitized runtime types for ES-MemEval-Public-v1.0.0-1427 (B12/B17/B18/B23).
 
 This module never reads ``data/external/evo_emo.json`` and never imports
 ``metacom_pm.paper1.data.es_memeval`` (the evaluator/split-only, raw-JSON,
@@ -40,6 +40,25 @@ dee641a``, not assumed):
   hidden background, confirmed by reading the actual construction code, not
   inferred from field naming.
 
+B23 runtime-visibility correction (same verification method, one layer
+deeper): the room-construction code itself
+(``src/lib/shared/chat_rooms/chat_room_builder.py``,
+``ChatRoomBuilder.fill_chat_room``/``fill_session``, shared by QA, Summary,
+and DG's "full" supporter room) builds every session/turn from only
+``history["timestamp"]`` (the session boundary marker passed to
+``room.begin_session``) and each ``dialogue["role"]``/``dialogue["content"]``
+-- it never reads ``history["emotion"]`` or ``history["topic"]`` at all, for
+any task type. Those two per-session dataset-author labels were still being
+carried into ``Session``/the sanitized artifact/MS ``raw_descriptors`` before
+this fix -- a runtime-visibility leak in the same family as B17's
+group/related-session identity leak, just for annotation content rather than
+identity. ``Session`` now carries only ``session_id``/``timestamp``/
+``chronological_rank``/``turns`` -- no ``owner_id`` field either (it never
+needed one: every ``Session`` only ever exists inside its owning
+``MemorySourceUser.sessions``, and every consumer already reads owner
+identity from that containing ``MemorySourceUser.owner_id``, never from the
+session itself).
+
 Consequently: ``Target.cutoff_rank`` is always the full session count for
 its owner (every session is strict-past for every target of every task
 type), and ``Target`` carries no ``context_session_ids`` field at all
@@ -79,21 +98,33 @@ class Turn:
 
 @dataclass(frozen=True)
 class Session:
-    """A single strictly-ordered dialog_history session, gold fields excluded.
+    """A single strictly-ordered dialog_history session, runtime-visible fields only.
 
     Deliberately does not carry the raw ``summary``/``observation`` fields:
     those are evaluator-authored annotations, not text the seeker or
     supporter produced, and must never be compiled into MS/ME candidate
     content (see the historical ESConv ``situation``-field privileged-input
     leak this project already found and fixed once).
+
+    B23: also does not carry ``emotion``/``topic``. These are per-session
+    dataset-author labels, not something the tested system (or anyone
+    playing the supporter role) is ever shown. Verified directly against the
+    pinned official harness (commit
+    ``692624208acc077b8867698c1d6fcd998dee641a``,
+    ``src/lib/shared/chat_rooms/chat_room_builder.py``):
+    ``ChatRoomBuilder.fill_chat_room``/``fill_session`` construct every room
+    turn from only ``history["timestamp"]`` (the session boundary marker)
+    and each ``dialogue["role"]``/``dialogue["content"]`` -- ``emotion`` and
+    ``topic`` are never read by the builder at all, for QA, Summary, or DG.
+    Carrying them into ``Session`` and onward into MS ``raw_descriptors``
+    was itself a runtime-visibility leak in the same family B17 already
+    fixed for group/related-session identity, just for annotation content
+    instead of identity.
     """
 
-    owner_id: str
     session_id: str
     timestamp: str
     chronological_rank: int
-    emotion: str
-    topic: str
     turns: tuple[Turn, ...]
 
     @property
@@ -310,8 +341,6 @@ def user_to_dict(user: MemorySourceUser) -> dict[str, Any]:
                 "session_id": s.session_id,
                 "timestamp": s.timestamp,
                 "chronological_rank": s.chronological_rank,
-                "emotion": s.emotion,
-                "topic": s.topic,
                 "turns": [{"idx": t.idx, "role": t.role, "content": t.content} for t in s.turns],
             }
             for s in user.sessions
@@ -332,12 +361,9 @@ def user_from_dict(payload: dict[str, Any]) -> MemorySourceUser:
     owner_id = payload["owner_id"]
     sessions = tuple(
         Session(
-            owner_id=owner_id,
             session_id=s["session_id"],
             timestamp=s["timestamp"],
             chronological_rank=s["chronological_rank"],
-            emotion=s["emotion"],
-            topic=s["topic"],
             turns=tuple(Turn(idx=t["idx"], role=t["role"], content=t["content"]) for t in s["turns"]),
         )
         for s in payload["sessions"]

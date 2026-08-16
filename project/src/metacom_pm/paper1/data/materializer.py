@@ -12,9 +12,9 @@ es_memeval`` (the evaluator/split-only module ``metacom_pm.paper1.splits.
 evidence`` depends on) and the official evaluator itself (Codex A's RQ1/RQ2
 adapters, out of this lane's scope). This module never imports
 ``es_memeval`` and never reads QA/Summary ``evidence``, ``answer``, session
-``summary``/``observation``, Summary ``group``, or any DG ``subsequent_
-topics`` field beyond ``idx`` -- see ``memory_source`` module docstring for
-why (B17 runtime-visibility finding).
+``summary``/``observation``/``emotion``/``topic``, Summary ``group``, or any
+DG ``subsequent_topics`` field beyond ``idx`` -- see ``memory_source``
+module docstring for why (B17/B23 runtime-visibility findings).
 """
 
 from __future__ import annotations
@@ -60,14 +60,6 @@ def _parse_date_key(raw: str):
     return date.fromisoformat(raw)
 
 
-def _normalize_text_field(value: Any) -> str:
-    """Raw ``topic``/``emotion`` are sometimes a string, sometimes a list of strings."""
-
-    if isinstance(value, list):
-        return ", ".join(str(item) for item in value)
-    return str(value)
-
-
 def load_raw_users(path: Path) -> list[dict[str, Any]]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw, list):
@@ -78,14 +70,24 @@ def load_raw_users(path: Path) -> list[dict[str, Any]]:
 def build_sanitized_runtime_users(raw: list[dict[str, Any]]) -> tuple[MemorySourceUser, ...]:
     """Parse raw EvoEmo user records directly into sanitized runtime types.
 
-    Reads only ``id``/``timestamp``/``emotion``/``topic``/``dialogue``
-    (sessions), ``id``/``idx``/``question`` (question groups/items),
-    ``idx``/``question`` (summaries), and ``idx`` (subsequent topics).
-    Never indexes ``"evidence"``, ``"answer"``, ``"theme"``, ``"group"``,
-    ``"summary"``, ``"observation"``, ``"related_sessions"``, ``"topic"``
-    (the DG scenario field -- distinct from the session-level ``"topic"``
-    label, which *is* read), ``"more_details"``, ``"physical_condition"``,
+    Reads only ``id``/``timestamp``/``dialogue`` (sessions), ``id``/``idx``/
+    ``question`` (question groups/items), ``idx``/``question`` (summaries),
+    and ``idx`` (subsequent topics). Never indexes ``"evidence"``,
+    ``"answer"``, ``"theme"``, ``"group"``, ``"summary"``, ``"observation"``,
+    ``"related_sessions"``, ``"more_details"``, ``"physical_condition"``,
     ``"psychological_condition"``, or ``"basic_info"``.
+
+    B23: no longer indexes session-level ``"emotion"``/``"topic"`` either.
+    Verified directly against the pinned official harness
+    (``src/lib/shared/chat_rooms/chat_room_builder.py``,
+    ``ChatRoomBuilder.fill_chat_room``/``fill_session``) that the
+    room/document store the tested system actually sees is built from only
+    ``timestamp`` and each turn's ``role``/``content`` -- ``emotion`` and
+    ``topic`` are dataset-author session labels the harness itself never
+    reads, for any task type. With this removal, every raw ``"topic"`` key
+    in the source file is uniformly forbidden here -- both the session-level
+    label and the distinct DG ``subsequent_topics[].topic`` scenario field
+    (never read either way; only ``idx`` is read from subsequent topics).
     """
 
     users: list[MemorySourceUser] = []
@@ -102,12 +104,9 @@ def build_sanitized_runtime_users(raw: list[dict[str, Any]]) -> tuple[MemorySour
             )
             sessions.append(
                 Session(
-                    owner_id=owner_id,
                     session_id=raw_session["id"],
                     timestamp=raw_session["timestamp"],
                     chronological_rank=rank,
-                    emotion=_normalize_text_field(raw_session["emotion"]),
-                    topic=_normalize_text_field(raw_session["topic"]),
                     turns=turns,
                 )
             )

@@ -1,3 +1,4 @@
+import dataclasses
 import hashlib
 import json
 from pathlib import Path
@@ -86,17 +87,26 @@ def test_sessions_are_resorted_into_true_chronological_order_even_when_raw_order
     assert ranks == list(range(len(p3.sessions)))
 
 
-def test_topic_and_emotion_normalize_list_or_string_shapes():
+def test_session_never_carries_emotion_or_topic_even_for_a_known_list_typed_raw_case():
+    # B23: session-level emotion/topic are dataset-author labels the official
+    # harness's room/document-store construction never reads (verified
+    # against ChatRoomBuilder.fill_chat_room/fill_session) -- Session must
+    # not carry them regardless of the raw shape. p1_conv_24 is a known case
+    # where raw "topic" is list-typed (not just string-typed), so this
+    # exercises the same raw record the old normalize-shape test used,
+    # confirming the field is dropped rather than merely reformatted.
     raw = load_raw_users(EVO_PATH)
     raw_p1 = next(u for u in raw if u["id"] == "p1")
     raw_session = next(s for s in raw_p1["dialog_history"] if s["id"] == "p1_conv_24")
     assert isinstance(raw_session["topic"], list), "expected a known list-typed topic case"
+    assert "emotion" in raw_session and "topic" in raw_session
 
     users = build_sanitized_runtime_users(raw)
     p1 = next(u for u in users if u.owner_id == "p1")
     session = p1.session_by_id("p1_conv_24")
-    assert isinstance(session.topic, str)
-    assert session.topic == ", ".join(raw_session["topic"])
+    field_names = {f.name for f in dataclasses.fields(session)}
+    assert "emotion" not in field_names
+    assert "topic" not in field_names
 
 
 def test_question_group_with_unresolvable_owner_is_flagged_not_guessed():
@@ -188,9 +198,35 @@ def test_materializer_never_reads_forbidden_raw_fields():
         "psychological_condition",
         "basic_info",
         "observation",
+        "emotion",
+        "topic",
     }
     for node in ast.walk(tree):
         if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
             value = node.slice.value
             if isinstance(value, str) and value in forbidden_subscripts:
                 raise AssertionError(f"materializer.py indexes forbidden raw key {value!r}")
+
+
+def test_sanitized_session_schema_carries_exactly_the_runtime_visible_fields():
+    # B23.4: the sanitized runtime Session must carry only what the official
+    # harness's room/document-store construction actually reads --
+    # session_id/timestamp/chronological_rank/turns. No owner_id field either
+    # (every Session only ever exists inside its owning MemorySourceUser.
+    # sessions, so owner identity is bound structurally by the parent
+    # container/type, never duplicated per-session) -- and no evaluator/
+    # dataset annotation of any kind (emotion/topic/summary/observation).
+    from metacom_pm.paper1.data.memory_source import Session
+
+    field_names = {f.name for f in dataclasses.fields(Session)}
+    assert field_names == {"session_id", "timestamp", "chronological_rank", "turns"}
+
+
+def test_sanitized_session_owner_is_reachable_only_through_the_containing_user():
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
+    user = next(u for u in users if u.owner_id == "p1")
+    session = user.sessions[0]
+    assert not hasattr(session, "owner_id")
+    # the only way to attribute a session to an owner is via the parent
+    # MemorySourceUser it was enumerated from
+    assert session in user.sessions

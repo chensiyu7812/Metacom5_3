@@ -62,6 +62,24 @@ def test_candidate_bundle_conforms_to_the_shared_contract(real_users, real_targe
             ).hexdigest()
 
 
+def test_ms_candidate_raw_descriptors_never_carry_emotion_or_topic(real_users, real_targets):
+    # B23: emotion/topic are dataset-author session labels the official
+    # harness's room/document-store construction never reads for any task
+    # type -- they must not appear anywhere in the compiled candidate,
+    # including as a non-content raw_descriptors entry.
+    user = next(u for u in real_users if u.owner_id == "p1")
+    target = _find_target(real_targets, "p1", "p1::p1_conv_10::")
+    bundle = compile_candidate_bundle(user, target)
+    for candidate in bundle[Head.MS]:
+        assert "emotion" not in candidate.raw_descriptors
+        assert "topic" not in candidate.raw_descriptors
+        assert set(candidate.raw_descriptors) == {
+            "session_id",
+            "session_chronological_rank",
+            "turn_count",
+        }
+
+
 def test_mp_ms_candidates_respect_the_owners_full_session_cutoff(real_users, real_targets):
     # B17: cutoff_rank is always the owner's full session count -- verified
     # against the official evaluation harness (see memory_source module
@@ -159,12 +177,9 @@ def test_mp_self_disclosure_pattern_excludes_mood_filler(text, expected):
 
 def _single_session_user(turns: tuple[Turn, ...]) -> MemorySourceUser:
     session = Session(
-        owner_id="synthetic",
         session_id="s1",
         timestamp="2024-01-01",
         chronological_rank=0,
-        emotion="neutral",
-        topic="test",
         turns=turns,
     )
     return MemorySourceUser(
@@ -350,12 +365,9 @@ def test_me_esc1024_suggestions_never_pair_with_the_esc1172_hr_turn():
     # turn. With the cross-turn pattern removed, no pairing across any two
     # sessions can happen at all.
     esc1024 = Session(
-        owner_id="p1",
         session_id="esc1024",
         timestamp="2024-06-30",
         chronological_rank=0,
-        emotion="depression",
-        topic="sleep",
         turns=(
             Turn(idx=1, role="seeker", content="please am not able to get sleep like 6 months now"),
             Turn(idx=14, role="supporter", content="Let try to ask them to be friends."),
@@ -363,12 +375,9 @@ def test_me_esc1024_suggestions_never_pair_with_the_esc1172_hr_turn():
         ),
     )
     esc1172 = Session(
-        owner_id="p1",
         session_id="esc1172",
         timestamp="2024-07-10",
         chronological_rank=1,
-        emotion="anxiety",
-        topic="workplace harassment",
         turns=(
             Turn(
                 idx=4,
@@ -519,8 +528,6 @@ def test_ms_compiler_rejects_a_cache_item_from_the_wrong_owner(real_users, real_
         session_id="esc1024",
         session_chronological_rank=0,
         observed_at="2024-06-30",
-        emotion="neutral",
-        topic="test",
         transcript="seeker: hello",
         turn_count=1,
     )
@@ -537,8 +544,6 @@ def test_ms_compiler_rejects_a_stale_observed_at_cache_item(real_users, real_tar
         session_id="esc1024",
         session_chronological_rank=real_session.chronological_rank,
         observed_at="1999-01-01",  # stale timestamp
-        emotion="neutral",
-        topic="test",
         transcript="seeker: hello",
         turn_count=1,
     )

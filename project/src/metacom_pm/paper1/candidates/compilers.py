@@ -110,8 +110,6 @@ def _ms_candidate(document: SessionDocument) -> CandidateRecord:
         raw_descriptors={
             "session_id": document.session_id,
             "session_chronological_rank": document.session_chronological_rank,
-            "emotion": document.emotion,
-            "topic": document.topic,
             "turn_count": document.turn_count,
         },
     )
