@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-m2-decision-packet-draft-v1",
   "status": "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK",
-  "generated_at": "2026-08-17T00:56:44+09:00",
+  "generated_at": "2026-08-17T01:25:03+09:00",
   "authority": {
     "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
     "route": "A_first_order_factorized",
@@ -54,22 +54,32 @@
     },
     "preoutcome_draft": {
       "path": "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json",
-      "sha256": "05d757d73ea34841179c19f734fa36750cd5d7719463837cae36e0633f61ba98",
+      "sha256": "016935a65f4f45a7206c8f522b17c2bb6fa0aed49cd4c32dc0e6ef44fab7f61f",
       "status": "DRAFT_AWAITING_M1_INTEGRATION"
     },
     "local_environment_attestation": {
       "path": "data/paper1_authority/paper1_local_environment_attestation_v1.json",
-      "sha256": "c374f1c34599d43cbd890eceef1bb4a11ce776a76757757a246a8f498fb76e89",
+      "sha256": "7dfdb022630144eec2a36ce44b9f96f0f498900eadc554282e70648ee501d7fe",
       "status": "ENGINEERING_CAPABLE_NOT_RESEARCH_FROZEN",
       "outcome_calls": 0,
       "tokenizer_provider_parity": "PENDING_M2_FREEZE",
       "retriever_candidate_role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
       "retriever_candidate_roles": {
         "bge_small": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
-        "bge_m3": "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE"
+        "bge_m3": "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE"
       },
       "official_rag_model_id": "BAAI/bge-m3",
-      "official_rag_local_revision_parity": "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION"
+      "official_rag_local_revision_parity": "OFFICIAL_LIBRARY_RUNTIME_ATTESTED_UPSTREAM_MAIN_WEIGHT_EQUIVALENCE_NOT_ESTABLISHED_REVISION_FREEZE_PENDING"
+    },
+    "official_rag_runtime_attestation": {
+      "path": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
+      "sha256": "173d4a57f96323ab2dbacc4e8cfba65c77072beed8387d0bd986c17353c84f00",
+      "status": "ENGINEERING_RUNTIME_ATTESTED_NOT_BASELINE_OR_RETRIEVER_FREEZE",
+      "outcome_calls": 0,
+      "official_arm_only": "ES_MEMEVAL_OFFICIAL_RAG_BASELINE_ENGINEERING_PATH",
+      "typed_memory_method_changed": false,
+      "rs_retriever_selected": false,
+      "local_revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE"
     }
   },
   "rs_findings": {
@@ -214,6 +224,15 @@
     },
     {
       "order": 12,
+      "decision_id": "official_rag_runtime",
+      "item": "ES-MemEval Official RAG baseline runtime",
+      "evidence": "The official-library probe loaded BAAI/bge-m3 through HuggingFaceEmbeddings, built a IndexFlatL2 over session-level Documents, and returned deterministic Top-4 on CUDA. It made 0 outcome calls. The pinned ES-MemEval source names the model but does not pin a Hub revision, so equivalence between the local PR-130 safetensors snapshot and an upstream main weight snapshot is not established.",
+      "recommendation": "Use this environment only for the Official RAG comparison arm. Before formal runs, bind the commit-addressed local BGE-M3 revision with the upstream-unpinned limitation and bind the task-specific official prompt/truncation wrappers. Do not infer MP/MS/ME or RS retriever choices from baseline reproducibility.",
+      "status": "ENGINEERING_RUNTIME_ATTESTED_REVISION_AND_TASK_WRAPPERS_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 13,
       "decision_id": "effect_coding",
       "item": "Multi-metric effect coding",
       "evidence": "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
@@ -222,7 +241,7 @@
       "researcher_approval_required": true
     },
     {
-      "order": 13,
+      "order": 14,
       "decision_id": "generator_stack",
       "item": "Generator and decoding stack",
       "evidence": "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
@@ -231,7 +250,7 @@
       "researcher_approval_required": true
     },
     {
-      "order": 14,
+      "order": 15,
       "decision_id": "repeated_effects",
       "item": "Repeated paired effects",
       "evidence": "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
@@ -240,7 +259,7 @@
       "researcher_approval_required": true
     },
     {
-      "order": 15,
+      "order": 16,
       "decision_id": "primary_policy",
       "item": "PM decision threshold",
       "evidence": "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
@@ -249,7 +268,7 @@
       "researcher_approval_required": false
     },
     {
-      "order": 16,
+      "order": 17,
       "decision_id": "matched_random",
       "item": "Matched-Random construction",
       "evidence": "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
@@ -258,7 +277,7 @@
       "researcher_approval_required": true
     },
     {
-      "order": 17,
+      "order": 18,
       "decision_id": "formal_unlock",
       "item": "Outcome/API unlock",
       "evidence": "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
@@ -277,6 +296,7 @@
     "rs_boundary_horizon",
     "rs_feature_schema",
     "outer_folds",
+    "official_rag_runtime",
     "effect_coding",
     "generator_stack",
     "repeated_effects",

@@ -28,7 +28,7 @@ conda run -n "${PAPER1_ENV_NAME}" env PYTHONNOUSERSITE=1 \
 conda run -n "${PAPER1_ENV_NAME}" env PYTHONNOUSERSITE=1 \
   python -m pip install \
   --constraint "${LOCK_FILE}" \
-  --editable "${PROJECT_DIR}[dev]"
+  --editable "${PROJECT_DIR}[dev,official-rag]"
 
 conda run -n "${PAPER1_ENV_NAME}" env PYTHONNOUSERSITE=1 \
   python -m pip check

@@ -95,6 +95,10 @@ def build() -> PreOutcomeFreezeManifest:
                 "data/paper1_authority/paper1_local_environment_attestation_v1.json",
                 "zero-outcome local runtime, tokenizer, and encoder capability attestation",
             ),
+            (
+                "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
+                "ES-MemEval Official RAG BGE-M3 plus FAISS Top-4 engineering attestation",
+            ),
         )
     )
     return PreOutcomeFreezeManifest(
@@ -112,7 +116,8 @@ def build() -> PreOutcomeFreezeManifest:
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
             "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
-            "reconcile_official_bge_m3_runtime_and_local_safetensors_revision",
+            "freeze_official_rag_local_bge_m3_revision_with_unpinned_upstream_disclosure",
+            "bind_task_specific_official_rag_prompt_and_truncation_wrappers",
             "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
             "freeze_rs_boundary_horizon_and_candidate_mapping",
             "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",

@@ -155,10 +155,13 @@ def verify_import_boundary() -> dict[str, str]:
     prefix = Path(sys.prefix).resolve()
     imports: dict[str, str] = {}
     for module_name in (
+        "faiss",
         "huggingface_hub",
+        "langchain_huggingface",
         "numpy",
         "pydantic",
         "pytest",
+        "sentence_transformers",
         "sklearn",
         "tokenizers",
         "torch",
@@ -292,7 +295,7 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             "probe": embedding_probe,
         },
         "bge_m3_encoder_candidate": {
-            "role": "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE",
+            "role": "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE",
             "repo": BGE_M3_REPO,
             "revision": BGE_M3_REVISION,
             "files": bge_m3_hashes,
@@ -304,9 +307,9 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
                 "session_level_top_k": 4,
                 "revision_in_official_source": None,
                 "official_main_revision_observed": "5617a9f61b028005a4858fdac845db406aefb181",
-                "local_revision_role": "PUBLIC_SAFETENSORS_CONVERSION_REVISION_FOR_SAFE_LOCAL_RUNTIME",
+                "local_revision_role": "COMMIT_ADDRESSED_HUB_PR130_SAFETENSORS_SNAPSHOT_FOR_LOCAL_RUNTIME",
                 "config_bytes_match_official_main": True,
-                "local_revision_parity_status": "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION",
+                "local_revision_parity_status": "OFFICIAL_LIBRARY_RUNTIME_ATTESTED_UPSTREAM_MAIN_WEIGHT_EQUIVALENCE_NOT_ESTABLISHED_REVISION_FREEZE_PENDING",
             },
         },
         "pending_researcher_freeze": [
@@ -314,7 +317,7 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             "resource_renderer_and_token_cap",
             "retriever_encoder_and_revision",
             "official_bge_m3_local_revision_parity",
-            "embedding_pooling_query_and_normalization_contract",
+            "non_official_RAG_retriever_pooling_query_and_normalization_contracts",
             "final_feature_schema",
         ],
     }

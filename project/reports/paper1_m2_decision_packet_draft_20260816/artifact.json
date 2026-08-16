@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "Paper 1 M2 预冻结决策包（零 outcome 草案）",
     "description": "Route A 的 Phase-1 证据、阻断项与待确认 M2 决策。",
-    "generatedAt": "2026-08-17T00:56:44+09:00",
+    "generatedAt": "2026-08-17T01:25:03+09:00",
     "sources": [
       {
         "id": "rs-census",
@@ -137,6 +137,11 @@
         "id": "rq0-contract",
         "label": "Frozen RQ0 Generator contract",
         "path": "sources/rq0_generator_contract.json"
+      },
+      {
+        "id": "official-rag-runtime",
+        "label": "ES-MemEval Official RAG runtime attestation",
+        "path": "sources/official_rag_runtime_attestation.json"
       }
     ],
     "cards": [
@@ -410,7 +415,7 @@
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-17T00:56:44+09:00",
+    "generatedAt": "2026-08-17T01:25:03+09:00",
     "status": "ready",
     "datasets": {
       "headlines": [
@@ -671,6 +676,16 @@
         },
         {
           "order": 12,
+          "decision_id": "official_rag_runtime",
+          "item": "ES-MemEval Official RAG baseline runtime",
+          "evidence": "The official-library probe loaded BAAI/bge-m3 through HuggingFaceEmbeddings, built a IndexFlatL2 over session-level Documents, and returned deterministic Top-4 on CUDA. It made 0 outcome calls. The pinned ES-MemEval source names the model but does not pin a Hub revision, so equivalence between the local PR-130 safetensors snapshot and an upstream main weight snapshot is not established.",
+          "recommendation": "Use this environment only for the Official RAG comparison arm. Before formal runs, bind the commit-addressed local BGE-M3 revision with the upstream-unpinned limitation and bind the task-specific official prompt/truncation wrappers. Do not infer MP/MS/ME or RS retriever choices from baseline reproducibility.",
+          "status": "ENGINEERING_RUNTIME_ATTESTED_REVISION_AND_TASK_WRAPPERS_PENDING",
+          "researcher_approval_required": true,
+          "approval_label": "Required"
+        },
+        {
+          "order": 13,
           "decision_id": "effect_coding",
           "item": "Multi-metric effect coding",
           "evidence": "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
@@ -680,7 +695,7 @@
           "approval_label": "Required"
         },
         {
-          "order": 13,
+          "order": 14,
           "decision_id": "generator_stack",
           "item": "Generator and decoding stack",
           "evidence": "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
@@ -690,7 +705,7 @@
           "approval_label": "Required"
         },
         {
-          "order": 14,
+          "order": 15,
           "decision_id": "repeated_effects",
           "item": "Repeated paired effects",
           "evidence": "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
@@ -700,7 +715,7 @@
           "approval_label": "Required"
         },
         {
-          "order": 15,
+          "order": 16,
           "decision_id": "primary_policy",
           "item": "PM decision threshold",
           "evidence": "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
@@ -710,7 +725,7 @@
           "approval_label": "No"
         },
         {
-          "order": 16,
+          "order": 17,
           "decision_id": "matched_random",
           "item": "Matched-Random construction",
           "evidence": "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
@@ -720,7 +735,7 @@
           "approval_label": "Required"
         },
         {
-          "order": 17,
+          "order": 18,
           "decision_id": "formal_unlock",
           "item": "Outcome/API unlock",
           "evidence": "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
@@ -863,6 +878,11 @@
       "id": "rq0-contract",
       "label": "Frozen RQ0 Generator contract",
       "path": "sources/rq0_generator_contract.json"
+    },
+    {
+      "id": "official-rag-runtime",
+      "label": "ES-MemEval Official RAG runtime attestation",
+      "path": "sources/official_rag_runtime_attestation.json"
     }
   ]
 }

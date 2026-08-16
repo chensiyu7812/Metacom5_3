@@ -30,6 +30,9 @@ PREOUTCOME_DRAFT = PROJECT / "data/paper1_authority/paper1_pre_outcome_freeze_dr
 ENVIRONMENT_ATTESTATION = (
     PROJECT / "data/paper1_authority/paper1_local_environment_attestation_v1.json"
 )
+OFFICIAL_RAG_RUNTIME_ATTESTATION = (
+    PROJECT / "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json"
+)
 PACKET_OUT = PROJECT / "data/paper1_authority/paper1_m2_decision_packet_draft_v1.json"
 REPORT_DIR = PROJECT / "reports/paper1_m2_decision_packet_draft_20260816"
 
@@ -79,6 +82,7 @@ def main() -> int:
     rq0 = _load(RQ0_CONTRACT)
     preoutcome = _load(PREOUTCOME_DRAFT)
     environment = _load(ENVIRONMENT_ATTESTATION)
+    official_rag_runtime = _load(OFFICIAL_RAG_RUNTIME_ATTESTATION)
     generated_at = datetime.now(ZoneInfo("Asia/Tokyo")).replace(microsecond=0).isoformat()
 
     conservative = rs["overlap_policy_sensitivity"]["conservative_existing_project_flag"]
@@ -199,6 +203,15 @@ def main() -> int:
         ),
         _decision(
             12,
+            "official_rag_runtime",
+            "ES-MemEval Official RAG baseline runtime",
+            f"The official-library probe loaded {official_rag_runtime['official_source_binding']['model_id']} through HuggingFaceEmbeddings, built a {official_rag_runtime['runtime']['probe']['faiss_index_class']} over session-level Documents, and returned deterministic Top-{official_rag_runtime['runtime']['probe']['top_k']} on CUDA. It made {official_rag_runtime['outcome_calls']} outcome calls. The pinned ES-MemEval source names the model but does not pin a Hub revision, so equivalence between the local PR-130 safetensors snapshot and an upstream main weight snapshot is not established.",
+            "Use this environment only for the Official RAG comparison arm. Before formal runs, bind the commit-addressed local BGE-M3 revision with the upstream-unpinned limitation and bind the task-specific official prompt/truncation wrappers. Do not infer MP/MS/ME or RS retriever choices from baseline reproducibility.",
+            "ENGINEERING_RUNTIME_ATTESTED_REVISION_AND_TASK_WRAPPERS_PENDING",
+            True,
+        ),
+        _decision(
+            13,
             "effect_coding",
             "Multi-metric effect coding",
             "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
@@ -207,7 +220,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            13,
+            14,
             "generator_stack",
             "Generator and decoding stack",
             "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
@@ -216,7 +229,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            14,
+            15,
             "repeated_effects",
             "Repeated paired effects",
             "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
@@ -225,7 +238,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            15,
+            16,
             "primary_policy",
             "PM decision threshold",
             "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
@@ -234,7 +247,7 @@ def main() -> int:
             False,
         ),
         _decision(
-            16,
+            17,
             "matched_random",
             "Matched-Random construction",
             "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
@@ -243,7 +256,7 @@ def main() -> int:
             True,
         ),
         _decision(
-            17,
+            18,
             "formal_unlock",
             "Outcome/API unlock",
             "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
@@ -325,6 +338,22 @@ def main() -> int:
                 "official_rag_local_revision_parity": environment[
                     "bge_m3_encoder_candidate"
                 ]["official_es_memeval_binding"]["local_revision_parity_status"],
+            },
+            "official_rag_runtime_attestation": {
+                "path": str(OFFICIAL_RAG_RUNTIME_ATTESTATION.relative_to(PROJECT)),
+                "sha256": _sha256(OFFICIAL_RAG_RUNTIME_ATTESTATION),
+                "status": official_rag_runtime.get("status"),
+                "outcome_calls": official_rag_runtime.get("outcome_calls"),
+                "official_arm_only": official_rag_runtime["scope"]["arm"],
+                "typed_memory_method_changed": official_rag_runtime["scope"][
+                    "typed_memory_method_changed"
+                ],
+                "rs_retriever_selected": official_rag_runtime["scope"][
+                    "rs_retriever_selected"
+                ],
+                "local_revision_status": official_rag_runtime[
+                    "local_model_binding"
+                ]["revision_status"],
             },
         },
         "rs_findings": {
@@ -423,6 +452,8 @@ def main() -> int:
         RECONCILIATION: source_dir / "execution_reconciliation.json",
         SCORER_AUDIT: source_dir / "official_scorer_audit.json",
         RQ0_CONTRACT: source_dir / "rq0_generator_contract.json",
+        OFFICIAL_RAG_RUNTIME_ATTESTATION: source_dir
+        / "official_rag_runtime_attestation.json",
         PACKET_OUT: source_dir / "m2_decision_packet.json",
     }
     for source, destination in copies.items():
@@ -546,6 +577,11 @@ def main() -> int:
             "id": "rq0-contract",
             "label": "Frozen RQ0 Generator contract",
             "path": "sources/rq0_generator_contract.json",
+        },
+        {
+            "id": "official-rag-runtime",
+            "label": "ES-MemEval Official RAG runtime attestation",
+            "path": "sources/official_rag_runtime_attestation.json",
         },
     ]
 

@@ -157,6 +157,10 @@ def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
     assert "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl" in paths
     assert "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json" in paths
     assert "data/paper1_authority/paper1_local_environment_attestation_v1.json" in paths
+    assert (
+        "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json"
+        in paths
+    )
     assert "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl" not in paths
     assert manifest["status"] == "DRAFT_AWAITING_M1_INTEGRATION"
     assert manifest["formal_outcome_calls_at_freeze"] == 0
@@ -186,6 +190,11 @@ def test_m2_decision_packet_is_a_locked_draft_with_explicit_researcher_choices()
     assert environment["status"] == "ENGINEERING_CAPABLE_NOT_RESEARCH_FROZEN"
     assert environment["outcome_calls"] == 0
     assert environment["tokenizer_provider_parity"] == "PENDING_M2_FREEZE"
+    official_rag = packet["evidence"]["official_rag_runtime_attestation"]
+    assert official_rag["outcome_calls"] == 0
+    assert official_rag["typed_memory_method_changed"] is False
+    assert official_rag["rs_retriever_selected"] is False
+    assert "official_rag_runtime" in packet["researcher_decision_ids"]
     assert any(
         row["status"] == "BLOCKED_PENDING_B_REPAIR" for row in packet["decisions"]
     )

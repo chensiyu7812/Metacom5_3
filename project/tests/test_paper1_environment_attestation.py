@@ -32,6 +32,9 @@ def test_lock_is_exact_and_contains_required_runtime_packages() -> None:
     assert packages["tokenizers"] == "0.22.2"
     assert packages["scikit-learn"] == "1.9.0"
     assert packages["pytest"] == "8.4.2"
+    assert packages["langchain-huggingface"] == "0.3.1"
+    assert packages["sentence-transformers"] == "5.1.0"
+    assert packages["faiss-cpu"] == "1.12.0"
 
 
 def test_snapshot_hash_verification_is_fail_closed(tmp_path: Path) -> None:
@@ -60,8 +63,8 @@ def test_encoder_roles_distinguish_smoke_challenger_from_official_model_id() -> 
     module = _load_module()
     source = SCRIPT.read_text(encoding="utf-8")
     assert "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE" in source
-    assert "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE" in source
-    assert "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION" in source
+    assert "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE" in source
+    assert "OFFICIAL_LIBRARY_RUNTIME_ATTESTED_UPSTREAM_MAIN_WEIGHT_EQUIVALENCE_NOT_ESTABLISHED_REVISION_FREEZE_PENDING" in source
     assert module.BGE_REPO != module.BGE_M3_REPO
 
 

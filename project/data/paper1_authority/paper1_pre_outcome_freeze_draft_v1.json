@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-pre-outcome-freeze-v1",
   "status": "DRAFT_AWAITING_M1_INTEGRATION",
-  "source_tree_sha": "71dfdab230ebe9250c40c5e9e0408c99873725db",
+  "source_tree_sha": "0c041d6bf1a233e3faf1906f7092aa8f70cf70be",
   "generator": {
     "selection_status": "FINAL",
     "provider": "NVIDIA hosted NIM",
@@ -110,8 +110,13 @@
     },
     {
       "repo_relative_path": "data/paper1_authority/paper1_local_environment_attestation_v1.json",
-      "sha256": "c374f1c34599d43cbd890eceef1bb4a11ce776a76757757a246a8f498fb76e89",
+      "sha256": "7dfdb022630144eec2a36ce44b9f96f0f498900eadc554282e70648ee501d7fe",
       "role": "zero-outcome local runtime, tokenizer, and encoder capability attestation"
+    },
+    {
+      "repo_relative_path": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
+      "sha256": "173d4a57f96323ab2dbacc4e8cfba65c77072beed8387d0bd986c17353c84f00",
+      "role": "ES-MemEval Official RAG BGE-M3 plus FAISS Top-4 engineering attestation"
     }
   ],
   "candidate_bundles": [],
@@ -129,7 +134,8 @@
     "freeze_final_candidate_bundle_per_head",
     "freeze_rs_effect_state_overlap_policy",
     "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
-    "reconcile_official_bge_m3_runtime_and_local_safetensors_revision",
+    "freeze_official_rag_local_bge_m3_revision_with_unpinned_upstream_disclosure",
+    "bind_task_specific_official_rag_prompt_and_truncation_wrappers",
     "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
     "freeze_rs_boundary_horizon_and_candidate_mapping",
     "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",

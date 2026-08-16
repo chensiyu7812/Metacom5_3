@@ -25,6 +25,14 @@ committed. The repository instead stores:
 - `scripts/paper1/10_attest_paper1_environment.py`: fail-closed package,
   import-boundary, tokenizer-byte, and encoder-forward verification.
 
+The `official-rag` project extra pins only the retrieval core needed to
+reproduce ES-MemEval's shipped RAG baseline path: `langchain-huggingface`,
+`sentence-transformers`, `langchain-community`, and `faiss-cpu`. It does not
+install or redefine the MP/MS/ME treatment pipeline, and it does not select an
+RS retriever. `scripts/paper1/13_attest_official_rag_runtime.py` exercises this
+path offline with a commit-addressed local BGE-M3 snapshot and synthetic
+session documents; its output is engineering evidence, not a benchmark result.
+
 The checked-in lock is for the local GPU research runtime. GitHub Actions
 continues to install from `pyproject.toml` on a CPU runner to test the supported
 dependency ranges and portability. Neither path unlocks formal outcomes.
@@ -36,10 +44,12 @@ usage fields, and provider-tokenizer parity remains an M2 freeze item.
 Two BGE snapshots are attested without freezing either one: BGE-small is a
 lightweight English RS challenger and environment smoke-test; BGE-M3 matches
 the model identity used by ES-MemEval's official FAISS session-level Top-4 RAG
-and is the leading typed-memory candidate. The official source does not pin a
-Hub revision. The attested local M3 revision is an immutable public
-``safetensors`` conversion whose config/tokenizer/pooling bytes match the
-current official-model main snapshot; weights/runtime parity, pooling,
-normalization, query, and document contract remain explicit M2
-reconciliation/freeze items. A successful forward pass is engineering evidence
-only, never a retriever-quality verdict.
+baseline and remains a separate typed-memory candidate. The official source
+does not pin a Hub revision. The attested local M3 revision is a
+commit-addressed Hub PR-130 `safetensors` snapshot whose
+config/tokenizer/pooling bytes match the current official-model main snapshot;
+weight equivalence to that unpinned main revision is not asserted. The
+official-library parity probe verifies the actual SentenceTransformer pooling,
+normalization, FAISS construction, and Top-4 API path for engineering use. It
+does not freeze the local revision, establish retrieval quality, alter Typed
+Memory, or assign BGE-M3 to RS.
