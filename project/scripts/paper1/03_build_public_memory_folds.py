@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Build primary exact-evidence group components and the sensitivity slice.
 
-Zero-outcome, Codex-B lane. Reads the same public
-``data/external/evo_emo.json`` targets as
-``02_build_public_memory_census.py`` and writes:
+Zero-outcome, Codex-B lane. Reads the same sanitized runtime artifact for
+target identity as ``02_build_public_memory_census.py`` (B18: via
+``metacom_pm.paper1.data.memory_source.load_sanitized_runtime_users``, never
+``data/external/evo_emo.json`` directly for that part) -- and, separately,
+reads raw ``data/external/evo_emo.json`` through the evaluator/split-only
+``metacom_pm.paper1.data.es_memeval`` loader purely to feed the evidence-only
+join below (B18's other legitimate raw reader). Writes:
 
 - ``es_memeval_public_group_component_assignments_v1.jsonl`` (B14: renamed
   from ``es_memeval_public_fold_assignments_v1.jsonl``, which is deleted):
@@ -46,7 +50,10 @@ sys.path.insert(0, str(PROJECT / "src"))
 
 from metacom_pm.paper1.data.es_memeval import load_users  # noqa: E402
 from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users  # noqa: E402
-from metacom_pm.paper1.data.memory_source import enumerate_targets, parse_memory_source_users  # noqa: E402
+from metacom_pm.paper1.data.memory_source import (  # noqa: E402
+    enumerate_targets,
+    load_sanitized_runtime_users,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 from metacom_pm.paper1.splits import (  # noqa: E402
     GROUP_COMPONENT_STATUS,
@@ -57,6 +64,7 @@ from metacom_pm.paper1.splits import (  # noqa: E402
 from metacom_pm.paper1.splits.evidence import enumerate_split_evidence  # noqa: E402
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
+ARTIFACT_PATH = OUT_DIR / "es_memeval_public_sanitized_runtime_artifact_v1.json"
 LEGACY_FOLD_ASSIGNMENTS_PATH = OUT_DIR / "es_memeval_public_fold_assignments_v1.jsonl"
 
 
@@ -84,14 +92,19 @@ def build() -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
 
-    raw = load_users(PROJECT / "data" / "external" / "evo_emo.json")
-    # B12: two fully independent parses of the same raw JSON. `users`
-    # (sanitized) drives target identity/cutoff, exactly like
-    # 02_build_public_memory_census.py; `evaluator_users` is parsed only to
-    # feed the splits-only evidence reader below and is never passed to
-    # anything that also touches candidates/features.
-    users = parse_memory_source_users(raw)
-    evaluator_users = parse_evaluator_users(raw)
+    if not ARTIFACT_PATH.exists():
+        raise RuntimeError(
+            f"{ARTIFACT_PATH} does not exist -- run "
+            "05_materialize_sanitized_runtime_artifact.py first"
+        )
+    # B12/B18: `users` (sanitized, from the already-materialized artifact)
+    # drives target identity, exactly like 02_build_public_memory_census.py;
+    # `evaluator_users` (raw evo_emo.json, via the evaluator/split-only
+    # es_memeval loader) is parsed only to feed the splits-only evidence
+    # reader below and is never passed to anything that also touches
+    # candidates/features.
+    users = load_sanitized_runtime_users(ARTIFACT_PATH)
+    evaluator_users = parse_evaluator_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
     targets = enumerate_targets(users)
     # B8: evidence is read once, here, via the splits-only evidence module,
     # and threaded through by target_id -- candidates/features never see it.

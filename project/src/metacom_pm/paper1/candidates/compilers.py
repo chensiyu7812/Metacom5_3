@@ -203,20 +203,22 @@ def _validate_session_identity(
         )
 
 
-def _is_strict_past(session_id: str, session_rank: int, target: Target) -> bool:
-    """Strict past = before the cutoff rank AND not one of the target's own
-    premise/context sessions.
+def _is_strict_past(session_rank: int, target: Target) -> bool:
+    """Strict past = before the cutoff rank.
 
-    The rank check alone is not enough: ``cutoff_rank`` is defined as
-    ``max(context session rank) + 1`` so that every context session's own
-    rank is ``< cutoff_rank``. Without the explicit membership exclusion, a
-    target's own current/premise session would qualify as its own "strict
-    past" MS/ME candidate -- i.e. the current session would be offered back
-    to the PM as if it were retrieved memory, which is not memory at all.
+    B17: ``cutoff_rank`` is always the target owner's full session count --
+    verified against the official ES-MemEval evaluation harness that the
+    complete ``dialog_history`` is available (via full-inclusion or
+    retrieval) before every QA/Summary query, and injected directly into the
+    DG supporter's room before "now" begins. There is no per-target "current
+    session" to exclude any more (``Target`` carries no
+    ``context_session_ids`` at all -- excluding a session from a candidate
+    pool based on question-group/related-session identity would itself be
+    the kind of leak this project has repeatedly had to remove, just from
+    the opposite direction).
     """
 
-    assert target.cutoff_rank is not None
-    return session_rank < target.cutoff_rank and session_id not in target.context_session_ids
+    return session_rank < target.cutoff_rank
 
 
 def compile_mp_candidates(
@@ -225,8 +227,6 @@ def compile_mp_candidates(
     disclosures: tuple[ProfileDisclosure, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
     _require_owner_match(user, target)
-    if target.cutoff_rank is None:
-        return ()
     items = disclosures if disclosures is not None else extract_profile_disclosures(user)
     eligible = []
     for d in items:
@@ -237,7 +237,7 @@ def compile_mp_candidates(
             session_chronological_rank=d.session_chronological_rank,
             observed_at=d.observed_at,
         )
-        if _is_strict_past(d.session_id, d.session_chronological_rank, target):
+        if _is_strict_past(d.session_chronological_rank, target):
             eligible.append(d)
     return tuple(_mp_candidate(d) for d in eligible)
 
@@ -248,8 +248,6 @@ def compile_ms_candidates(
     documents: tuple[SessionDocument, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
     _require_owner_match(user, target)
-    if target.cutoff_rank is None:
-        return ()
     items = documents if documents is not None else extract_session_documents(user)
     eligible = []
     for d in items:
@@ -260,7 +258,7 @@ def compile_ms_candidates(
             session_chronological_rank=d.session_chronological_rank,
             observed_at=d.observed_at,
         )
-        if _is_strict_past(d.session_id, d.session_chronological_rank, target):
+        if _is_strict_past(d.session_chronological_rank, target):
             eligible.append(d)
     return tuple(_ms_candidate(d) for d in eligible)
 
@@ -268,16 +266,18 @@ def compile_ms_candidates(
 def _me_is_strict_past(episode: ActionResultEpisode, target: Target) -> bool:
     """Both the action session and the result session must be strict past.
 
-    An episode can span two different sessions (the
-    ``supporter_suggestion_then_reported_result`` pattern allows a strictly
-    later session for the result). Checking only one side would let a
-    not-yet-past session leak in through the other.
+    ``ActionResultEpisode`` keeps separate action/result session fields even
+    though the current ``self_reported_same_turn`` pattern (B11/B20) always
+    has ``action_session_id == result_session_id`` -- see that module's
+    docstring for why. Checking both sides independently means this stays
+    correct if a future round reintroduces a genuinely cross-session,
+    coreference-linked pattern.
     """
 
     return _is_strict_past(
-        episode.action_session_id, episode.action_session_chronological_rank, target
+        episode.action_session_chronological_rank, target
     ) and _is_strict_past(
-        episode.result_session_id, episode.result_session_chronological_rank, target
+        episode.result_session_chronological_rank, target
     )
 
 
@@ -287,8 +287,6 @@ def compile_me_candidates(
     episodes: tuple[ActionResultEpisode, ...] | None = None,
 ) -> tuple[CandidateRecord, ...]:
     _require_owner_match(user, target)
-    if target.cutoff_rank is None:
-        return ()
     items = episodes if episodes is not None else extract_action_result_episodes(user)
     eligible = []
     for e in items:

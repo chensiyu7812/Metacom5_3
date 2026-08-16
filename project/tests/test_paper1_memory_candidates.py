@@ -11,13 +11,12 @@ from metacom_pm.paper1.candidates import (
     compile_ms_candidates,
 )
 from metacom_pm.paper1.contracts import CandidateRecord, Head
-from metacom_pm.paper1.data.es_memeval import load_users
+from metacom_pm.paper1.data.materializer import build_sanitized_runtime_users, load_raw_users
 from metacom_pm.paper1.data.memory_source import (
     MemorySourceUser,
     Session,
     Turn,
     enumerate_targets,
-    parse_memory_source_users,
 )
 from metacom_pm.paper1.memory.me import (
     ActionResultEpisode,
@@ -33,7 +32,7 @@ EVO_PATH = ROOT / "data/external/evo_emo.json"
 
 @pytest.fixture(scope="module")
 def real_users():
-    return parse_memory_source_users(load_users(EVO_PATH))
+    return build_sanitized_runtime_users(load_raw_users(EVO_PATH))
 
 
 @pytest.fixture(scope="module")
@@ -63,7 +62,10 @@ def test_candidate_bundle_conforms_to_the_shared_contract(real_users, real_targe
             ).hexdigest()
 
 
-def test_mp_ms_candidates_never_include_the_current_or_later_session(real_users, real_targets):
+def test_mp_ms_candidates_respect_the_owners_full_session_cutoff(real_users, real_targets):
+    # B17: cutoff_rank is always the owner's full session count -- verified
+    # against the official evaluation harness (see memory_source module
+    # docstring). There is no more per-target "current session" exclusion.
     user = next(u for u in real_users if u.owner_id == "p1")
     target = _find_target(real_targets, "p1", "p1::p1_conv_10::")
     bundle = compile_candidate_bundle(user, target)
@@ -71,9 +73,7 @@ def test_mp_ms_candidates_never_include_the_current_or_later_session(real_users,
     for head in (Head.MP, Head.MS):
         for candidate in bundle[head]:
             rank = candidate.raw_descriptors["session_chronological_rank"]
-            session_id = candidate.raw_descriptors["session_id"]
             assert rank < target.cutoff_rank
-            assert session_id not in target.context_session_ids
 
 
 def test_me_candidates_check_both_action_and_result_sessions_for_strict_past(real_users, real_targets):
@@ -85,21 +85,27 @@ def test_me_candidates_check_both_action_and_result_sessions_for_strict_past(rea
         d = candidate.raw_descriptors
         assert d["action_session_chronological_rank"] < target.cutoff_rank
         assert d["result_session_chronological_rank"] < target.cutoff_rank
-        assert d["action_session_id"] not in target.context_session_ids
-        assert d["result_session_id"] not in target.context_session_ids
         # action must not be temporally after its own result
         assert d["action_session_chronological_rank"] <= d["result_session_chronological_rank"]
 
 
-def test_ms_candidate_pool_excludes_the_current_session_itself(real_users, real_targets):
-    # Regression test: an earlier version's cutoff_rank allowed a target's own
-    # current session to appear as its own "strict past" MS candidate.
+def test_ms_candidate_pool_now_includes_every_session_including_the_current_one(real_users, real_targets):
+    # B17 regression/inversion: an earlier version excluded a target's own
+    # "current" session and treated the very first chronological session as
+    # having zero strict-past material. Verified directly against the
+    # official evaluation harness (ChatRoomBuilder.fill_chat_room /
+    # SessionWiseMemoryInplaceStrategy(AlwaysAllDocumentStore) for QA/
+    # Summary; dg_*_full.py's literal dialog_history replay for DG) that
+    # there is no "current session" concept at all -- the question is asked
+    # in a fresh turn, and the *entire* dialog_history, including whichever
+    # session a QA question happens to be nominally grouped under, is the
+    # available memory universe. p1's very first session now has all 32
+    # sessions (including itself) as MS candidates, not zero.
     user = next(u for u in real_users if u.owner_id == "p1")
     target = _find_target(real_targets, "p1", "p1::esc1024::")  # p1's very first session
     ms_candidates = compile_ms_candidates(user, target)
-    assert all(c.raw_descriptors["session_id"] != "esc1024" for c in ms_candidates)
-    # the first session ever has no strict-past material at all
-    assert ms_candidates == ()
+    assert len(ms_candidates) == len(user.sessions)
+    assert any(c.raw_descriptors["session_id"] == "esc1024" for c in ms_candidates)
 
 
 def test_owner_mismatch_between_user_and_target_raises():
@@ -115,17 +121,23 @@ def test_owner_mismatch_between_user_and_target_raises():
         owner_id="p2",
         primary_group_key="p2::qa::esc1024",
         cutoff_rank=1,
-        context_session_ids=("esc1024",),
+        visible_query_text="does this matter?",
     )
     with pytest.raises(ValueError, match="owner mismatch"):
         compile_mp_candidates(user, mismatched_target)
 
 
-def test_target_with_identity_anomaly_compiles_zero_candidates_for_every_head(real_users, real_targets):
+def test_target_with_identity_anomaly_still_compiles_the_full_candidate_pool(real_users, real_targets):
+    # B17.5: the malformed-group-id anomaly (owner p6's question group
+    # literally named "p7_conv_17") is audit-only. It must not empty the
+    # candidate pool any more -- cutoff/eligibility no longer depend on
+    # resolving question_group_id to any particular session at all.
     anomalous = next(t for t in real_targets if t.identity_anomaly is not None)
     user = next(u for u in real_users if u.owner_id == anomalous.owner_id)
+    assert anomalous.cutoff_rank == len(user.sessions)
     bundle = compile_candidate_bundle(user, anomalous)
-    assert all(candidates == () for candidates in bundle.values())
+    assert bundle[Head.MS] != ()
+    assert len(bundle[Head.MS]) == len(user.sessions)
 
 
 @pytest.mark.parametrize(
@@ -279,17 +291,55 @@ def test_me_action_with_no_stated_outcome_is_a_negative_example():
             "Well, I tried to bring up how I've been feeling undervalued and how it's "
             "affecting my motivation at work.",
         ),
+        (
+            "p3",
+            "p3_conv_10",
+            9,
+            "I tried, but it just ended up becoming another argument. I honestly feel worn "
+            "out trying to explain myself sometimes.",
+        ),
+        (
+            "p14",
+            "p14_conv_9",
+            9,
+            "We've tried talking, but sometimes it just ends in arguments. I think we both "
+            "feel overwhelmed. He's been a bit better about his work hours, which helps, but "
+            "there's still a lot to mend between us.",
+        ),
     ],
 )
 def test_me_bare_help_or_work_word_regressions(owner, session_id, turn_idx, text):
-    # B11 requirement 4: real corpus turns that must never become an ME
+    # B11 requirement 4 + B20: real corpus turns that must never become an ME
     # outcome -- a question ("Will that help?"), "help" as the infinitive
     # object of "tried to" (not a result clause), "work" as a possessed
-    # noun ("his work"), and "work" as a location noun phrase ("at work").
+    # noun ("his work"), "work" as a location noun phrase ("at work"),
+    # "tried" with no action complement ("I tried, but..."), and a
+    # result-relation clause that actually refers to an unrelated subject in
+    # a later sentence ("his work hours, which helps" does not refer back to
+    # "tried talking").
     assert find_self_reported_action_result_spans(text) is None
 
-    user = _single_session_user((Turn(idx=turn_idx, role="seeker", content=text),))
-    assert extract_action_result_episodes(user) == ()
+
+def test_me_cross_sentence_result_is_no_longer_accepted_even_with_a_real_help_word():
+    # B20: the same-sentence restriction is stricter than B11's fix -- a
+    # genuine "helped"/"help" word in a *later* sentence no longer qualifies,
+    # even though it previously passed B11's (looser) whole-turn search.
+    # This retires one previously-accepted case (p8, p8_conv_11 turn 15) as
+    # an intended, honest consequence of the stricter construct, not a bug.
+    text = (
+        "I've tried a few breathing exercises from meditation apps. They help in "
+        "stressful moments, but I often forget to use them consistently."
+    )
+    assert find_self_reported_action_result_spans(text) is None
+
+
+def test_me_action_complement_required_bare_tried_comma_is_rejected():
+    # B20: "tried," with literally nothing between "tried" and the comma
+    # must never qualify, regardless of what follows.
+    assert find_self_reported_action_result_spans("I tried, and it helped.") is None
+    # but a real complement right after "tried" still qualifies
+    spans = find_self_reported_action_result_spans("I tried yoga, and it helped.")
+    assert spans is not None
 
 
 def test_me_esc1024_suggestions_never_pair_with_the_esc1172_hr_turn():
@@ -372,10 +422,38 @@ def test_session_dataclass_never_carries_gold_summary_or_observation_fields():
     assert "observation" not in field_names
 
 
-def test_me_compiler_never_reads_target_cutoff_none_as_unlimited(real_users, real_targets):
+def test_me_compiler_treats_cutoff_rank_as_a_concrete_int_not_none(real_users, real_targets):
+    # B17: cutoff_rank is always a concrete int (the owner's full session
+    # count), never None/"unlimited". Confirmed against the real anomalous
+    # target (owner p6) that cutoff_rank is set and finite -- but p6 has zero
+    # ME-eligible episodes in the real corpus at all (verified directly),
+    # so an empty compile_me_candidates result here would be indistinguishable
+    # from a bug that still gates ME on identity_anomaly. Use a synthetic
+    # anomalous-shaped target with a real ME-eligible session instead, to
+    # prove the anomaly flag does not gate the ME compiler either.
     anomalous = next(t for t in real_targets if t.identity_anomaly is not None)
-    user = next(u for u in real_users if u.owner_id == anomalous.owner_id)
-    assert compile_me_candidates(user, anomalous) == ()
+    real_user = next(u for u in real_users if u.owner_id == anomalous.owner_id)
+    assert isinstance(anomalous.cutoff_rank, int)
+    assert anomalous.cutoff_rank == len(real_user.sessions)
+    assert compile_me_candidates(real_user, anomalous) == ()  # p6 has no ME material, not because of the anomaly
+
+    from metacom_pm.paper1.contracts import TaskType
+    from metacom_pm.paper1.data.memory_source import Target
+
+    episode_user = _single_session_user(
+        (Turn(idx=1, role="seeker", content="I tried meditation and it helped a bit."),)
+    )
+    anomalous_shaped_target = Target(
+        target_id="synthetic::anomalous::1",
+        task_type=TaskType.QA,
+        owner_id="synthetic",
+        primary_group_key="synthetic::qa::s1",
+        cutoff_rank=len(episode_user.sessions),
+        visible_query_text="does this matter?",
+        identity_anomaly="synthetic anomaly for this test only",
+    )
+    episode_candidates = compile_me_candidates(episode_user, anomalous_shaped_target)
+    assert len(episode_candidates) == 1
 
 
 # --- B13: candidate cache identity validation must fail closed -------------

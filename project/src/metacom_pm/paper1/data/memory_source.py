@@ -1,70 +1,119 @@
-"""Sanitized runtime types for ES-MemEval-Public-v1.0.0-1427 (B12).
+"""Sanitized runtime types for ES-MemEval-Public-v1.0.0-1427 (B12/B17/B18).
 
-``MemorySourceUser`` and ``parse_memory_source_users`` are parsed directly
-from the same raw ``data/external/evo_emo.json`` JSON that
-``metacom_pm.paper1.data.es_memeval.parse_users`` reads, but *independently*
--- this module never constructs an ``es_memeval.UserRecord``,
-``QuestionItem``, or ``SummaryItem`` at any point, so there is no code path
-here where QA/Summary ``evidence`` is loaded and then merely not used. It is
-structurally unreachable: this file contains no reference to the word
-``evidence`` in any parsing logic, by construction.
+This module never reads ``data/external/evo_emo.json`` and never imports
+``metacom_pm.paper1.data.es_memeval`` (the evaluator/split-only, raw-JSON,
+evidence-bearing module) or ``metacom_pm.paper1.data.materializer`` (the raw
+JSON -> sanitized artifact builder). It only knows how to (a) hold the
+sanitized types and (b) deserialize them from an *already-materialized*
+JSON artifact file on disk (``load_sanitized_runtime_users``). Candidates,
+memory extraction, and features import exclusively from here -- see
+``metacom_pm.paper1.data.materializer`` module docstring for the one-way
+dependency this enforces (materializer -> memory_source, never the reverse,
+and runtime code -> memory_source only).
 
-This is the *only* module ``candidates/``, ``memory/``, and ``features/``
-may import for a "which user/target am I looking at" type. ``Target`` here
-carries only mechanical identity, the strict-past ``cutoff_rank``, and the
-task's own premise/context session ids (``context_session_ids``) -- never an
-exact-evidence fingerprint or any other gold-derived field; that lives
-exclusively in ``metacom_pm.paper1.splits`` (``GroupComponentAssignment`` /
-``SplitEvidenceRecord``), built from ``metacom_pm.paper1.data.es_memeval``.
+B17 runtime-visibility correction (verified directly against the pinned
+official ES-MemEval source, commit ``692624208acc077b8867698c1d6fcd998
+dee641a``, not assumed):
 
-``enumerate_targets`` and ``validate_es_memeval_identity`` also live here
-(moved from ``es_memeval.py``) because they are part of the outcome-blind
-runtime surface, not the evaluator/split surface.
+- QA (``src/lib/qa/qa_experiment.py``) and Summary
+  (``src/lib/sum/sum_experiment.py``) both call
+  ``ChatRoomBuilder.fill_chat_room(room, data)``, which iterates the
+  seeker's *entire* ``dialog_history`` (every session, unconditionally) and
+  records each one into the room's memory/document store *before* the
+  question is asked -- the "full" experiment variants use
+  ``SessionWiseMemoryInplaceStrategy(AlwaysAllDocumentStore(), False)``
+  (literally "always all sessions"); the "rag" variants retrieve from the
+  same all-sessions store. There is no per-question restriction to "sessions
+  up to this question's own session" anywhere in the official harness --
+  every question in a seeker's file sees the same full-history universe.
+- DG's "full" supporter room builder (``src/exe/dg/dg_gpt4o_full.py``,
+  identical pattern in the other model variants) does
+  ``for history in parameters.data["dialog_history"]: ...
+  ChatRoomBuilder.fill_session(room, history)`` -- the complete
+  ``dialog_history``, verbatim, injected as real chat messages -- followed
+  by a literal ``"The following dialogue happens now."`` marker. The
+  supporter (what our PM stands in for) never receives
+  ``subsequent_topics[].related_sessions``/``topic``/``psychological_
+  condition``/``physical_condition``/``more_details`` at all; those fields
+  are used exclusively to build the *seeker simulator's* system prompt
+  (``src/lib/dg/dg_experiment.py``) -- genuinely simulator/evaluator-only
+  hidden background, confirmed by reading the actual construction code, not
+  inferred from field naming.
+
+Consequently: ``Target.cutoff_rank`` is always the full session count for
+its owner (every session is strict-past for every target of every task
+type), and ``Target`` carries no ``context_session_ids`` field at all
+(removed -- B17.2: question group / Summary group / DG related_sessions/
+topic must never enter the runtime ``Target``, a feature, a retrieval query,
+or a candidate-pool exclusion). The one legitimately runtime-visible piece
+of "current state" is the QA/Summary ``question`` text itself -- not gold
+(it is literally the input the officially-tested system receives), so it is
+carried as ``Target.visible_query_text``. DG has no such text pre-generation
+(``visible_query_text=None``): the real seeker utterance only exists once a
+(currently unauthorized) generation runner actually simulates a turn.
 """
 
 from __future__ import annotations
 
-import hashlib
 import json
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
-from typing import Any
-
-import yaml
+from typing import Any, Literal
 
 from metacom_pm.paper1.contracts import TaskType
-from metacom_pm.paper1.data.es_memeval import (
-    EXPECTED_DG_COUNT,
-    EXPECTED_SESSION_COUNT,
-    EXPECTED_SUMMARY_COUNT,
-    EXPECTED_USER_COUNT,
-    PAPER_QA_COUNT,
-    PUBLIC_ARTIFACT_NAME,
-    PUBLIC_QA_COUNT,
-    TIMELINE_QUESTION_GROUP_ID,
-    Session,
-    Turn,
-    _normalize_text_field,
-    _parse_date,
-    dg_primary_group_key,
-    dg_target_id,
-    load_users,
-    qa_primary_group_key,
-    qa_target_id,
-    summary_primary_group_key,
-    summary_target_id,
-)
+
+TIMELINE_QUESTION_GROUP_ID = "timeline"
 
 
-def _sha_bytes(raw: bytes) -> str:
-    return hashlib.sha256(raw).hexdigest()
+def _parse_date(raw: str) -> date:
+    return date.fromisoformat(raw)
+
+
+@dataclass(frozen=True)
+class Turn:
+    idx: int
+    role: Literal["seeker", "supporter"]
+    content: str
+
+
+@dataclass(frozen=True)
+class Session:
+    """A single strictly-ordered dialog_history session, gold fields excluded.
+
+    Deliberately does not carry the raw ``summary``/``observation`` fields:
+    those are evaluator-authored annotations, not text the seeker or
+    supporter produced, and must never be compiled into MS/ME candidate
+    content (see the historical ESConv ``situation``-field privileged-input
+    leak this project already found and fixed once).
+    """
+
+    owner_id: str
+    session_id: str
+    timestamp: str
+    chronological_rank: int
+    emotion: str
+    topic: str
+    turns: tuple[Turn, ...]
+
+    @property
+    def date(self) -> date:
+        return _parse_date(self.timestamp)
+
+    def seeker_turns(self) -> tuple[Turn, ...]:
+        return tuple(t for t in self.turns if t.role == "seeker")
+
+    def supporter_turns(self) -> tuple[Turn, ...]:
+        return tuple(t for t in self.turns if t.role == "supporter")
 
 
 @dataclass(frozen=True)
 class MemorySourceQuestionItem:
-    """No ``evidence``, no ``question``/``answer`` text -- identity only."""
+    """No ``evidence``. ``question`` is the officially-asked query text --
+    not gold, the actual runtime input (see module docstring)."""
 
     idx: str
+    question: str
 
 
 @dataclass(frozen=True)
@@ -75,38 +124,33 @@ class MemorySourceQuestionGroup:
 
 @dataclass(frozen=True)
 class MemorySourceSummaryItem:
-    """No ``evidence``, no ``question``/``answer``/``theme`` text.
-
-    ``group`` (the dataset's session-cluster premise for this summary
-    target) is kept: it is the task's own premise, not answer-justifying
-    evidence -- see ``Target.context_session_ids`` docstring below.
-    """
+    """No ``evidence``, no ``group`` (B18: Summary group is explicitly
+    forbidden from the sanitized artifact), no ``answer``/``theme``.
+    ``question`` is the officially-asked query text, same rationale as
+    ``MemorySourceQuestionItem``."""
 
     idx: int
-    group: tuple[str, ...]
+    question: str
 
 
 @dataclass(frozen=True)
 class MemorySourceSubsequentTopic:
-    """No narrative fields (``topic``/``more_details``/``physical_condition``/
-    ``psychological_condition``) -- those are DG evaluator-authored premise
-    text. Only ``related_sessions`` (the task's own premise session ids) is
-    kept, same rationale as ``MemorySourceSummaryItem.group``.
-    """
+    """Identity only. No ``related_sessions``, ``topic``, ``psychological_
+    condition``, ``physical_condition``, or ``more_details`` -- B17/B18:
+    confirmed simulator/evaluator-only hidden background, never visible to
+    the system under test."""
 
     idx: int
-    related_sessions: tuple[str, ...]
 
 
 @dataclass(frozen=True)
 class MemorySourceUser:
-    """Sanitized runtime user: public history only, no gold/evidence fields.
+    """Sanitized runtime user: public dialog_history + opaque target identity only.
 
-    Carries ``owner_id`` and the public session/turn/timestamp/topic/emotion
-    history, plus the minimal QA/Summary/DG identity needed to enumerate
-    targets (group/topic ids, item indices, premise session ids) -- never a
-    QA/Summary ``evidence`` set, ``answer``, ``question`` text, session
-    ``summary``/``observation``, or DG narrative field.
+    No QA/Summary ``evidence``, no ``answer``, no session ``summary``/
+    ``observation``, no Summary ``group``, no DG ``related_sessions``/
+    ``topic``/background, no ``basic_info``, no evaluator-authored hints of
+    any kind.
     """
 
     owner_id: str
@@ -122,146 +166,87 @@ class MemorySourceUser:
         raise KeyError(session_id)
 
 
-def parse_memory_source_users(raw: list[dict[str, Any]]) -> tuple[MemorySourceUser, ...]:
-    """Parse raw EvoEmo user records into the sanitized runtime type.
+def qa_target_id(owner_id: str, question_group_id: str, idx: str) -> str:
+    return f"{owner_id}::{question_group_id}::{idx}"
 
-    Independent of ``es_memeval.parse_users`` (see module docstring): reads
-    only ``id``/``timestamp``/``emotion``/``topic``/``dialogue`` (sessions),
-    ``id``/``idx`` (question groups/items), ``idx``/``group`` (summaries),
-    and ``idx``/``related_sessions`` (subsequent topics) from the raw dicts.
-    Never indexes ``"evidence"``, ``"answer"``, ``"question"``, ``"theme"``,
-    ``"summary"``, ``"observation"``, ``"more_details"``,
-    ``"physical_condition"``, or ``"psychological_condition"``.
-    """
 
-    users: list[MemorySourceUser] = []
-    for raw_user in raw:
-        owner_id = raw_user["id"]
-        indexed = list(enumerate(raw_user["dialog_history"]))
-        indexed.sort(key=lambda pair: (_parse_date(pair[1]["timestamp"]), pair[0]))
+def summary_target_id(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::summary::{idx}"
 
-        sessions: list[Session] = []
-        for rank, (_, raw_session) in enumerate(indexed):
-            turns = tuple(
-                Turn(idx=t["idx"], role=t["role"], content=t["content"])
-                for t in raw_session["dialogue"]
-            )
-            sessions.append(
-                Session(
-                    owner_id=owner_id,
-                    session_id=raw_session["id"],
-                    timestamp=raw_session["timestamp"],
-                    chronological_rank=rank,
-                    emotion=_normalize_text_field(raw_session["emotion"]),
-                    topic=_normalize_text_field(raw_session["topic"]),
-                    turns=turns,
-                )
-            )
 
-        question_groups = tuple(
-            MemorySourceQuestionGroup(
-                question_group_id=group["id"],
-                items=tuple(
-                    MemorySourceQuestionItem(idx=str(item["idx"])) for item in group["questions"]
-                ),
-            )
-            for group in raw_user["questions"]
-        )
-        summaries = tuple(
-            MemorySourceSummaryItem(idx=item["idx"], group=tuple(item.get("group", ())))
-            for item in raw_user["summaries"]
-        )
-        subsequent_topics = tuple(
-            MemorySourceSubsequentTopic(
-                idx=item["idx"], related_sessions=tuple(item.get("related_sessions", ()))
-            )
-            for item in raw_user["subsequent_topics"]
-        )
+def dg_target_id(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::dg::{idx}"
 
-        users.append(
-            MemorySourceUser(
-                owner_id=owner_id,
-                sessions=tuple(sessions),
-                question_groups=question_groups,
-                summaries=summaries,
-                subsequent_topics=subsequent_topics,
-            )
-        )
-    return tuple(users)
+
+def qa_primary_group_key(owner_id: str, question_group_id: str) -> str:
+    return f"{owner_id}::qa::{question_group_id}"
+
+
+def summary_primary_group_key(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::summary::{idx}"
+
+
+def dg_primary_group_key(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::dg::{idx}"
 
 
 @dataclass(frozen=True)
 class Target:
     """One QA / Summary / Dialogue-Generation evaluation unit.
 
-    ``cutoff_rank`` is the first session ``chronological_rank`` that is *not*
-    strict-past for this target: candidate compilers must only draw on
-    sessions with ``chronological_rank < cutoff_rank``. Gold answer/summary
-    text is never stored on this record.
+    ``cutoff_rank`` is always ``len(user.sessions)`` for this target's
+    owner: the full ``dialog_history`` is strict-past for every target of
+    every task type (B17, verified against the official evaluation harness
+    -- see module docstring). There is no per-target restriction any more;
+    a session is never excluded from any target's candidate pool.
 
-    ``context_session_ids`` is the task's own *premise* sessions (QA: the
-    session the question is anchored to; DG: ``related_sessions``; Summary:
-    ``group``). Legitimately known at decision time, safe to use for
-    outcome-blind current-context features (e.g. lexical overlap).
+    ``visible_query_text`` is the officially-asked QA/Summary ``question``
+    text (not gold) for QA/Summary targets, and always ``None`` for DG (no
+    static current-dialogue state exists pre-generation -- B17.4).
 
-    This type carries only mechanical identity, ``cutoff_rank``, and
-    ``context_session_ids`` -- no exact-evidence fingerprint, no
-    ``fold_id``/``group_component_id``, no other gold-derived field. Those
-    live exclusively in ``metacom_pm.paper1.splits``
-    (``GroupComponentAssignment`` / ``SplitEvidenceRecord``), built from the
-    evaluator/split-only ``metacom_pm.paper1.data.es_memeval`` module.
-    ``Target`` is constructed here from ``MemorySourceUser`` alone, so a
-    module that only imports ``Target``/``enumerate_targets`` structurally
-    cannot reach evidence at all -- not merely asked not to use it.
+    No exact-evidence fingerprint, ``fold_id``/``group_component_id``, or
+    other gold-derived/split-only field lives here; those are built
+    exclusively in ``metacom_pm.paper1.splits`` from the evaluator/split-only
+    ``metacom_pm.paper1.data.es_memeval`` module.
 
-    ``cutoff_rank`` is ``None`` and ``identity_anomaly`` is set when the raw
-    ``question_group_id`` does not resolve to any session owned by this
-    ``owner_id`` (a real, rare data quirk in the public artifact: e.g. owner
-    ``p6`` has a question group literally named ``p7_conv_17``, another
-    owner's session-id shape). This is a mechanical owner/identity mismatch,
-    not something to silently repair by guessing the intended session, so
-    such targets are kept (to preserve the total public row count) but
-    compile zero candidates and are flagged, never silently resolved.
+    ``identity_anomaly`` is set when the raw ``question_group_id`` does not
+    resolve to any session owned by this ``owner_id`` (a real, rare data
+    quirk in the public artifact: owner ``p6`` has a question group literally
+    named ``p7_conv_17``, another owner's session-id shape). B17.5: this is
+    audit-only -- it no longer gates ``cutoff_rank`` or empties the candidate
+    pool, since cutoff/eligibility no longer depend on resolving the group id
+    to any particular session at all.
     """
 
     target_id: str
     task_type: TaskType
     owner_id: str
     primary_group_key: str
-    cutoff_rank: int | None
-    context_session_ids: tuple[str, ...]
+    cutoff_rank: int
+    visible_query_text: str | None
     identity_anomaly: str | None = None
 
 
 def enumerate_targets(users: tuple[MemorySourceUser, ...]) -> tuple[Target, ...]:
-    """Enumerate every QA / Summary / DG target with its strict-past cutoff.
+    """Enumerate every QA / Summary / DG target.
 
-    Grouping keys follow the frozen mechanical rule (AGENTS.md / execution
-    reconciliation): QA groups by ``owner::question_group_id`` (the whole
-    session's question set, or the per-owner ``timeline`` group, is one
-    primary group); Summary and DG are one target per item, left for the
-    splits layer to union across exact evidence fingerprints rather than
-    folding evidence into the primary key here. Operates entirely on the
-    sanitized ``MemorySourceUser`` -- never touches evidence.
+    Every target's ``cutoff_rank`` is its owner's full session count (B17).
+    ``identity_anomaly`` is still detected and reported (a real data-quality
+    finding worth disclosing) but never changes ``cutoff_rank`` or empties a
+    candidate pool -- see ``Target`` docstring.
     """
 
     targets: list[Target] = []
     for user in users:
-        rank_by_session = {s.session_id: s.chronological_rank for s in user.sessions}
+        known_session_ids = {s.session_id for s in user.sessions}
         n_sessions = len(user.sessions)
 
         for group in user.question_groups:
             identity_anomaly: str | None = None
-            context_session_ids: tuple[str, ...]
-            if group.question_group_id == TIMELINE_QUESTION_GROUP_ID:
-                cutoff_rank = n_sessions
-                context_session_ids = ()
-            elif group.question_group_id in rank_by_session:
-                cutoff_rank = rank_by_session[group.question_group_id] + 1
-                context_session_ids = (group.question_group_id,)
-            else:
-                cutoff_rank = None
-                context_session_ids = ()
+            if (
+                group.question_group_id != TIMELINE_QUESTION_GROUP_ID
+                and group.question_group_id not in known_session_ids
+            ):
                 identity_anomaly = (
                     "question_group_id "
                     f"{group.question_group_id!r} does not resolve to any session "
@@ -276,120 +261,116 @@ def enumerate_targets(users: tuple[MemorySourceUser, ...]) -> tuple[Target, ...]
                         primary_group_key=qa_primary_group_key(
                             user.owner_id, group.question_group_id
                         ),
-                        cutoff_rank=cutoff_rank,
-                        context_session_ids=context_session_ids,
+                        cutoff_rank=n_sessions,
+                        visible_query_text=item.question,
                         identity_anomaly=identity_anomaly,
                     )
                 )
 
         for summary in user.summaries:
-            group_sessions = tuple(sorted(set(summary.group)))
-            referenced_ranks = [rank_by_session[s] for s in group_sessions]
-            cutoff_rank = (max(referenced_ranks) + 1) if referenced_ranks else 0
             targets.append(
                 Target(
                     target_id=summary_target_id(user.owner_id, summary.idx),
                     task_type=TaskType.SUMMARY,
                     owner_id=user.owner_id,
                     primary_group_key=summary_primary_group_key(user.owner_id, summary.idx),
-                    cutoff_rank=cutoff_rank,
-                    context_session_ids=group_sessions,
+                    cutoff_rank=n_sessions,
+                    visible_query_text=summary.question,
                 )
             )
 
         for topic in user.subsequent_topics:
-            referenced_ranks = [rank_by_session[s] for s in topic.related_sessions]
-            cutoff_rank = (max(referenced_ranks) + 1) if referenced_ranks else 0
             targets.append(
                 Target(
                     target_id=dg_target_id(user.owner_id, topic.idx),
                     task_type=TaskType.DIALOGUE_GENERATION,
                     owner_id=user.owner_id,
                     primary_group_key=dg_primary_group_key(user.owner_id, topic.idx),
-                    cutoff_rank=cutoff_rank,
-                    context_session_ids=topic.related_sessions,
+                    cutoff_rank=n_sessions,
+                    visible_query_text=None,
                 )
             )
 
     return tuple(targets)
 
 
-def validate_es_memeval_identity(project_root: Path) -> dict[str, Any]:
-    """Recompute the ES-MemEval-Public-v1.0.0-1427 identity from raw data.
+# --- sanitized artifact (de)serialization -----------------------------------
+#
+# Pure data-shape functions: no file I/O, no raw-JSON knowledge. The
+# materializer (metacom_pm.paper1.data.materializer) is the only module that
+# calls `user_to_dict` while building the artifact; `load_sanitized_runtime_
+# users` is what candidates/memory/features actually call.
 
-    Independently re-derives user/session/QA/Summary/DG counts and QA
-    ``row_id`` values from ``data/external/evo_emo.json`` (via the sanitized
-    ``parse_memory_source_users``, not the evaluator/split loader) and
-    cross-checks them against the already-frozen ``data/v3_authority`` row
-    identity manifest, without depending on that manifest for parsing. Zero
-    outcome reads; raises on any pinned-hash or count drift instead of
-    silently tolerating it.
-    """
 
-    evo_path = project_root / "data" / "external" / "evo_emo.json"
-    config = yaml.safe_load(
-        (project_root / "configs" / "paper1_public_only.yaml").read_text(encoding="utf-8")
-    )
-    expected_sha256 = config["public_sources"]["es_memeval"]["artifact_sha256"]
-    actual_sha256 = _sha_bytes(evo_path.read_bytes())
-    if actual_sha256 != expected_sha256:
-        raise ValueError(
-            "data/external/evo_emo.json no longer matches the pinned "
-            "ES-MemEval-Public-v1.0.0-1427 artifact hash in paper1_public_only.yaml"
-        )
-
-    users = parse_memory_source_users(load_users(evo_path))
-    if len(users) != EXPECTED_USER_COUNT:
-        raise ValueError(f"expected {EXPECTED_USER_COUNT} users, found {len(users)}")
-    total_sessions = sum(len(u.sessions) for u in users)
-    if total_sessions != EXPECTED_SESSION_COUNT:
-        raise ValueError(f"expected {EXPECTED_SESSION_COUNT} sessions, found {total_sessions}")
-
-    targets = enumerate_targets(users)
-    qa_targets = [t for t in targets if t.task_type is TaskType.QA]
-    summary_targets = [t for t in targets if t.task_type is TaskType.SUMMARY]
-    dg_targets = [t for t in targets if t.task_type is TaskType.DIALOGUE_GENERATION]
-    if len(qa_targets) != PUBLIC_QA_COUNT:
-        raise ValueError(f"expected {PUBLIC_QA_COUNT} public QA targets, found {len(qa_targets)}")
-    if len(summary_targets) != EXPECTED_SUMMARY_COUNT:
-        raise ValueError(
-            f"expected {EXPECTED_SUMMARY_COUNT} summary targets, found {len(summary_targets)}"
-        )
-    if len(dg_targets) != EXPECTED_DG_COUNT:
-        raise ValueError(
-            f"expected {EXPECTED_DG_COUNT} dialogue-generation targets, found {len(dg_targets)}"
-        )
-
-    derived_row_ids = {t.target_id for t in qa_targets}
-    result: dict[str, Any] = {
-        "protocol": "pm-paper1-es-memeval-public-identity-validation-v1",
-        "artifact_name": PUBLIC_ARTIFACT_NAME,
-        "source_sha256": actual_sha256,
-        "paper_qa_count": PAPER_QA_COUNT,
-        "public_qa_count": PUBLIC_QA_COUNT,
-        "derived_counts": {
-            "users": len(users),
-            "sessions": total_sessions,
-            "qa": len(qa_targets),
-            "summary": len(summary_targets),
-            "dialogue_generation": len(dg_targets),
-        },
-        "outcome_calls": 0,
+def user_to_dict(user: MemorySourceUser) -> dict[str, Any]:
+    return {
+        "owner_id": user.owner_id,
+        "sessions": [
+            {
+                "session_id": s.session_id,
+                "timestamp": s.timestamp,
+                "chronological_rank": s.chronological_rank,
+                "emotion": s.emotion,
+                "topic": s.topic,
+                "turns": [{"idx": t.idx, "role": t.role, "content": t.content} for t in s.turns],
+            }
+            for s in user.sessions
+        ],
+        "question_groups": [
+            {
+                "question_group_id": g.question_group_id,
+                "items": [{"idx": i.idx, "question": i.question} for i in g.items],
+            }
+            for g in user.question_groups
+        ],
+        "summaries": [{"idx": sm.idx, "question": sm.question} for sm in user.summaries],
+        "subsequent_topics": [{"idx": t.idx} for t in user.subsequent_topics],
     }
 
-    authority_path = (
-        project_root
-        / "data"
-        / "v3_authority"
-        / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
-    )
-    result["authority_manifest_present"] = authority_path.exists()
-    if authority_path.exists():
-        authority_rows = [
-            json.loads(line) for line in authority_path.read_text(encoding="utf-8").splitlines() if line
-        ]
-        authority_row_ids = {row["row_id"] for row in authority_rows}
-        result["authority_row_count"] = len(authority_row_ids)
-        result["row_ids_match_authority_manifest"] = derived_row_ids == authority_row_ids
 
-    return result
+def user_from_dict(payload: dict[str, Any]) -> MemorySourceUser:
+    owner_id = payload["owner_id"]
+    sessions = tuple(
+        Session(
+            owner_id=owner_id,
+            session_id=s["session_id"],
+            timestamp=s["timestamp"],
+            chronological_rank=s["chronological_rank"],
+            emotion=s["emotion"],
+            topic=s["topic"],
+            turns=tuple(Turn(idx=t["idx"], role=t["role"], content=t["content"]) for t in s["turns"]),
+        )
+        for s in payload["sessions"]
+    )
+    question_groups = tuple(
+        MemorySourceQuestionGroup(
+            question_group_id=g["question_group_id"],
+            items=tuple(
+                MemorySourceQuestionItem(idx=i["idx"], question=i["question"]) for i in g["items"]
+            ),
+        )
+        for g in payload["question_groups"]
+    )
+    summaries = tuple(
+        MemorySourceSummaryItem(idx=sm["idx"], question=sm["question"]) for sm in payload["summaries"]
+    )
+    subsequent_topics = tuple(MemorySourceSubsequentTopic(idx=t["idx"]) for t in payload["subsequent_topics"])
+    return MemorySourceUser(
+        owner_id=owner_id,
+        sessions=sessions,
+        question_groups=question_groups,
+        summaries=summaries,
+        subsequent_topics=subsequent_topics,
+    )
+
+
+def load_sanitized_runtime_users(artifact_path: Path) -> tuple[MemorySourceUser, ...]:
+    """Read the already-materialized sanitized runtime artifact from disk.
+
+    This is the *only* way candidates/memory/features should obtain
+    ``MemorySourceUser`` data -- never ``data/external/evo_emo.json``
+    directly, and never through ``metacom_pm.paper1.data.materializer``.
+    """
+
+    payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+    return tuple(user_from_dict(u) for u in payload["users"])

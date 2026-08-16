@@ -1,30 +1,33 @@
 """Public-only ES-MemEval/EvoEmo dataset loaders for Paper-1 memory/RQ2 work.
 
-B12: only the sanitized runtime surface (``memory_source``) is exported here.
-The evaluator/split-only, evidence-bearing types
+B12/B18: only the sanitized runtime surface (``memory_source``) is exported
+here, and it is entirely self-contained -- it never imports
+``es_memeval``/``materializer``, and neither of those is re-exported from
+this package. The evaluator/split-only, evidence-bearing types
 (``UserRecord``/``QuestionItem``/``SummaryItem``/``parse_users``) live in
-``metacom_pm.paper1.data.es_memeval`` and are deliberately *not* re-exported
-from this package -- only ``metacom_pm.paper1.splits.evidence`` should ever
-import them, and it does so via an explicit submodule import
-(``from metacom_pm.paper1.data.es_memeval import ...``), never through here.
+``metacom_pm.paper1.data.es_memeval``; the raw-JSON -> sanitized-artifact
+builder lives in ``metacom_pm.paper1.data.materializer``. Both require an
+explicit submodule import (``from metacom_pm.paper1.data.es_memeval import
+...`` / ``from metacom_pm.paper1.data.materializer import ...``), never
+reachable through this top-level package -- only
+``metacom_pm.paper1.splits.evidence`` should import the former, and only the
+materializer build script should import the latter.
 """
 
-from .es_memeval import PAPER_QA_COUNT, PUBLIC_QA_COUNT, Session, Turn, load_users
 from .memory_source import (
     MemorySourceQuestionGroup,
     MemorySourceQuestionItem,
     MemorySourceSubsequentTopic,
     MemorySourceSummaryItem,
     MemorySourceUser,
+    Session,
     Target,
+    Turn,
     enumerate_targets,
-    parse_memory_source_users,
-    validate_es_memeval_identity,
+    load_sanitized_runtime_users,
 )
 
 __all__ = [
-    "PAPER_QA_COUNT",
-    "PUBLIC_QA_COUNT",
     "MemorySourceQuestionGroup",
     "MemorySourceQuestionItem",
     "MemorySourceSubsequentTopic",
@@ -34,7 +37,5 @@ __all__ = [
     "Target",
     "Turn",
     "enumerate_targets",
-    "load_users",
-    "parse_memory_source_users",
-    "validate_es_memeval_identity",
+    "load_sanitized_runtime_users",
 ]

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """B16: build the transparent MP self-disclosure extraction audit.
 
-Zero-outcome, Codex-B lane. Reads the same public
-``data/external/evo_emo.json`` (via the sanitized loader, same as
-``02_build_public_memory_census.py``) and writes
+Zero-outcome, Codex-B lane. B18: reads *only* the already-materialized
+sanitized runtime artifact (same as ``02_build_public_memory_census.py``),
+never ``data/external/evo_emo.json`` directly. Run
+``05_materialize_sanitized_runtime_artifact.py`` first. Writes
 ``es_memeval_public_mp_extraction_audit_v1.json``: the primary compiler's
 exact current hits (span/source ids) plus per-category coverage counts and
 examples for plausibly-missed seeker self-disclosure (occupation, family
@@ -28,12 +29,12 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
-from metacom_pm.paper1.data.es_memeval import load_users  # noqa: E402
-from metacom_pm.paper1.data.memory_source import parse_memory_source_users  # noqa: E402
+from metacom_pm.paper1.data.memory_source import load_sanitized_runtime_users  # noqa: E402
 from metacom_pm.paper1.features import build_mp_extraction_audit_report  # noqa: E402
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
+ARTIFACT_PATH = OUT_DIR / "es_memeval_public_sanitized_runtime_artifact_v1.json"
 
 
 def _canonical(value: Any) -> str:
@@ -52,7 +53,12 @@ def build() -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
 
-    users = parse_memory_source_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
+    if not ARTIFACT_PATH.exists():
+        raise RuntimeError(
+            f"{ARTIFACT_PATH} does not exist -- run "
+            "05_materialize_sanitized_runtime_artifact.py first"
+        )
+    users = load_sanitized_runtime_users(ARTIFACT_PATH)
     audit = build_mp_extraction_audit_report(users)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

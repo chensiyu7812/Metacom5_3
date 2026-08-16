@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 """Build the public-only zero-outcome memory target enumeration and census.
 
-Zero-outcome, Codex-B (public data / memory / RQ2) lane. Reads only
-``data/external/evo_emo.json`` (ES-MemEval-Public-v1.0.0-1427) through the
-sanitized ``metacom_pm.paper1.data.memory_source`` loader (B12: never
-``metacom_pm.paper1.data.es_memeval``, the evaluator/split-only,
-evidence-bearing module -- this script cannot reach QA/Summary evidence at
-all), compiles MP/MS/ME candidates via ``metacom_pm.paper1.candidates``, and
-writes:
+Zero-outcome, Codex-B (public data / memory / RQ2) lane. B18: reads *only*
+the already-materialized sanitized runtime artifact
+(``es_memeval_public_sanitized_runtime_artifact_v1.json``, written by
+``05_materialize_sanitized_runtime_artifact.py``) via ``metacom_pm.paper1.
+data.memory_source.load_sanitized_runtime_users`` -- never
+``data/external/evo_emo.json`` directly, and never ``metacom_pm.paper1.data.
+es_memeval`` or ``metacom_pm.paper1.data.materializer``. Run
+``05_materialize_sanitized_runtime_artifact.py`` first.
+
+Writes:
 
 - ``es_memeval_public_targets_v1.jsonl``: every QA/Summary/DG target, its
-  strict-past cutoff rank, and its identity-anomaly flag (no gold text).
-- ``es_memeval_public_candidate_census_v1.jsonl`` /
-  ``..._summary_v1.json``: the zero-outcome coverage/count/length/age/
-  already-visible/retrieval-rank/variance census (no PASS/FAIL judgment).
+  (B17: always-full-history) cutoff rank, whether it has a runtime-visible
+  query, and its identity-anomaly flag (no gold text).
+- ``es_memeval_public_candidate_eligible_pool_v1.jsonl`` / ``..._summary_v1
+  .json`` (B19.5 layer 1): the target-invariant MP/MS/ME pool per owner.
+- ``es_memeval_public_candidate_census_v1.jsonl`` / ``..._summary_v1.json``
+  (B19.5 layer 2): per-target scoring against ``visible_query_text`` (no
+  PASS/FAIL judgment, no final-bundle/top-k selection).
 
 Fold construction (exact-evidence primary grouping and the shared-session
 sensitivity slice) is a separate script,
@@ -36,16 +42,22 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
-from metacom_pm.paper1.data.es_memeval import load_users  # noqa: E402
 from metacom_pm.paper1.data.memory_source import (  # noqa: E402
     enumerate_targets,
-    parse_memory_source_users,
-    validate_es_memeval_identity,
+    load_sanitized_runtime_users,
 )
-from metacom_pm.paper1.features import build_census, summarize_census, write_census_manifest  # noqa: E402
+from metacom_pm.paper1.features import (  # noqa: E402
+    build_census,
+    build_eligible_pool,
+    summarize_census,
+    summarize_eligible_pool,
+    write_census_manifest,
+    write_eligible_pool_manifest,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
+ARTIFACT_PATH = OUT_DIR / "es_memeval_public_sanitized_runtime_artifact_v1.json"
 
 
 def _canonical(value: Any) -> str:
@@ -72,22 +84,25 @@ def build() -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
 
-    identity = validate_es_memeval_identity(PROJECT)
-
-    users = parse_memory_source_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
+    if not ARTIFACT_PATH.exists():
+        raise RuntimeError(
+            f"{ARTIFACT_PATH} does not exist -- run "
+            "05_materialize_sanitized_runtime_artifact.py first"
+        )
+    users = load_sanitized_runtime_users(ARTIFACT_PATH)
     targets = enumerate_targets(users)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     target_rows = [
         {
-            "protocol": "pm-paper1-public-memory-target-v1",
+            "protocol": "pm-paper1-public-memory-target-v2",
             "target_id": t.target_id,
             "task_type": t.task_type.value,
             "owner_id": t.owner_id,
             "primary_group_key": t.primary_group_key,
             "cutoff_rank": t.cutoff_rank,
-            "context_session_ids": list(t.context_session_ids),
+            "has_visible_query": t.visible_query_text is not None,
             "identity_anomaly": t.identity_anomaly,
         }
         for t in targets
@@ -95,28 +110,49 @@ def build() -> dict[str, Any]:
     targets_path = OUT_DIR / "es_memeval_public_targets_v1.jsonl"
     targets_sha256 = _write_jsonl(target_rows, targets_path)
 
+    pool_rows = build_eligible_pool(users)
+    pool_summary = summarize_eligible_pool(pool_rows)
+    pool_paths = write_eligible_pool_manifest(pool_rows, pool_summary, OUT_DIR)
+
     census_rows = build_census(users, targets)
     census_summary = summarize_census(census_rows)
     census_paths = write_census_manifest(census_rows, census_summary, OUT_DIR)
 
     report = {
-        "protocol": "pm-paper1-public-memory-census-build-v1",
-        "status": "ZERO_OUTCOME_TARGETS_AND_CENSUS_BUILT",
+        "protocol": "pm-paper1-public-memory-census-build-v2",
+        "status": "ZERO_OUTCOME_TARGETS_ELIGIBLE_POOL_AND_CENSUS_BUILT",
         "outcome_calls": 0,
         "evidence_usage": "NONE_THIS_SCRIPT_NEVER_READS_QA_SUMMARY_EVIDENCE_SEE_03_BUILD_PUBLIC_MEMORY_FOLDS",
-        "es_memeval_identity": identity,
+        "runtime_visibility_basis": (
+            "B17: cutoff_rank is always the owner's full session count and "
+            "visible_query_text is the actual officially-asked QA/Summary "
+            "question, verified directly against the pinned official "
+            "ES-MemEval evaluation harness source (commit "
+            "692624208acc077b8867698c1d6fcd998dee641a) -- see "
+            "metacom_pm.paper1.data.memory_source module docstring."
+        ),
+        "sanitized_artifact_source": {
+            "path": _relpath(ARTIFACT_PATH),
+            "sha256": _sha_text(ARTIFACT_PATH.read_text(encoding="utf-8")),
+        },
         "outputs": {
             "targets": {
                 "path": _relpath(targets_path),
                 "rows": len(target_rows),
                 "sha256": targets_sha256,
             },
+            "eligible_pool_manifest": {
+                "path": _relpath(pool_paths["manifest"]),
+                "rows": len(pool_rows),
+            },
+            "eligible_pool_summary": {"path": _relpath(pool_paths["summary"])},
             "candidate_census_manifest": {
                 "path": _relpath(census_paths["manifest"]),
                 "rows": len(census_rows),
             },
             "candidate_census_summary": {"path": _relpath(census_paths["summary"])},
         },
+        "eligible_pool_summary": pool_summary,
         "census_summary": census_summary,
     }
     return report

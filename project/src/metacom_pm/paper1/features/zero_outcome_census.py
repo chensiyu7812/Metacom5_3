@@ -1,17 +1,35 @@
-"""Zero-outcome candidate census over MP/MS/ME.
+"""Zero-outcome candidate census over MP/MS/ME (B12/B17/B19).
 
-Reports coverage, candidate count, token length, age, already-visible
-redundancy, retrieval rank, and feature variance per (target, head) -- and
-nothing else. No candidate is scored for usefulness, no PASS/FAIL judgment is
-made, and no gold answer/summary/observation field is ever read. This module
-only consumes ``Target.context_session_ids`` (task-premise sessions, safe at
-decision time) for the current-context features. It structurally cannot
-touch QA/Summary answer-justifying evidence at all (B8/B12): this module
-imports only ``MemorySourceUser``/``Target`` from
-``metacom_pm.paper1.data.memory_source``, the sanitized runtime module that
-never constructs an evidence-bearing type in the first place; it never
-imports ``metacom_pm.paper1.data.es_memeval`` or
-``metacom_pm.paper1.splits.evidence`` at all.
+Reports two explicitly separate layers (B19.5):
+
+1. **Eligible candidate pool** (``build_eligible_pool`` /
+   ``es_memeval_public_candidate_eligible_pool_v1.jsonl``): per (owner,
+   head), how many MP/MS/ME candidates exist at all. B17: this is now the
+   *same* pool for every target of that owner, because the full
+   ``dialog_history`` is strict-past for every target regardless of task
+   type (verified against the official evaluation harness -- see
+   ``metacom_pm.paper1.data.memory_source`` module docstring). This layer is
+   target-invariant by construction.
+2. **Per-target scoring** (``build_census`` / the existing
+   ``TargetHeadCensusRow`` rows): outcome-blind lexical-overlap/age/already-
+   visible/retrieval-rank features computed against that target's own
+   ``visible_query_text`` (QA/Summary's actual officially-asked question --
+   not gold) where one exists. DG has no such text pre-generation, so all of
+   those fields are reported as ``None`` (B19.4), never approximated from
+   ``related_sessions``/``topic``.
+
+The **final retrieved bundle / top-k / token cap** is a third, separate
+concept this module does not compute at all -- that remains an M2-freeze
+decision (``FINAL_BUNDLE_STATUS`` below), not something to self-select this
+round.
+
+No candidate is scored for usefulness, no PASS/FAIL judgment is made, and no
+gold answer/summary/observation field is ever read. This module imports only
+``MemorySourceUser``/``Target`` from ``metacom_pm.paper1.data.memory_source``,
+the sanitized runtime module that never constructs an evidence-bearing type
+in the first place; it never imports ``metacom_pm.paper1.data.es_memeval``,
+``metacom_pm.paper1.data.materializer``, or ``metacom_pm.paper1.splits.
+evidence`` at all.
 """
 
 from __future__ import annotations
@@ -34,6 +52,7 @@ from metacom_pm.paper1.memory.mp import extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import extract_session_documents
 
 ALREADY_VISIBLE_LEXICAL_OVERLAP_THRESHOLD = 0.6
+FINAL_BUNDLE_STATUS = "PENDING_M2_FREEZE_NOT_SELECTED_THIS_ROUND"
 
 _WORD_PATTERN = re.compile(r"[a-z]{3,}")
 
@@ -64,9 +83,9 @@ class CandidateFeatureSnapshot:
     candidate_id: str
     token_count: int
     age_days: int | None
-    already_visible: bool
+    already_visible: bool | None
     lexical_overlap: float | None
-    retrieval_rank: int
+    retrieval_rank: int | None
 
 
 @dataclass(frozen=True)
@@ -76,6 +95,7 @@ class TargetHeadCensusRow:
     owner_id: str
     head: Head
     identity_anomaly: bool
+    has_visible_query: bool
     candidate_count: int
     coverage: bool
     token_count_min: int | None
@@ -90,12 +110,13 @@ class TargetHeadCensusRow:
 
     def to_manifest_row(self) -> dict[str, Any]:
         return {
-            "protocol": "pm-paper1-zero-outcome-census-row-v1",
+            "protocol": "pm-paper1-zero-outcome-census-row-v2",
             "target_id": self.target_id,
             "task_type": self.task_type.value,
             "owner_id": self.owner_id,
             "head": self.head.value,
             "identity_anomaly": self.identity_anomaly,
+            "has_visible_query": self.has_visible_query,
             "candidate_count": self.candidate_count,
             "coverage": self.coverage,
             "token_count_min": self.token_count_min,
@@ -120,39 +141,81 @@ class TargetHeadCensusRow:
         }
 
 
-def _anchor_date(user: MemorySourceUser, target: Target) -> date | None:
-    if not target.context_session_ids:
+@dataclass(frozen=True)
+class EligiblePoolRow:
+    """Layer 1 (B19.5): the target-invariant candidate pool for one (owner, head).
+
+    B17: every target of this owner draws on exactly this same pool -- the
+    full ``dialog_history`` is strict-past regardless of task type -- so
+    this is reported once per owner, not once per target.
+    """
+
+    owner_id: str
+    head: Head
+    eligible_candidate_count: int
+
+    def to_manifest_row(self) -> dict[str, Any]:
+        return {
+            "protocol": "pm-paper1-zero-outcome-eligible-pool-row-v1",
+            "owner_id": self.owner_id,
+            "head": self.head.value,
+            "eligible_candidate_count": self.eligible_candidate_count,
+        }
+
+
+def _anchor_date(user: MemorySourceUser) -> date | None:
+    """B19.2: age is relative to the evaluation boundary -- the owner's last
+    ``dialog_history`` timestamp -- the same anchor for every target of that
+    owner (no more per-target "current session")."""
+
+    if not user.sessions:
         return None
-    dates = [user.session_by_id(sid).date for sid in target.context_session_ids]
-    return max(dates)
+    return max(s.date for s in user.sessions)
 
 
-def _context_words(user: MemorySourceUser, target: Target) -> frozenset[str]:
-    if not target.context_session_ids:
-        return frozenset()
-    text_parts = []
-    for session_id in target.context_session_ids:
-        session = user.session_by_id(session_id)
-        text_parts.extend(turn.content for turn in session.turns)
-    return _word_set(" ".join(text_parts))
+def _query_words(target: Target) -> frozenset[str] | None:
+    """B19.3/B19.4: the actual officially-asked question text for QA/Summary;
+    ``None`` for DG (no static current-dialogue state exists pre-generation --
+    never approximated from related_sessions/topic)."""
+
+    if target.visible_query_text is None:
+        return None
+    return _word_set(target.visible_query_text)
 
 
 def _score_candidates(
     candidates: tuple[CandidateRecord, ...],
     *,
     anchor: date | None,
-    context_words: frozenset[str],
+    query_words: frozenset[str] | None,
 ) -> tuple[CandidateFeatureSnapshot, ...]:
+    def _age_days(candidate: CandidateRecord) -> int | None:
+        observed_at = candidate.lineage.observed_at
+        if anchor is None or not observed_at:
+            return None
+        return (anchor - date.fromisoformat(observed_at)).days
+
+    if query_words is None:
+        # B19.4: no static query exists (DG pre-generation) -- overlap/rank
+        # are null/N/A, never computed against related_sessions/topic.
+        return tuple(
+            CandidateFeatureSnapshot(
+                candidate_id=c.candidate_id,
+                token_count=c.token_count,
+                age_days=_age_days(c),
+                already_visible=None,
+                lexical_overlap=None,
+                retrieval_rank=None,
+            )
+            for c in candidates
+        )
+
     scored: list[tuple[float, int, str, CandidateFeatureSnapshot]] = []
     for candidate in candidates:
         candidate_words = _word_set(candidate.content)
-        overlap = _lexical_overlap(candidate_words, context_words)
+        overlap = _lexical_overlap(candidate_words, query_words)
         already_visible = overlap is not None and overlap >= ALREADY_VISIBLE_LEXICAL_OVERLAP_THRESHOLD
-        observed_at = candidate.lineage.observed_at
-        age_days: int | None = None
         chronological_rank = candidate.raw_descriptors.get("session_chronological_rank")
-        if anchor is not None and observed_at:
-            age_days = (anchor - date.fromisoformat(observed_at)).days
         recency_key = chronological_rank if isinstance(chronological_rank, int) else -1
         sort_key = (-(overlap if overlap is not None else -1.0), -recency_key, candidate.candidate_id)
         scored.append(
@@ -163,7 +226,7 @@ def _score_candidates(
                 CandidateFeatureSnapshot(
                     candidate_id=candidate.candidate_id,
                     token_count=candidate.token_count,
-                    age_days=age_days,
+                    age_days=_age_days(candidate),
                     already_visible=already_visible,
                     lexical_overlap=overlap,
                     retrieval_rank=0,
@@ -186,15 +249,14 @@ def _score_candidates(
 
 
 def _row_for_head(
-    user: MemorySourceUser,
     target: Target,
     head: Head,
     candidates: tuple[CandidateRecord, ...],
     *,
     anchor: date | None,
-    context_words: frozenset[str],
 ) -> TargetHeadCensusRow:
-    snapshots = _score_candidates(candidates, anchor=anchor, context_words=context_words)
+    query_words = _query_words(target)
+    snapshots = _score_candidates(candidates, anchor=anchor, query_words=query_words)
     token_counts = [s.token_count for s in snapshots]
     ages = [s.age_days for s in snapshots if s.age_days is not None]
     already_visible_count = sum(1 for s in snapshots if s.already_visible)
@@ -205,6 +267,7 @@ def _row_for_head(
         owner_id=target.owner_id,
         head=head,
         identity_anomaly=target.identity_anomaly is not None,
+        has_visible_query=target.visible_query_text is not None,
         candidate_count=len(snapshots),
         coverage=len(snapshots) > 0,
         token_count_min=min(token_counts) if token_counts else None,
@@ -219,10 +282,21 @@ def _row_for_head(
     )
 
 
+def build_eligible_pool(users: tuple[MemorySourceUser, ...]) -> tuple[EligiblePoolRow, ...]:
+    """Layer 1 (B19.5): the target-invariant MP/MS/ME pool size per owner."""
+
+    rows: list[EligiblePoolRow] = []
+    for user in users:
+        rows.append(EligiblePoolRow(user.owner_id, Head.MP, len(extract_profile_disclosures(user))))
+        rows.append(EligiblePoolRow(user.owner_id, Head.MS, len(extract_session_documents(user))))
+        rows.append(EligiblePoolRow(user.owner_id, Head.ME, len(extract_action_result_episodes(user))))
+    return tuple(rows)
+
+
 def build_census(
     users: tuple[MemorySourceUser, ...], targets: tuple[Target, ...]
 ) -> tuple[TargetHeadCensusRow, ...]:
-    """Build one census row per (target, head) with zero outcome reads."""
+    """Layer 2 (B19.5): per-target scoring against ``visible_query_text``."""
 
     users_by_owner = {u.owner_id: u for u in users}
     # Extraction is per-user and target-independent (see `metacom_pm.paper1.memory`
@@ -231,6 +305,7 @@ def build_census(
     disclosures_by_owner = {u.owner_id: extract_profile_disclosures(u) for u in users}
     documents_by_owner = {u.owner_id: extract_session_documents(u) for u in users}
     episodes_by_owner = {u.owner_id: extract_action_result_episodes(u) for u in users}
+    anchor_by_owner = {u.owner_id: _anchor_date(u) for u in users}
 
     rows: list[TargetHeadCensusRow] = []
     for target in targets:
@@ -242,14 +317,9 @@ def build_census(
             documents=documents_by_owner[target.owner_id],
             episodes=episodes_by_owner[target.owner_id],
         )
-        anchor = _anchor_date(user, target)
-        context_words = _context_words(user, target)
+        anchor = anchor_by_owner[target.owner_id]
         for head, candidates in bundle.items():
-            rows.append(
-                _row_for_head(
-                    user, target, head, candidates, anchor=anchor, context_words=context_words
-                )
-            )
+            rows.append(_row_for_head(target, head, candidates, anchor=anchor))
     return tuple(rows)
 
 
@@ -257,6 +327,32 @@ def _variance(values: list[float]) -> float | None:
     if len(values) < 2:
         return None
     return statistics.pvariance(values)
+
+
+def summarize_eligible_pool(rows: tuple[EligiblePoolRow, ...]) -> dict[str, Any]:
+    per_head: dict[str, dict[str, Any]] = {}
+    for head in (Head.MP, Head.MS, Head.ME):
+        head_rows = [r for r in rows if r.head is head]
+        counts = [r.eligible_candidate_count for r in head_rows]
+        per_head[head.value] = {
+            "owners_total": len(head_rows),
+            "owners_with_any_candidate": sum(1 for c in counts if c > 0),
+            "total_eligible_candidates": sum(counts),
+            "eligible_candidate_count_mean": statistics.fmean(counts) if counts else None,
+            "eligible_candidate_count_max": max(counts, default=None),
+        }
+    return {
+        "protocol": "pm-paper1-zero-outcome-eligible-pool-summary-v1",
+        "outcome_calls": 0,
+        "note": (
+            "Layer 1 of 2 (B19.5): the target-invariant candidate pool per owner. "
+            "Every target of an owner draws on exactly this pool (B17: the full "
+            "dialog_history is strict-past for every target regardless of task "
+            "type). This is NOT the final retrieved bundle/top-k -- that layer "
+            f"is {FINAL_BUNDLE_STATUS}."
+        ),
+        "per_head": per_head,
+    }
 
 
 def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
@@ -288,9 +384,11 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
         target_candidate_edges = sum(r.candidate_count for r in subset)
         unique_candidate_ids = {snap.candidate_id for r in subset for snap in r.candidates}
         owners_with_any_candidate = {r.owner_id for r in subset if r.candidate_count > 0}
+        targets_with_visible_query = sum(1 for r in subset if r.has_visible_query)
         return {
             "targets_total": len(subset),
             "targets_with_coverage": len(covered),
+            "targets_with_visible_query": targets_with_visible_query,
             "coverage_fraction": (len(covered) / len(subset)) if subset else None,
             "unique_candidate_count": len(unique_candidate_ids),
             "owners_with_any_candidate": len(owners_with_any_candidate),
@@ -320,21 +418,29 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
     }
 
     return {
-        "protocol": "pm-paper1-zero-outcome-census-summary-v1",
+        "protocol": "pm-paper1-zero-outcome-census-summary-v2",
         "outcome_calls": 0,
         "targets_total": len(seen_targets),
         "targets_by_task": targets_by_task,
         "identity_anomalies": identity_anomalies,
+        "final_retrieved_bundle_status": FINAL_BUNDLE_STATUS,
+        "superseded_note": (
+            "B19.7: this census supersedes all pre-B17 MP/MS/ME counts (the "
+            "old MP=118/MS=1516/ME=239 edge counts assumed a per-target "
+            "'current session' cutoff that the official ES-MemEval evaluation "
+            "harness does not actually use -- see memory_source module "
+            "docstring). Do not cite the old numbers as freeze evidence."
+        ),
         "interpretation_note": (
-            "targets_with_coverage and target_candidate_edges count "
-            "(target, candidate) pairs -- how many times some candidate was "
-            "offered to some target -- not distinct memories. The same "
-            "candidate is legitimately re-offered to every later strict-"
-            "past-eligible target, so target_candidate_edges is always >= "
-            "unique_candidate_count, sometimes by a wide margin for a small, "
-            "reused candidate pool (see unique_candidate_count and "
-            "owners_with_any_candidate for the distinct-memory view, e.g. "
-            "MP's small self-disclosure pool)."
+            "This is layer 2 of 2 (B19.5) -- per-target scoring against "
+            "visible_query_text (QA/Summary) or null (DG, no static query "
+            "pre-generation). candidate_count/targets_with_coverage here are "
+            "the eligible pool size restated per target (target-invariant per "
+            "owner, B17); see features.build_eligible_pool for the pool layer "
+            "reported once per owner. targets_with_coverage and "
+            "target_candidate_edges count (target, candidate) pairs, not "
+            "distinct memories -- see unique_candidate_count and "
+            "owners_with_any_candidate for the distinct-memory view."
         ),
         "per_head": per_head,
         "per_head_per_task": per_head_per_task,
@@ -357,5 +463,22 @@ def write_census_manifest(
     summary_with_hash["manifest_sha256"] = _sha_text(rendered)
     summary_with_hash["manifest_rows"] = len(rows)
     summary_path = out_dir / "es_memeval_public_candidate_census_summary_v1.json"
+    summary_path.write_text(_canonical(summary_with_hash) + "\n", encoding="utf-8")
+    return {"manifest": manifest_path, "summary": summary_path}
+
+
+def write_eligible_pool_manifest(
+    rows: tuple[EligiblePoolRow, ...], summary: dict[str, Any], out_dir: Path
+) -> dict[str, Path]:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = out_dir / "es_memeval_public_candidate_eligible_pool_v1.jsonl"
+    rendered = "".join(_canonical(row.to_manifest_row()) + "\n" for row in rows)
+    manifest_path.write_text(rendered, encoding="utf-8")
+
+    summary_with_hash = dict(summary)
+    summary_with_hash["manifest_filename"] = manifest_path.name
+    summary_with_hash["manifest_sha256"] = _sha_text(rendered)
+    summary_with_hash["manifest_rows"] = len(rows)
+    summary_path = out_dir / "es_memeval_public_candidate_eligible_pool_summary_v1.json"
     summary_path.write_text(_canonical(summary_with_hash) + "\n", encoding="utf-8")
     return {"manifest": manifest_path, "summary": summary_path}

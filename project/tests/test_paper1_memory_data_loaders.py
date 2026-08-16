@@ -6,12 +6,16 @@ import pytest
 import yaml
 
 from metacom_pm.paper1.contracts import TaskType
-from metacom_pm.paper1.data.es_memeval import PAPER_QA_COUNT, PUBLIC_QA_COUNT, load_users
-from metacom_pm.paper1.data.memory_source import (
-    enumerate_targets,
-    parse_memory_source_users,
+from metacom_pm.paper1.data.es_memeval import load_users
+from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users
+from metacom_pm.paper1.data.materializer import (
+    PAPER_QA_COUNT,
+    PUBLIC_QA_COUNT,
+    build_sanitized_runtime_users,
+    load_raw_users,
     validate_es_memeval_identity,
 )
+from metacom_pm.paper1.data.memory_source import enumerate_targets
 
 ROOT = Path(__file__).resolve().parents[1]
 EVO_PATH = ROOT / "data/external/evo_emo.json"
@@ -33,7 +37,7 @@ def test_paper_vs_public_qa_boundary_is_documented_and_distinct():
 
 
 def test_parsed_counts_match_es_memeval_public_1427_shape():
-    users = parse_memory_source_users(load_users(EVO_PATH))
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
     assert len(users) == 18
     assert sum(len(u.sessions) for u in users) == 401
     targets = enumerate_targets(users)
@@ -69,12 +73,12 @@ def test_identity_validation_rejects_a_drifted_source_hash(tmp_path):
 
 
 def test_sessions_are_resorted_into_true_chronological_order_even_when_raw_order_is_not():
-    raw = load_users(EVO_PATH)
+    raw = load_raw_users(EVO_PATH)
     raw_p3 = next(u for u in raw if u["id"] == "p3")
     raw_timestamps = [s["timestamp"] for s in raw_p3["dialog_history"]]
     assert raw_timestamps != sorted(raw_timestamps), "expected p3 to be a known out-of-order case"
 
-    users = parse_memory_source_users(raw)
+    users = build_sanitized_runtime_users(raw)
     p3 = next(u for u in users if u.owner_id == "p3")
     dates = [s.date for s in p3.sessions]
     assert dates == sorted(dates)
@@ -83,12 +87,12 @@ def test_sessions_are_resorted_into_true_chronological_order_even_when_raw_order
 
 
 def test_topic_and_emotion_normalize_list_or_string_shapes():
-    raw = load_users(EVO_PATH)
+    raw = load_raw_users(EVO_PATH)
     raw_p1 = next(u for u in raw if u["id"] == "p1")
     raw_session = next(s for s in raw_p1["dialog_history"] if s["id"] == "p1_conv_24")
     assert isinstance(raw_session["topic"], list), "expected a known list-typed topic case"
 
-    users = parse_memory_source_users(raw)
+    users = build_sanitized_runtime_users(raw)
     p1 = next(u for u in users if u.owner_id == "p1")
     session = p1.session_by_id("p1_conv_24")
     assert isinstance(session.topic, str)
@@ -96,19 +100,25 @@ def test_topic_and_emotion_normalize_list_or_string_shapes():
 
 
 def test_question_group_with_unresolvable_owner_is_flagged_not_guessed():
-    users = parse_memory_source_users(load_users(EVO_PATH))
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
     targets = enumerate_targets(users)
     anomalies = [t for t in targets if t.identity_anomaly is not None]
     assert len(anomalies) == 5
     assert all(t.owner_id == "p6" for t in anomalies)
-    assert all(t.cutoff_rank is None for t in anomalies)
     assert all("p7_conv_17" in t.identity_anomaly for t in anomalies)
+    # B17.5: the anomaly is audit-only -- it must NOT empty the candidate
+    # pool or zero out cutoff_rank any more (the full dialog_history is
+    # strict-past for every target regardless of question_group_id
+    # resolvability).
+    owner_sessions = {u.owner_id: len(u.sessions) for u in users}
+    assert all(t.cutoff_rank == owner_sessions[t.owner_id] for t in anomalies)
+    assert all(t.cutoff_rank > 0 for t in anomalies)
     # the anomalous group is still counted, preserving the 1427 public total
     assert sum(1 for t in targets if t.task_type is TaskType.QA) == PUBLIC_QA_COUNT
 
 
 def test_target_never_carries_gold_answer_text():
-    users = parse_memory_source_users(load_users(EVO_PATH))
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
     targets = enumerate_targets(users)
     rendered = json.dumps([t.__dict__ for t in targets[:50]], default=str)
     assert "answer" not in rendered
@@ -119,11 +129,9 @@ def test_sanitized_and_evaluator_parses_agree_on_session_identity():
     # never silently diverge on session identity/order, or the strict-past
     # cutoff computed from one would not match the evidence read from the
     # other.
-    from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users
-
-    raw = load_users(EVO_PATH)
-    sanitized = parse_memory_source_users(raw)
-    evaluator = parse_evaluator_users(raw)
+    raw = load_raw_users(EVO_PATH)
+    sanitized = build_sanitized_runtime_users(raw)
+    evaluator = parse_evaluator_users(load_users(EVO_PATH))
     assert {u.owner_id for u in sanitized} == {u.owner_id for u in evaluator}
     sanitized_by_owner = {u.owner_id: u for u in sanitized}
     evaluator_by_owner = {u.owner_id: u for u in evaluator}
@@ -131,3 +139,58 @@ def test_sanitized_and_evaluator_parses_agree_on_session_identity():
         s_sessions = [(s.session_id, s.chronological_rank) for s in sanitized_by_owner[owner_id].sessions]
         e_sessions = [(s.session_id, s.chronological_rank) for s in evaluator_by_owner[owner_id].sessions]
         assert s_sessions == e_sessions
+
+
+def test_every_target_cutoff_rank_is_the_owners_full_session_count():
+    # B17: verified against the official ES-MemEval evaluation harness --
+    # the complete dialog_history is strict-past for every target of every
+    # task type, no per-target restriction.
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
+    targets = enumerate_targets(users)
+    session_count_by_owner = {u.owner_id: len(u.sessions) for u in users}
+    assert all(t.cutoff_rank == session_count_by_owner[t.owner_id] for t in targets)
+
+
+def test_qa_and_summary_targets_carry_the_officially_visible_question_text():
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
+    targets = enumerate_targets(users)
+    qa_and_summary = [t for t in targets if t.task_type in (TaskType.QA, TaskType.SUMMARY)]
+    assert qa_and_summary
+    assert all(isinstance(t.visible_query_text, str) and t.visible_query_text for t in qa_and_summary)
+
+
+def test_dg_targets_have_no_static_visible_query():
+    # B17.4: no static current-dialogue state exists pre-generation for DG.
+    users = build_sanitized_runtime_users(load_raw_users(EVO_PATH))
+    targets = enumerate_targets(users)
+    dg_targets = [t for t in targets if t.task_type is TaskType.DIALOGUE_GENERATION]
+    assert len(dg_targets) == 34
+    assert all(t.visible_query_text is None for t in dg_targets)
+
+
+def test_materializer_never_reads_forbidden_raw_fields():
+    # B17/B18 structural check: the materializer's own parsing logic must
+    # never index the forbidden raw JSON keys.
+    import ast
+    import inspect
+
+    from metacom_pm.paper1.data import materializer
+
+    tree = ast.parse(inspect.getsource(materializer))
+    forbidden_subscripts = {
+        "evidence",
+        "answer",
+        "theme",
+        "group",
+        "related_sessions",
+        "more_details",
+        "physical_condition",
+        "psychological_condition",
+        "basic_info",
+        "observation",
+    }
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
+            value = node.slice.value
+            if isinstance(value, str) and value in forbidden_subscripts:
+                raise AssertionError(f"materializer.py indexes forbidden raw key {value!r}")

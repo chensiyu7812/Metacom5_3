@@ -3,17 +3,24 @@
 ``QuestionItem.evidence`` and ``SummaryItem.evidence`` encode which sessions
 justify the *correct answer* -- gold-adjacent information that must never
 reach a candidate feature or a current-context anchor (see
-``metacom_pm.paper1.data.es_memeval.Target``'s docstring for why: it would be
-a backdoor peek at what the gold answer needs). B8 physically isolates this:
-``Target``, the object handed to ``candidates/`` and ``features/``, carries
-no evidence field at all, so those modules cannot read it even by accident.
-This module is the sole place that extracts it, and only for exact-evidence
-fold-fingerprint construction in ``metacom_pm.paper1.splits``.
+``metacom_pm.paper1.data.memory_source.Target``'s docstring for why: it would
+be a backdoor peek at what the gold answer needs). B8/B18 physically isolate
+this: ``Target``, the object handed to ``candidates/`` and ``features/``,
+carries no evidence field at all -- and, as of B17, no ``context_session_ids``
+or any other group/related-session field either, since the full
+``dialog_history`` is now known to be strict-past for every target
+regardless of task type (verified against the official evaluation harness).
+This module is the sole place that reads QA/Summary ``evidence`` or DG
+``related_sessions``, and only for exact-evidence fold-fingerprint
+construction in ``metacom_pm.paper1.splits`` -- neither ever reaches
+``Target``, a candidate, or a feature.
 
-DG's ``related_sessions`` is not gold-adjacent in the same sense -- it is the
-task's own premise (already exposed on ``Target.context_session_ids``, see
-that docstring) -- but it is re-exposed here too, unchanged, purely so the
-fold-fingerprint step has one evidence-like source per task type to union on.
+DG's ``related_sessions`` is not gold-adjacent in the same sense as QA/
+Summary ``evidence`` -- it is simulator/evaluator-only hidden background
+(confirmed by reading the official DG harness's seeker-simulator
+construction code; the supporter under test never receives it at all) -- but
+it is read here too, unchanged, purely so the fold-fingerprint step has one
+evidence-like reference source per task type to union on.
 """
 
 from __future__ import annotations
