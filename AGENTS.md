@@ -2,18 +2,21 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-2. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-3. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-4. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-5. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-6. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-7. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+2. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+3. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+4. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+5. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+6. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+7. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+8. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+9. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
 ## Authority precedence
 
+- **The execution reconciliation override is highest precedence** for Generator identity, benefit-only soft targets, removal of empirical PASS gates, treatment-delivery validity, exact-evidence cross-fitting, the fixed 0.5 primary policy rule, and per-head claim reporting.
 - **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
 - **Final evaluation / measurement hierarchy** is governed by `PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md` and its machine-readable contract. Official ESC-Eval / ES-MemEval capability metrics outrank all internally defined Quality/Risk/Function rubrics.
 - **Implementation-level feature schema, leakage controls, CI migration, freeze items, and execution order** are governed by `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md` and its machine-readable contract.
@@ -54,7 +57,8 @@ The same applies to any old synthetic 80-user/11-user derivatives, old 256 effec
 - Interaction-aware/background-conditioned learning is future work only.
 - `ineligible` is deterministic OFF and not a learned negative example.
 - Primary learner remains four standardized L2-regularized logistic-regression heads.
-- Full-scale effect generation is blocked until the public-source repeated-effect qualification passes.
+- Repeated effects are retained as soft/binomial supervision and uncertainty; they do not create a 70%/agreement/uncertain-fraction PASS gate.
+- Cost is not part of the training label or loss. The pre-frozen primary decision rule is eligible plus predicted positive-effect probability greater than 0.5.
 
 ## Feature rule — outcome-blind raw observables only
 
@@ -86,8 +90,13 @@ The active feature schema is defined in `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_202
 - Formal RS effect construction must use leave-current-dialogue-out / fold-exclusive Strategy Bank retrieval.
 - Memory training/effect/candidate source: public ES-MemEval/EvoEmo only, with outcome-isolated cross-fitting.
 - Runtime PM never sees evaluation gold, outcome, reference, or future sessions.
-- Same-user longitudinal adaptation is allowed only with target/fact-event cluster outcome isolation.
+- Same-user longitudinal adaptation is allowed with target-outcome isolation. Primary folds use exact mechanical target/evidence lineage; broad semantic/shared-session components are sensitivity only.
 - No synthetic rescue for a sparse or failed head.
+
+## Treatment validity
+
+- Hard invalidation is limited to mechanical delivery/identity/integrity failures: compiler/schema failure, missing or mismatched assigned resource, wrong owner, future/gold leakage, arm/seed/prompt/candidate mismatch, terminal empty generation, or unparseable official scorer.
+- If the assigned resource was correctly delivered, Generator non-use, misuse, omission, or harm is a valid realized end-to-end effect. Semantic adoption is diagnostic only and must not filter rows.
 
 ## Immediate implementation order
 
@@ -96,11 +105,11 @@ Do not start formal PM training first.
 1. **Repository-to-contract audit** against the execution blueprint and official-evaluation-priority authority.
 2. Phase 0: disconnect obsolete synthetic active paths/configs/tests; remove MP_PREFERENCE/background-bit/utility-like active features; add fail-closed CI guards; establish a public-only Paper-1 config; audit that internal Q/R is not wired as a formal benchmark verdict.
 3. Phase 1: run a **public-only zero-outcome coverage audit** on ESConv + ES-MemEval/EvoEmo.
-4. Phase 2: before any formal effect outcome is opened, freeze candidate bundles/top-k/token caps, exact feature schema, cross-fit, formal N, task-specific comparators/margins, cost threshold, Generator full-stack manifest, qualification sample, reviewer overlap and API call plan.
-5. Phase 3: run public-source 32-state repeated-effect qualification.
-6. If it passes, generate final public-source effect labels and train four L2 heads.
-7. Freeze thresholds/baselines/matched-random schedules.
-8. Run RQ1, RQ2, and component-minus ablations using official benchmark outcomes as the capability verdict.
+4. Phase 2: before any formal effect outcome is opened, freeze candidate bundles/top-k/token caps, exact feature schema, exact mechanical cross-fit grouping, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, primary threshold, matched-random construction and API call plan.
+5. Generate repeated matched effects and preserve ON wins/OFF wins/ties/uncertain as soft supervision; no empirical qualification PASS gate.
+6. Train four L2 heads with fold-specific OOF policy predictions for formal memory evaluation.
+7. Freeze baselines/matched-random schedules and run RQ1, RQ2, and component-minus using official outcomes.
+8. Report realized N, coverage, official metric contrasts, Cost and clustered uncertainty without a binary Paper-1 PASS/FAIL or head-count gate.
 
 ## Drift prevention
 

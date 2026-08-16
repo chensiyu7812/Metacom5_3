@@ -6,6 +6,8 @@
 
 训练合同：`project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
+> **执行覆盖说明：** 本文件中的 CostWorthIt、70%/0.75/10% qualification、96/128 minimum、10% cost 与 2-of-3 head 条款，已由 `PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md` 明确覆盖，不再是 active gate。
+
 > **方法名：Policy Manager（PM），不是 MetaCom。**
 >
 > **Generator 已冻结。** 后续 effect generation、PM、baseline 与正式 evaluation 使用同一 Generator / base prompt / mode / decoding / seed schedule；若更换 Generator，effect labels 必须重做。

@@ -1,0 +1,70 @@
+protocol: pm-paper1-public-only-config-v1
+status: PRE_OUTCOME_ACTIVE
+authority:
+  reconciliation: project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json
+  human: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
+method: Policy Manager
+route: A_first_order_factorized
+components: [RS, MP, MS, ME]
+public_sources:
+  esconv:
+    role: RS training and Strategy Bank
+    expected_sha256: aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af
+  esc_eval:
+    role: RQ1 evaluation only
+    commit: 9ad46e7b5e247e824dae4633910eaa82be668beb
+  es_memeval:
+    role: MP/MS/ME candidate, effect and RQ2 evaluation
+    artifact_name: ES-MemEval-Public-v1.0.0-1427
+    commit: 692624208acc077b8867698c1d6fcd998dee641a
+    artifact_sha256: f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420
+generator:
+  selection_status: FINAL
+  provider: NVIDIA hosted NIM
+  model: meta/llama-3.1-8b-instruct
+  paper1_full_stack_manifest: PENDING_ZERO_OUTCOME_FREEZE
+learning:
+  model: standardized_L2_logistic_regression_per_head
+  target: probability_of_positive_marginal_effect
+  canonical_background: all_other_optional_components_off
+  primary_threshold: 0.5
+  cost_in_label_or_loss: false
+  empirical_pass_gates: false
+cross_fit:
+  claim: within_benchmark_cross_fitted_longitudinal_adaptation
+  qa_group: owner_plus_question_group_id
+  summary_group: owner_plus_summary_target_plus_exact_evidence_reference_fingerprint
+  dialogue_generation_group: owner_plus_topic_scenario_id
+  cross_task_union: exact_canonical_target_or_evidence_set_fingerprint_only
+  broad_semantic_or_shared_session_union: strict_sensitivity_only
+treatment:
+  validity_surface: deterministic_delivery_not_semantic_adoption
+  semantic_nonuse_is_valid_effect: true
+formal_evaluation:
+  rq1_arms: [R0, RS_Fixed_High, RS_Matched_Random, Learned_RS_PM]
+  rq2_arms: [No_Memory, Full_History, Official_RAG_Top4, Typed_Fixed_High, Typed_Matched_Random, Learned_Typed_Memory_PM]
+  official_metrics_only: true
+  cost_separate: true
+  binary_paper_pass_fail: false
+outcome_lock:
+  status: LOCKED_PRE_ZERO_OUTCOME_FREEZE
+  formal_effect_calls_allowed: false
+  formal_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
+  engineering_cap_check_allowed: true
+pending_zero_outcome_freeze:
+  - candidate_bundle_design
+  - exact_feature_schema
+  - exact_fold_manifest
+  - task_specific_effect_anchors
+  - generator_step2_runtime_manifest
+  - seed_schedule
+  - matched_random_construction
+  - api_call_plan
+forbidden_active_inputs:
+  - project/data/pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1/
+  - MP_PREFERENCE
+  - background_component_bits
+  - old_MS_fallback
+  - old_256_effect_labels
+  - synthetic_rescue

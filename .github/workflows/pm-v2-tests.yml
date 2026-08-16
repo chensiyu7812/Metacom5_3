@@ -11,6 +11,7 @@ on:
       - "codex/**"
       - "agent/**"
       - "pm-v1.5-*"
+      - "work/paper1-*"
     paths:
       - "project/**"
       - ".github/workflows/pm-v2-tests.yml"
@@ -37,7 +38,12 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
-      - name: Run blocking V5.3 clean-release suite
+      - name: Run blocking public-only Paper-1 suite
+        run: pytest -q tests/test_paper1_*.py
+      - name: Validate Paper-1 integration base and outcome lock
+        run: python scripts/paper1/00_validate_integration_base.py
+      - name: Run legacy V5.3 clean-release suite (diagnostic only)
+        continue-on-error: true
         run: pytest -q tests/test_v1_5_v5_3_*.py
       - name: Run complete historical suite (diagnostic)
         continue-on-error: true

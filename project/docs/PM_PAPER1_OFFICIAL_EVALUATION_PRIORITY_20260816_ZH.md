@@ -2,6 +2,8 @@
 
 状态：`ACTIVE / MEASUREMENT PRIORITY OVERRIDE / PAPER-1`
 
+> **执行覆盖说明：** 本文件第 5 节旧的 `benefit worth added cost` 训练标签逻辑已由 `PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md` 覆盖；Cost 不进入 active Paper-1 label/loss。
+
 本文件只解决一个容易再次漂移的问题：**Paper 1 最终到底由谁判成绩。**
 
 > **正式论文的能力结论，以先行研究已经定义并公开使用的 ESC-Eval / ES-MemEval 官方指标为主。**
