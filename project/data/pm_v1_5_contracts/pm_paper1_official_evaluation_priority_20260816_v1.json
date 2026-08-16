@@ -1,0 +1,71 @@
+{
+  "protocol": "pm-paper1-official-evaluation-priority-20260816-v1",
+  "status": "ACTIVE_MEASUREMENT_PRIORITY_OVERRIDE",
+  "human_authority": "project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md",
+  "final_capability_verdict": {
+    "RQ1": "ESC-Eval_official_metrics_only",
+    "RQ2": "ES-MemEval_official_metrics_only",
+    "posthoc_internal_composite_forbidden": true,
+    "posthoc_metric_cherry_picking_forbidden": true
+  },
+  "RQ1_official_metrics": [
+    "Fluency",
+    "Expression",
+    "Empathy",
+    "Information",
+    "Skillful",
+    "Humanoid",
+    "Overall"
+  ],
+  "RQ2_official_metrics": {
+    "QA": ["F1", "BERTScore", "LLM_as_Judge", "Recall_at_k", "nDCG_at_k"],
+    "Summarization": ["ROUGE_1", "ROUGE_2", "ROUGE_L", "Event_Precision", "Event_Recall", "Event_F1", "LLM_Score"],
+    "DialogueGeneration": ["Observation_Recall", "Weighted_Score", "LT_Memory", "Personalization", "Emotional_Support"]
+  },
+  "objective_efficiency": {
+    "role": "orthogonal_system_efficiency_not_capability_score",
+    "fields": [
+      "generator_input_tokens",
+      "resource_injected_tokens",
+      "output_tokens",
+      "total_tokens",
+      "retrieval_calls",
+      "embedding_calls",
+      "median_latency",
+      "p95_latency",
+      "retry_failure",
+      "recoverable_api_cost"
+    ],
+    "may_appear_in_main_results": true,
+    "may_compensate_material_official_metric_degradation": false
+  },
+  "internal_quality_risk": {
+    "role": ["training_weak_supervision", "measurement_qualification", "supplemental_diagnostics"],
+    "paper_primary_metric": false,
+    "formal_benchmark_runner_primary_scorer": false,
+    "main_capability_table_score": false,
+    "quality_dimensions": ["Goal_Fulfillment", "Emotional_Support_Value", "Useful_Contribution", "Clarity_Naturalness"],
+    "risk_dimensions": ["explicit_boundary_violation", "grounding_personal_evidence_violation", "excessive_directiveness_interaction_burden"],
+    "composite_score_forbidden": true
+  },
+  "engineering_integrity": {
+    "role": "fail_closed_validity_audit_not_capability_score",
+    "events": [
+      "wrong_owner",
+      "future_leakage",
+      "gold_reference_leakage",
+      "stale_superseded_misuse",
+      "scaffold_exposure",
+      "treatment_execution_failure",
+      "candidate_action_mismatch"
+    ]
+  },
+  "training_label_logic_scope": {
+    "eligible_and_measured_benefit_and_no_disqualifying_violation_and_cost_worth_it": "training_label_derivation_only",
+    "is_paper_evaluation_formula": false
+  },
+  "memory_training_preference": "anchor_to_ES-MemEval_task_specific_official_outcomes_when_available",
+  "RS_training_exception": "internal_blind_pairwise_scorer_allowed_for_weak_supervision_because_ESConv_has_no_RS_ON_OFF_gold",
+  "formal_success_rule": "official_benchmark_outcomes_first_plus_separate_objective_efficiency_tradeoff",
+  "codex_guard": "any_internal_QR_used_as_Paper1_final_verdict_is_Phase0_conflict"
+}
