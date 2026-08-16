@@ -55,6 +55,15 @@ def test_semantic_nonuse_does_not_invalidate_correct_delivery():
     assert trace.mechanically_valid is True
 
 
+def test_off_treatment_can_record_prompt_contamination_as_technical_failure():
+    trace = TreatmentDeliveryTrace(
+        assignment=TreatmentAssignment.OFF,
+        status=TreatmentDeliveryStatus.TECHNICAL_FAILURE,
+        mechanical_violations=("off_prompt_contains_resource",),
+    )
+    assert trace.mechanically_valid is False
+
+
 def test_eligibility_is_mechanical_and_strict():
     assert EligibilityDecision(status=EligibilityStatus.ELIGIBLE).hard_reasons == ()
     with pytest.raises(ValidationError):

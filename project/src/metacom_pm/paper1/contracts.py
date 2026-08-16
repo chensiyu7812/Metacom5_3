@@ -128,10 +128,12 @@ class TreatmentDeliveryTrace(StrictContract):
     @model_validator(mode="after")
     def validate_delivery(self) -> "TreatmentDeliveryTrace":
         if self.assignment is TreatmentAssignment.OFF:
-            if self.status is not TreatmentDeliveryStatus.NOT_ASSIGNED:
-                raise ValueError("OFF must use not_assigned delivery status")
+            if self.status is TreatmentDeliveryStatus.DELIVERED:
+                raise ValueError("OFF cannot use delivered status")
             if self.expected_resource_sha256 or self.delivered_resource_sha256:
                 raise ValueError("OFF cannot contain a delivered resource")
+            if self.status is TreatmentDeliveryStatus.NOT_ASSIGNED and self.mechanical_violations:
+                raise ValueError("valid OFF cannot carry mechanical violations")
         if self.assignment is TreatmentAssignment.ON and self.status is TreatmentDeliveryStatus.DELIVERED:
             if not self.expected_resource_sha256 or not self.delivered_resource_sha256:
                 raise ValueError("delivered ON requires both resource hashes")
@@ -139,6 +141,8 @@ class TreatmentDeliveryTrace(StrictContract):
                 raise ValueError("delivered resource identity mismatch")
             if self.mechanical_violations:
                 raise ValueError("delivered ON cannot carry mechanical violations")
+        if self.status is TreatmentDeliveryStatus.TECHNICAL_FAILURE and not self.mechanical_violations:
+            raise ValueError("technical failure requires a mechanical violation")
         return self
 
     @property
