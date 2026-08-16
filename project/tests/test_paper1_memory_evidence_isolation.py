@@ -66,6 +66,10 @@ from metacom_pm.paper1.features import (
     mp_extraction_audit,
     zero_outcome_census,
 )
+from metacom_pm.paper1.features import candidate_definition_decision_surface
+from metacom_pm.paper1.features import me_cross_turn_proposal_audit
+from metacom_pm.paper1.features import mp_conversation_proposal_audit
+from metacom_pm.paper1.features import mp_source_ontology_audit
 from metacom_pm.paper1.features.zero_outcome_census import CandidateFeatureSnapshot, EligiblePoolRow
 from metacom_pm.paper1.memory import me as memory_me
 from metacom_pm.paper1.memory import mp as memory_mp
@@ -129,7 +133,22 @@ RUNTIME_SURFACE_MODULES = (
     mp_extraction_audit,
     me_candidate_audit,
     feature_readiness_audit,
+    mp_conversation_proposal_audit,
+    me_cross_turn_proposal_audit,
 )
+
+# B29.1: mp_source_ontology_audit.py is the ONE deliberate, sanctioned
+# reader of raw basic_info in this lane (see its own module docstring) --
+# it must NEVER appear in RUNTIME_SURFACE_MODULES above (it would correctly
+# fail the forbidden-access scan, since basic_info is forbidden for the
+# sanitized runtime surface). candidate_definition_decision_surface.py
+# deliberately combines it with the other two proposal audits (that is its
+# whole purpose, B29.4), so it transitively reads basic_info too and is
+# likewise excluded from RUNTIME_SURFACE_MODULES -- only checked for not
+# leaking basic_info reads INTO the true candidate/feature pipeline below,
+# never expected to be basic_info-blind itself.
+BASIC_INFO_READER_MODULE = mp_source_ontology_audit
+BASIC_INFO_TRANSITIVE_CONSUMER_MODULE = candidate_definition_decision_surface
 
 
 def _forbidden_accesses(module) -> list[str]:
@@ -350,3 +369,37 @@ def test_sanitized_artifact_sha256_is_deterministic_across_rebuilds(tmp_path):
     sha_a = hashlib.sha256(out_a.read_bytes()).hexdigest()
     sha_b = hashlib.sha256(out_b.read_bytes()).hexdigest()
     assert sha_a == sha_b
+
+
+def test_basic_info_reader_module_is_never_imported_by_the_runtime_surface():
+    # B29.1: mp_source_ontology_audit.py deliberately reads raw basic_info
+    # for its own diagnostic MP-ontology-B comparison -- it must never leak
+    # into the actual candidate/feature runtime surface via an import.
+    for module in RUNTIME_SURFACE_MODULES:
+        tree = ast.parse(inspect.getsource(module))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom) and node.module == "metacom_pm.paper1.features.mp_source_ontology_audit":
+                raise AssertionError(f"{module.__name__} imports mp_source_ontology_audit: {ast.dump(node)}")
+
+
+def test_basic_info_reader_module_itself_never_appears_in_runtime_surface_modules():
+    assert BASIC_INFO_READER_MODULE not in RUNTIME_SURFACE_MODULES
+    assert BASIC_INFO_TRANSITIVE_CONSUMER_MODULE not in RUNTIME_SURFACE_MODULES
+
+
+def test_only_mp_source_ontology_audit_indexes_basic_info_anywhere_in_features():
+    # A structural sweep of every other features/ submodule (not just the
+    # curated RUNTIME_SURFACE_MODULES list) confirms basic_info is indexed
+    # nowhere else in this lane.
+    import metacom_pm.paper1.features as features_root
+    import pkgutil
+
+    package_path = features_root.__path__
+    for _finder, name, _ispkg in pkgutil.iter_modules(package_path):
+        if name in ("mp_source_ontology_audit", "__init__"):
+            continue
+        submodule = __import__(f"metacom_pm.paper1.features.{name}", fromlist=[name])
+        tree = ast.parse(inspect.getsource(submodule))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
+                assert node.slice.value != "basic_info", f"{name} indexes basic_info"
