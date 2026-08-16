@@ -154,17 +154,19 @@ class Target:
     sessions with ``chronological_rank < cutoff_rank``. Gold answer/summary
     text is never stored on this record.
 
-    Two different reference-id fields are kept deliberately separate:
+    ``context_session_ids`` is the task's own *premise* sessions (QA: the
+    session the question is anchored to; DG: ``related_sessions``; Summary:
+    ``group``). Legitimately known at decision time, safe to use for
+    outcome-blind current-context features (e.g. lexical overlap).
 
-    - ``context_session_ids``: the task's own *premise* sessions (QA: the
-      session the question is anchored to; DG: ``related_sessions``; Summary:
-      ``group``). Legitimately known at decision time, safe to use for
-      outcome-blind current-context features (e.g. lexical overlap).
-    - ``evidence_refs``: the *answer-justifying* reference set (QA/Summary
-      ``evidence``). This is gold-adjacent -- it encodes which sessions the
-      correct answer actually depends on -- so it is reserved strictly for
-      the splits layer's exact-evidence fold fingerprint and must never be
-      used to compute a candidate feature or a current-context anchor.
+    This type deliberately carries no gold-adjacent evidence field (B8: no
+    ``evidence_refs``, ``answer``, ``gold``, ``reference``, or ``observation``
+    data). QA/Summary's answer-justifying ``evidence`` sets are gold-adjacent
+    -- they encode which sessions the correct answer actually depends on --
+    and are physically isolated in ``metacom_pm.paper1.splits.evidence``,
+    the only module allowed to read them. Any module importing ``Target``
+    (``candidates/``, ``features/``) structurally cannot access that data at
+    all, rather than merely being asked not to use it.
 
     ``cutoff_rank`` is ``None`` and ``identity_anomaly`` is set when the raw
     ``question_group_id`` does not resolve to any session owned by this
@@ -181,9 +183,32 @@ class Target:
     owner_id: str
     primary_group_key: str
     cutoff_rank: int | None
-    evidence_refs: tuple[str, ...]
     context_session_ids: tuple[str, ...]
     identity_anomaly: str | None = None
+
+
+def qa_target_id(owner_id: str, question_group_id: str, idx: str) -> str:
+    return f"{owner_id}::{question_group_id}::{idx}"
+
+
+def summary_target_id(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::summary::{idx}"
+
+
+def dg_target_id(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::dg::{idx}"
+
+
+def qa_primary_group_key(owner_id: str, question_group_id: str) -> str:
+    return f"{owner_id}::qa::{question_group_id}"
+
+
+def summary_primary_group_key(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::summary::{idx}"
+
+
+def dg_primary_group_key(owner_id: str, idx: int) -> str:
+    return f"{owner_id}::dg::{idx}"
 
 
 def load_users(path: Path) -> list[dict[str, Any]]:
@@ -310,12 +335,13 @@ def enumerate_targets(users: tuple[UserRecord, ...]) -> tuple[Target, ...]:
             for item in group.items:
                 targets.append(
                     Target(
-                        target_id=f"{user.owner_id}::{group.question_group_id}::{item.idx}",
+                        target_id=qa_target_id(user.owner_id, group.question_group_id, item.idx),
                         task_type=TaskType.QA,
                         owner_id=user.owner_id,
-                        primary_group_key=f"{user.owner_id}::qa::{group.question_group_id}",
+                        primary_group_key=qa_primary_group_key(
+                            user.owner_id, group.question_group_id
+                        ),
                         cutoff_rank=cutoff_rank,
-                        evidence_refs=item.evidence,
                         context_session_ids=context_session_ids,
                         identity_anomaly=identity_anomaly,
                     )
@@ -324,22 +350,19 @@ def enumerate_targets(users: tuple[UserRecord, ...]) -> tuple[Target, ...]:
         for summary in user.summaries:
             # Cutoff/context anchoring uses only `group` (the dataset's session
             # cluster premise for this summary target), never `evidence` (the
-            # exact answer-justifying session set). `evidence` is reserved for
-            # the splits layer's exact-evidence fold fingerprint only, so it
-            # never leaks into cutoff/context/feature computation -- otherwise
-            # a candidate-vs-"current context" overlap feature would be a
-            # backdoor peek at which sessions the gold answer actually needs.
+            # exact answer-justifying session set). `evidence` is never read in
+            # this module at all -- see metacom_pm.paper1.splits.evidence,
+            # the only place allowed to read it, for the fold fingerprint.
             group_sessions = tuple(sorted(set(summary.group)))
             referenced_ranks = [rank_by_session[s] for s in group_sessions]
             cutoff_rank = (max(referenced_ranks) + 1) if referenced_ranks else 0
             targets.append(
                 Target(
-                    target_id=f"{user.owner_id}::summary::{summary.idx}",
+                    target_id=summary_target_id(user.owner_id, summary.idx),
                     task_type=TaskType.SUMMARY,
                     owner_id=user.owner_id,
-                    primary_group_key=f"{user.owner_id}::summary::{summary.idx}",
+                    primary_group_key=summary_primary_group_key(user.owner_id, summary.idx),
                     cutoff_rank=cutoff_rank,
-                    evidence_refs=summary.evidence,
                     context_session_ids=group_sessions,
                 )
             )
@@ -349,12 +372,11 @@ def enumerate_targets(users: tuple[UserRecord, ...]) -> tuple[Target, ...]:
             cutoff_rank = (max(referenced_ranks) + 1) if referenced_ranks else 0
             targets.append(
                 Target(
-                    target_id=f"{user.owner_id}::dg::{topic.idx}",
+                    target_id=dg_target_id(user.owner_id, topic.idx),
                     task_type=TaskType.DIALOGUE_GENERATION,
                     owner_id=user.owner_id,
-                    primary_group_key=f"{user.owner_id}::dg::{topic.idx}",
+                    primary_group_key=dg_primary_group_key(user.owner_id, topic.idx),
                     cutoff_rank=cutoff_rank,
-                    evidence_refs=topic.related_sessions,
                     context_session_ids=topic.related_sessions,
                 )
             )

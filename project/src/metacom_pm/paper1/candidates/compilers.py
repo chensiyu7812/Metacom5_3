@@ -121,19 +121,35 @@ def _me_candidate(episode: ActionResultEpisode) -> CandidateRecord:
     return _build_candidate(
         head=Head.ME,
         candidate_id=(
-            f"me::{episode.owner_id}::{episode.session_id}:"
-            f"{episode.action_turn.idx}-{episode.result_turn.idx}"
+            f"me::{episode.owner_id}::{episode.pattern}::"
+            f"{episode.action_session_id}:{episode.action_turn.idx}:"
+            f"{episode.action_span[0]}-{episode.action_span[1]}->"
+            f"{episode.result_session_id}:{episode.result_turn.idx}:"
+            f"{episode.result_span[0]}-{episode.result_span[1]}"
         ),
         content=episode.content,
         source=SOURCE_ME,
         owner_id=episode.owner_id,
+        # requirement: lineage carries both span IDs plus char offsets/hashes
         source_record_ids=episode.source_record_ids,
-        observed_at=episode.observed_at,
+        observed_at=episode.result_observed_at,
         raw_descriptors={
-            "session_id": episode.session_id,
-            "session_chronological_rank": episode.session_chronological_rank,
+            "me_pattern": episode.pattern,
+            "action_session_id": episode.action_session_id,
+            "action_session_chronological_rank": episode.action_session_chronological_rank,
             "action_turn_idx": episode.action_turn.idx,
+            "action_span_start": episode.action_span[0],
+            "action_span_end": episode.action_span[1],
+            "action_span_sha256": episode.action_span_sha256,
+            "result_session_id": episode.result_session_id,
+            "result_session_chronological_rank": episode.result_session_chronological_rank,
             "result_turn_idx": episode.result_turn.idx,
+            "result_span_start": episode.result_span[0],
+            "result_span_end": episode.result_span[1],
+            "result_span_sha256": episode.result_span_sha256,
+            # census/eligibility use this as the candidate's own recency
+            # anchor: the result is what makes the episode retrievable memory
+            "session_chronological_rank": episode.result_session_chronological_rank,
         },
     )
 
@@ -180,6 +196,22 @@ def compile_ms_candidates(
     return tuple(_ms_candidate(d) for d in eligible)
 
 
+def _me_is_strict_past(episode: ActionResultEpisode, target: Target) -> bool:
+    """Both the action session and the result session must be strict past.
+
+    An episode can span two different sessions (the
+    ``supporter_suggestion_then_reported_result`` pattern allows a strictly
+    later session for the result). Checking only one side would let a
+    not-yet-past session leak in through the other.
+    """
+
+    return _is_strict_past(
+        episode.action_session_id, episode.action_session_chronological_rank, target
+    ) and _is_strict_past(
+        episode.result_session_id, episode.result_session_chronological_rank, target
+    )
+
+
 def compile_me_candidates(
     user: UserRecord,
     target: Target,
@@ -189,7 +221,7 @@ def compile_me_candidates(
     if target.cutoff_rank is None:
         return ()
     items = episodes if episodes is not None else extract_action_result_episodes(user)
-    eligible = [e for e in items if _is_strict_past(e.session_id, e.session_chronological_rank, target)]
+    eligible = [e for e in items if _me_is_strict_past(e, target)]
     return tuple(_me_candidate(e) for e in eligible)
 
 

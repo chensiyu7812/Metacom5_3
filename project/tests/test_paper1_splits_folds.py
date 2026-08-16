@@ -7,9 +7,17 @@ from metacom_pm.paper1.splits import (
     build_shared_session_sensitivity_components,
     canonical_evidence_fingerprint,
 )
+from metacom_pm.paper1.splits.evidence import enumerate_split_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 EVO_PATH = ROOT / "data/external/evo_emo.json"
+
+
+def _load():
+    users = parse_users(load_users(EVO_PATH))
+    targets = enumerate_targets(users)
+    evidence_records = enumerate_split_evidence(users)
+    return users, targets, evidence_records
 
 
 def test_canonical_evidence_fingerprint_is_order_independent_and_deduplicated():
@@ -20,9 +28,8 @@ def test_canonical_evidence_fingerprint_is_order_independent_and_deduplicated():
 
 
 def test_every_target_within_a_primary_group_shares_one_fold_id():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    assignments = build_fold_assignments(targets)
+    _users, targets, evidence_records = _load()
+    assignments = build_fold_assignments(targets, evidence_records)
 
     fold_by_group: dict[str, set[str]] = defaultdict(set)
     for assignment in assignments:
@@ -31,9 +38,8 @@ def test_every_target_within_a_primary_group_shares_one_fold_id():
 
 
 def test_qa_targets_in_the_same_session_group_share_a_fold():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    assignments = {a.target_id: a for a in build_fold_assignments(targets)}
+    _users, targets, evidence_records = _load()
+    assignments = {a.target_id: a for a in build_fold_assignments(targets, evidence_records)}
 
     p1_esc1024_targets = [t for t in targets if t.target_id.startswith("p1::esc1024::")]
     assert len(p1_esc1024_targets) >= 2
@@ -42,10 +48,9 @@ def test_qa_targets_in_the_same_session_group_share_a_fold():
 
 
 def test_cross_task_union_only_fires_on_byte_identical_evidence_sets():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    assignments = build_fold_assignments(targets)
-    target_by_id = {t.target_id: t for t in targets}
+    _users, targets, evidence_records = _load()
+    assignments = build_fold_assignments(targets, evidence_records)
+    evidence_by_target = {r.target_id: r.evidence_refs for r in evidence_records}
 
     fold_tasks: dict[str, set[str]] = defaultdict(set)
     fold_members: dict[str, set[str]] = defaultdict(set)
@@ -59,7 +64,7 @@ def test_cross_task_union_only_fires_on_byte_identical_evidence_sets():
     for fold_id in mixed_task_folds:
         member_ids = fold_members[fold_id]
         fingerprints = {
-            canonical_evidence_fingerprint(target_by_id[tid].evidence_refs) for tid in member_ids
+            canonical_evidence_fingerprint(evidence_by_target[tid]) for tid in member_ids
         }
         # every member of a cross-task-unioned fold must share the identical
         # non-null evidence fingerprint that caused the union
@@ -68,37 +73,36 @@ def test_cross_task_union_only_fires_on_byte_identical_evidence_sets():
 
 
 def test_a_known_summary_and_dg_pair_unions_on_identical_evidence():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    assignments = {a.target_id: a for a in build_fold_assignments(targets)}
+    _users, targets, evidence_records = _load()
+    assignments = {a.target_id: a for a in build_fold_assignments(targets, evidence_records)}
+    evidence_by_target = {r.target_id: r.evidence_refs for r in evidence_records}
 
-    summary_target = next(t for t in targets if t.target_id == "p1::summary::5")
-    dg_target = next(t for t in targets if t.target_id == "p1::dg::1")
-    assert summary_target.evidence_refs == dg_target.evidence_refs
-    assert assignments[summary_target.target_id].fold_id == assignments[dg_target.target_id].fold_id
+    summary_target_id = "p1::summary::5"
+    dg_target_id = "p1::dg::1"
+    assert evidence_by_target[summary_target_id] == evidence_by_target[dg_target_id]
+    assert assignments[summary_target_id].fold_id == assignments[dg_target_id].fold_id
 
 
 def test_fold_id_is_deterministic_across_repeated_runs():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    first = {a.target_id: a.fold_id for a in build_fold_assignments(targets)}
-    second = {a.target_id: a.fold_id for a in build_fold_assignments(targets)}
+    _users, targets, evidence_records = _load()
+    first = {a.target_id: a.fold_id for a in build_fold_assignments(targets, evidence_records)}
+    second = {a.target_id: a.fold_id for a in build_fold_assignments(targets, evidence_records)}
     assert first == second
 
 
 def test_fold_assignment_always_excludes_target_outcome_from_fit():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)[:20]
-    assignments = build_fold_assignments(targets)
+    _users, targets, evidence_records = _load()
+    targets = targets[:20]
+    evidence_records = tuple(r for r in evidence_records if r.target_id in {t.target_id for t in targets})
+    assignments = build_fold_assignments(targets, evidence_records)
     assert all(a.target_outcome_excluded_from_fit for a in assignments)
     assert all(a.all_arms_seeds_repeats_bound for a in assignments)
 
 
 def test_shared_session_sensitivity_components_are_strictly_broader_than_primary_folds():
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    primary = build_fold_assignments(targets)
-    sensitivity = build_shared_session_sensitivity_components(targets, users)
+    users, targets, evidence_records = _load()
+    primary = build_fold_assignments(targets, evidence_records)
+    sensitivity = build_shared_session_sensitivity_components(targets, users, evidence_records)
 
     n_primary_folds = len({a.fold_id for a in primary})
     n_sensitivity_components = len(sensitivity)
@@ -114,9 +118,8 @@ def test_shared_session_sensitivity_components_are_strictly_broader_than_primary
 
 def test_primary_fold_assignment_is_untouched_by_broad_shared_session_grouping():
     # rule 6: the broad sensitivity grouping must never influence fold_id.
-    users = parse_users(load_users(EVO_PATH))
-    targets = enumerate_targets(users)
-    before = {a.target_id: a.fold_id for a in build_fold_assignments(targets)}
-    build_shared_session_sensitivity_components(targets, users)
-    after = {a.target_id: a.fold_id for a in build_fold_assignments(targets)}
+    users, targets, evidence_records = _load()
+    before = {a.target_id: a.fold_id for a in build_fold_assignments(targets, evidence_records)}
+    build_shared_session_sensitivity_components(targets, users, evidence_records)
+    after = {a.target_id: a.fold_id for a in build_fold_assignments(targets, evidence_records)}
     assert before == after

@@ -5,9 +5,11 @@ redundancy, retrieval rank, and feature variance per (target, head) -- and
 nothing else. No candidate is scored for usefulness, no PASS/FAIL judgment is
 made, and no gold answer/summary/observation field is ever read. This module
 only consumes ``Target.context_session_ids`` (task-premise sessions, safe at
-decision time) for the current-context features; it never touches
-``Target.evidence_refs`` (reserved for the splits layer's exact-evidence fold
-fingerprint -- see ``metacom_pm.paper1.data.es_memeval.Target`` docstring).
+decision time) for the current-context features. It structurally cannot
+touch QA/Summary answer-justifying evidence at all (B8): ``Target`` -- the
+only object this module imports from ``data.es_memeval`` -- carries no
+evidence field; that data is physically isolated in
+``metacom_pm.paper1.splits.evidence``, which this module never imports.
 """
 
 from __future__ import annotations

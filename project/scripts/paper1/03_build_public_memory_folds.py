@@ -34,6 +34,7 @@ from metacom_pm.paper1.splits import (  # noqa: E402
     build_fold_assignments,
     build_shared_session_sensitivity_components,
 )
+from metacom_pm.paper1.splits.evidence import enumerate_split_evidence  # noqa: E402
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
 
@@ -58,10 +59,13 @@ def build() -> dict[str, Any]:
 
     users = parse_users(load_users(PROJECT / "data" / "external" / "evo_emo.json"))
     targets = enumerate_targets(users)
+    # B8: evidence is read once, here, via the splits-only evidence module,
+    # and threaded through by target_id -- candidates/features never see it.
+    evidence_records = enumerate_split_evidence(users)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    fold_assignments = build_fold_assignments(targets)
+    fold_assignments = build_fold_assignments(targets, evidence_records)
     fold_rows = [
         {
             "protocol": "pm-paper1-public-memory-fold-assignment-v1",
@@ -78,7 +82,7 @@ def build() -> dict[str, Any]:
     folds_path = OUT_DIR / "es_memeval_public_fold_assignments_v1.jsonl"
     folds_sha256 = _write_jsonl(fold_rows, folds_path)
 
-    sensitivity = build_shared_session_sensitivity_components(targets, users)
+    sensitivity = build_shared_session_sensitivity_components(targets, users, evidence_records)
     sensitivity_rows = [
         {
             "protocol": "pm-paper1-public-memory-shared-session-sensitivity-v1",

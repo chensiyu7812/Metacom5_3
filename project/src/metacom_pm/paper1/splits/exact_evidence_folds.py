@@ -15,6 +15,13 @@ reconciliation doc). This module never unions targets just because they touch
 overlapping sessions -- that broader connected-component notion exists only
 as ``build_shared_session_sensitivity_components``, explicitly kept out of
 ``fold_id`` and usable for sensitivity analysis only (rule 6).
+
+B8: gold-adjacent evidence is consumed here exclusively via
+``metacom_pm.paper1.splits.evidence.SplitEvidenceRecord`` -- this module
+never reads ``Target.evidence_refs`` (that field no longer exists on
+``Target`` at all) or any raw ``.evidence``/``.related_sessions`` field
+directly; everything is joined in by ``target_id`` from records built by
+``enumerate_split_evidence``.
 """
 
 from __future__ import annotations
@@ -24,6 +31,7 @@ from dataclasses import dataclass
 
 from metacom_pm.paper1.contracts import FoldAssignment
 from metacom_pm.paper1.data.es_memeval import Target, UserRecord
+from metacom_pm.paper1.splits.evidence import SplitEvidenceRecord
 
 
 def canonical_evidence_fingerprint(refs: tuple[str, ...]) -> str | None:
@@ -71,15 +79,29 @@ def _fold_id_for_component(members: tuple[str, ...]) -> str:
     return f"fold::{digest}"
 
 
-def build_fold_assignments(targets: tuple[Target, ...]) -> tuple[FoldAssignment, ...]:
-    """One ``FoldAssignment`` per target, with exact-evidence-only cross-group union."""
+def build_fold_assignments(
+    targets: tuple[Target, ...], evidence_records: tuple[SplitEvidenceRecord, ...]
+) -> tuple[FoldAssignment, ...]:
+    """One ``FoldAssignment`` per target, with exact-evidence-only cross-group union.
+
+    ``evidence_records`` must come from
+    ``metacom_pm.paper1.splits.evidence.enumerate_split_evidence`` over the
+    same ``users``/``targets`` -- joined here by ``target_id``, never read
+    off ``Target`` itself (B8: ``Target`` carries no evidence field).
+    """
 
     uf = _UnionFind()
     all_group_keys = {t.primary_group_key for t in targets}
     for key in all_group_keys:
         uf.find(key)
 
-    fingerprint_by_target = {t.target_id: canonical_evidence_fingerprint(t.evidence_refs) for t in targets}
+    evidence_by_target = {r.target_id: r for r in evidence_records}
+    fingerprint_by_target = {
+        target.target_id: canonical_evidence_fingerprint(
+            evidence_by_target[target.target_id].evidence_refs
+        )
+        for target in targets
+    }
     groups_by_fingerprint: dict[str, set[str]] = {}
     for target in targets:
         fingerprint = fingerprint_by_target[target.target_id]
@@ -127,9 +149,11 @@ class SharedSessionSensitivityComponent:
     target_ids: tuple[str, ...]
 
 
-def _session_footprint(target: Target, known_session_ids: set[str]) -> frozenset[str]:
-    footprint = set(target.context_session_ids)
-    for ref in target.evidence_refs:
+def _session_footprint(
+    context_session_ids: tuple[str, ...], evidence_refs: tuple[str, ...], known_session_ids: set[str]
+) -> frozenset[str]:
+    footprint = set(context_session_ids)
+    for ref in evidence_refs:
         prefix = ref.split(":", 1)[0]
         if prefix in known_session_ids:
             footprint.add(prefix)
@@ -137,14 +161,18 @@ def _session_footprint(target: Target, known_session_ids: set[str]) -> frozenset
 
 
 def build_shared_session_sensitivity_components(
-    targets: tuple[Target, ...], users: tuple[UserRecord, ...]
+    targets: tuple[Target, ...],
+    users: tuple[UserRecord, ...],
+    evidence_records: tuple[SplitEvidenceRecord, ...],
 ) -> tuple[SharedSessionSensitivityComponent, ...]:
     """Broad connected components of targets sharing any session, per owner.
 
     Sensitivity-only per AGENTS.md rule 6: reported separately, never used to
-    compute the primary ``fold_id``.
+    compute the primary ``fold_id``. Reads evidence only via
+    ``evidence_records`` (B8), joined by ``target_id``.
     """
 
+    evidence_by_target = {r.target_id: r.evidence_refs for r in evidence_records}
     sessions_by_owner = {u.owner_id: {s.session_id for s in u.sessions} for u in users}
     uf = _UnionFind()
     targets_by_owner: dict[str, list[Target]] = {}
@@ -156,7 +184,10 @@ def build_shared_session_sensitivity_components(
         known_session_ids = sessions_by_owner.get(owner_id, set())
         session_to_targets: dict[str, list[str]] = {}
         for target in owner_targets:
-            for session_id in _session_footprint(target, known_session_ids):
+            footprint = _session_footprint(
+                target.context_session_ids, evidence_by_target[target.target_id], known_session_ids
+            )
+            for session_id in footprint:
                 session_to_targets.setdefault(session_id, []).append(target.target_id)
         for target_ids in session_to_targets.values():
             ordered = sorted(target_ids)
