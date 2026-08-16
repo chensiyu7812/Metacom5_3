@@ -30,7 +30,7 @@ from metacom_pm.paper1.data.memory_source import (
 )
 from metacom_pm.paper1.data.es_memeval import load_users
 from metacom_pm.paper1.data.es_memeval import parse_users as parse_evaluator_users
-from metacom_pm.paper1.features import build_census, zero_outcome_census
+from metacom_pm.paper1.features import build_census, mp_extraction_audit, zero_outcome_census
 from metacom_pm.paper1.memory import me as memory_me
 from metacom_pm.paper1.memory import mp as memory_mp
 from metacom_pm.paper1.memory import ms as memory_ms
@@ -74,6 +74,7 @@ RUNTIME_SURFACE_MODULES = (
     candidates_compilers,
     features_pkg,
     zero_outcome_census,
+    mp_extraction_audit,
 )
 
 
