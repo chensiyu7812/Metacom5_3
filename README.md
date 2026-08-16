@@ -4,36 +4,43 @@
 
 ## Active Paper-1 authority
 
-Read these files first:
-
 1. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
 2. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
 3. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 4. `AGENTS.md`
 
-The 2026-08-16 authority supersedes the 2026-08-14 research freeze and all older PM-v1/v1.5/v2/V3/V5 execution plans when they conflict.
+## Public-data-only route
 
-## Current Paper-1 route
+Active Paper-1 data come only from prior-work public resources:
+
+- `ESConv`: RS Strategy-RAG resource/training source;
+- `ESC-Eval`: RQ1 evaluation only;
+- `ES-MemEval/EvoEmo`: MP/MS/ME training/candidate source and RQ2 evaluation.
+
+Old synthetic 80-user/11-user longitudinal assets are **deprecated and off-limits** for Paper 1. The directory
+
+`project/data/pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1/`
+
+contains an explicit deprecation marker and must not be read/used by active Paper-1 code or agents.
+
+## Current route
 
 - frozen Generator;
 - four optional resources: `RS`, `MP`, `MS`, `ME`;
-- **MP = Profile Memory only**; `MP_PREFERENCE` is excluded from Paper 1;
-- **Route A / first-order factorized PM**: each component is trained under the canonical background where the other optional resources are OFF;
+- **MP = Profile Memory only**; no MP_PREFERENCE;
+- **Route A / first-order factorized PM**: formal effect contrast for one component uses a canonical background where all other optional resources are OFF;
 - four L2-regularized logistic-regression heads; no direct 16-class policy;
-- RQ1: ESConv train-only -> Strategy-RAG training -> ESC-Eval final evaluation;
-- RQ2: ES-MemEval/EvoEmo strict-past memory -> ES-MemEval QA/Summary/DG final evaluation;
-- same-stack Fixed/Random/official baselines and real token/latency/cost reporting;
-- legacy Quality/Function/Risk panels are diagnostics, not the Paper-1 verdict.
+- RQ1: ESConv -> ESC-Eval;
+- RQ2: ES-MemEval/EvoEmo -> ES-MemEval;
+- same-stack Fixed/Random/official baselines + real token/latency/cost logs;
+- official ESC-Eval/ES-MemEval metrics provide the capability verdict.
 
 ## Immediate work
 
-The research question is no longer being redesigned. The current work is implementation/training migration:
-
-1. remove preference data and background-bit features from the Paper-1 learner;
-2. audit natural MP/MS/ME coverage in ES-MemEval/EvoEmo;
-3. freeze source-specific candidate bundles and outcome-blind features;
-4. run repeated matched-effect qualification;
-5. generate final matched ON/OFF effect data and train the four first-order heads;
-6. run the frozen same-stack RQ1/RQ2 experiments and component-minus ablations.
-
-Older review/snapshot files remain in the repository for provenance only.
+1. disconnect all obsolete synthetic paths/configs/tests;
+2. migrate MP to public Profile-only and remove final background-bit features;
+3. run a public-only zero-outcome coverage audit on ESConv + ES-MemEval/EvoEmo;
+4. freeze candidate bundles/features/cross-fit;
+5. run public repeated-effect qualification;
+6. generate final public-source matched effects and train four heads;
+7. run frozen same-stack RQ1/RQ2 and component-minus ablations.
