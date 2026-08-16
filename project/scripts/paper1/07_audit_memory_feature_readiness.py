@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""B24: build the Phase-1 memory feature-readiness / identifiability audit.
+"""B24/B25: build the Phase-1 memory feature-readiness / identifiability audit.
 
 Zero-outcome, Codex-B lane. Reads *only* the already-materialized sanitized
 runtime artifact (same as ``02_build_public_memory_census.py``), never
@@ -8,10 +8,15 @@ runtime artifact (same as ``02_build_public_memory_census.py``), never
 (head, task): unique candidates, owners with candidates, target coverage,
 target-candidate edges (explicitly not a distinct-memory count), and
 missingness/variance/zero-variance readiness for every outcome-blind
-feature axis already computable in the census (candidate count, token
-length, relative age, lexical overlap, already-visible, retrieval rank).
-Embedding similarity is reported NOT_IMPLEMENTED; DG's query-dependent axes
-are reported N/A (no static current-dialogue state pre-generation).
+diagnostic axis already computable in the census (candidate count, token
+length, relative age, lexical overlap, the lexical-Jaccard already-visible
+*proxy* -- B25: not the authoritative already-visible construct, see module
+docstring -- retrieval rank). Embedding similarity is reported
+NOT_IMPLEMENTED; DG's query-dependent axes are reported N/A (no static
+current-dialogue state pre-generation). Also writes the full B25.5 feature
+inventory (every blueprint-named MP/MS/ME/shared feature, honestly marked
+IMPLEMENTED/IMPLEMENTED_AS_DIAGNOSTIC_PROXY/NOT_IMPLEMENTED/NOT_IMPLEMENTED_
+PENDING_MECHANICAL_DEFINITION) inside the summary report.
 
 Diagnostic only -- this script never widens the primary MP/ME compilers,
 never selects n_outer_folds/seed/top-k/token-cap, never declares a per-head
@@ -77,7 +82,9 @@ def build() -> dict[str, Any]:
         "status": "PHASE1_FEATURE_READINESS_AUDIT_BUILT",
         "outcome_calls": 0,
         "zero_variance_axes": summary["zero_variance_axes"],
-        "already_visible_zero_variance_head_tasks": summary["already_visible_zero_variance_head_tasks"],
+        "lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_head_tasks": summary[
+            "lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_head_tasks"
+        ],
         "outputs": {
             "rows_manifest": {
                 "path": _relpath(paths["rows_manifest"]),

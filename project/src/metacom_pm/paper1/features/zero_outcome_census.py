@@ -1,4 +1,4 @@
-"""Zero-outcome candidate census over MP/MS/ME (B12/B17/B19).
+"""Zero-outcome candidate census over MP/MS/ME (B12/B17/B19/B25).
 
 Reports two explicitly separate layers (B19.5):
 
@@ -11,12 +11,27 @@ Reports two explicitly separate layers (B19.5):
    ``metacom_pm.paper1.data.memory_source`` module docstring). This layer is
    target-invariant by construction.
 2. **Per-target scoring** (``build_census`` / the existing
-   ``TargetHeadCensusRow`` rows): outcome-blind lexical-overlap/age/already-
-   visible/retrieval-rank features computed against that target's own
+   ``TargetHeadCensusRow`` rows): outcome-blind lexical-overlap/age/
+   retrieval-rank diagnostics computed against that target's own
    ``visible_query_text`` (QA/Summary's actual officially-asked question --
    not gold) where one exists. DG has no such text pre-generation, so all of
    those fields are reported as ``None`` (B19.4), never approximated from
    ``related_sessions``/``topic``.
+
+B25 correction: the field previously named ``already_visible`` here was
+never the authoritative ``mp_profile_already_visible``/
+``ms_memory_already_visible``/``me_experience_already_visible`` construct
+defined in ``docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md``
+sections 5.2-5.4 ("当前窗口是否已经明确包含该 fact") -- it is a much cruder
+lowercase ``[a-z]{3,}`` word-set Jaccard overlap against the candidate,
+thresholded at 0.6. Calling it ``already_visible`` implied it was that
+authoritative feature; it is not, and is renamed
+``lexical_candidate_query_jaccard_ge_0_6_proxy`` throughout this module and
+every consumer to make that explicit. The authoritative already-visible
+construct itself remains unimplemented (see
+``metacom_pm.paper1.features.feature_readiness_audit``'s feature inventory,
+status ``NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION`` -- no new heuristic
+or threshold is invented for it this round).
 
 The **final retrieved bundle / top-k / token cap** is a third, separate
 concept this module does not compute at all -- that remains an M2-freeze
@@ -51,7 +66,7 @@ from metacom_pm.paper1.memory.me import extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import extract_session_documents
 
-ALREADY_VISIBLE_LEXICAL_OVERLAP_THRESHOLD = 0.6
+LEXICAL_CANDIDATE_QUERY_JACCARD_GE_0_6_PROXY_THRESHOLD = 0.6
 FINAL_BUNDLE_STATUS = "PENDING_M2_FREEZE_NOT_SELECTED_THIS_ROUND"
 
 _WORD_PATTERN = re.compile(r"[a-z]{3,}")
@@ -83,7 +98,11 @@ class CandidateFeatureSnapshot:
     candidate_id: str
     token_count: int
     age_days: int | None
-    already_visible: bool | None
+    # B25: renamed from `already_visible` -- this is a lowercase [a-z]{3,}
+    # word-set Jaccard overlap proxy thresholded at 0.6, NOT the
+    # authoritative mp/ms/me_*_already_visible construct from the execution
+    # blueprint. See module docstring.
+    lexical_candidate_query_jaccard_ge_0_6_proxy: bool | None
     lexical_overlap: float | None
     retrieval_rank: int | None
 
@@ -104,13 +123,13 @@ class TargetHeadCensusRow:
     age_days_min: int | None
     age_days_mean: float | None
     age_days_max: int | None
-    already_visible_count: int
+    lexical_candidate_query_jaccard_ge_0_6_proxy_count: int
     top_candidate_lexical_overlap: float | None
     candidates: tuple[CandidateFeatureSnapshot, ...]
 
     def to_manifest_row(self) -> dict[str, Any]:
         return {
-            "protocol": "pm-paper1-zero-outcome-census-row-v2",
+            "protocol": "pm-paper1-zero-outcome-census-row-v3",
             "target_id": self.target_id,
             "task_type": self.task_type.value,
             "owner_id": self.owner_id,
@@ -125,14 +144,18 @@ class TargetHeadCensusRow:
             "age_days_min": self.age_days_min,
             "age_days_mean": self.age_days_mean,
             "age_days_max": self.age_days_max,
-            "already_visible_count": self.already_visible_count,
+            "lexical_candidate_query_jaccard_ge_0_6_proxy_count": (
+                self.lexical_candidate_query_jaccard_ge_0_6_proxy_count
+            ),
             "top_candidate_lexical_overlap": self.top_candidate_lexical_overlap,
             "candidates": [
                 {
                     "candidate_id": c.candidate_id,
                     "token_count": c.token_count,
                     "age_days": c.age_days,
-                    "already_visible": c.already_visible,
+                    "lexical_candidate_query_jaccard_ge_0_6_proxy": (
+                        c.lexical_candidate_query_jaccard_ge_0_6_proxy
+                    ),
                     "lexical_overlap": c.lexical_overlap,
                     "retrieval_rank": c.retrieval_rank,
                 }
@@ -203,7 +226,7 @@ def _score_candidates(
                 candidate_id=c.candidate_id,
                 token_count=c.token_count,
                 age_days=_age_days(c),
-                already_visible=None,
+                lexical_candidate_query_jaccard_ge_0_6_proxy=None,
                 lexical_overlap=None,
                 retrieval_rank=None,
             )
@@ -214,7 +237,9 @@ def _score_candidates(
     for candidate in candidates:
         candidate_words = _word_set(candidate.content)
         overlap = _lexical_overlap(candidate_words, query_words)
-        already_visible = overlap is not None and overlap >= ALREADY_VISIBLE_LEXICAL_OVERLAP_THRESHOLD
+        jaccard_proxy = (
+            overlap is not None and overlap >= LEXICAL_CANDIDATE_QUERY_JACCARD_GE_0_6_PROXY_THRESHOLD
+        )
         chronological_rank = candidate.raw_descriptors.get("session_chronological_rank")
         recency_key = chronological_rank if isinstance(chronological_rank, int) else -1
         sort_key = (-(overlap if overlap is not None else -1.0), -recency_key, candidate.candidate_id)
@@ -227,7 +252,7 @@ def _score_candidates(
                     candidate_id=candidate.candidate_id,
                     token_count=candidate.token_count,
                     age_days=_age_days(candidate),
-                    already_visible=already_visible,
+                    lexical_candidate_query_jaccard_ge_0_6_proxy=jaccard_proxy,
                     lexical_overlap=overlap,
                     retrieval_rank=0,
                 ),
@@ -239,7 +264,9 @@ def _score_candidates(
             candidate_id=snap.candidate_id,
             token_count=snap.token_count,
             age_days=snap.age_days,
-            already_visible=snap.already_visible,
+            lexical_candidate_query_jaccard_ge_0_6_proxy=(
+                snap.lexical_candidate_query_jaccard_ge_0_6_proxy
+            ),
             lexical_overlap=snap.lexical_overlap,
             retrieval_rank=rank,
         )
@@ -259,7 +286,9 @@ def _row_for_head(
     snapshots = _score_candidates(candidates, anchor=anchor, query_words=query_words)
     token_counts = [s.token_count for s in snapshots]
     ages = [s.age_days for s in snapshots if s.age_days is not None]
-    already_visible_count = sum(1 for s in snapshots if s.already_visible)
+    jaccard_proxy_count = sum(
+        1 for s in snapshots if s.lexical_candidate_query_jaccard_ge_0_6_proxy
+    )
     top_overlap = snapshots[0].lexical_overlap if snapshots else None
     return TargetHeadCensusRow(
         target_id=target.target_id,
@@ -276,7 +305,7 @@ def _row_for_head(
         age_days_min=min(ages) if ages else None,
         age_days_mean=statistics.fmean(ages) if ages else None,
         age_days_max=max(ages) if ages else None,
-        already_visible_count=already_visible_count,
+        lexical_candidate_query_jaccard_ge_0_6_proxy_count=jaccard_proxy_count,
         top_candidate_lexical_overlap=top_overlap,
         candidates=snapshots,
     )
@@ -374,7 +403,9 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
         overlaps = [
             r.top_candidate_lexical_overlap for r in covered if r.top_candidate_lexical_overlap is not None
         ]
-        already_visible_total = sum(r.already_visible_count for r in subset)
+        jaccard_proxy_total = sum(
+            r.lexical_candidate_query_jaccard_ge_0_6_proxy_count for r in subset
+        )
         # target_candidate_edges: total (target, candidate) pairs -- i.e. how
         # many times some candidate was offered to some target. NOT the same
         # as the number of distinct underlying memories: the same MP/MS/ME
@@ -400,8 +431,11 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
             "token_count_variance_of_means": _variance(token_means),
             "age_days_mean_of_means": statistics.fmean(age_means) if age_means else None,
             "age_days_variance_of_means": _variance(age_means),
-            "already_visible_fraction_of_candidates": (
-                already_visible_total / target_candidate_edges if target_candidate_edges else None
+            # B25: renamed from already_visible_fraction_of_candidates -- see
+            # module docstring, this is a lexical-overlap proxy, not the
+            # authoritative already-visible construct.
+            "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": (
+                jaccard_proxy_total / target_candidate_edges if target_candidate_edges else None
             ),
             "top_candidate_lexical_overlap_mean": statistics.fmean(overlaps) if overlaps else None,
             "top_candidate_lexical_overlap_variance": _variance(overlaps),
@@ -418,7 +452,7 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
     }
 
     return {
-        "protocol": "pm-paper1-zero-outcome-census-summary-v2",
+        "protocol": "pm-paper1-zero-outcome-census-summary-v3",
         "outcome_calls": 0,
         "targets_total": len(seen_targets),
         "targets_by_task": targets_by_task,

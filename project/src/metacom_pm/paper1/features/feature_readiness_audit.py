@@ -1,4 +1,4 @@
-"""B24: Phase-1 memory feature-readiness / identifiability audit.
+"""B24/B25: Phase-1 memory feature-readiness / identifiability audit.
 
 Diagnostic only, built entirely from the already-materialized sanitized
 runtime artifact and the already-built zero-outcome census
@@ -7,17 +7,50 @@ no new candidates, reads no evidence/gold/observation field, and does not
 widen ``memory/mp.py``'s or ``memory/me.py``'s primary compiler -- it is a
 read-only report over ``build_census``'s output.
 
-What this audit deliberately does NOT do (AGENTS.md / B24 instruction):
+B25 construct/disclosure correction: the census's lowercase ``[a-z]{3,}``
+word-set Jaccard overlap thresholded at 0.6 was previously exposed here as
+``already_visible``, implying it was the authoritative
+``mp_profile_already_visible``/``ms_memory_already_visible``/
+``me_experience_already_visible`` construct defined in
+``docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`` sections 5.2-5.4
+("当前窗口是否已经明确包含该 fact"). It is not that -- it is a much cruder
+lexical proxy, renamed ``lexical_candidate_query_jaccard_ge_0_6_proxy``
+everywhere in this module and its upstream (``zero_outcome_census.py``).
+Its zero variance (uniformly False corpus-wide) is reported as
+``ZERO_VARIANCE_DIAGNOSTIC_PROXY_NOT_FEATURE_READY`` -- a status specific to
+this proxy, never read as "the current window has no variance/value for
+recalling memory" (that would be a claim about the authoritative construct,
+which this proxy does not measure). The authoritative construct itself is
+listed in ``FEATURE_INVENTORY`` below with status
+``NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION`` -- no new heuristic or
+threshold is invented for it this round.
+
+``FEATURE_INVENTORY`` is the full first-version feature list from the
+execution blueprint (sections 5.2 MP, 5.3 MS, 5.4 ME, plus the shared
+"fixed embedding similarity" philosophy in section 4), with an honest status
+per item -- ``IMPLEMENTED``, ``IMPLEMENTED_AS_DIAGNOSTIC_PROXY`` (computed,
+but via a cruder mechanism than the blueprint specifies), or
+``NOT_IMPLEMENTED``/``NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION``. No
+item is silently omitted, and none is implemented with a newly-invented
+heuristic this round.
+
+What this audit deliberately does NOT do (AGENTS.md / B24/B25 instruction):
 
 - It never declares a per-head PASS/FAIL verdict -- Paper-1's capability
   verdict is official-benchmark-only (AGENTS.md "Evaluation authority"),
   and this round is still zero-outcome, so no capability claim is possible
-  at all yet.
+  at all yet. MP/ME's candidate sparsity is reported as an identifiability
+  limitation, never a PASS/FAIL gate -- the execution-reconciliation
+  override already retired every empirical PASS gate, including any
+  "minimum N" or "at least 2/3 heads" rule (see
+  ``docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`` section 3).
 - It never sets a minimum-N gate for any head.
 - It never selects ``n_outer_folds``, an outer-fold seed, a memory top-k, or
   a token cap -- those remain explicit M2-freeze decisions.
 - It never folds the B21 ``family_relationship`` expansion diagnostic into
-  the primary MP compiler, and never loosens the B20 ME construct.
+  the primary MP compiler, and never loosens the B20 ME construct, and
+  never invents a new heuristic/threshold for any NOT_IMPLEMENTED inventory
+  item.
 - It never treats an opaque ``target_id``/``candidate_id``/``owner_id``/
   ``group_component_id`` as anything other than an audit/grouping key
   (``contracts.CandidateRecord.candidate_id`` and
@@ -28,16 +61,16 @@ Feature-readiness axes reported per (head, task): candidate availability
 (unique candidates / owners / target coverage / target-candidate edges --
 edges are explicitly *not* a count of independent memories, since the same
 candidate is legitimately offered again to every later strict-past-eligible
-target), and, for the outcome-blind features already computable in
+target), and, for the outcome-blind diagnostics already computable in
 ``zero_outcome_census`` (candidate count, token length, relative age,
-lexical overlap, already-visible, retrieval rank): missingness, distinct-
-value count, and variance where defined. A feature with zero variance
-corpus-wide (every computed value identical) is flagged
-``ZERO_VARIANCE_NOT_FEATURE_READY`` rather than silently reported as if it
-were a working discriminative signal -- readiness is a description, not an
-automatic go/no-go. Embedding similarity is reported ``NOT_IMPLEMENTED``:
-no code path in this project computes it yet, so it is honestly reported as
-absent rather than guessed at.
+lexical overlap, the already-visible lexical proxy, retrieval rank):
+missingness, distinct-value count, and variance where defined. ``candidate_
+count`` and ``retrieval_rank`` are themselves AUDIT_ONLY/PROVISIONAL
+availability/retrieval diagnostics, not learned features awaiting only a
+variance check -- see ``measurement_provenance_disclosures``. A diagnostic
+with zero variance corpus-wide (every computed value identical) is flagged
+rather than silently reported as if it were a working discriminative
+signal -- readiness is a description, not an automatic go/no-go.
 """
 
 from __future__ import annotations
@@ -59,6 +92,9 @@ from metacom_pm.paper1.features.zero_outcome_census import (
 
 _MEMORY_TASK_TYPES = (TaskType.QA, TaskType.SUMMARY, TaskType.DIALOGUE_GENERATION)
 
+ZERO_VARIANCE_STATUS = "ZERO_VARIANCE_NOT_FEATURE_READY"
+ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS = "ZERO_VARIANCE_DIAGNOSTIC_PROXY_NOT_FEATURE_READY"
+
 EDGES_NOT_INDEPENDENT_MEMORIES_NOTE = (
     "target_candidate_edges counts (target, candidate) pairs, not distinct "
     "memories -- the same underlying candidate is legitimately offered "
@@ -70,8 +106,8 @@ EDGES_NOT_INDEPENDENT_MEMORIES_NOTE = (
 DG_STATIC_SIMILARITY_NOTE = (
     "DG has no static current-dialogue state pre-generation (B17.4/B19.4): "
     "there is no seeker utterance to compute lexical/embedding similarity, "
-    "already-visible, or retrieval rank against until a turn is actually "
-    "generated. This is reported N/A, never approximated from "
+    "the already-visible proxy, or retrieval rank against until a turn is "
+    "actually generated. This is reported N/A, never approximated from "
     "related_sessions/topic. Making this computable requires either (a) a "
     "future generation runner that injects the real per-turn seeker "
     "utterance as dynamic state (out of scope this round -- no generation "
@@ -79,6 +115,184 @@ DG_STATIC_SIMILARITY_NOTE = (
     "features as held-out/downstream-only (scored after the fact against "
     "whatever the runner produces, never as a pre-generation candidate "
     "feature). Neither option is selected here."
+)
+
+MP_ME_SPARSITY_NOT_A_GATE_NOTE = (
+    "MP (3 unique candidates/3 owners) and ME (3 unique candidates/2 "
+    "owners) candidate sparsity is an honest identifiability limitation "
+    "under the current strict, precision-first compilers -- it is never "
+    "read as a PASS/FAIL gate or a minimum-N sufficiency threshold. The "
+    "execution-reconciliation override already retired every empirical "
+    "PASS gate this project used to have, including any 'minimum N' or "
+    "'at least 2/3 heads' rule (docs/PM_PAPER1_EXECUTION_RECONCILIATION_"
+    "20260816_ZH.md section 3); this audit does not reintroduce one."
+)
+
+# B25.5: the full first-version feature list from docs/
+# PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md sections 5.2 (MP), 5.3
+# (MS), 5.4 (ME), plus the shared "fixed embedding similarity" item named in
+# section 4's feature philosophy. Every item is listed with an honest
+# status; nothing computable only via a newly-invented heuristic this round
+# is marked IMPLEMENTED. RS (section 5.1) is Codex A's head and out of
+# scope for this memory-lane audit.
+FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
+    {
+        "canonical_name": "mp_state_profile_similarity",
+        "head": "MP",
+        "blueprint_section": "5.2",
+        "status": "IMPLEMENTED_AS_DIAGNOSTIC_PROXY",
+        "proxy_field": "lexical_similarity (census lexical_overlap)",
+        "note": (
+            "Blueprint specifies a fixed embedding/semantic similarity. "
+            "The only similarity currently computed is a lowercase "
+            "[a-z]{3,} word-set Jaccard overlap against the target's "
+            "visible_query_text -- a lexical proxy, not an embedding model."
+        ),
+    },
+    {
+        "canonical_name": "mp_profile_already_visible",
+        "head": "MP",
+        "blueprint_section": "5.2",
+        "status": "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION",
+        "proxy_field": None,
+        "note": (
+            "The lexical_candidate_query_jaccard_ge_0_6_proxy diagnostic "
+            "exists (see zero_outcome_census.py) but is explicitly not "
+            "this construct -- see module docstring. No new heuristic or "
+            "threshold is invented to close the gap this round."
+        ),
+    },
+    {
+        "canonical_name": "mp_profile_field_type",
+        "head": "MP",
+        "blueprint_section": "5.2",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": (
+            "memory/mp.py's ProfileDisclosure carries no field-type/"
+            "category attribute -- it records that some self-disclosure "
+            "pattern matched, not which one (occupation/age/name/"
+            "residence/study/family/diagnosis)."
+        ),
+    },
+    {
+        "canonical_name": "mp_profile_relative_age",
+        "head": "MP",
+        "blueprint_section": "5.2",
+        "status": "IMPLEMENTED",
+        "proxy_field": "relative_age_days (census age_days)",
+        "note": "Days from the owner's last dialog_history session to the disclosure's session.",
+    },
+    {
+        "canonical_name": "ms_state_memory_similarity",
+        "head": "MS",
+        "blueprint_section": "5.3",
+        "status": "IMPLEMENTED_AS_DIAGNOSTIC_PROXY",
+        "proxy_field": "lexical_similarity (census lexical_overlap)",
+        "note": "Same lexical-Jaccard-vs-embedding gap as mp_state_profile_similarity.",
+    },
+    {
+        "canonical_name": "ms_memory_already_visible",
+        "head": "MS",
+        "blueprint_section": "5.3",
+        "status": "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION",
+        "proxy_field": None,
+        "note": "Same gap and proxy pointer as mp_profile_already_visible.",
+    },
+    {
+        "canonical_name": "ms_relative_age",
+        "head": "MS",
+        "blueprint_section": "5.3",
+        "status": "IMPLEMENTED",
+        "proxy_field": "relative_age_days (census age_days)",
+        "note": "Days from the owner's last dialog_history session to the candidate session.",
+    },
+    {
+        "canonical_name": "ms_thread_entity_overlap",
+        "head": "MS",
+        "blueprint_section": "5.3",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": "No deterministic entity/thread overlap count/flag exists anywhere in this lane.",
+    },
+    {
+        "canonical_name": "ms_explicit_return_marker",
+        "head": "MS",
+        "blueprint_section": "5.3",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": (
+            "No detector for again/last time/before/still-style return/"
+            "continuity markers in the current visible query text exists."
+        ),
+    },
+    {
+        "canonical_name": "me_state_experience_similarity",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "IMPLEMENTED_AS_DIAGNOSTIC_PROXY",
+        "proxy_field": "lexical_similarity (census lexical_overlap)",
+        "note": "Same lexical-Jaccard-vs-embedding gap as mp_state_profile_similarity.",
+    },
+    {
+        "canonical_name": "me_experience_already_visible",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION",
+        "proxy_field": None,
+        "note": "Same gap and proxy pointer as mp_profile_already_visible.",
+    },
+    {
+        "canonical_name": "me_relative_age",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "IMPLEMENTED",
+        "proxy_field": "relative_age_days (census age_days)",
+        "note": "Days from the owner's last dialog_history session to the episode's session.",
+    },
+    {
+        "canonical_name": "me_historical_outcome_type",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": (
+            "ActionResultEpisode carries no positive/negative/mixed/"
+            "neutral outcome-polarity attribute -- the B11/B20 result-"
+            "relation patterns implicitly discriminate polarity during "
+            "matching but never expose it as a structured field."
+        ),
+    },
+    {
+        "canonical_name": "me_current_action_request",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": "No detector for an explicit advice/next-step request in the current visible query text exists.",
+    },
+    {
+        "canonical_name": "me_candidate_token_cost",
+        "head": "ME",
+        "blueprint_section": "5.4",
+        "status": "IMPLEMENTED_AS_DIAGNOSTIC_PROXY",
+        "proxy_field": "token_length (census token_count)",
+        "note": "Whitespace-split word count, not the frozen Generator's real tokenizer count -- see measurement_provenance_disclosures.",
+    },
+    {
+        "canonical_name": "embedding_similarity",
+        "head": "SHARED",
+        "blueprint_section": "4",
+        "status": "NOT_IMPLEMENTED",
+        "proxy_field": None,
+        "note": (
+            "No embedding model is wired into this lane. This is the "
+            "shared underlying gap behind mp_state_profile_similarity/"
+            "ms_state_memory_similarity/me_state_experience_similarity's "
+            "IMPLEMENTED_AS_DIAGNOSTIC_PROXY status above -- listed once "
+            "here rather than three times."
+        ),
+    },
 )
 
 
@@ -90,14 +304,15 @@ def _pvariance(values: list[float]) -> float | None:
 
 @dataclass(frozen=True)
 class FeatureAxisReadiness:
-    """Missingness/variance readiness for one outcome-blind feature axis.
+    """Missingness/variance readiness for one outcome-blind diagnostic axis.
 
     ``measured_over`` disambiguates what one "value" is: ``candidate_count``
     is measured per *target* (one value = how many candidates that target
-    got); every other axis (token length, age, lexical overlap, already-
-    visible, retrieval rank) is measured per compiled *candidate item*
-    (one value per (target, candidate) edge). ``total_values`` /
-    ``present_values`` are counted in whichever of those two units applies.
+    got); every other axis (token length, age, lexical overlap, the
+    already-visible lexical proxy, retrieval rank) is measured per compiled
+    *candidate item* (one value per (target, candidate) edge). ``total_
+    values``/``present_values`` are counted in whichever of those two units
+    applies.
     """
 
     computable: bool
@@ -127,7 +342,11 @@ class FeatureAxisReadiness:
 
 
 def _axis_readiness(
-    values: list[float | None], *, measured_over: str, na_reason: str | None
+    values: list[float | None],
+    *,
+    measured_over: str,
+    na_reason: str | None,
+    zero_variance_status: str = ZERO_VARIANCE_STATUS,
 ) -> FeatureAxisReadiness:
     total = len(values)
     if na_reason is not None:
@@ -150,7 +369,7 @@ def _axis_readiness(
     elif not present:
         status = "NOT_COMPUTABLE_ALL_MISSING"
     elif distinct <= 1:
-        status = "ZERO_VARIANCE_NOT_FEATURE_READY"
+        status = zero_variance_status
     else:
         status = "COMPUTABLE_WITH_VARIANCE"
     return FeatureAxisReadiness(
@@ -182,12 +401,12 @@ class HeadTaskFeatureReadinessRow:
     token_length: FeatureAxisReadiness
     relative_age_days: FeatureAxisReadiness
     lexical_similarity: FeatureAxisReadiness
-    already_visible: FeatureAxisReadiness
+    lexical_candidate_query_jaccard_ge_0_6_proxy: FeatureAxisReadiness
     retrieval_rank: FeatureAxisReadiness
 
     def to_manifest_row(self) -> dict[str, Any]:
         return {
-            "protocol": "pm-paper1-memory-feature-readiness-row-v1",
+            "protocol": "pm-paper1-memory-feature-readiness-row-v2",
             "head": self.head.value,
             "task_type": self.task_type.value,
             "unique_candidate_count": self.unique_candidate_count,
@@ -210,7 +429,9 @@ class HeadTaskFeatureReadinessRow:
             "token_length": self.token_length.to_manifest_row(),
             "relative_age_days": self.relative_age_days.to_manifest_row(),
             "lexical_similarity": self.lexical_similarity.to_manifest_row(),
-            "already_visible": self.already_visible.to_manifest_row(),
+            "lexical_candidate_query_jaccard_ge_0_6_proxy": (
+                self.lexical_candidate_query_jaccard_ge_0_6_proxy.to_manifest_row()
+            ),
             "retrieval_rank": self.retrieval_rank.to_manifest_row(),
         }
 
@@ -232,8 +453,10 @@ def _row_for_head_task(
         float(c.age_days) if c.age_days is not None else None for c in all_candidates
     ]
     lex_values: list[float | None] = [c.lexical_overlap for c in all_candidates]
-    already_visible_values: list[float | None] = [
-        (1.0 if c.already_visible else 0.0) if c.already_visible is not None else None
+    jaccard_proxy_values: list[float | None] = [
+        (1.0 if c.lexical_candidate_query_jaccard_ge_0_6_proxy else 0.0)
+        if c.lexical_candidate_query_jaccard_ge_0_6_proxy is not None
+        else None
         for c in all_candidates
     ]
     rank_values: list[float | None] = [
@@ -261,8 +484,11 @@ def _row_for_head_task(
         lexical_similarity=_axis_readiness(
             lex_values, measured_over="per_candidate_item", na_reason=na_reason
         ),
-        already_visible=_axis_readiness(
-            already_visible_values, measured_over="per_candidate_item", na_reason=na_reason
+        lexical_candidate_query_jaccard_ge_0_6_proxy=_axis_readiness(
+            jaccard_proxy_values,
+            measured_over="per_candidate_item",
+            na_reason=na_reason,
+            zero_variance_status=ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS,
         ),
         retrieval_rank=_axis_readiness(
             rank_values, measured_over="per_candidate_item", na_reason=na_reason
@@ -295,28 +521,28 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
     by_key = {(r.head, r.task_type): r for r in rows}
 
     zero_variance_axes = []
-    already_visible_zero_variance_head_tasks = []
+    jaccard_proxy_zero_variance_head_tasks = []
     for r in rows:
         for axis_name in (
             "candidate_count",
             "token_length",
             "relative_age_days",
             "lexical_similarity",
-            "already_visible",
+            "lexical_candidate_query_jaccard_ge_0_6_proxy",
             "retrieval_rank",
         ):
             axis: FeatureAxisReadiness = getattr(r, axis_name)
-            if axis.readiness_status == "ZERO_VARIANCE_NOT_FEATURE_READY":
+            if axis.readiness_status in (ZERO_VARIANCE_STATUS, ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS):
                 zero_variance_axes.append(f"{r.head.value}/{r.task_type.value}/{axis_name}")
-                if axis_name == "already_visible":
-                    already_visible_zero_variance_head_tasks.append(f"{r.head.value}/{r.task_type.value}")
+                if axis_name == "lexical_candidate_query_jaccard_ge_0_6_proxy":
+                    jaccard_proxy_zero_variance_head_tasks.append(f"{r.head.value}/{r.task_type.value}")
 
     mp_qa = by_key[(Head.MP, TaskType.QA)]
     me_qa = by_key[(Head.ME, TaskType.QA)]
     ms_qa = by_key[(Head.MS, TaskType.QA)]
 
     return {
-        "protocol": "pm-paper1-memory-feature-readiness-audit-report-v1",
+        "protocol": "pm-paper1-memory-feature-readiness-audit-report-v2",
         "status": "PHASE1_FEATURE_READINESS_IDENTIFIABILITY_AUDIT",
         "outcome_calls": 0,
         "scope_note": (
@@ -332,7 +558,8 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
                 "Paper-1's capability verdict is official-benchmark-only "
                 "(AGENTS.md 'Evaluation authority'); this is a zero-outcome "
                 "phase, so no capability claim -- and no minimum-N "
-                "sufficiency gate for any head -- is made here."
+                "sufficiency gate for any head -- is made here. "
+                + MP_ME_SPARSITY_NOT_A_GATE_NOTE
             ),
         },
         "unselected_freeze_decisions": {
@@ -351,9 +578,50 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
             "own or edit; this audit reports them only for row identity, "
             "never as a computed feature value."
         ),
+        "measurement_provenance_disclosures": {
+            "token_length": (
+                "Whitespace-split word count -- a deterministic structural-"
+                "cost proxy, NOT the frozen Generator's real Llama/"
+                "tokenizer token count (see candidates/compilers.py's "
+                "_token_count docstring, which already discloses this)."
+            ),
+            "candidate_count": (
+                "AUDIT_ONLY/PROVISIONAL availability diagnostic (how many "
+                "candidates a target's eligible pool currently has) -- not "
+                "automatically frozen into the learned feature schema."
+            ),
+            "retrieval_rank": (
+                "AUDIT_ONLY/PROVISIONAL retrieval diagnostic (a rank "
+                "induced purely for census/audit reporting by this "
+                "module's own lexical-overlap sort) -- not the eventual "
+                "M2-freeze retrieval mechanism, and not automatically "
+                "frozen into the learned feature schema."
+            ),
+            "target_candidate_edges": EDGES_NOT_INDEPENDENT_MEMORIES_NOTE,
+            "mp_me_sparsity": MP_ME_SPARSITY_NOT_A_GATE_NOTE,
+        },
+        "feature_inventory": {
+            "protocol": "pm-paper1-memory-feature-inventory-v1",
+            "authority": (
+                "docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md "
+                "sections 4 (feature philosophy) and 5.2-5.4 (MP/MS/ME "
+                "first-version model features). RS (section 5.1) is "
+                "Codex A's head and out of scope for this memory-lane "
+                "audit."
+            ),
+            "note": (
+                "Every blueprint-named MP/MS/ME/shared feature is listed "
+                "here, whether implemented, implemented only as a cruder "
+                "diagnostic proxy, or not implemented at all -- nothing is "
+                "silently omitted, and nothing NOT_IMPLEMENTED this round "
+                "is closed with a newly-invented heuristic or threshold."
+            ),
+            "items": list(FEATURE_INVENTORY),
+        },
         "mp_identifiability_limitation": {
             "unique_candidates": mp_qa.unique_candidate_count,
             "owners_with_candidates": mp_qa.owners_with_candidates,
+            "not_a_pass_fail_gate": True,
             "note": (
                 "MP is genuinely sparse under the strict self-disclosure "
                 "construct (memory/mp.py): 3 unique candidates from 3 "
@@ -365,19 +633,22 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
                 "stable existence fact with situational narration in a way "
                 "this project cannot mechanically separate without "
                 "semantic judgment. Not expanded here either; this is an "
-                "honest identifiability limitation, not a synthetic rescue."
+                "honest identifiability limitation, not a synthetic rescue "
+                "and not a PASS/FAIL gate."
             ),
         },
         "me_identifiability_limitation": {
             "unique_candidates": me_qa.unique_candidate_count,
             "owners_with_candidates": me_qa.owners_with_candidates,
+            "not_a_pass_fail_gate": True,
             "note": (
                 "ME requires an explicit self-reported action with a real "
                 "complement, an explicit same-sentence observed result, and "
                 "no cross-turn temporal-only pairing (B11/B20 repair "
                 "history in memory/me.py) -- 3 unique candidates from 2 "
                 "owners corpus-wide survive. This construct is not loosened "
-                "here to manufacture more coverage."
+                "here to manufacture more coverage, and this sparsity is "
+                "not a PASS/FAIL gate."
             ),
         },
         "ms_availability_note": (
@@ -392,21 +663,28 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
         "dg_static_similarity_note": DG_STATIC_SIMILARITY_NOTE,
         "zero_variance_axes": zero_variance_axes,
         "zero_variance_axes_note": (
-            "Every 'head/task/axis' entry above has readiness_status "
-            "ZERO_VARIANCE_NOT_FEATURE_READY -- every computed value for "
-            "that axis, corpus-wide, is identical (e.g. MP/qa's "
+            "Every 'head/task/axis' entry above has a zero-variance "
+            f"readiness_status ({ZERO_VARIANCE_STATUS} or "
+            f"{ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS}) -- every computed "
+            "value for that axis, corpus-wide, is identical (e.g. MP/qa's "
             "retrieval_rank is always 1, because MP almost never offers "
             "more than one candidate to a target). Listed for disclosure "
             "only; none of these axes are auto-frozen into the feature "
             "schema on this basis."
         ),
-        "already_visible_zero_variance_head_tasks": already_visible_zero_variance_head_tasks,
-        "already_visible_zero_variance_summary": (
-            "already-visible is zero-variance (uniformly False/0) for every "
-            "head/task pair with any candidate at all this round -- see "
-            "already_visible_zero_variance_head_tasks for the exact list. "
-            "This is reported as ZERO_VARIANCE_NOT_FEATURE_READY on each "
-            "affected row, not auto-frozen into the feature schema."
+        "lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_head_tasks": (
+            jaccard_proxy_zero_variance_head_tasks
+        ),
+        "lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_summary": (
+            "This lexical-overlap-threshold proxy is zero-variance "
+            "(uniformly False) for every head/task pair with any candidate "
+            "at all this round -- see the head_tasks list above. This is "
+            f"reported as {ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS} on each "
+            "affected row, never as proof that the authoritative "
+            "already-visible construct (still "
+            "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION -- see "
+            "feature_inventory) has no variance or no value, and not "
+            "auto-frozen into the feature schema."
         ),
     }
 

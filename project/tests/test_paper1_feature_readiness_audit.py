@@ -1,4 +1,4 @@
-"""B24: Phase-1 memory feature-readiness / identifiability audit."""
+"""B24/B25: Phase-1 memory feature-readiness / identifiability audit."""
 
 import json
 from pathlib import Path
@@ -7,6 +7,8 @@ from metacom_pm.paper1.contracts import Head, TaskType
 from metacom_pm.paper1.data.materializer import build_sanitized_runtime_users, load_raw_users
 from metacom_pm.paper1.data.memory_source import enumerate_targets
 from metacom_pm.paper1.features.feature_readiness_audit import (
+    FEATURE_INVENTORY,
+    ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS,
     build_feature_readiness_rows,
     summarize_feature_readiness,
     write_feature_readiness_manifest,
@@ -64,7 +66,11 @@ def test_dg_rows_have_na_status_for_query_dependent_axes_but_not_for_age_or_toke
     for head in (Head.MP, Head.MS, Head.ME):
         dg_row = rows[(head, TaskType.DIALOGUE_GENERATION)]
         assert dg_row.static_visible_query_present is False
-        for axis_name in ("lexical_similarity", "already_visible", "retrieval_rank"):
+        for axis_name in (
+            "lexical_similarity",
+            "lexical_candidate_query_jaccard_ge_0_6_proxy",
+            "retrieval_rank",
+        ):
             axis = getattr(dg_row, axis_name)
             assert axis.readiness_status == "N_A_NO_STATIC_QUERY_PRE_GENERATION"
             assert axis.computable is False
@@ -81,19 +87,42 @@ def test_qa_and_summary_rows_have_a_static_visible_query():
             assert rows[(head, task)].static_visible_query_present is True
 
 
-def test_already_visible_is_zero_variance_wherever_candidates_exist():
-    # Grounded corpus finding: the 0.6 lexical-overlap already-visible
-    # threshold is never crossed anywhere in the current corpus.
+def test_lexical_jaccard_proxy_is_zero_variance_wherever_candidates_exist():
+    # Grounded corpus finding: the 0.6 lexical-overlap proxy threshold is
+    # never crossed anywhere in the current corpus. B25: this proxy is
+    # explicitly not the authoritative already-visible construct (see
+    # feature_inventory), so its zero-variance status must use the
+    # dedicated ZERO_VARIANCE_DIAGNOSTIC_PROXY_NOT_FEATURE_READY label, not
+    # the generic one other (non-proxy-labeled) axes use.
     rows = _rows()
     summary = summarize_feature_readiness(rows)
     expected = {"MP/qa", "MP/summary", "MS/qa", "MS/summary", "ME/qa", "ME/summary"}
-    assert set(summary["already_visible_zero_variance_head_tasks"]) == expected
+    assert (
+        set(summary["lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_head_tasks"])
+        == expected
+    )
     for row in rows:
         if row.task_type is TaskType.DIALOGUE_GENERATION:
             continue
-        if row.already_visible.computable:
-            assert row.already_visible.readiness_status == "ZERO_VARIANCE_NOT_FEATURE_READY"
-            assert row.already_visible.zero_variance is True
+        axis = row.lexical_candidate_query_jaccard_ge_0_6_proxy
+        if axis.computable:
+            assert axis.readiness_status == ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS
+            assert axis.zero_variance is True
+
+
+def test_lexical_jaccard_proxy_field_name_never_claims_to_be_already_visible():
+    # B25.2/B25.3: the field/status names themselves must not read as the
+    # authoritative already_visible construct.
+    for row in _rows():
+        manifest = row.to_manifest_row()
+        assert "already_visible" not in manifest
+        proxy = manifest["lexical_candidate_query_jaccard_ge_0_6_proxy"]
+        assert proxy["readiness_status"] != "ZERO_VARIANCE_NOT_FEATURE_READY"
+    rows = _rows()
+    summary = summarize_feature_readiness(rows)
+    assert "already_visible_zero_variance_head_tasks" not in summary
+    summary_text = json.dumps(summary)
+    assert '"already_visible"' not in summary_text
 
 
 def test_ms_retrieval_rank_and_lexical_overlap_have_real_variance():
@@ -166,7 +195,7 @@ def test_manifest_write_roundtrip_and_hash(tmp_path):
     assert len(manifest_lines) == len(rows)
     for line in manifest_lines:
         parsed = json.loads(line)
-        assert parsed["protocol"] == "pm-paper1-memory-feature-readiness-row-v1"
+        assert parsed["protocol"] == "pm-paper1-memory-feature-readiness-row-v2"
 
     written_summary = json.loads(paths["summary"].read_text(encoding="utf-8"))
     assert written_summary["rows_manifest_count"] == len(rows)
@@ -175,3 +204,126 @@ def test_manifest_write_roundtrip_and_hash(tmp_path):
 
     rendered = paths["rows_manifest"].read_text(encoding="utf-8")
     assert written_summary["rows_manifest_sha256"] == hashlib.sha256(rendered.encode("utf-8")).hexdigest()
+
+
+# --- B25.5: feature inventory completeness ----------------------------------
+
+_REQUIRED_CANONICAL_NAMES = {
+    "mp_state_profile_similarity",
+    "mp_profile_already_visible",
+    "mp_profile_field_type",
+    "mp_profile_relative_age",
+    "ms_state_memory_similarity",
+    "ms_memory_already_visible",
+    "ms_relative_age",
+    "ms_thread_entity_overlap",
+    "ms_explicit_return_marker",
+    "me_state_experience_similarity",
+    "me_experience_already_visible",
+    "me_relative_age",
+    "me_historical_outcome_type",
+    "me_current_action_request",
+    "me_candidate_token_cost",
+    "embedding_similarity",
+}
+
+_VALID_INVENTORY_STATUSES = {
+    "IMPLEMENTED",
+    "IMPLEMENTED_AS_DIAGNOSTIC_PROXY",
+    "NOT_IMPLEMENTED",
+    "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION",
+    "NOT_AUDITED",
+}
+
+
+def test_feature_inventory_lists_every_blueprint_named_item_from_b25_instruction():
+    names = {item["canonical_name"] for item in FEATURE_INVENTORY}
+    missing = _REQUIRED_CANONICAL_NAMES - names
+    assert missing == set(), f"feature inventory silently omits: {missing}"
+
+
+def test_feature_inventory_items_have_a_valid_status_and_a_note():
+    for item in FEATURE_INVENTORY:
+        assert item["status"] in _VALID_INVENTORY_STATUSES, item
+        assert item["note"].strip() != "", item
+        assert item["head"] in ("MP", "MS", "ME", "SHARED"), item
+
+
+def test_feature_inventory_never_marks_a_not_implemented_item_as_implemented_via_new_heuristic():
+    # B25.4: profile_field_type/thread_entity_overlap/explicit_return_marker/
+    # historical_outcome_type/current_action_request must all be honestly
+    # NOT_IMPLEMENTED this round -- none may be silently upgraded to
+    # IMPLEMENTED/IMPLEMENTED_AS_DIAGNOSTIC_PROXY without an actual new
+    # compiler existing (which this round does not add).
+    by_name = {item["canonical_name"]: item for item in FEATURE_INVENTORY}
+    for name in (
+        "mp_profile_field_type",
+        "ms_thread_entity_overlap",
+        "ms_explicit_return_marker",
+        "me_historical_outcome_type",
+        "me_current_action_request",
+        "embedding_similarity",
+    ):
+        assert by_name[name]["status"] == "NOT_IMPLEMENTED", by_name[name]
+
+
+def test_feature_inventory_already_visible_items_pending_mechanical_definition():
+    by_name = {item["canonical_name"]: item for item in FEATURE_INVENTORY}
+    for name in (
+        "mp_profile_already_visible",
+        "ms_memory_already_visible",
+        "me_experience_already_visible",
+    ):
+        assert by_name[name]["status"] == "NOT_IMPLEMENTED_PENDING_MECHANICAL_DEFINITION", by_name[name]
+
+
+def test_feature_inventory_is_present_in_the_summary_report():
+    rows = _rows()
+    summary = summarize_feature_readiness(rows)
+    inventory = summary["feature_inventory"]
+    assert len(inventory["items"]) == len(FEATURE_INVENTORY)
+    names = {item["canonical_name"] for item in inventory["items"]}
+    assert _REQUIRED_CANONICAL_NAMES <= names
+
+
+def test_measurement_provenance_disclosures_present_and_accurate():
+    rows = _rows()
+    summary = summarize_feature_readiness(rows)
+    disclosures = summary["measurement_provenance_disclosures"]
+    token_note = disclosures["token_length"].lower()
+    assert "whitespace" in token_note
+    assert "not the frozen generator" in token_note or "not the frozen" in token_note
+    assert "audit_only" in disclosures["candidate_count"].lower().replace("/", "_") or (
+        "provisional" in disclosures["candidate_count"].lower()
+    )
+    assert "provisional" in disclosures["retrieval_rank"].lower()
+    assert "not distinct" in disclosures["target_candidate_edges"].lower()
+    assert "not" in disclosures["mp_me_sparsity"].lower()
+    assert "pass" in disclosures["mp_me_sparsity"].lower() or "gate" in disclosures["mp_me_sparsity"].lower()
+
+
+def test_mp_and_me_identifiability_limitation_explicitly_not_a_pass_fail_gate():
+    rows = _rows()
+    summary = summarize_feature_readiness(rows)
+    assert summary["mp_identifiability_limitation"]["not_a_pass_fail_gate"] is True
+    assert summary["me_identifiability_limitation"]["not_a_pass_fail_gate"] is True
+
+
+def test_b25_never_changes_the_underlying_unique_edge_or_coverage_counts():
+    # B25.7: the semantic/naming fix must not change any of the numbers
+    # frozen by B23/B24 -- only labels and disclosures change.
+    rows = {(r.head, r.task_type): r for r in _rows()}
+    mp_qa = rows[(Head.MP, TaskType.QA)]
+    ms_qa = rows[(Head.MS, TaskType.QA)]
+    me_qa = rows[(Head.ME, TaskType.QA)]
+    assert (mp_qa.unique_candidate_count, mp_qa.owners_with_candidates, mp_qa.target_candidate_edges) == (
+        3,
+        3,
+        184,
+    )
+    assert (ms_qa.unique_candidate_count, ms_qa.owners_with_candidates) == (401, 18)
+    assert (me_qa.unique_candidate_count, me_qa.owners_with_candidates, me_qa.target_candidate_edges) == (
+        3,
+        2,
+        255,
+    )

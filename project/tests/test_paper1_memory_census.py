@@ -56,9 +56,10 @@ def test_census_row_covers_the_required_axes():
 
 def test_dg_rows_report_null_query_dependent_features_never_related_sessions_or_topic():
     # B19.4: DG has no static current-dialogue state pre-generation -- overlap/
-    # already_visible/retrieval_rank must be None for every DG candidate, never
-    # approximated from related_sessions/topic. age_days/token_count are still
-    # concrete (they don't depend on a query at all).
+    # the lexical already-visible proxy/retrieval_rank must be None for every
+    # DG candidate, never approximated from related_sessions/topic.
+    # age_days/token_count are still concrete (they don't depend on a query
+    # at all).
     users = _users()
     dg_targets = [t for t in enumerate_targets(users) if t.task_type is TaskType.DIALOGUE_GENERATION]
     rows = build_census(users, dg_targets)
@@ -67,7 +68,7 @@ def test_dg_rows_report_null_query_dependent_features_never_related_sessions_or_
         assert row.has_visible_query is False
         assert row.top_candidate_lexical_overlap is None
         for candidate in row.candidates:
-            assert candidate.already_visible is None
+            assert candidate.lexical_candidate_query_jaccard_ge_0_6_proxy is None
             assert candidate.lexical_overlap is None
             assert candidate.retrieval_rank is None
         if row.candidate_count > 0:
@@ -95,7 +96,7 @@ def test_summary_reports_coverage_count_length_age_variance_per_head():
         assert "candidate_count_variance" in per_head
         assert "token_count_variance_of_means" in per_head
         assert "age_days_variance_of_means" in per_head
-        assert "already_visible_fraction_of_candidates" in per_head
+        assert "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates" in per_head
         assert "targets_with_visible_query" in per_head
 
     # B17: every target now draws on the owner's full session history, so MS
@@ -156,7 +157,7 @@ def test_manifest_write_roundtrip_and_hash(tmp_path):
     assert len(manifest_lines) == len(rows)
     for line in manifest_lines:
         parsed = json.loads(line)
-        assert parsed["protocol"] == "pm-paper1-zero-outcome-census-row-v2"
+        assert parsed["protocol"] == "pm-paper1-zero-outcome-census-row-v3"
 
     written_summary = json.loads(paths["summary"].read_text(encoding="utf-8"))
     assert written_summary["manifest_rows"] == len(rows)
