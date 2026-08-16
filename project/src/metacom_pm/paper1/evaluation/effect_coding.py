@@ -1,0 +1,407 @@
+"""Deterministic paired-effect coding over already-computed official outcomes.
+
+This module performs no generation, scorer calls, training, or threshold
+selection.  It preserves the five raw outcomes required by the Paper-1
+authority: ON better, OFF better, equivalent, uncertain, and invalid.
+"""
+
+from __future__ import annotations
+
+import math
+from collections.abc import Sequence
+from enum import StrEnum
+from fractions import Fraction
+
+from pydantic import Field, model_validator
+
+from ..contracts import PairedOutcome, StrictContract, TaskType
+
+
+class MechanicalInvalidReason(StrEnum):
+    """Closed integrity set from the highest-precedence reconciliation."""
+
+    COMPILER_OR_SCHEMA_FAILURE = "compiler_or_schema_failure"
+    RESOURCE_NOT_DELIVERED_OR_WRONGLY_BOUND = "assigned_resource_not_delivered_or_wrongly_bound"
+    WRONG_OWNER = "wrong_owner"
+    FUTURE_LEAKAGE = "future_leakage"
+    GOLD_REFERENCE_LEAKAGE = "gold_reference_leakage"
+    IDENTITY_MISMATCH = "arm_seed_prompt_candidate_identity_mismatch"
+    GENERATION_FAILURE = "empty_or_terminal_generation_failure"
+    SCORER_UNPARSEABLE = "official_scorer_unparseable"
+
+
+class PairedEffectDecision(StrictContract):
+    task_type: TaskType
+    outcome: PairedOutcome
+    reason_code: str
+    anchor_deltas: dict[str, float] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def invalid_outcomes_use_only_closed_mechanical_reasons(self) -> "PairedEffectDecision":
+        prefix = "mechanically_invalid:"
+        if self.outcome is not PairedOutcome.INVALID:
+            if self.reason_code.startswith(prefix):
+                raise ValueError("only invalid outcomes may carry mechanical invalid reasons")
+            return self
+        if not self.reason_code.startswith(prefix):
+            raise ValueError("invalid outcomes require closed mechanical invalid reasons")
+        values = self.reason_code.removeprefix(prefix).split(",")
+        allowed = {reason.value for reason in MechanicalInvalidReason}
+        if not values or any(value not in allowed for value in values):
+            raise ValueError("invalid outcome contains a non-mechanical reason")
+        return self
+
+    @property
+    def enters_training_likelihood(self) -> bool:
+        return self.outcome in {
+            PairedOutcome.ON_BETTER,
+            PairedOutcome.OFF_BETTER,
+            PairedOutcome.EQUIVALENT,
+        }
+
+    @property
+    def binary_target(self) -> float | None:
+        if self.outcome is PairedOutcome.ON_BETTER:
+            return 1.0
+        if self.outcome in {PairedOutcome.OFF_BETTER, PairedOutcome.EQUIVALENT}:
+            return 0.0
+        return None
+
+
+class QaEffectSurface(StrictContract):
+    llm_as_judge: int = Field(ge=0, le=2)
+    f1: float = Field(ge=0.0, le=1.0)
+    bert_score: float = Field(ge=-1.0, le=1.0)
+
+    @model_validator(mode="after")
+    def metrics_are_finite(self) -> "QaEffectSurface":
+        if not math.isfinite(self.f1) or not math.isfinite(self.bert_score):
+            raise ValueError("QA effect metrics must be finite")
+        return self
+
+
+class SummaryEffectSurface(StrictContract):
+    rouge_1: float = Field(ge=0.0, le=1.0)
+    rouge_2: float = Field(ge=0.0, le=1.0)
+    rouge_l: float = Field(ge=0.0, le=1.0)
+    reference_events: int = Field(ge=0)
+    generated_events: int = Field(ge=0)
+    recalled_events: int = Field(ge=0)
+    llm_score: int = Field(ge=0, le=5)
+
+    @model_validator(mode="after")
+    def recalled_events_are_bounded(self) -> "SummaryEffectSurface":
+        if not all(math.isfinite(value) for value in (self.rouge_1, self.rouge_2, self.rouge_l)):
+            raise ValueError("Summary ROUGE metrics must be finite")
+        if self.recalled_events > self.reference_events:
+            raise ValueError("recalled events cannot exceed reference events")
+        if self.recalled_events > self.generated_events:
+            raise ValueError("recalled events cannot exceed generated events")
+        return self
+
+    @property
+    def event_precision(self) -> Fraction:
+        if self.generated_events == 0:
+            return Fraction(0, 1)
+        return Fraction(self.recalled_events, self.generated_events)
+
+    @property
+    def event_recall(self) -> Fraction:
+        if self.reference_events == 0:
+            return Fraction(0, 1)
+        return Fraction(self.recalled_events, self.reference_events)
+
+    @property
+    def event_f1(self) -> Fraction:
+        denominator = self.reference_events + self.generated_events
+        if denominator == 0:
+            return Fraction(0, 1)
+        return Fraction(2 * self.recalled_events, denominator)
+
+
+class DgObservationJudgement(StrictContract):
+    observation_id: str = Field(min_length=1, description="Audit identity only")
+    turn: int = Field(ge=1, le=10)
+    relevance: int = Field(ge=1, le=3)
+    used: bool
+
+
+class DgEffectSurface(StrictContract):
+    scored_observation_count: int = Field(ge=0)
+    used_observation_count: int = Field(ge=0)
+    fully_relevant_total: int = Field(ge=0)
+    fully_relevant_used: int = Field(ge=0)
+    relevance_weight_total: int = Field(ge=0)
+    relevance_weight_used: int = Field(ge=0)
+    long_term_memory: int = Field(ge=1, le=5)
+    personalization: int = Field(ge=1, le=5)
+    emotional_support: int = Field(ge=1, le=5)
+    observation_metric_turns: int = Field(default=5)
+
+    @model_validator(mode="after")
+    def observation_counts_are_bounded(self) -> "DgEffectSurface":
+        if self.observation_metric_turns != 5:
+            raise ValueError("official observation aggregation is frozen to turns 1-5")
+        if self.fully_relevant_used > self.fully_relevant_total:
+            raise ValueError("used fully-relevant observations exceed total")
+        if self.used_observation_count > self.scored_observation_count:
+            raise ValueError("used observations exceed scored observations")
+        if self.fully_relevant_total > self.scored_observation_count:
+            raise ValueError("fully-relevant observations exceed scored observations")
+        if self.fully_relevant_used > self.used_observation_count:
+            raise ValueError("used fully-relevant observations exceed used observations")
+        if self.relevance_weight_used > self.relevance_weight_total:
+            raise ValueError("used relevance weight exceeds total")
+        if not (
+            2 * self.fully_relevant_total
+            <= self.relevance_weight_total
+            <= self.scored_observation_count + self.fully_relevant_total
+        ):
+            raise ValueError("total relevance weight is inconsistent with observation counts")
+        if not (
+            2 * self.fully_relevant_used
+            <= self.relevance_weight_used
+            <= self.used_observation_count + self.fully_relevant_used
+        ):
+            raise ValueError("used relevance weight is inconsistent with observation counts")
+        partial_total = self.relevance_weight_total - 2 * self.fully_relevant_total
+        partial_used = self.relevance_weight_used - 2 * self.fully_relevant_used
+        if not 0 <= partial_used <= partial_total:
+            raise ValueError("used partially-relevant observations are not a subset of total")
+        irrelevant_total = (
+            self.scored_observation_count - self.fully_relevant_total - partial_total
+        )
+        irrelevant_used = (
+            self.used_observation_count - self.fully_relevant_used - partial_used
+        )
+        if not 0 <= irrelevant_used <= irrelevant_total:
+            raise ValueError("used irrelevant observations are not a subset of total")
+        return self
+
+    @property
+    def observation_recall(self) -> Fraction:
+        if self.fully_relevant_total == 0:
+            return Fraction(0, 1)
+        return Fraction(self.fully_relevant_used, self.fully_relevant_total)
+
+    @property
+    def weighted_score(self) -> Fraction:
+        if self.relevance_weight_total == 0:
+            return Fraction(0, 1)
+        return Fraction(self.relevance_weight_used, self.relevance_weight_total)
+
+
+def build_dg_effect_surface(
+    observations: Sequence[DgObservationJudgement],
+    *,
+    expected_observation_ids: Sequence[str],
+    long_term_memory: int,
+    personalization: int,
+    emotional_support: int,
+) -> DgEffectSurface:
+    """Reproduce the official first-five-turn observation aggregation."""
+
+    if len(expected_observation_ids) != len(set(expected_observation_ids)):
+        raise ValueError("expected observation ids must be unique")
+    identities = [(item.turn, item.observation_id) for item in observations]
+    if len(identities) != len(set(identities)):
+        raise ValueError("duplicate dialogue-generation observation judgement")
+
+    scored = [item for item in observations if item.turn <= 5]
+    expected_scored = {
+        (turn, observation_id)
+        for turn in range(1, 6)
+        for observation_id in expected_observation_ids
+    }
+    observed_scored = {(item.turn, item.observation_id) for item in scored}
+    if observed_scored != expected_scored:
+        missing = sorted(expected_scored - observed_scored)
+        extra = sorted(observed_scored - expected_scored)
+        raise ValueError(f"incomplete DG observation grid: missing={missing}, extra={extra}")
+    fully_relevant = [item for item in scored if item.relevance == 3]
+    relevance_weights = [item.relevance - 1 for item in scored]
+    used_weights = [
+        item.relevance - 1 for item in scored if item.used
+    ]
+    return DgEffectSurface(
+        scored_observation_count=len(scored),
+        used_observation_count=sum(item.used for item in scored),
+        fully_relevant_total=len(fully_relevant),
+        fully_relevant_used=sum(item.used for item in fully_relevant),
+        relevance_weight_total=sum(relevance_weights),
+        relevance_weight_used=sum(used_weights),
+        long_term_memory=long_term_memory,
+        personalization=personalization,
+        emotional_support=emotional_support,
+    )
+
+
+def _sign(value: int | float | Fraction) -> int:
+    return (value > 0) - (value < 0)
+
+
+def _invalid(
+    task_type: TaskType,
+    invalid_reasons: Sequence[MechanicalInvalidReason],
+) -> PairedEffectDecision:
+    if not invalid_reasons or any(
+        not isinstance(reason, MechanicalInvalidReason) for reason in invalid_reasons
+    ):
+        raise ValueError("invalid reasons must come from the closed mechanical integrity enum")
+    return PairedEffectDecision(
+        task_type=task_type,
+        outcome=PairedOutcome.INVALID,
+        reason_code="mechanically_invalid:"
+        + ",".join(sorted({reason.value for reason in invalid_reasons})),
+    )
+
+
+def _directed(
+    task_type: TaskType,
+    direction: int,
+    reason_code: str,
+    anchor_deltas: dict[str, float],
+) -> PairedEffectDecision:
+    if direction not in {-1, 1}:
+        raise ValueError("directed paired effect requires a nonzero direction")
+    return PairedEffectDecision(
+        task_type=task_type,
+        outcome=(
+            PairedOutcome.ON_BETTER if direction > 0 else PairedOutcome.OFF_BETTER
+        ),
+        reason_code=reason_code,
+        anchor_deltas=anchor_deltas,
+    )
+
+
+def _code_pareto_direction(
+    task_type: TaskType,
+    deltas: dict[str, float],
+    *,
+    reason_prefix: str,
+) -> PairedEffectDecision:
+    """Code an unweighted direction only when all official axes agree."""
+
+    directions = {_sign(delta) for delta in deltas.values() if _sign(delta)}
+    if not directions:
+        return PairedEffectDecision(
+            task_type=task_type,
+            outcome=PairedOutcome.EQUIVALENT,
+            reason_code=f"{reason_prefix}_all_official_metrics_exactly_equal",
+            anchor_deltas=deltas,
+        )
+    if len(directions) == 1:
+        return _directed(
+            task_type,
+            directions.pop(),
+            f"{reason_prefix}_official_metric_pareto_direction",
+            deltas,
+        )
+    return PairedEffectDecision(
+        task_type=task_type,
+        outcome=PairedOutcome.UNCERTAIN,
+        reason_code=f"{reason_prefix}_official_metric_direction_conflict",
+        anchor_deltas=deltas,
+    )
+
+
+def code_esc_pairwise_effect(
+    verdict: PairedOutcome,
+    *,
+    invalid_reasons: Sequence[MechanicalInvalidReason] = (),
+) -> PairedEffectDecision:
+    """Preserve the blind RS pairwise verdict without inventing a score gate."""
+
+    if invalid_reasons:
+        return _invalid(TaskType.ESC_RESPONSE, invalid_reasons)
+    if verdict is PairedOutcome.INVALID:
+        raise ValueError("an invalid verdict requires a mechanical invalid reason")
+    return PairedEffectDecision(
+        task_type=TaskType.ESC_RESPONSE,
+        outcome=verdict,
+        reason_code="blind_pairwise_verdict",
+    )
+
+
+def code_qa_effect(
+    on: QaEffectSurface,
+    off: QaEffectSurface,
+    *,
+    invalid_reasons: Sequence[MechanicalInvalidReason] = (),
+) -> PairedEffectDecision:
+    if invalid_reasons:
+        return _invalid(TaskType.QA, invalid_reasons)
+
+    deltas = {
+        "LLM_as_Judge": float(on.llm_as_judge - off.llm_as_judge),
+        "F1": on.f1 - off.f1,
+        "BERTScore": on.bert_score - off.bert_score,
+    }
+    return _code_pareto_direction(TaskType.QA, deltas, reason_prefix="qa")
+
+
+def code_summary_effect(
+    on: SummaryEffectSurface,
+    off: SummaryEffectSurface,
+    *,
+    invalid_reasons: Sequence[MechanicalInvalidReason] = (),
+) -> PairedEffectDecision:
+    if invalid_reasons:
+        return _invalid(TaskType.SUMMARY, invalid_reasons)
+
+    deltas = {
+        "ROUGE_1": on.rouge_1 - off.rouge_1,
+        "ROUGE_2": on.rouge_2 - off.rouge_2,
+        "ROUGE_L": on.rouge_l - off.rouge_l,
+        "Event_Precision": float(on.event_precision - off.event_precision),
+        "Event_Recall": float(on.event_recall - off.event_recall),
+        "Event_F1": float(on.event_f1 - off.event_f1),
+        "LLM_Score": float(on.llm_score - off.llm_score),
+    }
+    if on.reference_events != off.reference_events:
+        return PairedEffectDecision(
+            task_type=TaskType.SUMMARY,
+            outcome=PairedOutcome.UNCERTAIN,
+            reason_code="summary_reference_event_extraction_disagrees",
+            anchor_deltas=deltas,
+        )
+
+    return _code_pareto_direction(TaskType.SUMMARY, deltas, reason_prefix="summary")
+
+
+def code_dg_effect(
+    on: DgEffectSurface,
+    off: DgEffectSurface,
+    *,
+    invalid_reasons: Sequence[MechanicalInvalidReason] = (),
+) -> PairedEffectDecision:
+    if invalid_reasons:
+        return _invalid(TaskType.DIALOGUE_GENERATION, invalid_reasons)
+
+    deltas = {
+        "Observation_Recall": float(on.observation_recall - off.observation_recall),
+        "Weighted_Score": float(on.weighted_score - off.weighted_score),
+        "LT_Memory": float(on.long_term_memory - off.long_term_memory),
+        "Personalization": float(on.personalization - off.personalization),
+        "Emotional_Support": float(on.emotional_support - off.emotional_support),
+    }
+    return _code_pareto_direction(
+        TaskType.DIALOGUE_GENERATION,
+        deltas,
+        reason_prefix="dg",
+    )
+
+
+__all__ = [
+    "DgEffectSurface",
+    "DgObservationJudgement",
+    "MechanicalInvalidReason",
+    "PairedEffectDecision",
+    "QaEffectSurface",
+    "SummaryEffectSurface",
+    "build_dg_effect_surface",
+    "code_dg_effect",
+    "code_esc_pairwise_effect",
+    "code_qa_effect",
+    "code_summary_effect",
+]

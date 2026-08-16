@@ -41,6 +41,10 @@ def build() -> PreOutcomeFreezeManifest:
             ("src/metacom_pm/paper1/core/freeze.py", "pre-outcome freeze validator"),
             ("src/metacom_pm/paper1/core/treatment.py", "Paper-1 treatment delivery"),
             ("src/metacom_pm/paper1/evaluation/official.py", "official metric surface"),
+            (
+                "src/metacom_pm/paper1/evaluation/effect_coding.py",
+                "zero-outcome task-specific paired-effect coding",
+            ),
             ("src/metacom_pm/paper1/evaluation/rq1.py", "RQ1 paired input cells"),
         )
     )
@@ -58,6 +62,10 @@ def build() -> PreOutcomeFreezeManifest:
             (
                 "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl",
                 "ESConv train-only RS source identity",
+            ),
+            (
+                "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
+                "pinned official scorer source and effect-surface audit",
             ),
         )
     )
@@ -80,7 +88,8 @@ def build() -> PreOutcomeFreezeManifest:
             "bind_new_paper1_generation_runners_and_prompt_templates",
             "freeze_decoding_and_max_tokens",
             "freeze_effect_seed_schedule",
-            "freeze_task_specific_material_better_and_equivalence_rules",
+            "freeze_project_multi_metric_effect_coding_rule",
+            "freeze_exact_rs_pairwise_and_es_memeval_scorer_identities",
             "freeze_matched_random_seed_and_proposals",
             "materialize_api_call_plan",
         ),
