@@ -1,4 +1,4 @@
-"""B28: official ES-MemEval RQ2 visibility / baseline-contract audit."""
+"""B28/B28R: official ES-MemEval RQ2 visibility / baseline-contract audit."""
 
 import ast
 import inspect
@@ -12,16 +12,24 @@ from metacom_pm.paper1.official_visibility_audit import (
     ARM_NO_MEMORY,
     ARM_OFFICIAL_RAG_TOP4,
     AUDITED_SOURCE_FILES,
+    AUDITED_SOURCE_TREES,
+    AUDITED_SOURCE_TREE_LISTINGS,
+    DG_RAG_DOUBLE_BEGINNING_PROMPT_NOTE,
     DG_STRUCTURE,
-    EVALUATOR_ONLY_FIELDS,
+    DG_TOKEN_CONTRACT,
+    D_SUB_CATEGORIES,
+    D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY,
+    D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+    D_SUB_UNUSED_OFFICIAL_METADATA,
+    FIELD_VISIBILITY_TABLE,
     OFFICIAL_RAG_CONTRACT,
     PINNED_COMMIT,
     PINNED_TAG,
     PUBLIC_ARTIFACT_NAME,
     SURFACE_A_RETRIEVAL_CORPUS,
-    SURFACE_B_PM_VISIBLE_DECISION_STATE,
+    SURFACE_B_QUERY_STATE_ONLY,
     SURFACE_C_GENERATOR_VISIBLE_PROMPT,
-    SURFACE_D_EVALUATOR_ONLY,
+    SURFACE_D_NOT_SUPPORTER_VISIBLE,
     SURFACES,
     TASKS,
     TASK_DIALOGUE_GENERATION,
@@ -38,17 +46,43 @@ def test_pinned_source_identity_matches_the_frozen_commit():
     assert PINNED_COMMIT == "692624208acc077b8867698c1d6fcd998dee641a"
     assert PINNED_TAG == "v1.0.0"
     assert PUBLIC_ARTIFACT_NAME == "ES-MemEval-Public-v1.0.0-1427"
-    # never conflate the public artifact with the paper's 1209-row figure
     assert "1209" not in PUBLIC_ARTIFACT_NAME
 
 
 def test_audited_source_files_have_real_looking_git_blob_shas():
-    assert len(AUDITED_SOURCE_FILES) >= 30
+    assert len(AUDITED_SOURCE_FILES) >= 33
     for path, sha in AUDITED_SOURCE_FILES.items():
         assert path.startswith("src/")
         assert path.endswith(".py")
         assert len(sha) == 40
         assert all(c in "0123456789abcdef" for c in sha)
+
+
+def test_b28r_6_new_sum_blobs_present_and_exact():
+    expected = {
+        "src/exe/sum/sum_gpt4o_full.py": "1a7cf4b5b1920ac379166903e4448a8d08a2733b",
+        "src/exe/sum/sum_gpt4o_rag.py": "c106a0518b1d3dc34c224892d4ce8c1a6f651a2c",
+        "src/lib/sum/sum_experiment_parameters.py": "837dae7e9d6ff69e2d3e1b02b10ed9d62eff2505",
+    }
+    for path, sha in expected.items():
+        assert AUDITED_SOURCE_FILES[path] == sha
+
+
+def test_absence_of_a_no_memory_qa_sum_script_is_backed_by_full_tree_listings():
+    # B28R.6: an absence claim needs a complete directory listing, not a
+    # curated set of blobs -- confirm the tree shas and listings are present
+    # and that neither directory contains anything named like a dedicated
+    # no-memory/empty baseline.
+    assert set(AUDITED_SOURCE_TREES) == {"src/exe/qa", "src/exe/sum"}
+    for path, tree_sha in AUDITED_SOURCE_TREES.items():
+        assert len(tree_sha) == 40
+        listing = AUDITED_SOURCE_TREE_LISTINGS[path]
+        assert len(listing) >= 10
+        for name in listing:
+            assert "no_memory" not in name
+            assert "empty" not in name
+            assert "baseline" not in name
+            assert "_full" in name or "_rag" in name
 
 
 def test_every_task_arm_surface_combination_is_covered():
@@ -59,10 +93,187 @@ def test_every_task_arm_surface_combination_is_covered():
     assert keys == expected
 
 
+def test_surface_b_is_renamed_query_state_only_not_pm_visible_decision_state():
+    assert SURFACE_B_QUERY_STATE_ONLY == "B_query_state_only"
+    report = build_official_visibility_audit_report()
+    assert "surface_b_no_pm_in_harness_note" in report
+    note = report["surface_b_no_pm_in_harness_note"].lower()
+    assert "no pm" in note or "no pm/memory-selection" in note
+
+
+def test_surface_d_renamed_and_has_three_sub_categories():
+    assert SURFACE_D_NOT_SUPPORTER_VISIBLE == "D_not_tested_supporter_visible"
+    assert set(D_SUB_CATEGORIES) == {
+        D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY,
+        D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+        D_SUB_UNUSED_OFFICIAL_METADATA,
+    }
+
+
+def test_surfaces_no_longer_claimed_non_overlapping():
+    report = build_official_visibility_audit_report()
+    note = report["surfaces_non_overlapping_note"].lower()
+    assert "not" in note
+    assert "guaranteed" in note or "overlap" in note
+
+
+# --- B28R.1: basic_info field-level split -----------------------------------
+
+
+def _field_row(field_path: str):
+    return next(r for r in FIELD_VISIBILITY_TABLE if r.field_path == field_path)
+
+
+def test_basic_info_name_reaches_the_tested_supporter():
+    row = _field_row("basic_info.name")
+    assert row.reaches_tested_supporter_prompt is True
+    note = row.reaches_tested_supporter_note.lower()
+    assert "greeting" in note or "beginning_prompt" in note
+    assert "human_name" in note or "labels" in note
+
+
+def test_basic_info_other_fields_never_reach_the_tested_supporter():
+    row = _field_row("basic_info.age|gender|nationality|location|job|education")
+    assert row.reaches_tested_supporter_prompt is False
+    assert row.applies_to_tasks == (TASK_DIALOGUE_GENERATION,)
+    assert D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY in row.d_sub_categories
+    assert D_SUB_POSTGENERATION_EVALUATOR_ONLY in row.d_sub_categories
+
+
+def test_basic_info_no_longer_reported_as_a_single_evaluator_only_blob():
+    # There must be at least two distinct basic_info rows (name vs. the rest)
+    basic_info_rows = [r for r in FIELD_VISIBILITY_TABLE if r.field_path.startswith("basic_info")]
+    assert len(basic_info_rows) >= 2
+    reaches = {r.reaches_tested_supporter_prompt for r in basic_info_rows}
+    assert reaches == {True, False}  # not uniformly one classification
+
+
+def test_social_relationship_and_dialog_history_emotion_topic_are_unused_not_evaluator_only():
+    for field_path in ("social_relationship", "dialog_history[].emotion", "dialog_history[].topic"):
+        row = _field_row(field_path)
+        assert row.d_sub_categories == (D_SUB_UNUSED_OFFICIAL_METADATA,)
+        assert row.reaches_tested_supporter_prompt is False
+
+
+def test_dialog_history_summary_and_subsequent_topic_topic_have_overlapping_sub_categories():
+    # Real, mechanically-confirmed examples of D sub-categories co-occurring.
+    for field_path in ("dialog_history[].summary", "subsequent_topics[].topic"):
+        row = _field_row(field_path)
+        assert D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY in row.d_sub_categories
+        assert D_SUB_POSTGENERATION_EVALUATOR_ONLY in row.d_sub_categories
+
+
+# --- B28R.7: QA/Summary evaluator fields accurate ---------------------------
+
+
+def test_qa_evidence_and_summary_evidence_theme_group_are_schema_present_but_unused():
+    qa_evidence = _field_row("question.evidence")
+    assert qa_evidence.d_sub_categories == (D_SUB_UNUSED_OFFICIAL_METADATA,)
+    sum_fields = _field_row("summary.evidence|theme|group")
+    assert sum_fields.d_sub_categories == (D_SUB_UNUSED_OFFICIAL_METADATA,)
+
+
+def test_qa_answer_and_summary_answer_are_actually_consumed_by_scoring():
+    for field_path in ("question.answer", "summary.answer"):
+        row = _field_row(field_path)
+        assert row.d_sub_categories == (D_SUB_POSTGENERATION_EVALUATOR_ONLY,)
+        assert "read" in row.reaches_tested_supporter_note.lower() or "consumed" in row.description.lower()
+
+
+def test_capability_fields_are_csv_logging_only():
+    for field_path in ("question.capability", "summary.capability"):
+        row = _field_row(field_path)
+        assert "csv" in row.description.lower()
+
+
+# --- B28R.3: DG token contract -----------------------------------------------
+
+
+def test_dg_token_contract_states_no_input_truncation_but_output_caps():
+    assert DG_TOKEN_CONTRACT["harness_level_input_context_truncation"] == "NONE"
+    caps = DG_TOKEN_CONTRACT["output_max_tokens"]
+    assert caps["seeker"] == 60
+    assert caps["supporter"] == 60
+    assert caps["observation_scorer"] == 30
+    assert caps["observation_usage_judge"] == 30
+
+
+def test_old_no_truncation_max_token_logic_anywhere_phrasing_is_removed():
+    # The exact old blanket claims this round retires -- checked as literal
+    # affirmative phrasings, not the (legitimate) explanatory mention of
+    # "the removed claim" in this module's own B28R changelog comment.
+    source = inspect.getsource(_module)
+    for old_phrasing in (
+        "no truncation/max-token logic exists anywhere",
+        "no truncation/max-token logic found anywhere",
+        "no truncation/max-token logic found here either",
+    ):
+        assert old_phrasing not in source.lower()
+
+
+# --- B28R.4: DG RAG double beginning_prompt ---------------------------------
+
+
+def test_dg_rag_double_beginning_prompt_note_present_and_mechanically_grounded():
+    note = DG_RAG_DOUBLE_BEGINNING_PROMPT_NOTE.lower()
+    assert "twice" in note
+    assert "fixedstrategy" in note
+    assert "room.append" in note or "_history" in note
+
+    rows = build_task_arm_surface_rows()
+    dg_rag_c = next(
+        r for r in rows
+        if r.task == TASK_DIALOGUE_GENERATION and r.arm == ARM_OFFICIAL_RAG_TOP4 and r.surface == SURFACE_C_GENERATOR_VISIBLE_PROMPT
+    )
+    assert "twice" in dg_rag_c.description.lower()
+
+
+# --- B28R.5: A/C relationship precision --------------------------------------
+
+
+def test_candidate_vs_prompt_visibility_note_no_longer_claims_unconditional_coincidence():
+    report = build_official_visibility_audit_report()
+    note = report["candidate_vs_prompt_visibility_note"].lower()
+    assert "coincide" in note
+    assert "only coincides" in note or "not reliably" in note or "not guaranteed" in note
+    assert "truncat" in note
+
+
+def test_dg_full_history_surface_a_is_not_alwaysalldocumentstore():
+    rows = build_task_arm_surface_rows()
+    row = next(
+        r for r in rows
+        if r.task == TASK_DIALOGUE_GENERATION and r.arm == ARM_FULL_HISTORY and r.surface == SURFACE_A_RETRIEVAL_CORPUS
+    )
+    desc = row.description.lower()
+    assert "not" in desc and "alwaysalldocumentstore" in desc
+    assert "fill_session" in desc
+
+
+def test_qa_sum_full_history_surface_c_mentions_truncation_prefix_caveat():
+    rows = build_task_arm_surface_rows()
+    for task in (TASK_QA, TASK_SUMMARIZATION):
+        row = next(
+            r for r in rows
+            if r.task == task and r.arm == ARM_FULL_HISTORY and r.surface == SURFACE_C_GENERATOR_VISIBLE_PROMPT
+        )
+        assert "prefix" in row.description.lower()
+
+
+def test_qa_sum_rag_surface_c_admits_not_reliably_strict_subset():
+    rows = build_task_arm_surface_rows()
+    for task in (TASK_QA, TASK_SUMMARIZATION):
+        row = next(
+            r for r in rows
+            if r.task == task and r.arm == ARM_OFFICIAL_RAG_TOP4 and r.surface == SURFACE_C_GENERATOR_VISIBLE_PROMPT
+        )
+        assert "not reliably" in row.description.lower() or "not guaranteed" in row.description.lower()
+
+
+# --- general structural checks ----------------------------------------------
+
+
 def test_qa_and_summarization_no_memory_arm_is_not_officially_shipped():
-    # B28: no dedicated no-memory script exists for QA/Summarization in the
-    # official repo (unlike DG's dg_gpt4o.py) -- this must be disclosed, not
-    # silently implied to be an official baseline.
     rows = build_task_arm_surface_rows()
     for task in (TASK_QA, TASK_SUMMARIZATION):
         for row in rows:
@@ -112,45 +323,10 @@ def test_official_rag_contract_dg_query_construction_is_dynamic_not_static():
     assert "topic" not in dg_query_note
 
 
-def test_official_rag_contract_flags_dg_truncation_gap():
-    # B28: confirmed asymmetry -- QA/Summarization truncate, DG does not.
-    qa_trunc = OFFICIAL_RAG_CONTRACT["truncation_max_token_behavior"][TASK_QA].lower()
-    dg_trunc = OFFICIAL_RAG_CONTRACT["truncation_max_token_behavior"][TASK_DIALOGUE_GENERATION].lower()
-    assert "token" in qa_trunc
-    assert "no equivalent" in dg_trunc or "no truncation" in dg_trunc
-
-
-def test_evaluator_only_fields_never_appear_inside_any_a_b_or_c_surface_description():
-    rows = build_task_arm_surface_rows()
-    runtime_surfaces = {SURFACE_A_RETRIEVAL_CORPUS, SURFACE_B_PM_VISIBLE_DECISION_STATE, SURFACE_C_GENERATOR_VISIBLE_PROMPT}
-    for row in rows:
-        if row.surface not in runtime_surfaces:
-            continue
-        rendered = row.description.lower()
-        for field in EVALUATOR_ONLY_FIELDS:
-            # exact bracket-key form, e.g. "['answer']" or ["answer"] -- avoids
-            # false positives on unrelated prose that happens to contain a
-            # forbidden word as a substring of a different word.
-            assert f"['{field}']" not in rendered
-            assert f'["{field}"]' not in rendered
-
-
-def test_d_surface_rows_are_the_only_ones_naming_evaluator_only_fields():
-    rows = build_task_arm_surface_rows()
-    d_rows = [r for r in rows if r.surface == SURFACE_D_EVALUATOR_ONLY]
-    assert len(d_rows) == len(TASKS) * len(ARMS)
-    for row in d_rows:
-        rendered = row.description.lower()
-        assert "answer" in rendered or "basic_info" in rendered or "observation" in rendered
-
-
 def test_dg_b_surface_explicitly_disclaims_related_sessions_topic_and_background():
-    # The description text legitimately names these fields in order to say
-    # they are excluded ("... never reach this surface") -- so this checks
-    # for the negation qualifier, not bare absence of the words.
     rows = build_task_arm_surface_rows()
     dg_b_rows = [
-        r for r in rows if r.task == TASK_DIALOGUE_GENERATION and r.surface == SURFACE_B_PM_VISIBLE_DECISION_STATE
+        r for r in rows if r.task == TASK_DIALOGUE_GENERATION and r.surface == SURFACE_B_QUERY_STATE_ONLY
     ]
     assert len(dg_b_rows) == len(ARMS)
     for row in dg_b_rows:
@@ -181,13 +357,11 @@ def test_report_is_zero_outcome_and_never_reads_local_corpus_data():
     report = build_official_visibility_audit_report()
     assert report["outcome_calls"] == 0
     rendered = json.dumps(report).lower()
-    for token in ("\"gold\"", "observation_score", "llm_as_a_judge_result"):
+    for token in ("\"gold\"", "\"answer\":", "\"evidence\":"):
         assert token not in rendered
 
 
 def test_module_never_imports_the_sanitized_loader_materializer_or_raw_evo_emo():
-    # B28: this is a pure static-documentation module -- it must never
-    # import anything that reads evo_emo.json or the sanitized artifact.
     tree = ast.parse(inspect.getsource(_module))
     forbidden_modules = (
         "metacom_pm.paper1.data.memory_source",
@@ -208,7 +382,7 @@ def test_manifest_write_roundtrip_and_hash(tmp_path):
     assert len(manifest_lines) == len(rows)
     for line in manifest_lines:
         parsed = json.loads(line)
-        assert parsed["protocol"] == "pm-paper1-official-visibility-task-arm-surface-row-v1"
+        assert parsed["protocol"] == "pm-paper1-official-visibility-task-arm-surface-row-v2"
         assert parsed["task"] in TASKS
         assert parsed["arm"] in ARMS
         assert parsed["surface"] in SURFACES
