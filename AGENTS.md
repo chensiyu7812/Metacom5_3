@@ -3,18 +3,21 @@
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
 1. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-2. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-3. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-4. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-5. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+2. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+3. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+4. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+5. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+6. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+7. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
 ## Authority precedence
 
 - **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
-- **Implementation-level feature schema, measurement rules, leakage controls, CI migration, freeze items, and execution order** are governed by the newer `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md` and its machine-readable contract.
-- If the older training contract or V5.3 code conflicts with the execution blueprint, **do not change the research design to match old code**. Report the conflict and migrate the implementation.
+- **Final evaluation / measurement hierarchy** is governed by `PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md` and its machine-readable contract. Official ESC-Eval / ES-MemEval capability metrics outrank all internally defined Quality/Risk/Function rubrics.
+- **Implementation-level feature schema, leakage controls, CI migration, freeze items, and execution order** are governed by `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md` and its machine-readable contract.
+- If the older training contract or V5.3 code conflicts with these authorities, **do not change the research design to match old code**. Report the conflict and migrate the implementation.
 - Do not silently resolve a pre-outcome research choice. If a required freeze item is not determined by the zero-outcome audit, mark it `IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED`.
 
 ## Critical data rule — public sources only
@@ -63,16 +66,19 @@ Forbidden examples: `worth_opening`, subjective `helpfulness`, subjective `respo
 
 The active feature schema is defined in `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`.
 
-## Evaluation authority
+## Evaluation authority — official benchmark first
 
-- RQ1 final benchmark: ESC-Eval; arms `R0 / RS Fixed-High / RS Matched-Random / Learned RS-PM`.
+- **Paper-1 final capability verdict is based on prior-work official metrics, not our internal Quality/Risk/Function rubric.**
+- RQ1 final benchmark: ESC-Eval; arms `R0 / RS Fixed-High / RS Matched-Random / Learned RS-PM`; report official `Fluency / Expression / Empathy / Information / Skillful / Humanoid / Overall`.
 - Because the Strategy Bank is ESConv-derived, the primary RQ1 transfer analysis uses non-ESConv-source English role cards; the full frozen English set is secondary and ESConv-derived cards are an overlap sensitivity slice.
-- RQ2 final benchmark: ES-MemEval; arms `No Memory / Full History / Official RAG Top-4 / Typed Fixed-High / Typed Matched-Random / Learned Typed-Memory PM`.
+- RQ2 final benchmark: ES-MemEval; arms `No Memory / Full History / Official RAG Top-4 / Typed Fixed-High / Typed Matched-Random / Learned Typed-Memory PM`; report official QA / Summarization / Dialogue Generation metrics.
 - RS stays fixed in ES-MemEval main analysis.
-- Component-minus `-MP/-MS/-ME` are ablations.
+- Component-minus `-MP/-MS/-ME` are ablations and must be interpreted through official ES-MemEval metrics.
 - Formal claims require same-stack reruns with the frozen Generator.
-- Use official ESC-Eval / ES-MemEval metrics for capability outcomes; do not create a post-hoc composite or pick only favorable metrics.
-- Cost is separately logged and cannot compensate for material quality/integrity failure.
+- Do not create a post-hoc composite or pick only favorable metrics.
+- **Internal Quality/Risk scorers are training-only / qualification / supplemental diagnostics. They must not become Paper-1 primary metrics or the final verdict.**
+- Objective Cost is a separate efficiency axis and may be reported beside official metrics, but it is not a capability score and cannot compensate for material official-metric degradation.
+- Formal benchmark runners must not use internal Q/R as their primary scorer or aggregate internal Q/R into a paper result composite.
 
 ## Data / leakage authority
 
@@ -87,14 +93,14 @@ The active feature schema is defined in `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_202
 
 Do not start formal PM training first.
 
-1. **Repository-to-contract audit** against the execution blueprint.
-2. Phase 0: disconnect obsolete synthetic active paths/configs/tests; remove MP_PREFERENCE/background-bit/utility-like active features; add fail-closed CI guards; establish a public-only Paper-1 config.
+1. **Repository-to-contract audit** against the execution blueprint and official-evaluation-priority authority.
+2. Phase 0: disconnect obsolete synthetic active paths/configs/tests; remove MP_PREFERENCE/background-bit/utility-like active features; add fail-closed CI guards; establish a public-only Paper-1 config; audit that internal Q/R is not wired as a formal benchmark verdict.
 3. Phase 1: run a **public-only zero-outcome coverage audit** on ESConv + ES-MemEval/EvoEmo.
 4. Phase 2: before any formal effect outcome is opened, freeze candidate bundles/top-k/token caps, exact feature schema, cross-fit, formal N, task-specific comparators/margins, cost threshold, Generator full-stack manifest, qualification sample, reviewer overlap and API call plan.
 5. Phase 3: run public-source 32-state repeated-effect qualification.
 6. If it passes, generate final public-source effect labels and train four L2 heads.
 7. Freeze thresholds/baselines/matched-random schedules.
-8. Run RQ1, RQ2, and component-minus ablations.
+8. Run RQ1, RQ2, and component-minus ablations using official benchmark outcomes as the capability verdict.
 
 ## Drift prevention
 
