@@ -153,13 +153,19 @@ def _diagnose_packing(
                 fold_task_counts[fold_index].get(task_name, 0) + count
             )
 
-    # B26.3: independently re-verify, not just trust the packer's own
+    # B26.3/B27.1: independently re-verify, not just trust the packer's own
     # internal invariants -- every target assigned to exactly one fold.
+    # "Exactly once" is two separate conditions: no duplicate (the naive
+    # len(all_assigned) == len(set(all_assigned)) check) AND no missing
+    # (the assigned count must also equal the expected total -- a target
+    # silently dropped from every fold's target set would still pass the
+    # duplicate-only check, since len(assigned) == len(set(assigned)) holds
+    # trivially whenever every element is merely unique, missing or not).
     all_assigned: list[str] = [tid for fold_set in fold_target_ids for tid in fold_set]
     total_targets_expected = sum(c.target_count for c in components)
-    no_missing_or_duplicate = (
-        len(all_assigned) == len(set(all_assigned)) == total_targets_expected
-    )
+    no_duplicates = len(all_assigned) == len(set(all_assigned))
+    no_missing = len(all_assigned) == total_targets_expected
+    no_missing_or_duplicate = no_duplicates and no_missing
 
     # Atomicity: every component's full target set must land inside exactly
     # one fold's target set (never split across two folds).
@@ -197,7 +203,10 @@ def _diagnose_packing(
         total_components=len(components),
         total_targets_expected=total_targets_expected,
         total_targets_assigned=len(all_assigned),
-        all_targets_assigned_exactly_once=(len(all_assigned) == len(set(all_assigned))),
+        # B27.1: reuse the same, already-correct no_missing_or_duplicate
+        # computation -- these two fields assert the identical claim and
+        # must never be allowed to diverge into two different checks again.
+        all_targets_assigned_exactly_once=no_missing_or_duplicate,
         all_components_atomic=all_atomic,
         no_missing_or_duplicate_targets=no_missing_or_duplicate,
         target_count_min=int(min(target_counts)) if target_counts else 0,
