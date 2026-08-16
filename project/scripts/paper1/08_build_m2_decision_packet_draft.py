@@ -125,9 +125,9 @@ def main() -> int:
             5,
             "rs_retriever",
             "RS semantic retriever",
-            f"Lexical Jaccard was used only for Phase-1 availability. A separate zero-outcome engineering attestation hash-verified BAAI/bge-small-en-v1.5 revision {environment['bge_small_encoder_candidate']['revision']} and completed a CUDA normalized-CLS forward pass with shape {environment['bge_small_encoder_candidate']['probe']['shape']}; this proves runtime capability, not that the retriever is frozen.",
-            "Decide once whether to bind this exact BGE candidate, normalized cosine similarity, the visible last-six-turn query, and leave-current-dialogue-out indexing. Do not promote the engineering probe to a research choice automatically.",
-            "ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_FREEZE_PENDING",
+            f"Lexical Jaccard was used only for Phase-1 availability. The zero-outcome environment attestation hash-verified two distinct candidates: lightweight English BAAI/bge-small-en-v1.5@{environment['bge_small_encoder_candidate']['revision']} with CUDA shape {environment['bge_small_encoder_candidate']['probe']['shape']}, and BAAI/bge-m3@{environment['bge_m3_encoder_candidate']['revision']} with CUDA shape {environment['bge_m3_encoder_candidate']['probe']['shape']}. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision. Neither local snapshot is thereby frozen for the Paper-1 RS retriever.",
+            "Keep BGE-small only as an RS lightweight challenger/smoke-test. Reproduce Official RAG with the BGE-M3 model identity, and treat BGE-M3 as the leading typed-memory candidate. For RS, compare lexical, BGE-small and BGE-M3 on the final dialogue-only Bank using an outcome-blind retrieval/applicability audit; then freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls.",
+            "DUAL_ENCODER_ENGINEERING_CAPABILITY_COMPLETE_RESEARCH_COMPARISON_AND_FREEZE_PENDING",
             True,
         ),
         _decision(
@@ -287,6 +287,16 @@ def main() -> int:
                 "retriever_candidate_role": environment[
                     "bge_small_encoder_candidate"
                 ]["role"],
+                "retriever_candidate_roles": {
+                    "bge_small": environment["bge_small_encoder_candidate"]["role"],
+                    "bge_m3": environment["bge_m3_encoder_candidate"]["role"],
+                },
+                "official_rag_model_id": environment["bge_m3_encoder_candidate"][
+                    "official_es_memeval_binding"
+                ]["model_id"],
+                "official_rag_local_revision_parity": environment[
+                    "bge_m3_encoder_candidate"
+                ]["official_es_memeval_binding"]["local_revision_parity_status"],
             },
         },
         "rs_findings": {

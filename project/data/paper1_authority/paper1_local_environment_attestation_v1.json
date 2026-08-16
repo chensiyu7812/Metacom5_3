@@ -1,8 +1,50 @@
 {
   "attestation_inputs": {
-    "attestation_script_sha256": "ad999aff450116e7f7a07cf6ccfd02c44c65a413a7fdb6b7319a3ad97b16f3e0",
+    "attestation_script_sha256": "855012fbcb308f7542a5fc929f5d046610b5ccbd2be1a52036225f951cf0373b",
     "environment_file_sha256": "32c54a381d4a0f1027263e41facf45b754a028a876f096587199b741bebeadbf",
     "lock_file_sha256": "e0b59271537e9a419329489aac06286887bbc5e74740d8e77fd6d6e6bc9cd1b0"
+  },
+  "bge_m3_encoder_candidate": {
+    "files": {
+      "1_Pooling/config.json": "e54c164a07274f2eb45bb724f54a79d1efcc90c41573887cd9a29aeee0597352",
+      "config.json": "26159e7ad065073448460117eb24b7a4572f6f4e78eadff65dc0a11c052449fa",
+      "config_sentence_transformers.json": "1eef72430e7194a1e59680e635aed81ffa083f05668dbc5bb1c56c04c0999c38",
+      "model.safetensors": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+      "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "sentence_bert_config.json": "eb9b44b13c0f52a3b3685c3b1cbdea1ba8b04bea123b98f61610048940776eb1",
+      "sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+      "special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+      "tokenizer.json": "21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08",
+      "tokenizer_config.json": "a62b2b6784f990259fddef5f16388693a8043be4f69179e6a5257eeb3f9abac4"
+    },
+    "official_es_memeval_binding": {
+      "config_bytes_match_official_main": true,
+      "local_revision_parity_status": "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION",
+      "local_revision_role": "PUBLIC_SAFETENSORS_CONVERSION_REVISION_FOR_SAFE_LOCAL_RUNTIME",
+      "model_id": "BAAI/bge-m3",
+      "official_main_revision_observed": "5617a9f61b028005a4858fdac845db406aefb181",
+      "repository_commit": "692624208acc077b8867698c1d6fcd998dee641a",
+      "revision_in_official_source": null,
+      "session_level_top_k": 4,
+      "store": "FAISS"
+    },
+    "probe": {
+      "cosine_diagnostic": 0.558841,
+      "cuda_available": true,
+      "device": "cuda",
+      "gpu_name": "NVIDIA RTX A6000",
+      "model_class": "XLMRobertaModel",
+      "normalized": true,
+      "shape": [
+        2,
+        1024
+      ],
+      "torch_cuda_version": "12.1",
+      "torch_version": "2.3.1+cu121"
+    },
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "role": "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE"
   },
   "bge_small_encoder_candidate": {
     "files": {
@@ -28,7 +70,7 @@
     },
     "repo": "BAAI/bge-small-en-v1.5",
     "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
-    "role": "ENGINEERING_CAPABILITY_CANDIDATE_NOT_RETRIEVER_FREEZE"
+    "role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE"
   },
   "environment_name": "metacom-paper1-py311",
   "generator": {
@@ -133,6 +175,7 @@
     "nvidia_nim_provider_tokenizer_parity",
     "resource_renderer_and_token_cap",
     "retriever_encoder_and_revision",
+    "official_bge_m3_local_revision_parity",
     "embedding_pooling_query_and_normalization_contract",
     "final_feature_schema"
   ],

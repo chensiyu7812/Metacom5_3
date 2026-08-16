@@ -29,8 +29,17 @@ The checked-in lock is for the local GPU research runtime. GitHub Actions
 continues to install from `pyproject.toml` on a CPU runner to test the supported
 dependency ranges and portability. Neither path unlocks formal outcomes.
 
-The Llama tokenizer and BGE encoder are distinct artifacts. The tokenizer is
+The Llama tokenizer and BGE encoders are distinct artifacts. The tokenizer is
 only a local text-to-token accounting/capping candidate; final cost uses NIM
-usage fields, and provider-tokenizer parity remains an M2 freeze item. The BGE
-snapshot is only an engineering-capability candidate until the researcher
-freezes the exact retriever/feature schema.
+usage fields, and provider-tokenizer parity remains an M2 freeze item.
+
+Two BGE snapshots are attested without freezing either one: BGE-small is a
+lightweight English RS challenger and environment smoke-test; BGE-M3 matches
+the model identity used by ES-MemEval's official FAISS session-level Top-4 RAG
+and is the leading typed-memory candidate. The official source does not pin a
+Hub revision. The attested local M3 revision is an immutable public
+``safetensors`` conversion whose config/tokenizer/pooling bytes match the
+current official-model main snapshot; weights/runtime parity, pooling,
+normalization, query, and document contract remain explicit M2
+reconciliation/freeze items. A successful forward pass is engineering evidence
+only, never a retriever-quality verdict.

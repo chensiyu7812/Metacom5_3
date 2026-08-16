@@ -27,6 +27,8 @@ LLAMA_REPO = "NousResearch/Meta-Llama-3.1-8B-Instruct"
 LLAMA_REVISION = "d10aef7999a2b5ba950ab3974312feeedbfe0b77"
 BGE_REPO = "BAAI/bge-small-en-v1.5"
 BGE_REVISION = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+BGE_M3_REPO = "BAAI/bge-m3"
+BGE_M3_REVISION = "9a0624b896d81da7492a910ffa53731274b6cf3d"
 
 LLAMA_FILES = {
     "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
@@ -39,6 +41,18 @@ BGE_FILES = {
     "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
     "tokenizer_config.json": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
     "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+}
+BGE_M3_FILES = {
+    "1_Pooling/config.json": "e54c164a07274f2eb45bb724f54a79d1efcc90c41573887cd9a29aeee0597352",
+    "config.json": "26159e7ad065073448460117eb24b7a4572f6f4e78eadff65dc0a11c052449fa",
+    "config_sentence_transformers.json": "1eef72430e7194a1e59680e635aed81ffa083f05668dbc5bb1c56c04c0999c38",
+    "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+    "model.safetensors": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "sentence_bert_config.json": "eb9b44b13c0f52a3b3685c3b1cbdea1ba8b04bea123b98f61610048940776eb1",
+    "sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+    "special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+    "tokenizer.json": "21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08",
+    "tokenizer_config.json": "a62b2b6784f990259fddef5f16388693a8043be4f69179e6a5257eeb3f9abac4",
 }
 
 _NORMALIZE_PACKAGE = re.compile(r"[-_.]+")
@@ -176,7 +190,12 @@ def _encode_probe(llama_dir: Path) -> dict[str, Any]:
     }
 
 
-def _embedding_probe(bge_dir: Path, *, require_cuda: bool) -> dict[str, Any]:
+def _embedding_probe(
+    bge_dir: Path,
+    *,
+    require_cuda: bool,
+    expected_dimension: int,
+) -> dict[str, Any]:
     import torch
     from transformers import AutoModel, AutoTokenizer
 
@@ -193,7 +212,8 @@ def _embedding_probe(bge_dir: Path, *, require_cuda: bool) -> dict[str, Any]:
     with torch.inference_mode():
         vectors = model(**batch).last_hidden_state[:, 0]
         vectors = torch.nn.functional.normalize(vectors, p=2, dim=1)
-    if tuple(vectors.shape) != (2, 384):
+    expected_shape = (2, expected_dimension)
+    if tuple(vectors.shape) != expected_shape:
         raise RuntimeError(f"unexpected BGE probe shape: {tuple(vectors.shape)}")
     norms = vectors.norm(dim=1).detach().cpu().tolist()
     if any(abs(value - 1.0) > 1e-5 for value in norms):
@@ -202,7 +222,7 @@ def _embedding_probe(bge_dir: Path, *, require_cuda: bool) -> dict[str, Any]:
     return {
         "model_class": type(model).__name__,
         "device": device,
-        "shape": [2, 384],
+        "shape": [2, expected_dimension],
         "normalized": True,
         "cosine_diagnostic": round(cosine, 6),
         "torch_version": torch.__version__,
@@ -219,9 +239,17 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
     import_paths = verify_import_boundary()
     llama_hashes = verify_files(args.llama_tokenizer_dir, LLAMA_FILES)
     bge_hashes = verify_files(args.bge_small_dir, BGE_FILES)
+    bge_m3_hashes = verify_files(args.bge_m3_dir, BGE_M3_FILES)
     tokenizer_probe = _encode_probe(args.llama_tokenizer_dir)
     embedding_probe = _embedding_probe(
-        args.bge_small_dir, require_cuda=args.require_cuda
+        args.bge_small_dir,
+        require_cuda=args.require_cuda,
+        expected_dimension=384,
+    )
+    bge_m3_probe = _embedding_probe(
+        args.bge_m3_dir,
+        require_cuda=args.require_cuda,
+        expected_dimension=1024,
     )
     return {
         "protocol": PROTOCOL,
@@ -257,16 +285,35 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             "nvidia_nim_provider_parity": "PENDING_M2_FREEZE",
         },
         "bge_small_encoder_candidate": {
-            "role": "ENGINEERING_CAPABILITY_CANDIDATE_NOT_RETRIEVER_FREEZE",
+            "role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
             "repo": BGE_REPO,
             "revision": BGE_REVISION,
             "files": bge_hashes,
             "probe": embedding_probe,
         },
+        "bge_m3_encoder_candidate": {
+            "role": "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE",
+            "repo": BGE_M3_REPO,
+            "revision": BGE_M3_REVISION,
+            "files": bge_m3_hashes,
+            "probe": bge_m3_probe,
+            "official_es_memeval_binding": {
+                "repository_commit": "692624208acc077b8867698c1d6fcd998dee641a",
+                "model_id": "BAAI/bge-m3",
+                "store": "FAISS",
+                "session_level_top_k": 4,
+                "revision_in_official_source": None,
+                "official_main_revision_observed": "5617a9f61b028005a4858fdac845db406aefb181",
+                "local_revision_role": "PUBLIC_SAFETENSORS_CONVERSION_REVISION_FOR_SAFE_LOCAL_RUNTIME",
+                "config_bytes_match_official_main": True,
+                "local_revision_parity_status": "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION",
+            },
+        },
         "pending_researcher_freeze": [
             "nvidia_nim_provider_tokenizer_parity",
             "resource_renderer_and_token_cap",
             "retriever_encoder_and_revision",
+            "official_bge_m3_local_revision_parity",
             "embedding_pooling_query_and_normalization_contract",
             "final_feature_schema",
         ],
@@ -288,6 +335,7 @@ def main() -> None:
     )
     parser.add_argument("--llama-tokenizer-dir", type=Path, required=True)
     parser.add_argument("--bge-small-dir", type=Path, required=True)
+    parser.add_argument("--bge-m3-dir", type=Path, required=True)
     parser.add_argument("--require-cuda", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()

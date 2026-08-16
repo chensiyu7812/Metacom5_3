@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -9,6 +10,10 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = PROJECT_ROOT / "scripts/paper1/10_attest_paper1_environment.py"
 LOCK = PROJECT_ROOT / "environments/requirements-paper1-py311.lock.txt"
+ATTESTATION = (
+    PROJECT_ROOT
+    / "data/paper1_authority/paper1_local_environment_attestation_v1.json"
+)
 
 
 def _load_module():
@@ -47,3 +52,28 @@ def test_attestation_status_cannot_claim_research_freeze() -> None:
     source = SCRIPT.read_text(encoding="utf-8")
     assert '"outcome_calls": 0' in source
     assert '"nvidia_nim_provider_parity": "PENDING_M2_FREEZE"' in source
+    assert module.BGE_M3_REPO == "BAAI/bge-m3"
+    assert module.BGE_M3_REVISION == "9a0624b896d81da7492a910ffa53731274b6cf3d"
+
+
+def test_encoder_roles_distinguish_smoke_challenger_from_official_model_id() -> None:
+    module = _load_module()
+    source = SCRIPT.read_text(encoding="utf-8")
+    assert "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE" in source
+    assert "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE" in source
+    assert "MODEL_ID_AND_CONFIG_MATCH_OFFICIAL_WEIGHTS_AND_RUNTIME_CONTRACT_REQUIRE_M2_RECONCILIATION" in source
+    assert module.BGE_REPO != module.BGE_M3_REPO
+
+
+def test_checked_in_attestation_records_both_cuda_encoder_probes() -> None:
+    payload = json.loads(ATTESTATION.read_text(encoding="utf-8"))
+    assert payload["outcome_calls"] == 0
+    assert payload["bge_small_encoder_candidate"]["probe"]["shape"] == [2, 384]
+    assert payload["bge_m3_encoder_candidate"]["probe"]["shape"] == [2, 1024]
+    assert payload["bge_small_encoder_candidate"]["probe"]["device"] == "cuda"
+    assert payload["bge_m3_encoder_candidate"]["probe"]["device"] == "cuda"
+    binding = payload["bge_m3_encoder_candidate"]["official_es_memeval_binding"]
+    assert binding["model_id"] == "BAAI/bge-m3"
+    assert binding["store"] == "FAISS"
+    assert binding["session_level_top_k"] == 4
+    assert binding["revision_in_official_source"] is None
