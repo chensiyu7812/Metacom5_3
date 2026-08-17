@@ -1,0 +1,164 @@
+{
+  "protocol": "pm-paper1-semantic-memory-compiler-amendment-20260817-v1",
+  "status": "ACTIVE_RESEARCHER_APPROVED_PRE_OUTCOME_SCOPED_IMPLEMENTATION_AMENDMENT",
+  "human_authority": "project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md",
+  "scope": [
+    "MP_MS_ME_semantic_candidate_construction",
+    "semantic_factual_extractor_and_verifier",
+    "BGE_M3_formal_semantic_similarity",
+    "regex_and_Jaccard_diagnostic_only_status",
+    "compiler_API_cache_resume_retry_and_cost_contract"
+  ],
+  "unchanged": {
+    "components": ["RS", "MP", "MS", "ME"],
+    "ontology": {
+      "RS": "Strategy_RAG",
+      "MP": "Profile_Memory_only",
+      "MS": "strict_past_same_user_cross_session_event_or_continuity_memory",
+      "ME": "strict_past_user_action_to_user_observed_outcome_experience"
+    },
+    "learning_route": "A_first_order_factorized",
+    "learner": "four_standardized_L2_regularized_logistic_regression_heads",
+    "generator": "meta/llama-3.1-8b-instruct",
+    "public_only": true,
+    "outcome_isolated_cross_fitting": true,
+    "primary_threshold": 0.5,
+    "outcome_lock": "LOCKED",
+    "final_capability_metrics": "official_ESC_Eval_and_ES_MemEval_only"
+  },
+  "semantic_compiler": {
+    "provider": "Alibaba_Cloud_Model_Studio_OpenAI_compatible_API",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "mode": "non_thinking",
+    "roles": ["semantic_factual_extractor", "semantic_factual_verifier"],
+    "not_roles": ["generator", "PM_learner", "effect_judge", "official_evaluator"],
+    "structured_output": {
+      "provider_mode": "json_object",
+      "provider_strict_JSON_Schema_enforcement_claimed": false,
+      "local_strict_schema_and_Pydantic_validation_required": true
+    },
+    "workflow": [
+      "semantic_extractor",
+      "local_strict_schema_validation",
+      "deterministic_grounding_validator",
+      "semantic_factual_verifier"
+    ],
+    "sessions_total": 401,
+    "stable_order": "within_owner_timestamp_then_session_id",
+    "compile_success_once_and_cache": true
+  },
+  "allowed_inputs": [
+    "current_source_session_raw_dialogue_with_roles_and_turn_ids",
+    "owner_id_source_session_id_timestamp",
+    "strict_past_accepted_compact_canonical_entity_state_table_for_coreference_only"
+  ],
+  "forbidden_inputs": [
+    "ES_MemEval_question",
+    "gold",
+    "reference",
+    "evidence_labels",
+    "future_session",
+    "formal_outcome",
+    "ON_OFF_or_usefulness_labels",
+    "evaluator_only_basic_info",
+    "official_observation_social_relationship_event_experience_annotations",
+    "generated_treatment_response",
+    "official_scorer_output"
+  ],
+  "allowed_factual_judgments": [
+    "durable_profile_fact_and_stable_social_role_membership",
+    "completed_event_state_change_continuity_thread",
+    "entity_time_status_lineage",
+    "user_actor_and_completed_action",
+    "explicit_user_observed_outcome",
+    "action_outcome_same_experience_lineage",
+    "cross_turn_coreference_and_entity_linking",
+    "durable_profile_vs_episodic_event",
+    "source_support_and_unsupported_normalization"
+  ],
+  "forbidden_judgments": [
+    "usefulness",
+    "helpfulness",
+    "quality_effect",
+    "relevance_to_current_target",
+    "transferability",
+    "worth_opening",
+    "should_open",
+    "ON_OFF",
+    "continuity_need",
+    "response_feasibility",
+    "scope_specificity"
+  ],
+  "mandatory_provenance": [
+    "owner_id",
+    "source_session_id",
+    "source_turn_ids",
+    "exact_supporting_seeker_spans_and_turn_local_locations",
+    "normalized_semantic_representation",
+    "typed_memory_class_and_subtype",
+    "entities",
+    "timestamp_status",
+    "linked_prior_memory_ids",
+    "source_prompt_schema_request_and_response_identity_hashes"
+  ],
+  "ME_hard_rejections": [
+    "third_party_action",
+    "future_plan",
+    "hypothetical",
+    "advice_only",
+    "purpose_clause_as_outcome",
+    "prediction_not_user_observed_result",
+    "action_outcome_lineage_unresolved"
+  ],
+  "deterministic_grounding": [
+    "source_owner_session_turn_IDs_exist",
+    "supporting_spans_verbatim_in_corresponding_seeker_turns",
+    "speaker_and_owner_correct",
+    "timestamp_and_strict_past_valid",
+    "no_future_wrong_owner_gold_reference_basic_info_or_official_annotation_leakage",
+    "linked_prior_memories_exist_and_are_recursively_source_grounded",
+    "normalized_content_contains_no_unsupported_facts"
+  ],
+  "acceptance_rule": "schema_valid_AND_deterministic_grounding_pass_AND_semantic_factual_verifier_pass",
+  "verifier_rejection_is_classifier_negative": false,
+  "semantic_links_may_replace_primary_exact_mechanical_grouping": false,
+  "cost_and_resume": {
+    "hard_budget_usd": 2.0,
+    "budget_includes": ["extractor", "verifier", "smoke", "all_retries"],
+    "provider_reported_usage_required": true,
+    "per_attempt_cost_ledger_required": true,
+    "pre_call_remaining_budget_reservation_required": true,
+    "client_internal_retries": 1,
+    "silent_retry_allowed": false,
+    "retry_requires_reason_and_attempt_record": true,
+    "successful_cache": "content_addressed_append_only_atomic_resume_without_repayment",
+    "smoke_sessions": 20,
+    "remaining_sessions_after_smoke": 381,
+    "smoke_is_model_or_hyperparameter_bakeoff": false
+  },
+  "external_provider_data_egress": "RESEARCHER_AUTHORIZED_FOR_PUBLIC_EVOEMO_ONLY",
+  "secret_policy": "API_keys_credentials_and_secret_paths_or_values_must_not_enter_repo_manifest_cache_or_logs",
+  "similarity": {
+    "formal_encoder": "BGE_M3",
+    "freeze_before_materialization": ["exact_revision", "pooling", "normalization", "query_construction", "artifact_identity"],
+    "lexical_Jaccard": "DIAGNOSTIC_BASELINE_ONLY"
+  },
+  "legacy": {
+    "regex_string_memory_compilers": "DIAGNOSTIC_BASELINE_ONLY_NOT_FORMAL_CANDIDATE_CONSTRUCTOR",
+    "old_MP_3_ME_3_census_and_B21_B29_B30_blocker": [
+      "pre_semantic_compiler_diagnostic",
+      "not_ontology_ceiling",
+      "not_active_learnability_evidence"
+    ],
+    "current_compiler_coverage_is_ontology_ceiling": false
+  },
+  "official_annotation_audit": {
+    "allowed_only_after_primary_compiler_output_hash_frozen": true,
+    "role": "annotation_relative_audit_reference_only",
+    "may_be_main_candidate_input": false,
+    "may_tune_prompt_filter_or_supplement_candidates": false
+  },
+  "outcome_calls": 0,
+  "formal_semantic_compiler_calls": 0,
+  "formal_outcome_training_or_benchmark_started": false
+}

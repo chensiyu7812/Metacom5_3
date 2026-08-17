@@ -2,20 +2,23 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-2. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-3. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-4. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-5. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-6. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-7. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-8. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-9. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
+2. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
+3. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+4. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+5. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+6. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+7. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+8. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+9. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+10. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+11. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
 ## Authority precedence
 
+- **The 2026-08-17 semantic-memory-compiler amendment has scoped precedence only** for MP/MS/ME semantic candidate construction, factual extraction/verification, the BGE-M3 formal-similarity requirement, diagnostic-only regex/Jaccard status, and compiler API/cache/cost rules. It does not alter the four-head ontology, research claims, learning route, Generator, public-only rule, cross-fitting, threshold, outcome lock, or official-evaluation hierarchy.
 - **The execution reconciliation override is highest precedence** for Generator identity, benefit-only soft targets, removal of empirical PASS gates, treatment-delivery validity, exact-evidence cross-fitting, the fixed 0.5 primary policy rule, and per-head claim reporting.
 - **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
 - **Final evaluation / measurement hierarchy** is governed by `PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md` and its machine-readable contract. Official ESC-Eval / ES-MemEval capability metrics outrank all internally defined Quality/Risk/Function rubrics.
