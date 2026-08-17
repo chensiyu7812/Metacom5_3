@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-pre-outcome-freeze-v1",
   "status": "DRAFT_AWAITING_M1_INTEGRATION",
-  "source_tree_sha": "335acd9061a2e0388f727df0d3fc4b612ea2a505",
+  "source_tree_sha": "e0e86e3173a560977e14f5ac7b8446f66e544ff9",
   "generator": {
     "selection_status": "FINAL",
     "provider": "NVIDIA hosted NIM",
@@ -117,6 +117,51 @@
       "repo_relative_path": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
       "sha256": "173d4a57f96323ab2dbacc4e8cfba65c77072beed8387d0bd986c17353c84f00",
       "role": "ES-MemEval Official RAG BGE-M3 plus FAISS Top-4 engineering attestation"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+      "sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+      "role": "gold-free ES-MemEval runtime state and visible history"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_targets_v1.jsonl",
+      "sha256": "b563ed5ba87e56ca56c9379caff14f48d8882235ec8a2877df91e5c830eb30fe",
+      "role": "opaque public RQ2 target identities"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_candidate_census_v1.jsonl",
+      "sha256": "32c34e25b39465a869b1a3d5f4e18c41967b5e023c2677528ad377a7742c3b9c",
+      "role": "MP/MS/ME strict-past candidate census"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json",
+      "sha256": "e6fffd99d0d956fa09c0be93f787b76d21afd6dc3c799e01501b82fbe268f438",
+      "role": "MP/MS/ME zero-outcome candidate census summary"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json",
+      "sha256": "3487899eb13cc99bece02184c0a8d2ec9ceeb442040f76c4c720b1bc109b4399",
+      "role": "memory outcome-blind feature inventory and implementation gaps"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_group_component_assignments_v1.jsonl",
+      "sha256": "daee9a7c5a2e8ffdaf45ce38114435c522f66de1fbbcffdc6a917b7f35eeea90",
+      "role": "exact-evidence atomic grouping before outer-fold packing"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_outer_fold_packing_surface_summary_v1.json",
+      "sha256": "8ced1bfbdf11e963c5c6926180628a6df694075ef81f04a93a7c6a618d47f626",
+      "role": "zero-outcome structural outer-fold packing surface"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+      "sha256": "fa594b100b3b41b24dba971755fe5158f9f87bd84143d09c5101017d6612223a",
+      "role": "pinned official RQ2 task-arm visibility and baseline contract"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_me_candidate_audit_v1.json",
+      "sha256": "fd1d99db0d04fdb908abdaa035f41a665d43e1d56e3413d3039aae81194c301d",
+      "role": "active same-turn ME action-to-observed-result candidate audit"
     }
   ],
   "candidate_bundles": [],
@@ -130,7 +175,7 @@
   "empirical_pass_gates": false,
   "formal_outcome_calls_at_freeze": 0,
   "pending_items": [
-    "integrate_repaired_public_memory_census",
+    "integrate_B30_final_stable_kinship_MP_and_five_fold_artifacts",
     "freeze_final_candidate_bundle_per_head",
     "freeze_rs_effect_state_overlap_policy",
     "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
@@ -140,7 +185,7 @@
     "freeze_rs_boundary_horizon_and_candidate_mapping",
     "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",
     "freeze_exact_feature_schema_per_head",
-    "pack_exact_evidence_components_into_outer_folds",
+    "materialize_exact_evidence_components_into_five_outer_folds_seed_zero",
     "freeze_inner_fold_count",
     "bind_new_paper1_generation_runners_and_prompt_templates",
     "freeze_decoding_and_max_tokens",

@@ -33,6 +33,18 @@ ENVIRONMENT_ATTESTATION = (
 OFFICIAL_RAG_RUNTIME_ATTESTATION = (
     PROJECT / "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json"
 )
+MEMORY_CENSUS = (
+    PROJECT / "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json"
+)
+MEMORY_FEATURE_READINESS = (
+    PROJECT / "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json"
+)
+MEMORY_FOLDS = (
+    PROJECT / "data/paper1_public_memory/es_memeval_public_folds_build_report_v1.json"
+)
+OFFICIAL_VISIBILITY = (
+    PROJECT / "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json"
+)
 PACKET_OUT = PROJECT / "data/paper1_authority/paper1_m2_decision_packet_draft_v1.json"
 REPORT_DIR = PROJECT / "reports/paper1_m2_decision_packet_draft_20260816"
 
@@ -83,6 +95,10 @@ def main() -> int:
     preoutcome = _load(PREOUTCOME_DRAFT)
     environment = _load(ENVIRONMENT_ATTESTATION)
     official_rag_runtime = _load(OFFICIAL_RAG_RUNTIME_ATTESTATION)
+    memory_census = _load(MEMORY_CENSUS)
+    memory_features = _load(MEMORY_FEATURE_READINESS)
+    memory_folds = _load(MEMORY_FOLDS)
+    official_visibility = _load(OFFICIAL_VISIBILITY)
     generated_at = datetime.now(ZoneInfo("Asia/Tokyo")).replace(microsecond=0).isoformat()
 
     conservative = rs["overlap_policy_sensitivity"]["conservative_existing_project_flag"]
@@ -100,6 +116,7 @@ def main() -> int:
         method: values["by_effect_state_split"]["validation"]
         for method, values in rs_family["methods"].items()
     }
+    memory_heads = memory_census["per_head"]
 
     decisions = [
         _decision(
@@ -187,19 +204,19 @@ def main() -> int:
             10,
             "memory_census",
             "MP/MS/ME candidate census",
-            "Codex B is repairing official evaluation-time visibility, sanitized runtime artifacts and ME linkage; current B coverage numbers are superseded for freeze purposes.",
-            "Do not choose memory bundle size, features or fold packing until the repaired B artifacts are integrated and independently validated.",
-            "BLOCKED_PENDING_B_REPAIR",
+            f"The integrated gold-free runtime has {memory_census['targets_total']} targets. Current active candidates are MP {memory_heads['MP']['unique_candidate_count']} unique/{memory_heads['MP']['owners_with_any_candidate']} owners, MS {memory_heads['MS']['unique_candidate_count']}/{memory_heads['MS']['owners_with_any_candidate']}, and same-turn ME {memory_heads['ME']['unique_candidate_count']}/{memory_heads['ME']['owners_with_any_candidate']}; all reports retain outcome_calls=0. B30-FINAL is adding only blueprint-aligned atomic stable-kinship MP facts and will rebuild these same artifacts.",
+            "Accept the integrated sanitized runtime, MS compiler and same-turn ME construct. Complete the one authorized stable-kinship MP rebuild, then stop candidate expansion and use the resulting population for feature/effect construction.",
+            "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING",
             False,
         ),
         _decision(
             11,
             "outer_folds",
             "Outer-fold K and seed",
-            "Exact-evidence components exist on B but must be rebuilt/join-validated after runtime-boundary repair; component IDs are not folds.",
-            "After B integration, compare only zero-outcome fold-size/task/owner balance and select K/seed once. Do not optimize using effect or benchmark outcomes.",
-            "BLOCKED_PENDING_B_REPAIR",
-            True,
+            f"The integrated evaluator-side grouping contains {memory_folds['group_components_total']} exact-evidence components over {memory_folds['targets_total']} targets. The zero-outcome surface verified K=2..10 without selecting a winner.",
+            "Materialize K=5, seed=0 exactly once. This is a pre-registered conventional split, not a winner chosen from outcomes or a structural PASS gate; group-component IDs remain distinct from outer-fold IDs.",
+            "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL",
+            False,
         ),
         _decision(
             12,
@@ -355,6 +372,42 @@ def main() -> int:
                     "local_model_binding"
                 ]["revision_status"],
             },
+            "memory_candidate_census": {
+                "path": str(MEMORY_CENSUS.relative_to(PROJECT)),
+                "sha256": _sha256(MEMORY_CENSUS),
+                "outcome_calls": memory_census.get("outcome_calls"),
+                "targets_total": memory_census.get("targets_total"),
+                "per_head": memory_heads,
+            },
+            "memory_feature_readiness": {
+                "path": str(MEMORY_FEATURE_READINESS.relative_to(PROJECT)),
+                "sha256": _sha256(MEMORY_FEATURE_READINESS),
+                "status": memory_features.get("status"),
+                "outcome_calls": memory_features.get("outcome_calls"),
+            },
+            "memory_exact_evidence_components": {
+                "path": str(MEMORY_FOLDS.relative_to(PROJECT)),
+                "sha256": _sha256(MEMORY_FOLDS),
+                "group_components_total": memory_folds.get(
+                    "group_components_total"
+                ),
+                "outer_fold_packing_status": memory_folds.get(
+                    "outer_fold_packing_status"
+                ),
+                "outcome_calls": memory_folds.get("outcome_calls"),
+            },
+            "official_rq2_visibility": {
+                "path": str(OFFICIAL_VISIBILITY.relative_to(PROJECT)),
+                "sha256": _sha256(OFFICIAL_VISIBILITY),
+                "status": official_visibility.get("status"),
+                "audited_source_file_count": official_visibility.get(
+                    "audited_source_file_count"
+                ),
+                "task_arm_surface_row_count": official_visibility.get(
+                    "task_arm_surface_row_count"
+                ),
+                "outcome_calls": official_visibility.get("outcome_calls"),
+            },
         },
         "rs_findings": {
             "dialogue_only_cards": counts["strategy_source_cards"],
@@ -413,10 +466,9 @@ def main() -> int:
             row["decision_id"] for row in decisions if row["researcher_approval_required"]
         ],
         "integration_order": [
-            "complete_A_RS_repair_and_commit",
-            "receive_and_audit_B_runtime_boundary_repair",
-            "integrate_B_commits_into_A",
-            "rebuild_combined_zero_outcome_artifacts",
+            "complete_B30_final_stable_kinship_and_K5_seed0_artifacts",
+            "merge_B30_final_increment_into_integrated_A_branch",
+            "rebuild_combined_zero_outcome_artifacts_and_hashes",
             "resolve_researcher_decisions_once",
             "materialize_and_validate_M2_freeze",
             "only_then_unlock_effect_calls",
@@ -454,6 +506,10 @@ def main() -> int:
         RQ0_CONTRACT: source_dir / "rq0_generator_contract.json",
         OFFICIAL_RAG_RUNTIME_ATTESTATION: source_dir
         / "official_rag_runtime_attestation.json",
+        MEMORY_CENSUS: source_dir / "memory_candidate_census.json",
+        MEMORY_FEATURE_READINESS: source_dir / "memory_feature_readiness.json",
+        MEMORY_FOLDS: source_dir / "memory_exact_evidence_components.json",
+        OFFICIAL_VISIBILITY: source_dir / "official_rq2_visibility.json",
         PACKET_OUT: source_dir / "m2_decision_packet.json",
     }
     for source, destination in copies.items():
@@ -582,6 +638,26 @@ def main() -> int:
             "id": "official-rag-runtime",
             "label": "ES-MemEval Official RAG runtime attestation",
             "path": "sources/official_rag_runtime_attestation.json",
+        },
+        {
+            "id": "memory-census",
+            "label": "ES-MemEval public memory candidate census",
+            "path": "sources/memory_candidate_census.json",
+        },
+        {
+            "id": "memory-feature-readiness",
+            "label": "Memory feature-readiness inventory",
+            "path": "sources/memory_feature_readiness.json",
+        },
+        {
+            "id": "memory-components",
+            "label": "Exact-evidence group components",
+            "path": "sources/memory_exact_evidence_components.json",
+        },
+        {
+            "id": "official-rq2-visibility",
+            "label": "Pinned RQ2 task-arm visibility contract",
+            "path": "sources/official_rq2_visibility.json",
         },
     ]
 
@@ -721,7 +797,7 @@ def main() -> int:
                         "## 技术结论：RS 已可审计，但整套 M2 仍不能解锁\n\n"
                         "- RS v1 确实混入了不可保证 runtime 可见的 `situation`；dialogue-only v2 已修复。\n"
                         "- RS 具备大量自然 state×candidate 机会，不需要人工制造 ON/OFF 或覆盖率 PASS 门。\n"
-                        "- 当前最大不确定性不是 RS coverage，而是 overlap policy、正式 Retriever/renderer、task-specific effect coding、重复测量语义，以及 B 修复后的 memory folds。\n"
+                        "- 当前最大不确定性不是 RS coverage，而是 overlap policy、正式 Retriever/renderer、task-specific effect coding、重复测量语义，以及冻结后的 memory feature/effect implementation。\n"
                         "- 本报告是决策草案，不是 freeze，也不解锁 outcome、训练或正式 benchmark。"
                     ),
                 },
@@ -775,7 +851,7 @@ def main() -> int:
                     "type": "markdown",
                     "body": (
                         "## 需要一次性确认的 M2 决策\n\n"
-                        "表中 `RESEARCHER_DECISION_REQUIRED` 项必须在任何正式 outcome 调用前一次性确认。Blocked 项应等待 B 修复和 A/B 集成；不能用旧 coverage 或旧 synthetic 数据填空。"
+                        "表中 `RESEARCHER_DECISION_REQUIRED` 项必须在任何正式 outcome 调用前一次性确认。Memory runtime 已合入；B30-FINAL 只完成已授权的 stable-kinship MP 与 K=5/seed=0 物化，不能用旧 coverage 或旧 synthetic 数据填空。"
                     ),
                 },
                 {"id": "decision-table", "type": "table", "tableId": "decision-register", "layout": "full"},

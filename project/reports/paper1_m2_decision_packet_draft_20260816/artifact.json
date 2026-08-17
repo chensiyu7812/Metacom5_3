@@ -5,7 +5,7 @@
     "surface": "report",
     "title": "Paper 1 M2 预冻结决策包（零 outcome 草案）",
     "description": "Route A 的 Phase-1 证据、阻断项与待确认 M2 决策。",
-    "generatedAt": "2026-08-17T01:25:42+09:00",
+    "generatedAt": "2026-08-17T09:40:18+09:00",
     "sources": [
       {
         "id": "rs-census",
@@ -142,6 +142,26 @@
         "id": "official-rag-runtime",
         "label": "ES-MemEval Official RAG runtime attestation",
         "path": "sources/official_rag_runtime_attestation.json"
+      },
+      {
+        "id": "memory-census",
+        "label": "ES-MemEval public memory candidate census",
+        "path": "sources/memory_candidate_census.json"
+      },
+      {
+        "id": "memory-feature-readiness",
+        "label": "Memory feature-readiness inventory",
+        "path": "sources/memory_feature_readiness.json"
+      },
+      {
+        "id": "memory-components",
+        "label": "Exact-evidence group components",
+        "path": "sources/memory_exact_evidence_components.json"
+      },
+      {
+        "id": "official-rq2-visibility",
+        "label": "Pinned RQ2 task-arm visibility contract",
+        "path": "sources/official_rq2_visibility.json"
       }
     ],
     "cards": [
@@ -345,7 +365,7 @@
       {
         "id": "technical-summary",
         "type": "markdown",
-        "body": "## 技术结论：RS 已可审计，但整套 M2 仍不能解锁\n\n- RS v1 确实混入了不可保证 runtime 可见的 `situation`；dialogue-only v2 已修复。\n- RS 具备大量自然 state×candidate 机会，不需要人工制造 ON/OFF 或覆盖率 PASS 门。\n- 当前最大不确定性不是 RS coverage，而是 overlap policy、正式 Retriever/renderer、task-specific effect coding、重复测量语义，以及 B 修复后的 memory folds。\n- 本报告是决策草案，不是 freeze，也不解锁 outcome、训练或正式 benchmark。"
+        "body": "## 技术结论：RS 已可审计，但整套 M2 仍不能解锁\n\n- RS v1 确实混入了不可保证 runtime 可见的 `situation`；dialogue-only v2 已修复。\n- RS 具备大量自然 state×candidate 机会，不需要人工制造 ON/OFF 或覆盖率 PASS 门。\n- 当前最大不确定性不是 RS coverage，而是 overlap policy、正式 Retriever/renderer、task-specific effect coding、重复测量语义，以及冻结后的 memory feature/effect implementation。\n- 本报告是决策草案，不是 freeze，也不解锁 outcome、训练或正式 benchmark。"
       },
       {
         "id": "rs-key-finding",
@@ -388,7 +408,7 @@
       {
         "id": "decision-heading",
         "type": "markdown",
-        "body": "## 需要一次性确认的 M2 决策\n\n表中 `RESEARCHER_DECISION_REQUIRED` 项必须在任何正式 outcome 调用前一次性确认。Blocked 项应等待 B 修复和 A/B 集成；不能用旧 coverage 或旧 synthetic 数据填空。"
+        "body": "## 需要一次性确认的 M2 决策\n\n表中 `RESEARCHER_DECISION_REQUIRED` 项必须在任何正式 outcome 调用前一次性确认。Memory runtime 已合入；B30-FINAL 只完成已授权的 stable-kinship MP 与 K=5/seed=0 物化，不能用旧 coverage 或旧 synthetic 数据填空。"
       },
       {
         "id": "decision-table",
@@ -415,7 +435,7 @@
   },
   "snapshot": {
     "version": 1,
-    "generatedAt": "2026-08-17T01:25:42+09:00",
+    "generatedAt": "2026-08-17T09:40:18+09:00",
     "status": "ready",
     "datasets": {
       "headlines": [
@@ -658,9 +678,9 @@
           "order": 10,
           "decision_id": "memory_census",
           "item": "MP/MS/ME candidate census",
-          "evidence": "Codex B is repairing official evaluation-time visibility, sanitized runtime artifacts and ME linkage; current B coverage numbers are superseded for freeze purposes.",
-          "recommendation": "Do not choose memory bundle size, features or fold packing until the repaired B artifacts are integrated and independently validated.",
-          "status": "BLOCKED_PENDING_B_REPAIR",
+          "evidence": "The integrated gold-free runtime has 1586 targets. Current active candidates are MP 3 unique/3 owners, MS 401/18, and same-turn ME 3/2; all reports retain outcome_calls=0. B30-FINAL is adding only blueprint-aligned atomic stable-kinship MP facts and will rebuild these same artifacts.",
+          "recommendation": "Accept the integrated sanitized runtime, MS compiler and same-turn ME construct. Complete the one authorized stable-kinship MP rebuild, then stop candidate expansion and use the resulting population for feature/effect construction.",
+          "status": "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING",
           "researcher_approval_required": false,
           "approval_label": "No"
         },
@@ -668,11 +688,11 @@
           "order": 11,
           "decision_id": "outer_folds",
           "item": "Outer-fold K and seed",
-          "evidence": "Exact-evidence components exist on B but must be rebuilt/join-validated after runtime-boundary repair; component IDs are not folds.",
-          "recommendation": "After B integration, compare only zero-outcome fold-size/task/owner balance and select K/seed once. Do not optimize using effect or benchmark outcomes.",
-          "status": "BLOCKED_PENDING_B_REPAIR",
-          "researcher_approval_required": true,
-          "approval_label": "Required"
+          "evidence": "The integrated evaluator-side grouping contains 477 exact-evidence components over 1586 targets. The zero-outcome surface verified K=2..10 without selecting a winner.",
+          "recommendation": "Materialize K=5, seed=0 exactly once. This is a pre-registered conventional split, not a winner chosen from outcomes or a structural PASS gate; group-component IDs remain distinct from outer-fold IDs.",
+          "status": "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL",
+          "researcher_approval_required": false,
+          "approval_label": "No"
         },
         {
           "order": 12,
@@ -883,6 +903,26 @@
       "id": "official-rag-runtime",
       "label": "ES-MemEval Official RAG runtime attestation",
       "path": "sources/official_rag_runtime_attestation.json"
+    },
+    {
+      "id": "memory-census",
+      "label": "ES-MemEval public memory candidate census",
+      "path": "sources/memory_candidate_census.json"
+    },
+    {
+      "id": "memory-feature-readiness",
+      "label": "Memory feature-readiness inventory",
+      "path": "sources/memory_feature_readiness.json"
+    },
+    {
+      "id": "memory-components",
+      "label": "Exact-evidence group components",
+      "path": "sources/memory_exact_evidence_components.json"
+    },
+    {
+      "id": "official-rq2-visibility",
+      "label": "Pinned RQ2 task-arm visibility contract",
+      "path": "sources/official_rq2_visibility.json"
     }
   ]
 }

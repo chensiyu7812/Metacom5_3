@@ -1,7 +1,7 @@
 {
   "protocol": "pm-paper1-m2-decision-packet-draft-v1",
   "status": "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK",
-  "generated_at": "2026-08-17T01:25:42+09:00",
+  "generated_at": "2026-08-17T09:40:18+09:00",
   "authority": {
     "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
     "route": "A_first_order_factorized",
@@ -54,7 +54,7 @@
     },
     "preoutcome_draft": {
       "path": "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json",
-      "sha256": "935c71c8c600a570e52e986b22dc6239ca5e1e7d5225ddf3157783bceac0f104",
+      "sha256": "cd9ddba36b93cf65ae93d2cbed4697aca59f9c8891b410273b9852794f730177",
       "status": "DRAFT_AWAITING_M1_INTEGRATION"
     },
     "local_environment_attestation": {
@@ -80,6 +80,92 @@
       "typed_memory_method_changed": false,
       "rs_retriever_selected": false,
       "local_revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE"
+    },
+    "memory_candidate_census": {
+      "path": "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json",
+      "sha256": "e6fffd99d0d956fa09c0be93f787b76d21afd6dc3c799e01501b82fbe268f438",
+      "outcome_calls": 0,
+      "targets_total": 1586,
+      "per_head": {
+        "ME": {
+          "age_days_mean_of_means": 259.6934523809524,
+          "age_days_variance_of_means": 11497.276564271542,
+          "candidate_count_max": 2,
+          "candidate_count_mean": 0.17717528373266078,
+          "candidate_count_variance": 0.28828104998179216,
+          "coverage_fraction": 0.10592686002522068,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 2,
+          "target_candidate_edges": 281,
+          "targets_total": 1586,
+          "targets_with_coverage": 168,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 22.044642857142858,
+          "token_count_variance_of_means": 12.38639987244898,
+          "top_candidate_lexical_overlap_mean": 0.02907653297815717,
+          "top_candidate_lexical_overlap_variance": 0.000997169465784967,
+          "unique_candidate_count": 3
+        },
+        "MP": {
+          "age_days_mean_of_means": 250.38317757009347,
+          "age_days_variance_of_means": 17181.376539435758,
+          "candidate_count_max": 1,
+          "candidate_count_mean": 0.13493064312736444,
+          "candidate_count_variance": 0.11672436467260026,
+          "coverage_fraction": 0.13493064312736444,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 3,
+          "target_candidate_edges": 214,
+          "targets_total": 1586,
+          "targets_with_coverage": 214,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 9.42056074766355,
+          "token_count_variance_of_means": 43.02873613416019,
+          "top_candidate_lexical_overlap_mean": 0.003596632647159978,
+          "top_candidate_lexical_overlap_variance": 0.00015321232930011589,
+          "unique_candidate_count": 3
+        },
+        "MS": {
+          "age_days_mean_of_means": 218.92831923147511,
+          "age_days_variance_of_means": 1614.4549787510527,
+          "candidate_count_max": 33,
+          "candidate_count_mean": 23.08953341740227,
+          "candidate_count_variance": 29.92640999667647,
+          "coverage_fraction": 1.0,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 18,
+          "target_candidate_edges": 36620,
+          "targets_total": 1586,
+          "targets_with_coverage": 1586,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 454.26270753931743,
+          "token_count_variance_of_means": 768.6708442115724,
+          "top_candidate_lexical_overlap_mean": 0.03444723035224926,
+          "top_candidate_lexical_overlap_variance": 0.00012609124284811534,
+          "unique_candidate_count": 401
+        }
+      }
+    },
+    "memory_feature_readiness": {
+      "path": "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json",
+      "sha256": "3487899eb13cc99bece02184c0a8d2ec9ceeb442040f76c4c720b1bc109b4399",
+      "status": "PHASE1_FEATURE_READINESS_IDENTIFIABILITY_AUDIT",
+      "outcome_calls": 0
+    },
+    "memory_exact_evidence_components": {
+      "path": "data/paper1_public_memory/es_memeval_public_folds_build_report_v1.json",
+      "sha256": "3fcb464945a31da901c6ab2c9013cc625d89bdcb8d03a3284046a21db6ff308f",
+      "group_components_total": 477,
+      "outer_fold_packing_status": "OUTER_FOLD_PACKING_PENDING_M2_FREEZE",
+      "outcome_calls": 0
+    },
+    "official_rq2_visibility": {
+      "path": "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+      "sha256": "fa594b100b3b41b24dba971755fe5158f9f87bd84143d09c5101017d6612223a",
+      "status": "B28R_ZERO_OUTCOME_STATIC_SOURCE_AUDIT_CORRECTED",
+      "audited_source_file_count": 36,
+      "task_arm_surface_row_count": 36,
+      "outcome_calls": 0
     }
   },
   "rs_findings": {
@@ -208,19 +294,19 @@
       "order": 10,
       "decision_id": "memory_census",
       "item": "MP/MS/ME candidate census",
-      "evidence": "Codex B is repairing official evaluation-time visibility, sanitized runtime artifacts and ME linkage; current B coverage numbers are superseded for freeze purposes.",
-      "recommendation": "Do not choose memory bundle size, features or fold packing until the repaired B artifacts are integrated and independently validated.",
-      "status": "BLOCKED_PENDING_B_REPAIR",
+      "evidence": "The integrated gold-free runtime has 1586 targets. Current active candidates are MP 3 unique/3 owners, MS 401/18, and same-turn ME 3/2; all reports retain outcome_calls=0. B30-FINAL is adding only blueprint-aligned atomic stable-kinship MP facts and will rebuild these same artifacts.",
+      "recommendation": "Accept the integrated sanitized runtime, MS compiler and same-turn ME construct. Complete the one authorized stable-kinship MP rebuild, then stop candidate expansion and use the resulting population for feature/effect construction.",
+      "status": "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING",
       "researcher_approval_required": false
     },
     {
       "order": 11,
       "decision_id": "outer_folds",
       "item": "Outer-fold K and seed",
-      "evidence": "Exact-evidence components exist on B but must be rebuilt/join-validated after runtime-boundary repair; component IDs are not folds.",
-      "recommendation": "After B integration, compare only zero-outcome fold-size/task/owner balance and select K/seed once. Do not optimize using effect or benchmark outcomes.",
-      "status": "BLOCKED_PENDING_B_REPAIR",
-      "researcher_approval_required": true
+      "evidence": "The integrated evaluator-side grouping contains 477 exact-evidence components over 1586 targets. The zero-outcome surface verified K=2..10 without selecting a winner.",
+      "recommendation": "Materialize K=5, seed=0 exactly once. This is a pre-registered conventional split, not a winner chosen from outcomes or a structural PASS gate; group-component IDs remain distinct from outer-fold IDs.",
+      "status": "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL",
+      "researcher_approval_required": false
     },
     {
       "order": 12,
@@ -295,7 +381,6 @@
     "rs_exemplar_policy",
     "rs_boundary_horizon",
     "rs_feature_schema",
-    "outer_folds",
     "official_rag_runtime",
     "effect_coding",
     "generator_stack",
@@ -303,10 +388,9 @@
     "matched_random"
   ],
   "integration_order": [
-    "complete_A_RS_repair_and_commit",
-    "receive_and_audit_B_runtime_boundary_repair",
-    "integrate_B_commits_into_A",
-    "rebuild_combined_zero_outcome_artifacts",
+    "complete_B30_final_stable_kinship_and_K5_seed0_artifacts",
+    "merge_B30_final_increment_into_integrated_A_branch",
+    "rebuild_combined_zero_outcome_artifacts_and_hashes",
     "resolve_researcher_decisions_once",
     "materialize_and_validate_M2_freeze",
     "only_then_unlock_effect_calls"

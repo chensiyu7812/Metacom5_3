@@ -99,6 +99,42 @@ def build() -> PreOutcomeFreezeManifest:
                 "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
                 "ES-MemEval Official RAG BGE-M3 plus FAISS Top-4 engineering attestation",
             ),
+            (
+                "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+                "gold-free ES-MemEval runtime state and visible history",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_targets_v1.jsonl",
+                "opaque public RQ2 target identities",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_candidate_census_v1.jsonl",
+                "MP/MS/ME strict-past candidate census",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json",
+                "MP/MS/ME zero-outcome candidate census summary",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json",
+                "memory outcome-blind feature inventory and implementation gaps",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_group_component_assignments_v1.jsonl",
+                "exact-evidence atomic grouping before outer-fold packing",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_outer_fold_packing_surface_summary_v1.json",
+                "zero-outcome structural outer-fold packing surface",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+                "pinned official RQ2 task-arm visibility and baseline contract",
+            ),
+            (
+                "data/paper1_public_memory/es_memeval_public_me_candidate_audit_v1.json",
+                "active same-turn ME action-to-observed-result candidate audit",
+            ),
         )
     )
     return PreOutcomeFreezeManifest(
@@ -112,7 +148,7 @@ def build() -> PreOutcomeFreezeManifest:
         ),
         official_evaluation_artifacts=official,
         pending_items=(
-            "integrate_repaired_public_memory_census",
+            "integrate_B30_final_stable_kinship_MP_and_five_fold_artifacts",
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
             "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
@@ -122,7 +158,7 @@ def build() -> PreOutcomeFreezeManifest:
             "freeze_rs_boundary_horizon_and_candidate_mapping",
             "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",
             "freeze_exact_feature_schema_per_head",
-            "pack_exact_evidence_components_into_outer_folds",
+            "materialize_exact_evidence_components_into_five_outer_folds_seed_zero",
             "freeze_inner_fold_count",
             "bind_new_paper1_generation_runners_and_prompt_templates",
             "freeze_decoding_and_max_tokens",

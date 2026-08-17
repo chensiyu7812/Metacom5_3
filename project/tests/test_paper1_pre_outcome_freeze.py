@@ -161,6 +161,22 @@ def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
         "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json"
         in paths
     )
+    assert (
+        "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json"
+        in paths
+    )
+    assert (
+        "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json"
+        in paths
+    )
+    assert (
+        "data/paper1_public_memory/es_memeval_public_group_component_assignments_v1.jsonl"
+        in paths
+    )
+    assert (
+        "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json"
+        in paths
+    )
     assert "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl" not in paths
     assert manifest["status"] == "DRAFT_AWAITING_M1_INTEGRATION"
     assert manifest["formal_outcome_calls_at_freeze"] == 0
@@ -195,6 +211,10 @@ def test_m2_decision_packet_is_a_locked_draft_with_explicit_researcher_choices()
     assert official_rag["typed_memory_method_changed"] is False
     assert official_rag["rs_retriever_selected"] is False
     assert "official_rag_runtime" in packet["researcher_decision_ids"]
-    assert any(
-        row["status"] == "BLOCKED_PENDING_B_REPAIR" for row in packet["decisions"]
-    )
+    memory = next(row for row in packet["decisions"] if row["decision_id"] == "memory_census")
+    assert memory["status"] == "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING"
+    folds = next(row for row in packet["decisions"] if row["decision_id"] == "outer_folds")
+    assert folds["status"] == "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL"
+    assert folds["researcher_approval_required"] is False
+    assert packet["evidence"]["memory_candidate_census"]["outcome_calls"] == 0
+    assert packet["evidence"]["official_rq2_visibility"]["outcome_calls"] == 0

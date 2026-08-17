@@ -20,6 +20,7 @@ from metacom_pm.paper1.official_visibility_audit import (
     D_SUB_CATEGORIES,
     D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY,
     D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+    D_SUB_POSTGENERATION_LOGGING_ONLY,
     D_SUB_UNUSED_OFFICIAL_METADATA,
     FIELD_VISIBILITY_TABLE,
     OFFICIAL_RAG_CONTRACT,
@@ -101,11 +102,12 @@ def test_surface_b_is_renamed_query_state_only_not_pm_visible_decision_state():
     assert "no pm" in note or "no pm/memory-selection" in note
 
 
-def test_surface_d_renamed_and_has_three_sub_categories():
+def test_surface_d_renamed_and_has_explicit_consumer_sub_categories():
     assert SURFACE_D_NOT_SUPPORTER_VISIBLE == "D_not_tested_supporter_visible"
     assert set(D_SUB_CATEGORIES) == {
         D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY,
         D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+        D_SUB_POSTGENERATION_LOGGING_ONLY,
         D_SUB_UNUSED_OFFICIAL_METADATA,
     }
 
@@ -184,6 +186,20 @@ def test_capability_fields_are_csv_logging_only():
     for field_path in ("question.capability", "summary.capability"):
         row = _field_row(field_path)
         assert "csv" in row.description.lower()
+        assert row.d_sub_categories == (D_SUB_POSTGENERATION_LOGGING_ONLY,)
+
+
+def test_full_history_descriptions_do_not_invent_an_explicit_sort():
+    rows = build_task_arm_surface_rows()
+    full_history_prompt_rows = [
+        row
+        for row in rows
+        if row.arm == ARM_FULL_HISTORY
+        and row.surface == SURFACE_C_GENERATOR_VISIBLE_PROMPT
+    ]
+    assert len(full_history_prompt_rows) == 3
+    assert all("source-list" in row.description for row in full_history_prompt_rows)
+    assert all("chronological order" not in row.description for row in full_history_prompt_rows)
 
 
 # --- B28R.3: DG token contract -----------------------------------------------

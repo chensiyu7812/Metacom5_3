@@ -191,10 +191,12 @@ SURFACES = (
 # B28R.2: surface D sub-categories -- not mutually exclusive with each other.
 D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY = "hidden_seeker_simulator_only"
 D_SUB_POSTGENERATION_EVALUATOR_ONLY = "postgeneration_evaluator_only"
+D_SUB_POSTGENERATION_LOGGING_ONLY = "postgeneration_logging_only"
 D_SUB_UNUSED_OFFICIAL_METADATA = "unused_official_metadata"
 D_SUB_CATEGORIES = (
     D_SUB_HIDDEN_SEEKER_SIMULATOR_ONLY,
     D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+    D_SUB_POSTGENERATION_LOGGING_ONLY,
     D_SUB_UNUSED_OFFICIAL_METADATA,
 )
 
@@ -228,7 +230,7 @@ CANDIDATE_VS_PROMPT_VISIBILITY_NOTE = (
     "corpus, but the assembled 'Question + Relevant Memory' string is then "
     "hard-truncated to context_length(16000) minus the system-prompt token "
     "count -- if that budget is exceeded, surface C becomes only a PREFIX "
-    "of surface A (chronologically-later sessions are cut first), not the "
+    "of surface A (source-list-later sessions are cut first), not the "
     "full set; it only coincides with A when the corpus fits under budget. "
     "For QA/Summarization Official RAG Top-4, surface C is normally at "
     "most the top-4 retrieved sessions (a subset of surface A) but is "
@@ -496,7 +498,7 @@ FIELD_VISIBILITY_TABLE: tuple[FieldVisibilityRow, ...] = (
         applies_to_tasks=(TASK_QA,),
         reaches_tested_supporter_prompt=False,
         reaches_tested_supporter_note="Logged to the results CSV only; never used to construct the prompt or influence scoring.",
-        d_sub_categories=(D_SUB_POSTGENERATION_EVALUATOR_ONLY,),
+        d_sub_categories=(D_SUB_POSTGENERATION_LOGGING_ONLY,),
         description="Task-difficulty/capability tag, CSV-output-only (not a scoring input).",
         source_refs=("src/lib/qa/qa_experiment.py:QaExperiment._run_for_seeker",),
     ),
@@ -530,7 +532,7 @@ FIELD_VISIBILITY_TABLE: tuple[FieldVisibilityRow, ...] = (
         applies_to_tasks=(TASK_SUMMARIZATION,),
         reaches_tested_supporter_prompt=False,
         reaches_tested_supporter_note="Logged to the results CSV only.",
-        d_sub_categories=(D_SUB_POSTGENERATION_EVALUATOR_ONLY,),
+        d_sub_categories=(D_SUB_POSTGENERATION_LOGGING_ONLY,),
         description="Task-difficulty/capability tag, CSV-output-only.",
         source_refs=("src/lib/sum/sum_experiment.py:SumExperiment._run_for_seeker",),
     ),
@@ -705,13 +707,14 @@ def _qa_sum_rows(task: str, experiment_file: str) -> tuple[TaskArmSurfaceRow, ..
             description=(
                 "Same fixed system prompt + one HumanMessage: 'Question: {question}"
                 "\\nRelevant Memory:\\n' followed by every session's '[date]\\n{text}' "
-                "block, unranked, in store-insertion (chronological) order -- then "
+                "block, unranked, in raw source-list/store-insertion order -- then "
                 "hard-truncated: the whole 'Question + Relevant Memory' string is "
                 "tiktoken-encoded (o200k_base) and cut to the first "
                 "context_length(16000) - system_prompt_tokens tokens if it exceeds "
                 "that, decoded back to text. Truncation can cut mid-document and "
-                "always removes the *tail* of the assembled content, i.e. later "
-                "(chronologically-later) sessions are the ones truncated away first. "
+                "always removes the *tail* of the assembled content, i.e. source-list-"
+                "later sessions are the ones truncated away first. The official code "
+                "does not explicitly sort Full History before this iteration. "
                 "B28R.5: surface C therefore only coincides with surface A when the "
                 "assembled corpus fits under the token budget -- when it does not, C "
                 "is a PREFIX of A, not the full corpus; see "
@@ -752,7 +755,11 @@ def _qa_sum_rows(task: str, experiment_file: str) -> tuple[TaskArmSurfaceRow, ..
                 "evaluator field. See FIELD_VISIBILITY_TABLE for the exact per-field "
                 "breakdown and d_sub_categories."
             )
-            sub_cats = (D_SUB_POSTGENERATION_EVALUATOR_ONLY, D_SUB_UNUSED_OFFICIAL_METADATA)
+            sub_cats = (
+                D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+                D_SUB_POSTGENERATION_LOGGING_ONLY,
+                D_SUB_UNUSED_OFFICIAL_METADATA,
+            )
         else:
             d_desc = (
                 "summary['answer'] is actually read (ROUGE-1/2/L + event-based "
@@ -763,7 +770,11 @@ def _qa_sum_rows(task: str, experiment_file: str) -> tuple[TaskArmSurfaceRow, ..
                 "metadata, not consumed evaluator fields. See FIELD_VISIBILITY_TABLE "
                 "for the exact per-field breakdown and d_sub_categories."
             )
-            sub_cats = (D_SUB_POSTGENERATION_EVALUATOR_ONLY, D_SUB_UNUSED_OFFICIAL_METADATA)
+            sub_cats = (
+                D_SUB_POSTGENERATION_EVALUATOR_ONLY,
+                D_SUB_POSTGENERATION_LOGGING_ONLY,
+                D_SUB_UNUSED_OFFICIAL_METADATA,
+            )
         rows.append(
             TaskArmSurfaceRow(
                 task=task,
@@ -886,8 +897,9 @@ def _dg_rows() -> tuple[TaskArmSurfaceRow, ...]:
             arm_officially_shipped_script=True,
             surface=SURFACE_C_GENERATOR_VISIBLE_PROMPT,
             description=(
-                "beginning_prompt, then for every historical session in chronological "
-                "order: SystemMessage('happens on {date}') + that session's real "
+                "beginning_prompt, then for every historical session in raw source-list "
+                "order (the official code performs no explicit sort here): "
+                "SystemMessage('happens on {date}') + that session's real "
                 "turns as HumanMessage(seeker)/AIMessage(supporter) -- then "
                 "SystemMessage('happens now') + beginning_prompt again, then the live "
                 "exchange. Same 'no input-context truncation' finding as No Memory -- "
@@ -985,7 +997,7 @@ OFFICIAL_RAG_CONTRACT: dict[str, Any] = {
         TASK_DIALOGUE_GENERATION: "prepend -- retrieved sessions are reconstructed as separate role-tagged SystemMessage/HumanMessage/AIMessage turns inserted before the in-progress conversation history, freshly on every supporter generation call (never injected only once); beginning_prompt itself also appears twice -- see DG_RAG_DOUBLE_BEGINNING_PROMPT_NOTE",
     },
     "truncation_max_token_behavior": {
-        TASK_QA: "hard INPUT-context token-level truncation: the assembled 'Question + Relevant Memory' string is tiktoken-encoded (o200k_base) and, if it exceeds context_length(16000) minus the fixed system-prompt's token count, cut to the first N tokens and decoded back -- always removes the tail of the assembled string (chronologically/rank-later sessions truncated first); this means surface C is only a PREFIX of the intended memory content when the budget is exceeded, see CANDIDATE_VS_PROMPT_VISIBILITY_NOTE",
+        TASK_QA: "hard INPUT-context token-level truncation: the assembled 'Question + Relevant Memory' string is tiktoken-encoded (o200k_base) and, if it exceeds context_length(16000) minus the fixed system-prompt's token count, cut to the first N tokens and decoded back -- always removes the tail of the assembled string (source-list/rank-later sessions truncated first); this means surface C is only a PREFIX of the intended memory content when the budget is exceeded, see CANDIDATE_VS_PROMPT_VISIBILITY_NOTE",
         TASK_SUMMARIZATION: "identical truncation mechanism as QA",
         TASK_DIALOGUE_GENERATION: "no harness-level INPUT-context truncation logic found anywhere in dg_experiment.py, dg_gpt4o_rag.py, or dg_gpt4o_full.py -- context grows unbounded across rounds/history replay for all 3 arms; see DG_TOKEN_CONTRACT for the corrected picture, including the OUTPUT max_tokens caps this task does have (seeker/supporter=60, observation scorer/usage judge=30)",
     },
