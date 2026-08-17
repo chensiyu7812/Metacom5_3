@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Build the public-only zero-outcome memory target enumeration and census.
 
-Zero-outcome, Codex-B (public data / memory / RQ2) lane. B18: reads *only*
-the already-materialized sanitized runtime artifact
+Zero-outcome public-memory lane. Reads the already-materialized sanitized
+runtime artifact plus a completed v6 semantic-compiler result artifact
 (``es_memeval_public_sanitized_runtime_artifact_v1.json``, written by
 ``05_materialize_sanitized_runtime_artifact.py``) via ``metacom_pm.paper1.
 data.memory_source.load_sanitized_runtime_users`` -- never
 ``data/external/evo_emo.json`` directly, and never ``metacom_pm.paper1.data.
 es_memeval`` or ``metacom_pm.paper1.data.materializer``. Run
-``05_materialize_sanitized_runtime_artifact.py`` first.
+``05_materialize_sanitized_runtime_artifact.py`` and the authorized semantic
+compiler first. Legacy regex/string candidates are not used by this script.
 
 Writes:
 
@@ -47,14 +48,17 @@ from metacom_pm.paper1.data.memory_source import (  # noqa: E402
     load_sanitized_runtime_users,
 )
 from metacom_pm.paper1.features import (  # noqa: E402
-    build_census,
-    build_eligible_pool,
+    build_semantic_census,
+    build_semantic_eligible_pool,
     summarize_census,
     summarize_eligible_pool,
     write_census_manifest,
     write_eligible_pool_manifest,
 )
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
+from metacom_pm.paper1.semantic_memory.artifact import (  # noqa: E402
+    load_accepted_semantic_units,
+)
 
 OUT_DIR = PROJECT / "data" / "paper1_public_memory"
 ARTIFACT_PATH = OUT_DIR / "es_memeval_public_sanitized_runtime_artifact_v1.json"
@@ -80,7 +84,7 @@ def _write_jsonl(rows: list[dict[str, Any]], path: Path) -> str:
     return _sha_text(rendered)
 
 
-def build() -> dict[str, Any]:
+def build(semantic_results_path: Path) -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
 
@@ -91,6 +95,13 @@ def build() -> dict[str, Any]:
         )
     users = load_sanitized_runtime_users(ARTIFACT_PATH)
     targets = enumerate_targets(users)
+    accepted_units = load_accepted_semantic_units(semantic_results_path, users=users)
+    semantic_source = {
+        "artifact_name": semantic_results_path.name,
+        "sha256": _sha_text(semantic_results_path.read_text(encoding="utf-8")),
+        "accepted_units": len(accepted_units),
+        "complete_session_artifact_required": True,
+    }
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -110,16 +121,20 @@ def build() -> dict[str, Any]:
     targets_path = OUT_DIR / "es_memeval_public_targets_v1.jsonl"
     targets_sha256 = _write_jsonl(target_rows, targets_path)
 
-    pool_rows = build_eligible_pool(users)
+    pool_rows = build_semantic_eligible_pool(users, accepted_units)
     pool_summary = summarize_eligible_pool(pool_rows)
+    pool_summary["candidate_source"] = "accepted_semantic_memory_v6"
+    pool_summary["semantic_compiler_source"] = semantic_source
     pool_paths = write_eligible_pool_manifest(pool_rows, pool_summary, OUT_DIR)
 
-    census_rows = build_census(users, targets)
+    census_rows = build_semantic_census(users, targets, accepted_units)
     census_summary = summarize_census(census_rows)
+    census_summary["candidate_source"] = "accepted_semantic_memory_v6"
+    census_summary["semantic_compiler_source"] = semantic_source
     census_paths = write_census_manifest(census_rows, census_summary, OUT_DIR)
 
     report = {
-        "protocol": "pm-paper1-public-memory-census-build-v2",
+        "protocol": "pm-paper1-public-memory-semantic-census-build-v3",
         "status": "ZERO_OUTCOME_TARGETS_ELIGIBLE_POOL_AND_CENSUS_BUILT",
         "outcome_calls": 0,
         "evidence_usage": "NONE_THIS_SCRIPT_NEVER_READS_QA_SUMMARY_EVIDENCE_SEE_03_BUILD_PUBLIC_MEMORY_FOLDS",
@@ -135,6 +150,7 @@ def build() -> dict[str, Any]:
             "path": _relpath(ARTIFACT_PATH),
             "sha256": _sha_text(ARTIFACT_PATH.read_text(encoding="utf-8")),
         },
+        "semantic_compiler_source": semantic_source,
         "outputs": {
             "targets": {
                 "path": _relpath(targets_path),
@@ -160,9 +176,10 @@ def build() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--semantic-compiler-results", type=Path, required=True)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    report = build()
+    report = build(args.semantic_compiler_results)
     rendered = _canonical(report) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

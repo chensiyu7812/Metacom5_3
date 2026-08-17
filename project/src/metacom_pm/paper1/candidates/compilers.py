@@ -1,4 +1,8 @@
-"""Deterministic MP/MS/ME candidate compilers.
+"""Memory candidate compilers.
+
+The regex/string constructors in this file are retained only as frozen
+pre-semantic-compiler diagnostics. Formal Paper-1 memory candidates must use
+``compile_semantic_candidate_bundle`` over accepted Qwen semantic units.
 
 Each compiler takes a parsed ``MemorySourceUser`` and a ``Target`` (see
 ``metacom_pm.paper1.data.memory_source``) and returns zero or more frozen
@@ -23,6 +27,10 @@ from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
 from metacom_pm.paper1.memory.me import ActionResultEpisode, extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import ProfileDisclosure, extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import SessionDocument, extract_session_documents
+from metacom_pm.paper1.semantic_memory.candidate_adapter import (
+    materialize_memory_candidates,
+)
+from metacom_pm.paper1.semantic_memory.contracts import AcceptedSemanticMemoryUnit
 
 SOURCE_MP = "es_memeval_public_v1_0_0_1427:mp_self_disclosure"
 SOURCE_MS = "es_memeval_public_v1_0_0_1427:ms_session_document"
@@ -319,10 +327,24 @@ def compile_candidate_bundle(
     documents: tuple[SessionDocument, ...] | None = None,
     episodes: tuple[ActionResultEpisode, ...] | None = None,
 ) -> dict[Head, tuple[CandidateRecord, ...]]:
-    """All three memory heads' eligible candidates for one target, in one call."""
+    """Legacy regex/string diagnostic bundle; never the formal constructor."""
 
     return {
         Head.MP: compile_mp_candidates(user, target, disclosures),
         Head.MS: compile_ms_candidates(user, target, documents),
         Head.ME: compile_me_candidates(user, target, episodes),
     }
+
+
+def compile_semantic_candidate_bundle(
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+    target: Target,
+) -> dict[Head, tuple[CandidateRecord, ...]]:
+    """Formal MP/MS/ME bundle from accepted source-grounded semantic units."""
+
+    return materialize_memory_candidates(
+        accepted_units,
+        target_owner_id=target.owner_id,
+        target_session_rank=target.cutoff_rank,
+        token_counter=_token_count,
+    )

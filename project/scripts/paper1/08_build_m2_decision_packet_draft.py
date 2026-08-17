@@ -99,6 +99,20 @@ def main() -> int:
     memory_features = _load(MEMORY_FEATURE_READINESS)
     memory_folds = _load(MEMORY_FOLDS)
     official_visibility = _load(OFFICIAL_VISIBILITY)
+    if memory_census.get("candidate_source") != "accepted_semantic_memory_v6":
+        raise RuntimeError(
+            "M2 packet requires a complete v6 semantic-memory census; "
+            "legacy regex/string census is diagnostic only"
+        )
+    if not isinstance(memory_census.get("semantic_compiler_source"), dict):
+        raise RuntimeError("memory census is missing semantic compiler identity")
+    if not isinstance(memory_features.get("semantic_compiler_source"), dict):
+        raise RuntimeError("memory readiness report is missing semantic compiler identity")
+    if (
+        memory_census["semantic_compiler_source"].get("sha256")
+        != memory_features["semantic_compiler_source"].get("artifact_sha256")
+    ):
+        raise RuntimeError("memory census/readiness compiler artifact mismatch")
     generated_at = datetime.now(ZoneInfo("Asia/Tokyo")).replace(microsecond=0).isoformat()
 
     conservative = rs["overlap_policy_sensitivity"]["conservative_existing_project_flag"]
@@ -204,9 +218,9 @@ def main() -> int:
             10,
             "memory_census",
             "MP/MS/ME candidate census",
-            f"The integrated gold-free runtime has {memory_census['targets_total']} targets. Current active candidates are MP {memory_heads['MP']['unique_candidate_count']} unique/{memory_heads['MP']['owners_with_any_candidate']} owners, MS {memory_heads['MS']['unique_candidate_count']}/{memory_heads['MS']['owners_with_any_candidate']}, and same-turn ME {memory_heads['ME']['unique_candidate_count']}/{memory_heads['ME']['owners_with_any_candidate']}; all reports retain outcome_calls=0. B30-FINAL is adding only blueprint-aligned atomic stable-kinship MP facts and will rebuild these same artifacts.",
-            "Accept the integrated sanitized runtime, MS compiler and same-turn ME construct. Complete the one authorized stable-kinship MP rebuild, then stop candidate expansion and use the resulting population for feature/effect construction.",
-            "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING",
+            f"The integrated gold-free runtime has {memory_census['targets_total']} targets. Verified semantic candidates are MP {memory_heads['MP']['unique_candidate_count']} unique/{memory_heads['MP']['owners_with_any_candidate']} owners, MS {memory_heads['MS']['unique_candidate_count']}/{memory_heads['MS']['owners_with_any_candidate']}, and ME {memory_heads['ME']['unique_candidate_count']}/{memory_heads['ME']['owners_with_any_candidate']}; all reports retain outcome_calls=0 and bind one complete compiler artifact.",
+            "Use only schema-valid, deterministically grounded, verifier-accepted v6 semantic MP/MS/ME units. Keep all regex/string constructors and B30 stable-kinship patterns diagnostic-only.",
+            "SEMANTIC_MEMORY_V6_COMPLETE_ARTIFACT_BOUND",
             False,
         ),
         _decision(
@@ -215,7 +229,7 @@ def main() -> int:
             "Outer-fold K and seed",
             f"The integrated evaluator-side grouping contains {memory_folds['group_components_total']} exact-evidence components over {memory_folds['targets_total']} targets. The zero-outcome surface verified K=2..10 without selecting a winner.",
             "Materialize K=5, seed=0 exactly once. This is a pre-registered conventional split, not a winner chosen from outcomes or a structural PASS gate; group-component IDs remain distinct from outer-fold IDs.",
-            "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL",
+            "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_COMPILER_HASH_BINDING",
             False,
         ),
         _decision(
@@ -466,8 +480,8 @@ def main() -> int:
             row["decision_id"] for row in decisions if row["researcher_approval_required"]
         ],
         "integration_order": [
-            "complete_B30_final_stable_kinship_and_K5_seed0_artifacts",
-            "merge_B30_final_increment_into_integrated_A_branch",
+            "complete_v6_semantic_memory_compiler_artifact",
+            "bind_v6_candidate_identity_into_K5_seed0_artifacts",
             "rebuild_combined_zero_outcome_artifacts_and_hashes",
             "resolve_researcher_decisions_once",
             "materialize_and_validate_M2_freeze",

@@ -31,6 +31,31 @@ def _head_sha() -> str:
 
 
 def build() -> PreOutcomeFreezeManifest:
+    memory_summary_path = (
+        PROJECT
+        / "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json"
+    )
+    memory_summary = json.loads(memory_summary_path.read_text(encoding="utf-8"))
+    if memory_summary.get("candidate_source") != "accepted_semantic_memory_v6":
+        raise RuntimeError(
+            "formal pre-outcome draft requires the complete v6 semantic-memory census; "
+            "legacy regex/string census is diagnostic only"
+        )
+    if not isinstance(memory_summary.get("semantic_compiler_source"), dict):
+        raise RuntimeError("semantic-memory census is missing compiler artifact identity")
+    feature_summary_path = (
+        PROJECT
+        / "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json"
+    )
+    feature_summary = json.loads(feature_summary_path.read_text(encoding="utf-8"))
+    feature_source = feature_summary.get("semantic_compiler_source")
+    if not isinstance(feature_source, dict):
+        raise RuntimeError("semantic feature-readiness report is missing compiler identity")
+    if (
+        memory_summary["semantic_compiler_source"].get("sha256")
+        != feature_source.get("artifact_sha256")
+    ):
+        raise RuntimeError("semantic census/readiness compiler artifact mismatch")
     generator_sources = tuple(
         bind_artifact(PROJECT, path, role=role)
         for path, role in (
@@ -133,7 +158,7 @@ def build() -> PreOutcomeFreezeManifest:
             ),
             (
                 "data/paper1_public_memory/es_memeval_public_me_candidate_audit_v1.json",
-                "active same-turn ME action-to-observed-result candidate audit",
+                "legacy same-turn regex ME diagnostic only, not formal candidate source",
             ),
         )
     )
@@ -148,7 +173,8 @@ def build() -> PreOutcomeFreezeManifest:
         ),
         official_evaluation_artifacts=official,
         pending_items=(
-            "integrate_B30_final_stable_kinship_MP_and_five_fold_artifacts",
+            "complete_and_bind_v6_semantic_memory_compiler_artifact",
+            "bind_candidate_compiler_identity_into_five_fold_artifacts",
             "freeze_final_candidate_bundle_per_head",
             "freeze_rs_effect_state_overlap_policy",
             "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",

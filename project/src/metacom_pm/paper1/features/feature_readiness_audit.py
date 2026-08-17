@@ -78,6 +78,7 @@ from __future__ import annotations
 import hashlib
 import json
 import statistics
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -88,7 +89,25 @@ from metacom_pm.paper1.features.zero_outcome_census import (
     FINAL_BUNDLE_STATUS,
     TargetHeadCensusRow,
     build_census,
+    build_semantic_census,
 )
+from metacom_pm.paper1.semantic_memory.contracts import AcceptedSemanticMemoryUnit
+from metacom_pm.paper1.semantic_memory.candidate_adapter import (
+    CANDIDATE_ADAPTER_VERSION,
+    materialize_memory_candidates,
+)
+from metacom_pm.paper1.semantic_memory.contracts import (
+    MEHistoricalOutcomeType,
+    MPProfileFieldType,
+)
+from metacom_pm.paper1.semantic_memory.grounding import GROUNDING_VERSION
+from metacom_pm.paper1.semantic_memory.renderer import (
+    RENDERER_CODE_SHA256,
+    RENDERER_SHA256,
+    RENDERER_VERSION,
+)
+from metacom_pm.paper1.semantic_memory.runtime import COMPILER_VERSION
+from metacom_pm.paper1.semantic_memory.versioning import VERSION_RESOLVER_VERSION
 
 _MEMORY_TASK_TYPES = (TaskType.QA, TaskType.SUMMARY, TaskType.DIALOGUE_GENERATION)
 
@@ -296,6 +315,46 @@ FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
 )
 
 
+def _semantic_feature_inventory() -> tuple[dict[str, str], ...]:
+    """Return the formal v6 inventory without rewriting the legacy audit.
+
+    The historical ``FEATURE_INVENTORY`` remains an exact description of the
+    regex/Jaccard diagnostic path.  Only fields deterministically exposed by
+    the accepted-unit adapter are upgraded here; the presence of typed Qwen
+    output does not by itself implement a target-state feature.
+    """
+
+    replacements = {
+        "mp_profile_field_type": {
+            "status": "IMPLEMENTED",
+            "proxy_field": "CandidateRecord.raw_descriptors.mp_profile_field_type",
+            "note": (
+                "The v6 accepted semantic unit has a closed MP profile_field_type; "
+                "candidate_adapter.py copies it directly into the formal raw "
+                "descriptor without parsing rendered prose."
+            ),
+        },
+        "me_historical_outcome_type": {
+            "status": "IMPLEMENTED",
+            "proxy_field": "CandidateRecord.raw_descriptors.me_historical_outcome_type",
+            "note": (
+                "The v6 accepted ME unit has a closed historical_outcome_type; "
+                "candidate_adapter.py copies it directly into the formal raw "
+                "descriptor without parsing rendered prose."
+            ),
+        },
+    }
+    rows: list[dict[str, str]] = []
+    for item in FEATURE_INVENTORY:
+        row = dict(item)
+        row.update(replacements.get(item["canonical_name"], {}))
+        rows.append(row)
+    return tuple(rows)
+
+
+SEMANTIC_FEATURE_INVENTORY = _semantic_feature_inventory()
+
+
 def _pvariance(values: list[float]) -> float | None:
     if len(values) < 2:
         return None
@@ -388,6 +447,7 @@ def _axis_readiness(
 
 @dataclass(frozen=True)
 class HeadTaskFeatureReadinessRow:
+    candidate_source: str
     head: Head
     task_type: TaskType
     unique_candidate_count: int
@@ -405,8 +465,14 @@ class HeadTaskFeatureReadinessRow:
     retrieval_rank: FeatureAxisReadiness
 
     def to_manifest_row(self) -> dict[str, Any]:
+        protocol = (
+            "pm-paper1-semantic-memory-feature-readiness-row-v3"
+            if self.candidate_source == "accepted_semantic_memory_v6"
+            else "pm-paper1-memory-feature-readiness-row-v2"
+        )
         return {
-            "protocol": "pm-paper1-memory-feature-readiness-row-v2",
+            "protocol": protocol,
+            "candidate_source": self.candidate_source,
             "head": self.head.value,
             "task_type": self.task_type.value,
             "unique_candidate_count": self.unique_candidate_count,
@@ -437,7 +503,11 @@ class HeadTaskFeatureReadinessRow:
 
 
 def _row_for_head_task(
-    head: Head, task: TaskType, subset: list[TargetHeadCensusRow]
+    head: Head,
+    task: TaskType,
+    subset: list[TargetHeadCensusRow],
+    *,
+    candidate_source: str,
 ) -> HeadTaskFeatureReadinessRow:
     is_dg = task is TaskType.DIALOGUE_GENERATION
     na_reason = "N_A_NO_STATIC_QUERY_PRE_GENERATION" if is_dg else None
@@ -465,6 +535,7 @@ def _row_for_head_task(
     candidate_count_values: list[float | None] = [float(r.candidate_count) for r in subset]
 
     return HeadTaskFeatureReadinessRow(
+        candidate_source=candidate_source,
         head=head,
         task_type=task,
         unique_candidate_count=len(unique_candidate_ids),
@@ -499,13 +570,198 @@ def _row_for_head_task(
 def build_feature_readiness_rows(
     users: tuple[MemorySourceUser, ...], targets: tuple[Target, ...]
 ) -> tuple[HeadTaskFeatureReadinessRow, ...]:
+    """Build the reproducible legacy regex/Jaccard diagnostic rows."""
+
     census_rows = build_census(users, targets)
+    return _build_rows_from_census(
+        census_rows, candidate_source="legacy_regex_jaccard_diagnostic"
+    )
+
+
+def build_semantic_feature_readiness_rows(
+    users: tuple[MemorySourceUser, ...],
+    targets: tuple[Target, ...],
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+) -> tuple[HeadTaskFeatureReadinessRow, ...]:
+    """Build formal rows from verified v6 semantic-memory units only."""
+
+    census_rows = build_semantic_census(users, targets, accepted_units)
+    return _build_rows_from_census(
+        census_rows, candidate_source="accepted_semantic_memory_v6"
+    )
+
+
+def _build_rows_from_census(
+    census_rows: tuple[TargetHeadCensusRow, ...],
+    *,
+    candidate_source: str,
+) -> tuple[HeadTaskFeatureReadinessRow, ...]:
     rows: list[HeadTaskFeatureReadinessRow] = []
     for head in (Head.MP, Head.MS, Head.ME):
         for task in _MEMORY_TASK_TYPES:
             subset = [r for r in census_rows if r.head is head and r.task_type is task]
-            rows.append(_row_for_head_task(head, task, subset))
+            rows.append(
+                _row_for_head_task(
+                    head, task, subset, candidate_source=candidate_source
+                )
+            )
     return tuple(rows)
+
+
+def summarize_semantic_feature_readiness(
+    rows: tuple[HeadTaskFeatureReadinessRow, ...],
+    *,
+    users: tuple[MemorySourceUser, ...],
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+    artifact_name: str,
+    artifact_sha256: str,
+) -> dict[str, Any]:
+    """Summarize formal semantic rows without inheriting legacy claims."""
+
+    summary = summarize_feature_readiness(rows)
+    by_key = {(row.head, row.task_type): row for row in rows}
+    mp_qa = by_key[(Head.MP, TaskType.QA)]
+    me_qa = by_key[(Head.ME, TaskType.QA)]
+    units_by_owner: dict[str, list[AcceptedSemanticMemoryUnit]] = {}
+    for unit in accepted_units:
+        units_by_owner.setdefault(unit.owner_id, []).append(unit)
+    formal_candidates = []
+    for user in users:
+        bundle = materialize_memory_candidates(
+            tuple(units_by_owner.get(user.owner_id, ())),
+            target_owner_id=user.owner_id,
+            target_session_rank=len(user.sessions),
+            token_counter=lambda content: len(content.split()),
+        )
+        formal_candidates.extend(bundle[Head.MP])
+        formal_candidates.extend(bundle[Head.ME])
+
+    def _categorical_coverage(
+        *, head: Head, field: str, allowed_values: set[str]
+    ) -> dict[str, Any]:
+        candidates = [candidate for candidate in formal_candidates if candidate.head is head]
+        values = [candidate.raw_descriptors.get(field) for candidate in candidates]
+        invalid = sorted(
+            {
+                str(value)
+                for value in values
+                if not isinstance(value, str) or value not in allowed_values
+            }
+        )
+        if invalid:
+            raise ValueError(f"invalid semantic categorical descriptor {field}: {invalid}")
+        present = [value for value in values if isinstance(value, str)]
+        counts = Counter(present)
+        return {
+            "head": head.value,
+            "field": field,
+            "measured_over": "unique_active_candidate_at_full_history_boundary",
+            "total_candidates": len(candidates),
+            "present_values": len(present),
+            "missing_values": len(candidates) - len(present),
+            "distinct_value_count": len(counts),
+            "value_counts": dict(sorted(counts.items())),
+            "allowed_values": sorted(allowed_values),
+        }
+
+    categorical_coverage = {
+        "mp_profile_field_type": _categorical_coverage(
+            head=Head.MP,
+            field="mp_profile_field_type",
+            allowed_values={item.value for item in MPProfileFieldType},
+        ),
+        "me_historical_outcome_type": _categorical_coverage(
+            head=Head.ME,
+            field="me_historical_outcome_type",
+            allowed_values={item.value for item in MEHistoricalOutcomeType},
+        ),
+    }
+    summary.update(
+        {
+            "protocol": "pm-paper1-semantic-memory-feature-readiness-audit-report-v3",
+            "status": "PHASE1_SEMANTIC_FEATURE_READINESS_IDENTIFIABILITY_AUDIT",
+            "scope_note": (
+                "Built from the sanitized runtime artifact and accepted v6 "
+                "semantic-memory units. Only schema-valid, deterministically "
+                "grounded, verifier-accepted units enter the formal candidate "
+                "adapter. No outcome, gold, reference, or future session is read."
+            ),
+            "semantic_compiler_source": {
+                "artifact_name": artifact_name,
+                "artifact_sha256": artifact_sha256,
+                "accepted_units": len(accepted_units),
+                "compiler_version": COMPILER_VERSION,
+                "grounding_version": GROUNDING_VERSION,
+                "renderer_version": RENDERER_VERSION,
+                "renderer_spec_sha256": RENDERER_SHA256,
+                "renderer_code_sha256": RENDERER_CODE_SHA256,
+                "candidate_adapter_version": CANDIDATE_ADAPTER_VERSION,
+                "version_resolver_version": VERSION_RESOLVER_VERSION,
+                "complete_session_artifact_required": True,
+            },
+            "categorical_feature_coverage": categorical_coverage,
+            "feature_inventory": {
+                "protocol": "pm-paper1-semantic-memory-feature-inventory-v2",
+                "authority": (
+                    "PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md "
+                    "plus PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md "
+                    "sections 4 and 5.2-5.4."
+                ),
+                "note": (
+                    "Only mp_profile_field_type and me_historical_outcome_type "
+                    "are upgraded relative to the legacy diagnostic inventory, "
+                    "because the formal adapter materializes those closed raw "
+                    "fields directly. BGE-M3 similarity and the remaining "
+                    "target-state features are still not implemented."
+                ),
+                "items": list(SEMANTIC_FEATURE_INVENTORY),
+            },
+            "mp_identifiability_limitation": {
+                "unique_candidates": mp_qa.unique_candidate_count,
+                "owners_with_candidates": mp_qa.owners_with_candidates,
+                "not_a_pass_fail_gate": True,
+                "note": (
+                    "Counts reflect accepted v6 semantic MP units after "
+                    "deterministic version resolution. They are disclosed as an "
+                    "identifiability constraint, never as a minimum-N or "
+                    "capability PASS/FAIL gate."
+                ),
+            },
+            "me_identifiability_limitation": {
+                "unique_candidates": me_qa.unique_candidate_count,
+                "owners_with_candidates": me_qa.owners_with_candidates,
+                "not_a_pass_fail_gate": True,
+                "note": (
+                    "Counts reflect accepted v6 semantic ME units requiring a "
+                    "completed owner action and explicit user-observed outcome. "
+                    "They are disclosed as an identifiability constraint, never "
+                    "as a minimum-N or capability PASS/FAIL gate."
+                ),
+            },
+        }
+    )
+    summary["no_verdict_policy"]["note"] = (
+        "Paper-1 capability is judged only by the frozen official benchmarks; "
+        "this zero-outcome readiness audit declares no per-head verdict or "
+        "minimum-N sufficiency gate."
+    )
+    summary["measurement_provenance_disclosures"]["mp_me_sparsity"] = (
+        "Accepted semantic-unit counts are identifiability diagnostics only, "
+        "not a PASS/FAIL or minimum-N gate."
+    )
+    summary["zero_variance_axes_note"] = (
+        "Each listed head/task/axis is zero-variance in the rows bound to the "
+        "semantic compiler artifact above. This is disclosure only and does "
+        "not automatically freeze, remove, or qualify a model feature."
+    )
+    summary[
+        "lexical_candidate_query_jaccard_ge_0_6_proxy_zero_variance_summary"
+    ] = (
+        "This is the diagnostic lexical-Jaccard threshold proxy only. Any "
+        "zero-variance result in the bound semantic rows is not evidence about "
+        "the still-unimplemented authoritative already-visible construct."
+    )
+    return summary
 
 
 def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -> dict[str, Any]:

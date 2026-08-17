@@ -59,12 +59,19 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from metacom_pm.paper1.candidates import compile_candidate_bundle
+from metacom_pm.paper1.candidates import (
+    compile_candidate_bundle,
+    compile_semantic_candidate_bundle,
+)
 from metacom_pm.paper1.contracts import CandidateRecord, Head, TaskType
 from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
 from metacom_pm.paper1.memory.me import extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import extract_session_documents
+from metacom_pm.paper1.semantic_memory.candidate_adapter import (
+    materialize_memory_candidates,
+)
+from metacom_pm.paper1.semantic_memory.contracts import AcceptedSemanticMemoryUnit
 
 LEXICAL_CANDIDATE_QUERY_JACCARD_GE_0_6_PROXY_THRESHOLD = 0.6
 FINAL_BUNDLE_STATUS = "PENDING_M2_FREEZE_NOT_SELECTED_THIS_ROUND"
@@ -109,6 +116,7 @@ class CandidateFeatureSnapshot:
 
 @dataclass(frozen=True)
 class TargetHeadCensusRow:
+    candidate_source: str
     target_id: str
     task_type: TaskType
     owner_id: str
@@ -128,8 +136,14 @@ class TargetHeadCensusRow:
     candidates: tuple[CandidateFeatureSnapshot, ...]
 
     def to_manifest_row(self) -> dict[str, Any]:
+        protocol = (
+            "pm-paper1-semantic-memory-zero-outcome-census-row-v4"
+            if self.candidate_source == "accepted_semantic_memory_v6"
+            else "pm-paper1-zero-outcome-census-row-v3"
+        )
         return {
-            "protocol": "pm-paper1-zero-outcome-census-row-v3",
+            "protocol": protocol,
+            "candidate_source": self.candidate_source,
             "target_id": self.target_id,
             "task_type": self.task_type.value,
             "owner_id": self.owner_id,
@@ -176,10 +190,17 @@ class EligiblePoolRow:
     owner_id: str
     head: Head
     eligible_candidate_count: int
+    candidate_source: str = "legacy_regex_string_diagnostic"
 
     def to_manifest_row(self) -> dict[str, Any]:
+        protocol = (
+            "pm-paper1-semantic-memory-eligible-pool-row-v2"
+            if self.candidate_source == "accepted_semantic_memory_v6"
+            else "pm-paper1-zero-outcome-eligible-pool-row-v1"
+        )
         return {
-            "protocol": "pm-paper1-zero-outcome-eligible-pool-row-v1",
+            "protocol": protocol,
+            "candidate_source": self.candidate_source,
             "owner_id": self.owner_id,
             "head": self.head.value,
             "eligible_candidate_count": self.eligible_candidate_count,
@@ -281,6 +302,7 @@ def _row_for_head(
     candidates: tuple[CandidateRecord, ...],
     *,
     anchor: date | None,
+    candidate_source: str,
 ) -> TargetHeadCensusRow:
     query_words = _query_words(target)
     snapshots = _score_candidates(candidates, anchor=anchor, query_words=query_words)
@@ -291,6 +313,7 @@ def _row_for_head(
     )
     top_overlap = snapshots[0].lexical_overlap if snapshots else None
     return TargetHeadCensusRow(
+        candidate_source=candidate_source,
         target_id=target.target_id,
         task_type=target.task_type,
         owner_id=target.owner_id,
@@ -312,13 +335,46 @@ def _row_for_head(
 
 
 def build_eligible_pool(users: tuple[MemorySourceUser, ...]) -> tuple[EligiblePoolRow, ...]:
-    """Layer 1 (B19.5): the target-invariant MP/MS/ME pool size per owner."""
+    """Legacy regex/string diagnostic pool, not the formal semantic pool."""
 
     rows: list[EligiblePoolRow] = []
     for user in users:
         rows.append(EligiblePoolRow(user.owner_id, Head.MP, len(extract_profile_disclosures(user))))
         rows.append(EligiblePoolRow(user.owner_id, Head.MS, len(extract_session_documents(user))))
         rows.append(EligiblePoolRow(user.owner_id, Head.ME, len(extract_action_result_episodes(user))))
+    return tuple(rows)
+
+
+def build_semantic_eligible_pool(
+    users: tuple[MemorySourceUser, ...],
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+) -> tuple[EligiblePoolRow, ...]:
+    """Formal target-invariant pool from accepted semantic-memory units."""
+
+    units_by_owner: dict[str, list[AcceptedSemanticMemoryUnit]] = {}
+    for unit in accepted_units:
+        units_by_owner.setdefault(unit.owner_id, []).append(unit)
+    known_owners = {user.owner_id for user in users}
+    unknown_owners = set(units_by_owner) - known_owners
+    if unknown_owners:
+        raise ValueError(f"semantic units contain unknown owners: {sorted(unknown_owners)}")
+    rows: list[EligiblePoolRow] = []
+    for user in users:
+        bundle = materialize_memory_candidates(
+            tuple(units_by_owner.get(user.owner_id, ())),
+            target_owner_id=user.owner_id,
+            target_session_rank=len(user.sessions),
+            token_counter=lambda content: len(content.split()),
+        )
+        for head in (Head.MP, Head.MS, Head.ME):
+            rows.append(
+                EligiblePoolRow(
+                    user.owner_id,
+                    head,
+                    len(bundle[head]),
+                    candidate_source="accepted_semantic_memory_v6",
+                )
+            )
     return tuple(rows)
 
 
@@ -348,7 +404,55 @@ def build_census(
         )
         anchor = anchor_by_owner[target.owner_id]
         for head, candidates in bundle.items():
-            rows.append(_row_for_head(target, head, candidates, anchor=anchor))
+            rows.append(
+                _row_for_head(
+                    target,
+                    head,
+                    candidates,
+                    anchor=anchor,
+                    candidate_source="legacy_regex_string_diagnostic",
+                )
+            )
+    return tuple(rows)
+
+
+def build_semantic_census(
+    users: tuple[MemorySourceUser, ...],
+    targets: tuple[Target, ...],
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+) -> tuple[TargetHeadCensusRow, ...]:
+    """Formal per-target census over accepted semantic candidates.
+
+    Lexical overlap remains a diagnostic only; BGE-M3 is materialized in a
+    separate frozen feature stage.
+    """
+
+    users_by_owner = {user.owner_id: user for user in users}
+    units_by_owner: dict[str, list[AcceptedSemanticMemoryUnit]] = {}
+    for unit in accepted_units:
+        units_by_owner.setdefault(unit.owner_id, []).append(unit)
+    if set(units_by_owner) - set(users_by_owner):
+        raise ValueError("semantic units contain an owner absent from sanitized runtime")
+    anchor_by_owner = {user.owner_id: _anchor_date(user) for user in users}
+    rows: list[TargetHeadCensusRow] = []
+    for target in targets:
+        if target.owner_id not in users_by_owner:
+            raise ValueError(f"target has unknown owner: {target.owner_id}")
+        bundle = compile_semantic_candidate_bundle(
+            tuple(units_by_owner.get(target.owner_id, ())),
+            target,
+        )
+        anchor = anchor_by_owner[target.owner_id]
+        for head, candidates in bundle.items():
+            rows.append(
+                _row_for_head(
+                    target,
+                    head,
+                    candidates,
+                    anchor=anchor,
+                    candidate_source="accepted_semantic_memory_v6",
+                )
+            )
     return tuple(rows)
 
 
