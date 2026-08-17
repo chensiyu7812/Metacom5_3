@@ -63,7 +63,7 @@
 5. 冻结 endpoint/region、request parameters、schema/prompt hashes、timeout、允许 retry 类型和当时的官方价格快照。
 6. 只有研究者再次允许开始调用后，按 owner 内 `(timestamp, session_id)` 先做前 20 sessions smoke；缓存成功结果后直接继续 381，不重付费。之后冻结全量 output hash，再做 official annotation-relative audit。
 
-当前服务器没有 DASHSCOPE secret file；本地恢复时只在 shell/session secret store 中 export，env var name 可由实现 contract 指定，但 key/value/path 不得进 Git、cache 或日志。不要把 key 写进命令历史；推荐在权限 `0600`、repo 外的本地 secret 文件中保存 `export DASHSCOPE_API_KEY='...'`，需要时以 `set +x; source /absolute/private/path; set -x` 加载，并用只输出“是否存在”的 probe 验证。
+当前服务器没有 DASHSCOPE secret file；本地恢复时只在 shell/session secret store 中 export，env var name 可由实现 contract 指定，但 key/value/path 不得进 Git、cache 或日志。不要把 key 写进命令历史；推荐在权限 `0600`、repo 外的本地 secret 文件中保存 `export DASHSCOPE_API_KEY='...'`，需要时先执行 `set +x` 再 `source /absolute/private/path`，并用只输出“是否存在”的 probe 验证。除非进入前已经开启 xtrace，否则不要在加载后执行 `set -x`。
 
 ### 4.2 BGE-M3
 
