@@ -123,7 +123,17 @@
   "verifier_rejection_is_classifier_negative": false,
   "semantic_links_may_replace_primary_exact_mechanical_grouping": false,
   "cost_and_resume": {
-    "hard_budget_usd": 2.0,
+    "hard_budget_usd": 5.0,
+    "hard_budget_usd_change_log": [
+      {
+        "date": "2026-08-18",
+        "from": 2.0,
+        "to": 5.0,
+        "reason": "v6 20-session live smoke measured real per-session cost (~$0.007-0.011, plus a richer-than-median first session) that made $2.00 insufficient to complete the full 401-session compile with margin for owner-to-owner variance and retries.",
+        "approval": "researcher_approved",
+        "no_model_prompt_schema_or_scope_change": true
+      }
+    ],
     "budget_includes": ["extractor", "verifier", "smoke", "all_retries"],
     "provider_reported_usage_required": true,
     "per_attempt_cost_ledger_required": true,

@@ -53,7 +53,7 @@ class LiveCompilerAuthorization(StrictContract):
         if self.model != FROZEN_QWEN_MODEL:
             raise ValueError("live authorization model mismatch")
         if self.hard_budget_usd != HARD_BUDGET_USD:
-            raise ValueError("live authorization must preserve the USD 2.00 hard budget")
+            raise ValueError("live authorization must preserve the USD 5.00 hard budget")
         if self.outcome_calls != 0:
             raise ValueError("outcome calls must remain zero")
         if self.outcome_lock != "LOCKED_PRE_ZERO_OUTCOME_FREEZE":

@@ -55,7 +55,7 @@ def test_success_cache_is_immutable_and_resumable(tmp_path) -> None:
         cache.store_success(identity, {"parsed": {"ok": False}})
 
 
-def test_budget_reserves_before_call_and_hard_stops_at_two_usd(tmp_path) -> None:
+def test_budget_reserves_before_call_and_hard_stops_at_five_usd(tmp_path) -> None:
     price = PriceSnapshot(
         snapshot_id="official-price-snapshot-test",
         provider="Alibaba",
@@ -72,13 +72,13 @@ def test_budget_reserves_before_call_and_hard_stops_at_two_usd(tmp_path) -> None
         maximum_prompt_tokens=1_000_000,
         maximum_completion_tokens=500_000,
     )
-    assert ledger.remaining_usd == Decimal("0.5")
+    assert ledger.remaining_usd == Decimal("3.5")
     with pytest.raises(RuntimeError, match="hard budget would be exceeded"):
         ledger.reserve(
             reservation_id="r2",
             phase="verifier",
             call_key="c2",
-            maximum_prompt_tokens=500_001,
+            maximum_prompt_tokens=3_500_001,
             maximum_completion_tokens=0,
         )
     ledger.settle(
@@ -86,4 +86,4 @@ def test_budget_reserves_before_call_and_hard_stops_at_two_usd(tmp_path) -> None
         usage={"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
         outcome="SUCCEEDED",
     )
-    assert ledger.remaining_usd == Decimal("1.999985")
+    assert ledger.remaining_usd == Decimal("4.999985")

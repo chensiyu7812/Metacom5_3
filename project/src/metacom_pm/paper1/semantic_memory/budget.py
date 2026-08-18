@@ -1,4 +1,4 @@
-"""Crash-conservative USD 2 pre-call reservation and cost ledger."""
+"""Crash-conservative USD 5 pre-call reservation and cost ledger."""
 
 from __future__ import annotations
 
@@ -10,7 +10,11 @@ from typing import Any, Mapping
 from metacom_pm.io import append_jsonl, canonical_json, iter_jsonl, sha256_text, utc_now
 
 BUDGET_LEDGER_PROTOCOL = "paper1-semantic-memory-budget-ledger-v1"
-HARD_BUDGET_USD = Decimal("2.00")
+# Researcher-approved 2026-08-18: raised from USD 2.00 after the v6 20-session
+# live smoke showed real per-session cost (~$0.007-0.011) makes USD 2.00
+# insufficient to complete the full 401-session compile with margin for
+# owner-to-owner variance and retries.
+HARD_BUDGET_USD = Decimal("5.00")
 
 
 @dataclass(frozen=True)
@@ -75,7 +79,7 @@ class SemanticCompilerBudgetLedger:
         self.price = price
         self.hard_budget_usd = Decimal(hard_budget_usd)
         if self.hard_budget_usd != HARD_BUDGET_USD:
-            raise ValueError("Paper-1 semantic compiler hard budget must remain USD 2.00")
+            raise ValueError("Paper-1 semantic compiler hard budget must remain USD 5.00")
         self._events: dict[str, list[dict[str, Any]]] = {}
         self._load()
 
@@ -130,7 +134,7 @@ class SemanticCompilerBudgetLedger:
         )
         if maximum > self.remaining_usd:
             raise RuntimeError(
-                "semantic compiler USD 2.00 hard budget would be exceeded: "
+                "semantic compiler USD 5.00 hard budget would be exceeded: "
                 f"remaining={self.remaining_usd}, next_maximum={maximum}"
             )
         row = {

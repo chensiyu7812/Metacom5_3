@@ -375,7 +375,7 @@ def test_live_authorization_fails_closed_while_outcome_lock_stays_closed() -> No
             runtime_binding_sha256="1" * 64,
             price_snapshot_id="test-price",
             price_snapshot_sha256="2" * 64,
-            hard_budget_usd=Decimal("2.00"),
+            hard_budget_usd=Decimal("5.00"),
             outcome_calls=0,
             outcome_lock="LOCKED_PRE_ZERO_OUTCOME_FREEZE",
         )
@@ -389,7 +389,7 @@ def test_live_authorization_separates_smoke_from_full_resume_scope() -> None:
         "runtime_binding_sha256": "1" * 64,
         "price_snapshot_id": "test-price",
         "price_snapshot_sha256": "2" * 64,
-        "hard_budget_usd": Decimal("2.00"),
+        "hard_budget_usd": Decimal("5.00"),
         "outcome_calls": 0,
         "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
     }

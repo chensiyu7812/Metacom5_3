@@ -121,9 +121,11 @@ AND semantic factual verifier pass
 
 Verifier rejection 不是 classifier negative，也不能影响 official target grouping。LLM semantic link 不得替代 primary exact-mechanical target/evidence grouping；broad semantic/shared-session union 仍只属于 sensitivity。
 
-## 7. Cache、resume、retry 与 USD 2.00 hard budget
+## 7. Cache、resume、retry 与 USD 5.00 hard budget
 
-总 hard budget `USD 2.00` 覆盖 extractor、verifier、20-session smoke 与所有 retry。
+总 hard budget `USD 5.00` 覆盖 extractor、verifier、20-session smoke 与所有 retry。
+
+> **2026-08-18 研究者批准的预算修正：`USD 2.00` → `USD 5.00`。** 原因：v6 20-session live smoke 实测单 session 真实成本约 $0.007–0.011（首个 session 因内容特别丰富略高），按此外推完成剩余 381 个 session 会超出原 $2.00 上限。此次修正只改预算数字，不改模型、prompt、schema 或研究范围。旧 `USD 2.00` 数字仅作历史 provenance 保留于 change log（`data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json` 的 `cost_and_resume.hard_budget_usd_change_log`）。
 
 正式实现必须：
 

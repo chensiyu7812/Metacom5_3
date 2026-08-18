@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--aggregate-budget-ledger",
         type=Path,
-        help="Required for live runs: the one cross-version aggregate USD 2 ledger.",
+        help="Required for live runs: the one cross-version aggregate USD 5 ledger.",
     )
     parser.add_argument("--live", action="store_true")
     return parser.parse_args()
@@ -97,7 +97,7 @@ def main() -> int:
                     "model": binding.endpoint.model,
                     "provider": binding.provider,
                     "region": binding.region,
-                    "hard_budget_usd": "2.00",
+                    "hard_budget_usd": "5.00",
                     "outcome_calls": 0,
                     "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
                 }
