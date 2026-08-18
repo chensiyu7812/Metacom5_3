@@ -65,6 +65,11 @@ from metacom_pm.paper1.candidates import (
 )
 from metacom_pm.paper1.contracts import CandidateRecord, Head, TaskType
 from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
+from metacom_pm.paper1.memory.explicit_signals import (
+    has_current_action_request,
+    has_explicit_return_marker,
+    thread_entity_overlap_count,
+)
 from metacom_pm.paper1.memory.me import extract_action_result_episodes
 from metacom_pm.paper1.memory.mp import extract_profile_disclosures
 from metacom_pm.paper1.memory.ms import extract_session_documents
@@ -112,6 +117,15 @@ class CandidateFeatureSnapshot:
     lexical_candidate_query_jaccard_ge_0_6_proxy: bool | None
     lexical_overlap: float | None
     retrieval_rank: int | None
+    # blueprint 5.3 ms_thread_entity_overlap: a pairwise count of
+    # non-sentence-initial capitalized ("entity-like") tokens shared between
+    # the target's query text and this one candidate's content. Computed for
+    # every head (it is a well-defined function of any two texts), but its
+    # intended feature use is MS-specific -- see
+    # metacom_pm.paper1.memory.explicit_signals module docstring. None when
+    # either side has no entity-like tokens, same convention as
+    # lexical_overlap.
+    thread_entity_overlap_count: int | None
 
 
 @dataclass(frozen=True)
@@ -123,6 +137,15 @@ class TargetHeadCensusRow:
     head: Head
     identity_anomaly: bool
     has_visible_query: bool
+    # blueprint 5.3/5.4 ms_explicit_return_marker / me_current_action_request:
+    # deterministic regex flags on the target's own visible_query_text (QA/
+    # Summary only; None for DG, same convention as has_visible_query's
+    # dependents). Target-level, not per-candidate -- every head-row for the
+    # same target carries the same value. Intended feature use is head-
+    # specific (return_marker -> MS, action_request -> ME) even though both
+    # are computed uniformly; see metacom_pm.paper1.memory.explicit_signals.
+    explicit_return_marker: bool | None
+    current_action_request: bool | None
     candidate_count: int
     coverage: bool
     token_count_min: int | None
@@ -150,6 +173,8 @@ class TargetHeadCensusRow:
             "head": self.head.value,
             "identity_anomaly": self.identity_anomaly,
             "has_visible_query": self.has_visible_query,
+            "explicit_return_marker": self.explicit_return_marker,
+            "current_action_request": self.current_action_request,
             "candidate_count": self.candidate_count,
             "coverage": self.coverage,
             "token_count_min": self.token_count_min,
@@ -172,6 +197,7 @@ class TargetHeadCensusRow:
                     ),
                     "lexical_overlap": c.lexical_overlap,
                     "retrieval_rank": c.retrieval_rank,
+                    "thread_entity_overlap_count": c.thread_entity_overlap_count,
                 }
                 for c in self.candidates
             ],
@@ -232,6 +258,7 @@ def _score_candidates(
     *,
     anchor: date | None,
     query_words: frozenset[str] | None,
+    query_text: str | None,
 ) -> tuple[CandidateFeatureSnapshot, ...]:
     def _age_days(candidate: CandidateRecord) -> int | None:
         observed_at = candidate.lineage.observed_at
@@ -250,10 +277,12 @@ def _score_candidates(
                 lexical_candidate_query_jaccard_ge_0_6_proxy=None,
                 lexical_overlap=None,
                 retrieval_rank=None,
+                thread_entity_overlap_count=None,
             )
             for c in candidates
         )
 
+    assert query_text is not None  # query_words is derived from query_text
     scored: list[tuple[float, int, str, CandidateFeatureSnapshot]] = []
     for candidate in candidates:
         candidate_words = _word_set(candidate.content)
@@ -261,6 +290,7 @@ def _score_candidates(
         jaccard_proxy = (
             overlap is not None and overlap >= LEXICAL_CANDIDATE_QUERY_JACCARD_GE_0_6_PROXY_THRESHOLD
         )
+        entity_overlap = thread_entity_overlap_count(query_text, candidate.content)
         chronological_rank = candidate.raw_descriptors.get("session_chronological_rank")
         recency_key = chronological_rank if isinstance(chronological_rank, int) else -1
         sort_key = (-(overlap if overlap is not None else -1.0), -recency_key, candidate.candidate_id)
@@ -276,6 +306,7 @@ def _score_candidates(
                     lexical_candidate_query_jaccard_ge_0_6_proxy=jaccard_proxy,
                     lexical_overlap=overlap,
                     retrieval_rank=0,
+                    thread_entity_overlap_count=entity_overlap,
                 ),
             )
         )
@@ -290,6 +321,7 @@ def _score_candidates(
             ),
             lexical_overlap=snap.lexical_overlap,
             retrieval_rank=rank,
+            thread_entity_overlap_count=snap.thread_entity_overlap_count,
         )
         for rank, (*_key, snap) in enumerate(scored, start=1)
     )
@@ -305,7 +337,10 @@ def _row_for_head(
     candidate_source: str,
 ) -> TargetHeadCensusRow:
     query_words = _query_words(target)
-    snapshots = _score_candidates(candidates, anchor=anchor, query_words=query_words)
+    query_text = target.visible_query_text
+    snapshots = _score_candidates(
+        candidates, anchor=anchor, query_words=query_words, query_text=query_text
+    )
     token_counts = [s.token_count for s in snapshots]
     ages = [s.age_days for s in snapshots if s.age_days is not None]
     jaccard_proxy_count = sum(
@@ -320,6 +355,12 @@ def _row_for_head(
         head=head,
         identity_anomaly=target.identity_anomaly is not None,
         has_visible_query=target.visible_query_text is not None,
+        explicit_return_marker=(
+            has_explicit_return_marker(query_text) if query_text is not None else None
+        ),
+        current_action_request=(
+            has_current_action_request(query_text) if query_text is not None else None
+        ),
         candidate_count=len(snapshots),
         coverage=len(snapshots) > 0,
         token_count_min=min(token_counts) if token_counts else None,
@@ -520,11 +561,43 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
         unique_candidate_ids = {snap.candidate_id for r in subset for snap in r.candidates}
         owners_with_any_candidate = {r.owner_id for r in subset if r.candidate_count > 0}
         targets_with_visible_query = sum(1 for r in subset if r.has_visible_query)
+        targets_with_query = [r for r in subset if r.has_visible_query]
+        return_marker_true = sum(1 for r in targets_with_query if r.explicit_return_marker)
+        action_request_true = sum(1 for r in targets_with_query if r.current_action_request)
+        entity_overlap_counts = [
+            snap.thread_entity_overlap_count
+            for r in subset
+            for snap in r.candidates
+            if snap.thread_entity_overlap_count is not None
+        ]
+        entity_overlap_nonzero = sum(1 for c in entity_overlap_counts if c > 0)
         return {
             "targets_total": len(subset),
             "targets_with_coverage": len(covered),
             "targets_with_visible_query": targets_with_visible_query,
             "coverage_fraction": (len(covered) / len(subset)) if subset else None,
+            # blueprint 5.3/5.4: fraction of targets-with-a-query whose own
+            # query text trips each deterministic flag. Reported per head
+            # even though intended use is head-specific (see
+            # explicit_signals module docstring) since both are purely
+            # functions of the shared query text.
+            "explicit_return_marker_fraction_of_targets_with_query": (
+                return_marker_true / len(targets_with_query) if targets_with_query else None
+            ),
+            "current_action_request_fraction_of_targets_with_query": (
+                action_request_true / len(targets_with_query) if targets_with_query else None
+            ),
+            # thread_entity_overlap_count is only non-None where both the
+            # query and the candidate have >=1 entity-like token; the
+            # denominator here is that comparable subset, not
+            # target_candidate_edges.
+            "thread_entity_overlap_comparable_edges": len(entity_overlap_counts),
+            "thread_entity_overlap_nonzero_fraction": (
+                entity_overlap_nonzero / len(entity_overlap_counts) if entity_overlap_counts else None
+            ),
+            "thread_entity_overlap_count_mean": (
+                statistics.fmean(entity_overlap_counts) if entity_overlap_counts else None
+            ),
             "unique_candidate_count": len(unique_candidate_ids),
             "owners_with_any_candidate": len(owners_with_any_candidate),
             "target_candidate_edges": target_candidate_edges,

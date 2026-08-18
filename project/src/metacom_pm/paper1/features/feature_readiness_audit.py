@@ -230,19 +230,28 @@ FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
         "canonical_name": "ms_thread_entity_overlap",
         "head": "MS",
         "blueprint_section": "5.3",
-        "status": "NOT_IMPLEMENTED",
-        "proxy_field": None,
-        "note": "No deterministic entity/thread overlap count/flag exists anywhere in this lane.",
+        "status": "IMPLEMENTED",
+        "proxy_field": "thread_entity_overlap_count (census)",
+        "note": (
+            "metacom_pm.paper1.memory.explicit_signals.thread_entity_overlap_count: "
+            "a deterministic count of non-sentence-initial capitalized ('entity-like') "
+            "tokens shared between the target's query text and one candidate's "
+            "content. None when either side has no entity-like tokens, same "
+            "convention as the lexical-overlap proxy."
+        ),
     },
     {
         "canonical_name": "ms_explicit_return_marker",
         "head": "MS",
         "blueprint_section": "5.3",
-        "status": "NOT_IMPLEMENTED",
-        "proxy_field": None,
+        "status": "IMPLEMENTED",
+        "proxy_field": "explicit_return_marker (census, target-level)",
         "note": (
-            "No detector for again/last time/before/still-style return/"
-            "continuity markers in the current visible query text exists."
+            "metacom_pm.paper1.memory.explicit_signals.has_explicit_return_marker: "
+            "deterministic regex for again/last time/before/still/like-I-said "
+            "style continuity markers in the target's own visible_query_text. "
+            "None for DG (no static query pre-generation, same convention as "
+            "has_visible_query's other dependents)."
         ),
     },
     {
@@ -286,9 +295,14 @@ FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
         "canonical_name": "me_current_action_request",
         "head": "ME",
         "blueprint_section": "5.4",
-        "status": "NOT_IMPLEMENTED",
-        "proxy_field": None,
-        "note": "No detector for an explicit advice/next-step request in the current visible query text exists.",
+        "status": "IMPLEMENTED",
+        "proxy_field": "current_action_request (census, target-level)",
+        "note": (
+            "metacom_pm.paper1.memory.explicit_signals.has_current_action_request: "
+            "deterministic regex for what-should-I-do/any-advice/how-do-I style "
+            "advice-seeking language in the target's own visible_query_text. "
+            "None for DG, same convention as has_visible_query's other dependents."
+        ),
     },
     {
         "canonical_name": "me_candidate_token_cost",
@@ -463,6 +477,9 @@ class HeadTaskFeatureReadinessRow:
     lexical_similarity: FeatureAxisReadiness
     lexical_candidate_query_jaccard_ge_0_6_proxy: FeatureAxisReadiness
     retrieval_rank: FeatureAxisReadiness
+    thread_entity_overlap: FeatureAxisReadiness
+    explicit_return_marker: FeatureAxisReadiness
+    current_action_request: FeatureAxisReadiness
 
     def to_manifest_row(self) -> dict[str, Any]:
         protocol = (
@@ -499,6 +516,9 @@ class HeadTaskFeatureReadinessRow:
                 self.lexical_candidate_query_jaccard_ge_0_6_proxy.to_manifest_row()
             ),
             "retrieval_rank": self.retrieval_rank.to_manifest_row(),
+            "thread_entity_overlap": self.thread_entity_overlap.to_manifest_row(),
+            "explicit_return_marker": self.explicit_return_marker.to_manifest_row(),
+            "current_action_request": self.current_action_request.to_manifest_row(),
         }
 
 
@@ -532,7 +552,21 @@ def _row_for_head_task(
     rank_values: list[float | None] = [
         float(c.retrieval_rank) if c.retrieval_rank is not None else None for c in all_candidates
     ]
+    entity_overlap_values: list[float | None] = [
+        float(c.thread_entity_overlap_count) if c.thread_entity_overlap_count is not None else None
+        for c in all_candidates
+    ]
     candidate_count_values: list[float | None] = [float(r.candidate_count) for r in subset]
+    # target-level, not per-candidate-item: one value per target row, same
+    # unit as candidate_count (see FeatureAxisReadiness docstring).
+    return_marker_values: list[float | None] = [
+        (1.0 if r.explicit_return_marker else 0.0) if r.explicit_return_marker is not None else None
+        for r in subset
+    ]
+    action_request_values: list[float | None] = [
+        (1.0 if r.current_action_request else 0.0) if r.current_action_request is not None else None
+        for r in subset
+    ]
 
     return HeadTaskFeatureReadinessRow(
         candidate_source=candidate_source,
@@ -563,6 +597,19 @@ def _row_for_head_task(
         ),
         retrieval_rank=_axis_readiness(
             rank_values, measured_over="per_candidate_item", na_reason=na_reason
+        ),
+        # thread_entity_overlap is well-defined for every head mechanically
+        # (see explicit_signals module docstring), but only entity-bearing
+        # (target, candidate) edges produce a value -- na_reason still only
+        # fires for DG, where there is no query text to compare at all.
+        thread_entity_overlap=_axis_readiness(
+            entity_overlap_values, measured_over="per_candidate_item", na_reason=na_reason
+        ),
+        explicit_return_marker=_axis_readiness(
+            return_marker_values, measured_over="per_target", na_reason=na_reason
+        ),
+        current_action_request=_axis_readiness(
+            action_request_values, measured_over="per_target", na_reason=na_reason
         ),
     )
 
@@ -786,6 +833,9 @@ def summarize_feature_readiness(rows: tuple[HeadTaskFeatureReadinessRow, ...]) -
             "lexical_similarity",
             "lexical_candidate_query_jaccard_ge_0_6_proxy",
             "retrieval_rank",
+            "thread_entity_overlap",
+            "explicit_return_marker",
+            "current_action_request",
         ):
             axis: FeatureAxisReadiness = getattr(r, axis_name)
             if axis.readiness_status in (ZERO_VARIANCE_STATUS, ZERO_VARIANCE_DIAGNOSTIC_PROXY_STATUS):

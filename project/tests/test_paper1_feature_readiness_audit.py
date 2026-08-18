@@ -250,21 +250,28 @@ def test_feature_inventory_items_have_a_valid_status_and_a_note():
 
 
 def test_feature_inventory_never_marks_a_not_implemented_item_as_implemented_via_new_heuristic():
-    # B25.4: profile_field_type/thread_entity_overlap/explicit_return_marker/
-    # historical_outcome_type/current_action_request must all be honestly
-    # NOT_IMPLEMENTED this round -- none may be silently upgraded to
-    # IMPLEMENTED/IMPLEMENTED_AS_DIAGNOSTIC_PROXY without an actual new
-    # compiler existing (which this round does not add).
+    # B25.4: profile_field_type/historical_outcome_type must stay honestly
+    # NOT_IMPLEMENTED in the base (legacy regex/Jaccard-lane) inventory --
+    # those two are only ever upgraded via the v6-semantic-compiler-gated
+    # _semantic_feature_inventory() overlay (see its module docstring),
+    # never silently in FEATURE_INVENTORY itself.
+    #
+    # thread_entity_overlap/explicit_return_marker/current_action_request
+    # are different in kind: they are pure deterministic regex/token
+    # functions on Target.visible_query_text, unconditionally available in
+    # both the legacy and v6-semantic lanes -- not gated on the v6 compiler
+    # existing at all. metacom_pm.paper1.memory.explicit_signals implements
+    # all three with dedicated tests (test_paper1_memory_explicit_signals.py),
+    # so their base-inventory upgrade to IMPLEMENTED is real, not silent.
     by_name = {item["canonical_name"]: item for item in FEATURE_INVENTORY}
+    for name in ("mp_profile_field_type", "me_historical_outcome_type", "embedding_similarity"):
+        assert by_name[name]["status"] == "NOT_IMPLEMENTED", by_name[name]
     for name in (
-        "mp_profile_field_type",
         "ms_thread_entity_overlap",
         "ms_explicit_return_marker",
-        "me_historical_outcome_type",
         "me_current_action_request",
-        "embedding_similarity",
     ):
-        assert by_name[name]["status"] == "NOT_IMPLEMENTED", by_name[name]
+        assert by_name[name]["status"] == "IMPLEMENTED", by_name[name]
 
 
 def test_feature_inventory_already_visible_items_pending_mechanical_definition():
