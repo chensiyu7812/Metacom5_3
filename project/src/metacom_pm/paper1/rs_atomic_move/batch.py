@@ -117,6 +117,7 @@ def run_source_card_prefix(
     structurally_invalid_total = 0
     verifier_rejections_total = 0
     duplicate_semantic_content_total = 0
+    call_failures_total = 0
 
     for row in existing_rows:
         accepted_total += len(row.get("accepted_units") or [])
@@ -124,6 +125,8 @@ def run_source_card_prefix(
         structurally_invalid_total += int(row.get("structurally_invalid_proposals") or 0)
         verifier_rejections_total += int(row.get("verifier_rejections") or 0)
         duplicate_semantic_content_total += int(row.get("duplicate_semantic_content_count") or 0)
+        if row.get("call_failure_phase"):
+            call_failures_total += 1
 
     for card in selected[len(existing_rows) :]:
         source = build_source_card_compile_input(
@@ -141,6 +144,7 @@ def run_source_card_prefix(
             "structurally_invalid_proposals": result.structurally_invalid_proposals,
             "verifier_rejections": result.verifier_rejections,
             "duplicate_semantic_content_count": result.duplicate_semantic_content_count,
+            "call_failure_phase": result.call_failure_phase,
         }
         append_jsonl(path, row)
         accepted_total += len(result.accepted_units)
@@ -148,6 +152,8 @@ def run_source_card_prefix(
         structurally_invalid_total += result.structurally_invalid_proposals
         verifier_rejections_total += result.verifier_rejections
         duplicate_semantic_content_total += result.duplicate_semantic_content_count
+        if result.call_failure_phase:
+            call_failures_total += 1
 
     all_rows = list(iter_jsonl(path)) if path.exists() else []
     is_full_catalog_done = run_scope == "full" and len(all_rows) == len(cards)
@@ -167,6 +173,7 @@ def run_source_card_prefix(
         "structurally_invalid_proposals": structurally_invalid_total,
         "verifier_rejections": verifier_rejections_total,
         "duplicate_semantic_content_count": duplicate_semantic_content_total,
+        "call_failures": call_failures_total,
         # Only a run_scope="full" pass over the entire catalog may ever be
         # complete=True; a smoke run (by definition a prefix) never is,
         # regardless of whether it finished its own smaller selection.

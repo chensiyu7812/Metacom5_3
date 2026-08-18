@@ -117,10 +117,35 @@ class SourceCardCompileResult:
     verifier_rejections: int = 0
     extractor_proposal_count: int = 0
     duplicate_semantic_content_count: int = 0
+    # A call that raised after exhausting its own internal retries (provider
+    # error, or a response that never became parsable/schema-valid) --
+    # distinct from schema_invalid_proposals/verifier_rejections, which both
+    # require a response that WAS parsed. 0 accepted units either way
+    # (fail-closed): an extractor call failure means no proposals exist to
+    # ground at all; a verifier call failure means grounded proposals exist
+    # but no decision was ever obtained for them, so none can be accepted.
+    call_failure_phase: str | None = None
 
 
 def source_sha256(source: SourceCardCompileInput) -> str:
     return sha256_text(canonical_json(source.model_dump(mode="json")))
+
+
+class RsAtomicMoveCallFailed(RuntimeError):
+    """A phase's provider call could not produce a usable response even
+    after the client's own internal retries. The pre-call budget
+    reservation for this exact call identity has already been settled
+    (crash-conservatively, at the reserved maximum) before this is raised --
+    callers must not attempt to reserve/settle again for the same identity,
+    and per RsAtomicMoveBudgetLedger's fail-closed reservation-uniqueness
+    rule, retrying the identical call content would raise on re-reservation
+    regardless. The caller's only safe response is to record this source
+    card's compile as a structural, zero-accepted-unit failure for this run
+    and move on to the next card."""
+
+    def __init__(self, phase: str, *, cause: BaseException) -> None:
+        super().__init__(f"RS atomic-move {phase} call failed: {cause}")
+        self.phase = phase
 
 
 class RsAtomicMoveCompiler:
@@ -234,21 +259,63 @@ class RsAtomicMoveCompiler:
         if cached is not None:
             return response_schema.model_validate(cached)
 
-        reservation = self.budget.reserve(
-            reservation_id=identity.cache_key,
-            phase=phase,
-            call_key=identity.cache_key,
-            maximum_prompt_tokens=params.maximum_prompt_tokens,
-            maximum_completion_tokens=params.max_tokens,
-        )
-        result, parsed = self.client.chat(
-            messages,
-            temperature=params.temperature,
-            max_tokens=params.max_tokens,
-            seed=None,
-            response_schema=response_schema,
-            retries=1,
-        )
+        try:
+            reservation = self.budget.reserve(
+                reservation_id=identity.cache_key,
+                phase=phase,
+                call_key=identity.cache_key,
+                maximum_prompt_tokens=params.maximum_prompt_tokens,
+                maximum_completion_tokens=params.max_tokens,
+            )
+        except RuntimeError as exc:
+            if "budget reservation ID already exists" not in str(exc):
+                # A genuinely different failure (e.g. hard budget would be
+                # exceeded) must propagate and stop the run -- only a
+                # dangling reservation from an earlier interrupted attempt
+                # at this exact call is recovered here.
+                raise
+            # This exact call identity was already reserved by an earlier
+            # process run that was interrupted before it could settle (a
+            # hard process kill, not the try/except below, which always
+            # settles before raising) -- reservation_id is a pure function
+            # of call content, so this identity can never be reserved again.
+            # The money is already conservatively counted in
+            # accounted_cost_usd via that dangling RESERVED row; no new
+            # settlement is needed, just recovery so this run can move past
+            # the card instead of crashing on it forever.
+            raise RsAtomicMoveCallFailed(phase, cause=exc) from exc
+        try:
+            result, parsed = self.client.chat(
+                messages,
+                temperature=params.temperature,
+                max_tokens=params.max_tokens,
+                seed=None,
+                response_schema=response_schema,
+                retries=1,
+            )
+        except Exception as exc:
+            # The client already retried internally and still could not
+            # produce a usable response (e.g. a provider response that
+            # never became schema-valid JSON). Settle this reservation now,
+            # crash-conservatively at the reserved maximum (usage=None), so
+            # it is never left permanently dangling -- reservation_id is a
+            # pure function of call content, so a bare retry of the same
+            # card/phase would otherwise collide with this same identity
+            # forever. The caller records this source card as a structural
+            # failure and moves on; this exact call is never retried.
+            self.budget.settle(reservation, usage=None, outcome="FAILED_CALL")
+            append_jsonl(
+                self.attempt_ledger_path,
+                {
+                    "protocol": "paper1-rs-atomic-move-attempt-log-v1",
+                    "phase": phase,
+                    "source_card_id": source.source_card_id,
+                    "cache_key": identity.cache_key,
+                    "outcome": "FAILED_CALL",
+                    "error": str(exc),
+                },
+            )
+            raise RsAtomicMoveCallFailed(phase, cause=exc) from exc
         append_jsonl(
             self.attempt_ledger_path,
             {
@@ -265,22 +332,27 @@ class RsAtomicMoveCompiler:
         outcome = "SUCCEEDED" if parsed is not None else "FAILED_PARSE"
         self.budget.settle(reservation, usage=result.usage, outcome=outcome)
         if parsed is None:
-            raise RuntimeError(f"RS atomic-move {phase} call did not produce a parsable response")
+            raise RsAtomicMoveCallFailed(
+                phase, cause=RuntimeError(f"RS atomic-move {phase} call did not produce a parsable response")
+            )
         self.cache.store_success(identity, parsed.model_dump(mode="json"))
         return parsed
 
     def compile_source_card(self, source: SourceCardCompileInput) -> SourceCardCompileResult:
-        extractor_batch = self._call(
-            phase="extractor",
-            source=source,
-            messages=extractor_messages(
-                canonical_json(source.model_dump(mode="json")),
-                canonical_json(ExtractorProposalBatch.model_json_schema()),
-            ),
-            response_schema=ExtractorProposalBatch,
-            prompt_sha256=EXTRACTOR_PROMPT_SHA256,
-            params=self.binding.extractor,
-        )
+        try:
+            extractor_batch = self._call(
+                phase="extractor",
+                source=source,
+                messages=extractor_messages(
+                    canonical_json(source.model_dump(mode="json")),
+                    canonical_json(ExtractorProposalBatch.model_json_schema()),
+                ),
+                response_schema=ExtractorProposalBatch,
+                prompt_sha256=EXTRACTOR_PROMPT_SHA256,
+                params=self.binding.extractor,
+            )
+        except RsAtomicMoveCallFailed:
+            return SourceCardCompileResult(call_failure_phase="extractor")
         assert isinstance(extractor_batch, ExtractorProposalBatch)
 
         grounded: list[ProposedAtomicMoveUnit] = []
@@ -306,18 +378,29 @@ class RsAtomicMoveCompiler:
                 grounding_rejections=tuple(grounding_rejections),
             )
 
-        verifier_batch = self._call(
-            phase="verifier",
-            source=source,
-            messages=verifier_messages(
-                canonical_json(source.model_dump(mode="json")),
-                canonical_json([p.model_dump(mode="json") for p in grounded]),
-                canonical_json(VerifierDecisionBatch.model_json_schema()),
-            ),
-            response_schema=VerifierDecisionBatch,
-            prompt_sha256=VERIFIER_PROMPT_SHA256,
-            params=self.binding.verifier,
-        )
+        try:
+            verifier_batch = self._call(
+                phase="verifier",
+                source=source,
+                messages=verifier_messages(
+                    canonical_json(source.model_dump(mode="json")),
+                    canonical_json([p.model_dump(mode="json") for p in grounded]),
+                    canonical_json(VerifierDecisionBatch.model_json_schema()),
+                ),
+                response_schema=VerifierDecisionBatch,
+                prompt_sha256=VERIFIER_PROMPT_SHA256,
+                params=self.binding.verifier,
+            )
+        except RsAtomicMoveCallFailed:
+            # Grounded proposals exist but no decision was ever obtained for
+            # them -- fail closed: none are accepted, and this card's
+            # verifier phase is never retried (see RsAtomicMoveCallFailed).
+            return SourceCardCompileResult(
+                extractor_proposal_count=len(extractor_batch.proposals),
+                structurally_invalid_proposals=len(grounding_rejections),
+                grounding_rejections=tuple(grounding_rejections),
+                call_failure_phase="verifier",
+            )
         assert isinstance(verifier_batch, VerifierDecisionBatch)
 
         # Fail closed on anything other than an exact 1:1 correspondence

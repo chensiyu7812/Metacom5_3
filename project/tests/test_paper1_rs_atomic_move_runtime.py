@@ -18,10 +18,12 @@ from metacom_pm.paper1.rs_atomic_move.contracts import (
     VerifierDecisionBatch,
     VerifierRejectionReason,
 )
+from metacom_pm.paper1.rs_atomic_move.prompts import EXTRACTOR_PROMPT_SHA256, extractor_messages
 from metacom_pm.paper1.rs_atomic_move.runtime import (
     CallParameters,
     RsAtomicMoveCompiler,
     RuntimeBinding,
+    source_sha256,
 )
 
 
@@ -84,6 +86,19 @@ class FakeClient:
             ),
             parsed,
         )
+
+
+class FailingClient:
+    """Raises on every .chat() call, simulating a response that never
+    became schema-valid even after the client's own internal retries."""
+
+    def __init__(self, endpoint: Endpoint) -> None:
+        self.endpoint = endpoint
+        self.calls = 0
+
+    def chat(self, messages, *, temperature, max_tokens, seed, response_schema, retries):
+        self.calls += 1
+        raise RuntimeError("simulated malformed provider response, never became schema-valid")
 
 
 def _compiler(tmp_path, client: FakeClient) -> RsAtomicMoveCompiler:
@@ -443,3 +458,139 @@ def test_duplicate_semantic_content_within_one_source_card_is_deduplicated(tmp_p
 
     assert len(result.accepted_units) == 1
     assert result.duplicate_semantic_content_count == 1
+
+
+def test_extractor_call_failure_is_recorded_not_crashed(tmp_path):
+    client = FailingClient(_endpoint())
+    compiler = _compiler(tmp_path, client)
+    result = compiler.compile_source_card(_source())
+
+    assert result.accepted_units == ()
+    assert result.call_failure_phase == "extractor"
+    assert client.calls == 1
+
+
+def test_extractor_call_failure_settles_the_reservation_conservatively(tmp_path):
+    from metacom_pm.paper1.rs_atomic_move.budget import RsAtomicMoveBudgetLedger
+
+    client = FailingClient(_endpoint())
+    compiler = _compiler(tmp_path, client)
+    compiler.compile_source_card(_source())
+
+    ledger = RsAtomicMoveBudgetLedger(
+        compiler.budget.path, price=_price(), hard_budget_usd=Decimal("1.00")
+    )
+    # Every reservation this compile attempt made must be SETTLED, not left
+    # dangling -- otherwise a resumed run could never make this exact call
+    # again (reservation_id is a pure function of call content).
+    for events in ledger._events.values():
+        assert events[-1]["event"] == "SETTLED"
+        assert events[-1]["outcome"] == "FAILED_CALL"
+
+
+def test_verifier_call_failure_is_recorded_not_crashed_and_keeps_extractor_counts(tmp_path):
+    proposal = ProposedAtomicMoveUnit(
+        proposal_id="p1",
+        atomic_move_family=AtomicMoveFamily.AFFIRMATION_AND_REASSURANCE,
+        action_description="validate the user's frustration",
+        supporting_spans=(_quote("I'm sorry your manager did that. You really stepped up."),),
+    )
+    extractor = ExtractorProposalBatch(proposals=(proposal,))
+
+    class ExtractorThenFailingClient:
+        def __init__(self, endpoint):
+            self.endpoint = endpoint
+            self.calls = 0
+
+        def chat(self, messages, *, temperature, max_tokens, seed, response_schema, retries):
+            self.calls += 1
+            if self.calls == 1:
+                parsed = response_schema.model_validate(extractor.model_dump(mode="json"))
+                payload = chat_request_payload(
+                    self.endpoint, messages, temperature=temperature, max_tokens=max_tokens,
+                    seed=seed, response_schema=response_schema,
+                )
+                return (
+                    CallResult(
+                        text=canonical_json(parsed.model_dump(mode="json")),
+                        raw_response={"call": self.calls},
+                        usage={"prompt_tokens": 20, "completion_tokens": 10, "total_tokens": 30},
+                        latency_ms=1.0,
+                        request_hash=sha256_text(canonical_json(payload)),
+                        provider_finish_reason="stop",
+                        normalized_finish_reason="complete",
+                        structured_output_audit={"initially_valid_json": True},
+                    ),
+                    parsed,
+                )
+            raise RuntimeError("simulated malformed verifier response")
+
+    compiler = _compiler(tmp_path, ExtractorThenFailingClient(_endpoint()))
+    result = compiler.compile_source_card(_source())
+
+    assert result.accepted_units == ()
+    assert result.call_failure_phase == "verifier"
+    assert result.extractor_proposal_count == 1
+    assert result.structurally_invalid_proposals == 0
+
+
+def test_resuming_after_a_dangling_reservation_recovers_instead_of_crashing(tmp_path):
+    # Simulate a hard process kill: a reservation was written but the
+    # process died before it could ever be settled (a real 2026-08-18
+    # incident on the full 12169-card run -- see call_failure_phase).
+    proposal = ProposedAtomicMoveUnit(
+        proposal_id="p1",
+        atomic_move_family=AtomicMoveFamily.AFFIRMATION_AND_REASSURANCE,
+        action_description="validate the user's frustration",
+        supporting_spans=(_quote("I'm sorry your manager did that. You really stepped up."),),
+    )
+    extractor = ExtractorProposalBatch(proposals=(proposal,))
+    verifier = VerifierDecisionBatch(decisions=(VerifierDecision(proposal_id="p1", accept=True),))
+
+    compiler_a = _compiler(tmp_path, FakeClient(_endpoint(), [extractor, verifier]))
+    # Manually reserve (but never settle) the exact identity the extractor
+    # call for this source would use, by reaching into the same budget
+    # ledger a second compiler instance would reopen.
+    from metacom_pm.paper1.rs_atomic_move.runtime import CompilerCallIdentity
+    import hashlib
+
+    payload = chat_request_payload(
+        _endpoint(),
+        extractor_messages(
+            canonical_json(_source().model_dump(mode="json")),
+            canonical_json(ExtractorProposalBatch.model_json_schema()),
+        ),
+        temperature=0.0,
+        max_tokens=200,
+        seed=None,
+        response_schema=ExtractorProposalBatch,
+    )
+    identity = CompilerCallIdentity(
+        phase="extractor",
+        compiler_version=compiler_a.binding.compiler_version,
+        provider=compiler_a.binding.provider,
+        region=compiler_a.binding.region,
+        base_url=compiler_a.endpoint.base_url,
+        model=compiler_a.endpoint.model,
+        enable_thinking=False,
+        response_mode="json_object_plus_local_pydantic",
+        request_parameters={"temperature": 0.0, "max_tokens": 200, "seed": None},
+        prompt_sha256=EXTRACTOR_PROMPT_SHA256,
+        schema_sha256=sha256_text(canonical_json(ExtractorProposalBatch.model_json_schema())),
+        source_card_id=_source().source_card_id,
+        source_sha256=source_sha256(_source()),
+        request_payload_sha256=sha256_text(canonical_json(payload)),
+    )
+    compiler_a.budget.reserve(
+        reservation_id=identity.cache_key,
+        phase="extractor",
+        call_key=identity.cache_key,
+        maximum_prompt_tokens=500,
+        maximum_completion_tokens=200,
+    )
+
+    # A fresh compile attempt against the SAME budget ledger file must
+    # recover (call_failure_phase="extractor"), not crash with "budget
+    # reservation ID already exists".
+    result = compiler_a.compile_source_card(_source())
+    assert result.call_failure_phase == "extractor"

@@ -46,7 +46,13 @@ from .renderer import (
     UnscrubbedActionDescriptionError,
     render_atomic_move,
 )
-from .runtime import CallParameters, RsAtomicMoveCompiler, RuntimeBinding, SourceCardCompileResult
+from .runtime import (
+    CallParameters,
+    RsAtomicMoveCallFailed,
+    RsAtomicMoveCompiler,
+    RuntimeBinding,
+    SourceCardCompileResult,
+)
 from .source_adapter import SOURCE_ADAPTER_CODE_SHA256, build_source_card_compile_input, load_esconv_data
 
 __all__ = [
@@ -84,6 +90,7 @@ __all__ = [
     "RsAtomicMoveCompiler",
     "RuntimeBinding",
     "SourceCardCompileResult",
+    "RsAtomicMoveCallFailed",
     "SOURCE_ADAPTER_CODE_SHA256",
     "build_source_card_compile_input",
     "load_esconv_data",
