@@ -18,6 +18,7 @@ def _card(card_id: str, dialogue_id: str, turn: int, response: str) -> StrategyS
     return StrategySourceCard(
         card_id=card_id,
         source_dialogue_id=dialogue_id,
+        source_dialogue_ids=(dialogue_id,),
         source_turn_index=turn,
         strategy_label="Affirmation and Reassurance",
         retrieval_text="seeker: I feel awful.",

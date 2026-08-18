@@ -105,7 +105,11 @@ SUPPORTER_TEXT = (
 SEEKER_PRECEDING_TEXT = "My manager took credit for my work again."
 
 
-def _source(target_dialogue_id: str = "esconv_0042", source_card_id: str | None = None) -> SourceCardCompileInput:
+def _source(
+    target_dialogue_id: str = "esconv_0042",
+    source_card_id: str | None = None,
+    equivalent_dialogue_ids: tuple[str, ...] = (),
+) -> SourceCardCompileInput:
     return SourceCardCompileInput(
         source_card_id=source_card_id or "rs_src_" + "0" * 24,
         target_dialogue_id=target_dialogue_id,
@@ -120,6 +124,7 @@ def _source(target_dialogue_id: str = "esconv_0042", source_card_id: str | None 
             source_dialogue_id=target_dialogue_id, turn_index=5, role="supporter",
             text=SUPPORTER_TEXT,
         ),
+        equivalent_dialogue_ids=equivalent_dialogue_ids,
     )
 
 
@@ -346,6 +351,37 @@ def test_accepted_unit_source_dialogue_ids_is_the_target_dialogue_baseline(tmp_p
     from metacom_pm.paper1.rs_atomic_move.contracts import fold_exclusion_dialogue_ids
     ids = fold_exclusion_dialogue_ids(result.accepted_units[0])
     assert ids == frozenset({"esconv_0042"})
+
+
+def test_accepted_unit_source_dialogue_ids_includes_the_full_dedup_equivalence_class(tmp_path):
+    # Architectural fix, 2026-08-18: a source card that collapsed duplicate
+    # content from other dialogues (StrategySourceCard.source_dialogue_ids)
+    # must have every one of those dialogues excluded by
+    # leave-current-dialogue-out fold exclusion, not just target_dialogue_id
+    # -- otherwise a state in one of the collapsed dialogues could retrieve
+    # a card that is verbatim its own supporter's words.
+    proposal = ProposedAtomicMoveUnit(
+        proposal_id="p1",
+        atomic_move_family=AtomicMoveFamily.AFFIRMATION_AND_REASSURANCE,
+        action_description="validate the user's frustration",
+        supporting_spans=(_quote("I'm sorry your manager did that. You really stepped up."),),
+    )
+    extractor = ExtractorProposalBatch(proposals=(proposal,))
+    verifier = VerifierDecisionBatch(decisions=(VerifierDecision(proposal_id="p1", accept=True),))
+
+    compiler = _compiler(tmp_path, FakeClient(_endpoint(), [extractor, verifier]))
+    source = _source(
+        target_dialogue_id="esconv_0042",
+        equivalent_dialogue_ids=("esconv_0100", "esconv_0999"),
+    )
+    result = compiler.compile_source_card(source)
+
+    from metacom_pm.paper1.rs_atomic_move.contracts import fold_exclusion_dialogue_ids
+    unit = result.accepted_units[0]
+    assert unit.source_dialogue_ids == ("esconv_0042", "esconv_0100", "esconv_0999")
+    assert fold_exclusion_dialogue_ids(unit) == frozenset(
+        {"esconv_0042", "esconv_0100", "esconv_0999"}
+    )
 
 
 def test_run_identity_changes_when_max_tokens_changes(tmp_path):

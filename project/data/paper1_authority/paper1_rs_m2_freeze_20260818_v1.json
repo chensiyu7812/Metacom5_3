@@ -112,13 +112,34 @@
       "status": "FROZEN",
       "researcher_approved": true,
       "note": "rs_atomic_move_type is populated from the atomic-move compiler's atomic_move_family field (closed 8-value ESConv taxonomy) -- this feature was already specified in PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md but had no implementation source until decision 6 above."
+    },
+    {
+      "order": 10,
+      "decision_id": "rs_atomic_bundle_and_cardinality",
+      "decision": "one_catalog_entry_per_accepted_unit_no_bundling_cross_card_duplicate_policy_pending",
+      "status": "PARTIALLY_FROZEN_RESEARCHER_DECISION_REQUIRED",
+      "researcher_approved": false,
+      "researcher_approved_scope": "The top-1 single-atomic-unit treatment identity is inherited from the already-approved top_1_single_card and atomic-move decisions. The cross-source-card duplicate policy has not been explicitly approved by the researcher.",
+      "rules": {
+        "zero_accepted_units": "the source card contributes nothing to the catalog; no placeholder or empty-card entry is created",
+        "one_accepted_unit": "becomes exactly one catalog entry, card_id from AcceptedAtomicMoveUnit's content hash",
+        "multiple_accepted_units": "each becomes its OWN separate catalog entry -- never merged into one multi-move bundle. Consistent with decision 4 (top-1 single-card retrieval, no bundle): the retriever picks the single best-matching individual atomic-move card at decision time, so a source turn producing several distinct moves simply contributes several independently-retrievable candidates, not one compound card.",
+        "token_cost": "computed per accepted unit from rendered_card_text using the frozen Llama-3.1-8B-Instruct tokenizer (NousResearch/Meta-Llama-3.1-8B-Instruct, revision d10aef7999a2b5ba950ab3974312feeedbfe0b77, tokenizer_json_sha256 79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4) -- the same tokenizer already used for decision 6's corrected 87.2% reduction figure, not o200k_base and not a whitespace-split proxy.",
+        "cross_source_card_semantic_duplicates": "PROPOSED RESEARCH CHANGE — NOT AUTHORIZED. Exact and near-duplicate accepted units across different source cards require a pre-outcome researcher decision after the full compiler output makes their realized frequency measurable. Options must preserve unioned source_dialogue_ids and must not give duplicated treatment text an artificial retrieval prior. No policy is frozen here.",
+        "within_source_card_semantic_duplicates": "already deduplicated by the runtime's existing content-hash card_id + duplicate_semantic_content_count mechanism (source_card_id + compiler_version + family + action_description + located_spans) -- unchanged by this decision, this row only freezes the cross-card behavior, which was previously undecided."
+      },
+      "source_count_lineage": "12403 -> 12169 source-card lineage is decision 2's note (dialogue-only v2 identity dedup); this decision (10) is about accepted-unit-to-catalog-entry cardinality downstream of compilation, a separate concept from the 234-source-card reduction.",
+      "post_freeze_corrections_20260818": [
+        "The 234 collapsed source cards' full dedup-equivalence lineage was not actually wired into AcceptedAtomicMoveUnit.source_dialogue_ids when this decision was first drafted (only target_dialogue_id was recorded, with a code comment deferring the fix). Fixed same-day: StrategySourceCard gained a source_dialogue_ids field (the full sorted union of every dialogue_id sharing that card's normalized, case-folded (retrieval_text, response) duplicate key), computed by strategy_bank.build_strategy_source_catalog via a two-pass scan; threaded through SourceCardCompileInput.equivalent_dialogue_ids (source_adapter.py) into AcceptedAtomicMoveUnit.source_dialogue_ids (runtime.py). Verified against the real catalog: exactly 82 cards carry multi-dialogue lineage, folding in exactly 234 extra dialogue_ids -- closes the 12403->12169 gap exactly.",
+        "The retrieval-document identity for RS in paper1_bge_m3_formal_binding_v1.json originally bound 'document' to StrategySourceCard.retrieval_text alone (source-context only, shared across every accepted unit from one source card) -- which, combined with this decision's own 'each accepted unit is an independent catalog entry' rule, would have made multiple units from the same source card produce identical document embeddings and degenerate into an arbitrary tie-break at retrieval time. Corrected same-day: metacom_pm.paper1.rs_atomic_move.catalog.build_atomic_move_retrieval_document now constructs and hash-binds retrieval_text + this unit's own rendered_card_text per accepted unit, while fail-closing on source-turn or lineage mismatch. BGE materialization itself remains pending formal-binding hardening."
+      ]
     }
   ],
   "not_yet_frozen_by_this_artifact": [
-    "exact BGE-M3 Hub revision/pooling/normalization (decision 5's pending items)",
-    "cross-dialogue diverse compiler QA (64-card stratified smoke) -- the 10-card 2026-08-18 smoke is single-dialogue engineering evidence only, not scientific generalization; required before compiler prompt/schema/renderer can be considered stable",
-    "RS atomic-move full-12169-card compile (only a 10-card single-dialogue smoke has run live; budget pending the diverse compiler QA outcome)",
+    "exact BGE-M3 Hub revision/pooling/normalization (decision 5's pending items) -- engineering attestation exists (paper1_bge_m3_formal_binding_v1.json) but is itself explicitly not-yet-hardened",
+    "RS atomic-move full-12169-card compile -- verifier architecture fix (leaked_source_specific_content retired from the LLM verifier's decidable schema) is live-verified (13-card targeted recheck, 2026-08-18); two full 64-card diverse smokes and one 13-card targeted recheck are real cross-dialogue evidence now, not single-dialogue only; still needs an explicit call-count/budget/resume-plan submission and researcher approval before running live",
     "exact mechanical definitions for the 5 RS features frozen in decision 9 (recent-window size, explicit-request parser, tokenizer, missing-value handling) -- per esconv_rs_zero_outcome_census_summary_v1.json#feature_readiness these are audited-draft, not exact-frozen",
+    "cross-source-card exact/near-duplicate accepted-unit policy -- PROPOSED RESEARCH CHANGE — NOT AUTHORIZED until realized full-compile frequencies and fold-safe alternatives are presented to the researcher",
     "cross-fit K/seed, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, matched-random construction, API call plan (execution-blueprint Phase 2 items, not RS-specific)"
   ]
 }

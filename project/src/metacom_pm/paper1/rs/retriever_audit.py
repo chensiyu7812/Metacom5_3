@@ -104,9 +104,10 @@ def build_retriever_comparison_rows(
     rows: list[RSRetrieverComparisonRow] = []
     card_counts_by_dialogue: dict[str, int] = {}
     for card in cards:
-        card_counts_by_dialogue[card.source_dialogue_id] = (
-            card_counts_by_dialogue.get(card.source_dialogue_id, 0) + 1
-        )
+        for dialogue_id in card.source_dialogue_ids:
+            card_counts_by_dialogue[dialogue_id] = (
+                card_counts_by_dialogue.get(dialogue_id, 0) + 1
+            )
 
     for state in states:
         rankings: list[RetrieverRanking] = []
@@ -119,7 +120,7 @@ def build_retriever_comparison_rows(
                 card = card_by_id.get(card_id)
                 if card is None:
                     raise ValueError(f"{method} returned unknown card {card_id}")
-                if card.source_dialogue_id == state.source_dialogue_id:
+                if state.source_dialogue_id in card.source_dialogue_ids:
                     raise ValueError(
                         f"{method} violated leave-current-dialogue-out for "
                         f"{state.state_id}"

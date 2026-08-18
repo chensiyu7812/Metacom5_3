@@ -15,6 +15,7 @@ from .authorization import (
     load_live_authorization,
 )
 from .batch import run_source_card_prefix
+from .catalog import AtomicMoveRetrievalDocument, build_atomic_move_retrieval_document
 from .contracts import (
     CONTRACTS_CODE_SHA256,
     RS_ATOMIC_MOVE_SCHEMA_VERSION,
@@ -87,4 +88,6 @@ __all__ = [
     "build_source_card_compile_input",
     "load_esconv_data",
     "run_source_card_prefix",
+    "AtomicMoveRetrievalDocument",
+    "build_atomic_move_retrieval_document",
 ]

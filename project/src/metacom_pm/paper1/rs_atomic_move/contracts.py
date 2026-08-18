@@ -75,7 +75,7 @@ from pydantic import Field, model_validator
 from metacom_pm.io import sha256_file
 from metacom_pm.paper1.contracts import StrictContract
 
-RS_ATOMIC_MOVE_SCHEMA_VERSION = "paper1-rs-atomic-move-schema-v2"
+RS_ATOMIC_MOVE_SCHEMA_VERSION = "paper1-rs-atomic-move-schema-v3"
 CONTRACTS_CODE_SHA256 = sha256_file(Path(__file__))
 
 
@@ -281,6 +281,15 @@ class SourceCardCompileInput(StrictContract):
     target_turn_index: int = Field(ge=0)
     preceding_turns: tuple[SourceTurnInput, ...]
     target_turn: SourceTurnInput
+    # Other dialogue_ids (besides target_dialogue_id) whose supporter turn
+    # produced the same normalized, case-folded (retrieval_text, response)
+    # duplicate key as this
+    # source card -- StrategySourceCard.source_dialogue_ids minus
+    # source_dialogue_id, threaded through from source_adapter.py so
+    # runtime.py can bind every accepted unit's source_dialogue_ids to the
+    # card's FULL dedup-equivalence class, not just target_dialogue_id.
+    # Never derived from a Qwen-declared field.
+    equivalent_dialogue_ids: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def _check_target_and_preceding_consistency(self) -> "SourceCardCompileInput":
@@ -293,6 +302,12 @@ class SourceCardCompileInput(StrictContract):
             )
         if self.target_turn.role != "supporter":
             raise ValueError("target_turn must be a supporter turn")
+        if self.target_dialogue_id in self.equivalent_dialogue_ids:
+            raise ValueError("equivalent_dialogue_ids must not repeat target_dialogue_id")
+        if len(set(self.equivalent_dialogue_ids)) != len(self.equivalent_dialogue_ids):
+            raise ValueError("equivalent_dialogue_ids must not contain duplicates")
+        if tuple(sorted(self.equivalent_dialogue_ids)) != self.equivalent_dialogue_ids:
+            raise ValueError("equivalent_dialogue_ids must be sorted")
         seen_indices: set[int] = set()
         for turn in self.preceding_turns:
             if turn.source_dialogue_id != self.target_dialogue_id:

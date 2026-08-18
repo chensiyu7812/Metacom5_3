@@ -81,7 +81,7 @@ def test_success_cache_round_trip(tmp_path):
     cache = SuccessCache(tmp_path / "cache")
     identity = CompilerCallIdentity(
         phase="extractor",
-        compiler_version="paper1-rs-atomic-move-compiler-v1",
+        compiler_version="paper1-rs-atomic-move-compiler-v2",
         provider="Alibaba Cloud Model Studio",
         region="Singapore (International)",
         base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
@@ -106,7 +106,7 @@ def test_success_cache_refuses_to_overwrite_with_different_result(tmp_path):
     cache = SuccessCache(tmp_path / "cache")
     identity = CompilerCallIdentity(
         phase="verifier",
-        compiler_version="paper1-rs-atomic-move-compiler-v1",
+        compiler_version="paper1-rs-atomic-move-compiler-v2",
         provider="Alibaba Cloud Model Studio",
         region="Singapore (International)",
         base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",

@@ -92,6 +92,31 @@ def test_retriever_comparison_rejects_leave_dialogue_out_violation():
         )
 
 
+def test_retriever_comparison_rejects_nonrepresentative_lineage_violation():
+    states, cards, rankings = _surface()
+    leaking = next(card for card in cards if len(card.source_dialogue_ids) > 1)
+    non_representative = next(
+        dialogue_id
+        for dialogue_id in leaking.source_dialogue_ids
+        if dialogue_id != leaking.source_dialogue_id
+    )
+    state = states[0].model_copy(update={"source_dialogue_id": non_representative})
+    adjusted_states = (state, states[1])
+    adjusted_rankings = {
+        method: {
+            state.state_id: ((leaking.card_id, 1.0),),
+            states[1].state_id: rows[states[1].state_id],
+        }
+        for method, rows in rankings.items()
+    }
+    with pytest.raises(ValueError, match="leave-current-dialogue-out"):
+        build_retriever_comparison_rows(
+            states=adjusted_states,
+            cards=cards,
+            rankings_by_method=adjusted_rankings,
+        )
+
+
 def test_retriever_comparison_rejects_missing_state_surface():
     states, cards, rankings = _surface()
     rankings["bge_small"] = {

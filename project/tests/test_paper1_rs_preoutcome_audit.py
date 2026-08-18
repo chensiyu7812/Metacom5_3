@@ -22,6 +22,7 @@ def _card(label="Reflection of feelings", example="It sounds like this was hard 
     return StrategySourceCard(
         card_id="rs_src_0123456789abcdef01234567",
         source_dialogue_id="esconv_0001",
+        source_dialogue_ids=("esconv_0001",),
         source_turn_index=3,
         strategy_label=label,
         retrieval_text="seeker: My mother called yesterday.",

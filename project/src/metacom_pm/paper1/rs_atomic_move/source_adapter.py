@@ -99,6 +99,9 @@ def build_source_card_compile_input(
             role=target_role,
             text=target_text,
         ),
+        equivalent_dialogue_ids=tuple(
+            sorted(dialogue_id for dialogue_id in card.source_dialogue_ids if dialogue_id != card.source_dialogue_id)
+        ),
     )
 
 

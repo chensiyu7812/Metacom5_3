@@ -40,7 +40,7 @@ from .prompts import (
 from .renderer import RENDERER_CODE_SHA256, RENDERER_SHA256, RENDERER_VERSION, render_atomic_move
 from .source_adapter import SOURCE_ADAPTER_CODE_SHA256
 
-COMPILER_VERSION = "paper1-rs-atomic-move-compiler-v1"
+COMPILER_VERSION = "paper1-rs-atomic-move-compiler-v2"
 FROZEN_QWEN_MODEL = "qwen3-235b-a22b-instruct-2507"
 VERIFIER_METHOD = "same_qwen_model_semantic_factual_verifier_not_independent"
 
@@ -378,15 +378,22 @@ class RsAtomicMoveCompiler:
             accepted.append(
                 AcceptedAtomicMoveUnit(
                     card_id=card_id,
-                    # Baseline: the one dialogue this proposal is mechanically
-                    # anchored to (locate_spans only ever searches the target
-                    # turn's own text, so a non-target grounding is
-                    # structurally impossible, not just checked-and-rejected).
-                    # A follow-up dedup-equivalence-group manifest may widen
-                    # this for the ~234 ESConv source rows that collapsed into
-                    # a shared representative card upstream in strategy_bank.py
-                    # -- never derived from the proposal itself.
-                    source_dialogue_ids=(source.target_dialogue_id,),
+                    # The proposal is mechanically anchored to target_dialogue_id
+                    # (locate_spans only ever searches the target turn's own
+                    # text, so a non-target grounding is structurally
+                    # impossible, not just checked-and-rejected) PLUS every
+                    # other dialogue whose supporter turn produced
+                    # the same normalized, case-folded
+                    # (retrieval_text, response) duplicate key --
+                    # StrategySourceCard.source_dialogue_ids, threaded through
+                    # source_adapter.py as equivalent_dialogue_ids, so
+                    # leave-current-dialogue-out fold exclusion catches a card
+                    # for every dialogue it is verbatim equivalent to, not
+                    # just the one arbitrarily kept as representative. Never
+                    # derived from the proposal itself.
+                    source_dialogue_ids=tuple(
+                        sorted((source.target_dialogue_id, *source.equivalent_dialogue_ids))
+                    ),
                     # Locally derived from the compile input's own target
                     # identity, never from a Qwen-declared field -- Qwen no
                     # longer even carries a source_turn_index in its schema.

@@ -16,7 +16,7 @@ from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from ..contracts import StrictContract
 
@@ -66,6 +66,26 @@ class StrategySourceCard(StrictContract):
     example_response: str = Field(min_length=1)
     retrieval_text_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     example_response_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    # Every dialogue_id (including source_dialogue_id itself) whose supporter
+    # turn produced the same normalized, case-folded (retrieval_text, response)
+    # duplicate key -- this
+    # card is the single kept representative of that whole equivalence
+    # class, and leave-current-dialogue-out fold exclusion must exclude a
+    # candidate built from this card for ANY of these dialogues, not just
+    # source_dialogue_id, or a state in one of the collapsed-duplicate
+    # dialogues could retrieve a card that is verbatim its own supporter's
+    # words under a different dialogue_id's name.
+    source_dialogue_ids: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _dialogue_ids_include_self_sorted_unique(self) -> "StrategySourceCard":
+        if self.source_dialogue_id not in self.source_dialogue_ids:
+            raise ValueError("source_dialogue_ids must include source_dialogue_id")
+        if len(set(self.source_dialogue_ids)) != len(self.source_dialogue_ids):
+            raise ValueError("source_dialogue_ids must not contain duplicates")
+        if tuple(sorted(self.source_dialogue_ids)) != self.source_dialogue_ids:
+            raise ValueError("source_dialogue_ids must be sorted")
+        return self
 
 
 class StrategyRetrieval(StrictContract):
@@ -118,8 +138,14 @@ def build_strategy_source_catalog(
     if not isinstance(data, list) or len(data) != len(split_rows):
         raise ValueError("ESConv must be a 1300-dialogue list aligned to the split manifest")
 
-    cards: list[StrategySourceCard] = []
-    seen: set[tuple[str, str]] = set()
+    # Pass 1: walk every candidate turn (no dedup yet) so the full set of
+    # dialogue_ids sharing each (retrieval_text, response) duplicate_key is
+    # known before any card is built -- a card built in pass 2 below must
+    # record every dialogue in its equivalence class, not just whichever one
+    # happened to be encountered first.
+    Candidate = tuple[str, int, str, str, str]  # dialogue_id, turn_index, strategy, retrieval_text, response
+    candidates_by_key: dict[tuple[str, str], list[Candidate]] = {}
+    ordered_keys: list[tuple[str, str]] = []
     for dialogue_index, row in enumerate(data):
         split = split_rows[dialogue_index]
         if split["split"] != "train":
@@ -150,29 +176,41 @@ def build_strategy_source_catalog(
                 # target-state or outcome information.
                 retrieval_text = response
             duplicate_key = (_normalize(retrieval_text).casefold(), response.casefold())
-            if duplicate_key in seen:
-                continue
-            seen.add(duplicate_key)
-            guidance = (
-                f"Use the emotional-support strategy '{strategy}' only when it fits the visible "
-                "dialogue. Adapt the move naturally and do not assume undisclosed facts."
+            if duplicate_key not in candidates_by_key:
+                candidates_by_key[duplicate_key] = []
+                ordered_keys.append(duplicate_key)
+            candidates_by_key[duplicate_key].append(
+                (dialogue_id, turn_index, strategy, retrieval_text, response)
             )
-            identity = _stable_id(dialogue_id, turn_index, strategy, retrieval_text, response)
-            cards.append(
-                StrategySourceCard(
-                    card_id=f"rs_src_{identity[:24]}",
-                    source_dialogue_id=dialogue_id,
-                    source_turn_index=turn_index,
-                    strategy_label=strategy,
-                    retrieval_text=retrieval_text,
-                    guidance_text=guidance,
-                    example_response=response,
-                    retrieval_text_sha256=hashlib.sha256(
-                        retrieval_text.encode("utf-8")
-                    ).hexdigest(),
-                    example_response_sha256=hashlib.sha256(response.encode("utf-8")).hexdigest(),
-                )
+
+    # Pass 2: for each duplicate_key, keep the FIRST-encountered candidate as
+    # the representative card (unchanged from the prior single-pass
+    # behavior/card_id/content), but attach every dialogue_id in that key's
+    # full equivalence class.
+    cards: list[StrategySourceCard] = []
+    for duplicate_key in ordered_keys:
+        group = candidates_by_key[duplicate_key]
+        dialogue_id, turn_index, strategy, retrieval_text, response = group[0]
+        all_dialogue_ids = tuple(sorted({item[0] for item in group}))
+        guidance = (
+            f"Use the emotional-support strategy '{strategy}' only when it fits the visible "
+            "dialogue. Adapt the move naturally and do not assume undisclosed facts."
+        )
+        identity = _stable_id(dialogue_id, turn_index, strategy, retrieval_text, response)
+        cards.append(
+            StrategySourceCard(
+                card_id=f"rs_src_{identity[:24]}",
+                source_dialogue_id=dialogue_id,
+                source_dialogue_ids=all_dialogue_ids,
+                source_turn_index=turn_index,
+                strategy_label=strategy,
+                retrieval_text=retrieval_text,
+                guidance_text=guidance,
+                example_response=response,
+                retrieval_text_sha256=hashlib.sha256(retrieval_text.encode("utf-8")).hexdigest(),
+                example_response_sha256=hashlib.sha256(response.encode("utf-8")).hexdigest(),
             )
+        )
     return tuple(cards)
 
 
@@ -195,7 +233,7 @@ def rank_strategy_cards(
     query_tokens = _tokens(query_text)
     scored: list[tuple[float, str, StrategySourceCard]] = []
     for card in cards:
-        if card.source_dialogue_id in excluded:
+        if excluded.intersection(card.source_dialogue_ids):
             continue
         card_tokens = _tokens(card.retrieval_text)
         union = query_tokens | card_tokens
@@ -207,7 +245,11 @@ def rank_strategy_cards(
         StrategyRetrieval(card=card, rank=rank, lexical_jaccard=score)
         for rank, (score, _card_id, card) in enumerate(selected, start=1)
     )
-    leaked = excluded & {row.card.source_dialogue_id for row in result}
+    leaked = excluded.intersection(
+        dialogue_id
+        for row in result
+        for dialogue_id in row.card.source_dialogue_ids
+    )
     if leaked:
         raise RuntimeError(f"fold-excluded Strategy Bank source leaked: {sorted(leaked)}")
     return result

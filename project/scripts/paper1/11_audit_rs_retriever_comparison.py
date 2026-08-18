@@ -156,7 +156,8 @@ def _dense_rankings(
     ).to(device)
     by_dialogue: dict[str, list[int]] = {}
     for index, card in enumerate(ordered_cards):
-        by_dialogue.setdefault(card.source_dialogue_id, []).append(index)
+        for dialogue_id in card.source_dialogue_ids:
+            by_dialogue.setdefault(dialogue_id, []).append(index)
 
     rankings: dict[str, tuple[tuple[str, float], ...]] = {}
     for start in range(0, len(states), query_batch_size):

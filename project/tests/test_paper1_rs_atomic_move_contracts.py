@@ -59,7 +59,7 @@ def _accepted(**overrides) -> AcceptedAtomicMoveUnit:
         rendered_card_text="Affirmation and Reassurance: validate the user's frustration",
         rendered_card_text_sha256=HEX64,
         renderer_version="paper1-rs-atomic-move-renderer-v1",
-        compiler_version="paper1-rs-atomic-move-compiler-v1",
+        compiler_version="paper1-rs-atomic-move-compiler-v2",
         extractor_prompt_sha256=HEX64,
         extractor_response_sha256=HEX64,
         verifier_prompt_sha256=HEX64,
@@ -245,6 +245,30 @@ def test_compile_input_rejects_target_turn_index_mismatch():
 def test_compile_input_rejects_non_supporter_target_role():
     with pytest.raises(ValidationError, match="must be a supporter turn"):
         _compile_input(target_turn=_turn(turn_index=3, role="seeker"))
+
+
+def test_compile_input_equivalent_dialogue_ids_defaults_empty():
+    assert _compile_input().equivalent_dialogue_ids == ()
+
+
+def test_compile_input_rejects_equivalent_dialogue_ids_repeating_target():
+    with pytest.raises(ValidationError, match="must not repeat target_dialogue_id"):
+        _compile_input(equivalent_dialogue_ids=("esconv_0001",))
+
+
+def test_compile_input_rejects_duplicate_equivalent_dialogue_ids():
+    with pytest.raises(ValidationError, match="must not contain duplicates"):
+        _compile_input(equivalent_dialogue_ids=("esconv_0002", "esconv_0002"))
+
+
+def test_compile_input_rejects_unsorted_equivalent_dialogue_ids():
+    with pytest.raises(ValidationError, match="must be sorted"):
+        _compile_input(equivalent_dialogue_ids=("esconv_0009", "esconv_0002"))
+
+
+def test_compile_input_accepts_sorted_unique_equivalent_dialogue_ids():
+    source = _compile_input(equivalent_dialogue_ids=("esconv_0002", "esconv_0009"))
+    assert source.equivalent_dialogue_ids == ("esconv_0002", "esconv_0009")
 
 
 def test_compile_input_rejects_preceding_turn_from_a_different_dialogue():
