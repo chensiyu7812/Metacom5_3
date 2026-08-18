@@ -36,3 +36,6 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+  "gpu: requires a local CUDA GPU and the torch/sentence-transformers extras (deselect with -m 'not gpu')",
+]

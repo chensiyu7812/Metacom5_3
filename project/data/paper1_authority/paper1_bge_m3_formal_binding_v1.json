@@ -1,0 +1,87 @@
+{
+  "protocol": "pm-paper1-bge-m3-formal-binding-v1",
+  "status": "ENGINEERING_ATTESTATION_PASS_FORMAL_BINDING_HARDENING_PENDING",
+  "status_correction_20260818": "Originally reported as a completed formal binding. Corrected: this artifact establishes that BGE-M3 loads and runs on this machine and records the per-head text-field choices, which is real, verified progress -- but the encoder identity itself is not yet hardened enough to call frozen. See known_gaps below. Do not wire this into zero_outcome_census.py or start materialization until those close.",
+  "human_authority": "project/docs/PM_PAPER1_BGE_M3_FORMAL_BINDING_20260818_ZH.md",
+  "scope": "This freezes the encoder identity (revision/pooling/normalization) and, for each of RS/MP/MS/ME, exactly which existing text field is embedded as query vs document. It does NOT run corpus-wide embedding materialization, does not touch any paid API, and does not open the outcome lock.",
+  "known_gaps_20260818": [
+    "encoder identity omits tokenizer/config hash, max_seq_length/truncation policy, dtype, and the exact torch/sentence-transformers runtime versions -- a version bump today would silently pass identity_sha256 unchanged",
+    "model_safetensors_sha256 is a copied constant, never re-verified against the actually-downloaded weights file at load time",
+    "pooling_mode='cls' is a declared field, never asserted against the live model's real Dense/pooling module config at load time (it was checked once, manually, outside this module, during the 2026-08-18 probe -- not by the module itself on every load)",
+    "BgeM3Encoder.encode hardcodes batch_size=min(32, len(texts)) regardless of text length; only tested with two short strings so far, not attested safe for long RS/MS document text on 8GB",
+    "EmbeddingSuccessCache does not validate a stored/loaded vector's length (==1024), finiteness, or L2 norm (~=1) -- its own round-trip tests used non-1024-dim vectors as valid, which should not have passed review",
+    "MP/MS/ME query_field=Target.visible_query_text is only correct for the STATIC_ZERO_OUTCOME_CENSUS (this artifact's actual scope); a FORMAL_DG_RUNTIME later needs a distinct, dynamic query built from the live current-round seeker utterance (metacom_pm.paper1.official_visibility_audit.SURFACE_B_NO_PM_IN_HARNESS_NOTE already documents this as DG's real surface-B query state) -- this artifact's per_head_text_construction.MP/MS/ME entries describe the static-census case only, not a permanent DG=N/A rule"
+  ],
+  "outcome_calls": 0,
+  "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
+  "encoder_binding": {
+    "binding_version": "paper1-bge-m3-embedding-binding-v1",
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE",
+    "revision_shared_with": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json#local_model_binding -- same exact revision, one encoder identity project-wide, not two independently-frozen copies",
+    "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "pooling_mode": "cls",
+    "normalize_embeddings": true,
+    "embedding_dimension": 1024,
+    "identity_sha256": "452856fd0293887c13e2987663c7fe8847be7ce4b2324b7ba2feb2c0df02b41b",
+    "official_unpinned_main_weight_equivalence": "NOT_ESTABLISHED",
+    "note": "pooling_mode and normalize_embeddings were read directly off the live sentence-transformers module config during the local probe below (Dense/pooling module get_config_dict()), not assumed from documentation."
+  },
+  "local_rtx_2070_attestation_20260818": {
+    "gpu_name": "NVIDIA GeForce RTX 2070",
+    "gpu_total_memory_mib": 8192,
+    "gpu_free_memory_mib_before_probe": 7111,
+    "torch_version": "2.13.0+cu130",
+    "cuda_available": true,
+    "load_seconds": 154.6,
+    "load_seconds_note": "first-run cold download; subsequent loads are local-cache reads, not re-timed here",
+    "encode_seconds_for_2_short_strings": 0.597,
+    "gpu_memory_allocated_mb": 2281.114112,
+    "output_shape": [2, 1024],
+    "output_l2_norms": [1.0, 0.99999994],
+    "note": "This is the first real confirmation this specific local machine (RTX 2070) can run BGE-M3; the existing official RAG attestation ran on an NVIDIA RTX A6000, a different machine, and cannot be read as covering this GPU."
+  },
+  "per_head_text_construction": {
+    "RS": {
+      "query_field": "metacom_pm.paper1.rs.zero_outcome_census.RSDecisionState.query_text",
+      "query_construction": "Last query_preceding_turns=6 visible dialogue turns (dialogue-only v2, current-dialogue-excluded), rendered as \"speaker: content\" lines joined by newline. Already frozen, tested code -- this binding does not redefine it.",
+      "document_field": "metacom_pm.paper1.rs.strategy_bank.StrategySourceCard.retrieval_text",
+      "document_construction": "Same construction as query_text (preceding_turns=6, dialogue-only v2), computed once per source card at catalog-build time. Already frozen, tested code.",
+      "consistency_note": "Query and document use the identical construction rule (same window size, same rendering), so a query and a candidate card are always comparable text of the same shape."
+    },
+    "MP": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "The real officially-asked QA/Summary question text; None for DG (no static current-dialogue state pre-generation, B17.4 -- BGE-M3 similarity is therefore N/A for DG, same convention as the existing lexical-overlap proxy and the explicit_signals detectors).",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "The v6 Qwen compiler's deterministically-rendered candidate text (e.g. \"Profile fact [health_condition]: ...\"), already hash-bound per accepted unit.",
+      "consistency_note": "Same query field already used by the existing lexical_candidate_query_jaccard_ge_0_6_proxy in features/zero_outcome_census.py -- BGE-M3 is a drop-in upgrade path for that proxy, not a new text source."
+    },
+    "MS": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "Same as MP.",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "Same as MP, for MS-classed accepted units.",
+      "consistency_note": "Same as MP."
+    },
+    "ME": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "Same as MP.",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "Same as MP, for ME-classed accepted units.",
+      "consistency_note": "Same as MP."
+    }
+  },
+  "cache_and_identity": {
+    "module": "metacom_pm.paper1.embeddings.cache.EmbeddingSuccessCache",
+    "identity_fields": ["binding_identity_sha256", "field_source", "text_sha256"],
+    "fail_closed_behavior": "Re-storing the same identity with a different vector raises RuntimeError rather than silently overwriting; a binding change (revision/pooling/normalization) produces a different binding_identity_sha256 and therefore never collides with prior cached vectors under the old binding.",
+    "no_budget_ledger": "Embedding is local GPU compute with no metered per-call cost, unlike the Qwen compilers; no budget/authorization artifact is needed for this binding or for future materialization runs."
+  },
+  "not_yet_done": [
+    "Corpus-wide embedding materialization for RS (12169 source cards) or MP/MS/ME (2745 accepted units) -- this artifact freezes what would be embedded, not the act of embedding it at scale.",
+    "Wiring computed cosine similarity into zero_outcome_census.py to replace the lexical-Jaccard/word-overlap proxies -- the proxies remain the active features until this wiring lands and is tested.",
+    "NVIDIA NIM tokenizer provider-parity check (RS M2 freeze decision 5's other pending item) -- unrelated to this binding, still open.",
+    "Query construction for the RS atomic-move final catalog after the full 12169-card compile is re-run following the verifier fix -- this binding uses StrategySourceCard.retrieval_text, which is compile-independent, but any change to which cards exist does not require re-freezing this binding."
+  ]
+}
