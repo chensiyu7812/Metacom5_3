@@ -1,6 +1,13 @@
 {
   "protocol": "pm-paper1-esconv-strategy-source-summary-v1",
-  "status": "ZERO_OUTCOME_SOURCE_CATALOG_ONLY_NOT_CANDIDATE_BUNDLE_FREEZE",
+  "status": "SUPERSEDED_20260818_DO_NOT_USE_FOR_M2_FREEZE",
+  "superseded_by": {
+    "identity_manifest": "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+    "summary": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+    "cards": 12169,
+    "source_dialogues": 875,
+    "reason": "commit 993f6a9 changed StrategySourceCard.retrieval_text from situation+context to context-only (dialogue_only_v2_identities). This increases duplicate_key collisions on (retrieval_text, response) and mechanically dedups 234 cards (12403 -> 12169) for the same 875 source dialogues and the same EvoEmo-overlap exclusion policy. This is not a data-loss bug; it is the intended effect of excluding ESConv's author-written situation field from the active RS catalog identity, frozen as RS M2 decision 1 (paper1_rs_m2_freeze_20260818_v1.json)."
+  },
   "source": {
     "artifact": "data/external/ESConv.json",
     "artifact_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",

@@ -1,0 +1,124 @@
+{
+  "protocol": "pm-paper1-rs-m2-freeze-v1",
+  "status": "RESEARCHER_DECISIONS_APPROVED_20260818_EXACT_IMPLEMENTATION_FREEZE_PENDING",
+  "status_meaning_20260818_correction": "status FROZEN on an individual decision below means the researcher's choice among alternatives is locked (e.g. 'use BGE-M3', 'use the atomic-move compiler'). It does NOT mean the exact mechanical implementation (Hub revision/pooling for decision 5; recent-window/parser/tokenizer/missing-value handling for decision 9's five features; diverse-content compiler behavior for decision 6) is frozen -- those remain open per pending_before_effect_calls / not_yet_frozen_by_this_artifact below and must close before any ON/OFF outcome call.",
+  "human_authority": "project/docs/PM_PAPER1_RS_M2_FREEZE_20260818_ZH.md",
+  "supersedes_draft_decisions": "data/paper1_authority/paper1_m2_decision_packet_draft_v1.json#decisions[1-9]",
+  "outcome_calls": 0,
+  "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
+  "decisions": [
+    {
+      "order": 1,
+      "decision_id": "rs_visible_source",
+      "decision": "dialogue_only_v2_identities",
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "note": "Already implemented prior to this freeze; situation/outcome/questionnaire fields permanently excluded from active RS catalog/state code."
+    },
+    {
+      "order": 2,
+      "decision_id": "rs_overlap_policy",
+      "decision": "legacy_conservative_evoemo_overlap_excluded",
+      "chosen_universe": {"cards": 12169, "states": 11883, "source_dialogues": 875},
+      "rejected_alternative": {"cards": 12906, "states": 12656, "description": "authority-literal ESConv train + train/dev, no EvoEmo-overlap exclusion"},
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "reason": "Keeps the RS (ESConv) and MP/MS/ME (EvoEmo) data lanes fully disjoint at the source-dialogue level, avoiding any cross-lane leakage argument, at the cost of ~6% fewer cards.",
+      "superseded_card_count_lineage_20260818": "An earlier catalog build (data/paper1_authority/esconv_strategy_source_identity_v1.jsonl, commit 91855fa, same EvoEmo-overlap exclusion policy) reported 12403 cards for the same 875 source dialogues. The 12403->12169 drop is not a discrepancy: commit 993f6a9 changed StrategySourceCard.retrieval_text from situation+context to context-only (dialogue_only_v2_identities, decision 1 above), which increases duplicate_key collisions on (retrieval_text, response) and mechanically dedups 234 cards. The 12169 figure is the current, correct output of build_strategy_source_catalog(); the 12403 artifact is stale and is marked superseded in data/paper1_authority/esconv_strategy_source_summary_v1.json. The full lineage is already recorded in data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json under superseded_artifact."
+    },
+    {
+      "order": 3,
+      "decision_id": "rs_state_grain",
+      "decision": "response_opportunity_grain",
+      "description": "One continuous supporter run after >=1 visible seeker turn == one RS decision state; initial greetings and consecutive supporter fragments are not separate PM calls.",
+      "status": "FROZEN",
+      "researcher_approved": true
+    },
+    {
+      "order": 4,
+      "decision_id": "rs_candidate_bundle",
+      "decision": "top_1_single_card",
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "reason": "Route A needs one interpretable candidate identity per treatment; a heterogeneous top-k>1 bundle would make attribution of any effect ambiguous."
+    },
+    {
+      "order": 5,
+      "decision_id": "rs_retriever",
+      "decision": "bge_m3_top1_leave_current_dialogue_out",
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "reason": "Family-match diagnostics did not decisively favor any of lexical/BGE-small/BGE-M3 (all ~19-21% top-1, ~42-44% top-3), so the choice is not diagnostic-driven. BGE-M3 is preferred because ESC-Eval's primary RQ1 transfer set spans non-ESConv sources (ExTES/MHP/Psych/EPITOME), favoring semantic over lexical matching, and it unifies the retrieval stack with RQ2's typed-memory BGE-M3 usage.",
+      "pending_before_effect_calls": [
+        "exact Hub revision/pooling/normalization/query-construction freeze",
+        "provider parity check vs NVIDIA NIM tokenizer stack"
+      ]
+    },
+    {
+      "order": 6,
+      "decision_id": "rs_card_representation",
+      "decision": "atomic_move_compiler",
+      "supersedes": "the prior two-option guidance_only vs guidance_plus_exemplar choice (decisions 6/7 in the draft packet)",
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "evidence": {
+        "source": "10-card live smoke, 2026-08-18, qwen3-235b-a22b-instruct-2507, all 10 source cards from a single dialogue (esconv_0002)",
+        "extractor_proposals": 19,
+        "structurally_invalid_proposals": 0,
+        "verifier_rejections": 6,
+        "accepted_units": 13,
+        "accepted_unit_unique_rendered_texts": 11,
+        "accepted_unit_exact_duplicate_rendered_texts": 2,
+        "acceptance_rate": 0.684,
+        "token_count_correction_20260818": "The originally recorded mean_rendered_tokens_o200k_base=16.2/max=23 used the OpenAI o200k_base tokenizer, while comparison_guidance_plus_exemplar_median/p95/max below were computed with the frozen Llama-3.1-8B-Instruct tokenizer (NousResearch/Meta-Llama-3.1-8B-Instruct, revision d10aef7999a2b5ba950ab3974312feeedbfe0b77, tokenizer_json_sha256 79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4) per paper1_m2_decision_packet_draft_v1.json:261. Comparing across tokenizers was invalid. Recomputed below using the same frozen Llama tokenizer on the same 13 accepted units.",
+        "median_rendered_tokens_llama31_8b_instruct": 16,
+        "mean_rendered_tokens_llama31_8b_instruct": 16.615384615384617,
+        "max_rendered_tokens_llama31_8b_instruct": 21,
+        "comparison_guidance_plus_exemplar_median_tokens": 125,
+        "comparison_guidance_plus_exemplar_p95_tokens": 158,
+        "comparison_guidance_plus_exemplar_max_tokens": 301,
+        "comparison_tokenizer": "llama31_8b_instruct_frozen_pinned_revision_d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "token_reduction_vs_guidance_plus_exemplar_pct_same_tokenizer": 87.2,
+        "generalization_status": "ENGINEERING_PASS_NOT_SCIENTIFIC_GENERALIZATION -- single-dialogue, single-run smoke; not yet evidence of cross-dialogue stability, verifier-rejection quality, or absence of semantic (non-exact) duplication at scale"
+      },
+      "reason": "guidance-only collapsed to 8 distinct rendered strings (not really a 12k-card resource); guidance+exemplar retained per-card identity but carried source-specific person/kinship/number content (5963/605/594 cards respectively per prior audit). Using the same frozen Llama-3.1-8B-Instruct tokenizer for both sides, atomic-move rendered cards are ~87.2% shorter than guidance+exemplar (16 vs 125 median tokens) and pass a fail-closed leak scan on action_description, while remaining card-specific (not collapsed to a handful of templates). This single-dialogue smoke is engineering evidence that the compiler pipeline works end-to-end; it is not yet evidence of cross-dialogue quality stability -- see rs_diverse_compiler_qa_pending below."
+    },
+    {
+      "order": 7,
+      "decision_id": "rs_exemplar_policy",
+      "decision": "merged_into_rs_card_representation",
+      "status": "SUPERSEDED_BY_DECISION_6",
+      "researcher_approved": true
+    },
+    {
+      "order": 8,
+      "decision_id": "rs_boundary_horizon",
+      "decision": "current_run_only",
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "reason": "listen-only/no-advice/no-probing boundaries activate extremely rarely under either horizon definition (1/11883 vs 9/11883 states); the simpler, more defensible current-run-only definition is adopted since the choice has negligible practical impact."
+    },
+    {
+      "order": 9,
+      "decision_id": "rs_feature_schema",
+      "decision": "final_five_feature_set",
+      "features": [
+        "rs_state_candidate_similarity",
+        "rs_atomic_move_type",
+        "rs_recent_same_move_count",
+        "rs_explicit_request_flags",
+        "rs_candidate_token_cost"
+      ],
+      "status": "FROZEN",
+      "researcher_approved": true,
+      "note": "rs_atomic_move_type is populated from the atomic-move compiler's atomic_move_family field (closed 8-value ESConv taxonomy) -- this feature was already specified in PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md but had no implementation source until decision 6 above."
+    }
+  ],
+  "not_yet_frozen_by_this_artifact": [
+    "exact BGE-M3 Hub revision/pooling/normalization (decision 5's pending items)",
+    "cross-dialogue diverse compiler QA (64-card stratified smoke) -- the 10-card 2026-08-18 smoke is single-dialogue engineering evidence only, not scientific generalization; required before compiler prompt/schema/renderer can be considered stable",
+    "RS atomic-move full-12169-card compile (only a 10-card single-dialogue smoke has run live; budget pending the diverse compiler QA outcome)",
+    "exact mechanical definitions for the 5 RS features frozen in decision 9 (recent-window size, explicit-request parser, tokenizer, missing-value handling) -- per esconv_rs_zero_outcome_census_summary_v1.json#feature_readiness these are audited-draft, not exact-frozen",
+    "cross-fit K/seed, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, matched-random construction, API call plan (execution-blueprint Phase 2 items, not RS-specific)"
+  ]
+}
