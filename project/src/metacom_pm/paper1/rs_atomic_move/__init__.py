@@ -15,7 +15,11 @@ from .authorization import (
     load_live_authorization,
 )
 from .batch import run_source_card_prefix
-from .catalog import AtomicMoveRetrievalDocument, build_atomic_move_retrieval_document
+from .catalog import (
+    AtomicMoveRetrievalDocument,
+    build_atomic_move_retrieval_document,
+    load_atomic_move_retrieval_documents,
+)
 from .contracts import (
     CONTRACTS_CODE_SHA256,
     RS_ATOMIC_MOVE_SCHEMA_VERSION,
@@ -56,6 +60,12 @@ from .runtime import (
     SourceCardCompileResult,
 )
 from .source_adapter import SOURCE_ADAPTER_CODE_SHA256, build_source_card_compile_input, load_esconv_data
+from .zero_outcome_census import (
+    RS_ATOMIC_MOVE_CENSUS_ROW_PROTOCOL,
+    BgeAuditIndex,
+    RSAtomicMoveCensusRow,
+    build_rs_atomic_move_zero_outcome_census,
+)
 
 __all__ = [
     "FULL_CATALOG_SIZE",
@@ -101,4 +111,9 @@ __all__ = [
     "run_source_card_prefix",
     "AtomicMoveRetrievalDocument",
     "build_atomic_move_retrieval_document",
+    "load_atomic_move_retrieval_documents",
+    "RS_ATOMIC_MOVE_CENSUS_ROW_PROTOCOL",
+    "BgeAuditIndex",
+    "RSAtomicMoveCensusRow",
+    "build_rs_atomic_move_zero_outcome_census",
 ]
