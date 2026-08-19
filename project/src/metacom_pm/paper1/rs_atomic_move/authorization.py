@@ -26,6 +26,14 @@ LIVE_AUTHORIZATION_PROTOCOL = "paper1-rs-atomic-move-live-authorization-v1"
 
 SMOKE_SCOPE = "PUBLIC_ESCONV_RS_ATOMIC_MOVE_SMOKE_ONLY"
 FULL_SCOPE = "PUBLIC_ESCONV_RS_ATOMIC_MOVE_FULL_CATALOG_RESUME"
+# A repair run is neither a smoke (exploring/testing the pipeline) nor a
+# full-catalog pass -- it is a small, targeted re-attempt of specific
+# call_failure_phase cards from an already-completed full run (see
+# scripts/paper1/17_repair_rs_atomic_move_failed_cards.py). It was first run
+# under SMOKE_SCOPE (2026-08-19, 20 cards, $0.15 cap) because this scope did
+# not yet exist; that historical authorization file is left as-is rather than
+# rewritten, but every repair run from here on must use this scope instead.
+REPAIR_SCOPE = "PUBLIC_ESCONV_RS_ATOMIC_MOVE_REPAIR_ONLY"
 
 # The real, already-materialized ESConv-train-only source catalog size (see
 # rs/strategy_bank.build_strategy_source_catalog, confirmed against the real
@@ -39,6 +47,11 @@ FULL_CATALOG_SIZE = 12169
 # smoke run still needs its own hard_budget_usd cap independent of this
 # card-count ceiling).
 SMOKE_MAXIMUM_CARDS = 100
+# A repair batch only ever covers the call_failure_phase rows of one prior
+# run; it should never approach full-catalog scale (if it did, the source
+# run was not actually usable and needs a fresh full-scope run instead, not
+# a repair).
+REPAIR_MAXIMUM_CARDS = 100
 
 
 class LiveCompilerAuthorization(StrictContract):
@@ -47,6 +60,7 @@ class LiveCompilerAuthorization(StrictContract):
     scope: Literal[
         "PUBLIC_ESCONV_RS_ATOMIC_MOVE_SMOKE_ONLY",
         "PUBLIC_ESCONV_RS_ATOMIC_MOVE_FULL_CATALOG_RESUME",
+        "PUBLIC_ESCONV_RS_ATOMIC_MOVE_REPAIR_ONLY",
     ]
     maximum_cards: int = Field(gt=0, le=FULL_CATALOG_SIZE)
     model: str
@@ -66,6 +80,8 @@ class LiveCompilerAuthorization(StrictContract):
             raise ValueError(f"smoke authorization cannot exceed {SMOKE_MAXIMUM_CARDS} cards")
         if self.scope == FULL_SCOPE and self.maximum_cards != FULL_CATALOG_SIZE:
             raise ValueError(f"full-catalog authorization must bind all {FULL_CATALOG_SIZE} cards")
+        if self.scope == REPAIR_SCOPE and self.maximum_cards > REPAIR_MAXIMUM_CARDS:
+            raise ValueError(f"repair authorization cannot exceed {REPAIR_MAXIMUM_CARDS} cards")
         if self.model != FROZEN_QWEN_MODEL:
             raise ValueError("live authorization model mismatch")
         if self.hard_budget_usd <= 0:

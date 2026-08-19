@@ -8,6 +8,8 @@ from pydantic import ValidationError
 from metacom_pm.paper1.rs_atomic_move.authorization import (
     FULL_CATALOG_SIZE,
     FULL_SCOPE,
+    REPAIR_MAXIMUM_CARDS,
+    REPAIR_SCOPE,
     SMOKE_MAXIMUM_CARDS,
     SMOKE_SCOPE,
     LiveCompilerAuthorization,
@@ -47,6 +49,18 @@ def test_full_scope_must_bind_the_entire_catalog():
         LiveCompilerAuthorization(scope=FULL_SCOPE, maximum_cards=100, **_common())
     auth = LiveCompilerAuthorization(scope=FULL_SCOPE, maximum_cards=FULL_CATALOG_SIZE, **_common())
     assert auth.maximum_cards == FULL_CATALOG_SIZE
+
+
+def test_valid_repair_authorization():
+    auth = LiveCompilerAuthorization(scope=REPAIR_SCOPE, maximum_cards=14, **_common())
+    assert auth.scope == REPAIR_SCOPE
+
+
+def test_repair_authorization_cannot_exceed_repair_maximum():
+    with pytest.raises(ValidationError, match=f"cannot exceed {REPAIR_MAXIMUM_CARDS}"):
+        LiveCompilerAuthorization(
+            scope=REPAIR_SCOPE, maximum_cards=REPAIR_MAXIMUM_CARDS + 1, **_common()
+        )
 
 
 def test_unauthorized_flag_fails_closed():
