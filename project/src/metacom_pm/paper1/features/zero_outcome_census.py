@@ -57,7 +57,7 @@ from dataclasses import dataclass
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from metacom_pm.paper1.candidates import (
     compile_candidate_bundle,
@@ -389,9 +389,17 @@ def build_eligible_pool(users: tuple[MemorySourceUser, ...]) -> tuple[EligiblePo
 def build_semantic_eligible_pool(
     users: tuple[MemorySourceUser, ...],
     accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+    *,
+    token_counter: Callable[[str], int] | None = None,
 ) -> tuple[EligiblePoolRow, ...]:
-    """Formal target-invariant pool from accepted semantic-memory units."""
+    """Formal target-invariant pool from accepted semantic-memory units.
 
+    ``token_counter`` defaults to the whitespace-split structural proxy when
+    not supplied (2026-08-19: pass
+    ``metacom_pm.paper1.llama_tokenizer.build_llama_token_counter(...)`` for
+    the frozen Generator tokenizer instead)."""
+
+    resolved_token_counter = token_counter or (lambda content: len(content.split()))
     units_by_owner: dict[str, list[AcceptedSemanticMemoryUnit]] = {}
     for unit in accepted_units:
         units_by_owner.setdefault(unit.owner_id, []).append(unit)
@@ -405,7 +413,7 @@ def build_semantic_eligible_pool(
             tuple(units_by_owner.get(user.owner_id, ())),
             target_owner_id=user.owner_id,
             target_session_rank=len(user.sessions),
-            token_counter=lambda content: len(content.split()),
+            token_counter=resolved_token_counter,
         )
         for head in (Head.MP, Head.MS, Head.ME):
             rows.append(
@@ -461,13 +469,19 @@ def build_semantic_census(
     users: tuple[MemorySourceUser, ...],
     targets: tuple[Target, ...],
     accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+    *,
+    token_counter: Callable[[str], int] | None = None,
 ) -> tuple[TargetHeadCensusRow, ...]:
     """Formal per-target census over accepted semantic candidates.
 
     Lexical overlap remains a diagnostic only; BGE-M3 is materialized in a
-    separate frozen feature stage.
+    separate frozen feature stage. ``token_counter`` defaults to the
+    whitespace-split structural proxy when not supplied (2026-08-19: pass
+    ``metacom_pm.paper1.llama_tokenizer.build_llama_token_counter(...)`` for
+    the frozen Generator tokenizer instead).
     """
 
+    compile_kwargs = {"token_counter": token_counter} if token_counter is not None else {}
     users_by_owner = {user.owner_id: user for user in users}
     units_by_owner: dict[str, list[AcceptedSemanticMemoryUnit]] = {}
     for unit in accepted_units:
@@ -482,6 +496,7 @@ def build_semantic_census(
         bundle = compile_semantic_candidate_bundle(
             tuple(units_by_owner.get(target.owner_id, ())),
             target,
+            **compile_kwargs,
         )
         anchor = anchor_by_owner[target.owner_id]
         for head, candidates in bundle.items():

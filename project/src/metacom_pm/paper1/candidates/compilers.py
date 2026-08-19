@@ -21,6 +21,7 @@ itself (``CandidateLineage.strict_past``).
 from __future__ import annotations
 
 import hashlib
+from typing import Callable
 
 from metacom_pm.paper1.contracts import CandidateLineage, CandidateRecord, Head
 from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
@@ -339,12 +340,20 @@ def compile_candidate_bundle(
 def compile_semantic_candidate_bundle(
     accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
     target: Target,
+    *,
+    token_counter: Callable[[str], int] = _token_count,
 ) -> dict[Head, tuple[CandidateRecord, ...]]:
-    """Formal MP/MS/ME bundle from accepted source-grounded semantic units."""
+    """Formal MP/MS/ME bundle from accepted source-grounded semantic units.
+
+    ``token_counter`` defaults to the whitespace-split structural proxy
+    (2026-08-19: callers building a formal token-cost feature should pass
+    ``metacom_pm.paper1.llama_tokenizer.build_llama_token_counter(...)``
+    instead -- the frozen Generator tokenizer, the same one RS's
+    rs_candidate_token_cost already uses, not a word-count proxy)."""
 
     return materialize_memory_candidates(
         accepted_units,
         target_owner_id=target.owner_id,
         target_session_rank=target.cutoff_rank,
-        token_counter=_token_count,
+        token_counter=token_counter,
     )

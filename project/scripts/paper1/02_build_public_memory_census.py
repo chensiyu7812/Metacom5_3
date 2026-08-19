@@ -55,6 +55,12 @@ from metacom_pm.paper1.features import (  # noqa: E402
     write_census_manifest,
     write_eligible_pool_manifest,
 )
+from metacom_pm.paper1.llama_tokenizer import (  # noqa: E402
+    LLAMA_TOKENIZER_JSON_SHA256,
+    LLAMA_TOKENIZER_REPO,
+    LLAMA_TOKENIZER_REVISION,
+    build_llama_token_counter,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
 from metacom_pm.paper1.semantic_memory.artifact import (  # noqa: E402
     load_accepted_semantic_units,
@@ -84,9 +90,34 @@ def _write_jsonl(rows: list[dict[str, Any]], path: Path) -> str:
     return _sha_text(rendered)
 
 
-def build(semantic_results_path: Path) -> dict[str, Any]:
+def _token_counter_identity(llama_tokenizer_json: Path | None) -> dict[str, Any]:
+    if llama_tokenizer_json is None:
+        return {"kind": "whitespace_split_proxy"}
+    return {
+        "kind": "llama31_8b_instruct_frozen_tokenizer",
+        "repo": LLAMA_TOKENIZER_REPO,
+        "revision": LLAMA_TOKENIZER_REVISION,
+        "tokenizer_json_sha256": LLAMA_TOKENIZER_JSON_SHA256,
+    }
+
+
+def build(
+    semantic_results_path: Path,
+    *,
+    llama_tokenizer_json: Path | None = None,
+    allow_whitespace_proxy: bool = False,
+) -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
+    if llama_tokenizer_json is None and not allow_whitespace_proxy:
+        raise RuntimeError(
+            "no --llama-tokenizer-json given -- a real census build must use the real "
+            "Generator token counter, not the whitespace-split proxy. Pass "
+            "--allow-whitespace-proxy-diagnostic-only explicitly if this is a "
+            "throwaway diagnostic run, not an artifact meant to be cited."
+        )
+    token_counter = build_llama_token_counter(llama_tokenizer_json) if llama_tokenizer_json else None
+    token_counter_identity = _token_counter_identity(llama_tokenizer_json)
 
     if not ARTIFACT_PATH.exists():
         raise RuntimeError(
@@ -121,16 +152,18 @@ def build(semantic_results_path: Path) -> dict[str, Any]:
     targets_path = OUT_DIR / "es_memeval_public_targets_v1.jsonl"
     targets_sha256 = _write_jsonl(target_rows, targets_path)
 
-    pool_rows = build_semantic_eligible_pool(users, accepted_units)
+    pool_rows = build_semantic_eligible_pool(users, accepted_units, token_counter=token_counter)
     pool_summary = summarize_eligible_pool(pool_rows)
     pool_summary["candidate_source"] = "accepted_semantic_memory_v6"
     pool_summary["semantic_compiler_source"] = semantic_source
+    pool_summary["token_counter"] = token_counter_identity
     pool_paths = write_eligible_pool_manifest(pool_rows, pool_summary, OUT_DIR)
 
-    census_rows = build_semantic_census(users, targets, accepted_units)
+    census_rows = build_semantic_census(users, targets, accepted_units, token_counter=token_counter)
     census_summary = summarize_census(census_rows)
     census_summary["candidate_source"] = "accepted_semantic_memory_v6"
     census_summary["semantic_compiler_source"] = semantic_source
+    census_summary["token_counter"] = token_counter_identity
     census_paths = write_census_manifest(census_rows, census_summary, OUT_DIR)
 
     report = {
@@ -177,9 +210,31 @@ def build(semantic_results_path: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--semantic-compiler-results", type=Path, required=True)
+    parser.add_argument(
+        "--llama-tokenizer-json",
+        type=Path,
+        help=(
+            "Path to the hash-verified frozen Llama-3.1-8B-Instruct tokenizer.json "
+            "(metacom_pm.paper1.llama_tokenizer.LLAMA_TOKENIZER_JSON_SHA256). Required "
+            "unless --allow-whitespace-proxy-diagnostic-only is also passed."
+        ),
+    )
+    parser.add_argument(
+        "--allow-whitespace-proxy-diagnostic-only",
+        action="store_true",
+        help=(
+            "Explicitly permit falling back to the whitespace-split token-count proxy "
+            "when --llama-tokenizer-json is omitted. For throwaway diagnostic runs only "
+            "-- an artifact built this way must not be cited as the real token-cost census."
+        ),
+    )
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    report = build(args.semantic_compiler_results)
+    report = build(
+        args.semantic_compiler_results,
+        llama_tokenizer_json=args.llama_tokenizer_json,
+        allow_whitespace_proxy=args.allow_whitespace_proxy_diagnostic_only,
+    )
     rendered = _canonical(report) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
