@@ -47,8 +47,10 @@ from .renderer import (
     render_atomic_move,
 )
 from .runtime import (
+    MAX_CONSECUTIVE_CALL_FAILURES,
     CallParameters,
     RsAtomicMoveCallFailed,
+    RsAtomicMoveCircuitBreakerTripped,
     RsAtomicMoveCompiler,
     RuntimeBinding,
     SourceCardCompileResult,
@@ -91,6 +93,8 @@ __all__ = [
     "RuntimeBinding",
     "SourceCardCompileResult",
     "RsAtomicMoveCallFailed",
+    "RsAtomicMoveCircuitBreakerTripped",
+    "MAX_CONSECUTIVE_CALL_FAILURES",
     "SOURCE_ADAPTER_CODE_SHA256",
     "build_source_card_compile_input",
     "load_esconv_data",

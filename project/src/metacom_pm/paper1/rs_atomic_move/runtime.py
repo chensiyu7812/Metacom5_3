@@ -15,7 +15,7 @@ from typing import Protocol, Type
 from pydantic import BaseModel
 
 from metacom_pm.api import CallResult, Endpoint, chat_request_payload
-from metacom_pm.io import append_jsonl, canonical_json, sha256_text
+from metacom_pm.io import append_jsonl, canonical_json, sha256_file, sha256_text
 from metacom_pm.paper1.contracts import StrictContract
 from pydantic import Field
 
@@ -43,6 +43,11 @@ from .source_adapter import SOURCE_ADAPTER_CODE_SHA256
 COMPILER_VERSION = "paper1-rs-atomic-move-compiler-v2"
 FROZEN_QWEN_MODEL = "qwen3-235b-a22b-instruct-2507"
 VERIFIER_METHOD = "same_qwen_model_semantic_factual_verifier_not_independent"
+# Bound into run_manifest so a change to this module's own call-handling
+# logic (e.g. the 2026-08-19 circuit-breaker/exception-narrowing fix) is
+# reflected in run_identity_sha256, not just prompt/schema/renderer content.
+RUNTIME_CODE_SHA256 = sha256_file(Path(__file__))
+MAX_CONSECUTIVE_CALL_FAILURES = 5
 
 
 class RsAtomicMoveClient(Protocol):
@@ -148,6 +153,19 @@ class RsAtomicMoveCallFailed(RuntimeError):
         self.phase = phase
 
 
+class RsAtomicMoveCircuitBreakerTripped(RuntimeError):
+    """Raised instead of RsAtomicMoveCallFailed once too many call failures
+    happen in a row without an intervening success. A single isolated
+    per-card failure (a rare malformed provider response) is expected and
+    safe to skip past; MAX_CONSECUTIVE_CALL_FAILURES failures in a row with
+    no success between them is evidence of a systemic problem (an expired
+    API key, a provider outage, a client-side bug) that would otherwise be
+    silently misrecorded as thousands of individual "this card has no
+    candidates" rows while burning through the entire budget. This is
+    deliberately NOT caught by compile_source_card -- it must propagate and
+    stop the run."""
+
+
 class RsAtomicMoveCompiler:
     def __init__(
         self,
@@ -180,6 +198,14 @@ class RsAtomicMoveCompiler:
         self.budget = RsAtomicMoveBudgetLedger(
             budget_ledger_path, price=price, hard_budget_usd=hard_budget_usd
         )
+        # Consecutive call-failure circuit breaker (see
+        # RsAtomicMoveCircuitBreakerTripped) -- reset to 0 on every success,
+        # never persisted across process restarts (a resumed run starts
+        # this back at 0, which is correct: the prior process's failures are
+        # already durably recorded per-row in session_results.jsonl and
+        # conservatively charged in the budget ledger; this counter's only
+        # job is bounding damage *within* one process's run).
+        self._consecutive_call_failures = 0
 
     @property
     def run_manifest(self) -> dict[str, object]:
@@ -209,6 +235,7 @@ class RsAtomicMoveCompiler:
             "renderer_spec_sha256": RENDERER_SHA256,
             "renderer_code_sha256": RENDERER_CODE_SHA256,
             "price_snapshot": self.price.identity_sha256,
+            "runtime_code_sha256": RUNTIME_CODE_SHA256,
         }
 
     @property
@@ -257,6 +284,7 @@ class RsAtomicMoveCompiler:
         )
         cached = self.cache.load(identity)
         if cached is not None:
+            self._consecutive_call_failures = 0
             return response_schema.model_validate(cached)
 
         try:
@@ -283,7 +311,7 @@ class RsAtomicMoveCompiler:
             # accounted_cost_usd via that dangling RESERVED row; no new
             # settlement is needed, just recovery so this run can move past
             # the card instead of crashing on it forever.
-            raise RsAtomicMoveCallFailed(phase, cause=exc) from exc
+            self._raise_call_failed(phase, cause=exc)
         try:
             result, parsed = self.client.chat(
                 messages,
@@ -303,6 +331,20 @@ class RsAtomicMoveCompiler:
             # card/phase would otherwise collide with this same identity
             # forever. The caller records this source card as a structural
             # failure and moves on; this exact call is never retried.
+            #
+            # This except is deliberately broad (bare Exception, not a
+            # whitelist of known-transient types): a whitelist can only ever
+            # be as complete as what has been seen before, and the failure
+            # mode this guards against (a systemic problem -- an expired API
+            # key, a provider outage, a bug in this client) is exactly the
+            # kind that would raise something not yet on any whitelist.
+            # Broad catching is safe here specifically because of
+            # _raise_call_failed's circuit breaker below: an isolated
+            # per-card issue stays isolated (skip and continue), but N
+            # consecutive failures with no success between them -- which is
+            # what a systemic problem looks like -- stops the whole run
+            # instead of silently burning the rest of the budget recording
+            # thousands of cards as "no candidates".
             self.budget.settle(reservation, usage=None, outcome="FAILED_CALL")
             append_jsonl(
                 self.attempt_ledger_path,
@@ -315,7 +357,7 @@ class RsAtomicMoveCompiler:
                     "error": str(exc),
                 },
             )
-            raise RsAtomicMoveCallFailed(phase, cause=exc) from exc
+            self._raise_call_failed(phase, cause=exc)
         append_jsonl(
             self.attempt_ledger_path,
             {
@@ -332,11 +374,29 @@ class RsAtomicMoveCompiler:
         outcome = "SUCCEEDED" if parsed is not None else "FAILED_PARSE"
         self.budget.settle(reservation, usage=result.usage, outcome=outcome)
         if parsed is None:
-            raise RsAtomicMoveCallFailed(
+            self._raise_call_failed(
                 phase, cause=RuntimeError(f"RS atomic-move {phase} call did not produce a parsable response")
             )
+        self._consecutive_call_failures = 0
         self.cache.store_success(identity, parsed.model_dump(mode="json"))
         return parsed
+
+    def _raise_call_failed(self, phase: str, *, cause: BaseException) -> None:
+        """Increment the consecutive-failure circuit breaker and raise
+        either the recoverable per-card RsAtomicMoveCallFailed (caught by
+        compile_source_card) or, once MAX_CONSECUTIVE_CALL_FAILURES is
+        reached with no success in between, the fatal
+        RsAtomicMoveCircuitBreakerTripped (never caught, stops the run)."""
+
+        self._consecutive_call_failures += 1
+        if self._consecutive_call_failures >= MAX_CONSECUTIVE_CALL_FAILURES:
+            raise RsAtomicMoveCircuitBreakerTripped(
+                f"{self._consecutive_call_failures} consecutive RS atomic-move call "
+                f"failures with no success in between (most recent phase={phase}); "
+                "treating as a systemic failure, not isolated per-card noise. "
+                f"Last cause: {cause}"
+            ) from cause
+        raise RsAtomicMoveCallFailed(phase, cause=cause) from cause
 
     def compile_source_card(self, source: SourceCardCompileInput) -> SourceCardCompileResult:
         try:

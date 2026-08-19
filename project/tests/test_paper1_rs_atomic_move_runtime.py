@@ -594,3 +594,69 @@ def test_resuming_after_a_dangling_reservation_recovers_instead_of_crashing(tmp_
     # reservation ID already exists".
     result = compiler_a.compile_source_card(_source())
     assert result.call_failure_phase == "extractor"
+
+
+def test_circuit_breaker_trips_after_consecutive_failures_across_different_cards(tmp_path):
+    from metacom_pm.paper1.rs_atomic_move.runtime import (
+        MAX_CONSECUTIVE_CALL_FAILURES,
+        RsAtomicMoveCircuitBreakerTripped,
+    )
+
+    client = FailingClient(_endpoint())
+    compiler = _compiler(tmp_path, client)
+
+    # Each card is a distinct source_card_id/dialogue, so every attempt has
+    # a fresh reservation_id -- this isolates the circuit breaker's own
+    # consecutive-failure counting from the dangling-reservation recovery
+    # path tested above.
+    for i in range(MAX_CONSECUTIVE_CALL_FAILURES - 1):
+        result = compiler.compile_source_card(
+            _source(target_dialogue_id=f"esconv_{1000+i:04d}", source_card_id=f"rs_src_{i:024d}")
+        )
+        assert result.call_failure_phase == "extractor"
+
+    with pytest.raises(RsAtomicMoveCircuitBreakerTripped, match="consecutive RS atomic-move call"):
+        compiler.compile_source_card(
+            _source(
+                target_dialogue_id=f"esconv_{1000 + MAX_CONSECUTIVE_CALL_FAILURES:04d}",
+                source_card_id=f"rs_src_{MAX_CONSECUTIVE_CALL_FAILURES:024d}",
+            )
+        )
+
+
+def test_circuit_breaker_resets_after_a_success(tmp_path):
+    from metacom_pm.paper1.rs_atomic_move.runtime import MAX_CONSECUTIVE_CALL_FAILURES
+
+    proposal = ProposedAtomicMoveUnit(
+        proposal_id="p1",
+        atomic_move_family=AtomicMoveFamily.AFFIRMATION_AND_REASSURANCE,
+        action_description="validate the user's frustration",
+        supporting_spans=(_quote("I'm sorry your manager did that. You really stepped up."),),
+    )
+    extractor = ExtractorProposalBatch(proposals=(proposal,))
+    verifier = VerifierDecisionBatch(decisions=(VerifierDecision(proposal_id="p1", accept=True),))
+
+    compiler = _compiler(tmp_path, FailingClient(_endpoint()))
+    # One failure short of tripping the breaker.
+    for i in range(MAX_CONSECUTIVE_CALL_FAILURES - 1):
+        compiler.compile_source_card(
+            _source(target_dialogue_id=f"esconv_{3000+i:04d}", source_card_id=f"rs_src_{200+i:024d}")
+        )
+    assert compiler._consecutive_call_failures == MAX_CONSECUTIVE_CALL_FAILURES - 1
+
+    # A single full success (both extractor and verifier calls succeed)
+    # must reset the counter back to 0, even though the very next call
+    # would otherwise have tripped the breaker.
+    compiler.client = FakeClient(_endpoint(), [extractor, verifier])
+    result = compiler.compile_source_card(_source(target_dialogue_id="esconv_3999", source_card_id="rs_src_" + "9" * 24))
+    assert len(result.accepted_units) == 1
+    assert compiler._consecutive_call_failures == 0
+
+    # Now MAX_CONSECUTIVE_CALL_FAILURES - 1 more failures must NOT trip the
+    # breaker, since the counter was reset by the success above.
+    compiler.client = FailingClient(_endpoint())
+    for i in range(MAX_CONSECUTIVE_CALL_FAILURES - 1):
+        compiler.compile_source_card(
+            _source(target_dialogue_id=f"esconv_{4000+i:04d}", source_card_id=f"rs_src_{300+i:024d}")
+        )
+    assert compiler._consecutive_call_failures == MAX_CONSECUTIVE_CALL_FAILURES - 1
