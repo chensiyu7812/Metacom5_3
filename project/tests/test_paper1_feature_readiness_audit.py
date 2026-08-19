@@ -136,10 +136,17 @@ def test_ms_retrieval_rank_and_lexical_overlap_have_real_variance():
     assert ms_qa.lexical_similarity.distinct_value_count > 1
 
 
-def test_embedding_similarity_always_reported_not_implemented():
+def test_embedding_similarity_always_reported_not_yet_materialized():
+    # 2026-08-19: BGE-M3 cosine similarity is now wired into
+    # build_semantic_census (see zero_outcome_census.py), but this audit's
+    # own fixtures never pass query_vectors/candidate_vectors -- computable
+    # must stay False and the status must say so, not silently flip to
+    # IMPLEMENTED just because the underlying code path now exists.
     for row in _rows():
         manifest = row.to_manifest_row()
-        assert manifest["embedding_similarity"]["readiness_status"] == "NOT_IMPLEMENTED"
+        assert manifest["embedding_similarity"]["readiness_status"] == (
+            "WIRED_NOT_YET_MATERIALIZED_IN_PUBLISHED_ARTIFACT"
+        )
         assert manifest["embedding_similarity"]["computable"] is False
 
 

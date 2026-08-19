@@ -163,9 +163,11 @@ FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
         "proxy_field": "lexical_similarity (census lexical_overlap)",
         "note": (
             "Blueprint specifies a fixed embedding/semantic similarity. "
-            "The only similarity currently computed is a lowercase "
-            "[a-z]{3,} word-set Jaccard overlap against the target's "
-            "visible_query_text -- a lexical proxy, not an embedding model."
+            "The only similarity currently computed in this legacy regex/"
+            "Jaccard lane is a lowercase [a-z]{3,} word-set Jaccard overlap "
+            "against the target's visible_query_text -- a lexical proxy, not "
+            "an embedding model. See SEMANTIC_FEATURE_INVENTORY for the "
+            "v6-semantic-lane status, which is different."
         ),
     },
     {
@@ -319,11 +321,15 @@ FEATURE_INVENTORY: tuple[dict[str, str], ...] = (
         "status": "NOT_IMPLEMENTED",
         "proxy_field": None,
         "note": (
-            "No embedding model is wired into this lane. This is the "
-            "shared underlying gap behind mp_state_profile_similarity/"
-            "ms_state_memory_similarity/me_state_experience_similarity's "
-            "IMPLEMENTED_AS_DIAGNOSTIC_PROXY status above -- listed once "
-            "here rather than three times."
+            "No embedding model is wired into the legacy regex/Jaccard lane "
+            "(build_census/compile_candidate_bundle) this item describes. "
+            "This is the shared underlying gap behind mp_state_profile_"
+            "similarity/ms_state_memory_similarity/me_state_experience_"
+            "similarity's IMPLEMENTED_AS_DIAGNOSTIC_PROXY status above -- "
+            "listed once here rather than three times. See "
+            "SEMANTIC_FEATURE_INVENTORY for the v6-semantic-lane status, "
+            "which is different (build_semantic_census now wires real BGE-M3 "
+            "cosine similarity when given query_vectors/candidate_vectors)."
         ),
     },
 )
@@ -355,6 +361,26 @@ def _semantic_feature_inventory() -> tuple[dict[str, str], ...]:
                 "The v6 accepted ME unit has a closed historical_outcome_type; "
                 "candidate_adapter.py copies it directly into the formal raw "
                 "descriptor without parsing rendered prose."
+            ),
+        },
+        "embedding_similarity": {
+            "status": "WIRED_NOT_YET_MATERIALIZED_IN_PUBLISHED_ARTIFACT",
+            "proxy_field": "bge_cosine_similarity (census bge_cosine_similarity/bge_retrieval_rank)",
+            "note": (
+                "2026-08-19: the frozen BGE-M3 encoder (metacom_pm.paper1."
+                "embeddings.bge_m3, hardened v2) is wired into "
+                "build_semantic_census via metacom_pm.paper1.embeddings."
+                "materialize_embeddings/cosine_similarity -- not a lexical "
+                "proxy substitute, the actual model the blueprint specifies. "
+                "Verified on real local GPU hardware (RTX 2070) and unit-"
+                "tested for the wiring logic (query_vectors/candidate_vectors "
+                "default to None, so existing callers are unaffected). "
+                "Corpus-scale materialization has not been run for the real "
+                "MP/MS/ME corpus (2745 accepted units + ~1552 QA/Summary "
+                "queries) yet, so the currently-published census artifact "
+                "still has these fields at None -- this status moves to "
+                "IMPLEMENTED once that run happens and the census is "
+                "regenerated with real vectors supplied."
             ),
         },
     }
@@ -502,10 +528,16 @@ class HeadTaskFeatureReadinessRow:
             "static_visible_query_present": self.static_visible_query_present,
             "embedding_similarity": {
                 "computable": False,
-                "readiness_status": "NOT_IMPLEMENTED",
+                "readiness_status": "WIRED_NOT_YET_MATERIALIZED_IN_PUBLISHED_ARTIFACT",
                 "note": (
-                    "No code path in this project computes an embedding "
-                    "similarity feature yet -- reported absent, not guessed."
+                    "2026-08-19: build_semantic_census now computes real BGE-M3 "
+                    "cosine similarity (bge_cosine_similarity/bge_retrieval_rank) "
+                    "when given query_vectors/candidate_vectors -- see "
+                    "metacom_pm.paper1.embeddings.materialize_embeddings. "
+                    "computable=False here reflects that this particular audit "
+                    "call did not supply them (corpus-scale MP/MS/ME "
+                    "materialization has not been run and published yet), not "
+                    "that no code path exists."
                 ),
             },
             "candidate_count": self.candidate_count.to_manifest_row(),

@@ -47,6 +47,12 @@ from metacom_pm.paper1.data.memory_source import (  # noqa: E402
     enumerate_targets,
     load_sanitized_runtime_users,
 )
+from metacom_pm.paper1.embeddings import (  # noqa: E402
+    BgeM3Encoder,
+    EmbeddingSuccessCache,
+    build_materialization_report,
+    materialize_embeddings,
+)
 from metacom_pm.paper1.features import (  # noqa: E402
     build_semantic_census,
     build_semantic_eligible_pool,
@@ -101,11 +107,59 @@ def _token_counter_identity(llama_tokenizer_json: Path | None) -> dict[str, Any]
     }
 
 
+BGE_QUERY_FIELD_SOURCE = "mp_ms_me.visible_query_text"
+BGE_CANDIDATE_FIELD_SOURCE = "mp_ms_me.rendered_candidate_content"
+
+
+def _materialize_bge_vectors(
+    accepted_units: tuple[Any, ...],
+    targets: tuple[Any, ...],
+    *,
+    cache_dir: Path,
+) -> tuple[dict[str, Any], dict[str, tuple[float, ...]], dict[str, tuple[float, ...]]]:
+    """Corpus-scale materialization for the real MP/MS/ME data: every
+    accepted unit's rendered content (the document side) and every target's
+    visible_query_text (the query side) -- exactly the fields declared in
+    paper1_bge_m3_formal_binding_v1.json#per_head_text_construction, shared
+    identically across MP/MS/ME (see that artifact's consistency_note).
+    Returns (materialization_report, query_vectors, candidate_vectors)."""
+
+    encoder = BgeM3Encoder()
+    cache = EmbeddingSuccessCache(cache_dir)
+
+    candidate_items = [
+        (f"semantic_{unit.memory_id}", unit.rendered_candidate_content) for unit in accepted_units
+    ]
+    query_items = [
+        (target.target_id, target.visible_query_text)
+        for target in targets
+        if target.visible_query_text is not None
+    ]
+
+    candidate_result = materialize_embeddings(
+        candidate_items, field_source=BGE_CANDIDATE_FIELD_SOURCE, encoder=encoder, cache=cache
+    )
+    query_result = materialize_embeddings(
+        query_items, field_source=BGE_QUERY_FIELD_SOURCE, encoder=encoder, cache=cache
+    )
+
+    report = {
+        "candidates": build_materialization_report(
+            field_source=BGE_CANDIDATE_FIELD_SOURCE, result=candidate_result, encoder=encoder
+        ),
+        "queries": build_materialization_report(
+            field_source=BGE_QUERY_FIELD_SOURCE, result=query_result, encoder=encoder
+        ),
+    }
+    return report, query_result.vectors, candidate_result.vectors
+
+
 def build(
     semantic_results_path: Path,
     *,
     llama_tokenizer_json: Path | None = None,
     allow_whitespace_proxy: bool = False,
+    bge_embedding_cache_dir: Path | None = None,
 ) -> dict[str, Any]:
     config = load_public_only_config(PROJECT / "configs" / "paper1_public_only.yaml")
     assert_pre_outcome_locked(config)
@@ -152,6 +206,14 @@ def build(
     targets_path = OUT_DIR / "es_memeval_public_targets_v1.jsonl"
     targets_sha256 = _write_jsonl(target_rows, targets_path)
 
+    bge_materialization_report: dict[str, Any] | None = None
+    query_vectors: dict[str, tuple[float, ...]] | None = None
+    candidate_vectors: dict[str, tuple[float, ...]] | None = None
+    if bge_embedding_cache_dir is not None:
+        bge_materialization_report, query_vectors, candidate_vectors = _materialize_bge_vectors(
+            accepted_units, targets, cache_dir=bge_embedding_cache_dir
+        )
+
     pool_rows = build_semantic_eligible_pool(users, accepted_units, token_counter=token_counter)
     pool_summary = summarize_eligible_pool(pool_rows)
     pool_summary["candidate_source"] = "accepted_semantic_memory_v6"
@@ -159,7 +221,14 @@ def build(
     pool_summary["token_counter"] = token_counter_identity
     pool_paths = write_eligible_pool_manifest(pool_rows, pool_summary, OUT_DIR)
 
-    census_rows = build_semantic_census(users, targets, accepted_units, token_counter=token_counter)
+    census_rows = build_semantic_census(
+        users,
+        targets,
+        accepted_units,
+        token_counter=token_counter,
+        query_vectors=query_vectors,
+        candidate_vectors=candidate_vectors,
+    )
     census_summary = summarize_census(census_rows)
     census_summary["candidate_source"] = "accepted_semantic_memory_v6"
     census_summary["semantic_compiler_source"] = semantic_source
@@ -203,6 +272,9 @@ def build(
         },
         "eligible_pool_summary": pool_summary,
         "census_summary": census_summary,
+        "bge_materialization": bge_materialization_report
+        if bge_materialization_report is not None
+        else "NOT_REQUESTED_SEE_BGE_EMBEDDING_CACHE_DIR",
     }
     return report
 
@@ -228,12 +300,28 @@ def main() -> int:
             "-- an artifact built this way must not be cited as the real token-cost census."
         ),
     )
+    parser.add_argument(
+        "--bge-embedding-cache-dir",
+        type=Path,
+        help=(
+            "Directory for the on-disk BGE-M3 embedding cache (metacom_pm.paper1."
+            "embeddings.EmbeddingSuccessCache). If given, materializes real BGE-M3 "
+            "cosine similarity for every accepted unit's rendered_candidate_content "
+            "and every target's visible_query_text (via metacom_pm.paper1.embeddings."
+            "materialize_embeddings, real local GPU encode), and threads the vectors "
+            "into build_semantic_census so census rows get real "
+            "bge_cosine_similarity/bge_retrieval_rank instead of None. Requires a "
+            "local CUDA GPU. If omitted, the census is built exactly as before "
+            "(bge fields stay None)."
+        ),
+    )
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
     report = build(
         args.semantic_compiler_results,
         llama_tokenizer_json=args.llama_tokenizer_json,
         allow_whitespace_proxy=args.allow_whitespace_proxy_diagnostic_only,
+        bge_embedding_cache_dir=args.bge_embedding_cache_dir,
     )
     rendered = _canonical(report) + "\n"
     if args.out:

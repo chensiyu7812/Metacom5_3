@@ -10,6 +10,7 @@ from metacom_pm.paper1.data.memory_source import (
     Target,
     Turn,
 )
+from metacom_pm.paper1.embeddings import cosine_similarity
 from metacom_pm.paper1.features.zero_outcome_census import (
     build_semantic_census,
     build_semantic_eligible_pool,
@@ -389,7 +390,9 @@ def test_semantic_census_uses_formal_adapter_not_legacy_regex_compiler() -> None
     inventory = {item["canonical_name"]: item for item in SEMANTIC_FEATURE_INVENTORY}
     assert inventory["mp_profile_field_type"]["status"] == "IMPLEMENTED"
     assert inventory["me_historical_outcome_type"]["status"] == "IMPLEMENTED"
-    assert inventory["embedding_similarity"]["status"] == "NOT_IMPLEMENTED"
+    assert inventory["embedding_similarity"]["status"] == (
+        "WIRED_NOT_YET_MATERIALIZED_IN_PUBLISHED_ARTIFACT"
+    )
     assert summary["semantic_compiler_source"]["artifact_sha256"] == HASH
     assert summary["categorical_feature_coverage"]["mp_profile_field_type"][
         "missing_values"
@@ -401,3 +404,126 @@ def test_semantic_census_uses_formal_adapter_not_legacy_regex_compiler() -> None
     assert {row["protocol"] for row in semantic_rows} == {
         "pm-paper1-semantic-memory-feature-readiness-row-v3"
     }
+
+
+def test_semantic_census_leaves_bge_fields_none_without_vectors() -> None:
+    # Backward-compatible default: no query_vectors/candidate_vectors
+    # supplied -- same as before BGE wiring existed.
+    user = MemorySourceUser(
+        owner_id="u1",
+        sessions=(Session(session_id="s0", timestamp="2024-01-01", chronological_rank=0, turns=()),),
+        question_groups=(),
+        summaries=(),
+        subsequent_topics=(),
+    )
+    target = Target(
+        target_id="t1",
+        task_type=TaskType.QA,
+        owner_id="u1",
+        primary_group_key="u1::qa::t1",
+        cutoff_rank=1,
+        visible_query_text="Where does the user live?",
+    )
+    unit = _mp_unit("m1", rank=0)
+    rows = build_semantic_census((user,), (target,), (unit,))
+    mp_row = next(r for r in rows if r.head is Head.MP)
+    assert mp_row.top_candidate_bge_cosine_similarity is None
+    assert all(c.bge_cosine_similarity is None for c in mp_row.candidates)
+    assert all(c.bge_retrieval_rank is None for c in mp_row.candidates)
+
+
+def test_semantic_census_computes_bge_cosine_similarity_when_vectors_supplied() -> None:
+    user = MemorySourceUser(
+        owner_id="u1",
+        sessions=(Session(session_id="s0", timestamp="2024-01-01", chronological_rank=0, turns=()),),
+        question_groups=(),
+        summaries=(),
+        subsequent_topics=(),
+    )
+    target = Target(
+        target_id="t1",
+        task_type=TaskType.QA,
+        owner_id="u1",
+        primary_group_key="u1::qa::t1",
+        cutoff_rank=1,
+        visible_query_text="Where does the user live?",
+    )
+    unit = _mp_unit("m1", rank=0)
+    query_vector = (1.0, 0.0, 0.0)
+    candidate_vector = (0.6, 0.8, 0.0)
+    rows = build_semantic_census(
+        (user,),
+        (target,),
+        (unit,),
+        query_vectors={"t1": query_vector},
+        candidate_vectors={"semantic_m1": candidate_vector},
+    )
+    mp_row = next(r for r in rows if r.head is Head.MP)
+    expected = cosine_similarity(query_vector, candidate_vector)
+    assert mp_row.top_candidate_bge_cosine_similarity == pytest.approx(expected)
+    snapshot = mp_row.candidates[0]
+    assert snapshot.bge_cosine_similarity == pytest.approx(expected)
+    assert snapshot.bge_retrieval_rank == 1
+
+
+def test_semantic_census_bge_similarity_is_none_when_candidate_vector_missing() -> None:
+    user = MemorySourceUser(
+        owner_id="u1",
+        sessions=(Session(session_id="s0", timestamp="2024-01-01", chronological_rank=0, turns=()),),
+        question_groups=(),
+        summaries=(),
+        subsequent_topics=(),
+    )
+    target = Target(
+        target_id="t1",
+        task_type=TaskType.QA,
+        owner_id="u1",
+        primary_group_key="u1::qa::t1",
+        cutoff_rank=1,
+        visible_query_text="Where does the user live?",
+    )
+    unit = _mp_unit("m1", rank=0)
+    rows = build_semantic_census(
+        (user,),
+        (target,),
+        (unit,),
+        query_vectors={"t1": (1.0, 0.0, 0.0)},
+        candidate_vectors={},
+    )
+    mp_row = next(r for r in rows if r.head is Head.MP)
+    assert mp_row.top_candidate_bge_cosine_similarity is None
+    assert mp_row.candidates[0].bge_cosine_similarity is None
+    assert mp_row.candidates[0].bge_retrieval_rank is None
+
+
+def test_semantic_census_bge_similarity_stays_none_for_dg_targets_even_if_a_vector_exists() -> None:
+    # DG has no static query pre-generation -- query_words is None, so the
+    # early-return branch in _score_candidates must never attempt a BGE
+    # lookup either, even if the caller (by mistake or otherwise) happened
+    # to supply a query_vectors entry for this target_id.
+    user = MemorySourceUser(
+        owner_id="u1",
+        sessions=(Session(session_id="s0", timestamp="2024-01-01", chronological_rank=0, turns=()),),
+        question_groups=(),
+        summaries=(),
+        subsequent_topics=(),
+    )
+    target = Target(
+        target_id="t1",
+        task_type=TaskType.DIALOGUE_GENERATION,
+        owner_id="u1",
+        primary_group_key="u1::dg::t1",
+        cutoff_rank=1,
+        visible_query_text=None,
+    )
+    unit = _mp_unit("m1", rank=0)
+    rows = build_semantic_census(
+        (user,),
+        (target,),
+        (unit,),
+        query_vectors={"t1": (1.0, 0.0, 0.0)},
+        candidate_vectors={"semantic_m1": (0.6, 0.8, 0.0)},
+    )
+    mp_row = next(r for r in rows if r.head is Head.MP)
+    assert mp_row.top_candidate_bge_cosine_similarity is None
+    assert all(c.bge_cosine_similarity is None for c in mp_row.candidates)

@@ -15,6 +15,13 @@ from .bge_m3 import (
     FROZEN_BGE_M3_BINDING,
 )
 from .cache import EMBEDDING_CACHE_PROTOCOL, EmbeddingCallIdentity, EmbeddingSuccessCache
+from .materialization import (
+    MATERIALIZATION_REPORT_PROTOCOL,
+    MaterializationResult,
+    build_materialization_report,
+    cosine_similarity,
+    materialize_embeddings,
+)
 
 __all__ = [
     "BGE_M3_EMBEDDING_BINDING_VERSION",
@@ -34,4 +41,9 @@ __all__ = [
     "EMBEDDING_CACHE_PROTOCOL",
     "EmbeddingCallIdentity",
     "EmbeddingSuccessCache",
+    "MATERIALIZATION_REPORT_PROTOCOL",
+    "MaterializationResult",
+    "build_materialization_report",
+    "cosine_similarity",
+    "materialize_embeddings",
 ]

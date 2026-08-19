@@ -65,6 +65,7 @@ from metacom_pm.paper1.candidates import (
 )
 from metacom_pm.paper1.contracts import CandidateRecord, Head, TaskType
 from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
+from metacom_pm.paper1.embeddings import cosine_similarity
 from metacom_pm.paper1.memory.explicit_signals import (
     has_current_action_request,
     has_explicit_return_marker,
@@ -117,6 +118,17 @@ class CandidateFeatureSnapshot:
     lexical_candidate_query_jaccard_ge_0_6_proxy: bool | None
     lexical_overlap: float | None
     retrieval_rank: int | None
+    # 2026-08-19: real BGE-M3 cosine similarity between the target's
+    # visible_query_text and this candidate's rendered_candidate_content
+    # (see paper1_bge_m3_formal_binding_v1.json#per_head_text_construction),
+    # computed only when both vectors were supplied via query_vectors/
+    # candidate_vectors -- None otherwise (including DG, where query_words
+    # is already None and no BGE lookup is attempted). This sits alongside
+    # lexical_overlap/retrieval_rank as a second, independent diagnostic; it
+    # does not replace or reorder them -- which similarity backend is
+    # authoritative remains an unfrozen M2 decision (FINAL_BUNDLE_STATUS).
+    bge_cosine_similarity: float | None
+    bge_retrieval_rank: int | None
     # blueprint 5.3 ms_thread_entity_overlap: a pairwise count of
     # non-sentence-initial capitalized ("entity-like") tokens shared between
     # the target's query text and this one candidate's content. Computed for
@@ -156,6 +168,7 @@ class TargetHeadCensusRow:
     age_days_max: int | None
     lexical_candidate_query_jaccard_ge_0_6_proxy_count: int
     top_candidate_lexical_overlap: float | None
+    top_candidate_bge_cosine_similarity: float | None
     candidates: tuple[CandidateFeatureSnapshot, ...]
 
     def to_manifest_row(self) -> dict[str, Any]:
@@ -187,6 +200,7 @@ class TargetHeadCensusRow:
                 self.lexical_candidate_query_jaccard_ge_0_6_proxy_count
             ),
             "top_candidate_lexical_overlap": self.top_candidate_lexical_overlap,
+            "top_candidate_bge_cosine_similarity": self.top_candidate_bge_cosine_similarity,
             "candidates": [
                 {
                     "candidate_id": c.candidate_id,
@@ -197,6 +211,8 @@ class TargetHeadCensusRow:
                     ),
                     "lexical_overlap": c.lexical_overlap,
                     "retrieval_rank": c.retrieval_rank,
+                    "bge_cosine_similarity": c.bge_cosine_similarity,
+                    "bge_retrieval_rank": c.bge_retrieval_rank,
                     "thread_entity_overlap_count": c.thread_entity_overlap_count,
                 }
                 for c in self.candidates
@@ -253,12 +269,27 @@ def _query_words(target: Target) -> frozenset[str] | None:
     return _word_set(target.visible_query_text)
 
 
+def _bge_retrieval_ranks(
+    candidate_ids: list[str], similarities: dict[str, float]
+) -> dict[str, int]:
+    """Independent rank-by-descending-cosine-similarity, ties broken by
+    candidate_id -- only over candidates that actually have a similarity
+    (both query and candidate vectors were supplied); candidates without one
+    get no rank at all rather than an arbitrary tie for last."""
+
+    scored_ids = [cid for cid in candidate_ids if cid in similarities]
+    scored_ids.sort(key=lambda cid: (-similarities[cid], cid))
+    return {cid: rank for rank, cid in enumerate(scored_ids, start=1)}
+
+
 def _score_candidates(
     candidates: tuple[CandidateRecord, ...],
     *,
     anchor: date | None,
     query_words: frozenset[str] | None,
     query_text: str | None,
+    query_vector: tuple[float, ...] | None = None,
+    candidate_vectors: dict[str, tuple[float, ...]] | None = None,
 ) -> tuple[CandidateFeatureSnapshot, ...]:
     def _age_days(candidate: CandidateRecord) -> int | None:
         observed_at = candidate.lineage.observed_at
@@ -266,9 +297,19 @@ def _score_candidates(
             return None
         return (anchor - date.fromisoformat(observed_at)).days
 
+    def _bge_similarity(candidate: CandidateRecord) -> float | None:
+        if query_vector is None or not candidate_vectors:
+            return None
+        candidate_vector = candidate_vectors.get(candidate.candidate_id)
+        if candidate_vector is None:
+            return None
+        return cosine_similarity(query_vector, candidate_vector)
+
     if query_words is None:
         # B19.4: no static query exists (DG pre-generation) -- overlap/rank
-        # are null/N/A, never computed against related_sessions/topic.
+        # are null/N/A, never computed against related_sessions/topic. No
+        # query_vector exists either for the same reason, so bge fields stay
+        # None too, same convention.
         return tuple(
             CandidateFeatureSnapshot(
                 candidate_id=c.candidate_id,
@@ -277,12 +318,21 @@ def _score_candidates(
                 lexical_candidate_query_jaccard_ge_0_6_proxy=None,
                 lexical_overlap=None,
                 retrieval_rank=None,
+                bge_cosine_similarity=None,
+                bge_retrieval_rank=None,
                 thread_entity_overlap_count=None,
             )
             for c in candidates
         )
 
     assert query_text is not None  # query_words is derived from query_text
+    bge_similarities = {
+        c.candidate_id: sim
+        for c in candidates
+        if (sim := _bge_similarity(c)) is not None
+    }
+    bge_ranks = _bge_retrieval_ranks([c.candidate_id for c in candidates], bge_similarities)
+
     scored: list[tuple[float, int, str, CandidateFeatureSnapshot]] = []
     for candidate in candidates:
         candidate_words = _word_set(candidate.content)
@@ -306,6 +356,8 @@ def _score_candidates(
                     lexical_candidate_query_jaccard_ge_0_6_proxy=jaccard_proxy,
                     lexical_overlap=overlap,
                     retrieval_rank=0,
+                    bge_cosine_similarity=bge_similarities.get(candidate.candidate_id),
+                    bge_retrieval_rank=bge_ranks.get(candidate.candidate_id),
                     thread_entity_overlap_count=entity_overlap,
                 ),
             )
@@ -321,6 +373,8 @@ def _score_candidates(
             ),
             lexical_overlap=snap.lexical_overlap,
             retrieval_rank=rank,
+            bge_cosine_similarity=snap.bge_cosine_similarity,
+            bge_retrieval_rank=snap.bge_retrieval_rank,
             thread_entity_overlap_count=snap.thread_entity_overlap_count,
         )
         for rank, (*_key, snap) in enumerate(scored, start=1)
@@ -335,11 +389,18 @@ def _row_for_head(
     *,
     anchor: date | None,
     candidate_source: str,
+    query_vector: tuple[float, ...] | None = None,
+    candidate_vectors: dict[str, tuple[float, ...]] | None = None,
 ) -> TargetHeadCensusRow:
     query_words = _query_words(target)
     query_text = target.visible_query_text
     snapshots = _score_candidates(
-        candidates, anchor=anchor, query_words=query_words, query_text=query_text
+        candidates,
+        anchor=anchor,
+        query_words=query_words,
+        query_text=query_text,
+        query_vector=query_vector,
+        candidate_vectors=candidate_vectors,
     )
     token_counts = [s.token_count for s in snapshots]
     ages = [s.age_days for s in snapshots if s.age_days is not None]
@@ -347,6 +408,8 @@ def _row_for_head(
         1 for s in snapshots if s.lexical_candidate_query_jaccard_ge_0_6_proxy
     )
     top_overlap = snapshots[0].lexical_overlap if snapshots else None
+    bge_similarities = [s.bge_cosine_similarity for s in snapshots if s.bge_cosine_similarity is not None]
+    top_bge_similarity = max(bge_similarities) if bge_similarities else None
     return TargetHeadCensusRow(
         candidate_source=candidate_source,
         target_id=target.target_id,
@@ -371,6 +434,7 @@ def _row_for_head(
         age_days_max=max(ages) if ages else None,
         lexical_candidate_query_jaccard_ge_0_6_proxy_count=jaccard_proxy_count,
         top_candidate_lexical_overlap=top_overlap,
+        top_candidate_bge_cosine_similarity=top_bge_similarity,
         candidates=snapshots,
     )
 
@@ -471,14 +535,25 @@ def build_semantic_census(
     accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
     *,
     token_counter: Callable[[str], int] | None = None,
+    query_vectors: dict[str, tuple[float, ...]] | None = None,
+    candidate_vectors: dict[str, tuple[float, ...]] | None = None,
 ) -> tuple[TargetHeadCensusRow, ...]:
     """Formal per-target census over accepted semantic candidates.
 
-    Lexical overlap remains a diagnostic only; BGE-M3 is materialized in a
-    separate frozen feature stage. ``token_counter`` defaults to the
-    whitespace-split structural proxy when not supplied (2026-08-19: pass
+    ``token_counter`` defaults to the whitespace-split structural proxy when
+    not supplied (2026-08-19: pass
     ``metacom_pm.paper1.llama_tokenizer.build_llama_token_counter(...)`` for
     the frozen Generator tokenizer instead).
+
+    ``query_vectors`` (keyed by ``target.target_id``) and ``candidate_vectors``
+    (keyed by ``CandidateRecord.candidate_id``, i.e. ``f"semantic_{memory_id}"``)
+    default to None, in which case every row's bge_cosine_similarity/
+    bge_retrieval_rank stay None -- same backward-compatible pattern as
+    token_counter. Build them with
+    ``metacom_pm.paper1.embeddings.materialize_embeddings`` over
+    ``AcceptedSemanticMemoryUnit.rendered_candidate_content`` (candidates)
+    and ``Target.visible_query_text`` (queries) -- the exact fields declared
+    in paper1_bge_m3_formal_binding_v1.json#per_head_text_construction.
     """
 
     compile_kwargs = {"token_counter": token_counter} if token_counter is not None else {}
@@ -499,6 +574,7 @@ def build_semantic_census(
             **compile_kwargs,
         )
         anchor = anchor_by_owner[target.owner_id]
+        query_vector = query_vectors.get(target.target_id) if query_vectors else None
         for head, candidates in bundle.items():
             rows.append(
                 _row_for_head(
@@ -507,6 +583,8 @@ def build_semantic_census(
                     candidates,
                     anchor=anchor,
                     candidate_source="accepted_semantic_memory_v6",
+                    query_vector=query_vector,
+                    candidate_vectors=candidate_vectors,
                 )
             )
     return tuple(rows)
@@ -562,6 +640,17 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
         age_means = [r.age_days_mean for r in covered if r.age_days_mean is not None]
         overlaps = [
             r.top_candidate_lexical_overlap for r in covered if r.top_candidate_lexical_overlap is not None
+        ]
+        bge_similarities = [
+            r.top_candidate_bge_cosine_similarity
+            for r in covered
+            if r.top_candidate_bge_cosine_similarity is not None
+        ]
+        bge_edge_similarities = [
+            snap.bge_cosine_similarity
+            for r in subset
+            for snap in r.candidates
+            if snap.bge_cosine_similarity is not None
         ]
         jaccard_proxy_total = sum(
             r.lexical_candidate_query_jaccard_ge_0_6_proxy_count for r in subset
@@ -631,6 +720,23 @@ def summarize_census(rows: tuple[TargetHeadCensusRow, ...]) -> dict[str, Any]:
             ),
             "top_candidate_lexical_overlap_mean": statistics.fmean(overlaps) if overlaps else None,
             "top_candidate_lexical_overlap_variance": _variance(overlaps),
+            # 2026-08-19: real BGE-M3 cosine similarity, independent of the
+            # lexical proxy above -- only non-None where both query_vectors
+            # and candidate_vectors were supplied to build_semantic_census
+            # (materialization is a separate, opt-in step; see
+            # materialize_embeddings). bge_edge_comparable_edges is the
+            # denominator for the fraction below, mirroring
+            # thread_entity_overlap_comparable_edges's pattern: it is the
+            # count of (target, candidate) edges that actually got a
+            # similarity computed, not target_candidate_edges.
+            "bge_edge_comparable_edges": len(bge_edge_similarities),
+            "bge_cosine_similarity_mean": (
+                statistics.fmean(bge_edge_similarities) if bge_edge_similarities else None
+            ),
+            "top_candidate_bge_cosine_similarity_mean": (
+                statistics.fmean(bge_similarities) if bge_similarities else None
+            ),
+            "top_candidate_bge_cosine_similarity_variance": _variance(bge_similarities),
         }
 
     per_head = {head.value: _aggregate([r for r in rows if r.head is head]) for head in Head if head is not Head.RS}
