@@ -20,7 +20,26 @@ def test_artifact_encoder_identity_matches_live_code():
     assert binding["pooling_mode"] == FROZEN_BGE_M3_BINDING.pooling_mode
     assert binding["normalize_embeddings"] == FROZEN_BGE_M3_BINDING.normalize_embeddings
     assert binding["embedding_dimension"] == FROZEN_BGE_M3_BINDING.embedding_dimension
+    assert binding["max_seq_length"] == FROZEN_BGE_M3_BINDING.max_seq_length
+    assert binding["truncation_side"] == FROZEN_BGE_M3_BINDING.truncation_side
+    assert binding["dtype"] == FROZEN_BGE_M3_BINDING.dtype
     assert binding["identity_sha256"] == FROZEN_BGE_M3_BINDING.identity_sha256
+
+
+def test_artifact_status_reflects_hardening_complete():
+    doc = _artifact()
+    assert doc["status"] == "FORMAL_BINDING_HARDENED_V2_MATERIALIZATION_NOT_STARTED"
+    resolution = " ".join(doc["known_gaps_20260818_resolution"])
+    # 5 of the 6 original gaps are resolved; the 6th (DG dynamic query) is a
+    # scope boundary, not an encoder-hardening gap, and must stay marked
+    # open rather than silently disappearing from the record. A same-day
+    # second review found 2 more gaps in how the first 5 were actually
+    # enforced (runtime identity was declare-only, not cache-key-enforced;
+    # max_seq_length was load-time-only, never checked against real input
+    # text) -- both fixed and recorded as RESOLVED_20260819B entries.
+    assert resolution.count("RESOLVED") == 7
+    assert resolution.count("RESOLVED_20260819B") == 2
+    assert "STILL OPEN" in resolution
 
 
 def test_artifact_shares_the_exact_revision_used_by_the_official_rag_attestation():
