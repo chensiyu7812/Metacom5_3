@@ -56,11 +56,34 @@ formal_evaluation:
   cost_separate: true
   binary_paper_pass_fail: false
 outcome_lock:
+  compatibility_role: legacy_umbrella_requires_all_four_scoped_locks_closed
   status: LOCKED_PRE_ZERO_OUTCOME_FREEZE
   formal_effect_calls_allowed: false
   formal_training_allowed: false
   formal_benchmark_outcomes_allowed: false
   engineering_cap_check_allowed: true
+RQ1_RS_CALIBRATION_OUTCOME_LOCK:
+  status: CLOSED
+  resource_amount_calibration_allowed: false
+  repeated_effect_qualification_allowed: false
+  pm_effect_construction_allowed: false
+  pm_training_allowed: false
+RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK:
+  status: CLOSED
+  resource_amount_calibration_allowed: false
+  repeated_effect_qualification_allowed: false
+  pm_effect_construction_allowed: false
+  pm_training_allowed: false
+RQ1_CONFIRMATORY_OUTCOME_LOCK:
+  status: CLOSED
+  formal_effect_dataset_allowed: false
+  pm_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
+RQ2_CONFIRMATORY_OUTCOME_LOCK:
+  status: CLOSED
+  formal_effect_dataset_allowed: false
+  pm_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
 pending_zero_outcome_freeze:
   - candidate_bundle_design
   - exact_feature_schema

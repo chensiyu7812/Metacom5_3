@@ -1,0 +1,538 @@
+{
+  "protocol": "pm-paper1-rs-resource-amount-surface-v1",
+  "status": "ZERO_OUTCOME_AMOUNT_SURFACE_NOT_A_K_FREEZE",
+  "outcome_calls": 0,
+  "calibration_outcome_lock": "CLOSED",
+  "confirmatory_outcome_lock": "CLOSED",
+  "source_identity": {
+    "census_path": "data/paper1_public_rs/esconv_rs_atomic_move_zero_outcome_census_v1.jsonl",
+    "census_sha256": "641a599c4f62848982a53eec3a284b17e144af25b25b58b50c6f4ef98ee935b2",
+    "census_summary_sha256": "fe45586c85e12d1aa75910adb7210d3500b80d105f22db396325b12231f47002",
+    "session_results_filename": "session_results_repaired_v1.jsonl",
+    "session_results_sha256": "d91b17117ac4164931f44e74cd1e7bb16eab5f30dd3e38f2d45bbcba858d434c",
+    "bge_binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+    "bge_runtime_identity_sha256": "44922aafab4f151043fad5f9904cf475a40dd443bb889c38e3cefad628d494d2",
+    "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+  },
+  "catalog": {
+    "raw_atomic_move_units": 15061,
+    "exact_canonical_treatments": 13172,
+    "exact_duplicate_instances": 1889,
+    "exact_duplicate_fraction_of_raw_units": 0.1254232786667552,
+    "canonicalization": "exact rendered_card_text SHA-256 only; treatment identity retains union of atomic_card_ids/source_card_ids/source_dialogue_ids/families",
+    "representative_rule": "one BGE ranking ticket per exact treatment; representative retrieval document is the lexicographically smallest (source_card_id, atomic_card_id); duplicate occurrences never contribute max/mean score pooling or a frequency prior",
+    "near_duplicate_policy": "REPORT_ONLY_NO_SEMANTIC_THRESHOLD_DELETION"
+  },
+  "ranking": {
+    "backend": "existing real BGE-M3 census ranking",
+    "leave_dialogue_out": true,
+    "available_prefix_depth": 4,
+    "surface_k_values": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "limitation": "Exact aliases are collapsed inside the already-materialized top-4 prefix; this audit does not backfill a collapsed slot from rank >4. A formal canonical-catalog retriever must be materialized before calibration calls."
+  },
+  "cells": [
+    {
+      "requested_k": 0,
+      "observed_rank_prefix": 0,
+      "states": 11883,
+      "states_with_full_k_after_exact_alias_and_lineage_rules": 11883,
+      "full_k_fraction": 1.0,
+      "delivered_canonical_treatments": {
+        "min": 0,
+        "p25": 0,
+        "median": 0,
+        "p75": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0,
+        "mean": 0.0
+      },
+      "generator_input_tokens": {
+        "min": 0,
+        "p25": 0,
+        "median": 0,
+        "p75": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0,
+        "mean": 0.0
+      },
+      "distinct_family_count": {
+        "min": 0,
+        "p25": 0,
+        "median": 0,
+        "p75": 0,
+        "p90": 0,
+        "p95": 0,
+        "max": 0,
+        "mean": 0.0
+      },
+      "top1_minus_top2_similarity_margin": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "p90": null,
+        "p95": null,
+        "max": null,
+        "mean": null
+      },
+      "k_boundary_similarity_margin": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "p90": null,
+        "p95": null,
+        "max": null,
+        "mean": null
+      },
+      "exact_alias_collapses_in_available_top4_prefix": 915,
+      "conservative_union_lineage_drops_in_available_top4_prefix": 360,
+      "states_with_selected_treatments_sharing_a_source_card": 0,
+      "states_with_selected_treatments_sharing_a_source_card_fraction": 0.0,
+      "token_cap_fit": {
+        "16": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "24": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "32": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "48": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "64": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "96": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "128": {
+          "states": 11883,
+          "fraction": 1.0
+        }
+      }
+    },
+    {
+      "requested_k": 1,
+      "observed_rank_prefix": 1,
+      "states": 11883,
+      "states_with_full_k_after_exact_alias_and_lineage_rules": 11870,
+      "full_k_fraction": 0.9989060001683077,
+      "delivered_canonical_treatments": {
+        "min": 0,
+        "p25": 1,
+        "median": 1,
+        "p75": 1,
+        "p90": 1,
+        "p95": 1,
+        "max": 1,
+        "mean": 0.9989060001683077
+      },
+      "generator_input_tokens": {
+        "min": 0,
+        "p25": 14,
+        "median": 16,
+        "p75": 18,
+        "p90": 21,
+        "p95": 22,
+        "max": 38,
+        "mean": 16.09879660018514
+      },
+      "distinct_family_count": {
+        "min": 0,
+        "p25": 1,
+        "median": 1,
+        "p75": 1,
+        "p90": 1,
+        "p95": 1,
+        "max": 1,
+        "mean": 0.9989060001683077
+      },
+      "top1_minus_top2_similarity_margin": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "p90": null,
+        "p95": null,
+        "max": null,
+        "mean": null
+      },
+      "k_boundary_similarity_margin": {
+        "min": 8.344650268554688e-07,
+        "p25": 0.002069830894470215,
+        "median": 0.005017876625061035,
+        "p75": 0.009834825992584229,
+        "p90": 0.016308963298797607,
+        "p95": 0.02095961570739746,
+        "max": 0.06758904457092285,
+        "mean": 0.0071211323994809965
+      },
+      "exact_alias_collapses_in_available_top4_prefix": 915,
+      "conservative_union_lineage_drops_in_available_top4_prefix": 360,
+      "states_with_selected_treatments_sharing_a_source_card": 0,
+      "states_with_selected_treatments_sharing_a_source_card_fraction": 0.0,
+      "token_cap_fit": {
+        "16": {
+          "states": 6688,
+          "fraction": 0.5628208364891021
+        },
+        "24": {
+          "states": 11683,
+          "fraction": 0.9831692333585795
+        },
+        "32": {
+          "states": 11880,
+          "fraction": 0.9997475385003787
+        },
+        "48": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "64": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "96": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "128": {
+          "states": 11883,
+          "fraction": 1.0
+        }
+      }
+    },
+    {
+      "requested_k": 2,
+      "observed_rank_prefix": 2,
+      "states": 11883,
+      "states_with_full_k_after_exact_alias_and_lineage_rules": 11795,
+      "full_k_fraction": 0.992594462677775,
+      "delivered_canonical_treatments": {
+        "min": 0,
+        "p25": 2,
+        "median": 2,
+        "p75": 2,
+        "p90": 2,
+        "p95": 2,
+        "max": 2,
+        "mean": 1.9915004628460826
+      },
+      "generator_input_tokens": {
+        "min": 0,
+        "p25": 29,
+        "median": 32,
+        "p75": 36,
+        "p90": 40,
+        "p95": 42,
+        "max": 56,
+        "mean": 32.278128418749475
+      },
+      "distinct_family_count": {
+        "min": 0,
+        "p25": 1,
+        "median": 2,
+        "p75": 2,
+        "p90": 2,
+        "p95": 2,
+        "max": 2,
+        "mean": 1.6368762097113523
+      },
+      "top1_minus_top2_similarity_margin": {
+        "min": 8.344650268554688e-07,
+        "p25": 0.002069830894470215,
+        "median": 0.005017876625061035,
+        "p75": 0.009834825992584229,
+        "p90": 0.016308963298797607,
+        "p95": 0.02095961570739746,
+        "max": 0.06758904457092285,
+        "mean": 0.0071211323994809965
+      },
+      "k_boundary_similarity_margin": {
+        "min": 3.5762786865234375e-07,
+        "p25": 0.0012150406837463379,
+        "median": 0.00289076566696167,
+        "p75": 0.005907773971557617,
+        "p90": 0.009997725486755371,
+        "p95": 0.013258576393127441,
+        "max": 0.08241593837738037,
+        "mean": 0.004371984863965804
+      },
+      "exact_alias_collapses_in_available_top4_prefix": 915,
+      "conservative_union_lineage_drops_in_available_top4_prefix": 360,
+      "states_with_selected_treatments_sharing_a_source_card": 1548,
+      "states_with_selected_treatments_sharing_a_source_card_fraction": 0.1302701338045948,
+      "token_cap_fit": {
+        "16": {
+          "states": 88,
+          "fraction": 0.007405537322225027
+        },
+        "24": {
+          "states": 1031,
+          "fraction": 0.08676260203652277
+        },
+        "32": {
+          "states": 6005,
+          "fraction": 0.505343768408651
+        },
+        "48": {
+          "states": 11838,
+          "fraction": 0.9962130775056803
+        },
+        "64": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "96": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "128": {
+          "states": 11883,
+          "fraction": 1.0
+        }
+      }
+    },
+    {
+      "requested_k": 3,
+      "observed_rank_prefix": 3,
+      "states": 11883,
+      "states_with_full_k_after_exact_alias_and_lineage_rules": 11563,
+      "full_k_fraction": 0.9730707733737272,
+      "delivered_canonical_treatments": {
+        "min": 0,
+        "p25": 3,
+        "median": 3,
+        "p75": 3,
+        "p90": 3,
+        "p95": 3,
+        "max": 3,
+        "mean": 2.96457123621981
+      },
+      "generator_input_tokens": {
+        "min": 0,
+        "p25": 44,
+        "median": 49,
+        "p75": 54,
+        "p90": 58,
+        "p95": 61,
+        "max": 76,
+        "mean": 48.32441302701338
+      },
+      "distinct_family_count": {
+        "min": 0,
+        "p25": 2,
+        "median": 2,
+        "p75": 3,
+        "p90": 3,
+        "p95": 3,
+        "max": 3,
+        "mean": 2.123117057981991
+      },
+      "top1_minus_top2_similarity_margin": {
+        "min": 8.344650268554688e-07,
+        "p25": 0.002069830894470215,
+        "median": 0.005017876625061035,
+        "p75": 0.009834825992584229,
+        "p90": 0.016308963298797607,
+        "p95": 0.02095961570739746,
+        "max": 0.06758904457092285,
+        "mean": 0.0071211323994809965
+      },
+      "k_boundary_similarity_margin": {
+        "min": 1.1920928955078125e-07,
+        "p25": 0.0008564591407775879,
+        "median": 0.0020501017570495605,
+        "p75": 0.004249870777130127,
+        "p90": 0.007107257843017578,
+        "p95": 0.009561121463775635,
+        "max": 0.044696033000946045,
+        "mean": 0.0031281444911609177
+      },
+      "exact_alias_collapses_in_available_top4_prefix": 915,
+      "conservative_union_lineage_drops_in_available_top4_prefix": 360,
+      "states_with_selected_treatments_sharing_a_source_card": 3004,
+      "states_with_selected_treatments_sharing_a_source_card_fraction": 0.2527981149541362,
+      "token_cap_fit": {
+        "16": {
+          "states": 88,
+          "fraction": 0.007405537322225027
+        },
+        "24": {
+          "states": 285,
+          "fraction": 0.023983842464024237
+        },
+        "32": {
+          "states": 466,
+          "fraction": 0.0392156862745098
+        },
+        "48": {
+          "states": 5651,
+          "fraction": 0.4755533114533367
+        },
+        "64": {
+          "states": 11646,
+          "fraction": 0.9800555415299167
+        },
+        "96": {
+          "states": 11883,
+          "fraction": 1.0
+        },
+        "128": {
+          "states": 11883,
+          "fraction": 1.0
+        }
+      }
+    },
+    {
+      "requested_k": 4,
+      "observed_rank_prefix": 4,
+      "states": 11883,
+      "states_with_full_k_after_exact_alias_and_lineage_rules": 11029,
+      "full_k_fraction": 0.9281326264411344,
+      "delivered_canonical_treatments": {
+        "min": 0,
+        "p25": 4,
+        "median": 4,
+        "p75": 4,
+        "p90": 4,
+        "p95": 4,
+        "max": 4,
+        "mean": 3.892703862660944
+      },
+      "generator_input_tokens": {
+        "min": 0,
+        "p25": 59,
+        "median": 66,
+        "p75": 71,
+        "p90": 77,
+        "p95": 80,
+        "max": 101,
+        "mean": 63.85584448371623
+      },
+      "distinct_family_count": {
+        "min": 0,
+        "p25": 2,
+        "median": 3,
+        "p75": 3,
+        "p90": 4,
+        "p95": 4,
+        "max": 4,
+        "mean": 2.500378692249432
+      },
+      "top1_minus_top2_similarity_margin": {
+        "min": 8.344650268554688e-07,
+        "p25": 0.002069830894470215,
+        "median": 0.005017876625061035,
+        "p75": 0.009834825992584229,
+        "p90": 0.016308963298797607,
+        "p95": 0.02095961570739746,
+        "max": 0.06758904457092285,
+        "mean": 0.0071211323994809965
+      },
+      "k_boundary_similarity_margin": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "p90": null,
+        "p95": null,
+        "max": null,
+        "mean": null
+      },
+      "exact_alias_collapses_in_available_top4_prefix": 915,
+      "conservative_union_lineage_drops_in_available_top4_prefix": 360,
+      "states_with_selected_treatments_sharing_a_source_card": 4180,
+      "states_with_selected_treatments_sharing_a_source_card_fraction": 0.3517630228056888,
+      "token_cap_fit": {
+        "16": {
+          "states": 88,
+          "fraction": 0.007405537322225027
+        },
+        "24": {
+          "states": 285,
+          "fraction": 0.023983842464024237
+        },
+        "32": {
+          "states": 427,
+          "fraction": 0.0359336867794328
+        },
+        "48": {
+          "states": 988,
+          "fraction": 0.08314398720861735
+        },
+        "64": {
+          "states": 5425,
+          "fraction": 0.45653454514853153
+        },
+        "96": {
+          "states": 11880,
+          "fraction": 0.9997475385003787
+        },
+        "128": {
+          "states": 11883,
+          "fraction": 1.0
+        }
+      }
+    }
+  ],
+  "pure_k_calibration_protocol": {
+    "status": "PRE_REGISTERED_PROTOCOL_CALIBRATION_LOCK_REMAINS_CLOSED",
+    "initial_k_values": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "fixed_nonbinding_generator_input_token_cap": 384,
+    "zero_outcome_truncation": {
+      "0": {
+        "states_truncated": 0,
+        "fraction": 0.0,
+        "observed_max_injected_tokens": 0
+      },
+      "1": {
+        "states_truncated": 0,
+        "fraction": 0.0,
+        "observed_max_injected_tokens": 38
+      },
+      "2": {
+        "states_truncated": 0,
+        "fraction": 0.0,
+        "observed_max_injected_tokens": 56
+      },
+      "3": {
+        "states_truncated": 0,
+        "fraction": 0.0,
+        "observed_max_injected_tokens": 76
+      },
+      "4": {
+        "states_truncated": 0,
+        "fraction": 0.0,
+        "observed_max_injected_tokens": 101
+      }
+    },
+    "actual_injected_tokens": "record the realized tokenizer count separately per trajectory",
+    "expansion_rule": "Expand once to k={6,8} only if k=4 has the highest calibration mean and k=3 is outside the one-standard-error admissible set relative to k=4. Before expanded calls, materialize canonical top-8 and re-audit one fixed nonbinding cap shared by every k; do not inspect confirmatory outcomes.",
+    "reason": "all initial arms vary k only; k=0 preserves the no-injection control, and the shared cap is deliberately nonbinding rather than a second treatment axis",
+    "step2_utility_filter": "FORBIDDEN"
+  }
+}

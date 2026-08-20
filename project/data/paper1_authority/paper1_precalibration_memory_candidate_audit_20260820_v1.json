@@ -1,0 +1,1215 @@
+{
+  "protocol": "pm-paper1-precalibration-memory-candidate-audit-v1",
+  "status": "STRUCTURAL_LINEAGE_PASS_SEMANTIC_SAMPLE_FAIL_CALIBRATION_LOCK_STAYS_CLOSED",
+  "outcome_calls": 0,
+  "calibration_outcome_lock": "CLOSED",
+  "confirmatory_outcome_lock": "CLOSED",
+  "source_identity": {
+    "semantic_results_sha256": "7c6a3dc6d6109679671439ba75975d1e93cadd85ad3264f1fe0bf48547089575",
+    "sanitized_runtime_sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "census_summary_sha256": "0b6b9f957b0511cfb07b3bb06f0b756548d724c19acb4744662f2eb56cea6ec3"
+  },
+  "count_reconciliation": {
+    "legacy_diagnostic": {
+      "MP": 3,
+      "MS": 401,
+      "ME": 3,
+      "reason": "MP and ME were narrow regex extractors; MS was one concatenated document per source session. This was a pre-semantic-compiler diagnostic, not an ontology ceiling."
+    },
+    "semantic_compiler_accepted_before_version_resolution": {
+      "total": 2745,
+      "by_head": {
+        "MP": 607,
+        "MS": 1997,
+        "ME": 141
+      }
+    },
+    "inactive_after_version_resolution": {
+      "unique_units": 876,
+      "by_head": {
+        "MP": 229,
+        "MS": 586,
+        "ME": 61
+      },
+      "relation_reason_occurrences": {
+        "newer_supersedes": 53,
+        "newer_reaffirms": 1234,
+        "newer_updates": 149,
+        "newer_conflicts_with": 3
+      },
+      "note": "one inactive unit may carry more than one relation reason occurrence"
+    },
+    "active_candidate_units": {
+      "total": 1869,
+      "by_head": {
+        "MP": 378,
+        "MS": 1411,
+        "ME": 80
+      },
+      "owners_by_head": {
+        "MP": 18,
+        "MS": 18,
+        "ME": 18
+      }
+    },
+    "exact_explanation": "The increase is a granularity and constructor change: one session can yield multiple typed, atomic, exact-span-grounded proposals; accepted units then undergo outcome-blind version resolution. It is not a change to MP/MS/ME ontology and it does not use basic_info."
+  },
+  "unified_per_task_counts": {
+    "qa": {
+      "MP": {
+        "unique_active_semantic_units": 378,
+        "owners": 18,
+        "target_candidate_edges": 34130,
+        "targets_with_coverage": 1427,
+        "targets_total": 1427,
+        "coverage_fraction": 1.0
+      },
+      "MS": {
+        "unique_active_semantic_units": 1411,
+        "owners": 18,
+        "target_candidate_edges": 114868,
+        "targets_with_coverage": 1427,
+        "targets_total": 1427,
+        "coverage_fraction": 1.0
+      },
+      "ME": {
+        "unique_active_semantic_units": 80,
+        "owners": 18,
+        "target_candidate_edges": 6077,
+        "targets_with_coverage": 1427,
+        "targets_total": 1427,
+        "coverage_fraction": 1.0
+      }
+    },
+    "summary": {
+      "MP": {
+        "unique_active_semantic_units": 378,
+        "owners": 18,
+        "target_candidate_edges": 2662,
+        "targets_with_coverage": 125,
+        "targets_total": 125,
+        "coverage_fraction": 1.0
+      },
+      "MS": {
+        "unique_active_semantic_units": 1411,
+        "owners": 18,
+        "target_candidate_edges": 10488,
+        "targets_with_coverage": 125,
+        "targets_total": 125,
+        "coverage_fraction": 1.0
+      },
+      "ME": {
+        "unique_active_semantic_units": 80,
+        "owners": 18,
+        "target_candidate_edges": 615,
+        "targets_with_coverage": 125,
+        "targets_total": 125,
+        "coverage_fraction": 1.0
+      }
+    },
+    "dialogue_generation": {
+      "MP": {
+        "unique_active_semantic_units": 378,
+        "owners": 18,
+        "target_candidate_edges": 720,
+        "targets_with_coverage": 34,
+        "targets_total": 34,
+        "coverage_fraction": 1.0
+      },
+      "MS": {
+        "unique_active_semantic_units": 1411,
+        "owners": 18,
+        "target_candidate_edges": 2673,
+        "targets_with_coverage": 34,
+        "targets_total": 34,
+        "coverage_fraction": 1.0
+      },
+      "ME": {
+        "unique_active_semantic_units": 80,
+        "owners": 18,
+        "target_candidate_edges": 156,
+        "targets_with_coverage": 34,
+        "targets_total": 34,
+        "coverage_fraction": 1.0
+      }
+    }
+  },
+  "hard_isolation_proof": {
+    "complete_ordered_sessions_replayed": 401,
+    "source_sha256_matches": 401,
+    "prior_memory_table_sha256_matches": 401,
+    "strict_prior_violations": 0,
+    "compiler_projection_keys": [
+      "candidate_source_use",
+      "chronological_rank",
+      "content",
+      "continuity_type",
+      "entities",
+      "historical_outcome_type",
+      "memory_class",
+      "memory_id",
+      "memory_subtype",
+      "normalized_memory",
+      "owner_id",
+      "profile_field_type",
+      "role",
+      "schema_version",
+      "session_id",
+      "source_session_id",
+      "source_session_rank",
+      "strictly_past_memory_table",
+      "timestamp",
+      "timestamp_status",
+      "turn_id",
+      "turn_index",
+      "turns"
+    ],
+    "forbidden_projection_key_hits": [],
+    "read_counts": {
+      "basic_info": 0,
+      "simulator_only_metadata": 0,
+      "gold": 0,
+      "future_sessions": 0,
+      "target_outcome": 0
+    },
+    "proof_interpretation": "All 401 stored source/prior hashes reproduce from SessionCompileInput built from only the current sanitized session and strictly earlier accepted units. The enclosing user object's question_groups, summaries and subsequent_topics are not serialized. ME historical outcome slots in prior accepted memories are source-dialogue facts, not target outcomes."
+  },
+  "mechanical_full_catalog_checks": {
+    "active_mp_units": 378,
+    "active_me_units": 80,
+    "all_active_mp_current_status": true,
+    "all_active_me_completed_with_nonempty_action_and_outcome_spans": true,
+    "all_supporting_spans_exact_and_seeker_only": true,
+    "me_same_span_set_for_action_and_outcome": 63,
+    "interpretation": "Schema/grounding guarantees are necessary but not sufficient: identical action/outcome span sets can be valid in a compact utterance or invalid when one event is duplicated into both slots. The fixed-seed semantic sample below tests that distinction."
+  },
+  "fixed_seed_stratified_examples": {
+    "sampling_rule": "SHA-256(seed='paper1-precalibration-seed0', memory_id), take two per MP field type and up to five per ME outcome type",
+    "reviewer_scope": "single-reviewer pre-calibration audit, not benchmark outcome or training label",
+    "MP": {
+      "verdict_counts": {
+        "PASS": 10,
+        "FAIL": 8,
+        "REVIEW": 2
+      },
+      "examples": [
+        {
+          "memory_id": "smu_0576a6bbec8bc7334671542d",
+          "stratum": "age",
+          "owner_id": "p15",
+          "source_session_id": "esc1138",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-06-10",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 22,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc1138:turn:17",
+              "role": "seeker",
+              "full_turn_text": "I'm 26",
+              "exact_supporting_span": "I'm 26",
+              "start_char": 0,
+              "end_char": 6
+            }
+          ],
+          "rendered_candidate": "Profile fact [age]: I'm 26",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The span 'I'm 26' (span_17) directly supports the factual claim about the owner's current age, which is a durable profile fact. It is explicitly stated and contextually current.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "direct durable owner age"
+        },
+        {
+          "memory_id": "smu_b6914391cc6ddc6dc65643ef",
+          "stratum": "age",
+          "owner_id": "p11",
+          "source_session_id": "p11_conv_12",
+          "source_session_rank": 16,
+          "source_timestamp": "2025-03-25",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 23,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p11_conv_12:turn:2",
+              "role": "seeker",
+              "full_turn_text": "Hi there! It's been a bit of a mixed bag recently. I just celebrated my 18th birthday.",
+              "exact_supporting_span": "Hi there! It's been a bit of a mixed bag recently. I just celebrated my 18th birthday.",
+              "start_char": 0,
+              "end_char": 86
+            }
+          ],
+          "rendered_candidate": "Profile fact [age]: The seeker is 18 years old.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_496a301b8ef90ec6c6cc3c89",
+              "relation": "updates"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The factual claim 'The seeker is 18 years old' is directly entailed by the seeker stating they 'just celebrated my 18th birthday' in span s1. This constitutes a durable current profile fact about age, correctly updating the prior MP about being 17, and is atomic and well-supported.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "direct durable owner age update"
+        },
+        {
+          "memory_id": "smu_84af73261d0cfa43329a8722",
+          "stratum": "education",
+          "owner_id": "p4",
+          "source_session_id": "esc508",
+          "source_session_rank": 7,
+          "source_timestamp": "2025-03-01",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 22,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc508:turn:4",
+              "role": "seeker",
+              "full_turn_text": "She's a year ahead of me in college and will be graduating in May. She's looking at jobs in the northwestern region, but I'd planned on looking at graduate schools in the south. However, we've always planned on living together after college, but my career path would be best served in the southern states. I don't know how to bring this up to her.",
+              "exact_supporting_span": "She's a year ahead of me in college and will be graduating in May. She's looking at jobs in the northwestern region, but I'd planned on looking at graduate schools in the south.",
+              "start_char": 0,
+              "end_char": 177
+            }
+          ],
+          "rendered_candidate": "Profile fact [education]: The seeker is currently in college and plans to apply to graduate schools.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The span 'She's a year ahead of me in college and will be graduating in May. She's looking at jobs in the northwestern region, but I'd planned on looking at graduate schools in the south.' clearly indicates the seeker is currently in college and plans to apply to graduate schools, supporting a current education status (MP).",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "compound future plan is included in a current education fact"
+        },
+        {
+          "memory_id": "smu_25d62c242ebbde30d3cad3dd",
+          "stratum": "education",
+          "owner_id": "p4",
+          "source_session_id": "esc508",
+          "source_session_rank": 7,
+          "source_timestamp": "2025-03-01",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 22,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc508:turn:4",
+              "role": "seeker",
+              "full_turn_text": "She's a year ahead of me in college and will be graduating in May. She's looking at jobs in the northwestern region, but I'd planned on looking at graduate schools in the south. However, we've always planned on living together after college, but my career path would be best served in the southern states. I don't know how to bring this up to her.",
+              "exact_supporting_span": "She's a year ahead of me in college and will be graduating in May.",
+              "start_char": 0,
+              "end_char": 66
+            }
+          ],
+          "rendered_candidate": "Profile fact [education]: The seeker's girlfriend is in her final year of college and will graduate in May.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The span 'She's a year ahead of me in college and will be graduating in May.' directly supports that the girlfriend is in her final year of college and will graduate in May, which qualifies as a current educational status (MP).",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "third-party girlfriend education, not owner profile"
+        },
+        {
+          "memory_id": "smu_cca3b3479250db2ee9211765",
+          "stratum": "enduring_interest_habit",
+          "owner_id": "p16",
+          "source_session_id": "p16_conv_19",
+          "source_session_rank": 23,
+          "source_timestamp": "2025-08-30",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p16_conv_19:turn:14",
+              "role": "seeker",
+              "full_turn_text": "I started painting a while back, mostly to manage stress, but now it feels like another thing I need to perfect. It's paradoxically stressing me out more.",
+              "exact_supporting_span": "I started painting a while back, mostly to manage stress, but now it feels like another thing I need to perfect. It's paradoxically stressing me out more.",
+              "start_char": 0,
+              "end_char": 154
+            }
+          ],
+          "rendered_candidate": "Profile fact [enduring_interest_habit]: The seeker continues to engage in painting as a hobby intended for stress management.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_906e934f967cdd00f3eb0e38",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker confirms they continue painting as a hobby originally intended for stress management, reaffirming a prior enduring interest/habit.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "ongoing owner hobby is durable despite a current consequence"
+        },
+        {
+          "memory_id": "smu_34a2952dbfe07080e506a9f8",
+          "stratum": "enduring_interest_habit",
+          "owner_id": "p10",
+          "source_session_id": "p10_conv_13",
+          "source_session_rank": 16,
+          "source_timestamp": "2025-09-10",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 18,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p10_conv_13:turn:2",
+              "role": "seeker",
+              "full_turn_text": "Hi there! Yeah, I did. His name is Max. Having a dog around has been a new experience.",
+              "exact_supporting_span": "Hi there! Yeah, I did. His name is Max. Having a dog around has been a new experience.",
+              "start_char": 0,
+              "end_char": 86
+            }
+          ],
+          "rendered_candidate": "Profile fact [enduring_interest_habit]: The seeker has adopted a dog named Max.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states 'Yeah, I did. His name is Max' in response to adoption, confirming ownership and naming. This establishes a durable current fact about a new pet, qualifying as a valid MP (enduring_interest_habit).",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "durable owner pet-ownership fact"
+        },
+        {
+          "memory_id": "smu_b7dad680d4ac06c9d6cc49d6",
+          "stratum": "health_condition",
+          "owner_id": "p3",
+          "source_session_id": "p3_conv_15",
+          "source_session_rank": 18,
+          "source_timestamp": "2025-12-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 28,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p3_conv_15:turn:11",
+              "role": "seeker",
+              "full_turn_text": "Honestly, not great. I've had setbacks in my studies due to health issues recently, and this news just added to it.",
+              "exact_supporting_span": "Honestly, not great. I've had setbacks in my studies due to health issues recently, and this news just added to it.",
+              "start_char": 0,
+              "end_char": 115
+            }
+          ],
+          "rendered_candidate": "Profile fact [health_condition]: The seeker is experiencing health issues affecting their studies.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_df7c08e4a82ebc5fbb806e03",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker says, 'I've had setbacks in my studies due to health issues recently,' which directly supports the factual claim about experiencing health issues affecting studies. This reaffirms the existing MP 'The seeker is experiencing headaches and fatigue' (memory_id: smu_df7c08e4a82ebc5fbb806e03) as a current profile fact relevant to academic functioning.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "recent unspecified health difficulty is situational/insufficiently durable"
+        },
+        {
+          "memory_id": "smu_2101af1cacb39d9eef742686",
+          "stratum": "health_condition",
+          "owner_id": "p7",
+          "source_session_id": "esc1231",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-07-17",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 19,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc1231:turn:3",
+              "role": "seeker",
+              "full_turn_text": "i am really depressed because of my friends",
+              "exact_supporting_span": "i am really depressed because of my friends",
+              "start_char": 0,
+              "end_char": 43
+            }
+          ],
+          "rendered_candidate": "Profile fact [health_condition]: The seeker is currently experiencing depression.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states 'i am really depressed because of my friends' in turn 3, which supports a current profile fact about experiencing depression. This is a durable self-reported emotional state fitting MP class with direct source support.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "situational depressed feeling is promoted to a durable condition"
+        },
+        {
+          "memory_id": "smu_b0bcb752c4f581b626728e7f",
+          "stratum": "identity",
+          "owner_id": "p16",
+          "source_session_id": "esc538",
+          "source_session_rank": 3,
+          "source_timestamp": "2024-09-01",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc538:turn:13",
+              "role": "seeker",
+              "full_turn_text": "That's a great idea. It is possible. I am the new kid on the block. I will try by being non confrontational. Any specific ideas to how  I can do that? She gets offended easily. I want her to know I am helping. ",
+              "exact_supporting_span": "That's a great idea. It is possible. I am the new kid on the block. I will try by being non confrontational. Any specific ideas to how  I can do that? She gets offended easily. I want her to know I am helping. ",
+              "start_char": 0,
+              "end_char": 210
+            }
+          ],
+          "rendered_candidate": "Profile fact [identity]: The seeker identifies as 'the new kid on the block' at work.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker self-identifies as 'the new kid on the block,' establishing a current work identity relevant to role dynamics, qualifying as an identity-type MP.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "temporary new-kid-at-work narration is not stable identity"
+        },
+        {
+          "memory_id": "smu_2d8695b92b0e7e0e6313a84a",
+          "stratum": "identity",
+          "owner_id": "p7",
+          "source_session_id": "esc75",
+          "source_session_rank": 15,
+          "source_timestamp": "2025-09-11",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 19,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc75:turn:13",
+              "role": "seeker",
+              "full_turn_text": "I could say I am a female that is one of those left out ",
+              "exact_supporting_span": "I could say I am a female that is one of those left out ",
+              "start_char": 0,
+              "end_char": 56
+            }
+          ],
+          "rendered_candidate": "Profile fact [identity]: The seeker identifies as female.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states 'I could say I am a female that is one of those left out', which directly supports the factual claim that they identify as female. This is a durable current profile fact supported by exact seeker span.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "direct durable owner identity"
+        },
+        {
+          "memory_id": "smu_5d8e2c68bf39543a653b765f",
+          "stratum": "location",
+          "owner_id": "p9",
+          "source_session_id": "esc88",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-07-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 21,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc88:turn:15",
+              "role": "seeker",
+              "full_turn_text": "I'm in a rural area, and I'm interested in women.",
+              "exact_supporting_span": "I'm in a rural area, and I'm interested in women.",
+              "start_char": 0,
+              "end_char": 49
+            }
+          ],
+          "rendered_candidate": "Profile fact [location]: The seeker lives in a rural area.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states 'I'm in a rural area, and I'm interested in women.' in turn esc88:turn:15, which directly supports the claim about living in a rural area. This qualifies as a relatively durable location-based profile fact.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "direct current owner location"
+        },
+        {
+          "memory_id": "smu_fbf565ad4f3913324b17afce",
+          "stratum": "location",
+          "owner_id": "p15",
+          "source_session_id": "esc1138",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-06-10",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 22,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc1138:turn:11",
+              "role": "seeker",
+              "full_turn_text": "I have. It's been a long stressful month of discussion. The problem is I don't share their beliefs, and I haven't been really \"saving myself\". I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about.",
+              "exact_supporting_span": "I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about.",
+              "start_char": 143,
+              "end_char": 290
+            }
+          ],
+          "rendered_candidate": "Profile fact [location]: I live away from my parents for college",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The span 'I'm been living away from them for collage quite a while...' (span_11) indicates a current residential separation from parents for college, constituting a valid and supported location-based profile fact.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "direct current owner residence status"
+        },
+        {
+          "memory_id": "smu_dceff7d7a9c7453af231d82b",
+          "stratum": "occupation",
+          "owner_id": "p3",
+          "source_session_id": "p3_conv_17",
+          "source_session_rank": 20,
+          "source_timestamp": "2026-01-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 28,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p3_conv_17:turn:4",
+              "role": "seeker",
+              "full_turn_text": "Well, after everything that happened last year, with switching my major and the issues with my family and friends, I felt like something needed to change.",
+              "exact_supporting_span": "after everything that happened last year, with switching my major and the issues with my family and friends",
+              "start_char": 6,
+              "end_char": 113
+            }
+          ],
+          "rendered_candidate": "Profile fact [occupation]: The seeker is in college and has switched to a new major.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_5b37be5d8a2f1387cbee7ed5",
+              "relation": "updates"
+            },
+            {
+              "memory_id": "smu_9c9a7309bb9ed52e1393b811",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states they switched majors last year, which aligns with prior MP updates about changing to psychology. This reaffirms and updates the durable profile fact about their occupation as being in college with a new major, supported by direct seeker utterance and consistent with historical MS transitions.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "education/major history is mislabeled occupation and adds prior-table inference"
+        },
+        {
+          "memory_id": "smu_50dbb5cab91f05e685c94433",
+          "stratum": "occupation",
+          "owner_id": "p5",
+          "source_session_id": "p5_conv_13",
+          "source_session_rank": 16,
+          "source_timestamp": "2025-09-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 20,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p5_conv_13:turn:14",
+              "role": "seeker",
+              "full_turn_text": "Not yet. Things have been better between us since she's started full-time, but I guess I'm still figuring out my thoughts first.",
+              "exact_supporting_span": "Not yet. Things have been better between us since she's started full-time, but I guess I'm still figuring out my thoughts first.",
+              "start_char": 0,
+              "end_char": 128
+            }
+          ],
+          "rendered_candidate": "Profile fact [occupation]: Margaret is currently employed full-time.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The claim 'Margaret is currently employed full-time' is directly stated in turn 14 ('since she's started full-time') and reflects a current, durable occupational status, satisfying MP requirements.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "third-party Margaret occupation, not owner profile"
+        },
+        {
+          "memory_id": "smu_6a6f47b47a3102227aea9bde",
+          "stratum": "other_durable_profile",
+          "owner_id": "p16",
+          "source_session_id": "p16_conv_1",
+          "source_session_rank": 2,
+          "source_timestamp": "2024-07-25",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p16_conv_1:turn:2",
+              "role": "seeker",
+              "full_turn_text": "Hey! I've been feeling a bit off after attending my aunt's memorial service last week.",
+              "exact_supporting_span": "Hey! I've been feeling a bit off after attending my aunt's memorial service last week.",
+              "start_char": 0,
+              "end_char": 86
+            }
+          ],
+          "rendered_candidate": "Profile fact [other_durable_profile]: The seeker attended their aunt's memorial service last week.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_d9c5fee7a23e6877b384acde",
+              "relation": "corefers_with"
+            },
+            {
+              "memory_id": "smu_49a0125b7d558b8bd3e2d72a",
+              "relation": "corefers_with"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states they attended their aunt's memorial service last week. This is a durable current-state fact supported by the exact span and co-refers with prior memories about the aunt's passing, making it a valid MP.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "one memorial attendance event is MS narration, not durable profile"
+        },
+        {
+          "memory_id": "smu_98d4a8d911adf997736496b0",
+          "stratum": "other_durable_profile",
+          "owner_id": "p13",
+          "source_session_id": "esc1198",
+          "source_session_rank": 14,
+          "source_timestamp": "2025-06-10",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 23,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc1198:turn:4",
+              "role": "seeker",
+              "full_turn_text": "I recently discovered some discrepancies in my paycheck.  I am not sure what to do to correct the situation.  I am just so upset right now.",
+              "exact_supporting_span": "I recently discovered some discrepancies in my paycheck.",
+              "start_char": 0,
+              "end_char": 56
+            }
+          ],
+          "rendered_candidate": "Profile fact [other_durable_profile]: I have a job where I receive a paycheck.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states 'I recently discovered some discrepancies in my paycheck,' which directly supports the existence of a job with a paycheck. This is a durable current profile fact.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "paycheck disclosure supports an owner employment fact"
+        },
+        {
+          "memory_id": "smu_208c6bad2a293f000f4cda4c",
+          "stratum": "stable_social_role",
+          "owner_id": "p18",
+          "source_session_id": "p18_conv_8",
+          "source_session_rank": 11,
+          "source_timestamp": "2025-07-25",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 14,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p18_conv_8:turn:3",
+              "role": "seeker",
+              "full_turn_text": "Well, Jane and I planned a surprise weekend getaway to try and reconnect, but I'm feeling a bit overwhelmed.",
+              "exact_supporting_span": "Jane and I planned a surprise weekend getaway",
+              "start_char": 6,
+              "end_char": 51
+            }
+          ],
+          "rendered_candidate": "Profile fact [stable_social_role]: is married",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_5df6d661dd80ee1d529de3a5",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The span 'Jane and I planned a surprise weekend getaway' supports that the seeker is in a committed relationship with Jane, consistent with being married. The prior memory 'is married' (smu_5df6d661dd80ee1d529de3a5) is reaffirmed, and the actor matches. MP class requires durable current state, which marriage satisfies.",
+          "precalibration_human_audit_verdict": "REVIEW",
+          "precalibration_human_audit_reason": "marriage is stable but this turn only reaffirms it indirectly through a prior memory"
+        },
+        {
+          "memory_id": "smu_c8b0d537ed256ab06d8c272d",
+          "stratum": "stable_social_role",
+          "owner_id": "p12",
+          "source_session_id": "p12_conv_15",
+          "source_session_rank": 19,
+          "source_timestamp": "2025-09-25",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 20,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p12_conv_15:turn:2",
+              "role": "seeker",
+              "full_turn_text": "Hi, it's been a bit tough lately. I just found out Jessica is moving away for a job.",
+              "exact_supporting_span": "Hi, it's been a bit tough lately. I just found out Jessica is moving away for a job.",
+              "start_char": 0,
+              "end_char": 84
+            }
+          ],
+          "rendered_candidate": "Profile fact [stable_social_role]: I have a close friendship with Jessica.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states 'I just found out Jessica is moving away for a job,' which directly supports the existence of a current close friendship with Jessica. This qualifies as a durable profile fact about a stable social role.",
+          "precalibration_human_audit_verdict": "REVIEW",
+          "precalibration_human_audit_reason": "friendship may be stable but closeness is inferred through prior context"
+        },
+        {
+          "memory_id": "smu_d4bc26a7361570f79b6ce3f5",
+          "stratum": "trait_tendency",
+          "owner_id": "p15",
+          "source_session_id": "esc119",
+          "source_session_rank": 3,
+          "source_timestamp": "2024-09-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 22,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc119:turn:8",
+              "role": "seeker",
+              "full_turn_text": "I want to be in the program, it's just that I feel like everyone is so much smarter than me and my performance in that class makes me question my admission into the programs sometimes. When I feel like this after submitting homework, I end up crying because I just want to do well. I enjoy this field, just not this  class in particular. ",
+              "exact_supporting_span": "I want to be in the program, it's just that I feel like everyone is so much smarter than me and my performance in that class makes me question my admission into the programs sometimes.",
+              "start_char": 0,
+              "end_char": 184
+            }
+          ],
+          "rendered_candidate": "Profile fact [trait_tendency]: I tend to doubt my academic worthiness despite wanting to be in the program",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The claim 'I tend to doubt my academic worthiness despite wanting to be in the program' is directly entailed by the seeker's statement in ss_2: questioning admission due to feeling less smart and poor performance. This reflects a stable tendency, suitable for MP with trait_tendency subtype, and is durably stated.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "recurrent self-doubt tendency is directly expressed"
+        },
+        {
+          "memory_id": "smu_b602d4b345d95c2090ff1f9c",
+          "stratum": "trait_tendency",
+          "owner_id": "p1",
+          "source_session_id": "p1_conv_10",
+          "source_session_rank": 13,
+          "source_timestamp": "2025-04-10",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 32,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p1_conv_10:turn:16",
+              "role": "seeker",
+              "full_turn_text": "Not really. I still feel like work can't function without me there. But maybe it's something I need to reconsider.",
+              "exact_supporting_span": "Not really. I still feel like work can't function without me there. But maybe it's something I need to reconsider.",
+              "start_char": 0,
+              "end_char": 114
+            }
+          ],
+          "rendered_candidate": "Profile fact [trait_tendency]: I feel that work cannot function without me present.",
+          "linked_prior_relations": [],
+          "compiler_rule": "MP must be a durable current owner profile fact",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The claim 'I still feel like work can't function without me there' expresses a current belief or perception about self-importance at work, which is a valid MP-level trait_tendency.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "recurrent work-responsibility belief is directly expressed"
+        }
+      ]
+    },
+    "ME": {
+      "verdict_counts": {
+        "PASS": 10,
+        "FAIL": 2
+      },
+      "examples": [
+        {
+          "memory_id": "smu_a27fb1d5fef2cf374dba67f2",
+          "stratum": "mixed",
+          "owner_id": "p6",
+          "source_session_id": "p6_conv_10",
+          "source_session_rank": 14,
+          "source_timestamp": "2025-03-20",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p6_conv_10:turn:5",
+              "role": "seeker",
+              "full_turn_text": "We actually had a really deep conversation a few days ago. Lots of tears but good ones, I think.",
+              "exact_supporting_span": "We actually had a really deep conversation a few days ago. Lots of tears but good ones, I think.",
+              "start_char": 0,
+              "end_char": 96
+            },
+            {
+              "turn_id": "p6_conv_10:turn:7",
+              "role": "seeker",
+              "full_turn_text": "It was a mix of relief and lingering sadness. I’m happy we cleared the air, but all those pent-up emotions were exhausting.",
+              "exact_supporting_span": "It was a mix of relief and lingering sadness. I’m happy we cleared the air, but all those pent-up emotions were exhausting.",
+              "start_char": 0,
+              "end_char": 123
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker had a deep, emotional conversation with Eliza to reconcile after a prior argument. User-observed outcome [mixed]: The seeker experienced a mix of relief and emotional exhaustion, feeling that they cleared the air but were drained by the release of pent-up emotions.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker reports having a deep emotional conversation with Eliza involving tears and resolution, resulting in mixed feelings of relief and exhaustion. The action (conversation) and observed outcome (emotional mix and exhaustion) are directly stated by the seeker and grounded in the dialogue spans.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit conversation action followed by mixed self-observed result"
+        },
+        {
+          "memory_id": "smu_4483c0f61788baae18d18266",
+          "stratum": "mixed",
+          "owner_id": "p7",
+          "source_session_id": "p7_conv_10",
+          "source_session_rank": 13,
+          "source_timestamp": "2025-08-05",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 19,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p7_conv_10:turn:15",
+              "role": "seeker",
+              "full_turn_text": "I've been trying meditation and some breathing exercises. They help a bit but don't eliminate the worry completely.",
+              "exact_supporting_span": "I've been trying meditation and some breathing exercises. They help a bit but don't eliminate the worry completely.",
+              "start_char": 0,
+              "end_char": 115
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker tried meditation and breathing exercises. User-observed outcome [mixed]: The seeker observed that these practices help a bit but do not eliminate worry completely.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_65c2c173fdb3dd6859025e36",
+              "relation": "corefers_with"
+            }
+          ],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker performed the action of trying meditation and breathing exercises, and directly observed the outcome that these practices help a bit but do not eliminate worry completely. The action and outcome are from the same experience lineage and are both self-observed.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit practice and mixed self-observed effect"
+        },
+        {
+          "memory_id": "smu_5e2faa22b0229adba561ddae",
+          "stratum": "negative",
+          "owner_id": "p13",
+          "source_session_id": "p13_conv_4",
+          "source_session_rank": 5,
+          "source_timestamp": "2024-12-20",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 23,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p13_conv_4:turn:4",
+              "role": "seeker",
+              "full_turn_text": "It's been a lot at work. The pressure has really been getting to me lately, and I actually had a panic attack a few days ago.",
+              "exact_supporting_span": "It's been a lot at work. The pressure has really been getting to me lately, and I actually had a panic attack a few days ago.",
+              "start_char": 0,
+              "end_char": 125
+            }
+          ],
+          "rendered_candidate": "Past action: had a panic attack User-observed outcome [negative]: I actually had a panic attack a few days ago.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states 'I actually had a panic attack a few days ago' in turn 4, which supports both the action and observed outcome. The event is self-observed, completed, and within the owner's experience lineage.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "panic attack is duplicated as both action and outcome; no action-to-result lineage"
+        },
+        {
+          "memory_id": "smu_9f724af1e653f4a579ab8cbf",
+          "stratum": "negative",
+          "owner_id": "p8",
+          "source_session_id": "esc242",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-07-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 33,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc242:turn:14",
+              "role": "seeker",
+              "full_turn_text": "I'm at my wits end. I tell him all the time. \"You talk too much. You gotta stop talking at me. You gotta give the other person a turn. You gotta respect other's time.\"",
+              "exact_supporting_span": "I'm at my wits end. I tell him all the time. \"You talk too much. You gotta stop talking at me. You gotta give the other person a turn. You gotta respect other's time.\"",
+              "start_char": 0,
+              "end_char": 167
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker repeatedly told their friend to talk less and respect conversational turns and time. User-observed outcome [negative]: The friend continues to dominate conversations despite repeated feedback.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states they repeatedly told their friend to talk less and respect conversational turns, and observes that the friend continues to dominate conversations despite this feedback. The action and its sustained negative outcome are clearly reported as completed and observed.",
+          "precalibration_human_audit_verdict": "FAIL",
+          "precalibration_human_audit_reason": "cited span states repeated feedback but not the claimed continuing outcome"
+        },
+        {
+          "memory_id": "smu_e6992c0803f13130214d0377",
+          "stratum": "negative",
+          "owner_id": "p2",
+          "source_session_id": "esc955",
+          "source_session_rank": 2,
+          "source_timestamp": "2024-09-01",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 26,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc955:turn:12",
+              "role": "seeker",
+              "full_turn_text": "I tried a couple of times, but my mom always sees it as being too sensitive",
+              "exact_supporting_span": "I tried a couple of times, but my mom always sees it as being too sensitive",
+              "start_char": 0,
+              "end_char": 75
+            }
+          ],
+          "rendered_candidate": "Past action: Tried to talk about feelings with parents. User-observed outcome [negative]: Mother dismissed the feelings as sensitivity, leading to no resolution.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The proposal includes a completed owner action ('tried to talk') and an observed outcome ('mom sees it as sensitivity, no resolution'), both drawn from the same experience lineage in the seeker's report. The outcome is negative and directly observed.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit attempt and directly observed dismissal"
+        },
+        {
+          "memory_id": "smu_1a1c4fb276f099c997b57f32",
+          "stratum": "negative",
+          "owner_id": "p7",
+          "source_session_id": "p7_conv_3",
+          "source_session_rank": 6,
+          "source_timestamp": "2025-01-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 19,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p7_conv_3:turn:7",
+              "role": "seeker",
+              "full_turn_text": "I did see a doctor a while back, but it hasn't improved much. It's frustrating because it's affecting my work and everything else in my life.",
+              "exact_supporting_span": "I did see a doctor a while back, but it hasn't improved much. It's frustrating because it's affecting my work and everything else in my life.",
+              "start_char": 0,
+              "end_char": 141
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker saw a doctor about their sleep issues. User-observed outcome [negative]: The seeker's sleep issues have not improved significantly since seeing the doctor.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker reports seeing a doctor about sleep issues (action) and observes that it hasn't improved much (outcome), forming a complete, owner-observed action-outcome lineage from the same experience.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit doctor visit and observed lack of improvement"
+        },
+        {
+          "memory_id": "smu_9d2a562660507167d724f7bb",
+          "stratum": "negative",
+          "owner_id": "p8",
+          "source_session_id": "esc242",
+          "source_session_rank": 1,
+          "source_timestamp": "2024-07-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 33,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "esc242:turn:12",
+              "role": "seeker",
+              "full_turn_text": "He will literally talk up to 10 minutes without letting you have a word in. As far as that advice, I have hung up, but he gets extremely offended easily.",
+              "exact_supporting_span": "He will literally talk up to 10 minutes without letting you have a word in. As far as that advice, I have hung up, but he gets extremely offended easily.",
+              "start_char": 0,
+              "end_char": 153
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker hung up the phone during a conversation with their friend. User-observed outcome [negative]: The friend became extremely offended.",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker reports having hung up the phone during a conversation ('I have hung up'), and observed the outcome: the friend became extremely offended. Both action and outcome are directly stated and completed within the same experience lineage.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit hang-up and observed reaction"
+        },
+        {
+          "memory_id": "smu_f88245e046ae62574296a29d",
+          "stratum": "positive",
+          "owner_id": "p3",
+          "source_session_id": "p3_conv_5",
+          "source_session_rank": 7,
+          "source_timestamp": "2025-06-15",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 28,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p3_conv_5:turn:13",
+              "role": "seeker",
+              "full_turn_text": "Yeah, you're right. I did sort things out with him. It was tough, but I'm glad I pushed through.",
+              "exact_supporting_span": "Yeah, you're right. I did sort things out with him. It was tough, but I'm glad I pushed through.",
+              "start_char": 0,
+              "end_char": 96
+            }
+          ],
+          "rendered_candidate": "Past action: resolved conflict with a friend previously User-observed outcome [positive]: felt glad about pushing through the conflict resolution process",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_bfe2106ecfa58229f06e0552",
+              "relation": "corefers_with"
+            },
+            {
+              "memory_id": "smu_73f5e3856b3e50e17d2a5e8e",
+              "relation": "corefers_with"
+            }
+          ],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states they resolved a conflict with a friend ('I did sort things out with him') and expresses a positive observed outcome ('I'm glad I pushed through'), which aligns with prior MS memories about the conflict and reconciliation with Henry. The action and outcome are completed, self-observed, and form a coherent experience lineage.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit conflict resolution and self-observed positive reaction"
+        },
+        {
+          "memory_id": "smu_08a5fe218ef39050888c4476",
+          "stratum": "positive",
+          "owner_id": "p13",
+          "source_session_id": "p13_conv_5",
+          "source_session_rank": 6,
+          "source_timestamp": "2025-01-05",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 23,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p13_conv_5:turn:12",
+              "role": "seeker",
+              "full_turn_text": "I've started journaling a bit. I think putting my thoughts on paper helps me process them better. Plus, it helps distract me from worrying about work.",
+              "exact_supporting_span": "I've started journaling a bit. I think putting my thoughts on paper helps me process them better. Plus, it helps distract me from worrying about work.",
+              "start_char": 0,
+              "end_char": 150
+            }
+          ],
+          "rendered_candidate": "Past action: started journaling User-observed outcome [positive]: putting my thoughts on paper helps me process them better and helps distract me from worrying about work",
+          "linked_prior_relations": [],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker states they started journaling (completed action) and directly observes that putting thoughts on paper helps process them and distracts from work worries (observed outcomes), forming a complete, self-contained experience with clear action-outcome lineage in the same utterance.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit journaling and self-observed benefit"
+        },
+        {
+          "memory_id": "smu_78767b80ccd77fab7a28914a",
+          "stratum": "positive",
+          "owner_id": "p6",
+          "source_session_id": "p6_conv_17",
+          "source_session_rank": 21,
+          "source_timestamp": "2025-08-25",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p6_conv_17:turn:18",
+              "role": "seeker",
+              "full_turn_text": "I think just having someone to talk to about it helps. You being here and listening makes a difference. It makes me feel less overwhelmed.",
+              "exact_supporting_span": "I think just having someone to talk to about it helps. You being here and listening makes a difference. It makes me feel less overwhelmed.",
+              "start_char": 0,
+              "end_char": 138
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker talked to the supporter about their feelings regarding the missed promotion and related struggles. User-observed outcome [positive]: The seeker felt less overwhelmed after talking to the supporter.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_6229579e6cd6aa90510cfac7",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states that talking helps, being listened to makes a difference, and reduces feeling overwhelmed. Action and observed outcome are directly stated by the seeker in the same experience lineage.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit supportive conversation and self-observed relief"
+        },
+        {
+          "memory_id": "smu_7ae21187e0eeb78733f8b9a0",
+          "stratum": "positive",
+          "owner_id": "p16",
+          "source_session_id": "p16_conv_5",
+          "source_session_rank": 8,
+          "source_timestamp": "2024-11-20",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 25,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p16_conv_5:turn:11",
+              "role": "seeker",
+              "full_turn_text": "I've mended things with a coworker recently, which has helped a bit. But it's still so lonely dealing with this.",
+              "exact_supporting_span": "I've mended things with a coworker recently, which has helped a bit. But it's still so lonely dealing with this.",
+              "start_char": 0,
+              "end_char": 112
+            }
+          ],
+          "rendered_candidate": "Past action: The seeker mended things with a coworker. User-observed outcome [positive]: The seeker observed that mending the relationship helped a bit with their situation.",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_1a20a66f6997fdf497d2f2be",
+              "relation": "corefers_with"
+            }
+          ],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker explicitly states they 'mended things with a coworker recently, which has helped a bit,' indicating a completed owner action (mending the relationship) and an observed outcome (helped a bit). This satisfies ME requirements for a completed action and owner-observed outcome from the same experience lineage.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit relationship repair and self-observed benefit"
+        },
+        {
+          "memory_id": "smu_b1b0347933a94f29d209424c",
+          "stratum": "positive",
+          "owner_id": "p3",
+          "source_session_id": "p3_conv_18",
+          "source_session_rank": 21,
+          "source_timestamp": "2026-01-20",
+          "strict_past_proof": {
+            "target_history_cutoff_rank": 28,
+            "source_rank_lt_cutoff": true
+          },
+          "exact_source_turns": [
+            {
+              "turn_id": "p3_conv_18:turn:23",
+              "role": "seeker",
+              "full_turn_text": "Thanks a lot. It really helps having someone to talk to.",
+              "exact_supporting_span": "Thanks a lot. It really helps having someone to talk to.",
+              "start_char": 0,
+              "end_char": 56
+            }
+          ],
+          "rendered_candidate": "Past action: talked with the supporter User-observed outcome [positive]: felt helped by talking about their feelings",
+          "linked_prior_relations": [
+            {
+              "memory_id": "smu_63cef39d8c3d6c69c6aa9648",
+              "relation": "reaffirms"
+            }
+          ],
+          "compiler_rule": "ME must be an explicit completed owner action plus owner-observed outcome in one experience lineage",
+          "compiler_verifier_reason": "accepted",
+          "compiler_verifier_factual_rationale": "The seeker performed the action 'talked with the supporter' and reported the observed outcome 'felt helped by talking about their feelings,' which matches prior ME experiences and forms a complete, observed action-outcome lineage within this session.",
+          "precalibration_human_audit_verdict": "PASS",
+          "precalibration_human_audit_reason": "explicit conversation and self-observed benefit"
+        }
+      ]
+    }
+  },
+  "decision": {
+    "structural_lineage": "PASS",
+    "semantic_candidate_catalog": "NO_GO_FOR_CALIBRATION_AS_CURRENTLY_MATERIALIZED",
+    "reason": "The fixed-seed sample contains MP situational/third-party leakage and ME action-outcome lineage failures. Candidate counts remain descriptive, but 378/80 cannot be treated as audited-valid formal MP/ME inventories. No ontology/compiler change is made in this round."
+  }
+}

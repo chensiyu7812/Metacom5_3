@@ -2,22 +2,29 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
-2. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
-3. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-4. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-5. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-6. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-7. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-8. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-9. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-10. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-11. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
+2. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
+3. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
+4. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
+5. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
+6. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
+7. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
+8. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+9. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+10. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+11. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+12. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+13. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+14. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+15. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+16. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
 ## Authority precedence
 
+- **The 2026-08-20 pre-qualification consolidation amendment has scoped precedence only** for the six-layer qualification/calibration/evaluation sequence, the four independent RQ1/RQ2 calibration/confirmatory locks, exact-treatment canonical Top-8 materialization, qualification packet/harness requirements, semantic-compiler precision requalification, and master decision status vocabulary. It does not alter the core research route, learner, threshold, Generator, public-source rule, benchmark arms, or official metric hierarchy.
+- **The 2026-08-20 resource-amount/evaluator-calibration amendment has scoped precedence only** for downgrading RS Top-1 from final primary to a calibration candidate, the amount/evaluator calibration sequence, the split calibration/confirmatory outcome locks, exact treatment-alias canonicalization, and outcome-blind split/fold feasibility. It does not alter the four heads, Route A, L2 learners, 0.5 threshold, public-only sources, Generator, official metric hierarchy, or benchmark arms.
 - **The 2026-08-17 semantic-memory-compiler amendment has scoped precedence only** for MP/MS/ME semantic candidate construction, factual extraction/verification, the BGE-M3 formal-similarity requirement, diagnostic-only regex/Jaccard status, and compiler API/cache/cost rules. It does not alter the four-head ontology, research claims, learning route, Generator, public-only rule, cross-fitting, threshold, outcome lock, or official-evaluation hierarchy.
 - **The execution reconciliation override is highest precedence** for Generator identity, benefit-only soft targets, removal of empirical PASS gates, treatment-delivery validity, exact-evidence cross-fitting, the fixed 0.5 primary policy rule, and per-head claim reporting.
 - **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
@@ -46,7 +53,7 @@ The same applies to any old synthetic 80-user/11-user derivatives, old 256 effec
 
 - Method name: **Policy Manager (PM)**, not MetaCom.
 - Generator is already frozen, but formal Paper-1 work must bind it in a new full-stack freeze manifest.
-- `RS`: inject-or-not the retrieved Strategy-RAG candidate; not strategy-category prediction.
+- `RS`: inject-or-not the globally amount-calibrated retrieved Strategy-RAG bundle of atomic-move units; not strategy-category prediction. Top-1 remains a candidate amount, not a predeclared final primary.
 - `MP`: **Profile Memory only**. No MP_PREFERENCE / response_preference_history.
 - `MS`: strictly-past same-user cross-session/session-continuity memory; no current/last-message fallback.
 - `ME`: strictly-past action -> user-observed-outcome experience memory.
@@ -108,10 +115,10 @@ Do not start formal PM training first.
 1. **Repository-to-contract audit** against the execution blueprint and official-evaluation-priority authority.
 2. Phase 0: disconnect obsolete synthetic active paths/configs/tests; remove MP_PREFERENCE/background-bit/utility-like active features; add fail-closed CI guards; establish a public-only Paper-1 config; audit that internal Q/R is not wired as a formal benchmark verdict.
 3. Phase 1: run a **public-only zero-outcome coverage audit** on ESConv + ES-MemEval/EvoEmo.
-4. Phase 2: before any formal effect outcome is opened, freeze candidate bundles/top-k/token caps, exact feature schema, exact mechanical cross-fit grouping, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, primary threshold, matched-random construction and API call plan.
+4. Phase 2: build zero-outcome amount surfaces; qualify the evaluator against a PM-blind human reference; run only authorized external calibration; then freeze global k/bundle/token budgets, exact feature schema, exact mechanical cross-fit grouping, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, primary threshold, matched-random construction and API call plan.
 5. Generate repeated matched effects and preserve ON wins/OFF wins/ties/uncertain as soft supervision; no empirical qualification PASS gate.
 6. Train four L2 heads with fold-specific OOF policy predictions for formal memory evaluation.
-7. Freeze baselines/matched-random schedules and run RQ1, RQ2, and component-minus using official outcomes.
+7. Keep confirmatory outcomes locked until the full stack above is frozen; then freeze baselines/matched-random schedules and run RQ1, RQ2, and component-minus using official outcomes.
 8. Report realized N, coverage, official metric contrasts, Cost and clustered uncertainty without a binary Paper-1 PASS/FAIL or head-count gate.
 
 ## Drift prevention
