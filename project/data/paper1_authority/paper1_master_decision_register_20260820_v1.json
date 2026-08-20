@@ -39,44 +39,42 @@
     {
       "id": "RS_resource_semantics_human_qualification",
       "status": "AUDIT_REQUIRED",
-      "evidence": "64-item rank-family-stratified packet and rubric are built; human judgments are not run"
+      "evidence": "aggregate rule frozen before results; 64-item blinded packet hash 69f5238b2e1d7064f0b2f23bd9da8a93a185f6e5603be8579dfa2b7894a42fd2; real human judgments 0/64"
     },
     {
       "id": "RS_treatment_uptake_qualification",
-      "status": "EXPERIMENT_REQUIRED",
-      "evidence": "offline contracts, deterministic Step2 renderer and blind review schema are ready; isolated Generator qualification is not run"
+      "status": "BLOCKED",
+      "evidence": "preregistered gate requires completed locked 64-item real-human semantics review and structural adjudication; assignments 0, Generator calls 0"
     },
     {
       "id": "memory_compiler_precision_repair",
-      "status": "IMPLEMENTATION_PENDING",
-      "evidence": "general MP ME schema prompt gates and MS semantic audit required"
+      "status": "BLOCKED",
+      "evidence": "v7 old-DEV live regression failed: known FAIL/REVIEW rejected 7/12, old PASS retained 6/20, 11 typed-decision contradictions; 401 not run; results hash f273e537753eda4261e0eb79280e5d6b73d4a030d196cd44c12e9eaef1269af7"
     },
     {
       "id": "memory_heldout_requalification",
-      "status": "EXPERIMENT_REQUIRED",
-      "evidence": "must use new seed and IDs selected after repair"
+      "status": "BLOCKED",
+      "evidence": "no v7 catalog exists because 401 was stopped; new held-out IDs and human packets cannot be frozen"
     },
     {
       "id": "ESC_RANK_official_runtime_qualification",
-      "status": "EXPERIMENT_REQUIRED",
-      "evidence": "requires pinned stack on GPU with at least 24 GiB VRAM"
+      "status": "BLOCKED",
+      "evidence": "pinned harness requires at least 24576 MiB; current attached RTX 2070 has 8192 MiB and no pinned local model snapshots; runtime calls 0"
     },
     {
       "id": "ESC_evaluator_winner",
       "status": "BLOCKED",
-      "evidence": "cannot choose before runtime human agreement bias and cost comparison"
+      "evidence": "24-item blind package is ready, but two-human ratings, ESC-RANK runtime, exact Qwen/DeepSeek identities, independent-family nomination, judge scores, agreement, bias and cost comparison are absent; recommendation null"
     },
     {
       "id": "ESC_split_large_52",
-      "status": "READY",
-      "readiness_label": "RESEARCHER_READY_TO_FREEZE",
-      "evidence": "outcome-blind feasibility report; explicit researcher approval pending"
+      "status": "FROZEN",
+      "evidence": "explicit researcher approval on 2026-08-20; paper1_structural_split_fold_freeze_20260820_v1.json binds 52 calibration plus 121 confirmatory cards at seed 0; split and seed changes forbidden"
     },
     {
       "id": "RQ2_outer_folds_K5_seed0",
-      "status": "READY",
-      "readiness_label": "RESEARCHER_READY_TO_FREEZE",
-      "evidence": "outcome-blind structural report; explicit researcher approval pending"
+      "status": "FROZEN",
+      "evidence": "explicit researcher approval on 2026-08-20; paper1_structural_split_fold_freeze_20260820_v1.json binds all 1586 targets and 477 exact-evidence components into K=5 seed=0 folds; seed changes forbidden"
     },
     {
       "id": "RQ1_resource_amount_k_star",
@@ -97,6 +95,11 @@
       "id": "confirmatory_RQ1_RQ2_evaluation",
       "status": "BLOCKED",
       "evidence": "confirmatory locks remain CLOSED until full-stack freeze"
+    },
+    {
+      "id": "qualification_execution_results_packet_20260820",
+      "status": "READY",
+      "evidence": "paper1_qualification_results_packet_20260820_v1.json records structural freezes, preregistered stops, 29 Qwen calls costing USD 0.08161918, zero formal outcome calls, zero PM training runs, and all four locks CLOSED"
     }
   ]
 }

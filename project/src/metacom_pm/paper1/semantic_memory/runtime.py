@@ -49,6 +49,7 @@ from .prompts import (
     extractor_messages,
     verifier_messages,
 )
+from .precision_qualification import PrecisionVerifierSessionOutput
 from .renderer import (
     RENDERER_CODE_SHA256,
     RENDERER_SHA256,
@@ -144,8 +145,10 @@ class SessionCompilationResult(StrictContract):
     prior_memory_table_sha256: str
     extractor: ExtractorSessionOutput
     verifier: VerifierSessionOutput
+    precision_verifier: PrecisionVerifierSessionOutput | None = None
     schema_rejections: tuple[SchemaRejectedItem, ...] = ()
     grounding: tuple[dict[str, Any], ...]
+    precision_binding: tuple[dict[str, Any], ...] = ()
     accepted_units: tuple[AcceptedSemanticMemoryUnit, ...]
     rejected_decisions: tuple[VerifierDecision, ...]
     extractor_cache_hit: bool

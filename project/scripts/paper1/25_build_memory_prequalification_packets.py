@@ -23,11 +23,17 @@ from metacom_pm.paper1.semantic_memory.precision_qualification import (  # noqa:
     MPPrecisionDecision,
     MSSemanticAuditDecision,
     PRECISION_EXTRACTOR_PROMPT_SHA256,
+    PRECISION_EXTRACTOR_SYSTEM_PROMPT_SHA256,
     PRECISION_EXTRACTOR_SYSTEM_PROMPT,
+    PRECISION_EXTRACTOR_USER_PROMPT_TEMPLATE,
+    PRECISION_EXTRACTOR_USER_TEMPLATE_SHA256,
     PRECISION_GROUNDING_VERSION,
     PRECISION_SCHEMA_VERSION,
     PRECISION_VERIFIER_PROMPT_SHA256,
+    PRECISION_VERIFIER_SYSTEM_PROMPT_SHA256,
     PRECISION_VERIFIER_SYSTEM_PROMPT,
+    PRECISION_VERIFIER_USER_PROMPT_TEMPLATE,
+    PRECISION_VERIFIER_USER_TEMPLATE_SHA256,
 )
 from metacom_pm.paper1.semantic_memory.versioning import resolve_memory_versions  # noqa: E402
 
@@ -94,12 +100,33 @@ def main() -> int:
     }
     precision = {
         "protocol": "pm-paper1-semantic-memory-precision-repair-v7",
-        "status": "IMPLEMENTATION_PENDING",
+        "status": "DEV_REGRESSION_FAILED_401_NOT_RUN",
         "interpretation": (
-            "General prompt/schema/deterministic gates are implemented and unit-tested, but the live v6 "
-            "runtime is intentionally not relabeled. Runtime migration, new authorization and held-out "
-            "Qwen qualification remain required before any repaired catalog can be called READY."
+            "The v7 runtime binding passed offline tests, but the preregistered 32-item old-DEV live "
+            "replay failed its diagnostic regression. The authorized 401-session compile was therefore "
+            "not started. The v6 artifact remains readable and is not relabeled; no v7 catalog or "
+            "held-out qualification IDs exist."
         ),
+        "live_dev_execution": {
+            "role": "diagnostic regression only; not held-out qualification and not outcome evaluation",
+            "source_items": 32,
+            "source_sessions": 29,
+            "provider_calls": 29,
+            "provider_call_failures": 0,
+            "cost_usd": 0.08161918,
+            "hard_cap_usd": 5.0,
+            "old_fail_or_review_rejected": 7,
+            "old_fail_or_review_total": 12,
+            "old_pass_retained": 6,
+            "old_pass_total": 20,
+            "strict_local_schema_gate_rejections": 11,
+            "diagnosis": "paper1-semantic-memory-v7-dev-diagnosis-v1",
+            "live_report_sha256": "3f1917483ea4ec82aaa5da27057818429f4e87f352a944fbaa3356c0a134888b",
+            "budget_ledger_sha256": "a82e47ef3dd52eab746b586fd25104583cfb6f7ed2623d2f506059120ed0aa9e",
+            "full_401_started": False,
+            "new_catalog_created": False,
+            "heldout_ids_frozen": False,
+        },
         "preserved": {
             "model": "qwen3-235b-a22b-instruct-2507",
             "ontology": ["MP", "MS", "ME"],
@@ -112,8 +139,14 @@ def main() -> int:
         },
         "prompt": {
             "extractor_system": PRECISION_EXTRACTOR_SYSTEM_PROMPT,
+            "extractor_system_sha256": PRECISION_EXTRACTOR_SYSTEM_PROMPT_SHA256,
+            "extractor_user_template": PRECISION_EXTRACTOR_USER_PROMPT_TEMPLATE,
+            "extractor_user_template_sha256": PRECISION_EXTRACTOR_USER_TEMPLATE_SHA256,
             "extractor_sha256": PRECISION_EXTRACTOR_PROMPT_SHA256,
             "verifier_system": PRECISION_VERIFIER_SYSTEM_PROMPT,
+            "verifier_system_sha256": PRECISION_VERIFIER_SYSTEM_PROMPT_SHA256,
+            "verifier_user_template": PRECISION_VERIFIER_USER_PROMPT_TEMPLATE,
+            "verifier_user_template_sha256": PRECISION_VERIFIER_USER_TEMPLATE_SHA256,
             "verifier_sha256": PRECISION_VERIFIER_PROMPT_SHA256,
         },
         "schemas": {
@@ -285,9 +318,23 @@ def main() -> int:
     old_dev_ids = [row["memory_id"] for row in replay_rows]
     heldout_plan = {
         "protocol": "pm-paper1-memory-heldout-requalification-plan-v1",
-        "status": "READY",
-        "qualification_ids_status": "IMPLEMENTATION_PENDING_UNTIL_V7_RUNTIME_REPAIR_IS_BOUND_AND_COMPILE_COMPLETES",
+        "status": "EXECUTION_STOPPED_AFTER_FAILED_OLD_DEV_REGRESSION",
+        "qualification_ids_status": "NOT_FROZEN_NO_V7_CATALOG",
         "selection_timing": "freeze IDs only after repaired catalog exists",
+        "execution_stop": {
+            "Qwen_budget_status": "RESEARCHER_APPROVED_20260820_HARD_CAP_USD_5",
+            "dev_sessions": 29,
+            "dev_items": 32,
+            "provider_calls": 29,
+            "cost_usd": 0.08161918,
+            "old_fail_or_review_rejected": "7/12",
+            "old_pass_retained": "6/20",
+            "strict_local_schema_gate_rejections": 11,
+            "full_401_started": False,
+            "new_catalog_created": False,
+            "heldout_ids_frozen": False,
+            "outcome_calls": 0,
+        },
         "exclusions": {
             "old_seed0_dev_memory_ids": old_dev_ids,
             "old_seed0_dev_count": len(old_dev_ids),
@@ -323,7 +370,7 @@ def main() -> int:
             "Qwen_recompile_sessions": 401,
             "Qwen_calls_nominal": 802,
             "Qwen_hard_cap_usd_proposal": 5.0,
-            "Qwen_budget_status": "RESEARCHER_APPROVAL_REQUIRED_BEFORE_NEW_LIVE_RUN",
+            "Qwen_budget_status": "RESEARCHER_APPROVED_20260820_HARD_CAP_USD_5",
             "human_reviews": "MP120 + MS144 + ME up to 240 individual blind reviews, before adjudication",
             "LLM_review_calls": 0,
             "outcome_calls": 0,

@@ -104,7 +104,11 @@ def _load_dialogues(path: Path) -> list[dict[str, Any]]:
     for row in rows:
         if set(row) & FORBIDDEN_KEYS:
             raise RuntimeError(f"qualification dialogue exposes forbidden keys: {set(row) & FORBIDDEN_KEYS}")
-        if row.get("source_role") not in {"public_baseline", "public_overlap_only"}:
+        if row.get("source_role") not in {
+            "public_baseline",
+            "public_overlap_only",
+            "controlled_semantics_preserving_probe",
+        }:
             raise RuntimeError("qualification dialogue source_role is not isolated")
         if not isinstance(row.get("dialogue"), list) or not row["dialogue"]:
             raise RuntimeError("qualification dialogue must be a non-empty string list")

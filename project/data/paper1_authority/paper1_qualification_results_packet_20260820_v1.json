@@ -1,0 +1,152 @@
+{
+  "protocol": "pm-paper1-qualification-results-packet-20260820-v1",
+  "status": "PARTIAL_EXECUTION_STOPPED_AT_PREREGISTERED_GATES",
+  "scope": "Outcome-blind Paper-1 qualification only; not resource-amount calibration, PM effect construction, PM training, or formal benchmark evaluation.",
+  "structural_freezes": {
+    "status": "FROZEN",
+    "manifest": {
+      "path": "project/data/paper1_authority/paper1_structural_split_fold_freeze_20260820_v1.json",
+      "sha256": "a9f62d305b82ff04cc986b02bdb840e59838405caf00913998988b8f8c5e92f8"
+    },
+    "ESC": {
+      "decision": "large_52",
+      "seed": 0,
+      "calibration_cards": 52,
+      "confirmatory_cards": 121,
+      "split_or_seed_change_forbidden": true
+    },
+    "RQ2": {
+      "outer_folds": 5,
+      "seed": 0,
+      "targets": 1586,
+      "exact_evidence_components": 477,
+      "fold_target_counts": [317, 317, 317, 317, 318],
+      "fold_or_seed_change_forbidden": true
+    }
+  },
+  "RS_resource_qualification": {
+    "status": "AUDIT_REQUIRED_PENDING_REAL_HUMAN_REVIEW",
+    "completed": [
+      "aggregate reporting and interpretation rule frozen before human results",
+      "64-item rank-family-stratified blind review sheet materialized",
+      "rank, family, similarity, provenance, PM identity, and future arm withheld from reviewer",
+      "human or LLM appropriateness forbidden as candidate-level runtime utility filter",
+      "only separately confirmed deterministic structural failures may hard-exclude"
+    ],
+    "aggregate_rule": {
+      "path": "project/data/paper1_authority/paper1_rs_resource_semantics_aggregate_rule_20260820_v1.json",
+      "sha256": "0bf6459284567efbb0279ac89a7c05367a272217df5f19bb07fab0f0c9add69c"
+    },
+    "blind_review": {
+      "path": "project/data/paper1_authority/paper1_rs_resource_semantics_blind_review_20260820_v1.jsonl",
+      "sha256": "69f5238b2e1d7064f0b2f23bd9da8a93a185f6e5603be8579dfa2b7894a42fd2",
+      "items": 64,
+      "human_completed": 0,
+      "LLM_completed": 0
+    },
+    "uptake": {
+      "status": "NOT_STARTED_BY_PREREGISTERED_HUMAN_GATE",
+      "assignments": 0,
+      "generator_calls": 0,
+      "cost_usd": 0.0,
+      "reason": "The 64-item real human semantics review and structural adjudication do not yet exist."
+    },
+    "readiness_sha256": "f2fa52e911263447e9f76ae166bd9e77a0e7a8a828dc63a587e883abde733e22"
+  },
+  "semantic_memory_v7": {
+    "status": "DEV_REGRESSION_FAILED_401_NOT_RUN",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "provider_region": "Alibaba Cloud Model Studio, Singapore International",
+    "dev": {
+      "items": 32,
+      "source_sessions": 29,
+      "provider_calls": 29,
+      "provider_call_failures": 0,
+      "cost_usd": 0.08161918,
+      "hard_cap_usd": 5.0,
+      "known_fail_or_review_rejected": "7/12",
+      "old_pass_retained": "6/20",
+      "strict_local_schema_gate_rejections": 11
+    },
+    "diagnosis": {
+      "qwen_internal_typed_flag_vs_accepted_reason_conflicts": 11,
+      "known_MP_fail_semantically_misaccepted": 5,
+      "old_pass_qwen_semantic_false_rejects": 2,
+      "old_pass_local_shared_span_ordering_bug": 4,
+      "local_bug_fix": "Implemented and unit-tested without API rerun; insufficient to authorize 401."
+    },
+    "execution": {
+      "full_401_started": false,
+      "new_catalog_created": false,
+      "heldout_ids_frozen": false,
+      "human_packet_created": false,
+      "remaining_authorized_cap_usd": 4.91838082,
+      "future_live_requires_new_runtime_authorization": true
+    },
+    "results": {
+      "path": "project/data/paper1_authority/paper1_semantic_memory_v7_dev_live_results_20260820_v1.json",
+      "sha256": "f273e537753eda4261e0eb79280e5d6b73d4a030d196cd44c12e9eaef1269af7"
+    },
+    "diagnosis_artifact": {
+      "path": "project/data/paper1_authority/paper1_semantic_memory_v7_dev_diagnosis_20260820_v1.json",
+      "sha256": "a26fbe5d852e79564bf9e63ee2fb65acef58aec81db8483c3cca8bfdc197dd21"
+    }
+  },
+  "ESC_evaluator_qualification": {
+    "status": "BLOCKED",
+    "completed": [
+      "official ESC-RANK code, base model, seven adapters, and revisions remain pinned",
+      "24-item blind package materialized: 6 pinned public natural baseline dialogues plus 18 controlled bias items",
+      "9 controlled pairs isolate verbosity, redundant suggestions, or list-format style while preserving context and semantic atoms within each pair",
+      "two blank human sheets, adjudication template, blind judge input, metrics implementation, and identity registry materialized"
+    ],
+    "not_completed": [
+      "ESC-RANK runtime on a connected GPU with at least 24 GiB VRAM",
+      "two real blind human ratings and adjudication",
+      "exact researcher-frozen Qwen judge model/version",
+      "exact researcher-frozen DeepSeek judge model/version",
+      "researcher-nominated fourth independent family and exact model/version",
+      "candidate judge scoring and evaluator winner selection"
+    ],
+    "local_hardware": "NVIDIA GeForce RTX 2070, 8192 MiB",
+    "judge_calls": 0,
+    "recommendation": null,
+    "selection_order": [
+      "validity and human agreement",
+      "bias and sensitivity",
+      "cost and latency"
+    ],
+    "forbidden_selection_basis": "which evaluator gives PM/Ours a higher score",
+    "manifest": {
+      "path": "project/data/paper1_authority/paper1_esc_evaluator_qualification_package_manifest_20260820_v1.json",
+      "sha256": "fc2e0414871794d3ec193ff30104b1ad7937cc6afa445afeecc790f1e11fa5ca"
+    },
+    "results": {
+      "path": "project/data/paper1_authority/paper1_esc_evaluator_qualification_results_20260820_v1.json",
+      "sha256": "bebbaa0e1df14ba4051ce010872277d68adbd19fa401ca46ca41d0299159e80d"
+    }
+  },
+  "execution_ledger": {
+    "Qwen_semantic_compiler_calls": 29,
+    "Qwen_semantic_compiler_cost_usd": 0.08161918,
+    "Llama_generator_calls": 0,
+    "general_judge_calls": 0,
+    "ESC_RANK_dimension_calls": 0,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "formal_unlock": false,
+  "researcher_decisions_required_next": [
+    "Arrange and complete the 64-item RS blind human semantics review; only then materialize uptake assignment and dedicated Llama authorization.",
+    "Approve a new semantic-memory contract or prompt revision addressing typed-decision inconsistency and MP semantic evidence errors; the current v7 authorization cannot be reused after runtime identity change.",
+    "Attach or provision a pinned GPU runtime with at least 24 GiB VRAM for ESC-RANK qualification.",
+    "Specify exact Qwen and DeepSeek judge models/versions and nominate the fourth independent family/model before any proxy judge calls.",
+    "Provide two independent human raters for the ESC blind package."
+  ]
+}

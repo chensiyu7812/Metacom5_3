@@ -10,6 +10,8 @@ from metacom_pm.paper1.semantic_memory.precision_qualification import (
     MPPrecisionDecision,
     MPPrecisionReason,
     PRECISION_EXTRACTOR_SYSTEM_PROMPT,
+    PRECISION_EXTRACTOR_USER_PROMPT_TEMPLATE,
+    precision_prompt_sha256,
 )
 
 
@@ -76,3 +78,15 @@ def test_me_gate_rejects_same_predicate_symptom_as_action_and_outcome():
 def test_precision_prompt_contains_no_dev_item_blacklist_identifiers():
     for item_specific in ("esc508", "p18_conv_8", "Margaret", "Jessica"):
         assert item_specific not in PRECISION_EXTRACTOR_SYSTEM_PROMPT
+
+
+def test_precision_prompt_identity_binds_user_template_not_only_system_prompt():
+    frozen = precision_prompt_sha256(
+        PRECISION_EXTRACTOR_SYSTEM_PROMPT,
+        PRECISION_EXTRACTOR_USER_PROMPT_TEMPLATE,
+    )
+    drifted = precision_prompt_sha256(
+        PRECISION_EXTRACTOR_SYSTEM_PROMPT,
+        PRECISION_EXTRACTOR_USER_PROMPT_TEMPLATE + "\nDRIFT",
+    )
+    assert frozen != drifted

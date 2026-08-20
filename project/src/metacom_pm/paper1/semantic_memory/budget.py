@@ -9,7 +9,8 @@ from typing import Any, Mapping
 
 from metacom_pm.io import append_jsonl, canonical_json, iter_jsonl, sha256_text, utc_now
 
-BUDGET_LEDGER_PROTOCOL = "paper1-semantic-memory-budget-ledger-v1"
+BUDGET_LEDGER_PROTOCOL = "paper1-semantic-memory-budget-ledger-v2"
+LEGACY_BUDGET_LEDGER_PROTOCOL = "paper1-semantic-memory-budget-ledger-v1"
 # Researcher-approved 2026-08-18: raised from USD 2.00 after the v6 20-session
 # live smoke showed real per-session cost (~$0.007-0.011) makes USD 2.00
 # insufficient to complete the full 401-session compile with margin for
@@ -87,12 +88,27 @@ class SemanticCompilerBudgetLedger:
         if not self.path.exists():
             return
         for line_no, row in enumerate(iter_jsonl(self.path), 1):
-            if row.get("protocol") != BUDGET_LEDGER_PROTOCOL:
+            protocol = row.get("protocol")
+            if protocol not in {
+                BUDGET_LEDGER_PROTOCOL,
+                LEGACY_BUDGET_LEDGER_PROTOCOL,
+            }:
                 raise RuntimeError(f"budget ledger protocol mismatch at line {line_no}")
             if row.get("price_snapshot_id") != self.price.snapshot_id:
                 raise RuntimeError(f"price snapshot mismatch at line {line_no}")
             if row.get("provider") != self.price.provider or row.get("region") != self.price.region:
                 raise RuntimeError(f"provider/region mismatch at line {line_no}")
+            if protocol == BUDGET_LEDGER_PROTOCOL:
+                if row.get("price_snapshot_sha256") != self.price.identity_sha256:
+                    raise RuntimeError(f"exact price identity mismatch at line {line_no}")
+                if Decimal(str(row.get("input_usd_per_million_tokens"))) != (
+                    self.price.input_usd_per_million_tokens
+                ):
+                    raise RuntimeError(f"input token price mismatch at line {line_no}")
+                if Decimal(str(row.get("output_usd_per_million_tokens"))) != (
+                    self.price.output_usd_per_million_tokens
+                ):
+                    raise RuntimeError(f"output token price mismatch at line {line_no}")
             reservation_id = str(row.get("reservation_id") or "")
             event = str(row.get("event") or "")
             events = self._events.setdefault(reservation_id, [])
@@ -100,6 +116,17 @@ class SemanticCompilerBudgetLedger:
                 raise RuntimeError(f"budget settlement precedes reservation at line {line_no}")
             if events and (len(events) != 1 or event != "SETTLED"):
                 raise RuntimeError(f"duplicate budget event at line {line_no}")
+            if (
+                protocol == LEGACY_BUDGET_LEDGER_PROTOCOL
+                and event == "RESERVED"
+                and (
+                    Decimal(str(row.get("input_usd_per_million_tokens")))
+                    != self.price.input_usd_per_million_tokens
+                    or Decimal(str(row.get("output_usd_per_million_tokens")))
+                    != self.price.output_usd_per_million_tokens
+                )
+            ):
+                raise RuntimeError(f"legacy exact token price mismatch at line {line_no}")
             events.append(row)
         if self.accounted_cost_usd > self.hard_budget_usd:
             raise RuntimeError("historical semantic compiler cost exceeds hard budget")
@@ -145,6 +172,7 @@ class SemanticCompilerBudgetLedger:
             "phase": phase,
             "call_key": call_key,
             "price_snapshot_id": self.price.snapshot_id,
+            "price_snapshot_sha256": self.price.identity_sha256,
             "provider": self.price.provider,
             "region": self.price.region,
             "currency": self.price.currency,
@@ -191,8 +219,15 @@ class SemanticCompilerBudgetLedger:
             "timestamp": utc_now(),
             "reservation_id": reservation.reservation_id,
             "price_snapshot_id": self.price.snapshot_id,
+            "price_snapshot_sha256": self.price.identity_sha256,
             "provider": self.price.provider,
             "region": self.price.region,
+            "input_usd_per_million_tokens": str(
+                self.price.input_usd_per_million_tokens
+            ),
+            "output_usd_per_million_tokens": str(
+                self.price.output_usd_per_million_tokens
+            ),
             "outcome": outcome,
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,

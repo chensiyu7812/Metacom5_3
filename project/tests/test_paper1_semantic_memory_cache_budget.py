@@ -87,3 +87,38 @@ def test_budget_reserves_before_call_and_hard_stops_at_five_usd(tmp_path) -> Non
         outcome="SUCCEEDED",
     )
     assert ledger.remaining_usd == Decimal("4.999985")
+
+
+def test_budget_ledger_cannot_reopen_same_snapshot_id_with_changed_prices(tmp_path) -> None:
+    path = tmp_path / "budget.jsonl"
+    frozen = PriceSnapshot(
+        snapshot_id="same-human-label",
+        provider="Alibaba",
+        region="region-a",
+        currency="USD",
+        input_usd_per_million_tokens=Decimal("0.23"),
+        output_usd_per_million_tokens=Decimal("0.92"),
+    )
+    ledger = SemanticCompilerBudgetLedger(path, price=frozen)
+    reservation = ledger.reserve(
+        reservation_id="r1",
+        phase="extractor",
+        call_key="c1",
+        maximum_prompt_tokens=100,
+        maximum_completion_tokens=100,
+    )
+    ledger.settle(
+        reservation,
+        usage={"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
+        outcome="SUCCEEDED",
+    )
+    changed = PriceSnapshot(
+        snapshot_id=frozen.snapshot_id,
+        provider=frozen.provider,
+        region=frozen.region,
+        currency="USD",
+        input_usd_per_million_tokens=Decimal("0.01"),
+        output_usd_per_million_tokens=frozen.output_usd_per_million_tokens,
+    )
+    with pytest.raises(RuntimeError, match="exact price identity mismatch"):
+        SemanticCompilerBudgetLedger(path, price=changed)
