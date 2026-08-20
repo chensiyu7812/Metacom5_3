@@ -40,5 +40,18 @@ def test_ci_blocks_on_paper1_and_demotes_legacy_v53_to_diagnostic():
     paper1 = workflow.index("Run blocking public-only Paper-1 suite")
     legacy = workflow.index("Run legacy V5.3 clean-release suite (diagnostic only)")
     assert paper1 < legacy
+    paper1_block = workflow[paper1:legacy]
+    assert 'pytest -q -m "not gpu" tests/test_paper1_*.py' in paper1_block
     legacy_block = workflow[legacy : legacy + 180]
     assert "continue-on-error: true" in legacy_block
+
+
+def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():
+    workflow = (ROOT.parent / ".github/workflows/pm-v2-tests.yml").read_text()
+    pytest_commands = [
+        line.strip()
+        for line in workflow.splitlines()
+        if line.strip().startswith("run: pytest")
+    ]
+    assert pytest_commands
+    assert all('-m "not gpu"' in command for command in pytest_commands)
