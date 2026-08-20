@@ -1,0 +1,42 @@
+{
+  "protocol": "pm-paper1-esc-rank-24gib-patch-manifest-v1",
+  "status": "IMPLEMENTATION_PENDING",
+  "official_identity": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "internlm2_model": "internlm/internlm2-chat-7b",
+    "internlm2_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "dtype": "float16",
+    "dimensions": ["fluency", "diversity", "empathic", "suggestion", "human", "tech", "overall"]
+  },
+  "allowed_source_patches": [
+    {
+      "old": "./ESC-RANK1/fluency",
+      "new": "./ESC-RANK/fluency",
+      "occurrences_required": 1,
+      "reason": "published path correction only"
+    },
+    {
+      "old": "./ESC-RANK1/fluency_en",
+      "new": "./ESC-RANK/fluency_en",
+      "occurrences_required": 1,
+      "reason": "published path correction only"
+    }
+  ],
+  "forbidden_patches": ["rubric", "prompt text", "base model", "adapter mapping", "score scale", "parser semantics"],
+  "dependency_pins": {
+    "torch": "2.3.1",
+    "transformers": "4.41.2",
+    "peft": "0.11.1",
+    "accelerate": "0.31.0"
+  },
+  "dependency_pin_note": "isolated ESC-RANK qualification environment; CUDA 12.1 wheel identity must be recorded in the runtime report",
+  "required_runtime_inventory": {
+    "esc_rank_tree_sha256": "IMPLEMENTATION_PENDING_AFTER_PINNED_DOWNLOAD",
+    "internlm2_tree_sha256": "IMPLEMENTATION_PENDING_AFTER_PINNED_DOWNLOAD",
+    "all_seven_adapter_tree_hashes_required": true
+  },
+  "minimum_gpu_total_mib": 24576,
+  "runtime_experiment_status": "EXPERIMENT_REQUIRED"
+}

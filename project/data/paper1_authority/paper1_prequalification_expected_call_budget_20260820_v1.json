@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-paper1-prequalification-expected-call-budget-v1",
+  "status": "READY",
+  "interpretation": "planning envelope only; not API/GPU authorization",
+  "current_round_actual": {
+    "paid_API_calls": 0,
+    "Generator_calls": 0,
+    "evaluator_calls": 0,
+    "outcome_calls": 0,
+    "PM_training_runs": 0,
+    "BGE_model_calls_for_canonical_top8": 0,
+    "cached_vector_ranking_GPU_seconds": 2.21
+  },
+  "resource_qualification": {
+    "RS_semantics_packet_items": 64,
+    "RS_human_reviews_at_two_raters": 128,
+    "MS_dev_audit_items": 48,
+    "memory_heldout_human_review_upper_bound": "MP 120 + MS 144 + ME up to 240 before adjudication"
+  },
+  "memory_repair_future_authorization_proposal": {
+    "Qwen_sessions": 401,
+    "nominal_extractor_verifier_calls": 802,
+    "hard_cap_usd_proposal": 5.0,
+    "authorization_status": "BLOCKED"
+  },
+  "RS_treatment_uptake_future_authorization_proposal": {
+    "isolated_states": 16,
+    "arms": 2,
+    "seeds": 2,
+    "NVIDIA_generator_calls": 64,
+    "outcome_judge_calls": 0,
+    "authorization_status": "BLOCKED"
+  },
+  "ESC_RANK_runtime_future_authorization_proposal": {
+    "minimum_GPU": "24 GiB",
+    "qualification_dialogues": 3,
+    "repeats": 2,
+    "dimension_passes": 42,
+    "rental_reservation_proposal_GPU_hours": 2,
+    "authorization_status": "BLOCKED"
+  },
+  "ESC_evaluator_comparison_future_authorization_proposal": {
+    "human_reference_dialogues": 24,
+    "human_raters": 2,
+    "human_ordinal_ratings": 336,
+    "ESC_RANK_dimension_passes": 168,
+    "Qwen_vector_calls": 24,
+    "DeepSeek_vector_calls": 24,
+    "independent_family_vector_calls": 24,
+    "API_usd": "TBD after exact model identities and dated prices",
+    "authorization_status": "BLOCKED"
+  },
+  "later_calibration_reference_only_not_authorized": {
+    "RQ1_large_52_pure_k_generator_calls": 1300,
+    "RQ2": "must be recomputed inside outer folds after repaired memory catalog and DG dynamic-query freeze"
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}
