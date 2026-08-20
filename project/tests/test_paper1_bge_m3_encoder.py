@@ -1,6 +1,11 @@
 import pytest
 
-from metacom_pm.paper1.embeddings.bge_m3 import BgeM3Binding, BgeM3Encoder, FROZEN_BGE_M3_BINDING
+from metacom_pm.paper1.embeddings.bge_m3 import (
+    BgeM3Binding,
+    BgeM3Encoder,
+    FROZEN_BGE_M3_BINDING,
+    _normalized_pooling_mode,
+)
 
 pytest.importorskip("torch")
 pytest.importorskip("sentence_transformers")
@@ -30,6 +35,36 @@ def test_encode_rejects_empty_string():
     encoder = BgeM3Encoder()
     with pytest.raises(ValueError, match="empty strings"):
         encoder.encode(["hello", ""])
+
+
+def test_pooling_mode_supports_frozen_sentence_transformers_boolean_schema():
+    config = {
+        "pooling_mode_cls_token": True,
+        "pooling_mode_mean_tokens": False,
+        "pooling_mode_max_tokens": False,
+        "pooling_mode_mean_sqrt_len_tokens": False,
+        "pooling_mode_weightedmean_tokens": False,
+        "pooling_mode_lasttoken": False,
+    }
+    assert _normalized_pooling_mode(config) == "cls"
+
+
+def test_pooling_mode_supports_direct_string_schema():
+    assert _normalized_pooling_mode({"pooling_mode": "cls"}) == "cls"
+
+
+def test_pooling_mode_fails_closed_on_ambiguous_boolean_schema():
+    with pytest.raises(RuntimeError, match="multiple modes"):
+        _normalized_pooling_mode(
+            {"pooling_mode_cls_token": True, "pooling_mode_mean_tokens": True}
+        )
+
+
+def test_pooling_mode_fails_closed_when_schemas_disagree():
+    with pytest.raises(RuntimeError, match="inconsistent pooling config"):
+        _normalized_pooling_mode(
+            {"pooling_mode": "mean", "pooling_mode_cls_token": True}
+        )
 
 
 @pytest.mark.gpu

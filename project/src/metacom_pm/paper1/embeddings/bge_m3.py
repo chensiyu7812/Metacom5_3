@@ -114,6 +114,63 @@ class BgeM3Binding:
 FROZEN_BGE_M3_BINDING = BgeM3Binding()
 
 
+_POOLING_BOOLEAN_FIELDS = {
+    "pooling_mode_cls_token": "cls",
+    "pooling_mode_mean_tokens": "mean",
+    "pooling_mode_max_tokens": "max",
+    "pooling_mode_mean_sqrt_len_tokens": "mean_sqrt_len",
+    "pooling_mode_weightedmean_tokens": "weightedmean",
+    "pooling_mode_lasttoken": "lasttoken",
+}
+
+
+def _normalized_pooling_mode(config: dict[str, object]) -> str:
+    """Read both supported SentenceTransformers pooling config schemas.
+
+    SentenceTransformers 5.1 serializes pooling as one boolean per mode,
+    while some newer/runtime-specific configs expose a single
+    ``pooling_mode`` string.  The former is the frozen Paper-1 environment,
+    so treating the latter as universally present made the live assertion
+    fail before any embedding could be produced.  When both representations
+    exist they must agree; ambiguous or malformed configs fail closed.
+    """
+
+    direct_mode = config.get("pooling_mode")
+    if direct_mode is not None and not isinstance(direct_mode, str):
+        raise RuntimeError(
+            f"pooling_mode must be a string when present, got {type(direct_mode).__name__}"
+        )
+
+    enabled_boolean_modes: list[str] = []
+    for field, normalized_mode in _POOLING_BOOLEAN_FIELDS.items():
+        if field not in config:
+            continue
+        value = config[field]
+        if not isinstance(value, bool):
+            raise RuntimeError(
+                f"{field} must be boolean when present, got {type(value).__name__}"
+            )
+        if value:
+            enabled_boolean_modes.append(normalized_mode)
+
+    if len(enabled_boolean_modes) > 1:
+        raise RuntimeError(
+            "ambiguous pooling config enables multiple modes: "
+            + ", ".join(sorted(enabled_boolean_modes))
+        )
+
+    boolean_mode = enabled_boolean_modes[0] if enabled_boolean_modes else None
+    if direct_mode is not None and boolean_mode is not None and direct_mode != boolean_mode:
+        raise RuntimeError(
+            f"inconsistent pooling config: pooling_mode={direct_mode!r}, "
+            f"boolean fields resolve to {boolean_mode!r}"
+        )
+    resolved = direct_mode or boolean_mode
+    if resolved is None:
+        raise RuntimeError("pooling config does not identify exactly one active pooling mode")
+    return resolved
+
+
 def _hash_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -200,7 +257,7 @@ def _load_model(binding: BgeM3Binding) -> tuple[object, BgeM3RuntimeIdentity]:
     # Assert the declared identity against the model actually loaded, not
     # merely trust the declaration.
     pooling_module = model[1]
-    real_pooling_mode = pooling_module.get_config_dict().get("pooling_mode")
+    real_pooling_mode = _normalized_pooling_mode(pooling_module.get_config_dict())
     if real_pooling_mode != binding.pooling_mode:
         raise RuntimeError(
             f"pooling_mode mismatch: binding declares {binding.pooling_mode!r}, "
