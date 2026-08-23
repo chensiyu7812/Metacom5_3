@@ -1,0 +1,124 @@
+{
+  "protocol": "paper1-semantic-memory-v8-data-quality-audit-v1",
+  "status": "DEV_DIAGNOSIS_COMPLETE_V9_LIVE_NOT_AUTHORIZED",
+  "generated_at": "2026-08-23T00:00:00+09:00",
+  "source_identity": {
+    "matrix_sha256": "d0037e293cdda1e2d84f6492deccb484a5465b8efdddd2d2d4ea0ec5b1ab394f",
+    "results_sha256": "a429e53fe09c337504ba16c94efb694cc2be99b23ddd8137220529ca559571ad",
+    "rows": 32,
+    "unique_memory_ids": 32
+  },
+  "descriptive_counts": {
+    "items": 32,
+    "old_pass_total": 20,
+    "old_pass_retained": 9,
+    "known_fail_review_total": 12,
+    "known_fail_review_rejected": 11,
+    "outcome_calls": 0,
+    "old_pass_retention_rate": 0.45,
+    "known_fail_review_rejection_rate": 0.9166666666666666,
+    "by_memory_class": [
+      {
+        "memory_class": "ME",
+        "total": 12,
+        "match": 5,
+        "false_reject": 7,
+        "false_accept": 0,
+        "schema_reject": 0,
+        "old_pass_total": 10,
+        "old_fail_review_total": 2
+      },
+      {
+        "memory_class": "MP",
+        "total": 20,
+        "match": 14,
+        "false_reject": 4,
+        "false_accept": 1,
+        "schema_reject": 1,
+        "old_pass_total": 10,
+        "old_fail_review_total": 10
+      }
+    ],
+    "gate_reason_counts": {
+      "action_not_agentive": 1,
+      "current_validity_not_established": 2,
+      "future_or_plan_with_current_validity": 1,
+      "health_not_durable_or_recurrent": 1,
+      "not_exactly_entailed": 11,
+      "not_owner_subject_direct": 1,
+      "persistence_episodic": 2,
+      "requires_prior_memory_inference": 7,
+      "same_experience_linkage_unresolved": 2,
+      "same_predicate": 1,
+      "stable_social_role_not_directly_current": 2,
+      "temporal_order_reversed_or_same": 8,
+      "temporal_plan": 1,
+      "temporal_status:enum": 1
+    },
+    "issue_domain_counts": {
+      "me_experience_linkage_observation": 1,
+      "me_semantic_order_span_topology_conflation": 8,
+      "mp_persistence_basis_missing": 1,
+      "mp_support_relation_collapse": 4,
+      "no_observed_mismatch": 17,
+      "schema_enum_conformance": 1
+    }
+  },
+  "trust_assessment": {
+    "safe_uses": [
+      "diagnose general v8 schema and local-gate interface defects",
+      "define outcome-blind v9 contract regression tests",
+      "verify that errors are semantic/schema rather than local-code rejects"
+    ],
+    "unsafe_uses": [
+      "estimate full-catalog precision or recall",
+      "select a model or evaluator",
+      "train PM heads",
+      "open calibration or confirmatory outcome locks",
+      "authorize the 401-session compile"
+    ],
+    "ms_qualification": "NOT_ASSESSED_NO_MS_ITEMS_IN_OLD_DEV_PACKET"
+  },
+  "v9_general_repairs": [
+    {
+      "issue_domain": "me_experience_linkage_observation",
+      "affected_items": 1,
+      "interpretation": "The annotator left same-experience linkage unresolved for an old PASS case.",
+      "v9_repair": "Retain fail-closed linkage semantics; remeasure under the clearer minimal-span prompt without an item exception."
+    },
+    {
+      "issue_domain": "me_semantic_order_span_topology_conflation",
+      "affected_items": 8,
+      "interpretation": "Semantic time order and a shared broad source span are collapsed into one enum.",
+      "v9_repair": "Use minimal exact subspans, a semantic-order enum, and a separately computed mechanical source order."
+    },
+    {
+      "issue_domain": "mp_persistence_basis_missing",
+      "affected_items": 1,
+      "interpretation": "A durability label has no independent evidence basis, allowing temporary narration to look stable.",
+      "v9_repair": "Record persistence basis separately and reject durable/recurrent labels backed by temporary, episodic, or no evidence."
+    },
+    {
+      "issue_domain": "mp_support_relation_collapse",
+      "affected_items": 4,
+      "interpretation": "A binary exact-entailment observation rejects conventional direct entailments.",
+      "v9_repair": "Replace the boolean with a closed support relation; accept only direct-explicit or conventional-entailment evidence."
+    },
+    {
+      "issue_domain": "schema_enum_conformance",
+      "affected_items": 1,
+      "interpretation": "One provider enum value failed the strict schema.",
+      "v9_repair": "Keep per-item fail-closed parsing; do not coerce unknown enum values."
+    }
+  ],
+  "new_human_ratings_performed": 0,
+  "provider_calls": 0,
+  "outcome_calls": 0,
+  "full_401_authorized": false,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

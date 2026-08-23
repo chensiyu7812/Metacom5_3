@@ -48,8 +48,8 @@
     },
     {
       "id": "memory_compiler_precision_repair",
-      "status": "BLOCKED",
-      "evidence": "v7 old-DEV live regression failed: known FAIL/REVIEW rejected 7/12, old PASS retained 6/20, 11 typed-decision contradictions; 401 not run; results hash f273e537753eda4261e0eb79280e5d6b73d4a030d196cd44c12e9eaef1269af7"
+      "status": "IMPLEMENTATION_PENDING",
+      "evidence": "v8 old-DEV live run completed without 401: known FAIL/REVIEW rejected 11/12, old PASS retained 9/20, but 11 semantic false rejects remain; outcome-blind v9 support-relation/persistence-basis/minimal-subspan schema and deterministic gates are implemented and offline-tested, while a new live v9 DEV cap is not authorized"
     },
     {
       "id": "memory_heldout_requalification",
@@ -82,9 +82,14 @@
       "evidence": "requires authorized calibration after qualifications"
     },
     {
+      "id": "RQ2_DG_dynamic_query_window_schedule",
+      "status": "FROZEN",
+      "evidence": "official ES-MemEval harness mechanically binds the exact current-round seeker utterance after it is appended and before supporter generation, with re-retrieval in all 10 rounds; paper1_rq2_dg_dynamic_query_freeze_20260823_v1.json"
+    },
+    {
       "id": "RQ2_task_specific_memory_bundles",
-      "status": "AUDIT_REQUIRED",
-      "evidence": "QA and Summary surfaces exist; DG dynamic query still requires official-harness audit"
+      "status": "EXPERIMENT_REQUIRED",
+      "evidence": "QA and Summary surfaces exist and DG dynamic query/window/timing/re-retrieval are frozen; task-specific bundle amounts still require authorized outcome-isolated calibration"
     },
     {
       "id": "PM_effect_dataset_and_training",

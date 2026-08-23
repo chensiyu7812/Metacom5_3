@@ -1,0 +1,55 @@
+{
+  "protocol": "pm-paper1-rq2-dg-dynamic-query-freeze-v1",
+  "status": "FROZEN",
+  "scope": "DG query text, call timing, and re-retrieval schedule only; memory amount remains calibration-required",
+  "official_source": {
+    "repository": "slptongji/ES-MemEval",
+    "tag": "v1.0.0",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "visibility_audit_path": "project/data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+    "visibility_audit_sha256": "fa594b100b3b41b24dba971755fe5158f9f87bd84143d09c5101017d6612223a",
+    "surface_rows_path": "project/data/paper1_public_memory/es_memeval_public_official_visibility_surface_rows_v1.jsonl",
+    "surface_rows_sha256": "158c351b9cc9183459034f36f28a4f539c2cab26ce730a9a5179c0c6796d8667"
+  },
+  "frozen_query_contract": {
+    "interaction_rounds": 10,
+    "decision_and_retrieval_calls_per_dialogue": 10,
+    "call_rounds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "call_timing": "after the current round seeker utterance is generated and appended to the supporter room, immediately before that round supporter generation",
+    "query_text": "the exact text of the just-appended current-round seeker utterance",
+    "query_source_expression": "session_history[-1].text()",
+    "history_window_in_query": "CURRENT_SEEKER_UTTERANCE_ONLY",
+    "re_retrieval_schedule": "EVERY_SUPPORTER_GENERATION_ROUND",
+    "static_pre_generation_query_forbidden": true,
+    "future_turns_forbidden": true,
+    "seeker_simulator_hidden_fields_forbidden": true,
+    "gold_reference_outcome_fields_forbidden": true
+  },
+  "responsibility_boundary": {
+    "PM_and_retriever": "consume the frozen current-round query plus outcome-blind eligible-candidate descriptors and choose the task-specific typed bundle after amount calibration",
+    "Generator": "receives the chosen bundle before producing the current supporter response",
+    "official_RAG_Top4_baseline": "remains the official session-granularity, per-round dynamic Top-4 baseline and is not redefined by this PM freeze",
+    "step2_utility_filter": false
+  },
+  "not_frozen_here": [
+    "task-specific MP/MS/ME bundle amount",
+    "token budget",
+    "PM features beyond the already-authorized raw observables",
+    "Generator or Step2 full-stack identity",
+    "calibration result",
+    "confirmatory result"
+  ],
+  "research_integrity": {
+    "outcome_reads": 0,
+    "outcome_calls": 0,
+    "seed_shopping": false,
+    "formal_ES_MemEval": false,
+    "PM_training_runs": 0,
+    "locks": {
+      "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+      "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+    }
+  }
+}
