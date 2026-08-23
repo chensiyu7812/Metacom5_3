@@ -2,8 +2,6 @@
   "protocol": "pm-paper1-esc-evaluator-qualification-results-v1",
   "status": "BLOCKED",
   "blockers": [
-    "two independent blind human rating sheets are incomplete",
-    "blind human adjudication is incomplete",
     "candidate evaluator score traces are incomplete",
     "exact researcher-frozen candidate identities missing: QWEN_GENERAL_JUDGE, DEEPSEEK_GENERAL_JUDGE, INDEPENDENT_FAMILY_JUDGE",
     "pinned ESC-RANK >=24 GiB runtime qualification report is absent or not READY"
@@ -19,7 +17,170 @@
     "qualification_items": 24,
     "natural_public_baseline_items": 6,
     "controlled_bias_probe_items": 18,
-    "human_rows_complete": false,
+    "human_rows_complete": true,
+    "human_reliability": {
+      "rater_ids": [
+        "RATER_A",
+        "RATER_B"
+      ],
+      "items": 24,
+      "per_dimension": {
+        "Fluency": {
+          "rater_means": {
+            "RATER_A": 2.8333333333333335,
+            "RATER_B": 2.4166666666666665
+          },
+          "exact_agreement_rate": 0.5833333333333334,
+          "absolute_difference_ge_2_items": 4,
+          "quadratic_weighted_kappa": 0.6496350364963503,
+          "spearman_rho": 0.6780784395577512,
+          "mean_absolute_deviation": 0.6666666666666666
+        },
+        "Expression": {
+          "rater_means": {
+            "RATER_A": 2.5416666666666665,
+            "RATER_B": 2.25
+          },
+          "exact_agreement_rate": 0.75,
+          "absolute_difference_ge_2_items": 2,
+          "quadratic_weighted_kappa": 0.8274111675126903,
+          "spearman_rho": 0.833015373120787,
+          "mean_absolute_deviation": 0.375
+        },
+        "Empathy": {
+          "rater_means": {
+            "RATER_A": 2.625,
+            "RATER_B": 2.25
+          },
+          "exact_agreement_rate": 0.75,
+          "absolute_difference_ge_2_items": 4,
+          "quadratic_weighted_kappa": 0.764102564102564,
+          "spearman_rho": 0.7870853824813459,
+          "mean_absolute_deviation": 0.4583333333333333
+        },
+        "Information": {
+          "rater_means": {
+            "RATER_A": 2.4583333333333335,
+            "RATER_B": 2.375
+          },
+          "exact_agreement_rate": 0.5416666666666666,
+          "absolute_difference_ge_2_items": 3,
+          "quadratic_weighted_kappa": 0.7720797720797721,
+          "spearman_rho": 0.7652270470247795,
+          "mean_absolute_deviation": 0.5833333333333334
+        },
+        "Skillful": {
+          "rater_means": {
+            "RATER_A": 2.625,
+            "RATER_B": 2.3333333333333335
+          },
+          "exact_agreement_rate": 0.5833333333333334,
+          "absolute_difference_ge_2_items": 3,
+          "quadratic_weighted_kappa": 0.759493670886076,
+          "spearman_rho": 0.7485322735746751,
+          "mean_absolute_deviation": 0.5416666666666666
+        },
+        "Humanoid": {
+          "rater_means": {
+            "RATER_A": 2.1666666666666665,
+            "RATER_B": 1.75
+          },
+          "exact_agreement_rate": 0.2916666666666667,
+          "absolute_difference_ge_2_items": 1,
+          "quadratic_weighted_kappa": 0.7619047619047619,
+          "spearman_rho": 0.7753910487097634,
+          "mean_absolute_deviation": 0.75
+        },
+        "Overall": {
+          "rater_means": {
+            "RATER_A": 2.125,
+            "RATER_B": 1.8333333333333333
+          },
+          "exact_agreement_rate": 0.4166666666666667,
+          "absolute_difference_ge_2_items": 1,
+          "quadratic_weighted_kappa": 0.7571428571428571,
+          "spearman_rho": 0.8007370386846581,
+          "mean_absolute_deviation": 0.625
+        }
+      },
+      "major_disagreement": {
+        "definition": "absolute ordinal-score difference >= 2",
+        "items_any_dimension": 8,
+        "items_any_dimension_detail": [
+          {
+            "blind_item_id": "escq_0e49439a9e28fb56",
+            "dimensions": [
+              "Overall"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_3ff449d0d0b60e44",
+            "dimensions": [
+              "Empathy",
+              "Information"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_8a4355f6db12c102",
+            "dimensions": [
+              "Fluency"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_428078f203f19d7f",
+            "dimensions": [
+              "Fluency"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_b25a37e6823438df",
+            "dimensions": [
+              "Empathy",
+              "Skillful"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_e6a624d292e174cb",
+            "dimensions": [
+              "Expression",
+              "Empathy",
+              "Information",
+              "Skillful",
+              "Humanoid"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_df64db2de78549c7",
+            "dimensions": [
+              "Fluency"
+            ]
+          },
+          {
+            "blind_item_id": "escbias_04fa334c6ef7edbc",
+            "dimensions": [
+              "Fluency",
+              "Expression",
+              "Empathy",
+              "Information",
+              "Skillful"
+            ]
+          }
+        ],
+        "items_overall": 1,
+        "overall_item_ids": [
+          "escq_0e49439a9e28fb56"
+        ]
+      }
+    },
+    "human_reference_interpretation": "two independent normalized references are complete; the only major Overall split is targeted-adjudicated and remaining disagreement is retained as uncertainty",
+    "full_single_gold_adjudication_complete": false,
+    "targeted_overall_adjudication": {
+      "blind_item_id": "escq_0e49439a9e28fb56",
+      "dimension": "Overall",
+      "adjudicated_score": 4,
+      "identity_blinded": true,
+      "original_rater_scores_shown_to_adjudicator": false
+    },
     "judge_calls": 0,
     "local_gpu": "NVIDIA GeForce RTX 2070 8192 MiB; below required 24576 MiB"
   },

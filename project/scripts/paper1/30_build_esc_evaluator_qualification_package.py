@@ -18,6 +18,7 @@ sys.path.insert(0, str(PROJECT / "src"))
 
 from metacom_pm.paper1.evaluator_qualification import (  # noqa: E402
     DIMENSIONS,
+    OFFICIAL_RUBRIC_DIMENSION_ORDER,
     assert_blind_payload,
     canonical_sha256,
 )
@@ -72,6 +73,44 @@ def _official_prompts(score_py: Path) -> list[str]:
             if isinstance(prompts, list) and len(prompts) == 7:
                 return prompts
     raise RuntimeError("official seven English prompts were not found")
+
+
+def _human_instrument(prompts: list[str]) -> dict[str, Any]:
+    """Bind official rubric text by dimension name, never tuple position.
+
+    The historical v1 instrument paired ``prompt_EN`` with ``DIMENSIONS`` by
+    index, swapping the official Humanoid and Skillful rubrics.  v2 preserves
+    that v1 artifact for provenance and fixes only the name-to-rubric binding.
+    """
+
+    if len(prompts) != len(OFFICIAL_RUBRIC_DIMENSION_ORDER):
+        raise ValueError("expected the seven pinned official ESC-Eval prompts")
+    prompt_by_dimension = dict(zip(OFFICIAL_RUBRIC_DIMENSION_ORDER, prompts, strict=True))
+    return {
+        "protocol": "pm-paper1-esc-evaluator-human-instrument-v2",
+        "status": "CORRECTED_AFTER_RAW_HUMAN_CAPTURE_BEFORE_CANDIDATE_SCORING",
+        "source": {
+            "esc_eval_commit": ESC_EVAL_COMMIT,
+            "score_py_sha256": SCORE_PY_SHA256,
+        },
+        "correction": {
+            "supersedes_for_future_use": "paper1_esc_evaluator_human_instrument_20260820_v1.json",
+            "v1_defect": "official Humanoid and Skillful rubric texts were positionally swapped",
+            "raw_submissions_are_immutable": True,
+            "normalization_rule": "v1 Skillful scores become official Humanoid; v1 Humanoid scores become official Skillful",
+        },
+        "dimensions": [
+            {
+                "paper_dimension": dimension,
+                "official_rubric_text": prompt_by_dimension[dimension],
+                "scale": [0, 1, 2, 3, 4],
+            }
+            for dimension in DIMENSIONS
+        ],
+        "blind_to": ["PM identity", "arm", "ON/OFF", "k", "token budget", "Ours/baseline"],
+        "two_independent_raters_required": True,
+        "adjudication_required": True,
+    }
 
 
 def _opaque(namespace: str, value: str) -> str:
@@ -292,21 +331,7 @@ def main() -> int:
     assert len(probe_items) == 18
 
     prompts = _official_prompts(args.esc_eval / "score.py")
-    human_instrument = {
-        "protocol": "pm-paper1-esc-evaluator-human-instrument-v1",
-        "status": "FROZEN_BEFORE_HUMAN_RATINGS",
-        "source": {
-            "esc_eval_commit": ESC_EVAL_COMMIT,
-            "score_py_sha256": SCORE_PY_SHA256,
-        },
-        "dimensions": [
-            {"paper_dimension": dimension, "official_rubric_text": prompts[index], "scale": [0, 1, 2, 3, 4]}
-            for index, dimension in enumerate(DIMENSIONS)
-        ],
-        "blind_to": ["PM identity", "arm", "ON/OFF", "k", "token budget", "Ours/baseline"],
-        "two_independent_raters_required": True,
-        "adjudication_required": True,
-    }
+    human_instrument = _human_instrument(prompts)
     registry = {
         "protocol": "pm-paper1-esc-evaluator-candidate-identity-registry-v1",
         "status": "BLOCKED_PENDING_RESEARCHER_IDENTITIES",
@@ -378,7 +403,7 @@ def main() -> int:
         "rater_b": base / "paper1_esc_evaluator_human_blind_sheet_rater_b_20260820_v1.jsonl",
         "adjudication": base / "paper1_esc_evaluator_human_adjudication_template_20260820_v1.jsonl",
         "judge_template": base / "paper1_esc_evaluator_judge_output_template_20260820_v1.jsonl",
-        "instrument": base / "paper1_esc_evaluator_human_instrument_20260820_v1.json",
+        "instrument": base / "paper1_esc_evaluator_human_instrument_20260823_v2.json",
         "registry": base / "paper1_esc_evaluator_candidate_identity_registry_20260820_v1.json",
         "manifest": base / "paper1_esc_evaluator_qualification_package_manifest_20260820_v1.json",
     }

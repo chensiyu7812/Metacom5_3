@@ -19,6 +19,7 @@ from metacom_pm.paper1.evaluator_qualification import (  # noqa: E402
     blocked_result,
     grouped_residual_bias,
     human_reliability,
+    validate_single_overall_adjudication,
     validate_scores,
 )
 from metacom_pm.paper1.outcome_lock import (  # noqa: E402
@@ -92,9 +93,14 @@ def main() -> int:
     parser.add_argument("--items", type=Path, default=base / "paper1_esc_evaluator_qualification_set_20260820_v1.jsonl")
     parser.add_argument("--pairs", type=Path, default=base / "paper1_esc_evaluator_qualification_pairs_20260820_v1.jsonl")
     parser.add_argument("--audit", type=Path, default=base / "paper1_esc_evaluator_qualification_audit_mapping_20260820_v1.json")
-    parser.add_argument("--rater-a", type=Path, default=base / "paper1_esc_evaluator_human_blind_sheet_rater_a_20260820_v1.jsonl")
-    parser.add_argument("--rater-b", type=Path, default=base / "paper1_esc_evaluator_human_blind_sheet_rater_b_20260820_v1.jsonl")
+    parser.add_argument("--rater-a", type=Path, default=base / "paper1_esc_evaluator_human_rater_a_normalized_20260823_v1.jsonl")
+    parser.add_argument("--rater-b", type=Path, default=base / "paper1_esc_evaluator_human_rater_b_normalized_20260823_v1.jsonl")
     parser.add_argument("--adjudicated", type=Path, default=base / "paper1_esc_evaluator_human_adjudication_template_20260820_v1.jsonl")
+    parser.add_argument(
+        "--single-overall-adjudication",
+        type=Path,
+        default=base / "paper1_esc_evaluator_single_overall_adjudication_20260823_v1.json",
+    )
     parser.add_argument("--judge-rows", type=Path, default=base / "paper1_esc_evaluator_judge_output_template_20260820_v1.jsonl")
     parser.add_argument("--registry", type=Path, default=base / "paper1_esc_evaluator_candidate_identity_registry_20260820_v1.json")
     parser.add_argument("--runtime-report", type=Path)
@@ -109,15 +115,45 @@ def main() -> int:
     rater_a = _read_jsonl(args.rater_a)
     rater_b = _read_jsonl(args.rater_b)
     adjudicated = _read_jsonl(args.adjudicated)
+    single_overall_adjudication = (
+        _read_json(args.single_overall_adjudication)
+        if args.single_overall_adjudication.is_file()
+        else None
+    )
     judge_rows = _read_jsonl(args.judge_rows)
     registry = _read_json(args.registry)
-    for payload in (items, pairs, rater_a, rater_b, adjudicated, judge_rows):
+    for payload in (
+        items,
+        pairs,
+        rater_a,
+        rater_b,
+        adjudicated,
+        single_overall_adjudication,
+        judge_rows,
+    ):
         assert_blind_payload(payload)
 
     blockers = []
-    if not _complete_human(rater_a) or not _complete_human(rater_b):
+    human_complete = _complete_human(rater_a) and _complete_human(rater_b)
+    reliability = None
+    item_ids = [row["blind_item_id"] for row in items]
+    if not human_complete:
         blockers.append("two independent blind human rating sheets are incomplete")
-    if not _complete_adjudication(adjudicated):
+    else:
+        reliability = human_reliability(rater_a + rater_b, item_ids)
+    full_adjudication_complete = _complete_adjudication(adjudicated)
+    targeted_adjudication = None
+    if human_complete and reliability is not None:
+        overall_ids = reliability["major_disagreement"]["overall_item_ids"]
+        if len(overall_ids) == 1 and single_overall_adjudication is not None:
+            try:
+                targeted_adjudication = validate_single_overall_adjudication(
+                    single_overall_adjudication,
+                    expected_item_id=overall_ids[0],
+                )
+            except (TypeError, ValueError):
+                targeted_adjudication = None
+    if not full_adjudication_complete and targeted_adjudication is None:
         blockers.append("blind human adjudication is incomplete")
     if not _complete_judges(judge_rows):
         blockers.append("candidate evaluator score traces are incomplete")
@@ -153,7 +189,15 @@ def main() -> int:
                 "qualification_items": len(items),
                 "natural_public_baseline_items": sum(row.get("item_kind") == "natural_public_baseline" for row in items),
                 "controlled_bias_probe_items": sum(row.get("item_kind") == "controlled_bias_probe" for row in items),
-                "human_rows_complete": False,
+                "human_rows_complete": human_complete,
+                "human_reliability": reliability,
+                "human_reference_interpretation": (
+                    "two independent normalized references are complete; the only major Overall split is targeted-adjudicated and remaining disagreement is retained as uncertainty"
+                    if human_complete
+                    else "incomplete"
+                ),
+                "full_single_gold_adjudication_complete": full_adjudication_complete,
+                "targeted_overall_adjudication": targeted_adjudication,
                 "judge_calls": 0,
                 "local_gpu": "NVIDIA GeForce RTX 2070 8192 MiB; below required 24576 MiB",
             },
@@ -162,20 +206,64 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
 
-    item_ids = [row["blind_item_id"] for row in items]
-    reliability = human_reliability(rater_a + rater_b, item_ids)
     candidate_ids = sorted({row["candidate_id"] for row in judge_rows})
-    analyses = {
-        candidate_id: analyze_candidate(
-            candidate_id=candidate_id,
-            item_rows=items,
-            adjudicated_rows=adjudicated,
-            candidate_rows=judge_rows,
-            pair_rows=pairs,
-        )
-        for candidate_id in candidate_ids
-    }
-    reference = {row["blind_item_id"]: validate_scores(row["scores"]) for row in adjudicated}
+    by_rater: dict[str, list[dict[str, Any]]] = {}
+    for row in rater_a + rater_b:
+        by_rater.setdefault(str(row["rater_id"]), []).append(row)
+    if full_adjudication_complete:
+        analyses = {
+            candidate_id: analyze_candidate(
+                candidate_id=candidate_id,
+                item_rows=items,
+                adjudicated_rows=adjudicated,
+                candidate_rows=judge_rows,
+                pair_rows=pairs,
+            )
+            for candidate_id in candidate_ids
+        }
+        reference_mode = "full_single_adjudicated_gold"
+    else:
+        analyses = {}
+        for candidate_id in candidate_ids:
+            candidate_trace = {
+                row["blind_item_id"]: row
+                for row in judge_rows
+                if row["candidate_id"] == candidate_id
+            }
+            targeted_item_id = str(targeted_adjudication["blind_item_id"])
+            targeted_row = candidate_trace[targeted_item_id]
+            candidate_targeted_score = (
+                targeted_row["scores"]["Overall"]
+                if targeted_row["parse_valid"] is True
+                else None
+            )
+            analyses[candidate_id] = {
+                "candidate_id": candidate_id,
+                "reference_mode": "dual_human_plus_targeted_major_overall_adjudication",
+                "against_each_human": {
+                    rater_id: analyze_candidate(
+                        candidate_id=candidate_id,
+                        item_rows=items,
+                        adjudicated_rows=rows,
+                        candidate_rows=judge_rows,
+                        pair_rows=pairs,
+                    )
+                    for rater_id, rows in sorted(by_rater.items())
+                },
+                "targeted_major_overall": {
+                    **targeted_adjudication,
+                    "candidate_score": candidate_targeted_score,
+                    "candidate_absolute_error": (
+                        abs(
+                            candidate_targeted_score
+                            - int(targeted_adjudication["adjudicated_score"])
+                        )
+                        if candidate_targeted_score is not None
+                        else None
+                    ),
+                },
+            }
+        reference_mode = "dual_human_plus_targeted_major_overall_adjudication"
     family_mapping = {row["blind_item_id"]: row["system_family"] for row in audit["natural"]}
     for candidate_id in candidate_ids:
         candidate = {
@@ -183,15 +271,37 @@ def main() -> int:
             for row in judge_rows
             if row["candidate_id"] == candidate_id and row["parse_valid"] is True
         }
-        analyses[candidate_id]["hidden_system_family_residual_bias"] = grouped_residual_bias(
-            reference_scores=reference,
-            candidate_scores=candidate,
-            item_groups=family_mapping,
-        )
+        if full_adjudication_complete:
+            reference = {
+                row["blind_item_id"]: validate_scores(row["scores"])
+                for row in adjudicated
+            }
+            analyses[candidate_id]["hidden_system_family_residual_bias"] = (
+                grouped_residual_bias(
+                    reference_scores=reference,
+                    candidate_scores=candidate,
+                    item_groups=family_mapping,
+                )
+            )
+        else:
+            for rater_id, rows in sorted(by_rater.items()):
+                reference = {
+                    row["blind_item_id"]: validate_scores(row["scores"])
+                    for row in rows
+                }
+                analyses[candidate_id]["against_each_human"][rater_id][
+                    "hidden_system_family_residual_bias"
+                ] = grouped_residual_bias(
+                    reference_scores=reference,
+                    candidate_scores=candidate,
+                    item_groups=family_mapping,
+                )
     result = {
         "protocol": "pm-paper1-esc-evaluator-qualification-results-v1",
         "status": "READY_FOR_RESEARCHER_EVALUATOR_SELECTION",
         "human_reliability": reliability,
+        "human_reference_mode": reference_mode,
+        "targeted_overall_adjudication": targeted_adjudication,
         "candidates": analyses,
         "recommendation": None,
         "recommendation_note": "Apply validity/agreement, then bias/sensitivity, then cost/latency; researcher freezes winner.",

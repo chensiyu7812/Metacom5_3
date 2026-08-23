@@ -25,6 +25,18 @@ DIMENSIONS = (
     "Humanoid",
     "Overall",
 )
+# The pinned ESC-Eval ``prompt_EN`` list is not in ``DIMENSIONS`` order:
+# Humanoid precedes Skillful in the official scorer.  Keep the report/schema
+# order above for compatibility, but never pair prompts by positional index.
+OFFICIAL_RUBRIC_DIMENSION_ORDER = (
+    "Fluency",
+    "Expression",
+    "Empathy",
+    "Information",
+    "Humanoid",
+    "Skillful",
+    "Overall",
+)
 FORBIDDEN_FIELDS = {
     "pm_identity",
     "arm",
@@ -72,6 +84,35 @@ def validate_scores(scores: Mapping[str, Any]) -> dict[str, int]:
             raise ValueError(f"{dimension} must be an integer on the official 0-4 scale")
         normalized[dimension] = score
     return normalized
+
+
+def validate_single_overall_adjudication(
+    row: Mapping[str, Any], *, expected_item_id: str
+) -> dict[str, Any]:
+    """Validate the pre-candidate targeted adjudication of one major Overall split."""
+
+    if row.get("status") != "ADJUDICATION_COMPLETE":
+        raise ValueError("single Overall adjudication status must be ADJUDICATION_COMPLETE")
+    if row.get("adjudication_completed") is not True:
+        raise ValueError("single Overall adjudication must be complete")
+    if row.get("blind_item_id") != expected_item_id:
+        raise ValueError("single Overall adjudication item identity mismatch")
+    if row.get("dimension") != "Overall":
+        raise ValueError("targeted adjudication may resolve only Overall")
+    score = row.get("adjudicated_score")
+    if isinstance(score, bool) or not isinstance(score, int) or not 0 <= score <= 4:
+        raise ValueError("adjudicated Overall score must be an integer on 0-4")
+    if row.get("identity_blinded") is not True:
+        raise ValueError("adjudication must remain identity blinded")
+    if row.get("original_rater_scores_shown_to_adjudicator") is not False:
+        raise ValueError("targeted adjudicator must not see original rater scores")
+    return {
+        "blind_item_id": expected_item_id,
+        "dimension": "Overall",
+        "adjudicated_score": score,
+        "identity_blinded": True,
+        "original_rater_scores_shown_to_adjudicator": False,
+    }
 
 
 def quadratic_weighted_kappa(left: Sequence[int], right: Sequence[int]) -> float | None:
@@ -168,12 +209,45 @@ def human_reliability(
     for dimension in DIMENSIONS:
         left = [indexes[0][item][dimension] for item in item_ids]
         right = [indexes[1][item][dimension] for item in item_ids]
+        absolute_differences = [abs(a - b) for a, b in zip(left, right, strict=True)]
         per_dimension[dimension] = {
+            "rater_means": {
+                rater_ids[0]: statistics.fmean(left),
+                rater_ids[1]: statistics.fmean(right),
+            },
+            "exact_agreement_rate": sum(a == b for a, b in zip(left, right, strict=True))
+            / len(left),
+            "absolute_difference_ge_2_items": sum(value >= 2 for value in absolute_differences),
             "quadratic_weighted_kappa": quadratic_weighted_kappa(left, right),
             "spearman_rho": spearman_rho(left, right),
             "mean_absolute_deviation": mean_absolute_deviation(left, right),
         }
-    return {"rater_ids": rater_ids, "per_dimension": per_dimension}
+    major_any_dimension = []
+    for item in item_ids:
+        differing = [
+            dimension
+            for dimension in DIMENSIONS
+            if abs(indexes[0][item][dimension] - indexes[1][item][dimension]) >= 2
+        ]
+        if differing:
+            major_any_dimension.append({"blind_item_id": item, "dimensions": differing})
+    major_overall = [
+        item
+        for item in item_ids
+        if abs(indexes[0][item]["Overall"] - indexes[1][item]["Overall"]) >= 2
+    ]
+    return {
+        "rater_ids": rater_ids,
+        "items": len(item_ids),
+        "per_dimension": per_dimension,
+        "major_disagreement": {
+            "definition": "absolute ordinal-score difference >= 2",
+            "items_any_dimension": len(major_any_dimension),
+            "items_any_dimension_detail": major_any_dimension,
+            "items_overall": len(major_overall),
+            "overall_item_ids": major_overall,
+        },
+    }
 
 
 def analyze_candidate(

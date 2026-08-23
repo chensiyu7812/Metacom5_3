@@ -7,6 +7,7 @@ import pytest
 
 from metacom_pm.paper1.evaluator_qualification import (
     DIMENSIONS,
+    OFFICIAL_RUBRIC_DIMENSION_ORDER,
     analyze_candidate,
     assert_blind_payload,
     blocked_result,
@@ -15,6 +16,7 @@ from metacom_pm.paper1.evaluator_qualification import (
     mean_absolute_deviation,
     quadratic_weighted_kappa,
     spearman_rho,
+    validate_single_overall_adjudication,
 )
 
 
@@ -56,6 +58,28 @@ def test_spearman_returns_none_for_constant_vector():
     assert spearman_rho([1, 1, 1], [0, 1, 2]) is None
 
 
+def test_targeted_overall_adjudication_is_blind_and_item_bound():
+    row = {
+        "status": "ADJUDICATION_COMPLETE",
+        "blind_item_id": "x",
+        "dimension": "Overall",
+        "adjudicated_score": 4,
+        "adjudication_completed": True,
+        "identity_blinded": True,
+        "original_rater_scores_shown_to_adjudicator": False,
+    }
+    assert validate_single_overall_adjudication(row, expected_item_id="x")[
+        "adjudicated_score"
+    ] == 4
+    with pytest.raises(ValueError, match="identity mismatch"):
+        validate_single_overall_adjudication(row, expected_item_id="y")
+    with pytest.raises(ValueError, match="must not see"):
+        validate_single_overall_adjudication(
+            {**row, "original_rater_scores_shown_to_adjudicator": True},
+            expected_item_id="x",
+        )
+
+
 def test_two_human_reliability_requires_exact_two_rater_coverage():
     item_ids = ["a", "b", "c"]
     rows = [
@@ -65,6 +89,9 @@ def test_two_human_reliability_requires_exact_two_rater_coverage():
     ]
     result = human_reliability(rows, item_ids)
     assert result["rater_ids"] == ["R1", "R2"]
+    assert result["items"] == 3
+    assert result["major_disagreement"]["items_overall"] == 0
+    assert result["per_dimension"]["Overall"]["exact_agreement_rate"] == 1.0
     assert result["per_dimension"]["Overall"]["quadratic_weighted_kappa"] == 1.0
     with pytest.raises(ValueError, match="cover every frozen"):
         human_reliability(rows[:-1], item_ids)
@@ -200,6 +227,82 @@ def test_controlled_probe_keeps_identical_semantic_atoms_within_each_pair():
         assert any(word in control_dialogue[0].lower() for word in context_words)
         assert any(word in control_dialogue[1].lower() for word in response_words)
         assert any(word in variant_dialogue[1].lower() for word in response_words)
+
+
+def test_human_instrument_binds_official_humanoid_and_skillful_by_name():
+    builder = _load_builder()
+    prompts = [f"PROMPT_{dimension}" for dimension in OFFICIAL_RUBRIC_DIMENSION_ORDER]
+    instrument = builder._human_instrument(prompts)
+    by_dimension = {
+        row["paper_dimension"]: row["official_rubric_text"]
+        for row in instrument["dimensions"]
+    }
+    assert instrument["protocol"] == "pm-paper1-esc-evaluator-human-instrument-v2"
+    assert by_dimension["Humanoid"] == "PROMPT_Humanoid"
+    assert by_dimension["Skillful"] == "PROMPT_Skillful"
+    assert instrument["correction"]["raw_submissions_are_immutable"] is True
+
+
+def test_v1_human_submission_normalization_only_swaps_two_rubric_labels():
+    path = ROOT / "scripts" / "paper1" / "31_ingest_esc_evaluator_human_reviews.py"
+    spec = importlib.util.spec_from_file_location("esc_human_ingest", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    item = {"blind_item_id": "x", "dialogue": ["User: x", "AI assistant: y"]}
+    payload = {
+        "meta": {"item_count": 1, "dimensions": list(DIMENSIONS)},
+        "submission": [
+            {
+                "blind_item_id": "x",
+                "Fluency": 0,
+                "Expression": 1,
+                "Empathy": 2,
+                "Information": 3,
+                "Skillful": 1,
+                "Humanoid": 4,
+                "Overall": 2,
+                "notes": "kept",
+                "human_completed": True,
+            }
+        ],
+    }
+    rows = module.normalize_submission(payload, rater_id="RATER_A", frozen_items={"x": item})
+    assert rows[0]["scores"] == {
+        "Fluency": 0,
+        "Expression": 1,
+        "Empathy": 2,
+        "Information": 3,
+        "Skillful": 4,
+        "Humanoid": 1,
+        "Overall": 2,
+    }
+    assert rows[0]["notes"] == "kept"
+    assert rows[0]["normalization"]["judgment_values_changed"] is False
+
+
+def test_corrected_instrument_preserves_rubric_text_and_repairs_only_names():
+    path = ROOT / "scripts" / "paper1" / "31_ingest_esc_evaluator_human_reviews.py"
+    spec = importlib.util.spec_from_file_location("esc_human_ingest_instrument", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    historical = {
+        "source": {"score_py_sha256": "x"},
+        "blind_to": ["PM identity"],
+        "dimensions": [
+            {"paper_dimension": dimension, "official_rubric_text": f"RAW_{dimension}"}
+            for dimension in DIMENSIONS
+        ],
+    }
+    corrected = module.corrected_instrument(historical)
+    by_dimension = {
+        row["paper_dimension"]: row["official_rubric_text"]
+        for row in corrected["dimensions"]
+    }
+    assert by_dimension["Humanoid"] == "RAW_Skillful"
+    assert by_dimension["Skillful"] == "RAW_Humanoid"
+    assert by_dimension["Empathy"] == "RAW_Empathy"
 
 
 def test_blocked_result_never_fabricates_a_winner_or_outcome():

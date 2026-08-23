@@ -49,12 +49,18 @@ v7 runtime 在离线门通过后，对旧 32-item DEV packet 做了 verifier-onl
 
 ## 4. C 线：ESC evaluator qualification
 
-已构建 24-item blind package：6 条 pinned public natural-baseline dialogues，加 18 条 controlled bias items。9 个 controlled pairs 覆盖 verbosity、redundant suggestions、list/format style；每对 control/variant 的 context 与 semantic atoms 相同，只改变目标 factor。已生成两份空白 human sheets、adjudication template、blind judge input、metrics 实现和 candidate identity registry。
+已构建 24-item blind package：6 条 pinned public natural-baseline dialogues，加 18 条 controlled bias items。9 个 controlled pairs 覆盖 verbosity、redundant suggestions、list/format style；每对 control/variant 绑定同一 context 与声明的 semantic atoms。两名独立真人现已各完成 `24/24`，原始提交按字节保存。
+
+数据质量审计发现历史 v1 instrument 将官方 `Humanoid` 与 `Skillful` rubric 按位置对调。该问题属于标签绑定错误，不是评分缺失：原始提交保持不变，normalized artifacts 只机械执行 `v1 Skillful → official Humanoid`、`v1 Humanoid → official Skillful`。无需因此重评 24 项。
+
+双人 Overall agreement 为 QWK=`0.7571`、Spearman=`0.8007`、MAD=`0.625`；24 项中仅 1 项 Overall 绝对分差 ≥2。分歧作为人类测量不确定性保留，不将任一 reviewer 静默指定为 primary。controlled verbosity variants 同时改变了支持性 framing，因此其结果不能被解释为纯长度偏好。
+
+唯一 major-Overall 项 `escq_0e49439a9e28fb56` 已在不显示原始 rater scores、继续隐藏 identity 的条件下裁决为 `Overall=4`。human reference 现冻结为“两名等权独立 reference + 唯一 major-Overall targeted adjudication”；当前 24-item reference 不再需要额外人评。
 
 当前不能给 evaluator winner：
 
 - 本机 RTX 2070 只有 8192 MiB，没有已连接的 ≥24 GiB GPU，也没有 pinned model snapshots；
-- 两名真人盲评与 adjudication 尚未发生；
+- 两名真人盲评及唯一 major-Overall targeted adjudication 已完成；不构造伪造的完整单一 human gold；
 - Qwen、DeepSeek judge 的 exact model/version 未由研究者冻结；
 - 第四独立家族及 exact model/version 未指定。
 
@@ -80,6 +86,5 @@ v7 runtime 在离线门通过后，对旧 32-item DEV packet 做了 verifier-onl
 2. 对 Semantic Memory 决定是否批准新的 contract/prompt 修订；当前 v7 已被真实 DEV 否决，禁止直接继续 401。
 3. 提供或租用 ≥24 GiB pinned GPU 环境跑 ESC-RANK runtime qualification。
 4. 冻结 exact Qwen judge、DeepSeek judge，并指定第四独立模型家族及 exact model/version。
-5. 安排两名独立真人完成 ESC blind sheets 与 adjudication。
 
 这些决定完成前，不打开任何 calibration lock。
