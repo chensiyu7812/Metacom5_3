@@ -8,6 +8,7 @@ from metacom_pm.paper1.contracts import (
     ExperimentArm,
     OfficialOutcomeRecord,
     PolicyDecision,
+    PolicyOperatingMode,
     SoftEffectTarget,
     TaskType,
     TreatmentAssignment,
@@ -38,16 +39,22 @@ def test_equivalent_is_nonpositive_not_half_a_positive_effect():
     assert target.positive_effect_fraction == pytest.approx(1 / 3)
 
 
-def test_primary_policy_rule_is_strictly_greater_than_point_five():
+def test_policy_rule_requires_an_explicit_frozen_operating_point():
     at_threshold = PolicyDecision(
         eligible=True,
         predicted_positive_effect_probability=0.5,
+        operating_mode=PolicyOperatingMode.CALIBRATED_THRESHOLD,
+        threshold=0.5,
+        threshold_protocol_id="threshold-freeze-v1",
         assignment=TreatmentAssignment.OFF,
     )
     assert at_threshold.assignment is TreatmentAssignment.OFF
     above = PolicyDecision(
         eligible=True,
         predicted_positive_effect_probability=0.5001,
+        operating_mode=PolicyOperatingMode.CALIBRATED_THRESHOLD,
+        threshold=0.5,
+        threshold_protocol_id="threshold-freeze-v1",
         assignment=TreatmentAssignment.ON,
     )
     assert above.assignment is TreatmentAssignment.ON
@@ -55,6 +62,24 @@ def test_primary_policy_rule_is_strictly_greater_than_point_five():
         PolicyDecision(
             eligible=False,
             predicted_positive_effect_probability=1.0,
+            operating_mode=PolicyOperatingMode.ELIGIBLE_ALWAYS_ON,
+            threshold_protocol_id="threshold-freeze-v1",
+            assignment=TreatmentAssignment.ON,
+        )
+    always_off = PolicyDecision(
+        eligible=True,
+        predicted_positive_effect_probability=1.0,
+        operating_mode=PolicyOperatingMode.ALWAYS_OFF,
+        threshold_protocol_id="threshold-freeze-v1",
+        assignment=TreatmentAssignment.OFF,
+    )
+    assert always_off.assignment is TreatmentAssignment.OFF
+    with pytest.raises(ValidationError, match="require a frozen threshold"):
+        PolicyDecision(
+            eligible=True,
+            predicted_positive_effect_probability=0.9,
+            operating_mode=PolicyOperatingMode.CALIBRATED_THRESHOLD,
+            threshold_protocol_id="threshold-freeze-v1",
             assignment=TreatmentAssignment.ON,
         )
 

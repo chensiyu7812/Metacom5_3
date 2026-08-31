@@ -1,6 +1,7 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
+  threshold_policy: project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json
   reconciliation: project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json
   human: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
 method: Policy Manager
@@ -27,7 +28,15 @@ learning:
   model: standardized_L2_logistic_regression_per_head
   target: probability_of_materially_positive_realized_paired_effect
   canonical_background: all_other_optional_components_off
-  primary_threshold: 0.5
+  primary_operating_point:
+    protocol: pm-paper1-quality-first-one-se-threshold-v1
+    probability_grid: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+    include_eligible_always_on: true
+    include_always_off: true
+    fixed_point_five_reference_required: true
+    selection_rule: quality_first_one_standard_error_then_minimum_generator_input_tokens
+    confirmatory_outcome_selection_forbidden: true
+    held_out_outer_target_outcome_selection_forbidden: true
   cost_in_label_or_loss: false
   empirical_pass_gates: false
   paired_outcome_coding:
@@ -68,12 +77,14 @@ RQ1_RS_CALIBRATION_OUTCOME_LOCK:
   repeated_effect_qualification_allowed: false
   pm_effect_construction_allowed: false
   pm_training_allowed: false
+  operating_point_calibration_allowed: false
 RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK:
   status: CLOSED
   resource_amount_calibration_allowed: false
   repeated_effect_qualification_allowed: false
   pm_effect_construction_allowed: false
   pm_training_allowed: false
+  operating_point_calibration_allowed: false
 RQ1_CONFIRMATORY_OUTCOME_LOCK:
   status: CLOSED
   formal_effect_dataset_allowed: false
@@ -92,6 +103,7 @@ pending_zero_outcome_freeze:
   - exact_rs_pairwise_and_es_memeval_scorer_identities
   - generator_step2_runtime_manifest
   - seed_schedule
+  - outcome_isolated_operating_point_protocol_and_selected_thresholds
   - matched_random_construction
   - api_call_plan
 forbidden_active_inputs:

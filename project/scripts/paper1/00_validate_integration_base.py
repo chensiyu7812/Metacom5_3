@@ -15,6 +15,7 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
+from metacom_pm.paper1.execution import STEP2_RESOURCE_PROTOCOL, VISIBLE_STATE_PROTOCOL
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 
 
@@ -43,6 +44,26 @@ def validate() -> dict[str, Any]:
         and reconciliation["learning_route"]["cost_in_label_or_loss"] is False
         and reconciliation["repeated_effect"]["qualification_pass_gate"] is False
         and reconciliation["formal_evidence"]["binary_paper_pass_fail_forbidden"] is True
+    )
+    threshold_policy = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_threshold_policy_calibration_amendment_20260831_v1.json"
+    )
+    configured_threshold = config["learning"]["primary_operating_point"]
+    checks["threshold_policy_scoped_override"] = (
+        threshold_policy["status"]
+        == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_AMENDMENT_PRE_OUTCOME"
+        and threshold_policy["preserved_research"]["cost_in_label_or_loss"] is False
+        and threshold_policy["isolation"]["confirmatory_outcome_selection"] == "FORBIDDEN"
+        and threshold_policy["isolation"]["held_out_outer_target_outcome_selection"]
+        == "FORBIDDEN"
+        and configured_threshold["protocol"]
+        == "pm-paper1-quality-first-one-se-threshold-v1"
+        and 0.5 in configured_threshold["probability_grid"]
+        and configured_threshold["include_eligible_always_on"] is True
+        and configured_threshold["include_always_off"] is True
     )
 
     authority = PROJECT / "data" / "v3_authority"
@@ -117,6 +138,20 @@ def validate() -> dict[str, Any]:
         "Cost" + "WorthIt",
     )
     checks["active_namespace_forbidden_tokens_absent"] = not any(token in active_text for token in forbidden_tokens)
+    checks["active_namespace_legacy_prompt_imports_absent"] = not any(
+        token in active_text
+        for token in (
+            "from metacom_pm.prompts import",
+            "from ..prompts import",
+            "v1_5_strategy_rag_runtime",
+        )
+    )
+    checks["paper1_visible_state_contract_ready"] = (
+        VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"
+    )
+    checks["paper1_step2_delivery_contract_ready"] = (
+        STEP2_RESOURCE_PROTOCOL == "pm-paper1-typed-step2-resource-envelope-v1"
+    )
 
     failed = [name for name, passed in checks.items() if not passed]
     return {

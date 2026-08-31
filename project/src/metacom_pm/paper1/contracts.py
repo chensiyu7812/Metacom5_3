@@ -57,6 +57,12 @@ class TreatmentAssignment(StrEnum):
     ON = "on"
 
 
+class PolicyOperatingMode(StrEnum):
+    CALIBRATED_THRESHOLD = "calibrated_threshold"
+    ELIGIBLE_ALWAYS_ON = "eligible_always_on"
+    ALWAYS_OFF = "always_off"
+
+
 class TreatmentDeliveryStatus(StrEnum):
     DELIVERED = "delivered"
     NOT_ASSIGNED = "not_assigned"
@@ -203,18 +209,28 @@ class SoftEffectTarget(StrictContract):
 class PolicyDecision(StrictContract):
     eligible: bool
     predicted_positive_effect_probability: float = Field(ge=0.0, le=1.0)
-    threshold: float = Field(default=0.5, ge=0.0, le=1.0)
+    operating_mode: PolicyOperatingMode
+    threshold: float | None = Field(default=None, ge=0.0, le=1.0)
+    threshold_protocol_id: str = Field(min_length=1)
     assignment: TreatmentAssignment
 
     @model_validator(mode="after")
     def enforce_primary_rule(self) -> "PolicyDecision":
-        expected = (
-            TreatmentAssignment.ON
-            if self.eligible and self.predicted_positive_effect_probability > self.threshold
-            else TreatmentAssignment.OFF
-        )
+        if self.operating_mode is PolicyOperatingMode.CALIBRATED_THRESHOLD:
+            if self.threshold is None:
+                raise ValueError("calibrated policy decisions require a frozen threshold")
+            open_resource = self.predicted_positive_effect_probability > self.threshold
+        elif self.operating_mode is PolicyOperatingMode.ELIGIBLE_ALWAYS_ON:
+            if self.threshold is not None:
+                raise ValueError("eligible-always-on cannot carry a probability threshold")
+            open_resource = True
+        else:
+            if self.threshold is not None:
+                raise ValueError("always-off cannot carry a probability threshold")
+            open_resource = False
+        expected = TreatmentAssignment.ON if self.eligible and open_resource else TreatmentAssignment.OFF
         if self.assignment is not expected:
-            raise ValueError("assignment violates the frozen eligibility + probability rule")
+            raise ValueError("assignment violates the frozen eligibility + operating-point rule")
         return self
 
 

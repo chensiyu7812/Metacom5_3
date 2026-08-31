@@ -24,6 +24,10 @@ RS_RENDER_AUDIT = (
 RECONCILIATION = (
     PROJECT / "data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json"
 )
+THRESHOLD_POLICY = (
+    PROJECT
+    / "data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json"
+)
 SCORER_AUDIT = PROJECT / "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json"
 RQ0_CONTRACT = PROJECT / "data/v3_authority/rq0_llama31_8b_esc_eval_exact_contract_v1.json"
 PREOUTCOME_DRAFT = PROJECT / "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json"
@@ -90,6 +94,7 @@ def main() -> int:
     rs_family = _load(RS_FAMILY_AUDIT)
     rs_render = _load(RS_RENDER_AUDIT)
     reconciliation = _load(RECONCILIATION)
+    threshold_policy = _load(THRESHOLD_POLICY)
     scorer = _load(SCORER_AUDIT)
     rq0 = _load(RQ0_CONTRACT)
     preoutcome = _load(PREOUTCOME_DRAFT)
@@ -271,10 +276,10 @@ def main() -> int:
         _decision(
             16,
             "primary_policy",
-            "PM decision threshold",
-            "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
-            "Keep 0.5 unchanged. Report Brier/log-loss/calibration diagnostics without calibration PASS gates.",
-            "ALREADY_FROZEN_BY_AUTHORITY",
+            "PM operating-point selection",
+            "The 2026-08-31 scoped amendment supersedes only the self-imposed fixed-0.5 operating point while preserving Route A, four L2 heads, benefit-only targets and outcome isolation.",
+            "Use the frozen grouped-OOF/outer-training-only quality-first one-SE then minimum Generator-input-token protocol. Retain 0.5, eligible-always-on and always-off as mandatory transparent references; never select on confirmatory or held-out outer-target outcomes.",
+            "SELECTION_PROTOCOL_FROZEN_OPERATING_POINTS_PENDING_EFFECT_DATA",
             False,
         ),
         _decision(
@@ -303,6 +308,7 @@ def main() -> int:
         "generated_at": generated_at,
         "authority": {
             "reconciliation_protocol": reconciliation.get("protocol"),
+            "threshold_policy_protocol": threshold_policy.get("protocol"),
             "route": "A_first_order_factorized",
             "official_benchmark_first": True,
             "cost_separate": True,

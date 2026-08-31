@@ -98,6 +98,7 @@ def test_memory_precision_artifact_does_not_claim_live_v7_success():
 
 def test_root_authority_lists_new_scoped_amendment_first():
     agents = (REPO / "AGENTS.md").read_text(encoding="utf-8")
+    threshold = "project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md"
     first = "project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md"
     prior = "project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md"
-    assert agents.index(first) < agents.index(prior)
+    assert agents.index(threshold) < agents.index(first) < agents.index(prior)

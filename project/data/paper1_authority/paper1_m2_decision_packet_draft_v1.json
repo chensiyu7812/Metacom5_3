@@ -5,6 +5,7 @@
   "generated_at": "2026-08-17T09:42:39+09:00",
   "authority": {
     "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
+    "threshold_policy_protocol": "pm-paper1-threshold-policy-calibration-amendment-20260831-v1",
     "route": "A_first_order_factorized",
     "official_benchmark_first": true,
     "cost_separate": true,
@@ -348,10 +349,10 @@
     {
       "order": 16,
       "decision_id": "primary_policy",
-      "item": "PM decision threshold",
-      "evidence": "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
-      "recommendation": "Keep 0.5 unchanged. Report Brier/log-loss/calibration diagnostics without calibration PASS gates.",
-      "status": "ALREADY_FROZEN_BY_AUTHORITY",
+      "item": "PM operating-point selection",
+      "evidence": "The 2026-08-31 scoped amendment supersedes only the self-imposed fixed-0.5 operating point while preserving Route A, four L2 heads, benefit-only targets and outcome isolation.",
+      "recommendation": "Use the frozen grouped-OOF/outer-training-only quality-first one-SE then minimum Generator-input-token protocol. Retain 0.5, eligible-always-on and always-off as mandatory transparent references; never select on confirmatory or held-out outer-target outcomes.",
+      "status": "SELECTION_PROTOCOL_FROZEN_OPERATING_POINTS_PENDING_EFFECT_DATA",
       "researcher_approval_required": false
     },
     {

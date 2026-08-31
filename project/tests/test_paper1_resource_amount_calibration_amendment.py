@@ -20,6 +20,14 @@ def test_amendment_is_scoped_and_both_outcome_locks_are_closed():
     assert doc["outcome_locks"]["CONFIRMATORY_OUTCOME_LOCK"]["current_status"] == "CLOSED"
     assert doc["current_activity"]["formal_outcome_calls"] == 0
     assert doc["current_activity"]["pm_training_runs"] == 0
+    threshold = _load(
+        "data/paper1_authority/"
+        "paper1_threshold_policy_calibration_amendment_20260831_v1.json"
+    )
+    assert "fixed-0.5-primary-policy" in threshold["precedence"]
+    assert threshold["scoped_override"]["fixed_point_five_new_role"].startswith(
+        "mandatory_transparent_reference"
+    )
 
 
 def test_new_scoped_amendment_is_registered_as_active_authority():

@@ -14,6 +14,7 @@ from metacom_pm.paper1.core.freeze import (
     GeneratorStackBinding,
     MatchedRandomFreeze,
     PreOutcomeFreezeManifest,
+    ThresholdSelectionFreeze,
     bind_artifact,
 )
 
@@ -143,6 +144,22 @@ def test_matched_random_must_match_prefrozen_on_counts_and_exact_token_budget():
         )
 
 
+def test_threshold_freeze_keeps_reference_endpoints_and_outcome_isolation():
+    threshold = ThresholdSelectionFreeze()
+    assert threshold.fixed_point_five_reference_required is True
+    assert 0.5 in threshold.probability_grid
+    assert threshold.include_eligible_always_on is True
+    assert threshold.include_always_off is True
+    assert threshold.cost_enters_label_or_loss is False
+    assert threshold.confirmatory_outcome_selection_forbidden is True
+    assert threshold.outer_target_outcome_selection_forbidden is True
+
+    with pytest.raises(ValidationError, match="cost cannot enter"):
+        ThresholdSelectionFreeze(cost_enters_label_or_loss=True)
+    with pytest.raises(ValidationError, match="outcome isolation"):
+        ThresholdSelectionFreeze(confirmatory_outcome_selection_forbidden=False)
+
+
 def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
     manifest = json.loads(
         (ROOT / "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json").read_text(
@@ -180,6 +197,9 @@ def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():
     assert "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl" not in paths
     assert manifest["status"] == "DRAFT_AWAITING_M1_INTEGRATION"
     assert manifest["formal_outcome_calls_at_freeze"] == 0
+    assert manifest["calibration_outcome_calls_at_freeze"] == 0
+    assert manifest["confirmatory_outcome_calls_at_freeze"] == 0
+    assert manifest["threshold_selection"] is None
     assert manifest["notes"]["formal_unlock"] is False
 
 

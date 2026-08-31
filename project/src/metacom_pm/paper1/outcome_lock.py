@@ -58,6 +58,7 @@ def assert_rq1_rs_calibration_outcome_locked(config: dict[str, Any]) -> None:
             "repeated_effect_qualification_allowed",
             "pm_effect_construction_allowed",
             "pm_training_allowed",
+            "operating_point_calibration_allowed",
         ),
     )
 
@@ -71,6 +72,7 @@ def assert_rq2_memory_calibration_outcome_locked(config: dict[str, Any]) -> None
             "repeated_effect_qualification_allowed",
             "pm_effect_construction_allowed",
             "pm_training_allowed",
+            "operating_point_calibration_allowed",
         ),
     )
 

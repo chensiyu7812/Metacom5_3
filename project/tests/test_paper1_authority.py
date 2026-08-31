@@ -10,7 +10,7 @@ def test_reconciliation_is_highest_precedence_and_removes_old_gates():
         (ROOT / "data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json").read_text()
     )
     assert contract["status"] == "ACTIVE_HIGHEST_PRECEDENCE_PRE_OUTCOME_OVERRIDE"
-    assert contract["learning_route"]["primary_threshold"] == 0.5
+    assert contract["learning_route"]["primary_threshold"] == 0.5  # historical clause
     assert contract["learning_route"]["target"] == (
         "probability_of_materially_positive_realized_paired_effect"
     )
@@ -26,6 +26,20 @@ def test_reconciliation_is_highest_precedence_and_removes_old_gates():
     )
     assert len(contract["superseded_empirical_gates"]) == 7
 
+    threshold = json.loads(
+        (
+            ROOT
+            / "data/paper1_authority/"
+            "paper1_threshold_policy_calibration_amendment_20260831_v1.json"
+        ).read_text()
+    )
+    assert threshold["status"] == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_AMENDMENT_PRE_OUTCOME"
+    assert threshold["scoped_override"]["fixed_point_five_new_role"].startswith(
+        "mandatory_transparent_reference"
+    )
+    assert threshold["preserved_research"]["cost_in_label_or_loss"] is False
+    assert threshold["current_activity"]["formal_outcome_calls"] == 0
+
 
 def test_agents_reads_reconciliation_first():
     agents = (ROOT.parent / "AGENTS.md").read_text()
@@ -33,6 +47,8 @@ def test_agents_reads_reconciliation_first():
     old_program = agents.index("PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md")
     assert reconciliation < old_program
     assert "Semantic adoption is diagnostic only" in agents
+    threshold = agents.index("PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md")
+    assert threshold < reconciliation
 
 
 def test_ci_blocks_on_paper1_and_demotes_legacy_v53_to_diagnostic():
