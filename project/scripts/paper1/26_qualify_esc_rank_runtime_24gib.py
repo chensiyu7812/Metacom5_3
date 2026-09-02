@@ -102,6 +102,8 @@ def _load_dialogues(path: Path) -> list[dict[str, Any]]:
     if len(rows) < 3:
         raise RuntimeError("runtime qualification requires at least three blind dialogues")
     for row in rows:
+        if not isinstance(row.get("blind_item_id"), str) or not row["blind_item_id"]:
+            raise RuntimeError("qualification dialogue must have a blind_item_id")
         if set(row) & FORBIDDEN_KEYS:
             raise RuntimeError(f"qualification dialogue exposes forbidden keys: {set(row) & FORBIDDEN_KEYS}")
         if row.get("source_role") not in {
@@ -209,7 +211,7 @@ def main() -> int:
                 torch.cuda.synchronize()
                 records.append(
                     {
-                        "qualification_item_id": row["qualification_item_id"],
+                        "qualification_item_id": row["blind_item_id"],
                         "repeat": repeat,
                         "paper_dimension": paper_name,
                         "adapter": adapter,
@@ -222,7 +224,7 @@ def main() -> int:
 
     vectors: dict[tuple[str, int], tuple[int | None, ...]] = {}
     for row in dialogues:
-        item_id = row["qualification_item_id"]
+        item_id = row["blind_item_id"]
         for repeat in range(args.repeats):
             vector = tuple(
                 next(
@@ -236,7 +238,7 @@ def main() -> int:
             )
             vectors[(item_id, repeat)] = vector
     deterministic = all(
-        len({vectors[(row["qualification_item_id"], repeat)] for repeat in range(args.repeats)}) == 1
+        len({vectors[(row["blind_item_id"], repeat)] for repeat in range(args.repeats)}) == 1
         for row in dialogues
     )
     latencies = [record["latency_seconds"] for record in records]
