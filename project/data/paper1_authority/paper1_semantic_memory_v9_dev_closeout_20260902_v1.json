@@ -1,0 +1,75 @@
+{
+  "protocol": "paper1-semantic-memory-v9-dev-closeout-v1",
+  "status": "DEV_DIAGNOSTIC_IMPROVED_BUT_NOT_QUALIFIED_STOP_BEFORE_401",
+  "scope": "OLD_DEV_32_ITEMS_IN_29_SOURCE_SESSIONS_ONLY",
+  "execution": {
+    "provider_call_successes": 29,
+    "provider_call_failures": 0,
+    "automatic_retries": 0,
+    "accounted_usd": "0.03079930",
+    "hard_cap_usd": "0.25"
+  },
+  "v9_counts": {
+    "items": 32,
+    "matches": 27,
+    "known_fail_or_review_rejected": "10/12",
+    "old_pass_retained": "17/20",
+    "semantic_false_accepts": 2,
+    "semantic_false_rejects": 3,
+    "schema_rejects": 0
+  },
+  "v8_comparison": {
+    "matches": "19_to_27",
+    "old_pass_retained": "9/20_to_17/20",
+    "known_fail_or_review_rejected": "11/12_to_10/12",
+    "semantic_false_accepts": "1_to_2",
+    "semantic_false_rejects": "11_to_3",
+    "interpretation": "v9 materially repairs false rejection but does not yet satisfy the precision-repair objective because two known negative DEV items are accepted"
+  },
+  "five_disagreements": [
+    {
+      "memory_id": "smu_b602d4b345d95c2090ff1f9c",
+      "old_label": "PASS",
+      "v9_verdict": "REJECT_FAIL_CLOSED",
+      "diagnosis": "single-session evidence was labeled episodic even though the candidate encodes a recurrent work-responsibility belief"
+    },
+    {
+      "memory_id": "smu_b0bcb752c4f581b626728e7f",
+      "old_label": "FAIL",
+      "v9_verdict": "ACCEPT",
+      "diagnosis": "temporary new-worker status was incorrectly treated as a conventionally stable identity"
+    },
+    {
+      "memory_id": "smu_dceff7d7a9c7453af231d82b",
+      "old_label": "FAIL",
+      "v9_verdict": "ACCEPT",
+      "diagnosis": "major-change history was incorrectly accepted in the occupation lane and the candidate adds college inference beyond the cited span"
+    },
+    {
+      "memory_id": "smu_b1b0347933a94f29d209424c",
+      "old_label": "PASS",
+      "v9_verdict": "REJECT_FAIL_CLOSED",
+      "diagnosis": "talking with the supporter was treated as non-agentive despite an explicit self-observed benefit"
+    },
+    {
+      "memory_id": "smu_9d2a562660507167d724f7bb",
+      "old_label": "PASS",
+      "v9_verdict": "REJECT_FAIL_CLOSED",
+      "diagnosis": "same-utterance hang-up and offended reaction remained unresolved under the conservative experience-linkage gate"
+    }
+  ],
+  "decision": {
+    "full_401_compile_authorized": false,
+    "new_catalog_created": false,
+    "heldout_ids_frozen": false,
+    "required_next_step": "RESEARCHER_REVIEW_OF_FIVE_DISAGREEMENTS_BEFORE_ANY_FURTHER_CONTRACT_CHANGE_OR_NEW_API_AUTHORIZATION"
+  },
+  "outcome_calls": 0,
+  "PM_training_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}
