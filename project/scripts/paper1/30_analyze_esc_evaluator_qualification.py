@@ -87,6 +87,16 @@ def _complete_judges(rows: list[dict[str, Any]]) -> bool:
         return False
 
 
+def _scoped_candidates(registry: dict[str, Any], candidate_scope: str | None) -> list[dict[str, Any]]:
+    candidates = registry["candidates"]
+    if candidate_scope is None:
+        return candidates
+    scoped = [row for row in candidates if row.get("candidate_id") == candidate_scope]
+    if len(scoped) != 1:
+        raise RuntimeError(f"candidate scope is absent or duplicated: {candidate_scope}")
+    return scoped
+
+
 def main() -> int:
     base = PROJECT / "data" / "paper1_authority"
     parser = argparse.ArgumentParser()
@@ -104,6 +114,11 @@ def main() -> int:
     parser.add_argument("--judge-rows", type=Path, default=base / "paper1_esc_evaluator_judge_output_template_20260820_v1.jsonl")
     parser.add_argument("--registry", type=Path, default=base / "paper1_esc_evaluator_candidate_identity_registry_20260820_v1.json")
     parser.add_argument("--runtime-report", type=Path)
+    parser.add_argument(
+        "--candidate-scope",
+        choices=("ESC_RANK",),
+        help="Analyze the official anchor alone while supplemental identities remain pending.",
+    )
     parser.add_argument("--out", type=Path, default=base / "paper1_esc_evaluator_qualification_results_20260820_v1.json")
     args = parser.parse_args()
 
@@ -157,17 +172,19 @@ def main() -> int:
         blockers.append("blind human adjudication is incomplete")
     if not _complete_judges(judge_rows):
         blockers.append("candidate evaluator score traces are incomplete")
+    scoped_candidates = _scoped_candidates(registry, args.candidate_scope)
     identity_blocked = [
         row["candidate_id"]
-        for row in registry["candidates"]
+        for row in scoped_candidates
         if row["status"].startswith("BLOCKED")
     ]
     if identity_blocked:
         blockers.append("exact researcher-frozen candidate identities missing: " + ", ".join(identity_blocked))
-    frozen_identity = {
-        row["candidate_id"]: row.get("identity_sha256") for row in registry["candidates"]
-    }
+    frozen_identity = {row["candidate_id"]: row.get("identity_sha256") for row in scoped_candidates}
     if _complete_judges(judge_rows):
+        observed_candidate_ids = {row["candidate_id"] for row in judge_rows}
+        if args.candidate_scope and observed_candidate_ids != {args.candidate_scope}:
+            blockers.append("candidate score rows do not match requested candidate scope")
         drifted = sorted(
             {
                 row["candidate_id"]
@@ -296,15 +313,24 @@ def main() -> int:
                     candidate_scores=candidate,
                     item_groups=family_mapping,
                 )
+    official_only = args.candidate_scope == "ESC_RANK"
     result = {
         "protocol": "pm-paper1-esc-evaluator-qualification-results-v1",
-        "status": "READY_FOR_RESEARCHER_EVALUATOR_SELECTION",
+        "status": (
+            "OFFICIAL_ESC_RANK_QUALIFICATION_COMPLETE_SUPPLEMENTAL_CANDIDATES_PENDING"
+            if official_only
+            else "READY_FOR_RESEARCHER_EVALUATOR_SELECTION"
+        ),
         "human_reliability": reliability,
         "human_reference_mode": reference_mode,
         "targeted_overall_adjudication": targeted_adjudication,
         "candidates": analyses,
         "recommendation": None,
-        "recommendation_note": "Apply validity/agreement, then bias/sensitivity, then cost/latency; researcher freezes winner.",
+        "recommendation_note": (
+            "Official ESC-RANK anchor is analyzed and remains the non-replaceable RQ1 main scorer; supplemental candidate identities/runs remain pending."
+            if official_only
+            else "Apply validity/agreement, then bias/sensitivity, then cost/latency; researcher freezes supplemental sensitivity evaluator."
+        ),
         "formal_ESC_Eval": False,
         "formal_outcome_calls": 0,
     }

@@ -36,6 +36,15 @@ def _load_builder():
     return module
 
 
+def _load_analyzer():
+    path = ROOT / "scripts" / "paper1" / "30_analyze_esc_evaluator_qualification.py"
+    spec = importlib.util.spec_from_file_location("esc_analyzer", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_blind_payload_recursively_rejects_pm_and_topk_fields():
     assert_blind_payload({"blind_item_id": "x", "dialogue": ["safe"]})
     with pytest.raises(ValueError, match="forbidden fields"):
@@ -311,3 +320,17 @@ def test_blocked_result_never_fabricates_a_winner_or_outcome():
     assert result["recommendation"] is None
     assert result["formal_ESC_Eval"] is False
     assert result["formal_outcome_calls"] == 0
+
+
+def test_analyzer_scope_keeps_official_anchor_without_unfreezing_proxies():
+    analyzer = _load_analyzer()
+    registry = {
+        "candidates": [
+            {"candidate_id": "ESC_RANK", "status": "FROZEN", "identity_sha256": "x"},
+            {"candidate_id": "QWEN_GENERAL_JUDGE", "status": "BLOCKED", "identity_sha256": None},
+        ]
+    }
+    assert analyzer._scoped_candidates(registry, "ESC_RANK") == [registry["candidates"][0]]
+    assert analyzer._scoped_candidates(registry, None) == registry["candidates"]
+    with pytest.raises(RuntimeError, match="absent"):
+        analyzer._scoped_candidates(registry, "MISSING")
