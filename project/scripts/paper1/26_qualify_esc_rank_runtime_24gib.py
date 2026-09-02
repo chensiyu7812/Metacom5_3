@@ -85,16 +85,16 @@ def _prompts(score_py: Path) -> list[str]:
     raise RuntimeError("official seven English prompts were not found")
 
 
-def _gpu_total_mib() -> int:
-    output = subprocess.run(
-        ["nvidia-smi", "--query-gpu=memory.total", "--format=csv,noheader,nounits"],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.splitlines()
-    if len(output) != 1:
+def _gpu_total_mib(cuda: Any | None = None) -> int:
+    if cuda is None:
+        import torch
+
+        cuda = torch.cuda
+    if not cuda.is_available():
+        raise RuntimeError("qualification harness requires an available CUDA GPU")
+    if cuda.device_count() != 1:
         raise RuntimeError("qualification harness requires exactly one visible GPU")
-    return int(output[0].strip())
+    return int(cuda.get_device_properties(0).total_memory // 1024**2)
 
 
 def _load_dialogues(path: Path) -> list[dict[str, Any]]:
