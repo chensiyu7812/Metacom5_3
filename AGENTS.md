@@ -2,29 +2,32 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
-2. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
-3. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
-4. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
-5. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
-6. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
-7. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
-8. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
-9. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
-10. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-11. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-12. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-13. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-14. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-15. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-16. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-17. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-18. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
+2. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
+3. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
+4. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
+5. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
+6. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
+7. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
+8. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
+9. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
+10. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
+11. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
+12. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+13. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+14. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+15. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+16. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+17. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+18. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+19. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+20. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
 ## Authority precedence
 
+- **The 2026-09-02 official ESC-Eval compatibility amendment has scoped precedence only** over the project-added full-string ESC-RANK parser, its runtime readiness gate, and any evaluator-winner wording that could replace the official RQ1 scorer. The primary RQ1 capability scorer must reproduce the pinned official `score.py` parser and seven adapter/rubric mappings. Strict/full-string and multi-label checks are supplemental diagnostics only. Qwen, DeepSeek, and an independent-family judge remain blinded qualification/sensitivity candidates but cannot replace official ESC-Eval in the RQ1 main capability table. It does not open any outcome lock or alter PM, Generator, arms, splits, metrics, or claims.
 - **The 2026-08-31 threshold-policy-calibration amendment has scoped precedence only** over the fixed-0.5-primary-policy clause. The four heads still learn materially-positive paired-effect probability with Cost excluded from label/loss. The primary operating point is selected only from grouped OOF or outer-training/inner-OOF effects by the frozen quality-first one-standard-error then minimum-Generator-input-token rule. Confirmatory and held-out outer-target outcomes are forbidden; fixed 0.5, eligible-always-on, and always-off remain mandatory references. It does not alter the learner, ontology, Route A, public sources, Generator, benchmark arms, or official metric hierarchy.
 - **The 2026-08-20 pre-qualification consolidation amendment has scoped precedence only** for the six-layer qualification/calibration/evaluation sequence, the four independent RQ1/RQ2 calibration/confirmatory locks, exact-treatment canonical Top-8 materialization, qualification packet/harness requirements, semantic-compiler precision requalification, and master decision status vocabulary. It does not alter the core research route, learner, threshold, Generator, public-source rule, benchmark arms, or official metric hierarchy.
 - **The 2026-08-20 resource-amount/evaluator-calibration amendment has scoped precedence only** for downgrading RS Top-1 from final primary to a calibration candidate, the amount/evaluator calibration sequence, the split calibration/confirmatory outcome locks, exact treatment-alias canonicalization, and outcome-blind split/fold feasibility. It does not alter the four heads, Route A, L2 learners, 0.5 threshold, public-only sources, Generator, official metric hierarchy, or benchmark arms.

@@ -24,11 +24,14 @@ from typing import Any
 PROJECT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT / "src"))
 
+from metacom_pm.esc_eval_official_parser import (  # noqa: E402
+    official_parser_diagnostics,
+    parse_official_ordinal,
+)
 from metacom_pm.esc_rank_runtime import (  # noqa: E402
     ESC_EVAL_COMMIT,
     ESC_RANK_REVISION,
     INTERNLM2_REVISION,
-    parse_strict_ordinal,
     repair_official_adapter_paths,
 )
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config  # noqa: E402
@@ -47,6 +50,9 @@ FORBIDDEN_KEYS = {
     "pm_identity", "arm", "on_off", "k", "token_budget", "ours", "baseline",
     "outcome", "score", "winner", "confirmatory_role_card", "calibration_role_card",
 }
+OFFICIAL_PARSER_SEMANTICS = (
+    "first label in label_order whose character is contained in raw response; invalid if none"
+)
 
 
 def _sha_file(path: Path) -> str:
@@ -139,6 +145,13 @@ def main() -> int:
         raise RuntimeError(f"ESC-RANK qualification requires >=24576 MiB, found {total_mib}")
 
     manifest = json.loads(args.patch_manifest.read_text(encoding="utf-8"))
+    parser_contract = manifest.get("official_parser", {})
+    if parser_contract.get("label_order") != ["0", "1", "2", "3", "4"]:
+        raise RuntimeError("patch manifest official parser label order drifted")
+    if parser_contract.get("semantics") != OFFICIAL_PARSER_SEMANTICS:
+        raise RuntimeError("patch manifest official parser semantics drifted")
+    if parser_contract.get("strict_full_string_role") != "supplemental_diagnostic_only":
+        raise RuntimeError("strict parser must remain supplemental only")
     if manifest["official_identity"]["esc_eval_commit"] != ESC_EVAL_COMMIT:
         raise RuntimeError("patch manifest ESC-Eval identity drifted")
     if manifest["official_identity"]["score_py_sha256"] != SCORE_PY_SHA256:
@@ -153,7 +166,9 @@ def main() -> int:
         raise RuntimeError("ESC-RANK adapter tree hash mismatch")
     if _tree_sha(args.base_path) != manifest["required_runtime_inventory"]["internlm2_tree_sha256"]:
         raise RuntimeError("InternLM2 tree hash mismatch")
-    for package, version in manifest["dependency_pins"].items():
+    dependency_pins = dict(manifest["dependency_pins"])
+    dependency_pins.update(manifest.get("auxiliary_runtime_pins", {}))
+    for package, version in dependency_pins.items():
         actual = importlib.metadata.version(package)
         if actual != version:
             raise RuntimeError(f"dependency drift {package}: expected {version}, got {actual}")
@@ -209,6 +224,8 @@ def main() -> int:
                         tokenizer, prompt, do_sample=False, temperature=0.0, history=[]
                     )
                 torch.cuda.synchronize()
+                official_ordinal = parse_official_ordinal(raw)
+                diagnostics = official_parser_diagnostics(raw)
                 records.append(
                     {
                         "qualification_item_id": row["blind_item_id"],
@@ -217,7 +234,10 @@ def main() -> int:
                         "adapter": adapter,
                         "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest(),
                         "raw_output": raw,
-                        "parsed_ordinal": parse_strict_ordinal(raw),
+                        "parsed_ordinal": official_ordinal,
+                        "official_parsed_ordinal": official_ordinal,
+                        "official_parse_valid": official_ordinal is not None,
+                        **diagnostics,
                         "latency_seconds": time.perf_counter() - started,
                     }
                 )
@@ -237,15 +257,52 @@ def main() -> int:
                 for paper_name, _adapter, _phrase in DIMENSIONS
             )
             vectors[(item_id, repeat)] = vector
-    deterministic = all(
+    official_vector_deterministic = all(
         len({vectors[(row["blind_item_id"], repeat)] for repeat in range(args.repeats)}) == 1
         for row in dialogues
     )
+    raw_output_deterministic = all(
+        len(
+            {
+                record["raw_output"]
+                for record in records
+                if record["qualification_item_id"] == row["blind_item_id"]
+                and record["paper_dimension"] == paper_name
+            }
+        )
+        == 1
+        for row in dialogues
+        for paper_name, _adapter, _phrase in DIMENSIONS
+    )
+    official_parse_complete = all(record["official_parse_valid"] for record in records)
     latencies = [record["latency_seconds"] for record in records]
     result = {
-        "protocol": "pm-paper1-esc-rank-runtime-qualification-v1",
-        "status": "READY" if deterministic and all(r["parsed_ordinal"] is not None for r in records) else "BLOCKED",
+        "protocol": "pm-paper1-esc-rank-runtime-qualification-v2",
+        "status": (
+            "READY"
+            if official_parse_complete
+            and official_vector_deterministic
+            and raw_output_deterministic
+            else "BLOCKED"
+        ),
         "official_identity": manifest["official_identity"],
+        "runtime_code_identity": {
+            "repository_commit": _git_head(PROJECT.parent),
+            "harness_sha256": _sha_file(Path(__file__).resolve()),
+            "esc_rank_runtime_module_sha256": _sha_file(
+                PROJECT / "src/metacom_pm/esc_rank_runtime.py"
+            ),
+            "official_parser_module_sha256": _sha_file(
+                PROJECT / "src/metacom_pm/esc_eval_official_parser.py"
+            ),
+        },
+        "parser_binding": {
+            "primary": "exact pinned ESC-Eval score.py label_list contains semantics",
+            "label_order": ["0", "1", "2", "3", "4"],
+            "invalid_local_sentinel": None,
+            "strict_full_string_parser_role": "supplemental diagnostic only",
+            "multiple_label_hit_role": "supplemental diagnostic only; official first-label semantics preserved",
+        },
         "patch_manifest_sha256": _sha_file(args.patch_manifest),
         "qualification_dialogues_sha256": _sha_file(args.qualification_dialogues),
         "gpu": {
@@ -258,14 +315,23 @@ def main() -> int:
             "dialogues": len(dialogues),
             "repeats": args.repeats,
             "dimension_passes": len(records),
-            "valid_parses": sum(record["parsed_ordinal"] is not None for record in records),
+            "valid_parses": sum(record["official_parse_valid"] for record in records),
+            "official_valid_parses": sum(record["official_parse_valid"] for record in records),
+            "strict_diagnostic_valid_parses": sum(
+                record["strict_full_string_valid"] for record in records
+            ),
+            "multiple_official_label_hit_diagnostics": sum(
+                record["multiple_official_label_hits"] for record in records
+            ),
         },
         "latency_seconds": {
             "mean_dimension": statistics.fmean(latencies),
             "median_dimension": statistics.median(latencies),
             "mean_seven_dimension_vector": statistics.fmean(latencies) * 7,
         },
-        "exact_parsed_vector_reproducibility": deterministic,
+        "exact_parsed_vector_reproducibility": official_vector_deterministic,
+        "exact_official_vector_reproducibility": official_vector_deterministic,
+        "exact_raw_output_reproducibility": raw_output_deterministic,
         "records": records,
         "outcome_calls": 0,
         "formal_ESC_Eval": False,

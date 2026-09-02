@@ -5,6 +5,10 @@ from pathlib import Path
 
 import pytest
 
+from metacom_pm.esc_eval_official_parser import (
+    official_parser_diagnostics,
+    parse_official_ordinal,
+)
 from metacom_pm.esc_rank_runtime import (
     ESCRankRuntimeIdentity,
     parse_strict_ordinal,
@@ -28,6 +32,31 @@ def test_strict_parser_accepts_only_complete_ordinals(raw, expected):
 @pytest.mark.parametrize("raw", ["", "5", "score: 4", "4 because it is good", "[3]"])
 def test_strict_parser_rejects_prose(raw):
     assert parse_strict_ordinal(raw) is None
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("The empathy score is 3.", 3),
+        (" 4 ", 4),
+        ("no ordinal", None),
+        ("scores 4 and 0", 0),
+        ("scores 3 and 2", 2),
+    ],
+)
+def test_official_parser_reproduces_pinned_score_py_label_loop(raw, expected):
+    assert parse_official_ordinal(raw) == expected
+
+
+def test_official_parser_diagnostics_do_not_override_official_result():
+    diagnostic = official_parser_diagnostics("scores 4 and 0")
+    assert diagnostic == {
+        "official_label_hits": ["0", "4"],
+        "multiple_official_label_hits": True,
+        "strict_full_string_ordinal": None,
+        "strict_full_string_valid": False,
+    }
+    assert parse_official_ordinal("scores 4 and 0") == 0
 
 
 def test_adapter_path_repair_is_bounded():

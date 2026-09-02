@@ -28,7 +28,16 @@ def _template(score_sha: str):
             "esc_rank_revision": "rank-revision",
             "internlm2_revision": "base-revision",
         },
+        "official_parser": {
+            "label_order": ["0", "1", "2", "3", "4"],
+            "semantics": (
+                "first label in label_order whose character is contained in raw response; "
+                "invalid if none"
+            ),
+            "strict_full_string_role": "supplemental_diagnostic_only",
+        },
         "dependency_pins": {"torch": "2.3.1", "transformers": "4.41.2"},
+        "auxiliary_runtime_pins": {"einops": "0.8.1"},
         "required_runtime_inventory": {
             "esc_rank_tree_sha256": "IMPLEMENTATION_PENDING_AFTER_PINNED_DOWNLOAD",
             "internlm2_tree_sha256": "IMPLEMENTATION_PENDING_AFTER_PINNED_DOWNLOAD",
@@ -61,7 +70,11 @@ def test_asset_attestor_resolves_exact_hashes_without_runtime_calls(tmp_path):
         esc_eval=esc,
         rank_path=rank,
         base_path=base,
-        actual_dependencies={"torch": "2.3.1", "transformers": "4.41.2"},
+        actual_dependencies={
+            "torch": "2.3.1",
+            "transformers": "4.41.2",
+            "einops": "0.8.1",
+        },
         observed_esc_eval_commit="esc-commit",
     )
     assert resolved["status"] == "ASSETS_ATTESTED_READY_FOR_24GIB_RUNTIME"
@@ -86,7 +99,46 @@ def test_asset_attestor_rejects_dependency_or_adapter_drift(tmp_path):
             esc_eval=esc,
             rank_path=rank,
             base_path=base,
-            actual_dependencies={"torch": "2.3.1", "transformers": "4.41.2"},
+            actual_dependencies={
+                "torch": "2.3.1",
+                "transformers": "4.41.2",
+                "einops": "0.8.1",
+            },
+            observed_esc_eval_commit="esc-commit",
+        )
+
+
+def test_asset_attestor_rejects_parser_or_auxiliary_dependency_drift(tmp_path):
+    module = _module()
+    esc, rank, base = _fake_assets(tmp_path, module)
+    template = _template(module.sha_file(esc / "score.py"))
+    template["official_parser"]["label_order"] = ["4", "3", "2", "1", "0"]
+    with pytest.raises(RuntimeError, match="parser label order"):
+        module.resolve_manifest(
+            template,
+            esc_eval=esc,
+            rank_path=rank,
+            base_path=base,
+            actual_dependencies={
+                "torch": "2.3.1",
+                "transformers": "4.41.2",
+                "einops": "0.8.1",
+            },
+            observed_esc_eval_commit="esc-commit",
+        )
+
+    template = _template(module.sha_file(esc / "score.py"))
+    with pytest.raises(RuntimeError, match="dependency drift einops"):
+        module.resolve_manifest(
+            template,
+            esc_eval=esc,
+            rank_path=rank,
+            base_path=base,
+            actual_dependencies={
+                "torch": "2.3.1",
+                "transformers": "4.41.2",
+                "einops": "0.8.0",
+            },
             observed_esc_eval_commit="esc-commit",
         )
 

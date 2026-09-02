@@ -28,6 +28,31 @@ REQUIRED_ADAPTERS = (
     "tech_en",
     "overall_en",
 )
+OFFICIAL_LABEL_ORDER = ["0", "1", "2", "3", "4"]
+OFFICIAL_PARSER_SEMANTICS = (
+    "first label in label_order whose character is contained in raw response; invalid if none"
+)
+
+
+def required_dependency_pins(template: dict[str, Any]) -> dict[str, str]:
+    """Return the complete isolated-runtime contract, rejecting duplicate drift."""
+
+    pins = dict(template["dependency_pins"])
+    for package, version in template.get("auxiliary_runtime_pins", {}).items():
+        if package in pins and pins[package] != version:
+            raise RuntimeError(f"conflicting dependency pin for {package}")
+        pins[package] = version
+    return pins
+
+
+def assert_official_parser_binding(template: dict[str, Any]) -> None:
+    parser = template.get("official_parser", {})
+    if parser.get("label_order") != OFFICIAL_LABEL_ORDER:
+        raise RuntimeError("official parser label order drifted")
+    if parser.get("semantics") != OFFICIAL_PARSER_SEMANTICS:
+        raise RuntimeError("official parser semantics drifted")
+    if parser.get("strict_full_string_role") != "supplemental_diagnostic_only":
+        raise RuntimeError("strict parser must remain supplemental only")
 
 
 def sha_file(path: Path) -> str:
@@ -61,6 +86,7 @@ def resolve_manifest(
     actual_dependencies: dict[str, str],
     observed_esc_eval_commit: str,
 ) -> dict[str, Any]:
+    assert_official_parser_binding(template)
     official = template["official_identity"]
     if observed_esc_eval_commit != official["esc_eval_commit"]:
         raise RuntimeError("ESC-Eval checkout is not at the pinned commit")
@@ -76,13 +102,13 @@ def resolve_manifest(
     for adapter in REQUIRED_ADAPTERS:
         if not (rank_path / adapter / "adapter_config.json").is_file():
             raise RuntimeError(f"ESC-RANK snapshot is missing {adapter}/adapter_config.json")
-    for package, expected in template["dependency_pins"].items():
+    for package, expected in required_dependency_pins(template).items():
         if actual_dependencies.get(package) != expected:
             raise RuntimeError(
                 f"dependency drift {package}: expected {expected}, got {actual_dependencies.get(package)}"
             )
     resolved = deepcopy(template)
-    resolved["protocol"] = "pm-paper1-esc-rank-24gib-resolved-runtime-manifest-v1"
+    resolved["protocol"] = "pm-paper1-esc-rank-24gib-resolved-runtime-manifest-v2"
     resolved["status"] = "ASSETS_ATTESTED_READY_FOR_24GIB_RUNTIME"
     resolved["required_runtime_inventory"]["esc_rank_tree_sha256"] = tree_sha(rank_path)
     resolved["required_runtime_inventory"]["internlm2_tree_sha256"] = tree_sha(base_path)
@@ -107,9 +133,10 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     template = json.loads(args.template.read_text(encoding="utf-8"))
+    assert_official_parser_binding(template)
     dependencies = {
         package: importlib.metadata.version(package)
-        for package in template["dependency_pins"]
+        for package in required_dependency_pins(template)
     }
     resolved = resolve_manifest(
         template,

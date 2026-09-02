@@ -53,3 +53,20 @@ official-library parity probe verifies the actual SentenceTransformer pooling,
 normalization, FAISS construction, and Top-4 API path for engineering use. It
 does not freeze the local revision, establish retrieval quality, alter Typed
 Memory, or assign BGE-M3 to RS.
+
+## Isolated official ESC-RANK runtime
+
+ESC-RANK uses a separate Python 3.11 environment because its pinned official
+stack requires `transformers==4.41.2`, `peft==0.11.1`, and
+`accelerate==0.31.0`, which intentionally differ from the main Paper-1
+environment. Create the Conda base from `paper1-esc-rank-py311.yml`, then
+install every package from `requirements-paper1-esc-rank-py311.lock.txt` using
+the ordinary PyPI index. The lock includes the dynamically imported InternLM2
+requirements (`einops`, `sentencepiece`, and `protobuf`) discovered before any
+formal outcome call.
+
+The official qualification environment must remain isolated, use exactly one
+CUDA-visible GPU with at least 24576 MiB, and bind assets and parser semantics
+through `paper1_esc_rank_24gib_patch_manifest_20260902_v2.json`. It is an
+evaluator-qualification runtime only; installing it does not open any outcome
+lock or authorize formal ESC-Eval.
