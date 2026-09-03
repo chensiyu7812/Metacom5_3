@@ -30,6 +30,12 @@ from metacom_pm.paper1.execution.rq2_prompts import (
     QA_SYSTEM_PROMPT,
     SUMMARY_SYSTEM_PROMPT,
 )
+from metacom_pm.paper1.execution.dg_official import (
+    DG_OFFICIAL_MAX_OUTPUT_TOKENS,
+    DG_OFFICIAL_ROUNDS,
+    DG_OFFICIAL_SEEKER_MODEL_ALIAS,
+    DG_REPRODUCIBLE_SEEKER_SNAPSHOT,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
 from metacom_pm.paper1.api_budget import (
@@ -595,6 +601,83 @@ def validate() -> dict[str, Any]:
         == LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
         and config["generator"]["chat_template_sha256"]
         == LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
+    )
+    dg_audit_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_official_dg_simulator_call_cost_surface_20260904_v1.json"
+    )
+    dg_audit = _load(dg_audit_path)
+    checks["official_dg_simulator_and_cost_surface"] = (
+        config["authority"]["official_dg_simulator_cost_surface"]
+        == "project/data/paper1_authority/"
+        "paper1_official_dg_simulator_call_cost_surface_20260904_v1.json"
+        and dg_audit["status"]
+        == "ZERO_OUTCOME_AUDIT_COMPLETE_EXECUTION_CHOICE_PENDING"
+        and dg_audit["upstream"]["seeker_model_in_code"]
+        == DG_OFFICIAL_SEEKER_MODEL_ALIAS
+        and dg_audit["upstream"]["dg_executables_checked"] == 15
+        and dg_audit["upstream"]["seeker_rounds_per_scenario"]
+        == DG_OFFICIAL_ROUNDS
+        and dg_audit["upstream"]["seeker_max_output_tokens"]
+        == DG_OFFICIAL_MAX_OUTPUT_TOKENS
+        and dg_audit["upstream"]["mixtral_or_qwen_seeker_is_official_requirement"]
+        is False
+        and dg_audit["reproducible_route_candidate"]["model"]
+        == DG_REPRODUCIBLE_SEEKER_SNAPSHOT
+        and dg_audit["public_population"]["owners"] == 18
+        and dg_audit["public_population"]["scenarios"] == 34
+        and dg_audit["six_system_call_surface"]["seeker_logical_calls"] == 2040
+        and dg_audit["six_system_call_surface"][
+            "total_local_mistral24b_turn_judge_calls"
+        ]
+        == 102720
+        and dg_audit["seeker_cost_surface_six_systems"][
+            "one_physical_attempt_per_logical_call"
+        ]["uncached_worst_case_usd"]
+        > 22.0
+        and dg_audit["paid_api_calls"] == 0
+        and dg_audit["formal_outcome_calls"] == 0
+        and dg_audit["pm_training_runs"] == 0
+        and set(dg_audit["locks"].values()) == {"CLOSED"}
+    )
+    full_pipeline = _load(
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_full_pipeline_latency_pilot_20260904_v1.json"
+    )
+    full_manifest_path = PROJECT / "data/paper1_authority" / full_pipeline["artifacts"]["manifest"]
+    full_traces_path = PROJECT / "data/paper1_authority" / full_pipeline["artifacts"]["traces"]
+    full_report_path = PROJECT / "data/paper1_authority" / full_pipeline["artifacts"]["report"]
+    full_traces = _jsonl(full_traces_path)
+    checks["full_pipeline_latency_pilot"] = (
+        config["authority"]["full_pipeline_latency_pilot"]
+        == "project/data/paper1_authority/"
+        "paper1_full_pipeline_latency_pilot_20260904_v1.json"
+        and full_pipeline["status"]
+        == "ZERO_OUTCOME_PILOT_COMPLETE_NOT_ALLOCATOR_ELIGIBLE"
+        and full_pipeline["coverage"]["warm_calls"] == 20
+        and full_pipeline["coverage"]["trained_PM_coefficients"] is False
+        and full_pipeline["coverage"]["RS"] is False
+        and full_pipeline["coverage"]["dynamic_DG"] is False
+        and len(full_traces) == 21
+        and full_pipeline["artifacts"]["manifest_sha256"] == _sha(full_manifest_path)
+        and full_pipeline["artifacts"]["traces_sha256"] == _sha(full_traces_path)
+        and full_pipeline["artifacts"]["report_sha256"] == _sha(full_report_path)
+        and all(
+            row["record"]["metadata"][
+                "query_embedding_and_all_head_ranking_inside_client_clock"
+            ]
+            is True
+            and row["record"]["metadata"]["trained_pm_coefficients_inside_client_clock"]
+            is False
+            and row["record"]["metadata"]["response_text_retained"] is False
+            for row in full_traces
+        )
+        and full_pipeline["formal_outcome_calls"] == 0
+        and full_pipeline["pm_training_runs"] == 0
+        and full_pipeline["paid_api_cost_usd"] == 0.0
+        and set(full_pipeline["locks"].values()) == {"CLOSED"}
     )
     natural_summary = _load(
         PROJECT

@@ -35,6 +35,7 @@ def test_lock_is_exact_and_contains_required_runtime_packages() -> None:
     assert packages["langchain-huggingface"] == "0.3.1"
     assert packages["sentence-transformers"] == "5.1.0"
     assert packages["faiss-cpu"] == "1.12.0"
+    assert packages["tiktoken"] == "0.12.0"
 
 
 def test_snapshot_hash_verification_is_fail_closed(tmp_path: Path) -> None:
@@ -54,7 +55,8 @@ def test_attestation_status_cannot_claim_research_freeze() -> None:
     assert module.STATUS == "ENGINEERING_CAPABLE_NOT_RESEARCH_FROZEN"
     source = SCRIPT.read_text(encoding="utf-8")
     assert '"outcome_calls": 0' in source
-    assert '"nvidia_nim_provider_parity": "PENDING_M2_FREEZE"' in source
+    assert '"hosted_nim_parity": "NOT_CLAIMED_RETIRED_PROVIDER"' in source
+    assert '"provider": "local_A6000_Transformers_reference_server"' in source
     assert module.BGE_M3_REPO == "BAAI/bge-m3"
     assert module.BGE_M3_REVISION == "9a0624b896d81da7492a910ffa53731274b6cf3d"
 
@@ -63,7 +65,7 @@ def test_encoder_roles_distinguish_smoke_challenger_from_official_model_id() -> 
     module = _load_module()
     source = SCRIPT.read_text(encoding="utf-8")
     assert "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE" in source
-    assert "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE" in source
+    assert "ACTIVE_TYPED_MEMORY_ENCODER_AND_OFFICIAL_RAG_COMPARATOR_MODEL_ID" in source
     assert "OFFICIAL_LIBRARY_RUNTIME_ATTESTED_UPSTREAM_MAIN_WEIGHT_EQUIVALENCE_NOT_ESTABLISHED_REVISION_FREEZE_PENDING" in source
     assert module.BGE_REPO != module.BGE_M3_REPO
 

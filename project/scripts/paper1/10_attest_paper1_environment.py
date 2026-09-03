@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Fail-closed zero-outcome attestation for the Paper-1 local runtime.
 
-This verifies engineering capability only. It does not freeze the retriever,
-token cap, renderer, feature schema, or NVIDIA NIM tokenizer parity, and it
-never reads benchmark outcomes.
+This verifies engineering capability only. It does not choose the final
+resource amount/cap, feature schema, or DG execution policy, and it never
+reads benchmark outcomes.
 """
 
 from __future__ import annotations
@@ -163,6 +163,7 @@ def verify_import_boundary() -> dict[str, str]:
         "pytest",
         "sentence_transformers",
         "sklearn",
+        "tiktoken",
         "tokenizers",
         "torch",
         "transformers",
@@ -272,20 +273,22 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             "python_no_user_site": os.environ.get("PYTHONNOUSERSITE"),
         },
         "generator": {
-            "provider": "NVIDIA_hosted_NIM",
+            "provider": "local_A6000_Transformers_reference_server",
             "model": "meta/llama-3.1-8b-instruct",
-            "local_install_role": "NONE_HOSTED_GENERATOR_NOT_LOCAL_TOKENIZER",
-            "paper1_full_stack_manifest": "PENDING_M2_FREEZE",
+            "revision": LLAMA_REVISION,
+            "model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+            "local_install_role": "ACTIVE_HASH_BOUND_GENERATOR_AND_TOKENIZER",
+            "paper1_full_stack_manifest": "PENDING_FINAL_RESOURCE_CAP_FEATURES_AND_PM",
         },
         "locked_packages": package_versions,
         "import_paths_relative_to_environment_prefix": import_paths,
         "llama_tokenizer_candidate": {
-            "role": "LOCAL_TOKEN_ACCOUNTING_AND_CAP_CANDIDATE_NOT_GENERATOR",
+            "role": "ACTIVE_LOCAL_GENERATOR_TOKENIZER_AND_TOKEN_ACCOUNTING",
             "repo": LLAMA_REPO,
             "revision": LLAMA_REVISION,
             "files": llama_hashes,
             "probe": tokenizer_probe,
-            "nvidia_nim_provider_parity": "PENDING_M2_FREEZE",
+            "hosted_nim_parity": "NOT_CLAIMED_RETIRED_PROVIDER",
         },
         "bge_small_encoder_candidate": {
             "role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
@@ -295,7 +298,7 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             "probe": embedding_probe,
         },
         "bge_m3_encoder_candidate": {
-            "role": "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE",
+            "role": "ACTIVE_TYPED_MEMORY_ENCODER_AND_OFFICIAL_RAG_COMPARATOR_MODEL_ID",
             "repo": BGE_M3_REPO,
             "revision": BGE_M3_REVISION,
             "files": bge_m3_hashes,
@@ -313,12 +316,10 @@ def build_attestation(args: argparse.Namespace) -> dict[str, Any]:
             },
         },
         "pending_researcher_freeze": [
-            "nvidia_nim_provider_tokenizer_parity",
-            "resource_renderer_and_token_cap",
-            "retriever_encoder_and_revision",
-            "official_bge_m3_local_revision_parity",
-            "non_official_RAG_retriever_pooling_query_and_normalization_contracts",
+            "final_resource_amount_and_token_cap",
             "final_feature_schema",
+            "official_DG_seeker_physical_attempt_policy",
+            "allocator_eligible_RS_DG_and_trained_PM_latency_profile",
         ],
     }
 

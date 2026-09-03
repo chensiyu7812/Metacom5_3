@@ -1,8 +1,8 @@
 {
   "attestation_inputs": {
-    "attestation_script_sha256": "5929f068c2d3bd3f60f8e301c0e7092c533c72fc71652e3a4df404784b71a03d",
+    "attestation_script_sha256": "82dde189d18dda9f7966fd4caa3e6e1eb7e4be14d1d04562ca8db7b8cc047e35",
     "environment_file_sha256": "32c54a381d4a0f1027263e41facf45b754a028a876f096587199b741bebeadbf",
-    "lock_file_sha256": "00fb80a1086db247be93e02d77ec4de4dc0a0dd041a766075b216261e1e08071"
+    "lock_file_sha256": "5dfd7fb12388f9a0f2c2811c52c3a9e1ed00debb542e9f8e006f5bcffa59f202"
   },
   "bge_m3_encoder_candidate": {
     "files": {
@@ -32,7 +32,7 @@
       "cosine_diagnostic": 0.558841,
       "cuda_available": true,
       "device": "cuda",
-      "gpu_name": "NVIDIA RTX A6000",
+      "gpu_name": "NVIDIA RTX A4500",
       "model_class": "XLMRobertaModel",
       "normalized": true,
       "shape": [
@@ -44,7 +44,7 @@
     },
     "repo": "BAAI/bge-m3",
     "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
-    "role": "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE"
+    "role": "ACTIVE_TYPED_MEMORY_ENCODER_AND_OFFICIAL_RAG_COMPARATOR_MODEL_ID"
   },
   "bge_small_encoder_candidate": {
     "files": {
@@ -58,7 +58,7 @@
       "cosine_diagnostic": 0.625959,
       "cuda_available": true,
       "device": "cuda",
-      "gpu_name": "NVIDIA RTX A6000",
+      "gpu_name": "NVIDIA RTX A4500",
       "model_class": "BertModel",
       "normalized": true,
       "shape": [
@@ -72,12 +72,14 @@
     "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
     "role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE"
   },
-  "environment_name": "metacom-paper1-py311",
+  "environment_name": "paper1-py311",
   "generator": {
-    "local_install_role": "NONE_HOSTED_GENERATOR_NOT_LOCAL_TOKENIZER",
+    "local_install_role": "ACTIVE_HASH_BOUND_GENERATOR_AND_TOKENIZER",
     "model": "meta/llama-3.1-8b-instruct",
-    "paper1_full_stack_manifest": "PENDING_M2_FREEZE",
-    "provider": "NVIDIA_hosted_NIM"
+    "model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+    "paper1_full_stack_manifest": "PENDING_FINAL_RESOURCE_CAP_FEATURES_AND_PM",
+    "provider": "local_A6000_Transformers_reference_server",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77"
   },
   "import_paths_relative_to_environment_prefix": {
     "faiss": "lib/python3.11/site-packages/faiss/__init__.py",
@@ -88,6 +90,7 @@
     "pytest": "lib/python3.11/site-packages/pytest/__init__.py",
     "sentence_transformers": "lib/python3.11/site-packages/sentence_transformers/__init__.py",
     "sklearn": "lib/python3.11/site-packages/sklearn/__init__.py",
+    "tiktoken": "lib/python3.11/site-packages/tiktoken/__init__.py",
     "tokenizers": "lib/python3.11/site-packages/tokenizers/__init__.py",
     "torch": "lib/python3.11/site-packages/torch/__init__.py",
     "transformers": "lib/python3.11/site-packages/transformers/__init__.py"
@@ -98,7 +101,7 @@
       "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
       "tokenizer_config.json": "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6"
     },
-    "nvidia_nim_provider_parity": "PENDING_M2_FREEZE",
+    "hosted_nim_parity": "NOT_CLAIMED_RETIRED_PROVIDER",
     "probe": {
       "probe_sha256": "faa8ece52b305b3ed66ccc7bc6a0fa262933d94fdff7733c5c5e99f4191dcd26",
       "roundtrip_exact": true,
@@ -107,7 +110,7 @@
     },
     "repo": "NousResearch/Meta-Llama-3.1-8B-Instruct",
     "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
-    "role": "LOCAL_TOKEN_ACCOUNTING_AND_CAP_CANDIDATE_NOT_GENERATOR"
+    "role": "ACTIVE_LOCAL_GENERATOR_TOKENIZER_AND_TOKEN_ACCOUNTING"
   },
   "locked_packages": {
     "aiohappyeyeballs": "2.7.1",
@@ -193,6 +196,7 @@
     "sympy": "1.14.0",
     "tenacity": "9.1.4",
     "threadpoolctl": "3.6.0",
+    "tiktoken": "0.12.0",
     "tokenizers": "0.22.2",
     "torch": "2.3.1+cu121",
     "tqdm": "4.70.0",
@@ -212,12 +216,10 @@
   },
   "outcome_calls": 0,
   "pending_researcher_freeze": [
-    "nvidia_nim_provider_tokenizer_parity",
-    "resource_renderer_and_token_cap",
-    "retriever_encoder_and_revision",
-    "official_bge_m3_local_revision_parity",
-    "non_official_RAG_retriever_pooling_query_and_normalization_contracts",
-    "final_feature_schema"
+    "final_resource_amount_and_token_cap",
+    "final_feature_schema",
+    "official_DG_seeker_physical_attempt_policy",
+    "allocator_eligible_RS_DG_and_trained_PM_latency_profile"
   ],
   "protocol": "pm-paper1-local-environment-attestation-v1",
   "python": {

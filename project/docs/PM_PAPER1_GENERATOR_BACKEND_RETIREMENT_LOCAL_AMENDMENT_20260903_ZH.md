@@ -56,6 +56,6 @@ hosted 退役探测因 NVIDIA 没有可审计的公开 token tariff，按 reserv
 6. 保留 timeout、fallback、finish reason、output cap 和真实停止长度；
 7. 继续把 60 秒作为研究者声明的灾难性完成时间上限，而不是把小 pilot 的任何数值升级成新的自设“通过门”。
 
-另有一个与 Generator 分开的 DG 依赖：原计划的 NVIDIA Mixtral seeker 和 Qwen2.5 robustness seeker 同样不在当前目录。本轮没有探测调用或替换它们。正式 DG 前必须单独冻结新的 seeker simulator 路线；Generator 本地迁移不能被解释为 DG 全链路已经完成。
+2026-09-04 复核纠正：这里曾把旧项目的 NVIDIA Mixtral/Qwen fixed-seeker 扩展误写成 Paper-1 官方 DG seeker。固定的 ES-MemEval 源码实际上在所有 DG executable 中把 seeker 绑定为 `gpt-4o`；Mixtral/Qwen 是否仍在 NVIDIA 目录与官方 DG 主路线无关。正式 DG 仍需冻结 GPT-4o 的确切 snapshot、一次逻辑调用的物理尝试规则和费用，但不再寻找所谓“官方 Mixtral 替代品”。详见 `PM_PAPER1_OFFICIAL_DG_SIMULATOR_AND_COST_AUDIT_20260904_ZH.md`。
 
 机器可读 authority：`project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json`。

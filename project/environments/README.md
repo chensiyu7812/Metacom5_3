@@ -1,10 +1,11 @@
 # Paper 1 local research environment
 
 The formal local runtime is a dedicated Python 3.11 Conda environment named
-`metacom-paper1-py311`. It is separate from the hosted NVIDIA NIM Generator:
-the environment runs Paper-1 code, tests, token accounting, and frozen
-retriever encoders; the Generator itself remains the hosted
-`meta/llama-3.1-8b-instruct` service.
+`metacom-paper1-py311`. It runs Paper-1 code, tests, token accounting, frozen
+retriever encoders, and the local reference server dependencies. After the
+hosted NVIDIA route returned HTTP 410, the Generator was moved—before any
+formal outcome—to a hash-bound local A6000
+`meta/llama-3.1-8b-instruct` reference server.
 
 Create or reconcile the environment from the repository root:
 
@@ -37,9 +38,10 @@ The checked-in lock is for the local GPU research runtime. GitHub Actions
 continues to install from `pyproject.toml` on a CPU runner to test the supported
 dependency ranges and portability. Neither path unlocks formal outcomes.
 
-The Llama tokenizer and BGE encoders are distinct artifacts. The tokenizer is
-only a local text-to-token accounting/capping candidate; final cost uses NIM
-usage fields, and provider-tokenizer parity remains an M2 freeze item.
+The Llama tokenizer and BGE encoders are distinct artifacts. The Llama
+tokenizer is the actual hash-bound local Generator tokenizer. `tiktoken` is a
+separate dependency used only to estimate and reserve OpenAI GPT-4o calls; a
+successful paid call's provider usage replaces its pre-call reservation.
 
 Two BGE snapshots are attested without freezing either one: BGE-small is a
 lightweight English RS challenger and environment smoke-test; BGE-M3 matches

@@ -52,6 +52,12 @@ from metacom_pm.paper1.data.memory_source import (  # noqa: E402
     load_sanitized_runtime_users,
 )
 from metacom_pm.paper1.execution.packing import RankedCandidate, pack_ranked_prefix  # noqa: E402
+from metacom_pm.paper1.execution.packing import rank_candidates  # noqa: E402
+from metacom_pm.paper1.embeddings import (  # noqa: E402
+    BgeM3Encoder,
+    EmbeddingSuccessCache,
+    materialize_embeddings,
+)
 from metacom_pm.paper1.execution.rq2_prompts import (  # noqa: E402
     LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256,
     LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256,
@@ -68,6 +74,7 @@ from metacom_pm.paper1.outcome_lock import (  # noqa: E402
 
 
 PROTOCOL = "paper1-local-reference-client-latency-pilot-v1"
+FULL_PIPELINE_PROTOCOL = "paper1-local-reference-client-retrieval-generator-pilot-v2"
 MODEL = "meta/llama-3.1-8b-instruct"
 MODEL_REVISION = LOCAL_GENERATOR_MODEL_REVISION
 SERVER_PROTOCOL = LOCAL_GENERATOR_SERVER_PROTOCOL
@@ -86,6 +93,14 @@ REPEATS = 2
 def _args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--live", action="store_true")
+    parser.add_argument(
+        "--full-pipeline",
+        action="store_true",
+        help=(
+            "put fresh BGE query encoding, all-head ranking, fixed-action selection, "
+            "packing, request construction and streaming generation in one client clock"
+        ),
+    )
     parser.add_argument("--base-url", default="http://127.0.0.1:8011")
     parser.add_argument("--tokenizer-json", type=Path, required=True)
     parser.add_argument(
@@ -107,11 +122,19 @@ def _args() -> argparse.Namespace:
         / "data/paper1_public_memory/es_memeval_public_active_multi_view_bge_top8_v1.jsonl",
     )
     parser.add_argument(
-        "--out-dir",
+        "--embedding-cache-dir",
         type=Path,
-        default=PROJECT / "outputs/paper1_reference_client_latency_pilot_v1/local",
+        default=PROJECT / "outputs/paper1_multi_view_bge_m3_v1/cache",
     )
-    return parser.parse_args()
+    parser.add_argument("--out-dir", type=Path)
+    args = parser.parse_args()
+    if args.out_dir is None:
+        args.out_dir = PROJECT / (
+            "outputs/paper1_reference_client_latency_pilot_v2/full_pipeline"
+            if args.full_pipeline
+            else "outputs/paper1_reference_client_latency_pilot_v1/local"
+        )
+    return args
 
 
 def _percentile(values: list[float], probability: float) -> float:
@@ -259,6 +282,44 @@ def _prepare(args: argparse.Namespace) -> dict[str, Any]:
                 }
             )
 
+    encoder: BgeM3Encoder | None = None
+    candidate_vectors: dict[str, tuple[float, ...]] = {}
+    embedding_runtime: dict[str, Any] | None = None
+    if args.full_pipeline:
+        import torch
+
+        encoder = BgeM3Encoder()
+        cache = EmbeddingSuccessCache(args.embedding_cache_dir)
+        materialized_counts: dict[str, dict[str, int]] = {}
+        for head in HEAD_ORDER:
+            items = [
+                (candidate.candidate_id, candidate.content)
+                for owner_id in sorted(bundles)
+                for candidate in bundles[owner_id][head]
+            ]
+            result = materialize_embeddings(
+                items,
+                field_source=f"active_multi_view_{head.value}_candidate_content_v1",
+                encoder=encoder,
+                cache=cache,
+                chunk_size=128,
+            )
+            candidate_vectors.update(result.vectors)
+            materialized_counts[head.value] = {
+                "items": len(result.vectors),
+                "cache_hits": result.cache_hits,
+                "newly_encoded": result.newly_encoded,
+            }
+        embedding_runtime = {
+            "binding_identity_sha256": encoder.binding.identity_sha256,
+            "runtime_identity_sha256": encoder.runtime_identity.identity_sha256,
+            "gpu": torch.cuda.get_device_name(torch.cuda.current_device()),
+            "candidate_materialization": materialized_counts,
+            "candidate_vectors_preloaded_before_client_clock": True,
+            "query_vector_reencoded_inside_every_client_clock": True,
+            "all_three_memory_heads_ranked_inside_every_client_clock": True,
+        }
+
     rng = random.Random(SEED)
     schedule: list[dict[str, Any]] = []
     position = 0
@@ -283,18 +344,28 @@ def _prepare(args: argparse.Namespace) -> dict[str, Any]:
                     }
                 )
                 position += 1
+    protocol = FULL_PIPELINE_PROTOCOL if args.full_pipeline else PROTOCOL
     manifest = {
-        "protocol": PROTOCOL,
+        "protocol": protocol,
         "created_at": utc_now(),
         "status": "LIVE_READY" if args.live else "DRY_RUN_READY",
         "purpose": "zero-outcome instrumentation and local deployment-stack pilot only",
         "measurement_scope": (
-            "Generator-path client request only; PM, retrieval, embedding and resource "
+            "fresh BGE query embedding, all-head exact ranking, fixed-action decision, "
+            "resource packing, request construction and streaming Generator share one clock; "
+            "candidate vectors are deployment-preloaded"
+            if args.full_pipeline
+            else "Generator-path client request only; PM, retrieval, embedding and resource "
             "packing are precomputed and therefore excluded"
         ),
         "eligible_for_runtime_allocator": False,
         "eligible_for_paper_latency_claim": False,
-        "insufficiency_reason": "two warm repeats per task/configuration cannot estimate a stable p95",
+        "insufficiency_reason": (
+            "two warm repeats per task/configuration, no trained PM coefficients, and no "
+            "RS/dynamic-DG coverage cannot estimate the final allocator lookup"
+            if args.full_pipeline
+            else "two warm repeats per task/configuration cannot estimate a stable p95"
+        ),
         "formal_outcome_calls": 0,
         "pm_training_runs": 0,
         "response_quality_inspected_or_scored": False,
@@ -320,16 +391,132 @@ def _prepare(args: argparse.Namespace) -> dict[str, Any]:
             "top8_sha256": sha256_file(args.top8),
             "tokenizer_json_sha256": sha256_file(args.tokenizer_json),
         },
+        "embedding_runtime": embedding_runtime,
     }
     return {
         "manifest": manifest,
         "requests": requests,
         "targets": {target.target_id: target for target in selected_targets},
+        "bundles": bundles,
+        "candidate_vectors": candidate_vectors,
+        "ranking_ids": ranking_ids,
+        "token_counter": token_counter,
+        "encoder": encoder,
+        "protocol": protocol,
     }
 
 
-def _call(client: httpx.Client, base_url: str, payload: dict[str, Any]) -> dict[str, Any]:
+def _build_full_pipeline_request(
+    prepared: dict[str, Any],
+    *,
+    target_id: str,
+    configuration_id: str,
+) -> tuple[dict[str, Any], dict[str, float | int]]:
+    """Build one request with live retrieval under a single client clock.
+
+    Candidate vectors are preloaded, as they would be in deployment.  The
+    query is encoded afresh and all three head pools are ranked before the
+    fixed pilot action is selected.  This intentionally does not pretend that
+    untrained PM coefficients exist.
+    """
+
+    encoder: BgeM3Encoder | None = prepared["encoder"]
+    if encoder is None:
+        raise RuntimeError("full-pipeline request requires the pinned BGE encoder")
+    target = prepared["targets"][target_id]
+    query = target.visible_query_text or ""
+    if not query:
+        raise RuntimeError("full-pipeline static target is missing a visible query")
+
+    started_ns = time.monotonic_ns()
+    query_vector = encoder.encode([query])[0]
+    ranked_by_head: dict[Head, tuple[RankedCandidate, ...]] = {}
+    for head in HEAD_ORDER:
+        ranked = rank_candidates(
+            query_vector=query_vector,
+            candidates=prepared["bundles"][target.owner_id][head],
+            candidate_vectors=prepared["candidate_vectors"],
+        )
+        expected_ids = [
+            candidate_id
+            for candidate_id, _score in prepared["ranking_ids"][(target_id, head)]
+        ]
+        actual_ids = [row.candidate.candidate_id for row in ranked[: len(expected_ids)]]
+        if actual_ids != expected_ids:
+            raise RuntimeError(
+                f"live {head.value} ranking differs from the frozen top8 for {target_id}"
+            )
+        ranked_by_head[head] = ranked
+    retrieval_done_ns = time.monotonic_ns()
+
+    # Fixed pilot action only.  The clock includes the branch itself, but no
+    # trained probability model is claimed before formal effect training.
+    head_ks = CONFIGURATIONS[configuration_id]
+    decision_done_ns = time.monotonic_ns()
+    resources = tuple(
+        pack_ranked_prefix(
+            head=head,
+            ranked=ranked_by_head[head],
+            k=k,
+            target_owner_id=target.owner_id,
+            token_counter=prepared["token_counter"],
+        ).envelope
+        for head, k in head_ks
+    )
+    request = build_static_rq2_request(
+        task_type=target.task_type,
+        question=query,
+        resources=resources,
+    )
+    messages = [message.model_dump(mode="json") for message in request.messages]
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "temperature": 0,
+        "max_tokens": request.max_output_tokens,
+        "stream": True,
+        "stream_options": {"include_usage": True},
+    }
+    packed_ns = time.monotonic_ns()
+    resource_tokens = (
+        prepared["token_counter"](
+            "\n".join(resource.rendered_resource_block for resource in resources)
+        )
+        if resources
+        else 0
+    )
+    info = {
+        "payload": payload,
+        "resource_tokens": resource_tokens,
+        "estimated_visible_message_tokens": prepared["token_counter"](
+            "\n".join(f"{message['role']}: {message['content']}" for message in messages)
+        ),
+        "heads": [head.value for head, _ in head_ks],
+        "requested_k": {head.value: k for head, k in head_ks},
+        "live_request_sha256": sha256_text(canonical_json(payload)),
+    }
+    timing = {
+        "pipeline_started_ns": started_ns,
+        "retrieval_embedding_ms": (retrieval_done_ns - started_ns) / 1_000_000,
+        "policy_decision_ms": (decision_done_ns - retrieval_done_ns) / 1_000_000,
+        "resource_render_pack_ms": (packed_ns - decision_done_ns) / 1_000_000,
+        "pre_provider_total_ms": (packed_ns - started_ns) / 1_000_000,
+    }
+    return info, timing
+
+
+def _call(
+    client: httpx.Client,
+    base_url: str,
+    payload: dict[str, Any],
+    *,
+    client_started_ns: int | None = None,
+) -> dict[str, Any]:
     send_ns = time.monotonic_ns()
+    if client_started_ns is None:
+        client_started_ns = send_ns
+    if client_started_ns > send_ns:
+        raise ValueError("client_started_ns cannot follow the provider send clock")
     first_ns: int | None = None
     final_ns: int | None = None
     parts: list[str] = []
@@ -367,6 +554,8 @@ def _call(client: httpx.Client, base_url: str, payload: dict[str, Any]) -> dict[
     return {
         "provider_ttft_ms": (first_ns - send_ns) / 1_000_000,
         "provider_completion_ms": (final_ns - send_ns) / 1_000_000,
+        "client_ttft_ms": (first_ns - client_started_ns) / 1_000_000,
+        "client_completion_ms": (final_ns - client_started_ns) / 1_000_000,
         "response_sha256": sha256_text("".join(parts)),
         "visible_characters": sum(len(part) for part in parts),
         "usage": usage,
@@ -382,8 +571,16 @@ def _record(
     warm_state: WarmState,
     connection_reuse: bool,
     trace_id: str,
+    protocol: str = PROTOCOL,
+    pipeline_timing: dict[str, float | int] | None = None,
 ) -> dict[str, Any]:
     usage = call["usage"]
+    component = pipeline_timing or {
+        "policy_decision_ms": 0.0,
+        "retrieval_embedding_ms": 0.0,
+        "resource_render_pack_ms": 0.0,
+        "pre_provider_total_ms": 0.0,
+    }
     record = EndToEndLatencyRecord(
         trace_id=trace_id,
         measurement_surface=LatencyMeasurementSurface.REFERENCE_CLIENT,
@@ -394,20 +591,20 @@ def _record(
         warm_state=warm_state,
         concurrency=1,
         connection_reuse=connection_reuse,
-        policy_decision_ms=0.0,
-        retrieval_embedding_ms=0.0,
-        resource_render_pack_ms=0.0,
+        policy_decision_ms=component["policy_decision_ms"],
+        retrieval_embedding_ms=component["retrieval_embedding_ms"],
+        resource_render_pack_ms=component["resource_render_pack_ms"],
         provider_request_to_first_content_ms=call["provider_ttft_ms"],
         provider_request_to_completion_ms=call["provider_completion_ms"],
-        client_send_to_first_visible_text_ms=call["provider_ttft_ms"],
-        client_send_to_final_visible_text_ms=call["provider_completion_ms"],
+        client_send_to_first_visible_text_ms=call["client_ttft_ms"],
+        client_send_to_final_visible_text_ms=call["client_completion_ms"],
         streaming_observed=True,
         input_tokens=int(usage.get("prompt_tokens", 0)),
         output_tokens=int(usage.get("completion_tokens", 0)),
         retry_count=0,
         finish_reason=call["finish_reason"],
         metadata={
-            "protocol": PROTOCOL,
+            "protocol": protocol,
             "configuration_id": row["configuration_id"],
             "resource_heads": request_info["heads"],
             "requested_k": request_info["requested_k"],
@@ -416,11 +613,17 @@ def _record(
             "response_text_retained": False,
             "visible_character_count": call["visible_characters"],
             "server_protocol": SERVER_PROTOCOL,
-            "precomputed_request_excludes_policy_retrieval_and_pack": True,
+            "precomputed_request_excludes_policy_retrieval_and_pack": pipeline_timing
+            is None,
+            "candidate_vectors_preloaded": pipeline_timing is not None,
+            "query_embedding_and_all_head_ranking_inside_client_clock": pipeline_timing
+            is not None,
+            "trained_pm_coefficients_inside_client_clock": False,
+            "pilot_action_selection": "fixed_configuration_not_learned_PM",
         },
     )
     return {
-        "protocol": PROTOCOL,
+        "protocol": protocol,
         "target_id": row["target_id"],
         "task_type": row["task_type"],
         "arm": (
@@ -463,7 +666,13 @@ def main() -> int:
 
     traces: list[dict[str, Any]] = []
     cold_target_id = prepared["manifest"]["selection_audit"][0]["selected_target_id"]
-    cold_info = prepared["requests"][(cold_target_id, "OFF")]
+    cold_pipeline_timing = None
+    if args.full_pipeline:
+        cold_info, cold_pipeline_timing = _build_full_pipeline_request(
+            prepared, target_id=cold_target_id, configuration_id="OFF"
+        )
+    else:
+        cold_info = prepared["requests"][(cold_target_id, "OFF")]
     cold_row = {
         "target_id": cold_target_id,
         "task_type": "qa",
@@ -474,7 +683,16 @@ def main() -> int:
         "randomized_sequence_position": 0,
     }
     with httpx.Client(timeout=httpx.Timeout(180.0)) as cold_client:
-        cold_call = _call(cold_client, args.base_url, cold_info["payload"])
+        cold_call = _call(
+            cold_client,
+            args.base_url,
+            cold_info["payload"],
+            client_started_ns=(
+                int(cold_pipeline_timing["pipeline_started_ns"])
+                if cold_pipeline_timing is not None
+                else None
+            ),
+        )
     traces.append(
         _record(
             row=cold_row,
@@ -483,6 +701,8 @@ def main() -> int:
             warm_state=WarmState.COLD,
             connection_reuse=False,
             trace_id="local-cold-qa-off-000",
+            protocol=prepared["protocol"],
+            pipeline_timing=cold_pipeline_timing,
         )
     )
 
@@ -490,8 +710,25 @@ def main() -> int:
         warm_health = client.get(f"{args.base_url}/health")
         warm_health.raise_for_status()
         for row in prepared["manifest"]["schedule"]:
-            info = prepared["requests"][(row["target_id"], row["configuration_id"])]
-            call = _call(client, args.base_url, info["payload"])
+            pipeline_timing = None
+            if args.full_pipeline:
+                info, pipeline_timing = _build_full_pipeline_request(
+                    prepared,
+                    target_id=row["target_id"],
+                    configuration_id=row["configuration_id"],
+                )
+            else:
+                info = prepared["requests"][(row["target_id"], row["configuration_id"])]
+            call = _call(
+                client,
+                args.base_url,
+                info["payload"],
+                client_started_ns=(
+                    int(pipeline_timing["pipeline_started_ns"])
+                    if pipeline_timing is not None
+                    else None
+                ),
+            )
             traces.append(
                 _record(
                     row=row,
@@ -500,6 +737,8 @@ def main() -> int:
                     warm_state=WarmState.WARM,
                     connection_reuse=True,
                     trace_id=f"local-warm-{row['randomized_sequence_position']:04d}",
+                    protocol=prepared["protocol"],
+                    pipeline_timing=pipeline_timing,
                 )
             )
     write_jsonl(args.out_dir / "raw_traces.jsonl", traces)
@@ -528,9 +767,13 @@ def main() -> int:
             }
         )
     report = {
-        "protocol": PROTOCOL,
+        "protocol": prepared["protocol"],
         "completed_at": utc_now(),
-        "status": "PILOT_COMPLETE_NOT_ALLOCATOR_ELIGIBLE",
+        "status": (
+            "FULL_RETRIEVAL_GENERATOR_PILOT_COMPLETE_NOT_ALLOCATOR_ELIGIBLE"
+            if args.full_pipeline
+            else "PILOT_COMPLETE_NOT_ALLOCATOR_ELIGIBLE"
+        ),
         "health": health_json,
         "manifest_sha256": sha256_file(manifest_path),
         "raw_traces_sha256": sha256_file(args.out_dir / "raw_traces.jsonl"),
@@ -543,6 +786,8 @@ def main() -> int:
         "pm_training_runs": 0,
         "paid_api_cost_usd": 0.0,
         "lookup_status": "SPARSE_PILOT_ONLY_MORE_REPEATS_AND_RS_DG_COVERAGE_REQUIRED",
+        "trained_pm_coefficients_profiled": False,
+        "live_query_embedding_and_all_head_ranking_profiled": args.full_pipeline,
         "summaries": summaries,
     }
     write_json(args.out_dir / "pilot_report.json", report)

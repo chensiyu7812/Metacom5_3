@@ -198,17 +198,19 @@ def main() -> int:
             "retry_performed": False,
             "probe_artifact_sha256": sha256_file(args.hosted_probe),
             "probe_unknown_cost_conservatively_accounted_usd": 0.01,
-            "dg_seeker_catalog_dependency_audit": {
-                "primary_model": "mistralai/mixtral-8x7b-instruct-v0.1",
-                "primary_model_listed": "mistralai/mixtral-8x7b-instruct-v0.1"
-                in catalog_models,
-                "robustness_model": "qwen/qwen2_5-7b-instruct",
-                "robustness_model_listed": "qwen/qwen2_5-7b-instruct" in catalog_models,
-                "seeker_calls_made": 0,
-                "interpretation": (
-                    "separate unresolved DG simulator dependency; Generator migration does "
-                    "not authorize or silently substitute either seeker"
+            "dg_seeker_catalog_note_superseded_2026_09_04": {
+                "incorrect_old_inference": (
+                    "the historical Mixtral/Qwen fixed-seeker endpoints were treated as "
+                    "the official Paper-1 ES-MemEval DG seeker dependency"
                 ),
+                "correction": (
+                    "pinned ES-MemEval binds every DG executable's seeker to gpt-4o; "
+                    "Mixtral/Qwen belong to an older controlled fixed-seeker extension"
+                ),
+                "authoritative_followup": (
+                    "paper1_official_dg_simulator_call_cost_surface_20260904_v1.json"
+                ),
+                "seeker_calls_made": 0,
             },
         },
         "decision": {
@@ -269,7 +271,7 @@ def main() -> int:
             "measure warm primary and cold separately",
             "include real PM, query embedding, retrieval and packing inside one client clock",
             "retain task output caps and learn stopping-length variation only from zero-outcome timing data",
-            "version and qualify a replacement DG seeker-simulator route because both frozen NVIDIA seeker routes are absent",
+        "freeze the official GPT-4o seeker execution/cost policy after the separate 2026-09-04 source audit",
         ],
         "locks": {
             key: config[key]["status"] for key in config if key.endswith("OUTCOME_LOCK")
