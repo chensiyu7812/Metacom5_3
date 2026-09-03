@@ -1,7 +1,8 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
-  multi_view_bge_packing_prompt: project/data/paper1_authority/paper1_active_multi_view_bge_packing_binding_20260903_v1.json
+  generator_backend: project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json
+  multi_view_bge_packing_prompt: project/data/paper1_authority/paper1_active_multi_view_bge_packing_binding_20260903_v2.json
   binary_benefit_scope_and_api_budget: project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json
   v2_1_consistency: project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json
   client_latency_frontier: project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json
@@ -35,10 +36,23 @@ public_sources:
     commit: 692624208acc077b8867698c1d6fcd998dee641a
     artifact_sha256: f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420
 generator:
-  selection_status: FINAL
-  provider: NVIDIA hosted NIM
+  selection_status: FINAL_PRE_OUTCOME_BACKEND_AMENDMENT
+  provider: local A6000 Transformers reference server
+  base_url: http://127.0.0.1:8011
   model: meta/llama-3.1-8b-instruct
-  paper1_full_stack_manifest: PENDING_ZERO_OUTCOME_FREEZE
+  model_revision: d10aef7999a2b5ba950ab3974312feeedbfe0b77
+  model_artifact_identity_sha256: 61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3
+  chat_template_sha256: b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2
+  serving_protocol: paper1-local-llama31-transformers-aiohttp-reference-server-v1
+  gpu: NVIDIA RTX A6000
+  dtype: bfloat16
+  concurrency: 1
+  streaming: true
+  hosted_predecessor:
+    provider: NVIDIA hosted NIM
+    status: RETIRED_HTTP_410
+    catalog_model_present: false
+  paper1_full_stack_manifest: PENDING_RESOURCE_CAP_AND_FULL_PIPELINE_LATENCY_FREEZE
 learning:
   model: standardized_L2_logistic_regression_per_head
   target: probability_of_materially_positive_realized_paired_effect

@@ -19,9 +19,22 @@ from metacom_pm.io import canonical_json, sha256_text
 from ..contracts import Head, StrictContract, TaskType, TreatmentAssignment
 from .step2 import Step2ResourceEnvelope
 
-RQ2_PROMPT_PROTOCOL = "pm-paper1-official-aligned-rq2-generator-messages-v1"
+RQ2_PROMPT_PROTOCOL = "pm-paper1-official-aligned-rq2-generator-messages-v2"
 ES_MEMEVAL_COMMIT = "692624208acc077b8867698c1d6fcd998dee641a"
 CANONICAL_MEMORY_HEAD_ORDER = (Head.MP, Head.ME, Head.MS)
+LOCAL_GENERATOR_SERVER_PROTOCOL = (
+    "paper1-local-llama31-transformers-aiohttp-reference-server-v1"
+)
+LOCAL_GENERATOR_MODEL_REVISION = "d10aef7999a2b5ba950ab3974312feeedbfe0b77"
+LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256 = (
+    "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3"
+)
+LOCAL_GENERATOR_TOKENIZER_CONFIG_SHA256 = (
+    "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6"
+)
+LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256 = (
+    "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2"
+)
 
 QA_SYSTEM_PROMPT = """## Task Description
 You are given a user question and a set of retrieved memory fragments.
@@ -91,14 +104,27 @@ class Rq2GeneratorRequest(StrictContract):
     protocol: str = RQ2_PROMPT_PROTOCOL
     task_type: TaskType
     prompt_template_id: str
-    provider: Literal["NVIDIA hosted NIM"] = "NVIDIA hosted NIM"
+    provider: Literal["local A6000 Transformers reference server"] = (
+        "local A6000 Transformers reference server"
+    )
     model: Literal["meta/llama-3.1-8b-instruct"] = "meta/llama-3.1-8b-instruct"
+    model_revision: Literal[LOCAL_GENERATOR_MODEL_REVISION] = LOCAL_GENERATOR_MODEL_REVISION
+    model_artifact_identity_sha256: Literal[LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256] = (
+        LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
+    )
+    serving_protocol: Literal[LOCAL_GENERATOR_SERVER_PROTOCOL] = LOCAL_GENERATOR_SERVER_PROTOCOL
+    tokenizer_config_sha256: Literal[LOCAL_GENERATOR_TOKENIZER_CONFIG_SHA256] = (
+        LOCAL_GENERATOR_TOKENIZER_CONFIG_SHA256
+    )
+    chat_template_sha256: Literal[LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256] = (
+        LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
+    )
     temperature: Literal[0] = 0
     max_output_tokens: int
     messages: tuple[GeneratorMessage, ...] = Field(min_length=2)
     resource_heads: tuple[Head, ...] = ()
     resource_sha256s: tuple[str, ...] = ()
-    provider_internal_chat_template_hash_available: Literal[False] = False
+    provider_internal_chat_template_hash_available: Literal[True] = True
     request_messages_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     hidden_seeker_simulator_fields_present: Literal[False] = False
 

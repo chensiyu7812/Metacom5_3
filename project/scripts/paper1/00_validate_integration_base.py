@@ -23,6 +23,10 @@ from metacom_pm.paper1.execution import (
 )
 from metacom_pm.paper1.execution.rq2_prompts import (
     DG_SUPPORTER_SYSTEM_PROMPT_TEMPLATE,
+    LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256,
+    LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256,
+    LOCAL_GENERATOR_MODEL_REVISION,
+    LOCAL_GENERATOR_SERVER_PROTOCOL,
     QA_SYSTEM_PROMPT,
     SUMMARY_SYSTEM_PROMPT,
 )
@@ -445,12 +449,12 @@ def validate() -> dict[str, Any]:
         PROJECT
         / "data"
         / "paper1_authority"
-        / "paper1_active_multi_view_bge_packing_binding_20260903_v1.json"
+        / "paper1_active_multi_view_bge_packing_binding_20260903_v2.json"
     )
     checks["active_multi_view_bge_packing_authority_selected"] = (
         config["authority"]["multi_view_bge_packing_prompt"]
         == "project/data/paper1_authority/"
-        "paper1_active_multi_view_bge_packing_binding_20260903_v1.json"
+        "paper1_active_multi_view_bge_packing_binding_20260903_v2.json"
     )
     top8_path = PROJECT / multi_view_bge_packing["artifacts"]["static_top8"]["path"]
     amount_surface_path = (
@@ -464,7 +468,7 @@ def validate() -> dict[str, Any]:
     amount_build_report = _load(amount_build_report_path)
     checks["active_multi_view_bge_and_packing_surface"] = (
         multi_view_bge_packing["status"]
-        == "ACTIVE_ZERO_OUTCOME_RETRIEVAL_PACKING_PROMPT_BINDING_NO_K_OR_FINAL_CAP_SELECTED"
+        == "ACTIVE_ZERO_OUTCOME_RETRIEVAL_PACKING_PROMPT_LOCAL_BACKEND_BINDING_NO_K_OR_FINAL_CAP_SELECTED"
         and multi_view_bge_packing["packing_binding"]["protocol"]
         == PACKING_PROTOCOL
         and multi_view_bge_packing["step2_binding"]["protocol"]
@@ -520,8 +524,77 @@ def validate() -> dict[str, Any]:
         == hashlib.sha256(
             DG_SUPPORTER_SYSTEM_PROMPT_TEMPLATE.encode("utf-8")
         ).hexdigest()
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "provider_request"
+        ]["provider"]
+        == "local A6000 Transformers reference server"
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "provider_request"
+        ]["model_revision"]
+        == LOCAL_GENERATOR_MODEL_REVISION
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "provider_request"
+        ]["model_artifact_identity_sha256"]
+        == LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "provider_request"
+        ]["chat_template_sha256"]
+        == LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
         and set(multi_view_bge_packing["research_integrity"]["locks"].values())
         == {"CLOSED"}
+    )
+    generator_backend_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_generator_backend_retirement_local_amendment_20260903_v1.json"
+    )
+    generator_backend = _load(generator_backend_path)
+    model_artifact_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / generator_backend["decision"]["local_model_artifact"]
+    )
+    pilot_manifest_path = (
+        PROJECT / "data/paper1_authority/" / generator_backend["pilot"]["manifest"]
+    )
+    pilot_traces_path = (
+        PROJECT / "data/paper1_authority/" / generator_backend["pilot"]["traces"]
+    )
+    pilot_report_path = (
+        PROJECT / "data/paper1_authority/" / generator_backend["pilot"]["report"]
+    )
+    pilot_traces = _jsonl(pilot_traces_path)
+    checks["generator_backend_retirement_and_local_pilot"] = (
+        config["authority"]["generator_backend"]
+        == "project/data/paper1_authority/"
+        "paper1_generator_backend_retirement_local_amendment_20260903_v1.json"
+        and generator_backend["status"] == "ACTIVE_PRE_OUTCOME_LOCAL_GENERATOR_BACKEND"
+        and generator_backend["incident"]["exact_model_call_http_status"] == 410
+        and generator_backend["incident"]["retry_performed"] is False
+        and generator_backend["decision"]["model_architecture_and_weight_bytes_changed"]
+        is False
+        and generator_backend["decision"]["serving_backend_changed"] is True
+        and generator_backend["decision"]["local_server_protocol"]
+        == LOCAL_GENERATOR_SERVER_PROTOCOL
+        and generator_backend["decision"]["local_model_artifact_sha256"]
+        == _sha(model_artifact_path)
+        and generator_backend["pilot"]["manifest_sha256"] == _sha(pilot_manifest_path)
+        and generator_backend["pilot"]["traces_sha256"] == _sha(pilot_traces_path)
+        and generator_backend["pilot"]["report_sha256"] == _sha(pilot_report_path)
+        and len(pilot_traces) == 21
+        and all("response" not in row and "text" not in row for row in pilot_traces)
+        and all(
+            row["record"]["metadata"]["response_text_retained"] is False
+            for row in pilot_traces
+        )
+        and generator_backend["pilot"]["allocator_eligible"] is False
+        and generator_backend["formal_outcome_calls"] == 0
+        and generator_backend["pm_training_runs"] == 0
+        and config["generator"]["model_revision"] == LOCAL_GENERATOR_MODEL_REVISION
+        and config["generator"]["model_artifact_identity_sha256"]
+        == LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
+        and config["generator"]["chat_template_sha256"]
+        == LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
     )
     natural_summary = _load(
         PROJECT

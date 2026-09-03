@@ -1,0 +1,179 @@
+{
+  "protocol": "pm-paper1-active-multi-view-bge-packing-binding-v2",
+  "date": "2026-09-03",
+  "status": "ACTIVE_ZERO_OUTCOME_RETRIEVAL_PACKING_PROMPT_LOCAL_BACKEND_BINDING_NO_K_OR_FINAL_CAP_SELECTED",
+  "scope": "Active MP/ME/MS retrieval text, BGE ranking, exact-prefix packing, Step2 semantics and official-aligned RQ2 provider-message construction",
+  "supersession": {
+    "replaces_for_active_memory": "paper1_bge_m3_formal_binding_v1.json per-head AcceptedSemanticMemoryUnit document fields",
+    "does_not_delete_history": true,
+    "reason": "The approved Multi-View ontology reset replaced the historical v9 semantic-memory candidate types. The encoder backend is unchanged; only the active candidate adapter and its correct fields are rebound."
+  },
+  "active_memory_semantics": {
+    "MP": "target-time Current Profile View compiled from strictly-past user statements; a profile value is context, not an instruction",
+    "ME": "strictly-past Atomic Event/Experience Timeline; action-to-user-observed-outcome is one subtype, not the definition",
+    "MS": "complete strictly-past raw Session transcript with speaker roles preserved",
+    "shared_source_projection_allowed": true
+  },
+  "retrieval_binding": {
+    "backend": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+    "runtime_identity_sha256": "62ee949d9b2d056c0612aba0a05e37bbd0015b19ddf22c29c56806a4ed494e6d",
+    "pooling": "CLS",
+    "normalized": true,
+    "similarity": "cosine implemented as normalized-vector dot product",
+    "candidate_document": "exact active CandidateRecord.content for the selected MP/MS/ME view",
+    "QA_and_Summary_query": "exact runtime-visible official question text",
+    "DG_query": "exact just-appended current-round seeker utterance at each of 10 supporter-generation rounds",
+    "DG_static_proxy_forbidden": true,
+    "sort": "descending cosine, exact ties by candidate_id",
+    "top_depth_materialized_for_static_tasks": 8
+  },
+  "packing_binding": {
+    "protocol": "pm-paper1-deterministic-ranked-prefix-packing-v1",
+    "initial_calibration_grid": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "k_zero": "true OFF with no resource block",
+    "positive_k": "exact ranked prefix; realized k may be smaller only when the eligible pool itself is smaller",
+    "overflow": "fail closed before generation",
+    "post_assignment_truncation_drop_rerank_or_backfill": "FORBIDDEN",
+    "final_k_selected": false,
+    "final_resource_token_cap_selected": false,
+    "surface_cap_values": "descriptive fit diagnostics only; not a selected treatment cap"
+  },
+  "step2_binding": {
+    "protocol": "pm-paper1-typed-step2-resource-envelope-v2",
+    "RS_template": "paper1-step2-rs-atomic-move-bundle-v2",
+    "MP_template": "paper1-step2-current-profile-view-bundle-v2",
+    "MS_template": "paper1-step2-raw-session-transcript-bundle-v2",
+    "ME_template": "paper1-step2-atomic-event-experience-timeline-bundle-v2",
+    "reason_for_v2": "Correct stale runtime guidance that had mislabeled MS as event/state/continuity facts and narrowed ME to action-outcome, contrary to the already-approved active ontology.",
+    "resource_block_hash_bound": true,
+    "candidate_order_hash_bound": true,
+    "candidate_level_utility_filter": false
+  },
+  "rq2_generator_prompt_binding": {
+    "protocol": "pm-paper1-official-aligned-rq2-generator-messages-v2",
+    "official_repo": "slptongji/ES-MemEval",
+    "official_tag": "v1.0.0",
+    "official_commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "official_source_sha256": {
+      "src/lib/qa/qa_experiment.py": "0607d0316d508db0002fb63e18ab86f3dbd2119ec6d90978d7170ed3db99b1db",
+      "src/lib/sum/sum_experiment.py": "93f8267f6aff734fd5f42a7fdd1844b2754e8f314d50d938663f4e1dc0ff6d0f",
+      "src/lib/dg/dg_experiment.py": "aad049c2408042947a63ff75c6aebbb43c489340ad5809347ecac102e60c61bc",
+      "src/exe/dg/dg_gpt4o_full.py": "6daf90c42500bffc36b3f5d6eb35132fa671358ceeebbd9c488b8b34ad759674",
+      "src/lib/shared/prompt_strategies/session_wise_memory_prepend_strategy.py": "6f34f660d01ce5767591673baa129d3e7f04b2c89094fc7c42af868071554c5f"
+    },
+    "implementation": {
+      "path": "src/metacom_pm/paper1/execution/rq2_prompts.py",
+      "sha256": "521adbfe35803bad13b5d63df064a3c97b3febbb388958824a31c28492855eea"
+    },
+    "official_base_prompt_sha256": {
+      "QA": "28e27099ab0aa73f44e900fb290ee36baee7e07d48c53aea2461737c660750a8",
+      "Summary": "cd7f3418f012ade63dee68912633d8375609983cf37af8115ba9ba208da8921c",
+      "DG_supporter_template_with_display_name_placeholder": "e9e06fd8d5406b615655d945a7baa3c43fe25444615c59104fa3f5fa7f8ba30a"
+    },
+    "injection": {
+      "QA_and_Summary": "exact Step2 PAPER1_RESOURCE blocks in canonical MP,ME,MS order inside the official human-message Relevant Memory section",
+      "DG": "exact Step2 blocks as system messages after the official supporter system prompt and before the official 'The following dialogue happens now.' boundary; current dialogue follows the boundary",
+      "post_assignment_filter_rerank_or_drop": "FORBIDDEN"
+    },
+    "DG_visibility": {
+      "supporter_visible_display_name": true,
+      "display_name_is_not_a_PM_feature": true,
+      "seeker_simulator_topic_psychological_physical_more_details_visible_to_supporter_or_PM": false,
+      "request_must_end_at_current_seeker_turn": true
+    },
+    "provider_request": {
+      "provider": "local A6000 Transformers reference server",
+      "base_url": "http://127.0.0.1:8011",
+      "model": "meta/llama-3.1-8b-instruct",
+      "model_revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+      "model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+      "serving_protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1",
+      "chat_template_sha256": "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2",
+      "temperature": 0,
+      "decoding": "greedy_do_sample_false",
+      "max_output_tokens": {
+        "QA": 256,
+        "Summary": 256,
+        "DialogueGeneration": 60
+      },
+      "client_role_content_message_bytes_hash_bound_per_request": true,
+      "provider_internal_chat_template_hash_available": true,
+      "old_hosted_template_or_latency_equivalence_claimed": false
+    }
+  },
+  "artifacts": {
+    "sanitized_runtime": {
+      "path": "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+      "sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c"
+    },
+    "candidate_census_summary": {
+      "path": "data/paper1_public_memory/es_memeval_public_multi_view_candidate_census_summary_v1.json",
+      "sha256": "b07f2b4ea532d1df20ae6a6ad5193eee136ab779a29fc754c32e32021cefa3a2"
+    },
+    "promoted_session_results": {
+      "path": "data/paper1_public_memory/es_memeval_public_multi_view_session_results_v1.jsonl",
+      "sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e"
+    },
+    "static_top8": {
+      "path": "data/paper1_public_memory/es_memeval_public_active_multi_view_bge_top8_v1.jsonl",
+      "sha256": "19cabd4a9a820a020dacf5e747c1a053296e1f45d92b3955e79d05da521f886f",
+      "rows": 4656,
+      "contains_query_or_candidate_text": false
+    },
+    "amount_surface": {
+      "path": "data/paper1_public_memory/es_memeval_public_active_multi_view_resource_amount_surface_v1.json",
+      "sha256": "1c8f43d031403ad06a0af5d614831b96057c798ea97b6a42a1eea7ea86008117"
+    },
+    "build_report": {
+      "path": "data/paper1_public_memory/es_memeval_public_active_multi_view_bge_amount_build_report_v1.json",
+      "sha256": "320e79f9c151fb01de35b946b99ff412bfa3311d28f0debbf874733a4bd42033"
+    }
+  },
+  "observed_zero_outcome_length_facts": {
+    "static_k4_exact_step2_max_tokens": {
+      "QA": {
+        "MP": 342,
+        "MS": 3639,
+        "ME": 326
+      },
+      "Summary": {
+        "MP": 324,
+        "MS": 3101,
+        "ME": 312
+      }
+    },
+    "static_k4_exact_all_three_heads_combined_max_tokens": {
+      "QA": 4225,
+      "Summary": 3594
+    },
+    "DG_k4_all_three_heads_longest_individual_token_order_proxy_max": 4283,
+    "interpretation": "The historical 384-token memory cap cannot be inherited by the active complete-transcript MS view. This is a tokenizer-length fact, not an empirical failure or a reason to redefine MS."
+  },
+  "still_pending_before_formal_generation": [
+    "calibration-selected task/head/fold k",
+    "one shared or explicitly scoped nonbinding resource cap after calibration design review",
+    "NVIDIA endpoint/API version, streaming behavior, timeout/retry and region/connection policy in the full Generator runtime manifest"
+  ],
+  "research_integrity": {
+    "formal_outcome_calls": 0,
+    "paid_api_calls": 0,
+    "pm_training_runs": 0,
+    "surface_is_an_empirical_pass_gate": false,
+    "locks": {
+      "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+      "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+    }
+  },
+  "supersedes": "paper1_active_multi_view_bge_packing_binding_20260903_v1.json",
+  "supersession_scope": "Generator backend/request identity only; candidate, BGE, top8, amount, packing and official prompt bytes are unchanged"
+}

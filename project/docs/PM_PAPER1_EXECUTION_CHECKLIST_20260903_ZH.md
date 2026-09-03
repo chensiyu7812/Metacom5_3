@@ -27,6 +27,7 @@
 - [x] 冻结 cost-neutral secondary：只复用已有 paired/OOF/sealed rows，按 task×head 报 Benefit Capture、harmful-open、net selected gain 与 local regret；禁止跨任务 ΔQ composite，也不为 secondary 新增 API 调用。
 - [x] 建立所有付费 LLM API 累计 USD 50 hard cap（目标 `$25–35`、`$43` 停 optional、至少 `$5` retry reserve），并将 v9 `$0.03079930` 纳入账本。
 - [x] 实现 provider-agnostic append-only 累计 API budget ledger：中断 reservation 按最坏费用占账、正常调用保留 `$5` retry reserve、同一成功 call hash 禁止二次付费、每个 logical call 最多一次 retry。
+- [x] 处理 Generator 外部退役事件：NVIDIA 目录已无冻结的 `meta/llama-3.1-8b-instruct`，一次精确请求返回 HTTP 410 且未重试；在 formal outcome=0、PM training=0 时版本化迁移到本地 A6000 BF16 backend。四个 safetensors 分片逐字节匹配 Meta 官方仓库 LFS SHA-256，实际本地 chat template 单独 hash-freeze；不声称与旧 hosted NIM 未公开模板或 latency 等价。
 
 ## 下一阶段：不读取 capability outcome 的准备工作
 
@@ -34,12 +35,14 @@
 2a. [x] 完成 401 public sessions 的 active MP/ME extraction + factual verification 和无文本 source-lineage/cost/rejection census：18 owners、401 sessions、2236 accepted units（MP 713、ME 1523）、0 grounding rejection、802/802 logical calls 成功；2 次 timeout 均在唯一 retry 恢复；所有 compiler 版本累计 `$1.12641971 < $1.42149913`。schema/semantic rejection 作为结果保留，不作为推进门。
 2b. [x] 用冻结的 401-session closeout 输出重建 target-time strict-past MP/ME/MS candidate pools：1,586 个官方目标的三个 head 均有候选；最终 pool 为 MP 388 / MS 401 / ME 1,523。MP exact owner-slot 388 个，713 条历史 MP 中 325 条被 target-time latest-rank view 正常取代，当前同 rank 冲突为 0。资源长度使用 hash-verified frozen Llama‑3.1 tokenizer：单候选中位 MP 26 / MS 592 / ME 29 tokens；MS 每用户完整池中位 13,177 tokens，因此这里只完成 eligible pool/census，绝不把完整池当作最终注入包，也不因统计结果回改 compiler。已将 401-session 结果提升为可从 GitHub 恢复的 public-data artifact；formal outcome / PM training / 新付费调用均为 0。
 3a. [x] 完成 active Multi-View 的本地 BGE‑M3 Top‑8 与 zero-outcome amount surface：QA/Summary 共 4,656 个 target×head 排序；DG 保持每轮当前 seeker utterance 动态重检索，不制造静态 proxy。冻结 `k=0` true-OFF、exact-prefix packing、candidate-id 精确并列规则与 overflow fail-closed；Step2 升为 v2 并修正 MS=完整 raw transcript、ME=广义 atomic event/experience timeline。该 surface 只描述长度/覆盖，不选最终 k/cap，也不是经验门。
-3b. [x] 逐文件对照固定的 ES‑MemEval `v1.0.0` commit，绑定 task-specific provider messages：QA/Summary 保留官方 system prompt并把 hash-bound Step2 blocks 放入官方 `Relevant Memory` 段；DG 保留官方 supporter prompt，把 typed blocks 放在官方 `now` 边界之前、当前对话放在之后，每轮请求必须停在当前 seeker turn。DG 只允许 supporter 官方可见的 display name，seeker simulator 的 topic/心理/身体/more_details 不得进入 supporter或 PM。Hosted NIM 能冻结的是客户端 role/content 请求字节，不能虚假声称掌握服务端未公开 chat-template hash。
-3c. [ ] 在 calibration 设计审阅后冻结 final resource cap，并绑定 NVIDIA endpoint/API version、streaming、timeout/retry、region/connection policy 等完整 runtime identity。旧 384-token memory cap 不得继承：active MS 在 k=4 的静态精确资源块最大 3,639 tokens。
+3b. [x] 逐文件对照固定的 ES‑MemEval `v1.0.0` commit，绑定 task-specific provider messages：QA/Summary 保留官方 system prompt并把 hash-bound Step2 blocks 放入官方 `Relevant Memory` 段；DG 保留官方 supporter prompt，把 typed blocks 放在官方 `now` 边界之前、当前对话放在之后，每轮请求必须停在当前 seeker turn。DG 只允许 supporter 官方可见的 display name，seeker simulator 的 topic/心理/身体/more_details 不得进入 supporter或 PM。旧 hosted NIM 内部 template 从未可见；退役迁移后，本地 tokenizer、chat template、权重和 serving source 都已 hash-bound，且明确不与旧 hosted latency 混合。
+3c. [ ] 在 calibration 设计审阅后冻结 final resource cap，并补齐本地 backend 的 timeout/fallback、完整 PM+BGE+pack E2E、RS/DG timing 与正式重复计划。旧 384-token memory cap 不得继承：active MS 在 k=4 的静态精确资源块最大 3,639 tokens。
+3d. [ ] 单独解决 DG seeker simulator 退役：冻结的 NVIDIA Mixtral 主 seeker 与 Qwen2.5 robustness seeker 均不在当前目录；本轮未对二者发请求，也未授权静默替换。正式 DG 前必须按官方 harness 角色边界版本化新的 seeker route、prompt、隐藏 scenario 输入、费用和独立性说明。
 4a. [x] 生成 public-only Natural-turn Appropriateness 零结果抽样框与待审提案：RS frame=11,182 个 ESConv ordinary response opportunities；memory frame=4,061 个 EvoEmo ordinary historical-session opportunities，且每个状态 MP/ME/MS 都有严格过去候选。提案为每头 20 个基础 pair（共 80），每头 4 个 reverse duplicate（共 96 review slots）；memory 三头共享 20 个状态以允许 exact-prompt/seed OFF 复用。抽样仅用可见 turn type、长度、深度、候选可用性与 user/session grouping；无目标 supporter response、gold/effect outcome、判卷或 API 调用。
 4b. [ ] 研究者审阅并冻结 Natural-turn 样本量/身份；当前 80+16 明确是 proposal，不得被代码或论文误称为 final。之后才可生成匿名 ON/OFF responses；默认 human-only，不给该 secondary slice 新增付费 LLM judge 预算。
-5. [ ] 建立 reference client raw timing profiler与 token-bin lookup artifact；在冻结 provider/model/prompt/streaming/output-limit/region/connection-reuse stack 上记录同一客户端 monotonic clocks、tokens、retry/finish，不读取 response capability score。
-6. [ ] 做 zero-outcome timing pilot，确认采集可靠性、重复次数与 time-block 设计；如存在具体产品目标，再向研究者提交严格低于 60,000 ms 的命名部署场景预算。没有更紧预算不阻塞论文主研究。
+5a. [x] 建立本地 reference client raw streaming profiler：同进程 monotonic send→first-visible / final-visible、tokens、finish、connection reuse、warm/cold 与 response hash 均已记录；回复文本不落盘、不评分。当前 artifact 是预构建 QA/Summary Generator-path pilot，不冒充完整 PM+BGE+pack E2E。
+5b. [ ] 扩成 allocator-eligible token-bin lookup：补 RS、动态 DG、多个 target/length bin、预冻结 repeats，并把真实 PM、query embedding、retrieval、packing 放进同一 client clock。当前 N=2/cell 的 pilot p95 只用于检查采集，不进入 allocator或论文 latency claim。
+6. [x] 完成 zero-outcome timing pilot：1 cold + 20 warm、单并发、QA/Summary 各 5 个配置、两次随机相邻 microblock repeats，21/21 完成且同配置 greedy response hashes 一致；formal outcome=0、PM training=0、生成文本未保存/判分、有效本地 API cost=`$0`。该 pilot 同时确认 completion 受 prompt prefill 与停止长度共同影响，不能仅按输入 token 单调外推；当前请求的 realized output length 仍禁止作为 pre-action feature。如存在具体产品目标，再向研究者提交严格低于 60,000 ms 的命名部署场景预算；没有更紧预算不阻塞论文主研究。
 
 ## Measurement work：人评与 pairwise teacher
 
@@ -66,7 +69,7 @@
 ## 当前仍需冻结的真实身份与可选参数
 
 - Pairwise teacher 精确 identities：必须在读取 96-pair outcomes 前绑定。
-- Reference-client/browser surface 的实际 runner 与环境 manifest：必须在正式计时前绑定。
+- Reference-client 本地 Generator-path runner、A6000、权重、chat template 与 pilot manifest 已绑定；正式 allocator-eligible 测量仍须补齐 RS/DG、full pipeline 与 repeats。Browser surface 如进入论文，需另绑实际 browser runner，不得从 localhost trace 推断。
 - Gemini Flash‑Lite 的 exact model revision、provider endpoint、prompt/parser 与单次 worst-case reservation：必须在读取 pair outcomes 前绑定。
 - 可选的 exact task-specific p95 TTFT/completion budgets：只有在主张某个具体部署场景时才需冻结；completion 必须 `< 60,000 ms`，不得用 capability outcome 选择。
 

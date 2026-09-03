@@ -1,0 +1,90 @@
+{
+  "protocol": "paper1-generator-backend-retirement-local-amendment-v1",
+  "date": "2026-09-03",
+  "status": "ACTIVE_PRE_OUTCOME_LOCAL_GENERATOR_BACKEND",
+  "not_an_empirical_pass_gate": true,
+  "incident": {
+    "previous_provider": "NVIDIA hosted NIM",
+    "previous_model": "meta/llama-3.1-8b-instruct",
+    "nvidia_catalog_sha256": "e3a0d721e1380401636796aa1a1dfd9af6df27147e6167e781da2bb33fcc90a4",
+    "nvidia_catalog_model_count": 81,
+    "previous_model_listed": false,
+    "exact_model_call_http_status": 410,
+    "retry_performed": false,
+    "probe_artifact_sha256": "3a17ad5871083acf12682ba2760f48f83dd744f5ceafdbb1ff1de53569efee74",
+    "probe_unknown_cost_conservatively_accounted_usd": 0.01,
+    "dg_seeker_catalog_dependency_audit": {
+      "primary_model": "mistralai/mixtral-8x7b-instruct-v0.1",
+      "primary_model_listed": false,
+      "robustness_model": "qwen/qwen2_5-7b-instruct",
+      "robustness_model_listed": false,
+      "seeker_calls_made": 0,
+      "interpretation": "separate unresolved DG simulator dependency; Generator migration does not authorize or silently substitute either seeker"
+    }
+  },
+  "decision": {
+    "action": "replace retired hosted backend with local exact-weight A6000 backend",
+    "timing": "before any formal outcome or PM training",
+    "model_architecture_and_weight_bytes_changed": false,
+    "serving_backend_changed": true,
+    "old_hosted_internal_chat_template_equivalence_claimed": false,
+    "old_hosted_latency_combined_with_local_latency": false,
+    "local_provider": "single-node local A6000 Transformers reference server",
+    "local_base_url": "http://127.0.0.1:8011",
+    "local_server_protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1",
+    "local_model_artifact": "paper1_local_llama31_model_artifact_20260903_v1.json",
+    "local_model_artifact_sha256": "7f836e8e6e24caaba564d3ded8fd9ccd6c058c08676dd92bf99a1efe424adaaf",
+    "temperature": 0,
+    "decoding": "greedy_do_sample_false",
+    "concurrency": 1,
+    "streaming": true
+  },
+  "pilot": {
+    "purpose": "instrumentation and deployment-stack feasibility only",
+    "scope": "precomputed QA/Summary Generator path, not full PM+BGE+pack E2E",
+    "raw_calls": 21,
+    "cold_calls": 1,
+    "warm_calls": 20,
+    "warm_repeats_per_task_configuration": 2,
+    "all_calls_completed": true,
+    "all_warm_duplicate_response_hashes_deterministic": true,
+    "generated_text_retained_or_scored": false,
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "paid_api_cost_usd": 0.0,
+    "allocator_eligible": false,
+    "paper_latency_claim_eligible": false,
+    "reason": "N=2 per warm cell and no RS/DG/full-pipeline coverage",
+    "manifest": "paper1_local_reference_latency_pilot_manifest_20260903_v1.json",
+    "manifest_sha256": "0cdd2211dedfdb218ae5d01d15f6707b6e252b47c61d792365451f96efbbca89",
+    "traces": "paper1_local_reference_latency_pilot_traces_20260903_v1.jsonl",
+    "traces_sha256": "806eb3d35f8e69a3c0a8a1502cb852fa118e4dbbb35f180f7d4d5770a6ab4aac",
+    "report": "paper1_local_reference_latency_pilot_report_20260903_v1.json",
+    "report_sha256": "6254f2a141c599bff29af33e87619112995a567014bf89a21b649233094e0368",
+    "important_observation": "realized completion latency depends on both prompt prefill and response stopping length; current-request realized output length remains forbidden as a pre-action feature"
+  },
+  "budget": {
+    "researcher_authorized_token_call_latency_pilot_cap_usd": 1.0,
+    "conservatively_accounted_this_stage_usd": 0.01,
+    "remaining_stage_authorization_usd": 0.99,
+    "paper1_cumulative_accounted_usd": 1.16721901,
+    "new_valid_local_pilot_api_cost_usd": 0.0
+  },
+  "remaining_before_allocator_use": [
+    "add RS and dynamic DG coverage",
+    "measure multiple targets in each frozen context/resource-token bin",
+    "select repeat count before allocator-eligible timing data",
+    "measure warm primary and cold separately",
+    "include real PM, query embedding, retrieval and packing inside one client clock",
+    "retain task output caps and learn stopping-length variation only from zero-outcome timing data",
+    "version and qualify a replacement DG seeker-simulator route because both frozen NVIDIA seeker routes are absent"
+  ],
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0
+}

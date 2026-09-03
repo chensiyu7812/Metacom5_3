@@ -12,6 +12,9 @@ from metacom_pm.paper1.contracts import (
 )
 from metacom_pm.paper1.execution.rq2_prompts import (
     GeneratorMessage,
+    LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256,
+    LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256,
+    LOCAL_GENERATOR_SERVER_PROTOCOL,
     RQ2_PROMPT_PROTOCOL,
     Rq2GeneratorRequest,
     build_dg_supporter_request,
@@ -48,6 +51,11 @@ def _resource(head: Head, candidate_id: str, content: str):
 def test_static_off_and_on_use_official_question_and_relevant_memory_slot():
     off = build_static_rq2_request(task_type=TaskType.QA, question="What happened?")
     assert off.protocol == RQ2_PROMPT_PROTOCOL
+    assert off.provider == "local A6000 Transformers reference server"
+    assert off.serving_protocol == LOCAL_GENERATOR_SERVER_PROTOCOL
+    assert off.model_artifact_identity_sha256 == LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
+    assert off.chat_template_sha256 == LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
+    assert off.provider_internal_chat_template_hash_available is True
     assert off.messages[-1].content == "Question: What happened?"
     assert off.resource_heads == ()
 
