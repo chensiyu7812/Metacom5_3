@@ -23,6 +23,10 @@
 - [x] 实现 effect correctness 与 latency-constrained action correctness 的分开报告。
 - [x] 写明 ordinary-turn 判卷标准：更多共情、记忆、个性化、建议或策略语言本身不加分；无必要干预可判 equivalent/OFF-better。
 - [x] authority/config/integration validator 对齐；formal outcome、PM training、paid API、formal GPU 调用均未由本轮打开。
+- [x] 冻结 Paper‑1 scope：四个 L2 heads 预测 task-defined material positive effect 的概率；不声称逐请求 effect magnitude、expected utility、动态 top‑k、16-action/global sequential optimum，这些留作后续 magnitude/bandit/RL 研究。
+- [x] 冻结 cost-neutral secondary：只复用已有 paired/OOF/sealed rows，按 task×head 报 Benefit Capture、harmful-open、net selected gain 与 local regret；禁止跨任务 ΔQ composite，也不为 secondary 新增 API 调用。
+- [x] 建立所有付费 LLM API 累计 USD 50 hard cap（目标 `$25–35`、`$43` 停 optional、至少 `$5` retry reserve），并将 v9 `$0.03079930` 纳入账本。
+- [x] 实现 provider-agnostic append-only 累计 API budget ledger：中断 reservation 按最坏费用占账、正常调用保留 `$5` retry reserve、同一成功 call hash 禁止二次付费、每个 logical call 最多一次 retry。
 
 ## 下一阶段：不读取 capability outcome 的准备工作
 
@@ -37,7 +41,7 @@
 
 7. [ ] 完成当前研究者正在进行的人评并按 blind item identity ingest；原始 disagreement 必须保留。
 8. [ ] 生成新的 96-pair human reference（ESC 32、QA 16、Summary 16、DG 32；两名独立 rater；20% reverse duplicates），不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
-9. [ ] 在任何 pair outcome 前绑定 Claude/Gemini/official-anchor candidate teacher 的精确 model、provider route、prompt、parser、temperature、重试与费用上限。
+9. [ ] 在任何 pair outcome 前绑定 official-anchor 与 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、重试与费用上限；Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。96 总数已包含 reverse duplicates。
 10. [ ] 以人类 reference 的 task-wise agreement、order stability、equivalent recall、position bias、parse reliability 与 cost完整报告候选；不以“产生更多 ON”或“让 PM 分数更好”选 teacher。
 11. [ ] 若 teacher 较弱，不循环修门：缩窄可识别 label 范围，tie/conflict 保留 uncertain，并收缩相应 claim。
 
@@ -52,11 +56,14 @@
 18. [ ] 运行 sealed local decision-correctness audit；结果不回流训练或 threshold。
 19. [ ] 只有完整 stack 冻结后才打开 confirmatory locks，运行 RQ1 ESC-Eval 与 RQ2 ES-MemEval official end-to-end arms、component-minus 与预注册 secondary analyses。
 20. [ ] 按 task/head 报告 official quality、effect correctness、action correctness、natural-turn restraint、client TTFT/completion、paired interleaved latency differences、quality-latency frontier、tokens/API cost、coverage、uncertainty与 failures；禁止跨任务自设 composite 或二元 Paper PASS/FAIL。
+21. [ ] 仅从已有 grouped OOF/sealed paired rows 计算 task×head magnitude diagnostics：Benefit Capture 必须和 ON rate、tokens、net selected gain、harmful-open/false-open harm 同报；分母无正收益时记 NA；ESC/DG 仅称 one-step/local counterfactual regret。
+22. [ ] 每阶段启动前生成 call manifest：settled + reserved + next-call worst-case ≤ `$50`；累计 `$43` 后停 optional；成功 prompt hash 禁止重复付费，transport/parser 最多重试一次，禁止结果驱动重跑。
 
 ## 当前仍需冻结的真实身份与可选参数
 
 - Pairwise teacher 精确 identities：必须在读取 96-pair outcomes 前绑定。
 - Reference-client/browser surface 的实际 runner 与环境 manifest：必须在正式计时前绑定。
+- Gemini Flash‑Lite 的 exact model revision、provider endpoint、prompt/parser 与单次 worst-case reservation：必须在读取 pair outcomes 前绑定。
 - 可选的 exact task-specific p95 TTFT/completion budgets：只有在主张某个具体部署场景时才需冻结；completion 必须 `< 60,000 ms`，不得用 capability outcome 选择。
 
 其中 teacher 与测量 runner 是复现身份；更紧的 task budget 是部署情景参数，不是研究本体的推进门。ontology/candidate 重建、public census、UI、instrumentation、timing pilot 与 dry-run 均可继续推进。

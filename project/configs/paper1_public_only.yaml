@@ -1,6 +1,7 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
+  binary_benefit_scope_and_api_budget: project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json
   v2_1_consistency: project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json
   client_latency_frontier: project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json
   client_latency_measurement: project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json
@@ -40,6 +41,9 @@ generator:
 learning:
   model: standardized_L2_logistic_regression_per_head
   target: probability_of_materially_positive_realized_paired_effect
+  paper_claim: probability_of_material_benefit_selective_opening_under_latency_feasibility
+  request_level_effect_magnitude_model: false
+  request_level_expected_utility_optimizer: false
   canonical_background: all_other_optional_components_off
   primary_operating_point:
     protocol: pm-paper1-client-e2e-quality-latency-frontier-v4
@@ -88,6 +92,19 @@ formal_evaluation:
   primary_latency_experience_guardrail: p95_client_send_to_first_visible_text_ms
   quality_latency_frontier_required: true
   binary_paper_pass_fail: false
+secondary_magnitude_diagnostics:
+  new_api_calls_allowed: false
+  reporting_grain: task_by_head
+  cross_task_delta_quality_composite: forbidden
+  prediction_source: grouped_oof_or_sealed_held_out_only
+  required_companions_for_benefit_capture: [realized_ON_rate, resource_tokens, net_selected_gain, harmful_open_rate, false_open_harm]
+api_budget:
+  currency: USD
+  expected_total_range: [25.0, 35.0]
+  absolute_hard_cap: 50.0
+  optional_stop_threshold: 43.0
+  minimum_retry_reserve: 5.0
+  known_v9_actual: 0.03079930
 outcome_lock:
   compatibility_role: legacy_umbrella_requires_all_four_scoped_locks_closed
   status: LOCKED_PRE_ZERO_OUTCOME_FREEZE

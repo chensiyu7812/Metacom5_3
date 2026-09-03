@@ -18,6 +18,12 @@ sys.path.insert(0, str(PROJECT / "src"))
 from metacom_pm.paper1.execution import STEP2_RESOURCE_PROTOCOL, VISIBLE_STATE_PROTOCOL
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
+from metacom_pm.paper1.api_budget import (
+    PAPER1_API_HARD_CAP_USD,
+    PAPER1_KNOWN_V9_COST_USD,
+    PAPER1_OPTIONAL_STOP_USD,
+    PAPER1_RETRY_RESERVE_USD,
+)
 from metacom_pm.paper1.multi_view_memory import MULTI_VIEW_MEMORY_SCHEMA_VERSION
 from metacom_pm.paper1.semantic_memory import HISTORICAL_ONLY
 
@@ -72,6 +78,12 @@ def validate() -> dict[str, Any]:
         / "paper1_authority"
         / "paper1_v2_1_consistency_amendment_20260903_v1.json"
     )
+    binary_scope_budget = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json"
+    )
     configured_threshold = config["learning"]["primary_operating_point"]
     checks["latency_constrained_policy_scoped_override"] = (
         threshold_policy_base["status"]
@@ -112,6 +124,38 @@ def validate() -> dict[str, Any]:
         and configured_threshold["include_eligible_always_on"] is True
         and configured_threshold["include_always_off"] is True
     )
+    stage_caps = binary_scope_budget["api_budget"]["stage_caps"]
+    checks["binary_benefit_scope_and_api_hard_cap"] = (
+        binary_scope_budget["status"]
+        == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT"
+        and binary_scope_budget["paper1_scope"]["prediction_target"]
+        == "probability_of_task_defined_material_positive_effect"
+        and binary_scope_budget["paper1_scope"][
+            "threshold_calibration_does_not_create_magnitude_model"
+        ]
+        is True
+        and binary_scope_budget["secondary_magnitude_analysis"][
+            "new_api_calls_authorized"
+        ]
+        is False
+        and binary_scope_budget["secondary_magnitude_analysis"]["reporting_grain"]
+        == "task_by_head_only"
+        and binary_scope_budget["secondary_magnitude_analysis"][
+            "cross_task_delta_Q_composite"
+        ]
+        == "FORBIDDEN"
+        and binary_scope_budget["api_budget"]["absolute_hard_cap"]
+        == float(PAPER1_API_HARD_CAP_USD)
+        and binary_scope_budget["api_budget"]["optional_stop_threshold"]
+        == float(PAPER1_OPTIONAL_STOP_USD)
+        and binary_scope_budget["api_budget"]["minimum_retry_reserve"]
+        == float(PAPER1_RETRY_RESERVE_USD)
+        and binary_scope_budget["api_budget"]["known_v9_actual"]
+        == float(PAPER1_KNOWN_V9_COST_USD)
+        and round(sum(stage_caps.values()), 2)
+        == binary_scope_budget["api_budget"]["stage_caps_total"]
+        and set(binary_scope_budget["locks"].values()) == {"CLOSED"}
+    )
 
     contract_names = (
         "paper1_training_evaluation_alignment_contract_v1.json",
@@ -122,6 +166,7 @@ def validate() -> dict[str, Any]:
         "paper1_end_to_end_latency_policy_contract_v1.json",
         "paper1_client_latency_measurement_contract_v3.json",
         "paper1_natural_turn_appropriateness_rubric_v1.json",
+        "paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json",
     )
     contracts = {
         name: _load(PROJECT / "data" / "paper1_authority" / name)

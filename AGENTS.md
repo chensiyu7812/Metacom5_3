@@ -2,33 +2,35 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
-2. `project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json`
-3. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
-4. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
-5. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json`
-6. `project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md`
-7. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260903_v1.json`
-8. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
-9. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
-10. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
-11. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
-12. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
-13. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
-14. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
-15. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
-16. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
-17. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
-18. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
-19. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-20. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-21. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-22. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-23. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-24. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-25. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-26. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-27. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_BINARY_BENEFIT_SCOPE_AND_API_BUDGET_AMENDMENT_20260903_ZH.md`
+2. `project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json`
+3. `project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
+4. `project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json`
+5. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
+6. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
+7. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json`
+8. `project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md`
+9. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260903_v1.json`
+10. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
+11. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
+12. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
+13. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
+14. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
+15. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
+16. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
+17. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
+18. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
+19. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
+20. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
+21. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+22. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+23. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+24. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+25. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+26. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+27. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+28. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+29. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
@@ -45,6 +47,7 @@ The 2026-09-03 amendments are operationalized by the active machine contracts
 
 ## Authority precedence
 
+- **The 2026-09-03 binary-benefit scope/API-budget amendment has highest scoped precedence** for the Paper-1 claim boundary, cost-neutral magnitude diagnostics, paid-teacher cascade and cumulative USD 50 API hard stop. The four L2 heads predict probability of task-defined material positive effect; they do not predict request-level gain magnitude or expected utility. Magnitude diagnostics remain task-by-head, reuse already generated paired outcomes and never create a new call, selection rule or empirical gate. Expected-utility, dynamic amount/top-k, joint-action and sequential/RL learning are future work.
 - **The 2026-09-03 V2.1 consistency amendment has highest scoped precedence** for the active Multi-View ontology, official-primary-quality threshold surface, timeout/fallback separation, target-level latency microblocks, and pre-call token-bin latency lookup. It repairs implementation/construct mismatches before any formal outcome and creates no empirical method gate.
 - **The 2026-09-03 client-observed latency/frontier V2 amendment has scoped precedence only** over V1's PM-runtime timing boundary, mandatory tighter task SLA, and hard-SLA-first primary selection. Primary latency is client send-to-final-visible p95; client send-to-first-visible p95 is the experience guardrail. The only primary catastrophic constraint is Client E2E Completion `< 60000 ms`; tighter budgets are optional named deployment scenarios/sensitivities and cannot block Paper execution. Among catastrophic-feasible policies, use official-quality one-SE admissibility then minimize client p95/median completion, p95 TTFT, tokens and ON rate. Report the quality-latency frontier without a project composite or binary PASS/FAIL.
 - **The 2026-09-03 latency-constrained selective-policy V1 amendment remains the historical base** for separating pure quality effect from deployment action-worthiness and for natural-turn restraint. Its backend timing boundary, mandatory tighter task SLA and hard-SLA-first Paper selection are superseded by the V2 clause immediately above.
@@ -96,6 +99,8 @@ The same applies to any old synthetic 80-user/11-user derivatives, old 256 effec
 - Primary learner remains four standardized L2-regularized logistic-regression heads.
 - The primary effect unit is an independent state/group. Identical deterministic prompt repeats are robustness traces, not independent binomial supervision and never create an empirical PASS gate.
 - Cost is not part of the pure quality-effect training label or loss. Client-observed text latency enters deployment action-worthiness and the quality-latency frontier. The Paper primary rejects only catastrophic p95 completion at or above 60000 ms, then uses quality one-SE admissibility followed by minimum client p95/median completion, p95 TTFT, tokens and ON rate. Tighter deployment budgets are optional named sensitivities, not research blockers or PASS gates. Fixed 0.5 remains a mandatory transparent reference, not the unique primary.
+- The Paper-1 claim is probability-of-material-benefit selective opening under latency feasibility. Preserve raw task-specific `Q_ON/Q_OFF/delta_Q`, but do not describe the learner as request-level magnitude or expected-utility optimization. Any magnitude/benefit-capture/local-regret secondary must be task-by-head, OOF or sealed, cost-neutral, and paired with ON rate and harmful-open reporting.
+- All active Paper-1 paid LLM API calls share one cumulative USD 50 hard cap. A call may start only when settled cost plus outstanding reservations plus the next-call worst case remains within the cap; optional calls stop at USD 43 and at least USD 5 remains reserved for primary-run retry. Historical planning envelopes with a null cap do not override this later researcher authorization.
 
 ## Feature rule — outcome-blind raw observables only
 
