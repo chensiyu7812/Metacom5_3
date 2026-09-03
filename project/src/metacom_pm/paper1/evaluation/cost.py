@@ -6,7 +6,7 @@ from typing import Any
 
 from pydantic import Field
 
-from ..contracts import CostRecord, StrictContract
+from ..contracts import CostRecord, EndToEndLatencyRecord, StrictContract
 
 
 class TokenPricing(StrictContract):
@@ -20,6 +20,7 @@ def build_cost_record(
     resource_injected_tokens: int,
     output_tokens: int,
     latency_ms: float,
+    latency_breakdown: EndToEndLatencyRecord | None = None,
     retrieval_calls: int = 0,
     embedding_calls: int = 0,
     retries: int = 0,
@@ -44,6 +45,7 @@ def build_cost_record(
         retrieval_calls=retrieval_calls,
         embedding_calls=embedding_calls,
         latency_ms=latency_ms,
+        latency_breakdown=latency_breakdown,
         retries=retries,
         recoverable_api_cost_usd=api_cost,
         metadata=metadata or {},

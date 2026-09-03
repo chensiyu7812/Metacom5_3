@@ -9,6 +9,7 @@ from metacom_pm.paper1.contracts import PairedOutcome, TaskType
 from metacom_pm.paper1.evaluation.effect_coding import (
     DgEffectSurface,
     DgObservationJudgement,
+    EscEffectSurface,
     MechanicalInvalidReason,
     PairedEffectDecision,
     QaEffectSurface,
@@ -22,6 +23,23 @@ from metacom_pm.paper1.evaluation.effect_coding import (
 
 
 PROJECT = Path(__file__).resolve().parents[1]
+
+
+def _esc(
+    overall: int,
+    *,
+    empathy: int = 3,
+    information: int = 3,
+) -> EscEffectSurface:
+    return EscEffectSurface(
+        empathy=empathy,
+        information=information,
+        expression=3,
+        fluency=3,
+        skillful=3,
+        humanoid=3,
+        overall=overall,
+    )
 
 
 def _qa(judge: int, f1: float, bert: float) -> QaEffectSurface:
@@ -73,7 +91,11 @@ def _dg(weight_used: int, *, lt: int = 3, per: int = 3, es: int = 3) -> DgEffect
     ],
 )
 def test_pairwise_verdict_preserves_outcome_and_training_semantics(outcome, enters, target):
-    decision = code_esc_pairwise_effect(outcome)
+    decision = code_esc_pairwise_effect(
+        _esc(3),
+        _esc(3),
+        pairwise_verdict=outcome,
+    )
     assert decision.task_type is TaskType.ESC_RESPONSE
     assert decision.outcome is outcome
     assert decision.enters_training_likelihood is enters
@@ -82,10 +104,15 @@ def test_pairwise_verdict_preserves_outcome_and_training_semantics(outcome, ente
 
 def test_invalid_requires_and_preserves_a_mechanical_reason():
     with pytest.raises(ValueError):
-        code_esc_pairwise_effect(PairedOutcome.INVALID)
+        code_esc_pairwise_effect(
+            _esc(3),
+            _esc(3),
+            pairwise_verdict=PairedOutcome.INVALID,
+        )
     decision = code_qa_effect(
         _qa(2, 1.0, 1.0),
         _qa(0, 0.0, 0.0),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
         invalid_reasons=(
             MechanicalInvalidReason.WRONG_OWNER,
             MechanicalInvalidReason.IDENTITY_MISMATCH,
@@ -100,6 +127,7 @@ def test_invalid_requires_and_preserves_a_mechanical_reason():
         code_qa_effect(
             _qa(2, 1.0, 1.0),
             _qa(0, 0.0, 0.0),
+            pairwise_verdict=PairedOutcome.ON_BETTER,
             invalid_reasons=("semantic_nonuse",),  # type: ignore[arg-type]
         )
     with pytest.raises(ValidationError, match="non-mechanical"):
@@ -110,20 +138,58 @@ def test_invalid_requires_and_preserves_a_mechanical_reason():
         )
 
 
-def test_qa_pareto_direction_uses_all_official_metrics_without_margin():
-    assert code_qa_effect(_qa(2, 0.6, 0.7), _qa(1, 0.6, 0.7)).outcome is PairedOutcome.ON_BETTER
-    assert code_qa_effect(_qa(0, 0.6, 0.7), _qa(1, 0.6, 0.7)).outcome is PairedOutcome.OFF_BETTER
+def test_qa_semantic_judge_is_primary_and_continuous_metrics_are_explanatory():
+    assert code_qa_effect(
+        _qa(2, 0.2, 0.3),
+        _qa(1, 0.9, 0.9),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_qa_effect(
+        _qa(0, 0.9, 0.9),
+        _qa(1, 0.2, 0.3),
+        pairwise_verdict=PairedOutcome.OFF_BETTER,
+    ).outcome is PairedOutcome.OFF_BETTER
 
 
-def test_qa_marks_any_official_metric_direction_conflict_uncertain():
-    decision = code_qa_effect(_qa(2, 0.2, 0.9), _qa(1, 0.8, 0.9))
+def test_qa_marks_primary_pairwise_conflict_uncertain():
+    decision = code_qa_effect(
+        _qa(2, 0.2, 0.9),
+        _qa(1, 0.8, 0.9),
+        pairwise_verdict=PairedOutcome.OFF_BETTER,
+    )
     assert decision.outcome is PairedOutcome.UNCERTAIN
 
 
-def test_qa_equal_judge_still_uses_unanimous_pareto_direction():
-    assert code_qa_effect(_qa(1, 0.8, 0.9), _qa(1, 0.4, 0.3)).outcome is PairedOutcome.ON_BETTER
-    assert code_qa_effect(_qa(1, 0.4, 0.9), _qa(1, 0.8, 0.3)).outcome is PairedOutcome.UNCERTAIN
-    assert code_qa_effect(_qa(1, 0.4, 0.3), _qa(1, 0.4, 0.3)).outcome is PairedOutcome.EQUIVALENT
+def test_qa_equal_judge_uses_gold_pairwise_teacher_not_metric_epsilon():
+    assert code_qa_effect(
+        _qa(1, 0.8, 0.9),
+        _qa(1, 0.4, 0.3),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_qa_effect(
+        _qa(1, 0.4, 0.9),
+        _qa(1, 0.8, 0.3),
+        pairwise_verdict=None,
+    ).outcome is PairedOutcome.UNCERTAIN
+    assert code_qa_effect(
+        _qa(1, 0.4, 0.3),
+        _qa(1, 0.4, 0.3),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    ).outcome is PairedOutcome.EQUIVALENT
+
+
+def test_esc_uses_overall_with_empathy_information_guards():
+    assert code_esc_pairwise_effect(
+        _esc(3),
+        _esc(2),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    guarded = code_esc_pairwise_effect(
+        _esc(3, empathy=2),
+        _esc(2, empathy=3),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    )
+    assert guarded.outcome is PairedOutcome.UNCERTAIN
 
 
 def test_summary_event_f1_is_exact_and_validated():
@@ -136,16 +202,36 @@ def test_summary_event_f1_is_exact_and_validated():
 
 
 def test_summary_reference_extraction_disagreement_is_uncertain():
-    decision = code_summary_effect(_summary(3, 2, 2, 4), _summary(4, 2, 2, 4))
+    decision = code_summary_effect(
+        _summary(3, 2, 2, 4),
+        _summary(4, 2, 2, 4),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    )
     assert decision.outcome is PairedOutcome.UNCERTAIN
     assert decision.reason_code == "summary_reference_event_extraction_disagrees"
 
 
-def test_summary_pareto_rule_uses_all_official_metrics_without_gate():
-    assert code_summary_effect(_summary(3, 2, 2, 4), _summary(3, 2, 1, 4)).outcome is PairedOutcome.ON_BETTER
-    assert code_summary_effect(_summary(3, 2, 2, 2), _summary(3, 2, 1, 5)).outcome is PairedOutcome.UNCERTAIN
-    assert code_summary_effect(_summary(3, 2, 1, 5), _summary(3, 2, 1, 4)).outcome is PairedOutcome.ON_BETTER
-    assert code_summary_effect(_summary(3, 2, 1, 4), _summary(3, 2, 1, 4)).outcome is PairedOutcome.EQUIVALENT
+def test_summary_event_f1_is_primary_with_semantic_guard_and_tie_evidence():
+    assert code_summary_effect(
+        _summary(3, 2, 2, 4),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_summary_effect(
+        _summary(3, 2, 2, 2),
+        _summary(3, 2, 1, 5),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.UNCERTAIN
+    assert code_summary_effect(
+        _summary(3, 2, 1, 5),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_summary_effect(
+        _summary(3, 2, 1, 4),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    ).outcome is PairedOutcome.EQUIVALENT
 
 
 def test_dg_builder_reproduces_first_five_turn_observation_aggregation():
@@ -218,12 +304,21 @@ def test_dg_surface_rejects_internally_inconsistent_aggregate():
         )
 
 
-def test_dg_pareto_rule_includes_recall_weighted_and_overall_metrics():
-    assert code_dg_effect(_dg(2), _dg(1)).outcome is PairedOutcome.ON_BETTER
-    assert code_dg_effect(_dg(3, lt=2), _dg(2, lt=4)).outcome is PairedOutcome.UNCERTAIN
-    assert code_dg_effect(_dg(2, lt=4, per=4, es=3), _dg(2, lt=3, per=3, es=3)).outcome is PairedOutcome.ON_BETTER
-    assert code_dg_effect(_dg(2, lt=4, per=2), _dg(2, lt=2, per=4)).outcome is PairedOutcome.UNCERTAIN
-    assert code_dg_effect(_dg(2), _dg(2)).outcome is PairedOutcome.EQUIVALENT
+def test_dg_uses_local_utilization_with_pairwise_correctness_guard():
+    assert code_dg_effect(
+        _dg(2), _dg(1), pairwise_verdict=PairedOutcome.ON_BETTER
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_dg_effect(
+        _dg(3, lt=2), _dg(2, lt=4), pairwise_verdict=PairedOutcome.OFF_BETTER
+    ).outcome is PairedOutcome.UNCERTAIN
+    assert code_dg_effect(
+        _dg(2, lt=4, per=4, es=3),
+        _dg(2, lt=3, per=3, es=3),
+        pairwise_verdict=PairedOutcome.ON_BETTER,
+    ).outcome is PairedOutcome.ON_BETTER
+    assert code_dg_effect(
+        _dg(2), _dg(2), pairwise_verdict=PairedOutcome.EQUIVALENT
+    ).outcome is PairedOutcome.EQUIVALENT
 
 
 def test_scorer_surface_audit_is_zero_outcome_and_portable():

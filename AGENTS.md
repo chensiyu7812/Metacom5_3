@@ -2,31 +2,49 @@
 
 Before making any research-design, evaluation, baseline, training-data, PM-semantics, feature, measurement, CI, or Paper-1 execution change, read first:
 
-1. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
-2. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
-3. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
-4. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
-5. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
-6. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
-7. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
-8. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
-9. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
-10. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
-11. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
-12. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-13. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-14. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-15. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-16. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-17. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-18. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
-19. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
-20. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
+1. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
+2. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
+3. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v2.json`
+4. `project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md`
+5. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260903_v1.json`
+6. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
+7. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
+8. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
+9. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
+10. `project/docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md`
+11. `project/data/paper1_authority/paper1_prequalification_consolidation_amendment_20260820_v1.json`
+12. `project/data/paper1_authority/paper1_master_decision_register_20260820_v1.json`
+13. `project/docs/PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md`
+14. `project/data/paper1_authority/paper1_resource_amount_and_evaluator_calibration_amendment_20260820_v1.json`
+15. `project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md`
+16. `project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json`
+17. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+18. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+19. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+20. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+21. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+22. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+23. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+24. `project/data/pm_v1_5_contracts/pm_final_frozen_research_program_20260816_v2.json`
+25. `project/docs/PM_FINAL_TRAINING_CONTRACT_20260816_ZH.md`
 
 These are the active Paper-1 authorities.
 
+The 2026-09-03 amendments are operationalized by the active machine contracts
+`paper1_client_latency_measurement_contract_v2.json`,
+`paper1_training_evaluation_alignment_contract_v1.json`,
+`paper1_pairwise_effect_oracle_contract_v1.json`,
+`paper1_pairwise_teacher_qualification_plan_v1.json`,
+`paper1_task_effect_coding_v1.json`,
+`paper1_decision_correctness_evaluation_v1.json`,
+`paper1_end_to_end_latency_policy_contract_v1.json`, and
+`paper1_natural_turn_appropriateness_rubric_v1.json` under
+`project/data/paper1_authority/`.
+
 ## Authority precedence
 
+- **The 2026-09-03 client-observed latency/frontier V2 amendment has scoped precedence only** over V1's PM-runtime timing boundary, mandatory tighter task SLA, and hard-SLA-first primary selection. Primary latency is client send-to-final-visible p95; client send-to-first-visible p95 is the experience guardrail. The only primary catastrophic constraint is Client E2E Completion `< 60000 ms`; tighter budgets are optional named deployment scenarios/sensitivities and cannot block Paper execution. Among catastrophic-feasible policies, use official-quality one-SE admissibility then minimize client p95/median completion, p95 TTFT, tokens and ON rate. Report the quality-latency frontier without a project composite or binary PASS/FAIL.
+- **The 2026-09-03 latency-constrained selective-policy V1 amendment remains the historical base** for separating pure quality effect from deployment action-worthiness and for natural-turn restraint. Its backend timing boundary, mandatory tighter task SLA and hard-SLA-first Paper selection are superseded by the V2 clause immediately above.
 - **The 2026-09-02 official ESC-Eval compatibility amendment has scoped precedence only** over the project-added full-string ESC-RANK parser, its runtime readiness gate, and any evaluator-winner wording that could replace the official RQ1 scorer. The primary RQ1 capability scorer must reproduce the pinned official `score.py` parser and seven adapter/rubric mappings. Strict/full-string and multi-label checks are supplemental diagnostics only. Qwen, DeepSeek, and an independent-family judge remain blinded qualification/sensitivity candidates but cannot replace official ESC-Eval in the RQ1 main capability table. It does not open any outcome lock or alter PM, Generator, arms, splits, metrics, or claims.
 - **The 2026-08-31 threshold-policy-calibration amendment has scoped precedence only** over the fixed-0.5-primary-policy clause. The four heads still learn materially-positive paired-effect probability with Cost excluded from label/loss. The primary operating point is selected only from grouped OOF or outer-training/inner-OOF effects by the frozen quality-first one-standard-error then minimum-Generator-input-token rule. Confirmatory and held-out outer-target outcomes are forbidden; fixed 0.5, eligible-always-on, and always-off remain mandatory references. It does not alter the learner, ontology, Route A, public sources, Generator, benchmark arms, or official metric hierarchy.
 - **The 2026-08-20 pre-qualification consolidation amendment has scoped precedence only** for the six-layer qualification/calibration/evaluation sequence, the four independent RQ1/RQ2 calibration/confirmatory locks, exact-treatment canonical Top-8 materialization, qualification packet/harness requirements, semantic-compiler precision requalification, and master decision status vocabulary. It does not alter the core research route, learner, threshold, Generator, public-source rule, benchmark arms, or official metric hierarchy.
@@ -74,7 +92,7 @@ The same applies to any old synthetic 80-user/11-user derivatives, old 256 effec
 - `ineligible` is deterministic OFF and not a learned negative example.
 - Primary learner remains four standardized L2-regularized logistic-regression heads.
 - Repeated effects are retained as soft/binomial supervision and uncertainty; they do not create a 70%/agreement/uncertain-fraction PASS gate.
-- Cost is not part of the training label or loss. The primary operating point is selected inside grouped OOF/outer-training evidence by the frozen quality-first one-standard-error then minimum-Generator-input-token protocol. Fixed 0.5 remains a mandatory transparent reference, not the unique primary.
+- Cost is not part of the pure quality-effect training label or loss. Client-observed text latency enters deployment action-worthiness and the quality-latency frontier. The Paper primary rejects only catastrophic p95 completion at or above 60000 ms, then uses quality one-SE admissibility followed by minimum client p95/median completion, p95 TTFT, tokens and ON rate. Tighter deployment budgets are optional named sensitivities, not research blockers or PASS gates. Fixed 0.5 remains a mandatory transparent reference, not the unique primary.
 
 ## Feature rule — outcome-blind raw observables only
 
@@ -124,7 +142,7 @@ Do not start formal PM training first.
 4. Phase 2: build zero-outcome amount surfaces; qualify the evaluator against a PM-blind human reference; run only authorized external calibration; then freeze global k/bundle/token budgets, exact feature schema, exact mechanical cross-fit grouping, task-specific effect anchors, Generator/Step2 full-stack manifest, seed schedule, operating-point selection protocol, matched-random construction and API call plan.
 5. Generate repeated matched effects and preserve ON wins/OFF wins/ties/uncertain as soft supervision; no empirical qualification PASS gate.
 6. Train four L2 heads with grouped/fold-specific OOF probability predictions.
-7. Select head/task/fold operating points only from grouped OOF or outer-training/inner-OOF effects using the frozen quality-first one-standard-error then minimum-token rule; never use confirmatory or held-out outer-target outcomes.
+7. Select head/task/fold Paper-primary operating points only from grouped OOF or outer-training/inner-OOF effects: reject catastrophic client p95 completion at or above 60000 ms, apply official-quality one-SE admissibility, then minimize client p95/median completion, p95 TTFT, tokens and ON rate; tighter deployment scenarios are sensitivity outputs and never use confirmatory or held-out outer-target outcomes.
 8. Keep confirmatory outcomes locked until the full stack, including operating points, is frozen; then freeze baselines/matched-random schedules and run RQ1, RQ2, and component-minus using official outcomes.
 9. Report realized N, coverage, fixed-0.5/always-on/always-off references, official metric contrasts, Cost and clustered uncertainty without a binary Paper-1 PASS/FAIL or head-count gate.
 

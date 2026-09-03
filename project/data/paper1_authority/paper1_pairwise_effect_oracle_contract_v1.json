@@ -1,0 +1,27 @@
+{
+  "protocol": "paper1-pairwise-effect-oracle-v1",
+  "status": "ACTIVE_PRE_OUTCOME",
+  "date": "2026-09-03",
+  "construct": "local realized counterfactual response-quality effect under a frozen stack",
+  "raw_classes": ["A_better", "B_better", "equivalent", "uncertain", "mechanically_invalid"],
+  "decoded_classes": ["on_better", "off_better", "equivalent", "uncertain", "invalid"],
+  "blind_to": ["arm", "ON/OFF", "PM score", "Ours/baseline", "resource bundle", "token budget"],
+  "judge_roles": {
+    "resource_correctness_auditor": "sees source lineage and checks truth/owner/time/integrity; does not judge action benefit",
+    "realized_effect_judge": "sees anonymous responses and only task-authorized context/reference; does not see the resource bundle"
+  },
+  "order_protocol": {
+    "formal_order": "SHA256-bound before outcomes",
+    "qualification": "A/B and B/A",
+    "reversal_conflict": "uncertain"
+  },
+  "quality_and_action_separation": {
+    "quality_effect_positive_target": 1,
+    "quality_effect_nonpositive_target": 0,
+    "cost_or_latency_in_quality_effect_label": false,
+    "latency_in_action_worthiness": true,
+    "action_worthy_on": "quality effect positive AND no material harm AND latency SLA-feasible"
+  },
+  "no_forced_binary_choice": true,
+  "formal_outcome_calls": 0
+}

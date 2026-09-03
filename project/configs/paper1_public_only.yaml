@@ -1,9 +1,14 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
-  threshold_policy: project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json
+  client_latency_frontier: project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json
+  client_latency_measurement: project/data/paper1_authority/paper1_client_latency_measurement_contract_v2.json
+  latency_constrained_policy: project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260903_v1.json
+  threshold_policy_base: project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json
   reconciliation: project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json
-  human: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
+  human: project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md
+  latency_human_base: project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md
+  reconciliation_human_base: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
 method: Policy Manager
 route: A_first_order_factorized
 components: [RS, MP, MS, ME]
@@ -29,12 +34,17 @@ learning:
   target: probability_of_materially_positive_realized_paired_effect
   canonical_background: all_other_optional_components_off
   primary_operating_point:
-    protocol: pm-paper1-quality-first-one-se-threshold-v1
+    protocol: pm-paper1-client-e2e-quality-latency-frontier-v3
     probability_grid: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
     include_eligible_always_on: true
     include_always_off: true
     fixed_point_five_reference_required: true
-    selection_rule: quality_first_one_standard_error_then_minimum_generator_input_tokens
+    selection_rule: catastrophic_client_completion_ceiling_then_quality_first_one_standard_error_then_client_latency_tokens_on_rate
+    primary_latency_percentile: 0.95
+    latency_measurement_protocol: paper1-client-latency-measurement-v2
+    catastrophic_client_completion_ceiling_ms: 60000
+    tighter_deployment_scenario: null
+    tighter_sla_required_for_paper_primary: false
     confirmatory_outcome_selection_forbidden: true
     held_out_outer_target_outcome_selection_forbidden: true
   cost_in_label_or_loss: false
@@ -46,8 +56,8 @@ learning:
     uncertain: missing_excluded_from_likelihood
     invalid: missing_excluded_from_likelihood_plus_integrity_record
     preserve_raw_outcome: true
-    task_specific_material_better_and_equivalence_rules: PENDING_EXPLICIT_PRE_OUTCOME_FREEZE
-    task_specific_effect_coding_draft: data/paper1_authority/paper1_official_scorer_surface_audit_v1.json
+    task_specific_material_better_and_equivalence_rules: data/paper1_authority/paper1_task_effect_coding_v1.json
+    pairwise_effect_oracle: data/paper1_authority/paper1_pairwise_effect_oracle_contract_v1.json
 cross_fit:
   claim: within_benchmark_cross_fitted_longitudinal_adaptation
   qa_group: owner_plus_question_group_id
@@ -63,6 +73,10 @@ formal_evaluation:
   rq2_arms: [No_Memory, Full_History, Official_RAG_Top4, Typed_Fixed_High, Typed_Matched_Random, Learned_Typed_Memory_PM]
   official_metrics_only: true
   cost_separate: true
+  client_observed_latency_constrains_deployment_action: true
+  primary_latency_cost_outcome: p95_client_send_to_final_visible_text_ms
+  primary_latency_experience_guardrail: p95_client_send_to_first_visible_text_ms
+  quality_latency_frontier_required: true
   binary_paper_pass_fail: false
 outcome_lock:
   compatibility_role: legacy_umbrella_requires_all_four_scoped_locks_closed

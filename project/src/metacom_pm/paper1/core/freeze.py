@@ -152,8 +152,15 @@ class ThresholdSelectionFreeze(StrictContract):
     fixed_point_five_reference_required: bool = True
     quality_rule: str = "paired_material_effect_quality_with_equivalent_credit_for_both_arms"
     uncertainty_rule: str = "cluster_mean_standard_error"
-    selection_rule: str = "quality_first_one_standard_error_then_minimum_generator_input_tokens"
+    selection_rule: str = (
+        "catastrophic_client_completion_ceiling_then_quality_first_one_standard_"
+        "error_then_minimum_p95_and_median_client_completion_latency"
+    )
     cost_enters_label_or_loss: bool = False
+    latency_enters_action_worthiness: bool = True
+    catastrophic_client_completion_ceiling_ms: float = 60_000.0
+    tighter_deployment_sla_required_for_paper_primary: bool = False
+    client_latency_measurement_protocol_id: str | None = None
     confirmatory_outcome_selection_forbidden: bool = True
     outer_target_outcome_selection_forbidden: bool = True
     operating_points: tuple[ThresholdOperatingPointFreeze, ...] = ()
@@ -168,6 +175,12 @@ class ThresholdSelectionFreeze(StrictContract):
             raise ValueError("fixed 0.5 must remain a mandatory reference")
         if self.cost_enters_label_or_loss:
             raise ValueError("cost cannot enter the PM label or loss")
+        if not self.latency_enters_action_worthiness:
+            raise ValueError("deployment action-worthiness requires client latency")
+        if self.catastrophic_client_completion_ceiling_ms != 60_000.0:
+            raise ValueError("catastrophic client completion ceiling must remain 60000 ms")
+        if self.tighter_deployment_sla_required_for_paper_primary:
+            raise ValueError("a tighter project-defined SLA cannot become a Paper primary gate")
         if (
             not self.confirmatory_outcome_selection_forbidden
             or not self.outer_target_outcome_selection_forbidden
@@ -245,6 +258,7 @@ class PreOutcomeFreezeManifest(StrictContract):
     matched_random: MatchedRandomFreeze | None = None
     api_call_plan: ApiCallPlan | None = None
     cost_in_label_or_loss: bool = False
+    latency_in_action_worthiness: bool = True
     empirical_pass_gates: bool = False
     calibration_outcome_calls_at_freeze: int = Field(default=0, ge=0)
     confirmatory_outcome_calls_at_freeze: int = Field(default=0, ge=0)
@@ -261,6 +275,8 @@ class PreOutcomeFreezeManifest(StrictContract):
             raise ValueError("Generator selection drifted")
         if self.cost_in_label_or_loss or self.empirical_pass_gates:
             raise ValueError("cost labels and empirical PASS gates are forbidden")
+        if not self.latency_in_action_worthiness:
+            raise ValueError("end-to-end latency must constrain deployment action-worthiness")
         if (
             self.formal_outcome_calls_at_freeze != 0
             or self.confirmatory_outcome_calls_at_freeze != 0
@@ -315,6 +331,8 @@ class PreOutcomeFreezeManifest(StrictContract):
                 raise ValueError("frozen manifest requires packed outer/inner cross-fitting")
             if self.threshold_selection is None or not self.threshold_selection.operating_points:
                 raise ValueError("frozen manifest requires calibrated threshold operating points")
+            if self.threshold_selection.client_latency_measurement_protocol_id is None:
+                raise ValueError("frozen manifest requires client latency measurement identity")
             points = self.threshold_selection.operating_points
             rs_points = [point for point in points if point.head is Head.RS]
             if len(rs_points) != 1:

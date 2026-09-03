@@ -1,0 +1,41 @@
+{
+  "protocol": "paper1-task-effect-coding-v1",
+  "status": "ACTIVE_PRE_OUTCOME_IMPLEMENTED_CONTRACT_TESTED",
+  "date": "2026-09-03",
+  "common": {
+    "classes": ["on_better", "off_better", "equivalent", "uncertain", "invalid"],
+    "training": {"on_better": 1, "off_better": 0, "equivalent": 0, "uncertain": null, "invalid": null},
+    "cost_or_latency_in_quality_label": false,
+    "current_unweighted_exact_difference_pareto_rule": "SUPERSEDED"
+  },
+  "ESC": {
+    "primary": "ESC-RANK Overall ordinal direction",
+    "minimum_primary_resolution": "one ordinal point",
+    "harm_guards": ["Empathy", "Information"],
+    "primary_tie": "human-calibrated ESC-rubric pairwise teacher",
+    "primary_teacher_conflict": "uncertain",
+    "final_official_scorer_unchanged": true
+  },
+  "QA": {
+    "primary": "official GPT-4o semantic correctness 0/1/2",
+    "tie_and_conflict": "question-plus-gold blinded pairwise correctness teacher",
+    "auxiliary": ["F1", "BERTScore"],
+    "continuous_epsilon_alone_is_material": false
+  },
+  "Summary": {
+    "primary": "Event_F1 against one common frozen reference-event inventory",
+    "guard_and_tie_evidence": "official LLM Score 0/1/2/3/4/5",
+    "explanatory_only": ["ROUGE_1", "ROUGE_2", "ROUGE_L"],
+    "event_semantic_conflict": "uncertain",
+    "final_official_code_difference_disclosed": true
+  },
+  "DG": {
+    "local_primary": "relevant-observation utilization delta at fixed prefix",
+    "local_guards": ["memory correctness", "personalization", "emotional-support non-harm"],
+    "observation_model_in_pinned_official_config": "Mistral-Small-3.1-24B-Instruct-2503",
+    "overall_model_in_pinned_official_config": "gpt-4o",
+    "local_is_global_policy_oracle": false,
+    "final": "official end-to-end Observation Recall, Weighted Score, LT-Memory, Personalization and Emotional Support"
+  },
+  "formal_outcome_calls": 0
+}

@@ -151,6 +151,9 @@ def test_threshold_freeze_keeps_reference_endpoints_and_outcome_isolation():
     assert threshold.include_eligible_always_on is True
     assert threshold.include_always_off is True
     assert threshold.cost_enters_label_or_loss is False
+    assert threshold.latency_enters_action_worthiness is True
+    assert threshold.catastrophic_client_completion_ceiling_ms == 60_000
+    assert threshold.tighter_deployment_sla_required_for_paper_primary is False
     assert threshold.confirmatory_outcome_selection_forbidden is True
     assert threshold.outer_target_outcome_selection_forbidden is True
 
@@ -158,6 +161,8 @@ def test_threshold_freeze_keeps_reference_endpoints_and_outcome_isolation():
         ThresholdSelectionFreeze(cost_enters_label_or_loss=True)
     with pytest.raises(ValidationError, match="outcome isolation"):
         ThresholdSelectionFreeze(confirmatory_outcome_selection_forbidden=False)
+    with pytest.raises(ValidationError, match="cannot become a Paper primary gate"):
+        ThresholdSelectionFreeze(tighter_deployment_sla_required_for_paper_primary=True)
 
 
 def test_active_draft_binds_dialogue_only_rs_artifacts_not_superseded_v1():

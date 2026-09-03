@@ -3,11 +3,13 @@
 from .contracts import (
     CandidateRecord,
     CostRecord,
+    EndToEndLatencyRecord,
     EligibilityDecision,
     EligibilityStatus,
     ExperimentArm,
     FoldAssignment,
     Head,
+    LatencyMeasurementSurface,
     ModelFeatureRecord,
     OfficialOutcomeRecord,
     PairedOutcome,
@@ -18,16 +20,19 @@ from .contracts import (
     TreatmentAssignment,
     TreatmentDeliveryStatus,
     TreatmentDeliveryTrace,
+    WarmState,
 )
 
 __all__ = [
     "CandidateRecord",
     "CostRecord",
+    "EndToEndLatencyRecord",
     "EligibilityDecision",
     "EligibilityStatus",
     "ExperimentArm",
     "FoldAssignment",
     "Head",
+    "LatencyMeasurementSurface",
     "ModelFeatureRecord",
     "OfficialOutcomeRecord",
     "PairedOutcome",
@@ -38,4 +43,5 @@ __all__ = [
     "TreatmentAssignment",
     "TreatmentDeliveryStatus",
     "TreatmentDeliveryTrace",
+    "WarmState",
 ]

@@ -1,0 +1,27 @@
+{
+  "protocol": "paper1-pairwise-teacher-qualification-v1",
+  "status": "ACTIVE_PLAN_PRE_OUTCOME_IDENTITIES_PENDING",
+  "date": "2026-09-03",
+  "human_reference": {
+    "total_pairs": 96,
+    "allocation": {"ESC": 32, "QA": 16, "Summary": 16, "DG": 32},
+    "independent_human_raters": 2,
+    "disagreement": "preserve then third-rater or predeclared consensus adjudication",
+    "reversed_duplicate_fraction": 0.2,
+    "sampling": "outcome-blind observable strata only",
+    "reuse_old_ESC_absolute_24": false
+  },
+  "candidate_identity_status": "IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED BEFORE PAIR OUTCOMES",
+  "candidate_families_allowed": ["official-score-derived", "Claude", "Gemini"],
+  "selection_order": [
+    "human decisive/equivalent macro agreement with clustered uncertainty",
+    "pair-order stability",
+    "equivalent recall and arm-position bias",
+    "parse and operational reliability",
+    "cost"
+  ],
+  "forbidden_selection": ["number of ON labels", "PM performance", "Ours score", "confirmatory outcomes"],
+  "no_absolute_pass_percentage": true,
+  "weak_teacher_fallback": "use only task official primary-anchor identifiable cases; retain ties/conflicts as uncertain and contract claims",
+  "paid_calls": 0
+}

@@ -7,6 +7,7 @@ the legacy V1.5 ontology.
 
 from __future__ import annotations
 
+import math
 from enum import StrEnum
 from typing import Any
 
@@ -59,8 +60,19 @@ class TreatmentAssignment(StrEnum):
 
 class PolicyOperatingMode(StrEnum):
     CALIBRATED_THRESHOLD = "calibrated_threshold"
+    LATENCY_CONSTRAINED_THRESHOLD = "latency_constrained_threshold"
     ELIGIBLE_ALWAYS_ON = "eligible_always_on"
     ALWAYS_OFF = "always_off"
+
+
+class LatencyMeasurementSurface(StrEnum):
+    REFERENCE_CLIENT = "reference_client_received_text"
+    BROWSER_RENDER_READY = "browser_render_ready_text"
+
+
+class WarmState(StrEnum):
+    WARM = "warm"
+    COLD = "cold"
 
 
 class TreatmentDeliveryStatus(StrEnum):
@@ -212,25 +224,154 @@ class PolicyDecision(StrictContract):
     operating_mode: PolicyOperatingMode
     threshold: float | None = Field(default=None, ge=0.0, le=1.0)
     threshold_protocol_id: str = Field(min_length=1)
+    client_latency_protocol_id: str | None = Field(default=None, min_length=1)
+    predicted_p95_client_ttft_ms: float | None = Field(default=None, ge=0.0)
+    predicted_p95_client_completion_ms: float | None = Field(default=None, ge=0.0)
+    catastrophic_completion_ceiling_ms: float | None = Field(default=None, gt=0.0)
+    deployment_scenario_id: str | None = Field(default=None, min_length=1)
+    deployment_ttft_budget_ms: float | None = Field(default=None, gt=0.0)
+    deployment_completion_budget_ms: float | None = Field(default=None, gt=0.0)
     assignment: TreatmentAssignment
 
     @model_validator(mode="after")
     def enforce_primary_rule(self) -> "PolicyDecision":
-        if self.operating_mode is PolicyOperatingMode.CALIBRATED_THRESHOLD:
+        latency_fields = (
+            self.client_latency_protocol_id,
+            self.predicted_p95_client_ttft_ms,
+            self.predicted_p95_client_completion_ms,
+            self.catastrophic_completion_ceiling_ms,
+            self.deployment_scenario_id,
+            self.deployment_ttft_budget_ms,
+            self.deployment_completion_budget_ms,
+        )
+        if self.operating_mode is PolicyOperatingMode.LATENCY_CONSTRAINED_THRESHOLD:
+            if self.threshold is None:
+                raise ValueError("latency-constrained decisions require a frozen threshold")
+            required = latency_fields[:4]
+            if any(value is None for value in required):
+                raise ValueError("latency-constrained decisions require client E2E predictions")
+            assert self.predicted_p95_client_ttft_ms is not None
+            assert self.predicted_p95_client_completion_ms is not None
+            assert self.catastrophic_completion_ceiling_ms is not None
+            if self.catastrophic_completion_ceiling_ms != 60_000.0:
+                raise ValueError("Paper-1 catastrophic completion ceiling must remain 60000 ms")
+            if (
+                self.predicted_p95_client_ttft_ms
+                > self.predicted_p95_client_completion_ms
+            ):
+                raise ValueError("predicted client TTFT cannot exceed client completion latency")
+            scenario_fields = latency_fields[4:]
+            if any(value is None for value in scenario_fields) and any(
+                value is not None for value in scenario_fields
+            ):
+                raise ValueError("deployment scenario id and both budgets must be complete")
+            latency_feasible = (
+                self.predicted_p95_client_completion_ms
+                < self.catastrophic_completion_ceiling_ms
+            )
+            if self.deployment_scenario_id is not None:
+                assert self.deployment_ttft_budget_ms is not None
+                assert self.deployment_completion_budget_ms is not None
+                if self.deployment_ttft_budget_ms > self.deployment_completion_budget_ms:
+                    raise ValueError("deployment TTFT budget cannot exceed completion budget")
+                if (
+                    self.deployment_completion_budget_ms
+                    >= self.catastrophic_completion_ceiling_ms
+                ):
+                    raise ValueError("tighter deployment budget must be below the ceiling")
+                latency_feasible = latency_feasible and (
+                    self.predicted_p95_client_ttft_ms
+                    <= self.deployment_ttft_budget_ms
+                    and self.predicted_p95_client_completion_ms
+                    <= self.deployment_completion_budget_ms
+                )
+            open_resource = (
+                self.predicted_positive_effect_probability > self.threshold
+                and latency_feasible
+            )
+        elif self.operating_mode is PolicyOperatingMode.CALIBRATED_THRESHOLD:
             if self.threshold is None:
                 raise ValueError("calibrated policy decisions require a frozen threshold")
+            if any(value is not None for value in latency_fields):
+                raise ValueError("legacy threshold references cannot carry a primary latency SLA")
             open_resource = self.predicted_positive_effect_probability > self.threshold
         elif self.operating_mode is PolicyOperatingMode.ELIGIBLE_ALWAYS_ON:
             if self.threshold is not None:
                 raise ValueError("eligible-always-on cannot carry a probability threshold")
+            if any(value is not None for value in latency_fields):
+                raise ValueError("always-on references cannot carry a primary latency SLA")
             open_resource = True
         else:
             if self.threshold is not None:
                 raise ValueError("always-off cannot carry a probability threshold")
+            if any(value is not None for value in latency_fields):
+                raise ValueError("always-off references cannot carry a primary latency SLA")
             open_resource = False
         expected = TreatmentAssignment.ON if self.eligible and open_resource else TreatmentAssignment.OFF
         if self.assignment is not expected:
             raise ValueError("assignment violates the frozen eligibility + operating-point rule")
+        return self
+
+
+class EndToEndLatencyRecord(StrictContract):
+    """Client-observed text latency plus same-trace component diagnostics.
+
+    For a timeout without a complete response, the final-visible field stores
+    the observed terminal cutoff and ``timeout_or_fallback`` must be true.  The
+    latency summarizer promotes that sample to at least the catastrophic
+    ceiling instead of deleting it.
+    """
+
+    trace_id: str = Field(min_length=1)
+    measurement_surface: LatencyMeasurementSurface
+    time_block_id: str = Field(min_length=1)
+    randomized_sequence_position: int = Field(ge=0)
+    client_region: str = Field(min_length=1)
+    warm_state: WarmState
+    concurrency: int = Field(ge=1)
+    connection_reuse: bool
+    policy_decision_ms: float = Field(ge=0.0)
+    retrieval_embedding_ms: float = Field(ge=0.0)
+    resource_render_pack_ms: float = Field(ge=0.0)
+    provider_request_to_first_content_ms: float | None = Field(default=None, ge=0.0)
+    provider_request_to_completion_ms: float = Field(ge=0.0)
+    client_send_to_first_visible_text_ms: float | None = Field(default=None, ge=0.0)
+    client_send_to_final_visible_text_ms: float = Field(ge=0.0)
+    streaming_observed: bool
+    timeout_or_fallback: bool = False
+    text_only: bool = True
+    input_tokens: int = Field(ge=0)
+    output_tokens: int = Field(ge=0)
+    retry_count: int = Field(default=0, ge=0)
+    finish_reason: str = Field(min_length=1)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def validate_user_facing_clocks(self) -> "EndToEndLatencyRecord":
+        if (self.client_send_to_first_visible_text_ms is None) != (
+            self.provider_request_to_first_content_ms is None
+        ):
+            raise ValueError("system and Generator TTFT must be recorded together")
+        first_token_fields_present = self.client_send_to_first_visible_text_ms is not None
+        if self.streaming_observed != first_token_fields_present:
+            raise ValueError("first-content timing must be present exactly for streaming")
+        if (
+            self.provider_request_to_first_content_ms is not None
+            and self.provider_request_to_first_content_ms
+            > self.provider_request_to_completion_ms
+        ):
+            raise ValueError("Generator TTFT cannot exceed Generator completion latency")
+        if (
+            self.client_send_to_first_visible_text_ms is not None
+            and self.client_send_to_first_visible_text_ms
+            > self.client_send_to_final_visible_text_ms
+        ):
+            raise ValueError("TTFT cannot exceed request-to-completion latency")
+        if (
+            self.provider_request_to_completion_ms
+            > self.client_send_to_final_visible_text_ms
+        ):
+            raise ValueError("provider completion cannot exceed client E2E completion")
         return self
 
 
@@ -242,9 +383,21 @@ class CostRecord(StrictContract):
     retrieval_calls: int = Field(ge=0, default=0)
     embedding_calls: int = Field(ge=0, default=0)
     latency_ms: float = Field(ge=0.0)
+    latency_breakdown: EndToEndLatencyRecord | None = None
     retries: int = Field(ge=0, default=0)
     recoverable_api_cost_usd: float | None = Field(default=None, ge=0.0)
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def legacy_latency_matches_end_to_end_completion(self) -> "CostRecord":
+        if self.latency_breakdown is not None and not math.isclose(
+            self.latency_ms,
+            self.latency_breakdown.client_send_to_final_visible_text_ms,
+            rel_tol=0.0,
+            abs_tol=1e-6,
+        ):
+            raise ValueError("latency_ms must alias client send-to-final-visible latency")
+        return self
 
 
 class OfficialOutcomeRecord(StrictContract):

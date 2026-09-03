@@ -17,6 +17,7 @@ sys.path.insert(0, str(PROJECT / "src"))
 
 from metacom_pm.paper1.execution import STEP2_RESOURCE_PROTOCOL, VISIBLE_STATE_PROTOCOL
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
+from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -45,25 +46,97 @@ def validate() -> dict[str, Any]:
         and reconciliation["repeated_effect"]["qualification_pass_gate"] is False
         and reconciliation["formal_evidence"]["binary_paper_pass_fail_forbidden"] is True
     )
-    threshold_policy = _load(
+    threshold_policy_base = _load(
         PROJECT
         / "data"
         / "paper1_authority"
         / "paper1_threshold_policy_calibration_amendment_20260831_v1.json"
     )
+    latency_policy = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_latency_constrained_selective_policy_amendment_20260903_v1.json"
+    )
+    client_latency_policy = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json"
+    )
     configured_threshold = config["learning"]["primary_operating_point"]
-    checks["threshold_policy_scoped_override"] = (
-        threshold_policy["status"]
+    checks["latency_constrained_policy_scoped_override"] = (
+        threshold_policy_base["status"]
         == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_AMENDMENT_PRE_OUTCOME"
-        and threshold_policy["preserved_research"]["cost_in_label_or_loss"] is False
-        and threshold_policy["isolation"]["confirmatory_outcome_selection"] == "FORBIDDEN"
-        and threshold_policy["isolation"]["held_out_outer_target_outcome_selection"]
+        and threshold_policy_base["preserved_research"]["cost_in_label_or_loss"] is False
+        and threshold_policy_base["isolation"]["confirmatory_outcome_selection"] == "FORBIDDEN"
+        and threshold_policy_base["isolation"]["held_out_outer_target_outcome_selection"]
         == "FORBIDDEN"
-        and configured_threshold["protocol"]
-        == "pm-paper1-quality-first-one-se-threshold-v1"
+        and latency_policy["status"]
+        == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT"
+        and latency_policy["estimands"]["cost_in_quality_effect_label_or_loss"] is False
+        and latency_policy["estimands"]["latency_in_deployment_action"] is True
+        and set(latency_policy["locks"].values()) == {"CLOSED"}
+        and client_latency_policy["status"]
+        == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT"
+        and client_latency_policy["primary_metrics"]["cost_outcome"]
+        == "p95_client_send_to_final_visible_text_ms"
+        and client_latency_policy["primary_metrics"]["experience_guardrail"]
+        == "p95_client_send_to_first_visible_text_ms"
+        and client_latency_policy["paper_primary_selection"]["order"][0]
+        == "catastrophic_p95_client_completion_below_60000ms"
+        and client_latency_policy["paper_primary_selection"][
+            "tighter_sla_required_for_paper_primary"
+        ]
+        is False
+        and set(client_latency_policy["locks"].values()) == {"CLOSED"}
+        and configured_threshold["protocol"] == THRESHOLD_PROTOCOL
+        and configured_threshold["primary_latency_percentile"] == 0.95
+        and configured_threshold["latency_measurement_protocol"]
+        == "paper1-client-latency-measurement-v2"
+        and configured_threshold["catastrophic_client_completion_ceiling_ms"] == 60000
+        and configured_threshold["tighter_deployment_scenario"] is None
+        and configured_threshold["tighter_sla_required_for_paper_primary"] is False
         and 0.5 in configured_threshold["probability_grid"]
         and configured_threshold["include_eligible_always_on"] is True
         and configured_threshold["include_always_off"] is True
+    )
+
+    contract_names = (
+        "paper1_training_evaluation_alignment_contract_v1.json",
+        "paper1_pairwise_effect_oracle_contract_v1.json",
+        "paper1_pairwise_teacher_qualification_plan_v1.json",
+        "paper1_task_effect_coding_v1.json",
+        "paper1_decision_correctness_evaluation_v1.json",
+        "paper1_end_to_end_latency_policy_contract_v1.json",
+        "paper1_client_latency_measurement_contract_v2.json",
+        "paper1_natural_turn_appropriateness_rubric_v1.json",
+    )
+    contracts = {
+        name: _load(PROJECT / "data" / "paper1_authority" / name)
+        for name in contract_names
+    }
+    checks["effect_action_latency_contracts_present_pre_outcome"] = (
+        all(contract["status"].startswith("ACTIVE") for contract in contracts.values())
+        and all(
+            contract.get("formal_outcome_calls", 0) == 0
+            for contract in contracts.values()
+        )
+        and contracts["paper1_task_effect_coding_v1.json"]["common"][
+            "current_unweighted_exact_difference_pareto_rule"
+        ]
+        == "SUPERSEDED"
+        and contracts["paper1_client_latency_measurement_contract_v2.json"]["primary"][
+            "primary_cost_outcome"
+        ]
+        == "p95 client_send_to_final_visible_text_ms"
+        and contracts["paper1_client_latency_measurement_contract_v2.json"][
+            "cross_machine_absolute_timestamp_subtraction"
+        ]
+        == "FORBIDDEN"
+        and contracts["paper1_natural_turn_appropriateness_rubric_v1.json"][
+            "decoded_r0_m0_sufficiency"
+        ].startswith("after arm decoding")
     )
 
     authority = PROJECT / "data" / "v3_authority"

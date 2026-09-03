@@ -17,6 +17,7 @@ from .freeze import (
     bind_artifact,
 )
 from .threshold import (
+    ClientLatencyConstraint,
     PROBABILITY_THRESHOLD_GRID,
     THRESHOLD_PROTOCOL,
     ThresholdCalibrationRow,
@@ -24,6 +25,12 @@ from .threshold import (
     ThresholdPolicyKind,
     ThresholdSelectionResult,
     select_threshold_operating_point,
+)
+from .latency_policy import (
+    CANONICAL_MEMORY_HEAD_ORDER,
+    HeadLatencyCandidate,
+    LatencyConstrainedAllocation,
+    allocate_latency_constrained_heads,
 )
 
 __all__ = [
@@ -35,6 +42,7 @@ __all__ = [
     "PreOutcomeFreezeManifest",
     "ThresholdOperatingPointFreeze",
     "ThresholdSelectionFreeze",
+    "ClientLatencyConstraint",
     "PROBABILITY_THRESHOLD_GRID",
     "THRESHOLD_PROTOCOL",
     "ThresholdCalibrationRow",
@@ -42,6 +50,10 @@ __all__ = [
     "ThresholdPolicyKind",
     "ThresholdSelectionResult",
     "select_threshold_operating_point",
+    "CANONICAL_MEMORY_HEAD_ORDER",
+    "HeadLatencyCandidate",
+    "LatencyConstrainedAllocation",
+    "allocate_latency_constrained_heads",
     "bind_artifact",
     "inspect_treatment_delivery",
     "parse_resource_blocks",

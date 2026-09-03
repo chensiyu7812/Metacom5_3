@@ -68,6 +68,18 @@ class PairedEffectDecision(StrictContract):
         return None
 
 
+class EscEffectSurface(StrictContract):
+    """Raw seven-dimension ESC-RANK surface (all ordinal 0--4)."""
+
+    empathy: int = Field(ge=0, le=4)
+    information: int = Field(ge=0, le=4)
+    expression: int = Field(ge=0, le=4)
+    fluency: int = Field(ge=0, le=4)
+    skillful: int = Field(ge=0, le=4)
+    humanoid: int = Field(ge=0, le=4)
+    overall: int = Field(ge=0, le=4)
+
+
 class QaEffectSurface(StrictContract):
     llm_as_judge: int = Field(ge=0, le=2)
     f1: float = Field(ge=0.0, le=1.0)
@@ -274,52 +286,91 @@ def _directed(
     )
 
 
-def _code_pareto_direction(
-    task_type: TaskType,
-    deltas: dict[str, float],
-    *,
-    reason_prefix: str,
-) -> PairedEffectDecision:
-    """Code an unweighted direction only when all official axes agree."""
+def _pairwise_direction(verdict: PairedOutcome | None) -> int | None:
+    if verdict is None or verdict is PairedOutcome.UNCERTAIN:
+        return None
+    if verdict is PairedOutcome.INVALID:
+        raise ValueError("an invalid pairwise verdict requires a mechanical invalid reason")
+    if verdict is PairedOutcome.ON_BETTER:
+        return 1
+    if verdict is PairedOutcome.OFF_BETTER:
+        return -1
+    return 0
 
-    directions = {_sign(delta) for delta in deltas.values() if _sign(delta)}
-    if not directions:
-        return PairedEffectDecision(
-            task_type=task_type,
-            outcome=PairedOutcome.EQUIVALENT,
-            reason_code=f"{reason_prefix}_all_official_metrics_exactly_equal",
-            anchor_deltas=deltas,
-        )
-    if len(directions) == 1:
-        return _directed(
-            task_type,
-            directions.pop(),
-            f"{reason_prefix}_official_metric_pareto_direction",
-            deltas,
-        )
+
+def _uncertain(
+    task_type: TaskType,
+    reason_code: str,
+    deltas: dict[str, float],
+) -> PairedEffectDecision:
     return PairedEffectDecision(
         task_type=task_type,
         outcome=PairedOutcome.UNCERTAIN,
-        reason_code=f"{reason_prefix}_official_metric_direction_conflict",
+        reason_code=reason_code,
+        anchor_deltas=deltas,
+    )
+
+
+def _equivalent(
+    task_type: TaskType,
+    reason_code: str,
+    deltas: dict[str, float],
+) -> PairedEffectDecision:
+    return PairedEffectDecision(
+        task_type=task_type,
+        outcome=PairedOutcome.EQUIVALENT,
+        reason_code=reason_code,
         anchor_deltas=deltas,
     )
 
 
 def code_esc_pairwise_effect(
-    verdict: PairedOutcome,
+    on: EscEffectSurface,
+    off: EscEffectSurface,
     *,
+    pairwise_verdict: PairedOutcome | None,
     invalid_reasons: Sequence[MechanicalInvalidReason] = (),
 ) -> PairedEffectDecision:
-    """Preserve the blind RS pairwise verdict without inventing a score gate."""
+    """Use Overall as primary, Empathy/Information as guards, then pairwise."""
 
     if invalid_reasons:
         return _invalid(TaskType.ESC_RESPONSE, invalid_reasons)
-    if verdict is PairedOutcome.INVALID:
-        raise ValueError("an invalid verdict requires a mechanical invalid reason")
-    return PairedEffectDecision(
-        task_type=TaskType.ESC_RESPONSE,
-        outcome=verdict,
-        reason_code="blind_pairwise_verdict",
+    pairwise = _pairwise_direction(pairwise_verdict)
+    deltas = {
+        "Overall": float(on.overall - off.overall),
+        "Empathy": float(on.empathy - off.empathy),
+        "Information": float(on.information - off.information),
+        "Expression": float(on.expression - off.expression),
+        "Fluency": float(on.fluency - off.fluency),
+        "Skillful": float(on.skillful - off.skillful),
+        "Humanoid": float(on.humanoid - off.humanoid),
+    }
+    primary = _sign(deltas["Overall"])
+    guards = (_sign(deltas["Empathy"]), _sign(deltas["Information"]))
+    if primary:
+        if any(guard == -primary for guard in guards):
+            return _uncertain(TaskType.ESC_RESPONSE, "esc_primary_guard_conflict", deltas)
+        if pairwise is not None and pairwise not in {0, primary}:
+            return _uncertain(TaskType.ESC_RESPONSE, "esc_primary_pairwise_conflict", deltas)
+        return _directed(
+            TaskType.ESC_RESPONSE,
+            primary,
+            "esc_overall_ordinal_direction_with_no_guard_conflict",
+            deltas,
+        )
+    if pairwise is None:
+        return _uncertain(TaskType.ESC_RESPONSE, "esc_overall_tie_pairwise_unresolved", deltas)
+    if pairwise == 0:
+        if any(guards) and len({guard for guard in guards if guard}) > 1:
+            return _uncertain(TaskType.ESC_RESPONSE, "esc_tied_primary_guard_conflict", deltas)
+        return _equivalent(TaskType.ESC_RESPONSE, "esc_pairwise_equivalent", deltas)
+    if any(guard == -pairwise for guard in guards):
+        return _uncertain(TaskType.ESC_RESPONSE, "esc_pairwise_guard_conflict", deltas)
+    return _directed(
+        TaskType.ESC_RESPONSE,
+        pairwise,
+        "esc_tied_overall_resolved_by_pairwise_teacher",
+        deltas,
     )
 
 
@@ -327,6 +378,7 @@ def code_qa_effect(
     on: QaEffectSurface,
     off: QaEffectSurface,
     *,
+    pairwise_verdict: PairedOutcome | None,
     invalid_reasons: Sequence[MechanicalInvalidReason] = (),
 ) -> PairedEffectDecision:
     if invalid_reasons:
@@ -337,13 +389,34 @@ def code_qa_effect(
         "F1": on.f1 - off.f1,
         "BERTScore": on.bert_score - off.bert_score,
     }
-    return _code_pareto_direction(TaskType.QA, deltas, reason_prefix="qa")
+    primary = _sign(deltas["LLM_as_Judge"])
+    pairwise = _pairwise_direction(pairwise_verdict)
+    if primary:
+        if pairwise is not None and pairwise not in {0, primary}:
+            return _uncertain(TaskType.QA, "qa_primary_pairwise_conflict", deltas)
+        return _directed(
+            TaskType.QA,
+            primary,
+            "qa_semantic_correctness_primary_direction",
+            deltas,
+        )
+    if pairwise is None:
+        return _uncertain(TaskType.QA, "qa_primary_tie_pairwise_unresolved", deltas)
+    if pairwise == 0:
+        return _equivalent(TaskType.QA, "qa_pairwise_equivalent", deltas)
+    return _directed(
+        TaskType.QA,
+        pairwise,
+        "qa_primary_tie_resolved_by_gold_pairwise_teacher",
+        deltas,
+    )
 
 
 def code_summary_effect(
     on: SummaryEffectSurface,
     off: SummaryEffectSurface,
     *,
+    pairwise_verdict: PairedOutcome | None,
     invalid_reasons: Sequence[MechanicalInvalidReason] = (),
 ) -> PairedEffectDecision:
     if invalid_reasons:
@@ -366,13 +439,35 @@ def code_summary_effect(
             anchor_deltas=deltas,
         )
 
-    return _code_pareto_direction(TaskType.SUMMARY, deltas, reason_prefix="summary")
+    primary = _sign(on.event_f1 - off.event_f1)
+    llm = _sign(deltas["LLM_Score"])
+    pairwise = _pairwise_direction(pairwise_verdict)
+    if primary:
+        if llm == -primary or (pairwise is not None and pairwise == -primary):
+            return _uncertain(TaskType.SUMMARY, "summary_event_semantic_conflict", deltas)
+        return _directed(
+            TaskType.SUMMARY,
+            primary,
+            "summary_event_f1_primary_direction",
+            deltas,
+        )
+    if llm and pairwise == llm:
+        return _directed(
+            TaskType.SUMMARY,
+            llm,
+            "summary_event_f1_tie_llm_pairwise_agreement",
+            deltas,
+        )
+    if llm == 0 and pairwise == 0:
+        return _equivalent(TaskType.SUMMARY, "summary_semantic_equivalent", deltas)
+    return _uncertain(TaskType.SUMMARY, "summary_event_f1_tie_semantic_unresolved", deltas)
 
 
 def code_dg_effect(
     on: DgEffectSurface,
     off: DgEffectSurface,
     *,
+    pairwise_verdict: PairedOutcome | None,
     invalid_reasons: Sequence[MechanicalInvalidReason] = (),
 ) -> PairedEffectDecision:
     if invalid_reasons:
@@ -385,16 +480,51 @@ def code_dg_effect(
         "Personalization": float(on.personalization - off.personalization),
         "Emotional_Support": float(on.emotional_support - off.emotional_support),
     }
-    return _code_pareto_direction(
+    primary = _sign(on.weighted_score - off.weighted_score)
+    pairwise = _pairwise_direction(pairwise_verdict)
+    if primary:
+        if pairwise is None:
+            return _uncertain(
+                TaskType.DIALOGUE_GENERATION,
+                "dg_pairwise_guard_unresolved",
+                deltas,
+            )
+        if pairwise == -primary:
+            return _uncertain(
+                TaskType.DIALOGUE_GENERATION,
+                "dg_utilization_pairwise_conflict",
+                deltas,
+            )
+        return _directed(
+            TaskType.DIALOGUE_GENERATION,
+            primary,
+            "dg_relevant_observation_utilization_direction",
+            deltas,
+        )
+    if pairwise is None:
+        return _uncertain(
+            TaskType.DIALOGUE_GENERATION,
+            "dg_utilization_tie_pairwise_unresolved",
+            deltas,
+        )
+    if pairwise == 0:
+        return _equivalent(
+            TaskType.DIALOGUE_GENERATION,
+            "dg_utilization_and_pairwise_equivalent",
+            deltas,
+        )
+    return _directed(
         TaskType.DIALOGUE_GENERATION,
+        pairwise,
+        "dg_utilization_tie_resolved_by_pairwise_teacher",
         deltas,
-        reason_prefix="dg",
     )
 
 
 __all__ = [
     "DgEffectSurface",
     "DgObservationJudgement",
+    "EscEffectSurface",
     "MechanicalInvalidReason",
     "PairedEffectDecision",
     "QaEffectSurface",
