@@ -148,6 +148,22 @@ class ProposedEventExperienceUnit(StrictContract):
 ProposedAtomicMemoryUnit = ProposedProfileViewUnit | ProposedEventExperienceUnit
 
 
+def _normalize_compact_key_case(value: Any) -> Any:
+    """Normalize transport-only keys while rejecting ambiguous collisions."""
+
+    if isinstance(value, dict):
+        normalized: dict[str, Any] = {}
+        for key, nested in value.items():
+            lowered = str(key).casefold()
+            if lowered in normalized:
+                raise ValueError(f"conflicting compact transport key: {lowered}")
+            normalized[lowered] = _normalize_compact_key_case(nested)
+        return normalized
+    if isinstance(value, (list, tuple)):
+        return [_normalize_compact_key_case(row) for row in value]
+    return value
+
+
 class ExtractorSessionOutput(StrictContract):
     schema_version: str = MULTI_VIEW_MEMORY_SCHEMA_VERSION
     owner_id: str = Field(min_length=1)
@@ -173,6 +189,108 @@ class ExtractorWireSessionOutput(StrictContract):
     session_id: str = Field(min_length=1)
     mp_facts: tuple[dict[str, Any], ...] = ()
     me_events: tuple[dict[str, Any], ...] = ()
+
+
+class CompactProposedSourceSpan(StrictContract):
+    """Token-efficient provider transport; expanded before strict validation."""
+
+    i: str = Field(min_length=1, description="source turn_id")
+
+
+class CompactProposedProfileViewUnit(StrictContract):
+    i: str = Field(min_length=1, description="unique proposal_id")
+    t: ProfileFieldType
+    k: str = Field(min_length=1, description="stable profile_slot_key")
+    v: str = Field(min_length=1, description="normalized value")
+    s: tuple[CompactProposedSourceSpan, ...] = Field(min_length=1)
+
+
+class CompactProposedEventExperienceUnit(StrictContract):
+    i: str = Field(min_length=1, description="unique proposal_id")
+    t: EventExperienceType
+    z: EventTemporalStatus
+    n: str = Field(min_length=1, description="normalized event or experience")
+    s: tuple[CompactProposedSourceSpan, ...] = Field(min_length=1)
+    a: str | None = Field(default=None, description="action text, subtype only")
+    o: str | None = Field(default=None, description="observed outcome text, subtype only")
+
+
+class CompactExtractorSessionOutput(StrictContract):
+    """Compact wire contract that preserves the complete extractor semantics."""
+
+    v: str = MULTI_VIEW_MEMORY_SCHEMA_VERSION
+    o: str = Field(min_length=1, description="owner_id")
+    s: str = Field(min_length=1, description="session_id")
+    p: tuple[CompactProposedProfileViewUnit, ...] = ()
+    e: tuple[CompactProposedEventExperienceUnit, ...] = ()
+
+
+
+class CompactExtractorWireSessionOutput(StrictContract):
+    """Loose item surface so one malformed proposal does not erase valid ones."""
+
+    v: str = MULTI_VIEW_MEMORY_SCHEMA_VERSION
+    o: str = Field(min_length=1)
+    s: str = Field(min_length=1)
+    p: tuple[dict[str, Any], ...] = ()
+    e: tuple[dict[str, Any], ...] = ()
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_transport_key_case(cls, value: Any) -> Any:
+        return _normalize_compact_key_case(value)
+
+    def expand(self, source: MultiViewSessionInput) -> ExtractorWireSessionOutput:
+        seeker_turns = {turn.turn_id: turn for turn in source.turns if turn.role == "seeker"}
+
+        def expanded_spans(proposal_id: Any, raw: Any) -> Any:
+            if not isinstance(raw, (list, tuple)):
+                return raw
+            expanded: list[Any] = []
+            for index, span in enumerate(raw):
+                if not isinstance(span, dict) or set(span) != {"i"}:
+                    expanded.append(span)
+                    continue
+                turn_id = span.get("i")
+                turn = seeker_turns.get(turn_id)
+                expanded.append(
+                    {
+                        "span_id": f"{proposal_id}:q{index}",
+                        "turn_id": turn_id,
+                        "exact_text": turn.content if turn is not None else None,
+                    }
+                )
+            return expanded
+
+        def mp(raw: dict[str, Any]) -> dict[str, Any]:
+            proposal_id = raw.get("i")
+            return {
+                "proposal_id": proposal_id,
+                "profile_field_type": raw.get("t"),
+                "profile_slot_key": raw.get("k"),
+                "normalized_value": raw.get("v"),
+                "supporting_spans": expanded_spans(proposal_id, raw.get("s")),
+            }
+
+        def me(raw: dict[str, Any]) -> dict[str, Any]:
+            proposal_id = raw.get("i")
+            return {
+                "proposal_id": proposal_id,
+                "event_experience_type": raw.get("t"),
+                "temporal_status": raw.get("z"),
+                "normalized_event": raw.get("n"),
+                "supporting_spans": expanded_spans(proposal_id, raw.get("s")),
+                "action_text": raw.get("a"),
+                "observed_outcome_text": raw.get("o"),
+            }
+
+        return ExtractorWireSessionOutput(
+            schema_version=self.v,
+            owner_id=self.o,
+            session_id=self.s,
+            mp_facts=tuple(mp(row) for row in self.p),
+            me_events=tuple(me(row) for row in self.e),
+        )
 
 
 class VerificationReason(StrEnum):
@@ -221,6 +339,51 @@ class VerifierWireSessionOutput(StrictContract):
     owner_id: str = Field(min_length=1)
     session_id: str = Field(min_length=1)
     decisions: tuple[dict[str, Any], ...]
+
+
+class CompactVerificationDecision(StrictContract):
+    i: str = Field(min_length=1, description="proposal_id")
+    r: VerificationReason
+
+
+class CompactVerifierSessionOutput(StrictContract):
+    """Compact verifier transport; acceptance is derived from the reason."""
+
+    v: str = MULTI_VIEW_MEMORY_SCHEMA_VERSION
+    o: str = Field(min_length=1, description="owner_id")
+    s: str = Field(min_length=1, description="session_id")
+    d: tuple[CompactVerificationDecision, ...]
+
+
+
+class CompactVerifierWireSessionOutput(StrictContract):
+    """Loose decision surface for item-level fail-closed validation."""
+
+    v: str = MULTI_VIEW_MEMORY_SCHEMA_VERSION
+    o: str = Field(min_length=1)
+    s: str = Field(min_length=1)
+    d: tuple[dict[str, Any], ...]
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_transport_key_case(cls, value: Any) -> Any:
+        return _normalize_compact_key_case(value)
+
+    def expand(self) -> VerifierWireSessionOutput:
+        return VerifierWireSessionOutput(
+            schema_version=self.v,
+            owner_id=self.o,
+            session_id=self.s,
+            decisions=tuple(
+                {
+                    "proposal_id": row.get("i"),
+                    "accepted": row.get("r") == VerificationReason.ACCEPTED.value,
+                    "reason": row.get("r"),
+                    "factual_rationale": f"decision:{row.get('r')}",
+                }
+                for row in self.d
+            ),
+        )
 
 
 class SchemaRejectedItem(StrictContract):
@@ -300,6 +463,10 @@ __all__ = [
     "AcceptedAtomicMemoryUnit",
     "AcceptedEventExperienceUnit",
     "AcceptedProfileViewUnit",
+    "CompactExtractorSessionOutput",
+    "CompactExtractorWireSessionOutput",
+    "CompactVerifierSessionOutput",
+    "CompactVerifierWireSessionOutput",
     "EventExperienceType",
     "EventTemporalStatus",
     "ExtractorSessionOutput",

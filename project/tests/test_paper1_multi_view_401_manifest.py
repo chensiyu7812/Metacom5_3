@@ -9,14 +9,14 @@ ROOT = Path(__file__).resolve().parents[1]
 AUTHORITY = ROOT / "data" / "paper1_authority"
 
 
-def test_manifest_covers_exact_public_401_and_fits_stage_cap():
+def test_manifest_covers_exact_public_401_and_each_call_fits_rolling_cap():
     summary = json.loads(
-        (AUTHORITY / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json")
+        (AUTHORITY / "paper1_multi_view_401_call_manifest_preflight_20260903_v8.json")
         .read_text(encoding="utf-8")
     )
-    rows_path = AUTHORITY / "paper1_multi_view_401_call_manifest_20260903_v1.jsonl"
+    rows_path = AUTHORITY / "paper1_multi_view_401_call_manifest_20260903_v8.jsonl"
     rows = [json.loads(line) for line in rows_path.read_text(encoding="utf-8").splitlines()]
-    assert summary["status"] == "PASS_ZERO_OUTCOME_PREFLIGHT"
+    assert summary["status"] == "PASS_ZERO_OUTCOME_ROLLING_BUDGET_PREFLIGHT"
     assert summary["source"] == {
         "path": "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
         "sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
@@ -29,16 +29,17 @@ def test_manifest_covers_exact_public_401_and_fits_stage_cap():
     assert [row["sequence"] for row in rows] == list(range(401))
     assert sha256_file(rows_path) == summary["manifest"]["sha256"]
     budget = summary["budget"]
-    assert Decimal(budget["aggregate_maximum_cost_usd"]) <= Decimal(
+    assert Decimal(budget["maximum_single_call_reservation_usd"]) <= Decimal(
         budget["stage_hard_cap_usd"]
     )
+    assert budget["rolling_hard_cap_may_stop_before_401"] is True
     assert budget["maximum_provider_calls"] == 802
     assert all(row["outcome_fields_read"] is False for row in rows)
 
 
 def test_manifest_freezes_exact_model_tokenizer_prompts_and_schemas():
     summary = json.loads(
-        (AUTHORITY / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json")
+        (AUTHORITY / "paper1_multi_view_401_call_manifest_preflight_20260903_v8.json")
         .read_text(encoding="utf-8")
     )
     identity = summary["runtime_identity"]
@@ -67,3 +68,29 @@ def test_manifest_freezes_exact_model_tokenizer_prompts_and_schemas():
         "pm_training_runs": 0,
         "all_outcome_locks": "CLOSED",
     }
+
+
+def test_closeout_records_complete_text_free_lineage_and_budget_census():
+    closeout = json.loads(
+        (AUTHORITY / "paper1_multi_view_401_closeout_20260903_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert closeout["status"] == "COMPLETE_CENSUS_PASS"
+    assert all(closeout["checks"].values())
+    assert closeout["coverage"]["sessions"] == 401
+    assert closeout["coverage"]["accepted_units"] == 2236
+    assert closeout["attempts"] == {
+        "logical_calls": 802,
+        "physical_attempts": 804,
+        "extractor_physical_attempts": 402,
+        "verifier_physical_attempts": 402,
+        "successful_terminal_attempts": 802,
+        "failed_terminal_attempts": 2,
+        "recovered_retry_calls": 2,
+        "exhausted_failed_calls": 0,
+    }
+    assert Decimal(
+        closeout["budget_usd"]["compiler_stage_all_versions_cost"]
+    ) <= Decimal(closeout["budget_usd"]["compiler_stage_authorized_cap"])
+    assert closeout["method_boundary"]["authority_artifact_contains_dialogue_text"] is False

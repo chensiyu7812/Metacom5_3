@@ -43,8 +43,30 @@ wrong owner, future/hypothetical content, supporter-only claims, and span
 mismatch. Never judge utility, treatment choice, response quality, or effect.
 Do not create, rewrite, or relabel a proposal."""
 
+MULTI_VIEW_EXTRACTOR_USER_INSTRUCTION = (
+    "Return one JSON object matching the schema. Proposal IDs and span IDs must be "
+    "unique within this session. Use the compact schema keys exactly. Every s item "
+    "must contain only i, set to a supplied seeker turn_id; the runtime restores the "
+    "complete exact turn as evidence. In prior_current_profile, t is profile_field_type, "
+    "k is profile_slot_key, and v is normalized_value. It is context only for reusing "
+    "stable profile_slot_key values; "
+    "do not repeat a prior fact unless the current session reaffirms or updates it."
+)
+MULTI_VIEW_VERIFIER_USER_INSTRUCTION = (
+    "Return one compact JSON object with exactly one d decision for every supplied "
+    "proposal_id and no other IDs. Set i to proposal_id and r to one schema reason. "
+    "Do not repair a proposal."
+)
+
 MULTI_VIEW_EXTRACTOR_PROMPT_SHA256 = sha256_text(MULTI_VIEW_EXTRACTOR_SYSTEM_PROMPT)
 MULTI_VIEW_VERIFIER_PROMPT_SHA256 = sha256_text(MULTI_VIEW_VERIFIER_SYSTEM_PROMPT)
+MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256 = sha256_text(
+    MULTI_VIEW_EXTRACTOR_USER_INSTRUCTION + "\n\nINPUT:\n{source}\n\nSCHEMA:\n{schema}"
+)
+MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256 = sha256_text(
+    MULTI_VIEW_VERIFIER_USER_INSTRUCTION
+    + "\n\nINPUT:\n{source}\n\nPROPOSALS:\n{proposals}\n\nSCHEMA:\n{schema}"
+)
 
 
 def extractor_messages(source_json: str, strict_schema_json: str) -> list[dict[str, str]]:
@@ -53,11 +75,8 @@ def extractor_messages(source_json: str, strict_schema_json: str) -> list[dict[s
         {
             "role": "user",
             "content": (
-                "Return one JSON object matching the schema. Proposal IDs and span IDs must be "
-                "unique within this session. Every supporting span must copy exact seeker text "
-                "and use a supplied turn_id. prior_current_profile is context only for reusing "
-                "stable profile_slot_key values; do not repeat a prior fact unless the current "
-                "session reaffirms or updates it.\n\nINPUT:\n"
+                MULTI_VIEW_EXTRACTOR_USER_INSTRUCTION
+                + "\n\nINPUT:\n"
                 + source_json
                 + "\n\nSCHEMA:\n"
                 + strict_schema_json
@@ -76,8 +95,8 @@ def verifier_messages(
         {
             "role": "user",
             "content": (
-                "Return exactly one decision for every supplied proposal_id and no other IDs. "
-                "Do not repair a proposal.\n\nINPUT:\n"
+                MULTI_VIEW_VERIFIER_USER_INSTRUCTION
+                + "\n\nINPUT:\n"
                 + source_json
                 + "\n\nPROPOSALS:\n"
                 + proposals_json
@@ -90,8 +109,10 @@ def verifier_messages(
 
 __all__ = [
     "MULTI_VIEW_EXTRACTOR_PROMPT_SHA256",
+    "MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256",
     "MULTI_VIEW_EXTRACTOR_SYSTEM_PROMPT",
     "MULTI_VIEW_VERIFIER_PROMPT_SHA256",
+    "MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256",
     "MULTI_VIEW_VERIFIER_SYSTEM_PROMPT",
     "extractor_messages",
     "verifier_messages",

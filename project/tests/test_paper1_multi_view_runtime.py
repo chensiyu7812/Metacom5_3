@@ -1,13 +1,19 @@
 from decimal import Decimal
 
+import pytest
+from pydantic import ValidationError
+
 from metacom_pm.api import CallResult, Endpoint, chat_request_payload
 from metacom_pm.io import canonical_json, sha256_text
 from metacom_pm.paper1.api_budget import CumulativePaper1ApiBudgetLedger
 from metacom_pm.paper1.multi_view_memory.contracts import (
+    CompactExtractorWireSessionOutput,
+    CompactVerifierWireSessionOutput,
     EventExperienceType,
     EventTemporalStatus,
     ExtractorSessionOutput,
     MultiViewSessionInput,
+    PriorCurrentProfileSlot,
     ProfileFieldType,
     ProposedEventExperienceUnit,
     ProposedProfileViewUnit,
@@ -23,6 +29,8 @@ from metacom_pm.paper1.multi_view_memory.runtime import (
     PriceSnapshot,
     RuntimeBinding,
 )
+from metacom_pm.paper1.multi_view_memory.prompts import extractor_messages, verifier_messages
+from metacom_pm.paper1.multi_view_memory.input_projection import prompt_source_projection
 
 
 def _endpoint():
@@ -96,6 +104,8 @@ class FakeClient:
     ):
         assert retries == 1
         supplied = self.outputs.pop(0)
+        if isinstance(supplied, Exception):
+            raise supplied
         parsed = response_schema.model_validate(supplied.model_dump(mode="json"))
         payload = chat_request_payload(
             self.endpoint,
@@ -152,24 +162,34 @@ def _outputs():
             ProposedSourceSpan(span_id="s2", turn_id="session-1:0", exact_text=text),
         ),
     )
-    extractor = ExtractorSessionOutput(
-        owner_id="u1",
-        session_id="session-1",
-        mp_facts=(profile,),
-        me_events=(event,),
-    )
-    verifier = VerifierSessionOutput(
-        owner_id="u1",
-        session_id="session-1",
-        decisions=tuple(
-            VerificationDecision(
-                proposal_id=proposal_id,
-                accepted=True,
-                reason=VerificationReason.ACCEPTED,
-                factual_rationale="Directly supported by seeker text.",
-            )
-            for proposal_id in ("mp1", "me1")
+    extractor = CompactExtractorWireSessionOutput(
+        o="u1",
+        s="session-1",
+        p=(
+            {
+                "i": profile.proposal_id,
+                "t": profile.profile_field_type.value,
+                "k": profile.profile_slot_key,
+                "v": profile.normalized_value,
+                "s": ({"i": "session-1:0"},),
+            },
         ),
+        e=(
+            {
+                "i": event.proposal_id,
+                "t": event.event_experience_type.value,
+                "z": event.temporal_status.value,
+                "n": event.normalized_event,
+                "s": ({"i": "session-1:0"},),
+                "a": None,
+                "o": None,
+            },
+        ),
+    )
+    verifier = CompactVerifierWireSessionOutput(
+        o="u1",
+        s="session-1",
+        d=tuple({"i": proposal_id, "r": "accepted"} for proposal_id in ("mp1", "me1")),
     )
     return extractor, verifier
 
@@ -190,29 +210,22 @@ def test_active_runtime_accepts_grounded_verified_mp_and_broad_me_and_caches(tmp
     assert cached_client.calls == 0
 
 
-def test_grounding_failure_cannot_be_overridden_by_verifier(tmp_path):
+def test_unknown_turn_reference_is_rejected_before_verifier(tmp_path):
     extractor, _ = _outputs()
-    bad = extractor.mp_facts[0].model_copy(
-        update={
-            "supporting_spans": (
-                ProposedSourceSpan(
-                    span_id="s1",
-                    turn_id="session-1:0",
-                    exact_text="I live in Kyoto",
-                ),
-            )
-        }
-    )
-    bad_extractor = extractor.model_copy(update={"mp_facts": (bad,), "me_events": ()})
+    bad = {**extractor.p[0], "s": ({"i": "unknown-turn"},)}
+    bad_extractor = extractor.model_copy(update={"p": (bad,), "e": ()})
     client = FakeClient(_endpoint(), [bad_extractor])
     result = _compiler(tmp_path, client).compile_session(_source())
     assert result.accepted_units == ()
-    assert result.grounding[0]["valid"] is False
+    assert len(result.schema_rejections) == 1
+    assert "supporting_spans.0.exact_text:string_type" in result.schema_rejections[
+        0
+    ].violations
     assert client.calls == 1
 
 
 def test_empty_extraction_skips_paid_verifier_call(tmp_path):
-    empty = ExtractorSessionOutput(owner_id="u1", session_id="session-1")
+    empty = CompactExtractorWireSessionOutput(o="u1", s="session-1")
     client = FakeClient(_endpoint(), [empty])
     result = _compiler(tmp_path, client).compile_session(_source())
     assert result.verifier.decisions == ()
@@ -222,19 +235,98 @@ def test_empty_extraction_skips_paid_verifier_call(tmp_path):
 
 def test_schema_invalid_item_is_rejected_without_losing_valid_item(tmp_path):
     extractor, verifier = _outputs()
-    valid = extractor.mp_facts[0].model_dump(mode="json")
-    invalid = {**valid, "proposal_id": "bad", "profile_field_type": "invented"}
-    from metacom_pm.paper1.multi_view_memory.contracts import ExtractorWireSessionOutput
-
-    wire = ExtractorWireSessionOutput(
-        owner_id="u1",
-        session_id="session-1",
-        mp_facts=(valid, invalid),
+    valid = extractor.p[0]
+    invalid = {**valid, "i": "bad", "t": "invented"}
+    wire = CompactExtractorWireSessionOutput(
+        o="u1",
+        s="session-1",
+        p=(valid, invalid),
     )
-    one_verdict = verifier.model_copy(update={"decisions": (verifier.decisions[0],)})
+    one_verdict = verifier.model_copy(update={"d": (verifier.d[0],)})
     result = _compiler(tmp_path, FakeClient(_endpoint(), [wire, one_verdict])).compile_session(
         _source()
     )
     assert len(result.accepted_units) == 1
     assert len(result.schema_rejections) == 1
     assert result.schema_rejections[0].proposal_id == "bad"
+
+
+def test_compact_transport_accepts_provider_uppercase_keys_without_changing_values():
+    wire = CompactExtractorWireSessionOutput.model_validate(
+        {
+            "V": "paper1-multi-view-memory-schema-v1",
+            "O": "u1",
+            "S": "session-1",
+            "P": [
+                {
+                    "I": "mp1",
+                    "T": "location",
+                    "K": "residence.current_city",
+                    "V": "Tokyo",
+                    "S": [{"I": "session-1:0"}],
+                }
+            ],
+            "E": [],
+        }
+    )
+    expanded = wire.expand(_source())
+    assert expanded.owner_id == "u1"
+    assert expanded.mp_facts[0]["normalized_value"] == "Tokyo"
+    assert expanded.mp_facts[0]["supporting_spans"][0]["exact_text"] == _source().turns[0].content
+
+
+def test_compact_transport_rejects_case_collisions():
+    with pytest.raises(ValidationError, match="conflicting compact transport key"):
+        CompactExtractorWireSessionOutput.model_validate(
+            {"o": "u1", "O": "other", "s": "session-1"}
+        )
+
+
+def test_json_object_provider_prompts_explicitly_name_json():
+    assert "json" in canonical_json(extractor_messages("{}", "{}")).casefold()
+    assert "json" in canonical_json(verifier_messages("{}", "{}", "{}")).casefold()
+
+
+def test_prompt_source_projection_keeps_current_value_but_removes_audit_lineage():
+    source = _source().model_copy(
+        update={
+            "chronological_rank": 2,
+            "prior_current_profile": (
+                PriorCurrentProfileSlot(
+                    memory_id="audit-only-memory-id",
+                    profile_field_type=ProfileFieldType.LOCATION,
+                    profile_slot_key="residence.current_city",
+                    normalized_value="Tokyo",
+                    source_session_rank=1,
+                ),
+            ),
+        }
+    )
+    projected = prompt_source_projection(source)
+    assert projected["prior_current_profile"] == [
+        {"t": "location", "k": "residence.current_city", "v": "Tokyo"}
+    ]
+    assert "audit-only-memory-id" not in canonical_json(projected)
+
+
+def test_failed_physical_attempt_can_resume_once_with_separate_budget_reservation(tmp_path):
+    extractor, verifier = _outputs()
+    with pytest.raises(TimeoutError):
+        _compiler(tmp_path, FakeClient(_endpoint(), [TimeoutError("network timeout")])).compile_session(
+            _source()
+        )
+
+    resumed = _compiler(tmp_path, FakeClient(_endpoint(), [extractor, verifier])).compile_session(
+        _source()
+    )
+    assert len(resumed.accepted_units) == 2
+    budget_rows = [
+        __import__("json").loads(line)
+        for line in (tmp_path / "api-budget.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    reservations = [row for row in budget_rows if row["event"] == "RESERVED"]
+    assert [row["call_class"] for row in reservations[:2]] == [
+        "PRIMARY",
+        "PRIMARY_RETRY",
+    ]
+    assert reservations[0]["reservation_id"] != reservations[1]["reservation_id"]

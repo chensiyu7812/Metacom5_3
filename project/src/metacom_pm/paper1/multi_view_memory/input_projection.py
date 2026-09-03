@@ -38,6 +38,7 @@ FORBIDDEN_INPUT_KEY_FRAGMENTS = frozenset(
         "utility",
     }
 )
+PROMPT_SOURCE_PROJECTION_VERSION = "paper1-multi-view-prompt-source-projection-v2"
 
 
 def assert_input_firewall(value: Any, *, path: str = "$") -> None:
@@ -112,4 +113,26 @@ def build_session_input(
     return projected
 
 
-__all__ = ["FORBIDDEN_INPUT_KEY_FRAGMENTS", "assert_input_firewall", "build_session_input"]
+def prompt_source_projection(source: MultiViewSessionInput) -> dict[str, Any]:
+    """Remove audit-only prior-slot fields from the provider transport."""
+
+    projected = source.model_dump(mode="json")
+    projected["prior_current_profile"] = [
+        {
+            "t": slot.profile_field_type.value,
+            "k": slot.profile_slot_key,
+            "v": slot.normalized_value,
+        }
+        for slot in source.prior_current_profile
+    ]
+    assert_input_firewall(projected)
+    return projected
+
+
+__all__ = [
+    "FORBIDDEN_INPUT_KEY_FRAGMENTS",
+    "PROMPT_SOURCE_PROJECTION_VERSION",
+    "assert_input_firewall",
+    "build_session_input",
+    "prompt_source_projection",
+]

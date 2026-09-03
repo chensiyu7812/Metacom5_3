@@ -36,7 +36,7 @@ def _args() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         type=Path,
-        default=PROJECT / "configs" / "paper1_multi_view_compiler_v1.yaml",
+        default=PROJECT / "configs" / "paper1_multi_view_compiler_v7.yaml",
     )
     parser.add_argument(
         "--source",
@@ -55,7 +55,7 @@ def _args() -> argparse.Namespace:
             PROJECT
             / "data"
             / "paper1_authority"
-            / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json"
+            / "paper1_multi_view_401_call_manifest_preflight_20260903_v8.json"
         ),
     )
     parser.add_argument("--tokenizer-dir", type=Path, required=True)
@@ -63,7 +63,7 @@ def _args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT / "outputs" / "paper1_multi_view_compiler_v1",
+        default=PROJECT / "outputs" / "paper1_multi_view_compiler_v7",
     )
     parser.add_argument("--maximum-sessions", type=int, default=401)
     parser.add_argument("--live", action="store_true")
@@ -139,7 +139,9 @@ def _runtime(config: dict, tokenizer_dir: Path):
     return endpoint, binding, price, count, tokenizer_hashes
 
 
-def _validate_authorization(args, config, binding, price, tokenizer_hashes) -> dict:
+def _validate_authorization(
+    args, config, manifest, binding, price, tokenizer_hashes
+) -> dict:
     if args.authorization is None:
         raise RuntimeError("--live requires --authorization")
     authorization = read_json(args.authorization)
@@ -156,6 +158,12 @@ def _validate_authorization(args, config, binding, price, tokenizer_hashes) -> d
         "batch_sha256": sha256_file(
             PROJECT / "src/metacom_pm/paper1/multi_view_memory/batch.py"
         ),
+        "prompts_sha256": sha256_file(
+            PROJECT / "src/metacom_pm/paper1/multi_view_memory/prompts.py"
+        ),
+        "input_projection_sha256": sha256_file(
+            PROJECT / "src/metacom_pm/paper1/multi_view_memory/input_projection.py"
+        ),
         "compiler_identity_sha256": compiler_identity_sha256(binding, price),
         "price_snapshot_sha256": price.identity_sha256,
         "tokenizer_file_sha256": tokenizer_hashes,
@@ -171,6 +179,28 @@ def _validate_authorization(args, config, binding, price, tokenizer_hashes) -> d
         raise RuntimeError("authorization maximum provider calls mismatch")
     if args.maximum_sessions > 401:
         raise RuntimeError("requested session prefix exceeds authorization")
+    historical_settled = Decimal(str(authorization["historical_settled_cost_usd"]))
+    aggregate_planning_ceiling = Decimal(
+        str(manifest["budget"]["aggregate_maximum_cost_usd"])
+    )
+    maximum_single_call = Decimal(
+        str(manifest["budget"]["maximum_single_call_reservation_usd"])
+    )
+    approved = Decimal(str(authorization["researcher_authorized_total_usd"]))
+    if Decimal(
+        str(authorization["aggregate_planning_ceiling_usd"])
+    ) != aggregate_planning_ceiling:
+        raise RuntimeError("authorization planning ceiling does not match manifest")
+    if Decimal(
+        str(authorization["maximum_single_call_reservation_usd"])
+    ) != maximum_single_call:
+        raise RuntimeError("authorization single-call maximum does not match manifest")
+    if Decimal(str(config["budget"]["researcher_authorized_total_usd"])) != approved:
+        raise RuntimeError("config and authorization researcher limits differ")
+    if Decimal(str(config["budget"]["stage_hard_cap_usd"])) != approved:
+        raise RuntimeError("rolling stage cap must equal researcher authorization")
+    if historical_settled + maximum_single_call > approved:
+        raise RuntimeError("next worst-case call cannot fit researcher authorization")
     return authorization
 
 
@@ -203,7 +233,7 @@ def main() -> int:
     if not args.live:
         print(json.dumps(plan, ensure_ascii=False, indent=2, default=str))
         return 0
-    _validate_authorization(args, config, binding, price, tokenizer_hashes)
+    _validate_authorization(args, config, manifest, binding, price, tokenizer_hashes)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     client = OpenAICompatibleClient(endpoint)
     try:

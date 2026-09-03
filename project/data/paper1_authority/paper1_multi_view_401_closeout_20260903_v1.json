@@ -1,0 +1,153 @@
+{
+  "protocol": "paper1-multi-view-401-closeout-census-v1",
+  "status": "COMPLETE_CENSUS_PASS",
+  "checks": {
+    "exact_401_prefix": true,
+    "exact_18_owners": true,
+    "batch_report_complete": true,
+    "batch_report_result_hash": true,
+    "all_order_source_prior_checks": true,
+    "all_unit_bindings": true,
+    "all_spans_exact_complete_seeker_turns": true,
+    "memory_ids_unique": true,
+    "active_logical_calls_complete": true,
+    "active_successes_complete": true,
+    "no_exhausted_failed_call": true,
+    "active_success_cache_complete": true,
+    "stage_cost_within_researcher_cap": true,
+    "formal_outcome_calls_zero": true,
+    "pm_training_runs_zero": true
+  },
+  "identity": {
+    "compiler_identity_sha256": "7b4a31d49fd483e088b52bf1d7183f18782295e56281b61dc7caa508efa70ab8",
+    "source_sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "session_results_sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "batch_report_sha256": "fbde5393a7d1d6b84f683b25df009d311375fad21a51ec51181bea64947a9844"
+  },
+  "coverage": {
+    "owners": 18,
+    "sessions": 401,
+    "accepted_units": 2236,
+    "accepted_MP": 713,
+    "accepted_ME": 1523,
+    "empty_accepted_sessions": 0,
+    "final_exact_profile_slot_keys": 388,
+    "maximum_prior_profile_slots": 63,
+    "MP_type_counts": {
+      "durable_boundary": 19,
+      "durable_health_constraint": 176,
+      "education": 43,
+      "enduring_interest": 134,
+      "enduring_preference": 93,
+      "identity": 8,
+      "location": 10,
+      "occupation": 40,
+      "stable_relationship_role": 190
+    },
+    "ME_type_counts": {
+      "action_observed_outcome": 4,
+      "coping_attempt": 374,
+      "life_event": 148,
+      "meaningful_experience": 314,
+      "other_occurred_event": 2,
+      "relationship_event": 293,
+      "state_change": 57,
+      "state_onset": 111,
+      "support_experience": 136,
+      "transient_state": 84
+    }
+  },
+  "rejections_are_retained_results_not_pass_gates": {
+    "schema_rejections": 519,
+    "schema_phase_counts": {
+      "extractor": 460,
+      "verifier": 59
+    },
+    "violation_counts": {
+      ":value_error": 135,
+      "event_experience_type:enum": 37,
+      "profile_field_type:enum": 57,
+      "proposal_id:missing": 28,
+      "proposal_id:unknown": 1,
+      "reason:enum": 30,
+      "supporting_spans.0.exact_text:string_type": 194,
+      "supporting_spans.1.exact_text:string_type": 100,
+      "supporting_spans.10.exact_text:string_type": 10,
+      "supporting_spans.11.exact_text:string_type": 4,
+      "supporting_spans.12.exact_text:string_type": 2,
+      "supporting_spans.13.exact_text:string_type": 2,
+      "supporting_spans.2.exact_text:string_type": 66,
+      "supporting_spans.3.exact_text:string_type": 39,
+      "supporting_spans.4.exact_text:string_type": 28,
+      "supporting_spans.5.exact_text:string_type": 27,
+      "supporting_spans.6.exact_text:string_type": 23,
+      "supporting_spans.7.exact_text:string_type": 18,
+      "supporting_spans.8.exact_text:string_type": 17,
+      "supporting_spans.9.exact_text:string_type": 15,
+      "supporting_spans:too_short": 161,
+      "temporal_status:enum": 9
+    },
+    "grounding_rejections": 0,
+    "semantic_rejections": 562
+  },
+  "attempts": {
+    "logical_calls": 802,
+    "physical_attempts": 804,
+    "extractor_physical_attempts": 402,
+    "verifier_physical_attempts": 402,
+    "successful_terminal_attempts": 802,
+    "failed_terminal_attempts": 2,
+    "recovered_retry_calls": 2,
+    "exhausted_failed_calls": 0
+  },
+  "budget_usd": {
+    "active_v8_v9_cost": "0.78147813",
+    "compiler_stage_all_versions_cost": "1.12641971",
+    "compiler_stage_authorized_cap": "1.42149913",
+    "compiler_stage_remaining": "0.29507942",
+    "unknown_settlements": 7,
+    "unknown_cost_charged_at_reserved_maximum": "0.01118605",
+    "all_new_paper1_ledger_cost": "1.12641971",
+    "opening_v9_cost": "0.03079930",
+    "paper1_accounted_total": "1.15721901"
+  },
+  "method_boundary": {
+    "authority_artifact_contains_dialogue_text": false,
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "capability_outcome_used_for_compiler_changes": false,
+    "schema_and_semantic_rejections_preserved": true
+  },
+  "pre_outcome_transport_amendments": [
+    {
+      "sequence": "V1",
+      "observation": "1024-token extractor response was truncated",
+      "resolution": "introduced compact JSON transport"
+    },
+    {
+      "sequence": "V2",
+      "observation": "provider uppercased structural JSON keys",
+      "resolution": "case-normalized only schema structural keys"
+    },
+    {
+      "sequence": "V3",
+      "observation": "JSON-object mode required an explicit JSON instruction",
+      "resolution": "added the explicit instruction and message-template hashes"
+    },
+    {
+      "sequence": "V4-V5",
+      "observation": "dense sessions still truncated duplicated evidence text",
+      "resolution": "model emits seeker turn IDs; runtime restores exact complete seeker turns"
+    },
+    {
+      "sequence": "V6-V7",
+      "observation": "dense prior-profile context exceeded narrow local allowances",
+      "resolution": "compacted prior-profile transport and widened the outcome-blind context allowance"
+    },
+    {
+      "sequence": "V8-V9",
+      "observation": "two independent provider read timeouts",
+      "resolution": "preserved compiler identity and allowed one separately budgeted, append-only retry per logical call"
+    }
+  ]
+}

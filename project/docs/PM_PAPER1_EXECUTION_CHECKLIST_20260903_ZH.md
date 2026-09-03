@@ -22,7 +22,7 @@
 - [x] 建立 outcome-blind pre-call latency lookup contract：`task × head × context-token-bin × resource-token-bin` paired p95 estimate进入 runtime allocator，禁止用本次 post-action latency倒推动作。
 - [x] 实现 effect correctness 与 latency-constrained action correctness 的分开报告。
 - [x] 写明 ordinary-turn 判卷标准：更多共情、记忆、个性化、建议或策略语言本身不加分；无必要干预可判 equivalent/OFF-better。
-- [x] authority/config/integration validator 对齐；formal outcome、PM training、paid API、formal GPU 调用均未由本轮打开。
+- [x] authority/config/integration validator 对齐；401-session compiler 已在研究者授权预算内运行；formal outcome、PM training 与 formal GPU outcome 调用仍为 0。
 - [x] 冻结 Paper‑1 scope：四个 L2 heads 预测 task-defined material positive effect 的概率；不声称逐请求 effect magnitude、expected utility、动态 top‑k、16-action/global sequential optimum，这些留作后续 magnitude/bandit/RL 研究。
 - [x] 冻结 cost-neutral secondary：只复用已有 paired/OOF/sealed rows，按 task×head 报 Benefit Capture、harmful-open、net selected gain 与 local regret；禁止跨任务 ΔQ composite，也不为 secondary 新增 API 调用。
 - [x] 建立所有付费 LLM API 累计 USD 50 hard cap（目标 `$25–35`、`$43` 停 optional、至少 `$5` retry reserve），并将 v9 `$0.03079930` 纳入账本。
@@ -31,7 +31,8 @@
 ## 下一阶段：不读取 capability outcome 的准备工作
 
 1. [x] 建立唯一 active Multi-View contract：MP=target-time Current Profile View；ME=strict-past Atomic Event/Experience Timeline（action→outcome 仅为 subtype）；MS=完整 strict-past raw Session transcript。旧 semantic-memory v7/v8/v9 只保留历史 DEV provenance。
-2. [ ] 对 401 public sessions 重建 strict-past candidate pools、coverage、collision、token 与 source-lineage census。其 active MP/ME runtime、Qwen tokenizer identity 与零付费 401 call manifest 已完成；实际 extraction/verification 和 census 尚未运行。
+2a. [x] 完成 401 public sessions 的 active MP/ME extraction + factual verification 和无文本 source-lineage/cost/rejection census：18 owners、401 sessions、2236 accepted units（MP 713、ME 1523）、0 grounding rejection、802/802 logical calls 成功；2 次 timeout 均在唯一 retry 恢复；所有 compiler 版本累计 `$1.12641971 < $1.42149913`。schema/semantic rejection 作为结果保留，不作为推进门。
+2b. [ ] 用冻结的 401-session closeout 输出重建 target-time strict-past MP/ME/MS candidate pools，并报告 target/head coverage、exact-slot collision/revision、resource token 分布与 source-lineage census；不得因 coverage 高低回改 compiler。
 3. [ ] 固定 global packing、overflow、resource token caps 与 task-specific prompt wrappers；Step2 不得在分配后擅自 reroute/drop。
 4. [ ] 生成 public-only Natural-turn Appropriateness sample：RS 来自 ESConv ordinary turns，memory 来自 EvoEmo ordinary historical turns；按 user/session grouped、strict-past、observable-only strata抽样。
 5. [ ] 建立 reference client raw timing profiler与 token-bin lookup artifact；在冻结 provider/model/prompt/streaming/output-limit/region/connection-reuse stack 上记录同一客户端 monotonic clocks、tokens、retry/finish，不读取 response capability score。

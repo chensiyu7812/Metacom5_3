@@ -293,16 +293,18 @@ def validate() -> dict[str, Any]:
         PROJECT
         / "data"
         / "paper1_authority"
-        / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json"
+        / "paper1_multi_view_401_call_manifest_preflight_20260903_v8.json"
     )
     checks["active_multi_view_401_zero_outcome_preflight"] = (
-        multi_view_manifest["status"] == "PASS_ZERO_OUTCOME_PREFLIGHT"
+        multi_view_manifest["status"]
+        == "PASS_ZERO_OUTCOME_ROLLING_BUDGET_PREFLIGHT"
         and multi_view_manifest["compiler_version"] == MULTI_VIEW_COMPILER_VERSION
         and multi_view_manifest["source"]["sessions"] == 401
         and multi_view_manifest["source"]["turns"] == 9368
         and multi_view_manifest["budget"]["maximum_provider_calls"] == 802
-        and float(multi_view_manifest["budget"]["aggregate_maximum_cost_usd"])
+        and float(multi_view_manifest["budget"]["maximum_single_call_reservation_usd"])
         <= float(multi_view_manifest["budget"]["stage_hard_cap_usd"])
+        and multi_view_manifest["budget"]["rolling_hard_cap_may_stop_before_401"]
         and multi_view_manifest["method_boundary"]["formal_outcomes_read"] == 0
         and multi_view_manifest["method_boundary"]["paid_api_calls"] == 0
     )
@@ -310,7 +312,7 @@ def validate() -> dict[str, Any]:
         PROJECT
         / "data"
         / "paper1_authority"
-        / "paper1_multi_view_401_live_authorization_20260903_v1.json"
+        / "paper1_multi_view_401_live_authorization_20260903_v9.json"
     )
     multi_view_authorization = _load(multi_view_authorization_path)
     checks["active_multi_view_401_live_authorization"] = (
@@ -318,10 +320,13 @@ def validate() -> dict[str, Any]:
         == "RESEARCHER_AUTHORIZED_ZERO_OUTCOME_COMPILATION"
         and multi_view_authorization["maximum_sessions"] == 401
         and multi_view_authorization["maximum_provider_calls"] == 802
-        and multi_view_authorization["stage_hard_cap_usd"] == "1.50"
+        and multi_view_authorization["stage_hard_cap_usd"] == "1.42149913"
         and multi_view_authorization["cumulative_paper1_hard_cap_usd"] == "50.00"
+        and float(multi_view_authorization["historical_settled_cost_usd"])
+        + float(multi_view_authorization["maximum_single_call_reservation_usd"])
+        <= float(multi_view_authorization["researcher_authorized_total_usd"])
         and multi_view_authorization["config_sha256"]
-        == _sha(PROJECT / "configs" / "paper1_multi_view_compiler_v1.yaml")
+        == _sha(PROJECT / "configs" / "paper1_multi_view_compiler_v7.yaml")
         and multi_view_authorization["source_sha256"]
         == _sha(
             PROJECT
@@ -334,7 +339,7 @@ def validate() -> dict[str, Any]:
             PROJECT
             / "data"
             / "paper1_authority"
-            / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json"
+            / "paper1_multi_view_401_call_manifest_preflight_20260903_v8.json"
         )
         and multi_view_authorization["runner_sha256"]
         == _sha(PROJECT / "scripts" / "paper1" / "40_run_multi_view_401_compiler.py")
@@ -345,6 +350,24 @@ def validate() -> dict[str, Any]:
         and set(multi_view_authorization["locks"].values()) == {"CLOSED"}
         and multi_view_authorization["formal_outcome_calls"] == 0
         and multi_view_authorization["pm_training_runs"] == 0
+    )
+    multi_view_closeout = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_multi_view_401_closeout_20260903_v1.json"
+    )
+    checks["active_multi_view_401_closeout"] = (
+        multi_view_closeout["status"] == "COMPLETE_CENSUS_PASS"
+        and multi_view_closeout["coverage"]["owners"] == 18
+        and multi_view_closeout["coverage"]["sessions"] == 401
+        and multi_view_closeout["attempts"]["logical_calls"] == 802
+        and multi_view_closeout["attempts"]["successful_terminal_attempts"] == 802
+        and multi_view_closeout["attempts"]["exhausted_failed_calls"] == 0
+        and float(multi_view_closeout["budget_usd"]["compiler_stage_all_versions_cost"])
+        <= float(multi_view_closeout["budget_usd"]["compiler_stage_authorized_cap"])
+        and multi_view_closeout["method_boundary"]["formal_outcome_calls"] == 0
+        and multi_view_closeout["method_boundary"]["pm_training_runs"] == 0
     )
     checks["paper1_visible_state_contract_ready"] = (
         VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"

@@ -21,6 +21,10 @@ from .contracts import (
     AcceptedAtomicMemoryUnit,
     AcceptedEventExperienceUnit,
     AcceptedProfileViewUnit,
+    CompactExtractorSessionOutput,
+    CompactExtractorWireSessionOutput,
+    CompactVerifierSessionOutput,
+    CompactVerifierWireSessionOutput,
     ExtractorSessionOutput,
     ExtractorWireSessionOutput,
     MultiViewSessionInput,
@@ -38,9 +42,15 @@ from .grounding import (
     validate_output_binding,
     validate_proposal_grounding,
 )
-from .input_projection import assert_input_firewall
+from .input_projection import (
+    PROMPT_SOURCE_PROJECTION_VERSION,
+    assert_input_firewall,
+    prompt_source_projection,
+)
 from .prompts import (
+    MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256,
     MULTI_VIEW_EXTRACTOR_PROMPT_SHA256,
+    MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256,
     MULTI_VIEW_VERIFIER_PROMPT_SHA256,
     extractor_messages,
     verifier_messages,
@@ -52,10 +62,10 @@ from .renderer import (
 )
 
 
-MULTI_VIEW_COMPILER_VERSION = "paper1-qwen-multi-view-memory-compiler-v1"
+MULTI_VIEW_COMPILER_VERSION = "paper1-qwen-multi-view-memory-compiler-v7"
 FROZEN_MULTI_VIEW_MODEL = "qwen3-235b-a22b-instruct-2507"
 MULTI_VIEW_COMPILER_STAGE = "multi_view_401_compilation_and_validation"
-MULTI_VIEW_COMPILER_STAGE_CAP_USD = Decimal("1.50")
+MULTI_VIEW_COMPILER_STAGE_CAP_USD = Decimal("1.42149913")
 
 
 class CompilerClient(Protocol):
@@ -158,12 +168,16 @@ def _schema_sha256(*models: Type[BaseModel]) -> str:
 
 
 EXTRACTOR_SCHEMA_SHA256 = _schema_sha256(
+    CompactExtractorSessionOutput,
+    CompactExtractorWireSessionOutput,
     ExtractorWireSessionOutput,
     ExtractorSessionOutput,
     ProposedProfileViewUnit,
     ProposedEventExperienceUnit,
 )
 VERIFIER_SCHEMA_SHA256 = _schema_sha256(
+    CompactVerifierSessionOutput,
+    CompactVerifierWireSessionOutput,
     VerifierWireSessionOutput,
     VerifierSessionOutput,
     VerificationDecision,
@@ -179,8 +193,11 @@ def compiler_identity_sha256(binding: RuntimeBinding, price: PriceSnapshot) -> s
                 "grounding": MULTI_VIEW_GROUNDING_VERSION,
                 "renderer": MULTI_VIEW_RENDERER_VERSION,
                 "renderer_sha256": MULTI_VIEW_RENDERER_SHA256,
+                "prompt_source_projection": PROMPT_SOURCE_PROJECTION_VERSION,
                 "extractor_prompt_sha256": MULTI_VIEW_EXTRACTOR_PROMPT_SHA256,
+                "extractor_message_template_sha256": MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256,
                 "verifier_prompt_sha256": MULTI_VIEW_VERIFIER_PROMPT_SHA256,
+                "verifier_message_template_sha256": MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256,
                 "extractor_schema_sha256": EXTRACTOR_SCHEMA_SHA256,
                 "verifier_schema_sha256": VERIFIER_SCHEMA_SHA256,
             }
@@ -202,6 +219,36 @@ def _violations(exc: ValidationError) -> tuple[str, ...]:
 def _raw_id(raw: dict[str, Any]) -> str | None:
     value = raw.get("proposal_id")
     return value if isinstance(value, str) and value else None
+
+
+def _compact_grounded_proposals(extractor: ExtractorSessionOutput) -> dict[str, Any]:
+    def spans(row: ProposedProfileViewUnit | ProposedEventExperienceUnit) -> list[dict[str, str]]:
+        return [{"i": span.turn_id} for span in row.supporting_spans]
+
+    return {
+        "p": [
+            {
+                "i": row.proposal_id,
+                "t": row.profile_field_type.value,
+                "k": row.profile_slot_key,
+                "v": row.normalized_value,
+                "s": spans(row),
+            }
+            for row in extractor.mp_facts
+        ],
+        "e": [
+            {
+                "i": row.proposal_id,
+                "t": row.event_experience_type.value,
+                "z": row.temporal_status.value,
+                "n": row.normalized_event,
+                "s": spans(row),
+                "a": row.action_text,
+                "o": row.observed_outcome_text,
+            }
+            for row in extractor.me_events
+        ],
+    }
 
 
 def _rejection(phase: str, index: int, raw: dict[str, Any], errors: tuple[str, ...]):
@@ -385,24 +432,32 @@ class MultiViewMemoryCompiler:
         attempts = PersistentAttemptLedger(
             self.attempt_ledger_root / phase / f"{call_key}.jsonl",
             stage=f"paper1_multi_view_{phase}",
-            expected_calls={call_key: 1},
-            maximum_total_attempts=1,
+            expected_calls={call_key: 2},
+            maximum_total_attempts=2,
         )
-        if attempts.started_attempts:
+        if any(
+            attempts.terminal_event(call_key, index) is None
+            for index in range(1, attempts.attempts_for(call_key) + 1)
+        ):
             raise RuntimeError("unfinished paid attempt requires manual reconciliation")
+        if attempts.succeeded(call_key):
+            raise RuntimeError("successful attempt exists but success cache is missing")
+        if attempts.exhausted(call_key):
+            raise RuntimeError("logical call exhausted its two physical attempts")
+        attempt_index = attempts.attempts_for(call_key) + 1
         maximum_cost = self.price.cost(
             prompt_tokens=reserved_prompt_tokens,
             completion_tokens=parameters.max_tokens,
         )
         reservation = self.cumulative_budget.reserve(
-            reservation_id=call_key,
+            reservation_id=f"{call_key}:attempt:{attempt_index}",
             logical_call_id=call_key,
             call_hash=call_key,
             stage=MULTI_VIEW_COMPILER_STAGE,
             provider=self.binding.provider,
             model=self.endpoint.model,
             maximum_cost_usd=maximum_cost,
-            call_class="PRIMARY",
+            call_class="PRIMARY" if attempt_index == 1 else "PRIMARY_RETRY",
             stage_hard_cap_usd=MULTI_VIEW_COMPILER_STAGE_CAP_USD,
         )
         attempt = attempts.reserve(
@@ -486,12 +541,14 @@ class MultiViewMemoryCompiler:
             raise
 
     def compile_session(self, source: MultiViewSessionInput) -> SessionCompilationResult:
-        source_json = canonical_json(source.model_dump(mode="json"))
+        source_json = canonical_json(prompt_source_projection(source))
         profile_free_source = source.model_copy(update={"prior_current_profile": ()})
-        profile_free_source_json = canonical_json(profile_free_source.model_dump(mode="json"))
+        profile_free_source_json = canonical_json(
+            prompt_source_projection(profile_free_source)
+        )
         extractor_message_rows = extractor_messages(
             source_json,
-            canonical_json(ExtractorSessionOutput.model_json_schema()),
+            canonical_json(CompactExtractorSessionOutput.model_json_schema()),
         )
         extractor_call = self._call(
             phase="extractor",
@@ -499,14 +556,16 @@ class MultiViewMemoryCompiler:
             messages=extractor_message_rows,
             profile_free_messages=extractor_messages(
                 profile_free_source_json,
-                canonical_json(ExtractorSessionOutput.model_json_schema()),
+                canonical_json(CompactExtractorSessionOutput.model_json_schema()),
             ),
-            response_schema=ExtractorWireSessionOutput,
+            response_schema=CompactExtractorWireSessionOutput,
             parameters=self.binding.extractor,
             prompt_sha256=MULTI_VIEW_EXTRACTOR_PROMPT_SHA256,
             schema_sha256=EXTRACTOR_SCHEMA_SHA256,
         )
-        extractor_wire = ExtractorWireSessionOutput.model_validate(extractor_call.parsed)
+        extractor_wire = CompactExtractorWireSessionOutput.model_validate(
+            extractor_call.parsed
+        ).expand(source)
         if extractor_wire.owner_id != source.owner_id or extractor_wire.session_id != source.session_id:
             raise ValueError("extractor wire owner/session mismatch")
         extractor, extractor_rejections = strict_extractor(extractor_wire)
@@ -526,26 +585,28 @@ class MultiViewMemoryCompiler:
             ),
         )
         if grounded.proposals:
-            grounded_json = canonical_json(grounded.model_dump(mode="json"))
+            grounded_json = canonical_json(_compact_grounded_proposals(grounded))
             verifier_call = self._call(
                 phase="verifier",
                 source=source,
                 messages=verifier_messages(
                     source_json,
                     grounded_json,
-                    canonical_json(VerifierSessionOutput.model_json_schema()),
+                    canonical_json(CompactVerifierSessionOutput.model_json_schema()),
                 ),
                 profile_free_messages=verifier_messages(
                     profile_free_source_json,
                     grounded_json,
-                    canonical_json(VerifierSessionOutput.model_json_schema()),
+                    canonical_json(CompactVerifierSessionOutput.model_json_schema()),
                 ),
-                response_schema=VerifierWireSessionOutput,
+                response_schema=CompactVerifierWireSessionOutput,
                 parameters=self.binding.verifier,
                 prompt_sha256=MULTI_VIEW_VERIFIER_PROMPT_SHA256,
                 schema_sha256=VERIFIER_SCHEMA_SHA256,
             )
-            verifier_wire = VerifierWireSessionOutput.model_validate(verifier_call.parsed)
+            verifier_wire = CompactVerifierWireSessionOutput.model_validate(
+                verifier_call.parsed
+            ).expand()
             if verifier_wire.owner_id != source.owner_id or verifier_wire.session_id != source.session_id:
                 raise ValueError("verifier wire owner/session mismatch")
             verifier, verifier_rejections = strict_verifier(

@@ -19,13 +19,19 @@ sys.path.insert(0, str(PROJECT / "src"))
 from metacom_pm.io import canonical_json, sha256_file, sha256_text, write_json
 from metacom_pm.paper1.data.memory_source import load_sanitized_runtime_users
 from metacom_pm.paper1.multi_view_memory.contracts import (
-    ExtractorSessionOutput,
-    VerifierSessionOutput,
+    CompactExtractorSessionOutput,
+    CompactVerifierSessionOutput,
 )
 from metacom_pm.paper1.multi_view_memory.grounding import source_sha256
-from metacom_pm.paper1.multi_view_memory.input_projection import build_session_input
+from metacom_pm.paper1.multi_view_memory.input_projection import (
+    PROMPT_SOURCE_PROJECTION_VERSION,
+    build_session_input,
+    prompt_source_projection,
+)
 from metacom_pm.paper1.multi_view_memory.prompts import (
+    MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256,
     MULTI_VIEW_EXTRACTOR_PROMPT_SHA256,
+    MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256,
     MULTI_VIEW_VERIFIER_PROMPT_SHA256,
     extractor_messages,
     verifier_messages,
@@ -43,7 +49,7 @@ def _args() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         type=Path,
-        default=PROJECT / "configs" / "paper1_multi_view_compiler_v1.yaml",
+        default=PROJECT / "configs" / "paper1_multi_view_compiler_v7.yaml",
     )
     parser.add_argument(
         "--source",
@@ -109,12 +115,12 @@ def main() -> int:
     rows: list[dict[str, object]] = []
     for sequence, (user, session) in enumerate(ordered):
         source = build_session_input(owner_id=user.owner_id, session=session)
-        source_json = canonical_json(source.model_dump(mode="json"))
+        source_json = canonical_json(prompt_source_projection(source))
         extractor_base = _token_count(
             tokenizer,
             extractor_messages(
                 source_json,
-                canonical_json(ExtractorSessionOutput.model_json_schema()),
+                canonical_json(CompactExtractorSessionOutput.model_json_schema()),
             ),
         )
         verifier_empty_base = _token_count(
@@ -122,7 +128,7 @@ def main() -> int:
             verifier_messages(
                 source_json,
                 "{}",
-                canonical_json(VerifierSessionOutput.model_json_schema()),
+                canonical_json(CompactVerifierSessionOutput.model_json_schema()),
             ),
         )
         profile = int(limits["prior_current_profile_allowance_tokens_per_call"])
@@ -139,9 +145,15 @@ def main() -> int:
         output_tokens = int(limits["extractor_max_output_tokens"]) + int(
             limits["verifier_max_output_tokens"]
         )
-        maximum_cost = (
-            Decimal(input_tokens) * input_price + Decimal(output_tokens) * output_price
+        extractor_maximum_cost = (
+            Decimal(extractor_input_max) * input_price
+            + Decimal(limits["extractor_max_output_tokens"]) * output_price
         ) / million
+        verifier_maximum_cost = (
+            Decimal(verifier_input_max) * input_price
+            + Decimal(limits["verifier_max_output_tokens"]) * output_price
+        ) / million
+        maximum_cost = extractor_maximum_cost + verifier_maximum_cost
         rows.append(
             {
                 "protocol": "paper1-multi-view-401-call-manifest-row-v1",
@@ -156,6 +168,8 @@ def main() -> int:
                 "verifier_empty_base_prompt_tokens": verifier_empty_base,
                 "verifier_reserved_prompt_tokens": verifier_input_max,
                 "verifier_max_output_tokens": int(limits["verifier_max_output_tokens"]),
+                "extractor_maximum_cost_usd": str(extractor_maximum_cost),
+                "verifier_maximum_cost_usd": str(verifier_maximum_cost),
                 "maximum_two_call_cost_usd": str(maximum_cost),
                 "outcome_fields_read": False,
             }
@@ -166,9 +180,21 @@ def main() -> int:
     rows_path.write_text(rendered, encoding="utf-8")
     maximum_cost = sum(Decimal(str(row["maximum_two_call_cost_usd"])) for row in rows)
     stage_cap = Decimal(str(config["budget"]["stage_hard_cap_usd"]))
+    maximum_single_call_cost = max(
+        max(
+            Decimal(str(row["extractor_maximum_cost_usd"])),
+            Decimal(str(row["verifier_maximum_cost_usd"])),
+        )
+        for row in rows
+    )
+    rolling_budget_safe = maximum_single_call_cost <= stage_cap
     summary = {
         "protocol": "paper1-multi-view-401-call-manifest-preflight-v1",
-        "status": "PASS_ZERO_OUTCOME_PREFLIGHT" if maximum_cost <= stage_cap else "FAIL_BUDGET",
+        "status": (
+            "PASS_ZERO_OUTCOME_ROLLING_BUDGET_PREFLIGHT"
+            if rolling_budget_safe
+            else "FAIL_SINGLE_CALL_BUDGET"
+        ),
         "compiler_version": MULTI_VIEW_COMPILER_VERSION,
         "stage": MULTI_VIEW_COMPILER_STAGE,
         "source": {
@@ -188,8 +214,11 @@ def main() -> int:
             "tokenizer_repo_id": config["tokenizer"]["repo_id"],
             "tokenizer_revision": config["tokenizer"]["revision"],
             "tokenizer_file_sha256": tokenizer_files,
+            "prompt_source_projection": PROMPT_SOURCE_PROJECTION_VERSION,
             "extractor_prompt_sha256": MULTI_VIEW_EXTRACTOR_PROMPT_SHA256,
+            "extractor_message_template_sha256": MULTI_VIEW_EXTRACTOR_MESSAGE_TEMPLATE_SHA256,
             "verifier_prompt_sha256": MULTI_VIEW_VERIFIER_PROMPT_SHA256,
+            "verifier_message_template_sha256": MULTI_VIEW_VERIFIER_MESSAGE_TEMPLATE_SHA256,
             "extractor_schema_sha256": EXTRACTOR_SCHEMA_SHA256,
             "verifier_schema_sha256": VERIFIER_SCHEMA_SHA256,
         },
@@ -209,8 +238,10 @@ def main() -> int:
                 for row in rows
             ),
             "aggregate_maximum_cost_usd": str(maximum_cost),
+            "maximum_single_call_reservation_usd": str(maximum_single_call_cost),
             "stage_hard_cap_usd": str(stage_cap),
-            "headroom_usd": str(stage_cap - maximum_cost),
+            "accounting_mode": config["budget"]["accounting_mode"],
+            "rolling_hard_cap_may_stop_before_401": True,
         },
         "manifest": {
             "path": str(rows_path.relative_to(PROJECT)),
@@ -231,7 +262,7 @@ def main() -> int:
     }
     write_json(summary_path, summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0 if summary["status"] == "PASS_ZERO_OUTCOME_PREFLIGHT" else 1
+    return 0 if rolling_budget_safe else 1
 
 
 if __name__ == "__main__":
