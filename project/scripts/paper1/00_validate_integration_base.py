@@ -369,6 +369,62 @@ def validate() -> dict[str, Any]:
         and multi_view_closeout["method_boundary"]["formal_outcome_calls"] == 0
         and multi_view_closeout["method_boundary"]["pm_training_runs"] == 0
     )
+    multi_view_census_path = (
+        PROJECT
+        / "data"
+        / "paper1_public_memory"
+        / "es_memeval_public_multi_view_candidate_census_summary_v1.json"
+    )
+    multi_view_census = _load(multi_view_census_path)
+    promoted_multi_view_results = (
+        PROJECT
+        / "data"
+        / "paper1_public_memory"
+        / multi_view_census["source"]["promoted_session_results_filename"]
+    )
+    candidate_pool = (
+        PROJECT
+        / "data"
+        / "paper1_public_memory"
+        / multi_view_census["artifacts"]["candidate_pool"]["filename"]
+    )
+    target_head_census = (
+        PROJECT
+        / "data"
+        / "paper1_public_memory"
+        / multi_view_census["artifacts"]["target_head_census"]["filename"]
+    )
+    checks["active_multi_view_target_candidate_census"] = (
+        multi_view_census["status"]
+        == "ZERO_OUTCOME_MULTI_VIEW_CANDIDATE_CENSUS_COMPLETE"
+        and multi_view_census["population"]["targets"] == 1586
+        and multi_view_census["eligible_pool"]["MP"]["candidates"] == 388
+        and multi_view_census["eligible_pool"]["MS"]["candidates"] == 401
+        and multi_view_census["eligible_pool"]["ME"]["candidates"] == 1523
+        and multi_view_census["source"]["promoted_session_results_sha256"]
+        == _sha(promoted_multi_view_results)
+        == multi_view_closeout["identity"]["session_results_sha256"]
+        and multi_view_census["artifacts"]["candidate_pool"]["sha256"]
+        == _sha(candidate_pool)
+        and multi_view_census["artifacts"]["target_head_census"]["sha256"]
+        == _sha(target_head_census)
+        and all(
+            multi_view_census["target_coverage"]["per_head"][head][
+                "targets_with_candidates"
+            ]
+            == 1586
+            for head in ("MP", "MS", "ME")
+        )
+        and multi_view_census["source_lineage_census"]["candidate_ids_unique"]
+        and multi_view_census["source_lineage_census"]["all_owner_bound"]
+        and multi_view_census["source_lineage_census"]["all_strict_past"]
+        and multi_view_census["source_lineage_census"]["all_content_hashes_match"]
+        and multi_view_census["method_boundary"]["formal_outcome_calls"] == 0
+        and multi_view_census["method_boundary"]["pm_training_runs"] == 0
+        and multi_view_census["method_boundary"]["paid_api_calls"] == 0
+        and multi_view_census["method_boundary"]["top_k_or_final_bundle_selected"]
+        is False
+    )
     checks["paper1_visible_state_contract_ready"] = (
         VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"
     )

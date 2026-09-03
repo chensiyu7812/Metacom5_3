@@ -1,5 +1,6 @@
 """Active Paper-1 MP/ME/MS Multi-View Memory implementation."""
 
+from .artifact import load_accepted_multi_view_units
 from .candidate_adapter import (
     MULTI_VIEW_CANDIDATE_ADAPTER_VERSION,
     materialize_multi_view_candidates,
@@ -43,5 +44,6 @@ __all__ = [
     "VerificationReason",
     "VerifierSessionOutput",
     "VerifierWireSessionOutput",
+    "load_accepted_multi_view_units",
     "materialize_multi_view_candidates",
 ]

@@ -1,0 +1,410 @@
+{
+  "protocol": "paper1-multi-view-candidate-census-v1",
+  "status": "ZERO_OUTCOME_MULTI_VIEW_CANDIDATE_CENSUS_COMPLETE",
+  "source": {
+    "sanitized_runtime_sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "compiler_closeout_sha256": "6733d65a9af9fbbdcdd154ba3abc5eb5260466d417269fd7938534e8026ae383",
+    "promoted_session_results_filename": "es_memeval_public_multi_view_session_results_v1.jsonl",
+    "promoted_session_results_sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "accepted_units": 2236
+  },
+  "tokenizer": {
+    "repo_id": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+    "counting_surface": "candidate content only; no chat template",
+    "p95_method": "nearest-rank"
+  },
+  "population": {
+    "owners": 18,
+    "sessions": 401,
+    "targets": 1586,
+    "targets_by_task": {
+      "dialogue_generation": 34,
+      "qa": 1427,
+      "summary": 125
+    }
+  },
+  "eligible_pool": {
+    "MP": {
+      "candidates": 388,
+      "owners_with_candidates": 18,
+      "candidate_token_count": {
+        "count": 388,
+        "sum": 9906,
+        "min": 8,
+        "median": 26.0,
+        "p95_nearest_rank": 38,
+        "max": 49
+      },
+      "owner_full_pool_token_count": {
+        "count": 18,
+        "sum": 9906,
+        "min": 100,
+        "median": 273.0,
+        "p95_nearest_rank": 1660,
+        "max": 1660
+      }
+    },
+    "MS": {
+      "candidates": 401,
+      "owners_with_candidates": 18,
+      "candidate_token_count": {
+        "count": 401,
+        "sum": 239249,
+        "min": 204,
+        "median": 592,
+        "p95_nearest_rank": 774,
+        "max": 1212
+      },
+      "owner_full_pool_token_count": {
+        "count": 18,
+        "sum": 239249,
+        "min": 7882,
+        "median": 13177.0,
+        "p95_nearest_rank": 20273,
+        "max": 20273
+      }
+    },
+    "ME": {
+      "candidates": 1523,
+      "owners_with_candidates": 18,
+      "candidate_token_count": {
+        "count": 1523,
+        "sum": 44780,
+        "min": 19,
+        "median": 29,
+        "p95_nearest_rank": 37,
+        "max": 47
+      },
+      "owner_full_pool_token_count": {
+        "count": 18,
+        "sum": 44780,
+        "min": 1450,
+        "median": 2668.0,
+        "p95_nearest_rank": 3411,
+        "max": 3411
+      }
+    }
+  },
+  "target_coverage": {
+    "per_head": {
+      "MP": {
+        "targets": 1586,
+        "targets_with_candidates": 1586,
+        "coverage_fraction": 1.0,
+        "candidate_count": {
+          "count": 1586,
+          "sum": 37986,
+          "min": 6,
+          "median": 14.0,
+          "p95_nearest_rank": 67,
+          "max": 67
+        },
+        "full_pool_token_count": {
+          "count": 1586,
+          "sum": 966529,
+          "min": 100,
+          "median": 271.0,
+          "p95_nearest_rank": 1660,
+          "max": 1660
+        }
+      },
+      "MS": {
+        "targets": 1586,
+        "targets_with_candidates": 1586,
+        "coverage_fraction": 1.0,
+        "candidate_count": {
+          "count": 1586,
+          "sum": 36620,
+          "min": 13,
+          "median": 23.0,
+          "p95_nearest_rank": 33,
+          "max": 33
+        },
+        "full_pool_token_count": {
+          "count": 1586,
+          "sum": 21900477,
+          "min": 7882,
+          "median": 13595.0,
+          "p95_nearest_rank": 20273,
+          "max": 20273
+        }
+      },
+      "ME": {
+        "targets": 1586,
+        "targets_with_candidates": 1586,
+        "coverage_fraction": 1.0,
+        "candidate_count": {
+          "count": 1586,
+          "sum": 137138,
+          "min": 48,
+          "median": 94.0,
+          "p95_nearest_rank": 113,
+          "max": 114
+        },
+        "full_pool_token_count": {
+          "count": 1586,
+          "sum": 4006287,
+          "min": 1450,
+          "median": 2672.0,
+          "p95_nearest_rank": 3226,
+          "max": 3411
+        }
+      }
+    },
+    "per_head_per_task": {
+      "MP": {
+        "qa": {
+          "targets": 1427,
+          "targets_with_candidates": 1427,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 1427,
+            "sum": 34379,
+            "min": 6,
+            "median": 14,
+            "p95_nearest_rank": 67,
+            "max": 67
+          },
+          "full_pool_token_count": {
+            "count": 1427,
+            "sum": 871673,
+            "min": 100,
+            "median": 266,
+            "p95_nearest_rank": 1660,
+            "max": 1660
+          }
+        },
+        "summary": {
+          "targets": 125,
+          "targets_with_candidates": 125,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 125,
+            "sum": 2879,
+            "min": 6,
+            "median": 15,
+            "p95_nearest_rank": 67,
+            "max": 67
+          },
+          "full_pool_token_count": {
+            "count": 125,
+            "sum": 75612,
+            "min": 100,
+            "median": 275,
+            "p95_nearest_rank": 1660,
+            "max": 1660
+          }
+        },
+        "dialogue_generation": {
+          "targets": 34,
+          "targets_with_candidates": 34,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 34,
+            "sum": 728,
+            "min": 6,
+            "median": 15.0,
+            "p95_nearest_rank": 52,
+            "max": 67
+          },
+          "full_pool_token_count": {
+            "count": 34,
+            "sum": 19244,
+            "min": 100,
+            "median": 285.0,
+            "p95_nearest_rank": 1532,
+            "max": 1660
+          }
+        }
+      },
+      "MS": {
+        "qa": {
+          "targets": 1427,
+          "targets_with_candidates": 1427,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 1427,
+            "sum": 32942,
+            "min": 13,
+            "median": 23,
+            "p95_nearest_rank": 33,
+            "max": 33
+          },
+          "full_pool_token_count": {
+            "count": 1427,
+            "sum": 19704771,
+            "min": 7882,
+            "median": 13595,
+            "p95_nearest_rank": 20273,
+            "max": 20273
+          }
+        },
+        "summary": {
+          "targets": 125,
+          "targets_with_candidates": 125,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 125,
+            "sum": 2926,
+            "min": 13,
+            "median": 23,
+            "p95_nearest_rank": 33,
+            "max": 33
+          },
+          "full_pool_token_count": {
+            "count": 125,
+            "sum": 1746608,
+            "min": 7882,
+            "median": 13595,
+            "p95_nearest_rank": 20273,
+            "max": 20273
+          }
+        },
+        "dialogue_generation": {
+          "targets": 34,
+          "targets_with_candidates": 34,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 34,
+            "sum": 752,
+            "min": 13,
+            "median": 22.0,
+            "p95_nearest_rank": 33,
+            "max": 33
+          },
+          "full_pool_token_count": {
+            "count": 34,
+            "sum": 449098,
+            "min": 7882,
+            "median": 13288.0,
+            "p95_nearest_rank": 20040,
+            "max": 20273
+          }
+        }
+      },
+      "ME": {
+        "qa": {
+          "targets": 1427,
+          "targets_with_candidates": 1427,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 1427,
+            "sum": 123255,
+            "min": 48,
+            "median": 94,
+            "p95_nearest_rank": 113,
+            "max": 114
+          },
+          "full_pool_token_count": {
+            "count": 1427,
+            "sum": 3595270,
+            "min": 1450,
+            "median": 2672,
+            "p95_nearest_rank": 3226,
+            "max": 3411
+          }
+        },
+        "summary": {
+          "targets": 125,
+          "targets_with_candidates": 125,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 125,
+            "sum": 11022,
+            "min": 48,
+            "median": 94,
+            "p95_nearest_rank": 113,
+            "max": 114
+          },
+          "full_pool_token_count": {
+            "count": 125,
+            "sum": 326421,
+            "min": 1450,
+            "median": 2829,
+            "p95_nearest_rank": 3226,
+            "max": 3411
+          }
+        },
+        "dialogue_generation": {
+          "targets": 34,
+          "targets_with_candidates": 34,
+          "coverage_fraction": 1.0,
+          "candidate_count": {
+            "count": 34,
+            "sum": 2861,
+            "min": 48,
+            "median": 94.0,
+            "p95_nearest_rank": 114,
+            "max": 114
+          },
+          "full_pool_token_count": {
+            "count": 34,
+            "sum": 84596,
+            "min": 1450,
+            "median": 2668.0,
+            "p95_nearest_rank": 3411,
+            "max": 3411
+          }
+        }
+      }
+    }
+  },
+  "profile_exact_slot_revision_census": {
+    "definition": "exact owner_id + profile_slot_key; latest source_session_rank is the target-time current view, with no semantic merging",
+    "accepted_historical_MP_units": 713,
+    "exact_owner_slot_keys": 388,
+    "current_view_MP_candidates": 388,
+    "historical_units_not_in_current_view": 325,
+    "slots_with_multiple_observations": 148,
+    "slots_with_multiple_distinct_values": 81,
+    "slots_with_repeated_same_value_only": 67,
+    "slots_with_any_same_rank_distinct_value_collision": 0,
+    "current_view_same_rank_distinct_value_collision_slots": 0
+  },
+  "source_lineage_census": {
+    "candidate_ids_unique": true,
+    "all_owner_bound": true,
+    "all_strict_past": true,
+    "all_content_hashes_match": true,
+    "distinct_source_sessions": {
+      "MP": 176,
+      "MS": 401,
+      "ME": 388
+    },
+    "distinct_current_candidate_lineage_span_ids": {
+      "MP": 392,
+      "ME": 885
+    },
+    "distinct_accepted_unit_grounded_source_turns": {
+      "MP": 861,
+      "ME": 1837
+    },
+    "MP_ME_shared_grounded_source_turns": 430
+  },
+  "artifacts": {
+    "candidate_pool": {
+      "filename": "es_memeval_public_multi_view_candidate_pool_v1.jsonl",
+      "rows": 2312,
+      "sha256": "4b68af499ab3b4069e8434077b22fb980eac07bd4bca35665bc7a2061b3f37d9",
+      "contains_candidate_text": false
+    },
+    "target_head_census": {
+      "filename": "es_memeval_public_multi_view_target_head_census_v1.jsonl",
+      "rows": 4758,
+      "sha256": "f92a11a7045753611da36150b4cfe574ea949e13a18a35960693310e5f935ea9",
+      "contains_query_or_candidate_text": false
+    }
+  },
+  "method_boundary": {
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "paid_api_calls": 0,
+    "top_k_or_final_bundle_selected": false,
+    "compiler_retuning_from_census_forbidden": true,
+    "full_eligible_pool_tokens_are_not_deployment_prompt_tokens": true,
+    "promoted_result_contains_public_dialogue_derived_text": true,
+    "evaluation_gold_or_capability_outcome_present": false
+  }
+}
