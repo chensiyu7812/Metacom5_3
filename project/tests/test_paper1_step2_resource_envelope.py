@@ -101,8 +101,24 @@ def test_typed_guidance_preserves_head_semantics_without_secondary_filter():
         head=Head.MP,
         bundle=mp_bundle,
     ).resource_block.content
-    assert "invent preferences" in mp_text
+    assert "target-time current profile view" in mp_text
+    assert "not an instruction" in mp_text
     assert "utility filter" not in mp_text.lower()
+
+    ms = _candidate(
+        "ms-1",
+        Head.MS,
+        "Timestamp: 2025-01-01\nseeker: I felt worried.\nsupporter: That sounds hard.",
+    )
+    ms_bundle = build_typed_treatment_bundle((ms,), target_owner_id="p1")
+    ms_text = render_step2_resource_envelope(
+        assignment=TreatmentAssignment.ON,
+        head=Head.MS,
+        bundle=ms_bundle,
+    ).resource_block.content
+    assert "complete strictly-past raw session transcripts" in ms_text
+    assert "speaker roles preserved" in ms_text
+    assert "still holds now" in ms_text
 
     me = _candidate(
         "me-1",
@@ -115,8 +131,9 @@ def test_typed_guidance_preserves_head_semantics_without_secondary_filter():
         head=Head.ME,
         bundle=me_bundle,
     ).resource_block.content
-    assert "tentative analogical context" in me_text
-    assert "not a guarantee" in me_text
+    assert "atomic event/experience timeline" in me_text
+    assert "only one possible subtype" in me_text
+    assert "causal effect" in me_text
 
 
 def test_bundle_identity_is_order_sensitive_and_deterministic():
@@ -140,4 +157,4 @@ def test_envelope_schema_is_fail_closed():
             head=Head.RS,
             bundle=bundle,
         )
-    assert STEP2_RESOURCE_PROTOCOL == "pm-paper1-typed-step2-resource-envelope-v1"
+    assert STEP2_RESOURCE_PROTOCOL == "pm-paper1-typed-step2-resource-envelope-v2"

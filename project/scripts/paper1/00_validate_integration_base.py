@@ -15,7 +15,17 @@ PROJECT = Path(__file__).resolve().parents[2]
 REPO = PROJECT.parent
 sys.path.insert(0, str(PROJECT / "src"))
 
-from metacom_pm.paper1.execution import STEP2_RESOURCE_PROTOCOL, VISIBLE_STATE_PROTOCOL
+from metacom_pm.paper1.execution import (
+    PACKING_PROTOCOL,
+    RQ2_PROMPT_PROTOCOL,
+    STEP2_RESOURCE_PROTOCOL,
+    VISIBLE_STATE_PROTOCOL,
+)
+from metacom_pm.paper1.execution.rq2_prompts import (
+    DG_SUPPORTER_SYSTEM_PROMPT_TEMPLATE,
+    QA_SYSTEM_PROMPT,
+    SUMMARY_SYSTEM_PROMPT,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
 from metacom_pm.paper1.api_budget import (
@@ -429,7 +439,89 @@ def validate() -> dict[str, Any]:
         VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"
     )
     checks["paper1_step2_delivery_contract_ready"] = (
-        STEP2_RESOURCE_PROTOCOL == "pm-paper1-typed-step2-resource-envelope-v1"
+        STEP2_RESOURCE_PROTOCOL == "pm-paper1-typed-step2-resource-envelope-v2"
+    )
+    multi_view_bge_packing = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_active_multi_view_bge_packing_binding_20260903_v1.json"
+    )
+    checks["active_multi_view_bge_packing_authority_selected"] = (
+        config["authority"]["multi_view_bge_packing_prompt"]
+        == "project/data/paper1_authority/"
+        "paper1_active_multi_view_bge_packing_binding_20260903_v1.json"
+    )
+    top8_path = PROJECT / multi_view_bge_packing["artifacts"]["static_top8"]["path"]
+    amount_surface_path = (
+        PROJECT / multi_view_bge_packing["artifacts"]["amount_surface"]["path"]
+    )
+    amount_build_report_path = (
+        PROJECT / multi_view_bge_packing["artifacts"]["build_report"]["path"]
+    )
+    top8_rows = _jsonl(top8_path)
+    amount_surface = _load(amount_surface_path)
+    amount_build_report = _load(amount_build_report_path)
+    checks["active_multi_view_bge_and_packing_surface"] = (
+        multi_view_bge_packing["status"]
+        == "ACTIVE_ZERO_OUTCOME_RETRIEVAL_PACKING_PROMPT_BINDING_NO_K_OR_FINAL_CAP_SELECTED"
+        and multi_view_bge_packing["packing_binding"]["protocol"]
+        == PACKING_PROTOCOL
+        and multi_view_bge_packing["step2_binding"]["protocol"]
+        == STEP2_RESOURCE_PROTOCOL
+        and len(top8_rows)
+        == multi_view_bge_packing["artifacts"]["static_top8"]["rows"]
+        == 4656
+        and all(
+            row["contains_query_or_candidate_text"] is False
+            and row["formal_outcome_calls"] == 0
+            and row["task_type"] in {"qa", "summary"}
+            and len(row["ranked_candidates"])
+            == min(8, row["eligible_candidate_count"])
+            and 0 < len(row["ranked_candidates"]) <= 8
+            for row in top8_rows
+        )
+        and _sha(top8_path)
+        == multi_view_bge_packing["artifacts"]["static_top8"]["sha256"]
+        and _sha(amount_surface_path)
+        == multi_view_bge_packing["artifacts"]["amount_surface"]["sha256"]
+        and _sha(amount_build_report_path)
+        == multi_view_bge_packing["artifacts"]["build_report"]["sha256"]
+        and amount_surface["status"]
+        == "ZERO_OUTCOME_SURFACE_READY_NOT_A_K_OR_FINAL_CAP_FREEZE"
+        and amount_surface["packing"]["protocol"] == PACKING_PROTOCOL
+        and amount_surface["packing"]["step2_protocol"]
+        == STEP2_RESOURCE_PROTOCOL
+        and amount_surface["packing"]["final_k_selected"] is False
+        and amount_surface["packing"]["final_resource_token_cap_selected"]
+        is False
+        and amount_surface["method_boundary"]["formal_outcome_calls"] == 0
+        and amount_surface["method_boundary"]["paid_api_calls"] == 0
+        and amount_surface["method_boundary"]["pm_training_runs"] == 0
+        and amount_build_report["top8_sha256"] == _sha(top8_path)
+        and amount_build_report["surface_sha256"] == _sha(amount_surface_path)
+        and multi_view_bge_packing["rq2_generator_prompt_binding"]["protocol"]
+        == RQ2_PROMPT_PROTOCOL
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "implementation"
+        ]["sha256"]
+        == _sha(PROJECT / "src/metacom_pm/paper1/execution/rq2_prompts.py")
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "official_base_prompt_sha256"
+        ]["QA"]
+        == hashlib.sha256(QA_SYSTEM_PROMPT.encode("utf-8")).hexdigest()
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "official_base_prompt_sha256"
+        ]["Summary"]
+        == hashlib.sha256(SUMMARY_SYSTEM_PROMPT.encode("utf-8")).hexdigest()
+        and multi_view_bge_packing["rq2_generator_prompt_binding"][
+            "official_base_prompt_sha256"
+        ]["DG_supporter_template_with_display_name_placeholder"]
+        == hashlib.sha256(
+            DG_SUPPORTER_SYSTEM_PROMPT_TEMPLATE.encode("utf-8")
+        ).hexdigest()
+        and set(multi_view_bge_packing["research_integrity"]["locks"].values())
+        == {"CLOSED"}
     )
 
     failed = [name for name, passed in checks.items() if not passed]
