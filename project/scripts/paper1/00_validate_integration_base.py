@@ -523,6 +523,49 @@ def validate() -> dict[str, Any]:
         and set(multi_view_bge_packing["research_integrity"]["locks"].values())
         == {"CLOSED"}
     )
+    natural_summary = _load(
+        PROJECT
+        / "data/paper1_public_memory/paper1_natural_turn_sample_proposal_summary_v1.json"
+    )
+    natural_base_path = (
+        PROJECT
+        / "data/paper1_public_memory"
+        / natural_summary["artifacts"]["base_sample"]["filename"]
+    )
+    natural_review_path = (
+        PROJECT
+        / "data/paper1_public_memory"
+        / natural_summary["artifacts"]["review_slot_plan"]["filename"]
+    )
+    natural_base = _jsonl(natural_base_path)
+    natural_review = _jsonl(natural_review_path)
+    checks["natural_turn_zero_outcome_sample_proposal"] = (
+        natural_summary["status"]
+        == "ZERO_OUTCOME_SAMPLE_PROPOSAL_READY_RESEARCHER_REVIEW_REQUIRED"
+        and len(natural_base)
+        == natural_summary["artifacts"]["base_sample"]["rows"]
+        == 80
+        and len(natural_review)
+        == natural_summary["artifacts"]["review_slot_plan"]["rows"]
+        == 96
+        and natural_summary["reverse_duplicates"] == 16
+        and _sha(natural_base_path)
+        == natural_summary["artifacts"]["base_sample"]["sha256"]
+        and _sha(natural_review_path)
+        == natural_summary["artifacts"]["review_slot_plan"]["sha256"]
+        and all(row["target_supporter_response_included"] is False for row in natural_base)
+        and all(row["effect_or_capability_outcome_read"] is False for row in natural_base)
+        and all(row["paid_api_calls"] == 0 for row in natural_base)
+        and all(
+            row["response_A"] is None
+            and row["response_B"] is None
+            and row["verdict"] is None
+            for row in natural_review
+        )
+        and natural_summary["boundaries"]["sample_size_is_final"] is False
+        and natural_summary["boundaries"]["paid_machine_judging_authorized"]
+        is False
+    )
 
     failed = [name for name, passed in checks.items() if not passed]
     return {
