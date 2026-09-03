@@ -47,9 +47,52 @@ MULTI_VIEW_EXTRACTOR_PROMPT_SHA256 = sha256_text(MULTI_VIEW_EXTRACTOR_SYSTEM_PRO
 MULTI_VIEW_VERIFIER_PROMPT_SHA256 = sha256_text(MULTI_VIEW_VERIFIER_SYSTEM_PROMPT)
 
 
+def extractor_messages(source_json: str, strict_schema_json: str) -> list[dict[str, str]]:
+    return [
+        {"role": "system", "content": MULTI_VIEW_EXTRACTOR_SYSTEM_PROMPT},
+        {
+            "role": "user",
+            "content": (
+                "Return one JSON object matching the schema. Proposal IDs and span IDs must be "
+                "unique within this session. Every supporting span must copy exact seeker text "
+                "and use a supplied turn_id. prior_current_profile is context only for reusing "
+                "stable profile_slot_key values; do not repeat a prior fact unless the current "
+                "session reaffirms or updates it.\n\nINPUT:\n"
+                + source_json
+                + "\n\nSCHEMA:\n"
+                + strict_schema_json
+            ),
+        },
+    ]
+
+
+def verifier_messages(
+    source_json: str,
+    proposals_json: str,
+    strict_schema_json: str,
+) -> list[dict[str, str]]:
+    return [
+        {"role": "system", "content": MULTI_VIEW_VERIFIER_SYSTEM_PROMPT},
+        {
+            "role": "user",
+            "content": (
+                "Return exactly one decision for every supplied proposal_id and no other IDs. "
+                "Do not repair a proposal.\n\nINPUT:\n"
+                + source_json
+                + "\n\nPROPOSALS:\n"
+                + proposals_json
+                + "\n\nSCHEMA:\n"
+                + strict_schema_json
+            ),
+        },
+    ]
+
+
 __all__ = [
     "MULTI_VIEW_EXTRACTOR_PROMPT_SHA256",
     "MULTI_VIEW_EXTRACTOR_SYSTEM_PROMPT",
     "MULTI_VIEW_VERIFIER_PROMPT_SHA256",
     "MULTI_VIEW_VERIFIER_SYSTEM_PROMPT",
+    "extractor_messages",
+    "verifier_messages",
 ]

@@ -102,6 +102,20 @@ class CumulativePaper1ApiBudgetLedger:
             if events[0].get("logical_call_id") == logical_call_id
         )
 
+    def accounted_stage_cost_usd(self, stage: str) -> Decimal:
+        total = Decimal("0")
+        for events in self._events.values():
+            if events[0].get("stage") != stage:
+                continue
+            terminal = events[-1]
+            field = (
+                "actual_cost_usd"
+                if terminal.get("event") == "SETTLED"
+                else "maximum_cost_usd"
+            )
+            total += Decimal(str(terminal[field]))
+        return total
+
     def reserve(
         self,
         *,
@@ -113,6 +127,7 @@ class CumulativePaper1ApiBudgetLedger:
         model: str,
         maximum_cost_usd: Decimal,
         call_class: Literal["PRIMARY", "OPTIONAL", "PRIMARY_RETRY"],
+        stage_hard_cap_usd: Decimal | None = None,
     ) -> ApiBudgetReservation:
         maximum = Decimal(maximum_cost_usd)
         if not reservation_id or not logical_call_id or not call_hash:
@@ -142,6 +157,12 @@ class CumulativePaper1ApiBudgetLedger:
             and projected > PAPER1_API_HARD_CAP_USD - PAPER1_RETRY_RESERVE_USD
         ):
             raise RuntimeError("USD 5 primary retry reserve must remain uncommitted")
+        if stage_hard_cap_usd is not None:
+            stage_cap = Decimal(stage_hard_cap_usd)
+            if stage_cap <= 0:
+                raise ValueError("stage hard cap must be positive")
+            if self.accounted_stage_cost_usd(stage) + maximum > stage_cap:
+                raise RuntimeError(f"Paper-1 API stage hard cap would be exceeded: {stage}")
 
         row = {
             "protocol": API_BUDGET_PROTOCOL,
@@ -157,6 +178,11 @@ class CumulativePaper1ApiBudgetLedger:
             "opening_cost_usd": str(self.opening_cost_usd),
             "hard_cap_usd": str(PAPER1_API_HARD_CAP_USD),
             "maximum_cost_usd": str(maximum),
+            "stage_hard_cap_usd": (
+                str(Decimal(stage_hard_cap_usd))
+                if stage_hard_cap_usd is not None
+                else None
+            ),
         }
         append_jsonl(self.path, row)
         self._events[reservation_id] = [row]

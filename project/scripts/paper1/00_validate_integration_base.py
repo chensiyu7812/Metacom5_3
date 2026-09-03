@@ -25,6 +25,7 @@ from metacom_pm.paper1.api_budget import (
     PAPER1_RETRY_RESERVE_USD,
 )
 from metacom_pm.paper1.multi_view_memory import MULTI_VIEW_MEMORY_SCHEMA_VERSION
+from metacom_pm.paper1.multi_view_memory.runtime import MULTI_VIEW_COMPILER_VERSION
 from metacom_pm.paper1.semantic_memory import HISTORICAL_ONLY
 
 
@@ -287,6 +288,63 @@ def validate() -> dict[str, Any]:
         and multi_view_config["ME"] == "strict_past_atomic_event_experience_timeline"
         and multi_view_config["MS"] == "one_complete_strict_past_raw_session_transcript"
         and multi_view_config["action_observed_outcome"] == "ME_subtype"
+    )
+    multi_view_manifest = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json"
+    )
+    checks["active_multi_view_401_zero_outcome_preflight"] = (
+        multi_view_manifest["status"] == "PASS_ZERO_OUTCOME_PREFLIGHT"
+        and multi_view_manifest["compiler_version"] == MULTI_VIEW_COMPILER_VERSION
+        and multi_view_manifest["source"]["sessions"] == 401
+        and multi_view_manifest["source"]["turns"] == 9368
+        and multi_view_manifest["budget"]["maximum_provider_calls"] == 802
+        and float(multi_view_manifest["budget"]["aggregate_maximum_cost_usd"])
+        <= float(multi_view_manifest["budget"]["stage_hard_cap_usd"])
+        and multi_view_manifest["method_boundary"]["formal_outcomes_read"] == 0
+        and multi_view_manifest["method_boundary"]["paid_api_calls"] == 0
+    )
+    multi_view_authorization_path = (
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_multi_view_401_live_authorization_20260903_v1.json"
+    )
+    multi_view_authorization = _load(multi_view_authorization_path)
+    checks["active_multi_view_401_live_authorization"] = (
+        multi_view_authorization["status"]
+        == "RESEARCHER_AUTHORIZED_ZERO_OUTCOME_COMPILATION"
+        and multi_view_authorization["maximum_sessions"] == 401
+        and multi_view_authorization["maximum_provider_calls"] == 802
+        and multi_view_authorization["stage_hard_cap_usd"] == "1.50"
+        and multi_view_authorization["cumulative_paper1_hard_cap_usd"] == "50.00"
+        and multi_view_authorization["config_sha256"]
+        == _sha(PROJECT / "configs" / "paper1_multi_view_compiler_v1.yaml")
+        and multi_view_authorization["source_sha256"]
+        == _sha(
+            PROJECT
+            / "data"
+            / "paper1_public_memory"
+            / "es_memeval_public_sanitized_runtime_artifact_v1.json"
+        )
+        and multi_view_authorization["manifest_summary_sha256"]
+        == _sha(
+            PROJECT
+            / "data"
+            / "paper1_authority"
+            / "paper1_multi_view_401_call_manifest_preflight_20260903_v1.json"
+        )
+        and multi_view_authorization["runner_sha256"]
+        == _sha(PROJECT / "scripts" / "paper1" / "40_run_multi_view_401_compiler.py")
+        and multi_view_authorization["runtime_sha256"]
+        == _sha(PROJECT / "src" / "metacom_pm" / "paper1" / "multi_view_memory" / "runtime.py")
+        and multi_view_authorization["batch_sha256"]
+        == _sha(PROJECT / "src" / "metacom_pm" / "paper1" / "multi_view_memory" / "batch.py")
+        and set(multi_view_authorization["locks"].values()) == {"CLOSED"}
+        and multi_view_authorization["formal_outcome_calls"] == 0
+        and multi_view_authorization["pm_training_runs"] == 0
     )
     checks["paper1_visible_state_contract_ready"] = (
         VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"

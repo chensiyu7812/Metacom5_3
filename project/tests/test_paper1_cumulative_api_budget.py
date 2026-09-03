@@ -80,3 +80,31 @@ def test_successful_call_hash_cannot_be_rebilled_and_ledger_reopens(tmp_path):
             maximum_cost_usd=Decimal("0.10"),
             call_class="PRIMARY",
         )
+
+
+def test_stage_cap_is_enforced_on_settled_plus_outstanding_cost(tmp_path):
+    ledger = CumulativePaper1ApiBudgetLedger(tmp_path / "api.jsonl")
+    first = ledger.reserve(
+        reservation_id="stage-one",
+        logical_call_id="stage-logical-one",
+        call_hash="stage-hash-one",
+        stage="multi_view_401_compilation_and_validation",
+        provider="provider",
+        model="model",
+        maximum_cost_usd=Decimal("1.00"),
+        call_class="PRIMARY",
+        stage_hard_cap_usd=Decimal("1.50"),
+    )
+    ledger.settle(first, actual_cost_usd=Decimal("0.90"), outcome="SUCCEEDED")
+    with pytest.raises(RuntimeError, match="stage hard cap"):
+        ledger.reserve(
+            reservation_id="stage-two",
+            logical_call_id="stage-logical-two",
+            call_hash="stage-hash-two",
+            stage="multi_view_401_compilation_and_validation",
+            provider="provider",
+            model="model",
+            maximum_cost_usd=Decimal("0.61"),
+            call_class="PRIMARY",
+            stage_hard_cap_usd=Decimal("1.50"),
+        )

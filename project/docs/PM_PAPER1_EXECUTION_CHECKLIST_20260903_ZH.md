@@ -31,7 +31,7 @@
 ## 下一阶段：不读取 capability outcome 的准备工作
 
 1. [x] 建立唯一 active Multi-View contract：MP=target-time Current Profile View；ME=strict-past Atomic Event/Experience Timeline（action→outcome 仅为 subtype）；MS=完整 strict-past raw Session transcript。旧 semantic-memory v7/v8/v9 只保留历史 DEV provenance。
-2. [ ] 对 401 public sessions 重建 strict-past candidate pools、coverage、collision、token 与 source-lineage census。
+2. [ ] 对 401 public sessions 重建 strict-past candidate pools、coverage、collision、token 与 source-lineage census。其 active MP/ME runtime、Qwen tokenizer identity 与零付费 401 call manifest 已完成；实际 extraction/verification 和 census 尚未运行。
 3. [ ] 固定 global packing、overflow、resource token caps 与 task-specific prompt wrappers；Step2 不得在分配后擅自 reroute/drop。
 4. [ ] 生成 public-only Natural-turn Appropriateness sample：RS 来自 ESConv ordinary turns，memory 来自 EvoEmo ordinary historical turns；按 user/session grouped、strict-past、observable-only strata抽样。
 5. [ ] 建立 reference client raw timing profiler与 token-bin lookup artifact；在冻结 provider/model/prompt/streaming/output-limit/region/connection-reuse stack 上记录同一客户端 monotonic clocks、tokens、retry/finish，不读取 response capability score。
