@@ -1,10 +1,11 @@
-"""Outcome-blind semantic-memory compiler contracts and offline runtime.
+"""Historical v7/v8/v9 semantic-memory compiler contracts and runtime.
 
-The formal candidate path accepts only a complete, identity-checked artifact
-from this package. Live calls remain separately authorization-gated. The
-compiler creates auditable, source-grounded semantic memory units without
-reading evaluator-only fields or making utility claims.
+This package preserves engineering provenance for the superseded ontology in
+which MS meant atomic continuity and ME meant only action/outcome. New Paper-1
+artifacts must use :mod:`metacom_pm.paper1.multi_view_memory`.
 """
+
+HISTORICAL_ONLY = True
 
 from .contracts import (
     AcceptedSemanticMemoryUnit,

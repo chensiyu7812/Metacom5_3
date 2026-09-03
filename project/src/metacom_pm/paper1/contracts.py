@@ -316,15 +316,17 @@ class PolicyDecision(StrictContract):
 class EndToEndLatencyRecord(StrictContract):
     """Client-observed text latency plus same-trace component diagnostics.
 
-    For a timeout without a complete response, the final-visible field stores
-    the observed terminal cutoff and ``timeout_or_fallback`` must be true.  The
-    latency summarizer promotes that sample to at least the catastrophic
-    ceiling instead of deleting it.
+    For a terminal timeout/incomplete response, the final-visible field stores
+    the observed terminal cutoff and ``terminal_timeout_or_incomplete`` must be
+    true.  A successful fallback remains a completed user-visible request: its
+    actual client E2E clocks are retained, while fallback use/reason are
+    reported separately.
     """
 
     trace_id: str = Field(min_length=1)
     measurement_surface: LatencyMeasurementSurface
     time_block_id: str = Field(min_length=1)
+    target_microblock_id: str = Field(min_length=1)
     randomized_sequence_position: int = Field(ge=0)
     client_region: str = Field(min_length=1)
     warm_state: WarmState
@@ -338,7 +340,9 @@ class EndToEndLatencyRecord(StrictContract):
     client_send_to_first_visible_text_ms: float | None = Field(default=None, ge=0.0)
     client_send_to_final_visible_text_ms: float = Field(ge=0.0)
     streaming_observed: bool
-    timeout_or_fallback: bool = False
+    terminal_timeout_or_incomplete: bool = False
+    fallback_used: bool = False
+    fallback_reason: str | None = Field(default=None, min_length=1)
     text_only: bool = True
     input_tokens: int = Field(ge=0)
     output_tokens: int = Field(ge=0)
@@ -348,6 +352,8 @@ class EndToEndLatencyRecord(StrictContract):
 
     @model_validator(mode="after")
     def validate_user_facing_clocks(self) -> "EndToEndLatencyRecord":
+        if self.fallback_used != (self.fallback_reason is not None):
+            raise ValueError("fallback_used and fallback_reason must be recorded together")
         if (self.client_send_to_first_visible_text_ms is None) != (
             self.provider_request_to_first_content_ms is None
         ):

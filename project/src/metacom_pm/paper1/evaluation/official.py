@@ -79,3 +79,39 @@ def build_official_outcome(
         official_scorer_id=official_scorer_id,
         diagnostic_only_metrics=dict(diagnostic_only_metrics or {}),
     )
+
+
+def normalized_official_primary_quality(
+    outcome: OfficialOutcomeRecord,
+) -> tuple[str, float]:
+    """Return the frozen task-specific primary anchor on a unit scale.
+
+    Positive affine normalization does not change a within-task best/one-SE
+    choice, but makes the threshold contract explicit and range-checkable.
+    It does not create a cross-task composite.
+    """
+
+    if outcome.benchmark == "ESC-Eval" and outcome.task_type is TaskType.ESC_RESPONSE:
+        metric_id, value = "ESC-RANK:Overall/4", outcome.metrics["Overall"] / 4.0
+    elif outcome.benchmark == "ES-MemEval" and outcome.task_type is TaskType.QA:
+        metric_id, value = (
+            "ES-MemEval:LLM_as_Judge/2",
+            outcome.metrics["LLM_as_Judge"] / 2.0,
+        )
+    elif outcome.benchmark == "ES-MemEval" and outcome.task_type is TaskType.SUMMARY:
+        metric_id, value = "ES-MemEval:Event_F1", outcome.metrics["Event_F1"]
+    elif (
+        outcome.benchmark == "ES-MemEval"
+        and outcome.task_type is TaskType.DIALOGUE_GENERATION
+    ):
+        metric_id, value = (
+            "ES-MemEval:Weighted_Score",
+            outcome.metrics["Weighted_Score"],
+        )
+    else:
+        raise ValueError("unsupported official outcome for primary-quality normalization")
+    if not 0.0 <= value <= 1.0:
+        raise ValueError(
+            f"official primary quality is outside its frozen scale: {metric_id}={value}"
+        )
+    return metric_id, value

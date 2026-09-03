@@ -33,6 +33,8 @@ def _candidate(
         frozen_probability_threshold=0.5,
         incremental_p95_client_ttft_ms=ttft_ms,
         incremental_p95_client_completion_ms=completion_ms,
+        latency_prediction_protocol_id="test-pre-call-lookup-v1",
+        latency_lookup_cell_id=f"test-{head.value}",
     )
 
 

@@ -32,6 +32,16 @@ from .latency_policy import (
     LatencyConstrainedAllocation,
     allocate_latency_constrained_heads,
 )
+from .latency_prediction import (
+    DEFAULT_CONTEXT_TOKEN_BIN_UPPER_BOUNDS,
+    DEFAULT_RESOURCE_TOKEN_BIN_UPPER_BOUNDS,
+    FrozenLatencyLookup,
+    LATENCY_PREDICTION_PROTOCOL,
+    LatencyLookupCell,
+    PairedLatencyProfileSample,
+    build_frozen_latency_lookup,
+    build_pre_call_head_latency_candidate,
+)
 
 __all__ = [
     "ResourceBlock",
@@ -54,6 +64,14 @@ __all__ = [
     "HeadLatencyCandidate",
     "LatencyConstrainedAllocation",
     "allocate_latency_constrained_heads",
+    "DEFAULT_CONTEXT_TOKEN_BIN_UPPER_BOUNDS",
+    "DEFAULT_RESOURCE_TOKEN_BIN_UPPER_BOUNDS",
+    "FrozenLatencyLookup",
+    "LATENCY_PREDICTION_PROTOCOL",
+    "LatencyLookupCell",
+    "PairedLatencyProfileSample",
+    "build_frozen_latency_lookup",
+    "build_pre_call_head_latency_candidate",
     "bind_artifact",
     "inspect_treatment_delivery",
     "parse_resource_blocks",

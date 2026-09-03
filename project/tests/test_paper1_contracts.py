@@ -79,7 +79,7 @@ def test_latency_constrained_policy_requires_benefit_and_client_feasibility():
         operating_mode=PolicyOperatingMode.LATENCY_CONSTRAINED_THRESHOLD,
         threshold=0.5,
         threshold_protocol_id="threshold-v3",
-        client_latency_protocol_id="paper1-client-latency-measurement-v2",
+        client_latency_protocol_id="paper1-client-latency-measurement-v3",
         predicted_p95_client_ttft_ms=800,
         predicted_p95_client_completion_ms=1_800,
         catastrophic_completion_ceiling_ms=60_000,
@@ -96,7 +96,7 @@ def test_latency_constrained_policy_requires_benefit_and_client_feasibility():
             operating_mode=PolicyOperatingMode.LATENCY_CONSTRAINED_THRESHOLD,
             threshold=0.5,
             threshold_protocol_id="threshold-v3",
-            client_latency_protocol_id="paper1-client-latency-measurement-v2",
+            client_latency_protocol_id="paper1-client-latency-measurement-v3",
             predicted_p95_client_ttft_ms=1_200,
             predicted_p95_client_completion_ms=1_800,
             catastrophic_completion_ceiling_ms=60_000,
@@ -112,6 +112,7 @@ def test_latency_telemetry_retains_sla_violations_and_aliases_completion():
         trace_id="trace-1",
         measurement_surface=LatencyMeasurementSurface.REFERENCE_CLIENT,
         time_block_id="block-1",
+        target_microblock_id="microblock-1",
         randomized_sequence_position=0,
         client_region="local-a6000",
         warm_state=WarmState.WARM,
@@ -125,7 +126,9 @@ def test_latency_telemetry_retains_sla_violations_and_aliases_completion():
         client_send_to_first_visible_text_ms=2_000,
         client_send_to_final_visible_text_ms=70_035,
         streaming_observed=True,
-        timeout_or_fallback=True,
+        terminal_timeout_or_incomplete=True,
+        fallback_used=True,
+        fallback_reason="primary_provider_timeout",
         input_tokens=10,
         output_tokens=3,
         retry_count=1,
@@ -140,7 +143,8 @@ def test_latency_telemetry_retains_sla_violations_and_aliases_completion():
         latency_breakdown=breakdown,
     )
     assert record.latency_breakdown is not None
-    assert record.latency_breakdown.timeout_or_fallback is True
+    assert record.latency_breakdown.terminal_timeout_or_incomplete is True
+    assert record.latency_breakdown.fallback_reason == "primary_provider_timeout"
     with pytest.raises(ValidationError, match="must alias"):
         CostRecord(**{**record.model_dump(), "latency_ms": 1})
     always_off = PolicyDecision(

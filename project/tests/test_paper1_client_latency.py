@@ -20,6 +20,7 @@ def _observation(
     completion_ms: float,
     ttft_ms: float | None,
     timeout: bool = False,
+    fallback_reason: str | None = None,
     surface: LatencyMeasurementSurface = LatencyMeasurementSurface.REFERENCE_CLIENT,
     warm_state: WarmState = WarmState.WARM,
 ) -> ClientLatencyObservation:
@@ -32,6 +33,7 @@ def _observation(
             trace_id=f"trace-{index}",
             measurement_surface=surface,
             time_block_id=f"block-{index // 2}",
+            target_microblock_id=f"microblock-{index // 2}-{index % 2}",
             randomized_sequence_position=index,
             client_region="tokyo",
             warm_state=warm_state,
@@ -47,7 +49,9 @@ def _observation(
             client_send_to_first_visible_text_ms=ttft_ms,
             client_send_to_final_visible_text_ms=completion_ms,
             streaming_observed=streaming,
-            timeout_or_fallback=timeout,
+            terminal_timeout_or_incomplete=timeout,
+            fallback_used=fallback_reason is not None,
+            fallback_reason=fallback_reason,
             input_tokens=100,
             output_tokens=20,
             retry_count=int(timeout),
@@ -56,7 +60,7 @@ def _observation(
     )
 
 
-def test_schedule_interleaves_every_target_arm_once_per_time_block():
+def test_schedule_uses_adjacent_randomized_target_microblocks():
     schedule = build_interleaved_latency_schedule(
         ("a", "b"),
         task_type=TaskType.QA,
@@ -73,6 +77,12 @@ def test_schedule_interleaves_every_target_arm_once_per_time_block():
             for arm in (ExperimentArm.NO_MEMORY, ExperimentArm.OFFICIAL_RAG_TOP4)
         }
         assert {row.randomized_sequence_position for row in block} == set(range(4))
+        for target in ("a", "b"):
+            target_rows = [row for row in block if row.target_id == target]
+            positions = sorted(row.randomized_sequence_position for row in target_rows)
+            assert positions[1] - positions[0] == 1
+            assert len({row.target_microblock_id for row in target_rows}) == 1
+            assert {row.position_within_target_microblock for row in target_rows} == {0, 1}
 
 
 def test_summary_uses_raw_nearest_rank_and_retains_timeout_penalty():
@@ -90,8 +100,27 @@ def test_summary_uses_raw_nearest_rank_and_retains_timeout_penalty():
     assert summary.p95_client_completion_ms == 118
     assert summary.max_client_completion_ms == 60_000
     assert summary.catastrophic_ceiling_violation_rate == pytest.approx(0.05)
-    assert summary.timeout_or_fallback_rate == pytest.approx(0.05)
+    assert summary.timeout_or_incomplete_rate == pytest.approx(0.05)
+    assert summary.successful_fallback_rate == 0
     assert summary.primary_controlled_surface is True
+
+
+def test_successful_fallback_keeps_actual_client_latency_and_reports_reason():
+    summary = summarize_client_latency(
+        (
+            _observation(
+                0,
+                completion_ms=4_100,
+                ttft_ms=3_000,
+                fallback_reason="primary_provider_timeout",
+            ),
+        )
+    )
+    assert summary.p95_client_completion_ms == 4_100
+    assert summary.p95_client_ttft_ms == 3_000
+    assert summary.timeout_or_incomplete_rate == 0
+    assert summary.successful_fallback_rate == 1
+    assert summary.fallback_reason_counts == {"primary_provider_timeout": 1}
 
 
 def test_summary_separates_measurement_surface_and_warm_state():

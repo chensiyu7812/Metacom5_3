@@ -150,7 +150,7 @@ class ThresholdSelectionFreeze(StrictContract):
     include_eligible_always_on: bool = True
     include_always_off: bool = True
     fixed_point_five_reference_required: bool = True
-    quality_rule: str = "paired_material_effect_quality_with_equivalent_credit_for_both_arms"
+    quality_rule: str = "normalized_task_specific_official_primary_quality_of_selected_arm"
     uncertainty_rule: str = "cluster_mean_standard_error"
     selection_rule: str = (
         "catastrophic_client_completion_ceiling_then_quality_first_one_standard_"

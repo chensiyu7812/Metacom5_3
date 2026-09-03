@@ -1,8 +1,9 @@
 """Memory candidate compilers.
 
-The regex/string constructors in this file are retained only as frozen
-pre-semantic-compiler diagnostics. Formal Paper-1 memory candidates must use
-``compile_semantic_candidate_bundle`` over accepted Qwen semantic units.
+The regex/string constructors and ``compile_semantic_candidate_bundle`` are
+retained only as frozen pre-reset diagnostics. Formal Paper-1 candidates use
+``compile_multi_view_candidate_bundle``: target-time MP, atomic-timeline ME,
+and mechanically compiled complete-session MS.
 
 Each compiler takes a parsed ``MemorySourceUser`` and a ``Target`` (see
 ``metacom_pm.paper1.data.memory_source``) and returns zero or more frozen
@@ -32,6 +33,10 @@ from metacom_pm.paper1.semantic_memory.candidate_adapter import (
     materialize_memory_candidates,
 )
 from metacom_pm.paper1.semantic_memory.contracts import AcceptedSemanticMemoryUnit
+from metacom_pm.paper1.multi_view_memory import (
+    AcceptedAtomicMemoryUnit,
+    materialize_multi_view_candidates,
+)
 
 SOURCE_MP = "es_memeval_public_v1_0_0_1427:mp_self_disclosure"
 SOURCE_MS = "es_memeval_public_v1_0_0_1427:ms_session_document"
@@ -343,7 +348,7 @@ def compile_semantic_candidate_bundle(
     *,
     token_counter: Callable[[str], int] = _token_count,
 ) -> dict[Head, tuple[CandidateRecord, ...]]:
-    """Formal MP/MS/ME bundle from accepted source-grounded semantic units.
+    """Historical v9 ontology bundle; forbidden for new Paper-1 artifacts.
 
     ``token_counter`` defaults to the whitespace-split structural proxy
     (2026-08-19: callers building a formal token-cost feature should pass
@@ -355,5 +360,22 @@ def compile_semantic_candidate_bundle(
         accepted_units,
         target_owner_id=target.owner_id,
         target_session_rank=target.cutoff_rank,
+        token_counter=token_counter,
+    )
+
+
+def compile_multi_view_candidate_bundle(
+    accepted_atomic_units: tuple[AcceptedAtomicMemoryUnit, ...],
+    user: MemorySourceUser,
+    target: Target,
+    *,
+    token_counter: Callable[[str], int] = _token_count,
+) -> dict[Head, tuple[CandidateRecord, ...]]:
+    """Active MP/ME/MS bundle under the approved ontology reset."""
+
+    return materialize_multi_view_candidates(
+        accepted_atomic_units,
+        user=user,
+        target=target,
         token_counter=token_counter,
     )

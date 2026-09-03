@@ -1,8 +1,9 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
+  v2_1_consistency: project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json
   client_latency_frontier: project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json
-  client_latency_measurement: project/data/paper1_authority/paper1_client_latency_measurement_contract_v2.json
+  client_latency_measurement: project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json
   latency_constrained_policy: project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260903_v1.json
   threshold_policy_base: project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json
   reconciliation: project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json
@@ -12,6 +13,13 @@ authority:
 method: Policy Manager
 route: A_first_order_factorized
 components: [RS, MP, MS, ME]
+memory_ontology:
+  display_name: Multi-View Memory
+  MP: target_time_current_stable_profile_slots
+  ME: strict_past_atomic_event_experience_timeline
+  MS: one_complete_strict_past_raw_session_transcript
+  action_observed_outcome: ME_subtype
+  legacy_semantic_memory_v7_v8_v9: historical_dev_only
 public_sources:
   esconv:
     role: RS training and Strategy Bank
@@ -34,14 +42,16 @@ learning:
   target: probability_of_materially_positive_realized_paired_effect
   canonical_background: all_other_optional_components_off
   primary_operating_point:
-    protocol: pm-paper1-client-e2e-quality-latency-frontier-v3
+    protocol: pm-paper1-client-e2e-quality-latency-frontier-v4
     probability_grid: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
     include_eligible_always_on: true
     include_always_off: true
     fixed_point_five_reference_required: true
     selection_rule: catastrophic_client_completion_ceiling_then_quality_first_one_standard_error_then_client_latency_tokens_on_rate
     primary_latency_percentile: 0.95
-    latency_measurement_protocol: paper1-client-latency-measurement-v2
+    latency_measurement_protocol: paper1-client-latency-measurement-v3
+    quality_surface: normalized_task_specific_official_primary_quality_of_selected_arm
+    decision_correctness_surface: separate_not_used_as_official_quality
     catastrophic_client_completion_ceiling_ms: 60000
     tighter_deployment_scenario: null
     tighter_sla_required_for_paper_primary: false
@@ -70,7 +80,7 @@ treatment:
   semantic_nonuse_is_valid_effect: true
 formal_evaluation:
   rq1_arms: [R0, RS_Fixed_High, RS_Matched_Random, Learned_RS_PM]
-  rq2_arms: [No_Memory, Full_History, Official_RAG_Top4, Typed_Fixed_High, Typed_Matched_Random, Learned_Typed_Memory_PM]
+  rq2_arms: [No_Memory, Full_History, Official_RAG_Top4, Multi_View_Fixed_High, Multi_View_Matched_Random, Learned_Multi_View_PM]
   official_metrics_only: true
   cost_separate: true
   client_observed_latency_constrains_deployment_action: true
@@ -110,7 +120,7 @@ RQ2_CONFIRMATORY_OUTCOME_LOCK:
   pm_training_allowed: false
   formal_benchmark_outcomes_allowed: false
 pending_zero_outcome_freeze:
-  - candidate_bundle_design
+  - active_multi_view_extractor_runtime_and_401_artifact
   - exact_feature_schema
   - exact_fold_manifest
   - task_specific_material_better_and_equivalence_rules

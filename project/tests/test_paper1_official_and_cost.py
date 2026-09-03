@@ -2,7 +2,10 @@ import pytest
 
 from metacom_pm.paper1.contracts import ExperimentArm, TaskType
 from metacom_pm.paper1.evaluation.cost import TokenPricing, build_cost_record
-from metacom_pm.paper1.evaluation.official import build_official_outcome
+from metacom_pm.paper1.evaluation.official import (
+    build_official_outcome,
+    normalized_official_primary_quality,
+)
 
 
 def test_cost_keeps_resource_tokens_as_a_non_additive_input_subset():
@@ -75,3 +78,24 @@ def test_official_adapter_rejects_partial_or_invented_metric_surfaces():
             metrics=complete,
             official_scorer_id="es-memeval@frozen",
         )
+
+
+def test_threshold_primary_quality_uses_the_task_specific_official_anchor():
+    outcome = build_official_outcome(
+        benchmark="ES-MemEval",
+        task_type=TaskType.QA,
+        target_id="qa-1",
+        arm=ExperimentArm.NO_MEMORY,
+        metrics={
+            "F1": 0.1,
+            "BERTScore": 0.9,
+            "LLM_as_Judge": 1,
+            "Recall_at_k": 0.2,
+            "nDCG_at_k": 0.3,
+        },
+        official_scorer_id="es-memeval@frozen",
+    )
+    assert normalized_official_primary_quality(outcome) == (
+        "ES-MemEval:LLM_as_Judge/2",
+        0.5,
+    )

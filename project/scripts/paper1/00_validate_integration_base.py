@@ -18,6 +18,8 @@ sys.path.insert(0, str(PROJECT / "src"))
 from metacom_pm.paper1.execution import STEP2_RESOURCE_PROTOCOL, VISIBLE_STATE_PROTOCOL
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
+from metacom_pm.paper1.multi_view_memory import MULTI_VIEW_MEMORY_SCHEMA_VERSION
+from metacom_pm.paper1.semantic_memory import HISTORICAL_ONLY
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -64,6 +66,12 @@ def validate() -> dict[str, Any]:
         / "paper1_authority"
         / "paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json"
     )
+    v2_1 = _load(
+        PROJECT
+        / "data"
+        / "paper1_authority"
+        / "paper1_v2_1_consistency_amendment_20260903_v1.json"
+    )
     configured_threshold = config["learning"]["primary_operating_point"]
     checks["latency_constrained_policy_scoped_override"] = (
         threshold_policy_base["status"]
@@ -90,10 +98,13 @@ def validate() -> dict[str, Any]:
         ]
         is False
         and set(client_latency_policy["locks"].values()) == {"CLOSED"}
+        and v2_1["status"] == "ACTIVE_PRE_OUTCOME_CONSISTENCY_REPAIR"
+        and v2_1["threshold"]["protocol"] == THRESHOLD_PROTOCOL
+        and set(v2_1["locks"].values()) == {"CLOSED"}
         and configured_threshold["protocol"] == THRESHOLD_PROTOCOL
         and configured_threshold["primary_latency_percentile"] == 0.95
         and configured_threshold["latency_measurement_protocol"]
-        == "paper1-client-latency-measurement-v2"
+        == "paper1-client-latency-measurement-v3"
         and configured_threshold["catastrophic_client_completion_ceiling_ms"] == 60000
         and configured_threshold["tighter_deployment_scenario"] is None
         and configured_threshold["tighter_sla_required_for_paper_primary"] is False
@@ -109,7 +120,7 @@ def validate() -> dict[str, Any]:
         "paper1_task_effect_coding_v1.json",
         "paper1_decision_correctness_evaluation_v1.json",
         "paper1_end_to_end_latency_policy_contract_v1.json",
-        "paper1_client_latency_measurement_contract_v2.json",
+        "paper1_client_latency_measurement_contract_v3.json",
         "paper1_natural_turn_appropriateness_rubric_v1.json",
     )
     contracts = {
@@ -126,13 +137,17 @@ def validate() -> dict[str, Any]:
             "current_unweighted_exact_difference_pareto_rule"
         ]
         == "SUPERSEDED"
-        and contracts["paper1_client_latency_measurement_contract_v2.json"]["primary"][
+        and contracts["paper1_client_latency_measurement_contract_v3.json"]["primary"][
             "primary_cost_outcome"
         ]
         == "p95 client_send_to_final_visible_text_ms"
-        and contracts["paper1_client_latency_measurement_contract_v2.json"][
+        and contracts["paper1_client_latency_measurement_contract_v3.json"][
             "cross_machine_absolute_timestamp_subtraction"
         ]
+        == "FORBIDDEN"
+        and contracts["paper1_client_latency_measurement_contract_v3.json"][
+            "successful_fallback"
+        ]["artificial_60000ms_floor"]
         == "FORBIDDEN"
         and contracts["paper1_natural_turn_appropriateness_rubric_v1.json"][
             "decoded_r0_m0_sufficiency"
@@ -218,6 +233,15 @@ def validate() -> dict[str, Any]:
             "from ..prompts import",
             "v1_5_strategy_rag_runtime",
         )
+    )
+    multi_view_config = config["memory_ontology"]
+    checks["active_multi_view_ontology"] = (
+        MULTI_VIEW_MEMORY_SCHEMA_VERSION == "paper1-multi-view-memory-schema-v1"
+        and HISTORICAL_ONLY is True
+        and multi_view_config["MP"] == "target_time_current_stable_profile_slots"
+        and multi_view_config["ME"] == "strict_past_atomic_event_experience_timeline"
+        and multi_view_config["MS"] == "one_complete_strict_past_raw_session_transcript"
+        and multi_view_config["action_observed_outcome"] == "ME_subtype"
     )
     checks["paper1_visible_state_contract_ready"] = (
         VISIBLE_STATE_PROTOCOL == "pm-paper1-visible-state-projection-v1"

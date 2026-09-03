@@ -11,24 +11,26 @@
 - [x] 实现 RQ2 MP/ME/MS 多头 latency allocator；只考虑 mechanically eligible 且 threshold-positive 的 head，不声称 interaction-aware global optimum。
 - [x] 将主时间边界冻结为同一客户端单调时钟的 `send→first-visible text` 与 `send→final-visible text`；后台 PM/检索/Generator/render 分段只作诊断。
 - [x] 区分 `reference_client_received_text` 与 `browser_render_ready_text` 两个测量面，禁止混报或改名；离线 evaluator 耗时不算用户延迟。
-- [x] 允许记录超过 60 秒与 timeout/fallback 的坏样本；60 秒仅为研究者声明的灾难性完成上限，不是普适行业 SLA 或论文二元过门线。
+- [x] 拆分 terminal timeout/incomplete 与 successful fallback：前者保留并按 60 秒 floor 分析，后者保留真实 client E2E latency；fallback rate/reason 单列。
 - [x] primary p95 改为从 raw per-call wall-clock samples 计算，禁止 `p95(state means)`。
-- [x] 冻结波动控制：task/time-block 内随机交错各 arm，warm 为主、cold 分开，controlled concurrency=1 与 offered-load stress 分开，按 target/time block 聚类 bootstrap。
+- [x] 冻结波动控制：每个 target/repeat 内 arms 随机顺序且紧邻形成 microblock，再随机 target microblock 顺序；warm 为主、cold 分开，controlled concurrency=1 与 offered-load stress 分开。
 - [x] 输出长度造成的等待保留在 primary completion latency；ITL、固定 token milestone 与 token-normalized latency 只作诊断。
 - [x] 冻结 official-quality/client-latency frontier；禁止 `quality - lambda × latency`、跨任务自设 composite 和二元 Paper PASS/FAIL。
 - [x] 撤回 QA/Summary/DG 所有指标等权、任意 epsilon、全同向 Pareto 的旧 effect coding。
-- [x] 实现 task-specific hierarchy：ESC Overall + Empathy/Information guards；QA semantic judge primary；Summary Event F1 primary；DG local relevant-observation utilization + pairwise correctness/non-harm。
+- [x] 实现 task-specific hierarchy：ESC Overall primary，Empathy/Information 只作至少一 ordinal point 的 material-degradation guard（不要求上升）；QA semantic judge primary；Summary Event F1 primary；DG local relevant-observation utilization + pairwise correctness/non-harm。
+- [x] 修正 threshold surface：official-quality one-SE 使用 policy 实际选择 arm 的 task-specific official primary quality；oracle decision correctness 单独报告。
+- [x] 建立 outcome-blind pre-call latency lookup contract：`task × head × context-token-bin × resource-token-bin` paired p95 estimate进入 runtime allocator，禁止用本次 post-action latency倒推动作。
 - [x] 实现 effect correctness 与 latency-constrained action correctness 的分开报告。
 - [x] 写明 ordinary-turn 判卷标准：更多共情、记忆、个性化、建议或策略语言本身不加分；无必要干预可判 equivalent/OFF-better。
 - [x] authority/config/integration validator 对齐；formal outcome、PM training、paid API、formal GPU 调用均未由本轮打开。
 
 ## 下一阶段：不读取 capability outcome 的准备工作
 
-1. [ ] 按已纠正的 MP/Profile、MS/cross-session continuity、ME/action→observed-outcome 定义重建 formal candidate/compiler contracts；v7/v8/v9 只保留 DEV provenance，不再作为“必须过 precision gate”的 formal 入口。
+1. [x] 建立唯一 active Multi-View contract：MP=target-time Current Profile View；ME=strict-past Atomic Event/Experience Timeline（action→outcome 仅为 subtype）；MS=完整 strict-past raw Session transcript。旧 semantic-memory v7/v8/v9 只保留历史 DEV provenance。
 2. [ ] 对 401 public sessions 重建 strict-past candidate pools、coverage、collision、token 与 source-lineage census。
 3. [ ] 固定 global packing、overflow、resource token caps 与 task-specific prompt wrappers；Step2 不得在分配后擅自 reroute/drop。
 4. [ ] 生成 public-only Natural-turn Appropriateness sample：RS 来自 ESConv ordinary turns，memory 来自 EvoEmo ordinary historical turns；按 user/session grouped、strict-past、observable-only strata抽样。
-5. [ ] 建立 reference client raw timing profiler；在冻结 provider/model/prompt/streaming/output-limit/region/connection-reuse stack 上记录同一客户端 monotonic clocks、tokens、retry/finish，不读取 response capability score。
+5. [ ] 建立 reference client raw timing profiler与 token-bin lookup artifact；在冻结 provider/model/prompt/streaming/output-limit/region/connection-reuse stack 上记录同一客户端 monotonic clocks、tokens、retry/finish，不读取 response capability score。
 6. [ ] 做 zero-outcome timing pilot，确认采集可靠性、重复次数与 time-block 设计；如存在具体产品目标，再向研究者提交严格低于 60,000 ms 的命名部署场景预算。没有更紧预算不阻塞论文主研究。
 
 ## Measurement work：人评与 pairwise teacher
@@ -45,7 +47,7 @@
 13. [ ] 生成独立-state、focal-head-only ON/OFF pairs；相同 deterministic response 不伪装成独立 repeats。
 14. [ ] 保存 raw official metrics、pairwise verdict、order stability、五类 effect 与每次 client raw latency/cost trace；timeout/retry/fallback 不得 complete-case 删除。
 15. [ ] 训练四个 standardized L2 heads，产生 grouped OOF / outer-training-inner-OOF probabilities。
-16. [ ] 用新 v3 threshold protocol选择 head/task/fold operating points：先排除 p95 client completion ≥60 秒，再做 official-quality one-SE 与 client latency tie-break；同时保留 fixed-0.5、always-on、always-off references。命名部署场景只作附加报告。
+16. [ ] 用 v4 threshold protocol选择 head/task/fold operating points：先排除 p95 client completion ≥60 秒，再对所选 arm 的 official primary quality 做 one-SE 与 client latency tie-break；decision correctness另报；同时保留 fixed-0.5、always-on、always-off references。
 17. [ ] 冻结 checkpoints、thresholds、multi-head allocator inputs、matched-random schedule 与 API call plan。
 18. [ ] 运行 sealed local decision-correctness audit；结果不回流训练或 threshold。
 19. [ ] 只有完整 stack 冻结后才打开 confirmatory locks，运行 RQ1 ESC-Eval 与 RQ2 ES-MemEval official end-to-end arms、component-minus 与预注册 secondary analyses。

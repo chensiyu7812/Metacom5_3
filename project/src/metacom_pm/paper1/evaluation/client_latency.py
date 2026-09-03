@@ -18,7 +18,7 @@ from ..contracts import (
 )
 
 
-CLIENT_LATENCY_MEASUREMENT_PROTOCOL = "paper1-client-latency-measurement-v2"
+CLIENT_LATENCY_MEASUREMENT_PROTOCOL = "paper1-client-latency-measurement-v3"
 CATASTROPHIC_COMPLETION_CEILING_MS = 60_000.0
 
 
@@ -27,8 +27,10 @@ class InterleavedLatencyScheduleRow(StrictContract):
     task_type: TaskType
     arm: ExperimentArm
     time_block_id: str = Field(min_length=1)
+    target_microblock_id: str = Field(min_length=1)
     repeat_index: int = Field(ge=0)
     randomized_sequence_position: int = Field(ge=0)
+    position_within_target_microblock: int = Field(ge=0)
 
 
 class ClientLatencyObservation(StrictContract):
@@ -59,7 +61,9 @@ class ClientLatencySummary(StrictContract):
     p95_client_completion_ms: float = Field(ge=0.0)
     max_client_completion_ms: float = Field(ge=0.0)
     catastrophic_ceiling_violation_rate: float = Field(ge=0.0, le=1.0)
-    timeout_or_fallback_rate: float = Field(ge=0.0, le=1.0)
+    timeout_or_incomplete_rate: float = Field(ge=0.0, le=1.0)
+    successful_fallback_rate: float = Field(ge=0.0, le=1.0)
+    fallback_reason_counts: dict[str, int] = Field(default_factory=dict)
     mean_retry_count: float = Field(ge=0.0)
     mean_input_tokens: float = Field(ge=0.0)
     mean_output_tokens: float = Field(ge=0.0)
@@ -82,7 +86,12 @@ def build_interleaved_latency_schedule(
     repeats: int,
     seed: int,
 ) -> tuple[InterleavedLatencyScheduleRow, ...]:
-    """Randomize all target-by-arm calls independently inside each time block."""
+    """Build adjacent target-level arm microblocks inside each repeat.
+
+    Target microblock order and within-target arm order are independently
+    randomized.  This keeps matched arms close in wall-clock time while
+    retaining randomized order against provider/network drift.
+    """
 
     if not target_ids or len(set(target_ids)) != len(target_ids):
         raise ValueError("target ids must be nonempty and unique")
@@ -94,20 +103,30 @@ def build_interleaved_latency_schedule(
     rng = random.Random(seed)
     result: list[InterleavedLatencyScheduleRow] = []
     for repeat_index in range(repeats):
-        block = [(target_id, arm) for target_id in target_ids for arm in arms]
-        rng.shuffle(block)
         time_block_id = f"{task_type.value}-latency-block-{repeat_index:03d}"
-        result.extend(
-            InterleavedLatencyScheduleRow(
-                target_id=target_id,
-                task_type=task_type,
-                arm=arm,
-                time_block_id=time_block_id,
-                repeat_index=repeat_index,
-                randomized_sequence_position=position,
+        target_order = list(target_ids)
+        rng.shuffle(target_order)
+        sequence_position = 0
+        for microblock_position, target_id in enumerate(target_order):
+            arm_order = list(arms)
+            rng.shuffle(arm_order)
+            microblock_id = (
+                f"{time_block_id}-micro-{microblock_position:05d}-{target_id}"
             )
-            for position, (target_id, arm) in enumerate(block)
-        )
+            for within_position, arm in enumerate(arm_order):
+                result.append(
+                    InterleavedLatencyScheduleRow(
+                        target_id=target_id,
+                        task_type=task_type,
+                        arm=arm,
+                        time_block_id=time_block_id,
+                        target_microblock_id=microblock_id,
+                        repeat_index=repeat_index,
+                        randomized_sequence_position=sequence_position,
+                        position_within_target_microblock=within_position,
+                    )
+                )
+                sequence_position += 1
     return tuple(result)
 
 
@@ -116,10 +135,10 @@ def summarize_client_latency(
 ) -> ClientLatencySummary:
     """Summarize one arm/task/surface/warm/concurrency stratum from raw calls.
 
-    Timeout or fallback traces are never dropped. Their TTFT and completion
-    samples are floored at the catastrophic ceiling so a failed request cannot
-    look artificially fast. Non-streaming completed calls use completion as
-    the first-visible measurement.
+    Terminal timeout/incomplete traces are never dropped and are floored at the
+    catastrophic ceiling. Successful fallback traces retain the user's actual
+    TTFT/completion and contribute separately to fallback reliability reports.
+    Non-streaming completed calls use completion as the first-visible measure.
     """
 
     if not observations:
@@ -154,7 +173,7 @@ def summarize_client_latency(
             if record.client_send_to_first_visible_text_ms is not None
             else completion
         )
-        if record.timeout_or_fallback:
+        if record.terminal_timeout_or_incomplete:
             completion = max(completion, CATASTROPHIC_COMPLETION_CEILING_MS)
             ttft = max(ttft, CATASTROPHIC_COMPLETION_CEILING_MS)
         completions.append(completion)
@@ -189,9 +208,26 @@ def summarize_client_latency(
             int(value >= CATASTROPHIC_COMPLETION_CEILING_MS)
             for value in completion_samples
         ),
-        timeout_or_fallback_rate=fmean(
-            int(row.record.timeout_or_fallback) for row in observations
+        timeout_or_incomplete_rate=fmean(
+            int(row.record.terminal_timeout_or_incomplete) for row in observations
         ),
+        successful_fallback_rate=fmean(
+            int(
+                row.record.fallback_used
+                and not row.record.terminal_timeout_or_incomplete
+            )
+            for row in observations
+        ),
+        fallback_reason_counts={
+            reason: sum(row.record.fallback_reason == reason for row in observations)
+            for reason in sorted(
+                {
+                    row.record.fallback_reason
+                    for row in observations
+                    if row.record.fallback_reason is not None
+                }
+            )
+        },
         mean_retry_count=fmean(row.record.retry_count for row in observations),
         mean_input_tokens=fmean(row.record.input_tokens for row in observations),
         mean_output_tokens=fmean(row.record.output_tokens for row in observations),

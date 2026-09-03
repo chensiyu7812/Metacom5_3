@@ -24,6 +24,10 @@ class HeadLatencyCandidate(StrictContract):
     frozen_probability_threshold: float = Field(ge=0.0, le=1.0)
     incremental_p95_client_ttft_ms: float = Field(ge=0.0)
     incremental_p95_client_completion_ms: float = Field(ge=0.0)
+    latency_prediction_protocol_id: str = Field(min_length=1)
+    latency_lookup_cell_id: str = Field(min_length=1)
+    prediction_made_pre_call: bool = True
+    realized_post_action_latency_read: bool = False
 
     @model_validator(mode="after")
     def memory_head_and_clock_order(self) -> "HeadLatencyCandidate":
@@ -34,6 +38,8 @@ class HeadLatencyCandidate(StrictContract):
             > self.incremental_p95_client_completion_ms
         ):
             raise ValueError("incremental TTFT cannot exceed incremental completion latency")
+        if not self.prediction_made_pre_call or self.realized_post_action_latency_read:
+            raise ValueError("runtime allocation requires an outcome-blind pre-call latency prediction")
         return self
 
     @property

@@ -22,7 +22,11 @@ from .effect_coding import (
     code_qa_effect,
     code_summary_effect,
 )
-from .official import build_official_outcome, official_metric_names
+from .official import (
+    build_official_outcome,
+    normalized_official_primary_quality,
+    official_metric_names,
+)
 from .decision_correctness import (
     DecisionCorrectnessReport,
     DecisionCorrectnessRow,
@@ -55,6 +59,7 @@ __all__ = [
     "code_summary_effect",
     "evaluate_decision_correctness",
     "load_rq1_cards",
+    "normalized_official_primary_quality",
     "official_metric_names",
     "summarize_client_latency",
     "RQ1InputCard",

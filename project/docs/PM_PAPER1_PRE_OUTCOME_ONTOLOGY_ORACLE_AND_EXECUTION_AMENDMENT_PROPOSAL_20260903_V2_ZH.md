@@ -1,9 +1,9 @@
 # Paper-1：Ontology、训练—考试对齐、Pairwise Effect Oracle 与执行修订提案 v2
 
-> `PROPOSED RESEARCH CHANGE — NOT AUTHORIZED`
+> `HISTORICAL APPROVED-IN-PRINCIPLE PROPOSAL — SUPERSEDED BY ACTIVE V2.1`
 >
 > 日期：2026-09-03
-> 状态：`INACTIVE / AWAITING EXPLICIT RESEARCHER APPROVAL`
+> 状态：`SUPERSEDED BY PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
 > 本文件只提出研究修订。它不修改 active authority，不打开任何 outcome lock，不授权 API/GPU outcome 调用，也不授权正式 PM training。
 
 ## 1. 本次修订要解决的不是新“门”，而是可识别性
