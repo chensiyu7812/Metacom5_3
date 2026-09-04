@@ -218,6 +218,34 @@ def validate() -> dict[str, Any]:
         PROJECT
         / "data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json"
     )
+    teacher_authorization = _load(
+        PROJECT
+        / "data/paper1_authority/"
+        "paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json"
+    )
+    teacher_dg_result_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        "paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json"
+    )
+    teacher_dg_result = _load(teacher_dg_result_path)
+    teacher_binding_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json"
+    )
+    teacher_binding = _load(teacher_binding_path)
+    teacher_local_result_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        "paper1_pairwise_teacher_local_generation_result_20260904_v1.json"
+    )
+    teacher_local_result = _load(teacher_local_result_path)
+    teacher_sheet_manifest = _load(
+        PROJECT
+        / "data/paper1_authority/"
+        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+    )
     checks["effect_action_latency_contracts_present_pre_outcome"] = (
         all(contract["status"].startswith("ACTIVE") for contract in contracts.values())
         and all(
@@ -332,6 +360,105 @@ def validate() -> dict[str, Any]:
         and contracts["paper1_natural_turn_appropriateness_rubric_v1.json"][
             "decoded_r0_m0_sufficiency"
         ].startswith("after arm decoding")
+    )
+    teacher_pair_map = teacher_local_result["base_pair_response_map"]
+    teacher_design = contracts[
+        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+    ]
+    teacher_plan = contracts["paper1_pairwise_teacher_qualification_plan_v2.json"]
+    checks["pairwise_teacher_reference_generation_ready"] = (
+        teacher_authorization["status"]
+        == "ACTIVE_RESEARCHER_AUTHORIZED_EXACT_EIGHT_CALLS"
+        and teacher_authorization["researcher_authorization"]["authorized_usd"]
+        == 0.11
+        and teacher_authorization["researcher_authorization"][
+            "authorized_new_physical_calls"
+        ]
+        == 8
+        and teacher_authorization["researcher_authorization"][
+            "gemini_calls_authorized"
+        ]
+        == 0
+        and teacher_dg_result["status"] == "PASS"
+        and teacher_dg_result["execution"]["model"] == "gpt-4o-2024-11-20"
+        and teacher_dg_result["execution"]["new_calls_succeeded"] == 8
+        and teacher_dg_result["execution"]["new_calls_failed"] == 0
+        and teacher_dg_result["execution"]["finish_reason_counts"] == {"stop": 8}
+        and teacher_dg_result["budget"]["settled_new_call_cost_usd"]
+        == "0.1013300"
+        and teacher_dg_result["formal_outcome_calls"] == 0
+        and teacher_dg_result["evaluator_calls"] == 0
+        and teacher_dg_result["pm_training_runs"] == 0
+        and teacher_binding["source"]["dg_first_turn_result_sha256"]
+        == _sha(teacher_dg_result_path)
+        and teacher_binding["counts"]["base_pairs"] == 80
+        and teacher_binding["counts"]["unique_generator_requests"] == 142
+        and teacher_binding["counts"]["by_task"]
+        == {"DG": 36, "ESC": 54, "QA": 26, "Summary": 26}
+        and teacher_binding["embedding_identity"]["query_count"] == 9
+        and teacher_binding["selection_read_response_quality"] is False
+        and teacher_local_result["request_binding_sha256"]
+        == _sha(teacher_binding_path)
+        and teacher_local_result["local_health"]["model"]
+        == "meta/llama-3.1-8b-instruct"
+        and teacher_local_result["local_health"]["revision"]
+        == LOCAL_GENERATOR_MODEL_REVISION
+        and teacher_local_result["local_health"]["model_artifact_identity_sha256"]
+        == LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
+        and teacher_local_result["local_health"]["chat_template_sha256"]
+        == LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256
+        and teacher_local_result["local_health"]["gpu"] == "NVIDIA RTX A6000"
+        and teacher_local_result["execution"]["unique_requests"] == 142
+        and teacher_local_result["execution"]["terminal_empty_outputs"] == 0
+        and teacher_local_result["execution"]["response_quality_inspected_or_scored"]
+        is False
+        and len(teacher_pair_map) == 80
+        and len({row["base_pair_id"] for row in teacher_pair_map}) == 80
+        and all(set(row) == {"base_pair_id", "OFF", "ON"} for row in teacher_pair_map)
+        and teacher_sheet_manifest["source_sha256"]["local_generation_result"]
+        == _sha(teacher_local_result_path)
+        and set(teacher_sheet_manifest["sheets"]) == {"RATER_A", "RATER_B"}
+        and all(
+            sheet["presentations"] == 96
+            for sheet in teacher_sheet_manifest["sheets"].values()
+        )
+        and teacher_sheet_manifest["primary_judgements_after_completion"] == 192
+        and teacher_sheet_manifest["blinding"]["on_off_hidden"] is True
+        and teacher_sheet_manifest["blinding"]["head_and_k_hidden"] is True
+        and teacher_design["identity_and_blinding"]["rater_A_sheet_hash"]
+        == teacher_sheet_manifest["sheets"]["RATER_A"]["sha256"]
+        and teacher_design["identity_and_blinding"]["rater_B_sheet_hash"]
+        == teacher_sheet_manifest["sheets"]["RATER_B"]["sha256"]
+        and teacher_plan["human_sheet_manifest_authority"]
+        == "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        and teacher_plan["generator_request_binding_authority"]
+        == "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json"
+        and teacher_plan["local_generation_result_authority"]
+        == "paper1_pairwise_teacher_local_generation_result_20260904_v1.json"
+        and teacher_plan["reference_generation"]["dg_first_turn_paid_calls"] == 8
+        and teacher_plan["reference_generation"]["local_generator_calls"] == 142
+        and teacher_plan["reference_generation"]["human_sheets_ready"] is True
+        and teacher_plan["reference_generation"]["human_ratings_observed"] == 0
+        and teacher_plan["candidate_teacher_paid_calls"] == 0
+        and config["authority"]["pairwise_teacher_dg_first_turn_authorization"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_dg_first_turn_result"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_generator_request_binding"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_local_generation_result"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_local_generation_result_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_human_sheet_manifest"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        and set(teacher_dg_result["locks"].values()) == {"CLOSED"}
+        and set(teacher_binding["locks"].values()) == {"CLOSED"}
+        and set(teacher_local_result["locks"].values()) == {"CLOSED"}
+        and set(teacher_sheet_manifest["locks"].values()) == {"CLOSED"}
     )
 
     authority = PROJECT / "data" / "paper1_authority"

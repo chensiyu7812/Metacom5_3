@@ -91,9 +91,10 @@ def test_teacher_reference_denominators_are_exact_before_rating():
     dg_design = design["dg_matched_scenario_design"]
     assert dg_design["scenario_clusters"] == 9
     assert dg_design["heads_per_scenario"] == ["MP", "ME", "MS"]
-    assert dg_design["new_paid_seeker_calls_pending"] == 8
+    assert dg_design["new_paid_seeker_calls_executed"] == 8
     assert dg_design["authorization_ceiling_usd"] == 0.11
-    assert dg_design["paid_calls_authorized"] is False
+    assert dg_design["paid_calls_authorized"] is True
+    assert dg_design["settled_seeker_cost_usd"] == 0.10133
     assert dg_design["analysis_must_cluster_by_scenario"] is True
     identity = design["identity_and_blinding"]
     assert identity["base_pair_identity_manifest"] == (
@@ -156,6 +157,112 @@ def test_teacher_preflight_and_gemini_identity_are_zero_outcome_and_exact():
         all(row["dg_seeker_request"]["existing_success_reused"] for row in rows)
         for rows in dg_by_target.values()
     ) == 1
+
+
+def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outcome():
+    plan = _json(AUTHORITY / "paper1_pairwise_teacher_qualification_plan_v2.json")
+    authorization = _json(
+        AUTHORITY
+        / "paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json"
+    )
+    dg_result_path = (
+        AUTHORITY / "paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json"
+    )
+    dg_result = _json(dg_result_path)
+    binding_path = (
+        AUTHORITY
+        / "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json"
+    )
+    binding = _json(binding_path)
+    local_result_path = (
+        AUTHORITY
+        / "paper1_pairwise_teacher_local_generation_result_20260904_v1.json"
+    )
+    local_result = _json(local_result_path)
+    sheet_manifest = _json(
+        AUTHORITY / "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+    )
+    design = _json(
+        AUTHORITY / "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+    )
+
+    grant = authorization["researcher_authorization"]
+    assert grant["authorized_usd"] == 0.11
+    assert grant["authorized_new_physical_calls"] == 8
+    assert grant["authorized_model"] == "gpt-4o-2024-11-20"
+    assert grant["retries_in_this_authorization"] == 0
+    assert grant["gemini_calls_authorized"] == 0
+    assert dg_result["authorization"]["sha256"] == _sha(
+        AUTHORITY
+        / "paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json"
+    )
+    assert dg_result["execution"]["new_calls_succeeded"] == 8
+    assert dg_result["execution"]["new_calls_failed"] == 0
+    assert dg_result["execution"]["finish_reason_counts"] == {"stop": 8}
+    assert dg_result["execution"]["tracked_response_text_retained"] is False
+    assert dg_result["budget"]["actual_prompt_tokens"] == 39648
+    assert dg_result["budget"]["actual_completion_tokens"] == 221
+    assert dg_result["budget"]["settled_new_call_cost_usd"] == "0.1013300"
+    assert dg_result["formal_outcome_calls"] == dg_result["evaluator_calls"] == 0
+    assert dg_result["pm_training_runs"] == 0
+
+    assert binding["source"]["dg_first_turn_result_sha256"] == _sha(dg_result_path)
+    assert binding["counts"] == {
+        "base_pairs": 80,
+        "unique_generator_requests": 142,
+        "by_task": {"DG": 36, "ESC": 54, "QA": 26, "Summary": 26},
+        "dg_scenario_clusters": 9,
+        "dg_shared_off_requests": 9,
+        "dg_head_specific_on_requests": 27,
+    }
+    assert len(binding["request_identities"]) == 142
+    assert len({row["request_id"] for row in binding["request_identities"]}) == 142
+    assert binding["embedding_identity"]["query_count"] == 9
+    assert binding["selection_read_response_quality"] is False
+
+    assert local_result["request_binding_sha256"] == _sha(binding_path)
+    health = local_result["local_health"]
+    assert health["gpu"] == "NVIDIA RTX A6000"
+    assert health["model"] == "meta/llama-3.1-8b-instruct"
+    assert local_result["execution"]["unique_requests"] == 142
+    assert local_result["execution"]["new_calls_this_run"] == 142
+    assert local_result["execution"]["terminal_empty_outputs"] == 0
+    assert local_result["execution"]["tracked_response_text_retained"] is False
+    pairs = local_result["base_pair_response_map"]
+    assert len(pairs) == len({row["base_pair_id"] for row in pairs}) == 80
+    assert all(set(row) == {"base_pair_id", "OFF", "ON"} for row in pairs)
+
+    assert sheet_manifest["source_sha256"]["local_generation_result"] == _sha(
+        local_result_path
+    )
+    assert set(sheet_manifest["sheets"]) == {"RATER_A", "RATER_B"}
+    assert all(
+        sheet["presentations"] == 96
+        for sheet in sheet_manifest["sheets"].values()
+    )
+    assert sheet_manifest["primary_judgements_after_completion"] == 192
+    assert sheet_manifest["blinding"]["on_off_hidden"] is True
+    assert sheet_manifest["blinding"]["head_and_k_hidden"] is True
+    assert design["identity_and_blinding"]["rater_A_sheet_hash"] == (
+        sheet_manifest["sheets"]["RATER_A"]["sha256"]
+    )
+    assert design["identity_and_blinding"]["rater_B_sheet_hash"] == (
+        sheet_manifest["sheets"]["RATER_B"]["sha256"]
+    )
+    assert plan["human_sheet_manifest_authority"] == (
+        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+    )
+    assert plan["reference_generation"] == {
+        "dg_first_turn_paid_calls": 8,
+        "dg_first_turn_settled_cost_usd": 0.10133,
+        "local_generator_calls": 142,
+        "local_generator_api_cost_usd": 0,
+        "human_sheets_ready": True,
+        "human_ratings_observed": 0,
+    }
+    assert plan["candidate_teacher_paid_calls"] == 0
+    for artifact in (dg_result, binding, local_result, sheet_manifest):
+        assert set(artifact["locks"].values()) == {"CLOSED"}
 
 
 def test_teacher_human_instrument_teaches_material_equivalence_and_blinding():

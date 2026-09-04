@@ -1,9 +1,10 @@
 {
   "protocol": "paper1-pairwise-teacher-human-reference-design-v1",
   "date": "2026-09-04",
-  "status": "ACTIVE_PRE_OUTCOME_BASE_PAIR_AND_PRESENTATION_IDENTITIES_FROZEN_RESPONSES_PENDING",
+  "status": "ACTIVE_PRE_OUTCOME_SHEETS_READY_RATINGS_PENDING",
   "purpose": "Remove denominator ambiguity before any human or candidate-teacher pair outcome is read.",
   "human_instrument_authority": "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
+  "human_sheet_manifest_authority": "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json",
   "measurement_units": {
     "base_semantic_pairs": 80,
     "reversed_pair_presentations": 16,
@@ -28,10 +29,11 @@
     "same_off_response_within_scenario": true,
     "probe_k_per_scenario": [1, 2, 4],
     "existing_identity_matched_seeker_turns_reused": 1,
-    "new_paid_seeker_calls_pending": 8,
+    "new_paid_seeker_calls_executed": 8,
     "maximum_physical_attempts_per_new_call": 1,
     "authorization_ceiling_usd": 0.11,
-    "paid_calls_authorized": false,
+    "paid_calls_authorized": true,
+    "settled_seeker_cost_usd": 0.10133,
     "analysis_must_cluster_by_scenario": true
   },
   "identity_and_blinding": {
@@ -41,8 +43,8 @@
     "presentation_plan_sha256": "ff2cb70572396403a268dcff893924e37f40db81a998c181f8a5152d12f7c864",
     "blind_key": "paper1_pairwise_teacher_blind_key_20260904_v1.jsonl",
     "blind_key_sha256": "33d953cc3604a76e647b30c9fe431f67909a98525a7b62b902296711b9927298",
-    "rater_A_sheet_hash": "PENDING_BEFORE_RATING",
-    "rater_B_sheet_hash": "PENDING_BEFORE_RATING",
+    "rater_A_sheet_hash": "a65d728572f8043b869c52c956f7624270b49f55cdf09391f875db20369b2aad",
+    "rater_B_sheet_hash": "2631e70bb334bd07a91d13825abb53552cbac368a97abe4ff15ad64ba33f9ef8",
     "same_base_pair_content_under_reversal": true,
     "reversal_swaps_A_and_B_only": true,
     "arms_hidden": true,
@@ -59,7 +61,8 @@
   "not_the_natural_turn_appropriateness_sample": true,
   "formal_outcome_calls": 0,
   "pm_training_runs": 0,
-  "paid_api_calls": 0,
+  "paid_api_calls_for_this_reference": 8,
+  "settled_api_cost_usd_for_this_reference": 0.10133,
   "locks": {
     "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
     "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",

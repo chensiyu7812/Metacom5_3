@@ -1,10 +1,13 @@
 {
   "protocol": "paper1-pairwise-teacher-qualification-v2",
-  "status": "ACTIVE_PLAN_PRE_OUTCOME_GEMINI_IDENTITY_FROZEN_HUMAN_OUTCOMES_PENDING",
+  "status": "ACTIVE_PRE_OUTCOME_HUMAN_SHEETS_READY_RATINGS_AND_GEMINI_OUTCOMES_PENDING",
   "date": "2026-09-04",
   "supersedes": "paper1_pairwise_teacher_qualification_plan_v1.json",
   "human_reference_design_authority": "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
   "human_instrument_authority": "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
+  "human_sheet_manifest_authority": "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json",
+  "generator_request_binding_authority": "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json",
+  "local_generation_result_authority": "paper1_pairwise_teacher_local_generation_result_20260904_v1.json",
   "human_reference": {
     "base_semantic_pairs": 80,
     "reversed_pair_presentations": 16,
@@ -50,7 +53,15 @@
   "forbidden_selection": ["number of ON labels", "PM performance", "Ours score", "confirmatory outcomes"],
   "no_absolute_pass_percentage": true,
   "weak_teacher_fallback": "use only task official primary-anchor identifiable cases; retain ties/conflicts and continuous-magnitude-unresolved cases as uncertain and contract claims",
-  "paid_calls": 0,
+  "reference_generation": {
+    "dg_first_turn_paid_calls": 8,
+    "dg_first_turn_settled_cost_usd": 0.10133,
+    "local_generator_calls": 142,
+    "local_generator_api_cost_usd": 0,
+    "human_sheets_ready": true,
+    "human_ratings_observed": 0
+  },
+  "candidate_teacher_paid_calls": 0,
   "formal_outcome_calls": 0,
   "pm_training_runs": 0
 }
