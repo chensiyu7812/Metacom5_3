@@ -7,8 +7,11 @@ import pytest
 
 from metacom_pm.io import sha256_text
 from metacom_pm.paper1.execution.dg_official import (
+    build_official_dg_supporter_system_prompt,
     build_official_dg_seeker_system_prompt,
     official_dg_seeker_messages,
+    official_dg_supporter_messages,
+    trim_to_last_complete_sentence,
 )
 
 
@@ -59,3 +62,30 @@ def test_official_seeker_messages_reject_more_than_nine_prior_turns() -> None:
             first_supporter_message="Hi",
             prior_turns=tuple(("s", "p") for _ in range(10)),
         )
+
+
+def test_official_no_memory_supporter_prompt_and_roles_match_upstream() -> None:
+    prompt = build_official_dg_supporter_system_prompt(seeker_name="Taylor")
+    assert sha256_text(prompt) == (
+        "080a2c38fdefe9a1514877c8a807e327fcf4557a10b420ef66ac4e298b0a8c67"
+    )
+    messages = official_dg_supporter_messages(
+        system_prompt=prompt,
+        first_supporter_message="Hi Taylor! How are you these days?",
+        prior_turns=(("seeker one", "supporter one"),),
+        current_seeker_message="seeker two",
+    )
+    assert [message["role"] for message in messages] == [
+        "system",
+        "assistant",
+        "user",
+        "assistant",
+        "user",
+    ]
+    assert messages[-1]["content"] == "seeker two"
+
+
+def test_official_third_non_stop_trim_is_exact_and_fail_open_to_raw_text() -> None:
+    assert trim_to_last_complete_sentence("First. Partial") == "First."
+    assert trim_to_last_complete_sentence("What? Yes! trailing") == "What? Yes!"
+    assert trim_to_last_complete_sentence("no punctuation") == "no punctuation"

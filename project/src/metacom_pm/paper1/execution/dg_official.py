@@ -16,6 +16,7 @@ DG_OFFICIAL_SEEKER_MODEL_ALIAS = "gpt-4o"
 DG_REPRODUCIBLE_SEEKER_SNAPSHOT = "gpt-4o-2024-11-20"
 DG_OFFICIAL_ROUNDS = 10
 DG_OFFICIAL_MAX_OUTPUT_TOKENS = 60
+DG_OFFICIAL_MAX_GENERATION_ATTEMPTS = 3
 
 
 def build_official_dg_seeker_system_prompt(
@@ -115,12 +116,67 @@ def official_dg_seeker_messages(
     return tuple(messages)
 
 
+def build_official_dg_supporter_system_prompt(*, seeker_name: str) -> str:
+    """Reproduce the upstream DG supporter instruction without memory text."""
+
+    if not seeker_name.strip():
+        raise ValueError("DG seeker name must be nonempty")
+    return f"""In emotional support conversations, there are typically two roles: a supporter and a seeker. You are a professional AI supporter talking to your seeker {seeker_name}.
+
+However, this isn't a real conversation; it's a test of your memory. You'll need to utilize the previous dialogues to generate responses, demonstrating that you truly remember the previous events, even if it may be less relevant to the current conversation.
+For example, when a seeker brings up a topic, you can say, "Oh, you mentioned this before, and you said..." The seeker you're talking to is also asked to elicit your memory as much as possible.
+However, if you don't have a memory, don't make it up. Faulty memories can lower your score.
+
+Additionally, your output is limited to 60 tokens, so don't try to say anything too long."""
+
+
+def official_dg_supporter_messages(
+    *,
+    system_prompt: str,
+    first_supporter_message: str,
+    prior_turns: Sequence[tuple[str, str]],
+    current_seeker_message: str,
+) -> tuple[dict[str, str], ...]:
+    """Build the no-memory supporter role sequence before its next response."""
+
+    if not system_prompt or not first_supporter_message or not current_seeker_message:
+        raise ValueError("DG supporter prompt and messages must be nonempty")
+    if len(prior_turns) >= DG_OFFICIAL_ROUNDS:
+        raise ValueError("prior_turns must precede one of the ten official supporter turns")
+    messages: list[dict[str, str]] = [
+        {"role": "system", "content": system_prompt},
+        {"role": "assistant", "content": first_supporter_message},
+    ]
+    for seeker_message, supporter_message in prior_turns:
+        if not seeker_message or not supporter_message:
+            raise ValueError("DG prior seeker/supporter messages must be nonempty")
+        messages.extend(
+            (
+                {"role": "user", "content": seeker_message},
+                {"role": "assistant", "content": supporter_message},
+            )
+        )
+    messages.append({"role": "user", "content": current_seeker_message})
+    return tuple(messages)
+
+
+def trim_to_last_complete_sentence(text: str) -> str:
+    """Apply upstream's third-non-stop complete-sentence-prefix handling."""
+
+    last = max((text.rfind(char) for char in "!.?…"), default=-1)
+    return text[: last + 1] if last >= 0 else text
+
+
 __all__ = [
     "DG_OFFICIAL_MAX_OUTPUT_TOKENS",
+    "DG_OFFICIAL_MAX_GENERATION_ATTEMPTS",
     "DG_OFFICIAL_ROUNDS",
     "DG_OFFICIAL_SEEKER_MODEL_ALIAS",
     "DG_OFFICIAL_SEEKER_PROTOCOL",
     "DG_REPRODUCIBLE_SEEKER_SNAPSHOT",
     "build_official_dg_seeker_system_prompt",
+    "build_official_dg_supporter_system_prompt",
     "official_dg_seeker_messages",
+    "official_dg_supporter_messages",
+    "trim_to_last_complete_sentence",
 ]
