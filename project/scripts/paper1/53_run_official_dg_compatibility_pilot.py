@@ -65,15 +65,17 @@ from metacom_pm.paper1.outcome_lock import (  # noqa: E402
 )
 
 
-PROTOCOL = "paper1-official-dg-execution-compatibility-pilot-v1"
+PROTOCOL = "paper1-official-dg-execution-compatibility-pilot-v2-a6000-bound"
 ES_MEMEVAL_COMMIT = "692624208acc077b8867698c1d6fcd998dee641a"
 OWNER_ID = "p7"
 TOPIC_INDEX = 1
 ARM = "No_Memory"
 LOCAL_MODEL = "meta/llama-3.1-8b-instruct"
+EXPECTED_SUPPORTER_GPU = "NVIDIA RTX A6000"
 STAGE = "token_call_latency_pilots"
 STAGE_HARD_CAP_USD = Decimal("1.00")
 BUNDLE_MAXIMUM_COST_USD = Decimal("0.305025")
+PILOT_FAMILY_HARD_CAP_USD = Decimal("0.40")
 INPUT_USD_PER_MTOK = Decimal("2.50")
 OUTPUT_USD_PER_MTOK = Decimal("10.00")
 OPENAI_BASE_URL = "https://api.openai.com/v1"
@@ -108,15 +110,21 @@ def _args() -> argparse.Namespace:
         "--private-out",
         type=Path,
         default=PROJECT
-        / "outputs/paper1_dg_compatibility_pilot_v1/private_trajectory.json",
+        / "outputs/paper1_dg_compatibility_pilot_v2/private_trajectory.json",
+    )
+    parser.add_argument(
+        "--prior-device-deviation-result",
+        type=Path,
+        default=PROJECT
+        / "data/paper1_authority/paper1_official_dg_compatibility_pilot_live_result_20260904_v1.json",
     )
     parser.add_argument("--authority-out", type=Path)
     args = parser.parse_args()
     if args.authority_out is None:
         filename = (
-            "paper1_official_dg_compatibility_pilot_live_result_20260904_v1.json"
+            "paper1_official_dg_compatibility_pilot_live_result_20260904_v2.json"
             if args.live
-            else "paper1_official_dg_compatibility_pilot_preflight_20260904_v1.json"
+            else "paper1_official_dg_compatibility_pilot_preflight_20260904_v2.json"
         )
         args.authority_out = PROJECT / "data/paper1_authority" / filename
     return args
@@ -160,6 +168,16 @@ def _manifest(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str, Any]]
     ) / Decimal("1000000")
     if calculated_maximum != BUNDLE_MAXIMUM_COST_USD:
         raise RuntimeError("DG bundle reserve no longer matches the frozen token surface")
+    prior = read_json(args.prior_device_deviation_result)
+    if (
+        prior.get("identity", {}).get("protocol")
+        != "paper1-official-dg-execution-compatibility-pilot-v1"
+        or prior.get("local_health", {}).get("gpu") != "NVIDIA RTX A4500"
+    ):
+        raise RuntimeError("prior consumed DG device-deviation result is not recognized")
+    prior_cost = Decimal(str(prior["budget"]["settled_pilot_cost_usd"]))
+    if prior_cost + BUNDLE_MAXIMUM_COST_USD > PILOT_FAMILY_HARD_CAP_USD:
+        raise RuntimeError("corrected A6000 run would exceed the authorized DG pilot cap")
 
     identity = {
         "protocol": PROTOCOL,
@@ -177,6 +195,7 @@ def _manifest(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str, Any]]
         "seeker_max_output_tokens": DG_OFFICIAL_MAX_OUTPUT_TOKENS,
         "seeker_system_prompt_sha256": sha256_text(seeker_prompt),
         "supporter_model": LOCAL_MODEL,
+        "supporter_gpu": EXPECTED_SUPPORTER_GPU,
         "supporter_model_revision": LOCAL_GENERATOR_MODEL_REVISION,
         "supporter_model_artifact_identity_sha256": (
             LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256
@@ -211,8 +230,14 @@ def _manifest(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str, Any]]
         "budget": {
             "stage": STAGE,
             "stage_hard_cap_usd": str(STAGE_HARD_CAP_USD),
-            "researcher_authorized_pilot_hard_cap_usd": "0.40",
+            "researcher_authorized_pilot_family_hard_cap_usd": str(
+                PILOT_FAMILY_HARD_CAP_USD
+            ),
+            "prior_consumed_device_deviation_cost_usd": str(prior_cost),
             "bundle_maximum_reservation_usd": str(BUNDLE_MAXIMUM_COST_USD),
+            "family_worst_case_after_reservation_usd": str(
+                prior_cost + BUNDLE_MAXIMUM_COST_USD
+            ),
             "prompt_cache_discount_counted": False,
         },
         "locks": {
@@ -245,6 +270,7 @@ def _local_health(base_url: str) -> dict[str, Any]:
         "revision": LOCAL_GENERATOR_MODEL_REVISION,
         "model_artifact_identity_sha256": LOCAL_GENERATOR_ARTIFACT_IDENTITY_SHA256,
         "chat_template_sha256": LOCAL_GENERATOR_CHAT_TEMPLATE_SHA256,
+        "gpu": EXPECTED_SUPPORTER_GPU,
     }
     if any(health.get(key) != value for key, value in expected.items()):
         raise RuntimeError("local DG supporter health identity mismatch")
