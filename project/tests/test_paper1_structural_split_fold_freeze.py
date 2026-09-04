@@ -72,20 +72,3 @@ def test_master_register_records_both_researcher_approvals_as_frozen():
     assert decisions["RQ2_outer_folds_K5_seed0"]["status"] == "FROZEN"
     assert "seed changes forbidden" in decisions["ESC_split_large_52"]["evidence"]
     assert "seed changes forbidden" in decisions["RQ2_outer_folds_K5_seed0"]["evidence"]
-
-
-def test_qualification_results_packet_preserves_all_four_locks_and_reports_stops():
-    packet = json.loads(
-        (AUTHORITY / "paper1_qualification_results_packet_20260820_v1.json").read_text(
-            encoding="utf-8"
-        )
-    )
-    assert packet["status"] == "PARTIAL_EXECUTION_STOPPED_AT_PREREGISTERED_GATES"
-    assert packet["structural_freezes"]["ESC"]["decision"] == "large_52"
-    assert packet["structural_freezes"]["RQ2"]["outer_folds"] == 5
-    assert packet["RS_resource_qualification"]["uptake"]["generator_calls"] == 0
-    assert packet["semantic_memory_v7"]["execution"]["full_401_started"] is False
-    assert packet["ESC_evaluator_qualification"]["recommendation"] is None
-    assert packet["execution_ledger"]["formal_outcome_calls"] == 0
-    assert packet["execution_ledger"]["PM_training_runs"] == 0
-    assert set(packet["locks"].values()) == {"CLOSED"}

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 STATUS = PROJECT / "data/paper1_authority/paper1_nonhuman_qualification_progress_20260823_v1.json"
 
 

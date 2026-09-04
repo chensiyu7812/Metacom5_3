@@ -66,4 +66,10 @@ Paper‑1 的处理规则是：
 4. 小到无法越过 scenario-level uncertainty 的系统差异报告为证据不足，不写成确定增益。
 5. 不做结果驱动的逐题重问、挑最好分或多数投票；若未来增加多次 judge，必须在看正式结果前另行冻结为统一协议。
 
+## 正式请求排程
+
+`paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json` 已在 formal outcome=0 时冻结排程算法：以 owner/scenario/turn/observation/judgement-kind 为 matched unit，同一 unit 的六个系统请求保持相邻，并按固定 seed 对 canonical arm order 做循环平衡；禁止按 system arm 整块评分。pilot 启动命令没有显式传 `--seed`，因此不追认其 seed identity；正式 server 必须显式传 `--seed 0`。正式运行前还必须把每个 request hash、schedule position 和最终 manifest hash 落盘；断点续跑只能恢复原 manifest 的 pending suffix，不得重新 shuffle。
+
+该安排只防止 arm 与调用顺序/batch context 系统性重合，不声称消除 sampling 或数值路径方差。正式推断仍使用 paired comparison 与 owner/scenario-clustered uncertainty，并保留 batch/restart block 作敏感性分析。
+
 权威结果：`paper1_official_mistral24b_backend_pilot_20260904_v2.json`；greedy 与 batch-context 诊断分别保存在 V1 pilot 和 batch-context diagnostic。所有付费 API 调用、formal outcome 调用和 PM training 均为 0，四个 outcome lock 保持 CLOSED。

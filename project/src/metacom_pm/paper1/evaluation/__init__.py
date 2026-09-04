@@ -32,12 +32,18 @@ from .decision_correctness import (
     DecisionCorrectnessRow,
     evaluate_decision_correctness,
 )
+from .formal_schedule import (
+    CANONICAL_DG_ARMS,
+    FORMAL_MISTRAL_SCHEDULE_PROTOCOL,
+    build_arm_balanced_schedule,
+)
 from .rq1 import RQ1InputCard, RQ1RunCell, build_rq1_run_cells, load_rq1_cards
 
 __all__ = [
     "TokenPricing",
     "ClientLatencyObservation",
     "ClientLatencySummary",
+    "CANONICAL_DG_ARMS",
     "DgEffectSurface",
     "DgObservationJudgement",
     "DecisionCorrectnessReport",
@@ -48,6 +54,8 @@ __all__ = [
     "QaEffectSurface",
     "SummaryEffectSurface",
     "InterleavedLatencyScheduleRow",
+    "FORMAL_MISTRAL_SCHEDULE_PROTOCOL",
+    "build_arm_balanced_schedule",
     "build_cost_record",
     "build_interleaved_latency_schedule",
     "build_dg_effect_surface",

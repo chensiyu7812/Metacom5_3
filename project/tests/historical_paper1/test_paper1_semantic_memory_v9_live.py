@@ -15,7 +15,7 @@ from metacom_pm.paper1.semantic_memory.runtime_v9_live import (
 )
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 RUNNER_PATH = PROJECT / "scripts/paper1/38_run_semantic_memory_v9_dev.py"
 RUNTIME_PATH = PROJECT / "src/metacom_pm/paper1/semantic_memory/runtime_v9_live.py"
 OFFLINE_GATE_PATH = PROJECT / "src/metacom_pm/paper1/semantic_memory/runtime_v9_dev.py"

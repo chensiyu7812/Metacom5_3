@@ -4,7 +4,7 @@ from pathlib import Path
 from metacom_pm.io import iter_jsonl, sha256_file
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 AUTHORITY = PROJECT / "data/paper1_authority"
 
 

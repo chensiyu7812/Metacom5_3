@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def _load(relative: str):
@@ -28,16 +28,6 @@ def test_amendment_is_scoped_and_both_outcome_locks_are_closed():
     assert threshold["scoped_override"]["fixed_point_five_new_role"].startswith(
         "mandatory_transparent_reference"
     )
-
-
-def test_new_scoped_amendment_is_registered_as_active_authority():
-    agents = (ROOT.parent / "AGENTS.md").read_text(encoding="utf-8")
-    resource_amount = agents.index(
-        "PM_PAPER1_RESOURCE_AMOUNT_AND_EVALUATOR_CALIBRATION_AMENDMENT_20260820_ZH.md"
-    )
-    semantic_memory = agents.index("PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md")
-    assert resource_amount < semantic_memory
-    assert "Top-1 remains a candidate amount" in agents
 
 
 def test_rs_surface_uses_exact_aliases_and_never_adds_a_step2_filter():

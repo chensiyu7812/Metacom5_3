@@ -36,6 +36,10 @@ from metacom_pm.paper1.execution.dg_official import (
     DG_OFFICIAL_SEEKER_MODEL_ALIAS,
     DG_REPRODUCIBLE_SEEKER_SNAPSHOT,
 )
+from metacom_pm.paper1.evaluation.formal_schedule import (
+    CANONICAL_DG_ARMS,
+    FORMAL_MISTRAL_SCHEDULE_PROTOCOL,
+)
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
 from metacom_pm.paper1.api_budget import (
@@ -195,12 +199,14 @@ def validate() -> dict[str, Any]:
         "paper1_training_evaluation_alignment_contract_v1.json",
         "paper1_pairwise_effect_oracle_contract_v1.json",
         "paper1_pairwise_teacher_qualification_plan_v2.json",
+        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
         "paper1_task_effect_coding_v2.json",
         "paper1_decision_correctness_evaluation_v1.json",
         "paper1_end_to_end_latency_policy_contract_v1.json",
         "paper1_client_latency_measurement_contract_v3.json",
         "paper1_natural_turn_appropriateness_rubric_v1.json",
         "paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json",
+        "paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json",
     )
     contracts = {
         name: _load(PROJECT / "data" / "paper1_authority" / name)
@@ -232,8 +238,42 @@ def validate() -> dict[str, Any]:
             "materiality_routing"
         ]["explicit_pairwise_equivalent"]
         == "always non-positive material effect"
+        and contracts[
+            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        ]["measurement_units"]["total_blinded_pair_presentations"]
+        == 96
+        and contracts[
+            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        ]["measurement_units"]["primary_rater_pair_judgements"]
+        == 192
+        and contracts[
+            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        ]["measurement_units"]["each_primary_rater_reviews_every_presentation"]
+        is True
         and config["authority"]["pairwise_teacher_plan"]
         == "project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v2.json"
+        and config["authority"]["pairwise_teacher_human_reference_design"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        and config["authority"]["task_effect_coding"]
+        == "project/data/paper1_authority/paper1_task_effect_coding_v2.json"
+        and contracts[
+            "paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json"
+        ]["protocol"]
+        == FORMAL_MISTRAL_SCHEDULE_PROTOCOL
+        and tuple(
+            contracts[
+                "paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json"
+            ]["schedule_algorithm"]["canonical_arms"]
+        )
+        == CANONICAL_DG_ARMS
+        and contracts[
+            "paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json"
+        ]["schedule_algorithm"]["one_arm_complete_before_next_arm"]
+        == "FORBIDDEN"
+        and config["authority"]["official_mistral24b_formal_schedule"]
+        == "project/data/paper1_authority/"
+        "paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json"
         and contracts["paper1_client_latency_measurement_contract_v3.json"]["primary"][
             "primary_cost_outcome"
         ]
@@ -251,40 +291,32 @@ def validate() -> dict[str, Any]:
         ].startswith("after arm decoding")
     )
 
-    authority = PROJECT / "data" / "v3_authority"
-    preflight = _load(authority / "rq0_llama31_8b_esc_eval_exact_preflight_v1.json")
-    score_preflight = _load(authority / "rq0_llama31_8b_esc_eval_exact_score_preflight_v1.json")
-    generation = _load(authority / "rq0_llama31_8b_esc_eval_exact_generation_closeout_v1.json")
-    qualification = _load(authority / "rq0_llama31_8b_esc_eval_exact_qualification_v1.json")
-    checks["rq0_selected_generator"] = (
-        qualification["status"] == "RQ0_COMPLETE_LLAMA31_8B_FROZEN_FOR_PM_EFFECT_GENERATION"
-        and qualification["candidate"]["model"] == "meta/llama-3.1-8b-instruct"
-        and qualification["decision"]["pm_effect_generation_authorized"] is True
+    authority = PROJECT / "data" / "paper1_authority"
+    generator_selection = _load(
+        authority / "paper1_active_generator_selection_binding_20260904_v1.json"
     )
-    checks["rq0_complete_shape"] = (
-        generation["complete_dialogues"] == 331
-        and generation["successful_turns"] == 1655
-        and qualification["scoring_integrity"]["dimension_calls"] == 2317
-    )
-    checks["rq0_contract_hash"] = _sha(authority / "rq0_llama31_8b_esc_eval_exact_contract_v1.json") == preflight["input_hashes"]["rq0_llama31_8b_esc_eval_exact_contract_v1.json"]
-    checks["rq0_runner_hash"] = _sha(PROJECT / "scripts" / "v3" / "46_run_rq0_llama31_8b_esc_eval_exact.py") == preflight["input_hashes"]["46_run_rq0_llama31_8b_esc_eval_exact.py"]
-    checks["rq0_scorer_hash"] = _sha(PROJECT / "scripts" / "v3" / "48_score_rq0_llama31_8b_esc_eval_exact.py") == score_preflight["measurement"]["scorer_sha256"]
-    checks["rq0_evidence_hashes_reconciled"] = (
-        qualification["evidence_hashes"]["generation_ledger_sha256"] == generation["evidence_hashes"]["private_turn_ledger_sha256"]
-        and qualification["evidence_hashes"]["official_result_sha256"] == score_preflight["result_sha256"]
-        and qualification["evidence_hashes"]["score_ledger_sha256"] == "d6d51b97d902c642e3b0f0f46a5d572ee12577bbac2287cf3ac60afaface7e4b"
+    checks["active_generator_selection_binding"] = (
+        config["authority"]["active_generator_selection"]
+        == "project/data/paper1_authority/"
+        "paper1_active_generator_selection_binding_20260904_v1.json"
+        and generator_selection["status"]
+        == "ACTIVE_PRE_OUTCOME_GENERATOR_SELECTION_PROVENANCE_CLOSED"
+        and generator_selection["selection"]["model"]
+        == "meta/llama-3.1-8b-instruct"
+        and generator_selection["selection"]["pm_effect_generation_authorized"]
+        is True
+        and generator_selection["selection"]["completed_dialogues"] == 331
+        and generator_selection["selection"]["successful_turns"] == 1655
+        and generator_selection["selection"]["official_dimension_calls"] == 2317
+        and generator_selection["archived_provenance"][
+            "routine_ci_reopens_archived_files"
+        ]
+        is False
+        and generator_selection["active_runtime"]["authority_sha256"]
+        == _sha(authority / "paper1_generator_backend_retirement_local_amendment_20260903_v1.json")
+        and set(generator_selection["locks"].values()) == {"CLOSED"}
     )
     checks["private_ledgers_not_committed"] = not any(PROJECT.rglob("private_*_ledger.jsonl"))
-    dependency_closure = _load(authority / "rq0_llama31_8b_integration_dependency_closure_v1.json")
-    checks["rq0_transitive_dependency_disclosure"] = all(
-        _sha(PROJECT.parent / path) == expected
-        for path, expected in dependency_closure["exactly_ported_dependencies"].items()
-    ) and (
-        _sha(PROJECT / "src/metacom_pm/api.py")
-        == dependency_closure["historical_runtime_dependency_not_bound_by_preflight"][
-            "origin_main_integration_base_sha256"
-        ]
-    )
 
     identity = _load(authority / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json")
     evo = PROJECT / "data" / "external" / "evo_emo.json"

@@ -1,11 +1,13 @@
 protocol: pm-paper1-public-only-config-v1
 status: PRE_OUTCOME_ACTIVE
 authority:
+  active_generator_selection: project/data/paper1_authority/paper1_active_generator_selection_binding_20260904_v1.json
   generator_backend: project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json
   official_dg_simulator_cost_surface: project/data/paper1_authority/paper1_official_dg_simulator_call_cost_surface_20260904_v1.json
   official_dg_execution_policy: project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json
   official_mistral24b_backend_pilot: project/data/paper1_authority/paper1_official_mistral24b_backend_pilot_20260904_v2.json
   official_mistral24b_batch_context_diagnostic: project/data/paper1_authority/paper1_official_mistral24b_batch_context_diagnostic_20260904_v1.json
+  official_mistral24b_formal_schedule: project/data/paper1_authority/paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json
   full_pipeline_latency_pilot: project/data/paper1_authority/paper1_full_pipeline_latency_pilot_20260904_v1.json
   multi_view_401_runtime_identity_audit: project/data/paper1_authority/paper1_multi_view_401_runtime_identity_audit_20260904_v1.json
   local_generator_termination_audit: project/data/paper1_authority/paper1_local_generator_termination_audit_20260904_v1.json
@@ -21,6 +23,8 @@ authority:
   latency_human_base: project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md
   pre_effect_stabilization_human: project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md
   pairwise_teacher_plan: project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v2.json
+  pairwise_teacher_human_reference_design: project/data/paper1_authority/paper1_pairwise_teacher_human_reference_design_20260904_v1.json
+  task_effect_coding: project/data/paper1_authority/paper1_task_effect_coding_v2.json
   reconciliation_human_base: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
 method: Policy Manager
 route: A_first_order_factorized
@@ -42,6 +46,8 @@ public_sources:
   es_memeval:
     role: MP/MS/ME candidate, effect and RQ2 evaluation
     artifact_name: ES-MemEval-Public-v1.0.0-1427
+    identity_authority: project/data/paper1_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json
+    row_identity_manifest: project/data/paper1_authority/es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl
     commit: 692624208acc077b8867698c1d6fcd998dee641a
     artifact_sha256: f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420
 generator:
@@ -161,10 +167,8 @@ RQ2_CONFIRMATORY_OUTCOME_LOCK:
   pm_training_allowed: false
   formal_benchmark_outcomes_allowed: false
 pending_zero_outcome_freeze:
-  - active_multi_view_extractor_runtime_and_401_artifact
   - exact_feature_schema
   - exact_fold_manifest
-  - task_specific_material_better_and_equivalence_rules
   - exact_rs_pairwise_and_es_memeval_scorer_identities
   - generator_step2_runtime_manifest
   - seed_schedule

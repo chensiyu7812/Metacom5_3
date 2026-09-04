@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 AUDIT = PROJECT / "data/paper1_authority/paper1_semantic_memory_v8_data_quality_audit_20260823_v1.json"
 ARTIFACT = PROJECT / "reports/paper1_semantic_memory_v8_dev_audit_20260823/artifact.json"
 

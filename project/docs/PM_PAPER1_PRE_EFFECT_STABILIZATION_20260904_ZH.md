@@ -36,4 +36,8 @@ Generator termination audit 只读取 EOS/EOT 配置、finish reason、output to
 
 ## 4. 稳定后执行顺序
 
-完成本修订、身份审计和 termination 初审后，不再优先扩展 latency/simulator contract。主线切回：candidate factuality QA → 96-pair dual-human teacher reference → teacher identity/qualification → amount calibration → matched focal-head ON/OFF effects → four L2 PM heads → grouped OOF Threshold V4 → sealed audit → official confirmatory evaluation。
+完成本修订、身份审计和 termination 初审后，不再优先扩展 latency/simulator contract。主线切回：candidate factuality QA → 96-presentation dual-human teacher reference → teacher identity/qualification → amount calibration → matched focal-head ON/OFF effects → four L2 PM heads → grouped OOF Threshold V4 → sealed audit → official confirmatory evaluation。
+
+这里的 teacher reference 计数固定为：80 个基础语义 pair，加 16 个仅交换 A/B 的反序 presentation，共 96 个 blinded pair presentations；两名 primary rater 各自独立完成全部 96 个 presentation，因此 primary 数据共有 192 份 rater-pair judgement。第三人或 consensus adjudication 另计，不进入这 192 的 agreement 分母。该集合与 Natural-turn Appropriateness 的 96-slot proposal 是两个不同样本。
+
+正式 DG 的本地官方 Mistral judgement 另采用预结果冻结的 arm-balanced schedule：同一 owner/scenario/turn/observation/judgement-kind 的六个系统请求相邻，并按固定 seed 做循环平衡；禁止先完整评分一个 arm 再评分另一个 arm。此设计只减少 arm 与 batch-context 的混淆，不保证单题确定，也不改变官方 temperature 省略、prompt、schema 或 metric。

@@ -23,6 +23,7 @@
 - [x] 实现 effect correctness 与 latency-constrained action correctness 的分开报告。
 - [x] 写明 ordinary-turn 判卷标准：更多共情、记忆、个性化、建议或策略语言本身不加分；无必要干预可判 equivalent/OFF-better。
 - [x] authority/config/integration validator 对齐；401-session compiler 已在研究者授权预算内运行；formal outcome、PM training 与 formal GPU outcome 调用仍为 0。
+- [x] 完成 2026-09-04 repository stabilization：AGENTS/current config 提升 Pre-Effect、Latency V2、Effect V2、Teacher V2 与 DG/Mistral schedule；旧 semantic v7-v9 和 V3 仅留 provenance，不再由 routine CI 重开。mixed historical/current tests 已拆分，当前 1427/ESC-overlap/RS-Top8 identity 继续 blocking。
 - [x] 冻结 Paper‑1 scope：四个 L2 heads 预测 task-defined material positive effect 的概率；不声称逐请求 effect magnitude、expected utility、动态 top‑k、16-action/global sequential optimum，这些留作后续 magnitude/bandit/RL 研究。
 - [x] 冻结 cost-neutral secondary：只复用已有 paired/OOF/sealed rows，按 task×head 报 Benefit Capture、harmful-open、net selected gain 与 local regret；禁止跨任务 ΔQ composite，也不为 secondary 新增 API 调用。
 - [x] 建立所有付费 LLM API 累计 USD 50 hard cap（目标 `$25–35`、`$43` 停 optional、至少 `$5` retry reserve），并将 v9 `$0.03079930` 纳入账本。
@@ -48,7 +49,7 @@
 ## Measurement work：人评与 pairwise teacher
 
 7. [ ] 完成当前研究者正在进行的人评并按 blind item identity ingest；原始 disagreement 必须保留。
-8. [ ] 生成新的 96-pair human reference（ESC 32、QA 16、Summary 16、DG 32；两名独立 rater；20% reverse duplicates），不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
+8. [ ] 生成新的 teacher human reference：80 个基础语义 pair + 16 个反序 presentation = 96 个 blinded pair presentations（ESC 32、QA 16、Summary 16、DG 32）；两名独立 primary rater 各评全部 96 个，共 192 份 primary judgement。第三人/consensus adjudication 另计；不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
 9. [ ] 在任何 pair outcome 前绑定 official-anchor 与 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、重试与费用上限；Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。96 总数已包含 reverse duplicates。
 10. [ ] 以人类 reference 的 task-wise agreement、order stability、equivalent recall、position bias、parse reliability 与 cost完整报告候选；不以“产生更多 ON”或“让 PM 分数更好”选 teacher。
 11. [ ] 若 teacher 较弱，不循环修门：缩窄可识别 label 范围，tie/conflict 保留 uncertain，并收缩相应 claim。
@@ -69,11 +70,13 @@
 21. [ ] 仅从已有 grouped OOF/sealed paired rows 计算 task×head magnitude diagnostics：Benefit Capture 必须和 ON rate、tokens、net selected gain、harmful-open/false-open harm 同报；分母无正收益时记 NA；ESC/DG 仅称 one-step/local counterfactual regret。
 22. [ ] 每阶段启动前生成 call manifest：settled + reserved + next-call worst-case ≤ `$50`；累计 `$43` 后停 optional；成功 prompt hash 禁止重复付费，transport/parser 最多重试一次，禁止结果驱动重跑。
 23. [x] 在 `$0.40` 家族上限内完成 DG retry compatibility：首次运行因 CUDA ordinal 歧义落到 A4500，10/10 轮完成、10/10 paid seeker 首试 stop、费用 `$0.08724`；A6000 零 API 重放 0/10 supporter bytes 相同，因此不伪称硬件等价。随后以 GPU 强绑定新 identity 在 A6000 完成正确轨迹，仍为 10/10 paid seeker 首试 stop，费用 `$0.0859925`。两次合计 `$0.1732325`，无 evaluator/outcome/PM training；错误轨迹只作消耗与工程诊断，不进入正式实验。
-24. [x] 已验证本地官方 Mistral‑Small‑3.1‑24B backend：固定 revision `68faf511d618ef198fef186659617cfd2eb8e33a`、未量化 BF16、A6000 + 5 GiB CPU offload、vLLM 0.10.1/cu128。官方 temperature 省略形态的 100+100 条公共历史 observation judgement 均 100% schema-valid 且正常 stop；首轮 2.091 req/s，对 102,720 calls 的稳态外推约 13.64 A6000 小时，prompt 最大 1,925 < 4,096 tokens，峰值常驻显存 48,505/49,140 MiB。重复判值一致率为 48/100，属于官方采样 judge 的实测方差，不是推进门；正式报告必须使用 scenario-level uncertainty，小差异不得写成确定增益。temperature=0 诊断另发现 continuous-batching context 可改变单条判值，而 6 条顺序双重放 6/6 稳定；因此须固定并记录正式请求顺序/并发，但不得声称 per-item deterministic。
+24. [x] 已验证本地官方 Mistral‑Small‑3.1‑24B backend：固定 revision `68faf511d618ef198fef186659617cfd2eb8e33a`、未量化 BF16、A6000 + 5 GiB CPU offload、vLLM 0.10.1/cu128。官方 temperature 省略形态的 100+100 条公共历史 observation judgement 均 100% schema-valid 且正常 stop；首轮 2.091 req/s，对 102,720 calls 的稳态外推约 13.64 A6000 小时，prompt 最大 1,925 < 4,096 tokens，峰值常驻显存 48,505/49,140 MiB。重复判值一致率为 48/100，属于官方采样 judge 的实测方差，不是推进门；正式报告必须使用 scenario-level uncertainty，小差异不得写成确定增益。temperature=0 诊断另发现 continuous-batching context 可改变单条判值，而 6 条顺序双重放 6/6 稳定。正式 schedule 算法现已冻结为 matched-unit 内六 arm 相邻、固定 seed 的循环平衡，concurrency=8；pilot 没有显式传 server seed，正式启动必须显式 `--seed 0`。实际 request manifest 与 hash 仍必须在 formal outcome unlock 前持久化，且断点续跑不得 reshuffle。
 
 ## 当前仍需冻结的真实身份与可选参数
 
 - Pairwise teacher 精确 identities：必须在读取 96-pair outcomes 前绑定。
+- Teacher 的计数单位已冻结为 96 presentations × 2 primary raters = 192 primary judgements；实际 item/sheet identities 尚待生成并 hash-bind。
+- Mistral arm-balanced schedule 算法已冻结；精确 formal request manifest/hash 在正式系统输出存在后、formal scoring 前冻结。
 - Reference-client 本地 Generator-path runner、A6000、权重、chat template 与 pilot manifest 已绑定；正式 allocator-eligible 测量仍须补齐 RS/DG、full pipeline 与 repeats。Browser surface 如进入论文，需另绑实际 browser runner，不得从 localhost trace 推断。
 - Gemini Flash‑Lite 的 exact model revision、provider endpoint、prompt/parser 与单次 worst-case reservation：必须在读取 pair outcomes 前绑定。
 - 可选的 exact task-specific p95 TTFT/completion budgets：只有在主张某个具体部署场景时才需冻结；completion 必须 `< 60,000 ms`，不得用 capability outcome 选择。

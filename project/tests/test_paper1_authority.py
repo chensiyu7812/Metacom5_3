@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_reconciliation_is_highest_precedence_and_removes_old_gates():
+def test_reconciliation_base_removes_old_gates_and_is_scoped_by_later_authority():
     contract = json.loads(
         (ROOT / "data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json").read_text()
     )
@@ -41,14 +41,25 @@ def test_reconciliation_is_highest_precedence_and_removes_old_gates():
     assert threshold["current_activity"]["formal_outcome_calls"] == 0
 
 
-def test_agents_reads_reconciliation_first():
+def test_agents_reads_current_stabilization_before_preserved_base_authority():
     agents = (ROOT.parent / "AGENTS.md").read_text()
+    stabilization = agents.index("PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md")
+    latency_v2 = agents.index(
+        "paper1_latency_constrained_selective_policy_amendment_20260904_v2.json"
+    )
+    effect_v2 = agents.index("paper1_task_effect_coding_v2.json")
+    teacher_v2 = agents.index("paper1_pairwise_teacher_qualification_plan_v2.json")
+    teacher_design = agents.index(
+        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+    )
     reconciliation = agents.index("PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md")
     old_program = agents.index("PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md")
+    assert stabilization < latency_v2 < effect_v2 < teacher_v2 < teacher_design
+    assert teacher_design < reconciliation
     assert reconciliation < old_program
     assert "Semantic adoption is diagnostic only" in agents
-    threshold = agents.index("PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md")
-    assert threshold < reconciliation
+    assert "semantic-memory v7/v8/v9 code are historical DEV provenance" in agents
+    assert "data/v3_authority`" in agents
 
 
 def test_ci_blocks_on_current_paper1_and_omits_historical_suites():
@@ -70,9 +81,19 @@ def test_ci_blocks_on_current_paper1_and_omits_historical_suites():
         "test_paper1_semantic_memory_v9_dev_artifact.py",
         "test_paper1_semantic_memory_v9_dev_package.py",
         "test_paper1_semantic_memory_v9_live.py",
+        "test_paper1_nonhuman_qualification_progress.py",
+        "test_paper1_resource_amount_calibration_amendment.py",
+        "test_paper1_rq0_anchored_parser_v3.py",
     )
     for test_name in historical_tests:
-        assert f"--ignore=tests/{test_name}" in workflow
+        assert (ROOT / "tests/historical_paper1" / test_name).is_file()
+        assert f"tests/{test_name}" not in workflow
+
+    current_integrity = ROOT / "tests/test_paper1_current_artifact_integrity.py"
+    assert current_integrity.is_file()
+    validator = (ROOT / "scripts/paper1/00_validate_integration_base.py").read_text()
+    assert "v3_authority" not in validator
+    assert '"scripts" / "v3"' not in validator
 
 
 def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():

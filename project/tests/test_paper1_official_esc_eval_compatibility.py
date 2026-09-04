@@ -58,9 +58,9 @@ def test_patch_manifest_binds_exact_official_parser_and_auxiliary_dependencies()
     }
 
 
-def test_root_authority_lists_official_compatibility_amendment_first():
+def test_root_authority_lists_official_compatibility_before_base_authority():
     agents = (REPO / "AGENTS.md").read_text(encoding="utf-8")
     official = agents.index("PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md")
     threshold = agents.index("PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md")
-    consolidation = agents.index("PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md")
-    assert official < threshold < consolidation
+    reconciliation = agents.index("PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md")
+    assert official < threshold < reconciliation

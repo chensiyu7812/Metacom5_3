@@ -8,7 +8,7 @@ from metacom_pm.paper1.semantic_memory.evidence_v8 import (
 )
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 MATRIX = (
     PROJECT
     / "data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl"
@@ -56,4 +56,3 @@ def test_v8_dev_summary_binds_matrix_and_stops_before_401():
     assert summary["heldout_ids_frozen"] is False
     assert summary["outcome_calls"] == 0
     assert set(summary["locks"].values()) == {"CLOSED"}
-

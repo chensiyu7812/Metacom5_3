@@ -4,7 +4,7 @@ import importlib.util
 from pathlib import Path
 
 
-PROJECT = Path(__file__).resolve().parents[1]
+PROJECT = Path(__file__).resolve().parents[2]
 SCRIPT = PROJECT / "scripts/paper1/37_build_semantic_memory_v9_dev_package.py"
 
 

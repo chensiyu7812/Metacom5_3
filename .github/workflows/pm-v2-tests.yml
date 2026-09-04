@@ -43,17 +43,6 @@ jobs:
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
       - name: Run blocking public-only Paper-1 suite
-        run: >-
-          pytest -q -m "not gpu" tests/test_paper1_*.py
-          --ignore=tests/test_paper1_evidence.py
-          --ignore=tests/test_paper1_prequalification_consolidation.py
-          --ignore=tests/test_paper1_semantic_memory_runtime_v7.py
-          --ignore=tests/test_paper1_semantic_memory_runtime_v8_dev.py
-          --ignore=tests/test_paper1_semantic_memory_runtime_v9_dev.py
-          --ignore=tests/test_paper1_semantic_memory_v8_data_quality_audit.py
-          --ignore=tests/test_paper1_semantic_memory_v8_dev_artifact.py
-          --ignore=tests/test_paper1_semantic_memory_v9_dev_artifact.py
-          --ignore=tests/test_paper1_semantic_memory_v9_dev_package.py
-          --ignore=tests/test_paper1_semantic_memory_v9_live.py
+        run: pytest -q -m "not gpu" tests/test_paper1_*.py
       - name: Validate Paper-1 integration base and outcome lock
         run: python scripts/paper1/00_validate_integration_base.py

@@ -1,9 +1,11 @@
+"""Historical V3 evidence-provenance tests; excluded from routine Paper-1 CI."""
+
 import hashlib
 import json
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 AUTHORITY = ROOT / "data/v3_authority"
 
 
@@ -42,26 +44,3 @@ def test_historical_transitive_dependency_gap_is_disclosed_not_hidden():
     )
     for relative, expected in closure["exactly_ported_dependencies"].items():
         assert sha(ROOT.parent / relative) == expected
-
-
-def test_public_1427_identity_is_named_without_paper_replication_claim():
-    identity = json.loads((AUTHORITY / "es_memeval_public_v1_0_0_1427_identity_decision_v1.json").read_text())
-    manifest = AUTHORITY / "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl"
-    rows = [json.loads(line) for line in manifest.read_text().splitlines()]
-    assert identity["primary_task_name"] == "ES-MemEval-Public-v1.0.0-1427"
-    assert identity["formal_paper_boundary"]["paper_qa"] == 1209
-    assert identity["formal_paper_boundary"]["public_qa"] == 1427
-    assert len(rows) == 1427
-    assert sha(manifest) == identity["identity_manifest"]["sha256"]
-    assert sha(ROOT / "data/external/evo_emo.json") == identity["source"]["sha256"]
-
-
-def test_esc_overlap_slices_are_frozen_outcome_blind():
-    summary = json.loads((ROOT / "data/paper1_authority/esc_eval_english331_source_overlap_summary_v1.json").read_text())
-    manifest = ROOT / "data/paper1_authority/esc_eval_english331_source_overlap_v1.jsonl"
-    rows = [json.loads(line) for line in manifest.read_text().splitlines()]
-    assert len(rows) == 331
-    assert summary["primary_non_esconv_transfer_cards"] == 173
-    assert summary["esconv_source_overlap_cards"] == 158
-    assert summary["contains_outcomes"] is False
-    assert sha(manifest) == summary["manifest_sha256"]
