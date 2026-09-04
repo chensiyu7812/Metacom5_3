@@ -69,7 +69,7 @@
 21. [ ] 仅从已有 grouped OOF/sealed paired rows 计算 task×head magnitude diagnostics：Benefit Capture 必须和 ON rate、tokens、net selected gain、harmful-open/false-open harm 同报；分母无正收益时记 NA；ESC/DG 仅称 one-step/local counterfactual regret。
 22. [ ] 每阶段启动前生成 call manifest：settled + reserved + next-call worst-case ≤ `$50`；累计 `$43` 后停 optional；成功 prompt hash 禁止重复付费，transport/parser 最多重试一次，禁止结果驱动重跑。
 23. [x] 在 `$0.40` 家族上限内完成 DG retry compatibility：首次运行因 CUDA ordinal 歧义落到 A4500，10/10 轮完成、10/10 paid seeker 首试 stop、费用 `$0.08724`；A6000 零 API 重放 0/10 supporter bytes 相同，因此不伪称硬件等价。随后以 GPU 强绑定新 identity 在 A6000 完成正确轨迹，仍为 10/10 paid seeker 首试 stop，费用 `$0.0859925`。两次合计 `$0.1732325`，无 evaluator/outcome/PM training；错误轨迹只作消耗与工程诊断，不进入正式实验。
-24. [ ] 在正式 DG 前验证本地官方 Mistral‑Small‑3.1‑24B backend，并对 100–500 条 observation judgement 做 batch throughput/determinism/VRAM pilot，估算 102,720 calls 的 GPU-hours；量化或其他非官方权重变更不得静默发生。
+24. [x] 已验证本地官方 Mistral‑Small‑3.1‑24B backend：固定 revision `68faf511d618ef198fef186659617cfd2eb8e33a`、未量化 BF16、A6000 + 5 GiB CPU offload、vLLM 0.10.1/cu128。官方 temperature 省略形态的 100+100 条公共历史 observation judgement 均 100% schema-valid 且正常 stop；首轮 2.091 req/s，对 102,720 calls 的稳态外推约 13.64 A6000 小时，prompt 最大 1,925 < 4,096 tokens，峰值常驻显存 48,505/49,140 MiB。重复判值一致率为 48/100，属于官方采样 judge 的实测方差，不是推进门；正式报告必须使用 scenario-level uncertainty，小差异不得写成确定增益。temperature=0 诊断另发现 continuous-batching context 可改变单条判值，而 6 条顺序双重放 6/6 稳定；因此须固定并记录正式请求顺序/并发，但不得声称 per-item deterministic。
 
 ## 当前仍需冻结的真实身份与可选参数
 

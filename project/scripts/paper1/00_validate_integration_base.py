@@ -61,6 +61,13 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _canonical_sha(value: Any) -> str:
+    rendered = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
+    return hashlib.sha256(rendered.encode("utf-8")).hexdigest()
+
+
 def validate() -> dict[str, Any]:
     checks: dict[str, bool] = {}
     config_path = PROJECT / "configs" / "paper1_public_only.yaml"
@@ -704,6 +711,89 @@ def validate() -> dict[str, Any]:
         ["paid_non_stop_extra_attempts"]
         == 0
         and set(dg_execution_policy["locks"].values()) == {"CLOSED"}
+    )
+    mistral_pilot_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_official_mistral24b_backend_pilot_20260904_v2.json"
+    )
+    mistral_greedy_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_official_mistral24b_backend_pilot_20260904_v1.json"
+    )
+    mistral_batch_diagnostic_path = (
+        PROJECT
+        / "data/paper1_authority/"
+        / "paper1_official_mistral24b_batch_context_diagnostic_20260904_v1.json"
+    )
+    mistral_pilot = _load(mistral_pilot_path)
+    mistral_batch_diagnostic = _load(mistral_batch_diagnostic_path)
+    checks["official_mistral24b_local_backend_evidence"] = (
+        config["authority"]["official_mistral24b_backend_pilot"]
+        == "project/data/paper1_authority/"
+        "paper1_official_mistral24b_backend_pilot_20260904_v2.json"
+        and config["authority"]["official_mistral24b_batch_context_diagnostic"]
+        == "project/data/paper1_authority/"
+        "paper1_official_mistral24b_batch_context_diagnostic_20260904_v1.json"
+        and mistral_pilot["status"]
+        == "OFFICIAL_BACKEND_COMPATIBILITY_OBSERVED"
+        and mistral_pilot["execution_identity_sha256"]
+        == _canonical_sha(mistral_pilot["identity"])
+        and mistral_pilot["identity"]["model_artifact"]["revision"]
+        == "68faf511d618ef198fef186659617cfd2eb8e33a"
+        and mistral_pilot["identity"]["model_artifact"]["total_weight_bytes"]
+        == 48022800560
+        and mistral_pilot["identity"]["server"]["vllm"] == "0.10.1"
+        and mistral_pilot["identity"]["server"]["torch"] == "2.7.1+cu128"
+        and mistral_pilot["identity"]["server"]["transformers"] == "4.55.4"
+        and mistral_pilot["identity"]["server"]["cpu_offload_gb"] == 5
+        and mistral_pilot["identity"]["server"]["max_model_len"] == 4096
+        and mistral_pilot["identity"]["server"]["max_num_seqs"] == 16
+        and mistral_pilot["identity"]["server"]["structured_backend"]
+        == "xgrammar"
+        and mistral_pilot["identity"]["server"][
+            "disable_any_json_whitespace"
+        ]
+        is True
+        and mistral_pilot["identity"]["temperature"]
+        == "official_provider_default_omitted"
+        and mistral_pilot["identity"]["projected_formal_call_surface"]
+        == 102720
+        and mistral_pilot["sample"]["selected_unique_requests"] == 100
+        and mistral_pilot["sample"]["score_requests"] == 50
+        and mistral_pilot["sample"]["usage_requests"] == 50
+        and mistral_pilot["compatibility"]["schema_valid"] == 100
+        and mistral_pilot["compatibility"]["repeat_schema_valid"] == 100
+        and mistral_pilot["compatibility"]["byte_identical_repeats"] == 48
+        and mistral_pilot["compatibility"][
+            "repeat_agreement_is_reported_not_used_as_a_gate"
+        ]
+        is True
+        and mistral_pilot["performance"]["prompt_tokens"]["max"] == 1925.0
+        and mistral_pilot["performance"]["first_pass_requests_per_second"] > 0
+        and mistral_pilot["prior_greedy_diagnostic"]["sha256"]
+        == _sha(mistral_greedy_path)
+        and mistral_batch_diagnostic["status"]
+        == "BATCH_CONTEXT_SENSITIVITY_MEASURED"
+        and mistral_batch_diagnostic["parent_greedy_pilot"]["sha256"]
+        == _sha(mistral_greedy_path)
+        and mistral_batch_diagnostic["fixed_100_request_replay"][
+            "schema_valid"
+        ]
+        == 100
+        and mistral_batch_diagnostic["sequential_replay_of_six_changed_cases"][
+            "byte_identical_between_sequential_runs"
+        ]
+        == 6
+        and mistral_batch_diagnostic["methodological_interpretation"][
+            "repeat_agreement_is_descriptive_not_a_progress_gate"
+        ]
+        is True
+        and mistral_pilot["identity"]["paid_api_calls"] == 0
+        and mistral_pilot["identity"]["formal_outcome_calls"] == 0
+        and mistral_pilot["identity"]["pm_training_runs"] == 0
+        and set(mistral_pilot["locks"].values()) == {"CLOSED"}
     )
     full_pipeline = _load(
         PROJECT
