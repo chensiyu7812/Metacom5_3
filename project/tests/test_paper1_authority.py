@@ -51,15 +51,28 @@ def test_agents_reads_reconciliation_first():
     assert threshold < reconciliation
 
 
-def test_ci_blocks_on_paper1_and_demotes_legacy_v53_to_diagnostic():
+def test_ci_blocks_on_current_paper1_and_omits_historical_suites():
     workflow = (ROOT.parent / ".github/workflows/pm-v2-tests.yml").read_text()
-    paper1 = workflow.index("Run blocking public-only Paper-1 suite")
-    legacy = workflow.index("Run legacy V5.3 clean-release suite (diagnostic only)")
-    assert paper1 < legacy
-    paper1_block = workflow[paper1:legacy]
-    assert 'pytest -q -m "not gpu" tests/test_paper1_*.py' in paper1_block
-    legacy_block = workflow[legacy : legacy + 180]
-    assert "continue-on-error: true" in legacy_block
+    assert "Run blocking public-only Paper-1 suite" in workflow
+    assert 'pytest -q -m "not gpu" tests/test_paper1_*.py' in workflow
+    assert "Run legacy V5.3" not in workflow
+    assert "Run complete historical suite" not in workflow
+    assert '"pm-v1.5-*"' not in workflow
+
+    historical_tests = (
+        "test_paper1_evidence.py",
+        "test_paper1_prequalification_consolidation.py",
+        "test_paper1_semantic_memory_runtime_v7.py",
+        "test_paper1_semantic_memory_runtime_v8_dev.py",
+        "test_paper1_semantic_memory_runtime_v9_dev.py",
+        "test_paper1_semantic_memory_v8_data_quality_audit.py",
+        "test_paper1_semantic_memory_v8_dev_artifact.py",
+        "test_paper1_semantic_memory_v9_dev_artifact.py",
+        "test_paper1_semantic_memory_v9_dev_package.py",
+        "test_paper1_semantic_memory_v9_live.py",
+    )
+    for test_name in historical_tests:
+        assert f"--ignore=tests/{test_name}" in workflow
 
 
 def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():
@@ -67,7 +80,7 @@ def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():
     pytest_commands = [
         line.strip()
         for line in workflow.splitlines()
-        if line.strip().startswith("run: pytest")
+        if line.strip().startswith(("run: pytest", "pytest "))
     ]
     assert pytest_commands
     assert all('-m "not gpu"' in command for command in pytest_commands)

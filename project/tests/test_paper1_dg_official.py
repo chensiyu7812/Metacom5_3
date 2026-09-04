@@ -20,9 +20,7 @@ PROJECT = Path(__file__).resolve().parents[1]
 
 def _first_scenario():
     users = json.loads(
-        (PROJECT / "outputs/vendor_es_memeval/data/evo_emo.json").read_text(
-            encoding="utf-8"
-        )
+        (PROJECT / "data/external/evo_emo.json").read_text(encoding="utf-8")
     )
     return users[0], users[0]["subsequent_topics"][0]
 
