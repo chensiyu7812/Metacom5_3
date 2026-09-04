@@ -679,6 +679,32 @@ def validate() -> dict[str, Any]:
         and dg_audit["pm_training_runs"] == 0
         and set(dg_audit["locks"].values()) == {"CLOSED"}
     )
+    dg_execution_policy = _load(
+        PROJECT
+        / "data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json"
+    )
+    checks["official_dg_cost_bounded_execution_policy"] = (
+        config["authority"]["official_dg_execution_policy"]
+        == "project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json"
+        and dg_execution_policy["status"]
+        == "ACTIVE_PRE_OUTCOME_COST_BOUNDED_DG_EXECUTION_POLICY"
+        and dg_execution_policy["active_execution_policy"]
+        ["seeker_physical_attempts_per_logical_turn"]
+        == 1
+        and dg_execution_policy["active_execution_policy"]
+        ["supporter_physical_attempts_per_logical_turn"]
+        == 1
+        and dg_execution_policy["active_execution_policy"]
+        ["unqualified_bit_exact_official_execution_claim"]
+        is False
+        and dg_execution_policy["compatibility_evidence"]["combined_pilot_family"]
+        ["paid_seeker_calls"]
+        == 20
+        and dg_execution_policy["compatibility_evidence"]["combined_pilot_family"]
+        ["paid_non_stop_extra_attempts"]
+        == 0
+        and set(dg_execution_policy["locks"].values()) == {"CLOSED"}
+    )
     full_pipeline = _load(
         PROJECT
         / "data/paper1_authority/"

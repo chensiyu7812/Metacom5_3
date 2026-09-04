@@ -1,0 +1,572 @@
+{
+  "identity": {
+    "protocol": "paper1-official-dg-execution-compatibility-pilot-v2-a6000-bound",
+    "upstream_repo": "slptongji/ES-MemEval",
+    "upstream_commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "upstream_dg_source_sha256": "aad049c2408042947a63ff75c6aebbb43c489340ad5809347ecac102e60c61bc",
+    "raw_data_sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "owner_id": "p7",
+    "topic_index": 1,
+    "arm": "No_Memory",
+    "seeker_provider": "OpenAI",
+    "seeker_model": "gpt-4o-2024-11-20",
+    "seeker_temperature": "provider_default_omitted",
+    "seeker_max_output_parameter": "max_completion_tokens",
+    "seeker_max_output_tokens": 60,
+    "seeker_system_prompt_sha256": "8e8eeecd0ad4d65eb3f5344eb47550664e978e8b1183494548333625567a6200",
+    "supporter_model": "meta/llama-3.1-8b-instruct",
+    "supporter_gpu": "NVIDIA RTX A6000",
+    "supporter_model_revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "supporter_model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+    "supporter_chat_template_sha256": "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2",
+    "supporter_server_protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1",
+    "supporter_temperature": 0,
+    "supporter_system_prompt_sha256": "2767344014957130c39408b668e530dc43bef9bd7fa4b4cda9af3b13277bf952",
+    "opening_message_sha256": "3faa3747949d9aca73e3d678155deac33404ce3d8747e6d7f57b491ee72a652c",
+    "rounds": 10,
+    "max_generation_attempts_after_non_stop": 3,
+    "third_non_stop_handling": "upstream_exact_last_complete_sentence_prefix",
+    "formal_outcome_calls": 0,
+    "evaluator_calls": 0,
+    "pm_training_runs": 0
+  },
+  "execution_identity_sha256": "cc9ceead3880ed097f544cf6433072eb2251c74a9d363a0127fe6ccc2ac58035",
+  "purpose": "zero-outcome execution compatibility and retry-frequency pilot; not a model-quality or benchmark evaluation",
+  "response_quality_inspected_or_scored": false,
+  "supporter_hidden_scenario_fields_visible": false,
+  "supporter_memory_resources_visible": false,
+  "tracked_response_text_retained": false,
+  "private_sequential_text_retained_under_ignored_outputs": true,
+  "pricing_snapshot": {
+    "source": "https://developers.openai.com/api/docs/models/gpt-4o",
+    "checked_date": "2026-09-04",
+    "input_usd_per_million_tokens": 2.5,
+    "cached_input_usd_per_million_tokens": 1.25,
+    "output_usd_per_million_tokens": 10.0,
+    "prompt_cache_discount_counted_in_hard_reserve": false
+  },
+  "budget": {
+    "stage": "token_call_latency_pilots",
+    "stage_hard_cap_usd": "1.00",
+    "researcher_authorized_pilot_family_hard_cap_usd": "0.40",
+    "prior_consumed_device_deviation_cost_usd": "0.08724",
+    "bundle_maximum_reservation_usd": "0.305025",
+    "family_worst_case_after_reservation_usd": "0.392265",
+    "prompt_cache_discount_counted": false,
+    "settled_pilot_cost_usd": "0.0859925",
+    "settlement_is_reserved_maximum": false,
+    "accounted_stage_cost_usd": "0.1832325",
+    "accounted_paper1_total_usd": "1.34045151",
+    "paper1_remaining_usd": "48.65954849"
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "created_at": "2026-09-04T02:56:30.415929+00:00",
+  "mode": "LIVE",
+  "status": "PASS",
+  "completed_at": "2026-09-04T02:57:04.201088+00:00",
+  "local_health": {
+    "protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1",
+    "model": "meta/llama-3.1-8b-instruct",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+    "chat_template_sha256": "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2",
+    "gpu": "NVIDIA RTX A6000",
+    "dtype": "bfloat16"
+  },
+  "trajectory": {
+    "completed_rounds": 10,
+    "physical_calls_by_role": {
+      "seeker": 10,
+      "supporter": 14
+    },
+    "finish_reason_counts": {
+      "seeker:stop": 10,
+      "supporter:length": 6,
+      "supporter:stop": 8
+    },
+    "seeker_non_stop_extra_attempts": 0,
+    "seeker_input_tokens": 33057,
+    "seeker_output_tokens": 335,
+    "turn_response_pair_sha256": [
+      "f43e580f53c9d297c64a9388cff9251ee0b9aa6d6cd17f064b2e9fc281c17815",
+      "6e4ef202efbaad0b0b824b445d3b07dba22ac45490e82119d683631f3d9221dd",
+      "486eb84f10c2460b98d45502b6597ecfef591973acdfd8525feb6ea2530dc2b9",
+      "acf31353a1a3bf5f850f9a4487d1060967d391cc3bbed112681d2be87b3f7a23",
+      "ab7631df3638fcd9dcdb7496ed4ee8b5e500c1c2c7a667332779086acc1ff809",
+      "e3afc780717dc8225e472d2b19aceaa4f3e0de1896fc0f436471c0848575ef5e",
+      "6c0402f3bc73fe25a951b39323bd04f9a7465f5dd3e91966a38b6beadae4e848",
+      "7bd11ed6e329959b83a83372abe3052488bee8f1eb2332c94f0faf1097616629",
+      "7472decd768af76080f26dcb92ca16f1be70e56520f8a69ea0e62b73a34cc5b0",
+      "a88c901623bb7533c95cb5fba783c8ac217c2d6032fa4c9e3bd0c981fe86bcc2"
+    ],
+    "attempts": [
+      {
+        "turn": 1,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "2bcd4e82fa7f2dd5a92542a4b4708d2a34ba1f2d29558adcdbdea17f05f0ad5d",
+        "response_sha256": "98a7f5cd1ff217f4d5de6a861b3c7a6fa18dc884e74454d1347834624ec55ca6",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 2914,
+          "completion_tokens": 29,
+          "total_tokens": 2943
+        },
+        "latency_ms": 1102.3629900009837,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 1,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "d6fee1f1a5683924dbcc46f0cd34fbc1a904af1fd0c0951e5345b2a923ab7be8",
+        "response_sha256": "bbb3c4f579f498877c48307879ba58546d90c8ba8b1e61b3695f255755414973",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 229,
+          "completion_tokens": 41,
+          "total_tokens": 270
+        },
+        "latency_ms": 1328.620464,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 2,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "1a6e1a8a3fcc5c2b347bc9e68e6526d05416668ca0ff84acf102f78478627bad",
+        "response_sha256": "9061f8265b59d9e5136e55a7fb916cdc439bc987c68b5ddd67fe231cc9707027",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 2989,
+          "completion_tokens": 32,
+          "total_tokens": 3021
+        },
+        "latency_ms": 1173.797438008478,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 2,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "0da8745c2ed70e5c016199eedad0670f5fa1ad878673fc21567ad49a232b799a",
+        "response_sha256": "f08f37066b519c1723c648ca601b7b4ebff77eedc05859c3f977003ddbac7d4c",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 312,
+          "completion_tokens": 60,
+          "total_tokens": 372
+        },
+        "latency_ms": 1758.928353,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 2,
+        "role": "supporter",
+        "attempt": 2,
+        "request_sha256": "0da8745c2ed70e5c016199eedad0670f5fa1ad878673fc21567ad49a232b799a",
+        "response_sha256": "f08f37066b519c1723c648ca601b7b4ebff77eedc05859c3f977003ddbac7d4c",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 312,
+          "completion_tokens": 60,
+          "total_tokens": 372
+        },
+        "latency_ms": 1765.644833,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 2,
+        "role": "supporter",
+        "attempt": 3,
+        "request_sha256": "0da8745c2ed70e5c016199eedad0670f5fa1ad878673fc21567ad49a232b799a",
+        "response_sha256": "f08f37066b519c1723c648ca601b7b4ebff77eedc05859c3f977003ddbac7d4c",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 312,
+          "completion_tokens": 60,
+          "total_tokens": 372
+        },
+        "latency_ms": 1747.001973,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false,
+        "third_non_stop_prefix_trim_applied": true,
+        "trimmed_response_sha256": "504527cfa06b715e8e062975b07db5fc0c7d6fde3ae62a9728b30c7c9e4d7212"
+      },
+      {
+        "turn": 3,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "4bc18df3b52475fd19698fa18181028ee6dc6384ea30d9d8dd74cf082df4345f",
+        "response_sha256": "c75f0ebdf38807e3990e4992124d3beeae77eae05c317cfe3fc38e5d69ab61f7",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3075,
+          "completion_tokens": 38,
+          "total_tokens": 3113
+        },
+        "latency_ms": 1200.6347200076561,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 3,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "4491c54978fcc2f780178364209060a343fbda4909ff6a00eb09bfd7ae2cf19f",
+        "response_sha256": "ad90da07b1eb76e645e95803c70669bb3ec1a3f7bc3777ddeece2c62c6a6ffcd",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 406,
+          "completion_tokens": 48,
+          "total_tokens": 454
+        },
+        "latency_ms": 1438.087286,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 4,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "b9704202d97c3854ab99e858e30efa54a0d0447c197598f72adcfbace3cb1443",
+        "response_sha256": "caad475f184345a4daea5a7e5864bb568e732158eb2dc4659aee141cb200da83",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3164,
+          "completion_tokens": 48,
+          "total_tokens": 3212
+        },
+        "latency_ms": 864.2320540093351,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 4,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "c320e8b21bd3a7bdea4a82d6f46bb5e9159c2753693709f573a29dfb85acae6b",
+        "response_sha256": "8769575ba0bcef9c7ed9888f0b928df976b0b7307d824329517422950616f62b",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 510,
+          "completion_tokens": 52,
+          "total_tokens": 562
+        },
+        "latency_ms": 1571.612678,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 5,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "bb6544822d162e30971128990abaf06299237e015dfb6cd1041bf413b9697d3b",
+        "response_sha256": "83dfec5e1993d7eea8ccbfdb47fa154b4881685169f054658d9dfed3ad0ef077",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3268,
+          "completion_tokens": 36,
+          "total_tokens": 3304
+        },
+        "latency_ms": 1079.3256869947072,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 5,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "d742337d0b0f9ccb31a7a9f3d2ef3dec2ef862b4cada184f7a314213a5d826f9",
+        "response_sha256": "f16ccec1896aae96b8d00870c07d6d559008cd393233305134fda499d34d2aa9",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 607,
+          "completion_tokens": 48,
+          "total_tokens": 655
+        },
+        "latency_ms": 1483.946528,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 6,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "3a2ead6f4a49a198c339226b86fa194118975b1d5da9520f1ddcb24ba6be7c7e",
+        "response_sha256": "9a5495a4588023c953dcb1e9a2f862ec770be4d289daeed6ec9c581ae71e79fe",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3356,
+          "completion_tokens": 31,
+          "total_tokens": 3387
+        },
+        "latency_ms": 2242.9552669927943,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 6,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "595f199c22da9fed480a20fcd47ef381f4c6e93ef83ecceb50fff4e1b093a729",
+        "response_sha256": "cbf23eb8581db8289a9c56a0e0ad6e33e13106d6775781e5cd0e8927a1b4ea4d",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 695,
+          "completion_tokens": 47,
+          "total_tokens": 742
+        },
+        "latency_ms": 1481.574161,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 7,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "3a9e74c233f97dcd35e3641369ab4a738a9e600afc19f026753ecb4e65413fd3",
+        "response_sha256": "da967e912f125312cb6da6a0052c815c9bb5901057cac08bfba85eecd5767bf8",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3439,
+          "completion_tokens": 36,
+          "total_tokens": 3475
+        },
+        "latency_ms": 953.5696959937923,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 7,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "f9b9cc7f2a2a38f78772a08e491739a207016f175a8b1f8e873d50e97ebb107c",
+        "response_sha256": "8d3235c6906684cba2cbe9c199f09157d027d0b74e87a46e7cce555e8199764b",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 787,
+          "completion_tokens": 60,
+          "total_tokens": 847
+        },
+        "latency_ms": 1895.877944,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 7,
+        "role": "supporter",
+        "attempt": 2,
+        "request_sha256": "f9b9cc7f2a2a38f78772a08e491739a207016f175a8b1f8e873d50e97ebb107c",
+        "response_sha256": "8d3235c6906684cba2cbe9c199f09157d027d0b74e87a46e7cce555e8199764b",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 787,
+          "completion_tokens": 60,
+          "total_tokens": 847
+        },
+        "latency_ms": 1848.301117,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 7,
+        "role": "supporter",
+        "attempt": 3,
+        "request_sha256": "f9b9cc7f2a2a38f78772a08e491739a207016f175a8b1f8e873d50e97ebb107c",
+        "response_sha256": "8d3235c6906684cba2cbe9c199f09157d027d0b74e87a46e7cce555e8199764b",
+        "finish_reason": "length",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 787,
+          "completion_tokens": 60,
+          "total_tokens": 847
+        },
+        "latency_ms": 1885.234638,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false,
+        "third_non_stop_prefix_trim_applied": true,
+        "trimmed_response_sha256": "8d3235c6906684cba2cbe9c199f09157d027d0b74e87a46e7cce555e8199764b"
+      },
+      {
+        "turn": 8,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "026701865e09d8d542ad04a26848a05f004436ac86a7da4b9b8d1f5d373da1b0",
+        "response_sha256": "2fdc2cfd62d1ce98aa0a987413958fc4ac4658d58e7016aa72e4dd8a4478bfe7",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3541,
+          "completion_tokens": 29,
+          "total_tokens": 3570
+        },
+        "latency_ms": 987.8984300012235,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 8,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "82b14dc505d5c16a1fd8d8a55dfc19f62bc5cc4fb912983d47a24f61d6fbf2e4",
+        "response_sha256": "a1245a34724d0bf0f12f2769ad32e64f1749bf1f8ae905fdf3513429cef4cca1",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 885,
+          "completion_tokens": 42,
+          "total_tokens": 927
+        },
+        "latency_ms": 1350.11089,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 9,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "b04b4c0574b28d288ffe8d698283660c7503d705ed49c04ebe0dd2b59ebbf321",
+        "response_sha256": "82a3c45332cecee4c8c7c78fb12ae789c2888b0de85ce5163fa9b11c0b7ce825",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3616,
+          "completion_tokens": 28,
+          "total_tokens": 3644
+        },
+        "latency_ms": 708.844937995309,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 9,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "5c183ff16608161ecfee5e3ef2f613ee99971bb05e192f7a34f9eb3800686b52",
+        "response_sha256": "db967345d25e3122b61d2f370cd21d5aa81da385d22f8e281821689548f98939",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 964,
+          "completion_tokens": 47,
+          "total_tokens": 1011
+        },
+        "latency_ms": 1565.045127,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 10,
+        "role": "seeker",
+        "attempt": 1,
+        "request_sha256": "7f92505d107af754531a2759761fe623e54b5bb073f1a81b30ffe6c82e12c03a",
+        "response_sha256": "86d57f4e53171141349984c1ff6acae9d0b558611ed754d91edcf422cc4c119c",
+        "finish_reason": "stop",
+        "normalized_finish_reason": "complete",
+        "usage": {
+          "prompt_tokens": 3695,
+          "completion_tokens": 28,
+          "total_tokens": 3723
+        },
+        "latency_ms": 703.6564959853422,
+        "returned_models": [
+          "gpt-4o-2024-11-20"
+        ],
+        "response_text_retained_in_tracked_output": false
+      },
+      {
+        "turn": 10,
+        "role": "supporter",
+        "attempt": 1,
+        "request_sha256": "c4582a548ef17784cf172fc276d9bbb11b5ebdfe1ee1589fbfb52cd069911082",
+        "response_sha256": "27bb94ce4665c980beaa99fb712af556b35fa4de273ed519fb747242f3a5886c",
+        "finish_reason": "stop",
+        "normalized_finish_reason": null,
+        "usage": {
+          "prompt_tokens": 1048,
+          "completion_tokens": 43,
+          "total_tokens": 1091
+        },
+        "latency_ms": 1459.926343,
+        "returned_models": [
+          "meta/llama-3.1-8b-instruct"
+        ],
+        "response_text_retained_in_tracked_output": false
+      }
+    ],
+    "contains_response_text": false
+  },
+  "error": null
+}
