@@ -200,6 +200,8 @@ def validate() -> dict[str, Any]:
         "paper1_pairwise_effect_oracle_contract_v1.json",
         "paper1_pairwise_teacher_qualification_plan_v2.json",
         "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
+        "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
+        "paper1_gemini_pairwise_teacher_identity_20260904_v1.json",
         "paper1_task_effect_coding_v2.json",
         "paper1_decision_correctness_evaluation_v1.json",
         "paper1_end_to_end_latency_policy_contract_v1.json",
@@ -212,6 +214,10 @@ def validate() -> dict[str, Any]:
         name: _load(PROJECT / "data" / "paper1_authority" / name)
         for name in contract_names
     }
+    teacher_preflight = _load(
+        PROJECT
+        / "data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json"
+    )
     checks["effect_action_latency_contracts_present_pre_outcome"] = (
         all(contract["status"].startswith("ACTIVE") for contract in contracts.values())
         and all(
@@ -255,6 +261,43 @@ def validate() -> dict[str, Any]:
         and config["authority"]["pairwise_teacher_human_reference_design"]
         == "project/data/paper1_authority/"
         "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_human_instrument"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_human_instrument_20260904_v1.json"
+        and contracts["paper1_pairwise_teacher_human_instrument_20260904_v1.json"][
+            "not_a_pass_gate"
+        ]
+        is True
+        and config["authority"]["pairwise_teacher_candidate_identity"]
+        == "project/data/paper1_authority/"
+        "paper1_gemini_pairwise_teacher_identity_20260904_v1.json"
+        and config["authority"]["pairwise_teacher_preflight"]
+        == "project/data/paper1_authority/"
+        "paper1_pairwise_teacher_preflight_20260904_v1.json"
+        and contracts["paper1_gemini_pairwise_teacher_identity_20260904_v1.json"][
+            "model"
+        ]["models_get_version"]
+        == "001"
+        and contracts["paper1_gemini_pairwise_teacher_identity_20260904_v1.json"][
+            "budget"
+        ]["paid_calls_authorized_by_this_identity"]
+        is False
+        and teacher_preflight["base_semantic_pairs"] == 80
+        and teacher_preflight["presentations"] == 96
+        and teacher_preflight["reverse_presentations"] == 16
+        and teacher_preflight["dg_scenario_clusters"] == 9
+        and teacher_preflight["dg_first_turn_seeker_calls_pending"] == 8
+        and teacher_preflight["dg_first_turn_seeker_budget"]["estimated_input_tokens"]
+        == 39640
+        and teacher_preflight["dg_first_turn_seeker_budget"]["worst_case_estimated_usd"]
+        == 0.1039
+        and teacher_preflight["dg_first_turn_seeker_budget"]["authorization_ceiling_usd"]
+        == 0.11
+        and teacher_preflight["dg_first_turn_seeker_budget"]["paid_calls_authorized"]
+        is False
+        and teacher_preflight["local_generator_outputs_pending"] == 142
+        and teacher_preflight["paid_api_calls"] == 0
+        and teacher_preflight["formal_outcome_calls"] == 0
         and config["authority"]["task_effect_coding"]
         == "project/data/paper1_authority/paper1_task_effect_coding_v2.json"
         and contracts[

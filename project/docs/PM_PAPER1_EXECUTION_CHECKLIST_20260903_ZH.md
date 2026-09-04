@@ -50,7 +50,8 @@
 
 7. [ ] 完成当前研究者正在进行的人评并按 blind item identity ingest；原始 disagreement 必须保留。
 8. [ ] 生成新的 teacher human reference：80 个基础语义 pair + 16 个反序 presentation = 96 个 blinded pair presentations（ESC 32、QA 16、Summary 16、DG 32）；两名独立 primary rater 各评全部 96 个，共 192 份 primary judgement。第三人/consensus adjudication 另计；不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
-9. [ ] 在任何 pair outcome 前绑定 official-anchor 与 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、重试与费用上限；Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。96 总数已包含 reverse duplicates。
+   - [x] 已 outcome-blind 冻结 80 个 base identity 与 96 个 presentation/blind key；覆盖 ESC 27、QA 13、Summary 13、DG 27 个 base pair，16 个 reverse 不新增生成。ON 使用 `k∈{1,2,4}` 的 qualification probe，只覆盖候选 teacher 的低/中/高输入形态，不是 final amount 选择。53 个 ESC/QA/Summary ON/OFF 请求已精确构造；DG 采用 9 个 scenario cluster × MP/ME/MS，其中 `p7::dg::1` 复用已完成的 identity-matched first-turn seeker，故仅 8 个新 seeker 调用待授权。每个 scenario 共用 seeker 与 OFF，避免无意义的付费重复和跨 head 生成噪声。8 个请求预算估计为 39,640 input tokens + 至多 480 output tokens，按冻结 GPT-4o 费率最坏约 `$0.1039`，授权 ceiling `$0.11`，当前仍为未授权、零调用。
+9. [x] 在任何 pair outcome 前绑定 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、thinking、重试与费用上限：Google Gemini API `gemini-2.5-flash-lite`，metadata version `001`，temperature=0、thinkingBudget=0、strict JSON 四类 parser、最多一次有界重试、qualification hard cap `$0.10`。Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。该 freeze 本身不授权付费调用。
 10. [ ] 以人类 reference 的 task-wise agreement、order stability、equivalent recall、position bias、parse reliability 与 cost完整报告候选；不以“产生更多 ON”或“让 PM 分数更好”选 teacher。
 11. [ ] 若 teacher 较弱，不循环修门：缩窄可识别 label 范围，tie/conflict 保留 uncertain，并收缩相应 claim。
 

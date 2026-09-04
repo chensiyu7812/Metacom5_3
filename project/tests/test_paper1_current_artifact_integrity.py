@@ -88,10 +88,95 @@ def test_teacher_reference_denominators_are_exact_before_rating():
     assert sum(row["base_semantic_pairs"] for row in allocation.values()) == 80
     assert sum(row["reversed_presentations"] for row in allocation.values()) == 16
     assert sum(row["total_presentations"] for row in allocation.values()) == 96
-    assert design["identity_and_blinding"]["base_pair_identity_manifest"].startswith(
-        "PENDING"
+    dg_design = design["dg_matched_scenario_design"]
+    assert dg_design["scenario_clusters"] == 9
+    assert dg_design["heads_per_scenario"] == ["MP", "ME", "MS"]
+    assert dg_design["new_paid_seeker_calls_pending"] == 8
+    assert dg_design["authorization_ceiling_usd"] == 0.11
+    assert dg_design["paid_calls_authorized"] is False
+    assert dg_design["analysis_must_cluster_by_scenario"] is True
+    identity = design["identity_and_blinding"]
+    assert identity["base_pair_identity_manifest"] == (
+        "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl"
     )
+    assert identity["base_pair_identity_manifest_sha256"] == _sha(
+        AUTHORITY / identity["base_pair_identity_manifest"]
+    )
+    assert identity["presentation_plan_sha256"] == _sha(
+        AUTHORITY / identity["presentation_plan"]
+    )
+    assert identity["blind_key_sha256"] == _sha(AUTHORITY / identity["blind_key"])
     assert set(design["locks"].values()) == {"CLOSED"}
+
+
+def test_teacher_preflight_and_gemini_identity_are_zero_outcome_and_exact():
+    preflight = _json(AUTHORITY / "paper1_pairwise_teacher_preflight_20260904_v1.json")
+    base_rows = _jsonl(
+        AUTHORITY / "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl"
+    )
+    gemini = _json(AUTHORITY / "paper1_gemini_pairwise_teacher_identity_20260904_v1.json")
+    assert preflight["base_semantic_pairs"] == 80
+    assert preflight["base_by_task"] == {"DG": 27, "ESC": 27, "QA": 13, "Summary": 13}
+    assert preflight["presentations"] == 96
+    assert preflight["reverse_presentations"] == 16
+    assert preflight["dg_scenario_clusters"] == 9
+    assert preflight["dg_existing_first_turn_seeker_success_reused"] == 1
+    assert preflight["dg_first_turn_seeker_calls_pending"] == 8
+    dg_budget = preflight["dg_first_turn_seeker_budget"]
+    assert dg_budget["physical_attempts_per_logical_turn"] == 1
+    assert dg_budget["estimated_input_tokens"] == 39640
+    assert dg_budget["maximum_output_tokens"] == 480
+    assert dg_budget["worst_case_estimated_usd"] == 0.1039
+    assert dg_budget["authorization_ceiling_usd"] == 0.11
+    assert dg_budget["paid_calls_authorized"] is False
+    assert len(dg_budget["calls"]) == 8
+    assert preflight["local_generator_outputs_pending"] == 142
+    assert preflight["paid_api_calls"] == preflight["formal_outcome_calls"] == 0
+    assert gemini["model"]["request_model"] == "gemini-2.5-flash-lite"
+    assert gemini["model"]["models_get_version"] == "001"
+    assert gemini["generation"]["temperature"] == 0
+    assert gemini["generation"]["thinking_config"]["thinkingBudget"] == 0
+    assert gemini["budget"]["teacher_qualification_hard_cap_usd"] == 0.1
+    assert gemini["budget"]["paid_calls_authorized_by_this_identity"] is False
+    assert set(gemini["locks"].values()) == {"CLOSED"}
+
+    dg_rows = [row for row in base_rows if row["task"] == "DG"]
+    dg_by_target = {}
+    for row in dg_rows:
+        dg_by_target.setdefault(row["target_id"], []).append(row)
+    assert len(dg_by_target) == 9
+    assert all(len(rows) == 3 for rows in dg_by_target.values())
+    assert all({row["head"] for row in rows} == {"MP", "ME", "MS"} for rows in dg_by_target.values())
+    assert all({row["qualification_probe_k"] for row in rows} == {1, 2, 4} for rows in dg_by_target.values())
+    assert all(
+        len({row["dg_seeker_request"]["request_messages_sha256"] for row in rows}) == 1
+        for rows in dg_by_target.values()
+    )
+    assert sum(
+        all(row["dg_seeker_request"]["existing_success_reused"] for row in rows)
+        for rows in dg_by_target.values()
+    ) == 1
+
+
+def test_teacher_human_instrument_teaches_material_equivalence_and_blinding():
+    instrument = _json(
+        AUTHORITY / "paper1_pairwise_teacher_human_instrument_20260904_v1.json"
+    )
+    assert instrument["not_a_pass_gate"] is True
+    assert set(instrument["task_rubrics"]) == {"ESC", "QA", "Summary", "DG"}
+    assert set(instrument["verdicts"]) == {
+        "A_better",
+        "B_better",
+        "equivalent",
+        "uncertain",
+    }
+    common = " ".join(instrument["common_instruction"])
+    assert "more empathy" in common
+    assert "not by itself an advantage" in common
+    assert instrument["blinding"]["on_off_hidden"] is True
+    assert instrument["blinding"]["resource_bundle_hidden_from_effect_judge"] is True
+    assert instrument["rating_design"]["presentations_per_primary_rater"] == 96
+    assert instrument["rating_design"]["primary_judgements"] == 192
 
 
 def test_mistral_formal_schedule_is_balanced_and_still_pre_outcome():

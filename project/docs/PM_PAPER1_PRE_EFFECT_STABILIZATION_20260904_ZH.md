@@ -36,7 +36,7 @@ Generator termination audit 只读取 EOS/EOT 配置、finish reason、output to
 
 ## 4. 稳定后执行顺序
 
-完成本修订、身份审计和 termination 初审后，不再优先扩展 latency/simulator contract。主线切回：candidate factuality QA → 96-presentation dual-human teacher reference → teacher identity/qualification → amount calibration → matched focal-head ON/OFF effects → four L2 PM heads → grouped OOF Threshold V4 → sealed audit → official confirmatory evaluation。
+完成本修订、身份审计和 termination 初审后，不再优先扩展 latency/simulator contract。401 compiler 已对全部接受单元保存 exact source spans、owner/time 与 hash-grounding；其事实核对和 effect oracle 的 resource-correctness 记录不再扩张成新的经验通过门。主线直接切回：96-presentation dual-human teacher reference → teacher identity/qualification → amount calibration → matched focal-head ON/OFF effects → four L2 PM heads → grouped OOF Threshold V4 → sealed audit → official confirmatory evaluation。
 
 这里的 teacher reference 计数固定为：80 个基础语义 pair，加 16 个仅交换 A/B 的反序 presentation，共 96 个 blinded pair presentations；两名 primary rater 各自独立完成全部 96 个 presentation，因此 primary 数据共有 192 份 rater-pair judgement。第三人或 consensus adjudication 另计，不进入这 192 的 agreement 分母。该集合与 Natural-turn Appropriateness 的 96-slot proposal 是两个不同样本。
 

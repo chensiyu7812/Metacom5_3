@@ -1,9 +1,10 @@
 {
   "protocol": "paper1-pairwise-teacher-qualification-v2",
-  "status": "ACTIVE_PLAN_PRE_OUTCOME_IDENTITIES_PENDING",
+  "status": "ACTIVE_PLAN_PRE_OUTCOME_GEMINI_IDENTITY_FROZEN_HUMAN_OUTCOMES_PENDING",
   "date": "2026-09-04",
   "supersedes": "paper1_pairwise_teacher_qualification_plan_v1.json",
   "human_reference_design_authority": "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
+  "human_instrument_authority": "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
   "human_reference": {
     "base_semantic_pairs": 80,
     "reversed_pair_presentations": 16,
@@ -24,7 +25,8 @@
     "reuse_old_ESC_absolute_24": false,
     "not_the_natural_turn_96_slot_sample": true
   },
-  "candidate_identity_status": "GEMINI_EXACT_MODEL_PROVIDER_PROMPT_PARSER_IDENTITY_PENDING_ZERO_OUTCOME_FREEZE",
+  "candidate_identity_status": "GEMINI_2_5_FLASH_LITE_VERSION_001_PROVIDER_PROMPT_PARSER_IDENTITY_FROZEN_ZERO_CALL",
+  "candidate_identity_authority": "paper1_gemini_pairwise_teacher_identity_20260904_v1.json",
   "candidate_families_allowed": ["official-score-derived", "Claude", "Gemini"],
   "materiality_routing": {
     "ESC": "non-tied one-step Overall may be official-score-derived; ties and explicit checks use the qualified pairwise teacher",
@@ -34,7 +36,7 @@
     "explicit_pairwise_equivalent": "always non-positive material effect",
     "unresolved_or_budget_exhausted": "uncertain and excluded from supervised likelihood"
   },
-  "default_paid_candidate": "Gemini_Flash_Lite_exact_identity_pending",
+  "default_paid_candidate": "Google_Gemini_API_gemini_2.5_flash-lite_version_001",
   "claude_role": "substitute only; never an additive full-sample run",
   "teacher_qualification_hard_cap_usd": 0.1,
   "formal_residual_pairwise_hard_cap_usd": 2.0,

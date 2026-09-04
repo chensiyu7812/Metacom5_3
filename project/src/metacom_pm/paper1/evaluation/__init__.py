@@ -38,6 +38,13 @@ from .formal_schedule import (
     build_arm_balanced_schedule,
 )
 from .rq1 import RQ1InputCard, RQ1RunCell, build_rq1_run_cells, load_rq1_cards
+from .pairwise_teacher import (
+    PAIRWISE_TEACHER_PROTOCOL,
+    ParsedTeacherVerdict,
+    build_pairwise_teacher_prompt,
+    pairwise_teacher_identity_payload,
+    parse_pairwise_teacher_response,
+)
 
 __all__ = [
     "TokenPricing",
@@ -72,4 +79,9 @@ __all__ = [
     "summarize_client_latency",
     "RQ1InputCard",
     "RQ1RunCell",
+    "PAIRWISE_TEACHER_PROTOCOL",
+    "ParsedTeacherVerdict",
+    "build_pairwise_teacher_prompt",
+    "pairwise_teacher_identity_payload",
+    "parse_pairwise_teacher_response",
 ]
