@@ -1,9 +1,12 @@
-"""Transparent first-order allocation under client-observed latency constraints.
+"""Fail-closed primary allocation under client-observed latency constraints.
 
-The effect models remain independent probability estimators.  This module is
-the deployment layer: it admits only eligible, threshold-positive heads and
-greedily selects a latency-feasible subset using the pre-outcome priority rule.
-It deliberately makes no interaction-aware or globally optimal claim.
+The independently trained effect models answer whether each optional memory
+head is threshold-positive.  Their probability margins are not effect sizes
+and are not assumed comparable across heads.  The Paper-1 primary allocator
+therefore keeps every qualifying head when the complete bundle is feasible and
+falls back to no optional memory when the bundle collides with a latency
+budget.  Tighter-budget subset heuristics belong to explicitly named
+deployment sensitivities, not this primary policy.
 """
 
 from __future__ import annotations
@@ -53,14 +56,6 @@ class HeadLatencyCandidate(StrictContract):
     def threshold_positive(self) -> bool:
         return self.probability_margin > 0.0
 
-    @property
-    def priority_score(self) -> float:
-        # Zero measured increment is a legitimate highest-priority candidate.
-        if self.incremental_p95_client_completion_ms == 0.0:
-            return float("inf") if self.probability_margin > 0.0 else 0.0
-        return self.probability_margin / self.incremental_p95_client_completion_ms
-
-
 class LatencyConstrainedAllocation(StrictContract):
     client_latency_measurement_protocol_id: str = Field(min_length=1)
     deployment_scenario_id: str | None = Field(default=None, min_length=1)
@@ -70,6 +65,8 @@ class LatencyConstrainedAllocation(StrictContract):
     base_p95_client_completion_ms: float = Field(ge=0.0)
     predicted_p95_client_ttft_ms: float = Field(ge=0.0)
     predicted_p95_client_completion_ms: float = Field(ge=0.0)
+    bundle_budget_collision: bool = False
+    allocation_rule: str = "all_threshold_positive_if_bundle_feasible_else_fail_closed"
     interaction_aware_optimality_claim: bool = False
 
     @model_validator(mode="after")
@@ -80,6 +77,11 @@ class LatencyConstrainedAllocation(StrictContract):
             raise ValueError("a head cannot be both selected and rejected")
         if self.interaction_aware_optimality_claim:
             raise ValueError("the frozen allocator cannot claim interaction-aware optimality")
+        if (
+            self.allocation_rule
+            != "all_threshold_positive_if_bundle_feasible_else_fail_closed"
+        ):
+            raise ValueError("Paper-1 primary allocation rule identity mismatch")
         if self.predicted_p95_client_ttft_ms > self.predicted_p95_client_completion_ms:
             raise ValueError("predicted TTFT cannot exceed predicted completion latency")
         return self
@@ -92,11 +94,13 @@ def allocate_latency_constrained_heads(
     base_p95_client_ttft_ms: float,
     base_p95_client_completion_ms: float,
 ) -> LatencyConstrainedAllocation:
-    """Allocate MP/ME/MS using margin per incremental p95 completion latency.
+    """Keep the complete qualifying bundle if feasible, otherwise fail closed.
 
     Incremental estimates must be produced by the frozen same-stack latency
-    profiler. Summing them is the declared first-order approximation; joint
-    interaction effects remain a diagnostic and are not silently optimized.
+    profiler. Summing them is a conservative declared first-order approximation.
+    A collision does not trigger cross-head probability ranking because the
+    independently calibrated probabilities are not effect magnitudes or a
+    common utility currency.
     """
 
     if base_p95_client_ttft_ms < 0 or base_p95_client_completion_ms < 0:
@@ -119,18 +123,13 @@ def allocate_latency_constrained_heads(
     if len(heads) != len(set(heads)):
         raise ValueError("candidate heads must be unique")
 
-    order = {head: index for index, head in enumerate(CANONICAL_MEMORY_HEAD_ORDER)}
     qualifying = [
         candidate
         for candidate in candidates
         if candidate.eligible and candidate.threshold_positive
     ]
     qualifying.sort(
-        key=lambda candidate: (
-            -candidate.priority_score,
-            -candidate.probability_margin,
-            order[candidate.head],
-        )
+        key=lambda candidate: CANONICAL_MEMORY_HEAD_ORDER.index(candidate.head)
     )
 
     selected: list[Head] = []
@@ -144,33 +143,35 @@ def allocate_latency_constrained_heads(
         elif not candidate.threshold_positive:
             rejected[candidate.head] = "not_quality_effect_threshold_positive"
 
-    for candidate in qualifying:
-        proposed_ttft = predicted_ttft + candidate.incremental_p95_client_ttft_ms
-        proposed_completion = (
-            predicted_completion
-            + candidate.incremental_p95_client_completion_ms
+    bundle_ttft = base_p95_client_ttft_ms + sum(
+        candidate.incremental_p95_client_ttft_ms for candidate in qualifying
+    )
+    bundle_completion = base_p95_client_completion_ms + sum(
+        candidate.incremental_p95_client_completion_ms for candidate in qualifying
+    )
+    catastrophic_feasible = (
+        bundle_completion < client_latency.catastrophic_completion_ceiling_ms
+    )
+    scenario_feasible = True
+    if client_latency.has_tighter_deployment_scenario:
+        assert client_latency.deployment_ttft_budget_ms is not None
+        assert client_latency.deployment_completion_budget_ms is not None
+        scenario_feasible = (
+            bundle_ttft <= client_latency.deployment_ttft_budget_ms
+            and bundle_completion <= client_latency.deployment_completion_budget_ms
         )
-        catastrophic_feasible = (
-            proposed_completion < client_latency.catastrophic_completion_ceiling_ms
+    collision = bool(qualifying) and not (catastrophic_feasible and scenario_feasible)
+    if collision:
+        reason = (
+            "named_deployment_scenario_bundle_collision_fail_closed"
+            if client_latency.has_tighter_deployment_scenario
+            else "catastrophic_bundle_collision_fail_closed"
         )
-        scenario_feasible = True
-        if client_latency.has_tighter_deployment_scenario:
-            assert client_latency.deployment_ttft_budget_ms is not None
-            assert client_latency.deployment_completion_budget_ms is not None
-            scenario_feasible = (
-                proposed_ttft <= client_latency.deployment_ttft_budget_ms
-                and proposed_completion <= client_latency.deployment_completion_budget_ms
-            )
-        if catastrophic_feasible and scenario_feasible:
-            selected.append(candidate.head)
-            predicted_ttft = proposed_ttft
-            predicted_completion = proposed_completion
-        else:
-            rejected[candidate.head] = (
-                "named_deployment_scenario_overflow"
-                if client_latency.has_tighter_deployment_scenario
-                else "catastrophic_client_completion_ceiling_overflow"
-            )
+        rejected.update({candidate.head: reason for candidate in qualifying})
+    else:
+        selected.extend(candidate.head for candidate in qualifying)
+        predicted_ttft = bundle_ttft
+        predicted_completion = bundle_completion
 
     return LatencyConstrainedAllocation(
         client_latency_measurement_protocol_id=client_latency.measurement_protocol_id,
@@ -181,6 +182,7 @@ def allocate_latency_constrained_heads(
         base_p95_client_completion_ms=base_p95_client_completion_ms,
         predicted_p95_client_ttft_ms=predicted_ttft,
         predicted_p95_client_completion_ms=predicted_completion,
+        bundle_budget_collision=collision,
     )
 
 

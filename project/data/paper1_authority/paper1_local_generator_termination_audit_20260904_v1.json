@@ -1,0 +1,273 @@
+{
+  "protocol": "paper1-local-generator-termination-audit-v1",
+  "date": "2026-09-04",
+  "status": "INITIAL_ZERO_OUTCOME_TERMINATION_AUDIT_COMPLETE_BROADER_SAMPLE_PENDING",
+  "not_an_empirical_pass_gate": true,
+  "checks": {
+    "tokenizer_eos_is_eot_id": true,
+    "tokenizer_eos_id_matches_eot_id": true,
+    "server_passes_tokenizer_eos_to_generate": true,
+    "server_distinguishes_length_from_stop": true,
+    "all_calls_have_known_terminal_reason": true,
+    "no_response_text_retained": true
+  },
+  "tokenizer": {
+    "eos_token": "<|eot_id|>",
+    "eos_token_id": 128009,
+    "eot_token_id": 128009
+  },
+  "server_sha256": "b4c966cebb4cdb8ad59e7df8de5ba0c3c8ff3874b681179ce300006dba88d6d5",
+  "trace_surfaces": {
+    "paper1_local_reference_latency_pilot_traces_20260903_v1.jsonl": {
+      "sha256": "806eb3d35f8e69a3c0a8a1502cb852fa118e4dbbb35f180f7d4d5770a6ab4aac",
+      "calls": 21,
+      "finish_reason_counts": {
+        "length": 5,
+        "stop": 16
+      },
+      "cells": {
+        "qa::ALL_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            214,
+            214
+          ]
+        },
+        "qa::ME_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            26,
+            26
+          ]
+        },
+        "qa::MP_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            28,
+            28
+          ]
+        },
+        "qa::MS_k1": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            133,
+            133
+          ]
+        },
+        "qa::OFF": {
+          "calls": 3,
+          "finish_reason_counts": {
+            "length": 3
+          },
+          "output_tokens": [
+            256,
+            256,
+            256
+          ]
+        },
+        "summary::ALL_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            199,
+            199
+          ]
+        },
+        "summary::ME_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            91,
+            91
+          ]
+        },
+        "summary::MP_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            38,
+            38
+          ]
+        },
+        "summary::MS_k1": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            111,
+            111
+          ]
+        },
+        "summary::OFF": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "length": 2
+          },
+          "output_tokens": [
+            256,
+            256
+          ]
+        }
+      },
+      "response_text_fields_present": []
+    },
+    "paper1_full_pipeline_latency_pilot_traces_20260904_v1.jsonl": {
+      "sha256": "220401a90885093d77c15d179f4d98f0fd7991bfacbbfff1c5cf516a578dc3dd",
+      "calls": 21,
+      "finish_reason_counts": {
+        "length": 5,
+        "stop": 16
+      },
+      "cells": {
+        "qa::ALL_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            214,
+            214
+          ]
+        },
+        "qa::ME_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            26,
+            26
+          ]
+        },
+        "qa::MP_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            28,
+            28
+          ]
+        },
+        "qa::MS_k1": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            133,
+            133
+          ]
+        },
+        "qa::OFF": {
+          "calls": 3,
+          "finish_reason_counts": {
+            "length": 3
+          },
+          "output_tokens": [
+            256,
+            256,
+            256
+          ]
+        },
+        "summary::ALL_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            199,
+            199
+          ]
+        },
+        "summary::ME_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            91,
+            91
+          ]
+        },
+        "summary::MP_k4": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            38,
+            38
+          ]
+        },
+        "summary::MS_k1": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "stop": 2
+          },
+          "output_tokens": [
+            111,
+            111
+          ]
+        },
+        "summary::OFF": {
+          "calls": 2,
+          "finish_reason_counts": {
+            "length": 2
+          },
+          "output_tokens": [
+            256,
+            256
+          ]
+        }
+      },
+      "response_text_fields_present": []
+    }
+  },
+  "aggregate": {
+    "calls": 42,
+    "finish_reason_counts": {
+      "length": 10,
+      "stop": 32
+    },
+    "length_finish_cells": [
+      "qa::OFF",
+      "summary::OFF"
+    ],
+    "interpretation": "The frozen server uses the correct Llama-3.1 EOT token. Existing length finishes are concentrated in QA/Summary OFF cells and are observed cap hits, not evidence of an EOT identity mismatch."
+  },
+  "cap_freeze_status": "PENDING_BROADER_RS_MEMORY_DG_TARGET_SAMPLE",
+  "allowed_next_read": [
+    "finish reason",
+    "output token count",
+    "task/head/amount cell",
+    "latency and failure metadata"
+  ],
+  "forbidden_next_read": [
+    "response quality",
+    "official capability score",
+    "PM performance"
+  ],
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0
+}

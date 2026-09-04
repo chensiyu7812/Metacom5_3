@@ -38,7 +38,7 @@ def _candidate(
     )
 
 
-def test_allocator_uses_probability_margin_per_incremental_p95_latency():
+def test_allocator_fails_closed_instead_of_ranking_incomparable_head_margins():
     allocation = allocate_latency_constrained_heads(
         (
             _candidate(Head.MP, 0.9, 1_000),
@@ -49,10 +49,28 @@ def test_allocator_uses_probability_margin_per_incremental_p95_latency():
         base_p95_client_ttft_ms=500,
         base_p95_client_completion_ms=1_000,
     )
-    # ME has the largest margin/latency ratio, then MS. MP no longer fits.
-    assert allocation.selected_heads == (Head.ME, Head.MS)
-    assert allocation.rejected_heads[Head.MP] == "named_deployment_scenario_overflow"
-    assert allocation.predicted_p95_client_completion_ms == 1_900
+    assert allocation.selected_heads == ()
+    assert allocation.bundle_budget_collision
+    assert set(allocation.rejected_heads.values()) == {
+        "named_deployment_scenario_bundle_collision_fail_closed"
+    }
+    assert allocation.predicted_p95_client_completion_ms == 1_000
+
+
+def test_allocator_keeps_every_threshold_positive_head_when_bundle_is_feasible():
+    allocation = allocate_latency_constrained_heads(
+        (
+            _candidate(Head.MS, 0.55, 200),
+            _candidate(Head.MP, 0.9, 100),
+            _candidate(Head.ME, 0.7, 200),
+        ),
+        client_latency=_client_latency(),
+        base_p95_client_ttft_ms=100,
+        base_p95_client_completion_ms=1_000,
+    )
+    assert allocation.selected_heads == (Head.MP, Head.ME, Head.MS)
+    assert not allocation.bundle_budget_collision
+    assert allocation.predicted_p95_client_completion_ms == 1_500
 
 
 def test_allocator_never_rewards_ineligible_or_threshold_negative_heads():
@@ -67,6 +85,7 @@ def test_allocator_never_rewards_ineligible_or_threshold_negative_heads():
         base_p95_client_completion_ms=500,
     )
     assert allocation.selected_heads == (Head.MS,)
+    assert not allocation.bundle_budget_collision
     assert allocation.rejected_heads == {
         Head.MP: "mechanically_ineligible",
         Head.ME: "not_quality_effect_threshold_positive",
@@ -112,6 +131,7 @@ def test_allocator_without_tighter_scenario_only_enforces_catastrophic_ceiling()
         base_p95_client_completion_ms=10_000,
     )
     assert rejected.selected_heads == ()
+    assert rejected.bundle_budget_collision
     assert rejected.rejected_heads[Head.MP] == (
-        "catastrophic_client_completion_ceiling_overflow"
+        "catastrophic_bundle_collision_fail_closed"
     )

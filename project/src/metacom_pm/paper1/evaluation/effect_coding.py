@@ -331,7 +331,13 @@ def code_esc_pairwise_effect(
     pairwise_verdict: PairedOutcome | None,
     invalid_reasons: Sequence[MechanicalInvalidReason] = (),
 ) -> PairedEffectDecision:
-    """Use Overall as primary, Empathy/Information as guards, then pairwise."""
+    """Use Overall as the discrete primary and retain all other dimensions.
+
+    Empathy and Information remain reported diagnostics.  A one-step change in
+    either is not, by itself, a material-harm veto.  When a qualified pairwise
+    judgement is supplied, an explicit equivalent verdict means that the
+    realized pair has no discernible material advantage.
+    """
 
     if invalid_reasons:
         return _invalid(TaskType.ESC_RESPONSE, invalid_reasons)
@@ -346,26 +352,25 @@ def code_esc_pairwise_effect(
         "Humanoid": float(on.humanoid - off.humanoid),
     }
     primary = _sign(deltas["Overall"])
-    guards = (_sign(deltas["Empathy"]), _sign(deltas["Information"]))
     if primary:
-        if any(guard == -primary for guard in guards):
-            return _uncertain(TaskType.ESC_RESPONSE, "esc_primary_guard_conflict", deltas)
-        if pairwise is not None and pairwise not in {0, primary}:
+        if pairwise == 0:
+            return _equivalent(
+                TaskType.ESC_RESPONSE,
+                "esc_pairwise_material_equivalence_overrides_ordinal_direction",
+                deltas,
+            )
+        if pairwise is not None and pairwise != primary:
             return _uncertain(TaskType.ESC_RESPONSE, "esc_primary_pairwise_conflict", deltas)
         return _directed(
             TaskType.ESC_RESPONSE,
             primary,
-            "esc_overall_ordinal_direction_with_no_guard_conflict",
+            "esc_overall_ordinal_material_direction",
             deltas,
         )
     if pairwise is None:
         return _uncertain(TaskType.ESC_RESPONSE, "esc_overall_tie_pairwise_unresolved", deltas)
     if pairwise == 0:
-        if any(guards) and len({guard for guard in guards if guard}) > 1:
-            return _uncertain(TaskType.ESC_RESPONSE, "esc_tied_primary_guard_conflict", deltas)
         return _equivalent(TaskType.ESC_RESPONSE, "esc_pairwise_equivalent", deltas)
-    if any(guard == -pairwise for guard in guards):
-        return _uncertain(TaskType.ESC_RESPONSE, "esc_pairwise_guard_conflict", deltas)
     return _directed(
         TaskType.ESC_RESPONSE,
         pairwise,
@@ -392,7 +397,13 @@ def code_qa_effect(
     primary = _sign(deltas["LLM_as_Judge"])
     pairwise = _pairwise_direction(pairwise_verdict)
     if primary:
-        if pairwise is not None and pairwise not in {0, primary}:
+        if pairwise == 0:
+            return _equivalent(
+                TaskType.QA,
+                "qa_pairwise_material_equivalence_overrides_ordinal_direction",
+                deltas,
+            )
+        if pairwise is not None and pairwise != primary:
             return _uncertain(TaskType.QA, "qa_primary_pairwise_conflict", deltas)
         return _directed(
             TaskType.QA,
@@ -443,14 +454,28 @@ def code_summary_effect(
     llm = _sign(deltas["LLM_Score"])
     pairwise = _pairwise_direction(pairwise_verdict)
     if primary:
-        if llm == -primary or (pairwise is not None and pairwise == -primary):
+        if llm == -primary or pairwise == -primary:
             return _uncertain(TaskType.SUMMARY, "summary_event_semantic_conflict", deltas)
+        if pairwise is None:
+            return _uncertain(
+                TaskType.SUMMARY,
+                "summary_continuous_primary_materiality_unresolved",
+                deltas,
+            )
+        if pairwise == 0:
+            return _equivalent(
+                TaskType.SUMMARY,
+                "summary_pairwise_material_equivalence",
+                deltas,
+            )
         return _directed(
             TaskType.SUMMARY,
             primary,
             "summary_event_f1_primary_direction",
             deltas,
         )
+    if pairwise == 0 and llm == 0:
+        return _equivalent(TaskType.SUMMARY, "summary_semantic_equivalent", deltas)
     if llm and pairwise == llm:
         return _directed(
             TaskType.SUMMARY,
@@ -458,8 +483,6 @@ def code_summary_effect(
             "summary_event_f1_tie_llm_pairwise_agreement",
             deltas,
         )
-    if llm == 0 and pairwise == 0:
-        return _equivalent(TaskType.SUMMARY, "summary_semantic_equivalent", deltas)
     return _uncertain(TaskType.SUMMARY, "summary_event_f1_tie_semantic_unresolved", deltas)
 
 
@@ -487,6 +510,12 @@ def code_dg_effect(
             return _uncertain(
                 TaskType.DIALOGUE_GENERATION,
                 "dg_pairwise_guard_unresolved",
+                deltas,
+            )
+        if pairwise == 0:
+            return _equivalent(
+                TaskType.DIALOGUE_GENERATION,
+                "dg_pairwise_material_equivalence",
                 deltas,
             )
         if pairwise == -primary:

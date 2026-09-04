@@ -149,6 +149,11 @@ def test_qa_semantic_judge_is_primary_and_continuous_metrics_are_explanatory():
         _qa(1, 0.2, 0.3),
         pairwise_verdict=PairedOutcome.OFF_BETTER,
     ).outcome is PairedOutcome.OFF_BETTER
+    assert code_qa_effect(
+        _qa(2, 0.9, 0.9),
+        _qa(1, 0.2, 0.3),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    ).outcome is PairedOutcome.EQUIVALENT
 
 
 def test_qa_marks_primary_pairwise_conflict_uncertain():
@@ -178,18 +183,23 @@ def test_qa_equal_judge_uses_gold_pairwise_teacher_not_metric_epsilon():
     ).outcome is PairedOutcome.EQUIVALENT
 
 
-def test_esc_uses_overall_with_empathy_information_guards():
+def test_esc_uses_overall_without_one_step_empathy_information_vetoes():
     assert code_esc_pairwise_effect(
         _esc(3),
         _esc(2),
         pairwise_verdict=PairedOutcome.ON_BETTER,
     ).outcome is PairedOutcome.ON_BETTER
-    guarded = code_esc_pairwise_effect(
+    restrained_but_overall_better = code_esc_pairwise_effect(
         _esc(3, empathy=2),
         _esc(2, empathy=3),
         pairwise_verdict=PairedOutcome.ON_BETTER,
     )
-    assert guarded.outcome is PairedOutcome.UNCERTAIN
+    assert restrained_but_overall_better.outcome is PairedOutcome.ON_BETTER
+    assert code_esc_pairwise_effect(
+        _esc(3, empathy=2),
+        _esc(2, empathy=3),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    ).outcome is PairedOutcome.EQUIVALENT
 
 
 def test_summary_event_f1_is_exact_and_validated():
@@ -229,6 +239,16 @@ def test_summary_event_f1_is_primary_with_semantic_guard_and_tie_evidence():
     ).outcome is PairedOutcome.ON_BETTER
     assert code_summary_effect(
         _summary(3, 2, 1, 4),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    ).outcome is PairedOutcome.EQUIVALENT
+    assert code_summary_effect(
+        _summary(3, 2, 2, 4),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=None,
+    ).outcome is PairedOutcome.UNCERTAIN
+    assert code_summary_effect(
+        _summary(3, 2, 2, 4),
         _summary(3, 2, 1, 4),
         pairwise_verdict=PairedOutcome.EQUIVALENT,
     ).outcome is PairedOutcome.EQUIVALENT
@@ -318,6 +338,9 @@ def test_dg_uses_local_utilization_with_pairwise_correctness_guard():
     ).outcome is PairedOutcome.ON_BETTER
     assert code_dg_effect(
         _dg(2), _dg(2), pairwise_verdict=PairedOutcome.EQUIVALENT
+    ).outcome is PairedOutcome.EQUIVALENT
+    assert code_dg_effect(
+        _dg(2), _dg(1), pairwise_verdict=PairedOutcome.EQUIVALENT
     ).outcome is PairedOutcome.EQUIVALENT
 
 

@@ -85,7 +85,7 @@ def validate() -> dict[str, Any]:
         PROJECT
         / "data"
         / "paper1_authority"
-        / "paper1_latency_constrained_selective_policy_amendment_20260903_v1.json"
+        / "paper1_latency_constrained_selective_policy_amendment_20260904_v2.json"
     )
     client_latency_policy = _load(
         PROJECT
@@ -117,6 +117,12 @@ def validate() -> dict[str, Any]:
         == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT"
         and latency_policy["estimands"]["cost_in_quality_effect_label_or_loss"] is False
         and latency_policy["estimands"]["latency_in_deployment_action"] is True
+        and latency_policy["primary_multi_head_policy"][
+            "probability_margin_per_incremental_latency_priority"
+        ]
+        == "FORBIDDEN"
+        and latency_policy["primary_multi_head_policy"]["budget_collision"]
+        == "select no optional memory heads, return R0+M0, and record the collision"
         and set(latency_policy["locks"].values()) == {"CLOSED"}
         and client_latency_policy["status"]
         == "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT"
@@ -181,8 +187,8 @@ def validate() -> dict[str, Any]:
     contract_names = (
         "paper1_training_evaluation_alignment_contract_v1.json",
         "paper1_pairwise_effect_oracle_contract_v1.json",
-        "paper1_pairwise_teacher_qualification_plan_v1.json",
-        "paper1_task_effect_coding_v1.json",
+        "paper1_pairwise_teacher_qualification_plan_v2.json",
+        "paper1_task_effect_coding_v2.json",
         "paper1_decision_correctness_evaluation_v1.json",
         "paper1_end_to_end_latency_policy_contract_v1.json",
         "paper1_client_latency_measurement_contract_v3.json",
@@ -199,10 +205,28 @@ def validate() -> dict[str, Any]:
             contract.get("formal_outcome_calls", 0) == 0
             for contract in contracts.values()
         )
-        and contracts["paper1_task_effect_coding_v1.json"]["common"][
+        and contracts["paper1_task_effect_coding_v2.json"]["common"][
             "current_unweighted_exact_difference_pareto_rule"
         ]
         == "SUPERSEDED"
+        and contracts["paper1_task_effect_coding_v2.json"]["common"][
+            "continuous_nonzero_difference_alone_is_material"
+        ]
+        is False
+        and contracts["paper1_task_effect_coding_v2.json"]["ESC"][
+            "Empathy_and_Information_role"
+        ]
+        == "reported diagnostics, not automatic one-point vetoes"
+        and contracts["paper1_pairwise_teacher_qualification_plan_v2.json"][
+            "human_reference"
+        ]["not_the_natural_turn_96_slot_sample"]
+        is True
+        and contracts["paper1_pairwise_teacher_qualification_plan_v2.json"][
+            "materiality_routing"
+        ]["explicit_pairwise_equivalent"]
+        == "always non-positive material effect"
+        and config["authority"]["pairwise_teacher_plan"]
+        == "project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v2.json"
         and contracts["paper1_client_latency_measurement_contract_v3.json"]["primary"][
             "primary_cost_outcome"
         ]
@@ -388,6 +412,20 @@ def validate() -> dict[str, Any]:
         <= float(multi_view_closeout["budget_usd"]["compiler_stage_authorized_cap"])
         and multi_view_closeout["method_boundary"]["formal_outcome_calls"] == 0
         and multi_view_closeout["method_boundary"]["pm_training_runs"] == 0
+    )
+    identity_audit = _load(
+        PROJECT
+        / "data/paper1_authority/paper1_multi_view_401_runtime_identity_audit_20260904_v1.json"
+    )
+    checks["multi_view_401_runtime_identity_uniformity"] = (
+        config["authority"]["multi_view_401_runtime_identity_audit"]
+        == "project/data/paper1_authority/paper1_multi_view_401_runtime_identity_audit_20260904_v1.json"
+        and identity_audit["status"] == "UNIFORM_IDENTITY_PASS"
+        and all(identity_audit["checks"].values())
+        and identity_audit["rerun_required"] is False
+        and identity_audit["formal_outcome_calls"] == 0
+        and identity_audit["pm_training_runs"] == 0
+        and identity_audit["paid_api_calls"] == 0
     )
     multi_view_census_path = (
         PROJECT
@@ -678,6 +716,25 @@ def validate() -> dict[str, Any]:
         and full_pipeline["pm_training_runs"] == 0
         and full_pipeline["paid_api_cost_usd"] == 0.0
         and set(full_pipeline["locks"].values()) == {"CLOSED"}
+    )
+    termination_audit = _load(
+        PROJECT
+        / "data/paper1_authority/paper1_local_generator_termination_audit_20260904_v1.json"
+    )
+    checks["local_generator_termination_initial_audit"] = (
+        config["authority"]["local_generator_termination_audit"]
+        == "project/data/paper1_authority/paper1_local_generator_termination_audit_20260904_v1.json"
+        and termination_audit["status"]
+        == "INITIAL_ZERO_OUTCOME_TERMINATION_AUDIT_COMPLETE_BROADER_SAMPLE_PENDING"
+        and all(termination_audit["checks"].values())
+        and termination_audit["tokenizer"]["eos_token"] == "<|eot_id|>"
+        and termination_audit["aggregate"]["finish_reason_counts"]
+        == {"length": 10, "stop": 32}
+        and termination_audit["aggregate"]["length_finish_cells"]
+        == ["qa::OFF", "summary::OFF"]
+        and termination_audit["formal_outcome_calls"] == 0
+        and termination_audit["pm_training_runs"] == 0
+        and termination_audit["paid_api_calls"] == 0
     )
     natural_summary = _load(
         PROJECT
