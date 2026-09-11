@@ -1,0 +1,80 @@
+{
+  "audit_date": "2026-09-07",
+  "scope": "Blinded instrument integrity and evidence sufficiency; no response verdicts assigned.",
+  "counts": {
+    "base_by_task": {
+      "ESC": 27,
+      "QA": 13,
+      "Summary": 13,
+      "DG": 27
+    },
+    "presentations_per_rater_by_task": {
+      "DG": 32,
+      "QA": 16,
+      "ESC": 32,
+      "Summary": 16
+    },
+    "primary_judgements": 192,
+    "DG_scenario_count": 9,
+    "all_local_generations": 142,
+    "length_finish_generations": 28,
+    "base_pairs_with_any_length_finish": 26,
+    "exact_response_equal_base_pairs": 2
+  },
+  "DG_reference_coverage": {
+    "base_pair_bundles": 27,
+    "bundles_with_any_source_session_outside_reference": 15,
+    "bundles_with_all_source_sessions_outside_reference": 6,
+    "observed_response_fact_supported_in_raw_history_but_absent_from_shown_reference": true,
+    "interpretation": "Source-session absence is a coverage risk, not a count of invalid pairs, erroneous responses, or uncertain human verdicts. The independent presence probe establishes an actual missing-evidence case without rating the pair.",
+    "current_unique_scenario_reference_words": 18681,
+    "proposed_full_history_unique_scenario_reference_words": 88385,
+    "current_reference_chars_min_max": [
+      5428,
+      20781
+    ],
+    "proposed_full_history_chars_min_max": [
+      37383,
+      87783
+    ],
+    "boundary": "Current B17 target cutoff is the full historical session count; proposal must still enforce rank < target.cutoff_rank and must exclude hidden new-scenario narrative."
+  },
+  "integrity_checks": {
+    "RATER_A_frozen_hash": true,
+    "RATER_A_96_unique_presentations": true,
+    "RATER_A_complete_numbering": true,
+    "RATER_A_instrument_exact": true,
+    "RATER_A_only_blinded_item_fields": true,
+    "RATER_A_unrated_original": true,
+    "RATER_A_nonempty_input_and_responses": true,
+    "RATER_A_responses_exact_cache": true,
+    "RATER_A_references_exact_preflight": true,
+    "RATER_A_non_DG_inputs_exact": true,
+    "RATER_A_DG_visible_prefix_exact": true,
+    "RATER_B_frozen_hash": true,
+    "RATER_B_96_unique_presentations": true,
+    "RATER_B_complete_numbering": true,
+    "RATER_B_instrument_exact": true,
+    "RATER_B_only_blinded_item_fields": true,
+    "RATER_B_unrated_original": true,
+    "RATER_B_nonempty_input_and_responses": true,
+    "RATER_B_responses_exact_cache": true,
+    "RATER_B_references_exact_preflight": true,
+    "RATER_B_non_DG_inputs_exact": true,
+    "RATER_B_DG_visible_prefix_exact": true,
+    "same_items_and_orientation": true,
+    "different_rater_order": true,
+    "80_base_16_reversed": true,
+    "reversal_only_swaps_responses": true,
+    "all_DG_references_exact_related_sessions_projection": true,
+    "QA_gold_matches_raw_source": true,
+    "Summary_gold_matches_raw_source": true
+  },
+  "integrity_checks_passed": 29,
+  "integrity_checks_total": 29,
+  "measurement_readiness": "Recommend DG reference correction before starting final human rating; active frozen v1 left unchanged.",
+  "paid_calls": 0,
+  "formal_outcomes": 0,
+  "human_or_teacher_verdicts_created": 0,
+  "frozen_repo_files_modified": 0
+}

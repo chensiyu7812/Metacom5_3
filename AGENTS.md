@@ -6,41 +6,42 @@ current entry points in order:
 
 1. `project/configs/paper1_public_only.yaml`
 2. `project/docs/PM_PAPER1_EXECUTION_CHECKLIST_20260903_ZH.md`
-3. `project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md`
-4. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260904_v2.json`
-5. `project/data/paper1_authority/paper1_task_effect_coding_v2.json`
-6. `project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v2.json`
-7. `project/data/paper1_authority/paper1_pairwise_teacher_human_reference_design_20260904_v1.json`
-8. `project/data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260904_v1.json`
-9. `project/data/paper1_authority/paper1_gemini_pairwise_teacher_identity_20260904_v1.json`
-10. `project/data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json`
-11. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json`
-12. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json`
-13. `project/data/paper1_authority/paper1_pairwise_teacher_generator_request_binding_20260904_v1.json`
-14. `project/data/paper1_authority/paper1_pairwise_teacher_local_generation_result_20260904_v1.json`
-15. `project/data/paper1_authority/paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json`
-16. `project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json`
-17. `project/data/paper1_authority/paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json`
-18. `project/data/paper1_authority/paper1_active_generator_selection_binding_20260904_v1.json`
-19. `project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json`
-20. `project/docs/PM_PAPER1_BINARY_BENEFIT_SCOPE_AND_API_BUDGET_AMENDMENT_20260903_ZH.md`
-21. `project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json`
-22. `project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
-23. `project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json`
-24. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
-25. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
-26. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json`
-27. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
-28. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
-29. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
-30. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
-31. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
-32. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
-33. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
-34. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
-35. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
-36. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
-37. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+3. `project/docs/PM_PAPER1_HUMAN_REFERENCE_V2_AMENDMENT_20260908_ZH.md`
+4. `project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md`
+5. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260904_v2.json`
+6. `project/data/paper1_authority/paper1_task_effect_coding_v2.json`
+7. `project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v3.json`
+8. `project/data/paper1_authority/paper1_pairwise_teacher_human_reference_design_20260908_v2.json`
+9. `project/data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260908_v2.json`
+10. `project/data/paper1_authority/paper1_gemini_pairwise_teacher_identity_20260908_v2.json`
+11. `project/data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json`
+12. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json`
+13. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json`
+14. `project/data/paper1_authority/paper1_pairwise_teacher_generator_request_binding_20260904_v1.json`
+15. `project/data/paper1_authority/paper1_pairwise_teacher_local_generation_result_20260904_v1.json`
+16. `project/data/paper1_authority/paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json`
+17. `project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json`
+18. `project/data/paper1_authority/paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json`
+19. `project/data/paper1_authority/paper1_active_generator_selection_binding_20260904_v1.json`
+20. `project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json`
+21. `project/docs/PM_PAPER1_BINARY_BENEFIT_SCOPE_AND_API_BUDGET_AMENDMENT_20260903_ZH.md`
+22. `project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json`
+23. `project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
+24. `project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json`
+25. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
+26. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
+27. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json`
+28. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
+29. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
+30. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
+31. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
+32. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+33. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+34. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+35. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+36. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+37. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+38. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
 
 The config and checklist are navigation/state surfaces; the linked JSON and
 human amendments are the controlling contracts. Older clauses remain active
@@ -51,16 +52,17 @@ The current operational machine contracts under
 
 - `paper1_latency_constrained_selective_policy_amendment_20260904_v2.json`
 - `paper1_task_effect_coding_v2.json`
-- `paper1_pairwise_teacher_qualification_plan_v2.json`
-- `paper1_pairwise_teacher_human_reference_design_20260904_v1.json`
-- `paper1_pairwise_teacher_human_instrument_20260904_v1.json`
-- `paper1_gemini_pairwise_teacher_identity_20260904_v1.json`
+- `paper1_pairwise_teacher_reference_amendment_20260908_v2.json`
+- `paper1_pairwise_teacher_qualification_plan_v3.json`
+- `paper1_pairwise_teacher_human_reference_design_20260908_v2.json`
+- `paper1_pairwise_teacher_human_instrument_20260908_v2.json`
+- `paper1_gemini_pairwise_teacher_identity_20260908_v2.json`
 - `paper1_pairwise_teacher_preflight_20260904_v1.json`
 - `paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json`
 - `paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json`
 - `paper1_pairwise_teacher_generator_request_binding_20260904_v1.json`
 - `paper1_pairwise_teacher_local_generation_result_20260904_v1.json`
-- `paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json`
+- `paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json`
 - `paper1_pairwise_effect_oracle_contract_v1.json`
 - `paper1_training_evaluation_alignment_contract_v1.json`
 - `paper1_decision_correctness_evaluation_v1.json`
@@ -73,6 +75,7 @@ The current operational machine contracts under
 
 ## Authority precedence
 
+- **The 2026-09-08 human-reference V2 amendment has scoped precedence** for DG reference evidence, the corresponding teacher rubric/payload, offline human forms and ingest, and predeclared consensus adjudication. The researcher authorized the new sheets in the current session. Both raters still review all 96 presentations; all 142 replies and original item orders are preserved. DG includes the unchanged related-history excerpt and complete strict-past raw history, identical for humans and the teacher. V1 sheets remain provenance. No Gemini call, formal outcome, PM training, budget increase or new empirical gate is authorized by this amendment.
 - **The 2026-09-04 Pre-Effect Stabilization has highest scoped precedence** for the primary multi-head overflow rule, task-specific effect coding V2, pairwise-equivalent semantics, and the return to the 96-presentation dual-human teacher reference. The 401 compiler's source-grounding verification and the effect oracle's resource-correctness role do not create a separate candidate-factuality pass gate. It adds no empirical gate and does not reopen outcomes.
 - **The 2026-09-04 teacher human-reference design fixes the measurement denominator** at 80 base semantic pairs + 16 reversed presentations = 96 blinded presentations, each reviewed by both primary raters = 192 primary judgements. Adjudication is separate.
 - **The 2026-09-04 official DG and Mistral schedule contracts have scoped precedence** for the disclosed one-attempt generation amendment and arm-balanced local official scoring. They do not guarantee per-item determinism and do not change official prompts, schemas, metrics or temperature omission.
@@ -89,7 +92,8 @@ The current operational machine contracts under
 - **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
 - **Final evaluation / measurement hierarchy** is governed by `PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md` and its machine-readable contract. Official ESC-Eval / ES-MemEval capability metrics outrank all internally defined Quality/Risk/Function rubrics.
 - **Implementation-level feature schema and leakage controls** inherit from `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md` only where the current config/checklist and later amendments do not supersede it. Its old repeated-effect gates and old execution status are not active.
-- `paper1_pairwise_teacher_qualification_plan_v1.json`, `paper1_task_effect_coding_v1.json`, the semantic-memory v7/v8/v9 DEV packages, `data/v3_authority`, and `scripts/v3` are historical/superseded provenance and must not drive new changes or routine CI.
+- Teacher qualification plans V1/V2 and the 2026-09-04 human sheets/instrument/identity are historical provenance; V3 plan and the 2026-09-08 V2 reference contracts govern new human submissions and teacher requests. The original sampling, blind keys and generation artifacts remain active source identities.
+- `paper1_task_effect_coding_v1.json`, the semantic-memory v7/v8/v9 DEV packages, `data/v3_authority`, and `scripts/v3` are historical/superseded provenance and must not drive new changes or routine CI.
 - If the older training contract or V5.3 code conflicts with these authorities, **do not change the research design to match old code**. Report the conflict and migrate the implementation.
 - Do not silently resolve a pre-outcome research choice. If a required freeze item is not determined by the zero-outcome audit, mark it `IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED`.
 
@@ -175,7 +179,7 @@ The active feature schema is defined in `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_202
 Do not start formal PM training first.
 
 1. Treat the completed 401-run exact-span/owner/time/hash grounding as compiler evidence, not as a new empirical candidate-factuality pass gate. Resource correctness remains an explicit role inside the effect-oracle/teacher workflow.
-2. Materialize and hash-bind the 80-base/16-reversal, 96-presentation human-reference package; both primary raters review all 96 presentations.
+2. Use the 2026-09-08 V2 80-base/16-reversal human-reference package; both primary raters independently review all 96 presentations. Preserve the original primary files, then conduct separate predeclared consensus adjudication before candidate-teacher verdicts are seen. Unresolved cases remain uncertain. Never use returned primary ratings as editable blank templates.
 3. Before reading pair outcomes, bind the common task-aware pairwise rubric and exact Gemini model/provider/prompt/parser/temperature/retry/cost identities. Claude is substitute-only within the existing cap; official benchmark scorers remain the final capability authorities rather than candidate pairwise teachers.
 4. Report teacher agreement, order stability, equivalent recall, position bias, parsing and cost. Weak measurement contracts identifiable labels/claims; it does not create another progression gate.
 5. Under separately authorized calibration locks, freeze amount/cap, exact feature and fold manifests, Generator/Step2 full-stack identity, seeds, matched-random construction, operating-point protocol and the exact API call manifest.

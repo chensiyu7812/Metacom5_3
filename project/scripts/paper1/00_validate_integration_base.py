@@ -40,6 +40,7 @@ from metacom_pm.paper1.evaluation.formal_schedule import (
     CANONICAL_DG_ARMS,
     FORMAL_MISTRAL_SCHEDULE_PROTOCOL,
 )
+from metacom_pm.paper1.evaluation.pairwise_teacher import pairwise_teacher_identity_payload
 from metacom_pm.paper1.outcome_lock import assert_pre_outcome_locked, load_public_only_config
 from metacom_pm.paper1.core.threshold import THRESHOLD_PROTOCOL
 from metacom_pm.paper1.api_budget import (
@@ -198,10 +199,10 @@ def validate() -> dict[str, Any]:
     contract_names = (
         "paper1_training_evaluation_alignment_contract_v1.json",
         "paper1_pairwise_effect_oracle_contract_v1.json",
-        "paper1_pairwise_teacher_qualification_plan_v2.json",
-        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
-        "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
-        "paper1_gemini_pairwise_teacher_identity_20260904_v1.json",
+        "paper1_pairwise_teacher_qualification_plan_v3.json",
+        "paper1_pairwise_teacher_human_reference_design_20260908_v2.json",
+        "paper1_pairwise_teacher_human_instrument_20260908_v2.json",
+        "paper1_gemini_pairwise_teacher_identity_20260908_v2.json",
         "paper1_task_effect_coding_v2.json",
         "paper1_decision_correctness_evaluation_v1.json",
         "paper1_end_to_end_latency_policy_contract_v1.json",
@@ -244,7 +245,7 @@ def validate() -> dict[str, Any]:
     teacher_sheet_manifest = _load(
         PROJECT
         / "data/paper1_authority/"
-        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        "paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json"
     )
     checks["effect_action_latency_contracts_present_pre_outcome"] = (
         all(contract["status"].startswith("ACTIVE") for contract in contracts.values())
@@ -264,49 +265,49 @@ def validate() -> dict[str, Any]:
             "Empathy_and_Information_role"
         ]
         == "reported diagnostics, not automatic one-point vetoes"
-        and contracts["paper1_pairwise_teacher_qualification_plan_v2.json"][
+        and contracts["paper1_pairwise_teacher_qualification_plan_v3.json"][
             "human_reference"
         ]["not_the_natural_turn_96_slot_sample"]
         is True
-        and contracts["paper1_pairwise_teacher_qualification_plan_v2.json"][
+        and contracts["paper1_pairwise_teacher_qualification_plan_v3.json"][
             "materiality_routing"
         ]["explicit_pairwise_equivalent"]
         == "always non-positive material effect"
         and contracts[
-            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+            "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
         ]["measurement_units"]["total_blinded_pair_presentations"]
         == 96
         and contracts[
-            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+            "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
         ]["measurement_units"]["primary_rater_pair_judgements"]
         == 192
         and contracts[
-            "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+            "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
         ]["measurement_units"]["each_primary_rater_reviews_every_presentation"]
         is True
         and config["authority"]["pairwise_teacher_plan"]
-        == "project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v2.json"
+        == "project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v3.json"
         and config["authority"]["pairwise_teacher_human_reference_design"]
         == "project/data/paper1_authority/"
-        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
         and config["authority"]["pairwise_teacher_human_instrument"]
         == "project/data/paper1_authority/"
-        "paper1_pairwise_teacher_human_instrument_20260904_v1.json"
-        and contracts["paper1_pairwise_teacher_human_instrument_20260904_v1.json"][
+        "paper1_pairwise_teacher_human_instrument_20260908_v2.json"
+        and contracts["paper1_pairwise_teacher_human_instrument_20260908_v2.json"][
             "not_a_pass_gate"
         ]
         is True
         and config["authority"]["pairwise_teacher_candidate_identity"]
         == "project/data/paper1_authority/"
-        "paper1_gemini_pairwise_teacher_identity_20260904_v1.json"
+        "paper1_gemini_pairwise_teacher_identity_20260908_v2.json"
         and config["authority"]["pairwise_teacher_preflight"]
         == "project/data/paper1_authority/"
         "paper1_pairwise_teacher_preflight_20260904_v1.json"
-        and contracts["paper1_gemini_pairwise_teacher_identity_20260904_v1.json"][
+        and contracts["paper1_gemini_pairwise_teacher_identity_20260908_v2.json"][
             "model"
         ]["models_get_version"]
         == "001"
-        and contracts["paper1_gemini_pairwise_teacher_identity_20260904_v1.json"][
+        and contracts["paper1_gemini_pairwise_teacher_identity_20260908_v2.json"][
             "budget"
         ]["paid_calls_authorized_by_this_identity"]
         is False
@@ -363,9 +364,9 @@ def validate() -> dict[str, Any]:
     )
     teacher_pair_map = teacher_local_result["base_pair_response_map"]
     teacher_design = contracts[
-        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
     ]
-    teacher_plan = contracts["paper1_pairwise_teacher_qualification_plan_v2.json"]
+    teacher_plan = contracts["paper1_pairwise_teacher_qualification_plan_v3.json"]
     checks["pairwise_teacher_reference_generation_ready"] = (
         teacher_authorization["status"]
         == "ACTIVE_RESEARCHER_AUTHORIZED_EXACT_EIGHT_CALLS"
@@ -430,7 +431,7 @@ def validate() -> dict[str, Any]:
         and teacher_design["identity_and_blinding"]["rater_B_sheet_hash"]
         == teacher_sheet_manifest["sheets"]["RATER_B"]["sha256"]
         and teacher_plan["human_sheet_manifest_authority"]
-        == "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        == "paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json"
         and teacher_plan["generator_request_binding_authority"]
         == "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json"
         and teacher_plan["local_generation_result_authority"]
@@ -454,11 +455,53 @@ def validate() -> dict[str, Any]:
         "paper1_pairwise_teacher_local_generation_result_20260904_v1.json"
         and config["authority"]["pairwise_teacher_human_sheet_manifest"]
         == "project/data/paper1_authority/"
-        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        "paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json"
         and set(teacher_dg_result["locks"].values()) == {"CLOSED"}
         and set(teacher_binding["locks"].values()) == {"CLOSED"}
         and set(teacher_local_result["locks"].values()) == {"CLOSED"}
         and set(teacher_sheet_manifest["locks"].values()) == {"CLOSED"}
+    )
+
+    reference_amendment = _load(
+        PROJECT / "data/paper1_authority/paper1_pairwise_teacher_reference_amendment_20260908_v2.json"
+    )
+    teacher_identity = contracts["paper1_gemini_pairwise_teacher_identity_20260908_v2.json"]
+    prompt_identity = pairwise_teacher_identity_payload()
+    checks["human_reference_v2_evidence_and_identity_bound"] = (
+        reference_amendment["researcher_authorization"]["authorized"] is True
+        and reference_amendment["researcher_authorization"]["paid_calls_authorized"] is False
+        and reference_amendment["human_and_teacher_reference_identical"] is True
+        and reference_amendment["hidden_new_scenario_narrative_included"] is False
+        and reference_amendment["new_empirical_pass_gate"] is False
+        and teacher_sheet_manifest["validation"]["DG_candidates_source_coverage"] == "complete"
+        and teacher_sheet_manifest["validation"]["DG_candidate_instances_checked"] == 63
+        and teacher_sheet_manifest["validation"]["human_teacher_reference_byte_equal"] is True
+        and len(teacher_sheet_manifest["DG_reference_lineage"]) == 9
+        and all(
+            row["source_session_ranks"] == list(range(row["cutoff_rank"]))
+            and row["session_count"] == row["cutoff_rank"]
+            and len(row["source_session_ids"]) == row["session_count"]
+            for row in teacher_sheet_manifest["DG_reference_lineage"]
+        )
+        and len(teacher_sheet_manifest["teacher_request_identities"]) == 96
+        and all(teacher_identity["prompt_identity"][k] == v for k, v in prompt_identity.items())
+        and teacher_identity["parser"]["source_sha256"]
+        == _sha(PROJECT / "src/metacom_pm/paper1/evaluation/pairwise_teacher.py")
+        and teacher_sheet_manifest["teacher_identity_sha256"]
+        == _sha(PROJECT / "data/paper1_authority/paper1_gemini_pairwise_teacher_identity_20260908_v2.json")
+        and all(
+            _sha(PROJECT / path) == expected
+            for path, expected in teacher_sheet_manifest["implementation_sha256"].items()
+        )
+        and teacher_sheet_manifest["source_sha256"]["instrument"]
+        == _sha(PROJECT / "data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260908_v2.json")
+        and teacher_sheet_manifest["source_sha256"]["old_sheet_manifest"]
+        == _sha(PROJECT / "data/paper1_authority/paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json")
+        and teacher_design["disagreement"]["resolution"] == "predeclared_consensus_after_both_primary_files_sealed"
+        and teacher_design["disagreement"]["unresolved_consensus"] == "uncertain"
+        and teacher_plan["human_reference"]["ratings_used_directly_for_PM_training"] is False
+        and teacher_identity["offline_reference_v2_budget_preflight"]["paid_execution_authorized"] is False
+        and set(reference_amendment["locks"].values()) == {"CLOSED"}
     )
 
     authority = PROJECT / "data" / "paper1_authority"

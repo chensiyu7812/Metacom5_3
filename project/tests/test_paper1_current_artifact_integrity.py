@@ -76,7 +76,7 @@ def test_current_config_does_not_list_completed_freezes_as_pending():
 
 def test_teacher_reference_denominators_are_exact_before_rating():
     design = _json(
-        AUTHORITY / "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        AUTHORITY / "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
     )
     units = design["measurement_units"]
     allocation = design["task_allocation"]
@@ -115,7 +115,7 @@ def test_teacher_preflight_and_gemini_identity_are_zero_outcome_and_exact():
     base_rows = _jsonl(
         AUTHORITY / "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl"
     )
-    gemini = _json(AUTHORITY / "paper1_gemini_pairwise_teacher_identity_20260904_v1.json")
+    gemini = _json(AUTHORITY / "paper1_gemini_pairwise_teacher_identity_20260908_v2.json")
     assert preflight["base_semantic_pairs"] == 80
     assert preflight["base_by_task"] == {"DG": 27, "ESC": 27, "QA": 13, "Summary": 13}
     assert preflight["presentations"] == 96
@@ -160,7 +160,7 @@ def test_teacher_preflight_and_gemini_identity_are_zero_outcome_and_exact():
 
 
 def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outcome():
-    plan = _json(AUTHORITY / "paper1_pairwise_teacher_qualification_plan_v2.json")
+    plan = _json(AUTHORITY / "paper1_pairwise_teacher_qualification_plan_v3.json")
     authorization = _json(
         AUTHORITY
         / "paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json"
@@ -180,10 +180,10 @@ def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outco
     )
     local_result = _json(local_result_path)
     sheet_manifest = _json(
-        AUTHORITY / "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        AUTHORITY / "paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json"
     )
     design = _json(
-        AUTHORITY / "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        AUTHORITY / "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
     )
 
     grant = authorization["researcher_authorization"]
@@ -250,7 +250,7 @@ def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outco
         sheet_manifest["sheets"]["RATER_B"]["sha256"]
     )
     assert plan["human_sheet_manifest_authority"] == (
-        "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json"
+        "paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json"
     )
     assert plan["reference_generation"] == {
         "dg_first_turn_paid_calls": 8,
@@ -259,6 +259,8 @@ def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outco
         "local_generator_api_cost_usd": 0,
         "human_sheets_ready": True,
         "human_ratings_observed": 0,
+        "reference_v2_new_generator_calls": 0,
+        "reference_v2_new_paid_calls": 0,
     }
     assert plan["candidate_teacher_paid_calls"] == 0
     for artifact in (dg_result, binding, local_result, sheet_manifest):
@@ -267,7 +269,7 @@ def test_teacher_reference_generation_is_hash_bound_complete_and_still_pre_outco
 
 def test_teacher_human_instrument_teaches_material_equivalence_and_blinding():
     instrument = _json(
-        AUTHORITY / "paper1_pairwise_teacher_human_instrument_20260904_v1.json"
+        AUTHORITY / "paper1_pairwise_teacher_human_instrument_20260908_v2.json"
     )
     assert instrument["not_a_pass_gate"] is True
     assert set(instrument["task_rubrics"]) == {"ESC", "QA", "Summary", "DG"}

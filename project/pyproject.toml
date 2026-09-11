@@ -34,6 +34,9 @@ official-rag = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"metacom_pm.paper1.evaluation" = ["human_reference_form.html", "human_reference_form.js"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"

@@ -48,9 +48,9 @@ def test_agents_reads_current_stabilization_before_preserved_base_authority():
         "paper1_latency_constrained_selective_policy_amendment_20260904_v2.json"
     )
     effect_v2 = agents.index("paper1_task_effect_coding_v2.json")
-    teacher_v2 = agents.index("paper1_pairwise_teacher_qualification_plan_v2.json")
+    teacher_v2 = agents.index("paper1_pairwise_teacher_qualification_plan_v3.json")
     teacher_design = agents.index(
-        "paper1_pairwise_teacher_human_reference_design_20260904_v1.json"
+        "paper1_pairwise_teacher_human_reference_design_20260908_v2.json"
     )
     reconciliation = agents.index("PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md")
     old_program = agents.index("PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md")
