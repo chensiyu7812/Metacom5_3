@@ -1,0 +1,38 @@
+{
+  "protocol": "paper1-training-evaluation-alignment-v1",
+  "status": "ACTIVE_PRE_OUTCOME",
+  "date": "2026-09-03",
+  "row_invariants": [
+    "same target and current visible state",
+    "same strict-past boundary",
+    "same frozen candidate bundle, retriever, renderer, amount and token accounting",
+    "same Generator, base prompt, decoding, output limit and normalization",
+    "ON and OFF differ only in delivery of the focal head; all other optional heads OFF",
+    "same official task outcome surface and frozen task-specific hierarchy",
+    "all arms and counterfactuals for one target stay in one group/fold"
+  ],
+  "scorer_only_fields": [
+    "QA gold answer",
+    "Summary reference answer and reference-event inventory",
+    "DG scenario observations",
+    "official outcomes and pairwise verdicts"
+  ],
+  "forbidden_pm_inputs": [
+    "gold or reference",
+    "future sessions or future turns",
+    "official capability label",
+    "judge output or rationale",
+    "ON/OFF effect label",
+    "subjective worth-opening/helpfulness feature"
+  ],
+  "outcome_blind_curriculum_strata": [
+    "candidate age",
+    "current-context redundancy",
+    "entity and thread overlap",
+    "resource length",
+    "stable versus transient source form",
+    "explicit memory request markers",
+    "valid but low-overlap resource"
+  ],
+  "formal_outcome_calls": 0
+}

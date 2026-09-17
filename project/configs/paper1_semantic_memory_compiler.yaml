@@ -1,0 +1,39 @@
+protocol: pm-paper1-semantic-memory-compiler-config-v1
+status: PRE_OUTCOME_ACTIVE
+authority:
+  amendment: project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json
+  human: project/docs/PM_PAPER1_SEMANTIC_MEMORY_COMPILER_AMENDMENT_20260817_ZH.md
+
+endpoints:
+  # Extractor + verifier share this single frozen endpoint (amendment section 2:
+  # same model used for both roles, non-thinking mode, JSON object structured
+  # output with local strict schema/Pydantic validation -- provider strict
+  # JSON-Schema enforcement is not claimed for this model).
+  semantic_memory_compiler:
+    base_url: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    model: "qwen3-235b-a22b-instruct-2507"
+    api_key_env: "DASHSCOPE_API_KEY"
+    family: "qwen3_235b_dashscope_intl"
+    timeout_seconds: 240
+    transport: "openai_chat_completions"
+    supports_strict_json_schema: false
+    thinking_mode: "provider_default"
+    enable_thinking: false
+
+semantic_memory_compiler:
+  provider: "Alibaba Cloud Model Studio"
+  region: "Singapore (International)"
+  endpoint_name: "semantic_memory_compiler"
+  compiler_version: "paper1-qwen-semantic-memory-compiler-v6"
+  extractor:
+    temperature: 0.0
+    max_tokens: 4096
+    maximum_prompt_tokens: 126976
+  verifier:
+    temperature: 0.0
+    max_tokens: 4096
+    maximum_prompt_tokens: 126976
+  price_snapshot:
+    snapshot_id: "alibaba-model-studio-singapore-qwen3-235b-a22b-instruct-2507-official-list-20260817"
+    input_usd_per_million_tokens: "0.23"
+    output_usd_per_million_tokens: "0.92"

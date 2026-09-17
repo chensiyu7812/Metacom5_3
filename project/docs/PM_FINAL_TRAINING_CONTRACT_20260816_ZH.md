@@ -2,6 +2,8 @@
 
 状态：`ACTIVE / SUBORDINATE TO PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
 
+> **执行覆盖说明：** 本文件中的主观 utility-like feature、70%/0.75/10% qualification、96/128 minimum 与 hard-label 条款，已由 `PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md` 覆盖。active implementation 使用 outcome-blind raw features 与 soft/binomial effect targets。
+
 > **硬规则：Paper 1 的训练数据、effect states、candidate contents 和 final labels 只来自公开先行研究资源。旧 synthetic 80-user/11-user 资产全部退出 active pipeline，不得再读取、采样、审计、修复、编译、训练或作为 evidence 使用。**
 
 本合同回答：四个 head 看什么 outcome-blind features；训练数据怎样构造；哪些公开资源负责训练/评价；以及 Generator 已冻结后怎么立即推进。

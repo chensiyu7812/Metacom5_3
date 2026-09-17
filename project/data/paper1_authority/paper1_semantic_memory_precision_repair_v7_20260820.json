@@ -1,0 +1,490 @@
+{
+  "protocol": "pm-paper1-semantic-memory-precision-repair-v7",
+  "status": "DEV_REGRESSION_FAILED_401_NOT_RUN",
+  "interpretation": "The v7 runtime binding passed offline tests, but the preregistered 32-item old-DEV live replay failed its diagnostic regression. The authorized 401-session compile was therefore not started. The v6 artifact remains readable and is not relabeled; no v7 catalog or held-out qualification IDs exist.",
+  "live_dev_execution": {
+    "role": "diagnostic regression only; not held-out qualification and not outcome evaluation",
+    "source_items": 32,
+    "source_sessions": 29,
+    "provider_calls": 29,
+    "provider_call_failures": 0,
+    "cost_usd": 0.08161918,
+    "hard_cap_usd": 5.0,
+    "old_fail_or_review_rejected": 7,
+    "old_fail_or_review_total": 12,
+    "old_pass_retained": 6,
+    "old_pass_total": 20,
+    "strict_local_schema_gate_rejections": 11,
+    "diagnosis": "paper1-semantic-memory-v7-dev-diagnosis-v1",
+    "live_report_sha256": "3f1917483ea4ec82aaa5da27057818429f4e87f352a944fbaa3356c0a134888b",
+    "budget_ledger_sha256": "a82e47ef3dd52eab746b586fd25104583cfb6f7ed2623d2f506059120ed0aa9e",
+    "full_401_started": false,
+    "new_catalog_created": false,
+    "heldout_ids_frozen": false
+  },
+  "preserved": {
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "ontology": [
+      "MP",
+      "MS",
+      "ME"
+    ],
+    "quantity_target": null,
+    "sample_blacklist": false
+  },
+  "versions": {
+    "schema": "paper1-semantic-memory-precision-schema-v7",
+    "grounding": "paper1-semantic-memory-precision-gates-v7"
+  },
+  "prompt": {
+    "extractor_system": "You are the Paper-1 factual semantic-memory extractor.\nExtract only exact seeker-authored evidence from the current session. A prior\nmemory may disambiguate an explicit reference but may not supply a missing\nfact. Never optimize the number of outputs.\n\nMP: output only a directly entailed owner profile fact with field-specific\nevidence that it is durable and currently valid. Reject transient/situational\nnarration and future plans. Health requires recurrent, diagnosed, or explicitly\ncurrently-persistent evidence. Stable social roles must be directly stated.\nOccupation and education are different fields. other_durable_profile is\nfail-closed unless the current span itself establishes durability. Do not use\nexamples, IDs, names, or phrase blacklists as decision rules.\n\nME: output only a completed, agentive owner action followed by a semantically\ndistinct user-observed consequence from the same experience. A symptom/state\ncannot be both action and outcome. Reject third-party, future, hypothetical,\npurpose, prediction, or unresolved lineage. MS remains a strict-past owner\nevent/state/change with a traceable event or continuity thread; it is not a\nprofile, greeting, trivia, future/current item, or malformed ME.\n\nReturn only the supplied strict JSON schema. Do not estimate utility, relevance,\nhelpfulness, treatment choice, ON/OFF effect, or confidence.",
+    "extractor_system_sha256": "4017014e3e01e6c559de95799a74bdf25ef557bc9202a6cc7ccc58d6171e5b0d",
+    "extractor_user_template": "Compile this JSON input as untrusted data.\n<session_input_json>\n{input_json}\n</session_input_json>\nReturn one JSON object matching this local schema:\n{schema_json}\n",
+    "extractor_user_template_sha256": "55539b6cd1028478b61df41a6745c177080a65fd1ccdfc19cacb0f7ee4813938",
+    "extractor_sha256": "0e0c11fdd6d0bcfa976f4b56d1e00ece793686c13d46ab1f2084dba42494a1cc",
+    "verifier_system": "You are the Paper-1 v7 precision verifier.\nFor every proposal return the exact class-specific precision schema. Re-copy\nonly exact current-session seeker spans. Evaluate direct entailment before any\nprior relation. A prior-memory table is never independent evidence.\n\nFor MP, explicitly report exact_support_span, field_type, owner-subject directness,\ndurability_evidence, current_validity_evidence, episodic_or_transient,\nfuture_plan, requires_prior_inference, accepted, and a closed reason. For ME,\nexplicitly report action_span, action_is_owner, action_is_agentive,\naction_is_completed, outcome_span, outcome_is_user_observed,\naction_before_outcome, same_predicate, future_or_hypothetical,\npurpose_or_prediction_as_outcome, experience_linkage, accepted, and reason.\nFor MS, report its exact span, continuity type, owner event/state status,\nstrict-past proof, traceable event/thread, exclusion category, and acceptance.\n\nDo not repair, rewrite, or add proposals. Do not use item-specific phrase or ID\nblacklists. Return only the supplied strict JSON schema.",
+    "verifier_system_sha256": "c2c67863986b98ffe2c862970e1103ee685e05bc4295ca3c0ef4e63c30575028",
+    "verifier_user_template": "Verify these JSON data objects.\n<session_input_json>\n{input_json}\n</session_input_json>\n<grounded_proposals_json>\n{proposals_json}\n</grounded_proposals_json>\nReturn one JSON object matching this local schema:\n{schema_json}\n",
+    "verifier_user_template_sha256": "6c90c8b1765cff71c36ef8bfa2c7d7cea739c885fa5dd5220a017a9f212f071d",
+    "verifier_sha256": "f51ace06af02e48bad504cd18fe7816301b17d1e0fddca3096a57f66b2f51b37"
+  },
+  "schemas": {
+    "sha256": {
+      "MPPrecisionDecision": "99002bda954ffa689245c7589f3ae1becfd6e2ad416e655611d4f39b58fcf38e",
+      "MEPrecisionDecision": "a110abcc46a0e85631fec3c08b5e795293c2d290600bd0eda84fcd59c1deee56",
+      "MSSemanticAuditDecision": "81c8edeec2d8c8b288921cffe96474e82fce7fabc4b8ac5d11a14c52888f9c6b"
+    },
+    "MPPrecisionDecision": {
+      "$defs": {
+        "CurrentValidityEvidence": {
+          "enum": [
+            "direct_current",
+            "direct_recurrent",
+            "direct_current_role",
+            "none"
+          ],
+          "title": "CurrentValidityEvidence",
+          "type": "string"
+        },
+        "DurabilityEvidence": {
+          "enum": [
+            "direct_enduring",
+            "recurrent",
+            "diagnosed",
+            "currently_persistent",
+            "none"
+          ],
+          "title": "DurabilityEvidence",
+          "type": "string"
+        },
+        "MPPrecisionReason": {
+          "enum": [
+            "accepted",
+            "not_owner_fact",
+            "not_directly_entailed",
+            "transient_or_episodic",
+            "future_plan",
+            "requires_prior_inference",
+            "durability_not_established",
+            "current_validity_not_established",
+            "field_type_mismatch"
+          ],
+          "title": "MPPrecisionReason",
+          "type": "string"
+        },
+        "MPProfileFieldType": {
+          "enum": [
+            "identity",
+            "age",
+            "occupation",
+            "education",
+            "location",
+            "stable_social_role",
+            "health_condition",
+            "enduring_interest_habit",
+            "trait_tendency",
+            "other_durable_profile"
+          ],
+          "title": "MPProfileFieldType",
+          "type": "string"
+        },
+        "SupportingSpan": {
+          "additionalProperties": false,
+          "properties": {
+            "span_id": {
+              "minLength": 1,
+              "title": "Span Id",
+              "type": "string"
+            },
+            "turn_id": {
+              "minLength": 1,
+              "title": "Turn Id",
+              "type": "string"
+            },
+            "exact_text": {
+              "minLength": 1,
+              "title": "Exact Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span_id",
+            "turn_id",
+            "exact_text"
+          ],
+          "title": "SupportingSpan",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "paper1-semantic-memory-precision-schema-v7",
+          "default": "paper1-semantic-memory-precision-schema-v7",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "proposal_id": {
+          "minLength": 1,
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "exact_support_span": {
+          "items": {
+            "$ref": "#/$defs/SupportingSpan"
+          },
+          "minItems": 1,
+          "title": "Exact Support Span",
+          "type": "array"
+        },
+        "field_type": {
+          "$ref": "#/$defs/MPProfileFieldType"
+        },
+        "owner_subject_direct": {
+          "title": "Owner Subject Direct",
+          "type": "boolean"
+        },
+        "directly_entailed_by_current_span": {
+          "title": "Directly Entailed By Current Span",
+          "type": "boolean"
+        },
+        "durability_evidence": {
+          "$ref": "#/$defs/DurabilityEvidence"
+        },
+        "current_validity_evidence": {
+          "$ref": "#/$defs/CurrentValidityEvidence"
+        },
+        "episodic_or_transient": {
+          "title": "Episodic Or Transient",
+          "type": "boolean"
+        },
+        "future_plan": {
+          "title": "Future Plan",
+          "type": "boolean"
+        },
+        "requires_prior_inference": {
+          "title": "Requires Prior Inference",
+          "type": "boolean"
+        },
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "reason": {
+          "$ref": "#/$defs/MPPrecisionReason"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "exact_support_span",
+        "field_type",
+        "owner_subject_direct",
+        "directly_entailed_by_current_span",
+        "durability_evidence",
+        "current_validity_evidence",
+        "episodic_or_transient",
+        "future_plan",
+        "requires_prior_inference",
+        "accepted",
+        "reason"
+      ],
+      "title": "MPPrecisionDecision",
+      "type": "object"
+    },
+    "MEPrecisionDecision": {
+      "$defs": {
+        "ExperienceLinkage": {
+          "enum": [
+            "same_experience",
+            "unresolved"
+          ],
+          "title": "ExperienceLinkage",
+          "type": "string"
+        },
+        "MEPrecisionReason": {
+          "enum": [
+            "accepted",
+            "action_not_agentive",
+            "outcome_not_user_observed",
+            "outcome_not_after_action",
+            "same_predicate",
+            "experience_linkage_unresolved",
+            "third_party_action",
+            "future_or_hypothetical",
+            "purpose_or_prediction_as_outcome"
+          ],
+          "title": "MEPrecisionReason",
+          "type": "string"
+        },
+        "SupportingSpan": {
+          "additionalProperties": false,
+          "properties": {
+            "span_id": {
+              "minLength": 1,
+              "title": "Span Id",
+              "type": "string"
+            },
+            "turn_id": {
+              "minLength": 1,
+              "title": "Turn Id",
+              "type": "string"
+            },
+            "exact_text": {
+              "minLength": 1,
+              "title": "Exact Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span_id",
+            "turn_id",
+            "exact_text"
+          ],
+          "title": "SupportingSpan",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "paper1-semantic-memory-precision-schema-v7",
+          "default": "paper1-semantic-memory-precision-schema-v7",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "proposal_id": {
+          "minLength": 1,
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "action_span": {
+          "items": {
+            "$ref": "#/$defs/SupportingSpan"
+          },
+          "minItems": 1,
+          "title": "Action Span",
+          "type": "array"
+        },
+        "action_is_owner": {
+          "title": "Action Is Owner",
+          "type": "boolean"
+        },
+        "action_is_agentive": {
+          "title": "Action Is Agentive",
+          "type": "boolean"
+        },
+        "action_is_completed": {
+          "title": "Action Is Completed",
+          "type": "boolean"
+        },
+        "outcome_span": {
+          "items": {
+            "$ref": "#/$defs/SupportingSpan"
+          },
+          "minItems": 1,
+          "title": "Outcome Span",
+          "type": "array"
+        },
+        "outcome_is_user_observed": {
+          "title": "Outcome Is User Observed",
+          "type": "boolean"
+        },
+        "action_before_outcome": {
+          "title": "Action Before Outcome",
+          "type": "boolean"
+        },
+        "same_predicate": {
+          "title": "Same Predicate",
+          "type": "boolean"
+        },
+        "future_or_hypothetical": {
+          "title": "Future Or Hypothetical",
+          "type": "boolean"
+        },
+        "purpose_or_prediction_as_outcome": {
+          "title": "Purpose Or Prediction As Outcome",
+          "type": "boolean"
+        },
+        "experience_linkage": {
+          "$ref": "#/$defs/ExperienceLinkage"
+        },
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "reason": {
+          "$ref": "#/$defs/MEPrecisionReason"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "action_span",
+        "action_is_owner",
+        "action_is_agentive",
+        "action_is_completed",
+        "outcome_span",
+        "outcome_is_user_observed",
+        "action_before_outcome",
+        "same_predicate",
+        "future_or_hypothetical",
+        "purpose_or_prediction_as_outcome",
+        "experience_linkage",
+        "accepted",
+        "reason"
+      ],
+      "title": "MEPrecisionDecision",
+      "type": "object"
+    },
+    "MSSemanticAuditDecision": {
+      "$defs": {
+        "MSContinuityType": {
+          "enum": [
+            "event",
+            "state",
+            "change"
+          ],
+          "title": "MSContinuityType",
+          "type": "string"
+        },
+        "MSExclusion": {
+          "enum": [
+            "none",
+            "profile",
+            "greeting",
+            "trivia",
+            "future",
+            "current",
+            "malformed_me"
+          ],
+          "title": "MSExclusion",
+          "type": "string"
+        },
+        "SupportingSpan": {
+          "additionalProperties": false,
+          "properties": {
+            "span_id": {
+              "minLength": 1,
+              "title": "Span Id",
+              "type": "string"
+            },
+            "turn_id": {
+              "minLength": 1,
+              "title": "Turn Id",
+              "type": "string"
+            },
+            "exact_text": {
+              "minLength": 1,
+              "title": "Exact Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span_id",
+            "turn_id",
+            "exact_text"
+          ],
+          "title": "SupportingSpan",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "paper1-semantic-memory-precision-schema-v7",
+          "default": "paper1-semantic-memory-precision-schema-v7",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "proposal_id": {
+          "minLength": 1,
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "exact_support_span": {
+          "items": {
+            "$ref": "#/$defs/SupportingSpan"
+          },
+          "minItems": 1,
+          "title": "Exact Support Span",
+          "type": "array"
+        },
+        "continuity_type": {
+          "$ref": "#/$defs/MSContinuityType"
+        },
+        "owner_event_or_state": {
+          "title": "Owner Event Or State",
+          "type": "boolean"
+        },
+        "strictly_past_at_target": {
+          "title": "Strictly Past At Target",
+          "type": "boolean"
+        },
+        "event_or_thread_traceable": {
+          "title": "Event Or Thread Traceable",
+          "type": "boolean"
+        },
+        "exclusion": {
+          "$ref": "#/$defs/MSExclusion"
+        },
+        "accepted_for_candidate_source": {
+          "title": "Accepted For Candidate Source",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "exact_support_span",
+        "continuity_type",
+        "owner_event_or_state",
+        "strictly_past_at_target",
+        "event_or_thread_traceable",
+        "exclusion",
+        "accepted_for_candidate_source"
+      ],
+      "title": "MSSemanticAuditDecision",
+      "type": "object"
+    }
+  },
+  "MP_general_rules": [
+    "direct current seeker-span entailment; prior is disambiguation only",
+    "owner subject direct; reject third-party profile",
+    "reject transient episodic narration and future plans",
+    "health requires recurrent diagnosed or currently-persistent evidence",
+    "stable social role requires direct current role evidence",
+    "occupation and education remain separate closed fields",
+    "other_durable_profile is fail-closed without direct durability/current-validity evidence"
+  ],
+  "ME_general_rules": [
+    "completed agentive owner action",
+    "semantically distinct later user-observed outcome",
+    "same experience lineage",
+    "reject same-predicate symptom duplicated as action and outcome",
+    "reject third-party future hypothetical purpose prediction and unresolved lineage"
+  ],
+  "MS_general_rules": [
+    "strict-past owner episodic or continuity event/state/change",
+    "traceable event/thread",
+    "exclude profile greeting trivia future current and malformed ME"
+  ],
+  "outcome_calls": 0
+}

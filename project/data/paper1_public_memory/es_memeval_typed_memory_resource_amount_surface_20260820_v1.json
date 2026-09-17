@@ -1,0 +1,2574 @@
+{
+  "protocol": "pm-paper1-typed-memory-resource-amount-surface-v1",
+  "status": "ZERO_OUTCOME_TASK_LEVEL_SURFACES_NOT_A_BUNDLE_FREEZE",
+  "outcome_calls": 0,
+  "calibration_outcome_lock": "CLOSED",
+  "confirmatory_outcome_lock": "CLOSED",
+  "source_identity": {
+    "census_path": "data/paper1_public_memory/es_memeval_public_candidate_census_v1.jsonl",
+    "census_sha256": "902c97ab1225783f6f440c91b4da98728be81556bd3ceeacc5d3e369d0761bad",
+    "census_summary_sha256": "0b6b9f957b0511cfb07b3bb06f0b756548d724c19acb4744662f2eb56cea6ec3",
+    "semantic_compiler_source": {
+      "accepted_units": 2745,
+      "artifact_name": "session_results.jsonl",
+      "complete_session_artifact_required": true,
+      "sha256": "7c6a3dc6d6109679671439ba75975d1e93cadd85ad3264f1fe0bf48547089575"
+    },
+    "token_counter": {
+      "kind": "llama31_8b_instruct_frozen_tokenizer",
+      "repo": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+      "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+      "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+    }
+  },
+  "current_local_counts": {
+    "MP": {
+      "unique_candidates": 378,
+      "owners_with_any_candidate": 18,
+      "targets_total": 1586,
+      "targets_with_coverage": 1586,
+      "coverage_fraction": 1.0
+    },
+    "MS": {
+      "unique_candidates": 1411,
+      "owners_with_any_candidate": 18,
+      "targets_total": 1586,
+      "targets_with_coverage": 1586,
+      "coverage_fraction": 1.0
+    },
+    "ME": {
+      "unique_candidates": 80,
+      "owners_with_any_candidate": 18,
+      "targets_total": 1586,
+      "targets_with_coverage": 1586,
+      "coverage_fraction": 1.0
+    }
+  },
+  "old_remote_artifact_check": {
+    "old_counts": {
+      "MP": 3,
+      "MS": 401,
+      "ME": 3
+    },
+    "matches_current_local": false,
+    "instruction": "do not cite the old remote counts as current local evidence"
+  },
+  "sparsity_interpretation": {
+    "MP": "not the old 3-unit artifact, but owner-level pool size is uneven; wide ordinary top-k is not assumed",
+    "MS": "supports the broadest amount surface",
+    "ME": "80 unique units total and owner mean 4.44; k>4 loses full-k coverage and no synthetic rescue is allowed",
+    "synthetic_rescue": "FORBIDDEN"
+  },
+  "surface_k_values": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "token_caps": [
+    64,
+    96,
+    128,
+    192,
+    256,
+    384,
+    512
+  ],
+  "task_surfaces": {
+    "qa": {
+      "status": "STATIC_VISIBLE_QUERY_BGE_SURFACE_READY_NOT_FROZEN",
+      "targets": 1427,
+      "per_head": {
+        "MP": [
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 9,
+              "p25": 16,
+              "median": 18,
+              "p75": 22,
+              "p90": 24,
+              "p95": 25,
+              "max": 38,
+              "mean": 18.546601261387526
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.21876383658718881,
+              "p25": 0.4055323978227228,
+              "median": 0.45282466907036556,
+              "p75": 0.5058154938015051,
+              "p90": 0.5639415403088252,
+              "p95": 0.6044176754222299,
+              "max": 0.7836407267273948,
+              "mean": 0.4590286336252248
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "generator_input_tokens": {
+              "min": 18,
+              "p25": 33,
+              "median": 37,
+              "p75": 42,
+              "p90": 46,
+              "p95": 48,
+              "max": 71,
+              "mean": 37.41625788367204
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.18685798155872413,
+              "p25": 0.37632574897304544,
+              "median": 0.4226435028018004,
+              "p75": 0.47016159975198557,
+              "p90": 0.5254498270812852,
+              "p95": 0.5621262949303927,
+              "max": 0.6921910155819935,
+              "mean": 0.42706077154941186
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1424,
+                "fraction": 0.9978976874562018
+              },
+              "96": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 1391,
+            "full_k_fraction": 0.9747722494744219,
+            "delivered_units": {
+              "min": 2,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.9747722494744218
+            },
+            "generator_input_tokens": {
+              "min": 28,
+              "p25": 51,
+              "median": 56,
+              "p75": 62,
+              "p90": 68,
+              "p95": 71,
+              "max": 99,
+              "mean": 55.97967764540995
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.2155709514172039,
+              "p25": 0.3618307992743413,
+              "median": 0.4055883945062256,
+              "p75": 0.4516615953528966,
+              "p90": 0.5078088587757544,
+              "p95": 0.539746686999087,
+              "max": 0.6449455274911691,
+              "mean": 0.41101579575299924
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1164,
+                "fraction": 0.815697266993693
+              },
+              "96": {
+                "targets": 1424,
+                "fraction": 0.9978976874562018
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 1391,
+            "full_k_fraction": 0.9747722494744219,
+            "delivered_units": {
+              "min": 2,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.9495444989488435
+            },
+            "generator_input_tokens": {
+              "min": 33,
+              "p25": 70,
+              "median": 76,
+              "p75": 82,
+              "p90": 90,
+              "p95": 92,
+              "max": 125,
+              "mean": 74.44358794674142
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.20684289534024392,
+              "p25": 0.35102381072592015,
+              "median": 0.39399784833332757,
+              "p75": 0.43933181781220004,
+              "p90": 0.4922676628937667,
+              "p95": 0.5274730131938197,
+              "max": 0.6325051875083101,
+              "mean": 0.3990275202425276
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 191,
+                "fraction": 0.13384723195515066
+              },
+              "96": {
+                "targets": 1396,
+                "fraction": 0.9782761037140855
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 16,
+              "p25": 24,
+              "median": 27,
+              "p75": 31,
+              "p90": 34,
+              "p95": 36,
+              "max": 47,
+              "mean": 27.477224947442185
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.3093076479949439,
+              "p25": 0.466972749119687,
+              "median": 0.5072091754922915,
+              "p75": 0.5564907469796219,
+              "p90": 0.6046500230102093,
+              "p95": 0.643545663814768,
+              "max": 0.8019416230516875,
+              "mean": 0.5137092714351706
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "generator_input_tokens": {
+              "min": 36,
+              "p25": 50,
+              "median": 55,
+              "p75": 60,
+              "p90": 64,
+              "p95": 67,
+              "max": 92,
+              "mean": 55.48563419761738
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.27920683211601804,
+              "p25": 0.44568758736147535,
+              "median": 0.4836456153897019,
+              "p75": 0.5262377275635237,
+              "p90": 0.5725964204931518,
+              "p95": 0.6088783090497747,
+              "max": 0.7486948881416353,
+              "mean": 0.48940088657372033
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1284,
+                "fraction": 0.8997897687456202
+              },
+              "96": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 3,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "generator_input_tokens": {
+              "min": 57,
+              "p25": 77,
+              "median": 84,
+              "p75": 90,
+              "p90": 96,
+              "p95": 100,
+              "max": 121,
+              "mean": 83.8969866853539
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.2790060843290761,
+              "p25": 0.4330149583980455,
+              "median": 0.47209778703843847,
+              "p75": 0.5128823433225679,
+              "p90": 0.5561072582570235,
+              "p95": 0.5931931928936888,
+              "max": 0.7133284470362246,
+              "mean": 0.4757523229694531
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 35,
+                "fraction": 0.02452697967764541
+              },
+              "96": {
+                "targets": 1288,
+                "fraction": 0.9025928521373511
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 4,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "generator_input_tokens": {
+              "min": 78,
+              "p25": 104,
+              "median": 112,
+              "p75": 120,
+              "p90": 126,
+              "p95": 131,
+              "max": 161,
+              "mean": 112.05185704274702
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.27690184005379853,
+              "p25": 0.4249460917971115,
+              "median": 0.4620274322621782,
+              "p75": 0.5016627315851563,
+              "p90": 0.5449493718240059,
+              "p95": 0.5787785391608675,
+              "max": 0.6975240606058998,
+              "mean": 0.4658636964490761
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 0,
+                "fraction": 0.0
+              },
+              "96": {
+                "targets": 111,
+                "fraction": 0.07778556412053259
+              },
+              "128": {
+                "targets": 1332,
+                "fraction": 0.933426769446391
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 25,
+              "median": 32,
+              "p75": 36,
+              "p90": 41,
+              "p95": 46,
+              "max": 57,
+              "mean": 32.70918009810792
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.16222795897785053,
+              "p25": 0.31921994487729655,
+              "median": 0.36830903700953255,
+              "p75": 0.42569331818308553,
+              "p90": 0.49185523203427417,
+              "p95": 0.5361161894230074,
+              "max": 0.6628424255238599,
+              "mean": 0.37745913963908667
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1172,
+            "full_k_fraction": 0.8213034337771549,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 1.821303433777155
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 50,
+              "median": 64,
+              "p75": 72,
+              "p90": 81,
+              "p95": 89,
+              "max": 99,
+              "mean": 60.518570427470216
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.17337541354073835,
+              "p25": 0.30149872153623414,
+              "median": 0.3480055427761225,
+              "p75": 0.4048790798919851,
+              "p90": 0.4688968882401511,
+              "p95": 0.5039637871755333,
+              "max": 0.6076179931743074,
+              "mean": 0.35567856265291853
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 750,
+                "fraction": 0.5255781359495445
+              },
+              "96": {
+                "targets": 1400,
+                "fraction": 0.9810791871058164
+              },
+              "128": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 932,
+            "full_k_fraction": 0.6531184302733006,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.4744218640504556
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 64,
+              "median": 83,
+              "p75": 110,
+              "p90": 116,
+              "p95": 127,
+              "max": 138,
+              "mean": 82.01331464611073
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.159477910774022,
+              "p25": 0.29005518817989334,
+              "median": 0.33174996969413645,
+              "p75": 0.38894803837648223,
+              "p90": 0.4554510587623996,
+              "p95": 0.4901773977356399,
+              "max": 0.5940670758197449,
+              "mean": 0.34282636031226316
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 380,
+                "fraction": 0.2662929222144359
+              },
+              "96": {
+                "targets": 885,
+                "fraction": 0.6201822004204625
+              },
+              "128": {
+                "targets": 1368,
+                "fraction": 0.9586545199719692
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 700,
+            "full_k_fraction": 0.4905395935529082,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 3,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 2.964961457603364
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 64,
+              "median": 98,
+              "p75": 135,
+              "p90": 154,
+              "p95": 162,
+              "max": 175,
+              "mean": 98.25858444288717
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.16739977908102802,
+              "p25": 0.28956866031894446,
+              "median": 0.32905701084885813,
+              "p75": 0.3865127014294507,
+              "p90": 0.44779527424271837,
+              "p95": 0.4837657982459109,
+              "max": 0.5866787312439563,
+              "mean": 0.3403709202412853
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 380,
+                "fraction": 0.2662929222144359
+              },
+              "96": {
+                "targets": 700,
+                "fraction": 0.4905395935529082
+              },
+              "128": {
+                "targets": 990,
+                "fraction": 0.6937631394533987
+              },
+              "192": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "typed_bundle_surface": [
+        {
+          "symmetric_k_per_head": 1,
+          "targets": 1427,
+          "targets_with_all_three_heads_full_k": 1427,
+          "all_three_heads_full_k_fraction": 1.0,
+          "delivered_typed_units": {
+            "min": 3,
+            "p25": 3,
+            "median": 3,
+            "p75": 3,
+            "p90": 3,
+            "p95": 3,
+            "max": 3,
+            "mean": 3.0
+          },
+          "generator_input_tokens": {
+            "min": 48,
+            "p25": 71,
+            "median": 79,
+            "p75": 86,
+            "p90": 94,
+            "p95": 99,
+            "max": 119,
+            "mean": 78.73300630693763
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 137,
+              "fraction": 0.09600560616678346
+            },
+            "96": {
+              "targets": 1322,
+              "fraction": 0.9264190609670637
+            },
+            "128": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "192": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "256": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 1427,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 2,
+          "targets": 1427,
+          "targets_with_all_three_heads_full_k": 1172,
+          "all_three_heads_full_k_fraction": 0.8213034337771549,
+          "delivered_typed_units": {
+            "min": 5,
+            "p25": 6,
+            "median": 6,
+            "p75": 6,
+            "p90": 6,
+            "p95": 6,
+            "max": 6,
+            "mean": 5.821303433777155
+          },
+          "generator_input_tokens": {
+            "min": 77,
+            "p25": 140,
+            "median": 156,
+            "p75": 170,
+            "p90": 182,
+            "p95": 187,
+            "max": 222,
+            "mean": 153.42046250875964
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 67,
+              "fraction": 0.046951646811492644
+            },
+            "128": {
+              "targets": 189,
+              "fraction": 0.1324456902592852
+            },
+            "192": {
+              "targets": 1387,
+              "fraction": 0.9719691660826909
+            },
+            "256": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 1427,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 3,
+          "targets": 1427,
+          "targets_with_all_three_heads_full_k": 896,
+          "all_three_heads_full_k_fraction": 0.6278906797477225,
+          "delivered_typed_units": {
+            "min": 7,
+            "p25": 8,
+            "median": 9,
+            "p75": 9,
+            "p90": 9,
+            "p95": 9,
+            "max": 9,
+            "mean": 8.449194113524877
+          },
+          "generator_input_tokens": {
+            "min": 107,
+            "p25": 201,
+            "median": 224,
+            "p75": 252,
+            "p90": 269,
+            "p95": 276,
+            "max": 310,
+            "mean": 221.88997897687457
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "128": {
+              "targets": 62,
+              "fraction": 0.043447792571829014
+            },
+            "192": {
+              "targets": 273,
+              "fraction": 0.1913104414856342
+            },
+            "256": {
+              "targets": 1143,
+              "fraction": 0.8009810791871058
+            },
+            "384": {
+              "targets": 1427,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 1427,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 4,
+          "targets": 1427,
+          "targets_with_all_three_heads_full_k": 664,
+          "all_three_heads_full_k_fraction": 0.4653118430273301,
+          "delivered_typed_units": {
+            "min": 9,
+            "p25": 10,
+            "median": 11,
+            "p75": 12,
+            "p90": 12,
+            "p95": 12,
+            "max": 12,
+            "mean": 10.914505956552208
+          },
+          "generator_input_tokens": {
+            "min": 141,
+            "p25": 249,
+            "median": 286,
+            "p75": 330,
+            "p90": 354,
+            "p95": 365,
+            "max": 396,
+            "mean": 284.7540294323756
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "128": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets": 73,
+              "fraction": 0.051156271899089
+            },
+            "256": {
+              "targets": 428,
+              "fraction": 0.2999299229152067
+            },
+            "384": {
+              "targets": 1419,
+              "fraction": 0.9943938332165382
+            },
+            "512": {
+              "targets": 1427,
+              "fraction": 1.0
+            }
+          }
+        }
+      ]
+    },
+    "summary": {
+      "status": "STATIC_VISIBLE_QUERY_BGE_SURFACE_READY_NOT_FROZEN",
+      "targets": 125,
+      "per_head": {
+        "MP": [
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 9,
+              "p25": 17,
+              "median": 20,
+              "p75": 22,
+              "p90": 24,
+              "p95": 25,
+              "max": 31,
+              "mean": 19.44
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.31941078601296397,
+              "p25": 0.4296677773136088,
+              "median": 0.47831814014197677,
+              "p75": 0.5207809823788109,
+              "p90": 0.5729475375907538,
+              "p95": 0.5976438207836144,
+              "max": 0.6425069203704264,
+              "mean": 0.47768516446119075
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "generator_input_tokens": {
+              "min": 19,
+              "p25": 36,
+              "median": 39,
+              "p75": 44,
+              "p90": 47,
+              "p95": 49,
+              "max": 54,
+              "mean": 39.384
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.26705999759315857,
+              "p25": 0.3919798351715836,
+              "median": 0.45368340569660126,
+              "p75": 0.4918925085339656,
+              "p90": 0.5348905682914333,
+              "p95": 0.5536257050561816,
+              "max": 0.594171332386774,
+              "mean": 0.44575107041695167
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 119,
+            "full_k_fraction": 0.952,
+            "delivered_units": {
+              "min": 2,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.952
+            },
+            "generator_input_tokens": {
+              "min": 28,
+              "p25": 54,
+              "median": 60,
+              "p75": 65,
+              "p90": 70,
+              "p95": 72,
+              "max": 79,
+              "mean": 58.464
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.28703025370367186,
+              "p25": 0.3917160562135772,
+              "median": 0.4310709406689852,
+              "p75": 0.48516411248640073,
+              "p90": 0.5100412585329523,
+              "p95": 0.5409400412014748,
+              "max": 0.5618478558145993,
+              "mean": 0.4330201499696155
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 89,
+                "fraction": 0.712
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 119,
+            "full_k_fraction": 0.952,
+            "delivered_units": {
+              "min": 2,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.904
+            },
+            "generator_input_tokens": {
+              "min": 33,
+              "p25": 74,
+              "median": 78,
+              "p75": 87,
+              "p90": 92,
+              "p95": 97,
+              "max": 102,
+              "mean": 77.304
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.27007215557815223,
+              "p25": 0.3814587377606878,
+              "median": 0.4178461061160228,
+              "p75": 0.46806193715660604,
+              "p90": 0.4979260115649221,
+              "p95": 0.5229232213388634,
+              "max": 0.5428532833185364,
+              "mean": 0.42074604937359156
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 11,
+                "fraction": 0.088
+              },
+              "96": {
+                "targets": 118,
+                "fraction": 0.944
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 17,
+              "p25": 26,
+              "median": 30,
+              "p75": 33,
+              "p90": 38,
+              "p95": 39,
+              "max": 44,
+              "mean": 30.056
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.4283666291725364,
+              "p25": 0.48063408919668854,
+              "median": 0.5206638942717973,
+              "p75": 0.5741696933752055,
+              "p90": 0.6333301193796639,
+              "p95": 0.6455896772080446,
+              "max": 0.6819101652011087,
+              "mean": 0.5321453585711334
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "generator_input_tokens": {
+              "min": 39,
+              "p25": 54,
+              "median": 61,
+              "p75": 64,
+              "p90": 70,
+              "p95": 74,
+              "max": 91,
+              "mean": 59.656
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.41840451425271236,
+              "p25": 0.46518495527154763,
+              "median": 0.50008946142733,
+              "p75": 0.55619739980279,
+              "p90": 0.6026665224990173,
+              "p95": 0.6290237629017732,
+              "max": 0.656397093897903,
+              "mean": 0.5136580599405648
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 95,
+                "fraction": 0.76
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 3,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "generator_input_tokens": {
+              "min": 58,
+              "p25": 84,
+              "median": 89,
+              "p75": 94,
+              "p90": 101,
+              "p95": 104,
+              "max": 117,
+              "mean": 88.68
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.4084286023132721,
+              "p25": 0.4538688344986929,
+              "median": 0.4874023930534908,
+              "p75": 0.543304894086703,
+              "p90": 0.5864050554284115,
+              "p95": 0.6063647435453248,
+              "max": 0.6450073889493955,
+              "mean": 0.5006787968218113
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 2,
+                "fraction": 0.016
+              },
+              "96": {
+                "targets": 102,
+                "fraction": 0.816
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 4,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "generator_input_tokens": {
+              "min": 82,
+              "p25": 111,
+              "median": 118,
+              "p75": 127,
+              "p90": 134,
+              "p95": 137,
+              "max": 148,
+              "mean": 118.32
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.4049189749695385,
+              "p25": 0.45038786410473736,
+              "median": 0.47936869439630564,
+              "p75": 0.5306903784235241,
+              "p90": 0.5792423813085816,
+              "p95": 0.592333829318641,
+              "max": 0.6367785042043749,
+              "mean": 0.49240990953523545
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 0,
+                "fraction": 0.0
+              },
+              "96": {
+                "targets": 5,
+                "fraction": 0.04
+              },
+              "128": {
+                "targets": 98,
+                "fraction": 0.784
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 26,
+              "median": 34,
+              "p75": 40,
+              "p90": 46,
+              "p95": 47,
+              "max": 57,
+              "mean": 33.896
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.2804004110084092,
+              "p25": 0.37184400019589764,
+              "median": 0.42468769362274933,
+              "p75": 0.5124393713914178,
+              "p90": 0.5681832924078981,
+              "p95": 0.5957640676412885,
+              "max": 0.6935247874997253,
+              "mean": 0.44090780422834885
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "96": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 104,
+            "full_k_fraction": 0.832,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 1.832
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 53,
+              "median": 69,
+              "p75": 78,
+              "p90": 82,
+              "p95": 91,
+              "max": 99,
+              "mean": 62.864
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.2535620242780347,
+              "p25": 0.3601066882003805,
+              "median": 0.41086181443212144,
+              "p75": 0.4980254461785969,
+              "p90": 0.5420222626423543,
+              "p95": 0.566309007446249,
+              "max": 0.6219751478916526,
+              "mean": 0.42203440773179507
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 56,
+                "fraction": 0.448
+              },
+              "96": {
+                "targets": 123,
+                "fraction": 0.984
+              },
+              "128": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 88,
+            "full_k_fraction": 0.704,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.536
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 72,
+              "median": 95,
+              "p75": 112,
+              "p90": 121,
+              "p95": 123,
+              "max": 138,
+              "mean": 86.64
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.21551542144135916,
+              "p25": 0.34721151496516267,
+              "median": 0.392678995354733,
+              "p75": 0.488039430668971,
+              "p90": 0.5223156556681705,
+              "p95": 0.5538441845828169,
+              "max": 0.5874034069668275,
+              "mean": 0.4089113365488789
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 25,
+                "fraction": 0.2
+              },
+              "96": {
+                "targets": 63,
+                "fraction": 0.504
+              },
+              "128": {
+                "targets": 120,
+                "fraction": 0.96
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 76,
+            "full_k_fraction": 0.608,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.144
+            },
+            "generator_input_tokens": {
+              "min": 21,
+              "p25": 81,
+              "median": 122,
+              "p75": 148,
+              "p90": 157,
+              "p95": 165,
+              "max": 172,
+              "mean": 106.776
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "min": 0.26701098343272767,
+              "p25": 0.3500097351326483,
+              "median": 0.4019365193875197,
+              "p75": 0.476859591949011,
+              "p90": 0.518355645408759,
+              "p95": 0.5397119504511639,
+              "max": 0.5721522785894253,
+              "mean": 0.40849554514934594
+            },
+            "token_cap_fit": {
+              "64": {
+                "targets": 25,
+                "fraction": 0.2
+              },
+              "96": {
+                "targets": 48,
+                "fraction": 0.384
+              },
+              "128": {
+                "targets": 73,
+                "fraction": 0.584
+              },
+              "192": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "typed_bundle_surface": [
+        {
+          "symmetric_k_per_head": 1,
+          "targets": 125,
+          "targets_with_all_three_heads_full_k": 125,
+          "all_three_heads_full_k_fraction": 1.0,
+          "delivered_typed_units": {
+            "min": 3,
+            "p25": 3,
+            "median": 3,
+            "p75": 3,
+            "p90": 3,
+            "p95": 3,
+            "max": 3,
+            "mean": 3.0
+          },
+          "generator_input_tokens": {
+            "min": 48,
+            "p25": 76,
+            "median": 83,
+            "p75": 93,
+            "p90": 101,
+            "p95": 103,
+            "max": 112,
+            "mean": 83.392
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 7,
+              "fraction": 0.056
+            },
+            "96": {
+              "targets": 108,
+              "fraction": 0.864
+            },
+            "128": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "192": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "256": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 125,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 2,
+          "targets": 125,
+          "targets_with_all_three_heads_full_k": 104,
+          "all_three_heads_full_k_fraction": 0.832,
+          "delivered_typed_units": {
+            "min": 5,
+            "p25": 6,
+            "median": 6,
+            "p75": 6,
+            "p90": 6,
+            "p95": 6,
+            "max": 6,
+            "mean": 5.832
+          },
+          "generator_input_tokens": {
+            "min": 82,
+            "p25": 147,
+            "median": 168,
+            "p75": 183,
+            "p90": 191,
+            "p95": 196,
+            "max": 207,
+            "mean": 161.904
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 5,
+              "fraction": 0.04
+            },
+            "128": {
+              "targets": 14,
+              "fraction": 0.112
+            },
+            "192": {
+              "targets": 114,
+              "fraction": 0.912
+            },
+            "256": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 125,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 3,
+          "targets": 125,
+          "targets_with_all_three_heads_full_k": 82,
+          "all_three_heads_full_k_fraction": 0.656,
+          "delivered_typed_units": {
+            "min": 7,
+            "p25": 8,
+            "median": 9,
+            "p75": 9,
+            "p90": 9,
+            "p95": 9,
+            "max": 9,
+            "mean": 8.488
+          },
+          "generator_input_tokens": {
+            "min": 112,
+            "p25": 213,
+            "median": 240,
+            "p75": 269,
+            "p90": 282,
+            "p95": 284,
+            "max": 297,
+            "mean": 233.784
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "128": {
+              "targets": 5,
+              "fraction": 0.04
+            },
+            "192": {
+              "targets": 20,
+              "fraction": 0.16
+            },
+            "256": {
+              "targets": 82,
+              "fraction": 0.656
+            },
+            "384": {
+              "targets": 125,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets": 125,
+              "fraction": 1.0
+            }
+          }
+        },
+        {
+          "symmetric_k_per_head": 4,
+          "targets": 125,
+          "targets_with_all_three_heads_full_k": 70,
+          "all_three_heads_full_k_fraction": 0.56,
+          "delivered_typed_units": {
+            "min": 9,
+            "p25": 10,
+            "median": 12,
+            "p75": 12,
+            "p90": 12,
+            "p95": 12,
+            "max": 12,
+            "mean": 11.048
+          },
+          "generator_input_tokens": {
+            "min": 148,
+            "p25": 270,
+            "median": 308,
+            "p75": 353,
+            "p90": 369,
+            "p95": 378,
+            "max": 387,
+            "mean": 302.4
+          },
+          "token_cap_fit": {
+            "64": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "96": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "128": {
+              "targets": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets": 5,
+              "fraction": 0.04
+            },
+            "256": {
+              "targets": 27,
+              "fraction": 0.216
+            },
+            "384": {
+              "targets": 124,
+              "fraction": 0.992
+            },
+            "512": {
+              "targets": 125,
+              "fraction": 1.0
+            }
+          }
+        }
+      ]
+    },
+    "dialogue_generation": {
+      "status": "IMPLEMENTATION_BLOCKER_RESEARCHER_DECISION_REQUIRED_DYNAMIC_QUERY_NOT_FROZEN",
+      "targets": 34,
+      "official_harness_requirement": "audit the official 10-round DG harness and mechanically freeze the exact dynamic query window, turn timing, and re-retrieval schedule before any calibration outcome",
+      "selection_surface": null,
+      "outcome_blind_unranked_availability_and_token_envelope": {
+        "MP": [
+          {
+            "requested_k": 1,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 9,
+              "p25": 12,
+              "median": 12,
+              "p75": 15,
+              "p90": 15,
+              "p95": 16,
+              "max": 16,
+              "mean": 12.794117647058824
+            },
+            "unranked_token_upper_bound": {
+              "min": 16,
+              "p25": 24,
+              "median": 27,
+              "p75": 29,
+              "p90": 31,
+              "p95": 38,
+              "max": 38,
+              "mean": 26.647058823529413
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 18,
+              "p25": 25,
+              "median": 26,
+              "p75": 30,
+              "p90": 31,
+              "p95": 33,
+              "max": 33,
+              "mean": 26.764705882352942
+            },
+            "unranked_token_upper_bound": {
+              "min": 29,
+              "p25": 46,
+              "median": 50,
+              "p75": 57,
+              "p90": 59,
+              "p95": 71,
+              "max": 71,
+              "mean": 51.1764705882353
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 34,
+            "full_k_fraction": 0.9117647058823529,
+            "delivered_units": {
+              "min": 2,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.911764705882353
+            },
+            "unranked_token_lower_bound": {
+              "min": 28,
+              "p25": 37,
+              "median": 40,
+              "p75": 43,
+              "p90": 47,
+              "p95": 47,
+              "max": 49,
+              "mean": 40.205882352941174
+            },
+            "unranked_token_upper_bound": {
+              "min": 33,
+              "p25": 67,
+              "median": 73,
+              "p75": 84,
+              "p90": 86,
+              "p95": 103,
+              "max": 103,
+              "mean": 72.97058823529412
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 34,
+            "full_k_fraction": 0.9117647058823529,
+            "delivered_units": {
+              "min": 2,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 3.823529411764706
+            },
+            "unranked_token_lower_bound": {
+              "min": 33,
+              "p25": 52,
+              "median": 54,
+              "p75": 61,
+              "p90": 64,
+              "p95": 64,
+              "max": 67,
+              "mean": 54.35294117647059
+            },
+            "unranked_token_upper_bound": {
+              "min": 33,
+              "p25": 87,
+              "median": 96,
+              "p75": 110,
+              "p90": 113,
+              "p95": 131,
+              "max": 131,
+              "mean": 93.55882352941177
+            }
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 1,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 16,
+              "p25": 17,
+              "median": 18,
+              "p75": 20,
+              "p90": 20,
+              "p95": 21,
+              "max": 21,
+              "mean": 18.264705882352942
+            },
+            "unranked_token_upper_bound": {
+              "min": 33,
+              "p25": 37,
+              "median": 40,
+              "p75": 44,
+              "p90": 47,
+              "p95": 47,
+              "max": 47,
+              "mean": 40.1764705882353
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 2,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 33,
+              "p25": 35,
+              "median": 38,
+              "p75": 41,
+              "p90": 42,
+              "p95": 42,
+              "max": 42,
+              "mean": 37.61764705882353
+            },
+            "unranked_token_upper_bound": {
+              "min": 66,
+              "p25": 73,
+              "median": 78,
+              "p75": 87,
+              "p90": 91,
+              "p95": 91,
+              "max": 92,
+              "mean": 78.82352941176471
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 3,
+              "p25": 3,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 50,
+              "p25": 55,
+              "median": 57,
+              "p75": 62,
+              "p90": 64,
+              "p95": 64,
+              "max": 64,
+              "mean": 57.76470588235294
+            },
+            "unranked_token_upper_bound": {
+              "min": 98,
+              "p25": 107,
+              "median": 113,
+              "p75": 129,
+              "p90": 133,
+              "p95": 133,
+              "max": 135,
+              "mean": 115.97058823529412
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 4,
+              "p25": 4,
+              "median": 4,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 68,
+              "p25": 75,
+              "median": 78,
+              "p75": 84,
+              "p90": 86,
+              "p95": 86,
+              "max": 88,
+              "mean": 78.3529411764706
+            },
+            "unranked_token_upper_bound": {
+              "min": 128,
+              "p25": 140,
+              "median": 148,
+              "p75": 169,
+              "p90": 173,
+              "p95": 173,
+              "max": 177,
+              "mean": 152.02941176470588
+            }
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 1,
+            "targets": 34,
+            "full_k_fraction": 1.0,
+            "delivered_units": {
+              "min": 1,
+              "p25": 1,
+              "median": 1,
+              "p75": 1,
+              "p90": 1,
+              "p95": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "unranked_token_lower_bound": {
+              "min": 21,
+              "p25": 25,
+              "median": 30,
+              "p75": 32,
+              "p90": 34,
+              "p95": 35,
+              "max": 40,
+              "mean": 29.38235294117647
+            },
+            "unranked_token_upper_bound": {
+              "min": 21,
+              "p25": 32,
+              "median": 40,
+              "p75": 45,
+              "p90": 47,
+              "p95": 47,
+              "max": 57,
+              "mean": 38.44117647058823
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 34,
+            "full_k_fraction": 0.7647058823529411,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 2,
+              "p75": 2,
+              "p90": 2,
+              "p95": 2,
+              "max": 2,
+              "mean": 1.7647058823529411
+            },
+            "unranked_token_lower_bound": {
+              "min": 21,
+              "p25": 45,
+              "median": 56,
+              "p75": 64,
+              "p90": 70,
+              "p95": 70,
+              "max": 81,
+              "mean": 53.38235294117647
+            },
+            "unranked_token_upper_bound": {
+              "min": 21,
+              "p25": 51,
+              "median": 72,
+              "p75": 81,
+              "p90": 85,
+              "p95": 88,
+              "max": 99,
+              "mean": 65.08823529411765
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 34,
+            "full_k_fraction": 0.6176470588235294,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 3,
+              "p75": 3,
+              "p90": 3,
+              "p95": 3,
+              "max": 3,
+              "mean": 2.3823529411764706
+            },
+            "unranked_token_lower_bound": {
+              "min": 21,
+              "p25": 64,
+              "median": 80,
+              "p75": 95,
+              "p90": 107,
+              "p95": 110,
+              "max": 110,
+              "mean": 73.20588235294117
+            },
+            "unranked_token_upper_bound": {
+              "min": 21,
+              "p25": 64,
+              "median": 83,
+              "p75": 111,
+              "p90": 123,
+              "p95": 129,
+              "max": 138,
+              "mean": 85.32352941176471
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 34,
+            "full_k_fraction": 0.47058823529411764,
+            "delivered_units": {
+              "min": 1,
+              "p25": 2,
+              "median": 3,
+              "p75": 4,
+              "p90": 4,
+              "p95": 4,
+              "max": 4,
+              "mean": 2.8529411764705883
+            },
+            "unranked_token_lower_bound": {
+              "min": 21,
+              "p25": 64,
+              "median": 94,
+              "p75": 120,
+              "p90": 130,
+              "p95": 133,
+              "max": 148,
+              "mean": 88.23529411764706
+            },
+            "unranked_token_upper_bound": {
+              "min": 21,
+              "p25": 64,
+              "median": 98,
+              "p75": 142,
+              "p90": 161,
+              "p95": 166,
+              "max": 175,
+              "mean": 100.44117647058823
+            }
+          }
+        ]
+      }
+    }
+  },
+  "selection_rule": "task-specific official primary anchor, quality-first one-standard-error, then minimum Generator input-token cost; never a QA/Summary/DG composite"
+}

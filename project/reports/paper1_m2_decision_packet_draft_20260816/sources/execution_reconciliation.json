@@ -1,0 +1,105 @@
+{
+  "protocol": "pm-paper1-execution-reconciliation-20260816-v1",
+  "status": "ACTIVE_HIGHEST_PRECEDENCE_PRE_OUTCOME_OVERRIDE",
+  "human_authority": "project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md",
+  "generator": {
+    "research_selection_status": "FINAL",
+    "provider": "NVIDIA_hosted_NIM",
+    "model": "meta/llama-3.1-8b-instruct",
+    "rq0_qualification": "project/data/v3_authority/rq0_llama31_8b_esc_eval_exact_qualification_v1.json",
+    "paper1_full_stack_manifest_status": "PENDING_ZERO_OUTCOME_FREEZE",
+    "reopen_model_selection": false
+  },
+  "learning_route": {
+    "name": "A_first_order_factorized",
+    "canonical_background": "all_other_optional_components_off",
+    "target": "probability_of_materially_positive_realized_paired_effect",
+    "estimand": "P(Y_ON_materially_better_than_Y_OFF_given_state_candidate_frozen_stack)",
+    "cost_in_label_or_loss": false,
+    "primary_threshold": 0.5,
+    "threshold_is_paper_pass_line": false,
+    "calibration_is_diagnostic_not_gate": true
+  },
+  "repeated_effect": {
+    "preserve": ["on_better", "off_better", "equivalent", "uncertain", "invalid"],
+    "target_type": "binomial_positive_effect_probability",
+    "outcome_coding": {
+      "on_better": 1,
+      "off_better": 0,
+      "equivalent": 0,
+      "uncertain": "missing_excluded_from_likelihood",
+      "invalid": "missing_excluded_from_likelihood_plus_integrity_record"
+    },
+    "positive_effect_fraction": "on_better/(on_better+off_better+equivalent)",
+    "usable_repeat_count_role": "binomial_trials_or_sample_weight_not_a_pass_gate",
+    "task_specific_material_better_and_equivalent_rules": "PENDING_EXPLICIT_PRE_OUTCOME_FREEZE",
+    "task_specific_effect_coding_draft": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
+    "hard_state_direction_label_required": false,
+    "qualification_pass_gate": false
+  },
+  "superseded_empirical_gates": [
+    "state_direction_reproducibility_min_0_70",
+    "inter_reviewer_exact_agreement_min_0_75",
+    "uncertain_fraction_max_0_10",
+    "minimum_effect_groups_96_or_128",
+    "minimum_cost_reduction_0_10",
+    "typed_memory_claim_requires_two_of_three_heads",
+    "cost_worth_it_training_label"
+  ],
+  "measurement_validity": {
+    "hard_invalid_only": [
+      "compiler_or_schema_failure",
+      "assigned_resource_not_delivered_or_wrongly_bound",
+      "wrong_owner",
+      "future_leakage",
+      "gold_reference_leakage",
+      "arm_seed_prompt_candidate_identity_mismatch",
+      "empty_or_terminal_generation_failure",
+      "official_scorer_unparseable"
+    ],
+    "semantic_nonuse_is_valid_realized_effect": true,
+    "semantic_adoption_role": "diagnostic_or_mediator_only",
+    "trace_name": "treatment_delivery_trace"
+  },
+  "memory_cross_fit": {
+    "claim": "within_benchmark_cross_fitted_longitudinal_adaptation",
+    "same_user_adaptation_allowed": true,
+    "primary_grouping": {
+      "all_tasks": "same_target_all_arms_seeds_repeats_same_fold",
+      "QA": "owner_plus_question_group_id",
+      "Summary": "owner_plus_summary_target_plus_exact_evidence_reference_fingerprint",
+      "DialogueGeneration": "owner_plus_topic_scenario_id",
+      "cross_task_union": "exact_canonical_target_or_evidence_set_fingerprint_only"
+    },
+    "broad_shared_session_or_semantic_event_union": "strict_sensitivity_only",
+    "formal_policy_predictions": "out_of_fold",
+    "formal_generations": "fresh_frozen_evaluation_generations",
+    "full_data_checkpoint_role": "post_paper_deployment_only"
+  },
+  "dataset_identity": {
+    "primary_name": "ES-MemEval-Public-v1.0.0-1427",
+    "public_qa": 1427,
+    "paper_qa": 1209,
+    "exact_paper_row_replication_claim": false
+  },
+  "formal_evidence": {
+    "RQ1_contrast_primary": "Learned_RS_PM_vs_RS_Matched_Random",
+    "RQ2_contrast_primary": "Learned_Typed_Memory_PM_vs_Typed_Matched_Random",
+    "matched_random_budget_constraint": "same_realized_on_rate_and_exact_injected_token_budget",
+    "resource_value": "Learned_vs_R0_or_NoMemory",
+    "efficiency_tradeoff": "Learned_vs_FixedHigh",
+    "capability_metrics": "official_ESC_Eval_and_ES_MemEval_only",
+    "cost_role": "separate_objective_efficiency_axis",
+    "cross_task_composite_forbidden": true,
+    "binary_paper_pass_fail_forbidden": true,
+    "component_claim_rule": "claim_each_head_exactly_as_supported_no_head_count_gate"
+  },
+  "outcome_lock": {
+    "status": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
+    "formal_effect_calls_allowed": false,
+    "formal_training_allowed": false,
+    "formal_benchmark_outcomes_allowed": false,
+    "engineering_cap_check_allowed": true,
+    "engineering_cap_check_may_read_capability_scores": false
+  }
+}

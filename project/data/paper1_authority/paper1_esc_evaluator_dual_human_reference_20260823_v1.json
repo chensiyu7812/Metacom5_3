@@ -1,0 +1,298 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-dual-human-reference-20260823-v1",
+  "status": "TWO_INDEPENDENT_HUMAN_RATINGS_COMPLETE_ADJUDICATION_PENDING",
+  "grain": "one blind qualification item x one official ESC-Eval dimension x two raters",
+  "frozen_qualification_items": 24,
+  "source_submissions": {
+    "RATER_A": {
+      "path": "data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_a_20260823_v1.json",
+      "source_sha256": "a161eb992e5a54261d8efaf7485fb6069210cad9a95527ea848dc658d6b730ba",
+      "stored_sha256": "a161eb992e5a54261d8efaf7485fb6069210cad9a95527ea848dc658d6b730ba",
+      "generated_at": "2026-08-23T12:10:22.165Z",
+      "complete_items": 24
+    },
+    "RATER_B": {
+      "path": "data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_b_20260823_v1.json",
+      "source_sha256": "3506da0fbdbce0e749822c5fe84b31561c08c711385d6ed268f891e9e5bbfa06",
+      "stored_sha256": "3506da0fbdbce0e749822c5fe84b31561c08c711385d6ed268f891e9e5bbfa06",
+      "generated_at": "2026-08-23T13:12:32.823Z",
+      "complete_items": 24
+    }
+  },
+  "instrument_correction": {
+    "severity": "HIGH_FOR_PER_DIMENSION_LABELING_NO_LOSS_OF_RAW_JUDGMENTS",
+    "historical_instrument": "project/data/paper1_authority/paper1_esc_evaluator_human_instrument_20260820_v1.json",
+    "corrected_instrument": "project/data/paper1_authority/paper1_esc_evaluator_human_instrument_20260823_v2.json",
+    "historical_instrument_sha256": "13d797b8cfe3e9cfaae095a4c9f7dff32a5efff361283d6b4bdca92ebeba4d19",
+    "corrected_instrument_sha256": "9e6f94082a08d60aa37751789e0f3ff1afff172cae5b081a4601ea78b3a17be7",
+    "mechanical_rule": {
+      "Fluency": "Fluency",
+      "Expression": "Expression",
+      "Empathy": "Empathy",
+      "Information": "Information",
+      "Skillful": "Humanoid",
+      "Humanoid": "Skillful",
+      "Overall": "Overall"
+    },
+    "raw_values_modified": false,
+    "rerating_required_for_this_mapping_defect": false
+  },
+  "human_reliability": {
+    "rater_ids": [
+      "RATER_A",
+      "RATER_B"
+    ],
+    "items": 24,
+    "per_dimension": {
+      "Fluency": {
+        "rater_means": {
+          "RATER_A": 2.8333333333333335,
+          "RATER_B": 2.4166666666666665
+        },
+        "exact_agreement_rate": 0.5833333333333334,
+        "absolute_difference_ge_2_items": 4,
+        "quadratic_weighted_kappa": 0.6496350364963503,
+        "spearman_rho": 0.6780784395577512,
+        "mean_absolute_deviation": 0.6666666666666666
+      },
+      "Expression": {
+        "rater_means": {
+          "RATER_A": 2.5416666666666665,
+          "RATER_B": 2.25
+        },
+        "exact_agreement_rate": 0.75,
+        "absolute_difference_ge_2_items": 2,
+        "quadratic_weighted_kappa": 0.8274111675126903,
+        "spearman_rho": 0.833015373120787,
+        "mean_absolute_deviation": 0.375
+      },
+      "Empathy": {
+        "rater_means": {
+          "RATER_A": 2.625,
+          "RATER_B": 2.25
+        },
+        "exact_agreement_rate": 0.75,
+        "absolute_difference_ge_2_items": 4,
+        "quadratic_weighted_kappa": 0.764102564102564,
+        "spearman_rho": 0.7870853824813459,
+        "mean_absolute_deviation": 0.4583333333333333
+      },
+      "Information": {
+        "rater_means": {
+          "RATER_A": 2.4583333333333335,
+          "RATER_B": 2.375
+        },
+        "exact_agreement_rate": 0.5416666666666666,
+        "absolute_difference_ge_2_items": 3,
+        "quadratic_weighted_kappa": 0.7720797720797721,
+        "spearman_rho": 0.7652270470247795,
+        "mean_absolute_deviation": 0.5833333333333334
+      },
+      "Skillful": {
+        "rater_means": {
+          "RATER_A": 2.625,
+          "RATER_B": 2.3333333333333335
+        },
+        "exact_agreement_rate": 0.5833333333333334,
+        "absolute_difference_ge_2_items": 3,
+        "quadratic_weighted_kappa": 0.759493670886076,
+        "spearman_rho": 0.7485322735746751,
+        "mean_absolute_deviation": 0.5416666666666666
+      },
+      "Humanoid": {
+        "rater_means": {
+          "RATER_A": 2.1666666666666665,
+          "RATER_B": 1.75
+        },
+        "exact_agreement_rate": 0.2916666666666667,
+        "absolute_difference_ge_2_items": 1,
+        "quadratic_weighted_kappa": 0.7619047619047619,
+        "spearman_rho": 0.7753910487097634,
+        "mean_absolute_deviation": 0.75
+      },
+      "Overall": {
+        "rater_means": {
+          "RATER_A": 2.125,
+          "RATER_B": 1.8333333333333333
+        },
+        "exact_agreement_rate": 0.4166666666666667,
+        "absolute_difference_ge_2_items": 1,
+        "quadratic_weighted_kappa": 0.7571428571428571,
+        "spearman_rho": 0.8007370386846581,
+        "mean_absolute_deviation": 0.625
+      }
+    },
+    "major_disagreement": {
+      "definition": "absolute ordinal-score difference >= 2",
+      "items_any_dimension": 8,
+      "items_any_dimension_detail": [
+        {
+          "blind_item_id": "escq_0e49439a9e28fb56",
+          "dimensions": [
+            "Overall"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_3ff449d0d0b60e44",
+          "dimensions": [
+            "Empathy",
+            "Information"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_8a4355f6db12c102",
+          "dimensions": [
+            "Fluency"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_428078f203f19d7f",
+          "dimensions": [
+            "Fluency"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_b25a37e6823438df",
+          "dimensions": [
+            "Empathy",
+            "Skillful"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_e6a624d292e174cb",
+          "dimensions": [
+            "Expression",
+            "Empathy",
+            "Information",
+            "Skillful",
+            "Humanoid"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_df64db2de78549c7",
+          "dimensions": [
+            "Fluency"
+          ]
+        },
+        {
+          "blind_item_id": "escbias_04fa334c6ef7edbc",
+          "dimensions": [
+            "Fluency",
+            "Expression",
+            "Empathy",
+            "Information",
+            "Skillful"
+          ]
+        }
+      ],
+      "items_overall": 1,
+      "overall_item_ids": [
+        "escq_0e49439a9e28fb56"
+      ]
+    }
+  },
+  "category_means_by_rater": {
+    "RATER_A": {
+      "format_list_style": {
+        "Fluency": 2.1666666666666665,
+        "Expression": 1.8333333333333333,
+        "Empathy": 1.8333333333333333,
+        "Information": 1.6666666666666667,
+        "Skillful": 2.0,
+        "Humanoid": 1.3333333333333333,
+        "Overall": 1.0
+      },
+      "natural_public_baseline": {
+        "Fluency": 4.0,
+        "Expression": 4.0,
+        "Empathy": 4.0,
+        "Information": 3.8333333333333335,
+        "Skillful": 3.8333333333333335,
+        "Humanoid": 3.1666666666666665,
+        "Overall": 3.5
+      },
+      "redundant_suggestions": {
+        "Fluency": 1.8333333333333333,
+        "Expression": 1.5,
+        "Empathy": 1.6666666666666667,
+        "Information": 1.5,
+        "Skillful": 1.6666666666666667,
+        "Humanoid": 1.1666666666666667,
+        "Overall": 1.1666666666666667
+      },
+      "verbosity": {
+        "Fluency": 3.3333333333333335,
+        "Expression": 2.8333333333333335,
+        "Empathy": 3.0,
+        "Information": 2.8333333333333335,
+        "Skillful": 3.0,
+        "Humanoid": 3.0,
+        "Overall": 2.8333333333333335
+      }
+    },
+    "RATER_B": {
+      "format_list_style": {
+        "Fluency": 1.0,
+        "Expression": 0.8333333333333334,
+        "Empathy": 1.0,
+        "Information": 1.1666666666666667,
+        "Skillful": 1.3333333333333333,
+        "Humanoid": 0.6666666666666666,
+        "Overall": 0.6666666666666666
+      },
+      "natural_public_baseline": {
+        "Fluency": 4.0,
+        "Expression": 4.0,
+        "Empathy": 4.0,
+        "Information": 4.0,
+        "Skillful": 4.0,
+        "Humanoid": 3.3333333333333335,
+        "Overall": 3.1666666666666665
+      },
+      "redundant_suggestions": {
+        "Fluency": 1.8333333333333333,
+        "Expression": 1.5,
+        "Empathy": 1.5,
+        "Information": 1.8333333333333333,
+        "Skillful": 1.3333333333333333,
+        "Humanoid": 0.8333333333333334,
+        "Overall": 1.3333333333333333
+      },
+      "verbosity": {
+        "Fluency": 2.8333333333333335,
+        "Expression": 2.6666666666666665,
+        "Empathy": 2.5,
+        "Information": 2.5,
+        "Skillful": 2.6666666666666665,
+        "Humanoid": 2.1666666666666665,
+        "Overall": 2.1666666666666665
+      }
+    }
+  },
+  "interpretation": {
+    "dual_reference_use": "retain both raters equally; report candidate agreement against each rater and disagreement sensitivity",
+    "single_gold_claimed": false,
+    "rater_disagreement_invalidates_reviews": false,
+    "controlled_probe_limit": "verbosity variants also add supportive framing; controlled results cannot identify pure length preference",
+    "formal_primary_metrics_replaced": false,
+    "adjudication": "current authority still requires adjudication before final evaluator winner; no adjudicated score is fabricated here"
+  },
+  "identity": {
+    "frozen_items_sha256": "e3ddf952d9f5f080f03af4604b3a08f0055ca10ec6838ae33eefc6f4e9b1c0dc",
+    "audit_mapping_sha256": "5879760062afba8ef1d5bbc759e9211e4252c201554712ccff0046371cfa03d9",
+    "normalized_rater_a_sha256": "0ccb7aae6c59accf10a24d24c9d0357092120e52054a0225b74220081d0f8d48",
+    "normalized_rater_b_sha256": "fee71d4a9bf2869fa9969711fa5a7d31ac32d2edee929062ff7a1c7ca111e922",
+    "reference_content_sha256": "60dd6aecd0480afe3a437c4c11ce3b2881390502a0d80492239f9864c7c534bd"
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "calls": {
+    "paid_api": 0,
+    "formal_outcome": 0,
+    "pm_training": 0
+  }
+}

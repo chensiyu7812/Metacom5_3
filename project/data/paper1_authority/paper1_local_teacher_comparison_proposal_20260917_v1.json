@@ -1,0 +1,234 @@
+{
+  "protocol": "paper1-local-teacher-comparison-proposal-v1",
+  "status": "PROPOSED RESEARCH CHANGE — NOT AUTHORIZED",
+  "created_at": "2026-09-17T05:58:02.798344+00:00",
+  "researcher_approval": false,
+  "paid_api_authorized": false,
+  "candidates": [
+    {
+      "short_name": "selene_mini_8b",
+      "model": "AtlaAI/Selene-1-Mini-Llama-3.1-8B",
+      "revision": "427792f1c3e2073cb7da216924fd884b1ba496e0",
+      "model_card": "https://huggingface.co/AtlaAI/Selene-1-Mini-Llama-3.1-8B",
+      "config_context_limit": 131072,
+      "tokenizer_declared_max_length": 4096,
+      "max_input_tokens": 25674,
+      "sum_input_tokens": 960012,
+      "exceeding_tokenizer_declared_limit": 54,
+      "full_inputs_fit_config_with_output_reserve": true,
+      "long_context_accuracy_tested": false,
+      "BF16_weights_only_GiB": 14.96,
+      "requests": 160,
+      "request_manifest": "outputs/paper1_pairwise_teacher/local_comparison_proposal_20260917_v1/selene_mini_8b_requests.jsonl",
+      "request_manifest_sha256": "b44b7141e7623b9f61edd326c4e5e38df519c6ed08aa09c7e0cf0f8aeefa90a9",
+      "tokenizer_directory": "outputs/paper1_pairwise_teacher/local_comparison_proposal_20260917_v1/tokenizers/selene_mini_8b",
+      "tokenizer_and_config_sha256": {
+        "config.json": "f99ae8a14cf35785a2c01361463503b58f7a38682dcaaf3dcd379d28896810cb",
+        "generation_config.json": "64b5104d9c477768fe5563636f100053a4e8e240a495435748cb9ef0b78080e1",
+        "special_tokens_map.json": "1b1835caa5b4d70acaa210fa222b0036f1882f9525c4660fd4810fb3e1e40ff8",
+        "tokenizer.json": "6b9e4e7fb171f92fd137b777cc2714bf87d11576700a1dcd7a399e7bbe39537b",
+        "tokenizer_config.json": "b0caf23a8e11118b2afc59d98a7952724dced1715dc87c953333d03a6bd1503d"
+      }
+    },
+    {
+      "short_name": "compassjudger2_7b",
+      "model": "opencompass/CompassJudger-2-7B-Instruct",
+      "revision": "f913ec1569c282f02530028fedc1ce9832024ebf",
+      "model_card": "https://huggingface.co/opencompass/CompassJudger-2-7B-Instruct",
+      "config_context_limit": 32768,
+      "tokenizer_declared_max_length": 131072,
+      "max_input_tokens": 25840,
+      "sum_input_tokens": 965754,
+      "exceeding_tokenizer_declared_limit": 0,
+      "full_inputs_fit_config_with_output_reserve": true,
+      "long_context_accuracy_tested": false,
+      "BF16_weights_only_GiB": 14.19,
+      "requests": 160,
+      "request_manifest": "outputs/paper1_pairwise_teacher/local_comparison_proposal_20260917_v1/compassjudger2_7b_requests.jsonl",
+      "request_manifest_sha256": "5a83fe92b776bd07352540e727847c6bcc760b1bf9232baedf07e7ea87752c3a",
+      "tokenizer_directory": "outputs/paper1_pairwise_teacher/local_comparison_proposal_20260917_v1/tokenizers/compassjudger2_7b",
+      "tokenizer_and_config_sha256": {
+        "config.json": "89c7b256fff827bbdf3e3fcc1783f0146c2236fcf0d3dc2b14824e8976a7a597",
+        "generation_config.json": "43012d37897c41d2f637ee15579f8e43532950434a3adc9655cd4c06b1e47280",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer_config.json": "a590fdc908550c5c74097f42d2c8030642fca6df20733bb778ad3bb5cdc8226e",
+        "vocab.json": "87a257b04b17642a0688c98cd1df89c398bda4fee532d6f88b38a659ecb4ac8d"
+      }
+    }
+  ],
+  "new_logical_model_calls_if_approved": 320,
+  "human_source_presentations": 96,
+  "base_pairs": 80,
+  "model_only_derived_reversals": 64,
+  "presentations_per_candidate": 160,
+  "new_human_sheets": 0,
+  "new_human_judgements": 0,
+  "generation": {
+    "temperature": 0,
+    "seed": 0,
+    "max_tokens": 1024,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "paper1_material_effect_teacher",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": [
+                "A_better",
+                "B_better",
+                "equivalent",
+                "uncertain"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "required": [
+            "verdict",
+            "rationale"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "format_note": "Formatting requirement: return only the JSON object. The rationale must contain between 1 and 600 characters.",
+  "semantic_rubric_identity": {
+    "protocol": "paper1-pairwise-material-effect-teacher-v2",
+    "common_instruction_sha256": "6d9ae14eb646b22d1c1a3ab9506628fae6310d52b27ce9d56dafd5beab70b630",
+    "task_rubric_sha256": {
+      "DG": "27f721485d3fe0f4ac4de7dd4a9e40509e3a3fc560df10a635f5b28973322273",
+      "ESC": "18d76a78132fe476f01ef22eb79241fef41bbb2fd5ee6a0f3c445ed817711857",
+      "QA": "52811395c1bb03623ea28648d876ba65150beea3afa33a8c6459bf92a76d527f",
+      "Summary": "3b3fe1d22236e2d592f3cc342df77a906d71384c242f44fe9f0ca0302a390c26"
+    },
+    "response_schema_sha256": "0d077887b9fad98b3078f6b3e38251db8b0946d876a516cf0e61963cbd1d58c0",
+    "verdicts": [
+      "A_better",
+      "B_better",
+      "equivalent",
+      "uncertain"
+    ]
+  },
+  "reference_sheet_sha256": "b51f6bc8a40c6dde66c9e4c7eb05762adf97a402f1b4ca83d526e872e3a210b2",
+  "reference_trace_sha256": "3a0db33bb7e80fe2d352a42e7eb9c9df6f69011d5c70e0eae63d2461a2bd7af2",
+  "model_only_mapping_sha256": "8014d68008d6fb08ab40481ff5cf41ca0228eb7d90e71d5d92c23657ebf4b567",
+  "baseline_always_equivalent_original_A": {
+    "scheduled": 80,
+    "observed": 80,
+    "missing": 0,
+    "exact_matches": 56,
+    "exact_agreement": 0.7,
+    "reference_counts_all": {
+      "equivalent": 56,
+      "B_better": 10,
+      "uncertain": 12,
+      "A_better": 2
+    },
+    "candidate_counts_observed": {
+      "equivalent": 80
+    },
+    "confusion_reference_rows_candidate_columns": {
+      "A_better": {
+        "A_better": 0,
+        "B_better": 0,
+        "equivalent": 2,
+        "uncertain": 0
+      },
+      "B_better": {
+        "A_better": 0,
+        "B_better": 0,
+        "equivalent": 10,
+        "uncertain": 0
+      },
+      "equivalent": {
+        "A_better": 0,
+        "B_better": 0,
+        "equivalent": 56,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "A_better": 0,
+        "B_better": 0,
+        "equivalent": 12,
+        "uncertain": 0
+      }
+    },
+    "recall_by_observed_reference_class": {
+      "A_better": 0.0,
+      "B_better": 0.0,
+      "equivalent": 1.0,
+      "uncertain": 0.0
+    },
+    "macro_recall_decisive_equivalent_present_classes": 0.3333333333333333,
+    "macro_recall_classes_present": 3,
+    "candidate_A_fraction_among_decisive": null,
+    "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+    "is_accuracy_against_independent_gold": false
+  },
+  "primary_reference": "Original 80 base judgements; original-human/followup/assistant-sensitive views kept separate. Derived reversals are model stability checks, not additional human labels or independent examples.",
+  "comparison": "Taskwise decisive/equivalent macro recall with clustered uncertainty, order stability, equivalent recall, evidence diagnostics, parse/operational reliability, then cost. Also report constant-equivalent baseline; no automatic winner or absolute PASS percentage.",
+  "analysis_plan": {
+    "selection_order": [
+      "human decisive/equivalent macro agreement with clustered uncertainty",
+      "pair-order stability",
+      "equivalent recall and arm-position bias",
+      "parse and operational reliability",
+      "cost"
+    ],
+    "primary_agreement_denominator": "80 original base presentations per candidate; display all scheduled, valid and missing counts. Do not count reversed presentations as independent human-reference cases.",
+    "comparability": "Report each candidate's valid set and their shared valid set with identical supported reference classes; never conceal parse failures or compare macro recall across differing class support without disclosure.",
+    "order_checks": "All 80 paired orders per candidate; also report the original 16-pair subset separately alongside historical Gemini results.",
+    "uncertainty": "Taskwise source-cluster bootstrap, 2000 replicates, seed 20260917; source clusters from the existing outcome-blind preflight. Report small class support and undefined bootstrap replicates.",
+    "reference_views": "Original A primary, six-case followup overlay and assistant factual sensitivity separately; AI B exploratory, never additional human gold. No reference labels or rationales in model requests.",
+    "language": "Model inputs remain canonical English; humans primarily read Chinese. Report this limitation rather than claim language-matched independent validation.",
+    "evidence_diagnostics": "Inspect materiality, unsupported facts and reversal contradictions across all outputs; qualitative diagnostics do not create a new empirical PASS gate.",
+    "selection_boundary": "One fixed comparison, no same-sample semantic prompt search or finetuning, no automatic winner. Review task-specific applicability before any teacher promotion. No promotion authorizes downstream outcomes or PM training."
+  },
+  "historic_comparators": "Reuse Gemini V2 and exploratory AI B as historical context only; not a controlled same-output-cap architecture comparison.",
+  "scope_changes": [
+    "Add exactly two open-weight candidates to V3 permitted candidate families.",
+    "Add 64 model-only reversed presentations per candidate to cover both orders of all 80 bases.",
+    "For new candidates only, explicitly specify the existing 600-character rationale rule in prompt/schema and use max output 1024, preserving four-class meanings. Existing Gemini V2 remains immutable."
+  ],
+  "reason": "Check applicability of pretrained specialist judges before accepting permanent Summary/DG supervision limitations; no from-scratch training.",
+  "previous_results_invalidated": "None. Old Gemini remains a valid result under its V2 configuration; cross-protocol differences cannot be attributed to weights alone.",
+  "reruns": "Only the two new candidates; no old Gemini call, no Generator rerun, no rerating, no PM training.",
+  "claim_change": "No immediate change to PM scope. Promote only supported task roles after reporting the evidence; absent support retain existing fallback and disclose limitations.",
+  "infrastructure_proposal": {
+    "GPU": "NVIDIA RTX A6000",
+    "GPU_UUID": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+    "dtype": "BF16",
+    "concurrency": 1,
+    "models_loaded_simultaneously": 1,
+    "intended_backend": "existing vLLM 0.10.1 local stack; full serving/config/parser binding required before calls",
+    "total_local_runtime_ceiling_hours": 4,
+    "per_attempt_timeout_seconds": 120,
+    "retry": "At most one infrastructure retry; no repeated greedy retry for parser failure and no result-driven reruns.",
+    "max_physical_attempts": 640,
+    "extra_API_cost_usd": "0",
+    "runtime_and_peak_memory_measured": false
+  },
+  "no_finetuning_on_this_reference": true,
+  "same_sample_semantic_prompt_search": false,
+  "execution_runner_ready": false,
+  "weights_downloaded_by_this_preparation": false,
+  "pre_execution_remaining": [
+    "Approve the scoped candidate/protocol expansion.",
+    "Bind downloaded weight hashes and exact existing serving stack; verify JSON schema support and no input truncation before scored calls.",
+    "Complete resumable local runner and offline tests; bind exact final implementation hash without changing the approved design."
+  ],
+  "new_model_calls_in_preparation": 0,
+  "new_API_cost_usd": "0",
+  "formal_outcomes": 0,
+  "PM_training": 0,
+  "outcome_locks": "ALL_CLOSED"
+}

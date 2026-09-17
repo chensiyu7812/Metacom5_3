@@ -1,0 +1,1358 @@
+{
+  "protocol": "pm-paper1-ms-semantic-audit-packet-v1",
+  "status": "AUDIT_REQUIRED",
+  "scope": "DEV_SEMANTIC_AUDIT_PACKET_NOT_HELDOUT_QUALIFICATION",
+  "source": {
+    "semantic_results_sha256": "7c6a3dc6d6109679671439ba75975d1e93cadd85ad3264f1fe0bf48547089575",
+    "runtime_sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "active_MS_units": 1411
+  },
+  "sampling": {
+    "seed": "paper1-ms-semantic-dev-audit-seed-20260820-v1",
+    "rule": "SHA256(seed,memory_id), up to 12 per observed continuity_type x timestamp_status stratum",
+    "population_by_stratum": {
+      "state__ongoing": 1016,
+      "event__completed": 339,
+      "state__completed": 12,
+      "change__completed": 44
+    },
+    "sample_by_stratum": {
+      "change__completed": 12,
+      "event__completed": 12,
+      "state__completed": 12,
+      "state__ongoing": 12
+    }
+  },
+  "rubric": {
+    "accept_only_if": [
+      "owner-authored event/state/change",
+      "strictly prior at target",
+      "traceable event or continuity thread",
+      "not profile greeting trivia future current or malformed ME"
+    ],
+    "labels": [
+      "VALID_MS",
+      "WRONG_CLASS",
+      "NOT_TRACEABLE",
+      "CURRENT_OR_FUTURE",
+      "TRIVIA_OR_GREETING",
+      "MALFORMED_ME",
+      "UNCERTAIN"
+    ],
+    "LLM_may_replace_human": false
+  },
+  "rows": [
+    {
+      "audit_item_id": "ms_audit_005fb2059f1c94fb0d94f237",
+      "memory_id": "smu_5e4e91103e1219cd7be31d23",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_1",
+      "source_session_rank": 0,
+      "source_timestamp": "2024-03-12",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_1:turn:8",
+          "role": "seeker",
+          "full_turn_text": "Exactly. I was feeling quite confident before, and now I just feel lost.",
+          "exact_supporting_span": "Exactly. I was feeling quite confident before, and now I just feel lost."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: I changed from feeling confident to feeling lost about my thesis after receiving feedback.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0193a54a87da1e9f4534f11f",
+      "memory_id": "smu_dcd9152a2e9d3a83a57d5c3a",
+      "owner_id": "p18",
+      "source_session_id": "p18_conv_1",
+      "source_session_rank": 2,
+      "source_timestamp": "2024-11-05",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 14,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p18_conv_1:turn:9",
+          "role": "seeker",
+          "full_turn_text": "A little. Some family members have chipped in, but I still feel like I'm carrying most of the load.",
+          "exact_supporting_span": "A little. Some family members have chipped in, but I still feel like I'm carrying most of the load."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: some family members have started helping with caregiving",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0ccc947c2527c0353de887c0",
+      "memory_id": "smu_e6d1d6ab7c237d029968a60b",
+      "owner_id": "p16",
+      "source_session_id": "p16_conv_20",
+      "source_session_rank": 24,
+      "source_timestamp": "2025-09-12",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p16_conv_20:turn:11",
+          "role": "seeker",
+          "full_turn_text": "I've been trying to paint, but I've put pressure on myself to be good at it, which backfired.",
+          "exact_supporting_span": "I've been trying to paint, but I've put pressure on myself to be good at it, which backfired."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker tried painting as a way to cope with stress but experienced increased pressure due to self-expectations.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_7b4e25e610f0a8a732d9dc84",
+          "relation": "corefers_with"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0d216f55753c85ee55c99f86",
+      "memory_id": "smu_26f327e9196fb29ebb2f4c5f",
+      "owner_id": "p3",
+      "source_session_id": "p3_conv_3",
+      "source_session_rank": 5,
+      "source_timestamp": "2025-05-30",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p3_conv_3:turn:11",
+          "role": "seeker",
+          "full_turn_text": "I used to love it, but now it's just become a source of stress. I miss being excited about it.",
+          "exact_supporting_span": "I used to love it, but now it's just become a source of stress. I miss being excited about it."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker has transitioned from loving physics to finding it stressful.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_ef1d1fadfe77511298fc518b",
+          "relation": "corefers_with"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_19d302d736af8a148dd8a135",
+      "memory_id": "smu_07137edf2e14e7838ac3185b",
+      "owner_id": "p8",
+      "source_session_id": "p8_conv_18",
+      "source_session_rank": 22,
+      "source_timestamp": "2025-03-15",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 33,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p8_conv_18:turn:11",
+          "role": "seeker",
+          "full_turn_text": "Yeah, I'm trying to be practical about it. And I'm moving in with a colleague I know from Sydney—Emily. We hit it off recently.",
+          "exact_supporting_span": "Yeah, I'm trying to be practical about it. And I'm moving in with a colleague I know from Sydney—Emily. We hit it off recently."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker has decided to move in with Emily, a colleague from Sydney, following a recent connection.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_094128a66c3520f79294b552",
+          "relation": "corefers_with"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_284535ac071d1de411a428da",
+      "memory_id": "smu_705f5f2b965116c9c4a841e1",
+      "owner_id": "p8",
+      "source_session_id": "p8_conv_25",
+      "source_session_rank": 29,
+      "source_timestamp": "2025-06-15",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 33,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p8_conv_25:turn:3",
+          "role": "seeker",
+          "full_turn_text": "A lot has been happening lately, especially with Emily. We've decided to become exclusive.",
+          "exact_supporting_span": "A lot has been happening lately, especially with Emily. We've decided to become exclusive."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker and Emily decided to become exclusive.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_2d02c53bd13ef7432ef1d460",
+      "memory_id": "smu_63fc55fb3d832d8d301e6c20",
+      "owner_id": "p8",
+      "source_session_id": "p8_conv_2",
+      "source_session_rank": 4,
+      "source_timestamp": "2024-08-20",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 33,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p8_conv_2:turn:15",
+          "role": "seeker",
+          "full_turn_text": "I've actually started seeking professional help. It's scary, but I feel a bit more hopeful having someone to guide me.",
+          "exact_supporting_span": "I've actually started seeking professional help. It's scary, but I feel a bit more hopeful having someone to guide me."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker has initiated the process of seeking professional help for their alcohol problem.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_41c7bcba08b533676aa6671e",
+      "memory_id": "smu_ef1d1fadfe77511298fc518b",
+      "owner_id": "p3",
+      "source_session_id": "esc844",
+      "source_session_rank": 1,
+      "source_timestamp": "2025-01-25",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc844:turn:5",
+          "role": "seeker",
+          "full_turn_text": "I loved physics and I decided to attend university, but soon after I slowly lost my interest and became unmotivated",
+          "exact_supporting_span": "I loved physics and I decided to attend university, but soon after I slowly lost my interest and became unmotivated"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker transitioned from being highly interested in physics to becoming unmotivated.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_48f4393c7ee90895396e9879",
+      "memory_id": "smu_348726ab4cb6d04aa0133645",
+      "owner_id": "p18",
+      "source_session_id": "p18_conv_2",
+      "source_session_rank": 3,
+      "source_timestamp": "2025-01-05",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 14,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p18_conv_2:turn:10",
+          "role": "seeker",
+          "full_turn_text": "It felt nice to get it off my chest, but sometimes I worry I'm burdening her too much.",
+          "exact_supporting_span": "It felt nice to get it off my chest, but sometimes I worry I'm burdening her too much."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: felt relief after talking to Annie but also experienced concern about burdening her",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_49b40bc9609b03e3f948c9ec",
+      "memory_id": "smu_64341ba34c7696f32cccc012",
+      "owner_id": "p12",
+      "source_session_id": "p12_conv_14",
+      "source_session_rank": 18,
+      "source_timestamp": "2025-08-25",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 20,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p12_conv_14:turn:3",
+          "role": "seeker",
+          "full_turn_text": "I've been feeling overwhelmed at work again, and it's been really hard to keep up. I decided it might be time to start looking for a new job.",
+          "exact_supporting_span": "I've been feeling overwhelmed at work again, and it's been really hard to keep up. I decided it might be time to start looking for a new job."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: I decided to begin searching for a new job due to ongoing work stress.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_5634a18e06ad1c268ac79320",
+      "memory_id": "smu_77d7c72e66a22d03acfae2d6",
+      "owner_id": "p8",
+      "source_session_id": "esc1082",
+      "source_session_rank": 6,
+      "source_timestamp": "2024-09-15",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 33,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc1082:turn:22",
+          "role": "seeker",
+          "full_turn_text": "i actually just switched from beachbody to les mills",
+          "exact_supporting_span": "i actually just switched from beachbody to les mills"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker changed their workout program from Beachbody to Les Mills.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_64f08ad0ac0c583912a4f2f0",
+      "memory_id": "smu_a934809fd890925b35183044",
+      "owner_id": "p16",
+      "source_session_id": "p16_conv_7",
+      "source_session_rank": 11,
+      "source_timestamp": "2025-01-05",
+      "continuity_type": "change",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p16_conv_7:turn:15",
+          "role": "seeker",
+          "full_turn_text": "Actually, I made amends with a coworker a few months back and our collaboration has improved a lot.",
+          "exact_supporting_span": "Actually, I made amends with a coworker a few months back and our collaboration has improved a lot."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [change; source_status=completed]: The seeker repaired their relationship with a coworker several months ago, leading to improved collaboration.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_7ae21187e0eeb78733f8b9a0",
+          "relation": "corefers_with"
+        },
+        {
+          "memory_id": "smu_aaa3acdd004c19bf0ffa9e07",
+          "relation": "supersedes"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_00e155907937802dd2c7e7b7",
+      "memory_id": "smu_8b515e17519cd0fdaf977b6b",
+      "owner_id": "p10",
+      "source_session_id": "p10_conv_10",
+      "source_session_rank": 13,
+      "source_timestamp": "2025-03-05",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 18,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p10_conv_10:turn:4",
+          "role": "seeker",
+          "full_turn_text": "Well, Bob just got a full-time job, which is a huge relief financially. But I’m still feeling quite overwhelmed.",
+          "exact_supporting_span": "Well, Bob just got a full-time job, which is a huge relief financially. But I’m still feeling quite overwhelmed."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: Bob secured a full-time job.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_00e673e5999f75fed8b1a28e",
+      "memory_id": "smu_d661d2cb1a702a6f69ae6904",
+      "owner_id": "p4",
+      "source_session_id": "esc837",
+      "source_session_rank": 0,
+      "source_timestamp": "2024-06-15",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc837:turn:7",
+          "role": "seeker",
+          "full_turn_text": "I have learned my lines and practiced at home a lot. I know what to say almost word for word but I had a bad experience in the past that has scared me.",
+          "exact_supporting_span": "I have learned my lines and practiced at home a lot. I know what to say almost word for word but I had a bad experience in the past that has scared me."
+        },
+        {
+          "turn_id": "esc837:turn:17",
+          "role": "seeker",
+          "full_turn_text": "I think that is really good advice. I think I have just suffered from a bad experience in the past and this has shaped my way of thinking to always be fearful. I'm fine in meetings or virtually but something about a stage just scares me.",
+          "exact_supporting_span": "I think that is really good advice. I think I have just suffered from a bad experience in the past and this has shaped my way of thinking to always be fearful. I'm fine in meetings or virtually but something about a stage just scares me."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker had a bad experience in the past that has made them fearful of giving presentations on stage.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_00f57afb5f26f3b83258a5bf",
+      "memory_id": "smu_f9e879c40aa7c91f3427e557",
+      "owner_id": "p2",
+      "source_session_id": "p2_conv_1",
+      "source_session_rank": 4,
+      "source_timestamp": "2024-10-05",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 26,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p2_conv_1:turn:4",
+          "role": "seeker",
+          "full_turn_text": "Yeah, it's mostly about Nate, my ex. We had a big argument and things have been weird since then.",
+          "exact_supporting_span": "Yeah, it's mostly about Nate, my ex. We had a big argument and things have been weird since then."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker had a big argument with their ex-boyfriend Nate.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0157a11200ae8f93e7ac693d",
+      "memory_id": "smu_a3e5a05a6aaa286cba888faf",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_10",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-01-05",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_10:turn:10",
+          "role": "seeker",
+          "full_turn_text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+          "exact_supporting_span": "They reminded me of how much work I've already done and how capable I am."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: My old college friend reminded me of my past work and capability.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0157bac58274821526e66fb5",
+      "memory_id": "smu_33f49760e42aabf8d2344336",
+      "owner_id": "p11",
+      "source_session_id": "p11_conv_14",
+      "source_session_rank": 18,
+      "source_timestamp": "2025-05-10",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 23,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p11_conv_14:turn:2",
+          "role": "seeker",
+          "full_turn_text": "Hi, it's been a bit rough. My mom recently had to go into the hospital for surgery, and I've been really worried about her.",
+          "exact_supporting_span": "Hi, it's been a bit rough. My mom recently had to go into the hospital for surgery, and I've been really worried about her."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker's mom had surgery.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_017826f868d0349baadbf1d7",
+      "memory_id": "smu_af39bf98f93c1e885ca02e22",
+      "owner_id": "p13",
+      "source_session_id": "esc785",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-04-21",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 23,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc785:turn:22",
+          "role": "seeker",
+          "full_turn_text": "And for some reason when this happens she expects you to come crawling asking her what you did wrong when infact you did nothing. she would start recalling what happened 5years ago",
+          "exact_supporting_span": "And for some reason when this happens she expects you to come crawling asking her what you did wrong when infact you did nothing. she would start recalling what happened 5years ago"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: When the conflict happened, my friend expected me to apologize even though I did nothing wrong and brought up an incident from five years ago.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_05de935cda6878282a3a538d",
+      "memory_id": "smu_febf1991a6ebdc4f2ad9d874",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_10",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-01-05",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_10:turn:14",
+          "role": "seeker",
+          "full_turn_text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "exact_supporting_span": "we chatted for a while"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: I had a conversation with my old college friend about what's been on my mind.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0623831559efd129fb31b55b",
+      "memory_id": "smu_71d1814b01f0833af76fafca",
+      "owner_id": "p6",
+      "source_session_id": "esc1121",
+      "source_session_rank": 1,
+      "source_timestamp": "2024-09-01",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc1121:turn:6",
+          "role": "seeker",
+          "full_turn_text": "No, I am so mad but I don't want to break up with him. I told my best friends that I never want to see her again though. My boyfriend and I have plans to get engaged this month. I am furious at him though.",
+          "exact_supporting_span": "I told my best friends that I never want to see her again though."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker told their best friends they never want to see one of them again.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_06df7cbe135e789fa38916a9",
+      "memory_id": "smu_e84f8fedc44ecc278be25299",
+      "owner_id": "p3",
+      "source_session_id": "p3_conv_6",
+      "source_session_rank": 8,
+      "source_timestamp": "2025-07-05",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p3_conv_6:turn:11",
+          "role": "seeker",
+          "full_turn_text": "I told my family first. They were really understanding, which helped a lot, especially since they know I've been struggling.",
+          "exact_supporting_span": "I told my family first. They were really understanding, which helped a lot, especially since they know I've been struggling."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker informed their family about their decision to change majors.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_559a3edaec1799f266b8c9d7",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_07314bba75591f23a5ec6c8e",
+      "memory_id": "smu_7877e9c331ab66f066bb3640",
+      "owner_id": "p10",
+      "source_session_id": "p10_conv_14",
+      "source_session_rank": 17,
+      "source_timestamp": "2025-09-30",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 18,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p10_conv_14:turn:13",
+          "role": "seeker",
+          "full_turn_text": "When he left, it was so sudden. We had a big fight, and next thing I knew, he was gone. I felt so guilty and helpless.",
+          "exact_supporting_span": "When he left, it was so sudden. We had a big fight, and next thing I knew, he was gone. I felt so guilty and helpless."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: Jerry left home suddenly after a big argument, which left the seeker feeling guilty and helpless.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_4d0ebbc1e0315e3fa6fbd6b6",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_1f6ffd6153cc0aa08e808efb",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_07adf37d4b2c9d1730e85f9b",
+      "memory_id": "smu_7f4050687d1e4677ca268b87",
+      "owner_id": "p6",
+      "source_session_id": "p6_conv_6",
+      "source_session_rank": 10,
+      "source_timestamp": "2024-12-10",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p6_conv_6:turn:2",
+          "role": "seeker",
+          "full_turn_text": "Hi, it's been a bit rough lately. My car broke down and the repair costs are just... more than I can handle right now.",
+          "exact_supporting_span": "Hi, it's been a bit rough lately. My car broke down and the repair costs are just... more than I can handle right now."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker's car broke down.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_089f4705a53fab66d7fe025f",
+      "memory_id": "smu_13f0311f36e17e9a57873410",
+      "owner_id": "p16",
+      "source_session_id": "p16_conv_17",
+      "source_session_rank": 21,
+      "source_timestamp": "2025-06-08",
+      "continuity_type": "event",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p16_conv_17:turn:3",
+          "role": "seeker",
+          "full_turn_text": "I had a bit of a health scare recently.",
+          "exact_supporting_span": "I had a bit of a health scare recently."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [event; source_status=completed]: The seeker experienced a mild health scare recently.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_05df0e3300fb4ff484e3142b",
+      "memory_id": "smu_6ae47c350e55c6a6c6838c81",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_10",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-01-05",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_10:turn:6",
+          "role": "seeker",
+          "full_turn_text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+          "exact_supporting_span": "It's from an old college friend I hadn't spoken to in a while."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: I had not spoken to an old college friend for a long time before they reached out.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_2e8e462c0df1d6bac24d783c",
+      "memory_id": "smu_e3af10469de0cbeca2c833b6",
+      "owner_id": "p5",
+      "source_session_id": "p5_conv_6",
+      "source_session_rank": 9,
+      "source_timestamp": "2025-03-10",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 20,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p5_conv_6:turn:5",
+          "role": "seeker",
+          "full_turn_text": "Yeah, it really is. We hadn't spoken in a while, and now I can't get that time back.",
+          "exact_supporting_span": "Yeah, it really is. We hadn't spoken in a while, and now I can't get that time back."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The seeker had not communicated with their father for some time before the father's death.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_5f92faf22b2132009df1870a",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_586ff5461841b477519b5c17",
+      "memory_id": "smu_523b3de7cb609fcf2bdd0128",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_4",
+      "source_session_rank": 6,
+      "source_timestamp": "2024-10-18",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_4:turn:5",
+          "role": "seeker",
+          "full_turn_text": "Well, I was really nervous from the start. I tried to stay calm, but I stumbled over my words.",
+          "exact_supporting_span": "Well, I was really nervous from the start. I tried to stay calm, but I stumbled over my words."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: I was in a state of being nervous and stumbling over my words during the thesis presentation.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_58e64b2c8695bc331d2e6e74",
+      "memory_id": "smu_3b7aa4fd965a094e23a40acd",
+      "owner_id": "p5",
+      "source_session_id": "p5_conv_6",
+      "source_session_rank": 9,
+      "source_timestamp": "2025-03-10",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 20,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p5_conv_6:turn:7",
+          "role": "seeker",
+          "full_turn_text": "I keep thinking about our last conversation, it didn't end well and I never reached out after that.",
+          "exact_supporting_span": "I keep thinking about our last conversation, it didn't end well and I never reached out after that."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The seeker's last conversation with their father ended poorly, and the seeker did not initiate further contact afterward.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_66ebb768b0830f8fee5ee54d",
+      "memory_id": "smu_101b685d6e23543962702fbf",
+      "owner_id": "p6",
+      "source_session_id": "p6_conv_9",
+      "source_session_rank": 13,
+      "source_timestamp": "2025-03-15",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p6_conv_9:turn:16",
+          "role": "seeker",
+          "full_turn_text": "Yes, there were times we've disagreed but always managed to mend things eventually.",
+          "exact_supporting_span": "Yes, there were times we've disagreed but always managed to mend things eventually."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The seeker recalls past disagreements with Eliza that were eventually resolved.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_93d2c4152669f2a6a4bd1ba8",
+      "memory_id": "smu_49750aed48bd3a923bf9f656",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_9",
+      "source_session_rank": 11,
+      "source_timestamp": "2024-12-20",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_9:turn:10",
+          "role": "seeker",
+          "full_turn_text": "Yeah, that disappointment was heavy. It sort of spiraled into making me feel distant from friends too.",
+          "exact_supporting_span": "Yeah, that disappointment was heavy. It sort of spiraled into making me feel distant from friends too."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: I was in a state of emotional distance from friends following the thesis presentation disappointment.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_8a4a602fb8e6f4504f555cbc",
+          "relation": "updates"
+        },
+        {
+          "memory_id": "smu_42ea451d38ddebdf6b6c9ab0",
+          "relation": "updates"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_bba667d970f50f5baed70808",
+      "memory_id": "smu_c9de7d66beadb4a172cd9a77",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_9",
+      "source_session_rank": 11,
+      "source_timestamp": "2024-12-20",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_9:turn:8",
+          "role": "seeker",
+          "full_turn_text": "Thank you. It wasn't easy, especially with how anxious I felt about my thesis presentation.",
+          "exact_supporting_span": "Thank you. It wasn't easy, especially with how anxious I felt about my thesis presentation."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: I was in a state of anxiety about my thesis presentation.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_5c58f717b0b12e7f72cb181f",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_bf79711f8a4039f110f346e6",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_d0608ae41212b0a501231e88",
+      "memory_id": "smu_bdccf39364f59a2c79545fa8",
+      "owner_id": "p1",
+      "source_session_id": "esc245",
+      "source_session_rank": 2,
+      "source_timestamp": "2024-08-02",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 32,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc245:turn:20",
+          "role": "seeker",
+          "full_turn_text": "Maybe it did. There are some fans of his work on social media, and he's on all the popular social media sights. I don't know if he me the guy online or what. There hasn't been anything like this before that I know of. Maybe there was. I trusted him and didn't look at his messages or anything.",
+          "exact_supporting_span": "Maybe it did. There are some fans of his work on social media, and he's on all the popular social media sights. I don't know if he me the guy online or what. There hasn't been anything like this before that I know of. Maybe there was. I trusted him and didn't look at his messages or anything."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: Prior to this incident, I had no knowledge of any infidelity by my partner.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_d79dc88e9a0e988823267409",
+      "memory_id": "smu_01dce20536b8cfd81567fee4",
+      "owner_id": "p3",
+      "source_session_id": "p3_conv_21",
+      "source_session_rank": 24,
+      "source_timestamp": "2026-02-22",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p3_conv_21:turn:5",
+          "role": "seeker",
+          "full_turn_text": "We broke up because of the emotional distance between us.",
+          "exact_supporting_span": "We broke up because of the emotional distance between us."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The emotional distance between the seeker and Sally contributed to their breakup.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_dba071ba6e9ff92cc2328f66",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_38c801394a37b6d0eb415ac9",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_d0a4ce51dafd4743db6eb48f",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_e4403fa52c41ecc7bbdc7f7b",
+      "memory_id": "smu_2a958db1e93953e09e1d913e",
+      "owner_id": "p11",
+      "source_session_id": "p11_conv_13",
+      "source_session_rank": 17,
+      "source_timestamp": "2025-04-15",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 23,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p11_conv_13:turn:6",
+          "role": "seeker",
+          "full_turn_text": "We just couldn't agree on our future plans. He said he’s tired of arguing about it all the time, and it feels like he’s been pulling away for a while now.",
+          "exact_supporting_span": "We just couldn't agree on our future plans. He said he’s tired of arguing about it all the time, and it feels like he’s been pulling away for a while now."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The seeker and John had ongoing disagreements about their future plans, and John had been emotionally distancing himself.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_273e69994808ee97d9908079",
+          "relation": "supersedes"
+        },
+        {
+          "memory_id": "smu_881418578b967ff668dbb914",
+          "relation": "corefers_with"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_eccbab188c0ed89cccbe61cd",
+      "memory_id": "smu_7dfaaec8a60080e31c408449",
+      "owner_id": "p2",
+      "source_session_id": "p2_conv_16",
+      "source_session_rank": 19,
+      "source_timestamp": "2025-02-15",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 26,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p2_conv_16:turn:5",
+          "role": "seeker",
+          "full_turn_text": "It went surprisingly well! I mean, I was really nervous at first.",
+          "exact_supporting_span": "It went surprisingly well! I mean, I was really nervous at first."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: The seeker felt nervous before performing at the poetry slam.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_ee6b1811b99b2ec430cf4d70",
+      "memory_id": "smu_a8bf8a63d6ee327809fa267b",
+      "owner_id": "p15",
+      "source_session_id": "p15_conv_4",
+      "source_session_rank": 6,
+      "source_timestamp": "2024-10-18",
+      "continuity_type": "state",
+      "timestamp_status": "completed",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p15_conv_4:turn:7",
+          "role": "seeker",
+          "full_turn_text": "Yeah, and the Q&A session was even worse. I struggled to answer some of the questions.",
+          "exact_supporting_span": "Yeah, and the Q&A session was even worse. I struggled to answer some of the questions."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=completed]: I was in a state of struggling to answer questions during the Q&A session of my thesis presentation.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_007c927ad41e2f6a854b79ed",
+      "memory_id": "smu_a5ac2d62c06b89bf65a40330",
+      "owner_id": "p6",
+      "source_session_id": "p6_conv_16",
+      "source_session_rank": 20,
+      "source_timestamp": "2025-08-20",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p6_conv_16:turn:13",
+          "role": "seeker",
+          "full_turn_text": "We’ve been better. We managed to patch things up after the wedding planning fallout, but I wonder how she’d have reacted if I moved.",
+          "exact_supporting_span": "We’ve been better. We managed to patch things up after the wedding planning fallout, but I wonder how she’d have reacted if I moved."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker's relationship with Eliza has improved after reconciling following a prior conflict, but the seeker remains uncertain about how Eliza would have responded to a potential move.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_b17a955df0bd52e8574a554f",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_008235bf072d177ae2f6d5f6",
+      "memory_id": "smu_f88bec545c8db8731ccea7ad",
+      "owner_id": "p1",
+      "source_session_id": "p1_conv_25",
+      "source_session_rank": 28,
+      "source_timestamp": "2025-12-01",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 32,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p1_conv_25:turn:4",
+          "role": "seeker",
+          "full_turn_text": "Yeah, it's just that work has been such a huge part of my identity. I'm worried about how this break might affect my career.",
+          "exact_supporting_span": "Yeah, it's just that work has been such a huge part of my identity. I'm worried about how this break might affect my career."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: I am currently concerned that my sabbatical may negatively impact my career trajectory.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_015bf427782d65e19e871a60",
+      "memory_id": "smu_765fc1899cc16b2f2b9c72bd",
+      "owner_id": "p10",
+      "source_session_id": "p10_conv_6",
+      "source_session_rank": 9,
+      "source_timestamp": "2024-12-20",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 18,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p10_conv_6:turn:11",
+          "role": "seeker",
+          "full_turn_text": "Sometimes I feel like I'm just waiting for the next thing to go wrong. It's exhausting.",
+          "exact_supporting_span": "Sometimes I feel like I'm just waiting for the next thing to go wrong. It's exhausting."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker is in a state of emotional exhaustion, anticipating further negative events.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_01ae3d0d410f09b48e086f0a",
+      "memory_id": "smu_e80b076ca63069ac7c2fbbe8",
+      "owner_id": "p7",
+      "source_session_id": "p7_conv_10",
+      "source_session_rank": 13,
+      "source_timestamp": "2025-08-05",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 19,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p7_conv_10:turn:5",
+          "role": "seeker",
+          "full_turn_text": "It's been overwhelming. I knew my health wasn't the best, but I didn't expect it to get to this point where I had to pause everything.",
+          "exact_supporting_span": "It's been overwhelming. I knew my health wasn't the best, but I didn't expect it to get to this point where I had to pause everything."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker finds the situation of pausing work due to health issues overwhelming.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_01b20b8c13bd4c367dcb2697",
+      "memory_id": "smu_734dc8c3f34647ec5b9f76a4",
+      "owner_id": "p3",
+      "source_session_id": "p3_conv_12",
+      "source_session_rank": 15,
+      "source_timestamp": "2025-11-15",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p3_conv_12:turn:8",
+          "role": "seeker",
+          "full_turn_text": "We’ve talked a little, but I get the sense she’s not saying everything she feels.",
+          "exact_supporting_span": "We’ve talked a little, but I get the sense she’s not saying everything she feels."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker perceives that Sally is not fully expressing her feelings about the reduced time spent together.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_023cb5bfb3c370dda05862e2",
+      "memory_id": "smu_9ecb3f3bf6fd3ff351bd07db",
+      "owner_id": "p15",
+      "source_session_id": "esc86",
+      "source_session_rank": 19,
+      "source_timestamp": "2025-04-20",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc86:turn:4",
+          "role": "seeker",
+          "full_turn_text": "I'm having trouble getting motivated to finish my senior thesis",
+          "exact_supporting_span": "I'm having trouble getting motivated to finish my senior thesis"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: I am in a state of having trouble getting motivated to finish my senior thesis.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_024e59986a2adc7c44c015a5",
+      "memory_id": "smu_3205dd66a05c9f898bcd5f5e",
+      "owner_id": "p4",
+      "source_session_id": "p4_conv_8",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-03-28",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 22,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p4_conv_8:turn:16",
+          "role": "seeker",
+          "full_turn_text": "Yeah, we've talked. She's being really supportive, but I know she's worried too.",
+          "exact_supporting_span": "Yeah, we've talked. She's being really supportive, but I know she's worried too."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker has discussed their feelings about the future with their girlfriend, who is supportive but also anxious.",
+      "linked_prior_relations": [
+        {
+          "memory_id": "smu_c52d5a6c754748433e64886c",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_a4a49144e8fbb3ebc8012a64",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_76e9a1693b8b07cb56c51fae",
+          "relation": "reaffirms"
+        },
+        {
+          "memory_id": "smu_b8b6d4df384eb172e976b169",
+          "relation": "reaffirms"
+        }
+      ],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_02502314468ee9d1432aac1d",
+      "memory_id": "smu_6487ded24aa77ab082f27cc2",
+      "owner_id": "p16",
+      "source_session_id": "p16_conv_19",
+      "source_session_rank": 23,
+      "source_timestamp": "2025-08-30",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p16_conv_19:turn:4",
+          "role": "seeker",
+          "full_turn_text": "Yeah, I brought it up. I think my boss understood where I'm coming from, but it's hard to be sure. I've felt stuck for a while now.",
+          "exact_supporting_span": "Yeah, I brought it up. I think my boss understood where I'm coming from, but it's hard to be sure. I've felt stuck for a while now."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker feels stuck in their current work situation after discussing their career path with their boss.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_02576c1663a0c7b4aa985426",
+      "memory_id": "smu_27aa8cbcca432d62c8069ef2",
+      "owner_id": "p13",
+      "source_session_id": "p13_conv_16",
+      "source_session_rank": 20,
+      "source_timestamp": "2025-08-12",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 23,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p13_conv_16:turn:19",
+          "role": "seeker",
+          "full_turn_text": "Honestly, it feels overwhelming, but talking it out is helping me see things clearer. I should tackle things one step at a time.",
+          "exact_supporting_span": "Honestly, it feels overwhelming, but talking it out is helping me see things clearer. I should tackle things one step at a time."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: I feel overwhelmed by multiple responsibilities, but discussing them helps me gain clarity.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0257e5ba8cbe96fc8902f544",
+      "memory_id": "smu_47a9824f092e0b3e25267b68",
+      "owner_id": "p16",
+      "source_session_id": "esc13",
+      "source_session_rank": 10,
+      "source_timestamp": "2024-12-25",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 25,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc13:turn:2",
+          "role": "seeker",
+          "full_turn_text": "I'm, okay, thanks, and you?  I'm feeling a bit down because I'm alone for the holidays.",
+          "exact_supporting_span": "I'm, okay, thanks, and you?  I'm feeling a bit down because I'm alone for the holidays."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker is feeling down because they are alone for the holidays.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_025b2ee4f5f65e7d10228863",
+      "memory_id": "smu_f0080e7a2c3423f30c0bee51",
+      "owner_id": "p3",
+      "source_session_id": "p3_conv_9",
+      "source_session_rank": 12,
+      "source_timestamp": "2025-10-18",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 28,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "p3_conv_9:turn:13",
+          "role": "seeker",
+          "full_turn_text": "Yeah, she reassured me that we'll take things slow and focus on becoming better together.",
+          "exact_supporting_span": "Yeah, she reassured me that we'll take things slow and focus on becoming better together."
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker and Sally are intentionally taking their relationship slow and focusing on mutual growth.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    },
+    {
+      "audit_item_id": "ms_audit_0293179e435cd9618bc0cdba",
+      "memory_id": "smu_409ec1bb08d29b35eb9d9803",
+      "owner_id": "p8",
+      "source_session_id": "esc1082",
+      "source_session_rank": 6,
+      "source_timestamp": "2024-09-15",
+      "continuity_type": "state",
+      "timestamp_status": "ongoing",
+      "strict_past_proof": {
+        "audit_target_cutoff_rank": 33,
+        "source_rank_lt_cutoff": true
+      },
+      "exact_source_turns": [
+        {
+          "turn_id": "esc1082:turn:34",
+          "role": "seeker",
+          "full_turn_text": "i knowi have to love myself. i just cant figure out how lol",
+          "exact_supporting_span": "i knowi have to love myself. i just cant figure out how lol"
+        }
+      ],
+      "rendered_candidate": "Continuity fact [state; source_status=ongoing]: The seeker acknowledges the need to love themselves but currently does not know how.",
+      "linked_prior_relations": [],
+      "human_labels": null
+    }
+  ],
+  "outcome_calls": 0
+}

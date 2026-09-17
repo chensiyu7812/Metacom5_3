@@ -10,7 +10,7 @@ on:
       - main
       - "codex/**"
       - "agent/**"
-      - "pm-v1.5-*"
+      - "work/paper1-*"
     paths:
       - "project/**"
       - ".github/workflows/pm-v2-tests.yml"
@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 20
     env:
       # Keep dependency resolution isolated from runner-level user packages.
-      # Reportable PM-v1.5 stages enforce the same invariant at runtime.
+      # Reportable Paper-1 stages enforce the same invariant at runtime.
       PYTHONNOUSERSITE: "1"
     defaults:
       run:
@@ -33,12 +33,16 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: project/pyproject.toml
+      - name: Install CPU PyTorch for non-GPU CI
+        run: >-
+          python -m pip install
+          --index-url https://download.pytorch.org/whl/cpu
+          "torch==2.3.1+cpu"
       - name: Install package
         run: python -m pip install -e ".[dev]"
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
-      - name: Run blocking V5.3 clean-release suite
-        run: pytest -q tests/test_v1_5_v5_3_*.py
-      - name: Run complete historical suite (diagnostic)
-        continue-on-error: true
-        run: pytest -q
+      - name: Run blocking public-only Paper-1 suite
+        run: pytest -q -m "not gpu" tests/test_paper1_*.py
+      - name: Validate Paper-1 integration base and outcome lock
+        run: python scripts/paper1/00_validate_integration_base.py

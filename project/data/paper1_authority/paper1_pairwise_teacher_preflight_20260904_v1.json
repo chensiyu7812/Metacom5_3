@@ -1,0 +1,143 @@
+{
+  "protocol": "paper1-pairwise-teacher-base-pair-preflight-v1",
+  "status": "ZERO_OUTCOME_PREFLIGHT_READY_DG_SEEKER_AND_LOCAL_RESPONSES_NOT_RUN",
+  "sampling_seed_sha256": "aac1366aa2fca22a460eddcc995fd95e16ca072810f185e26335236ececf5a24",
+  "base_semantic_pairs": 80,
+  "base_by_task": {
+    "DG": 27,
+    "ESC": 27,
+    "QA": 13,
+    "Summary": 13
+  },
+  "base_by_head": {
+    "ME": 18,
+    "MP": 18,
+    "MS": 17,
+    "RS": 27
+  },
+  "probe_k_by_task": {
+    "ESC": {
+      "1": 9,
+      "2": 9,
+      "4": 9
+    },
+    "QA": {
+      "1": 6,
+      "2": 4,
+      "4": 3
+    },
+    "Summary": {
+      "1": 6,
+      "2": 4,
+      "4": 3
+    },
+    "DG": {
+      "1": 9,
+      "2": 9,
+      "4": 9
+    }
+  },
+  "presentations": 96,
+  "reverse_presentations": 16,
+  "independent_primary_raters": 2,
+  "primary_rater_pair_judgements_after_completion": 192,
+  "selection_fields": "runtime-visible task/head/query length/group plus frozen retrieval identities only",
+  "reference_loaded_only_after_target_identity_selection": true,
+  "qualification_probe_k_is_not_final_resource_amount": true,
+  "dg_scenario_clusters": 9,
+  "dg_existing_first_turn_seeker_success_reused": 1,
+  "dg_first_turn_seeker_calls_pending": 8,
+  "dg_first_turn_seeker_budget": {
+    "physical_attempts_per_logical_turn": 1,
+    "estimated_input_tokens": 39640,
+    "maximum_output_tokens": 480,
+    "input_usd_per_million_tokens": 2.5,
+    "output_usd_per_million_tokens": 10.0,
+    "worst_case_estimated_usd": 0.1039,
+    "authorization_ceiling_usd": 0.11,
+    "paid_calls_authorized": false,
+    "token_estimator": "sum(4 + encoded_content_tokens_per_message) + 2",
+    "tiktoken_version": "0.12.0",
+    "official_pricing_url": "https://developers.openai.com/api/docs/models/gpt-4o",
+    "calls": [
+      {
+        "target_id": "p2::dg::2",
+        "request_messages_sha256": "d2f967a2a474d9a5762f7cb6f50549c6a467a90df7b44a49ad5d377cbffe5a61",
+        "estimated_input_tokens": 6993,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p17::dg::3",
+        "request_messages_sha256": "9856d9cb12a1c820212658559adad49a22b355247ea83cf6c2618f67af37258a",
+        "estimated_input_tokens": 3262,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p10::dg::1",
+        "request_messages_sha256": "89c59fb8a274a547e933af0e8703f90820a82b80856c79e49ca105f27462c163",
+        "estimated_input_tokens": 3741,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p11::dg::1",
+        "request_messages_sha256": "bcb50cc59cad63a03ab32f06837db720ebc8885023d45fca00664d0b55647698",
+        "estimated_input_tokens": 4415,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p5::dg::1",
+        "request_messages_sha256": "7e4ee55ba3c34914235c11ae1b2ece19742b4734c6ecce8d436d8567f50b7a16",
+        "estimated_input_tokens": 5387,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p14::dg::2",
+        "request_messages_sha256": "14dd0fa90cac67af553bd56ddbb5b8b0eea67918952b0e9f0bc2d2ee005e0afe",
+        "estimated_input_tokens": 5007,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p13::dg::1",
+        "request_messages_sha256": "bf170abd5e559a8ec0b941c2784376f4b00b99605c4e6e42a8e11d1f0bfbcd7c",
+        "estimated_input_tokens": 3228,
+        "maximum_output_tokens": 60
+      },
+      {
+        "target_id": "p8::dg::2",
+        "request_messages_sha256": "2f77b46d7b7868520a773f88ed0c17ceffb16f8917b0b1087f687fa9aa10d757",
+        "estimated_input_tokens": 7607,
+        "maximum_output_tokens": 60
+      }
+    ]
+  },
+  "local_generator_outputs_pending": 142,
+  "local_generator_output_accounting": "ESC 54 + QA 26 + Summary 26 + DG 9 shared OFF plus 27 head-specific ON",
+  "reverse_duplicates_require_new_generation": 0,
+  "paid_api_calls": 0,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "artifacts": {
+    "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl": {
+      "rows": 80,
+      "sha256": "90c8b869fdc3fe4683b89e24ec237cd6eec0030602adb5ce90ae6728e545d7c7"
+    },
+    "paper1_pairwise_teacher_presentation_plan_20260904_v1.jsonl": {
+      "rows": 96,
+      "sha256": "ff2cb70572396403a268dcff893924e37f40db81a998c181f8a5152d12f7c864"
+    },
+    "paper1_pairwise_teacher_blind_key_20260904_v1.jsonl": {
+      "rows": 96,
+      "sha256": "33d953cc3604a76e647b30c9fe431f67909a98525a7b62b902296711b9927298"
+    }
+  },
+  "source_sha256": {
+    "ESConv.json": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "ES-MemEval-sanitized": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "ES-MemEval-raw": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "RS-Top8": "14aa06384d06d196064bbb1dc80cdb97b655a792560e7495ed26f7becbe47a11",
+    "Multi-View-Top8": "19cabd4a9a820a020dacf5e747c1a053296e1f45d92b3955e79d05da521f886f",
+    "Multi-View-session-results": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "Generator-tokenizer": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+  },
+  "next_step": "authorize at most 8 frozen GPT-4o first-turn seeker calls; then bind dynamic DG retrieval and generate 142 local A6000 outputs without inspecting quality"
+}

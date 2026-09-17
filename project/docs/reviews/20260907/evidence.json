@@ -1,0 +1,294 @@
+{
+  "audit_date": "2026-09-07",
+  "scope": "current public-only Paper-1, metadata and implementation checks",
+  "teacher_reference": {
+    "base_by_task": {
+      "ESC": 27,
+      "QA": 13,
+      "Summary": 13,
+      "DG": 27
+    },
+    "presentations_by_task": {
+      "DG": 32,
+      "ESC": 32,
+      "QA": 16,
+      "Summary": 16
+    },
+    "base_by_head": {
+      "RS": 27,
+      "MP": 18,
+      "ME": 18,
+      "MS": 17
+    },
+    "independent_target_counts_by_task": {
+      "ESC": 27,
+      "QA": 13,
+      "Summary": 13,
+      "DG": 9
+    },
+    "finish_reason_counts": {
+      "DG:OFF:length": 1,
+      "DG:OFF:stop": 8,
+      "DG:ON:length": 9,
+      "DG:ON:stop": 18,
+      "ESC:OFF:length": 2,
+      "ESC:OFF:stop": 25,
+      "ESC:ON:length": 1,
+      "ESC:ON:stop": 26,
+      "QA:OFF:length": 1,
+      "QA:OFF:stop": 12,
+      "QA:ON:length": 2,
+      "QA:ON:stop": 11,
+      "Summary:OFF:length": 11,
+      "Summary:OFF:stop": 2,
+      "Summary:ON:length": 1,
+      "Summary:ON:stop": 12
+    },
+    "usage": {
+      "prompt_tokens": 87112,
+      "completion_tokens": 13183,
+      "total_tokens": 100295
+    },
+    "length_finished_total": 28,
+    "pair_count_with_any_length_finish": 26,
+    "output_caps_by_task": {
+      "ESC": [
+        256
+      ],
+      "QA": [
+        256
+      ],
+      "Summary": [
+        256
+      ],
+      "DG": [
+        60
+      ]
+    },
+    "observed_original_sheet_ratings": 0,
+    "same_response_hash_base_pairs": 2
+  },
+  "budget": {
+    "event_rows": 2300,
+    "reservations": 1150,
+    "unsettled_reservations": 0,
+    "opening_cost_usd": "0.03079930",
+    "accounted_cost_usd": "1.44178151",
+    "remaining_usd": "48.55821849",
+    "stage_totals_usd": {
+      "multi_view_401_compilation_and_validation": "1.12641971",
+      "token_call_latency_pilots": "0.1832325",
+      "pairwise_teacher_reference_dg_first_turns": "0.1013300"
+    },
+    "settlement_outcomes": {
+      "UNKNOWN": 7,
+      "SUCCEEDED": 1142,
+      "FAILED": 1
+    },
+    "non_success_settlement_accounting": {
+      "unknown_cost_charged_at_reserved_maximum": 8
+    },
+    "non_success_settlement_cost_usd": "0.02118605",
+    "gemini_events": 0
+  },
+  "public_data_counts": {
+    "owners": 18,
+    "sessions": 401,
+    "QA": 1427,
+    "Summary": 125,
+    "DG": 34
+  },
+  "compiler": {
+    "sessions": 401,
+    "owners": 18,
+    "accepted_units": 2236,
+    "compiler_versions": {
+      "paper1-qwen-multi-view-memory-compiler-v7": 401
+    },
+    "schema_rejection_records": 519,
+    "semantic_rejection_records": 562
+  },
+  "target_cutoffs": {
+    "target_count": 1586,
+    "unique_cutoffs_per_owner": {
+      "p1": [
+        32
+      ],
+      "p2": [
+        26
+      ],
+      "p3": [
+        28
+      ],
+      "p4": [
+        22
+      ],
+      "p5": [
+        20
+      ],
+      "p6": [
+        25
+      ],
+      "p7": [
+        19
+      ],
+      "p8": [
+        33
+      ],
+      "p9": [
+        21
+      ],
+      "p10": [
+        18
+      ],
+      "p11": [
+        23
+      ],
+      "p12": [
+        20
+      ],
+      "p13": [
+        23
+      ],
+      "p14": [
+        17
+      ],
+      "p15": [
+        22
+      ],
+      "p16": [
+        25
+      ],
+      "p17": [
+        13
+      ],
+      "p18": [
+        14
+      ]
+    }
+  },
+  "teacher_fold_overlap": {
+    "teacher_unique_memory_targets": 35,
+    "targets_in_frozen_outer_fold_manifest": 35,
+    "direct_touched_target_counts_by_fold": {
+      "0": 5,
+      "1": 8,
+      "3": 11,
+      "4": 5,
+      "2": 6
+    },
+    "touched_exact_components": 35,
+    "targets_in_touched_components": 97,
+    "expanded_target_counts_by_task": {
+      "dialogue_generation": 9,
+      "summary": 19,
+      "qa": 69
+    }
+  },
+  "RS": {
+    "canonical_treatments": 13172,
+    "decision_states": 11883,
+    "retrieval_assignments_checked": 95064,
+    "state_source_splits": {
+      "train": 9923,
+      "validation": 1960
+    }
+  },
+  "latency_p95_counterexample": {
+    "description": "three disjoint 4% tail events; constant base 5000 ms",
+    "marginal_p95_ms": [
+      0,
+      0,
+      0
+    ],
+    "base_plus_sum_p95_ms": 5000,
+    "actual_bundle_p95_ms": 65000,
+    "is_empirical_project_outcome": false
+  },
+  "summary_equivalence_contract_reproductions": [
+    {
+      "case": "event_tie_llm_direction",
+      "pairwise_verdict": "equivalent",
+      "actual_outcome": "uncertain",
+      "reason": "summary_event_f1_tie_semantic_unresolved",
+      "contract_common_equivalence_expectation": "equivalent"
+    },
+    {
+      "case": "event_direction_llm_opposite",
+      "pairwise_verdict": "equivalent",
+      "actual_outcome": "uncertain",
+      "reason": "summary_event_semantic_conflict",
+      "contract_common_equivalence_expectation": "equivalent"
+    }
+  ],
+  "duplicate_JSON_key_parser": {
+    "input_verdict_keys": [
+      "A_better",
+      "B_better"
+    ],
+    "accepted_verdict": "B_better"
+  },
+  "checks": {
+    "80_unique_base_pairs": true,
+    "96_unique_presentations": true,
+    "16_reverse_presentations": true,
+    "sheet_source_hash_base_pairs": true,
+    "sheet_source_hash_presentations": true,
+    "sheet_source_hash_blind_key": true,
+    "sheet_source_hash_instrument": true,
+    "sheet_source_hash_local_generation_result": true,
+    "generation_binding_hash": true,
+    "private_request_file_hash": true,
+    "142_unique_requests_and_caches": true,
+    "all_request_and_cache_hashes": true,
+    "all_response_text_hashes": true,
+    "all_nonempty_accepted_responses": true,
+    "pair_map_response_hashes": true,
+    "focal_pair_identity": true,
+    "matched_pair_decoding": true,
+    "RATER_A_original_sheet_hash": true,
+    "RATER_A_complete_blank_ids": true,
+    "RATER_A_responses_match_blind_key": true,
+    "RATER_A_no_direct_unblinding_fields": true,
+    "RATER_B_original_sheet_hash": true,
+    "RATER_B_complete_blank_ids": true,
+    "RATER_B_responses_match_blind_key": true,
+    "RATER_B_no_direct_unblinding_fields": true,
+    "same_AB_content_both_raters": true,
+    "different_rater_orders": true,
+    "reverse_swap_teacher_present_eb96170c6d90916a57799edb": true,
+    "reverse_swap_teacher_present_dade0f5150e701bdeff86389": true,
+    "reverse_swap_teacher_present_951a4bd6fba85b110eb87d91": true,
+    "reverse_swap_teacher_present_abab706f308f103e535760b6": true,
+    "reverse_swap_teacher_present_226340e65e5b33562a3cb0a2": true,
+    "reverse_swap_teacher_present_dee697f9b63f2303d882545b": true,
+    "reverse_swap_teacher_present_61685020e9229cc191b1ee54": true,
+    "reverse_swap_teacher_present_6088da0b4d8b4d0d9efe6452": true,
+    "reverse_swap_teacher_present_3bc986ba858d375f285413ac": true,
+    "reverse_swap_teacher_present_cde9f968fe109207d35a5c6b": true,
+    "reverse_swap_teacher_present_f2ecc63fcc5ac046db318050": true,
+    "reverse_swap_teacher_present_e550de4dff2f5011253fe87d": true,
+    "reverse_swap_teacher_present_0f9773e21920a3f3127449be": true,
+    "reverse_swap_teacher_present_18e7bf4f61257e1f2ede5c3e": true,
+    "reverse_swap_teacher_present_b88fbbf78c4e1a263d31336a": true,
+    "reverse_swap_teacher_present_16a73efb502675c40cbb329b": true,
+    "finish_counts_match_result": true,
+    "usage_matches_result": true,
+    "budget_accounted_total_matches_claim": true,
+    "DG_seeker_cost_recomputed": true,
+    "DG_seeker_count": true,
+    "public_ESMemEval_sha256": true,
+    "public_ESConv_sha256": true,
+    "all_2236_units_load_with_source_validation": true,
+    "no_exact_component_crosses_outer_folds": true,
+    "1586_unique_fold_targets": true,
+    "RS_all_exact_treatment_content_hashes": true,
+    "RS_11883_states_all_eight_distinct": true,
+    "RS_95064_retrievals_exclude_current_dialogue_union": true,
+    "RS_stored_top8_order": true
+  },
+  "check_summary": {
+    "passed": 57,
+    "failed": []
+  }
+}

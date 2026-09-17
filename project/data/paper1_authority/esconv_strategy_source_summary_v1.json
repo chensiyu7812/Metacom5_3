@@ -1,0 +1,53 @@
+{
+  "protocol": "pm-paper1-esconv-strategy-source-summary-v1",
+  "status": "SUPERSEDED_20260818_DO_NOT_USE_FOR_M2_FREEZE",
+  "superseded_by": {
+    "identity_manifest": "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+    "summary": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+    "cards": 12169,
+    "source_dialogues": 875,
+    "reason": "commit 993f6a9 changed StrategySourceCard.retrieval_text from situation+context to context-only (dialogue_only_v2_identities). This increases duplicate_key collisions on (retrieval_text, response) and mechanically dedups 234 cards (12403 -> 12169) for the same 875 source dialogues and the same EvoEmo-overlap exclusion policy. This is not a data-loss bug; it is the intended effect of excluding ESConv's author-written situation field from the active RS catalog identity, frozen as RS M2 decision 1 (paper1_rs_m2_freeze_20260818_v1.json)."
+  },
+  "source": {
+    "artifact": "data/external/ESConv.json",
+    "artifact_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "project_defined_split_manifest": "data/strategy/esconv_split_manifest_v1_5.jsonl",
+    "project_defined_split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "split_is_official": false,
+    "source_split": "train",
+    "evoemo_overlap_dialogues_excluded": true
+  },
+  "counts": {
+    "cards": 12403,
+    "source_dialogues": 875,
+    "strategy_labels": {
+      "Affirmation and Reassurance": 1953,
+      "Information": 808,
+      "Others": 2252,
+      "Providing Suggestions": 1991,
+      "Question": 2568,
+      "Reflection of feelings": 976,
+      "Restatement or Paraphrasing": 706,
+      "Self-disclosure": 1149
+    }
+  },
+  "outcome_blind_lengths": {
+    "retrieval_words_min": 1,
+    "retrieval_words_median": 111,
+    "retrieval_words_max": 500,
+    "response_words_min": 1,
+    "response_words_median": 15,
+    "response_words_max": 166
+  },
+  "identity_manifest": "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl",
+  "identity_manifest_sha256": "819f58ba23be2888994f61b7a43a9cc360449fde4efb160fc137a080d08312f9",
+  "contains_raw_dialogue_or_response_text": false,
+  "formal_outcome_calls": 0,
+  "pending_m2_freeze": [
+    "final_card_rendering",
+    "retrieval_backend",
+    "top_k",
+    "token_cap",
+    "fold_manifest"
+  ]
+}

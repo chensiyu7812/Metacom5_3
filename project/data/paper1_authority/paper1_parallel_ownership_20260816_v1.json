@@ -1,0 +1,37 @@
+{
+  "protocol": "pm-paper1-parallel-ownership-20260816-v1",
+  "status": "ACTIVE_AFTER_INTEGRATION_BASE_COMMIT",
+  "integrator": "Codex_A",
+  "shared_rule": "separate_worktrees_small_cherry_pickable_commits_no_uncommitted_file_transfer",
+  "Codex_A": {
+    "scope": ["integration", "authority", "official_benchmark_adapters", "cost", "controls", "RS", "RQ1"],
+    "exclusive_paths": [
+      "AGENTS.md",
+      ".github/workflows/",
+      "project/docs/PM_PAPER1_",
+      "project/data/paper1_authority/",
+      "project/configs/paper1_public_only.yaml",
+      "project/src/metacom_pm/paper1/core/",
+      "project/src/metacom_pm/paper1/evaluation/",
+      "project/src/metacom_pm/paper1/rs/"
+    ]
+  },
+  "Codex_B": {
+    "scope": ["public_data", "candidate_compilers", "features", "cross_fit", "learning", "memory", "RQ2"],
+    "exclusive_paths": [
+      "project/src/metacom_pm/paper1/data/",
+      "project/src/metacom_pm/paper1/candidates/",
+      "project/src/metacom_pm/paper1/features/",
+      "project/src/metacom_pm/paper1/splits/",
+      "project/src/metacom_pm/paper1/learning/",
+      "project/src/metacom_pm/paper1/memory/"
+    ]
+  },
+  "shared_interface": {
+    "path": "project/src/metacom_pm/paper1/contracts.py",
+    "owner": "Codex_A",
+    "consumer": "Codex_B",
+    "change_rule": "proposal_then_integrator_commit"
+  },
+  "formal_outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE"
+}

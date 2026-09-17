@@ -1,0 +1,40 @@
+{
+  "protocol": "pm-paper1-esc-rank-cloud-execution-readiness-v1",
+  "status": "READY_TO_ATTEST_ASSETS_GPU_RUNTIME_NOT_EXECUTED",
+  "minimum_gpu_total_mib": 24576,
+  "current_local_gpu": {
+    "model": "NVIDIA GeForce RTX 2070",
+    "total_mib": 8192,
+    "eligible": false
+  },
+  "committed_inputs": {
+    "runtime_harness": "project/scripts/paper1/26_qualify_esc_rank_runtime_24gib.py",
+    "asset_attestor": "project/scripts/paper1/34_attest_esc_rank_cloud_assets.py",
+    "pending_patch_template": "project/data/paper1_authority/paper1_esc_rank_24gib_patch_manifest_20260820_v1.json",
+    "qualification_dialogues": "project/data/paper1_authority/paper1_esc_rank_runtime_smoke_dialogues_20260820_v1.jsonl"
+  },
+  "cloud_sequence": [
+    "checkout the pinned repository commit and download the two pinned public snapshots",
+    "install the four exact dependencies in an isolated CUDA 12.1 environment",
+    "run 34_attest_esc_rank_cloud_assets.py to create a run-local resolved manifest",
+    "run 26_qualify_esc_rank_runtime_24gib.py with the resolved manifest and repeats >= 2",
+    "retain the runtime report for researcher review; do not run formal ESC-Eval"
+  ],
+  "identity_status": {
+    "ESC_RANK": "FROZEN_IDENTITY_RUNTIME_EXPERIMENT_REQUIRED",
+    "QWEN_GENERAL_JUDGE": "BLOCKED_EXACT_MODEL_VERSION_NOT_RESEARCHER_SPECIFIED",
+    "DEEPSEEK_GENERAL_JUDGE": "BLOCKED_EXACT_MODEL_VERSION_NOT_RESEARCHER_SPECIFIED",
+    "INDEPENDENT_FAMILY_JUDGE": "BLOCKED_FAMILY_AND_EXACT_MODEL_NOT_RESEARCHER_SPECIFIED"
+  },
+  "human_ratings_completed_by_this_work": 0,
+  "provider_calls": 0,
+  "evaluator_calls": 0,
+  "outcome_calls": 0,
+  "formal_ESC_Eval": false,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

@@ -1,0 +1,196 @@
+protocol: pm-paper1-public-only-config-v1
+status: PRE_OUTCOME_ACTIVE
+authority:
+  pairwise_teacher_qualification_closeout: project/data/paper1_authority/paper1_gemini_qualification_closeout_20260917_v1.json
+  pairwise_teacher_execution_authorization: project/data/paper1_authority/paper1_gemini_qualification_authorization_20260917_v2.json
+  active_generator_selection: project/data/paper1_authority/paper1_active_generator_selection_binding_20260904_v1.json
+  generator_backend: project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json
+  official_dg_simulator_cost_surface: project/data/paper1_authority/paper1_official_dg_simulator_call_cost_surface_20260904_v1.json
+  official_dg_execution_policy: project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json
+  official_mistral24b_backend_pilot: project/data/paper1_authority/paper1_official_mistral24b_backend_pilot_20260904_v2.json
+  official_mistral24b_batch_context_diagnostic: project/data/paper1_authority/paper1_official_mistral24b_batch_context_diagnostic_20260904_v1.json
+  official_mistral24b_formal_schedule: project/data/paper1_authority/paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json
+  full_pipeline_latency_pilot: project/data/paper1_authority/paper1_full_pipeline_latency_pilot_20260904_v1.json
+  multi_view_401_runtime_identity_audit: project/data/paper1_authority/paper1_multi_view_401_runtime_identity_audit_20260904_v1.json
+  local_generator_termination_audit: project/data/paper1_authority/paper1_local_generator_termination_audit_20260904_v1.json
+  multi_view_bge_packing_prompt: project/data/paper1_authority/paper1_active_multi_view_bge_packing_binding_20260903_v2.json
+  binary_benefit_scope_and_api_budget: project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json
+  v2_1_consistency: project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json
+  client_latency_frontier: project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json
+  client_latency_measurement: project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json
+  latency_constrained_policy: project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260904_v2.json
+  threshold_policy_base: project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json
+  reconciliation: project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json
+  human: project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md
+  latency_human_base: project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md
+  pre_effect_stabilization_human: project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md
+  pairwise_teacher_reference_amendment: project/data/paper1_authority/paper1_pairwise_teacher_reference_amendment_20260908_v2.json
+  pairwise_teacher_reference_human: project/docs/PM_PAPER1_HUMAN_REFERENCE_V2_AMENDMENT_20260908_ZH.md
+  pairwise_teacher_plan: project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v3.json
+  pairwise_teacher_human_reference_design: project/data/paper1_authority/paper1_pairwise_teacher_human_reference_design_20260908_v2.json
+  pairwise_teacher_human_instrument: project/data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260908_v2.json
+  pairwise_teacher_candidate_identity: project/data/paper1_authority/paper1_gemini_pairwise_teacher_identity_20260908_v2.json
+  pairwise_teacher_preflight: project/data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json
+  pairwise_teacher_dg_first_turn_authorization: project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json
+  pairwise_teacher_dg_first_turn_result: project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json
+  pairwise_teacher_generator_request_binding: project/data/paper1_authority/paper1_pairwise_teacher_generator_request_binding_20260904_v1.json
+  pairwise_teacher_local_generation_result: project/data/paper1_authority/paper1_pairwise_teacher_local_generation_result_20260904_v1.json
+  pairwise_teacher_human_sheet_manifest: project/data/paper1_authority/paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json
+  task_effect_coding: project/data/paper1_authority/paper1_task_effect_coding_v2.json
+  reconciliation_human_base: project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md
+method: Policy Manager
+route: A_first_order_factorized
+components: [RS, MP, MS, ME]
+memory_ontology:
+  display_name: Multi-View Memory
+  MP: target_time_current_stable_profile_slots
+  ME: strict_past_atomic_event_experience_timeline
+  MS: one_complete_strict_past_raw_session_transcript
+  action_observed_outcome: ME_subtype
+  legacy_semantic_memory_v7_v8_v9: historical_dev_only
+public_sources:
+  esconv:
+    role: RS training and Strategy Bank
+    expected_sha256: aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af
+  esc_eval:
+    role: RQ1 evaluation only
+    commit: 9ad46e7b5e247e824dae4633910eaa82be668beb
+  es_memeval:
+    role: MP/MS/ME candidate, effect and RQ2 evaluation
+    artifact_name: ES-MemEval-Public-v1.0.0-1427
+    identity_authority: project/data/paper1_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json
+    row_identity_manifest: project/data/paper1_authority/es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl
+    commit: 692624208acc077b8867698c1d6fcd998dee641a
+    artifact_sha256: f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420
+generator:
+  selection_status: FINAL_PRE_OUTCOME_BACKEND_AMENDMENT
+  provider: local A6000 Transformers reference server
+  base_url: http://127.0.0.1:8011
+  model: meta/llama-3.1-8b-instruct
+  model_revision: d10aef7999a2b5ba950ab3974312feeedbfe0b77
+  model_artifact_identity_sha256: 61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3
+  chat_template_sha256: b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2
+  serving_protocol: paper1-local-llama31-transformers-aiohttp-reference-server-v1
+  gpu: NVIDIA RTX A6000
+  dtype: bfloat16
+  concurrency: 1
+  streaming: true
+  hosted_predecessor:
+    provider: NVIDIA hosted NIM
+    status: RETIRED_HTTP_410
+    catalog_model_present: false
+  paper1_full_stack_manifest: PENDING_RESOURCE_CAP_AND_FULL_PIPELINE_LATENCY_FREEZE
+learning:
+  model: standardized_L2_logistic_regression_per_head
+  target: probability_of_materially_positive_realized_paired_effect
+  paper_claim: probability_of_material_benefit_selective_opening_under_latency_feasibility
+  request_level_effect_magnitude_model: false
+  request_level_expected_utility_optimizer: false
+  canonical_background: all_other_optional_components_off
+  primary_operating_point:
+    protocol: pm-paper1-client-e2e-quality-latency-frontier-v4
+    probability_grid: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+    include_eligible_always_on: true
+    include_always_off: true
+    fixed_point_five_reference_required: true
+    selection_rule: catastrophic_client_completion_ceiling_then_quality_first_one_standard_error_then_client_latency_tokens_on_rate
+    primary_latency_percentile: 0.95
+    latency_measurement_protocol: paper1-client-latency-measurement-v3
+    quality_surface: normalized_task_specific_official_primary_quality_of_selected_arm
+    decision_correctness_surface: separate_not_used_as_official_quality
+    catastrophic_client_completion_ceiling_ms: 60000
+    tighter_deployment_scenario: null
+    tighter_sla_required_for_paper_primary: false
+    confirmatory_outcome_selection_forbidden: true
+    held_out_outer_target_outcome_selection_forbidden: true
+  cost_in_label_or_loss: false
+  empirical_pass_gates: false
+  paired_outcome_coding:
+    on_better: 1
+    off_better: 0
+    equivalent: 0
+    uncertain: missing_excluded_from_likelihood
+    invalid: missing_excluded_from_likelihood_plus_integrity_record
+    preserve_raw_outcome: true
+    task_specific_material_better_and_equivalence_rules: data/paper1_authority/paper1_task_effect_coding_v2.json
+    pairwise_effect_oracle: data/paper1_authority/paper1_pairwise_effect_oracle_contract_v1.json
+cross_fit:
+  claim: within_benchmark_cross_fitted_longitudinal_adaptation
+  qa_group: owner_plus_question_group_id
+  summary_group: owner_plus_summary_target_plus_exact_evidence_reference_fingerprint
+  dialogue_generation_group: owner_plus_topic_scenario_id
+  cross_task_union: exact_canonical_target_or_evidence_set_fingerprint_only
+  broad_semantic_or_shared_session_union: strict_sensitivity_only
+treatment:
+  validity_surface: deterministic_delivery_not_semantic_adoption
+  semantic_nonuse_is_valid_effect: true
+formal_evaluation:
+  rq1_arms: [R0, RS_Fixed_High, RS_Matched_Random, Learned_RS_PM]
+  rq2_arms: [No_Memory, Full_History, Official_RAG_Top4, Multi_View_Fixed_High, Multi_View_Matched_Random, Learned_Multi_View_PM]
+  official_metrics_only: true
+  cost_separate: true
+  client_observed_latency_constrains_deployment_action: true
+  primary_latency_cost_outcome: p95_client_send_to_final_visible_text_ms
+  primary_latency_experience_guardrail: p95_client_send_to_first_visible_text_ms
+  quality_latency_frontier_required: true
+  binary_paper_pass_fail: false
+secondary_magnitude_diagnostics:
+  new_api_calls_allowed: false
+  reporting_grain: task_by_head
+  cross_task_delta_quality_composite: forbidden
+  prediction_source: grouped_oof_or_sealed_held_out_only
+  required_companions_for_benefit_capture: [realized_ON_rate, resource_tokens, net_selected_gain, harmful_open_rate, false_open_harm]
+api_budget:
+  currency: USD
+  expected_total_range: [25.0, 35.0]
+  absolute_hard_cap: 50.0
+  optional_stop_threshold: 43.0
+  minimum_retry_reserve: 5.0
+  known_v9_actual: 0.03079930
+outcome_lock:
+  compatibility_role: legacy_umbrella_requires_all_four_scoped_locks_closed
+  status: LOCKED_PRE_ZERO_OUTCOME_FREEZE
+  formal_effect_calls_allowed: false
+  formal_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
+  engineering_cap_check_allowed: true
+RQ1_RS_CALIBRATION_OUTCOME_LOCK:
+  status: CLOSED
+  resource_amount_calibration_allowed: false
+  repeated_effect_qualification_allowed: false
+  pm_effect_construction_allowed: false
+  pm_training_allowed: false
+  operating_point_calibration_allowed: false
+RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK:
+  status: CLOSED
+  resource_amount_calibration_allowed: false
+  repeated_effect_qualification_allowed: false
+  pm_effect_construction_allowed: false
+  pm_training_allowed: false
+  operating_point_calibration_allowed: false
+RQ1_CONFIRMATORY_OUTCOME_LOCK:
+  status: CLOSED
+  formal_effect_dataset_allowed: false
+  pm_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
+RQ2_CONFIRMATORY_OUTCOME_LOCK:
+  status: CLOSED
+  formal_effect_dataset_allowed: false
+  pm_training_allowed: false
+  formal_benchmark_outcomes_allowed: false
+pending_zero_outcome_freeze:
+  - exact_feature_schema
+  - exact_fold_manifest
+  - exact_rs_pairwise_and_es_memeval_scorer_identities
+  - generator_step2_runtime_manifest
+  - seed_schedule
+  - outcome_isolated_operating_point_protocol_and_selected_thresholds
+  - matched_random_construction
+  - api_call_plan
+forbidden_active_inputs:
+  - project/data/pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1/
+  - MP_PREFERENCE
+  - background_component_bits
+  - old_MS_fallback
+  - old_256_effect_labels
+  - synthetic_rescue

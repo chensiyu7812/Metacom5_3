@@ -1,0 +1,126 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Paper-1 ESC 双真人参考审计",
+    "description": "24-item blind evaluator-qualification human-reference quality audit",
+    "generatedAt": "2026-08-23T22:51:36+09:00",
+    "sources": [
+      {
+        "id": "dual_reference",
+        "label": "ESC dual-human agreement audit query",
+        "path": "project/reports/paper1_esc_dual_human_reference_20260823/agreement.sql"
+      },
+      {
+        "id": "dual_reference_json",
+        "label": "ESC dual-human reference",
+        "path": "project/data/paper1_authority/paper1_esc_evaluator_dual_human_reference_20260823_v1.json"
+      },
+      {
+        "id": "human_reference_freeze",
+        "label": "ESC human-reference freeze",
+        "path": "project/data/paper1_authority/paper1_esc_evaluator_human_reference_freeze_20260823_v1.json"
+      },
+      {
+        "id": "qualification_results",
+        "label": "ESC evaluator qualification results",
+        "path": "project/data/paper1_authority/paper1_esc_evaluator_qualification_results_20260820_v1.json"
+      }
+    ],
+    "tables": [
+      {
+        "id": "agreement_table",
+        "title": "双 reviewer 一致性",
+        "subtitle": "24 个 blind items；Skillful/Humanoid 已按官方 rubric 机械归位",
+        "dataset": "agreement",
+        "defaultSort": {"field": "dimension_order", "direction": "asc"},
+        "density": "spacious",
+        "sourceId": "dual_reference",
+        "layout": "full",
+        "columns": [
+          {"field": "dimension_order", "label": "顺序", "format": "number"},
+          {"field": "dimension", "label": "维度", "type": "text"},
+          {"field": "qwk", "label": "QWK", "format": "number"},
+          {"field": "spearman", "label": "Spearman", "format": "number"},
+          {"field": "mad", "label": "MAD", "format": "number"},
+          {"field": "exact_rate", "label": "完全同分率", "format": "percent"},
+          {"field": "major_disagreements", "label": "分差>=2项", "format": "number"}
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "qwk_by_dimension",
+        "title": "逐维双 reviewer QWK",
+        "subtitle": "24 个 blind items；越高表示 ordinal agreement 越强",
+        "type": "bar",
+        "dataset": "agreement",
+        "sourceId": "dual_reference",
+        "layout": "full",
+        "encodings": {
+          "x": {"field": "dimension", "type": "nominal", "label": "ESC-Eval dimension"},
+          "y": {"field": "qwk", "type": "quantitative", "label": "Quadratic weighted kappa", "format": "number"},
+          "tooltip": [
+            {"field": "qwk", "type": "quantitative", "label": "QWK", "format": "number"},
+            {"field": "spearman", "type": "quantitative", "label": "Spearman", "format": "number"},
+            {"field": "mad", "type": "quantitative", "label": "MAD", "format": "number"},
+            {"field": "major_disagreements", "type": "quantitative", "label": "分差>=2项", "format": "number"}
+          ]
+        },
+        "maxRows": 7
+      }
+    ],
+    "blocks": [
+      {"id": "title", "type": "markdown", "body": "# Paper-1 ESC 双真人参考审计"},
+      {"id": "summary", "type": "markdown", "sourceId": "human_reference_freeze", "body": "## 技术结论\n\n两份 24-item 独立盲评均完整可用，不需要重评。Overall QWK 为 **0.7571**、Spearman 为 **0.8007**，仅 **1/24** 项出现至少 2 分的 Overall 分歧；该项已在保持盲性的条件下裁决为 **4**。任何 evaluator 必须同时对两人报告 agreement。"},
+      {"id": "mapping", "type": "markdown", "sourceId": "dual_reference_json", "body": "## 标签错误已机械修复，原始判断没有被改写\n\n历史 v1 instrument 将 Humanoid 与 Skillful rubric 对调。normalized artifacts 只执行 `v1 Skillful -> official Humanoid` 与 `v1 Humanoid -> official Skillful`，旧 instrument 和原始提交保持不可变。"},
+      {"id": "agreement_intro", "type": "markdown", "body": "## 总体排序稳定，维度绝对分数仍含视角差异\n\nQWK 和 Spearman 表明两位 reviewer 对相对好坏有较强一致性；完全同分率较低则说明评分尺度与关注角度不同。分歧应作为 sensitivity 保留，而不是把其中一人事后指定为唯一标准。"},
+      {"id": "qwk_chart", "type": "chart", "chartId": "qwk_by_dimension", "layout": "full"},
+      {"id": "agreement", "type": "table", "tableId": "agreement_table", "layout": "full"},
+      {"id": "scope", "type": "markdown", "sourceId": "qualification_results", "body": "## 测量对象与边界\n\n本数据粒度是 blind item × official ESC-Eval dimension × reviewer。它用于资格审查自动 evaluator，不是 PM/Top-k outcome，也不证明临床效果。质量 reviewer 不需要知道资源身份；资源执行情况由独立 uptake review 处理。"},
+      {"id": "method", "type": "markdown", "body": "## 方法\n\n两份 submission 先验证 24 个 opaque ID 完整、唯一、0-4整数有效且 `human_completed=true`，随后只做冻结的两列名称归位。报告逐维 QWK、Spearman、MAD、完全同分率及绝对分差至少2分的项目数。"},
+      {"id": "limitations", "type": "markdown", "sourceId": "dual_reference_json", "body": "## 局限与稳健性\n\ncontrolled verbosity variants 同时增加支持性 framing，不能识别纯长度偏好；one-turn controlled probes 也不能替代多轮 natural-dialogue evidence。targeted adjudication 只解决唯一 major-Overall 格，不构造完整单一 gold；其他分歧继续作为 sensitivity。"},
+      {"id": "next", "type": "markdown", "sourceId": "qualification_results", "body": "## 下一步\n\n当前 24-item reference 不再需要人评。下一步是在 >=24 GiB GPU 上跑 pinned ESC-RANK，并在 exact model identity 冻结后运行 proxy judges；所有 outcome lock 继续 CLOSED。"},
+      {"id": "questions", "type": "markdown", "body": "## 尚待决定\n\n仍需冻结 Qwen、DeepSeek 与第四独立家族 judge 的 exact model/version，并完成 ESC-RANK runtime qualification；不能依据哪个 judge 让 PM/Ours 分高来选择。"}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-23T22:51:36+09:00",
+    "status": "ready",
+    "datasets": {
+      "agreement": [
+        {"dimension_order": 1, "dimension": "Fluency", "qwk": 0.6496350365, "spearman": 0.6780784396, "mad": 0.6666666667, "exact_rate": 0.5833333333, "major_disagreements": 4},
+        {"dimension_order": 2, "dimension": "Expression", "qwk": 0.8274111675, "spearman": 0.8330153731, "mad": 0.375, "exact_rate": 0.75, "major_disagreements": 2},
+        {"dimension_order": 3, "dimension": "Empathy", "qwk": 0.7641025641, "spearman": 0.7870853825, "mad": 0.4583333333, "exact_rate": 0.75, "major_disagreements": 4},
+        {"dimension_order": 4, "dimension": "Information", "qwk": 0.7720797721, "spearman": 0.765227047, "mad": 0.5833333333, "exact_rate": 0.5416666667, "major_disagreements": 3},
+        {"dimension_order": 5, "dimension": "Skillful", "qwk": 0.7594936709, "spearman": 0.7485322736, "mad": 0.5416666667, "exact_rate": 0.5833333333, "major_disagreements": 3},
+        {"dimension_order": 6, "dimension": "Humanoid", "qwk": 0.7619047619, "spearman": 0.7753910487, "mad": 0.75, "exact_rate": 0.2916666667, "major_disagreements": 1},
+        {"dimension_order": 7, "dimension": "Overall", "qwk": 0.7571428571, "spearman": 0.8007370387, "mad": 0.625, "exact_rate": 0.4166666667, "major_disagreements": 1}
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "dual_reference",
+      "label": "ESC dual-human agreement audit query",
+      "path": "project/reports/paper1_esc_dual_human_reference_20260823/agreement.sql"
+    },
+    {
+      "id": "dual_reference_json",
+      "label": "ESC dual-human reference",
+      "path": "project/data/paper1_authority/paper1_esc_evaluator_dual_human_reference_20260823_v1.json"
+    },
+    {
+      "id": "human_reference_freeze",
+      "label": "ESC human-reference freeze",
+      "path": "project/data/paper1_authority/paper1_esc_evaluator_human_reference_freeze_20260823_v1.json"
+    },
+    {
+      "id": "qualification_results",
+      "label": "ESC evaluator qualification results",
+      "path": "project/data/paper1_authority/paper1_esc_evaluator_qualification_results_20260820_v1.json"
+    }
+  ]
+}

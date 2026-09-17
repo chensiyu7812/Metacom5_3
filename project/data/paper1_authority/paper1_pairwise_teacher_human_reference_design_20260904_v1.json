@@ -1,0 +1,72 @@
+{
+  "protocol": "paper1-pairwise-teacher-human-reference-design-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_PRE_OUTCOME_SHEETS_READY_RATINGS_PENDING",
+  "purpose": "Remove denominator ambiguity before any human or candidate-teacher pair outcome is read.",
+  "human_instrument_authority": "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
+  "human_sheet_manifest_authority": "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json",
+  "measurement_units": {
+    "base_semantic_pairs": 80,
+    "reversed_pair_presentations": 16,
+    "reverse_fraction_denominator": "base_semantic_pairs",
+    "reverse_fraction": 0.2,
+    "total_blinded_pair_presentations": 96,
+    "independent_primary_raters": 2,
+    "each_primary_rater_reviews_every_presentation": true,
+    "primary_rater_pair_judgements": 192,
+    "adjudication_judgements_in_primary_192": false
+  },
+  "task_allocation": {
+    "ESC": {"base_semantic_pairs": 27, "reversed_presentations": 5, "total_presentations": 32},
+    "QA": {"base_semantic_pairs": 13, "reversed_presentations": 3, "total_presentations": 16},
+    "Summary": {"base_semantic_pairs": 13, "reversed_presentations": 3, "total_presentations": 16},
+    "DG": {"base_semantic_pairs": 27, "reversed_presentations": 5, "total_presentations": 32}
+  },
+  "dg_matched_scenario_design": {
+    "scenario_clusters": 9,
+    "heads_per_scenario": ["MP", "ME", "MS"],
+    "same_first_seeker_turn_within_scenario": true,
+    "same_off_response_within_scenario": true,
+    "probe_k_per_scenario": [1, 2, 4],
+    "existing_identity_matched_seeker_turns_reused": 1,
+    "new_paid_seeker_calls_executed": 8,
+    "maximum_physical_attempts_per_new_call": 1,
+    "authorization_ceiling_usd": 0.11,
+    "paid_calls_authorized": true,
+    "settled_seeker_cost_usd": 0.10133,
+    "analysis_must_cluster_by_scenario": true
+  },
+  "identity_and_blinding": {
+    "base_pair_identity_manifest": "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl",
+    "base_pair_identity_manifest_sha256": "90c8b869fdc3fe4683b89e24ec237cd6eec0030602adb5ce90ae6728e545d7c7",
+    "presentation_plan": "paper1_pairwise_teacher_presentation_plan_20260904_v1.jsonl",
+    "presentation_plan_sha256": "ff2cb70572396403a268dcff893924e37f40db81a998c181f8a5152d12f7c864",
+    "blind_key": "paper1_pairwise_teacher_blind_key_20260904_v1.jsonl",
+    "blind_key_sha256": "33d953cc3604a76e647b30c9fe431f67909a98525a7b62b902296711b9927298",
+    "rater_A_sheet_hash": "a65d728572f8043b869c52c956f7624270b49f55cdf09391f875db20369b2aad",
+    "rater_B_sheet_hash": "2631e70bb334bd07a91d13825abb53552cbac368a97abe4ff15ad64ba33f9ef8",
+    "same_base_pair_content_under_reversal": true,
+    "reversal_swaps_A_and_B_only": true,
+    "arms_hidden": true,
+    "on_off_hidden": true,
+    "pm_score_hidden": true,
+    "candidate_teacher_outputs_hidden_from_humans": true
+  },
+  "verdicts": ["A_better", "B_better", "equivalent", "uncertain"],
+  "disagreement": {
+    "raw_primary_rater_disagreement_preserved": true,
+    "resolution": "third independent rater or predeclared consensus adjudication",
+    "adjudication_is_separate_from_inter_rater_agreement": true
+  },
+  "not_the_natural_turn_appropriateness_sample": true,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls_for_this_reference": 8,
+  "settled_api_cost_usd_for_this_reference": 0.10133,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

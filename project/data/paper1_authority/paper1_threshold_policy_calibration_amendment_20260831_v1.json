@@ -1,0 +1,142 @@
+{
+  "protocol": "pm-paper1-threshold-policy-calibration-amendment-20260831-v1",
+  "date": "2026-08-31",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_AMENDMENT_PRE_OUTCOME",
+  "human_authority": "project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md",
+  "scope": "replace_fixed_point_five_primary_operating_point_with_outcome_isolated_selection_protocol_only",
+  "precedence": "Scoped precedence over the fixed-0.5-primary-policy clause in the 2026-08-16 execution reconciliation and later amendments that merely preserved that clause. All other active Paper-1 authority remains controlling.",
+  "researcher_approval": {
+    "date": "2026-08-31",
+    "authorized": true,
+    "formal_outcomes_observed_before_approval": 0,
+    "pm_training_runs_before_approval": 0
+  },
+  "official_framework_audit": {
+    "ESC_Eval_requires_PM_probability_threshold": false,
+    "ES_MemEval_requires_PM_probability_threshold": false,
+    "fixed_point_five_origin": "project_self_frozen_execution_reconciliation_20260816"
+  },
+  "preserved_research": {
+    "heads": ["RS", "MP", "MS", "ME"],
+    "route": "A_first_order_factorized_all_other_optional_heads_off",
+    "learner": "four_standardized_L2_logistic_regression_heads",
+    "target": "probability_of_materially_positive_realized_paired_effect",
+    "paired_training_coding": {
+      "on_better": 1,
+      "off_better": 0,
+      "equivalent": 0,
+      "uncertain": "excluded_from_likelihood",
+      "invalid": "excluded_from_likelihood_plus_integrity_record"
+    },
+    "cost_in_label_or_loss": false,
+    "public_only": true,
+    "generator_changed": false,
+    "benchmark_arms_changed": false,
+    "official_metric_hierarchy_changed": false
+  },
+  "scoped_override": {
+    "old_clause": "eligible AND predicted_positive_effect_probability > 0.5 -> ON",
+    "new_clause": "eligible AND frozen_operating_point_policy(predicted_positive_effect_probability, selected_tau) -> ON",
+    "fixed_point_five_new_role": "mandatory_transparent_reference_and_sensitivity_not_unique_primary",
+    "selection_protocol": "pm-paper1-quality-first-one-se-threshold-v1"
+  },
+  "candidate_surface": {
+    "eligible_always_on": true,
+    "probability_thresholds": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95],
+    "always_off": true,
+    "grid_change_after_effect_outcome": "FORBIDDEN"
+  },
+  "selection_rule": {
+    "quality_credit": {
+      "on_better": "ON_only",
+      "off_better": "OFF_only",
+      "equivalent": "ON_and_OFF_then_cost_prefers_OFF",
+      "uncertain": "excluded_preserved",
+      "invalid": "excluded_preserved"
+    },
+    "uncertainty": "cluster_mean_standard_error",
+    "admissible": "mean_quality(g) >= mean_quality(g_best) - SE(g_best)",
+    "primary_tie_breaks": [
+      "minimum_mean_generator_input_tokens",
+      "lower_realized_on_rate",
+      "higher_probability_threshold",
+      "canonical_grid_order"
+    ],
+    "quality_minus_lambda_cost_composite": "FORBIDDEN"
+  },
+  "operating_point_scope": {
+    "RQ1": "one_RS_operating_point_from_grouped_OOF_RS_effect_data",
+    "RQ2": "fold_specific_head_x_task_operating_points_from_outer_training_inner_OOF_only",
+    "cross_task_official_metric_composite": "FORBIDDEN",
+    "unidentifiable_head_task": "ALWAYS_OFF_and_claim_contraction_no_synthetic_rescue"
+  },
+  "isolation": {
+    "confirmatory_outcome_selection": "FORBIDDEN",
+    "held_out_outer_target_outcome_selection": "FORBIDDEN",
+    "gold_reference_future_fields": "FORBIDDEN",
+    "additional_generator_calls_for_threshold_surface": 0,
+    "additional_judge_calls_for_threshold_surface": 0
+  },
+  "required_reporting": [
+    "Brier",
+    "log_loss",
+    "reliability_curve",
+    "fixed_point_five_reference",
+    "selected_operating_point",
+    "realized_ON_rate",
+    "ON_benefit_recall",
+    "OFF_nonbenefit_specificity",
+    "unnecessary_open",
+    "missed_benefit",
+    "harm_and_misuse_diagnostics",
+    "generator_input_resource_output_tokens",
+    "latency",
+    "recoverable_API_cost",
+    "always_on_always_off_matched_random_comparisons"
+  ],
+  "execution_sequence": [
+    "resource_qualification",
+    "treatment_execution_qualification",
+    "measurement_evaluator_qualification",
+    "resource_amount_calibration_and_bundle_freeze",
+    "repeated_effect_construction",
+    "four_head_training_with_grouped_OOF_predictions",
+    "outcome_isolated_operating_point_calibration",
+    "full_stack_freeze",
+    "confirmatory_evaluation"
+  ],
+  "research_question_boundary": {
+    "top_k_role": "methodological_resource_amount_selection_supporting_RQ1_and_RQ2_not_a_new_core_RQ",
+    "threshold_role": "methodological_open_close_operating_point_supporting_RQ1_and_RQ2_not_a_new_core_RQ",
+    "secondary_analysis": [
+      "official_quality_by_resource_amount",
+      "quality_equivalent_minimum_token_operating_point",
+      "latency_token_API_cost_frontier_and_decomposition"
+    ],
+    "deployment_primary_constraint_note": "latency_is_often_primary_but_tokens_and_API_cost_remain_separately_reported"
+  },
+  "prior_artifacts_invalidated": [],
+  "reruns_required_now": [
+    "authority_contract_tests",
+    "offline_threshold_selector_tests",
+    "integration_validator"
+  ],
+  "reruns_not_required": [
+    "Qwen_catalog_compilation",
+    "BGE_embedding_materialization",
+    "human_review",
+    "zero_outcome_amount_surfaces"
+  ],
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "current_activity": {
+    "paid_API_calls": 0,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0,
+    "formal_GPU_experiments": 0
+  }
+}

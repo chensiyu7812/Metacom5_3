@@ -1,0 +1,67 @@
+{
+  "protocol": "paper1-pairwise-teacher-qualification-v2",
+  "status": "ACTIVE_PRE_OUTCOME_HUMAN_SHEETS_READY_RATINGS_AND_GEMINI_OUTCOMES_PENDING",
+  "date": "2026-09-04",
+  "supersedes": "paper1_pairwise_teacher_qualification_plan_v1.json",
+  "human_reference_design_authority": "paper1_pairwise_teacher_human_reference_design_20260904_v1.json",
+  "human_instrument_authority": "paper1_pairwise_teacher_human_instrument_20260904_v1.json",
+  "human_sheet_manifest_authority": "paper1_pairwise_teacher_human_sheet_manifest_20260904_v1.json",
+  "generator_request_binding_authority": "paper1_pairwise_teacher_generator_request_binding_20260904_v1.json",
+  "local_generation_result_authority": "paper1_pairwise_teacher_local_generation_result_20260904_v1.json",
+  "human_reference": {
+    "base_semantic_pairs": 80,
+    "reversed_pair_presentations": 16,
+    "total_blinded_pair_presentations": 96,
+    "allocation": {
+      "ESC": 32,
+      "QA": 16,
+      "Summary": 16,
+      "DG": 32
+    },
+    "independent_human_raters": 2,
+    "each_primary_rater_reviews_every_presentation": true,
+    "primary_rater_pair_judgements": 192,
+    "disagreement": "preserve then third-rater or predeclared consensus adjudication",
+    "reversed_duplicate_fraction_of_base_pairs": 0.2,
+    "total_blinded_pair_presentations_include_reversed_presentations": true,
+    "sampling": "outcome-blind observable strata only",
+    "reuse_old_ESC_absolute_24": false,
+    "not_the_natural_turn_96_slot_sample": true
+  },
+  "candidate_identity_status": "GEMINI_2_5_FLASH_LITE_VERSION_001_PROVIDER_PROMPT_PARSER_IDENTITY_FROZEN_ZERO_CALL",
+  "candidate_identity_authority": "paper1_gemini_pairwise_teacher_identity_20260904_v1.json",
+  "candidate_families_allowed": ["official-score-derived", "Claude", "Gemini"],
+  "materiality_routing": {
+    "ESC": "non-tied one-step Overall may be official-score-derived; ties and explicit checks use the qualified pairwise teacher",
+    "QA": "non-tied one-step semantic correctness may be official-score-derived; ties and explicit checks use the qualified pairwise teacher",
+    "Summary": "directional Event_F1 requires qualified pairwise confirmation until a separately justified natural-unit material margin is frozen",
+    "DG": "directional local Weighted_Score requires qualified pairwise correctness/appropriateness confirmation",
+    "explicit_pairwise_equivalent": "always non-positive material effect",
+    "unresolved_or_budget_exhausted": "uncertain and excluded from supervised likelihood"
+  },
+  "default_paid_candidate": "Google_Gemini_API_gemini_2.5_flash-lite_version_001",
+  "claude_role": "substitute only; never an additive full-sample run",
+  "teacher_qualification_hard_cap_usd": 0.1,
+  "formal_residual_pairwise_hard_cap_usd": 2.0,
+  "selection_order": [
+    "human decisive/equivalent macro agreement with clustered uncertainty",
+    "pair-order stability",
+    "equivalent recall and arm-position bias",
+    "parse and operational reliability",
+    "cost"
+  ],
+  "forbidden_selection": ["number of ON labels", "PM performance", "Ours score", "confirmatory outcomes"],
+  "no_absolute_pass_percentage": true,
+  "weak_teacher_fallback": "use only task official primary-anchor identifiable cases; retain ties/conflicts and continuous-magnitude-unresolved cases as uncertain and contract claims",
+  "reference_generation": {
+    "dg_first_turn_paid_calls": 8,
+    "dg_first_turn_settled_cost_usd": 0.10133,
+    "local_generator_calls": 142,
+    "local_generator_api_cost_usd": 0,
+    "human_sheets_ready": true,
+    "human_ratings_observed": 0
+  },
+  "candidate_teacher_paid_calls": 0,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0
+}

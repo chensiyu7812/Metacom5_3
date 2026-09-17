@@ -1,0 +1,54 @@
+{
+  "protocol": "paper1-official-mistral24b-batch-context-diagnostic-v1",
+  "date": "2026-09-04",
+  "status": "BATCH_CONTEXT_SENSITIVITY_MEASURED",
+  "not_a_research_outcome_or_scientific_pass_gate": true,
+  "parent_greedy_pilot": {
+    "path": "paper1_official_mistral24b_backend_pilot_20260904_v1.json",
+    "sha256": "7fe08c763a04564f0527b16b2e7e909d90890cf2788db7c7608cb38b6ed054ed",
+    "temperature": 0,
+    "first_pass_schema_valid": 100,
+    "first_pass_total": 100,
+    "first_twenty_replay_byte_identical": 14,
+    "first_twenty_replay_total": 20
+  },
+  "fixed_100_request_replay": {
+    "concurrency": 8,
+    "schema_valid": 100,
+    "total": 100,
+    "byte_identical_to_parent_first_pass": 62,
+    "different_from_parent_first_pass": 38,
+    "wall_seconds": 50.59855906898156,
+    "requests_per_second": 1.976340865036669,
+    "comparison_vector_sha256": "9d1a98f59caf11d35cbf5bf998eb7e4f20d312d6d68219dddfdc2195ec0a5128"
+  },
+  "sequential_replay_of_six_changed_cases": {
+    "concurrency": 1,
+    "cases": 6,
+    "first_wall_seconds": 23.83958330200403,
+    "second_wall_seconds": 23.716749019018607,
+    "first_schema_valid": 6,
+    "second_schema_valid": 6,
+    "byte_identical_between_sequential_runs": 6,
+    "interpretation": "The six values that changed across different continuous-batching contexts were stable when evaluated sequentially twice."
+  },
+  "methodological_interpretation": {
+    "backend_schema_compatibility_failed": false,
+    "model_or_weights_failed": false,
+    "batch_context_can_change_single_item_judgements_even_at_temperature_zero": true,
+    "official_temperature_is_omitted_and_therefore_sampling_variation_is_expected": true,
+    "repeat_agreement_is_descriptive_not_a_progress_gate": true,
+    "formal_reporting_rule": "Use the official scorer contract and report scenario-level uncertainty; do not turn a small or unstable difference into a positive claim."
+  },
+  "response_values_retained_in_authority": false,
+  "response_quality_inspected_or_scored": false,
+  "paid_api_calls": 0,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}
