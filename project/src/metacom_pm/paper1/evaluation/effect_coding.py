@@ -453,6 +453,15 @@ def code_summary_effect(
     primary = _sign(on.event_f1 - off.event_f1)
     llm = _sign(deltas["LLM_Score"])
     pairwise = _pairwise_direction(pairwise_verdict)
+    # V2: qualified material equivalence takes precedence over mere metric
+    # directions, including an Event-F1 tie with a non-tied LLM Score. Keep the
+    # raw deltas and the earlier integrity/reference-inventory checks intact.
+    if pairwise == 0:
+        return _equivalent(
+            TaskType.SUMMARY,
+            "summary_pairwise_material_equivalence" if primary else "summary_semantic_equivalent",
+            deltas,
+        )
     if primary:
         if llm == -primary or pairwise == -primary:
             return _uncertain(TaskType.SUMMARY, "summary_event_semantic_conflict", deltas)
@@ -462,20 +471,12 @@ def code_summary_effect(
                 "summary_continuous_primary_materiality_unresolved",
                 deltas,
             )
-        if pairwise == 0:
-            return _equivalent(
-                TaskType.SUMMARY,
-                "summary_pairwise_material_equivalence",
-                deltas,
-            )
         return _directed(
             TaskType.SUMMARY,
             primary,
             "summary_event_f1_primary_direction",
             deltas,
         )
-    if pairwise == 0 and llm == 0:
-        return _equivalent(TaskType.SUMMARY, "summary_semantic_equivalent", deltas)
     if llm and pairwise == llm:
         return _directed(
             TaskType.SUMMARY,

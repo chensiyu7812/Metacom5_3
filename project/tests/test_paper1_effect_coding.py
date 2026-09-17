@@ -221,6 +221,50 @@ def test_summary_reference_extraction_disagreement_is_uncertain():
     assert decision.reason_code == "summary_reference_event_extraction_disagrees"
 
 
+@pytest.mark.parametrize(("on_recalled", "off_recalled"), [(2, 1), (1, 2), (1, 1)])
+@pytest.mark.parametrize(("on_llm", "off_llm"), [(4, 2), (2, 4), (3, 3)])
+def test_summary_material_equivalence_survives_metric_directions(
+    on_recalled, off_recalled, on_llm, off_llm
+):
+    decision = code_summary_effect(
+        _summary(3, 2, on_recalled, on_llm),
+        _summary(3, 2, off_recalled, off_llm),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+    )
+    assert decision.outcome is PairedOutcome.EQUIVALENT
+    assert decision.enters_training_likelihood
+    assert decision.binary_target == 0.0
+    # Disagreement remains visible as a diagnostic; it is not silently discarded.
+    assert decision.anchor_deltas["Event_F1"] == float(
+        Fraction(2 * (on_recalled - off_recalled), 5)
+    )
+    assert decision.anchor_deltas["LLM_Score"] == on_llm - off_llm
+
+
+def test_summary_material_equivalence_does_not_override_mechanical_invalidity():
+    decision = code_summary_effect(
+        _summary(3, 2, 2, 2),
+        _summary(3, 2, 1, 4),
+        pairwise_verdict=PairedOutcome.EQUIVALENT,
+        invalid_reasons=(MechanicalInvalidReason.WRONG_OWNER,),
+    )
+    assert decision.outcome is PairedOutcome.INVALID
+    assert not decision.enters_training_likelihood
+
+
+@pytest.mark.parametrize("swap", [False, True])
+def test_summary_opposite_directional_teacher_stays_uncertain(swap):
+    on, off = _summary(3, 2, 2, 4), _summary(3, 2, 1, 4)
+    if swap:
+        on, off = off, on
+    decision = code_summary_effect(
+        on, off,
+        pairwise_verdict=PairedOutcome.ON_BETTER if swap else PairedOutcome.OFF_BETTER,
+    )
+    assert decision.outcome is PairedOutcome.UNCERTAIN
+    assert not decision.enters_training_likelihood
+
+
 def test_summary_event_f1_is_primary_with_semantic_guard_and_tie_evidence():
     assert code_summary_effect(
         _summary(3, 2, 2, 4),

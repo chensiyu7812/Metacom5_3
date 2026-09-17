@@ -2,6 +2,8 @@
 
 状态：`ACTIVE WORKING CHECKLIST — NOT AN EMPIRICAL PASS GATE`
 
+2026-09-17 更新：已按研究者 `$0.10` 批准完成 Gemini 96 题资格测试：100 次物理调用、92 个有效判决、4 个解析失败，保守记账 `$0.0654614`；累计 `$1.50724291`、剩余 `$48.49275709`。该配置不提升为 material-effect teacher，执行现有 V3 weak-teacher fallback；[完整结果与后续边界](PM_PAPER1_GEMINI_QUALIFICATION_RESULTS_20260917_ZH.md)。A/AI B/六题复核和原始请求保留，不重做人评；Summary equivalent 分支已修复；四把 outcome lock 仍关闭，formal outcome / PM training 均为 0。
+
 本清单只管理依赖与产物，不以项目自设准确率、agreement、precision 或 head-count 门决定研究“通过/失败”。除机械完整性、泄漏、身份、预算与正式 outcome lock 外，测得的好坏均作为研究结果保留。
 
 ## 已完成：本轮方法与实现纠偏
@@ -48,14 +50,14 @@
 
 ## Measurement work：人评与 pairwise teacher
 
-7. [ ] 两名主评独立完成 V2 全部 96 题，按 blind item identity 校验并封存原始评分。之后依 2026-09-08 预先确定的 consensus 流程处理分歧/uncertain/反序不稳定；未形成可靠共识则保留 uncertain。原始一致性及分歧不得被共识覆盖。
-8. [x] 生成新版 teacher human reference 空白卷及离线表单：80 个基础语义 pair + 16 个反序 presentation = 96 个 blinded pair presentations（ESC 32、QA 16、Summary 16、DG 32）；两名独立 primary rater 各评全部 96 个，共 192 份 primary judgement。评分尚未收集；consensus adjudication 另计，不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
+7. [x] 已校验并封存 V2 原始 A、AI B 和六题复核。按实际流程记录联合人评 A，原始/人工复核/助手事实敏感性分开报告；AI B 只作探索比较。192 份独立 primary judgments 是原设计，不能冒充实际完成数量；不新增人评。
+8. [x] 已生成并保留新版 teacher human reference 空白卷及离线表单：80 个基础语义 pair + 16 个反序 presentation = 96 个 blinded pair presentations（ESC 32、QA 16、Summary 16、DG 32）。原独立双人设计及试卷留作来源记录，实际提交与用途见第 7 项；不复用旧 24 条 absolute-score 样本冒充 pairwise reference。
    - [x] 已 outcome-blind 冻结 80 个 base identity 与 96 个 presentation/blind key；覆盖 ESC 27、QA 13、Summary 13、DG 27 个 base pair，16 个 reverse 不新增生成。ON 使用 `k∈{1,2,4}` 的 qualification probe，只覆盖候选 teacher 的低/中/高输入形态，不是 final amount 选择。53 个 ESC/QA/Summary ON/OFF 请求已精确构造；DG 采用 9 个 scenario cluster × MP/ME/MS，其中 `p7::dg::1` 复用已有 identity-matched first-turn seeker，每个 scenario 共用 seeker 与 OFF，避免无意义的付费重复和跨 head 生成噪声。执行前预算为 39,640 input tokens + 至多 480 output tokens，最坏估计约 `$0.1039`、授权 ceiling `$0.11`；此处仅记录冻结的 preflight，实际执行见下一项。
    - [x] 研究者已授权 `$0.11`；8/8 个冻结 GPT‑4o seeker 请求均首试 `stop`，实际 39,648 input + 221 output tokens，结算 `$0.1013300`，无重试/失败/evaluator。随后在 UUID 强绑定 A6000 上完成 142/142 个唯一 local Generator 请求，80 个 base pair 均有恰好一个 OFF 与一个 ON；双人各 96 题的同 A/B、独立题序 blind sheets 已生成并 hash-bound，现只待两名人类独立填写。
    - [x] 2026-09-08 研究者授权修订 DG 证据缺口：V2 提供九个情境的完整 strict-past raw history、日期索引和字面搜索；63 个 DG candidate instances 的来源均包含在新参考中。保留题目/回复/顺序/盲法、旧 V1 字节及已有生成结果。两份离线 HTML、规范 JSON 和各自独立分发 ZIP 已生成并 hash-bound；同版 96 个精确 Gemini 请求已离线构造，新增生成、付费调用、formal outcome 和 PM training 均为 0。
 9. [x] 在收集主评/Gemini verdict 前绑定 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、thinking、重试与费用上限：Google Gemini API `gemini-2.5-flash-lite`，metadata version `001`，temperature=0、thinkingBudget=0、strict JSON 四类 parser、最多一次有界重试、qualification hard cap `$0.10`。2026-09-08 identity V2 绑定扩充后的 DG rubric/reference，落实重复 JSON 字段拒绝；不把本次经过回复内容审计的修订称为完全未见生成文本。Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。该 freeze 本身不授权付费调用。
-10. [ ] 以人类 reference 的 task-wise agreement、order stability、equivalent recall、position bias、parse reliability 与 cost完整报告候选；不以“产生更多 ON”或“让 PM 分数更好”选 teacher。
-11. [ ] 若 teacher 较弱，不循环修门：缩窄可识别 label 范围，tie/conflict 保留 uncertain，并收缩相应 claim。
+10. [x] 完整报告 Gemini task-wise agreement、order stability、equivalent recall、位置描述、解析与费用：有效 base 77/80；与原始 A 相同 7/77；翻转一致 8/13，3 组缺失。16 组反序原始字节全部核验；未以 ON 数量或 PM 表现选 teacher。
+11. [x] 当前 Gemini V2 不提升为正式 teacher；按 V3 原有 fallback 仅使用官方 primary anchor 可识别的 effect，tie/conflict/连续量实质性未明案例保留 uncertain，不循环改同卷 prompt。Summary/DG 当前无可靠 pairwise 确认，训练覆盖与对应主张必须收缩；官方质量驱动的 amount calibration 仍可单独准备。
 
 当前方法性最高优先级到此结束：除完成 96-pair teacher identity/reference 所必需的实现外，不再优先扩展 latency、simulator 或新门。
 
@@ -77,11 +79,11 @@
 
 ## 当前仍需冻结的真实身份与可选参数
 
-- Pairwise teacher 的 model/provider/解码/预算身份已绑定，V2 prompt/parser 与精确 reference/request hashes 已冻结；实际判卷尚未运行。
-- Teacher 的 96 presentations × 2 primary raters = 192 primary judgements 及 V2 item/sheet identities 已生成并 hash-bind；等待主评和随后单列的共识记录。
+- Pairwise teacher 的冻结 96 题已运行并收口；本候选不提升，AI B 不自动替代。模型/请求/原始参照和全部尝试记录保留。
+- 现有人评按联合 A 与单列复核/敏感性记录，无需新卷；192 独立 primary judgments 留作原设计而非实际完成数。
 - Mistral arm-balanced schedule 算法已冻结；精确 formal request manifest/hash 在正式系统输出存在后、formal scoring 前冻结。
 - Reference-client 本地 Generator-path runner、A6000、权重、chat template 与 pilot manifest 已绑定；正式 allocator-eligible 测量仍须补齐 RS/DG、full pipeline 与 repeats。Browser surface 如进入论文，需另绑实际 browser runner，不得从 localhost trace 推断。
-- Gemini V2 离线单次全卷估计 `$0.0636498` 使用本地代理 tokenizer 和已冻结价表，未计重试且不是 provider 保证上界。正式调用前仍须核对 provider token count、精确 revision/route 和累计/阶段 worst-case reservation，且需独立付费授权。
+- Gemini V2 的旧离线估价已被 96 次官方 token 计数与本次实际尝试记录补充；预算采用保守记账，缓存折扣估计与最终账单分开。后续付费或 calibration 仍须新的具体 manifest 与对应授权。
 - 可选的 exact task-specific p95 TTFT/completion budgets：只有在主张某个具体部署场景时才需冻结；completion 必须 `< 60,000 ms`，不得用 capability outcome 选择。
 
 其中 teacher 与测量 runner 是复现身份；更紧的 task budget 是部署情景参数，不是研究本体的推进门。ontology/candidate 重建、public census、UI、instrumentation、timing pilot 与 dry-run 均可继续推进。

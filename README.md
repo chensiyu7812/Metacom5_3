@@ -2,7 +2,7 @@
 
 > `Metacom5_3` is a historical repository name. **The method name is Policy Manager (PM), not MetaCom.**
 
-**Latest review package (2026-09-11):** [中文版审阅入口：研究审计、人评 V2、自动裁判调研与待处理问题](project/docs/PM_PAPER1_WEB_REVIEW_20260911_ZH.md). This package documents current evidence and proposals; it does not authorize new judge candidates or open outcome locks.
+**Latest review package (2026-09-17):** [中文版审阅入口：人评复核、Gemini 资格结果、修复与候选提案](project/docs/PM_PAPER1_WEB_REVIEW_20260917_ZH.md). Gemini qualification is complete; the candidate was not promoted. New local judges remain proposals, and all outcome locks remain closed.
 
 ## Active Paper-1 authority
 
@@ -53,8 +53,8 @@ Do not use subjective pre-scorers such as `worth_opening`, resource helpfulness,
 
 **Do not start formal training yet.**
 
-1. Two independent raters complete their V2 sheets (96 presentations each), then seal primary judgements and resolve disagreements under the predeclared consensus protocol.
-2. Under separate authorization, run Gemini teacher qualification against the same evidence and report task-wise agreement and uncertainty.
+1. Preserve the completed joint-human A review, exploratory AI B and six-case followup; use the September 17 closeout rather than restarting human review.
+2. Gemini qualification completed 96 presentations / 100 physical calls, with 92 valid verdicts and USD 0.0654614 conservatively accounted. The candidate was not promoted; review task applicability and any explicitly authorized alternative candidates before adopting a teacher.
 3. Under the appropriate calibration locks, calibrate RS/MP/ME/MS amount/top-k and capacity; the teacher sample's `k ∈ {1,2,4}` is only a coverage probe.
 4. Freeze final amounts/caps, exact features and leakage-safe folds, Generator/Step2 stack, operating-point protocol, seeds and API call manifests before formal effect labels and PM training.
 5. Run frozen same-stack RQ1/RQ2, component-minus ablations and the separately specified natural-turn audit.
