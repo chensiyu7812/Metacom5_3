@@ -23,6 +23,7 @@
 3. [Gemini 资格结果与后续边界](PM_PAPER1_GEMINI_QUALIFICATION_RESULTS_20260917_ZH.md)、[执行授权说明](PM_PAPER1_GEMINI_QUALIFICATION_APPROVAL_20260917_ZH.md)、[结果机器收口](../data/paper1_authority/paper1_gemini_qualification_closeout_20260917_v1.json)。首题用量修复有独立记录，不能据请求 thinkingBudget=0 声称实测零 thinking。
 4. [可公开复算的比较统计](reviews/20260917/qualification_statistics.json)：保留原始 A、六题覆盖、助手事实敏感性三种视图，混淆矩阵、各任务类别召回、换序和分组区间；不含题面、原始答卷理由或 API 响应正文。
 5. [本地两候选提案](PM_PAPER1_LOCAL_TEACHER_COMPARISON_PROPOSAL_20260917_ZH.md)、[提案绑定](../data/paper1_authority/paper1_local_teacher_comparison_proposal_20260917_v1.json)、[原始选型调研](reviews/20260911/自动裁判选型调研与建议.md)。两名候选是待检验建议，不能写成已知最佳模型。用户最新要求是进一步分析最适合任务的能力与候选范围。
+6. [最新候选能力与任务适配分析](reviews/20260917/裁判候选能力与任务适配分析.md)、[12 个模型的版本和配置来源](reviews/20260917/candidate_capability_metadata.json)。建议把通用推理模型纳入比较，区分文献能力、长文配置与本项目实测；对原两模型方案的扩展仍为未授权提案。
 
 ## 可检查的实现
 

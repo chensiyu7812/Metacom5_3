@@ -4,6 +4,8 @@
 
 `PROPOSED RESEARCH CHANGE — NOT AUTHORIZED`
 
+> 此为较早的两模型提案，尚未执行。用户要求进一步比较候选能力后的分析见 [裁判候选能力与任务适配分析](reviews/20260917/裁判候选能力与任务适配分析.md)；其中建议纳入通用推理对照，未自动改动本提案的调用和预算绑定。
+
 本文件只提出下一阶段范围；未修改当前研究协议，未执行模型推理。机器提案见 [绑定记录](../data/paper1_authority/paper1_local_teacher_comparison_proposal_20260917_v1.json)，准备脚本见 [66_prepare_local_teacher_comparison.py](../scripts/paper1/66_prepare_local_teacher_comparison.py)。
 
 ## 候选与工作量
