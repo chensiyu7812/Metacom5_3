@@ -1,0 +1,30 @@
+{
+  "kind": "development_diagnostic",
+  "requests": 26,
+  "by_arm": {
+    "ON": {
+      "requests": 13,
+      "old_length_stops": 1,
+      "new_natural_stops": 13,
+      "min_output_tokens": 17,
+      "median_output_tokens": 63,
+      "max_output_tokens": 318,
+      "all_old_texts_preserved_as_prefix": true,
+      "unchanged_former_natural_stops": 12
+    },
+    "OFF": {
+      "requests": 13,
+      "old_length_stops": 11,
+      "new_natural_stops": 13,
+      "min_output_tokens": 35,
+      "median_output_tokens": 363,
+      "max_output_tokens": 431,
+      "all_old_texts_preserved_as_prefix": true,
+      "unchanged_former_natural_stops": 2
+    }
+  },
+  "new_API_cost_usd": 0,
+  "old_outputs_and_ratings_overwritten": false,
+  "timing_note": "Early requests overlapped an interrupted Qwen setup attempt on A6000; timing is not a formal latency measurement.",
+  "quality_note": "Completion is not correctness. Several OFF continuations still fabricate events or use the system worked-example identity."
+}

@@ -2,6 +2,14 @@
 
 状态：`ACTIVE WORKING CHECKLIST — NOT AN EMPIRICAL PASS GATE`
 
+2026-09-17 执行链补齐：[静态资源量校准执行记录](PM_PAPER1_STATIC_AMOUNT_EXECUTION_20260917_ZH.md)。准备包已逐项复核（8 项产物哈希吻合、1,924 条请求逐条按 messages 重算哈希一致、共享 true-OFF 恰为每目标一条）。新增 79（可断点恢复的本地自然结束生成）、80（官方评分执行，默认免费 preflight）、81（回收／完整性审计／k 建议），以及按 upstream 固定 commit 复刻的 QA／Summary 官方 parser（`json-repair==0.52.4` 钉版本旁置，冻结 Generator 环境未改动）。20 项新测试通过，Paper-1 测试子集全绿。**生成 0 条、官方评分 0 次、付费 $0、k* 未选定、formal outcome 与 PM training 仍为 0。**A6000 仍被他项目 KVCacheNet 任务占用（实测空闲 16.7–17.4 GiB < 18 GiB 门槛），设备预检按预期拒绝载入，未干扰这些进程；已挂单实例看守进程，等该卡真正空出后自动续跑生成。拟议 $15 付费评分阶段仍未获批，`--execute` 实测被拒绝。
+
+2026-09-17 继续推进：[裁判测量研究稿与论文图表](PM_PAPER1_JUDGE_MEASUREMENT_STUDY_20260917_ZH.md)已保留；[QA／Summary 校准包](PM_PAPER1_STATIC_AMOUNT_CALIBRATION_PACKAGE_20260917_ZH.md)已具体到 85 QA＋63 Summary、1,924 条完整生成请求、官方模板及选量代码。相关 20 项测试和四个官方提示对照通过。A6000 当前运行其他项目任务，未启动新生成或评分、未选择 k*。评分成本情景约 $7.85／$13.27／$24.21，拟议含重试 $15 阶段尚未授权；这些不是输出长度上限。
+
+2026-09-17 本地比较已收口：480 次三候选比较、160 次 Selene 格式适配、156 次完整历史 Summary 对照及 26 次 Generator 自然结束均完成处理；计划内 821 次正常停止、1 次循环超时。Qwen 换序 70/80，Compass 55/80，Selene 适配后 48/77（另 3 对缺失）。本地开发优先 Qwen，但尚不单独承担全任务自动收益标注；[完整结果](PM_PAPER1_LOCAL_TEACHER_DEVELOPMENT_RESULTS_20260917_ZH.md)及[机器收口](../data/paper1_authority/paper1_local_teacher_development_closeout_20260917_v1.json)。新增 API $0，保守 GPU 生成墙钟约 3.02 小时；formal outcome / PM training 仍为 0。
+
+2026-09-17 后续执行：研究者已授权务实开发、三款本地裁判和自然结束，不再重复申请该范围。Summary 26 条自然结束诊断完成，旧 12 条截断均消除，旧 14 条正常回复逐字保持；[结果](PM_PAPER1_SUMMARY_NATURAL_END_RESULTS_20260917_ZH.md)。已物化 QA/Summary 的 20,176 条 top-k 全量候选配置用于工作量盘点，[准备记录](PM_PAPER1_TOPK_PREPARATION_20260917_ZH.md)。新的正式校准样本、收费调用和 k* 尚未确定。开发样本可读可复用，不再强制“完全未触碰”或整批剔除 97 个关联目标；普通分组交叉拟合与运行时 gold/future 排除保留。
+
 2026-09-17 更新：已按研究者 `$0.10` 批准完成 Gemini 96 题资格测试：100 次物理调用、92 个有效判决、4 个解析失败，保守记账 `$0.0654614`；累计 `$1.50724291`、剩余 `$48.49275709`。该配置不提升为 material-effect teacher，执行现有 V3 weak-teacher fallback；[完整结果与后续边界](PM_PAPER1_GEMINI_QUALIFICATION_RESULTS_20260917_ZH.md)。A/AI B/六题复核和原始请求保留，不重做人评；Summary equivalent 分支已修复；四把 outcome lock 仍关闭，formal outcome / PM training 均为 0。
 
 本清单只管理依赖与产物，不以项目自设准确率、agreement、precision 或 head-count 门决定研究“通过/失败”。除机械完整性、泄漏、身份、预算与正式 outcome lock 外，测得的好坏均作为研究结果保留。
@@ -57,9 +65,9 @@
    - [x] 2026-09-08 研究者授权修订 DG 证据缺口：V2 提供九个情境的完整 strict-past raw history、日期索引和字面搜索；63 个 DG candidate instances 的来源均包含在新参考中。保留题目/回复/顺序/盲法、旧 V1 字节及已有生成结果。两份离线 HTML、规范 JSON 和各自独立分发 ZIP 已生成并 hash-bound；同版 96 个精确 Gemini 请求已离线构造，新增生成、付费调用、formal outcome 和 PM training 均为 0。
 9. [x] 在收集主评/Gemini verdict 前绑定 Gemini Flash‑Lite 的精确 model、provider route、prompt、parser、temperature、thinking、重试与费用上限：Google Gemini API `gemini-2.5-flash-lite`，metadata version `001`，temperature=0、thinkingBudget=0、strict JSON 四类 parser、最多一次有界重试、qualification hard cap `$0.10`。2026-09-08 identity V2 绑定扩充后的 DG rubric/reference，落实重复 JSON 字段拒绝；不把本次经过回复内容审计的修订称为完全未见生成文本。Claude 只可在同一既有 cap 内替代 Gemini，不得再做一套全量并行判卷。该 freeze 本身不授权付费调用。
 10. [x] 完整报告 Gemini task-wise agreement、order stability、equivalent recall、位置描述、解析与费用：有效 base 77/80；与原始 A 相同 7/77；翻转一致 8/13，3 组缺失。16 组反序原始字节全部核验；未以 ON 数量或 PM 表现选 teacher。
-11. [x] 当前 Gemini V2 不提升为正式 teacher；按 V3 原有 fallback 仅使用官方 primary anchor 可识别的 effect，tie/conflict/连续量实质性未明案例保留 uncertain，不循环改同卷 prompt。Summary/DG 当前无可靠 pairwise 确认，训练覆盖与对应主张必须收缩；官方质量驱动的 amount calibration 仍可单独准备。
+11. [x] 当前 Gemini V2 不提升为正式 teacher；按 V3 原有 fallback 仅使用官方 primary anchor 可识别的 effect，tie/conflict/连续量实质性未明案例保留 uncertain。新版本地裁判与提示可按研究者授权开发，保存修改理由与各版本结果；同卷结果按开发证据报告。Summary/DG 在可靠 pairwise 确认建立前，训练覆盖与对应主张保留限制；官方质量驱动的 amount calibration 可并行准备。
 
-当前方法性最高优先级到此结束：除完成 96-pair teacher identity/reference 所必需的实现外，不再优先扩展 latency、simulator 或新门。
+已授权本地裁判比较与自然结束诊断已完成，top-k 全量候选盘点已完成；下一步确定可承受的官方质量校准样本与实际调用清单，再选择 k*。Summary/DG 实质性判断仍作为测量限制单列，不增加无关推进门，不继续无边界扩展小模型名单。
 
 ## Calibration、训练与正式评价
 

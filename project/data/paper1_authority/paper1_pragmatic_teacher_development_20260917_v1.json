@@ -1,0 +1,55 @@
+{
+  "protocol": "paper1-pragmatic-teacher-development-v1",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED",
+  "date": "2026-09-17",
+  "researcher_direction": [
+    "其实关于隔离独立什么的，我并不是那么在乎，咱们也不用那么防御性，该做的做好就行，不需要以前那种完全未触碰未打开什么的",
+    "好的，开始推进吧。其实关于输出完整性，上限的问题，我的建议是不预先设置一个上限，自然结束比较好吧？"
+  ],
+  "local_execution_authorized": true,
+  "candidate_keys": [
+    "selene_mini_8b",
+    "compassjudger2_7b",
+    "qwen35_9b",
+    "summary_generator"
+  ],
+  "scope": {
+    "teacher_comparison": "Three local candidates, existing 80 base pairs in both orders, 480 presentations; no new human sheet.",
+    "summary_diagnostic": "Read existing response contents and rerun all 26 Summary requests with natural stopping; retain original responses and human references.",
+    "summary_evidence_diagnostic": "Same 13 Summary pairs in both orders with complete source history: first keep old responses fixed, then use the existing natural-end responses. Compass JSON, Qwen general-task JSON and adapted Selene reasoning-first each receive the same 52 diagnostic requests (156 total), separate from baseline comparison. Selene is included to compare all three usable output configurations under the same repaired evidence conditions. Paired source-presentation seeds for Qwen; no new human review or paid API; shared four-hour GPU generation wall budget.",
+    "top_k": "Prepare the official-quality calibration plan; no paid scoring or formal training in this local development run.",
+    "development": "Samples may be inspected and prompts/configurations may be improved with versioned records. Reused-sample scores are development evidence, not untouched validation.",
+    "overlap": "Keep recorded teacher-target overlap; do not require automatic removal of all 97 linked targets or an untouched-data gate. Ordinary grouped PM cross-fitting and runtime gold/future exclusion remain.",
+    "selene_output_format_diagnostic": "One bounded 160-presentation output-format-only development pass after observing explicit reasoning/verdict contradictions in the baseline. Use the official Reasoning-before-Result layout while preserving the same four classes, rubric, evidence, model and greedy settings. The official forced A/B decision rule is not adopted. Keep JSON baseline and adapted results separate; shared four-hour generation budget, no new human review or paid calls."
+  },
+  "natural_end": {
+    "task_output_token_cap": null,
+    "normal_stop": "model EOS/EOT",
+    "technical_context_boundary": "model configured context minus complete input; never truncate evidence",
+    "timeout_seconds": {
+      "nonthinking_local": 300,
+      "qwen_thinking": 900
+    },
+    "exact_cycle_guard": "32 generated token block repeated four consecutive times",
+    "guard_handling": "Record timeout/repetition/context exhaustion separately as incomplete; never call it natural completion or silently convert to uncertain/equivalent.",
+    "rationale_character_ceiling": null,
+    "official_paid_simulator_and_scorer_settings": "Unchanged; this scope is local judge and own-Generator development.",
+    "formal_generator_stack": "Natural-end is the approved direction; adopt one common version across compared arms after this diagnostic, and refresh latency/request manifests. No historical result is overwritten."
+  },
+  "qwen_configuration_correction": "The initial 0.6 temperature / zero presence-penalty run matches the pinned model card's precise-coding profile and developed prolonged repetitive reasoning. Preserve its 46 completed presentations and four interrupted starts as configuration diagnostics. The full 160-presentation candidate comparison uses the same evidence with official general-task thinking settings: temperature 1.0, top_p 0.95, top_k 20, min_p 0, presence_penalty 1.5, repetition_penalty 1.0. Increase Qwen served context to 131072 within native 262144 and available GPU cache, without changing RoPE. No prompt/human-label change or extra paid call. The run-start snapshot says 43, the observed count at the actual interruption was 46; interruption.json is authoritative for the consumed attempts.",
+  "local_generation_wall_budget_seconds": 14400,
+  "budget_note": "Four hours of cumulative GPU-occupied generation wall time across sequential model runs is an operational stop/resume boundary; downloads/setup excluded. Batched request durations overlap and must not be summed as GPU wall time. The initial runner used the more conservative overlapping-duration sum; its snapshots and results remain intact. An unchanged-prompt/sampling continuation may complete pending presentations under this corrected accounting. No new API authorization.",
+  "new_paid_API_calls_authorized": false,
+  "new_API_cost_usd": 0,
+  "formal_outcome_calls_authorized": false,
+  "PM_training_authorized_by_this_record": false,
+  "supersedes_in_scope": [
+    "V3 candidate family restriction for this local development comparison",
+    "Two-model proposal scope and 1024-token/600-character limits for new local judges",
+    "No-reading-response-quality and absolute untouched-development requirements",
+    "Task-specific short output caps for the new Summary development rerun"
+  ],
+  "previous_results_invalidated": "None. Historical Gemini, human ratings and generated pairs remain results of their original configurations.",
+  "reruns": "Versioned local candidate development, 26 Summary natural-end generations, 156 Summary evidence/completion judgements and 160 Selene output-format diagnostic judgements; no repeated human review or paid Gemini run.",
+  "claim_change": "PM scientific target and official metric hierarchy unchanged; explicitly acknowledge benchmark-informed development rather than claim fully untouched end-to-end validation."
+}

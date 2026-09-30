@@ -87,6 +87,14 @@ class CumulativePaper1ApiBudgetLedger:
     def remaining_usd(self) -> Decimal:
         return PAPER1_API_HARD_CAP_USD - self.accounted_cost_usd
 
+    def has_successful_call_hash(self, call_hash: str) -> bool:
+        """Whether this exact prompt/call was already paid for successfully.
+
+        A resumed run checks this to skip such a call rather than colliding with
+        its reservation, so recovery can never pay for the same request twice.
+        """
+        return str(call_hash) in self._successful_hashes()
+
     def _successful_hashes(self) -> set[str]:
         return {
             str(events[-1]["call_hash"])
@@ -101,6 +109,29 @@ class CumulativePaper1ApiBudgetLedger:
             for events in self._events.values()
             if events[0].get("logical_call_id") == logical_call_id
         )
+
+    def attempts_for(self, logical_call_id: str) -> int:
+        """How many attempts this logical call already consumed.
+
+        A resumed run reads this instead of restarting at attempt one, which
+        would collide with the reservation the interrupted run already wrote.
+        """
+        return self._attempts(logical_call_id)
+
+    def unsettled_reservations(self, logical_call_id: str | None = None) -> list[dict[str, Any]]:
+        """Reservations written but never settled: a call of unknown outcome.
+
+        A process killed between reserving and settling leaves one of these. It
+        stays conservatively accounted at its maximum, and the money question is
+        already safe, but whether the provider served it is genuinely unknown,
+        so it must be reconciled rather than silently re-sent.
+        """
+        return [
+            events[0]
+            for events in self._events.values()
+            if len(events) == 1
+            and (logical_call_id is None or events[0].get("logical_call_id") == logical_call_id)
+        ]
 
     def accounted_stage_cost_usd(self, stage: str) -> Decimal:
         total = Decimal("0")
@@ -194,18 +225,30 @@ class CumulativePaper1ApiBudgetLedger:
         *,
         actual_cost_usd: Decimal | None,
         outcome: Literal["SUCCEEDED", "FAILED", "UNKNOWN"],
+        allow_overrun: bool = False,
     ) -> Decimal:
         events = self._events.get(reservation.reservation_id)
         if events is None or len(events) != 1:
             raise RuntimeError("API reservation is absent or already settled")
+        overrun = Decimal("0")
         if actual_cost_usd is None:
             actual = reservation.maximum_cost_usd
             accounting = "unknown_cost_charged_at_reserved_maximum"
         else:
             actual = Decimal(actual_cost_usd)
-            if actual < 0 or actual > reservation.maximum_cost_usd:
-                raise RuntimeError("actual API cost is outside the reserved range")
-            accounting = "provider_reported_or_price_snapshot_cost"
+            if actual < 0:
+                raise RuntimeError("actual API cost cannot be negative")
+            if actual > reservation.maximum_cost_usd:
+                # The provider really charged more than we reserved, which means
+                # the estimator was wrong. Recording the smaller reserved figure
+                # would understate the true bill, so the real cost is kept and
+                # the caller is expected to stop and re-check its estimator.
+                if not allow_overrun:
+                    raise RuntimeError("actual API cost is outside the reserved range")
+                overrun = actual - reservation.maximum_cost_usd
+                accounting = "observed_usage_exceeded_reservation_true_cost_recorded"
+            else:
+                accounting = "provider_reported_or_price_snapshot_cost"
         opening = events[0]
         row = {
             "protocol": API_BUDGET_PROTOCOL,
@@ -223,6 +266,7 @@ class CumulativePaper1ApiBudgetLedger:
             "outcome": outcome,
             "actual_cost_usd": str(actual),
             "accounting": accounting,
+            "reservation_overrun_usd": str(overrun),
         }
         append_jsonl(self.path, row)
         events.append(row)

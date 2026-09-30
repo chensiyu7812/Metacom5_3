@@ -1,0 +1,168 @@
+{
+  "kind": "development_comparison_not_new_human_accuracy",
+  "base_pairs": 13,
+  "new_human_ratings": 0,
+  "API_cost_usd": 0,
+  "formal_labels": false,
+  "sampling_note": "Qwen uses source-presentation seeds across versions; different inputs and batched inference still preclude treating changes as noiseless causal effects.",
+  "candidates": {
+    "compassjudger2_7b": {
+      "variants": {
+        "same_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "SUCCEEDED": 26
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 4,
+            "B_better": 4,
+            "uncertain": 5
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 12,
+            "missing_pairs": 0,
+            "rate": 0.9230769230769231
+          }
+        },
+        "natural_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "SUCCEEDED": 25,
+            "PARSE_FAILED": 1
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 4,
+            "B_better": 3,
+            "uncertain": 5,
+            "equivalent": 1
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 11,
+            "missing_pairs": 0,
+            "rate": 0.8461538461538461
+          }
+        }
+      },
+      "source_expansion_base_comparisons": 13,
+      "source_expansion_changed_base_verdicts": 6,
+      "natural_completion_base_comparisons": 13,
+      "natural_completion_changed_base_verdicts": 1,
+      "unchanged_answer_base_controls": 2,
+      "unchanged_answer_base_controls_comparable": 2,
+      "unchanged_answer_base_controls_verdict_changes": 0,
+      "changed_answer_base_comparisons": 11,
+      "changed_answer_changed_base_verdicts": 1
+    },
+    "qwen35_9b": {
+      "variants": {
+        "same_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "PARSE_FAILED": 3,
+            "SUCCEEDED": 23
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 7,
+            "B_better": 6
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 13,
+            "missing_pairs": 0,
+            "rate": 1.0
+          }
+        },
+        "natural_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "SUCCEEDED": 20,
+            "PARSE_FAILED": 6
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 7,
+            "B_better": 6
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 11,
+            "missing_pairs": 0,
+            "rate": 0.8461538461538461
+          }
+        }
+      },
+      "source_expansion_base_comparisons": 13,
+      "source_expansion_changed_base_verdicts": 3,
+      "natural_completion_base_comparisons": 13,
+      "natural_completion_changed_base_verdicts": 0,
+      "unchanged_answer_base_controls": 2,
+      "unchanged_answer_base_controls_comparable": 2,
+      "unchanged_answer_base_controls_verdict_changes": 0,
+      "changed_answer_base_comparisons": 11,
+      "changed_answer_changed_base_verdicts": 0
+    },
+    "selene_reasoning_first": {
+      "variants": {
+        "same_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "SUCCEEDED": 22,
+            "PARSE_FAILED": 4
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 6,
+            "B_better": 4,
+            "equivalent": 2,
+            "uncertain": 1
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 8,
+            "missing_pairs": 0,
+            "rate": 0.6153846153846154
+          }
+        },
+        "natural_answers_full_history": {
+          "scheduled": 26,
+          "attempted": 26,
+          "statuses": {
+            "SUCCEEDED": 21,
+            "PARSE_FAILED": 5
+          },
+          "format_normalized_usable": 26,
+          "base_verdicts": {
+            "A_better": 6,
+            "B_better": 5,
+            "uncertain": 2
+          },
+          "order": {
+            "paired_bases": 13,
+            "consistent": 9,
+            "missing_pairs": 0,
+            "rate": 0.6923076923076923
+          }
+        }
+      },
+      "source_expansion_base_comparisons": 12,
+      "source_expansion_changed_base_verdicts": 4,
+      "natural_completion_base_comparisons": 13,
+      "natural_completion_changed_base_verdicts": 3,
+      "unchanged_answer_base_controls": 2,
+      "unchanged_answer_base_controls_comparable": 2,
+      "unchanged_answer_base_controls_verdict_changes": 0,
+      "changed_answer_base_comparisons": 11,
+      "changed_answer_changed_base_verdicts": 3
+    }
+  }
+}
