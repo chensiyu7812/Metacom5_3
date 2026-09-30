@@ -1,5 +1,20 @@
 # Repository Research Authority for Codex / Agents
 
+## Current successor scope (PM-RL1, 2026-09-30)
+
+For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/` and the current
+single-turn research, start with `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md`
+and `project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md`.
+The user authorized this successor on September 28. Existing Paper-1 contracts,
+outcome locks and result identities below remain preserved; do not reinterpret
+their four-head route as a prohibition on the separately authorized RL1 work.
+Natural-support reward remains unqualified; engineering PPO results are not
+natural-support research outcomes. Publication and CI fixes create no training
+or paid-call authorization. Current CPU CI runs both `test_paper1_*.py` and
+`test_rl1_*.py` without private output folders or model downloads.
+
+## Preserved Paper-1 authority
+
 Before making any research-design, evaluation, baseline, training-data,
 PM-semantics, feature, measurement, CI, or Paper-1 execution change, read these
 current entry points in order:

@@ -1,0 +1,159 @@
+{
+  "status": "ASSET_AUDIT_NOT_NEW_JUDGE_QUALIFICATION",
+  "checked_file_sha256": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_a_20260823_v1.json": "a161eb992e5a54261d8efaf7485fb6069210cad9a95527ea848dc658d6b730ba",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_b_20260823_v1.json": "3506da0fbdbce0e749822c5fe84b31561c08c711385d6ed268f891e9e5bbfa06",
+    "/home/tokkio/paper1_pairwise_teacher_rater_a_sheet_v2_zh_v1_rated.json": "0272f503c61811484c9b7da2c6bb25e331538376bd0e1b683e4f2dd3c6e5a94b",
+    "/home/tokkio/AI_B_中文评审结果.html": "d956751629e08d11511dd5efa7b1060ab5957796e5f6012b214ac0e1b6ad6c92",
+    "/home/tokkio/六题复核_完整记录.json": "ab20fd6c894f11fe2d3c78b7024c1e7eaed6cf63a7096704a2e9531f8132afbd",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/paper1_pairwise_teacher/human_sheets_v2/RATER_A/paper1_pairwise_teacher_rater_a_sheet_v2.json": "b51f6bc8a40c6dde66c9e4c7eb05762adf97a402f1b4ca83d526e872e3a210b2",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/paper1_pairwise_teacher/human_sheets_v2/RATER_B/paper1_pairwise_teacher_rater_b_sheet_v2.json": "affcf64c2e5b41ce4301bb622648965f37259cfd9f50e8fcf84fc1e641b69ebc",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/reviews/20260917/local_teacher_execution_summary.json": "7cd0644738f9d91e39e41ba001dc0724cee44b3baa42bfb3697a32c7a10f5191",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/reviews/20260917/local_teacher_comparison_statistics.json": "2d168b3627804834a39fbdb1438cb0cd43f75733dfc9809ff690a284e9f3bd1d",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/reviews/20260917/local_teacher_summary_evidence_statistics.json": "f55cb91f99162e68889377b0c751109b25a53f8d8190346278f3d6db2e37a632"
+  },
+  "esc_24": {
+    "actual_reference": "two independent human sheets",
+    "items": 24,
+    "dimensions": 7,
+    "original_human_dimension_ratings": 336,
+    "source": {
+      "RATER_A": {
+        "path": "data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_a_20260823_v1.json",
+        "source_sha256": "a161eb992e5a54261d8efaf7485fb6069210cad9a95527ea848dc658d6b730ba",
+        "stored_sha256": "a161eb992e5a54261d8efaf7485fb6069210cad9a95527ea848dc658d6b730ba",
+        "generated_at": "2026-08-23T12:10:22.165Z",
+        "complete_items": 24
+      },
+      "RATER_B": {
+        "path": "data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_b_20260823_v1.json",
+        "source_sha256": "3506da0fbdbce0e749822c5fe84b31561c08c711385d6ed268f891e9e5bbfa06",
+        "stored_sha256": "3506da0fbdbce0e749822c5fe84b31561c08c711385d6ed268f891e9e5bbfa06",
+        "generated_at": "2026-08-23T13:12:32.823Z",
+        "complete_items": 24
+      }
+    },
+    "official_result": {
+      "items": 24,
+      "dimension_calls": 168,
+      "valid_items": 24,
+      "valid_dimension_parses": 168,
+      "multiple_label_diagnostics": 0,
+      "mean_item_seconds": 3.4724165020415967,
+      "overall_against_rater_A": {
+        "quadratic_weighted_kappa": 0.3728813559322035,
+        "spearman_rho": 0.7655354469571903,
+        "mean_absolute_deviation": 0.7916666666666666
+      },
+      "overall_against_rater_B": {
+        "quadratic_weighted_kappa": 0.5081967213114753,
+        "spearman_rho": 0.8190646711242471,
+        "mean_absolute_deviation": 0.6666666666666666
+      },
+      "limitations": [
+        "dimension-level human agreement is heterogeneous",
+        "Fluency, Empathy, and Humanoid have weak or negative QWK against at least one rater",
+        "several dimensions have compressed ordinal dynamic range",
+        "the targeted major-Overall item has absolute error 2"
+      ],
+      "interpretation": "official ESC-RANK remains the non-replaceable RQ1 main scorer, but human-agreement and bias sensitivity must be reported; no claim of human-equivalent judgment is authorized",
+      "agreement_artifact": "paper1_official_esc_rank_human_agreement_20260902_v1.json",
+      "agreement_sha256": "4b9185088f865111d72ebfceba3bfd3f282e3069d0c66f9e379c7d700089bb8f",
+      "trace_artifact": "paper1_official_esc_rank_trace_20260902_v1.json",
+      "trace_sha256": "574be030f9424b1c837d173df56ef4cdeb562daccc041234dbeedf20acb381f0",
+      "judge_rows_artifact": "paper1_official_esc_rank_judge_rows_20260902_v1.jsonl",
+      "judge_rows_sha256": "c067d5d9a74d0e1eef39369d5f8bab76522046d29a136dea93d957e70f5bd363"
+    },
+    "status": "OFFICIAL_ESC_RANK_QUALIFIED_SUPPLEMENTAL_SENSITIVITY_CANDIDATES_PENDING",
+    "usable_scope": "official old ESC-Eval protocol, not automatically current-turn reward"
+  },
+  "pairwise_96": {
+    "actual_reference": {
+      "human_A": "两名评审共同审阅，研究者报告最终判定一致；一份联合答卷，主要阅读中文。",
+      "exploratory_AI_B": "研究者报告 GPT-6 Astra（极高）独立于 A 答卷作答，未见 A 判定和理由；API snapshot 与采样参数未提供。",
+      "AI_B_role": "exploratory_comparison_not_second_human_or_frozen_teacher",
+      "six_case_followup": "后续人工复核；已见问题分析，不属于原始盲评。",
+      "latest_user_correction": "我是说这一块，按照你分析来的就好，而不是B，哎呀，我说的B指的是AI评审，因为我没关注到狗的问题。",
+      "A3_B_means": "AI 评审 B，不是候选回答 B；不得把这句话记成用户直接选择 B_better。",
+      "raw_submissions_must_remain_unchanged": true,
+      "new_human_review_requested": false
+    },
+    "base_pairs": 80,
+    "reversed_presentations": 16,
+    "task_counts": {
+      "DG": 27,
+      "QA": 13,
+      "ESC": 27,
+      "Summary": 13
+    },
+    "joint_A_counts": {
+      "equivalent": 56,
+      "B_better": 10,
+      "uncertain": 12,
+      "A_better": 2
+    },
+    "A_vs_exploratory_B_base_matches": 27,
+    "gemini_status": "COMPLETED_CANDIDATE_NOT_PROMOTED_EXISTING_FALLBACK_ACTIVE",
+    "valid_presentations": {
+      "SUCCEEDED": 92,
+      "OPERATIONAL_FAILURE": 4
+    },
+    "actual_goal": "old task-defined material pairwise effect, not q/m absolute current-turn scoring"
+  },
+  "local_teacher_disposition": {
+    "qwen35_9b": "Preferred local development and evidence-review configuration; not an autonomous all-task material-benefit labeler.",
+    "compassjudger2_7b": "Supplementary development comparator; no majority-vote or automatic gold status.",
+    "selene_mini_8b": "JSON layout has strong presentation-A tendency; reasoning-first improves it but does not justify primary-labeling use.",
+    "formal_pairwise_teacher_promoted": false,
+    "next_step": "Continue official-primary amount/top-k calibration preparation. Summary/DG materiality remains a separate unresolved measurement limitation; use existing V3 weak-teacher fallback where applicable."
+  },
+  "local_teacher_calls": 796,
+  "existing_natural_turn_rubric": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/data/paper1_authority/paper1_natural_turn_appropriateness_rubric_v1.json",
+  "new_rl1": {
+    "status": "ENGINEERING_VERIFIED_NOT_TRAINING_RESULT",
+    "tests": 36,
+    "failures": 0,
+    "preexisting_files_checked": 70,
+    "preexisting_files_changed": [],
+    "real_completed_generations": 6,
+    "real_episode_replays_and_completed_cache_hits": 6,
+    "additional_generation_calls_during_verification": 0,
+    "judge_calls": 0,
+    "training_updates": 0,
+    "api_cost_usd": 0,
+    "original_budget_ledger_sha256": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+    "new_source_sha256": {
+      "src/metacom_pm/rl1/__init__.py": "c941c9023ec00ffd338bf00866a2f58b6b918e4fd1c8a1265dffca7b600ae744",
+      "src/metacom_pm/rl1/cache.py": "e29dd539c72dca5da4d59e01e2829e50d8272cccfbb24c9b9b289cef74b14c0a",
+      "src/metacom_pm/rl1/data.py": "22af7863c37d2b3ba04bbb0b24d36c798eea7b021212f03e99f9120970ec2ca6",
+      "src/metacom_pm/rl1/env.py": "6f7f6577ec8394c0748e83a1f884b4c8c0eb1357d081efa49c3b029a0c302926",
+      "src/metacom_pm/rl1/generation.py": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30",
+      "src/metacom_pm/rl1/render.py": "5a69fe657eee8c98fb3647b64c44fd052bbcfa7053168c38df1f6991c31da7c8",
+      "src/metacom_pm/rl1/schema.py": "2eb678e7bce7ed517448f9103216b9256c04756df302ba2805b85df5f2c1225e",
+      "scripts/rl1/01_prepare_engineering_probe.py": "8fcb7b57e7efd42a9fae77ca7fe16865e0ead8f24b3ecc774035a414d9199c83",
+      "scripts/rl1/02_reprice_plan.py": "c90710245814459bcaf0d59d1f558d7332740e16e333452e35c604861e4465f7",
+      "scripts/rl1/03_smoke_natural_generation.py": "ab22cb168c5a365bfed7d93f9c39ed1122321d3130abac870a146459739c395e"
+    }
+  },
+  "exposure": {
+    "proposed_test_owners": [
+      "p14",
+      "p4",
+      "p7"
+    ],
+    "old_memory_pair_counts": {
+      "p14": 5,
+      "p4": 1,
+      "p7": 4
+    },
+    "old_DG_complete_history_test_owners": [
+      "p14",
+      "p7"
+    ],
+    "interpretation": "owner overlap is an exposure warning, not proof of training contamination; audit exact source/fact/suffix use before a clean-test claim",
+    "automatically_reassigned_or_deleted_owners": false
+  },
+  "new_model_calls": 0,
+  "new_human_ratings": 0,
+  "paid_api_usd": 0
+}

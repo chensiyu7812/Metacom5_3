@@ -1,4 +1,16 @@
-# MetaCom V3.3 GitHub/GPT Review Package 2026-06-28
+# Current review entry — PM-RL1, 2026-09-30
+
+Start with [PM-RL1 研究进展与结果索引](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md),
+then the [dataset diagnosis](project/docs/PM_RL1_DATASET_DIAGNOSTICS_AND_RESEARCH_PATH_20260930_ZH.md).
+The [repository README](README.md) contains the current clean-checkout CPU test command.
+
+Everything below is the preserved **2026-06-28 historical V3.3 package**. Its
+training claims, review instructions and all-tests commands are not the current
+PM-RL1 state or active CI contract.
+
+---
+
+# Historical MetaCom V3.3 GitHub/GPT Review Package 2026-06-28
 
 > **Current PM-v1.5 review:** start with
 > [`README_PM_V1_5_REVIEW_ZH.md`](README_PM_V1_5_REVIEW_ZH.md). The historical

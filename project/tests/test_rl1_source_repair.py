@@ -16,7 +16,7 @@ PROJECT=Path(__file__).resolve().parents[1]
 def source():
     users=load_sanitized_runtime_users(PROJECT/'data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json')
     units=load_accepted_multi_view_units(PROJECT/'data/paper1_public_memory/es_memeval_public_multi_view_session_results_v1.jsonl',users=users)
-    overlay=json.loads((PROJECT/'outputs/pm_rl1/source_repair_20260929_v2/source_overlay_private.json').read_text())
+    overlay=json.loads((PROJECT/'tests/fixtures/rl1/source_overlay_20260929_v2.json').read_text())
     return {u.owner_id:u for u in users},units,overlay
 
 def view(source,owner,rank):

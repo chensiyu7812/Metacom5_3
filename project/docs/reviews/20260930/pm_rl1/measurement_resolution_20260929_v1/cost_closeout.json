@@ -1,0 +1,127 @@
+{
+  "status": "ACTUAL_LOCAL_COMPUTE_ACCOUNTING_NO_PAID_EXECUTION",
+  "phases": [
+    {
+      "phase": "v2",
+      "device": "A6000",
+      "submitted": 55,
+      "returned": 55,
+      "unknown": 0,
+      "engine_seconds": 2196.648419668083,
+      "load_seconds": 17.633509648032486,
+      "output_tokens": 246227
+    },
+    {
+      "phase": "v4",
+      "device": "A6000",
+      "submitted": 67,
+      "returned": 67,
+      "unknown": 0,
+      "engine_seconds": 2997.6831124090822,
+      "load_seconds": 17.718565959017724,
+      "output_tokens": 330923
+    },
+    {
+      "phase": "v3_interrupted",
+      "device": "A6000",
+      "submitted": 18,
+      "returned": 14,
+      "unknown": 4,
+      "engine_seconds": 740.0,
+      "engine_seconds_approximate": true,
+      "engine_seconds_completed_row_lower_bound": 698.2903155649547,
+      "load_seconds": 18.06290398002602,
+      "output_tokens": null,
+      "output_tokens_note": "4 interrupted raw tails unavailable; never report their compute as zero"
+    },
+    {
+      "phase": "compass_complex",
+      "device": "A4500",
+      "submitted": 12,
+      "returned": 12,
+      "unknown": 0,
+      "engine_seconds": 449.6422247639857,
+      "load_seconds": 19.719101903028786,
+      "output_tokens": 12946
+    },
+    {
+      "phase": "compass_simple",
+      "device": "A4500",
+      "submitted": 12,
+      "returned": 12,
+      "unknown": 0,
+      "engine_seconds": 101.57579634804279,
+      "load_seconds": 12.213642376009375,
+      "output_tokens": 1359
+    }
+  ],
+  "device_totals": {
+    "A6000": {
+      "engine_seconds": 5934.331532077165,
+      "load_seconds": 53.41497958707623,
+      "engine_hours": 1.6484254255769903
+    },
+    "A4500": {
+      "engine_seconds": 551.2180211120285,
+      "load_seconds": 31.93274427903816,
+      "engine_hours": 0.1531161169755635
+    }
+  },
+  "total_judge_submissions": 164,
+  "returned_raw_outputs": 160,
+  "unknown_interrupted": 4,
+  "new_generator_calls": 0,
+  "new_paid_api_usd": 0,
+  "paid_ledger_sha256": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+  "paid_ledger_unchanged": true,
+  "inherited_budget": {
+    "protocol": "pm-paper1-followup-total-budget-v1",
+    "baseline_accounted_usd": "1.50724291",
+    "ledger_accounted_usd": "1.50724291",
+    "settled_new_spend_usd": "0E-8",
+    "outstanding_batch_liability_usd": "0",
+    "committed_new_spend_usd": "0E-8",
+    "target_usd": "10.00",
+    "hard_cap_usd": "20.00",
+    "remaining_to_target_usd": "10.00000000",
+    "remaining_to_hard_cap_usd": "20.00000000",
+    "target_exceeded": false,
+    "target_is_a_plan_not_a_gate": true
+  },
+  "local_compute_currency_cost": null,
+  "currency_note": "No electricity/rental rate provided; zero API spending is not zero compute or research labor.",
+  "wall_clock_note": "A4500 and A6000 overlapped. Device engine wall times must not be added as project elapsed time. Loading/hashing/CPU analysis are separate.",
+  "cpu_e0_training_seconds": 54.415151458000764,
+  "embedding_probe": {
+    "device": "A4500",
+    "embedding_texts": 24,
+    "encoder_calls": 24,
+    "load_seconds": 11.335696526919492,
+    "encoding_seconds": 0.8789566749474034,
+    "total_process_seconds": 13.27703111502342,
+    "generative_judge_calls": 0,
+    "note": "additional to the judge-only device totals above"
+  },
+  "v4_token_usage": {
+    "input_tokens": 1173507,
+    "output_tokens": 330923,
+    "mean_output_tokens": 4939.149253731343,
+    "median_output_tokens": 5321,
+    "max_output_tokens": 11780,
+    "note": "Includes Qwen reasoning and completed portions of failed attempts; not another provider/model billing estimate"
+  },
+  "historical_pilot_judge_calls": 60,
+  "cumulative_new_route_judge_submissions": 224,
+  "remaining_scope_call_ceiling": 8244,
+  "additional_OFF_call_reserve": 648,
+  "ceiling_note": "Existing 96 train / 18 dev / 48 test planning scenario; not all calls are currently justified or scheduled. SFT diagnostics/retries/independent final review are additional.",
+  "conditional_J_only_projection": {
+    "scoring_calls": 3096,
+    "seconds_per_call_from_v4_batch": 44.741538991180335,
+    "hours": 38.47772353241509,
+    "assumption": "Same Qwen workload/context distribution/concurrency; excludes G, teacher/verifier, OFF, model loads, failures, training and independent review.",
+    "executor_training_or_quality_PPO_approved_by_projection": false
+  },
+  "analysis_sha256": "9b487763e8f55ef935f757746ea39c2a30f8f2e90fa4d0f1efcae62dc28fb94b",
+  "script_sha256": "4911ab0ec68954f9574b7eda451f8b86ea31f98cb88519960480d8562e8369ea"
+}

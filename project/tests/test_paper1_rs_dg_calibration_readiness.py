@@ -102,7 +102,7 @@ def test_the_confirmatory_dg_run_is_kept_separate_from_the_calibration_cost():
 
 def test_the_generated_report_claims_no_execution_of_any_kind():
     report = json.loads((Path(__file__).resolve().parents[1]
-                         / "outputs/paper1_calibration/rs_dg_readiness_20260918_v1"
+                         / "docs/reviews/20260918/rs_dg_readiness_20260918_v1"
                          / "readiness_report.json").read_text())
     assert "NO_EXECUTION_NO_PAID_CALLS_NO_K_SELECTION" in report["status"]
     for claim in ["no generation", "no paid API call", "no k selection", "no k* freeze",

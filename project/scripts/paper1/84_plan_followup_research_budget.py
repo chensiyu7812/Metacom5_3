@@ -40,6 +40,7 @@ FOLLOWUP_SNAPSHOT = PROJECT / "outputs/paper1_api_budget/followup_budget_boundar
 DG_COST_SURFACE = PROJECT / "data/paper1_authority/paper1_official_dg_simulator_call_cost_surface_20260904_v1.json"
 DG_POLICY = PROJECT / "data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json"
 PACKAGE = PROJECT / "outputs/paper1_calibration/static_sample_20260917_v1"
+PUBLISHED_PREPARATION = PROJECT / "docs/reviews/20260918/static_sample_20260917_v1/preparation_summary.json"
 PROTOCOL = "paper1-followup-research-budget-plan-v1"
 
 SYNC = {"input": Decimal("2.5"), "output": Decimal("10")}
@@ -95,7 +96,8 @@ def stage_rows(dg_rates: dict) -> list[dict]:
     rows = []
 
     # 1. QA/Summary static amount calibration (the 1,924 prepared requests).
-    prepared = read_json(PACKAGE / "preparation_summary.json")
+    preparation_path = PACKAGE / "preparation_summary.json"
+    prepared = read_json(preparation_path if preparation_path.is_file() else PUBLISHED_PREPARATION)
     # Measured after the real run: byte-identical scorer prompts are bought once.
     calls = {"qa": 903, "summary": 728}
     rows.append({

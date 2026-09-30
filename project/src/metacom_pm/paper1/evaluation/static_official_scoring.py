@@ -11,11 +11,12 @@ from __future__ import annotations
 
 import re
 import sys
+from importlib.metadata import version
 from dataclasses import dataclass
 from pathlib import Path
 
-# The upstream requirements pin json-repair==0.52.4. It is vendored beside the
-# calibration package so the frozen Generator environment stays byte-identical.
+# The upstream requirements pin json-repair==0.52.4. Historical local runs used
+# a vendored copy; clean installations declare the identical version in pyproject.
 VENDOR_PYTHON = Path(__file__).resolve().parents[4] / "outputs/paper1_calibration/vendor_python"
 PINNED_JSON_REPAIR_VERSION = "0.52.4"
 
@@ -29,14 +30,16 @@ class OfficialParseError(ValueError):
 
 
 def load_json_repair():
-    """Import the upstream-pinned json_repair without mutating any environment."""
-    if str(VENDOR_PYTHON) not in sys.path:
+    """Use the historical vendor when present, otherwise the pinned dependency."""
+    if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
         sys.path.insert(0, str(VENDOR_PYTHON))
     import json_repair
 
     installed = Path(json_repair.__file__).resolve()
-    if VENDOR_PYTHON not in installed.parents:
+    if VENDOR_PYTHON.is_dir() and VENDOR_PYTHON not in installed.parents:
         raise RuntimeError("json_repair resolved outside the pinned vendored copy")
+    if version("json-repair") != PINNED_JSON_REPAIR_VERSION:
+        raise RuntimeError("json_repair version differs from the pinned official parser")
     return json_repair
 
 

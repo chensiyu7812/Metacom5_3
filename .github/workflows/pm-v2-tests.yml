@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - "project/**"
+      - "README.md"
+      - "README_FOR_REVIEW.md"
+      - "AGENTS.md"
       - ".github/workflows/pm-v2-tests.yml"
   push:
     branches:
@@ -13,6 +16,9 @@ on:
       - "work/paper1-*"
     paths:
       - "project/**"
+      - "README.md"
+      - "README_FOR_REVIEW.md"
+      - "AGENTS.md"
       - ".github/workflows/pm-v2-tests.yml"
 
 jobs:
@@ -43,6 +49,6 @@ jobs:
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
       - name: Run blocking public-only Paper-1 suite
-        run: pytest -q -m "not gpu" tests/test_paper1_*.py
+        run: pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py
       - name: Validate Paper-1 integration base and outcome lock
         run: python scripts/paper1/00_validate_integration_base.py

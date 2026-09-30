@@ -1,8 +1,31 @@
-# Policy Manager (PM) — Paper 1 Research Repository
+# Policy Manager (PM) — PM-RL1 and Paper-1 Research Repository
 
 > `Metacom5_3` is a historical repository name. **The method name is Policy Manager (PM), not MetaCom.**
 
-**Latest review package (2026-09-17):** [中文版审阅入口：人评复核、Gemini 资格结果、修复与候选提案](project/docs/PM_PAPER1_WEB_REVIEW_20260917_ZH.md). Gemini qualification is complete; the candidate was not promoted. New local judges remain proposals, and all outcome locks remain closed.
+**最新研究入口（2026-09-30）：[PM-RL1 全部进展、结果与数据诊断](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md)。**
+
+PM-RL1 is the authorized successor: one conversational turn, at most four resource acquisitions, then one executor reply. Environment/PPO engineering and executor LoRA development have run; a reliable natural-support reward remains unresolved. Prometheus and Skywork native-interface experiments are complete; neither is qualified as the training reward. The latest dataset census identifies role identity, temporal grounding and executor coverage as the next repair targets. **No natural-support PPO result or support-quality improvement is claimed.**
+
+- [Original PM-RL1 plan](project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md) · [scoped implementation](project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md)
+- [Executor training results](project/docs/PM_RL1_COVERAGE_TRAINING_RESULTS_20260930_ZH.md) · [R04B judge results](project/docs/PM_RL1_R04B_CANDIDATE_RESULTS_20260930_ZH.md)
+- [Dataset diagnosis and next steps](project/docs/PM_RL1_DATASET_DIAGNOSTICS_AND_RESEARCH_PATH_20260930_ZH.md) · [portable notebook](project/docs/reviews/20260930/pm_rl1/dataset_diagnostics_20260930_v1/dataset_diagnostics.ipynb)
+- [Published results manifest](project/docs/reviews/20260930/pm_rl1/MANIFEST.json) · [CI failure diagnosis](project/docs/PM_RL1_PUBLICATION_AND_CI_20260930_ZH.md)
+
+## Run the current CPU checks
+
+```bash
+cd project
+python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.3.1+cpu"
+python -m pip install -e ".[dev]"
+pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py
+python scripts/paper1/00_validate_integration_base.py
+```
+
+These checks need no local `outputs/`, GPU, model weights or provider credentials. Research runs still require their versioned local models and run artifacts; provenance paths in historical reports are not installation dependencies. The repository also contains retired experiments: running every historical test is not the active public-data-only CI contract.
+
+## Preserved Paper-1 scope
+
+The remainder of this page documents the earlier Paper-1 route. Its result identities and outcome locks remain intact; PM-RL1's scoped successor authorization governs the new `rl1` namespace. Earlier local judge development and calibration are recorded in the [September 17 review](project/docs/PM_PAPER1_WEB_REVIEW_20260917_ZH.md).
 
 ## Active Paper-1 authority
 

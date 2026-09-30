@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -10,13 +11,17 @@ from metacom_pm.paper1.evaluation.static_official_scoring import (
     load_json_repair, parse_official_qa, parse_official_reply, parse_official_summary,
 )
 
-VENDOR_REQUIREMENTS = Path(__file__).resolve().parents[1] / "outputs/vendor_es_memeval/requirements.txt"
-
-
-def test_vendored_json_repair_matches_the_upstream_pin():
-    assert f"json-repair=={PINNED_JSON_REPAIR_VERSION}" in VENDOR_REQUIREMENTS.read_text()
-    assert (VENDOR_PYTHON / f"json_repair-{PINNED_JSON_REPAIR_VERSION}.dist-info").is_dir()
+def test_json_repair_is_a_declared_dependency_at_the_upstream_pin():
+    config = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text())
+    assert f"json-repair=={PINNED_JSON_REPAIR_VERSION}" in config['project']['dependencies']
     assert load_json_repair().loads('{"score": 1}') == {"score": 1}
+
+
+def test_different_parser_version_cannot_silently_change_official_scoring(monkeypatch):
+    from metacom_pm.paper1.evaluation import static_official_scoring as scoring
+    monkeypatch.setattr(scoring, 'version', lambda package: '0.0.0')
+    with pytest.raises(RuntimeError, match='version differs'):
+        scoring.load_json_repair()
 
 
 def test_qa_parser_takes_the_first_zero_to_two_digit_anywhere_in_the_reply():

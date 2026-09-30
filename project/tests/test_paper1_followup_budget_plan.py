@@ -10,7 +10,7 @@ import pytest
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts/paper1"
 PLAN = (Path(__file__).resolve().parents[1]
-        / "outputs/paper1_calibration/followup_budget_plan_20260918_v1/followup_budget_plan.json")
+        / "docs/reviews/20260918/followup_budget_plan_20260918_v1/followup_budget_plan.json")
 
 
 def load(name: str, filename: str):
