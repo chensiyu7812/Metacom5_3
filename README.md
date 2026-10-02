@@ -2,9 +2,15 @@
 
 > `Metacom5_3` is a historical repository name. **The method name is Policy Manager (PM), not MetaCom.**
 
-**最新研究入口（2026-09-30）：[PM-RL1 全部进展、结果与数据诊断](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md)。**
+**最新研究入口（2026-10-02）：[PM-RL1 全部进展、结果与数据诊断](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md) · [本阶段发布说明](project/docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md)。**
 
-PM-RL1 is the authorized successor: one conversational turn, at most four resource acquisitions, then one executor reply. Environment/PPO engineering and executor LoRA development have run; a reliable natural-support reward remains unresolved. Prometheus and Skywork native-interface experiments are complete; neither is qualified as the training reward. The latest dataset census identifies role identity, temporal grounding and executor coverage as the next repair targets. **No natural-support PPO result or support-quality improvement is claimed.**
+PM-RL1 is the authorized successor: one conversational turn, at most four resource acquisitions, then one executor reply. P1 source/role representation and P2 weak-supervision executor development are complete with disclosed limitations: 493 training/development targets, one three-epoch LoRA run, and 639 naturally completed comparison replies. P3 has completed 32 initial development scores plus one full-source recheck probe and prepared a fixed 40-pair human calibration instrument. **Human calibration and reward qualification remain pending; no natural-support PPO result or support-quality improvement is claimed.**
+
+- [Feasible completion plan](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md) · [capability backward design](project/docs/PM_RL1_CAPABILITY_BACKWARD_DESIGN_20261001_ZH.md) · [runbook](project/docs/pm_rl1_completion_20260930_v2/runbook.md)
+- [P1 representation results](project/docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md) · [P2 executor results and limitations](project/docs/PM_RL1_P2_EXECUTOR_RESULTS_20261001_ZH.md) · [P3 measurements and costs](project/docs/pm_rl1_completion_20260930_v2/p3_development_results.json)
+- [October 2 results manifest](project/docs/reviews/20261002/pm_rl1/MANIFEST.json) · [public overview notebook](project/docs/reviews/20261002/pm_rl1/stage_results.ipynb)
+
+Earlier stages and the first publication:
 
 - [Original PM-RL1 plan](project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md) · [scoped implementation](project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md)
 - [Executor training results](project/docs/PM_RL1_COVERAGE_TRAINING_RESULTS_20260930_ZH.md) · [R04B judge results](project/docs/PM_RL1_R04B_CANDIDATE_RESULTS_20260930_ZH.md)

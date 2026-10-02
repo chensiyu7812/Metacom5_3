@@ -1,0 +1,656 @@
+{
+  "phase": "P2",
+  "status": "COMPLETE_EXECUTOR_AND_UNSCORED_POOLS_WITH_DISCLOSED_ADMISSION_DEFECT",
+  "admission": {
+    "accepted": 493,
+    "coverage": {
+      "train": {
+        "examples": 413,
+        "owners": 12,
+        "prefixes": 92,
+        "by_head": {
+          "RS": 171,
+          "MP": 129,
+          "MS": 133,
+          "ME": 145
+        },
+        "off": 68,
+        "multiple_resources": 281,
+        "mp_owners": 12,
+        "by_category": {
+          "OFF": {
+            "examples": 68,
+            "prefixes": 68,
+            "owners": 12
+          },
+          "single": {
+            "examples": 64,
+            "prefixes": 64,
+            "owners": 12
+          },
+          "cross_two": {
+            "examples": 71,
+            "prefixes": 71,
+            "owners": 12
+          },
+          "same_two": {
+            "examples": 71,
+            "prefixes": 71,
+            "owners": 12
+          },
+          "three": {
+            "examples": 67,
+            "prefixes": 67,
+            "owners": 12
+          },
+          "four": {
+            "examples": 72,
+            "prefixes": 72,
+            "owners": 12
+          }
+        },
+        "resource_behavior_model_reported": {
+          "use": 64,
+          "ignore": 283,
+          "none": 66
+        },
+        "behavior_caution": "Model can confuse current-prefix use with optional-resource use; counts are not verified uptake coverage. OFF is structurally none."
+      },
+      "dev": {
+        "examples": 80,
+        "owners": 3,
+        "prefixes": 17,
+        "by_head": {
+          "RS": 36,
+          "MP": 27,
+          "MS": 29,
+          "ME": 23
+        },
+        "off": 13,
+        "multiple_resources": 55,
+        "mp_owners": 3,
+        "by_category": {
+          "OFF": {
+            "examples": 13,
+            "prefixes": 13,
+            "owners": 3
+          },
+          "single": {
+            "examples": 12,
+            "prefixes": 12,
+            "owners": 3
+          },
+          "cross_two": {
+            "examples": 15,
+            "prefixes": 15,
+            "owners": 3
+          },
+          "same_two": {
+            "examples": 12,
+            "prefixes": 12,
+            "owners": 3
+          },
+          "three": {
+            "examples": 14,
+            "prefixes": 14,
+            "owners": 3
+          },
+          "four": {
+            "examples": 14,
+            "prefixes": 14,
+            "owners": 3
+          }
+        },
+        "resource_behavior_model_reported": {
+          "ignore": 61,
+          "none": 10,
+          "use": 9
+        },
+        "behavior_caution": "Model can confuse current-prefix use with optional-resource use; counts are not verified uptake coverage. OFF is structurally none."
+      }
+    },
+    "initial_statuses": {
+      "accept": 475,
+      "unresolved_review": 163,
+      "reject": 42,
+      "uncertain": 4
+    },
+    "initial_statuses_by_split_category": {
+      "train": {
+        "OFF": {
+          "accept": 65,
+          "unresolved_review": 24,
+          "reject": 7
+        },
+        "single": {
+          "accept": 62,
+          "unresolved_review": 28,
+          "reject": 6
+        },
+        "cross_two": {
+          "accept": 69,
+          "unresolved_review": 22,
+          "reject": 4,
+          "uncertain": 1
+        },
+        "same_two": {
+          "accept": 68,
+          "unresolved_review": 22,
+          "reject": 5,
+          "uncertain": 1
+        },
+        "three": {
+          "accept": 65,
+          "unresolved_review": 25,
+          "reject": 6
+        },
+        "four": {
+          "accept": 68,
+          "reject": 8,
+          "unresolved_review": 20
+        }
+      },
+      "dev": {
+        "OFF": {
+          "unresolved_review": 4,
+          "accept": 12,
+          "reject": 1,
+          "uncertain": 1
+        },
+        "single": {
+          "unresolved_review": 5,
+          "accept": 12,
+          "reject": 1
+        },
+        "cross_two": {
+          "accept": 15,
+          "unresolved_review": 2,
+          "reject": 1
+        },
+        "same_two": {
+          "unresolved_review": 4,
+          "accept": 12,
+          "reject": 1,
+          "uncertain": 1
+        },
+        "three": {
+          "unresolved_review": 3,
+          "reject": 2,
+          "accept": 13
+        },
+        "four": {
+          "unresolved_review": 4,
+          "accept": 14
+        }
+      }
+    },
+    "initial_Qwen_output_tokens_by_status": {
+      "accept": {
+        "n": 475,
+        "min": 10,
+        "median": 74,
+        "max": 191
+      },
+      "reject": {
+        "n": 42,
+        "min": 43,
+        "median": 104.5,
+        "max": 178
+      },
+      "uncertain": {
+        "n": 4,
+        "min": 48,
+        "median": 69.5,
+        "max": 93
+      },
+      "unresolved_review": {
+        "n": 163,
+        "min": 27,
+        "median": 97,
+        "max": 249
+      }
+    },
+    "selection_analysis_scope": "Descriptive admission/length coverage; not a causal quality effect or a calibrated error rate",
+    "selected_attempts": {
+      "0": 475,
+      "None": 191,
+      "1": 18
+    },
+    "rejected_or_unresolved": 191,
+    "duplicates": [],
+    "coordinator_audit_count": 37,
+    "coordinator_downgrades": 4,
+    "API_usd": 0,
+    "human_labels": 0,
+    "claim": "Input/weak-target coverage only; no support-quality gain or reward qualification."
+  },
+  "initial_review": {
+    "total": 684,
+    "statuses": {
+      "accept": 479,
+      "unresolved_review": 163,
+      "reject": 42
+    },
+    "parse_errors": {
+      "ValueError: source quote": 71,
+      "ValueError: output quote": 43,
+      "ValueError: accept contradicts checks/claims": 16,
+      "JSONDecodeError: Extra data: line 1 column 2508 (char 2507)": 1,
+      "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 1263 (char 1262)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 1315 (char 1314)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 2893 (char 2892)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 2367 (char 2366)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2283 (char 2282)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 3296 (char 3295)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 4088 (char 4087)": 1,
+      "JSONDecodeError: Extra data: line 1 column 1933 (char 1932)": 1,
+      "ValueError: support lacks visible evidence": 1,
+      "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 804 (char 803)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 2943 (char 2942)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2725 (char 2724)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 1959 (char 1958)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3221 (char 3220)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 1370 (char 1369)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 796 (char 795)": 1,
+      "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2060 (char 2059)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2053 (char 2052)": 1,
+      "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2536 (char 2535)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2566 (char 2565)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2298 (char 2297)": 1,
+      "JSONDecodeError: Extra data: line 1 column 2895 (char 2894)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 917 (char 916)": 1,
+      "JSONDecodeError: Unterminated string starting at: line 1 column 3113 (char 3112)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 1003 (char 1002)": 1,
+      "ValueError: citation schema": 1,
+      "JSONDecodeError: Extra data: line 1 column 3738 (char 3737)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 987 (char 986)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3047 (char 3046)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3800 (char 3799)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3398 (char 3397)": 1,
+      "ValueError: no inspected reply fragments": 1
+    },
+    "by_split": {
+      "train": {
+        "accept": 399,
+        "unresolved_review": 141,
+        "reject": 36
+      },
+      "dev": {
+        "unresolved_review": 22,
+        "accept": 80,
+        "reject": 6
+      }
+    },
+    "RL_reward_calls": 0,
+    "accepted_training_freeze": false
+  },
+  "admission_duplicate_key_defect": {
+    "status": "POSTHOC_ADMISSION_DEFECT_DISCLOSED_NO_RETROACTIVE_REPAIR",
+    "raw_duplicate_reviews": 7,
+    "affected_frozen_targets": 4,
+    "affected_by_split": {
+      "train": 3,
+      "dev": 1
+    },
+    "original_frozen_targets": 493,
+    "targets_not_affected_by_detected_duplicate_keys": 489,
+    "strictly_reviewed_493_claim_allowed": false,
+    "posthoc_coordinator_cases": 4,
+    "disposition": "Retain the once-trained executor and all frozen observations as an AI-weak-supervised development experiment with four mechanically defective admission records. No rewrite, deletion, second training, or reward promotion. Independent P3 qualification remains required.",
+    "future_parser": "Existing judge._pairs already rejects duplicate keys and is reused by judge_flat/explicit; this rule must stay in P3. Frozen P2 validate_review remains unchanged for exact reproduction."
+  },
+  "repaired_review": {
+    "total": 39,
+    "statuses": {
+      "accept": 18,
+      "reject": 14,
+      "unresolved_review": 7
+    },
+    "parse_errors": {
+      "ValueError: output quote": 2,
+      "ValueError: accept contradicts checks/claims": 1,
+      "JSONDecodeError: Extra data: line 1 column 3641 (char 3640)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3024 (char 3023)": 1,
+      "JSONDecodeError: Expecting ',' delimiter: line 1 column 953 (char 952)": 1,
+      "JSONDecodeError: Extra data: line 1 column 3081 (char 3080)": 1
+    },
+    "by_split": {
+      "train": {
+        "accept": 16,
+        "reject": 12,
+        "unresolved_review": 6
+      },
+      "dev": {
+        "accept": 2,
+        "unresolved_review": 1,
+        "reject": 2
+      }
+    },
+    "RL_reward_calls": 0,
+    "accepted_training_freeze": false
+  },
+  "repairs": {
+    "eligible": 39,
+    "selected": 39,
+    "by_split": {
+      "train": 34,
+      "dev": 5
+    },
+    "max_per_slot": 1,
+    "remaining_unrepaired": 0,
+    "feedback": "Fixed generic correction; no SOURCE-only facts or freeform feedback",
+    "audit_overrides": "Preserved separately; audited false accepts are excluded, not silently redrawn outside the frozen repair eligibility rule."
+  },
+  "selected_executor": "epoch_3",
+  "executor_identity": "4666e72612aef698567b2e14fd3315463c451cde64f5cad1299199aaf9e0e811",
+  "renderer_identity": "4f1f582a5e955cbbf468328813a20e5830031c9fc5568e2699dcb5409e9a4c4b",
+  "training": {
+    "epochs": 3,
+    "steps": 78,
+    "trainable_parameters": 3407872,
+    "baseline_dev_nll": 1.786513342472241,
+    "epoch_metrics": [
+      {
+        "epoch": 1,
+        "nll": 1.2799197995658822,
+        "body_nll": 1.2928981864056694,
+        "eot_nll": 0.29259007034779644
+      },
+      {
+        "epoch": 2,
+        "nll": 1.1531583211888286,
+        "body_nll": 1.1653781725394268,
+        "eot_nll": 0.2235330551662628
+      },
+      {
+        "epoch": 3,
+        "nll": 1.1173423809777827,
+        "body_nll": 1.1299146863139462,
+        "eot_nll": 0.16090304901099445
+      }
+    ],
+    "frozen_base_unchanged": true
+  },
+  "selection": {
+    "selected": "epoch_3",
+    "confirmed_severe_exclusions": [
+      "epoch_1"
+    ],
+    "technical_exclusions": [],
+    "eligible_epochs": [
+      2,
+      3
+    ],
+    "review_statuses": {
+      "confirmed_severe_error": 2,
+      "no_confirmed_severe_error": 27,
+      "uncertain": 7
+    },
+    "selected_dev_nll": 1.1173423809777827,
+    "rule": "Exclude source-confirmed severe regressions, then minimum token-weighted dev response+EOT NLL; earlier epoch ties; base fallback"
+  },
+  "behavior_scope": {
+    "inputs": 12,
+    "prefixes": 9,
+    "owners": 3,
+    "new_generations": 36,
+    "independent_human_gold": false,
+    "unseen_test": false
+  },
+  "common_pool": {
+    "primary": {
+      "slots": 586,
+      "statuses": {
+        "natural_stop": 586
+      },
+      "by_split": {
+        "train": 336,
+        "dev": 250
+      },
+      "output_tokens": 47042,
+      "generation_seconds": 1612.890194130945,
+      "reward_measurements": 0
+    },
+    "secondary": {
+      "slots": 53,
+      "statuses": {
+        "natural_stop": 53
+      },
+      "by_split": {
+        "dev": 53
+      },
+      "output_tokens": 3142,
+      "generation_seconds": 101.07069193699863,
+      "reward_measurements": 0
+    }
+  },
+  "primary_text_identity_diagnostic": {
+    "status": "EXACT_TEXT_AND_LENGTH_ONLY_NOT_QUALITY_OR_REWARD",
+    "primary_responses": 586,
+    "non_OFF": 544,
+    "non_OFF_exact_text_equal_to_own_OFF": 17,
+    "distinct_prefix_reply_texts": 534,
+    "output_tokens": {
+      "min": 13,
+      "median": 81.0,
+      "max": 182,
+      "total": 47042
+    },
+    "generation_seconds": 1612.890194130945,
+    "process_seconds": 1784.0831546969712,
+    "source_summary_sha256": "14d69520b1618bbe9a6c1d3f03a39ee554c8888fe5e1ea940e77f6c6c19bb25d",
+    "interpretation": "Different wording is not evidence of useful resource use or improvement. Exact-equal replies at the same prefix require equal scoring under the shared text/evidence-only protocol, but no missing score is filled in here.",
+    "reward_measurements": 0
+  },
+  "pairing_integrity": {
+    "primary_unique_conditions": 586,
+    "primary_true_OFF_prefixes": 42,
+    "base_adapter_equal_input_pairs": 53
+  },
+  "same_input_greedy_diagnostic_replay": {
+    "rows": [
+      {
+        "diagnostic_request_id": "03a1f273e69acbc7284ca164dddfb232d0395a24ad8e43655a6d37558d78a222",
+        "pool_request_id": "5147cd9dbcddbeef15b0f3b116eded4a4a3e74dc42902aef4d6f74c02aa4733b",
+        "exact_tokens": false,
+        "exact_text": false
+      },
+      {
+        "diagnostic_request_id": "650ae50531a62ae6f028c592c36627786e34bb4316cfdaad47f0f2ab6f572e5d",
+        "pool_request_id": "397a1aa2bbf266bdbaed509918c87bef4c6fce366e3614ef7897851e08dbb801",
+        "exact_tokens": true,
+        "exact_text": true
+      },
+      {
+        "diagnostic_request_id": "5a2921ea7c15e26613e28f373fbb5a6f6128f117c65432cea0b7eeaffa87fcf1",
+        "pool_request_id": "296fa77ef1b1384d9bc7c2e11f1b768fcb75b907f01646ef4e499f835b81585a",
+        "exact_tokens": false,
+        "exact_text": false
+      },
+      {
+        "diagnostic_request_id": "5ec9a88e49284e362a8b963fe2762f8eebad76020c28115291f59f27b011d111",
+        "pool_request_id": "b4619adb4b9b0f46152b4b6ec4243abc00b80b22563f0d3bc2f515efaa8d39a9",
+        "exact_tokens": true,
+        "exact_text": true
+      },
+      {
+        "diagnostic_request_id": "d29e78c3e4885b67ac3aab653ec4d941b633806981117f9431d3f169d911937b",
+        "pool_request_id": "72a61ce8ded3ccf31369670a33443c1c22507b9765a3ab2439df61e953b1b429",
+        "exact_tokens": false,
+        "exact_text": false
+      },
+      {
+        "diagnostic_request_id": "d347dec6d1b90a44e930417b3641d5a040241a59fe6e29941bc864ce9d4e4774",
+        "pool_request_id": "76a839ae25d068c8bd717e4ba8ae7cef311742c849b721e4fd555bea75b4936f",
+        "exact_tokens": false,
+        "exact_text": false
+      }
+    ],
+    "comparisons": 6,
+    "exact_tokens": 2,
+    "exact_text": 2,
+    "scope": "Repeatability check, not independent observations or evidence of quality gain"
+  },
+  "unavailable_primary": 44,
+  "unavailable_secondary": 1,
+  "actual": {
+    "calls": {
+      "author": 684,
+      "review": 684,
+      "repair": 39,
+      "review_repair": 39,
+      "review_abandoned_starts": 39,
+      "common_pool_primary": 586,
+      "common_pool_secondary": 53,
+      "behavior_generation": 36
+    },
+    "G": 1398,
+    "J_admission": 762,
+    "J_RL_reward": 0,
+    "pre_generation_startup_failures": [
+      {
+        "status": "PRE_GENERATION_RUNTIME_COMPARISON_FAILURE",
+        "exception": "AssertionError: frozen runtime mismatch",
+        "root_cause": "Python tuple EOS IDs in live manifest compare unequal to the JSON array loaded from frozen runtime, despite identical canonical JSON digest. Use canonical identity, retaining complete fields.",
+        "physical_generation_starts": 0,
+        "physical_judge_starts": 0,
+        "api_usd": 0,
+        "load_attempts": 1,
+        "load_wall_seconds": null,
+        "model_prompt_decode_or_weights_changed": false,
+        "executor_freeze_changed": false,
+        "old_runner_sha256": "f2d384135b58fb6067e906a3a0e4fe47ee3a5ad3a7ae6a01cdd5c4d08c196424",
+        "process_window_upper_proxy_seconds": 96.00521755218506,
+        "timing_caution": "Conservative file-time window from preflight to recorded stop; exact load/engine time was not captured."
+      }
+    ],
+    "observed_output_tokens": 383056,
+    "unfinished_output_token_counts": 4,
+    "AI_coordinator_admission_cases": 37,
+    "AI_coordinator_behavior_cases": 36,
+    "AI_coordinator_posthoc_duplicate_cases": 4,
+    "new_human_tasks": 0,
+    "API_usd": 0,
+    "timing": {
+      "author": {
+        "load_seconds": 19.644232450053096,
+        "engine_wall_seconds": 564.149116777,
+        "elapsed_seconds": 622.7404721570201
+      },
+      "review": {
+        "load_seconds": 17.458108239923604,
+        "engine_wall_seconds": 2315.2784722690703,
+        "elapsed_seconds": 2376.3291671680054
+      },
+      "repair": {
+        "load_seconds": 17.60921500599943,
+        "engine_wall_seconds": 39.62676567595918,
+        "elapsed_seconds": 94.69305881601758
+      },
+      "review_repair": {
+        "load_seconds": 18.139260973082855,
+        "engine_wall_seconds": 177.48962532309815,
+        "elapsed_seconds": 232.12007752794307
+      },
+      "abandoned_review": {
+        "last_recorded_elapsed_seconds": 148.37883218401112,
+        "process_window_upper_proxy_seconds": 550.2277553903405,
+        "caution": "File-time conservative process window; includes overhead and is not exclusive GPU occupancy. Four unfinished outputs have unknown token count."
+      },
+      "common_pool_primary": {
+        "load_seconds": 16.75565204792656,
+        "generation_seconds": 1612.890194130945,
+        "final_invocation_seconds": 1784.0831546969712
+      },
+      "common_pool_secondary": {
+        "load_seconds": 16.575200463063084,
+        "generation_seconds": 101.07069193699863,
+        "final_invocation_seconds": 136.64137659291737
+      },
+      "training": {
+        "load_seconds": 2.66766795294825,
+        "train_and_epoch_dev_seconds": 937.7656557270093,
+        "total_seconds": 1003.323705505929
+      },
+      "behavior": {
+        "load_seconds": 16.20668606297113,
+        "total_seconds": 135.80247361096554
+      },
+      "reload": {
+        "load_seconds": 2.5484194230521098,
+        "total_seconds": 38.7985810659593
+      }
+    },
+    "timing_scope": "Measured local process/engine wall time; not total analyst time or exclusive GPU occupancy"
+  },
+  "tests": {
+    "tests": 185,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "CI_integration_tests": {
+    "tests": 1173,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 1172,
+    "skip_records": [
+      {
+        "test": "tests.test_paper1_llama_tokenizer",
+        "reason": "collection skipped"
+      }
+    ]
+  },
+  "old_artifacts_unchanged": 2735,
+  "unresolved": [
+    "AI weak supervision is not independent gold",
+    "Four frozen targets have posthoc-detected duplicate-key admission defects; no retrospective strict-pass claim",
+    "Model-reported resource behavior is not verified optional-resource uptake",
+    "No support-quality improvement established by NLL/behavior selection",
+    "Common replies have no calibrated q/m reward; missing measurement is not zero",
+    "P3 bounded human calibration and formal natural PPO remain pending"
+  ],
+  "next": "P3: source-bound single-reply measurement interface, finite development/sealed human calibration package; do not update PPO from unqualified scores",
+  "evidence_files": {
+    "outputs/pm_rl1/completion_20260930_v2/P2/admission_duplicate_disposition.json": "6cb9d2b6539f019dbc13c3c3af960bbefa4f404734b03d86b705124657206a50",
+    "outputs/pm_rl1/completion_20260930_v2/P2/admission_summary.json": "a112bfa3d835a804fb9c130e21fddbbd8a7b3b2154903babedb7573f9b90b11b",
+    "outputs/pm_rl1/completion_20260930_v2/P2/author/ee108b1a05fcbb36b438d1e6f69a672cbc81738aeebb564be626c9be4af14a86/runtime.json": "0f37b2e0e9ee3ebe7ac460b56677e377828b76cd6638ba57b5d867687ab33205",
+    "outputs/pm_rl1/completion_20260930_v2/P2/author/ee108b1a05fcbb36b438d1e6f69a672cbc81738aeebb564be626c9be4af14a86/summary.json": "4a8dd633a7d95c9ab37490bcc197926e3b4b0acf3ed68332f4f88e7933b94d2c",
+    "outputs/pm_rl1/completion_20260930_v2/P2/behavior_reviews_private.json": "940b28d759a5eede42855344391fca508910b07bf46faa240cb121b1c9848f2a",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/0e2be11f2c984979a6f0034e044731bde26ccd941803e20242be2410d0c27f7a/protocol.json": "3b3b5763ae3f3e70f59b43564fe078556ed3696f90e007fc1b46b182150f0df6",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/0e2be11f2c984979a6f0034e044731bde26ccd941803e20242be2410d0c27f7a/runtime.json": "15ab534ecd26e2345f28a89b07c1d0e3e6104e8f6a829d71b08eb85fcbbaddbb",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/0e2be11f2c984979a6f0034e044731bde26ccd941803e20242be2410d0c27f7a/runtime_observed.json": "15ab534ecd26e2345f28a89b07c1d0e3e6104e8f6a829d71b08eb85fcbbaddbb",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/0e2be11f2c984979a6f0034e044731bde26ccd941803e20242be2410d0c27f7a/summary.json": "cd7b8dd27e804c3fd514bd54918c3245c5d831401b6e131028d8c3d7d5bcd764",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/protocol.json": "4a52438ba0cbcdd54bb63a4f75bc60a4176077cc44a995eb9cda9297cd89ad66",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/runtime.json": "b184bcb81ef298f325d4b8618f4c3d5041f0b7a7f7207bb918ef6f6da41789b5",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/runtime_observed.json": "b184bcb81ef298f325d4b8618f4c3d5041f0b7a7f7207bb918ef6f6da41789b5",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/summary.json": "14d69520b1618bbe9a6c1d3f03a39ee554c8888fe5e1ea940e77f6c6c19bb25d",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/9fa8709f5fcb97e0680a07ecd2eaf1c3260a71a28b7569f95b6176a70008109f/runner_before_runtime_fix.py": "f2d384135b58fb6067e906a3a0e4fe47ee3a5ad3a7ae6a01cdd5c4d08c196424",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/9fa8709f5fcb97e0680a07ecd2eaf1c3260a71a28b7569f95b6176a70008109f/stop_disposition.json": "1693746c8869b36534f757ea5aef4c3794cf63ee35d5caf63569baf7abc0cff2",
+    "outputs/pm_rl1/completion_20260930_v2/P2/common_pool/primary_content_identity_summary.json": "cbda41a9599d4b4a8fc0d43c0035209865ce063e7ee4569a53062df01f5e36dd",
+    "outputs/pm_rl1/completion_20260930_v2/P2/coordinator_audit_decisions_private.json": "d55e1a9a83a208cdb2a42769c79cb74c268e7467ccccf3aaaa5116121a823d77",
+    "outputs/pm_rl1/completion_20260930_v2/P2/dataset_freeze.json": "48842984f4db794f3b613f183147fd0a90c4da9372c3ccd865c4a3c2b30919ca",
+    "outputs/pm_rl1/completion_20260930_v2/P2/diagnostics/0dc18db421738988858610f5f87b94288b5d06b7c5ac2fbc5cc26506ea3119d8/summary.json": "f62d96ae1f852d43e7c2adaf2cf975e5ce93db40740009de74b4a3d4d56c3b41",
+    "outputs/pm_rl1/completion_20260930_v2/P2/executor_freeze.json": "7f552e714c595428f8268505762cf7cf8313e021fa971ac7ab9ec035ce234457",
+    "outputs/pm_rl1/completion_20260930_v2/P2/executor_selection.json": "56f9ddaf837529e6b7f7916523d6e9a040c5ab564312030e8ed31373874a1ef3",
+    "outputs/pm_rl1/completion_20260930_v2/P2/repair/fe005386c8f43980e9ba343073b612f89b32fef68e3073ab33825ce64f5357e6/runtime.json": "ae08fa9c525760eab615eab3bdd6fffd26f43967598a62d19e16016b670a2097",
+    "outputs/pm_rl1/completion_20260930_v2/P2/repair/fe005386c8f43980e9ba343073b612f89b32fef68e3073ab33825ce64f5357e6/summary.json": "e412dff8250930233d756aa06e7ec6fee3907e382b5c0d223b5aea09261d10ad",
+    "outputs/pm_rl1/completion_20260930_v2/P2/repair_selection.json": "74e93b893538f80fd7168186b9f932a34d5444bb6887e6c1bdd5d8328810a0bf",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review/7348075f692141a816365529fb1b9d884bccc0213ff70000da48085fb1f181f6/stop_disposition.json": "656e5bc3c32d6014b3f43e250349a34dd1000c9850432394de0a6eb41effe1fc",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review/7348075f692141a816365529fb1b9d884bccc0213ff70000da48085fb1f181f6/summary.json": "5e0a98c5f6cfda75433d2bb80995a3799a25fee2d02bb2cd5d810172f1d90e73",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_duplicate_key_audit.json": "c120f473e7296ebffd0cfea4f181f3f22a3a462d116edff0a9c9828ec4df37c8",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_format_v2/format_deviation.json": "909b7470b25ec68d561ca65e0353eda2c1713c5dd48a72d401b5d160c6267587",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_format_v2/review/0fc1b6b09fb1cd9bc618a3dd5714437309be1b45025867a0d5a6f1b75a1d6be1/runtime.json": "230012c3d559e5cac0c67407d4c6c85cfbfed5d8434a230fe30269ab4a5b9910",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_format_v2/review/0fc1b6b09fb1cd9bc618a3dd5714437309be1b45025867a0d5a6f1b75a1d6be1/summary.json": "7fda45fcd0951bb6584312592226b29cab2ab0223706d719f88e57e6243db9cd",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_parse_summary.json": "f9e66650f33665ed65c7408acfcb71481e5990ef5354f75c4b03aa90707a62ea",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_repair/21be44daba3997d4dc6b34140c2781fbb06be3db44cddb9dbdf0c83cf3bdcbf9/runtime.json": "75be410f59e32c1ef0bbedad06a6b2d2c3ea384fa4aa132a7bc2446b5803779d",
+    "outputs/pm_rl1/completion_20260930_v2/P2/review_repair/21be44daba3997d4dc6b34140c2781fbb06be3db44cddb9dbdf0c83cf3bdcbf9/summary.json": "fadb5ebd10360bb9ff215dae5b17908c15d572983f50762a05e42b1859e6c06d",
+    "outputs/pm_rl1/completion_20260930_v2/P2/tests_ci_integration.xml": "5104ad57a5154989b27ccb625cc8a36c810beb901b1fce9212ac95ab31e9338e",
+    "outputs/pm_rl1/completion_20260930_v2/P2/tests_supervision.xml": "a75645b4858ca4319d87d704c850dcac081442d037960f55cee64af1e8cc36c5",
+    "outputs/pm_rl1/completion_20260930_v2/P2/training/058aa28e277649ac26b76895c694c0944674efd3d23fffbbf1fd8084b2f53a32/epochs.json": "1f8af22c74161d1c5821a37e7741c70f47cd04d9dbb7cc37e04d4cfc0fb3c9a4",
+    "outputs/pm_rl1/completion_20260930_v2/P2/training/058aa28e277649ac26b76895c694c0944674efd3d23fffbbf1fd8084b2f53a32/summary.json": "a6726c79f82d15d0edc5869c3feac6ae0de9f0e1fc810f7cd7413c44552b2d9a",
+    "scripts/rl1/93_close_p2_executor.py": "81928367b204023906ff7695d19e519fe6e0a6b8806becc77c1eb8a59b99a7a2",
+    "outputs/pm_rl1/completion_20260930_v2/P2/phase_closeout.json": "c9440da2529ed420714ad6e5e308fbf602fff410e24b030d1d06347ba3d621ed"
+  }
+}

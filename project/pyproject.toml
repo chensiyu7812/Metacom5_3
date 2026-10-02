@@ -25,6 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+human-calibration = ["cryptography>=42"]
 official-rag = [
   "faiss-cpu==1.12.0",
   "langchain-community==0.3.28",
@@ -37,6 +38,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "metacom_pm.paper1.evaluation" = ["human_reference_form.html", "human_reference_form.js"]
+"metacom_pm.rl1" = ["calibration_form.html", "calibration_form_chronology.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -3,6 +3,8 @@ import pytest
 import torch
 from metacom_pm.rl1.schema import Observation,PublicTurn,AcquiredText
 from metacom_pm.rl1.observation_features import ObservedFeatureEncoder,make_actor_critic
+from metacom_pm.rl1.observation_features import PlanAwareFeatureEncoder
+from metacom_pm.rl1.schema import PLANS
 
 
 def setup():
@@ -55,3 +57,20 @@ def test_bad_embedding_and_terminal_observations_fail_closed():
     with pytest.raises(ValueError):e.encode(replace(o,action_mask=(False,)*5))
     broken=ObservedFeatureEncoder(lambda ts:[[float('nan'),0] for t in ts],embedding_dimension=2,text_encoder_identity='bad')
     with pytest.raises(ValueError):broken.encode(o)
+
+
+def test_v2_exposes_shared_plan_feasibility_without_encoding_unacquired_text():
+    old,o,calls=setup()
+    v2=PlanAwareFeatureEncoder(old.encode_texts,embedding_dimension=2,text_encoder_identity='test')
+    first=v2.encode(o)
+    mask=list(o.initial_plan_mask);mask[PLANS.index((1,1,1,1))]=False
+    other=v2.encode(replace(o,initial_plan_mask=tuple(mask)))
+    assert first.values[:-70]==other.values[:-70] and first.values[-70:]!=other.values[-70:]
+    assert len(first.values)==old.feature_dimension+70 and calls==['seeker: Help']
+    assert v2.identity!=old.identity
+
+
+@pytest.mark.parametrize('mask',[(True,)*69,(1,)*70,(False,)+(True,)*69])
+def test_v2_rejects_malformed_initial_plan_mask(mask):
+    old,o,_=setup();v2=PlanAwareFeatureEncoder(old.encode_texts,embedding_dimension=2,text_encoder_identity='test')
+    with pytest.raises(ValueError):v2.encode(replace(o,initial_plan_mask=mask))

@@ -6,7 +6,7 @@ This is not a trained policy or a frozen formal feature specification.
 from dataclasses import dataclass
 import json
 import math
-from .schema import Observation, HEADS, digest
+from .schema import Observation, HEADS, PLANS, digest
 
 AGES = ('not_applicable', 'previous_session', '2_to_4_sessions', '5_plus_sessions')
 VERSION = 'rl1-public-observation-features-development-v1'
@@ -83,6 +83,42 @@ class ObservedFeatureEncoder:
         if len(values)!=self.feature_dimension or not all(math.isfinite(x) for x in values):
             raise ValueError('invalid feature shape or values')
         return FeatureRecord(tuple(values),o.action_mask,self.identity)
+
+
+class PlanAwareFeatureEncoder(ObservedFeatureEncoder):
+    """V2 public features. Keep V1 unchanged for historical checkpoint replay.
+
+    The initial 70-plan feasibility vector is shared by sequential and OneShot
+    callers. It conveys declared feasibility, never unacquired source text.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.identity = digest(dict(version='rl1-public-observation-features-v2',
+            base_identity=self.identity, plan_order=PLANS,
+            initial_plan_mask=True))
+
+    @property
+    def feature_dimension(self):
+        return super().feature_dimension + len(PLANS)
+
+    def encode(self, observation):
+        if type(observation) is not Observation:
+            raise TypeError('only the public Observation is accepted')
+        mask=observation.initial_plan_mask
+        if (len(mask)!=len(PLANS) or any(type(v) is not bool for v in mask)
+                or not mask[PLANS.index((0,0,0,0))]
+                or not mask[PLANS.index(observation.counts)]):
+            raise ValueError('invalid initial feasible-plan mask')
+        # V1's shape assertion uses its own dimension, so call a V1 encoder
+        # sharing only the public-text cache, without altering the V1 protocol.
+        base=ObservedFeatureEncoder(self.encode_texts, embedding_dimension=self.dimension,
+            text_encoder_identity=self.identity, resource_budget=self.budget)
+        base._cache=self._cache
+        record=base.encode(observation)
+        values=record.values+tuple(float(v) for v in mask)
+        if len(values)!=self.feature_dimension:
+            raise ValueError('invalid V2 feature shape')
+        return FeatureRecord(values,record.action_mask,self.identity)
 
 
 def make_actor_critic(feature_dimension):
