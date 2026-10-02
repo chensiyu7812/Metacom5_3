@@ -1,0 +1,234 @@
+{
+  "protocol": "pm-rl1-repricing-v1",
+  "checked_date": "2026-09-28",
+  "price_source": "https://developers.openai.com/api/docs/models/gpt-4o",
+  "batch_source": "https://developers.openai.com/api/docs/guides/batch",
+  "pricing_model_scenario": "gpt-4o; not a reward-model selection or paid-call authorization",
+  "rates_usd_per_million": {
+    "sync_input": 2.5,
+    "sync_output": 10,
+    "batch_input": 1.25,
+    "batch_output": 5
+  },
+  "budget": {
+    "protocol": "pm-paper1-followup-total-budget-v1",
+    "baseline_accounted_usd": "1.50724291",
+    "ledger_accounted_usd": "1.50724291",
+    "settled_new_spend_usd": "0E-8",
+    "outstanding_batch_liability_usd": "0",
+    "committed_new_spend_usd": "0E-8",
+    "target_usd": "10.00",
+    "hard_cap_usd": "20.00",
+    "remaining_to_target_usd": "10.00000000",
+    "remaining_to_hard_cap_usd": "20.00000000",
+    "target_exceeded": false,
+    "target_is_a_plan_not_a_gate": true
+  },
+  "budget_ledger_sha256": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+  "known_batch_state_files": {},
+  "core_local_calls": {
+    "executor_data": 2160,
+    "initialization": 1440,
+    "rl_training": 1536,
+    "dev_evaluation": 576,
+    "formal_execution": 864,
+    "formal_policy_cross": 1920
+  },
+  "core_local_call_total": 8496,
+  "off_additional_call_reserve": 672,
+  "measurement_score_calls": 60,
+  "nominal_known_call_ceiling": 9228,
+  "ceiling_note": "8496 + 672 + 60; not a full project bound: measurement replies, SFT diagnostics, retries, independent review and timing excluded; exact cache dedup can reduce",
+  "local_core_api_usd": 0,
+  "excluded_default_extras": {
+    "optional_executor_data_extension": 1728,
+    "optional_all_formal_esc_rank_dimensions": 9744,
+    "optional_latency_generations": 144
+  },
+  "measured_legal_evidence_tokens": {
+    "n": 168,
+    "min": 275,
+    "median": 6671.0,
+    "p95": 13168,
+    "max": 19001
+  },
+  "independent_review": {
+    "calls": "12 measurement pairs + 24 final pairs = 36 single presentations",
+    "assumed_extra_input_tokens": 2048,
+    "caveat": "rubric and two response sizes not yet measured; price exact complete payloads before sending; reversal duplicates this line",
+    "scenarios": [
+      {
+        "scenario": "median_history",
+        "calls": 36,
+        "input_per_call": 8719,
+        "assumed_output_per_call": 256,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 0.87687,
+        "batch_usd": 0.438435
+      },
+      {
+        "scenario": "median_history",
+        "calls": 36,
+        "input_per_call": 8719,
+        "assumed_output_per_call": 512,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 0.96903,
+        "batch_usd": 0.484515
+      },
+      {
+        "scenario": "median_history",
+        "calls": 36,
+        "input_per_call": 8719,
+        "assumed_output_per_call": 1024,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 1.15335,
+        "batch_usd": 0.576675
+      },
+      {
+        "scenario": "median_history",
+        "calls": 36,
+        "input_per_call": 8719,
+        "assumed_output_per_call": 16384,
+        "assumption_is_output_cap": false,
+        "interpretation": "native output liability scenario",
+        "sync_usd": 6.68295,
+        "batch_usd": 3.341475
+      },
+      {
+        "scenario": "p95_history",
+        "calls": 36,
+        "input_per_call": 15216,
+        "assumed_output_per_call": 256,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 1.4616,
+        "batch_usd": 0.7308
+      },
+      {
+        "scenario": "p95_history",
+        "calls": 36,
+        "input_per_call": 15216,
+        "assumed_output_per_call": 512,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 1.55376,
+        "batch_usd": 0.77688
+      },
+      {
+        "scenario": "p95_history",
+        "calls": 36,
+        "input_per_call": 15216,
+        "assumed_output_per_call": 1024,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 1.73808,
+        "batch_usd": 0.86904
+      },
+      {
+        "scenario": "p95_history",
+        "calls": 36,
+        "input_per_call": 15216,
+        "assumed_output_per_call": 16384,
+        "assumption_is_output_cap": false,
+        "interpretation": "native output liability scenario",
+        "sync_usd": 7.26768,
+        "batch_usd": 3.63384
+      },
+      {
+        "scenario": "max_history",
+        "calls": 36,
+        "input_per_call": 21049,
+        "assumed_output_per_call": 256,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 1.98657,
+        "batch_usd": 0.993285
+      },
+      {
+        "scenario": "max_history",
+        "calls": 36,
+        "input_per_call": 21049,
+        "assumed_output_per_call": 512,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 2.07873,
+        "batch_usd": 1.039365
+      },
+      {
+        "scenario": "max_history",
+        "calls": 36,
+        "input_per_call": 21049,
+        "assumed_output_per_call": 1024,
+        "assumption_is_output_cap": false,
+        "interpretation": "length forecast only",
+        "sync_usd": 2.26305,
+        "batch_usd": 1.131525
+      },
+      {
+        "scenario": "max_history",
+        "calls": 36,
+        "input_per_call": 21049,
+        "assumed_output_per_call": 16384,
+        "assumption_is_output_cap": false,
+        "interpretation": "native output liability scenario",
+        "sync_usd": 7.79265,
+        "batch_usd": 3.896325
+      }
+    ]
+  },
+  "optional_official_qa": {
+    "note": "192 answers; current answers not yet generated; legacy input length is a forecast anchor",
+    "scenarios": [
+      {
+        "calls": 192,
+        "measured_legacy_mean_input": 388,
+        "assumed_output_per_call": 8,
+        "assumption_is_output_cap": false,
+        "sync_usd": 0.2016,
+        "batch_usd": 0.1008
+      },
+      {
+        "calls": 192,
+        "measured_legacy_mean_input": 388,
+        "assumed_output_per_call": 64,
+        "assumption_is_output_cap": false,
+        "sync_usd": 0.30912,
+        "batch_usd": 0.15456
+      },
+      {
+        "calls": 192,
+        "measured_legacy_mean_input": 388,
+        "assumed_output_per_call": 16384,
+        "assumption_is_output_cap": false,
+        "sync_usd": 31.64352,
+        "batch_usd": 15.82176
+      }
+    ]
+  },
+  "old_scoring_separate": {
+    "unique_calls": 1631,
+    "task_counts": {
+      "qa": 903,
+      "summary": 728
+    },
+    "measured_input_tokens_with_framing_reserve": 990612,
+    "assumed_outputs": "QA 8; Summary 1024 (length scenarios, not caps)",
+    "forecast_sync_usd": 10.00349,
+    "forecast_batch_usd": 5.001745,
+    "native_batch_liability_usd": 134.849785,
+    "pm_rl1_prerequisite": false
+  },
+  "compute": {
+    "executor_teacher_and_repair_calls": 1080,
+    "executor_verification_calls": 1080,
+    "downstream_generator_calls": 3168,
+    "downstream_joint_judge_calls": 3168,
+    "formula_seconds": "1080*t_teacher + 1080*t_verifier + 3168*t_G + 3168*t_J + OFF + measurement + embeddings + loads + LoRA + PPO + retries",
+    "price_usd": "local ownership/electricity/rental rate not supplied; do not equate zero API spend with zero compute cost",
+    "wall_clock": "requires measured G/J throughput and scheduling; no total-hours promise"
+  },
+  "paid_calls_sent": 0
+}

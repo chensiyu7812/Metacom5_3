@@ -1,0 +1,36 @@
+protocol: pm-paper1-rs-atomic-move-compiler-config-v1
+status: PRE_OUTCOME_ACTIVE
+
+endpoints:
+  # Same frozen Qwen model/endpoint as the MP/MS/ME memory compiler, but a
+  # separate config entry and a separate budget/authorization surface --
+  # this is an independent compiler, not a reuse of the memory compiler's
+  # USD 5.00 cap or authorization.
+  rs_atomic_move_compiler:
+    base_url: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    model: "qwen3-235b-a22b-instruct-2507"
+    api_key_env: "DASHSCOPE_API_KEY"
+    family: "qwen3_235b_dashscope_intl"
+    timeout_seconds: 240
+    transport: "openai_chat_completions"
+    supports_strict_json_schema: false
+    thinking_mode: "provider_default"
+    enable_thinking: false
+
+rs_atomic_move_compiler:
+  provider: "Alibaba Cloud Model Studio"
+  region: "Singapore (International)"
+  endpoint_name: "rs_atomic_move_compiler"
+  compiler_version: "paper1-rs-atomic-move-compiler-v2"
+  extractor:
+    temperature: 0.0
+    max_tokens: 1024
+    maximum_prompt_tokens: 8192
+  verifier:
+    temperature: 0.0
+    max_tokens: 1024
+    maximum_prompt_tokens: 8192
+  price_snapshot:
+    snapshot_id: "alibaba-model-studio-singapore-qwen3-235b-a22b-instruct-2507-official-list-20260817"
+    input_usd_per_million_tokens: "0.23"
+    output_usd_per_million_tokens: "0.92"

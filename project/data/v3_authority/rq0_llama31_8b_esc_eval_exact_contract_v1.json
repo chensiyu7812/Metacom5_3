@@ -1,0 +1,78 @@
+{
+  "protocol": "metacom-v3-rq0-llama31-8b-esc-eval-exact-v1",
+  "date": "2026-08-15",
+  "status": "FROZEN_USER_AUTHORIZED_EXACT_ESC_EVAL_REPRODUCTION",
+  "question": "What ESC-Eval English quality profile does the hosted Llama 3.1 8B incumbent achieve under the official repository interaction and scoring code?",
+  "candidate": {
+    "candidate_id": "llama31_8b_incumbent_esc_eval_exact",
+    "provider": "NVIDIA hosted NIM API",
+    "base_url": "https://integrate.api.nvidia.com",
+    "model": "meta/llama-3.1-8b-instruct",
+    "api_key_env": "NVIDIA_API_KEY",
+    "reference_repository_model": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "model_difference_disclosed": "The tested hosted candidate is Llama 3.1 8B, not the repository's earlier Llama 3 8B checkpoint."
+  },
+  "official_interaction": {
+    "source": "ESC-Eval/evaluate.py",
+    "source_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "language": "en",
+    "cards_artifact": "ESC-Eval/data/card_high_en.json",
+    "cards": 331,
+    "turns": 5,
+    "supporter_system_prompt": "You are a helpful assistant!",
+    "initial_utterance": "Hello, I'm your personal assistant. You can confide in me about any worries or concerns you may have!",
+    "role_prompt_template_source": "evaluate.py run_rolellm English branch verbatim",
+    "role_generation": {
+      "model": "haidequanbu/ESC-Role",
+      "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+      "max_new_tokens": 512,
+      "explicit_arguments_in_evaluate_py": "max_new_tokens only",
+      "model_generation_config_effective": {
+        "do_sample": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "top_k": 20,
+        "repetition_penalty": 1.05
+      },
+      "project_seed": null
+    },
+    "generator_generation": {
+      "max_new_tokens": 256,
+      "do_sample": false,
+      "temperature": 0.0,
+      "eos": "provider-native Llama EOS/EOT handling",
+      "pad": "provider-native",
+      "seed": null
+    }
+  },
+  "provider_adaptation": {
+    "necessary_change": "Replace the local Hugging Face Llama class with the hosted OpenAI-compatible Llama 3.1 8B endpoint.",
+    "messages_preserved": true,
+    "max_tokens": 256,
+    "temperature": 0.0,
+    "retries": "one transient transport retry; logical output contract unchanged",
+    "project_prompt_added": false,
+    "project_content_rule_added": false,
+    "project_sampling_rule_added": false
+  },
+  "official_scoring": {
+    "source": "ESC-Eval/score.py",
+    "base_model": "internlm/internlm2-chat-7b",
+    "base_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "english_adapters": ["fluency_en", "diversity_en", "empathic_en", "suggestion_en", "human_en", "tech_en", "overall_en"],
+    "dimensions": ["Fluency", "Expression", "Empathy", "Information", "Humanoid", "Skillful", "Overall"],
+    "generation": {"do_sample": false, "temperature": 0.0},
+    "parser": "First matching substring in ordered labels 0,1,2,3,4, exactly as score.py; raw output and exact-label audit also retained.",
+    "official_pass_line": null
+  },
+  "interpretation": {
+    "formal_absolute_pass": "NOT_DEFINED_BY_ESC_EVAL",
+    "operational_completion": "Report 331-card and 1655-turn completion, invalids, length finishes and failures.",
+    "quality": "Report original 0-4 seven dimensions and contextual comparison with repository-provided Llama3 English reference scores.",
+    "usable_for_pm": "PI judgment from official profile and operational behavior, without inventing a pass threshold."
+  },
+  "budget": {"provider_paid_usd": 0.0, "qwen_calls": 0, "qwen_usd": 0.0},
+  "authorization": "The user explicitly requested an official-configuration Llama-only ESC-Eval test on 2026-08-15.",
+  "claim_boundary": "Exact repository protocol adaptation except the disclosed hosted Llama 3.1 endpoint/checkpoint difference; not PM value or clinical safety."
+}

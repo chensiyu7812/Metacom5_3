@@ -1,0 +1,237 @@
+{
+  "protocol": "paper1-followup-research-budget-plan-v1",
+  "generated_at": "2026-09-19T03:06:33.874911+00:00",
+  "status": "QUOTATION_ONLY_NOTHING_SELECTED_NOTHING_SENT",
+  "followup_constraint": {
+    "target_usd": "10.00",
+    "hard_cap_usd": "20.00",
+    "scope": "every remaining new paid call, including retries",
+    "baseline_accounted_usd": "1.50724291",
+    "current_status": {
+      "protocol": "pm-paper1-followup-total-budget-v1",
+      "baseline_accounted_usd": "1.50724291",
+      "ledger_accounted_usd": "1.50724291",
+      "settled_new_spend_usd": "0E-8",
+      "outstanding_batch_liability_usd": "0",
+      "committed_new_spend_usd": "0E-8",
+      "target_usd": "10.00",
+      "hard_cap_usd": "20.00",
+      "remaining_to_target_usd": "10.00000000",
+      "remaining_to_hard_cap_usd": "20.00000000",
+      "target_exceeded": false,
+      "target_is_a_plan_not_a_gate": true
+    }
+  },
+  "dg_seeker_rates": {
+    "reserve_per_call_usd": "0.01446595588235294117647058824",
+    "observed_per_call_usd": "0.00859925",
+    "observed_source": "single recorded 10-call A6000 pilot; one scenario, not a population mean"
+  },
+  "assumptions": {
+    "measured": [
+      "official scorer input tokens INCLUDING the real prediction, from the completed 1,924 natural-end generations",
+      "Generator answer lengths (QA median 36, Summary median 75 tokens)",
+      "DG scenario prompt tokens",
+      "the single recorded 10-call DG pilot cost"
+    ],
+    "assumed_not_capped": {
+      "prediction_tokens": {
+        "qa": 0,
+        "summary": 0
+      },
+      "judge_output_tokens": {
+        "qa": 8,
+        "summary": 1024
+      }
+    },
+    "unmeasured": [
+      "actual judge reply lengths -- the last big unknown, and the one that swings the static bill between about USD 2.2 and USD 8.8 at batch rates",
+      "prompt cache hit rate (no discount assumed)"
+    ],
+    "warning": "These are estimates. Real figures require the local generations to exist first; halving a synchronous estimate does not guarantee a batch completes inside any budget."
+  },
+  "cost_drivers": {
+    "per_call_batch_usd": {
+      "qa": "0.0005",
+      "summary": "0.0062"
+    },
+    "summary_is_the_driver": "One Summary judgement costs about 11.8476x a QA one, because the official Summary judge returns event lists and a justification while QA returns one line. Summary is roughly 88% of the amount-calibration bill despite being the smaller task.",
+    "disproportion_to_flag": "The prepared Summary calibration buys 819 judgements to choose k for a task whose entire population is 125 targets. That is defensible as a paired design but is the single most reducible cost in the programme.",
+    "levers_that_move_money": [
+      "number of RQ2 arms scored",
+      "size of the Summary calibration sample",
+      "batch instead of synchronous delivery (exactly half)",
+      "whether DG is executed at all"
+    ],
+    "levers_that_must_not_be_used": [
+      "shortening Generator answers",
+      "capping judge output below the official setting",
+      "substituting a local judge for the official scorer"
+    ]
+  },
+  "stages_at_original_scope": [
+    {
+      "stage": "A. QA/Summary amount calibration scoring",
+      "purpose": "choose k for MP/ME/MS on the static tasks",
+      "paid_calls": 1631,
+      "rows_before_identical_payload_reuse": 1924,
+      "calls_detail": {
+        "qa": 903,
+        "summary": 728
+      },
+      "delivery_options": {
+        "sync_observed_usd": "10.0045",
+        "batch_observed_usd": "5.0022",
+        "batch_reserve_usd": "134.8503"
+      },
+      "generation": "DONE 2026-09-19: all 1,924 natural-end generations completed, 6,199 s GPU wall, USD 0",
+      "note": "input tokens measured from the real predictions; only the judge reply length is still an assumption"
+    },
+    {
+      "stage": "B. PM training labels (static tasks)",
+      "purpose": "materially-positive effect labels for MP/ME/MS heads",
+      "paid_calls": "SCOPE_NOT_FIXED",
+      "note": "Label volume depends on how many independent states are scored per head. At the full population one ON scoring per head plus one shared OFF is 1552 x 4 = 6208 official calls, which alone exceeds the follow-up cap at any delivery rate. This stage must be sized deliberately.",
+      "batch_observed_usd_full_population": "6.1067"
+    },
+    {
+      "stage": "C. RQ1 ESC-Eval formal evaluation",
+      "purpose": "official RQ1 capability table, 4 arms on 121 confirmatory cards",
+      "paid_calls": 0,
+      "usd": "0",
+      "note": "supporter, ESC-Role seeker and the official ESC-RANK scorer are all local"
+    },
+    {
+      "stage": "D. RQ2 QA/Summary formal evaluation",
+      "purpose": "official QA/Summarization metrics, 6 arms on the full population",
+      "paid_calls": 9312,
+      "calls_detail": {
+        "qa": 8562,
+        "summary": 750
+      },
+      "delivery_options": {
+        "batch_observed_usd": "9.1600",
+        "sync_observed_usd": "18.3201"
+      },
+      "note": "this is the reported result, not a tuning step"
+    },
+    {
+      "stage": "E. RQ2 DG formal evaluation",
+      "purpose": "official Dialogue Generation metrics, 6 arms x 34 scenarios x 10 rounds",
+      "paid_calls": 2040,
+      "usd_at_reserve": "29.5106",
+      "usd_at_pilot_observed_rate": "17.5425",
+      "plus_official_overall_judge_calls": 204,
+      "note": "the simulated user is sequential and cannot be pre-batched; each round depends on the previous supporter reply"
+    },
+    {
+      "stage": "F. DG amount calibration at the full 13-condition grid",
+      "purpose": "choose k live for MP/ME/MS on DG",
+      "paid_calls": 4420,
+      "usd_at_reserve": "63.9395",
+      "usd_at_pilot_observed_rate": "38.0087",
+      "verdict": "incompatible with the follow-up cap at either rate"
+    }
+  ],
+  "candidate_plans": [
+    {
+      "plan": "P0 - aim at the USD 10 target",
+      "components": {
+        "A QA amount calibration, full prepared sample (batch)": "0.4741",
+        "A Summary amount calibration, full prepared sample (batch)": "4.5282",
+        "D RQ2 static formal at FULL population, 4 arms (batch)": "6.1067",
+        "C RQ1 ESC-Eval formal": "0",
+        "E RQ2 DG formal": "not executed"
+      },
+      "total_at_observed_rates_usd": "11.1089",
+      "total_at_dg_reserve_usd": "11.1089",
+      "dg_paid_calls": 0,
+      "retry_margin_to_cap_usd": "8.8911",
+      "keeps": [
+        "full-population official QA/Summarization results on the compared arms",
+        "k chosen from real official quality on both static tasks",
+        "complete RQ1 official table at full scope, free",
+        "the largest retry and training-label margin of any plan here"
+      ],
+      "gives_up": [
+        "two of the six RQ2 arms",
+        "the entire DG component"
+      ],
+      "cannot_claim": "RQ2 would cover two of three ES-MemEval tasks, and which four arms to keep is a research decision, not a costing one"
+    },
+    {
+      "plan": "P1 - calibrate the static tasks, evaluate on a declared subset",
+      "components": {
+        "A static amount calibration (batch)": "5.0022",
+        "D RQ2 static formal on a 25% pre-drawn subset (batch)": "2.2866",
+        "E RQ2 DG formal on 8 pre-drawn scenarios, all 6 arms": "4.1276",
+        "C RQ1 ESC-Eval formal": "0"
+      },
+      "total_at_observed_rates_usd": "11.4165",
+      "total_at_dg_reserve_usd": "14.2325",
+      "dg_paid_calls": 480,
+      "keeps": [
+        "k chosen from real official quality on QA/Summary",
+        "all six RQ2 arms compared against each other",
+        "complete RQ1 official table at full scope, free",
+        "complete dialogues and natural ending"
+      ],
+      "gives_up": [
+        "full-population RQ2 static numbers",
+        "all 34 DG scenarios",
+        "any DG-specific k tuning"
+      ],
+      "cannot_claim": "subset results do not carry the evidential strength of the full benchmark"
+    },
+    {
+      "plan": "P2 - full static evaluation, minimal DG",
+      "components": {
+        "A static amount calibration (batch)": "5.0022",
+        "D RQ2 static formal at FULL population (batch)": "9.1600",
+        "E RQ2 DG formal on 6 scenarios, 3 arms only": "1.5479",
+        "C RQ1 ESC-Eval formal": "0"
+      },
+      "total_at_observed_rates_usd": "15.7102",
+      "total_at_dg_reserve_usd": "16.7662",
+      "dg_paid_calls": 180,
+      "keeps": [
+        "full-population official QA/Summarization results",
+        "k chosen from real official quality",
+        "complete RQ1 official table"
+      ],
+      "gives_up": [
+        "three of the six DG arms",
+        "28 of 34 DG scenarios"
+      ],
+      "cannot_claim": "DG becomes an illustration, not a benchmark result"
+    },
+    {
+      "plan": "P3 - no paid DG at all",
+      "components": {
+        "A static amount calibration (batch)": "5.0022",
+        "D RQ2 static formal at FULL population (batch)": "9.1600",
+        "C RQ1 ESC-Eval formal": "0",
+        "E RQ2 DG formal": "not executed"
+      },
+      "total_at_observed_rates_usd": "14.1623",
+      "total_at_dg_reserve_usd": "14.1623",
+      "dg_paid_calls": 0,
+      "keeps": [
+        "full-population official QA/Summarization results",
+        "complete RQ1 official table",
+        "largest margin left inside the cap for retries and training labels"
+      ],
+      "gives_up": [
+        "the entire DG component of RQ2"
+      ],
+      "cannot_claim": "RQ2 cannot be described as covering all three ES-MemEval tasks"
+    }
+  ],
+  "headline": "The original full scope does not fit. RQ1 is free. The paid load is the RQ2 official scoring, and the DG simulated user dominates it. Amount calibration is affordable by batch; the formal evaluation is what the cap actually constrains, so k-finding must not consume the budget first.",
+  "not_selected": "No plan here is chosen, and the scenario counts are illustrations of the trade-off, not a drawn sample. Substantive changes to frozen research conditions need an explicit decision.",
+  "sources_sha256": {
+    "paper1_official_dg_simulator_call_cost_surface_20260904_v1.json": "033fe4e1e189b7bbe394f3c11e979163b03f912a83254c913a14da2bf6a5d002",
+    "paper1_official_dg_execution_policy_amendment_20260904_v1.json": "6b73077bfcf766c82979bacafe0096f5f517c1dd00c50f42470258a7421ee0c6",
+    "preparation_summary.json": "de767f81e4f096518b524a2cb36f0b8ec3232f72464c4f3048ae9266cd873ca9"
+  }
+}

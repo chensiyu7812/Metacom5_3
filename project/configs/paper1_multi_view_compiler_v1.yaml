@@ -1,0 +1,47 @@
+protocol: pm-paper1-multi-view-compiler-config-v1
+status: ACTIVE_ZERO_OUTCOME_PREFLIGHT
+
+endpoint:
+  provider: Alibaba Cloud Model Studio
+  region: Singapore (International)
+  base_url: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+  model: qwen3-235b-a22b-instruct-2507
+  api_key_env: DASHSCOPE_API_KEY
+  transport: openai_chat_completions
+  supports_strict_json_schema: false
+  enable_thinking: false
+  temperature: 0.0
+  seed: 0
+
+tokenizer:
+  repo_id: Qwen/Qwen3-235B-A22B-Instruct-2507
+  revision: ac9c66cc9b46af7306746a9250f23d47083d689e
+  add_generation_prompt: true
+
+limits:
+  extractor_max_output_tokens: 1024
+  verifier_max_output_tokens: 1024
+  maximum_prompt_tokens_per_call: 4864
+  prompt_token_safety_margin_per_call: 128
+  prior_current_profile_allowance_tokens_per_call: 1024
+  verifier_proposal_allowance_tokens: 1024
+  maximum_provider_calls: 802
+
+price_snapshot:
+  snapshot_id: alibaba-model-studio-singapore-qwen3-235b-a22b-instruct-2507-official-list-20260903
+  input_usd_per_million_tokens: 0.23
+  output_usd_per_million_tokens: 0.92
+  source: https://www.alibabacloud.com/help/en/model-studio/model-pricing
+  accessed_date: 2026-09-03
+
+budget:
+  stage: multi_view_401_compilation_and_validation
+  stage_hard_cap_usd: 1.50
+  cumulative_paper1_hard_cap_usd: 50.00
+  paid_calls_authorized_by_this_config: false
+
+locks:
+  RQ1_RS_CALIBRATION_OUTCOME_LOCK: CLOSED
+  RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK: CLOSED
+  RQ1_CONFIRMATORY_OUTCOME_LOCK: CLOSED
+  RQ2_CONFIRMATORY_OUTCOME_LOCK: CLOSED

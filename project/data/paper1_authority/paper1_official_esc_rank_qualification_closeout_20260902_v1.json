@@ -1,0 +1,63 @@
+{
+  "protocol": "pm-paper1-official-esc-rank-qualification-closeout-20260902-v1",
+  "status": "OFFICIAL_ESC_RANK_QUALIFIED_SUPPLEMENTAL_SENSITIVITY_CANDIDATES_PENDING",
+  "authority": "paper1_official_esc_eval_compatibility_amendment_20260902_v1.json",
+  "runtime": {
+    "status": "READY",
+    "dialogues": 3,
+    "repeats": 2,
+    "dimension_calls": 42,
+    "official_valid_parses": 42,
+    "strict_diagnostic_valid_parses": 0,
+    "multiple_label_diagnostics": 0,
+    "raw_and_vector_exact_reproducibility": true,
+    "peak_allocated_mib": 14805.5234375,
+    "mean_seven_dimension_seconds": 4.733723949502746,
+    "artifact": "paper1_esc_rank_runtime_qualification_20260902_v1.json",
+    "sha256": "b6df325b78a3c5182805950e3d99069820f63189f264ee738fd5267f17907c4a"
+  },
+  "blind_human_qualification": {
+    "items": 24,
+    "dimension_calls": 168,
+    "valid_items": 24,
+    "valid_dimension_parses": 168,
+    "multiple_label_diagnostics": 0,
+    "mean_item_seconds": 3.4724165020415967,
+    "overall_against_rater_A": {
+      "quadratic_weighted_kappa": 0.3728813559322035,
+      "spearman_rho": 0.7655354469571903,
+      "mean_absolute_deviation": 0.7916666666666666
+    },
+    "overall_against_rater_B": {
+      "quadratic_weighted_kappa": 0.5081967213114753,
+      "spearman_rho": 0.8190646711242471,
+      "mean_absolute_deviation": 0.6666666666666666
+    },
+    "limitations": [
+      "dimension-level human agreement is heterogeneous",
+      "Fluency, Empathy, and Humanoid have weak or negative QWK against at least one rater",
+      "several dimensions have compressed ordinal dynamic range",
+      "the targeted major-Overall item has absolute error 2"
+    ],
+    "interpretation": "official ESC-RANK remains the non-replaceable RQ1 main scorer, but human-agreement and bias sensitivity must be reported; no claim of human-equivalent judgment is authorized",
+    "agreement_artifact": "paper1_official_esc_rank_human_agreement_20260902_v1.json",
+    "agreement_sha256": "4b9185088f865111d72ebfceba3bfd3f282e3069d0c66f9e379c7d700089bb8f",
+    "trace_artifact": "paper1_official_esc_rank_trace_20260902_v1.json",
+    "trace_sha256": "574be030f9424b1c837d173df56ef4cdeb562daccc041234dbeedf20acb381f0",
+    "judge_rows_artifact": "paper1_official_esc_rank_judge_rows_20260902_v1.jsonl",
+    "judge_rows_sha256": "c067d5d9a74d0e1eef39369d5f8bab76522046d29a136dea93d957e70f5bd363"
+  },
+  "research_status": {
+    "official_RQ1_scorer": "QUALIFIED_AND_FROZEN",
+    "supplemental_Qwen_DeepSeek_independent_family": "PENDING_EXACT_RESEARCHER_IDENTITIES_OPTIONAL_SENSITIVITY_ONLY",
+    "formal_ESC_Eval": false,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0,
+    "locks": {
+      "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+      "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+      "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+    }
+  }
+}

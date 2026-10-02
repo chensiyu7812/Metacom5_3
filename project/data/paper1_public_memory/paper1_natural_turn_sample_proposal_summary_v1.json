@@ -1,0 +1,88 @@
+{
+  "protocol": "paper1-natural-turn-sample-proposal-summary-v1",
+  "status": "ZERO_OUTCOME_SAMPLE_PROPOSAL_READY_RESEARCHER_REVIEW_REQUIRED",
+  "sampling_protocol": "paper1-natural-turn-zero-outcome-sample-proposal-v1",
+  "sampling_seed_sha256": "3d094cfa6533846302be6f837ea19efeea2e2f411cf66b504f97aebbbf77ec36",
+  "base_pairs": 80,
+  "base_pairs_per_head": 20,
+  "review_slots": 96,
+  "reverse_duplicates": 16,
+  "reverse_fraction_of_base": 0.2,
+  "memory_states_shared_across_MP_ME_MS": true,
+  "future_generator_call_efficiency": "one OFF response may be reused across MP/ME/MS only when the exact state, prompt, decoding and seed identity are identical",
+  "future_generation_plan_not_authorized": {
+    "RS_OFF_plus_ON": 40,
+    "memory_shared_OFF": 20,
+    "memory_head_specific_ON": 60,
+    "total_logical_generator_outputs": 120,
+    "reverse_duplicates_require_new_generation": 0,
+    "paid_judge_calls": 0
+  },
+  "frame": {
+    "RS_states": 11182,
+    "memory_states_with_all_three_strict_past_heads": 4061,
+    "RS_groups": 989,
+    "memory_owners": 18
+  },
+  "selected": {
+    "RS_dialogues": 20,
+    "memory_owners": 18,
+    "memory_sessions": 20,
+    "RS_turn_type": {
+      "advice_request_cue": 1,
+      "explicit_memory_cue": 2,
+      "greeting_or_closing_cue": 4,
+      "other_question": 5,
+      "statement": 8
+    },
+    "memory_turn_type": {
+      "explicit_memory_cue": 4,
+      "greeting_or_closing_cue": 5,
+      "other_question": 4,
+      "statement": 7
+    },
+    "RS_length_bin": {
+      "long_ge48": 3,
+      "medium_16_47": 9,
+      "short_lt16": 8
+    },
+    "memory_length_bin": {
+      "long_ge48": 1,
+      "medium_16_47": 11,
+      "short_lt16": 8
+    },
+    "RS_depth_bin": {
+      "early_lt4": 6,
+      "late_ge10": 10,
+      "middle_4_9": 4
+    },
+    "memory_depth_bin": {
+      "early_lt4": 5,
+      "late_ge10": 8,
+      "middle_4_9": 7
+    }
+  },
+  "artifacts": {
+    "base_sample": {
+      "filename": "paper1_natural_turn_base_sample_proposal_v1.jsonl",
+      "rows": 80,
+      "sha256": "3d022e2a87db3d69d1e022d35dcd2f33e836b9f60c89bd0b030d0297e794fbc6"
+    },
+    "review_slot_plan": {
+      "filename": "paper1_natural_turn_review_slot_plan_v1.jsonl",
+      "rows": 96,
+      "sha256": "5389cc2c4b114c622897ebb47b39c513da399b4dfaf46119780feccccc3cb395"
+    }
+  },
+  "boundaries": {
+    "target_supporter_responses_read_into_sample": 0,
+    "gold_capability_or_effect_outcomes_read": 0,
+    "formal_outcome_calls": 0,
+    "paid_api_calls": 0,
+    "pm_training_runs": 0,
+    "human_or_machine_verdicts": 0,
+    "sample_size_is_final": false,
+    "not_an_empirical_pass_gate": true,
+    "paid_machine_judging_authorized": false
+  }
+}

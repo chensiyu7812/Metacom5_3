@@ -1,0 +1,133 @@
+{
+  "protocol": "metacom-v3-rq0-llama31-8b-esc-eval-exact-preflight-v1",
+  "status": "ZERO_CALL_EXACT_OFFICIAL_CODE_IDENTITY_FROZEN_USER_AUTHORIZED",
+  "run_identity": "ca7c97b11330d69a4ad8a33f2aa13b039e3870ec4ba7d2d9e17313db51deb849",
+  "identity_payload": {
+    "protocol": "metacom-v3-rq0-llama31-8b-esc-eval-exact-v1",
+    "candidate": {
+      "candidate_id": "llama31_8b_incumbent_esc_eval_exact",
+      "provider": "NVIDIA hosted NIM API",
+      "base_url": "https://integrate.api.nvidia.com",
+      "model": "meta/llama-3.1-8b-instruct",
+      "api_key_env": "NVIDIA_API_KEY",
+      "reference_repository_model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "model_difference_disclosed": "The tested hosted candidate is Llama 3.1 8B, not the repository's earlier Llama 3 8B checkpoint."
+    },
+    "official_interaction": {
+      "source": "ESC-Eval/evaluate.py",
+      "source_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+      "language": "en",
+      "cards_artifact": "ESC-Eval/data/card_high_en.json",
+      "cards": 331,
+      "turns": 5,
+      "supporter_system_prompt": "You are a helpful assistant!",
+      "initial_utterance": "Hello, I'm your personal assistant. You can confide in me about any worries or concerns you may have!",
+      "role_prompt_template_source": "evaluate.py run_rolellm English branch verbatim",
+      "role_generation": {
+        "model": "haidequanbu/ESC-Role",
+        "revision": "2e2a4733d2e71da242f348aad165fe171acd5df7",
+        "max_new_tokens": 512,
+        "explicit_arguments_in_evaluate_py": "max_new_tokens only",
+        "model_generation_config_effective": {
+          "do_sample": true,
+          "temperature": 0.7,
+          "top_p": 0.8,
+          "top_k": 20,
+          "repetition_penalty": 1.05
+        },
+        "project_seed": null
+      },
+      "generator_generation": {
+        "max_new_tokens": 256,
+        "do_sample": false,
+        "temperature": 0.0,
+        "eos": "provider-native Llama EOS/EOT handling",
+        "pad": "provider-native",
+        "seed": null
+      }
+    },
+    "provider_adaptation": {
+      "necessary_change": "Replace the local Hugging Face Llama class with the hosted OpenAI-compatible Llama 3.1 8B endpoint.",
+      "messages_preserved": true,
+      "max_tokens": 256,
+      "temperature": 0.0,
+      "retries": "one transient transport retry; logical output contract unchanged",
+      "project_prompt_added": false,
+      "project_content_rule_added": false,
+      "project_sampling_rule_added": false
+    },
+    "official_scoring": {
+      "source": "ESC-Eval/score.py",
+      "base_model": "internlm/internlm2-chat-7b",
+      "base_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+      "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+      "english_adapters": [
+        "fluency_en",
+        "diversity_en",
+        "empathic_en",
+        "suggestion_en",
+        "human_en",
+        "tech_en",
+        "overall_en"
+      ],
+      "dimensions": [
+        "Fluency",
+        "Expression",
+        "Empathy",
+        "Information",
+        "Humanoid",
+        "Skillful",
+        "Overall"
+      ],
+      "generation": {
+        "do_sample": false,
+        "temperature": 0.0
+      },
+      "parser": "First matching substring in ordered labels 0,1,2,3,4, exactly as score.py; raw output and exact-label audit also retained.",
+      "official_pass_line": null
+    },
+    "interpretation": {
+      "formal_absolute_pass": "NOT_DEFINED_BY_ESC_EVAL",
+      "operational_completion": "Report 331-card and 1655-turn completion, invalids, length finishes and failures.",
+      "quality": "Report original 0-4 seven dimensions and contextual comparison with repository-provided Llama3 English reference scores.",
+      "usable_for_pm": "PI judgment from official profile and operational behavior, without inventing a pass threshold."
+    },
+    "input_hashes": {
+      "rq0_llama31_8b_esc_eval_exact_contract_v1.json": "c98e71c7fd6c0b85c023a13d5f016c7536219b0a4ce24556198bdcaf86474642",
+      "46_run_rq0_llama31_8b_esc_eval_exact.py": "68f4f4be8c499274fd97b3f26f6e0123f1329cfaf98d414744053645835450b8",
+      "ESC-Eval/evaluate.py": "e66bda0e1093c2bec7c46daa6a64584cc6153e1f1bfde94b3fa2fd3c8f5629f8",
+      "ESC-Eval/score.py": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+      "ESC-Eval/data/card_high_en.json": "2c63cf0f65cbe159b38837e0da368667201d34e42c6e5ea1bedbcf35cb7ab4e8"
+    }
+  },
+  "identity_payload_sha256": "ca7c97b11330d69a4ad8a33f2aa13b039e3870ec4ba7d2d9e17313db51deb849",
+  "input_hashes": {
+    "rq0_llama31_8b_esc_eval_exact_contract_v1.json": "c98e71c7fd6c0b85c023a13d5f016c7536219b0a4ce24556198bdcaf86474642",
+    "46_run_rq0_llama31_8b_esc_eval_exact.py": "68f4f4be8c499274fd97b3f26f6e0123f1329cfaf98d414744053645835450b8",
+    "ESC-Eval/evaluate.py": "e66bda0e1093c2bec7c46daa6a64584cc6153e1f1bfde94b3fa2fd3c8f5629f8",
+    "ESC-Eval/score.py": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+    "ESC-Eval/data/card_high_en.json": "2c63cf0f65cbe159b38837e0da368667201d34e42c6e5ea1bedbcf35cb7ab4e8"
+  },
+  "cards_text_sha256": "2c63cf0f65cbe159b38837e0da368667201d34e42c6e5ea1bedbcf35cb7ab4e8",
+  "call_accounting": {
+    "cards": 331,
+    "turns": 5,
+    "llama_supporter_calls": 1655,
+    "qwen_calls": 0
+  },
+  "official_conditions": {
+    "role_max_new_tokens": 512,
+    "role_other_generation_args": "MODEL_GENERATION_CONFIG",
+    "role_project_seed": null,
+    "llama_max_new_tokens": 256,
+    "llama_temperature": 0.0,
+    "supporter_prompt": "You are a helpful assistant!"
+  },
+  "budget": {
+    "provider_paid_usd": 0.0,
+    "qwen_calls": 0,
+    "qwen_usd": 0.0
+  },
+  "api_calls": 0,
+  "authorization": "The user explicitly requested an official-configuration Llama-only ESC-Eval test on 2026-08-15."
+}

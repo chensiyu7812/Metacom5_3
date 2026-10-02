@@ -1,0 +1,66 @@
+{
+  "protocol": "paper1-full-pipeline-latency-pilot-freeze-v1",
+  "date": "2026-09-04",
+  "status": "ZERO_OUTCOME_PILOT_COMPLETE_NOT_ALLOCATOR_ELIGIBLE",
+  "not_an_empirical_pass_gate": true,
+  "scope": "preloaded candidate vectors; fresh BGE query encoding and all-head ranking, fixed pilot action, packing, request construction, and streaming local Generator inside one client monotonic clock",
+  "hardware": {
+    "query_embedding_and_ranking_gpu": "NVIDIA RTX A4500",
+    "streaming_generator_gpu": "NVIDIA RTX A6000",
+    "deployment_shape": "dual_local_GPU_concurrency_1"
+  },
+  "coverage": {
+    "tasks": [
+      "qa",
+      "summary"
+    ],
+    "configurations": [
+      "OFF",
+      "MP_k4",
+      "ME_k4",
+      "MS_k1",
+      "ALL_k4"
+    ],
+    "cold_calls": 1,
+    "warm_calls": 20,
+    "warm_repeats_per_task_configuration": 2,
+    "RS": false,
+    "dynamic_DG": false,
+    "trained_PM_coefficients": false
+  },
+  "component_latency": {
+    "live_query_embedding_plus_all_head_ranking": {
+      "median_ms": 63.223095,
+      "min_ms": 51.783888,
+      "max_ms": 169.04845
+    },
+    "fixed_action_branch": {
+      "median_ms": 0.001204,
+      "min_ms": 0.000785,
+      "max_ms": 0.00176
+    },
+    "resource_pack_plus_request_construction": {
+      "median_ms": 1.781095,
+      "min_ms": 0.140905,
+      "max_ms": 12.808164
+    }
+  },
+  "interpretation": "The full client clock works and adds real pre-provider work. N=2/cell, one target/task, and missing RS/DG/trained PM make these samples ineligible for allocator lookup or a paper p95 claim.",
+  "artifacts": {
+    "manifest": "paper1_full_pipeline_latency_pilot_manifest_20260904_v1.json",
+    "manifest_sha256": "2504e90a29f886a3152b1b33469da1aa94d7c0b08ea3d14b00e40cc8960b41db",
+    "traces": "paper1_full_pipeline_latency_pilot_traces_20260904_v1.jsonl",
+    "traces_sha256": "220401a90885093d77c15d179f4d98f0fd7991bfacbbfff1c5cf516a578dc3dd",
+    "report": "paper1_full_pipeline_latency_pilot_report_20260904_v1.json",
+    "report_sha256": "d7646764e07cd65325787b20d6d82d7bab5cb89a537c4e71cd814687a8f16c01"
+  },
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_cost_usd": 0.0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

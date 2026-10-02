@@ -1,0 +1,119 @@
+{
+  "protocol": "pm-paper1-latency-constrained-selective-policy-amendment-20260903-v1",
+  "date": "2026-09-03",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT",
+  "human_authority": "project/docs/PM_PAPER1_LATENCY_CONSTRAINED_SELECTIVE_POLICY_AMENDMENT_20260903_ZH.md",
+  "researcher_approval": {
+    "authorized": true,
+    "date": "2026-09-03",
+    "instruction": "好的，开始",
+    "approved_intent": "quality benefit and end-to-end latency jointly determine action-worthy ON/OFF; simple R0+M0-sufficient turns remain OFF"
+  },
+  "scoped_precedence": [
+    "overrides minimum-generator-input-tokens as the first cost tie-break in the 2026-08-31 threshold amendment",
+    "overrides interpretations of the 2026-08-16 execution reconciliation that exclude latency from deployment action-worthiness",
+    "does not put latency or monetary cost into the pure quality-effect learner label or loss"
+  ],
+  "estimands": {
+    "quality_effect": "probability of a materially positive realized response-quality effect under the frozen stack",
+    "action_worthiness": "quality-effect positive and no material harm and predicted end-to-end latency SLA-feasible",
+    "cost_in_quality_effect_label_or_loss": false,
+    "latency_in_deployment_action": true
+  },
+  "primary_selection": {
+    "protocol": "pm-paper1-latency-constrained-quality-first-one-se-v2",
+    "order": [
+      "hard_p95_latency_feasibility",
+      "quality_first_one_standard_error_admissibility",
+      "minimum_p95_request_to_completion_ms",
+      "minimum_median_request_to_completion_ms",
+      "minimum_p95_time_to_first_token_ms",
+      "minimum_mean_generator_input_tokens",
+      "lower_realized_on_rate",
+      "higher_probability_threshold",
+      "canonical_grid_order"
+    ],
+    "quality_minus_lambda_cost_composite": "FORBIDDEN",
+    "fixed_point_five": "MANDATORY_REFERENCE_NOT_UNIQUE_PRIMARY",
+    "confirmatory_or_outer_target_outcome_selection": "FORBIDDEN"
+  },
+  "latency_measurement": {
+    "user_facing_primary": [
+      "request_to_first_token_ms",
+      "request_to_completion_ms"
+    ],
+    "components": [
+      "policy_decision_ms",
+      "retrieval_embedding_ms",
+      "resource_render_pack_ms",
+      "generator_request_ms",
+      "generator_time_to_first_token_ms",
+      "generator_completion_ms"
+    ],
+    "distribution_reports": ["median", "p90", "p95", "max", "timeout_or_fallback_rate"],
+    "percentile_input": "raw per-call wall-clock samples; never p95 of per-state means",
+    "offline_evaluator_latency_excluded": true,
+    "text_only_claim_until_audio_stack_is_in_scope": true
+  },
+  "sla": {
+    "absolute_unacceptable_ceiling_ms": 60000,
+    "budgets_must_be_strictly_less_than_ceiling": true,
+    "time_to_first_token_budget_ms": null,
+    "request_to_completion_budget_ms": null,
+    "selection_percentile": 0.95,
+    "freeze_source": "zero-outcome same-stack latency profiling plus explicit researcher deployment requirement",
+    "formal_operating_point_status": "IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED",
+    "not_an_empirical_research_pass_gate": true
+  },
+  "multi_head_arbiter": {
+    "candidate_heads": ["MP", "ME", "MS"],
+    "only_eligible_threshold_positive_heads_enter": true,
+    "hard_global_latency_budget": true,
+    "overflow_priority": "descending probability margin per incremental p95 latency; canonical head order for exact ties",
+    "interaction_aware_optimality_claim": false,
+    "step2_may_reroute_or_drop": false
+  },
+  "appropriateness": {
+    "penalize": [
+      "current-context repetition",
+      "gratuitous memory display",
+      "mechanical repeated empathy",
+      "forced personalization",
+      "unnecessary advice or one-strategy overuse"
+    ],
+    "natural_turn_secondary_slice": {
+      "RS": "public ESConv ordinary turns",
+      "MP_ME_MS": "public EvoEmo ordinary historical session turns",
+      "strict_past_and_grouped_holdout": true,
+      "replaces_official_benchmark": false
+    }
+  },
+  "required_reporting": [
+    "effect correctness",
+    "latency-constrained action correctness",
+    "beneficial-but-latency-infeasible rate",
+    "latency-feasible ON precision and recall",
+    "p95 SLA violation rate",
+    "R0+M0-sufficient avoided-unnecessary-intervention rate",
+    "TTFT and completion distributions",
+    "tokens and recoverable API cost"
+  ],
+  "invalidated_implementation": [
+    "probability-only PolicyDecision primary assignment",
+    "ambiguous single CostRecord.latency_ms field",
+    "minimum-token-first threshold selector",
+    "action-worthiness contracts that forbid latency participation"
+  ],
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "current_activity": {
+    "paid_API_calls": 0,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0,
+    "formal_GPU_experiments": 0
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "status": "DEVELOPMENT_THROUGHPUT_SENSITIVITY_NOT_FINAL_PPO_BUDGET",
+  "actual_J_calls": 33,
+  "API_usd": 0,
+  "executor_G_calls": 0,
+  "load_seconds": 17.954477639053948,
+  "engine_wall_seconds": 1750.5848847049056,
+  "process_seconds": 1806.6054365830496,
+  "individual_request_seconds": {
+    "min": 74.54694386199117,
+    "median": 196.57925339601934,
+    "mean": 193.16698896689834,
+    "max": 295.0862905710237
+  },
+  "output_tokens_including_thinking": {
+    "min": 2271,
+    "median": 5994,
+    "mean": 5877.424242424242,
+    "max": 9379
+  },
+  "recorded_output_tokens_total": 193955,
+  "warm_batched_engine_seconds_per_finished_job": 53.04802680923956,
+  "by_context": {
+    "under_8192": {
+      "n": 12,
+      "latency_seconds": {
+        "min": 153.49818068894092,
+        "median": 204.58359748643124,
+        "mean": 216.6172116280553,
+        "max": 291.4020728900796
+      }
+    },
+    "8192_to_16383": {
+      "n": 11,
+      "latency_seconds": {
+        "min": 99.93426371994428,
+        "median": 186.32585210702382,
+        "mean": 188.7430644946342,
+        "max": 295.0862905710237
+      }
+    },
+    "at_least_16384": {
+      "n": 10,
+      "latency_seconds": {
+        "min": 74.54694386199117,
+        "median": 158.75440096651437,
+        "mean": 169.89303869300056,
+        "max": 273.74190866795834
+      }
+    }
+  },
+  "future_train_dev_source_coverage": {
+    "status": "SOURCE_LENGTH_COVERAGE_ONLY_NO_SCORING",
+    "prefixes": 114,
+    "splits": {
+      "train": 96,
+      "dev": 18
+    },
+    "test_prefixes": 0,
+    "source_only_tokens": {
+      "min": 666,
+      "median": 13054.5,
+      "max": 37418
+    },
+    "calibration_development_max_source_tokens": 25294,
+    "prefixes_longer_than_measured_calibration_source": 8,
+    "model_calls": 0,
+    "human_labels_read": 0,
+    "limitation": "Complete future scoring requests add instructions, reply units and actual new replies; do full admission checks at submission. Source length does not predict reasoning length."
+  },
+  "forecasts": [
+    {
+      "episodes_per_seed": 128,
+      "remaining_quality_slots_envelope": 3258,
+      "remaining_semantic_and_technical_extra_J_envelope": 248,
+      "warm_batched_J_hours_if_sample_rate_transfers": 51.66288388699831,
+      "individual_request_seconds_linear_hours": 188.1231842549849,
+      "optional_RQX_J_hours_in_batched_envelope": 4.2438421447391645
+    },
+    {
+      "episodes_per_seed": 384,
+      "remaining_quality_slots_envelope": 4794,
+      "remaining_semantic_and_technical_extra_J_envelope": 248,
+      "warm_batched_J_hours_if_sample_rate_transfers": 74.29670865894052,
+      "individual_request_seconds_linear_hours": 270.5410995475282,
+      "optional_RQX_J_hours_in_batched_envelope": 4.2438421447391645
+    }
+  ],
+  "limitations": [
+    "Three development owners and constructed controls are not representative of all future replies.",
+    "Future sources can exceed calibration context lengths; no test replies scored for this forecast.",
+    "Batching/caching changes elapsed time; individual latencies overlap and must not be summed as GPU occupancy.",
+    "Future executor generation, model reloads, encoding, policy compute, training and previous time still need a complete schedule.",
+    "No dollar price for local GPU occupancy was assumed. API cost is zero.",
+    "128/384 not selected yet; qualification and the complete <=96-hour prospective schedule control that choice."
+  ]
+}

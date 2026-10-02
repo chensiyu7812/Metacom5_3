@@ -1,0 +1,70 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-prequalification-v3",
+  "status": "EXPERIMENT_REQUIRED",
+  "authority": "paper1_official_esc_eval_compatibility_amendment_20260902_v1.json",
+  "supersedes": "paper1_esc_evaluator_prequalification_protocol_20260820_v2.json",
+  "official_anchor": "ESC-RANK",
+  "official_RQ1_main_scorer": "ESC-RANK at pinned InternLM2 and seven official adapters",
+  "official_main_scorer_replaceable_by_proxy": false,
+  "candidate_set": [
+    {
+      "candidate": "ESC-RANK",
+      "role": "official anchor and mandatory RQ1 main scorer",
+      "status": "EXPERIMENT_REQUIRED"
+    },
+    {
+      "candidate": "Qwen general judge",
+      "role": "supplemental blind qualification and sensitivity",
+      "status": "BLOCKED_EXACT_IDENTITY"
+    },
+    {
+      "candidate": "DeepSeek general judge",
+      "role": "supplemental blind qualification and sensitivity",
+      "status": "BLOCKED_EXACT_IDENTITY"
+    },
+    {
+      "candidate": "researcher-nominated independent-family judge",
+      "role": "supplemental blind qualification and sensitivity",
+      "status": "BLOCKED_EXACT_IDENTITY"
+    }
+  ],
+  "qualification_set": {
+    "items": 24,
+    "frozen_dual_human_reference": true,
+    "future_RS_topk_outcomes_forbidden": true,
+    "blind_to": ["PM identity", "arm", "ON/OFF", "k", "token budget", "Ours/baseline"]
+  },
+  "ESC_RANK_runtime": {
+    "minimum_gpu_mib": 24576,
+    "dialogues": 3,
+    "repeats": 2,
+    "dimension_passes": 42,
+    "primary_parser": "exact pinned ESC-Eval score.py label_list contains semantics",
+    "strict_parser": "supplemental diagnostic only",
+    "required": ["peak VRAM", "cold and warm latency", "official parse rate", "exact raw and official-vector determinism", "all model adapter and code hashes"]
+  },
+  "comparison_metrics": [
+    "quadratic weighted kappa against each rater",
+    "Spearman rho against each rater",
+    "mean absolute deviation against each rater",
+    "targeted adjudicated Overall absolute error",
+    "pairwise winner consistency",
+    "valid parse rate",
+    "dynamic range",
+    "verbosity suggestion and family bias",
+    "latency and GPU hours or API USD"
+  ],
+  "selection_rule": {
+    "official_ESC_RANK_remains_main": true,
+    "supplemental_judge_priority": ["validity and human agreement", "bias and sensitivity", "cost and latency"],
+    "selection_by_PM_or_Ours_score": "FORBIDDEN"
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "outcome_calls": 0,
+  "formal_ESC_Eval": false
+}

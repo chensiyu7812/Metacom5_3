@@ -1,0 +1,267 @@
+{
+  "protocol": "paper1-local-teacher-development-execution-result-v1",
+  "completed_at": "2026-09-17T10:06:38.912479+00:00",
+  "development_scope_complete": true,
+  "runs": {
+    "selene_mini_8b": {
+      "planned": 160,
+      "completed_records": 160,
+      "natural_ends": 160,
+      "statuses": {
+        "SUCCEEDED": 158,
+        "PARSE_FAILED": 2
+      },
+      "finishes": {
+        "stop": 160
+      },
+      "engine_wall_seconds": 274.5048253440036,
+      "overlapping_request_seconds_not_GPU_wall": 1082.3257385479665,
+      "output_tokens_min_median_max": [
+        41,
+        73.5,
+        111
+      ],
+      "model_revision": "427792f1c3e2073cb7da216924fd884b1ba496e0",
+      "identity_sha256": "a8f0912105da3709c9084afc30977d356ea2db81227eba79dcb06dbdce95874d",
+      "response_format": "JSON",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.7.1+cu128",
+        "transformers": "4.55.4",
+        "vllm": "0.10.1"
+      }
+    },
+    "compassjudger2_7b": {
+      "planned": 160,
+      "completed_records": 160,
+      "natural_ends": 160,
+      "statuses": {
+        "SUCCEEDED": 160
+      },
+      "finishes": {
+        "stop": 160
+      },
+      "engine_wall_seconds": 266.5146329170093,
+      "overlapping_request_seconds_not_GPU_wall": 1054.9856382190192,
+      "output_tokens_min_median_max": [
+        62,
+        102.0,
+        164
+      ],
+      "model_revision": "f913ec1569c282f02530028fedc1ce9832024ebf",
+      "identity_sha256": "b2b530dd8ad0a29b2c9584e2fdea2bf48f554e93f50294cc48a9128e15fd2c4c",
+      "response_format": "JSON",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.7.1+cu128",
+        "transformers": "4.55.4",
+        "vllm": "0.10.1"
+      }
+    },
+    "qwen35_9b": {
+      "planned": 160,
+      "completed_records": 160,
+      "natural_ends": 160,
+      "statuses": {
+        "SUCCEEDED": 144,
+        "PARSE_FAILED": 16
+      },
+      "finishes": {
+        "stop": 160
+      },
+      "engine_wall_seconds": 4747.648176704999,
+      "overlapping_request_seconds_not_GPU_wall": 18781.61209576906,
+      "output_tokens_min_median_max": [
+        847,
+        3657.5,
+        7598
+      ],
+      "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "identity_sha256": "3df17b8aff9c05866e41e5e67f04a78ac4f0085d6e05aee7880d2ed0cb3512a6",
+      "response_format": "JSON",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.10.0",
+        "transformers": "5.5.1",
+        "vllm": "0.19.1"
+      }
+    },
+    "selene_reasoning_first": {
+      "planned": 160,
+      "completed_records": 160,
+      "natural_ends": 159,
+      "statuses": {
+        "SUCCEEDED": 153,
+        "PARSE_FAILED": 6,
+        "INCOMPLETE": 1
+      },
+      "finishes": {
+        "stop": 159,
+        "timeout": 1
+      },
+      "engine_wall_seconds": 460.3173552359949,
+      "overlapping_request_seconds_not_GPU_wall": 1483.6694585750083,
+      "output_tokens_min_median_max": [
+        82,
+        120.0,
+        7934
+      ],
+      "model_revision": "427792f1c3e2073cb7da216924fd884b1ba496e0",
+      "identity_sha256": "e98b9e78812347f8fde2b939d990bcf25ed973da720a0aff8e3f94b408637a57",
+      "response_format": "reasoning_then_result",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.7.1+cu128",
+        "transformers": "4.55.4",
+        "vllm": "0.10.1"
+      }
+    },
+    "summary_generator": {
+      "planned": 26,
+      "completed_records": 26,
+      "natural_ends": 26,
+      "statuses": {
+        "COMPLETED": 26
+      },
+      "finishes": {
+        "stop": 26
+      },
+      "engine_wall_seconds": 249.75224401103333,
+      "overlapping_request_seconds_not_GPU_wall": 249.75224401103333,
+      "output_tokens_min_median_max": [
+        17,
+        158.5,
+        431
+      ],
+      "model_revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+      "identity_sha256": "51d18e522637dab16ea202855afff3cf37b83faccbee10e3bb33ac1b660d04cc",
+      "response_format": "original_Generator_text",
+      "backend": "transformers",
+      "packages": {
+        "torch": "2.3.1+cu121",
+        "transformers": "4.57.6",
+        "huggingface_hub": "0.36.2"
+      }
+    },
+    "summary_evidence_qwen35_9b": {
+      "planned": 52,
+      "completed_records": 52,
+      "natural_ends": 52,
+      "statuses": {
+        "SUCCEEDED": 43,
+        "PARSE_FAILED": 9
+      },
+      "finishes": {
+        "stop": 52
+      },
+      "engine_wall_seconds": 1751.0579164310038,
+      "overlapping_request_seconds_not_GPU_wall": 6739.534259987995,
+      "output_tokens_min_median_max": [
+        1697,
+        3436.5,
+        7155
+      ],
+      "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "identity_sha256": "5a206a7e299fc2dab1a55f1ae06989708f9fc9744ceafc44f7c548742df0b890",
+      "response_format": "JSON",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.10.0",
+        "transformers": "5.5.1",
+        "vllm": "0.19.1"
+      }
+    },
+    "summary_evidence_compassjudger2_7b": {
+      "planned": 52,
+      "completed_records": 52,
+      "natural_ends": 52,
+      "statuses": {
+        "SUCCEEDED": 51,
+        "PARSE_FAILED": 1
+      },
+      "finishes": {
+        "stop": 52
+      },
+      "engine_wall_seconds": 166.1768284689897,
+      "overlapping_request_seconds_not_GPU_wall": 654.9347050099896,
+      "output_tokens_min_median_max": [
+        77,
+        113.0,
+        193
+      ],
+      "model_revision": "f913ec1569c282f02530028fedc1ce9832024ebf",
+      "identity_sha256": "3b57e02c31e0b9f6cde64bf2b8c15a077dd8e2c67e8b6976bcceeca768bbdf12",
+      "response_format": "JSON",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.7.1+cu128",
+        "transformers": "4.55.4",
+        "vllm": "0.10.1"
+      }
+    },
+    "summary_evidence_selene_reasoning_first": {
+      "planned": 52,
+      "completed_records": 52,
+      "natural_ends": 52,
+      "statuses": {
+        "SUCCEEDED": 43,
+        "PARSE_FAILED": 9
+      },
+      "finishes": {
+        "stop": 52
+      },
+      "engine_wall_seconds": 193.9425797740114,
+      "overlapping_request_seconds_not_GPU_wall": 765.186511955937,
+      "output_tokens_min_median_max": [
+        98,
+        118.5,
+        227
+      ],
+      "model_revision": "427792f1c3e2073cb7da216924fd884b1ba496e0",
+      "identity_sha256": "50c6658424b3c4615e287e9187927c98757fdfdfa84ef7ddd329672766ac094a",
+      "response_format": "reasoning_then_result",
+      "backend": "vllm",
+      "packages": {
+        "torch": "2.7.1+cu128",
+        "transformers": "4.55.4",
+        "vllm": "0.10.1"
+      }
+    }
+  },
+  "planned_completed_records_excluding_discontinued_configurations": 822,
+  "all_recorded_generation_starts_including_discontinued_configurations": 873,
+  "interrupted_Qwen_setup": {
+    "recorded_starts": 1,
+    "completed_records": 0,
+    "conservative_wall_reserve_seconds": 900
+  },
+  "discontinued_Qwen_coding_profile": {
+    "recorded_starts": 50,
+    "completed_records": 46,
+    "interrupted_active_starts": 4,
+    "natural_ends": 45,
+    "timeout_records": 1,
+    "engine_wall_seconds": 1868.849411,
+    "not_combined_with_general_task_results": true
+  },
+  "conservatively_accounted_generation_wall_seconds": 10878.763969887044,
+  "generation_budget_seconds": 14400,
+  "within_generation_budget": true,
+  "new_API_cost_usd": 0,
+  "formal_outcomes": 0,
+  "PM_training_runs": 0,
+  "reference_interpretation": "joint-human and reused-sample development reference, not independent gold accuracy",
+  "tests": {
+    "non_GPU_Paper1_passed": 881,
+    "failed": 0,
+    "later_format_recovery_targeted_tests_passed": 22,
+    "log_sha256": "cd061f81673465e59451363cba1cec6a0d85e071c8b83c0818cfbb6909fe813a"
+  },
+  "private_artifact_hashes": {
+    "outputs/paper1_pairwise_teacher/local_comparison_20260917_v2/comparison_statistics.json": "2d168b3627804834a39fbdb1438cb0cd43f75733dfc9809ff690a284e9f3bd1d",
+    "outputs/paper1_pairwise_teacher/local_comparison_20260917_v2/summary_evidence_diagnostic/statistics.json": "f55cb91f99162e68889377b0c751109b25a53f8d8190346278f3d6db2e37a632",
+    "outputs/paper1_pairwise_teacher/local_comparison_20260917_v2/summary_natural_end_statistics.json": "39cab983b8a3f7fe01587a633e794818ee2091e211fe16966699380efeaadcd3",
+    "outputs/paper1_pairwise_teacher/local_comparison_20260917_v2/base80_reference_and_judges.csv": "dffb0caefb52eb38dd4aa74c1efd63a9cd3da47a6be6c337e75ca92e8ffa7cae",
+    "outputs/paper1_pairwise_teacher/local_comparison_20260917_v2/summary_evidence_diagnostic/summary13_evidence_and_completion_comparison.csv": "1253ea14a494775e7780bc7706c2e60a8c710eeb024456111f6ed80b08fc3a13"
+  }
+}

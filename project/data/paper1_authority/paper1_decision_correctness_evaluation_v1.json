@@ -1,0 +1,34 @@
+{
+  "protocol": "paper1-decision-correctness-evaluation-v1",
+  "status": "ACTIVE_PRE_OUTCOME",
+  "date": "2026-09-03",
+  "effect_correctness": {
+    "unit": "grouped-OOF or outer-fold-held-out local effect row",
+    "metrics": ["ON-benefit recall", "OFF-nonbenefit specificity", "unnecessary-open", "missed-benefit", "balanced accuracy", "Brier", "log loss", "calibration curve"],
+    "equivalent": "nonbeneficial for deployment and separately reported",
+    "uncertain_invalid": "excluded from accuracy denominator and fully reported"
+  },
+  "action_correctness": {
+    "oracle": "quality-beneficial AND no material harm AND active client-latency constraint-feasible",
+    "metrics": [
+      "beneficial-but-latency-infeasible rate",
+      "latency-feasible ON precision",
+      "latency-feasible ON recall",
+      "p95 client-latency constraint violation rate",
+      "R0+M0-sufficient avoided-unnecessary-intervention rate",
+      "quality-admissible latency saving",
+      "timeout/fallback rate"
+    ]
+  },
+  "natural_turn_appropriateness": {
+    "RS_source": "ESConv ordinary turns",
+    "memory_source": "EvoEmo ordinary historical session turns",
+    "public_only": true,
+    "outcome_blind_sampling": true,
+    "official_benchmark_replacement": false
+  },
+  "confirmatory_local_slice": "sealed PM decision before unchosen counterfactual generation; never feeds training or threshold",
+  "interactive_caveat": "ESC and DG local correctness is myopic fixed-prefix evidence, not global sequential-policy regret",
+  "cross_task_composite": "FORBIDDEN",
+  "formal_outcome_calls": 0
+}

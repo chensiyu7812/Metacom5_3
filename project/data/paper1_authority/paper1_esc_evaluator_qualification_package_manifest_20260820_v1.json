@@ -1,0 +1,44 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-qualification-package-manifest-v1",
+  "status": "READY_FOR_TWO_HUMAN_REVIEW_JUDGE_EXECUTION_BLOCKED",
+  "source": {
+    "official_repository": "https://github.com/haidequanbu/ESC-Eval",
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724"
+  },
+  "counts": {
+    "natural_public_baseline_dialogues": 6,
+    "natural_system_pairs": 3,
+    "controlled_bias_items": 18,
+    "controlled_bias_pairs": 9,
+    "total_blind_items": 24
+  },
+  "limitations": [
+    "the pinned public repository contains only 3 role cards x 2 public baseline systems, not the planned 24 natural dialogues",
+    "controlled probes supplement but do not replace natural-dialogue agreement evidence",
+    "human sheets are blank and Codex has not acted as a human rater",
+    "Qwen, DeepSeek, and independent-family exact judge identities remain researcher decisions",
+    "ESC-RANK runtime still requires an attached >=24 GiB GPU and pinned local snapshots"
+  ],
+  "artifact_sha256": {
+    "items": "e3ddf952d9f5f080f03af4604b3a08f0055ca10ec6838ae33eefc6f4e9b1c0dc",
+    "judge_blind_input": "3cc69f6aa0ef4a833146d19e7c9e7c2625338af7ddc4729546ca91266733f655",
+    "esc_rank_runtime_smoke": "ddb85a4664ed93d1a2d42aeb71cc061cbc9632b4b56ade2343b5c1cb25f2a9d7",
+    "audit": "5879760062afba8ef1d5bbc759e9211e4252c201554712ccff0046371cfa03d9",
+    "pairs": "c6db2c5591df8e1abbed2673918482f85fd793e8e24afa93b0b887f67b934c7d",
+    "rater_a": "e9ca2faaa7a303fe3152f65f779cea8f4d347005bda1fecf5c9cfdec5665218f",
+    "rater_b": "7daaea10e5bc2f464df5e39992f3b22944ec668845e386db72aae5b887381932",
+    "adjudication": "86e502adaf7a3def6390b542164fe274ac3b6ab9d26dfc90840d4e56d31829c3",
+    "judge_template": "50d3a165cd3fb9b46c29bc639d43b53f01ff373f14fa6d4640846cdf3052df16",
+    "instrument": "13d797b8cfe3e9cfaae095a4c9f7dff32a5efff361283d6b4bdca92ebeba4d19",
+    "registry": "7fe0b72ed980450c33ee6c00c0a7498c3cc19d6b9b24b1f499e8427fd599f89e"
+  },
+  "selection_rule": [
+    "validity_and_human_agreement",
+    "bias_and_sensitivity",
+    "cost_and_latency"
+  ],
+  "formal_ESC_Eval": false,
+  "formal_outcome_calls": 0,
+  "judge_calls": 0
+}

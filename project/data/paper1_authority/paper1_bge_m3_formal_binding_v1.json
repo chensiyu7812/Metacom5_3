@@ -1,0 +1,104 @@
+{
+  "protocol": "pm-paper1-bge-m3-formal-binding-v1",
+  "status": "FORMAL_BINDING_HARDENED_V2_MATERIALIZATION_NOT_STARTED",
+  "status_correction_20260818": "Originally reported as a completed formal binding, then corrected to ENGINEERING_ATTESTATION_PASS/HARDENING_PENDING once 6 real gaps were found. All 6 are closed as of 2026-08-19 -- see known_gaps_20260818_resolution below. A second review the same day found the runtime-identity binding and the max_seq_length assertion were both declare-only with no code enforcement at the actual cache-key/encode call sites; both are now closed too -- see the two RESOLVED_20260819B entries below. Materialization still has not started; do not wire this into zero_outcome_census.py without a separate decision to do so.",
+  "known_gaps_20260818_resolution": [
+    "RESOLVED: encoder_binding now includes max_seq_length/truncation_side/dtype as frozen fields (real values read from the live model, not guessed), and identity_sha256 covers them. torch/sentence-transformers versions are deliberately NOT frozen fields (a version bump should change identity, not require editing a constant) -- they are captured live every load as BgeM3RuntimeIdentity, folded into runtime_identity_20260819 below.",
+    "RESOLVED: model_safetensors_sha256 is now re-hashed from the actual local Hub cache file (huggingface_hub.scan_cache_dir) at every model load and compared against the declared value -- BgeM3Encoder._load_model raises RuntimeError on any mismatch instead of trusting a copied constant.",
+    "RESOLVED: pooling_mode, max_seq_length, truncation_side, and dtype are now asserted against the live loaded model's real config at every load (not just checked once manually outside the module) -- any mismatch raises RuntimeError before encode() can run.",
+    "RESOLVED: BgeM3Encoder.encode now sizes batch_size adaptively from text length (4/16/32 tiers) and backs off on CUDA OOM rather than assuming a fixed 32 is always safe -- live-tested with a 5440-character string (well past the >4000-char tier) on this RTX 2070, encoded successfully at batch_size=4.",
+    "RESOLVED: EmbeddingSuccessCache.store_success/load now validate vector length (==embedding_dimension), finiteness (no NaN/Inf), and L2 norm (~=1.0 when expect_normalized) -- both write and read paths fail closed; regression tests cover a 2-dim vector, a NaN, an Inf, and an unnormalized vector all being rejected.",
+    "RESOLVED_20260819B: EmbeddingCallIdentity previously only bound binding_identity_sha256, with a docstring comment telling callers to 'fold in' BgeM3Encoder.runtime_identity themselves -- no code path actually did. EmbeddingCallIdentity.runtime_identity_sha256 is now a required field (see cache_and_identity below), so a torch/sentence-transformers version bump changes the cache key even when BgeM3Binding is unchanged. Regression test: test_cache_key_changes_when_runtime_identity_changes.",
+    "RESOLVED_20260819B: max_seq_length=8192 was only asserted once at model-load time against the model's own config, never checked against actual candidate/document text at encode() time -- sentence-transformers would have silently truncated (truncation_side='right') any longer input instead of raising. BgeM3Encoder.encode now tokenizes every input without truncation and raises RuntimeError before encoding if any text exceeds max_seq_length. Regression test: test_encode_fails_closed_on_text_that_would_be_silently_truncated (real GPU).",
+    "STILL OPEN, not an encoder-hardening item: MP/MS/ME query_field=Target.visible_query_text is only correct for the STATIC_ZERO_OUTCOME_CENSUS; a FORMAL_DG_RUNTIME later needs a distinct, dynamic query from the live current-round seeker utterance (see official_visibility_audit.SURFACE_B_NO_PM_IN_HARNESS_NOTE). Documented here as a scope boundary, not something this round's hardening was meant to close."
+  ],
+  "outcome_calls": 0,
+  "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
+  "encoder_binding": {
+    "binding_version": "paper1-bge-m3-embedding-binding-v2",
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE",
+    "revision_shared_with": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json#local_model_binding -- same exact revision, one encoder identity project-wide, not two independently-frozen copies",
+    "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "pooling_mode": "cls",
+    "normalize_embeddings": true,
+    "embedding_dimension": 1024,
+    "max_seq_length": 8192,
+    "truncation_side": "right",
+    "dtype": "torch.float32",
+    "identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+    "official_unpinned_main_weight_equivalence": "NOT_ESTABLISHED",
+    "note": "Every field above is asserted against the live loaded model at every BgeM3Encoder call, not merely declared -- see BgeM3Encoder._load_model. torch/sentence-transformers package versions are intentionally not part of this identity; see runtime_identity_20260819."
+  },
+  "local_rtx_2070_attestation_20260818": {
+    "gpu_name": "NVIDIA GeForce RTX 2070",
+    "gpu_total_memory_mib": 8192,
+    "gpu_free_memory_mib_before_probe": 7111,
+    "torch_version": "2.13.0+cu130",
+    "cuda_available": true,
+    "load_seconds": 154.6,
+    "load_seconds_note": "first-run cold download; subsequent loads are local-cache reads, not re-timed here",
+    "encode_seconds_for_2_short_strings": 0.597,
+    "gpu_memory_allocated_mb": 2281.114112,
+    "output_shape": [2, 1024],
+    "output_l2_norms": [1.0, 0.99999994],
+    "note": "This is the first real confirmation this specific local machine (RTX 2070) can run BGE-M3; the existing official RAG attestation ran on an NVIDIA RTX A6000, a different machine, and cannot be read as covering this GPU."
+  },
+  "runtime_identity_20260819": {
+    "captured_by": "BgeM3Encoder.runtime_identity, live at model load, not hardcoded",
+    "torch_version": "2.13.0+cu130",
+    "sentence_transformers_version": "5.7.0",
+    "weights_sha256_verified": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "runtime_identity_sha256": "44922aafab4f151043fad5f9904cf475a40dd443bb889c38e3cefad628d494d2",
+    "long_text_probe": {
+      "input_chars": 5440,
+      "note": "Exercises the >4000-char adaptive batch_size=4 tier, not just the original 2-short-string smoke test.",
+      "encode_seconds_for_3_texts_incl_one_5440char": 18.795,
+      "output_l2_norms": [1.0000000352490743, 1.000000005339698, 1.0000000448994293]
+    }
+  },
+  "per_head_text_construction": {
+    "RS": {
+      "query_field": "metacom_pm.paper1.rs.zero_outcome_census.RSDecisionState.query_text",
+      "query_construction": "Last query_preceding_turns=6 visible dialogue turns (dialogue-only v2, current-dialogue-excluded), rendered as \"speaker: content\" lines joined by newline. Already frozen, tested code -- this binding does not redefine it.",
+      "document_field_correction_20260818": "Originally bound document_field to StrategySourceCard.retrieval_text (source-context only, shared by every accepted unit from the same source card). This was wrong given decision 10's catalog cardinality (one AcceptedAtomicMoveUnit = one independently-retrievable catalog entry): two atomic units from the same source card would get IDENTICAL document embeddings and IDENTICAL similarity scores against any query, so top-1 selection between them would degenerate into an arbitrary card_id tie-break instead of a real semantic choice. Corrected below -- document is now bound per accepted unit, not per source card, matching decision 10's own granularity so retrieval identity, feature identity, and injection identity all align.",
+      "document_field": "metacom_pm.paper1.rs_atomic_move.catalog.build_atomic_move_retrieval_document: StrategySourceCard.retrieval_text (source context, per source card) concatenated with AcceptedAtomicMoveUnit.rendered_card_text (this specific unit's own rendered content) -- computed separately for every accepted unit, never shared across units from the same source card",
+      "document_construction": "f\"{retrieval_text}\\n{rendered_card_text}\" per accepted unit. retrieval_text retains the frozen preceding_turns=6 dialogue-only-v2 source-context construction. The executable constructor validates exact source-turn and full dialogue-lineage alignment before emitting a hash-bound document. BGE-M3 embedding/materialization remains pending formal-binding hardening.",
+      "consistency_note": "Query and the source-context half of the document use the identical construction rule (same window size, same rendering), so a query and a candidate are always comparable text of the same shape. The unit-specific half (rendered_card_text) is what makes two atomic units from one source card produce genuinely different document embeddings."
+    },
+    "MP": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "The real officially-asked QA/Summary question text; None for DG (no static current-dialogue state pre-generation, B17.4 -- BGE-M3 similarity is therefore N/A for DG, same convention as the existing lexical-overlap proxy and the explicit_signals detectors).",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "The v6 Qwen compiler's deterministically-rendered candidate text (e.g. \"Profile fact [health_condition]: ...\"), already hash-bound per accepted unit.",
+      "consistency_note": "Same query field already used by the existing lexical_candidate_query_jaccard_ge_0_6_proxy in features/zero_outcome_census.py -- BGE-M3 is a drop-in upgrade path for that proxy, not a new text source."
+    },
+    "MS": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "Same as MP.",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "Same as MP, for MS-classed accepted units.",
+      "consistency_note": "Same as MP."
+    },
+    "ME": {
+      "query_field": "metacom_pm.paper1.data.memory_source.Target.visible_query_text",
+      "query_construction": "Same as MP.",
+      "document_field": "metacom_pm.paper1.semantic_memory.contracts.AcceptedSemanticMemoryUnit.rendered_candidate_content",
+      "document_construction": "Same as MP, for ME-classed accepted units.",
+      "consistency_note": "Same as MP."
+    }
+  },
+  "cache_and_identity": {
+    "module": "metacom_pm.paper1.embeddings.cache.EmbeddingSuccessCache",
+    "identity_fields": ["binding_identity_sha256", "runtime_identity_sha256", "field_source", "text_sha256"],
+    "fail_closed_behavior": "Re-storing the same identity with a different vector raises RuntimeError rather than silently overwriting; a binding change (revision/pooling/normalization) produces a different binding_identity_sha256, and a torch/sentence-transformers version change produces a different runtime_identity_sha256 (required field as of 2026-08-19B) -- neither ever collides with prior cached vectors under the old identity.",
+    "no_budget_ledger": "Embedding is local GPU compute with no metered per-call cost, unlike the Qwen compilers; no budget/authorization artifact is needed for this binding or for future materialization runs."
+  },
+  "not_yet_done": [
+    "Corpus-wide embedding materialization for RS (12169 source cards) or MP/MS/ME (2745 accepted units) -- this artifact freezes what would be embedded, not the act of embedding it at scale.",
+    "Wiring computed cosine similarity into zero_outcome_census.py to replace the lexical-Jaccard/word-overlap proxies -- the proxies remain the active features until this wiring lands and is tested.",
+    "NVIDIA NIM tokenizer provider-parity check (RS M2 freeze decision 5's other pending item) -- unrelated to this binding, still open.",
+    "Query construction for the RS atomic-move final catalog after the full 12169-card compile is re-run following the verifier fix -- this binding uses StrategySourceCard.retrieval_text, which is compile-independent, but any change to which cards exist does not require re-freezing this binding."
+  ]
+}

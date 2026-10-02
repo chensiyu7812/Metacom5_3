@@ -1,0 +1,76 @@
+{
+  "protocol": "pm-paper1-v2-1-consistency-amendment-20260903-v1",
+  "date": "2026-09-03",
+  "status": "ACTIVE_PRE_OUTCOME_CONSISTENCY_REPAIR",
+  "human_authority": "project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md",
+  "basis": {
+    "researcher_direction": [
+      "好的，开始",
+      "别再拿自己设置的标准当硬门然后一直原地打转地改了",
+      "你分析看看怎么办"
+    ],
+    "formal_outcome_calls_before_repair": 0,
+    "pm_training_runs_before_repair": 0,
+    "new_empirical_pass_gate": false
+  },
+  "ontology": {
+    "status": "ACTIVE_UNIQUE_MULTI_VIEW_ONTOLOGY",
+    "not_claimed_as_es_memeval_official_taxonomy": true,
+    "MP": "target-time Current Profile View of stable slot-like user facts",
+    "ME": "strict-past Atomic Event/Experience Timeline",
+    "MS": "one complete strict-past raw Session transcript",
+    "action_observed_outcome": "ME subtype",
+    "same_source_multi_view_projection_allowed_with_shared_lineage": true,
+    "v7_v8_v9": "HISTORICAL_DEV_ONLY"
+  },
+  "threshold": {
+    "protocol": "pm-paper1-client-e2e-quality-latency-frontier-v4",
+    "quality_surface": "normalized task-specific official primary quality of the arm selected by each policy",
+    "decision_correctness_surface": "separate diagnostic; never named or used as official quality",
+    "one_se_uses": "official primary quality only",
+    "isolation": "grouped OOF or outer-training/inner-OOF only",
+    "confirmatory_or_held_out_outer_target_selection": "FORBIDDEN"
+  },
+  "client_latency": {
+    "measurement_protocol": "paper1-client-latency-measurement-v3",
+    "terminal_timeout_or_incomplete_floor_ms": 60000,
+    "successful_fallback_uses_actual_client_latency": true,
+    "fallback_rate_and_reason_reported_separately": true,
+    "schedule": "random target microblocks; random adjacent arms within target/repeat"
+  },
+  "runtime_latency_prediction": {
+    "protocol": "paper1-outcome-blind-paired-p95-lookup-v1",
+    "key": ["task", "head", "visible-context-token-bin", "resource-token-bin"],
+    "source": "zero-outcome same-stack timing profiler",
+    "prediction_time": "before current action",
+    "post_action_latency_feedback_into_current_action": false
+  },
+  "esc_guard": {
+    "primary": "Overall",
+    "guards": ["Empathy", "Information"],
+    "material_degradation": "at least one ordinal point in the direction opposite the primary/pairwise direction",
+    "guard_improvement_required": false,
+    "natural_turn_pairwise_appropriateness_retained": true
+  },
+  "preserved": [
+    "benefit-only L2 learner",
+    "Cost excluded from quality label/loss",
+    "Natural-turn slice",
+    "Matched-Random preserves each state-specific bundle",
+    "RS OFF throughout RQ2 main arms",
+    "ESC-RANK RQ1 primary scorer",
+    "ES-MemEval official task metric families",
+    "four outcome locks CLOSED"
+  ],
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "current_activity": {
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "formal_gpu_experiments": 0
+  }
+}

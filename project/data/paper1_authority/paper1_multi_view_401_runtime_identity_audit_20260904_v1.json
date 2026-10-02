@@ -1,0 +1,199 @@
+{
+  "protocol": "paper1-multi-view-401-runtime-identity-uniformity-audit-v1",
+  "date": "2026-09-04",
+  "status": "UNIFORM_IDENTITY_PASS",
+  "not_an_empirical_pass_gate": true,
+  "scope": "mechanical reproducibility identity only; no candidate correctness judgement",
+  "checks": {
+    "exact_401_session_results": true,
+    "single_compiler_version": true,
+    "single_grounding_version": true,
+    "single_accepted_unit_compiler_identity": true,
+    "exact_401_extractor_success_caches": true,
+    "exact_401_verifier_success_caches": true,
+    "all_cache_stable_identity_fields_singleton": true,
+    "single_extractor_attempt_prompt": true,
+    "single_verifier_attempt_prompt": true,
+    "batch_report_binds_session_results": true,
+    "promoted_results_byte_identical": true
+  },
+  "session_surface": {
+    "rows": 401,
+    "compiler_versions": [
+      "paper1-qwen-multi-view-memory-compiler-v7"
+    ],
+    "grounding_versions": [
+      "paper1-multi-view-structural-grounding-v1"
+    ],
+    "accepted_unit_compiler_identities": [
+      "7b4a31d49fd483e088b52bf1d7183f18782295e56281b61dc7caa508efa70ab8"
+    ]
+  },
+  "extractor": {
+    "success_cache_files": 401,
+    "stable_identity_unique_counts": {
+      "base_url": 1,
+      "compiler_version": 1,
+      "model": 1,
+      "phase": 1,
+      "prompt_sha256": 1,
+      "protocol": 1,
+      "provider": 1,
+      "region": 1,
+      "request_parameters.max_tokens": 1,
+      "request_parameters.maximum_prompt_tokens": 1,
+      "request_parameters.prompt_token_safety_margin": 1,
+      "request_parameters.seed": 1,
+      "request_parameters.temperature": 1,
+      "request_parameters.tokenizer_identity": 1,
+      "schema_sha256": 1
+    },
+    "stable_identity_values": {
+      "base_url": [
+        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+      ],
+      "compiler_version": [
+        "paper1-qwen-multi-view-memory-compiler-v7"
+      ],
+      "model": [
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "phase": [
+        "extractor"
+      ],
+      "prompt_sha256": [
+        "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a"
+      ],
+      "protocol": [
+        "paper1-multi-view-success-cache-v1"
+      ],
+      "provider": [
+        "Alibaba Cloud Model Studio"
+      ],
+      "region": [
+        "Singapore (International)"
+      ],
+      "request_parameters.max_tokens": [
+        "2048"
+      ],
+      "request_parameters.maximum_prompt_tokens": [
+        "16384"
+      ],
+      "request_parameters.prompt_token_safety_margin": [
+        "128"
+      ],
+      "request_parameters.seed": [
+        "0"
+      ],
+      "request_parameters.temperature": [
+        "0.0"
+      ],
+      "request_parameters.tokenizer_identity": [
+        "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3"
+      ],
+      "schema_sha256": [
+        "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b"
+      ]
+    },
+    "contains_response_or_dialogue_text": false
+  },
+  "verifier": {
+    "success_cache_files": 401,
+    "stable_identity_unique_counts": {
+      "base_url": 1,
+      "compiler_version": 1,
+      "model": 1,
+      "phase": 1,
+      "prompt_sha256": 1,
+      "protocol": 1,
+      "provider": 1,
+      "region": 1,
+      "request_parameters.max_tokens": 1,
+      "request_parameters.maximum_prompt_tokens": 1,
+      "request_parameters.prompt_token_safety_margin": 1,
+      "request_parameters.seed": 1,
+      "request_parameters.temperature": 1,
+      "request_parameters.tokenizer_identity": 1,
+      "schema_sha256": 1
+    },
+    "stable_identity_values": {
+      "base_url": [
+        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+      ],
+      "compiler_version": [
+        "paper1-qwen-multi-view-memory-compiler-v7"
+      ],
+      "model": [
+        "qwen3-235b-a22b-instruct-2507"
+      ],
+      "phase": [
+        "verifier"
+      ],
+      "prompt_sha256": [
+        "d32431d7c7723e1d72ed95d3e804a7659f3548c3ce9de0113700fee566352c05"
+      ],
+      "protocol": [
+        "paper1-multi-view-success-cache-v1"
+      ],
+      "provider": [
+        "Alibaba Cloud Model Studio"
+      ],
+      "region": [
+        "Singapore (International)"
+      ],
+      "request_parameters.max_tokens": [
+        "512"
+      ],
+      "request_parameters.maximum_prompt_tokens": [
+        "16384"
+      ],
+      "request_parameters.prompt_token_safety_margin": [
+        "128"
+      ],
+      "request_parameters.seed": [
+        "0"
+      ],
+      "request_parameters.temperature": [
+        "0.0"
+      ],
+      "request_parameters.tokenizer_identity": [
+        "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3"
+      ],
+      "schema_sha256": [
+        "bd7615a8ab1ff58f2d2c5d35f16e1a34a3d5a988d6f0a8c989d24c7e8ceba613"
+      ]
+    },
+    "contains_response_or_dialogue_text": false
+  },
+  "extractor_attempts": {
+    "logical_call_ledgers": 401,
+    "started_prompt_sha256_unique_count": 1,
+    "started_prompt_sha256": [
+      "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a"
+    ],
+    "terminal_counts": {
+      "FAILED": 1,
+      "SUCCEEDED": 401
+    }
+  },
+  "verifier_attempts": {
+    "logical_call_ledgers": 401,
+    "started_prompt_sha256_unique_count": 1,
+    "started_prompt_sha256": [
+      "d32431d7c7723e1d72ed95d3e804a7659f3548c3ce9de0113700fee566352c05"
+    ],
+    "terminal_counts": {
+      "FAILED": 1,
+      "SUCCEEDED": 401
+    }
+  },
+  "artifacts": {
+    "session_results_sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "batch_report_sha256": "fbde5393a7d1d6b84f683b25df009d311375fad21a51ec51181bea64947a9844",
+    "promoted_results_sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e"
+  },
+  "rerun_required": false,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0
+}

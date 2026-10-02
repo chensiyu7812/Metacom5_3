@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'">
+  <title>独立回复质量评审 · V2</title>
+  <style>
+    :root { color-scheme: light; --ink:#172d35; --muted:#526971; --line:#d7e2e3; --paper:#fff; --accent:#176b62; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#f3f6f5; color:var(--ink); font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    header { background:#183e41; color:white; padding:22px max(24px,calc((100vw - 1240px)/2)); }
+    header h1 { margin:0; font-size:25px; letter-spacing:.03em; }
+    header p { margin:5px 0 0; color:#d4e6e3; }
+    main { max-width:1290px; padding:22px 24px 65px; margin:auto; }
+    .toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; background:#edf3f1; padding:13px 0; }
+    button,.file-button,select { font:inherit; background:white; color:var(--ink); border:1px solid #a9bebb; border-radius:8px; padding:9px 14px; cursor:pointer; }
+    button:hover,.file-button:hover { background:#edf5f2; }
+    button:focus-visible,summary:focus-visible,a:focus-visible { outline:3px solid #c58624; outline-offset:3px; }
+    button:disabled { opacity:.5; cursor:default; }
+    .primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .primary:hover { background:#10574f; }
+    .primary:disabled { background:#719b95; }
+    .spacer { flex:1; }
+    #progress { font-weight:700; white-space:nowrap; }
+    #save-status,#message { font-size:14px; margin:6px 0; min-height:23px; color:var(--muted); }
+    #message.error,#save-status.error { color:#a1232a; }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:18px 21px; margin:16px 0; }
+    summary { cursor:pointer; font-weight:650; }
+    h2 { font-size:23px; margin:20px 0 5px; }
+    h3 { font-size:17px; margin:0 0 10px; }
+    p { margin:9px 0; }
+    li { margin:6px 0; }
+    .muted { color:var(--muted); font-size:14px; }
+    .prose { white-space:pre-wrap; overflow-wrap:anywhere; font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif; margin:10px 0 0; }
+    .scroll { max-height:390px; overflow:auto; padding-right:12px; }
+    .responses { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .responses .panel { margin:0; border-top:4px solid #577b7d; }
+    .responses h3 { font-size:20px; }
+    .rubric { border-left:4px solid #6a9390; }
+    .choices { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0; }
+    .choice { display:flex; align-items:center; gap:8px; padding:13px; border:1px solid #a9bebb; border-radius:9px; cursor:pointer; }
+    .choice:has(input:checked) { background:#e2f1eb; border:2px solid var(--accent); padding:12px; }
+    .choice input { accent-color:var(--accent); width:18px; height:18px; }
+    textarea,input[type=search] { font:inherit; border:1px solid #9ab2ad; border-radius:8px; padding:12px; width:100%; color:var(--ink); background:white; }
+    textarea { min-height:125px; resize:vertical; }
+    .history-tools { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:15px 0 8px; }
+    .history-tools input { flex:1; min-width:200px; }
+    .session { border-top:1px solid var(--line); padding:12px 0; }
+    .session summary { color:#215c58; }
+    mark { background:#ffeb9c; color:#172d35; }
+    .navigation { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding-top:15px; }
+    .visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    [hidden] { display:none !important; }
+    @media(max-width:760px) { main { padding:15px 14px 45px; } header { padding:20px 16px; } .responses { grid-template-columns:1fr; } .choices { grid-template-columns:1fr 1fr; } .panel { padding:16px; } .spacer { display:none; } h2 { font-size:21px; } }
+    @media print { .toolbar,.navigation,#rating-panel,#save-status,#message,.history-tools { display:none; } body { background:white; } .scroll { max-height:none; overflow:visible; } }
+  </style>
+</head>
+<body>
+  <header><h1>独立回复质量评审</h1><p><span id="rater-label"></span> · V2 · 可分次完成，原文保持英文</p></header>
+  <main>
+    <div class="toolbar">
+      <span id="progress" aria-live="polite">正在载入…</span><span class="spacer"></span>
+      <button id="export-progress" type="button">导出进度</button>
+      <button id="import-button" type="button">恢复进度</button>
+      <input id="import-file" class="visually-hidden" type="file" accept=".json,application/json" aria-label="选择本人进度文件">
+      <button id="export-complete" type="button" class="primary" disabled>导出完整答卷</button>
+    </div>
+    <p id="save-status" role="status"></p><p id="message" role="status"></p>
+    <details class="panel" id="instructions" open>
+      <summary>开始前阅读：怎样判断与保存</summary>
+      <p>请本人独立判断，不与另一位评审交流答案，也不让模型代评。每题比较同一问题下的两条匿名回复，只填写一个判定和简短理由。</p>
+      <ul>
+        <li><strong>A 更好 / B 更好：</strong>一方在本题标准下有清楚、实质的净质量优势。</li>
+        <li><strong>无实质差别（equivalent）：</strong>两方都可以判断，但没有可辨识的实质净优势；同样好或同样差都可以选。</li>
+        <li><strong>无法可靠判断（uncertain）：</strong>证据不足、无法核验正确性，或优缺点冲突而无法作出有依据的整体比较。不要强行分胜负。</li>
+        <li>更长、更温暖、更多建议或提及更多记忆，本身不加分。按实际回复判断；不要替回复补全，也不要因为它拒答就跳过。</li>
+        <li>独立评每次呈现。不要找重复题，或为使重复题一致而回改答案。允许休息和分次完成。</li>
+        <li>DG 题的相关摘录并不穷尽历史。需要核对记忆时，展开完整历史，用关键词或日期定位；注意说话者、时间变化和当前对话。</li>
+        <li>理由写 1–3 句话即可，中文或英文均可；指出实质差异，或说明为何无差别 / 无法判断。</li>
+      </ul>
+      <p><strong>保存：</strong>页面会尝试保存在当前浏览器。每次休息前请“导出进度”备份；下次打开同一份网页继续，也可“恢复进度”导入本人 JSON。全部完成后导出完整答卷，交回研究负责人。页面不会自动上传。</p>
+      <details><summary>英文规范说明</summary><ul id="english-common"></ul></details>
+    </details>
+    <div class="navigation">
+      <button id="previous-top" type="button">上一题</button>
+      <label for="question-select">跳转题目</label><select id="question-select"></select>
+      <button id="next-top" type="button">下一题</button>
+    </div>
+    <h2 id="question-title" tabindex="-1"></h2>
+    <p id="task-description" class="muted"></p>
+    <section class="panel rubric"><h3>本题判定依据</h3><p id="rubric-zh"></p><p id="dg-policy" hidden></p><details><summary>英文任务标准</summary><ul id="rubric-en"></ul><p id="material-example"></p><p id="not-material-example"></p><p id="evidence-en"></p></details></section>
+    <section class="panel"><h3 id="input-title">任务与当前对话</h3><pre id="task-input" class="prose scroll"></pre></section>
+    <section id="reference-panel" class="panel" hidden>
+      <h3 id="reference-title">参考材料</h3><p id="reference-note" class="muted"></p><pre id="reference-excerpt" class="prose scroll"></pre>
+      <details id="history-panel" hidden>
+        <summary id="history-summary">完整过去历史</summary>
+        <div class="history-tools"><label for="history-search" class="visually-hidden">搜索完整历史</label><input id="history-search" type="search" placeholder="搜索英文关键词或日期；不区分大小写"><label for="history-date" class="visually-hidden">按日期跳转</label><select id="history-date"><option value="">按日期查阅</option></select><button id="history-clear" type="button">显示全部会话</button></div>
+        <p id="search-count" class="muted" aria-live="polite"></p><div id="history-sessions"></div>
+      </details>
+    </section>
+    <div class="responses">
+      <section class="panel"><h3>回复 A</h3><pre id="response-a" class="prose"></pre></section>
+      <section class="panel"><h3>回复 B</h3><pre id="response-b" class="prose"></pre></section>
+    </div>
+    <section class="panel" id="rating-panel">
+      <h3>你的独立判断</h3>
+      <div class="choices" role="radiogroup" aria-label="本题判定">
+        <label class="choice"><input type="radio" name="verdict" value="A_better">A 更好</label>
+        <label class="choice"><input type="radio" name="verdict" value="B_better">B 更好</label>
+        <label class="choice"><input type="radio" name="verdict" value="equivalent">无实质差别</label>
+        <label class="choice"><input type="radio" name="verdict" value="uncertain">无法可靠判断</label>
+      </div>
+      <label for="rationale">简短理由（必填）</label>
+      <textarea id="rationale" placeholder="写出判断所依据的实质差异，或为何无差别 / 无法判断。如需核验历史，可注明日期。"></textarea>
+      <p class="muted">允许保留未完成题目并导出进度。完整答卷要求每题都有判定和非空理由。</p>
+      <div class="navigation"><button id="previous" type="button">上一题</button><span class="spacer"></span><button id="next" type="button" class="primary">保存并下一题</button></div>
+    </section>
+    <noscript>本表单需要启用 JavaScript；也可填写配套 JSON 中每题的 verdict 和 rationale。</noscript>
+  </main>
+  <script id="form-data" type="application/json">__FORM_PAYLOAD__</script>
+  <script>__FORM_SCRIPT__</script>
+</body>
+</html>

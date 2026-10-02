@@ -1,0 +1,71 @@
+{
+  "protocol": "paper1-natural-turn-appropriateness-rubric-v1",
+  "status": "ACTIVE_PRE_OUTCOME",
+  "date": "2026-09-03",
+  "purpose": "measure whether optional strategy or memory is conditionally appropriate on ordinary turns where the official benchmark does not explicitly elicit it",
+  "judge_blinding": {
+    "shown": [
+      "task-authorized visible conversation prefix",
+      "current user utterance",
+      "anonymous response A",
+      "anonymous response B",
+      "task-specific rubric"
+    ],
+    "hidden": [
+      "ON/OFF identity",
+      "resource bundle",
+      "PM probability or assignment",
+      "system name",
+      "latency and token count"
+    ],
+    "order_check": "20 percent A/B reversed duplicates; reversal conflict is uncertain"
+  },
+  "judge_instruction": "Choose the response that better meets the user's present need with proportionate support. More empathy, memory references, personalization, advice, detail, or strategy language is not inherently better.",
+  "decision_criteria": [
+    {
+      "id": "present_unmet_need",
+      "question": "Does the response address a real unmet need in this turn rather than adding an optional behavior for its own sake?"
+    },
+    {
+      "id": "current_context_nonrepetition",
+      "question": "Does it avoid merely repeating information already visible in the current context?"
+    },
+    {
+      "id": "memory_relevance_and_naturalness",
+      "question": "If past information is used, is it correct, relevant, and naturally useful rather than displayed to prove memory?"
+    },
+    {
+      "id": "empathy_proportionality",
+      "question": "Is emotional acknowledgement proportionate and non-mechanical rather than repeated by default?"
+    },
+    {
+      "id": "personalization_proportionality",
+      "question": "Is personalization warranted by the present request rather than forced?"
+    },
+    {
+      "id": "strategy_and_advice_proportionality",
+      "question": "Does it avoid unnecessary advice, overlong intervention, or applying one support strategy regardless of need?"
+    },
+    {
+      "id": "concise_baseline_sufficiency",
+      "question": "Would a concise response using only the current visible context be equally good or better?"
+    }
+  ],
+  "allowed_labels": {
+    "A_better": "A has a discernible net quality/appropriateness advantage",
+    "B_better": "B has a discernible net quality/appropriateness advantage",
+    "equivalent": "neither response has a discernible net advantage; extra optional behavior receives no credit",
+    "uncertain": "the evidence is insufficient, criteria conflict materially, or the judge cannot decide reliably"
+  },
+  "decoded_r0_m0_sufficiency": "after arm decoding, OFF-better or equivalent means the optional resource was not needed for this realized pair",
+  "latency_visibility": "hidden from the pure quality-effect judge; combined later by the action-worthiness evaluator",
+  "sampling": {
+    "RS": "public ESConv ordinary turns",
+    "MP_ME_MS": "public EvoEmo ordinary historical-session turns",
+    "strict_past": true,
+    "grouped_holdout": "speaker/session grouped",
+    "outcome_blind_strata_only": true
+  },
+  "role_in_paper": "secondary selectivity and mechanism evidence; does not replace ESC-Eval or ES-MemEval official outcomes",
+  "formal_outcome_calls": 0
+}

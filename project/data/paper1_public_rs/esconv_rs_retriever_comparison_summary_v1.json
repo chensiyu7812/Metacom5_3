@@ -1,0 +1,282 @@
+{
+  "protocol": "pm-paper1-esconv-rs-retriever-comparison-v1",
+  "status": "ZERO_OUTCOME_DECISION_SURFACE_NO_WINNER_NOT_RETRIEVER_FREEZE",
+  "scientific_scope": {
+    "what_this_can_show": [
+      "retriever_behavior_and_method_agreement",
+      "score_and_margin_variation",
+      "source_card_reuse_and_strategy_annotation_mix"
+    ],
+    "what_this_cannot_show": [
+      "candidate_applicability_gold",
+      "positive_marginal_effect",
+      "PM_learnability",
+      "official_ESC_Eval_or_ES_MemEval_performance",
+      "retriever_winner"
+    ],
+    "winner_selected": false,
+    "formal_outcome_calls": 0
+  },
+  "universe": {
+    "status": "CURRENT_CONSERVATIVE_PROJECT_UNIVERSE_NOT_OVERLAP_POLICY_FREEZE",
+    "strategy_bank": "ESConv_train_dialogue_only_cards",
+    "effect_states": "ESConv_train_validation_visible_prefixes",
+    "evoemo_overlap_excluded": true,
+    "leave_current_dialogue_out": true,
+    "query_preceding_visible_turns": 6,
+    "top_k": 4,
+    "source_card_count": 12169,
+    "decision_state_count": 11883
+  },
+  "methods": {
+    "lexical_jaccard": {
+      "role": "PHASE1_BASELINE_DIAGNOSTIC_NOT_RETRIEVER_FREEZE",
+      "max_card_document_frequency": 0.2
+    },
+    "bge_small": {
+      "role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
+      "repo": "BAAI/bge-small-en-v1.5",
+      "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+      "runtime": {
+        "model_class": "BertModel",
+        "tokenizer_class": "BertTokenizerFast",
+        "device": "cuda",
+        "torch_version": "2.3.1+cu121",
+        "torch_cuda_version": "12.1",
+        "gpu_name": "NVIDIA RTX A4500",
+        "pooling": "last_hidden_state_cls_token",
+        "normalization": "l2_float32",
+        "similarity": "exact_dense_cosine_via_normalized_dot_product",
+        "query_instruction": null,
+        "truncation": "tokenizer_model_max_length_if_needed",
+        "card_batch_size": 128,
+        "query_batch_size": 64,
+        "top_k_tie_order": "score_desc_then_card_id_within_torch_topk_result"
+      }
+    },
+    "bge_m3": {
+      "role": "OFFICIAL_RAG_MODEL_ID_AND_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE",
+      "repo": "BAAI/bge-m3",
+      "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+      "runtime": {
+        "model_class": "XLMRobertaModel",
+        "tokenizer_class": "XLMRobertaTokenizerFast",
+        "device": "cuda",
+        "torch_version": "2.3.1+cu121",
+        "torch_cuda_version": "12.1",
+        "gpu_name": "NVIDIA RTX A4500",
+        "pooling": "last_hidden_state_cls_token",
+        "normalization": "l2_float32",
+        "similarity": "exact_dense_cosine_via_normalized_dot_product",
+        "query_instruction": null,
+        "truncation": "tokenizer_model_max_length_if_needed",
+        "card_batch_size": 32,
+        "query_batch_size": 64,
+        "top_k_tie_order": "score_desc_then_card_id_within_torch_topk_result"
+      }
+    }
+  },
+  "contract_status": {
+    "pooling_and_normalization": "PROVISIONAL_SHARED_SYMMETRIC_CONTRACT_NOT_M2_FREEZE",
+    "query_instruction": "NONE_FOR_ALL_DENSE_METHODS_TO_AVOID_ASYMMETRIC_PROMPT_ADVANTAGE",
+    "target_supporter_response_read": false,
+    "target_strategy_annotation_read": false,
+    "situation_read": false,
+    "future_turns_read": false
+  },
+  "diagnostics": {
+    "by_method": {
+      "lexical_jaccard": {
+        "top1_unique_card_count": 5066,
+        "top1_max_card_reuse_count": 182,
+        "top1_source_strategy_annotation_counts": {
+          "Affirmation and Reassurance": 1718,
+          "Information": 710,
+          "Others": 2212,
+          "Providing Suggestions": 1926,
+          "Question": 2437,
+          "Reflection of feelings": 900,
+          "Restatement or Paraphrasing": 877,
+          "Self-disclosure": 1103
+        },
+        "top1_score_distribution": {
+          "min": 0.0,
+          "p25": 0.13513513513513514,
+          "median": 0.15217391304347827,
+          "p75": 0.1836734693877551,
+          "p90": 0.32,
+          "p95": 0.6,
+          "max": 1.0,
+          "population_variance": 0.031144784170924342
+        },
+        "top1_minus_top2_margin_distribution": {
+          "min": 0.0,
+          "p25": 0.0021645021645021606,
+          "median": 0.006199460916442051,
+          "p75": 0.013986013986013984,
+          "p90": 0.026475958612294598,
+          "p95": 0.04222222222222222,
+          "max": 0.5,
+          "population_variance": 0.0005863754178010712
+        }
+      },
+      "bge_small": {
+        "top1_unique_card_count": 4934,
+        "top1_max_card_reuse_count": 111,
+        "top1_source_strategy_annotation_counts": {
+          "Affirmation and Reassurance": 1788,
+          "Information": 806,
+          "Others": 1875,
+          "Providing Suggestions": 2078,
+          "Question": 2308,
+          "Reflection of feelings": 1082,
+          "Restatement or Paraphrasing": 803,
+          "Self-disclosure": 1143
+        },
+        "top1_score_distribution": {
+          "min": 0.7132152318954468,
+          "p25": 0.9246216416358948,
+          "median": 0.9389347434043884,
+          "p75": 0.9518651962280273,
+          "p90": 0.9655448794364929,
+          "p95": 0.9761770963668823,
+          "max": 1.0000005960464478,
+          "population_variance": 0.0006204252302019047
+        },
+        "top1_minus_top2_margin_distribution": {
+          "min": 0.0,
+          "p25": 0.0011793971061706543,
+          "median": 0.002862393856048584,
+          "p75": 0.0057909488677978516,
+          "p90": 0.009586751461029053,
+          "p95": 0.012366414070129395,
+          "max": 0.08251035213470459,
+          "population_variance": 2.3287998964075627e-05
+        }
+      },
+      "bge_m3": {
+        "top1_unique_card_count": 4505,
+        "top1_max_card_reuse_count": 65,
+        "top1_source_strategy_annotation_counts": {
+          "Affirmation and Reassurance": 1840,
+          "Information": 735,
+          "Others": 2072,
+          "Providing Suggestions": 1843,
+          "Question": 2623,
+          "Reflection of feelings": 979,
+          "Restatement or Paraphrasing": 762,
+          "Self-disclosure": 1029
+        },
+        "top1_score_distribution": {
+          "min": 0.62188720703125,
+          "p25": 0.7920632362365723,
+          "median": 0.8232278227806091,
+          "p75": 0.8571681380271912,
+          "p90": 0.904160737991333,
+          "p95": 0.9504210352897644,
+          "max": 1.0000004768371582,
+          "population_variance": 0.003545354820208666
+        },
+        "top1_minus_top2_margin_distribution": {
+          "min": 0.0,
+          "p25": 0.002209186553955078,
+          "median": 0.005449950695037842,
+          "p75": 0.010826826095581055,
+          "p90": 0.017798185348510742,
+          "p95": 0.02300703525543213,
+          "max": 0.10723757743835449,
+          "population_variance": 6.674912198618855e-05
+        }
+      }
+    },
+    "pairwise_method_agreement": {
+      "lexical_jaccard__vs__bge_small": {
+        "top1_same_card_count": 423,
+        "top1_same_card_rate": 0.03559707144660439,
+        "topk_intersection_size_distribution": {
+          "min": 0,
+          "p25": 0,
+          "median": 0,
+          "p75": 0,
+          "p90": 1,
+          "p95": 1,
+          "max": 4,
+          "population_variance": 0.23090915267585288
+        },
+        "topk_set_jaccard_distribution": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0,
+          "p90": 0.14285714285714285,
+          "p95": 0.14285714285714285,
+          "max": 1.0,
+          "population_variance": 0.006270194281432027
+        }
+      },
+      "lexical_jaccard__vs__bge_m3": {
+        "top1_same_card_count": 428,
+        "top1_same_card_rate": 0.036017840612639906,
+        "topk_intersection_size_distribution": {
+          "min": 0,
+          "p25": 0,
+          "median": 0,
+          "p75": 0,
+          "p90": 1,
+          "p95": 1,
+          "max": 4,
+          "population_variance": 0.28479825625155936
+        },
+        "topk_set_jaccard_distribution": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "p75": 0.0,
+          "p90": 0.14285714285714285,
+          "p95": 0.14285714285714285,
+          "max": 1.0,
+          "population_variance": 0.008140992658307962
+        }
+      },
+      "bge_small__vs__bge_m3": {
+        "top1_same_card_count": 1613,
+        "top1_same_card_rate": 0.13574013296305645,
+        "topk_intersection_size_distribution": {
+          "min": 0,
+          "p25": 0,
+          "median": 1,
+          "p75": 1,
+          "p90": 2,
+          "p95": 3,
+          "max": 4,
+          "population_variance": 0.813150311528879
+        },
+        "topk_set_jaccard_distribution": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.14285714285714285,
+          "p75": 0.14285714285714285,
+          "p90": 0.3333333333333333,
+          "p95": 0.6,
+          "max": 1.0,
+          "population_variance": 0.029536746971566955
+        }
+      }
+    }
+  },
+  "provenance": {
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "environment_attestation_sha256": "c374f1c34599d43cbd890eceef1bb4a11ce776a76757757a246a8f498fb76e89",
+    "script_sha256": "203f184d3c4ed05df31eec293105758a52757cfc9709714b977a3847a7f5a882",
+    "surface_path": "data/paper1_public_rs/esconv_rs_retriever_comparison_surface_v1.jsonl",
+    "surface_sha256": "fd7182c35a3ab737b9b10f1c2cdca807026327e273fc81fe6455d7aa97404096"
+  },
+  "pending_m2_freeze": [
+    "effect_state_overlap_policy",
+    "retriever_encoder_revision_and_runtime_contract",
+    "query_construction_and_optional_instruction",
+    "candidate_bundle_top_k",
+    "candidate_applicability_measurement"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "attestation_inputs": {
+    "environment_lock_sha256": "00fb80a1086db247be93e02d77ec4de4dc0a0dd041a766075b216261e1e08071",
+    "local_environment_attestation_sha256": "7dfdb022630144eec2a36ce44b9f96f0f498900eadc554282e70648ee501d7fe",
+    "public_only_config_sha256": "acb292cbf780bd86d557f3a38b70cf30d46901b258406e7741d62200140817db",
+    "script_sha256": "494f6ae548cad6b9e4d57cb0da0be2e5d682a05196d038a08c43c4a5184c24b8"
+  },
+  "formal_unlock": false,
+  "interpretation": {
+    "established": [
+      "exact official retrieval-core package versions import together",
+      "commit-addressed local BGE-M3 loads through HuggingFaceEmbeddings",
+      "SentenceTransformer emits normalized 1024-dimensional dense vectors",
+      "FAISS indexes session-level Documents and returns deterministic Top-4"
+    ],
+    "not_established": [
+      "official benchmark performance",
+      "equivalence to an unpinned upstream BGE-M3 main weight snapshot",
+      "final local model revision freeze",
+      "Typed Memory retrieval design or utility",
+      "RS retriever selection or utility"
+    ]
+  },
+  "local_model_binding": {
+    "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "official_unpinned_main_weight_equivalence": "NOT_ESTABLISHED",
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE"
+  },
+  "official_source_binding": {
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "document_grain": "one_historical_session_per_Document",
+    "embedding_api": "langchain_huggingface.HuggingFaceEmbeddings",
+    "model_id": "BAAI/bge-m3",
+    "model_revision_in_official_source": null,
+    "repository": "slptongji/ES-MemEval",
+    "retrieval_k": 4,
+    "source_blobs": {
+      "src/lib/shared/document_stores/vector_document_store.py": "66fc315f878e40e78c2bef2315e51dfe511f3867",
+      "src/lib/shared/embedding_models/embedding_provider.py": "a98510f2304afeadc415d5391db4f64a412ad6f7",
+      "src/lib/shared/prompt_strategies/session_wise_memory_inplace_strategy.py": "e8efc593aa4fdbb9e038448500484a5de2f6a779",
+      "src/lib/shared/prompt_strategies/session_wise_memory_prepend_strategy.py": "a88a419a988912c899a369bba8c686f02accf586"
+    },
+    "vector_store": "langchain_community.vectorstores.FAISS"
+  },
+  "outcome_calls": 0,
+  "pending_m2_freeze": [
+    "select_and_bind_the_local_BGE_M3_revision_for_official_RAG_with_unpinned_upstream_disclosure",
+    "bind_task_specific_official_RAG_prompt_and_truncation_wrappers",
+    "bind_official_RAG_runner_and_cost_logging_without_changing_Typed_Memory"
+  ],
+  "protocol": "pm-paper1-official-rag-runtime-attestation-v1",
+  "runtime": {
+    "fixture_document_count": 5,
+    "fixture_document_sha256": [
+      "d42fb0da3fcdb055bcad22b1fc598a4ec0c514c2cb7a64ecd4bfdd61b619c7a7",
+      "15cfcacbbc7f0920aeca83feffd5e62007fef54b2ced40f950e421cb6dd15a65",
+      "385c460f118f34dc5f3c24192b2735a5ec6bc0cc36adedcda23216156181a62c",
+      "49e0402eaee4b275dfc80b2144f30ec8b1eca3392ea92ea6ffeda34320dda8d2",
+      "3e50380cde4cf8f677ea739c323d2517bd78753b91200c31453237a77270518d"
+    ],
+    "offline": true,
+    "package_versions": {
+      "faiss-cpu": "1.12.0",
+      "langchain-community": "0.3.28",
+      "langchain-huggingface": "0.3.1",
+      "sentence-transformers": "5.1.0"
+    },
+    "probe": {
+      "cuda_available": true,
+      "device": "cuda",
+      "document_embedding_shape": [
+        5,
+        1024
+      ],
+      "document_vector_l2_norms": [
+        1.0,
+        0.99999994,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "embedding_client_class": "SentenceTransformer",
+      "faiss_dimension": 1024,
+      "faiss_document_count": 5,
+      "faiss_index_class": "IndexFlatL2",
+      "faiss_metric": "L2_DISTANCE_LOWER_IS_CLOSER",
+      "gpu_name": "NVIDIA RTX A6000",
+      "repeat_exact": true,
+      "top4": [
+        {
+          "faiss_l2_distance": 0.56163776,
+          "rank": 1,
+          "session_fixture_id": "synthetic-session-1"
+        },
+        {
+          "faiss_l2_distance": 0.563375,
+          "rank": 2,
+          "session_fixture_id": "synthetic-session-3"
+        },
+        {
+          "faiss_l2_distance": 0.69909239,
+          "rank": 3,
+          "session_fixture_id": "synthetic-session-2"
+        },
+        {
+          "faiss_l2_distance": 0.76407206,
+          "rank": 4,
+          "session_fixture_id": "synthetic-session-0"
+        }
+      ],
+      "top_k": 4,
+      "torch_cuda_version": "12.1",
+      "torch_version": "2.3.1+cu121"
+    },
+    "query_sha256": "b4b309fe3811c90b9f8215356557e67dc186f1fed74393c86c473d967cdc8ad8"
+  },
+  "scope": {
+    "arm": "ES_MEMEVAL_OFFICIAL_RAG_BASELINE_ENGINEERING_PATH",
+    "benchmark_gold_or_scorer_outputs_read": false,
+    "benchmark_targets_read": false,
+    "generator_calls": 0,
+    "rs_retriever_selected": false,
+    "typed_memory_method_changed": false,
+    "winner_selected": false
+  },
+  "status": "ENGINEERING_RUNTIME_ATTESTED_NOT_BASELINE_OR_RETRIEVER_FREEZE"
+}

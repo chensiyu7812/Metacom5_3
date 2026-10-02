@@ -1,0 +1,4799 @@
+{
+  "protocol": "paper1-active-multi-view-resource-amount-surface-v1",
+  "status": "ZERO_OUTCOME_SURFACE_READY_NOT_A_K_OR_FINAL_CAP_FREEZE",
+  "source_identity": {
+    "sanitized_runtime_sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "candidate_census_summary_sha256": "b07f2b4ea532d1df20ae6a6ad5193eee136ab779a29fc754c32e32021cefa3a2",
+    "promoted_session_results_sha256": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "top8_filename": "es_memeval_public_active_multi_view_bge_top8_v1.jsonl",
+    "top8_sha256": "19cabd4a9a820a020dacf5e747c1a053296e1f45d92b3955e79d05da521f886f"
+  },
+  "population": {
+    "owners": 18,
+    "targets": 1586,
+    "targets_by_task": {
+      "dialogue_generation": 34,
+      "qa": 1427,
+      "summary": 125
+    },
+    "eligible_candidates_by_head": {
+      "MP": 388,
+      "MS": 401,
+      "ME": 1523
+    }
+  },
+  "retrieval": {
+    "backend": "pinned local BGE-M3 dense cosine",
+    "top_depth_materialized": 8,
+    "sort": "descending cosine; exact tie by candidate_id",
+    "QA_and_Summary_query": "exact officially-visible question text",
+    "DG_query": "exact just-appended current-round seeker utterance; no static proxy",
+    "materialization": {
+      "MP": {
+        "protocol": "paper1-bge-m3-materialization-report-v1",
+        "field_source": "active_multi_view_MP_candidate_content_v1",
+        "item_count": 388,
+        "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+        "runtime_identity_sha256": "62ee949d9b2d056c0612aba0a05e37bbd0015b19ddf22c29c56806a4ed494e6d",
+        "max_input_chars": 293,
+        "max_seq_length": 8192,
+        "truncation_fail_closed": true,
+        "outcome_calls": 0,
+        "cache_hit_counts_excluded_from_frozen_identity": true
+      },
+      "MS": {
+        "protocol": "paper1-bge-m3-materialization-report-v1",
+        "field_source": "active_multi_view_MS_candidate_content_v1",
+        "item_count": 401,
+        "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+        "runtime_identity_sha256": "62ee949d9b2d056c0612aba0a05e37bbd0015b19ddf22c29c56806a4ed494e6d",
+        "max_input_chars": 5054,
+        "max_seq_length": 8192,
+        "truncation_fail_closed": true,
+        "outcome_calls": 0,
+        "cache_hit_counts_excluded_from_frozen_identity": true
+      },
+      "ME": {
+        "protocol": "paper1-bge-m3-materialization-report-v1",
+        "field_source": "active_multi_view_ME_candidate_content_v1",
+        "item_count": 1523,
+        "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+        "runtime_identity_sha256": "62ee949d9b2d056c0612aba0a05e37bbd0015b19ddf22c29c56806a4ed494e6d",
+        "max_input_chars": 242,
+        "max_seq_length": 8192,
+        "truncation_fail_closed": true,
+        "outcome_calls": 0,
+        "cache_hit_counts_excluded_from_frozen_identity": true
+      },
+      "static_queries": {
+        "protocol": "paper1-bge-m3-materialization-report-v1",
+        "field_source": "active_multi_view_QA_Summary_visible_query_text_v1",
+        "item_count": 1552,
+        "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+        "runtime_identity_sha256": "62ee949d9b2d056c0612aba0a05e37bbd0015b19ddf22c29c56806a4ed494e6d",
+        "max_input_chars": 156,
+        "max_seq_length": 8192,
+        "truncation_fail_closed": true,
+        "outcome_calls": 0,
+        "cache_hit_counts_excluded_from_frozen_identity": true
+      }
+    }
+  },
+  "packing": {
+    "protocol": "pm-paper1-deterministic-ranked-prefix-packing-v1",
+    "step2_protocol": "pm-paper1-typed-step2-resource-envelope-v2",
+    "initial_calibration_grid": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "k_zero_is_true_OFF": true,
+    "selection": "exact ranked prefix",
+    "overflow": "fail closed before generation; never truncate, drop, rerank, or backfill",
+    "diagnostic_caps_not_selected_caps": [
+      128,
+      192,
+      256,
+      384,
+      512,
+      768,
+      1024,
+      1536,
+      2048,
+      3072,
+      4096,
+      6144
+    ],
+    "final_k_selected": false,
+    "final_resource_token_cap_selected": false
+  },
+  "task_surfaces": {
+    "qa": {
+      "status": "STATIC_VISIBLE_QUERY_TOP8_AND_AMOUNT_SURFACE_READY",
+      "targets": 1427,
+      "per_head": {
+        "MP": [
+          {
+            "requested_k": 0,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 8,
+              "median": 23,
+              "p90_nearest_rank": 37,
+              "p95_nearest_rank": 42,
+              "max": 49,
+              "mean": 23.915907498248075
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 149,
+              "median": 165,
+              "p90_nearest_rank": 182,
+              "p95_nearest_rank": 184,
+              "max": 195,
+              "mean": 167.4905395935529
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.2856241762638092,
+              "median": 0.4763709604740143,
+              "p90_nearest_rank": 0.5692058801651001,
+              "p95_nearest_rank": 0.596653401851654,
+              "max": 0.69524085521698,
+              "mean": 0.4765608819030596
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 1.558661460876465e-05,
+              "median": 0.024499833583831787,
+              "p90_nearest_rank": 0.09204810857772827,
+              "p95_nearest_rank": 0.11807072162628174,
+              "max": 0.23266813158988953,
+              "mean": 0.037628407067323615
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 1420,
+                "fraction": 0.9950946040644709
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 20,
+              "median": 47,
+              "p90_nearest_rank": 70,
+              "p95_nearest_rank": 75,
+              "max": 94,
+              "mean": 48.92151366503153
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 165,
+              "median": 193,
+              "p90_nearest_rank": 217,
+              "p95_nearest_rank": 225,
+              "max": 243,
+              "mean": 195.9593552908199
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.2507953643798828,
+              "median": 0.4378519654273987,
+              "p90_nearest_rank": 0.5290637016296387,
+              "p95_nearest_rank": 0.5531925559043884,
+              "max": 0.6522393226623535,
+              "mean": 0.438932474835736
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 1.8835067749023438e-05,
+              "median": 0.014438539743423462,
+              "p90_nearest_rank": 0.04991549253463745,
+              "p95_nearest_rank": 0.06943577527999878,
+              "max": 0.155191570520401,
+              "mean": 0.021513773873709428
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 662,
+                "fraction": 0.4639103013314646
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 31,
+              "median": 71,
+              "p90_nearest_rank": 101,
+              "p95_nearest_rank": 108,
+              "max": 143,
+              "mean": 73.1843027330063
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 178,
+              "median": 222,
+              "p90_nearest_rank": 253,
+              "p95_nearest_rank": 262,
+              "max": 293,
+              "mean": 224.49544498948845
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.22601422667503357,
+              "median": 0.41654694080352783,
+              "p90_nearest_rank": 0.5070220232009888,
+              "p95_nearest_rank": 0.5367562174797058,
+              "max": 0.6328150033950806,
+              "mean": 0.41741870096202655
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 7.808208465576172e-06,
+              "median": 0.00913277268409729,
+              "p90_nearest_rank": 0.03300932049751282,
+              "p95_nearest_rank": 0.041787534952163696,
+              "max": 0.11333495378494263,
+              "mean": 0.01380219581499748
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 54,
+                "fraction": 0.0378416257883672
+              },
+              "256": {
+                "targets_fit": 1329,
+                "fraction": 0.9313244569025928
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 43,
+              "median": 96,
+              "p90_nearest_rank": 133,
+              "p95_nearest_rank": 141,
+              "max": 185,
+              "mean": 96.90469516468114
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 197,
+              "median": 252,
+              "p90_nearest_rank": 290,
+              "p95_nearest_rank": 298,
+              "max": 342,
+              "mean": 252.10021023125438
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.20750278234481812,
+              "median": 0.40224069356918335,
+              "p90_nearest_rank": 0.4943516254425049,
+              "p95_nearest_rank": 0.5225108861923218,
+              "max": 0.6315460205078125,
+              "mean": 0.40361650514702907
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 5.692243576049805e-06,
+              "median": 0.008134037256240845,
+              "p90_nearest_rank": 0.03113335371017456,
+              "p95_nearest_rank": 0.042172402143478394,
+              "max": 0.1515749990940094,
+              "mean": 0.013106242480107597
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 829,
+                "fraction": 0.5809390329362298
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 0,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 236,
+              "median": 591,
+              "p90_nearest_rank": 725,
+              "p95_nearest_rank": 764,
+              "max": 1109,
+              "mean": 603.0560616678346
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 381,
+              "median": 737,
+              "p90_nearest_rank": 871,
+              "p95_nearest_rank": 907,
+              "max": 1248,
+              "mean": 745.4400840925017
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3789275884628296,
+              "median": 0.615593671798706,
+              "p90_nearest_rank": 0.6768413782119751,
+              "p95_nearest_rank": 0.6941993236541748,
+              "max": 0.74235999584198,
+              "mean": 0.6094929233621532
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 8.165836334228516e-06,
+              "median": 0.016527771949768066,
+              "p90_nearest_rank": 0.05575418472290039,
+              "p95_nearest_rank": 0.07939684391021729,
+              "max": 0.21035349369049072,
+              "mean": 0.024817674913519983
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 4,
+                "fraction": 0.002803083391730904
+              },
+              "512": {
+                "targets_fit": 15,
+                "fraction": 0.01051156271899089
+              },
+              "768": {
+                "targets_fit": 993,
+                "fraction": 0.695865451997197
+              },
+              "1024": {
+                "targets_fit": 1401,
+                "fraction": 0.9817799579537492
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 787,
+              "median": 1199,
+              "p90_nearest_rank": 1378,
+              "p95_nearest_rank": 1438,
+              "max": 1933,
+              "mean": 1207.261387526279
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 930,
+              "median": 1345,
+              "p90_nearest_rank": 1523,
+              "p95_nearest_rank": 1584,
+              "max": 2077,
+              "mean": 1352.490539593553
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3749951124191284,
+              "median": 0.5895705819129944,
+              "p90_nearest_rank": 0.6524761319160461,
+              "p95_nearest_rank": 0.6719491481781006,
+              "max": 0.7117190361022949,
+              "mean": 0.5846752484486332
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 1.1920928955078125e-06,
+              "median": 0.008101880550384521,
+              "p90_nearest_rank": 0.027486443519592285,
+              "p95_nearest_rank": 0.035842955112457275,
+              "max": 0.11053800582885742,
+              "mean": 0.012015008767668652
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 13,
+                "fraction": 0.009110021023125438
+              },
+              "1536": {
+                "targets_fit": 1298,
+                "fraction": 0.9096005606166784
+              },
+              "2048": {
+                "targets_fit": 1426,
+                "fraction": 0.9992992291520673
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 1322,
+              "median": 1803,
+              "p90_nearest_rank": 2013,
+              "p95_nearest_rank": 2087,
+              "max": 2649,
+              "mean": 1814.2438682550805
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 1462,
+              "median": 1951,
+              "p90_nearest_rank": 2162,
+              "p95_nearest_rank": 2232,
+              "max": 2806,
+              "mean": 1962.707077785564
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.36641421914100647,
+              "median": 0.577009916305542,
+              "p90_nearest_rank": 0.6415408849716187,
+              "p95_nearest_rank": 0.658856987953186,
+              "max": 0.7032384872436523,
+              "mean": 0.5726602396809646
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 7.152557373046875e-07,
+              "median": 0.006072819232940674,
+              "p90_nearest_rank": 0.02052515745162964,
+              "p95_nearest_rank": 0.028599262237548828,
+              "max": 0.0814550518989563,
+              "mean": 0.008948247104402849
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1536": {
+                "targets_fit": 8,
+                "fraction": 0.005606166783461808
+              },
+              "2048": {
+                "targets_fit": 1044,
+                "fraction": 0.731604765241766
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 1760,
+              "median": 2402,
+              "p90_nearest_rank": 2664,
+              "p95_nearest_rank": 2741,
+              "max": 3481,
+              "mean": 2416.2354590049054
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 1902,
+              "median": 2553,
+              "p90_nearest_rank": 2814,
+              "p95_nearest_rank": 2893,
+              "max": 3639,
+              "mean": 2567.2669936930624
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3570522964000702,
+              "median": 0.5675404071807861,
+              "p90_nearest_rank": 0.6329715251922607,
+              "p95_nearest_rank": 0.6491600275039673,
+              "max": 0.702446460723877,
+              "mean": 0.5637119925765617
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 8.52346420288086e-06,
+              "median": 0.0046901702880859375,
+              "p90_nearest_rank": 0.01661241054534912,
+              "p95_nearest_rank": 0.02240729331970215,
+              "max": 0.07266205549240112,
+              "mean": 0.007116349577151902
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1536": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "2048": {
+                "targets_fit": 3,
+                "fraction": 0.002102312543798178
+              },
+              "3072": {
+                "targets_fit": 1407,
+                "fraction": 0.9859845830413455
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 0,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 19,
+              "median": 30,
+              "p90_nearest_rank": 35,
+              "p95_nearest_rank": 37,
+              "max": 47,
+              "mean": 29.9635599159075
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 166,
+              "median": 181,
+              "p90_nearest_rank": 189,
+              "p95_nearest_rank": 190,
+              "max": 202,
+              "mean": 180.76103714085494
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.33631789684295654,
+              "median": 0.5625672340393066,
+              "p90_nearest_rank": 0.6502726078033447,
+              "p95_nearest_rank": 0.6706361770629883,
+              "max": 0.790863037109375,
+              "mean": 0.5600231442530003
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 3.7550926208496094e-06,
+              "median": 0.01810353994369507,
+              "p90_nearest_rank": 0.06531065702438354,
+              "p95_nearest_rank": 0.08756408095359802,
+              "max": 0.20598167181015015,
+              "mean": 0.028021893345900325
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 1407,
+                "fraction": 0.9859845830413455
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 39,
+              "median": 60,
+              "p90_nearest_rank": 68,
+              "p95_nearest_rank": 71,
+              "max": 89,
+              "mean": 60.10581639803784
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 188,
+              "median": 214,
+              "p90_nearest_rank": 225,
+              "p95_nearest_rank": 226,
+              "max": 243,
+              "mean": 214.39032936229853
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3188459873199463,
+              "median": 0.5344712734222412,
+              "p90_nearest_rank": 0.613440990447998,
+              "p95_nearest_rank": 0.6359279155731201,
+              "max": 0.7415750622749329,
+              "mean": 0.5320012509071
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 4.082918167114258e-05,
+              "median": 0.009768903255462646,
+              "p90_nearest_rank": 0.03562617301940918,
+              "p95_nearest_rank": 0.045432209968566895,
+              "max": 0.1368706226348877,
+              "mean": 0.015095181288047528
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 6,
+                "fraction": 0.004204625087596356
+              },
+              "256": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 61,
+              "median": 90,
+              "p90_nearest_rank": 102,
+              "p95_nearest_rank": 105,
+              "max": 124,
+              "mean": 90.03714085494043
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 216,
+              "median": 248,
+              "p90_nearest_rank": 261,
+              "p95_nearest_rank": 264,
+              "max": 283,
+              "mean": 248.23405746320952
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3177899718284607,
+              "median": 0.5193935036659241,
+              "p90_nearest_rank": 0.5951769948005676,
+              "p95_nearest_rank": 0.6217399835586548,
+              "max": 0.6936196684837341,
+              "mean": 0.5169060696190525
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 1.6689300537109375e-06,
+              "median": 0.007555127143859863,
+              "p90_nearest_rank": 0.025414705276489258,
+              "p95_nearest_rank": 0.03378570079803467,
+              "max": 0.1394304633140564,
+              "mean": 0.01099137048163277
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 1154,
+                "fraction": 0.8086895585143657
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 1427,
+            "targets_with_full_k": 1427,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 1427,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 1427,
+              "min": 87,
+              "median": 121,
+              "p90_nearest_rank": 134,
+              "p95_nearest_rank": 138,
+              "max": 160,
+              "mean": 120.04134548002803
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 1427,
+              "min": 245,
+              "median": 282,
+              "p90_nearest_rank": 297,
+              "p95_nearest_rank": 300,
+              "max": 326,
+              "mean": 282.18990889978977
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 1427,
+              "min": 0.3145637810230255,
+              "median": 0.5081150531768799,
+              "p90_nearest_rank": 0.5835334062576294,
+              "p95_nearest_rank": 0.6062473058700562,
+              "max": 0.6719202995300293,
+              "mean": 0.5059146991374197
+            },
+            "k_boundary_similarity_margin": {
+              "count": 1427,
+              "min": 5.155801773071289e-06,
+              "median": 0.005569875240325928,
+              "p90_nearest_rank": 0.02066493034362793,
+              "p95_nearest_rank": 0.029597699642181396,
+              "max": 0.12274640798568726,
+              "mean": 0.009135950421986248
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 17,
+                "fraction": 0.011913104414856343
+              },
+              "384": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 1427,
+                "fraction": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "all_heads_symmetric_k_diagnostic": [
+        {
+          "symmetric_requested_k_per_head": 0,
+          "targets": 1427,
+          "realized_units_across_MP_ME_MS": {
+            "count": 1427,
+            "min": 0,
+            "median": 0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 1427,
+            "min": 0,
+            "median": 0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "192": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "256": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "768": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "1024": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "1536": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "2048": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "3072": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 1,
+          "targets": 1427,
+          "realized_units_across_MP_ME_MS": {
+            "count": 1427,
+            "min": 3,
+            "median": 3,
+            "p90_nearest_rank": 3,
+            "p95_nearest_rank": 3,
+            "max": 3,
+            "mean": 3.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 1427,
+            "min": 706,
+            "median": 1083,
+            "p90_nearest_rank": 1223,
+            "p95_nearest_rank": 1268,
+            "max": 1598,
+            "mean": 1093.6916608269096
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 4,
+              "fraction": 0.002803083391730904
+            },
+            "1024": {
+              "targets_fit": 313,
+              "fraction": 0.21934127540294324
+            },
+            "1536": {
+              "targets_fit": 1422,
+              "fraction": 0.9964961457603364
+            },
+            "2048": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "3072": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 2,
+          "targets": 1427,
+          "realized_units_across_MP_ME_MS": {
+            "count": 1427,
+            "min": 6,
+            "median": 6,
+            "p90_nearest_rank": 6,
+            "p95_nearest_rank": 6,
+            "max": 6,
+            "mean": 6.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 1427,
+            "min": 1296,
+            "median": 1754,
+            "p90_nearest_rank": 1941,
+            "p95_nearest_rank": 1997,
+            "max": 2467,
+            "mean": 1762.8402242466714
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 45,
+              "fraction": 0.03153468815697267
+            },
+            "2048": {
+              "targets_fit": 1388,
+              "fraction": 0.9726699369306236
+            },
+            "3072": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 3,
+          "targets": 1427,
+          "realized_units_across_MP_ME_MS": {
+            "count": 1427,
+            "min": 9,
+            "median": 9,
+            "p90_nearest_rank": 9,
+            "p95_nearest_rank": 9,
+            "max": 9,
+            "mean": 9.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 1427,
+            "min": 1892,
+            "median": 2425,
+            "p90_nearest_rank": 2642,
+            "p95_nearest_rank": 2719,
+            "max": 3317,
+            "mean": 2435.436580238262
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "2048": {
+              "targets_fit": 20,
+              "fraction": 0.01401541695865452
+            },
+            "3072": {
+              "targets_fit": 1422,
+              "fraction": 0.9964961457603364
+            },
+            "4096": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 4,
+          "targets": 1427,
+          "realized_units_across_MP_ME_MS": {
+            "count": 1427,
+            "min": 12,
+            "median": 12,
+            "p90_nearest_rank": 12,
+            "p95_nearest_rank": 12,
+            "max": 12,
+            "mean": 12.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 1427,
+            "min": 2365,
+            "median": 3094,
+            "p90_nearest_rank": 3352,
+            "p95_nearest_rank": 3442,
+            "max": 4225,
+            "mean": 3101.5571128241063
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "2048": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "3072": {
+              "targets_fit": 643,
+              "fraction": 0.4505956552207428
+            },
+            "4096": {
+              "targets_fit": 1426,
+              "fraction": 0.9992992291520673
+            },
+            "6144": {
+              "targets_fit": 1427,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        }
+      ]
+    },
+    "summary": {
+      "status": "STATIC_VISIBLE_QUERY_TOP8_AND_AMOUNT_SURFACE_READY",
+      "targets": 125,
+      "per_head": {
+        "MP": [
+          {
+            "requested_k": 0,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 8,
+              "median": 25,
+              "p90_nearest_rank": 37,
+              "p95_nearest_rank": 42,
+              "max": 49,
+              "mean": 25.488
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 152,
+              "median": 166,
+              "p90_nearest_rank": 182,
+              "p95_nearest_rank": 186,
+              "max": 195,
+              "mean": 168.232
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.34844422340393066,
+              "median": 0.5060920715332031,
+              "p90_nearest_rank": 0.5990079641342163,
+              "p95_nearest_rank": 0.6263954639434814,
+              "max": 0.6986186504364014,
+              "mean": 0.5074545593261719
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 0.0004056096076965332,
+              "median": 0.027448058128356934,
+              "p90_nearest_rank": 0.08542346954345703,
+              "p95_nearest_rank": 0.1365422010421753,
+              "max": 0.18779680132865906,
+              "mean": 0.03949166560173035
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 123,
+                "fraction": 0.984
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 22,
+              "median": 49,
+              "p90_nearest_rank": 70,
+              "p95_nearest_rank": 78,
+              "max": 91,
+              "mean": 51.56
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 171,
+              "median": 195,
+              "p90_nearest_rank": 220,
+              "p95_nearest_rank": 231,
+              "max": 243,
+              "mean": 199.104
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.32539820671081543,
+              "median": 0.4599217176437378,
+              "p90_nearest_rank": 0.5536493062973022,
+              "p95_nearest_rank": 0.5917590856552124,
+              "max": 0.626964271068573,
+              "mean": 0.46796289372444155
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 4.7266483306884766e-05,
+              "median": 0.01395714282989502,
+              "p90_nearest_rank": 0.05239439010620117,
+              "p95_nearest_rank": 0.06998831033706665,
+              "max": 0.16386333107948303,
+              "mean": 0.02234454298019409
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 48,
+                "fraction": 0.384
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 42,
+              "median": 76,
+              "p90_nearest_rank": 103,
+              "p95_nearest_rank": 110,
+              "max": 139,
+              "mean": 76.576
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 189,
+              "median": 227,
+              "p90_nearest_rank": 253,
+              "p95_nearest_rank": 265,
+              "max": 290,
+              "mean": 227.512
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.23365473747253418,
+              "median": 0.4424957036972046,
+              "p90_nearest_rank": 0.5357024669647217,
+              "p95_nearest_rank": 0.5548058748245239,
+              "max": 0.5996280908584595,
+              "mean": 0.44561835074424744
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 0.00012570619583129883,
+              "median": 0.008786529302597046,
+              "p90_nearest_rank": 0.03370088338851929,
+              "p95_nearest_rank": 0.041392385959625244,
+              "max": 0.06441524624824524,
+              "mean": 0.013189188003540039
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 3,
+                "fraction": 0.024
+              },
+              "256": {
+                "targets_fit": 115,
+                "fraction": 0.92
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 55,
+              "median": 101,
+              "p90_nearest_rank": 136,
+              "p95_nearest_rank": 140,
+              "max": 166,
+              "mean": 101.232
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 210,
+              "median": 257,
+              "p90_nearest_rank": 290,
+              "p95_nearest_rank": 295,
+              "max": 324,
+              "mean": 256.68
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.2079446017742157,
+              "median": 0.4337098300457001,
+              "p90_nearest_rank": 0.5234332084655762,
+              "p95_nearest_rank": 0.5436232089996338,
+              "max": 0.5910645127296448,
+              "mean": 0.4324291627407074
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 5.7220458984375e-06,
+              "median": 0.00946056842803955,
+              "p90_nearest_rank": 0.030182480812072754,
+              "p95_nearest_rank": 0.03923538327217102,
+              "max": 0.09226509928703308,
+              "mean": 0.01401255750656128
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 60,
+                "fraction": 0.48
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 0,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 341,
+              "median": 614,
+              "p90_nearest_rank": 738,
+              "p95_nearest_rank": 756,
+              "max": 1000,
+              "mean": 614.496
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 480,
+              "median": 753,
+              "p90_nearest_rank": 877,
+              "p95_nearest_rank": 897,
+              "max": 1143,
+              "mean": 756.584
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.48391368985176086,
+              "median": 0.612581729888916,
+              "p90_nearest_rank": 0.6736791133880615,
+              "p95_nearest_rank": 0.6843186616897583,
+              "max": 0.7260309457778931,
+              "mean": 0.6153055794239044
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 2.014636993408203e-05,
+              "median": 0.011076271533966064,
+              "p90_nearest_rank": 0.04202622175216675,
+              "p95_nearest_rank": 0.05883842706680298,
+              "max": 0.12387114763259888,
+              "mean": 0.017690048933029175
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 1,
+                "fraction": 0.008
+              },
+              "768": {
+                "targets_fit": 75,
+                "fraction": 0.6
+              },
+              "1024": {
+                "targets_fit": 124,
+                "fraction": 0.992
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 846,
+              "median": 1208,
+              "p90_nearest_rank": 1376,
+              "p95_nearest_rank": 1414,
+              "max": 1618,
+              "mean": 1218.04
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 994,
+              "median": 1351,
+              "p90_nearest_rank": 1518,
+              "p95_nearest_rank": 1561,
+              "max": 1762,
+              "mean": 1363.136
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.4635864794254303,
+              "median": 0.5999447703361511,
+              "p90_nearest_rank": 0.6513365507125854,
+              "p95_nearest_rank": 0.6606159210205078,
+              "max": 0.6951264142990112,
+              "mean": 0.5976155304908752
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 4.8220157623291016e-05,
+              "median": 0.006806492805480957,
+              "p90_nearest_rank": 0.0245322585105896,
+              "p95_nearest_rank": 0.04079905152320862,
+              "max": 0.10801798105239868,
+              "mean": 0.01141014003753662
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 2,
+                "fraction": 0.016
+              },
+              "1536": {
+                "targets_fit": 117,
+                "fraction": 0.936
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 1480,
+              "median": 1817,
+              "p90_nearest_rank": 1999,
+              "p95_nearest_rank": 2029,
+              "max": 2190,
+              "mean": 1813.976
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 1631,
+              "median": 1963,
+              "p90_nearest_rank": 2150,
+              "p95_nearest_rank": 2176,
+              "max": 2338,
+              "mean": 1962.096
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.43546509742736816,
+              "median": 0.5864219665527344,
+              "p90_nearest_rank": 0.6386475563049316,
+              "p95_nearest_rank": 0.6560465097427368,
+              "max": 0.6877917647361755,
+              "mean": 0.5862053904533386
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 7.784366607666016e-05,
+              "median": 0.004865884780883789,
+              "p90_nearest_rank": 0.023240208625793457,
+              "p95_nearest_rank": 0.029002904891967773,
+              "max": 0.06459087133407593,
+              "mean": 0.008491157054901123
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1536": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "2048": {
+                "targets_fit": 92,
+                "fraction": 0.736
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 1982,
+              "median": 2425,
+              "p90_nearest_rank": 2659,
+              "p95_nearest_rank": 2687,
+              "max": 2948,
+              "mean": 2423.472
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 2134,
+              "median": 2580,
+              "p90_nearest_rank": 2814,
+              "p95_nearest_rank": 2841,
+              "max": 3101,
+              "mean": 2575.344
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.42471516132354736,
+              "median": 0.5771813988685608,
+              "p90_nearest_rank": 0.6340541243553162,
+              "p95_nearest_rank": 0.6541417837142944,
+              "max": 0.6806951761245728,
+              "mean": 0.5777142333984375
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 3.0875205993652344e-05,
+              "median": 0.0047005414962768555,
+              "p90_nearest_rank": 0.01861727237701416,
+              "p95_nearest_rank": 0.022613108158111572,
+              "max": 0.058352112770080566,
+              "mean": 0.007277867078781128
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "512": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "768": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1024": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "1536": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "2048": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "3072": {
+                "targets_fit": 124,
+                "fraction": 0.992
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 0,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 0,
+              "median": 0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "k_boundary_similarity_margin": {
+              "count": 0,
+              "min": null,
+              "median": null,
+              "p90_nearest_rank": null,
+              "p95_nearest_rank": null,
+              "max": null,
+              "mean": null
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "192": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 1,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 1,
+              "median": 1,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 22,
+              "median": 30,
+              "p90_nearest_rank": 36,
+              "p95_nearest_rank": 37,
+              "max": 41,
+              "mean": 30.56
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 170,
+              "median": 181,
+              "p90_nearest_rank": 189,
+              "p95_nearest_rank": 191,
+              "max": 195,
+              "mean": 181.12
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.43126460909843445,
+              "median": 0.5869455933570862,
+              "p90_nearest_rank": 0.653472363948822,
+              "p95_nearest_rank": 0.6825756430625916,
+              "max": 0.7352664470672607,
+              "mean": 0.5812245573997498
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 8.744001388549805e-05,
+              "median": 0.016213178634643555,
+              "p90_nearest_rank": 0.05041179060935974,
+              "p95_nearest_rank": 0.055340468883514404,
+              "max": 0.07668530941009521,
+              "mean": 0.019908002614974975
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 120,
+                "fraction": 0.96
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 2,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 2,
+              "median": 2,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 47,
+              "median": 61,
+              "p90_nearest_rank": 69,
+              "p95_nearest_rank": 72,
+              "max": 81,
+              "mean": 61.512
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 199,
+              "median": 215,
+              "p90_nearest_rank": 225,
+              "p95_nearest_rank": 227,
+              "max": 233,
+              "mean": 215.8
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.42579060792922974,
+              "median": 0.5607268810272217,
+              "p90_nearest_rank": 0.6265510320663452,
+              "p95_nearest_rank": 0.6639604568481445,
+              "max": 0.7002726793289185,
+              "mean": 0.5613165547847748
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 8.279085159301758e-05,
+              "median": 0.008880078792572021,
+              "p90_nearest_rank": 0.031187236309051514,
+              "p95_nearest_rank": 0.04138070344924927,
+              "max": 0.10311996936798096,
+              "mean": 0.013704225063323975
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 3,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 3,
+              "median": 3,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 71,
+              "median": 92,
+              "p90_nearest_rank": 104,
+              "p95_nearest_rank": 107,
+              "max": 116,
+              "mean": 92.264
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 229,
+              "median": 249,
+              "p90_nearest_rank": 262,
+              "p95_nearest_rank": 264,
+              "max": 270,
+              "mean": 250.128
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.41763585805892944,
+              "median": 0.5451984405517578,
+              "p90_nearest_rank": 0.6152787208557129,
+              "p95_nearest_rank": 0.6501133441925049,
+              "max": 0.6806609630584717,
+              "mean": 0.5476123297214508
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 5.7697296142578125e-05,
+              "median": 0.006978452205657959,
+              "p90_nearest_rank": 0.02362978458404541,
+              "p95_nearest_rank": 0.028489887714385986,
+              "max": 0.04466703534126282,
+              "mean": 0.00979749059677124
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 90,
+                "fraction": 0.72
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          },
+          {
+            "requested_k": 4,
+            "targets": 125,
+            "targets_with_full_k": 125,
+            "full_k_fraction": 1.0,
+            "realized_k": {
+              "count": 125,
+              "min": 4,
+              "median": 4,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "candidate_content_tokens": {
+              "count": 125,
+              "min": 97,
+              "median": 123,
+              "p90_nearest_rank": 137,
+              "p95_nearest_rank": 141,
+              "max": 149,
+              "mean": 123.16
+            },
+            "exact_step2_rendered_resource_tokens": {
+              "count": 125,
+              "min": 258,
+              "median": 285,
+              "p90_nearest_rank": 300,
+              "p95_nearest_rank": 306,
+              "max": 312,
+              "mean": 285.168
+            },
+            "kth_candidate_bge_cosine_similarity": {
+              "count": 125,
+              "min": 0.41754186153411865,
+              "median": 0.5397331714630127,
+              "p90_nearest_rank": 0.6097862720489502,
+              "p95_nearest_rank": 0.6329211592674255,
+              "max": 0.6662733554840088,
+              "mean": 0.5378148391246795
+            },
+            "k_boundary_similarity_margin": {
+              "count": 125,
+              "min": 2.473592758178711e-05,
+              "median": 0.005541086196899414,
+              "p90_nearest_rank": 0.019554078578948975,
+              "p95_nearest_rank": 0.024112582206726074,
+              "max": 0.05539417266845703,
+              "mean": 0.008409544944763184
+            },
+            "diagnostic_cap_fit_not_a_cap_selection": {
+              "128": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "192": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "256": {
+                "targets_fit": 0,
+                "fraction": 0.0
+              },
+              "384": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "512": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "768": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1024": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "1536": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "2048": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "3072": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "4096": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              },
+              "6144": {
+                "targets_fit": 125,
+                "fraction": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "all_heads_symmetric_k_diagnostic": [
+        {
+          "symmetric_requested_k_per_head": 0,
+          "targets": 125,
+          "realized_units_across_MP_ME_MS": {
+            "count": 125,
+            "min": 0,
+            "median": 0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 125,
+            "min": 0,
+            "median": 0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "192": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "256": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "384": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "512": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "768": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "1024": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "1536": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "2048": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "3072": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 1,
+          "targets": 125,
+          "realized_units_across_MP_ME_MS": {
+            "count": 125,
+            "min": 3,
+            "median": 3,
+            "p90_nearest_rank": 3,
+            "p95_nearest_rank": 3,
+            "max": 3,
+            "mean": 3.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 125,
+            "min": 824,
+            "median": 1102,
+            "p90_nearest_rank": 1226,
+            "p95_nearest_rank": 1251,
+            "max": 1490,
+            "mean": 1105.936
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 26,
+              "fraction": 0.208
+            },
+            "1536": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "2048": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "3072": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 2,
+          "targets": 125,
+          "realized_units_across_MP_ME_MS": {
+            "count": 125,
+            "min": 6,
+            "median": 6,
+            "p90_nearest_rank": 6,
+            "p95_nearest_rank": 6,
+            "max": 6,
+            "mean": 6.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 125,
+            "min": 1389,
+            "median": 1775,
+            "p90_nearest_rank": 1946,
+            "p95_nearest_rank": 1981,
+            "max": 2192,
+            "mean": 1778.04
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 5,
+              "fraction": 0.04
+            },
+            "2048": {
+              "targets_fit": 121,
+              "fraction": 0.968
+            },
+            "3072": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 3,
+          "targets": 125,
+          "realized_units_across_MP_ME_MS": {
+            "count": 125,
+            "min": 9,
+            "median": 9,
+            "p90_nearest_rank": 9,
+            "p95_nearest_rank": 9,
+            "max": 9,
+            "mean": 9.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 125,
+            "min": 2093,
+            "median": 2437,
+            "p90_nearest_rank": 2628,
+            "p95_nearest_rank": 2673,
+            "max": 2819,
+            "mean": 2439.736
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "2048": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "3072": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "4096": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        },
+        {
+          "symmetric_requested_k_per_head": 4,
+          "targets": 125,
+          "realized_units_across_MP_ME_MS": {
+            "count": 125,
+            "min": 12,
+            "median": 12,
+            "p90_nearest_rank": 12,
+            "p95_nearest_rank": 12,
+            "max": 12,
+            "mean": 12.0
+          },
+          "exact_combined_step2_resource_tokens": {
+            "count": 125,
+            "min": 2639,
+            "median": 3124,
+            "p90_nearest_rank": 3382,
+            "p95_nearest_rank": 3423,
+            "max": 3594,
+            "mean": 3117.192
+          },
+          "diagnostic_cap_fit_not_a_cap_selection": {
+            "128": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "192": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "256": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "384": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "512": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "768": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1024": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "1536": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "2048": {
+              "targets_fit": 0,
+              "fraction": 0.0
+            },
+            "3072": {
+              "targets_fit": 49,
+              "fraction": 0.392
+            },
+            "4096": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            },
+            "6144": {
+              "targets_fit": 125,
+              "fraction": 1.0
+            }
+          },
+          "interpretation": "diagnostic simultaneous-three-head request in canonical MP,ME,MS order; the learned allocator may select a subset and amount selection remains task/head/fold specific"
+        }
+      ]
+    },
+    "dialogue_generation": {
+      "status": "DYNAMIC_QUERY_CONTRACT_FROZEN_STATIC_RANKING_INTENTIONALLY_ABSENT",
+      "targets": 34,
+      "interaction_rounds_per_target": 10,
+      "query": "exact just-appended current-round seeker utterance",
+      "retrieval_schedule": "every supporter generation round",
+      "per_head": {
+        "MP": [
+          {
+            "requested_k": 0,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 1,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 1,
+              "median": 1.0,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 8,
+              "median": 12.5,
+              "p90_nearest_rank": 18,
+              "p95_nearest_rank": 23,
+              "max": 23,
+              "mean": 13.11111111111111
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 18,
+              "median": 34.5,
+              "p90_nearest_rank": 43,
+              "p95_nearest_rank": 49,
+              "max": 49,
+              "mean": 33.166666666666664
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 149,
+              "median": 154.5,
+              "p90_nearest_rank": 165,
+              "p95_nearest_rank": 172,
+              "max": 172,
+              "mean": 155.88888888888889
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 161,
+              "median": 179.0,
+              "p90_nearest_rank": 188,
+              "p95_nearest_rank": 195,
+              "max": 195,
+              "mean": 176.88888888888889
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 2,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 2,
+              "median": 2.0,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 19,
+              "median": 27.5,
+              "p90_nearest_rank": 43,
+              "p95_nearest_rank": 48,
+              "max": 48,
+              "mean": 28.833333333333332
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 35,
+              "median": 68.0,
+              "p90_nearest_rank": 86,
+              "p95_nearest_rank": 97,
+              "max": 97,
+              "mean": 64.72222222222223
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 162,
+              "median": 173.5,
+              "p90_nearest_rank": 189,
+              "p95_nearest_rank": 196,
+              "max": 196,
+              "mean": 175.44444444444446
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 184,
+              "median": 214.5,
+              "p90_nearest_rank": 237,
+              "p95_nearest_rank": 246,
+              "max": 246,
+              "mean": 212.0
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 3,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 3,
+              "median": 3.0,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 30,
+              "median": 45.5,
+              "p90_nearest_rank": 72,
+              "p95_nearest_rank": 74,
+              "max": 74,
+              "mean": 46.166666666666664
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 52,
+              "median": 95.5,
+              "p90_nearest_rank": 127,
+              "p95_nearest_rank": 143,
+              "max": 143,
+              "mean": 93.94444444444444
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 179,
+              "median": 196.0,
+              "p90_nearest_rank": 222,
+              "p95_nearest_rank": 227,
+              "max": 227,
+              "mean": 197.5
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 200,
+              "median": 252.5,
+              "p90_nearest_rank": 277,
+              "p95_nearest_rank": 300,
+              "max": 300,
+              "mean": 245.94444444444446
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 4,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 4,
+              "median": 4.0,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 43,
+              "median": 62.0,
+              "p90_nearest_rank": 100,
+              "p95_nearest_rank": 101,
+              "max": 101,
+              "mean": 64.94444444444444
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 69,
+              "median": 121.5,
+              "p90_nearest_rank": 167,
+              "p95_nearest_rank": 185,
+              "max": 185,
+              "mean": 122.0
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 198,
+              "median": 219.0,
+              "p90_nearest_rank": 255,
+              "p95_nearest_rank": 265,
+              "max": 265,
+              "mean": 220.72222222222223
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 223,
+              "median": 274.5,
+              "p90_nearest_rank": 325,
+              "p95_nearest_rank": 337,
+              "max": 337,
+              "mean": 276.55555555555554
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          }
+        ],
+        "MS": [
+          {
+            "requested_k": 0,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 1,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 1,
+              "median": 1.0,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 204,
+              "median": 381.5,
+              "p90_nearest_rank": 462,
+              "p95_nearest_rank": 485,
+              "max": 485,
+              "mean": 366.6111111111111
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 658,
+              "median": 813.0,
+              "p90_nearest_rank": 1109,
+              "p95_nearest_rank": 1212,
+              "max": 1212,
+              "mean": 876.8333333333334
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 341,
+              "median": 524.5,
+              "p90_nearest_rank": 608,
+              "p95_nearest_rank": 628,
+              "max": 628,
+              "mean": 509.5
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 804,
+              "median": 955.5,
+              "p90_nearest_rank": 1248,
+              "p95_nearest_rank": 1354,
+              "max": 1354,
+              "mean": 1019.1111111111111
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 2,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 2,
+              "median": 2.0,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 629,
+              "median": 823.5,
+              "p90_nearest_rank": 927,
+              "p95_nearest_rank": 980,
+              "max": 980,
+              "mean": 815.2777777777778
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 1302,
+              "median": 1569.5,
+              "p90_nearest_rank": 1933,
+              "p95_nearest_rank": 1937,
+              "max": 1937,
+              "mean": 1631.0
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 775,
+              "median": 969.5,
+              "p90_nearest_rank": 1073,
+              "p95_nearest_rank": 1130,
+              "max": 1130,
+              "mean": 961.3888888888889
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 1453,
+              "median": 1714.0,
+              "p90_nearest_rank": 2077,
+              "p95_nearest_rank": 2078,
+              "max": 2078,
+              "mean": 1776.388888888889
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 3,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 3,
+              "median": 3.0,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 1079,
+              "median": 1328.0,
+              "p90_nearest_rank": 1399,
+              "p95_nearest_rank": 1480,
+              "max": 1480,
+              "mean": 1301.388888888889
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 1919,
+              "median": 2297.0,
+              "p90_nearest_rank": 2718,
+              "p95_nearest_rank": 2721,
+              "max": 2721,
+              "mean": 2345.1111111111113
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 1224,
+              "median": 1478.5,
+              "p90_nearest_rank": 1551,
+              "p95_nearest_rank": 1626,
+              "max": 1626,
+              "mean": 1449.388888888889
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 2065,
+              "median": 2445.0,
+              "p90_nearest_rank": 2868,
+              "p95_nearest_rank": 2868,
+              "max": 2868,
+              "mean": 2493.8888888888887
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 4,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 4,
+              "median": 4.0,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 1565,
+              "median": 1839.0,
+              "p90_nearest_rank": 1951,
+              "p95_nearest_rank": 1982,
+              "max": 1982,
+              "mean": 1813.1666666666667
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 2533,
+              "median": 2990.0,
+              "p90_nearest_rank": 3481,
+              "p95_nearest_rank": 3485,
+              "max": 3485,
+              "mean": 3035.6111111111113
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 1718,
+              "median": 1991.5,
+              "p90_nearest_rank": 2104,
+              "p95_nearest_rank": 2133,
+              "max": 2133,
+              "mean": 1964.4444444444443
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 2686,
+              "median": 3142.5,
+              "p90_nearest_rank": 3631,
+              "p95_nearest_rank": 3636,
+              "max": 3636,
+              "mean": 3187.1666666666665
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          }
+        ],
+        "ME": [
+          {
+            "requested_k": 0,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 0,
+              "median": 0.0,
+              "p90_nearest_rank": 0,
+              "p95_nearest_rank": 0,
+              "max": 0,
+              "mean": 0.0
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 1,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 1,
+              "median": 1.0,
+              "p90_nearest_rank": 1,
+              "p95_nearest_rank": 1,
+              "max": 1,
+              "mean": 1.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 19,
+              "median": 21.0,
+              "p90_nearest_rank": 25,
+              "p95_nearest_rank": 26,
+              "max": 26,
+              "mean": 21.61111111111111
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 35,
+              "median": 39.5,
+              "p90_nearest_rank": 46,
+              "p95_nearest_rank": 47,
+              "max": 47,
+              "mean": 40.166666666666664
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 166,
+              "median": 171.0,
+              "p90_nearest_rank": 178,
+              "p95_nearest_rank": 181,
+              "max": 181,
+              "mean": 171.83333333333334
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 182,
+              "median": 188.5,
+              "p90_nearest_rank": 199,
+              "p95_nearest_rank": 202,
+              "max": 202,
+              "mean": 190.22222222222223
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 2,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 2,
+              "median": 2.0,
+              "p90_nearest_rank": 2,
+              "p95_nearest_rank": 2,
+              "max": 2,
+              "mean": 2.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 39,
+              "median": 43.0,
+              "p90_nearest_rank": 50,
+              "p95_nearest_rank": 53,
+              "max": 53,
+              "mean": 44.05555555555556
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 68,
+              "median": 78.0,
+              "p90_nearest_rank": 89,
+              "p95_nearest_rank": 90,
+              "max": 90,
+              "mean": 78.66666666666667
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 191,
+              "median": 199.0,
+              "p90_nearest_rank": 206,
+              "p95_nearest_rank": 207,
+              "max": 207,
+              "mean": 198.88888888888889
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 223,
+              "median": 233.5,
+              "p90_nearest_rank": 245,
+              "p95_nearest_rank": 250,
+              "max": 250,
+              "mean": 234.05555555555554
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 3,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 3,
+              "median": 3.0,
+              "p90_nearest_rank": 3,
+              "p95_nearest_rank": 3,
+              "max": 3,
+              "mean": 3.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 60,
+              "median": 65.0,
+              "p90_nearest_rank": 79,
+              "p95_nearest_rank": 80,
+              "max": 80,
+              "mean": 67.16666666666667
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 101,
+              "median": 115.0,
+              "p90_nearest_rank": 131,
+              "p95_nearest_rank": 133,
+              "max": 133,
+              "mean": 116.27777777777777
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 214,
+              "median": 226.0,
+              "p90_nearest_rank": 236,
+              "p95_nearest_rank": 241,
+              "max": 241,
+              "mean": 225.22222222222223
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 261,
+              "median": 274.5,
+              "p90_nearest_rank": 287,
+              "p95_nearest_rank": 290,
+              "max": 290,
+              "mean": 275.8888888888889
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          },
+          {
+            "requested_k": 4,
+            "owners": 18,
+            "realized_k_capacity": {
+              "count": 18,
+              "min": 4,
+              "median": 4.0,
+              "p90_nearest_rank": 4,
+              "p95_nearest_rank": 4,
+              "max": 4,
+              "mean": 4.0
+            },
+            "sum_of_k_shortest_candidate_tokens": {
+              "count": 18,
+              "min": 81,
+              "median": 88.0,
+              "p90_nearest_rank": 107,
+              "p95_nearest_rank": 108,
+              "max": 108,
+              "mean": 90.88888888888889
+            },
+            "sum_of_k_longest_candidate_tokens": {
+              "count": 18,
+              "min": 134,
+              "median": 151.5,
+              "p90_nearest_rank": 172,
+              "p95_nearest_rank": 175,
+              "max": 175,
+              "mean": 153.33333333333334
+            },
+            "exact_rendered_shortest_token_order_proxy": {
+              "count": 18,
+              "min": 236,
+              "median": 250.0,
+              "p90_nearest_rank": 271,
+              "p95_nearest_rank": 272,
+              "max": 272,
+              "mean": 253.44444444444446
+            },
+            "exact_rendered_longest_token_order_proxy": {
+              "count": 18,
+              "min": 299,
+              "median": 313.5,
+              "p90_nearest_rank": 339,
+              "p95_nearest_rank": 339,
+              "max": 339,
+              "mean": 316.1111111111111
+            },
+            "interpretation": "outcome-blind length extremes, not a static DG ranking and not a proof that the longest-token ordering maximizes joint tokenizer length"
+          }
+        ]
+      },
+      "all_heads_symmetric_k_capacity_diagnostic": [
+        {
+          "symmetric_requested_k_per_head": 0,
+          "owners": 18,
+          "exact_combined_shortest_token_order_proxy": {
+            "count": 18,
+            "min": 0,
+            "median": 0.0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "exact_combined_longest_token_order_proxy": {
+            "count": 18,
+            "min": 0,
+            "median": 0.0,
+            "p90_nearest_rank": 0,
+            "p95_nearest_rank": 0,
+            "max": 0,
+            "mean": 0.0
+          },
+          "interpretation": "three-head dynamic-query length proxy only; no static DG ranking, effect, or final cap selection"
+        },
+        {
+          "symmetric_requested_k_per_head": 1,
+          "owners": 18,
+          "exact_combined_shortest_token_order_proxy": {
+            "count": 18,
+            "min": 663,
+            "median": 844.0,
+            "p90_nearest_rank": 930,
+            "p95_nearest_rank": 953,
+            "max": 953,
+            "mean": 837.2222222222222
+          },
+          "exact_combined_longest_token_order_proxy": {
+            "count": 18,
+            "min": 1162,
+            "median": 1314.5,
+            "p90_nearest_rank": 1613,
+            "p95_nearest_rank": 1719,
+            "max": 1719,
+            "mean": 1386.2222222222222
+          },
+          "interpretation": "three-head dynamic-query length proxy only; no static DG ranking, effect, or final cap selection"
+        },
+        {
+          "symmetric_requested_k_per_head": 2,
+          "owners": 18,
+          "exact_combined_shortest_token_order_proxy": {
+            "count": 18,
+            "min": 1148,
+            "median": 1347.5,
+            "p90_nearest_rank": 1451,
+            "p95_nearest_rank": 1496,
+            "max": 1496,
+            "mean": 1335.7222222222222
+          },
+          "exact_combined_longest_token_order_proxy": {
+            "count": 18,
+            "min": 1876,
+            "median": 2146.0,
+            "p90_nearest_rank": 2545,
+            "p95_nearest_rank": 2551,
+            "max": 2551,
+            "mean": 2222.4444444444443
+          },
+          "interpretation": "three-head dynamic-query length proxy only; no static DG ranking, effect, or final cap selection"
+        },
+        {
+          "symmetric_requested_k_per_head": 3,
+          "owners": 18,
+          "exact_combined_shortest_token_order_proxy": {
+            "count": 18,
+            "min": 1647,
+            "median": 1898.0,
+            "p90_nearest_rank": 2014,
+            "p95_nearest_rank": 2032,
+            "max": 2032,
+            "mean": 1872.111111111111
+          },
+          "exact_combined_longest_token_order_proxy": {
+            "count": 18,
+            "min": 2549,
+            "median": 2951.0,
+            "p90_nearest_rank": 3389,
+            "p95_nearest_rank": 3452,
+            "max": 3452,
+            "mean": 3015.722222222222
+          },
+          "interpretation": "three-head dynamic-query length proxy only; no static DG ranking, effect, or final cap selection"
+        },
+        {
+          "symmetric_requested_k_per_head": 4,
+          "owners": 18,
+          "exact_combined_shortest_token_order_proxy": {
+            "count": 18,
+            "min": 2187,
+            "median": 2466.0,
+            "p90_nearest_rank": 2601,
+            "p95_nearest_rank": 2630,
+            "max": 2630,
+            "mean": 2438.6111111111113
+          },
+          "exact_combined_longest_token_order_proxy": {
+            "count": 18,
+            "min": 3228,
+            "median": 3696.0,
+            "p90_nearest_rank": 4248,
+            "p95_nearest_rank": 4283,
+            "max": 4283,
+            "mean": 3779.8333333333335
+          },
+          "interpretation": "three-head dynamic-query length proxy only; no static DG ranking, effect, or final cap selection"
+        }
+      ]
+    }
+  },
+  "tokenizer": {
+    "repo_id": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+    "surface": "exact rendered PAPER1_RESOURCE block; no task base prompt/chat template"
+  },
+  "method_boundary": {
+    "formal_outcome_calls": 0,
+    "paid_api_calls": 0,
+    "pm_training_runs": 0,
+    "calibration_outcome_lock": "CLOSED",
+    "confirmatory_outcome_lock": "CLOSED",
+    "task_generator_prompt_injection_point_frozen": false,
+    "surface_cells_are_descriptive_not_empirical_pass_gates": true
+  }
+}

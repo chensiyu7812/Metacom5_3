@@ -1,0 +1,39 @@
+{
+  "protocol": "paper1-pairwise-teacher-dg-first-turn-authorization-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_EXACT_EIGHT_CALLS",
+  "researcher_authorization": {
+    "authorized_usd": 0.11,
+    "authorized_new_physical_calls": 8,
+    "authorized_model": "gpt-4o-2024-11-20",
+    "authorized_purpose": "first seeker turn for the nine-scenario matched DG subset of the 96-presentation pairwise-teacher reference",
+    "one_existing_identity_matched_call_reused": true,
+    "retries_in_this_authorization": 0,
+    "gemini_calls_authorized": 0,
+    "formal_evaluator_calls_authorized": 0,
+    "quality_or_outcome_driven_reruns_authorized": false
+  },
+  "frozen_input": {
+    "git_commit_before_execution": "59f48afb9e6949561be1a4a33a912568299654fa",
+    "preflight": "paper1_pairwise_teacher_preflight_20260904_v1.json",
+    "preflight_sha256": "22e56eaece212fc947baadce9e691a6774777cf028a415a6073a1ad52f2cacbf",
+    "base_pair_manifest": "paper1_pairwise_teacher_base_pair_preflight_20260904_v1.jsonl",
+    "base_pair_manifest_sha256": "90c8b869fdc3fe4683b89e24ec237cd6eec0030602adb5ce90ae6728e545d7c7",
+    "pending_request_count": 8,
+    "estimated_input_tokens": 39640,
+    "maximum_output_tokens": 480,
+    "preflight_worst_case_estimated_usd": 0.1039,
+    "execution_reservation_rule": "reserve each call using preflight estimated input plus 200 safety tokens and the full 60-token output ceiling; aggregate reservations must remain <= USD 0.11"
+  },
+  "execution_policy": {
+    "temperature": "provider default omitted",
+    "max_completion_tokens": 60,
+    "physical_attempts_per_request": 1,
+    "non_stop": "apply the frozen upstream complete-sentence-prefix handling without resampling",
+    "selection_or_continuation_may_not_read_response_quality": true,
+    "generated_text_storage": "ignored private outputs only; tracked result stores hashes and operational metadata"
+  },
+  "formal_outcome_calls_before_authorization": 0,
+  "pm_training_runs_before_authorization": 0,
+  "locks_remain_closed": true
+}

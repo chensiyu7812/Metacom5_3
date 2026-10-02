@@ -1,0 +1,144 @@
+{
+  "protocol": "paper1-pairwise-teacher-human-instrument-v2",
+  "date": "2026-09-08",
+  "status": "ACTIVE_REFERENCE_V2_FROZEN_HUMAN_RATINGS_PENDING",
+  "purpose": "Give both primary human raters the same task-specific definition of a discernible material response-quality advantage before either rater sees any pair.",
+  "unit": "one blinded presentation of the same task input with anonymous Response A and Response B",
+  "common_instruction": [
+    "Judge the responses as answers to the supplied task input; do not guess which response used a resource or which system produced it.",
+    "Choose A_better or B_better only when that response has a clear, meaningful net advantage in the task-authorized quality criteria.",
+    "Longer wording, warmer tone, more empathy, more advice, more personalization, more strategies, or mentioning memory is not by itself an advantage.",
+    "Incorrect, invented, stale, irrelevant, intrusive, unsafe, or instruction-violating content can make a response worse even when it sounds supportive.",
+    "Choose equivalent when both responses are assessable but neither has a discernible material net advantage, including when both are similarly good or similarly poor.",
+    "Choose uncertain only when the supplied information is insufficient, correctness cannot be determined, or material advantages and harms conflict without a defensible net choice.",
+    "Rate every presentation independently. Do not search for duplicates or revise an earlier answer to make repeated presentations agree."
+  ],
+  "verdicts": {
+    "A_better": "Response A has a clear, meaningful net quality advantage.",
+    "B_better": "Response B has a clear, meaningful net quality advantage.",
+    "equivalent": "No discernible material net advantage; both may be equally good, equally acceptable, or equally poor.",
+    "uncertain": "A reliable direction/equivalence judgement cannot be made from the authorized evidence."
+  },
+  "task_rubrics": {
+    "ESC": {
+      "shown": [
+        "visible conversation prefix ending at the current seeker turn",
+        "Response A",
+        "Response B"
+      ],
+      "judge": [
+        "overall appropriateness to the current seeker need",
+        "empathy and emotional attunement",
+        "relevance and helpfulness",
+        "coherence and naturalness",
+        "absence of harmful or unsupported claims"
+      ],
+      "material_example": "One response addresses the seeker's actual concern safely and concretely while the other misses it, invents facts, gives unsuitable advice, or is substantially less supportive.",
+      "not_material_example": "Minor wording, length, politeness, or warmth differences that do not change the response's practical quality."
+    },
+    "QA": {
+      "shown": [
+        "question",
+        "reference answer",
+        "Response A",
+        "Response B"
+      ],
+      "judge": [
+        "semantic correctness against the reference",
+        "directness and relevance",
+        "absence of unsupported additions",
+        "appropriate abstention when the reference is unknown"
+      ],
+      "material_example": "One response gets a reference-supported fact or conclusion right while the other gets it wrong, omits the answer, or invents a conflicting fact.",
+      "not_material_example": "Paraphrases that convey the same correct answer with harmless differences in detail or style."
+    },
+    "Summary": {
+      "shown": [
+        "summary question",
+        "reference summary",
+        "Response A",
+        "Response B"
+      ],
+      "judge": [
+        "coverage of the requested events or evolution",
+        "temporal and causal coherence",
+        "faithfulness to the reference",
+        "focus and concision"
+      ],
+      "material_example": "One response captures a missing major event, transition, or causal relation, or avoids a substantive hallucination present in the other.",
+      "not_material_example": "Tiny overlap, ordering, or phrasing differences that preserve the same important events and meaning."
+    },
+    "DG": {
+      "shown": [
+        "task-related historical excerpt and complete strict-past raw history",
+        "current new-dialogue prefix ending at the current seeker turn",
+        "Response A",
+        "Response B"
+      ],
+      "judge": [
+        "correctness of any claimed prior memory",
+        "relevant and non-intrusive personalization",
+        "emotional-support appropriateness",
+        "coherence with the current dialogue",
+        "absence of harmful, stale, or invented claims"
+      ],
+      "material_example": "One response correctly recalls a useful prior detail and responds supportively while the other forgets a crucial cue, recalls it incorrectly, or forces irrelevant memory into the turn.",
+      "not_material_example": "Merely mentioning history or the seeker's name without a real improvement in correctness or support quality.",
+      "evidence_instruction": "The task-related historical excerpt is not exhaustive. Use the complete prior history to check a claimed memory when needed; absence from the excerpt alone does not establish fabrication. Distinguish seeker statements from supporter guesses, and past events from current states using dates and visible updates. If the supplied evidence still cannot support a reliable comparison, choose uncertain."
+    }
+  },
+  "response_fields": {
+    "verdict": {
+      "required": true,
+      "allowed": [
+        "A_better",
+        "B_better",
+        "equivalent",
+        "uncertain"
+      ]
+    },
+    "rationale": {
+      "required": true,
+      "instruction": "Briefly identify the decisive material difference or explain why the pair is equivalent/uncertain."
+    }
+  },
+  "blinding": {
+    "on_off_hidden": true,
+    "head_and_k_hidden": true,
+    "pm_score_hidden": true,
+    "system_identity_hidden": true,
+    "reverse_duplicate_flag_hidden": true,
+    "resource_bundle_hidden_from_effect_judge": true,
+    "gold_or_reference_is_scorer_only_and_never_generator_or_pm_input": true
+  },
+  "rating_design": {
+    "presentations_per_primary_rater": 96,
+    "primary_raters": 2,
+    "primary_judgements": 192,
+    "same_A_B_orientation_for_both_raters": true,
+    "independent_rater_order": true,
+    "disagreement_preserved": true,
+    "adjudication_separate": true,
+    "human_uncertain_may_remain_uncertain": true
+  },
+  "not_a_pass_gate": true,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "reference_protocol": "paper1-DG-complete-strict-past-human-teacher-reference-v2",
+  "submission": {
+    "editable_fields_only": [
+      "verdict",
+      "rationale"
+    ],
+    "rationale_language": "Chinese or English",
+    "partial_save_allowed": true,
+    "adjudication": "separate_after_primary_ratings_sealed"
+  }
+}

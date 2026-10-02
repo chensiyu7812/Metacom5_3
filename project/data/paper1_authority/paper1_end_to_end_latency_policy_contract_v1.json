@@ -1,0 +1,28 @@
+{
+  "protocol": "paper1-end-to-end-latency-policy-v1",
+  "status": "ACTIVE_INSTRUMENTATION_CONTRACT_SLA_VALUES_PENDING",
+  "date": "2026-09-03",
+  "clock": "monotonic wall clock",
+  "scope_start": "frozen visible state accepted by PM runtime",
+  "scope_first_token_end": "first generated text token available to the caller",
+  "scope_completion_end": "normalized complete text response available to the caller",
+  "required_components_ms": [
+    "policy_decision",
+    "retrieval_embedding",
+    "resource_render_pack",
+    "generator_request_to_first_token",
+    "generator_request_to_completion",
+    "request_to_first_token",
+    "request_to_completion"
+  ],
+  "optional_future_audio_components_ms": ["ASR_endpointer", "TTS_first_audio"],
+  "offline_scorer_or_evaluator_time_is_user_latency": false,
+  "report_percentiles": [0.5, 0.9, 0.95, 1.0],
+  "percentile_input": "raw per-call wall-clock samples; p95-of-state-means is forbidden",
+  "primary_constraint_percentile": 0.95,
+  "absolute_unacceptable_ceiling_ms": 60000,
+  "task_budgets": null,
+  "task_budget_status": "IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED AFTER ZERO-OUTCOME PROFILING",
+  "budget_selection_may_read_capability_outcomes": false,
+  "formal_outcome_calls": 0
+}

@@ -1,0 +1,51 @@
+{
+  "protocol": "paper1-gemini-teacher-execution-plan-v1",
+  "status": "PROPOSED_EXECUTION_NOT_AUTHORIZED",
+  "model": "gemini-2.5-flash-lite",
+  "identity_sha256": "34cecf98a27792aec28520145ad3895a2fae6c90781f5685fa63525b8e590f58",
+  "requests_path": "outputs/paper1_pairwise_teacher/human_sheets_v2/coordinator_only/gemini_requests_v2.jsonl",
+  "requests_sha256": "f26e04b07fa8e21bc52e0658a1a44b3abe10d86270e25ce0aadf5c00708a187d",
+  "presentations": 96,
+  "base_pairs": 80,
+  "reversal_presentations": 16,
+  "base_pair_source_sha256": "90c8b869fdc3fe4683b89e24ec237cd6eec0030602adb5ce90ae6728e545d7c7",
+  "reference_trace_sha256": "3a0db33bb7e80fe2d352a42e7eb9c9df6f69011d5c70e0eae63d2461a2bd7af2",
+  "intake_sha256": "61067376526394f8eb180d5dc3d0a108d54aa1882c617f8830e467cab3441ec5",
+  "closeout_sha256": "9d9c5e232aec269a53466b54467b6214e814a217204d70833bb2e98121b40921",
+  "implementation_sha256": {
+    "scripts/paper1/64_run_gemini_teacher_qualification.py": "2b0a5620aefcf526eacc4f459ed3f963b4d982bb7fa69596e0e7051b46eec188",
+    "src/metacom_pm/paper1/evaluation/gemini_teacher.py": "381690c4352625ed42d5665fd0c75617ad4b6bd18a3dc2789290e38197abc45d",
+    "src/metacom_pm/paper1/evaluation/pairwise_teacher.py": "77850839338e4bfd9b2cd23c4c834d45310394304583477a5329adca777588fe",
+    "src/metacom_pm/paper1/evaluation/teacher_diagnostics.py": "c5c8926b0a2c8219522191a238f66b513b5f3b02dd7586ebf0e3ff61fb05b90c",
+    "src/metacom_pm/paper1/api_budget.py": "37611440e711182ca32ed180ca47722284099450c3b15b00d2caf66e71ef23c7"
+  },
+  "provider_preflight_sha256": "6502d2445d5f5db68f67d57dcbceb3c41a6587c2b74382b2a8cc0e99b8e29d5f",
+  "reference_protocol_change": {
+    "status": "PROPOSED RESEARCH CHANGE — NOT AUTHORIZED",
+    "changes": "Use original A as the recorded joint-human reference; posthoc six-case and assistant views are sensitivity only; AI B stays exploratory.",
+    "reason": "Actual joint review is complete; researcher requested no further human sheets.",
+    "superseded_claim": "Completion of 192 independent primary human judgements and independent inter-human agreement.",
+    "reruns": "No rerating or regeneration of the existing 142 responses. Run the still-unexecuted candidate qualification with disclosed provenance.",
+    "paper_claim_change": "No change to official RQ1/RQ2 capability metrics or PM claim; qualification agreement is against a joint reference."
+  },
+  "stage_hard_cap_usd": "0.10",
+  "cumulative_hard_cap_usd": "50.00",
+  "max_physical_attempts_per_presentation": 2,
+  "concurrency": 1,
+  "input_accounting_allowance_tokens": 256,
+  "input_accounting_note": "Provider countTokens on full request plus a fixed billing allowance; usage outside the reserved envelope stops execution for reconciliation.",
+  "pricing_checked_date": "2026-09-17",
+  "pricing_source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash-lite",
+  "post_run": "offline taskwise agreement, order stability, equivalent recall, position diagnostics, parsing, cost and clustered uncertainty; no prompt tuning on this sample",
+  "uncertainty": {
+    "method": "cluster percentile bootstrap of exact agreement and supported-class macro recall",
+    "unit": "memory owner / ESC source dialogue",
+    "replicates": 2000,
+    "seed": 20260917,
+    "undefined_replicates": "report valid count; do not invent zero scores for absent classes"
+  },
+  "new_generator_calls": 0,
+  "formal_outcomes": 0,
+  "PM_training": 0,
+  "outcome_locks": "ALL_CLOSED"
+}

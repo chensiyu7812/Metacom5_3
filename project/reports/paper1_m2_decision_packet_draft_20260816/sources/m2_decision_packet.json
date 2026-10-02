@@ -1,0 +1,417 @@
+{
+  "protocol": "pm-paper1-m2-decision-packet-draft-v1",
+  "status": "PRE_OUTCOME_DECISION_DRAFT_NOT_A_FREEZE_NOT_AN_UNLOCK",
+  "generated_at": "2026-08-17T09:42:39+09:00",
+  "authority": {
+    "reconciliation_protocol": "pm-paper1-execution-reconciliation-20260816-v1",
+    "route": "A_first_order_factorized",
+    "official_benchmark_first": true,
+    "cost_separate": true,
+    "empirical_pass_gates": false
+  },
+  "evidence": {
+    "rs_zero_outcome_summary": {
+      "path": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+      "sha256": "6488419b0ed0a3e68bb7eea2f4a2a1805427632a7d0786c9011a313717766b53"
+    },
+    "rs_retriever_comparison": {
+      "path": "data/paper1_public_rs/esconv_rs_retriever_comparison_summary_v1.json",
+      "sha256": "62148c58a1dde98d6d38db50c76c9b85f77e0f9903ac76e6128820f2eda7350a",
+      "status": "ZERO_OUTCOME_DECISION_SURFACE_NO_WINNER_NOT_RETRIEVER_FREEZE",
+      "winner_selected": false,
+      "formal_outcome_calls": 0
+    },
+    "rs_strategy_family_evaluator_diagnostic": {
+      "path": "data/paper1_evaluator_only_rs/esconv_rs_strategy_family_match_summary_v1.json",
+      "sha256": "1dc1aa75d9c7dd95a9d493f76bbb51543426380ce49fdf5318fade8fd462f204",
+      "status": "EVALUATOR_ONLY_RETRIEVER_DIAGNOSTIC_NOT_PM_GOLD_NOT_A_FREEZE",
+      "evaluator_only": true,
+      "winner_selected": false,
+      "formal_outcome_calls": 0
+    },
+    "rs_renderer_boundary_audit": {
+      "path": "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json",
+      "sha256": "b153dd4c42accdb3d4aba7dd450eda787687826cf8cd12ffa9ee7efa64179ee9",
+      "status": "ZERO_OUTCOME_DECISION_SURFACE_NOT_RENDERER_OR_BOUNDARY_FREEZE",
+      "tokenizer": {
+        "source_repo": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+        "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+        "special_tokens_added_for_resource_substring": false,
+        "artifact_identity_status": "LOCAL_TOKENIZER_BYTES_SHA256_VERIFIED",
+        "source_attribution_status": "CALLER_DECLARED_PUBLIC_MIRROR_REPO_AND_REVISION_NOT_REMOTE_REVERIFIED_BY_THIS_SCRIPT",
+        "provider_parity_status": "PUBLIC_LLAMA31_TOKENIZER_MIRROR_NOT_YET_VERIFIED_AGAINST_NVIDIA_NIM_USAGE"
+      }
+    },
+    "official_scorer_audit": {
+      "path": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
+      "sha256": "205722b60b67172c1bf994784aec562362e6de3c53083e6e6070078a85861ce2",
+      "status": "ZERO_OUTCOME_SOURCE_AUDIT_COMPLETE_CODING_AND_SCORER_FREEZE_PENDING"
+    },
+    "rq0_contract": {
+      "path": "data/v3_authority/rq0_llama31_8b_esc_eval_exact_contract_v1.json",
+      "sha256": "c98e71c7fd6c0b85c023a13d5f016c7536219b0a4ce24556198bdcaf86474642"
+    },
+    "preoutcome_draft": {
+      "path": "data/paper1_authority/paper1_pre_outcome_freeze_draft_v1.json",
+      "sha256": "3c34608918606ea8251645d2153bc1c012ea7a050d52fb8fccd399b97b5e8a2b",
+      "status": "DRAFT_AWAITING_M1_INTEGRATION"
+    },
+    "local_environment_attestation": {
+      "path": "data/paper1_authority/paper1_local_environment_attestation_v1.json",
+      "sha256": "7dfdb022630144eec2a36ce44b9f96f0f498900eadc554282e70648ee501d7fe",
+      "status": "ENGINEERING_CAPABLE_NOT_RESEARCH_FROZEN",
+      "outcome_calls": 0,
+      "tokenizer_provider_parity": "PENDING_M2_FREEZE",
+      "retriever_candidate_role": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
+      "retriever_candidate_roles": {
+        "bge_small": "RS_LIGHTWEIGHT_CHALLENGER_AND_ENGINEERING_SMOKE_NOT_RETRIEVER_FREEZE",
+        "bge_m3": "OFFICIAL_RAG_BASELINE_MODEL_ID_AND_SEPARATE_TYPED_MEMORY_CANDIDATE_NOT_RETRIEVER_FREEZE"
+      },
+      "official_rag_model_id": "BAAI/bge-m3",
+      "official_rag_local_revision_parity": "OFFICIAL_LIBRARY_RUNTIME_ATTESTED_UPSTREAM_MAIN_WEIGHT_EQUIVALENCE_NOT_ESTABLISHED_REVISION_FREEZE_PENDING"
+    },
+    "official_rag_runtime_attestation": {
+      "path": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
+      "sha256": "173d4a57f96323ab2dbacc4e8cfba65c77072beed8387d0bd986c17353c84f00",
+      "status": "ENGINEERING_RUNTIME_ATTESTED_NOT_BASELINE_OR_RETRIEVER_FREEZE",
+      "outcome_calls": 0,
+      "official_arm_only": "ES_MEMEVAL_OFFICIAL_RAG_BASELINE_ENGINEERING_PATH",
+      "typed_memory_method_changed": false,
+      "rs_retriever_selected": false,
+      "local_revision_status": "COMMIT_ADDRESSED_HUB_PR130_SNAPSHOT_NOT_RESEARCH_FREEZE"
+    },
+    "memory_candidate_census": {
+      "path": "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json",
+      "sha256": "e6fffd99d0d956fa09c0be93f787b76d21afd6dc3c799e01501b82fbe268f438",
+      "outcome_calls": 0,
+      "targets_total": 1586,
+      "per_head": {
+        "ME": {
+          "age_days_mean_of_means": 259.6934523809524,
+          "age_days_variance_of_means": 11497.276564271542,
+          "candidate_count_max": 2,
+          "candidate_count_mean": 0.17717528373266078,
+          "candidate_count_variance": 0.28828104998179216,
+          "coverage_fraction": 0.10592686002522068,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 2,
+          "target_candidate_edges": 281,
+          "targets_total": 1586,
+          "targets_with_coverage": 168,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 22.044642857142858,
+          "token_count_variance_of_means": 12.38639987244898,
+          "top_candidate_lexical_overlap_mean": 0.02907653297815717,
+          "top_candidate_lexical_overlap_variance": 0.000997169465784967,
+          "unique_candidate_count": 3
+        },
+        "MP": {
+          "age_days_mean_of_means": 250.38317757009347,
+          "age_days_variance_of_means": 17181.376539435758,
+          "candidate_count_max": 1,
+          "candidate_count_mean": 0.13493064312736444,
+          "candidate_count_variance": 0.11672436467260026,
+          "coverage_fraction": 0.13493064312736444,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 3,
+          "target_candidate_edges": 214,
+          "targets_total": 1586,
+          "targets_with_coverage": 214,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 9.42056074766355,
+          "token_count_variance_of_means": 43.02873613416019,
+          "top_candidate_lexical_overlap_mean": 0.003596632647159978,
+          "top_candidate_lexical_overlap_variance": 0.00015321232930011589,
+          "unique_candidate_count": 3
+        },
+        "MS": {
+          "age_days_mean_of_means": 218.92831923147511,
+          "age_days_variance_of_means": 1614.4549787510527,
+          "candidate_count_max": 33,
+          "candidate_count_mean": 23.08953341740227,
+          "candidate_count_variance": 29.92640999667647,
+          "coverage_fraction": 1.0,
+          "lexical_candidate_query_jaccard_ge_0_6_proxy_fraction_of_candidates": 0.0,
+          "owners_with_any_candidate": 18,
+          "target_candidate_edges": 36620,
+          "targets_total": 1586,
+          "targets_with_coverage": 1586,
+          "targets_with_visible_query": 1552,
+          "token_count_mean_of_means": 454.26270753931743,
+          "token_count_variance_of_means": 768.6708442115724,
+          "top_candidate_lexical_overlap_mean": 0.03444723035224926,
+          "top_candidate_lexical_overlap_variance": 0.00012609124284811534,
+          "unique_candidate_count": 401
+        }
+      }
+    },
+    "memory_feature_readiness": {
+      "path": "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json",
+      "sha256": "3487899eb13cc99bece02184c0a8d2ec9ceeb442040f76c4c720b1bc109b4399",
+      "status": "PHASE1_FEATURE_READINESS_IDENTIFIABILITY_AUDIT",
+      "outcome_calls": 0
+    },
+    "memory_exact_evidence_components": {
+      "path": "data/paper1_public_memory/es_memeval_public_folds_build_report_v1.json",
+      "sha256": "3fcb464945a31da901c6ab2c9013cc625d89bdcb8d03a3284046a21db6ff308f",
+      "group_components_total": 477,
+      "outer_fold_packing_status": "OUTER_FOLD_PACKING_PENDING_M2_FREEZE",
+      "outcome_calls": 0
+    },
+    "official_rq2_visibility": {
+      "path": "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+      "sha256": "fa594b100b3b41b24dba971755fe5158f9f87bd84143d09c5101017d6612223a",
+      "status": "B28R_ZERO_OUTCOME_STATIC_SOURCE_AUDIT_CORRECTED",
+      "audited_source_file_count": 36,
+      "task_arm_surface_row_count": 36,
+      "outcome_calls": 0
+    }
+  },
+  "rs_findings": {
+    "dialogue_only_cards": 12169,
+    "cards_removed_vs_situation_conditioned_v1": 234,
+    "decision_states": 11883,
+    "leave_dialogue_out_candidate_coverage": 1.0,
+    "nonzero_lexical_overlap_coverage": 0.9999158461667929,
+    "nonverbatim_situation_rate": 0.9653846153846154,
+    "guidance_plus_exemplar_median_tokens": 125,
+    "guidance_only_distinct_renders": 8,
+    "guidance_plus_exemplar_distinct_renders": 11807,
+    "guidance_plus_exemplar_p95_tokens": 158,
+    "guidance_plus_exemplar_192_cap_coverage": 0.993261566274961,
+    "boundary_current_run_states": 1,
+    "boundary_narrow_persistent_states": 9,
+    "retriever_top1_same_card_rates": {
+      "lexical_jaccard__vs__bge_small": 0.03559707144660439,
+      "lexical_jaccard__vs__bge_m3": 0.036017840612639906,
+      "bge_small__vs__bge_m3": 0.13574013296305645
+    },
+    "retriever_heldout_validation_strategy_family_match": {
+      "lexical_jaccard": {
+        "at_1": 0.20918367346938777,
+        "at_3": 0.42653061224489797,
+        "macro_at_1": 0.17700109083222804,
+        "macro_at_3": 0.37114979611603427
+      },
+      "bge_small": {
+        "at_1": 0.1923469387755102,
+        "at_3": 0.42653061224489797,
+        "macro_at_1": 0.17135113433132157,
+        "macro_at_3": 0.3843821580892292
+      },
+      "bge_m3": {
+        "at_1": 0.20714285714285716,
+        "at_3": 0.43826530612244896,
+        "macro_at_1": 0.17571316534192566,
+        "macro_at_3": 0.3887737602810396
+      }
+    }
+  },
+  "decisions": [
+    {
+      "order": 1,
+      "decision_id": "rs_visible_source",
+      "item": "RS source visibility",
+      "evidence": "The prior v1 catalog used ESConv situation text; 1,255/1,300 situations are not verbatim present anywhere in dialogue.",
+      "recommendation": "Adopt dialogue-only v2 identities and permanently forbid situation/outcome/questionnaire fields in active RS catalog/state code.",
+      "status": "IMPLEMENTED_AWAITING_INTEGRATION",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 2,
+      "decision_id": "rs_overlap_policy",
+      "item": "Legacy EvoEmo-overlap exclusion",
+      "evidence": "Legacy-conservative universe: 12169 cards/11883 states; authority-literal ESConv train + train/dev: 12906 cards/12656 states.",
+      "recommendation": "Use the authority-literal ESConv train Bank and train/dev effect states. Treat the old EvoEmo flag as a disclosed sensitivity, because RS is fixed across RQ2 memory arms and the highest program does not require this exclusion.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 3,
+      "decision_id": "rs_state_grain",
+      "item": "RS decision-state grain",
+      "evidence": "11883 non-overlap states were reconstructed as one supporter run after at least one visible seeker turn; initial greetings and consecutive supporter fragments are not separate PM calls.",
+      "recommendation": "Freeze this response-opportunity grain; query/state must stop before the target supporter response and future turns.",
+      "status": "RECOMMENDED_FOR_FREEZE",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 4,
+      "decision_id": "rs_candidate_bundle",
+      "item": "RS candidate bundle",
+      "evidence": "Diagnostic injected-word medians are 37 for k=1, 77 for k=2 and 157 for k=4; all states have leave-dialogue-out candidates.",
+      "recommendation": "Freeze one retrieved card (Top-1) as the exact RS treatment. This preserves a single interpretable candidate identity and avoids learning the value of an internally heterogeneous bundle.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 5,
+      "decision_id": "rs_retriever",
+      "item": "RS semantic retriever",
+      "evidence": "A full zero-outcome surface compared lexical Jaccard, BGE-small and BGE-M3 over 11883 visible-prefix states with leave-current-dialogue-out. Top-1 card agreement is 3.56% for lexical/small, 3.60% for lexical/M3 and 13.57% for small/M3. On the held-out ESConv validation diagnostic, Top-1 family match is lexical 20.92%, small 19.23%, M3 20.71%; Top-3 is lexical 42.65%, small 42.65%, M3 43.83%. No method dominates both cutoffs. Family match is evaluator-only coarse strategy agreement, not applicability, RS ON/OFF gold, or Generator outcome. ES-MemEval's pinned official code names BAAI/bge-m3 for FAISS session-level Top-4 but does not pin a Hub revision.",
+      "recommendation": "Keep BGE-small only as an RS lightweight challenger/smoke-test and BGE-M3 as the official-RAG identity/leading typed-memory candidate. For RS Top-1, the remaining researcher choice is principally transparent lexical simplicity versus M3 stack unification/semantic representation; the held-out family diagnostic does not establish a decisive winner. Freeze one encoder, revision, pooling, normalization, query construction and leave-current-dialogue-out index before effect calls. Do not infer utility from family match, score magnitude or model size.",
+      "status": "ZERO_OUTCOME_BEHAVIOR_AND_FAMILY_DIAGNOSTICS_COMPLETE_RESEARCH_FREEZE_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 6,
+      "decision_id": "rs_render_and_cap",
+      "item": "RS rendering and resource token cap",
+      "evidence": "The dedicated Python 3.11 runtime hash-verified tokenizer bytes for NousResearch/Meta-Llama-3.1-8B-Instruct at revision d10aef7999a2b5ba950ab3974312feeedbfe0b77. Those bytes give guidance-only median 72 tokens; guidance+exemplar median 125, p95 158 and max 301. A 192-token cap contains 99.33% of cards. NVIDIA NIM provider parity remains unverified.",
+      "recommendation": "Freeze the exact renderer variant before outcomes. If exemplar is retained, use the explicit other-dialogue/style-only delimiter and preserve guidance before exemplar under truncation. Verify tokenizer parity with the NVIDIA NIM stack before freezing the cap.",
+      "status": "CENSUS_COMPLETE_PROVIDER_PARITY_AND_VARIANT_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 7,
+      "decision_id": "rs_exemplar_policy",
+      "item": "RS example-response treatment policy",
+      "evidence": "Among 12169 cards, guidance-only collapses to 8 distinct resource strings, while guidance+exemplar retains 11807. The source exemplar has first-person references in 5963, kinship terms in 605, time/number references in 594 and non-initial capitalized-token proxies in 594. These are descriptive text-shape proxies, not risk labels.",
+      "recommendation": "Choose once between guidance-only and guidance+exemplar. Guidance-only is an eight-move strategy prompt rather than card-specific RAG; guidance+exemplar preserves card identity and is therefore the closer Strategy-RAG treatment. Any copying, factual carryover, misuse or semantic non-use after valid delivery remains a realized treatment effect and error-analysis signal, never a post-treatment invalidation rule.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 8,
+      "decision_id": "rs_boundary_horizon",
+      "item": "Explicit user-boundary horizon and strategy mapping",
+      "evidence": "Current-user-run parsing activates a boundary in 1 of 11883 states; prefix persistence activates one in 9. No audited state loses every compatible candidate.",
+      "recommendation": "Apply boundaries identically to every arm at candidate level: listen-only blocks Suggestions and Question, no-advice blocks Suggestions, and no-probing blocks Question. Freeze either current-run-only or narrow explicit persistence; never turn the sparse flags into learned features or close the whole RS head.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 9,
+      "decision_id": "rs_feature_schema",
+      "item": "RS observable features",
+      "evidence": "Advice-request appears in 308 states in the original request-feature census. The stricter current-run boundary audit finds listen-only in 1, no-advice in 0 and no-probing in 0 states; the former single no-probing hit referred to what third parties might ask and was a false positive.",
+      "recommendation": "Retain similarity, candidate move type, recent previously-injected same-move count, advice-request flag and exact resource-token count. Keep listen-only/no-probing as deterministic boundary rules, not learned features.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 10,
+      "decision_id": "memory_census",
+      "item": "MP/MS/ME candidate census",
+      "evidence": "The integrated gold-free runtime has 1586 targets. Current active candidates are MP 3 unique/3 owners, MS 401/18, and same-turn ME 3/2; all reports retain outcome_calls=0. B30-FINAL is adding only blueprint-aligned atomic stable-kinship MP facts and will rebuild these same artifacts.",
+      "recommendation": "Accept the integrated sanitized runtime, MS compiler and same-turn ME construct. Complete the one authorized stable-kinship MP rebuild, then stop candidate expansion and use the resulting population for feature/effect construction.",
+      "status": "ACTIVE_MEMORY_LANE_INTEGRATED_B30_FINAL_REBUILD_PENDING",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 11,
+      "decision_id": "outer_folds",
+      "item": "Outer-fold K and seed",
+      "evidence": "The integrated evaluator-side grouping contains 477 exact-evidence components over 1586 targets. The zero-outcome surface verified K=2..10 without selecting a winner.",
+      "recommendation": "Materialize K=5, seed=0 exactly once. This is a pre-registered conventional split, not a winner chosen from outcomes or a structural PASS gate; group-component IDs remain distinct from outer-fold IDs.",
+      "status": "K5_SEED0_PRE_REGISTERED_MATERIALIZATION_PENDING_B30_FINAL",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 12,
+      "decision_id": "official_rag_runtime",
+      "item": "ES-MemEval Official RAG baseline runtime",
+      "evidence": "The official-library probe loaded BAAI/bge-m3 through HuggingFaceEmbeddings, built a IndexFlatL2 over session-level Documents, and returned deterministic Top-4 on CUDA. It made 0 outcome calls. The pinned ES-MemEval source names the model but does not pin a Hub revision, so equivalence between the local PR-130 safetensors snapshot and an upstream main weight snapshot is not established.",
+      "recommendation": "Use this environment only for the Official RAG comparison arm. Before formal runs, bind the commit-addressed local BGE-M3 revision with the upstream-unpinned limitation and bind the task-specific official prompt/truncation wrappers. Do not infer MP/MS/ME or RS retriever choices from baseline reproducibility.",
+      "status": "ENGINEERING_RUNTIME_ATTESTED_REVISION_AND_TASK_WRAPPERS_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 13,
+      "decision_id": "effect_coding",
+      "item": "Multi-metric effect coding",
+      "evidence": "Official repositories emit metric vectors and do not define a paired direction. The implemented exact Pareto overlay is explicitly still a project draft.",
+      "recommendation": "Prefer authority-aligned task anchors: QA LLM-as-Judge primary with F1/BERTScore auxiliaries; Summary Event-F1 primary with official LLM guard and ROUGE explanatory; DG Weighted Score primary with Observation Recall and three official ratings as guards. Freeze exact tie/conflict logic before calls and retain every raw official metric.",
+      "status": "RESEARCHER_DECISION_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 14,
+      "decision_id": "generator_stack",
+      "item": "Generator and decoding stack",
+      "evidence": "RQ0 selected meta/llama-3.1-8b-instruct on NVIDIA NIM with supporter prompt 'You are a helpful assistant!', temperature 0 and max output tokens 256; provider seed was null.",
+      "recommendation": "Carry the RQ0 Generator identity, prompt, temperature=0 and max output tokens=256 into Paper 1, adding only a hash-bound typed resource block and treatment-delivery trace.",
+      "status": "PROMPT_AND_EXECUTOR_BINDING_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 15,
+      "decision_id": "repeated_effects",
+      "item": "Repeated paired effects",
+      "evidence": "The authority retains repeated soft/binomial supervision, while the frozen RQ0 decoding is temperature=0 with no provider seed.",
+      "recommendation": "Use three matched repeat IDs only if they produce independently executed generation/scoring traces; byte-identical duplicate generations must not be counted as independent ON wins. Do not convert three repeats into a 2-of-3 PASS label.",
+      "status": "IMPLEMENTATION_BLOCKER_REPRODUCIBILITY_RULE_REQUIRED",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 16,
+      "decision_id": "primary_policy",
+      "item": "PM decision threshold",
+      "evidence": "Highest reconciliation already fixes eligible plus predicted positive-effect probability > 0.5; this is not a paper PASS threshold.",
+      "recommendation": "Keep 0.5 unchanged. Report Brier/log-loss/calibration diagnostics without calibration PASS gates.",
+      "status": "ALREADY_FROZEN_BY_AUTHORITY",
+      "researcher_approval_required": false
+    },
+    {
+      "order": 17,
+      "decision_id": "matched_random",
+      "item": "Matched-Random construction",
+      "evidence": "The current implementation exactly matches ON count by pre-frozen stratum and fails closed when injected-token budget cannot be matched.",
+      "recommendation": "Freeze strata before outcomes, use a seed derived from the reviewed freeze-manifest hash, and use fixed padded resource caps so Learned and Random match realized ON count and token budget.",
+      "status": "SEED_AND_STRATA_PENDING",
+      "researcher_approval_required": true
+    },
+    {
+      "order": 18,
+      "decision_id": "formal_unlock",
+      "item": "Outcome/API unlock",
+      "evidence": "RS is audited but repaired memory artifacts, folds, scorer identities, prompts, seeds, matched-random schedule and call counts remain incomplete.",
+      "recommendation": "Keep formal outcome/training/benchmark access locked. Materialize the API call plan only after the combined M2 manifest validates with no pending scientific fields.",
+      "status": "LOCKED",
+      "researcher_approval_required": false
+    }
+  ],
+  "researcher_decision_ids": [
+    "rs_overlap_policy",
+    "rs_state_grain",
+    "rs_candidate_bundle",
+    "rs_retriever",
+    "rs_render_and_cap",
+    "rs_exemplar_policy",
+    "rs_boundary_horizon",
+    "rs_feature_schema",
+    "official_rag_runtime",
+    "effect_coding",
+    "generator_stack",
+    "repeated_effects",
+    "matched_random"
+  ],
+  "integration_order": [
+    "complete_B30_final_stable_kinship_and_K5_seed0_artifacts",
+    "merge_B30_final_increment_into_integrated_A_branch",
+    "rebuild_combined_zero_outcome_artifacts_and_hashes",
+    "resolve_researcher_decisions_once",
+    "materialize_and_validate_M2_freeze",
+    "only_then_unlock_effect_calls"
+  ],
+  "report_chart_map": [
+    {
+      "segment": "Bundle cost shape",
+      "question": "How quickly does bundle size consume a fixed diagnostic word cap?",
+      "family": "comparison",
+      "type": "grouped_bar",
+      "dataset": "bundle_cap_coverage",
+      "fields": [
+        "cap_words",
+        "bundle_size",
+        "coverage"
+      ],
+      "supported_claim": "Larger bundles consume the resource budget faster; the chart does not measure outcome quality.",
+      "palette_policy": "relaxed_multi_category_three_roots",
+      "delivery": "portable_html_native_artifact_chart"
+    }
+  ],
+  "formal_outcome_calls": 0,
+  "formal_unlock": false
+}

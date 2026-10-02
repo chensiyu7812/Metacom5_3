@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PM-RL1 独立人工校准</title>
+<style>
+body{font:16px/1.65 system-ui,sans-serif;margin:0;background:#f4f6f9;color:#172332}main{max-width:1100px;margin:auto;padding:24px}header,.card,details{background:white;border:1px solid #d6dde5;border-radius:8px;padding:16px;margin:12px 0}h1{font-size:24px}h2{font-size:20px}h3{font-size:17px}p{margin:.65em 0}button,select,input,textarea{font:inherit;padding:8px;border:1px solid #a8b7c5;border-radius:4px}button{cursor:pointer;background:#eef4fa}button:disabled{cursor:default;opacity:.45}textarea{width:100%;box-sizing:border-box;min-height:80px}label{display:block;margin:10px 0}pre,.reply,.turn{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.turn{padding:8px;border-bottom:1px solid #e6ebf0}.turn:last-child{border-bottom:0}.speaker{color:#41627b;font-weight:600}.final{background:#fff7da}.toolbar{position:sticky;top:0;background:#f4f6f9;z-index:2;padding:8px;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid #ccd6df}.notice{color:#754713}.status{color:#176038}.error{color:#9e2431}small{color:#516477}summary{cursor:pointer;font-weight:600}#nav{max-width:280px}#search{width:70%}@media(max-width:700px){.cols{grid-template-columns:1fr}main{padding:10px}}
+</style>
+<main>
+<header><h1>PM-RL1 独立人工校准</h1>
+<p>共 40 对回复。每对都在同一段对话之后作答；只评价 A、B 两条新的回复。请独立填写，可分次完成，不要查看另一位评审者的答案。</p>
+<p><b>说话者约定：</b>A、B 都由新接入的 AI 助手说出。原对话中的所有 supporter（支持者），包括当前对话中的 supporter，都是另一位历史说话者；AI 没有其个人经历，也不是用户的朋友、家属或治疗师。普通的“我在听”“很高兴你愿意说”不自动构成身份错误。</p>
+<p><b>整体偏好：</b>哪条更贴合当前最后一句用户表达、更适当且尊重已知事实？不按长短、建议多少、是否提及历史或某种固定文风评优。不同但同样合适的回复可以相当；不足以判断时选“无法判断”。</p>
+<p><b>风险：</b>“未检出”表示没有发现可确认错误，不能理解为全面事实认证；“局部失准”不改变核心理解；“严重错误”实质改变身份、个人事实、主体、当前状态、意向与完成结果或明确边界。普通共情、建议、试探性问题不因没有历史出处而受罚，但其中暗含的具体事实仍需核对。来源不支持不等于在现实世界一定为假。</p>
+<p>先读当前对话，需要时检索完整历史。原文未删减，历史按时间列出。来源编号如 C:T002、H001:T004；身份约定可填 ROLE，完整来源中找不到断言依据可填 FULL_SOURCE，并解释。非零风险请复制出错回复的准确片段。存在歧义请保留不确定，不必替实验“凑出”偏好。</p>
+<p class="notice">所有操作在本地浏览器内进行，不联网。答案自动存于此浏览器；请保留同一 HTML 文件。完成后导出加密 JSON；研究执行方先只解开开发题，冻结评分协议后才解开验证题。请勿将答案写入仓库说明或聊天正文。</p>
+<label>评审者姓名或稳定代号 <input id="reviewer" autocomplete="off"></label>
+<label>评审背景或限制（可选，例如英语阅读困难） <input id="details" autocomplete="off"></label>
+<button id="export">检查并导出 40 题加密答案</button> <span id="exportStatus" role="status"></span>
+<p><small id="identity"></small></p></header>
+<div class="toolbar"><button id="prev">上一题</button><select id="nav" aria-label="选择题目"></select><button id="next">下一题</button><span id="progress" role="status"></span></div>
+<section class="card"><h2 id="title"></h2><div class="cols"><div><h3>回复 A</h3><div class="reply" id="replyA"></div></div><div><h3>回复 B</h3><div class="reply" id="replyB"></div></div></div></section>
+<section class="card"><h2>判断</h2>
+<label>整体偏好 <select id="preference"><option value="">请选择</option><option value="A">A 更合适</option><option value="B">B 更合适</option><option value="tie">两者相当</option><option value="uncertain">无法判断</option></select></label>
+<div class="cols"><div><label>A 的风险 <select id="risk_A" class="risk"></select></label><label>A 的出错原句（非零风险必填）<textarea id="quote_A"></textarea></label></div><div><label>B 的风险 <select id="risk_B" class="risk"></select></label><label>B 的出错原句（非零风险必填）<textarea id="quote_B"></textarea></label></div></div>
+<label>关键依据编号（多个用空格或逗号分隔，点击原文编号可加入）<input id="source_ids" style="width:90%"></label>
+<label>判断理由（必填；指出具体差别或相当的原因）<textarea id="reason"></textarea></label>
+<label>无法判断的原因（任一项选“无法判断”时必填）<textarea id="uncertainty"></textarea></label>
+<p id="itemStatus" role="status"></p></section>
+<section class="card"><h2>当前对话（截止待回复位置）</h2><div id="current"></div></section>
+<section class="card"><h2>完整合法历史</h2><p><input id="search" placeholder="搜索原文关键词" aria-label="搜索全部历史"><button id="clearSearch">清除搜索</button></p><div id="matches"></div><div id="history"></div></section>
+</main>
+<script id="form-data" type="application/json">__FORM_DATA__</script>
+<script>
+'use strict';
+const form=JSON.parse(document.getElementById('form-data').textContent), $=id=>document.getElementById(id);
+const storageKey='pmrl1:'+form.form_identity, fields=['preference','risk_A','risk_B','quote_A','quote_B','source_ids','reason','uncertainty'];
+let storageWarning='', saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){storageWarning='浏览器无法读取保存记录，请不要关闭页面。'}
+let current=0, answers=saved.answers||{};
+$('reviewer').value=saved.reviewer||'';$('details').value=saved.details||'';
+$('identity').textContent='表单 '+form.rater_slot+' · '+form.form_identity.slice(0,16);
+for(const el of document.querySelectorAll('.risk'))for(const [value,text] of [['','请选择'],['none_detected','未检出可确认问题'],['local','局部失准'],['severe','严重错误'],['uncertain','无法判断']]){const o=document.createElement('option');o.value=value;o.textContent=text;el.append(o)}
+form.items.forEach((item,i)=>{const o=document.createElement('option');o.value=i;o.textContent='第 '+(i+1)+' 题';$('nav').append(o)});
+function blank(item){return {item_id:item.item_id,preference:'',risk_A:'',risk_B:'',quote_A:'',quote_B:'',source_ids:[],reason:'',uncertainty:''}}
+function allTurns(source){return [...source.current_prefix,...source.legal_past_sessions.flatMap(s=>s.turns)]}
+function problem(a,item){
+ if(!['A','B','tie','uncertain'].includes(a.preference))return '请选择整体偏好';
+ for(const side of ['A','B']){if(!['none_detected','local','severe','uncertain'].includes(a['risk_'+side]))return '请选择 '+side+' 的风险';
+  if(a['quote_'+side]&&!item[side].includes(a['quote_'+side]))return side+' 的原句必须准确复制自该回复';
+  if(['local','severe'].includes(a['risk_'+side])&&!a['quote_'+side].trim())return '非零风险需复制 '+side+' 的出错原句'}
+ if(!a.reason.trim())return '请填写判断理由';
+ if([a.preference,a.risk_A,a.risk_B].includes('uncertain')&&!a.uncertainty.trim())return '请说明无法判断的原因';
+ const valid=new Set([...allTurns(form.sources[item.source_key]).map(t=>t.id),'ROLE','FULL_SOURCE']);
+ if(a.source_ids.some(s=>!valid.has(s)))return '有来源编号不属于本题';
+ if([a.risk_A,a.risk_B].some(s=>['local','severe'].includes(s))&&!a.source_ids.length)return '非零风险需填写来源编号或 ROLE / FULL_SOURCE';
+ return '';
+}
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify({reviewer:$('reviewer').value,details:$('details').value,answers}))}catch(e){storageWarning='自动保存失败，请保持页面打开并完成导出。'} }
+function capture(){const item=form.items[current],a=blank(item);for(const f of fields)a[f]=f==='source_ids'?[...new Set($(f).value.split(/[\s,，]+/).filter(Boolean))]:$(f).value;answers[item.item_id]=a;persist();status()}
+function status(){const a=answers[form.items[current].item_id]||blank(form.items[current]),err=problem(a,form.items[current]);$('itemStatus').textContent=err||'本题已填写，可继续修改';$('itemStatus').className=err?'notice':'status';let n=0;form.items.forEach((i,k)=>{const ok=answers[i.item_id]&&!problem(answers[i.item_id],i);if(ok)n++;$('nav').options[k].textContent='第 '+(k+1)+' 题'+(ok?' ✓':'')});$('progress').textContent=n+'/40 已完成'+(storageWarning?' · '+storageWarning:'')}
+function showTurn(t,parent,isFinal=false){const row=document.createElement('div');row.className='turn'+(isFinal?' final':'');const b=document.createElement('button');b.textContent=t.id;b.title='加入关键依据编号';b.onclick=()=>{const old=$('source_ids').value;$('source_ids').value=old+(old?' ':'')+t.id;capture()};row.append(b);const role=document.createElement('span');role.className='speaker';role.textContent=' '+(t.role==='seeker'?'用户':'历史支持者')+'：';row.append(role,document.createTextNode(t.text));parent.append(row)}
+function search(){const q=$('search').value.trim().toLowerCase(),parent=$('matches');parent.replaceChildren();if(!q)return;const source=form.sources[form.items[current].source_key],matches=allTurns(source).filter(t=>t.text.toLowerCase().includes(q));const p=document.createElement('p');p.textContent='找到 '+matches.length+' 条；下方完整历史仍可展开。';parent.append(p);matches.forEach(t=>showTurn(t,parent))}
+function render(){const item=form.items[current],source=form.sources[item.source_key],a=answers[item.item_id]||blank(item);$('title').textContent='第 '+(current+1)+' / 40 题';$('replyA').textContent=item.A;$('replyB').textContent=item.B;for(const f of fields)$(f).value=f==='source_ids'?a[f].join(' '):a[f];$('nav').value=current;$('prev').disabled=current===0;$('next').disabled=current===39;$('current').replaceChildren();source.current_prefix.forEach((t,i)=>showTurn(t,$('current'),i===source.current_prefix.length-1));$('history').replaceChildren();if(!source.legal_past_sessions.length)$('history').textContent='此截止位置之前没有其他合法历史会话。';source.legal_past_sessions.forEach((s,i)=>{const d=document.createElement('details'),summary=document.createElement('summary');summary.textContent='历史会话 '+(i+1)+' · '+(s.date||s.timestamp||'')+' · '+s.turns.length+' 条原文';d.append(summary);s.turns.forEach(t=>showTurn(t,d));$('history').append(d)});$('search').value='';$('matches').replaceChildren();status()}
+for(const f of fields)$(f).addEventListener('input',capture);for(const f of ['reviewer','details'])$(f).addEventListener('input',persist);
+function move(n){capture();current=n;render();$('title').scrollIntoView({block:'start'})}
+$('prev').onclick=()=>move(current-1);$('next').onclick=()=>move(current+1);$('nav').onchange=()=>move(Number($('nav').value));$('search').oninput=search;$('clearSearch').onclick=()=>{$('search').value='';search()};
+const b64=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))),decode=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function makeSubmission(){capture();if(!$('reviewer').value.trim())throw Error('请填写评审者姓名或稳定代号');for(let i=0;i<form.items.length;i++){const item=form.items[i],err=problem(answers[item.item_id]||blank(item),item);if(err){move(i);throw Error('第 '+(i+1)+' 题：'+err)}}
+ if(!globalThis.crypto?.subtle)throw Error('当前浏览器不支持本地加密，请用新版 Chrome / Edge 打开此文件；答案仍在本地');
+ const rsa=await crypto.subtle.importKey('spki',decode(form.public_key_spki),{name:'RSA-OAEP',hash:'SHA-256'},false,['encrypt']),enc=new TextEncoder(),items=[];
+ for(const item of form.items){const aes=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt']),nonce=crypto.getRandomValues(new Uint8Array(12)),raw=await crypto.subtle.exportKey('raw',aes),aad=enc.encode(form.packet_identity+':'+form.form_identity+':'+item.item_id);items.push({item_id:item.item_id,wrapped_key:b64(await crypto.subtle.encrypt({name:'RSA-OAEP'},rsa,raw)),nonce:b64(nonce),ciphertext:b64(await crypto.subtle.encrypt({name:'AES-GCM',iv:nonce,additionalData:aad},aes,enc.encode(JSON.stringify(answers[item.item_id]))))})}
+ return {protocol:form.protocol,packet_identity:form.packet_identity,form_identity:form.form_identity,reviewer_kind:'individual_human',reviewer_identity:$('reviewer').value.trim(),reviewer_details:$('details').value,items};
+}
+$('export').onclick=async()=>{const target=$('exportStatus');try{$('export').disabled=true;target.textContent='正在检查并加密…';const out=await makeSubmission(),url=URL.createObjectURL(new Blob([JSON.stringify(out,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='PM_RL1_'+form.rater_slot+'_sealed_answers.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);target.textContent='已导出加密答案，请保留下载文件并交回。';target.className='status'}catch(e){target.textContent=e.message;target.className='error'}finally{$('export').disabled=false}};
+render();
+</script></html>

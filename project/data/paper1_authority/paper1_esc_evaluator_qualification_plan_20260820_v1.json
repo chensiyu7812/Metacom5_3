@@ -1,0 +1,142 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-qualification-plan-v1",
+  "status": "ESC_RANK_REFERENCE_PRIMARY_CANDIDATE_CLOUD_RUNTIME_QUALIFICATION_REQUIRED",
+  "outcome_calls": 0,
+  "calibration_outcome_lock": "CLOSED",
+  "confirmatory_outcome_lock": "CLOSED",
+  "official_asset_audit": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "files": {
+      "score.py": {
+        "sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724"
+      },
+      "evaluate.py": {
+        "sha256": "e66bda0e1093c2bec7c46daa6a64584cc6153e1f1bfde94b3fa2fd3c8f5629f8"
+      },
+      "data/card_high_en.json": {
+        "sha256": "2c63cf0f65cbe159b38837e0da368667201d34e42c6e5ea1bedbcf35cb7ab4e8"
+      },
+      "data/test_en.json": {
+        "sha256": "f5c48910b989397ab0e282fd2856b24c4b87a00c76ee3e2d4e88725f22b0f66f"
+      },
+      "score/llama3_en.json": {
+        "sha256": "ce7359f6a88a6ad6d91ae1e1c60d502a0a6e5e05def35aaa8f3ee57242cc27eb"
+      },
+      "score/Qwen_7B_en.json": {
+        "sha256": "21e3cd9cb603e19b6a35bd273622603e7189ed2b5179969486d06267e56b0f32"
+      }
+    },
+    "official_example_role_cards": 3,
+    "official_example_score_rows": {
+      "llama3_en": 3,
+      "Qwen_7B_en": 3
+    },
+    "raw_item_level_human_validation_labels_found": false,
+    "raw_train_validation_test_assignment_found": false,
+    "interpretation": "The pinned public repository provides scorer code, 331 English role cards, three example trajectories and three-row example score files, but not the item-level human annotations needed to recompute weighted kappa, Spearman, MAD, or ranking consistency. Example score rows are not a qualification set. This does not block using the official ESC-RANK protocol; it only prevents treating alternative-judge agreement as already established."
+  },
+  "official_esc_rank_runtime_feasibility": {
+    "reference_role": "official ESC-RANK is the reference and primary evaluator candidate",
+    "tested_repo_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "tested_command": "python score.py from the pinned official repository; no dialogue outcome files were generated or read",
+    "local_environment": {
+      "gpu": "NVIDIA GeForce RTX 2070",
+      "gpu_total_mib": 8192,
+      "gpu_free_before_test_mib": 7301,
+      "system_ram_gib": 7.7,
+      "torch": "2.3.1+cu121",
+      "transformers": "4.57.6",
+      "peft": "NOT_INSTALLED",
+      "base_model_cached": false,
+      "esc_rank_adapters_cached": false
+    },
+    "actual_initialization_test": {
+      "exit_code": 1,
+      "elapsed_seconds": 4.76,
+      "max_rss_kib": 546868,
+      "gpu_process_or_allocation_observed": false,
+      "failure": "ModuleNotFoundError: No module named 'peft' before model or adapters load",
+      "inference_latency": "NOT_MEASURED_NO_MODEL_INITIALIZATION",
+      "score_reproducibility": "NOT_MEASURED_NO_MODEL_INITIALIZATION"
+    },
+    "capacity_audit": {
+      "official_base": "internlm/internlm2-chat-7b loaded torch.float16 with device_map=auto",
+      "published_weight_shards_total_approx_gb": 15.49,
+      "local_gpu_conclusion": "base fp16 weights alone exceed the 8 GiB GPU; current 7.7 GiB system RAM is also not a credible CPU-offload qualification host",
+      "official_code_issue": "score.py initializes the first adapter from ./ESC-RANK1/* but the repository instructs download to ./ESC-RANK; a pinned minimal path correction must be recorded",
+      "official_dimension_adapter_mapping_must_be_frozen": "fluency/diversity/empathic/suggestion/human/tech/overall to the paper-authority seven reported labels"
+    },
+    "decision": "NOT_RUNNABLE_ON_LOCAL_RTX2070_AS_OFFICIAL_FP16_STACK; retain ESC-RANK as primary candidate and qualify it on a rented >=24 GiB GPU before CALIBRATION_OUTCOME_LOCK can open",
+    "cloud_qualification_requirements": [
+      "pin base-model revision, all seven English adapter hashes, transformers/peft/torch/CUDA and the minimal ESC-RANK1 path correction",
+      "run at least three identical blinded dialogues twice with greedy decoding and require exact parsed seven-score vectors",
+      "record load peak VRAM, per-dimension warm/cold latency, seven-dimension vector latency, parse rate and GPU-hour cost"
+    ]
+  },
+  "human_label_feasibility": {
+    "status": "NOT_AN_ESC_EVALUATION_BLOCKER",
+    "missing_public_evidence": "item-level, dimension-level human ratings paired to candidate evaluator scores",
+    "use": "needed only if qualifying an alternative judge by agreement rather than retaining official ESC-RANK",
+    "smallest_scientifically_valid_sources": [
+      "obtain the authors' held-out human validation labels and immutable split identities",
+      "commission a new independent blinded calibration set with at least two raters plus adjudication and freeze it before evaluator comparison"
+    ]
+  },
+  "blindness": {
+    "reference_raters_and_candidate_evaluators_receive": [
+      "role-card context required by the official rubric",
+      "dialogue trajectory",
+      "official dimension rubric",
+      "random opaque item id"
+    ],
+    "withheld": [
+      "PM identity",
+      "arm name",
+      "ON/OFF status",
+      "k or token budget",
+      "Ours/baseline label",
+      "retrieval scores and head decisions"
+    ],
+    "randomization": "candidate order and system aliases fixed before scoring"
+  },
+  "candidate_set": {
+    "mandatory_official_candidate": "ESC-RANK at pinned adapters + InternLM2-chat-7B base; reference and primary candidate",
+    "additional_candidate_slots": "NONE_NEEDED_UNLESS_CLOUD_QUALIFICATION_FINDS_ESC_RANK_OPERATIONALLY_IMPRACTICAL; researcher nomination required before any call",
+    "qwen_status": "PROXY_ONLY_IF_NEEDED; compare agreement and cost against ESC-RANK, never choose by PM/Ours score",
+    "no_silent_selection": true
+  },
+  "comparison": {
+    "unit": "same dialogue x same dimension scored by human reference and every candidate evaluator",
+    "dimensions": [
+      "Fluency",
+      "Expression",
+      "Empathy",
+      "Information",
+      "Skillful",
+      "Humanoid",
+      "Overall"
+    ],
+    "metrics": [
+      "quadratic weighted kappa with clustered bootstrap CI",
+      "Spearman rho with clustered bootstrap CI",
+      "mean absolute deviation on the official 0-4 scale",
+      "pairwise system-ranking consistency with clustered bootstrap CI",
+      "valid parse rate and missingness",
+      "USD and GPU-hours per scored dialogue and per seven-dimension vector"
+    ],
+    "thresholds": "RESEARCHER_DECISION_REQUIRED_AND_MUST_BE_FROZEN_BEFORE_SCORING",
+    "selection_order": [
+      "validity and agreement against blinded human reference",
+      "robustness across all seven official dimensions",
+      "cost among evaluators that remain validity-qualified"
+    ],
+    "forbidden_selection_basis": "which evaluator gives Learned RS-PM or any Ours-labelled arm a higher score"
+  },
+  "qualification_outputs": [
+    "immutable item and blindness manifest",
+    "human-reference reliability report",
+    "per-candidate agreement report with confidence intervals",
+    "cost ledger",
+    "researcher-signed evaluator freeze or explicit nonselection"
+  ]
+}

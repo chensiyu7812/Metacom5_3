@@ -1,0 +1,260 @@
+{
+  "status": "OFFLINE_DIAGNOSIS_NO_NEW_SCORES_OR_HUMAN_REFERENCE",
+  "strict_failure_counts": {
+    "Expecting ',' delimiter: line 3 column 149 (char 184)": 1,
+    "quote is absent from bound original text": 17,
+    "source ID not in legal evidence": 2,
+    "missing required source evidence": 3,
+    "findings do not exactly index the declared errors": 5,
+    "duplicate JSON key: m": 1,
+    "scored record contains unresolved uncertainty or inconsistent m": 1,
+    "Expecting value: line 7 column 21 (char 228)": 1,
+    "schema keys differ: status q m q_rationale claims misuse_findings coverage uncertainty_reasons": 1,
+    "Expecting ',' delimiter: line 15 column 2 (char 1701)": 1
+  },
+  "damage": {
+    "primary_cases": 9,
+    "strict_valid": 1,
+    "cases_with_only_positive_declared_m": 9,
+    "rows": [
+      {
+        "pilot_index": 1,
+        "job_id": "578b322c17ab1dd657a46184c718feaa580a6c93596ce3fa4fbce7a43069ab11",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "findings do not exactly index the declared errors",
+        "declared_m_values": [
+          0.25
+        ],
+        "declared_q_values": [
+          3
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply successfully validates the ambivalence and provides appropriate career-oriented advice, meeting the core support goals. However, there is a localized contradiction where the supporter characterizes the user's relief about not moving as disappointment, which constitutes a minor factual inaccuracy regarding the user's expressed state."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 2,
+        "job_id": "d5566ac1edeb877a3c4da6659e1d72139efa4a05fa95fdd0ce1879e25413c0b6",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "quote is absent from bound original text",
+        "declared_m_values": [
+          0.25
+        ],
+        "declared_q_values": [
+          2
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply asserts it is natural to feel 'certain', directly contradicting the user's explicit statement of 'not sure' in C:T015. This misalignment in empathy/validation reduces responsiveness to the user's immediate emotional state, preventing a fully appropriate score (q=3)."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 4,
+        "job_id": "ae6635624474a96790250b563f161d9f42be1d3aa02bfd3adc3e1082516c0b3e",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "duplicate JSON key: m",
+        "declared_m_values": [
+          0.25,
+          0.25
+        ],
+        "declared_q_values": [
+          2
+        ],
+        "duplicate_top_level_keys": [
+          "m"
+        ],
+        "model_reason": [
+          "The reply correctly offers empathy and invites reflection, but it asserts a specific factual detail ('you said it ended amicably') that is unsupported in the provided evidence and contradicts the user's description of 'fighting'. This constitutes a mismatch in understanding the core constraints of the situation (conflict vs. amiability), reducing the responsiveness to a level 2."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 5,
+        "job_id": "eaf272d06b3e809ad83a904b84506646d3f3ae99c72d67e55145b70cb4e33005",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "quote is absent from bound original text",
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply explicitly asserts the user shared feelings with their 'parents'. The legal evidence (C:T000, C:T002, C:T004) confirms the recent conversation was with 'siblings'. Past sessions (H003, H005, H013) also indicate prior difficulty/sensitivity with parents. This factual error fundamentally misidentifies the source of support and contradicts the immediate context, undermining the appropriateness of the response (m=1)."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 6,
+        "job_id": "2483dc7aa843d268346f6f0d0e67d4d3e1ae70d5aa0400c1d6feccc9d37b3fab",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "findings do not exactly index the declared errors",
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply asserts a completion of reconciliation ('already reconciled... in person') that directly contradicts the seeker's explicit statements in the current session about not having the chance to try and wishing for more time. This minimizes the active grief expressed and introduces a material factual error regarding the user's reported experience in this context, undermining the core support function."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 9,
+        "job_id": "fe9a6c5420b522f9ebc2377fd64928bb2c3b803532ed5d8de106a445c42c7b14",
+        "strict_status": "measured_candidate",
+        "strict_error": null,
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply makes a definitive claim ('never seen any benefits') that directly contradicts the user's explicit statement in the immediate previous turn ('helping a lot'). This factual error creates a significant trust breach, dismissing the user's positive experience with therapy and undermining the supportive intent of the validation."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 10,
+        "job_id": "e293dd0f210e19a1af47a3008b49edcc0504ed91db56fe2423697e21094ac252",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "source ID not in legal evidence",
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply asserts the user 'spent your entire life in Sydney', which directly contradicts the explicit evidence in the current session (C:T007) and past sessions (H023) stating the user recently moved FROM Canberra TO Sydney. This factual hallucination undermines the core empathy regarding the 'change' and migration discussed, resulting in a dominant error."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 11,
+        "job_id": "91fe1825d1e0e21c0635696831d35e98f1e3dd28108ff7596f841af431fbe723",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "findings do not exactly index the declared errors",
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The supporter explicitly contradicts the seeker's self-reported stance by stating renewable energy 'is a field that's not only in conflict with your values' when the seeker clearly stated it 'aligns with my values'. This fundamental error about the user's expressed perspective undermines the coherence and trustworthiness of the reply."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      },
+      {
+        "pilot_index": 12,
+        "job_id": "b166f0c18ca6f917d6d8d3ec35a661eed52d58848e06e3d970622c2c69053601",
+        "strict_status": "parse_or_evidence_failure",
+        "strict_error": "findings do not exactly index the declared errors",
+        "declared_m_values": [
+          1
+        ],
+        "declared_q_values": [
+          1
+        ],
+        "duplicate_top_level_keys": [],
+        "model_reason": [
+          "The reply contains a severe factual contradiction regarding the user's identity. The user explicitly states they are 17 in C:T013, but the reply asserts they are 25. This dominant error undermines the support by creating a false reality and rendering context-specific advice (regarding parental control/minority) inaccurate."
+        ],
+        "all_declared_m_positive": true,
+        "semantic_correctness": "NOT_ESTABLISHED",
+        "reward_eligible": false
+      }
+    ],
+    "interpretation": "Raw declarations identify a transport bottleneck; they are not detection accuracy or recovered training labels."
+  },
+  "natural": {
+    "planned": 24,
+    "typographically_valid": 14,
+    "valid_q_counts": {
+      "4": 13,
+      "3": 1
+    },
+    "interpretation": "Selective valid subset; cannot distinguish true ties, task simplicity and score compression."
+  },
+  "coverage": {
+    "damage_controls": 9,
+    "current_context_damage": 9,
+    "historical_only_damage": 0,
+    "style_scope": "contraction expansion and paragraph breaks only",
+    "independent_review_pair_types": {
+      "OFF_ON": 6,
+      "original_damage": 1,
+      "original_style": 3
+    },
+    "review_source_words": 64357,
+    "review_turns": 3647,
+    "review_past_sessions": 148
+  },
+  "indexed_smoke": {
+    "calls": 5,
+    "valid": 5,
+    "complete_within_protocol_repeat_pairs": 0,
+    "qualifies_judge": false
+  },
+  "next_run": {
+    "existing_exam_jobs": 55,
+    "new_generator_calls": 0,
+    "expected_api_calls": 0,
+    "scope": "same exam and seeds, current indexed citation protocol; not executed by this audit",
+    "reuse_smoke_only_if_full_request_and_runtime_identity_match": true
+  },
+  "model_calls": 0,
+  "paid_api_usd": 0,
+  "human_submissions_created": 0,
+  "reward_labels_created": 0,
+  "training_updates": 0,
+  "sources_sha256": {
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge_pointer.json": "fabe2a28737ec0ec6b95c5081afb7f5b9033055e6c0d35e30684afc63b086382",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/summary.json": "35a8cb07589c1123281896b2be6ec7cb6c9dcc3dfdcced5c4e378d7adf9d9dfc",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/exam_private.json": "5215d4a8a14f1761a0023b6a7e3b7b5ff62db2457b5bad1dfba12494b1e02f2b",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/76fba60f582abab2bacd2f7a40c564be92c268884eadf0f0f7c01002a4e20b22.raw.json": "39bd7f12586eb97c7e7810cb7b8356b64072c247c30646ef38b53dd7bd7e10aa",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/2683dbcdb66aa9888927773b2dadddeee1973b820e9d364c5e7d3aa63297dc1d.raw.json": "570ddde054b4d5bdd71122517cc24e265276c4dfd6b4b65c99a10723bbd7bfa3",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/e6f10eb821e02fedd16087cafe6faf97747fcaecc912dcf1060c419b47f2766c.raw.json": "b51dd604daf323e5aa15c8f9cc2b13be105e77d8fe3ea57b76709ef7dc6a335a",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/eea7ce55c48b5cb319f52a750311c1baa02b21a517855e78a53f068c6ef911d0.raw.json": "61e22c79c022dc910534900c61f85b591e334d61ae7cc9be3f2b5e189855067b",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/eed8b4b8684cc01c8597c2bf8c30eced109977c510c03ff8d22bf99125a4751c.raw.json": "e4075730ed037d8c8ef4e723a1d0e02e8160ea42db64fa3ac8948a1bcc9bc660",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/bccc188aee9ad2c1d5ef6e763c3f5db16252789abecb6c6bc7912c70c6e34e15.raw.json": "414660705c40c3d6af11e9557df7a1506f6d6ccc4e92c615d3e8e00e92518443",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/7d1b69c8c21890f391ee225aa04c3b928bb2fd37fce36f6e992782c4bfb2972b.raw.json": "6cf21e8c7253665f5a4a7277bb7cbeaa2dd6819edb40eb4c37aaaf010c54dae4",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/2b2c583a35a5718d44e355a9c7d896301056a76019e624f298cf692753916be9.raw.json": "467e0d822707328025002c023cbb1fd8c882c63f5ae0d1a8089cf100a344dcb9",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/d29c3f26dcc8420bd604c82ba94ea241bf387d594dacf44d749ea4d4b10ca32e.raw.json": "17943413b274c62adf962fdbfa1e6fded1e92f5b121fd02bfee4c71e3abbb1cf",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/typographic_parser_v2/analysis.json": "c93011a5d1d2828c40f0987cb963056070cb3c80df40bd285f633f16d9bdd7e4",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/coordinator_only/controls_and_missing.json": "c750d92bea755161c66afe75caddca532d4b6eac80e4fb4841c105076d16f272",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/coordinator_only/answer_key.json": "ca0ed5f73f76dab005f85f74539d788f79ccdeaba88583567ded4a6a276a49c4",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/independent_review_UNSCORED.json": "a35c0de4abbe6de6d45e6b26965032a039c9be0fb620d75bcf6eedc1fdf4951b",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/review_material_size.json": "42ddd3e1e69b697aa4440d8d7082c2bddb784a16c189ce44588de318c8272dda",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/indexed_transport_smoke_pointer.json": "171134f3f8baf52bffbf5ce73e80bfb97147ef888dc6da14a8c7903b607f1a26",
+    "outputs/pm_rl1/measurement_pilot_20260928_v1/indexed_transport_smoke/361818a34de57fc20496b0276c63f4ec0bab991dfbf8ef4a956f40876c38c949/summary.json": "1938b4df1feaa0e44438dea0afb95ca11f1efe55bbb7fa60be72ce43bb9d522c"
+  },
+  "script_sha256": "03f5689aaf18a910216c8714a05856026cce678f992088f997c6ff8217fec3d3"
+}

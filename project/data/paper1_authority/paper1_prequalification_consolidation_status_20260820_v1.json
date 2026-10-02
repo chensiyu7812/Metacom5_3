@@ -1,0 +1,158 @@
+{
+  "protocol": "pm-paper1-prequalification-consolidation-status-v1",
+  "status": "IMPLEMENTATION_PENDING",
+  "overall": "PREQUALIFICATION_BUILD_COMPLETE_FOR_OFFLINE_ARTIFACTS; LIVE_AND_HUMAN_QUALIFICATIONS_NOT_RUN",
+  "local_state": {
+    "branch": "work/paper1-rq1-integration-20260816",
+    "local_HEAD": "9d277fdaceab0a8f5ec1b913300cf522f3b7cd4b",
+    "local_origin_tracking_ref": "9d277fdaceab0a8f5ec1b913300cf522f3b7cd4b",
+    "worktree": "DIRTY_WITH_50_TRACKED_OR_UNTRACKED_PATHS_FROM_ACCEPTED_PREVIOUS_AND_CURRENT_BUILD",
+    "GPU": "NVIDIA GeForce RTX 2070",
+    "VRAM_MiB": 8192,
+    "driver": "610.47",
+    "Python": "3.11.15",
+    "torch": "2.3.1+cu121",
+    "CUDA_available": true
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "calls_and_training": {
+    "paid_API_calls_this_round": 0,
+    "Qwen_calls_this_round": 0,
+    "NVIDIA_Generator_calls_this_round": 0,
+    "evaluator_calls_this_round": 0,
+    "outcome_calls_this_round": 0,
+    "PM_training_runs_this_round": 0,
+    "formal_ESC_Eval_runs_this_round": 0,
+    "formal_ES_MemEval_runs_this_round": 0
+  },
+  "deliverables": [
+    {
+      "name": "prequalification amendment",
+      "status": "FROZEN",
+      "path": "docs/PM_PAPER1_PREQUALIFICATION_CONSOLIDATION_AMENDMENT_20260820_ZH.md"
+    },
+    {
+      "name": "machine Master Decision Register",
+      "status": "READY",
+      "path": "data/paper1_authority/paper1_master_decision_register_20260820_v1.json"
+    },
+    {
+      "name": "RS canonical BGE Top-8",
+      "status": "READY",
+      "path": "data/paper1_public_rs/esconv_rs_canonical_bge_top8_report_v1.json",
+      "facts": {
+        "raw_units": 15061,
+        "canonical_treatments": 13172,
+        "decision_states": 11883,
+        "full_coverage_k": [1, 2, 3, 4, 6, 8],
+        "cap384_truncation_rate_all_reported_k": 0.0,
+        "top8_sha256": "14aa06384d06d196064bbb1dc80cdb97b655a792560e7495ed26f7becbe47a11"
+      }
+    },
+    {
+      "name": "RS resource-semantics packet/rubric",
+      "status": "AUDIT_REQUIRED",
+      "path": "data/paper1_authority/paper1_rs_resource_semantics_qualification_packet_20260820_v1.json",
+      "facts": {"items": 64, "human_judgments_completed": 0}
+    },
+    {
+      "name": "RS treatment-uptake harness/schema",
+      "status": "READY",
+      "path": "data/paper1_authority/paper1_rs_treatment_uptake_qualification_protocol_20260820_v1.json",
+      "facts": {"Generator_calls": 0, "utility_filter": false}
+    },
+    {
+      "name": "semantic-memory v7 precision prompt/schema/gates",
+      "status": "IMPLEMENTATION_PENDING",
+      "path": "data/paper1_authority/paper1_semantic_memory_precision_repair_v7_20260820.json",
+      "facts": {"live_v6_runtime_migrated": false, "new_Qwen_calls": 0}
+    },
+    {
+      "name": "old MP20/ME12 DEV regression",
+      "status": "READY",
+      "path": "data/paper1_authority/paper1_semantic_memory_old_dev_regression_v7_20260820.json",
+      "facts": {"role": "DEV_EXPECTATION_AND_GENERIC_GATE_COVERAGE_ONLY", "heldout_proof": false}
+    },
+    {
+      "name": "MS semantic audit packet",
+      "status": "AUDIT_REQUIRED",
+      "path": "data/paper1_authority/paper1_ms_semantic_audit_packet_20260820_v1.json"
+    },
+    {
+      "name": "memory held-out requalification plan",
+      "status": "READY",
+      "path": "data/paper1_authority/paper1_memory_heldout_requalification_plan_20260820_v1.json",
+      "facts": {"qualification_IDs_frozen": false, "selection_after_repaired_catalog": true}
+    },
+    {
+      "name": "ESC-RANK >=24GiB harness and patch manifest",
+      "status": "EXPERIMENT_REQUIRED",
+      "path": "scripts/paper1/26_qualify_esc_rank_runtime_24gib.py",
+      "facts": {"local_8GiB_execution_attempted": false, "runtime_qualified": false}
+    },
+    {
+      "name": "ESC evaluator protocol/candidate set",
+      "status": "EXPERIMENT_REQUIRED",
+      "path": "data/paper1_authority/paper1_esc_evaluator_prequalification_protocol_20260820_v2.json"
+    },
+    {
+      "name": "prequalification call/GPU budget",
+      "status": "READY",
+      "path": "data/paper1_authority/paper1_prequalification_expected_call_budget_20260820_v1.json",
+      "facts": {"authorization_granted": false}
+    }
+  ],
+  "researcher_ready_not_frozen": {
+    "ESC_large_52": "READY / RESEARCHER_READY_TO_FREEZE",
+    "RQ2_K5_seed0": "READY / RESEARCHER_READY_TO_FREEZE"
+  },
+  "blockers": [
+    {
+      "scope": "RQ1 Resource Qualification",
+      "status": "AUDIT_REQUIRED",
+      "blocker": "64 RS semantics items still require blind human review"
+    },
+    {
+      "scope": "RQ1 Treatment Qualification",
+      "status": "EXPERIMENT_REQUIRED",
+      "blocker": "isolated OFF/ON uptake run and blind adherence review are not authorized or run"
+    },
+    {
+      "scope": "RQ1 Measurement Qualification",
+      "status": "EXPERIMENT_REQUIRED",
+      "blocker": "ESC-RANK must initialize and repeat exactly on pinned >=24GiB runtime; human agreement comparison is not run"
+    },
+    {
+      "scope": "RQ2 Resource Qualification",
+      "status": "IMPLEMENTATION_PENDING",
+      "blocker": "v7 precision schemas/gates are not yet wired into live Qwen runtime; repaired 401-session catalog and held-out human qualification do not exist"
+    },
+    {
+      "scope": "RQ2 DG amount calibration",
+      "status": "AUDIT_REQUIRED",
+      "blocker": "official-harness dynamic query window/call timing/re-retrieval schedule remains mechanically unfrozen"
+    },
+    {
+      "scope": "split/fold freeze",
+      "status": "READY",
+      "blocker": "large_52 and K5 seed0 await explicit researcher approval; no seed shopping performed"
+    },
+    {
+      "scope": "PM effect/training and confirmatory evaluation",
+      "status": "BLOCKED",
+      "blocker": "qualification, authorized calibration and complete full-stack freeze must precede both"
+    }
+  ],
+  "verification": {
+    "targeted_tests": "25 passed before final full-suite rerun",
+    "paper1_cpu_suite": "669 passed",
+    "paper1_GPU_marked_engineering_suite": "11 passed on RTX 2070",
+    "integration_validator": "PASS; outcome_calls=0",
+    "git_diff_check": "PASS"
+  }
+}

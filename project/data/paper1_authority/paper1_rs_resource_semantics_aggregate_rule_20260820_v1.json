@@ -1,0 +1,160 @@
+{
+  "protocol": "pm-paper1-rs-resource-semantics-aggregate-rule-v1",
+  "status": "FROZEN_BEFORE_HUMAN_RESULTS",
+  "source_packet_sha256": "12944869dd5b88a0dd9639694f5429b42c504f3b4f9a4de739d4d4c5438d2a05",
+  "sample_identity": {
+    "N": 64,
+    "rank_counts": {
+      "1": 16,
+      "2": 16,
+      "4": 16,
+      "8": 16
+    },
+    "family_count": 8,
+    "items_per_family": 8,
+    "pool": "ESConv validation; isolated from future ESC-Eval role cards"
+  },
+  "estimands_and_reporting": {
+    "primary": "descriptive label prevalence for each frozen rubric dimension",
+    "strata": [
+      "overall",
+      "retrieval_rank_1_2_4_8",
+      "atomic_move_family"
+    ],
+    "report": [
+      "raw numerator and denominator for every label",
+      "proportion for every label",
+      "Wilson 95 percent interval for each binary one-vs-rest label proportion",
+      "missing and uncertain counts without recoding uncertain as failure"
+    ],
+    "binary_PASS_line": null,
+    "empirical_threshold_to_invent_after_results": false,
+    "small_strata_interpretation": "descriptive only; no family/rank significance claim"
+  },
+  "interpretation_rule": {
+    "permitted": [
+      "aggregate evidence about exact-treatment resource semantics",
+      "aggregate retriever failure-mode localization by frozen rank and family strata",
+      "transparent recommendation for general catalog/retriever repair subject to researcher review"
+    ],
+    "forbidden": [
+      "claiming response quality, PM effect, or ESC-Eval capability",
+      "choosing k or token budget",
+      "deleting, reranking, or downweighting a candidate because a human or LLM judged state appropriateness",
+      "creating any runtime human-or-LLM utility filter",
+      "using visible redundancy or near-duplicate judgment as a semantic-threshold deletion rule",
+      "turning aggregate results into a post-hoc PASS threshold"
+    ],
+    "qualification_conclusion_form": "Report the observed descriptive profile and named failure modes; researcher decides whether a general pre-outcome resource/retriever repair is warranted. No binary automatic gate."
+  },
+  "candidate_level_structural_hard_exclusions": {
+    "allowed_only_after_separate_deterministic_confirmation": [
+      "identity/hash mismatch",
+      "leave-dialogue-out/provenance failure",
+      "non-atomic treatment",
+      "explicit visible boundary conflict for that state-candidate pair",
+      "mechanically non-executable treatment",
+      "source-specific or outcome leakage"
+    ],
+    "never_hard_exclusion": [
+      "human or LLM state-appropriateness opinion",
+      "topic fit opinion",
+      "visible redundancy",
+      "near-duplicate semantic similarity",
+      "predicted helpfulness, utility, response quality, or likely uptake"
+    ],
+    "human_label_role": "A human structural finding triggers an auditable deterministic adjudication; the human label alone is not an active runtime exclusion."
+  },
+  "review_blinding": {
+    "reviewer_sees": [
+      "blind item id",
+      "visible state",
+      "current user text",
+      "exact treatment"
+    ],
+    "reviewer_does_not_see_until_locked": [
+      "rank",
+      "cosine similarity",
+      "family stratum",
+      "provenance IDs",
+      "PM identity",
+      "future ESC arm",
+      "Generator response/outcome",
+      "evaluator score"
+    ],
+    "LLM_may_replace_human": false
+  },
+  "review_form_rubric": {
+    "atomicity": {
+      "question": "Does the treatment express one executable supporter move rather than a bundle?",
+      "labels": [
+        "PASS",
+        "MULTI_MOVE",
+        "VAGUE",
+        "UNCERTAIN"
+      ]
+    },
+    "state_appropriateness": {
+      "question": "Is this move semantically appropriate to the visible state without using hidden facts?",
+      "labels": [
+        "PASS",
+        "TOPIC_MISMATCH",
+        "UNSUPPORTED_ASSUMPTION",
+        "UNCERTAIN"
+      ]
+    },
+    "boundary_compatibility": {
+      "question": "Does it respect explicit listen-only, no-advice and no-probing boundaries?",
+      "labels": [
+        "PASS",
+        "BOUNDARY_CONFLICT",
+        "NO_EXPLICIT_BOUNDARY",
+        "UNCERTAIN"
+      ]
+    },
+    "executability": {
+      "question": "Can frozen Step2/Generator act on the move without extra retrieval or hidden interpretation?",
+      "labels": [
+        "PASS",
+        "NOT_EXECUTABLE",
+        "UNDERSPECIFIED",
+        "UNCERTAIN"
+      ]
+    },
+    "leakage": {
+      "question": "Does the exact rendered move expose source-specific names, facts, dialogue wording or outcome?",
+      "labels": [
+        "PASS",
+        "SOURCE_SPECIFIC_LEAKAGE",
+        "OUTCOME_LEAKAGE",
+        "UNCERTAIN"
+      ]
+    },
+    "redundancy_near_duplicate": {
+      "question": "Is it redundant with the visible supporter behavior or a near-duplicate of another reviewed ticket?",
+      "labels": [
+        "DISTINCT",
+        "VISIBLE_REDUNDANCY",
+        "NEAR_DUPLICATE",
+        "UNCERTAIN"
+      ],
+      "note": "near-duplicate label is diagnostic only and never deletes a ticket by threshold"
+    },
+    "per_item_final_QUALIFIED_NOT_QUALIFIED_label_used": false,
+    "completion_instruction": "For every blind_item_id, return exactly one CompletedSemanticsHumanReview row. Judge the six fixed dimensions and provide a rationale; do not score likely response quality, helpfulness, utility, or whether the PM should turn RS on."
+  },
+  "uptake_assignment_gate": {
+    "human_review_must_cover_exact_64_item_set": true,
+    "human_results_must_be_locked_before_key_join": true,
+    "pool_filter": "separately confirmed structural validity only",
+    "state_appropriateness_filter": false,
+    "utility_filter": false,
+    "current_status": "BLOCKED_PENDING_REAL_HUMAN_REVIEW"
+  },
+  "schema_sha256": {
+    "BlindSemanticsReviewItem": "3d8f44c6be2434fdfeb1eb1734b903de3b72be0ad37471057fb151b32dca36d8",
+    "CompletedSemanticsHumanReview": "70d6ca83d3011e095f55faaef2e8e77cc5adfb1fa166877a5f4cd54885e27cd7",
+    "StructuralAdjudication": "45984c54784a0705de43098590f5812a7121dedfd3e6f71144f7716c250e15d5"
+  },
+  "outcome_calls": 0
+}

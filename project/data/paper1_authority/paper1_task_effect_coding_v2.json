@@ -1,0 +1,68 @@
+{
+  "protocol": "paper1-task-effect-coding-v2",
+  "status": "ACTIVE_PRE_OUTCOME_IMPLEMENTED_CONTRACT_TESTED",
+  "date": "2026-09-04",
+  "human_authority": "project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md",
+  "supersedes": "paper1_task_effect_coding_v1.json",
+  "common": {
+    "classes": ["on_better", "off_better", "equivalent", "uncertain", "invalid"],
+    "training": {
+      "on_better": 1,
+      "off_better": 0,
+      "equivalent": 0,
+      "uncertain": null,
+      "invalid": null
+    },
+    "cost_or_latency_in_quality_label": false,
+    "equivalent_semantics": "a supplied qualified pairwise-equivalent verdict means no discernible material advantage and cannot be overridden by a merely directional metric difference",
+    "continuous_nonzero_difference_alone_is_material": false,
+    "current_unweighted_exact_difference_pareto_rule": "SUPERSEDED"
+  },
+  "ESC": {
+    "primary": "ESC-RANK Overall ordinal direction",
+    "minimum_primary_resolution": "one ordinal point",
+    "Empathy_and_Information_role": "reported diagnostics, not automatic one-point vetoes",
+    "remaining_dimensions_role": "reported diagnostics",
+    "explicit_pairwise_equivalent": "equivalent",
+    "primary_pairwise_opposite": "uncertain",
+    "primary_tie": "qualified ESC-rubric pairwise teacher",
+    "final_official_scorer_unchanged": true
+  },
+  "QA": {
+    "primary": "official GPT-4o semantic correctness 0/1/2",
+    "minimum_primary_resolution": "one ordinal point",
+    "explicit_pairwise_equivalent": "equivalent",
+    "primary_pairwise_opposite": "uncertain",
+    "primary_tie": "question-plus-gold blinded pairwise correctness teacher",
+    "auxiliary": ["F1", "BERTScore"]
+  },
+  "Summary": {
+    "primary": "Event_F1 against one common frozen reference-event inventory",
+    "numeric_material_margin_status": "NOT_INVENTED; a directional Event_F1 difference requires qualified pairwise confirmation in V2",
+    "semantic_guard": "official LLM Score 0/1/2/3/4/5",
+    "directional_primary_without_pairwise": "uncertain",
+    "directional_primary_pairwise_equivalent": "equivalent",
+    "directional_primary_pairwise_same": "directed effect if LLM Score is not opposite",
+    "explanatory_only": ["ROUGE_1", "ROUGE_2", "ROUGE_L"]
+  },
+  "DG": {
+    "local_primary": "relevant-observation Weighted_Score direction at fixed prefix",
+    "numeric_material_margin_status": "NOT_INVENTED; a directional utilization difference requires qualified pairwise confirmation in V2",
+    "directional_primary_without_pairwise": "uncertain",
+    "directional_primary_pairwise_equivalent": "equivalent",
+    "directional_primary_pairwise_same": "directed local effect",
+    "pairwise_checks": ["memory correctness", "personalization", "emotional-support appropriateness"],
+    "local_is_global_policy_oracle": false,
+    "final": "official end-to-end Observation Recall, Weighted Score, LT-Memory, Personalization and Emotional Support"
+  },
+  "teacher_budget_implication": "ESC and QA non-tied ordinal anchors may remain official-score-derived; Summary and DG directional continuous anchors require pairwise confirmation until a separately justified natural-unit material rule is frozen",
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

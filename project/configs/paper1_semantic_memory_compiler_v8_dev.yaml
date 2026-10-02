@@ -1,0 +1,38 @@
+protocol: pm-paper1-semantic-memory-compiler-v8-dev-config-v1
+status: RESEARCHER_AUTHORIZED_OLD_DEV_ONLY
+authority:
+  amendment: project/data/paper1_authority/paper1_semantic_memory_compiler_amendment_20260817_v1.json
+  old_dev: project/data/paper1_authority/paper1_semantic_memory_old_dev_regression_v7_20260820.json
+
+endpoints:
+  semantic_memory_verifier_v8_dev:
+    base_url: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    model: "qwen3-235b-a22b-instruct-2507"
+    api_key_env: "DASHSCOPE_API_KEY"
+    family: "qwen3_235b_dashscope_intl"
+    timeout_seconds: 240
+    transport: "openai_chat_completions"
+    supports_strict_json_schema: false
+    thinking_mode: "provider_default"
+    enable_thinking: false
+
+semantic_memory_v8_dev:
+  provider: "Alibaba Cloud Model Studio"
+  region: "Singapore (International)"
+  endpoint_name: "semantic_memory_verifier_v8_dev"
+  compiler_version: "paper1-qwen-semantic-memory-verifier-v8-dev"
+  verifier:
+    temperature: 0.0
+    max_tokens: 4096
+    maximum_prompt_tokens: 126976
+  price_snapshot:
+    snapshot_id: "alibaba-model-studio-singapore-qwen3-235b-a22b-instruct-2507-official-list-20260817"
+    input_usd_per_million_tokens: "0.23"
+    output_usd_per_million_tokens: "0.92"
+  live_scope:
+    items: 32
+    source_sessions: 29
+    maximum_provider_calls: 29
+    hard_cap_usd: "0.25"
+    full_401_compile_authorized: false
+    outcome_calls: 0

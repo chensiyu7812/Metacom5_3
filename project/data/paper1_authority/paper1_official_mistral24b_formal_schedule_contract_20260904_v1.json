@@ -1,0 +1,54 @@
+{
+  "protocol": "paper1-official-mistral24b-formal-scoring-schedule-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_PRE_OUTCOME_SCHEDULE_ALGORITHM_FROZEN_REQUEST_MANIFEST_PENDING",
+  "purpose": "Prevent system-arm confounding with measured continuous-batching context sensitivity while preserving the pinned official scoring contract.",
+  "official_scorer": {
+    "model": "mistralai/Mistral-Small-3.1-24B-Instruct-2503",
+    "revision": "68faf511d618ef198fef186659617cfd2eb8e33a",
+    "backend_pilot_sha256": "0b94bf20ddee76097e8d132a8dd0c73ccf096a98a45a4df68dab7f888204fe56",
+    "batch_context_diagnostic_sha256": "365c5604424d95eba07c1d71a83ed287fe1e56b333934f032c0a31a4ac6f41e8",
+    "temperature": "official_provider_default_omitted",
+    "max_completion_tokens": 30,
+    "structured_schema_unchanged": true
+  },
+  "execution": {
+    "concurrency": 8,
+    "server_seed": 0,
+    "server_command_must_pass_explicit_seed": true,
+    "pilot_server_seed_was_explicitly_bound": false,
+    "warmup_requests_are_not_scored": true,
+    "content_or_score_driven_retry": "FORBIDDEN",
+    "transport_retry": "at most one, separately logged",
+    "checkpoint_resume": "resume the persisted pending suffix; never regenerate or reshuffle the schedule",
+    "restart_boundary_recorded": true
+  },
+  "schedule_algorithm": {
+    "seed": 0,
+    "canonical_arms": ["No_Memory", "Full_History", "Official_RAG_Top4", "Multi_View_Fixed_High", "Multi_View_Matched_Random", "Learned_Multi_View_PM"],
+    "matched_unit": ["owner_id", "scenario_id", "turn_index", "observation_id", "judgement_kind"],
+    "matched_units_order": "ascending SHA256(seed || canonical matched-unit serialization)",
+    "within_unit_arm_order": "balanced cyclic rotation of canonical_arms by matched-unit rank modulo 6",
+    "all_six_arms_contiguous_per_matched_unit": true,
+    "one_arm_complete_before_next_arm": "FORBIDDEN",
+    "evaluator_prompt_contains_arm_identity": false,
+    "persist_before_scoring": ["request_id", "matched_unit_id", "arm", "schedule_position", "within_unit_position", "request_sha256"],
+    "final_request_manifest_sha256": "PENDING_BEFORE_FORMAL_OUTCOME_UNLOCK"
+  },
+  "interpretation": {
+    "guarantees_per_item_determinism": false,
+    "eliminates_judge_sampling_variance": false,
+    "purpose_is_design_balance_not_a_scientific_pass_gate": true,
+    "inference": "paired comparisons with owner/scenario-clustered uncertainty; batch/restart blocks retained for sensitivity",
+    "small_differences_below_clustered_uncertainty": "evidence insufficient, not a positive claim"
+  },
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

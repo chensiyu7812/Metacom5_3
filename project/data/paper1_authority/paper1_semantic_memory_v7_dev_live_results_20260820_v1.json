@@ -1,0 +1,66 @@
+{
+  "protocol": "paper1-semantic-memory-v7-dev-live-results-v1",
+  "status": "DEV_REGRESSION_FAILED_STOP_BEFORE_401",
+  "role": "Preregistered old-DEV diagnostic regression only; not held-out qualification and not outcome evaluation.",
+  "source": {
+    "items": 32,
+    "source_sessions": 29,
+    "old_dev_plan_sha256": "16235cc426e29100b35fabf38413995d4a1f9c0213023a57b852975dd7259b53",
+    "v6_results_sha256": "7c6a3dc6d6109679671439ba75975d1e93cadd85ad3264f1fe0bf48547089575"
+  },
+  "raw_live_identity": {
+    "runtime_binding_sha256": "fa7bdf1e823821d9eb14fb1882fd62bc51cbbb9d6cba998c48dcd6d98d0680e9",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "thinking": false,
+    "live_report_sha256": "3f1917483ea4ec82aaa5da27057818429f4e87f352a944fbaa3356c0a134888b",
+    "budget_ledger_sha256": "a82e47ef3dd52eab746b586fd25104583cfb6f7ed2623d2f506059120ed0aa9e"
+  },
+  "calls_and_cost": {
+    "verifier_calls": 29,
+    "provider_call_failures": 0,
+    "cost_usd": 0.08161918,
+    "authorized_hard_cap_usd": 5.0,
+    "remaining_authorized_cap_usd": 4.91838082
+  },
+  "results": {
+    "strict_local_schema_gate_rejections": 11,
+    "known_fail_or_review_rejected": 7,
+    "known_fail_or_review_total": 12,
+    "old_pass_retained": 6,
+    "old_pass_total": 20,
+    "by_class_old_verdict_observed": {
+      "MP|PASS|ACCEPT": 5,
+      "MP|PASS|REJECT_FAIL_CLOSED": 5,
+      "MP|FAIL|ACCEPT": 5,
+      "MP|FAIL|REJECT_FAIL_CLOSED": 3,
+      "MP|REVIEW|REJECT_FAIL_CLOSED": 2,
+      "ME|PASS|ACCEPT": 1,
+      "ME|PASS|REJECT_FAIL_CLOSED": 9,
+      "ME|FAIL|REJECT_FAIL_CLOSED": 2
+    },
+    "diagnosis_protocol": "paper1-semantic-memory-v7-dev-diagnosis-v1"
+  },
+  "execution_stop": {
+    "full_401_started": false,
+    "new_catalog_created": false,
+    "heldout_qualification_ids_frozen": false,
+    "human_review_packet_created": false,
+    "outcome_calls": 0,
+    "pm_training": false,
+    "formal_evaluation": false
+  },
+  "post_run_local_fix": {
+    "scope": "Shared-span ME ordering implementation bug only",
+    "api_calls": 0,
+    "raw_live_result_mutated": false,
+    "new_runtime_authorization_required_before_any_future_live_execution": true
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

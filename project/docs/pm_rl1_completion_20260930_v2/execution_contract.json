@@ -1,0 +1,438 @@
+{
+  "plan_id": "pm_rl1_completion_20260930_v2",
+  "status": "PLAN_READY_NOT_EXPERIMENT_RESULTS",
+  "canonical_document": "project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md",
+  "scope": "one primary frozen executor; four resource heads; one-turn generation; no future simulation",
+  "invariants": {
+    "split": {
+      "train": 96,
+      "dev": 18,
+      "test": 48
+    },
+    "owners": {
+      "train": 12,
+      "dev": 3,
+      "test": 3
+    },
+    "max_gets": 4,
+    "resource_tokens": 2048,
+    "head_order": [
+      "RS",
+      "MP",
+      "MS",
+      "ME"
+    ],
+    "terminal_plan_count": 70,
+    "response_task_token_cap": null,
+    "no_gold_or_unacquired_content_in_actor_critic": true,
+    "test_prior_exposure_disclosed": true,
+    "missing_reward_is_zero": false
+  },
+  "representation": {
+    "mp_train_dev_queue": 72,
+    "me_source_fragments": 24,
+    "renderer_diagnostic_replies_max": 72,
+    "requires_new_actual_capacity_check": true
+  },
+  "executor": {
+    "train_slots": 576,
+    "dev_slots": 108,
+    "per_slot_initial_candidates": 1,
+    "per_slot_max_repairs": 1,
+    "global_repair_reserve": {
+      "train": 80,
+      "dev": 16
+    },
+    "author_outputs_max": 780,
+    "epochs": 3,
+    "seed": 17,
+    "lora": {
+      "r": 8,
+      "alpha": 16,
+      "targets": [
+        "q_proj",
+        "v_proj"
+      ],
+      "dropout": 0,
+      "dtype": "bfloat16",
+      "lr": 0.0001,
+      "microbatch": 1,
+      "gradient_accumulation": 16
+    },
+    "regression_inputs": 12,
+    "regression_generations_max": 36,
+    "selection": "exclude source-confirmed severe regression; lowest response NLL among remaining; earlier epoch tie; otherwise base",
+    "positive_quality_gain_required": false
+  },
+  "shared_pool": {
+    "selection_seed": 17,
+    "train_prefixes": 24,
+    "train_per_owner": 2,
+    "dev_prefixes": 18,
+    "fixed_plans": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        2,
+        1
+      ]
+    ],
+    "fixed_plan_hash_recipe": "pm-rl1-completion-v2|fixed-plan| + compact JSON numeric list; ascending SHA256 within mixed-dose candidates",
+    "same_global_plan_menu_for_fixed": true,
+    "train_replies_max": 360,
+    "dev_replies_max": 270,
+    "secondary_executor_dev_replies_max": 54,
+    "impossible_plan": "record unavailable, no easy replacement",
+    "fixed_dev_illegal_policy": "OFF, included in aggregate"
+  },
+  "measurement": {
+    "current_status": "NOT_EVALUATED_NEW_PROTOCOL",
+    "candidate": "existing Qwen3.5-9B checkpoint; runtime to bind",
+    "optional_factual_model": {
+      "name": "lytang/MiniCheck-Flan-T5-Large",
+      "max_candidates": 1,
+      "development_claims": 64,
+      "default_use": "diagnostic only",
+      "validated_for_project": false
+    },
+    "human_pairs": {
+      "development_natural": 8,
+      "development_control": 8,
+      "sealed_natural": 16,
+      "sealed_control": 8,
+      "sealed_natural_reserve": 8
+    },
+    "semantic_revisions_max": 1,
+    "calibration_scorer_requests_max": 140,
+    "repeat_single_replies": 12,
+    "repeat_same_utility_min": 11,
+    "severe_risk_repeat_flips_allowed": 0,
+    "first_format_valid_fraction_min": 0.95,
+    "clear_human_pairs_min": 8,
+    "direction_agreement_min": 0.75,
+    "human_ties_min_for_tie_gate": 5,
+    "tie_agreement_min": 0.8,
+    "qualified_states": [
+      "CALIBRATED_FOR_BOUNDED_STUDY",
+      "CALIBRATED_LOW_CONTRAST"
+    ],
+    "low_contrast_requires_all_available_clear_directions_correct": true,
+    "noisy_severe_false_positive_preference_allowed": false,
+    "semantic_evidence_rechecks_max": 96,
+    "train_human_single_reply_reserve": 12,
+    "train_human_handoffs_max": 2,
+    "reward": {
+      "q": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "m": [
+        0,
+        0.25,
+        1
+      ],
+      "alpha": 1,
+      "lambda": 0.05,
+      "gamma": 1,
+      "lambda_reanalysis_only": [
+        0.025,
+        0.1
+      ]
+    }
+  },
+  "policy": {
+    "seeds": [
+      17,
+      29,
+      43
+    ],
+    "primary_executors": 1,
+    "independently_trained_methods": [
+      "PPO",
+      "PPO-NoText"
+    ],
+    "preferred_episodes_per_seed": 384,
+    "reduced_episodes_per_seed": 128,
+    "selected_episodes_per_seed": null,
+    "selection_before_formal_rollouts": true,
+    "selection_rule": "low contrast ->128; else preferred total engine-hour projection <=96 ->384, otherwise128; exclude optional full RQ-X matrix if128 still exceeds; report remaining scheduling need",
+    "engine_hours_planning_envelope": 96,
+    "epoch_train_prefix_schedule": "384: four owner-balanced shuffled complete passes over96;128: complete96 then balanced32",
+    "new_rollout_trajectory_required_with_cached_terminal_rewards": true,
+    "train_update": {
+      "lr": 0.0003,
+      "clip": 0.2,
+      "gamma": 1,
+      "gae_lambda": 1,
+      "value_coef": 0.5,
+      "entropy_coef": 0.01,
+      "gradient_clip": 0.5,
+      "episodes_per_batch": 16,
+      "epochs_per_batch": 4,
+      "minibatch_episodes": 4
+    },
+    "supervised": {
+      "epochs": 50,
+      "batch_size": 64,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "value_head_only_steps": 500
+    },
+    "dev_checks": {
+      "128": [
+        64,
+        128
+      ],
+      "384": [
+        128,
+        384
+      ]
+    },
+    "static_baselines_receive_final_train_union": true,
+    "ppo_second_union_retraining_default": false,
+    "NoText": {
+      "independent_BC_and_value_initialization": true,
+      "same_demonstrations_and_random_seed_as_full_text": true,
+      "acquired_text_zero_from_initialization_through_evaluation": true,
+      "own_BC_checkpoint_saved": true
+    }
+  },
+  "evaluation": {
+    "test_prefixes": 48,
+    "primary_instances": {
+      "OFF": 1,
+      "Fixed": 1,
+      "Random": 3,
+      "OneShot": 3,
+      "BC-init": 3,
+      "BC-union": 3,
+      "PPO": 3,
+      "PPO-NoText": 3
+    },
+    "primary_reply_slots_max": 960,
+    "optional_executor_reply_slots_max": 288,
+    "human_pairs": {
+      "PPO_vs_OneShot": 24,
+      "PPO_vs_Fixed": 12,
+      "Xg_vs_Xl_or_PPO_vs_BC_union": 12
+    },
+    "last_12_human_pairs": "Xg_vs_Xl only if new LoRA exists and executor comparison retained; otherwise PPO_vs_BC_union; freeze before test",
+    "no_test_adaptation": true,
+    "unit": "within-prefix pairing, then owner summaries; seed and repeated plans not independent people"
+  },
+  "recovery": {
+    "max_technical_retries_per_request": 2,
+    "global_extra_G_attempts": 96,
+    "global_extra_J_attempts": 192,
+    "retry_cannot_change_semantics_under_same_identity": true
+  },
+  "fallback": {
+    "automatic_phase": "B0 only",
+    "B1_requires": "concrete scope choice and human capacity; never assume missing answers",
+    "single_head_selection": "train/dev reachable-dose coverage only; ties ME,MP,RS,MS; no reward selection",
+    "prefixes": {
+      "train": 24,
+      "dev": 6,
+      "test": 48
+    },
+    "terminal_doses": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "terminal_reply_slots_max": 390,
+    "two_rater_single_reply_judgments_max": 780,
+    "previous_route_costs_additive": true,
+    "select_before_A_test_unsealing": true,
+    "if_A_test_already_read": "same test is exploratory follow-up, not new independent confirmation",
+    "claim": "single-head adaptive dose/stopping, not four-head completion"
+  },
+  "paid_execution": {
+    "default": "local_only",
+    "new_paid_authorization": false,
+    "historical_boundary_usd": "1.50724291",
+    "all_new_followup_target_usd": "10",
+    "all_new_followup_hard_cap_usd": "20",
+    "not_per_phase": true
+  },
+  "work_packages": [
+    {
+      "id": "P0",
+      "depends_on": [],
+      "status": "COMPLETED",
+      "purpose": "基线及方案清单",
+      "deliverable": "核对HEAD、旧产物、模型配置、设备、账本与本方案身份"
+    },
+    {
+      "id": "P1",
+      "depends_on": [
+        "P0"
+      ],
+      "status": "READY",
+      "purpose": "输入表示及有限来源修复",
+      "deliverable": "新renderer/schema/overlay、72条MP和24片段ME审查、共同mask、最多72条固定诊断"
+    },
+    {
+      "id": "P2",
+      "depends_on": [
+        "P1"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "执行器及共同回复池",
+      "deliverable": "一次覆盖SFT、主执行器冻结、train/dev固定计划回复"
+    },
+    {
+      "id": "P3",
+      "depends_on": [
+        "P2"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "有限测量校准",
+      "deliverable": "40对人工材料、封存验证、反馈用途和收益来源判断"
+    },
+    {
+      "id": "P4",
+      "depends_on": [
+        "P2",
+        "P3"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "真实策略学习",
+      "deliverable": "共同train反馈、BC-init、PPO/NoText、BC-union、OneShot"
+    },
+    {
+      "id": "P5",
+      "depends_on": [
+        "P4"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "冻结评价",
+      "deliverable": "test矩阵、48对人评、风险成本缺失记录"
+    },
+    {
+      "id": "P6",
+      "depends_on": [
+        "P5"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "结果分析",
+      "deliverable": "逐owner/seed主表、消融、有限结论"
+    },
+    {
+      "id": "P7",
+      "depends_on": [
+        "P6"
+      ],
+      "status": "NOT_STARTED",
+      "purpose": "论文与复现",
+      "deliverable": "完整方法结果局限稿和复算索引"
+    },
+    {
+      "id": "B0",
+      "depends_on": [
+        "P3"
+      ],
+      "status": "CONDITIONAL",
+      "purpose": "人工终值表备选准备",
+      "deliverable": "仅在主线反馈失败或缺测超额时准备材料与人力估算"
+    },
+    {
+      "id": "B1",
+      "depends_on": [
+        "B0"
+      ],
+      "status": "REQUIRES_SCOPE_AND_HUMAN_COMMITMENT",
+      "purpose": "单头取量与停止",
+      "deliverable": "新增范围选择及实际人工输入后才运行，非自动四头替代"
+    }
+  ]
+}

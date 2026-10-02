@@ -1,0 +1,105 @@
+{
+  "protocol": "paper1-rs-dg-calibration-readiness-audit-v1",
+  "generated_at": "2026-09-17T15:14:13.668347+00:00",
+  "status": "OFFLINE_READINESS_AUDIT_NO_EXECUTION_NO_PAID_CALLS_NO_K_SELECTION",
+  "purpose": "Establish, before anything is spent, what RS and DG amount calibration each require and whether they fit the remaining Paper-1 API budget.",
+  "budget": {
+    "cumulative_accounted_usd": "1.50724291",
+    "cumulative_remaining_usd": "48.49275709",
+    "hard_cap_usd": "50.00",
+    "primary_retry_reserve_usd": "5.00",
+    "headroom_for_non_retry_calls_usd": "43.49275709",
+    "not_yet_authorized_static_qa_summary_stage_usd": 15,
+    "static_stage_authorized": false
+  },
+  "stages": [
+    {
+      "stage": "RS_amount_calibration",
+      "benchmark": "ESC-Eval",
+      "cards": {
+        "calibration": 52,
+        "confirmatory": 121,
+        "planning_envelope_role_cards": 52
+      },
+      "amount_arms": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "turns_per_trajectory": 5,
+      "trajectories": 260,
+      "generator_calls": 1300,
+      "esc_role_seeker_turns_local": 1300,
+      "official_esc_rank_dimension_passes": 1820,
+      "paid_api_calls_required": 0,
+      "paid_usd_required": "0",
+      "why_free": "The ESC-Eval loop is local end to end: the frozen Generator is the supporter, ESC-Role is local inference, and the official ESC-RANK scorer is a local internlm2-chat-7b plus adapter. No provider call is involved.",
+      "measured_scorer_seconds_per_trajectory": 4.809616843499195,
+      "official_scorer_wall_seconds_for_all_trajectories": 1250.5003793097908,
+      "generation_wall_time": "UNMEASURED_FOR_THIS_LOOP",
+      "generation_wall_time_note": "Supporter and ESC-Role turn latency on this stack has not been measured for the ESC-Eval loop. It must be timed on a small pilot before a wall-clock claim; the judge-development rate is not transferable because those were long reasoning outputs.",
+      "blocking_decisions": [
+        "RS amount calibration uses the 52 calibration cards only; the 121 confirmatory cards stay sealed.",
+        "The five-point arm grid (k=0..4) and five turns per trajectory come from the 2026-08-20 planning envelope, which is explicitly PLANNING_ENVELOPE_NOT_AUTHORIZATION and must be re-confirmed.",
+        "The RS bundle is retrieved per turn under leave-current-dialogue-out retrieval; the exact per-turn retrieval binding for the ESC-Eval loop is not yet materialized as a request manifest."
+      ],
+      "feasible_within_remaining_budget": true,
+      "binding_constraint": "GPU wall time, not money"
+    },
+    {
+      "stage": "DG_amount_calibration",
+      "benchmark": "ES-MemEval Dialogue Generation",
+      "scenarios": 34,
+      "rounds_per_scenario": 10,
+      "conditions_per_scenario": 13,
+      "conditions_note": "3 heads x k in [1, 2, 3, 4] plus one shared true-OFF",
+      "static_query_substitute_forbidden": true,
+      "retrieval_note": "DG retrieves after each live seeker utterance, so a condition cannot reuse another condition's trajectory: every condition is its own paid run.",
+      "recorded_six_system_reference": {
+        "seeker_logical_calls": 2040,
+        "uncached_worst_case_usd": "29.51055000",
+        "derived_usd_per_logical_seeker_call": "0.01446596"
+      },
+      "calibration_volume": {
+        "paid_seeker_logical_calls": 4420,
+        "paid_official_overall_judge_calls": 442,
+        "local_mistral24b_turn_judge_calls": 222560
+      },
+      "paid_usd_required_seeker_only_worst_case": "63.93952500",
+      "cumulative_remaining_usd": "48.49275709",
+      "primary_call_headroom_usd": "43.49275709",
+      "feasible_within_remaining_budget": false,
+      "shortfall_usd": "20.44676791",
+      "still_owed_after_calibration": {
+        "six_system_confirmatory_seeker_worst_case_usd": "29.51055000",
+        "note": "The confirmatory six-system DG run is the actual RQ2 deliverable and is not included above."
+      },
+      "blocking_decisions": [
+        "Full-grid DG amount calibration is not affordable; the researcher must choose how to reduce it.",
+        "Reduction options that do not depend on seeing any result: fewer DG scenarios in calibration, a coarser k grid, calibrating fewer heads live, or adopting the static QA/Summary k for DG with the transfer stated as a limitation.",
+        "Whatever is chosen must be fixed before any DG call, because a result-driven choice is forbidden."
+      ],
+      "binding_constraint": "paid seeker calls"
+    }
+  ],
+  "headline": "RS amount calibration needs no paid call at all and is limited by GPU wall time. DG amount calibration at the full grid needs about USD 63.93952500 of paid seeker calls alone, against USD 43.49275709 of headroom, and the six-system confirmatory DG run (about USD 29.51055000) has not been spent yet either. DG calibration must be reduced by an explicit, result-blind researcher decision before any DG call.",
+  "explicitly_not_done_here": [
+    "no generation",
+    "no paid API call",
+    "no k selection",
+    "no k* freeze",
+    "no formal outcome",
+    "no PM training",
+    "no lock opened"
+  ],
+  "sources_sha256": {
+    "esc_split": "fbc689d59f8bf25a36ce3e2cd76dfbb7506a2a7b8d7adebc927f004bf7479941",
+    "planning_envelope": "552dc997fd0b7bc79124b50e40d818a083c086dac0a4d52be6b0e2c4114c2496",
+    "esc_eval_compatibility": "e17969b2cc98482a00ee13719f5e08b19466baf391a4eaf06a10cd6f8d962109",
+    "dg_cost_surface": "033fe4e1e189b7bbe394f3c11e979163b03f912a83254c913a14da2bf6a5d002",
+    "dg_execution_policy": "6b73077bfcf766c82979bacafe0096f5f517c1dd00c50f42470258a7421ee0c6",
+    "static_execution": "383a30e0528beef5350d705ebb74a239dd31bf59f6418cdbcfa37b1f75d6edbb"
+  }
+}
