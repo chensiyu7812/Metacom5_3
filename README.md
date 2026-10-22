@@ -9,6 +9,7 @@
 - [2026-10-22再次复核：研究脉络、最新证据和版本状态](project/docs/pm_rl1_workspace_20261022/RESEARCH_REVIEW_ZH.md)
 - [研究全景：目的、方法、数据、方案、进度和结果](project/docs/pm_rl1_workspace_20261022/RESEARCH_OVERVIEW_ZH.md)
 - [当前唯一主方案](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md) · [最新状态](project/docs/PM_RL1_CURRENT_STATUS.md)
+- [完整研究阶段落实与待决定事项](project/docs/pm_rl1_workspace_20261022/COMPLETION_EXECUTION_ZH.md)
 - [逐阶段时间线与证据](project/docs/pm_rl1_workspace_20261022/EVIDENCE_TIMELINE_ZH.md)
 - [工作区与目录指南](project/docs/pm_rl1_workspace_20261022/DIRECTORY_GUIDE_ZH.md)
 - [执行手册](project/docs/pm_rl1_completion_20260930_v2/runbook.md) · [执行合同](project/docs/pm_rl1_completion_20260930_v2/execution_contract.json)
