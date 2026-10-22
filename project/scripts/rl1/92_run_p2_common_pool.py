@@ -34,11 +34,119 @@ def save(path, value):
     temp.replace(path)
 
 
+def load_frozen_generator(runtime):
+    """Shared loader for the original pool and separately authorized diagnostics."""
+    import torch
+    if torch.cuda.device_count() != 1 or 'A6000' not in torch.cuda.get_device_name(0):
+        raise RuntimeError('bind A6000; no fallback')
+    generator = BoundNaturalGenerator(Path(runtime['model_dir']), minimum_free_gib=40)
+    if runtime['adapter']:
+        from peft import PeftModel
+        adapter = runtime['adapter']
+        assert importlib.metadata.version('peft') == adapter['peft_version'], 'adapter loader package drift'
+        generator.model = PeftModel.from_pretrained(generator.model, adapter['path'],
+            adapter_name=adapter['name'], is_trainable=False).eval()
+        generator.manifest = dict(generator.manifest, adapter=adapter)
+        generator.identity = digest(generator.manifest)
+    return generator
+
+
+def run_rs_package(args):
+    # No model, device or account operation before the exact package and its
+    # new execution authorization have passed. This never uses the old D slots.
+    from metacom_pm.rl1.rs_development import (validate_package,
+        validate_authorization, execute_jobs, save_once)
+    protocol, jobs = validate_package(args.rs_package)
+    print(json.dumps(dict(preflight='OK', jobs=len(jobs), mode='RS diagnostic',
+        protocol_identity=digest(protocol), execution_authorized=False)), flush=True)
+    if args.preflight_only:
+        return
+    if not args.execution_authorization:
+        raise RuntimeError('supply the separately approved exact RS batch authorization')
+    authorization = read(args.execution_authorization)
+    validate_authorization(protocol, authorization)
+    import fcntl
+    import os
+    import subprocess
+    run = Path(protocol['execution_dir'])
+    run.mkdir(parents=True, exist_ok=True)
+    with (run / '.dispatch.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        save_once(run / 'protocol.json', protocol)
+        save_once(run / 'authorization.json', authorization)
+        if (run / 'STOP.json').exists():
+            raise RuntimeError('existing diagnostic STOP retained; no implicit resume')
+        if (run / 'results.json').exists():
+            print('Already complete; no GPU load or redispatch.', flush=True)
+            return
+        if (run / 'launch.json').exists():
+            raise RuntimeError('earlier launch retained; no implicit second idle wait or interrupted-run restart')
+        for receipt in run.glob('*.started.json'):
+            if not receipt.with_name(receipt.name.replace('.started.json', '.raw.json')).exists():
+                raise RuntimeError('unresolved prior model entry; no retry or GPU load')
+        runtime = protocol['runtime']
+        if (os.environ.get('CUDA_VISIBLE_DEVICES') != runtime['cuda_visible_devices']
+                or os.environ.get('CUDA_DEVICE_ORDER') != runtime['cuda_device_order']):
+            raise RuntimeError('frozen CUDA deployment changed')
+        from datetime import datetime, timezone
+        save_once(run / 'launch.json', dict(utc=datetime.now(timezone.utc).isoformat(),
+            protocol_identity=digest(protocol), authorization_identity=digest(authorization)))
+        # Establish the UUID of the frozen PCI-ordered CUDA ordinal as well as
+        # checking the card by UUID; a name-only match is insufficient.
+        mapping = subprocess.run(['nvidia-smi', '--query-gpu=pci.bus_id,uuid',
+            '--format=csv,noheader'], capture_output=True, text=True, timeout=20)
+        save_once(run / 'device_mapping.json', dict(returncode=mapping.returncode,
+            stdout=mapping.stdout, stderr=mapping.stderr))
+        rows = sorted([[f.strip() for f in r.split(',')] for r in mapping.stdout.splitlines()])
+        ordinal = int(runtime['cuda_visible_devices'])
+        if (mapping.returncode or len(rows) <= ordinal or any(len(r) != 2 for r in rows)
+                or rows[ordinal][1] != protocol['gpu_uuid']):
+            save_once(run / 'STOP.json', dict(status='STOP_DEVICE_MAPPING'))
+            raise RuntimeError('frozen CUDA ordinal / designated UUID mismatch')
+        sys.path.insert(0, str(Path(protocol['gpu_guard_path']).parent))
+        from resume_engineering import GPUChecks
+        checks = GPUChecks(run / 'gpu_checks')
+        idle = checks.wait_idle(seconds=300)
+        if not idle['eligible']:
+            save_once(run / 'STOP.json', dict(status='STOP_GPU_PREFLIGHT', detail=idle))
+            return
+        for name, expected in runtime['model_files'].items():
+            if sha256_file(Path(runtime['model_dir']) / name) != expected:
+                save_once(run / 'STOP.json', dict(status='STOP_MODEL_FILE_DRIFT', file=name))
+                raise RuntimeError('local model file changed; no download')
+        for name, expected in runtime['adapter']['files'].items():
+            if sha256_file(Path(runtime['adapter']['path']) / name) != expected:
+                save_once(run / 'STOP.json', dict(status='STOP_ADAPTER_FILE_DRIFT', file=name))
+                raise RuntimeError('local adapter file changed')
+        generator = load_frozen_generator(runtime)
+        actual = dict(generator.manifest, identity=generator.identity)
+        save_once(run / 'runtime_observed.json', actual)
+        if digest(actual) != digest(runtime):
+            save_once(run / 'STOP.json', dict(status='STOP_RUNTIME_DRIFT'))
+            raise RuntimeError('frozen runtime mismatch')
+        result = execute_jobs(protocol, jobs, generator,
+            before_request=lambda: checks.check(own_pid=os.getpid())['eligible'])
+        print(json.dumps(dict(status=result['status'],
+            started=len(list(run.glob('*.started.json'))))), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--preflight-only', action='store_true')
     ap.add_argument('--arm', choices=('primary', 'secondary'), default='primary')
+    ap.add_argument('--rs-package', type=Path, help='versioned, separately authorized RS diagnostic package')
+    ap.add_argument('--execution-authorization', type=Path)
     args = ap.parse_args()
+    if args.rs_package:
+        run_rs_package(args)
+        return
+    # The legacy pool used the runner hash in its directory identity. Editing
+    # this CLI must not create a fresh directory and replay all old requests.
+    pointer = OUT / (args.arm + '_generation_pointer.json')
+    if pointer.exists():
+        legacy = read(Path(read(pointer)['run_dir']) / 'protocol.json')
+        if legacy['runner_sha256'] != sha256_file(Path(__file__)):
+            raise RuntimeError('legacy runner identity changed; refuse a new pool/replay; use the separately scoped RS entry')
     start = time.monotonic()
     freeze = read(OUT / 'input_freeze.json')
     for name, expected in freeze['files'].items():
@@ -99,18 +207,7 @@ def main():
     print(json.dumps(dict(preflight='OK', jobs=len(jobs), run_dir=str(run))), flush=True)
     if args.preflight_only:
         return
-    import torch
-    if torch.cuda.device_count() != 1 or 'A6000' not in torch.cuda.get_device_name(0):
-        raise RuntimeError('bind A6000; no fallback')
-    generator = BoundNaturalGenerator(Path(runtime['model_dir']), minimum_free_gib=40)
-    if runtime['adapter']:
-        from peft import PeftModel
-        adapter = runtime['adapter']
-        assert importlib.metadata.version('peft') == adapter['peft_version'], 'adapter loader package drift'
-        generator.model = PeftModel.from_pretrained(generator.model, adapter['path'],
-            adapter_name=adapter['name'], is_trainable=False).eval()
-        generator.manifest = dict(generator.manifest, adapter=adapter)
-        generator.identity = digest(generator.manifest)
+    generator = load_frozen_generator(runtime)
     # JSON persists EOS tuples as arrays; compare the complete canonical
     # manifest instead of Python container types. No field is discarded.
     actual_runtime = dict(generator.manifest, identity=generator.identity)

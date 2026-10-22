@@ -1,13 +1,20 @@
-# Current review entry — PM-RL1, 2026-10-02
+# Current review entry — PM-RL1, 2026-10-22
 
-Start with [PM-RL1 研究进展与结果索引](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md),
-then the [current stage results and limitations](project/docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md)
-and [feasible completion plan](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md).
-P1/P2 are complete with disclosed limitations; P3 initial development is complete,
-but human calibration and reward qualification remain pending. The public
+Start with the [research review](project/docs/pm_rl1_workspace_20261022/RESEARCH_REVIEW_ZH.md),
+[current status](project/docs/PM_RL1_CURRENT_STATUS.md), and
+[controlling plan](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md).
+P1/P2 are complete with disclosed limitations. Human development references have
+been received, but reward qualification remains unresolved. The latest diagnostic
+closed after 307 cumulative judge/audit attempts; natural-task RL updates remain
+zero. Formal policy comparisons and independent final evaluation are incomplete.
+See the [version review](project/docs/reviews/20261022/pm_rl1/VERSION_REVIEW_ZH.md)
+for local and clean-checkout verification and reproducibility limitations.
+
+The historical [2026-10-02 publication](project/docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md)
+and its public
 [results notebook](project/docs/reviews/20261002/pm_rl1/stage_results.ipynb)
-checks published hashes and summary arithmetic without local experiment files.
-The [repository README](README.md) contains the current clean-checkout CPU test command.
+check that snapshot's hashes and arithmetic; they do not describe today's
+measurement status. The [repository README](README.md) gives the CPU test command.
 
 Everything below is the preserved **2026-06-28 historical V3.3 package**. Its
 training claims, review instructions and all-tests commands are not the current
