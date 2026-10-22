@@ -1,3 +1,5 @@
+后续状态：研究者已暂缓Claude。一次真实请求配置拒绝、无评分和费用；此前Models/free token成功不能代表推理可用。详见[最新接续](ORIGINAL_PLAN_RESUMPTION_ZH.md)。下文保留资源准备时点的分析与提案。
+
 # Claude 额度对 PM-RL1 的作用与接续落实
 
 2026-10-22。接续[完整研究阶段落实](COMPLETION_EXECUTION_ZH.md)，唯一主入口仍为[统一推进方案](../PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md)。研究者补充“应该是 Anthropic API 额度，大概几十美元”，要求分析正向作用并继续推进。该信息改变资源规划，不等于已核实余额、到期日、核验人员或批准任意新实验支出。
