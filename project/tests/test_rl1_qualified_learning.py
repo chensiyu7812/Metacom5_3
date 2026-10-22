@@ -178,3 +178,69 @@ def test_fixed_endpoint_cannot_skip_development_or_stop_early(tmp_path,setup_art
     assert done['episodes']==128 and done['updates']==8 and done['scope']=='ENGINEERING_ONLY'
     assert not done['independent_test_evaluation_completed']
     with pytest.raises(ValueError):run.next_batch()
+
+
+def test_interrupted_collection_at_five_resumes_same_actions_and_rng(tmp_path,setup_artifacts):
+    a=setup_artifacts['BC-init'];reference=start(a,tmp_path/'reference');reference.collect(episodes(a))
+    work=tmp_path/'interrupted';run=start(a,work)
+    def crash(event,**detail):
+        if event=='collected_episode' and detail['count']==5:raise KeyboardInterrupt()
+    run.fault_hook=crash
+    with pytest.raises(KeyboardInterrupt):run.collect(episodes(a))
+    with pytest.raises(ValueError,match='complete pending'):run.poll(FeedbackQueue(tmp_path/'q.sqlite'))
+    restored=start(a,work);restored.resume_collection(episodes(a))
+    assert torch.equal(restored.rng_state,reference.rng_state)
+    for row,expected in zip(restored.records,reference.records):
+        assert row['episode'].snapshot()==expected['episode'].snapshot()
+        for t,u in zip(row['transitions'],expected['transitions']):
+            assert torch.equal(t['action'],u['action']) and torch.equal(t['old_log_prob'],u['old_log_prob'])
+
+
+@pytest.mark.parametrize('boundary',['update_intent','optimized_before_checkpoint','checkpoint_before_receipt'])
+def test_update_crash_recovery_is_one_logical_update(tmp_path,setup_artifacts,boundary):
+    a=setup_artifacts['BC-init'];reference=start(a,tmp_path/'reference');queue=FeedbackQueue(tmp_path/'q.sqlite')
+    reference.collect(episodes(a));complete(reference,queue);expected=reference.update_once()
+    work=tmp_path/'interrupted';run=start(a,work);run.collect(episodes(a));complete(run,queue)
+    def crash(event,**detail):
+        if event==boundary:raise KeyboardInterrupt()
+    run.fault_hook=crash;batch=run.batch_id
+    with pytest.raises(KeyboardInterrupt):run.update_once()
+    before_counts=queue.counts();restored=start(a,work)
+    receipt=restored.recover_update(episodes(a),batch_id=batch)
+    assert receipt['after']==expected['after'] and restored.trainer.version==1
+    assert torch.equal(restored.rng_state,reference.rng_state)
+    assert queue.counts()==before_counts and queue.claim_next() is None
+    again=start(a,work)
+    assert again.recover_update(episodes(a),batch_id=batch)==receipt
+    assert len(list(work.glob('*.update_done.json')))==1
+    with pytest.raises(ValueError):restored.update_once()
+
+
+def test_unified_backend_BC_queue_recovery_full_batch_update_and_resampling(tmp_path,setup_artifacts):
+    from test_rl1_measurement_backend import setup as backend_setup
+    from metacom_pm.rl1.measurement_backend import QualifiedFeedbackBackend
+    from metacom_pm.rl1.research_backend import ResearchBackend
+    a=setup_artifacts['BC-init']
+    q,_,kw=backend_setup(tmp_path,('format_failure',)+('valid',)*255,max_attempts=256,enqueue=False)
+    kw['budget'].stage_cap=kw['budget'].trial_cap=kw['budget'].shared_cap=1000000
+    w=QualifiedFeedbackBackend(q,**kw)
+    backend=ResearchBackend(q,qualification_bundle=a['bundle'],measurement_worker=w)
+    run=start(a,tmp_path/'learning');run.collect(episodes(a));old=run.behavior
+    saw_recovery=False
+    for _ in range(128):
+        cycle=backend.learning_cycle(run)
+        result=cycle['results']
+        if cycle['status']=='FEEDBACK_COMPLETE':break
+        while (item:=q.claim_next(kind='generation')) is not None:q.settle(item['id'],answer(item))
+        progress=cycle['service']['measurement']
+        if progress['status']=='PENDING_TECHNICAL_RECOVERY':
+            saw_recovery=True
+            assert any(r['phase']=='pending_score' for r in result)
+            with pytest.raises(ValueError,match='all 16'):run.update_once()
+        else:assert progress['status'] in ('LOGICAL_SETTLED','IDLE')
+    assert all(r['phase']=='terminal' for r in result) and saw_recovery
+    receipt=backend.learning_cycle(run,allow_update=True)['update']
+    assert receipt['after']!=old and receipt['natural_policy_updates']==0
+    assert len(receipt['training_feedback'])==32
+    run.next_batch();run.collect(episodes(a,1))
+    assert run.behavior==receipt['after'] and len(run.records)==16

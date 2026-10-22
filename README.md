@@ -6,6 +6,7 @@
 
 ## 先读这几处
 
+- [最新后端复核：内容评分缓存、有限恢复、公共引擎与学习接线](project/docs/reviews/20261022/pm_rl1_backend/BACKEND_REVIEW_ZH.md)
 - [2026-10-22再次复核：研究脉络、最新证据和版本状态](project/docs/pm_rl1_workspace_20261022/RESEARCH_REVIEW_ZH.md)
 - [研究全景：目的、方法、数据、方案、进度和结果](project/docs/pm_rl1_workspace_20261022/RESEARCH_OVERVIEW_ZH.md)
 - [当前唯一主方案](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md) · [最新状态](project/docs/PM_RL1_CURRENT_STATUS.md)

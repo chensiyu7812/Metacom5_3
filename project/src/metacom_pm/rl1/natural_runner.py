@@ -61,9 +61,7 @@ class _EpisodeLoop:
             finish_reason=response['finish_reason'], runtime_identity=response['runtime_identity'])
 
     def _score(self, req, response, measure):
-        query = dict(generation_request_id=req['request_id'], response_identity=digest(response['text']),
-            evidence_identity=digest(self.evidence), runtime_identity=self.freeze['runtime_identity'],
-            rubric_identity=self.freeze['rubric_identity'], freeze_identity=self.freeze['identity'])
+        query = self.measurement_binding(req, response)
         key = digest(query)
         rec = self.scores.get(key)
         if rec is None:
@@ -82,6 +80,12 @@ class _EpisodeLoop:
                 return None
             self.scores[key] = deepcopy(rec)
         return Score(rec['q'], rec['m'], (digest(rec),))
+
+    def measurement_binding(self, req, response):
+        # Preserve the frozen historical diagnostic interfaces.
+        return dict(generation_request_id=req['request_id'], response_identity=digest(response['text']),
+            evidence_identity=digest(self.evidence), runtime_identity=self.freeze['runtime_identity'],
+            rubric_identity=self.freeze['rubric_identity'], freeze_identity=self.freeze['identity'])
 
     def advance(self, generate, measure):
         if self.env.phase in ('terminal', 'technical_failure'):
@@ -150,6 +154,11 @@ class _EpisodeLoop:
 
 
 class NaturalEpisode(_EpisodeLoop):
+    def measurement_binding(self, req, response):
+        from .measurement_identity import binding
+        return binding(req['request_id'], digest(response['text']), digest(self.evidence),
+                       self.freeze, self.qualification)
+
     def __init__(self, spec, renderer, *, evidence, freeze, freeze_inputs, qualification, trajectory_id):
         require_qualified_episode(spec, freeze, freeze_inputs, qualification)
         super().__init__(spec, renderer, evidence=evidence, freeze=freeze,

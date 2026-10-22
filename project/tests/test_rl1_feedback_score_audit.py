@@ -130,7 +130,6 @@ class Decisions(unittest.TestCase):
         with self.assertRaises(Exception): c.validate_review(self.v, self.j['evaluation']['value'])
 
 
-@unittest.skipUnless(fixtures.HAS_ENGINE, 'preserved private engine absent')
 class Interface(unittest.TestCase):
     def setUp(self):
         self.p = fixtures.p
@@ -147,8 +146,6 @@ class Interface(unittest.TestCase):
             rv['checks'][name]['score_links'] = [dict(path=path, quote='SYNTHETIC')]
         self.addCleanup(patch.stopall)
         patch('socket.socket.connect', side_effect=AssertionError('no network')).start()
-        patch('deepseek_access.read_key', side_effect=AssertionError('no credentials')).start()
-        patch('deepseek_access.management_once', side_effect=AssertionError('no account')).start()
 
     def raw(self):
         return dict(transport='deepseek', choices=[dict(message=dict(content=json.dumps(self.value), reasoning_content='DO NOT READ'), finish_reason='stop')])

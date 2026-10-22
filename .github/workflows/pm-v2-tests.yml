@@ -49,6 +49,14 @@ jobs:
       - name: Compile PM-v2 modules
         run: python -m compileall -q src scripts tests
       - name: Run blocking public-only Paper-1 suite
-        run: pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py
+        # Avoid stacking pyproject's -q with the explicit -q: retain the totals.
+        run: pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py -ra -o addopts= --junitxml=pytest-results.xml
+      - name: Upload test counts and skip reasons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pm-cpu-tests-${{ github.event_name }}
+          path: project/pytest-results.xml
+          if-no-files-found: warn
       - name: Validate Paper-1 integration base and outcome lock
         run: python scripts/paper1/00_validate_integration_base.py

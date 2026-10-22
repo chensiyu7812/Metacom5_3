@@ -52,7 +52,6 @@ class Portable(unittest.TestCase):
         with self.assertRaises(ValueError):c.feed(b'data: {"id":"two","choices":[]}')
 
 
-@unittest.skipUnless(fixtures.f.HAS_ENGINE,'preserved engine absent')
 class Integration(unittest.TestCase):
     def setUp(self):
         fixtures.Integration.setUp(self)

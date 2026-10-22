@@ -74,12 +74,12 @@ def test_unpriced_or_incomplete_usage_not_zero(change):
 
 
 @pytest.fixture
-def entry():
+def entry(monkeypatch):
     project=Path(__file__).resolve().parents[1]
-    if not (project/'outputs/pm_rl1/judge_selection_preparation_20261014_v1/paired_diagnostic_20261019_v1/paired.py').exists():
-        pytest.skip('preserved private engine absent; portable transport tests still run')
     spec=importlib.util.spec_from_file_location('claude_pilot_entry',project/'scripts/rl1/127_run_claude_pilot.py')
     m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+    from metacom_pm.rl1 import diagnostic_engine
+    monkeypatch.setattr(m,"engine",lambda:diagnostic_engine)
     return m
 
 

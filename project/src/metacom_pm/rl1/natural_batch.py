@@ -43,6 +43,8 @@ class FeedbackQueue:
         with self.transaction() as db:
             db.execute('CREATE TABLE IF NOT EXISTS feedback '
                 '(id TEXT PRIMARY KEY, kind TEXT, payload TEXT, state TEXT, result TEXT)')
+            db.execute('CREATE TABLE IF NOT EXISTS measurement_origins '
+                '(origin TEXT PRIMARY KEY, feedback_id TEXT NOT NULL, binding TEXT NOT NULL)')
         self.path.chmod(0o600)
 
     @contextmanager
@@ -59,10 +61,17 @@ class FeedbackQueue:
         finally:
             db.close()
 
-    def _get(self, kind, payload):
+    def _get(self, kind, payload, *, origin=None):
         key = digest(dict(kind=kind, payload=payload))
         encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False, allow_nan=False)
         with self.transaction() as db:
+            if origin is not None:
+                encoded_origin = json.dumps(origin, sort_keys=True, ensure_ascii=False, allow_nan=False)
+                oid = digest(origin)
+                old = db.execute('SELECT feedback_id,binding FROM measurement_origins WHERE origin=?', (oid,)).fetchone()
+                if old is not None and old != (key, encoded_origin):
+                    raise ValueError('measurement origin changed')
+                db.execute('INSERT OR IGNORE INTO measurement_origins VALUES (?,?,?)', (oid, key, encoded_origin))
             row = db.execute('SELECT kind,payload,state,result FROM feedback WHERE id=?', (key,)).fetchone()
             if row is None:
                 db.execute('INSERT INTO feedback VALUES (?,?,?,\'WAITING\',NULL)', (key, kind, encoded))
@@ -79,11 +88,26 @@ class FeedbackQueue:
     def measure(self, binding, evidence, reply):
         if binding['evidence_identity'] != digest(evidence) or binding['response_identity'] != digest(reply):
             raise ValueError('source/response binding mismatch')
-        return self._get('measurement', dict(binding=binding, evidence=evidence, reply=reply))
+        from .measurement_identity import POLICY, canonical
+        if binding.get('cache_policy') != POLICY:
+            return self._get('measurement', dict(binding=binding, evidence=evidence, reply=reply))
+        content_binding = canonical(binding, evidence, reply)
+        payload = dict(binding=content_binding, evidence=evidence, reply=reply)
+        result = self._get('measurement', payload, origin=binding)
+        if result is None:
+            return None
+        if result.get('binding') != content_binding:
+            raise ValueError('canonical measurement receipt changed')
+        return dict(result, binding=deepcopy(binding),
+            content_receipt_identity=digest(result),
+            content_feedback_id=digest(dict(kind='measurement', payload=payload)))
 
-    def claim_next(self):
+    def claim_next(self, *, kind=None):
         with self.transaction() as db:
-            row = db.execute("SELECT id,kind,payload FROM feedback WHERE state='WAITING' ORDER BY rowid LIMIT 1").fetchone()
+            if kind not in (None, 'generation', 'measurement'):
+                raise ValueError('unknown feedback kind')
+            row = db.execute("SELECT id,kind,payload FROM feedback WHERE state='WAITING' "
+                "AND (? IS NULL OR kind=?) ORDER BY rowid LIMIT 1", (kind, kind)).fetchone()
             if row is None:
                 return None
             payload = json.loads(row[2])

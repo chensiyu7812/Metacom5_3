@@ -9,6 +9,7 @@ from metacom_pm.rl1.learning_handoff import (candidate_menu, prepare_handoff,
     compile_supervision, checkpoint_requirements, verify_checkpoint_receipt)
 from metacom_pm.rl1.learning_preparation import TerminalCandidate, PolicyInputView
 from metacom_pm.rl1.schema import PLANS, digest
+from metacom_pm.rl1.measurement_identity import binding
 from test_rl1_calibration_workflow import fixture
 from test_rl1_environment import fixture_spec, renderer
 from rl1_batch_fixtures import make_encoder
@@ -31,9 +32,7 @@ def inputs(scope='initial_train'):
         c=TerminalCandidate(spec.prefix.identity,'train',counts,r.cost(spec,counts),rid,
             digest('MOCK reply '+str(counts)),evidence,spec.executor_identity,r.identity)
         cs.append(c)
-        receipts[rid]=dict(binding=dict(generation_request_id=rid,response_identity=c.response_identity,
-            evidence_identity=evidence,runtime_identity=freeze['runtime_identity'],
-            rubric_identity=freeze['rubric_identity'],freeze_identity=freeze['identity']),
+        receipts[rid]=dict(binding=binding(rid,c.response_identity,evidence,freeze,qualify(**bundle)),
             measurement_status='measured_candidate',q=4 if counts[0] else 2,m=0)
     menu=candidate_menu(cs,source_identity='MOCK frozen pool',scope=scope)
     kw=dict(menu=menu,receipts=receipts,qualification_bundle=bundle,

@@ -16,15 +16,12 @@ import test_rl1_feedback_workflow as fixtures
 p=fixtures.p if fixtures.HAS_ENGINE else None
 
 
-@unittest.skipUnless(fixtures.HAS_ENGINE,'preserved private engine unavailable')
 class SourceEvidenceTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
         self.items,self.rows=fixtures.fixture();self.item=self.items['V1_OFF'];self.calls=[]
         self.addCleanup(patch.stopall)
         patch('socket.socket.connect',side_effect=AssertionError('offline network forbidden')).start()
-        patch('deepseek_access.read_key',side_effect=AssertionError('offline credentials forbidden')).start()
-        patch('deepseek_access.management_once',side_effect=AssertionError('no new account query')).start()
     def score(self,item):return fixtures.WorkflowIntegrationTests.score(self,item)
     def audit(self,item,flag=False):
         value=fixtures.WorkflowIntegrationTests.audit(self,item,True)
@@ -130,7 +127,10 @@ class SourceEvidenceTests(unittest.TestCase):
         self.prepare();out=self.execute(change=lambda request,raw:raw.pop('usage'))
         self.assertEqual(out['new_started'],1);self.assertEqual(out['attempt_liability_usd'],'0.786432')
 
+    @unittest.skipUnless(fixtures.HAS_LEGACY_TRANSPORT,'historical private credential/transport adapter')
     def test_launcher_reuses_management_and_stops_replay_before_credentials(self):
+        sys.path.insert(0,str(fixtures.BASE/'paired_diagnostic_20261019_v1'))
+        import paired, live
         self.prepare();project=Path(__file__).resolve().parents[1]
         spec=importlib.util.spec_from_file_location('continuation_entry_test',project/'scripts/rl1/121_continue_feedback_source_evidence.py')
         entry=importlib.util.module_from_spec(spec);spec.loader.exec_module(entry)

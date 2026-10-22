@@ -1,7 +1,7 @@
 """Synthetic dependency/financial integration; no live requests or credentials.
 
-The engine integration is skipped on public CPU CI without the preserved private
-engine. Portable schedule/decision tests still run there.
+The dispatch and financial engine is checked-in source. Only the historical
+credential-launch adapter test requires preserved local adapters.
 """
 from copy import deepcopy
 from contextlib import nullcontext
@@ -19,10 +19,9 @@ sys.path.insert(0,str(PROJECT/'src'))
 from metacom_pm.rl1 import feedback_workflow as w, paired_dependencies as d, feedback_prototype as f
 from metacom_pm.rl1.schema import digest
 BASE=PROJECT/'outputs/pm_rl1/judge_selection_preparation_20261014_v1'
-HAS_ENGINE=(BASE/'paired_diagnostic_20261019_v1/paired.py').exists()
-if HAS_ENGINE:
-    sys.path.insert(0,str(BASE/'paired_diagnostic_20261019_v1'))
-    import paired as p
+from metacom_pm.rl1 import diagnostic_engine as p
+HAS_ENGINE=True
+HAS_LEGACY_TRANSPORT=(BASE/'paired_diagnostic_20261019_v1/live.py').exists()
 
 
 def fixture():
@@ -58,7 +57,6 @@ class PortableWorkflowTests(unittest.TestCase):
         self.assertTrue(w.flagged(j,a))
 
 
-@unittest.skipUnless(HAS_ENGINE,'private original engine absent; no downloads')
 class WorkflowIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
@@ -72,8 +70,6 @@ class WorkflowIntegrationTests(unittest.TestCase):
             stage_cap=p.s.nanodollars(2),trial_cap=p.s.nanodollars('3.65'),shared_cap=p.s.nanodollars(20),baseline=0,opening=0)
         self.addCleanup(patch.stopall)
         patch('socket.socket.connect',side_effect=AssertionError('network forbidden offline')).start()
-        patch('deepseek_access.read_key',side_effect=AssertionError('credentials forbidden offline')).start()
-        patch('deepseek_access.management_once',side_effect=AssertionError('account forbidden offline')).start()
 
     def score(self,item,unknown=False):
         units=p.response_units(item['reply'])
@@ -244,7 +240,10 @@ class WorkflowIntegrationTests(unittest.TestCase):
         key=self.pr['schedule'][0]['item_key'];self.items[key]['reply']='word '*150000
         out=self.execute();self.assertEqual(out['started'],0);self.assertIn('input boundary',out['stop']['reason'])
 
+    @unittest.skipUnless(HAS_LEGACY_TRANSPORT,'historical private credential/transport adapter')
     def test_launch_preflight_once_clean_resume_and_closed_without_key(self):
+        sys.path.insert(0,str(BASE/'paired_diagnostic_20261019_v1'))
+        import paired, live
         # Synthetic authorization seam: never write APPROVED or activate a contract.
         spec=importlib.util.spec_from_file_location('feedback_entry_mock',PROJECT/'scripts/rl1/119_run_feedback_validation.py')
         entry=importlib.util.module_from_spec(spec);spec.loader.exec_module(entry)

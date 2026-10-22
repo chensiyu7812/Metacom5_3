@@ -31,10 +31,9 @@ CONFIG = dict(epochs=50, batch_size=64, lr=.0003, weight_decay=.0001,
 
 
 def save_json(path, value):
-    with Path(path).open('x') as f:
-        json.dump(value, f, ensure_ascii=False, indent=2, allow_nan=False)
-        f.write('\n'); f.flush(); os.fsync(f.fileno())
-    Path(path).chmod(0o600)
+    from .durable import publish
+    data = (json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False)+'\n').encode()
+    publish(path, lambda f: f.write(data))
 
 
 def file_sha(path):
@@ -87,9 +86,9 @@ class OneShotReturnModel(nn.Module):
 
 
 def prepare_supervised(candidates, *, menu, receipts, qualification_bundle,
-                       episodes, view, method):
+                       episodes, view, method, union_bundle=None):
     handoff = prepare_handoff(candidates, menu=menu, receipts=receipts,
-        qualification_bundle=qualification_bundle, episodes=episodes)
+        qualification_bundle=qualification_bundle, episodes=episodes,union_bundle=union_bundle)
     if handoff['status'] != 'READY':
         return stamp(dict(version=VERSION, status=handoff['status'],
             handoff_identity=handoff['identity'], rows=[], method=method))

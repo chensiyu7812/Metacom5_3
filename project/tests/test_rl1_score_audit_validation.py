@@ -31,7 +31,6 @@ class Portable(unittest.TestCase):
             with self.assertRaises(ValueError):v.historical_guard(pr,base)
 
 
-@unittest.skipUnless(f.HAS_ENGINE,'preserved engine absent')
 class Integration(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
@@ -49,8 +48,6 @@ class Integration(unittest.TestCase):
             stage_cap=self.p.s.nanodollars(1),trial_cap=self.p.s.nanodollars('3.65'),shared_cap=self.p.s.nanodollars(20),baseline=0,opening=0)
         self.addCleanup(patch.stopall)
         patch('socket.socket.connect',side_effect=AssertionError('network forbidden')).start()
-        patch('deepseek_access.read_key',side_effect=AssertionError('credentials forbidden')).start()
-        patch('deepseek_access.management_once',side_effect=AssertionError('account forbidden')).start()
 
     def value(self,key,issue=False):
         z=f.WorkflowIntegrationTests.audit(self,self.items[key],False)

@@ -34,10 +34,9 @@ def adapt_qualified_episode_feedback(candidate, record, *, spec, freeze, freeze_
     if (candidate.prefix_identity != spec.prefix.identity or candidate.split != spec.prefix.split
             or candidate.executor_identity != spec.executor_identity):
         raise ValueError('candidate belongs to another episode')
-    expected = dict(generation_request_id=candidate.request_identity,
-        response_identity=candidate.response_identity, evidence_identity=candidate.evidence_identity,
-        runtime_identity=freeze['runtime_identity'], rubric_identity=freeze['rubric_identity'],
-        freeze_identity=freeze['identity'])
+    from .measurement_identity import binding
+    expected = binding(candidate.request_identity, candidate.response_identity,
+                       candidate.evidence_identity, freeze, qualification)
     if record.get('binding') != expected:
         raise ValueError('natural feedback binding mismatch')
     measured = record.get('measurement_status') == 'measured_candidate'

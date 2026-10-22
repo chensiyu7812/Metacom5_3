@@ -32,7 +32,7 @@ def candidate_menu(candidates, *, source_identity, scope):
 
 
 def prepare_handoff(candidates, *, menu, receipts, qualification_bundle=None,
-                    episodes=None):
+                    episodes=None, union_bundle=None):
     """Recompute original qualification; accept no manually asserted PASS flag.
 
     `episodes` maps prefix identity to (EpisodeSpec, renderer). All evidence
@@ -58,6 +58,19 @@ def prepare_handoff(candidates, *, menu, receipts, qualification_bundle=None,
             qualification_identity=qualification['identity'],
             qualification_status=qualification['status'],
             pending_prefixes=sorted(groups), qualified_prefixes=0))
+    if menu['scope']=='final_train_union':
+        if union_bundle is None and qualification_bundle['inputs']['code'].get('synthetic_only') is not True:
+            raise ValueError('formal final union requires all completed comparison feedback')
+        if union_bundle is not None:
+            from .study_schedule import common_union
+            union, union_receipts, union_proof=common_union(**union_bundle)
+            executors={c.executor_identity for c in candidates}
+            expected=[c for c in union if c.executor_identity in executors]
+            if (len(executors)!=1 or candidates!=expected or menu['source_identity']!=union_proof['identity']
+                    or any(receipts.get(c.request_identity)!=union_receipts[c.request_identity] for c in expected)
+                    or union_bundle['study']['qualification_identity']!=qualification['identity']):
+                raise ValueError('final union was reduced, relabeled or taken from another study')
+            base['common_union_identity']=union_proof['identity']
     if episodes is None or set(episodes) != set(groups):
         raise ValueError('exact complete episode set required')
     freeze = qualification_bundle['freeze']
