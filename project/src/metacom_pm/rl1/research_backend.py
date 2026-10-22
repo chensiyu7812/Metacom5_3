@@ -10,9 +10,12 @@ from .supervised_learning import prepare_supervised
 
 
 class ResearchBackend:
-    def __init__(self,queue,*,qualification_bundle,measurement_worker=None,generation_cache=None):
+    def __init__(self,queue,*,qualification_bundle,measurement_worker=None,generation_cache=None,generation_worker=None):
         self.queue=queue;self.bundle=qualification_bundle
         self.measurement=measurement_worker;self.generation_cache=generation_cache
+        self.generation_worker=generation_worker
+        if generation_worker is not None and generation_worker.queue.path.resolve()!=queue.path.resolve():
+            raise ValueError('generation worker belongs to another queue')
         self.qualification=qualify(**qualification_bundle) if qualification_bundle is not None else None
         if measurement_worker is not None and (measurement_worker.queue.path.resolve()!=queue.path.resolve()
                 or measurement_worker.qualification!=self.qualification):
@@ -21,8 +24,9 @@ class ResearchBackend:
     def service_once(self):
         """At most one explicitly attached score attempt; cache-only G by default."""
         generated=replay_cached_generations(self.queue,self.generation_cache) if self.generation_cache else None
+        generation_attempt=self.generation_worker.step() if self.generation_worker else None
         scored=self.measurement.step() if self.measurement else dict(status='NO_QUALIFIED_WORKER')
-        return dict(generation=generated,measurement=scored)
+        return dict(generation=generated,generation_attempt=generation_attempt,measurement=scored)
 
     def pool_receipts(self,candidates,*,episodes,evidence):
         if self.qualification is None:
