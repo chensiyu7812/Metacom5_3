@@ -1,3 +1,5 @@
+学习执行更新（2026-10-22）：BC/价值初始化、独立NoText、原OneShot回报回归和合格批次协调器已实现，77项工程检查通过；真实仍308次、合格BC/自然更新0，Claude暂停。真实后端和反馈资格仍待落实。详见[当前接续](../pm_rl1_workspace_20261022/ORIGINAL_PLAN_RESUMPTION_ZH.md)。下方为历史记录。
+
 最新（2026-10-22）：Claude已按用户要求暂缓；仅1次配置拒绝，无新评分/费用，累计308次。原计划继续：完整候选到BC/OneShot/NoText监督样本交接和检查点来源核对已实现；真实BC目标/检查点/自然更新仍0。详情见[原计划接续](../pm_rl1_workspace_20261022/ORIGINAL_PLAN_RESUMPTION_ZH.md)。以下为历史时点记录，不是当前运行授权。
 
 最新资源接续：参见[Claude额度与阶段准备](../pm_rl1_workspace_20261022/CLAUDE_RESOURCE_ASSESSMENT_ZH.md)。模型列表与免费计数已完成；付费执行、核验人、资格卷用途及额度仍待落实；不可据下方旧批指令自动续跑。
