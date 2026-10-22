@@ -2,7 +2,7 @@
 
 更新：2026-10-22（Asia/Tokyo）。`Metacom5_3`是历史仓库名，方法名为Policy Manager（PM）。
 
-**当前：P1来源/表示和P2执行器适配已完成；自动奖励仍未合格，自然任务PM强化学习更新为0，正式比较与独立终评尚未完成。** 最近严格交付诊断已收口：当前裁判试验累计307次评分/审查尝试，容量374；最后原8槽共5次尝试、3有效、2格式失败、3未派发。容量或脚本存在不表示后续实验已获运行许可。
+**当前：P1来源/表示和P2执行器适配已完成；自动奖励仍未合格，真实BC检查点与自然任务PM强化学习更新均为0，正式比较与独立终评尚未完成。** 累计308次尝试，包括旧307次评分/审查尝试与1次Claude配置拒绝；Claude已按研究者要求暂缓。学习协调器、BC/OneShot/NoText接口及586条历史生成的来源绑定缓存接线已完成工程检查。新的8对开发盲评与6条问题回归材料已交付，尚未收到答案。容量或脚本存在不表示后续实验已获运行许可。
 
 ## 先读这几处
 
@@ -26,6 +26,7 @@ PM-RL1研究同一轮回复前的顺序信息获取：固定候选排序，最�
 | P1 | 72条MP＋24条ME来源审查，角色/时间表示及新版可达计划 |
 | P2 | 493条弱目标、一次三epoch LoRA、639条比较回复；保留重复键准入和跨加载复现限制 |
 | P3 | 开发人评已收到，多轮裁判/关系/任务参照/反馈诊断已做；自动奖励未获资格 |
+| 学习与核验准备 | BC/OneShot/NoText及完整反馈batch协调已接线；586条历史G结果离线复用；新开发人评材料已交付、待回收 |
 | P4—P7 | 真实BC起点、自然任务PPO、正式策略对照、独立评价和主表仍待完成 |
 
 [P1结果](project/docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md) · [P2结果](project/docs/PM_RL1_P2_EXECUTOR_RESULTS_20261001_ZH.md) · [开发接收](project/docs/PM_RL1_DEVELOPMENT_CLOSEOUT_20261014_ZH.md) · [长期两阶段方向](project/docs/PM_RL1_TWO_STAGE_ROUTE_20261015_ZH.md)。NLL降低和工程测试通过不构成支持质量或RL收益证明。
@@ -54,6 +55,8 @@ python scripts/paper1/00_validate_integration_base.py
 新环境所需依赖定义在`project/pyproject.toml`。这些命令不等于启动GPU实验、付费调用或自然任务训练；整理本身只进行路径、内容和导航校验，未重新运行研究实验。
 
 后续版本核对实际执行了CPU回归；本机完整集成与干净检出的结果、私有产物依赖及跳过范围见[版本验证记录](project/docs/reviews/20261022/pm_rl1/VERSION_REVIEW_ZH.md)。
+
+本次GitHub发布另外使用全新Python 3.11环境和CI指定的CPU PyTorch验证：1,429项通过、131项跳过，pytest退出码0；32项集成检查通过。发现并补齐`jsonschema`运行依赖。跳过项依赖私人引擎/输入、可选BGE依赖或本机冻结tokenizer，不算已验证集成；详见[发布验证回执](project/docs/reviews/20261022/pm_rl1_publication/VALIDATION.json)。
 
 ## 保留的历史边界
 

@@ -1,0 +1,151 @@
+{
+  "protocol": "pm-rl1-github-publication-validation-v1",
+  "date": "2026-10-22",
+  "repository": "chensiyu7812/Metacom5_3",
+  "branch": "work/paper1-rq1-integration-20260816",
+  "existing_pull_request": 3,
+  "previous_published_commit": "0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28",
+  "research_snapshot_commit": "0546471bdc2186c39d3b8bbbf696e4e4acfd071e",
+  "publication_changes": [
+    "Declare jsonschema>=4.18,<5 as a runtime dependency.",
+    "Update current README entries to 308 attempts and human-review delivery.",
+    "Record the researcher-requested local human ZIP move without rewriting its original delivery receipt."
+  ],
+  "clean_environment": {
+    "system_site_packages": false,
+    "python": "3.11.15",
+    "packages": {
+      "torch": "2.3.1+cpu",
+      "numpy": "2.4.6",
+      "pytest": "8.4.2",
+      "jsonschema": "4.26.0",
+      "transformers": "4.57.6",
+      "json-repair": "0.52.4"
+    },
+    "install_commands": [
+      "python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.3.1+cpu",
+      "python -m pip install -e .[dev]"
+    ],
+    "test_environment": {
+      "PYTHONNOUSERSITE": "1",
+      "CUDA_VISIBLE_DEVICES": "",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "initial_collection": {
+      "exit_code": 2,
+      "error": "ModuleNotFoundError: No module named jsonschema",
+      "fix": "Declare the dependency used by claude_delivery and its tests; reinstall the package."
+    },
+    "final_pytest": {
+      "command": "python -m pytest -q -m \"not gpu\" tests/test_paper1_*.py tests/test_rl1_*.py --junitxml=<local log>",
+      "exit_code": 0,
+      "tests": 1560,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 131,
+      "passed": 1429,
+      "seconds": 290.274
+    },
+    "skips": {
+      "private_engine_or_inputs": 129,
+      "optional_sentence_transformers_module": 1,
+      "absent_frozen_local_tokenizer": 1,
+      "note": "Existing conditional checks were not removed or relaxed by this publication fix. These are not verified private/GPU integrations."
+    },
+    "compileall_exit_code": 0,
+    "pip_check_exit_code": 0,
+    "integration": {
+      "protocol": "pm-paper1-integration-base-validation-v1",
+      "status": "PASS",
+      "checks": {
+        "outcome_lock": true,
+        "highest_precedence_reconciliation": true,
+        "latency_constrained_policy_scoped_override": true,
+        "binary_benefit_scope_and_api_hard_cap": true,
+        "effect_action_latency_contracts_present_pre_outcome": true,
+        "pairwise_teacher_reference_generation_ready": true,
+        "human_reference_v2_evidence_and_identity_bound": true,
+        "active_generator_selection_binding": true,
+        "private_ledgers_not_committed": true,
+        "es_memeval_artifact_hash": true,
+        "es_memeval_1427_identity": true,
+        "es_memeval_identity_is_text_free": true,
+        "esc_eval_overlap_identity": true,
+        "active_namespace_forbidden_tokens_absent": true,
+        "active_namespace_legacy_prompt_imports_absent": true,
+        "active_multi_view_ontology": true,
+        "active_multi_view_401_zero_outcome_preflight": true,
+        "active_multi_view_401_live_authorization": true,
+        "active_multi_view_401_closeout": true,
+        "multi_view_401_runtime_identity_uniformity": true,
+        "active_multi_view_target_candidate_census": true,
+        "paper1_visible_state_contract_ready": true,
+        "paper1_step2_delivery_contract_ready": true,
+        "active_multi_view_bge_packing_authority_selected": true,
+        "active_multi_view_bge_and_packing_surface": true,
+        "generator_backend_retirement_and_local_pilot": true,
+        "official_dg_simulator_and_cost_surface": true,
+        "official_dg_cost_bounded_execution_policy": true,
+        "official_mistral24b_local_backend_evidence": true,
+        "full_pipeline_latency_pilot": true,
+        "local_generator_termination_initial_audit": true,
+        "natural_turn_zero_outcome_sample_proposal": true
+      },
+      "failed_checks": [],
+      "outcome_calls": 0
+    },
+    "private_ignored_output_files_present": false,
+    "tracked_historical_public_output_files": 518,
+    "tracked_pm_rl1_output_files": 0
+  },
+  "tested_inputs": {
+    "tracked_files": 2053,
+    "sha256_of_sorted_compact_path_hash_json": "3b0472cf277ec838c1c96868c4dba8e909ee1ca49f7b7d7aa9b26f00c59a1a7f",
+    "scope": [
+      "project/src",
+      "project/scripts",
+      "project/tests",
+      "project/configs",
+      "project/data",
+      "project/pyproject.toml",
+      ".github/workflows/pm-v2-tests.yml"
+    ],
+    "working_tree_matches_clean_test_inputs": true
+  },
+  "content_audit": {
+    "changed_files_before_adding_this_report": 225,
+    "exact_duplicate_groups": [],
+    "initial_224_file_credential_pattern_hits": [],
+    "initial_224_file_files_over_5MB": [],
+    "changed_tracked_outputs": []
+  },
+  "unchanged_research_records": {
+    "execution_contract_sha256": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+    "private_api_ledger_sha256": "9674415f7726e6e119b280f028fe4be183445a2be92460b3f1d9ce0a7c1190bc",
+    "private_human_zip_sha256": "20469842fda6d157b97649c0f0a8e0786777400b732434d4c12e29dc3e8445db"
+  },
+  "research_limits": {
+    "attempts": 308,
+    "qualified_bc_checkpoints": 0,
+    "natural_pm_updates": 0,
+    "new_human_answers_received": 0,
+    "claude_deferred": true,
+    "new_api_calls_during_publication": 0,
+    "new_research_training_during_publication": 0
+  },
+  "raw_validation_log_sha256": {
+    "pmrl1-publication-clean.log": "aaedb2b6ab962f5c9b4b7c1a69e5ac3022c32c8324df5d85b7d2c58275ec7a17",
+    "pmrl1-publication-clean.xml": "fb722704a3866a394e1d0d17b7a528227e58097133290844f6bcd35ae52d6033",
+    "pmrl1-publication-content-audit.json": "6aa556d2940b864faf70e6be3f530f71f51208e8fbbead55b96b61c9abb31720",
+    "pmrl1-publication-environment.txt": "2411c1a2f92cf52d29e1d2c6251d207b6c1ffa231b051156348143780798d658",
+    "pmrl1-publication-initial-collection.log": "1a1a87d0cf983c52a9de774a284f1f8ff54128d7bf360e99f5cf2e2744ac334e",
+    "pmrl1-publication-integration.log": "fe0d32ee2bc15b785e19184ec2cc59d16742f03d32f7f445dad2d922e558f8a5",
+    "pmrl1-publication-project-install-fixed.log": "afb0758ff118f15d3ac9e57be034d815ee00e2604100130ddf322f18444e6f19",
+    "pmrl1-publication-project-install.log": "013d52cabf93c3fab29f1ae21566c98138b1146ecd3a671470adb693b702fc02",
+    "pmrl1-publication-torch-install.log": "d8dce35c3509d0c1575203fae8b943d3de6fd762e9d0817ef65a9eee725f3fe0"
+  },
+  "remote_validation": "Record the final pushed SHA and both push/pull_request workflow results in PR #3 after GitHub completes; local results here do not claim remote success."
+}

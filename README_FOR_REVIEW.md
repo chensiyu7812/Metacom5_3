@@ -4,11 +4,20 @@ Start with the [research review](project/docs/pm_rl1_workspace_20261022/RESEARCH
 [current status](project/docs/PM_RL1_CURRENT_STATUS.md), and
 [controlling plan](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md).
 P1/P2 are complete with disclosed limitations. Human development references have
-been received, but reward qualification remains unresolved. The latest diagnostic
-closed after 307 cumulative judge/audit attempts; natural-task RL updates remain
-zero. Formal policy comparisons and independent final evaluation are incomplete.
+been received, but reward qualification remains unresolved. There are 308 cumulative
+attempts: 307 judge/audit attempts and one rejected Claude configuration request.
+Claude is deferred. Qualified BC checkpoints and natural-task RL updates remain
+zero. BC/OneShot/NoText coordination and source-bound replay of 586 historical
+generations have engineering checks; eight new blinded development pairs and six
+regression cases have been delivered for human review, with no new answers returned.
+Formal policy comparisons and independent final evaluation are incomplete.
 See the [version review](project/docs/reviews/20261022/pm_rl1/VERSION_REVIEW_ZH.md)
 for local and clean-checkout verification and reproducibility limitations.
+The [publication validation](project/docs/reviews/20261022/pm_rl1_publication/VALIDATION.json)
+uses a fresh Python 3.11 environment with CPU PyTorch and declared dependencies:
+1,429 passed, 131 skipped, exit code 0; all 32 integration checks passed.
+Skipped private-engine/input, optional BGE and frozen-tokenizer checks are not
+verified integrations. The missing `jsonschema` runtime dependency is now declared.
 
 The historical [2026-10-02 publication](project/docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md)
 and its public
