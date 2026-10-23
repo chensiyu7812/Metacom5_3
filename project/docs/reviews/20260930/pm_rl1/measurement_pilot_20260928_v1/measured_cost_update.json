@@ -1,0 +1,238 @@
+{
+  "status": "OFFLINE_COST_UPDATE_NO_PAID_REQUESTS",
+  "checked_date": "2026-09-28",
+  "official_sources": {
+    "prices": "https://developers.openai.com/api/docs/pricing",
+    "model": "https://developers.openai.com/api/docs/models/gpt-4o",
+    "batch": "https://developers.openai.com/api/docs/guides/batch"
+  },
+  "pricing_scenario_only": "gpt-4o text, standard or batch; no external reviewer model selected by this estimate",
+  "rates_usd_per_million": {
+    "standard_input": 2.5,
+    "standard_output": 10,
+    "batch_input": 1.25,
+    "batch_output": 5
+  },
+  "native_output_limit": 16384,
+  "pilot_payload_input_tokens": {
+    "n": 10,
+    "total": 164825,
+    "min": 4567,
+    "median": 14517.5,
+    "max": 31105
+  },
+  "token_count_caveat": "actual prompt text counted with o200k_base; 96-token framing reserve is an estimate, final billing requires provider usage",
+  "pilot_review_scenarios": [
+    {
+      "pilot_pairs": 10,
+      "input_tokens_estimated": 164825,
+      "assumed_output_tokens_per_pair": 512,
+      "assumption_is_output_cap": false,
+      "sync_usd": 0.4632625,
+      "batch_usd": 0.23163125
+    },
+    {
+      "pilot_pairs": 10,
+      "input_tokens_estimated": 164825,
+      "assumed_output_tokens_per_pair": 1024,
+      "assumption_is_output_cap": false,
+      "sync_usd": 0.5144625,
+      "batch_usd": 0.25723125
+    },
+    {
+      "pilot_pairs": 10,
+      "input_tokens_estimated": 164825,
+      "assumed_output_tokens_per_pair": 16384,
+      "assumption_is_output_cap": false,
+      "sync_usd": 2.0504625,
+      "batch_usd": 1.02523125
+    }
+  ],
+  "formal_input_scenarios_with_512_reply_token_allowance": {
+    "median": 12444,
+    "p95": 20708,
+    "max": 22385
+  },
+  "combined_34_pair_scenarios": [
+    {
+      "formal_input_scenario": "median",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 512,
+      "assumption_is_output_cap": false,
+      "sync_usd": 1.3327825,
+      "batch_usd": 0.66639125
+    },
+    {
+      "formal_input_scenario": "median",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 1024,
+      "assumption_is_output_cap": false,
+      "sync_usd": 1.5068625,
+      "batch_usd": 0.75343125
+    },
+    {
+      "formal_input_scenario": "median",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 16384,
+      "assumption_is_output_cap": false,
+      "sync_usd": 6.7292625,
+      "batch_usd": 3.36463125
+    },
+    {
+      "formal_input_scenario": "p95",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 512,
+      "assumption_is_output_cap": false,
+      "sync_usd": 1.8286225,
+      "batch_usd": 0.91431125
+    },
+    {
+      "formal_input_scenario": "p95",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 1024,
+      "assumption_is_output_cap": false,
+      "sync_usd": 2.0027025,
+      "batch_usd": 1.00135125
+    },
+    {
+      "formal_input_scenario": "p95",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 16384,
+      "assumption_is_output_cap": false,
+      "sync_usd": 7.2251025,
+      "batch_usd": 3.61255125
+    },
+    {
+      "formal_input_scenario": "max",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 512,
+      "assumption_is_output_cap": false,
+      "sync_usd": 1.9292425,
+      "batch_usd": 0.96462125
+    },
+    {
+      "formal_input_scenario": "max",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 1024,
+      "assumption_is_output_cap": false,
+      "sync_usd": 2.1033225,
+      "batch_usd": 1.05166125
+    },
+    {
+      "formal_input_scenario": "max",
+      "formal_pairs": 24,
+      "pilot_pairs": 10,
+      "assumed_output_per_pair": 16384,
+      "assumption_is_output_cap": false,
+      "sync_usd": 7.3257225,
+      "batch_usd": 3.66286125
+    }
+  ],
+  "external_review_caveats": [
+    "no model ranking or reliability claim follows from price",
+    "24 final replies not generated; their reply sizes are forecasts",
+    "additional reverse presentations or reviewer duplicates cost extra",
+    "no provider transport/reservation has been created"
+  ],
+  "core_local_calls": {
+    "executor_data": 2052,
+    "initialization": 1440,
+    "rl_training": 1536,
+    "dev_evaluation": 432,
+    "formal_execution": 864,
+    "formal_policy_cross": 1920
+  },
+  "core_total": 8244,
+  "previous_core_total": 8496,
+  "additional_OFF_reserve": 648,
+  "measurement_actual_J_calls": 55,
+  "measurement_new_G_calls": 23,
+  "measurement_existing_G_cache_hits": 1,
+  "known_core_plus_OFF_plus_pilot_calls": 8975,
+  "not_full_project_ceiling": "excludes old 6-call smoke, failed process starts, parser/rubric reruns, SFT diagnostics, LoRA/PPO compute, independent review and other optional work",
+  "inherited_paid_budget": {
+    "protocol": "pm-paper1-followup-total-budget-v1",
+    "baseline_accounted_usd": "1.50724291",
+    "ledger_accounted_usd": "1.50724291",
+    "settled_new_spend_usd": "0E-8",
+    "outstanding_batch_liability_usd": "0",
+    "committed_new_spend_usd": "0E-8",
+    "target_usd": "10.00",
+    "hard_cap_usd": "20.00",
+    "remaining_to_target_usd": "10.00000000",
+    "remaining_to_hard_cap_usd": "20.00000000",
+    "target_exceeded": false,
+    "target_is_a_plan_not_a_gate": true
+  },
+  "paid_ledger_sha256": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+  "new_paid_api_usd": 0,
+  "cpu_gpu_currency_cost": null,
+  "currency_reason": "no hardware rental/electricity rate supplied; zero API spend is not zero local compute cost",
+  "downstream_calls_each_G_and_J": 3096,
+  "executor_teacher_calls": 1026,
+  "executor_verifier_calls": 1026,
+  "measured_compute": {
+    "generator": {
+      "actual_replies": 24,
+      "new_calls": 23,
+      "exact_cache_hits": 1,
+      "finish_counts": {
+        "natural_stop": 24
+      },
+      "output_tokens": {
+        "n": 24,
+        "min": 38,
+        "median": 53.5,
+        "mean": 58.333333333333336,
+        "p95": 89,
+        "max": 89
+      },
+      "new_generation_seconds": 47.66257235506782,
+      "successful_load_seconds": 16.766805798979476
+    },
+    "judge": {
+      "input_tokens": {
+        "n": 55,
+        "min": 5031,
+        "median": 15781,
+        "mean": 17428.672727272726,
+        "p95": 34724,
+        "max": 34729
+      },
+      "output_tokens": {
+        "n": 55,
+        "min": 851,
+        "median": 4478,
+        "mean": 4284.218181818182,
+        "p95": 6520,
+        "max": 6792
+      },
+      "summed_request_latency_seconds": 8122.650753391732,
+      "engine_wall_seconds": 2084.635128328984,
+      "successful_load_seconds": 121.85689434799133,
+      "successful_process_seconds": 2223.860805973003,
+      "engine_wall_seconds_per_completed_draw": 37.902456878708804,
+      "note": "concurrent request latencies overlap; use engine wall for throughput. Failed startup is separate and not erased."
+    },
+    "pilot_inventory_process_seconds": 61.1737262980314,
+    "full_capacity_process_seconds": 323.4566388759995,
+    "failed_bootstrap_logged_but_duration_not_fully_persisted": true
+  },
+  "conditional_downstream_J_only_hours": 32.596112915689574,
+  "projection_caveat": "rough planning projection ONLY if future Qwen workload and concurrency match this pilot; excludes teacher/verifier, OFF, loading, failures/retries, training and independent review; current J is not yet reward-ready",
+  "additional_indexed_transport_J_calls": 5,
+  "total_J_calls_this_turn": 60,
+  "indexed_transport_compute": {
+    "engine_wall_seconds": 220.80653997400077,
+    "load_seconds": 17.896850824996363,
+    "note": "five transport probes; not a qualified replacement throughput estimate"
+  }
+}

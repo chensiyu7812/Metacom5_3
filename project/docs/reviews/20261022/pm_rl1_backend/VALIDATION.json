@@ -1,0 +1,176 @@
+{
+  "protocol": "pmrl1-qualified-backend-offline-validation-v1",
+  "date": "2026-10-22",
+  "base_commit": "f59e570e14343e2573445271c6b9926d92040f00",
+  "scope": "OFFLINE_ENGINEERING_ONLY",
+  "command": "python -m pytest -q -m 'not gpu' tests/test_paper1_*.py tests/test_rl1_*.py -ra -o addopts= --junitxml=<local log>",
+  "clean_environment": {
+    "python": "3.11.15",
+    "packages": {
+      "torch": "2.3.1+cpu",
+      "numpy": "2.4.6",
+      "pytest": "8.4.2",
+      "jsonschema": "4.26.0",
+      "transformers": "4.57.6",
+      "json-repair": "0.52.4"
+    },
+    "system_site_packages": false,
+    "reused_isolated_publication_venv": true,
+    "PYTHONPATH": "src",
+    "private_pm_rl1_outputs_present": false
+  },
+  "final_clean_pytest": {
+    "tests": 1593,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 64,
+    "passed": 1529,
+    "seconds": 349.631,
+    "exit_code": 0
+  },
+  "deselected": 1,
+  "clean_skips": {
+    "historical_relation_case_inputs": 32,
+    "historical_task_case_inputs": 28,
+    "historical_private_transport_entrypoints": 2,
+    "optional_BGE_module": 1,
+    "absent_frozen_tokenizer_module": 1,
+    "note": "Module-level skips do not count the assertions inside those uncollected modules. No live G/BGE chain was tested."
+  },
+  "initial_clean_pytest": {
+    "tests": 1593,
+    "failures": 5,
+    "errors": 0,
+    "skipped": 64,
+    "passed": 1524,
+    "seconds": 354.794,
+    "exit_code": 1
+  },
+  "repairs_after_initial_clean_run": [
+    "Keep the exact existing blocking pytest command; append -ra and JUnit, suppress only the redundant pyproject -q via -o addopts=.",
+    "Remove unused private credential-module mocks from four now-public pure score-audit interface tests; socket-network prohibition stays."
+  ],
+  "local_private_RL1_pytest": {
+    "tests": 611,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 611,
+    "seconds": 98.297,
+    "exit_code": 0
+  },
+  "local_private_note": "Full RL1 run preceded removal of unused private credential mocks; the final 15-test interface module was rerun successfully. The final clean full suite covers the final code.",
+  "compileall_exit_code": 0,
+  "pip_check_exit_code": 0,
+  "integration": {
+    "protocol": "pm-paper1-integration-base-validation-v1",
+    "status": "PASS",
+    "checks": {
+      "outcome_lock": true,
+      "highest_precedence_reconciliation": true,
+      "latency_constrained_policy_scoped_override": true,
+      "binary_benefit_scope_and_api_hard_cap": true,
+      "effect_action_latency_contracts_present_pre_outcome": true,
+      "pairwise_teacher_reference_generation_ready": true,
+      "human_reference_v2_evidence_and_identity_bound": true,
+      "active_generator_selection_binding": true,
+      "private_ledgers_not_committed": true,
+      "es_memeval_artifact_hash": true,
+      "es_memeval_1427_identity": true,
+      "es_memeval_identity_is_text_free": true,
+      "esc_eval_overlap_identity": true,
+      "active_namespace_forbidden_tokens_absent": true,
+      "active_namespace_legacy_prompt_imports_absent": true,
+      "active_multi_view_ontology": true,
+      "active_multi_view_401_zero_outcome_preflight": true,
+      "active_multi_view_401_live_authorization": true,
+      "active_multi_view_401_closeout": true,
+      "multi_view_401_runtime_identity_uniformity": true,
+      "active_multi_view_target_candidate_census": true,
+      "paper1_visible_state_contract_ready": true,
+      "paper1_step2_delivery_contract_ready": true,
+      "active_multi_view_bge_packing_authority_selected": true,
+      "active_multi_view_bge_and_packing_surface": true,
+      "generator_backend_retirement_and_local_pilot": true,
+      "official_dg_simulator_and_cost_surface": true,
+      "official_dg_cost_bounded_execution_policy": true,
+      "official_mistral24b_local_backend_evidence": true,
+      "full_pipeline_latency_pilot": true,
+      "local_generator_termination_initial_audit": true,
+      "natural_turn_zero_outcome_sample_proposal": true
+    },
+    "failed_checks": [],
+    "outcome_calls": 0
+  },
+  "tested_inputs": {
+    "files": 2064,
+    "sha256": "9327bc765911339f68c09379ca29b2743fa6e61ece29c217e93dd2652a85b681",
+    "working_tree_matches_clean_test_inputs": false,
+    "post_test_cleanup": {
+      "files": [
+        "project/src/metacom_pm/rl1/diagnostic_engine.py",
+        "project/src/metacom_pm/rl1/diagnostic_support.py",
+        "project/src/metacom_pm/rl1/final_envelope.py"
+      ],
+      "change": "Remove one extra empty line at EOF to satisfy staged git diff --check. Parsed AST identical; no executable statement or test changed. Final remote CI checks the committed bytes.",
+      "ast_equal": true
+    }
+  },
+  "content_audit": {
+    "changed_files": 32,
+    "credential_pattern_paths": [],
+    "files_over_5MB": [],
+    "exact_duplicate_groups": [],
+    "changed_outputs": [],
+    "tested_input_count": 2064,
+    "tested_input_digest": "9327bc765911339f68c09379ca29b2743fa6e61ece29c217e93dd2652a85b681",
+    "clean_input_mismatches": []
+  },
+  "unchanged_research_records": {
+    "execution_contract_sha256": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+    "private_api_ledger_sha256": "9674415f7726e6e119b280f028fe4be183445a2be92460b3f1d9ce0a7c1190bc",
+    "private_human_zip_sha256": "20469842fda6d157b97649c0f0a8e0786777400b732434d4c12e29dc3e8445db"
+  },
+  "research_limits": {
+    "attempts": 308,
+    "new_G_or_J_calls": 0,
+    "new_G_or_BGE_weight_loads": 0,
+    "new_cost_usd": "0",
+    "qualified_real_BC_targets": 0,
+    "qualified_real_BC_checkpoints": 0,
+    "natural_PM_updates": 0,
+    "new_human_answers": 0,
+    "SA_route_selected": false,
+    "production_adapter_instance_ready": false
+  },
+  "coverage": [
+    "Different generation identities, same scoring content: one canonical score, retained lineage and consistent BC targets.",
+    "Runtime/rubric/freeze/qualification/content/repeat identities never cross-cache.",
+    "Transient technical failure remains pending, finite recovery settles once; unknown delivery/usage never resends.",
+    "Global attempt/recovery/money limits and three matching technical failures stop further dispatch.",
+    "After 5 collection episodes and all 3 update publication windows: same actions, RNG and final weights, one logical update.",
+    "Common original scale across methods/seeds; final union must include every completed run, batch and initial pool.",
+    "Synthetic BC -> content queue -> finite recovery -> all 16 feedback -> optimization -> new on-policy collection."
+  ],
+  "remaining": [
+    "Source-based S/A development decision and original qualification.",
+    "Frozen production service adapter, shared cumulative attempt/recovery admission and financial reconciliation for the approved stage.",
+    "Explicitly approved bounded real G/BGE loading and throughput integration.",
+    "Real BC and natural updates, all baselines/seeds and independent final evaluation."
+  ],
+  "raw_log_sha256": {
+    "pmrl1-backend-clean.log": "5bf891d35ece11ce955b5f4bfe326c38d657ab3591323ab067a6b6681e48ffac",
+    "pmrl1-backend-clean.xml": "22bb88f44b1f6b4fb78570ec9b7b05cea8e79a1f6b16813a1f4daf14f6c7e92b",
+    "pmrl1-backend-clean-initial.log": "05f57e2fd3fefa85897d926b82ea49f281ec711c71cbf38b5e0757e7ea4f9124",
+    "pmrl1-backend-clean-initial.xml": "0ed760d8a6b54bc10852b3cc768d48ec5be3480fe60964aaa97280ce7cbfdfa7",
+    "pmrl1-backend-local.log": "398af70ad5e182ec0c73eb629147d6a8078628978a200c89e161dd84409937b5",
+    "pmrl1-backend-local.xml": "0979fa32ea07a44f2301dcec76a0827d0968c21d6c4bce2a6004ff7558162028",
+    "pmrl1-backend-integration.log": "fe0d32ee2bc15b785e19184ec2cc59d16742f03d32f7f445dad2d922e558f8a5",
+    "pmrl1-backend-audit.json": "31048b295e483366c51719389ba382e19698d227db1446c76012b79fa1259bfd",
+    "pmrl1-backend-inputs.json": "0abff0ca4c9a9017218c6ca4a59e315a808b4ac63b09337c1e9b78808c8346c2",
+    "pmrl1-backend-fixes.log": "02e00edbe6415cf1d548ef7fb53b67e37c4abd29397b00075c6feb0d48b5f2c5",
+    "pmrl1-backend-local-final-interface.log": "b9a76fcd2bde5686a753cbd55e635e9f9837a40067d8a7e6bac433e1d5a36fa1",
+    "pmrl1-backend-extra-tests.log": "42cae74afd4248169bbb0b06a1d5d35d4048d652155a833a5fefe4e5b081d2fc"
+  },
+  "remote_validation": "Final pushed commit and both exact-head workflow results are recorded in PR #3 after completion; these local results do not assert remote success."
+}

@@ -1,0 +1,120 @@
+{
+  "utc": "2026-10-22T06:19:49.948523+00:00",
+  "baseline_commit": "0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28",
+  "status": "PASS_WITH_EXPLICIT_LOCAL_ARTIFACT_DEPENDENCIES",
+  "remote_ci_run": false,
+  "remote_push": false,
+  "new_research_requests": 0,
+  "new_natural_updates": 0,
+  "environment": {
+    "python": "3.11.15",
+    "pytest": "8.4.2",
+    "torch": "2.3.1+cu121",
+    "numpy": "2.4.6",
+    "json_repair": "0.52.4",
+    "jsonschema": "4.26.0",
+    "cryptography": "50.0.2",
+    "isolation": "temporary venv with system-site-packages; research environment unmodified",
+    "gpu_visible": false,
+    "hub_offline": true
+  },
+  "test_command": "PYTHONNOUSERSITE=1 CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONPATH=src OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest -q -m \"not gpu\" tests/test_paper1_*.py tests/test_rl1_*.py",
+  "checks": {
+    "local_tests": {
+      "tests": 1459,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1456,
+      "seconds": 300.279,
+      "skip_reasons": {
+        "collection skipped": 1
+      },
+      "xml_sha256": "c02ee59b8684ba17a9f792a7f34f60b9acfa0ea8272934215b6d219094355e7f",
+      "local_receipt": "/home/tokkio/成果归档/工程测试产物/PM-RL1_版本核对_20261022/local_tests.xml"
+    },
+    "reference_tests": {
+      "tests": 79,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 79,
+      "seconds": 5.085,
+      "skip_reasons": {},
+      "xml_sha256": "fc1488f72b5bcf0e0a056c5ca3afc4e8c77a838cfaccc8c9b172d462984e099f",
+      "local_receipt": "/home/tokkio/成果归档/工程测试产物/PM-RL1_版本核对_20261022/reference_tests.xml"
+    },
+    "local_final": {
+      "tests": 1478,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 1477,
+      "seconds": 288.754,
+      "skip_reasons": {
+        "collection skipped": 1
+      },
+      "xml_sha256": "198e21362fba90324f76cf76968ebd4e7af9c80a5c06c4332bfeb69c9ffa24b8",
+      "local_receipt": "/home/tokkio/成果归档/工程测试产物/PM-RL1_版本核对_20261022/local_final.xml"
+    },
+    "clean_final": {
+      "tests": 1478,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 126,
+      "passed": 1352,
+      "seconds": 282.729,
+      "skip_reasons": {
+        "collection skipped": 1,
+        "preserved private engine absent": 4,
+        "preserved private engine unavailable": 13,
+        "private original engine absent; no downloads": 25,
+        "requires preserved local engine and relation inputs": 32,
+        "preserved engine absent": 23,
+        "requires preserved local engine and task inputs": 28
+      },
+      "xml_sha256": "025bbeddaddb1beca5915590d7dba5a91587f5a97e494ac59e15a15b6990181e",
+      "local_receipt": "/home/tokkio/成果归档/工程测试产物/PM-RL1_版本核对_20261022/clean_final.xml"
+    },
+    "integration_validation": {
+      "status": "PASS",
+      "checks": 32,
+      "outcome_calls": 0,
+      "receipt_sha256": "fe0d32ee2bc15b785e19184ec2cc59d16742f03d32f7f445dad2d922e558f8a5"
+    },
+    "clean_integration": {
+      "status": "PASS",
+      "checks": 32,
+      "outcome_calls": 0,
+      "receipt_sha256": "fe0d32ee2bc15b785e19184ec2cc59d16742f03d32f7f445dad2d922e558f8a5"
+    },
+    "clean_compileall": {
+      "status": "PASS",
+      "command": "python -m compileall -q src scripts tests"
+    },
+    "initial_clean_collection": {
+      "errors": 2,
+      "cause": "Unconditional import of ignored paired engine in the relation/task integration suites; resolved by explicit local dependency detection plus 19 portable contract cases."
+    },
+    "tested_python_identity": {
+      "matching_files": 1537,
+      "withheld_scripts": [
+        "project/scripts/rl1/95_lock_p3_calibration_selection.py",
+        "project/scripts/rl1/96_build_p3_human_packet.py"
+      ]
+    },
+    "preexisting_changed_code_preserved": {
+      "checked": 39,
+      "unchanged": true
+    },
+    "research_evidence": {
+      "source_hashes_verified": 16,
+      "frozen_files": 141,
+      "old_stops": 11,
+      "historical_started": 238,
+      "judge_attempts": 307,
+      "ledger_unchanged": true
+    }
+  },
+  "shared_collection_skip": "Frozen Llama tokenizer absent at the configured private local path; not downloaded for this CPU review."
+}

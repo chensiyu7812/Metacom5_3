@@ -1,0 +1,771 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Paper-1 Semantic Memory v8 DEV Data-Quality Audit",
+    "description": "Outcome-blind diagnosis of the frozen 32-item MP/ME DEV matrix.",
+    "generatedAt": "2026-08-23T00:00:00+09:00",
+    "sources": [
+      {
+        "id": "summary_source",
+        "label": "Frozen v8 DEV matrix summary",
+        "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+        "query": {
+          "engine": "SQLite 3 in-memory audit",
+          "sql": "SELECT\n  COUNT(*) AS items,\n  SUM(CASE WHEN old_human_label = 'PASS' THEN 1 ELSE 0 END) AS old_pass_total,\n  SUM(CASE WHEN old_human_label = 'PASS' AND deterministic_v8_verdict = 'ACCEPT' THEN 1 ELSE 0 END) AS old_pass_retained,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') THEN 1 ELSE 0 END) AS known_fail_review_total,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') AND deterministic_v8_verdict != 'ACCEPT' THEN 1 ELSE 0 END) AS known_fail_review_rejected,\n  SUM(outcome_calls) AS outcome_calls\nFROM v8_dev_matrix",
+          "description": "Counts frozen v8 DEV items and descriptive retention/rejection rates.",
+          "tables_used": [
+            "v8_dev_matrix"
+          ],
+          "filters": [
+            "none; all 32 frozen old-DEV rows"
+          ],
+          "metric_definitions": [
+            "old_pass_retention_rate = old_pass_retained / old_pass_total",
+            "known_fail_review_rejection_rate = known_fail_review_rejected / known_fail_review_total",
+            "These are DEV diagnostics, not research PASS gates."
+          ]
+        }
+      },
+      {
+        "id": "head_source",
+        "label": "Frozen v8 DEV mismatch counts by memory class",
+        "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+        "query": {
+          "engine": "SQLite 3 in-memory audit",
+          "sql": "SELECT\n  memory_class,\n  COUNT(*) AS total,\n  SUM(CASE WHEN mismatch_reason = 'MATCH' THEN 1 ELSE 0 END) AS match,\n  SUM(CASE WHEN mismatch_reason = 'SEMANTIC_FALSE_REJECT' THEN 1 ELSE 0 END) AS false_reject,\n  SUM(CASE WHEN mismatch_reason = 'SEMANTIC_FALSE_ACCEPT' THEN 1 ELSE 0 END) AS false_accept,\n  SUM(CASE WHEN mismatch_reason = 'SCHEMA_REJECT' THEN 1 ELSE 0 END) AS schema_reject,\n  SUM(CASE WHEN old_human_label = 'PASS' THEN 1 ELSE 0 END) AS old_pass_total,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') THEN 1 ELSE 0 END) AS old_fail_review_total\nFROM v8_dev_matrix\nGROUP BY memory_class\nORDER BY memory_class",
+          "description": "Groups the frozen item matrix by MP/ME and mismatch class.",
+          "tables_used": [
+            "v8_dev_matrix"
+          ],
+          "filters": [
+            "none; MS had no items in the old DEV packet"
+          ],
+          "metric_definitions": [
+            "Each stacked segment is an item count; denominator is shown as total."
+          ]
+        }
+      },
+      {
+        "id": "item_source",
+        "label": "Frozen v8 DEV item-level decisions",
+        "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+        "query": {
+          "engine": "SQLite 3 in-memory audit",
+          "sql": "SELECT\n  memory_class, memory_id, old_human_label, v7_verdict,\n  deterministic_v8_verdict, mismatch_reason, local_gate_reason\nFROM v8_dev_matrix\nORDER BY memory_class, memory_id",
+          "description": "Selects the bounded item-level audit fields for exact review.",
+          "tables_used": [
+            "v8_dev_matrix"
+          ],
+          "filters": [
+            "no candidate content or new human judgments included"
+          ],
+          "metric_definitions": []
+        }
+      }
+    ],
+    "cards": [
+      {
+        "id": "items_card",
+        "dataset": "summary",
+        "sourceId": "summary_source",
+        "description": "All frozen old-DEV rows; no held-out or outcome data.",
+        "metrics": [
+          {
+            "label": "DEV items",
+            "field": "items",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "pass_retention_card",
+        "dataset": "summary",
+        "sourceId": "summary_source",
+        "description": "Previously human-labeled PASS items accepted by deterministic v8.",
+        "metrics": [
+          {
+            "label": "Old PASS retained",
+            "field": "old_pass_retention_rate",
+            "format": "percent"
+          },
+          {
+            "label": "Retained",
+            "field": "old_pass_retained",
+            "format": "number"
+          },
+          {
+            "label": "Old PASS",
+            "field": "old_pass_total",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "fail_reject_card",
+        "dataset": "summary",
+        "sourceId": "summary_source",
+        "description": "Previously human-labeled FAIL/REVIEW items rejected or failed closed by v8.",
+        "metrics": [
+          {
+            "label": "FAIL/REVIEW rejected",
+            "field": "known_fail_review_rejection_rate",
+            "format": "percent"
+          },
+          {
+            "label": "Rejected",
+            "field": "known_fail_review_rejected",
+            "format": "number"
+          },
+          {
+            "label": "FAIL/REVIEW",
+            "field": "known_fail_review_total",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "outcome_card",
+        "dataset": "summary",
+        "sourceId": "summary_source",
+        "description": "Formal or calibration outcome calls in this audit.",
+        "metrics": [
+          {
+            "label": "Outcome calls",
+            "field": "outcome_calls",
+            "format": "number"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "mismatch_by_head",
+        "title": "v8 DEV verdict agreement by memory class",
+        "subtitle": "Item counts; MP n=20, ME n=12; frozen old-DEV labels only",
+        "intent": "composition",
+        "question": "Where do v8 errors concentrate across MP and ME?",
+        "rationale": "A stacked categorical bar shows the mismatch composition while retaining class denominators.",
+        "comparisonContext": {
+          "grain": "memory class",
+          "unit": "items",
+          "denominator": "all frozen old-DEV items in each class"
+        },
+        "type": "stackedBar",
+        "dataset": "head_outcomes",
+        "sourceId": "head_source",
+        "encodings": {
+          "x": {
+            "field": "memory_class",
+            "type": "nominal",
+            "label": "Memory class"
+          },
+          "y": {
+            "fields": [
+              "match",
+              "false_reject",
+              "false_accept",
+              "schema_reject"
+            ],
+            "type": "quantitative",
+            "label": "Items",
+            "unit": "items"
+          },
+          "tooltip": [
+            {
+              "field": "total",
+              "type": "quantitative",
+              "label": "Total"
+            },
+            {
+              "field": "old_pass_total",
+              "type": "quantitative",
+              "label": "Old PASS"
+            },
+            {
+              "field": "old_fail_review_total",
+              "type": "quantitative",
+              "label": "Old FAIL/REVIEW"
+            }
+          ]
+        },
+        "palette": {
+          "kind": "categorical",
+          "name": "blue-orange-neutral"
+        },
+        "settings": {
+          "showValues": true,
+          "sort": "none"
+        },
+        "surface": {
+          "viewMode": "both",
+          "interactiveLegend": true
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "issue_table",
+        "title": "General interface defects and bounded repairs",
+        "subtitle": "Counts diagnose v8 only; proposed repairs are class-general and outcome-blind",
+        "dataset": "issues",
+        "sourceId": "item_source",
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "issue_domain",
+            "label": "Issue domain"
+          },
+          {
+            "field": "affected_items",
+            "label": "Items",
+            "format": "number"
+          },
+          {
+            "field": "interpretation",
+            "label": "Interpretation"
+          },
+          {
+            "field": "v9_repair",
+            "label": "v9 repair"
+          }
+        ]
+      },
+      {
+        "id": "item_table",
+        "title": "Frozen item-level audit matrix",
+        "subtitle": "No source text, new rating, held-out item, or outcome field is included",
+        "dataset": "items",
+        "sourceId": "item_source",
+        "density": "dense",
+        "defaultSort": {
+          "field": "memory_class",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "memory_class",
+            "label": "Class"
+          },
+          {
+            "field": "memory_id",
+            "label": "Memory ID"
+          },
+          {
+            "field": "old_human_label",
+            "label": "Frozen DEV label"
+          },
+          {
+            "field": "v7_verdict",
+            "label": "v7"
+          },
+          {
+            "field": "deterministic_v8_verdict",
+            "label": "v8"
+          },
+          {
+            "field": "mismatch_reason",
+            "label": "Audit result"
+          },
+          {
+            "field": "local_gate_reason",
+            "label": "Local reasons"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Paper-1 Semantic Memory v8 DEV Data-Quality Audit"
+      },
+      {
+        "id": "summary_heading",
+        "type": "markdown",
+        "sourceId": "summary_source",
+        "body": "## Technical Summary\n\nv8 improved rejection of known bad/review cases but retained only 9 of 20 old PASS items. The evidence is sufficient to diagnose schema/interface defects, not to estimate catalog quality, select a model, or authorize the 401-session compile."
+      },
+      {
+        "id": "metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "items_card",
+          "pass_retention_card",
+          "fail_reject_card",
+          "outcome_card"
+        ]
+      },
+      {
+        "id": "findings",
+        "type": "markdown",
+        "sourceId": "item_source",
+        "body": "## Key Findings\n\nME errors concentrate in the field that conflates semantic action-outcome order with shared-span layout. MP false rejects concentrate in a binary exact-entailment field that cannot represent ordinary conventional entailment. The single MP false accept shows that a persistence label needs an independently observed basis. One malformed enum failed closed as intended. Local-code rejects were zero after the shared-span ordering repair."
+      },
+      {
+        "id": "head_chart",
+        "type": "chart",
+        "chartId": "mismatch_by_head"
+      },
+      {
+        "id": "scope",
+        "type": "markdown",
+        "body": "## Scope and Definitions\n\nThe population is the already-frozen old MP20 + ME12 DEV packet across 29 public source sessions. `MATCH` means the deterministic v8 verdict agrees with the frozen DEV label convention; `SEMANTIC_FALSE_REJECT` and `SEMANTIC_FALSE_ACCEPT` are DEV diagnostic categories. No MS item was present, so this audit cannot qualify MS."
+      },
+      {
+        "id": "method",
+        "type": "markdown",
+        "sourceId": "item_source",
+        "body": "## Methodology\n\nThe script loads the immutable JSONL matrix into an in-memory SQLite table, executes the source queries attached to this report, checks unique item IDs and zero outcome calls, then classifies only observed mismatch patterns. It does not reread source dialogue, change a frozen label, or infer a new human verdict."
+      },
+      {
+        "id": "issues",
+        "type": "table",
+        "tableId": "issue_table"
+      },
+      {
+        "id": "limitations",
+        "type": "markdown",
+        "body": "## Limitations and Robustness\n\nThis is a deliberately reused DEV set, not held-out evidence. Small per-class denominators make percentages unstable. The old labels are treated as frozen diagnostic references, not ground truth for formal Paper-1 effects. The proposed v9 schema must still pass a separately authorized live DEV rerun before any 401-session compile can be considered."
+      },
+      {
+        "id": "details",
+        "type": "table",
+        "tableId": "item_table"
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "body": "## Recommended Next Steps\n\nRun offline v9 contract and binding tests now. Later, only after a new explicit API cap, rerun the same 29 source sessions and produce a v7/v8/v9 matrix. Stop again for researcher review; do not auto-start 401 sessions."
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## Further Questions\n\nA later human review must decide whether the remaining ambiguous conventional-entailment and same-experience cases are consistently labeled. The present implementation must not answer those questions by item-specific code."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-23T00:00:00+09:00",
+    "status": "ready",
+    "datasets": {
+      "summary": [
+        {
+          "items": 32,
+          "old_pass_total": 20,
+          "old_pass_retained": 9,
+          "known_fail_review_total": 12,
+          "known_fail_review_rejected": 11,
+          "outcome_calls": 0,
+          "old_pass_retention_rate": 0.45,
+          "known_fail_review_rejection_rate": 0.9166666666666666
+        }
+      ],
+      "head_outcomes": [
+        {
+          "memory_class": "ME",
+          "total": 12,
+          "match": 5,
+          "false_reject": 7,
+          "false_accept": 0,
+          "schema_reject": 0,
+          "old_pass_total": 10,
+          "old_fail_review_total": 2
+        },
+        {
+          "memory_class": "MP",
+          "total": 20,
+          "match": 14,
+          "false_reject": 4,
+          "false_accept": 1,
+          "schema_reject": 1,
+          "old_pass_total": 10,
+          "old_fail_review_total": 10
+        }
+      ],
+      "issues": [
+        {
+          "issue_domain": "me_experience_linkage_observation",
+          "affected_items": 1,
+          "interpretation": "The annotator left same-experience linkage unresolved for an old PASS case.",
+          "v9_repair": "Retain fail-closed linkage semantics; remeasure under the clearer minimal-span prompt without an item exception."
+        },
+        {
+          "issue_domain": "me_semantic_order_span_topology_conflation",
+          "affected_items": 8,
+          "interpretation": "Semantic time order and a shared broad source span are collapsed into one enum.",
+          "v9_repair": "Use minimal exact subspans, a semantic-order enum, and a separately computed mechanical source order."
+        },
+        {
+          "issue_domain": "mp_persistence_basis_missing",
+          "affected_items": 1,
+          "interpretation": "A durability label has no independent evidence basis, allowing temporary narration to look stable.",
+          "v9_repair": "Record persistence basis separately and reject durable/recurrent labels backed by temporary, episodic, or no evidence."
+        },
+        {
+          "issue_domain": "mp_support_relation_collapse",
+          "affected_items": 4,
+          "interpretation": "A binary exact-entailment observation rejects conventional direct entailments.",
+          "v9_repair": "Replace the boolean with a closed support relation; accept only direct-explicit or conventional-entailment evidence."
+        },
+        {
+          "issue_domain": "schema_enum_conformance",
+          "affected_items": 1,
+          "interpretation": "One provider enum value failed the strict schema.",
+          "v9_repair": "Keep per-item fail-closed parsing; do not coerce unknown enum values."
+        }
+      ],
+      "items": [
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_08a5fe218ef39050888c4476",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_1a1c4fb276f099c997b57f32",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_4483c0f61788baae18d18266",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"same_predicate\", \"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_5e2faa22b0229adba561ddae",
+          "old_human_label": "FAIL",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"action_not_agentive\", \"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_78767b80ccd77fab7a28914a",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_7ae21187e0eeb78733f8b9a0",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_9d2a562660507167d724f7bb",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_9f724af1e653f4a579ab8cbf",
+          "old_human_label": "FAIL",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"same_experience_linkage_unresolved\", \"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_a27fb1d5fef2cf374dba67f2",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_b1b0347933a94f29d209424c",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"temporal_order_reversed_or_same\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_e6992c0803f13130214d0377",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"same_experience_linkage_unresolved\"]"
+        },
+        {
+          "memory_class": "ME",
+          "memory_id": "smu_f88245e046ae62574296a29d",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_0576a6bbec8bc7334671542d",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_208c6bad2a293f000f4cda4c",
+          "old_human_label": "REVIEW",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"requires_prior_memory_inference\", \"stable_social_role_not_directly_current\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_2101af1cacb39d9eef742686",
+          "old_human_label": "FAIL",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"health_not_durable_or_recurrent\", \"not_exactly_entailed\", \"persistence_episodic\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_25d62c242ebbde30d3cad3dd",
+          "old_human_label": "FAIL",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"not_owner_subject_direct\", \"persistence_episodic\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_2d8695b92b0e7e0e6313a84a",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_34a2952dbfe07080e506a9f8",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_50dbb5cab91f05e685c94433",
+          "old_human_label": "FAIL",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SCHEMA_REJECT",
+          "local_gate_reason": "[\"temporal_status:enum\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_5d8e2c68bf39543a653b765f",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_6a6f47b47a3102227aea9bde",
+          "old_human_label": "FAIL",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"current_validity_not_established\", \"not_exactly_entailed\", \"requires_prior_memory_inference\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_84af73261d0cfa43329a8722",
+          "old_human_label": "FAIL",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"temporal_plan\", \"future_or_plan_with_current_validity\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_98d4a8d911adf997736496b0",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"requires_prior_memory_inference\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_b0bcb752c4f581b626728e7f",
+          "old_human_label": "FAIL",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "SEMANTIC_FALSE_ACCEPT",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_b602d4b345d95c2090ff1f9c",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_b6914391cc6ddc6dc65643ef",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"requires_prior_memory_inference\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_b7dad680d4ac06c9d6cc49d6",
+          "old_human_label": "FAIL",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"requires_prior_memory_inference\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_c8b0d537ed256ab06d8c272d",
+          "old_human_label": "REVIEW",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"current_validity_not_established\", \"not_exactly_entailed\", \"requires_prior_memory_inference\", \"stable_social_role_not_directly_current\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_cca3b3479250db2ee9211765",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"not_exactly_entailed\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_d4bc26a7361570f79b6ce3f5",
+          "old_human_label": "PASS",
+          "v7_verdict": "REJECT_FAIL_CLOSED",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "SEMANTIC_FALSE_REJECT",
+          "local_gate_reason": "[\"not_exactly_entailed\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_dceff7d7a9c7453af231d82b",
+          "old_human_label": "FAIL",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "REJECT_FAIL_CLOSED",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[\"not_exactly_entailed\", \"requires_prior_memory_inference\"]"
+        },
+        {
+          "memory_class": "MP",
+          "memory_id": "smu_fbf565ad4f3913324b17afce",
+          "old_human_label": "PASS",
+          "v7_verdict": "ACCEPT",
+          "deterministic_v8_verdict": "ACCEPT",
+          "mismatch_reason": "MATCH",
+          "local_gate_reason": "[]"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "summary_source",
+      "label": "Frozen v8 DEV matrix summary",
+      "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+      "query": {
+        "engine": "SQLite 3 in-memory audit",
+        "sql": "SELECT\n  COUNT(*) AS items,\n  SUM(CASE WHEN old_human_label = 'PASS' THEN 1 ELSE 0 END) AS old_pass_total,\n  SUM(CASE WHEN old_human_label = 'PASS' AND deterministic_v8_verdict = 'ACCEPT' THEN 1 ELSE 0 END) AS old_pass_retained,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') THEN 1 ELSE 0 END) AS known_fail_review_total,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') AND deterministic_v8_verdict != 'ACCEPT' THEN 1 ELSE 0 END) AS known_fail_review_rejected,\n  SUM(outcome_calls) AS outcome_calls\nFROM v8_dev_matrix",
+        "description": "Counts frozen v8 DEV items and descriptive retention/rejection rates.",
+        "tables_used": [
+          "v8_dev_matrix"
+        ],
+        "filters": [
+          "none; all 32 frozen old-DEV rows"
+        ],
+        "metric_definitions": [
+          "old_pass_retention_rate = old_pass_retained / old_pass_total",
+          "known_fail_review_rejection_rate = known_fail_review_rejected / known_fail_review_total",
+          "These are DEV diagnostics, not research PASS gates."
+        ]
+      }
+    },
+    {
+      "id": "head_source",
+      "label": "Frozen v8 DEV mismatch counts by memory class",
+      "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+      "query": {
+        "engine": "SQLite 3 in-memory audit",
+        "sql": "SELECT\n  memory_class,\n  COUNT(*) AS total,\n  SUM(CASE WHEN mismatch_reason = 'MATCH' THEN 1 ELSE 0 END) AS match,\n  SUM(CASE WHEN mismatch_reason = 'SEMANTIC_FALSE_REJECT' THEN 1 ELSE 0 END) AS false_reject,\n  SUM(CASE WHEN mismatch_reason = 'SEMANTIC_FALSE_ACCEPT' THEN 1 ELSE 0 END) AS false_accept,\n  SUM(CASE WHEN mismatch_reason = 'SCHEMA_REJECT' THEN 1 ELSE 0 END) AS schema_reject,\n  SUM(CASE WHEN old_human_label = 'PASS' THEN 1 ELSE 0 END) AS old_pass_total,\n  SUM(CASE WHEN old_human_label IN ('FAIL','REVIEW') THEN 1 ELSE 0 END) AS old_fail_review_total\nFROM v8_dev_matrix\nGROUP BY memory_class\nORDER BY memory_class",
+        "description": "Groups the frozen item matrix by MP/ME and mismatch class.",
+        "tables_used": [
+          "v8_dev_matrix"
+        ],
+        "filters": [
+          "none; MS had no items in the old DEV packet"
+        ],
+        "metric_definitions": [
+          "Each stacked segment is an item count; denominator is shown as total."
+        ]
+      }
+    },
+    {
+      "id": "item_source",
+      "label": "Frozen v8 DEV item-level decisions",
+      "path": "project/data/paper1_authority/paper1_semantic_memory_v8_dev_matrix_20260820_v1.jsonl",
+      "query": {
+        "engine": "SQLite 3 in-memory audit",
+        "sql": "SELECT\n  memory_class, memory_id, old_human_label, v7_verdict,\n  deterministic_v8_verdict, mismatch_reason, local_gate_reason\nFROM v8_dev_matrix\nORDER BY memory_class, memory_id",
+        "description": "Selects the bounded item-level audit fields for exact review.",
+        "tables_used": [
+          "v8_dev_matrix"
+        ],
+        "filters": [
+          "no candidate content or new human judgments included"
+        ],
+        "metric_definitions": []
+      }
+    }
+  ]
+}

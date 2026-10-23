@@ -1,0 +1,25 @@
+{
+  "protocol": "metacom-v3-rq0-llama31-8b-integration-dependency-closure-v1",
+  "status": "ARCHIVAL_DEPENDENCIES_PORTED_HISTORICAL_PREFLIGHT_OMISSION_DISCLOSED",
+  "purpose": "Preserve the completed RQ0 evidence path without pretending the historical preflight bound every transitive Python dependency.",
+  "exactly_ported_dependencies": {
+    "project/scripts/v3/13_score_g0_esc_rank.py": "d0e51dd4757342585a7f2830db5428ad348459981511950f57bf201e8e3a34a5",
+    "project/scripts/v3/14_derive_g0_esc_rank_anchored_scores.py": "7d515839d10a6bdca07f3573ebc6641e4eed310dccf4a5060eddf27f8cb204f6",
+    "project/scripts/v3/16_run_g0_research_aligned_esc.py": "84f4b21bead542fe6929d88f05b9665b0c3edf388671ca470f29c458aac107ba",
+    "project/src/metacom_pm/esc_rank_runtime.py": "fa64dfb81c72d1f01b94113b3cc2bbed4bb75693556359f3fa4f08bff4b72efa"
+  },
+  "historical_runtime_dependency_not_bound_by_preflight": {
+    "path": "project/src/metacom_pm/api.py",
+    "historical_worktree_sha256": "b2f28cbff8e73c397097b3c8f30b73814a50b5631a41184535c78bc14335fb3b",
+    "origin_main_integration_base_sha256": "657b639f041fc1066f4cd56bd5c65df8186a20e8bbfe8acddd2329a89d637566",
+    "decision": "Do not rewrite completed RQ0 evidence or silently change origin/main API. The archived exact runner remains evidence provenance; all new Paper-1 calls must bind the active API/runtime in the new full-stack manifest."
+  },
+  "historical_preflight_bound": [
+    "exact_contract",
+    "exact_runner",
+    "ESC-Eval/evaluate.py",
+    "ESC-Eval/score.py",
+    "ESC-Eval/data/card_high_en.json"
+  ],
+  "claim_boundary": "This closes repository provenance for the completed evidence. It is not the pending Paper-1 full-stack runtime freeze and authorizes no new formal outcome calls."
+}

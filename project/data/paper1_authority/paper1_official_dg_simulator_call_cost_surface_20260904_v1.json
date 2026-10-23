@@ -1,0 +1,489 @@
+{
+  "protocol": "paper1-official-dg-simulator-and-cost-audit-v1",
+  "date": "2026-09-04",
+  "status": "ZERO_OUTCOME_AUDIT_COMPLETE_EXECUTION_CHOICE_PENDING",
+  "not_an_empirical_pass_gate": true,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0,
+  "upstream": {
+    "repo": "slptongji/ES-MemEval",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "dg_executables_checked": 15,
+    "dg_source_sha256": "aad049c2408042947a63ff75c6aebbb43c489340ad5809347ecac102e60c61bc",
+    "common_config_source_sha256": "13e3da404c834970a26849cd15634f8ed426f4b44fb4155aa90a7317648c02c6",
+    "seeker_model_in_code": "gpt-4o",
+    "seeker_rounds_per_scenario": 10,
+    "seeker_max_output_tokens": 60,
+    "non_stop_generation_attempts_in_code": 3,
+    "seeker_is_conditioned_on_prior_supporter_responses": true,
+    "seeker_hidden_scenario_fields": [
+      "all session summaries",
+      "all event summaries",
+      "related-session transcripts",
+      "topic",
+      "psychological_condition",
+      "physical_condition",
+      "more_details"
+    ],
+    "hidden_fields_visible_to_supporter_or_PM": false,
+    "mixtral_or_qwen_seeker_is_official_requirement": false
+  },
+  "reproducible_route_candidate": {
+    "model": "gpt-4o-2024-11-20",
+    "reason": "pin the latest GPT-4o snapshot predating the 2025-11-23 public repository commit instead of using a moving alias",
+    "account_catalog_presence_checked_2026_09_04": true,
+    "account_catalog_model_present": true,
+    "source_fidelity": "official GPT-4o family and exact prompt/role sequence; snapshot pin is a reproducibility amendment",
+    "batch_allowed_for_sequential_seeker_calls": false
+  },
+  "public_population": {
+    "owners": 18,
+    "scenarios": 34,
+    "related_observations_across_scenarios": 856,
+    "scenario_prompt_tokens": {
+      "count": 34,
+      "min": 2894,
+      "median": 4527.5,
+      "p95_nearest_rank": 7280,
+      "max": 7588,
+      "mean": 4612.970588235294
+    },
+    "seeker_input_reserve_per_request_tokens": {
+      "count": 340,
+      "min": 2999,
+      "median": 5421.5,
+      "p95_nearest_rank": 8061,
+      "max": 9349,
+      "mean": 5546.382352941177
+    },
+    "scenario_rows": [
+      {
+        "owner_id": "p1",
+        "topic_index": 1,
+        "system_prompt_sha256": "58826b1816b399ed33bd03b81f9104e1440b87e124640b64057b036ef8f7a0f7",
+        "system_prompt_tiktoken_tokens": 3756,
+        "related_session_count": 2,
+        "related_observation_count": 10,
+        "ten_turn_seeker_input_reserve_tokens": 46890,
+        "max_single_turn_seeker_input_reserve_tokens": 5517,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p2",
+        "topic_index": 1,
+        "system_prompt_sha256": "c9883f70016eeb672b2c0bb4eb9da5be30fa6322299a87b731c948d551229513",
+        "system_prompt_tiktoken_tokens": 4286,
+        "related_session_count": 3,
+        "related_observation_count": 27,
+        "ten_turn_seeker_input_reserve_tokens": 52190,
+        "max_single_turn_seeker_input_reserve_tokens": 6047,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p2",
+        "topic_index": 2,
+        "system_prompt_sha256": "9eb4b86e011d80d9018ea92cdd7e11fc8554b24cc9e746157066fa878f835d77",
+        "system_prompt_tiktoken_tokens": 6974,
+        "related_session_count": 8,
+        "related_observation_count": 48,
+        "ten_turn_seeker_input_reserve_tokens": 79070,
+        "max_single_turn_seeker_input_reserve_tokens": 8735,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p2",
+        "topic_index": 3,
+        "system_prompt_sha256": "7fe40958b89811acc96f9156af89ac3137dfa3f7c0568547c93593c8884b0c5b",
+        "system_prompt_tiktoken_tokens": 5161,
+        "related_session_count": 5,
+        "related_observation_count": 35,
+        "ten_turn_seeker_input_reserve_tokens": 60940,
+        "max_single_turn_seeker_input_reserve_tokens": 6922,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p3",
+        "topic_index": 1,
+        "system_prompt_sha256": "d719c781134e76ab3a30898fa4ab87f5761989c49c153857807155a252dd7893",
+        "system_prompt_tiktoken_tokens": 4857,
+        "related_session_count": 5,
+        "related_observation_count": 26,
+        "ten_turn_seeker_input_reserve_tokens": 57900,
+        "max_single_turn_seeker_input_reserve_tokens": 6618,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p3",
+        "topic_index": 2,
+        "system_prompt_sha256": "6910e7cd9c1e1a2f4fb0c01f0d6b5b1efea97e022dcf1c7dc308fd29789f1a24",
+        "system_prompt_tiktoken_tokens": 5392,
+        "related_session_count": 6,
+        "related_observation_count": 34,
+        "ten_turn_seeker_input_reserve_tokens": 63250,
+        "max_single_turn_seeker_input_reserve_tokens": 7153,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p4",
+        "topic_index": 1,
+        "system_prompt_sha256": "4dbbebf557332e6cc18a0c85ea9f0df51066345e67eb5a9cd6393f607c6890f9",
+        "system_prompt_tiktoken_tokens": 3223,
+        "related_session_count": 2,
+        "related_observation_count": 9,
+        "ten_turn_seeker_input_reserve_tokens": 41570,
+        "max_single_turn_seeker_input_reserve_tokens": 4985,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p5",
+        "topic_index": 1,
+        "system_prompt_sha256": "dcaaaf644fac15a1e7c8fe5bed43621dee13911b23dd05bec862e72dbabc2906",
+        "system_prompt_tiktoken_tokens": 5367,
+        "related_session_count": 6,
+        "related_observation_count": 34,
+        "ten_turn_seeker_input_reserve_tokens": 63010,
+        "max_single_turn_seeker_input_reserve_tokens": 7129,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p5",
+        "topic_index": 2,
+        "system_prompt_sha256": "cb4cea4f7765dc7a1908687de2037b1e00839caba4082bc96a51ea238b56c48f",
+        "system_prompt_tiktoken_tokens": 5977,
+        "related_session_count": 7,
+        "related_observation_count": 42,
+        "ten_turn_seeker_input_reserve_tokens": 69110,
+        "max_single_turn_seeker_input_reserve_tokens": 7739,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p6",
+        "topic_index": 1,
+        "system_prompt_sha256": "08eb4bd85f1e904bd41a00d29b9751e252ec2cefdcb9cf363c2639f832218219",
+        "system_prompt_tiktoken_tokens": 4929,
+        "related_session_count": 5,
+        "related_observation_count": 30,
+        "ten_turn_seeker_input_reserve_tokens": 58630,
+        "max_single_turn_seeker_input_reserve_tokens": 6691,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p6",
+        "topic_index": 2,
+        "system_prompt_sha256": "144f16e4a07b5af02a0d3150e9e15ebb47c0582018ea21118ec476b9bbbdc15c",
+        "system_prompt_tiktoken_tokens": 7280,
+        "related_session_count": 8,
+        "related_observation_count": 45,
+        "ten_turn_seeker_input_reserve_tokens": 82140,
+        "max_single_turn_seeker_input_reserve_tokens": 9042,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p7",
+        "topic_index": 1,
+        "system_prompt_sha256": "8e8eeecd0ad4d65eb3f5344eb47550664e978e8b1183494548333625567a6200",
+        "system_prompt_tiktoken_tokens": 2894,
+        "related_session_count": 2,
+        "related_observation_count": 13,
+        "ten_turn_seeker_input_reserve_tokens": 38270,
+        "max_single_turn_seeker_input_reserve_tokens": 4655,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p8",
+        "topic_index": 1,
+        "system_prompt_sha256": "15fd1bf7bbeacad629a0494cf2be58eb76fbf8340a0e5a3b7d86cf1d4cb4a1be",
+        "system_prompt_tiktoken_tokens": 4396,
+        "related_session_count": 3,
+        "related_observation_count": 18,
+        "ten_turn_seeker_input_reserve_tokens": 53290,
+        "max_single_turn_seeker_input_reserve_tokens": 6157,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p8",
+        "topic_index": 2,
+        "system_prompt_sha256": "0ec20552109e276e828e2977ab2219db62514195ce1ca6c7ddcc20d62a05d148",
+        "system_prompt_tiktoken_tokens": 7588,
+        "related_session_count": 8,
+        "related_observation_count": 43,
+        "ten_turn_seeker_input_reserve_tokens": 85210,
+        "max_single_turn_seeker_input_reserve_tokens": 9349,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p9",
+        "topic_index": 1,
+        "system_prompt_sha256": "ead2ac9c78c2ae5352628e9f494b8707bbb936ad0b2c02a5e6a9eaf02389f016",
+        "system_prompt_tiktoken_tokens": 4210,
+        "related_session_count": 4,
+        "related_observation_count": 27,
+        "ten_turn_seeker_input_reserve_tokens": 51430,
+        "max_single_turn_seeker_input_reserve_tokens": 5971,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p10",
+        "topic_index": 1,
+        "system_prompt_sha256": "6bf1712b424fb959ec2b6592f618a6b2673c005961e7acf8e22136ad7b563099",
+        "system_prompt_tiktoken_tokens": 3721,
+        "related_session_count": 3,
+        "related_observation_count": 20,
+        "ten_turn_seeker_input_reserve_tokens": 46550,
+        "max_single_turn_seeker_input_reserve_tokens": 5483,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p11",
+        "topic_index": 1,
+        "system_prompt_sha256": "274023d728b9d36627cb0285ea381a6979de87a161ea048f45694962278dd05d",
+        "system_prompt_tiktoken_tokens": 4395,
+        "related_session_count": 4,
+        "related_observation_count": 17,
+        "ten_turn_seeker_input_reserve_tokens": 53290,
+        "max_single_turn_seeker_input_reserve_tokens": 6157,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p11",
+        "topic_index": 2,
+        "system_prompt_sha256": "f9f971ea6ee131cd94927dfca4e2c6f29c2c588cdaab032fa32660d1e28c8a62",
+        "system_prompt_tiktoken_tokens": 4727,
+        "related_session_count": 4,
+        "related_observation_count": 17,
+        "ten_turn_seeker_input_reserve_tokens": 56610,
+        "max_single_turn_seeker_input_reserve_tokens": 6489,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p12",
+        "topic_index": 1,
+        "system_prompt_sha256": "66e64fafa45d11d75b95af2a31d2513033b87e9ba564a5377caa6f5a714ff689",
+        "system_prompt_tiktoken_tokens": 3590,
+        "related_session_count": 3,
+        "related_observation_count": 15,
+        "ten_turn_seeker_input_reserve_tokens": 45240,
+        "max_single_turn_seeker_input_reserve_tokens": 5352,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p12",
+        "topic_index": 2,
+        "system_prompt_sha256": "dfd79a4e61c9b601edcc366d37cb46ddccd3e09b8b819c887fa8347014e8a62c",
+        "system_prompt_tiktoken_tokens": 3647,
+        "related_session_count": 3,
+        "related_observation_count": 14,
+        "ten_turn_seeker_input_reserve_tokens": 45810,
+        "max_single_turn_seeker_input_reserve_tokens": 5409,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p12",
+        "topic_index": 3,
+        "system_prompt_sha256": "963a5a998e8c770e8788a8d67f57fba81b7a3aec7c4d0f43d59513766f1c0e2c",
+        "system_prompt_tiktoken_tokens": 4899,
+        "related_session_count": 5,
+        "related_observation_count": 32,
+        "ten_turn_seeker_input_reserve_tokens": 58330,
+        "max_single_turn_seeker_input_reserve_tokens": 6661,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p13",
+        "topic_index": 1,
+        "system_prompt_sha256": "5b6e24b2a386abd52f5bbfb09fc7c788981494a61ad6455aaa5fa390f8449f3e",
+        "system_prompt_tiktoken_tokens": 3209,
+        "related_session_count": 2,
+        "related_observation_count": 12,
+        "ten_turn_seeker_input_reserve_tokens": 41420,
+        "max_single_turn_seeker_input_reserve_tokens": 4970,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p13",
+        "topic_index": 2,
+        "system_prompt_sha256": "cfaf403cec279be9144f544f71116ebab74272aa11daecf7d4683eceb624c8db",
+        "system_prompt_tiktoken_tokens": 4409,
+        "related_session_count": 4,
+        "related_observation_count": 19,
+        "ten_turn_seeker_input_reserve_tokens": 53420,
+        "max_single_turn_seeker_input_reserve_tokens": 6170,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p14",
+        "topic_index": 1,
+        "system_prompt_sha256": "b9567b55622a09e29aee1a2cfb2cda76b207cfd778a346c548110ed18f426251",
+        "system_prompt_tiktoken_tokens": 5176,
+        "related_session_count": 6,
+        "related_observation_count": 36,
+        "ten_turn_seeker_input_reserve_tokens": 61090,
+        "max_single_turn_seeker_input_reserve_tokens": 6937,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p14",
+        "topic_index": 2,
+        "system_prompt_sha256": "91eb85adb6f8b2855ad4a32c8484c921398978493461a8a064130801105bf602",
+        "system_prompt_tiktoken_tokens": 4988,
+        "related_session_count": 5,
+        "related_observation_count": 33,
+        "ten_turn_seeker_input_reserve_tokens": 59210,
+        "max_single_turn_seeker_input_reserve_tokens": 6749,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p14",
+        "topic_index": 3,
+        "system_prompt_sha256": "5b643643b2b30888b0de5168b28fb16ddbf191cd412d06dd82a1287879523ffb",
+        "system_prompt_tiktoken_tokens": 3603,
+        "related_session_count": 3,
+        "related_observation_count": 21,
+        "ten_turn_seeker_input_reserve_tokens": 45360,
+        "max_single_turn_seeker_input_reserve_tokens": 5364,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p15",
+        "topic_index": 1,
+        "system_prompt_sha256": "88fceb12546f3aeac6ad37e9ef134c61dfc60c8476591b2a48925be9085cad7a",
+        "system_prompt_tiktoken_tokens": 4880,
+        "related_session_count": 4,
+        "related_observation_count": 20,
+        "ten_turn_seeker_input_reserve_tokens": 58130,
+        "max_single_turn_seeker_input_reserve_tokens": 6641,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p15",
+        "topic_index": 2,
+        "system_prompt_sha256": "ba30d2f64915c263bd27a18a1871db1a662eb075cea3798e8bc2cd77a6934f0c",
+        "system_prompt_tiktoken_tokens": 4349,
+        "related_session_count": 4,
+        "related_observation_count": 19,
+        "ten_turn_seeker_input_reserve_tokens": 52820,
+        "max_single_turn_seeker_input_reserve_tokens": 6110,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p16",
+        "topic_index": 1,
+        "system_prompt_sha256": "a15ab1283c26847ce3beebc7ba315f7ff35c7c24d5935ccf8928182e800e1047",
+        "system_prompt_tiktoken_tokens": 4764,
+        "related_session_count": 4,
+        "related_observation_count": 26,
+        "ten_turn_seeker_input_reserve_tokens": 56980,
+        "max_single_turn_seeker_input_reserve_tokens": 6526,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p16",
+        "topic_index": 2,
+        "system_prompt_sha256": "80ab9f6e944cf751036936d5604ac042b4585cdf59b04654093313da036aeadc",
+        "system_prompt_tiktoken_tokens": 4646,
+        "related_session_count": 4,
+        "related_observation_count": 20,
+        "ten_turn_seeker_input_reserve_tokens": 55800,
+        "max_single_turn_seeker_input_reserve_tokens": 6408,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p17",
+        "topic_index": 1,
+        "system_prompt_sha256": "71e021d58fd24d18a5c77d242d30b5208487e43cbf209db992647a118a36948a",
+        "system_prompt_tiktoken_tokens": 4891,
+        "related_session_count": 5,
+        "related_observation_count": 32,
+        "ten_turn_seeker_input_reserve_tokens": 58240,
+        "max_single_turn_seeker_input_reserve_tokens": 6652,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p17",
+        "topic_index": 2,
+        "system_prompt_sha256": "3ecbc6aaa45f917d8a1e18afea3607ba925e46bbc160b03f504b0c50cb01bd4f",
+        "system_prompt_tiktoken_tokens": 3157,
+        "related_session_count": 3,
+        "related_observation_count": 16,
+        "ten_turn_seeker_input_reserve_tokens": 40900,
+        "max_single_turn_seeker_input_reserve_tokens": 4918,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p17",
+        "topic_index": 3,
+        "system_prompt_sha256": "e5454de10259572bec7656926b159ca35a3bb076b36d7dcb1f987e47624fe271",
+        "system_prompt_tiktoken_tokens": 3243,
+        "related_session_count": 4,
+        "related_observation_count": 17,
+        "ten_turn_seeker_input_reserve_tokens": 41760,
+        "max_single_turn_seeker_input_reserve_tokens": 5004,
+        "contains_prompt_text": false
+      },
+      {
+        "owner_id": "p18",
+        "topic_index": 1,
+        "system_prompt_sha256": "1acde9a95bcab1d0abf1c223e2a5d5eb41b506a03154177e8b5f62e579c53339",
+        "system_prompt_tiktoken_tokens": 4257,
+        "related_session_count": 5,
+        "related_observation_count": 29,
+        "ten_turn_seeker_input_reserve_tokens": 51910,
+        "max_single_turn_seeker_input_reserve_tokens": 6019,
+        "contains_prompt_text": false
+      }
+    ]
+  },
+  "six_system_call_surface": {
+    "seeker_logical_calls": 2040,
+    "local_supporter_calls": 2040,
+    "gpt4o_overall_judge_calls": 204,
+    "local_mistral24b_observation_relevance_calls": 51360,
+    "local_mistral24b_observation_usage_calls": 51360,
+    "total_local_mistral24b_turn_judge_calls": 102720,
+    "correction_to_old_planning_arithmetic": "official code scores every related observation at every one of ten turns; it does not make five observation-aggregation calls per trajectory"
+  },
+  "pricing_snapshot": {
+    "source": "https://developers.openai.com/api/docs/models/gpt-4o",
+    "checked_date": "2026-09-04",
+    "input_usd_per_million_tokens": 2.5,
+    "cached_input_usd_per_million_tokens": 1.25,
+    "output_usd_per_million_tokens": 10.0,
+    "prompt_cache_discount_counted_in_hard_reserve": false
+  },
+  "seeker_cost_surface_six_systems": {
+    "one_physical_attempt_per_logical_call": {
+      "reserved_input_tokens": 11314620,
+      "reserved_output_tokens": 122400,
+      "uncached_worst_case_usd": 29.51055,
+      "all_input_cached_sensitivity_usd_not_a_reserve": 15.367275
+    },
+    "upstream_max_three_attempts_every_logical_call": {
+      "reserved_input_tokens": 33943860,
+      "reserved_output_tokens": 367200,
+      "uncached_worst_case_usd": 88.53165
+    },
+    "estimator": {
+      "encoding": "o200k_base",
+      "known_prompt_content_counted_exactly": true,
+      "unknown_prior_seeker_and_supporter_content": "official 60-token cap per message",
+      "per_message_serialization_reserve_tokens": 32,
+      "per_request_extra_reserve_tokens": 32,
+      "actual_usage_must_replace_reservations_after_each_call": true
+    }
+  },
+  "decision_required_before_paid_dg": {
+    "issue": "The upstream non-stop behavior can spend up to three physical GPT-4o calls for one logical seeker turn and is incompatible with the current USD 22 RQ2 envelope.",
+    "options": [
+      "retain bit-level upstream retry behavior and reduce DG systems/scenarios or increase budget",
+      "freeze one physical attempt plus deterministic complete-sentence prefix handling as an explicit official-method cost amendment"
+    ],
+    "result_driven_choice_forbidden": true
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

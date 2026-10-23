@@ -1,0 +1,361 @@
+对，现在可以正式收口了。**当前不是“RL做不下去”，而是已经很清楚地定位到：PPO/环境工程基本过关，真正卡住的是 reward measurement。** 而且这件事有解，但接下来不能再沿着“把现有 Qwen judge 修到能用”为目标继续迭代。
+
+这轮结果已经足够支持把当前裁判永久降级：67 项里 64 项可解析，但自然 OFF/ON 的 `q` 是 10 平、2 个 ON 更低、0 个 ON 更高；10 个重复中有 3 个变分，最大 `q/4-m` 差 0.5，而资源成本项最多约 0.05。更重要的是还出现了证据存在但推理错误、试探性建议被错误当事实、正确历史被误罚等语义问题。:chatgpt-content-reference{index="0"} :chatgpt-content-reference{index="1"} 这意味着**单次 pointwise `q=0…4` 不能安全当 PPO reward**。
+
+另一方面，E0 已经不是纸面验证：BC→价值头初始化→PPO 后三个种子都达到 5/5 精确最优，而且 log-prob、终局 bootstrap、保存恢复、参数更新都实际验过；BGE→真实策略网络和 LoRA loss masking 也已经接通。:chatgpt-content-reference{index="2"} :chatgpt-content-reference{index="3"} 所以接下来**不要换 PPO，不要重做环境。应该重构 reward stack。**
+
+## 我建议把后续路线正式改成“两条线并行”
+
+一条是**执行器 R05 继续推进**。这部分现在可以做，因为它不依赖失败的 `q/m` 裁判。另一条单独新增一个 **R04B：Reward Architecture Qualification**，它不是“再选一个新裁判”，而是改变奖励定义。
+
+我建议最终架构变成：
+
+\[
+\boxed{\text{Hard validity}}
++
+\boxed{\text{Grounding/misuse}}
++
+\boxed{\text{Pairwise support preference}}
++
+\boxed{\text{Deterministic cost}}
+\]
+
+而不再是：
+
+\[
+\boxed{\text{one LLM}\rightarrow q,m\rightarrow PPO}
+\]
+
+你原方案其实已经把来源合法、语义适用、输出误用、最终增益分成四层了；只是后来又让一个 LLM 一次把它们都判完。:chatgpt-content-reference{index="4"} 现在的实验告诉我们：**这四层必须真的拆开。**
+
+### 第一层：能程序判断的，一律从 LLM 手里拿走
+
+`owner / cutoff / future leakage / 是否真的 GET / rank / token cap / superseded version / current-vs-past timestamp` 等都做 deterministic validity。
+
+这些不应该是 reward，更不应该问 LLM。
+
+错了就是 protocol/constraint failure。
+
+这样能立刻消掉相当一部分噪声。
+
+### 第二层：misuse 改成“claim → evidence verification”
+
+这里我很建议直接借鉴 **RefChecker** 这种范式，而不是继续整段回复一次判。RefChecker 的核心就是先把回复拆成细粒度 claim，再逐 claim 用 reference evidence 判断；论文报告 claim-triplet 粒度比整段/句级检查更适合细粒度 hallucination detection。:chatgpt-content-reference{index="5"}
+
+我们可以做成：
+
+```text
+response
+  ↓
+claim extraction
+  ↓
+NON_FACTUAL
+SUPPORTED_CURRENT
+SUPPORTED_HISTORY
+CONTRADICTED
+STALE
+WRONG_ENTITY
+WRONG_TIME
+UNSUPPORTED
+UNCERTAIN
+```
+
+然后 `m` **由程序从这些状态派生**。
+
+于是：
+
+> “也许可以试试看……”  
+> → NON_FACTUAL
+
+而：
+
+> “你上次已经通过散步解决了这个问题。”  
+> → 进入 evidence verification。
+
+这正好解决你们这次最棘手的“建议被当事实”“理由和 severity 打架”的问题。
+
+---
+
+## Quality 我建议正式放弃“单回复 0–4 作为训练主信号”
+
+这一步我现在相当支持。
+
+你的真正问题本来就是：
+
+> **这个资源计划相对 OFF 有没有边际价值？**
+
+所以直接比较：
+
+```text
+same prefix
+same executor
+
+A = OFF response
+B = plan-E response
+
+B materially better
+A materially better
+equivalent
+uncertain
+```
+
+比：
+
+```text
+A = 4
+B = 4
+```
+
+更贴近研究问题。
+
+而且 pairwise 也要做得科学：
+
+- A/B、B/A **反序两次**；
+- 明确允许 `equivalent`；
+- 明确允许 `uncertain`；
+- 顺序反转后结论矛盾 → 不产生训练 reward。
+
+这是有文献依据的。2025 年针对 LLM judge 的大规模研究发现，position bias 普遍存在，而且与候选答案质量差有关，所以不能只判一个顺序。:chatgpt-content-reference{index="6"} 对 tie 的研究也表明，把真实 tie 强行压成 win/loss 会系统性扭曲 preference strength。:chatgpt-content-reference{index="7"}
+
+这特别适合你的 PM：
+
+> **ON 和 OFF 真正差不多，本身就是一个非常重要的答案。**
+
+因为此时有资源成本，PM 就应该倾向 STOP。
+
+---
+
+# 需要引入新模型，但不要再找“新的唯一裁判”
+
+我建议只测试**两个预注册的新组件**，到此为止，不再无限换模型。
+
+| 组件 | 推荐 | 负责什么 |
+|---|---|---|
+| Pairwise generative evaluator | **Prometheus-2 7B** | 按我们自己的正向 support rubric 做 A/B/tie |
+| Preference reward model | **Skywork-Reward-V2-Llama-3.1-8B** | 给一个完全不同范式的 pairwise preference 信号 |
+| 当前 Qwen v4 | 保留 | development diagnostic / claim extraction 候选，不再是 oracle |
+| ESC-RANK | 保留原身份 | 冻结系统后的 ESC 外部评价，不做当前 PPO reward |
+
+Prometheus-2 本身就是针对 evaluator 训练的，支持**自定义 criterion + direct assessment + pairwise ranking**，论文在多套 pairwise 人类偏好 benchmark 上表现强于其测试的其他开放 evaluator。:chatgpt-content-reference{index="8"}
+
+Skywork-Reward-V2 则不是 prompted judge，而是 Bradley–Terry reward model；最新公开系列报告其在 RewardBench v1/v2、RM-Bench、JudgeBench 等多类 reward benchmark 上表现很强，并提供 1B/3B/8B 等不同大小。:chatgpt-content-reference{index="9"}
+
+这两者放一起的意义不是“投票决定真理”，而是：
+
+> **Prometheus 是显式 rubric reasoning，Skywork 是训练过的 preference RM。**
+
+如果两种完全不同机制对某个自然 pair 都认为 B>A，而且 Prometheus 反序后仍稳定，那这个信号比当前 Qwen 的单次 `q=4` 强很多。
+
+如果它们分歧：
+
+> `uncertain`。
+
+**不要硬给 reward。**
+
+---
+
+# 甚至可以把 uncertainty 本身用起来
+
+这也是成熟 RLHF 研究已经在处理的问题。
+
+Reward-model ensemble 的研究发现，直接优化单一 imperfect reward 很容易 overoptimize；用多个 reward 的 conservative / uncertainty-aware objective 能明显减轻 PPO 对 reward 漏洞的利用。:chatgpt-content-reference{index="10"}
+
+我们不需要一开始搞复杂算法。
+
+第一版只需要：
+
+\[
+s(E)\in\{-1,0,+1,\mathrm{unknown}\}
+\]
+
+表示：
+
+- `+1`：资源计划明显更好；
+- `0`：materially equivalent；
+- `-1`：更差；
+- `unknown`：裁判分歧/顺序不一致。
+
+然后：
+
+\[
+R(E)
+=
+s(E)
+-\alpha M(E)
+-\lambda\frac{c(E)}{B}.
+\]
+
+`unknown` episode **不进入 PPO actor/critic loss**，继续沿用你原方案“reward 缺失不能填 0”的原则。
+
+其实你原来的：
+
+\[
+R=U(E)-U(\emptyset)-\lambda C
+\]
+
+结构不需要推翻。:chatgpt-content-reference{index="11"}
+
+只是把：
+
+\[
+U=q/4-m
+\]
+
+替换为更可信的：
+
+\[
+U=\text{pairwise support advantage}-\text{verified misuse}.
+\]
+
+---
+
+# 但还缺最后一个关键环节：小规模 human anchor
+
+这个我认为最终还是值得做一次，但**不是现在马上做，也不是再让你填一张大表。**
+
+先让上述自动 stack 在纯客观控制上过关：
+
+> wrong entity、wrong time、intention→outcome、stale state、style invariance、A/B swap、重复稳定性……
+
+如果这都过不了，直接淘汰，不浪费人评。
+
+只有通过后，再从 **train/dev 而不是 test** 里固定大约 24 个真正的自然 pair，让人一次性做：
+
+> A better / B better / tie / uncertain。
+
+这就是 reward 的 calibration anchor。
+
+为什么我现在认为这一步值得？RLFF-ESC 自己并没有“相信 critic 就算了”。他们另外抽 100 个对话，让三名有心理学背景的评审和 critic 独立判断，最后才报告 critic 与 human majority 的 Krippendorff α=0.786、Spearman ρ=0.796。:chatgpt-content-reference{index="12"}
+
+ESC-Eval 更明显：ESC-RANK 背后是 **59,654 条人工评分**之后训练出来的自动 evaluator。:chatgpt-content-reference{index="13"}
+
+我们不用做这么大。
+
+但如果完全没有 domain human anchor，而想声称：
+
+> “这个 reward 代表 emotional-support quality”，
+
+就会天然弱一截。
+
+所以我的建议是：
+
+> **现在不做人评；等自动 reward stack 先过机器可验证的资格，再一次性做 24 个 pair。**
+
+和最后系统冻结后的 24 个 test blind pairs 是两批不同用途：
+
+- 前者：**train/dev reward calibration**
+- 后者：**final independent evaluation**
+
+不能混。
+
+---
+
+# 我还建议增加一个非常聪明的“真实任务桥梁”：先在 QA 上跑一次 RL
+
+这个我觉得现在尤其值得做。
+
+你现在 toy E0 已经证明：
+
+> RL code 会学。
+
+但中间还缺：
+
+> **toy → 自然 ESC reward**
+
+跨度太大。
+
+ES-MemEval QA 可以做中间桥：
+
+```text
+真实长期历史
+→ GET MP/MS/ME
+→ STOP
+→ frozen Generator answer
+→ gold answer / official QA metric
+```
+
+这里 reward 可以来自：
+
+- exact/F1；
+- BERTScore；
+- 或官方 QA scorer；
+
+而且 gold 只在 evaluation side，actor 看不到。
+
+这样可以先回答：
+
+> **在真实 BGE、真实历史、真实资源内容下，小 PM 是否能靠一个较可靠的任务反馈学会 GET/STOP？**
+
+如果这一步都学不会，就不用怀疑 emotional-support judge。
+
+如果这一步能学：
+
+> toy PPO ✅  
+> real semantic QA PPO ✅  
+> natural ESC reward ❓
+
+那整个研究问题会定位得非常干净。
+
+而你的原方案其实已经留了“最多 48 个 outcome-isolated QA targets”的外部桥接位置。:chatgpt-content-reference{index="14"}
+
+我会把它从“可选验证”升级成：
+
+> **R06-QA bridge，强烈建议执行。**
+
+它不能代替最终 ESC quality，但对研发极有价值。
+
+---
+
+# 所以接下来我建议严格按这 6 步走
+
+1. **冻结这次 closeout，绝不再改 Qwen v4。**  
+   `measurement_resolution_20260929_v1` 永久定义为 development diagnostic。报告已经正确写明“不自动生成训练标签”，后续几题的好坏不能翻案。:chatgpt-content-reference{index="15"}
+
+2. **继续 R05 Step-2 小批量。**  
+   先 12–24 个 prefix 做 teacher→source audit→LoRA→reload→dev NLL。准入不能靠当前 `q/m`；只接受来源/时态/owner 可核、没有明确 unsupported claim 的样本。先证明 X_l 真正能训练和重载，再扩至 96/24。
+
+3. **新建 R04B Reward Stack v2，完全独立 namespace。**  
+   不重跑旧 67 来“修分”；旧 67 只作为 development stress set。接入 Prometheus-2 + Skywork RM，加入 A/B swap、tie、uncertain 和 RefChecker-style claim verification。RewardBench 2 的经验也支持先专门评价 reward model，再考虑下游 PPO；它专门报告 RM benchmark 与 PPO 等 downstream performance 的关联。:chatgpt-content-reference{index="16"}
+
+4. **先过客观控制，再考虑 24-pair human anchor。**  
+   重点测 subtle factual corruption、style invariance、order consistency、repeat consistency、abstention。RM-Bench 的结果说明即便先进 RM，对“内容只差一点 + 风格干扰”的场景也很脆弱，这正是你当前最需要测的东西。:chatgpt-content-reference{index="17"}
+
+5. **插入 R06-QA real-semantic bridge。**  
+   用真实资源环境 + 客观/官方 QA outcome 训练一次有限 PM。这个阶段通过以后，才能说“真实环境里的 sequential resource acquisition 能学”，而不只是 E0 toy。
+
+6. **只有 R04B reward 通过后，才启动 natural-support PPO。**  
+   如果最终 pairwise quality 仍不稳定，就不要硬上。那论文可以收窄成 Step-2 + OneShot / finite-plan + QA sequential RL；如果 reward 通过，再进入完整 PM-RL1。
+
+---
+
+## 我会怎么改 Codex 的下一条指令
+
+可以直接把下面这段给它：
+
+> 当前 `measurement_resolution_20260929_v1` 已正式关闭，不得继续修改 Qwen v4 rubric、补题、换 prompt 或以新的裁判结果回写旧用途判定。它永久保留为 development diagnostic，不产生 PPO reward 或 SFT 准入标签。
+>
+> 接下来并行推进两条独立工作流。
+>
+> **A. R05 Executor**：先做 12–24 prefix 的小批量 teacher/source-verification/LoRA/reload/dev-NLL 闭环。现有 q/m 不用于准入。作者只能看到真实 G 输入；核验只使用合法 source/cutoff，拒绝 unsupported、wrong-owner、future、stale-as-current、intention-as-outcome 等明确错误。保留合理不使用资源的高质量回复。小批量通过后再提出是否扩至既定 96 train / 24 dev。
+>
+> **B. R04B Reward Stack v2**：新 namespace，不改变旧 closeout。目标不是寻找新的单一 judge，而是验证新的奖励架构：
+> 1. deterministic validity；
+> 2. claim-level evidence verification；
+> 3. pairwise support preference with `better / worse / equivalent / uncertain`；
+> 4. deterministic token cost。
+>
+> Pairwise evaluator 预注册测试 Prometheus-2 与一个独立 Bradley–Terry reward model（优先 Skywork-Reward-V2-Llama-3.1-8B）；当前 Qwen 只保留 diagnostic。所有 pair 必须做 A/B 与 B/A 顺序检查。顺序矛盾、模型分歧或 evidence relation 不确定时记 UNKNOWN，不填零、不进入 PPO。
+>
+> 先在现有 development stress cases 上检查 technical completion、subtle corruption、style invariance、repeat consistency、position consistency 和 tie/abstention 行为；不得根据 PM 最终谁赢选择 evaluator。若自动 stack 连这些客观控制都过不了，停止模型追加，不继续 judge shopping。
+>
+> 同时准备一个独立的 **real-semantic QA bridge**：只从 train/dev 的 ES-MemEval-compatible QA targets 构造，actor 不见 gold；使用合法历史和现有 GET/STOP 环境，STOP 后由 frozen Generator 作答，以 gold/official QA outcome 作为 evaluation-side reward。该实验用于验证 toy E0 之后，真实语义资源环境中的 PM 是否可学习；不得把 QA 成功解释成 emotional-support quality 成功。
+>
+> natural-support PPO 暂不启动。只有 R04B 给出稳定、可审计的 reward contract 后再开。
+
+---
+
+我现在会把整个项目的状态概括成一句话：
+
+> **环境已经能跑，RL 已经会学，执行器可以开始训练；现在需要做的不是继续“修一个裁判”，而是把 reward 本身升级成一个经过资格验证的测量系统。**
+
+而且从 RewardBench、RM-Bench、JudgeBench、Prometheus、RefChecker、PoLL 这些研究看，**你们现在碰到的并不是离谱的项目特有 bug，而正是当前 reward-model / LLM-as-judge 研究的核心难题。** 所以解决方式也已经比较明确：分解、pairwise、允许 tie/uncertain、异构模型、可验证证据、最终用很小的人类 anchor 校准，而不是相信某一个更大的模型。

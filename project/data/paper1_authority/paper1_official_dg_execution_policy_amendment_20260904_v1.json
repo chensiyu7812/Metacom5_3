@@ -1,0 +1,88 @@
+{
+  "protocol": "paper1-official-dg-execution-policy-amendment-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_PRE_OUTCOME_COST_BOUNDED_DG_EXECUTION_POLICY",
+  "not_an_empirical_pass_gate": true,
+  "decision_basis": {
+    "formal_outcome_calls_before_decision": 0,
+    "evaluator_calls_before_decision": 0,
+    "pm_training_runs_before_decision": 0,
+    "selection_based_on_response_quality": false,
+    "researcher_authorized_compatibility_pilot_family_cap_usd": 0.4,
+    "paper1_paid_api_hard_cap_usd": 50.0,
+    "reason": "The pinned upstream maximum of three physical GPT-4o calls for every non-stop logical seeker turn has a six-system uncached worst-case reserve of USD 88.53165 and cannot coexist with the Paper-1 USD 50 hard cap. The execution policy is therefore frozen before capability outcomes rather than chosen after seeing benchmark quality."
+  },
+  "upstream_surface": {
+    "repo": "slptongji/ES-MemEval",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "rounds_per_scenario": 10,
+    "seeker_family": "GPT-4o",
+    "seeker_snapshot": "gpt-4o-2024-11-20",
+    "max_completion_tokens": 60,
+    "temperature": "provider default; omitted",
+    "upstream_non_stop_maximum_physical_attempts": 3,
+    "upstream_third_non_stop_handling": "take the prefix ending at the last occurrence of ! . ? or ellipsis; preserve raw text if none exists"
+  },
+  "active_execution_policy": {
+    "seeker_physical_attempts_per_logical_turn": 1,
+    "seeker_stop": "accept returned text",
+    "seeker_non_stop": "immediately apply the upstream complete-sentence-prefix handling and record the non-stop event; do not resample",
+    "seeker_transport_retry": "at most one separately budget-reserved retry only for a retryable transport failure; never retry because of content or score",
+    "supporter_physical_attempts_per_logical_turn": 1,
+    "supporter_stop": "accept returned text",
+    "supporter_non_stop": "immediately apply the upstream complete-sentence-prefix handling",
+    "supporter_one_attempt_reason": "The frozen local supporter is greedy and deterministic. Repeating an identical non-stop request three times returns identical bytes and adds only latency; this was observed for every repeated local length event in both compatibility trajectories.",
+    "formal_method_label": "ES-MemEval official prompt, role sequence, rounds, model family and scoring with an explicitly declared one-attempt generation cost amendment",
+    "unqualified_bit_exact_official_execution_claim": false
+  },
+  "compatibility_evidence": {
+    "first_consumed_device_deviation": {
+      "artifact": "paper1_official_dg_compatibility_pilot_live_result_20260904_v1.json",
+      "sha256": "50cb5645167ee8ac623da660bc57abfc401893f48793b88f1743c753133da0ad",
+      "gpu": "NVIDIA RTX A4500",
+      "completed_rounds": 10,
+      "paid_seeker_calls": 10,
+      "paid_seeker_non_stop_extra_attempts": 0,
+      "actual_cost_usd": 0.08724,
+      "use": "consumed engineering evidence only; not the active backend identity"
+    },
+    "a6000_replay_of_first_supporter_path": {
+      "artifact": "paper1_dg_supporter_a6000_replay_20260904_v1.json",
+      "sha256": "2ba29c1e85d3fd36d63d6536182df856109a05e8ccfc1f0415082a81d67e94b7",
+      "byte_exact_supporter_matches": "0/10",
+      "paid_api_calls": 0,
+      "conclusion": "GPU identity cannot be silently treated as interchangeable for deterministic generation"
+    },
+    "active_a6000_trajectory": {
+      "preflight_artifact": "paper1_official_dg_compatibility_pilot_preflight_20260904_v2.json",
+      "preflight_sha256": "f03c7e065746d45f8716db3da06b2a14d73405fae8d23456c6f2f68cc732c730",
+      "result_artifact": "paper1_official_dg_compatibility_pilot_live_result_20260904_v2.json",
+      "result_sha256": "9b258b30b8efc5d9dc0f03fb2580cca86bb43c2a1c55aac6d044500e81fc0383",
+      "gpu": "NVIDIA RTX A6000",
+      "completed_rounds": 10,
+      "paid_seeker_calls": 10,
+      "paid_seeker_stop_first_attempt": 10,
+      "paid_seeker_non_stop_extra_attempts": 0,
+      "actual_cost_usd": 0.0859925,
+      "status": "PASS"
+    },
+    "combined_pilot_family": {
+      "paid_seeker_calls": 20,
+      "paid_non_stop_extra_attempts": 0,
+      "actual_cost_usd": 0.1732325,
+      "interpretation": "Execution compatibility is established for the sampled trajectories. The 20/20 stop result is descriptive and is not used as a statistical guarantee or a capability pass gate."
+    }
+  },
+  "budget_consequence": {
+    "six_system_one_attempt_uncached_worst_case_usd": 29.51055,
+    "six_system_upstream_three_attempt_uncached_worst_case_usd": 88.53165,
+    "one_attempt_cost_includes_official_scorers": false,
+    "remaining_requirement": "Before formal DG, reconcile the one-attempt seeker reserve, official GPT-4o overall scoring, other RQ2 tasks and already settled cost in one exact call manifest; do not assume the old USD 22 RQ2 estimate remains valid."
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

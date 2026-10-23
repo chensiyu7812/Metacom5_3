@@ -1,0 +1,103 @@
+{
+  "protocol": "pm-paper1-esc-rank-24gib-resolved-runtime-manifest-v2",
+  "status": "ASSETS_ATTESTED_READY_FOR_24GIB_RUNTIME",
+  "authority": "data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json",
+  "supersedes_for_future_runs": "paper1_esc_rank_24gib_patch_manifest_20260820_v1.json",
+  "official_identity": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "internlm2_model": "internlm/internlm2-chat-7b",
+    "internlm2_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "dtype": "float16",
+    "dimensions": [
+      "fluency",
+      "diversity",
+      "empathic",
+      "suggestion",
+      "human",
+      "tech",
+      "overall"
+    ]
+  },
+  "official_parser": {
+    "source": "pinned ESC-Eval score.py lines 99-105",
+    "label_order": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "semantics": "first label in label_order whose character is contained in raw response; invalid if none",
+    "strict_full_string_role": "supplemental_diagnostic_only",
+    "multiple_label_role": "supplemental_diagnostic_only"
+  },
+  "allowed_source_patches": [
+    {
+      "old": "./ESC-RANK1/fluency",
+      "new": "./ESC-RANK/fluency",
+      "occurrences_required": 1,
+      "reason": "published path correction only"
+    },
+    {
+      "old": "./ESC-RANK1/fluency_en",
+      "new": "./ESC-RANK/fluency_en",
+      "occurrences_required": 1,
+      "reason": "published path correction only"
+    }
+  ],
+  "forbidden_patches": [
+    "rubric",
+    "prompt text",
+    "base model",
+    "adapter mapping",
+    "score scale",
+    "official parser semantics"
+  ],
+  "dependency_pins": {
+    "torch": "2.3.1",
+    "transformers": "4.41.2",
+    "peft": "0.11.1",
+    "accelerate": "0.31.0"
+  },
+  "auxiliary_runtime_pins": {
+    "einops": "0.8.1",
+    "sentencepiece": "0.2.1",
+    "protobuf": "5.29.5"
+  },
+  "dependency_pin_note": "isolated ESC-RANK qualification environment; torch package metadata is 2.3.1 and torch.__version__ records the CUDA 12.1 local build",
+  "required_runtime_inventory": {
+    "esc_rank_tree_sha256": "d8f21aab7dbed35fb15149b5b6ae2f786cdde50ca8f530df7f581c8db7ea7664",
+    "internlm2_tree_sha256": "0fd19e9871212274395c27ddd25d855d56073f230435ead2737a75e906024560",
+    "all_seven_adapter_tree_hashes_required": true,
+    "adapter_directories": [
+      "fluency_en",
+      "diversity_en",
+      "empathic_en",
+      "suggestion_en",
+      "human_en",
+      "tech_en",
+      "overall_en"
+    ],
+    "dependency_versions": {
+      "torch": "2.3.1",
+      "transformers": "4.41.2",
+      "peft": "0.11.1",
+      "accelerate": "0.31.0",
+      "einops": "0.8.1",
+      "sentencepiece": "0.2.1",
+      "protobuf": "5.29.5"
+    }
+  },
+  "minimum_gpu_total_mib": 24576,
+  "runtime_experiment_status": "READY_TO_EXECUTE_NOT_YET_RUN",
+  "outcome_calls": 0,
+  "formal_ESC_Eval": false,
+  "calls": {
+    "downloads_by_this_script": 0,
+    "model_loads_by_this_script": 0,
+    "evaluator_calls_by_this_script": 0,
+    "outcome_calls": 0
+  }
+}

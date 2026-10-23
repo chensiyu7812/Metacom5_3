@@ -1,0 +1,1412 @@
+{
+  "protocol": "paper1-gemini-qualification-closeout-v1",
+  "status": "COMPLETED_CANDIDATE_NOT_PROMOTED_EXISTING_FALLBACK_ACTIVE",
+  "recorded_at": "2026-09-17T05:36:16.713522+00:00",
+  "role": "Qualification evidence and operational closeout, not formal effect labels or an empirical Paper PASS gate.",
+  "model": "gemini-2.5-flash-lite",
+  "metadata_version": "001",
+  "response_model_versions": {
+    "gemini-2.5-flash-lite": 100
+  },
+  "authorization": "paper1_gemini_qualification_authorization_20260917_v2.json",
+  "original_budget_approval_verbatim": "我批准$0.10",
+  "reference_provenance": "One completed joint-human A sheet, six-case human followup and assistant fact-review sensitivity kept separately; AI B exploratory.",
+  "supersedes_progress_only": [
+    "V3 plan human/teacher pending counters",
+    "20260917 approval document pending status"
+  ],
+  "source_protocols_and_original_reviews_preserved": true,
+  "operational": {
+    "scheduled": 96,
+    "completed": 96,
+    "physical_calls": 100,
+    "retries": 4,
+    "status_counts": {
+      "SUCCEEDED": 92,
+      "OPERATIONAL_FAILURE": 4
+    },
+    "http_status_counts": {
+      "200": 100
+    },
+    "finish_reason_counts": {
+      "STOP": 100
+    },
+    "parse_error_counts_physical_attempts": {
+      "teacher rationale must contain 1..600 nonblank characters": 8
+    },
+    "token_usage": {
+      "input": 617650,
+      "visible_output": 8947,
+      "thinking_output": 71,
+      "cached_input": 384250,
+      "thinking_histogram_per_physical_call": {
+        "0": 63,
+        "2": 34,
+        "1": 3
+      }
+    },
+    "by_task": {
+      "DG": {
+        "presentations": 32,
+        "status_counts": {
+          "SUCCEEDED": 30,
+          "OPERATIONAL_FAILURE": 2
+        },
+        "base_status_counts": {
+          "SUCCEEDED": 25,
+          "OPERATIONAL_FAILURE": 2
+        },
+        "reversal": {
+          "paired_bases": 3,
+          "consistent": 3,
+          "missing_pairs": 2,
+          "rate": 1.0
+        }
+      },
+      "ESC": {
+        "presentations": 32,
+        "status_counts": {
+          "SUCCEEDED": 32
+        },
+        "base_status_counts": {
+          "SUCCEEDED": 27
+        },
+        "reversal": {
+          "paired_bases": 5,
+          "consistent": 3,
+          "missing_pairs": 0,
+          "rate": 0.6
+        }
+      },
+      "QA": {
+        "presentations": 16,
+        "status_counts": {
+          "SUCCEEDED": 14,
+          "OPERATIONAL_FAILURE": 2
+        },
+        "base_status_counts": {
+          "SUCCEEDED": 12,
+          "OPERATIONAL_FAILURE": 1
+        },
+        "reversal": {
+          "paired_bases": 2,
+          "consistent": 1,
+          "missing_pairs": 1,
+          "rate": 0.5
+        }
+      },
+      "Summary": {
+        "presentations": 16,
+        "status_counts": {
+          "SUCCEEDED": 16
+        },
+        "base_status_counts": {
+          "SUCCEEDED": 13
+        },
+        "reversal": {
+          "paired_bases": 3,
+          "consistent": 1,
+          "missing_pairs": 0,
+          "rate": 0.3333333333333333
+        }
+      }
+    },
+    "first_response_recovered_without_call": 1
+  },
+  "budget": {
+    "stage_cap_usd": "0.10",
+    "stage_accounted_usd": "0.0654614",
+    "standard_rate_usage_derived_usd": "0.0653722",
+    "usage_with_reported_cache_discount_usd": "0.03078970",
+    "pricing_note": "Ledger conservatively uses full standard input price and preserves the first reserved-maximum settlement. Cache-adjusted figure is calculated at published rates, not a billing-invoice confirmation.",
+    "cumulative_accounted_usd": "1.50724291",
+    "remaining_cumulative_usd": "48.49275709",
+    "stage_remaining_accounted_usd": "0.0345386",
+    "unsettled_reservations": 0
+  },
+  "comparisons": {
+    "original_A": {
+      "base_pairs": {
+        "scheduled": 80,
+        "observed": 77,
+        "missing": 3,
+        "exact_matches": 7,
+        "exact_agreement": 0.09090909090909091,
+        "reference_counts_all": {
+          "equivalent": 56,
+          "B_better": 10,
+          "uncertain": 12,
+          "A_better": 2
+        },
+        "candidate_counts_observed": {
+          "A_better": 44,
+          "B_better": 24,
+          "equivalent": 8,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 6,
+            "B_better": 2,
+            "equivalent": 2,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 33,
+            "B_better": 16,
+            "equivalent": 4,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 4,
+            "B_better": 5,
+            "equivalent": 2,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.5,
+          "B_better": 0.2,
+          "equivalent": 0.07407407407407407,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.2580246913580247,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.6470588235294118,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "by_task_base_pairs": {
+        "DG": {
+          "scheduled": 27,
+          "observed": 25,
+          "missing": 2,
+          "exact_matches": 2,
+          "exact_agreement": 0.08,
+          "reference_counts_all": {
+            "equivalent": 24,
+            "B_better": 1,
+            "uncertain": 2
+          },
+          "candidate_counts_observed": {
+            "A_better": 19,
+            "B_better": 5,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 0,
+              "B_better": 1,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 17,
+              "B_better": 4,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 2,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 1.0,
+            "equivalent": 0.045454545454545456,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.5227272727272727,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.7916666666666666,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "ESC": {
+          "scheduled": 27,
+          "observed": 27,
+          "missing": 0,
+          "exact_matches": 3,
+          "exact_agreement": 0.1111111111111111,
+          "reference_counts_all": {
+            "equivalent": 25,
+            "B_better": 1,
+            "uncertain": 1
+          },
+          "candidate_counts_observed": {
+            "B_better": 9,
+            "A_better": 14,
+            "equivalent": 4
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 13,
+              "B_better": 9,
+              "equivalent": 3,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 1,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.0,
+            "equivalent": 0.12,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.06,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.6086956521739131,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "QA": {
+          "scheduled": 13,
+          "observed": 12,
+          "missing": 1,
+          "exact_matches": 0,
+          "exact_agreement": 0.0,
+          "reference_counts_all": {
+            "B_better": 5,
+            "uncertain": 7,
+            "equivalent": 1
+          },
+          "candidate_counts_observed": {
+            "A_better": 7,
+            "equivalent": 2,
+            "B_better": 3
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 4,
+              "B_better": 0,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 2,
+              "B_better": 3,
+              "equivalent": 1,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.0,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.0,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.7,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "Summary": {
+          "scheduled": 13,
+          "observed": 13,
+          "missing": 0,
+          "exact_matches": 2,
+          "exact_agreement": 0.15384615384615385,
+          "reference_counts_all": {
+            "A_better": 2,
+            "equivalent": 6,
+            "B_better": 3,
+            "uncertain": 2
+          },
+          "candidate_counts_observed": {
+            "B_better": 7,
+            "A_better": 4,
+            "uncertain": 1,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 1,
+              "B_better": 1,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 1,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 2,
+              "B_better": 3,
+              "equivalent": 0,
+              "uncertain": 1
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 2,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": 0.5,
+            "B_better": 0.3333333333333333,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.27777777777777773,
+          "macro_recall_classes_present": 3,
+          "candidate_A_fraction_among_decisive": 0.36363636363636365,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        }
+      },
+      "reference_reversal": {
+        "paired_bases": 16,
+        "consistent": 15,
+        "missing_pairs": 0,
+        "rate": 0.9375
+      },
+      "candidate_reversal": {
+        "paired_bases": 13,
+        "consistent": 8,
+        "missing_pairs": 3,
+        "rate": 0.6153846153846154
+      },
+      "uncertainty_by_task": {
+        "DG": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 9,
+          "observed_base_pairs": 25,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.18518518518518517
+          ],
+          "macro_recall_interval": [
+            0.5,
+            0.5681818181818181
+          ],
+          "macro_recall_valid_replicates": 1275,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "ESC": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 27,
+          "observed_base_pairs": 27,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.25925925925925924
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.1346153846153846
+          ],
+          "macro_recall_valid_replicates": 1256,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "QA": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 12,
+          "observed_base_pairs": 12,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.0
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.0
+          ],
+          "macro_recall_valid_replicates": 1325,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "Summary": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 13,
+          "observed_base_pairs": 13,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.38461538461538464
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.5652777777777752
+          ],
+          "macro_recall_valid_replicates": 1707,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "A_better",
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        }
+      }
+    },
+    "human_followup": {
+      "base_pairs": {
+        "scheduled": 80,
+        "observed": 77,
+        "missing": 3,
+        "exact_matches": 8,
+        "exact_agreement": 0.1038961038961039,
+        "reference_counts_all": {
+          "equivalent": 58,
+          "B_better": 10,
+          "uncertain": 11,
+          "A_better": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 44,
+          "B_better": 24,
+          "equivalent": 8,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 1,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 6,
+            "B_better": 2,
+            "equivalent": 2,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 33,
+            "B_better": 17,
+            "equivalent": 5,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 4,
+            "B_better": 5,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 1.0,
+          "B_better": 0.2,
+          "equivalent": 0.08928571428571429,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.42976190476190473,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.6470588235294118,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "by_task_base_pairs": {
+        "DG": {
+          "scheduled": 27,
+          "observed": 25,
+          "missing": 2,
+          "exact_matches": 1,
+          "exact_agreement": 0.04,
+          "reference_counts_all": {
+            "equivalent": 25,
+            "uncertain": 2
+          },
+          "candidate_counts_observed": {
+            "A_better": 19,
+            "B_better": 5,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 17,
+              "B_better": 5,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 2,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": null,
+            "equivalent": 0.043478260869565216,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.043478260869565216,
+          "macro_recall_classes_present": 1,
+          "candidate_A_fraction_among_decisive": 0.7916666666666666,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "ESC": {
+          "scheduled": 27,
+          "observed": 27,
+          "missing": 0,
+          "exact_matches": 4,
+          "exact_agreement": 0.14814814814814814,
+          "reference_counts_all": {
+            "equivalent": 26,
+            "B_better": 1
+          },
+          "candidate_counts_observed": {
+            "B_better": 9,
+            "A_better": 14,
+            "equivalent": 4
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 13,
+              "B_better": 9,
+              "equivalent": 4,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.0,
+            "equivalent": 0.15384615384615385,
+            "uncertain": null
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.07692307692307693,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.6086956521739131,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "QA": {
+          "scheduled": 13,
+          "observed": 12,
+          "missing": 1,
+          "exact_matches": 1,
+          "exact_agreement": 0.08333333333333333,
+          "reference_counts_all": {
+            "B_better": 6,
+            "equivalent": 1,
+            "uncertain": 6
+          },
+          "candidate_counts_observed": {
+            "A_better": 7,
+            "equivalent": 2,
+            "B_better": 3
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 4,
+              "B_better": 1,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 2,
+              "B_better": 2,
+              "equivalent": 1,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.16666666666666666,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.08333333333333333,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.7,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "Summary": {
+          "scheduled": 13,
+          "observed": 13,
+          "missing": 0,
+          "exact_matches": 2,
+          "exact_agreement": 0.15384615384615385,
+          "reference_counts_all": {
+            "uncertain": 3,
+            "A_better": 1,
+            "equivalent": 6,
+            "B_better": 3
+          },
+          "candidate_counts_observed": {
+            "B_better": 7,
+            "A_better": 4,
+            "uncertain": 1,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 1,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 2,
+              "B_better": 3,
+              "equivalent": 0,
+              "uncertain": 1
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 3,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": 1.0,
+            "B_better": 0.3333333333333333,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.4444444444444444,
+          "macro_recall_classes_present": 3,
+          "candidate_A_fraction_among_decisive": 0.36363636363636365,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        }
+      },
+      "reference_reversal": {
+        "paired_bases": 16,
+        "consistent": 15,
+        "missing_pairs": 0,
+        "rate": 0.9375
+      },
+      "candidate_reversal": {
+        "paired_bases": 13,
+        "consistent": 8,
+        "missing_pairs": 3,
+        "rate": 0.6153846153846154
+      },
+      "uncertainty_by_task": {
+        "DG": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 9,
+          "observed_base_pairs": 25,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.12
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.13043478260869565
+          ],
+          "macro_recall_valid_replicates": 2000,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "ESC": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 27,
+          "observed_base_pairs": 27,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.037037037037037035,
+            0.2962962962962963
+          ],
+          "macro_recall_interval": [
+            0.019230769230769232,
+            0.15384615384615385
+          ],
+          "macro_recall_valid_replicates": 1256,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "QA": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 12,
+          "observed_base_pairs": 12,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.25
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.25
+          ],
+          "macro_recall_valid_replicates": 1326,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "Summary": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 13,
+          "observed_base_pairs": 13,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.38461538461538464
+          ],
+          "macro_recall_interval": [
+            0.3333333333333333,
+            0.6666666666666666
+          ],
+          "macro_recall_valid_replicates": 1233,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "A_better",
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        }
+      }
+    },
+    "assistant_fact_review_sensitivity": {
+      "base_pairs": {
+        "scheduled": 80,
+        "observed": 77,
+        "missing": 3,
+        "exact_matches": 9,
+        "exact_agreement": 0.11688311688311688,
+        "reference_counts_all": {
+          "equivalent": 57,
+          "B_better": 10,
+          "uncertain": 12,
+          "A_better": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 44,
+          "B_better": 24,
+          "equivalent": 8,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 1,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 5,
+            "B_better": 3,
+            "equivalent": 2,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 33,
+            "B_better": 16,
+            "equivalent": 5,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 5,
+            "B_better": 5,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 1.0,
+          "B_better": 0.3,
+          "equivalent": 0.09090909090909091,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.4636363636363636,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.6470588235294118,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "by_task_base_pairs": {
+        "DG": {
+          "scheduled": 27,
+          "observed": 25,
+          "missing": 2,
+          "exact_matches": 2,
+          "exact_agreement": 0.08,
+          "reference_counts_all": {
+            "equivalent": 24,
+            "B_better": 1,
+            "uncertain": 2
+          },
+          "candidate_counts_observed": {
+            "A_better": 19,
+            "B_better": 5,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 0,
+              "B_better": 1,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 17,
+              "B_better": 4,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 2,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 1.0,
+            "equivalent": 0.045454545454545456,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.5227272727272727,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.7916666666666666,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "ESC": {
+          "scheduled": 27,
+          "observed": 27,
+          "missing": 0,
+          "exact_matches": 4,
+          "exact_agreement": 0.14814814814814814,
+          "reference_counts_all": {
+            "equivalent": 26,
+            "B_better": 1
+          },
+          "candidate_counts_observed": {
+            "B_better": 9,
+            "A_better": 14,
+            "equivalent": 4
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 13,
+              "B_better": 9,
+              "equivalent": 4,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.0,
+            "equivalent": 0.15384615384615385,
+            "uncertain": null
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.07692307692307693,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.6086956521739131,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "QA": {
+          "scheduled": 13,
+          "observed": 12,
+          "missing": 1,
+          "exact_matches": 1,
+          "exact_agreement": 0.08333333333333333,
+          "reference_counts_all": {
+            "B_better": 5,
+            "equivalent": 1,
+            "uncertain": 7
+          },
+          "candidate_counts_observed": {
+            "A_better": 7,
+            "equivalent": 2,
+            "B_better": 3
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 0,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 3,
+              "B_better": 1,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "uncertain": {
+              "A_better": 3,
+              "B_better": 2,
+              "equivalent": 1,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": null,
+            "B_better": 0.2,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.1,
+          "macro_recall_classes_present": 2,
+          "candidate_A_fraction_among_decisive": 0.7,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        },
+        "Summary": {
+          "scheduled": 13,
+          "observed": 13,
+          "missing": 0,
+          "exact_matches": 2,
+          "exact_agreement": 0.15384615384615385,
+          "reference_counts_all": {
+            "uncertain": 3,
+            "A_better": 1,
+            "equivalent": 6,
+            "B_better": 3
+          },
+          "candidate_counts_observed": {
+            "B_better": 7,
+            "A_better": 4,
+            "uncertain": 1,
+            "equivalent": 1
+          },
+          "confusion_reference_rows_candidate_columns": {
+            "A_better": {
+              "A_better": 1,
+              "B_better": 0,
+              "equivalent": 0,
+              "uncertain": 0
+            },
+            "B_better": {
+              "A_better": 1,
+              "B_better": 1,
+              "equivalent": 1,
+              "uncertain": 0
+            },
+            "equivalent": {
+              "A_better": 2,
+              "B_better": 3,
+              "equivalent": 0,
+              "uncertain": 1
+            },
+            "uncertain": {
+              "A_better": 0,
+              "B_better": 3,
+              "equivalent": 0,
+              "uncertain": 0
+            }
+          },
+          "recall_by_observed_reference_class": {
+            "A_better": 1.0,
+            "B_better": 0.3333333333333333,
+            "equivalent": 0.0,
+            "uncertain": 0.0
+          },
+          "macro_recall_decisive_equivalent_present_classes": 0.4444444444444444,
+          "macro_recall_classes_present": 3,
+          "candidate_A_fraction_among_decisive": 0.36363636363636365,
+          "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+          "is_accuracy_against_independent_gold": false
+        }
+      },
+      "reference_reversal": {
+        "paired_bases": 16,
+        "consistent": 14,
+        "missing_pairs": 0,
+        "rate": 0.875
+      },
+      "candidate_reversal": {
+        "paired_bases": 13,
+        "consistent": 8,
+        "missing_pairs": 3,
+        "rate": 0.6153846153846154
+      },
+      "uncertainty_by_task": {
+        "DG": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 9,
+          "observed_base_pairs": 25,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.18518518518518517
+          ],
+          "macro_recall_interval": [
+            0.5,
+            0.5681818181818181
+          ],
+          "macro_recall_valid_replicates": 1275,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "ESC": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 27,
+          "observed_base_pairs": 27,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.037037037037037035,
+            0.2962962962962963
+          ],
+          "macro_recall_interval": [
+            0.019230769230769232,
+            0.15384615384615385
+          ],
+          "macro_recall_valid_replicates": 1256,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "QA": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 12,
+          "observed_base_pairs": 12,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.25
+          ],
+          "macro_recall_interval": [
+            0.0,
+            0.3333333333333333
+          ],
+          "macro_recall_valid_replicates": 1325,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        },
+        "Summary": {
+          "method": "cluster_resampling_percentile_95_percent",
+          "seed": 20260917,
+          "replicates": 2000,
+          "clusters": 13,
+          "observed_base_pairs": 13,
+          "unit": "memory_owner_or_ESC_source_dialogue",
+          "interval": [
+            0.0,
+            0.38461538461538464
+          ],
+          "macro_recall_interval": [
+            0.3333333333333333,
+            0.6666666666666666
+          ],
+          "macro_recall_valid_replicates": 1233,
+          "reference_is_joint_not_independent_gold": true,
+          "macro_recall_supported_classes": [
+            "A_better",
+            "B_better",
+            "equivalent"
+          ],
+          "macro_recall_missing_class_policy": "replicates missing an originally supported class are undefined; report valid count"
+        }
+      }
+    }
+  },
+  "AI_B_exploratory_agreement": {
+    "scheduled": 80,
+    "observed": 77,
+    "missing": 3,
+    "exact_matches": 38,
+    "exact_agreement": 0.4935064935064935,
+    "reference_counts_all": {
+      "A_better": 25,
+      "B_better": 20,
+      "equivalent": 34,
+      "uncertain": 1
+    },
+    "candidate_counts_observed": {
+      "A_better": 44,
+      "B_better": 24,
+      "equivalent": 8,
+      "uncertain": 1
+    },
+    "confusion_reference_rows_candidate_columns": {
+      "A_better": {
+        "A_better": 20,
+        "B_better": 3,
+        "equivalent": 1,
+        "uncertain": 0
+      },
+      "B_better": {
+        "A_better": 8,
+        "B_better": 11,
+        "equivalent": 0,
+        "uncertain": 1
+      },
+      "equivalent": {
+        "A_better": 15,
+        "B_better": 10,
+        "equivalent": 7,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "A_better": 1,
+        "B_better": 0,
+        "equivalent": 0,
+        "uncertain": 0
+      }
+    },
+    "recall_by_observed_reference_class": {
+      "A_better": 0.8333333333333334,
+      "B_better": 0.55,
+      "equivalent": 0.21875,
+      "uncertain": 0.0
+    },
+    "macro_recall_decisive_equivalent_present_classes": 0.5340277777777778,
+    "macro_recall_classes_present": 3,
+    "candidate_A_fraction_among_decisive": 0.6470588235294118,
+    "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+    "is_accuracy_against_independent_gold": false
+  },
+  "decision": {
+    "candidate_promoted_to_material_effect_teacher": false,
+    "task_scope": [
+      "ESC",
+      "QA",
+      "Summary",
+      "DG"
+    ],
+    "basis": [
+      "Frequent directional preferences justified only by slight wording/support differences despite materiality rubric.",
+      "Five of thirteen observed reversal comparisons inconsistent; all sixteen reversed payload pairs byte-verified.",
+      "Fact errors can occur in either human or teacher references; current teacher gives contradictory evidence interpretations under reversal.",
+      "Four presentations violate the frozen rationale length parser after one retry each."
+    ],
+    "threshold_based_pass_fail": false,
+    "selection_uses_ON_rate": false,
+    "tune_on_same_sample": false,
+    "fallback_authority": "paper1_pairwise_teacher_qualification_plan_v3.json weak_teacher_fallback",
+    "formal_pairwise_verdict_source": null,
+    "ESC": "Official Overall non-tied direction may identify effects; tied/unresolved cases remain uncertain.",
+    "QA": "Official semantic correctness non-tied direction may identify effects; tied/unresolved cases remain uncertain.",
+    "Summary_DG": "Without qualified pairwise confirmation, preserve continuous-magnitude/semantic-unresolved cases as uncertain, excluded from supervised likelihood; do not convert uncertain to zero.",
+    "claim_limit": "No claim of complete Summary/DG material-effect supervision. Report task/head coverage and unidentifiable cells; no fabricated PM head training success.",
+    "amount_calibration": "Official-primary-quality amount selection remains possible under separately authorized calibration locks; it does not itself supply material-effect labels."
+  },
+  "next_stage": {
+    "initial_k_grid": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "final_k_selected": false,
+    "RS_frozen_calibration_cards": 52,
+    "RS_frozen_confirmatory_cards": 121,
+    "memory_outer_folds": 5,
+    "seed": 0,
+    "calibration_requests_and_cost_authorization": "NOT_YET_FROZEN_OR_AUTHORIZED",
+    "new_human_sheets_required": false
+  },
+  "artifacts": {
+    "execution_audit.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/execution_audit.json",
+      "sha256": "749a846d43d50fc7c9c72bd17d0a54a25799c67423991a80383f7f60608cd830"
+    },
+    "reference_comparisons.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/reference_comparisons.json",
+      "sha256": "299b619c161690242fc74973f01265aaf3239ebc5d2e0eeae9151f65d3a0742e"
+    },
+    "results.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/results.json",
+      "sha256": "5b297907383b713fe5f0441c47f2de61e96d7e3c28b3436f38269716b4038089"
+    },
+    "aligned_results.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/aligned_results.json",
+      "sha256": "779f823cc57266a62acb372fab2cbd1c44a5a0e79b30cb6cabc24dab2b27efbd"
+    },
+    "aligned_results.csv": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/aligned_results.csv",
+      "sha256": "4a3e3adfdff76da9b802834a7040293afba796faeefc1f0525ef5a012bde0564"
+    },
+    "attempt_diagnostics.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempt_diagnostics.json",
+      "sha256": "82156c63f19c88a2e3b6a8ec2e480f9fc0f4959fa25535f3b956a2cf5f66efd7"
+    },
+    "resume_verification.json": {
+      "path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/resume_verification.json",
+      "sha256": "a84037428c85a37879273ca0ef912177960d46890cebdc0dc68d3decfbc4b130"
+    }
+  },
+  "report": "docs/PM_PAPER1_GEMINI_QUALIFICATION_RESULTS_20260917_ZH.md",
+  "formal_outcomes": 0,
+  "PM_training": 0,
+  "new_generator_calls": 0,
+  "outcome_locks": "ALL_CLOSED"
+}

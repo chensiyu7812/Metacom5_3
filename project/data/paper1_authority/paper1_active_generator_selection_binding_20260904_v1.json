@@ -1,0 +1,42 @@
+{
+  "protocol": "paper1-active-generator-selection-binding-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_PRE_OUTCOME_GENERATOR_SELECTION_PROVENANCE_CLOSED",
+  "purpose": "Expose the still-active Generator selection facts in the current Paper-1 authority namespace without reopening historical V3 files during routine CI.",
+  "selection": {
+    "model": "meta/llama-3.1-8b-instruct",
+    "pm_effect_generation_authorized": true,
+    "completed_dialogues": 331,
+    "successful_turns": 1655,
+    "official_dimension_calls": 2317
+  },
+  "archived_provenance": {
+    "namespace": "historical_v3_only",
+    "routine_ci_reopens_archived_files": false,
+    "files": {
+      "rq0_llama31_8b_esc_eval_exact_preflight_v1.json": "a6d2ee2a15ec470920311b8ed9da40eeea5ea7f4bcf4b701b104c12ff9261ae8",
+      "rq0_llama31_8b_esc_eval_exact_generation_closeout_v1.json": "9f935011aae607ae127e3da44b59e56a3b5c1acb1db94d80295d2e5974c5d005",
+      "rq0_llama31_8b_esc_eval_exact_score_preflight_v1.json": "93115967737649ab2f97f3d5f72348d9388f8de1932d60872ceaeaa6ace67bb9",
+      "rq0_llama31_8b_esc_eval_exact_qualification_v1.json": "18f5ce757b0b2b9b27471cd2203fc0e5fa16ae74bf7a3b9da141cf32cf8052db",
+      "rq0_llama31_8b_esc_eval_exact_contract_v1.json": "c98e71c7fd6c0b85c023a13d5f016c7536219b0a4ce24556198bdcaf86474642",
+      "46_run_rq0_llama31_8b_esc_eval_exact.py": "68f4f4be8c499274fd97b3f26f6e0123f1329cfaf98d414744053645835450b8",
+      "48_score_rq0_llama31_8b_esc_eval_exact.py": "24c657cb3058a43d8323eb7193c661e41fa59cb4ea4ccc4d5aabf2f37f90fed7"
+    },
+    "interpretation": "Hashes preserve traceability only. Archived implementations and evidence are not active runtime or routine-CI dependencies."
+  },
+  "active_runtime": {
+    "authority": "paper1_generator_backend_retirement_local_amendment_20260903_v1.json",
+    "authority_sha256": "13a98a9b6c4a9eb3de0d4c3989c6ecf30b72493e0bc4ae62f8c83e897ef90ce5",
+    "provider": "single-node local A6000 Transformers reference server",
+    "serving_protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1"
+  },
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "paid_api_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

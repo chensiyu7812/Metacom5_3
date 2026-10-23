@@ -1,0 +1,305 @@
+{
+  "protocol": "pm-paper1-esconv-rs-strategy-family-match-evaluator-only-v1",
+  "status": "EVALUATOR_ONLY_RETRIEVER_DIAGNOSTIC_NOT_PM_GOLD_NOT_A_FREEZE",
+  "scope": {
+    "authority_allowed_use": "retriever_strategy_family_sanity_diagnostic_only",
+    "evaluator_only": true,
+    "PM_feature": false,
+    "RS_ON_OFF_gold": false,
+    "candidate_applicability_gold": false,
+    "Generator_outcome": false,
+    "Paper1_capability_metric": false,
+    "winner_selected": false,
+    "pass_fail_gate": false,
+    "formal_outcome_calls": 0
+  },
+  "counts": {
+    "states": 11883,
+    "states_by_effect_split": {
+      "train": 9923,
+      "validation": 1960
+    },
+    "target_strategy_annotation_counts": {
+      "Affirmation and Reassurance": 2005,
+      "Information": 798,
+      "Others": 2105,
+      "Providing Suggestions": 1927,
+      "Question": 2103,
+      "Reflection of feelings": 1034,
+      "Restatement or Paraphrasing": 775,
+      "Self-disclosure": 1136
+    }
+  },
+  "methods": {
+    "lexical_jaccard": {
+      "total": 11883,
+      "match_at_1": 2399,
+      "match_at_3": 5151,
+      "strategy_family_match_at_1": 0.2018850458638391,
+      "strategy_family_match_at_3": 0.4334763948497854,
+      "macro_strategy_family_match_at_1": 0.16900529270037584,
+      "macro_strategy_family_match_at_3": 0.3774492869028227,
+      "by_effect_state_split": {
+        "train": {
+          "total": 9923,
+          "match_at_1": 1989,
+          "match_at_3": 4315,
+          "strategy_family_match_at_1": 0.20044341429003326,
+          "strategy_family_match_at_3": 0.43484833215761365,
+          "macro_strategy_family_match_at_1": 0.1674534732607051,
+          "macro_strategy_family_match_at_3": 0.3787863524262874
+        },
+        "validation": {
+          "total": 1960,
+          "match_at_1": 410,
+          "match_at_3": 836,
+          "strategy_family_match_at_1": 0.20918367346938777,
+          "strategy_family_match_at_3": 0.42653061224489797,
+          "macro_strategy_family_match_at_1": 0.17700109083222804,
+          "macro_strategy_family_match_at_3": 0.37114979611603427
+        }
+      },
+      "by_target_strategy_family": {
+        "Affirmation and Reassurance": {
+          "total": 2005,
+          "match_at_1": 314,
+          "match_at_3": 805,
+          "strategy_family_match_at_1": 0.15660847880299253,
+          "strategy_family_match_at_3": 0.4014962593516209
+        },
+        "Information": {
+          "total": 798,
+          "match_at_1": 50,
+          "match_at_3": 138,
+          "strategy_family_match_at_1": 0.06265664160401002,
+          "strategy_family_match_at_3": 0.17293233082706766
+        },
+        "Others": {
+          "total": 2105,
+          "match_at_1": 614,
+          "match_at_3": 1271,
+          "strategy_family_match_at_1": 0.29168646080760097,
+          "strategy_family_match_at_3": 0.6038004750593824
+        },
+        "Providing Suggestions": {
+          "total": 1927,
+          "match_at_1": 435,
+          "match_at_3": 958,
+          "strategy_family_match_at_1": 0.22573949143746758,
+          "strategy_family_match_at_3": 0.497145822522055
+        },
+        "Question": {
+          "total": 2103,
+          "match_at_1": 708,
+          "match_at_3": 1224,
+          "strategy_family_match_at_1": 0.33666191155492153,
+          "strategy_family_match_at_3": 0.5820256776034237
+        },
+        "Reflection of feelings": {
+          "total": 1034,
+          "match_at_1": 89,
+          "match_at_3": 236,
+          "strategy_family_match_at_1": 0.086073500967118,
+          "strategy_family_match_at_3": 0.22823984526112184
+        },
+        "Restatement or Paraphrasing": {
+          "total": 775,
+          "match_at_1": 64,
+          "match_at_3": 188,
+          "strategy_family_match_at_1": 0.08258064516129032,
+          "strategy_family_match_at_3": 0.24258064516129033
+        },
+        "Self-disclosure": {
+          "total": 1136,
+          "match_at_1": 125,
+          "match_at_3": 331,
+          "strategy_family_match_at_1": 0.11003521126760564,
+          "strategy_family_match_at_3": 0.2913732394366197
+        }
+      }
+    },
+    "bge_small": {
+      "total": 11883,
+      "match_at_1": 2301,
+      "match_at_3": 5228,
+      "strategy_family_match_at_1": 0.19363797020954304,
+      "strategy_family_match_at_3": 0.4399562400067323,
+      "macro_strategy_family_match_at_1": 0.16950523435561926,
+      "macro_strategy_family_match_at_3": 0.39553903881606606,
+      "by_effect_state_split": {
+        "train": {
+          "total": 9923,
+          "match_at_1": 1924,
+          "match_at_3": 4392,
+          "strategy_family_match_at_1": 0.19389297591454197,
+          "strategy_family_match_at_3": 0.4426080822331956,
+          "macro_strategy_family_match_at_1": 0.16922107460717398,
+          "macro_strategy_family_match_at_3": 0.3979897332872102
+        },
+        "validation": {
+          "total": 1960,
+          "match_at_1": 377,
+          "match_at_3": 836,
+          "strategy_family_match_at_1": 0.1923469387755102,
+          "strategy_family_match_at_3": 0.42653061224489797,
+          "macro_strategy_family_match_at_1": 0.17135113433132157,
+          "macro_strategy_family_match_at_3": 0.3843821580892292
+        }
+      },
+      "by_target_strategy_family": {
+        "Affirmation and Reassurance": {
+          "total": 2005,
+          "match_at_1": 326,
+          "match_at_3": 863,
+          "strategy_family_match_at_1": 0.16259351620947632,
+          "strategy_family_match_at_3": 0.4304239401496259
+        },
+        "Information": {
+          "total": 798,
+          "match_at_1": 75,
+          "match_at_3": 192,
+          "strategy_family_match_at_1": 0.09398496240601503,
+          "strategy_family_match_at_3": 0.24060150375939848
+        },
+        "Others": {
+          "total": 2105,
+          "match_at_1": 500,
+          "match_at_3": 1104,
+          "strategy_family_match_at_1": 0.2375296912114014,
+          "strategy_family_match_at_3": 0.5244655581947744
+        },
+        "Providing Suggestions": {
+          "total": 1927,
+          "match_at_1": 408,
+          "match_at_3": 941,
+          "strategy_family_match_at_1": 0.21172807472755578,
+          "strategy_family_match_at_3": 0.48832381940840686
+        },
+        "Question": {
+          "total": 2103,
+          "match_at_1": 657,
+          "match_at_3": 1251,
+          "strategy_family_match_at_1": 0.3124108416547789,
+          "strategy_family_match_at_3": 0.5948644793152639
+        },
+        "Reflection of feelings": {
+          "total": 1034,
+          "match_at_1": 121,
+          "match_at_3": 298,
+          "strategy_family_match_at_1": 0.11702127659574468,
+          "strategy_family_match_at_3": 0.28820116054158607
+        },
+        "Restatement or Paraphrasing": {
+          "total": 775,
+          "match_at_1": 79,
+          "match_at_3": 214,
+          "strategy_family_match_at_1": 0.10193548387096774,
+          "strategy_family_match_at_3": 0.2761290322580645
+        },
+        "Self-disclosure": {
+          "total": 1136,
+          "match_at_1": 135,
+          "match_at_3": 365,
+          "strategy_family_match_at_1": 0.11883802816901408,
+          "strategy_family_match_at_3": 0.32130281690140844
+        }
+      }
+    },
+    "bge_m3": {
+      "total": 11883,
+      "match_at_1": 2497,
+      "match_at_3": 5211,
+      "strategy_family_match_at_1": 0.21013212151813515,
+      "strategy_family_match_at_3": 0.4385256248422116,
+      "macro_strategy_family_match_at_1": 0.1762698153660218,
+      "macro_strategy_family_match_at_3": 0.3851683276599611,
+      "by_effect_state_split": {
+        "train": {
+          "total": 9923,
+          "match_at_1": 2091,
+          "match_at_3": 4352,
+          "strategy_family_match_at_1": 0.2107225637408042,
+          "strategy_family_match_at_3": 0.43857704323289326,
+          "macro_strategy_family_match_at_1": 0.176461639612843,
+          "macro_strategy_family_match_at_3": 0.38455214138015487
+        },
+        "validation": {
+          "total": 1960,
+          "match_at_1": 406,
+          "match_at_3": 859,
+          "strategy_family_match_at_1": 0.20714285714285716,
+          "strategy_family_match_at_3": 0.43826530612244896,
+          "macro_strategy_family_match_at_1": 0.17571316534192566,
+          "macro_strategy_family_match_at_3": 0.3887737602810396
+        }
+      },
+      "by_target_strategy_family": {
+        "Affirmation and Reassurance": {
+          "total": 2005,
+          "match_at_1": 337,
+          "match_at_3": 847,
+          "strategy_family_match_at_1": 0.16807980049875312,
+          "strategy_family_match_at_3": 0.4224438902743142
+        },
+        "Information": {
+          "total": 798,
+          "match_at_1": 47,
+          "match_at_3": 133,
+          "strategy_family_match_at_1": 0.05889724310776942,
+          "strategy_family_match_at_3": 0.16666666666666666
+        },
+        "Others": {
+          "total": 2105,
+          "match_at_1": 613,
+          "match_at_3": 1176,
+          "strategy_family_match_at_1": 0.29121140142517815,
+          "strategy_family_match_at_3": 0.5586698337292162
+        },
+        "Providing Suggestions": {
+          "total": 1927,
+          "match_at_1": 386,
+          "match_at_3": 887,
+          "strategy_family_match_at_1": 0.20031136481577583,
+          "strategy_family_match_at_3": 0.46030098598858327
+        },
+        "Question": {
+          "total": 2103,
+          "match_at_1": 826,
+          "match_at_3": 1366,
+          "strategy_family_match_at_1": 0.3927722301474085,
+          "strategy_family_match_at_3": 0.649548264384213
+        },
+        "Reflection of feelings": {
+          "total": 1034,
+          "match_at_1": 88,
+          "match_at_3": 265,
+          "strategy_family_match_at_1": 0.0851063829787234,
+          "strategy_family_match_at_3": 0.2562862669245648
+        },
+        "Restatement or Paraphrasing": {
+          "total": 775,
+          "match_at_1": 92,
+          "match_at_3": 231,
+          "strategy_family_match_at_1": 0.11870967741935484,
+          "strategy_family_match_at_3": 0.29806451612903223
+        },
+        "Self-disclosure": {
+          "total": 1136,
+          "match_at_1": 108,
+          "match_at_3": 306,
+          "strategy_family_match_at_1": 0.09507042253521127,
+          "strategy_family_match_at_3": 0.26936619718309857
+        }
+      }
+    }
+  },
+  "interpretation": "Family match asks whether a retrieved source card shares the coarse human ESConv strategy annotation of the target supporter turn. It does not establish that the card is contextually applicable, worth opening, or beneficial to the frozen Generator.",
+  "provenance": {
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "retriever_surface_sha256": "fd7182c35a3ab737b9b10f1c2cdca807026327e273fc81fe6455d7aa97404096",
+    "script_sha256": "fd108fbee1f708b9786a58ff858f04bbe54eb0a3844982dd29f4e7a39a421fba",
+    "evaluator_rows_path": "data/paper1_evaluator_only_rs/esconv_rs_strategy_family_match_evaluator_only_v1.jsonl",
+    "evaluator_rows_sha256": "1457c0f6a42753b4a58b38d6441dc50765ec1dbbadb5f512a60750bd7124438d"
+  }
+}

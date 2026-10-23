@@ -1,0 +1,138 @@
+{
+  "protocol": "paper1-gemini-pairwise-teacher-identity-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_PRE_OUTCOME_IDENTITY_FROZEN_CALLS_NOT_AUTHORIZED",
+  "role": "candidate pairwise material-effect teacher evaluated against the frozen two-human reference; not an official benchmark scorer",
+  "provider": {
+    "name": "Google Gemini Developer API",
+    "backend": "Gemini API",
+    "base_url": "https://generativelanguage.googleapis.com/v1beta",
+    "method": "models.generateContent",
+    "api_key_env": "GEMINI_API_KEY"
+  },
+  "model": {
+    "request_model": "gemini-2.5-flash-lite",
+    "models_get_name": "models/gemini-2.5-flash-lite",
+    "models_get_version": "001",
+    "models_get_display_name": "Gemini 2.5 Flash-Lite",
+    "models_get_description": "Stable version of Gemini 2.5 Flash-Lite, released in July of 2025",
+    "models_get_checked_at": "2026-09-04",
+    "input_token_limit": 1048576,
+    "output_token_limit": 65536,
+    "latest_alias_used": false,
+    "response_model_version_must_be_recorded": true,
+    "mixed_response_model_versions_fail_closed": true
+  },
+  "generation": {
+    "temperature": 0,
+    "thinking_config": {
+      "thinkingBudget": 0
+    },
+    "maxOutputTokens": 256,
+    "responseMimeType": "application/json",
+    "responseJsonSchema": {
+      "type": "object",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "A_better",
+            "B_better",
+            "equivalent",
+            "uncertain"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict",
+        "rationale"
+      ],
+      "additionalProperties": false
+    },
+    "seed": 0,
+    "tools": [],
+    "grounding": false,
+    "batch_api": false,
+    "concurrency": 1
+  },
+  "prompt_identity": {
+    "protocol": "paper1-pairwise-material-effect-teacher-v1",
+    "implementation": "project/src/metacom_pm/paper1/evaluation/pairwise_teacher.py",
+    "common_instruction_sha256": "6d9ae14eb646b22d1c1a3ab9506628fae6310d52b27ce9d56dafd5beab70b630",
+    "task_rubric_sha256": {
+      "DG": "1fa436a981a933592eba046a210e78d8f9a8ed180e2b01dfa0c6f34a7d396b8f",
+      "ESC": "18d76a78132fe476f01ef22eb79241fef41bbb2fd5ee6a0f3c445ed817711857",
+      "QA": "52811395c1bb03623ea28648d876ba65150beea3afa33a8c6459bf92a76d527f",
+      "Summary": "3b3fe1d22236e2d592f3cc342df77a906d71384c242f44fe9f0ca0302a390c26"
+    },
+    "response_schema_sha256": "0d077887b9fad98b3078f6b3e38251db8b0946d876a516cf0e61963cbd1d58c0"
+  },
+  "parser": {
+    "implementation": "parse_pairwise_teacher_response",
+    "exact_keys": [
+      "verdict",
+      "rationale"
+    ],
+    "verdicts": [
+      "A_better",
+      "B_better",
+      "equivalent",
+      "uncertain"
+    ],
+    "rationale_nonblank_max_characters": 600,
+    "markdown_fence_or_free_text_accepted": false,
+    "conflicting_or_extra_fields": "fail_closed"
+  },
+  "retry": {
+    "maximum_physical_attempts_per_presentation": 2,
+    "retry_once_on": [
+      "HTTP_408",
+      "HTTP_429",
+      "HTTP_5XX",
+      "network_timeout",
+      "invalid_structured_output"
+    ],
+    "successful_prompt_hash_may_be_recalled": false,
+    "result_after_exhaustion": "uncertain_operational_failure",
+    "every_attempt_logged": true
+  },
+  "qualification": {
+    "base_semantic_pairs": 80,
+    "reversed_presentations": 16,
+    "total_presentations": 96,
+    "candidate_calls": 96,
+    "selection_uses_human_agreement_not_positive_label_rate": true,
+    "no_absolute_pass_percentage": true,
+    "weak_candidate_fallback": "official-primary-anchor identifiable cases only; unresolved cases remain uncertain"
+  },
+  "pricing_snapshot": {
+    "standard_input_usd_per_million_tokens": 0.1,
+    "standard_output_usd_per_million_tokens": 0.4,
+    "source": "https://ai.google.dev/gemini-api/docs/pricing",
+    "accessed_date": "2026-09-04"
+  },
+  "budget": {
+    "teacher_qualification_hard_cap_usd": 0.1,
+    "paid_calls_authorized_by_this_identity": false,
+    "reservation_required_before_each_call": true,
+    "same_successful_prompt_hash_repeat_forbidden": true
+  },
+  "official_sources": {
+    "models": "https://ai.google.dev/gemini-api/docs/models",
+    "structured_output": "https://ai.google.dev/gemini-api/docs/structured-output",
+    "thinking": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+    "pricing": "https://ai.google.dev/gemini-api/docs/pricing"
+  },
+  "paid_api_calls": 0,
+  "formal_outcome_calls": 0,
+  "pm_training_runs": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

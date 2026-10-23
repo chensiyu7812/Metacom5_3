@@ -1,0 +1,247 @@
+{
+  "protocol": "pm-paper1-esconv-rs-zero-outcome-summary-v1",
+  "status": "ZERO_OUTCOME_AUDIT_ONLY_AWAITING_M2_FREEZE",
+  "intended_grain": "one row per supporter-response opportunity after a visible seeker turn",
+  "source": {
+    "esconv_artifact": "data/external/ESConv.json",
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "project_defined_split_manifest": "data/strategy/esconv_split_manifest_v1_5.jsonl",
+    "project_defined_split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "effect_state_splits": [
+      "train",
+      "validation"
+    ],
+    "evoemo_overlap_dialogues_excluded": true,
+    "strategy_bank_split": "train",
+    "strategy_bank_leave_current_dialogue_out_required": true
+  },
+  "privileged_field_audit": {
+    "situation": {
+      "status": "DIAGNOSTIC_ONLY_FIELD_EXCLUDED_FROM_ACTIVE_CATALOG_AND_STATE",
+      "dialogues_with_nonempty_situation": 1300,
+      "situation_verbatim_contained_anywhere_in_dialogue": 45,
+      "situation_not_verbatim_contained_anywhere_in_dialogue": 1255
+    },
+    "excluded_everywhere": [
+      "survey_score",
+      "turn.feedback",
+      "seeker_question1",
+      "seeker_question2",
+      "supporter_question1",
+      "supporter_question2"
+    ],
+    "target_supporter_response_used_as_state_or_query": false,
+    "future_turns_used_as_state_or_query": false
+  },
+  "superseded_artifact": {
+    "path": "data/paper1_authority/esconv_strategy_source_identity_v1.jsonl",
+    "sha256": "819f58ba23be2888994f61b7a43a9cc360449fde4efb160fc137a080d08312f9",
+    "reason": "v1 retrieval hashes were conditioned on ESConv situation text"
+  },
+  "counts": {
+    "strategy_source_cards": 12169,
+    "strategy_source_dialogues": 875,
+    "decision_states": 11883,
+    "decision_state_dialogues": 1047,
+    "decision_states_by_split": {
+      "train": 9923,
+      "validation": 1960
+    },
+    "states_with_leave_dialogue_out_candidates": 11883,
+    "states_with_nonzero_lexical_overlap": 11882
+  },
+  "overlap_policy_sensitivity": {
+    "status": "M2_RESEARCHER_DECISION_REQUIRED",
+    "conservative_existing_project_flag": {
+      "strategy_source_cards": 12169,
+      "strategy_source_dialogues": 875,
+      "decision_states": 11883,
+      "decision_state_dialogues": 1047
+    },
+    "authority_literal_esconv_train_bank_train_dev_states": {
+      "strategy_source_cards": 12906,
+      "strategy_source_dialogues": 934,
+      "decision_states": 12656,
+      "decision_state_dialogues": 1120
+    },
+    "note": "The highest research program says ESConv train for the Bank and train/dev for effects; it does not itself require the legacy EvoEmo-overlap exclusion. No final policy is selected here."
+  },
+  "outcome_blind_distributions": {
+    "candidate_count_after_leave_dialogue_out": {
+      "min": 12123,
+      "p25": 12153,
+      "median": 12156,
+      "p75": 12159,
+      "p90": 12169,
+      "p95": 12169,
+      "max": 12169
+    },
+    "nonzero_lexical_overlap_candidate_count": {
+      "min": 0,
+      "p25": 8494,
+      "median": 9695,
+      "p75": 10359,
+      "p90": 10781,
+      "p95": 10968,
+      "max": 11848
+    },
+    "query_words": {
+      "min": 2,
+      "p25": 61,
+      "median": 91,
+      "p75": 126,
+      "p90": 166,
+      "p95": 196,
+      "max": 436
+    },
+    "source_card_retrieval_words": {
+      "min": 1,
+      "p25": 60,
+      "median": 91,
+      "p75": 126,
+      "p90": 166,
+      "p95": 196,
+      "max": 436
+    },
+    "source_card_diagnostic_injected_words": {
+      "min": 23,
+      "p25": 31,
+      "median": 38,
+      "p75": 47,
+      "p90": 58,
+      "p95": 67,
+      "max": 189
+    },
+    "diagnostic_top1_lexical_jaccard": {
+      "min": 0.0,
+      "p25": 0.13513513513513514,
+      "median": 0.15217391304347827,
+      "p75": 0.1836734693877551,
+      "p90": 0.32,
+      "p95": 0.6,
+      "max": 1.0
+    },
+    "diagnostic_top1_lexical_jaccard_population_variance": 0.031144784170924342,
+    "diagnostic_bundle_injected_words": {
+      "1": {
+        "min": 23,
+        "p25": 31,
+        "median": 37,
+        "p75": 46,
+        "p90": 56,
+        "p95": 65,
+        "max": 189
+      },
+      "2": {
+        "min": 46,
+        "p25": 66,
+        "median": 77,
+        "p75": 91,
+        "p90": 107,
+        "p95": 120,
+        "max": 244
+      },
+      "4": {
+        "min": 96,
+        "p25": 137,
+        "median": 157,
+        "p75": 180,
+        "p90": 206,
+        "p95": 225,
+        "max": 363
+      }
+    }
+  },
+  "diagnostic_lexical_method": {
+    "status": "PHASE1_AUDIT_ONLY_NOT_FINAL_RETRIEVER",
+    "similarity": "token_set_jaccard",
+    "max_card_document_frequency": 0.2,
+    "query_preceding_turns": 6,
+    "top_k": 4
+  },
+  "diagnostic_word_cap_grid": {
+    "status": "AUDIT_GRID_ONLY_WORD_COUNTS_NOT_MODEL_TOKENS_NOT_M2_FREEZE",
+    "cells": {
+      "k1_cap64": {
+        "states_within_cap": 11265,
+        "rate": 0.9479929310780106
+      },
+      "k1_cap128": {
+        "states_within_cap": 11878,
+        "rate": 0.9995792308339645
+      },
+      "k1_cap256": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      },
+      "k1_cap512": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      },
+      "k2_cap64": {
+        "states_within_cap": 2700,
+        "rate": 0.22721534965917697
+      },
+      "k2_cap128": {
+        "states_within_cap": 11499,
+        "rate": 0.9676849280484726
+      },
+      "k2_cap256": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      },
+      "k2_cap512": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      },
+      "k4_cap64": {
+        "states_within_cap": 0,
+        "rate": 0.0
+      },
+      "k4_cap128": {
+        "states_within_cap": 1905,
+        "rate": 0.1603130522595304
+      },
+      "k4_cap256": {
+        "states_within_cap": 11729,
+        "rate": 0.9870403096861062
+      },
+      "k4_cap512": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      }
+    }
+  },
+  "draft_visible_request_flags": {
+    "status": "DETERMINISTIC_DIAGNOSTIC_NOT_M2_FEATURE_FREEZE",
+    "advice_request": 308,
+    "listen_only": 0,
+    "no_probing": 1
+  },
+  "feature_readiness": {
+    "state_candidate_similarity": "diagnostic lexical variance measured; final backend pending",
+    "atomic_move_type": "source-card property available; exact mapping/rendering pending",
+    "recent_same_move": "pending runtime-observable text classifier; source gold not used",
+    "explicit_request_flags": "draft deterministic parser audited; exact parser pending",
+    "candidate_token_cost": "word proxy audited; frozen Generator tokenizer pending",
+    "forbidden_shortcuts_present": false
+  },
+  "artifacts": {
+    "strategy_source_identity": "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+    "strategy_source_identity_sha256": "f7b785d2058061f0b874b93a582ae59bba75432e083680a8088e44972a489d97",
+    "decision_state_identity": "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl",
+    "decision_state_identity_sha256": "e41e6486cdb67ec1d0445e3dabe010d805786cc2aef736a538ed321c1ea2c40e",
+    "census": "data/paper1_public_rs/esconv_rs_zero_outcome_census_v1.jsonl",
+    "census_sha256": "825c9cb5cad40afceaa98f71be8a152480f84b11201b3188617e56094ca96fcf"
+  },
+  "formal_outcome_calls": 0,
+  "pending_m2_freeze": [
+    "final_card_rendering",
+    "retrieval_backend_and_query_window",
+    "candidate_bundle_top_k",
+    "generator_token_cap",
+    "exact_rs_feature_schema",
+    "effect_state_overlap_policy",
+    "fold_manifest"
+  ]
+}

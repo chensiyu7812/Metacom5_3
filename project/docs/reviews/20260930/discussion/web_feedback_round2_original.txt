@@ -1,0 +1,197 @@
+我看完以后，**Codex 这次的反驳是成立的，而且比我上一版“直接上 Prometheus + Skywork + pairwise”更严谨。** 它不是否定我们刚才的方向，而是把“有希望的解决办法”重新降回了它们应有的位置：**候选方案，需要先做本任务适配验证，不能提前当作 reward 已经解决。**
+
+这次最值得接受的修正有六个。
+
+第一，**自然 OFF/ON 大量平局本身不是裁判失败证据。** 当前真正足以否决 Qwen 直接当 reward 的，是同输入重复结果能相差 0.5、事实/建议分类不一致、正确历史被误罚以及“引用存在但推理不成立”等问题。你们最终报告本身也已经准确冻结为“开发诊断，不自动生成训练标签”。:chatgpt-content-reference{index="0"} :chatgpt-content-reference{index="1"} 这一点 Codex 纠正得对：**不能要求一个合格裁判一定判 ON 赢。**
+
+第二，**RefChecker 只能提供更好的分解思想，不能把语义问题变成程序问题。** RefChecker 确实是“claim extraction → reference → claim-level checking”的模块化设计，而且 claim extractor/checker 本身仍是模型组件。:chatgpt-content-reference{index="2"} Codex 举的例子也很好：“也许你可以再联系上次帮过你的姐姐”虽然是建议句，却预设了“姐姐以前帮助过你”。所以我们不能用简单规则：
+
+> hedge / question / suggestion → NON_FACTUAL
+
+而应该检查**句子中有没有 embedded personal presupposition**。
+
+第三，**Prometheus 和 Skywork 应该只是两名预注册候选，不是未来固定“双裁判”。** Prometheus-2 官方 pairwise 协议确实明确要求最后输出 A 或 B，并没有原生的 tie/uncertain 类别；我们如果加入 tie，本身就是新的 task adaptation，必须重新验证。:chatgpt-content-reference{index="3"} Skywork Reward V2 则是 sequence-classification reward model，官方推荐推理输入不超过训练时的 16,384 tokens，并明确建议 chat template 不加 system prompt。:chatgpt-content-reference{index="4"} 所以 Codex 对接口、长历史和 prompt 适配的担心完全合理。
+
+第四，**pairwise 不是“只换一个打分方法”，而是改变 reward 的数学含义。** 这一点是它最重要的纠正之一。原式是：
+
+\[
+R=\Delta(q/4-\alpha m)-\lambda C
+\]
+
+现在如果变成：
+
+\[
+s\in\{-1,0,+1\}
+\]
+
+质量差异的量纲直接变了；原来的 `λ=0.05` 和 `α=1` 就不能自动继承。你方案原来也明确说 α、λ、评分锚点必须在真实训练前冻结。:chatgpt-content-reference{index="5"}
+
+我现在建议**不要急着定最终 reward 公式**，而是在 R04B 里并列测试两个明确候选：
+
+\[
+R_A =
+s(E,\mathrm{OFF})
+-\alpha[M(E)-M(\mathrm{OFF})]
+-\lambda C
+\]
+
+以及一个更“约束式”的版本：
+
+\[
+R_B =
+s(E,\mathrm{OFF})-\lambda C
+\]
+
+但当存在**高置信 major misuse**时，单独做 veto / fixed penalty。
+
+为什么同时测试？因为 Codex 指出的“双重惩罚”是真的：一个严重事实错误很可能已经让 pairwise judge 判输，如果再扣一次 `m=1`，就是有意的 risk amplification，而不是“自然数学结果”。这必须变成显式研究选择。
+
+而且在 R04B 阶段我甚至建议**先不把 better/tie/worse 映射成 scalar reward**。先保存：
+
+```text
+support_preference
+misuse_record
+judge disagreement
+order consistency
+repeat consistency
+context coverage
+cost
+```
+
+把测量工具验证完，最后再决定怎样 scalarize。这样不会又出现“一边调 reward，一边训练 PPO”的污染。
+
+第五，**QA bridge 仍然非常值得做，但 Codex 对“客观”的纠正也对。** ES-MemEval QA 并不等于每题都有 deterministic exact gold；你当前官方链路还有 LLM judge、F1、BERTScore 等不同指标。所以 QA bridge 最好进一步收窄：
+
+> **只选择 train/dev 中能够明确程序判定的 QA 子集。**
+
+例如短实体、日期、明确 yes/no、简单事实抽取，可以用 normalized exact match / token F1。开放式 user modeling、复杂 temporal explanation 先不作为 RL reward。
+
+这样我们得到一个非常干净的中间结论：
+
+> toy E0 → 真实 history / BGE / GET-STOP → objective-ish QA outcome。
+
+而原先最多 48 个 **test targets** 仍留给外部验证，不能拿回来训练。这一点我赞成 Codex。
+
+第六，**人评现在不要加。** Codex 对我的“24 train/dev anchor + 24 final”指出了一个真实问题：这相当于又增加两轮活动，而且用户本来就不希望不断做人评。
+
+我现在会改成：
+
+> **暂时不预注册新的训练前人评。**
+
+先看机器侧能不能把 reward contract 做到足够稳定。如果未来只允许一次新增人工活动，优先留给**最终冻结系统的独立 blind comparison**。代价是训练 reward 只能声称：
+
+> task-qualified automated proxy
+
+不能强声称：
+
+> human-aligned emotional-support utility。
+
+这是可以接受的研究边界。
+
+RLFF-ESC 为什么敢更强地谈 critic 对齐？因为它专门让三名有心理学背景的人和 critic 独立判 100 个对话，最后报告 critic 与 human-majority 的 Krippendorff α=0.786、Spearman ρ=0.796。:chatgpt-content-reference{index="6"} 但这个样本量和任务定义不能直接搬到我们的单轮资源增量判断上。Codex这一点也说得对。
+
+---
+
+## 所以现在我建议正式冻结成这条推进顺序
+
+**第一主线直接推进 R05。**
+
+这已经是近期最确定、最能产生真正研究资产的工作：
+
+> 12–24 prefix 小批量  
+> → teacher generation  
+> → source/temporal/task-boundary audit  
+> → accept/reject  
+> → LoRA 真更新  
+> → adapter reload  
+> → dev NLL  
+> → 生成行为诊断。
+
+现有 q/m **不得决定准入**。
+
+核验出现问题最好优先：
+
+> reject / uncertain
+
+而不是把核验者看到的额外历史告诉 teacher 重新修答案，否则会制造信息泄漏。
+
+这一步做完，我们至少会第一次得到真正的：
+
+> **trained \(X_l\)**。
+
+---
+
+**第二条线是 R04B，但先做“Reward Contract”，不是先下载模型。**
+
+先写清楚五件事：
+
+1. 哪些是 deterministic validity；
+2. semantic misuse 的最小 taxonomy；
+3. pairwise 到底比较什么——支持性、贴合性、行动帮助，还是 holistic response quality；
+4. tie / uncertain 的定义；
+5. misuse 和 pairwise quality 如何避免无意 double counting。
+
+这五件没写死之前，Prometheus 和 Skywork都不启动批量测试。
+
+---
+
+**第三步才做一个有边界的 candidate evaluator experiment。**
+
+只测试：
+
+> Prometheus-2  
+> Skywork Reward V2
+
+到此为止，不再 judge shopping。
+
+在同一固定 development stress set 上报告：
+
+- technical completion；
+- A/B ↔ B/A order consistency；
+- repeat consistency；
+- known corruption detection；
+- style invariance；
+- evidence reasoning correctness；
+- long-context coverage；
+- natural pair 上的 tie / discrimination；
+- disagreement / UNKNOWN rate；
+- 按 RS/MP/MS/ME、历史长度分层的失败率。
+
+**评价它们是否合格，不看“谁让 ON 赢得更多”。**
+
+这点一定锁死。
+
+RewardBench 2 本身也提醒了一个很重要的事实：reward benchmark 与 downstream PPO 可以相关，但通用 benchmark 表现和真实 downstream use 仍然不是同一件事，因此 task-specific qualification 不能省略。:chatgpt-content-reference{index="7"}
+
+---
+
+**第四步做 QA semantic bridge。**
+
+如果：
+
+> E0 ✅  
+> QA real-resource PM ✅
+
+那么我们已经证明了一件很重要的事情：
+
+> **Sequential GET/STOP 在真实长期语义资源环境里是可学习的。**
+
+即使自然 ESC reward 仍然没解决，RL 方法本身也不再只是 toy。
+
+---
+
+**最后才决定 natural-support PPO 是否开。**
+
+到那个节点只有三种结果：
+
+- reward stack 稳定 → 开正式 natural-support PPO；
+- reward 只能稳定判断 major misuse / grounding，不能判断细微 helpfulness → 收窄为 constrained/resource-risk RL；
+- reward 仍然不稳定 → 不硬上 PPO，保留 R05 + OneShot/finite-plan + QA-RL 作为可信结果。
+
+这三个都比“换一个 judge 然后曲线涨了”科学。
+
+还有一个实现状态我也核了一下：连接的 GitHub 仓库本身可正常访问，但 Codex现在引用的 `rl1/judge_scoped.py` 等最新文件看起来还是服务器本地工作内容，并不在默认公开分支上，因此**当前最新实现状态应以你发来的本地 closeout 报告为准**，不能拿公开仓库旧版本反推现在已经完成了什么。
+
+所以我现在会采用 Codex 这版顺序，而不是我上一条那个更激进的执行指令。**它不是把路线变慢，而是在真正开始消耗大量 G/J/PPO 计算前，把“哪个问题已经解决、哪个只是候选解决办法”重新分清了。**
+
+下一步最适合让 Codex做的，就是它自己总结的前两项：**先完成 R05 小批量闭环，同时单独写一份 R04B reward-contract amendment，不训练 natural-support PPO。**这样推进最稳。

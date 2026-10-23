@@ -1,0 +1,39 @@
+{
+  "protocol": "pm-rl1-full-prefix-bge-v1",
+  "binding": {
+    "binding_version": "paper1-bge-m3-embedding-binding-v2",
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "pooling_mode": "cls",
+    "normalize_embeddings": true,
+    "embedding_dimension": 1024,
+    "max_seq_length": 8192,
+    "truncation_side": "right",
+    "dtype": "torch.float32"
+  },
+  "runtime": {
+    "torch_version": "2.3.1+cu121",
+    "sentence_transformers_version": "5.1.0",
+    "weights_sha256_verified": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e"
+  },
+  "rs_alias_sha256": "382737a23a78cbe9943c02bf368561a6996a2393ed0f98d4deffb29cb570813a",
+  "query": "entire public current-session prefix",
+  "tie_break": "candidate_id",
+  "probe_only": true,
+  "renderer_identity": "34e7df59a45ce62584b86f2681aa8adeee791eb84d81077db1e62dab58ac5018",
+  "elapsed_seconds": 187.7049207080272,
+  "script_sha256": "8fcb7b57e7efd42a9fae77ca7fe16865e0ead8f24b3ecc774035a414d9199c83",
+  "artifact_sha256": {
+    "episode_specs_private.json": "ca47b7623322e0a5769207711d84cc9097ae1faf735060fe518c1dbf132d5033",
+    "mechanical_traces.json": "8c3a635824503fc733f2367e9ee5fe5398dcbf3c328a2ff2ecb484f5d0b3bb83",
+    "capacity_probe.json": "b944b295697a668ee84753d0382164a4bfad19d6d57d54661107bc4bcdb05857"
+  },
+  "outcome_calls": 0,
+  "api_cost_usd": 0,
+  "limitations": [
+    "fact-family grouping including descendants of shared sessions",
+    "historical exposure manifest and held-out interpretation",
+    "capacity census with RS before resource-budget freeze"
+  ]
+}

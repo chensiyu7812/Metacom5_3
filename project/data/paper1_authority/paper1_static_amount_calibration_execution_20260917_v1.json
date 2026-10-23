@@ -1,0 +1,132 @@
+{
+  "protocol": "paper1-static-amount-calibration-execution-v1",
+  "date": "2026-09-17",
+  "status": "LOCAL_GENERATION_AUTHORIZED_PAID_SCORING_NOT_AUTHORIZED",
+  "researcher_direction": [
+    "请核查准备包，补齐可断点恢复的生成执行器及官方评分执行、回收与分析流程，在冻结 A6000 可用后推进本地生成。",
+    "新官方评分拟议的 $15 尚未批准。先完成执行器、真实评分请求和费用清单，再就具体付费批次确认。",
+    "不要停止其他项目的 GPU 任务；设备忙时继续完成不依赖 GPU 的工作。"
+  ],
+  "scope": {
+    "local_generation": "Execute the already prepared 1,924 natural-end Generator requests of static_sample_20260917_v1 on the frozen Llama-3.1-8B stack. Free, local, resumable. One shared true-OFF response per target, already structural in the package.",
+    "offline_binding": "Bind completed responses to exact official scorer payloads and produce a real cost manifest from observed prediction lengths.",
+    "paid_scoring": "NOT authorized by this record. A separate researcher approval naming the stage cap must set new_paid_execution_authorized.",
+    "analysis": "Recovery, completeness auditing and missingness reporting are authorized. Producing fold-external k recommendations additionally requires the RQ2 memory amount-calibration authorization flag below."
+  },
+  "local_generation_authorized": true,
+  "new_paid_API_calls_authorized": false,
+  "new_API_cost_usd": 0,
+  "paid_scoring_stage": {
+    "stage": "static_amount_calibration_official_scoring_v1",
+    "model": "gpt-4o-2024-11-20",
+    "proposed_stage_hard_cap_including_retries_usd": "SUPERSEDED_SEE_followup_total_budget_20260918",
+    "proposed_cap_authorized": false,
+    "cap_is_not_a_guaranteed_full_batch_price": true,
+    "length_scenarios_are_estimates_not_output_caps": true,
+    "account_availability_confirmed_by_paid_call": false,
+    "superseded_by_followup_total_budget": true
+  },
+  "rq2_memory_amount_calibration_recommendation_authorized": false,
+  "k_star_frozen": false,
+  "formal_outcome_calls_authorized": false,
+  "PM_training_authorized_by_this_record": false,
+  "outcome_locks_unchanged": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "note": "Local generation produces predictions, not calibration outcomes. The executors assert every scoped lock is still CLOSED before running and never edit the config."
+  },
+  "gpu_policy": {
+    "device_selection": "CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1; verify the visible device reports NVIDIA RTX A6000 before loading.",
+    "other_project_jobs": "KVCacheNet processes of another project may occupy the A6000. Never stop, signal, or contend with them, and never silently move the frozen Generator to different hardware.",
+    "free_memory_preflight_bytes": 19327352832,
+    "on_insufficient_memory": "Exit without loading the model and report the observed free memory; do not fall back to another GPU or to CPU."
+  },
+  "natural_end": {
+    "task_output_token_cap": null,
+    "normal_stop": "model EOS/EOT",
+    "max_new_tokens": "native context minus complete input; never truncate evidence",
+    "technical_timeout_seconds": 300,
+    "exact_cycle_guard": {
+      "block_tokens": 32,
+      "repeats": 4
+    },
+    "guard_handling": "Timeout, exact-cycle interruption and context exhaustion are recorded as separate incomplete outcomes; never a complete answer, never a zero score, never semantic uncertainty."
+  },
+  "resume_rules": {
+    "identity": "request_sha256 of the prepared package row must match a cached response or the run stops.",
+    "no_duplicate_generation": "A cached response is never regenerated; a cached response whose identity disagrees is a hard error, not an overwrite.",
+    "failed_attempts": "Every start and every failure is appended to attempts.jsonl before and after the attempt."
+  },
+  "package": {
+    "path": "project/outputs/paper1_calibration/static_sample_20260917_v1",
+    "preparation_summary_sha256": "de767f81e4f096518b524a2cb36f0b8ec3232f72464c4f3048ae9266cd873ca9",
+    "generator_requests_sha256": "430969cf1f20ef418a6187ed66481e075ebe20cbaa2c82fce503bc7ea94c5122",
+    "generator_config_sha256": "0958d995bc3188cc45b36457380f766c7a0954f688b1f6ef844b04e399f8a592",
+    "scheduled_generator_requests": 1924,
+    "targets": 148
+  },
+  "official_scorer_parity": {
+    "source_commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "prompts": "unchanged upstream SystemMessage/HumanMessage bytes rendered from the AST-extracted templates",
+    "parsers": "upstream QA first-[0-2] regex and upstream Summary json_repair plus integer count formulas",
+    "primary_metrics": {
+      "qa": "official llm_as_a_judge score normalized by 2",
+      "summary": "official Event F1"
+    },
+    "local_judge_substitution_forbidden": true,
+    "vendored_json_repair": {
+      "pinned_version": "0.52.4",
+      "matches_upstream_requirements_txt": true,
+      "path": "project/outputs/paper1_calibration/vendor_python",
+      "reason": "Reproduce the official Summary parser without modifying the frozen Generator environment.",
+      "frozen_env_unchanged": true
+    }
+  },
+  "not_in_this_record": [
+    "RS multi-round calibration",
+    "DG live-seeker calibration",
+    "formal effect labels",
+    "PM training",
+    "k* freeze",
+    "paid API execution"
+  ],
+  "followup_total_budget_20260918": {
+    "researcher_direction": "行，我能接受的其实是最多20美元，最好是10美元左右的。",
+    "target_usd": 10,
+    "hard_cap_usd": 20,
+    "scope": "ALL remaining new paid API work together: first attempts, retries, the DG simulated user, judges, training labels and the formal evaluation. Not per stage.",
+    "baseline_accounted_usd": "1.50724291",
+    "boundary_snapshot": "project/outputs/paper1_api_budget/followup_budget_boundary_20260918_v1.json",
+    "boundary_is_immutable": "The starting point is recorded once and never re-derived, so a resumed run cannot reset its own allowance.",
+    "supersedes_in_scope": [
+      "the proposed USD 15 single-stage scoring cap, which must be re-planned inside this total"
+    ],
+    "older_programme_cap_still_applies": "The USD 50 cumulative cap and its USD 5 primary-retry reserve remain in force underneath; the stricter constraint binds first.",
+    "enforced_in_code": {
+      "module": "project/src/metacom_pm/paper1/followup_budget.py",
+      "synchronous_path": "project/scripts/paper1/80_execute_official_static_scoring.py",
+      "batch_path": "project/scripts/paper1/83_submit_official_static_scoring_batch.py",
+      "batch_liability_rule": "A submitted batch counts in full from submission until it settles.",
+      "verified_offline": true
+    },
+    "target_is_a_plan_not_an_approval_gate": true,
+    "still_not_authorized": [
+      "any paid call",
+      "k* freeze",
+      "formal outcomes",
+      "PM training"
+    ]
+  },
+  "review_fixes_20260918": {
+    "source": "/home/tokkio/对接手Codex进展与费用的复核_20260918.md",
+    "fixed": [
+      "retry reservation now stops cleanly on stage/cumulative/follow-up caps instead of raising mid-run",
+      "resume continues the attempt count and refuses to blindly re-send an unsettled reservation",
+      "a bill larger than its reservation is recorded at its true value and stops the run",
+      "the raw provider response is persisted before the cost is settled",
+      "skipped already-paid calls and paid-but-answer-missing ids now appear in the execution report"
+    ]
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "accepted": 493,
+  "coverage": {
+    "train": {
+      "examples": 413,
+      "owners": 12,
+      "prefixes": 92,
+      "by_head": {
+        "RS": 171,
+        "MP": 129,
+        "MS": 133,
+        "ME": 145
+      },
+      "off": 68,
+      "multiple_resources": 281,
+      "mp_owners": 12,
+      "by_category": {
+        "OFF": {
+          "examples": 68,
+          "prefixes": 68,
+          "owners": 12
+        },
+        "single": {
+          "examples": 64,
+          "prefixes": 64,
+          "owners": 12
+        },
+        "cross_two": {
+          "examples": 71,
+          "prefixes": 71,
+          "owners": 12
+        },
+        "same_two": {
+          "examples": 71,
+          "prefixes": 71,
+          "owners": 12
+        },
+        "three": {
+          "examples": 67,
+          "prefixes": 67,
+          "owners": 12
+        },
+        "four": {
+          "examples": 72,
+          "prefixes": 72,
+          "owners": 12
+        }
+      },
+      "resource_behavior_model_reported": {
+        "use": 64,
+        "ignore": 283,
+        "none": 66
+      },
+      "behavior_caution": "Model can confuse current-prefix use with optional-resource use; counts are not verified uptake coverage. OFF is structurally none."
+    },
+    "dev": {
+      "examples": 80,
+      "owners": 3,
+      "prefixes": 17,
+      "by_head": {
+        "RS": 36,
+        "MP": 27,
+        "MS": 29,
+        "ME": 23
+      },
+      "off": 13,
+      "multiple_resources": 55,
+      "mp_owners": 3,
+      "by_category": {
+        "OFF": {
+          "examples": 13,
+          "prefixes": 13,
+          "owners": 3
+        },
+        "single": {
+          "examples": 12,
+          "prefixes": 12,
+          "owners": 3
+        },
+        "cross_two": {
+          "examples": 15,
+          "prefixes": 15,
+          "owners": 3
+        },
+        "same_two": {
+          "examples": 12,
+          "prefixes": 12,
+          "owners": 3
+        },
+        "three": {
+          "examples": 14,
+          "prefixes": 14,
+          "owners": 3
+        },
+        "four": {
+          "examples": 14,
+          "prefixes": 14,
+          "owners": 3
+        }
+      },
+      "resource_behavior_model_reported": {
+        "ignore": 61,
+        "none": 10,
+        "use": 9
+      },
+      "behavior_caution": "Model can confuse current-prefix use with optional-resource use; counts are not verified uptake coverage. OFF is structurally none."
+    }
+  },
+  "initial_statuses": {
+    "accept": 475,
+    "unresolved_review": 163,
+    "reject": 42,
+    "uncertain": 4
+  },
+  "initial_statuses_by_split_category": {
+    "train": {
+      "OFF": {
+        "accept": 65,
+        "unresolved_review": 24,
+        "reject": 7
+      },
+      "single": {
+        "accept": 62,
+        "unresolved_review": 28,
+        "reject": 6
+      },
+      "cross_two": {
+        "accept": 69,
+        "unresolved_review": 22,
+        "reject": 4,
+        "uncertain": 1
+      },
+      "same_two": {
+        "accept": 68,
+        "unresolved_review": 22,
+        "reject": 5,
+        "uncertain": 1
+      },
+      "three": {
+        "accept": 65,
+        "unresolved_review": 25,
+        "reject": 6
+      },
+      "four": {
+        "accept": 68,
+        "reject": 8,
+        "unresolved_review": 20
+      }
+    },
+    "dev": {
+      "OFF": {
+        "unresolved_review": 4,
+        "accept": 12,
+        "reject": 1,
+        "uncertain": 1
+      },
+      "single": {
+        "unresolved_review": 5,
+        "accept": 12,
+        "reject": 1
+      },
+      "cross_two": {
+        "accept": 15,
+        "unresolved_review": 2,
+        "reject": 1
+      },
+      "same_two": {
+        "unresolved_review": 4,
+        "accept": 12,
+        "reject": 1,
+        "uncertain": 1
+      },
+      "three": {
+        "unresolved_review": 3,
+        "reject": 2,
+        "accept": 13
+      },
+      "four": {
+        "unresolved_review": 4,
+        "accept": 14
+      }
+    }
+  },
+  "initial_Qwen_output_tokens_by_status": {
+    "accept": {
+      "n": 475,
+      "min": 10,
+      "median": 74,
+      "max": 191
+    },
+    "reject": {
+      "n": 42,
+      "min": 43,
+      "median": 104.5,
+      "max": 178
+    },
+    "uncertain": {
+      "n": 4,
+      "min": 48,
+      "median": 69.5,
+      "max": 93
+    },
+    "unresolved_review": {
+      "n": 163,
+      "min": 27,
+      "median": 97,
+      "max": 249
+    }
+  },
+  "selection_analysis_scope": "Descriptive admission/length coverage; not a causal quality effect or a calibrated error rate",
+  "selected_attempts": {
+    "0": 475,
+    "None": 191,
+    "1": 18
+  },
+  "rejected_or_unresolved": 191,
+  "duplicates": [],
+  "coordinator_audit_count": 37,
+  "coordinator_downgrades": 4,
+  "API_usd": 0,
+  "human_labels": 0,
+  "claim": "Input/weak-target coverage only; no support-quality gain or reward qualification."
+}

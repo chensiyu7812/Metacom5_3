@@ -1,0 +1,44 @@
+{
+  "protocol": "paper1-es-memeval-public-v1-0-0-1427-identity-decision-v1",
+  "date": "2026-09-04",
+  "status": "ACTIVE_FROZEN_PRIMARY_PUBLIC_ARTIFACT_NOT_EXACT_PAPER_REPLICATION",
+  "primary_task_name": "ES-MemEval-Public-v1.0.0-1427",
+  "decision": "Paper-1 uses the complete reproducible public repository artifact and names it ES-MemEval-Public-v1.0.0-1427. It does not claim row-identical reproduction of the WWW 2026 final-paper 1209 QA set.",
+  "rationale": [
+    "The final 1209 row IDs are unavailable in the inspected paper, public repository history, and issue tracker.",
+    "The local file exactly matches the official public v1.0.0 file hash.",
+    "Selecting all 1427 public rows is outcome-blind, deterministic, broader than an undocumented subset, and independently reproducible.",
+    "Waiting for an unpublished identity is not required for a valid external task if the artifact and claim are named precisely."
+  ],
+  "source": {
+    "repository": "https://github.com/slptongji/ES-MemEval",
+    "tag": "v1.0.0",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "path": "data/evo_emo.json",
+    "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"
+  },
+  "identity_manifest": {
+    "path": "data/paper1_authority/es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl",
+    "sha256": "e530e58b489ee87641a80fed9da696a559cdfd50c5772eb50734bf5468ee730c",
+    "rows": 1427,
+    "owners": 18,
+    "contains_question_or_answer_text": false,
+    "capability_counts": {
+      "information extraction": 309,
+      "temporal reasoning": 284,
+      "conflict detection": 267,
+      "user modeling": 306,
+      "abstention": 261
+    }
+  },
+  "formal_paper_boundary": {
+    "paper_qa": 1209,
+    "public_qa": 1427,
+    "difference": 218,
+    "allowed_wording": "Evaluation on ES-MemEval-Public-v1.0.0-1427, the complete public artifact associated with ES-MemEval.",
+    "forbidden_wording": "Exact reproduction of the final-paper 1209-question ES-MemEval QA benchmark."
+  },
+  "historical_418_boundary": "The historical project-specific 418-question V5.2 slice remains diagnostic only and cannot replace the frozen 1427-row primary task.",
+  "outcome_blind": true,
+  "api_authority": false
+}

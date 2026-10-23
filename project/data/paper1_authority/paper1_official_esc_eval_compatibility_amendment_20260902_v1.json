@@ -1,0 +1,90 @@
+{
+  "protocol": "pm-paper1-official-esc-eval-compatibility-amendment-20260902-v1",
+  "date": "2026-09-02",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_AMENDMENT_PRE_OUTCOME",
+  "human_authority": "project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md",
+  "scope": "official_ESC_RANK_parser_runtime_gate_and_main_scorer_role_only",
+  "precedence": "Scoped precedence over the project-added full-string ESC-RANK parser, runtime parser gate, and any evaluator-winner wording that could replace official ESC-Eval in the RQ1 main capability result.",
+  "researcher_approval": {
+    "date": "2026-09-02",
+    "authorized": true,
+    "formal_ESC_Eval_runs_before_approval": 0,
+    "formal_outcomes_observed_before_approval": 0,
+    "PM_training_runs_before_approval": 0
+  },
+  "official_identity": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+    "base_model": "internlm/internlm2-chat-7b",
+    "base_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "adapter_repo": "haidequanbu/ESC-RANK",
+    "adapter_revision": "450bf2eb5376c79e371aaf432925810243de1527"
+  },
+  "parser_binding": {
+    "primary": "iterate labels 0,1,2,3,4 in that order and return the first label whose character occurs anywhere in raw response; invalid if none",
+    "upstream_invalid_value": -1,
+    "local_invalid_sentinel": null,
+    "first_occurring_digit_parser": "FORBIDDEN_AS_OFFICIAL",
+    "adapter_specific_regex_parser": "FORBIDDEN_AS_OFFICIAL",
+    "strict_full_string_parser": "SUPPLEMENTAL_DIAGNOSTIC_ONLY",
+    "multiple_label_conflict_check": "SUPPLEMENTAL_DIAGNOSTIC_ONLY_DOES_NOT_OVERRIDE_OFFICIAL"
+  },
+  "runtime_evidence_before_amendment": {
+    "run_date": "2026-09-01",
+    "dimension_passes": 42,
+    "model_and_adapters_loaded": true,
+    "raw_exact_repeat_reproducibility": true,
+    "strict_full_string_valid": 0,
+    "official_parser_valid": 42,
+    "peak_allocated_mib": 14805.5234375,
+    "mean_seven_dimension_seconds": 4.809616843499195,
+    "formal_outcome_calls": 0
+  },
+  "dimension_mapping": {
+    "fluency": "Fluency",
+    "diversity": "Expression",
+    "empathic": "Empathy",
+    "suggestion": "Information",
+    "human": "Humanoid",
+    "tech": "Skillful",
+    "overall": "Overall"
+  },
+  "evaluator_roles": {
+    "official_ESC_RANK": "mandatory_RQ1_main_capability_scorer_and_qualification_anchor",
+    "Qwen_general_judge": "supplemental_blind_qualification_and_sensitivity_only",
+    "DeepSeek_general_judge": "supplemental_blind_qualification_and_sensitivity_only",
+    "independent_family_judge": "supplemental_blind_qualification_and_sensitivity_only",
+    "alternative_may_replace_official_main_scorer": false,
+    "selection_by_PM_or_Ours_score": "FORBIDDEN"
+  },
+  "prior_artifacts_invalidated": [
+    "2026-09-01 runtime BLOCKED interpretation caused only by full-string parser",
+    "paper1_esc_rank_24gib_patch_manifest_20260820_v1 parser-as-project-primary clause"
+  ],
+  "reruns_required": [
+    "same 3-dialogue x 2-repeat x 7-dimension runtime qualification",
+    "official ESC-RANK scoring of frozen 24-item blind human-reference package",
+    "authority parser harness asset and integration tests"
+  ],
+  "reruns_not_required": [
+    "model or adapter download",
+    "BGE embedding materialization",
+    "RS catalog materialization",
+    "human rerating",
+    "split or fold construction",
+    "memory artifact materialization"
+  ],
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "authorization_boundary": {
+    "zero_outcome_evaluator_qualification_allowed": true,
+    "formal_ESC_Eval_allowed": false,
+    "calibration_outcome_allowed": false,
+    "confirmatory_outcome_allowed": false,
+    "PM_training_allowed": false
+  }
+}

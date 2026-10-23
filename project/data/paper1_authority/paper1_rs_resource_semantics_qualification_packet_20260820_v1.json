@@ -1,0 +1,2330 @@
+{
+  "protocol": "pm-paper1-rs-resource-semantics-qualification-packet-v1",
+  "status": "AUDIT_REQUIRED",
+  "scope": "DEV_RESOURCE_SEMANTICS_PACKET_ONLY_NO_GENERATOR_NO_OUTCOME",
+  "sampling": {
+    "seed": "paper1-rs-resource-semantics-dev-seed-20260820-v1",
+    "target_N": 64,
+    "actual_N": 64,
+    "rank_distribution": {
+      "1": 16,
+      "2": 16,
+      "4": 16,
+      "8": 16
+    },
+    "family_distribution": {
+      "affirmation_and_reassurance": 8,
+      "information": 8,
+      "others": 8,
+      "providing_suggestions": 8,
+      "question": 8,
+      "reflection_of_feelings": 8,
+      "restatement_or_paraphrasing": 8,
+      "self_disclosure": 8
+    },
+    "isolation": "ESConv validation decision states; no ESC-Eval role cards read or used"
+  },
+  "source_identity": {
+    "canonical_catalog_sha256": "382737a23a78cbe9943c02bf368561a6996a2393ed0f98d4deffb29cb570813a",
+    "canonical_top8_sha256": "14aa06384d06d196064bbb1dc80cdb97b655a792560e7495ed26f7becbe47a11",
+    "canonical_top8_report_sha256": "09be9e631394999eb89265c1fe572340b28cfb5ee86ba970b3125ff242a9110b"
+  },
+  "rubric": {
+    "atomicity": {
+      "question": "Does the treatment express one executable supporter move rather than a bundle?",
+      "labels": [
+        "PASS",
+        "MULTI_MOVE",
+        "VAGUE",
+        "UNCERTAIN"
+      ]
+    },
+    "state_appropriateness": {
+      "question": "Is this move semantically appropriate to the visible state without using hidden facts?",
+      "labels": [
+        "PASS",
+        "TOPIC_MISMATCH",
+        "UNSUPPORTED_ASSUMPTION",
+        "UNCERTAIN"
+      ]
+    },
+    "boundary_compatibility": {
+      "question": "Does it respect explicit listen-only, no-advice and no-probing boundaries?",
+      "labels": [
+        "PASS",
+        "BOUNDARY_CONFLICT",
+        "NO_EXPLICIT_BOUNDARY",
+        "UNCERTAIN"
+      ]
+    },
+    "executability": {
+      "question": "Can frozen Step2/Generator act on the move without extra retrieval or hidden interpretation?",
+      "labels": [
+        "PASS",
+        "NOT_EXECUTABLE",
+        "UNDERSPECIFIED",
+        "UNCERTAIN"
+      ]
+    },
+    "leakage": {
+      "question": "Does the exact rendered move expose source-specific names, facts, dialogue wording or outcome?",
+      "labels": [
+        "PASS",
+        "SOURCE_SPECIFIC_LEAKAGE",
+        "OUTCOME_LEAKAGE",
+        "UNCERTAIN"
+      ]
+    },
+    "redundancy_near_duplicate": {
+      "question": "Is it redundant with the visible supporter behavior or a near-duplicate of another reviewed ticket?",
+      "labels": [
+        "DISTINCT",
+        "VISIBLE_REDUNDANCY",
+        "NEAR_DUPLICATE",
+        "UNCERTAIN"
+      ],
+      "note": "near-duplicate label is diagnostic only and never deletes a ticket by threshold"
+    },
+    "final_semantics_label": [
+      "QUALIFIED",
+      "NOT_QUALIFIED",
+      "UNCERTAIN"
+    ],
+    "LLM_may_replace_human": false,
+    "blind_to": [
+      "PM identity",
+      "future ESC arm",
+      "Generator outcome",
+      "evaluator score"
+    ]
+  },
+  "rows": [
+    {
+      "qualification_item_id": "rs_semq_451b3977e07f834c32067d0e",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0386",
+      "source_split": "validation",
+      "decision_turn_index": 11,
+      "visible_state": "seeker: yes . i am so attarctive to baby .. i though nobody will take care of baby as much as i can .So unble to concentrate on job prparation\nsupporter: Whenever I have important dates coming up , I always take time to myself and try and focus on the task at hand . Have you tried methods like this ?\nseeker: noo , but here about the upgrade skills and search for new job as a new mom\nsupporter: Just from chatting with you ,I can completely understand how that can be overwhelming .\nsupporter: Just from chatting with you ,I can completely understand how that can be overwhelming .\nseeker: i dont know what are you talking about",
+      "current_user_text": "i dont know what are you talking about",
+      "query_text": "seeker: yes . i am so attarctive to baby .. i though nobody will take care of baby as much as i can .So unble to concentrate on job prparation\nsupporter: Whenever I have important dates coming up , I always take time to myself and try and focus on the task at hand . Have you tried methods like this ?\nseeker: noo , but here about the upgrade skills and search for new job as a new mom\nsupporter: Just from chatting with you ,I can completely understand how that can be overwhelming .\nsupporter: Just from chatting with you ,I can completely understand how that can be overwhelming .\nseeker: i dont know what are you talking about",
+      "rank": 1,
+      "cosine_similarity": 0.7816023826599121,
+      "canonical_treatment_id": "rs_treatment_a2d9bb769d23321afa4216d2",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: acknowledge the user's progress and affirm their efforts",
+      "rendered_card_text_sha256": "a2d9bb769d23321afa4216d224c57f721b44744980370ef3a24978b7b8f86d43",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_da463d17490d8127f4214bee"
+        ],
+        "source_card_ids": [
+          "rs_src_25b44b987ff42b3213185586"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0501"
+        ],
+        "representative_atomic_card_id": "rs_atomic_da463d17490d8127f4214bee",
+        "representative_source_card_id": "rs_src_25b44b987ff42b3213185586"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_e69959e45ed1ec3aa2a19d09",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1164",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "supporter: Ah I understand, is there any temporary financial support available for you and your family?\nsupporter: If I may suggest this, you can look into programs that help re-employ or support laid off workers in your country.\nseeker: Currently i have no support apart from the meagre earnings of my wife\nseeker: I have looked into it, applied but have not been fortunate to get one yet\nsupporter: I completely understand, I would also feel anxious if I were in this situation. It's an honorable thing that you've taken the initiative and are working hard to support your family.\nseeker: Sure. I really need your support on how to manage the anxiety because despite constant reassurance from my wife, i still feel i am letting down my family as a man",
+      "current_user_text": "Sure. I really need your support on how to manage the anxiety because despite constant reassurance from my wife, i still feel i am letting down my family as a man",
+      "query_text": "supporter: Ah I understand, is there any temporary financial support available for you and your family?\nsupporter: If I may suggest this, you can look into programs that help re-employ or support laid off workers in your country.\nseeker: Currently i have no support apart from the meagre earnings of my wife\nseeker: I have looked into it, applied but have not been fortunate to get one yet\nsupporter: I completely understand, I would also feel anxious if I were in this situation. It's an honorable thing that you've taken the initiative and are working hard to support your family.\nseeker: Sure. I really need your support on how to manage the anxiety because despite constant reassurance from my wife, i still feel i am letting down my family as a man",
+      "rank": 1,
+      "cosine_similarity": 0.8287081122398376,
+      "canonical_treatment_id": "rs_treatment_16f4e00c2f9d6e54e3692773",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: offer reassurance about the user's temporary financial security",
+      "rendered_card_text_sha256": "16f4e00c2f9d6e54e3692773564d4814cbe5f5ea979f19aeb631f41da22a602e",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_b5ad0d7d09975980df9383e5"
+        ],
+        "source_card_ids": [
+          "rs_src_c16870ba2fe55857d552afb0"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0005"
+        ],
+        "representative_atomic_card_id": "rs_atomic_b5ad0d7d09975980df9383e5",
+        "representative_source_card_id": "rs_src_c16870ba2fe55857d552afb0"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_472937c3bff7b2f6575c6904",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0288",
+      "source_split": "validation",
+      "decision_turn_index": 9,
+      "visible_state": "supporter: are your classes online in person\nseeker: A mixture. I currently have 2 online classes and 2 face-to-face ones.\nsupporter: So you have a full schedule\nsupporter: Are these mandatory classes for your degree\nsupporter: May I aks what your major is\nseeker: Yes, I am in a full schedule. The class I might fail is mandatory for my Computer Science degree. That is why I am so concerned.",
+      "current_user_text": "Yes, I am in a full schedule. The class I might fail is mandatory for my Computer Science degree. That is why I am so concerned.",
+      "query_text": "supporter: are your classes online in person\nseeker: A mixture. I currently have 2 online classes and 2 face-to-face ones.\nsupporter: So you have a full schedule\nsupporter: Are these mandatory classes for your degree\nsupporter: May I aks what your major is\nseeker: Yes, I am in a full schedule. The class I might fail is mandatory for my Computer Science degree. That is why I am so concerned.",
+      "rank": 1,
+      "cosine_similarity": 0.7714293003082275,
+      "canonical_treatment_id": "rs_treatment_8d5b3a6844a445209a446645",
+      "exact_rendered_treatment": "Strategy family [Information]: mention that online study has advantages",
+      "rendered_card_text_sha256": "8d5b3a6844a445209a4466459478b0e255294e23c2ddf3fd466dc4f872d1d575",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_654f3399714e85a5a5d6f609"
+        ],
+        "source_card_ids": [
+          "rs_src_06907dc2cf87a8a793e64159"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0384"
+        ],
+        "representative_atomic_card_id": "rs_atomic_654f3399714e85a5a5d6f609",
+        "representative_source_card_id": "rs_src_06907dc2cf87a8a793e64159"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_70e23189e617d5870483dc49",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0231",
+      "source_split": "validation",
+      "decision_turn_index": 2,
+      "visible_state": "supporter: Hello there! How are you doing?\nseeker: Hello. Not so well. I have a very stressful job situation right now.",
+      "current_user_text": "Hello. Not so well. I have a very stressful job situation right now.",
+      "query_text": "supporter: Hello there! How are you doing?\nseeker: Hello. Not so well. I have a very stressful job situation right now.",
+      "rank": 1,
+      "cosine_similarity": 0.866753339767456,
+      "canonical_treatment_id": "rs_treatment_48d9fe0acd28c57506c17693",
+      "exact_rendered_treatment": "Strategy family [Information]: share that it is a difficult time to be job hunting",
+      "rendered_card_text_sha256": "48d9fe0acd28c57506c17693979bd016d14599c43e95be8b8b26cc7763436651",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_4fe313b75b1c76bd369fd999"
+        ],
+        "source_card_ids": [
+          "rs_src_c7365ba76e4189637b8df664"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1083"
+        ],
+        "representative_atomic_card_id": "rs_atomic_4fe313b75b1c76bd369fd999",
+        "representative_source_card_id": "rs_src_c7365ba76e4189637b8df664"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_a4c66bb25d5ddb17f9a0c99b",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0339",
+      "source_split": "validation",
+      "decision_turn_index": 29,
+      "visible_state": "seeker: She does not mind snow either\nseeker: It is chilly but ok\nsupporter: Ok. My dog, Phineas, love the snow!\nseeker: Garbo hates small animals also. Especially skunks\nsupporter: Oh Garbo! Hahahaha! She sounds wonderful!\nseeker: She has been sprayed 4 times",
+      "current_user_text": "She has been sprayed 4 times",
+      "query_text": "seeker: She does not mind snow either\nseeker: It is chilly but ok\nsupporter: Ok. My dog, Phineas, love the snow!\nseeker: Garbo hates small animals also. Especially skunks\nsupporter: Oh Garbo! Hahahaha! She sounds wonderful!\nseeker: She has been sprayed 4 times",
+      "rank": 1,
+      "cosine_similarity": 0.6887840032577515,
+      "canonical_treatment_id": "rs_treatment_6529c9808cb1dbc14633a0ce",
+      "exact_rendered_treatment": "Strategy family [Others]: express a closing sentiment",
+      "rendered_card_text_sha256": "6529c9808cb1dbc14633a0ced51b5c4f14f1657835cfd4620830061c974ca08d",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_0ffba6cd3349f12be722d0bd"
+        ],
+        "source_card_ids": [
+          "rs_src_63116f4f04874f18c337029e"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0131"
+        ],
+        "representative_atomic_card_id": "rs_atomic_0ffba6cd3349f12be722d0bd",
+        "representative_source_card_id": "rs_src_63116f4f04874f18c337029e"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_61fe0d3d9448f55c7b87b4ae",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0742",
+      "source_split": "validation",
+      "decision_turn_index": 1,
+      "visible_state": "seeker: hello",
+      "current_user_text": "hello",
+      "query_text": "seeker: hello",
+      "rank": 1,
+      "cosine_similarity": 0.7167072892189026,
+      "canonical_treatment_id": "rs_treatment_909619194e3f7ed1049df1f6",
+      "exact_rendered_treatment": "Strategy family [Others]: greet the user",
+      "rendered_card_text_sha256": "909619194e3f7ed1049df1f68247f9f2e5b71580a5ec2ab9dbefc0b0d89690a9",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_14af075edc1fedf9afb0d97d",
+          "rs_atomic_3ac2bca6bc82275edd49de67",
+          "rs_atomic_41e05022f6693e55ff66c0d2",
+          "rs_atomic_46f7ff7c6ea659102fb305c7",
+          "rs_atomic_607ad84c207197e38bf4df4e",
+          "rs_atomic_6ae76902a7dd7ceed7364948",
+          "rs_atomic_8ff5c812f3810c63eedc2f76",
+          "rs_atomic_afdd83997364d3b54c690687"
+        ],
+        "source_card_ids": [
+          "rs_src_133c249e411fa8c6449f0607",
+          "rs_src_5c0699ec8da5139730eba11a",
+          "rs_src_a5533a0fe831dc5d9af66555",
+          "rs_src_b6d4c86e4a3ca847d77a515d",
+          "rs_src_c54e32b9b1efdebef137e386",
+          "rs_src_db423f8af77b689d30158aad",
+          "rs_src_dfec075c66898e877fffebd5",
+          "rs_src_ff092885a59e3d8105339a60"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0076",
+          "esconv_0146",
+          "esconv_0156",
+          "esconv_0225",
+          "esconv_0678",
+          "esconv_1021",
+          "esconv_1260",
+          "esconv_1265"
+        ],
+        "representative_atomic_card_id": "rs_atomic_afdd83997364d3b54c690687",
+        "representative_source_card_id": "rs_src_133c249e411fa8c6449f0607"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_4e1fbb1b8a3f66b0f3da0be0",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0360",
+      "source_split": "validation",
+      "decision_turn_index": 56,
+      "visible_state": "supporter: She even recommends work for teens\nseeker: n i will i have it on another tab as soon as im done here im going there to check it out\nseeker: my daughter definitely nds a job shes getting expensive\nsupporter: OK Good night\nseeker: gn\nseeker: n merry early christmas",
+      "current_user_text": "gn\nn merry early christmas",
+      "query_text": "supporter: She even recommends work for teens\nseeker: n i will i have it on another tab as soon as im done here im going there to check it out\nseeker: my daughter definitely nds a job shes getting expensive\nsupporter: OK Good night\nseeker: gn\nseeker: n merry early christmas",
+      "rank": 1,
+      "cosine_similarity": 0.7600805759429932,
+      "canonical_treatment_id": "rs_treatment_8b456072c6704d740aa17a07",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest a way to earn extra income",
+      "rendered_card_text_sha256": "8b456072c6704d740aa17a071f5838669665e031d3f845e7a444841f5a4f492c",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_c3ccd928592ff4b0e683189b"
+        ],
+        "source_card_ids": [
+          "rs_src_646bf18809649e4ede3878eb"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0186"
+        ],
+        "representative_atomic_card_id": "rs_atomic_c3ccd928592ff4b0e683189b",
+        "representative_source_card_id": "rs_src_646bf18809649e4ede3878eb"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_1459dd0af5cfb312ca5e0311",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1144",
+      "source_split": "validation",
+      "decision_turn_index": 8,
+      "visible_state": "seeker: It's been tough. I've been looking for a job for months, but feel like I'm getting nowhere.\nsupporter: I'm sorry to hear that but if i may hear your you clearly, what you are saying is that you don't have any job for a long time now\nseeker: Well, I am fortunate to have a job, but I am seeking a different job because the one I have does not pay what my skills are worth. It barely pays enough for me to pay my essential bills.\nsupporter: ok, that is a bit of relief\nsupporter: have u check for job vacancy in your state\nseeker: I have, but there are few decent jobs out there. Most available jobs are in locations where one can not drive safely or their personal safety is at risk.",
+      "current_user_text": "I have, but there are few decent jobs out there. Most available jobs are in locations where one can not drive safely or their personal safety is at risk.",
+      "query_text": "seeker: It's been tough. I've been looking for a job for months, but feel like I'm getting nowhere.\nsupporter: I'm sorry to hear that but if i may hear your you clearly, what you are saying is that you don't have any job for a long time now\nseeker: Well, I am fortunate to have a job, but I am seeking a different job because the one I have does not pay what my skills are worth. It barely pays enough for me to pay my essential bills.\nsupporter: ok, that is a bit of relief\nsupporter: have u check for job vacancy in your state\nseeker: I have, but there are few decent jobs out there. Most available jobs are in locations where one can not drive safely or their personal safety is at risk.",
+      "rank": 1,
+      "cosine_similarity": 0.8116098642349243,
+      "canonical_treatment_id": "rs_treatment_eae6479289ef37159f3def52",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest looking for jobs on indeed.com or craigslist",
+      "rendered_card_text_sha256": "eae6479289ef37159f3def52c5c1cf9635ff8a9836d442739395df4e6ff10188",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_68f190d9bfc3beb08649946c"
+        ],
+        "source_card_ids": [
+          "rs_src_f468e3b95a4a8ac28426347a"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0609"
+        ],
+        "representative_atomic_card_id": "rs_atomic_68f190d9bfc3beb08649946c",
+        "representative_source_card_id": "rs_src_f468e3b95a4a8ac28426347a"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_8e2e5a5f6352d6e8aed57165",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1030",
+      "source_split": "validation",
+      "decision_turn_index": 5,
+      "visible_state": "seeker: Hello\nsupporter: Hey! How are you?\nseeker: I am hanging in there, how are you doing?\nsupporter: Im doing good :) How you doing hanging in there?\nseeker: Well, I have been dealing with insomnia, and that is pretty much ruining my day lately.",
+      "current_user_text": "Well, I have been dealing with insomnia, and that is pretty much ruining my day lately.",
+      "query_text": "seeker: Hello\nsupporter: Hey! How are you?\nseeker: I am hanging in there, how are you doing?\nsupporter: Im doing good :) How you doing hanging in there?\nseeker: Well, I have been dealing with insomnia, and that is pretty much ruining my day lately.",
+      "rank": 1,
+      "cosine_similarity": 0.8359206914901733,
+      "canonical_treatment_id": "rs_treatment_8797a72afe444359a5cac9d5",
+      "exact_rendered_treatment": "Strategy family [Question]: ask if sleeping difficulties are becoming a concern",
+      "rendered_card_text_sha256": "8797a72afe444359a5cac9d506e1e14c6058666289b7c1bb13e3c6717f84df27",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_e3956f590369dbef5791afd2"
+        ],
+        "source_card_ids": [
+          "rs_src_4db16112fce58d2e6f778d76"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0973"
+        ],
+        "representative_atomic_card_id": "rs_atomic_e3956f590369dbef5791afd2",
+        "representative_source_card_id": "rs_src_4db16112fce58d2e6f778d76"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_9ee1b8ebd4d3181fcc64748f",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0382",
+      "source_split": "validation",
+      "decision_turn_index": 5,
+      "visible_state": "seeker: i cant go back to uni due to finacial issue\nsupporter: Good afternoon. How may I assist you?\nseeker: good afternnon.\nsupporter: What is unit? Are talking school\nseeker: as i stated i had to cut university short and i feel like am going to finish old",
+      "current_user_text": "as i stated i had to cut university short and i feel like am going to finish old",
+      "query_text": "seeker: i cant go back to uni due to finacial issue\nsupporter: Good afternoon. How may I assist you?\nseeker: good afternnon.\nsupporter: What is unit? Are talking school\nseeker: as i stated i had to cut university short and i feel like am going to finish old",
+      "rank": 1,
+      "cosine_similarity": 0.7723264098167419,
+      "canonical_treatment_id": "rs_treatment_8f572d7f78dcbeac9f8e1b52",
+      "exact_rendered_treatment": "Strategy family [Question]: ask about barriers preventing task completion",
+      "rendered_card_text_sha256": "8f572d7f78dcbeac9f8e1b523e30509f6b1f1288531320e9aa91366460f4b5c7",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_3f70a3d2b07768445d0b1b63"
+        ],
+        "source_card_ids": [
+          "rs_src_4b88ace52cc423f86f553043"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1041"
+        ],
+        "representative_atomic_card_id": "rs_atomic_3f70a3d2b07768445d0b1b63",
+        "representative_source_card_id": "rs_src_4b88ace52cc423f86f553043"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_bbd2f2f03fd80e050e1161bc",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0889",
+      "source_split": "validation",
+      "decision_turn_index": 11,
+      "visible_state": "supporter: I know a lot of people who are feeling this way. It is a difficult time\nseeker: I’m trying to make the best of it but having a hard time.\nsupporter: Why do you think you are struggling?\nseeker: I’m feeling isolated and missing my family and friends.\nsupporter: It sounds like you are feeling lonely. Is that right?\nseeker: Yes. Video calls are not the same.",
+      "current_user_text": "Yes. Video calls are not the same.",
+      "query_text": "supporter: I know a lot of people who are feeling this way. It is a difficult time\nseeker: I’m trying to make the best of it but having a hard time.\nsupporter: Why do you think you are struggling?\nseeker: I’m feeling isolated and missing my family and friends.\nsupporter: It sounds like you are feeling lonely. Is that right?\nseeker: Yes. Video calls are not the same.",
+      "rank": 1,
+      "cosine_similarity": 0.8294399976730347,
+      "canonical_treatment_id": "rs_treatment_c9c562a9fabddf3af7970e9c",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the user's loneliness and emotional struggle",
+      "rendered_card_text_sha256": "c9c562a9fabddf3af7970e9c37f5e29ecb8d42526702a41645830c8f1681755b",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_743c432285a0e41ba41a7ac0"
+        ],
+        "source_card_ids": [
+          "rs_src_1d6ba4c0e41f5cd17a87d281"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0376"
+        ],
+        "representative_atomic_card_id": "rs_atomic_743c432285a0e41ba41a7ac0",
+        "representative_source_card_id": "rs_src_1d6ba4c0e41f5cd17a87d281"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_281e477ca50a1f99e6ee719c",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0875",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "seeker: I worry for my children.\nseeker: This is not their fault yet they are suffering.\nseeker: What would you do?\nseeker: How are you?\nsupporter: I can imagine how difficult money can be during the pandemic as I had trouble looking for good jobs too.\nseeker: Thank you!",
+      "current_user_text": "Thank you!",
+      "query_text": "seeker: I worry for my children.\nseeker: This is not their fault yet they are suffering.\nseeker: What would you do?\nseeker: How are you?\nsupporter: I can imagine how difficult money can be during the pandemic as I had trouble looking for good jobs too.\nseeker: Thank you!",
+      "rank": 1,
+      "cosine_similarity": 0.8242281675338745,
+      "canonical_treatment_id": "rs_treatment_b310aeac72c55c8a7369949a",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the shared difficulty of the situation",
+      "rendered_card_text_sha256": "b310aeac72c55c8a7369949a3bc178c15b53530bf3e49ecc4588291d21d08080",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_dec595e2c628949100adbe40"
+        ],
+        "source_card_ids": [
+          "rs_src_f59b027b4781bae5c7b1c5ab"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0130"
+        ],
+        "representative_atomic_card_id": "rs_atomic_dec595e2c628949100adbe40",
+        "representative_source_card_id": "rs_src_f59b027b4781bae5c7b1c5ab"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_94bf75c4b91b0895651956c4",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0356",
+      "source_split": "validation",
+      "decision_turn_index": 18,
+      "visible_state": "seeker: It is more or less that I got the middle man rate\nseeker: Pissed me right off\nsupporter: Tell me what happened. That sounds horrible\nseeker: Well, I ordered my normal uhm, 'package' from my homie... Well he just took off as normal and came back in a few hours.\nseeker: We agreed on n160 for the whole mess and HE JUST DECIDES that its now 185 cause he needed gas, and what ever..\nseeker: Nah man, I already fill your tank and food and he can grab some fries from the bag when he gets here.",
+      "current_user_text": "Well, I ordered my normal uhm, 'package' from my homie... Well he just took off as normal and came back in a few hours.\nWe agreed on n160 for the whole mess and HE JUST DECIDES that its now 185 cause he needed gas, and what ever..\nNah man, I already fill your tank and food and he can grab some fries from the bag when he gets here.",
+      "query_text": "seeker: It is more or less that I got the middle man rate\nseeker: Pissed me right off\nsupporter: Tell me what happened. That sounds horrible\nseeker: Well, I ordered my normal uhm, 'package' from my homie... Well he just took off as normal and came back in a few hours.\nseeker: We agreed on n160 for the whole mess and HE JUST DECIDES that its now 185 cause he needed gas, and what ever..\nseeker: Nah man, I already fill your tank and food and he can grab some fries from the bag when he gets here.",
+      "rank": 1,
+      "cosine_similarity": 0.6496091485023499,
+      "canonical_treatment_id": "rs_treatment_9b2f84d26020c18069de6f2a",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: paraphrase the user's financial concern to confirm understanding",
+      "rendered_card_text_sha256": "9b2f84d26020c18069de6f2a4f53a7acdb4ceb8b725b7307ea86e91d6899abe4",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_8c720d4f1dee3089e19f9edb"
+        ],
+        "source_card_ids": [
+          "rs_src_9c5e17f54f0cead5b6ed1ff2"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0696"
+        ],
+        "representative_atomic_card_id": "rs_atomic_8c720d4f1dee3089e19f9edb",
+        "representative_source_card_id": "rs_src_9c5e17f54f0cead5b6ed1ff2"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_74f977a236238050f999c4bf",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1277",
+      "source_split": "validation",
+      "decision_turn_index": 12,
+      "visible_state": "supporter: How long are you doing the online school?\nseeker: Last semester and this semester. It feels like a lot longer though.\nsupporter: What are you missing most? Friends?\nseeker: A balance in life. I spend so much time online. I'm always staring at a screen. I would like to get aware from the computer.\nsupporter: As the vaccination started, I believe we will be back to normal soon..\nseeker: Yeah, I can't wait for things to return to normal. Until then, I don't know what I can do to feel normal.",
+      "current_user_text": "Yeah, I can't wait for things to return to normal. Until then, I don't know what I can do to feel normal.",
+      "query_text": "supporter: How long are you doing the online school?\nseeker: Last semester and this semester. It feels like a lot longer though.\nsupporter: What are you missing most? Friends?\nseeker: A balance in life. I spend so much time online. I'm always staring at a screen. I would like to get aware from the computer.\nsupporter: As the vaccination started, I believe we will be back to normal soon..\nseeker: Yeah, I can't wait for things to return to normal. Until then, I don't know what I can do to feel normal.",
+      "rank": 1,
+      "cosine_similarity": 0.8276227712631226,
+      "canonical_treatment_id": "rs_treatment_e0d83f30c51dd5578e4ceb5c",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: rephrase the shared experience of waiting for normal life to resume",
+      "rendered_card_text_sha256": "e0d83f30c51dd5578e4ceb5c6ec61fa79f0de1a09864cf37539d6fdc3dd1dc56",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_c9b71b262f248b67c6136102"
+        ],
+        "source_card_ids": [
+          "rs_src_46b32cb4e0ea2eae4fbb5e4e"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0358"
+        ],
+        "representative_atomic_card_id": "rs_atomic_c9b71b262f248b67c6136102",
+        "representative_source_card_id": "rs_src_46b32cb4e0ea2eae4fbb5e4e"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_46a72ec50dbc0bbf2bf389b7",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0444",
+      "source_split": "validation",
+      "decision_turn_index": 12,
+      "visible_state": "supporter: So you feel that life was more simple when you were still in high school?\nseeker: Yes, schoolwork wise. Now, I can never stay on top.\nsupporter: I think that it is quite usual to feel a bit disorientated when transitioning from school to college. It is strange to feel like an adult all of a sudden\nseeker: Do you have any experience with that?\nsupporter: Yes I do. It took me quite a long time to adjust to college in my first year too.\nseeker: Woah, I am sorry it was rough for you.",
+      "current_user_text": "Woah, I am sorry it was rough for you.",
+      "query_text": "supporter: So you feel that life was more simple when you were still in high school?\nseeker: Yes, schoolwork wise. Now, I can never stay on top.\nsupporter: I think that it is quite usual to feel a bit disorientated when transitioning from school to college. It is strange to feel like an adult all of a sudden\nseeker: Do you have any experience with that?\nsupporter: Yes I do. It took me quite a long time to adjust to college in my first year too.\nseeker: Woah, I am sorry it was rough for you.",
+      "rank": 1,
+      "cosine_similarity": 0.8262854814529419,
+      "canonical_treatment_id": "rs_treatment_21c4632a0c9e85a5272ffbd0",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal experience of struggling after transitioning to college",
+      "rendered_card_text_sha256": "21c4632a0c9e85a5272ffbd00c78ed1fcdfc59e38f18c91e8a3bc5d23ea5b101",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_9f12052dd0f7d344f976aca8"
+        ],
+        "source_card_ids": [
+          "rs_src_b2935b17bd53bcedead63b5b"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0754"
+        ],
+        "representative_atomic_card_id": "rs_atomic_9f12052dd0f7d344f976aca8",
+        "representative_source_card_id": "rs_src_b2935b17bd53bcedead63b5b"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_424591865f6823328d3f1d25",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1088",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "seeker: Talking a walk is a good idea. Unfortunately it is cold today but tomorrow it is supposed to be nicer.\nseeker: *taking\nsupporter: Yeah, I like to clear my head by taking a walk. I know it is a temporary relief, but it helps regulate my mood. Do you live with people, do you have conversation with people regularly?\nseeker: No I live alone. I don't like the people at work either so I don't talk to them. Every now and then I talk to a friend via text, I see my family rarely but will see them this weekend due to the holiday.\nsupporter: It sounds like you know what you are doing and you have a support system of your choice. Do you share stories like breaking up with girlfriend with them?\nseeker: I share a little but don't want to burden anyone with my issues.",
+      "current_user_text": "I share a little but don't want to burden anyone with my issues.",
+      "query_text": "seeker: Talking a walk is a good idea. Unfortunately it is cold today but tomorrow it is supposed to be nicer.\nseeker: *taking\nsupporter: Yeah, I like to clear my head by taking a walk. I know it is a temporary relief, but it helps regulate my mood. Do you live with people, do you have conversation with people regularly?\nseeker: No I live alone. I don't like the people at work either so I don't talk to them. Every now and then I talk to a friend via text, I see my family rarely but will see them this weekend due to the holiday.\nsupporter: It sounds like you know what you are doing and you have a support system of your choice. Do you share stories like breaking up with girlfriend with them?\nseeker: I share a little but don't want to burden anyone with my issues.",
+      "rank": 1,
+      "cosine_similarity": 0.856450080871582,
+      "canonical_treatment_id": "rs_treatment_80ad74be4ed0ac0cdf2b7343",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: disclose personal experience of being shy",
+      "rendered_card_text_sha256": "80ad74be4ed0ac0cdf2b7343ef26c1c38c0bab68c5deeea9854d5a8ea9ec90f2",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_13ec25ff8ae3f2d3e64b4584"
+        ],
+        "source_card_ids": [
+          "rs_src_697a55adbaecb9c872bb563c"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0498"
+        ],
+        "representative_atomic_card_id": "rs_atomic_13ec25ff8ae3f2d3e64b4584",
+        "representative_source_card_id": "rs_src_697a55adbaecb9c872bb563c"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_7b6a47ac81464ba09292c40b",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0569",
+      "source_split": "validation",
+      "decision_turn_index": 21,
+      "visible_state": "supporter: I also was helped a lot by a Christian Preacher, he's long dead, but he has audio on youtube -- Frank Hammond, Pigs in the Parlor. It's a 5 part series I found helpful, you might want to jot that down. And I do encourage you to find a counselor, once you rule out the physical (doctor) then you can look at emotional, mental and/or spiritual. I think most of everything is spiritual and emotional to some degree, and our body just responds to that.\nseeker: I always lose sight of how to make things better. It really helps to talk sometimes so someone can help me put things into perspective. I'll look into Frank Hammond! I am actually religious and would love to look into that.\nsupporter: I will definitely pray for you tonight because I know losing sleep is hard to deal with. But please have hope, sometimes we go through these things to possible get to deeper issues that might need to be dealt with. We only have a few minutes here, but I'm pretty old and I have found this to be true so many times. Get a good support system of good friends. Having people who \"get\" you is SO vital to our lives. And learning to be grateful helps too. And especially journal, find out what may be bothering you.\nsupporter: I had some abuse issues and that is why I had a hard time resting. I also would wake up in the middle of the night and obsess over problems with people. I had a lot to work through, but most nights, I sleep restful now. It may take time.\nsupporter: I have hope for you! :D\nseeker: That sounds very similar to my situation! I always had some abuse issues. Thank you so much . Talking to you made me feel a lot better",
+      "current_user_text": "That sounds very similar to my situation! I always had some abuse issues. Thank you so much . Talking to you made me feel a lot better",
+      "query_text": "supporter: I also was helped a lot by a Christian Preacher, he's long dead, but he has audio on youtube -- Frank Hammond, Pigs in the Parlor. It's a 5 part series I found helpful, you might want to jot that down. And I do encourage you to find a counselor, once you rule out the physical (doctor) then you can look at emotional, mental and/or spiritual. I think most of everything is spiritual and emotional to some degree, and our body just responds to that.\nseeker: I always lose sight of how to make things better. It really helps to talk sometimes so someone can help me put things into perspective. I'll look into Frank Hammond! I am actually religious and would love to look into that.\nsupporter: I will definitely pray for you tonight because I know losing sleep is hard to deal with. But please have hope, sometimes we go through these things to possible get to deeper issues that might need to be dealt with. We only have a few minutes here, but I'm pretty old and I have found this to be true so many times. Get a good support system of good friends. Having people who \"get\" you is SO vital to our lives. And learning to be grateful helps too. And especially journal, find out what may be bothering you.\nsupporter: I had some abuse issues and that is why I had a hard time resting. I also would wake up in the middle of the night and obsess over problems with people. I had a lot to work through, but most nights, I sleep restful now. It may take time.\nsupporter: I have hope for you! :D\nseeker: That sounds very similar to my situation! I always had some abuse issues. Thank you so much . Talking to you made me feel a lot better",
+      "rank": 2,
+      "cosine_similarity": 0.682685375213623,
+      "canonical_treatment_id": "rs_treatment_b4235c10c4725e2f18688296",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: reaffirm willingness to help and invite future conversation during times of anxiety",
+      "rendered_card_text_sha256": "b4235c10c4725e2f18688296b16b0e0f6df3c72a0c9d1e285b45d6872699d46f",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_9660c2e7a2177bcda34c371e"
+        ],
+        "source_card_ids": [
+          "rs_src_c3246e0980ee81fe1ec94f78"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1186"
+        ],
+        "representative_atomic_card_id": "rs_atomic_9660c2e7a2177bcda34c371e",
+        "representative_source_card_id": "rs_src_c3246e0980ee81fe1ec94f78"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_e02e0520f91d0447b6f766f7",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0115",
+      "source_split": "validation",
+      "decision_turn_index": 24,
+      "visible_state": "supporter: it*\nseeker: Do you have any feeling like me now are before\nsupporter: You mentioned you feel sad and unloved but you have a good family. Do you feel as if you lack a good support systems within your family?\nseeker: My problem is i have a good job. But i want to follow my passion . I need my job at the same time i want to follow my passion. But my parents said don't quit my job\nsupporter: No, not any more. I have to reflect on what was causes my feelings to be so negative and i corrected them.\nseeker: Yes you are correct",
+      "current_user_text": "Yes you are correct",
+      "query_text": "supporter: it*\nseeker: Do you have any feeling like me now are before\nsupporter: You mentioned you feel sad and unloved but you have a good family. Do you feel as if you lack a good support systems within your family?\nseeker: My problem is i have a good job. But i want to follow my passion . I need my job at the same time i want to follow my passion. But my parents said don't quit my job\nsupporter: No, not any more. I have to reflect on what was causes my feelings to be so negative and i corrected them.\nseeker: Yes you are correct",
+      "rank": 2,
+      "cosine_similarity": 0.8083851337432861,
+      "canonical_treatment_id": "rs_treatment_4835df3cc1c79e15681e71e3",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: acknowledge the presence of a supportive person in the user's life",
+      "rendered_card_text_sha256": "4835df3cc1c79e15681e71e321ee29a73af6d0b49a092452c38433d528b9d452",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_0c661c7b26a6bc165bf88e4c",
+          "rs_atomic_efba8035219f1deba15d48e7"
+        ],
+        "source_card_ids": [
+          "rs_src_9dbbb794212800c50edccf50",
+          "rs_src_fb8ee39bb2108a64c8b30520"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0026",
+          "esconv_0411"
+        ],
+        "representative_atomic_card_id": "rs_atomic_efba8035219f1deba15d48e7",
+        "representative_source_card_id": "rs_src_9dbbb794212800c50edccf50"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_441f3cd5a871f1c6182d0823",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0413",
+      "source_split": "validation",
+      "decision_turn_index": 29,
+      "visible_state": "seeker: He started saying things that are just factually not correct. I get that the immune system is super complicated, and most people don't know much about it. But when I'd try to explain some things to him, he acted like I couldn't possibly know anything he didn't, after reading one Forbes article, and he started making personal attacks.\nsupporter: I think that perhaps you do not need this toxic person in your life. After fifteen years without him do you really feel you need to stay r reconciled?\nseeker: I don't need him, no... But he's funny, and I don't have too many people in my life right now. I just moved to a new state where I literally know no one.\nsupporter: In that case perhaps you can just agree to disagree on this topic? If you don't want to risk the friendship :). I hope I have been able to be of some help to you today and thank you for talking!\nseeker: And I'm also hurt and annoyed that he thinks I have anything to apologize for, when I put up with his acid tongued comments, and just turn the other cheek. I agree we should just go on, but I'm not going to apologize, when I didn't do anything.\nseeker: Anyway - yes. I agree with you. Thanks for the talk. Take care!",
+      "current_user_text": "And I'm also hurt and annoyed that he thinks I have anything to apologize for, when I put up with his acid tongued comments, and just turn the other cheek. I agree we should just go on, but I'm not going to apologize, when I didn't do anything.\nAnyway - yes. I agree with you. Thanks for the talk. Take care!",
+      "query_text": "seeker: He started saying things that are just factually not correct. I get that the immune system is super complicated, and most people don't know much about it. But when I'd try to explain some things to him, he acted like I couldn't possibly know anything he didn't, after reading one Forbes article, and he started making personal attacks.\nsupporter: I think that perhaps you do not need this toxic person in your life. After fifteen years without him do you really feel you need to stay r reconciled?\nseeker: I don't need him, no... But he's funny, and I don't have too many people in my life right now. I just moved to a new state where I literally know no one.\nsupporter: In that case perhaps you can just agree to disagree on this topic? If you don't want to risk the friendship :). I hope I have been able to be of some help to you today and thank you for talking!\nseeker: And I'm also hurt and annoyed that he thinks I have anything to apologize for, when I put up with his acid tongued comments, and just turn the other cheek. I agree we should just go on, but I'm not going to apologize, when I didn't do anything.\nseeker: Anyway - yes. I agree with you. Thanks for the talk. Take care!",
+      "rank": 2,
+      "cosine_similarity": 0.7471127510070801,
+      "canonical_treatment_id": "rs_treatment_c0a985eac8c30826a17920f4",
+      "exact_rendered_treatment": "Strategy family [Information]: inform the user about availability of free therapy sessions for people in need",
+      "rendered_card_text_sha256": "c0a985eac8c30826a17920f4511d6401e024e6d2fe559b4e5d2a0d01a61a635f",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_407e80e14be75d4afc5ce0ac"
+        ],
+        "source_card_ids": [
+          "rs_src_26390238441971cb7ae3dcc7"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0357"
+        ],
+        "representative_atomic_card_id": "rs_atomic_407e80e14be75d4afc5ce0ac",
+        "representative_source_card_id": "rs_src_26390238441971cb7ae3dcc7"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_56a19df7a7ff5498147cb11b",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1018",
+      "source_split": "validation",
+      "decision_turn_index": 16,
+      "visible_state": "seeker: Yes again. I have to do something to sleep well.\nseeker: My schedule starts in the evening extends through the night. But I can take sleep as much I want. But not throughout the night.\nsupporter: When I feel restless and want to sleep well, I take warm shower before sleeping and it helps me. At day time try to keep your bedroom dark so you can sleep for longer.\nsupporter: Enough sleep is very important for good health.\nseeker: Warm shower helps you sleep. I learn to do that. I was thinking a bath will keep me fresh and will reduce sleep. Thanks for your advice. Also I am making arrangements to keep my room full dark, no small light at all.\nseeker: Thanks again for your advice.",
+      "current_user_text": "Warm shower helps you sleep. I learn to do that. I was thinking a bath will keep me fresh and will reduce sleep. Thanks for your advice. Also I am making arrangements to keep my room full dark, no small light at all.\nThanks again for your advice.",
+      "query_text": "seeker: Yes again. I have to do something to sleep well.\nseeker: My schedule starts in the evening extends through the night. But I can take sleep as much I want. But not throughout the night.\nsupporter: When I feel restless and want to sleep well, I take warm shower before sleeping and it helps me. At day time try to keep your bedroom dark so you can sleep for longer.\nsupporter: Enough sleep is very important for good health.\nseeker: Warm shower helps you sleep. I learn to do that. I was thinking a bath will keep me fresh and will reduce sleep. Thanks for your advice. Also I am making arrangements to keep my room full dark, no small light at all.\nseeker: Thanks again for your advice.",
+      "rank": 2,
+      "cosine_similarity": 0.7711844444274902,
+      "canonical_treatment_id": "rs_treatment_0b0b8bc6feb5e586c10964ff",
+      "exact_rendered_treatment": "Strategy family [Information]: inform the user that getting good sleep is critical",
+      "rendered_card_text_sha256": "0b0b8bc6feb5e586c10964ff5870f98fb1e8563222e5f0354f9c173032a18df6",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_841e6c7d85c60f76e70017f2"
+        ],
+        "source_card_ids": [
+          "rs_src_adf73d26bbd8bf662b5764dd"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0992"
+        ],
+        "representative_atomic_card_id": "rs_atomic_841e6c7d85c60f76e70017f2",
+        "representative_source_card_id": "rs_src_adf73d26bbd8bf662b5764dd"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_0c5b1b4a5c7547c7a84bcc0e",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1268",
+      "source_split": "validation",
+      "decision_turn_index": 1,
+      "visible_state": "seeker: Hi, how are you?",
+      "current_user_text": "Hi, how are you?",
+      "query_text": "seeker: Hi, how are you?",
+      "rank": 2,
+      "cosine_similarity": 0.715919017791748,
+      "canonical_treatment_id": "rs_treatment_909619194e3f7ed1049df1f6",
+      "exact_rendered_treatment": "Strategy family [Others]: greet the user",
+      "rendered_card_text_sha256": "909619194e3f7ed1049df1f68247f9f2e5b71580a5ec2ab9dbefc0b0d89690a9",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_14af075edc1fedf9afb0d97d",
+          "rs_atomic_3ac2bca6bc82275edd49de67",
+          "rs_atomic_41e05022f6693e55ff66c0d2",
+          "rs_atomic_46f7ff7c6ea659102fb305c7",
+          "rs_atomic_607ad84c207197e38bf4df4e",
+          "rs_atomic_6ae76902a7dd7ceed7364948",
+          "rs_atomic_8ff5c812f3810c63eedc2f76",
+          "rs_atomic_afdd83997364d3b54c690687"
+        ],
+        "source_card_ids": [
+          "rs_src_133c249e411fa8c6449f0607",
+          "rs_src_5c0699ec8da5139730eba11a",
+          "rs_src_a5533a0fe831dc5d9af66555",
+          "rs_src_b6d4c86e4a3ca847d77a515d",
+          "rs_src_c54e32b9b1efdebef137e386",
+          "rs_src_db423f8af77b689d30158aad",
+          "rs_src_dfec075c66898e877fffebd5",
+          "rs_src_ff092885a59e3d8105339a60"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0076",
+          "esconv_0146",
+          "esconv_0156",
+          "esconv_0225",
+          "esconv_0678",
+          "esconv_1021",
+          "esconv_1260",
+          "esconv_1265"
+        ],
+        "representative_atomic_card_id": "rs_atomic_afdd83997364d3b54c690687",
+        "representative_source_card_id": "rs_src_133c249e411fa8c6449f0607"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_437834a1fb25cddf7df1bdee",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0807",
+      "source_split": "validation",
+      "decision_turn_index": 2,
+      "visible_state": "supporter: hi how are you today?\nseeker: I am doing okay.",
+      "current_user_text": "I am doing okay.",
+      "query_text": "supporter: hi how are you today?\nseeker: I am doing okay.",
+      "rank": 2,
+      "cosine_similarity": 0.8110394477844238,
+      "canonical_treatment_id": "rs_treatment_4113a20b8b1442dba7a1f6a9",
+      "exact_rendered_treatment": "Strategy family [Others]: state their own current state as alright",
+      "rendered_card_text_sha256": "4113a20b8b1442dba7a1f6a98901271820278673b5a0799f0e9e48563f736a29",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_098f5f352d030387bd4eeebf"
+        ],
+        "source_card_ids": [
+          "rs_src_871c1268915957acaac3f373"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1158"
+        ],
+        "representative_atomic_card_id": "rs_atomic_098f5f352d030387bd4eeebf",
+        "representative_source_card_id": "rs_src_871c1268915957acaac3f373"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_388e75b36b62aa1637460d85",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0582",
+      "source_split": "validation",
+      "decision_turn_index": 25,
+      "visible_state": "seeker: Who is this they that your speaking about?\nseeker: I don't mean to be crass either but I have never been jobless or homeless either. So I'm desperate here and don't know what to do?\nsupporter: Your landlord. I worked out a way with payments when i was furloughed from my job. And yes i was actually homeless many years ago so i do know what it feels like to miss out on meals for a days at a time. It seems you should look up evictions during Covid. They are not allowed to throw you on the street as long as the pandemic is going on.\nseeker: How did you eat and where did you sleep when you were homeless? How long did it take to end your situation?\nseeker: If you were homeless what did you say to your landlord that they still put you out?\nseeker: Where did you wash up or brush your teeth?",
+      "current_user_text": "How did you eat and where did you sleep when you were homeless? How long did it take to end your situation?\nIf you were homeless what did you say to your landlord that they still put you out?\nWhere did you wash up or brush your teeth?",
+      "query_text": "seeker: Who is this they that your speaking about?\nseeker: I don't mean to be crass either but I have never been jobless or homeless either. So I'm desperate here and don't know what to do?\nsupporter: Your landlord. I worked out a way with payments when i was furloughed from my job. And yes i was actually homeless many years ago so i do know what it feels like to miss out on meals for a days at a time. It seems you should look up evictions during Covid. They are not allowed to throw you on the street as long as the pandemic is going on.\nseeker: How did you eat and where did you sleep when you were homeless? How long did it take to end your situation?\nseeker: If you were homeless what did you say to your landlord that they still put you out?\nseeker: Where did you wash up or brush your teeth?",
+      "rank": 2,
+      "cosine_similarity": 0.7344187498092651,
+      "canonical_treatment_id": "rs_treatment_c41a9141e29887570398cc08",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest the user look into funds for hotel accommodation",
+      "rendered_card_text_sha256": "c41a9141e29887570398cc08e4b20ce1132c9067cf7a7f4bcb655bfad8d37ea8",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_c3030aa081808a59a38aedf0"
+        ],
+        "source_card_ids": [
+          "rs_src_b67e53ce3b46929a5d1314de"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0390"
+        ],
+        "representative_atomic_card_id": "rs_atomic_c3030aa081808a59a38aedf0",
+        "representative_source_card_id": "rs_src_b67e53ce3b46929a5d1314de"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_5eb6755e5a61ff87a79f817f",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0466",
+      "source_split": "validation",
+      "decision_turn_index": 11,
+      "visible_state": "supporter: I can sense how stressed you are about the safety of your job. This pandemic has caused so much stress and very much anxiety on everyone, so just know you are not alone. I'm not sure on the work you do, but you putting your health at risk everyday to make a living for you and your family makes you an amazing person. Just try and remember that your health is very much more important then your job and just make sure you are trying everything possible to keep yourself safe out there.\nseeker: Thanks for the positive vibes, but I doubt things will get better.\nsupporter: Of course! I also am afraid that this pandemic is going to get worse before it gets any better and that is just my opinion. I am scared for everyone out here anymore and its not just people getting sick and ill, but people like you who could be in jeopardy of loosing their job or their source of income. That's is something that would be on anyones mind, more yours then mine due to you actually working in the public.\nseeker: There is a lock down in my area, I fear it will only get worse.\nsupporter: We thankfully have not got on lockdown just yet, but I know it will be happening soon. We live in a very small town and it has got bad here that either we know someone who has it, or someone in the family has it. It seemed like it just happened over night that it just spread so fast here that everyone is in a panic mode again. What type of things do you do while you are on lockdown?\nseeker: Think about the bad things that will happen if I lost my job. I have been only thinking about the bad..",
+      "current_user_text": "Think about the bad things that will happen if I lost my job. I have been only thinking about the bad..",
+      "query_text": "supporter: I can sense how stressed you are about the safety of your job. This pandemic has caused so much stress and very much anxiety on everyone, so just know you are not alone. I'm not sure on the work you do, but you putting your health at risk everyday to make a living for you and your family makes you an amazing person. Just try and remember that your health is very much more important then your job and just make sure you are trying everything possible to keep yourself safe out there.\nseeker: Thanks for the positive vibes, but I doubt things will get better.\nsupporter: Of course! I also am afraid that this pandemic is going to get worse before it gets any better and that is just my opinion. I am scared for everyone out here anymore and its not just people getting sick and ill, but people like you who could be in jeopardy of loosing their job or their source of income. That's is something that would be on anyones mind, more yours then mine due to you actually working in the public.\nseeker: There is a lock down in my area, I fear it will only get worse.\nsupporter: We thankfully have not got on lockdown just yet, but I know it will be happening soon. We live in a very small town and it has got bad here that either we know someone who has it, or someone in the family has it. It seemed like it just happened over night that it just spread so fast here that everyone is in a panic mode again. What type of things do you do while you are on lockdown?\nseeker: Think about the bad things that will happen if I lost my job. I have been only thinking about the bad..",
+      "rank": 2,
+      "cosine_similarity": 0.847466230392456,
+      "canonical_treatment_id": "rs_treatment_d5d693d0165de11711bb9a06",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest using the time at home to learn new things",
+      "rendered_card_text_sha256": "d5d693d0165de11711bb9a0650a3e7123c6e26b53cb4bbf7a2d170ee4aa5b3e4",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_c6c331011c049319497dd3da"
+        ],
+        "source_card_ids": [
+          "rs_src_b8a9726d8d51c3362e75771f"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0499"
+        ],
+        "representative_atomic_card_id": "rs_atomic_c6c331011c049319497dd3da",
+        "representative_source_card_id": "rs_src_b8a9726d8d51c3362e75771f"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_2e2e9fbe1e6b68ce08bca651",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1227",
+      "source_split": "validation",
+      "decision_turn_index": 7,
+      "visible_state": "supporter: Hi , how are you?\nseeker: tired, how about you?\nsupporter: Good afternoon\nsupporter: Why your tired?\nseeker: Is it afternoon where you are?\nseeker: I'm still waking up, should have more coffee. And, I am just always tired, tired of everything these days",
+      "current_user_text": "Is it afternoon where you are?\nI'm still waking up, should have more coffee. And, I am just always tired, tired of everything these days",
+      "query_text": "supporter: Hi , how are you?\nseeker: tired, how about you?\nsupporter: Good afternoon\nsupporter: Why your tired?\nseeker: Is it afternoon where you are?\nseeker: I'm still waking up, should have more coffee. And, I am just always tired, tired of everything these days",
+      "rank": 2,
+      "cosine_similarity": 0.8371783494949341,
+      "canonical_treatment_id": "rs_treatment_b471a08e92d98702d242e2b2",
+      "exact_rendered_treatment": "Strategy family [Question]: ask about the user's work hours",
+      "rendered_card_text_sha256": "b471a08e92d98702d242e2b23730588baddac0a3760e84f839b09372f2a56985",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_25c055aa5240af81ed71c5e9"
+        ],
+        "source_card_ids": [
+          "rs_src_578b79a1945464af3e875e18"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0224"
+        ],
+        "representative_atomic_card_id": "rs_atomic_25c055aa5240af81ed71c5e9",
+        "representative_source_card_id": "rs_src_578b79a1945464af3e875e18"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_cf8b8bcefab727d93a293598",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0324",
+      "source_split": "validation",
+      "decision_turn_index": 7,
+      "visible_state": "supporter: I good, how are you feeling?\nseeker: I am worried that COVID-19 has made me depressed. I am usually a well mannered, even personality but I find myself impatient and possibly getting depressed.\nsupporter: So you think that COVID-19 has made you depressed? Could there be anything else that could be bothering you?\nseeker: Possibly... I think the remote learning of my kids and the iability to leave the house or go out, is making me sadder than normal.\nsupporter: I completely understand where you are coming from there. I feel like remote learning takes away from some of the social aspects of life that need to happen in order for a healthy life.\nseeker: I am also worried that I am not playing the political game well. I feel like I am too straight forward, not rude, but I should play politics more to get ahead.",
+      "current_user_text": "I am also worried that I am not playing the political game well. I feel like I am too straight forward, not rude, but I should play politics more to get ahead.",
+      "query_text": "supporter: I good, how are you feeling?\nseeker: I am worried that COVID-19 has made me depressed. I am usually a well mannered, even personality but I find myself impatient and possibly getting depressed.\nsupporter: So you think that COVID-19 has made you depressed? Could there be anything else that could be bothering you?\nseeker: Possibly... I think the remote learning of my kids and the iability to leave the house or go out, is making me sadder than normal.\nsupporter: I completely understand where you are coming from there. I feel like remote learning takes away from some of the social aspects of life that need to happen in order for a healthy life.\nseeker: I am also worried that I am not playing the political game well. I feel like I am too straight forward, not rude, but I should play politics more to get ahead.",
+      "rank": 2,
+      "cosine_similarity": 0.8191388845443726,
+      "canonical_treatment_id": "rs_treatment_5280617efd610568c62f95d9",
+      "exact_rendered_treatment": "Strategy family [Question]: ask if the user interacts with their friends currently",
+      "rendered_card_text_sha256": "5280617efd610568c62f95d9ca7b72744a14680dcd6a790c7b052f45c3d1f11c",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_37df6ca593c013527931eaf5"
+        ],
+        "source_card_ids": [
+          "rs_src_8dcdb56031f048b12963e9c2"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0322"
+        ],
+        "representative_atomic_card_id": "rs_atomic_37df6ca593c013527931eaf5",
+        "representative_source_card_id": "rs_src_8dcdb56031f048b12963e9c2"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_8f256ca8dc7939b068c95332",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0641",
+      "source_split": "validation",
+      "decision_turn_index": 22,
+      "visible_state": "seeker: No, thank heavens. My government is handling things a bit better here in Canada.\nseeker: Being out of work is tough, but at the same time I get a bunch of time to myself.\nsupporter: I'm jealous. hehe I often wonder what our friends to the north are going through. I'm glad to see you reaching out too. That's awesome!\nseeker: It feels good to reach out and at least talk to someone about something to be honest.\nsupporter: I know the feeling and especially in these times. It seems things are looking up though with a vaccine coming soon. Getting outside and reaching out is definitely the right thing to do. Soon things will be back to normal!\nseeker: That's what I'm hoping for... It looks like there is finally light at the end of the tunnel.",
+      "current_user_text": "That's what I'm hoping for... It looks like there is finally light at the end of the tunnel.",
+      "query_text": "seeker: No, thank heavens. My government is handling things a bit better here in Canada.\nseeker: Being out of work is tough, but at the same time I get a bunch of time to myself.\nsupporter: I'm jealous. hehe I often wonder what our friends to the north are going through. I'm glad to see you reaching out too. That's awesome!\nseeker: It feels good to reach out and at least talk to someone about something to be honest.\nsupporter: I know the feeling and especially in these times. It seems things are looking up though with a vaccine coming soon. Getting outside and reaching out is definitely the right thing to do. Soon things will be back to normal!\nseeker: That's what I'm hoping for... It looks like there is finally light at the end of the tunnel.",
+      "rank": 2,
+      "cosine_similarity": 0.7825261354446411,
+      "canonical_treatment_id": "rs_treatment_4b3076a6aaaba7d28e72410d",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: recognize the difficulty of remembering self-care during stressful times",
+      "rendered_card_text_sha256": "4b3076a6aaaba7d28e72410dd7c73fa65fb5c6e1f45b9ab443c8cc472d7203c2",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_615dbedb96f1109ff4ae5572"
+        ],
+        "source_card_ids": [
+          "rs_src_f4940552c0130d534f6bfe10"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0898"
+        ],
+        "representative_atomic_card_id": "rs_atomic_615dbedb96f1109ff4ae5572",
+        "representative_source_card_id": "rs_src_f4940552c0130d534f6bfe10"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_1139146d2de2c92e127988c6",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1296",
+      "source_split": "validation",
+      "decision_turn_index": 18,
+      "visible_state": "seeker: Can you elaborate on extensions please ? Not sure what it is ?\nsupporter: Also there are people willing to help sometimes in local places. An extension would happen when the institution you owe gives you more time to pay them.\nsupporter: I would try going to the town hall.\nseeker: Ahh ok . I will give them a call and check. What does going to town hall mean ?\nsupporter: Going to the town hall means phsyically going to your local town hall asking for help for assistance. There should within have programs you can apply for.\nseeker: ok understood. Have you had any depression issues during lockdown ?",
+      "current_user_text": "ok understood. Have you had any depression issues during lockdown ?",
+      "query_text": "seeker: Can you elaborate on extensions please ? Not sure what it is ?\nsupporter: Also there are people willing to help sometimes in local places. An extension would happen when the institution you owe gives you more time to pay them.\nsupporter: I would try going to the town hall.\nseeker: Ahh ok . I will give them a call and check. What does going to town hall mean ?\nsupporter: Going to the town hall means phsyically going to your local town hall asking for help for assistance. There should within have programs you can apply for.\nseeker: ok understood. Have you had any depression issues during lockdown ?",
+      "rank": 2,
+      "cosine_similarity": 0.7075597047805786,
+      "canonical_treatment_id": "rs_treatment_c20f61324c61410bfecc87df",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the user's difficult situation and validate its harshness",
+      "rendered_card_text_sha256": "c20f61324c61410bfecc87df3525eb24545b007b11dfe0054f4f81d0337eef22",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_e61df9e847b873f993f22d31"
+        ],
+        "source_card_ids": [
+          "rs_src_7bddada91ee6e472440d3b7e"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0198"
+        ],
+        "representative_atomic_card_id": "rs_atomic_e61df9e847b873f993f22d31",
+        "representative_source_card_id": "rs_src_7bddada91ee6e472440d3b7e"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_2d04b5e1f1587bb0b296a16b",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0577",
+      "source_split": "validation",
+      "decision_turn_index": 6,
+      "visible_state": "supporter: Hi there, how are you doing today?\nseeker: I am okay, I am very worried about my friend. I believe she is abusing prescription drugs.\nsupporter: Oh no, why do you think she is abusing them?\nseeker: I don't think it, I guess I actually know she is. She use to have a heroin problem and went on methadone. She has since started taking anxiety medicine in order to get high.\nsupporter: Thats a tough spot to be in, ive actually been both sides of that coin.\nseeker: I think I know what I need to do, It is just hard.",
+      "current_user_text": "I think I know what I need to do, It is just hard.",
+      "query_text": "supporter: Hi there, how are you doing today?\nseeker: I am okay, I am very worried about my friend. I believe she is abusing prescription drugs.\nsupporter: Oh no, why do you think she is abusing them?\nseeker: I don't think it, I guess I actually know she is. She use to have a heroin problem and went on methadone. She has since started taking anxiety medicine in order to get high.\nsupporter: Thats a tough spot to be in, ive actually been both sides of that coin.\nseeker: I think I know what I need to do, It is just hard.",
+      "rank": 2,
+      "cosine_similarity": 0.798179030418396,
+      "canonical_treatment_id": "rs_treatment_02ed40e0d60f42dda8ff8625",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: restate the user's conflicting feelings about their friend's recovery progress",
+      "rendered_card_text_sha256": "02ed40e0d60f42dda8ff862585c85546e712ae5b9c02633446033abb589d2c60",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_128105d917f8251fc306bbc8"
+        ],
+        "source_card_ids": [
+          "rs_src_0277d804af8d2fd1b75dc70b"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1229"
+        ],
+        "representative_atomic_card_id": "rs_atomic_128105d917f8251fc306bbc8",
+        "representative_source_card_id": "rs_src_0277d804af8d2fd1b75dc70b"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_2bb1d76f3d24ecea4469f233",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0158",
+      "source_split": "validation",
+      "decision_turn_index": 33,
+      "visible_state": "supporter: He must still care because he is talking with you, but he is also involved with his x\nseeker: His family member was a friend of mine.\nseeker: I think he does but it is more convenient to be with his ex.\nsupporter: Has the COVID interfered with you\nsupporter: There is another way to look at this\nseeker: Yes it has. We are in different countries and his ex is in the same country as him.",
+      "current_user_text": "Yes it has. We are in different countries and his ex is in the same country as him.",
+      "query_text": "supporter: He must still care because he is talking with you, but he is also involved with his x\nseeker: His family member was a friend of mine.\nseeker: I think he does but it is more convenient to be with his ex.\nsupporter: Has the COVID interfered with you\nsupporter: There is another way to look at this\nseeker: Yes it has. We are in different countries and his ex is in the same country as him.",
+      "rank": 2,
+      "cosine_similarity": 0.7683438658714294,
+      "canonical_treatment_id": "rs_treatment_dd74a16206f82bacb0b9ef1e",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: imply shared social connections and suggest possible reasons for others' silence",
+      "rendered_card_text_sha256": "dd74a16206f82bacb0b9ef1e2da8a8dc6a495cc0693de6fc199d5bc589efa8ca",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_403878349a677e01a9db287f"
+        ],
+        "source_card_ids": [
+          "rs_src_2ea0d0a0766754e7f71804a2"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0259"
+        ],
+        "representative_atomic_card_id": "rs_atomic_403878349a677e01a9db287f",
+        "representative_source_card_id": "rs_src_2ea0d0a0766754e7f71804a2"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_0a7285b10c49323feb754d90",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1187",
+      "source_split": "validation",
+      "decision_turn_index": 16,
+      "visible_state": "supporter: okay. at lease seeing them in the video should have brought you some relief. Are you planning to get vaccinated when you are able to? And what about your friends? once you are vaccinated, it will help you meet your friends in person.\nseeker: Yes we are planning to get it as soon as possible but that is hard in our state\nsupporter: oh okay. Have you tried checking with your friends to see if you could meet in person but still maintain social distance and wear masks, etc.\nseeker: None of them are really comfortable with that sadly\nsupporter: oh okay, have you discussed anything with your friends to see if you find any alternative way of meeting?\nseeker: I have tried but we don't have many ideas",
+      "current_user_text": "I have tried but we don't have many ideas",
+      "query_text": "supporter: okay. at lease seeing them in the video should have brought you some relief. Are you planning to get vaccinated when you are able to? And what about your friends? once you are vaccinated, it will help you meet your friends in person.\nseeker: Yes we are planning to get it as soon as possible but that is hard in our state\nsupporter: oh okay. Have you tried checking with your friends to see if you could meet in person but still maintain social distance and wear masks, etc.\nseeker: None of them are really comfortable with that sadly\nsupporter: oh okay, have you discussed anything with your friends to see if you find any alternative way of meeting?\nseeker: I have tried but we don't have many ideas",
+      "rank": 2,
+      "cosine_similarity": 0.8042763471603394,
+      "canonical_treatment_id": "rs_treatment_6520dbf3e97547d47e1024d6",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal practice of meeting friends in parks or public spaces while following guidelines",
+      "rendered_card_text_sha256": "6520dbf3e97547d47e1024d64d36d1f354d83853df6f4eb01d5e5c1fe4b13fcf",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_778a61f3e5b456fd1a91b6dd"
+        ],
+        "source_card_ids": [
+          "rs_src_e125e2d079626edf0bf325b3"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0346"
+        ],
+        "representative_atomic_card_id": "rs_atomic_778a61f3e5b456fd1a91b6dd",
+        "representative_source_card_id": "rs_src_e125e2d079626edf0bf325b3"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_3e83ab49e297b859730974a3",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0438",
+      "source_split": "validation",
+      "decision_turn_index": 40,
+      "visible_state": "supporter: What would you like to talk about?\nseeker: I talk about my friends and my life\nsupporter: We have talked about your friends and your life and you feel like you have a plan moving forward.\nseeker: Yes i have plan move for my with my own rules\nsupporter: You're going to move on by your own rules. Tell me more?\nseeker: I have independted life",
+      "current_user_text": "I have independted life",
+      "query_text": "supporter: What would you like to talk about?\nseeker: I talk about my friends and my life\nsupporter: We have talked about your friends and your life and you feel like you have a plan moving forward.\nseeker: Yes i have plan move for my with my own rules\nsupporter: You're going to move on by your own rules. Tell me more?\nseeker: I have independted life",
+      "rank": 2,
+      "cosine_similarity": 0.7967769503593445,
+      "canonical_treatment_id": "rs_treatment_636316e4be98a25134779001",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal activity for me time",
+      "rendered_card_text_sha256": "636316e4be98a25134779001843f4bc45ed37136b586affbfefd4b3dd5b9514d",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_b6fdb6a4eddbcb2eca21c60b"
+        ],
+        "source_card_ids": [
+          "rs_src_611a87e4363ea2676137635a"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0583"
+        ],
+        "representative_atomic_card_id": "rs_atomic_b6fdb6a4eddbcb2eca21c60b",
+        "representative_source_card_id": "rs_src_611a87e4363ea2676137635a"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_361f7e767ebd896fcfb28df5",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1227",
+      "source_split": "validation",
+      "decision_turn_index": 34,
+      "visible_state": "seeker: thank you :) you sound like a nice person\nsupporter: yes , Thanks\nseeker: can you tell me where you are? I am in the US, in Illinois\nsupporter: I'm in London\nseeker: I hope you are real. It is good to connect with someone else!\nseeker: Cool!!! I would love to hear your accent, lol",
+      "current_user_text": "I hope you are real. It is good to connect with someone else!\nCool!!! I would love to hear your accent, lol",
+      "query_text": "seeker: thank you :) you sound like a nice person\nsupporter: yes , Thanks\nseeker: can you tell me where you are? I am in the US, in Illinois\nsupporter: I'm in London\nseeker: I hope you are real. It is good to connect with someone else!\nseeker: Cool!!! I would love to hear your accent, lol",
+      "rank": 4,
+      "cosine_similarity": 0.7233390808105469,
+      "canonical_treatment_id": "rs_treatment_e54c3c3a1269be838e478e48",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: acknowledge that the current job situation is better than nothing",
+      "rendered_card_text_sha256": "e54c3c3a1269be838e478e48d9e9d7ad6e84d438d327e5c83738e1823cf57d3f",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_a7d2a026b674e43903d0faa2"
+        ],
+        "source_card_ids": [
+          "rs_src_855609dc7b990d564b5eeac8"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0056"
+        ],
+        "representative_atomic_card_id": "rs_atomic_a7d2a026b674e43903d0faa2",
+        "representative_source_card_id": "rs_src_855609dc7b990d564b5eeac8"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_b582dd9eb75e0faed9f8c3f5",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0458",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "supporter: There is a way to connect virtually in a fun way, i've tried doing cocktail tasting and wine tasting, a virtual cooking class.\nseeker: really? i've never heard of that\nsupporter: It's very fun! You can find a wine list online and have everyone go get the same bottles. You can download tasting notes and instructions. It's really fun!!!\nseeker: how do find such chats?\nsupporter: For my grandmas 80thi birthday, we hired a chef to do a cooking class which was so fun.\nseeker: what a great idea!",
+      "current_user_text": "what a great idea!",
+      "query_text": "supporter: There is a way to connect virtually in a fun way, i've tried doing cocktail tasting and wine tasting, a virtual cooking class.\nseeker: really? i've never heard of that\nsupporter: It's very fun! You can find a wine list online and have everyone go get the same bottles. You can download tasting notes and instructions. It's really fun!!!\nseeker: how do find such chats?\nsupporter: For my grandmas 80thi birthday, we hired a chef to do a cooking class which was so fun.\nseeker: what a great idea!",
+      "rank": 4,
+      "cosine_similarity": 0.6886716485023499,
+      "canonical_treatment_id": "rs_treatment_4bdf19dac21b56b804d17417",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: offer encouragement and express optimism about the future",
+      "rendered_card_text_sha256": "4bdf19dac21b56b804d174173627001e799680991f574ee666506fac0e76d521",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_a6907f974f1f33a9d7a87def"
+        ],
+        "source_card_ids": [
+          "rs_src_943754b212017ca06a2f4d33"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0728"
+        ],
+        "representative_atomic_card_id": "rs_atomic_a6907f974f1f33a9d7a87def",
+        "representative_source_card_id": "rs_src_943754b212017ca06a2f4d33"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_11149fadacf81b4e654c7fd4",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0288",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "supporter: May I aks what your major is\nseeker: Yes, I am in a full schedule. The class I might fail is mandatory for my Computer Science degree. That is why I am so concerned.\nsupporter: Is it online in person\nseeker: That class in particular is online.\nsupporter: Being online makes it harder.\nseeker: You think so? I kept telling myself that they were supposed to be easier, since its on the computer.",
+      "current_user_text": "You think so? I kept telling myself that they were supposed to be easier, since its on the computer.",
+      "query_text": "supporter: May I aks what your major is\nseeker: Yes, I am in a full schedule. The class I might fail is mandatory for my Computer Science degree. That is why I am so concerned.\nsupporter: Is it online in person\nseeker: That class in particular is online.\nsupporter: Being online makes it harder.\nseeker: You think so? I kept telling myself that they were supposed to be easier, since its on the computer.",
+      "rank": 4,
+      "cosine_similarity": 0.7580026388168335,
+      "canonical_treatment_id": "rs_treatment_a22472ff75c21d31cf512215",
+      "exact_rendered_treatment": "Strategy family [Information]: acknowledge that online learning challenges are common among people",
+      "rendered_card_text_sha256": "a22472ff75c21d31cf5122156f1c743a8365b392dfe8e81db4a163a9b65a6dfb",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_51f54746d5ef4c217b9df95c"
+        ],
+        "source_card_ids": [
+          "rs_src_e13eb9b9964afec2dd637cb1"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0619"
+        ],
+        "representative_atomic_card_id": "rs_atomic_51f54746d5ef4c217b9df95c",
+        "representative_source_card_id": "rs_src_e13eb9b9964afec2dd637cb1"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_ef25f071a9c067735f100580",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1187",
+      "source_split": "validation",
+      "decision_turn_index": 28,
+      "visible_state": "supporter: yes, things will only get better from here\nsupporter: i hope with the government's plan to get vaccines sooner, will let states to administer them soon . and then hopefully you will be able to meet your friends in person\nseeker: I truly hope so!\nseeker: Thanks for talking with me\nsupporter: Sure no problem. Hopefully things will be much better for you soon.\nseeker: Thanks. Bye!",
+      "current_user_text": "Thanks. Bye!",
+      "query_text": "supporter: yes, things will only get better from here\nsupporter: i hope with the government's plan to get vaccines sooner, will let states to administer them soon . and then hopefully you will be able to meet your friends in person\nseeker: I truly hope so!\nseeker: Thanks for talking with me\nsupporter: Sure no problem. Hopefully things will be much better for you soon.\nseeker: Thanks. Bye!",
+      "rank": 4,
+      "cosine_similarity": 0.791723370552063,
+      "canonical_treatment_id": "rs_treatment_c70cc7dfda09e70482cc7b04",
+      "exact_rendered_treatment": "Strategy family [Information]: provide information about the situation in their country",
+      "rendered_card_text_sha256": "c70cc7dfda09e70482cc7b045dfd89b942df9bef6282577300b26b99d7602c66",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_afedc8e17089da5d7fac4bd5"
+        ],
+        "source_card_ids": [
+          "rs_src_7b278462d5513cc103c92044"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0407"
+        ],
+        "representative_atomic_card_id": "rs_atomic_afedc8e17089da5d7fac4bd5",
+        "representative_source_card_id": "rs_src_7b278462d5513cc103c92044"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_dcd359e8d11396aafe6dc77e",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0555",
+      "source_split": "validation",
+      "decision_turn_index": 26,
+      "visible_state": "supporter: Ohhh really. But women have a equal rights as men.\nseeker: yes your corret i am equal rights as men\nseeker: and then thanks for support my feeling\nsupporter: Women's are succeeding in all the fields now a days.\nseeker: yes. but somewhat difficult in a days\nseeker: but i believe after some days that issue will sloved",
+      "current_user_text": "yes. but somewhat difficult in a days\nbut i believe after some days that issue will sloved",
+      "query_text": "supporter: Ohhh really. But women have a equal rights as men.\nseeker: yes your corret i am equal rights as men\nseeker: and then thanks for support my feeling\nsupporter: Women's are succeeding in all the fields now a days.\nseeker: yes. but somewhat difficult in a days\nseeker: but i believe after some days that issue will sloved",
+      "rank": 4,
+      "cosine_similarity": 0.7288931608200073,
+      "canonical_treatment_id": "rs_treatment_f81739a300e992becf2a4e7d",
+      "exact_rendered_treatment": "Strategy family [Others]: acknowledge shared thinking with the user",
+      "rendered_card_text_sha256": "f81739a300e992becf2a4e7d39e4e5d608e9c5c7361aab2dc04e9907179198df",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_d1e3b5dcbbc632eeedbfd1d5"
+        ],
+        "source_card_ids": [
+          "rs_src_55fbe9b42d9e5ecef6afa6c4"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1241"
+        ],
+        "representative_atomic_card_id": "rs_atomic_d1e3b5dcbbc632eeedbfd1d5",
+        "representative_source_card_id": "rs_src_55fbe9b42d9e5ecef6afa6c4"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_385ac0a41686721627991c2d",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0052",
+      "source_split": "validation",
+      "decision_turn_index": 14,
+      "visible_state": "seeker: Yes..\nsupporter: Have you started looking for a new one?\nsupporter: I know this is difficult but the best thing I would recommend is moving on.\nseeker: Not yet. Not sure where to start.\nsupporter: Do you have a linkdin account?\nseeker: I do, but not up to date.",
+      "current_user_text": "I do, but not up to date.",
+      "query_text": "seeker: Yes..\nsupporter: Have you started looking for a new one?\nsupporter: I know this is difficult but the best thing I would recommend is moving on.\nseeker: Not yet. Not sure where to start.\nsupporter: Do you have a linkdin account?\nseeker: I do, but not up to date.",
+      "rank": 4,
+      "cosine_similarity": 0.7538694739341736,
+      "canonical_treatment_id": "rs_treatment_8633b06977491503aadf02e0",
+      "exact_rendered_treatment": "Strategy family [Others]: acknowledge the conversation and wish the user well",
+      "rendered_card_text_sha256": "8633b06977491503aadf02e0700ab82c0835447df46351c44b4eb75fbcbcad08",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_162d2983cd6dc96c5747e207"
+        ],
+        "source_card_ids": [
+          "rs_src_e15d9f6bdd8ed5dbd52f88f6"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0280"
+        ],
+        "representative_atomic_card_id": "rs_atomic_162d2983cd6dc96c5747e207",
+        "representative_source_card_id": "rs_src_e15d9f6bdd8ed5dbd52f88f6"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_08bcb2c820401312ca00b4cc",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0720",
+      "source_split": "validation",
+      "decision_turn_index": 24,
+      "visible_state": "seeker: A lot of selfish people inviting others indoors or going out, even a few months ago when the cases were just dropping and they didn't take enough time to wait but immediately lift their own restriction and go out.\nsupporter: I'm also sick of the repetition too. Everyday I go to work then go home and just get stuck there all nigh every day. However, we need to tell ourselves that this too shall pass\nseeker: But even when there were a lot of cases, there are some people on my floor that walked freely in and out many times in one day when it wasn't safe for anyone. And I didn't get that at all and that was when I was angry and anxious of their actions.\nseeker: Because that risked my safety too\nseeker: sorry to hear that you have similar repetitions. That's how it feels. Everyday is the same. And when I talk with my folks on the phone, I have nothing new to share except about the pandemic, because that's the only thing new, and I only call the once a week.\nseeker: But yes, I do believe that it will pass at some point.",
+      "current_user_text": "But even when there were a lot of cases, there are some people on my floor that walked freely in and out many times in one day when it wasn't safe for anyone. And I didn't get that at all and that was when I was angry and anxious of their actions.\nBecause that risked my safety too\nsorry to hear that you have similar repetitions. That's how it feels. Everyday is the same. And when I talk with my folks on the phone, I have nothing new to share except about the pandemic, because that's the only thing new, and I only call the once a week.\nBut yes, I do believe that it will pass at some point.",
+      "query_text": "seeker: A lot of selfish people inviting others indoors or going out, even a few months ago when the cases were just dropping and they didn't take enough time to wait but immediately lift their own restriction and go out.\nsupporter: I'm also sick of the repetition too. Everyday I go to work then go home and just get stuck there all nigh every day. However, we need to tell ourselves that this too shall pass\nseeker: But even when there were a lot of cases, there are some people on my floor that walked freely in and out many times in one day when it wasn't safe for anyone. And I didn't get that at all and that was when I was angry and anxious of their actions.\nseeker: Because that risked my safety too\nseeker: sorry to hear that you have similar repetitions. That's how it feels. Everyday is the same. And when I talk with my folks on the phone, I have nothing new to share except about the pandemic, because that's the only thing new, and I only call the once a week.\nseeker: But yes, I do believe that it will pass at some point.",
+      "rank": 4,
+      "cosine_similarity": 0.7635017037391663,
+      "canonical_treatment_id": "rs_treatment_158e260b53d8e52c5529d960",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: encourage the user to initiate conversations with others about shared concerns",
+      "rendered_card_text_sha256": "158e260b53d8e52c5529d9608759fa6a46fcc1dff5e5c81647571e6b0c2baa8d",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_48e06e8212ae9a304db340e7"
+        ],
+        "source_card_ids": [
+          "rs_src_5ea6e2208274803f2b23655a"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0644"
+        ],
+        "representative_atomic_card_id": "rs_atomic_48e06e8212ae9a304db340e7",
+        "representative_source_card_id": "rs_src_5ea6e2208274803f2b23655a"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_17704b00b952c546fd2a0c07",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0031",
+      "source_split": "validation",
+      "decision_turn_index": 19,
+      "visible_state": "seeker: I agree. She made me watch them have sex once, it was sick.\nseeker: Can a therapist help me with that?\nseeker: Are you still there sir?\nsupporter: Sorry i was having wifi issues\nseeker: So what should i do?\nseeker: I think I need to have the threesome with them. She would like to get spitroasted, then I can get her back.",
+      "current_user_text": "So what should i do?\nI think I need to have the threesome with them. She would like to get spitroasted, then I can get her back.",
+      "query_text": "seeker: I agree. She made me watch them have sex once, it was sick.\nseeker: Can a therapist help me with that?\nseeker: Are you still there sir?\nsupporter: Sorry i was having wifi issues\nseeker: So what should i do?\nseeker: I think I need to have the threesome with them. She would like to get spitroasted, then I can get her back.",
+      "rank": 4,
+      "cosine_similarity": 0.7195234894752502,
+      "canonical_treatment_id": "rs_treatment_cb4d014d6e003bafb03e48ac",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest talking to a professional counsellor",
+      "rendered_card_text_sha256": "cb4d014d6e003bafb03e48ac1fe0a704b4c1d3891f5f8b0b0c8013deea55b99a",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_c9b5c890b9babce3c26f1235"
+        ],
+        "source_card_ids": [
+          "rs_src_13f544c14de491fc3cf7102e"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0061"
+        ],
+        "representative_atomic_card_id": "rs_atomic_c9b5c890b9babce3c26f1235",
+        "representative_source_card_id": "rs_src_13f544c14de491fc3cf7102e"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_f456ae4a9b34ba56a1642770",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0930",
+      "source_split": "validation",
+      "decision_turn_index": 22,
+      "visible_state": "supporter: What did you do for fun before you met her?\nseeker: sighting girls\nsupporter: I loved doing that too! Have you thought about going out and doing that with your friends now?\nseeker: yes. after having a chat with you i feel some goodness in me\nsupporter: Good! From talking to you I can tell that you have a lot of goodness in you!\nseeker: thank you so much",
+      "current_user_text": "thank you so much",
+      "query_text": "supporter: What did you do for fun before you met her?\nseeker: sighting girls\nsupporter: I loved doing that too! Have you thought about going out and doing that with your friends now?\nseeker: yes. after having a chat with you i feel some goodness in me\nsupporter: Good! From talking to you I can tell that you have a lot of goodness in you!\nseeker: thank you so much",
+      "rank": 4,
+      "cosine_similarity": 0.7593470811843872,
+      "canonical_treatment_id": "rs_treatment_85d0e786e8802a985e2c9dfa",
+      "exact_rendered_treatment": "Strategy family [Question]: ask if there is any other way to support the user",
+      "rendered_card_text_sha256": "85d0e786e8802a985e2c9dfa7c856a75c9759ff26382bfc6fcd510cdcd343eab",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_5d7b00ee764bf2680ebd6f59"
+        ],
+        "source_card_ids": [
+          "rs_src_bbff3c85bd5bbad569d32445"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0263"
+        ],
+        "representative_atomic_card_id": "rs_atomic_5d7b00ee764bf2680ebd6f59",
+        "representative_source_card_id": "rs_src_bbff3c85bd5bbad569d32445"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_a1b9dde8d6ebe61f7b97b74a",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0997",
+      "source_split": "validation",
+      "decision_turn_index": 3,
+      "visible_state": "seeker: Hello, how are you?\nsupporter: Hi there, how are you feeling?\nseeker: I'm alright, honestly I'm feeling rather ashamed. The reason for that and the problem that I'm facing is that I've had a drinking problem for quite a few years now, and I'm only 24 years old. Right now in my life I'm ready to seek help, but I'm having a lot of anxiety about it because I'm very worried about how others will judge me. I'm worried about how the counselors will see me, how others at a facility might view me, and any one else that I will have to share my story with when getting treatment and how they might view me. I'm ashamed of myself, my life, and the choices that I've made that have gotten me here and I guess my problem is that I just dont know how to get over these extreme anxieties and worries so that I can just finally make the step that I need so desperately and get help.",
+      "current_user_text": "I'm alright, honestly I'm feeling rather ashamed. The reason for that and the problem that I'm facing is that I've had a drinking problem for quite a few years now, and I'm only 24 years old. Right now in my life I'm ready to seek help, but I'm having a lot of anxiety about it because I'm very worried about how others will judge me. I'm worried about how the counselors will see me, how others at a facility might view me, and any one else that I will have to share my story with when getting treatment and how they might view me. I'm ashamed of myself, my life, and the choices that I've made that have gotten me here and I guess my problem is that I just dont know how to get over these extreme anxieties and worries so that I can just finally make the step that I need so desperately and get help.",
+      "query_text": "seeker: Hello, how are you?\nsupporter: Hi there, how are you feeling?\nseeker: I'm alright, honestly I'm feeling rather ashamed. The reason for that and the problem that I'm facing is that I've had a drinking problem for quite a few years now, and I'm only 24 years old. Right now in my life I'm ready to seek help, but I'm having a lot of anxiety about it because I'm very worried about how others will judge me. I'm worried about how the counselors will see me, how others at a facility might view me, and any one else that I will have to share my story with when getting treatment and how they might view me. I'm ashamed of myself, my life, and the choices that I've made that have gotten me here and I guess my problem is that I just dont know how to get over these extreme anxieties and worries so that I can just finally make the step that I need so desperately and get help.",
+      "rank": 4,
+      "cosine_similarity": 0.7426950931549072,
+      "canonical_treatment_id": "rs_treatment_048d7ae47d2c3f60d755e49d",
+      "exact_rendered_treatment": "Strategy family [Question]: ask the user if the supporter's interpretation of their situation is accurate",
+      "rendered_card_text_sha256": "048d7ae47d2c3f60d755e49d33150e680dd46c33ebb58f938888c4dabd04b6ef",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_d7841ba46f6a6bacbfa231c2"
+        ],
+        "source_card_ids": [
+          "rs_src_1e7ccc5e5599c7233cd169a3"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0911"
+        ],
+        "representative_atomic_card_id": "rs_atomic_d7841ba46f6a6bacbfa231c2",
+        "representative_source_card_id": "rs_src_1e7ccc5e5599c7233cd169a3"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_b7503e7aa713d57cbe942eff",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0799",
+      "source_split": "validation",
+      "decision_turn_index": 8,
+      "visible_state": "seeker: I am doing alright, and yeah I did type in the description. Do you want me to tell you what I typed?\nsupporter: If you're willing to share, please.\nseeker: So I'm frustrated with an ex-friend right now. I lived with her and 2 other friends and she just moved out the day before rent was due and then blocked us on everything so we couldn't ask her to pay her rent. So I'm pretty frustrated, but also sad that a friend would do that, yanno?\nsupporter: ouch. that sounds like it really hurts. how are you feeling about that? betrayed? sad? mad?\nseeker: All of the above reallu\nseeker: really",
+      "current_user_text": "All of the above reallu\nreally",
+      "query_text": "seeker: I am doing alright, and yeah I did type in the description. Do you want me to tell you what I typed?\nsupporter: If you're willing to share, please.\nseeker: So I'm frustrated with an ex-friend right now. I lived with her and 2 other friends and she just moved out the day before rent was due and then blocked us on everything so we couldn't ask her to pay her rent. So I'm pretty frustrated, but also sad that a friend would do that, yanno?\nsupporter: ouch. that sounds like it really hurts. how are you feeling about that? betrayed? sad? mad?\nseeker: All of the above reallu\nseeker: really",
+      "rank": 4,
+      "cosine_similarity": 0.7275528907775879,
+      "canonical_treatment_id": "rs_treatment_5b7a9330997a92676873936c",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the difficulty of moving due to financial hardship",
+      "rendered_card_text_sha256": "5b7a9330997a92676873936c772e73c94ecc16c97bcc2f58df3f4b550722a8e1",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_8fdf5e3982aba8670a7b6f09"
+        ],
+        "source_card_ids": [
+          "rs_src_04ad565673ffa863fa0170ce"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0390"
+        ],
+        "representative_atomic_card_id": "rs_atomic_8fdf5e3982aba8670a7b6f09",
+        "representative_source_card_id": "rs_src_04ad565673ffa863fa0170ce"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_95ad10ab209f9e53d0020f79",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0953",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "supporter: I hear you, feeling overwhelmed and like you don't know where to start can leave a person feeling stressd forsure!\nsupporter: Decluttering sounds like a great idea!\nsupporter: Sometimes taking baby steps is a good place to start!\nseeker: but there are so many thinggs to do and ideas i have\nsupporter: Of course! It can feel so stressful when we have all these little things we want to do but don't know where to start!\nseeker: should i start in one room or one group of things and collect them from all the rooms?",
+      "current_user_text": "should i start in one room or one group of things and collect them from all the rooms?",
+      "query_text": "supporter: I hear you, feeling overwhelmed and like you don't know where to start can leave a person feeling stressd forsure!\nsupporter: Decluttering sounds like a great idea!\nsupporter: Sometimes taking baby steps is a good place to start!\nseeker: but there are so many thinggs to do and ideas i have\nsupporter: Of course! It can feel so stressful when we have all these little things we want to do but don't know where to start!\nseeker: should i start in one room or one group of things and collect them from all the rooms?",
+      "rank": 4,
+      "cosine_similarity": 0.7714496850967407,
+      "canonical_treatment_id": "rs_treatment_dd2b860a9af10f9bddddf630",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the difficulty of starting tasks",
+      "rendered_card_text_sha256": "dd2b860a9af10f9bddddf630af83fd3235cf21869c3504e2ee590c5e3bb60801",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_2a514b2e33f0964abe06dead"
+        ],
+        "source_card_ids": [
+          "rs_src_4877100608ed9f2450c16bd3"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1004"
+        ],
+        "representative_atomic_card_id": "rs_atomic_2a514b2e33f0964abe06dead",
+        "representative_source_card_id": "rs_src_4877100608ed9f2450c16bd3"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_b4fa721dbafb46870809c18f",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0444",
+      "source_split": "validation",
+      "decision_turn_index": 6,
+      "visible_state": "supporter: Hello there, how is life treating you?\nseeker: Hello! Life is treating me fair, what about you?\nsupporter: Well, I've been a bit worried this year due to Covid and everything. Have you been worrying about anything?\nseeker: Yes, not covid tho. Mostly, it's academics. It paralyses me.\nsupporter: Do you work in academia then? Or are you a student?\nseeker: I am a college student, and I miss my high school days.",
+      "current_user_text": "I am a college student, and I miss my high school days.",
+      "query_text": "supporter: Hello there, how is life treating you?\nseeker: Hello! Life is treating me fair, what about you?\nsupporter: Well, I've been a bit worried this year due to Covid and everything. Have you been worrying about anything?\nseeker: Yes, not covid tho. Mostly, it's academics. It paralyses me.\nsupporter: Do you work in academia then? Or are you a student?\nseeker: I am a college student, and I miss my high school days.",
+      "rank": 4,
+      "cosine_similarity": 0.802984356880188,
+      "canonical_treatment_id": "rs_treatment_b6114df0b6ac6b991fc4f0f9",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: acknowledge the user's feelings by restating their experience",
+      "rendered_card_text_sha256": "b6114df0b6ac6b991fc4f0f9b38d2e026fc91c6a7f22499a603840a1e839e03c",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_5292903f192eec64fcc6742a"
+        ],
+        "source_card_ids": [
+          "rs_src_68732b8491c804c8ed325cb9"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1042"
+        ],
+        "representative_atomic_card_id": "rs_atomic_5292903f192eec64fcc6742a",
+        "representative_source_card_id": "rs_src_68732b8491c804c8ed325cb9"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_ae56bf42590145324a41fd0e",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1087",
+      "source_split": "validation",
+      "decision_turn_index": 19,
+      "visible_state": "seeker: Yeah I could maybe get some ideas from friends too.\nsupporter: And you never know, you might get a creative burst when you get back and rattle it off in one.\nseeker: Alcohol can make people creative. That's for sure.\nsupporter: Oh yeah. Follow it up with a smoke and you'll be a regular Shakespeare. He was probably half cut all the time too.\nseeker: YEah or had some good mushrooms. I've been wanting to try shrooms just don\nseeker: 't have a good source",
+      "current_user_text": "YEah or had some good mushrooms. I've been wanting to try shrooms just don\n't have a good source",
+      "query_text": "seeker: Yeah I could maybe get some ideas from friends too.\nsupporter: And you never know, you might get a creative burst when you get back and rattle it off in one.\nseeker: Alcohol can make people creative. That's for sure.\nsupporter: Oh yeah. Follow it up with a smoke and you'll be a regular Shakespeare. He was probably half cut all the time too.\nseeker: YEah or had some good mushrooms. I've been wanting to try shrooms just don\nseeker: 't have a good source",
+      "rank": 4,
+      "cosine_similarity": 0.666872501373291,
+      "canonical_treatment_id": "rs_treatment_1f2754a206142d4a5110bd8f",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: paraphrase the user's struggle with drinking to confirm understanding",
+      "rendered_card_text_sha256": "1f2754a206142d4a5110bd8f6e5bd0f607dbe7d8599c4a3e4252b8d235912948",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_d84a7462091c0b4ca4791f65"
+        ],
+        "source_card_ids": [
+          "rs_src_816fe94c49929888193f7f69"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0954"
+        ],
+        "representative_atomic_card_id": "rs_atomic_d84a7462091c0b4ca4791f65",
+        "representative_source_card_id": "rs_src_816fe94c49929888193f7f69"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_f62fbadbc40f21747e63d1c1",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0413",
+      "source_split": "validation",
+      "decision_turn_index": 16,
+      "visible_state": "supporter: Thank you, I would like to be able to help you but do not know what the problem is right now\nseeker: I have this friend who is now on the opposite coast. We were out of touch for 15 years, but recently reconnected. We've been texting. But now he's demanding an apology, and it's completely unreasonable...\nsupporter: Ah I see .. you feel as though you friend is dragging up things from the past which are no longer relevant to your friendship?\nseeker: No, not at all. It's new stuff.\nsupporter: Oh I am sorry, I misunderstood. Can you tell me a little about the situation?\nseeker: We've been texting about politics, among other things. And we completely agree on the subject - that's not the issue. But I put up with his sort of acerbic wit - I ignore little put-downs, because I know that's just him...",
+      "current_user_text": "We've been texting about politics, among other things. And we completely agree on the subject - that's not the issue. But I put up with his sort of acerbic wit - I ignore little put-downs, because I know that's just him...",
+      "query_text": "supporter: Thank you, I would like to be able to help you but do not know what the problem is right now\nseeker: I have this friend who is now on the opposite coast. We were out of touch for 15 years, but recently reconnected. We've been texting. But now he's demanding an apology, and it's completely unreasonable...\nsupporter: Ah I see .. you feel as though you friend is dragging up things from the past which are no longer relevant to your friendship?\nseeker: No, not at all. It's new stuff.\nsupporter: Oh I am sorry, I misunderstood. Can you tell me a little about the situation?\nseeker: We've been texting about politics, among other things. And we completely agree on the subject - that's not the issue. But I put up with his sort of acerbic wit - I ignore little put-downs, because I know that's just him...",
+      "rank": 4,
+      "cosine_similarity": 0.7622382640838623,
+      "canonical_treatment_id": "rs_treatment_d4615c1b40c51376e33c3fec",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal experience about maintaining a close friendship despite infrequent communication",
+      "rendered_card_text_sha256": "d4615c1b40c51376e33c3fec3a003c187417fc437e3a113c3101d8409dc2158a",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_6d6f1fff50d8ef987faf9769"
+        ],
+        "source_card_ids": [
+          "rs_src_595f9a7c5a8e70e266681e0d"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0385"
+        ],
+        "representative_atomic_card_id": "rs_atomic_6d6f1fff50d8ef987faf9769",
+        "representative_source_card_id": "rs_src_595f9a7c5a8e70e266681e0d"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_bcb1252a8872622e5b3e76d8",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0866",
+      "source_split": "validation",
+      "decision_turn_index": 10,
+      "visible_state": "supporter: That's a hard situation to be in. Are you isolating due to the pandemic?\nseeker: I have been isolated for 2 years now ever since my wife decided to sneak out in the middle of the night and run away\nsupporter: That's really rough. It sounds like you did not get to have any closure whatsoever.\nseeker: yeah what a peach she was, at least she didnt murder me like my brother did to my mom\nsupporter: There's a lot of dark stuff happening in and around your life. Do you have any things that you like to do on your own that calm you down?\nseeker: drinking is the only thing that takes the pain away",
+      "current_user_text": "drinking is the only thing that takes the pain away",
+      "query_text": "supporter: That's a hard situation to be in. Are you isolating due to the pandemic?\nseeker: I have been isolated for 2 years now ever since my wife decided to sneak out in the middle of the night and run away\nsupporter: That's really rough. It sounds like you did not get to have any closure whatsoever.\nseeker: yeah what a peach she was, at least she didnt murder me like my brother did to my mom\nsupporter: There's a lot of dark stuff happening in and around your life. Do you have any things that you like to do on your own that calm you down?\nseeker: drinking is the only thing that takes the pain away",
+      "rank": 4,
+      "cosine_similarity": 0.7688167691230774,
+      "canonical_treatment_id": "rs_treatment_71f5906bc338408085e88b91",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal experience of enjoying a specific show",
+      "rendered_card_text_sha256": "71f5906bc338408085e88b910be9791f7a59d7267db390916c10725806593a1f",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_42c8a302623bdf1316d4af1d"
+        ],
+        "source_card_ids": [
+          "rs_src_717ca51010868947a1adfb2a"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1185"
+        ],
+        "representative_atomic_card_id": "rs_atomic_42c8a302623bdf1316d4af1d",
+        "representative_source_card_id": "rs_src_717ca51010868947a1adfb2a"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_955753fb3d0133c60332303c",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0123",
+      "source_split": "validation",
+      "decision_turn_index": 12,
+      "visible_state": "supporter: I am sorry to hear that but try not to panic, just failing one class is not the end of the world. How do you feel about retaking it?\nseeker: I don't mind retaking it, really\nsupporter: Ah so you feel that this is going to be severely disruptive to your plans for this winter break?\nseeker: yha. also, im worried i might fail again if i get too distracted by my family\nsupporter: Is it possible for you to get any sort of private tutoring which might help you?\nseeker: i mean, tutoring is just another added time commitment. I really failed the first time because i was depressed and unmotivated. which is why I'm excited to be with my family finally",
+      "current_user_text": "i mean, tutoring is just another added time commitment. I really failed the first time because i was depressed and unmotivated. which is why I'm excited to be with my family finally",
+      "query_text": "supporter: I am sorry to hear that but try not to panic, just failing one class is not the end of the world. How do you feel about retaking it?\nseeker: I don't mind retaking it, really\nsupporter: Ah so you feel that this is going to be severely disruptive to your plans for this winter break?\nseeker: yha. also, im worried i might fail again if i get too distracted by my family\nsupporter: Is it possible for you to get any sort of private tutoring which might help you?\nseeker: i mean, tutoring is just another added time commitment. I really failed the first time because i was depressed and unmotivated. which is why I'm excited to be with my family finally",
+      "rank": 8,
+      "cosine_similarity": 0.7950539588928223,
+      "canonical_treatment_id": "rs_treatment_539cab89749c31202183db19",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: reassure the user that they can achieve their dreams and make a difference",
+      "rendered_card_text_sha256": "539cab89749c31202183db19d2f55079a78488fd3ded610890ae5e3c63304776",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_5fb1ead400db5043abceb711"
+        ],
+        "source_card_ids": [
+          "rs_src_1886415b288eedc382c0df79"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0706"
+        ],
+        "representative_atomic_card_id": "rs_atomic_5fb1ead400db5043abceb711",
+        "representative_source_card_id": "rs_src_1886415b288eedc382c0df79"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_6b52c24fc8152cbbe44ebc0a",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1105",
+      "source_split": "validation",
+      "decision_turn_index": 16,
+      "visible_state": "supporter: You have been the best you could be for him and it has got to feel really sad to let him go. It can feel like a death sometimes when you lose someone or a pet.\nseeker: If he died it would be OK, I would mourn him and move on. But I have never had to give up a pet before. I just think most people. wont take care of him like I do. Because he is still alive, I will worry about him\nsupporter: I understand a little bit of how you feel. My dog died recently and it was really hard when the vet had to put him down. I was really sad and would cry when I thought of him ort the things we used to do together.\nseeker: Yes, I was depressed for 6 months after my parrot died, but eventually we move on. I dont know that I can move on after giving him up\nsupporter: Would you ever consider getting a pet that is not as loud? I am not suggesting that you replace him.\nseeker: No, except a seeing dog",
+      "current_user_text": "No, except a seeing dog",
+      "query_text": "supporter: You have been the best you could be for him and it has got to feel really sad to let him go. It can feel like a death sometimes when you lose someone or a pet.\nseeker: If he died it would be OK, I would mourn him and move on. But I have never had to give up a pet before. I just think most people. wont take care of him like I do. Because he is still alive, I will worry about him\nsupporter: I understand a little bit of how you feel. My dog died recently and it was really hard when the vet had to put him down. I was really sad and would cry when I thought of him ort the things we used to do together.\nseeker: Yes, I was depressed for 6 months after my parrot died, but eventually we move on. I dont know that I can move on after giving him up\nsupporter: Would you ever consider getting a pet that is not as loud? I am not suggesting that you replace him.\nseeker: No, except a seeing dog",
+      "rank": 8,
+      "cosine_similarity": 0.7447382211685181,
+      "canonical_treatment_id": "rs_treatment_0aee685829ca453bc3168053",
+      "exact_rendered_treatment": "Strategy family [Affirmation And Reassurance]: validate the user's idea as positive and encouraging",
+      "rendered_card_text_sha256": "0aee685829ca453bc3168053e90a42f71b0f5a941e5165dbe7dd76b23a21f3ea",
+      "sampling_primary_family": "affirmation_and_reassurance",
+      "atomic_move_family_union": [
+        "affirmation_and_reassurance"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_cbcbf698198036233c47b5e4"
+        ],
+        "source_card_ids": [
+          "rs_src_c0a2f859da1c867b6dc49162"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1197"
+        ],
+        "representative_atomic_card_id": "rs_atomic_cbcbf698198036233c47b5e4",
+        "representative_source_card_id": "rs_src_c0a2f859da1c867b6dc49162"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_8a74d99dda7fbd816b4ca656",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0158",
+      "source_split": "validation",
+      "decision_turn_index": 26,
+      "visible_state": "seeker: He was. Except she still doesn't know about me.\nseeker: No children.\nsupporter: Has he been contacting you lately\nseeker: It is very hard for me because I feel lost. He was a huge part of my life and I thought my future. Now I don't know what to do.\nsupporter: was he your 1st love\nseeker: Not my first love but the first guy I talked marriage with. He still talks to me. It is kind of hard when you are used to talk a lot every day for over a year.",
+      "current_user_text": "Not my first love but the first guy I talked marriage with. He still talks to me. It is kind of hard when you are used to talk a lot every day for over a year.",
+      "query_text": "seeker: He was. Except she still doesn't know about me.\nseeker: No children.\nsupporter: Has he been contacting you lately\nseeker: It is very hard for me because I feel lost. He was a huge part of my life and I thought my future. Now I don't know what to do.\nsupporter: was he your 1st love\nseeker: Not my first love but the first guy I talked marriage with. He still talks to me. It is kind of hard when you are used to talk a lot every day for over a year.",
+      "rank": 8,
+      "cosine_similarity": 0.7557384967803955,
+      "canonical_treatment_id": "rs_treatment_f6f72b479087a1768e8a9a73",
+      "exact_rendered_treatment": "Strategy family [Information]: provide information about people finding partners later in life",
+      "rendered_card_text_sha256": "f6f72b479087a1768e8a9a73aa08b3481b87ef2eddc39f45adedbf7e40a9bb29",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_e6877f307f0474d967f19f80"
+        ],
+        "source_card_ids": [
+          "rs_src_b3a9ec84882a98e5bb5e596c"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0237"
+        ],
+        "representative_atomic_card_id": "rs_atomic_e6877f307f0474d967f19f80",
+        "representative_source_card_id": "rs_src_b3a9ec84882a98e5bb5e596c"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_6d47584caeddb01e643281b3",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1059",
+      "source_split": "validation",
+      "decision_turn_index": 3,
+      "visible_state": "seeker: Hello\nsupporter: Hello, how are you doing today?\nseeker: I was looking for some assistance. I lost my job 4 month ago",
+      "current_user_text": "I was looking for some assistance. I lost my job 4 month ago",
+      "query_text": "seeker: Hello\nsupporter: Hello, how are you doing today?\nseeker: I was looking for some assistance. I lost my job 4 month ago",
+      "rank": 8,
+      "cosine_similarity": 0.8203061819076538,
+      "canonical_treatment_id": "rs_treatment_48d9fe0acd28c57506c17693",
+      "exact_rendered_treatment": "Strategy family [Information]: share that it is a difficult time to be job hunting",
+      "rendered_card_text_sha256": "48d9fe0acd28c57506c17693979bd016d14599c43e95be8b8b26cc7763436651",
+      "sampling_primary_family": "information",
+      "atomic_move_family_union": [
+        "information"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_4fe313b75b1c76bd369fd999"
+        ],
+        "source_card_ids": [
+          "rs_src_c7365ba76e4189637b8df664"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1083"
+        ],
+        "representative_atomic_card_id": "rs_atomic_4fe313b75b1c76bd369fd999",
+        "representative_source_card_id": "rs_src_c7365ba76e4189637b8df664"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_b45f3ccd4a5ce5494b48be4d",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0293",
+      "source_split": "validation",
+      "decision_turn_index": 108,
+      "visible_state": "seeker: Just a couple weeks ago, he brought me a giant care package full of food and snacks to help keep me going and relieve the boredom.\nsupporter: can you sign language the service and send it back for the church to reach others\nseeker: No... I'm not fluent enough for that. I do the songs because I can research them and practice ahead.\nseeker: I can't interpret.\nsupporter: Do u have away to record the service and sign language. Sign language the songs\nseeker: I am blessed to have friends who give me technical advice. I have a friend who is a certified interpreter who has sent me video showing me the correct way to sign certain songs.",
+      "current_user_text": "I am blessed to have friends who give me technical advice. I have a friend who is a certified interpreter who has sent me video showing me the correct way to sign certain songs.",
+      "query_text": "seeker: Just a couple weeks ago, he brought me a giant care package full of food and snacks to help keep me going and relieve the boredom.\nsupporter: can you sign language the service and send it back for the church to reach others\nseeker: No... I'm not fluent enough for that. I do the songs because I can research them and practice ahead.\nseeker: I can't interpret.\nsupporter: Do u have away to record the service and sign language. Sign language the songs\nseeker: I am blessed to have friends who give me technical advice. I have a friend who is a certified interpreter who has sent me video showing me the correct way to sign certain songs.",
+      "rank": 8,
+      "cosine_similarity": 0.6877180337905884,
+      "canonical_treatment_id": "rs_treatment_bdeed7fd4c0ec45c1f1e84bf",
+      "exact_rendered_treatment": "Strategy family [Others]: express holiday greetings",
+      "rendered_card_text_sha256": "bdeed7fd4c0ec45c1f1e84bf8372febe6d159f1ca8930a3c98182476ea66b089",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_f0dd58fc84b29c76ece4f609"
+        ],
+        "source_card_ids": [
+          "rs_src_c2f1e1e4a63a94bfbf174dd0"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0579"
+        ],
+        "representative_atomic_card_id": "rs_atomic_f0dd58fc84b29c76ece4f609",
+        "representative_source_card_id": "rs_src_c2f1e1e4a63a94bfbf174dd0"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_66b0da7f3d67e466a90cbab2",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0707",
+      "source_split": "validation",
+      "decision_turn_index": 49,
+      "visible_state": "seeker: i didnt expect this conversation to actually help me, thankyou\nseeker: neat, saltwater or freshwater?\nseeker: we have a salt reef tank and a cat as well named perch\nsupporter: It was better when we could request payment daily now soonest is 3 days and I ll tell you what . It has saved us a few times even though it was like $30 it was enough to hold us to payday fri\nseeker: I have to agree any littel amount helps\nseeker: yea i only saw the 3 day option",
+      "current_user_text": "I have to agree any littel amount helps\nyea i only saw the 3 day option",
+      "query_text": "seeker: i didnt expect this conversation to actually help me, thankyou\nseeker: neat, saltwater or freshwater?\nseeker: we have a salt reef tank and a cat as well named perch\nsupporter: It was better when we could request payment daily now soonest is 3 days and I ll tell you what . It has saved us a few times even though it was like $30 it was enough to hold us to payday fri\nseeker: I have to agree any littel amount helps\nseeker: yea i only saw the 3 day option",
+      "rank": 8,
+      "cosine_similarity": 0.6469848155975342,
+      "canonical_treatment_id": "rs_treatment_0247b0673fe03d65a97b21e4",
+      "exact_rendered_treatment": "Strategy family [Others]: acknowledge the slowness of their typing response",
+      "rendered_card_text_sha256": "0247b0673fe03d65a97b21e48367af356f19edeb1dac37caaaf8f4fc57d24c95",
+      "sampling_primary_family": "others",
+      "atomic_move_family_union": [
+        "others"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_7d42bbaeba381f4247832099"
+        ],
+        "source_card_ids": [
+          "rs_src_1c9934e936d28aa7a588d514"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1180"
+        ],
+        "representative_atomic_card_id": "rs_atomic_7d42bbaeba381f4247832099",
+        "representative_source_card_id": "rs_src_1c9934e936d28aa7a588d514"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_dcf9166cd0298c3736171707",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0405",
+      "source_split": "validation",
+      "decision_turn_index": 13,
+      "visible_state": "supporter: I'm sorry to hear that. I've dealt with something similar earlier this year myself. I know how you are feeling. Have you tried to reach out to her and let her know how you've felt?\nsupporter: I'm sorry to hear that. I've dealt with something similar earlier this year myself. I know how you are feeling. Have you tried to reach out to her and let her know how you've felt?\nseeker: Yes i told her how i felt and she said she was just busy. I just feel like she is taking me for granted and Im not a priority.\nseeker: I feel like we are all busy but I would find time for her and I dont feel she is doing the same for me.\nsupporter: I see. I would feel the same way if it were in your position. You seem like a person who would go above and beyond for a good friend.\nseeker: Thank you. I try to be a good friend. My husband thinks I should just not talk to her anymore but we have been friends for almost 10 years.",
+      "current_user_text": "Thank you. I try to be a good friend. My husband thinks I should just not talk to her anymore but we have been friends for almost 10 years.",
+      "query_text": "supporter: I'm sorry to hear that. I've dealt with something similar earlier this year myself. I know how you are feeling. Have you tried to reach out to her and let her know how you've felt?\nsupporter: I'm sorry to hear that. I've dealt with something similar earlier this year myself. I know how you are feeling. Have you tried to reach out to her and let her know how you've felt?\nseeker: Yes i told her how i felt and she said she was just busy. I just feel like she is taking me for granted and Im not a priority.\nseeker: I feel like we are all busy but I would find time for her and I dont feel she is doing the same for me.\nsupporter: I see. I would feel the same way if it were in your position. You seem like a person who would go above and beyond for a good friend.\nseeker: Thank you. I try to be a good friend. My husband thinks I should just not talk to her anymore but we have been friends for almost 10 years.",
+      "rank": 8,
+      "cosine_similarity": 0.8043001294136047,
+      "canonical_treatment_id": "rs_treatment_5a7f45c61cd263df2fb5e21b",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest focusing on self-care to improve emotional well-being",
+      "rendered_card_text_sha256": "5a7f45c61cd263df2fb5e21b1b8e55db5b18e4317ea4a6e79827b41b4bdb29bb",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_9999dd272706766051db1d0e"
+        ],
+        "source_card_ids": [
+          "rs_src_b755ccf4211ef0c39eecae99"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0583"
+        ],
+        "representative_atomic_card_id": "rs_atomic_9999dd272706766051db1d0e",
+        "representative_source_card_id": "rs_src_b755ccf4211ef0c39eecae99"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_73949aef211fa9f41515659e",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0409",
+      "source_split": "validation",
+      "decision_turn_index": 22,
+      "visible_state": "seeker: Sure, I guess sex and cuddling is nice, but what I really want is someone to shopping with and eventually build a future\nsupporter: Have you considered getting some sort of counselling, either just you or as a couple?\nseeker: It has peaked my interest, but at the same time, I wonder how much of this is just me buried in the idea of a relationship, even though it's pretty one-sided now\nseeker: Should I seek counseling for a relationship that technically wasn't official?\nsupporter: I am hearing you say that you still have feelings for her but you are not sure whether to totally break away or not, given that she has\nseeker: Yes. I hate how I love her, but I'm not getting the same energy back",
+      "current_user_text": "Yes. I hate how I love her, but I'm not getting the same energy back",
+      "query_text": "seeker: Sure, I guess sex and cuddling is nice, but what I really want is someone to shopping with and eventually build a future\nsupporter: Have you considered getting some sort of counselling, either just you or as a couple?\nseeker: It has peaked my interest, but at the same time, I wonder how much of this is just me buried in the idea of a relationship, even though it's pretty one-sided now\nseeker: Should I seek counseling for a relationship that technically wasn't official?\nsupporter: I am hearing you say that you still have feelings for her but you are not sure whether to totally break away or not, given that she has\nseeker: Yes. I hate how I love her, but I'm not getting the same energy back",
+      "rank": 8,
+      "cosine_similarity": 0.7735238075256348,
+      "canonical_treatment_id": "rs_treatment_b9d3390fb2f928de7fbfff30",
+      "exact_rendered_treatment": "Strategy family [Providing Suggestions]: suggest using online resources to process infidelity",
+      "rendered_card_text_sha256": "b9d3390fb2f928de7fbfff30c9bdea012eb20b48c977a5a4cfc2551c00356750",
+      "sampling_primary_family": "providing_suggestions",
+      "atomic_move_family_union": [
+        "providing_suggestions"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_ba1ddf5040c31e8087e5f84e"
+        ],
+        "source_card_ids": [
+          "rs_src_46354ab48d47d0bcaa8f28fb"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0302"
+        ],
+        "representative_atomic_card_id": "rs_atomic_ba1ddf5040c31e8087e5f84e",
+        "representative_source_card_id": "rs_src_46354ab48d47d0bcaa8f28fb"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_df1101657cab367fe7a0171c",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1111",
+      "source_split": "validation",
+      "decision_turn_index": 25,
+      "visible_state": "seeker: Yes. Particularly in pandemic times.\nsupporter: It sounds like you have a good handle on your situation. Is there anything else I can help you with?\nseeker: In your opinion, Am I in the right path?\nsupporter: Yes. Time will help you resolve this issue. You will gain perspective on what's out there.\nsupporter: More opportunities will come up if you have time to investigate.\nseeker: We, I and my wife, also think the same way. Even if takes some time, better to wait. But we were having an oscillation. After chatting with you, we feel supportive of our thinkings.",
+      "current_user_text": "We, I and my wife, also think the same way. Even if takes some time, better to wait. But we were having an oscillation. After chatting with you, we feel supportive of our thinkings.",
+      "query_text": "seeker: Yes. Particularly in pandemic times.\nsupporter: It sounds like you have a good handle on your situation. Is there anything else I can help you with?\nseeker: In your opinion, Am I in the right path?\nsupporter: Yes. Time will help you resolve this issue. You will gain perspective on what's out there.\nsupporter: More opportunities will come up if you have time to investigate.\nseeker: We, I and my wife, also think the same way. Even if takes some time, better to wait. But we were having an oscillation. After chatting with you, we feel supportive of our thinkings.",
+      "rank": 8,
+      "cosine_similarity": 0.7885536551475525,
+      "canonical_treatment_id": "rs_treatment_6d262307163f5106141c6eed",
+      "exact_rendered_treatment": "Strategy family [Question]: ask whether the advice is helpful",
+      "rendered_card_text_sha256": "6d262307163f5106141c6eed3018a93243b3ca191a1ae8d7b204a01cf514ed8e",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_fd4522f4946561b212afc598"
+        ],
+        "source_card_ids": [
+          "rs_src_23473bf722bb89e30b76dff6"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1106"
+        ],
+        "representative_atomic_card_id": "rs_atomic_fd4522f4946561b212afc598",
+        "representative_source_card_id": "rs_src_23473bf722bb89e30b76dff6"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_6b343f014118fa5bc6387c4c",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0879",
+      "source_split": "validation",
+      "decision_turn_index": 6,
+      "visible_state": "supporter: Hello :-)\nseeker: Hi\nsupporter: How are you doing?\nseeker: Today hasn't been too bad\nsupporter: Anything you need to talk about?\nseeker: Lately I have been having trouble sleeping",
+      "current_user_text": "Lately I have been having trouble sleeping",
+      "query_text": "supporter: Hello :-)\nseeker: Hi\nsupporter: How are you doing?\nseeker: Today hasn't been too bad\nsupporter: Anything you need to talk about?\nseeker: Lately I have been having trouble sleeping",
+      "rank": 8,
+      "cosine_similarity": 0.835381031036377,
+      "canonical_treatment_id": "rs_treatment_f054ad18e04782b48e10b94a",
+      "exact_rendered_treatment": "Strategy family [Question]: invite the user to share what is happening",
+      "rendered_card_text_sha256": "f054ad18e04782b48e10b94a761292cbf541d77e070897ba8d49d5b56f5b6ae2",
+      "sampling_primary_family": "question",
+      "atomic_move_family_union": [
+        "question"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_6b1982dbe107ab6beaf536d7",
+          "rs_atomic_db4e9434a0fc84d267b38e96"
+        ],
+        "source_card_ids": [
+          "rs_src_55a5025229fcdd5e3d226fd5",
+          "rs_src_8aa94c35032c9919788e2843"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0962",
+          "esconv_1008"
+        ],
+        "representative_atomic_card_id": "rs_atomic_6b1982dbe107ab6beaf536d7",
+        "representative_source_card_id": "rs_src_55a5025229fcdd5e3d226fd5"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_e94d117d1123803e8a6b9b13",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0134",
+      "source_split": "validation",
+      "decision_turn_index": 21,
+      "visible_state": "supporter: So, 2 years should be long enough to know if your partner has been cheating.\nseeker: What do you mean exactly?\nsupporter: Are you someone who trusts people? I think that most men would fess up about it.\nseeker: I guess all people are different. I generally trust people easily.\nsupporter: Does he show affection to you? If he is adamant about loving you, then, it may be false allegations.\nseeker: That is true. He is but, has been distant lately.",
+      "current_user_text": "That is true. He is but, has been distant lately.",
+      "query_text": "supporter: So, 2 years should be long enough to know if your partner has been cheating.\nseeker: What do you mean exactly?\nsupporter: Are you someone who trusts people? I think that most men would fess up about it.\nseeker: I guess all people are different. I generally trust people easily.\nsupporter: Does he show affection to you? If he is adamant about loving you, then, it may be false allegations.\nseeker: That is true. He is but, has been distant lately.",
+      "rank": 8,
+      "cosine_similarity": 0.7852587699890137,
+      "canonical_treatment_id": "rs_treatment_56b3f78e85047f34b2027e02",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the duration of the relationship as significant",
+      "rendered_card_text_sha256": "56b3f78e85047f34b2027e024767f4f7b3477ecdc1f865430c114b6320da3d5c",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_1578005e47b921edb223f78f"
+        ],
+        "source_card_ids": [
+          "rs_src_242c81473169ac862a79e34f"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0188"
+        ],
+        "representative_atomic_card_id": "rs_atomic_1578005e47b921edb223f78f",
+        "representative_source_card_id": "rs_src_242c81473169ac862a79e34f"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_eee31562f66c3b1237521d5c",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_1134",
+      "source_split": "validation",
+      "decision_turn_index": 20,
+      "visible_state": "supporter: Managing things all become stressful, but Im sure you are really good at what you are doing!\nseeker: im so tired all the time\nseeker: i feel lik everything i do just isnt enough\nseeker: how do you handle things and stress?\nsupporter: Thats are not true, You have beautiful kids, work and pursuing master's . You are a great achiever\nseeker: i guess",
+      "current_user_text": "i guess",
+      "query_text": "supporter: Managing things all become stressful, but Im sure you are really good at what you are doing!\nseeker: im so tired all the time\nseeker: i feel lik everything i do just isnt enough\nseeker: how do you handle things and stress?\nsupporter: Thats are not true, You have beautiful kids, work and pursuing master's . You are a great achiever\nseeker: i guess",
+      "rank": 8,
+      "cosine_similarity": 0.8129347562789917,
+      "canonical_treatment_id": "rs_treatment_35e3da9ce68bdc262617cc67",
+      "exact_rendered_treatment": "Strategy family [Reflection Of Feelings]: acknowledge the user's stress about not being able to find a job",
+      "rendered_card_text_sha256": "35e3da9ce68bdc262617cc672022e7938f20f5a2d0c3e7ffeb0909cf34acd884",
+      "sampling_primary_family": "reflection_of_feelings",
+      "atomic_move_family_union": [
+        "reflection_of_feelings"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_2ef0f1d5e26856ebb45e87e4"
+        ],
+        "source_card_ids": [
+          "rs_src_15449de3ffbfaed8228d37b1"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1131"
+        ],
+        "representative_atomic_card_id": "rs_atomic_2ef0f1d5e26856ebb45e87e4",
+        "representative_source_card_id": "rs_src_15449de3ffbfaed8228d37b1"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_a0d37bf3d0211186102b9e03",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0774",
+      "source_split": "validation",
+      "decision_turn_index": 12,
+      "visible_state": "seeker: Im having some issues with friendships. It has me down. The other day I had called a couple of friends to go have lunch together since we havent seen each other in a while and everyone said No due to covid\nseeker: But today I called another friend and everybody were out together but didnt include me\nsupporter: that really sucks how they pulled that excuse on you\nsupporter: did your other friend tell you why they did that?\nseeker: No they just said they just thought I was busy and couldn't attend\nseeker: so im bitter sad about the situation and don't how to address it",
+      "current_user_text": "No they just said they just thought I was busy and couldn't attend\nso im bitter sad about the situation and don't how to address it",
+      "query_text": "seeker: Im having some issues with friendships. It has me down. The other day I had called a couple of friends to go have lunch together since we havent seen each other in a while and everyone said No due to covid\nseeker: But today I called another friend and everybody were out together but didnt include me\nsupporter: that really sucks how they pulled that excuse on you\nsupporter: did your other friend tell you why they did that?\nseeker: No they just said they just thought I was busy and couldn't attend\nseeker: so im bitter sad about the situation and don't how to address it",
+      "rank": 8,
+      "cosine_similarity": 0.7776305079460144,
+      "canonical_treatment_id": "rs_treatment_94108603c4823a10e366a5e6",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: acknowledge that the user is in a busy time of the semester",
+      "rendered_card_text_sha256": "94108603c4823a10e366a5e666a05020fe5731e2e26400f2b6a126e4ab9aa23d",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_d4fbe00f90c81df4433fec0d"
+        ],
+        "source_card_ids": [
+          "rs_src_574a36320c9b92fc5a9951de"
+        ],
+        "source_dialogue_ids": [
+          "esconv_1086"
+        ],
+        "representative_atomic_card_id": "rs_atomic_d4fbe00f90c81df4433fec0d",
+        "representative_source_card_id": "rs_src_574a36320c9b92fc5a9951de"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_4d7f0b3fc3144320d58cf1e7",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0988",
+      "source_split": "validation",
+      "decision_turn_index": 2,
+      "visible_state": "supporter: Hello my name is Lisa, how are you today?\nseeker: Hi, I'm Megan. I'm just looking for some help really, I've been feeling down for a while and it's affecting my sleep. I feel tired during the day but cant fall or stay asleep at night.",
+      "current_user_text": "Hi, I'm Megan. I'm just looking for some help really, I've been feeling down for a while and it's affecting my sleep. I feel tired during the day but cant fall or stay asleep at night.",
+      "query_text": "supporter: Hello my name is Lisa, how are you today?\nseeker: Hi, I'm Megan. I'm just looking for some help really, I've been feeling down for a while and it's affecting my sleep. I feel tired during the day but cant fall or stay asleep at night.",
+      "rank": 8,
+      "cosine_similarity": 0.7771296501159668,
+      "canonical_treatment_id": "rs_treatment_7da8ba8ef930f857ce14f688",
+      "exact_rendered_treatment": "Strategy family [Restatement Or Paraphrasing]: acknowledge the user's report of daytime tiredness due to poor sleep",
+      "rendered_card_text_sha256": "7da8ba8ef930f857ce14f688d19ee1eec99a576cd8888ec2f379b4d432468ebe",
+      "sampling_primary_family": "restatement_or_paraphrasing",
+      "atomic_move_family_union": [
+        "restatement_or_paraphrasing"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_01e3d3dd19a2db7f0718184b"
+        ],
+        "source_card_ids": [
+          "rs_src_c5d21316ed47cc3effe05a82"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0992"
+        ],
+        "representative_atomic_card_id": "rs_atomic_01e3d3dd19a2db7f0718184b",
+        "representative_source_card_id": "rs_src_c5d21316ed47cc3effe05a82"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_eddbd8624e4612e99e3050aa",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0791",
+      "source_split": "validation",
+      "decision_turn_index": 10,
+      "visible_state": "supporter: So are you doubting that you made the right decision or are you just feeling sadness at the loss you are feeling right now\nseeker: I'm mainly doubting my decision and I know there's nothing I can do about it\nsupporter: You must have had good reason's to have made the decision to breakup and to have initiated it. Its normal to doubt yourself afterwards. You may want to remind yourself of the reasons that you came to your decision you did. Im sure the reasons are still valid\nseeker: I did it because I'm trying to focus on self-improvement but looking back now, there's no reason I couldn't have improved myself with my partner\nsupporter: So you felt the need to have some time to fucus on your own goals and growth and now you feel like you could have stayed in the relationship and you are doubting that you needed to take the step of breaking up. In my experience at times we need to be single for self growth and I have found that personal growth usual thrives when I am single.\nseeker: That's what I hope for. I just can't get over missing my partner because they were great to me, I just needed to be alone.",
+      "current_user_text": "That's what I hope for. I just can't get over missing my partner because they were great to me, I just needed to be alone.",
+      "query_text": "supporter: So are you doubting that you made the right decision or are you just feeling sadness at the loss you are feeling right now\nseeker: I'm mainly doubting my decision and I know there's nothing I can do about it\nsupporter: You must have had good reason's to have made the decision to breakup and to have initiated it. Its normal to doubt yourself afterwards. You may want to remind yourself of the reasons that you came to your decision you did. Im sure the reasons are still valid\nseeker: I did it because I'm trying to focus on self-improvement but looking back now, there's no reason I couldn't have improved myself with my partner\nsupporter: So you felt the need to have some time to fucus on your own goals and growth and now you feel like you could have stayed in the relationship and you are doubting that you needed to take the step of breaking up. In my experience at times we need to be single for self growth and I have found that personal growth usual thrives when I am single.\nseeker: That's what I hope for. I just can't get over missing my partner because they were great to me, I just needed to be alone.",
+      "rank": 8,
+      "cosine_similarity": 0.7894092798233032,
+      "canonical_treatment_id": "rs_treatment_71bac1317b45c2457abf1a57",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: share a personal experience of going through a difficult breakup",
+      "rendered_card_text_sha256": "71bac1317b45c2457abf1a57ea30544b332023076110f7eb4dbb8c24b81161f5",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_4bf1966ba3e9a21f13dc5dff"
+        ],
+        "source_card_ids": [
+          "rs_src_2cd09b587c90a53350889f06"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0851"
+        ],
+        "representative_atomic_card_id": "rs_atomic_4bf1966ba3e9a21f13dc5dff",
+        "representative_source_card_id": "rs_src_2cd09b587c90a53350889f06"
+      },
+      "human_review": null
+    },
+    {
+      "qualification_item_id": "rs_semq_22df9a8e64615ffa7324b109",
+      "source_dataset": "ESConv",
+      "qualification_pool": "ESConv_validation_isolated_from_all_future_ESC_role_cards",
+      "source_dialogue_id": "esconv_0335",
+      "source_split": "validation",
+      "decision_turn_index": 5,
+      "visible_state": "supporter: Hello, how are you?\nsupporter: Anyone there?\nseeker: Hi how are you?\nsupporter: Hi! so nice to chat with you today.\nseeker: I am haing a difficult time with COVID-19. I want to go out but can't. And I'm an introvert.",
+      "current_user_text": "I am haing a difficult time with COVID-19. I want to go out but can't. And I'm an introvert.",
+      "query_text": "supporter: Hello, how are you?\nsupporter: Anyone there?\nseeker: Hi how are you?\nsupporter: Hi! so nice to chat with you today.\nseeker: I am haing a difficult time with COVID-19. I want to go out but can't. And I'm an introvert.",
+      "rank": 8,
+      "cosine_similarity": 0.8302448987960815,
+      "canonical_treatment_id": "rs_treatment_48839cfb9f470bd3488eaacb",
+      "exact_rendered_treatment": "Strategy family [Self Disclosure]: disclose effort to practice mindfulness despite challenges",
+      "rendered_card_text_sha256": "48839cfb9f470bd3488eaacb16f6bf503b4e19ca12a353d4141cee710a3dc0ea",
+      "sampling_primary_family": "self_disclosure",
+      "atomic_move_family_union": [
+        "self_disclosure"
+      ],
+      "provenance_union": {
+        "atomic_card_ids": [
+          "rs_atomic_67653a046cfa49ea638a69a1"
+        ],
+        "source_card_ids": [
+          "rs_src_4b1d5bd3d1b930dcf93eebe3"
+        ],
+        "source_dialogue_ids": [
+          "esconv_0337"
+        ],
+        "representative_atomic_card_id": "rs_atomic_67653a046cfa49ea638a69a1",
+        "representative_source_card_id": "rs_src_4b1d5bd3d1b930dcf93eebe3"
+      },
+      "human_review": null
+    }
+  ],
+  "human_judgments_completed": 0,
+  "LLM_judgments_completed": 0,
+  "outcome_calls": 0
+}

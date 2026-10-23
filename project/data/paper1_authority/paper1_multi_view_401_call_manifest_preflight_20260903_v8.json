@@ -1,0 +1,75 @@
+{
+  "protocol": "paper1-multi-view-401-call-manifest-preflight-v1",
+  "status": "PASS_ZERO_OUTCOME_ROLLING_BUDGET_PREFLIGHT",
+  "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+  "stage": "multi_view_401_compilation_and_validation",
+  "source": {
+    "path": "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+    "sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "users": 18,
+    "sessions": 401,
+    "turns": 9368
+  },
+  "runtime_identity": {
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "enable_thinking": false,
+    "temperature": 0.0,
+    "seed": 0,
+    "tokenizer_repo_id": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+    "tokenizer_revision": "ac9c66cc9b46af7306746a9250f23d47083d689e",
+    "tokenizer_file_sha256": {
+      "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "tokenizer_config.json": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "config.json": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2"
+    },
+    "prompt_source_projection": "paper1-multi-view-prompt-source-projection-v2",
+    "extractor_prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "extractor_message_template_sha256": "02a07bd4bc04b882c8e8c631c747cbec58e7674d9113bcb4603f20283bb923b1",
+    "verifier_prompt_sha256": "d32431d7c7723e1d72ed95d3e804a7659f3548c3ce9de0113700fee566352c05",
+    "verifier_message_template_sha256": "2491a661cfe0c08f2f6eca2efea7d0abd44ae4fef9aed00e3f13e73501cc4af0",
+    "extractor_schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "verifier_schema_sha256": "bd7615a8ab1ff58f2d2c5d35f16e1a34a3d5a988d6f0a8c989d24c7e8ceba613"
+  },
+  "limits": {
+    "extractor_max_output_tokens": 2048,
+    "verifier_max_output_tokens": 512,
+    "maximum_prompt_tokens_per_call": 16384,
+    "prompt_token_safety_margin_per_call": 128,
+    "prior_current_profile_allowance_tokens_per_call": 8192,
+    "verifier_proposal_allowance_tokens": 2048,
+    "maximum_provider_calls": 802
+  },
+  "pricing": {
+    "snapshot_id": "alibaba-model-studio-singapore-qwen3-235b-a22b-instruct-2507-official-list-20260903",
+    "input_usd_per_million_tokens": 0.23,
+    "output_usd_per_million_tokens": 0.92,
+    "source": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+    "accessed_date": "2026-09-03"
+  },
+  "budget": {
+    "maximum_provider_calls": 802,
+    "verifier_calls_skipped_when_no_grounded_proposals": true,
+    "aggregate_reserved_input_tokens": 9061616,
+    "aggregate_reserved_output_tokens": 1026560,
+    "aggregate_maximum_cost_usd": "3.02860688",
+    "maximum_single_call_reservation_usd": "0.00451605",
+    "stage_hard_cap_usd": "1.42149913",
+    "accounting_mode": "rolling_settled_plus_next_worst_case_reservation",
+    "rolling_hard_cap_may_stop_before_401": true
+  },
+  "manifest": {
+    "path": "data/paper1_authority/paper1_multi_view_401_call_manifest_20260903_v8.jsonl",
+    "sha256": "1c2b7c08060d4944c34b665980cb254b1b1eb1cc6b9c92a967e33d081c83e965",
+    "rows": 401
+  },
+  "method_boundary": {
+    "prior_profile_allowance_is_per_call_not_observed_output": true,
+    "verifier_proposal_allowance_equals_extractor_max_output_tokens": true,
+    "formal_outcomes_read": 0,
+    "paid_api_calls": 0,
+    "pm_training_runs": 0,
+    "all_outcome_locks": "CLOSED"
+  }
+}

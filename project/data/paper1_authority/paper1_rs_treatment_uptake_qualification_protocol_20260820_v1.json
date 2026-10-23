@@ -1,0 +1,674 @@
+{
+  "protocol": "pm-paper1-rs-treatment-uptake-qualification-protocol-v1",
+  "status": "READY",
+  "scope": "OFFLINE_HARNESS_AND_SCHEMA_ONLY_NO_GENERATOR_CALL",
+  "isolated_pool": {
+    "source": "the same ESConv validation qualification pool",
+    "future_ESC_role_cards_forbidden": true
+  },
+  "matched_design": {
+    "OFF": "same visible state, no RS block",
+    "ON": "same visible state, exactly one assigned canonical exact treatment",
+    "other_optional_resources": "OFF",
+    "utility_filter": false,
+    "step2": "deterministic validity and typed rendering only"
+  },
+  "recorded_fields": [
+    "exact treatment and hashes",
+    "exact prompt and response hashes",
+    "treatment-delivery trace",
+    "intended-move reflection",
+    "additional unassigned moves",
+    "mechanical failure",
+    "input/output tokens and latency"
+  ],
+  "blind_adherence_review": {
+    "judges execution/adherence only": true,
+    "judges quality_or_utility": false,
+    "correct_delivery_then_nonuse_or_harm_is_valid_effect_later": true
+  },
+  "schema_sha256": {
+    "QualificationState": "247eb65db43ce5e53b173989cec3f042657e37022f7683f51d195656add63904",
+    "UptakeAssignment": "25155c757f1f1a4d0673626f1f9c695ba20ecba7e35d7609fcb59696d623d7b1",
+    "UptakeRuntimeManifest": "27c969ab9fd08d5c6deb93a72f36972d9454b2375effd65adf8a4f7840eb6191",
+    "UptakeExecutionRecord": "c4f6688b239274de313595dbeed01ca1c8ab90d3a7b317bfdf3556a9ca6adcf8",
+    "BlindAdherenceReview": "909788d26cf7d0b645f30556a9103c55ae4b7c2a792ed46a38c03c13c8dbff54"
+  },
+  "schemas": {
+    "QualificationState": {
+      "additionalProperties": false,
+      "properties": {
+        "qualification_state_id": {
+          "minLength": 1,
+          "title": "Qualification State Id",
+          "type": "string"
+        },
+        "source_dataset": {
+          "const": "ESConv",
+          "default": "ESConv",
+          "title": "Source Dataset",
+          "type": "string"
+        },
+        "source_split": {
+          "enum": [
+            "train",
+            "validation"
+          ],
+          "title": "Source Split",
+          "type": "string"
+        },
+        "source_dialogue_id": {
+          "minLength": 1,
+          "title": "Source Dialogue Id",
+          "type": "string"
+        },
+        "visible_state": {
+          "minLength": 1,
+          "title": "Visible State",
+          "type": "string"
+        },
+        "query_text": {
+          "minLength": 1,
+          "title": "Query Text",
+          "type": "string"
+        },
+        "future_esc_role_card_overlap": {
+          "const": false,
+          "default": false,
+          "title": "Future Esc Role Card Overlap",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "qualification_state_id",
+        "source_split",
+        "source_dialogue_id",
+        "visible_state",
+        "query_text"
+      ],
+      "title": "QualificationState",
+      "type": "object"
+    },
+    "UptakeAssignment": {
+      "$defs": {
+        "AssignedExactTreatment": {
+          "additionalProperties": false,
+          "properties": {
+            "treatment_id": {
+              "pattern": "^rs_treatment_[0-9a-f]{24}$",
+              "title": "Treatment Id",
+              "type": "string"
+            },
+            "rendered_card_text": {
+              "minLength": 1,
+              "title": "Rendered Card Text",
+              "type": "string"
+            },
+            "rendered_card_text_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "title": "Rendered Card Text Sha256",
+              "type": "string"
+            },
+            "source_card_ids": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Source Card Ids",
+              "type": "array"
+            },
+            "source_dialogue_ids": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Source Dialogue Ids",
+              "type": "array"
+            },
+            "atomic_move_families": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Atomic Move Families",
+              "type": "array"
+            }
+          },
+          "required": [
+            "treatment_id",
+            "rendered_card_text",
+            "rendered_card_text_sha256",
+            "source_card_ids",
+            "source_dialogue_ids",
+            "atomic_move_families"
+          ],
+          "title": "AssignedExactTreatment",
+          "type": "object"
+        },
+        "QualificationState": {
+          "additionalProperties": false,
+          "properties": {
+            "qualification_state_id": {
+              "minLength": 1,
+              "title": "Qualification State Id",
+              "type": "string"
+            },
+            "source_dataset": {
+              "const": "ESConv",
+              "default": "ESConv",
+              "title": "Source Dataset",
+              "type": "string"
+            },
+            "source_split": {
+              "enum": [
+                "train",
+                "validation"
+              ],
+              "title": "Source Split",
+              "type": "string"
+            },
+            "source_dialogue_id": {
+              "minLength": 1,
+              "title": "Source Dialogue Id",
+              "type": "string"
+            },
+            "visible_state": {
+              "minLength": 1,
+              "title": "Visible State",
+              "type": "string"
+            },
+            "query_text": {
+              "minLength": 1,
+              "title": "Query Text",
+              "type": "string"
+            },
+            "future_esc_role_card_overlap": {
+              "const": false,
+              "default": false,
+              "title": "Future Esc Role Card Overlap",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "qualification_state_id",
+            "source_split",
+            "source_dialogue_id",
+            "visible_state",
+            "query_text"
+          ],
+          "title": "QualificationState",
+          "type": "object"
+        },
+        "UptakeArm": {
+          "enum": [
+            "OFF",
+            "ON"
+          ],
+          "title": "UptakeArm",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "default": "pm-paper1-rs-treatment-uptake-qualification-v1",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "assignment_id": {
+          "minLength": 1,
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/QualificationState"
+        },
+        "arm": {
+          "$ref": "#/$defs/UptakeArm"
+        },
+        "treatment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AssignedExactTreatment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "assignment_id",
+        "state",
+        "arm"
+      ],
+      "title": "UptakeAssignment",
+      "type": "object"
+    },
+    "UptakeRuntimeManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "default": "pm-paper1-rs-treatment-uptake-qualification-v1",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "generator_provider": {
+          "minLength": 1,
+          "title": "Generator Provider",
+          "type": "string"
+        },
+        "generator_model": {
+          "minLength": 1,
+          "title": "Generator Model",
+          "type": "string"
+        },
+        "base_prompt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Base Prompt Sha256",
+          "type": "string"
+        },
+        "step2_protocol": {
+          "const": "pm-paper1-rs-single-exact-move-step2-v1",
+          "default": "pm-paper1-rs-single-exact-move-step2-v1",
+          "title": "Step2 Protocol",
+          "type": "string"
+        },
+        "step2_code_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Step2 Code Sha256",
+          "type": "string"
+        },
+        "decoding_parameters_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Decoding Parameters Sha256",
+          "type": "string"
+        },
+        "seed_schedule_id": {
+          "minLength": 1,
+          "title": "Seed Schedule Id",
+          "type": "string"
+        },
+        "utility_filter_present": {
+          "const": false,
+          "default": false,
+          "title": "Utility Filter Present",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "generator_provider",
+        "generator_model",
+        "base_prompt_sha256",
+        "step2_code_sha256",
+        "decoding_parameters_sha256",
+        "seed_schedule_id"
+      ],
+      "title": "UptakeRuntimeManifest",
+      "type": "object"
+    },
+    "UptakeExecutionRecord": {
+      "$defs": {
+        "AssignedExactTreatment": {
+          "additionalProperties": false,
+          "properties": {
+            "treatment_id": {
+              "pattern": "^rs_treatment_[0-9a-f]{24}$",
+              "title": "Treatment Id",
+              "type": "string"
+            },
+            "rendered_card_text": {
+              "minLength": 1,
+              "title": "Rendered Card Text",
+              "type": "string"
+            },
+            "rendered_card_text_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "title": "Rendered Card Text Sha256",
+              "type": "string"
+            },
+            "source_card_ids": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Source Card Ids",
+              "type": "array"
+            },
+            "source_dialogue_ids": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Source Dialogue Ids",
+              "type": "array"
+            },
+            "atomic_move_families": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Atomic Move Families",
+              "type": "array"
+            }
+          },
+          "required": [
+            "treatment_id",
+            "rendered_card_text",
+            "rendered_card_text_sha256",
+            "source_card_ids",
+            "source_dialogue_ids",
+            "atomic_move_families"
+          ],
+          "title": "AssignedExactTreatment",
+          "type": "object"
+        },
+        "IntendedMoveReflection": {
+          "enum": [
+            "clear",
+            "partial",
+            "absent",
+            "unreviewed"
+          ],
+          "title": "IntendedMoveReflection",
+          "type": "string"
+        },
+        "QualificationState": {
+          "additionalProperties": false,
+          "properties": {
+            "qualification_state_id": {
+              "minLength": 1,
+              "title": "Qualification State Id",
+              "type": "string"
+            },
+            "source_dataset": {
+              "const": "ESConv",
+              "default": "ESConv",
+              "title": "Source Dataset",
+              "type": "string"
+            },
+            "source_split": {
+              "enum": [
+                "train",
+                "validation"
+              ],
+              "title": "Source Split",
+              "type": "string"
+            },
+            "source_dialogue_id": {
+              "minLength": 1,
+              "title": "Source Dialogue Id",
+              "type": "string"
+            },
+            "visible_state": {
+              "minLength": 1,
+              "title": "Visible State",
+              "type": "string"
+            },
+            "query_text": {
+              "minLength": 1,
+              "title": "Query Text",
+              "type": "string"
+            },
+            "future_esc_role_card_overlap": {
+              "const": false,
+              "default": false,
+              "title": "Future Esc Role Card Overlap",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "qualification_state_id",
+            "source_split",
+            "source_dialogue_id",
+            "visible_state",
+            "query_text"
+          ],
+          "title": "QualificationState",
+          "type": "object"
+        },
+        "UptakeArm": {
+          "enum": [
+            "OFF",
+            "ON"
+          ],
+          "title": "UptakeArm",
+          "type": "string"
+        },
+        "UptakeAssignment": {
+          "additionalProperties": false,
+          "properties": {
+            "protocol": {
+              "default": "pm-paper1-rs-treatment-uptake-qualification-v1",
+              "title": "Protocol",
+              "type": "string"
+            },
+            "assignment_id": {
+              "minLength": 1,
+              "title": "Assignment Id",
+              "type": "string"
+            },
+            "state": {
+              "$ref": "#/$defs/QualificationState"
+            },
+            "arm": {
+              "$ref": "#/$defs/UptakeArm"
+            },
+            "treatment": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AssignedExactTreatment"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "required": [
+            "assignment_id",
+            "state",
+            "arm"
+          ],
+          "title": "UptakeAssignment",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "default": "pm-paper1-rs-treatment-uptake-qualification-v1",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "assignment": {
+          "$ref": "#/$defs/UptakeAssignment"
+        },
+        "runtime_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Runtime Manifest Sha256",
+          "type": "string"
+        },
+        "exact_prompt": {
+          "minLength": 1,
+          "title": "Exact Prompt",
+          "type": "string"
+        },
+        "prompt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Sha256",
+          "type": "string"
+        },
+        "response": {
+          "minLength": 1,
+          "title": "Response",
+          "type": "string"
+        },
+        "response_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Response Sha256",
+          "type": "string"
+        },
+        "treatment_delivery_trace": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Treatment Delivery Trace",
+          "type": "array"
+        },
+        "intended_move_reflection": {
+          "$ref": "#/$defs/IntendedMoveReflection",
+          "default": "unreviewed"
+        },
+        "additional_unassigned_moves": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Additional Unassigned Moves",
+          "type": "array"
+        },
+        "mechanical_failure": {
+          "title": "Mechanical Failure",
+          "type": "boolean"
+        },
+        "mechanical_failure_reasons": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Mechanical Failure Reasons",
+          "type": "array"
+        },
+        "input_tokens": {
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "outcome_metric_fields_present": {
+          "const": false,
+          "default": false,
+          "title": "Outcome Metric Fields Present",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "assignment",
+        "runtime_manifest_sha256",
+        "exact_prompt",
+        "prompt_sha256",
+        "response",
+        "response_sha256",
+        "treatment_delivery_trace",
+        "mechanical_failure",
+        "input_tokens",
+        "output_tokens",
+        "latency_ms"
+      ],
+      "title": "UptakeExecutionRecord",
+      "type": "object"
+    },
+    "BlindAdherenceReview": {
+      "$defs": {
+        "IntendedMoveReflection": {
+          "enum": [
+            "clear",
+            "partial",
+            "absent",
+            "unreviewed"
+          ],
+          "title": "IntendedMoveReflection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "default": "pm-paper1-rs-treatment-uptake-qualification-v1",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "blind_item_id": {
+          "minLength": 1,
+          "title": "Blind Item Id",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "minLength": 1,
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "assigned_arm_hidden": {
+          "const": true,
+          "default": true,
+          "title": "Assigned Arm Hidden",
+          "type": "boolean"
+        },
+        "intended_move_reflection": {
+          "$ref": "#/$defs/IntendedMoveReflection"
+        },
+        "additional_move_count": {
+          "minimum": 0,
+          "title": "Additional Move Count",
+          "type": "integer"
+        },
+        "exact_treatment_was_copied_verbatim": {
+          "title": "Exact Treatment Was Copied Verbatim",
+          "type": "boolean"
+        },
+        "boundary_compatible": {
+          "title": "Boundary Compatible",
+          "type": "boolean"
+        },
+        "mechanical_execution_valid": {
+          "title": "Mechanical Execution Valid",
+          "type": "boolean"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evaluates_response_quality_or_utility": {
+          "const": false,
+          "default": false,
+          "title": "Evaluates Response Quality Or Utility",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "blind_item_id",
+        "reviewer_id",
+        "intended_move_reflection",
+        "additional_move_count",
+        "exact_treatment_was_copied_verbatim",
+        "boundary_compatible",
+        "mechanical_execution_valid",
+        "rationale"
+      ],
+      "title": "BlindAdherenceReview",
+      "type": "object"
+    }
+  },
+  "step2_render_function_sha256": "0d98eec1d2cf3ee8067ba1ea64f46807b7efca7d743503ea64785829afcbc738",
+  "generator_calls": 0,
+  "outcome_calls": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

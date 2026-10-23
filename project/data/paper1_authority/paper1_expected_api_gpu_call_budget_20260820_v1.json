@@ -1,0 +1,107 @@
+{
+  "protocol": "pm-paper1-expected-api-gpu-call-budget-v1",
+  "status": "PLANNING_ENVELOPE_NOT_AUTHORIZATION",
+  "date": "2026-08-20",
+  "current_round_actual": {
+    "paid_api_calls": 0,
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "formal_gpu_experiments": 0,
+    "engineering_gpu_suite": "11 tests passed",
+    "api_usd": 0.0
+  },
+  "price_policy": {
+    "usd_hard_cap": null,
+    "reason": "Evaluator candidates, calibration split size, provider price snapshot and exact prompt-token bounds are not frozen; inventing a dollar cap now would be false precision.",
+    "required_before_any_unlock": [
+      "researcher-selected provider/model identities",
+      "dated provider price snapshot",
+      "measured p50/p95 input-output tokens on outcome-blind prompts",
+      "pre-call reservation ledger and researcher-approved hard USD cap"
+    ]
+  },
+  "already_materialized_zero_outcome_compute": {
+    "qwen_semantic_compiler_calls_needed": 0,
+    "qwen_rs_atomic_compiler_calls_needed": 0,
+    "new_bge_encoding_calls_needed_for_current_surfaces": 0,
+    "new_gpu_hours_needed_for_current_surfaces": 0,
+    "note": "Current surfaces consume immutable semantic/atomic artifacts and existing BGE census rankings."
+  },
+  "esc_evaluator_qualification_formula": {
+    "human_reference_dialogues": "H_RESEARCHER_DECISION_REQUIRED",
+    "human_raters": "R_RESEARCHER_DECISION_REQUIRED_at_least_2_plus_adjudication",
+    "official_esc_rank_dimension_passes": "7 * H",
+    "each_additional_api_evaluator_vector_calls": "H if one strict seven-dimension JSON vector per dialogue; otherwise 7 * H",
+    "human_ordinal_ratings": "7 * H * R",
+    "gpu": "one >=16GB CUDA device; 24GB recommended; benchmark examples before freezing GPU-hour cap",
+    "api_usd": "TBD after candidate nomination and price snapshot"
+  },
+  "rq1_rs_external_calibration_scenarios": {
+    "amount_arms": [0, 1, 2, 3, 4],
+    "turns_per_esc_eval_trajectory": 5,
+    "small_24": {
+      "role_cards": 24,
+      "trajectories": 120,
+      "nvidia_generator_calls": 600,
+      "esc_role_local_inference_turns": 600,
+      "official_esc_rank_dimension_passes": 840,
+      "each_additional_api_evaluator_vector_calls": 120
+    },
+    "medium_36": {
+      "role_cards": 36,
+      "trajectories": 180,
+      "nvidia_generator_calls": 900,
+      "esc_role_local_inference_turns": 900,
+      "official_esc_rank_dimension_passes": 1260,
+      "each_additional_api_evaluator_vector_calls": 180
+    },
+    "large_52": {
+      "role_cards": 52,
+      "trajectories": 260,
+      "nvidia_generator_calls": 1300,
+      "esc_role_local_inference_turns": 1300,
+      "official_esc_rank_dimension_passes": 1820,
+      "each_additional_api_evaluator_vector_calls": 260
+    },
+    "interpretation": "Arithmetic planning only. No split ratio, evaluator, call plan or budget is authorized by this file."
+  },
+  "rq2_memory_amount_upper_bound_arithmetic": {
+    "status": "NOT_AUTHORIZED_FULL_POPULATION_UPPER_BOUND",
+    "amount_arms": [0, 1, 2, 4],
+    "qa": {
+      "targets": 1427,
+      "generator_calls": 5708,
+      "official_gpt4o_judge_calls_lower_bound": 5708
+    },
+    "summary": {
+      "targets": 125,
+      "generator_calls": 500,
+      "official_gpt4o_judge_calls_lower_bound": 500,
+      "note": "Exact event-extraction and LLM-score call multiplier must be audited from the pinned official harness before authorization."
+    },
+    "dialogue_generation": {
+      "targets": 34,
+      "supporter_generator_turn_calls": 1360,
+      "role_model_local_inference_turns": 1360,
+      "mistral24b_turn_judge_passes_lower_bound": 680,
+      "official_gpt4o_overall_judge_calls_lower_bound": 136,
+      "note": "DG numbers assume 10 supporter turns and five official observation aggregation turns per trajectory; the dynamic-query/harness audit must confirm this before use."
+    },
+    "outer_isolation": "Actual calibration must be nested inside each outer-training partition; these full-population totals are only an upper-bound arithmetic surface and cannot be executed as one pooled calibration run."
+  },
+  "confirmatory_budget": {
+    "status": "NOT_ESTIMATED_AND_NOT_AUTHORIZED_WHILE_CONFIRMATORY_OUTCOME_LOCK_IS_CLOSED",
+    "reason": "Requires frozen k/bundle/evaluator/features/folds/Generator/Step2 and selected calibration split."
+  },
+  "staged_authorization": [
+    "Stage A: evaluator qualification only",
+    "Stage B: one researcher-selected calibration split and frozen amount grid",
+    "Stage C: repeated-effect qualification",
+    "Stage D: formal effect construction and PM training",
+    "Stage E: confirmatory evaluation"
+  ],
+  "locks": {
+    "CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

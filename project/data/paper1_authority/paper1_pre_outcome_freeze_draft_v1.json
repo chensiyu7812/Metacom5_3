@@ -1,0 +1,208 @@
+{
+  "protocol": "pm-paper1-pre-outcome-freeze-v1",
+  "status": "DRAFT_AWAITING_M1_INTEGRATION",
+  "staleness_notice_20260818": "source_tree_sha below predates the v6 semantic memory compiler run (2745 accepted units), the RS atomic-move compiler, the RS M2 freeze (paper1_rs_m2_freeze_20260818_v1.json), and the BGE-M3 engineering attestation (paper1_bge_m3_formal_binding_v1.json). Any candidate_bundle/feature_schema/api_call_plan content here reflecting an earlier tree state must be rebuilt against current artifacts before this draft can be treated as the real pre-outcome freeze -- this notice is a pointer, not a full content rewrite.",
+  "source_tree_sha": "4b4ed1846bad7300d81ae49238f8b59142f7c9f4",
+  "generator": {
+    "selection_status": "FINAL",
+    "provider": "NVIDIA hosted NIM",
+    "model": "meta/llama-3.1-8b-instruct",
+    "route": "build.nvidia.com/v1/chat/completions",
+    "source_artifacts": [
+      {
+        "repo_relative_path": "src/metacom_pm/api.py",
+        "sha256": "657b639f041fc1066f4cd56bd5c65df8186a20e8bbfe8acddd2329a89d637566",
+        "role": "NVIDIA NIM API client"
+      },
+      {
+        "repo_relative_path": "scripts/v3/46_run_rq0_llama31_8b_esc_eval_exact.py",
+        "sha256": "68f4f4be8c499274fd97b3f26f6e0123f1329cfaf98d414744053645835450b8",
+        "role": "historical exact RQ0 runner"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/esc_rank_runtime.py",
+        "sha256": "fa64dfb81c72d1f01b94113b3cc2bbed4bb75693556359f3fa4f08bff4b72efa",
+        "role": "ESC-RANK parsing/runtime"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/contracts.py",
+        "sha256": "3ee71f2a7eeb737de57ba117d832b757f09af2a522c2f55d29843a27547fc7da",
+        "role": "paired outcome and shared contracts"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/core/freeze.py",
+        "sha256": "419578d287122b974d91139c0273a37101ca795b1125c74db053f68e3b10224b",
+        "role": "pre-outcome freeze validator"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/core/treatment.py",
+        "sha256": "54cfd87cb175dd675ac15dac30165d4e5afcb8e0b7d008138d5b810ff06382cc",
+        "role": "Paper-1 treatment delivery"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/evaluation/official.py",
+        "sha256": "fdca9a99c187e85ea8b4bd40b1bdf2f0e11f13832afd31d76cc9683caea54238",
+        "role": "official metric surface"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/evaluation/effect_coding.py",
+        "sha256": "1d05a49c8f7e60aad034bd1e3827d563e64dda240c0d49940c07397d6dc8b9c1",
+        "role": "zero-outcome task-specific paired-effect coding"
+      },
+      {
+        "repo_relative_path": "src/metacom_pm/paper1/evaluation/rq1.py",
+        "sha256": "d78ec14cc8b6c2b464ed778c66b33169121c71cd446c0b756dcc3bf2a1b945da",
+        "role": "RQ1 paired input cells"
+      }
+    ],
+    "prompt_template_ids": [],
+    "decoding": {}
+  },
+  "official_evaluation_artifacts": [
+    {
+      "repo_relative_path": "data/paper1_authority/esc_eval_english331_source_overlap_v1.jsonl",
+      "sha256": "1440434ccf92d71fcf9b61397c8007ba3da177edd60f2e1d9a2a99837da63779",
+      "role": "ESC-Eval 331-card source slices"
+    },
+    {
+      "repo_relative_path": "data/v3_authority/es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl",
+      "sha256": "e530e58b489ee87641a80fed9da696a559cdfd50c5772eb50734bf5468ee730c",
+      "role": "ES-MemEval public 1427 QA identity"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_strategy_source_identity_dialogue_only_v2.jsonl",
+      "sha256": "f7b785d2058061f0b874b93a582ae59bba75432e083680a8088e44972a489d97",
+      "role": "ESConv train-only dialogue-visible RS source identity"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_decision_state_identity_v1.jsonl",
+      "sha256": "e41e6486cdb67ec1d0445e3dabe010d805786cc2aef736a538ed321c1ea2c40e",
+      "role": "ESConv outcome-blind RS decision-state identity"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+      "sha256": "6488419b0ed0a3e68bb7eea2f4a2a1805427632a7d0786c9011a313717766b53",
+      "role": "ESConv RS Phase-1 zero-outcome census summary"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_retriever_comparison_summary_v1.json",
+      "sha256": "62148c58a1dde98d6d38db50c76c9b85f77e0f9903ac76e6128820f2eda7350a",
+      "role": "RS lexical/BGE-small/BGE-M3 zero-outcome behavior comparison"
+    },
+    {
+      "repo_relative_path": "data/paper1_evaluator_only_rs/esconv_rs_strategy_family_match_summary_v1.json",
+      "sha256": "1dc1aa75d9c7dd95a9d493f76bbb51543426380ce49fdf5318fade8fd462f204",
+      "role": "evaluator-only ESConv strategy-family retriever diagnostic"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_renderer_card_audit_v1.jsonl",
+      "sha256": "05088aabdf93f9fc81bfb8abd3b6438e0ae5dcafaea91b1ba369c5b3602a5f73",
+      "role": "text-free per-card RS renderer token and exemplar-shape audit"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_rs/esconv_rs_renderer_boundary_audit_v1.json",
+      "sha256": "b153dd4c42accdb3d4aba7dd450eda787687826cf8cd12ffa9ee7efa64179ee9",
+      "role": "RS renderer-token and explicit-boundary zero-outcome decision surface"
+    },
+    {
+      "repo_relative_path": "data/paper1_authority/paper1_official_scorer_surface_audit_v1.json",
+      "sha256": "205722b60b67172c1bf994784aec562362e6de3c53083e6e6070078a85861ce2",
+      "role": "pinned official scorer source and effect-surface audit"
+    },
+    {
+      "repo_relative_path": "data/paper1_authority/paper1_local_environment_attestation_v1.json",
+      "sha256": "7dfdb022630144eec2a36ce44b9f96f0f498900eadc554282e70648ee501d7fe",
+      "role": "zero-outcome local runtime, tokenizer, and encoder capability attestation"
+    },
+    {
+      "repo_relative_path": "data/paper1_authority/paper1_official_rag_runtime_attestation_v1.json",
+      "sha256": "173d4a57f96323ab2dbacc4e8cfba65c77072beed8387d0bd986c17353c84f00",
+      "role": "ES-MemEval Official RAG BGE-M3 plus FAISS Top-4 engineering attestation"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+      "sha256": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+      "role": "gold-free ES-MemEval runtime state and visible history"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_targets_v1.jsonl",
+      "sha256": "b563ed5ba87e56ca56c9379caff14f48d8882235ec8a2877df91e5c830eb30fe",
+      "role": "opaque public RQ2 target identities"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_candidate_census_v1.jsonl",
+      "sha256": "32c34e25b39465a869b1a3d5f4e18c41967b5e023c2677528ad377a7742c3b9c",
+      "role": "MP/MS/ME strict-past candidate census"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json",
+      "sha256": "e6fffd99d0d956fa09c0be93f787b76d21afd6dc3c799e01501b82fbe268f438",
+      "role": "MP/MS/ME zero-outcome candidate census summary"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_feature_readiness_audit_v1.json",
+      "sha256": "3487899eb13cc99bece02184c0a8d2ec9ceeb442040f76c4c720b1bc109b4399",
+      "role": "memory outcome-blind feature inventory and implementation gaps"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_group_component_assignments_v1.jsonl",
+      "sha256": "daee9a7c5a2e8ffdaf45ce38114435c522f66de1fbbcffdc6a917b7f35eeea90",
+      "role": "exact-evidence atomic grouping before outer-fold packing"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_outer_fold_packing_surface_summary_v1.json",
+      "sha256": "8ced1bfbdf11e963c5c6926180628a6df694075ef81f04a93a7c6a618d47f626",
+      "role": "zero-outcome structural outer-fold packing surface"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_official_visibility_audit_v1.json",
+      "sha256": "fa594b100b3b41b24dba971755fe5158f9f87bd84143d09c5101017d6612223a",
+      "role": "pinned official RQ2 task-arm visibility and baseline contract"
+    },
+    {
+      "repo_relative_path": "data/paper1_public_memory/es_memeval_public_me_candidate_audit_v1.json",
+      "sha256": "fd1d99db0d04fdb908abdaa035f41a665d43e1d56e3413d3039aae81194c301d",
+      "role": "active same-turn ME action-to-observed-result candidate audit"
+    }
+  ],
+  "candidate_bundles": [],
+  "feature_schemas": [],
+  "cross_fit": null,
+  "threshold_selection": null,
+  "effect_seed_schedule": [],
+  "effect_measurements": [],
+  "matched_random": null,
+  "api_call_plan": null,
+  "cost_in_label_or_loss": false,
+  "empirical_pass_gates": false,
+  "calibration_outcome_calls_at_freeze": 0,
+  "confirmatory_outcome_calls_at_freeze": 0,
+  "formal_outcome_calls_at_freeze": 0,
+  "pending_items": [
+    "integrate_B30_final_stable_kinship_MP_and_five_fold_artifacts",
+    "freeze_final_candidate_bundle_per_head",
+    "freeze_rs_effect_state_overlap_policy",
+    "freeze_rs_retriever_after_reviewing_zero_outcome_behavior_surface",
+    "freeze_official_rag_local_bge_m3_revision_with_unpinned_upstream_disclosure",
+    "bind_task_specific_official_rag_prompt_and_truncation_wrappers",
+    "freeze_rs_guidance_only_vs_guidance_plus_exemplar",
+    "freeze_rs_boundary_horizon_and_candidate_mapping",
+    "verify_nvidia_nim_tokenizer_parity_and_freeze_resource_token_cap",
+    "freeze_exact_feature_schema_per_head",
+    "materialize_exact_evidence_components_into_five_outer_folds_seed_zero",
+    "freeze_inner_fold_count",
+    "bind_new_paper1_generation_runners_and_prompt_templates",
+    "freeze_decoding_and_max_tokens",
+    "freeze_effect_seed_schedule",
+    "select_head_task_fold_operating_points_from_grouped_OOF_or_outer_training_only",
+    "freeze_project_multi_metric_effect_coding_rule",
+    "freeze_exact_rs_pairwise_and_es_memeval_scorer_identities",
+    "freeze_matched_random_seed_and_proposals",
+    "materialize_api_call_plan"
+  ],
+  "notes": {
+    "purpose": "configuration/provenance completeness, not an empirical PASS gate",
+    "formal_unlock": false,
+    "rq0_historical_dependency_disclosure": "data/v3_authority/rq0_llama31_8b_integration_dependency_closure_v1.json"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "protocol": "paper1-client-latency-measurement-v3",
+  "status": "ACTIVE_PRE_OUTCOME_IMPLEMENTATION",
+  "date": "2026-09-03",
+  "clock": "same-client monotonic clock",
+  "primary": {
+    "client_send_to_first_visible_text_ms": "T_first_visible - T_send",
+    "client_send_to_final_visible_text_ms": "T_final_visible - T_send",
+    "primary_cost_outcome": "p95 client_send_to_final_visible_text_ms",
+    "experience_guardrail": "p95 client_send_to_first_visible_text_ms"
+  },
+  "surface_identity": ["reference_client_received_text", "browser_render_ready_text"],
+  "cross_machine_absolute_timestamp_subtraction": "FORBIDDEN",
+  "server_component_durations_are_diagnostic": true,
+  "schedule": {
+    "unit": "target-level microblock within repeat",
+    "within_target": "random arm order with adjacent execution",
+    "between_targets": "random target-microblock order",
+    "paired_analysis_ids": ["target_id", "repeat_index", "target_microblock_id", "time_block_id"]
+  },
+  "terminal_timeout_or_incomplete": {
+    "retained": true,
+    "analysis_floor_ms": 60000,
+    "complete_case_deletion": false
+  },
+  "successful_fallback": {
+    "primary_latency": "actual observed client TTFT and completion",
+    "artificial_60000ms_floor": "FORBIDDEN",
+    "report_separately": ["fallback rate", "fallback reason"]
+  },
+  "required_trace_fields": [
+    "trace_id",
+    "measurement_surface",
+    "time_block_id",
+    "target_microblock_id",
+    "randomized_sequence_position",
+    "client_region",
+    "warm_or_cold",
+    "concurrency",
+    "connection_reuse",
+    "streaming_observed",
+    "policy_decision_ms",
+    "retrieval_embedding_ms",
+    "resource_render_pack_ms",
+    "provider_request_to_first_content_ms",
+    "provider_request_to_completion_ms",
+    "client_send_to_first_visible_text_ms",
+    "client_send_to_final_visible_text_ms",
+    "input_tokens",
+    "output_tokens",
+    "retry_count",
+    "finish_reason",
+    "terminal_timeout_or_incomplete",
+    "fallback_used",
+    "fallback_reason"
+  ],
+  "pre_call_prediction": {
+    "protocol": "paper1-outcome-blind-paired-p95-lookup-v1",
+    "key": ["task", "head", "visible-context-token-bin", "resource-token-bin"],
+    "source": "zero-outcome adjacent ON/OFF timing-profile microblocks",
+    "realized_post_action_latency_used_for_current_action": false,
+    "enters_runtime_allocator": true
+  },
+  "percentile_input": "raw per-call samples",
+  "cold_start": "reported separately",
+  "non_streaming_first_visible": "use client completion because the complete response is first visible",
+  "offline_scorers": "EXCLUDED",
+  "formal_outcome_calls": 0
+}

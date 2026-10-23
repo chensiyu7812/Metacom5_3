@@ -1,0 +1,105 @@
+{
+  "status": "CROSS_LOAD_GREEDY_REPLAY_LIMIT_DISCLOSED",
+  "comparisons": 6,
+  "exact_text": 2,
+  "exact_tokens": 2,
+  "differing": 4,
+  "root_cause": "NOT_IDENTIFIED; no claim that ordinary GPU numeric nondeterminism alone has been proved.",
+  "observed": {
+    "selected_model_adapter_file_hashes_equal": true,
+    "recorded_packages_hardware_decode_policy_equal": true,
+    "model_visible_messages_equal": true,
+    "different_request_wrapper_and_draw_identity": true,
+    "loader_difference": "Behavior run loads three adapters and switches to epoch_3; common pool freshly loads only epoch_3. This is a known process difference, not a proven causal explanation.",
+    "first_different_token_positions": [
+      61,
+      20,
+      70,
+      65
+    ]
+  },
+  "impact": "All 53 base/adapter comparison inputs match. The finite behavior screen is not a guarantee of exact later wording or error absence. One differing Mark response changes whether the online-group suggestion appears, so differences are not all merely punctuation.",
+  "disposition": "Keep all first actual responses and both run identities. Use common-pool bytes for future common baselines/cache; never silently regenerate and replace them or claim repeatable greedy wording. Any future loader change must receive a new runtime identity. Do not infer support-quality gain or reward qualification from this check.",
+  "additional_generation": 0,
+  "additional_judge_calls": 0,
+  "reward_qualified": false,
+  "rows": [
+    {
+      "diagnostic_request_id": "03a1f273e69acbc7284ca164dddfb232d0395a24ad8e43655a6d37558d78a222",
+      "pool_request_id": "5147cd9dbcddbeef15b0f3b116eded4a4a3e74dc42902aef4d6f74c02aa4733b",
+      "exact_tokens": false,
+      "exact_text": false,
+      "first_different_token_index": 61,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 423,
+      "pool_input_tokens": 423,
+      "diagnostic_raw_sha256": "f4928451e48075f2487c46079116a0d2e066c542d6f484c4f7549408506c4c48",
+      "pool_raw_sha256": "c35087a89f67421b116ebc6003a9017803c3ca20227b8e4bbd0964fbbe317e1b"
+    },
+    {
+      "diagnostic_request_id": "650ae50531a62ae6f028c592c36627786e34bb4316cfdaad47f0f2ab6f572e5d",
+      "pool_request_id": "397a1aa2bbf266bdbaed509918c87bef4c6fce366e3614ef7897851e08dbb801",
+      "exact_tokens": true,
+      "exact_text": true,
+      "first_different_token_index": null,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 247,
+      "pool_input_tokens": 247,
+      "diagnostic_raw_sha256": "84f0646bb6bccf167d7cf897c03d6017905440b890cc2cac12ea27416ba13e61",
+      "pool_raw_sha256": "e70a321f113c932e5cb1b38ca022e3f69af03ce0e9e42ead2534c65a8c1c9ecc"
+    },
+    {
+      "diagnostic_request_id": "5a2921ea7c15e26613e28f373fbb5a6f6128f117c65432cea0b7eeaffa87fcf1",
+      "pool_request_id": "296fa77ef1b1384d9bc7c2e11f1b768fcb75b907f01646ef4e499f835b81585a",
+      "exact_tokens": false,
+      "exact_text": false,
+      "first_different_token_index": 20,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 697,
+      "pool_input_tokens": 697,
+      "diagnostic_raw_sha256": "044c4cd36d9ee33c072b51854745a6a176efcc315128bbe2e0fec802da60adb8",
+      "pool_raw_sha256": "3bb21bdea8c656b7e402555b61ee743ba41ccf00340ae1f2fe1c98190111e7c5"
+    },
+    {
+      "diagnostic_request_id": "5ec9a88e49284e362a8b963fe2762f8eebad76020c28115291f59f27b011d111",
+      "pool_request_id": "b4619adb4b9b0f46152b4b6ec4243abc00b80b22563f0d3bc2f515efaa8d39a9",
+      "exact_tokens": true,
+      "exact_text": true,
+      "first_different_token_index": null,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 1375,
+      "pool_input_tokens": 1375,
+      "diagnostic_raw_sha256": "e18f229ddba568b60d14981cb4f150930316c9d128e6d89e636d2c197249a5aa",
+      "pool_raw_sha256": "40949f980dccf48c05e6f5f9b5b9309f4ad8fccc3bcee83c9cd0c87dbb09d7ed"
+    },
+    {
+      "diagnostic_request_id": "d29e78c3e4885b67ac3aab653ec4d941b633806981117f9431d3f169d911937b",
+      "pool_request_id": "72a61ce8ded3ccf31369670a33443c1c22507b9765a3ab2439df61e953b1b429",
+      "exact_tokens": false,
+      "exact_text": false,
+      "first_different_token_index": 70,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 834,
+      "pool_input_tokens": 834,
+      "diagnostic_raw_sha256": "30a63ba1c4bb22e13758252dafcf7b657b6412464204420362e1946ce07a01b3",
+      "pool_raw_sha256": "8f5ba59284d16f02e88b82a0fea45c0d3fa34552f1debf8434a4ee337d19eea8"
+    },
+    {
+      "diagnostic_request_id": "d347dec6d1b90a44e930417b3641d5a040241a59fe6e29941bc864ce9d4e4774",
+      "pool_request_id": "76a839ae25d068c8bd717e4ba8ae7cef311742c849b721e4fd555bea75b4936f",
+      "exact_tokens": false,
+      "exact_text": false,
+      "first_different_token_index": 65,
+      "model_visible_messages_equal": true,
+      "diagnostic_input_tokens": 944,
+      "pool_input_tokens": 944,
+      "diagnostic_raw_sha256": "f7a25b8eb1cf9720dd10258fdd72fc083bc2ebe932145a858882df57fd211f8a",
+      "pool_raw_sha256": "f8237f0155c7ac618a3593c107308bea9774131a06967980620ec73579a1a626"
+    }
+  ],
+  "source_files": {
+    "project/outputs/pm_rl1/completion_20260930_v2/P2/phase_closeout.json": "c9440da2529ed420714ad6e5e308fbf602fff410e24b030d1d06347ba3d621ed",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/diagnostics/0dc18db421738988858610f5f87b94288b5d06b7c5ac2fbc5cc26506ea3119d8/epoch_3.runtime.json": "373378a74443eb2e26cc296babb6219efd629280f875dd05443ef097de42d2c1",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/runtime.json": "b184bcb81ef298f325d4b8618f4c3d5041f0b7a7f7207bb918ef6f6da41789b5"
+  }
+}

@@ -1,0 +1,825 @@
+{
+  "protocol": "pm-paper1-esc-rank-runtime-qualification-v2",
+  "status": "READY",
+  "official_identity": {
+    "esc_eval_commit": "9ad46e7b5e247e824dae4633910eaa82be668beb",
+    "score_py_sha256": "1d775462adc7687d84ceb19d3648c3c917abf7ceed8b052b1fed8e4740f12724",
+    "esc_rank_revision": "450bf2eb5376c79e371aaf432925810243de1527",
+    "internlm2_model": "internlm/internlm2-chat-7b",
+    "internlm2_revision": "c2ba64483dc50b3f8eb2d8271c4b9877a79ed2e2",
+    "dtype": "float16",
+    "dimensions": [
+      "fluency",
+      "diversity",
+      "empathic",
+      "suggestion",
+      "human",
+      "tech",
+      "overall"
+    ]
+  },
+  "runtime_code_identity": {
+    "repository_commit": "f9c96037b39cb1e8422c0b069b055edbac2dec4f",
+    "harness_sha256": "52ad959b5b2330e7ae6cf74104545046d59aecdf99d945f8461f5b8bddcb0599",
+    "esc_rank_runtime_module_sha256": "fa64dfb81c72d1f01b94113b3cc2bbed4bb75693556359f3fa4f08bff4b72efa",
+    "official_parser_module_sha256": "4906c6afc92b37843d0660fd3d57e3380d975dc548fe7d708ff216f47e4aec14"
+  },
+  "parser_binding": {
+    "primary": "exact pinned ESC-Eval score.py label_list contains semantics",
+    "label_order": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "invalid_local_sentinel": null,
+    "strict_full_string_parser_role": "supplemental diagnostic only",
+    "multiple_label_hit_role": "supplemental diagnostic only; official first-label semantics preserved"
+  },
+  "patch_manifest_sha256": "68a397c35c89bb9dfa1bba125e0f0f95c3c423e7333c3d9aacceca15fcd390ab",
+  "qualification_dialogues_sha256": "ddb85a4664ed93d1a2d42aeb71cc061cbc9632b4b56ade2343b5c1cb25f2a9d7",
+  "gpu": {
+    "total_mib": 48550,
+    "cold_load_seconds": 6.280808217998128,
+    "peak_allocated_mib": 14805.5234375,
+    "peak_reserved_mib": 14806.0
+  },
+  "counts": {
+    "dialogues": 3,
+    "repeats": 2,
+    "dimension_passes": 42,
+    "valid_parses": 42,
+    "official_valid_parses": 42,
+    "strict_diagnostic_valid_parses": 0,
+    "multiple_official_label_hit_diagnostics": 0
+  },
+  "latency_seconds": {
+    "mean_dimension": 0.6762462785003923,
+    "median_dimension": 0.6537781155020639,
+    "mean_seven_dimension_vector": 4.733723949502746
+  },
+  "exact_parsed_vector_reproducibility": true,
+  "exact_official_vector_reproducibility": true,
+  "exact_raw_output_reproducibility": true,
+  "records": [
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "1ad619224053b8fe90d3fd5e53d691af2a0ad35d2d4641486d844580db49373a",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.9772487689988338
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "4e3f2d1a44931fb149896b8d40e05ea82cf3bde98fd386151f9985d156e4f3f5",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6591984449987649
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "9f1566f80595ad24bfcbf33cc415d701b6c99def686bec4e577d62295b0bd191",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6535336810047738
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "aa1fb5fbf6914b917c52a28863e795f7800a766f82b98d2a0ec4d6804347bf21",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7813885079958709
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "bb003cc77b7f07d406580e5dc8677b337d3dd3e8e4ca6348217599be52ca32a1",
+      "raw_output": "The humanoid score is 1.",
+      "parsed_ordinal": 1,
+      "official_parsed_ordinal": 1,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "1"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6984540379999089
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "9115e23425d4b0edb1f7d66b1cc37c1d2eba7bf379b6b68557476807f26cff42",
+      "raw_output": "The emotional knowledge score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.693272666001576
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 0,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "090ba6052f52fae4b392f24a562cc09ea715756b4fd43f0dbb2f8716bffe939f",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6923426599969389
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "1ad619224053b8fe90d3fd5e53d691af2a0ad35d2d4641486d844580db49373a",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.74109129000135
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "4e3f2d1a44931fb149896b8d40e05ea82cf3bde98fd386151f9985d156e4f3f5",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6554847820007126
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "9f1566f80595ad24bfcbf33cc415d701b6c99def686bec4e577d62295b0bd191",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6526272120026988
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "aa1fb5fbf6914b917c52a28863e795f7800a766f82b98d2a0ec4d6804347bf21",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7755134380058735
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "bb003cc77b7f07d406580e5dc8677b337d3dd3e8e4ca6348217599be52ca32a1",
+      "raw_output": "The humanoid score is 1.",
+      "parsed_ordinal": 1,
+      "official_parsed_ordinal": 1,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "1"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6952869109954918
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "9115e23425d4b0edb1f7d66b1cc37c1d2eba7bf379b6b68557476807f26cff42",
+      "raw_output": "The emotional knowledge score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6911758450005436
+    },
+    {
+      "qualification_item_id": "escq_38135c4b38cd71de",
+      "repeat": 1,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "090ba6052f52fae4b392f24a562cc09ea715756b4fd43f0dbb2f8716bffe939f",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6910960239983979
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "1d4528f78b4694514a9b93db30864221fc2a6446e364aedd7f8be2628051a9ed",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6906391459997394
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "449a6b87433717f3b1d4d30b4db28b287d8faa192a6139acf5196101c393155f",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6113297829942894
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "ef9974b2ce41e5710a4a3c25bb61f455415f11134737a80e3a97b12777273bb8",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6104083039972465
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "8d8f9cb9fa22fa33ecd3a32e945fad31acb0e8670ec11ecd607e643369b8ea70",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7288035590026993
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "4d274a9fc981181a8d3a66bb17b18f322df895cddc672401e443b4cf22f02855",
+      "raw_output": "The humanoid score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6540225499993539
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "7646279e8999503a8cf7a84bde8e318e97335a356a3587f0981af29af9b7fa7f",
+      "raw_output": "The emotional knowledge score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6479719749986543
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 0,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "854e2dab944192e602e777f6ab0ca5197910545fb9dea53a89f7ba7fce31a4a8",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6469310879983823
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "1d4528f78b4694514a9b93db30864221fc2a6446e364aedd7f8be2628051a9ed",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6917831089958781
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "449a6b87433717f3b1d4d30b4db28b287d8faa192a6139acf5196101c393155f",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6103598370027612
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "ef9974b2ce41e5710a4a3c25bb61f455415f11134737a80e3a97b12777273bb8",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6083058700023685
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "8d8f9cb9fa22fa33ecd3a32e945fad31acb0e8670ec11ecd607e643369b8ea70",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7297010000038426
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "4d274a9fc981181a8d3a66bb17b18f322df895cddc672401e443b4cf22f02855",
+      "raw_output": "The humanoid score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6506392960000085
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "7646279e8999503a8cf7a84bde8e318e97335a356a3587f0981af29af9b7fa7f",
+      "raw_output": "The emotional knowledge score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6461145690045669
+    },
+    {
+      "qualification_item_id": "escq_4094fe9e8dc21788",
+      "repeat": 1,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "854e2dab944192e602e777f6ab0ca5197910545fb9dea53a89f7ba7fce31a4a8",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6445179829970584
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "c9311356a88764d6b674fe2e70036db4242763704a978b26a627c52425bf9435",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7088801530044293
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "5f6441b4ca879ae9a755341c5c2bc07bfd422dbb7819e4a9b5a786fb9227bcd9",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6085071639972739
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "11e9ed307b2424a726ffdd7bb8694f04edf60a6e7b3362cc79b3733caf90655b",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6267676420029602
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "8fad4e75e7507ffa68d1138fa4ee04ae440ec0aefa0b354ee14579f914debea6",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7459236130016507
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "fc5ef755a60b59a2f8199f5206133e9ae6b5056b1d0b971eb05b9c4afbf686b0",
+      "raw_output": "The humanoid score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6483366750035202
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "4b4803ffdea1abe4496e6c87efc19a73a6c5dd26430009337aca074d9a08e724",
+      "raw_output": "The emotional knowledge score is 3",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6087054500021623
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 0,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "05f6a341f01c3ec34ca5ee222294b99a39e1398670cbb32c610540ffabebf0b5",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6383521320021828
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Fluency",
+      "adapter": "fluency",
+      "prompt_sha256": "c9311356a88764d6b674fe2e70036db4242763704a978b26a627c52425bf9435",
+      "raw_output": "The fluecy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7066199969995068
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Expression",
+      "adapter": "diversity",
+      "prompt_sha256": "5f6441b4ca879ae9a755341c5c2bc07bfd422dbb7819e4a9b5a786fb9227bcd9",
+      "raw_output": "The diversity score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6091986149986042
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Empathy",
+      "adapter": "empathic",
+      "prompt_sha256": "11e9ed307b2424a726ffdd7bb8694f04edf60a6e7b3362cc79b3733caf90655b",
+      "raw_output": "The empathy score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6263703209988307
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Information",
+      "adapter": "suggestion",
+      "prompt_sha256": "8fad4e75e7507ffa68d1138fa4ee04ae440ec0aefa0b354ee14579f914debea6",
+      "raw_output": "The suggection effectiveness score is 3.",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.7476299469999503
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Humanoid",
+      "adapter": "human",
+      "prompt_sha256": "fc5ef755a60b59a2f8199f5206133e9ae6b5056b1d0b971eb05b9c4afbf686b0",
+      "raw_output": "The humanoid score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.651032171001134
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Skillful",
+      "adapter": "tech",
+      "prompt_sha256": "4b4803ffdea1abe4496e6c87efc19a73a6c5dd26430009337aca074d9a08e724",
+      "raw_output": "The emotional knowledge score is 3",
+      "parsed_ordinal": 3,
+      "official_parsed_ordinal": 3,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "3"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.6099671960037085
+    },
+    {
+      "qualification_item_id": "escq_0993c40ca725a069",
+      "repeat": 1,
+      "paper_dimension": "Overall",
+      "adapter": "overall",
+      "prompt_sha256": "05f6a341f01c3ec34ca5ee222294b99a39e1398670cbb32c610540ffabebf0b5",
+      "raw_output": "The human preference score is 2.",
+      "parsed_ordinal": 2,
+      "official_parsed_ordinal": 2,
+      "official_parse_valid": true,
+      "official_label_hits": [
+        "2"
+      ],
+      "multiple_official_label_hits": false,
+      "strict_full_string_ordinal": null,
+      "strict_full_string_valid": false,
+      "latency_seconds": 0.636810283001978
+    }
+  ],
+  "outcome_calls": 0,
+  "formal_ESC_Eval": false
+}

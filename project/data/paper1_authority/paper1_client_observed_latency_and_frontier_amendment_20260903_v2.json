@@ -1,0 +1,86 @@
+{
+  "protocol": "pm-paper1-client-observed-latency-and-frontier-amendment-20260903-v2",
+  "date": "2026-09-03",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT",
+  "human_authority": "project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md",
+  "researcher_approval": {
+    "authorized": true,
+    "instruction": "同意，这个更新加到方案里，给我最新的，修改和推进方案。",
+    "approved_intent": "measure objective client send-to-complete-response latency, handle provider variability, and use latency evidence without an arbitrary project PASS gate"
+  },
+  "scoped_precedence": [
+    "client send replaces PM-runtime ingress as the primary start boundary",
+    "client first-visible and final-visible response replace backend-only endpoints as primary user latency",
+    "unfilled task-specific SLA values no longer block Paper-1 research execution",
+    "only the researcher-declared 60000 ms completion ceiling is catastrophic fail-closed",
+    "tighter budgets are named deployment scenarios and sensitivity analyses"
+  ],
+  "primary_metrics": {
+    "cost_outcome": "p95_client_send_to_final_visible_text_ms",
+    "experience_guardrail": "p95_client_send_to_first_visible_text_ms",
+    "raw_sample_percentiles": [0.5, 0.9, 0.95, 1.0],
+    "timeout_fallback_rate_required": true,
+    "output_length_normalization_replaces_primary": false
+  },
+  "measurement_surfaces": {
+    "reference_client": "send before full PM pipeline to first non-empty received content and complete normalized text",
+    "browser": "send UI event to first-visible and final render-ready text",
+    "mix_or_relabel": "FORBIDDEN",
+    "offline_evaluator_latency": "EXCLUDED"
+  },
+  "variability_control": {
+    "arm_order": "randomized interleaving within task and time block",
+    "raw_latency_repeats_are_valid": true,
+    "deterministic_content_repeats_are_independent_quality_outcomes": false,
+    "warm_primary_cold_secondary": true,
+    "timeout_retry_fallback_dropped": false,
+    "uncertainty": "target-and-time-block clustered/bootstrap",
+    "controlled_concurrency_and_offered_load_separate": true
+  },
+  "paper_primary_selection": {
+    "protocol": "pm-paper1-client-e2e-quality-latency-frontier-v3",
+    "order": [
+      "catastrophic_p95_client_completion_below_60000ms",
+      "official_quality_one_standard_error_admissibility",
+      "minimum_p95_client_completion_ms",
+      "minimum_median_client_completion_ms",
+      "minimum_p95_client_ttft_ms",
+      "minimum_mean_generator_input_tokens",
+      "lower_realized_on_rate",
+      "higher_probability_threshold",
+      "canonical_grid_order"
+    ],
+    "tighter_sla_required_for_paper_primary": false,
+    "fixed_point_five_and_endpoint_references_required": true,
+    "confirmatory_or_outer_target_outcome_selection": "FORBIDDEN"
+  },
+  "reporting": {
+    "quality_latency_frontier": true,
+    "same_quality_lower_latency": true,
+    "same_named_budget_higher_quality": true,
+    "paired_interleaved_latency_differences": true,
+    "quality_minus_lambda_latency": "FORBIDDEN",
+    "cross_task_composite": "FORBIDDEN",
+    "binary_paper_pass_fail": "FORBIDDEN"
+  },
+  "deployment_budgets": {
+    "catastrophic_client_completion_ceiling_ms": 60000,
+    "ceiling_comparator": "strictly_less_than",
+    "universal_peer_reviewed_text_chat_sla_claim": false,
+    "tighter_task_budgets": null,
+    "tighter_budget_status": "OPTIONAL_PRE_OUTCOME_DEPLOYMENT_SCENARIO_AFTER_ZERO_OUTCOME_TIMING_PROFILE",
+    "not_a_research_execution_blocker": true
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "current_activity": {
+    "paid_API_calls": 0,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0,
+    "formal_GPU_experiments": 0
+  }
+}

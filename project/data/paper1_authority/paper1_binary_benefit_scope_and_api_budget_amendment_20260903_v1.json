@@ -1,0 +1,165 @@
+{
+  "protocol": "pm-paper1-binary-benefit-scope-and-api-budget-amendment-20260903-v1",
+  "date": "2026-09-03",
+  "status": "ACTIVE_RESEARCHER_AUTHORIZED_SCOPED_PRE_OUTCOME_AMENDMENT",
+  "human_authority": "project/docs/PM_PAPER1_BINARY_BENEFIT_SCOPE_AND_API_BUDGET_AMENDMENT_20260903_ZH.md",
+  "authorization": {
+    "researcher_direction": [
+      "Paper-1 keeps the simpler probability-of-material-benefit design",
+      "effect magnitude, expected utility, dynamic amount/top-k and sequential/RL learning are future work",
+      "all paid LLM API work should target USD 25-35 with an absolute hard cap of USD 50"
+    ],
+    "formal_outcome_calls_before_amendment": 0,
+    "pm_training_runs_before_amendment": 0,
+    "new_empirical_pass_gate": false
+  },
+  "paper1_scope": {
+    "learner": "four independent standardized L2 logistic-regression heads",
+    "prediction_target": "probability_of_task_defined_material_positive_effect",
+    "canonical_effect_background": "focal_head_only_with_all_other_optional_components_off",
+    "deployment_action": "mechanical_eligibility_and_oof_probability_threshold_and_pre_action_latency_feasibility_and_combined_budget_feasibility",
+    "threshold_calibration": "selected-arm task-specific official primary quality surface with outcome-isolated grouped OOF calibration",
+    "accurate_description": "binary effect learning plus magnitude-aware aggregate operating-point calibration",
+    "threshold_calibration_does_not_create_magnitude_model": true
+  },
+  "paper1_claim": {
+    "allowed": "latency-feasible selective opening based on the predicted probability of task-defined material benefit",
+    "not_claimed": [
+      "request-level expected quality gain",
+      "request-level quality-minus-cost utility maximization",
+      "optimal joint policy over all 16 resource configurations",
+      "dynamic per-request resource amount or top-k optimization",
+      "global sequential dialogue-policy optimality",
+      "harm-probability optimization"
+    ],
+    "future_work": [
+      "effect-magnitude regression",
+      "expected-utility or contextual-bandit learning",
+      "dynamic amount and top-k selection",
+      "interaction-aware joint action learning",
+      "sequential policy learning or reinforcement learning"
+    ]
+  },
+  "raw_effect_retention": {
+    "required": true,
+    "fields": [
+      "task_specific_Q_ON",
+      "task_specific_Q_OFF",
+      "task_specific_delta_Q",
+      "five_class_effect_verdict",
+      "selected_action",
+      "oof_probability",
+      "client_latency_and_token_trace"
+    ],
+    "teacher_only_ordinal_preference_is_numeric_delta": false
+  },
+  "secondary_magnitude_analysis": {
+    "role": "DESCRIPTIVE_LOCAL_COUNTERFACTUAL_DIAGNOSTIC_NOT_A_NEW_LEARNER_OR_SELECTION_GATE",
+    "authorized_data": [
+      "already_generated_grouped_cross_fitted_ON_OFF_pairs",
+      "frozen_sealed_decision_audit_pairs"
+    ],
+    "new_api_calls_authorized": false,
+    "reporting_grain": "task_by_head_only",
+    "cross_task_delta_Q_composite": "FORBIDDEN",
+    "probability_bins": {
+      "predictions": "grouped_OOF_or_sealed_held_out_only",
+      "scheme": "fixed_equal_width_bins_frozen_before_sealed_outcomes",
+      "report_n_per_bin": true,
+      "in_sample_predictions": "FORBIDDEN"
+    },
+    "benefit_capture": {
+      "formula": "sum(max(delta_Q,0) for selected_ON) / sum(max(delta_Q,0) for all eligible paired rows)",
+      "denominator_zero": "NA",
+      "required_companions": [
+        "realized_ON_rate",
+        "resource_tokens",
+        "net_selected_gain",
+        "harmful_open_rate",
+        "false_open_harm"
+      ],
+      "interpretation": "descriptive local-oracle ceiling capture; never a standalone policy-success metric"
+    },
+    "local_regret": {
+      "formula": "max(Q_ON,Q_OFF)-Q_selected",
+      "name_for_ESC_and_DG": "sealed one-step local counterfactual quality regret",
+      "global_policy_regret_claim": "FORBIDDEN",
+      "requires_two_valid_scalar_official_primary_quality_arms": true
+    },
+    "large_benefit_metric": {
+      "primary_or_gate": false,
+      "preferred_replacements": [
+        "benefit_capture",
+        "positive_gain_distribution_or_ECDF_among_PM_OFF",
+        "local_counterfactual_regret"
+      ],
+      "if_reported": "task-natural-unit or calibration-only threshold must be frozen before sealed outcomes and labelled descriptive"
+    },
+    "uncertainty": "highest-level independent group clustered intervals with realized N and exclusions"
+  },
+  "api_budget": {
+    "currency": "USD",
+    "scope": "all_paid_LLM_API_calls_in_the_active_Paper1_route",
+    "includes_providers": ["NVIDIA_hosted_NIM_if_billed", "OpenAI", "Google_Gemini", "Anthropic_Claude", "Qwen_or_other_paid_routes"],
+    "excludes": ["local_A6000_electricity", "local_ESC_RANK", "local_Mistral_observation_scorer", "local_BGE", "local_PM_training"],
+    "expected_total_range": [25.0, 35.0],
+    "absolute_hard_cap": 50.0,
+    "known_v9_actual": 0.0307993,
+    "stage_caps": {
+      "known_v9_actual_rounded": 0.03,
+      "multi_view_401_compilation_and_validation": 1.5,
+      "teacher_96_pair_qualification": 0.1,
+      "token_call_latency_pilots": 1.0,
+      "amount_and_top_k_calibration": 4.0,
+      "formal_training_effect_label_official_scoring": 8.0,
+      "gemini_residual_pairwise_judging": 2.0,
+      "six_primary_RQ2_systems_full_official_evaluation": 22.0,
+      "component_minus_and_necessary_secondary": 5.0,
+      "retry_and_price_variation_reserve": 5.0
+    },
+    "stage_caps_total": 48.63,
+    "reservation_rule": "settled_cost_plus_outstanding_reservations_plus_next_call_worst_case_must_not_exceed_50_USD",
+    "optional_stop_threshold": 43.0,
+    "minimum_retry_reserve": 5.0,
+    "successful_prompt_hash_rebilling": "FORBIDDEN",
+    "maximum_parser_or_transport_retry_per_call": 1,
+    "result_driven_reruns": "FORBIDDEN",
+    "priority_if_budget_tight": [
+      "six_primary_official_systems",
+      "formal_effect_labels_needed_for_primary_learning",
+      "necessary qualification and integrity checks",
+      "component-minus ablations",
+      "optional secondary analyses"
+    ]
+  },
+  "paid_teacher_policy": {
+    "human_reference_total_pairs_including_reverse_duplicates": 96,
+    "cascade": [
+      "derive label from frozen task-specific official anchors when decisive",
+      "send only official-tie-or-conflict residual cases to the frozen Gemini judge",
+      "retain unresolved cases as uncertain and exclude from supervised likelihood"
+    ],
+    "default_paid_candidate": "Gemini_Flash_Lite_exact_identity_pending_zero_outcome_freeze",
+    "claude_role": "substitute_only_if_Gemini_is_operationally_unsuitable_and_within_reallocated_existing_cap",
+    "claude_and_gemini_full_sample_additive_run": "FORBIDDEN",
+    "residual_pairwise_hard_cap": 2.0,
+    "candidate_selection_by_ON_label_rate_or_PM_result": "FORBIDDEN"
+  },
+  "official_evaluation": {
+    "official_scorers_may_be_replaced_for_cost": false,
+    "openai_batch_allowed_for_offline_independent_QA_and_Summary_scoring": true,
+    "DG_dependent_multiturn_calls_assumed_batchable": false,
+    "provider_or_backend_switch_without_versioned_stack_amendment": "FORBIDDEN"
+  },
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "current_activity": {
+    "formal_outcome_calls": 0,
+    "pm_training_runs": 0,
+    "new_paid_calls_from_this_amendment": 0
+  }
+}

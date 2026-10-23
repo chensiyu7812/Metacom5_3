@@ -1,0 +1,52 @@
+{
+  "protocol": "paper1-client-latency-measurement-v2",
+  "status": "ACTIVE_PRE_OUTCOME_IMPLEMENTATION",
+  "date": "2026-09-03",
+  "clock": "same-client monotonic clock",
+  "primary": {
+    "client_send_to_first_visible_text_ms": "T_first_visible - T_send",
+    "client_send_to_final_visible_text_ms": "T_final_visible - T_send",
+    "primary_cost_outcome": "p95 client_send_to_final_visible_text_ms",
+    "experience_guardrail": "p95 client_send_to_first_visible_text_ms"
+  },
+  "surface_identity": ["reference_client_received_text", "browser_render_ready_text"],
+  "cross_machine_absolute_timestamp_subtraction": "FORBIDDEN",
+  "server_component_durations_are_diagnostic": true,
+  "required_trace_fields": [
+    "trace_id",
+    "measurement_surface",
+    "time_block_id",
+    "randomized_sequence_position",
+    "client_region",
+    "warm_or_cold",
+    "concurrency",
+    "connection_reuse",
+    "streaming",
+    "policy_decision_ms",
+    "retrieval_embedding_ms",
+    "resource_render_pack_ms",
+    "provider_request_to_first_content_ms",
+    "provider_request_to_completion_ms",
+    "client_send_to_first_visible_text_ms",
+    "client_send_to_final_visible_text_ms",
+    "input_tokens",
+    "output_tokens",
+    "retry_count",
+    "finish_reason",
+    "timeout_or_fallback"
+  ],
+  "percentile_input": "raw per-call samples",
+  "catastrophic_ceiling_violation_rate_required": true,
+  "cold_start": "reported separately",
+  "timeouts": "retained as ceiling violations and reported separately; never complete-case deleted; analysis latency is floored at 60000 ms",
+  "fallbacks": "retained, identified, and conservatively handled with the same 60000 ms analysis floor in the frozen primary implementation",
+  "non_streaming_first_visible": "use client completion time because the complete response is the first visible text",
+  "summary_strata": "never mix task, arm, measurement surface, warm/cold state, or concurrency",
+  "primary_controlled_surface": {
+    "measurement_surface": "reference_client_received_text",
+    "warm_or_cold": "warm",
+    "concurrency": 1
+  },
+  "offline_scorers": "EXCLUDED",
+  "formal_outcome_calls": 0
+}

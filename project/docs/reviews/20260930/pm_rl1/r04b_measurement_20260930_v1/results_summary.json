@@ -1,0 +1,103 @@
+{
+  "status": "NATIVE_CANDIDATE_EXPERIMENT_COMPLETE_NOT_REWARD_QUALIFICATION",
+  "cases": 40,
+  "by_category": {
+    "actual_executor_pair": {
+      "pairs": 18,
+      "prometheus_status": {
+        "order_disagreement": 7,
+        "order_consistent": 11
+      },
+      "prometheus_consistent_expected_direction": 0,
+      "directional_reference_count": 0,
+      "skywork_available": 18,
+      "skywork_expected_direction": 0
+    },
+    "identical_response_control": {
+      "pairs": 2,
+      "prometheus_status": {
+        "order_disagreement": 2
+      },
+      "prometheus_consistent_expected_direction": 0,
+      "directional_reference_count": 0,
+      "skywork_available": 2,
+      "skywork_expected_direction": 0
+    },
+    "inherited_target_damage": {
+      "pairs": 9,
+      "prometheus_status": {
+        "order_disagreement": 5,
+        "incomplete_native_pair": 1,
+        "order_consistent": 3
+      },
+      "prometheus_consistent_expected_direction": 3,
+      "directional_reference_count": 9,
+      "skywork_available": 8,
+      "skywork_expected_direction": 7
+    },
+    "new_grounding_control": {
+      "pairs": 7,
+      "prometheus_status": {
+        "order_consistent": 4,
+        "order_disagreement": 3
+      },
+      "prometheus_consistent_expected_direction": 2,
+      "directional_reference_count": 7,
+      "skywork_available": 7,
+      "skywork_expected_direction": 6
+    },
+    "new_style_equivalence_control": {
+      "pairs": 4,
+      "prometheus_status": {
+        "incomplete_native_pair": 1,
+        "order_disagreement": 2,
+        "order_consistent": 1
+      },
+      "prometheus_consistent_expected_direction": 0,
+      "directional_reference_count": 0,
+      "skywork_available": 4,
+      "skywork_expected_direction": 0
+    }
+  },
+  "calls": {
+    "prometheus": {
+      "planned": 88,
+      "finish_reasons": {
+        "natural_stop": 88
+      },
+      "load_seconds": 30.29638476402033,
+      "wall_seconds": 408.2881403500214
+    },
+    "skywork": {
+      "planned": 96,
+      "finish_reasons": {
+        "technical_context_missing": 2,
+        "scored": 94
+      },
+      "load_seconds": 11.075397134991363,
+      "wall_seconds": 160.9260559170507
+    }
+  },
+  "prometheus_parse_counts": {
+    "parsed_native_binary": 86,
+    "parse_missing": 2
+  },
+  "global_context_coverage": "see capacity_census.json; complete turns or missing, never truncation",
+  "independent_human_preferences": 0,
+  "calibrated_equivalence": false,
+  "calibrated_uncertainty": false,
+  "structured_factual_detector_validated": false,
+  "reward_mapping": null,
+  "natural_support_ppo_eligible": false,
+  "costs": {
+    "api_usd": 0,
+    "local_cost_not_monetized": true
+  },
+  "limitations": [
+    "Development controls authored by coordinating AI; actual pairs have no independent gold.",
+    "Current run tests native ordering, not a validated four-way support-quality measurement.",
+    "Order conflict, raw equality and small score gaps do not establish semantic equivalence.",
+    "Scalar reward has no rationale or A/B position metric; those are not applicable.",
+    "Repeated prompts/reversed pairs and same-prefix conditions are not independent observations."
+  ]
+}

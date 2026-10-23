@@ -1,0 +1,104 @@
+{
+  "version": "pmrl1-local-backend-offline-validation-v1",
+  "date": "2026-10-23",
+  "base_commit": "5eba6150e40ac680fcca0d3087b067a847b39b60",
+  "scope": "OFFLINE_ENGINEERING_ONLY",
+  "focused_tests": {
+    "passed": 45,
+    "exit_code": 0,
+    "seconds": 27.62
+  },
+  "new_tests": 12,
+  "clean_suite_status": "PASSED",
+  "static_package": {
+    "protocol_identity": "dd23f5ae2dbfbf970a38876796602d0fe9212c8722382dc868e6c356b3ec9b16",
+    "unique_file_hashes": 111,
+    "package_versions": 5,
+    "real_tokenizers_loaded_on_CPU": true,
+    "model_weights_loaded": false,
+    "separate_check_exit_code": 0
+  },
+  "protected_files": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/pm_rl1_completion_20260930_v2/execution_contract.json": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/paper1_api_budget/cumulative_paid_api_budget.jsonl": "9674415f7726e6e119b280f028fe4be183445a2be92460b3f1d9ce0a7c1190bc",
+    "/home/tokkio/PM_RL1_开发人评材料.zip": "20469842fda6d157b97649c0f0a8e0786777400b732434d4c12e29dc3e8445db"
+  },
+  "initial_attempts": [
+    {
+      "scope": "first_targeted_run",
+      "passed": 28,
+      "failed": 1,
+      "reason": "Synthetic fixture used unsupported coarse_age; fixed to existing schema categories."
+    },
+    {
+      "scope": "full_probe_tests",
+      "passed": 10,
+      "failed": 2,
+      "reason": "New test builder used counts instead of existing canonical_counts; fixture fixed."
+    },
+    {
+      "scope": "test_command",
+      "exit_code": 4,
+      "occurrences": 2,
+      "reason": "Nonexistent guessed test filenames; no tests ran. Corrected using actual repository paths."
+    }
+  ],
+  "new_G_calls": 0,
+  "new_BGE_calls": 0,
+  "new_J_calls": 0,
+  "new_API_cost_usd": "0",
+  "research_BC_checkpoints": 0,
+  "natural_updates": 0,
+  "read_only_GPU_preview": {
+    "eligible": true,
+    "selected_gpu": {
+      "uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+      "name": "NVIDIA RTX A6000",
+      "free_mib": 48551,
+      "utilization_percent": 0
+    },
+    "process_visibility": "queries_succeeded_no_processes_listed",
+    "limit": "Instantaneous NVIDIA-visible state, rechecked before actual load; no model loaded."
+  },
+  "compileall_exit_code": 0,
+  "integration_lock_checks": {
+    "passed": 32,
+    "exit_code": 0,
+    "outcome_calls": 0
+  },
+  "clean_script_help_exit_code": 0,
+  "clean_suite": {
+    "tests": 1605,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 64,
+    "time": 358.989,
+    "passed": 1541,
+    "deselected": 1,
+    "exit_code": 0
+  },
+  "clean_environment": {
+    "python": "3.11",
+    "torch": "2.3.1+cpu",
+    "private_PM_RL1_outputs_present": false,
+    "PYTHONPATH": "src",
+    "isolated_venv": true
+  },
+  "command": "python -m pytest -q -m 'not gpu' tests/test_paper1_*.py tests/test_rl1_*.py -ra -o addopts= --junitxml=<local artifact>",
+  "skip_scope": {
+    "historical_private_relation_cases": 32,
+    "historical_private_task_cases": 28,
+    "historical_private_transport_entrypoints": 2,
+    "module_level_BGE_and_tokenizer": 2,
+    "not_live_G_BGE_validation": true
+  },
+  "tested_code_sha256": {
+    "project/scripts/rl1/130_local_backend_integration.py": "405faff30cc4faae430af941b1a3d976dec85df57066212ffe3f8af65a26a70e",
+    "project/src/metacom_pm/rl1/generation_worker.py": "9a4cf7598dcc179a71f052c13e5d37c020e64cea96cf517062a66bfd9e0cb733",
+    "project/src/metacom_pm/rl1/local_backend.py": "7a48c16fbdff28c57218702cf9e916229210b2bb9b5e0c95420e7845bf3d2cdb",
+    "project/src/metacom_pm/rl1/local_gpu_guard.py": "514fa9d563a2d7b7aae10cb1011d53a2e535d38fbc1e99c5cc06408d837510aa",
+    "project/src/metacom_pm/rl1/local_integration.py": "b6dad27b1e732c4c2779c8e4c0cf361cc3006a2f735244eef5b1b22fc6fcf149",
+    "project/src/metacom_pm/rl1/research_backend.py": "963a8b480deff925a2aa1f76c2a65b4fa37406ec1db5225dd23d8e245a85cc63",
+    "project/tests/test_rl1_local_backend.py": "3a70899289f9a2e6af95a9621b6b5effd2e6b84e59393b8f843a66bca4224000"
+  }
+}

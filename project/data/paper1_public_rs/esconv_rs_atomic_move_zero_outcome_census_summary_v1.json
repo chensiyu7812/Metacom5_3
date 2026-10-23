@@ -1,0 +1,203 @@
+{
+  "protocol": "pm-paper1-rs-atomic-move-zero-outcome-summary-v1",
+  "status": "ZERO_OUTCOME_AUDIT_ONLY_AWAITING_M2_FREEZE",
+  "supersedes": {
+    "path": "data/paper1_public_rs/esconv_rs_zero_outcome_census_summary_v1.json",
+    "sha256": "6488419b0ed0a3e68bb7eea2f4a2a1805427632a7d0786c9011a313717766b53",
+    "reason": "06_materialize_esconv_rs_zero_outcome_census.py ranks the pre-atomic-move 12169-card StrategySourceCard catalog with a token-Jaccard index; this script ranks the real 15061-unit atomic-move catalog (RS M2 freeze decision 10's approved granularity) with real BGE-M3 cosine similarity. The old artifact is left in place, not deleted -- both exist side by side as distinct, dated diagnostics."
+  },
+  "source": {
+    "esconv_sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+    "split_manifest_sha256": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "session_results_filename": "session_results_repaired_v1.jsonl",
+    "session_results_sha256": "d91b17117ac4164931f44e74cd1e7bb16eab5f30dd3e38f2d45bbcba858d434c"
+  },
+  "counts": {
+    "strategy_source_cards": 12169,
+    "atomic_move_retrieval_documents": 15061,
+    "decision_states": 11883,
+    "decision_state_dialogues": 1047,
+    "states_with_leave_dialogue_out_candidates": 11883,
+    "states_with_nonzero_bge_similarity": 11883
+  },
+  "bge_materialization": {
+    "documents": {
+      "protocol": "paper1-bge-m3-materialization-report-v1",
+      "field_source": "rs.document_text",
+      "item_count": 15061,
+      "cache_hits": 15061,
+      "newly_encoded": 0,
+      "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+      "runtime_identity_sha256": "44922aafab4f151043fad5f9904cf475a40dd443bb889c38e3cefad628d494d2",
+      "max_input_chars": 2337,
+      "max_seq_length": 8192,
+      "truncation_fail_closed": true,
+      "outcome_calls": 0
+    },
+    "queries": {
+      "protocol": "paper1-bge-m3-materialization-report-v1",
+      "field_source": "rs.query_text",
+      "item_count": 11883,
+      "cache_hits": 11883,
+      "newly_encoded": 0,
+      "binding_identity_sha256": "6d8e20aff72c710cb267e88d6c27798c9e06418b58b11f62fe34a0bfc6a16a5c",
+      "runtime_identity_sha256": "44922aafab4f151043fad5f9904cf475a40dd443bb889c38e3cefad628d494d2",
+      "max_input_chars": 2416,
+      "max_seq_length": 8192,
+      "truncation_fail_closed": true,
+      "outcome_calls": 0
+    }
+  },
+  "outcome_blind_distributions": {
+    "candidate_count_after_leave_dialogue_out": {
+      "min": 15009,
+      "p25": 15040,
+      "median": 15045,
+      "p75": 15050,
+      "p90": 15061,
+      "p95": 15061,
+      "max": 15061
+    },
+    "nonzero_bge_similarity_candidate_count": {
+      "min": 15009,
+      "p25": 15040,
+      "median": 15045,
+      "p75": 15050,
+      "p90": 15061,
+      "p95": 15061,
+      "max": 15061
+    },
+    "diagnostic_top1_bge_cosine_similarity": {
+      "min": 0.5939366817474365,
+      "p25": 0.7698893547058105,
+      "median": 0.7986469268798828,
+      "p75": 0.8234156370162964,
+      "p90": 0.8440959453582764,
+      "p95": 0.8554439544677734,
+      "max": 0.9012158513069153
+    },
+    "diagnostic_top1_bge_cosine_similarity_population_variance": 0.0017254490909548764,
+    "diagnostic_bundle_document_words": {
+      "1": {
+        "min": 8,
+        "p25": 76,
+        "median": 105,
+        "p75": 137,
+        "p90": 175,
+        "p95": 201,
+        "max": 380
+      },
+      "2": {
+        "min": 17,
+        "p25": 160,
+        "median": 216,
+        "p75": 273,
+        "p90": 334,
+        "p95": 378,
+        "max": 733
+      },
+      "4": {
+        "min": 37,
+        "p25": 335,
+        "median": 440,
+        "p75": 542,
+        "p90": 649,
+        "p95": 715,
+        "max": 1199
+      }
+    }
+  },
+  "concentration_diagnostics": {
+    "note": "states_with_nonzero_bge_similarity above is a weak claim on its own -- dense embeddings almost always produce a nonzero cosine similarity for any pair, so it mainly says every state had a legal candidate, not that every candidate is semantically relevant. These numbers characterize actual retrieval structure instead.",
+    "exact_top1_top2_bge_cosine_similarity_ties": 7,
+    "distinct_documents_ever_selected_as_top1": 4047,
+    "atomic_move_retrieval_documents": 15061,
+    "most_reused_top1_document": {
+      "atomic_card_id": "rs_atomic_3ac2bca6bc82275edd49de67",
+      "times_selected_as_top1": 161
+    },
+    "duplicate_retrieval_document_instances": 84,
+    "duplicate_retrieval_document_instances_note": "count of documents whose retrieval text (source context + rendered move) is byte-identical to another document already counted -- i.e. extra instances beyond the first in each duplicate-content group, not the number of groups.",
+    "states_with_multiple_top_4_candidates_sharing_a_source_card": 4061,
+    "states_with_multiple_top_4_candidates_sharing_a_source_card_fraction": 0.3417487166540436
+  },
+  "diagnostic_word_cap_grid": {
+    "status": "AUDIT_GRID_ONLY_WORD_COUNTS_NOT_MODEL_TOKENS_NOT_M2_FREEZE",
+    "cells": {
+      "k1_cap64": {
+        "states_within_cap": 2259,
+        "rate": 0.19010350921484473
+      },
+      "k1_cap128": {
+        "states_within_cap": 8251,
+        "rate": 0.6943532777918034
+      },
+      "k1_cap256": {
+        "states_within_cap": 11750,
+        "rate": 0.9888075401834554
+      },
+      "k1_cap512": {
+        "states_within_cap": 11883,
+        "rate": 1.0
+      },
+      "k2_cap64": {
+        "states_within_cap": 740,
+        "rate": 0.062273836573255914
+      },
+      "k2_cap128": {
+        "states_within_cap": 1930,
+        "rate": 0.162416898089708
+      },
+      "k2_cap256": {
+        "states_within_cap": 8237,
+        "rate": 0.693175124126904
+      },
+      "k2_cap512": {
+        "states_within_cap": 11819,
+        "rate": 0.9946141546747455
+      },
+      "k4_cap64": {
+        "states_within_cap": 397,
+        "rate": 0.033409071783219724
+      },
+      "k4_cap128": {
+        "states_within_cap": 680,
+        "rate": 0.05722460658082976
+      },
+      "k4_cap256": {
+        "states_within_cap": 1667,
+        "rate": 0.14028443995624001
+      },
+      "k4_cap512": {
+        "states_within_cap": 8140,
+        "rate": 0.685012202305815
+      }
+    }
+  },
+  "diagnostic_similarity_method": {
+    "status": "REAL_BGE_M3_NOT_A_LEXICAL_PROXY_STILL_PHASE1_AUDIT_ONLY_NOT_FINAL_RETRIEVER",
+    "similarity": "cosine (L2-normalized BGE-M3 dot product)",
+    "query_preceding_turns": 6,
+    "top_k": 4
+  },
+  "primary_retrieval_unit_decision": {
+    "status": "M2_RESEARCHER_DECISION_REQUIRED_NOT_ENACTED_HERE",
+    "recommendation": "Since the research definition is 'inject or don't inject one RS atomic move,' the formal primary retrieval unit should probably freeze to top-1 alone. top_k>1 is kept as a diagnostic surface (concentration/redundancy auditing above) and must not be silently reassembled into a multi-move bundle at freeze time -- that would quietly break the atomic-unit treatment definition. This is a pre-outcome researcher decision, not something this script or its default top_k picks on its own."
+  },
+  "artifacts": {
+    "census": "data/paper1_public_rs/esconv_rs_atomic_move_zero_outcome_census_v1.jsonl",
+    "census_sha256": "641a599c4f62848982a53eec3a284b17e144af25b25b58b50c6f4ef98ee935b2"
+  },
+  "outcome_calls": 0,
+  "outcome_lock": "LOCKED_PRE_ZERO_OUTCOME_FREEZE",
+  "pending_m2_freeze": [
+    "final_card_rendering",
+    "retrieval_backend_and_query_window",
+    "candidate_bundle_top_k_vs_top1_primary_unit",
+    "generator_token_cap",
+    "exact_rs_feature_schema",
+    "effect_state_overlap_policy",
+    "fold_manifest",
+    "cross_source_card_duplicate_policy"
+  ]
+}

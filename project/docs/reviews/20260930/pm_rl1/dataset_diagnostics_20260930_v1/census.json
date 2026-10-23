@@ -1,0 +1,393 @@
+{
+  "scope": "Complete structural census; train/dev-only gold analysis; lexical flags are not error labels.",
+  "owner_splits": {
+    "p12": "train",
+    "p9": "train",
+    "p5": "train",
+    "p11": "train",
+    "p17": "train",
+    "p3": "train",
+    "p6": "train",
+    "p13": "train",
+    "p16": "train",
+    "p8": "train",
+    "p2": "train",
+    "p10": "train",
+    "p1": "dev",
+    "p15": "dev",
+    "p18": "dev",
+    "p14": "test",
+    "p4": "test",
+    "p7": "test"
+  },
+  "esconv": {
+    "dialogues": 1300,
+    "turns": 38365,
+    "supporter_turns": 18376,
+    "strategy_counts": {
+      "Question": 3801,
+      "Affirmation and Reassurance": 2827,
+      "Others": 3341,
+      "Information": 1215,
+      "Self-disclosure": 1713,
+      "Providing Suggestions": 2954,
+      "Restatement or Paraphrasing": 1089,
+      "Reflection of feelings": 1436
+    },
+    "split_counts": {
+      "test": 180,
+      "train": 934,
+      "validation": 186
+    },
+    "self_disclosure_dialogues": 946,
+    "self_life_lexical_dialogues": 214,
+    "emotion_counts": {
+      "anxiety": 354,
+      "anger": 111,
+      "fear": 95,
+      "depression": 334,
+      "sadness": 308,
+      "disgust": 40,
+      "shame": 42,
+      "nervousness": 13,
+      "pain": 1,
+      "jealousy": 1,
+      "guilt": 1
+    },
+    "problem_counts": {
+      "job crisis": 280,
+      "problems with friends": 179,
+      "ongoing depression": 351,
+      "breakup with partner": 239,
+      "academic pressure": 156,
+      "conflict with parents": 10,
+      "Procrastination": 13,
+      "Alcohol Abuse": 12,
+      "Issues with Parents": 8,
+      "Sleep Problems": 28,
+      "Appearance Anxiety": 12,
+      "School Bullying": 2,
+      "Issues with Children": 10
+    },
+    "words": {
+      "n": 1300,
+      "min": 129,
+      "median": 452.0,
+      "p90": 711,
+      "max": 1898
+    }
+  },
+  "history": {
+    "owners": 18,
+    "sessions": 401,
+    "turns": 9368,
+    "origin_counts": {
+      "esconv_seed": 85,
+      "expanded_session": 316
+    },
+    "session_words": {
+      "n": 401,
+      "min": 129,
+      "median": 430,
+      "p90": 545,
+      "max": 925
+    },
+    "owner_words": {
+      "n": 18,
+      "min": 5671,
+      "median": 9661.0,
+      "p90": 14448,
+      "max": 14844
+    },
+    "self_life_lexical_sessions": 18,
+    "self_life_lexical_turns": 22,
+    "exact_esconv_transcript_sessions": 58,
+    "cross_split_exact_transcript_groups": [
+      [
+        [
+          "p13",
+          "train",
+          "esc1198"
+        ],
+        [
+          "p18",
+          "dev",
+          "esc1198"
+        ]
+      ]
+    ],
+    "cross_split_shared_session_ids": [
+      [
+        [
+          "p13",
+          "train"
+        ],
+        [
+          "p18",
+          "dev"
+        ]
+      ]
+    ],
+    "duplicate_turn_index_sessions": 0,
+    "adjacent_same_role_sessions": 70
+  },
+  "tasks": {
+    "train": {
+      "qa": 1003,
+      "summary": 81,
+      "dg": 25
+    },
+    "dev": {
+      "qa": 258,
+      "summary": 22,
+      "dg": 4
+    },
+    "test": {
+      "qa": 166,
+      "summary": 22,
+      "dg": 5
+    }
+  },
+  "qa_train_dev": {
+    "rows": 1261,
+    "capabilities": {
+      "temporal reasoning": 255,
+      "conflict detection": 240,
+      "user modeling": 273,
+      "abstention": 225,
+      "information extraction": 268
+    },
+    "unknown_answers": 223,
+    "answer_words": {
+      "n": 1261,
+      "min": 1,
+      "median": 14,
+      "p90": 26,
+      "max": 121
+    },
+    "no_evidence": 224,
+    "duplicate_evidence_rows": 3,
+    "private_event_any": 320,
+    "only_private_event": 20,
+    "visible_evidence_any": 1006,
+    "unresolved_rows": 20,
+    "unresolved_refs": 30,
+    "group_missing_rows": 5,
+    "literal_answer_any": 96,
+    "literal_answer_seeker": 87,
+    "only_private_but_literal_seeker": 1,
+    "multiple_visible_sessions": 219
+  },
+  "qa_test_structure_only": {
+    "rows": 166,
+    "capabilities": {
+      "information extraction": 41,
+      "conflict detection": 27,
+      "user modeling": 33,
+      "abstention": 36,
+      "temporal reasoning": 29
+    },
+    "gold_semantics_not_analyzed": true
+  },
+  "summary_train_dev": {
+    "rows": 103,
+    "answer_words": {
+      "n": 103,
+      "min": 33,
+      "median": 73,
+      "p90": 87,
+      "max": 97
+    },
+    "visible_sessions": {
+      "n": 103,
+      "min": 1,
+      "median": 3,
+      "p90": 5,
+      "max": 6
+    },
+    "unresolved_rows": 0
+  },
+  "memory": {
+    "units": 2236,
+    "head_counts": {
+      "MP": 713,
+      "ME": 1523
+    },
+    "types": {
+      "durable_health_constraint": 176,
+      "enduring_preference": 93,
+      "stable_relationship_role": 190,
+      "coping_attempt": 374,
+      "relationship_event": 293,
+      "transient_state": 84,
+      "meaningful_experience": 314,
+      "occupation": 40,
+      "enduring_interest": 134,
+      "state_onset": 111,
+      "life_event": 148,
+      "support_experience": 136,
+      "state_change": 57,
+      "durable_boundary": 19,
+      "identity": 8,
+      "action_observed_outcome": 4,
+      "education": 43,
+      "other_occurred_event": 2,
+      "location": 10
+    },
+    "temporal_status": {
+      "ongoing_stage": 475,
+      "occurred": 1048
+    },
+    "missing_turn_refs": 0,
+    "bad_span_slices": 0,
+    "only_supporter_units": 0,
+    "repeat_same_slot_value": 201,
+    "reviewed_repeat_units": 101,
+    "overlay_reviewed": 101,
+    "overlay_status": {
+      "citation_unrelated": 26,
+      "citation_partial": 60,
+      "citation_sufficient": 13,
+      "citation_conflicts_with_current_slot": 2
+    },
+    "temporal_blocks": 2,
+    "session_blocks": 1
+  },
+  "rs": {
+    "treatments": 13172,
+    "families": {
+      "Information": 774,
+      "Providing Suggestions": 2232,
+      "Question": 2976,
+      "Affirmation And Reassurance": 4028,
+      "Self Disclosure": 1337,
+      "Restatement Or Paraphrasing": 474,
+      "Others": 270,
+      "Reflection Of Feelings": 1081
+    },
+    "self_disclosure_treatments": 1337,
+    "top4_prefixes_with_self_disclosure": 45,
+    "retrieved_source_overlap_with_exact_seed_matches": []
+  },
+  "prefixes": {
+    "rows": 114,
+    "splits": {
+      "train": 96,
+      "dev": 18
+    },
+    "short_greeting_candidates": 8,
+    "thanks_marker": 9,
+    "history_or_update_marker": 7,
+    "prior_supporter_self_life_candidates": 1,
+    "last_turn_words": {
+      "n": 114,
+      "min": 1,
+      "median": 18.5,
+      "p90": 27,
+      "max": 34
+    },
+    "deficient_inventory": {
+      "RS": 0,
+      "MP": 28,
+      "MS": 16,
+      "ME": 2
+    }
+  },
+  "sft": {
+    "train": {
+      "rows": 103,
+      "owners": 12,
+      "prefixes": 19,
+      "resource_counts": {
+        "0": 34,
+        "1": 59,
+        "2": 10
+      },
+      "same_head_repeat_rows": 0,
+      "response_words": {
+        "n": 103,
+        "min": 7,
+        "median": 67,
+        "p90": 105,
+        "max": 179
+      },
+      "response_self_life_candidates": 0,
+      "prefix_self_life_candidates": 0,
+      "rs_self_disclosure_rows": 3
+    },
+    "dev": {
+      "rows": 52,
+      "owners": 3,
+      "prefixes": 9,
+      "resource_counts": {
+        "0": 15,
+        "1": 27,
+        "2": 10
+      },
+      "same_head_repeat_rows": 0,
+      "response_words": {
+        "n": 52,
+        "min": 33,
+        "median": 68.0,
+        "p90": 123,
+        "max": 354
+      },
+      "response_self_life_candidates": 0,
+      "prefix_self_life_candidates": 4,
+      "rs_self_disclosure_rows": 2
+    }
+  },
+  "esc_eval": {
+    "en": {
+      "cards": 331,
+      "sources": {
+        "ESconv": 158,
+        "EPITOME": 5,
+        "ExTES": 70,
+        "MHP": 73,
+        "Psych": 25
+      },
+      "topic_labels": {
+        "家庭生活": 172,
+        "工作学习": 87,
+        "社会与其他": 72
+      },
+      "duplicate_keys": 0,
+      "empty_base": 0,
+      "base_words": {
+        "n": 331,
+        "min": 19,
+        "median": 39,
+        "p90": 71,
+        "max": 100
+      },
+      "active_primary_language": true
+    },
+    "zh": {
+      "cards": 324,
+      "sources": {
+        "PsyQA": 252,
+        "smile": 72
+      },
+      "topic_labels": {
+        "家庭生活": 215,
+        "工作学习": 72,
+        "社会与其他": 37
+      },
+      "duplicate_keys": 0,
+      "empty_base": 0,
+      "base_words": {
+        "n": 324,
+        "min": 9,
+        "median": 12.0,
+        "p90": 16,
+        "max": 22
+      },
+      "active_primary_language": false
+    },
+    "frozen_slices": {
+      "esconv_source_overlap": 158,
+      "primary_non_esconv_transfer": 173
+    }
+  }
+}

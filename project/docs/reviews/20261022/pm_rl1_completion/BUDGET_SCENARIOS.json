@@ -1,0 +1,193 @@
+{
+  "historical_sample_counts": {
+    "joint": 8,
+    "audit": 8,
+    "repair": 1
+  },
+  "historical_means_usd": {
+    "joint": "0.008086425",
+    "audit": "0.0141589125",
+    "repair": "0.0092904"
+  },
+  "not_current_provider_quote": true,
+  "fixed_existing_G_requests": 586,
+  "exact_unique_existing_evidence_reply_inputs": 534,
+  "qualified_reward_cache_entries": 0,
+  "train_plan_capacity_missing": 5522,
+  "dev_plan_capacity_missing": 791,
+  "stage": {
+    "known_regression_reply_slots": 6,
+    "new_development_pairs": 8,
+    "primary_and_audit_first_attempts": 44,
+    "conditional_resolution_max": 22,
+    "selected_only_validation_single_calls": 59,
+    "selected_only_validation_audit_upper": 177,
+    "technical_extra_stage_max": 16,
+    "per_identity_extra_max": 2,
+    "validation_nonrepeat_recoveries_max": 1,
+    "validation_independent_repeat_recoveries": 0,
+    "total_call_ceiling_single": 141,
+    "total_call_ceiling_audit": 259,
+    "capacity_if_all_planned_audit": 566,
+    "cumulative_capacity_now": 374,
+    "capacity_revision_required": true,
+    "cash_ceiling_proposal_usd": "6",
+    "cash_ceiling_authorized": false,
+    "full_worst_case_call_liability_usd": ".786432",
+    "completion_guaranteed_by_cash_ceiling": false,
+    "projected_single_route_usd": "1.3974279000",
+    "projected_audit_route_usd": "2.7809373375"
+  },
+  "scenarios": [
+    {
+      "episodes_per_seed": 128,
+      "policy_episodes": 768,
+      "rows": [
+        {
+          "phase": "unscored_existing_common_pool",
+          "new_G_upper": 0,
+          "new_J_upper": 534
+        },
+        {
+          "phase": "remaining_train_OFF",
+          "new_G_upper": 72,
+          "new_J_upper": 72
+        },
+        {
+          "phase": "PPO_and_NoText",
+          "new_G_upper": 768,
+          "new_J_upper": 768
+        },
+        {
+          "phase": "policy_dev_and_supervised_dev",
+          "new_G_upper": 378,
+          "new_J_upper": 378
+        },
+        {
+          "phase": "core_test_20_instances_x48",
+          "new_G_upper": 960,
+          "new_J_upper": 960
+        },
+        {
+          "phase": "semantic_recheck_reserve",
+          "new_G_upper": 0,
+          "new_J_upper": 96
+        },
+        {
+          "phase": "remaining_technical_recovery_reserve",
+          "new_G_upper": 96,
+          "new_J_upper": 176
+        }
+      ],
+      "additional_G_upper": 2274,
+      "additional_J_upper_single": 2984,
+      "conservative_single_cost_scenario_usd": "25.5273201000",
+      "pervasive_audit_cost_scenario_usd": "69.1610244375",
+      "optional_executor_matrix_additional_G_J_each": 288,
+      "lower_bound_note": "Adaptive incremental train/dev G/J may be zero after exact qualified-cache reuse; core test has at least 48 OFF endpoints; no zero-cost assumption for the whole study.",
+      "overlap": "Upper rows can overlap. Never sum this as exact unique requests; stage-common overlap also remains conservative.",
+      "shared_technical_J_reserve": "16 in selection stage plus176 later =192, not208"
+    },
+    {
+      "episodes_per_seed": 384,
+      "policy_episodes": 2304,
+      "rows": [
+        {
+          "phase": "unscored_existing_common_pool",
+          "new_G_upper": 0,
+          "new_J_upper": 534
+        },
+        {
+          "phase": "remaining_train_OFF",
+          "new_G_upper": 72,
+          "new_J_upper": 72
+        },
+        {
+          "phase": "PPO_and_NoText",
+          "new_G_upper": 2304,
+          "new_J_upper": 2304
+        },
+        {
+          "phase": "policy_dev_and_supervised_dev",
+          "new_G_upper": 378,
+          "new_J_upper": 378
+        },
+        {
+          "phase": "core_test_20_instances_x48",
+          "new_G_upper": 960,
+          "new_J_upper": 960
+        },
+        {
+          "phase": "semantic_recheck_reserve",
+          "new_G_upper": 0,
+          "new_J_upper": 96
+        },
+        {
+          "phase": "remaining_technical_recovery_reserve",
+          "new_G_upper": 96,
+          "new_J_upper": 176
+        }
+      ],
+      "additional_G_upper": 3810,
+      "additional_J_upper_single": 4520,
+      "conservative_single_cost_scenario_usd": "37.9480689000",
+      "pervasive_audit_cost_scenario_usd": "103.3298628375",
+      "optional_executor_matrix_additional_G_J_each": 288,
+      "lower_bound_note": "Adaptive incremental train/dev G/J may be zero after exact qualified-cache reuse; core test has at least 48 OFF endpoints; no zero-cost assumption for the whole study.",
+      "overlap": "Upper rows can overlap. Never sum this as exact unique requests; stage-common overlap also remains conservative.",
+      "shared_technical_J_reserve": "16 in selection stage plus176 later =192, not208"
+    }
+  ],
+  "shared_remaining_usd": "18.0941768",
+  "training_scale_rule": "unchanged: low contrast128; otherwise full engine projection<=96h384, else128; freeze before rollout",
+  "local_G_and_BGE_engine_hours": "not certified by cached replay; profile at authorized actual integration",
+  "human_hours_assumptions": {
+    "new_dev_pairs": 8,
+    "known_regression_replies": 6,
+    "validation_pairs": 24,
+    "final_pairs": 48,
+    "optional_validation_reserve_pairs": 8,
+    "train_unknown_replies_max": 12,
+    "minutes_per_pair_range": [
+      8,
+      20
+    ],
+    "minutes_per_single_range": [
+      5,
+      15
+    ],
+    "score_basis_review_items": 22,
+    "minutes_per_score_basis_review_range": [
+      3,
+      10
+    ],
+    "development_rater_hours": [
+      2.6667,
+      7.8334
+    ],
+    "final48_rater_hours": [
+      6.4,
+      16
+    ],
+    "development_plus_final_single_rater_hours": [
+      9.0667,
+      23.8334
+    ],
+    "old24_labels": "reuse if unchanged meaning and exposure adjudication permits; do not ask same researcher to refill",
+    "optional_new24_validation_rater_hours": [
+      3.2,
+      8
+    ],
+    "train12_unknown_rater_hours": [
+      1,
+      3
+    ],
+    "optional8_reserve_rater_hours": [
+      1.0667,
+      2.6667
+    ],
+    "excludes": "adjudication and scheduling; multiply only newly assigned work for additional real raters; record actual source-reading time",
+    "rater_hourly_rate": null,
+    "assigned_rater": null
+  }
+}

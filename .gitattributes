@@ -1,0 +1,9 @@
+# Preserve the byte-exact CRLF line endings of the frozen raw ESC human-review
+# submissions while still checking every other whitespace rule for these files.
+project/data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_a_20260823_v1.json whitespace=cr-at-eol
+project/data/paper1_human_review/raw/paper1_esc_evaluator_human_submission_rater_b_20260823_v1.json whitespace=cr-at-eol
+
+# Preserve the exact bytes of source-bound exported tables and supplied texts.
+# CRLF is intentional provenance here, not whitespace damage in executable code.
+project/docs/reviews/20260930/pm_rl1/**/*.csv -text whitespace=cr-at-eol
+project/docs/reviews/20260930/discussion/*_original.txt -text whitespace=-trailing-space,cr-at-eol

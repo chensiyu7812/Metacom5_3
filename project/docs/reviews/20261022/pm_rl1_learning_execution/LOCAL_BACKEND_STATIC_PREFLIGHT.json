@@ -1,0 +1,47 @@
+{
+  "status": "STATIC_ASSETS_MATCH_NOT_LIVE_INTEGRATION",
+  "utc": "2026-10-22T09:35:42.730449+00:00",
+  "source_head": "a260235",
+  "human_review_state": "USER_DEFERRED_THIS_DEVELOPMENT_STAGE",
+  "executor_identity": "4666e72612aef698567b2e14fd3315463c451cde64f5cad1299199aaf9e0e811",
+  "executor_freeze_sha256": "7f552e714c595428f8268505762cf7cf8313e021fa971ac7ab9ec035ce234457",
+  "diagnostic_reference_sha256": "78185012ad3b307cf781757ed2fc7f5572c0ea08e58ae6a8971cd4a9b53e21ee",
+  "diagnostic_reference_use": "runtime metadata only; no old diagnostic permission or random initialization inherited",
+  "package_metadata": {
+    "torch": "2.3.1+cu121",
+    "transformers": "4.57.6",
+    "tokenizers": "0.22.2",
+    "peft": "0.17.1",
+    "sentence-transformers": "5.1.0"
+  },
+  "BGE_static_pooling_dimension_context": [
+    "cls",
+    1024,
+    8192
+  ],
+  "ledger_sha256": "9674415f7726e6e119b280f028fe4be183445a2be92460b3f1d9ce0a7c1190bc",
+  "contract_sha256": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+  "network_requests": 0,
+  "model_loads": 0,
+  "model_inference": 0,
+  "optimizer_steps": 0,
+  "api_cost_usd": "0",
+  "live_integration_complete": false,
+  "not_checked": [
+    "live GPU availability and UUID",
+    "actual G/BGE coexistence and live manifests",
+    "complete formal input token coverage",
+    "worker/broker integration and total throughput"
+  ],
+  "future_integration_constraints": [
+    "use qualified coordinator, not legacy random-init diagnostic route",
+    "load G first: legacy loader needs 40 GiB free before BGE",
+    "HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1 for the inherited BGE loader",
+    "preserve policy RNG around G/BGE loading and calls, as existing LocalProviders does",
+    "bind exact source identities; cache timing is not full-engine timing"
+  ],
+  "verified_unique_files": 29,
+  "private_report_sha256": "8046e2b601800c446ded0ca31c6ca59431afed5c05bf62c04e878191dad82308",
+  "private_report_identity": "4fb29ad9acac2e7b25e7dec76be2aa1b4e13f985055d4619b7fbcf47ed825e51",
+  "private_report_path": "project/outputs/pm_rl1/learning_execution_20261022_v1/LOCAL_BACKEND_STATIC_PREFLIGHT.json"
+}

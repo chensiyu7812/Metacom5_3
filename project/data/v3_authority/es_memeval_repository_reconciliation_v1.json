@@ -1,0 +1,53 @@
+{
+  "protocol": "metacom-v3-es-memeval-repository-reconciliation-v1",
+  "date": "2026-08-13",
+  "status": "VERSION_CONFLICT_VERIFIED_ROW_LEVEL_RECONCILIATION_BLOCKED",
+  "official_repository_identity": {
+    "tag": "v1.0.0",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "file": "data/evo_emo.json",
+    "bytes": 4482088,
+    "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420"
+  },
+  "shape_checks": {
+    "users": 18,
+    "sessions": 401,
+    "question_groups": 355,
+    "public_questions": 1427,
+    "summaries": 125,
+    "dialogue_generation_scenarios": 34,
+    "user_ids": ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18"]
+  },
+  "qa_count_comparison": [
+    {"capability": "information extraction", "formal_paper": 271, "public_v1_0_0": 309, "difference": 38},
+    {"capability": "temporal reasoning", "formal_paper": 236, "public_v1_0_0": 284, "difference": 48},
+    {"capability": "conflict detection", "formal_paper": 226, "public_v1_0_0": 267, "difference": 41},
+    {"capability": "user modeling", "formal_paper": 251, "public_v1_0_0": 306, "difference": 55},
+    {"capability": "abstention", "formal_paper": 225, "public_v1_0_0": 261, "difference": 36},
+    {"capability": "total", "formal_paper": 1209, "public_v1_0_0": 1427, "difference": 218}
+  ],
+  "verified_conclusion": "The public v1.0.0 repository is not row-identical to the final WWW 2026 QA set. Summary and dialogue-generation counts match, but QA contains 218 additional rows distributed across every capability.",
+  "public_history_audit": {
+    "commit_count": 2,
+    "commits": ["f3da485751e2240dbe90d7239f7afd5ea802b95b", "692624208acc077b8867698c1d6fcd998dee641a"],
+    "data_file_changed_between_commits": false,
+    "public_issue_explaining_1209_1427": false,
+    "conclusion": "The final-paper 1209-row identity cannot be reconstructed from the public repository history or issue tracker inspected on 2026-08-13."
+  },
+  "cannot_be_inferred": "The exact 218 rows excluded from the final paper cannot be identified from counts alone. No outcome-independent row-level 1209 mapping is present in the inspected public artifact.",
+  "required_resolution": [
+    "obtain authoritative final-paper question IDs or a later official artifact",
+    "map each public question by owner, group id, item idx, normalized question hash, capability, answerability, and evidence IDs",
+    "classify rows as final-1209, public-extra-218, or unresolved",
+    "freeze one identity and use its exact name in the paper",
+    "if the 1209 IDs remain unavailable, report the 1427-row public v1.0.0 benchmark as a distinct artifact and do not claim exact paper replication"
+  ],
+  "historical_418_boundary": "The 418-question V5.2 subset is a project-specific historical slice, not the final-paper 1209 set and not an independent dataset.",
+  "v3_resolution": {
+    "status": "RESOLVED_BY_EXPLICIT_PUBLIC_ARTIFACT_SELECTION",
+    "primary_task_name": "ES-MemEval-Public-v1.0.0-1427",
+    "identity_decision": "es_memeval_public_v1_0_0_1427_identity_decision_v1.json",
+    "row_identity": "es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl",
+    "paper_replication_claim": false
+  }
+}

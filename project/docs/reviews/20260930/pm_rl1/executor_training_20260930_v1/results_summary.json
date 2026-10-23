@@ -1,0 +1,178 @@
+{
+  "status": "FINITE_SUPERVISED_EXECUTOR_RUN_COMPLETE",
+  "admission": {
+    "new_statuses": {
+      "accept": 69,
+      "reject": 9,
+      "uncertain": 4
+    },
+    "new_by_split": {
+      "train": {
+        "accept": 46,
+        "reject": 6,
+        "uncertain": 2
+      },
+      "dev": {
+        "accept": 23,
+        "reject": 3,
+        "uncertain": 2
+      }
+    },
+    "reused_statuses": {
+      "accept": 24,
+      "reject": 2
+    },
+    "coverage": {
+      "train": {
+        "examples": 103,
+        "owners": 12,
+        "prefixes": 19,
+        "by_head": {
+          "RS": 17,
+          "MP": 12,
+          "MS": 24,
+          "ME": 26
+        },
+        "off": 34,
+        "multiple_resources": 10,
+        "mp_owners": 7
+      },
+      "dev": {
+        "examples": 52,
+        "owners": 3,
+        "prefixes": 9,
+        "by_head": {
+          "RS": 16,
+          "MP": 8,
+          "MS": 17,
+          "ME": 6
+        },
+        "off": 15,
+        "multiple_resources": 10,
+        "mp_owners": 2
+      }
+    },
+    "missing_supplement_cells": [
+      {
+        "index": 3,
+        "condition": "L"
+      },
+      {
+        "index": 5,
+        "condition": "L"
+      },
+      {
+        "index": 9,
+        "condition": "R"
+      },
+      {
+        "index": 17,
+        "condition": "L"
+      }
+    ],
+    "all_four_heads_and_combinations_represented": true,
+    "duplicates_removed": 4,
+    "repairs": 0,
+    "new_human_labels": 0,
+    "paid_API_usd": 0,
+    "statement": "Structural training coverage, not resource-use competence, reward qualification, or independent support-quality evidence."
+  },
+  "metrics": [
+    {
+      "arm": "base",
+      "nll": 1.8613904018948524,
+      "body_nll": 1.8798569653144876,
+      "eot_nll": 0.032849418320482146
+    },
+    {
+      "arm": "epoch_1",
+      "nll": 1.633495551580375,
+      "body_nll": 1.6495861513541958,
+      "eot_nll": 0.04021383396726518
+    },
+    {
+      "arm": "epoch_2",
+      "nll": 1.5209237069172301,
+      "body_nll": 1.5351508639349154,
+      "eot_nll": 0.11215674701424387
+    },
+    {
+      "arm": "epoch_3",
+      "nll": 1.428836145531189,
+      "body_nll": 1.4390851641469937,
+      "eot_nll": 0.413985045778995
+    }
+  ],
+  "selected_epoch": 3,
+  "optimizer_steps": 21,
+  "trainable_parameters": 3407872,
+  "frozen_base_unchanged": true,
+  "reload_passed": true,
+  "reload_nll_delta": 0.0,
+  "generation_lengths": {
+    "base": {
+      "count": 18,
+      "min": 40,
+      "median": 58.5,
+      "max": 227,
+      "natural_stops": 18
+    },
+    "epoch_1": {
+      "count": 18,
+      "min": 20,
+      "median": 38.5,
+      "max": 283,
+      "natural_stops": 18
+    },
+    "epoch_2": {
+      "count": 18,
+      "min": 20,
+      "median": 36.5,
+      "max": 395,
+      "natural_stops": 18
+    },
+    "epoch_3": {
+      "count": 18,
+      "min": 41,
+      "median": 154.0,
+      "max": 432,
+      "natural_stops": 18
+    }
+  },
+  "cost": {
+    "new_author_calls": 82,
+    "reused_author_calls": 26,
+    "diagnostic_calls": 72,
+    "author_natural_ends": 82,
+    "diagnostic_natural_ends": 72,
+    "author_total_seconds": 129.49555474100634,
+    "training_total_seconds": 206.86391323897988,
+    "reload_total_seconds": 24.55995913699735,
+    "diagnostic_total_seconds": 239.9172373471083,
+    "paid_api_usd": 0,
+    "new_human_labels": 0,
+    "retries": 0
+  },
+  "tests": {
+    "tests": "88",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0"
+  },
+  "preserved": {
+    "preexisting_files.json": {
+      "count": 182,
+      "unchanged": true
+    },
+    "prior_artifact_files.json": {
+      "count": 382,
+      "unchanged": true
+    }
+  },
+  "limitations": [
+    "AI-assisted admission; not independent human labels",
+    "Dev outcomes reused for development; no held-out quality claim",
+    "NLL and response length are not support quality or resource benefit",
+    "Reward qualification and natural-support PPO remain pending"
+  ]
+}

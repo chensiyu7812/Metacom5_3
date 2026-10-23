@@ -1,0 +1,35 @@
+{
+  "protocol": "metacom-v3-dataset-card-v1",
+  "dataset": "ES-MemEval",
+  "date": "2026-08-13",
+  "status": "FROZEN_AS_ES_MEMEVAL_PUBLIC_V1_0_0_1427_WITH_DISCLOSURE",
+  "formal_paper": {
+    "venue": "The ACM Web Conference 2026",
+    "doi": "10.1145/3774904.3792143",
+    "url": "https://cslinzhang.github.io/home/files/WWW-tiantian.pdf",
+    "reported_counts": {"users": 18, "sessions": 401, "qa": 1209, "summaries": 125, "dialogue_generation_scenarios": 34}
+  },
+  "public_repository": {
+    "repository": "https://github.com/slptongji/ES-MemEval",
+    "tag": "v1.0.0",
+    "commit": "692624208acc077b8867698c1d6fcd998dee641a",
+    "file": "data/evo_emo.json",
+    "sha256": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "observed_counts": {"users": 18, "sessions": 401, "qa": 1427, "summaries": 125, "dialogue_generation_scenarios": 34}
+  },
+  "capabilities": ["information extraction", "temporal reasoning", "conflict detection", "abstention", "user modeling"],
+  "task_formats": ["question answering", "summarization", "dialogue generation"],
+  "analysis_grain": "user; task rows are repeated measures",
+  "primary_objective_metrics": ["Token F1", "BERTScore", "Recall@k", "nDCG@k", "event precision/recall/F1", "abstention false-answer", "observation recall/weighted score"],
+  "secondary_subjective_metrics": ["task-specific LLM ratings with pinned prompts and model"],
+  "allowed_claims": ["long-term memory capability under a named pinned task identity", "accuracy-risk-cost transport"],
+  "forbidden_claims": ["RS response value", "four-head PM pass from QA alone", "1209-question reproduction while using 1427 rows", "independent population replication from EvoEmo"],
+  "historical_project_subset": {"qa": 418, "role": "historical V5.2 subset only", "formal_v3_reuse": false},
+  "v3_primary_identity": {
+    "name": "ES-MemEval-Public-v1.0.0-1427",
+    "row_manifest": "data/v3_authority/es_memeval_public_v1_0_0_1427_row_identity_v1.jsonl",
+    "decision": "data/v3_authority/es_memeval_public_v1_0_0_1427_identity_decision_v1.json",
+    "exact_final_paper_replication": false
+  },
+  "remaining_p0_work": ["separate answer/evidence gold physically from response-PM development"]
+}

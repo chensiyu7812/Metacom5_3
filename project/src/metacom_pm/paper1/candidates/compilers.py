@@ -1,0 +1,381 @@
+"""Memory candidate compilers.
+
+The regex/string constructors and ``compile_semantic_candidate_bundle`` are
+retained only as frozen pre-reset diagnostics. Formal Paper-1 candidates use
+``compile_multi_view_candidate_bundle``: target-time MP, atomic-timeline ME,
+and mechanically compiled complete-session MS.
+
+Each compiler takes a parsed ``MemorySourceUser`` and a ``Target`` (see
+``metacom_pm.paper1.data.memory_source``) and returns zero or more frozen
+``CandidateRecord`` contract objects (``metacom_pm.paper1.contracts``),
+restricted to memory items whose owning session is strictly past relative to
+the target's ``cutoff_rank``.
+
+No candidate is ever excluded here for being low-value, off-topic, or
+semantically unlikely to help -- that judgment is out of scope for
+construction (AGENTS.md: "not because of semantic non-use, worse adoption, or
+a negative effect"). The only exclusion mechanisms are the strict-past cutoff
+and the owner-identity check, both mechanical and required by the contract
+itself (``CandidateLineage.strict_past``).
+"""
+
+from __future__ import annotations
+
+import hashlib
+from typing import Callable
+
+from metacom_pm.paper1.contracts import CandidateLineage, CandidateRecord, Head
+from metacom_pm.paper1.data.memory_source import MemorySourceUser, Target
+from metacom_pm.paper1.memory.me import ActionResultEpisode, extract_action_result_episodes
+from metacom_pm.paper1.memory.mp import ProfileDisclosure, extract_profile_disclosures
+from metacom_pm.paper1.memory.ms import SessionDocument, extract_session_documents
+from metacom_pm.paper1.semantic_memory.candidate_adapter import (
+    materialize_memory_candidates,
+)
+from metacom_pm.paper1.semantic_memory.contracts import AcceptedSemanticMemoryUnit
+from metacom_pm.paper1.multi_view_memory import (
+    AcceptedAtomicMemoryUnit,
+    materialize_multi_view_candidates,
+)
+
+SOURCE_MP = "es_memeval_public_v1_0_0_1427:mp_self_disclosure"
+SOURCE_MS = "es_memeval_public_v1_0_0_1427:ms_session_document"
+SOURCE_ME = "es_memeval_public_v1_0_0_1427:me_action_result_episode"
+
+
+def _content_sha256(content: str) -> str:
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def _token_count(content: str) -> int:
+    """Whitespace-split word count: a deterministic structural-cost proxy.
+
+    Not the frozen Generator's real tokenizer count (that belongs to Cost
+    accounting in ``core/``); this is only used for outcome-blind candidate
+    census/feature purposes (AGENTS.md's allowed "structural token cost").
+    """
+
+    return len(content.split())
+
+
+def _require_owner_match(user: MemorySourceUser, target: Target) -> None:
+    if user.owner_id != target.owner_id:
+        raise ValueError(
+            f"owner mismatch: user {user.owner_id!r} does not own target {target.target_id!r} "
+            f"(target owner {target.owner_id!r})"
+        )
+
+
+def _build_candidate(
+    *,
+    head: Head,
+    candidate_id: str,
+    content: str,
+    source: str,
+    owner_id: str,
+    source_record_ids: tuple[str, ...],
+    observed_at: str,
+    raw_descriptors: dict[str, str | int | float | bool | None],
+) -> CandidateRecord:
+    lineage = CandidateLineage(
+        source=source,
+        owner_id=owner_id,
+        source_record_ids=source_record_ids,
+        strict_past=True,
+        observed_at=observed_at,
+        content_sha256=_content_sha256(content),
+    )
+    return CandidateRecord(
+        candidate_id=candidate_id,
+        head=head,
+        content=content,
+        token_count=_token_count(content),
+        lineage=lineage,
+        raw_descriptors=raw_descriptors,
+    )
+
+
+def _mp_candidate(disclosure: ProfileDisclosure) -> CandidateRecord:
+    return _build_candidate(
+        head=Head.MP,
+        candidate_id=f"mp::{disclosure.owner_id}::{disclosure.session_id}:{disclosure.turn.idx}",
+        content=disclosure.content,
+        source=SOURCE_MP,
+        owner_id=disclosure.owner_id,
+        source_record_ids=disclosure.source_record_ids,
+        observed_at=disclosure.observed_at,
+        raw_descriptors={
+            "session_id": disclosure.session_id,
+            "session_chronological_rank": disclosure.session_chronological_rank,
+            "turn_idx": disclosure.turn.idx,
+        },
+    )
+
+
+def _ms_candidate(document: SessionDocument) -> CandidateRecord:
+    return _build_candidate(
+        head=Head.MS,
+        candidate_id=f"ms::{document.owner_id}::{document.session_id}",
+        content=document.content,
+        source=SOURCE_MS,
+        owner_id=document.owner_id,
+        source_record_ids=document.source_record_ids,
+        observed_at=document.observed_at,
+        raw_descriptors={
+            "session_id": document.session_id,
+            "session_chronological_rank": document.session_chronological_rank,
+            "turn_count": document.turn_count,
+        },
+    )
+
+
+def _me_candidate(episode: ActionResultEpisode) -> CandidateRecord:
+    return _build_candidate(
+        head=Head.ME,
+        candidate_id=(
+            f"me::{episode.owner_id}::{episode.pattern}::"
+            f"{episode.action_session_id}:{episode.action_turn.idx}:"
+            f"{episode.action_span[0]}-{episode.action_span[1]}->"
+            f"{episode.result_session_id}:{episode.result_turn.idx}:"
+            f"{episode.result_span[0]}-{episode.result_span[1]}"
+        ),
+        content=episode.content,
+        source=SOURCE_ME,
+        owner_id=episode.owner_id,
+        # requirement: lineage carries both span IDs plus char offsets/hashes
+        source_record_ids=episode.source_record_ids,
+        observed_at=episode.result_observed_at,
+        raw_descriptors={
+            "me_pattern": episode.pattern,
+            "action_session_id": episode.action_session_id,
+            "action_session_chronological_rank": episode.action_session_chronological_rank,
+            "action_turn_idx": episode.action_turn.idx,
+            "action_span_start": episode.action_span[0],
+            "action_span_end": episode.action_span[1],
+            "action_span_sha256": episode.action_span_sha256,
+            "result_session_id": episode.result_session_id,
+            "result_session_chronological_rank": episode.result_session_chronological_rank,
+            "result_turn_idx": episode.result_turn.idx,
+            "result_span_start": episode.result_span[0],
+            "result_span_end": episode.result_span[1],
+            "result_span_sha256": episode.result_span_sha256,
+            # census/eligibility use this as the candidate's own recency
+            # anchor: the result is what makes the episode retrievable memory
+            "session_chronological_rank": episode.result_session_chronological_rank,
+        },
+    )
+
+
+def _validate_session_identity(
+    user: MemorySourceUser,
+    *,
+    owner_id: str,
+    session_id: str,
+    session_chronological_rank: int,
+    observed_at: str,
+) -> None:
+    """Fail closed on any candidate-cache/session identity mismatch (B13).
+
+    ``disclosures``/``documents``/``episodes`` passed into
+    ``compile_*_candidates`` may be a cache built elsewhere (e.g. once per
+    owner in ``features.zero_outcome_census.build_census``) rather than
+    freshly extracted here. This checks every item -- cached or fresh --
+    against the actual ``user`` being compiled for: the item's owner must
+    match, its session must actually belong to that owner, and the cached
+    rank/timestamp must match what ``user.sessions`` currently says for that
+    session id. A mismatch on any of these means the cache is wrong (built
+    for a different owner, stale against updated session data, or simply
+    handed to the wrong ``user``) and must raise immediately rather than
+    silently compile a candidate that looks plausible but is not actually
+    this user's strict-past material. Checking only ``user.owner_id ==
+    target.owner_id`` (``_require_owner_match``) does not catch this: that
+    only validates the *target*, never the individual cache items.
+    """
+
+    if owner_id != user.owner_id:
+        raise ValueError(
+            f"candidate cache item owner {owner_id!r} does not match user {user.owner_id!r}"
+        )
+    try:
+        session = user.session_by_id(session_id)
+    except KeyError:
+        raise ValueError(
+            f"candidate cache item references session {session_id!r}, which is not one of "
+            f"{user.owner_id!r}'s sessions"
+        ) from None
+    if session.chronological_rank != session_chronological_rank:
+        raise ValueError(
+            f"candidate cache item for session {session_id!r} has a stale chronological_rank "
+            f"{session_chronological_rank!r} (current user data: {session.chronological_rank!r})"
+        )
+    if session.timestamp != observed_at:
+        raise ValueError(
+            f"candidate cache item for session {session_id!r} has a stale observed_at "
+            f"{observed_at!r} (current user data: {session.timestamp!r})"
+        )
+
+
+def _is_strict_past(session_rank: int, target: Target) -> bool:
+    """Strict past = before the cutoff rank.
+
+    B17: ``cutoff_rank`` is always the target owner's full session count --
+    verified against the official ES-MemEval evaluation harness that the
+    complete ``dialog_history`` is available (via full-inclusion or
+    retrieval) before every QA/Summary query, and injected directly into the
+    DG supporter's room before "now" begins. There is no per-target "current
+    session" to exclude any more (``Target`` carries no
+    ``context_session_ids`` at all -- excluding a session from a candidate
+    pool based on question-group/related-session identity would itself be
+    the kind of leak this project has repeatedly had to remove, just from
+    the opposite direction).
+    """
+
+    return session_rank < target.cutoff_rank
+
+
+def compile_mp_candidates(
+    user: MemorySourceUser,
+    target: Target,
+    disclosures: tuple[ProfileDisclosure, ...] | None = None,
+) -> tuple[CandidateRecord, ...]:
+    _require_owner_match(user, target)
+    items = disclosures if disclosures is not None else extract_profile_disclosures(user)
+    eligible = []
+    for d in items:
+        _validate_session_identity(
+            user,
+            owner_id=d.owner_id,
+            session_id=d.session_id,
+            session_chronological_rank=d.session_chronological_rank,
+            observed_at=d.observed_at,
+        )
+        if _is_strict_past(d.session_chronological_rank, target):
+            eligible.append(d)
+    return tuple(_mp_candidate(d) for d in eligible)
+
+
+def compile_ms_candidates(
+    user: MemorySourceUser,
+    target: Target,
+    documents: tuple[SessionDocument, ...] | None = None,
+) -> tuple[CandidateRecord, ...]:
+    _require_owner_match(user, target)
+    items = documents if documents is not None else extract_session_documents(user)
+    eligible = []
+    for d in items:
+        _validate_session_identity(
+            user,
+            owner_id=d.owner_id,
+            session_id=d.session_id,
+            session_chronological_rank=d.session_chronological_rank,
+            observed_at=d.observed_at,
+        )
+        if _is_strict_past(d.session_chronological_rank, target):
+            eligible.append(d)
+    return tuple(_ms_candidate(d) for d in eligible)
+
+
+def _me_is_strict_past(episode: ActionResultEpisode, target: Target) -> bool:
+    """Both the action session and the result session must be strict past.
+
+    ``ActionResultEpisode`` keeps separate action/result session fields even
+    though the current ``self_reported_same_turn`` pattern (B11/B20) always
+    has ``action_session_id == result_session_id`` -- see that module's
+    docstring for why. Checking both sides independently means this stays
+    correct if a future round reintroduces a genuinely cross-session,
+    coreference-linked pattern.
+    """
+
+    return _is_strict_past(
+        episode.action_session_chronological_rank, target
+    ) and _is_strict_past(
+        episode.result_session_chronological_rank, target
+    )
+
+
+def compile_me_candidates(
+    user: MemorySourceUser,
+    target: Target,
+    episodes: tuple[ActionResultEpisode, ...] | None = None,
+) -> tuple[CandidateRecord, ...]:
+    _require_owner_match(user, target)
+    items = episodes if episodes is not None else extract_action_result_episodes(user)
+    eligible = []
+    for e in items:
+        # both sides of the episode must independently satisfy identity
+        # binding -- an episode can span two sessions (B7's remaining
+        # same-turn pattern always has action_session == result_session, but
+        # nothing here should rely on that not changing in the future)
+        _validate_session_identity(
+            user,
+            owner_id=e.owner_id,
+            session_id=e.action_session_id,
+            session_chronological_rank=e.action_session_chronological_rank,
+            observed_at=e.action_observed_at,
+        )
+        _validate_session_identity(
+            user,
+            owner_id=e.owner_id,
+            session_id=e.result_session_id,
+            session_chronological_rank=e.result_session_chronological_rank,
+            observed_at=e.result_observed_at,
+        )
+        if _me_is_strict_past(e, target):
+            eligible.append(e)
+    return tuple(_me_candidate(e) for e in eligible)
+
+
+def compile_candidate_bundle(
+    user: MemorySourceUser,
+    target: Target,
+    *,
+    disclosures: tuple[ProfileDisclosure, ...] | None = None,
+    documents: tuple[SessionDocument, ...] | None = None,
+    episodes: tuple[ActionResultEpisode, ...] | None = None,
+) -> dict[Head, tuple[CandidateRecord, ...]]:
+    """Legacy regex/string diagnostic bundle; never the formal constructor."""
+
+    return {
+        Head.MP: compile_mp_candidates(user, target, disclosures),
+        Head.MS: compile_ms_candidates(user, target, documents),
+        Head.ME: compile_me_candidates(user, target, episodes),
+    }
+
+
+def compile_semantic_candidate_bundle(
+    accepted_units: tuple[AcceptedSemanticMemoryUnit, ...],
+    target: Target,
+    *,
+    token_counter: Callable[[str], int] = _token_count,
+) -> dict[Head, tuple[CandidateRecord, ...]]:
+    """Historical v9 ontology bundle; forbidden for new Paper-1 artifacts.
+
+    ``token_counter`` defaults to the whitespace-split structural proxy
+    (2026-08-19: callers building a formal token-cost feature should pass
+    ``metacom_pm.paper1.llama_tokenizer.build_llama_token_counter(...)``
+    instead -- the frozen Generator tokenizer, the same one RS's
+    rs_candidate_token_cost already uses, not a word-count proxy)."""
+
+    return materialize_memory_candidates(
+        accepted_units,
+        target_owner_id=target.owner_id,
+        target_session_rank=target.cutoff_rank,
+        token_counter=token_counter,
+    )
+
+
+def compile_multi_view_candidate_bundle(
+    accepted_atomic_units: tuple[AcceptedAtomicMemoryUnit, ...],
+    user: MemorySourceUser,
+    target: Target,
+    *,
+    token_counter: Callable[[str], int] = _token_count,
+) -> dict[Head, tuple[CandidateRecord, ...]]:
+    """Active MP/ME/MS bundle under the approved ontology reset."""
+
+    return materialize_multi_view_candidates(
+        accepted_atomic_units,
+        user=user,
+        target=target,
+        token_counter=token_counter,
+    )

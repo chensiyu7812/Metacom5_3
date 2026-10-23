@@ -1,0 +1,52 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-human-reference-freeze-20260823-v1",
+  "status": "FROZEN",
+  "scope": "evaluator qualification human reference only; not PM outcome, Top-k outcome, formal ESC-Eval, or training",
+  "reference_mode": "two equal independent normalized human references plus targeted adjudication of the only major Overall disagreement",
+  "dual_human_reference": {
+    "path": "project/data/paper1_authority/paper1_esc_evaluator_dual_human_reference_20260823_v1.json",
+    "sha256": "96668d0dc504be966eee075372de055ee9665d7d46fee026372e6d3b1cd463d6",
+    "raters": 2,
+    "items_per_rater": 24,
+    "overall_quadratic_weighted_kappa": 0.7571428571428571,
+    "overall_spearman_rho": 0.8007370386846581,
+    "overall_mean_absolute_deviation": 0.625,
+    "major_overall_disagreements": 1
+  },
+  "targeted_adjudication": {
+    "path": "project/data/paper1_authority/paper1_esc_evaluator_single_overall_adjudication_20260823_v1.json",
+    "sha256": "6101f86980bbfc0709efcf559be86b1ec71f4065ae140fb3c0a12a73a1dddffb",
+    "blind_item_id": "escq_0e49439a9e28fb56",
+    "dimension": "Overall",
+    "adjudicated_score": 4,
+    "identity_blinded": true,
+    "original_rater_scores_shown_to_adjudicator": false
+  },
+  "candidate_evaluator_comparison_rule": {
+    "report_agreement_against_RATER_A": true,
+    "report_agreement_against_RATER_B": true,
+    "report_targeted_overall_absolute_error": true,
+    "remaining_rater_disagreement_role": "sensitivity_and_uncertainty",
+    "single_full_24x7_gold_claimed": false,
+    "silent_primary_rater_selection_forbidden": true,
+    "winner_requires_robustness_to_both_raters": true,
+    "selection_priority": [
+      "validity_and_agreement",
+      "bias_and_sensitivity",
+      "cost_and_latency"
+    ],
+    "select_by_PM_or_Ours_score_forbidden": true
+  },
+  "no_more_human_work_required_for_current_24_item_reference": true,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  },
+  "calls": {
+    "paid_api": 0,
+    "formal_outcome": 0,
+    "pm_training": 0
+  }
+}

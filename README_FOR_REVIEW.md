@@ -1,4 +1,37 @@
-# MetaCom V3.3 GitHub/GPT Review Package 2026-06-28
+# Current review entry — PM-RL1, 2026-10-22
+
+Start with the [research review](project/docs/pm_rl1_workspace_20261022/RESEARCH_REVIEW_ZH.md),
+[current status](project/docs/PM_RL1_CURRENT_STATUS.md), and
+[controlling plan](project/docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md).
+P1/P2 are complete with disclosed limitations. Human development references have
+been received, but reward qualification remains unresolved. There are 308 cumulative
+attempts: 307 judge/audit attempts and one rejected Claude configuration request.
+Claude is deferred. Qualified BC checkpoints and natural-task RL updates remain
+zero. BC/OneShot/NoText coordination and source-bound replay of 586 historical
+generations have engineering checks; eight new blinded development pairs and six
+regression cases have been delivered for human review, with no new answers returned.
+Formal policy comparisons and independent final evaluation are incomplete.
+See the [version review](project/docs/reviews/20261022/pm_rl1/VERSION_REVIEW_ZH.md)
+for local and clean-checkout verification and reproducibility limitations.
+The [publication validation](project/docs/reviews/20261022/pm_rl1_publication/VALIDATION.json)
+uses a fresh Python 3.11 environment with CPU PyTorch and declared dependencies:
+1,429 passed, 131 skipped, exit code 0; all 32 integration checks passed.
+Skipped private-engine/input, optional BGE and frozen-tokenizer checks are not
+verified integrations. The missing `jsonschema` runtime dependency is now declared.
+
+The historical [2026-10-02 publication](project/docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md)
+and its public
+[results notebook](project/docs/reviews/20261002/pm_rl1/stage_results.ipynb)
+check that snapshot's hashes and arithmetic; they do not describe today's
+measurement status. The [repository README](README.md) gives the CPU test command.
+
+Everything below is the preserved **2026-06-28 historical V3.3 package**. Its
+training claims, review instructions and all-tests commands are not the current
+PM-RL1 state or active CI contract.
+
+---
+
+# Historical MetaCom V3.3 GitHub/GPT Review Package 2026-06-28
 
 > **Current PM-v1.5 review:** start with
 > [`README_PM_V1_5_REVIEW_ZH.md`](README_PM_V1_5_REVIEW_ZH.md). The historical

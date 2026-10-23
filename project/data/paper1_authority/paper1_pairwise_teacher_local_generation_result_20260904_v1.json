@@ -1,0 +1,954 @@
+{
+  "protocol": "paper1-pairwise-teacher-local-generation-result-v1",
+  "date": "2026-09-04",
+  "status": "PASS_142_LOCAL_RESPONSES_READY_FOR_BLINDED_SHEETS",
+  "completed_at": "2026-09-04T06:25:06.429348+00:00",
+  "request_binding_sha256": "aec468edb5d4f296977530c8c137180e125b18a78ecc321e00a7db7676d7486e",
+  "private_request_manifest_sha256": "3d86c3d857ee0e3486f558e8994561213990ec12f2911952ca84fe8d6929dd91",
+  "local_health": {
+    "status": "ready",
+    "protocol": "paper1-local-llama31-transformers-aiohttp-reference-server-v1",
+    "model": "meta/llama-3.1-8b-instruct",
+    "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+    "model_artifact_identity_sha256": "61ca4a878558de3dad5ce518ba4ec6619b7848babc6450ca90290087366df1a3",
+    "chat_template_sha256": "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2",
+    "gpu": "NVIDIA RTX A6000",
+    "dtype": "bfloat16"
+  },
+  "execution": {
+    "unique_requests": 142,
+    "new_calls_this_run": 142,
+    "cache_hits_this_run": 0,
+    "temperature": 0,
+    "concurrency": 1,
+    "physical_attempts_per_request": 1,
+    "finish_reason_counts": {
+      "DG:OFF:length": 1,
+      "DG:OFF:stop": 8,
+      "DG:ON:length": 9,
+      "DG:ON:stop": 18,
+      "ESC:OFF:length": 2,
+      "ESC:OFF:stop": 25,
+      "ESC:ON:length": 1,
+      "ESC:ON:stop": 26,
+      "QA:OFF:length": 1,
+      "QA:OFF:stop": 12,
+      "QA:ON:length": 2,
+      "QA:ON:stop": 11,
+      "Summary:OFF:length": 11,
+      "Summary:OFF:stop": 2,
+      "Summary:ON:length": 1,
+      "Summary:ON:stop": 12
+    },
+    "terminal_empty_outputs": 0,
+    "response_quality_inspected_or_scored": false,
+    "tracked_response_text_retained": false
+  },
+  "usage": {
+    "prompt_tokens": 87112,
+    "completion_tokens": 13183,
+    "total_tokens": 100295
+  },
+  "latency_ms": {
+    "sum_completion": 395157.81407400005,
+    "maximum_completion": 9115.82826
+  },
+  "private_success_cache": {
+    "path": "outputs/paper1_pairwise_teacher/local_generator_success_cache_v1",
+    "files": 142,
+    "contains_generated_response_text": true,
+    "git_tracking_forbidden": true
+  },
+  "base_pair_response_map": [
+    {
+      "base_pair_id": "teacher_base_02017d6274c7d266c6861c48",
+      "OFF": {
+        "request_id": "teacher_gen_7fbbc2a5e998863dfd854c67",
+        "response_sha256": "bbcebe02b549f3873c3651e899cd2f947c8688fa24ae0609f899204f7be2d51a"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ea733dccd530d6bada33fa1b",
+        "response_sha256": "2c2c468fc8a16af092f97ebf0044ffada8b69cbdbc3dba4832eae8553fefc582"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_031c88f01f1970465732dfd1",
+      "OFF": {
+        "request_id": "teacher_gen_a11ca5731efa99819917088e",
+        "response_sha256": "16c72152e30adb670af254903d75d9b395e7001fc5ce4f0f6a53d04fa7ca5657"
+      },
+      "ON": {
+        "request_id": "teacher_gen_04fa11977169d6a81ebbc469",
+        "response_sha256": "c1a7f349ddb9abc40ef11ac635324cb269da8be5bd7d33c2a9073204253bbc3b"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_0789211c4792bf7eb3a72ced",
+      "OFF": {
+        "request_id": "teacher_gen_dd4b1d5c60cfcda09c2d33f0",
+        "response_sha256": "c1a8ffefa5b1bfa782ff9a4a5519dac03a3f11bd733c8dd6009fd3365f32e146"
+      },
+      "ON": {
+        "request_id": "teacher_gen_d20261a1ecee0ece9044292e",
+        "response_sha256": "9715676ceaafcf8ae9e0809be4d2bbdd6cad9169b9c236f422804cbbec2adb36"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_0b8dac111650f2f1c0bb14f2",
+      "OFF": {
+        "request_id": "teacher_gen_2efeab74616a31e0a88916db",
+        "response_sha256": "149c0916b35d663ee48f626420d45bb7a6095b5aea1d7008f6e82a369f46a2e9"
+      },
+      "ON": {
+        "request_id": "teacher_gen_039ccaef5a18b0c227d07a1b",
+        "response_sha256": "149c0916b35d663ee48f626420d45bb7a6095b5aea1d7008f6e82a369f46a2e9"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_0c7b6f0e53a714141c107852",
+      "OFF": {
+        "request_id": "teacher_gen_5aa4187541f706a194243184",
+        "response_sha256": "d3bb2e07e26000d6084f353ac45de00d973a445501a9a2919a2cbdcd3c731b32"
+      },
+      "ON": {
+        "request_id": "teacher_gen_5a23b862713a62e76f72346f",
+        "response_sha256": "73e970cea5e6dff6fac0ec26f88c2ee09c194f4127645957804ae94290642f5f"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_0d95c59b6e6bb934b9674ffb",
+      "OFF": {
+        "request_id": "teacher_gen_489f600094112be266974575",
+        "response_sha256": "4a67de84e016f6485992bad7bee0a75d1fd756ed77cc1c6c20fe1d02f1662202"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ac168cb9d31838af78811e7e",
+        "response_sha256": "64fdfcc156824d99d0eb756a57da1e126a7cc079a491e4fa952bd0ee502ce086"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_0f5e84d4573a048a37e1932a",
+      "OFF": {
+        "request_id": "teacher_gen_c642d4156aacfa7ae781ad0f",
+        "response_sha256": "2973783b4922774f95de8231e4026ba4bdc7091fe1f8c59bdbf0c0bcade532ac"
+      },
+      "ON": {
+        "request_id": "teacher_gen_cb94d229f3dd62d897b65e2c",
+        "response_sha256": "82db2d8afa896550ba05c25f1b1cff047ab58c75e5516582c0ffb4db9dbb642b"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_11e8db5856dbf75d222e2799",
+      "OFF": {
+        "request_id": "teacher_gen_9d6c6c415c45198d4662a814",
+        "response_sha256": "d11c73906108fccba4f7c6da79c03be0922ea4fe86ab54433652c13652a9ee3f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_01c2f72ccb0acc6a74cd7fb0",
+        "response_sha256": "bec25e164919aa27dd28cb8145d6c3da2373a4223b698d1acccbcb383b0ad5a9"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_15ed533b89af405dfd63c607",
+      "OFF": {
+        "request_id": "teacher_gen_d48f182f8dae7d616bace02b",
+        "response_sha256": "9c9db8af46d318013083ea5733236eb75348b3dd8f3c77aae8c8cc5e739ac598"
+      },
+      "ON": {
+        "request_id": "teacher_gen_f0c4eced5bad55b98ed745ad",
+        "response_sha256": "662e05c97e4c445f9beb1711e8b3fcfeb994e7be5f4ffc778c7382a6b4112a2e"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_1e2e320ec84d5a1750b0b112",
+      "OFF": {
+        "request_id": "teacher_gen_cf55ee5d27a884559f8e574d",
+        "response_sha256": "980c67a22032031514b1788a72e89241221f108ee4fb8b949d05b66eeb6b86b6"
+      },
+      "ON": {
+        "request_id": "teacher_gen_24d70c6dce9fd077885f3d7c",
+        "response_sha256": "b09bb8dc394772295942e65970636dd99eb7be6dba2df6937b4bf1ab2da9538d"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_20a2406f17bebc691afd51be",
+      "OFF": {
+        "request_id": "teacher_gen_2231b62d5e624e0408107b38",
+        "response_sha256": "611285866157985df500490ace3666e42fa27ec87d93aa6baef150bd7aeeb088"
+      },
+      "ON": {
+        "request_id": "teacher_gen_f73b2e14a94f45a3e750a466",
+        "response_sha256": "fc1930d7a353df3624d1dbc147958bef1564c721cc8fec23a4e6add6f390a786"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_23b9abb008c9d7544e8b5eb9",
+      "OFF": {
+        "request_id": "teacher_gen_6d17161516b11e04080f83b0",
+        "response_sha256": "2297a3a33dea2455c6c81e64d0a65f0c17a9c923cf9d960923c8665949d88c88"
+      },
+      "ON": {
+        "request_id": "teacher_gen_62c03d46c0f5558d2a17d154",
+        "response_sha256": "fe0a28be1febdda60679446aae207b0d6979101fb0a7ec3b986d20cf138801ae"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_2bfc973ba9f738531b3b4c03",
+      "OFF": {
+        "request_id": "teacher_gen_0af4f98adba73383afe05002",
+        "response_sha256": "0d68b23b0749bffc3c1f4564516ea2a9e14608f0957d92482b356438f8274119"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ac7e78452eb51b9161fb5f25",
+        "response_sha256": "9920816ceed7983ffc618a27923e6473763eab35923fb2672da398de2011bec1"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_3d4c464b9efd2296826a3870",
+      "OFF": {
+        "request_id": "teacher_gen_7abed66121402fc914cea8f4",
+        "response_sha256": "e0b0c499f89816ff772b1cd2a1b06e17ad76782d1a4d2c41c677c1531bed40f2"
+      },
+      "ON": {
+        "request_id": "teacher_gen_2ad6a9b041e25209d60ad0f1",
+        "response_sha256": "4e665e21232c8eaa5a8009145e373aca5d63e8e0d3417e1765b19c3a8af91afd"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_476ac00be37171d14a26102f",
+      "OFF": {
+        "request_id": "teacher_gen_74c115fd177a398c2a21a1f8",
+        "response_sha256": "0c2721e91f44d4a905830ffc1a840ae0b1f8eff7544f492f213962424d51deaf"
+      },
+      "ON": {
+        "request_id": "teacher_gen_c0d1aad00698f2b4700ffd40",
+        "response_sha256": "b4edd761903ddf05904faccc92f078de100b8ab17924fd69c495e5ecf09575df"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_49e7a2a9de764f76f75e70e5",
+      "OFF": {
+        "request_id": "teacher_gen_2691ceab9d4a8de1808af404",
+        "response_sha256": "b42c73277a496095de4777d7e49934ce4ece3442c10b8a8973b81772b7162a1f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_49c70f6950aec59bd9a2c950",
+        "response_sha256": "a3e1b3b427e1d46d792fe45ab1297368de76fd9eef6843590972cb3282c887f3"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_4bf77abc25be62f900851492",
+      "OFF": {
+        "request_id": "teacher_gen_baca449152053efd06584329",
+        "response_sha256": "d3919ff00c2f7d68cb94a083cf8f78fc7095129353c3029819ffae4780362b40"
+      },
+      "ON": {
+        "request_id": "teacher_gen_28f542bc0e90d4f85b6cc645",
+        "response_sha256": "f164b36f1af850d4b158f2b0d9d598cbc3d338f4bb6894cd4241e17b2e0527b5"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_4ca2762b290b213683aec3a7",
+      "OFF": {
+        "request_id": "teacher_gen_e30af25e7b2a1de34bda5016",
+        "response_sha256": "80c54f982bd53845d0c9d7a845bd6840792509d96e4364d67f2f6f908fe9ca97"
+      },
+      "ON": {
+        "request_id": "teacher_gen_4d12a8100a99a0539e8895b4",
+        "response_sha256": "4d11a3f7bae0a9f5ef7b76192175fe1a03e4b7949d759146455ab6694cca166c"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_509c0b5122bdcfcfc0ca0869",
+      "OFF": {
+        "request_id": "teacher_gen_05b46feee9b18e310b0bf6e3",
+        "response_sha256": "af9d1a7c6f89d0ec3ae1d19c5460109da5158eec8743698569854f10b435a10f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_bb79c6082c044d56ba188dd5",
+        "response_sha256": "57fd6914cd4872f23b2191689f4e7f387d1ba50614df6959730ad16802f761dc"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_50d5991e7474200e25673ba3",
+      "OFF": {
+        "request_id": "teacher_gen_f5c926f2b01bc4e8c080e98c",
+        "response_sha256": "39260cbdf854a2fef11df213a6fbf2f47fa3a7673351648bdc24fbb484053954"
+      },
+      "ON": {
+        "request_id": "teacher_gen_4435085948bbac89c4393d4c",
+        "response_sha256": "de7f6c70a54303500df006461c804b6f0bc15b6334c1f560844fa3e40c3d77f0"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_53efa3de270399352283fe3c",
+      "OFF": {
+        "request_id": "teacher_gen_f9489dd3f1ba6ce29a001afc",
+        "response_sha256": "637efafc54d5a227eb1a7f10a31f881a0d853f1efed3789330d262c1ccf659f4"
+      },
+      "ON": {
+        "request_id": "teacher_gen_3daec05c267f3a01ba720a7c",
+        "response_sha256": "e01cf422c576f93e70cb4035fdd46bafe8aab3cd6308aebebdd9a6b3c8423b8f"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_5413a8cca3ef043408310a2f",
+      "OFF": {
+        "request_id": "teacher_gen_e7da9af54b6b093926715f1e",
+        "response_sha256": "4aff24b7b045ab6fe5df78c3fecda70f320a1e16bb8d347a5fab8c602bc3e54f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_7813323d2d281314e52be646",
+        "response_sha256": "ab5a9cc2958bed75f987a6f4f0789a14e5ca841b60f6c74ef537e9939dc4efbe"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_573fb92a7e77e5041b0b2603",
+      "OFF": {
+        "request_id": "teacher_gen_2f422e0ad1913ed0cc7da2d8",
+        "response_sha256": "de067365cade96f1f1455797547bc5f1fcabcfac13a38133ef94e625129576a7"
+      },
+      "ON": {
+        "request_id": "teacher_gen_880a2864346e6a45f3def9d0",
+        "response_sha256": "fde26bcfe65609598851910eb6c6d1d436e1fbc92c447a8eeab8483c09e307b2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_5ce358ccb5dc05c58645cbed",
+      "OFF": {
+        "request_id": "teacher_gen_7143b606005515096e78e44f",
+        "response_sha256": "6edc5192622d050692444205e9473be99fc5730be0ee5c210636c63df5ecd121"
+      },
+      "ON": {
+        "request_id": "teacher_gen_793d33521e33e3b0766c0679",
+        "response_sha256": "223f09f4b18befa4790f4720e1951bd2ab4c42ce8d6590721bd0f27b6c089dc4"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_5e62d95026b0b9e1bc515de2",
+      "OFF": {
+        "request_id": "teacher_gen_c4c28483fc89121e26e8ee0a",
+        "response_sha256": "4f7f0fab2ebb0dd6ab3f22da662178f6ab88d231695375d925e228dfb2521701"
+      },
+      "ON": {
+        "request_id": "teacher_gen_d31b9724660b7f7f38338276",
+        "response_sha256": "4adcf27d099e6cb8b3522b43ecf2027a91fac6bcc3c45d5bfc0612d140f499ec"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_630f235531b163191cd552a7",
+      "OFF": {
+        "request_id": "teacher_gen_10f06a6b033421b69e1f0aa9",
+        "response_sha256": "ee970262d48b460f3ee2c440835b4c7691c10f33346b545a56f8a1a81acd42a5"
+      },
+      "ON": {
+        "request_id": "teacher_gen_2ce31c5341082bf4b81a0001",
+        "response_sha256": "83b7e57fc39f7df3cb17c99dcbb3076c3fd18da13e24207c568bd132424c53ea"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_63e4debfe6f878057fd3b3bb",
+      "OFF": {
+        "request_id": "teacher_gen_c63b471c5a6a60cdffbc9f77",
+        "response_sha256": "0cb3f98afe1dd75640bd94ef984bde7d02bb545cc3660f69bddf001be3b098e3"
+      },
+      "ON": {
+        "request_id": "teacher_gen_e36c8820b14c37b50fc52bf5",
+        "response_sha256": "eb700e1b895b79982c88eb9ae134fd606303200e2010b6143290cec00a326b7f"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_6430f43fc68ae6884cf5919b",
+      "OFF": {
+        "request_id": "teacher_gen_f5c926f2b01bc4e8c080e98c",
+        "response_sha256": "39260cbdf854a2fef11df213a6fbf2f47fa3a7673351648bdc24fbb484053954"
+      },
+      "ON": {
+        "request_id": "teacher_gen_79d346554aae32b539bdfb8f",
+        "response_sha256": "ea50cca1c5a4f3427872cca40106b759768b826fe2b7b4af6e5c6d512d4d621c"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_689b4c05aee322bc7eb87daf",
+      "OFF": {
+        "request_id": "teacher_gen_62a32a1ae21d0400290a4d81",
+        "response_sha256": "747e2ef2a2fd53db9c5aa9bcc9fc72a76ff57a4d63e03fcab95d1e29b566b462"
+      },
+      "ON": {
+        "request_id": "teacher_gen_eae7467edd80fdda7b88023e",
+        "response_sha256": "8f535dda8e081a2857e6ead23a38336dc11caca2fa18cb81c64a74bdce1d3d17"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_69bd371ed143fed48737cae1",
+      "OFF": {
+        "request_id": "teacher_gen_40ebb304c81134d50a2c0f59",
+        "response_sha256": "5aed3e6fdf3512dfc10cb8fd1330b2e4e5d1203d4e87573fd5ed638d52e1c709"
+      },
+      "ON": {
+        "request_id": "teacher_gen_8d89a21f781f98556ac5152f",
+        "response_sha256": "c7e51816cc2fd25c56ea7e6c34876015e23b84ab4645322ec07f5e3bde6e5855"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_6a157e5e4e2b6216c01e2f6c",
+      "OFF": {
+        "request_id": "teacher_gen_4bca346b0c5872379a6fd2c8",
+        "response_sha256": "b4b4f1c59ada45a4b945661b769e5dce264e19174b9c8dfbfb17645afe6c6f56"
+      },
+      "ON": {
+        "request_id": "teacher_gen_1a0f6f29d2361ef13a7a4963",
+        "response_sha256": "93d4f7b98a5a19d2c4e508a8ecbe55e6849c987a1d5f701c96e45c79547eb68c"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_788de26b31b0b6d3bc5be802",
+      "OFF": {
+        "request_id": "teacher_gen_1c30527afb74de41620b1df4",
+        "response_sha256": "959408a1f89e9a7c0b537d8ee583ba25f56b532f30eca0cfbba32dc945aa215c"
+      },
+      "ON": {
+        "request_id": "teacher_gen_d004f5d826138b80e426b1c2",
+        "response_sha256": "41b61271fa2f18a3d8167512afd7d1ca79109c1ac51bd4b36c2e2d2d795daa5c"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_79fce195517258c2149df63d",
+      "OFF": {
+        "request_id": "teacher_gen_b1bfe4aba5133783a00fdf2e",
+        "response_sha256": "aa5f11b4837a4f5a6f71f8c729c3efd54f779b68641d31fc6a025c9623ffef59"
+      },
+      "ON": {
+        "request_id": "teacher_gen_420291e05a4087db749a32ba",
+        "response_sha256": "d0b786ca65933bb6edbdef7ebca76d3bb94dc4a72dc4e5d370f6f3a62f68387b"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_7ac55c7f30859fadbaad3d29",
+      "OFF": {
+        "request_id": "teacher_gen_c90fe87c84f283b5ece372cc",
+        "response_sha256": "16863998521bc256d07eacd72aee9e53a58f1266e00badc0b62ffd27c90dd1b7"
+      },
+      "ON": {
+        "request_id": "teacher_gen_4e15d107d54b7cb7e5c331c4",
+        "response_sha256": "8fa46538fbe3bd88d214a80d2864cf752b3ff953f6da54588c8fbc4e5483d173"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_7f1a2599e954cab831c7c8a9",
+      "OFF": {
+        "request_id": "teacher_gen_643dcff40ba3d87abf54c050",
+        "response_sha256": "831a31a6634acde29e3c98d8d7d39d77d5afa6145633b15ab3b321c41d839284"
+      },
+      "ON": {
+        "request_id": "teacher_gen_f9dd1ddfa4b41a8108316e68",
+        "response_sha256": "2be4783301022605102cd5d41bebf6012fed36b739fc5f564eac6402707e5a62"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_7f575a4c78530b98081d2a62",
+      "OFF": {
+        "request_id": "teacher_gen_7d368501f82bd60e7c0aa258",
+        "response_sha256": "c8e35a9a8808c5bd7f95785837e4f7dd56dfd1d03272edafef6e1a2339446fa0"
+      },
+      "ON": {
+        "request_id": "teacher_gen_e9eef4ee9a4206be6697672e",
+        "response_sha256": "36102687a3568ec57f62ec77e2f0dd944be1b7f9b4ad927449d9cfb702a1aa25"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_7f64311b61c05c8a2f2820cc",
+      "OFF": {
+        "request_id": "teacher_gen_402d5d7904a86e18a4e28246",
+        "response_sha256": "6da8fe52efdd363f4e66b735622bba95e99b33d6c4efd84507c6c31f90977e26"
+      },
+      "ON": {
+        "request_id": "teacher_gen_969855fe02117d290426432d",
+        "response_sha256": "09ef513559b0e25c8c1acf4d03c6e8cdf990e00a661df6ee978327aefb5d48f3"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_7f7a8df48dd5967f034beb95",
+      "OFF": {
+        "request_id": "teacher_gen_b2cbd5b3e622e163dd4ba785",
+        "response_sha256": "65303581750fbff3b6dd60aa9abcf5276c740e7a631769b79a1456f68498dde1"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ccf8d03003fc80e755fe52c5",
+        "response_sha256": "65303581750fbff3b6dd60aa9abcf5276c740e7a631769b79a1456f68498dde1"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_809bca38abd51cad9c9725b9",
+      "OFF": {
+        "request_id": "teacher_gen_f5c926f2b01bc4e8c080e98c",
+        "response_sha256": "39260cbdf854a2fef11df213a6fbf2f47fa3a7673351648bdc24fbb484053954"
+      },
+      "ON": {
+        "request_id": "teacher_gen_455264d56f754b543fec14ab",
+        "response_sha256": "637faeabbb05979ca3771451cd0bcea1b10c9520333d326a5681c4a521a04bc1"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_83ea8433d6d49f1bcd127060",
+      "OFF": {
+        "request_id": "teacher_gen_a39fca27ca91378cb3730b6c",
+        "response_sha256": "b29c30eab0619618da87ff975e1d3e2203e57ddcebfaf5d9ea56026d03568564"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ea8ff8e0c9e6ad1ce16313e9",
+        "response_sha256": "b5ad629c3eb7e34b2edba9eaa44afc12376c5d56935ee61135837e86687736b8"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_866b08b842c53695d281bb18",
+      "OFF": {
+        "request_id": "teacher_gen_fc5ddd3a62349d844f6d41ee",
+        "response_sha256": "5376141c1067d85d22b0fdb2875fe80ce8058e80578fc16d07bf9f63222bdf11"
+      },
+      "ON": {
+        "request_id": "teacher_gen_49472ab7c4f37b6928f6c43c",
+        "response_sha256": "697f17ce2b5299fb576358db4d3d774174b4fbfcf586175bd3d84172a570d6a4"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_8df304c9356d7f271636db37",
+      "OFF": {
+        "request_id": "teacher_gen_05b46feee9b18e310b0bf6e3",
+        "response_sha256": "af9d1a7c6f89d0ec3ae1d19c5460109da5158eec8743698569854f10b435a10f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_bee331568288fc254e320047",
+        "response_sha256": "6708408abb22063c6b1d465779fb6cbfcd1ad0283c2275d5d2269b624fbb90fd"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_9062e05362303470c9a05e5d",
+      "OFF": {
+        "request_id": "teacher_gen_fb42ce09e663fe85e4564ccf",
+        "response_sha256": "0959faada4707d784ed17b4701e560ca303d381d535ef7e28f75617983eb8bc5"
+      },
+      "ON": {
+        "request_id": "teacher_gen_af93ff3f9a1d1c832c708cce",
+        "response_sha256": "9bf5d4a6c3ab2e7dcc6542788729f0f4d004cafe04a4a0c622597030ee7fba16"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_918fe2d5e4863d559544966a",
+      "OFF": {
+        "request_id": "teacher_gen_2f33d10f3935423b83f11115",
+        "response_sha256": "94bc4f4f4853709daa72162d20f4daa164d36c2032e09552cf272fc38e9c03d5"
+      },
+      "ON": {
+        "request_id": "teacher_gen_f5dff00557a1253c74174ddf",
+        "response_sha256": "3dc48cde16a3ec4f5dbd03f1107c420d9290c2b68b59293a3b554d4fdb3ef3ef"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_925c203cfaa798f04e1d53ee",
+      "OFF": {
+        "request_id": "teacher_gen_6c66c8271fe72d9ddff23409",
+        "response_sha256": "69f7392193bc900914c52eb8904b7ce75678adce264c4daddc7f5c1b28e305c8"
+      },
+      "ON": {
+        "request_id": "teacher_gen_0be08f6adb4da5ffb776aac8",
+        "response_sha256": "8e5184eadad3678f3eae800d19131e9cfc4f3a6c0449cbdc073214f270f97908"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_929e113d2eff5efd874b4c07",
+      "OFF": {
+        "request_id": "teacher_gen_d595644ccebbd753f80d4a81",
+        "response_sha256": "892f51da166d80edd92facc0f49a77cf92e91266a9d0f4958a925f65a11f5fbe"
+      },
+      "ON": {
+        "request_id": "teacher_gen_09fcf6dbe1dbf9f7f00b8cb6",
+        "response_sha256": "c50d5a305a9da34bdd1353770a41238501cb27dfde23f718491fb710c915cb80"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_92a611b60a89d578089f7fbf",
+      "OFF": {
+        "request_id": "teacher_gen_4eb55413f1704d920081ebcb",
+        "response_sha256": "59bda052720324deedfbed8330cd8fec84dfdf09a7979ee43ebb13b3208cfa18"
+      },
+      "ON": {
+        "request_id": "teacher_gen_2ca66b78bd7856b7f282c873",
+        "response_sha256": "fc2e403e0f3d63250b63bb00fbbf4530409542f108d0636f34625589d7ac234e"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_9820ce4a3b73f46a1aaf1c98",
+      "OFF": {
+        "request_id": "teacher_gen_212be0cfd1e585798a109684",
+        "response_sha256": "00a118b156d2380d13acb2e14316881f0c4c047f7d91fe54ff909e326a0b5776"
+      },
+      "ON": {
+        "request_id": "teacher_gen_176d7cb1d1a6347e7bde0a64",
+        "response_sha256": "62afa192b42791d319c68f07bc9201fc67c13cf24cb75b6ae5eb5a5d7a491de4"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_a9a65e01e98ffa66d1c072b6",
+      "OFF": {
+        "request_id": "teacher_gen_2691ceab9d4a8de1808af404",
+        "response_sha256": "b42c73277a496095de4777d7e49934ce4ece3442c10b8a8973b81772b7162a1f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_693428992e2918a3e762b034",
+        "response_sha256": "c969c17c89e962c5389a26e62fc766475f5b513806d2336c5ed31256a09f1bef"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_aa77830c63cab5f1ca75d6bd",
+      "OFF": {
+        "request_id": "teacher_gen_fa403a9d045344cba67874e5",
+        "response_sha256": "e8f2129e0e92629cec89979fa762219e85d4646353eb3ac70f7390d9d482822b"
+      },
+      "ON": {
+        "request_id": "teacher_gen_97af7004ee592dc483302f9b",
+        "response_sha256": "ea5f650d97d8317c9c12b4b7688172a2bdd4efeec3be6b36491cc17baf64b370"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_ad2a5d42facc6c68406c7f1e",
+      "OFF": {
+        "request_id": "teacher_gen_b1bfe4aba5133783a00fdf2e",
+        "response_sha256": "aa5f11b4837a4f5a6f71f8c729c3efd54f779b68641d31fc6a025c9623ffef59"
+      },
+      "ON": {
+        "request_id": "teacher_gen_cfdfaff5ca4c6c40b5e53bcd",
+        "response_sha256": "9033bae91006a7fe98c7043ed67f1f6d9f19a537812878885e474db8408820b2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_af83c0c7168c7a3c1eed69a5",
+      "OFF": {
+        "request_id": "teacher_gen_eceed7716b0f8d6c8726d8c9",
+        "response_sha256": "cb568228267b653f3bc72c7d481ff2a4a23754565b98e40e8c36a356fc745fb8"
+      },
+      "ON": {
+        "request_id": "teacher_gen_aeee170c95a77fa8de7e29e1",
+        "response_sha256": "bccc0e5a121ba394a45bb0cae75319b30e767b9b99267930f6677928b3b2a03e"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_b00ed1bc15ebc0b9973b4408",
+      "OFF": {
+        "request_id": "teacher_gen_9a4542b3528578f02f9e1b9e",
+        "response_sha256": "20e4a69d82ca4b2b98a03db9002dbec8feafd04bc91b8b77226418b40c741fd3"
+      },
+      "ON": {
+        "request_id": "teacher_gen_816e831a7afbc47f5d5853e9",
+        "response_sha256": "aaad682bba374bc146d7a9e1f0754bb35843de320781a64decad6e96bf4d8df6"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_b1e5442c4c7d928c8eefa014",
+      "OFF": {
+        "request_id": "teacher_gen_7467421b65990fd633ca11fb",
+        "response_sha256": "87a921fe4a131c6c70d260f044aa6d07211bad5896a862d115972cbb1844d256"
+      },
+      "ON": {
+        "request_id": "teacher_gen_f11a6f21cc51a0afdaa40ec7",
+        "response_sha256": "94eb84d78935b9adbb0af73767c50c70587a4f0b2dd2a1c94d8fe309655e1957"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_b755a706a0d78f63781ac5c6",
+      "OFF": {
+        "request_id": "teacher_gen_e7da9af54b6b093926715f1e",
+        "response_sha256": "4aff24b7b045ab6fe5df78c3fecda70f320a1e16bb8d347a5fab8c602bc3e54f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_c38c0b7ac41e7764b96b4d9d",
+        "response_sha256": "481362752bee563808d2f55fe0426da469ffd335034aeb8635b90f7ba2d499ae"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_b8d96008d3f647608854ba2b",
+      "OFF": {
+        "request_id": "teacher_gen_6d17161516b11e04080f83b0",
+        "response_sha256": "2297a3a33dea2455c6c81e64d0a65f0c17a9c923cf9d960923c8665949d88c88"
+      },
+      "ON": {
+        "request_id": "teacher_gen_fe116243fbcfc2d0cb9fa388",
+        "response_sha256": "cbf12c312865414bcfe7dbe843a088a596ab0d1c0463f0e700acee50b61c9cf0"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_bc7ba10dad924ebd56d73e6c",
+      "OFF": {
+        "request_id": "teacher_gen_dc7932202609a1893470bd79",
+        "response_sha256": "00803ec16173bfdd1f23b1c5ede0993a3897c440ce67abcf849cb2d46f3c3b2b"
+      },
+      "ON": {
+        "request_id": "teacher_gen_71313f0e0dfec7c621b97480",
+        "response_sha256": "49bac347e8463c7bb2a30e16094c8cdd409934394355291ddd5c7b55e9130223"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_c0f5e85dd4f6282a1936a369",
+      "OFF": {
+        "request_id": "teacher_gen_65f88961aea641166ab37df1",
+        "response_sha256": "204f126249f8339bfd910c80788ce2cb20d8648fb0abe0a563d8c9bb3e5eb009"
+      },
+      "ON": {
+        "request_id": "teacher_gen_a7642ba3889e6d93e981d9f8",
+        "response_sha256": "883ace1acc1369a00a8269161430d67ed5b0fb24d7c6a2c4f185cebd20deee2d"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_c13febd3da8ed3556c0126ae",
+      "OFF": {
+        "request_id": "teacher_gen_05b46feee9b18e310b0bf6e3",
+        "response_sha256": "af9d1a7c6f89d0ec3ae1d19c5460109da5158eec8743698569854f10b435a10f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_3d8f983400d5f26960475b7e",
+        "response_sha256": "7fd4129f1cc536f8c4c84c9ce413330afcc6d95c1c4010d9c6542bbd2a9dadd2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_c36943915651aaecf432f160",
+      "OFF": {
+        "request_id": "teacher_gen_96de0c9adc9298a9d499e0cd",
+        "response_sha256": "8f8b2b07d7ef605e2974658e4519ce881859356b68b5ae129cfeb771b60fc3e8"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ac2420f61fba9a9db9eb8635",
+        "response_sha256": "84ef42b9da9629d8294b468e1488dd4c82ab61a2cfa20ea3868cc4574fba6504"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_c398900e6230fdf401a1c1cd",
+      "OFF": {
+        "request_id": "teacher_gen_2c50ed4d672a3b5adf3acace",
+        "response_sha256": "99a0a56ee3fddc0c68a30c8dc6ce9cba12d6b4d48d05e5e0865c5d246f808540"
+      },
+      "ON": {
+        "request_id": "teacher_gen_15d7db1363894b29fd603d8b",
+        "response_sha256": "99dce2aef1a05f5ac8e9f5b63c1013f877770fef18b334ee3431fb474e6bf5a8"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_c6944c972f1b5551bb7b19e0",
+      "OFF": {
+        "request_id": "teacher_gen_faacae8d6a0f0156fb279808",
+        "response_sha256": "960f7caf878ecc556e05b4982a25cb72e5899927781501c051d5913fdc0eebe4"
+      },
+      "ON": {
+        "request_id": "teacher_gen_0dc67f711058bbe1c0d80102",
+        "response_sha256": "c756d1a5b4b2d647856c8cbdce9779448cdb511f979da9a45f740ce5774ae42c"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_ce725964f05814b43c83b510",
+      "OFF": {
+        "request_id": "teacher_gen_411c3c5c3aaac31a3be8ffe2",
+        "response_sha256": "bb3862c32489f45bdf853f4c5270aec25ca059a1e7258cb5e9ed372e9ad77bdf"
+      },
+      "ON": {
+        "request_id": "teacher_gen_cafb909b39d51182456d3712",
+        "response_sha256": "6366f41df68aad31d5aebc16b2ed9745401494c4fcd410dce42751bb913a1737"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d0100ec6f1c895dfa972af8e",
+      "OFF": {
+        "request_id": "teacher_gen_7fbbc2a5e998863dfd854c67",
+        "response_sha256": "bbcebe02b549f3873c3651e899cd2f947c8688fa24ae0609f899204f7be2d51a"
+      },
+      "ON": {
+        "request_id": "teacher_gen_a843f7c02c426147cdea9224",
+        "response_sha256": "6882d2f5be0c28050ad09b86dba2b1e1e7701bc79e1e5d1c253d235d2b8f52cc"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d13eecd362ceb18294a2b52c",
+      "OFF": {
+        "request_id": "teacher_gen_e7da9af54b6b093926715f1e",
+        "response_sha256": "4aff24b7b045ab6fe5df78c3fecda70f320a1e16bb8d347a5fab8c602bc3e54f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_69f4ba675b2bb36dc7b3f0a2",
+        "response_sha256": "3762d64d92a14cd398081598472ccd6d7639bf25b5e3782f5d3130e00806b095"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d1a70e80d05f9ba0f562c007",
+      "OFF": {
+        "request_id": "teacher_gen_52ec2e75b503199ae6049ea7",
+        "response_sha256": "7a91096542db92bb970138144378d1330bcb883eae27128b92ed56f7e5074086"
+      },
+      "ON": {
+        "request_id": "teacher_gen_503b6e5dc401ab2830b5b31e",
+        "response_sha256": "011d35af0bedab36a19538727bae1b492973d3b0e862d802041c28717c5a0afc"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d419d90148b5446cdf938b55",
+      "OFF": {
+        "request_id": "teacher_gen_181f3dbe5a3b347c6b272ab8",
+        "response_sha256": "85430e18bfaf7ed6f986df1e94b3cb24e15a6ac0750657ad06423e99e97c6751"
+      },
+      "ON": {
+        "request_id": "teacher_gen_d1c2cc495fbbe58c147e12e9",
+        "response_sha256": "3a18939834522e633bbf2d8d88a42e8ca406069b98828fcf324cdb626b599b87"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d4ab984dc1c15b4a08fc9592",
+      "OFF": {
+        "request_id": "teacher_gen_3415edadd87bcee725f1bbcb",
+        "response_sha256": "e5726d627d5112ccaee91b313f64ef02482f95b3dc981cd2864a753e7b4b80ea"
+      },
+      "ON": {
+        "request_id": "teacher_gen_e64081d00776d7bec91340b1",
+        "response_sha256": "8e0e1c3a7672208656ff080b2c18784ef85854f3a2fdff779405b211afdb89c9"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d59f9780cf18b043b2c597f4",
+      "OFF": {
+        "request_id": "teacher_gen_43b6c1904a3745e465ade26b",
+        "response_sha256": "ea9f108b5777ac9f4aa9807846aabd1997f7679fb3f0be5183206eadceb05050"
+      },
+      "ON": {
+        "request_id": "teacher_gen_a5177916f746dbb3e9ef6a1d",
+        "response_sha256": "0b1fc39c9cb23942df2bed867e05ec0e6d5cf0e15c2a44c5c2db8876700d0259"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d5b9573949a0516e7271df21",
+      "OFF": {
+        "request_id": "teacher_gen_b1bfe4aba5133783a00fdf2e",
+        "response_sha256": "aa5f11b4837a4f5a6f71f8c729c3efd54f779b68641d31fc6a025c9623ffef59"
+      },
+      "ON": {
+        "request_id": "teacher_gen_67bec6abae073d03f9ef7181",
+        "response_sha256": "efaaf170e7498bedbf5d31d1bdd96c52b01fbb2d9bdb23f28d2b7f4f5dfb3694"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_d847dc5e5a47cd35fd3fc886",
+      "OFF": {
+        "request_id": "teacher_gen_6d17161516b11e04080f83b0",
+        "response_sha256": "2297a3a33dea2455c6c81e64d0a65f0c17a9c923cf9d960923c8665949d88c88"
+      },
+      "ON": {
+        "request_id": "teacher_gen_c8cfb441a6168484d3829b0f",
+        "response_sha256": "bd554ccddeeff72b7a2add3dd975b512c95e84d578ae4a562f8eac00886b9d40"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_dcb08a5e703c64b5181a8fe2",
+      "OFF": {
+        "request_id": "teacher_gen_2691ceab9d4a8de1808af404",
+        "response_sha256": "b42c73277a496095de4777d7e49934ce4ece3442c10b8a8973b81772b7162a1f"
+      },
+      "ON": {
+        "request_id": "teacher_gen_114cd9d10c9ad1463b1ea8ab",
+        "response_sha256": "aa27cbf7fd7f121777243093006664c48093e0fde699490518bb96a12d192ce2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_de7f250284b8979963e0e091",
+      "OFF": {
+        "request_id": "teacher_gen_a7adef831ddb693e6de86e94",
+        "response_sha256": "11a90945551e0659a9396e8fe79c5af7737bd9fc34ec21e44ab2b24a61815027"
+      },
+      "ON": {
+        "request_id": "teacher_gen_2f472668a1657fabba01d63e",
+        "response_sha256": "e07ef2bebc7e25892fcbb8384bb374f6195a87f0ac64109066e99203c639d8d2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_e0474e2c1a91726d754b0653",
+      "OFF": {
+        "request_id": "teacher_gen_75705261ae7cec1d728069d7",
+        "response_sha256": "9c933d3320fc989eb750489bd0e929127dbedef6446f09f6ef8a9b25d606fe11"
+      },
+      "ON": {
+        "request_id": "teacher_gen_2b58c6fcc9203bd60860f46a",
+        "response_sha256": "b2dcd190590962b137484f2336535b25232c23cb9dbc98433a8b1a74a92e630f"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_e7442ac16e13297c1020d741",
+      "OFF": {
+        "request_id": "teacher_gen_7fbbc2a5e998863dfd854c67",
+        "response_sha256": "bbcebe02b549f3873c3651e899cd2f947c8688fa24ae0609f899204f7be2d51a"
+      },
+      "ON": {
+        "request_id": "teacher_gen_0649b234010c157d23e889b3",
+        "response_sha256": "99e99269fb9eae2b88db79897c0a9304dc66329d98da22f5cde1830c804737b2"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_ecc41bb3180a3c70122c3dc1",
+      "OFF": {
+        "request_id": "teacher_gen_3415edadd87bcee725f1bbcb",
+        "response_sha256": "e5726d627d5112ccaee91b313f64ef02482f95b3dc981cd2864a753e7b4b80ea"
+      },
+      "ON": {
+        "request_id": "teacher_gen_50a71cc786910b99a9a1de01",
+        "response_sha256": "1966f21e9a13460d21dea2c5caccd8cd430c4f4211339ab93d41e8c4597d8304"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_f739d72e18fde9df62111f21",
+      "OFF": {
+        "request_id": "teacher_gen_7abed66121402fc914cea8f4",
+        "response_sha256": "e0b0c499f89816ff772b1cd2a1b06e17ad76782d1a4d2c41c677c1531bed40f2"
+      },
+      "ON": {
+        "request_id": "teacher_gen_4da4e94caab9b3317d10446e",
+        "response_sha256": "9b0e1aca89f8c64fb8cbad193ad2de4f3e9d26e9f3a88dabf6e0aaf2d3974ca0"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_f829b41df592aced53719780",
+      "OFF": {
+        "request_id": "teacher_gen_7abed66121402fc914cea8f4",
+        "response_sha256": "e0b0c499f89816ff772b1cd2a1b06e17ad76782d1a4d2c41c677c1531bed40f2"
+      },
+      "ON": {
+        "request_id": "teacher_gen_5238bed31a501f9fcde6c174",
+        "response_sha256": "f86b9a134f672446b248801ab0e08b5b2355036fd48ef693b97de855dd3817aa"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_f9469a24ae3279f16cd8ab44",
+      "OFF": {
+        "request_id": "teacher_gen_3415edadd87bcee725f1bbcb",
+        "response_sha256": "e5726d627d5112ccaee91b313f64ef02482f95b3dc981cd2864a753e7b4b80ea"
+      },
+      "ON": {
+        "request_id": "teacher_gen_3fca24e67b88a08cdd1bea28",
+        "response_sha256": "870fafde1eb2e3a04315cc12b6a9e07770b0548926927a7afc279f5d399a00f3"
+      }
+    },
+    {
+      "base_pair_id": "teacher_base_fdb5c928f4221699cd114b59",
+      "OFF": {
+        "request_id": "teacher_gen_e15fff69990cae71f0a973c0",
+        "response_sha256": "f2c58767db1300496a6890e761afb2ecdb17191dffb4120bea017a49dfcce925"
+      },
+      "ON": {
+        "request_id": "teacher_gen_ec8f92e3f781035e6bc75cae",
+        "response_sha256": "950d90e4f0dc1f393bea36866fda2407822ab2b62714acacf076d4cdb10a2282"
+      }
+    }
+  ],
+  "paid_api_calls": 0,
+  "formal_outcome_calls": 0,
+  "evaluator_calls": 0,
+  "pm_training_runs": 0,
+  "locks": {
+    "RQ1_RS_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ2_MEMORY_CALIBRATION_OUTCOME_LOCK": "CLOSED",
+    "RQ1_CONFIRMATORY_OUTCOME_LOCK": "CLOSED",
+    "RQ2_CONFIRMATORY_OUTCOME_LOCK": "CLOSED"
+  }
+}

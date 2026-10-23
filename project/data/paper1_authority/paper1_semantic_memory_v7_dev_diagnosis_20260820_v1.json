@@ -1,0 +1,106 @@
+{
+  "protocol": "paper1-semantic-memory-v7-dev-diagnosis-v1",
+  "status": "DEV_REGRESSION_FAILED_401_NOT_RUN",
+  "scope": "Zero-new-API diagnosis of the preregistered old-DEV replay; not held-out qualification and not outcome evaluation.",
+  "execution": {
+    "items": 32,
+    "source_sessions": 29,
+    "provider_calls": 29,
+    "provider_call_failures": 0,
+    "cost_usd": 0.08161918,
+    "hard_cap_usd": 5.0,
+    "full_401_started": false,
+    "new_catalog_created": false,
+    "heldout_ids_frozen": false,
+    "outcome_calls": 0
+  },
+  "summary": {
+    "old_fail_or_review_rejected": 7,
+    "old_fail_or_review_total": 12,
+    "old_pass_retained": 6,
+    "old_pass_total": 20,
+    "strict_local_schema_gate_rejections": 11,
+    "mp_old_fail_accepted": 5,
+    "old_pass_rejected": 14,
+    "disposition": "DO_NOT_START_401"
+  },
+  "strict_local_schema_gate_rejections": {
+    "interpretation": "All 11 wire JSON objects parsed structurally. Each repeated accepted=true and reason=accepted while its own typed evidence flags deterministically required rejection. Local validation correctly failed closed; these are Qwen internal decision inconsistencies, not transport/JSON/envelope failures.",
+    "counts": {
+      "MP_accepted_reason_conflicts_with_precision_flags": 5,
+      "ME_accepted_reason_conflicts_with_same_predicate_true": 6
+    },
+    "items": [
+      {"memory_id": "smu_b6914391cc6ddc6dc65643ef", "class": "MP", "old_verdict": "PASS", "gate_conflicts": ["durability_not_established", "requires_prior_inference"]},
+      {"memory_id": "smu_25d62c242ebbde30d3cad3dd", "class": "MP", "old_verdict": "FAIL", "gate_conflicts": ["not_owner_fact"]},
+      {"memory_id": "smu_c8b0d537ed256ab06d8c272d", "class": "MP", "old_verdict": "REVIEW", "gate_conflicts": ["durability_not_established", "social_role_not_directly_current"]},
+      {"memory_id": "smu_d4bc26a7361570f79b6ce3f5", "class": "MP", "old_verdict": "PASS", "gate_conflicts": ["durability_not_established"]},
+      {"memory_id": "smu_b602d4b345d95c2090ff1f9c", "class": "MP", "old_verdict": "PASS", "gate_conflicts": ["durability_not_established"]},
+      {"memory_id": "smu_4483c0f61788baae18d18266", "class": "ME", "old_verdict": "PASS", "gate_conflicts": ["same_predicate_action_outcome"]},
+      {"memory_id": "smu_5e2faa22b0229adba561ddae", "class": "ME", "old_verdict": "FAIL", "gate_conflicts": ["same_predicate_action_outcome"]},
+      {"memory_id": "smu_08a5fe218ef39050888c4476", "class": "ME", "old_verdict": "PASS", "gate_conflicts": ["same_predicate_action_outcome"]},
+      {"memory_id": "smu_78767b80ccd77fab7a28914a", "class": "ME", "old_verdict": "PASS", "gate_conflicts": ["same_predicate_action_outcome"]},
+      {"memory_id": "smu_7ae21187e0eeb78733f8b9a0", "class": "ME", "old_verdict": "PASS", "gate_conflicts": ["same_predicate_action_outcome"]},
+      {"memory_id": "smu_b1b0347933a94f29d209424c", "class": "ME", "old_verdict": "PASS", "gate_conflicts": ["same_predicate_action_outcome"]}
+    ]
+  },
+  "mp_old_fail_accepted": {
+    "interpretation": "All five passed exact ID/class/span binding. The failure is Qwen semantic evidence classification: it set the gate inputs incorrectly, so the deterministic gate had no contradictory local observable to reject. Adding ID/phrase blacklists or changing ontology is forbidden and was not done.",
+    "items": [
+      {"memory_id": "smu_84af73261d0cfa43329a8722", "error": "compound current education plus future graduate-school plan was classified as direct enduring/current and future_plan=false"},
+      {"memory_id": "smu_b7dad680d4ac06c9d6cc49d6", "error": "recent unspecified health difficulty was classified currently_persistent"},
+      {"memory_id": "smu_dceff7d7a9c7453af231d82b", "error": "education/major history remained occupation and prior inference was marked unnecessary"},
+      {"memory_id": "smu_50dbb5cab91f05e685c94433", "error": "third-party Margaret employment was classified owner_subject_direct=true"},
+      {"memory_id": "smu_6a6f47b47a3102227aea9bde", "error": "one memorial attendance event was classified as a durable current profile"}
+    ]
+  },
+  "old_pass_rejections": {
+    "counts": {
+      "qwen_internal_schema_gate_contradiction": 8,
+      "qwen_explicit_semantic_false_reject": 2,
+      "local_shared_span_ordering_bug_in_raw_run": 4
+    },
+    "schema_gate_contradiction_ids": [
+      "smu_b6914391cc6ddc6dc65643ef",
+      "smu_d4bc26a7361570f79b6ce3f5",
+      "smu_b602d4b345d95c2090ff1f9c",
+      "smu_4483c0f61788baae18d18266",
+      "smu_08a5fe218ef39050888c4476",
+      "smu_78767b80ccd77fab7a28914a",
+      "smu_7ae21187e0eeb78733f8b9a0",
+      "smu_b1b0347933a94f29d209424c"
+    ],
+    "semantic_false_rejects": [
+      {"memory_id": "smu_34a2952dbfe07080e506a9f8", "qwen_reason": "durability_not_established", "old_pass_subject": "pet ownership"},
+      {"memory_id": "smu_98d4a8d911adf997736496b0", "qwen_reason": "durability_not_established", "old_pass_subject": "paycheck evidence for employment"}
+    ],
+    "shared_span_bug_ids": [
+      "smu_e6992c0803f13130214d0377",
+      "smu_1a1c4fb276f099c997b57f32",
+      "smu_9d2a562660507167d724f7bb",
+      "smu_f88245e046ae62574296a29d"
+    ]
+  },
+  "me_span_diagnosis": {
+    "finding": "The v6 proposals often expose one whole supporting span containing both the action and outcome propositions. The v7 verifier re-copied that whole span for both lanes rather than producing mechanically distinct minimal exact subspans. The raw runtime then incorrectly treated equal start positions as proof that outcome was not after action.",
+    "minimal_implementation_fix": "When action and outcome select the same exact grounded span, do not assert mechanical ordering from equal span starts. Continue to require exact proposal/source binding and leave semantic ordering/distinctness to the frozen typed ME gate. Distinct-span reverse order remains mechanically rejected.",
+    "offline_fix_status": "IMPLEMENTED_AND_UNIT_TESTED_NO_API_RERUN",
+    "important_limit": "This fix only removes a false local rejection. It does not repair Qwen's six same_predicate=true/accepted=true contradictions or the five MP semantic misclassifications, and it is not sufficient to authorize 401 execution."
+  },
+  "recommendation": {
+    "status": "BLOCKED_BEFORE_401",
+    "reason": "The general v7 verifier did not preserve old PASS systematically and accepted five known MP FAIL cases. The local shared-span bug is fixed offline, but most failures are Qwen semantic/decision-consistency failures rather than binding bypasses.",
+    "forbidden_shortcuts_not_used": [
+      "candidate-specific blacklist",
+      "ontology expansion",
+      "model change",
+      "outcome read",
+      "401 live rerun"
+    ]
+  },
+  "identity": {
+    "live_report_sha256": "3f1917483ea4ec82aaa5da27057818429f4e87f352a944fbaa3356c0a134888b",
+    "budget_ledger_sha256": "a82e47ef3dd52eab746b586fd25104583cfb6f7ed2623d2f506059120ed0aa9e"
+  },
+  "locks": "all four Paper-1 calibration/confirmatory outcome locks remain CLOSED"
+}

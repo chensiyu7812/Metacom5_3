@@ -1,0 +1,55 @@
+{
+  "status": "SOURCE_GATE_INTEGRATED_ENGINEERING_CYCLE_COMPLETED",
+  "source_audit": {
+    "citation_unrelated": 26,
+    "citation_partial": 60,
+    "citation_sufficient": 13,
+    "citation_conflicts_with_current_slot": 2
+  },
+  "source_scope": "101 reassertions plus 3 source/state exclusions; selected 36 resources reviewed. Not full-corpus qualification.",
+  "source_projection_removed_unique": 49,
+  "source_projection_removed_occurrences": 54,
+  "source_gate_conditions": 54,
+  "original_pilot_gate_passed": false,
+  "original_pilot_review_counts": {
+    "accept": 90,
+    "uncertain": 6,
+    "reject": 12
+  },
+  "original_missing_cells": [
+    {
+      "index": 4,
+      "condition": "L"
+    },
+    {
+      "index": 9,
+      "condition": "L"
+    },
+    {
+      "index": 14,
+      "condition": "L"
+    }
+  ],
+  "engineering_post_hoc": true,
+  "engineering_rows": 90,
+  "engineering_eligible_for_research_or_rl": false,
+  "optimization_steps": 12,
+  "base_weights_unchanged": true,
+  "baseline_dev_nll": 1.8536694061951338,
+  "selected_dev_nll": 1.5604514515648986,
+  "selected_epoch": 3,
+  "reload_passed": true,
+  "reload_nll_delta": 0.0,
+  "diagnostics_by_arm": {
+    "base": {
+      "natural_stop": 18
+    },
+    "lora": {
+      "natural_stop": 18
+    }
+  },
+  "natural_support_ppo_updates": 0,
+  "new_human_submissions": 0,
+  "new_paid_api_usd": 0,
+  "next": "Use completed diagnostics to separate teacher data coverage, executor behavior and reward measurement. Avoid repeating the identical author batch to chase coverage; keep human assessment for frozen systems."
+}

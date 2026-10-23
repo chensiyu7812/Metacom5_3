@@ -1,0 +1,229 @@
+{
+  "status": "STRUCTURAL_TASK_FIT_AUDIT_NOT_RESOURCE_EFFECT_OR_REWARD_VALIDATION",
+  "population": "Existing 2026-09-30 old-renderer train/dev structural exports; no test semantic analysis",
+  "by_split": {
+    "train": {
+      "prefixes": 96,
+      "owners": 12,
+      "current_sessions": 96,
+      "per_owner_prefixes": {
+        "p10": 8,
+        "p11": 8,
+        "p12": 8,
+        "p13": 8,
+        "p16": 8,
+        "p17": 8,
+        "p2": 8,
+        "p3": 8,
+        "p5": 8,
+        "p6": 8,
+        "p8": 8,
+        "p9": 8
+      },
+      "theoretical_plans": 6720,
+      "inventory_allowed_plans": 6350,
+      "reachable_plans": 6155,
+      "additional_feasibility_exclusions": 195,
+      "exclusion_fraction_of_inventory_allowed": 0.030708661417322834,
+      "reachable_four_get_plans": 2957,
+      "inventory_allowed_four_get_plans": 3128,
+      "four_distinct_heads_reachable_prefixes": 89,
+      "median_four_get_resource_tokens": 724,
+      "median_current_prefix_chat_tokens": 263.0,
+      "fixed_15_menu_reachable_slots": 1390,
+      "fixed_15_menu_planned_slots": 1440,
+      "lexical_flags_not_need_labels": {
+        "short_greeting_candidate": 8,
+        "thanks_marker": 6,
+        "history_or_update_marker": 7,
+        "rs_self_disclosure_in_top4": 37
+      }
+    },
+    "dev": {
+      "prefixes": 18,
+      "owners": 3,
+      "current_sessions": 18,
+      "per_owner_prefixes": {
+        "p1": 6,
+        "p15": 6,
+        "p18": 6
+      },
+      "theoretical_plans": 1260,
+      "inventory_allowed_plans": 1127,
+      "reachable_plans": 1085,
+      "additional_feasibility_exclusions": 42,
+      "exclusion_fraction_of_inventory_allowed": 0.037267080745341616,
+      "reachable_four_get_plans": 512,
+      "inventory_allowed_four_get_plans": 547,
+      "four_distinct_heads_reachable_prefixes": 16,
+      "median_four_get_resource_tokens": 796.5,
+      "median_current_prefix_chat_tokens": 356.0,
+      "fixed_15_menu_reachable_slots": 253,
+      "fixed_15_menu_planned_slots": 270,
+      "lexical_flags_not_need_labels": {
+        "short_greeting_candidate": 0,
+        "thanks_marker": 3,
+        "history_or_update_marker": 0,
+        "rs_self_disclosure_in_top4": 8
+      }
+    }
+  },
+  "totals": {
+    "prefixes": 114,
+    "inventory_allowed_plans": 7477,
+    "reachable_plans": 7240,
+    "additional_feasibility_exclusions": 237,
+    "exclusion_fraction_of_inventory_allowed": 0.03169720476126789,
+    "four_distinct_heads_reachable_prefixes": 105
+  },
+  "single_resource_total_block_cost": {
+    "RS": {
+      "reachable_prefixes": 114,
+      "min_tokens": 120,
+      "median_tokens": 129.0,
+      "max_tokens": 139,
+      "median_reward_cost": 0.0031494140625
+    },
+    "MP": {
+      "reachable_prefixes": 106,
+      "min_tokens": 129,
+      "median_tokens": 139.0,
+      "max_tokens": 161,
+      "median_reward_cost": 0.0033935546875
+    },
+    "MS": {
+      "reachable_prefixes": 114,
+      "min_tokens": 332,
+      "median_tokens": 702.0,
+      "max_tokens": 1231,
+      "median_reward_cost": 0.017138671875
+    },
+    "ME": {
+      "reachable_prefixes": 113,
+      "min_tokens": 140,
+      "median_tokens": 147,
+      "max_tokens": 160,
+      "median_reward_cost": 0.0035888671875000003
+    }
+  },
+  "cross_head_source_overlap_not_semantic_redundancy": {
+    "MP_MS": {
+      "prefixes_with_both_heads": 106,
+      "first_items_share_source_session": 21,
+      "top4_inventories_share_any_source_session": 87
+    },
+    "MP_ME": {
+      "prefixes_with_both_heads": 105,
+      "first_items_share_source_session": 21,
+      "top4_inventories_share_any_source_session": 77
+    },
+    "MS_ME": {
+      "prefixes_with_both_heads": 113,
+      "first_items_share_source_session": 31,
+      "top4_inventories_share_any_source_session": 99
+    }
+  },
+  "training_coverage": {
+    "sft_rows": 103,
+    "independent_prefixes": 19,
+    "count_distribution": {
+      "0": 34,
+      "1": 59,
+      "2": 10
+    },
+    "same_head_repeat_rows": 0,
+    "train_prefix_hash_join": {
+      "source_prefixes": 96,
+      "sft_prefixes": 19,
+      "matched": 19
+    },
+    "reachable_plans_dose_3_or_4_fraction": 0.7714088397790055,
+    "sft_to_RL_prefix_fraction": 0.19791666666666666
+  },
+  "train_dev_MP_repeated_updates": {
+    "total": 173,
+    "reviewed": 101,
+    "unreviewed": 72
+  },
+  "reward_geometry": {
+    "q_values": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "m_values": [
+      0,
+      0.25,
+      1
+    ],
+    "utility_min_nonzero_step": 0.25,
+    "resource_cost_max": 0.05,
+    "smallest_utility_step_over_max_cost": 5,
+    "off_subtraction": "constant for all plans of a fixed prefix/executor; does not change their ranking or create quality labels",
+    "step_costs": "telescope to final resource cost at gamma=1; individual GETs do not measure marginal support benefit"
+  },
+  "public_source_scope": {
+    "history_owners": 18,
+    "history_sessions": 401,
+    "memory_units": 2236,
+    "memory_heads": {
+      "MP": 713,
+      "ME": 1523
+    },
+    "official_QA_train_dev_rows": 1261,
+    "official_QA_no_evidence": 224,
+    "official_QA_only_private_event": 20,
+    "official_QA_multiple_visible_sessions": 219
+  },
+  "unknowns": [
+    "Incremental information relative to current prefix",
+    "Cross-head semantic redundancy and complementarity",
+    "Fixed-executor response gain from each plan",
+    "Between-prefix variation in useful plans",
+    "Value of acquired text for later action choice",
+    "Natural-pair human-calibrated evaluator resolution"
+  ],
+  "caveats": [
+    "Additional feasibility exclusions combine actual renderer budget/context/path rules; not attributed to token budget alone.",
+    "Resource costs include shared wrapper; not intrinsic per-item or marginal costs.",
+    "Lexical flags are candidate strata, never relevance/error/reward labels.",
+    "Old renderer statistics must be recomputed after representation changes.",
+    "Counts are not effect estimates, independent people or proof of an RL advantage."
+  ],
+  "sources": [
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/prefix_features.csv",
+      "sha256": "8f1c21e7edb1c64112a2d0e2521907b5ec9306d3e734310233a9ce3529bda0d7"
+    },
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/capacity_prefix_features.csv",
+      "sha256": "f39de9878b60d9f99ebec7716ded87ea0b594abc941279a1decedf6afcd02b24"
+    },
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/reachable_plan_features.csv",
+      "sha256": "7b13bfbb9853b8fa68c9dcc898857e90716bb074013bba5f1e0da234068c39b2"
+    },
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/memory_unit_features.csv",
+      "sha256": "dabfd2398a8ecf6673f5d139c627a6cf6d29e497395ded2b7748cd939dd84ddc"
+    },
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/sft_features.csv",
+      "sha256": "12d9970a059daab9bd70e9b3ec996fa32dc011b7ebe1590bcd64af257f2458e4"
+    },
+    {
+      "path": "project/outputs/pm_rl1/dataset_diagnostics_20260930_v1/census.json",
+      "sha256": "2d90ddb3b48e9c898747efcf5f4fd3b210d33ee5480a881fcb748484f031d618"
+    },
+    {
+      "path": "project/outputs/pm_rl1/executor_coverage_20260929_v1/episode_specs_private.json",
+      "sha256": "c5103c518aa074a8df0af983b73c2bada922eb606b8122f29e20118b05ff34b6"
+    },
+    {
+      "path": "project/docs/pm_rl1_completion_20260930_v2/execution_contract.json",
+      "sha256": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60"
+    }
+  ]
+}

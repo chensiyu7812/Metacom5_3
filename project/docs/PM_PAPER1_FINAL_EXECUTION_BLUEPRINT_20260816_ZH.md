@@ -2,6 +2,8 @@
 
 状态：`ACTIVE / PAPER-1 EXECUTION AUTHORITY / PRE-OUTCOME FREEZE PLAN`
 
+> **执行覆盖说明：** 本文件中的 empirical qualification、minimum-N、CostWorthIt、broad fact/event union、semantic treatment execution 与 2-of-3 head 条款，已由 `PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md` 覆盖。其余路线 A、public-only、feature 与 official benchmark 规则继续有效。
+
 本文件的目的不是重新讨论研究方向，而是把已经确认的研究问题、尚未落地的实现缺口、科学测量规则、代码迁移顺序、停止条件和最终成功标准放在同一个可执行合同里。
 
 **优先级规则：**

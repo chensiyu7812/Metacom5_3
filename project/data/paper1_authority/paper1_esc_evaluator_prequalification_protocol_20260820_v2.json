@@ -1,0 +1,77 @@
+{
+  "protocol": "pm-paper1-esc-evaluator-prequalification-v2",
+  "status": "EXPERIMENT_REQUIRED",
+  "official_anchor": "ESC-RANK",
+  "official_anchor_is_predeclared_unique_winner": false,
+  "candidate_set": [
+    {
+      "candidate": "ESC-RANK",
+      "family": "InternLM2-7B plus official seven adapters",
+      "role": "official anchor and primary candidate",
+      "status": "EXPERIMENT_REQUIRED"
+    },
+    {
+      "candidate": "Qwen general judge",
+      "family": "Qwen",
+      "role": "proxy candidate",
+      "status": "EXPERIMENT_REQUIRED"
+    },
+    {
+      "candidate": "DeepSeek general judge",
+      "family": "DeepSeek",
+      "role": "proxy candidate",
+      "status": "EXPERIMENT_REQUIRED"
+    },
+    {
+      "candidate": "researcher-nominated independent-family judge",
+      "family": "not Qwen, DeepSeek, or InternLM",
+      "role": "reserved candidate slot",
+      "status": "BLOCKED"
+    }
+  ],
+  "qualification_set": {
+    "future_RS_topk_outcomes_forbidden": true,
+    "preferred_source": "public baseline dialogues and overlap-only material",
+    "planned_dialogues": 24,
+    "systems_per_dialogue": "at least two public baseline systems where available",
+    "blind_opaque_ids": true,
+    "withheld": ["PM identity", "arm", "ON/OFF", "k", "token budget", "Ours/baseline alias"]
+  },
+  "human_reference": {
+    "raters": 2,
+    "adjudication": true,
+    "dimensions": ["Fluency", "Expression", "Empathy", "Information", "Skillful", "Humanoid", "Overall"],
+    "scale": "official ordinal 0-4",
+    "status": "AUDIT_REQUIRED"
+  },
+  "comparison_metrics": [
+    "quadratic weighted kappa",
+    "Spearman rho",
+    "mean absolute deviation",
+    "pairwise winner consistency",
+    "valid parse rate",
+    "dynamic range",
+    "verbosity bias",
+    "suggestion bias",
+    "atomic-move-family bias",
+    "latency",
+    "GPU hours or API USD"
+  ],
+  "selection_order": [
+    "validity and agreement",
+    "bias and sensitivity",
+    "cost and latency"
+  ],
+  "forbidden_selection": "which judge gives PM/Ours a higher score",
+  "ESC_RANK_runtime": {
+    "minimum_gpu_mib": 24576,
+    "dialogues": 3,
+    "repeats": 2,
+    "dimension_passes": 42,
+    "required": ["cold and warm latency", "peak VRAM", "parse rate", "exact vector determinism", "all model adapter and code hashes"],
+    "harness": "scripts/paper1/26_qualify_esc_rank_runtime_24gib.py",
+    "patch_manifest": "data/paper1_authority/paper1_esc_rank_24gib_patch_manifest_20260820_v1.json"
+  },
+  "outcome_calls": 0,
+  "formal_ESC_Eval": false
+}

@@ -1,0 +1,47 @@
+{
+  "protocol": "paper1-gemini-usage-accounting-implementation-repair-v1",
+  "status": "IMPLEMENTATION_REPAIR_WITHIN_EXISTING_AUTHORIZED_REQUESTS_AND_BUDGET",
+  "recorded_at": "2026-09-17T05:25:19.537807+00:00",
+  "prior_execution_plan_sha256": "4b62af2a4c504d75e4ac63921110363b2b52e4c7fb55bf9b94635f3b286bf619",
+  "prior_authorization_sha256": "a9f9027b575f85f7ddc72fbe6ba8478885cd8a5e8a1d86db8881680226ed13ef",
+  "reason": "The new executor added a thoughtsTokenCount==0 condition beyond the frozen request identity. First HTTP 200 STOP response has a valid frozen-parser verdict, exact requested thinkingBudget=0, and reported thinking usage=2. Preserve the discrepancy without inferring what those tokens represent.",
+  "repair": "Keep every request byte, model, prompt, parser, seed, temperature and thinkingBudget unchanged. Account candidatesTokenCount + thoughtsTokenCount at the official output rate; enforce their combined frozen maxOutputTokens=256. Record nonzero thinking usage as a provider discrepancy for every item.",
+  "research_scope_change": false,
+  "authorization_basis": "Researcher authorized this exact 96-item qualification up to USD 0.10 and ongoing necessary implementation fixes. This record is an executor-authored repair record, not a new researcher quote or a claim of a separate explicit approval.",
+  "new_requests": 0,
+  "additional_budget_usd": "0",
+  "stage_hard_cap_usd": "0.10",
+  "source": {
+    "thinking": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+    "pricing": "https://ai.google.dev/gemini-api/docs/pricing",
+    "checked_date": "2026-09-17"
+  },
+  "cache_path": "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/0a6958cc543f2271c28bce927d47aa52985a0342ec2e55c343cf97916c2860ec.json",
+  "cache_sha256": "eaea9b5173a665c50cffed8d7be5cf99b4646499ea9543566dee4167f3732e3c",
+  "first_response_usage": {
+    "promptTokenCount": 17587,
+    "candidatesTokenCount": 95,
+    "totalTokenCount": 17684,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 17587
+      }
+    ],
+    "thoughtsTokenCount": 2,
+    "serviceTier": "standard"
+  },
+  "first_reported_usage_cost_usd": "0.0017975",
+  "first_ledger_conservative_cost_usd": "0.0018867",
+  "ledger_policy": "Preserve the original FAILED settlement and conservative charge unchanged. An explicit response-hash-bound reconciliation permits recovering this valid saved verdict without any repeat call. Report budget-accounted and provider-usage-derived costs separately.",
+  "saved_settlement_reconciliations": {
+    "pairwise_teacher_qualification_v2:teacher_present_c4e9087bf5939967dcf8e1d1:1": {
+      "call_hash": "f11463e2a87565057d8ef9882be2b8b62140b903b99e429b729b943b43284bfa",
+      "response_sha256": "247fd7466c79b96ad8be1fb7f705968137abdc01761abb7731df276cad200091",
+      "reason": "saved_valid_response_rejected_by_removed_zero_thinking_usage_assumption"
+    }
+  },
+  "formal_outcomes": 0,
+  "PM_training": 0,
+  "outcome_locks": "ALL_CLOSED"
+}
