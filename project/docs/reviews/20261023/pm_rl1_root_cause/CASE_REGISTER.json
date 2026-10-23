@@ -1,0 +1,104 @@
+{
+  "status": "EVIDENCE_ATTRIBUTION_NOT_NEW_GOLD_LABELS",
+  "cases": [
+    {
+      "id": "data_compilation",
+      "evidence_level": "已证实的历史来源编译问题",
+      "finding": "MP更新引用不能支持完整属性重述；已在该批抑制，不代表原始事实全假。",
+      "source": "docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md",
+      "source_sha256": "b3559c6480590a2541ba93bc8c617504b43995ee64e64826fcbe97d5b38ab8a8",
+      "resolution": "限定修复已完成；检查现行资源时只归因仍存在的证据缺口。",
+      "new_human_gold": false
+    },
+    {
+      "id": "input_roles",
+      "evidence_level": "局部干预支持组织方式影响",
+      "finding": "历史supporter与当前assistant混同、整体JSON任务误读；角色/接口修订在开发案例改变了行为。",
+      "source": "docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md",
+      "source_sha256": "b3559c6480590a2541ba93bc8c617504b43995ee64e64826fcbe97d5b38ab8a8",
+      "resolution": "保留现行表示；组合干预不能把全部改进归给单个字段。",
+      "new_human_gold": false
+    },
+    {
+      "id": "rs_applicability",
+      "evidence_level": "局部干预支持G误用资源",
+      "finding": "无当前求职依据却采纳RS求职情境；16次新旧对照只确认一处已知修复。",
+      "source": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/rs_applicability_20261019_v1/execution_review_20261019/RESULTS_ZH.md",
+      "source_sha256": "ae17fa9f51cdf18cb6ca0f448d276872851c4853356a9f25ae9eebe2766cd994",
+      "resolution": "候选指导未替换正式G；先判是否为普遍适用性问题，不追加熟题调参。",
+      "new_human_gold": false
+    },
+    {
+      "id": "weak_supervision",
+      "evidence_level": "缺陷已证实；效果因果未定",
+      "finding": "4条目标有重复JSON键缺陷，use/ignore字段不可信，作者与核验同模型。",
+      "source": "docs/PM_RL1_P2_EXECUTOR_RESULTS_20261001_ZH.md",
+      "source_sha256": "57a7d11ac2b2e8f87cd15c715c5096a32c6234dedcdf5283d0235e8616c1f0ba",
+      "resolution": "保留实际训练；利用现成base/LoRA对照，不据NLL推断质量提高或立即重训。",
+      "new_human_gold": false
+    },
+    {
+      "id": "current_vs_extra",
+      "evidence_level": "信息来源位置可定位",
+      "finding": "部分身份信息已经在当前前缀，OFF可见；改善归属不能自动记为GET收益。",
+      "source": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/researcher_annotation_review_20261019_v1/RESEARCHER_REVIEW_ZH.md",
+      "source_sha256": "36f659f09904e66ba7cd1369a923ddf398a1e4fa2775ff0ba5d3c7d7d416cd85",
+      "resolution": "逐项标明信息原本可见位置；不把一般能力修复归因资源获取。",
+      "new_human_gold": false
+    },
+    {
+      "id": "local_positive_reference",
+      "evidence_level": "已有单人局部正向参照",
+      "finding": "早期4资源对照3平1偏ME；偏ME的旧案例被后来P04复用，裁判原方向相反。",
+      "source": "outputs/pm_rl1/human_acceptance_20261014_v2/intake/development_comparisons_private.json",
+      "source_sha256": "6c650023234cc22ad25c8dded33e3e424ed17317509277e9d5767c6d6791701a",
+      "resolution": "保留该正向开发判断且去重；不是新的独立标签或精确净收益。",
+      "new_human_gold": false
+    },
+    {
+      "id": "judge_reading_and_scale",
+      "evidence_level": "实际重复差异；政策与执行混合",
+      "finding": "12终点四重复中5个U变化；04B双读，严重风险标志该批未翻转。",
+      "source": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/noise_human_analysis_20261020_v1/RESULTS_ZH.md",
+      "source_sha256": "fee8827867250c368297c26ca4573a435d3b51c6a95a7c9e3b056ec0e8e9a0aa",
+      "resolution": "沿已有政策区分执行错误与真歧义；无须要求永不出错，亦不能平均掩盖定义问题。",
+      "new_human_gold": false
+    },
+    {
+      "id": "relation_reference",
+      "evidence_level": "局部诊断支持两个不同环节",
+      "finding": "06B关系参照后两次关系判断改善而q仍2/3；关系分类来自原协调者分析。",
+      "source": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/relation_reference_results_20261021_v1/SCORE_MATRIX.json",
+      "source_sha256": "f432460dad189d52dc1763ba0168c44ec7523a03bcadd5e4633694adb82175a5",
+      "resolution": "事实读取和数值后果分别核验；不能把辅助参照臂当自动系统合格。",
+      "new_human_gold": false
+    },
+    {
+      "id": "task_reference",
+      "evidence_level": "未显示附加卡片增益",
+      "finding": "06B同期两臂均稳定，04B两臂仍波动，35B严重度不同。",
+      "source": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/task_reference_results_20261021_v1/SCORE_MATRIX.json",
+      "source_sha256": "7e57683d0e9a1e6a6370c1bda2f5a0ad1c24c110e3e5b8a3fb914f09aec04d02",
+      "resolution": "不把共同变化归功于新增卡片；不继续同类提示循环。",
+      "new_human_gold": false
+    },
+    {
+      "id": "delivery_vs_semantics",
+      "evidence_level": "历史工程故障与剩余语义失败并存",
+      "finding": "早期量表/schema未送达；后期完整送达仍有条款矛盾。",
+      "source": "docs/pm_rl1_workspace_20261022/COMPLETION_EXECUTION_ZH.md",
+      "source_sha256": "58e0353ecfe6a2833066a52d1b5c23c7bfbe66335e5ff0f73e70b66079c53566",
+      "resolution": "修复输入和生产适配，S/A阶段核查语义增量；旧失败不回填。",
+      "new_human_gold": false
+    },
+    {
+      "id": "policy_learning",
+      "evidence_level": "尚无自然学习结果",
+      "finding": "BC检查点0、自然更新0；真实G/BGE局部集成成功不能判断PM能力。",
+      "source": "docs/reviews/20261023/pm_rl1_local_success/VERIFIED_RESULT.json",
+      "source_sha256": "11fe4ae268d0cf33d23b3059ad474b69e92204c0d7fcf5b9eea03b8da242ad82",
+      "resolution": "反馈资格后真实BC、完整16条更新及再采样，再用OneShot/NoText定位顺序价值。",
+      "new_human_gold": false
+    }
+  ]
+}
