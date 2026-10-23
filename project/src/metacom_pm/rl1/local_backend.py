@@ -115,7 +115,15 @@ class LocalBackend:
         save_json(self.root/f'load_{index:04d}.started.json',dict(protocol_identity=self.identity))
         started=time.monotonic()
         self.generator=self.generator_factory(self.protocol['runtime'])
-        if dict(self.generator.manifest,identity=self.generator.identity)!=self.protocol['runtime']:
+        observed=dict(self.generator.manifest,identity=self.generator.identity)
+        save_json(self.root/f'load_{index:04d}.observed.json',dict(
+            status='LOADER_RETURNED_NOT_YET_VALIDATED',runtime=observed,
+            canonical_runtime_identity=digest(observed),seconds=time.monotonic()-started))
+        # Native dataclass policy uses an EOS tuple; JSON freezes use a list.
+        # Compare every field in the same canonical JSON domain as the original
+        # identity, and independently recompute the loader's claimed identity.
+        if (digest(observed)!=digest(self.protocol['runtime'])
+                or digest(self.generator.manifest)!=self.generator.identity):
             self.generator=None
             raise ValueError('loaded generator differs from frozen runtime')
         save_json(self.root/f'load_{index:04d}.done.json',dict(runtime=self.protocol['runtime'],seconds=time.monotonic()-started))

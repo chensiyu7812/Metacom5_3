@@ -188,3 +188,45 @@ def test_probe_rejects_source_change_before_any_loader(tmp_path):
     episodes[pid]=(replace(s,draw_identity='unexpected_draw'),r)
     with pytest.raises(ValueError,match='changed'):run_probe(p,cases,episodes,tmp_path/'probe',backend=b)
     assert not events and not b.root.exists()
+
+
+def native_policy_backend(tmp_path,change=None):
+    from dataclasses import asdict
+    import json
+    from metacom_pm.rl1.generation import NaturalEndPolicy
+    b,_,_,_,events,_,_=setup(tmp_path)
+    policy=asdict(NaturalEndPolicy(131072,(128001,128008,128009)))
+    native={k:v for k,v in b.protocol['runtime'].items() if k!='identity'}
+    native['policy']=policy
+    expected=json.loads(json.dumps(stamp(native)))
+    p=stamp({k:v for k,v in dict(b.protocol,runtime=expected).items() if k!='identity'})
+    def factory(_):
+        g=b.generator_factory(expected);g.manifest=native;g.identity=expected['identity']
+        if change=='timeout':g.manifest['policy']['timeout_seconds']=301.
+        if change=='eos':g.manifest['policy']['eos_token_ids']=(128001,128008,128010)
+        if change=='identity':g.identity='FALSE_IDENTITY'
+        return g
+    return LocalBackend(p,tmp_path/'native',generator_factory=factory,
+        bge_factory=b.bge_factory,gpu_guard=b.gpu_guard)
+
+
+def test_native_policy_tuple_matches_json_freeze_by_full_canonical_identity(tmp_path):
+    import json
+    b=native_policy_backend(tmp_path);b.prepare()
+    assert isinstance(b.generator.manifest['policy']['eos_token_ids'],tuple)
+    assert isinstance(b.protocol['runtime']['policy']['eos_token_ids'],list)
+    observed=json.loads((b.root/'load_0000.observed.json').read_text())
+    assert observed['runtime']==b.protocol['runtime']
+    assert observed['canonical_runtime_identity']==digest(b.protocol['runtime'])
+    assert (b.root/'load_0000.done.json').exists()
+
+
+@pytest.mark.parametrize('change',['timeout','eos','identity'])
+def test_actual_runtime_change_is_retained_and_rejected_without_reload(tmp_path,change):
+    import json
+    b=native_policy_backend(tmp_path,change)
+    with pytest.raises(ValueError,match='differs'):b.prepare()
+    observed=json.loads((b.root/'load_0000.observed.json').read_text())
+    assert observed['runtime']!=b.protocol['runtime']
+    assert not (b.root/'load_0000.done.json').exists()
+    with pytest.raises(ValueError,match='load envelope'):b.prepare()
