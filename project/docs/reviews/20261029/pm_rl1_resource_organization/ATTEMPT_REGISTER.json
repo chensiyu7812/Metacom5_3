@@ -1,0 +1,951 @@
+{
+  "scope": "PM-RL1 major recorded routes from 2026-09-28 through latest offline audit; not exhaustive request-level re-audit",
+  "compiled_date": "2026-10-29",
+  "baseline_commit": "e042fe0",
+  "source_timeline": {
+    "path": "docs/pm_rl1_workspace_20261022/EVIDENCE_TIMELINE_ZH.md",
+    "exists": true,
+    "sha256": "e7e40680fec4108c213b06665d37315148bed8ea6a698cf6e1d10d1898a9fab2",
+    "verification": "report bytes/hash, not a new per-request semantic audit"
+  },
+  "current_308_counter_scope": "307 in the later judge chain plus one Claude configuration refusal; not all historical local G/J or all model attempts",
+  "do_not_sum_stage_counters": true,
+  "raw_requests_reexecuted": 0,
+  "new_gold_labels": 0,
+  "routes": [
+    {
+      "id": "J01",
+      "route": "Qwen 首轮联合q/m与引文规范化",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "55次严格22有效；仅字形规范化26；编号接口追加5次均结构可读。",
+      "do_not_repeat": "机械引用恢复不等于语义蕴含；不可只报有效子集。",
+      "reopen_only_with": "明确新的输入/解析差异及完整分母，不能重抽好分。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_MEASUREMENT_PILOT_RESULTS_20260928_ZH.md",
+          "exists": true,
+          "sha256": "e4fbb7185590d4759b24823a5212810a8d798e944b3f025e864342817e922cf6",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J02",
+      "route": "Qwen 编号引用、relation/schema简化",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "v2 49/55有效；v3结构冲突；v4 64/67可解析但仍有事实/严重度矛盾和重复分差。v5仅离线准备。",
+      "do_not_repeat": "不能把grammar和同分缓存当可靠测量。",
+      "reopen_only_with": "针对已证机制的实际wire核对与语义独立参照；不能把准备版本记为实跑。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_RESOLUTION_AND_E0_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "61e03c5df88b7d155f99cec5e770fabb073522018fc2ef7a020817c5efbddf02",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J03",
+      "route": "Compass 复杂结构及一次简化",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "复杂版12次失败；简化版12次可读但无要求的来源ID，存在选项/理由冲突。",
+      "do_not_repeat": "控制中5/6可能等于总选A；不同checkpoint不自动是独立模型家族。",
+      "reopen_only_with": "改变能力或输入机制并用平衡/反序及证据核验。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_RESOLUTION_AND_E0_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "61e03c5df88b7d155f99cec5e770fabb073522018fc2ef7a020817c5efbddf02",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J04",
+      "route": "Prometheus 原生相对评分",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "88调用；86可解析，换序与虚构比较理由问题。",
+      "do_not_repeat": "相同回复也能编造差异；不能投票掩盖这种错误。",
+      "reopen_only_with": "新任务适配/监督证据，而非原配置重复跑熟题。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_R04B_CANDIDATE_RESULTS_20260930_ZH.md",
+          "exists": true,
+          "sha256": "9c79fd20e5d4827f0689b8514fd2045050f5db4a3009fc97e3b40971e717206e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J05",
+      "route": "Skywork 原生标量排序",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "94条可读，2条范围外未调用；确定性重复仍可强烈偏好错误自传。",
+      "do_not_repeat": "稳定不是正确；epsilon不能修正大幅错误方向；raw logit不能冒充q/m。",
+      "reopen_only_with": "明确用途和有依据的语义校准，不能事后调阈值宣称原卷通过。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_R04B_CANDIDATE_RESULTS_20260930_ZH.md",
+          "exists": true,
+          "sha256": "9c79fd20e5d4827f0689b8514fd2045050f5db4a3009fc97e3b40971e717206e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "S01",
+      "route": "MP更新来源隔离与时点投影",
+      "disposition": "retain_scoped_source_repair",
+      "outcome": "旧101次更新复核、部分抑制；先选当时最新再隔离，不自动回退旧事实。",
+      "do_not_repeat": "找得到quote不代表支持完整属性；抑制不等于事实全假。",
+      "reopen_only_with": "有新增原文依据可修复；时间链只由当时可知来源生成。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_SOURCE_REPAIR_AND_ENGINEERING_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "1ee6c5f2f97126b5d6b1d77994e3a120ca3222a88b3eed55ee352531bfb73f80",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "G01",
+      "route": "作者弱目标第二批与工程LoRA",
+      "disposition": "engineering_only",
+      "outcome": "108回复；90接纳弱目标，原全格准入未过；61/29工程训练，MP训练0。",
+      "do_not_repeat": "不能不断补抽到全格通过；NLL下降不是支持质量。",
+      "reopen_only_with": "明确覆盖和监督缺陷后的新数据方案，旧失败保留。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_SOURCE_REPAIR_AND_ENGINEERING_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "1ee6c5f2f97126b5d6b1d77994e3a120ca3222a88b3eed55ee352531bfb73f80",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "G02",
+      "route": "旧155弱目标覆盖训练",
+      "disposition": "superseded_not_erased",
+      "outcome": "覆盖不足，后由P1/P2新版本承接。",
+      "do_not_repeat": "不能将该批作为完整四头资源利用监督。",
+      "reopen_only_with": "依据最终数据覆盖/来源变化重建训练身份。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_EXECUTOR_COVERAGE_AND_STOPPING_20260929_ZH.md",
+          "exists": true,
+          "sha256": "65507167c35e8798aaec1350e00195198738c314b06d33c12f4733afd770890a",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_COVERAGE_TRAINING_RESULTS_20260930_ZH.md",
+          "exists": true,
+          "sha256": "94dca5b34fc91e1e3c8e5d2c4122ee54a9e6e77566fca1f56d315eaaf75cd711",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "S02",
+      "route": "P1来源/角色/原生user接口",
+      "disposition": "retain_versioned_fix",
+      "outcome": "72 MP、24 ME有限审查；88生成诊断；现DirectReplyRenderer。",
+      "do_not_repeat": "历史supporter不是当前AI；整体JSON曾导致第三人称分析。",
+      "reopen_only_with": "实际新输入变化才重测受影响项，不重复已完成集成。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md",
+          "exists": true,
+          "sha256": "b3559c6480590a2541ba93bc8c617504b43995ee64e64826fcbe97d5b38ab8a8",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "G03",
+      "route": "P2 493弱目标和三epoch LoRA",
+      "disposition": "trained_executor_quality_unestablished",
+      "outcome": "413/80目标；586主回复与53同输入base对照；4条重复键准入缺陷，质量收益未证明。",
+      "do_not_repeat": "作者与核验同模型、use/ignore自报不作金标；不按NLL直接宣称获益。",
+      "reopen_only_with": "先分析现成同输入对照，再决定新监督/训练是否必要。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_P2_EXECUTOR_RESULTS_20261001_ZH.md",
+          "exists": true,
+          "sha256": "57a7d11ac2b2e8f87cd15c715c5096a32c6234dedcdf5283d0235e8616c1f0ba",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J06",
+      "route": "P3初版结构化裁判和人工材料",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "32主评分＋1复核；40对材料设计。",
+      "do_not_repeat": "有数值和交卷工具不等于资格。",
+      "reopen_only_with": "固定新候选及原人工用途。",
+      "sources": [
+        {
+          "path": "docs/pm_rl1_completion_20260930_v2/p3_development_results.json",
+          "exists": true,
+          "sha256": "8cade38c3c5ce704986fb0b041d7e74ebbe5074fda8ae47101b3a259a61108d6",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md",
+          "exists": true,
+          "sha256": "8efd4a79b53d79ba8eae7eb387280d1e941fc14789821dd4d9935c5d7b003f64",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "H01",
+      "route": "开发16题接收与派生记录",
+      "disposition": "retain_development_references",
+      "outcome": "已有实质备注；Du为派生，不能算第二位独立人。",
+      "do_not_repeat": "重复材料/AI复核不增加独立人群或评审者。",
+      "reopen_only_with": "仅对新且必要的未知点收集参照，不重发整套旧题。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_DEVELOPMENT_CLOSEOUT_20261014_ZH.md",
+          "exists": true,
+          "sha256": "98276c615cb39a470d16a6f61da51812504d91058585ec63169b770735ec83b2",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J07",
+      "route": "Gemma A/B及接续",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "语义与技术STOP，未选出合格配置。",
+      "do_not_repeat": "模型名或格式修复不能继承资格。",
+      "reopen_only_with": "机制变化、固定开发比较和独立参照。",
+      "sources": [
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/AB_development_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "9c39475600cb89c72790e1270875e96706ecfe706bef152383a4f913b9faa2e1",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/AB_diagnostic_continuation_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "248bd79096f902a2148362a865373a176eedf767d72e315af3be303bd686ce1e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J08",
+      "route": "DeepSeek C/D及D接续",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "C等义分差；D接续末尾重复JSON键失败，当时累计120。",
+      "do_not_repeat": "已知格式失败不可当能力失败，失败结果不可覆盖。",
+      "reopen_only_with": "完整wire交付与语义结果分开验证。",
+      "sources": [
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/CD_engineering_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "1e16ec563747637fb5c28ed9f2b6bbf3fb83f23ed76e7806fa3668dc2a77147c",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/D_development_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "100fa46a2ceab9e729013b10f1ee37b9119a107ba2bc6e3ebf02080764128214",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J09",
+      "route": "联合评分 vs 分步提取",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "24J，没有已证明的上下文修复，不升级分步。",
+      "do_not_repeat": "多一步不自动改善；同模型抽取不能自证事实。",
+      "reopen_only_with": "新的缺失能力/监督证据，不重复原拆分提示。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "11b33fd65434c70be647740c87960a45d04307bee19051a449845c86102a5fc4",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "G04",
+      "route": "RS适用性指导对照",
+      "disposition": "candidate_local_gain_not_promoted",
+      "outcome": "16G，一处已知求职套用得到局部修复。",
+      "do_not_repeat": "局部修复不推广为普遍正确，也不能为涨效果无条件替换冻结G。",
+      "reopen_only_with": "固定新开发材料；来源条件化RS与原版同输入对照。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_RESULTS_20261019/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "ae17fa9f51cdf18cb6ca0f448d276872851c4853356a9f25ae9eebe2766cd994",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "G05",
+      "route": "本地执行与闭环生成诊断",
+      "disposition": "generation_only",
+      "outcome": "45计划槽，41G自然完成，4无库存；无新合格q/m。",
+      "do_not_repeat": "生成成功、随机初始化诊断不能称真实BC/PPO。",
+      "reopen_only_with": "合格反馈后使用真实初始化与完整自然轨迹。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "1478a6bb02d1828d19b309232bf76f5f22be11bf9056eabe9c1c0bd4678fb574",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J10",
+      "route": "行动阶段提醒",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "9J后稳定性STOP，06B同输入U差0.5。",
+      "do_not_repeat": "强调意向/行动不等于稳定q。",
+      "reopen_only_with": "独立核查事实读取和量化后果，不能继续只加提醒。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "d5fbb8c6075a6b2e086ae5fb371e5d595cd35276c2c8c821fefbe09e40d10097",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J11",
+      "route": "四次重复与均值诊断",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "48J覆盖12终点，5终点U变化；平均未建立推进条件。",
+      "do_not_repeat": "重复不是新独立样本；不能平均掉定义歧义或按喜欢的分数选。",
+      "reopen_only_with": "明确测量政策/监督或真实机制差异，独立repeat保留独立draw。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "ce77283dc83324f6792284978689f8c35b9d02b66a551ac82c9ec3e8acdbdf3a",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "H02",
+      "route": "七组方向人工及旧ME偏好",
+      "disposition": "retain_correlated_development_references",
+      "outcome": "后7组6平1偏OFF；旧ME局部正例后来P04复用。",
+      "do_not_repeat": "不遗漏正例，也不双计；平局不强行拉开。",
+      "reopen_only_with": "按原低差异分支；保留STOP情境。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_HUMAN_DIRECTION_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "fee8827867250c368297c26ca4573a435d3b51c6a95a7c9e3b056ec0e8e9a0aa",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J12",
+      "route": "锚点校准",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "24J；04B仍波动、06B未完整修复。",
+      "do_not_repeat": "熟题锚点不能自动变泛化能力。",
+      "reopen_only_with": "新监督或可检验机制变化，另用未调规则材料。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "743bc2c571ff9de336e282c9e162ae8e1f2be3fb8e5f1b84a00803cac2805f11",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J13",
+      "route": "关系参照",
+      "disposition": "partial_mechanism_gain_not_qualified",
+      "outcome": "28J；06B关系局部改善，q仍2/3。",
+      "do_not_repeat": "事实判断和评分后果不可混为一个成功指标。",
+      "reopen_only_with": "采用有效分项，另校准质量尺度；这不禁止来源图优化。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_RESULTS_20261021/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "69b731ffbcc3279004a7f827acbe825e93510389bf7fc67a1128e2cc9c5313d7",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J14",
+      "route": "任务参照卡",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "32J；同期两臂共同变化，未显示新增卡片增益。",
+      "do_not_repeat": "不能把共同变化归功于新增提示。",
+      "reopen_only_with": "能区分新增机制贡献的固定比较，而非继续加卡。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_RESULTS_20261021/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "c3d106b9061ae5da2bc17fd339dfdababf6121ea00f5e2d2c445ca7851f4f115",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J15",
+      "route": "初评—审查—补核原型与source_evidence接续",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "6＋11次；原17次3/4配对完整，唯一补核未改分；原审查缺完整量表。",
+      "do_not_repeat": "回复有错不等于初评漏判；本地schema不能替代发送给模型。",
+      "reopen_only_with": "真实wire全量核验、收益与成本、有限S/A路线选择。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "d6c16699dc25451d12ede9d71499c5c8b28b64b236e56f6cf9d04753deb74b77",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "06103d489bd89dafab87c97a5d349392dbb6696a96f3cae6fc1577d66a2c7ea3",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J16",
+      "route": "评分关联审查",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "2次，1有效、1多余括号失败。",
+      "do_not_repeat": "解析有效不保证依据/量表执行正确。",
+      "reopen_only_with": "完整输入交付修复明确、技术和语义独立验收。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "3bd89dbca54163c2256a3f869ffaf51d190813d711559e8b5c442deccb9ccdc1",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J17",
+      "route": "Beta strict接续",
+      "disposition": "not_qualified_for_reward",
+      "outcome": "3次，2有效1格式失败；有效输出仍有q3条款矛盾；旧3槽未派发。",
+      "do_not_repeat": "strict参数不是验收；不自动恢复旧STOP或挪旧剩余额。",
+      "reopen_only_with": "新完整阶段和有限恢复，不能原配置逐错逐次续命。",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "35447dab75455a83a75d1f449a0d796f8836cccdb232ab5ed7151e87b135bc82",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "J18",
+      "route": "Claude试用配置",
+      "disposition": "deferred_configuration_not_model_failure",
+      "outcome": "1次评分请求配置拒绝；workspace查询403；无评分结果。",
+      "do_not_repeat": "配置/账户问题不能诊断Claude语义能力；未用额度不转移。",
+      "reopen_only_with": "账户归属/配置明确且具体阶段获批后才有能力实验。",
+      "sources": [
+        {
+          "path": "docs/pm_rl1_workspace_20261022/ORIGINAL_PLAN_RESUMPTION_ZH.md",
+          "exists": true,
+          "sha256": "d52d322bb5c51e8f79936237e4a870277578db6a4fc85d1cdec149b75edae96c",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "E01",
+      "route": "内容评分复用、有限恢复、统一学习队列",
+      "disposition": "retain_engineering",
+      "outcome": "主要工程缺口已修；合成BC/完整batch接线通过。",
+      "do_not_repeat": "缓存同分不是准确性；mock通过不代表真实评分流程完整。",
+      "reopen_only_with": "生产版本变化时测接线；不重复以测试数代替研究结果。",
+      "sources": [
+        {
+          "path": "docs/reviews/20261022/pm_rl1_backend/BACKEND_REVIEW_ZH.md",
+          "exists": true,
+          "sha256": "9bb803bcce95286c80370c8e9fc2b43113a22c61bddfebe0379a3fa0694a72e7",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "E02",
+      "route": "真实G/BGE固定集成",
+      "disposition": "retain_real_integration",
+      "outcome": "EOS tuple/list误拒绝已修，另批准8G/8编码完成；回复与历史对应相同。",
+      "do_not_repeat": "不把同输入复现算新增训练样本，不重复运行已收口探针。",
+      "reopen_only_with": "实际模型/runtime/接口变动后才验证受影响部分。",
+      "sources": [
+        {
+          "path": "docs/reviews/20261023/pm_rl1_local_execution/EXECUTION_ZH.md",
+          "exists": true,
+          "sha256": "a2d0236da6b9a2af16fe5b9f897f7ce33b8ebe47f80bc320ca2f92cd4acb488b",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/reviews/20261023/pm_rl1_local_success/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "0153b65a2c2bbacfc22619009cbe4e2fbbdf1fdc734c0867aad74e8d6054ce57",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "E03",
+      "route": "E0合成环境真实学习",
+      "disposition": "engineering_learning_not_natural_learning",
+      "outcome": "有真实优化与价值初始化证据，属于已知小任务。",
+      "do_not_repeat": "toy可学不证明自然任务可学；未测自然终值不可补oracle。",
+      "reopen_only_with": "只在算法/接线变动或出现新失败时回归。",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_RESOLUTION_AND_E0_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "61e03c5df88b7d155f99cec5e770fabb073522018fc2ef7a020817c5efbddf02",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "O01",
+      "route": "来源机会审计与最小时序索引",
+      "disposition": "completed_offline_audit",
+      "outcome": "114前缀、586回复重核；MS179位置阻塞；52同内容高成本；原始ID/盲化序号适配修复。",
+      "do_not_repeat": "不要把每条quote存在当语义正确；不要把旧硬预算当不可改前提。",
+      "reopen_only_with": "研究者本轮已要求解除人为限制，开始新组织对照。",
+      "sources": [
+        {
+          "path": "docs/reviews/20261029/pm_rl1_reorganization/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "0f6f7f3049efe90c91fe96449e040ff64467ef2724d2314f38aa49e0aff1fc07",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    },
+    {
+      "id": "P01",
+      "route": "自然BC与PPO",
+      "disposition": "not_started_no_capability_verdict",
+      "outcome": "合格BC检查点0、自然更新0。",
+      "do_not_repeat": "不能写成PM已经学失败；不能用新索引轨迹代替训练。",
+      "reopen_only_with": "合格反馈、冻结同域基线及版本后开展真实闭环。",
+      "sources": [
+        {
+          "path": "docs/reviews/20261029/pm_rl1_reorganization/J1_READINESS.json",
+          "exists": true,
+          "sha256": "1e88ed30ec24f8cd76fe587552c9bd2b373f999bd6b9dc2428973315e254757a",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ],
+      "findings_are_not_new_human_gold": true
+    }
+  ],
+  "historical_timeline": [
+    {
+      "stage": "09-28 原始方向",
+      "reported_result": "从Paper-1扩展为单轮有限步资源获取；建立观测、动作、预算及执行边界",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md",
+          "exists": true,
+          "sha256": "7888613fac3a0820db2be012d9f85b59eb0dbb0a22d373a68eaaa3b6acb94a6b",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md",
+          "exists": true,
+          "sha256": "8f4556ba282c51595f8b4ff2b707e7742b3568f9b8b2c55b2d42133b0ecbcfac",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "09-28—29 环境/E0",
+      "reported_result": "实现GET/STOP、冻结来源、有限环境PPO与初始化；不代表自然任务成功",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_ENGINEERING_PROGRESS_20260928_ZH.md",
+          "exists": true,
+          "sha256": "2d004e32abae66274dc89aed49e99237e6c611a0aa2ed6398c37d4d150707e78",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_RESOLUTION_AND_E0_RESULTS_20260929_ZH.md",
+          "exists": true,
+          "sha256": "61e03c5df88b7d155f99cec5e770fabb073522018fc2ef7a020817c5efbddf02",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "09-29—30 初版执行器",
+      "reported_result": "155条接纳弱目标的旧一轮训练；覆盖不足，后被P1/P2新版本承接",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_EXECUTOR_COVERAGE_AND_STOPPING_20260929_ZH.md",
+          "exists": true,
+          "sha256": "65507167c35e8798aaec1350e00195198738c314b06d33c12f4733afd770890a",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_COVERAGE_TRAINING_RESULTS_20260930_ZH.md",
+          "exists": true,
+          "sha256": "94dca5b34fc91e1e3c8e5d2c4122ee54a9e6e77566fca1f56d315eaaf75cd711",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "09-30 R04B",
+      "reported_result": "Prometheus/Skywork有限原生接口实验均未获reward资格",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_R04B_CANDIDATE_RESULTS_20260930_ZH.md",
+          "exists": true,
+          "sha256": "9c79fd20e5d4827f0689b8514fd2045050f5db4a3009fc97e3b40971e717206e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "09-30 完成方案v2",
+      "reported_result": "收敛至单冻结执行器下完整资源策略研究，明确P0—P7与备用路线",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_FEASIBLE_COMPLETION_PLAN_20260930_ZH.md",
+          "exists": true,
+          "sha256": "b8207857a11a6777242c158559c3f14b418316e3e5daf2531e704083e4b764c7",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-01 P1",
+      "reported_result": "72 MP＋24 ME有限审查；88条生成诊断，修复角色/来源交付并复算容量",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_P1_REPRESENTATION_RESULTS_20261001_ZH.md",
+          "exists": true,
+          "sha256": "b3559c6480590a2541ba93bc8c617504b43995ee64e64826fcbe97d5b38ab8a8",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-01 P2",
+      "reported_result": "493条弱目标、一次三epoch LoRA、639条比较回复；披露重复键与跨加载限制",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_P2_EXECUTOR_RESULTS_20261001_ZH.md",
+          "exists": true,
+          "sha256": "57a7d11ac2b2e8f87cd15c715c5096a32c6234dedcdf5283d0235e8616c1f0ba",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-01—02 P3初版",
+      "reported_result": "32条开发主评分＋1次完整来源复核；40对人评工具；奖励未合格",
+      "sources": [
+        {
+          "path": "docs/pm_rl1_completion_20260930_v2/p3_development_results.json",
+          "exists": true,
+          "sha256": "8cade38c3c5ce704986fb0b041d7e74ebbe5074fda8ae47101b3a259a61108d6",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "docs/PM_RL1_STAGE_PUBLICATION_20261002_ZH.md",
+          "exists": true,
+          "sha256": "8efd4a79b53d79ba8eae7eb387280d1e941fc14789821dd4d9935c5d7b003f64",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-14 开发接收",
+      "reported_result": "开发16题有实质备注；Du为派生；24封存对与12复评未据此通过",
+      "sources": [
+        {
+          "path": "docs/PM_RL1_DEVELOPMENT_CLOSEOUT_20261014_ZH.md",
+          "exists": true,
+          "sha256": "98276c615cb39a470d16a6f61da51812504d91058585ec63169b770735ec83b2",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-15 Gemma A/B",
+      "reported_result": "A/B开发及接续遇语义/技术STOP；没有确定合格配置",
+      "sources": [
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/AB_development_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "9c39475600cb89c72790e1270875e96706ecfe706bef152383a4f913b9faa2e1",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/AB_diagnostic_continuation_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "248bd79096f902a2148362a865373a176eedf767d72e315af3be303bd686ce1e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-15 DeepSeek C/D",
+      "reported_result": "首轮8次；C遇等义分差STOP；D接续13次，最后重复JSON键失败；当时累计120",
+      "sources": [
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/CD_engineering_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "1e16ec563747637fb5c28ed9f2b6bbf3fb83f23ed76e7806fa3668dc2a77147c",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "outputs/pm_rl1/judge_selection_preparation_20261014_v1/D_development_20261015/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "100fa46a2ceab9e729013b10f1ee37b9119a107ba2bc6e3ebf02080764128214",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-19 人评与澄清",
+      "reported_result": "同研究者八条原标注、三项补充；保留04B双读、06B行动预设、16A亲历归属",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_ANNOTATION_REVIEW_20261019/README_ZH.md",
+          "exists": true,
+          "sha256": "5a9a111209d220f9cb8c5f6a052b0613d22ee4477a379b0237dcebddbbee442b",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        },
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_REFERENCE_UPDATE_20261019/FOLLOWUP_AND_NEXT_STEP_ZH.md",
+          "exists": true,
+          "sha256": "147056a9a90d2847e821057512872693bb58ff9e5e533ac2f9ee81a80e5f425e",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-19 联合/分步",
+      "reported_result": "24J完成，累计144；没有已证实的上下文修复，不升级分步流程",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "11b33fd65434c70be647740c87960a45d04307bee19051a449845c86102a5fc4",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-19 RS适用性",
+      "reported_result": "16G完成；一个已知求职套用错误得到局部修复；J仍144",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_RESULTS_20261019/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "ae17fa9f51cdf18cb6ca0f448d276872851c4853356a9f25ae9eebe2766cd994",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-20 本地与闭环",
+      "reported_result": "45计划槽中41G自然完成、4不具库存；没有新q/m和自然训练",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "1478a6bb02d1828d19b309232bf76f5f22be11bf9056eabe9c1c0bd4678fb574",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-20 行动提醒",
+      "reported_result": "9J后稳定性STOP，累计153；06B同输入U差0.5",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "d5fbb8c6075a6b2e086ae5fb371e5d595cd35276c2c8c821fefbe09e40d10097",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-20 奖励噪声",
+      "reported_result": "48J完成，累计201；平均未达到推进条件",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "ce77283dc83324f6792284978689f8c35b9d02b66a551ac82c9ec3e8acdbdf3a",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-20 七组方向人评",
+      "reported_result": "六组相当、一组A；旧P04另列复用；同一研究者开发参照",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_HUMAN_DIRECTION_RESULTS_20261020/RESULTS_ZH.md",
+          "exists": true,
+          "sha256": "fee8827867250c368297c26ca4573a435d3b51c6a95a7c9e3b056ec0e8e9a0aa",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-20 锚点校准",
+      "reported_result": "24J完成，累计225；04B仍波动，06B未完整修复",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "743bc2c571ff9de336e282c9e162ae8e1f2be3fb8e5f1b84a00803cac2805f11",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-21 关系参照",
+      "reported_result": "28J完成，累计253；06B事实关系局部改善，q仍波动",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_RESULTS_20261021/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "69b731ffbcc3279004a7f827acbe825e93510389bf7fc67a1128e2cc9c5313d7",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-21 任务参照",
+      "reported_result": "32J完成，累计285；未显示B额外任务卡增益",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_RESULTS_20261021/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "c3d106b9061ae5da2bc17fd339dfdababf6121ea00f5e2d2c445ca7851f4f115",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-22 反馈原型/实跑",
+      "reported_result": "原型离线完成；实际第6次因schema合同缺口STOP，累计291，5有效1失败",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "d6c16699dc25451d12ede9d71499c5c8b28b64b236e56f6cf9d04753deb74b77",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-22 source_evidence",
+      "reported_result": "新增11次有效，累计302；原阶段17次、3/4配对完整，唯一补核未改分",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "06103d489bd89dafab87c97a5d349392dbb6696a96f3cae6fc1577d66a2c7ea3",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-22 评分关联审查",
+      "reported_result": "离线候选后实跑2次，累计304；1有效、1末尾额外括号失败",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "3bd89dbca54163c2256a3f869ffaf51d190813d711559e8b5c442deccb9ccdc1",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    },
+    {
+      "stage": "10-22 strict接续",
+      "reported_result": "新增3次，累计307；2有效1格式失败；原8槽合计3有效/5尝试/8计划，3未派发",
+      "sources": [
+        {
+          "path": "/home/tokkio/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_RESULTS_20261022/REPORT_ZH.md",
+          "exists": true,
+          "sha256": "35447dab75455a83a75d1f449a0d796f8836cccdb232ab5ed7151e87b135bc82",
+          "verification": "report bytes/hash, not a new per-request semantic audit"
+        }
+      ]
+    }
+  ],
+  "next_proposal_required_fields": [
+    "prior_route_id",
+    "known_failure_evidence",
+    "changed_mechanism_and_identity",
+    "new_information",
+    "fixed_comparison",
+    "independent_reference_or_explicit_limit",
+    "cost_and_success_failure_exit"
+  ],
+  "rule": "Diagnostic differences justify bounded tests; no new perpetual empirical gate. Same failure, same config, no new evidence does not establish new qualification."
+}
