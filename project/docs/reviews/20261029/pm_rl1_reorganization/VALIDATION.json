@@ -1,0 +1,94 @@
+{
+  "baseline_head": "a81e6ad286abe60fec8494d89199c15d9e4a82a9",
+  "final_run": "project/outputs/pm_rl1/reorganization_20261029_v4",
+  "audit_runs": [
+    {
+      "run": "v1",
+      "status": "FAILED_CLOSED",
+      "reason": "raw turn idx conflated with blinded ordinal; audit adapter bug"
+    },
+    {
+      "run": "v2",
+      "status": "passed"
+    },
+    {
+      "run": "v3",
+      "status": "passed"
+    },
+    {
+      "run": "v4",
+      "status": "passed",
+      "exit_code": 0
+    }
+  ],
+  "pytest": {
+    "tests": "43",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "2.463"
+  },
+  "pytest_exit_code": 0,
+  "pytest_scope": [
+    "test_rl1_temporal_evidence_ledger.py",
+    "test_rl1_environment.py",
+    "test_rl1_representation.py"
+  ],
+  "notebook_cells": [
+    {
+      "cell_index": 1,
+      "status": "passed",
+      "executor": "plain Python sequential exec, not Jupyter kernel"
+    },
+    {
+      "cell_index": 2,
+      "status": "passed",
+      "executor": "plain Python sequential exec, not Jupyter kernel"
+    },
+    {
+      "cell_index": 3,
+      "status": "passed",
+      "executor": "plain Python sequential exec, not Jupyter kernel"
+    }
+  ],
+  "public_CI_for_new_changes": "not_run",
+  "full_repository_tests": "not_run_outside_this_offline_scope",
+  "protected_hashes_checked": true,
+  "source_and_output_hashes_checked": true,
+  "new_model_loads": 0,
+  "new_model_calls": 0,
+  "new_training_updates": 0,
+  "new_human_tasks": 0,
+  "input_missing": [
+    "194 memory candidate source occurrences",
+    "beyond-top4 persisted BGE vectors/ranks",
+    "original raw turn ID mapping",
+    "new returned human references"
+  ],
+  "authority_not_granted": [
+    "S/A actual calls",
+    "P4 generation",
+    "test/sealed unsealing",
+    "BC/PPO/LoRA",
+    "primary resource switch"
+  ],
+  "exposure": "EXPOSURE_INCIDENT.json",
+  "commands": "RUNBOOK_ZH.md",
+  "cli_fail_closed_checks": [
+    {
+      "case": "missing_inputs_before_any_tokenizer_or_model_load",
+      "exit_code": 1,
+      "expected_failure_type": "FileNotFoundError",
+      "result": "passed"
+    },
+    {
+      "case": "existing_output_refused_before_loading_inputs",
+      "exit_code": 1,
+      "result": "passed"
+    }
+  ],
+  "py_compile_exit_code": 0,
+  "git_diff_check_exit_code": 0,
+  "relative_report_links_verified": true,
+  "final_output_manifest_files": 245
+}

@@ -1,0 +1,86 @@
+{
+  "example_only": true,
+  "study_evidence": false,
+  "index": {
+    "version": "pm-rl1-temporal-evidence-ledger-min-v1",
+    "prefix_identity": "109cf20b1d4e8ce17d12d43873855a35ca2e493689b4a439002b6aaa686026a9",
+    "provenance_identity": "synthetic-example-not-study-data",
+    "audience": "construction_evaluator_only",
+    "source_turns": {
+      "synthetic-owner/past:0": {
+        "owner_id": "synthetic-owner",
+        "session_id": "past",
+        "session_rank": 1,
+        "turn_index": 0,
+        "speaker": "seeker",
+        "text": "I intend to talk to my mother.",
+        "reported_at": "2026-01-02",
+        "identity": "1f9c7b321396e4f09a9408c13e04ee45c74de431f4e9b843b9188012acf1f9b4"
+      }
+    },
+    "session_directory": [
+      {
+        "session_id": "past",
+        "session_rank": 1,
+        "reported_at": "2026-01-02",
+        "source_keys": [
+          "synthetic-owner/past:0"
+        ],
+        "summary": null,
+        "topics": null,
+        "summary_status": "not_derived",
+        "completeness": "registered_turns_only_not_certified_complete_session"
+      }
+    ],
+    "claims": {
+      "c0780b8523bcee2db8aeeba696bc6f07b78f56b262b38226654f93aa61deb601": {
+        "candidate_id": "synthetic-me",
+        "head": "ME",
+        "statement": "I intend to talk to my mother.",
+        "subject": null,
+        "stage": "intention",
+        "event_time": null,
+        "outcome": null,
+        "epistemic_status": "source_report_not_verified_world_fact",
+        "spans": [
+          {
+            "source_key": "synthetic-owner/past:0",
+            "source_identity": "1f9c7b321396e4f09a9408c13e04ee45c74de431f4e9b843b9188012acf1f9b4",
+            "source_text_identity": "06a58a3ba235416117aeabeb56d3ed0dc2e38c77c729e936f038b0e011b3ec4c",
+            "speaker": "seeker",
+            "start_char": 0,
+            "end_char": 30,
+            "exact_quote": "I intend to talk to my mother."
+          }
+        ],
+        "input_source_keys": [
+          "synthetic-owner/past:0"
+        ],
+        "derivation_method": "synthetic_fixture_only",
+        "derivation_identity": "synthetic",
+        "review_status": "unverified",
+        "semantic_support": "unverified",
+        "training_label": false
+      }
+    },
+    "relations": {},
+    "unknown_is_not_false": true,
+    "main_retrieval_changed": false,
+    "model_calls": 0,
+    "semantic_labels_created": 0,
+    "identity": "861bec050ebfed0b02ea8ebe56c01885a597ee64d7b72b6e68754fb0a743f7ad"
+  },
+  "lookup": [
+    {
+      "source_key": "synthetic-owner/past:0",
+      "source_identity": "1f9c7b321396e4f09a9408c13e04ee45c74de431f4e9b843b9188012acf1f9b4",
+      "ranking_method": "literal_unique_word_overlap_v1",
+      "ranking_score": 1,
+      "matched_terms": [
+        "mother"
+      ],
+      "bge_similarity": null,
+      "actor_visible": false
+    }
+  ]
+}
