@@ -1,0 +1,32 @@
+{
+  "entries": [
+    {
+      "actual_G_calls": 1,
+      "actual_G_loads": 1,
+      "id": "O4-real-fixed-resource-comparison",
+      "quality_effect": "unverified",
+      "retry_rule": "completed result reused; 42 never-started only; no unknown request repetition",
+      "source_bound": true,
+      "status": "one_of_43_completed"
+    },
+    {
+      "do_not_repeat": "do not cherry-pick the lower utilization or relax thresholds to force launch",
+      "evidence": "three earlier CSV=2/later XML=0 receipts",
+      "id": "GPU-sampling-order",
+      "method": "always latest snapshot, including adverse changes",
+      "status": "fixed"
+    },
+    {
+      "do_not_repeat": "coordinate an idle window; do not kill others or silently consume extra model loads",
+      "evidence": "foreign PID before load and a new foreign PID after first result",
+      "id": "GPU-concurrent-writer",
+      "status": "actual_execution_blocker"
+    },
+    {
+      "do_not_repeat": "do not count same-input reuse as independent repeats; missing comparisons are not ties; no quality labels from text changes",
+      "id": "O4-partial-analysis",
+      "status": "recomputed"
+    }
+  ],
+  "previous_register": "../pm_rl1_execution_bridges/ATTEMPT_REGISTER_DELTA.json"
+}

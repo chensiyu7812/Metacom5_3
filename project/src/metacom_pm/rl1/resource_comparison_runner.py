@@ -17,7 +17,7 @@ from .generation import LocalNaturalGenerator
 from .local_backend import load_generator, check_static
 from .schema import digest
 
-VERSION = 'pmrl1-addressed-fixed-generation-v1-20261030'
+VERSION = 'pmrl1-addressed-fixed-generation-v2-20261030'
 
 
 def execution_identity(runtime, code_identity):
@@ -64,7 +64,7 @@ def protocol_for(requests, *, runtime, assets, packages, gpu_uuid, code_identity
         runtime=runtime, assets=assets, packages=packages, gpu_uuid=gpu_uuid, code_identity=code_identity,
         source_package_identity=source_package_identity, request_ids=[x['identity'] for x in requests],
         max_G_loads=1, max_G_calls=len(requests), max_BGE_loads=0, max_BGE_calls=0,
-        API_calls=0, automatic_retry=False, training_updates=0,
+        API_calls=0, automatic_retry=False, training_updates=0,gpu_sampling_policy='last_xml',
         run_directory=str(Path(run_directory).resolve()) if run_directory else None))
 
 
@@ -108,7 +108,8 @@ class FixedResourceComparison:
                 raise ValueError('offline local-only loading required')
             check_static(self.protocol)
             from .local_gpu_guard import LocalGPUCheck
-            self.guard = LocalGPUCheck(self.protocol['gpu_uuid'], self.protocol['runtime'], self.root/'gpu_checks')
+            if self.protocol.get('gpu_sampling_policy')!='last_xml':raise ValueError('GPU sampling policy changed')
+            self.guard = LocalGPUCheck(self.protocol['gpu_uuid'], self.protocol['runtime'], self.root/'gpu_checks',latest_snapshot=True)
         self.guard.check()
         save_once(self.root/'load.started.json', dict(protocol_identity=self.protocol['identity']))
         start = time.monotonic(); g = self.factory(self.protocol['runtime'])

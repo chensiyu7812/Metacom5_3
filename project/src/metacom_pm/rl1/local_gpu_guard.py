@@ -11,7 +11,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 from .supervised_learning import save_json
 
-def parse_gpu(gpu, compute, xml, expected_uuid, own_pid=None):
+def parse_gpu(gpu, compute, xml, expected_uuid, own_pid=None, *, latest_snapshot=False):
     reasons=[];selected=None;visible=[];visibility='unknown'
     try:
         rows=list(csv.reader(io.StringIO(gpu)))
@@ -28,6 +28,20 @@ def parse_gpu(gpu, compute, xml, expected_uuid, own_pid=None):
         matches=[g for g in doc.findall('gpu') if g.findtext('uuid')==expected_uuid]
         if len(matches)!=1:raise ValueError('XML designated UUID missing or duplicated')
         g=matches[0];processes=g.find('processes')
+        if latest_snapshot:
+            # `check` captures XML last. Always use that snapshot, including
+            # when it is WORSE than the earlier CSV; never choose the minimum
+            # utilization or wait until a favorable sample appears.
+            utilization=(g.findtext('utilization/gpu_util') or '').split()
+            free=(g.findtext('fb_memory_usage/free') or '').split()
+            if len(utilization)!=2 or utilization[1]!='%' or len(free)!=2 or free[1]!='MiB':
+                raise ValueError('latest XML utilization/memory snapshot unavailable')
+            u,m=int(utilization[0]),int(free[0])
+            if not 0<=u<=100 or m<0:raise ValueError('latest XML snapshot value range')
+            if selected is not None:
+                selected.update(earlier_csv_utilization_percent=selected['utilization_percent'],
+                    earlier_csv_free_mib=selected['free_mib'],utilization_percent=u,free_mib=m,
+                    admission_snapshot='last captured XML')
         if processes is None or (processes.text or '').strip() not in ('','None'):
             raise ValueError('XML processes unavailable')
         for p in processes.findall('process_info'):
@@ -54,12 +68,14 @@ def parse_gpu(gpu, compute, xml, expected_uuid, own_pid=None):
     return dict(selected_gpu=selected,visible_processes=visible,process_visibility=visibility,
         visibility_limit='Successful empty process lists describe what these NVIDIA queries expose; they do not prove absence of hidden, transient or future jobs.',
         rejection_reasons=reasons,eligible=not reasons,
+        sampling_policy='last_xml' if latest_snapshot else 'historical_first_csv',
         guard='original free>=45000MiB and util==0 plus visible-process check' if own_pid is None else 'resident model: original other-process exclusion; no idle threshold applied to our own loaded model')
 
 
 class LocalGPUCheck:
-    def __init__(self, expected_uuid, runtime, root):
+    def __init__(self, expected_uuid, runtime, root, *, latest_snapshot=False):
         self.uuid,self.runtime,self.root=expected_uuid,runtime,Path(root)
+        self.latest_snapshot=latest_snapshot
         self.root.mkdir(parents=True,exist_ok=True)
 
     def check(self, *, own_pid=None):
@@ -80,7 +96,8 @@ class LocalGPUCheck:
         for cmd in commands:
             r=subprocess.run(cmd,capture_output=True,text=True,timeout=20)
             queries.append(dict(argv=cmd,returncode=r.returncode,stdout=r.stdout,stderr=r.stderr))
-        result=parse_gpu(*(r['stdout'] for r in queries),expected_uuid=self.uuid,own_pid=own_pid)
+        result=parse_gpu(*(r['stdout'] for r in queries),expected_uuid=self.uuid,own_pid=own_pid,
+            latest_snapshot=self.latest_snapshot)
         if any(r['returncode'] for r in queries):result['rejection_reasons'].append('GPU query failed')
         try:
             mounts=[x for x in Path('/proc/mounts').read_text().splitlines() if x.split()[1]=='/proc']
