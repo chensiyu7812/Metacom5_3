@@ -11,6 +11,19 @@ from metacom_pm.rl1.schema import digest
 import test_rl1_feedback_workflow as fixtures
 
 
+def test_package_roundtrip_preserves_frozen_outbound_json_field_order(tmp_path):
+    from metacom_pm.rl1.development_feedback import freeze_inputs, thaw_inputs, save_once
+    a=adapter();rows=materials()
+    before=OfflineDevelopmentStage(tmp_path/'before',rows,a)
+    p=tmp_path/'bundle.json';save_once(p,freeze_inputs(rows,a.prompt,a.config))
+    restored,after_adapter=thaw_inputs(json.loads(p.read_text()))
+    after=OfflineDevelopmentStage(tmp_path/'after',restored,after_adapter)
+    assert before.protocol==after.protocol
+    for row in rows:
+        item={k:row[k] for k in ('reply','evidence')}
+        assert a.prepare(item,'S')==after_adapter.prepare(item,'S')
+
+
 @pytest.fixture(autouse=True)
 def no_network(monkeypatch):
     def forbidden(*args, **kwargs): raise AssertionError('offline test attempted network')

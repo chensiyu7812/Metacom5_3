@@ -14,20 +14,23 @@ from . import feedback_score_audit as audit
 from . import feedback_prototype as prototype
 from . import score_audit_validation as audit_input
 from . import strict_audit_delivery as strict
-from .durable import publish
+from .durable import save_json_once as save_once
 from .recovery_schedule import RecoverySchedule, Slot
 from .schema import digest
 
 VERSION = 'pmrl1-complete-development-adapter-v1-20261030'
 
 
-def save_once(path, value):
-    data = json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False) + '\n'
-    if path.exists():
-        if path.read_text() != data:
-            raise ValueError('immutable development journal changed')
-    else:
-        publish(path, lambda f: f.write(data.encode()))
+def freeze_inputs(materials, prompt, config):
+    # The original prompt serializer preserves evidence field order. A sorted
+    # outer package must not silently reserialize that wire input differently.
+    return dict(materials_json=json.dumps(materials,ensure_ascii=False,allow_nan=False),
+                prompt=prompt,config_json=json.dumps(config,ensure_ascii=False,allow_nan=False))
+
+
+def thaw_inputs(bundle):
+    return json.loads(bundle['materials_json']), DevelopmentAdapter(
+        prompt=bundle['prompt'],config=json.loads(bundle['config_json']))
 
 
 def candidate_scores(primary, routing, resolution):
@@ -172,9 +175,35 @@ class OfflineDevelopmentStage:
         self.recovery_cap = recovery_cap
         self.protocol = dict(version=VERSION, adapter=adapter.identity, mapping=self.mapping,
             unique_inputs=len(self.items), recovery_cap=recovery_cap, max_attempts=3 * len(self.items) + recovery_cap,
-            mode='synthetic_only', qualification_granted=False, reward_eligible=False)
+            **self.protocol_extension(), qualification_granted=False, reward_eligible=False)
         self.identity = digest(self.protocol)
         save_once(self.root/'PROTOCOL.json', self.protocol)
+
+    def protocol_extension(self):
+        return dict(mode='synthetic_only')
+
+    def authorize_transport(self, transport):
+        if getattr(transport, 'synthetic_only', False) is not True:
+            raise ValueError('offline stage refuses live transport; budget/approval bridge required')
+
+    def reserve(self, claim, request):
+        return dict(attempt_id=claim['attempt_id'], reservation_identity=digest(['synthetic', claim]),
+                    synthetic_only=True, nanodollars=0)
+
+    def perform(self, transport, claim, request, item, score, directory):
+        raw = transport.send(deepcopy(request), attempt_id=claim['attempt_id'])
+        save_once(directory/(claim['attempt_id']+'.raw.json'), raw)
+        if raw.get('synthetic_only') is not True:
+            raise ValueError('non-synthetic response refused; reconcile outstanding claim')
+        evaluation = self.adapter.evaluate(request, item, raw, score=score)
+        record = dict(evaluation=evaluation, raw_identity=digest(raw), synthetic_only=True,
+                      real_cost_usd=0, reward_eligible=False)
+        save_once(directory/(claim['attempt_id']+'.result.json'), record)
+        return dict(outcome='valid' if evaluation['technical_valid'] else evaluation['failure_kind'],
+                    settlement_identity=digest(['synthetic_zero', claim['attempt_id']]), result_identity=digest(record))
+
+    def closed_extension(self, waves):
+        return dict(status='CLOSED_OFFLINE_REHEARSAL', real_calls=0)
 
     def _wave(self, component, requests, remaining):
         directory = self.root/component; directory.mkdir(exist_ok=True, mode=0o700)
@@ -200,8 +229,7 @@ class OfflineDevelopmentStage:
         return valid
 
     def advance(self, transport):
-        if getattr(transport, 'synthetic_only', False) is not True:
-            raise ValueError('offline stage refuses live transport; budget/approval bridge required')
+        self.authorize_transport(transport)
         with (self.root/'.lock').open('a') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             remaining = self.recovery_cap; primary = {}; reviews = {}; waves = []
@@ -223,29 +251,20 @@ class OfflineDevelopmentStage:
                 report = schedule.report()
                 if report['global_stop']:
                     return dict(status='RECONCILIATION_REQUIRED', component=component, reason=report['global_stop'])
-                claim = schedule.claim_next(lambda c: dict(attempt_id=c['attempt_id'], reservation_identity=digest(['synthetic', c]),
-                                                           synthetic_only=True, nanodollars=0))
+                claim = schedule.claim_next(lambda c: self.reserve(c, requests[c['slot_id']]))
                 if claim is not None:
                     key = claim['slot_id']; request = requests[key]
                     # A crash/exception after claim leaves an outstanding journal,
                     # never a license to send again. Raw and result are immutable.
-                    raw = transport.send(deepcopy(request), attempt_id=claim['attempt_id'])
-                    save_once(self.root/component/(claim['attempt_id']+'.raw.json'), raw)
-                    if raw.get('synthetic_only') is not True:
-                        raise ValueError('non-synthetic response refused; reconcile outstanding claim')
-                    evaluation = self.adapter.evaluate(request, self.items[key], raw,
-                        score=primary[key]['value'] if component == 'A' else None)
-                    record = dict(evaluation=evaluation, raw_identity=digest(raw), synthetic_only=True,
-                                  real_cost_usd=0, reward_eligible=False)
-                    save_once(self.root/component/(claim['attempt_id']+'.result.json'), record)
+                    result = self.perform(transport, claim, request, self.items[key],
+                        primary[key]['value'] if component == 'A' else None, self.root/component)
                     # Here VALID means delivered + schema/source validated, NOT
                     # q/m certainty or qualification. Preserve model_unknown.
-                    outcome = 'valid' if evaluation['technical_valid'] else evaluation['failure_kind']
-                    schedule.settle(claim['attempt_id'], outcome=outcome,
+                    schedule.settle(claim['attempt_id'], **result,
                         input_identity=request['identity'], config_identity=claim['config_identity'],
-                        settlement_identity=digest(['synthetic_zero', claim['attempt_id']]), result_identity=digest(record))
-                    return dict(status='ATTEMPT_RECORDED', component=component, outcome=outcome,
-                                ordinal=claim['ordinal'], real_calls=0)
+                        )
+                    return dict(status='ATTEMPT_RECORDED', component=component, outcome=result['outcome'],
+                                ordinal=claim['ordinal'], mode=self.protocol['mode'])
                 remaining -= report['recovery_attempts']
                 results = self._results(component, report)
                 if component == 'S': primary = results
@@ -262,8 +281,8 @@ class OfflineDevelopmentStage:
                 candidates.append(dict(row, S_candidate=p, audit=a, routing=route,
                     A_resolution=resolution, route_candidates=candidate_scores(p, route, resolution),
                     qualification_granted=False, reward_eligible=False))
-            report = dict(status='CLOSED_OFFLINE_REHEARSAL', protocol_identity=self.identity, waves=waves,
-                materials=candidates, real_calls=0, training_updates=0, qualified_receipt=None,
+            report = dict(**self.closed_extension(waves), protocol_identity=self.identity, waves=waves,
+                materials=candidates, training_updates=0, qualified_receipt=None,
                 route_selected=None, independent_review_status='not_supplied')
             save_once(self.root/'CLOSED.json', report)
             return report
