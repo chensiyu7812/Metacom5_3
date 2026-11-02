@@ -24,6 +24,7 @@ class FullTextFeatures:
         self.encode_tokens, self.add_special_tokens = encode_tokens, add_special_tokens
         self.window, self.special = native_window, special_tokens
         self.dimension = dimension
+        self.encoder_identity = encoder_identity
         self.identity = digest(dict(version=VERSION, tokenizer=tokenizer_identity,
             encoder=encoder_identity, native_window=native_window, special_tokens=special_tokens,
             dimension=dimension, chunk_pool='payload-token-weighted mean', head_pool='mean of all acquired resources',
