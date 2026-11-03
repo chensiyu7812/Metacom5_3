@@ -21,15 +21,22 @@ VERSION = 'pmrl1-organized-variable-rollout-v1'
 
 
 class OrganizedRollout:
-    def __init__(self, model, view, root, *, run_identity, policy_version, seed):
+    def __init__(self, model, view, root, *, run_identity, policy_version, seed, rng_state=None):
         if (not run_identity or type(policy_version) is not int or policy_version < 0
                 or type(seed) is not int):
             raise ValueError('bound run/policy version/RNG required')
         self.model,self.view,self.root=model,view,Path(root)
         self.behavior=parameter_identity(model);self.version=policy_version
-        self.identity=digest(dict(version=VERSION,run=run_identity,policy_version=policy_version,
-            behavior=self.behavior,view=view.identity,no_text=view.no_text,seed=seed))
+        binding=dict(version=VERSION,run=run_identity,policy_version=policy_version,
+            behavior=self.behavior,view=view.identity,no_text=view.no_text,seed=seed)
         self.rng=torch.Generator().manual_seed(seed).get_state().tolist()
+        if rng_state is not None:
+            # The formal coordinator continues its archived BC/PPO RNG instead
+            # of restarting a seed at every collection batch.
+            state=torch.tensor(rng_state,dtype=torch.uint8)
+            check=torch.Generator();check.set_state(state)
+            self.rng=state.tolist();binding['initial_rng']=self.rng
+        self.identity=digest(binding)
         self.records=[];self.encoding=[];self.current=0;self.step_count=0
         self.root.mkdir(parents=True,exist_ok=True,mode=0o700)
         self.fault_hook=lambda event, **kw:None

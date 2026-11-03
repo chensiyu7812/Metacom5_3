@@ -16,7 +16,7 @@ import time
 
 import torch
 
-from .bound_generation import validate_and_project
+from .generation_requests import project as validate_and_project
 from metacom_pm.io import sha256_file
 from .calibration_workflow import stamp, verify_identity
 from .observation_features import PlanAwareFeatureEncoder
@@ -174,6 +174,8 @@ class LocalBackend:
         with torch.random.fork_rng(devices=[]):
             self._ensure()
             save_json(self.root/(name+'.started.json'),dict(protocol_identity=self.identity,request=request))
-            result=self.generator.generate(request)
+            from .organized_feedback import VERSION as ORGANIZED_VERSION, execute_generation
+            result=(execute_generation(self.generator,request) if request.get('version')==ORGANIZED_VERSION
+                    else self.generator.generate(request))
             save_json(self.root/(name+'.raw.json'),result)
             return result

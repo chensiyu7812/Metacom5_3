@@ -89,6 +89,11 @@ def make_run_manifest(prepared, *, bindings, dev_bindings, seed, qualification, 
         episodes=size,dev_checks=[64,128] if size==128 else [128,384],
         scale_evidence=deepcopy(scale_evidence),train_bindings=deepcopy(bindings),dev_bindings=deepcopy(dev_bindings),
         batch_size=16,max_updates=size//16,study_scale=deepcopy(study_scale))
+    from .organized_supervision import VERSION as ORGANIZED_VERSION
+    if prepared['version'] == ORGANIZED_VERSION:
+        base['resource_domain'] = {k: prepared['metadata'][k] for k in (
+            'plan_order_identity', 'measurement_use_identity', 'cost_identity')}
+        base['supervision_version'] = ORGANIZED_VERSION
     salt=digest(base)
     base['trajectories']=[dict(b,trajectory_id=digest(dict(run=salt,index=i,prefix=b['prefix_identity'])))
                           for i,b in enumerate(order)]

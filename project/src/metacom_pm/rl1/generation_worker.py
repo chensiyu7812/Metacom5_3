@@ -7,7 +7,7 @@ import fcntl
 import json
 from pathlib import Path
 
-from .bound_generation import validate_and_project
+from .generation_requests import project as validate_and_project
 from .calibration_workflow import stamp,verify_identity
 from .local_backend import authorize
 from .schema import digest
@@ -25,6 +25,9 @@ class GenerationWorker:
         else:save_json(path,marker)
 
     def _validate(self,request,result):
+        from .organized_feedback import VERSION
+        if request.get('version') == VERSION and result.get('input_tokens') != request['expected_input_tokens']:
+            raise ValueError('organized generation input length changed')
         if (result.get('request_id')!=request['request_id']
                 or result.get('runtime_identity')!=request['executor_identity']
                 or result.get('source_provenance_identity')!=digest(request['provenance'])

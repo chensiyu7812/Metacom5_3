@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from .bound_generation import validate_and_project
+from .generation_requests import project as validate_and_project
 from .calibration_workflow import stamp, verify_identity
 from .schema import digest
 
@@ -31,6 +31,9 @@ def _entry(entry):
     request = _read(entry['request_path'], entry['request_sha256'])
     raw = _read(entry['raw_path'], entry['raw_sha256'])
     validate_and_project(request, request['executor_identity'])
+    from .organized_feedback import VERSION as ORGANIZED_VERSION
+    if request.get('version') == ORGANIZED_VERSION and raw.get('input_tokens') != request['expected_input_tokens']:
+        raise ValueError('organized cached generation input length changed')
     if (raw.get('request_id') != request['request_id']
             or raw.get('runtime_identity') != request['executor_identity']
             or raw.get('source_provenance_identity') != digest(request['provenance'])

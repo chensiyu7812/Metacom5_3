@@ -149,7 +149,10 @@ def validate_prepared(prepared):
     if prepared.get('status') != 'READY' or not prepared.get('rows'):
         raise ValueError('complete qualified training data required')
     meta = prepared['metadata']; verify_identity(meta)
-    if (prepared['version'] != VERSION or prepared['config'] != CONFIG
+    from .organized_supervision import VERSION as ORGANIZED_VERSION, validate_prepared as validate_organized
+    if prepared['version'] == ORGANIZED_VERSION:
+        validate_organized(prepared)
+    if (prepared['version'] not in (VERSION, ORGANIZED_VERSION) or prepared['config'] != CONFIG
             or meta['rows_identity'] != digest(prepared['rows'])
             or meta['method'] != prepared['method']
             or prepared['scope'] not in (ENGINEERING, NATURAL)):
@@ -158,6 +161,10 @@ def validate_prepared(prepared):
 
 def _model(prepared):
     d = prepared['feature_dimension']
+    from .organized_supervision import VERSION as ORGANIZED_VERSION
+    if prepared['version'] == ORGANIZED_VERSION and prepared['method'] == 'OneShot':
+        from .organized_oneshot import ProgramReturnModel
+        return ProgramReturnModel(d)
     return OneShotReturnModel(d) if prepared['method'] == 'OneShot' else make_actor_critic(d)
 
 
@@ -179,12 +186,31 @@ def fit_supervised(prepared, *, seed, directory, approval=None):
         if not torch.isfinite(x).all() or not torch.isfinite(y).all():
             raise ValueError('nonfinite training data')
         if one:
-            plans = torch.tensor([r['plan'] for r in rows], dtype=torch.float32)
+            from .organized_supervision import VERSION as ORGANIZED_VERSION
+            if prepared['version'] == ORGANIZED_VERSION:
+                from .organized_oneshot import program_tensor
+                plans = program_tensor([r['program'] for r in rows])
+            else:
+                plans = torch.tensor([r['plan'] for r in rows], dtype=torch.float32)
         else:
             masks = torch.tensor([r['mask'] for r in rows], dtype=torch.bool)
             actions = torch.tensor([r['target'] for r in rows], dtype=torch.long)
             if not masks.gather(1, actions[:,None]).all():
                 raise ValueError('illegal supervised action')
+        def diagnostics():
+            # Full scheduled dataset, not a favorable last minibatch. These
+            # are fit diagnostics, never a claim about natural-task quality.
+            with torch.no_grad():
+                if one:
+                    residual = model(x, plans)-y
+                    return dict(return_mse=float(residual.square().mean()),
+                                return_max_absolute_error=float(residual.abs().max()), rows=len(rows))
+                dist, values = model(x, masks)
+                free = masks.sum(-1) > 1
+                return dict(action_nll=float(-dist.log_prob(actions)[free].mean()) if free.any() else None,
+                    greedy_action_accuracy=float((dist.probs.argmax(-1)[free] == actions[free]).float().mean()) if free.any() else None,
+                    value_mse=float((values-y).square().mean()), rows=len(rows), decision_rows=int(free.sum()))
+        initial_fit = diagnostics()
         losses=[]; steps=0
         for _ in range(CONFIG['epochs']):
             order = torch.randperm(len(rows))
@@ -229,6 +255,7 @@ def fit_supervised(prepared, *, seed, directory, approval=None):
             parameter_count=sum(p.numel() for p in model.parameters()),
             first_supervised_loss=losses[0],last_supervised_loss=losses[-1],
             last_value_loss=value_losses[-1] if value_losses else None,
+            initial_fit=initial_fit, final_fit=diagnostics(),
             PPO_optimizer_initialization='fresh Adam lr3e-4; state archived' if not one else None,
             natural_policy_updates=0,research_checkpoint=prepared['scope']==NATURAL))
         save_json(out/'RECEIPT.json',receipt)

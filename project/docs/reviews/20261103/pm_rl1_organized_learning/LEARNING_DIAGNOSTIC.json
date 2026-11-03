@@ -1,0 +1,2711 @@
+{
+  "scope": "ENGINEERING_ONLY",
+  "versions": {
+    "1": 16,
+    "2": 128,
+    "3": 128
+  },
+  "v2_v3_training_and_greedy_identical": true,
+  "real_models_loaded": 0,
+  "natural_updates": 0,
+  "API_calls": 0,
+  "human_labels": 0,
+  "source": "programmed three-case environment; synthetic visible-text marker encoder; not natural-task evidence",
+  "oracle": {
+    "REDD": 0.478466796875,
+    "BLUE": 0.4787841796875,
+    "STOP_TASK": 0.0
+  },
+  "best_shared_initial_program_mean": 0.0,
+  "initial_observations_identical": true,
+  "full_acquired_text_distinguishes": true,
+  "NoText_after_MP_identical": true,
+  "artifact_hashes": {
+    "project/outputs/pm_rl1/organized_learnability_20261103_v1/RESULTS.json": "caaa5481ab3be2ea1ee00ea2dbe6f3e3bdd9320d912488398e8d4c662cfe7a57",
+    "project/outputs/pm_rl1/organized_learnability_20261103_v1/SCRIPT.py": "da8784a1dbe13172589f43550a91102b1d4c71c65f336b94937edc56652c1ad8",
+    "project/outputs/pm_rl1/organized_learnability_20261103_v2/RESULTS.json": "933100870d381189d3e123b714800dcbd3f373b7d5f1564d24cd19cbab271efd",
+    "project/outputs/pm_rl1/organized_learnability_20261103_v3/RESULTS.json": "9dedd64a43133de71c8c4f807ef31d093db34c23bfcdadda1f0fb0f4459f94c8",
+    "project/outputs/pm_rl1/organized_learnability_20261103_v3/SCRIPT.py": "2a051b6f010d25b39d709127f4eba9e761802b334ee4fc46a0e1c2876e55f7a6"
+  },
+  "records": [
+    {
+      "seed": 17,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.48833614587783813,
+        "greedy_action_accuracy": 1.0,
+        "value_mse": 0.0021677857730537653,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875,
+          "exact_stochastic_return": -0.06147982814202075,
+          "initial_value_estimate": 0.4650644361972809,
+          "critic_bias_vs_policy": 0.5265442643393017,
+          "probability_of_optimal_program": 0.24027052421116088
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875,
+          "exact_stochastic_return": -0.06870749490203751,
+          "initial_value_estimate": 0.4650644361972809,
+          "critic_bias_vs_policy": 0.5337719310993184,
+          "probability_of_optimal_program": 0.23788041978939597
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.0077845785848750515,
+          "initial_value_estimate": 0.032659903168678284,
+          "critic_bias_vs_policy": 0.040444481753553335,
+          "probability_of_optimal_program": 0.6091807543307105
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875,
+          "exact_stochastic_return": 0.15691461184627284,
+          "initial_value_estimate": -0.033960629254579544,
+          "critic_bias_vs_policy": -0.19087524110085238,
+          "probability_of_optimal_program": 0.3945153798552712
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": 0.03311472027695359,
+          "initial_value_estimate": -0.033960629254579544,
+          "critic_bias_vs_policy": -0.06707534953153313,
+          "probability_of_optimal_program": 0.1650963178900221
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.0020633908718237347,
+          "initial_value_estimate": -0.015355180948972702,
+          "critic_bias_vs_policy": -0.013291790077148967,
+          "probability_of_optimal_program": 0.8920957142180802
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": -0.05410546420097547,
+              "initial_value_estimate": 0.1202920451760292,
+              "critic_bias_vs_policy": 0.17439750937700468,
+              "probability_of_optimal_program": 0.2868640498887052
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": -0.12431430361837438,
+              "initial_value_estimate": 0.1202920451760292,
+              "critic_bias_vs_policy": 0.24460634879440357,
+              "probability_of_optimal_program": 0.2198605708374562
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.005796915821768057,
+              "initial_value_estimate": -0.10586755722761154,
+              "critic_bias_vs_policy": -0.10007064140584349,
+              "probability_of_optimal_program": 0.7109961757387807
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.02236438961699605,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.008589172363281255
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.03793783127964771,
+              "initial_value_estimate": -0.032855842262506485,
+              "critic_bias_vs_policy": 0.005081989017141228,
+              "probability_of_optimal_program": 0.18768810646941445
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.019920583697806377,
+              "initial_value_estimate": -0.032855842262506485,
+              "critic_bias_vs_policy": -0.05277642596031286,
+              "probability_of_optimal_program": 0.2799280598424822
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.002624671539720224,
+              "initial_value_estimate": -0.08102640509605408,
+              "critic_bias_vs_policy": -0.07840173355633386,
+              "probability_of_optimal_program": 0.862573991067373
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.027790757827460766,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.0440185546875
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": -0.061480628878458884,
+              "initial_value_estimate": 0.10354755818843842,
+              "critic_bias_vs_policy": 0.1650281870668973,
+              "probability_of_optimal_program": 0.18604419009688525
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": -0.010134291376036296,
+              "initial_value_estimate": 0.10354755818843842,
+              "critic_bias_vs_policy": 0.11368184956447472,
+              "probability_of_optimal_program": 0.2689267970538335
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0015802777685559634,
+              "initial_value_estimate": 0.056902263313531876,
+              "critic_bias_vs_policy": 0.058482541082087836,
+              "probability_of_optimal_program": 0.9186292344677512
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.04600500222295523,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.07906646728515623
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": -0.07467010008939157,
+              "initial_value_estimate": 0.005107119679450989,
+              "critic_bias_vs_policy": 0.07977721976884256,
+              "probability_of_optimal_program": 0.2612857543370239
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.0034683343397887644,
+              "initial_value_estimate": 0.005107119679450989,
+              "critic_bias_vs_policy": 0.0016387853396622244,
+              "probability_of_optimal_program": 0.3641395476840522
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0022206477042556573,
+              "initial_value_estimate": -0.0579012893140316,
+              "critic_bias_vs_policy": -0.05568064160977594,
+              "probability_of_optimal_program": 0.8873526800117475
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.02971471520140767,
+            "behavior_log_probability_max_error": 1.4901161193847656e-07
+          },
+          "sampled_mean_return": 0.0236328125
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.06866011066071763,
+              "initial_value_estimate": -0.011314813047647476,
+              "critic_bias_vs_policy": -0.0799749237083651,
+              "probability_of_optimal_program": 0.34351964705311955
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.05737062726474843,
+              "initial_value_estimate": -0.011314813047647476,
+              "critic_bias_vs_policy": -0.0686854403123959,
+              "probability_of_optimal_program": 0.3411992400844671
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0017067040578044596,
+              "initial_value_estimate": -0.06652942299842834,
+              "critic_bias_vs_policy": -0.06482271894062389,
+              "probability_of_optimal_program": 0.910813407060332
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.01788175996625796,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.045159912109375006
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.13123270300252562,
+              "initial_value_estimate": 0.04909082502126694,
+              "critic_bias_vs_policy": -0.08214187798125869,
+              "probability_of_optimal_program": 0.3739547827246001
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.02201126058184486,
+              "initial_value_estimate": 0.04909082502126694,
+              "critic_bias_vs_policy": 0.027079564439422076,
+              "probability_of_optimal_program": 0.2236612191086664
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0014046463836948793,
+              "initial_value_estimate": 0.005112014710903168,
+              "critic_bias_vs_policy": 0.006516661094598047,
+              "probability_of_optimal_program": 0.9258756238306607
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.0053712871740572155,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.013378906250000003
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.1560275336700567,
+              "initial_value_estimate": -0.04987256973981857,
+              "critic_bias_vs_policy": -0.20590010340987527,
+              "probability_of_optimal_program": 0.4162536699883323
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.042804932213572615,
+              "initial_value_estimate": -0.04987256973981857,
+              "critic_bias_vs_policy": -0.0926775019533912,
+              "probability_of_optimal_program": 0.2202521836195233
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0018271487433698073,
+              "initial_value_estimate": -0.09534893184900284,
+              "critic_bias_vs_policy": -0.09352178310563303,
+              "probability_of_optimal_program": 0.9042013596242617
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.03196350857615471,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.044406127929687504
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.15691461184627284,
+              "initial_value_estimate": -0.033960629254579544,
+              "critic_bias_vs_policy": -0.19087524110085238,
+              "probability_of_optimal_program": 0.3945153798552712
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.03311472027695359,
+              "initial_value_estimate": -0.033960629254579544,
+              "critic_bias_vs_policy": -0.06707534953153313,
+              "probability_of_optimal_program": 0.1650963178900221
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0020633908718237347,
+              "initial_value_estimate": -0.015355180948972702,
+              "critic_bias_vs_policy": -0.013291790077148967,
+              "probability_of_optimal_program": 0.8920957142180802
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.02510411012917757,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.042338562011718754
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": 0.3190836588541666,
+        "exact_stochastic_return": -0.0459906338763111,
+        "critic_bias_vs_policy": 0.36692022573072447
+      },
+      "after_PPO_means": {
+        "return_value": 0.15336100260416666,
+        "exact_stochastic_return": 0.06265531375046757,
+        "critic_bias_vs_policy": -0.09041412690317817
+      }
+    },
+    {
+      "seed": 17,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.5655391216278076,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.0022616926580667496,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.12137016264609332,
+          "initial_value_estimate": 0.464738667011261,
+          "critic_bias_vs_policy": 0.5861088296573543,
+          "probability_of_optimal_program": 0.17764683599428405
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.12263731385586348,
+          "initial_value_estimate": 0.464738667011261,
+          "critic_bias_vs_policy": 0.5873759808671245,
+          "probability_of_optimal_program": 0.17653805599808695
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.006742720941673978,
+          "initial_value_estimate": 0.03484435752034187,
+          "critic_bias_vs_policy": 0.04158707846201585,
+          "probability_of_optimal_program": 0.657313493047604
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.016051950654949704,
+          "initial_value_estimate": -0.027054186910390854,
+          "critic_bias_vs_policy": -0.01100223625544115,
+          "probability_of_optimal_program": 0.0117090939953461
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.019567975876053363,
+          "initial_value_estimate": -0.027054186910390854,
+          "critic_bias_vs_policy": -0.007486211034337491,
+          "probability_of_optimal_program": 0.011787300984784553
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.0008421049286782893,
+          "initial_value_estimate": -0.03510557487607002,
+          "critic_bias_vs_policy": -0.03426346994739173,
+          "probability_of_optimal_program": 0.953918554780764
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": -0.1436207779885195,
+              "initial_value_estimate": 0.031287167221307755,
+              "critic_bias_vs_policy": 0.17490794520982725,
+              "probability_of_optimal_program": 0.18225356695412678
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.521533203125,
+              "exact_stochastic_return": -0.17120680968168633,
+              "initial_value_estimate": 0.031287167221307755,
+              "critic_bias_vs_policy": 0.2024939769029941,
+              "probability_of_optimal_program": 0.1554845363070036
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.004181367193442758,
+              "initial_value_estimate": -0.16660235822200775,
+              "critic_bias_vs_policy": -0.162420991028565,
+              "probability_of_optimal_program": 0.7871163048805724
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.01351356040686369,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.009497070312500008
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": -0.5212158203125,
+              "exact_stochastic_return": -0.12684868958336182,
+              "initial_value_estimate": -0.13176023960113525,
+              "critic_bias_vs_policy": -0.004911550017773436,
+              "probability_of_optimal_program": 0.1033052546476478
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": -0.07110720889680137,
+              "initial_value_estimate": -0.13176023960113525,
+              "critic_bias_vs_policy": -0.06065303070433388,
+              "probability_of_optimal_program": 0.15838045303615317
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0017589901898757262,
+              "initial_value_estimate": -0.12419001758098602,
+              "critic_bias_vs_policy": -0.1224310273911103,
+              "probability_of_optimal_program": 0.907821344782962
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.053588649490848184,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.10636138916015628
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.049954130411264196,
+              "initial_value_estimate": -0.17131280899047852,
+              "critic_bias_vs_policy": -0.12135867857921431,
+              "probability_of_optimal_program": 0.0894948587575892
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.052455281806003395,
+              "initial_value_estimate": -0.17131280899047852,
+              "critic_bias_vs_policy": -0.11885752718447512,
+              "probability_of_optimal_program": 0.08756961731756883
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0009761952937470137,
+              "initial_value_estimate": -0.06536506116390228,
+              "critic_bias_vs_policy": -0.06438886587015527,
+              "probability_of_optimal_program": 0.9478773426197911
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.024111804785206914,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.13585968017578126
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.016406919543206906,
+              "initial_value_estimate": -0.08332057297229767,
+              "critic_bias_vs_policy": -0.06691365342909077,
+              "probability_of_optimal_program": 0.03449521903195208
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.020248813172653264,
+              "initial_value_estimate": -0.08332057297229767,
+              "critic_bias_vs_policy": -0.06307175979964441,
+              "probability_of_optimal_program": 0.031645499839093906
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0005503669733812299,
+              "initial_value_estimate": 0.04598353058099747,
+              "critic_bias_vs_policy": 0.0465338975543787,
+              "probability_of_optimal_program": 0.9700829466308419
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.15080612455494702,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.0676422119140625
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.019010593908863924,
+              "initial_value_estimate": 0.00991438515484333,
+              "critic_bias_vs_policy": 0.028924979063707255,
+              "probability_of_optimal_program": 0.07406450525283668
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.04039830376198045,
+              "initial_value_estimate": 0.00991438515484333,
+              "critic_bias_vs_policy": 0.05031268891682378,
+              "probability_of_optimal_program": 0.0569589076170687
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0009501691008953558,
+              "initial_value_estimate": 0.13502489030361176,
+              "critic_bias_vs_policy": 0.1359750594045071,
+              "probability_of_optimal_program": 0.9487325390446901
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.11302480660378933,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.02765045166015625
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.012769708823840098,
+              "initial_value_estimate": -0.07783234119415283,
+              "critic_bias_vs_policy": -0.06506263237031273,
+              "probability_of_optimal_program": 0.01802650253672683
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.017935378968121345,
+              "initial_value_estimate": -0.07783234119415283,
+              "critic_bias_vs_policy": -0.05989696222603148,
+              "probability_of_optimal_program": 0.016652620133189605
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0007141898477739085,
+              "initial_value_estimate": -0.038209062069654465,
+              "critic_bias_vs_policy": -0.037494872221880554,
+              "probability_of_optimal_program": 0.9609440632339404
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.0021255328319966793,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.04021759033203126
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.009005609093774214,
+              "initial_value_estimate": -0.025731056928634644,
+              "critic_bias_vs_policy": -0.016725447834860428,
+              "probability_of_optimal_program": 0.004449451272961418
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.010996674371867656,
+              "initial_value_estimate": -0.025731056928634644,
+              "critic_bias_vs_policy": -0.014734382556766987,
+              "probability_of_optimal_program": 0.004592066388317662
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0004654661099965758,
+              "initial_value_estimate": -0.07019971311092377,
+              "critic_bias_vs_policy": -0.06973424700092719,
+              "probability_of_optimal_program": 0.9744371539431481
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.1391778700053692,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.036219787597656254
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.016051950654949704,
+              "initial_value_estimate": -0.027054186910390854,
+              "critic_bias_vs_policy": -0.01100223625544115,
+              "probability_of_optimal_program": 0.0117090939953461
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.019567975876053363,
+              "initial_value_estimate": -0.027054186910390854,
+              "critic_bias_vs_policy": -0.007486211034337491,
+              "probability_of_optimal_program": 0.011787300984784553
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0008421049286782893,
+              "initial_value_estimate": -0.03510557487607002,
+              "critic_bias_vs_policy": -0.03426346994739173,
+              "probability_of_optimal_program": 0.953918554780764
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.06865717470645905,
+            "behavior_log_probability_max_error": 0.0
+          },
+          "sampled_mean_return": 0.0
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": -0.012255859374999999,
+        "exact_stochastic_return": -0.08358339914787692,
+        "critic_bias_vs_policy": 0.4050239629954982
+      },
+      "after_PPO_means": {
+        "return_value": -0.012255859374999999,
+        "exact_stochastic_return": -0.012154010486560451,
+        "critic_bias_vs_policy": -0.017583972412390125
+      }
+    },
+    {
+      "seed": 17,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.11449844390153885,
+      "final_mse": 0.07651650160551071,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    },
+    {
+      "seed": 29,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.5420942902565002,
+        "greedy_action_accuracy": 1.0,
+        "value_mse": 0.00314087956212461,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875,
+          "exact_stochastic_return": -0.07226364334344776,
+          "initial_value_estimate": 0.44411030411720276,
+          "critic_bias_vs_policy": 0.5163739474606506,
+          "probability_of_optimal_program": 0.22627723226909194
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875,
+          "exact_stochastic_return": -0.07820574282645894,
+          "initial_value_estimate": 0.44411030411720276,
+          "critic_bias_vs_policy": 0.5223160469436617,
+          "probability_of_optimal_program": 0.21870931131775093
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.009427855593479202,
+          "initial_value_estimate": 0.05160050466656685,
+          "critic_bias_vs_policy": 0.06102836026004605,
+          "probability_of_optimal_program": 0.5337217720187024
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875,
+          "exact_stochastic_return": 0.16646211499764335,
+          "initial_value_estimate": 0.04541047662496567,
+          "critic_bias_vs_policy": -0.12105163837267768,
+          "probability_of_optimal_program": 0.46514489544721893
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875,
+          "exact_stochastic_return": 0.02331927602861805,
+          "initial_value_estimate": 0.04541047662496567,
+          "critic_bias_vs_policy": 0.02209120059634762,
+          "probability_of_optimal_program": 0.3170595504652387
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.010307805257922886,
+          "initial_value_estimate": -0.029484372586011887,
+          "critic_bias_vs_policy": -0.019176567328089,
+          "probability_of_optimal_program": 0.4803121559676977
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.09193199360785939,
+              "initial_value_estimate": -0.03981938585639,
+              "critic_bias_vs_policy": 0.05211260775146939,
+              "probability_of_optimal_program": 0.149079324442119
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.03360283223082445,
+              "initial_value_estimate": -0.03981938585639,
+              "critic_bias_vs_policy": -0.07342221808721444,
+              "probability_of_optimal_program": 0.29718313878119107
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.007331452847990375,
+              "initial_value_estimate": -0.2439868003129959,
+              "critic_bias_vs_policy": -0.23665534746500552,
+              "probability_of_optimal_program": 0.6258771468936416
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.017313456162810326,
+            "behavior_log_probability_max_error": 4.76837158203125e-07
+          },
+          "sampled_mean_return": -0.015199279785156252
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.04088893443440809,
+              "initial_value_estimate": 0.08317741751670837,
+              "critic_bias_vs_policy": 0.12406635195111645,
+              "probability_of_optimal_program": 0.19745329058727962
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.0329583504810718,
+              "initial_value_estimate": 0.08317741751670837,
+              "critic_bias_vs_policy": 0.050219067035636576,
+              "probability_of_optimal_program": 0.3003825152237945
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.007596173933776893,
+              "initial_value_estimate": -0.03034920245409012,
+              "critic_bias_vs_policy": -0.022753028520313225,
+              "probability_of_optimal_program": 0.6115442222516567
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.05087721720337868,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.015829467773437498
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.02122767148203457,
+              "initial_value_estimate": -0.08564943820238113,
+              "critic_bias_vs_policy": -0.1068771096844157,
+              "probability_of_optimal_program": 0.2080701969666703
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.01644093946726358,
+              "initial_value_estimate": -0.08564943820238113,
+              "critic_bias_vs_policy": -0.10209037766964471,
+              "probability_of_optimal_program": 0.23062223389331069
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.006929123582091949,
+              "initial_value_estimate": -0.06006104499101639,
+              "critic_bias_vs_policy": -0.05313192140892444,
+              "probability_of_optimal_program": 0.641051982521321
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.04223692277446389,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.07429656982421876
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.05749555548746922,
+              "initial_value_estimate": -0.03771776333451271,
+              "critic_bias_vs_policy": -0.09521331882198193,
+              "probability_of_optimal_program": 0.2894749623327106
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": -0.018937516093569005,
+              "initial_value_estimate": -0.03771776333451271,
+              "critic_bias_vs_policy": -0.018780247240943706,
+              "probability_of_optimal_program": 0.2403817754670946
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0072520923822196074,
+              "initial_value_estimate": 0.02370539680123329,
+              "critic_bias_vs_policy": 0.0309574891834529,
+              "probability_of_optimal_program": 0.6330911798798627
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.04205010493751615,
+            "behavior_log_probability_max_error": 4.76837158203125e-07
+          },
+          "sampled_mean_return": -0.03849334716796875
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.039569425821668745,
+              "initial_value_estimate": -0.13430848717689514,
+              "critic_bias_vs_policy": -0.1738779129985639,
+              "probability_of_optimal_program": 0.17163902649756535
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.020671545987479657,
+              "initial_value_estimate": -0.13430848717689514,
+              "critic_bias_vs_policy": -0.1549800331643748,
+              "probability_of_optimal_program": 0.17833742005716222
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.005218936016612276,
+              "initial_value_estimate": -0.0702778697013855,
+              "critic_bias_vs_policy": -0.06505893368477322,
+              "probability_of_optimal_program": 0.7262234026082695
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.006156031973659992,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.14045562744140622
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.04420495280300311,
+              "initial_value_estimate": 0.06481501460075378,
+              "critic_bias_vs_policy": 0.020610061797750677,
+              "probability_of_optimal_program": 0.16650794053838472
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.017790041905283428,
+              "initial_value_estimate": 0.06481501460075378,
+              "critic_bias_vs_policy": 0.04702497269547036,
+              "probability_of_optimal_program": 0.1640848938416395
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.005631750404003669,
+              "initial_value_estimate": 0.0650000125169754,
+              "critic_bias_vs_policy": 0.07063176292097907,
+              "probability_of_optimal_program": 0.7025446543618857
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.06477574212476611,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.00976257324218752
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.1465075030245761,
+              "initial_value_estimate": 0.07332442700862885,
+              "critic_bias_vs_policy": -0.07318307601594726,
+              "probability_of_optimal_program": 0.3893110653940441
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.039560160481397766,
+              "initial_value_estimate": 0.07332442700862885,
+              "critic_bias_vs_policy": 0.11288458749002661,
+              "probability_of_optimal_program": 0.19866976365738592
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.008789425778555031,
+              "initial_value_estimate": 0.010902609676122665,
+              "critic_bias_vs_policy": 0.019692035454677695,
+              "probability_of_optimal_program": 0.5500315823099486
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.04178174352273345,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.05141143798828125
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.16646211499764335,
+              "initial_value_estimate": 0.04541047662496567,
+              "critic_bias_vs_policy": -0.12105163837267768,
+              "probability_of_optimal_program": 0.46514489544721893
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": 0.02331927602861805,
+              "initial_value_estimate": 0.04541047662496567,
+              "critic_bias_vs_policy": 0.02209120059634762,
+              "probability_of_optimal_program": 0.3170595504652387
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.010307805257922886,
+              "initial_value_estimate": -0.029484372586011887,
+              "critic_bias_vs_policy": -0.019176567328089,
+              "probability_of_optimal_program": 0.4803121559676977
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.043481860018800944,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": 0.016320800781249974
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": 0.3190836588541666,
+        "exact_stochastic_return": -0.053299080587795304,
+        "critic_bias_vs_policy": 0.36657278488811945
+      },
+      "after_PPO_means": {
+        "return_value": 0.3190836588541666,
+        "exact_stochastic_return": 0.059824528589446174,
+        "critic_bias_vs_policy": -0.03937900170147302
+      }
+    },
+    {
+      "seed": 29,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.6154652833938599,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.0025370402727276087,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.11816592013589197,
+          "initial_value_estimate": 0.45142999291419983,
+          "critic_bias_vs_policy": 0.5695959130500918,
+          "probability_of_optimal_program": 0.17073899366231116
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.12150999191355503,
+          "initial_value_estimate": 0.45142999291419983,
+          "critic_bias_vs_policy": 0.5729399848277549,
+          "probability_of_optimal_program": 0.16726473734275468
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.008671805437939474,
+          "initial_value_estimate": 0.04515216127038002,
+          "critic_bias_vs_policy": 0.053823966708319494,
+          "probability_of_optimal_program": 0.5679946389759203
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.018455604513997928,
+          "initial_value_estimate": 0.00377090647816658,
+          "critic_bias_vs_policy": 0.022226510992164508,
+          "probability_of_optimal_program": 0.002349614673702773
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.011447649712689235,
+          "initial_value_estimate": 0.00377090647816658,
+          "critic_bias_vs_policy": 0.015218556190855815,
+          "probability_of_optimal_program": 0.006374567166359904
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.0010017104622725309,
+          "initial_value_estimate": 0.009209774434566498,
+          "critic_bias_vs_policy": 0.010211484896839028,
+          "probability_of_optimal_program": 0.9450721050180335
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": -0.5212158203125,
+              "exact_stochastic_return": -0.16502791049952092,
+              "initial_value_estimate": 0.015463169664144516,
+              "critic_bias_vs_policy": 0.18049108016366544,
+              "probability_of_optimal_program": 0.08990306749222804
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                4,
+                0
+              ],
+              "return_value": 0.4787841796875,
+              "exact_stochastic_return": -0.022514506011820156,
+              "initial_value_estimate": 0.015463169664144516,
+              "critic_bias_vs_policy": 0.037977675675964676,
+              "probability_of_optimal_program": 0.2304588711438803
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.005927489373208902,
+              "initial_value_estimate": -0.1914071887731552,
+              "critic_bias_vs_policy": -0.1854796993999463,
+              "probability_of_optimal_program": 0.6984848985605029
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.030525245470926166,
+            "behavior_log_probability_max_error": 4.76837158203125e-07
+          },
+          "sampled_mean_return": -0.015022277832031253
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.1294463826777282,
+              "initial_value_estimate": 0.025090523064136505,
+              "critic_bias_vs_policy": 0.1545369057418647,
+              "probability_of_optimal_program": 0.05018358899532614
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.027741512227159086,
+              "initial_value_estimate": 0.025090523064136505,
+              "critic_bias_vs_policy": -0.002650989163022581,
+              "probability_of_optimal_program": 0.20351026329586605
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0029611722384619227,
+              "initial_value_estimate": -0.08465585112571716,
+              "critic_bias_vs_policy": -0.08169467888725523,
+              "probability_of_optimal_program": 0.8448645200495579
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.00200422084890306,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.01009674072265625
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0632965571778504,
+              "initial_value_estimate": -0.0772494375705719,
+              "critic_bias_vs_policy": -0.013952880392721495,
+              "probability_of_optimal_program": 0.01884882822555066
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": 0.01762801587091618,
+              "initial_value_estimate": -0.0772494375705719,
+              "critic_bias_vs_policy": -0.09487745344148808,
+              "probability_of_optimal_program": 0.09493003684970161
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0012470248097194126,
+              "initial_value_estimate": -0.09213182330131531,
+              "critic_bias_vs_policy": -0.09088479849159589,
+              "probability_of_optimal_program": 0.9330881728328118
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.033727992326021194,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.06897277832031251
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.05012098310034867,
+              "initial_value_estimate": 0.02138901874423027,
+              "critic_bias_vs_policy": 0.07151000184457894,
+              "probability_of_optimal_program": 0.011473703300858161
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": 0.013446104876048377,
+              "initial_value_estimate": 0.02138901874423027,
+              "critic_bias_vs_policy": 0.007942913868181894,
+              "probability_of_optimal_program": 0.06918365312463254
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0010752482426024054,
+              "initial_value_estimate": 0.0602380745112896,
+              "critic_bias_vs_policy": 0.061313322753892,
+              "probability_of_optimal_program": 0.9416737927012286
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.04481751087587327,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.005146789550781249
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.01463152293820239,
+              "initial_value_estimate": -0.019700748845934868,
+              "critic_bias_vs_policy": -0.005069225907732478,
+              "probability_of_optimal_program": 0.0019696227870632434
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.004873217551055537,
+              "initial_value_estimate": -0.019700748845934868,
+              "critic_bias_vs_policy": -0.01482753129487933,
+              "probability_of_optimal_program": 0.008345354767519504
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0005521122048873517,
+              "initial_value_estimate": -0.006326582282781601,
+              "critic_bias_vs_policy": -0.0057744700778942495,
+              "probability_of_optimal_program": 0.9696637302169638
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.08365997485816479,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.03602294921875001
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.008374304956031682,
+              "initial_value_estimate": -0.011361731216311455,
+              "critic_bias_vs_policy": -0.002987426260279773,
+              "probability_of_optimal_program": 0.0006221919892511287
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.004769159503570707,
+              "initial_value_estimate": -0.011361731216311455,
+              "critic_bias_vs_policy": -0.006592571712740748,
+              "probability_of_optimal_program": 0.0021080326854880263
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0003945513010940011,
+              "initial_value_estimate": -0.006793823093175888,
+              "critic_bias_vs_policy": -0.006399271792081887,
+              "probability_of_optimal_program": 0.9782545106987827
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.0030693442095071077,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.00114898681640625
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.005700789613865864,
+              "initial_value_estimate": -0.002562429755926132,
+              "critic_bias_vs_policy": 0.0031383598579397317,
+              "probability_of_optimal_program": 0.0002502674223906591
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.003991279208011812,
+              "initial_value_estimate": -0.002562429755926132,
+              "critic_bias_vs_policy": 0.00142884945208568,
+              "probability_of_optimal_program": 0.0006678933322716562
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0003155308594944892,
+              "initial_value_estimate": -0.0030941739678382874,
+              "critic_bias_vs_policy": -0.0027786431083437983,
+              "probability_of_optimal_program": 0.9825868599133086
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.0014466828433796763,
+            "behavior_log_probability_max_error": 0.0
+          },
+          "sampled_mean_return": -0.00114898681640625
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.018455604513997928,
+              "initial_value_estimate": 0.00377090647816658,
+              "critic_bias_vs_policy": 0.022226510992164508,
+              "probability_of_optimal_program": 0.002349614673702773
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.011447649712689235,
+              "initial_value_estimate": 0.00377090647816658,
+              "critic_bias_vs_policy": 0.015218556190855815,
+              "probability_of_optimal_program": 0.006374567166359904
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0010017104622725309,
+              "initial_value_estimate": 0.009209774434566498,
+              "critic_bias_vs_policy": 0.010211484896839028,
+              "probability_of_optimal_program": 0.9450721050180335
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.03171830344945192,
+            "behavior_log_probability_max_error": 0.0
+          },
+          "sampled_mean_return": 0.0
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": -0.012255859374999999,
+        "exact_stochastic_return": -0.0827825724957955,
+        "critic_bias_vs_policy": 0.3987866215287221
+      },
+      "after_PPO_means": {
+        "return_value": 0.0,
+        "exact_stochastic_return": -0.010301654896319899,
+        "critic_bias_vs_policy": 0.015885517359953118
+      }
+    },
+    {
+      "seed": 29,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.14789243042469025,
+      "final_mse": 0.07880526036024094,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    },
+    {
+      "seed": 43,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.5468689203262329,
+        "greedy_action_accuracy": 0.8571428656578064,
+        "value_mse": 0.004291779827326536,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.06993727607388159,
+          "initial_value_estimate": 0.41069427132606506,
+          "critic_bias_vs_policy": 0.4806315473999466,
+          "probability_of_optimal_program": 0.20800563975854564
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875,
+          "exact_stochastic_return": -0.08024069563235296,
+          "initial_value_estimate": 0.41069427132606506,
+          "critic_bias_vs_policy": 0.49093496695841804,
+          "probability_of_optimal_program": 0.22294439927881005
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.009103944728016755,
+          "initial_value_estimate": 0.1039755642414093,
+          "critic_bias_vs_policy": 0.11307950896942606,
+          "probability_of_optimal_program": 0.5480614795440786
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875,
+          "exact_stochastic_return": 0.19684944354334863,
+          "initial_value_estimate": 0.14950735867023468,
+          "critic_bias_vs_policy": -0.04734208487311395,
+          "probability_of_optimal_program": 0.5828028084755784
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": 0.015186728614694892,
+          "initial_value_estimate": 0.14950735867023468,
+          "critic_bias_vs_policy": 0.1343206300555398,
+          "probability_of_optimal_program": 0.26579235786138994
+        },
+        "STOP_TASK": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": -0.021533203125,
+          "exact_stochastic_return": -0.015287591073822914,
+          "initial_value_estimate": 0.004384895786643028,
+          "critic_bias_vs_policy": 0.019672486860465944,
+          "probability_of_optimal_program": 0.24666523827111753
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.003061372619820453,
+              "initial_value_estimate": 0.10881195962429047,
+              "critic_bias_vs_policy": 0.10575058700447001,
+              "probability_of_optimal_program": 0.3515242739518351
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.521533203125,
+              "exact_stochastic_return": -0.1939866324265767,
+              "initial_value_estimate": 0.10881195962429047,
+              "critic_bias_vs_policy": 0.3027985920508672,
+              "probability_of_optimal_program": 0.15544250441149757
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.010574426657805036,
+              "initial_value_estimate": -0.10496710240840912,
+              "critic_bias_vs_policy": -0.09439267575060409,
+              "probability_of_optimal_program": 0.48455664187825936
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.0487653398886323,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.08341674804687499
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.09824606666678427,
+              "initial_value_estimate": -0.14137306809425354,
+              "critic_bias_vs_policy": -0.2396191347610378,
+              "probability_of_optimal_program": 0.3275865711710053
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.12996025792042631,
+              "initial_value_estimate": -0.14137306809425354,
+              "critic_bias_vs_policy": -0.011412810173827226,
+              "probability_of_optimal_program": 0.09529339100896782
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.007487809009654803,
+              "initial_value_estimate": -0.22567984461784363,
+              "critic_bias_vs_policy": -0.21819203560818884,
+              "probability_of_optimal_program": 0.6127089296641268
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.015793061815202236,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.07817687988281251
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.1971450783555348,
+              "initial_value_estimate": 0.22376909852027893,
+              "critic_bias_vs_policy": 0.026624020164744133,
+              "probability_of_optimal_program": 0.5293892210038919
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.521533203125,
+              "exact_stochastic_return": -0.2667759327543438,
+              "initial_value_estimate": 0.22376909852027893,
+              "critic_bias_vs_policy": 0.49054503127462273,
+              "probability_of_optimal_program": 0.05468228908263353
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.00954280401362614,
+              "initial_value_estimate": 0.1467146873474121,
+              "critic_bias_vs_policy": 0.15625749136103825,
+              "probability_of_optimal_program": 0.5211562306073454
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.12427918281173334,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.1435791015625
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.16909189869158056,
+              "initial_value_estimate": 0.12182489037513733,
+              "critic_bias_vs_policy": -0.04726700831644323,
+              "probability_of_optimal_program": 0.4795461077093641
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.19267061919752962,
+              "initial_value_estimate": 0.12182489037513733,
+              "critic_bias_vs_policy": 0.3144955095726669,
+              "probability_of_optimal_program": 0.09613997743634492
+            },
+            "STOP_TASK": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.011282743412867119,
+              "initial_value_estimate": 0.05583652853965759,
+              "critic_bias_vs_policy": 0.0671192719525247,
+              "probability_of_optimal_program": 0.43016287662742936
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.07230610260739923,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.04961853027343752
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.16649820930843842,
+              "initial_value_estimate": -0.05081985518336296,
+              "critic_bias_vs_policy": -0.21731806449180138,
+              "probability_of_optimal_program": 0.43681635439028926
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.1448532685065551,
+              "initial_value_estimate": -0.05081985518336296,
+              "critic_bias_vs_policy": 0.09403341332319215,
+              "probability_of_optimal_program": 0.07575184471556583
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.010050419888249233,
+              "initial_value_estimate": -0.10134167969226837,
+              "critic_bias_vs_policy": -0.09129125980401914,
+              "probability_of_optimal_program": 0.48536181635029557
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.028503386885859072,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.014523315429687513
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.1940564523207874,
+              "initial_value_estimate": 0.10578624159097672,
+              "critic_bias_vs_policy": -0.08827021072981067,
+              "probability_of_optimal_program": 0.49457583420183965
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.12308814844426227,
+              "initial_value_estimate": 0.10578624159097672,
+              "critic_bias_vs_policy": 0.228874390035239,
+              "probability_of_optimal_program": 0.08494114363325972
+            },
+            "STOP_TASK": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.011843491237085474,
+              "initial_value_estimate": 0.061923690140247345,
+              "critic_bias_vs_policy": 0.07376718137733282,
+              "probability_of_optimal_program": 0.3975080122408619
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.006757988594472408,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.020121765136718737
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.17892261447151475,
+              "initial_value_estimate": 0.024394245818257332,
+              "critic_bias_vs_policy": -0.15452836865325742,
+              "probability_of_optimal_program": 0.4925251030254327
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.03511987515740997,
+              "initial_value_estimate": 0.024394245818257332,
+              "critic_bias_vs_policy": 0.0595141209756673,
+              "probability_of_optimal_program": 0.15814603575509437
+            },
+            "STOP_TASK": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.013486739940388721,
+              "initial_value_estimate": -0.05182674899697304,
+              "critic_bias_vs_policy": -0.038340009056584315,
+              "probability_of_optimal_program": 0.31623919730355243
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.015977684874087572,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.01915893554687502
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.19684944354334863,
+              "initial_value_estimate": 0.14950735867023468,
+              "critic_bias_vs_policy": -0.04734208487311395,
+              "probability_of_optimal_program": 0.5828028084755784
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.015186728614694892,
+              "initial_value_estimate": 0.14950735867023468,
+              "critic_bias_vs_policy": 0.1343206300555398,
+              "probability_of_optimal_program": 0.26579235786138994
+            },
+            "STOP_TASK": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.021533203125,
+              "exact_stochastic_return": -0.015287591073822914,
+              "initial_value_estimate": 0.004384895786643028,
+              "critic_bias_vs_policy": 0.019672486860465944,
+              "probability_of_optimal_program": 0.24666523827111753
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.01569036894943565,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.07921905517578125
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": 0.153466796875,
+        "exact_stochastic_return": -0.05309397214475043,
+        "critic_bias_vs_policy": 0.3615486744425969
+      },
+      "after_PPO_means": {
+        "return_value": 0.14618326822916666,
+        "exact_stochastic_return": 0.06558286036140687,
+        "critic_bias_vs_policy": 0.03555034401429726
+      }
+    },
+    {
+      "seed": 43,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.6236068606376648,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.004265015013515949,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.12016473733780939,
+          "initial_value_estimate": 0.4143894612789154,
+          "critic_bias_vs_policy": 0.5345541986167248,
+          "probability_of_optimal_program": 0.16163547269585987
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625,
+          "exact_stochastic_return": -0.11776774400298577,
+          "initial_value_estimate": 0.4143894612789154,
+          "critic_bias_vs_policy": 0.5321572052819011,
+          "probability_of_optimal_program": 0.16449375568630473
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.00858953011233328,
+          "initial_value_estimate": 0.09058067947626114,
+          "critic_bias_vs_policy": 0.09917020958859442,
+          "probability_of_optimal_program": 0.5733967539328136
+        }
+      },
+      "after_PPO": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.009564981037150543,
+          "initial_value_estimate": -0.029016830027103424,
+          "critic_bias_vs_policy": -0.01945184898995288,
+          "probability_of_optimal_program": 0.010755248639184168
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.02500190494987995,
+          "initial_value_estimate": -0.029016830027103424,
+          "critic_bias_vs_policy": -0.004014925077223473,
+          "probability_of_optimal_program": 0.003549632209663318
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0,
+          "exact_stochastic_return": -0.0035307107073778397,
+          "initial_value_estimate": -0.019335269927978516,
+          "critic_bias_vs_policy": -0.015804559220600676,
+          "probability_of_optimal_program": 0.8078845262928199
+        }
+      },
+      "curve": [
+        {
+          "episodes": 16,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": -0.06982241492063808,
+              "initial_value_estimate": 0.11743032187223434,
+              "critic_bias_vs_policy": 0.1872527367928724,
+              "probability_of_optimal_program": 0.27188330914040004
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.521533203125,
+              "exact_stochastic_return": -0.23415086852532713,
+              "initial_value_estimate": 0.11743032187223434,
+              "critic_bias_vs_policy": 0.35158119039756147,
+              "probability_of_optimal_program": 0.10845966219003512
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.00949222795075737,
+              "initial_value_estimate": -0.12405448406934738,
+              "critic_bias_vs_policy": -0.11456225611859001,
+              "probability_of_optimal_program": 0.5345291668640464
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.05448295781388879,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": 0.08341674804687499
+        },
+        {
+          "episodes": 32,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.05608248291139349,
+              "initial_value_estimate": -0.16424131393432617,
+              "critic_bias_vs_policy": -0.22032379684571968,
+              "probability_of_optimal_program": 0.27267473243084817
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.15335046612854056,
+              "initial_value_estimate": -0.16424131393432617,
+              "critic_bias_vs_policy": -0.010890847805785614,
+              "probability_of_optimal_program": 0.06621912962407873
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.006449825754623643,
+              "initial_value_estimate": -0.2385600507259369,
+              "critic_bias_vs_policy": -0.23211022497131326,
+              "probability_of_optimal_program": 0.6643350711175052
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.019892618292942643,
+            "behavior_log_probability_max_error": 4.76837158203125e-07
+          },
+          "sampled_mean_return": -0.07817687988281251
+        },
+        {
+          "episodes": 48,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": 0.478466796875,
+              "exact_stochastic_return": 0.11733307805320205,
+              "initial_value_estimate": 0.22293804585933685,
+              "critic_bias_vs_policy": 0.1056049678061348,
+              "probability_of_optimal_program": 0.4223513916326302
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                3,
+                0
+              ],
+              "return_value": -0.521533203125,
+              "exact_stochastic_return": -0.25882348922192927,
+              "initial_value_estimate": 0.22293804585933685,
+              "critic_bias_vs_policy": 0.4817615350812661,
+              "probability_of_optimal_program": 0.04878040055758073
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.008515964377724004,
+              "initial_value_estimate": 0.1324210911989212,
+              "critic_bias_vs_policy": 0.1409370555766452,
+              "probability_of_optimal_program": 0.5674148109738726
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.12859660619869828,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": 0.1435791015625
+        },
+        {
+          "episodes": 64,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.05837902461959767,
+              "initial_value_estimate": 0.06839190423488617,
+              "critic_bias_vs_policy": 0.010012879615288496,
+              "probability_of_optimal_program": 0.31971069708921823
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.17777128429178043,
+              "initial_value_estimate": 0.06839190423488617,
+              "critic_bias_vs_policy": 0.2461631885266666,
+              "probability_of_optimal_program": 0.08509217474304025
+            },
+            "STOP_TASK": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.011242509037958877,
+              "initial_value_estimate": 0.0012204013764858246,
+              "critic_bias_vs_policy": 0.012462910414444701,
+              "probability_of_optimal_program": 0.4210562544386739
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.09811520064249635,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.11304626464843753
+        },
+        {
+          "episodes": 80,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.04941489390193268,
+              "initial_value_estimate": -0.20166508853435516,
+              "critic_bias_vs_policy": -0.2510799824362878,
+              "probability_of_optimal_program": 0.21242052710281092
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.11367872605023638,
+              "initial_value_estimate": -0.20166508853435516,
+              "critic_bias_vs_policy": -0.08798636248411879,
+              "probability_of_optimal_program": 0.053134755295174814
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.008224261650881571,
+              "initial_value_estimate": -0.14606811106204987,
+              "critic_bias_vs_policy": -0.13784384941116828,
+              "probability_of_optimal_program": 0.5675293021958527
+            }
+          },
+          "PPO": {
+            "mean_loss": 0.007069826824590564,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.10790405273437503
+        },
+        {
+          "episodes": 96,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": 0.009003451833508985,
+              "initial_value_estimate": 0.01770738884806633,
+              "critic_bias_vs_policy": 0.008703937014557345,
+              "probability_of_optimal_program": 0.07354405543516532
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.05452644314339197,
+              "initial_value_estimate": 0.01770738884806633,
+              "critic_bias_vs_policy": 0.0722338319914583,
+              "probability_of_optimal_program": 0.018638235693892686
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0055072226680356814,
+              "initial_value_estimate": 0.07662960141897202,
+              "critic_bias_vs_policy": 0.0821368240870077,
+              "probability_of_optimal_program": 0.7040689878305866
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.051099490374326706,
+            "behavior_log_probability_max_error": 2.384185791015625e-07
+          },
+          "sampled_mean_return": -0.04428253173828126
+        },
+        {
+          "episodes": 112,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.006858622385261607,
+              "initial_value_estimate": -0.029667183756828308,
+              "critic_bias_vs_policy": -0.0228085613715667,
+              "probability_of_optimal_program": 0.026359356762789603
+            },
+            "BLUE": {
+              "actions": [
+                2,
+                0
+              ],
+              "return_value": -0.0183837890625,
+              "exact_stochastic_return": -0.03336766194506393,
+              "initial_value_estimate": -0.029667183756828308,
+              "critic_bias_vs_policy": 0.0037004781882356216,
+              "probability_of_optimal_program": 0.007937188348407708
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.004628083231592305,
+              "initial_value_estimate": -0.0023568011820316315,
+              "critic_bias_vs_policy": 0.0022712820495606736,
+              "probability_of_optimal_program": 0.7491253522817283
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.05093188025057316,
+            "behavior_log_probability_max_error": 1.1920928955078125e-07
+          },
+          "sampled_mean_return": -0.04293670654296878
+        },
+        {
+          "episodes": 128,
+          "evaluation": {
+            "REDD": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.009564981037150543,
+              "initial_value_estimate": -0.029016830027103424,
+              "critic_bias_vs_policy": -0.01945184898995288,
+              "probability_of_optimal_program": 0.010755248639184168
+            },
+            "BLUE": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.02500190494987995,
+              "initial_value_estimate": -0.029016830027103424,
+              "critic_bias_vs_policy": -0.004014925077223473,
+              "probability_of_optimal_program": 0.003549632209663318
+            },
+            "STOP_TASK": {
+              "actions": [
+                0
+              ],
+              "return_value": 0.0,
+              "exact_stochastic_return": -0.0035307107073778397,
+              "initial_value_estimate": -0.019335269927978516,
+              "critic_bias_vs_policy": -0.015804559220600676,
+              "probability_of_optimal_program": 0.8078845262928199
+            }
+          },
+          "PPO": {
+            "mean_loss": -0.05418530059978366,
+            "behavior_log_probability_max_error": 0.0
+          },
+          "sampled_mean_return": -0.00804290771484375
+        }
+      ],
+      "resampled_trajectories": 16,
+      "before_PPO_means": {
+        "return_value": -0.012255859374999999,
+        "exact_stochastic_return": -0.08217400381770948,
+        "critic_bias_vs_policy": 0.3886272044957401
+      },
+      "after_PPO_means": {
+        "return_value": 0.0,
+        "exact_stochastic_return": -0.01269919889813611,
+        "critic_bias_vs_policy": -0.01309044442925901
+      }
+    },
+    {
+      "seed": 43,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.19257090985774994,
+      "final_mse": 0.08110077679157257,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    }
+  ]
+}

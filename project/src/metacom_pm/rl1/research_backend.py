@@ -71,3 +71,28 @@ class ResearchBackend:
         update=run.update_once() if allow_update and complete else None
         return dict(status='UPDATED' if update else 'FEEDBACK_COMPLETE' if complete else 'PENDING_FEEDBACK',
             results=after,service=service,update=update)
+
+    def prepare_organized_supervision(self, *, menu, factories, view, method):
+        """Initial new-domain pool through the same persistent G/J queue.
+
+        Final union compilation consumes completed-run exports directly; it
+        must not be reconstructed from whichever feedback happens to be cached.
+        This method queues work but invokes no provider or model loader.
+        """
+        from .organized_supervision import endpoint, prepare_supervised, _check_menu
+        if method not in ('BC-init','PPO-NoText'):
+            raise ValueError('final baselines require the completed common training union')
+        _check_menu(menu, factories, None)
+        responses, receipts = {}, {}
+        for x in menu['endpoints']:
+            rebuilt, e = endpoint(factories[x['prefix_identity']], x['actions'])
+            if rebuilt != x:
+                raise ValueError('organized initial pool changed')
+            if e.route is None or self.bundle is None:
+                continue
+            if e.route.bundle != self.bundle:
+                raise ValueError('organized pool and worker qualification differ')
+            e.advance(self.queue.generate, self.queue.measure)
+            responses.update(e.responses); receipts.update(e.receipts)
+        return prepare_supervised(menu, factories=factories, responses=responses,
+                                  receipts=receipts, view=view, method=method)
