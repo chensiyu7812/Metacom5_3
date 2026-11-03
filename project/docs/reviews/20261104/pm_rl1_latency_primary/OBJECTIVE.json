@@ -1,0 +1,50 @@
+{
+  "version": "pm-rl1-latency-primary-direction-20261104-v1",
+  "status": "RESEARCHER_AUTHORIZED_PRIMARY_OBJECTIVE_CORRECTION",
+  "authority": "研究者明确：tokens仅供研究用，实际部署时用户等待的延迟才是目标。",
+  "supersedes_in_RL1": "Original September 28 scope that optimized resource input tokens while relegating latency to reporting or a future extension.",
+  "quality_and_misuse_objectives_retained": true,
+  "deployment_cost_objective": "client_observed_latency",
+  "latency_measurements": {
+    "start": "client send before any method-specific PM, encoding, retrieval or planning",
+    "TTFT_end": "first nonempty actual reply text visible or received at the declared client surface",
+    "completion_end": "complete natural-end response visible or received at the same surface",
+    "clock": "same client monotonic clock for start and both endpoints",
+    "report": ["p50", "p95", "timeout_or_incomplete_rate", "cold_or_warm_state", "load_and_concurrency"],
+    "resource_cost_primary_summary": "p95 client E2E completion",
+    "experience_companion_summary": "p95 client E2E TTFT",
+    "inherited_arbitrary_hard_deadline_ms": null,
+    "quality_latency_frontier_required": true
+  },
+  "tokens_role": ["research diagnostic", "context capacity", "candidate latency predictor feature"],
+  "tokens_are_user_utility_or_latency": false,
+  "included_online_work": ["queue and transport", "initial PM features", "all PM or OneShot planning", "retrieval", "encoding", "resource rendering and input preparation", "G prefill and full natural decoding", "client delivery"],
+  "excluded_offline_work": ["training judge", "human review", "offline training", "prebuilt static catalog construction"],
+  "comparison": {
+    "matched_execution_conditions": true,
+    "interleaved_repeated_calls": true,
+    "same_deployment_caching_policy": true,
+    "historical_training_replay_is_new_latency_observation": false,
+    "warm_and_cold_reported_separately": true,
+    "incomplete_calls": "retain observed wait and failure/censoring status; never relabel as completed or silently drop",
+    "method_specific_online_overhead_counted": true,
+    "output_shortening_cap_for_speed": false
+  },
+  "learning": {
+    "current_implemented_cost": "TokenCost; legacy proxy experiment only under this new primary direction",
+    "latency_cost_implementation_selected": false,
+    "latency_model_calibrated": false,
+    "new_latency_reward_ready": false,
+    "candidate_total_return": "quality/misuse utility gain minus a calibrated seconds-based cost, counted once",
+    "frozen_seconds_coefficient": null,
+    "missing_latency": "pending, never zero or inferred directly from token count",
+    "mean_per_call_penalty_does_not_by_itself_optimize_p95": true,
+    "no_new_formal_training_authorization_claimed_by_this_file": true
+  },
+  "scope_limits": [
+    "No edits to old Paper-1 contracts or historical outcomes.",
+    "This records the current objective; existing runners do not automatically enforce this JSON.",
+    "Old generation_seconds is a component diagnostic, not client E2E latency.",
+    "No millisecond or dollar value is assigned to the researcher's 90/95 analogy."
+  ]
+}
