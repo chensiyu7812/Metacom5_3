@@ -1,0 +1,50 @@
+{
+  "status": "USE_EXISTING_ANSWERS_BEFORE_PROPOSING_NEW_REVIEW",
+  "researcher_direction": "先看看以前的答案能不能用。直接分析标注和答案，看看能用的先用。然后如果需要做人评，重新看看怎么做才能有用。",
+  "reference_registry": "project/outputs/pm_rl1/human_answer_reanalysis_20261103_v2/ANSWER_REGISTRY_PRIVATE.json",
+  "old_eight_pair_questionnaire_mandatory": false,
+  "questions_dispatched_this_round": 0,
+  "exact_reuse_identity": ["complete_evidence_identity", "reply_identity_or_unordered_pair", "question_dimension", "original_question_scope"],
+  "new_question_must_document": [
+    "decision_that_depends_on_answer",
+    "existing_answers_and_clarifications_already_used",
+    "what_is_new_relative_to_previous_question",
+    "alternative_actions_for_different_answers",
+    "why_original_source_or_local_analysis_does_not_resolve_it"
+  ],
+  "reuse_priorities": [
+    "original_answer_with_exact_input",
+    "same_researcher_explicit_later_clarification_with_chronology",
+    "existing_reason_as_bounded_rule_for_analysis_of_new_reply",
+    "only_then_a_specific_new_unresolved_question"
+  ],
+  "human_interface": {
+    "group_shared_context": true,
+    "prefill_existing_answers_as_read_only_references": true,
+    "show_only_new_question_dimension": true,
+    "source_id_entry_required": false,
+    "exhaustive_claim_annotation_required": false,
+    "allow_both_acceptable": true,
+    "allow_both_problematic": true,
+    "allow_uncertain": true,
+    "retain_q_ranges": true,
+    "quality_and_factual_error_are_separate_questions": true
+  },
+  "text_answer_handling": {
+    "read_reasons_omissions_and_supplements_even_if_claims_array_empty": true,
+    "empty_claims_is_not_no_error": true,
+    "keep_analyst_coding_separate_from_original_human_fields": true
+  },
+  "after_each_batch": [
+    "link_every_answer_to_exact_evidence_and_reply",
+    "report_which_decision_or_error_check_used_it",
+    "record_unresolved_points_without_forcing_new_answers"
+  ],
+  "limits": [
+    "same_topic_does_not_authorize_copying_scores",
+    "holistic_tie_is_not_exact_equal_cardinal_reward",
+    "analyst_interpretation_is_not_a_new_human_label",
+    "repeated_forms_or_rater_name_copies_are_not_independent_observations",
+    "current_development_scores_are_not_qualified_training_rewards"
+  ]
+}
