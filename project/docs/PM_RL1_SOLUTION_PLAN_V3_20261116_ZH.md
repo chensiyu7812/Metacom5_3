@@ -3,6 +3,7 @@
 日期：2026-11-16。基线：`10307c62f5175fcad62558e9e20d4d881b3d9238`。
 状态：候选方案。**研究者合并本 PR 即视为采用**；采用后它取代 V2（`PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`）和 11-16 主方案的执行顺序，二者保留为历史与字段参考。
 配套状态表：[`plans/pm_rl1_v3_20261116/EXECUTION_STATE.json`](plans/pm_rl1_v3_20261116/EXECUTION_STATE.json)。
+**四资源施工细则：**[`plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md`](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)（时序证据关系、每头索引、BGE/BM25、读取契约、25项回归、C0/A1–A6 交付）。这是本方案的从属技术规范，**不是第三条执行路线**；状态与采用规则不变。
 
 本文件不覆盖任何历史结果、标签、模型或测试。本文写作时没有运行任何模型、GPU 或付费调用。
 
@@ -163,6 +164,8 @@ V3 保留 V2 的环境形式，把奖励来源换成检查表，人工量降到�
 
 ## 5. 统一契约（Day 0，两条线共同依赖）
 
+C0 开工前必须同时冻结[四资源施工细则 §2–3](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)的来源跨度、双时间、时序关系、索引身份和私有/可见字段。A、B 不得各自发明不同的 SourceSpan、TemporalClaim、TemporalRelation 或检索回包。
+
 两条工作线第一天先写 `project/src/metacom_pm/rl1v3/contracts.py`（冻结的 dataclass）和对应的 JSON Schema。以后双方只通过这些对象交换数据。字段如下（省略通用的 `id / version / sha256`）。
 
 | 对象 | 关键字段 | 生产者 → 消费者 |
@@ -233,7 +236,7 @@ V3 保留 V2 的环境形式，把奖励来源换成检查表，人工量降到�
 
 **校验。** 机械层：跨度精确匹配、owner 一致、rank 严格小于切点。语义层：第二个模型（与抽取器不同的那个）做"原话是否支持该陈述"的蕴含判断，并单独判 stage。两项都通过才进库，否则进拒收队列并保存理由。11/15 发现的 3 个错误（已挂电话被写成避免挂电话等）作为必过回归测试。
 
-**交付单元。** GET_MP：当前档案，按与查询的相似度取前 10 条，≤350 tokens。GET_ME：BGE 相似度 top-3 事件。每条注明"报告于 <日期或第几次会话>"，ME 注明阶段。
+**交付单元（Phase-1 的单次确定性打包上限，不是最终固定 Top-k 政策）。** GET_MP：先按当前时点、实体和 slot 投影，再相关性排序，最多 10 条、≤350 tokens，足够时允许少于 10 条。GET_ME：先检索并按经核验的事件链去重，再交付最多 3 个逻辑事件单位；不把“建议”和“已执行”混写。每条注明“报告于某次会话/日期”和阶段。Phase-2 的可变读取和 MS 父文展开按[四资源施工细则 §4–5](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)实现，不把 Phase-1 打包混称为已经学习了数量选择。
 
 ### 6.4 MS：会后摘要、完整原文与定向回查
 
@@ -247,6 +250,8 @@ V3 保留 V2 的环境形式，把奖励来源换成检查表，人工量降到�
 这样同时解决了"单个会话太长"（SUM）和"会话越来越多"（检索 + STOP），并保留了摘要遗漏后的补救路径（RAW 稀疏索引 + EXPAND）。
 
 ### 6.5 检索器
+
+**V3.1-R1 具体绑定：**四头分别建索引；A5 第一版明确使用现有固定 BGE-M3 的 **dense** 编码器 + **BM25**，以 RRF 合并，然后实施实体/slot/时间阶段校验及有原话支持的事件关系扩展。现有 SentenceTransformer 封装并未输出原生 BGE sparse 权重；若以后接 FlagEmbedding 原生 sparse/ColBERT，必须换检索器和 index 身份。详见[四资源施工细则 §5](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)。BGE 作候选召回，不代替动态事实投影或资源实际收益判断。
 
 统一接口：
 
@@ -502,7 +507,7 @@ Delta(S,OFF) in [L(S)-U(OFF), U(S)-L(OFF)]
 |---|---|---|---|
 | C0 | 写 `rl1v3/contracts.py` + JSON Schema（第 5 节全部对象），以及 `rl1v3/io.py`（规范 JSON、sha256、manifest） | 代码 + `test_rl1v3_contracts.py` | 正反例各 ≥10 个；`TerminalKey` 任一字段变化 hash 变化 |
 
-由 WS-A 编写、WS-B 审阅合并。WS-B 在此期间可开始 B0。
+由 WS-A 编写、WS-B 审阅合并。WS-B 在此期间可开始 B0。C0 的额外 SourceSpan/TemporalClaim/TemporalRelation/IndexManifest/RetrievalTrace 契约及正反例见[四资源施工细则 §3、§7](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)，不得省略。
 
 ### 9.4 WS-A 任务表
 
@@ -515,7 +520,7 @@ Delta(S,OFF) in [L(S)-U(OFF), U(S)-L(OFF)]
 | A3 | A1 | RAW、v0 | MP/ME v1 编译（ADD/UPDATE/INVALIDATE/NOOP + 双时间 + 阶段）；逐条精确源跨度、语义蕴含与冲突边；额外构造 3 个已知错误和时间否定反例回归 | `mp_v1.jsonl`、`me_v1.jsonl`、拒收队列 | 3 个已知错误通过；抽样 60 条由 Codex 做开发预筛、**不能称人评**；需要宣称精确率时由独立人工核验并报告精确率/召回和样本数 | 精确率不足 → 收紧、改对话阶段识别、人工补关键错例；召回不足 → 用有角色和原句的 RAW 事件视图，不编造语义状态 |
 | A4 | A1 | 方法原文、ESConv train、FailedESConv | RS 方法卡候选24–40张、完整案例、适用/不适用条件与误用示例；高风险标签单列 | `rs_methods.jsonl`、`rs_cases.jsonl` | 每卡出处/许可/原话；案例按质量审阅，不能按数量充正例；高风险卡未经专业审核不得部署 | 案例不足的方法保留方法层；高风险卡冻结 research_only；扩大来源/改条件，不冒充已验证专业策略 |
 | A5 | A2,A3,A4 | v1 资源 | 混合检索器 + 过滤 + 事实键 + 时间感知；词面基线保留 | `retrieve/`、索引 manifest | 见 6.5 验收 | 见 6.5 替代 |
-| A6 | A5 | v1 + 检索器 | reading_view、渲染、G 请求包；`bank_validator`（跨记录检查 7 项，见 RESOURCE_SPEC §6） | `render/`、`bank_v1/` 冻结 | 端到端演示 Prefix→GET×4→STOP→请求包；越权、未来、错 owner、同会话摘要、超上下文等反例测试全拦截 | — |
+| A6 | A5 | v1 + 检索器 | reading_view、渲染、G 请求包；`bank_validator`（跨记录检查 7 项，见 [RESOURCE_SPEC §6](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)） | `render/`、`bank_v1/` 冻结 | 端到端演示 Prefix→GET×4→STOP→请求包；越权、未来、错 owner、同会话摘要、超上下文等反例测试全拦截 | — |
 | A7 | A6,A0,B3 | G0、v1、校准反馈 | 冻结 G0 与 B0 提示；支持计划有/无对照，以真实等待和校准后的质量共同决定，不合格 J1 只能作开发预筛 | `G0_FREEZE.json` | 版本与选择依据固定；计划不强制引用可选记忆 | 计划明显拖慢或质量不升 → 用 noplan 作 G0，G1 仍可学支持计划 |
 | A8 | A7,B2,B3 | G1 train owners 前缀、资源可见性、NeedCard | 相关/无关/OFF/更新冲突/可选不提及/RS 条件生成；先验证历史只来自当前 G 可见输入，再按合格的事实约束与独立支持信号筛选教师候选 | `g1_data/` | 样本出处、可见输入、拒收原因完整；候选总量与质量逐类报告 | 标签稀缺 → 扩充可信原始前缀及困难反例、补人工偏好；不靠多采样追高 GSC |
 | A9 | A8 | g1_data | QLoRA SFT；在独立偏好合格后正式 DPO，弱标签 DPO 单列工程试验 | 适配器、训练日志、偏好资格 | 无泄漏、训练收敛；dev 上 OFF 不退化、事实误用不升、自然支持质量可审 | 不过 → 补 OFF-better/无关/已拒绝历史训练并重训，不自动称仅提示的 G1 为微调成功 |
