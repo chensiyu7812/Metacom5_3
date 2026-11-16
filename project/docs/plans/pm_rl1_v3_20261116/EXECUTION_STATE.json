@@ -1,375 +1,430 @@
 {
- "version": "pmrl1-v3-state-20261116",
- "plan": "../../PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md",
- "adopted_by_researcher": false,
- "adoption_rule": "研究者合并引入本文件的PR即视为采用；之后Codex把本字段改为true并记录合并commit",
- "scale_tier": null,
- "g0_identity": null,
- "lambda_main": null,
- "noninferiority_margin_gsc": -0.02,
- "human_touchpoints": {
-  "H0": "合并PR",
-  "H1": "判官校准",
-  "H2": "方法卡专业审核(可选)",
-  "H3": "最终盲评120对",
-  "H4": "ES-MemEval付费评分额度"
- },
- "allowed_status": [
-  "pending",
-  "ready",
-  "in_progress",
-  "completed",
-  "completed_with_fallback",
-  "blocked_external"
- ],
- "sync_points": {
-  "S1": [
-   "C0",
-   "A1",
-   "A1b",
-   "B0",
-   "B5"
+  "version": "pmrl1-v3.1-state-20261116",
+  "plan": "../../PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md",
+  "adopted_by_researcher": false,
+  "adoption_rule": "仅在研究者主动合并PR #4后视为正式采用；合并后由集成负责人在独立提交中将 adopted_by_researcher=true 并记录合并SHA",
+  "scale_tier": null,
+  "g0_identity": null,
+  "lambda_main": null,
+  "noninferiority_margin_gsc": -0.02,
+  "human_touchpoints": {
+    "H0": "合并PR",
+    "H1": "分层困难样本的人评校准；必要时追加标注，不承诺4小时",
+    "H2": "方法卡专业审核(可选)",
+    "H3": "冻结后独立盲评，目标120对；实际样本数依据效应精度/预注册增补",
+    "H4": "ES-MemEval付费评分额度"
+  },
+  "allowed_status": [
+    "pending",
+    "ready",
+    "in_progress",
+    "completed",
+    "completed_with_fallback",
+    "blocked_external"
   ],
-  "S2": [
-   "A2",
-   "A3",
-   "A4",
-   "A5",
-   "A6",
-   "B1",
-   "B2",
-   "B3",
-   "B4"
+  "sync_points": {
+    "S1": [
+      "C0",
+      "A0",
+      "A1",
+      "A1b",
+      "B0",
+      "B1",
+      "B2",
+      "B5",
+      "B6e",
+      "B8e"
+    ],
+    "S2": [
+      "A2",
+      "A3",
+      "A4",
+      "A5",
+      "A6",
+      "B3",
+      "B4"
+    ],
+    "S3": [
+      "A7",
+      "A8",
+      "A9",
+      "B6",
+      "B7",
+      "B8"
+    ],
+    "S4": [
+      "A10",
+      "A11",
+      "B9",
+      "B10"
+    ],
+    "S5": [
+      "B11",
+      "B12",
+      "B13"
+    ]
+  },
+  "tasks": {
+    "C0": {
+      "workstream": "shared",
+      "depends_on": [],
+      "title": "contracts.py + JSON Schema + io.py",
+      "status": "ready",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A0": {
+      "workstream": "WS-A",
+      "depends_on": [],
+      "title": "环境盘点与吞吐实测，选规模档位",
+      "status": "ready",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A1": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "C0"
+      ],
+      "title": "来源库 source_registry",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A1b": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A1"
+      ],
+      "title": "bank v0 适配器（现有MP/ME/MS-RAW/RS草稿）",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A2": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A1"
+      ],
+      "title": "MS-SUM 写入器+跨度账+忠实性检查",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A3": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A1"
+      ],
+      "title": "MP/ME v1 编译（版本操作、双时间、stage、双模型校验）",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A4": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A1"
+      ],
+      "title": "RS 方法卡+案例+误用示例",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A5": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "title": "混合检索器（过滤→BGE稠密+稀疏→RRF，事实键，时间感知）",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A6": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A5"
+      ],
+      "title": "reading_view/渲染/G请求包 + bank_validator，冻结bank v1",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A7": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A6",
+        "A0",
+        "B3"
+      ],
+      "title": "冻结G0 + SupportPlan 对照",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A8": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A7",
+        "B2",
+        "B3"
+      ],
+      "title": "真实合法历史的资源条件教师目标与可见性筛选",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A9": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A8"
+      ],
+      "title": "G1 QLoRA SFT；DPO独立偏好合格后正式执行",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A10": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A9",
+        "B3"
+      ],
+      "title": "G1 vs G0 留出owner验收",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "A11": {
+      "workstream": "WS-A",
+      "depends_on": [
+        "A10"
+      ],
+      "title": "冻结G1（或降级为提示式）",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B0": {
+      "workstream": "WS-B",
+      "depends_on": [],
+      "title": "前缀普查+折分+确定性特征",
+      "status": "ready",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B1": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B0",
+        "A1b"
+      ],
+      "title": "需求卡+分层抽样",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B2": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B1"
+      ],
+      "title": "检查项生成+J1/J2判官+GSC",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B3": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B2",
+        "A1b",
+        "A0"
+      ],
+      "title": "逐类别资格校准（H1），不阻塞工程级训练",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B4": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "A0"
+      ],
+      "title": "等待测量与ΔT模型",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B5": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "C0"
+      ],
+      "title": "Phase-1 有限头环境+DP",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B6": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "A6",
+        "A7"
+      ],
+      "title": "资源v1和合格奖励的正式16终点表；若未合格仅工程标记",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B7": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B6"
+      ],
+      "title": "基线/OneShot/Seq-BC/BC-union",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B8": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B7",
+        "B3",
+        "B4"
+      ],
+      "title": "正式PPO / PPO-NoText（三种子×λ），与BC/固定策略同反馈比较",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B9": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B8",
+        "A6"
+      ],
+      "title": "Phase-2 自适应环境与PPO-Adaptive",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B10": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "A11",
+        "B8"
+      ],
+      "title": "G1终点表与G×PM 2×2",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B11": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B8",
+        "B9",
+        "B10"
+      ],
+      "title": "主统计+H3人评包",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B12": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B11"
+      ],
+      "title": "ESC-Eval/ES-MemEval/客户端与Tokkio等待（H4）",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B13": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B11",
+        "B12",
+        "B9",
+        "B10"
+      ],
+      "title": "收口与论文图表",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null
+    },
+    "B6e": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B2",
+        "B5",
+        "A1b",
+        "A0"
+      ],
+      "title": "bank v0版本绑定终点表及可回放工程数据，不等待软质量判官科研资格",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null,
+      "evidence_tier": "engineering_only"
+    },
+    "B8e": {
+      "workstream": "WS-B",
+      "depends_on": [
+        "B6e"
+      ],
+      "title": "BC/OneShot/PPO/NoText 真实optimizer更新工程试验；无自然帮助结论",
+      "status": "pending",
+      "fallback_used": null,
+      "results_doc": null,
+      "commit": null,
+      "evidence_tier": "engineering_only"
+    }
+  },
+  "evidence_tiers": [
+    "engineering_only",
+    "research_qualified",
+    "human_confirmed"
   ],
-  "S3": [
-   "B6",
-   "B7",
-   "B8"
-  ],
-  "S4": [
-   "A10",
-   "A11",
-   "B9",
-   "B10"
-  ],
-  "S5": [
-   "B11",
-   "B12",
-   "B13"
-  ]
- },
- "tasks": {
-  "C0": {
-   "workstream": "shared",
-   "depends_on": [],
-   "title": "contracts.py + JSON Schema + io.py",
-   "status": "ready",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A0": {
-   "workstream": "WS-A",
-   "depends_on": [],
-   "title": "环境盘点与吞吐实测，选规模档位",
-   "status": "ready",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A1": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "C0"
-   ],
-   "title": "来源库 source_registry",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A1b": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A1"
-   ],
-   "title": "bank v0 适配器（现有MP/ME/MS-RAW/RS草稿）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A2": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A1"
-   ],
-   "title": "MS-SUM 写入器+跨度账+忠实性检查",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A3": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A1"
-   ],
-   "title": "MP/ME v1 编译（版本操作、双时间、stage、双模型校验）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A4": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A1"
-   ],
-   "title": "RS 方法卡+案例+误用示例",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A5": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A2",
-    "A3",
-    "A4"
-   ],
-   "title": "混合检索器（过滤→BGE稠密+稀疏→RRF，事实键，时间感知）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A6": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A5"
-   ],
-   "title": "reading_view/渲染/G请求包 + bank_validator，冻结bank v1",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A7": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A6",
-    "A0"
-   ],
-   "title": "冻结G0 + SupportPlan 对照",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A8": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A7",
-    "B2"
-   ],
-   "title": "G1 条件组数据生成与检查表筛选",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A9": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A8"
-   ],
-   "title": "G1 QLoRA SFT → DPO",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A10": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A9",
-    "B3"
-   ],
-   "title": "G1 vs G0 留出owner验收",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "A11": {
-   "workstream": "WS-A",
-   "depends_on": [
-    "A10"
-   ],
-   "title": "冻结G1（或降级为提示式）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B0": {
-   "workstream": "WS-B",
-   "depends_on": [],
-   "title": "前缀普查+折分+确定性特征",
-   "status": "ready",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B1": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B0",
-    "A1b"
-   ],
-   "title": "需求卡+分层抽样",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B2": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B1"
-   ],
-   "title": "检查项生成+J1/J2判官+GSC",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B3": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B2"
-   ],
-   "title": "判官校准包与资格（H1）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B4": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "A0"
-   ],
-   "title": "等待测量与ΔT模型",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B5": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "C0"
-   ],
-   "title": "Phase-1 有限头环境+DP",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B6": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B2",
-    "B5"
-   ],
-   "title": "终点表生成（先bank v0，S2后用bank v1）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B7": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B6"
-   ],
-   "title": "基线/OneShot/Seq-BC/BC-union",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B8": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B7",
-    "B4"
-   ],
-   "title": "PPO/PPO-NoText × 3种子 × λ网格",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B9": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B8",
-    "A6"
-   ],
-   "title": "Phase-2 自适应环境与PPO-Adaptive",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B10": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "A11",
-    "B8"
-   ],
-   "title": "G1终点表与G×PM 2×2",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B11": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B8"
-   ],
-   "title": "主统计+H3人评包",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B12": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B11"
-   ],
-   "title": "ESC-Eval/ES-MemEval/客户端与Tokkio等待（H4）",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  },
-  "B13": {
-   "workstream": "WS-B",
-   "depends_on": [
-    "B12"
-   ],
-   "title": "收口与论文图表",
-   "status": "pending",
-   "fallback_used": null,
-   "results_doc": null,
-   "commit": null
-  }
- }
+  "state_owner": "integration_owner_only",
+  "task_results_are_append_only": true,
+  "feedback_rule": "代理反馈可用于工程训练，不得替代逐类别合格判官及冻结后独立自然支持人评；unresolved uncertain 保持上下界，不硬填分数"
 }
